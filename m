@@ -2,230 +2,224 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A54ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:25:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAC3ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:25:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 763862083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:25:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lH5jXvHS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 763862083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D5DC2083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:25:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D5DC2083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbeJRJYB (ORCPT
+        id S1727454AbeJRJYD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 05:24:01 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:41177 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726706AbeJRJYB (ORCPT
+        Thu, 18 Oct 2018 05:24:03 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:42897 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726673AbeJRJYC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 05:24:01 -0400
-Received: by mail-qt1-f196.google.com with SMTP id l41-v6so32437386qtl.8
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 18:25:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t27sUZb2P/VMpTeQiWfb7AKdjdCcA4gG+3+9VZsQwkE=;
-        b=lH5jXvHSaFzKTV4aDhLuP/b+cPLrRrwGWw9NkpGtNbu20YAh1m3kPZKKAA5841A2DS
-         tog01DbiydB6AUYlxfUT7J1ZDhOs/kP1XL89av3RGxBtGpx7IxXgkYdd/lJA93Egosm3
-         SzBb/qcTpnQErMQq3T1qb7iPjymE+gj1mX7RPCwUMb70rp8moLokvBpBYgfnbnqjI+2r
-         hBk+qYzvQGDdIjunQyQHeQh6wjT8ZyMZ4V3zCnme+u+0aXApBjgT0KJd9Zd4z6A1mdSk
-         CFuo59zfVssX6fGoyBZ2N/q5qnWCOROBP4sXut+lYEI3geJ3EI74Te3LDlhGPKR5eiXl
-         2F6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t27sUZb2P/VMpTeQiWfb7AKdjdCcA4gG+3+9VZsQwkE=;
-        b=hsq8nCUhvOHOLDxjjwV2m7UWFhPXWM2JGsXaTHvVU5mv5Nrd+Kex2cG5GurXGsP9RX
-         bj18q3KoGNRktOoPLGgrxaC6MpwDkJhUwTRrQ/l/kYF5y7IOP2gtfp8JKj9MhIHVjdl3
-         yaesokqaM0wwbJ9D52IEN+9rHKTZ/AFtkyvQ1cW/eO9I5r39SWxqRUi5pD4CWAPZzdLH
-         R5+TrgL9klSgQierUqk+Z78Y6loNgxCCfj3bjzjIHwC6trfjXSXDsJwzSSTBxXU6uhlY
-         32UY4K+27ogrDnRRDrwb3+sDVsUBU7xhJDiIxEpmQFJHwvvn4zk/01bHeXzVvcoNTMx5
-         igaQ==
-X-Gm-Message-State: ABuFfoj2pQ3yzfSR4QXlOkE90CyVgcE+3Ch8EOGKG6GLq7oNZX9TfAec
-        uzaJLMyttiJXFHNvQyQSM9noJy1JyycV0C2A4RA=
-X-Google-Smtp-Source: ACcGV62Gsu5JDILhTmTqIjKVmjsp0aElx69gPAsza+1wPcFbPa0a556Fj5fSXYtzSLYJj9SDXOPNFWlSDV6rwd/q4TE=
-X-Received: by 2002:ac8:1739:: with SMTP id w54-v6mr26680844qtj.76.1539825934204;
- Wed, 17 Oct 2018 18:25:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181001103222.11924-1-kraxel@redhat.com> <20181001103222.11924-6-kraxel@redhat.com>
-In-Reply-To: <20181001103222.11924-6-kraxel@redhat.com>
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Thu, 18 Oct 2018 11:25:22 +1000
-Message-ID: <CAPM=9tzpzxv9TorRDWX3=sj_=EEqu3gyU2+AyWAFVHLPzZVcew@mail.gmail.com>
-Subject: Re: [PATCH 5/8] drm/virtio: track created object state
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@linux.ie>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:VIRTIO CORE, NET..." 
-        <virtualization@lists.linux-foundation.org>
+        Thu, 18 Oct 2018 05:24:02 -0400
+X-UUID: e53af6b4d2774edd9642ab5af7340b6c-20181018
+X-UUID: e53af6b4d2774edd9642ab5af7340b6c-20181018
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <honghui.zhang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 883320070; Thu, 18 Oct 2018 09:25:14 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 18 Oct
+ 2018 09:25:13 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 18 Oct 2018 09:25:12 +0800
+Message-ID: <1539825912.11281.8.camel@mhfsdcap03>
+Subject: Re: [PATCH v9 2/9] PCI: Using PCI configuration space header type
+ instead of class type to assign resource
+From:   Honghui Zhang <honghui.zhang@mediatek.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        <youlin.pei@mediatek.com>, <devicetree@vger.kernel.org>,
+        <ulf.hansson@linaro.org>, <ryder.lee@mediatek.com>,
+        <marc.zyngier@arm.com>, <linux-pci@vger.kernel.org>,
+        <jianjun.wang@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <yt.shen@mediatek.com>, <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>, <bhelgaas@google.com>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Thu, 18 Oct 2018 09:25:12 +0800
+In-Reply-To: <20181017132251.GG5906@bhelgaas-glaptop.roam.corp.google.com>
+References: <1539686690-24068-1-git-send-email-honghui.zhang@mediatek.com>
+         <1539686690-24068-3-git-send-email-honghui.zhang@mediatek.com>
+         <20181016145355.GB16390@e107981-ln.cambridge.arm.com>
+         <20181017132251.GG5906@bhelgaas-glaptop.roam.corp.google.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 1 Oct 2018 at 20:33, Gerd Hoffmann <kraxel@redhat.com> wrote:
->
-> Track whenever the virtio_gpu_object is already created (i.e. host knows
-> about it) in a new variable.  Add checks to virtio_gpu_object_attach()
-> to do nothing on objects not created yet.
->
-> Make virtio_gpu_ttm_bo_destroy() use the new variable too, instead of
-> expecting hw_res_handle indicating the object state.
+On Wed, 2018-10-17 at 08:22 -0500, Bjorn Helgaas wrote:
+> On Tue, Oct 16, 2018 at 03:53:55PM +0100, Lorenzo Pieralisi wrote:
+> > On Tue, Oct 16, 2018 at 06:44:43PM +0800, honghui.zhang@mediatek.com wrote:
+> > > From: Honghui Zhang <honghui.zhang@mediatek.com>
+> > > 
+> > > The PCI configuration space header type defines the layout of the rest
+> > > of the header (PCI r3.0 sec 6.1, PCIe r4.0 sec 7.5.1.1.9) while the
+> > > resource assignment is based on the configuration space layout instead
+> > > of its class type. Using configuration space header type instead of
+> > > class type for the resource assignment.
+> > > 
+> > > Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
+> > > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> > > ---
+> > >  drivers/pci/pci.c       |  3 +--
+> > >  drivers/pci/probe.c     |  3 ---
+> > >  drivers/pci/setup-bus.c | 20 ++++++++++----------
+> > >  3 files changed, 11 insertions(+), 15 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > > index 29ff961..7d379ca 100644
+> > > --- a/drivers/pci/pci.c
+> > > +++ b/drivers/pci/pci.c
+> > > @@ -5908,8 +5908,7 @@ void pci_reassigndev_resource_alignment(struct pci_dev *dev)
+> > >  	 * to enable the kernel to reassign new resource
+> > >  	 * window later on.
+> > >  	 */
+> > > -	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE &&
+> > > -	    (dev->class >> 8) == PCI_CLASS_BRIDGE_PCI) {
+> > > +	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
+> > >  		for (i = PCI_BRIDGE_RESOURCES; i < PCI_NUM_RESOURCES; i++) {
+> > >  			r = &dev->resource[i];
+> > >  			if (!(r->flags & IORESOURCE_MEM))
+> > > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> > > index ec78400..29a35c1 100644
+> > > --- a/drivers/pci/probe.c
+> > > +++ b/drivers/pci/probe.c
+> > > @@ -1695,9 +1695,6 @@ int pci_setup_device(struct pci_dev *dev)
+> > >  		break;
+> > >  
+> > >  	case PCI_HEADER_TYPE_BRIDGE:		    /* bridge header */
+> > > -		if (class != PCI_CLASS_BRIDGE_PCI)
+> > > -			goto bad;
+> > > -
+> > >  		/*
+> > >  		 * The PCI-to-PCI bridge spec requires that subtractive
+> > >  		 * decoding (i.e. transparent) bridge must have programming
+> > > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> > > index 79b1824..69f90f4 100644
+> > > --- a/drivers/pci/setup-bus.c
+> > > +++ b/drivers/pci/setup-bus.c
+> > > @@ -182,7 +182,7 @@ static void __dev_sort_resources(struct pci_dev *dev,
+> > >  	u16 class = dev->class >> 8;
+> > >  
+> > >  	/* Don't touch classless devices or host bridges or ioapics.  */
+> > > -	if (class == PCI_CLASS_NOT_DEFINED || class == PCI_CLASS_BRIDGE_HOST)
+> > > +	if (class == PCI_CLASS_NOT_DEFINED)
+> > 
+> > I think this check has been there since the first initial git commit,
+> > whether that's _really_ needed or not in the current kernel it is very
+> > hard to say.
+> > 
+> > I am not that sure it is safe to remove it, especially given that we are at
+> > -rc8 and close to a release, it would be good if this patch could sit in
+> > next to give it some exposure to testing before merging it upstream.
+> 
 
-Is there a potential patch ordering issue here? If this patch changes
-the code to avoid using hw_res_handle,
-is after patches that start filling in hw_res_handle in places we
-haven't filled it in before.
+I'm not sure why the first version has take care of
+PCI_CLASS_BRIDGE_HOST separately, I have no idea whether there's some
+host bridge device that has their resource fixed.
 
-Maybe this patch should happen earlier.
+I agree that this patch should be hold for the moment since I have it
+tested only in Mediatek's platform.
 
-Dave.
+Thanks
 
->
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->  drivers/gpu/drm/virtio/virtgpu_drv.h    | 3 ++-
->  drivers/gpu/drm/virtio/virtgpu_fb.c     | 2 +-
->  drivers/gpu/drm/virtio/virtgpu_gem.c    | 2 +-
->  drivers/gpu/drm/virtio/virtgpu_ioctl.c  | 3 ++-
->  drivers/gpu/drm/virtio/virtgpu_object.c | 2 +-
->  drivers/gpu/drm/virtio/virtgpu_vq.c     | 8 ++++++--
->  6 files changed, 13 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> index 9b26e8ee84..4a39877ce6 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> @@ -65,6 +65,7 @@ struct virtio_gpu_object {
->         struct ttm_placement            placement;
->         struct ttm_buffer_object        tbo;
->         struct ttm_bo_kmap_obj          kmap;
-> +       bool created;
->  };
->  #define gem_to_virtio_gpu_obj(gobj) \
->         container_of((gobj), struct virtio_gpu_object, gem_base)
-> @@ -263,7 +264,7 @@ void virtio_gpu_resource_id_get(struct virtio_gpu_device *vgdev,
->                                uint32_t *resid);
->  void virtio_gpu_resource_id_put(struct virtio_gpu_device *vgdev, uint32_t id);
->  void virtio_gpu_cmd_create_resource(struct virtio_gpu_device *vgdev,
-> -                                   uint32_t resource_id,
-> +                                   struct virtio_gpu_object *bo,
->                                     uint32_t format,
->                                     uint32_t width,
->                                     uint32_t height);
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_fb.c b/drivers/gpu/drm/virtio/virtgpu_fb.c
-> index b16c62c4d8..c22a8246b6 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_fb.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_fb.c
-> @@ -232,7 +232,7 @@ static int virtio_gpufb_create(struct drm_fb_helper *helper,
->                 return PTR_ERR(obj);
->
->         virtio_gpu_resource_id_get(vgdev, &obj->hw_res_handle);
-> -       virtio_gpu_cmd_create_resource(vgdev, obj->hw_res_handle, format,
-> +       virtio_gpu_cmd_create_resource(vgdev, obj, format,
->                                        mode_cmd.width, mode_cmd.height);
->
->         ret = virtio_gpu_object_kmap(obj);
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virtio/virtgpu_gem.c
-> index 5450f7ab5b..665d18a49d 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_gem.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
-> @@ -104,7 +104,7 @@ int virtio_gpu_mode_dumb_create(struct drm_file *file_priv,
->         format = virtio_gpu_translate_format(DRM_FORMAT_HOST_XRGB8888);
->         obj = gem_to_virtio_gpu_obj(gobj);
->         virtio_gpu_resource_id_get(vgdev, &obj->hw_res_handle);
-> -       virtio_gpu_cmd_create_resource(vgdev, obj->hw_res_handle, format,
-> +       virtio_gpu_cmd_create_resource(vgdev, obj, format,
->                                        args->width, args->height);
->
->         /* attach the object to the resource */
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> index 44c9160c14..f9c55ecfca 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> @@ -256,7 +256,7 @@ static int virtio_gpu_resource_create_ioctl(struct drm_device *dev, void *data,
->         virtio_gpu_resource_id_get(vgdev, &qobj->hw_res_handle);
->
->         if (!vgdev->has_virgl_3d) {
-> -               virtio_gpu_cmd_create_resource(vgdev, qobj->hw_res_handle, rc->format,
-> +               virtio_gpu_cmd_create_resource(vgdev, qobj, rc->format,
->                                                rc->width, rc->height);
->
->                 ret = virtio_gpu_object_attach(vgdev, qobj, NULL);
-> @@ -285,6 +285,7 @@ static int virtio_gpu_resource_create_ioctl(struct drm_device *dev, void *data,
->                 rc_3d.flags = cpu_to_le32(rc->flags);
->
->                 virtio_gpu_cmd_resource_create_3d(vgdev, &rc_3d, NULL);
-> +               qobj->created = true;
->                 ret = virtio_gpu_object_attach(vgdev, qobj, &fence);
->                 if (ret) {
->                         ttm_eu_backoff_reservation(&ticket, &validate_list);
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
-> index eca7655374..6611c487d7 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_object.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_object.c
-> @@ -33,7 +33,7 @@ static void virtio_gpu_ttm_bo_destroy(struct ttm_buffer_object *tbo)
->         bo = container_of(tbo, struct virtio_gpu_object, tbo);
->         vgdev = (struct virtio_gpu_device *)bo->gem_base.dev->dev_private;
->
-> -       if (bo->hw_res_handle)
-> +       if (bo->created)
->                 virtio_gpu_cmd_unref_resource(vgdev, bo->hw_res_handle);
->         if (bo->pages)
->                 virtio_gpu_object_free_sg_table(bo);
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> index dd4464ccb1..45da3c87b6 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> @@ -388,7 +388,7 @@ static int virtio_gpu_queue_cursor(struct virtio_gpu_device *vgdev,
->
->  /* create a basic resource */
->  void virtio_gpu_cmd_create_resource(struct virtio_gpu_device *vgdev,
-> -                                   uint32_t resource_id,
-> +                                   struct virtio_gpu_object *bo,
->                                     uint32_t format,
->                                     uint32_t width,
->                                     uint32_t height)
-> @@ -400,12 +400,13 @@ void virtio_gpu_cmd_create_resource(struct virtio_gpu_device *vgdev,
->         memset(cmd_p, 0, sizeof(*cmd_p));
->
->         cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_RESOURCE_CREATE_2D);
-> -       cmd_p->resource_id = cpu_to_le32(resource_id);
-> +       cmd_p->resource_id = cpu_to_le32(bo->hw_res_handle);
->         cmd_p->format = cpu_to_le32(format);
->         cmd_p->width = cpu_to_le32(width);
->         cmd_p->height = cpu_to_le32(height);
->
->         virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
-> +       bo->created = true;
->  }
->
->  void virtio_gpu_cmd_unref_resource(struct virtio_gpu_device *vgdev,
-> @@ -868,6 +869,9 @@ int virtio_gpu_object_attach(struct virtio_gpu_device *vgdev,
->         struct scatterlist *sg;
->         int si, nents;
->
-> +       if (!obj->created)
-> +               return 0;
-> +
->         if (!obj->pages) {
->                 int ret;
->
-> --
-> 2.9.3
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> Yes, you're right; I think I think this is a little too risky at this
+> point.  I'll pull this patch out and queue it up for the next cycle
+> (v4.21).
+
+Thanks, I will follow up this patch.
+
+> 
+> For v4.20, I think you should resurrect the class code patch [1].  That
+> should be enough to make things work in v4.20, even without this hdr_type
+> patch.  It will also improve the lspci output, because I think it uses the
+> class code to look up the generic description, e.g., in this output:
+> 
+>   00:1c.0 PCI bridge: Intel Corporation Sunrise Point-LP PCI Express Root Port (rev f1)
+> 
+> I think the "PCI bridge" part is based on the class code.
+> 
+> Bjorn
+> 
+> [1] https://lore.kernel.org/linux-pci/1539590940-13355-3-git-send-email-honghui.zhang@mediatek.com
+> 
+> > >  		return;
+> > >  
+> > >  	/* Don't touch ioapic devices already enabled by firmware */
+> > > @@ -1221,12 +1221,12 @@ void __pci_bus_size_bridges(struct pci_bus *bus, struct list_head *realloc_head)
+> > >  		if (!b)
+> > >  			continue;
+> > >  
+> > > -		switch (dev->class >> 8) {
+> > > -		case PCI_CLASS_BRIDGE_CARDBUS:
+> > > +		switch (dev->hdr_type) {
+> > > +		case PCI_HEADER_TYPE_CARDBUS:
+> > >  			pci_bus_size_cardbus(b, realloc_head);
+> > >  			break;
+> > >  
+> > > -		case PCI_CLASS_BRIDGE_PCI:
+> > > +		case PCI_HEADER_TYPE_BRIDGE:
+> > >  		default:
+> > >  			__pci_bus_size_bridges(b, realloc_head);
+> > >  			break;
+> > > @@ -1237,12 +1237,12 @@ void __pci_bus_size_bridges(struct pci_bus *bus, struct list_head *realloc_head)
+> > >  	if (pci_is_root_bus(bus))
+> > >  		return;
+> > >  
+> > > -	switch (bus->self->class >> 8) {
+> > > -	case PCI_CLASS_BRIDGE_CARDBUS:
+> > > +	switch (bus->self->hdr_type) {
+> > > +	case PCI_HEADER_TYPE_CARDBUS:
+> > >  		/* don't size cardbuses yet. */
+> > >  		break;
+> > >  
+> > > -	case PCI_CLASS_BRIDGE_PCI:
+> > > +	case PCI_HEADER_TYPE_BRIDGE:
+> > >  		pci_bridge_check_ranges(bus);
+> > >  		if (bus->self->is_hotplug_bridge) {
+> > >  			additional_io_size  = pci_hotplug_io_size;
+> > > @@ -1391,13 +1391,13 @@ void __pci_bus_assign_resources(const struct pci_bus *bus,
+> > >  
+> > >  		__pci_bus_assign_resources(b, realloc_head, fail_head);
+> > >  
+> > > -		switch (dev->class >> 8) {
+> > > -		case PCI_CLASS_BRIDGE_PCI:
+> > > +		switch (dev->hdr_type) {
+> > > +		case PCI_HEADER_TYPE_BRIDGE:
+> > >  			if (!pci_is_enabled(dev))
+> > >  				pci_setup_bridge(b);
+> > >  			break;
+> > >  
+> > > -		case PCI_CLASS_BRIDGE_CARDBUS:
+> > > +		case PCI_HEADER_TYPE_CARDBUS:
+> > >  			pci_setup_cardbus(b);
+> > >  			break;
+> > >  
+> > > -- 
+> > > 2.6.4
+> > > 
+> > 
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+
