@@ -2,507 +2,278 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FAKE_REPLY_C,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59ADCC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:26:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0858EECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD7FB21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:26:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cal7HUY2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD7FB21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id C20632145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:26:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C20632145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbeJRO0B (ORCPT
+        id S1727562AbeJRO0I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 10:26:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34214 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727351AbeJRO0A (ORCPT
+        Thu, 18 Oct 2018 10:26:08 -0400
+Received: from alexa-out-tai-02.qualcomm.com ([103.229.16.227]:19987 "EHLO
+        alexa-out-tai-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727351AbeJRO0H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 10:26:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:References:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=INRz6lM4K2suR7jntUwl0Bkj7+RXINgS4+aW4QjQScM=; b=Cal7HUY2TCqU5SYfoyhvgpPdLT
-        0EoOVG1+gFu3tAikm8d4DWQVnTba8HSNj5GXZHqPMOmEUrjT4CQKvAjppICJs8q9GRcmB2HGLTTSo
-        V0oGoqr2ZQ/bzS/WgzhUQJna2uXDQdVDu2QgCLhTF+WjEmWWBykX1xQ785KL6caGRAi+ni60TEi/o
-        BdiR8UKdKEefbhgruZ+n6X+AnWFTHI7AhvlaoL/MSOaWxf/bFWXmjeTooj3KnP6sd6wG5G+hUnk7Q
-        ut8Ddn2t9B4bdSvJG16E1Om5v0cUx90UcuP5q1dcPmURaFLfoRomoMrhW3uuOjtJ7EmTSxNL9zfXD
-        ciP6ehXw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gD1lS-0001Aw-Cb; Thu, 18 Oct 2018 06:26:34 +0000
-Date:   Wed, 17 Oct 2018 23:26:34 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [GIT PULL] IDA/IDR fixes for 4.19
-Message-ID: <20181018062634.GA27494@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016171608.GA19184@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Thu, 18 Oct 2018 10:26:07 -0400
+X-Greylist: delayed 527 seconds by postgrey-1.27 at vger.kernel.org; Thu, 18 Oct 2018 10:26:05 EDT
+X-IronPort-AV: E=Sophos;i="5.54,395,1534780800"; 
+   d="scan'208";a="1369258"
+Received: from ironmsg01-tai.qualcomm.com ([10.249.140.6])
+  by alexa-out-tai-02.qualcomm.com with ESMTP; 18 Oct 2018 14:16:51 +0800
+X-IronPort-AV: E=McAfee;i="5900,7806,9049"; a="17679162"
+Received: from c-fan-gv.ap.qualcomm.com (HELO c-fan-gv) ([10.231.253.105])
+  by ironmsg01-tai.qualcomm.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Oct 2018 14:16:50 +0800
+From:   Teng Fei Fan <tengfei@codeaurora.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        sudeep.holla@arm.com, will.deacon@arm.com,
+        linux-arm-msm@vger.kernel.org, tengfei@codeaurora.org,
+        Russell King <linux@arm.linux.org.uk>
+Subject: [PATCH] arm: kernel: add support for detecting armv8 cpu cache information
+Date:   Thu, 18 Oct 2018 14:16:47 +0800
+Message-Id: <1539843407-7439-1-git-send-email-tengfei@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 10:16:08AM -0700, Matthew Wilcox wrote:
-> > >   git://git.infradead.org/users/willy/linux-dax.git ida-fixes-4.19-rc8
-> > 
-> > How about you at least test these in linux-next?  Putting things on top
-> > of the most recent change is a huge tip-off that this branch got no
-> > testing :(
-> 
-> One of the two changes is a comment line in a doc file.
-> The other has been tested by 0day (which originally reported the issue).
-> 
-> I don't see how spending time in linux-next is going to achieve anything.
+This patch adds support for cacheinfo on 32bit ARMv8 platform.
+Add support for detecting cpu cache information cpu cache information
+via sysfs for 32bit armv8 platform. And export to sysfs then userspace
+can get from /sys/devices/system/cpu/cpuX/cache.
 
-Especialy if we miss 4.19 final with that.  The documentation patch
-avoids the probem of CC-BY-SA-4.0 including larger amounts of GPL files
-in the output document, so we should have this before the release for
-sure, and the other is just a test that isn't even in a normal kernel
-build.
-
-Also after idr.rst is removed we should include something like this:
-
+Signed-off-by: Teng Fei Fan <tengfei@codeaurora.org>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
 ---
-From c3660257f981e7a7254d18f52af64a2077f7bb49 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Thu, 18 Oct 2018 08:22:39 +0200
-Subject: LICENSES: Remove CC-BY-SA-4.0 license text
+ arch/arm/include/asm/cachetype.h |  38 ++++++++++++
+ arch/arm/kernel/Makefile         |   3 +-
+ arch/arm/kernel/cacheinfo.c      | 128 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 168 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/kernel/cacheinfo.c
 
-Using non-GPL licenses for our documentation is rather problematic,
-as it can directly include other files, which generally are GPLv2
-licensed and thus not compatible.
-
-Remove this license now that the only user (idr.rst) is gone to avoid
-people semi-accidentally using it again.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- LICENSES/other/CC-BY-SA-4.0 | 397 ------------------------------------
- 1 file changed, 397 deletions(-)
- delete mode 100644 LICENSES/other/CC-BY-SA-4.0
-
-diff --git a/LICENSES/other/CC-BY-SA-4.0 b/LICENSES/other/CC-BY-SA-4.0
-deleted file mode 100644
-index f9158e831e79..000000000000
---- a/LICENSES/other/CC-BY-SA-4.0
-+++ /dev/null
-@@ -1,397 +0,0 @@
--Valid-License-Identifier: CC-BY-SA-4.0
--SPDX-URL: https://spdx.org/licenses/CC-BY-SA-4.0
--Usage-Guide:
--  To use the Creative Commons Attribution Share Alike 4.0 International
--  license put the following SPDX tag/value pair into a comment according to
--  the placement guidelines in the licensing rules documentation:
--    SPDX-License-Identifier: CC-BY-SA-4.0
--License-Text:
--
--Creative Commons Attribution-ShareAlike 4.0 International
--
--Creative Commons Corporation ("Creative Commons") is not a law firm and
--does not provide legal services or legal advice. Distribution of Creative
--Commons public licenses does not create a lawyer-client or other
--relationship. Creative Commons makes its licenses and related information
--available on an "as-is" basis. Creative Commons gives no warranties
--regarding its licenses, any material licensed under their terms and
--conditions, or any related information. Creative Commons disclaims all
--liability for damages resulting from their use to the fullest extent
--possible.
--
--Using Creative Commons Public Licenses
--
--Creative Commons public licenses provide a standard set of terms and
--conditions that creators and other rights holders may use to share original
--works of authorship and other material subject to copyright and certain
--other rights specified in the public license below. The following
--considerations are for informational purposes only, are not exhaustive, and
--do not form part of our licenses.
--
--Considerations for licensors: Our public licenses are intended for use by
--those authorized to give the public permission to use material in ways
--otherwise restricted by copyright and certain other rights. Our licenses
--are irrevocable. Licensors should read and understand the terms and
--conditions of the license they choose before applying it. Licensors should
--also secure all rights necessary before applying our licenses so that the
--public can reuse the material as expected. Licensors should clearly mark
--any material not subject to the license. This includes other CC-licensed
--material, or material used under an exception or limitation to
--copyright. More considerations for licensors :
--wiki.creativecommons.org/Considerations_for_licensors
--
--Considerations for the public: By using one of our public licenses, a
--licensor grants the public permission to use the licensed material under
--specified terms and conditions. If the licensor's permission is not
--necessary for any reason - for example, because of any applicable exception
--or limitation to copyright - then that use is not regulated by the
--license. Our licenses grant only permissions under copyright and certain
--other rights that a licensor has authority to grant. Use of the licensed
--material may still be restricted for other reasons, including because
--others have copyright or other rights in the material. A licensor may make
--special requests, such as asking that all changes be marked or described.
--
--Although not required by our licenses, you are encouraged to respect those
--requests where reasonable. More considerations for the public :
--wiki.creativecommons.org/Considerations_for_licensees
--
--Creative Commons Attribution-ShareAlike 4.0 International Public License
--
--By exercising the Licensed Rights (defined below), You accept and agree to
--be bound by the terms and conditions of this Creative Commons
--Attribution-ShareAlike 4.0 International Public License ("Public
--License"). To the extent this Public License may be interpreted as a
--contract, You are granted the Licensed Rights in consideration of Your
--acceptance of these terms and conditions, and the Licensor grants You such
--rights in consideration of benefits the Licensor receives from making the
--Licensed Material available under these terms and conditions.
--
--Section 1 - Definitions.
--
--    a. Adapted Material means material subject to Copyright and Similar
--       Rights that is derived from or based upon the Licensed Material and
--       in which the Licensed Material is translated, altered, arranged,
--       transformed, or otherwise modified in a manner requiring permission
--       under the Copyright and Similar Rights held by the Licensor. For
--       purposes of this Public License, where the Licensed Material is a
--       musical work, performance, or sound recording, Adapted Material is
--       always produced where the Licensed Material is synched in timed
--       relation with a moving image.
--
--    b. Adapter's License means the license You apply to Your Copyright and
--       Similar Rights in Your contributions to Adapted Material in
--       accordance with the terms and conditions of this Public License.
--
--    c. BY-SA Compatible License means a license listed at
--       creativecommons.org/compatiblelicenses, approved by Creative Commons
--       as essentially the equivalent of this Public License.
--
--    d. Copyright and Similar Rights means copyright and/or similar rights
--       closely related to copyright including, without limitation,
--       performance, broadcast, sound recording, and Sui Generis Database
--       Rights, without regard to how the rights are labeled or
--       categorized. For purposes of this Public License, the rights
--       specified in Section 2(b)(1)-(2) are not Copyright and Similar
--       Rights.
--
--    e. Effective Technological Measures means those measures that, in the
--       absence of proper authority, may not be circumvented under laws
--       fulfilling obligations under Article 11 of the WIPO Copyright Treaty
--       adopted on December 20, 1996, and/or similar international
--       agreements.
--
--    f. Exceptions and Limitations means fair use, fair dealing, and/or any
--       other exception or limitation to Copyright and Similar Rights that
--       applies to Your use of the Licensed Material.
--
--    g. License Elements means the license attributes listed in the name of
--       a Creative Commons Public License. The License Elements of this
--       Public License are Attribution and ShareAlike.
--
--    h. Licensed Material means the artistic or literary work, database, or
--       other material to which the Licensor applied this Public License.
--
--    i. Licensed Rights means the rights granted to You subject to the terms
--       and conditions of this Public License, which are limited to all
--       Copyright and Similar Rights that apply to Your use of the Licensed
--       Material and that the Licensor has authority to license.
--
--    j. Licensor means the individual(s) or entity(ies) granting rights
--       under this Public License.
--
--    k. Share means to provide material to the public by any means or
--       process that requires permission under the Licensed Rights, such as
--       reproduction, public display, public performance, distribution,
--       dissemination, communication, or importation, and to make material
--       available to the public including in ways that members of the public
--       may access the material from a place and at a time individually
--       chosen by them.
--
--    l. Sui Generis Database Rights means rights other than copyright
--       resulting from Directive 96/9/EC of the European Parliament and of
--       the Council of 11 March 1996 on the legal protection of databases,
--       as amended and/or succeeded, as well as other essentially equivalent
--       rights anywhere in the world.  m. You means the individual or entity
--       exercising the Licensed Rights under this Public License. Your has a
--       corresponding meaning.
--
--Section 2 - Scope.
--
--    a. License grant.
--
--        1. Subject to the terms and conditions of this Public License, the
--           Licensor hereby grants You a worldwide, royalty-free,
--           non-sublicensable, non-exclusive, irrevocable license to
--           exercise the Licensed Rights in the Licensed Material to:
--
--            A. reproduce and Share the Licensed Material, in whole or in part; and
--
--            B. produce, reproduce, and Share Adapted Material.
--
--        2. Exceptions and Limitations. For the avoidance of doubt, where
--           Exceptions and Limitations apply to Your use, this Public
--           License does not apply, and You do not need to comply with its
--           terms and conditions.
--
--        3. Term. The term of this Public License is specified in Section 6(a).
--
--        4. Media and formats; technical modifications allowed. The Licensor
--           authorizes You to exercise the Licensed Rights in all media and
--           formats whether now known or hereafter created, and to make
--           technical modifications necessary to do so. The Licensor waives
--           and/or agrees not to assert any right or authority to forbid You
--           from making technical modifications necessary to exercise the
--           Licensed Rights, including technical modifications necessary to
--           circumvent Effective Technological Measures. For purposes of
--           this Public License, simply making modifications authorized by
--           this Section 2(a)(4) never produces Adapted Material.
--
--        5. Downstream recipients.
--
--            A. Offer from the Licensor - Licensed Material. Every recipient
--               of the Licensed Material automatically receives an offer
--               from the Licensor to exercise the Licensed Rights under the
--               terms and conditions of this Public License.
--
--            B. Additional offer from the Licensor - Adapted Material. Every
--               recipient of Adapted Material from You automatically
--               receives an offer from the Licensor to exercise the Licensed
--               Rights in the Adapted Material under the conditions of the
--               Adapter's License You apply.
--
--            C. No downstream restrictions. You may not offer or impose any
--               additional or different terms or conditions on, or apply any
--               Effective Technological Measures to, the Licensed Material
--               if doing so restricts exercise of the Licensed Rights by any
--               recipient of the Licensed Material.
--
--        6. No endorsement. Nothing in this Public License constitutes or
--           may be construed as permission to assert or imply that You are,
--           or that Your use of the Licensed Material is, connected with, or
--           sponsored, endorsed, or granted official status by, the Licensor
--           or others designated to receive attribution as provided in
--           Section 3(a)(1)(A)(i).
--
--    b. Other rights.
--
--        1. Moral rights, such as the right of integrity, are not licensed
--           under this Public License, nor are publicity, privacy, and/or
--           other similar personality rights; however, to the extent
--           possible, the Licensor waives and/or agrees not to assert any
--           such rights held by the Licensor to the limited extent necessary
--           to allow You to exercise the Licensed Rights, but not otherwise.
--
--        2. Patent and trademark rights are not licensed under this Public
--           License.
--
--        3. To the extent possible, the Licensor waives any right to collect
--           royalties from You for the exercise of the Licensed Rights,
--           whether directly or through a collecting society under any
--           voluntary or waivable statutory or compulsory licensing
--           scheme. In all other cases the Licensor expressly reserves any
--           right to collect such royalties.
--
--Section 3 - License Conditions.
--
--Your exercise of the Licensed Rights is expressly made subject to the
--following conditions.
--
--    a. Attribution.
--
--        1. If You Share the Licensed Material (including in modified form),
--           You must:
--
--            A. retain the following if it is supplied by the Licensor with
--               the Licensed Material:
--
--                i. identification of the creator(s) of the Licensed
--                   Material and any others designated to receive
--                   attribution, in any reasonable manner requested by the
--                   Licensor (including by pseudonym if designated);
--
--                ii. a copyright notice;
--
--                iii. a notice that refers to this Public License;
--
--                iv. a notice that refers to the disclaimer of warranties;
--
--                v. a URI or hyperlink to the Licensed Material to the extent reasonably practicable;
--
--            B. indicate if You modified the Licensed Material and retain an
--               indication of any previous modifications; and
--
--            C. indicate the Licensed Material is licensed under this Public
--            License, and include the text of, or the URI or hyperlink to,
--            this Public License.
--
--        2. You may satisfy the conditions in Section 3(a)(1) in any
--           reasonable manner based on the medium, means, and context in
--           which You Share the Licensed Material. For example, it may be
--           reasonable to satisfy the conditions by providing a URI or
--           hyperlink to a resource that includes the required information.
--
--        3. If requested by the Licensor, You must remove any of the
--           information required by Section 3(a)(1)(A) to the extent
--           reasonably practicable.  b. ShareAlike.In addition to the
--           conditions in Section 3(a), if You Share Adapted Material You
--           produce, the following conditions also apply.
--
--           1. The Adapter's License You apply must be a Creative Commons
--              license with the same License Elements, this version or
--              later, or a BY-SA Compatible License.
--
--           2. You must include the text of, or the URI or hyperlink to, the
--              Adapter's License You apply. You may satisfy this condition
--              in any reasonable manner based on the medium, means, and
--              context in which You Share Adapted Material.
--
--           3. You may not offer or impose any additional or different terms
--              or conditions on, or apply any Effective Technological
--              Measures to, Adapted Material that restrict exercise of the
--              rights granted under the Adapter's License You apply.
--
--Section 4 - Sui Generis Database Rights.
--
--Where the Licensed Rights include Sui Generis Database Rights that apply to
--Your use of the Licensed Material:
--
--    a. for the avoidance of doubt, Section 2(a)(1) grants You the right to
--       extract, reuse, reproduce, and Share all or a substantial portion of
--       the contents of the database;
--
--    b. if You include all or a substantial portion of the database contents
--       in a database in which You have Sui Generis Database Rights, then
--       the database in which You have Sui Generis Database Rights (but not
--       its individual contents) is Adapted Material, including for purposes
--       of Section 3(b); and
--
--    c. You must comply with the conditions in Section 3(a) if You Share all
--       or a substantial portion of the contents of the database.
--
--    For the avoidance of doubt, this Section 4 supplements and does not
--    replace Your obligations under this Public License where the Licensed
--    Rights include other Copyright and Similar Rights.
--
--Section 5 - Disclaimer of Warranties and Limitation of Liability.
--
--    a. Unless otherwise separately undertaken by the Licensor, to the
--       extent possible, the Licensor offers the Licensed Material as-is and
--       as-available, and makes no representations or warranties of any kind
--       concerning the Licensed Material, whether express, implied,
--       statutory, or other. This includes, without limitation, warranties
--       of title, merchantability, fitness for a particular purpose,
--       non-infringement, absence of latent or other defects, accuracy, or
--       the presence or absence of errors, whether or not known or
--       discoverable. Where disclaimers of warranties are not allowed in
--       full or in part, this disclaimer may not apply to You.
--
--    b. To the extent possible, in no event will the Licensor be liable to
--       You on any legal theory (including, without limitation, negligence)
--       or otherwise for any direct, special, indirect, incidental,
--       consequential, punitive, exemplary, or other losses, costs,
--       expenses, or damages arising out of this Public License or use of
--       the Licensed Material, even if the Licensor has been advised of the
--       possibility of such losses, costs, expenses, or damages. Where a
--       limitation of liability is not allowed in full or in part, this
--       limitation may not apply to You.
--
--    c. The disclaimer of warranties and limitation of liability provided
--       above shall be interpreted in a manner that, to the extent possible,
--       most closely approximates an absolute disclaimer and waiver of all
--       liability.
--
--Section 6 - Term and Termination.
--
--    a. This Public License applies for the term of the Copyright and
--       Similar Rights licensed here. However, if You fail to comply with
--       this Public License, then Your rights under this Public License
--       terminate automatically.
--
--    b. Where Your right to use the Licensed Material has terminated under
--       Section 6(a), it reinstates:
--
--        1. automatically as of the date the violation is cured, provided it
--           is cured within 30 days of Your discovery of the violation; or
--
--        2. upon express reinstatement by the Licensor.
--
--    c. For the avoidance of doubt, this Section 6(b) does not affect any
--       right the Licensor may have to seek remedies for Your violations of
--       this Public License.
--
--    d. For the avoidance of doubt, the Licensor may also offer the Licensed
--       Material under separate terms or conditions or stop distributing the
--       Licensed Material at any time; however, doing so will not terminate
--       this Public License.
--
--    e. Sections 1, 5, 6, 7, and 8 survive termination of this Public License.
--
--Section 7 - Other Terms and Conditions.
--
--    a. The Licensor shall not be bound by any additional or different terms
--       or conditions communicated by You unless expressly agreed.
--
--    b. Any arrangements, understandings, or agreements regarding the
--       Licensed Material not stated herein are separate from and
--       independent of the terms and conditions of this Public License.
--
--Section 8 - Interpretation.
--
--    a. For the avoidance of doubt, this Public License does not, and shall
--       not be interpreted to, reduce, limit, restrict, or impose conditions
--       on any use of the Licensed Material that could lawfully be made
--       without permission under this Public License.
--
--    b. To the extent possible, if any provision of this Public License is
--       deemed unenforceable, it shall be automatically reformed to the
--       minimum extent necessary to make it enforceable. If the provision
--       cannot be reformed, it shall be severed from this Public License
--       without affecting the enforceability of the remaining terms and
--       conditions.
--
--    c. No term or condition of this Public License will be waived and no
--       failure to comply consented to unless expressly agreed to by the
--       Licensor.
--
--    d. Nothing in this Public License constitutes or may be interpreted as
--       a limitation upon, or waiver of, any privileges and immunities that
--       apply to the Licensor or You, including from the legal processes of
--       any jurisdiction or authority.
--
--Creative Commons is not a party to its public licenses. Notwithstanding,
--Creative Commons may elect to apply one of its public licenses to material
--it publishes and in those instances will be considered the "Licensor." The
--text of the Creative Commons public licenses is dedicated to the public
--domain under the CC0 Public Domain Dedication. Except for the limited
--purpose of indicating that material is shared under a Creative Commons
--public license or as otherwise permitted by the Creative Commons policies
--published at creativecommons.org/policies, Creative Commons does not
--authorize the use of the trademark "Creative Commons" or any other
--trademark or logo of Creative Commons without its prior written consent
--including, without limitation, in connection with any unauthorized
--modifications to any of its public licenses or any other arrangements,
--understandings, or agreements concerning use of licensed material. For the
--avoidance of doubt, this paragraph does not form part of the public
--licenses.
--
--Creative Commons may be contacted at creativecommons.org.
+diff --git a/arch/arm/include/asm/cachetype.h b/arch/arm/include/asm/cachetype.h
+index 01509ae..f639c64 100644
+--- a/arch/arm/include/asm/cachetype.h
++++ b/arch/arm/include/asm/cachetype.h
+@@ -1,6 +1,31 @@
+ #ifndef __ASM_ARM_CACHETYPE_H
+ #define __ASM_ARM_CACHETYPE_H
+ 
++/*
++ * NumSets, bits[27:13] - (Number of sets in cache) - 1
++ * Associativity, bits[12:3] - (Associativity of cache) - 1
++ * LineSize, bits[2:0] - (Log2(Number of words in cache line)) - 2
++ */
++#define CCSIDR_EL1_WRITE_THROUGH	BIT(31)
++#define CCSIDR_EL1_WRITE_BACK		BIT(30)
++#define CCSIDR_EL1_READ_ALLOCATE	BIT(29)
++#define CCSIDR_EL1_WRITE_ALLOCATE	BIT(28)
++#define CCSIDR_EL1_LINESIZE_MASK	0x7
++#define CCSIDR_EL1_LINESIZE(x)		((x) & CCSIDR_EL1_LINESIZE_MASK)
++#define CCSIDR_EL1_ASSOCIATIVITY_SHIFT	3
++#define CCSIDR_EL1_ASSOCIATIVITY_MASK	0x3ff
++#define CCSIDR_EL1_ASSOCIATIVITY(x) \
++	(((x) >> CCSIDR_EL1_ASSOCIATIVITY_SHIFT) \
++	& CCSIDR_EL1_ASSOCIATIVITY_MASK)
++#define CCSIDR_EL1_NUMSETS_SHIFT	13
++#define CCSIDR_EL1_NUMSETS_MASK		0x7fff
++#define CCSIDR_EL1_NUMSETS(x) \
++	(((x) >> CCSIDR_EL1_NUMSETS_SHIFT) & CCSIDR_EL1_NUMSETS_MASK)
++
++#define CACHE_LINESIZE(x)	(16 << CCSIDR_EL1_LINESIZE(x))
++#define CACHE_NUMSETS(x)	(CCSIDR_EL1_NUMSETS(x) + 1)
++#define CACHE_ASSOCIATIVITY(x)	(CCSIDR_EL1_ASSOCIATIVITY(x) + 1)
++
+ #define CACHEID_VIVT			(1 << 0)
+ #define CACHEID_VIPT_NONALIASING	(1 << 1)
+ #define CACHEID_VIPT_ALIASING		(1 << 2)
+@@ -80,6 +105,14 @@ static inline unsigned int read_ccsidr(void)
+ 	asm volatile("mrc p15, 1, %0, c0, c0, 0" : "=r" (val));
+ 	return val;
+ }
++
++static inline unsigned int read_clidr(void)
++{
++	unsigned int val;
++
++	asm volatile("mrc	p15, 1, %0, c0, c0, 1" : "=r" (val));
++	return val;
++}
+ #else /* CONFIG_CPU_V7M */
+ #include <linux/io.h>
+ #include "asm/v7m.h"
+@@ -93,6 +126,11 @@ static inline unsigned int read_ccsidr(void)
+ {
+ 	return readl(BASEADDR_V7M_SCB + V7M_SCB_CCSIDR);
+ }
++
++static inline unsigned int read_clidr(void)
++{
++	return readl_relaxed(BASEADDR_V7M_SCB + V7M_SCB_CLIDR);
++}
+ #endif
+ 
+ #endif
+diff --git a/arch/arm/kernel/Makefile b/arch/arm/kernel/Makefile
+index ad325a8..3abd6aa 100644
+--- a/arch/arm/kernel/Makefile
++++ b/arch/arm/kernel/Makefile
+@@ -18,7 +18,8 @@ CFLAGS_REMOVE_return_address.o = -pg
+ obj-y		:= elf.o entry-common.o irq.o opcodes.o \
+ 		   process.o ptrace.o reboot.o return_address.o \
+ 		   setup.o signal.o sigreturn_codes.o \
+-		   stacktrace.o sys_arm.o time.o traps.o
++		   stacktrace.o sys_arm.o time.o traps.o \
++		   cacheinfo.o
+ 
+ obj-$(CONFIG_ATAGS)		+= atags_parse.o
+ obj-$(CONFIG_ATAGS_PROC)	+= atags_proc.o
+diff --git a/arch/arm/kernel/cacheinfo.c b/arch/arm/kernel/cacheinfo.c
+new file mode 100644
+index 0000000..2880b34
+--- /dev/null
++++ b/arch/arm/kernel/cacheinfo.c
+@@ -0,0 +1,128 @@
++/*
++ *  ARM cacheinfo support
++ *
++ *  Copyright (C) 2015 ARM Ltd.
++ *  All Rights Reserved
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/bitops.h>
++#include <linux/cacheinfo.h>
++#include <linux/cpu.h>
++#include <linux/compiler.h>
++#include <linux/of.h>
++
++#include <asm/cachetype.h>
++#include <asm/processor.h>
++
++#define MAX_CACHE_LEVEL			7	/* Max 7 level supported */
++/* Ctypen, bits[3(n - 1) + 2 : 3(n - 1)], for n = 1 to 7 */
++#define CLIDR_CTYPE_SHIFT(level)	(3 * (level - 1))
++#define CLIDR_CTYPE_MASK(level)		(7 << CLIDR_CTYPE_SHIFT(level))
++#define CLIDR_CTYPE(clidr, level)	\
++	(((clidr) & CLIDR_CTYPE_MASK(level)) >> CLIDR_CTYPE_SHIFT(level))
++
++static inline enum cache_type get_cache_type(int level)
++{
++	unsigned int clidr;
++
++	if (level > MAX_CACHE_LEVEL)
++		return CACHE_TYPE_NOCACHE;
++	clidr = read_clidr();
++
++	return CLIDR_CTYPE(clidr, level);
++}
++
++/*
++ * Cache Size Selection Register(CSSELR) selects which Cache Size ID
++ * Register(CCSIDR) is accessible by specifying the required cache
++ * level and the cache type. We need to ensure that no one else changes
++ * CSSELR by calling this in non-preemtible context
++ */
++static unsigned int __attribute_const__ cache_get_ccsidr(unsigned int csselr)
++{
++	unsigned int ccsidr;
++
++	WARN_ON(preemptible());
++
++	/* Put value into CSSELR */
++	set_csselr(csselr);
++	isb();
++	ccsidr = read_ccsidr();
++
++	return ccsidr;
++}
++
++static void ci_leaf_init(struct cacheinfo *this_leaf,
++			 enum cache_type type, unsigned int level)
++{
++	bool is_icache = type & CACHE_TYPE_INST;
++	unsigned int tmp = cache_get_ccsidr((level - 1) << 1 | is_icache);
++
++	this_leaf->level = level;
++	this_leaf->type = type;
++	this_leaf->coherency_line_size = CACHE_LINESIZE(tmp);
++	this_leaf->number_of_sets = CACHE_NUMSETS(tmp);
++	this_leaf->ways_of_associativity = CACHE_ASSOCIATIVITY(tmp);
++	this_leaf->size = this_leaf->number_of_sets *
++	this_leaf->coherency_line_size * this_leaf->ways_of_associativity;
++	this_leaf->attributes =
++		((tmp & CCSIDR_EL1_WRITE_THROUGH) ? CACHE_WRITE_THROUGH : 0) |
++		((tmp & CCSIDR_EL1_WRITE_BACK) ? CACHE_WRITE_BACK : 0) |
++		((tmp & CCSIDR_EL1_READ_ALLOCATE) ? CACHE_READ_ALLOCATE : 0) |
++		((tmp & CCSIDR_EL1_WRITE_ALLOCATE) ? CACHE_WRITE_ALLOCATE : 0);
++}
++
++static int __init_cache_level(unsigned int cpu)
++{
++	unsigned int ctype, level, leaves;
++	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
++
++	for (level = 1, leaves = 0; level <= MAX_CACHE_LEVEL; level++) {
++		ctype = get_cache_type(level);
++		if (ctype == CACHE_TYPE_NOCACHE) {
++			level--;
++			break;
++		}
++		/* Separate instruction and data caches */
++		leaves += (ctype == CACHE_TYPE_SEPARATE) ? 2 : 1;
++	}
++
++	this_cpu_ci->num_levels = level;
++	this_cpu_ci->num_leaves = leaves;
++	return 0;
++}
++
++static int __populate_cache_leaves(unsigned int cpu)
++{
++	unsigned int level, idx;
++	enum cache_type type;
++	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
++	struct cacheinfo *this_leaf = this_cpu_ci->info_list;
++
++	for (idx = 0, level = 1; level <= this_cpu_ci->num_levels &&
++	     idx < this_cpu_ci->num_leaves; idx++, level++) {
++		type = get_cache_type(level);
++		if (type == CACHE_TYPE_SEPARATE) {
++			ci_leaf_init(this_leaf++, CACHE_TYPE_DATA, level);
++			ci_leaf_init(this_leaf++, CACHE_TYPE_INST, level);
++		} else {
++			ci_leaf_init(this_leaf++, type, level);
++		}
++	}
++	return 0;
++}
++
++DEFINE_SMP_CALL_CACHE_FUNCTION(init_cache_level)
++DEFINE_SMP_CALL_CACHE_FUNCTION(populate_cache_leaves)
 -- 
-2.19.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
