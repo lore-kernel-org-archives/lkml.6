@@ -2,70 +2,86 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A26F2C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B641ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04E0E2098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:03:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04E0E2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemonage.de
+	by mail.kernel.org (Postfix) with ESMTP id 46A912098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:04:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46A912098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbeJRVEx (ORCPT
+        id S1727447AbeJRVE4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 17:04:53 -0400
-Received: from smtp2.goneo.de ([85.220.129.33]:44092 "EHLO smtp2.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727149AbeJRVEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 17:04:52 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp2.goneo.de (Postfix) with ESMTP id AA70A24188A;
-        Thu, 18 Oct 2018 15:03:53 +0200 (CEST)
-X-Virus-Scanned: by goneo
-Received: from smtp2.goneo.de ([127.0.0.1])
-        by localhost (smtp2.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id h0VxCrj-4Lb7; Thu, 18 Oct 2018 15:03:52 +0200 (CEST)
-Received: from lem-wkst-02.lemonage (hq.lemonage.de [87.138.178.34])
-        by smtp2.goneo.de (Postfix) with ESMTPSA id 0143723F6CA;
-        Thu, 18 Oct 2018 15:03:51 +0200 (CEST)
-Date:   Thu, 18 Oct 2018 15:03:46 +0200
-From:   Lars Poeschel <poeschel@lemonage.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Samuel Ortiz <sameo@linux.intel.com>, Jiri Slaby <jslaby@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH 1/3] nfc: pn533: add UART phy driver
-Message-ID: <20181018130346.GA3975@lem-wkst-02.lemonage>
-References: <20181017102037.28537-1-poeschel@lemonage.de>
- <20181017115357.GC32302@kroah.com>
+        Thu, 18 Oct 2018 17:04:56 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:34493 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727189AbeJRVEy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 17:04:54 -0400
+Received: from [213.61.215.195] (helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gD7xl-0008Hd-0l; Thu, 18 Oct 2018 15:03:41 +0200
+Date:   Thu, 18 Oct 2018 15:03:40 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [Patch v3 05/13] x86/smt: Create cpu_smt_enabled static key for
+ SMT specific code
+In-Reply-To: <ed49c63227dcfa8fd6e53c492e38ce0e22a5b11f.1539798901.git.tim.c.chen@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1810181459120.1647@nanos.tec.linutronix.de>
+References: <cover.1539798901.git.tim.c.chen@linux.intel.com> <ed49c63227dcfa8fd6e53c492e38ce0e22a5b11f.1539798901.git.tim.c.chen@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181017115357.GC32302@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 01:53:57PM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Oct 17, 2018 at 12:20:35PM +0200, Lars Poeschel wrote:
-> > This adds the UART phy interface for the pn533 driver.
-> > The pn533 driver can be used through UART interface this way.
-> > It is implemented as a tty line discipline.
+On Wed, 17 Oct 2018, Tim Chen wrote:
+
+> Create the cpu_smt_enabled static key to indicate if we are
+> using SMT.  SMT specific code paths are executed only when SMT
+> code paths are enabled by this key.
 > 
-> Why not use the serdev interface instead?
+> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+> ---
+>  arch/x86/kernel/cpu/bugs.c |  2 +-
+>  arch/x86/kvm/vmx.c         |  2 +-
+>  include/linux/cpu.h        |  1 +
+>  kernel/cpu.c               | 12 ++++++++++--
 
-Maybe because the most obivious is not obivious enough. ;)
-I did not know about serdev before. Thank you very much for this! I am
-almost finished migrating to serdev and everything is much cleaner and
-more simple now!
+I have a hard time to understand why the subject prefix is x86/smt.
 
-I will post a follow-up with all your other comments addressed.
+This want's to be split into:
+
+1) Add the static key to the core
+
+2) Make use of it in x86
 
 Thanks,
-Lars
+
+	tglx
