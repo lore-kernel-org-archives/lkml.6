@@ -2,119 +2,121 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B750FC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E86C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:25:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A61D2098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:24:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivcThHLF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A61D2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1440F2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:25:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1440F2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbeJRWZx (ORCPT
+        id S1728300AbeJRW0R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 18:25:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45752 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 18:26:17 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33279 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726924AbeJRWZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 18:25:53 -0400
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C87921477;
-        Thu, 18 Oct 2018 14:24:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539872678;
-        bh=vkfNO8xLQnsxLlhSwV054j82Tt775BuYwMMzGfYnoRE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ivcThHLFV+EimVZK2BF3cc6DSQ618gKXSSgMGbZTcXFceSNACzsBONGRu2Xx4dVvQ
-         +/8HlZiaN67rU2Ms9LGbEN97p/ArInFFJ0rTOD5eKmabvWRhdZD9mcj4BTv/hXV7kU
-         1rUB4Gcl3CRhRPPuZMAaZWc2a/facx5yTrqxMsPo=
-Received: by mail-wr1-f50.google.com with SMTP id y16so33934201wrw.3;
-        Thu, 18 Oct 2018 07:24:38 -0700 (PDT)
-X-Gm-Message-State: ABuFfogwaHPuMhSXUnQJa33xfIqlmWD57h5LwC0+PF9zaDR2MyOTJUF1
-        yy8mj9qqGShG4LboAvo7+uxmw8/NJ8YRAjrV7RA=
-X-Google-Smtp-Source: ACcGV61xzHJ9ic+gYJSO3fVzHH3QD5F2TFptyY/2+MIj8FFeKW/gx5GSJKD1RbDXi9i4X1BVtWhX9bYcaoqLISAlL7g=
-X-Received: by 2002:adf:9592:: with SMTP id p18-v6mr30375166wrp.202.1539872676703;
- Thu, 18 Oct 2018 07:24:36 -0700 (PDT)
+        id S1728077AbeJRW0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 18:26:17 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A98A32090A; Thu, 18 Oct 2018 16:25:00 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-25-52.w90-88.abo.wanadoo.fr [90.88.145.52])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 281BB208C7;
+        Thu, 18 Oct 2018 16:24:50 +0200 (CEST)
+Date:   Thu, 18 Oct 2018 16:24:49 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Jianxin Pan <jianxin.pan@amlogic.com>
+Cc:     <linux-mtd@lists.infradead.org>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 2/2] mtd: rawnand: meson: add support for Amlogic
+ NAND flash controller
+Message-ID: <20181018162449.3fe433e7@bbrezillon>
+In-Reply-To: <1539839345-14021-3-git-send-email-jianxin.pan@amlogic.com>
+References: <1539839345-14021-1-git-send-email-jianxin.pan@amlogic.com>
+        <1539839345-14021-3-git-send-email-jianxin.pan@amlogic.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org> <20181008191411.32555-3-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20181008191411.32555-3-manivannan.sadhasivam@linaro.org>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Thu, 18 Oct 2018 22:24:25 +0800
-X-Gmail-Original-Message-ID: <CAGp9LzqKEpmJMZhU0KW2GWXT4mxEiMqA0xhGxeX2kv+7_ADtKw@mail.gmail.com>
-Message-ID: <CAGp9LzqKEpmJMZhU0KW2GWXT4mxEiMqA0xhGxeX2kv+7_ADtKw@mail.gmail.com>
-Subject: Re: [PATCH 2/5] arm64: dts: mediatek: mt6797: Add pinctrl support
-To:     manivannan.sadhasivam@linaro.org
-Cc:     =?UTF-8?B?U2VhbiBXYW5nICjnjovlv5fkupgp?= <sean.wang@mediatek.com>,
-        linus.walleij@linaro.org, matthias.bgg@gmail.com,
-        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
-        amit.kucheria@linaro.org, linux-gpio@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 3:16 AM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> Add pinctrl support for Mediatek MT6797 SoC.
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  arch/arm64/boot/dts/mediatek/mt6797.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> index 4beaa71107d7..231230d32d09 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> @@ -14,6 +14,7 @@
->  #include <dt-bindings/clock/mt6797-clk.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/pinctrl/mt6797-pinfunc.h>
->
->  / {
->         compatible = "mediatek,mt6797";
-> @@ -129,6 +130,19 @@
->                 #clock-cells = <1>;
->         };
->
-> +       pio: pinctrl@10005000 {
-> +               compatible = "mediatek,mt6797-pinctrl";
-> +               reg = <0 0x10005000 0 0x1000>,
-> +                     <0 0x10002000 0 0x400>,
-> +                     <0 0x10002400 0 0x400>,
-> +                     <0 0x10002800 0 0x400>,
-> +                     <0 0x10002C00 0 0x400>;
-> +               reg-names = "gpio", "iocfgl", "iocfgb",
-> +                           "iocfgr", "iocfgt";
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +       };
+On Thu, 18 Oct 2018 13:09:05 +0800
+Jianxin Pan <jianxin.pan@amlogic.com> wrote:
+
+> +static int meson_nfc_exec_op(struct nand_chip *chip,
+> +			     const struct nand_operation *op, bool check_only)
+> +{
+> +	struct mtd_info *mtd = nand_to_mtd(chip);
+> +	struct meson_nfc *nfc = nand_get_controller_data(chip);
+> +	const struct nand_op_instr *instr = NULL;
+> +	int ret = 0, cmd;
+> +	unsigned int op_id;
+> +	int i;
 > +
+> +	for (op_id = 0; op_id < op->ninstrs; op_id++) {
+> +		instr = &op->instrs[op_id];
+> +		switch (instr->type) {
+> +		case NAND_OP_CMD_INSTR:
+> +			if (instr->ctx.cmd.opcode == NAND_CMD_STATUS)
+> +				meson_nfc_cmd_idle(nfc, nfc->timing.twb);
 
-The content looks good to me, but the dt-binding document is required
-to be added for MT6797 SoC before the DTS instance is being added.
+Hm, I don't want drivers to base their decisions on the opcode value.
+There's a ->delay_ns field in the instruction object, can't you use
+that one instead? Also, I don't understand why this is only needed for
+the STATUS command. It should normally be applied to all instructions.
 
->         scpsys: scpsys@10006000 {
->                 compatible = "mediatek,mt6797-scpsys";
->                 #power-domain-cells = <1>;
-> --
-> 2.17.1
->
->
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+> +			cmd = nfc->param.chip_select | NFC_CMD_CLE;
+> +			cmd |= instr->ctx.cmd.opcode & 0xff;
+> +			writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> +			if (instr->ctx.cmd.opcode == NAND_CMD_STATUS)
+> +				meson_nfc_cmd_idle(nfc, nfc->timing.twhr);
+> +			break;
+> +
+> +		case NAND_OP_ADDR_INSTR:
+> +			for (i = 0; i < instr->ctx.addr.naddrs; i++) {
+> +				cmd = nfc->param.chip_select | NFC_CMD_ALE;
+> +				cmd |= instr->ctx.addr.addrs[i] & 0xff;
+> +				writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> +			}
+> +			break;
+> +
+> +		case NAND_OP_DATA_IN_INSTR:
+> +			meson_nfc_read_buf(mtd, instr->ctx.data.buf.in,
+> +					   instr->ctx.data.len);
+> +			break;
+> +
+> +		case NAND_OP_DATA_OUT_INSTR:
+> +			meson_nfc_write_buf(mtd, instr->ctx.data.buf.out,
+> +					    instr->ctx.data.len);
+> +			break;
+> +
+> +		case NAND_OP_WAITRDY_INSTR:
+> +			meson_nfc_queue_rb(nfc, instr->ctx.waitrdy.timeout_ms);
+> +			break;
+> +		}
+> +	}
+> +	return ret;
+> +}
