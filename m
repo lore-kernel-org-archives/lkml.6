@@ -2,109 +2,183 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF57C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B1CC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E26B82098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:31:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E26B82098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id AA6EE2054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:35:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q6bOVnfU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA6EE2054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbeJRRbg (ORCPT
+        id S1727613AbeJRRfw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 13:31:36 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36278 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727427AbeJRRbg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 13:31:36 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 72ED8806ED; Thu, 18 Oct 2018 11:31:24 +0200 (CEST)
-Date:   Thu, 18 Oct 2018 11:31:25 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
+        Thu, 18 Oct 2018 13:35:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33468 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727427AbeJRRfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 13:35:52 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A65692083A;
+        Thu, 18 Oct 2018 09:35:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539855341;
+        bh=FaDWAVrTMMuZxOrPHriv6ng6HO5zzIvVwoOK/tKqxVU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Q6bOVnfUyOCCmBrlOk0OoyhuwRPwIbUP5QSHu9MiS6o1+dJQ5pN9n+IWinVEsOSJy
+         hxprxcaQsYl1lWcGaWtYE4MccFB/8FRHNf08AE1UPuhSdNAEWEKHVJ8kE76l0NihwK
+         tsUJdo0xK1XW9Xt0Iq3aCU9F4uZ1tpwRS1fRbrGg=
+Date:   Thu, 18 Oct 2018 18:35:38 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        David Miller <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [PATCH v5 03/27] x86/fpu/xstate: Introduce XSAVES system states
-Message-ID: <20181018093125.GB10861@amd>
-References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
- <20181011151523.27101-4-yu-cheng.yu@intel.com>
- <20181017104137.GE22535@zn.tnic>
- <32da559b-7958-60db-e328-f0eb316e668e@infradead.org>
- <20181017225829.GA32023@zn.tnic>
- <fde4c237-6210-f4e4-5362-c2e24a9916a2@infradead.org>
- <20181018092603.GB20831@zn.tnic>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="CUfgB8w4ZwR/yMy5"
-Content-Disposition: inline
-In-Reply-To: <20181018092603.GB20831@zn.tnic>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@gmail.com>
+Subject: Re: perf's handling of unfindable user symbols...
+Message-Id: <20181018183538.fba99bf336f9e6261860e049@kernel.org>
+In-Reply-To: <20181017122855.GB31465@kernel.org>
+References: <20181014.004238.292485794143606801.davem@davemloft.net>
+        <20181015222546.GA2159@redhat.com>
+        <20181015.160246.58484704665215987.davem@davemloft.net>
+        <20181016184506.GB3254@redhat.com>
+        <20181017172226.7274498db2bbe3431c3f4057@kernel.org>
+        <20181017122855.GB31465@kernel.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 17 Oct 2018 09:28:55 -0300
+Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
---CUfgB8w4ZwR/yMy5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Em Wed, Oct 17, 2018 at 05:22:26PM +0900, Masami Hiramatsu escreveu:
+> > On Tue, 16 Oct 2018 15:45:06 -0300
+> > Arnaldo Carvalho de Melo <acme@redhat.com> wrote:
+> > > So, I thought something had changed and in the past we would somehow
+> > > find that address in the kallsyms, but I couldn't find anything to back
+> > > that up, the patch introducing this is over a decade old, lots of things
+> > > changed, so I was just thinking I was missing something.
+> 
+> > > I tried a gtod busy loop to generate vdso activity and added a 'perf
+> > > probe' at that branch, on x86_64 to see if it ever gets hit:
+> 
+> > > Made thread__find_map() noinline, as 'perf probe' in lines of inline
+> > > functions seems to not be working, only at function start. (Masami?)
+>  
+> > Thank you for reporting it. Hmm, what happened when you did it?
+> > I checked some points, but seems no problem.
+> > (Would you see no line number? or defined event didn't work?)
+> 
+> So, the problem is with a function in the perf tool that ends up inlined
+> in five places, then when I ask for a line inside of this function to be
+> probed, it creates 4 probes, one in each of the function it inlines,
+> see:
+> 
+> [root@jouet ~]# perf probe -x ~/bin/perf -L thread__find_map:43
+> <thread__find_map@/home/acme/git/perf/tools/perf/util/event.c:43>
+>      43                 return NULL;
+>                 }
+>          
+>      46         al->map = map_groups__find(mg, al->addr);
+>      47         if (al->map != NULL) {
+>                         /*
+>                          * Kernel maps might be changed when loading symbols so loading
+>                          * must be done prior to using kernel maps.
+>                          */
+>                         if (load_map)
+>      53                         map__load(al->map);
+>      54                 al->addr = al->map->map_ip(al->map, al->addr);
+>                 }
+>          
+>      57         return al->map;
+>      58  }
+>          
+>          struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
+>                                            u64 addr, struct addr_location *al)
+> 
+> [root@jouet ~]# 
+> 
+> So I know that everytime we look for a mmap in a thread and we find that map,
+> we get to line 54, lets try to add it:
+> 
+> [root@jouet ~]# perf probe -x ~/bin/perf thread__find_map:54
+> Added new events:
+>   probe_perf:thread__find_map (on thread__find_map:54 in /home/acme/bin/perf)
+>   probe_perf:thread__find_map_1 (on thread__find_map:54 in /home/acme/bin/perf)
+>   probe_perf:thread__find_map_2 (on thread__find_map:54 in /home/acme/bin/perf)
+>   probe_perf:thread__find_map_3 (on thread__find_map:54 in /home/acme/bin/perf)
+>   probe_perf:thread__find_map_4 (on thread__find_map:54 in /home/acme/bin/perf)
+> 
+> You can now use it in all perf tools, such as:
+> 
+> 	perf record -e probe_perf:thread__find_map_4 -aR sleep 1
+> 
+> [root@jouet ~]#
 
-On Thu 2018-10-18 11:26:03, Borislav Petkov wrote:
-> On Wed, Oct 17, 2018 at 04:17:01PM -0700, Randy Dunlap wrote:
-> > I asked what I really wanted to know.
->=20
-> Then the answer is a bit better readability, I'd guess.
+Hmm, it seems that the line is optimized and spread into 5 places (instructions).
+"perf probe -x ~/bin/perf -D thread__find_map:54" will show you the actual address
+where the probes are. Or, you can just dump the /sys/kernel/debug/tracing/uprobe_events.
 
-Normally, similar local variables are grouped together, with
-initialized variables giving additional constraints.
+> Now I run 'perf top' and then, on another terminal, run this to get system wide
+> events to get a few of those probes:
+> 
+> [root@jouet ~]# perf trace -a -e *perf:*/max-stack=7/ sleep 0.02
+>      0.000 probe_perf:thread__find_map_3:(4be2e3)
+>                                        machine__resolve (/home/acme/bin/perf)
+>                                        perf_top__mmap_read_idx (/home/acme/bin/perf)
+>                                        perf_top__mmap_read (/home/acme/bin/perf)
+>                                        cmd_top (/home/acme/bin/perf)
+>                                        run_builtin (/home/acme/bin/perf)
+>                                        handle_internal_command (/home/acme/bin/perf)
+>                                        main (/home/acme/bin/perf)
+>      0.023 probe_perf:thread__find_map_3:(4be2e3)
+>                                        machine__resolve (/home/acme/bin/perf)
+>                                        perf_top__mmap_read_idx (/home/acme/bin/perf)
+>                                        perf_top__mmap_read (/home/acme/bin/perf)
+>                                        cmd_top (/home/acme/bin/perf)
+>                                        run_builtin (/home/acme/bin/perf)
+>                                        handle_internal_command (/home/acme/bin/perf)
+>                                        main (/home/acme/bin/perf)
+>      0.048 probe_perf:thread__find_map_3:(4be2e3)
+>                                        machine__resolve (/home/acme/bin/perf)
+>                                        perf_top__mmap_read_idx (/home/acme/bin/perf)
+>                                        perf_top__mmap_read (/home/acme/bin/perf)
+>                                        cmd_top (/home/acme/bin/perf)
+>                                        run_builtin (/home/acme/bin/perf)
+>                                        handle_internal_command (/home/acme/bin/perf)
+>                                        main (/home/acme/bin/perf)
+> <SNIP>
+> [root@jouet ~]# 
+> 
+> So it now I'm not being able to reproduce... Erm, nevermind then, I'll report
+> back if I notice this again... :-)
 
-Additionally sorting them with length ... gives too much constraints
-to the author. We want readable sources, not neat ascii art everywhere.
+Thanks!
+I guess it might be broken. I will investigate it.
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+> 
+> Thanks for checking, sorry for the noise.
 
---CUfgB8w4ZwR/yMy5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Issue reports are always welcome :)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> 
+> - Arnaldo
 
-iEYEARECAAYFAlvIUu0ACgkQMOfwapXb+vJZyACgn99kve8+2WEyYpLJ7yB+0qS+
-ctcAoMNGUikTEw2fbI/IwxPsp3/Jpr6K
-=dsBJ
------END PGP SIGNATURE-----
 
---CUfgB8w4ZwR/yMy5--
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
