@@ -2,184 +2,147 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB248ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F35ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97CE721476
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:42:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wKzmTsDq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97CE721476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A5E6A2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:43:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5E6A2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbeJRRnC (ORCPT
+        id S1727946AbeJRRnM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 13:43:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37362 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 13:43:12 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53663 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727363AbeJRRnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 13:43:02 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C673C208E4;
-        Thu, 18 Oct 2018 09:42:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539855771;
-        bh=TjI+igHuP2XLnbYyYLZfiMS+0GTUUaekiLe0jBwnkAk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=wKzmTsDqqQzMnxx8gy+3/+8uAv/qjMeBJ+/r6YlC1MDSL+MpBuHVEN5WsKWSyXuAg
-         LaojaFRfMoU0rW92JhKoVKt0i6hS9mwCT2xjdfXOR1I2I2MuL+uwP//FyNB9iXsGEO
-         DwdDy7hK1Cm8oR0F+R1Am1nPLnD+6tNBEWNQWpVk=
-Date:   Thu, 18 Oct 2018 18:42:48 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@gmail.com>
-Subject: Re: perf's handling of unfindable user symbols...
-Message-Id: <20181018184248.81fa704692a65c0fb471641f@kernel.org>
-In-Reply-To: <20181017122855.GB31465@kernel.org>
-References: <20181014.004238.292485794143606801.davem@davemloft.net>
-        <20181015222546.GA2159@redhat.com>
-        <20181015.160246.58484704665215987.davem@davemloft.net>
-        <20181016184506.GB3254@redhat.com>
-        <20181017172226.7274498db2bbe3431c3f4057@kernel.org>
-        <20181017122855.GB31465@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727363AbeJRRnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 13:43:11 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id CFF812090A; Thu, 18 Oct 2018 11:42:58 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-25-52.w90-88.abo.wanadoo.fr [90.88.145.52])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9875C20723;
+        Thu, 18 Oct 2018 11:42:58 +0200 (CEST)
+Date:   Thu, 18 Oct 2018 11:42:58 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>, devicetree@vger.kernel.org,
+        Dave Airlie <airlied@linux.ie>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 9/9] [DO NOT MERGE] drm/sun4i: rgb: Add 5% tolerance to
+ dot clock frequency check
+Message-ID: <20181018094258.oahlopafvm2udvoe@flea>
+References: <20181018073327.64942-1-icenowy@aosc.io>
+ <20181018073327.64942-10-icenowy@aosc.io>
+ <4168274.Gmp9JTCfJR@avalon>
+ <CAKMK7uFp2c=wqzPi096MTRB6Cdfacerkp6dM=fEqCAr99PQG9w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xqjqal4ijvcwwzek"
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uFp2c=wqzPi096MTRB6Cdfacerkp6dM=fEqCAr99PQG9w@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 17 Oct 2018 09:28:55 -0300
-Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-> Em Wed, Oct 17, 2018 at 05:22:26PM +0900, Masami Hiramatsu escreveu:
-> > On Tue, 16 Oct 2018 15:45:06 -0300
-> > Arnaldo Carvalho de Melo <acme@redhat.com> wrote:
-> > > So, I thought something had changed and in the past we would somehow
-> > > find that address in the kallsyms, but I couldn't find anything to back
-> > > that up, the patch introducing this is over a decade old, lots of things
-> > > changed, so I was just thinking I was missing something.
-> 
-> > > I tried a gtod busy loop to generate vdso activity and added a 'perf
-> > > probe' at that branch, on x86_64 to see if it ever gets hit:
-> 
-> > > Made thread__find_map() noinline, as 'perf probe' in lines of inline
-> > > functions seems to not be working, only at function start. (Masami?)
->  
-> > Thank you for reporting it. Hmm, what happened when you did it?
-> > I checked some points, but seems no problem.
-> > (Would you see no line number? or defined event didn't work?)
-> 
-> So, the problem is with a function in the perf tool that ends up inlined
-> in five places, then when I ask for a line inside of this function to be
-> probed, it creates 4 probes, one in each of the function it inlines,
-> see:
-> 
-> [root@jouet ~]# perf probe -x ~/bin/perf -L thread__find_map:43
-> <thread__find_map@/home/acme/git/perf/tools/perf/util/event.c:43>
->      43                 return NULL;
->                 }
->          
->      46         al->map = map_groups__find(mg, al->addr);
->      47         if (al->map != NULL) {
->                         /*
->                          * Kernel maps might be changed when loading symbols so loading
->                          * must be done prior to using kernel maps.
->                          */
->                         if (load_map)
->      53                         map__load(al->map);
->      54                 al->addr = al->map->map_ip(al->map, al->addr);
->                 }
->          
->      57         return al->map;
->      58  }
->          
->          struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
->                                            u64 addr, struct addr_location *al)
-> 
-> [root@jouet ~]# 
-> 
-> So I know that everytime we look for a mmap in a thread and we find that map,
-> we get to line 54, lets try to add it:
-> 
-> [root@jouet ~]# perf probe -x ~/bin/perf thread__find_map:54
-> Added new events:
->   probe_perf:thread__find_map (on thread__find_map:54 in /home/acme/bin/perf)
->   probe_perf:thread__find_map_1 (on thread__find_map:54 in /home/acme/bin/perf)
->   probe_perf:thread__find_map_2 (on thread__find_map:54 in /home/acme/bin/perf)
->   probe_perf:thread__find_map_3 (on thread__find_map:54 in /home/acme/bin/perf)
->   probe_perf:thread__find_map_4 (on thread__find_map:54 in /home/acme/bin/perf)
-> 
-> You can now use it in all perf tools, such as:
-> 
-> 	perf record -e probe_perf:thread__find_map_4 -aR sleep 1
-> 
-> [root@jouet ~]#
+--xqjqal4ijvcwwzek
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hmm, it seems that the line is optimized and spread into 5 places (instructions).
-"perf probe -x ~/bin/perf -D thread__find_map:54" will show you the actual address
-where the probes are. Or, you can just dump the /sys/kernel/debug/tracing/uprobe_events.
+On Thu, Oct 18, 2018 at 11:18:06AM +0200, Daniel Vetter wrote:
+> On Thu, Oct 18, 2018 at 10:55 AM Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> >
+> > Hi Icenowy,
+> >
+> > Thank you for the patch.
+> >
+> > On Thursday, 18 October 2018 10:33:27 EEST Icenowy Zheng wrote:
+> > > From: Chen-Yu Tsai <wens@csie.org>
+> > >
+> > > The panels shipped with Allwinner devices are very "generic", i.e.
+> > > they do not have model numbers or reliable sources of information
+> > > for the timings (that we know of) other than the fex files shipped
+> > > on them. The dot clock frequency provided in the fex files have all
+> > > been rounded to the nearest MHz, as that is the unit used in them.
+> > >
+> > > We were using the simple panel "urt,umsh-8596md-t" as a substitute
+> > > for the A13 Q8 tablets in the absence of a specific model for what
+> > > may be many different but otherwise timing compatible panels. This
+> > > was usable without any visual artifacts or side effects, until the
+> > > dot clock rate check was added in commit bb43d40d7c83 ("drm/sun4i:
+> > > rgb: Validate the clock rate").
+> > >
+> > > The reason this check fails is because the dotclock frequency for
+> > > this model is 33.26 MHz, which is not achievable with our dot clock
+> > > hardware, and the rate returned by clk_round_rate deviates slightly,
+> > > causing the driver to reject the display mode.
+> > >
+> > > The LCD panels have some tolerance on the dot clock frequency, even
+> > > if it's not specified in their datasheets.
+> > >
+> > > This patch adds a 5% tolerence to the dot clock check.
+> >
+> > Why do you think this shouldn't be merged ?
+>=20
+> It pisses of a lot of people who really insist upon accurate timing.
 
-> Now I run 'perf top' and then, on another terminal, run this to get system wide
-> events to get a few of those probes:
-> 
-> [root@jouet ~]# perf trace -a -e *perf:*/max-stack=7/ sleep 0.02
->      0.000 probe_perf:thread__find_map_3:(4be2e3)
->                                        machine__resolve (/home/acme/bin/perf)
->                                        perf_top__mmap_read_idx (/home/acme/bin/perf)
->                                        perf_top__mmap_read (/home/acme/bin/perf)
->                                        cmd_top (/home/acme/bin/perf)
->                                        run_builtin (/home/acme/bin/perf)
->                                        handle_internal_command (/home/acme/bin/perf)
->                                        main (/home/acme/bin/perf)
->      0.023 probe_perf:thread__find_map_3:(4be2e3)
->                                        machine__resolve (/home/acme/bin/perf)
->                                        perf_top__mmap_read_idx (/home/acme/bin/perf)
->                                        perf_top__mmap_read (/home/acme/bin/perf)
->                                        cmd_top (/home/acme/bin/perf)
->                                        run_builtin (/home/acme/bin/perf)
->                                        handle_internal_command (/home/acme/bin/perf)
->                                        main (/home/acme/bin/perf)
->      0.048 probe_perf:thread__find_map_3:(4be2e3)
->                                        machine__resolve (/home/acme/bin/perf)
->                                        perf_top__mmap_read_idx (/home/acme/bin/perf)
->                                        perf_top__mmap_read (/home/acme/bin/perf)
->                                        cmd_top (/home/acme/bin/perf)
->                                        run_builtin (/home/acme/bin/perf)
->                                        handle_internal_command (/home/acme/bin/perf)
->                                        main (/home/acme/bin/perf)
-> <SNIP>
-> [root@jouet ~]# 
-> 
-> So it now I'm not being able to reproduce... Erm, nevermind then, I'll report
-> back if I notice this again... :-)
+It's not just about accurate timings. That 5% is a made-up limit, that
+never have really been confirmed by looking at the typical tolerancies
+of panels.
 
-OK, I will wait for your report.
+And while being to relaxed might make some panels work that are not
+working currently, it might also break some panels that currently work
+and won't now, and ideally, we should really be able to let those
+panels work if they can, and filter out resolutions if they can't.
 
-> 
-> Thanks for checking, sorry for the noise.
+> I think a better fix would be to have a dotclock range in drm_panel,
+> and some magic to figure out which one of these we can actually
+> do. Then tell userspace that this is the mode is should
+> request. That way userspace knows what the actual dotclock/refresh
+> rate is, and the panel still works.
 
-Issue reports are always welcome :)
+It's not just about panels, but also bridges with EDID where the
+tolerancy is not exposed.
 
-Thank you,
+Maxime
 
-> 
-> - Arnaldo
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--xqjqal4ijvcwwzek
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlvIVaEACgkQ0rTAlCFN
+r3QUIQ//aqylvlMaqvKcakg6woSHr+2qRJJHUiQuuvO5NjfPge6TPcL6eQyV7vUo
+Y4YWHz0/Ds1kt1wr5W0pWrmAqnbzrKc4Nbasirq1oqgk0jKKAtUhQ1hVnlCj2WYX
+9hB16webBwVHI6zcNPOcZxTSCuQWEHQwJmT/vKHnbmsXX5WhvdWhVmwOeOxKD2KS
+3dpnoSv4kvV3bZlNRzRa/IQiA2m6oGl7i2P+QUXJt11YhJhAbm+xzRjOadrmN8xM
+H+6ZFBg8RF/jY0NLbACLixvEPEVvxvdKxDWIZPk24hX/Py1ZOjOQj42d/9cDShkE
+Tm8qaGP2vybzU01Mpjbggg1Ny4ZVDunKf8/BozLrsmY0J7KUQsHzTINhkNEZmszQ
+1ydAh1iNWhzwMMDAp+QLkb0aZcQ/11ubLHRIPLz0AWlt/1U9DjyGsh5iDEYCOk2j
+c+ND+A24GfxgaWlf/RsL9tTJQwVx9ISyLN/F306yclVBJFBEmkwWi2Jhj696zIbx
+7krhIi1VDLVelG7gSqZ6avBf2FZiQomqhSYJWjf0L9BKWBEMni//3SjznkQlWB9V
+faS8gfLiq60jInmddFJ4RAgn4egviWyLqxkRPoSro9KE9e9xtjZcEHn8+rTZrqgt
+k9NWYdx6o8G99nQr3IKCwKSY1KqWrvER8fqHSn5bQsOKhtYmldI=
+=esmR
+-----END PGP SIGNATURE-----
+
+--xqjqal4ijvcwwzek--
