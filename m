@@ -2,136 +2,110 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA21C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF986C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9D752145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:57:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="N5CsdxVc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9D752145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id AEA9E2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:57:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEA9E2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbeJRV6Q (ORCPT
+        id S1728237AbeJRV6e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 17:58:16 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37304 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbeJRV6P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 17:58:15 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A7C301277;
-        Thu, 18 Oct 2018 15:57:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1539871025;
-        bh=nnbw9qMDkR1XWxVnDfJPUAqqsNWys8mPKYrdph7FBAE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N5CsdxVcPKDItg+1ARtDnlKQueOfvvWPj76+iw6YX5waz5BlyjmSQnjWxVKRndbxj
-         9Ii61Z5a+C71rgZosNJU5Y3LYuqXyhNmu4krE+P3aX1myAeK6yGppja6TsKRIZXyBg
-         8xEuW0PN1NZlXT1ivUmfCX8FEihnTet2fqkTr7tw=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, Icenowy Zheng <icenowy@aosc.io>,
-        devicetree@vger.kernel.org, Dave Airlie <airlied@linux.ie>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 9/9] [DO NOT MERGE] drm/sun4i: rgb: Add 5% tolerance to dot clock frequency check
-Date:   Thu, 18 Oct 2018 16:57:03 +0300
-Message-ID: <18807799.FbuUgLpiEM@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20181018121819.gmup3jd7ukj52rvx@flea>
-References: <20181018073327.64942-1-icenowy@aosc.io> <1585874.9P5eR8PMbl@avalon> <20181018121819.gmup3jd7ukj52rvx@flea>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 18 Oct 2018 17:58:34 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:40895 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727550AbeJRV6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 17:58:33 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42bVwf5Vygz9ttFR;
+        Thu, 18 Oct 2018 15:57:22 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id twNWOxLSDhTZ; Thu, 18 Oct 2018 15:57:22 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42bVwf50Htz9ttBL;
+        Thu, 18 Oct 2018 15:57:22 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C0E5D8B8CB;
+        Thu, 18 Oct 2018 15:57:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id UevNhOIFGIeq; Thu, 18 Oct 2018 15:57:22 +0200 (CEST)
+Received: from pc13168vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 831748B8AB;
+        Thu, 18 Oct 2018 15:57:22 +0200 (CEST)
+Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 4758D6F47A; Thu, 18 Oct 2018 13:57:22 +0000 (UTC)
+Message-Id: <b587c4952ab56b672383d3657c1bc9b6d31ad0da.1539870727.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/8xx: Add DT node for using the SEC engine of the
+ MPC885
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        MAZEYRAT Ludovic <ludovic.mazeyrat@alstomgroup.com>
+Date:   Thu, 18 Oct 2018 13:57:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
+The MPC885 has SEC engine version 1.2 with the following details:
+- Number of Crypto channels: 1
+- Exec Units: DEU, MDEU and AESU
+- Available descriptors: 00010, 00100, 00110, 01000, 11000, 11010
 
-On Thursday, 18 October 2018 15:18:19 EEST Maxime Ripard wrote:
-> On Thu, Oct 18, 2018 at 02:31:01PM +0300, Laurent Pinchart wrote:
-> > On Thursday, 18 October 2018 12:42:58 EEST Maxime Ripard wrote:
-> >> On Thu, Oct 18, 2018 at 11:18:06AM +0200, Daniel Vetter wrote:
-> >>> On Thu, Oct 18, 2018 at 10:55 AM Laurent Pinchart wrote:
-> >>>> On Thursday, 18 October 2018 10:33:27 EEST Icenowy Zheng wrote:
-> >>>>> From: Chen-Yu Tsai <wens@csie.org>
-> >>>>> 
-> >>>>> The panels shipped with Allwinner devices are very "generic", i.e.
-> >>>>> they do not have model numbers or reliable sources of information
-> >>>>> for the timings (that we know of) other than the fex files shipped
-> >>>>> on them. The dot clock frequency provided in the fex files have all
-> >>>>> been rounded to the nearest MHz, as that is the unit used in them.
-> >>>>> 
-> >>>>> We were using the simple panel "urt,umsh-8596md-t" as a substitute
-> >>>>> for the A13 Q8 tablets in the absence of a specific model for what
-> >>>>> may be many different but otherwise timing compatible panels. This
-> >>>>> was usable without any visual artifacts or side effects, until the
-> >>>>> dot clock rate check was added in commit bb43d40d7c83 ("drm/sun4i:
-> >>>>> rgb: Validate the clock rate").
-> >>>>> 
-> >>>>> The reason this check fails is because the dotclock frequency for
-> >>>>> this model is 33.26 MHz, which is not achievable with our dot clock
-> >>>>> hardware, and the rate returned by clk_round_rate deviates slightly,
-> >>>>> causing the driver to reject the display mode.
-> >>>>> 
-> >>>>> The LCD panels have some tolerance on the dot clock frequency, even
-> >>>>> if it's not specified in their datasheets.
-> >>>>> 
-> >>>>> This patch adds a 5% tolerence to the dot clock check.
-> >>>> 
-> >>>> Why do you think this shouldn't be merged ?
-> >>> 
-> >>> It pisses of a lot of people who really insist upon accurate timing.
-> >> 
-> >> It's not just about accurate timings. That 5% is a made-up limit, that
-> >> never have really been confirmed by looking at the typical tolerancies
-> >> of panels.
-> >> 
-> >> And while being to relaxed might make some panels work that are not
-> >> working currently, it might also break some panels that currently work
-> >> and won't now, and ideally, we should really be able to let those
-> >> panels work if they can, and filter out resolutions if they can't.
-> >> 
-> >>> I think a better fix would be to have a dotclock range in drm_panel,
-> >>> and some magic to figure out which one of these we can actually
-> >>> do. Then tell userspace that this is the mode is should
-> >>> request. That way userspace knows what the actual dotclock/refresh
-> >>> rate is, and the panel still works.
-> >> 
-> >> It's not just about panels, but also bridges with EDID where the
-> >> tolerancy is not exposed.
-> > 
-> > Given that the tolerance is a property of the panel or bridge, I agree
-> > with Daniel that it should be implemented there, or at least in
-> > cooperation with drm_panel and drm_bridge.
-> 
-> How are we supposed to deal with panels without any documentation then?
+It is also supposed to have descriptor 00000, but it doesn't work
+properly so we keep it out for the moment.
 
-We can only guess, but if the guess comes from the panel driver, it will at 
-least not affect all panels and bridges, like this patch does.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/boot/dts/mpc885ads.dts | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-> > Semi-related information, I think the CEA and VESA standards allow a 0.5%
-> > clock tolerance. What is the maximum clock frequency deviation required
-> > for this platform ?
-> 
-> Looks like it does indeed. That's definetely good to know.
-
+diff --git a/arch/powerpc/boot/dts/mpc885ads.dts b/arch/powerpc/boot/dts/mpc885ads.dts
+index 5b037f51741d..3aa300afbbca 100644
+--- a/arch/powerpc/boot/dts/mpc885ads.dts
++++ b/arch/powerpc/boot/dts/mpc885ads.dts
+@@ -72,7 +72,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		device_type = "soc";
+-		ranges = <0x0 0xff000000 0x4000>;
++		ranges = <0x0 0xff000000 0x28000>;
+ 		bus-frequency = <0>;
+ 
+ 		// Temporary -- will go away once kernel uses ranges for get_immrbase().
+@@ -224,6 +224,17 @@
+ 				#size-cells = <0>;
+ 			};
+ 		};
++
++		crypto@20000 {
++			compatible = "fsl,sec1.2", "fsl,sec1.0";
++			reg = <0x20000 0x8000>;
++			interrupts = <1 1>;
++			interrupt-parent = <&PIC>;
++			fsl,num-channels = <1>;
++			fsl,channel-fifo-len = <24>;
++			fsl,exec-units-mask = <0x4c>;
++			fsl,descriptor-types-mask = <0x05000154>;
++		};
+ 	};
+ 
+ 	chosen {
 -- 
-Regards,
-
-Laurent Pinchart
-
-
+2.13.3
 
