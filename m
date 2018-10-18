@@ -2,170 +2,162 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48CD8C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D1FC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EAB92145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:51:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EAB92145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9094721473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:57:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9094721473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=eircom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbeJRSwL (ORCPT
+        id S1727714AbeJRS54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 14:52:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57764 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727519AbeJRSwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 14:52:10 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 18 Oct 2018 14:57:56 -0400
+Received: from vie01a-dmta-pe08-1.mx.upcmail.net ([84.116.36.20]:53633 "EHLO
+        vie01a-dmta-pe08-1.mx.upcmail.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727453AbeJRS54 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 14:57:56 -0400
+Received: from [172.31.216.235] (helo=vie01a-pemc-psmtp-pe12.mail.upcmail.net)
+        by vie01a-dmta-pe08.mx.upcmail.net with esmtp (Exim 4.88)
+        (envelope-from <mikebrady@eircom.net>)
+        id 1gD5zb-00088p-0N
+        for linux-kernel@vger.kernel.org; Thu, 18 Oct 2018 12:57:27 +0200
+Received: from helix.aillwee.com ([37.228.204.209])
+        by vie01a-pemc-psmtp-pe12.mail.upcmail.net with ESMTP
+        id D5zZg67FmkosQD5zZgtk2W; Thu, 18 Oct 2018 12:57:26 +0200
+X-Env-Mailfrom: mikebrady@eircom.net
+X-Env-Rcptto: linux-kernel@vger.kernel.org
+X-SourceIP: 37.228.204.209
+X-CNFS-Analysis: v=2.3 cv=NNQEBHyg c=1 sm=1 tr=0
+ a=/+iDkf0alGTUGXENEoGzTg==:117 a=/+iDkf0alGTUGXENEoGzTg==:17
+ a=kj9zAlcOel0A:10 a=smKx5t2vBNcA:10 a=k7f7euTfAAAA:8 a=rj1QaQtciXKptpJ9f5IA:9
+ a=tsLZIYwQTnFd6Zqp:21 a=uTyBaVoy6FBSJHVO:21 a=CjuIK1q_8ugA:10
+Received: from ubuntu (apu.aillwee.com [192.168.50.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5A000753B1;
-        Thu, 18 Oct 2018 10:51:44 +0000 (UTC)
-Received: from [10.36.112.15] (unknown [10.36.112.15])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5582061D2D;
-        Thu, 18 Oct 2018 10:51:40 +0000 (UTC)
-Subject: Re: linux-next: manual merge of the kselftest tree with the kvm tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Shuah Khan <shuah@kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-References: <20181018155030.1d75c506@canb.auug.org.au>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <2e7090d2-5c80-7fcf-6e50-7155280b998a@redhat.com>
-Date:   Thu, 18 Oct 2018 12:51:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        by helix.aillwee.com (Postfix) with ESMTPSA id B43254E607;
+        Thu, 18 Oct 2018 11:57:24 +0100 (IST)
+Date:   Thu, 18 Oct 2018 11:57:15 +0100
+From:   Mike Brady <mikebrady@eircom.net>
+To:     eric@anholt.net, stefan.wahren@i2se.com, gregkh@linuxfoundation.org
+Cc:     f.fainelli@gmail.com, tiwai@suse.de,
+        nishka.dasgupta_ug18@ashoka.edu.in, julia.lawall@lip6.fr,
+        mikebrady@eircom.net, k.marinushkin@gmail.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: bcm2835-audio: interpolate audio delay
+Message-ID: <20181018105715.GA6660@ubuntu>
 MIME-Version: 1.0
-In-Reply-To: <20181018155030.1d75c506@canb.auug.org.au>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="XLS7OL1X6RJ73iZ22Fo0PjMCsVWsqGLfb"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 18 Oct 2018 10:51:45 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-CMAE-Envelope: MS4wfFPbtpHfqRe+r+/EJILl8WBnHKBt9JGnBXv0OLnDBc64jYCKIrfudhSvcI+LEU87Lq9QvX5fFxC4Pr9uiFTrtOHNd7QRlLH2iIsH1yNQ/mssFd91Uw+4
+ vvuxugONH7DEPD1TZI12fRpTNPV9nsBJzvaEuxkG8E0psebmLKPP8qmJ/rf+nrUW2gpBNXSf6tbnzZOIKmrLWdbazJdBEP1cfAI5yD1r7l1u4FStMwB5lWji
+ b2T3SztI6Bh185Iyb7Vzzw5iYc0hVEgbytxOrJJcBdNLGe2LNKdKaAA9Cmn/D/Y5fhLVZQ8rG2p/B73vlndVFp5xdPxZi/cmCetTtB4H1ykj7ZS/e7l/Lg1x
+ pylMFmHdBWf1uKLg6IZjEB0jKUJ9Zd1tpF9tfT1S+Wiv/dlgqA5iAFVHWaGqfY5y5ZWqdye75tEJ7Jf8KGsXKbL0UMGUXEeNvKRaWM4SpDg5LLv2ZgNCbPDv
+ sJW9KwQajV9RszgopkjbWGzMx9JaBNYbCV7M9zyWA9HCtev5GB/ril54KwB47btffZp9z0lrmEOMSRPLRFsTy+j9pqNngLxQEMXU2J03J8Qn4DDpZ3Da37BP
+ wc50bz79rdG1NjsnuVwYphaj4233cB71mT+SUzAY34kn78Bd5guShAb6oMdj4XvPswE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---XLS7OL1X6RJ73iZ22Fo0PjMCsVWsqGLfb
-Content-Type: multipart/mixed; boundary="6V6fxYqBQo5zLsuy2gbyedycmZCShSo7p";
- protected-headers="v1"
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Shuah Khan <shuah@kernel.org>,
- =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
- KVM <kvm@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Andrea Parri <andrea.parri@amarulasolutions.com>
-Message-ID: <2e7090d2-5c80-7fcf-6e50-7155280b998a@redhat.com>
-Subject: Re: linux-next: manual merge of the kselftest tree with the kvm tree
-References: <20181018155030.1d75c506@canb.auug.org.au>
-In-Reply-To: <20181018155030.1d75c506@canb.auug.org.au>
+When the BCM2835 audio output is used, userspace sees a jitter up to 10ms
+in the audio position, aka "delay" -- the number of frames that must
+be output before a new frame would be played.
+Make this a bit nicer for userspace by interpolating the position
+using the CPU clock.
+The overhead is small -- an extra ktime_get() every time a GPU message
+is sent -- and another call and a few calculations whenever the delay
+is sought from userland.
+At 48,000 frames per second, i.e. approximately 20 microseconds per
+frame, it would take a clock inaccuracy of
+20 microseconds in 10 milliseconds -- 2,000 parts per million --
+to result in an inaccurate estimate, whereas
+crystal- or resonator-based clocks typically have an
+inaccuracy of 10s to 100s of parts per million.
 
---6V6fxYqBQo5zLsuy2gbyedycmZCShSo7p
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Mike Brady <mikebrady@eircom.net>
+---
+ .../vc04_services/bcm2835-audio/bcm2835-pcm.c | 23 ++++++++++++++++++-
+ .../vc04_services/bcm2835-audio/bcm2835.h     |  1 +
+ 2 files changed, 23 insertions(+), 1 deletion(-)
 
-On 18/10/2018 06:50, Stephen Rothwell wrote:
-> Hi Shuah,
->=20
-> Today's linux-next merge of the kselftest tree got a conflict in:
->=20
->   tools/testing/selftests/kvm/dirty_log_test.c
->=20
-> between commit:
->=20
->   fff8dcd7b4a2 ("kvm: selftests: port dirty_log_test to aarch64")
->=20
-> from the kvm tree and commit:
->=20
->   cda94d9ffa0e ("selftests: kvm: Fix -Wformat warnings")
->=20
-> from the kselftest tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tre=
-e
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularl=
-y
-> complex conflicts.
->=20
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
+index e66da11af5cf..250adf82385a 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
+@@ -12,7 +12,8 @@
+ static const struct snd_pcm_hardware snd_bcm2835_playback_hw = {
+ 	.info = (SNDRV_PCM_INFO_INTERLEAVED | SNDRV_PCM_INFO_BLOCK_TRANSFER |
+ 		 SNDRV_PCM_INFO_MMAP | SNDRV_PCM_INFO_MMAP_VALID |
+-		 SNDRV_PCM_INFO_DRAIN_TRIGGER | SNDRV_PCM_INFO_SYNC_APPLPTR),
++		 SNDRV_PCM_INFO_BATCH | SNDRV_PCM_INFO_DRAIN_TRIGGER |
++		 SNDRV_PCM_INFO_SYNC_APPLPTR),
+ 	.formats = SNDRV_PCM_FMTBIT_U8 | SNDRV_PCM_FMTBIT_S16_LE,
+ 	.rates = SNDRV_PCM_RATE_CONTINUOUS | SNDRV_PCM_RATE_8000_48000,
+ 	.rate_min = 8000,
+@@ -74,6 +75,7 @@ void bcm2835_playback_fifo(struct bcm2835_alsa_stream *alsa_stream,
+ 	atomic_set(&alsa_stream->pos, pos);
+ 
+ 	alsa_stream->period_offset += bytes;
++	alsa_stream->interpolate_start = ktime_get();
+ 	if (alsa_stream->period_offset >= alsa_stream->period_size) {
+ 		alsa_stream->period_offset %= alsa_stream->period_size;
+ 		snd_pcm_period_elapsed(substream);
+@@ -243,6 +245,7 @@ static int snd_bcm2835_pcm_prepare(struct snd_pcm_substream *substream)
+ 	atomic_set(&alsa_stream->pos, 0);
+ 	alsa_stream->period_offset = 0;
+ 	alsa_stream->draining = false;
++	alsa_stream->interpolate_start = ktime_get();
+ 
+ 	return 0;
+ }
+@@ -292,6 +295,24 @@ snd_bcm2835_pcm_pointer(struct snd_pcm_substream *substream)
+ {
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	struct bcm2835_alsa_stream *alsa_stream = runtime->private_data;
++	ktime_t now = ktime_get();
++
++	/* Give userspace better delay reporting by interpolating between GPU
++	 * notifications, assuming audio speed is close enough to the clock
++	 * used for ktime
++	 */
++
++	if ((ktime_to_ns(alsa_stream->interpolate_start)) &&
++	    (ktime_compare(alsa_stream->interpolate_start, now) < 0)) {
++		u64 interval =
++			(ktime_to_ns(ktime_sub(now,
++				alsa_stream->interpolate_start)));
++		u64 frames_output_in_interval =
++			div_u64((interval * runtime->rate), 1000000000);
++		snd_pcm_sframes_t frames_output_in_interval_sized =
++			-frames_output_in_interval;
++		runtime->delay = frames_output_in_interval_sized;
++	}
+ 
+ 	return snd_pcm_indirect_playback_pointer(substream,
+ 		&alsa_stream->pcm_indirect,
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
+index e13435d1c205..595ad584243f 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
+@@ -78,6 +78,7 @@ struct bcm2835_alsa_stream {
+ 	unsigned int period_offset;
+ 	unsigned int buffer_size;
+ 	unsigned int period_size;
++	ktime_t interpolate_start;
+ 
+ 	struct bcm2835_audio_instance *instance;
+ 	int idx;
+-- 
+2.17.1
 
-
-Shuah, I think it's best if in the future the
-tools/testing/selftests/kvm/ changes go through my tree, unless they
-affect many selftests subdirectories.
-
-Thanks,
-
-Paolo
-
-
---6V6fxYqBQo5zLsuy2gbyedycmZCShSo7p--
-
---XLS7OL1X6RJ73iZ22Fo0PjMCsVWsqGLfb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEE8TM4V0tmI4mGbHaCv/vSX3jHroMFAlvIZboACgkQv/vSX3jH
-roPSpQgAmWoQwg/mIwT6qaFKxL2VFB3OrtM2ZH8kgMQGBwrLH7NTfgYBD8LCiDGT
-fGdxXjN6Lxb7eLSoF89mtTUzsf1fP2/ERnzHM5DFUXvD1A2HAFacSaCGLAotvs0T
-IMoHnffRJ196zrqdZ/DAcaGfrU/ZWG9zv0zC5z6ooQnUv5v3z10hjppmnZiMUppt
-oR2up3J1GQy2uBqsq1/EagF5/1ClVFJTj5JIWvvnpC8E/lZUFL2By+Xbzqj0EIHm
-sr6hgA10apPTPIiYqm0SJ+l6DdT+8UJdXPqT3t/E3cafmTXh7cPDN1XTl22GXMNT
-Xl70KgyZnEi/MUOMErzBFVcVtMTXJg==
-=dnRN
------END PGP SIGNATURE-----
-
---XLS7OL1X6RJ73iZ22Fo0PjMCsVWsqGLfb--
