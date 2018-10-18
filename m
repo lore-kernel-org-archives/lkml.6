@@ -2,149 +2,101 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD6CECDE42
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BBF8ECDE42
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1AAF21470
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:17:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJXYbu6d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1AAF21470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A9D2C21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:22:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9D2C21473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemote.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727376AbeJRJPx (ORCPT
+        id S1727271AbeJRJUw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 05:15:53 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38204 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726706AbeJRJPx (ORCPT
+        Thu, 18 Oct 2018 05:20:52 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:47034 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbeJRJUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 05:15:53 -0400
-Received: by mail-qt1-f195.google.com with SMTP id l9-v6so32435647qtf.5;
-        Wed, 17 Oct 2018 18:17:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mLREJIs3pZSSAN2IjBzRgsm8xvZAm4XvsbPOyvNiQ5M=;
-        b=TJXYbu6dOLBy2WZYK1Z8iQy3S/yf/yXjU6EPoEpI2tN1gup2CXSyUYrDzh7tJQOZa5
-         A497T9/o1ixgaXQ5H8P+aD246+k6F86afPjl7oDT/IgdJbJyxU8Rqu9xU6d1RwFfyt6e
-         qMtyT/h+RLPXIE8WmJLp3GDG1WskHi4pAOD0wXT2CADgTzI/6r5NzbN1FZV5raRY6Ppn
-         BJo1hRB5CDUmdDXH7u7R5bVXOzOm114303ubu3eKF/zhO/H+xXM2RNuURzWlmaIeGS8v
-         gKEsFg2yVStJpv++EWIT+B/qpVI/4O5MgFhdTIZdk8w7brnoO/o7qpzuDV2nysQhiZxW
-         bP6g==
+        Thu, 18 Oct 2018 05:20:52 -0400
+Received: by mail-io1-f65.google.com with SMTP id t7-v6so20013083ioj.13
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 18:22:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=mLREJIs3pZSSAN2IjBzRgsm8xvZAm4XvsbPOyvNiQ5M=;
-        b=Ab/lL/j1LMlTetYX8XK0BizP4qqTLcIi8xX0Hl56p1L7gKyq5zq1GB3puL8tPMlukR
-         VcJO2GszFIhXLg8A+tA3CUIyVJ7EAMaBdgKxHXwqiqOwCLYIpGjKNlfQ16xgy4phTWFi
-         bgWJaYr8sUxgEZ2PSDtzpb8FrF2JSQA5U/fy+tNuqabm57iM84RUCk5PSeJmrLseAvmr
-         jFe9NGyjmpJhxqfwWII2uJhDVujPYrnaCk28rItfVY63p8RXHqEBNRzHh5knGF2J6r1C
-         1cxQ9v0zcP9E0obqqXqZkJ3u5M3M5dGHa5w3CHesiHumOSfOSfZptMucwisVwKQSKQ6S
-         y8mQ==
-X-Gm-Message-State: ABuFfojmZT3aPyL62N+YV4IrKCbk+fo9PFZ9BJ66auwMJzNyb4gWFpPQ
-        F7u/04F8l4TIGP94u60Qx4LPVbDjNwbAf2hcaL0=
-X-Google-Smtp-Source: ACcGV60y31Vj3s0OLTQ70WEZW4CeorFh8rv0i8qMA2A8K0G48Lzgsd2X1qHZyOfKjzhIMoQNuqKlTuio9dq9Sx0tMG0=
-X-Received: by 2002:a0c:8a08:: with SMTP id 8mr19507199qvt.203.1539825447566;
- Wed, 17 Oct 2018 18:17:27 -0700 (PDT)
+        bh=sjdNWVFJTGVBaq920sxl0SGbKsYcBJUkUutUCpRY/yw=;
+        b=F7E3j8hvn0StGUT6Q1HnZTTTDXyaQ4O3yXFlNJb02xJk3QF7DBgq7Rght/+05VJPxM
+         vYBGiep9coSgo2BV5WlmS61HMvL3VPh8fQe5A/eOSIWggpyu5JFQrk8F9byNXfz8k2ru
+         tjf+jV583PUEjM0dH6uG0I8fb/wVi3gS+sL0oMiUmkRWa/tiSgMo6B4OJXVaLHWVPqZS
+         SHqDR+eiKnntGjwkaVDF4iIzgg/HA2m1N5tj2aNN1uPqxkhIazfg1Ev19LeMU1n8gVuU
+         PZaRFqiXEgYno6ZK3L7tdi+CecI4kqea4yWgBBNqcAF7pdFSRhTpQjRCDNZtEfbluuor
+         pBOw==
+X-Gm-Message-State: ABuFfogeD6ykGMG2SQ2n3sG/o1o5cFmiyju6VlCqUdLa0fnWbEW6mSw6
+        fX2mRKVa0A4k36mzJ6f+900e4XdIu48M78OACqc=
+X-Google-Smtp-Source: ACcGV61/aQDcPk9SUA4g5Odz59MfVe5CsVgkTvzgZkbSuYXz0N3BjKxyYjZ3B7omxzUdZJ+xmKT7CtfJ4sTxljxDZx8=
+X-Received: by 2002:a6b:3b54:: with SMTP id i81-v6mr19110679ioa.133.1539825746113;
+ Wed, 17 Oct 2018 18:22:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181005125154.19824-1-kraxel@redhat.com>
-In-Reply-To: <20181005125154.19824-1-kraxel@redhat.com>
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Thu, 18 Oct 2018 11:17:14 +1000
-Message-ID: <CAPM=9twky-=a44GABrqi7prQjorzQRpLHQw8TOTc3Th83bjB1g@mail.gmail.com>
-Subject: Re: [PATCH v2] virtio-gpu: add VIRTIO_GPU_F_EDID feature
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     virtio-dev@redhat.com, KVM list <kvm@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Dave Airlie <airlied@linux.ie>,
-        Jason Wang <jasowang@redhat.com>,
+References: <1539739563-1886-1-git-send-email-chenhc@lemote.com> <20181017093540.GB16320@e107155-lin>
+In-Reply-To: <20181017093540.GB16320@e107155-lin>
+From:   Huacai Chen <chenhc@lemote.com>
+Date:   Thu, 18 Oct 2018 09:28:11 +0800
+Message-ID: <CAAhV-H64KYE6YDLrBuK_oYkyBHe8F_5Ja433tY+Pp841kJw57g@mail.gmail.com>
+Subject: Re: [PATCH] cacheinfo: Keep the old value if of_property_read_u32 fails
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:VIRTIO CORE, NET..." 
-        <virtualization@lists.linux-foundation.org>
+        zhangfx <zhangfx@lemote.com>, wu zhangjin <wuzhangjin@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Dave Airlie <airlied@redhat.com>
-On Fri, 5 Oct 2018 at 22:52, Gerd Hoffmann <kraxel@redhat.com> wrote:
+Hi, Sudeep,
+
+Please see this call-graph:
+
+static int detect_cache_attributes(unsigned int cpu)
+        ....
+        ret = populate_cache_leaves(cpu);
+        ....
+        ret = cache_shared_cpu_map_setup(cpu); -->
+cache_setup_of_node() --> cache_of_set_props() -->
+cache_size()/cache_nr_sets
+
+populate_cache_leaves() is arch-specific, All archs except arm64 have
+provide initial values to cacheinfo:size and cacheinfo:number_of_sets.
+
+Related files:
+arch/nds32/kernel/cacheinfo.c
+arch/riscv/kernel/cacheinfo.c
+arch/s390/kernel/cache.c
+arch/mips/kernel/cacheinfo.c
+arch/x86/kernel/cpu/cacheinfo.c
+
+Regards,
+Huacai
+
+On Wed, Oct 17, 2018 at 5:35 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
 >
-> The feature allows the guest request an EDID blob (describing monitor
-> capabilities) for a given scanout (aka virtual monitor connector).
+> On Wed, Oct 17, 2018 at 09:26:03AM +0800, Huacai Chen wrote:
+> > Commit 448a5a552f336bd7b847b1951 ("drivers: base: cacheinfo: use OF
+> > property_read_u32 instead of get_property,read_number") makes cache
+> > size and number_of_sets be 0 if DT doesn't provide there values. I
+> > think this is unreasonable so make them keep the old values, which is
+> > the same as old kernels.
+> >
 >
-> It brings a new command message, which has just a scanout field (beside
-> the standard virtio-gpu header) and a response message which carries the
-> EDID data.
+> What old values does the kernel have ? Which architecture are you referring ?
+> If DT doesn't have entry then we can't expose sysfs, hence 0.
+> Please provide more details on the issue you are seeing.
 >
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->  include/uapi/linux/virtio_gpu.h | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->
-> diff --git a/include/uapi/linux/virtio_gpu.h b/include/uapi/linux/virtio_gpu.h
-> index f43c3c6171..1cef1ff339 100644
-> --- a/include/uapi/linux/virtio_gpu.h
-> +++ b/include/uapi/linux/virtio_gpu.h
-> @@ -41,6 +41,7 @@
->  #include <linux/types.h>
->
->  #define VIRTIO_GPU_F_VIRGL 0
-> +#define VIRTIO_GPU_F_EDID  1
->
->  enum virtio_gpu_ctrl_type {
->         VIRTIO_GPU_UNDEFINED = 0,
-> @@ -56,6 +57,7 @@ enum virtio_gpu_ctrl_type {
->         VIRTIO_GPU_CMD_RESOURCE_DETACH_BACKING,
->         VIRTIO_GPU_CMD_GET_CAPSET_INFO,
->         VIRTIO_GPU_CMD_GET_CAPSET,
-> +       VIRTIO_GPU_CMD_GET_EDID,
->
->         /* 3d commands */
->         VIRTIO_GPU_CMD_CTX_CREATE = 0x0200,
-> @@ -76,6 +78,7 @@ enum virtio_gpu_ctrl_type {
->         VIRTIO_GPU_RESP_OK_DISPLAY_INFO,
->         VIRTIO_GPU_RESP_OK_CAPSET_INFO,
->         VIRTIO_GPU_RESP_OK_CAPSET,
-> +       VIRTIO_GPU_RESP_OK_EDID,
->
->         /* error responses */
->         VIRTIO_GPU_RESP_ERR_UNSPEC = 0x1200,
-> @@ -291,6 +294,20 @@ struct virtio_gpu_resp_capset {
->         __u8 capset_data[];
->  };
->
-> +/* VIRTIO_GPU_CMD_GET_EDID */
-> +struct virtio_gpu_get_edid {
-> +       struct virtio_gpu_ctrl_hdr hdr;
-> +       __le32 scanout;
-> +};
-> +
-> +/* VIRTIO_GPU_RESP_OK_EDID */
-> +struct virtio_gpu_resp_edid {
-> +       struct virtio_gpu_ctrl_hdr hdr;
-> +       __le32 scanout;
-> +       __le32 size;
-> +       __u8 edid[1024];
-> +};
-> +
->  #define VIRTIO_GPU_EVENT_DISPLAY (1 << 0)
->
->  struct virtio_gpu_config {
 > --
-> 2.9.3
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> Regards,
+> Sudeep
