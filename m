@@ -2,138 +2,81 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FB1C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 04:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D80ECDE42
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 04:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6992F21477
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 04:32:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hYrvkGYb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6992F21477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 70E1121476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 04:32:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E1121476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727418AbeJRMbE (ORCPT
+        id S1727455AbeJRMbG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 08:31:04 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:42291 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbeJRMbE (ORCPT
+        Thu, 18 Oct 2018 08:31:06 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:41882 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727359AbeJRMbE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 18 Oct 2018 08:31:04 -0400
-Received: by mail-yw1-f67.google.com with SMTP id a197-v6so11288518ywh.9
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 21:32:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OZSwTv+XUMKcJR+cvGYCOtARHhGLWiPAZFlDPUtfuPc=;
-        b=hYrvkGYbr32sxDFKZKgBGLbDNHk55eVJSshas2d/4fU1fwsP5iAyNURKbNiepBC/0J
-         3PPMma7L/oMZAyVcFg8JPynYgvzh99kUGPfjmn5jYxvMTc4COHbMFKq3YXiIOcS8SVIL
-         uic/rpHKFESfOIvBj3mCVTO213wYyvtFYdXmI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OZSwTv+XUMKcJR+cvGYCOtARHhGLWiPAZFlDPUtfuPc=;
-        b=bqVZyz7uHv9Ism9Sd9T7LUg35cuCKsRtriDwMHKU4O0+05dPh8UbD8YxE/e4iFR8Uz
-         Wn6E6KipIR+q8Ok8tblMDvmyolLz2bSEKon2rKYPiVKSptOYLy4I9BZmOTOAsue4o4bE
-         PHGkpz35HM4ZkzeZxK1a6qFTVO76vRncSeWPoqLGuIF4CMrL9FNdYqteeVKmYygICZil
-         Q+95UzO6IfHzwP7SlbnaBVXOekM7rLgdsMZIbjxIgzZnLWaQXnu+mES3jlyjvAlfdO86
-         q4UF+OT2WHuCR2o3Yf3HJPVSlR3kpreiVtA51dMTVkCUfCh6vpdMx0Ib4VZsSEXjn/N6
-         Ppdw==
-X-Gm-Message-State: ABuFfojF1ZmWzpCqwDEc3yQNbMzxs2ZRiabQa9oV8TS4j3lQjpVObP5t
-        SR3Qp3eCPRAgbMZDm1cTJ4gZXLz5s02u/w==
-X-Google-Smtp-Source: ACcGV62PwU/dRRtD6kwRuvbrVH0KsU8AAH+0fyR6t00AXrlgO5WbeiBOO6Dd2nGTk8t13JxXzpK6bQ==
-X-Received: by 2002:a81:c545:: with SMTP id o5-v6mr17231868ywj.102.1539837122174;
-        Wed, 17 Oct 2018 21:32:02 -0700 (PDT)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id y198-v6sm6119614ywy.64.2018.10.17.21.32.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 21:32:00 -0700 (PDT)
-Received: by mail-yb1-f181.google.com with SMTP id 5-v6so11335202ybf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 21:32:00 -0700 (PDT)
-X-Received: by 2002:a25:24c6:: with SMTP id k189-v6mr6595231ybk.373.1539837119869;
- Wed, 17 Oct 2018 21:31:59 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gCzya-0007M8-QA; Thu, 18 Oct 2018 04:32:00 +0000
+Date:   Thu, 18 Oct 2018 05:32:00 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     "Hongzhi, Song" <hongzhi.song@windriver.com>
+Cc:     linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
+        linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: Question about mmap syscall and POSIX standard on mips arch
+Message-ID: <20181018043200.GE32577@ZenIV.linux.org.uk>
+References: <e897b11f-1577-9298-7c82-7bbdea56e7e5@windriver.com>
 MIME-Version: 1.0
-References: <20181017075242.21790-1-henryhsu@chromium.org> <13883852.6N9L7C0n48@avalon>
- <CAAFQd5B+4x4aSUywtdukwgUmQNQsQsbK4sjedNphwNFteaTscg@mail.gmail.com> <2355808.GKno8i6Ks9@avalon>
-In-Reply-To: <2355808.GKno8i6Ks9@avalon>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Thu, 18 Oct 2018 13:31:48 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5AL2CnnWLk+i133RRa36HTa0baFkezRhpTXf9YP0DSF1Q@mail.gmail.com>
-Message-ID: <CAAFQd5AL2CnnWLk+i133RRa36HTa0baFkezRhpTXf9YP0DSF1Q@mail.gmail.com>
-Subject: Re: [PATCH] media: uvcvideo: Add boottime clock support
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        gwendal@chromium.org, amstan@chromium.org
-Cc:     Heng-Ruey Hsu <henryhsu@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ricky Liang <jcliang@chromium.org>, linux-iio@vger.kernel.org,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e897b11f-1577-9298-7c82-7bbdea56e7e5@windriver.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 5:50 AM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Tomasz,
->
-> On Wednesday, 17 October 2018 11:28:52 EEST Tomasz Figa wrote:
-> > On Wed, Oct 17, 2018 at 5:02 PM Laurent Pinchart wrote:
-> > > On Wednesday, 17 October 2018 10:52:42 EEST Heng-Ruey Hsu wrote:
-> > >> Android requires camera timestamps to be reported with
-> > >> CLOCK_BOOTTIME to sync timestamp with other sensor sources.
-> > >
-> > > What's the rationale behind this, why can't CLOCK_MONOTONIC work ? If the
-> > > monotonic clock has shortcomings that make its use impossible for proper
-> > > synchronization, then we should consider switching to CLOCK_BOOTTIME
-> > > globally in V4L2, not in selected drivers only.
-> >
-> > CLOCK_BOOTTIME includes the time spent in suspend, while
-> > CLOCK_MONOTONIC doesn't. I can imagine the former being much more
-> > useful for anything that cares about the actual, long term, time
-> > tracking. Especially important since suspend is a very common event on
-> > Android and doesn't stop the time flow there, i.e. applications might
-> > wake up the device to perform various tasks at necessary times.
->
-> Sure, but this patch mentions timestamp synchronization with other sensors,
-> and from that point of view, I'd like to know what is wrong with the monotonic
-> clock if all devices use it.
+[mips folks Cc'd]
 
-AFAIK the sensors mentioned there are not camera sensors, but rather
-things we normally put under IIO, e.g. accelerometers, gyroscopes and
-so on. I'm not sure how IIO deals with timestamps, but Android seems
-to operate in the CLOCK_BOTTIME domain. Let me add some IIO folks.
+On Thu, Oct 18, 2018 at 11:26:02AM +0800, Hongzhi, Song wrote:
+> Hi all,
+> 
+> Ltp has a POSIX teatcase about mmap, 24-2.c.
+> 
+> https://github.com/linux-test-project/ltp/blob/e816127e5d8efbff5ae53e9c2292fae22f36838b/testcases/open_posix_testsuite/conformance/interfaces/mmap/24-2.c#L94
 
-Gwendal, Alexandru, do you think you could shed some light on how we
-handle IIO sensors timestamps across the kernel, Chrome OS and
-Android?
+[basically, MAP_FIXED mmap with addr + len > TASK_SIZE fails with
+-EINVAL on mips and -ENOMEM elsewhere]
+ 
+> Under POSIX standard, the expected errno should be ENOMEM
+> 
+> when the specific [addr+len] exceeds the bound of memory.
 
->
-> > Generally, I'd see a V4L2_BUF_FLAG_TIMESTAMP_BOOTTIME flag being added
-> > and user space being given choice to select the time stamp base it
-> > needs, perhaps by setting the flag in v4l2_buffer struct at QBUF time?
->
-> I would indeed prefer a mechanism specified at the V4L2 API level, with an
-> implementation in the V4L2 core, over a module parameter. If the goal is to
-> use the boottime clock for synchronization purpose, we need to make sure that
-> all drivers will support it correctly. Patching drivers one by one doesn't
-> really scale.
+The mmap() function may fail if:
 
-Agreed.
+[EINVAL]
+The addr argument (if MAP_FIXED was specified) or off is not a multiple
+of the page size as returned by sysconf(), or is considered invalid by
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+the implementation.
+^^^^^^^^^^^^^^^^^^^
 
-Best regards,
-Tomasz
+So that behaviour gets past POSIX.  That part is mostly about the
+things like cache aliasing constraints, etc., but it leaves enough
+space to weasel out.  Said that, this
+
+[ENOMEM]
+MAP_FIXED was specified, and the range [addr,addr+len) exceeds that allowed
+for the address space of a process; or, if MAP_FIXED was not specified and
+there is insufficient room in the address space to effect the mapping.
+
+is a lot more specific, so switching to -ENOMEM there might be a good idea,
+especially since on other architectures we do get -ENOMEM in that case,
+AFAICS.
