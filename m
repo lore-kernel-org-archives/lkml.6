@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20229ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 442E6ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD9D020658
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DC0D20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0r4K5zPY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD9D020658
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXIL11Ji"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DC0D20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730606AbeJSCJI (ORCPT
+        id S1730165AbeJSCJL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:09:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58474 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:09:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729745AbeJSCJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:09:08 -0400
+        id S1729911AbeJSCJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:09:11 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6A41204FD;
-        Thu, 18 Oct 2018 18:06:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF8E1204FD;
+        Thu, 18 Oct 2018 18:07:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539886020;
-        bh=GCwUzgDy0cXbnCKaCwoJjBLUW0hBxwb2JIsqfDgJB6o=;
+        s=default; t=1539886023;
+        bh=5Vbl6A0NUE6qRVXTbD3/fBJGtVmAGFMc6/HCqLDyE/8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0r4K5zPY70MQTq88ZOMTuaPr6I9ToJs1sibxeNosQt76DnaAw3Ti0yTVQIVODFL3W
-         cRzi8lMGNji6dOZGp9s5qyWNghxc3Vbrd1ANhILvqtWe3HsDRHuPbyL1Psx/Vv7L4q
-         SZZGUbdIkxZT76VUWCbKNH0U/MmqahV5Yop+mRR0=
+        b=KXIL11JinmolID1IUcsT1GSFa75yJJnrvQ69rOr/5TFJoQlvcPROIYIDR0hif52oB
+         UJuihECtTH8wDRkvSxjb5oS0ofaZFa1tGHhaUmgPvwAfBxf8nJHtZB8TSE+6j6bHu7
+         bt5zQqwlteqEnYqeeAcjYUmZW7IiBtZkBeflqE1M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wang Jian <jianjian.wang1@gmail.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        Long Li <longli@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 4.4 48/48] HV: properly delay KVP packets when negotiation is in progress
-Date:   Thu, 18 Oct 2018 19:55:23 +0200
-Message-Id: <20181018175430.455023194@linuxfoundation.org>
+        stable@vger.kernel.org, Jozef Balga <jozef.balga@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 35/48] media: af9035: prevent buffer overflow on write
+Date:   Thu, 18 Oct 2018 19:55:10 +0200
+Message-Id: <20181018175429.813937162@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -64,94 +63,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Long Li <longli@microsoft.com>
+From: Jozef Balga <jozef.balga@gmail.com>
 
-commit a3ade8cc474d848676278660e65f5af1e9e094d9 upstream.
+[ Upstream commit 312f73b648626a0526a3aceebb0a3192aaba05ce ]
 
-The host may send multiple negotiation packets
-(due to timeout) before the KVP user-mode daemon
-is connected. KVP user-mode daemon is connected.
-We need to defer processing those packets
-until the daemon is negotiated and connected.
-It's okay for guest to respond
-to all negotiation packets.
+When less than 3 bytes are written to the device, memcpy is called with
+negative array size which leads to buffer overflow and kernel panic. This
+patch adds a condition and returns -EOPNOTSUPP instead.
+Fixes bugzilla issue 64871
 
-In addition, the host may send multiple staged
-KVP requests as soon as negotiation is done.
-We need to properly process those packets using one
-tasklet for exclusive access to ring buffer.
-
-This patch is based on the work of
-Nick Meier <Nick.Meier@microsoft.com>.
-
-The above is the original changelog of
-a3ade8cc474d ("HV: properly delay KVP packets when negotiation is in progress"
-
-Here I re-worked the original patch because the mainline version
-can't work for the linux-4.4.y branch, on which channel->callback_event
-doesn't exist yet. In the mainline, channel->callback_event was added by:
-631e63a9f346 ("vmbus: change to per channel tasklet"). Here we don't want
-to backport it to v4.4, as it requires extra supporting changes and fixes,
-which are unnecessary as to the KVP bug we're trying to resolve.
-
-NOTE: before this patch is used, we should cherry-pick the other related
-3 patches from the mainline first:
-
-The background of this backport request is that: recently Wang Jian reported
-some KVP issues: https://github.com/LIS/lis-next/issues/593:
-e.g. the /var/lib/hyperv/.kvp_pool_* files can not be updated, and sometimes
-if the hv_kvp_daemon doesn't timely start, the host may not be able to query
-the VM's IP address via KVP.
-
-Reported-by: Wang Jian <jianjian.wang1@gmail.com>
-Tested-by: Wang Jian <jianjian.wang1@gmail.com>
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Long Li <longli@microsoft.com>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+[mchehab+samsung@kernel.org: fix a merge conflict and changed the
+ condition to match the patch's comment, e. g. len == 3 could
+ also be valid]
+Signed-off-by: Jozef Balga <jozef.balga@gmail.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/hv/hv_kvp.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/media/usb/dvb-usb-v2/af9035.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/hv/hv_kvp.c
-+++ b/drivers/hv/hv_kvp.c
-@@ -612,21 +612,22 @@ void hv_kvp_onchannelcallback(void *cont
- 		     NEGO_IN_PROGRESS,
- 		     NEGO_FINISHED} host_negotiatied = NEGO_NOT_STARTED;
+--- a/drivers/media/usb/dvb-usb-v2/af9035.c
++++ b/drivers/media/usb/dvb-usb-v2/af9035.c
+@@ -389,8 +389,10 @@ static int af9035_i2c_master_xfer(struct
+ 			    msg[0].addr == (state->af9033_i2c_addr[1] >> 1))
+ 				reg |= 0x100000;
  
--	if (host_negotiatied == NEGO_NOT_STARTED &&
--	    kvp_transaction.state < HVUTIL_READY) {
-+	if (kvp_transaction.state < HVUTIL_READY) {
- 		/*
- 		 * If userspace daemon is not connected and host is asking
- 		 * us to negotiate we need to delay to not lose messages.
- 		 * This is important for Failover IP setting.
- 		 */
--		host_negotiatied = NEGO_IN_PROGRESS;
--		schedule_delayed_work(&kvp_host_handshake_work,
-+		if (host_negotiatied == NEGO_NOT_STARTED) {
-+			host_negotiatied = NEGO_IN_PROGRESS;
-+			schedule_delayed_work(&kvp_host_handshake_work,
- 				      HV_UTIL_NEGO_TIMEOUT * HZ);
-+		}
- 		return;
- 	}
- 	if (kvp_transaction.state > HVUTIL_READY)
- 		return;
--
-+recheck:
- 	vmbus_recvpacket(channel, recv_buffer, PAGE_SIZE * 4, &recvlen,
- 			 &requestid);
- 
-@@ -703,6 +704,8 @@ void hv_kvp_onchannelcallback(void *cont
- 				       VM_PKT_DATA_INBAND, 0);
- 
- 		host_negotiatied = NEGO_FINISHED;
-+
-+		goto recheck;
- 	}
- 
- }
+-			ret = af9035_wr_regs(d, reg, &msg[0].buf[3],
+-					msg[0].len - 3);
++			ret = (msg[0].len >= 3) ? af9035_wr_regs(d, reg,
++							         &msg[0].buf[3],
++							         msg[0].len - 3)
++					        : -EOPNOTSUPP;
+ 		} else {
+ 			/* I2C write */
+ 			u8 buf[MAX_XFER_SIZE];
 
 
