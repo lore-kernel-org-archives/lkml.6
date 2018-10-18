@@ -2,98 +2,91 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7F3ECDE42
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DADFCECDE42
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55E4521473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:06:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mQtlciUY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E4521473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id A9A512083A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:06:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A512083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727437AbeJRKEf (ORCPT
+        id S1727489AbeJRKEy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 06:04:35 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37595 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727307AbeJRKEf (ORCPT
+        Thu, 18 Oct 2018 06:04:54 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:49103 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727307AbeJRKEy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 06:04:35 -0400
-Received: by mail-ot1-f67.google.com with SMTP id o14so28278367oth.4
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 19:06:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xXqDoljyPiAGf8azecab2KuGNZbnO9MYXBF4o5v8oDM=;
-        b=mQtlciUYOT3CUMvkvIkZ02T6fVcjtBDUlWJtHzWrJl9l5NJGG+woLUdW03Ochke8Sk
-         T/Xo8TzWlQCm1hl1JO6EHC5AuPnIT/hzTyBlB2LRT6C6FDlxaEfU9MvVyuPU6FAyOOsg
-         MHR8lXs9FM4HKjht8SKXc37gwJ19Y1ZYw2Vm7vprTgiq9iuvfaxPu42HtIDWlmdzIxWL
-         31KleoB5qP6KqgK1FwIeoXOYkcLme6KBFAQiOi83UidwDYubJIi9kcFiwrUOR6qjfKXl
-         QtrF32ExAYDmgIwE2N3Ua44bqQqg1xrC31lNIJbTIYC3igoZxwQgmkdTpIXPsC71Mqq3
-         kFRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xXqDoljyPiAGf8azecab2KuGNZbnO9MYXBF4o5v8oDM=;
-        b=IAi6h8Nh6NbTy4c8TLwDT6tAo3vzgae588G+DPOYYLuMIt2x4SKxQYECoTDU/xL4k/
-         TmInMrHph06vUxDi01sZOpuoctMeRIJJ4sktooAbQiGPdZub6owOUihThscN7m2bAKY4
-         hSqzlaJtCFFdJtRa5Id5BFLf/pV6PXcXeY+s04J6DEWaN9BhQV6RXekkL8pyfQgIQbiR
-         ihCRDBXlTpcpqEA8VRh5wgB7gety93EYFyQr0LfdSL32de8XJ4wGLUODdzE5hDBlokCe
-         /EfSXfsIC/gVr3IO9Y6RPAk4V6Zha1g875jLlPOecTQbYeUFmO6j0ihY5PWM7QdqcEyI
-         bCxQ==
-X-Gm-Message-State: ABuFfoh83nHWycPYJWcbePewdo9c3pbmNxR5/iiigENNvrhze0H/1l8S
-        XPOSz6aszpT1H7kPe9F6//rdfDWKCG1KHgrg7XT9Wenu
-X-Google-Smtp-Source: ACcGV60ArT3LpFuNR65QC3yp51UNMQjRFeZwIHtPAx0rTOxv/ZBqP352yYcP4h70CV36tKhj+g1GckKkW1TwKensYBU=
-X-Received: by 2002:a9d:2117:: with SMTP id i23mr17346130otb.230.1539828361129;
- Wed, 17 Oct 2018 19:06:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181016235120.138227-1-brendanhiggins@google.com> <42737f55-0d42-dffe-7b34-e24666e713a0@infradead.org>
-In-Reply-To: <42737f55-0d42-dffe-7b34-e24666e713a0@infradead.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Wed, 17 Oct 2018 19:05:49 -0700
-Message-ID: <CAFd5g440GaxOzii9pXF6ykmeT3ihUFduG8EpbRXCMpTLROPhtQ@mail.gmail.com>
-Subject: Re: [RFC v1 00/31] kunit: Introducing KUnit, the Linux kernel unit
- testing framework
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>, mcgrof@kernel.org,
-        shuah@kernel.org, Joel Stanley <joel@jms.id.au>,
-        mpe@ellerman.id.au, joe@perches.com, brakmo@fb.com,
-        rostedt@goodmis.org, Tim.Bird@sony.com, khilman@baylibre.com,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        Thu, 18 Oct 2018 06:04:54 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08180991|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l10423;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=16;RT=16;SR=0;TI=SMTPD_---.D3i0F6V_1539828369;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D3i0F6V_1539828369)
+          by smtp.aliyun-inc.com(10.147.41.121);
+          Thu, 18 Oct 2018 10:06:09 +0800
+Date:   Thu, 18 Oct 2018 10:05:54 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        David Miller <davem@davemloft.net>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-arch <linux-arch@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, c-sky_gcc_upstream@c-sky.com
+Subject: Re: [PATCH V9 07/21] csky: MMU and page table management
+Message-ID: <20181018020552.GB12027@guoren-Inspiron-7460>
+References: <cover.1539655731.git.ren_guo@c-sky.com>
+ <783a90d35138634a1cb899e2c551c96f3b5178af.1539655731.git.ren_guo@c-sky.com>
+ <CAK8P3a1ME=1Gb1d_q_+9zP4bLr9wJC7hmEv4KGCt5GN6dG5F8g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK8P3a1ME=1Gb1d_q_+9zP4bLr9wJC7hmEv4KGCt5GN6dG5F8g@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 4:12 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> On 10/16/18 4:50 PM, Brendan Higgins wrote:
-> > This patch set proposes KUnit, a lightweight unit testing and mocking
-> > framework for the Linux kernel.
->
-> Hi,
->
-> Just a general comment:
->
-> Documentation/process/submitting-patches.rst says:
-> <<Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
-> instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
-> to do frotz", as if you are giving orders to the codebase to change
-> its behaviour.>>
->
+On Wed, Oct 17, 2018 at 05:06:56PM +0200, Arnd Bergmann wrote:
+> On Tue, Oct 16, 2018 at 5:01 AM Guo Ren <ren_guo@c-sky.com> wrote:
+> >
+> > This patch adds files related to memory management and here is our
+> > memory-layout:
+> >
+> >    Fixmap       : 0xffc02000 – 0xfffff000       (4 MB - 12KB)
+> >    Pkmap        : 0xff800000 – 0xffc00000       (4 MB)
+> >    Vmalloc      : 0xf0200000 – 0xff000000       (238 MB)
+> >    Lowmem       : 0x80000000 – 0xc0000000       (1GB)
+> >
+> > abiv1 CPU (CK610) is VIPT cache and it doesn't support highmem.
+> > abiv2 CPUs are all PIPT cache and they could support highmem.
+> >
+> > Lowmem is directly mapped by msa0 & msa1 reg, and we needn't setup
+> > memory page table for it.
+> >
+> > Link:https://lore.kernel.org/lkml/20180518215548.GH17671@n2100.armlinux.org.uk/
+> > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> > Cc: Christoph Hellwig <hch@infradead.org>
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> 
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> Christoph had all the useful comments on this one, I just checked that I didn't
+> spot anything beyond that.
+Yes, Christoph help a lot and find a critical bug of "sync_dma > 4K".
 
-Thanks! I will fix this in the next revision.
+Best Regards
+ Guo Ren
