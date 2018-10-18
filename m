@@ -2,121 +2,168 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E783C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFA5C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5BA82098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:48:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5BA82098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 226972098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:48:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4oOx8Wd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 226972098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbeJROsR (ORCPT
+        id S1727516AbeJROsV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 10:48:17 -0400
-Received: from mga05.intel.com ([192.55.52.43]:27565 "EHLO mga05.intel.com"
+        Thu, 18 Oct 2018 10:48:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727357AbeJROsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 10:48:16 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 23:48:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,395,1534834800"; 
-   d="scan'208";a="78926887"
-Received: from aaronlu.sh.intel.com (HELO intel.com) ([10.239.159.44])
-  by fmsmga007.fm.intel.com with ESMTP; 17 Oct 2018 23:48:40 -0700
-Date:   Thu, 18 Oct 2018 14:48:39 +0800
-From:   Aaron Lu <aaron.lu@intel.com>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Mel Gorman <mgorman@techsingularity.net>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>
-Subject: Re: [RFC v4 PATCH 2/5] mm/__free_one_page: skip merge for order-0
- page unless compaction failed
-Message-ID: <20181018064839.GA6468@intel.com>
-References: <20181017063330.15384-1-aaron.lu@intel.com>
- <20181017063330.15384-3-aaron.lu@intel.com>
- <20181017104427.GJ5819@techsingularity.net>
- <20181017131059.GA9167@intel.com>
- <20181017135807.GL5819@techsingularity.net>
- <6d4d1a59-bb70-d4c9-bd18-8c398a09f25f@suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6d4d1a59-bb70-d4c9-bd18-8c398a09f25f@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727357AbeJROsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 10:48:21 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFB0421473;
+        Thu, 18 Oct 2018 06:48:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539845330;
+        bh=yUBR8uWXBdESI9vTVsRfMmfIuy8cgWJmA5JK7nKpzXU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=W4oOx8WdDZ0Nq2jlmoOMO09bX1Z7ByNCc+x1uR6923IINe3eMfILaPaFrh4XLxy8y
+         pSW9NZav6oMDBsbrpYLJRJ5ajcfRqeeXnxVxpWVrq85SrZJhrBWrA3xX3Ok1loycYK
+         xIFgjT6eNwLND3KBpzfWpHoxuuqUrgGmmgNGK4xM=
+Date:   Thu, 18 Oct 2018 15:48:46 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH v2] x86: ptrace.h: Make regs_get_kernel_stack_nth() not
+ fault on bad stack
+Message-Id: <20181018154846.8d055466316359525b94a87a@kernel.org>
+In-Reply-To: <20181017165951.09119177@gandalf.local.home>
+References: <20181017165951.09119177@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 07:03:30PM +0200, Vlastimil Babka wrote:
-> On 10/17/18 3:58 PM, Mel Gorman wrote:
-> > Again, as compaction is not guaranteed to find the pageblocks, it would
-> > be important to consider whether a) that matters or b) find an
-> > alternative way of keeping unmerged buddies on separate lists so they
-> > can be quickly discovered when a high-order allocation fails.
+On Wed, 17 Oct 2018 16:59:51 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
-> Agree, unmerged buddies could be on separate freelist from regular
-> order-0 freelist. That list could be also preferred to allocations
-> before the regular one. Then one could e.g. try "direct merging" via
-> this list when compaction fails, or prefer direct merging to compaction
-> for non-costly-order allocations, do direct merging when allocation
-> context doesn't even allow compaction (atomic etc).
+> Andy had some concerns about using regs_get_kernel_stack_nth() in a new
+> function regs_get_kernel_argument() as if there's any error in the stack
+> code, it could cause a bad memory access. To be on the safe side, call
+> probe_kernel_read() on the stack address to be extra careful in accessing
+> the memory. A helper function, regs_get_kernel_stack_nth_addr(), was added
+> to just return the stack address (or NULL if not on the stack), that will be
+> used to find the address (and could be used by other functions) and read the
+> address with kernel_probe_read().
+> 
+> Link: http://lkml.kernel.org/r/CALCETrXn9zKTb9i1LP3qoFcpqZHF34BdkuZ5D3N0uCmRr+VnbA@mail.gmail.com
+> Requested-by: Andy Lutomirski <luto@amacapital.net>
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-One concern regarding "direct merging" these unmerged pages via this
-separate freelist(let's call it unmerged_free_list) is: adjacent
-unmerged pages on the unmerged_free_list could be far away from each
-other regarding their physical positions, so during the process of
-merging them, the needed high order page may not be able to be formed
-in a short time. Actually, the time could be unbound in a bad condition
-when:
-1 unmerged pages adjacent on the unmerged_free_list happen to be far
-  away from each other regarding their physical positions; and
-2 there are a lot of unmerged pages on unmerged_free_list.
+Looks good to me.
 
-That's the reason I hooked the merging of unmerged pages in compaction
-when isolate_migratepages_block() is scanning every page of a pageblock
-in PFN order.
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-OTOH, if there is a kernel thread trying to reduce fragmentation by
-doing merges for these unmerged pages, I think it's perfect fine to let
-it iterate all unmerged pages of that list and do_merge() for all of
-them.
+Thank you,
 
-So what about this: if kcompactd is running, let it handle these
-unmerged pages on the list and after that, do its usual job of
-compaction. If direct compaction is running, do not handle unmerged
-pages on that list but rely on isolate_migratepages_block() to do the
-merging as is done in this patchset.
+> ---
+> 
+> Changes since v1:
+> 
+>    - Make regs_get_kernel_stack_nth() not fault, and not have a
+>      separate function. Only tracing uses it anyway.
+> 
+>  arch/x86/include/asm/ptrace.h | 43 ++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 36 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
+> index c2304b25e2fd..055f632ce711 100644
+> --- a/arch/x86/include/asm/ptrace.h
+> +++ b/arch/x86/include/asm/ptrace.h
+> @@ -237,23 +237,52 @@ static inline int regs_within_kernel_stack(struct pt_regs *regs,
+>  }
+>  
+>  /**
+> + * regs_get_kernel_stack_nth_addr() - get the address of the Nth entry on stack
+> + * @regs:	pt_regs which contains kernel stack pointer.
+> + * @n:		stack entry number.
+> + *
+> + * regs_get_kernel_stack_nth() returns the address of the @n th entry of the
+> + * kernel stack which is specified by @regs. If the @n th entry is NOT in
+> + * the kernel stack, this returns NULL.
+> + */
+> +static inline unsigned long *regs_get_kernel_stack_nth_addr(struct pt_regs *regs,
+> +							    unsigned int n)
+> +{
+> +	unsigned long *addr = (unsigned long *)kernel_stack_pointer(regs);
+> +
+> +	addr += n;
+> +	if (regs_within_kernel_stack(regs, (unsigned long)addr))
+> +		return addr;
+> +	else
+> +		return NULL;
+> +}
+> +
+> +/* To avoid include hell, we can't include uaccess.h */
+> +extern long probe_kernel_read(void *dst, const void *src, size_t size);
+> +
+> +/**
+>   * regs_get_kernel_stack_nth() - get Nth entry of the stack
+>   * @regs:	pt_regs which contains kernel stack pointer.
+>   * @n:		stack entry number.
+>   *
+>   * regs_get_kernel_stack_nth() returns @n th entry of the kernel stack which
+> - * is specified by @regs. If the @n th entry is NOT in the kernel stack,
+> + * is specified by @regs. If the @n th entry is NOT in the kernel stack
+>   * this returns 0.
+>   */
+>  static inline unsigned long regs_get_kernel_stack_nth(struct pt_regs *regs,
+>  						      unsigned int n)
+>  {
+> -	unsigned long *addr = (unsigned long *)kernel_stack_pointer(regs);
+> -	addr += n;
+> -	if (regs_within_kernel_stack(regs, (unsigned long)addr))
+> -		return *addr;
+> -	else
+> -		return 0;
+> +	unsigned long *addr;
+> +	unsigned long val;
+> +	long ret;
+> +
+> +	addr = regs_get_kernel_stack_nth_addr(regs, n);
+> +	if (addr) {
+> +		ret = probe_kernel_read(&val, addr, sizeof(val));
+> +		if (!ret)
+> +			return val;
+> +	}
+> +	return 0;
+>  }
+>  
+>  /**
+> -- 
+> 2.13.6
+> 
 
-This of course has the effect of tying compaction with 'lazy merging'.
-If it is not desirable, what about creating a new kernel thread to do
-the merging of unmerged pages on the list while keeping the behaviour of
-isolate_migratepages_block() in this patchset to improve compaction
-success rate.
 
-> Also I would definitely consider always merging pages freed to
-> non-MOVABLE pageblocks. We really don't want to increase the
-> fragmentation in those. However that means it probably won't help the
-> netperf case?
-
-Yes, that would be unfortunate for all in-kernel users of page
-allocator...
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
