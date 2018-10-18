@@ -2,121 +2,252 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E86C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B208BECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1440F2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:25:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1440F2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 725FE2098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:25:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 725FE2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbeJRW0R (ORCPT
+        id S1728312AbeJRW00 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 18:26:17 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33279 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728077AbeJRW0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 18:26:17 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A98A32090A; Thu, 18 Oct 2018 16:25:00 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-25-52.w90-88.abo.wanadoo.fr [90.88.145.52])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 281BB208C7;
-        Thu, 18 Oct 2018 16:24:50 +0200 (CEST)
-Date:   Thu, 18 Oct 2018 16:24:49 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Jianxin Pan <jianxin.pan@amlogic.com>
-Cc:     <linux-mtd@lists.infradead.org>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 2/2] mtd: rawnand: meson: add support for Amlogic
- NAND flash controller
-Message-ID: <20181018162449.3fe433e7@bbrezillon>
-In-Reply-To: <1539839345-14021-3-git-send-email-jianxin.pan@amlogic.com>
-References: <1539839345-14021-1-git-send-email-jianxin.pan@amlogic.com>
-        <1539839345-14021-3-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 18 Oct 2018 18:26:26 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14092 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728077AbeJRW00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 18:26:26 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id CDA645F768CE1;
+        Thu, 18 Oct 2018 22:25:01 +0800 (CST)
+Received: from localhost (10.202.226.46) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Thu, 18 Oct 2018
+ 22:24:52 +0800
+Date:   Thu, 18 Oct 2018 15:24:34 +0100
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Oscar Salvador <osalvador@techadventures.net>
+CC:     <akpm@linux-foundation.org>, <mhocko@suse.com>,
+        <dan.j.williams@intel.com>, <yasu.isimatu@gmail.com>,
+        <rppt@linux.vnet.ibm.com>, <malat@debian.org>,
+        <linux-kernel@vger.kernel.org>, <pavel.tatashin@microsoft.com>,
+        <jglisse@redhat.com>, <rafael@kernel.org>, <david@redhat.com>,
+        <dave.jiang@intel.com>, <linux-mm@kvack.org>,
+        <alexander.h.duyck@linux.intel.com>,
+        Oscar Salvador <osalvador@suse.de>, <linuxarm@huawei.com>
+Subject: Re: [PATCH 5/5] mm/memory-hotplug: Rework
+ unregister_mem_sect_under_nodes
+Message-ID: <20181018152434.00001845@huawei.com>
+In-Reply-To: <20181015153034.32203-6-osalvador@techadventures.net>
+References: <20181015153034.32203-1-osalvador@techadventures.net>
+        <20181015153034.32203-6-osalvador@techadventures.net>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.46]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 18 Oct 2018 13:09:05 +0800
-Jianxin Pan <jianxin.pan@amlogic.com> wrote:
+On Mon, 15 Oct 2018 17:30:34 +0200
+Oscar Salvador <osalvador@techadventures.net> wrote:
 
-> +static int meson_nfc_exec_op(struct nand_chip *chip,
-> +			     const struct nand_operation *op, bool check_only)
-> +{
-> +	struct mtd_info *mtd = nand_to_mtd(chip);
-> +	struct meson_nfc *nfc = nand_get_controller_data(chip);
-> +	const struct nand_op_instr *instr = NULL;
-> +	int ret = 0, cmd;
-> +	unsigned int op_id;
-> +	int i;
-> +
-> +	for (op_id = 0; op_id < op->ninstrs; op_id++) {
-> +		instr = &op->instrs[op_id];
-> +		switch (instr->type) {
-> +		case NAND_OP_CMD_INSTR:
-> +			if (instr->ctx.cmd.opcode == NAND_CMD_STATUS)
-> +				meson_nfc_cmd_idle(nfc, nfc->timing.twb);
+> From: Oscar Salvador <osalvador@suse.de>
+> 
+> This tries to address another issue about accessing
+> unitiliazed pages.
+> 
+> Jonathan reported a problem [1] where we can access steal pages
+> in case we hot-remove memory without onlining it first.
+> 
+> This time is in unregister_mem_sect_under_nodes.
+> This function tries to get the nid from the pfn and then
+> tries to remove the symlink between mem_blk <-> nid and vice versa.
+> 
+> Since we already know the nid in remove_memory(), we can pass
+> it down the chain to unregister_mem_sect_under_nodes.
+> There we can just remove the symlinks without the need
+> to look into the pages.
+> 
+> [1] https://www.spinics.net/lists/linux-mm/msg161316.html
+> 
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
 
-Hm, I don't want drivers to base their decisions on the opcode value.
-There's a ->delay_ns field in the instruction object, can't you use
-that one instead? Also, I don't understand why this is only needed for
-the STATUS command. It should normally be applied to all instructions.
+Hi Oscar,
 
-> +			cmd = nfc->param.chip_select | NFC_CMD_CLE;
-> +			cmd |= instr->ctx.cmd.opcode & 0xff;
-> +			writel(cmd, nfc->reg_base + NFC_REG_CMD);
-> +			if (instr->ctx.cmd.opcode == NAND_CMD_STATUS)
-> +				meson_nfc_cmd_idle(nfc, nfc->timing.twhr);
-> +			break;
-> +
-> +		case NAND_OP_ADDR_INSTR:
-> +			for (i = 0; i < instr->ctx.addr.naddrs; i++) {
-> +				cmd = nfc->param.chip_select | NFC_CMD_ALE;
-> +				cmd |= instr->ctx.addr.addrs[i] & 0xff;
-> +				writel(cmd, nfc->reg_base + NFC_REG_CMD);
-> +			}
-> +			break;
-> +
-> +		case NAND_OP_DATA_IN_INSTR:
-> +			meson_nfc_read_buf(mtd, instr->ctx.data.buf.in,
-> +					   instr->ctx.data.len);
-> +			break;
-> +
-> +		case NAND_OP_DATA_OUT_INSTR:
-> +			meson_nfc_write_buf(mtd, instr->ctx.data.buf.out,
-> +					    instr->ctx.data.len);
-> +			break;
-> +
-> +		case NAND_OP_WAITRDY_INSTR:
-> +			meson_nfc_queue_rb(nfc, instr->ctx.waitrdy.timeout_ms);
-> +			break;
-> +		}
-> +	}
-> +	return ret;
-> +}
+I've not gone through these in detail, but I have run some
+quick smoke tests and all seems fine with the out of tree arm64
+patches we are carrying (with the obvious changes to match
+up with those for other architectures that you make in this set).
+
+Tested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+In particular (as expected) it fixes the issue you mention above
+so I can drop the hack I had in place to avoid that :)
+
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/base/memory.c  |  9 ++++-----
+>  drivers/base/node.c    | 38 +++++++-------------------------------
+>  include/linux/memory.h |  2 +-
+>  include/linux/node.h   |  9 ++++-----
+>  mm/memory_hotplug.c    |  2 +-
+>  5 files changed, 17 insertions(+), 43 deletions(-)
+> 
+> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+> index 0e5985682642..3d8c65d84bea 100644
+> --- a/drivers/base/memory.c
+> +++ b/drivers/base/memory.c
+> @@ -744,8 +744,7 @@ unregister_memory(struct memory_block *memory)
+>  	device_unregister(&memory->dev);
+>  }
+>  
+> -static int remove_memory_section(unsigned long node_id,
+> -			       struct mem_section *section, int phys_device)
+> +static int remove_memory_section(unsigned long nid, struct mem_section *section)
+>  {
+>  	struct memory_block *mem;
+>  
+> @@ -759,7 +758,7 @@ static int remove_memory_section(unsigned long node_id,
+>  	if (!mem)
+>  		goto out_unlock;
+>  
+> -	unregister_mem_sect_under_nodes(mem, __section_nr(section));
+> +	unregister_mem_sect_under_nodes(nid, mem);
+>  
+>  	mem->section_count--;
+>  	if (mem->section_count == 0)
+> @@ -772,12 +771,12 @@ static int remove_memory_section(unsigned long node_id,
+>  	return 0;
+>  }
+>  
+> -int unregister_memory_section(struct mem_section *section)
+> +int unregister_memory_section(int nid, struct mem_section *section)
+>  {
+>  	if (!present_section(section))
+>  		return -EINVAL;
+>  
+> -	return remove_memory_section(0, section, 0);
+> +	return remove_memory_section(nid, section);
+>  }
+>  #endif /* CONFIG_MEMORY_HOTREMOVE */
+>  
+> diff --git a/drivers/base/node.c b/drivers/base/node.c
+> index 86d6cd92ce3d..65bc5920bd3d 100644
+> --- a/drivers/base/node.c
+> +++ b/drivers/base/node.c
+> @@ -453,40 +453,16 @@ int register_mem_sect_under_node(struct memory_block *mem_blk, void *arg)
+>  	return 0;
+>  }
+>  
+> -/* unregister memory section under all nodes that it spans */
+> -int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
+> -				    unsigned long phys_index)
+> +/*
+> + * This mem_blk is going to be removed, so let us remove the link
+> + * to the node and vice versa
+> + */
+> +void unregister_mem_sect_under_nodes(int nid, struct memory_block *mem_blk)
+>  {
+> -	NODEMASK_ALLOC(nodemask_t, unlinked_nodes, GFP_KERNEL);
+> -	unsigned long pfn, sect_start_pfn, sect_end_pfn;
+> -
+> -	if (!mem_blk) {
+> -		NODEMASK_FREE(unlinked_nodes);
+> -		return -EFAULT;
+> -	}
+> -	if (!unlinked_nodes)
+> -		return -ENOMEM;
+> -	nodes_clear(*unlinked_nodes);
+> -
+> -	sect_start_pfn = section_nr_to_pfn(phys_index);
+> -	sect_end_pfn = sect_start_pfn + PAGES_PER_SECTION - 1;
+> -	for (pfn = sect_start_pfn; pfn <= sect_end_pfn; pfn++) {
+> -		int nid;
+> -
+> -		nid = get_nid_for_pfn(pfn);
+> -		if (nid < 0)
+> -			continue;
+> -		if (!node_online(nid))
+> -			continue;
+> -		if (node_test_and_set(nid, *unlinked_nodes))
+> -			continue;
+> -		sysfs_remove_link(&node_devices[nid]->dev.kobj,
+> +	sysfs_remove_link(&node_devices[nid]->dev.kobj,
+>  			 kobject_name(&mem_blk->dev.kobj));
+> -		sysfs_remove_link(&mem_blk->dev.kobj,
+> +	sysfs_remove_link(&mem_blk->dev.kobj,
+>  			 kobject_name(&node_devices[nid]->dev.kobj));
+> -	}
+> -	NODEMASK_FREE(unlinked_nodes);
+> -	return 0;
+>  }
+>  
+>  int link_mem_sections(int nid, unsigned long start_pfn, unsigned long end_pfn)
+> diff --git a/include/linux/memory.h b/include/linux/memory.h
+> index a6ddefc60517..d75ec88ca09d 100644
+> --- a/include/linux/memory.h
+> +++ b/include/linux/memory.h
+> @@ -113,7 +113,7 @@ extern int register_memory_isolate_notifier(struct notifier_block *nb);
+>  extern void unregister_memory_isolate_notifier(struct notifier_block *nb);
+>  int hotplug_memory_register(int nid, struct mem_section *section);
+>  #ifdef CONFIG_MEMORY_HOTREMOVE
+> -extern int unregister_memory_section(struct mem_section *);
+> +extern int unregister_memory_section(int nid, struct mem_section *);
+>  #endif
+>  extern int memory_dev_init(void);
+>  extern int memory_notify(unsigned long val, void *v);
+> diff --git a/include/linux/node.h b/include/linux/node.h
+> index 257bb3d6d014..dddead9937ab 100644
+> --- a/include/linux/node.h
+> +++ b/include/linux/node.h
+> @@ -72,8 +72,8 @@ extern int register_cpu_under_node(unsigned int cpu, unsigned int nid);
+>  extern int unregister_cpu_under_node(unsigned int cpu, unsigned int nid);
+>  extern int register_mem_sect_under_node(struct memory_block *mem_blk,
+>  						void *arg);
+> -extern int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
+> -					   unsigned long phys_index);
+> +extern void unregister_mem_sect_under_nodes(int nid,
+> +						struct memory_block *mem_blk);
+>  
+>  #ifdef CONFIG_HUGETLBFS
+>  extern void register_hugetlbfs_with_node(node_registration_func_t doregister,
+> @@ -105,10 +105,9 @@ static inline int register_mem_sect_under_node(struct memory_block *mem_blk,
+>  {
+>  	return 0;
+>  }
+> -static inline int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
+> -						  unsigned long phys_index)
+> +static inline void unregister_mem_sect_under_nodes(int nid,
+> +						struct memory_block *mem_blk)
+>  {
+> -	return 0;
+>  }
+>  
+>  static inline void register_hugetlbfs_with_node(node_registration_func_t reg,
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 6b98321aa52f..66ccbb5b8a88 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -528,7 +528,7 @@ static int __remove_section(int nid, struct mem_section *ms,
+>  	if (!valid_section(ms))
+>  		return ret;
+>  
+> -	ret = unregister_memory_section(ms);
+> +	ret = unregister_memory_section(nid, ms);
+>  	if (ret)
+>  		return ret;
+>  
+
+
