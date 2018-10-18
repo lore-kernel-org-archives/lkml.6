@@ -2,126 +2,102 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B1CC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC5BECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:04:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CCCE21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:04:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 971FB21486
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:04:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z0UhtBYM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CCCE21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="owCL9WWq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 971FB21486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbeJRVFK (ORCPT
+        id S1727638AbeJRVFM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 17:05:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51360 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727152AbeJRVFK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 17:05:10 -0400
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEAA621479;
-        Thu, 18 Oct 2018 13:04:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539867853;
-        bh=YlwXWIYpMBQgjvWQbv4gpAodiiwd3kFNzUEwvm+XfL0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=z0UhtBYM+5gULszMkdndL8Icm8tTflpVpt0QABOjzkaULZksKVvnYx2sac2a9rVEi
-         QMV/CzjSD/zgux7MqL/sB935atMlWLPmNL8hXIhdqspPNnmRLE0GnFH8SrCDr0Gchi
-         dH3usziNN1GyVWNKFSZ6NYRhDgK/6qqs8UQzOLzY=
-Received: by mail-qk1-f175.google.com with SMTP id q184-v6so622101qkd.3;
-        Thu, 18 Oct 2018 06:04:12 -0700 (PDT)
-X-Gm-Message-State: ABuFfoiH6Fd59HGS9noXMnQIUjiYguUR3Z0LVh0rNofnBZvOZV0gPrp7
-        nG5MszoBM9si94Wxgnqw9RPDTdB7wqNQ0nt3Eg==
-X-Google-Smtp-Source: ACcGV60OyZuiaMfTarwQVk2BmwaB+TYZN9eXPLrW6OtggynukYr+/Cd+mVrFZF4bzxeTlNQC/kCQLfxOqVk/CY6QG54=
-X-Received: by 2002:a37:4dc5:: with SMTP id a188-v6mr28480649qkb.326.1539867852088;
- Thu, 18 Oct 2018 06:04:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181012142413.26107-1-benjamin.tissoires@redhat.com>
- <20181012142413.26107-4-benjamin.tissoires@redhat.com> <20181017201522.GA26525@bogus>
- <CAO-hwJ+z6YdnLdbzeh-7f99cBBjHfbLKLzKo-fQQaC_W8bt_Uw@mail.gmail.com>
-In-Reply-To: <CAO-hwJ+z6YdnLdbzeh-7f99cBBjHfbLKLzKo-fQQaC_W8bt_Uw@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 18 Oct 2018 08:04:00 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLdXEPYsK5q4J9_ZF10NJbj6_cH199zLhZ5+9oQYw9B6w@mail.gmail.com>
-Message-ID: <CAL_JsqLdXEPYsK5q4J9_ZF10NJbj6_cH199zLhZ5+9oQYw9B6w@mail.gmail.com>
-Subject: Re: [PATCH 3/5] dt-bindings: add more optional properties for
- elan_i2c touchpads
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        KT Liao <kt.liao@emc.com.tw>, linux-input@vger.kernel.org,
+        Thu, 18 Oct 2018 17:05:12 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:50725 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727152AbeJRVFL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 17:05:11 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 7491225B853;
+        Fri, 19 Oct 2018 00:04:13 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1539867854; bh=0/e++dXnhk4VqjzvYIRoLenXLXr4Ifh2wEHuGPjelpA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=owCL9WWqh0JZ8pQHZm7GtUGR6YXJWTSzSLuIyjSVaEZgu52e5OLsq9/kbxrRodJGj
+         ervVye76bB3weKHHDP4/NKrEoaMC3Mbkmoeh6cVcDi46UZQtx596F5F5/dXFWHebZ8
+         0m9YX/zIguqZCRRSuZgIvyF6yDsd6gQUYbx/1ycw=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 57D94940162; Thu, 18 Oct 2018 15:04:11 +0200 (CEST)
+Date:   Thu, 18 Oct 2018 15:04:11 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Grant Likely <glikely@secretlab.ca>,
+        Kumar Gala <kumar.gala@linaro.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 05/36] dt-bindings: arm: renesas: Move 'renesas,prr'
+ binding to its own doc
+Message-ID: <20181018130411.vbammbqqiyvmmcxo@verge.net.au>
+References: <20181005165848.3474-1-robh@kernel.org>
+ <20181005165848.3474-6-robh@kernel.org>
+ <CAMuHMdV=HaVhGf-7-21OHb05dCc0q9MDUNknAcybEiGSxATeEA@mail.gmail.com>
+ <CAL_JsqJGGRfoEb_TjZy2X9QwjfAdoxs_EB+cLNmszHOE8-OtHw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqJGGRfoEb_TjZy2X9QwjfAdoxs_EB+cLNmszHOE8-OtHw@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 3:10 AM Benjamin Tissoires
-<benjamin.tissoires@redhat.com> wrote:
->
-> On Wed, Oct 17, 2018 at 10:15 PM Rob Herring <robh@kernel.org> wrote:
+On Mon, Oct 08, 2018 at 09:59:19AM -0500, Rob Herring wrote:
+> On Mon, Oct 8, 2018 at 2:05 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 > >
-> > On Fri, Oct 12, 2018 at 04:24:11PM +0200, Benjamin Tissoires wrote:
-> > > Some new touchpads IC are connected through PS/2 and I2C. On some of these
-> > > new IC, the I2C part doesn't have all of the information available.
-> > > We need to be able to forward the touchpad parameters from PS/2 and
-> > > thus, we need those new optional properties.
+> > Hi Rob,
+> >
+> > On Fri, Oct 5, 2018 at 6:58 PM Rob Herring <robh@kernel.org> wrote:
+> > > In preparation to convert board-level bindings to json-schema, move
+> > > various misc SoC bindings out to their own file.
 > > >
-> > > Link: https://bugzilla.redhat.com/show_bug.cgi?id=1628715
-> > > Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/input/elan_i2c.txt | 8 ++++++++
-> > >  1 file changed, 8 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/input/elan_i2c.txt b/Documentation/devicetree/bindings/input/elan_i2c.txt
-> > > index 797607460735..ace6bcb0b4eb 100644
-> > > --- a/Documentation/devicetree/bindings/input/elan_i2c.txt
-> > > +++ b/Documentation/devicetree/bindings/input/elan_i2c.txt
-> > > @@ -13,6 +13,14 @@ Optional properties:
-> > >    pinctrl binding [1]).
-> > >  - vcc-supply: a phandle for the regulator supplying 3.3V power.
-> > >  - elan,trackpoint: touchpad can support a trackpoint (boolean)
-> > > +- elan,clickpad: touchpad is a clickpad (the entire surface is a button)
+> > > Cc: Mark Rutland <mark.rutland@arm.com>
+> > > Cc: Simon Horman <horms@verge.net.au>
+> > > Cc: Magnus Damm <magnus.damm@gmail.com>
+> > > Cc: devicetree@vger.kernel.org
+> > > Cc: linux-renesas-soc@vger.kernel.org
+> > > Signed-off-by: Rob Herring <robh@kernel.org>
 > >
-> > > +- elan,max_x: the maximum reported value on the X axis
-> > > +- elan,max_y: the maximum reported value on the Y axis
-> > > +- elan,min_x: the minimum reported value on the X axis
-> > > +- elan,min_y: the minimum reported value on the Y axis
-> > > +- elan,x_res: the resolution of the X axis (in units per mm)
-> > > +- elan,y_res: the resolution of the Y axis (in units per mm)
-> > > +- elan,width: max reported width of a blob
-> >
-> > Can't we use standard touchscreen properties here? (Yes, I get this is a
-> > touchpad, not touchscreen).
->
-> Hey Rob,
->
-> Well, there is that (it's a touchpad driver) and we can't also really
-> use the of_touchscreen.c implementation.
-> If both concerns are not an issue, we can then move the [min/max/res]
-> properties to the touchscreen ones.
+> > Looks good to me, but needs a rebase, as the PRR section has been extended
+> > in -next.
+> 
+> Is this something you all can apply still for 4.20?
 
-Neither is problem for me. Bindings don't have to map 1:1 to kernel code.
+Sorry, missing this until now. It was too late.
 
-> Regarding 'elan,width', this is something missing from the standard ts
-> properties, and AFAICT, this controls the maximum reported
-> width/height of a touch.
-> I should probably rename them to max_width, max_height.
-
-Sure, just use '-' rather than '_' in property names.
-
-> Hans, do you think we should add such properties to of_touchscreen.c
-> too? (the width/height ones)
->
-> Cheers,
-> Benjamin
+Shall I take it for v4.21?
