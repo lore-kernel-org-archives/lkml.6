@@ -2,161 +2,205 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B792DECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5766DC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 559972145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:08:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 559972145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 138A42145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:09:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="asBo5BoU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 138A42145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbeJRPIQ (ORCPT
+        id S1727672AbeJRPIi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 11:08:16 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:45335 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbeJRPIQ (ORCPT
+        Thu, 18 Oct 2018 11:08:38 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44619 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727519AbeJRPIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 11:08:16 -0400
-Received: by mail-oi1-f193.google.com with SMTP id e17-v6so23162190oig.12;
-        Thu, 18 Oct 2018 00:08:40 -0700 (PDT)
+        Thu, 18 Oct 2018 11:08:37 -0400
+Received: by mail-lj1-f195.google.com with SMTP id v6-v6so26668360ljc.11
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 00:09:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=T2stLgyg18MQ9p+6+t8oNvg14Su0YdeVWjL1RNVaFOE=;
+        b=asBo5BoUlydsbwdkRSJS5mm4XLmE8XjsGGKPTdk4wISXR0gaxQgsdSRnKT639AdM5c
+         BeNYyYGMt5O2DrDu9bSJYa1VQA1h+HZiHb8JQd7aOYa9avsl4t1pfE+7TTnBPdB1KYVG
+         fR6yfRgfXXmXrdZ6QdKGWlMDqf13S7Za/ZzLw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=roC9j8EstnfLJ2Q2aL3Vsdf6fGvhGS6j/JlIz5Wrufs=;
-        b=eqz59VyWha/c9aFfh3fF1vm2sDLjEW2IhZSaWaLH+r4m1js0n57GH9AMmHPcAQmB1D
-         E7UGXxLvuiVFU6yf0FKrPXXohQTZ3hhN+mVMJLawgSWG87gZobIrKkJE8jXXuI1JWtPu
-         Tuf29ryannWinfoJ59eExjuqWf7y0BnGWKjQDuwhjOrGIUudmjP7TkDIrFHxFQ1hTCG3
-         FI4kjrx5ULgm5BJiohAq+/OXBe16T3o4xo1N1d8Df5juPziYRSGNSFJfzmPU23w6iq0r
-         hb3GWE1GU52T8jKyTjZ7KOikGUkiZXL6q1DG12Il4CQmlikaPPyQEb7Tj+k8NZKnOG0o
-         Ul2A==
-X-Gm-Message-State: ABuFfogHt2kK+tEfkpDo6LyeAhMv5rZD/uruPeKQ5lP4x0qF1Ew8R+0x
-        Bqf8DMDlyZcE4ag9xIxDKZtlnyCPWy6MMS0ZKKw=
-X-Google-Smtp-Source: ACcGV60L5/21wuILvbH9oPBqlBsUmF2/KOiTwyASXSlXjFkMDZq9aqF7gpN4XdqpV+w2/d/VypYSWEvKGkNuph2G1wk=
-X-Received: by 2002:aca:e24f:: with SMTP id z76-v6mr16376439oig.95.1539846520247;
- Thu, 18 Oct 2018 00:08:40 -0700 (PDT)
+        bh=T2stLgyg18MQ9p+6+t8oNvg14Su0YdeVWjL1RNVaFOE=;
+        b=tBucwEAVqrdj8rZUdRStQhbFzhKB9jf369LwG7eWlz3PTxZi9BYjjnfB80tv1F8D0Q
+         r7KZHKWygjqFrfh3yF1+ArnPVdNrHOXsGQGaWYx4aVAiVNypL9Qyc3tUSWB2gHPKCIjB
+         b5sQnWvTTMYbN5hj9F70MWKdosGhfHAyqLBpuoQc30NnW95IAEnSEC3ORWJVq6V7Tymh
+         kbJhTTvEOfP7Ky4j7ekq6ZFB8IH5bHDv/fFV8yKjPjWYhHbFw2Vj9iUfhtVpyNSp+miA
+         Z+0J9UaAyWxL8FaUY8hFOaAYE2NWVWmd+RXq0kBKriQISmkpJtBf49LGy5MrXAPQ/qNK
+         7YGw==
+X-Gm-Message-State: AGRZ1gIvndNbsjc11nSLT1OPytyEq8OoKi468DC4KHRa5KN5NJEkWwZi
+        9Ksmp41/kou15TvRhwQbZBiZFE/PSWXha1aepUqjI5dIGRU=
+X-Google-Smtp-Source: ACcGV60h4bxxC/0tlMomkA9iR7HJaDEOYN/TYhqLEw9O7mX8xF0JRIDaBOTHhHHjd4JpTgeQ9RLPLDzfSRm1eddMZ/4=
+X-Received: by 2002:a2e:9e56:: with SMTP id g22-v6mr584134ljk.120.1539846539241;
+ Thu, 18 Oct 2018 00:08:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
- <20181010061751.GA37224@gmail.com> <5BBE1E1F.3030308@linaro.org>
- <20181016073305.GA64994@gmail.com> <5BC76181.90105@linaro.org> <20181018064849.GA42813@gmail.com>
-In-Reply-To: <20181018064849.GA42813@gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 18 Oct 2018 09:08:25 +0200
-Message-ID: <CAJZ5v0g=CnAv6HC6H68ub0KbO8Z8Fx4BtW=mjfEshNsnNX407w@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Thara Gopinath <thara.gopinath@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Zhang, Rui" <rui.zhang@intel.com>,
+Received: by 2002:a2e:8e91:0:0:0:0:0 with HTTP; Thu, 18 Oct 2018 00:08:58
+ -0700 (PDT)
+In-Reply-To: <20181018065908.254389-2-joel@joelfernandes.org>
+References: <20181018065908.254389-1-joel@joelfernandes.org> <20181018065908.254389-2-joel@joelfernandes.org>
+From:   Joel Fernandes <joel@joelfernandes.org>
+Date:   Thu, 18 Oct 2018 00:08:58 -0700
+Message-ID: <CAEXW_YTDWgY3JAeiY0Ti0BBL=iJMcSkR5V7USJYv6UxHiCpN-g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] selftests/memfd: Add tests for F_SEAL_FS_WRITE seal
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     kernel-team <kernel-team@android.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Daniel Colascione <dancol@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kachhap <amit.kachhap@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Javi Merino <javi.merino@kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        ionela.voinescu@arm.com,
-        Vincent Guittot <vincent.guittot@linaro.org>
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        John Reck <jreck@google.com>, linux-fsdevel@vger.kernel.org,
+        linux-kselftest <linux-kselftest@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, marcandre.lureau@redhat.com,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 8:48 AM Ingo Molnar <mingo@kernel.org> wrote:
->
->
-> * Thara Gopinath <thara.gopinath@linaro.org> wrote:
->
-> > On 10/16/2018 03:33 AM, Ingo Molnar wrote:
-> > >
-> > > * Thara Gopinath <thara.gopinath@linaro.org> wrote:
-> > >
-> > >>>> Regarding testing, basic build, boot and sanity testing have been
-> > >>>> performed on hikey960 mainline kernel with debian file system.
-> > >>>> Further aobench (An occlusion renderer for benchmarking realworld
-> > >>>> floating point performance) showed the following results on hikey960
-> > >>>> with debain.
-> > >>>>
-> > >>>>                                         Result          Standard        Standard
-> > >>>>                                         (Time secs)     Error           Deviation
-> > >>>> Hikey 960 - no thermal pressure applied 138.67          6.52            11.52%
-> > >>>> Hikey 960 -  thermal pressure applied   122.37          5.78            11.57%
-> > >>>
-> > >>> Wow, +13% speedup, impressive! We definitely want this outcome.
-> > >>>
-> > >>> I'm wondering what happens if we do not track and decay the thermal
-> > >>> load at all at the PELT level, but instantaneously decrease/increase
-> > >>> effective CPU capacity in reaction to thermal events we receive from
-> > >>> the CPU.
-> > >>
-> > >> The problem with instantaneous update is that sometimes thermal events
-> > >> happen at a much faster pace than cpu_capacity is updated in the
-> > >> scheduler. This means that at the moment when scheduler uses the
-> > >> value, it might not be correct anymore.
-> > >
-> > > Let me offer a different interpretation: if we average throttling events
-> > > then we create a 'smooth' average of 'true CPU capacity' that doesn't
-> > > fluctuate much. This allows more stable yet asymmetric task placement if
-> > > the thermal characteristics of the different cores is different
-> > > (asymmetric). This, compared to instantaneous updates, would reduce
-> > > unnecessary task migrations between cores.
-> > >
-> > > Is that accurate?
-> >
-> > Yes. I think it is accurate. I will also add that if we don't average
-> > throttling events, we will miss the events that occur in between load
-> > balancing(LB) period.
->
-> Yeah, so I'd definitely suggest to not integrate this averaging into
-> pelt.c in the fashion presented, because:
->
->  - This couples your thermal throttling averaging to the PELT decay
->    half-time AFAICS, which would break the other user every time the
->    decay is changed/tuned.
->
->  - The boolean flag that changes behavior in pelt.c is not particularly
->    clean either and complicates the code.
->
->  - Instead maybe factor out a decaying average library into
->    kernel/sched/avg.h perhaps (if this truly improves the code), and use
->    those methods both in pelt.c and any future thermal.c - and maybe
->    other places where we do decaying averages.
->
->  - But simple decaying averages are not that complex either, so I think
->    your original solution of open coding it is probably fine as well.
->
-> Furthermore, any logic introduced by thermal.c and the resulting change
-> to load-balancing behavior would have to be in perfect sync with cpufreq
-> governor actions - one mechanism should not work against the other.
+On Wed, Oct 17, 2018 at 11:59 PM, Joel Fernandes (Google)
+<joel@joelfernandes.org> wrote:
+> Add tests to verify sealing memfds with the F_SEAL_FS_WRITE works as
+> expected.
 
-Right, that really is required.
+I messed the commit message it should be "F_SEAL_FUTURE_WRITE", but
+otherwise this
+patch itself is good and I'll resend it with the corrected commit
+message after further review.
 
-> The only long term maintainable solution is to move all high level
-> cpufreq logic and policy handling code into kernel/sched/cpufreq*.c,
-> which has been done to a fair degree already in the past ~2 years - but
-> it's unclear to me to what extent this is true for thermal throttling
-> policy currently: there might be more governor surgery and code
-> reshuffling required?
+thanks,
 
-It doesn't cover thermal management directly ATM.
+ - Joel
 
-The EAS work kind of hopes to make a connection in there by adding a
-common energy model to underlie both the performance scaling and
-thermal management, but it doesn't change the thermal decision making
-part AFAICS.
 
-So it is fair to say that additional governor surgery and code
-reshuffling will be required IMO.
 
-Thanks,
-Rafael
+> Cc: dancol@google.com
+> Cc: minchan@kernel.org
+> Reviewed-by: John Stultz <john.stultz@linaro.org>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+>  tools/testing/selftests/memfd/memfd_test.c | 74 ++++++++++++++++++++++
+>  1 file changed, 74 insertions(+)
+>
+> diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
+> index 10baa1652fc2..32b207ca7372 100644
+> --- a/tools/testing/selftests/memfd/memfd_test.c
+> +++ b/tools/testing/selftests/memfd/memfd_test.c
+> @@ -692,6 +692,79 @@ static void test_seal_write(void)
+>         close(fd);
+>  }
+>
+> +/*
+> + * Test SEAL_FUTURE_WRITE
+> + * Test whether SEAL_FUTURE_WRITE actually prevents modifications.
+> + */
+> +static void test_seal_future_write(void)
+> +{
+> +       int fd;
+> +       void *p;
+> +
+> +       printf("%s SEAL-FUTURE-WRITE\n", memfd_str);
+> +
+> +       fd = mfd_assert_new("kern_memfd_seal_future_write",
+> +                           mfd_def_size,
+> +                           MFD_CLOEXEC | MFD_ALLOW_SEALING);
+> +
+> +       p = mfd_assert_mmap_shared(fd);
+> +
+> +       mfd_assert_has_seals(fd, 0);
+> +       /* Not adding grow/shrink seals makes the future write
+> +        * seal fail to get added
+> +        */
+> +       mfd_fail_add_seals(fd, F_SEAL_FUTURE_WRITE);
+> +
+> +       mfd_assert_add_seals(fd, F_SEAL_GROW);
+> +       mfd_assert_has_seals(fd, F_SEAL_GROW);
+> +
+> +       /* Should still fail since shrink seal has
+> +        * not yet been added
+> +        */
+> +       mfd_fail_add_seals(fd, F_SEAL_FUTURE_WRITE);
+> +
+> +       mfd_assert_add_seals(fd, F_SEAL_SHRINK);
+> +       mfd_assert_has_seals(fd, F_SEAL_GROW |
+> +                                F_SEAL_SHRINK);
+> +
+> +       /* Now should succeed, also verifies that the seal
+> +        * could be added with an existing writable mmap
+> +        */
+> +       mfd_assert_add_seals(fd, F_SEAL_FUTURE_WRITE);
+> +       mfd_assert_has_seals(fd, F_SEAL_SHRINK |
+> +                                F_SEAL_GROW |
+> +                                F_SEAL_FUTURE_WRITE);
+> +
+> +       /* read should pass, writes should fail */
+> +       mfd_assert_read(fd);
+> +       mfd_fail_write(fd);
+> +
+> +       munmap(p, mfd_def_size);
+> +       close(fd);
+> +
+> +       /* Test adding all seals (grow, shrink, future write) at once */
+> +       fd = mfd_assert_new("kern_memfd_seal_future_write2",
+> +                           mfd_def_size,
+> +                           MFD_CLOEXEC | MFD_ALLOW_SEALING);
+> +
+> +       p = mfd_assert_mmap_shared(fd);
+> +
+> +       mfd_assert_has_seals(fd, 0);
+> +       mfd_assert_add_seals(fd, F_SEAL_SHRINK |
+> +                                F_SEAL_GROW |
+> +                                F_SEAL_FUTURE_WRITE);
+> +       mfd_assert_has_seals(fd, F_SEAL_SHRINK |
+> +                                F_SEAL_GROW |
+> +                                F_SEAL_FUTURE_WRITE);
+> +
+> +       /* read should pass, writes should fail */
+> +       mfd_assert_read(fd);
+> +       mfd_fail_write(fd);
+> +
+> +       munmap(p, mfd_def_size);
+> +       close(fd);
+> +}
+> +
+>  /*
+>   * Test SEAL_SHRINK
+>   * Test whether SEAL_SHRINK actually prevents shrinking
+> @@ -945,6 +1018,7 @@ int main(int argc, char **argv)
+>         test_basic();
+>
+>         test_seal_write();
+> +       test_seal_future_write();
+>         test_seal_shrink();
+>         test_seal_grow();
+>         test_seal_resize();
+> --
+> 2.19.1.331.ge82ca0e54c-goog
+>
