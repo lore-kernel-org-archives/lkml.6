@@ -2,174 +2,107 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 511EAC67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D01FC67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED6D52098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:55:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB1152098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:58:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iIhdb1wb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED6D52098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="LFEgt4kW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB1152098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbeJSF64 (ORCPT
+        id S1726916AbeJSGBU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 01:58:56 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34822 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725751AbeJSF64 (ORCPT
+        Fri, 19 Oct 2018 02:01:20 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35284 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725751AbeJSGBT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 01:58:56 -0400
-Received: by mail-wr1-f66.google.com with SMTP id w5-v6so35285705wrt.2;
-        Thu, 18 Oct 2018 14:55:55 -0700 (PDT)
+        Fri, 19 Oct 2018 02:01:19 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 32-v6so3632913pgu.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 14:58:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cedI6L2HxLnFCqRXETI1zk9gDFuUv7bXrQNvp4RiQ2k=;
-        b=iIhdb1wbNUESeJRJ5i9wPxodlXitd8E0C6XCpRxA0qJsipyNbtIX5ajGZAQr/xjZbm
-         RvaUxXNgj/WWIG2zkKsGHPuJ7J+uEDONEj/pHAQVGrjuMjsgG3enVJ056rhZD9XDYL7s
-         ewDjKuL9TUpWrah5ajjTUqW0ZE0xp5nFDHDcC/g7IveRR7XCfDmPWJDijQKEmQ/LZC5b
-         O4wzdOa6useRagCHMZXUB8vj8b6svtJUAjBzckDC06tyMGPHTs/PST7LOuGhOT9Yssl2
-         c8/Wf/X839pWXbppm0XvF66f3Kn6DHb98y1jvGSzCdnqkcFJ/QrU2+gjUiapDwbZRPZD
-         ugBQ==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=SsYQRzp9Y9EowT8w7pXhhEuLE3rv1uvmE5mK6UjAHX4=;
+        b=LFEgt4kWmUU8PY5PsG9zKbLqmOuqBHag/W6JD4WhjNvwLCVRbSWNV9vrEun7ECJmuH
+         Z1cP7+cmjCSXoWYadbRcaCQJX5sUOoqoXKsbqYSpdSiDMVqTJzakVNBa9jOXfuaBpB8H
+         3kKIjFn1k8cZ83r94YsUkvz95mnXamfQ2qZRwbu97c6loX6OkoTd+zL6ctoT1BF9q91Z
+         ZLJoW/SHI7G7brvUq+ZTvUzvcxjHul+pDe7TuZOjVZEJJLgeO8rO9eILZ7o4onILigbF
+         CKerPs1ZMvUU8txQzP/1T55FtOoZH+9/PWZR5kYvFRrBHhSXyZwFoVWXlldb++m24tDw
+         wHRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cedI6L2HxLnFCqRXETI1zk9gDFuUv7bXrQNvp4RiQ2k=;
-        b=CqExqeLTiGVlctNvvq2ga63QVG/iRfna9fjPMfkrBfAYSy83xRd1mTXNb0Uv/CwCA2
-         CywBF+OnyDYF2onSen2pjLTIBCbjUCAXe5guxSSuyyzjxYfRlOyrMciSXKTHNJpZzKQ6
-         0Qjy3Wv8NvaO1t6jl9ez3+rDfaYKxO28xCc8TKj8aOI0zoOMbNC5hUABWvWExeSlKh0K
-         2tr518MTAE95L3pMLR5m3pqRwo+10c45XHWdTE31e6P8ukFesJrtjzufVInIvolkOAwK
-         NPE5jcmg1eUrK7eD7hhGtcz6LxmncQR8arxikgaQ2Mg+rF1Cs88G8Un6WJg2m79PMuq3
-         P6Qg==
-X-Gm-Message-State: ABuFfoiWLmkkQT9JkVd6USzYpd+hY9ZOSqHDIXFluoX3PbxavgarAOcf
-        jIQkQgKaEkUmYioYGXKphkQCEXw9J8suPg==
-X-Google-Smtp-Source: ACcGV63b1ubYawNDa3pdlLkkwra0/iUoIzdlpyIheIXdwYfl0QLhmw3PQaYEmAQpZZ7RfQOYfxoMZg==
-X-Received: by 2002:adf:eb03:: with SMTP id s3-v6mr31954811wrn.281.1539899753948;
-        Thu, 18 Oct 2018 14:55:53 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id c24-v6sm34468140wre.44.2018.10.18.14.55.53
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=SsYQRzp9Y9EowT8w7pXhhEuLE3rv1uvmE5mK6UjAHX4=;
+        b=JaoFMsOM5vXlFFesDgEZYKKizcBq8VDlH2F0ZNIhbvC2+HeRQa9iNFS5txrWXI5VJE
+         AiMSFwz8PgKeoN6dgJYaohxuVfiimFSX3Qw9RWC+fo55Ish5CTpYR6OEmJfnUZ6c9a4r
+         usH9YRTwujgTyCaTMK/KqwUcsg5p4fE18gAY/nXZFTDkpxN7arQiAo6OTGjcdhxV/Nn1
+         zN1SjYtb6rV0/NDTVNx9akyKIsQxwxHxct74srQq559rVmbFUEOkMtrakaxU7NZUF5w1
+         gntRggNucZBzksZ4OBiTr4SEO7qOxtQYcCCYUyaM7sHY6LpXS16rX1i4tfkvAYRq5O+X
+         xHlA==
+X-Gm-Message-State: ABuFfoiuR3Bv2Fx/6eNWvelbljzbdQJ8wPP7gaEM6S3I2Wv0VPr6wdde
+        NJuL+3H7PQY8dzAtT2OoAewh2w==
+X-Google-Smtp-Source: ACcGV62TW2+Il+9/RT1R3OuJSCD+h+MIImONiMgB2iis2GimU61wPkmi36TeeRkxrvDCox94WYGpHw==
+X-Received: by 2002:a63:5c1f:: with SMTP id q31-v6mr30199432pgb.452.1539899898835;
+        Thu, 18 Oct 2018 14:58:18 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b055:c039:8d1c:3674:f40d:d2a1? ([2600:1010:b055:c039:8d1c:3674:f40d:d2a1])
+        by smtp.gmail.com with ESMTPSA id s13-v6sm45568514pgs.76.2018.10.18.14.58.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 14:55:53 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Adam Radford <aradford@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] scsi: 3w-{sas,9xxx}: Use unsigned char for cdb
-Date:   Thu, 18 Oct 2018 14:55:41 -0700
-Message-Id: <20181018215541.4768-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 18 Oct 2018 14:58:17 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 05/11] x86/fpu: set PKRU state for kernel threads
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A366)
+In-Reply-To: <20181018212421.ndjtawc34cqdycyy@linutronix.de>
+Date:   Thu, 18 Oct 2018 14:58:16 -0700
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A6DB636D-0021-48A4-98C5-7F4B3DFC98D2@amacapital.net>
+References: <20181004140547.13014-1-bigeasy@linutronix.de> <20181004140547.13014-6-bigeasy@linutronix.de> <39e0a55f-4920-cfde-9bef-09c51109d211@linux.intel.com> <CALCETrUdxsFA5g0M9uRFktfdi=mxK_g3kBfs-VxwDZ0xWqjFAQ@mail.gmail.com> <20181018162644.qqjkzoqn2fleyi2b@linutronix.de> <CC7B46F7-7A6E-4CAF-A1EB-91271CC7B092@amacapital.net> <20181018182538.vgotfpsdy7qxl2tg@linutronix.de> <CALCETrVjEOkNhdyAF10PaYi_rnFUWKRqPhLRCq3ZV=gxQFETxg@mail.gmail.com> <aedef390-2fb1-8c09-3a69-53d3fd0505da@linux.intel.com> <20181018212421.ndjtawc34cqdycyy@linutronix.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns a few times:
 
-drivers/scsi/3w-sas.c:386:11: warning: implicit conversion from 'int' to
-'char' changes value from 128 to -128 [-Wconstant-conversion]
-        cdb[4] = TW_ALLOCATION_LENGTH; /* allocation length */
-               ~ ^~~~~~~~~~~~~~~~~~~~
 
-Update cdb's type to unsigned char, which matches the type of the cdb
-member in struct TW_Command_Apache.
+> On Oct 18, 2018, at 2:24 PM, Sebastian Andrzej Siewior <bigeasy@linutronix=
+.de> wrote:
+>=20
+> On 2018-10-18 13:56:24 [-0700], Dave Hansen wrote:
+>>> But this is not the only loophole: There is ptrace interface which is
+>>> used by gdb (just checked) and also bypasses PKRU. So=E2=80=A6
+>>=20
+>> Bypassing protection keys is not a big deal IMNHO.  In places where a
+>> sane one is not readily available, I'm totally fine with just
+>> effectively disabling it (PKRU=3D0) for the length of time it isn't avail=
+able.
+>=20
+> Okay, this makes things easier. Let document that for kernel threads we
+> use PKRU=3D0. This should be happening in my try right now. I double check=
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/158
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/scsi/3w-9xxx.c | 12 ++++++++----
- drivers/scsi/3w-sas.c  |  8 +++++---
- 2 files changed, 13 insertions(+), 7 deletions(-)
+> tomorrow just in case=E2=80=A6
+>=20
+>=20
 
-diff --git a/drivers/scsi/3w-9xxx.c b/drivers/scsi/3w-9xxx.c
-index 05293babb031..2d655a97b959 100644
---- a/drivers/scsi/3w-9xxx.c
-+++ b/drivers/scsi/3w-9xxx.c
-@@ -143,7 +143,9 @@ static int twa_poll_status_gone(TW_Device_Extension *tw_dev, u32 flag, int secon
- static int twa_post_command_packet(TW_Device_Extension *tw_dev, int request_id, char internal);
- static int twa_reset_device_extension(TW_Device_Extension *tw_dev);
- static int twa_reset_sequence(TW_Device_Extension *tw_dev, int soft_reset);
--static int twa_scsiop_execute_scsi(TW_Device_Extension *tw_dev, int request_id, char *cdb, int use_sg, TW_SG_Entry *sglistarg);
-+static int twa_scsiop_execute_scsi(TW_Device_Extension *tw_dev, int request_id,
-+				   unsigned char *cdb, int use_sg,
-+				   TW_SG_Entry *sglistarg);
- static void twa_scsiop_execute_scsi_complete(TW_Device_Extension *tw_dev, int request_id);
- static char *twa_string_lookup(twa_message_type *table, unsigned int aen_code);
- 
-@@ -278,7 +280,7 @@ static int twa_aen_complete(TW_Device_Extension *tw_dev, int request_id)
- static int twa_aen_drain_queue(TW_Device_Extension *tw_dev, int no_check_reset)
- {
- 	int request_id = 0;
--	char cdb[TW_MAX_CDB_LEN];
-+	unsigned char cdb[TW_MAX_CDB_LEN];
- 	TW_SG_Entry sglist[1];
- 	int finished = 0, count = 0;
- 	TW_Command_Full *full_command_packet;
-@@ -423,7 +425,7 @@ static void twa_aen_queue_event(TW_Device_Extension *tw_dev, TW_Command_Apache_H
- /* This function will read the aen queue from the isr */
- static int twa_aen_read_queue(TW_Device_Extension *tw_dev, int request_id)
- {
--	char cdb[TW_MAX_CDB_LEN];
-+	unsigned char cdb[TW_MAX_CDB_LEN];
- 	TW_SG_Entry sglist[1];
- 	TW_Command_Full *full_command_packet;
- 	int retval = 1;
-@@ -1798,7 +1800,9 @@ static int twa_scsi_queue_lck(struct scsi_cmnd *SCpnt, void (*done)(struct scsi_
- static DEF_SCSI_QCMD(twa_scsi_queue)
- 
- /* This function hands scsi cdb's to the firmware */
--static int twa_scsiop_execute_scsi(TW_Device_Extension *tw_dev, int request_id, char *cdb, int use_sg, TW_SG_Entry *sglistarg)
-+static int twa_scsiop_execute_scsi(TW_Device_Extension *tw_dev, int request_id,
-+				   unsigned char *cdb, int use_sg,
-+				   TW_SG_Entry *sglistarg)
- {
- 	TW_Command_Full *full_command_packet;
- 	TW_Command_Apache *command_packet;
-diff --git a/drivers/scsi/3w-sas.c b/drivers/scsi/3w-sas.c
-index 266bdac75304..480cf82700e9 100644
---- a/drivers/scsi/3w-sas.c
-+++ b/drivers/scsi/3w-sas.c
-@@ -287,7 +287,9 @@ static int twl_post_command_packet(TW_Device_Extension *tw_dev, int request_id)
- } /* End twl_post_command_packet() */
- 
- /* This function hands scsi cdb's to the firmware */
--static int twl_scsiop_execute_scsi(TW_Device_Extension *tw_dev, int request_id, char *cdb, int use_sg, TW_SG_Entry_ISO *sglistarg)
-+static int twl_scsiop_execute_scsi(TW_Device_Extension *tw_dev, int request_id,
-+				   unsigned char *cdb, int use_sg,
-+				   TW_SG_Entry_ISO *sglistarg)
- {
- 	TW_Command_Full *full_command_packet;
- 	TW_Command_Apache *command_packet;
-@@ -372,7 +374,7 @@ static int twl_scsiop_execute_scsi(TW_Device_Extension *tw_dev, int request_id,
- /* This function will read the aen queue from the isr */
- static int twl_aen_read_queue(TW_Device_Extension *tw_dev, int request_id)
- {
--	char cdb[TW_MAX_CDB_LEN];
-+	unsigned char cdb[TW_MAX_CDB_LEN];
- 	TW_SG_Entry_ISO sglist[1];
- 	TW_Command_Full *full_command_packet;
- 	int retval = 1;
-@@ -554,7 +556,7 @@ static int twl_poll_response(TW_Device_Extension *tw_dev, int request_id, int se
- static int twl_aen_drain_queue(TW_Device_Extension *tw_dev, int no_check_reset)
- {
- 	int request_id = 0;
--	char cdb[TW_MAX_CDB_LEN];
-+	unsigned char cdb[TW_MAX_CDB_LEN];
- 	TW_SG_Entry_ISO sglist[1];
- 	int finished = 0, count = 0;
- 	TW_Command_Full *full_command_packet;
--- 
-2.19.1
-
+If you document that, please at least document that it=E2=80=99s a bug and n=
+ot intended behavior.=
