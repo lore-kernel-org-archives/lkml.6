@@ -2,229 +2,131 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B3BECDE42
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 00:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBFBEECDE3D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 00:36:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F720208E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 00:29:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B77621470
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 00:36:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FVYX7AFa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F720208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/xntCYl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B77621470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbeJRI1m (ORCPT
+        id S1727266AbeJRIfH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 04:27:42 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38851 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726644AbeJRI1m (ORCPT
+        Thu, 18 Oct 2018 04:35:07 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:32827 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726644AbeJRIfH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 04:27:42 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f8-v6so13312847pgq.5
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 17:29:27 -0700 (PDT)
+        Thu, 18 Oct 2018 04:35:07 -0400
+Received: by mail-ot1-f65.google.com with SMTP id q50so28135009otd.0;
+        Wed, 17 Oct 2018 17:36:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=rPFHxFk4mPW7FWIaPD3tahDvarHk0+RFbX/QhbVt4k4=;
-        b=FVYX7AFaQSN1D0uGR5ANjrmwM2/IVJdmMYZFFusdUlF3/rObs3RZl8vet43ei+TD0J
-         d5hqH9AqLopsWOFKBsnzmcAaQHz1JlY36budf++c8rwfg4i7pxEi3eKmSy7cDvf/HsPR
-         32bX0b86L0YT59o+9GgszraFkDqJsg+4SOUlI=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=2PL4hFv0GE0rxeKh7sQXxDq7sromb5wbNNXMy5vuzHs=;
+        b=S/xntCYlsnBxx9ryB/NsyXw8/oeDFgHzNVK+lJ++0/5MDJX78G6W/Z3wZRYuLqUggR
+         aDHKL7i4ISJx7cVLZETciX4DjXAljjDwESPHkbY1guZe2lErTqPvvYDeO++P3xz0gsgI
+         bFrAIyLEMpuwnybAuGFr5s/CIeFCFKPL1eT9eFuNC3PGYu92S5BHDpxT/vLd+N+tzgPS
+         ZEfQhV2ZeSOdiXaRcr3QOL/7TlI7gS2nE9cXfMW6h0PkaOPk46QaPY3ZhLUUjgeQ6FFU
+         emO45VWYHEpN4gV1pmf12hLTIuwTA0c6HrZtO6gH9I5HD2geF6nXsymX3+o/0XbxluHx
+         k9eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=rPFHxFk4mPW7FWIaPD3tahDvarHk0+RFbX/QhbVt4k4=;
-        b=LUgv/WYqXgEqpW6ZwX4HdymfNJsn5u8glAhSG+PMJMClAtK/2ZruwVVhIwBww1N/iX
-         PjntSBYjLSwsyx24TfJelOBHaBx0K3ygvFMKL34itZdOUXPiBVafcQgKFT96OHOdwmye
-         0UX576v5T/JUPkZtOMzz60DosELcycb8ezzutPT8780nbu5yv7SQ4bJ9+HlyYVTMbTDh
-         wrn6K1PXUYAKtWg7uXEbQdTjmTK7OcF9joc/k1hqBu4nlR2GZdRketNhJscZ1KOXZmN+
-         kbS6UEn1rjx7vPX5kcGVqzUx9dNIMvZELcHWVHGso0RpEpf8eEmAlvNO93DeAkxw2YLY
-         mh7A==
-X-Gm-Message-State: ABuFfoiYMdwRqfbuGzCpVOOAAlpJvyv2TiiwEHp7vFEgHDcxsq4KEZRE
-        YcOlyLG45Z3GBP/qp8uZynK2Ng==
-X-Google-Smtp-Source: ACcGV61QrG1+fQlewBi96P89Z0w2l+DyG0AXmI7Bb+tt/toCFk8IOuOgASQOe6XEmXqFJgAN6+IUkg==
-X-Received: by 2002:a63:3642:: with SMTP id d63-v6mr26068721pga.404.1539822567036;
-        Wed, 17 Oct 2018 17:29:27 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm18977102pgo.90.2018.10.17.17.29.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 17:29:25 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 17:29:24 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: [PATCH] pstore/ram: Clarify resource reservation labels
-Message-ID: <20181018002924.GA42803@beast>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=2PL4hFv0GE0rxeKh7sQXxDq7sromb5wbNNXMy5vuzHs=;
+        b=HQwRmoVTkxE84IXN7sQgyyxG9P6q4/6jvbg2OqskLyc8DYYmyP/mRSytlWYj28Q039
+         LL7C6YQFGJSnBD0EMRpUU1N1lb1ZyTdgo/5igMk2pzzGuSRYO6z1c8Ow2HQnlsScThT2
+         iUQX3+GOHI46qCrT2ymnJxdJsvT3vYnFV6BBP4S6WZZgLOITlYAE0xnrUIUsy35PuVvZ
+         yDw7L4ygd2g4y54JDQr9EaT5fy9Jox+S4IRHn0yyWLv2Q1i3+7dFpTNtPijTu/NlisOm
+         b9AN7kO+4sGozED2UB9ZcYeH2RuI4696fgpkR7ZWonnsasATXFalCd0xXA5bMEv5NPXT
+         7IJw==
+X-Gm-Message-State: ABuFfojh0hGnKNHSYfSfQ+Bm3B2PEWFT2pKdmR8BdvgZfbSutw8A5C0Y
+        0M4I29ZwhPGN9ErbN2CYizWg9gHrVqK0Y0JbIm0=
+X-Google-Smtp-Source: ACcGV60wK2GlJAtKjrrhDq/F4nTMgUrY2dHq23I+QsS2sJjl8gjSc+d2iweWHHphjHR+rqktxVUwMQzeIXNVqBlMK/A=
+X-Received: by 2002:a9d:2568:: with SMTP id j37mr19054980otd.263.1539823010099;
+ Wed, 17 Oct 2018 17:36:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20181017000809.GA21292@WindFlash> <20181017081115.GA22535@zn.tnic>
+ <CAK7LNASVn7CB5uL9tCtNC2u4Ary5eb-vyiB_sS2ey5AZNweKAA@mail.gmail.com>
+In-Reply-To: <CAK7LNASVn7CB5uL9tCtNC2u4Ary5eb-vyiB_sS2ey5AZNweKAA@mail.gmail.com>
+From:   Leonardo Bras <leobras.c@gmail.com>
+Date:   Wed, 17 Oct 2018 21:36:38 -0300
+Message-ID: <CADvQ+rGVLG85p82O-joY6yU4maMdP0RsyJr-JGPNCrfjy4-WbA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] Adds -Wshadow=local on KBUILD_HOSTCFLAGS
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Borislav Petkov <bp@alien8.de>, lkcamp@lists.libreplanetbr.org,
+        Matthew Wilcox <willy6545@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When ramoops reserved a memory region in the kernel, it had an unhelpful
-label of "persistent_memory". When reading /proc/iomem, it would be
-repeated many times, did not hint that it was ramoops in particular,
-and didn't clarify very much about what each was used for:
-
-400000000-407ffffff : Persistent Memory (legacy)
-  400000000-400000fff : persistent_memory
-  400001000-400001fff : persistent_memory
-...
-  4000ff000-4000fffff : persistent_memory
-
-Instead, this adds meaningful labels for how the various regions are
-being used:
-
-400000000-407ffffff : Persistent Memory (legacy)
-  400000000-400000fff : ramoops:dump(0/252)
-  400001000-400001fff : ramoops:dump(1/252)
-...
-  4000fc000-4000fcfff : ramoops:dump(252/252)
-  4000fd000-4000fdfff : ramoops:console
-  4000fe000-4000fe3ff : ramoops:ftrace(0/3)
-  4000fe400-4000fe7ff : ramoops:ftrace(1/3)
-  4000fe800-4000febff : ramoops:ftrace(2/3)
-  4000fec00-4000fefff : ramoops:ftrace(3/3)
-  4000ff000-4000fffff : ramoops:pmsg
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- fs/pstore/ram.c            | 16 +++++++++++++---
- fs/pstore/ram_core.c       | 11 +++++++----
- include/linux/pstore_ram.h |  3 ++-
- 3 files changed, 22 insertions(+), 8 deletions(-)
-
-diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-index 6ea9cd801044..ffcff6516e89 100644
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -587,9 +587,16 @@ static int ramoops_init_przs(const char *name,
- 		goto fail;
- 
- 	for (i = 0; i < *cnt; i++) {
-+		char *label;
-+
-+		if (*cnt == 1)
-+			label = kasprintf(GFP_KERNEL, "ramoops:%s", name);
-+		else
-+			label = kasprintf(GFP_KERNEL, "ramoops:%s(%d/%d)",
-+					  name, i, *cnt - 1);
- 		prz_ar[i] = persistent_ram_new(*paddr, zone_sz, sig,
--						  &cxt->ecc_info,
--						  cxt->memtype, flags);
-+					       &cxt->ecc_info,
-+					       cxt->memtype, flags, label);
- 		if (IS_ERR(prz_ar[i])) {
- 			err = PTR_ERR(prz_ar[i]);
- 			dev_err(dev, "failed to request %s mem region (0x%zx@0x%llx): %d\n",
-@@ -619,6 +626,8 @@ static int ramoops_init_prz(const char *name,
- 			    struct persistent_ram_zone **prz,
- 			    phys_addr_t *paddr, size_t sz, u32 sig)
- {
-+	char *label;
-+
- 	if (!sz)
- 		return 0;
- 
-@@ -629,8 +638,9 @@ static int ramoops_init_prz(const char *name,
- 		return -ENOMEM;
- 	}
- 
-+	label = kasprintf(GFP_KERNEL, "ramoops:%s", name);
- 	*prz = persistent_ram_new(*paddr, sz, sig, &cxt->ecc_info,
--				  cxt->memtype, 0);
-+				  cxt->memtype, 0, label);
- 	if (IS_ERR(*prz)) {
- 		int err = PTR_ERR(*prz);
- 
-diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
-index 0792595ebcfb..12e21f789194 100644
---- a/fs/pstore/ram_core.c
-+++ b/fs/pstore/ram_core.c
-@@ -438,11 +438,11 @@ static void *persistent_ram_vmap(phys_addr_t start, size_t size,
- }
- 
- static void *persistent_ram_iomap(phys_addr_t start, size_t size,
--		unsigned int memtype)
-+		unsigned int memtype, char *label)
- {
- 	void *va;
- 
--	if (!request_mem_region(start, size, "persistent_ram")) {
-+	if (!request_mem_region(start, size, label ?: "ramoops")) {
- 		pr_err("request mem region (0x%llx@0x%llx) failed\n",
- 			(unsigned long long)size, (unsigned long long)start);
- 		return NULL;
-@@ -470,7 +470,8 @@ static int persistent_ram_buffer_map(phys_addr_t start, phys_addr_t size,
- 	if (pfn_valid(start >> PAGE_SHIFT))
- 		prz->vaddr = persistent_ram_vmap(start, size, memtype);
- 	else
--		prz->vaddr = persistent_ram_iomap(start, size, memtype);
-+		prz->vaddr = persistent_ram_iomap(start, size, memtype,
-+						  prz->label);
- 
- 	if (!prz->vaddr) {
- 		pr_err("%s: Failed to map 0x%llx pages at 0x%llx\n", __func__,
-@@ -541,12 +542,13 @@ void persistent_ram_free(struct persistent_ram_zone *prz)
- 	prz->ecc_info.par = NULL;
- 
- 	persistent_ram_free_old(prz);
-+	kfree(prz->label);
- 	kfree(prz);
- }
- 
- struct persistent_ram_zone *persistent_ram_new(phys_addr_t start, size_t size,
- 			u32 sig, struct persistent_ram_ecc_info *ecc_info,
--			unsigned int memtype, u32 flags)
-+			unsigned int memtype, u32 flags, char *label)
- {
- 	struct persistent_ram_zone *prz;
- 	int ret = -ENOMEM;
-@@ -560,6 +562,7 @@ struct persistent_ram_zone *persistent_ram_new(phys_addr_t start, size_t size,
- 	/* Initialize general buffer state. */
- 	raw_spin_lock_init(&prz->buffer_lock);
- 	prz->flags = flags;
-+	prz->label = label;
- 
- 	ret = persistent_ram_buffer_map(start, size, prz, memtype);
- 	if (ret)
-diff --git a/include/linux/pstore_ram.h b/include/linux/pstore_ram.h
-index e6d226464838..602d64725222 100644
---- a/include/linux/pstore_ram.h
-+++ b/include/linux/pstore_ram.h
-@@ -46,6 +46,7 @@ struct persistent_ram_zone {
- 	phys_addr_t paddr;
- 	size_t size;
- 	void *vaddr;
-+	char *label;
- 	struct persistent_ram_buffer *buffer;
- 	size_t buffer_size;
- 	u32 flags;
-@@ -65,7 +66,7 @@ struct persistent_ram_zone {
- 
- struct persistent_ram_zone *persistent_ram_new(phys_addr_t start, size_t size,
- 			u32 sig, struct persistent_ram_ecc_info *ecc_info,
--			unsigned int memtype, u32 flags);
-+			unsigned int memtype, u32 flags, char *label);
- void persistent_ram_free(struct persistent_ram_zone *prz);
- void persistent_ram_zap(struct persistent_ram_zone *prz);
- 
--- 
-2.17.1
+On Wed, Oct 17, 2018 at 5:21 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> On Wed, Oct 17, 2018 at 5:11 PM Borislav Petkov <bp@alien8.de> wrote:
+> >
+> > On Tue, Oct 16, 2018 at 09:08:09PM -0300, Leonardo Br=C3=A1s wrote:
+> > > Adds -Wshadow=3Dlocal on KBUILD_HOSTCFLAGS to show shadow warnings
+> > > on tools built for HOST.
+> > >
+> > > Signed-off-by: Leonardo Br=C3=A1s <leobras.c@gmail.com>
+> > > ---
+> > >  Makefile | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/Makefile b/Makefile
+> > > index e8b599b4dcde..fb0a9ac195e7 100644
+> > > --- a/Makefile
+> > > +++ b/Makefile
+> > > @@ -360,7 +360,7 @@ HOST_LFS_LIBS :=3D $(shell getconf LFS_LIBS 2>/de=
+v/null)
+> > >
+> > >  HOSTCC       =3D gcc
+> > >  HOSTCXX      =3D g++
+> > > -KBUILD_HOSTCFLAGS   :=3D -Wall -Wmissing-prototypes -Wstrict-prototy=
+pes -O2 \
+> > > +KBUILD_HOSTCFLAGS   :=3D -Wall -Wshadow=3Dlocal -Wmissing-prototypes=
+ -Wstrict-prototypes -O2 \
+> > >               -fomit-frame-pointer -std=3Dgnu89 $(HOST_LFS_CFLAGS) \
+> > >               $(HOSTCFLAGS)
+> > >  KBUILD_HOSTCXXFLAGS :=3D -O2 $(HOST_LFS_CFLAGS) $(HOSTCXXFLAGS)
+> > > --
+> >
+> > You might wanna take a look at scripts/Makefile.extrawarn which already
+> > has -Wshadow.
+>
+>
+> scripts/Makefile.extrawarn provides options for the target compiler (CC),
+> whereas this patch adds -Wshadow=3Dlocal for the host compiler (HOSTCC).
+>
+>
 
 
--- 
-Kees Cook
-Pixel Security
+Thanks for helping, :)
+
+Leonardo Bras
+
+>
+> --
+> Best Regards
+> Masahiro Yamada
