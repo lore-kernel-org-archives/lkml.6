@@ -2,155 +2,133 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7F2C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E19C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:58:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39C3C21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:53:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="JFUWZwbm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Mq+hjHd6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39C3C21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
+	by mail.kernel.org (Postfix) with ESMTP id 485512086E
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:58:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 485512086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbeJSAy5 (ORCPT
+        id S1728533AbeJSA7v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 20:54:57 -0400
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:57821 "EHLO
-        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727294AbeJSAy5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 20:54:57 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id DC259ADC;
-        Thu, 18 Oct 2018 12:53:05 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 18 Oct 2018 12:53:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=DIMDT6bSST5I2HG027pPjkeYYnp
-        roZYNP6E0aSxH1tM=; b=JFUWZwbmhDGqest0DezA+pNe7l4sxyUhHFkMtFOXrjW
-        F5UHh63b9suJD0sHAJFLsCZlxoBwnuBllEYUS7d2FOpsiJ7P0asG6vZRYo8YcQlT
-        oQ6viV+j07IjozIvobVDDt/CLiXCvxixdsZn3T8DXG/VNuZ3dmUpPAMFqd9YXkC8
-        0hYDyAPe7lzYI2BEn8hTZwtlRJS7L/4oqzAjShP5ZIwLUKE/6gntNokGKZPv5HtP
-        bVrdeILWgYrF0uLPUb6np5dTVfRBtB1v0HFHf4WEohCBULKuKBLkKaP3q6q/aO90
-        +RtpM2wZ4tirAj8pfSKpGJ8oJV31WdX6Rp1p5AgMTIg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=DIMDT6
-        bSST5I2HG027pPjkeYYnproZYNP6E0aSxH1tM=; b=Mq+hjHd61oHoFsTMce7f9i
-        793j0+mG3uqPcrh5HbVGJirQfY1MG42oeu5Y0tgNk1b2tQ9LGR3jHUD0glTSaOQ3
-        q8DKgvTGzTt5c5h1BLQcJjbfy5O3i/SY3aEvJH5RGyR2pIfgBj/9idzutm1QblK1
-        xUNvvRI259nCdByw1uewCulMlkTAKNcrUtDy67FNV043hUmVfYHgAp7RxWQSYcC9
-        X73cMCOIkJMm+iXEn18c06sPtH3U3Gz97ts2BRV+9p8fw4GVXMl0cUcdT6m0KIJH
-        kM5WAbUzRc2JppE0xke6Wy7U275OV0VchfON7nOdK+ZVijsa/huyTxxtBZeDdxUA
-        ==
-X-ME-Sender: <xms:cbrIW5ehhPkNmv1Ye4B3c6Hu9IJwUg5X_o3nMv9cKY2J8wcYindCjA>
-X-ME-Proxy: <xmx:cbrIW7qDnala6aH0CZ-ul7KosMDjD16pKlkjNgR8cPMBZpVr7e2rGA>
-    <xmx:cbrIW0stSwaD6WDHtL5L-8f63VoGjTPA4ST3dOs9HRob8siFLFRiWQ>
-    <xmx:cbrIW-ZoZJc0OUDrjwwXAO2yaHJD1m-bqR-txmKgyh6YkhqLwYwqkA>
-    <xmx:cbrIW7Zr8EhxxKACNS744ELVHKqlCY1by7TKFtXTEhUBas4O9UBzxQ>
-    <xmx:cbrIW_nuKVdskdtoCMQdC7xderjy1VNAks81PyGdLwUbs4lCbirSmw>
-    <xmx:cbrIW4BA4nsC2j8vsStjeyj_mE_-qCR9UXzEKuWYNxiO3j1OvDhmBw>
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        by mail.messagingengine.com (Postfix) with ESMTPA id BF4CC102E2;
-        Thu, 18 Oct 2018 12:53:04 -0400 (EDT)
-Date:   Thu, 18 Oct 2018 18:53:03 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Da Shi Cao <dscao999@gmail.com>
-Cc:     linux-usb@vger.kernel.org, linux-terminal@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Add support of TI ICDI to USB simple serial device
-Message-ID: <20181018165303.GA1915@kroah.com>
-References: <CAG3POB=BYJ_+iYy-xNygzp2RVOaUY2qEhRn9kTSNXYUo=9a5Og@mail.gmail.com>
+        Thu, 18 Oct 2018 20:59:51 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40860 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727509AbeJSA7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 20:59:51 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFED0341;
+        Thu, 18 Oct 2018 09:57:59 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 85BAA3F5D3;
+        Thu, 18 Oct 2018 09:57:57 -0700 (PDT)
+Subject: Re: [PATCH 2/4] kernel hacking: new config NO_AUTO_INLINE to disable
+ compiler auto-inline optimizations
+To:     Du Changbin <changbin.du@gmail.com>, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, tglx@linutronix.de, mingo@redhat.com,
+        linux@armlinux.org.uk, akpm@linux-foundation.org
+Cc:     linux-kbuild@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        Changbin Du <changbin.du@intel.com>,
+        linux-sparse@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20181018162548.6399-1-changbin.du@gmail.com>
+ <20181018162548.6399-3-changbin.du@gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <62bcdf3d-87be-407f-b971-5a53dbb1e4b8@arm.com>
+Date:   Thu, 18 Oct 2018 17:57:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG3POB=BYJ_+iYy-xNygzp2RVOaUY2qEhRn9kTSNXYUo=9a5Og@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181018162548.6399-3-changbin.du@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 13, 2018 at 05:10:50PM +0800, Da Shi Cao wrote:
-> In-Circuit Debug Interface is a debugging interface for TI ARM
-> microcontrollers. It has three USB interfaces and two of them are
-> presented as standard ACM serial device. The 3rd interface is the
-> debugging interface and it can be driven as a Linux USB simple
-> terminal. With it, debugging session and firmware up/down loading are
-> supported on Linux.
+On 18/10/18 17:25, Du Changbin wrote:
+> From: Changbin Du <changbin.du@intel.com>
 > 
-> Signed-off-by: Dashi Cao <dscao999@hotmail.com, dscao999@gmail.com>
+> This patch add a new kernel hacking option NO_AUTO_INLINE. Selecting
+> this option will prevent the compiler from optimizing the kernel by
+> auto-inlining functions not marked with the inline keyword.
+> 
+> With this option, only functions explicitly marked with "inline" will
+> be inlined. This will allow the function tracer to trace more functions
+> because it only traces functions that the compiler has not inlined.
+> 
+> Signed-off-by: Changbin Du <changbin.du@intel.com>
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 > ---
->  drivers/usb/serial/usb-serial-simple.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+>   Makefile          |  6 ++++++
+>   lib/Kconfig.debug | 25 +++++++++++++++++++++++++
+>   2 files changed, 31 insertions(+)
 > 
-> diff --git a/drivers/usb/serial/usb-serial-simple.c
-> b/drivers/usb/serial/usb-serial-simple.c
-> index 4d0273508043..ae43088b659e 100644
-> --- a/drivers/usb/serial/usb-serial-simple.c
-> +++ b/drivers/usb/serial/usb-serial-simple.c
-> @@ -109,6 +109,11 @@ DEVICE(suunto, SUUNTO_IDS);
->         { USB_DEVICE(0x908, 0x0004) }
->  DEVICE(siemens_mpi, SIEMENS_IDS);
-> 
-> +/* TI In-Circuit Debug Interface */
-> +#define ICDI_IDS()              \
-> +       { USB_DEVICE_INTERFACE_CLASS(0x1cbe, 0x00fd, USB_CLASS_VENDOR_SPEC) }
-> +DEVICE(ti_icdi, ICDI_IDS);
+> diff --git a/Makefile b/Makefile
+> index e8b599b4dcde..757d6507cb5c 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -749,6 +749,12 @@ KBUILD_CFLAGS 	+= $(call cc-option, -femit-struct-debug-baseonly) \
+>   		   $(call cc-option,-fno-var-tracking)
+>   endif
+>   
+> +ifdef CONFIG_NO_AUTO_INLINE
+> +KBUILD_CFLAGS   += $(call cc-option, -fno-inline-functions) \
+> +		   $(call cc-option, -fno-inline-small-functions) \
+> +		   $(call cc-option, -fno-inline-functions-called-once)
+> +endif
 > +
->  /* All of the above structures mushed into two lists */
->  static struct usb_serial_driver * const serial_drivers[] = {
->         &carelink_device,
-> @@ -124,6 +129,7 @@ static struct usb_serial_driver * const serial_drivers[] = {
->         &hp4x_device,
->         &suunto_device,
->         &siemens_mpi_device,
-> +       &ti_icdi_device,
->         NULL
->  };
+>   ifdef CONFIG_FUNCTION_TRACER
+>   ifdef CONFIG_FTRACE_MCOUNT_RECORD
+>     # gcc 5 supports generating the mcount tables directly
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 4966c4fbe7f7..0f9b4fa78b1c 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -211,6 +211,31 @@ config GDB_SCRIPTS
+>   	  instance. See Documentation/dev-tools/gdb-kernel-debugging.rst
+>   	  for further details.
+>   
+> +config NO_AUTO_INLINE
+> +	bool "Disable compiler auto-inline optimizations"
+> +	help
+> +	  This will prevent the compiler from optimizing the kernel by
+> +	  auto-inlining functions not marked with the inline keyword.
+> +	  With this option, only functions explicitly marked with
+> +	  "inline" will be inlined. This will allow the function tracer
+> +	  to trace more functions because it only traces functions that
+> +	  the compiler has not inlined.
+> +
+> +	  Enabling this function can help debugging a kernel if using
+> +	  the function tracer. But it can also change how the kernel
+> +	  works, because inlining functions may change the timing,
+> +	  which could make it difficult while debugging race conditions.
+> +
+> +	  If unsure, select N.
+> +
+> +config ENABLE_WARN_DEPRECATED
+
+This part doesn't look like it belongs in this patch, and judging by the 
+commit message in 771c035372a0 wouldn't be welcome back anyway.
+
+Robin.
+
+> +	bool "Enable __deprecated logic"
+> +	default y
+> +	help
+> +	  Enable the __deprecated logic in the kernel build.
+> +	  Disable this to suppress the "warning: 'foo' is deprecated
+> +	  (declared at kernel/power/somefile.c:1234)" messages.
+> +
+>   config ENABLE_MUST_CHECK
+>   	bool "Enable __must_check logic"
+>   	default y
 > 
-> @@ -141,6 +147,7 @@ static const struct usb_device_id id_table[] = {
->         HP4X_IDS(),
->         SUUNTO_IDS(),
->         SIEMENS_IDS(),
-> +       ICDI_IDS(),
->         { },
->  };
->  MODULE_DEVICE_TABLE(usb, id_table);
-> --
-> 2.11.0
-
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- Your patch is malformed (tabs converted to spaces, linewrapped, etc.)
-  and can not be applied.  Please read the file,
-  Documentation/email-clients.txt in order to fix this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
