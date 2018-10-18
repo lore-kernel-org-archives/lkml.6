@@ -2,168 +2,141 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27465C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E28C1C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:47:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1B5F2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:44:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1B5F2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C1752145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:47:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="WS4CzusP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1752145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728208AbeJSAqf (ORCPT
+        id S1728331AbeJSAtl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 20:46:35 -0400
-Received: from gateway33.websitewelcome.com ([192.185.146.210]:22927 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727402AbeJSAqe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 20:46:34 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id AB682A261ED
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 11:44:45 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id DBPNgDB6ZBcCXDBPYgTTv5; Thu, 18 Oct 2018 11:44:45 -0500
-X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:55728 helo=[192.168.1.41])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gDBPN-000iKK-3y; Thu, 18 Oct 2018 11:44:25 -0500
-Subject: Re: [PATCH] scsi: hisi_sas: Fix NULL pointer dereference
-To:     John Garry <john.garry@huawei.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Xiang Chen <chenxiang66@hisilicon.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181018164116.GA24330@embeddedor.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- xsFNBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
- 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
- tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
- DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
- 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
- YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
- m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
- NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
- qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
- LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABzSxHdXN0YXZvIEEu
- IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPsLBfQQTAQgAJwUCWywcDAIbIwUJ
- CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
- l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
- obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
- cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
- ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
- JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
- JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
- PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
- R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
- 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
- e5YnLxF8ctRAp7K4yVlvA87BTQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
- H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
- DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
- 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
- otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
- l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
- jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
- zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
- I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
- ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
- EQEAAcLBZQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
- UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
- XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
- WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
- imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
- fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
- 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
- ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
- YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
- GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <d6b55dbe-ea24-5697-5e45-ab0cc035b9a9@embeddedor.com>
-Date:   Thu, 18 Oct 2018 18:44:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 18 Oct 2018 20:49:41 -0400
+Received: from mail-cys01nam02on0084.outbound.protection.outlook.com ([104.47.37.84]:56211
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727294AbeJSAtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 20:49:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cC3DtPQ0eaesF+5Oa7LEcIEaheUjEuI6JyjB7q1kY6Y=;
+ b=WS4CzusPZaWk4atvkdWXUU6dSx+rLd51ZL21bOgp82apdoIda2s4hdSDy2CrmQpNOydLZaTx1UuJmQaFNXNqzeTzDnEg28pI7r9Sp6fPTU2ix+HVluFm1TdNdeuNKltxh6s3XcNlnf0XETH25FSrjp/vIp+xzfDRpOlHz7S45ko=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB5013.namprd05.prod.outlook.com (20.177.230.207) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1250.13; Thu, 18 Oct 2018 16:47:08 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::49cd:7d04:35b7:b2a2]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::49cd:7d04:35b7:b2a2%5]) with mapi id 15.20.1250.024; Thu, 18 Oct 2018
+ 16:47:08 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+CC:     Ingo Molnar <mingo@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>
+Subject: Re: [RFC PATCH 1/5] x86: introduce preemption disable prefix
+Thread-Topic: [RFC PATCH 1/5] x86: introduce preemption disable prefix
+Thread-Index: AQHUZn1pCzXLEno8kUGEBsbCNoIC6KUkNS4AgAAefQCAAAsFAIAA2LuA
+Date:   Thu, 18 Oct 2018 16:47:07 +0000
+Message-ID: <925F22EA-F8CB-4194-B96B-378409ED7918@vmware.com>
+References: <20181018005420.82993-1-namit@vmware.com>
+ <20181018005420.82993-2-namit@vmware.com>
+ <D247AB7C-2890-49CE-B102-163E5B368FC2@amacapital.net>
+ <07255D2B-0243-4254-B62A-37050C44207E@vmware.com>
+ <CALCETrXEG8OrMpB3VBS9RF41O_MwtPmXBazkdSGE0ohZmXDcBw@mail.gmail.com>
+In-Reply-To: <CALCETrXEG8OrMpB3VBS9RF41O_MwtPmXBazkdSGE0ohZmXDcBw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [66.170.99.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB5013;20:JrVFqNlMtP27CmFiJ4aR2A0WxZo8CjUhNltR3SBF21NGCt3zX1HCT6KBtnbIph+gicqytz3yCAR4rc3zX3D1nkcy77YMeTNLR0mNyTrsO33Z6rdh3xWBJFvJOn8mMswmXzwQMjJ8m+BvpFU7LExSD0Cl75B11j5tIOysYaJky7E=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 1833145d-f5c4-49a5-d216-08d6351957b7
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB5013;
+x-ms-traffictypediagnostic: BYAPR05MB5013:
+x-microsoft-antispam-prvs: <BYAPR05MB501344317FBD1F9CF5C288B2D0F80@BYAPR05MB5013.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(61668805478150);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(3002001)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB5013;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB5013;
+x-forefront-prvs: 08296C9B35
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(366004)(396003)(136003)(376002)(189003)(199004)(51444003)(217873002)(7416002)(36756003)(6506007)(76176011)(33656002)(102836004)(86362001)(6486002)(99286004)(26005)(53546011)(82746002)(5660300001)(81166006)(7736002)(81156014)(6512007)(3846002)(6916009)(8936002)(305945005)(25786009)(186003)(316002)(53936002)(106356001)(2900100001)(6116002)(4326008)(71190400001)(2616005)(93886005)(83716004)(478600001)(5250100002)(97736004)(8676002)(105586002)(71200400001)(6246003)(68736007)(476003)(446003)(6436002)(11346002)(2906002)(486006)(14444005)(66066001)(54906003)(256004)(14454004)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB5013;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: tRdWDhg+rYLWl24+LBaget+Iy4mvOYQEFPDqjfuq07ZTOKbYi3aWy2TsljxoRPECWLaTD5mzl2gu79P/c4A/43IDo+2VhFvPZH9qf6NtvB6Nf0qNTo9XduALeavGNxKzfymkf49irIJe91UGF1tG7iceV8aY3cZqWelzIMfMWNHDcMX2SCsBRC215dSmpceeBkmQZreASHpp75kvYLdYzzk9LFydTY1Vfc2en3ZCoDNDph9Ymjl9lcdEDbabQAgfxE7ZLQntXh008SbZvGht4ZwQ9WcnVi+/06UhoZtncGbrMdA04G0qrX0vcRiZkZ2uiFCxF1n3l91HIkL5xomyMi1AdwxsQFCIUAfK5m+1PI4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <CE1A3E71B228E9498E17B51CBDC88EA8@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20181018164116.GA24330@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 86.245.173.13
-X-Source-L: No
-X-Exim-ID: 1gDBPN-000iKK-3y
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:55728
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 12
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1833145d-f5c4-49a5-d216-08d6351957b7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2018 16:47:07.8120
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5013
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-I just found another instance of this same issue at line 1053.
-
-Please, drop this patch and I'll send v2 addressing both instances, shortly.
-
-Thanks
---
-Gustavo
-
-On 10/18/18 6:41 PM, Gustavo A. R. Silva wrote:
-> There is a NULL pointer dereference in case *slot* happens to
-> be NULL at line 1878:
-> 
-> struct hisi_sas_cq *cq =
-> 	&hisi_hba->cq[slot->dlvry_queue];
-> 
-> Notice that *slot* is being NULL checked at line 1881: if (slot),
-> which implies it may be NULL.
-> 
-> Fix this by placing the declaration and definition of variable cq,
-> which contains the pointer dereference slot->dlvry_queue, after
-> *slot* has been properly NULL checked.
-> 
-> Addresses-Coverity-ID: 1474515 ("Dereference before null check")
-> Fixes: 584f53fe5f52 ("scsi: hisi_sas: Fix the race between IO completion and timeout for SMP/internal IO")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/scsi/hisi_sas/hisi_sas_main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-> index 2e5eaf1..e3f7c7b 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-> @@ -1875,10 +1875,10 @@ hisi_sas_internal_task_abort(struct hisi_hba *hisi_hba,
->  	if ((task->task_state_flags & SAS_TASK_STATE_ABORTED)) {
->  		if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
->  			struct hisi_sas_slot *slot = task->lldd_task;
-> -			struct hisi_sas_cq *cq =
-> -				&hisi_hba->cq[slot->dlvry_queue];
->  
->  			if (slot) {
-> +				struct hisi_sas_cq *cq =
-> +					&hisi_hba->cq[slot->dlvry_queue];
->  				/*
->  				 * flush tasklet to avoid free'ing task
->  				 * before using task in IO completion
-> 
+YXQgODo1MSBQTSwgQW5keSBMdXRvbWlyc2tpIDxsdXRvQGFtYWNhcGl0YWwubmV0PiB3cm90ZToN
+Cg0KPiBPbiBXZWQsIE9jdCAxNywgMjAxOCBhdCA4OjEyIFBNIE5hZGF2IEFtaXQgPG5hbWl0QHZt
+d2FyZS5jb20+IHdyb3RlOg0KPj4gYXQgNjoyMiBQTSwgQW5keSBMdXRvbWlyc2tpIDxsdXRvQGFt
+YWNhcGl0YWwubmV0PiB3cm90ZToNCj4+IA0KPj4+PiBPbiBPY3QgMTcsIDIwMTgsIGF0IDU6NTQg
+UE0sIE5hZGF2IEFtaXQgPG5hbWl0QHZtd2FyZS5jb20+IHdyb3RlOg0KPj4+PiANCj4+Pj4gSXQg
+aXMgc29tZXRpbWVzIGJlbmVmaWNpYWwgdG8gcHJldmVudCBwcmVlbXB0aW9uIGZvciB2ZXJ5IGZl
+dw0KPj4+PiBpbnN0cnVjdGlvbnMsIG9yIHByZXZlbnQgcHJlZW1wdGlvbiBmb3Igc29tZSBpbnN0
+cnVjdGlvbnMgdGhhdCBwcmVjZWRlDQo+Pj4+IGEgYnJhbmNoICh0aGlzIGxhdHRlciBjYXNlIHdp
+bGwgYmUgaW50cm9kdWNlZCBpbiB0aGUgbmV4dCBwYXRjaGVzKS4NCj4+Pj4gDQo+Pj4+IFRvIHBy
+b3ZpZGUgc3VjaCBmdW5jdGlvbmFsaXR5IG9uIHg4Ni02NCwgd2UgdXNlIGFuIGVtcHR5IFJFWC1w
+cmVmaXgNCj4+Pj4gKG9wY29kZSAweDQwKSBhcyBhbiBpbmRpY2F0aW9uIHRoYXQgcHJlZW1wdGlv
+biBpcyBkaXNhYmxlZCBmb3IgdGhlDQo+Pj4+IGZvbGxvd2luZyBpbnN0cnVjdGlvbi4NCj4+PiAN
+Cj4+PiBOaWZ0eSENCj4+PiANCj4+PiBUaGF0IGJlaW5nIHNhaWQsIEkgdGhpbmsgeW91IGhhdmUg
+YSBmZXcgYnVncy4gRmlyc3QsIHlvdSBjYW7igJl0IGp1c3QgaWdub3JlDQo+Pj4gYSByZXNjaGVk
+dWxpbmcgaW50ZXJydXB0LCBhcyB5b3UgaW50cm9kdWNlIHVuYm91bmRlZCBsYXRlbmN5IHdoZW4g
+dGhpcw0KPj4+IGhhcHBlbnMg4oCUIHlvdeKAmXJlIGVmZmVjdGl2ZWx5IGVtdWxhdGluZyBwcmVl
+bXB0X2VuYWJsZV9ub19yZXNjaGVkKCksIHdoaWNoDQo+Pj4gaXMgbm90IGEgZHJvcC1pbiByZXBs
+YWNlbWVudCBmb3IgcHJlZW1wdF9lbmFibGUoKS4gVG8gZml4IHRoaXMsIHlvdSBtYXkNCj4+PiBu
+ZWVkIHRvIGp1bXAgdG8gYSBzbG93LXBhdGggdHJhbXBvbGluZSB0aGF0IGNhbGxzIHNjaGVkdWxl
+KCkgYXQgdGhlIGVuZCBvcg0KPj4+IGNvbnNpZGVyIHJld2luZGluZyBvbmUgaW5zdHJ1Y3Rpb24g
+aW5zdGVhZC4gT3IgdXNlIFRGLCB3aGljaCBpcyBvbmx5IGENCj4+PiBsaXR0bGUgYml0IHRlcnJp
+ZnlpbmfigKYNCj4+IA0KPj4gWWVzLCBJIGRpZG7igJl0IHBheSBlbm91Z2ggYXR0ZW50aW9uIGhl
+cmUuIEZvciBteSB1c2UtY2FzZSwgSSB0aGluayB0aGF0IHRoZQ0KPj4gZWFzaWVzdCBzb2x1dGlv
+biB3b3VsZCBiZSB0byBtYWtlIHN5bmNocm9uaXplX3NjaGVkKCkgaWdub3JlIHByZWVtcHRpb25z
+DQo+PiB0aGF0IGhhcHBlbiB3aGlsZSB0aGUgcHJlZml4IGlzIGRldGVjdGVkLiBJdCB3b3VsZCBz
+bGlnaHRseSBjaGFuZ2UgdGhlDQo+PiBtZWFuaW5nIG9mIHRoZSBwcmVmaXguDQoNClNvIHRoaW5r
+aW5nIGFib3V0IGl0IGZ1cnRoZXIsIHJld2luZGluZyB0aGUgaW5zdHJ1Y3Rpb24gc2VlbXMgdGhl
+IGVhc2llc3QNCmFuZCBtb3N0IHJvYnVzdCBzb2x1dGlvbi4gSeKAmWxsIGRvIGl0Lg0KDQo+Pj4g
+WW91IGFsc28gYXJlbuKAmXQgYWNjb3VudGluZyBmb3IgdGhlIGNhc2Ugd2hlcmUgeW91IGdldCBh
+biBleGNlcHRpb24gdGhhdA0KPj4+IGlzLCBpbiB0dXJuLCBwcmVlbXB0ZWQuDQo+PiANCj4+IEht
+bS4uIENhbiB5b3UgZ2l2ZSBtZSBhbiBleGFtcGxlIGZvciBzdWNoIGFuIGV4Y2VwdGlvbiBpbiBt
+eSB1c2UtY2FzZT8gSQ0KPj4gY2Fubm90IHRoaW5rIG9mIGFuIGV4Y2VwdGlvbiB0aGF0IG1pZ2h0
+IGJlIHByZWVtcHRlZCAoYXNzdW1pbmcgI0JQLCAjTUMNCj4+IGNhbm5vdCBiZSBwcmVlbXB0ZWQp
+Lg0KPiANCj4gTG9vayBmb3IgY29uZF9sb2NhbF9pcnFfZW5hYmxlKCkuDQoNCkkgbG9va2VkIGF0
+IGl0LiBZZXQsIEkgc3RpbGwgZG9u4oCZdCBzZWUgaG93IGV4Y2VwdGlvbnMgbWlnaHQgaGFwcGVu
+IGluIG15DQp1c2UtY2FzZSwgYnV0IGhhdmluZyBzYWlkIHRoYXQgLSB0aGlzIGNhbiBiZSBmaXhl
+ZCB0b28uDQoNClRvIGJlIGZyYW5rLCBJIHBhaWQgcmVsYXRpdmVseSBsaXR0bGUgYXR0ZW50aW9u
+IHRvIHRoaXMgc3ViamVjdC4gQW55DQpmZWVkYmFjayBhYm91dCB0aGUgb3RoZXIgcGFydHMgYW5k
+IGVzcGVjaWFsbHkgb24gdGhlIGhpZ2gtbGV2ZWwgYXBwcm9hY2g/IElzDQptb2RpZnlpbmcgdGhl
+IHJldHBvbGluZXMgaW4gdGhlIHByb3Bvc2VkIG1hbm5lciAoYXNzZW1ibHkgbWFjcm9zKQ0KYWNj
+ZXB0YWJsZT8NCg0KVGhhbmtzLA0KTmFkYXY=
