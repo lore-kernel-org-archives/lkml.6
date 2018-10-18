@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBC7C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F4DECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B173121486
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:56:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11D2F204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:56:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="o7PzkKKn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B173121486
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOb0OKJ5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11D2F204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728713AbeJSB6x (ORCPT
+        id S1728727AbeJSB64 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 21:58:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46594 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 21:58:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728673AbeJSB6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 21:58:52 -0400
+        id S1726463AbeJSB6z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 21:58:55 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D5C821473;
-        Thu, 18 Oct 2018 17:56:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87E6121476;
+        Thu, 18 Oct 2018 17:56:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885408;
-        bh=U7HdEwtB+pJ47evC27AMk5hitLwCQJvRVh8y+jIN2MU=;
+        s=default; t=1539885411;
+        bh=9s6W5yjQSfdODp4XXDyxIgYWwCxiAoszQcbAzBLulsk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o7PzkKKnaw9Qg3HaJ94/AbfK9wWYHDBXs5hMP29tfjOxhRkt+ocb0OoilLpSYXzEm
-         JfCmZhD16O3GQJiQl+2F/uycwdHNu5x67bet/l+868rHpQpv+i7gPyAzfLlOm8D2hE
-         rb7sDTBEcT8YWSbTFDSJRGV/7NNjKmORuJ6kEX3s=
+        b=JOb0OKJ5NpVdc4KABp037I7gEUDtQgmJ5e1yJQGlrQEUb2xvwPeGZaFP/M5ta07Fv
+         JAXJytE6Ve3HoI4t+iCYOCLhJWaMtO1bE4ZRTBvyuMnrXp+pIViPgCNPZxhKwm3H3w
+         ujtdeuPSUJ5K+9eMj70nCtUPe6gp5NNS8z9dIGaA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shreyas NC <shreyas.nc@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
+        stable@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 02/53] soundwire: Fix incorrect exit after configuring stream
-Date:   Thu, 18 Oct 2018 19:53:55 +0200
-Message-Id: <20181018175416.980194672@linuxfoundation.org>
+Subject: [PATCH 4.18 20/53] intel_th: pci: Add Ice Lake PCH support
+Date:   Thu, 18 Oct 2018 19:54:13 +0200
+Message-Id: <20181018175420.295277056@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.561567978@linuxfoundation.org>
 References: <20181018175416.561567978@linuxfoundation.org>
@@ -64,49 +63,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shreyas NC <shreyas.nc@intel.com>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-[ Upstream commit 3fef1a2259c556cce34df2791688cb3001f81c92 ]
+[ Upstream commit 59d08d00d43c644ee2011d7ff1807bdd69f31fe0 ]
 
-In sdw_stream_add_master() after the Master ports are configured,
-the stream is released incorrectly.
+This adds Intel(R) Trace Hub PCI ID for Ice Lake PCH.
 
-So, fix it by avoiding stream release after configuring the Master
-for the stream.
-While at it, rename the label appropriately.
-
-Signed-off-by: Shreyas NC <shreyas.nc@intel.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/soundwire/stream.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/hwtracing/intel_th/pci.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/soundwire/stream.c
-+++ b/drivers/soundwire/stream.c
-@@ -1112,7 +1112,7 @@ int sdw_stream_add_master(struct sdw_bus
- 				"Master runtime config failed for stream:%s",
- 				stream->name);
- 		ret = -ENOMEM;
--		goto error;
-+		goto unlock;
- 	}
+--- a/drivers/hwtracing/intel_th/pci.c
++++ b/drivers/hwtracing/intel_th/pci.c
+@@ -160,6 +160,11 @@ static const struct pci_device_id intel_
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x18e1),
+ 		.driver_data = (kernel_ulong_t)&intel_th_2x,
+ 	},
++	{
++		/* Ice Lake PCH */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x34a6),
++		.driver_data = (kernel_ulong_t)&intel_th_2x,
++	},
+ 	{ 0 },
+ };
  
- 	ret = sdw_config_stream(bus->dev, stream, stream_config, false);
-@@ -1123,9 +1123,11 @@ int sdw_stream_add_master(struct sdw_bus
- 	if (ret)
- 		goto stream_error;
- 
-+	goto unlock;
-+
- stream_error:
- 	sdw_release_master_stream(stream);
--error:
-+unlock:
- 	mutex_unlock(&bus->bus_lock);
- 	return ret;
- }
 
 
