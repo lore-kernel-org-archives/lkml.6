@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3170AC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B73F8C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:12:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E610D2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:12:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3970E2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:12:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="e0omu59Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E610D2087A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+RXQMjN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3970E2087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbeJRUMn (ORCPT
+        id S1726952AbeJRUNL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 16:12:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41054 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 16:13:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726325AbeJRUMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 16:12:42 -0400
+        id S1726325AbeJRUNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 16:13:11 -0400
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2154B2087A;
-        Thu, 18 Oct 2018 12:11:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DA172087A;
+        Thu, 18 Oct 2018 12:12:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539864718;
-        bh=i/OZoOvZMrfReMiV6oq42SD3M2/l4GI+PJBokj/fblI=;
+        s=default; t=1539864746;
+        bh=KMCN64YzFI0LvpVXNVInl0F5SKOkz+74vNvWPncx1Sg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e0omu59QJ79++Rsenia9gqjX+uK00Sg1Qrfq3Kb5oFeVIaKOl5njRkkReBobBUhMg
-         xyiz+4O2b9GYhffbA3Ml85i5zP6qb0dRul9dLi2QWmt/KZ2qLA+7zqJ4kMgrY9YFZy
-         /gfKkO+iWkdmWeAisLEErbnpNTCej22V1BE1frV0=
+        b=U+RXQMjNjSdnXpgjjB+cIMB//DgWbGeEr0XXKtelk8fX4VgHuqn0JKqT7O4TdF6Yo
+         NuoZIZRsUcF8HJYcVXBEKIFLpNNoX/pDekm18dR8A6pzF2jUo3jxn2+TcrIsBxjOa+
+         UueyY+64pbkCbBlhCBV9UA0yZRMCKmMtwERkCdRw=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>, Shuah Khan <shuah@kernel.org>
 Cc:     Tom Zanussi <zanussi@kernel.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org, stable@vgar.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
         Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH 1/3] tracing: Fix synthetic event to accept unsigned modifier
-Date:   Thu, 18 Oct 2018 21:11:35 +0900
-Message-Id: <153986469515.1671.2442221440653629796.stgit@devbox>
+Subject: [PATCH 2/3] tracing: Fix synthetic event to allow semicolon at end
+Date:   Thu, 18 Oct 2018 21:12:03 +0900
+Message-Id: <153986472359.1671.14765934058821057199.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <153986466551.1671.11399119973192957474.stgit@devbox>
 References: <153986466551.1671.11399119973192957474.stgit@devbox>
@@ -58,111 +58,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix synthetic event to accept unsigned modifier for its field type
-correctly.
+Fix synthetic event to allow independent semicolon at end.
 
-Currently, synthetic_events interface returns error for "unsigned"
-modifiers as below;
+The synthetic_events interface accepts a semicolon after the
+last word if there is no space.
 
- # echo "myevent unsigned long var" >> synthetic_events
+ # echo "myevent u64 var;" >> synthetic_events
+
+But if there is a space, it returns an error.
+
+ # echo "myevent u64 var ;" > synthetic_events
  sh: write error: Invalid argument
 
-This is because argv_split() breaks "unsigned long" into "unsigned"
-and "long", but parse_synth_field() doesn't expected it.
-
-With this fix, synthetic_events can handle the "unsigned long"
-correctly like as below;
-
- # echo "myevent unsigned long var" >> synthetic_events
- # cat synthetic_events
- myevent	unsigned long var
+This behavior is difficult for users to understand. Let's
+allow the last independent semicolon too.
 
 Fixes: commit 4b147936fa50 ("tracing: Add support for 'synthetic' events")
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: <stable@vgar.kernel.org>
+Cc: <stable@vger.kernel.org>
 Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
 Cc: Steven Rostedt <rostedt@goodmis.org>
 ---
- kernel/trace/trace_events_hist.c |   30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
+ kernel/trace/trace_events_hist.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 85f6b01431c7..6ff83941065a 100644
+index 6ff83941065a..d239004aaf29 100644
 --- a/kernel/trace/trace_events_hist.c
 +++ b/kernel/trace/trace_events_hist.c
-@@ -738,16 +738,30 @@ static void free_synth_field(struct synth_field *field)
- 	kfree(field);
- }
- 
--static struct synth_field *parse_synth_field(char *field_type,
--					     char *field_name)
-+static struct synth_field *parse_synth_field(int argc, char **argv,
-+					     int *consumed)
- {
- 	struct synth_field *field;
-+	const char *prefix = NULL;
-+	char *field_type = argv[0], *field_name;
- 	int len, ret = 0;
- 	char *array;
- 
- 	if (field_type[0] == ';')
- 		field_type++;
- 
-+	if (!strcmp(field_type, "unsigned")) {
-+		if (argc < 3)
-+			return ERR_PTR(-EINVAL);
-+		prefix = "unsigned ";
-+		field_type = argv[1];
-+		field_name = argv[2];
-+		*consumed = 3;
-+	} else {
-+		field_name = argv[1];
-+		*consumed = 2;
-+	}
-+
- 	len = strlen(field_name);
- 	if (field_name[len - 1] == ';')
- 		field_name[len - 1] = '\0';
-@@ -760,11 +774,15 @@ static struct synth_field *parse_synth_field(char *field_type,
- 	array = strchr(field_name, '[');
- 	if (array)
- 		len += strlen(array);
-+	if (prefix)
-+		len += strlen(prefix);
- 	field->type = kzalloc(len, GFP_KERNEL);
- 	if (!field->type) {
- 		ret = -ENOMEM;
- 		goto free;
- 	}
-+	if (prefix)
-+		strcat(field->type, prefix);
- 	strcat(field->type, field_type);
- 	if (array) {
- 		strcat(field->type, array);
-@@ -1009,7 +1027,7 @@ static int create_synth_event(int argc, char **argv)
- 	struct synth_field *field, *fields[SYNTH_FIELDS_MAX];
- 	struct synth_event *event = NULL;
- 	bool delete_event = false;
--	int i, n_fields = 0, ret = 0;
-+	int i, consumed = 0, n_fields = 0, ret = 0;
- 	char *name;
- 
- 	mutex_lock(&synth_event_mutex);
-@@ -1061,13 +1079,13 @@ static int create_synth_event(int argc, char **argv)
- 			goto err;
- 		}
- 
--		field = parse_synth_field(argv[i], argv[i + 1]);
-+		field = parse_synth_field(argc - i, &argv[i], &consumed);
- 		if (IS_ERR(field)) {
- 			ret = PTR_ERR(field);
- 			goto err;
- 		}
--		fields[n_fields] = field;
--		i++; n_fields++;
-+		fields[n_fields++] = field;
-+		i += consumed - 1;
+@@ -1088,7 +1088,7 @@ static int create_synth_event(int argc, char **argv)
+ 		i += consumed - 1;
  	}
  
- 	if (i < argc) {
+-	if (i < argc) {
++	if (i < argc && strcmp(argv[i], ";") != 0) {
+ 		ret = -EINVAL;
+ 		goto err;
+ 	}
 
