@@ -6,77 +6,75 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A201C67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4E8ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 052242145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:35:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 052242145D
+	by mail.kernel.org (Postfix) with ESMTP id 8989620658
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:35:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8989620658
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbeJSEiA (ORCPT
+        id S1727408AbeJSEiW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 00:38:00 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:44560 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725751AbeJSEh7 (ORCPT
+        Fri, 19 Oct 2018 00:38:22 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42075 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725751AbeJSEiW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 00:37:59 -0400
-Received: by mail-oi1-f196.google.com with SMTP id u74-v6so25112523oia.11;
-        Thu, 18 Oct 2018 13:35:15 -0700 (PDT)
+        Fri, 19 Oct 2018 00:38:22 -0400
+Received: by mail-ot1-f65.google.com with SMTP id c23so29328814otl.9;
+        Thu, 18 Oct 2018 13:35:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+yddQhupXDbPuGP93wdK6HRSQ89ti/nB9Kyq52n+QUQ=;
-        b=UcUTGYtaFNlibz7Gf7Hd4fIiu5jNGcUeSZqQC8fBU7RKS+9PdvmpBNKxABoiCeoy8g
-         CAT+Ojjc4f3hE01G3qe1gfxpVQAVnM13eXJ3mGf14yMjgYq00uWr4BuREEvQ8BISfr1d
-         0dEemhllPOGLxatV9OnkCNQTqQNDwQ6hj44UxeTgTWgR2lM6bXEjbEyQD3CyEklxS3PZ
-         8BhH1Bsdrs/SitPH827ukkNKFJD8UXh37wN9sZW439+Wujei6LnVIV65CQR6mDZ8/QbH
-         DSsSnNcjB2dK9AUQeHzXl+45YdbmaTdVGNj0Tjl/RDOebn7ueqv3DTAyHBEZ/PszhLac
-         dqXA==
-X-Gm-Message-State: ABuFfojsztpF/l2IHkcZCZV4e+h0BQTKlEU3syi1Ur0FkIQQrQHVFBrl
-        ZxrFvdPttrtBcFoDceRBrA==
-X-Google-Smtp-Source: ACcGV63WP+Oe2x5TrQICqPSJG9aqfL0fkXiARr93kaCT9b+bhIXJIcX1TcmQOerM1DmSF4e9R1stGA==
-X-Received: by 2002:aca:5107:: with SMTP id f7-v6mr17943426oib.223.1539894915274;
-        Thu, 18 Oct 2018 13:35:15 -0700 (PDT)
+        bh=PrM7XZQAKRWgV4vYT9n8NCSMrNhconiFMYbYrdAhufs=;
+        b=ugAsapCOOTkqGW9pOs++yvtfbwYs5IJWKyQmQFFcH+9WDf/BVxcN5jthZs8R3H+Hgm
+         EiV/S66RRvwkLcWTx3tJxvPazsY+/+zzIrAHrPrM5E16YwypdDhU+HxI81RFt9vJodVN
+         LyhgWTM8XRA4hH4wey3gf760JyxsvRbyJ7xdbeUC0843GrWlktLiB3XlSUOukEExryLf
+         /rFxNZ/yKUCBhHJpLaAbTCzF5r8mKjCJtuLbO2NlzfP70U0ZUUm5nx4XqXb9UrUSaRut
+         DYkpJ9rUYbgfsc5W/K558sy6avRNHjtLBA9y8cpKyW9+P3NWeJmp6TjFl6tnaUpS5jAe
+         fFRA==
+X-Gm-Message-State: ABuFfogYlzFuXpboqrF2xiYoIHcl9IcaVvcpDgUAXq1C+rmn1rBxKHD/
+        pJF4hg4EEJhcUwfv1yvaTA==
+X-Google-Smtp-Source: ACcGV63z6vcTZghm3/EkbCgJJGPgd7I8PsBOiqh1LcCrq1gCBl/8ryXOW+TZBwRFNHwZcXZDTLoSGw==
+X-Received: by 2002:a9d:7a91:: with SMTP id l17mr20996001otn.62.1539894938028;
+        Thu, 18 Oct 2018 13:35:38 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id h70-v6sm8027519oic.17.2018.10.18.13.35.14
+        by smtp.gmail.com with ESMTPSA id p185-v6sm7164386oic.36.2018.10.18.13.35.37
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 18 Oct 2018 13:35:14 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 15:35:13 -0500
+        Thu, 18 Oct 2018 13:35:37 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 15:35:36 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Richard Leitner <richard.leitner@skidata.com>
 Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
         mark.rutland@arm.com, linux-input@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Richard Leitner <richard.leitner@skidata.com>
-Subject: Re: [PATCH v2 3/8] dt-bindings: input: touchscreen: sx8654: add
- compatible models
-Message-ID: <20181018203513.GA21155@bogus>
+Subject: Re: [PATCH v2 5/8] dt-bindings: input: touchscreen: sx8654: add
+ sx8650 to comatibles
+Message-ID: <20181018203536.GA21783@bogus>
 References: <20181017125116.20077-1-richard.leitner@skidata.com>
- <20181017125116.20077-4-richard.leitner@skidata.com>
+ <20181017125116.20077-6-richard.leitner@skidata.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181017125116.20077-4-richard.leitner@skidata.com>
+In-Reply-To: <20181017125116.20077-6-richard.leitner@skidata.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 17 Oct 2018 14:51:11 +0200, Richard Leitner wrote:
-> As the sx865[456] share the same datasheet and differ only in the
-> presence of a "capacitive proximity detection circuit" and a "haptics
-> motor driver for LRA/ERM" add them to the compatbiles. As the driver
-> doesn't implement these features it should be no problem.
+On Wed, 17 Oct 2018 14:51:13 +0200, Richard Leitner wrote:
+> As the sx8650 is quite similar to the sx8654 support for it will be
+> added in the driver. Therefore add it to the compatibles.
 > 
 > Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
 > ---
->  Documentation/devicetree/bindings/input/touchscreen/sx8654.txt | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/input/touchscreen/sx8654.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
