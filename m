@@ -2,143 +2,134 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54954C67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31843C67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0270C208E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:53:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD0FD208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:54:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="djr40ZuE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0270C208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TmA8XyQ+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD0FD208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727544AbeJSH47 (ORCPT
+        id S1727417AbeJSH5z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 03:56:59 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:33434 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbeJSH47 (ORCPT
+        Fri, 19 Oct 2018 03:57:55 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43399 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbeJSH5z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 03:56:59 -0400
-Received: by mail-vs1-f67.google.com with SMTP id e206so24274333vsd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 16:53:37 -0700 (PDT)
+        Fri, 19 Oct 2018 03:57:55 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d8-v6so3708032pgv.10
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 16:54:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bi3GIi6WZ/6zMjDSYyR8izGsXU5CKVn1b9rsYYPXPeI=;
-        b=djr40ZuEN+8MvbhYYX5DGiCWT43X3IuSLvXTnYtMD6SDWICmdzpEyYvIMpRhdjdgGm
-         GSSdQMzc0rPL5wyyaxT3zGAS71s1xG/idip6XyXIECL5EVnqH1vy2vxPLloqvOwi2rVP
-         KHmk5/vwCTqcY8Xsj78Asmb2Co04znxvzdOQY=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DO/fVzbSSZNaWKyG4aluGth9amjXj6x4RBOrXvQ4rZ0=;
+        b=TmA8XyQ+v4dMRzEH8Jsl37R0O7Qlx5G26yvmHDv6fvMPYKitXzKW8qsR6PV/h5lvaC
+         MUuer2jVKgJg2WnChYLDqhBXJ2srm5jEHLdW7iu71VkJk23ekRDfjmEkx6AgFilTboj1
+         LcXhgGnXrTNXcCSBUp2E1LDMM/kwtHS7TjFaVXNehxaZ4kIO27rlhQZ2TpOnKkw8YqcW
+         HkgnrtPy0f9ljfLrqYlM8M3vwE0KDrQvZpEJ9pKEu6Cm96TwFd9wCiRfPnFlS0sv5S/D
+         8SNwhLmlk4m/45G3x03/H+ZQdL2IH/fJnSDELEZxGbpihikGqj4QFcdgChq/aFbZxr2A
+         CQMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bi3GIi6WZ/6zMjDSYyR8izGsXU5CKVn1b9rsYYPXPeI=;
-        b=bvjuv+WsZiiFI/WL2qsuTV3l9g9Nq1Q9CTq5EyKaJyzgLOALMtIxKsGygyPRreH7d4
-         EpVWFAJMmB0Km8cP4/h5jp1lsUuIMyu3dGme/CXxP7olzmPsbwjewqIYvISlatj9Kgwg
-         GKX6OWftUesgXd/7GTdM1rd+KnTzZrH9EEwmHlzbRmsNO9J9bS33c0YloHjPyo3+UVDD
-         A3N0juLNsVAtxBFGzc6QFPGLg1vS8/I3TwXk4XttKGeiNat2FaKPn2wUnBNHuoygiO+p
-         LiM/Wi1oEVnzpLjm7htBWqnXMxlmGj1b2/qIT/PcUPx3vVsBAz5SchZy9FAxiWl9UNyx
-         GNwg==
-X-Gm-Message-State: ABuFfoiDBTFDOKaCfyjUorM6pZptNU6ht3nH4XilTg4TuoS+Yl/4NnMz
-        QIFkgejj60nwaCrNmMxtIi2ngnXDUyk=
-X-Google-Smtp-Source: ACcGV60aBwdbNomcgi+QBQUxthI+TFTzmPk4untovexOJQWUdhNL9wTTnH3vkEGbvzZ7Fyh2A5iyMQ==
-X-Received: by 2002:a67:ce17:: with SMTP id s23mr13523125vsl.78.1539906816744;
-        Thu, 18 Oct 2018 16:53:36 -0700 (PDT)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
-        by smtp.gmail.com with ESMTPSA id c83sm4718267vsa.28.2018.10.18.16.53.35
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 16:53:35 -0700 (PDT)
-Received: by mail-vk1-f169.google.com with SMTP id d141so4654112vke.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 16:53:35 -0700 (PDT)
-X-Received: by 2002:a1f:310c:: with SMTP id x12mr9576764vkx.79.1539906815231;
- Thu, 18 Oct 2018 16:53:35 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DO/fVzbSSZNaWKyG4aluGth9amjXj6x4RBOrXvQ4rZ0=;
+        b=PeAJqpj5pyS5s+gEm6EI1x9nWEjgjl8wP85VEMWO052DT5YjcPFDSCZ1Al3STXWqTS
+         cSLBeOcMApn8oO0wCoqqQC/kltHAoUAj7n3grxIvbYlB3+02nHJhcfxmqSw7rwyh63AM
+         FLGvqDyBnr1212ngX5r4+aCqEFPgw6izeE4JA5PJvoZUSiMOgZanO51Ck+i6jUjdnFvt
+         mZhJ3HKGqQHyqhOwWYyKLbsQxOfi4GscItveq/WWlC1Od+LdoosyrIYpSh35/mzfulue
+         cuZPXd+5aQtD6EDpX1Ct6XOy+rc2zUfmKbMiHirzuKVQNSYjKKpMBOVRBb8pq1C6CkXy
+         3pjw==
+X-Gm-Message-State: ABuFfojXUTn+45rurq0xvno465MVj/FAhdrrY11RWNVOIGYXjZ8J+IBV
+        J1q405PY3LAT2wMl1TSg1Ew=
+X-Google-Smtp-Source: ACcGV609bfkckzukQBwg2Fsj9qy1Ta2+VQnkKfXww6/MB++1ApYRHyT8CIxA0cYPM1FO1L4WitfmDA==
+X-Received: by 2002:a63:4e18:: with SMTP id c24-v6mr25718025pgb.6.1539906872625;
+        Thu, 18 Oct 2018 16:54:32 -0700 (PDT)
+Received: from localhost ([110.70.52.202])
+        by smtp.gmail.com with ESMTPSA id y12-v6sm7388982pga.77.2018.10.18.16.54.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Oct 2018 16:54:31 -0700 (PDT)
+Date:   Fri, 19 Oct 2018 08:54:27 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, guro@fb.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        rientjes@google.com, yang.s@alibaba-inc.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>
+Subject: Re: [PATCH v3] mm: memcontrol: Don't flood OOM messages with no
+ eligible task.
+Message-ID: <20181018235427.GA877@jagdpanzerIV>
+References: <201810180246.w9I2koi3011358@www262.sakura.ne.jp>
+ <20181018042739.GA650@jagdpanzerIV>
+ <201810180526.w9I5QvVn032670@www262.sakura.ne.jp>
+ <20181018061018.GB650@jagdpanzerIV>
+ <20181018075611.GY18839@dhcp22.suse.cz>
+ <20181018081352.GA438@jagdpanzerIV>
+ <2c2b2820-e6f8-76c8-c431-18f60845b3ab@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-References: <20181018210933.113592-1-evgreen@chromium.org> <20181018210933.113592-6-evgreen@chromium.org>
-In-Reply-To: <20181018210933.113592-6-evgreen@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 18 Oct 2018 16:53:22 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XAdZhb4Bq_MKni_-ep283v4dLw8i3Y7dy5-Y+7gwOKxg@mail.gmail.com>
-Message-ID: <CAD=FV=XAdZhb4Bq_MKni_-ep283v4dLw8i3Y7dy5-Y+7gwOKxg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] arm64: dts: qcom: sdm845: Add USB PHY lane two
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Manu Gautam <mgautam@codeaurora.org>, cang@codeaurora.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2c2b2820-e6f8-76c8-c431-18f60845b3ab@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On (10/18/18 20:58), Tetsuo Handa wrote:
+> > 
+> > A knob might do.
+> > As well as /proc/sys/kernel/printk tweaks, probably. One can even add
+> > echo "a b c d" > /proc/sys/kernel/printk to .bashrc and adjust printk
+> > console levels on login and rollback to old values in .bash_logout
+> > May be.
+> 
+> That can work for only single login with root user case.
+> Not everyone logs into console as root user.
 
-On Thu, Oct 18, 2018 at 2:10 PM Evan Green <evgreen@chromium.org> wrote:
->
-> This change adds the second lane registers for the USB PHY, now that the
-> QMP phy bindings have been updated. This way the driver can stop
-> reaching beyond its register region to get at the second lane.
->
-> Signed-off-by: Evan Green <evgreen@chromium.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 9c72edb678ec..f28c50e93f5a 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -1188,10 +1188,12 @@
->                                  <&gcc GCC_USB3_PHY_PRIM_BCR>;
->                         reset-names = "phy", "common";
->
-> -                       usb_1_ssphy: lane@88e9200 {
-> +                       usb_1_ssphy: lanes@88e9200 {
->                                 reg = <0x88e9200 0x128>,
->                                       <0x88e9400 0x200>,
->                                       <0x88e9c00 0x218>,
-> +                                     <0x88e9600 0x128>,
-> +                                     <0x88e9800 0x200>,
->                                       <0x88e9a00 0x100>;
->                                 #phy-cells = <0>;
->                                 clocks = <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
-> @@ -1219,10 +1221,12 @@
->                                  <&gcc GCC_USB3_PHY_SEC_BCR>;
->                         reset-names = "phy", "common";
->
-> -                       usb_2_ssphy: lane@88eb200 {
-> +                       usb_2_ssphy: lanes@88eb200 {
->                                 reg = <0x88eb200 0x128>,
->                                       <0x88eb400 0x1fc>,
->                                       <0x88eb800 0x218>,
-> +                                     <0x88eb600 0x128>,
-> +                                     <0x88eb800 0x1fc>,
+Add sudo ;)
 
-This is wrong and needs to be fixed.  The
-"qcom,sdm845-qmp-usb3-uni-phy" is not dual-lane and thus shouldn't
-have tx2/rx2.  The driver knows "qcom,sdm845-qmp-usb3-uni-phy" is not
-dual lane and thus will try to map tx2 as pcs_misc.
+> It is pity that we can't send kernel messages to only selected consoles
+> (e.g. all messages are sent to netconsole, but only critical messages are
+> sent to local consoles).
 
+OK, that's a fair point. There was a patch from FB, which would allow us
+to set a log_level on per-console basis. So the noise goes to heav^W net
+console; only critical stuff goes to the serial console (if I recall it
+correctly). I'm not sure what happened to that patch, it was a while ago.
+I'll try to find that out.
 
-Also overall I'll continue to point out that this patch needs to land
-_after_ the driver fix since the new driver can cope with either style
-device tree (at least temporarily) but the old driver can't cope with
-the new device tree.  See patch #2 comments for details.
+[..]
+> That boils down to a "user interaction" problem.
+> Not limiting
+> 
+>   "%s invoked oom-killer: gfp_mask=%#x(%pGg), nodemask=%*pbl, order=%d, oom_score_adj=%hd\n"
+>   "Out of memory and no killable processes...\n"
+> 
+> is very annoying.
+> 
+> And I really can't understand why Michal thinks "handling this requirement" as
+> "make the code more complex than necessary and squash different things together".
 
--Doug
+Michal is trying very hard to address the problem in a reasonable way.
+The problem you are talking about is not MM specific. You can have a
+faulty SCSI device, corrupted FS, and so and on.
+
+	-ss
