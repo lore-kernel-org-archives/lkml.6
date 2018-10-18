@@ -2,237 +2,100 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E750ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC724ECDE42
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5AC821470
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:30:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C4B321470
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:32:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="NRvWGHWS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5AC821470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ilTvxIzz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C4B321470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbeJRJ2c (ORCPT
+        id S1727396AbeJRJah (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 05:28:32 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:36844 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726706AbeJRJ2c (ORCPT
+        Thu, 18 Oct 2018 05:30:37 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:40069 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727028AbeJRJag (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 05:28:32 -0400
-Received: by mail-it1-f195.google.com with SMTP id c85-v6so5077189itd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 18:30:05 -0700 (PDT)
+        Thu, 18 Oct 2018 05:30:36 -0400
+Received: by mail-qk1-f193.google.com with SMTP id x11-v6so558209qkl.7;
+        Wed, 17 Oct 2018 18:32:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kdPFN0LEbEMZ9IMvAsEl2i67D21nSEKfGsWKIMlnxVE=;
-        b=NRvWGHWSjNhgnFi9IqgfnRht+S61AFEv5AXNZuiwT2BYC3TlMHd57sY4S6rTHPJB6e
-         uW2Z4uEbSKQo0f8TvkeRvpyzwBK3UKoNkR9oOEREmm6soMwkNH7MgRIvHKqFa/tn4a2y
-         Cc3dWfTOF7fp/m2R19CdERgh/y8qL1VXEnyPA=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=pwt34DZ8W47/I8E8oXqSyBfO0kw2BfmzXZy/V4jFHvc=;
+        b=ilTvxIzzJ9UuzWHTVO9SKeo9zWK44Ngb78BGMtqICrx3vGI5CeFpKqaydqeYj5O/5i
+         VwBwdAOdXWK9VcIy+9b0jzxTdY+FN4mIzdF0wDDB/vcVuBMLR3rbHKqIZ4o+wUKj5iiu
+         4jM8zEjSisnrG76kWHwY+QpKfWWyLeZWwbKUD5lFvMvsGLnb5WRp2vRuAj0YLOWYXBAg
+         HhRqY8LdgkTocMtvWM8l06qZTHjvdy8KPjNK6cbp31GU2qCJhhP7YUfe5/SSkcLP/Jl6
+         FoNRv1NmPj+oQUyP4iRB2OPf2I3u0N6jlGF/Mj4V95RCqPXqepcA9515iD/cnYWhCWez
+         EhyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kdPFN0LEbEMZ9IMvAsEl2i67D21nSEKfGsWKIMlnxVE=;
-        b=WcMAUWYZUKsmwRQcoPS0fekomJ4fV5fQxjioI3xMaYg/sh6g+AygjUnSb4KCvtVhDC
-         68kC/lBBbXY4AjBIhLPUvZ1UsMt45upmhi2Ya5uHSs8Wv+YgTQKvB6w4nliBeJvXiUY9
-         WaJBMRaKasc+mF0znd8BTe/SRQ2+Fj2UX+fV78psUI0O87zVeSw2SkMDgcPtL8zz5Twf
-         t9QtHV2KtyJ2bENXgN6uLUEGO14FYBl+V197pGlVn+ZT2CrEMysNeT0US64kFMOMSl81
-         P1s/lTdtoCVu86lMSxK2/WypW5zcrd3+Xkiwf2XwoP5XzzsLJHEHsVLoI/G+a3A80kzb
-         RK7g==
-X-Gm-Message-State: ABuFfojiY/G0ckrN3HdLAueETOdYqJwdSahWjHdwiN7eB5YV5Lm18+oP
-        HoifKQ3MyK9Ept7kbIJXc/PxlA==
-X-Google-Smtp-Source: AJdET5clccV7tdFdaQ589yrDoMGEJILZ8Shmyu5kuVgUiFE5SW5VQd6Ac0Segt//j5DcZ9TPPiwJ/w==
-X-Received: by 2002:a24:74d4:: with SMTP id o203-v6mr3394136itc.81.1539826204254;
-        Wed, 17 Oct 2018 18:30:04 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id u1-v6sm2886199itu.42.2018.10.17.18.30.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 18:30:02 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 18:30:01 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pstore: Refactor compression initialization
-Message-ID: <20181018013001.GA99677@joelaf.mtv.corp.google.com>
-References: <20181017214124.GA8239@beast>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181017214124.GA8239@beast>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=pwt34DZ8W47/I8E8oXqSyBfO0kw2BfmzXZy/V4jFHvc=;
+        b=oH3dI2qqIOyltDU4iVwmk5HRWDxQ9pkl+maoYHg4N+pxRQHMC5nAzZ3si0FpJ6PoEn
+         KKmG7eegqjBhZzUvJ/w6YFHiMMqnKwn6InbTcrSsAKtRymraE4Vms1mROz+4ZuSQmXG9
+         KRfBawFclbL76JrdV1YsDza6xBRTYyORx5R7sRlPV+Dieq4VqPMBMYx/mDPahe5sKg3p
+         vSu8gRquLMTtStLh+Kt5a3dKTnMhRlj3nM49XNSofR06AImS6zngpdHMq6JisWc6KF2L
+         G9JDBCou7bRqQQWb6Xe7cG5+b4Jixep9h9/ISHeGnqrTW7dSg3a1MFHatFwk6vx9R+fL
+         e6cQ==
+X-Gm-Message-State: ABuFfoj6EXuztZvomaMyH9E7iGk6raQjYLACQ7kA5wMIqSmSAGjdjmTH
+        6hMzRRwDPMA3AV0L6ZqGm+ueoi5auNI=
+X-Google-Smtp-Source: ACcGV61ogsWT8AKVDyAQ+RivagLN7nAv0+eE0qNdcRI0Qe/uWhjB33dxmH4ZQdUKsTHa5389PFiteg==
+X-Received: by 2002:a37:d6c2:: with SMTP id p63-v6mr26793471qkl.190.1539826328647;
+        Wed, 17 Oct 2018 18:32:08 -0700 (PDT)
+Received: from marcelo-Aspire-5750.semfio.usp.br ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id c44-v6sm15043429qtb.53.2018.10.17.18.32.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Oct 2018 18:32:08 -0700 (PDT)
+From:   Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kernel-usp@googlegroups.com,
+        Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Subject: [PATCH v2] Staging iio: adc: Match parenthesis alignment
+Date:   Wed, 17 Oct 2018 22:31:47 -0300
+Message-Id: <20181018013147.15352-1-marcelo.schmitt1@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 02:41:24PM -0700, Kees Cook wrote:
-> With compression initialization now separated from pstore_register(),
-> there is no longer a good reason to do compression method selection
-> during fs init. Instead, merge everything together into the late init.
-> Additionally cleans up the reporting to be more clear.
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
-> This patch goes on top of Joel's. I'll have both in linux-next shortly...
-> ---
->  fs/pstore/inode.c    |  2 --
->  fs/pstore/internal.h |  3 --
->  fs/pstore/platform.c | 65 ++++++++++++++++++++++++++++----------------
->  3 files changed, 41 insertions(+), 29 deletions(-)
-> 
-> diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
-> index 5fcb845b9fec..d814723fb27d 100644
-> --- a/fs/pstore/inode.c
-> +++ b/fs/pstore/inode.c
-> @@ -486,8 +486,6 @@ static int __init init_pstore_fs(void)
->  {
->  	int err;
->  
-> -	pstore_choose_compression();
-> -
->  	/* Create a convenient mount point for people to access pstore */
->  	err = sysfs_create_mount_point(fs_kobj, "pstore");
->  	if (err)
-> diff --git a/fs/pstore/internal.h b/fs/pstore/internal.h
-> index fb767e28aeb2..c029314478fa 100644
-> --- a/fs/pstore/internal.h
-> +++ b/fs/pstore/internal.h
-> @@ -37,7 +37,4 @@ extern bool	pstore_is_mounted(void);
->  extern void	pstore_record_init(struct pstore_record *record,
->  				   struct pstore_info *psi);
->  
-> -/* Called during module_init() */
-> -extern void __init pstore_choose_compression(void);
-> -
->  #endif
-> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-> index f09066db2d4d..e4737a5fa68c 100644
-> --- a/fs/pstore/platform.c
-> +++ b/fs/pstore/platform.c
-> @@ -274,36 +274,56 @@ static int pstore_decompress(void *in, void *out,
->  
->  static void allocate_buf_for_compression(void)
->  {
-> +	struct crypto_comp *ctx;
-> +	int size;
-> +	char *buf;
-> +
-> +	/* Skip if not built-in or compression backend not selected yet. */
->  	if (!IS_ENABLED(CONFIG_PSTORE_COMPRESS) || !zbackend)
->  		return;
->  
-> +	/* Skip if no pstore backend yet or compression init already done. */
-> +	if (!psinfo || tfm)
-> +		return;
-> +
->  	if (!crypto_has_comp(zbackend->name, 0, 0)) {
-> -		pr_err("No %s compression\n", zbackend->name);
-> +		pr_err("Unknown compression: %s\n", zbackend->name);
->  		return;
->  	}
->  
-> -	big_oops_buf_sz = zbackend->zbufsize(psinfo->bufsize);
-> -	if (big_oops_buf_sz <= 0)
-> +	size = zbackend->zbufsize(psinfo->bufsize);
-> +	if (size <= 0) {
-> +		pr_err("Invalid compression size for %s: %d\n",
-> +		       zbackend->name, size);
->  		return;
-> +	}
->  
-> -	big_oops_buf = kmalloc(big_oops_buf_sz, GFP_KERNEL);
-> -	if (!big_oops_buf) {
-> -		pr_err("allocate compression buffer error!\n");
-> +	buf = kmalloc(size, GFP_KERNEL);
-> +	if (!buf) {
-> +		pr_err("Failed %d byte compression buffer allocation for: %s\n",
-> +		       size, zbackend->name);
->  		return;
->  	}
->  
-> -	tfm = crypto_alloc_comp(zbackend->name, 0, 0);
-> -	if (IS_ERR_OR_NULL(tfm)) {
-> -		kfree(big_oops_buf);
-> -		big_oops_buf = NULL;
-> -		pr_err("crypto_alloc_comp() failed!\n");
-> +	ctx = crypto_alloc_comp(zbackend->name, 0, 0);
-> +	if (IS_ERR_OR_NULL(ctx)) {
-> +		kfree(buf);
-> +		pr_err("crypto_alloc_comp('%s') failed: %ld\n", zbackend->name,
-> +		       PTR_ERR(ctx));
->  		return;
->  	}
-> +
-> +	/* A non-NULL big_oops_buf indicates compression is available. */
-> +	tfm = ctx;
-> +	big_oops_buf_sz = size;
-> +	big_oops_buf = buf;
-> +
-> +	pr_info("Using compression: %s\n", zbackend->name);
->  }
->  
->  static void free_buf_for_compression(void)
->  {
-> -	if (IS_ENABLED(CONFIG_PSTORE_COMPRESS) && !IS_ERR_OR_NULL(tfm))
-> +	if (IS_ENABLED(CONFIG_PSTORE_COMPRESS) && tfm)
->  		crypto_free_comp(tfm);
->  	kfree(big_oops_buf);
->  	big_oops_buf = NULL;
-> @@ -764,31 +784,28 @@ static void pstore_timefunc(struct timer_list *unused)
->  			  jiffies + msecs_to_jiffies(pstore_update_ms));
->  }
->  
-> -void __init pstore_choose_compression(void)
-> +static int __init pstore_compression_late_init(void)
->  {
->  	const struct pstore_zbackend *step;
->  
->  	if (!compress)
-> -		return;
-> +		return 0;
->  
-> +	/* Locate desired compression method. */
->  	for (step = zbackends; step->name; step++) {
->  		if (!strcmp(compress, step->name)) {
->  			zbackend = step;
-> -			pr_info("using %s compression\n", zbackend->name);
-> -			return;
-> +			break;
->  		}
->  	}
-> -}
->  
-> -static int __init pstore_compression_late_init(void)
-> -{
->  	/*
-> -	 * Check if any pstore backends registered earlier but did not allocate
-> -	 * for compression because crypto was not ready, if so then initialize
-> -	 * compression.
-> +	 * Check if any pstore backends registered earlier but did not
-> +	 * initialize compression because crypto was not ready. If so,
-> +	 * then initialize compression now.
->  	 */
-> -	if (psinfo && !tfm)
-> -		allocate_buf_for_compression();
-> +	allocate_buf_for_compression();
+Change close parenthesis alignment to match respective open parenthesis at
+iio/drivers/staging/iio/adc/ad7606.c line 379.
+This makes the file more compliant with the preferred coding style for the
+linux kernel.
 
-We can also get rid of the 'zbackend' global variable since choosing the
-compression backend and allocating the buffers are done at the same time?
+Signed-of-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+---
+ drivers/staging/iio/adc/ad7606.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Otherwise looks good to me,
-
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-
-thanks,
-
- - Joel
+diff --git a/drivers/staging/iio/adc/ad7606.c b/drivers/staging/iio/adc/ad7606.c
+index 0b728b6ea135..230faae38c12 100644
+--- a/drivers/staging/iio/adc/ad7606.c
++++ b/drivers/staging/iio/adc/ad7606.c
+@@ -376,7 +376,7 @@ static int ad7606_request_gpios(struct ad7606_state *st)
+ 		return 0;
+ 
+ 	st->gpio_os = devm_gpiod_get_array_optional(dev, "oversampling-ratio",
+-			GPIOD_OUT_LOW);
++						    GPIOD_OUT_LOW);
+ 	return PTR_ERR_OR_ZERO(st->gpio_os);
+ }
+ 
+-- 
+2.17.1
 
