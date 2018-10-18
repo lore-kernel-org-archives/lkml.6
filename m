@@ -2,89 +2,66 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A17C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C0FC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:15:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D2BB2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:12:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D2BB2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 4717F208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:15:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4717F208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbeJRNMB (ORCPT
+        id S1727469AbeJRNO1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 09:12:01 -0400
-Received: from smtprelay0134.hostedemail.com ([216.40.44.134]:49911 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727348AbeJRNMB (ORCPT
+        Thu, 18 Oct 2018 09:14:27 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:54802 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727331AbeJRNO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 09:12:01 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 6EFEB235C9;
-        Thu, 18 Oct 2018 05:12:50 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: slip41_52cc55438e755
-X-Filterd-Recvd-Size: 2115
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 18 Oct 2018 05:12:48 +0000 (UTC)
-Message-ID: <889a482aff2a3d4110640833d3749ce7ba5447f1.camel@perches.com>
-Subject: Re: [PATCH] MAINTAINERS: Add entry for VKMS
-From:   Joe Perches <joe@perches.com>
-To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date:   Wed, 17 Oct 2018 22:12:47 -0700
-In-Reply-To: <20181017225126.o7le4sczgfol62mq@smtp.gmail.com>
-References: <20181017225126.o7le4sczgfol62mq@smtp.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
+        Thu, 18 Oct 2018 09:14:27 -0400
+Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 15F5E13AE1A9F;
+        Wed, 17 Oct 2018 22:15:16 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 22:15:15 -0700 (PDT)
+Message-Id: <20181017.221515.528292765899192548.davem@davemloft.net>
+To:     vijaykhemka@fb.com
+Cc:     sam@mendozajonas.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+        Justin.Lee1@Dell.com, joel@jms.id.au, linux-aspeed@lists.ozlabs.org
+Subject: Re: [PATCH net-next v5] net/ncsi: Add NCSI Broadcom OEM command
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181016191319.1909502-1-vijaykhemka@fb.com>
+References: <20181016191319.1909502-1-vijaykhemka@fb.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 17 Oct 2018 22:15:16 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-17 at 19:51 -0300, Rodrigo Siqueira wrote:
-> Add maintainers and reviewers for VKMS driver
+From: Vijay Khemka <vijaykhemka@fb.com>
+Date: Tue, 16 Oct 2018 12:13:19 -0700
+
+> This patch adds OEM Broadcom commands and response handling. It also
+> defines OEM Get MAC Address handler to get and configure the device.
 > 
-> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> ---
->  MAINTAINERS | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+> ncsi_oem_gma_handler_bcm: This handler send NCSI broadcom command for
+> getting mac address.
+> ncsi_rsp_handler_oem_bcm: This handles response received for all
+> broadcom OEM commands.
+> ncsi_rsp_handler_oem_bcm_gma: This handles get mac address response and
+> set it to device.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 39c3f6682ace..78c3c0bf89fa 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4592,6 +4592,16 @@ T:	git git://anongit.freedesktop.org/drm/drm-misc
->  S:	Supported
->  F:	drivers/gpu/drm/pl111/
->  
-> +DRM DRIVER FOR VIRTUAL KERNEL MODESETTING (VKMS)
-> +M:	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> +R:	Haneen Mohammed <hamohammed.sa@gmail.com>
-> +R:	Daniel Vetter <daniel@ffwll.ch>
-> +T:	git git://anongit.freedesktop.org/drm/drm-misc
-> +S:	Maintained
-> +L:	dri-devel@lists.freedesktop.org 
-> +F:	drivers/gpu/drm/vkms/
-> +F:	Documentation/gpu/vkms.rst
-> +
->  DRM DRIVER FOR ARM VERSATILE TFT PANELS
->  M:	Linus Walleij <linus.walleij@linaro.org>
->  T:	git git://anongit.freedesktop.org/drm/drm-misc
+> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
 
-Please insert this section in alphabetical order
-
-
+Applied.
