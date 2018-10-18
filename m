@@ -2,112 +2,110 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3865C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC65C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B8822145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:26:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=benyossef-com.20150623.gappssmtp.com header.i=@benyossef-com.20150623.gappssmtp.com header.b="aa1Tv3aw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B8822145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=benyossef.com
+	by mail.kernel.org (Postfix) with ESMTP id C3D592098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:28:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3D592098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727767AbeJRV1Q (ORCPT
+        id S1727835AbeJRV32 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 17:27:16 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:42460 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727387AbeJRV1Q (ORCPT
+        Thu, 18 Oct 2018 17:29:28 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:34558 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727387AbeJRV31 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 17:27:16 -0400
-Received: by mail-vs1-f65.google.com with SMTP id e126so23046642vsc.9
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 06:26:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=e7D7uTyDGwUyou8Rg/88nt7xvFgNvhoSiEjO/nHUzGQ=;
-        b=aa1Tv3awzssfhGrS0l6+YYWatN424wGorqGgIEiI5OJZxAPch1qLzTUnXxQS7kEAtA
-         t31MHYoFEGCbqTjmuWWkqn73eW3kOaoSggrIewpHawXvFZARLsZmTx9tebSeheQDORDa
-         +agpjM+azW2tBf3NeIlFbXgj7F1OKxyi+/Aqdo7kPMcQjP8+iUOa3VKeTDCB6/2TnvTE
-         52DDlkNCS6Paywc/ZZ44n5yjWiTqEuUFvYg1kgW45sR5axncddsnwKePgWT6jM5PMCfR
-         U6LxVY0PAmuXoguNMS448/hM6MgGGJE6mVewU5wsxN41xo15nBHyMYU4PM1jZtrewMNd
-         YCVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=e7D7uTyDGwUyou8Rg/88nt7xvFgNvhoSiEjO/nHUzGQ=;
-        b=a/3k3qyvl5VMVtgNO2uREYWE6hspf9j0ZnOHGggZPXev1xU59+vFK44+kQ8GK3hmzW
-         GKj2CKoZoirD66i2lw1r75LRSS8gXYifGH+4GNpD1ntQ9bpdIwQ4Uk4HvvrVQCdOjeSK
-         WwqE64XJpSoIzi0Juwtbb3+uKSoSh6kNGqMYq1i28BaZa286iXnlnG2It1SQYzV/b+7y
-         B9FkNQrQDslWYD0wIkaTwpxpwbvRqOvLcj3ZziZGowEAbJNJCDpGXk9JS2dPRAhS5rG7
-         R4ELamL9iKRt8iod7ecEANgdtmxQ++1OKyTAmj+xtlSPUpoRt2KaqnrKDTFc0JrEFdVZ
-         bfbg==
-X-Gm-Message-State: ABuFfogSP2NTFjxa6EdpkmuDOdvDWV+VPBUAQnSMzXkBx5QE5QFbXaKA
-        iTE8URd71W9n17ZTTRfQ/E1wAfUC6vUJht8yn7jCqA==
-X-Google-Smtp-Source: ACcGV61EMXc68U8cdYbfJtav/9G5RXqYgMLj4TKIJM53lpvrWH46vhT8Jiq/EOOfNhzBHM5VT+84nuMgRGC4MaaKQpM=
-X-Received: by 2002:a67:3e81:: with SMTP id a1mr12340511vsi.136.1539869173007;
- Thu, 18 Oct 2018 06:26:13 -0700 (PDT)
+        Thu, 18 Oct 2018 17:29:27 -0400
+Received: from [213.61.215.195] (helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gD8LR-0000UN-Ry; Thu, 18 Oct 2018 15:28:10 +0200
+Date:   Thu, 18 Oct 2018 15:28:08 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [Patch v3 07/13] x86/process Add arch_set_dumpable
+In-Reply-To: <6c8538c428d6335efae926c1e6a6fd26a3f9a1b8.1539798901.git.tim.c.chen@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1810181522230.1647@nanos.tec.linutronix.de>
+References: <cover.1539798901.git.tim.c.chen@linux.intel.com> <6c8538c428d6335efae926c1e6a6fd26a3f9a1b8.1539798901.git.tim.c.chen@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <1539867599-20504-1-git-send-email-yael.chemla@foss.arm.com>
-In-Reply-To: <1539867599-20504-1-git-send-email-yael.chemla@foss.arm.com>
-From:   Gilad Ben-Yossef <gilad@benyossef.com>
-Date:   Thu, 18 Oct 2018 16:26:01 +0300
-Message-ID: <CAOtvUMe8ACJtadM1B50qBT=TBwD45rPN-89Pw+AdU20uMqyU-g@mail.gmail.com>
-Subject: Re: [PATCH 0/3] crypto: ccree: add SM3 support
-To:     yaeceh01 <yael.chemla@foss.arm.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Ofir Drang <ofir.drang@arm.com>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 4:00 PM Yael Chemla <yael.chemla@foss.arm.com> wrot=
-e:
->
-> Add support for SM3 in CryptoCell 713.
->
-> Yael Chemla (3):
->   crypto: ccree: adjust hash length to suit certain context specifics
->   crypto: ccree:  modify set_cipher_mode usage from cc_hash
->   crypto: ccree: add SM3 support
->
->  drivers/crypto/Kconfig                  |   1 +
->  drivers/crypto/ccree/cc_aead.c          |  19 +++-
->  drivers/crypto/ccree/cc_crypto_ctx.h    |   4 +-
->  drivers/crypto/ccree/cc_driver.c        |  10 +-
->  drivers/crypto/ccree/cc_driver.h        |   2 +-
->  drivers/crypto/ccree/cc_hash.c          | 175 +++++++++++++++++++++++---=
-------
->  drivers/crypto/ccree/cc_hw_queue_defs.h |  27 +++++
->  7 files changed, 182 insertions(+), 56 deletions(-)
->
-> --
-> 2.7.4
->
+On Wed, 17 Oct 2018, Tim Chen wrote:
 
-Herbert, these go on top of my own previous patch set that adds the
-CryptoCell 713 and its SM4 cipher support.
+> Add arch_set_dumpable for setting architecture specific security
+> modifications on processes according to its dumpable properties.
+> Non dumpable processes are security sensitive and they can be modified
+> to gain architecture specific security defenses via arch_set_dumpable.
 
-Acked-by: Gilad Ben-Yossef <gilad@benyossef.com>
+You love that sentence, right? But it's still wrong.
+
+arch_set_dumpable() does arch specific extra modifications depending on
+'value'. It's not a one way street. It can tighten or relax.
+
+> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+> ---
+>  fs/exec.c | 6 ++++++
+
+And this is related to the subsystem in $subject (x86/process) in which way?
+
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index e204830..6f329fc 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1940,6 +1940,11 @@ void set_binfmt(struct linux_binfmt *new)
+>  }
+>  EXPORT_SYMBOL(set_binfmt);
+>  
+> +void __weak arch_set_dumpable(struct task_struct *tsk, unsigned int value)
+> +{
+> +	return;
+> +}
+> +
+>  /*
+>   * set_dumpable stores three-value SUID_DUMP_* into mm->flags.
+>   */
+> @@ -1956,6 +1961,7 @@ void set_dumpable(struct task_struct *tsk, unsigned int value)
+>  		old = READ_ONCE(tsk->mm->flags);
+>  		new = (old & ~MMF_DUMPABLE_MASK) | value;
+>  	} while (cmpxchg(&tsk->mm->flags, old, new) != old);
+> +	arch_set_dumpable(tsk, value);
+
+So now the obvious question. set_dumpable() operates on tsk->mm. i.e. it's
+a process wide operation. But arch_set_dumpable() operates on the task
+itself. What about the other tasks of that process?
 
 Thanks,
-Gilad
 
---=20
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-values of =CE=B2 will give rise to dom!
+	tglx
