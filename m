@@ -6,77 +6,69 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D80ECDE42
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 04:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CBBC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 04:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70E1121476
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 04:32:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E1121476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 226692145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 04:35:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 226692145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbeJRMbG (ORCPT
+        id S1727459AbeJRMeo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 08:31:06 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:41882 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727359AbeJRMbE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 08:31:04 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gCzya-0007M8-QA; Thu, 18 Oct 2018 04:32:00 +0000
-Date:   Thu, 18 Oct 2018 05:32:00 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     "Hongzhi, Song" <hongzhi.song@windriver.com>
-Cc:     linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
-        linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: Question about mmap syscall and POSIX standard on mips arch
-Message-ID: <20181018043200.GE32577@ZenIV.linux.org.uk>
-References: <e897b11f-1577-9298-7c82-7bbdea56e7e5@windriver.com>
+        Thu, 18 Oct 2018 08:34:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60568 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727297AbeJRMeo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 08:34:44 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EE17C300197C;
+        Thu, 18 Oct 2018 04:35:42 +0000 (UTC)
+Received: from localhost (ovpn-8-17.pek2.redhat.com [10.72.8.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 47D881A910;
+        Thu, 18 Oct 2018 04:35:42 +0000 (UTC)
+Date:   Thu, 18 Oct 2018 12:35:39 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
+        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        keescook@chromium.org, msys.mizuma@gmail.com,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v9 3/8] x86/boot: Add efi_get_rsdp_addr() to dig out RSDP
+ from EFI table
+Message-ID: <20181018043539.GF1885@192.168.1.4>
+References: <20181017102012.872-1-fanc.fnst@cn.fujitsu.com>
+ <20181017102012.872-4-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e897b11f-1577-9298-7c82-7bbdea56e7e5@windriver.com>
+In-Reply-To: <20181017102012.872-4-fanc.fnst@cn.fujitsu.com>
 User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 18 Oct 2018 04:35:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[mips folks Cc'd]
+On 10/17/18 at 06:20pm, Chao Fan wrote:
+> There is a bug that kaslr may randomly choose some positions
+> which are located in movable memory regions. This will break memory
+> hotplug feature and make the movable memory chosen by KASLR can't be
+> removed. So dig SRAT table from ACPI tables to get memory information.
 
-On Thu, Oct 18, 2018 at 11:26:02AM +0800, Hongzhi, Song wrote:
-> Hi all,
+This patch is only adding a function efi_get_rsdp_addr() which will be
+used in later patch. Do we need to describe bug here?
+
+Can we focus on what is this function, and why it's written like that,
+and why it's here?
 > 
-> Ltp has a POSIX teatcase about mmap, 24-2.c.
+> Imitate the ACPI code of parsing ACPI tables to dig and read ACPI
+> tables. Since some operations are not needed here, functions are
+> simplified. Functions will be used to dig only SRAT tables to get
+> information of memory, so that KASLR can the memory in immovable node.
 > 
-> https://github.com/linux-test-project/ltp/blob/e816127e5d8efbff5ae53e9c2292fae22f36838b/testcases/open_posix_testsuite/conformance/interfaces/mmap/24-2.c#L94
-
-[basically, MAP_FIXED mmap with addr + len > TASK_SIZE fails with
--EINVAL on mips and -ENOMEM elsewhere]
- 
-> Under POSIX standard, the expected errno should be ENOMEM
-> 
-> when the specific [addr+len] exceeds the bound of memory.
-
-The mmap() function may fail if:
-
-[EINVAL]
-The addr argument (if MAP_FIXED was specified) or off is not a multiple
-of the page size as returned by sysconf(), or is considered invalid by
-                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-the implementation.
-^^^^^^^^^^^^^^^^^^^
-
-So that behaviour gets past POSIX.  That part is mostly about the
-things like cache aliasing constraints, etc., but it leaves enough
-space to weasel out.  Said that, this
-
-[ENOMEM]
-MAP_FIXED was specified, and the range [addr,addr+len) exceeds that allowed
-for the address space of a process; or, if MAP_FIXED was not specified and
-there is insufficient room in the address space to effect the mapping.
-
-is a lot more specific, so switching to -ENOMEM there might be a good idea,
-especially since on other architectures we do get -ENOMEM in that case,
-AFAICS.
