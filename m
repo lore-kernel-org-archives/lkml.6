@@ -2,119 +2,84 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6DA2ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C46FBC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:15:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7870E21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:15:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7870E21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 965E821477
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:15:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965E821477
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727980AbeJRRPS (ORCPT
+        id S1727879AbeJRRP6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 13:15:18 -0400
-Received: from mga09.intel.com ([134.134.136.24]:10561 "EHLO mga09.intel.com"
+        Thu, 18 Oct 2018 13:15:58 -0400
+Received: from foss.arm.com ([217.140.101.70]:34752 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727575AbeJRRPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 13:15:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2018 02:15:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,395,1534834800"; 
-   d="scan'208";a="100261340"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.72.61])
-  by fmsmga001.fm.intel.com with ESMTP; 18 Oct 2018 02:15:11 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        id S1727519AbeJRRP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 13:15:58 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C44480D;
+        Thu, 18 Oct 2018 02:15:53 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC0633F5D3;
+        Thu, 18 Oct 2018 02:15:51 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 10:15:43 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Huacai Chen <chenhc@lemote.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] kernel-doc: fix declaration type determination
-In-Reply-To: <640b26f4-a6fa-ffbc-c866-ea03de4f79a5@infradead.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <640b26f4-a6fa-ffbc-c866-ea03de4f79a5@infradead.org>
-Date:   Thu, 18 Oct 2018 12:14:53 +0300
-Message-ID: <87va5zipki.fsf@intel.com>
+        zhangfx <zhangfx@lemote.com>, wu zhangjin <wuzhangjin@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH] cacheinfo: Keep the old value if of_property_read_u32
+ fails
+Message-ID: <20181018091146.GA22021@e107155-lin>
+References: <1539739563-1886-1-git-send-email-chenhc@lemote.com>
+ <20181017093540.GB16320@e107155-lin>
+ <CAAhV-H64KYE6YDLrBuK_oYkyBHe8F_5Ja433tY+Pp841kJw57g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAhV-H64KYE6YDLrBuK_oYkyBHe8F_5Ja433tY+Pp841kJw57g@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 17 Oct 2018, Randy Dunlap <rdunlap@infradead.org> wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> Make declaration type determination more robust.
->
-> When scripts/kernel-doc is deciding if some kernel-doc notation
-> contains an enum, a struct, a union, a typedef, or a function,
-> it does a pattern match on the beginning of the string, looking
-> for a match with one of "struct", "union", "enum", or "typedef",
-> and otherwise defaults to a function declaration type.
-> However, if a function or a function-like macro has a name that
-> begins with "struct" (e.g., struct_size()), then kernel-doc
-> incorrectly decides that this is a struct declaration.
->
-> Fix this by looking for the declaration type keywords having an
-> ending word boundary (\b), so that "struct_size" will not match
-> a struct declaration.
+Hi Huacai,
 
-My perl is all cargo cult, so can't really review, but based on the
-description this is what should be done,
+On Thu, Oct 18, 2018 at 09:28:11AM +0800, Huacai Chen wrote:
+> Hi, Sudeep,
+> 
+> Please see this call-graph:
+> 
+> static int detect_cache_attributes(unsigned int cpu)
+>         ....
+>         ret = populate_cache_leaves(cpu);
+>         ....
+>         ret = cache_shared_cpu_map_setup(cpu); -->
+> cache_setup_of_node() --> cache_of_set_props() -->
+> cache_size()/cache_nr_sets
+> 
+> populate_cache_leaves() is arch-specific, All archs except arm64 have
+> provide initial values to cacheinfo:size and cacheinfo:number_of_sets.
+> 
+> Related files:
+> arch/nds32/kernel/cacheinfo.c
+> arch/mips/kernel/cacheinfo.c
 
-Acked-by: Jani Nikula <jani.nikula@intel.com>
+Only above 2 could be affected, but I want to be sure. I wasn't aware
+of MIPS arch setting values elsewhere, assumed DT, my bad.
+You have still not answered my question. Which arch are you facing issue ?
+Or are you proposing this by code inspection ? I changes look fine, but
+want to be sure if the issue you are seeing is in above architectures.
 
-> I compared lots of html before/after output from core-api, driver-api,
-> and networking.  There were no differences in any of the files that
-> I checked.
-
-I used to do diff -r on pre and post change clean documentation builds
-to verify this type of stuff.
-
-BR,
-Jani.
-
->
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Tested-by: Kees Cook <keescook@chromium.org>
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: linux-doc@vger.kernel.org
-> ---
->  scripts/kernel-doc |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> --- lnx-419-rc8.orig/scripts/kernel-doc
-> +++ lnx-419-rc8/scripts/kernel-doc
-> @@ -1904,13 +1904,13 @@ sub process_name($$) {
->  	    ++$warnings;
->  	}
->  
-> -	if ($identifier =~ m/^struct/) {
-> +	if ($identifier =~ m/^struct\b/) {
->  	    $decl_type = 'struct';
-> -	} elsif ($identifier =~ m/^union/) {
-> +	} elsif ($identifier =~ m/^union\b/) {
->  	    $decl_type = 'union';
-> -	} elsif ($identifier =~ m/^enum/) {
-> +	} elsif ($identifier =~ m/^enum\b/) {
->  	    $decl_type = 'enum';
-> -	} elsif ($identifier =~ m/^typedef/) {
-> +	} elsif ($identifier =~ m/^typedef\b/) {
->  	    $decl_type = 'typedef';
->  	} else {
->  	    $decl_type = 'function';
->
->
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+--
+Regards,
+Sudeep
