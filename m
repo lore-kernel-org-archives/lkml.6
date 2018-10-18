@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03044ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC52C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC20B205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:01:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7136A205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:01:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ma3z4T5k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC20B205C9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKXV/tzn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7136A205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729561AbeJSCDg (ORCPT
+        id S1729571AbeJSCDk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:03:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51626 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:03:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728478AbeJSCDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:03:36 -0400
+        id S1728478AbeJSCDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:03:40 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD21521479;
-        Thu, 18 Oct 2018 18:01:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9377A205C9;
+        Thu, 18 Oct 2018 18:01:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885690;
-        bh=3udG9RrtbUk4jxOLcB5Svsgm1iF/3Mc5idgRzyoS5F4=;
+        s=default; t=1539885694;
+        bh=R6OLlyecRUcnsaPQckMEo0qzvywk/JB951JwJEZsqqs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ma3z4T5kbhD2del/qgnqo8OQiOmH6MZWRgDEWDoBb5L2/FVd25R9u2eqS5f1YYwSv
-         cyKJ694kt0eqyg3Pk6gODzjBGCsMFj4i2y4DCGlJ182nW5BoMPIh8fK7knfsLrwc1b
-         zuTxWKVmwzFUPOhHSFdcXehU29muIdMsx+P5RPhA=
+        b=jKXV/tzn+ewSmDmns8fGSxuIvjnaGfCWBlRpjprNrdGa0Kr1JYEwjiWKWruEm32Y4
+         1A6XjsdTbmkMDnyPMQoBD1VlkAwOS3FIS+IB/+C9Ea4Cac7kaSqAfec1Ab6bMcLkg9
+         EndMF176zpgX24tDruJ+IA6SlHbq6UmtjE9vgrhk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, linux stable <stable@vger.kernel.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Rob Herring <robh@kernel.org>,
-        Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.14 34/41] ARC: build: Dont set CROSS_COMPILE in archs Makefile
-Date:   Thu, 18 Oct 2018 19:54:49 +0200
-Message-Id: <20181018175422.671965719@linuxfoundation.org>
+        Natanael Copa <ncopa@alpinelinux.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH 4.14 35/41] HID: quirks: fix support for Apple Magic Keyboards
+Date:   Thu, 18 Oct 2018 19:54:50 +0200
+Message-Id: <20181018175422.845780607@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
 References: <20181018175416.718399607@linuxfoundation.org>
@@ -63,70 +62,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Brodkin <abrodkin@synopsys.com>
+From: Natanael Copa <ncopa@alpinelinux.org>
 
-commit 40660f1fcee8d524a60b5101538e42b1f39f106d upstream.
+Commit b6cc0ba2cbf4 (HID: add support for Apple Magic Keyboards)
+backported support for the Magic Keyboard over Bluetooth, but did not
+add the BT_VENDOR_ID_APPLE to hid_have_special_driver[] so the hid-apple
+driver is never loaded and Fn key does not work at all.
 
-There's not much sense in doing that because if user or
-his build-system didn't set CROSS_COMPILE we still may
-very well make incorrect guess.
+Adding BT_VENDOR_ID_APPLE to hid_have_special_driver[] is not needed
+after commit e04a0442d33b (HID: core: remove the absolute need of
+hid_have_special_driver[]), so 4.16 kernels and newer does not need it.
 
-But as it turned out setting CROSS_COMPILE is not as harmless
-as one may think: with recent changes that implemented automatic
-discovery of __host__ gcc features unconditional setup of
-CROSS_COMPILE leads to failures on execution of "make xxx_defconfig"
-with absent cross-compiler, for more info see [1].
-
-Set CROSS_COMPILE as well gets in the way if we want only to build
-.dtb's (again with absent cross-compiler which is not really needed
-for building .dtb's), see [2].
-
-Note, we had to change LIBGCC assignment type from ":=" to "="
-so that is is resolved on its usage, otherwise if it is resolved
-at declaration time with missing CROSS_COMPILE we're getting this
-error message from host GCC:
-
-| gcc: error: unrecognized command line option -mmedium-calls
-| gcc: error: unrecognized command line option -mno-sdata
-
-[1] http://lists.infradead.org/pipermail/linux-snps-arc/2018-September/004308.html
-[2] http://lists.infradead.org/pipermail/linux-snps-arc/2018-September/004320.html
-
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Rob Herring <robh@kernel.org>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Fixes: b6cc0ba2cbf4 (HID: add support for Apple Magic Keyboards)
+Bugzilla-id: https://bugzilla.kernel.org/show_bug.cgi?id=99881
+Signed-off-by: Natanael Copa <ncopa@alpinelinux.org>
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arc/Makefile |   10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
 
---- a/arch/arc/Makefile
-+++ b/arch/arc/Makefile
-@@ -6,14 +6,6 @@
- # published by the Free Software Foundation.
- #
- 
--ifeq ($(CROSS_COMPILE),)
--ifndef CONFIG_CPU_BIG_ENDIAN
--CROSS_COMPILE := arc-linux-
--else
--CROSS_COMPILE := arceb-linux-
--endif
--endif
--
- KBUILD_DEFCONFIG := nsim_700_defconfig
- 
- cflags-y	+= -fno-common -pipe -fno-builtin -mmedium-calls -D__linux__
-@@ -73,7 +65,7 @@ ldflags-$(CONFIG_CPU_BIG_ENDIAN)	+= -EB
- # --build-id w/o "-marclinux". Default arc-elf32-ld is OK
- ldflags-$(upto_gcc44)			+= -marclinux
- 
--LIBGCC	:= $(shell $(CC) $(cflags-y) --print-libgcc-file-name)
-+LIBGCC	= $(shell $(CC) $(cflags-y) --print-libgcc-file-name)
- 
- # Modules with short calls might break for calls into builtin-kernel
- KBUILD_CFLAGS_MODULE	+= -mlong-calls -mno-millicode
+Benjamin, thank you for your help with this.
+
+I believe this is needed for both linux-4.14.y and linux-4.9.y.
+
+ drivers/hid/hid-core.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -1964,6 +1964,9 @@ static const struct hid_device_id hid_ha
+ 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_ISO) },
+ 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_JIS) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI) },
++	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI) },
++	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_FOUNTAIN_TP_ONLY) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_GEYSER1_TP_ONLY) },
+ #endif
 
 
