@@ -2,141 +2,96 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96685C67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD859C67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 585E620658
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:39:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 585E620658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F1A620658
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:40:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZNC2BW7M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F1A620658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbeJSEmc (ORCPT
+        id S1727459AbeJSEmp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 00:42:32 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46592 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726653AbeJSEmc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 00:42:32 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C5113207C4; Thu, 18 Oct 2018 22:39:44 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 253462072C;
-        Thu, 18 Oct 2018 22:39:44 +0200 (CEST)
-Date:   Thu, 18 Oct 2018 22:39:43 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Jianxin Pan <jianxin.pan@amlogic.com>
-Cc:     <linux-mtd@lists.infradead.org>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 2/2] mtd: rawnand: meson: add support for Amlogic
- NAND flash controller
-Message-ID: <20181018223943.145e5497@bbrezillon>
-In-Reply-To: <1539839345-14021-3-git-send-email-jianxin.pan@amlogic.com>
-References: <1539839345-14021-1-git-send-email-jianxin.pan@amlogic.com>
-        <1539839345-14021-3-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Fri, 19 Oct 2018 00:42:45 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:55504 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726534AbeJSEmp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 00:42:45 -0400
+Received: by mail-it1-f193.google.com with SMTP id c23-v6so1955224itd.5
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 13:40:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aLdsCBf34ru96mZk8IQZFBhwXP47jbHuXKRy0BVgJho=;
+        b=ZNC2BW7MKRqNjeFKbPe8jcpDAzCuBMgoG7Ky9Fm4H9B9/KQtSPOd2OBEqh7T8JPc0n
+         9FMm526vNx8dgCGCStbcSafYLUqQvm6GzRqJLkSn0K1ZyTxqEHJqRLs+Qs6zHcuKpjOq
+         zuG1wmTaCq5GBXFuKCFLH1dK8EfU9Tm9ynS3OEyTSFbBp+GYbK+PCRgEkuIqcCpdksoF
+         M9RORa+RFkLW8+/p9gLR6VmfG03ciKndPixxHNEMsOtwQBbEEsPnZoosZk2O2Sel65lK
+         dNHMmmHP0GXv2XZpd5HqkLgBnqJbnMlfKZjuBTaELHxzFi2RxBbZAU9M4tEuDvgD/Kb5
+         YwuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aLdsCBf34ru96mZk8IQZFBhwXP47jbHuXKRy0BVgJho=;
+        b=Q+97ZdRA0vValq/pPVgWgj5Ako/fb1EnonxuSTnuQV7DPxYXXtzlebg/n4qvACeGEB
+         W8qUpni0eTj1JMnxi+sUK/eAmbxEDvSCFqW+ICs4XzT6bfUXvxKwLsQEdT3lOhc9LQK0
+         D4f9cT6xs103kIK817kHZXhA4hdw1eBA2vayDRr4S+zp73Lc/J2Bh/SHOJ+Krp5AkJWZ
+         0VsTSMBP/t0abkmIDh17k5+phu4i31oelvw0D6mMVdn+cvxnh5DKAg4wGCexUC/mQq0Y
+         7Tofm7T7xoUP0AAC3z3+lyBwsse7RPLugyF2XoQcWTlwk0sAoi16vQRM6pyxJ0jrEQhD
+         pSdQ==
+X-Gm-Message-State: ABuFfoh/OAI2Jj5b7PQWMg2UZrt3BOkScDEt27YcZb72uNQisx4OqY5f
+        tOaLcyjIrBIuK3sb43sdibMordShms0YL1J1bshCjA==
+X-Google-Smtp-Source: ACcGV62cgpYtjR0MUSTM6kAO/OUGfH+6Af/a51jeOoZJWqLVz5CLT9VfyeJLw5N6qNSmSCarBgaGza10wyFwP+/2KnI=
+X-Received: by 2002:a02:ac89:: with SMTP id x9-v6mr110621jan.119.1539895199582;
+ Thu, 18 Oct 2018 13:39:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181017222710.254994-1-kunyi@google.com> <20181018194758.GA21705@bogus>
+In-Reply-To: <20181018194758.GA21705@bogus>
+From:   Kun Yi <kunyi@google.com>
+Date:   Thu, 18 Oct 2018 13:39:32 -0700
+Message-ID: <CAGMNF6UY1dS83h+zSauHqjETWM7rzpc3EmAEwNSCr0HW0J=cAg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] dt-bindings: hwmon: Add adm127x documentation
+To:     robh@kernel.org
+Cc:     OpenBMC Maillist <openbmc@lists.ozlabs.org>, jdelvare@suse.com,
+        Guenter Roeck <linux@roeck-us.net>, mark.rutland@arm.com,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 18 Oct 2018 13:09:05 +0800
-Jianxin Pan <jianxin.pan@amlogic.com> wrote:
+On Thu, Oct 18, 2018 at 12:48 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, 17 Oct 2018 15:27:09 -0700, Kun Yi wrote:
+> > adm127x are hot-swap controllers that allow a circuit board to be removed from
+> > or inserted into a live backplane. This patch adds the device tree
+> > bindings documentation.
+> >
+> > Signed-off-by: Kun Yi <kunyi@google.com>
+> > ---
+> >  .../devicetree/bindings/hwmon/adm1275.txt     | 25 +++++++++++++++++++
+> >  1 file changed, 25 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/hwmon/adm1275.txt
+> >
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-> +static int meson_nfc_calc_set_timing(struct meson_nfc *nfc,
-> +				     const struct nand_sdr_timings *timings)
-> +{
-> +	struct nand_timing *timing = &nfc->timing;
-> +	int div, bt_min, bt_max, bus_timing;
-> +	int ret;
-> +
-> +	div = DIV_ROUND_UP((timings->tRC_min / 1000), NFC_CLK_CYCLE);
-> +	ret = clk_set_rate(nfc->device_clk, 1000000000 / div);
-> +	if (ret) {
-> +		dev_err(nfc->dev, "failed to set nand clock rate\n");
-> +		return ret;
-> +	}
-> +
-> +	timing->twb = DIV_ROUND_UP(PSEC_TO_NSEC(timings->tWB_max),
-> +				   div * NFC_CLK_CYCLE);
-> +	timing->tadl = DIV_ROUND_UP(PSEC_TO_NSEC(timings->tADL_min),
-> +				    div * NFC_CLK_CYCLE);
-> +	timing->twhr = DIV_ROUND_UP(PSEC_TO_NSEC(timings->tWHR_min),
-> +				    div * NFC_CLK_CYCLE);
-> +
-> +	bt_min = (timings->tREA_max + NFC_DEFAULT_DELAY) / div;
-> +	bt_max = (NFC_DEFAULT_DELAY + timings->tRHOH_min
-> +			+ timings->tRC_min / 2) / div;
-> +
-> +	bt_min = DIV_ROUND_UP(bt_min, 1000);
-> +	bt_max = DIV_ROUND_UP(bt_max, 1000);
-> +
-> +	if (bt_max < bt_min)
-> +		return -EINVAL;
-> +
-> +	bus_timing = (bt_min + bt_max) / 2 + 1;
-> +
-> +	writel((1 << 21), nfc->reg_base + NFC_REG_CFG);
-> +	writel((NFC_CLK_CYCLE - 1) | (bus_timing << 5),
-> +	       nfc->reg_base + NFC_REG_CFG);
-> +
-> +	writel((1 << 31), nfc->reg_base + NFC_REG_CMD);
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +meson_nfc_setup_data_interface(struct nand_chip *nand, int csline,
-> +			       const struct nand_data_interface *conf)
-> +{
-> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
-> +	const struct nand_sdr_timings *timings;
-> +
-> +	timings = nand_get_sdr_timings(conf);
-> +	if (IS_ERR(timings))
-> +		return -ENOTSUPP;
-> +
-> +	if (csline == NAND_DATA_IFACE_CHECK_ONLY)
-> +		return 0;
+Thanks a lot for the Review!
 
-Hm, before saying you supporting the requested timing, you should make
-sure they are actually supported. I'd recommend splitting this in 2
-steps:
 
-1/ calc timings
-2/ store the timings in the chip priv struct so that they can be
-applied next time ->select_chip() is called.
-
-> +
-> +	meson_nfc_calc_set_timing(nfc, timings);
-
-You should not set the timing from ->setup_data_interface(), just
-calculate them, make sure they are supported and store the state in the
-private chip struct. Applying those timings should be done in
-->select_chip(), so that you can support 2 chips with different timings.
-
-> +	return 0;
-> +}
+-- 
+Regards,
+Kun
