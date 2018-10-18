@@ -2,155 +2,170 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56BC9C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 380FDC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:59:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 090DA208E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:58:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 090DA208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
+	by mail.kernel.org (Postfix) with ESMTP id DEE4E208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:59:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=as-electronics.de header.i=@as-electronics.de header.b="KsdTvla4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEE4E208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbeJRP6a convert rfc822-to-8bit (ORCPT
+        id S1727712AbeJRP7m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 11:58:30 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:48318 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbeJRP63 (ORCPT
+        Thu, 18 Oct 2018 11:59:42 -0400
+Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.136]:14260 "EHLO
+        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbeJRP7m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 11:58:29 -0400
-Received: from marcel-macbook.fritz.box (p4FF9F655.dip0.t-ipconnect.de [79.249.246.85])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 087E9CEF8D;
-        Thu, 18 Oct 2018 10:06:04 +0200 (CEST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: [PATCH v2] Bluetooth: hci_qca: Add support for controller debug
- logs.
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <b59f1fdb359f74bcd3d932339c41f9f3@codeaurora.org>
-Date:   Thu, 18 Oct 2018 09:58:41 +0200
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Harish Bandi <c-hbandi@codeaurora.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <A1A25EBE-925D-4952-AE5E-4A6C2BA6FD9E@holtmann.org>
-References: <20181003151144.10537-1-bgodavar@codeaurora.org>
- <2206464E-FA01-4A5A-8BC4-5CF70A0B9765@holtmann.org>
- <eca6c8832017269881709e51eadcf543@codeaurora.org>
- <EC27FDED-638A-4055-A861-C4AAD842F124@holtmann.org>
- <fed90ab28af93bc27a07c0b4e8ca933c@codeaurora.org>
- <01616379-E0FF-49AC-8C69-DA498DA9F51F@holtmann.org>
- <540262ec6c6f1c5f3a9baf18b6f40d47@codeaurora.org>
- <9261133E-226E-42E7-B2F6-15489CCC7CF1@holtmann.org>
- <b59f1fdb359f74bcd3d932339c41f9f3@codeaurora.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-X-Mailer: Apple Mail (2.3445.100.39)
+        Thu, 18 Oct 2018 11:59:42 -0400
+X-Greylist: delayed 739 seconds by postgrey-1.27 at vger.kernel.org; Thu, 18 Oct 2018 11:59:41 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1539849594;
+        s=strato-dkim-0002; d=as-electronics.de;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=8mRoC82yWy41GfVf86ASjT2si0+W6NzVDmL7PnsfOnw=;
+        b=KsdTvla4dmoFrYUGBHX+ah/PdTwODxD4zU2D1PcU4l3hyiNtvN2menVflsTBKkbCs5
+        5sAt5oSAIvtyY56x4zUaX0nIYXvROjoin9IFM4jysZXXhIjVOfzoujvjSFR4An9ep2Qc
+        a9HcsNyyXNeullQT48Jtz6sPhJ0SgYN1dZyQC+PChJ/76V2X5XGOLWWq2Cp4SGbuETPb
+        bt2SG9ws1vQpnK2ZK3xqQegcqdBp/rMp0+LoRmpIQEAagkScm7XR1+r7+w0IIQNJn+XI
+        EZw8/Yxfjq2cMCzzsMmUA7JKu9FfKiNc4wdoa6cWA4kuhIc92piDypgiYTEAt/mAojrQ
+        mz5w==
+X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx22AatU+eLaHfutoZdl+X9BETxn4/4+IVqx+ZaE86CU4W9SKmmy5dqqXOHDy+cSfqdZKKHYA=="
+X-RZG-CLASS-ID: mo05
+Received: from fs-work.fritz.box
+        by smtp.strato.de (RZmta 44.3 AUTH)
+        with ESMTPSA id j097e4u9I7lBFmq
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 18 Oct 2018 09:47:11 +0200 (CEST)
+From:   Frieder Schrempf <frieder.schrempf@kontron.de>
+To:     devicetree@vger.kernel.org, peter.chen@nxp.com
+Cc:     Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dts: imx: Add dummy PHYs for HSIC-only USB controllers
+Date:   Thu, 18 Oct 2018 09:45:04 +0200
+Message-Id: <1539848729-27646-1-git-send-email-frieder.schrempf@kontron.de>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Balakrishna,
+Some SOCs in the i.MX6 family have a USB host controller that is
+only capable of the HSIC interface and has no on-board PHY.
 
->>>>>>>>> This patch will prevent error messages splashing on console.
->>>>>>>>> [   78.426697] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
->>>>>>>>> [   78.436682] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
->>>>>>>>> [   78.446639] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
->>>>>>>>> [   78.456596] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
->>>>>>>>> QCA wcn3990 will send the debug logs in the form of ACL packets.
->>>>>>>>> While decoding packet in qca_recv(), marking the received debug log
->>>>>>>>> packet as diagnostic packet.
->>>>>>>>> Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
->>>>>>>>> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
->>>>>>>>> ---
->>>>>>>>> v2:
->>>>>>>>> * Addressed reviewer comments.
->>>>>>>>> v1:
->>>>>>>>> * initial patch
->>>>>>>>> ---
->>>>>>>>> drivers/bluetooth/hci_qca.c | 20 +++++++++++++++++++-
->>>>>>>>> 1 file changed, 19 insertions(+), 1 deletion(-)
->>>>>>>>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->>>>>>>>> index d98ed0442201..63ac3c6b4149 100644
->>>>>>>>> --- a/drivers/bluetooth/hci_qca.c
->>>>>>>>> +++ b/drivers/bluetooth/hci_qca.c
->>>>>>>>> @@ -63,6 +63,10 @@
->>>>>>>>> /* susclk rate */
->>>>>>>>> #define SUSCLK_RATE_32KHZ	32768
->>>>>>>>> +/* Controller debug log header */
->>>>>>>>> +#define QCA_DEBUG_HDR_MSB	0xDC
->>>>>>>>> +#define QCA_DEBUG_HDR_LSB	0x2E
->>>>>>>>> +
->>>>>>>> since this is actually the ACL handle, why not call it QCA_DEBUG_HANDLE.
->>>>>>> [Bala]: will update.
->>>>>>>>> /* HCI_IBS transmit side sleep protocol states */
->>>>>>>>> enum tx_ibs_states {
->>>>>>>>> 	HCI_IBS_TX_ASLEEP,
->>>>>>>>> @@ -849,6 +853,20 @@ static int qca_ibs_wake_ack(struct hci_dev *hdev, struct sk_buff *skb)
->>>>>>>>> 	return 0;
->>>>>>>>> }
->>>>>>>>> +static int qca_recv_acl_data(struct hci_dev *hdev, struct sk_buff *skb)
->>>>>>>>> +{
->>>>>>>>> +	/* We receive debug logs from chip as an ACL packets.
->>>>>>>>> +	 * Instead of sending the data to ACL to decode the
->>>>>>>>> +	 * received data, we are pushing them to the above layers
->>>>>>>>> +	 * as a diagnostic packet.
->>>>>>>>> +	 */
->>>>>>>>> +	if ((skb->len > 2) && (skb->data[0] == QCA_DEBUG_HDR_MSB) &&
->>>>>>>>> +	    (skb->data[1] == QCA_DEBUG_HDR_LSB))
->>>>>>>> Skip the individual () since they are not needed. Also the skb->len
->>>>>>>> check is not needed since the H4_RECV_ACL already ensures the proper
->>>>>>>> length of the header.
->>>>>>>> And just use get_unaligned_le16(skb->data) here (or be16 if that is
->>>>>>>> the byte order).
->>>>>>> [Bala] : will update condition with _le16()
->>>>>>>>> +		return hci_recv_diag(hdev, skb);
->>>>>>>> Is there any reason to keep the 4 octets hci_acl_hdr with this SKB? Or
->>>>>>>> would it be better to be stripped off. Mainly asking are they any
->>>>>>>> other magic handles that we might want to feed through the diag
->>>>>>>> channel?
->>>>>>> [Bala]: yes we need header in the stack, to  differentiate between actual diagnostic packet and debug packet.
->>>>>> please explain that a bit more. There is just one debug handle or do
->>>>>> you have more special handles?
->>>>> [Bala]: Qualcomm bluetooth chip sends the debug data of the chip with ACL header along with fixed handler i.e. 0x2edc..
->>>>>      this handler is dedicated for the debug logs sent by qcomm bt chip and it is not used for any other connection handlers.
->>>>>      so here we are checking this handler and sending to stack as an
->>>>>      a diagnostic packet.. so during the log capture we will read this diagnostic packet and handler,to decode the debug packet.
->>>>>      that is the  reason why we don't remove handler during condition check,  in future, if qualcomm chip sends diagnostic packet,
->>>>>      then this will create an problem to upper layers to decide whether it is an diagnostic packet or the debug packet.
->>>>>     this is how we do it.
->>>>>    if( diagnostic packet && handler == 0x2edc)
->>>>>       treat them as an ddebug packet
->>>>>    else
->>>>>        treat as diagnostic packet.
->>>> let me interpret this answer. Besides debug handle 0x2edc, there are
->>>> other handles that are not connection handles. And in future updates
->>>> you want to send these handles also via hci_recv_diag channel.
->>> No, 0x2edc is an dedicated handle for debug logs, i don't really think they we will have an new handle coming up.
->>> this is only the handle we will send via hci_recv_diag channel to the stack.
->>> what i mean in my previous answer was,we don't to remove debug connection handle from the skb, because in the stack
->>> we look for a diagnostic packet and debug connection handler to decode the message.
->> if 0x2edc is the only magic connection handle, then lets strip the SKB
->> of the ACL packet header and send only the payload to via
->> hci_recv_diag. All the information is present and you would be just
->> sending the ACL packet header for no reason. The diagnostic packets
->> get a separate channel on the monitor interface.
-> [Bala]: even we the felt the same to remove ACL packet header before sending to stack via an diagnostic channel,
-> 
->        here is the case, let us assume that an in future qaulcomm bt chip want to send diagnosis data as a diagnostic packet.
->        if we remove ACL header for ACL debug packet, how can the stack differentiate between debug packet and diagnosis packet.
+To be able to use these controllers, we need to add "usb-nop-xceiv"
+dummy PHYs.
 
-fair enough. Can we also do the same for the other Qualcomm / Atheros devices on USB and SMD bus? And what about implementing hdev->set_diag to enable / disable sending of debug logs. And of course the addition to btmon to decode the diagnostic channel.
+Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+---
+ arch/arm/boot/dts/imx6qdl.dtsi | 14 ++++++++++++++
+ arch/arm/boot/dts/imx6sl.dtsi  |  7 +++++++
+ arch/arm/boot/dts/imx6sx.dtsi  |  6 ++++++
+ 3 files changed, 27 insertions(+)
 
-Regards
-
-Marcel
+diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
+index 61d2d26..d3404d1 100644
+--- a/arch/arm/boot/dts/imx6qdl.dtsi
++++ b/arch/arm/boot/dts/imx6qdl.dtsi
+@@ -139,6 +139,16 @@
+ 		interrupts = <0 94 IRQ_TYPE_LEVEL_HIGH>;
+ 	};
+ 
++	usbphynop1: usbphynop1 {
++		compatible = "usb-nop-xceiv";
++		#phy-cells = <0>;
++	};
++
++	usbphynop2: usbphynop2 {
++		compatible = "usb-nop-xceiv";
++		#phy-cells = <0>;
++	};
++
+ 	soc {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -981,6 +991,8 @@
+ 				reg = <0x02184400 0x200>;
+ 				interrupts = <0 41 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clks IMX6QDL_CLK_USBOH3>;
++				fsl,usbphy = <&usbphynop1>;
++				phy_type = "hsic";
+ 				fsl,usbmisc = <&usbmisc 2>;
+ 				dr_mode = "host";
+ 				ahb-burst-config = <0x0>;
+@@ -994,6 +1006,8 @@
+ 				reg = <0x02184600 0x200>;
+ 				interrupts = <0 42 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clks IMX6QDL_CLK_USBOH3>;
++				fsl,usbphy = <&usbphynop2>;
++				phy_type = "hsic";
+ 				fsl,usbmisc = <&usbmisc 3>;
+ 				dr_mode = "host";
+ 				ahb-burst-config = <0x0>;
+diff --git a/arch/arm/boot/dts/imx6sl.dtsi b/arch/arm/boot/dts/imx6sl.dtsi
+index 7a4f5da..81edcdc 100644
+--- a/arch/arm/boot/dts/imx6sl.dtsi
++++ b/arch/arm/boot/dts/imx6sl.dtsi
+@@ -110,6 +110,11 @@
+ 		interrupts = <0 94 IRQ_TYPE_LEVEL_HIGH>;
+ 	};
+ 
++	usbphynop1: usbphynop1 {
++		compatible = "usb-nop-xceiv";
++		#phy-cells = <0>;
++	};
++
+ 	soc {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -815,6 +820,8 @@
+ 				reg = <0x02184400 0x200>;
+ 				interrupts = <0 40 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clks IMX6SL_CLK_USBOH3>;
++				fsl,usbphy = <&usbphynop1>;
++				phy_type = "hsic";
+ 				fsl,usbmisc = <&usbmisc 2>;
+ 				dr_mode = "host";
+ 				ahb-burst-config = <0x0>;
+diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
+index 844caa3..07ed417 100644
+--- a/arch/arm/boot/dts/imx6sx.dtsi
++++ b/arch/arm/boot/dts/imx6sx.dtsi
+@@ -159,6 +159,11 @@
+ 		interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
+ 	};
+ 
++	usbphynop1: usbphynop1 {
++		compatible = "usb-nop-xceiv";
++		#phy-cells = <0>;
++	};
++
+ 	soc {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -877,6 +882,7 @@
+ 				reg = <0x02184400 0x200>;
+ 				interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clks IMX6SX_CLK_USBOH3>;
++				fsl,usbphy = <&usbphynop1>;
+ 				fsl,usbmisc = <&usbmisc 2>;
+ 				phy_type = "hsic";
+ 				fsl,anatop = <&anatop>;
+-- 
+2.7.4
 
