@@ -7,58 +7,52 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3844EECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5032DC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAC272148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D3162148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g1CnKNnt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAC272148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SiJFefVz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D3162148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730034AbeJSCGL (ORCPT
+        id S1730046AbeJSCGN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:06:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54368 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:06:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728416AbeJSCGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:06:10 -0400
+        id S1728416AbeJSCGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:06:13 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8A3F21476;
-        Thu, 18 Oct 2018 18:04:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5D662148D;
+        Thu, 18 Oct 2018 18:04:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885842;
-        bh=F7vom+3xj1atX65evVUYyPrEa+8MXBm1FzHLlaeQZRM=;
+        s=default; t=1539885845;
+        bh=Pn8iHZ0PHvRdQjFf7haZN2vk+Xmot2dWXORE9acQwcc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g1CnKNntGDS3yKa3Zo+X+ZyiaVHRA0hKZFCF/D3l9lAODNwlxZn7d7fW1V2JI8qJq
-         atK/XMevZlWeJUz+/w1HJ0VcXmmAFyT58ITUOuD7yVw9mjBmPpZXQ7HKgYEPeM3wdt
-         X4uD5NbN1nprTb/PfamcdnMjQ7pJxkZx/ZY1NPVs=
+        b=SiJFefVz+krTENBmp5xoHxKDY2GKtC6uZnTYmWHza3gpbLX5KgwewrKKRSm0AgaUG
+         Ks1eT2CN+ep98194ZbbSvQNbKH/ChwF6p42lzaCYhspxuQK1qcLmSHdH+w0QLeY2oC
+         6N0gF3Il2NgoEuEPuSZEZnlHyaxe0C7RbojtVq10=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter Zijlstra <peterz@infradead.org>,
         Rik van Riel <riel@redhat.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Stanislaw Gruszka <sgruszka@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>,
         Wanpeng Li <wanpeng.li@hotmail.com>,
         Ingo Molnar <mingo@kernel.org>,
         Ivan Delalande <colona@arista.com>
-Subject: [PATCH 4.9 32/35] sched/cputime: Increment kcpustat directly on irqtime account
-Date:   Thu, 18 Oct 2018 19:55:01 +0200
-Message-Id: <20181018175427.007210788@linuxfoundation.org>
+Subject: [PATCH 4.9 33/35] sched/cputime: Fix ksoftirqd cputime accounting regression
+Date:   Thu, 18 Oct 2018 19:55:02 +0200
+Message-Id: <20181018175427.156878860@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175422.506152522@linuxfoundation.org>
 References: <20181018175422.506152522@linuxfoundation.org>
@@ -78,162 +72,136 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frederic Weisbecker <fweisbec@gmail.com>
 
-commit a499a5a14dbd1d0315a96fc62a8798059325e9e6 upstream.
+commit 25e2d8c1b9e327ed260edd13169cc22bc7a78bc6 upstream.
 
-The irqtime is accounted is nsecs and stored in
-cpu_irq_time.hardirq_time and cpu_irq_time.softirq_time. Once the
-accumulated amount reaches a new jiffy, this one gets accounted to the
-kcpustat.
+irq_time_read() returns the irqtime minus the ksoftirqd time. This
+is necessary because irq_time_read() is used to substract the IRQ time
+from the sum_exec_runtime of a task. If we were to include the softirq
+time of ksoftirqd, this task would substract its own CPU time everytime
+it updates ksoftirqd->sum_exec_runtime which would therefore never
+progress.
 
-This was necessary when kcpustat was stored in cputime_t, which could at
-worst have jiffies granularity. But now kcpustat is stored in nsecs
-so this whole discretization game with temporary irqtime storage has
-become unnecessary.
+But this behaviour got broken by:
 
-We can now directly account the irqtime to the kcpustat.
+  a499a5a14db ("sched/cputime: Increment kcpustat directly on irqtime account")
 
+... which now includes ksoftirqd softirq time in the time returned by
+irq_time_read().
+
+This has resulted in wrong ksoftirqd cputime reported to userspace
+through /proc/stat and thus "top" not showing ksoftirqd when it should
+after intense networking load.
+
+ksoftirqd->stime happens to be correct but it gets scaled down by
+sum_exec_runtime through task_cputime_adjusted().
+
+To fix this, just account the strict IRQ time in a separate counter and
+use it to report the IRQ time.
+
+Reported-and-tested-by: Jesper Dangaard Brouer <brouer@redhat.com>
 Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Reviewed-by: Rik van Riel <riel@redhat.com>
+Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Paul Mackerras <paulus@samba.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@redhat.com>
 Cc: Stanislaw Gruszka <sgruszka@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
 Cc: Wanpeng Li <wanpeng.li@hotmail.com>
-Link: http://lkml.kernel.org/r/1485832191-26889-17-git-send-email-fweisbec@gmail.com
+Link: http://lkml.kernel.org/r/1493129448-5356-1-git-send-email-fweisbec@gmail.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ivan Delalande <colona@arista.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/sched/cputime.c |   50 ++++++++++++++++---------------------------------
- kernel/sched/sched.h   |    7 +++---
- 2 files changed, 21 insertions(+), 36 deletions(-)
+ kernel/sched/cputime.c |   27 ++++++++++++++++-----------
+ kernel/sched/sched.h   |    9 +++++++--
+ 2 files changed, 23 insertions(+), 13 deletions(-)
 
 --- a/kernel/sched/cputime.c
 +++ b/kernel/sched/cputime.c
-@@ -44,6 +44,7 @@ void disable_sched_clock_irqtime(void)
+@@ -37,6 +37,18 @@ void disable_sched_clock_irqtime(void)
+ 	sched_clock_irqtime = 0;
+ }
+ 
++static void irqtime_account_delta(struct irqtime *irqtime, u64 delta,
++				  enum cpu_usage_stat idx)
++{
++	u64 *cpustat = kcpustat_this_cpu->cpustat;
++
++	u64_stats_update_begin(&irqtime->sync);
++	cpustat[idx] += delta;
++	irqtime->total += delta;
++	irqtime->tick_delta += delta;
++	u64_stats_update_end(&irqtime->sync);
++}
++
+ /*
+  * Called before incrementing preempt_count on {soft,}irq_enter
+  * and before decrementing preempt_count on {soft,}irq_exit.
+@@ -44,7 +56,6 @@ void disable_sched_clock_irqtime(void)
  void irqtime_account_irq(struct task_struct *curr)
  {
  	struct irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
-+	u64 *cpustat = kcpustat_this_cpu->cpustat;
+-	u64 *cpustat = kcpustat_this_cpu->cpustat;
  	s64 delta;
  	int cpu;
  
-@@ -61,49 +62,35 @@ void irqtime_account_irq(struct task_str
+@@ -55,22 +66,16 @@ void irqtime_account_irq(struct task_str
+ 	delta = sched_clock_cpu(cpu) - irqtime->irq_start_time;
+ 	irqtime->irq_start_time += delta;
+ 
+-	u64_stats_update_begin(&irqtime->sync);
+ 	/*
+ 	 * We do not account for softirq time from ksoftirqd here.
+ 	 * We want to continue accounting softirq time to ksoftirqd thread
  	 * in that case, so as not to confuse scheduler with a special task
  	 * that do not consume any time, but still wants to run.
  	 */
--	if (hardirq_count())
--		irqtime->hardirq_time += delta;
--	else if (in_serving_softirq() && curr != this_cpu_ksoftirqd())
--		irqtime->softirq_time += delta;
-+	if (hardirq_count()) {
-+		cpustat[CPUTIME_IRQ] += delta;
-+		irqtime->tick_delta += delta;
-+	} else if (in_serving_softirq() && curr != this_cpu_ksoftirqd()) {
-+		cpustat[CPUTIME_SOFTIRQ] += delta;
-+		irqtime->tick_delta += delta;
-+	}
- 
- 	u64_stats_update_end(&irqtime->sync);
+-	if (hardirq_count()) {
+-		cpustat[CPUTIME_IRQ] += delta;
+-		irqtime->tick_delta += delta;
+-	} else if (in_serving_softirq() && curr != this_cpu_ksoftirqd()) {
+-		cpustat[CPUTIME_SOFTIRQ] += delta;
+-		irqtime->tick_delta += delta;
+-	}
+-
+-	u64_stats_update_end(&irqtime->sync);
++	if (hardirq_count())
++		irqtime_account_delta(irqtime, delta, CPUTIME_IRQ);
++	else if (in_serving_softirq() && curr != this_cpu_ksoftirqd())
++		irqtime_account_delta(irqtime, delta, CPUTIME_SOFTIRQ);
  }
  EXPORT_SYMBOL_GPL(irqtime_account_irq);
  
--static cputime_t irqtime_account_update(u64 irqtime, int idx, cputime_t maxtime)
-+static cputime_t irqtime_tick_accounted(cputime_t maxtime)
- {
--	u64 *cpustat = kcpustat_this_cpu->cpustat;
--	cputime_t irq_cputime;
--
--	irq_cputime = nsecs_to_cputime64(irqtime - cpustat[idx]);
--	irq_cputime = min(irq_cputime, maxtime);
--	cpustat[idx] += cputime_to_nsecs(irq_cputime);
--
--	return irq_cputime;
--}
-+	struct irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
-+	cputime_t delta;
- 
--static cputime_t irqtime_account_hi_update(cputime_t maxtime)
--{
--	return irqtime_account_update(__this_cpu_read(cpu_irqtime.hardirq_time),
--				      CPUTIME_IRQ, maxtime);
--}
-+	delta = nsecs_to_cputime(irqtime->tick_delta);
-+	delta = min(delta, maxtime);
-+	irqtime->tick_delta -= cputime_to_nsecs(delta);
- 
--static cputime_t irqtime_account_si_update(cputime_t maxtime)
--{
--	return irqtime_account_update(__this_cpu_read(cpu_irqtime.softirq_time),
--				      CPUTIME_SOFTIRQ, maxtime);
-+	return delta;
- }
- 
- #else /* CONFIG_IRQ_TIME_ACCOUNTING */
- 
- #define sched_clock_irqtime	(0)
- 
--static cputime_t irqtime_account_hi_update(cputime_t dummy)
--{
--	return 0;
--}
--
--static cputime_t irqtime_account_si_update(cputime_t dummy)
-+static cputime_t irqtime_tick_accounted(cputime_t dummy)
- {
- 	return 0;
- }
-@@ -290,10 +277,7 @@ static inline cputime_t account_other_ti
- 	accounted = steal_account_process_time(max);
- 
- 	if (accounted < max)
--		accounted += irqtime_account_hi_update(max - accounted);
--
--	if (accounted < max)
--		accounted += irqtime_account_si_update(max - accounted);
-+		accounted += irqtime_tick_accounted(max - accounted);
- 
- 	return accounted;
- }
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -4,6 +4,7 @@
- #include <linux/sched/rt.h>
- #include <linux/u64_stats_sync.h>
- #include <linux/sched/deadline.h>
-+#include <linux/kernel_stat.h>
- #include <linux/binfmts.h>
- #include <linux/mutex.h>
- #include <linux/spinlock.h>
-@@ -1742,8 +1743,7 @@ static inline void nohz_balance_exit_idl
+@@ -1743,6 +1743,7 @@ static inline void nohz_balance_exit_idl
  
  #ifdef CONFIG_IRQ_TIME_ACCOUNTING
  struct irqtime {
--	u64			hardirq_time;
--	u64			softirq_time;
-+	u64			tick_delta;
++	u64			total;
+ 	u64			tick_delta;
  	u64			irq_start_time;
  	struct u64_stats_sync	sync;
- };
-@@ -1753,12 +1753,13 @@ DECLARE_PER_CPU(struct irqtime, cpu_irqt
+@@ -1750,16 +1751,20 @@ struct irqtime {
+ 
+ DECLARE_PER_CPU(struct irqtime, cpu_irqtime);
+ 
++/*
++ * Returns the irqtime minus the softirq time computed by ksoftirqd.
++ * Otherwise ksoftirqd's sum_exec_runtime is substracted its own runtime
++ * and never move forward.
++ */
  static inline u64 irq_time_read(int cpu)
  {
  	struct irqtime *irqtime = &per_cpu(cpu_irqtime, cpu);
-+	u64 *cpustat = kcpustat_cpu(cpu).cpustat;
+-	u64 *cpustat = kcpustat_cpu(cpu).cpustat;
  	unsigned int seq;
  	u64 total;
  
  	do {
  		seq = __u64_stats_fetch_begin(&irqtime->sync);
--		total = irqtime->softirq_time + irqtime->hardirq_time;
-+		total = cpustat[CPUTIME_SOFTIRQ] + cpustat[CPUTIME_IRQ];
+-		total = cpustat[CPUTIME_SOFTIRQ] + cpustat[CPUTIME_IRQ];
++		total = irqtime->total;
  	} while (__u64_stats_fetch_retry(&irqtime->sync, seq));
  
  	return total;
