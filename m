@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9607ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF86BECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0A75204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A70B220658
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qESYb8+P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0A75204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZpzF/+G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A70B220658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730418AbeJSCIQ (ORCPT
+        id S1730429AbeJSCIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:08:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57158 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:08:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729977AbeJSCIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:08:15 -0400
+        id S1726822AbeJSCIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:08:19 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77FA220658;
-        Thu, 18 Oct 2018 18:06:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD66E20658;
+        Thu, 18 Oct 2018 18:06:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885968;
-        bh=Gnps1+kPXzLfisvtJJdGmB0gbfrLsF4J4bCUYNLLs2g=;
+        s=default; t=1539885971;
+        bh=5RHJNFKZfN0UQU1RS9b4zjV0iL1YfcU5hEtlzn9uvz8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qESYb8+PT4MQiM6t+vLPsavW/ZEvUludhvgLQs4Ue/QSZT5++FqSNZztswCiwbdUN
-         ng6pTbI32fTNGwnZbkXw9L7l4b3F7sPjJagVPgtq97zCpH4gKG/ZSoXkbh82KaZGem
-         CDf7tiY+iAKo9H64c6oh9d4zm7lZeB+uzBEIWUuI=
+        b=MZpzF/+G8KgE/5qGJh7JC9756xv0GJOZe/I9FZecIUheDjkbHO7s17TiazC5Pys+X
+         m27QS163vsoW5b9dhZo0Hroq6fazDFRtZObUKfPgULqwHThzzVruOuzRpMNDKQCBOF
+         HB9WGa+P8kM6twiOKxqyuYaZ2H/12qTEDKywKpSE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 30/48] rtnl: limit IFLA_NUM_TX_QUEUES and IFLA_NUM_RX_QUEUES to 4096
-Date:   Thu, 18 Oct 2018 19:55:05 +0200
-Message-Id: <20181018175429.575034056@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+Subject: [PATCH 4.4 31/48] KVM: x86: remove eager_fpu field of struct kvm_vcpu_arch
+Date:   Thu, 18 Oct 2018 19:55:06 +0200
+Message-Id: <20181018175429.615288507@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -62,54 +61,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-[ Upstream commit 0e1d6eca5113858ed2caea61a5adc03c595f6096 ]
+commit 5a5fbdc0e3f1159a734f1890da60fce70e98271d upstream.
 
-We have an impressive number of syzkaller bugs that are linked
-to the fact that syzbot was able to create a networking device
-with millions of TX (or RX) queues.
+It is now equal to use_eager_fpu(), which simply tests a cpufeature bit.
 
-Let's limit the number of RX/TX queues to 4096, this really should
-cover all known cases.
-
-A separate patch will add various cond_resched() in the loops
-handling sysfs entries at device creation and dismantle.
-
-Tested:
-
-lpaa6:~# ip link add gre-4097 numtxqueues 4097 numrxqueues 4097 type ip6gretap
-RTNETLINK answers: Invalid argument
-
-lpaa6:~# time ip link add gre-4096 numtxqueues 4096 numrxqueues 4096 type ip6gretap
-
-real	0m0.180s
-user	0m0.000s
-sys	0m0.107s
-
-Fixes: 76ff5cc91935 ("rtnl: allow to specify number of rx and tx queues on device creation")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/rtnetlink.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/include/asm/kvm_host.h |    1 -
+ arch/x86/kvm/cpuid.c            |    3 +--
+ arch/x86/kvm/x86.c              |    2 +-
+ 3 files changed, 2 insertions(+), 4 deletions(-)
 
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -2116,6 +2116,12 @@ struct net_device *rtnl_create_link(stru
- 	else if (ops->get_num_rx_queues)
- 		num_rx_queues = ops->get_num_rx_queues();
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -439,7 +439,6 @@ struct kvm_vcpu_arch {
+ 	struct kvm_mmu_memory_cache mmu_page_header_cache;
  
-+	if (num_tx_queues < 1 || num_tx_queues > 4096)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (num_rx_queues < 1 || num_rx_queues > 4096)
-+		return ERR_PTR(-EINVAL);
-+
- 	err = -ENOMEM;
- 	dev = alloc_netdev_mqs(ops->priv_size, ifname, name_assign_type,
- 			       ops->setup, num_tx_queues, num_rx_queues);
+ 	struct fpu guest_fpu;
+-	bool eager_fpu;
+ 	u64 xcr0;
+ 	u64 guest_supported_xcr0;
+ 	u32 guest_xstate_size;
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -104,8 +104,7 @@ int kvm_update_cpuid(struct kvm_vcpu *vc
+ 	if (best && (best->eax & (F(XSAVES) | F(XSAVEC))))
+ 		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
+ 
+-	vcpu->arch.eager_fpu = use_eager_fpu();
+-	if (vcpu->arch.eager_fpu)
++	if (use_eager_fpu())
+ 		kvm_x86_ops->fpu_activate(vcpu);
+ 
+ 	/*
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -7325,7 +7325,7 @@ void kvm_put_guest_fpu(struct kvm_vcpu *
+ 	 * Every 255 times fpu_counter rolls over to 0; a guest that uses
+ 	 * the FPU in bursts will revert to loading it on demand.
+ 	 */
+-	if (!vcpu->arch.eager_fpu) {
++	if (!use_eager_fpu()) {
+ 		if (++vcpu->fpu_counter < 5)
+ 			kvm_make_request(KVM_REQ_DEACTIVATE_FPU, vcpu);
+ 	}
 
 
