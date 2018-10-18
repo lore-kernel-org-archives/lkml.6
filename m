@@ -2,406 +2,310 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70894ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:56:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 491FBC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:58:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E2062087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:56:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E2062087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=foss.arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E444F21479
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:58:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GTohPGhM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E444F21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727373AbeJRU5v (ORCPT
+        id S1727097AbeJRU7V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 16:57:51 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37450 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726325AbeJRU5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 16:57:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61861341;
-        Thu, 18 Oct 2018 05:56:56 -0700 (PDT)
-Received: from ssg-dev-vb.kfn.arm.com (E111387.Emea.Arm.com [10.50.33.152])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 776D53F59C;
-        Thu, 18 Oct 2018 05:56:55 -0700 (PDT)
-From:   Yael Chemla <yael.chemla@foss.arm.com>
-To:     Yael CHEmla <yael.chemla@arm.com>, linux-kernel@vger.kernel.org
-Cc:     Yael Chemla <yael.chemla@foss.arm.com>
-Subject: [PATCH 3/3] crypto: ccree: add SM3 support
-Date:   Thu, 18 Oct 2018 13:56:26 +0100
-Message-Id: <1539867386-20344-4-git-send-email-yael.chemla@foss.arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539867386-20344-1-git-send-email-yael.chemla@foss.arm.com>
-References: <1539867386-20344-1-git-send-email-yael.chemla@foss.arm.com>
+        Thu, 18 Oct 2018 16:59:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60260 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726663AbeJRU7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 16:59:21 -0400
+Received: from linux-8ccs (charybdis-ext.suse.de [195.135.221.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 727F72087A;
+        Thu, 18 Oct 2018 12:58:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539867505;
+        bh=8MhlpBduEZAG3iVaBCq0rYQXBSoA114IrTIa0SJNgR4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GTohPGhMM+sxoluvxkxgdsr4eBxCTcnUhtqO9mAPVJfD4Gtz7rUjwp8mggJsYCYR8
+         1wLIZdVUDuSOtCdi+ChPN4VeSaI5HFJCdYow3faThO9VQq0M9Y+1o8oVpDRW62IzIp
+         U0um9SxxzdWl9BeTtYAlNk5WLUkP70gST7XF9kDk=
+Date:   Thu, 18 Oct 2018 14:58:20 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     Torsten Duwe <duwe@lst.de>, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] arm64: implement live patching
+Message-ID: <20181018125820.iw54zbirq74ulknj@linux-8ccs>
+References: <20181001140910.086E768BC7@newverein.lst.de>
+ <20181001141652.5478C68BE1@newverein.lst.de>
+ <alpine.LSU.2.21.1810171051560.21847@pobox.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1810171051560.21847@pobox.suse.cz>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.16-default x86_64
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for SM3 cipher in CryptoCell 713.
++++ Miroslav Benes [17/10/18 15:39 +0200]:
+>On Mon, 1 Oct 2018, Torsten Duwe wrote:
+>
+>> Based on ftrace with regs, do the usual thing. Also allocate a
+>> task flag for whatever consistency handling will be used.
+>> Watch out for interactions with the graph tracer.
+>
+>Similar to what Mark wrote about 2/4, I'd appreciate a better commit log.
+>Could you explain traditional "what/why/how", please?
+>
+>> Signed-off-by: Torsten Duwe <duwe@suse.de>
+>>
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -119,6 +119,7 @@ config ARM64
+>>  	select HAVE_GENERIC_DMA_COHERENT
+>>  	select HAVE_HW_BREAKPOINT if PERF_EVENTS
+>>  	select HAVE_IRQ_TIME_ACCOUNTING
+>> +	select HAVE_LIVEPATCH
+>>  	select HAVE_MEMBLOCK
+>>  	select HAVE_MEMBLOCK_NODE_MAP if NUMA
+>>  	select HAVE_NMI
+>> @@ -1349,4 +1350,6 @@ if CRYPTO
+>>  source "arch/arm64/crypto/Kconfig"
+>>  endif
+>>
+>> +source "kernel/livepatch/Kconfig"
+>> +
+>>  source "lib/Kconfig"
+>> --- a/arch/arm64/include/asm/thread_info.h
+>> +++ b/arch/arm64/include/asm/thread_info.h
+>> @@ -76,6 +76,7 @@ void arch_release_task_struct(struct tas
+>>  #define TIF_FOREIGN_FPSTATE	3	/* CPU's FP state is not current's */
+>>  #define TIF_UPROBE		4	/* uprobe breakpoint or singlestep */
+>>  #define TIF_FSCHECK		5	/* Check FS is USER_DS on return */
+>> +#define TIF_PATCH_PENDING	6
+>>  #define TIF_NOHZ		7
+>>  #define TIF_SYSCALL_TRACE	8
+>>  #define TIF_SYSCALL_AUDIT	9
+>> @@ -94,6 +95,7 @@ void arch_release_task_struct(struct tas
+>>  #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+>>  #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+>>  #define _TIF_FOREIGN_FPSTATE	(1 << TIF_FOREIGN_FPSTATE)
+>> +#define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
+>>  #define _TIF_NOHZ		(1 << TIF_NOHZ)
+>>  #define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+>>  #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+>> @@ -106,7 +108,8 @@ void arch_release_task_struct(struct tas
+>>
+>>  #define _TIF_WORK_MASK		(_TIF_NEED_RESCHED | _TIF_SIGPENDING | \
+>>  				 _TIF_NOTIFY_RESUME | _TIF_FOREIGN_FPSTATE | \
+>> -				 _TIF_UPROBE | _TIF_FSCHECK)
+>> +				 _TIF_UPROBE | _TIF_FSCHECK | \
+>> +				 _TIF_PATCH_PENDING)
+>
+>Could you add a note to the changelog what this means? My ability to read
+>arm64 entry.S is very limited, but I can see that _TIF_WORK_MASK is
+>process in a syscall exit and irq return paths. That's good. It is also
+>called (via "b ret_to_user") in a couple of different places (el0_*
+>labels). I guess those are returns from exception handling. A comment
+>about it in the changelog would be appreciated.
+>
+>>  #define _TIF_SYSCALL_WORK	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT | \
+>>  				 _TIF_SYSCALL_TRACEPOINT | _TIF_SECCOMP | \
+>> --- /dev/null
+>> +++ b/arch/arm64/include/asm/livepatch.h
+>> @@ -0,0 +1,36 @@
+>> +/* SPDX-License-Identifier: GPL-2.0
+>> + *
+>> + * livepatch.h - arm64-specific Kernel Live Patching Core
+>> + *
+>> + * Copyright (C) 2016,2018 SUSE
+>> + *
+>> + * This program is free software; you can redistribute it and/or
+>> + * modify it under the terms of the GNU General Public License
+>> + * as published by the Free Software Foundation; either version 2
+>> + * of the License, or (at your option) any later version.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + *
+>> + * You should have received a copy of the GNU General Public License
+>> + * along with this program; if not, see <http://www.gnu.org/licenses/>.
+>> + */
+>> +#ifndef _ASM_ARM64_LIVEPATCH_H
+>> +#define _ASM_ARM64_LIVEPATCH_H
+>> +
+>> +#include <linux/module.h>
+>> +#include <linux/ftrace.h>
+>
+>I think that only
+>
+>#include <asm/ptrace.h>
+>
+>is in fact needed, because of "struct pt_regs".
+>
+>
+>Ad relocations. I checked that everything in struct mod_arch_specific
+>stays after the module is load. Both core and init get SHF_ALLOC set
+>(mod->arch.core.plt->sh_flags in module_frob_arch_sections(). It is
+>important because apply_relocate_add() may use those sections
+>through module_emit_plt_entry() call.
 
-Signed-off-by: Yael Chemla <yael.chemla@foss.arm.com>
----
- drivers/crypto/Kconfig                  |   1 +
- drivers/crypto/ccree/cc_crypto_ctx.h    |   4 +-
- drivers/crypto/ccree/cc_hash.c          | 119 ++++++++++++++++++++++++++------
- drivers/crypto/ccree/cc_hw_queue_defs.h |  13 ++++
- 4 files changed, 113 insertions(+), 24 deletions(-)
+Yes, it looks like the needed .plt sections will remain in module
+memory. However, I think I found a slight issue... :/
 
-diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index a8c4ce0..1588cd4 100644
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -751,6 +751,7 @@ config CRYPTO_DEV_CCREE
- 	select CRYPTO_ECB
- 	select CRYPTO_CTR
- 	select CRYPTO_XTS
-+	select CRYPTO_SM3
- 	help
- 	  Say 'Y' to enable a driver for the REE interface of the Arm
- 	  TrustZone CryptoCell family of processors. Currently the
-diff --git a/drivers/crypto/ccree/cc_crypto_ctx.h b/drivers/crypto/ccree/cc_crypto_ctx.h
-index e032544..c8dac27 100644
---- a/drivers/crypto/ccree/cc_crypto_ctx.h
-+++ b/drivers/crypto/ccree/cc_crypto_ctx.h
-@@ -115,7 +115,8 @@ enum drv_hash_mode {
- 	DRV_HASH_CBC_MAC = 6,
- 	DRV_HASH_XCBC_MAC = 7,
- 	DRV_HASH_CMAC = 8,
--	DRV_HASH_MODE_NUM = 9,
-+	DRV_HASH_SM3 = 9,
-+	DRV_HASH_MODE_NUM = 10,
- 	DRV_HASH_RESERVE32B = S32_MAX
+In module_frob_arch_sections(), mod->arch.core.plt is set to an offset
+within info->sechdrs:
+
+             if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt"))
+                     mod->arch.core.plt = sechdrs + i;
+
+sechdrs is from info->sechdrs, which is freed at the end of
+load_module() via free_copy(). So although the relevant plt section(s)
+are in module memory, mod->arch.core.plt will point to invalid memory
+after info is freed. In other words, the section (.plt) *is* in memory
+but the section header (struct elf64_shdr) containing section metadata
+like sh_addr, sh_size etc., is not.
+
+But we have mod->klp_info->sechdrs (which is a copy of the section
+headers) for this very reason. It is initialized only at the very end
+of load_module(). I don't think copy_module_elf() is dependent on
+anything, so it can just be moved earlier.
+
+Note that we cannot set mod->arch.core.plt to mod->klp_info->sechdrs + i
+during module_frob_arch_sections() because it is still too early, none
+of the module sections have been copied and none of their sh_addr's
+have been set to their final locations as this is all happening before
+move_module() is called. So we can use a module_finalize() function
+for arm64 to switch the mod->arch.core.plt to use the klp_info section
+headers.
+
+Maybe this will be more clear in the example fix below (completely
+untested and unreviewed!):
+
+diff --git a/arch/arm64/include/asm/module.h b/arch/arm64/include/asm/module.h
+index 97d0ef12e2ff..150afc29171b 100644
+--- a/arch/arm64/include/asm/module.h
++++ b/arch/arm64/include/asm/module.h
+@@ -25,6 +25,7 @@ struct mod_plt_sec {
+ 	struct elf64_shdr	*plt;
+ 	int			plt_num_entries;
+ 	int			plt_max_entries;
++	int			plt_shndx;
  };
  
-@@ -127,6 +128,7 @@ enum drv_hash_hw_mode {
- 	DRV_HASH_HW_SHA512 = 4,
- 	DRV_HASH_HW_SHA384 = 12,
- 	DRV_HASH_HW_GHASH = 6,
-+	DRV_HASH_HW_SM3 = 14,
- 	DRV_HASH_HW_RESERVE32B = S32_MAX
- };
- 
-diff --git a/drivers/crypto/ccree/cc_hash.c b/drivers/crypto/ccree/cc_hash.c
-index adcd9df..c80c9ae 100644
---- a/drivers/crypto/ccree/cc_hash.c
-+++ b/drivers/crypto/ccree/cc_hash.c
-@@ -6,6 +6,7 @@
- #include <crypto/algapi.h>
- #include <crypto/hash.h>
- #include <crypto/md5.h>
-+#include <crypto/sm3.h>
- #include <crypto/internal/hash.h>
- 
- #include "cc_driver.h"
-@@ -16,6 +17,7 @@
- 
- #define CC_MAX_HASH_SEQ_LEN 12
- #define CC_MAX_OPAD_KEYS_SIZE CC_MAX_HASH_BLCK_SIZE
-+#define CC_SM3_HASH_LEN_SIZE 8
- 
- struct cc_hash_handle {
- 	cc_sram_addr_t digest_len_sram_addr; /* const value in SRAM*/
-@@ -43,6 +45,9 @@ static u64 sha384_init[] = {
- static u64 sha512_init[] = {
- 	SHA512_H7, SHA512_H6, SHA512_H5, SHA512_H4,
- 	SHA512_H3, SHA512_H2, SHA512_H1, SHA512_H0 };
-+static const u32 sm3_init[] = {
-+	SM3_IVH, SM3_IVG, SM3_IVF, SM3_IVE,
-+	SM3_IVD, SM3_IVC, SM3_IVB, SM3_IVA };
- 
- static void cc_setup_xcbc(struct ahash_request *areq, struct cc_hw_desc desc[],
- 			  unsigned int *seq_size);
-@@ -1074,7 +1079,10 @@ static int cc_get_hash_len(struct crypto_tfm *tfm)
- {
- 	struct cc_hash_ctx *ctx = crypto_tfm_ctx(tfm);
- 
--	return cc_get_default_hash_len(ctx->drvdata);
-+	if (ctx->hash_mode == DRV_HASH_SM3)
-+		return CC_SM3_HASH_LEN_SIZE;
-+	else
-+		return cc_get_default_hash_len(ctx->drvdata);
+ struct mod_arch_specific {
+diff --git a/arch/arm64/kernel/module-plts.c b/arch/arm64/kernel/module-plts.c
+index f0690c2ca3e0..c23cef8f0165 100644
+--- a/arch/arm64/kernel/module-plts.c
++++ b/arch/arm64/kernel/module-plts.c
+@@ -196,6 +196,21 @@ static unsigned int count_plts(Elf64_Sym *syms, Elf64_Rela *rela, int num,
+ 	return ret;
  }
  
- static int cc_cra_init(struct crypto_tfm *tfm)
-@@ -1523,6 +1531,7 @@ struct cc_hash_template {
- 	char mac_name[CRYPTO_MAX_ALG_NAME];
- 	char mac_driver_name[CRYPTO_MAX_ALG_NAME];
- 	unsigned int blocksize;
-+	bool is_mac;
- 	bool synchronize;
- 	struct ahash_alg template_ahash;
- 	int hash_mode;
-@@ -1544,6 +1553,7 @@ static struct cc_hash_template driver_hash[] = {
- 		.mac_name = "hmac(sha1)",
- 		.mac_driver_name = "hmac-sha1-ccree",
- 		.blocksize = SHA1_BLOCK_SIZE,
-+		.is_mac = true,
- 		.synchronize = false,
- 		.template_ahash = {
- 			.init = cc_hash_init,
-@@ -1570,6 +1580,7 @@ static struct cc_hash_template driver_hash[] = {
- 		.mac_name = "hmac(sha256)",
- 		.mac_driver_name = "hmac-sha256-ccree",
- 		.blocksize = SHA256_BLOCK_SIZE,
-+		.is_mac = true,
- 		.template_ahash = {
- 			.init = cc_hash_init,
- 			.update = cc_hash_update,
-@@ -1595,6 +1606,7 @@ static struct cc_hash_template driver_hash[] = {
- 		.mac_name = "hmac(sha224)",
- 		.mac_driver_name = "hmac-sha224-ccree",
- 		.blocksize = SHA224_BLOCK_SIZE,
-+		.is_mac = true,
- 		.template_ahash = {
- 			.init = cc_hash_init,
- 			.update = cc_hash_update,
-@@ -1620,6 +1632,7 @@ static struct cc_hash_template driver_hash[] = {
- 		.mac_name = "hmac(sha384)",
- 		.mac_driver_name = "hmac-sha384-ccree",
- 		.blocksize = SHA384_BLOCK_SIZE,
-+		.is_mac = true,
- 		.template_ahash = {
- 			.init = cc_hash_init,
- 			.update = cc_hash_update,
-@@ -1645,6 +1658,7 @@ static struct cc_hash_template driver_hash[] = {
- 		.mac_name = "hmac(sha512)",
- 		.mac_driver_name = "hmac-sha512-ccree",
- 		.blocksize = SHA512_BLOCK_SIZE,
-+		.is_mac = true,
- 		.template_ahash = {
- 			.init = cc_hash_init,
- 			.update = cc_hash_update,
-@@ -1670,6 +1684,7 @@ static struct cc_hash_template driver_hash[] = {
- 		.mac_name = "hmac(md5)",
- 		.mac_driver_name = "hmac-md5-ccree",
- 		.blocksize = MD5_HMAC_BLOCK_SIZE,
-+		.is_mac = true,
- 		.template_ahash = {
- 			.init = cc_hash_init,
- 			.update = cc_hash_update,
-@@ -1690,9 +1705,34 @@ static struct cc_hash_template driver_hash[] = {
- 		.min_hw_rev = CC_HW_REV_630,
- 	},
- 	{
-+		.name = "sm3",
-+		.driver_name = "sm3-ccree",
-+		.blocksize = SM3_BLOCK_SIZE,
-+		.is_mac = false,
-+		.template_ahash = {
-+			.init = cc_hash_init,
-+			.update = cc_hash_update,
-+			.final = cc_hash_final,
-+			.finup = cc_hash_finup,
-+			.digest = cc_hash_digest,
-+			.export = cc_hash_export,
-+			.import = cc_hash_import,
-+			.setkey = cc_hash_setkey,
-+			.halg = {
-+				.digestsize = SM3_DIGEST_SIZE,
-+				.statesize = CC_STATE_SIZE(SM3_DIGEST_SIZE),
-+			},
-+		},
-+		.hash_mode = DRV_HASH_SM3,
-+		.hw_mode = DRV_HASH_HW_SM3,
-+		.inter_digestsize = SM3_DIGEST_SIZE,
-+		.min_hw_rev = CC_HW_REV_713,
-+	},
-+	{
- 		.mac_name = "xcbc(aes)",
- 		.mac_driver_name = "xcbc-aes-ccree",
- 		.blocksize = AES_BLOCK_SIZE,
-+		.is_mac = true,
- 		.template_ahash = {
- 			.init = cc_hash_init,
- 			.update = cc_mac_update,
-@@ -1716,6 +1756,7 @@ static struct cc_hash_template driver_hash[] = {
- 		.mac_name = "cmac(aes)",
- 		.mac_driver_name = "cmac-aes-ccree",
- 		.blocksize = AES_BLOCK_SIZE,
-+		.is_mac = true,
- 		.template_ahash = {
- 			.init = cc_hash_init,
- 			.update = cc_mac_update,
-@@ -1788,6 +1829,7 @@ int cc_init_hash_sram(struct cc_drvdata *drvdata)
- 	unsigned int larval_seq_len = 0;
- 	struct cc_hw_desc larval_seq[CC_DIGEST_SIZE_MAX / sizeof(u32)];
- 	bool large_sha_supported = (drvdata->hw_rev >= CC_HW_REV_712);
-+	bool sm3_supported = (drvdata->hw_rev >= CC_HW_REV_713);
- 	int rc = 0;
- 
- 	/* Copy-to-sram digest-len */
-@@ -1853,6 +1895,17 @@ int cc_init_hash_sram(struct cc_drvdata *drvdata)
- 	sram_buff_ofs += sizeof(sha256_init);
- 	larval_seq_len = 0;
- 
-+	if (sm3_supported) {
-+		cc_set_sram_desc(sm3_init, sram_buff_ofs,
-+				 ARRAY_SIZE(sm3_init), larval_seq,
-+				 &larval_seq_len);
-+		rc = send_request_init(drvdata, larval_seq, larval_seq_len);
-+		if (rc)
-+			goto init_digest_const_err;
-+		sram_buff_ofs += sizeof(sm3_init);
-+		larval_seq_len = 0;
-+	}
-+
- 	if (large_sha_supported) {
- 		cc_set_sram_desc((u32 *)sha384_init, sram_buff_ofs,
- 				 (ARRAY_SIZE(sha384_init) * 2), larval_seq,
-@@ -1919,6 +1972,9 @@ int cc_hash_alloc(struct cc_drvdata *drvdata)
- 			sizeof(sha224_init) +
- 			sizeof(sha256_init);
- 
-+	if (drvdata->hw_rev >= CC_HW_REV_713)
-+		sram_size_to_alloc += sizeof(sm3_init);
-+
- 	if (drvdata->hw_rev >= CC_HW_REV_712)
- 		sram_size_to_alloc += sizeof(digest_len_sha512_init) +
- 			sizeof(sha384_init) + sizeof(sha512_init);
-@@ -1948,27 +2004,28 @@ int cc_hash_alloc(struct cc_drvdata *drvdata)
- 		/* We either support both HASH and MAC or none */
- 		if (driver_hash[alg].min_hw_rev > drvdata->hw_rev)
- 			continue;
--
--		/* register hmac version */
--		t_alg = cc_alloc_hash_alg(&driver_hash[alg], dev, true);
--		if (IS_ERR(t_alg)) {
--			rc = PTR_ERR(t_alg);
--			dev_err(dev, "%s alg allocation failed\n",
--				driver_hash[alg].driver_name);
--			goto fail;
--		}
--		t_alg->drvdata = drvdata;
--
--		rc = crypto_register_ahash(&t_alg->ahash_alg);
--		if (rc) {
--			dev_err(dev, "%s alg registration failed\n",
--				driver_hash[alg].driver_name);
--			kfree(t_alg);
--			goto fail;
--		} else {
--			list_add_tail(&t_alg->entry, &hash_handle->hash_list);
-+		if (driver_hash[alg].is_mac) {
-+			/* register hmac version */
-+			t_alg = cc_alloc_hash_alg(&driver_hash[alg], dev, true);
-+			if (IS_ERR(t_alg)) {
-+				rc = PTR_ERR(t_alg);
-+				dev_err(dev, "%s alg allocation failed\n",
-+					driver_hash[alg].driver_name);
-+				goto fail;
-+			}
-+			t_alg->drvdata = drvdata;
-+
-+			rc = crypto_register_ahash(&t_alg->ahash_alg);
-+			if (rc) {
-+				dev_err(dev, "%s alg registration failed\n",
-+					driver_hash[alg].driver_name);
-+				kfree(t_alg);
-+				goto fail;
-+			} else {
-+				list_add_tail(&t_alg->entry,
-+					      &hash_handle->hash_list);
-+			}
- 		}
--
- 		if (hw_mode == DRV_CIPHER_XCBC_MAC ||
- 		    hw_mode == DRV_CIPHER_CMAC)
- 			continue;
-@@ -2170,6 +2227,8 @@ static const void *cc_larval_digest(struct device *dev, u32 mode)
- 		return sha384_init;
- 	case DRV_HASH_SHA512:
- 		return sha512_init;
-+	case DRV_HASH_SM3:
-+		return sm3_init;
- 	default:
- 		dev_err(dev, "Invalid hash mode (%d)\n", mode);
- 		return md5_init;
-@@ -2190,6 +2249,8 @@ cc_sram_addr_t cc_larval_digest_addr(void *drvdata, u32 mode)
- 	struct cc_drvdata *_drvdata = (struct cc_drvdata *)drvdata;
- 	struct cc_hash_handle *hash_handle = _drvdata->hash_handle;
- 	struct device *dev = drvdata_to_dev(_drvdata);
-+	bool sm3_supported = (_drvdata->hw_rev >= CC_HW_REV_713);
-+	cc_sram_addr_t addr;
- 
- 	switch (mode) {
- 	case DRV_HASH_NULL:
-@@ -2208,19 +2269,31 @@ cc_sram_addr_t cc_larval_digest_addr(void *drvdata, u32 mode)
- 			sizeof(md5_init) +
- 			sizeof(sha1_init) +
- 			sizeof(sha224_init));
--	case DRV_HASH_SHA384:
-+	case DRV_HASH_SM3:
- 		return (hash_handle->larval_digest_sram_addr +
- 			sizeof(md5_init) +
- 			sizeof(sha1_init) +
- 			sizeof(sha224_init) +
- 			sizeof(sha256_init));
-+	case DRV_HASH_SHA384:
-+		addr = (hash_handle->larval_digest_sram_addr +
-+			sizeof(md5_init) +
-+			sizeof(sha1_init) +
-+			sizeof(sha224_init) +
-+			sizeof(sha256_init));
-+		if (sm3_supported)
-+			addr += sizeof(sm3_init);
-+		return addr;
- 	case DRV_HASH_SHA512:
--		return (hash_handle->larval_digest_sram_addr +
-+		addr = (hash_handle->larval_digest_sram_addr +
- 			sizeof(md5_init) +
- 			sizeof(sha1_init) +
- 			sizeof(sha224_init) +
- 			sizeof(sha256_init) +
- 			sizeof(sha384_init));
-+		if (sm3_supported)
-+			addr += sizeof(sm3_init);
-+		return addr;
- 	default:
- 		dev_err(dev, "Invalid hash mode (%d)\n", mode);
- 	}
-diff --git a/drivers/crypto/ccree/cc_hw_queue_defs.h b/drivers/crypto/ccree/cc_hw_queue_defs.h
-index b367b67..e1783ea 100644
---- a/drivers/crypto/ccree/cc_hw_queue_defs.h
-+++ b/drivers/crypto/ccree/cc_hw_queue_defs.h
-@@ -42,6 +42,7 @@
- #define WORD3_QUEUE_LAST_IND	CC_GENMASK(3, QUEUE_LAST_IND)
- #define WORD4_ACK_NEEDED	CC_GENMASK(4, ACK_NEEDED)
- #define WORD4_AES_SEL_N_HASH	CC_GENMASK(4, AES_SEL_N_HASH)
-+#define WORD4_AES_XOR_CRYPTO_KEY CC_GENMASK(4, AES_XOR_CRYPTO_KEY)
- #define WORD4_BYTES_SWAP	CC_GENMASK(4, BYTES_SWAP)
- #define WORD4_CIPHER_CONF0	CC_GENMASK(4, CIPHER_CONF0)
- #define WORD4_CIPHER_CONF1	CC_GENMASK(4, CIPHER_CONF1)
-@@ -394,6 +395,16 @@ static inline void set_aes_not_hash_mode(struct cc_hw_desc *pdesc)
- }
- 
- /*
-+ * Set aes xor crypto key, this in some secenrios select SM3 engine
-+ *
-+ * @pdesc: pointer HW descriptor struct
-+ */
-+static inline void set_aes_xor_crypto_key(struct cc_hw_desc *pdesc)
++int module_finalize(const Elf_Ehdr *hdr, const Elf_Shdr *sechdrs,
++		    struct module *mod)
 +{
-+	pdesc->word[4] |= FIELD_PREP(WORD4_AES_XOR_CRYPTO_KEY, 1);
++	/*
++	 * Livepatch modules need to keep access to section headers to apply
++	 * relocations. Note mod->klp_info should have already been initialized
++	 * and all section sh_addr's should have their final addresses by the
++	 * time module_finalize() is called.
++	 */
++	if (is_livepatch_module(mod))
++		mod->arch.core.plt = mod->klp_info->sechdrs + mod->arch.core.plt_shndx;
++
++	return 0;
 +}
 +
-+/*
-  * Set the DOUT field of a HW descriptors to SRAM mode
-  * Note: No need to check SRAM alignment since host requests do not use SRAM and
-  * adaptor will enforce alignment check.
-@@ -466,6 +477,8 @@ static inline void set_hash_cipher_mode(struct cc_hw_desc *pdesc,
- 					enum drv_hash_mode hash_mode)
+ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+ 			      char *secstrings, struct module *mod)
  {
- 	set_cipher_mode(pdesc, cipher_mode);
-+	if (hash_mode == DRV_HASH_SM3)
-+		set_aes_xor_crypto_key(pdesc);
- }
+@@ -210,11 +225,13 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+ 	 * entries. Record the symtab address as well.
+ 	 */
+ 	for (i = 0; i < ehdr->e_shnum; i++) {
+-		if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt"))
++		if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt")) {
+ 			mod->arch.core.plt = sechdrs + i;
+-		else if (!strcmp(secstrings + sechdrs[i].sh_name, ".init.plt"))
++			mod->arch.core.plt_shndx = i;
++		} else if (!strcmp(secstrings + sechdrs[i].sh_name, ".init.plt")) {
+ 			mod->arch.init.plt = sechdrs + i;
+-		else if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE) &&
++			mod->arch.init.plt_shndx = i;
++		} else if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE) &&
+ 			 !strcmp(secstrings + sechdrs[i].sh_name,
+ 				 ".text.ftrace_trampoline"))
+ 			tramp = sechdrs + i;
+diff --git a/kernel/module.c b/kernel/module.c
+index 6746c85511fe..2fc4d74288dd 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -3363,6 +3363,12 @@ static int post_relocation(struct module *mod, const struct load_info *info)
+ 	/* Setup kallsyms-specific fields. */
+ 	add_kallsyms(mod, info);
  
- /*
--- 
-2.7.4
++	if (is_livepatch_module(mod)) {
++		err = copy_module_elf(mod, info);
++		if (err < 0)
++			return err;
++	}
++
+ 	/* Arch-specific module finalizing. */
+ 	return module_finalize(info->hdr, info->sechdrs, mod);
+ }
+@@ -3775,12 +3781,6 @@ static int load_module(struct load_info *info, const char __user *uargs,
+ 	if (err < 0)
+ 		goto coming_cleanup;
+ 
+-	if (is_livepatch_module(mod)) {
+-		err = copy_module_elf(mod, info);
+-		if (err < 0)
+-			goto sysfs_cleanup;
+-	}
+-
+ 	/* Get rid of temporary copy. */
+ 	free_copy(info);
 
+Thoughts? Does the fix make sense?
+
+>The last thing is count_plts() function called from
+>module_frob_arch_sections(). It needed to be changed in 2016 as well. See
+>Jessica's patch
+>(20160713001113.GA30925@packer-debian-8-amd64.digitalocean.com). The logic
+>in the function has changed since then. If I am not mistaken,
+>count_plts() is fine as it is right now. It does not consider SHN_UNDEF
+>anymore, it looks at the destination section (where a symbol should
+>resolved to) only.
+>
+>Jessica, could you doublecheck, please?
+
+Yes, I think count_plts() is fine now in this case (because it is
+always true that sym->st_shndx != dstidx for SHN_LIVEPATCH symbols)
+and my old patch from 2016 is no longer needed.
+
+Thanks,
+
+Jessica
