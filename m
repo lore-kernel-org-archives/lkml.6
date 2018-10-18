@@ -7,44 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA50C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3158AC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19AA12145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E101921476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2TNe5wQo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19AA12145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JauH4Gxc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E101921476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730263AbeJSCH2 (ORCPT
+        id S1730276AbeJSCHb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:07:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56100 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:07:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729245AbeJSCH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:07:27 -0400
+        id S1729245AbeJSCH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:07:29 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9435E2145D;
-        Thu, 18 Oct 2018 18:05:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A32F204FD;
+        Thu, 18 Oct 2018 18:05:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885919;
-        bh=X/EajQmypCPm/N2RKREQXruHdpXyaydgHTzxvi5UzPE=;
+        s=default; t=1539885922;
+        bh=qIV7r78ETrQTuVJ3mZH93vqJ4rRiecQN02udKEANzSs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2TNe5wQoEua2KB+SafDpje38MQ5ohpcr+BkJzJqhrwAlTyzsb/2YSNcZtK9ZzuGFC
-         wNZq+Tf22itGPxanvNn+CGwWP6VM5Doc1JpjXKVURjWBt0V7N7fTkXthVqckM8FiyC
-         /1cjM0AF3VxeryY6Oc7bRDZMvh3QRbGm4VCHZNM8=
+        b=JauH4GxcZe4W/8K8ZeLOe4ETcpX9jXs0LixDG9wOFYyb0m3LFT5x5rjl3A7b3oq85
+         De3/nniiOVz/r9oQiB3RK5WLaR2mvqF3HdSbnFZXFx8MogILDKAPwQb4EXc89zrMyc
+         a8SBgQh7nrRFB7Ai9NiR6uVAHrZPDPYevy80Lo9Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mahesh Bandewar <maheshb@google.com>,
+        stable@vger.kernel.org,
+        syzbot+3fde91d4d394747d6db4@syzkaller.appspotmail.com,
+        Alexander Potapenko <glider@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 18/48] bonding: avoid possible dead-lock
-Date:   Thu, 18 Oct 2018 19:54:53 +0200
-Message-Id: <20181018175428.997024376@linuxfoundation.org>
+Subject: [PATCH 4.4 19/48] ip6_tunnel: be careful when accessing the inner header
+Date:   Thu, 18 Oct 2018 19:54:54 +0200
+Message-Id: <20181018175429.043220407@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -62,244 +65,136 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mahesh Bandewar <maheshb@google.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit d4859d749aa7090ffb743d15648adb962a1baeae ]
+[ Upstream commit 76c0ddd8c3a683f6e2c6e60e11dc1a1558caf4bc ]
 
-Syzkaller reported this on a slightly older kernel but it's still
-applicable to the current kernel -
+the ip6 tunnel xmit ndo assumes that the processed skb always
+contains an ip[v6] header, but syzbot has found a way to send
+frames that fall short of this assumption, leading to the following splat:
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.18.0-next-20180823+ #46 Not tainted
-------------------------------------------------------
-syz-executor4/26841 is trying to acquire lock:
-00000000dd41ef48 ((wq_completion)bond_dev->name){+.+.}, at: flush_workqueue+0x2db/0x1e10 kernel/workqueue.c:2652
-
-but task is already holding lock:
-00000000768ab431 (rtnl_mutex){+.+.}, at: rtnl_lock net/core/rtnetlink.c:77 [inline]
-00000000768ab431 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x412/0xc30 net/core/rtnetlink.c:4708
-
-which lock already depends on the new lock.
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (rtnl_mutex){+.+.}:
-       __mutex_lock_common kernel/locking/mutex.c:925 [inline]
-       __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
-       mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
-       rtnl_lock+0x17/0x20 net/core/rtnetlink.c:77
-       bond_netdev_notify drivers/net/bonding/bond_main.c:1310 [inline]
-       bond_netdev_notify_work+0x44/0xd0 drivers/net/bonding/bond_main.c:1320
-       process_one_work+0xc73/0x1aa0 kernel/workqueue.c:2153
-       worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
-       kthread+0x35a/0x420 kernel/kthread.c:246
-       ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
-
--> #1 ((work_completion)(&(&nnw->work)->work)){+.+.}:
-       process_one_work+0xc0b/0x1aa0 kernel/workqueue.c:2129
-       worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
-       kthread+0x35a/0x420 kernel/kthread.c:246
-       ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
-
--> #0 ((wq_completion)bond_dev->name){+.+.}:
-       lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
-       flush_workqueue+0x30a/0x1e10 kernel/workqueue.c:2655
-       drain_workqueue+0x2a9/0x640 kernel/workqueue.c:2820
-       destroy_workqueue+0xc6/0x9d0 kernel/workqueue.c:4155
-       __alloc_workqueue_key+0xef9/0x1190 kernel/workqueue.c:4138
-       bond_init+0x269/0x940 drivers/net/bonding/bond_main.c:4734
-       register_netdevice+0x337/0x1100 net/core/dev.c:8410
-       bond_newlink+0x49/0xa0 drivers/net/bonding/bond_netlink.c:453
-       rtnl_newlink+0xef4/0x1d50 net/core/rtnetlink.c:3099
-       rtnetlink_rcv_msg+0x46e/0xc30 net/core/rtnetlink.c:4711
-       netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2454
-       rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4729
-       netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
-       netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1343
-       netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1908
-       sock_sendmsg_nosec net/socket.c:622 [inline]
-       sock_sendmsg+0xd5/0x120 net/socket.c:632
-       ___sys_sendmsg+0x7fd/0x930 net/socket.c:2115
-       __sys_sendmsg+0x11d/0x290 net/socket.c:2153
-       __do_sys_sendmsg net/socket.c:2162 [inline]
-       __se_sys_sendmsg net/socket.c:2160 [inline]
-       __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2160
-       do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-  (wq_completion)bond_dev->name --> (work_completion)(&(&nnw->work)->work) --> rtnl_mutex
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(rtnl_mutex);
-                               lock((work_completion)(&(&nnw->work)->work));
-                               lock(rtnl_mutex);
-  lock((wq_completion)bond_dev->name);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor4/26841:
-
-stack backtrace:
-CPU: 1 PID: 26841 Comm: syz-executor4 Not tainted 4.18.0-next-20180823+ #46
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+BUG: KMSAN: uninit-value in ip6ip6_tnl_xmit net/ipv6/ip6_tunnel.c:1307
+[inline]
+BUG: KMSAN: uninit-value in ip6_tnl_start_xmit+0x7d2/0x1ef0
+net/ipv6/ip6_tunnel.c:1390
+CPU: 0 PID: 4504 Comm: syz-executor558 Not tainted 4.16.0+ #87
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
 Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
- print_circular_bug.isra.34.cold.55+0x1bd/0x27d kernel/locking/lockdep.c:1222
- check_prev_add kernel/locking/lockdep.c:1862 [inline]
- check_prevs_add kernel/locking/lockdep.c:1975 [inline]
- validate_chain kernel/locking/lockdep.c:2416 [inline]
- __lock_acquire+0x3449/0x5020 kernel/locking/lockdep.c:3412
- lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
- flush_workqueue+0x30a/0x1e10 kernel/workqueue.c:2655
- drain_workqueue+0x2a9/0x640 kernel/workqueue.c:2820
- destroy_workqueue+0xc6/0x9d0 kernel/workqueue.c:4155
- __alloc_workqueue_key+0xef9/0x1190 kernel/workqueue.c:4138
- bond_init+0x269/0x940 drivers/net/bonding/bond_main.c:4734
- register_netdevice+0x337/0x1100 net/core/dev.c:8410
- bond_newlink+0x49/0xa0 drivers/net/bonding/bond_netlink.c:453
- rtnl_newlink+0xef4/0x1d50 net/core/rtnetlink.c:3099
- rtnetlink_rcv_msg+0x46e/0xc30 net/core/rtnetlink.c:4711
- netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2454
- rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4729
- netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
- netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1343
- netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1908
- sock_sendmsg_nosec net/socket.c:622 [inline]
- sock_sendmsg+0xd5/0x120 net/socket.c:632
- ___sys_sendmsg+0x7fd/0x930 net/socket.c:2115
- __sys_sendmsg+0x11d/0x290 net/socket.c:2153
- __do_sys_sendmsg net/socket.c:2162 [inline]
- __se_sys_sendmsg net/socket.c:2160 [inline]
- __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2160
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457089
-Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f2df20a5c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f2df20a66d4 RCX: 0000000000457089
-RDX: 0000000000000000 RSI: 0000000020000180 RDI: 0000000000000003
-RBP: 0000000000930140 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004d40b8 R14: 00000000004c8ad8 R15: 0000000000000001
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+  ip6ip6_tnl_xmit net/ipv6/ip6_tunnel.c:1307 [inline]
+  ip6_tnl_start_xmit+0x7d2/0x1ef0 net/ipv6/ip6_tunnel.c:1390
+  __netdev_start_xmit include/linux/netdevice.h:4066 [inline]
+  netdev_start_xmit include/linux/netdevice.h:4075 [inline]
+  xmit_one net/core/dev.c:3026 [inline]
+  dev_hard_start_xmit+0x5f1/0xc70 net/core/dev.c:3042
+  __dev_queue_xmit+0x27ee/0x3520 net/core/dev.c:3557
+  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3590
+  packet_snd net/packet/af_packet.c:2944 [inline]
+  packet_sendmsg+0x7c70/0x8a30 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+  __sys_sendmmsg+0x42d/0x800 net/socket.c:2136
+  SYSC_sendmmsg+0xc4/0x110 net/socket.c:2167
+  SyS_sendmmsg+0x63/0x90 net/socket.c:2162
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x441819
+RSP: 002b:00007ffe58ee8268 EFLAGS: 00000213 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441819
+RDX: 0000000000000002 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 00000000006cd018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000402510
+R13: 00000000004025a0 R14: 0000000000000000 R15: 0000000000000000
 
-Signed-off-by: Mahesh Bandewar <maheshb@google.com>
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+  kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
+  slab_post_alloc_hook mm/slab.h:445 [inline]
+  slab_alloc_node mm/slub.c:2737 [inline]
+  __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
+  __kmalloc_reserve net/core/skbuff.c:138 [inline]
+  __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
+  alloc_skb include/linux/skbuff.h:984 [inline]
+  alloc_skb_with_frags+0x1d4/0xb20 net/core/skbuff.c:5234
+  sock_alloc_send_pskb+0xb56/0x1190 net/core/sock.c:2085
+  packet_alloc_skb net/packet/af_packet.c:2803 [inline]
+  packet_snd net/packet/af_packet.c:2894 [inline]
+  packet_sendmsg+0x6454/0x8a30 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+  __sys_sendmmsg+0x42d/0x800 net/socket.c:2136
+  SYSC_sendmmsg+0xc4/0x110 net/socket.c:2167
+  SyS_sendmmsg+0x63/0x90 net/socket.c:2162
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+This change addresses the issue adding the needed check before
+accessing the inner header.
+
+The ipv4 side of the issue is apparently there since the ipv4 over ipv6
+initial support, and the ipv6 side predates git history.
+
+Fixes: c4d3efafcc93 ("[IPV6] IP6TUNNEL: Add support to IPv4 over IPv6 tunnel.")
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: syzbot+3fde91d4d394747d6db4@syzkaller.appspotmail.com
+Tested-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_main.c |   43 +++++++++++++++-------------------------
- include/net/bonding.h           |    7 ------
- 2 files changed, 18 insertions(+), 32 deletions(-)
+ net/ipv6/ip6_tunnel.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -216,6 +216,7 @@ static struct rtnl_link_stats64 *bond_ge
- static void bond_slave_arr_handler(struct work_struct *work);
- static bool bond_time_in_interval(struct bonding *bond, unsigned long last_act,
- 				  int mod);
-+static void bond_netdev_notify_work(struct work_struct *work);
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -1096,7 +1096,7 @@ static inline int
+ ip4ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct ip6_tnl *t = netdev_priv(dev);
+-	const struct iphdr  *iph = ip_hdr(skb);
++	const struct iphdr  *iph;
+ 	int encap_limit = -1;
+ 	struct flowi6 fl6;
+ 	__u8 dsfield;
+@@ -1104,6 +1104,11 @@ ip4ip6_tnl_xmit(struct sk_buff *skb, str
+ 	u8 tproto;
+ 	int err;
  
- /*---------------------------- General routines -----------------------------*/
- 
-@@ -1237,6 +1238,8 @@ static struct slave *bond_alloc_slave(st
- 			return NULL;
- 		}
- 	}
-+	INIT_DELAYED_WORK(&slave->notify_work, bond_netdev_notify_work);
++	/* ensure we can access the full inner ip header */
++	if (!pskb_may_pull(skb, sizeof(struct iphdr)))
++		return -1;
 +
- 	return slave;
- }
++	iph = ip_hdr(skb);
+ 	memset(&(IPCB(skb)->opt), 0, sizeof(IPCB(skb)->opt));
  
-@@ -1244,6 +1247,7 @@ static void bond_free_slave(struct slave
+ 	tproto = ACCESS_ONCE(t->parms.proto);
+@@ -1140,7 +1145,7 @@ static inline int
+ ip6ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev)
  {
- 	struct bonding *bond = bond_get_bond_by_slave(slave);
+ 	struct ip6_tnl *t = netdev_priv(dev);
+-	struct ipv6hdr *ipv6h = ipv6_hdr(skb);
++	struct ipv6hdr *ipv6h;
+ 	int encap_limit = -1;
+ 	__u16 offset;
+ 	struct flowi6 fl6;
+@@ -1149,6 +1154,10 @@ ip6ip6_tnl_xmit(struct sk_buff *skb, str
+ 	u8 tproto;
+ 	int err;
  
-+	cancel_delayed_work_sync(&slave->notify_work);
- 	if (BOND_MODE(bond) == BOND_MODE_8023AD)
- 		kfree(SLAVE_AD_INFO(slave));
- 
-@@ -1265,39 +1269,26 @@ static void bond_fill_ifslave(struct sla
- 	info->link_failure_count = slave->link_failure_count;
- }
- 
--static void bond_netdev_notify(struct net_device *dev,
--			       struct netdev_bonding_info *info)
--{
--	rtnl_lock();
--	netdev_bonding_info_change(dev, info);
--	rtnl_unlock();
--}
--
- static void bond_netdev_notify_work(struct work_struct *_work)
- {
--	struct netdev_notify_work *w =
--		container_of(_work, struct netdev_notify_work, work.work);
-+	struct slave *slave = container_of(_work, struct slave,
-+					   notify_work.work);
++	if (unlikely(!pskb_may_pull(skb, sizeof(*ipv6h))))
++		return -1;
 +
-+	if (rtnl_trylock()) {
-+		struct netdev_bonding_info binfo;
- 
--	bond_netdev_notify(w->dev, &w->bonding_info);
--	dev_put(w->dev);
--	kfree(w);
-+		bond_fill_ifslave(slave, &binfo.slave);
-+		bond_fill_ifbond(slave->bond, &binfo.master);
-+		netdev_bonding_info_change(slave->dev, &binfo);
-+		rtnl_unlock();
-+	} else {
-+		queue_delayed_work(slave->bond->wq, &slave->notify_work, 1);
-+	}
- }
- 
- void bond_queue_slave_event(struct slave *slave)
- {
--	struct bonding *bond = slave->bond;
--	struct netdev_notify_work *nnw = kzalloc(sizeof(*nnw), GFP_ATOMIC);
--
--	if (!nnw)
--		return;
--
--	dev_hold(slave->dev);
--	nnw->dev = slave->dev;
--	bond_fill_ifslave(slave, &nnw->bonding_info.slave);
--	bond_fill_ifbond(bond, &nnw->bonding_info.master);
--	INIT_DELAYED_WORK(&nnw->work, bond_netdev_notify_work);
--
--	queue_delayed_work(slave->bond->wq, &nnw->work, 0);
-+	queue_delayed_work(slave->bond->wq, &slave->notify_work, 0);
- }
- 
- /* enslave device <slave> to bond device <master> */
---- a/include/net/bonding.h
-+++ b/include/net/bonding.h
-@@ -146,12 +146,6 @@ struct bond_parm_tbl {
- 	int mode;
- };
- 
--struct netdev_notify_work {
--	struct delayed_work	work;
--	struct net_device	*dev;
--	struct netdev_bonding_info bonding_info;
--};
--
- struct slave {
- 	struct net_device *dev; /* first - useful for panic debug */
- 	struct bonding *bond; /* our master */
-@@ -177,6 +171,7 @@ struct slave {
- #ifdef CONFIG_NET_POLL_CONTROLLER
- 	struct netpoll *np;
- #endif
-+	struct delayed_work notify_work;
- 	struct kobject kobj;
- 	struct rtnl_link_stats64 slave_stats;
- };
++	ipv6h = ipv6_hdr(skb);
+ 	tproto = ACCESS_ONCE(t->parms.proto);
+ 	if ((tproto != IPPROTO_IPV6 && tproto != 0) ||
+ 	    ip6_tnl_addr_conflict(t, ipv6h))
 
 
