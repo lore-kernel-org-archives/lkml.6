@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6215CC67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5891EC67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 256222087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:50:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD2AC2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:51:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bG5ftTXG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 256222087A
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nbEAtqm/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2AC2087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbeJSHyM (ORCPT
+        id S1727335AbeJSHyp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 03:54:12 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:37260 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbeJSHyM (ORCPT
+        Fri, 19 Oct 2018 03:54:45 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:40744 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726245AbeJSHyp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 03:54:12 -0400
-Received: by mail-ua1-f68.google.com with SMTP id y5so6837085uap.4
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 16:50:50 -0700 (PDT)
+        Fri, 19 Oct 2018 03:54:45 -0400
+Received: by mail-ua1-f66.google.com with SMTP id c21so6835511uap.7
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 16:51:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ej9GWqztV4YayoN6VfUnAmxlWRuyAiHJeA0+pwOYNYU=;
-        b=bG5ftTXG4ijWNxqwbSXHnlnpj+3ZO7020fB/ntdHvEBhluG4i7XjzCRZXI33E7hEqm
-         rFwU6IfEUtFDtqwBPtyig3cSzPr5fMzESUwATvJzEedoJ2o523IqE+dQzRa7dutAoGqg
-         zfpUGnvqVYH6xIaDoRXaFQx5ikPvuQA0I4SpE=
+        bh=sRjGUXac8wI20zJFfcbJlWhBnsVPKloJQulzagUCP8s=;
+        b=nbEAtqm/XjZf+toqwpAxvdZA0wT+O8f57QJPbQhFpZxTF1nIUDkJTF4Lg1LGgxvfv8
+         9umkiybS22D2LY3pCC2ToxDIkJRT1ndnZbIvAH9lL+drlwDSUlQU6KJpyyWQ4ayviP6O
+         5lA1m8XTleTdDmc1PHZQQ0NBUBT/PjJVnPkz4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ej9GWqztV4YayoN6VfUnAmxlWRuyAiHJeA0+pwOYNYU=;
-        b=gl+6m4O0Y2FublnpS1T2Y4f/mbw+fdK+6NxVcqyhkq/FjfecR6A2byLz2Oga8EBA5p
-         hbd8S0mus0GkTYfQTEGl1iGMe3uGkPQy+0IGmGc7rAuJJ1Y0i4Wkkm/KQE5iyi+PIYIp
-         zPdl0JfjAsNNbcyiH6PYTiFl1Zd9EwvBsHl+0ScAqLRuoa0VptFPjQ2/ZTzckUhQoqs/
-         P/dOUqnZ7iI1EbOYHyGUapFuQzkqCWlE8YS6X4FSrZWusDHsS/ak+D2+GDmj8iAfP65z
-         C8/Ps8pqoGLQMuxY41ragcNfHljPr9xOv3Pmhce71kedcQaYB86RNrB/Peqpk7tYpeSF
-         c7bQ==
-X-Gm-Message-State: ABuFfohQuIpkvGG1aX4H2QGa1uhtZPq3uBxvxqFBSIdEOStHXDAvcURn
-        rJFUKxrcbriSNrfz3Bt2uhqyJjafrKc=
-X-Google-Smtp-Source: ACcGV63APn/WuuDTHyj7jnFiEjNXDZ6jnVrqJ9bLqvuOzkAyuuhNhiYJHOovajFr0RJNwMAUp+azkw==
-X-Received: by 2002:ab0:4e8b:: with SMTP id l11mr14882097uah.93.1539906649656;
-        Thu, 18 Oct 2018 16:50:49 -0700 (PDT)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id c25sm3844287uan.13.2018.10.18.16.50.47
+        bh=sRjGUXac8wI20zJFfcbJlWhBnsVPKloJQulzagUCP8s=;
+        b=cZGUaiBDPbzttuOIFgj2fp6LdpG+en6p+CycMSkAy/eav7R6QnhKq94iJuq0gk6k1M
+         axfNCp4XO+Y/mDnArB5gKjssxZTQOrkielapXhMsGc30yVDMLqXFdwGqUjmD9tTftOBE
+         gh6T5bTuRefwRURGkjbyCmpUeqAhra42m5xxrTY2kck6S10gz/70AW/qOEf76hT/IFcT
+         rjKd1poPEmB+ogudYyqI1gj7lfZtg691dh6bimeeSzYz/TVjP0EkhYXqxk0Jr9Bvi6he
+         ybuppha2oNZLT/XzNLRqdRPoKRC5kjdT+xJcs5VtGaGL0Cyt3ZfbzRtFl/oXQ2j0tqST
+         N6Sg==
+X-Gm-Message-State: ABuFfojVLN6nZgANQ5hHTVyP+b9Im00V6srriG7WhMMfTfodDmZsHJli
+        +h8BO9zGqP/kIQbGHBeunBikOgCBUWI=
+X-Google-Smtp-Source: ACcGV61gYNHReP+QHsFZn43eb4iCR5rUJgnh2YlvarIhyYRxmkL/60TNOk8jDHWpbqY8hHgQUZ9Grg==
+X-Received: by 2002:ab0:1089:: with SMTP id d9mr8688696uab.42.1539906682854;
+        Thu, 18 Oct 2018 16:51:22 -0700 (PDT)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id w2sm4469481vsg.29.2018.10.18.16.51.21
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 16:50:48 -0700 (PDT)
-Received: by mail-ua1-f54.google.com with SMTP id c21so6835132uap.7
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 16:50:47 -0700 (PDT)
-X-Received: by 2002:ab0:7291:: with SMTP id w17mr14823974uao.115.1539906647519;
- Thu, 18 Oct 2018 16:50:47 -0700 (PDT)
+        Thu, 18 Oct 2018 16:51:21 -0700 (PDT)
+Received: by mail-vs1-f53.google.com with SMTP id q15so9951903vso.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 16:51:21 -0700 (PDT)
+X-Received: by 2002:a67:8316:: with SMTP id f22mr13374255vsd.6.1539906681339;
+ Thu, 18 Oct 2018 16:51:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181018210933.113592-1-evgreen@chromium.org> <20181018210933.113592-2-evgreen@chromium.org>
-In-Reply-To: <20181018210933.113592-2-evgreen@chromium.org>
+References: <20181018210933.113592-1-evgreen@chromium.org> <20181018210933.113592-3-evgreen@chromium.org>
+In-Reply-To: <20181018210933.113592-3-evgreen@chromium.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 18 Oct 2018 16:50:34 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XM9uG8EfamXmEp2-g5tgagir0KHpdMZMtL6ckqt+Jjsg@mail.gmail.com>
-Message-ID: <CAD=FV=XM9uG8EfamXmEp2-g5tgagir0KHpdMZMtL6ckqt+Jjsg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: phy-qcom-qmp: Fix register underspecification
+Date:   Thu, 18 Oct 2018 16:51:08 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VMnTEUgPoDnfF-Oh8FDj9hy+ohz6oViJOtZCD_K-t_Dg@mail.gmail.com>
+Message-ID: <CAD=FV=VMnTEUgPoDnfF-Oh8FDj9hy+ohz6oViJOtZCD_K-t_Dg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] phy: qcom-qmp: Utilize fully-specified DT registers
 To:     Evan Green <evgreen@chromium.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -91,36 +91,40 @@ Hi,
 
 On Thu, Oct 18, 2018 at 2:09 PM Evan Green <evgreen@chromium.org> wrote:
 >
-> This change adds register regions for the second lane of dual-lane nodes.
-> This additional specification is needed so that the driver can stop
-> reaching beyond the tx and rx register allocations to get at the
-> second lane registers in a dual-lane PHY.
+> This change utilizes the newly fixed up DT bindings to get the tx2
+> and rx2 register regions for the second lane of dual-lane PHYs. Before
+> this change, the driver was simply using lane one's register region and
+> adding 0x400, which reached well beyond the DT-specified register
+> allocation. This would have been a crash were it not for the page size on
+> ARM64. Fix the driver not to rely on the magic of virtual memory by using
+> the newly specified DT register regions for tx2 and rx2.
 >
-> While in there, document #clock-cells as optional for PHYs that don't
-> provide a pipe clock. Also, document the pcs_misc register region, which
-> was being quietly supplied and used.
+> In order to support existing device trees, this change also contains a
+> fallback mode for when those new register regions don't exist, which
+> reverts to the original behavior of overreaching and prints a complaint.
 >
 > Signed-off-by: Evan Green <evgreen@chromium.org>
->
 > ---
-> This applies atop linux-next 20181018 with the addition of Doug's
-> changes [1] and [2].
->
-> [1] https://lore.kernel.org/lkml/20181012213632.252346-1-dianders@chromium.org/
-> [2] https://lore.kernel.org/lkml/20181012213926.253765-1-dianders@chromium.org/
->
->  .../devicetree/bindings/phy/qcom-qmp-phy.txt       | 73 +++++++++++++++++++---
->  1 file changed, 65 insertions(+), 8 deletions(-)
+>  drivers/phy/qualcomm/phy-qcom-qmp.c | 51 +++++++++++++++++++++++++++----------
+>  1 file changed, 38 insertions(+), 13 deletions(-)
 
-This all makes sense to me and seems like the right compromise to make
+Looks good to me.  This seems like the right compromise for moving
+forward to fix the problem.
 
-The only current SoC that uses tx2/rx2 is SDM845 and the support of
-that SoC is in its infancy in mainline.  Thus I don't mind that we say
-that all 5 registers are "required" even though there is an existing
-device tree out there that don't include tx2/rx2 for USB.  Currently
-patch #2 in this series still makes old device trees "work" (as well
-as they used to) but I'm all for that being very temporary code and
-that officially tx2/rx2 are not optional.
+A few notes:
+
+* The only current SoC that uses tx2/rx2 is SDM845 and the support of
+that SoC is in its infancy in mainline.  Thus I don't mind that using
+existing device trees with this new patch will print a warning and
+continue to take advantage of the Linux "bug" that the whole page
+could be accessed.  We should fix the old DTS files ASAP and then
+remove the nod to backward compatibility in the code.
+
+* This should land _before_ dts patches land.  If dts changes land
+without this change then the old code will end up mapping tx2 and
+using it as pcsmisc.  ...so either we'll need to delay landing the
+device tree patch by one major version or Andy / Kishon will need to
+coordinate.
 
 
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
