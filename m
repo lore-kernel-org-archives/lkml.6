@@ -2,165 +2,237 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B14C1ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E750ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 796DE21470
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:26:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 796DE21470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id C5AC821470
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:30:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="NRvWGHWS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5AC821470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbeJRJY7 (ORCPT
+        id S1727290AbeJRJ2c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 05:24:59 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:53771 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726943AbeJRJY7 (ORCPT
+        Thu, 18 Oct 2018 05:28:32 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:36844 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbeJRJ2c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 05:24:59 -0400
-X-UUID: f8d66faec2884058b7f904e2b72a65c3-20181018
-X-UUID: f8d66faec2884058b7f904e2b72a65c3-20181018
-Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <honghui.zhang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 2104160628; Thu, 18 Oct 2018 09:26:27 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N2.mediatek.inc
- (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 18 Oct
- 2018 09:26:25 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 18 Oct 2018 09:26:24 +0800
-Message-ID: <1539825984.11281.9.camel@mhfsdcap03>
-Subject: Re: [PATCH v8 0/9] PCI: mediatek: fixup find_port, enable_msi and
- add PM, module support
-From:   Honghui Zhang <honghui.zhang@mediatek.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     <bhelgaas@google.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ryder.lee@mediatek.com>,
-        <ulf.hansson@linaro.org>, <marc.zyngier@arm.com>,
-        <matthias.bgg@gmail.com>, <devicetree@vger.kernel.org>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <youlin.pei@mediatek.com>, <yt.shen@mediatek.com>,
-        <jianjun.wang@mediatek.com>, <yong.wu@mediatek.com>
-Date:   Thu, 18 Oct 2018 09:26:24 +0800
-In-Reply-To: <20181017151954.GA9374@e107981-ln.cambridge.arm.com>
-References: <1539590940-13355-1-git-send-email-honghui.zhang@mediatek.com>
-         <20181017151954.GA9374@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Thu, 18 Oct 2018 05:28:32 -0400
+Received: by mail-it1-f195.google.com with SMTP id c85-v6so5077189itd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 18:30:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kdPFN0LEbEMZ9IMvAsEl2i67D21nSEKfGsWKIMlnxVE=;
+        b=NRvWGHWSjNhgnFi9IqgfnRht+S61AFEv5AXNZuiwT2BYC3TlMHd57sY4S6rTHPJB6e
+         uW2Z4uEbSKQo0f8TvkeRvpyzwBK3UKoNkR9oOEREmm6soMwkNH7MgRIvHKqFa/tn4a2y
+         Cc3dWfTOF7fp/m2R19CdERgh/y8qL1VXEnyPA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kdPFN0LEbEMZ9IMvAsEl2i67D21nSEKfGsWKIMlnxVE=;
+        b=WcMAUWYZUKsmwRQcoPS0fekomJ4fV5fQxjioI3xMaYg/sh6g+AygjUnSb4KCvtVhDC
+         68kC/lBBbXY4AjBIhLPUvZ1UsMt45upmhi2Ya5uHSs8Wv+YgTQKvB6w4nliBeJvXiUY9
+         WaJBMRaKasc+mF0znd8BTe/SRQ2+Fj2UX+fV78psUI0O87zVeSw2SkMDgcPtL8zz5Twf
+         t9QtHV2KtyJ2bENXgN6uLUEGO14FYBl+V197pGlVn+ZT2CrEMysNeT0US64kFMOMSl81
+         P1s/lTdtoCVu86lMSxK2/WypW5zcrd3+Xkiwf2XwoP5XzzsLJHEHsVLoI/G+a3A80kzb
+         RK7g==
+X-Gm-Message-State: ABuFfojiY/G0ckrN3HdLAueETOdYqJwdSahWjHdwiN7eB5YV5Lm18+oP
+        HoifKQ3MyK9Ept7kbIJXc/PxlA==
+X-Google-Smtp-Source: AJdET5clccV7tdFdaQ589yrDoMGEJILZ8Shmyu5kuVgUiFE5SW5VQd6Ac0Segt//j5DcZ9TPPiwJ/w==
+X-Received: by 2002:a24:74d4:: with SMTP id o203-v6mr3394136itc.81.1539826204254;
+        Wed, 17 Oct 2018 18:30:04 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id u1-v6sm2886199itu.42.2018.10.17.18.30.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 18:30:02 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 18:30:01 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pstore: Refactor compression initialization
+Message-ID: <20181018013001.GA99677@joelaf.mtv.corp.google.com>
+References: <20181017214124.GA8239@beast>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017214124.GA8239@beast>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-17 at 16:19 +0100, Lorenzo Pieralisi wrote:
-> On Mon, Oct 15, 2018 at 04:08:51PM +0800, honghui.zhang@mediatek.com wrote:
-> > From: Honghui Zhang <honghui.zhang@mediatek.com>
-> > 
-> > This patchset includes misc patchs:
-> > 
-> > The patch 1 fixup the mtk_pcie_find_port logic which will cause system
-> > could not touch the EP's configuration space that connected to PCIe slot 1.
-> > 
-> > The patch 2 fixup the class type for MT7622.
-> > The patch 6 fixup the enable msi logic, the operation to enable MSI
-> > should be after system clock is enabled. Call mtk_pcie_enable_msi in
-> > mtk_pcie_startup_port_v2 since the clock was all enabled at that time.
-> > 
-> > The patch 7 was rebased and refactor of the v4 patch[1], changes are:
-> >  -Add PM support for MT7622.
-> >  -Using mtk_pcie_enable_port to re-establish the link when resumed.
-> >  -Rebased on this patchset.
-> > 
-> > The patch 9 add loadable kernel module support.
-> > 
-> > [1] https://patchwork.kernel.org/patch/10479079
+On Wed, Oct 17, 2018 at 02:41:24PM -0700, Kees Cook wrote:
+> With compression initialization now separated from pstore_register(),
+> there is no longer a good reason to do compression method selection
+> during fs init. Instead, merge everything together into the late init.
+> Additionally cleans up the reporting to be more clear.
 > 
-> I have pushed out (after basically rewriting all commit logs and
-> squashing two patches) this version of the patchset to my pci/mediatek
-> branch for v4.20, keeping in mind that you must follow-up with Bjorn on
-> this patch:
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> This patch goes on top of Joel's. I'll have both in linux-next shortly...
+> ---
+>  fs/pstore/inode.c    |  2 --
+>  fs/pstore/internal.h |  3 --
+>  fs/pstore/platform.c | 65 ++++++++++++++++++++++++++++----------------
+>  3 files changed, 41 insertions(+), 29 deletions(-)
+> 
+> diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
+> index 5fcb845b9fec..d814723fb27d 100644
+> --- a/fs/pstore/inode.c
+> +++ b/fs/pstore/inode.c
+> @@ -486,8 +486,6 @@ static int __init init_pstore_fs(void)
+>  {
+>  	int err;
+>  
+> -	pstore_choose_compression();
+> -
+>  	/* Create a convenient mount point for people to access pstore */
+>  	err = sysfs_create_mount_point(fs_kobj, "pstore");
+>  	if (err)
+> diff --git a/fs/pstore/internal.h b/fs/pstore/internal.h
+> index fb767e28aeb2..c029314478fa 100644
+> --- a/fs/pstore/internal.h
+> +++ b/fs/pstore/internal.h
+> @@ -37,7 +37,4 @@ extern bool	pstore_is_mounted(void);
+>  extern void	pstore_record_init(struct pstore_record *record,
+>  				   struct pstore_info *psi);
+>  
+> -/* Called during module_init() */
+> -extern void __init pstore_choose_compression(void);
+> -
+>  #endif
+> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+> index f09066db2d4d..e4737a5fa68c 100644
+> --- a/fs/pstore/platform.c
+> +++ b/fs/pstore/platform.c
+> @@ -274,36 +274,56 @@ static int pstore_decompress(void *in, void *out,
+>  
+>  static void allocate_buf_for_compression(void)
+>  {
+> +	struct crypto_comp *ctx;
+> +	int size;
+> +	char *buf;
+> +
+> +	/* Skip if not built-in or compression backend not selected yet. */
+>  	if (!IS_ENABLED(CONFIG_PSTORE_COMPRESS) || !zbackend)
+>  		return;
+>  
+> +	/* Skip if no pstore backend yet or compression init already done. */
+> +	if (!psinfo || tfm)
+> +		return;
+> +
+>  	if (!crypto_has_comp(zbackend->name, 0, 0)) {
+> -		pr_err("No %s compression\n", zbackend->name);
+> +		pr_err("Unknown compression: %s\n", zbackend->name);
+>  		return;
+>  	}
+>  
+> -	big_oops_buf_sz = zbackend->zbufsize(psinfo->bufsize);
+> -	if (big_oops_buf_sz <= 0)
+> +	size = zbackend->zbufsize(psinfo->bufsize);
+> +	if (size <= 0) {
+> +		pr_err("Invalid compression size for %s: %d\n",
+> +		       zbackend->name, size);
+>  		return;
+> +	}
+>  
+> -	big_oops_buf = kmalloc(big_oops_buf_sz, GFP_KERNEL);
+> -	if (!big_oops_buf) {
+> -		pr_err("allocate compression buffer error!\n");
+> +	buf = kmalloc(size, GFP_KERNEL);
+> +	if (!buf) {
+> +		pr_err("Failed %d byte compression buffer allocation for: %s\n",
+> +		       size, zbackend->name);
+>  		return;
+>  	}
+>  
+> -	tfm = crypto_alloc_comp(zbackend->name, 0, 0);
+> -	if (IS_ERR_OR_NULL(tfm)) {
+> -		kfree(big_oops_buf);
+> -		big_oops_buf = NULL;
+> -		pr_err("crypto_alloc_comp() failed!\n");
+> +	ctx = crypto_alloc_comp(zbackend->name, 0, 0);
+> +	if (IS_ERR_OR_NULL(ctx)) {
+> +		kfree(buf);
+> +		pr_err("crypto_alloc_comp('%s') failed: %ld\n", zbackend->name,
+> +		       PTR_ERR(ctx));
+>  		return;
+>  	}
+> +
+> +	/* A non-NULL big_oops_buf indicates compression is available. */
+> +	tfm = ctx;
+> +	big_oops_buf_sz = size;
+> +	big_oops_buf = buf;
+> +
+> +	pr_info("Using compression: %s\n", zbackend->name);
+>  }
+>  
+>  static void free_buf_for_compression(void)
+>  {
+> -	if (IS_ENABLED(CONFIG_PSTORE_COMPRESS) && !IS_ERR_OR_NULL(tfm))
+> +	if (IS_ENABLED(CONFIG_PSTORE_COMPRESS) && tfm)
+>  		crypto_free_comp(tfm);
+>  	kfree(big_oops_buf);
+>  	big_oops_buf = NULL;
+> @@ -764,31 +784,28 @@ static void pstore_timefunc(struct timer_list *unused)
+>  			  jiffies + msecs_to_jiffies(pstore_update_ms));
+>  }
+>  
+> -void __init pstore_choose_compression(void)
+> +static int __init pstore_compression_late_init(void)
+>  {
+>  	const struct pstore_zbackend *step;
+>  
+>  	if (!compress)
+> -		return;
+> +		return 0;
+>  
+> +	/* Locate desired compression method. */
+>  	for (step = zbackends; step->name; step++) {
+>  		if (!strcmp(compress, step->name)) {
+>  			zbackend = step;
+> -			pr_info("using %s compression\n", zbackend->name);
+> -			return;
+> +			break;
+>  		}
+>  	}
+> -}
+>  
+> -static int __init pstore_compression_late_init(void)
+> -{
+>  	/*
+> -	 * Check if any pstore backends registered earlier but did not allocate
+> -	 * for compression because crypto was not ready, if so then initialize
+> -	 * compression.
+> +	 * Check if any pstore backends registered earlier but did not
+> +	 * initialize compression because crypto was not ready. If so,
+> +	 * then initialize compression now.
+>  	 */
+> -	if (psinfo && !tfm)
+> -		allocate_buf_for_compression();
+> +	allocate_buf_for_compression();
 
-Thanks for your great help with this serial.
+We can also get rid of the 'zbackend' global variable since choosing the
+compression backend and allocating the buffers are done at the same time?
 
-> 
-> https://patchwork.ozlabs.org/patch/984668/
-> 
-> that we shall still consider for v4.21.
-> 
-> Lorenzo
-> 
-> > Change since v7:
-> >  - Add Acked-by tags from Ryder Lee.
-> >  - Add Fix tags for patch 2(Fix calss type for MT7622 as PCI_CLASS_BRIDGE_PCI)
-> >    and patch 6(Fixup enable MSI logic by enable MSI after clock enabled)
-> > 
-> > Change since v6:
-> >  - Remove the pci_unmap_iospace when remove the device since the
-> >    devm_pci_remap_iospace is an devm_ version.
-> >  - Commit message changed for patch 2(Fix class type for MT7622 as PCI_CLASS_BRIDGE_PCI).
-> >  - Capitilizing "MSI" and "PM" in the patch title.
-> > 
-> > Change since v5:
-> >  - A bit improvement of mtk_pcie_find_port suggest by Lorenzo.
-> >    MSI after clock enabled).
-> >  - Add Acked-by tags from Ryder.
-> > 
-> > Change since v4:
-> >  - Add patch 2 to fixup class type for MT7622.
-> >  - Add patch 3 to remove the redundant dev->pm_domain check
-> >  - Add patch 4 to covert to use pci_host_probe
-> >  - Add patch 5 to re-arrange the function define, this is a prepare patch for
-> >    fixup the enable_msi logic, no functional changed have been made by this one.
-> >  - Add patch 8 to save the GIC IRQ in mtk_pcie_port as a prepare patch for tear
-> >    down the irq when remove the kernel module.
-> >  - Re-arrange the find_port flow suggest by Lorenzo to make the code parse easier
-> >    for the patch 1.
-> >  - Remove the .pm_support in mtk_pcie_soc in patch 7 since if system pm was not
-> >    supported, then those pm callbacks will never be executed for MT7622. So the
-> >    .pm_support is not needed.
-> > 
-> > Change since v3:
-> >  - Remove pm_runtime_XXX ops in suspend and resume callbacks in the third patch.
-> >  - Rebase to 4.19-rc1.
-> > 
-> > Change since v2:
-> >  - Fix the list_for_each_entry_safe parameter error.
-> >  - Add Ryder's Acked-by flag.
-> > 
-> > Change since v1:
-> >  - A bit of code refact of the first patch suggested by Andy Shevchenko, and
-> >    commit message updated.
-> > 
-> > Honghui Zhang (9):
-> >   PCI: mediatek: Using slot's devfn for compare to fix
-> >     mtk_pcie_find_port logic
-> >   PCI: mediatek: Fix class type for MT7622 as PCI_CLASS_BRIDGE_PCI
-> >   PCI: mediatek: Remove the redundant dev->pm_domain check
-> >   PCI: mediatek: Convert to use pci_host_probe()
-> >   PCI: mediatek: Move the mtk_pcie_startup_port_v2 function's define
-> >     after mtk_pcie_setup_irq
-> >   PCI: mediatek: Fixup enable MSI logic by enable MSI after clock
-> >     enabled
-> >   PCI: mediatek: Add system PM support for MT2712 and MT7622
-> >   PCI: mediatek: Save the GIC IRQ in mtk_pcie_port
-> >   PCI: mediatek: Add loadable kernel module support
-> > 
-> >  drivers/pci/controller/Kconfig         |   2 +-
-> >  drivers/pci/controller/pcie-mediatek.c | 319 +++++++++++++++++++++------------
-> >  2 files changed, 204 insertions(+), 117 deletions(-)
-> > 
-> > -- 
-> > 2.6.4
-> > 
+Otherwise looks good to me,
 
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+
+thanks,
+
+ - Joel
 
