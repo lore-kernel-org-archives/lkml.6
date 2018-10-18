@@ -6,121 +6,79 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C23AECDE42
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6447C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EA0A2083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:10:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA0A2083A
+	by mail.kernel.org (Postfix) with ESMTP id 871FA2083A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:10:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871FA2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbeJRNJp (ORCPT
+        id S1727583AbeJRNJo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 09:09:45 -0400
-Received: from a2nlsmtp01-05.prod.iad2.secureserver.net ([198.71.225.49]:39456
+        Thu, 18 Oct 2018 09:09:44 -0400
+Received: from a2nlsmtp01-05.prod.iad2.secureserver.net ([198.71.225.49]:39454
         "EHLO a2nlsmtp01-05.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727352AbeJRNJo (ORCPT
+        by vger.kernel.org with ESMTP id S1727337AbeJRNJo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 18 Oct 2018 09:09:44 -0400
 Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
         by : HOSTING RELAY : with ESMTP
-        id D0Yvg47xkbOGjD0Yvgan4E; Wed, 17 Oct 2018 22:09:34 -0700
+        id D0Ywg47xmbOGjD0Ywgan4G; Wed, 17 Oct 2018 22:09:34 -0700
 x-originating-ip: 107.180.71.197
 Received: from kys by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
         (envelope-from <kys@linuxonhyperv2.linuxonhyperv.com>)
-        id 1gD0Yv-0007HI-Sy; Wed, 17 Oct 2018 22:09:33 -0700
+        id 1gD0Yv-0007HM-Vv; Wed, 17 Oct 2018 22:09:34 -0700
 From:   kys@linuxonhyperv.com
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
         devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
         jasowang@redhat.com, sthemmin@microsoft.com,
         Michael.H.Kelley@microsoft.com, vkuznets@redhat.com
-Cc:     "K. Y. Srinivasan" <kys@microsoft.com>
-Subject: [PATCH V2 1/5] Drivers: hv: vmbus: Get rid of unnecessary state in hv_context
-Date:   Thu, 18 Oct 2018 05:09:28 +0000
-Message-Id: <20181018050932.27932-1-kys@linuxonhyperv.com>
+Cc:     Haiyang Zhang <haiyangz@microsoft.com>,
+        "K . Y . Srinivasan" <kys@microsoft.com>
+Subject: [PATCH V2 2/5] hv_utils: update name in struct hv_driver util_drv
+Date:   Thu, 18 Oct 2018 05:09:29 +0000
+Message-Id: <20181018050932.27932-2-kys@linuxonhyperv.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20181018050835.27828-1-kys@linuxonhyperv.com>
+In-Reply-To: <20181018050932.27932-1-kys@linuxonhyperv.com>
 References: <20181018050835.27828-1-kys@linuxonhyperv.com>
+ <20181018050932.27932-1-kys@linuxonhyperv.com>
 Reply-To: kys@microsoft.com
 X-CMAE-Envelope: MS4wfCVdhjszUBFJw4+JbZsb4HZB9P6m7Q8jcwGY4vImu7PBjBhrWxk0ogP7BBuNQoLAITXNrqbJ5WKsHeOLQXCC+j70/DHsiuHXzZZ2PsC8B3t1xAybRpcR
- bSLp7yBb3VCt8W0zL1Kn16tgk/6jlIB2bTy23e17cD8wETrni63hu5eWPc6aDvhtUJQWi97tDvVhpRZvGFYmMLSHwsxBYnks29qWkBw1K5AmaxhjZkrMMl1j
- MjlN9l6rWfJ9SEks5G1sdsaGwM8uhkx5pu6iklhpveHOLCbt/Z+7EG2kh/Fq4RTmJJl4tt1mHSoZ10Y2cQx5Vr9gnDjhJ6RRrsMSr+Uq2nj49rFBaTHOc7Lj
- xOcjjHAzY69U38moaiCWtnUIi+RJA5hxbuVRr7J63k5AUmYFMIEzxEhshdl89CaYT/FEaRyjkJp11O0OhzLe1xpEjGpcM5rh7DwzHmA1eQWs31IXqXEenoRp
- OcXiEC6m4qrA4FIHcNmekig+yZFf1IXuoeqJkqyWBD43Jqu6ilyaZplzIvi7CASINF3IswnmchwSUS44
+ bSLp7yBb3VCt8W0zL1Kn16tgk/6jlIB2bTy23e17cD8wETrni63hu5eWdmio+j3UeQVUNG1lHAIpPhQSlkdnSTBaDwvvvhEs3jOgIg8ggXqaCUk/3q87hwmp
+ Ts0HHqnK3ZG+50XTLJHbuRUUNppxuuB9JAcdYJAC8aK+o7OFxbi4GGbu4RHCo4Ya8+MYaOifdm0z2sN1CtC0s+7th5HOXPc2E5AKYp0aKvY4rR7AyY7PnAD/
+ 55XIIlKMuYB4cSowoCwejT/CEFS5CHH5nW8OAebcaINGjHgxhBv8ZmD0gnKMM/4szxAJ9FGex6MLJYPnxHRq+kbX3ReXtS7dO97/Ye40aqF+8ZJNj2v+VC21
+ eLYs4RJBJUFavK7VqlS749hQrgK3LnbLlJvIDtKi65+iaAZYI0mDrmq2xLS2Cm2pIKdsDADH2s6Eiy1gIWm8225UjjTm2OAKnHbF9g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "K. Y. Srinivasan" <kys@microsoft.com>
+From: Haiyang Zhang <haiyangz@microsoft.com>
 
-Currently we are replicating state in struct hv_context that is unnecessary -
-this state can be retrieved from the hypervisor. Furthermore, this is a per-cpu
-state that is being maintained as a global state in struct hv_context.
-Get rid of this state in struct hv_context.
+The correct module name is hv_utils. This patch corrects
+the name in struct hv_driver util_drv.
 
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
 Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 ---
- drivers/hv/hv.c           | 10 +++-------
- drivers/hv/hyperv_vmbus.h |  2 --
- 2 files changed, 3 insertions(+), 9 deletions(-)
+ drivers/hv/hv_util.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-index 332d7c34be5c..166c2501de17 100644
---- a/drivers/hv/hv.c
-+++ b/drivers/hv/hv.c
-@@ -33,9 +33,7 @@
- #include "hyperv_vmbus.h"
+diff --git a/drivers/hv/hv_util.c b/drivers/hv/hv_util.c
+index 423205077bf6..f10eeb120c8b 100644
+--- a/drivers/hv/hv_util.c
++++ b/drivers/hv/hv_util.c
+@@ -483,7 +483,7 @@ MODULE_DEVICE_TABLE(vmbus, id_table);
  
- /* The one and only */
--struct hv_context hv_context = {
--	.synic_initialized	= false,
--};
-+struct hv_context hv_context;
- 
- /*
-  * If false, we're using the old mechanism for stimer0 interrupts
-@@ -326,8 +324,6 @@ int hv_synic_init(unsigned int cpu)
- 
- 	hv_set_synic_state(sctrl.as_uint64);
- 
--	hv_context.synic_initialized = true;
--
- 	/*
- 	 * Register the per-cpu clockevent source.
- 	 */
-@@ -373,7 +369,8 @@ int hv_synic_cleanup(unsigned int cpu)
- 	bool channel_found = false;
- 	unsigned long flags;
- 
--	if (!hv_context.synic_initialized)
-+	hv_get_synic_state(sctrl.as_uint64);
-+	if (sctrl.enable != 1)
- 		return -EFAULT;
- 
- 	/*
-@@ -435,7 +432,6 @@ int hv_synic_cleanup(unsigned int cpu)
- 	hv_set_siefp(siefp.as_uint64);
- 
- 	/* Disable the global synic bit */
--	hv_get_synic_state(sctrl.as_uint64);
- 	sctrl.enable = 0;
- 	hv_set_synic_state(sctrl.as_uint64);
- 
-diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
-index 72eaba3d50fc..f17c06a5e74b 100644
---- a/drivers/hv/hyperv_vmbus.h
-+++ b/drivers/hv/hyperv_vmbus.h
-@@ -230,8 +230,6 @@ struct hv_context {
- 
- 	void *tsc_page;
- 
--	bool synic_initialized;
--
- 	struct hv_per_cpu_context __percpu *cpu_context;
- 
- 	/*
+ /* The one and only one */
+ static  struct hv_driver util_drv = {
+-	.name = "hv_util",
++	.name = "hv_utils",
+ 	.id_table = id_table,
+ 	.probe =  util_probe,
+ 	.remove =  util_remove,
 -- 
 2.18.0
 
