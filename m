@@ -2,195 +2,219 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C65EC67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7830C67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B22DD2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:25:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85E772145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:28:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFzFophp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B22DD2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="xN203UKu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85E772145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727528AbeJSE2O (ORCPT
+        id S1726790AbeJSEbV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 00:28:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725735AbeJSE2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 00:28:13 -0400
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC18821486;
-        Thu, 18 Oct 2018 20:25:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539894332;
-        bh=FijrFl+Jun+HKk+KfBRIss5bmX9j9o4cw4HezeO7mrc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=IFzFophpyZ4gh4CxrP09E+Ad6cWJaEmZnk2qTOeLlrhbo4w1jRZURc2+dOGd1uNsR
-         +hnBnF46tMlOq+yeipulnSXr0PgGlheZX9CuYeGKNWgEH/KwuP76QzSAd3Xjamb/7l
-         niTfgjqQxli+Y0iScbYzwmpdiFtfV5wdBhaH256I=
-Received: by mail-ed1-f49.google.com with SMTP id z21-v6so29442484edb.11;
-        Thu, 18 Oct 2018 13:25:31 -0700 (PDT)
-X-Gm-Message-State: ABuFfoiDfxj2pnjNDkSTt9GRqciILehoNnsjYHt7zVBNU8fTNlLDD57F
-        EohG7qNuJdAz9hhf9Fpnm8fky7Q/hN+iaVuMKoA=
-X-Google-Smtp-Source: ACcGV60DoMkSuQ3oj9wSaOxtCBQQmi4iSPq32E3hILxAhsLJ2eUM+3hAIvxnpELtqvfrs9ZVYTLyA/qQ55hwbffOwDQ=
-X-Received: by 2002:a50:92fd:: with SMTP id l58-v6mr4468252eda.200.1539894330243;
- Thu, 18 Oct 2018 13:25:30 -0700 (PDT)
+        Fri, 19 Oct 2018 00:31:21 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:38128 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725751AbeJSEbU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 00:31:20 -0400
+Received: by mail-it1-f194.google.com with SMTP id i76-v6so2009943ita.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 13:28:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=AlH7aFBh9LBPqEh2my4cGuUFIT4INFCUN481J/mPJ4c=;
+        b=xN203UKucSUUW4V02dc7w673l3nWVVWX/7W5fh4GekQaPVmQr8R0KdZceZRSRuAxac
+         ahtDdKtbU+EcLCfXMuuUy8/g88tnOqLZdCI37E7gfRYPXyXKnkG6I8+C3yJ2tYRUszGx
+         dAKq1pPHB9XnXjcvRe9hIA884L/ew8+9cVbMAtsqU/kvVqfKHbmJTIsW0IQaD7D9IA/e
+         BneNRDyiooJxU9pRE+3VvkuqWF/+8W3FVgfcTbmPQ433ujOczkT1SctkvaSj2qLrs9fW
+         byA35ijwFRtiy6Wd326iWJV8T9/iRJWC4+SWbPj4AVF8wZOBRDYqa3nDfrInPIp9NnP4
+         wrBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AlH7aFBh9LBPqEh2my4cGuUFIT4INFCUN481J/mPJ4c=;
+        b=hzHAUz8t6UMQES69IggQzaBPg6+ajt0jqY7MYw0yNMeK16f4ITq1TC/NXi2xc8EV4e
+         6gMQaQUZfW4xds9fIBt3xUgzP4OpyKjVwXojopeRN3AetBC3uX334QNx2L9PLvIvzqUv
+         PqUzpZa8hVLoaKmRoWKJfmZ+945X6KPnCNzYTuU4dgRAa4OUZnhP26ijLFQGby3n4BL9
+         0On00jbsOb1+Pg/BvNfgvmU1eVOki+20SlwRlKp28KmXI95NoeNuVRearVnojOUdFLHw
+         OtTfDPUBiJs5YtgeGMJmju0B6PkyUBZpTqWCR8e4B1xK+jAZGk1XJzly7sLIGT5ZM/tP
+         lkQg==
+X-Gm-Message-State: ABuFfohf+dbtPqSdwWGIeKi3fpXYWc0++0U54vM2nzp3VcQ7wnrciwIv
+        kQJhjn9hqMCx0tbRh8bAuUjP4zx5D6k=
+X-Google-Smtp-Source: ACcGV63Ufe13r+IwbOYmXREhtLxHS3Q97D17QnHGD7BrOYI/p8Cz4cda7/AkffIhPHSABeCHThig5Q==
+X-Received: by 2002:a24:4113:: with SMTP id x19-v6mr1332521ita.112.1539894517838;
+        Thu, 18 Oct 2018 13:28:37 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id a14-v6sm6651938iod.53.2018.10.18.13.28.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Oct 2018 13:28:36 -0700 (PDT)
+Subject: Re: bioset changes in 4.18 broke aha1542
+To:     Ondrej Zary <linux@rainbow-software.org>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <201810182034.51724.linux@rainbow-software.org>
+ <201810182204.36894.linux@rainbow-software.org>
+ <fe5cf33d-8653-c43c-dbff-89a8f3413eb4@kernel.dk>
+ <201810182222.41789.linux@rainbow-software.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <2baee56c-8e56-3dba-0000-1af1392a89f7@kernel.dk>
+Date:   Thu, 18 Oct 2018 14:28:35 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
- <1539657458-24401-2-git-send-email-frowand.list@gmail.com> <CANk1AXS-DMhA3=8v9N28K_V6K18HcgN_Esuo=-ddmeBLO46-Rw@mail.gmail.com>
-In-Reply-To: <CANk1AXS-DMhA3=8v9N28K_V6K18HcgN_Esuo=-ddmeBLO46-Rw@mail.gmail.com>
-From:   Alan Tull <atull@kernel.org>
-Date:   Thu, 18 Oct 2018 15:24:53 -0500
-X-Gmail-Original-Message-ID: <CANk1AXT38UJ0gZze87b3jDiGfXoVEW7izhohsGRdZ5P20wfeEw@mail.gmail.com>
-Message-ID: <CANk1AXT38UJ0gZze87b3jDiGfXoVEW7izhohsGRdZ5P20wfeEw@mail.gmail.com>
-Subject: Re: [PATCH v4 01/18] of: overlay: add tests to validate kfrees from
- overlay removal
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Moritz Fischer <mdf@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <201810182222.41789.linux@rainbow-software.org>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 4:30 PM Alan Tull <atull@kernel.org> wrote:
->
-> On Mon, Oct 15, 2018 at 9:39 PM <frowand.list@gmail.com> wrote:
->
-> Hi Frank,
->
-> >
-> > From: Frank Rowand <frank.rowand@sony.com>
-> >
-> > Add checks:
-> >   - attempted kfree due to refcount reaching zero before overlay
-> >     is removed
-> >   - properties linked to an overlay node when the node is removed
-> >   - node refcount > one during node removal in a changeset destroy,
-> >     if the node was created by the changeset
-> >
-> > After applying this patch, several validation warnings will be
-> > reported from the devicetree unittest during boot due to
-> > pre-existing devicetree bugs. The warnings will be similar to:
-> >
-> >   OF: ERROR: of_node_release() overlay node /testcase-data/overlay-node/test-bus/test-unittest11/test-unittest111 contains unexpected properties
-> >   OF: ERROR: memory leak - destroy cset entry: attach overlay node /testcase-data-2/substation@100/hvac-medium-2 expected refcount 1 instead of 2.  of_node_get() / of_node_put() are unbalanced for this node.
-> >
-> > Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-> > ---
-> > Changes since v3:
-> >   - Add expected value of refcount for destroy cset entry error.  Also
-> >     explain the cause of the error.
-> >
-> >  drivers/of/dynamic.c | 29 +++++++++++++++++++++++++++++
-> >  drivers/of/overlay.c |  1 +
-> >  include/linux/of.h   | 15 ++++++++++-----
-> >  3 files changed, 40 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-> > index f4f8ed9b5454..24c97b7a050f 100644
-> > --- a/drivers/of/dynamic.c
-> > +++ b/drivers/of/dynamic.c
-> > @@ -330,6 +330,25 @@ void of_node_release(struct kobject *kobj)
-> >         if (!of_node_check_flag(node, OF_DYNAMIC))
-> >                 return;
-> >
-> > +       if (of_node_check_flag(node, OF_OVERLAY)) {
-> > +
-> > +               if (!of_node_check_flag(node, OF_OVERLAY_FREE_CSET)) {
-> > +                       /* premature refcount of zero, do not free memory */
-> > +                       pr_err("ERROR: memory leak %s() overlay node %pOF before free overlay changeset\n",
-> > +                              __func__, node);
-> > +                       return;
-> > +               }
-> > +
-> > +               /*
-> > +                * If node->properties non-empty then properties were added
-> > +                * to this node either by different overlay that has not
-> > +                * yet been removed, or by a non-overlay mechanism.
-> > +                */
-> > +               if (node->properties)
-> > +                       pr_err("ERROR: %s() overlay node %pOF contains unexpected properties\n",
-> > +                              __func__, node);
-> > +       }
-> > +
-> >         property_list_free(node->properties);
-> >         property_list_free(node->deadprops);
-> >
-> > @@ -434,6 +453,16 @@ struct device_node *__of_node_dup(const struct device_node *np,
-> >
-> >  static void __of_changeset_entry_destroy(struct of_changeset_entry *ce)
-> >  {
-> > +       if (ce->action == OF_RECONFIG_ATTACH_NODE &&
-> > +           of_node_check_flag(ce->np, OF_OVERLAY)) {
-> > +               if (kref_read(&ce->np->kobj.kref) > 1) {
-> > +                       pr_err("ERROR: memory leak - destroy cset entry: attach overlay node %pOF expected refcount 1 instead of %d.  of_node_get() / of_node_put() are unbalanced for this node.\n",
-> > +                              ce->np, kref_read(&ce->np->kobj.kref));
->
-> Still testing as much as I have time to do.
->
-> I'm hitting this error message once when removing an overlay that adds
-> several child nodes.  The only node I get the message for was a node
-> that added a fixed-clock (the other nodes didn't trigger the error).
-> Then even if I edited all the rest of the overlay DTS and removed all
-> other child nodes and all references to the clock from other nodes, I
-> still got the error.
->
-> Removing dtbo: 1-socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dtb
-> [   72.032270] OF: ERROR: memory leak - destroy cset entry: attach
-> overlay node /soc/base_fpga_region/clk_0 expected refcount 1 instead
-> of 2.  of_node_get() / of_node_put() are unbalanced for this node.
+On 10/18/18 2:22 PM, Ondrej Zary wrote:
+> On Thursday 18 October 2018 22:10:31 Jens Axboe wrote:
+>> On 10/18/18 2:04 PM, Ondrej Zary wrote:
+>>> On Thursday 18 October 2018 21:59:09 Jens Axboe wrote:
+>>>> On 10/18/18 1:55 PM, Ondrej Zary wrote:
+>>>>> On Thursday 18 October 2018 20:58:57 Jens Axboe wrote:
+>>>>>> On 10/18/18 12:34 PM, Ondrej Zary wrote:
+>>>>>>> Hello,
+>>>>>>> aha1542 works fine in 4.17 but crashes in 4.18. It's hard to bisect because
+>>>>>>> of many commits that don't compile.
+>>>>>>> # only skipped commits left to test
+>>>>>>> # possible first bad commit: [52190f8abe7f2bf2b4e5f9760cbcc1427ca2136b] fs: convert block_dev.c to bioset_init()
+>>>>>>> # possible first bad commit: [a47a28b74a5c7c27bf621276b85ad6c124651236] target: convert to bioset_init()/mempool_init()
+>>>>>>> # possible first bad commit: [6f1c819c219f7841079f0f43ab62727a55b0d849] dm: convert to bioset_init()/mempool_init()
+>>>>>>> # possible first bad commit: [afeee514ce7f4cab605beedd03be71ebaf0c5fc8] md: convert to bioset_init()/mempool_init()
+>>>>>>> # possible first bad commit: [d19936a26658a7a53edd5619d631ee2c2c3151a2] bcache: convert to bioset_init()/mempool_init()
+>>>>>>> # possible first bad commit: [b906bbb6997785d9ea0bd3f5585537afa6257c43] lightnvm: convert to bioset_init()/mempool_init()
+>>>>>>>
+>>>>>>> Testing manually, a47a28b74a5c7c27bf621276b85ad6c124651236 works.
+>>>>>>> 52190f8abe7f2bf2b4e5f9760cbcc1427ca2136b does not compile
+>>>>>>> 8ac9f7c1fd1d342e82ddf078425423b050652ba0 does not compile
+>>>>>>> e292d7bc63c8f2adb3dfda27910e805f1b6557f9 does not compile
+>>>>>>> dad08527525f9a8ac9c7f278864c65f94bc5e9b3 does not compile
+>>>>>>> 943cf9f3ca16133dbd00f9a4cbfea46512fcb0e8 works
+>>>>>>> ..
+>>>>>>> fedc3abe7bd2dcc4c80bcf3cff8708a3908d8219 works
+>>>>>>> 04c4950d5b373ba712d928592e05e73510785bca crashes
+>>>>>>
+>>>>>> It looks like the ISA bioset pool isn't being initialized. You should
+>>>>>> have messages like this in your dmesg:
+>>>>>>
+>>>>>> isa pool size: 16 pages
+>>>>>>
+>>>>>> (which you do), but also something on the bioset section. Do you have
+>>>>>> this one:
+>>>>>>
+>>>>>> pool size: 64 pages
+>>>>>>
+>>>>>> as well?
+>>>>>>
+>>>>>
+>>>>> No, it's not there.
+>>>>
+>>>> Can you attach your .config? I'm guessing CONFIG_HIGHMEM* isn't set.
+>>>>
+>>>
+>>> It is.
+>>
+>> Puzzled... Does this work?
+>>
+>>
+>> diff --git a/block/bounce.c b/block/bounce.c
+>> index b30071ac4ec6..49564a1bfd22 100644
+>> --- a/block/bounce.c
+>> +++ b/block/bounce.c
+>> @@ -35,10 +35,6 @@ static mempool_t page_pool, isa_page_pool;
+>>  static __init int init_emergency_pool(void)
+>>  {
+>>  	int ret;
+>> -#if defined(CONFIG_HIGHMEM) && !defined(CONFIG_MEMORY_HOTPLUG)
+>> -	if (max_pfn <= max_low_pfn)
+>> -		return 0;
+>> -#endif
+>>  
+>>  	ret = mempool_init_page_pool(&page_pool, POOL_SIZE, 0);
+>>  	BUG_ON(ret);
+>>
+> 
+> Yes, it does! 
+> bounce: pool size: 64 pages
+> and aha1542 works.
+> 
+> Also added printks for pfn:
+> max_pfn=65520, max_low_pfn=65520
 
-Update: with some helpful offline debug patches from Frank, I was able
-to find the source of the of_node_get/put unbalance.  The fixed-rate
-clock driver calls of_clk_add_provider() when probed but never calls
-of_clk_del_provider()
+This should be a better fix, though I'm still puzzled why we need
+it now. Can you test this one?
 
-This patchset quite likely will uncover other of_node_get/put
-unbalances around the kernel.
 
-Alan
+diff --git a/block/bounce.c b/block/bounce.c
+index b30071ac4ec6..1356a2f4aae2 100644
+--- a/block/bounce.c
++++ b/block/bounce.c
+@@ -31,6 +31,24 @@
+ static struct bio_set bounce_bio_set, bounce_bio_split;
+ static mempool_t page_pool, isa_page_pool;
+ 
++static __init void init_bounce_bioset(void)
++{
++	static bool bounce_bs_setup;
++	int ret;
++
++	if (bounce_bs_setup)
++		return;
++
++	ret = bioset_init(&bounce_bio_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS);
++	BUG_ON(ret);
++	if (bioset_integrity_create(&bounce_bio_set, BIO_POOL_SIZE))
++		BUG_ON(1);
++
++	ret = bioset_init(&bounce_bio_split, BIO_POOL_SIZE, 0, 0);
++	BUG_ON(ret);
++	bounce_bs_setup = true;
++}
++
+ #if defined(CONFIG_HIGHMEM)
+ static __init int init_emergency_pool(void)
+ {
+@@ -44,14 +62,7 @@ static __init int init_emergency_pool(void)
+ 	BUG_ON(ret);
+ 	pr_info("pool size: %d pages\n", POOL_SIZE);
+ 
+-	ret = bioset_init(&bounce_bio_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS);
+-	BUG_ON(ret);
+-	if (bioset_integrity_create(&bounce_bio_set, BIO_POOL_SIZE))
+-		BUG_ON(1);
+-
+-	ret = bioset_init(&bounce_bio_split, BIO_POOL_SIZE, 0, 0);
+-	BUG_ON(ret);
+-
++	init_bounce_bioset();
+ 	return 0;
+ }
+ 
+@@ -102,6 +113,7 @@ int init_emergency_isa_pool(void)
+ 	BUG_ON(ret);
+ 
+ 	pr_info("isa pool size: %d pages\n", ISA_POOL_SIZE);
++	init_bounce_bioset();
+ 	return 0;
+ }
+ 
 
->
-> Here's the very stripped down overlay:
->
-> /dts-v1/;
-> /plugin/;
-> / {
->         fragment@0 {
->                 target-path = "/soc/base_fpga_region";
->                 #address-cells = <1>;
->                 #size-cells = <1>;
->
->                 __overlay__ {
->                         external-fpga-config;
->
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->
->                         clk_0: clk_0 {
->                                 compatible = "fixed-clock";
->                                 #clock-cells = <0>;
->                                 clock-frequency = <100000000>;  /* 100.00 MHz */
->                                 clock-output-names = "clk_0-clk";
->                         };
->                 };
->         };
-> };
+-- 
+Jens Axboe
+
