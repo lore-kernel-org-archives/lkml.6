@@ -2,99 +2,116 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F4A9C67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66424ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:55:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20F2D20644
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:55:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C63C208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:55:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=rainbow-software.org header.i=@rainbow-software.org header.b="BarERn4k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20F2D20644
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rainbow-software.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZDSgGaJ9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C63C208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727382AbeJSD5y (ORCPT
+        id S1727400AbeJSD6U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 23:57:54 -0400
-Received: from smtp-1b-out-4.atlantis.sk ([80.94.52.30]:39861 "EHLO
-        smtp-1b-out-4.atlantis.sk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbeJSD5y (ORCPT
+        Thu, 18 Oct 2018 23:58:20 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37742 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbeJSD6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 23:57:54 -0400
-Received: from [192.168.0.2] (188-167-58-14.dynamic.chello.sk [188.167.58.14])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp-1b.atlantis.sk (Postfix) with ESMTPSA id 09F0D8049795;
-        Thu, 18 Oct 2018 21:55:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rainbow-software.org;
-        s=atlsmtp; t=1539892518;
-        bh=J1unjxwHck33k5r3I70X7Nc2YCwzehVb9CMUw/2szXo=;
-        h=From:To:Subject:Date:Cc:References:In-Reply-To;
-        b=BarERn4kvXGd7Uxcv7oK1taW1lU6Iz6eYenRrNqE+WMjmhefkjJailJ8hW/FGX5Fs
-         2j3URaWW5y9G6C7dedV1Ird7Kii77DTPS82pqjENRsfG35Be2mWkJUstUXf/FbXS3y
-         RQ3peYPn4pZdzu2k48UUKbMl6OB8rixUitqNbSEI=
-From:   Ondrej Zary <linux@rainbow-software.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Subject: Re: bioset changes in 4.18 broke aha1542
-Date:   Thu, 18 Oct 2018 21:55:15 +0200
-User-Agent: KMail/1.9.10 (enterprise35 0.20100827.1168748)
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <201810182034.51724.linux@rainbow-software.org> <ee572ca2-8bbe-cd7d-5c41-8bb2fb5b204d@kernel.dk>
-In-Reply-To: <ee572ca2-8bbe-cd7d-5c41-8bb2fb5b204d@kernel.dk>
-X-KMail-QuotePrefix: > 
-MIME-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-Message-Id: <201810182155.15935.linux@rainbow-software.org>
+        Thu, 18 Oct 2018 23:58:19 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 185-v6so1534988wmt.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 12:55:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=f2d05Erv6S9E0ZU9gj0Ovl7L2m019u559hKyrxCLRic=;
+        b=ZDSgGaJ9FGPvKXpYdKBOi4gAaE6vvl0/9OP+UvWgDC/0A9EamLrFIVpLCn6t/dUnRn
+         Au9yqsf21y+I+IEvpRl+577FQvXRXxsFGFHBHDuIdmmWJNCYq7EFl5uHO8KRh7zQ0nHo
+         LmwCGDyTyuaRmhuR8hmYr4W5R3ZDLAHfdWFkE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=f2d05Erv6S9E0ZU9gj0Ovl7L2m019u559hKyrxCLRic=;
+        b=E044hIKqA89qlVZzHWFOkjivMGBpISUcFxvFBgY+KqwIfFOEGY9+dXQBYKwppuLGV4
+         OfNkQNolLM+dUfdqQx3lxgajjKkSbOOHsIAET7MASb3oO1BMTqP/0ywW3LadOM6rQok9
+         nXo7bB80FxfaWEsCFOrxbdzvmZ5j1s09Cp3UnGENBw0cik0xMq8t3UY+xHdhl0jQ1N4a
+         NJ7RyGSnkEkR9PRUUIdMScmhltrftsLv+6HKATpVeqwHPU8zaMLAAzIvNIPwULpQ28Y8
+         aEf+UxlYP+mBepuCOwdTxzbx7mgiIdIPfHn3kLtCotmYgNyVvFSb+ytWvKj1Medp8Her
+         kwMQ==
+X-Gm-Message-State: ABuFfojzJb0h65OjGgf74oi+G5G6LQoPTBU4A98D2LdIZEv2tjcRmd5I
+        YgpSeEo3FpKojVTf6h6v1ug24Q==
+X-Google-Smtp-Source: ACcGV60sYxhCDm8BsxsBWTrrg+kMXS4Uy3znXzFv/RIQQ4JdWKozS+dnXmkaRjolsSDG33/o+stDMg==
+X-Received: by 2002:a1c:9fd5:: with SMTP id i204-v6mr1831630wme.88.1539892544040;
+        Thu, 18 Oct 2018 12:55:44 -0700 (PDT)
+Received: from localhost.localdomain (77.65.136.77.rev.sfr.net. [77.136.65.77])
+        by smtp.gmail.com with ESMTPSA id h18-v6sm1540260wro.0.2018.10.18.12.55.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 18 Oct 2018 12:55:43 -0700 (PDT)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     rafael@kernel.org, mingo@kernel.org, peterz@infradead.org
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH] sched/cpufreq: Add the SPDX tags
+Date:   Thu, 18 Oct 2018 21:55:34 +0200
+Message-Id: <1539892534-16917-1-git-send-email-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 18 October 2018 20:58:57 Jens Axboe wrote:
-> On 10/18/18 12:34 PM, Ondrej Zary wrote:
-> > Hello,
-> > aha1542 works fine in 4.17 but crashes in 4.18. It's hard to bisect because
-> > of many commits that don't compile.
-> > # only skipped commits left to test
-> > # possible first bad commit: [52190f8abe7f2bf2b4e5f9760cbcc1427ca2136b] fs: convert block_dev.c to bioset_init()
-> > # possible first bad commit: [a47a28b74a5c7c27bf621276b85ad6c124651236] target: convert to bioset_init()/mempool_init()
-> > # possible first bad commit: [6f1c819c219f7841079f0f43ab62727a55b0d849] dm: convert to bioset_init()/mempool_init()
-> > # possible first bad commit: [afeee514ce7f4cab605beedd03be71ebaf0c5fc8] md: convert to bioset_init()/mempool_init()
-> > # possible first bad commit: [d19936a26658a7a53edd5619d631ee2c2c3151a2] bcache: convert to bioset_init()/mempool_init()
-> > # possible first bad commit: [b906bbb6997785d9ea0bd3f5585537afa6257c43] lightnvm: convert to bioset_init()/mempool_init()
-> > 
-> > Testing manually, a47a28b74a5c7c27bf621276b85ad6c124651236 works.
-> > 52190f8abe7f2bf2b4e5f9760cbcc1427ca2136b does not compile
-> > 8ac9f7c1fd1d342e82ddf078425423b050652ba0 does not compile
-> > e292d7bc63c8f2adb3dfda27910e805f1b6557f9 does not compile
-> > dad08527525f9a8ac9c7f278864c65f94bc5e9b3 does not compile
-> > 943cf9f3ca16133dbd00f9a4cbfea46512fcb0e8 works
-> > ..
-> > fedc3abe7bd2dcc4c80bcf3cff8708a3908d8219 works
-> > 04c4950d5b373ba712d928592e05e73510785bca crashes
-> 
-> It looks like the ISA bioset pool isn't being initialized. You should
-> have messages like this in your dmesg:
-> 
-> isa pool size: 16 pages
-> 
-> (which you do), but also something on the bioset section. Do you have
-> this one:
-> 
-> pool size: 64 pages
-> 
-> as well?
-> 
+The SPDX tags are not present in cpufreq.c and cpufreq_schedutil.c.
 
-No, it's not there.
+Add them and remove the license descriptions
 
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ kernel/sched/cpufreq.c           | 5 +----
+ kernel/sched/cpufreq_schedutil.c | 5 +----
+ 2 files changed, 2 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/sched/cpufreq.c b/kernel/sched/cpufreq.c
+index 5e54cbc..22bd898 100644
+--- a/kernel/sched/cpufreq.c
++++ b/kernel/sched/cpufreq.c
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Scheduler code and data structures related to cpufreq.
+  *
+  * Copyright (C) 2016, Intel Corporation
+  * Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ #include "sched.h"
+ 
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 3fffad3..626ddd4 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * CPUFreq governor based on scheduler-provided CPU utilization data.
+  *
+  * Copyright (C) 2016, Intel Corporation
+  * Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 -- 
-Ondrej Zary
+2.7.4
+
