@@ -2,246 +2,265 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E95ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E278C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CEBC2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:57:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CEBC2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chris-wilson.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 3704821473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:59:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="Wfm7WNtn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3704821473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727583AbeJRO5I convert rfc822-to-8bit (ORCPT
+        id S1727546AbeJRO6v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 10:57:08 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:52848 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727337AbeJRO5I (ORCPT
+        Thu, 18 Oct 2018 10:58:51 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46248 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727363AbeJRO6v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 10:57:08 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 14143354-1500050 
-        for multiple; Thu, 18 Oct 2018 07:56:48 +0100
-Content-Type: text/plain; charset="utf-8"
+        Thu, 18 Oct 2018 10:58:51 -0400
+Received: by mail-pf1-f193.google.com with SMTP id r64-v6so14414192pfb.13
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 23:59:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xear+RLNnBEI0/eVpUZWOmlWkAdxU+7aAlsATSKFP7M=;
+        b=Wfm7WNtnSe1mOFGfqKBdRntjsGjuttEpU10k9RKeog5WXJ4GJeEB8W4LkPkkB6p5qt
+         m0VAfP1IGy9EfgWauzMhEfHkXjnITorsjoe5qct0+kAEb7FmQ6lrAFpoRbx0WKmmIbsv
+         cBjHAtotUSQYxzv+ZijepTDA6aV5uMFoaR+FI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xear+RLNnBEI0/eVpUZWOmlWkAdxU+7aAlsATSKFP7M=;
+        b=QdV40fpl5/I0QOC81hovSy2zbEQJgRwGxNhpIUoZY6LkcaqgNsawVE4jD2xNGfL0XR
+         Lj3o6rbzmnyLF4e6j/j6a+OLlmPpneSozA4yXa+gIJcCgtgDZ/d4z5vjPWdbTy1ze+O1
+         Un2ocZxJSTfTQPwykyIe3K9AIXpjlBV5UzZHJQfSoGD9k5iDjzeMPxb2AXbXQROSFy38
+         1InyNF60l+h6BM7amNekJQdzZrVE+ytbYgJQsqLagEGBPBLnwR60XXRp3bPpviZ340Yi
+         2GelO6DNLTcYdLyqgrR0hcjwGJOm+dc+lnh1ciFB3hp9qgEL8wJ50FRxjAnK/2yrSBuq
+         NHTA==
+X-Gm-Message-State: ABuFfojeq+yQh7/gRaBIzNLdTzdWALh/Y7/rdK+G+5z+zVaunQNALjpp
+        ro3Un32g+DXo2LQ15vDEFu7lGZJYG/k=
+X-Google-Smtp-Source: ACcGV61xNVH+I+unnVa85HggpBCokX4PPakDnkgxaXbTohriKoGLxj+MmqZCLQw34fZ/oUzP7/SshA==
+X-Received: by 2002:a63:f744:: with SMTP id f4-v6mr27668756pgk.410.1539845957462;
+        Wed, 17 Oct 2018 23:59:17 -0700 (PDT)
+Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id r23-v6sm21580750pfh.79.2018.10.17.23.59.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Oct 2018 23:59:16 -0700 (PDT)
+From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        jreck@google.com, john.stultz@linaro.org, tkjos@google.com,
+        gregkh@linuxfoundation.org, hch@infradead.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>, dancol@google.com,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-mm@kvack.org, marcandre.lureau@redhat.com,
+        Mike Kravetz <mike.kravetz@oracle.com>, minchan@kernel.org,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v3 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to memfd
+Date:   Wed, 17 Oct 2018 23:59:07 -0700
+Message-Id: <20181018065908.254389-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Kuo-Hsin Yang <vovoy@chromium.org>,
-        Michal Hocko <mhocko@kernel.org>
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <153971466599.22931.16793398326492316920@skylake-alporthouse-com>
-Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        peterz@infradead.org, dave.hansen@intel.com, corbet@lwn.net,
-        hughd@google.com, joonas.lahtinen@linux.intel.com,
-        marcheu@chromium.org, hoegsberg@chromium.org
-References: <20181016174300.197906-1-vovoy@chromium.org>
- <20181016174300.197906-3-vovoy@chromium.org>
- <20181016182155.GW18839@dhcp22.suse.cz>
- <153971466599.22931.16793398326492316920@skylake-alporthouse-com>
-Message-ID: <153984580501.19935.11456945882099910977@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH 2/2] drm/i915: Mark pinned shmemfs pages as unevictable
-Date:   Thu, 18 Oct 2018 07:56:45 +0100
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Chris Wilson (2018-10-16 19:31:06)
-> Fwiw, the shmem_unlock_mapping() call feels quite expensive, almost
-> nullifying the advantage gained from not walking the lists in reclaim.
-> I'll have better numbers in a couple of days.
+Android uses ashmem for sharing memory regions. We are looking forward
+to migrating all usecases of ashmem to memfd so that we can possibly
+remove the ashmem driver in the future from staging while also
+benefiting from using memfd and contributing to it. Note staging drivers
+are also not ABI and generally can be removed at anytime.
 
-Using a test ("igt/benchmarks/gem_syslatency -t 120 -b -m" on kbl)
-consisting of cycletest with a background load of trying to allocate +
-populate 2MiB (to hit thp) while catting all files to /dev/null, the
-result of using mapping_set_unevictable is mixed.
+One of the main usecases Android has is the ability to create a region
+and mmap it as writeable, then add protection against making any
+"future" writes while keeping the existing already mmap'ed
+writeable-region active.  This allows us to implement a usecase where
+receivers of the shared memory buffer can get a read-only view, while
+the sender continues to write to the buffer.
+See CursorWindow documentation in Android for more details:
+https://developer.android.com/reference/android/database/CursorWindow
 
-Each test run consists of running cycletest for 120s measuring the mean
-and maximum wakeup latency and then repeating that 120 times.
+This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
+To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE seal
+which prevents any future mmap and write syscalls from succeeding while
+keeping the existing mmap active. The following program shows the seal
+working in action:
 
-x baseline-mean.txt # no i915 activity
-+ tip-mean.txt # current stock i915 with a continuous load
-+------------------------------------------------------------------------+
-| x      +                                                               |
-| x      +                                                               |
-|xx      +                                                               |
-|xx      +                                                               |
-|xx      +                                                               |
-|xx     ++                                                               |
-|xx    +++                                                               |
-|xx    +++                                                               |
-|xx    +++                                                               |
-|xx    +++                                                               |
-|xx    +++                                                               |
-|xx    ++++                                                              |
-|xx   +++++                                                              |
-|xx  ++++++                                                              |
-|xx  ++++++                                                              |
-|xx  ++++++                                                              |
-|xx  ++++++                                                              |
-|xx  ++++++                                                              |
-|xx  +++++++ +                                                           |
-|xx ++++++++ +                                                           |
-|xx ++++++++++                                                           |
-|xx+++++++++++ +     +                                                   |
-|xx+++++++++++ +     +  +          +      +       ++                    +|
-| A                                                                      |
-||______M_A_________|                                                    |
-+------------------------------------------------------------------------+
-    N           Min           Max        Median           Avg        Stddev
-x 120       359.153       876.915       863.548     778.80319     186.15875
-+ 120      2475.318     73172.303      7666.812     9579.4671      9552.865
+ #include <stdio.h>
+ #include <errno.h>
+ #include <sys/mman.h>
+ #include <linux/memfd.h>
+ #include <linux/fcntl.h>
+ #include <asm/unistd.h>
+ #include <unistd.h>
+ #define F_SEAL_FUTURE_WRITE 0x0010
+ #define REGION_SIZE (5 * 1024 * 1024)
 
-Our target then is 863us, but currently i915 adds 7ms of uninterruptable
-delay on hitting the shrinker.
+int memfd_create_region(const char *name, size_t size)
+{
+    int ret;
+    int fd = syscall(__NR_memfd_create, name, MFD_ALLOW_SEALING);
+    if (fd < 0) return fd;
+    ret = ftruncate(fd, size);
+    if (ret < 0) { close(fd); return ret; }
+    return fd;
+}
 
-x baseline-mean.txt
-+ mapping-mean.txt # applying the mapping_set_evictable patch
-* tip-mean.txt
-+------------------------------------------------------------------------+
-| x      *         +                                                     |
-| x      *         +                                                     |
-|xx      *         +                                                     |
-|xx      *         +                                                     |
-|xx      *         +                                                     |
-|xx     **         +                                                     |
-|xx    ***         ++                                                    |
-|xx    ***         ++                                                    |
-|xx    ***         ++                                                    |
-|xx    ***         ++                                                    |
-|xx    ***         ++                                                    |
-|xx    ****  +     ++                                                    |
-|xx   *****+ ++    ++                                                    |
-|xx  ******+ ++    ++                                                    |
-|xx  ******+ ++  + ++                                                    |
-|xx  ******+ ++  + ++                                                    |
-|xx  ******+ ++  ++++                                                    |
-|xx  ******+ ++  ++++                                                    |
-|xx  ******* *+  ++++                                                    |
-|xx ******** *+ +++++                                                    |
-|xx **********+ +++++                                                    |
-|xx***********+*+++++*                                                   |
-|xx***********+*+++++*  *  +       *      *       **                    *|
-| A                                                                      |
-|          |___AM___|                                                    |
-||______M_A_________|                                                    |
-+------------------------------------------------------------------------+
-    N           Min           Max        Median           Avg        Stddev
-x 120       359.153       876.915       863.548     778.80319     186.15875
-+ 120      3291.633     26644.894     15829.186     14654.781     4466.6997
-* 120      2475.318     73172.303      7666.812     9579.4671      9552.865
+int main() {
+    int ret, fd;
+    void *addr, *addr2, *addr3, *addr1;
+    ret = memfd_create_region("test_region", REGION_SIZE);
+    printf("ret=%d\n", ret);
+    fd = ret;
 
-Shows that if we use the mapping_set_evictable() +
-shmem_unlock_mapping() we add a further 8ms uninterruptable delay to the
-system... That's the opposite of our goal! ;)
+    // Create map
+    addr = mmap(0, REGION_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+    if (addr == MAP_FAILED)
+	    printf("map 0 failed\n");
+    else
+	    printf("map 0 passed\n");
 
-x baseline-mean.txt
-+ lock_vma-mean.txt # the old approach of pinning each page
-* tip-mean.txt
-+------------------------------------------------------------------------+
-| *+     *                                                               |
-| *+   * *                                                               |
-| *+   * *                                                               |
-| *+   * *                                                               |
-| *+   ***                                                               |
-| *+   ***                                                               |
-| *+   ***                                                               |
-| *+   ***                                                               |
-| *+   ***                                                               |
-| *+   ***                                                               |
-| *+   ***                                                               |
-| *+   ****                                                              |
-| *+  *****                                                              |
-| *+  ******                                                             |
-| *+  ****** *                                                           |
-| *+  ****** *                                                           |
-| *+ ******* *                                                           |
-| *+******** *                                                           |
-| *+******** *                                                           |
-| *+******** *                                                           |
-| *+******** * *     *                                                   |
-| *+******** * *   + *  *          *      *       * *                   *|
-| A                                                                      |
-||MA|                                                                    |
-||_______M_A________|                                                    |
-+------------------------------------------------------------------------+
-    N           Min           Max        Median           Avg        Stddev
-x 120       359.153       876.915       863.548     778.80319     186.15875
-+ 120       511.415     18757.367      1276.302     1416.0016     1679.3965
-* 120      2475.318     73172.303      7666.812     9579.4671      9552.865
+    if ((ret = write(fd, "test", 4)) != 4)
+	    printf("write failed even though no future-write seal "
+		   "(ret=%d errno =%d)\n", ret, errno);
+    else
+	    printf("write passed\n");
 
-By contrast, the previous approach of using mlock_page_vma() does
-dramatically reduce the uninterruptable delay -- which suggests that the
-mapping_set_evictable() isn't keeping our unshrinkable pages off the
-shrinker lru.
+    addr1 = mmap(0, REGION_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+    if (addr1 == MAP_FAILED)
+	    perror("map 1 prot-write failed even though no seal\n");
+    else
+	    printf("map 1 prot-write passed as expected\n");
 
-However, if instead of looking at the average uninterruptable delay
-during the 120s of cycletest, but look at the worst case, things get a
-little more interesting. Currently i915 is terrible.
+    ret = fcntl(fd, F_ADD_SEALS, F_SEAL_FUTURE_WRITE |
+				 F_SEAL_GROW |
+				 F_SEAL_SHRINK);
+    if (ret == -1)
+	    printf("fcntl failed, errno: %d\n", errno);
+    else
+	    printf("future-write seal now active\n");
 
-x baseline-max.txt
-+ tip-max.txt
-+------------------------------------------------------------------------+
-|      *                                                                 |
-[snip 100 lines]
-|      *                                                                 |
-|      *                                                                 |
-|      *                                                                 |
-|      *                                                                 |
-|      *                                                                 |
-|      *                                                                 |
-|      *                                                                 |
-|      *                                                                 |
-|      * +++      ++ +           +  +      +                            +|
-|      A                                                                 |
-||_____M_A_______|                                                       |
-+------------------------------------------------------------------------+
-    N           Min           Max        Median           Avg        Stddev
-x 120          7391         58543         51953     51564.033     5044.6375
-+ 120       2284928  6.752085e+08       3385097      20825362      80352645
+    if ((ret = write(fd, "test", 4)) != 4)
+	    printf("write failed as expected due to future-write seal\n");
+    else
+	    printf("write passed (unexpected)\n");
 
-Worst case with no i915 is 52ms, but as soon as we load up i915 with
-some work, the worst case uninterruptable delay is on average 20s!!! As
-suggested by the median, the data is severely skewed by a few outliers.
-(Worst worst case is so bad khungtaskd often makes an appearance.)
+    addr2 = mmap(0, REGION_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+    if (addr2 == MAP_FAILED)
+	    perror("map 2 prot-write failed as expected due to seal\n");
+    else
+	    printf("map 2 passed\n");
 
-x baseline-max.txt
-+ mapping-max.txt
-* tip-max.txt
-+------------------------------------------------------------------------+
-|      *                                                                 |
-[snip 100 lines]
-|      *                                                                 |
-|      *                                                                 |
-|      *                                                                 |
-|      *                                                                 |
-|      *                                                                 |
-|      *                                                                 |
-|      *                                                                 |
-|      *+                                                                |
-|      *+***      ** *           * +*      *                            *|
-|      A                                                                 |
-|    |_A__|                                                              |
-||_____M_A_______|                                                       |
-+------------------------------------------------------------------------+
-    N           Min           Max        Median           Avg        Stddev
-x 120          7391         58543         51953     51564.033     5044.6375
-+ 120       3088140 2.9181602e+08       4022581     6528993.3      26278426
-* 120       2284928  6.752085e+08       3385097      20825362      80352645
+    addr3 = mmap(0, REGION_SIZE, PROT_READ, MAP_SHARED, fd, 0);
+    if (addr3 == MAP_FAILED)
+	    perror("map 3 failed\n");
+    else
+	    printf("map 3 prot-read passed as expected\n");
+}
 
-So while the mapping_set_evictable patch did reduce the maximum observed
-delay within the 4 hour sample, on average (median, to exclude those worst
-worst case outliers) it still fares worse than stock i915. The
-mlock_page_vma() has no impact on worst case wrt stock.
+The output of running this program is as follows:
+ret=3
+map 0 passed
+write passed
+map 1 prot-write passed as expected
+future-write seal now active
+write failed as expected due to future-write seal
+map 2 prot-write failed as expected due to seal
+: Permission denied
+map 3 prot-read passed as expected
 
-My conclusion is that the mapping_set_evictable patch makes both the
-average and worst case uninterruptable latency (as observed by other
-users of the system) significantly worse. (Although the maximum latency
-is not stable enough to draw a real conclusion other than i915 is
-shockingly terrible.)
--Chris
+Cc: jreck@google.com
+Cc: john.stultz@linaro.org
+Cc: tkjos@google.com
+Cc: gregkh@linuxfoundation.org
+Cc: hch@infradead.org
+Reviewed-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+v1->v2: No change, just added selftests to the series. manpages are
+ready and I'll submit them once the patches are accepted.
+
+v2->v3: Updated commit message to have more support code (John Stultz)
+ 	Renamed seal from F_SEAL_FS_WRITE to F_SEAL_FUTURE_WRITE
+						(Christoph Hellwig)
+	Allow for this seal only if grow/shrink seals are also
+	either previous set, or are requested along with this seal.
+						(Christoph Hellwig)
+	Added locking to synchronize access to file->f_mode.
+						(Christoph Hellwig)
+
+ include/uapi/linux/fcntl.h |  1 +
+ mm/memfd.c                 | 22 +++++++++++++++++++++-
+ 2 files changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index 6448cdd9a350..a2f8658f1c55 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -41,6 +41,7 @@
+ #define F_SEAL_SHRINK	0x0002	/* prevent file from shrinking */
+ #define F_SEAL_GROW	0x0004	/* prevent file from growing */
+ #define F_SEAL_WRITE	0x0008	/* prevent writes */
++#define F_SEAL_FUTURE_WRITE	0x0010  /* prevent future writes while mapped */
+ /* (1U << 31) is reserved for signed error codes */
+ 
+ /*
+diff --git a/mm/memfd.c b/mm/memfd.c
+index 2bb5e257080e..5ba9804e9515 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -150,7 +150,8 @@ static unsigned int *memfd_file_seals_ptr(struct file *file)
+ #define F_ALL_SEALS (F_SEAL_SEAL | \
+ 		     F_SEAL_SHRINK | \
+ 		     F_SEAL_GROW | \
+-		     F_SEAL_WRITE)
++		     F_SEAL_WRITE | \
++		     F_SEAL_FUTURE_WRITE)
+ 
+ static int memfd_add_seals(struct file *file, unsigned int seals)
+ {
+@@ -219,6 +220,25 @@ static int memfd_add_seals(struct file *file, unsigned int seals)
+ 		}
+ 	}
+ 
++	if ((seals & F_SEAL_FUTURE_WRITE) &&
++	    !(*file_seals & F_SEAL_FUTURE_WRITE)) {
++		/*
++		 * The FUTURE_WRITE seal also prevents growing and shrinking
++		 * so we need them to be already set, or requested now.
++		 */
++		int test_seals = (seals | *file_seals) &
++				 (F_SEAL_GROW | F_SEAL_SHRINK);
++
++		if (test_seals != (F_SEAL_GROW | F_SEAL_SHRINK)) {
++			error = -EINVAL;
++			goto unlock;
++		}
++
++		spin_lock(&file->f_lock);
++		file->f_mode &= ~(FMODE_WRITE | FMODE_PWRITE);
++		spin_unlock(&file->f_lock);
++	}
++
+ 	*file_seals |= seals;
+ 	error = 0;
+ 
+-- 
+2.19.1.331.ge82ca0e54c-goog
