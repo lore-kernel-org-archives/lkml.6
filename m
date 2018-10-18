@@ -2,120 +2,192 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6429FC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91ED4C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 242262145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:32:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 242262145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 3343D2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:33:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jKeyJZma";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jKeyJZma"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3343D2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727951AbeJRTcw (ORCPT
+        id S1728038AbeJRTd6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 15:32:52 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:61360 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727434AbeJRTcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 15:32:52 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id D4291A0399B36B23A7ED;
-        Thu, 18 Oct 2018 19:32:14 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w9IBW89K093624;
-        Thu, 18 Oct 2018 19:32:08 +0800 (GMT-8)
-        (envelope-from peng.hao2@zte.com.cn)
-Received: from localhost.localdomain.localdomain ([10.74.120.59])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018101819323982-5326716 ;
-          Thu, 18 Oct 2018 19:32:39 +0800 
-From:   Peng Hao <peng.hao2@zte.com.cn>
-To:     pbonzini@redhat.com, rkrcmar@redhat.com, stefanha@gmail.com
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Peng Hao <peng.hao2@zte.com.cn>
-Subject: [RESEND PATCH V6 1/5]  target/i386 : add coalesced pio support
-Date:   Fri, 19 Oct 2018 03:43:35 +0800
-Message-Id: <1539891815-30605-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-10-18 19:32:39,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-10-18 19:31:55,
-        Serialize complete at 2018-10-18 19:31:55
-X-MAIL: mse01.zte.com.cn w9IBW89K093624
+        Thu, 18 Oct 2018 15:33:58 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51618 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727434AbeJRTd6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 15:33:58 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BB6D360B73; Thu, 18 Oct 2018 11:33:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539862400;
+        bh=0L6EddOgErezuqYWi4CHAbqZF7HbZ4bqbEi5ow9Nehw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=jKeyJZmaAhTmfjCdOp6AJQp1PtipjY/Ltu+oT5jYvkGOWYjlMcmoXuqUh8Em8bV1c
+         erQ0vrc5KzX97YCJJy90tONF1glrA8+bbMpuQEUDuIBtnjtcB+RGkcm9x1PsUA5CDT
+         I4GIs3dpP1GplgqUpPzJ7UhmV7y+wVcF9gqwzRYE=
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 026F5606DC;
+        Thu, 18 Oct 2018 11:33:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539862400;
+        bh=0L6EddOgErezuqYWi4CHAbqZF7HbZ4bqbEi5ow9Nehw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=jKeyJZmaAhTmfjCdOp6AJQp1PtipjY/Ltu+oT5jYvkGOWYjlMcmoXuqUh8Em8bV1c
+         erQ0vrc5KzX97YCJJy90tONF1glrA8+bbMpuQEUDuIBtnjtcB+RGkcm9x1PsUA5CDT
+         I4GIs3dpP1GplgqUpPzJ7UhmV7y+wVcF9gqwzRYE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 026F5606DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-qk1-f172.google.com with SMTP id q5-v6so18496575qki.6;
+        Thu, 18 Oct 2018 04:33:19 -0700 (PDT)
+X-Gm-Message-State: ABuFfoiZfBaCy+jEGLeWkWz0a8AJJtPtREPpCfKxSzkjhivrSFOBSZul
+        IVO7+4JjV+xZEeVRi7/uE7vj6Qo8S06X8IHA9B8=
+X-Google-Smtp-Source: ACcGV62AJW4uAV2uhiEph7H5790lOYLB58GWZentmTnwDMcM43OQtMrgEQbBIqpsyKQlMlQ5RufTHJCUmyxZW2hIWs0=
+X-Received: by 2002:a37:5003:: with SMTP id e3-v6mr2184308qkb.102.1539862399238;
+ Thu, 18 Oct 2018 04:33:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181017172312.194281-1-evgreen@chromium.org> <20181017172312.194281-2-evgreen@chromium.org>
+In-Reply-To: <20181017172312.194281-2-evgreen@chromium.org>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Thu, 18 Oct 2018 17:03:06 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iHRECKosJWQZoaZa6QxAmW0MZLNPsFAbD21vW+kG0xJ-A@mail.gmail.com>
+Message-ID: <CAFp+6iHRECKosJWQZoaZa6QxAmW0MZLNPsFAbD21vW+kG0xJ-A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: sdm845: add UFS controller
+To:     evgreen@chromium.org
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        "robh+dt" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>, swboyd@chromium.org,
+        Doug Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add coalesced_pio's struct and KVM_CAP_COALESCED_PIO header.
+Hi Evan,
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- accel/kvm/kvm-all.c       |  4 ++--
- linux-headers/linux/kvm.h | 11 +++++++++--
- 2 files changed, 11 insertions(+), 4 deletions(-)
+On Wed, Oct 17, 2018 at 10:55 PM Evan Green <evgreen@chromium.org> wrote:
+>
+> This change adds the UFS controller and PHY to SDM845.
+>
+> Signed-off-by: Evan Green <evgreen@chromium.org>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 66 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index b72bdb0a31a5..20b2c258816a 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -808,6 +808,72 @@
+>                         };
+>                 };
+>
+> +               ufshc1: ufshc@1d84000 {
+> +                       compatible = "qcom,sdm845-ufshc", "qcom,ufshc",
+> +                                    "jedec,ufs-2.0";
+> +                       reg = <0x1d84000 0x2500>;
+> +                       interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
+> +                       phys = <&ufsphy1_lanes>;
+> +                       phy-names = "ufsphy";
+> +                       lanes-per-direction = <2>;
+> +                       power-domains = <&gcc UFS_PHY_GDSC>;
+> +
+> +                       clock-names =
+> +                               "core_clk",
+> +                               "bus_aggr_clk",
+> +                               "iface_clk",
+> +                               "core_clk_unipro",
+> +                               "ref_clk",
+> +                               "tx_lane0_sync_clk",
+> +                               "rx_lane0_sync_clk",
+> +                               "rx_lane1_sync_clk";
+> +                       clocks =
+> +                               <&gcc GCC_UFS_PHY_AXI_CLK>,
+> +                               <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
+> +                               <&gcc GCC_UFS_PHY_AHB_CLK>,
+> +                               <&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
+> +                               <&rpmhcc RPMH_CXO_CLK>,
+> +                               <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
+> +                               <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>,
+> +                               <&gcc GCC_UFS_PHY_RX_SYMBOL_1_CLK>;
+> +                       freq-table-hz =
+> +                               <50000000 200000000>,
+> +                               <0 0>,
+> +                               <0 0>,
+> +                               <37500000 150000000>,
+> +                               <0 0>,
+> +                               <0 0>,
+> +                               <0 0>,
+> +                               <0 0>;
+> +
+> +                       resets = <&gcc GCC_UFS_PHY_BCR>;
+> +                       reset-names = "rst";
+> +
+> +                       status = "disabled";
+> +               };
+> +
+> +               ufsphy1: ufsphy@1d87000 {
 
-diff --git a/accel/kvm/kvm-all.c b/accel/kvm/kvm-all.c
-index 799966f..7724055 100644
---- a/accel/kvm/kvm-all.c
-+++ b/accel/kvm/kvm-all.c
-@@ -538,7 +538,7 @@ static void kvm_coalesce_mmio_region(MemoryListener *listener,
- 
-         zone.addr = start;
-         zone.size = size;
--        zone.pad = 0;
-+        zone.pio = 0;
- 
-         (void)kvm_vm_ioctl(s, KVM_REGISTER_COALESCED_MMIO, &zone);
-     }
-@@ -555,7 +555,7 @@ static void kvm_uncoalesce_mmio_region(MemoryListener *listener,
- 
-         zone.addr = start;
-         zone.size = size;
--        zone.pad = 0;
-+        zone.pio = 0;
- 
-         (void)kvm_vm_ioctl(s, KVM_UNREGISTER_COALESCED_MMIO, &zone);
-     }
-diff --git a/linux-headers/linux/kvm.h b/linux-headers/linux/kvm.h
-index 83ba4eb..670a3d1 100644
---- a/linux-headers/linux/kvm.h
-+++ b/linux-headers/linux/kvm.h
-@@ -420,13 +420,19 @@ struct kvm_run {
- struct kvm_coalesced_mmio_zone {
- 	__u64 addr;
- 	__u32 size;
--	__u32 pad;
-+   union {
-+       __u32 pad;
-+       __u32 pio;
-+   };
- };
- 
- struct kvm_coalesced_mmio {
- 	__u64 phys_addr;
- 	__u32 len;
--	__u32 pad;
-+   union {
-+       __u32 pad;
-+       __u32 pio;
-+   };
- 	__u8  data[8];
- };
- 
-@@ -953,6 +959,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_NESTED_STATE 157
- #define KVM_CAP_ARM_INJECT_SERROR_ESR 158
- #define KVM_CAP_MSR_PLATFORM_INFO 159
-+#define KVM_CAP_COALESCED_PIO 162
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
+nit: s/ufsphy@1d87000/phy@1d87000
+
+> +                       compatible = "qcom,sdm845-qmp-ufs-phy";
+> +                       reg = <0x1d87000 0x18c>;
+> +                       #clock-cells = <1>;
+
+why do we need this clock-cells? ufsphy i think is not providing any
+clocks. Is it?
+Rest looks good.
+
+Best regards
+Vivek
+
+> +                       #address-cells = <1>;
+> +                       #size-cells = <1>;
+> +                       ranges;
+> +                       clock-names = "ref",
+> +                                     "ref_aux";
+> +                       clocks = <&gcc GCC_UFS_MEM_CLKREF_CLK>,
+> +                                <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
+> +
+> +                       status = "disabled";
+> +
+> +                       ufsphy1_lanes: lanes@1d87400 {
+> +                               reg = <0x1d87400 0x108>,
+> +                                     <0x1d87600 0x1e0>,
+> +                                     <0x1d87c00 0x1dc>;
+> +                               #phy-cells = <0>;
+> +                       };
+> +               };
+> +
+>                 tcsr_mutex_regs: syscon@1f40000 {
+>                         compatible = "syscon";
+>                         reg = <0x1f40000 0x40000>;
+> --
+> 2.16.4
+>
+
+
 -- 
-1.8.3.1
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
