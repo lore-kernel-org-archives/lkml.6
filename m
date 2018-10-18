@@ -2,279 +2,147 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32821C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92858C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0EEE20645
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:47:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTnGF1hL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0EEE20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 3F83A21476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:47:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F83A21476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbeJRVsI (ORCPT
+        id S1728216AbeJRVtC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 17:48:08 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43824 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728143AbeJRVsI (ORCPT
+        Thu, 18 Oct 2018 17:49:02 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:34615 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726932AbeJRVtC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 17:48:08 -0400
-Received: by mail-pl1-f195.google.com with SMTP id 30-v6so14339310plb.10;
-        Thu, 18 Oct 2018 06:47:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nOUqgsLalH2b3niyB618xYBjNP3sFmj4HBaC5HNiQmg=;
-        b=PTnGF1hL1pc8hODZgOKbZFSI+0SPc1Teq4EGlaWtA6+bxrN7J4NZSkZ/KZQ19BNRai
-         RnGWdtXJv1AL1x7ApZoU8TU1knUx5AHYOKG/aylHMqKv789xp+OpQTqtInMIa+5lhQZv
-         Dcy+5iaTUWnbGDLhE+d/9rsEpBrwsThzXyEpHUJgA6ZWkpyGDDvmRKbvbuOk1AIc/Kzy
-         KBQoOBT39e4s3y1vpYAmyLU2/7xFPGL/rHEgyA4bc4r2LIqh0/6Uh9z49mJ/Hzxx0afd
-         HOztuT9qVqkuChba4J3D1l38eNFFgWp/N3xRp51USThCwKM0DV2x3hlxbaFYNqfEiO71
-         7jaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nOUqgsLalH2b3niyB618xYBjNP3sFmj4HBaC5HNiQmg=;
-        b=NsU7AaYe5TF8/jf0bANiQxS0tQG0nOAt5SSYsWsOZHCNumgi8FSRt/w0vm0kNbeO35
-         rk3osPfPOm06uF2zLiJ9W/OoVD0j+eFBCvj4MntcEvFtw+uNfF/ERmXU6/oDz2UkVwi6
-         1HOPFIAsLj68RKhelHrn+SKLJAkG2IQG0onz8jrThk0uAHeGm2ZVBKWAn5mlyrNwLISt
-         nisELEN1Xt659ckX+YBoxSI/6Ac7pK74bi6nbJ1g8wOWIfz/XI64itjxwQAhJqjdQM9M
-         Z0VpwHCoRTmR7X2cOsYSYyPN3+PPuuP3VN274toQgK3lP4pk8dpOBIdTm0GdZI4+aAxX
-         OUtg==
-X-Gm-Message-State: ABuFfoiv9bu1cjvZ/RpqeNxS5ApU2kEz7CuZbqFJpZRqteAV+BUJG+AA
-        cqCKdXI5nmRYXXhO8ry6fU5wC/XX
-X-Google-Smtp-Source: ACcGV62dBGXuZaF4MXwC9Z3R5ORP1u6OYnXblCyw8SonTe2+tPd4v5Xxs85FoJtTOiPjx5tOuSc8pQ==
-X-Received: by 2002:a17:902:7203:: with SMTP id ba3-v6mr20037993plb.321.1539870420969;
-        Thu, 18 Oct 2018 06:47:00 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id o2-v6sm35079045pgi.62.2018.10.18.06.46.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 06:47:00 -0700 (PDT)
-Subject: Re: [PATCH 2/2] hwmon: (isl68137) add accessors to enable/disable AVS
- mode
-To:     Kun Yi <kunyi@google.com>
-Cc:     openbmc@lists.ozlabs.org, Robert Lippert <rlippert@google.com>,
-        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181017225622.8366-1-kunyi@google.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <8c1fdf5d-0d54-da8b-a11d-0e74ea8ce974@roeck-us.net>
-Date:   Thu, 18 Oct 2018 06:46:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 18 Oct 2018 17:49:02 -0400
+Received: from [213.61.215.195] (helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gD8eK-00014D-De; Thu, 18 Oct 2018 15:47:40 +0200
+Date:   Thu, 18 Oct 2018 15:47:39 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [Patch v3 09/13] x86/speculation: Reorganize SPEC_CTRL MSR
+ update
+In-Reply-To: <23d8ffaac99be49aa163eb16dd131399141fc432.1539798901.git.tim.c.chen@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1810181537331.1647@nanos.tec.linutronix.de>
+References: <cover.1539798901.git.tim.c.chen@linux.intel.com> <23d8ffaac99be49aa163eb16dd131399141fc432.1539798901.git.tim.c.chen@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181017225622.8366-1-kunyi@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/2018 03:56 PM, Kun Yi wrote:
-> From: Robert Lippert <rlippert@google.com>
-> 
-> This patch adds sysfs files avs(0|1)_enabled underneath the I2C device
-> to control the AVS state of each rail and perform the appropriate
-> hacks when enabling AVS.
-> 
-> The ISL68137 has issues wrt AVS operation mode that require it
-> to be enabled/disabled at runtime.
-> 
+On Wed, 17 Oct 2018, Tim Chen wrote:
 
-This is quite unusual. This would usually be handled in ROMMON/BIOS for
-devices like this. What are those issues ?
+> Reorganize the spculation control MSR update code. Currently it is limited
+> to only dynamic update of the Speculative Store Bypass Disable bit.
+> This patch consolidates the logic to check for AMD CPUs that may or may
 
-> Additionally enabling AVS mode requires a hack to set the VOUT value
-> before enabling to make sure that the device does not switch to
-> an old cached AVS provided value and is instead in a "clean" state
-> before booting.
+# git grep 'This patch' Documentation/process/
+
+> not use this MSR to control SSBD. This prepares us to add logic to update
+> other bits in the SPEC_CTRL MSR cleanly.
 > 
-> Signed-off-by: Robert Lippert <rlippert@google.com>
-> Signed-off-by: Kun Yi <kunyi@google.com>
+> Originally-by: Thomas Lendacky <Thomas.Lendacky@amd.com>
+> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 > ---
->   drivers/hwmon/pmbus/isl68137.c | 120 ++++++++++++++++++++++++++++++++-
->   1 file changed, 118 insertions(+), 2 deletions(-)
+>  arch/x86/kernel/process.c | 39 +++++++++++++++++++++++++++++----------
+>  1 file changed, 29 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/hwmon/pmbus/isl68137.c b/drivers/hwmon/pmbus/isl68137.c
-> index 2a5322e4a286..94e2894f13bc 100644
-> --- a/drivers/hwmon/pmbus/isl68137.c
-> +++ b/drivers/hwmon/pmbus/isl68137.c
-> @@ -19,8 +19,11 @@
->   #include <linux/init.h>
->   #include <linux/err.h>
->   #include <linux/i2c.h>
-> +#include <linux/hwmon-sysfs.h>
->   #include "pmbus.h"
->   
-> +#define ISL68137_VOUT_AVS 0x30
+> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+> index 8aa4960..789f1bada 100644
+> --- a/arch/x86/kernel/process.c
+> +++ b/arch/x86/kernel/process.c
+> @@ -397,25 +397,45 @@ static __always_inline void amd_set_ssb_virt_state(unsigned long tifn)
+>  
+>  static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
+>  {
+> -	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
+> +	u64 msr = x86_spec_ctrl_base;
 > +
->   static struct pmbus_driver_info isl68137_info = {
->   	.pages = 2,
->   	.format[PSC_VOLTAGE_IN] = direct,
-> @@ -56,10 +59,123 @@ static struct pmbus_driver_info isl68137_info = {
->   	    | PMBUS_HAVE_IOUT | PMBUS_HAVE_STATUS_IOUT | PMBUS_HAVE_POUT,
->   };
->   
-> +static ssize_t isl68137_avs_enable_show_page(struct i2c_client *client,
-> +					     int page,
-> +					     char *buf)
-> +{
-> +	int val = pmbus_read_byte_data(client, page, PMBUS_OPERATION);
-> +
-> +	return sprintf(buf, "%d\n",
-> +		       (val & ISL68137_VOUT_AVS) == ISL68137_VOUT_AVS ? 1 : 0);
-> +}
-> +
-> +static ssize_t isl68137_avs_enable_store_page(struct i2c_client *client,
-> +					      int page,
-> +					      const char *buf, size_t count)
-> +{
-> +	int rc, op_val;
-> +
-> +	if (count < 1) {
-> +		rc = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	switch (buf[0]) {
-> +	case '0':
-> +		op_val = 0;
-> +		break;
-> +	case '1':
-> +		op_val = ISL68137_VOUT_AVS;
-> +		break;
-> +	default:
-> +		rc = -EINVAL;
-> +		goto out;
-> +	}
-> +
-Please use kstrtobool().
-
 > +	/*
-> +	 * Writes to VOUT setpoint over AVSBus will persist after the VRM is
-> +	 * switched to PMBus control. Switching back to AVSBus control
-> +	 * restores this persisted setpoint rather than re-initializing to
-> +	 * PMBus VOUT_COMMAND. Writing VOUT_COMMAND first over PMBus before
-> +	 * enabling AVS control is the workaround.
+> +	 * If X86_FEATURE_SSBD is not set, the SSBD
+> +	 * bit is not to be touched.
 > +	 */
-> +	if (op_val == ISL68137_VOUT_AVS) {
-> +		int vout_command = pmbus_read_word_data(client, page,
-> +							PMBUS_VOUT_COMMAND);
-> +		rc = pmbus_write_word_data(client, page, PMBUS_VOUT_COMMAND,
-> +					   vout_command);
-> +		if (rc)
-> +			goto out;
+> +	if (static_cpu_has(X86_FEATURE_SSBD))
+> +		msr |= ssbd_tif_to_spec_ctrl(tifn);
+>  
+>  	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
+>  }
+>  
+> -static __always_inline void __speculation_ctrl_update(unsigned long tifn)
+> +static __always_inline void __speculation_ctrl_update(unsigned long tifp,
+> +						      unsigned long tifn)
+>  {
+> -	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
+> -		amd_set_ssb_virt_state(tifn);
+> -	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
+> -		amd_set_core_ssb_state(tifn);
+> -	else
+> +	bool updmsr = false;
+> +
+> +	/* Check for AMD cpu to see if it uses SPEC_CTRL MSR for SSBD */
 
-Does it make a difference if bit 1 is set in the operation register ?
+Errm. This checks a TIF bit and nothing AMD. The AMD specific check only
+happens when the branch is taken. Please be precise with your comments.
 
+	/* If TIF_SSBD is different, select the proper mitigation method */
+
+Hmm?
+
+> +	if ((tifp ^ tifn) & _TIF_SSBD) {
+> +		if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
+> +			amd_set_ssb_virt_state(tifn);
+> +		else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
+> +			amd_set_core_ssb_state(tifn);
+> +		else if (static_cpu_has(X86_FEATURE_SSBD))
+> +			updmsr  = true;
 > +	}
 > +
-> +	rc = pmbus_update_byte_data(client, page, PMBUS_OPERATION,
-> +				    ISL68137_VOUT_AVS, op_val);
-> +
-> +out:
-> +	return rc < 0 ? rc : count;
-> +}
-> +
-> +static ssize_t isl68137_avs_enable_show(struct device *dev,
-> +					struct device_attribute *devattr,
-> +					char *buf)
-> +{
-> +	struct i2c_client *client = kobj_to_i2c_client(&dev->kobj);
-> +	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
-> +
-> +	return isl68137_avs_enable_show_page(client, attr->index, buf);
-> +}
-> +
-> +static ssize_t isl68137_avs_enable_store(struct device *dev,
-> +				struct device_attribute *devattr,
-> +				const char *buf, size_t count)
-> +{
-> +	struct i2c_client *client = kobj_to_i2c_client(&dev->kobj);
-> +	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
-> +
-> +	return isl68137_avs_enable_store_page(client, attr->index, buf, count);
-> +}
-> +
-> +static SENSOR_DEVICE_ATTR_2(avs0_enabled, 0644,
-> +			    isl68137_avs_enable_show, isl68137_avs_enable_store,
-> +			    0, 0);
-> +static SENSOR_DEVICE_ATTR_2(avs1_enabled, 0644,
-> +			    isl68137_avs_enable_show, isl68137_avs_enable_store,
-> +			    0, 1);
-> +
+> +	if (updmsr)
+>  		spec_ctrl_update_msr(tifn);
+>  }
+>  
+>  void speculation_ctrl_update(unsigned long tif)
+>  {
+> +	/*
+> +	 * On this path we're forcing the update, so use ~tif as the
+> +	 * previous flags.
+> +	 */
 
-Why ATTR_2 ? That seems quite pointless.
+	/* Forced update. Make sure all relevant TIF flags are different */
 
-I would suggest to use _enable as attribute name, but I understand this is POV,
-so I won't insist on it.
+Hmm?
 
-> +static int isl68137_remove(struct i2c_client *client);
-> +
+Thanks,
 
-Please move the remove function to this location.
-
->   static int isl68137_probe(struct i2c_client *client,
->   			  const struct i2c_device_id *id)
->   {
-> -	return pmbus_do_probe(client, id, &isl68137_info);
-> +	int rc;
-> +
-> +	rc = pmbus_do_probe(client, id, &isl68137_info);
-> +	if (rc)
-> +		return rc;
-> +
-> +	rc = device_create_file(&client->dev,
-> +				&sensor_dev_attr_avs0_enabled.dev_attr);
-> +	if (rc)
-> +		goto out_fail;
-> +	rc = device_create_file(&client->dev,
-> +				&sensor_dev_attr_avs1_enabled.dev_attr);
-> +	if (rc)
-> +		goto out_fail;
-> +
-This creadtes the device files after the hwmon device is created,
-which may confuse userspace if it is triggered by the creation of the
-hwmon device. You might consider creating the device files before
-registering the hwmon device. That makes removal on error a bit
-more complex, though, so I'll leave it up to you.
-
-> +	return rc;
-> +
-> +out_fail:
-> +	isl68137_remove(client);
-> +	return rc;
-> +}
-> +
-> +static int isl68137_remove(struct i2c_client *client)
-> +{
-> +	device_remove_file(&client->dev,
-> +			   &sensor_dev_attr_avs1_enabled.dev_attr);
-> +	device_remove_file(&client->dev,
-> +			   &sensor_dev_attr_avs0_enabled.dev_attr);
-> +	return pmbus_do_remove(client);
->   }
->   
->   static const struct i2c_device_id isl68137_id[] = {
-> @@ -75,7 +191,7 @@ static struct i2c_driver isl68137_driver = {
->   		   .name = "isl68137",
->   		   },
->   	.probe = isl68137_probe,
-> -	.remove = pmbus_do_remove,
-> +	.remove = isl68137_remove,
->   	.id_table = isl68137_id,
->   };
->   
-> 
-
+	tglx
