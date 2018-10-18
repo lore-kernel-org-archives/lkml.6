@@ -2,121 +2,106 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA0CC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F582C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:06:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78F692145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:04:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78F692145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2FEC12145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:06:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZdQl+5Rg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FEC12145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728435AbeJSAGE (ORCPT
+        id S1728454AbeJSAIL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 20:06:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58556 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727274AbeJSAGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 20:06:04 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6E1B08046C;
-        Thu, 18 Oct 2018 16:04:25 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3FADA2B5AB;
-        Thu, 18 Oct 2018 16:04:24 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAJfpegsxFUGeczcC-pzK0WWROjv48_PvXtNun-f5QJMoUDn1Dw@mail.gmail.com>
-References: <CAJfpegsxFUGeczcC-pzK0WWROjv48_PvXtNun-f5QJMoUDn1Dw@mail.gmail.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, Michael Kerrisk <mtk.manpages@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: statx(2) API and documentation
+        Thu, 18 Oct 2018 20:08:11 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33888 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728015AbeJSAIK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 20:08:10 -0400
+Received: by mail-pl1-f196.google.com with SMTP id f18-v6so14538742plr.1;
+        Thu, 18 Oct 2018 09:06:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:date:from:to:cc:subject:mime-version:content-disposition
+         :user-agent;
+        bh=C8bE4KmkBYfe+pwepGdmrGPvLf2v2K63YsE1ZpunmkU=;
+        b=ZdQl+5RgMxKKEDzH5pqiulF+KTuF6+FiFcUCNRTXp7VBLfUF8Hwe6L6lT9uaMHJxhf
+         dEXvU3usXezBS5D+L2KWg3sCNiJvCMWCaYb8eLZ9zMbd2ndnsFATlNq6p5s/vs3ENeiZ
+         zOdjhJFMwEB2Ik3j2iZ5NMtaqWC+OOCl5oruOzn15hpo66K2eJIRMhtwVpbjiAXpujoy
+         hAA55o+VovIYnW7iXNsU99UaBKgvMdKPepsTdo3+haLXnyPXm056eX3nE1OHPKlP35QJ
+         Gif7B3pyFMjLNggJbQDZnIX8cvtNRYmLR4vjjOEvyDfQhfiuwJ/eCmwMuzdzUpd3sOxH
+         MEXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:from:to:cc:subject:mime-version
+         :content-disposition:user-agent;
+        bh=C8bE4KmkBYfe+pwepGdmrGPvLf2v2K63YsE1ZpunmkU=;
+        b=GRTyx8ICO7Zsrg84UEVwqM4gUkrtx1ZydD9hLYN/QhewBl4AjDvoiXQhFQ4fF7hjdB
+         5AmkiiB7R7GXd1n1EqBNcxbgwWeOP7dvjlEHYSPuibz2xMAYDyjrpiB/C+NL0aM+fSVQ
+         S80Kxa6uymsMrn2uX1MyHPgcOsn7pwqPuDNmB9L+ykL1QMs46IpKBbB8Wu6NHRtF3U6Y
+         nkIoJa/T58uBIWnne8Q4RCgOl5qLIVF0jlIoMB2w1g/rg82NIGTnPySkdnvr2Ory0T+w
+         B+GAYfIn9GLSeqdzFWrSdTW2prtg6RE6MSJjuOL8A18HD/dNZERR0HLlwQ/mCWYxOVgt
+         +b1g==
+X-Gm-Message-State: ABuFfojSh6oOBgDlOzTSkk7akxPKOKtPQwP+g8q4wjwJwvJq/m/nNNcG
+        HmxkoF6U3aum5k0Wnoy/P9M=
+X-Google-Smtp-Source: ACcGV630pjfYl4TEv1vWGZyc2ZIXmM6tdYXMHfq1SdXojb3Gitrg1E2N24ANJo50Z+qL6azh6AtuDw==
+X-Received: by 2002:a17:902:8646:: with SMTP id y6-v6mr30424689plt.86.1539878791156;
+        Thu, 18 Oct 2018 09:06:31 -0700 (PDT)
+Received: from sabyasachi ([45.116.191.237])
+        by smtp.gmail.com with ESMTPSA id c24-v6sm31644508pgn.60.2018.10.18.09.06.29
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 18 Oct 2018 09:06:29 -0700 (PDT)
+Message-ID: <5bc8af85.1c69fb81.3eebc.a22b@mx.google.com>
+X-Google-Original-Message-ID: <20181018160626.GA6010@sabyasachi.linux@gmail.com>
+Date:   Thu, 18 Oct 2018 21:36:26 +0530
+From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+To:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        keescook@chromium.org, john.garry@huawei.com,
+        jinpu.wang@profitbricks.com
+Cc:     jrdr.linux@gmail.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com
+Subject: [PATCH] scsi/mvsas/mv_sas.c: Use dma_pool_zalloc
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4892.1539878663.1@warthog.procyon.org.uk>
-Date:   Thu, 18 Oct 2018 17:04:23 +0100
-Message-ID: <4893.1539878663@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 18 Oct 2018 16:04:25 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+Replaced dma_pool_alloc + memset with dma_pool_zalloc
+Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+---
+ drivers/scsi/mvsas/mv_sas.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> I'm trying to implement statx for fuse and ran into the following issues:
-> 
-> - Need a STATX_ATTRIBUTES bit, so that userspace can explicitly ask
-> for stx_attribute; otherwise if querying has non-zero cost, then
-> filesystem cannot do it without regressing performance.
-
-Okay, though the way your patch implements it makes it superfluous.  I presume
-you have further patches that will actually make use of it from the fuse side?
-
-> - STATX_ALL definition is unclear, can this change, or is it fixed?
-> If it's the former, than that's a backward compatibility nightmare.
-> If it's the latter, then what's the point?
-
-It's the set of supported attributes known by the headers, and such can
-only be added to over time.  But yes, it's probably unnecessary.  Asking
-fsinfo() will be a better way of doing things.
-
-> - STATX_ATIME is cleared from stx_mask on SB_RDONLY,
-
-Ummm...  Where?  It's cleared on IS_NOATIME() in generic_fillattr().  I made
-the assumption that IS_NOATIME() == false indicates that there isn't an atime
-to be had.
-
-> and on NFS it is also cleared on MNT_NOATIME, but not on MNT_RDONLY.  We
-> need some sort of guideline in the documentation about what constitutes
-> "unsupported": does atime become unsupported because filesystem is remounted
-> r/o?  If so, why isn't this case handled consistently in the VFS and
-> filesystems?
-
-STATX_ATIME should mean there is an actual atime from the "medium" in
-stx_atime, rather than something made up by the filesystem driver; it doesn't
-necessarily promise that this will be updated.
-
-There can still be an atime if the medium is read-only.
-
-atime is even more complicated with MNT_NOATIME or MNT_RDONLY because that
-doesn't stop the atime from actually being updated through another mountpoint
-on the same system.
-
-Note that stx_atime should always contain something that can be used directly
-to fill in st_atime if emulating stat() - even if STATX_ATIME is cleared.
-
-> - What about fields that are not cached when statx() is called with
-> AT_STATX_DONT_SYNC?  E.g. stx_btime is supported by the filesystem,
-> but getting it requires a roundtrip to the server.
-
-Not necessarily.  It's not cached in *struct inode*, but that doesn't mean
-that the filesystem can't cache it elsewhere.
-
-> Requesting STATX_BTIME in the mask and adding AT_STATX_DONT_SYNC to the
-> flags means the filesystem has to decide which it will honor.  My feeling is
-> that it should honor AT_STATX_DONT_SYNC and clear STATX_BTIME in stx_mask.
-> Documentation has no word about this case.
-
-From the manpage:
-
-       AT_STATX_DONT_SYNC
-              Don't synchronize anything, but rather just  take  whatever  the
-              system  has cached if possible. ...
+diff --git a/drivers/scsi/mvsas/mv_sas.c b/drivers/scsi/mvsas/mv_sas.c
+index cff43bd..d00d37d 100644
+--- a/drivers/scsi/mvsas/mv_sas.c
++++ b/drivers/scsi/mvsas/mv_sas.c
+@@ -790,12 +790,11 @@ static int mvs_task_prep(struct sas_task *task, struct mvs_info *mvi, int is_tmf
+ 	slot->n_elem = n_elem;
+ 	slot->slot_tag = tag;
  
-Note the "if possible".  If it's not possible, you still need to go get it if
-they explicitly asked for it.
+-	slot->buf = dma_pool_alloc(mvi->dma_pool, GFP_ATOMIC, &slot->buf_dma);
++	slot->buf = dma_pool_zalloc(mvi->dma_pool, GFP_ATOMIC, &slot->buf_dma);
+ 	if (!slot->buf) {
+ 		rc = -ENOMEM;
+ 		goto err_out_tag;
+ 	}
+-	memset(slot->buf, 0, MVS_SLOT_BUF_SZ);
+ 
+ 	tei.task = task;
+ 	tei.hdr = &mvi->slot[tag];
+-- 
+2.7.4
 
-David
