@@ -2,128 +2,256 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04124C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8356EC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:25:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B8AC20838
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:23:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B8AC20838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=santannapisa.it
+	by mail.kernel.org (Postfix) with ESMTP id 2CAD820838
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:25:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NwMIbibf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CAD820838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727955AbeJRSX7 (ORCPT
+        id S1728031AbeJRSZs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 14:23:59 -0400
-Received: from ms01.santannapisa.it ([193.205.80.98]:40200 "EHLO
-        mail.santannapisa.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727423AbeJRSX7 (ORCPT
+        Thu, 18 Oct 2018 14:25:48 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:45672 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727451AbeJRSZs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 14:23:59 -0400
-Received: from [10.30.3.207] (account l.abeni@santannapisa.it HELO luca64)
-  by santannapisa.it (CommuniGate Pro SMTP 6.1.11)
-  with ESMTPSA id 133795687; Thu, 18 Oct 2018 12:23:35 +0200
-Date:   Thu, 18 Oct 2018 12:23:31 +0200
-From:   luca abeni <luca.abeni@santannapisa.it>
-To:     Juri Lelli <juri.lelli@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Juri Lelli <juri.lelli@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        syzbot <syzbot+385468161961cee80c31@syzkaller.appspotmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        nstange@suse.de, syzkaller-bugs@googlegroups.com, henrik@austad.us,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: INFO: rcu detected stall in do_idle
-Message-ID: <20181018122331.50ed3212@luca64>
-In-Reply-To: <20181018082838.GA21611@localhost.localdomain>
-References: <000000000000a4ee200578172fde@google.com>
-        <alpine.DEB.2.21.1810161516430.7787@nanos.tec.linutronix.de>
-        <20181016140322.GB3121@hirez.programming.kicks-ass.net>
-        <20181016144045.GF9130@localhost.localdomain>
-        <alpine.DEB.2.21.1810161643540.7787@nanos.tec.linutronix.de>
-        <20181016153608.GH9130@localhost.localdomain>
-        <20181018082838.GA21611@localhost.localdomain>
-Organization: Scuola Superiore S. Anna
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 18 Oct 2018 14:25:48 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9IAOg3s032620;
+        Thu, 18 Oct 2018 05:24:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1539858282;
+        bh=akYrPiUs6WT+yWsDgKA3So28PMkfi+IJvSwrXWQCquc=;
+        h=From:To:CC:Subject:Date;
+        b=NwMIbibf6D7HZNldE3mJVcEBgIKnK6mCfnuSPhJw2EFmBC6I5wNJOuVLCqWJkUrKy
+         beDETS+nLgoIRnDtuJrEMHb+pewLgGm8KafEgiZz9Ix8QnZnOvwpvu4cgw5pBy2Mtj
+         2WngbGNsACatwgfmEhqFAZt3DnmF/zxTJhdId/Ks=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9IAOgYP028939;
+        Thu, 18 Oct 2018 05:24:42 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 18
+ Oct 2018 05:24:42 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 18 Oct 2018 05:24:42 -0500
+Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9IAOdKx017445;
+        Thu, 18 Oct 2018 05:24:40 -0500
+From:   Keerthy <j-keerthy@ti.com>
+To:     <aaro.koskinen@iki.fi>, <tony@atomide.com>
+CC:     <linux-omap@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <vigneshr@ti.com>,
+        <t-kristo@ti.com>, <j-keerthy@ti.com>
+Subject: [RFC PATCH] i2c: busses: omap: Add the master_xfer_irqless hook
+Date:   Thu, 18 Oct 2018 15:54:28 +0530
+Message-ID: <1539858268-9648-1-git-send-email-j-keerthy@ti.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Juri,
+From: Tero Kristo <t-kristo@ti.com>
 
-On Thu, 18 Oct 2018 10:28:38 +0200
-Juri Lelli <juri.lelli@redhat.com> wrote:
-[...]
->  struct sched_attr {
->     .size	= 0,
->     .policy	= 6,
->     .flags	= 0,
->     .nice	= 0,
->     .priority	= 0,
->     .runtime	= 0x9917,
->     .deadline	= 0xffff,
->     .period	= 0,
->  }
-> 
-> So, we seem to be correctly (in theory, see below) accepting the task.
-> 
-> What seems to generate the problem here is that CONFIG_HZ=100 and
-> reproducer task has "tiny" runtime (~40us) and deadline (~66us)
-> parameters, combination that "bypasses" the enforcing mechanism
-> (performed at each tick).
+Add the master_xfer_irqless hook to enable i2c transactions
+in irq disabled contexts like the poweroff case.
 
-Ok, so the task can execute for at most 1 tick before being throttled...
-Which does not look too bad.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
 
-I missed the original emails, but maybe the issue is that the task
-blocks before the tick, and when it wakes up again something goes wrong
-with the deadline and runtime assignment? (maybe because the deadline
-is in the past?)
+This is based on Wolfam's series:
 
+https://www.spinics.net/lists/linux-renesas-soc/msg33215.html
 
-> Another side problem seems also to be that with such tiny parameters
-> we spend lot of time in the while (dl_se->runtime <= 0) loop of
-> replenish_dl_ entity() (actually uselessly, as deadline is most
-> probably going to still be in the past when eventually runtime
-> becomes positive again), as delta_exec is huge w.r.t. runtime and
-> runtime has to keep up with tiny increments of dl_runtime. I guess we
-> could ameliorate things here by limiting the number of time we
-> execute the loop before bailing out.
+Tested on AM572X-IDK for poweroff
 
-Actually, I think the loop will iterate at most 10ms / 39us times, which
-is about 256 times, right? If this is too much (I do not know how much
-time it is spent executing the loop), then the solution is (as you
-suggest) to increase the minimum allowed runtime.
+ drivers/i2c/busses/i2c-omap.c | 79 ++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 66 insertions(+), 13 deletions(-)
 
-[...]
-> So, I tend to think that we might want to play safe and put some
-> higher minimum value for dl_runtime (it's currently at 1ULL <<
-> DL_SCALE). Guess the problem is to pick a reasonable value, though.
-> Maybe link it someway to HZ?
+diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+index b1086bf..1fe4b17 100644
+--- a/drivers/i2c/busses/i2c-omap.c
++++ b/drivers/i2c/busses/i2c-omap.c
+@@ -269,6 +269,8 @@ struct omap_i2c_dev {
+ 	[OMAP_I2C_IP_V2_IRQENABLE_CLR] = 0x30,
+ };
+ 
++static int omap_i2c_xfer_data(struct omap_i2c_dev *omap);
++
+ static inline void omap_i2c_write_reg(struct omap_i2c_dev *omap,
+ 				      int reg, u16 val)
+ {
+@@ -648,15 +650,28 @@ static void omap_i2c_resize_fifo(struct omap_i2c_dev *omap, u8 size, bool is_rx)
+ 			(1000 * omap->speed / 8);
+ }
+ 
++static void omap_i2c_wait(struct omap_i2c_dev *omap)
++{
++	u16 stat;
++	u16 mask = omap_i2c_read_reg(omap, OMAP_I2C_IE_REG);
++	int count = 0;
++
++	do {
++		stat = omap_i2c_read_reg(omap, OMAP_I2C_STAT_REG);
++		count++;
++	} while (!(stat & mask) && count < 5);
++}
++
+ /*
+  * Low level master read/write transaction.
+  */
+ static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
+-			     struct i2c_msg *msg, int stop)
++			     struct i2c_msg *msg, int stop, bool polling)
+ {
+ 	struct omap_i2c_dev *omap = i2c_get_adapdata(adap);
+ 	unsigned long timeout;
+ 	u16 w;
++	int ret;
+ 
+ 	dev_dbg(omap->dev, "addr: 0x%04x, len: %d, flags: 0x%x, stop: %d\n",
+ 		msg->addr, msg->len, msg->flags, stop);
+@@ -680,7 +695,8 @@ static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
+ 	w |= OMAP_I2C_BUF_RXFIF_CLR | OMAP_I2C_BUF_TXFIF_CLR;
+ 	omap_i2c_write_reg(omap, OMAP_I2C_BUF_REG, w);
+ 
+-	reinit_completion(&omap->cmd_complete);
++	if (!polling)
++		reinit_completion(&omap->cmd_complete);
+ 	omap->cmd_err = 0;
+ 
+ 	w = OMAP_I2C_CON_EN | OMAP_I2C_CON_MST | OMAP_I2C_CON_STT;
+@@ -732,8 +748,21 @@ static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
+ 	 * REVISIT: We should abort the transfer on signals, but the bus goes
+ 	 * into arbitration and we're currently unable to recover from it.
+ 	 */
+-	timeout = wait_for_completion_timeout(&omap->cmd_complete,
+-						OMAP_I2C_TIMEOUT);
++	if (!polling) {
++		timeout = wait_for_completion_timeout(&omap->cmd_complete,
++						      OMAP_I2C_TIMEOUT);
++	} else {
++		do {
++			omap_i2c_wait(omap);
++			ret = omap_i2c_xfer_data(omap);
++		} while (ret == -EAGAIN);
++
++		if (!ret)
++			timeout = 1;
++		else
++			timeout = 0;
++	}
++
+ 	if (timeout == 0) {
+ 		dev_err(omap->dev, "controller timed out\n");
+ 		omap_i2c_reset(omap);
+@@ -772,7 +801,8 @@ static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
+  * to do the work during IRQ processing.
+  */
+ static int
+-omap_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
++omap_i2c_xfer_common(struct i2c_adapter *adap, struct i2c_msg msgs[], int num,
++		     bool polling)
+ {
+ 	struct omap_i2c_dev *omap = i2c_get_adapdata(adap);
+ 	int i;
+@@ -794,7 +824,8 @@ static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
+ 		omap->set_mpu_wkup_lat(omap->dev, omap->latency);
+ 
+ 	for (i = 0; i < num; i++) {
+-		r = omap_i2c_xfer_msg(adap, &msgs[i], (i == (num - 1)));
++		r = omap_i2c_xfer_msg(adap, &msgs[i], (i == (num - 1)),
++				      polling);
+ 		if (r != 0)
+ 			break;
+ 	}
+@@ -813,6 +844,18 @@ static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
+ 	return r;
+ }
+ 
++static int
++omap_i2c_xfer_irq(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
++{
++	return omap_i2c_xfer_common(adap, msgs, num, false);
++}
++
++static int
++omap_i2c_xfer_polling(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
++{
++	return omap_i2c_xfer_common(adap, msgs, num, true);
++}
++
+ static u32
+ omap_i2c_func(struct i2c_adapter *adap)
+ {
+@@ -1035,10 +1078,8 @@ static int omap_i2c_transmit_data(struct omap_i2c_dev *omap, u8 num_bytes,
+ 	return ret;
+ }
+ 
+-static irqreturn_t
+-omap_i2c_isr_thread(int this_irq, void *dev_id)
++static int omap_i2c_xfer_data(struct omap_i2c_dev *omap)
+ {
+-	struct omap_i2c_dev *omap = dev_id;
+ 	u16 bits;
+ 	u16 stat;
+ 	int err = 0, count = 0;
+@@ -1056,7 +1097,8 @@ static int omap_i2c_transmit_data(struct omap_i2c_dev *omap, u8 num_bytes,
+ 
+ 		if (!stat) {
+ 			/* my work here is done */
+-			goto out;
++			err = -EAGAIN;
++			break;
+ 		}
+ 
+ 		dev_dbg(omap->dev, "IRQ (ISR = 0x%04x)\n", stat);
+@@ -1165,14 +1207,25 @@ static int omap_i2c_transmit_data(struct omap_i2c_dev *omap, u8 num_bytes,
+ 		}
+ 	} while (stat);
+ 
+-	omap_i2c_complete_cmd(omap, err);
++	return err;
++}
++
++static irqreturn_t
++omap_i2c_isr_thread(int this_irq, void *dev_id)
++{
++	int ret;
++	struct omap_i2c_dev *omap = dev_id;
++
++	ret = omap_i2c_xfer_data(omap);
++	if (ret != -EAGAIN)
++		omap_i2c_complete_cmd(omap, ret);
+ 
+-out:
+ 	return IRQ_HANDLED;
+ }
+ 
+ static const struct i2c_algorithm omap_i2c_algo = {
+-	.master_xfer	= omap_i2c_xfer,
++	.master_xfer	= omap_i2c_xfer_irq,
++	.master_xfer_irqless	= omap_i2c_xfer_polling,
+ 	.functionality	= omap_i2c_func,
+ };
+ 
+-- 
+1.9.1
 
-Yes, a value dependent on HZ looks like a good idea. I would propose
-HZ / N, where N is the maximum number of times you want the loop above
-to be executed.
-
-
-> Then we might add a sysctl (or similar)
-> thing with which knowledgeable users can do whatever they think their
-> platform/config can support?
-
-I guess this can be related to the utilization limits we were
-discussing some time ago... I would propose a cgroup-based interface to
-set all of these limits.
-
-
-
-				Luca
