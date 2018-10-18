@@ -2,127 +2,120 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9604FC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6429FC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E5E721473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:30:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JPSQUwOJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E5E721473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 242262145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:32:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 242262145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbeJRTb2 (ORCPT
+        id S1727951AbeJRTcw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 15:31:28 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:33344 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727439AbeJRTb2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 15:31:28 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8E5C81277;
-        Thu, 18 Oct 2018 13:30:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1539862251;
-        bh=e0Y+b7qIWXZvGBY1F5a6n61/01pQjUD5lQ5C5RhVioI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JPSQUwOJN+mgU3fRJLNroOq+EaAxRQg0EKBuccEDs+A4oj6+jD6HpPyuV/ki2yPpA
-         HXDBcxTSgJxxAbvb98/u69SLt/6kWREwmxJavQRf/rCLM3cT/H/O+65nS5Hx5YlIq5
-         DvM9Ki/g5mLyH8Q26JH049DOiCCDpWuFhb79FKK0=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, Icenowy Zheng <icenowy@aosc.io>,
-        devicetree@vger.kernel.org, Dave Airlie <airlied@linux.ie>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 9/9] [DO NOT MERGE] drm/sun4i: rgb: Add 5% tolerance to dot clock frequency check
-Date:   Thu, 18 Oct 2018 14:31:01 +0300
-Message-ID: <1585874.9P5eR8PMbl@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20181018094258.oahlopafvm2udvoe@flea>
-References: <20181018073327.64942-1-icenowy@aosc.io> <CAKMK7uFp2c=wqzPi096MTRB6Cdfacerkp6dM=fEqCAr99PQG9w@mail.gmail.com> <20181018094258.oahlopafvm2udvoe@flea>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 18 Oct 2018 15:32:52 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:61360 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727434AbeJRTcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 15:32:52 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id D4291A0399B36B23A7ED;
+        Thu, 18 Oct 2018 19:32:14 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w9IBW89K093624;
+        Thu, 18 Oct 2018 19:32:08 +0800 (GMT-8)
+        (envelope-from peng.hao2@zte.com.cn)
+Received: from localhost.localdomain.localdomain ([10.74.120.59])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018101819323982-5326716 ;
+          Thu, 18 Oct 2018 19:32:39 +0800 
+From:   Peng Hao <peng.hao2@zte.com.cn>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com, stefanha@gmail.com
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Peng Hao <peng.hao2@zte.com.cn>
+Subject: [RESEND PATCH V6 1/5]  target/i386 : add coalesced pio support
+Date:   Fri, 19 Oct 2018 03:43:35 +0800
+Message-Id: <1539891815-30605-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-10-18 19:32:39,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-10-18 19:31:55,
+        Serialize complete at 2018-10-18 19:31:55
+X-MAIL: mse01.zte.com.cn w9IBW89K093624
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+add coalesced_pio's struct and KVM_CAP_COALESCED_PIO header.
 
-On Thursday, 18 October 2018 12:42:58 EEST Maxime Ripard wrote:
-> On Thu, Oct 18, 2018 at 11:18:06AM +0200, Daniel Vetter wrote:
-> > On Thu, Oct 18, 2018 at 10:55 AM Laurent Pinchart wrote:
-> >> On Thursday, 18 October 2018 10:33:27 EEST Icenowy Zheng wrote:
-> >>> From: Chen-Yu Tsai <wens@csie.org>
-> >>> 
-> >>> The panels shipped with Allwinner devices are very "generic", i.e.
-> >>> they do not have model numbers or reliable sources of information
-> >>> for the timings (that we know of) other than the fex files shipped
-> >>> on them. The dot clock frequency provided in the fex files have all
-> >>> been rounded to the nearest MHz, as that is the unit used in them.
-> >>> 
-> >>> We were using the simple panel "urt,umsh-8596md-t" as a substitute
-> >>> for the A13 Q8 tablets in the absence of a specific model for what
-> >>> may be many different but otherwise timing compatible panels. This
-> >>> was usable without any visual artifacts or side effects, until the
-> >>> dot clock rate check was added in commit bb43d40d7c83 ("drm/sun4i:
-> >>> rgb: Validate the clock rate").
-> >>> 
-> >>> The reason this check fails is because the dotclock frequency for
-> >>> this model is 33.26 MHz, which is not achievable with our dot clock
-> >>> hardware, and the rate returned by clk_round_rate deviates slightly,
-> >>> causing the driver to reject the display mode.
-> >>> 
-> >>> The LCD panels have some tolerance on the dot clock frequency, even
-> >>> if it's not specified in their datasheets.
-> >>> 
-> >>> This patch adds a 5% tolerence to the dot clock check.
-> >> 
-> >> Why do you think this shouldn't be merged ?
-> > 
-> > It pisses of a lot of people who really insist upon accurate timing.
-> 
-> It's not just about accurate timings. That 5% is a made-up limit, that
-> never have really been confirmed by looking at the typical tolerancies
-> of panels.
-> 
-> And while being to relaxed might make some panels work that are not
-> working currently, it might also break some panels that currently work
-> and won't now, and ideally, we should really be able to let those
-> panels work if they can, and filter out resolutions if they can't.
-> 
-> > I think a better fix would be to have a dotclock range in drm_panel,
-> > and some magic to figure out which one of these we can actually
-> > do. Then tell userspace that this is the mode is should
-> > request. That way userspace knows what the actual dotclock/refresh
-> > rate is, and the panel still works.
-> 
-> It's not just about panels, but also bridges with EDID where the
-> tolerancy is not exposed.
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+---
+ accel/kvm/kvm-all.c       |  4 ++--
+ linux-headers/linux/kvm.h | 11 +++++++++--
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
-Given that the tolerance is a property of the panel or bridge, I agree with 
-Daniel that it should be implemented there, or at least in cooperation with 
-drm_panel and drm_bridge.
-
-Semi-related information, I think the CEA and VESA standards allow a 0.5% 
-clock tolerance. What is the maximum clock frequency deviation required for 
-this platform ?
-
+diff --git a/accel/kvm/kvm-all.c b/accel/kvm/kvm-all.c
+index 799966f..7724055 100644
+--- a/accel/kvm/kvm-all.c
++++ b/accel/kvm/kvm-all.c
+@@ -538,7 +538,7 @@ static void kvm_coalesce_mmio_region(MemoryListener *listener,
+ 
+         zone.addr = start;
+         zone.size = size;
+-        zone.pad = 0;
++        zone.pio = 0;
+ 
+         (void)kvm_vm_ioctl(s, KVM_REGISTER_COALESCED_MMIO, &zone);
+     }
+@@ -555,7 +555,7 @@ static void kvm_uncoalesce_mmio_region(MemoryListener *listener,
+ 
+         zone.addr = start;
+         zone.size = size;
+-        zone.pad = 0;
++        zone.pio = 0;
+ 
+         (void)kvm_vm_ioctl(s, KVM_UNREGISTER_COALESCED_MMIO, &zone);
+     }
+diff --git a/linux-headers/linux/kvm.h b/linux-headers/linux/kvm.h
+index 83ba4eb..670a3d1 100644
+--- a/linux-headers/linux/kvm.h
++++ b/linux-headers/linux/kvm.h
+@@ -420,13 +420,19 @@ struct kvm_run {
+ struct kvm_coalesced_mmio_zone {
+ 	__u64 addr;
+ 	__u32 size;
+-	__u32 pad;
++   union {
++       __u32 pad;
++       __u32 pio;
++   };
+ };
+ 
+ struct kvm_coalesced_mmio {
+ 	__u64 phys_addr;
+ 	__u32 len;
+-	__u32 pad;
++   union {
++       __u32 pad;
++       __u32 pio;
++   };
+ 	__u8  data[8];
+ };
+ 
+@@ -953,6 +959,7 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_CAP_NESTED_STATE 157
+ #define KVM_CAP_ARM_INJECT_SERROR_ESR 158
+ #define KVM_CAP_MSR_PLATFORM_INFO 159
++#define KVM_CAP_COALESCED_PIO 162
+ 
+ #ifdef KVM_CAP_IRQ_ROUTING
+ 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
+1.8.3.1
 
