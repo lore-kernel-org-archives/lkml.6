@@ -2,198 +2,138 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931C2C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C426C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:55:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EA662145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:52:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A6242145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:55:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AfUMZplS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EA662145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="Kz97SF5Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A6242145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbeJRLvb (ORCPT
+        id S1727396AbeJRLyr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 07:51:31 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39295 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727326AbeJRLvb (ORCPT
+        Thu, 18 Oct 2018 07:54:47 -0400
+Received: from mail-io1-f42.google.com ([209.85.166.42]:38102 "EHLO
+        mail-io1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727297AbeJRLyr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 07:51:31 -0400
-Received: by mail-wm1-f65.google.com with SMTP id y144-v6so4187922wmd.4;
-        Wed, 17 Oct 2018 20:52:36 -0700 (PDT)
+        Thu, 18 Oct 2018 07:54:47 -0400
+Received: by mail-io1-f42.google.com with SMTP id n5-v6so20191831ioh.5;
+        Wed, 17 Oct 2018 20:55:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wHFGW0D8ab0RJqiMixyEMSYgryVmwW9AqI1O0T5KHnQ=;
-        b=AfUMZplSqD2EqGJ/+rxnMQkUsRj1XM19yntd8uwX/88C3YiJqnU9oN9X1lbJhhBjTX
-         9sotJmo2ZKW+HVOCbC8iAqavtxgEfBkdq4DvmM1E4ZfTZPBxKGvpan+zeZM1fKGfpyNE
-         MIpaJQx6T9ew1p7RPx/nfYbCytw16TnwV5NoAD5Q0HhvhTcWdfskLneLGvACgoG7RDC0
-         3/vZ42IaJF03lrcJio/XjKeUQA7DUVYaV9O7Q41jxr2XlXzBaZikNGwo3prlogoueYf1
-         pfkwwmUFqSm7ITpHaif/oRhNLGKyEp1FLz+bwvzjdtLdhUVT0uvzzaHSN95GyTXZ5Jx+
-         J1Pg==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pDu+3+spCZ3AcS3AY0EP4+m8cefNQYjNiRLlE0jz9N8=;
+        b=Kz97SF5Y3hjf6QCjkPIrHooFsP9uku5clh03bG3IM5+LseUySFj+b+6uYUy2YUHFud
+         pcL1TRdwUVJbUvZf4uRuCfWpTJr89P2ZwtAd8PDVeR1Dfyxf4dS+F2TSoLj90f0/r8wr
+         mI9o/BCdujxmrBEqzRtTI9clCk/R0EidCZgG/tcUBFT4FRBEREjPXn0fqKKiokmYHfNP
+         bNsV6aesdgXfCl75A8OWOHOk0bWWFlKf6TJsxv3oXmAr8CFmUbCL7CvZfiALEvn4EHzT
+         59ERpJvdDyz7ceMm+EqS3QXcDErn+WlGGBlnujYWJ2ysC6BUbG71mEMygZwE/Ny2S3MC
+         B7KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wHFGW0D8ab0RJqiMixyEMSYgryVmwW9AqI1O0T5KHnQ=;
-        b=UZ1ZBzcEl3ErbB+V8+U2pmVSoyu05bBfFhHk+kAbckntq7++LBo81JsUWp1Ae6i38g
-         BTY+AELHBEC8w4otm/tV7C3HOl2TvrchY7duRYtKICGuAZwr/Vkb1YO5V1tKCk43NaJy
-         UafSG9N9Bh6Cn6a5f4YZUybWQ4L7ulZx5TI+XMSYtkOI0wnkm6FZi+9AkCeOvoJfw2D/
-         UKKALz+dT4mjXX+xe/bUWILJ55jHZ3Nibc6h9v8mnke3YSsaoXm0TDK8ZkAfI6BThpxe
-         ax1TTTAGbWe5GDi8V87ktWSSYjDJyFPvL/CmvcGrf0fgNcbFmSmTiZRDfK8SzXO//c8M
-         dDRQ==
-X-Gm-Message-State: ABuFfoib9/OYTMyzwjX94gUbx1CLUuBIKWROS/7GFZAdJhU97pjpoL6R
-        9NqgyRn8zyiNxwo7SxsCJwovAbbFPRLbIQ==
-X-Google-Smtp-Source: ACcGV60sq5XtzKc7SPbku86b+KBGqYTbN8EkERfeIyJIM7UbIkS0umvRqxdlLOpnWBo09o+l1+8kXQ==
-X-Received: by 2002:a1c:89cd:: with SMTP id l196-v6mr5302545wmd.7.1539834755725;
-        Wed, 17 Oct 2018 20:52:35 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id d16-v6sm15698195wrw.78.2018.10.17.20.52.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 20:52:35 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Karsten Keil <isdn@linux-pingi.de>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH v2] isdn: hfc_{pci,sx}: Avoid empty body if statements
-Date:   Wed, 17 Oct 2018 20:49:36 -0700
-Message-Id: <20181018034935.16819-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181017180657.9410-1-natechancellor@gmail.com>
-References: <20181017180657.9410-1-natechancellor@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pDu+3+spCZ3AcS3AY0EP4+m8cefNQYjNiRLlE0jz9N8=;
+        b=ZJRKPJIKDQOz1TE5VBdCpQbPDpAr2VJsx6dQeIoLz/Xsz68upyt5Cc8da2V34G96gj
+         64X84iwnNdSiqVqMXK4XoKBW6YnDT7YeF5RZt4hLEt1chgSX0Z6l2x1/uwcri5E9A2io
+         YFIVK3hG9/n3kBqQu69rGtBX3tFu2kugYw30nhv1vGRDNi1d3pRQ4Pxw03DodyGnModt
+         1nJajXFcL2nOOmmPY9r9JVYKE2RLMyAmyvnITKUOEbb/1nAumaFKtZYAZw2ZhK1/NX7u
+         8K1lCkPhfcy39l8/nZtKTllIn3Df2iWyf+CFB6PXxdjQ7wQoqgq9UlZkgOdc316va5og
+         bZHA==
+X-Gm-Message-State: ABuFfoi7Q+MtX8YTKBHILMqIeq/5a7/opedKSzpY2qCTiIGHmL0T1Mkp
+        vGlEr36qpMLJt0zU0xHvTMDP34Y29BccR7puano=
+X-Google-Smtp-Source: ACcGV62UUF5/FR8ToCBORHaYcyPe9wPYRuEHsLZrm0Ewmwv3GxZ6NgRCQeIS0waK3ZrllgscMHyk+/BXt4DUWBgT3mI=
+X-Received: by 2002:a6b:5a0f:: with SMTP id o15-v6mr17729503iob.136.1539834952548;
+ Wed, 17 Oct 2018 20:55:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181016235120.138227-1-brendanhiggins@google.com>
+In-Reply-To: <20181016235120.138227-1-brendanhiggins@google.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 17 Oct 2018 20:55:41 -0700
+Message-ID: <CAA9_cmeRE3mPvxb3NciGFYjNu9aMFx4iTMeUq2fC3UtsyXky2A@mail.gmail.com>
+Subject: Re: [RFC v1 00/31] kunit: Introducing KUnit, the Linux kernel unit
+ testing framework
+To:     brendanhiggins@google.com
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, mcgrof@kernel.org,
+        shuah@kernel.org, joel@jms.id.au,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Joe Perches <joe@perches.com>, brakmo@fb.com,
+        Steven Rostedt <rostedt@goodmis.org>, Tim.Bird@sony.com,
+        khilman@baylibre.com, Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+On Tue, Oct 16, 2018 at 4:54 PM Brendan Higgins
+<brendanhiggins@google.com> wrote:
+>
+> This patch set proposes KUnit, a lightweight unit testing and mocking
+> framework for the Linux kernel.
+>
+> Unlike Autotest and kselftest, KUnit is a true unit testing framework;
+> it does not require installing the kernel on a test machine or in a VM
+> and does not require tests to be written in userspace running on a host
+> kernel. Additionally, KUnit is fast: From invocation to completion KUnit
+> can run several dozen tests in under a second. Currently, the entire
+> KUnit test suite for KUnit runs in under a second from the initial
+> invocation (build time excluded).
+>
+> KUnit is heavily inspired by JUnit, Python's unittest.mock, and
+> Googletest/Googlemock for C++. KUnit provides facilities for defining
+> unit test cases, grouping related test cases into test suites, providing
+> common infrastructure for running tests, mocking, spying, and much more.
+>
+> ## What's so special about unit testing?
+>
+> A unit test is supposed to test a single unit of code in isolation,
+> hence the name. There should be no dependencies outside the control of
+> the test; this means no external dependencies, which makes tests orders
+> of magnitudes faster. Likewise, since there are no external dependencies,
+> there are no hoops to jump through to run the tests. Additionally, this
+> makes unit tests deterministic: a failing unit test always indicates a
+> problem. Finally, because unit tests necessarily have finer granularity,
+> they are able to test all code paths easily solving the classic problem
+> of difficulty in exercising error handling code.
+>
+> ## Is KUnit trying to replace other testing frameworks for the kernel?
+>
+> No. Most existing tests for the Linux kernel are end-to-end tests, which
+> have their place. A well tested system has lots of unit tests, a
+> reasonable number of integration tests, and some end-to-end tests. KUnit
+> is just trying to address the unit test space which is currently not
+> being addressed.
+>
+> ## More information on KUnit
+>
+> There is a bunch of documentation near the end of this patch set that
+> describes how to use KUnit and best practices for writing unit tests.
+> For convenience I am hosting the compiled docs here:
+> https://google.github.io/kunit-docs/third_party/kernel/docs/
 
-drivers/isdn/hisax/hfc_pci.c:131:34: error: if statement has empty body
-[-Werror,-Wempty-body]
-        if (Read_hfc(cs, HFCPCI_INT_S1));
-                                        ^
-drivers/isdn/hisax/hfc_pci.c:131:34: note: put the semicolon on a
-separate line to silence this warning
+Nice! I've been using mocking techniques in kernel code for the
+libnvdimm test infrastructure in tools/testing/nvdimm/. It's part unit
+test infrastructure, part emulation, and I've always had the feeling
+it's all a bit too adhoc. I'm going to take a look and see what can be
+converted to kunit. Please include linux-nvdimm@lists.01.org on future
+postings.
 
-In my attempt to hide the warnings because I thought they didn't serve
-any purpose[1], Masahiro Yamada pointed out that {Read,Write}_hfc in
-hci_pci.c should be using a standard register access method; otherwise,
-the compiler will just remove the if statements.
-
-For hfc_pci, use the versions of {Read,Write}_hfc found in
-drivers/isdn/hardware/mISDN/hfc_pCI.h then remove the empty if statements.
-
-For hfc_sx, {Read,Write}_hfc are already use a proper register accessor
-(inb, outb) so just remove the unnecessary if statements.
-
-[1]: https://lore.kernel.org/lkml/20181016021454.11953-1-natechancellor@gmail.com/
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/66
-Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
-
-v1 -> v2:
-
-* Remove unnecessary cast to void, just remove if statements (thanks to
-  review from Masahiro).
-
-* Clean up commit message.
-
- drivers/isdn/hisax/hfc_pci.c | 6 +++---
- drivers/isdn/hisax/hfc_pci.h | 4 ++--
- drivers/isdn/hisax/hfc_sx.c  | 6 +++---
- 3 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
-index 8e5b03161b2f..7bcd104e9dfe 100644
---- a/drivers/isdn/hisax/hfc_pci.c
-+++ b/drivers/isdn/hisax/hfc_pci.c
-@@ -128,7 +128,7 @@ reset_hfcpci(struct IsdnCardState *cs)
- 	Write_hfc(cs, HFCPCI_INT_M1, cs->hw.hfcpci.int_m1);
- 
- 	/* Clear already pending ints */
--	if (Read_hfc(cs, HFCPCI_INT_S1));
-+	Read_hfc(cs, HFCPCI_INT_S1);
- 
- 	Write_hfc(cs, HFCPCI_STATES, HFCPCI_LOAD_STATE | 2);	/* HFC ST 2 */
- 	udelay(10);
-@@ -158,7 +158,7 @@ reset_hfcpci(struct IsdnCardState *cs)
- 	/* Finally enable IRQ output */
- 	cs->hw.hfcpci.int_m2 = HFCPCI_IRQ_ENABLE;
- 	Write_hfc(cs, HFCPCI_INT_M2, cs->hw.hfcpci.int_m2);
--	if (Read_hfc(cs, HFCPCI_INT_S1));
-+	Read_hfc(cs, HFCPCI_INT_S1);
- }
- 
- /***************************************************/
-@@ -1537,7 +1537,7 @@ hfcpci_bh(struct work_struct *work)
- 					cs->hw.hfcpci.int_m1 &= ~HFCPCI_INTS_TIMER;
- 					Write_hfc(cs, HFCPCI_INT_M1, cs->hw.hfcpci.int_m1);
- 					/* Clear already pending ints */
--					if (Read_hfc(cs, HFCPCI_INT_S1));
-+					Read_hfc(cs, HFCPCI_INT_S1);
- 					Write_hfc(cs, HFCPCI_STATES, 4 | HFCPCI_LOAD_STATE);
- 					udelay(10);
- 					Write_hfc(cs, HFCPCI_STATES, 4);
-diff --git a/drivers/isdn/hisax/hfc_pci.h b/drivers/isdn/hisax/hfc_pci.h
-index 4e58700a3e61..4c3b3ba35726 100644
---- a/drivers/isdn/hisax/hfc_pci.h
-+++ b/drivers/isdn/hisax/hfc_pci.h
-@@ -228,8 +228,8 @@ typedef union {
- } fifo_area;
- 
- 
--#define Write_hfc(a, b, c) (*(((u_char *)a->hw.hfcpci.pci_io) + b) = c)
--#define Read_hfc(a, b) (*(((u_char *)a->hw.hfcpci.pci_io) + b))
-+#define Write_hfc(a, b, c) (writeb(c, (a->hw.hfcpci.pci_io) + b))
-+#define Read_hfc(a, b) (readb((a->hw.hfcpci.pci_io) + b))
- 
- extern void main_irq_hcpci(struct BCState *bcs);
- extern void releasehfcpci(struct IsdnCardState *cs);
-diff --git a/drivers/isdn/hisax/hfc_sx.c b/drivers/isdn/hisax/hfc_sx.c
-index 4d3b4b2f2612..12af628d9b2c 100644
---- a/drivers/isdn/hisax/hfc_sx.c
-+++ b/drivers/isdn/hisax/hfc_sx.c
-@@ -381,7 +381,7 @@ reset_hfcsx(struct IsdnCardState *cs)
- 	Write_hfc(cs, HFCSX_INT_M1, cs->hw.hfcsx.int_m1);
- 
- 	/* Clear already pending ints */
--	if (Read_hfc(cs, HFCSX_INT_S1));
-+	Read_hfc(cs, HFCSX_INT_S1);
- 
- 	Write_hfc(cs, HFCSX_STATES, HFCSX_LOAD_STATE | 2);	/* HFC ST 2 */
- 	udelay(10);
-@@ -411,7 +411,7 @@ reset_hfcsx(struct IsdnCardState *cs)
- 	/* Finally enable IRQ output */
- 	cs->hw.hfcsx.int_m2 = HFCSX_IRQ_ENABLE;
- 	Write_hfc(cs, HFCSX_INT_M2, cs->hw.hfcsx.int_m2);
--	if (Read_hfc(cs, HFCSX_INT_S2));
-+	Read_hfc(cs, HFCSX_INT_S2);
- }
- 
- /***************************************************/
-@@ -1288,7 +1288,7 @@ hfcsx_bh(struct work_struct *work)
- 					cs->hw.hfcsx.int_m1 &= ~HFCSX_INTS_TIMER;
- 					Write_hfc(cs, HFCSX_INT_M1, cs->hw.hfcsx.int_m1);
- 					/* Clear already pending ints */
--					if (Read_hfc(cs, HFCSX_INT_S1));
-+					Read_hfc(cs, HFCSX_INT_S1);
- 
- 					Write_hfc(cs, HFCSX_STATES, 4 | HFCSX_LOAD_STATE);
- 					udelay(10);
--- 
-2.19.1
-
+I'll shamelessly plug my lwn article about unit testing
+https://lwn.net/Articles/654071/ because it's always good to find
+fellow co-travelers to compare notes and advocate for more test
+oriented kernel development.
