@@ -2,93 +2,168 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14640C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC35C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:05:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C044721477
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:00:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XN3b8b7z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C044721477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E3CE02098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:05:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3CE02098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727955AbeJRUBd (ORCPT
+        id S1726599AbeJRUGe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 16:01:33 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:41154 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727439AbeJRUBd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 16:01:33 -0400
-Received: by mail-oi1-f194.google.com with SMTP id l197-v6so23744596oib.8
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 05:00:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=z8LEYxzNyd12usccmUsiKE+Ec8KzMI7COr+GLPD/jpk=;
-        b=XN3b8b7zKy8i4etEdLFPO/xImVsqJGBgjdSFoEUeo7ZG7PxGIq+bhVXfbkXib6lSsM
-         IOrsVGl397DSogrAyHCXku/hdgfILUOE3AGx2jKsqCcKEqy67nblrlUJM+Km+Y8fG6UG
-         3d1aIUOPr2KK5V/+XoW2KKfNJRi8DH3305oMk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=z8LEYxzNyd12usccmUsiKE+Ec8KzMI7COr+GLPD/jpk=;
-        b=kYJ4Ftv3T2VuGXcKWY19WUEfqJKCyxPWakcGxDcIkHQCh1rmHIJuPTUFHFUzl/U0zM
-         teBrh2GViut5Wde8x72FaZP8RfgDCOoE6/Qu0+LB5JNAEkLeNm9BZ4FBvEWIk2IWn2vc
-         8Jm0RUVxDj0tzPZMfNpZjCvkjG1i4CEIJ0miuadxq/n6zWj5mthuMqyNpxC5HWO/5zNS
-         ewG9nhNbGH9sfpPVsgu2+F/jJgPb2eeL/3LyWSbRMtMQbBVPmPEA/FoWBTNDQXzwLizg
-         cVC0xp1BUkjvjWUwTmIe+Y+74nt1un3rOkEsBelt69oPXCEYqdp7aRlUe7io12DlH6H5
-         rtrg==
-X-Gm-Message-State: ABuFfoge+gCbbkJUsBS1pTwp1CfLPlWZmgjIXY4B735mgL1DuIJFxhki
-        QLR9dheaZv+z51yxKFI907VjNLZPvb+ETalrD72R3g==
-X-Google-Smtp-Source: ACcGV609eMpbYg+tF35u60vjBmlnePURX3T5eIRF+acatXnm5ql/Bp+7V06tlGh8QKAkRduPE18lPXeJSVGpQABSIm8=
-X-Received: by 2002:aca:4e09:: with SMTP id c9-v6mr15388432oib.254.1539864051156;
- Thu, 18 Oct 2018 05:00:51 -0700 (PDT)
+        Thu, 18 Oct 2018 16:06:34 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58198 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726269AbeJRUGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 16:06:33 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 54964307D86D;
+        Thu, 18 Oct 2018 12:05:50 +0000 (UTC)
+Received: from [10.36.112.15] (unknown [10.36.112.15])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EF41F68B05;
+        Thu, 18 Oct 2018 12:05:47 +0000 (UTC)
+Subject: Re: linux-next: manual merge of the kselftest tree with the kvm tree
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Shuah Khan <shuah@kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181018155030.1d75c506@canb.auug.org.au>
+ <2e7090d2-5c80-7fcf-6e50-7155280b998a@redhat.com>
+ <20181018115009.GA6819@andrea>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <798279ee-4aa7-978c-0402-fe4b803e599a@redhat.com>
+Date:   Thu, 18 Oct 2018 14:05:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20181013151707.32210-1-hch@lst.de> <20181013151707.32210-8-hch@lst.de>
- <CA+M3ks5KO-Yr_PEczaENhTfirthFz2gW1uv4bwZe5mjy3-jZyg@mail.gmail.com> <20181017072020.GD23407@lst.de>
-In-Reply-To: <20181017072020.GD23407@lst.de>
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date:   Thu, 18 Oct 2018 14:00:40 +0200
-Message-ID: <CA+M3ks5ebGDgFtMS5mSYz38AnyrTMQr8C_JkbFEzp=k+izJjUQ@mail.gmail.com>
-Subject: Re: [PATCH 7/8] media: sti/bdisp: don't pass GFP_DMA32 to dma_alloc_attrs
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        ML dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-media@vger.kernel.org, linux-spi@vger.kernel.org,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        alsa-devel@alsa-project.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181018115009.GA6819@andrea>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 18 Oct 2018 12:05:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le mer. 17 oct. 2018 =C3=A0 09:20, Christoph Hellwig <hch@lst.de> a =C3=A9c=
-rit :
->
-> On Mon, Oct 15, 2018 at 11:12:55AM +0200, Benjamin Gaignard wrote:
-> > Le sam. 13 oct. 2018 =C3=A0 17:18, Christoph Hellwig <hch@lst.de> a =C3=
-=A9crit :
-> > >
-> > > The DMA API does its own zone decisions based on the coherent_dma_mas=
-k.
-> > >
-> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> >
-> > Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
->
-> Can you pick it up through the media tree?
+On 18/10/2018 13:50, Andrea Parri wrote:
+>> Shuah, I think it's best if in the future the
+>> tools/testing/selftests/kvm/ changes go through my tree, unless they
+>> affect many selftests subdirectories.
+> 
+> Would the patch below make sense ?
+> 
+> (It wasn't the case of my patch, but you never know... ;D)
+> 
+> Output of get_maintainer.pl on tools/testing/selftests/kvm/:
+> 
+> Before:
+> 
+> Shuah Khan <shuah@kernel.org> (maintainer:KERNEL SELFTEST FRAMEWORK,commit_signer:5/23=22%)
+> Paolo Bonzini <pbonzini@redhat.com> (commit_signer:20/23=87%,authored:10/23=43%)
+> Peter Xu <peterx@redhat.com> (commit_signer:4/23=17%,authored:4/23=17%)
+> Anders Roxell <anders.roxell@linaro.org> (commit_signer:3/23=13%,authored:3/23=13%)
+> Ken Hofsass <hofsass@google.com> (commit_signer:2/23=9%)
+> linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+> linux-kernel@vger.kernel.org (open list)
+> 
+> After:
+> 
+> Paolo Bonzini <pbonzini@redhat.com> (supporter:KERNEL VIRTUAL MACHINE (KVM))
+> "Radim Krčmář" <rkrcmar@redhat.com> (supporter:KERNEL VIRTUAL MACHINE (KVM))
+> Shuah Khan <shuah@kernel.org> (maintainer:KERNEL SELFTEST FRAMEWORK)
+> kvm@vger.kernel.org (open list:KERNEL VIRTUAL MACHINE (KVM))
+> linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+> linux-kernel@vger.kernel.org (open list)
+> 
+> Cheers,
+>   Andrea
+> 
+> ---
+> commit 59fc1af0d7d0ae0c1ec9400bfbacaadce11e5f50
+> Author: Andrea Parri <andrea.parri@amarulasolutions.com>
+> Date:   Thu Oct 18 13:11:09 2018 +0200
+> 
+>     MAINTAINERS: Add selftests to the KVM entry
+>     
+>     Should ensure that Joe random dev will Cc: the KVM maintainers.
+>     
+>     Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+>     Cc: Paolo Bonzini <pbonzini@redhat.com>
+>     Cc: "Radim Krčmář" <rkrcmar@redhat.com>
+>     Cc: Shuah Khan <shuah@kernel.org>
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 6ac000cc006d1..25755bf6365ee 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7997,6 +7997,7 @@ F:	include/linux/kvm*
+>  F:	include/kvm/iodev.h
+>  F:	virt/kvm/*
+>  F:	tools/kvm/
+> +F:	tools/testing/selftests/kvm/
+>  
+>  KERNEL VIRTUAL MACHINE FOR AMD-V (KVM/amd)
+>  M:	Joerg Roedel <joro@8bytes.org>
+> ---
+> 
+>>
+>> Thanks,
+>>
+>> Paolo
+>>
+> 
+> 
+> 
 
-No but Mauros or Hans (in CC) can add it.
+Yes, I've applied it.
+
+Paolo
