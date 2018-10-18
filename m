@@ -7,74 +7,77 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E278C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 162AEC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3704821473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:59:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C82A021473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:59:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="Wfm7WNtn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3704821473
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="DfksOTMP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C82A021473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbeJRO6v (ORCPT
+        id S1727610AbeJRO6z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 10:58:51 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46248 "EHLO
+        Thu, 18 Oct 2018 10:58:55 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40534 "EHLO
         mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbeJRO6v (ORCPT
+        with ESMTP id S1727585AbeJRO6x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 10:58:51 -0400
-Received: by mail-pf1-f193.google.com with SMTP id r64-v6so14414192pfb.13
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 23:59:18 -0700 (PDT)
+        Thu, 18 Oct 2018 10:58:53 -0400
+Received: by mail-pf1-f193.google.com with SMTP id g21-v6so7428913pfi.7
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 23:59:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Xear+RLNnBEI0/eVpUZWOmlWkAdxU+7aAlsATSKFP7M=;
-        b=Wfm7WNtnSe1mOFGfqKBdRntjsGjuttEpU10k9RKeog5WXJ4GJeEB8W4LkPkkB6p5qt
-         m0VAfP1IGy9EfgWauzMhEfHkXjnITorsjoe5qct0+kAEb7FmQ6lrAFpoRbx0WKmmIbsv
-         cBjHAtotUSQYxzv+ZijepTDA6aV5uMFoaR+FI=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=/VyGfWQacueEUHTGPoQ3uFdYU/4GyGaHaoBL4dBXqp8=;
+        b=DfksOTMPnGLSt+/RZVbtrmZH+aUqtKZ9anz+d0UFot8eCfcdCf686Kgfs2EwSZu5tI
+         /paN5Ys1hMjJp+YCZH1bFHtPB2OgWbeFXPV3FmFTN9aWRdsDYc5RgLoKzciA+gXwfIw/
+         JIgYuws1P9Eb1SydvkYErc+X99w9lMAz/+IyQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Xear+RLNnBEI0/eVpUZWOmlWkAdxU+7aAlsATSKFP7M=;
-        b=QdV40fpl5/I0QOC81hovSy2zbEQJgRwGxNhpIUoZY6LkcaqgNsawVE4jD2xNGfL0XR
-         Lj3o6rbzmnyLF4e6j/j6a+OLlmPpneSozA4yXa+gIJcCgtgDZ/d4z5vjPWdbTy1ze+O1
-         Un2ocZxJSTfTQPwykyIe3K9AIXpjlBV5UzZHJQfSoGD9k5iDjzeMPxb2AXbXQROSFy38
-         1InyNF60l+h6BM7amNekJQdzZrVE+ytbYgJQsqLagEGBPBLnwR60XXRp3bPpviZ340Yi
-         2GelO6DNLTcYdLyqgrR0hcjwGJOm+dc+lnh1ciFB3hp9qgEL8wJ50FRxjAnK/2yrSBuq
-         NHTA==
-X-Gm-Message-State: ABuFfojeq+yQh7/gRaBIzNLdTzdWALh/Y7/rdK+G+5z+zVaunQNALjpp
-        ro3Un32g+DXo2LQ15vDEFu7lGZJYG/k=
-X-Google-Smtp-Source: ACcGV61xNVH+I+unnVa85HggpBCokX4PPakDnkgxaXbTohriKoGLxj+MmqZCLQw34fZ/oUzP7/SshA==
-X-Received: by 2002:a63:f744:: with SMTP id f4-v6mr27668756pgk.410.1539845957462;
-        Wed, 17 Oct 2018 23:59:17 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=/VyGfWQacueEUHTGPoQ3uFdYU/4GyGaHaoBL4dBXqp8=;
+        b=YhtpNtKD/8MvvtZN2GOPSRSmMfBeV8ZG2MWjhEgu2SGwnljtsEvOrv4WNAq4b57fW9
+         igHFlevp8i5AMf55v488WymMCTdh3vSO3vEgcLGr/gUh3uVT+IewlSAA8ftmNMW4/iDo
+         5HSovoD/897CSgaRBe8P8epEjKzV/jo7MLrdRjQL21TRgVmoBRgAy2c9q188yvM0bDUO
+         bErpZMEQyruJyrq/EAO5K4oIjvFEq4SE6SLBoXkjtD3Nd0jys+D8xmLeqRPAFOkv0lXd
+         XQr069mB2nC7jEUrmtLAh5SprMTDh6jR3FUZnOLlP4m5Cp8BQIRO3KS2YvgW4HmFYny8
+         tUdA==
+X-Gm-Message-State: ABuFfoj25B6b8webtbWW3eV0UhaaxQgjXHsa4yqZCRL6H8aMxI1bdjBz
+        gk7rEV+rutwHpQr3TDycYEdwr5Ni90s=
+X-Google-Smtp-Source: ACcGV61MVMwfFrq1iY6mCNrXqt8vwRjugldQxLhW5AVm7ZVRL/BogArhefTux89TWrApAiEACQS/Uw==
+X-Received: by 2002:a63:7044:: with SMTP id a4-v6mr27475186pgn.63.1539845959538;
+        Wed, 17 Oct 2018 23:59:19 -0700 (PDT)
 Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id r23-v6sm21580750pfh.79.2018.10.17.23.59.15
+        by smtp.gmail.com with ESMTPSA id r23-v6sm21580750pfh.79.2018.10.17.23.59.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 23:59:16 -0700 (PDT)
+        Wed, 17 Oct 2018 23:59:18 -0700 (PDT)
 From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel-team@android.com,
         "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        jreck@google.com, john.stultz@linaro.org, tkjos@google.com,
-        gregkh@linuxfoundation.org, hch@infradead.org,
+        dancol@google.com, minchan@kernel.org,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>, dancol@google.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        gregkh@linuxfoundation.org,
         "J. Bruce Fields" <bfields@fieldses.org>,
         Jeff Layton <jlayton@kernel.org>,
+        John Stultz <john.stultz@linaro.org>, jreck@google.com,
         linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
         linux-mm@kvack.org, marcandre.lureau@redhat.com,
-        Mike Kravetz <mike.kravetz@oracle.com>, minchan@kernel.org,
+        Mike Kravetz <mike.kravetz@oracle.com>,
         Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v3 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to memfd
-Date:   Wed, 17 Oct 2018 23:59:07 -0700
-Message-Id: <20181018065908.254389-1-joel@joelfernandes.org>
+        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com
+Subject: [PATCH v3 2/2] selftests/memfd: Add tests for F_SEAL_FS_WRITE seal
+Date:   Wed, 17 Oct 2018 23:59:08 -0700
+Message-Id: <20181018065908.254389-2-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.19.1.331.ge82ca0e54c-goog
+In-Reply-To: <20181018065908.254389-1-joel@joelfernandes.org>
+References: <20181018065908.254389-1-joel@joelfernandes.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -82,185 +85,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Android uses ashmem for sharing memory regions. We are looking forward
-to migrating all usecases of ashmem to memfd so that we can possibly
-remove the ashmem driver in the future from staging while also
-benefiting from using memfd and contributing to it. Note staging drivers
-are also not ABI and generally can be removed at anytime.
+Add tests to verify sealing memfds with the F_SEAL_FS_WRITE works as
+expected.
 
-One of the main usecases Android has is the ability to create a region
-and mmap it as writeable, then add protection against making any
-"future" writes while keeping the existing already mmap'ed
-writeable-region active.  This allows us to implement a usecase where
-receivers of the shared memory buffer can get a read-only view, while
-the sender continues to write to the buffer.
-See CursorWindow documentation in Android for more details:
-https://developer.android.com/reference/android/database/CursorWindow
-
-This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
-To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE seal
-which prevents any future mmap and write syscalls from succeeding while
-keeping the existing mmap active. The following program shows the seal
-working in action:
-
- #include <stdio.h>
- #include <errno.h>
- #include <sys/mman.h>
- #include <linux/memfd.h>
- #include <linux/fcntl.h>
- #include <asm/unistd.h>
- #include <unistd.h>
- #define F_SEAL_FUTURE_WRITE 0x0010
- #define REGION_SIZE (5 * 1024 * 1024)
-
-int memfd_create_region(const char *name, size_t size)
-{
-    int ret;
-    int fd = syscall(__NR_memfd_create, name, MFD_ALLOW_SEALING);
-    if (fd < 0) return fd;
-    ret = ftruncate(fd, size);
-    if (ret < 0) { close(fd); return ret; }
-    return fd;
-}
-
-int main() {
-    int ret, fd;
-    void *addr, *addr2, *addr3, *addr1;
-    ret = memfd_create_region("test_region", REGION_SIZE);
-    printf("ret=%d\n", ret);
-    fd = ret;
-
-    // Create map
-    addr = mmap(0, REGION_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
-    if (addr == MAP_FAILED)
-	    printf("map 0 failed\n");
-    else
-	    printf("map 0 passed\n");
-
-    if ((ret = write(fd, "test", 4)) != 4)
-	    printf("write failed even though no future-write seal "
-		   "(ret=%d errno =%d)\n", ret, errno);
-    else
-	    printf("write passed\n");
-
-    addr1 = mmap(0, REGION_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
-    if (addr1 == MAP_FAILED)
-	    perror("map 1 prot-write failed even though no seal\n");
-    else
-	    printf("map 1 prot-write passed as expected\n");
-
-    ret = fcntl(fd, F_ADD_SEALS, F_SEAL_FUTURE_WRITE |
-				 F_SEAL_GROW |
-				 F_SEAL_SHRINK);
-    if (ret == -1)
-	    printf("fcntl failed, errno: %d\n", errno);
-    else
-	    printf("future-write seal now active\n");
-
-    if ((ret = write(fd, "test", 4)) != 4)
-	    printf("write failed as expected due to future-write seal\n");
-    else
-	    printf("write passed (unexpected)\n");
-
-    addr2 = mmap(0, REGION_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
-    if (addr2 == MAP_FAILED)
-	    perror("map 2 prot-write failed as expected due to seal\n");
-    else
-	    printf("map 2 passed\n");
-
-    addr3 = mmap(0, REGION_SIZE, PROT_READ, MAP_SHARED, fd, 0);
-    if (addr3 == MAP_FAILED)
-	    perror("map 3 failed\n");
-    else
-	    printf("map 3 prot-read passed as expected\n");
-}
-
-The output of running this program is as follows:
-ret=3
-map 0 passed
-write passed
-map 1 prot-write passed as expected
-future-write seal now active
-write failed as expected due to future-write seal
-map 2 prot-write failed as expected due to seal
-: Permission denied
-map 3 prot-read passed as expected
-
-Cc: jreck@google.com
-Cc: john.stultz@linaro.org
-Cc: tkjos@google.com
-Cc: gregkh@linuxfoundation.org
-Cc: hch@infradead.org
+Cc: dancol@google.com
+Cc: minchan@kernel.org
 Reviewed-by: John Stultz <john.stultz@linaro.org>
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
-v1->v2: No change, just added selftests to the series. manpages are
-ready and I'll submit them once the patches are accepted.
+ tools/testing/selftests/memfd/memfd_test.c | 74 ++++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
 
-v2->v3: Updated commit message to have more support code (John Stultz)
- 	Renamed seal from F_SEAL_FS_WRITE to F_SEAL_FUTURE_WRITE
-						(Christoph Hellwig)
-	Allow for this seal only if grow/shrink seals are also
-	either previous set, or are requested along with this seal.
-						(Christoph Hellwig)
-	Added locking to synchronize access to file->f_mode.
-						(Christoph Hellwig)
-
- include/uapi/linux/fcntl.h |  1 +
- mm/memfd.c                 | 22 +++++++++++++++++++++-
- 2 files changed, 22 insertions(+), 1 deletion(-)
-
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index 6448cdd9a350..a2f8658f1c55 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -41,6 +41,7 @@
- #define F_SEAL_SHRINK	0x0002	/* prevent file from shrinking */
- #define F_SEAL_GROW	0x0004	/* prevent file from growing */
- #define F_SEAL_WRITE	0x0008	/* prevent writes */
-+#define F_SEAL_FUTURE_WRITE	0x0010  /* prevent future writes while mapped */
- /* (1U << 31) is reserved for signed error codes */
+diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
+index 10baa1652fc2..32b207ca7372 100644
+--- a/tools/testing/selftests/memfd/memfd_test.c
++++ b/tools/testing/selftests/memfd/memfd_test.c
+@@ -692,6 +692,79 @@ static void test_seal_write(void)
+ 	close(fd);
+ }
  
++/*
++ * Test SEAL_FUTURE_WRITE
++ * Test whether SEAL_FUTURE_WRITE actually prevents modifications.
++ */
++static void test_seal_future_write(void)
++{
++	int fd;
++	void *p;
++
++	printf("%s SEAL-FUTURE-WRITE\n", memfd_str);
++
++	fd = mfd_assert_new("kern_memfd_seal_future_write",
++			    mfd_def_size,
++			    MFD_CLOEXEC | MFD_ALLOW_SEALING);
++
++	p = mfd_assert_mmap_shared(fd);
++
++	mfd_assert_has_seals(fd, 0);
++	/* Not adding grow/shrink seals makes the future write
++	 * seal fail to get added
++	 */
++	mfd_fail_add_seals(fd, F_SEAL_FUTURE_WRITE);
++
++	mfd_assert_add_seals(fd, F_SEAL_GROW);
++	mfd_assert_has_seals(fd, F_SEAL_GROW);
++
++	/* Should still fail since shrink seal has
++	 * not yet been added
++	 */
++	mfd_fail_add_seals(fd, F_SEAL_FUTURE_WRITE);
++
++	mfd_assert_add_seals(fd, F_SEAL_SHRINK);
++	mfd_assert_has_seals(fd, F_SEAL_GROW |
++				 F_SEAL_SHRINK);
++
++	/* Now should succeed, also verifies that the seal
++	 * could be added with an existing writable mmap
++	 */
++	mfd_assert_add_seals(fd, F_SEAL_FUTURE_WRITE);
++	mfd_assert_has_seals(fd, F_SEAL_SHRINK |
++				 F_SEAL_GROW |
++				 F_SEAL_FUTURE_WRITE);
++
++	/* read should pass, writes should fail */
++	mfd_assert_read(fd);
++	mfd_fail_write(fd);
++
++	munmap(p, mfd_def_size);
++	close(fd);
++
++	/* Test adding all seals (grow, shrink, future write) at once */
++	fd = mfd_assert_new("kern_memfd_seal_future_write2",
++			    mfd_def_size,
++			    MFD_CLOEXEC | MFD_ALLOW_SEALING);
++
++	p = mfd_assert_mmap_shared(fd);
++
++	mfd_assert_has_seals(fd, 0);
++	mfd_assert_add_seals(fd, F_SEAL_SHRINK |
++				 F_SEAL_GROW |
++				 F_SEAL_FUTURE_WRITE);
++	mfd_assert_has_seals(fd, F_SEAL_SHRINK |
++				 F_SEAL_GROW |
++				 F_SEAL_FUTURE_WRITE);
++
++	/* read should pass, writes should fail */
++	mfd_assert_read(fd);
++	mfd_fail_write(fd);
++
++	munmap(p, mfd_def_size);
++	close(fd);
++}
++
  /*
-diff --git a/mm/memfd.c b/mm/memfd.c
-index 2bb5e257080e..5ba9804e9515 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -150,7 +150,8 @@ static unsigned int *memfd_file_seals_ptr(struct file *file)
- #define F_ALL_SEALS (F_SEAL_SEAL | \
- 		     F_SEAL_SHRINK | \
- 		     F_SEAL_GROW | \
--		     F_SEAL_WRITE)
-+		     F_SEAL_WRITE | \
-+		     F_SEAL_FUTURE_WRITE)
+  * Test SEAL_SHRINK
+  * Test whether SEAL_SHRINK actually prevents shrinking
+@@ -945,6 +1018,7 @@ int main(int argc, char **argv)
+ 	test_basic();
  
- static int memfd_add_seals(struct file *file, unsigned int seals)
- {
-@@ -219,6 +220,25 @@ static int memfd_add_seals(struct file *file, unsigned int seals)
- 		}
- 	}
- 
-+	if ((seals & F_SEAL_FUTURE_WRITE) &&
-+	    !(*file_seals & F_SEAL_FUTURE_WRITE)) {
-+		/*
-+		 * The FUTURE_WRITE seal also prevents growing and shrinking
-+		 * so we need them to be already set, or requested now.
-+		 */
-+		int test_seals = (seals | *file_seals) &
-+				 (F_SEAL_GROW | F_SEAL_SHRINK);
-+
-+		if (test_seals != (F_SEAL_GROW | F_SEAL_SHRINK)) {
-+			error = -EINVAL;
-+			goto unlock;
-+		}
-+
-+		spin_lock(&file->f_lock);
-+		file->f_mode &= ~(FMODE_WRITE | FMODE_PWRITE);
-+		spin_unlock(&file->f_lock);
-+	}
-+
- 	*file_seals |= seals;
- 	error = 0;
- 
+ 	test_seal_write();
++	test_seal_future_write();
+ 	test_seal_shrink();
+ 	test_seal_grow();
+ 	test_seal_resize();
 -- 
 2.19.1.331.ge82ca0e54c-goog
+
