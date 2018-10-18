@@ -2,153 +2,174 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 597B8ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BFE4C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC470208E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:24:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YuxunfCa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC470208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id F20BA2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:28:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F20BA2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727751AbeJRQYV (ORCPT
+        id S1727638AbeJRQ2j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 12:24:21 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36453 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbeJRQYV (ORCPT
+        Thu, 18 Oct 2018 12:28:39 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55465 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727414AbeJRQ2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 12:24:21 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f18-v6so13861487pgv.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 01:24:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=lQ4qM7GVWLol2Q0OL4g4jfd2pwuqVD0wkT6TvnQ9zEY=;
-        b=YuxunfCakbkPChj/mEm6Z3PK98m5UoevAT/QvMtCbQqUB8Rw7pOKlHw4rQtZMDxhNr
-         B/i62CRmyVgi4JxH8YByPhgXH12aQYXOmS4u7FBiObX1BDo4Gst2k4U5syMruhGru5TK
-         q9ipi9ryA9hsmxgjdMVY1VH6Eahk+2mE+AcAQ=
+        Thu, 18 Oct 2018 12:28:39 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 206-v6so4507732wmb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 01:28:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=lQ4qM7GVWLol2Q0OL4g4jfd2pwuqVD0wkT6TvnQ9zEY=;
-        b=SPa2i5aNNxikZ0nHsWdHz+r5C2dDbpSlRP9RL9ErbFn0OvrJAiTII9cr46L+Tk5KqA
-         PgvXJj0+nsdqy+SwzjoqBq2vHE0eqAnVK4X7LGiIGAdDCpbZzc0x2/bAuCGRreB6w+v5
-         aWSQMlB3zqAxu0cnzDKYJqJUI5ggeMIqxweOJ1ITbp4NcCGid3BiuM4itvCU71a1cNdc
-         hyG+XEFkQXcn/1HnHlbMuw5xBcMh06o7zjeSFxWr1SXlxL+qhXQmkap2iRrLF1BE5A4j
-         EF54jvH6sFEKYeQvXL4/fl5Uija53B4T2j316cuQqq6dhuJnAJ7zf43sZPjkqv9Bpr+4
-         fUuw==
-X-Gm-Message-State: ABuFfoh4sszX4Vf7V03TxCffFfSncLCm60pmD/w0jYJvRYqRX7myqf5C
-        O7BlxXkyMwfjfM+HWTMftx1P9A==
-X-Google-Smtp-Source: ACcGV62CQ1AfBglm9yOGYNwyeFh8efoO20DS0F1pM1Wet8/f2Et28cNa5aKh2SEt9mjaWRRfZv4COA==
-X-Received: by 2002:a65:498b:: with SMTP id r11-v6mr27357237pgs.153.1539851069283;
-        Thu, 18 Oct 2018 01:24:29 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id o76-v6sm36743049pfi.162.2018.10.18.01.24.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 18 Oct 2018 01:24:28 -0700 (PDT)
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-To:     Russell King <linux@armlinux.org.uk>,
-        Marc Zyngier <Marc.Zyngier@arm.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH] ARM: prevent tracing IPI_CPU_BACKTRACE
-Date:   Thu, 18 Oct 2018 16:23:59 +0800
-Message-Id: <1539851039-15778-1-git-send-email-zhang.chunyan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1538019697-14673-1-git-send-email-chunyan.zhang@unisoc.com>
-References: <1538019697-14673-1-git-send-email-chunyan.zhang@unisoc.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=A81vAJGptTkeCRBtHozeAQu4M/6x9Fy2WNuynQ1scSU=;
+        b=szFWoladd9u3aC7uNkskSDFKGdtDkmy6i7/WKMfMZAcswss0rhHU7/NEHverJS2Bhp
+         USdEgkeeEOQfukmIe81ovI6Us920I/RFjQJFCUQQ0z90ywkQD+HJ3FcEUmjn/rYYIAph
+         sJRwck6CqTabHxGDTYnKn8lJ7bvPHrLdoamG3PyKlgubGrNHXjTY4CFiGRAOsc1ZilUk
+         +rk2CncKOJZXK4QA+PE54JXZPKgJHnpeqUu65amOftFSAN67N3Wjb5caKPnDxYbr2GfV
+         2NF/AwJyNHaarL3dLzf8Jbg1+mGnJYrE6CAc0b5z5PQOlgGQKN/mheASEvsaFtfvpTh5
+         8bPQ==
+X-Gm-Message-State: ABuFfojCy0dIfrCzrBOLuELhOzKxYWyTbinrEdhmHvLhm/EusCz4fWCn
+        oYWNnl12dB0bqKbAKbgFAjaUTQ==
+X-Google-Smtp-Source: ACcGV62G6O9xEd8dMLusGK73KBKeAOzuJRi1d/38KBhaDJxlGHNR0tY1s3Vs8lCykNkirVBno54qdg==
+X-Received: by 2002:a1c:3702:: with SMTP id e2-v6mr5902477wma.89.1539851324184;
+        Thu, 18 Oct 2018 01:28:44 -0700 (PDT)
+Received: from localhost.localdomain ([151.37.218.44])
+        by smtp.gmail.com with ESMTPSA id i13-v6sm4872308wrn.62.2018.10.18.01.28.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Oct 2018 01:28:43 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 10:28:38 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Juri Lelli <juri.lelli@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        syzbot <syzbot+385468161961cee80c31@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        nstange@suse.de, syzkaller-bugs@googlegroups.com,
+        Luca Abeni <luca.abeni@santannapisa.it>, henrik@austad.us,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: INFO: rcu detected stall in do_idle
+Message-ID: <20181018082838.GA21611@localhost.localdomain>
+References: <000000000000a4ee200578172fde@google.com>
+ <alpine.DEB.2.21.1810161516430.7787@nanos.tec.linutronix.de>
+ <20181016140322.GB3121@hirez.programming.kicks-ass.net>
+ <20181016144045.GF9130@localhost.localdomain>
+ <alpine.DEB.2.21.1810161643540.7787@nanos.tec.linutronix.de>
+ <20181016153608.GH9130@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181016153608.GH9130@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 16/10/18 16:03, Peter Zijlstra wrote:
+> On Tue, Oct 16, 2018 at 03:24:06PM +0200, Thomas Gleixner wrote:
+> > It does reproduce here but with a kworker stall. Looking at the reproducer:
+> > 
+> >   *(uint32_t*)0x20000000 = 0;
+> >   *(uint32_t*)0x20000004 = 6;
+> >   *(uint64_t*)0x20000008 = 0;
+> >   *(uint32_t*)0x20000010 = 0;
+> >   *(uint32_t*)0x20000014 = 0;
+> >   *(uint64_t*)0x20000018 = 0x9917;
+> >   *(uint64_t*)0x20000020 = 0xffff;
+> >   *(uint64_t*)0x20000028 = 0;
+> >   syscall(__NR_sched_setattr, 0, 0x20000000, 0);
+> > 
+> > which means:
+> > 
+> >   struct sched_attr {
+> >   	 .size		= 0,
+> > 	 .policy	= 6,
+> > 	 .flags		= 0,
+> > 	 .nice		= 0,
+> > 	 .priority	= 0,
+> > 	 .deadline	= 0x9917,
+> > 	 .runtime	= 0xffff,
+> > 	 .period	= 0,
+> >   }
+> > 
+> > policy 6 is SCHED_DEADLINE
+> > 
+> > That makes the thread hog the CPU and prevents all kind of stuff to run.
+> > 
+> > Peter, is that expected behaviour?
+> 
+> Sorta, just like FIFO-99 while(1);. Except we should be rejecting the
+> above configuration, because of the rule:
+> 
+>   runtime <= deadline <= period
+> 
+> Juri, where were we supposed to check that?
 
-When function tracing for IPIs is enabled, we get a warning for an
-overflow of the ipi_types array with the IPI_CPU_BACKTRACE type
-as triggered by raise_nmi():
+OK, looks like the "which means" part above had me fooled, as
+we actually have ([1], where the comment is wrong)
 
-arch/arm/kernel/smp.c: In function 'raise_nmi':
-arch/arm/kernel/smp.c:489:2: error: array subscript is above array bounds [-Werror=array-bounds]
-	trace_ipi_raise(target, ipi_types[ipinr]);
-
-This is a correct warning as we actually overflow the array here.
-
-This patch raise_nmi() to call __smp_cross_call() instead of
-smp_cross_call(), to avoid calling into ftrace. For clarification,
-I'm also adding a two new code comments describing how this one
-is special.
-
-The warning appears to have shown up after patch e7273ff49acf
-("ARM: 8488/1: Make IPI_CPU_BACKTRACE a "non-secure" SGI"), which
-changed the number assignment from '15' to '8', but as far as I can
-tell has existed since the IPI tracepoints were first introduced.
-If we decide to backport this patch to stable kernels, we probably
-need to backport e7273ff49acf as well.
-
-Resubmitting this patch is because that I found coverity is complaining
-the issue this patch fixed, and also I got the traces like below:
-"ipi_raise: target_mask=00000001 (machine_suspend)" which actually was
-the TPS of suspend_resume[1] rather that ipi_raise.
-
-[1]
-https://elixir.bootlin.com/linux/latest/source/kernel/power/suspend.c#L80
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: e7273ff49acf ("ARM: 8488/1: Make IPI_CPU_BACKTRACE a "non-secure" SGI")
-Fixes: 365ec7b17327 ("ARM: add IPI tracepoints") # v3.17
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
----
- arch/arm/include/asm/hardirq.h | 1 +
- arch/arm/kernel/smp.c          | 6 +++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/include/asm/hardirq.h b/arch/arm/include/asm/hardirq.h
-index cba23ea..7a88f16 100644
---- a/arch/arm/include/asm/hardirq.h
-+++ b/arch/arm/include/asm/hardirq.h
-@@ -6,6 +6,7 @@
- #include <linux/threads.h>
- #include <asm/irq.h>
- 
-+/* number of IPIS _not_ including IPI_CPU_BACKTRACE */
- #define NR_IPI	7
- 
- typedef struct {
-diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
-index 0978282..ddd48e2 100644
---- a/arch/arm/kernel/smp.c
-+++ b/arch/arm/kernel/smp.c
-@@ -75,6 +75,10 @@ enum ipi_msg_type {
- 	IPI_CPU_STOP,
- 	IPI_IRQ_WORK,
- 	IPI_COMPLETION,
-+	/*
-+	 * CPU_BACKTRACE is special and not included in NR_IPI
-+	 * or tracable with trace_ipi_*
-+	 */
- 	IPI_CPU_BACKTRACE,
- 	/*
- 	 * SGI8-15 can be reserved by secure firmware, and thus may
-@@ -755,7 +759,7 @@ core_initcall(register_cpufreq_notifier);
- 
- static void raise_nmi(cpumask_t *mask)
- {
--	smp_cross_call(mask, IPI_CPU_BACKTRACE);
-+	__smp_cross_call(mask, IPI_CPU_BACKTRACE);
+ struct sched_attr {
+    .size	= 0,
+    .policy	= 6,
+    .flags	= 0,
+    .nice	= 0,
+    .priority	= 0,
+    .runtime	= 0x9917,
+    .deadline	= 0xffff,
+    .period	= 0,
  }
- 
- void arch_trigger_cpumask_backtrace(const cpumask_t *mask, bool exclude_self)
--- 
-2.7.4
 
+So, we seem to be correctly (in theory, see below) accepting the task.
+
+What seems to generate the problem here is that CONFIG_HZ=100 and
+reproducer task has "tiny" runtime (~40us) and deadline (~66us)
+parameters, combination that "bypasses" the enforcing mechanism
+(performed at each tick).
+
+Another side problem seems also to be that with such tiny parameters we
+spend lot of time in the while (dl_se->runtime <= 0) loop of replenish_dl_
+entity() (actually uselessly, as deadline is most probably going to
+still be in the past when eventually runtime becomes positive again), as
+delta_exec is huge w.r.t. runtime and runtime has to keep up with tiny
+increments of dl_runtime. I guess we could ameliorate things here by
+limiting the number of time we execute the loop before bailing out.
+
+Enabling HRTICK makes a difference [2]. I played a bit with several
+combinations and could verify that parameters in the ~50us range seem
+usable. However, still to mention that when runtime gets close to
+deadline (very high bandwidth) enforcing could be tricked again, as
+hrtick overheads might make the task effectively executing for more than
+the runtime, over passing the replenish instant (old deadline), so
+replenish timer is not set, and letting the task continuing executing
+after a replenishment.
+
+This is all however very much platform and config dependent, of course.
+
+So, I tend to think that we might want to play safe and put some higher
+minimum value for dl_runtime (it's currently at 1ULL << DL_SCALE).
+Guess the problem is to pick a reasonable value, though. Maybe link it
+someway to HZ? Then we might add a sysctl (or similar) thing with which
+knowledgeable users can do whatever they think their platform/config can
+support?
+
+Thoughts?
+
+I'm adding more people on Cc as I'm not sure they are following this.
+Thread starts here [3].
+
+1 - https://elixir.bootlin.com/linux/latest/source/include/uapi/linux/sched/types.h#L70
+2 - noticed that we don't actually start hrtick on setup_new_dl_entity()
+    and think we should
+3 - https://lore.kernel.org/lkml/000000000000a4ee200578172fde@google.com/
