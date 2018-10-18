@@ -2,127 +2,234 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D2EAC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB6B6ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19F6D2098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:55:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="pWcR+k+v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19F6D2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C7AA21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:55:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C7AA21473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbeJRQzT (ORCPT
+        id S1727802AbeJRQzi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 12:55:19 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:55748 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727360AbeJRQzT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 12:55:19 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0AA3F113F;
-        Thu, 18 Oct 2018 10:55:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1539852918;
-        bh=PzXfgR0jQx6mHhWuR+IWfYb9dMd5a/t6d54eOomr/oQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pWcR+k+v4eg7FKi24SFzIxu0+Yrc+XyhAZyyENbOu1CGLbI7HIVK4Ae8UFKmi9yPh
-         7MNNHKSf4uEQiwH16Wc3Tl/W1IH+t6KkSoCx0/SWl9JeSIpRWM2kj5VGazBE82KV9j
-         yMwwGhn+MS2ULdTDWBc9o+xQhOf+Ji4qNPkf1RQw=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 9/9] [DO NOT MERGE] drm/sun4i: rgb: Add 5% tolerance to dot clock frequency check
-Date:   Thu, 18 Oct 2018 11:55:28 +0300
-Message-ID: <4168274.Gmp9JTCfJR@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20181018073327.64942-10-icenowy@aosc.io>
-References: <20181018073327.64942-1-icenowy@aosc.io> <20181018073327.64942-10-icenowy@aosc.io>
+        Thu, 18 Oct 2018 12:55:38 -0400
+Received: from foss.arm.com ([217.140.101.70]:34338 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727360AbeJRQzi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 12:55:38 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2ABDF80D;
+        Thu, 18 Oct 2018 01:55:39 -0700 (PDT)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FFD83F5D3;
+        Thu, 18 Oct 2018 01:55:38 -0700 (PDT)
+Subject: Re: [PATCH 3/4] irqchip/mbigen: add support for a MBIGEN generating
+ SPIs
+To:     Yang Yingliang <yangyingliang@huawei.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, guohanjun@huawei.com
+References: <1539681316-19300-1-git-send-email-yangyingliang@huawei.com>
+ <1539681316-19300-4-git-send-email-yangyingliang@huawei.com>
+ <a8ea3f08-8d60-13bf-edcc-03298a9cfb0d@arm.com> <5BC800EB.5070201@huawei.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <15c4ab00-3bfa-0eb8-a341-fc7a2be857f7@arm.com>
+Date:   Thu, 18 Oct 2018 09:55:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <5BC800EB.5070201@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Icenowy,
+Hi Yang,
 
-Thank you for the patch.
+On 18/10/18 04:41, Yang Yingliang wrote:
+> Hi, Marc
+> 
+> On 2018/10/18 0:30, Marc Zyngier wrote:
+>> On 16/10/18 10:15, Yang Yingliang wrote:
+>>> Now with
+>>> 5052875 ("irqchip/gic-v3: Add support for Message Based Interrupts as an MSI controller"),
+>>> we can support MBIGEN to generate message based SPIs by writing GICD_SETSPIR.
+>>>
+>>> The first 64-pins of each MBIGEN chip is used to generate SPIs, and each
+>>> MBIGEN chip has several MBIGEN nodes, every node has 128 pins for generating
+>>> LPIs. The total pins are: 64(SPIs) + 128 * node_nr(LPIs). So we can translate
+>>> the pin index in a unified way in mbigen_domain_translate().
+>>>
+>>> Also Add TYPE and VEC registers that used by generating SPIs, the driver can
+>>> access them when MBIGEN is used to generate SPIs.
+>>>
+>>> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+>>> ---
+>>>   drivers/irqchip/irq-mbigen.c | 21 +++++++++++++++++++--
+>>>   1 file changed, 19 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/irqchip/irq-mbigen.c b/drivers/irqchip/irq-mbigen.c
+>>> index f05998f..37c1932 100644
+>>> --- a/drivers/irqchip/irq-mbigen.c
+>>> +++ b/drivers/irqchip/irq-mbigen.c
+>>> @@ -48,6 +48,7 @@
+>>>   #define MBIGEN_NODE_OFFSET		0x1000
+>>>   
+>>>   /* offset of vector register in mbigen node */
+>>> +#define REG_MBIGEN_SPI_VEC_OFFSET	0x500
+>>>   #define REG_MBIGEN_LPI_VEC_OFFSET	0x200
+>>>   
+>>>   /**
+>>> @@ -62,6 +63,7 @@
+>>>    * This register is used to configure interrupt
+>>>    * trigger type
+>>>    */
+>>> +#define REG_MBIGEN_SPI_TYPE_OFFSET	0x400
+>>>   #define REG_MBIGEN_LPI_TYPE_OFFSET	0x0
+>>>   
+>>>   /**
+>>> @@ -79,6 +81,9 @@ static inline unsigned int get_mbigen_vec_reg(irq_hw_number_t hwirq)
+>>>   {
+>>>   	unsigned int nid, pin;
+>>>   
+>>> +	if (hwirq < SPI_NUM_PER_MBIGEN_CHIP)
+>>> +		return (hwirq * 4 + REG_MBIGEN_SPI_VEC_OFFSET);
+>>> +
+>>>   	hwirq -= SPI_NUM_PER_MBIGEN_CHIP;
+>>>   	nid = hwirq / IRQS_PER_MBIGEN_NODE + 1;
+>>>   	pin = hwirq % IRQS_PER_MBIGEN_NODE;
+>>> @@ -92,6 +97,13 @@ static inline void get_mbigen_type_reg(irq_hw_number_t hwirq,
+>>>   {
+>>>   	unsigned int nid, irq_ofst, ofst;
+>>>   
+>>> +	if (hwirq < SPI_NUM_PER_MBIGEN_CHIP) {
+>>> +		*mask = 1 << (hwirq % 32);
+>>> +		ofst = hwirq / 32 * 4;
+>>> +		*addr = ofst + REG_MBIGEN_SPI_TYPE_OFFSET;
+>>> +		return;
+>>> +	}
+>>> +
+>>>   	hwirq -= SPI_NUM_PER_MBIGEN_CHIP;
+>>>   	nid = hwirq / IRQS_PER_MBIGEN_NODE + 1;
+>>>   	irq_ofst = hwirq % IRQS_PER_MBIGEN_NODE;
+>>> @@ -162,6 +174,12 @@ static void mbigen_write_msg(struct msi_desc *desc, struct msi_msg *msg)
+>>>   	u32 val;
+>>>   
+>>>   	base += get_mbigen_vec_reg(d->hwirq);
+>>> +
+>>> +	if (d->hwirq < SPI_NUM_PER_MBIGEN_CHIP) {
+>>> +		writel_relaxed(msg->data, base);
+>>> +		return;
+>>> +	}
+>> How is the GICD_SETSPI_NSR base address programmed if you're ignoring
+>> the address stored in the message?
+> Now, this base address is encoded in MBIGEN register by default.
 
-On Thursday, 18 October 2018 10:33:27 EEST Icenowy Zheng wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
-> 
-> The panels shipped with Allwinner devices are very "generic", i.e.
-> they do not have model numbers or reliable sources of information
-> for the timings (that we know of) other than the fex files shipped
-> on them. The dot clock frequency provided in the fex files have all
-> been rounded to the nearest MHz, as that is the unit used in them.
-> 
-> We were using the simple panel "urt,umsh-8596md-t" as a substitute
-> for the A13 Q8 tablets in the absence of a specific model for what
-> may be many different but otherwise timing compatible panels. This
-> was usable without any visual artifacts or side effects, until the
-> dot clock rate check was added in commit bb43d40d7c83 ("drm/sun4i:
-> rgb: Validate the clock rate").
-> 
-> The reason this check fails is because the dotclock frequency for
-> this model is 33.26 MHz, which is not achievable with our dot clock
-> hardware, and the rate returned by clk_round_rate deviates slightly,
-> causing the driver to reject the display mode.
-> 
-> The LCD panels have some tolerance on the dot clock frequency, even
-> if it's not specified in their datasheets.
-> 
-> This patch adds a 5% tolerence to the dot clock check.
+OK. So let's move the comment in that function to the top, and indicate
+that this also applies to the GICD_SETSPI_NSR register.
 
-Why do you think this shouldn't be merged ?
+> In case this address isn't set to register in later SoCs, I think the
+> MBIGEN driver set this base address would be better. I will add
+> relative codes to handle both GICD_SETSPI_NSR and ITS Translate
+> address.
+> 
+>>
+>> How do you deal with level interrupts, as you don't seem to use the
+>> level MSI framework either?
+> The MBIGEN driver need to clear active state in irq_eoi hook, when it
+> dealing with level SPIs.
 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_rgb.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c
-> b/drivers/gpu/drm/sun4i/sun4i_rgb.c index bf068da6b12e..23bdc449eacc 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-> @@ -92,13 +92,14 @@ static enum drm_mode_status sun4i_rgb_mode_valid(struct
-> drm_encoder *crtc,
-> 
->  	DRM_DEBUG_DRIVER("Vertical parameters OK\n");
-> 
-> +	/* Check against a 5% tolerance for the dot clock */
->  	tcon->dclk_min_div = 6;
->  	tcon->dclk_max_div = 127;
->  	rounded_rate = clk_round_rate(tcon->dclk, rate);
-> -	if (rounded_rate < rate)
-> +	if (rounded_rate < rate * 19 / 20 )
->  		return MODE_CLOCK_LOW;
-> 
-> -	if (rounded_rate > rate)
-> +	if (rounded_rate > rate * 21 / 20)
->  		return MODE_CLOCK_HIGH;
-> 
->  	DRM_DEBUG_DRIVER("Clock rate OK\n");
+OK, so you're not taking advantage of the the CLEAR register here? Sad.
 
+> 
+>>
+>>> +
+>>>   	val = readl_relaxed(base);
+>>>   
+>>>   	val &= ~(IRQ_EVENT_ID_MASK << IRQ_EVENT_ID_SHIFT);
+>>> @@ -182,8 +200,7 @@ static int mbigen_domain_translate(struct irq_domain *d,
+>>>   		if (fwspec->param_count != 2)
+>>>   			return -EINVAL;
+>>>   
+>>> -		if ((fwspec->param[0] > MAXIMUM_IRQ_PIN_NUM) ||
+>>> -			(fwspec->param[0] < SPI_NUM_PER_MBIGEN_CHIP))
+>>> +		if (fwspec->param[0] > MAXIMUM_IRQ_PIN_NUM)
+>>>   			return -EINVAL;
+>>>   		else
+>>>   			*hwirq = fwspec->param[0];
+>>>
+>> Now, the biggest question of them all: how does it work with ACPI? Last
+>> time I checked, there was no DT support for platforms using the MBIGEN.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/hisilicon/hip07.dtsi
+> This DT describes how platform devices using the MBIGEN.
+
+That's not how my own D05 boots. It is ACPI only. How is that going to
+work on this platform?
+
+> 
+>>
+>> My gut feeling is that it would be so much better if the SPIs generated
+>> by the MBIGEN were configured in firmware, and the devices behind it
+>> would just describe the corresponding SPI...
+> We need use this framework to clear active state in MBIGEN register, so 
+> configuring
+> in firmware is not enough...
+
+Fair enough.
+
+Thanks,
+
+	M.
 -- 
-Regards,
-
-Laurent Pinchart
-
-
-
+Jazz is not dead. It just smells funny...
