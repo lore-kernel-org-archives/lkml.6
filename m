@@ -2,91 +2,88 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1C9C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E14DECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:25:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C25F320658
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:25:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C25F320658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 669EE2098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:25:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 669EE2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728490AbeJSC1r (ORCPT
+        id S1728581AbeJSC2C convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:27:47 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:41447 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728295AbeJSC1r (ORCPT
+        Thu, 18 Oct 2018 22:28:02 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:35637 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726424AbeJSC2C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:27:47 -0400
-Received: by mail-oi1-f194.google.com with SMTP id l197-v6so24791020oib.8;
-        Thu, 18 Oct 2018 11:25:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KXhBMyxzWWa4j7MFH1Ln1pqY6tnuSQTijJ8LU0Itl1o=;
-        b=NOW4/OAlU7QvZXaqVNO8iDU16fFv60r/nhiJSxmm1KnHVap2mOnU/57m+qv8f5dxUm
-         w/2q9hWSl5R7Er+3uffUErcrj0wPsnF7FMdG+xzJxMJqTzpnzNBawEp/5krBH9+H8mEB
-         OGqG0DC8ZS3Eg65vhRXlsNNdNitSlbL1e6z05vaN9bwlYxqTcj/e1/uwtkOJ4OzMv0Jl
-         ouleY24oUnu8Dk4Kkr74y2+zxszJGjtZYKuEDl4vZzHOuiSaqaBZtg3ZXGIKboLcg5yf
-         9gy6QhK9bO1zsAa1Q/CaUmFXIiUBUQiZLlypw+KeQSnTM8R2/zpIFSGxRYrpl7UIAEdd
-         806Q==
-X-Gm-Message-State: ABuFfogXjCDZ6JVVEHlVAc0pfW0/pG1oHxEyIsTmjyJUbAi/8LRk916+
-        uIkQ1gvKmagQFFxUNfEVZg==
-X-Google-Smtp-Source: ACcGV62SB2akFVl9zfUYZzcl1ImQbgj7Dq7/TR1L73ZzyEqalOgjezK6djni9Nlu1D1hpzll5Wqi/w==
-X-Received: by 2002:aca:df87:: with SMTP id w129-v6mr15660431oig.241.1539887134160;
-        Thu, 18 Oct 2018 11:25:34 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id k68-v6sm7323378oib.35.2018.10.18.11.25.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 18 Oct 2018 11:25:33 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 13:25:32 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        "David S . Miller " <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/4] dt-bindings: crypto: Mention clocks for mxs-dcp
-Message-ID: <20181018182532.GA28722@bogus>
-References: <cover.1539779579.git.leonard.crestez@nxp.com>
- <4536b5b5b101ab6a4197fb4891f775ddeb519847.1539779579.git.leonard.crestez@nxp.com>
+        Thu, 18 Oct 2018 22:28:02 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gDCzL-00009Q-5i; Thu, 18 Oct 2018 20:25:39 +0200
+Date:   Thu, 18 Oct 2018 20:25:39 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH 05/11] x86/fpu: set PKRU state for kernel threads
+Message-ID: <20181018182538.vgotfpsdy7qxl2tg@linutronix.de>
+References: <20181004140547.13014-1-bigeasy@linutronix.de>
+ <20181004140547.13014-6-bigeasy@linutronix.de>
+ <39e0a55f-4920-cfde-9bef-09c51109d211@linux.intel.com>
+ <CALCETrUdxsFA5g0M9uRFktfdi=mxK_g3kBfs-VxwDZ0xWqjFAQ@mail.gmail.com>
+ <20181018162644.qqjkzoqn2fleyi2b@linutronix.de>
+ <CC7B46F7-7A6E-4CAF-A1EB-91271CC7B092@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4536b5b5b101ab6a4197fb4891f775ddeb519847.1539779579.git.leonard.crestez@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CC7B46F7-7A6E-4CAF-A1EB-91271CC7B092@amacapital.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 17 Oct 2018 12:37:51 +0000, Leonard Crestez wrote:
-> Explicit clock enabling is required on 6sll and 6ull so mention that
-> standard clock bindings are used.
+On 2018-10-18 09:48:24 [-0700], Andy Lutomirski wrote:
+> > On Oct 18, 2018, at 9:26 AM, Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+> >> On 2018-10-12 11:02:18 [-0700], Andy Lutomirski wrote:
+> >> On Fri, Oct 12, 2018 at 10:54 AM Dave Hansen
+> >>> So I'm kinda missing the point of the patch.
+> >> 
+> >> use_mm().
+> > 
+> > So. I would drop that patch from queue. Anyone feels different about it?
+> > 
 > 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> Reviewed-by: Fabio Estevam <festevam@gmail.com>
-> ---
->  Documentation/devicetree/bindings/crypto/fsl-dcp.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+> I think we *do* want the patch. It’s a bugfix for use_mm users, right?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+This is the loophole that has been pointed out. I am not convinced what
+the correct behaviour should be here (and we have five users of that
+interface). For instance f_fs[0].  It reads data from the USB EP and
+then writes it to userland task. Due to $circumstances it happens in a
+workqueue instead of the task's context.  So it borrows the mm with
+use_mm().  The current behaviour random because the PKRU value can not
+be predicted. It may or may not work.
+
+Setting it to allow-all/none would let the operation always fail or
+succeed which might be an improvement in terms of debugging. However it
+is hard to judge what the correct behaviour should be. Should fail or
+succeed.
+But this is not the only loophole: There is ptrace interface which is
+used by gdb (just checked) and also bypasses PKRU. So…
+
+[0] drivers/usb/gadget/function/f_fs.c::ffs_user_copy_worker()
+
+Sebastian
