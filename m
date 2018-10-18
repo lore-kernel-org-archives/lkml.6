@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFCDC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC749ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA7752148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A628C2148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qIyIQM0n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA7752148D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="voB6pNjK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A628C2148D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730224AbeJSCHQ (ORCPT
+        id S1730237AbeJSCHT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:07:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55824 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:07:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730194AbeJSCHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:07:15 -0400
+        id S1729855AbeJSCHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:07:19 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5AE121476;
-        Thu, 18 Oct 2018 18:05:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5490321476;
+        Thu, 18 Oct 2018 18:05:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885908;
-        bh=DNDRjR7Vdiz7w36JDes1Xl9NXCZBFrcFzKhFpVpTlHY=;
+        s=default; t=1539885911;
+        bh=HT78kggpkgZyK93rkE3pvXdR6J7JBCt9GRb6MeRJn5Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qIyIQM0nmNaZl+r066nEh55vehIGOC8jAUL4y1wuH1vBOvAOjibSuxpkJ242qIauS
-         ANTFhjgaQrlfOUCYDnsRsQ3Bu6YqqUS8iu/olGk+/GighF6hZVCHEeFi90mU84BoyB
-         kEQHi45zCZlHtZAxeuTMEXOzPDrSqn/vHjkJcxgQ=
+        b=voB6pNjKosUqX3C5KUeY5uBbx3OC0/p/UEWFAHHAypfgy0sc80vgxHfomz20zMISg
+         WLauvj7mLIs9ejaAuApv5f5Zsd04afx799NDAxiw04Q/QIvXPy+hNnp6fTZT0p5kbO
+         CUOufaKbATsCsthOi6rpvm/MghGzV/vFb6EzQ5zA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ross Zwisler <zwisler@google.com>
-Subject: [PATCH 4.4 15/48] xhci: Dont print a warning when setting link state for disabled ports
-Date:   Thu, 18 Oct 2018 19:54:50 +0200
-Message-Id: <20181018175428.823402836@linuxfoundation.org>
+        stable@vger.kernel.org, Hou Tao <houtao1@huawei.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: [PATCH 4.4 16/48] jffs2: return -ERANGE when xattr buffer is too small
+Date:   Thu, 18 Oct 2018 19:54:51 +0200
+Message-Id: <20181018175428.883959029@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -64,61 +62,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Hou Tao <houtao1@huawei.com>
 
-commit 1208d8a84fdcae6b395c57911cdf907450d30e70 upstream.
+When a file have multiple xattrs and the passed buffer is
+smaller than the required size, jffs2_listxattr() should
+return -ERANGE instead of continue, else Oops may occur
+due to memory corruption.
 
-When disabling a USB3 port the hub driver will set the port link state to
-U3 to prevent "ejected" or "safely removed" devices that are still
-physically connected from immediately re-enumerating.
+Also remove the unnecessary check ("rc < 0"), because
+xhandle->list(...) will not return an error number.
 
-If the device was really unplugged, then error messages were printed
-as the hub tries to set the U3 link state for a port that is no longer
-enabled.
+Spotted by generic/377 in xfstests-dev.
 
-xhci-hcd ee000000.usb: Cannot set link state.
-usb usb8-port1: cannot disable (err = -32)
+NB: The problem had been fixed by commit 764a5c6b1fa4 ("xattr
+handlers: Simplify list operation") in v4.5-rc1, but the
+modification in that commit may be too much because it modifies
+all file-systems which implement xattr, so I create a single
+patch for jffs2 to fix the problem.
 
-Don't print error message in xhci-hub if hub tries to set port link state
-for a disabled port. Return -ENODEV instead which also silences hub driver.
-
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Ross Zwisler <zwisler@google.com>
+Signed-off-by: Hou Tao <houtao1@huawei.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/host/xhci-hub.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ fs/jffs2/xattr.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -1048,17 +1048,17 @@ int xhci_hub_control(struct usb_hcd *hcd
- 				temp = readl(port_array[wIndex]);
- 				break;
- 			}
--
--			/* Software should not attempt to set
--			 * port link state above '3' (U3) and the port
--			 * must be enabled.
--			 */
--			if ((temp & PORT_PE) == 0 ||
--				(link_state > USB_SS_PORT_LS_U3)) {
--				xhci_warn(xhci, "Cannot set link state.\n");
-+			/* Port must be enabled */
-+			if (!(temp & PORT_PE)) {
-+				retval = -ENODEV;
-+				break;
+--- a/fs/jffs2/xattr.c
++++ b/fs/jffs2/xattr.c
+@@ -1004,12 +1004,14 @@ ssize_t jffs2_listxattr(struct dentry *d
+ 			rc = xhandle->list(xhandle, dentry, buffer + len,
+ 					   size - len, xd->xname,
+ 					   xd->name_len);
++			if (rc > size - len) {
++				rc = -ERANGE;
++				goto out;
 +			}
-+			/* Can't set port link state above '3' (U3) */
-+			if (link_state > USB_SS_PORT_LS_U3) {
-+				xhci_warn(xhci, "Cannot set port %d link state %d\n",
-+					 wIndex, link_state);
- 				goto error;
- 			}
--
- 			if (link_state == USB_SS_PORT_LS_U3) {
- 				slot_id = xhci_find_slot_id_by_port(hcd, xhci,
- 						wIndex + 1);
+ 		} else {
+ 			rc = xhandle->list(xhandle, dentry, NULL, 0,
+ 					   xd->xname, xd->name_len);
+ 		}
+-		if (rc < 0)
+-			goto out;
+ 		len += rc;
+ 	}
+ 	rc = len;
 
 
