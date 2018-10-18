@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F56C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB98C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 892D12145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3FF420658
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HRyYjQnW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 892D12145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPF1CQdw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3FF420658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730657AbeJSCJX (ORCPT
+        id S1730666AbeJSCJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:09:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58788 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:09:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728944AbeJSCJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:09:22 -0400
+        id S1728851AbeJSCJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:09:25 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F30620658;
-        Thu, 18 Oct 2018 18:07:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A85F20658;
+        Thu, 18 Oct 2018 18:07:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539886034;
-        bh=QlkZdUTz7Y0euEqHknVE/lm9CR2Sq88EPDOIjZwYi6o=;
+        s=default; t=1539886037;
+        bh=NAab/DawTbwz97yAymf424JRHBvr8024NQn2tkhY8Qc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HRyYjQnWveS+cMkSUjp79YCWCpof+ZXLD8CkLwaMZ8UB9aiC1IVX+b9x+mbS+kSW4
-         RXV7q0Qm82H1GEelvm2odGcphfEiml4q5dE++j5uOtGS4CmT2maQSpb4uD8uFukChv
-         ZPS1jqV+E9BZJXuacRCmV25HNrrWb41Av/jA0dF4=
+        b=DPF1CQdw5m1c3FcdHu8wK9qGBgsJa4lUaP/PLlNVxXVKMsu/fMJ1Zhkz5IR67Nm6g
+         +Dkc6lXOtP2vV/C4uJq3HOPso7d7wquc6A3aMI+ZzHLPhs+07+gOf7QLqv5c9QwtP3
+         ewnqzm4oBGHoKJ5ENkEtNZG8lQrFAxh/foatOc7g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
-        Andreas Schwab <schwab@linux-m68k.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 38/48] Input: atakbd - fix Atari CapsLock behaviour
-Date:   Thu, 18 Oct 2018 19:55:13 +0200
-Message-Id: <20181018175429.965870946@linuxfoundation.org>
+Subject: [PATCH 4.4 39/48] net/mlx4: Use cpumask_available for eq->affinity_mask
+Date:   Thu, 18 Oct 2018 19:55:14 +0200
+Message-Id: <20181018175430.013043847@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -63,44 +63,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Schmitz <schmitzmic@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 52d2c7bf7c90217fbe875d2d76f310979c48eb83 ]
+[ Upstream commit 8ac1ee6f4d62e781e3b3fd8b9c42b70371427669 ]
 
-The CapsLock key on Atari keyboards is not a toggle, it does send the
-normal make and break scancodes.
+Clang warns that the address of a pointer will always evaluated as true
+in a boolean context:
 
-Drop the CapsLock toggle handling code, which did cause the CapsLock
-key to merely act as a Shift key.
+drivers/net/ethernet/mellanox/mlx4/eq.c:243:11: warning: address of
+array 'eq->affinity_mask' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+        if (!eq->affinity_mask || cpumask_empty(eq->affinity_mask))
+            ~~~~~^~~~~~~~~~~~~
+1 warning generated.
 
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Andreas Schwab <schwab@linux-m68k.org>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Use cpumask_available, introduced in commit f7e30f01a9e2 ("cpumask: Add
+helper cpumask_available()"), which does the proper checking and avoids
+this warning.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/86
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/input/keyboard/atakbd.c |   10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/eq.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/input/keyboard/atakbd.c
-+++ b/drivers/input/keyboard/atakbd.c
-@@ -189,14 +189,8 @@ static void atakbd_interrupt(unsigned ch
+--- a/drivers/net/ethernet/mellanox/mlx4/eq.c
++++ b/drivers/net/ethernet/mellanox/mlx4/eq.c
+@@ -228,7 +228,8 @@ static void mlx4_set_eq_affinity_hint(st
+ 	struct mlx4_dev *dev = &priv->dev;
+ 	struct mlx4_eq *eq = &priv->eq_table.eq[vec];
  
- 		scancode = atakbd_keycode[scancode];
+-	if (!eq->affinity_mask || cpumask_empty(eq->affinity_mask))
++	if (!cpumask_available(eq->affinity_mask) ||
++	    cpumask_empty(eq->affinity_mask))
+ 		return;
  
--		if (scancode == KEY_CAPSLOCK) {	/* CapsLock is a toggle switch key on Amiga */
--			input_report_key(atakbd_dev, scancode, 1);
--			input_report_key(atakbd_dev, scancode, 0);
--			input_sync(atakbd_dev);
--		} else {
--			input_report_key(atakbd_dev, scancode, down);
--			input_sync(atakbd_dev);
--		}
-+		input_report_key(atakbd_dev, scancode, down);
-+		input_sync(atakbd_dev);
- 	} else				/* scancodes >= 0xf3 are mouse data, most likely */
- 		printk(KERN_INFO "atakbd: unhandled scancode %x\n", scancode);
- 
+ 	hint_err = irq_set_affinity_hint(eq->irq, eq->affinity_mask);
 
 
