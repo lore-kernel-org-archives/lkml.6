@@ -3,117 +3,168 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8563CC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2879EC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4186621473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:48:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4186621473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id D58AE21476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:51:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D58AE21476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbeJRQsn (ORCPT
+        id S1727781AbeJRQvp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 12:48:43 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:51057 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727646AbeJRQsn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 12:48:43 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42bN4W4m7Hz9ttBf;
-        Thu, 18 Oct 2018 10:48:43 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id l1dpoSH3mN6i; Thu, 18 Oct 2018 10:48:43 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42bN4W4Cl8z9ttBV;
-        Thu, 18 Oct 2018 10:48:43 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 742C48B8A9;
-        Thu, 18 Oct 2018 10:48:43 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 4gVh4GVF4QBL; Thu, 18 Oct 2018 10:48:43 +0200 (CEST)
-Received: from pc13168vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 38F0F8B8A7;
-        Thu, 18 Oct 2018 10:48:43 +0200 (CEST)
-Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id E77FB6F474; Thu, 18 Oct 2018 08:48:42 +0000 (UTC)
-Message-Id: <40873f45f922b28c727c013e3883be467fc31c56.1539852411.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/uaccess: fix warning/error with access_ok()
+        Thu, 18 Oct 2018 12:51:45 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:41374 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727620AbeJRQvp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 12:51:45 -0400
+Received: by mail-ed1-f66.google.com with SMTP id x31-v6so27469569edd.8
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 01:51:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lXRYzyQpOEMkRfskmvfIQ94cvWbun3un/tGOvrOlWiI=;
+        b=jWd3SQZe3EBIBX6YVrOBkjkA+a7V/PBiSvKK6QR8TaZxKZU5uL3jpt0ph9efagYFPO
+         0gh9e4XWgyrZjP2GAIXYI/Z3OgJmsS+XXLQZrlgtAA6ttgSDiUuhwOwM2GoAHFEQpW1y
+         mIJ5Z43K7jVhvr9Ixo9j8NRid+e73ebXZZgb8bFRGNNXgBBvEfWlHla3ll9hiNOH5CDa
+         Vj6MIr14HdU++hNfrL4x/WgH4Yr3ooZj/YaCOFaJRit62/ZuLOmOX5AZuy02DznSs7tl
+         kgF047sSMtlItrLxRGoBvlm1/sL8r+YHcqtH9JitspModiNNXJrkd+NGSiEtVYcZlJ8J
+         7+3w==
+X-Gm-Message-State: ABuFfogc5hfhNdmxS3QGhds5viaMVcdWuOC1TtDpcQrHToDbSw7sX7AW
+        k4sSmY5FTks3UtBhUT6V0fkJXw==
+X-Google-Smtp-Source: ACcGV63vqsTSKS12AJMllLb4bpXo/nP+ZwbrE4qiq26iuAp0NEZ0i7YDDyQsKhGe3Ps7EAfFYVomoQ==
+X-Received: by 2002:a17:906:c7d3:: with SMTP id dc19-v6mr27967868ejb.232.1539852705356;
+        Thu, 18 Oct 2018 01:51:45 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id l16-v6sm4049503eja.14.2018.10.18.01.51.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Oct 2018 01:51:44 -0700 (PDT)
+Subject: Re: [PATCH 3/5] dt-bindings: add more optional properties for
+ elan_i2c touchpads
+To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc:     robh@kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        =?UTF-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
+References: <20181012142413.26107-1-benjamin.tissoires@redhat.com>
+ <20181012142413.26107-4-benjamin.tissoires@redhat.com>
+ <20181017201522.GA26525@bogus>
+ <CAO-hwJ+z6YdnLdbzeh-7f99cBBjHfbLKLzKo-fQQaC_W8bt_Uw@mail.gmail.com>
+ <1fb98946-a518-d7d7-3bec-8944be95b91c@redhat.com>
+ <CAO-hwJKXBvuGLensAQv82SoPh-vrt9UFgoC3_XeTA78EHCOANA@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <4a81a5d1-39c8-60f3-16be-559d43c0116a@redhat.com>
+Date:   Thu, 18 Oct 2018 10:51:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 18 Oct 2018 08:48:42 +0000 (UTC)
+In-Reply-To: <CAO-hwJKXBvuGLensAQv82SoPh-vrt9UFgoC3_XeTA78EHCOANA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the following peace of code, the following compilation warning
-is encountered:
+Hi,
 
-	if (_IOC_DIR(ioc) != _IOC_NONE) {
-		int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
+On 18-10-18 10:44, Benjamin Tissoires wrote:
+> On Thu, Oct 18, 2018 at 10:39 AM Hans de Goede <hdegoede@redhat.com> wrote:
+>>
+>> Hi,
+>>
+>> On 18-10-18 10:10, Benjamin Tissoires wrote:
+>>> On Wed, Oct 17, 2018 at 10:15 PM Rob Herring <robh@kernel.org> wrote:
+>>>>
+>>>> On Fri, Oct 12, 2018 at 04:24:11PM +0200, Benjamin Tissoires wrote:
+>>>>> Some new touchpads IC are connected through PS/2 and I2C. On some of these
+>>>>> new IC, the I2C part doesn't have all of the information available.
+>>>>> We need to be able to forward the touchpad parameters from PS/2 and
+>>>>> thus, we need those new optional properties.
+>>>>>
+>>>>> Link: https://bugzilla.redhat.com/show_bug.cgi?id=1628715
+>>>>> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+>>>>> ---
+>>>>>    Documentation/devicetree/bindings/input/elan_i2c.txt | 8 ++++++++
+>>>>>    1 file changed, 8 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/input/elan_i2c.txt b/Documentation/devicetree/bindings/input/elan_i2c.txt
+>>>>> index 797607460735..ace6bcb0b4eb 100644
+>>>>> --- a/Documentation/devicetree/bindings/input/elan_i2c.txt
+>>>>> +++ b/Documentation/devicetree/bindings/input/elan_i2c.txt
+>>>>> @@ -13,6 +13,14 @@ Optional properties:
+>>>>>      pinctrl binding [1]).
+>>>>>    - vcc-supply: a phandle for the regulator supplying 3.3V power.
+>>>>>    - elan,trackpoint: touchpad can support a trackpoint (boolean)
+>>>>> +- elan,clickpad: touchpad is a clickpad (the entire surface is a button)
+>>>>
+>>>>> +- elan,max_x: the maximum reported value on the X axis
+>>>>> +- elan,max_y: the maximum reported value on the Y axis
+>>>>> +- elan,min_x: the minimum reported value on the X axis
+>>>>> +- elan,min_y: the minimum reported value on the Y axis
+>>>>> +- elan,x_res: the resolution of the X axis (in units per mm)
+>>>>> +- elan,y_res: the resolution of the Y axis (in units per mm)
+>>>>> +- elan,width: max reported width of a blob
+>>>>
+>>>> Can't we use standard touchscreen properties here? (Yes, I get this is a
+>>>> touchpad, not touchscreen).
+>>>
+>>> Hey Rob,
+>>>
+>>> Well, there is that (it's a touchpad driver) and we can't also really
+>>> use the of_touchscreen.c implementation.
+>>> If both concerns are not an issue, we can then move the [min/max/res]
+>>> properties to the touchscreen ones.
+>>>
+>>> Regarding 'elan,width', this is something missing from the standard ts
+>>> properties, and AFAICT, this controls the maximum reported
+>>> width/height of a touch.
+>>> I should probably rename them to max_width, max_height.
+>>>
+>>> Hans, do you think we should add such properties to of_touchscreen.c
+>>> too? (the width/height ones)
+>>
+>> Are there touchscreens which report finger/touch width / height ? if so
+>> then it probably does make sense.
+> 
+> Well, it's pretty common for hid-multitouch touchscreens to report
+> such properties (it's a way to indicate the palm). Don't know about
+> the touchscreens that rely on of_touchscreen though.
 
-		if (!access_ok(verify, ioarg, _IOC_SIZE(ioc))) {
+Now that you mention it I think some may also have some sort of
+pressure/weight value, but at least for the ones I wrote I do not
+think we do anything with it, since the actual meaning of the
+field is somewhat vague. This is all IIRC.
 
-drivers/platform/test/dev.c: In function ‘my_ioctl’:
-drivers/platform/test/dev.c:219:7: warning: unused variable ‘verify’ [-Wunused-variable]
-   int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
+>> Note that for historical reasons
+>> Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
+> 
+> Looks like your sentence is not finished here :)
 
-This patch fixes it by handing the type to __access_ok(), changing it
-to an inline function for PPC64 as already done for PPC32
+I actually deleted it, but not those 2 lines, what I had written there
+was that for historical reasons it uses touchscreen-size-x rather then
+max-x and that that might be a bit confusing vs max-width, but I could
+not come up with something better then max-width, so I deleted my
+rambling, but ended up not deleting all of it :)
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/uaccess.h | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+>> Also the touchscreen bindings have: touchscreen-x-mm and touchscreen-y-mm
+>> rather then res, which can then be used to calculate the resolution.
+>>
+> 
+> yeah, that's fine, I would need to convert to mm, then go back to res.
+> Extra effort, but that's the price to pay.
 
-diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-index 15bea9a0f260..97faf0353919 100644
---- a/arch/powerpc/include/asm/uaccess.h
-+++ b/arch/powerpc/include/asm/uaccess.h
-@@ -47,13 +47,16 @@ static inline void set_fs(mm_segment_t fs)
-  * This check is sufficient because there is a large enough
-  * gap between user addresses and the kernel addresses
-  */
--#define __access_ok(addr, size, segment)	\
--	(((addr) <= (segment).seg) && ((size) <= (segment).seg))
-+static inline int __access_ok(int type, unsigned long addr, unsigned long size,
-+			      mm_segment_t seg)
-+{
-+	return addr <= seg.seg && size <= seg.seg;
-+}
- 
- #else
- 
--static inline int __access_ok(unsigned long addr, unsigned long size,
--			mm_segment_t seg)
-+static inline int __access_ok(int type, unsigned long addr, unsigned long size,
-+			      mm_segment_t seg)
- {
- 	if (addr > seg.seg)
- 		return 0;
-@@ -64,7 +67,7 @@ static inline int __access_ok(unsigned long addr, unsigned long size,
- 
- #define access_ok(type, addr, size)		\
- 	(__chk_user_ptr(addr),			\
--	 __access_ok((__force unsigned long)(addr), (size), get_fs()))
-+	 __access_ok((type), (__force unsigned long)(addr), (size), get_fs()))
- 
- /*
-  * These are the main single-value transfer routines.  They automatically
--- 
-2.13.3
+Ack.
+
+Regards,
+
+Hans
 
