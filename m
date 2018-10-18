@@ -2,309 +2,476 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4643C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 408C0ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FA4F21476
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9AB121480
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dY3X7fEW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FA4F21476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNHqTFti"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9AB121480
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729088AbeJSCAl (ORCPT
+        id S1729101AbeJSCAo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:00:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48316 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:00:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728562AbeJSCAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:00:40 -0400
+        id S1728562AbeJSCAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:00:43 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44AF521479;
-        Thu, 18 Oct 2018 17:58:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05D8321473;
+        Thu, 18 Oct 2018 17:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885514;
-        bh=AaVLTS/JSVx+hMfNZHVPWLPCq6egaRCNWHvWuRcjKc4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=dY3X7fEWi8KpLsvIIy48nZJQOXI20eDxwqxxsl4lDCoOEzMLFoRc6o2tbJmMBK6+g
-         O7yFdTxCalHoZ5lRB/wlkFTNrJEitB7byl4JDqF5Gpj103s6cQric2LPa2qJZqB82x
-         cd2g2UzT/lHJO9BRRnysP8Z94puwQnAPB11BlIJU=
+        s=default; t=1539885517;
+        bh=QDMi7g3vUiO0Fp70wKUWqeUiIO+cuuLJP2HKC6BjzDk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=WNHqTFtirDbbTEgrkrFGRiMdFMClskK9lcQYnOv0XDR3MCwZeDtrO7CjrkYZTPeSu
+         VQs8vL+X/jngs4GnorbWvm/q9+I6/t3AH4Y4gM9y0WH+oMgKpqsrmJOBffDVHwPcDP
+         16/AGUG9bmWPvXZ7gOyyo6GXdGkov5ak8+3/tsOE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.18 00/53] 4.18.16-stable review
-Date:   Thu, 18 Oct 2018 19:53:53 +0200
-Message-Id: <20181018175416.561567978@linuxfoundation.org>
+        stable@vger.kernel.org, Selvin Xavier <selvin.xavier@broadcom.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 41/53] RDMA/bnxt_re: Fix system crash during RDMA resource initialization
+Date:   Thu, 18 Oct 2018 19:54:34 +0200
+Message-Id: <20181018175423.553970915@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
+In-Reply-To: <20181018175416.561567978@linuxfoundation.org>
+References: <20181018175416.561567978@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.18.16-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.18.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.18.16-rc1
-X-KernelTest-Deadline: 2018-10-20T17:54+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.18.16 release.
-There are 53 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Sat Oct 20 17:53:52 UTC 2018.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.18.16-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.18.y
-and the diffstat can be found below.
+From: Selvin Xavier <selvin.xavier@broadcom.com>
 
-thanks,
+[ Upstream commit de5c95d0f518537f59ee5aef762abc46f868c377 ]
 
-greg k-h
+bnxt_re_ib_reg acquires and releases the rtnl lock whenever it accesses
+the L2 driver.
 
--------------
-Pseudo-Shortlog of commits:
+The following sequence can trigger a crash
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.18.16-rc1
+Acquires the rtnl_lock ->
+	Registers roce driver callback with L2 driver ->
+		release the rtnl lock
+bnxt_re acquires the rtnl_lock ->
+	Request for MSIx vectors ->
+		release the rtnl_lock
 
-Alexey Brodkin <abrodkin@synopsys.com>
-    ARC: build: Don't set CROSS_COMPILE in arch's Makefile
+Issue happens when bnxt_re proceeds with remaining part of initialization
+and L2 driver invokes bnxt_ulp_irq_stop as a part of bnxt_open_nic.
 
-Alexey Brodkin <abrodkin@synopsys.com>
-    ARC: build: Get rid of toolchain check
+The crash is in bnxt_qplib_nq_stop_irq as the NQ structures are
+not initialized yet,
 
-Linus Torvalds <torvalds@linux-foundation.org>
-    mremap: properly flush TLB before releasing the page
+<snip>
+[ 3551.726647] BUG: unable to handle kernel NULL pointer dereference at (null)
+[ 3551.726656] IP: [<ffffffffc0840ee9>] bnxt_qplib_nq_stop_irq+0x59/0xb0 [bnxt_re]
+[ 3551.726674] PGD 0
+[ 3551.726679] Oops: 0002 1 SMP
+...
+[ 3551.726822] Hardware name: Dell Inc. PowerEdge R720/08RW36, BIOS 2.4.3 07/09/2014
+[ 3551.726826] task: ffff97e30eec5ee0 ti: ffff97e3173bc000 task.ti: ffff97e3173bc000
+[ 3551.726829] RIP: 0010:[<ffffffffc0840ee9>] [<ffffffffc0840ee9>]
+bnxt_qplib_nq_stop_irq+0x59/0xb0 [bnxt_re]
+...
+[ 3551.726872] Call Trace:
+[ 3551.726886] [<ffffffffc082cb9e>] bnxt_re_stop_irq+0x4e/0x70 [bnxt_re]
+[ 3551.726899] [<ffffffffc07d6a53>] bnxt_ulp_irq_stop+0x43/0x70 [bnxt_en]
+[ 3551.726908] [<ffffffffc07c82f4>] bnxt_reserve_rings+0x174/0x1e0 [bnxt_en]
+[ 3551.726917] [<ffffffffc07cafd8>] __bnxt_open_nic+0x368/0x9a0 [bnxt_en]
+[ 3551.726925] [<ffffffffc07cb62b>] bnxt_open_nic+0x1b/0x50 [bnxt_en]
+[ 3551.726934] [<ffffffffc07cc62f>] bnxt_setup_mq_tc+0x11f/0x260 [bnxt_en]
+[ 3551.726943] [<ffffffffc07d5f58>] bnxt_dcbnl_ieee_setets+0xb8/0x1f0 [bnxt_en]
+[ 3551.726954] [<ffffffff890f983a>] dcbnl_ieee_set+0x9a/0x250
+[ 3551.726966] [<ffffffff88fd6d21>] ? __alloc_skb+0xa1/0x2d0
+[ 3551.726972] [<ffffffff890f72fa>] dcb_doit+0x13a/0x210
+[ 3551.726981] [<ffffffff89003ff7>] rtnetlink_rcv_msg+0xa7/0x260
+[ 3551.726989] [<ffffffff88ffdb00>] ? rtnl_unicast+0x20/0x30
+[ 3551.726996] [<ffffffff88bf9dc8>] ? __kmalloc_node_track_caller+0x58/0x290
+[ 3551.727002] [<ffffffff890f7326>] ? dcb_doit+0x166/0x210
+[ 3551.727007] [<ffffffff88fd6d0d>] ? __alloc_skb+0x8d/0x2d0
+[ 3551.727012] [<ffffffff89003f50>] ? rtnl_newlink+0x880/0x880
+...
+[ 3551.727104] [<ffffffff8911f7d5>] system_call_fastpath+0x1c/0x21
+...
+[ 3551.727164] RIP [<ffffffffc0840ee9>] bnxt_qplib_nq_stop_irq+0x59/0xb0 [bnxt_re]
+[ 3551.727175] RSP <ffff97e3173bf788>
+[ 3551.727177] CR2: 0000000000000000
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Revert "vfs: fix freeze protection in mnt_want_write_file() for overlayfs"
+Avoid this inconsistent state and  system crash by acquiring
+the rtnl lock for the entire duration of device initialization.
+Re-factor the code to remove the rtnl lock from the individual function
+and acquire and release it from the caller.
 
-Kairui Song <kasong@redhat.com>
-    x86/boot: Fix kexec booting failure in the SEV bit detection code
+Fixes: 1ac5a4047975 ("RDMA/bnxt_re: Add bnxt_re RoCE driver")
+Fixes: 6e04b1035689 ("RDMA/bnxt_re: Fix broken RoCE driver due to recent L2 driver changes")
+Signed-off-by: Selvin Xavier <selvin.xavier@broadcom.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/infiniband/hw/bnxt_re/main.c |   93 ++++++++++++++---------------------
+ 1 file changed, 38 insertions(+), 55 deletions(-)
 
-Arindam Nath <arindam.nath@amd.com>
-    iommu/amd: Return devid as alias for ACPI HID devices
-
-Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-    powerpc/numa: Use associativity if VPHN hcall is successful
-
-Michael Neuling <mikey@neuling.org>
-    powerpc/tm: Avoid possible userspace r1 corruption on reclaim
-
-Michael Neuling <mikey@neuling.org>
-    powerpc/tm: Fix userspace r13 corruption
-
-Daniel Kurtz <djkurtz@chromium.org>
-    pinctrl/amd: poll InterruptEnable bits in amd_gpio_irq_set_type
-
-Heiko Stuebner <heiko@sntech.de>
-    iommu/rockchip: Free irqs in shutdown handler
-
-James Cowgill <jcowgill@debian.org>
-    RISC-V: include linux/ftrace.h in asm-prototypes.h
-
-Selvin Xavier <selvin.xavier@broadcom.com>
-    RDMA/bnxt_re: Fix system crash during RDMA resource initialization
-
-Tao Ren <taoren@fb.com>
-    clocksource/drivers/fttmr010: Fix set_next_event handler
-
-Nathan Chancellor <natechancellor@gmail.com>
-    net/mlx4: Use cpumask_available for eq->affinity_mask
-
-John Fastabend <john.fastabend@gmail.com>
-    bpf: test_maps, only support ESTABLISHED socks
-
-John Fastabend <john.fastabend@gmail.com>
-    bpf: sockmap, fix transition through disconnect without close
-
-John Fastabend <john.fastabend@gmail.com>
-    bpf: sockmap only allow ESTABLISHED sock state
-
-Johannes Thumshirn <jthumshirn@suse.de>
-    scsi: sd: don't crash the host on invalid commands
-
-Wen Xiong <wenxiong@linux.vnet.ibm.com>
-    scsi: ipr: System hung while dlpar adding primary ipr adapter back
-
-Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
-    drm: mali-dp: Call drm_crtc_vblank_reset on device init
-
-James Smart <jsmart2021@gmail.com>
-    scsi: lpfc: Synchronize access to remoteport via rport
-
-Majd Dibbiny <majd@mellanox.com>
-    RDMA/uverbs: Fix validity check for modify QP
-
-Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-    PCI: dwc: Fix scheduling while atomic issues
-
-Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
-    qed: Do not add VLAN 0 tag to untagged frames in multi-function mode.
-
-Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
-    qed: Fix populating the invalid stag value in multi function mode.
-
-YueHaibing <yuehaibing@huawei.com>
-    net/smc: fix sizeof to int comparison
-
-Ursula Braun <ubraun@linux.ibm.com>
-    net/smc: fix non-blocking connect problem
-
-Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-    ravb: do not write 1 to reserved bits
-
-Christian Lamparter <chunkeey@gmail.com>
-    net: emac: fix fixed-link setup for the RTL8363SB switch
-
-Sabrina Dubroca <sd@queasysnail.net>
-    selftests: pmtu: properly redirect stderr to /dev/null
-
-Michael Schmitz <schmitzmic@gmail.com>
-    Input: atakbd - fix Atari CapsLock behaviour
-
-Andreas Schwab <schwab@linux-m68k.org>
-    Input: atakbd - fix Atari keymap
-
-Alexander Shishkin <alexander.shishkin@linux.intel.com>
-    intel_th: pci: Add Ice Lake PCH support
-
-Laura Abbott <labbott@redhat.com>
-    scsi: ibmvscsis: Ensure partition name is properly NUL terminated
-
-Laura Abbott <labbott@redhat.com>
-    scsi: ibmvscsis: Fix a stringop-overflow warning
-
-Keerthy <j-keerthy@ti.com>
-    clocksource/drivers/ti-32k: Add CLOCK_SOURCE_SUSPEND_NONSTOP flag for non-am43 SoCs
-
-Steve Wise <swise@opengridcomputing.com>
-    cxgb4: fix abort_req_rss6 struct
-
-Marek Lindner <mareklindner@neomailbox.ch>
-    batman-adv: fix hardif_neigh refcount on queue_work() failure
-
-Marek Lindner <mareklindner@neomailbox.ch>
-    batman-adv: fix backbone_gw refcount on queue_work() failure
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Prevent duplicated tvlv handler
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Prevent duplicated global TT entry
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Prevent duplicated softif_vlan entry
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Prevent duplicated nc_node entry
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Prevent duplicated gateway_node entry
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Fix segfault when writing to sysfs elp_interval
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Fix segfault when writing to throughput_override
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Avoid probe ELP information leak
-
-Linus Walleij <linus.walleij@linaro.org>
-    spi: gpio: Fix copy-and-paste error
-
-Jozef Balga <jozef.balga@gmail.com>
-    media: af9035: prevent buffer overflow on write
-
-Sanyog Kale <sanyog.r.kale@intel.com>
-    soundwire: Fix acquiring bus lock twice during master release
-
-Shreyas NC <shreyas.nc@intel.com>
-    soundwire: Fix incorrect exit after configuring stream
-
-Shreyas NC <shreyas.nc@intel.com>
-    soundwire: Fix duplicate stream state assignment
-
-
--------------
-
-Diffstat:
-
- Makefile                                     |   4 +-
- arch/arc/Makefile                            |  24 +-----
- arch/powerpc/kernel/tm.S                     |  20 ++++-
- arch/powerpc/mm/numa.c                       |   4 +-
- arch/riscv/include/asm/asm-prototypes.h      |   7 ++
- arch/x86/boot/compressed/mem_encrypt.S       |  19 -----
- drivers/clocksource/timer-fttmr010.c         |  18 +++--
- drivers/clocksource/timer-ti-32k.c           |   3 +
- drivers/gpu/drm/arm/malidp_drv.c             |   1 +
- drivers/hwtracing/intel_th/pci.c             |   5 ++
- drivers/infiniband/core/uverbs_cmd.c         |  68 +++++++++++------
- drivers/infiniband/hw/bnxt_re/main.c         |  93 ++++++++++-------------
- drivers/input/keyboard/atakbd.c              |  74 +++++++------------
- drivers/iommu/amd_iommu.c                    |   6 ++
- drivers/iommu/rockchip-iommu.c               |   6 ++
- drivers/media/usb/dvb-usb-v2/af9035.c        |   6 +-
- drivers/net/ethernet/chelsio/cxgb4/t4_msg.h  |   1 -
- drivers/net/ethernet/ibm/emac/core.c         |  15 ++--
- drivers/net/ethernet/mellanox/mlx4/eq.c      |   3 +-
- drivers/net/ethernet/qlogic/qed/qed_dcbx.c   |   9 ++-
- drivers/net/ethernet/qlogic/qed/qed_dcbx.h   |   1 +
- drivers/net/ethernet/qlogic/qed/qed_dev.c    |  15 +++-
- drivers/net/ethernet/qlogic/qed/qed_hsi.h    |   4 +
- drivers/net/ethernet/renesas/ravb.h          |   5 ++
- drivers/net/ethernet/renesas/ravb_main.c     |  11 +--
- drivers/net/ethernet/renesas/ravb_ptp.c      |   2 +-
- drivers/pci/controller/dwc/pcie-designware.c |   8 +-
- drivers/pci/controller/dwc/pcie-designware.h |   3 +-
- drivers/pinctrl/pinctrl-amd.c                |  33 ++++++---
- drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c     |   5 +-
- drivers/scsi/ipr.c                           | 106 +++++++++++++++------------
- drivers/scsi/ipr.h                           |   1 +
- drivers/scsi/lpfc/lpfc_attr.c                |  15 ++--
- drivers/scsi/lpfc/lpfc_debugfs.c             |  10 +--
- drivers/scsi/lpfc/lpfc_nvme.c                |  11 ++-
- drivers/scsi/sd.c                            |   3 +-
- drivers/soundwire/stream.c                   |  23 ++++--
- drivers/spi/spi-gpio.c                       |   4 +-
- fs/namespace.c                               |   7 +-
- include/linux/huge_mm.h                      |   2 +-
- kernel/bpf/sockmap.c                         |  91 ++++++++++++++++++-----
- mm/huge_memory.c                             |  10 +--
- mm/mremap.c                                  |  30 ++++----
- net/batman-adv/bat_v_elp.c                   |  10 ++-
- net/batman-adv/bridge_loop_avoidance.c       |  10 ++-
- net/batman-adv/gateway_client.c              |  11 ++-
- net/batman-adv/network-coding.c              |  27 ++++---
- net/batman-adv/soft-interface.c              |  25 +++++--
- net/batman-adv/sysfs.c                       |  30 +++++---
- net/batman-adv/translation-table.c           |   6 +-
- net/batman-adv/tvlv.c                        |   8 +-
- net/smc/af_smc.c                             |   7 +-
- net/smc/smc_clc.c                            |  14 ++--
- tools/testing/selftests/bpf/test_maps.c      |  10 ++-
- tools/testing/selftests/net/pmtu.sh          |   4 +-
- 55 files changed, 563 insertions(+), 385 deletions(-)
+--- a/drivers/infiniband/hw/bnxt_re/main.c
++++ b/drivers/infiniband/hw/bnxt_re/main.c
+@@ -78,7 +78,7 @@ static struct list_head bnxt_re_dev_list
+ /* Mutex to protect the list of bnxt_re devices added */
+ static DEFINE_MUTEX(bnxt_re_dev_lock);
+ static struct workqueue_struct *bnxt_re_wq;
+-static void bnxt_re_ib_unreg(struct bnxt_re_dev *rdev, bool lock_wait);
++static void bnxt_re_ib_unreg(struct bnxt_re_dev *rdev);
+ 
+ /* SR-IOV helper functions */
+ 
+@@ -182,7 +182,7 @@ static void bnxt_re_shutdown(void *p)
+ 	if (!rdev)
+ 		return;
+ 
+-	bnxt_re_ib_unreg(rdev, false);
++	bnxt_re_ib_unreg(rdev);
+ }
+ 
+ static void bnxt_re_stop_irq(void *handle)
+@@ -251,7 +251,7 @@ static struct bnxt_ulp_ops bnxt_re_ulp_o
+ /* Driver registration routines used to let the networking driver (bnxt_en)
+  * to know that the RoCE driver is now installed
+  */
+-static int bnxt_re_unregister_netdev(struct bnxt_re_dev *rdev, bool lock_wait)
++static int bnxt_re_unregister_netdev(struct bnxt_re_dev *rdev)
+ {
+ 	struct bnxt_en_dev *en_dev;
+ 	int rc;
+@@ -260,14 +260,9 @@ static int bnxt_re_unregister_netdev(str
+ 		return -EINVAL;
+ 
+ 	en_dev = rdev->en_dev;
+-	/* Acquire rtnl lock if it is not invokded from netdev event */
+-	if (lock_wait)
+-		rtnl_lock();
+ 
+ 	rc = en_dev->en_ops->bnxt_unregister_device(rdev->en_dev,
+ 						    BNXT_ROCE_ULP);
+-	if (lock_wait)
+-		rtnl_unlock();
+ 	return rc;
+ }
+ 
+@@ -281,14 +276,12 @@ static int bnxt_re_register_netdev(struc
+ 
+ 	en_dev = rdev->en_dev;
+ 
+-	rtnl_lock();
+ 	rc = en_dev->en_ops->bnxt_register_device(en_dev, BNXT_ROCE_ULP,
+ 						  &bnxt_re_ulp_ops, rdev);
+-	rtnl_unlock();
+ 	return rc;
+ }
+ 
+-static int bnxt_re_free_msix(struct bnxt_re_dev *rdev, bool lock_wait)
++static int bnxt_re_free_msix(struct bnxt_re_dev *rdev)
+ {
+ 	struct bnxt_en_dev *en_dev;
+ 	int rc;
+@@ -298,13 +291,9 @@ static int bnxt_re_free_msix(struct bnxt
+ 
+ 	en_dev = rdev->en_dev;
+ 
+-	if (lock_wait)
+-		rtnl_lock();
+ 
+ 	rc = en_dev->en_ops->bnxt_free_msix(rdev->en_dev, BNXT_ROCE_ULP);
+ 
+-	if (lock_wait)
+-		rtnl_unlock();
+ 	return rc;
+ }
+ 
+@@ -320,7 +309,6 @@ static int bnxt_re_request_msix(struct b
+ 
+ 	num_msix_want = min_t(u32, BNXT_RE_MAX_MSIX, num_online_cpus());
+ 
+-	rtnl_lock();
+ 	num_msix_got = en_dev->en_ops->bnxt_request_msix(en_dev, BNXT_ROCE_ULP,
+ 							 rdev->msix_entries,
+ 							 num_msix_want);
+@@ -335,7 +323,6 @@ static int bnxt_re_request_msix(struct b
+ 	}
+ 	rdev->num_msix = num_msix_got;
+ done:
+-	rtnl_unlock();
+ 	return rc;
+ }
+ 
+@@ -358,24 +345,18 @@ static void bnxt_re_fill_fw_msg(struct b
+ 	fw_msg->timeout = timeout;
+ }
+ 
+-static int bnxt_re_net_ring_free(struct bnxt_re_dev *rdev, u16 fw_ring_id,
+-				 bool lock_wait)
++static int bnxt_re_net_ring_free(struct bnxt_re_dev *rdev, u16 fw_ring_id)
+ {
+ 	struct bnxt_en_dev *en_dev = rdev->en_dev;
+ 	struct hwrm_ring_free_input req = {0};
+ 	struct hwrm_ring_free_output resp;
+ 	struct bnxt_fw_msg fw_msg;
+-	bool do_unlock = false;
+ 	int rc = -EINVAL;
+ 
+ 	if (!en_dev)
+ 		return rc;
+ 
+ 	memset(&fw_msg, 0, sizeof(fw_msg));
+-	if (lock_wait) {
+-		rtnl_lock();
+-		do_unlock = true;
+-	}
+ 
+ 	bnxt_re_init_hwrm_hdr(rdev, (void *)&req, HWRM_RING_FREE, -1, -1);
+ 	req.ring_type = RING_ALLOC_REQ_RING_TYPE_L2_CMPL;
+@@ -386,8 +367,6 @@ static int bnxt_re_net_ring_free(struct
+ 	if (rc)
+ 		dev_err(rdev_to_dev(rdev),
+ 			"Failed to free HW ring:%d :%#x", req.ring_id, rc);
+-	if (do_unlock)
+-		rtnl_unlock();
+ 	return rc;
+ }
+ 
+@@ -405,7 +384,6 @@ static int bnxt_re_net_ring_alloc(struct
+ 		return rc;
+ 
+ 	memset(&fw_msg, 0, sizeof(fw_msg));
+-	rtnl_lock();
+ 	bnxt_re_init_hwrm_hdr(rdev, (void *)&req, HWRM_RING_ALLOC, -1, -1);
+ 	req.enables = 0;
+ 	req.page_tbl_addr =  cpu_to_le64(dma_arr[0]);
+@@ -426,27 +404,21 @@ static int bnxt_re_net_ring_alloc(struct
+ 	if (!rc)
+ 		*fw_ring_id = le16_to_cpu(resp.ring_id);
+ 
+-	rtnl_unlock();
+ 	return rc;
+ }
+ 
+ static int bnxt_re_net_stats_ctx_free(struct bnxt_re_dev *rdev,
+-				      u32 fw_stats_ctx_id, bool lock_wait)
++				      u32 fw_stats_ctx_id)
+ {
+ 	struct bnxt_en_dev *en_dev = rdev->en_dev;
+ 	struct hwrm_stat_ctx_free_input req = {0};
+ 	struct bnxt_fw_msg fw_msg;
+-	bool do_unlock = false;
+ 	int rc = -EINVAL;
+ 
+ 	if (!en_dev)
+ 		return rc;
+ 
+ 	memset(&fw_msg, 0, sizeof(fw_msg));
+-	if (lock_wait) {
+-		rtnl_lock();
+-		do_unlock = true;
+-	}
+ 
+ 	bnxt_re_init_hwrm_hdr(rdev, (void *)&req, HWRM_STAT_CTX_FREE, -1, -1);
+ 	req.stat_ctx_id = cpu_to_le32(fw_stats_ctx_id);
+@@ -457,8 +429,6 @@ static int bnxt_re_net_stats_ctx_free(st
+ 		dev_err(rdev_to_dev(rdev),
+ 			"Failed to free HW stats context %#x", rc);
+ 
+-	if (do_unlock)
+-		rtnl_unlock();
+ 	return rc;
+ }
+ 
+@@ -478,7 +448,6 @@ static int bnxt_re_net_stats_ctx_alloc(s
+ 		return rc;
+ 
+ 	memset(&fw_msg, 0, sizeof(fw_msg));
+-	rtnl_lock();
+ 
+ 	bnxt_re_init_hwrm_hdr(rdev, (void *)&req, HWRM_STAT_CTX_ALLOC, -1, -1);
+ 	req.update_period_ms = cpu_to_le32(1000);
+@@ -490,7 +459,6 @@ static int bnxt_re_net_stats_ctx_alloc(s
+ 	if (!rc)
+ 		*fw_stats_ctx_id = le32_to_cpu(resp.stat_ctx_id);
+ 
+-	rtnl_unlock();
+ 	return rc;
+ }
+ 
+@@ -929,19 +897,19 @@ fail:
+ 	return rc;
+ }
+ 
+-static void bnxt_re_free_nq_res(struct bnxt_re_dev *rdev, bool lock_wait)
++static void bnxt_re_free_nq_res(struct bnxt_re_dev *rdev)
+ {
+ 	int i;
+ 
+ 	for (i = 0; i < rdev->num_msix - 1; i++) {
+-		bnxt_re_net_ring_free(rdev, rdev->nq[i].ring_id, lock_wait);
++		bnxt_re_net_ring_free(rdev, rdev->nq[i].ring_id);
+ 		bnxt_qplib_free_nq(&rdev->nq[i]);
+ 	}
+ }
+ 
+-static void bnxt_re_free_res(struct bnxt_re_dev *rdev, bool lock_wait)
++static void bnxt_re_free_res(struct bnxt_re_dev *rdev)
+ {
+-	bnxt_re_free_nq_res(rdev, lock_wait);
++	bnxt_re_free_nq_res(rdev);
+ 
+ 	if (rdev->qplib_res.dpi_tbl.max) {
+ 		bnxt_qplib_dealloc_dpi(&rdev->qplib_res,
+@@ -1219,7 +1187,7 @@ static int bnxt_re_setup_qos(struct bnxt
+ 	return 0;
+ }
+ 
+-static void bnxt_re_ib_unreg(struct bnxt_re_dev *rdev, bool lock_wait)
++static void bnxt_re_ib_unreg(struct bnxt_re_dev *rdev)
+ {
+ 	int i, rc;
+ 
+@@ -1234,28 +1202,27 @@ static void bnxt_re_ib_unreg(struct bnxt
+ 		cancel_delayed_work(&rdev->worker);
+ 
+ 	bnxt_re_cleanup_res(rdev);
+-	bnxt_re_free_res(rdev, lock_wait);
++	bnxt_re_free_res(rdev);
+ 
+ 	if (test_and_clear_bit(BNXT_RE_FLAG_RCFW_CHANNEL_EN, &rdev->flags)) {
+ 		rc = bnxt_qplib_deinit_rcfw(&rdev->rcfw);
+ 		if (rc)
+ 			dev_warn(rdev_to_dev(rdev),
+ 				 "Failed to deinitialize RCFW: %#x", rc);
+-		bnxt_re_net_stats_ctx_free(rdev, rdev->qplib_ctx.stats.fw_id,
+-					   lock_wait);
++		bnxt_re_net_stats_ctx_free(rdev, rdev->qplib_ctx.stats.fw_id);
+ 		bnxt_qplib_free_ctx(rdev->en_dev->pdev, &rdev->qplib_ctx);
+ 		bnxt_qplib_disable_rcfw_channel(&rdev->rcfw);
+-		bnxt_re_net_ring_free(rdev, rdev->rcfw.creq_ring_id, lock_wait);
++		bnxt_re_net_ring_free(rdev, rdev->rcfw.creq_ring_id);
+ 		bnxt_qplib_free_rcfw_channel(&rdev->rcfw);
+ 	}
+ 	if (test_and_clear_bit(BNXT_RE_FLAG_GOT_MSIX, &rdev->flags)) {
+-		rc = bnxt_re_free_msix(rdev, lock_wait);
++		rc = bnxt_re_free_msix(rdev);
+ 		if (rc)
+ 			dev_warn(rdev_to_dev(rdev),
+ 				 "Failed to free MSI-X vectors: %#x", rc);
+ 	}
+ 	if (test_and_clear_bit(BNXT_RE_FLAG_NETDEV_REGISTERED, &rdev->flags)) {
+-		rc = bnxt_re_unregister_netdev(rdev, lock_wait);
++		rc = bnxt_re_unregister_netdev(rdev);
+ 		if (rc)
+ 			dev_warn(rdev_to_dev(rdev),
+ 				 "Failed to unregister with netdev: %#x", rc);
+@@ -1276,6 +1243,12 @@ static int bnxt_re_ib_reg(struct bnxt_re
+ {
+ 	int i, j, rc;
+ 
++	bool locked;
++
++	/* Acquire rtnl lock through out this function */
++	rtnl_lock();
++	locked = true;
++
+ 	/* Registered a new RoCE device instance to netdev */
+ 	rc = bnxt_re_register_netdev(rdev);
+ 	if (rc) {
+@@ -1374,12 +1347,16 @@ static int bnxt_re_ib_reg(struct bnxt_re
+ 		schedule_delayed_work(&rdev->worker, msecs_to_jiffies(30000));
+ 	}
+ 
++	rtnl_unlock();
++	locked = false;
++
+ 	/* Register ib dev */
+ 	rc = bnxt_re_register_ib(rdev);
+ 	if (rc) {
+ 		pr_err("Failed to register with IB: %#x\n", rc);
+ 		goto fail;
+ 	}
++	set_bit(BNXT_RE_FLAG_IBDEV_REGISTERED, &rdev->flags);
+ 	dev_info(rdev_to_dev(rdev), "Device registered successfully");
+ 	for (i = 0; i < ARRAY_SIZE(bnxt_re_attributes); i++) {
+ 		rc = device_create_file(&rdev->ibdev.dev,
+@@ -1395,7 +1372,6 @@ static int bnxt_re_ib_reg(struct bnxt_re
+ 			goto fail;
+ 		}
+ 	}
+-	set_bit(BNXT_RE_FLAG_IBDEV_REGISTERED, &rdev->flags);
+ 	ib_get_eth_speed(&rdev->ibdev, 1, &rdev->active_speed,
+ 			 &rdev->active_width);
+ 	set_bit(BNXT_RE_FLAG_ISSUE_ROCE_STATS, &rdev->flags);
+@@ -1404,17 +1380,21 @@ static int bnxt_re_ib_reg(struct bnxt_re
+ 
+ 	return 0;
+ free_sctx:
+-	bnxt_re_net_stats_ctx_free(rdev, rdev->qplib_ctx.stats.fw_id, true);
++	bnxt_re_net_stats_ctx_free(rdev, rdev->qplib_ctx.stats.fw_id);
+ free_ctx:
+ 	bnxt_qplib_free_ctx(rdev->en_dev->pdev, &rdev->qplib_ctx);
+ disable_rcfw:
+ 	bnxt_qplib_disable_rcfw_channel(&rdev->rcfw);
+ free_ring:
+-	bnxt_re_net_ring_free(rdev, rdev->rcfw.creq_ring_id, true);
++	bnxt_re_net_ring_free(rdev, rdev->rcfw.creq_ring_id);
+ free_rcfw:
+ 	bnxt_qplib_free_rcfw_channel(&rdev->rcfw);
+ fail:
+-	bnxt_re_ib_unreg(rdev, true);
++	if (!locked)
++		rtnl_lock();
++	bnxt_re_ib_unreg(rdev);
++	rtnl_unlock();
++
+ 	return rc;
+ }
+ 
+@@ -1567,7 +1547,7 @@ static int bnxt_re_netdev_event(struct n
+ 		 */
+ 		if (atomic_read(&rdev->sched_count) > 0)
+ 			goto exit;
+-		bnxt_re_ib_unreg(rdev, false);
++		bnxt_re_ib_unreg(rdev);
+ 		bnxt_re_remove_one(rdev);
+ 		bnxt_re_dev_unreg(rdev);
+ 		break;
+@@ -1646,7 +1626,10 @@ static void __exit bnxt_re_mod_exit(void
+ 		 */
+ 		flush_workqueue(bnxt_re_wq);
+ 		bnxt_re_dev_stop(rdev);
+-		bnxt_re_ib_unreg(rdev, true);
++		/* Acquire the rtnl_lock as the L2 resources are freed here */
++		rtnl_lock();
++		bnxt_re_ib_unreg(rdev);
++		rtnl_unlock();
+ 		bnxt_re_remove_one(rdev);
+ 		bnxt_re_dev_unreg(rdev);
+ 	}
 
 
