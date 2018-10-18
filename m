@@ -5,60 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABF3C67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7110CC67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9A6B20866
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:48:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27F6520866
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:48:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YhXsdHLC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9A6B20866
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IsjnurNq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27F6520866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727550AbeJSGvW (ORCPT
+        id S1727592AbeJSGvY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 02:51:22 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46764 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727474AbeJSGvV (ORCPT
+        Fri, 19 Oct 2018 02:51:24 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35397 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727474AbeJSGvX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 02:51:21 -0400
-Received: by mail-pf1-f193.google.com with SMTP id r64-v6so15534482pfb.13;
-        Thu, 18 Oct 2018 15:48:11 -0700 (PDT)
+        Fri, 19 Oct 2018 02:51:23 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 32-v6so3684342pgu.2;
+        Thu, 18 Oct 2018 15:48:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=snE79BS2V8O8WQJmvjxN5XBTUF3JVF3Wmy1gffetaI8=;
-        b=YhXsdHLCgxwsaHuwszA+mzAJ9uKZPbtiZ58fxf1wGV3Fg/iKYbITE9TzOCIlkgBpbC
-         nA7WboR2ADr/J7wldR6SGviOoyHk/YtdTWSWRJ+fRbmMNHSJtvSs/oyeXpQNvXzr/JOP
-         91vrjxG9KO+IbZ1OSllX0WIMfsFFtr5MX90X6OHCBxhckKmPW3qUdb5EcLXjvMk+C/Br
-         3tKwyk63f9LwJlxhSRNf75iypRw4NDkJ2NgkgcZ6/tGNoVwg6dmOS8RIixwc3V+CYZ1d
-         iCG/mIsPZtwHE0GR+afoJE/2YWtnHd401Ug62LVTEGe2KPlPtyRL0W0Uz9Vr49vvDYmT
-         n+zA==
+        bh=hBF4GTCYQtWD7OTyqHilkMQ3AcRwpf9bLhC6OceDmtA=;
+        b=IsjnurNqMSNRl0sIuQsRMfniBJGTCnIsdWRuifa0ndgANP9IAYYJQaAkl81R/yQHw/
+         OqH9Zrhe/GDD1nqNiiWmw9gcoIqktJSe7lZ3PVbDxbJ4osDosTCD2MA5r0gvSlJdqgnZ
+         FmZ4uernFdSA64abYrSSAbj0voH9bMlnraL3BD63u8+ts3WxvtbLLJglGlSi5ws34Mop
+         ekrtCc9pYhAAJtLWmNkC5orvi3+Z0isYI6BtgIo02r+FBFtvTGgj8kgBz5LbuIMtHMLT
+         l0Yp9SmDUJ5FR0t86jPxyy8QYtAx2vOl51Iqcpno9wVuHU2zDxP1yv/e1jDoFayHapw9
+         p5kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=snE79BS2V8O8WQJmvjxN5XBTUF3JVF3Wmy1gffetaI8=;
-        b=W/fL4r5vlRJ1pK5pkOWDWNbP7VK2D7JayAyasA/3jBCVlR1PDYCpanCmSPMrzD1dLe
-         s1UBjPMwjXkDBI81BzjEiWTAvtcJM4qtuSeTq91GanZz7jcG8Kzw1oiThJKsW/2i23sD
-         PTxzJWp2LdLBY5h16rAWtS0Sm8OHe40vfYcyVUYlYOUajUSa+4X4DxJOL81iCJftF/tF
-         a7OHjKLh0q/zDiHrcUKxyO9U8sQ48FVqRoIqpnzE0cCfPiB+SriOz06YGgb1xTDVh0QG
-         6sT9AFU0arZGH73e9UNsjG8CXh547yeOuoDijCy+DSwkm/idqmlSxUTX01b4vw8H1pux
-         7BvQ==
-X-Gm-Message-State: ABuFfohLhlwEpn48fYBnDRtXNxdSUYZHYSYVyz9ZdEUagWekWO4SLTpz
-        zDFheSvuOz1F3cUQyKPie1o=
-X-Google-Smtp-Source: ACcGV63Rb5p2M4rnpwF8wcGiScKbqYzQPnw5D+2V5/cMFkw+Sq2ZEsiM0lYgT8oJuzcbvviaovROwQ==
-X-Received: by 2002:a63:785:: with SMTP id 127-v6mr4506236pgh.129.1539902890938;
-        Thu, 18 Oct 2018 15:48:10 -0700 (PDT)
+        bh=hBF4GTCYQtWD7OTyqHilkMQ3AcRwpf9bLhC6OceDmtA=;
+        b=QWQGU8M8nGntiy2bbTW4pWWSDtYHEnJNYaDZhkyd0evJeWzFEa/OxmpaJmUNK+DpSz
+         cgUrZGCA9RVOvz6xY8i1kAgxh2SglAeMkkfNDK6TlpJEYvfp5FPiV+gRAy/Zgles3y4+
+         L48DJbF6qizqHTRAEtOPHt9iRHAuLvWKi26Nsqml8t4hVnoAhmZoVyyFEbnL+11f3ktO
+         bz1vBeh+fDpbl2QXs4i1gsdckQRwVOZa7yzsGUP2hoSaOqhbkk8vFEcwfe43PmvIgkX6
+         MmKawmRuaEZ5xserNolHK/zZLF1x15rfuq6eopadXaOFwhwptZVIek7RyU4GxHKxnmcU
+         4DUQ==
+X-Gm-Message-State: ABuFfoggdE14vc8XKPvJg+t+vYSVxmQ8oNlS5miWPC8F1U4O6wcrC4LO
+        cnep/HjBQ29QQ+gJL8zPkOI=
+X-Google-Smtp-Source: ACcGV61LFJDW7XEZjTnBXaCmFQNnW0lf/zFG9MdU2pjZtJMOhfPrGSXAKiaKY7qh6o0qp0viQpNSfg==
+X-Received: by 2002:a63:e601:: with SMTP id g1-v6mr30604733pgh.290.1539902893223;
+        Thu, 18 Oct 2018 15:48:13 -0700 (PDT)
 Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id v81-v6sm38129268pfj.25.2018.10.18.15.48.09
+        by smtp.gmail.com with ESMTPSA id v81-v6sm38129268pfj.25.2018.10.18.15.48.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 18 Oct 2018 15:48:10 -0700 (PDT)
+        Thu, 18 Oct 2018 15:48:12 -0700 (PDT)
 From:   frowand.list@gmail.com
 To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
@@ -68,9 +67,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH v5 05/18] of: overlay: use prop add changeset entry for property in new nodes
-Date:   Thu, 18 Oct 2018 15:46:23 -0700
-Message-Id: <1539902796-8382-6-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH v5 07/18] of: dynamic: change type of of_{at,de}tach_node() to void
+Date:   Thu, 18 Oct 2018 15:46:25 -0700
+Message-Id: <1539902796-8382-8-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1539902796-8382-1-git-send-email-frowand.list@gmail.com>
 References: <1539902796-8382-1-git-send-email-frowand.list@gmail.com>
@@ -81,324 +80,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-The changeset entry 'update property' was used for new properties in
-an overlay instead of 'add property'.
-
-The decision of whether to use 'update property' was based on whether
-the property already exists in the subtree where the node is being
-spliced into.  At the top level of creating a changeset describing the
-overlay, the target node is in the live devicetree, so checking whether
-the property exists in the target node returns the correct result.
-As soon as the changeset creation algorithm recurses into a new node,
-the target is no longer in the live devicetree, but is instead in the
-detached overlay tree, thus all properties are incorrectly found to
-already exist in the target.
-
-This fix will expose another devicetree bug that will be fixed
-in the following patch in the series.
-
-When this patch is applied the errors reported by the devictree
-unittest will change, and the unittest results will change from:
-
-   ### dt-test ### end of unittest - 210 passed, 0 failed
-
-to
-
-   ### dt-test ### end of unittest - 203 passed, 7 failed
+of_attach_node() and of_detach_node() always return zero, so
+their return value is meaningless.  Change their type to void
+and fix all callers to ignore return value.
 
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
- drivers/of/overlay.c | 112 ++++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 74 insertions(+), 38 deletions(-)
+ arch/powerpc/platforms/pseries/dlpar.c    | 13 ++-----------
+ arch/powerpc/platforms/pseries/reconfig.c |  6 +-----
+ drivers/of/dynamic.c                      |  9 ++-------
+ include/linux/of.h                        |  4 ++--
+ 4 files changed, 7 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index 32cfee68f2e3..94740f4ee34c 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -24,6 +24,26 @@
- #include "of_private.h"
+diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
+index e3010b14aea5..0027eea94a8b 100644
+--- a/arch/powerpc/platforms/pseries/dlpar.c
++++ b/arch/powerpc/platforms/pseries/dlpar.c
+@@ -244,15 +244,9 @@ struct device_node *dlpar_configure_connector(__be32 drc_index,
  
- /**
-+ * struct target - info about current target node as recursing through overlay
-+ * @np:			node where current level of overlay will be applied
-+ * @in_livetree:	@np is a node in the live devicetree
-+ *
-+ * Used in the algorithm to create the portion of a changeset that describes
-+ * an overlay fragment, which is a devicetree subtree.  Initially @np is a node
-+ * in the live devicetree where the overlay subtree is targeted to be grafted
-+ * into.  When recursing to the next level of the overlay subtree, the target
-+ * also recurses to the next level of the live devicetree, as long as overlay
-+ * subtree node also exists in the live devicetree.  When a node in the overlay
-+ * subtree does not exist at the same level in the live devicetree, target->np
-+ * points to a newly allocated node, and all subsequent targets in the subtree
-+ * will be newly allocated nodes.
-+ */
-+struct target {
-+	struct device_node *np;
-+	bool in_livetree;
-+};
-+
-+/**
-  * struct fragment - info about fragment nodes in overlay expanded device tree
-  * @target:	target of the overlay operation
-  * @overlay:	pointer to the __overlay__ node
-@@ -72,8 +92,7 @@ static int devicetree_corrupt(void)
- }
- 
- static int build_changeset_next_level(struct overlay_changeset *ovcs,
--		struct device_node *target_node,
--		const struct device_node *overlay_node);
-+		struct target *target, const struct device_node *overlay_node);
- 
- /*
-  * of_resolve_phandles() finds the largest phandle in the live tree.
-@@ -257,14 +276,17 @@ static struct property *dup_and_fixup_symbol_prop(
- /**
-  * add_changeset_property() - add @overlay_prop to overlay changeset
-  * @ovcs:		overlay changeset
-- * @target_node:	where to place @overlay_prop in live tree
-+ * @target:		where @overlay_prop will be placed
-  * @overlay_prop:	property to add or update, from overlay tree
-  * @is_symbols_prop:	1 if @overlay_prop is from node "/__symbols__"
-  *
-- * If @overlay_prop does not already exist in @target_node, add changeset entry
-- * to add @overlay_prop in @target_node, else add changeset entry to update
-+ * If @overlay_prop does not already exist in live devicetree, add changeset
-+ * entry to add @overlay_prop in @target, else add changeset entry to update
-  * value of @overlay_prop.
-  *
-+ * @target may be either in the live devicetree or in a new subtree that
-+ * is contained in the changeset.
-+ *
-  * Some special properties are not updated (no error returned).
-  *
-  * Update of property in symbols node is not allowed.
-@@ -273,20 +295,22 @@ static struct property *dup_and_fixup_symbol_prop(
-  * invalid @overlay.
-  */
- static int add_changeset_property(struct overlay_changeset *ovcs,
--		struct device_node *target_node,
--		struct property *overlay_prop,
-+		struct target *target, struct property *overlay_prop,
- 		bool is_symbols_prop)
+ int dlpar_attach_node(struct device_node *dn, struct device_node *parent)
  {
- 	struct property *new_prop = NULL, *prop;
- 	int ret = 0;
- 
--	prop = of_find_property(target_node, overlay_prop->name, NULL);
+-	int rc;
 -
- 	if (!of_prop_cmp(overlay_prop->name, "name") ||
- 	    !of_prop_cmp(overlay_prop->name, "phandle") ||
- 	    !of_prop_cmp(overlay_prop->name, "linux,phandle"))
- 		return 0;
+ 	dn->parent = parent;
  
-+	if (target->in_livetree)
-+		prop = of_find_property(target->np, overlay_prop->name, NULL);
-+	else
-+		prop = NULL;
-+
- 	if (is_symbols_prop) {
- 		if (prop)
- 			return -EINVAL;
-@@ -299,10 +323,10 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
- 		return -ENOMEM;
+-	rc = of_attach_node(dn);
+-	if (rc) {
+-		printk(KERN_ERR "Failed to add device node %pOF\n", dn);
+-		return rc;
+-	}
++	of_attach_node(dn);
  
- 	if (!prop)
--		ret = of_changeset_add_property(&ovcs->cset, target_node,
-+		ret = of_changeset_add_property(&ovcs->cset, target->np,
- 						new_prop);
- 	else
--		ret = of_changeset_update_property(&ovcs->cset, target_node,
-+		ret = of_changeset_update_property(&ovcs->cset, target->np,
- 						   new_prop);
- 
- 	if (ret) {
-@@ -315,14 +339,14 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
- 
- /**
-  * add_changeset_node() - add @node (and children) to overlay changeset
-- * @ovcs:		overlay changeset
-- * @target_node:	where to place @node in live tree
-- * @node:		node from within overlay device tree fragment
-+ * @ovcs:	overlay changeset
-+ * @target:	where @node will be placed in live tree or changeset
-+ * @node:	node from within overlay device tree fragment
-  *
-- * If @node does not already exist in @target_node, add changeset entry
-- * to add @node in @target_node.
-+ * If @node does not already exist in @target, add changeset entry
-+ * to add @node in @target.
-  *
-- * If @node already exists in @target_node, and the existing node has
-+ * If @node already exists in @target, and the existing node has
-  * a phandle, the overlay node is not allowed to have a phandle.
-  *
-  * If @node has child nodes, add the children recursively via
-@@ -355,15 +379,16 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
-  * invalid @overlay.
-  */
- static int add_changeset_node(struct overlay_changeset *ovcs,
--		struct device_node *target_node, struct device_node *node)
-+		struct target *target, struct device_node *node)
- {
- 	const char *node_kbasename;
- 	struct device_node *tchild;
-+	struct target target_child;
- 	int ret = 0;
- 
- 	node_kbasename = kbasename(node->full_name);
- 
--	for_each_child_of_node(target_node, tchild)
-+	for_each_child_of_node(target->np, tchild)
- 		if (!of_node_cmp(node_kbasename, kbasename(tchild->full_name)))
- 			break;
- 
-@@ -372,22 +397,28 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
- 		if (!tchild)
- 			return -ENOMEM;
- 
--		tchild->parent = target_node;
-+		tchild->parent = target->np;
- 		of_node_set_flag(tchild, OF_OVERLAY);
- 
- 		ret = of_changeset_attach_node(&ovcs->cset, tchild);
- 		if (ret)
- 			return ret;
- 
--		ret = build_changeset_next_level(ovcs, tchild, node);
-+		target_child.np = tchild;
-+		target_child.in_livetree = false;
-+
-+		ret = build_changeset_next_level(ovcs, &target_child, node);
- 		of_node_put(tchild);
- 		return ret;
- 	}
- 
--	if (node->phandle && tchild->phandle)
-+	if (node->phandle && tchild->phandle) {
- 		ret = -EINVAL;
--	else
--		ret = build_changeset_next_level(ovcs, tchild, node);
-+	} else {
-+		target_child.np = tchild;
-+		target_child.in_livetree = target->in_livetree;
-+		ret = build_changeset_next_level(ovcs, &target_child, node);
-+	}
- 	of_node_put(tchild);
- 
- 	return ret;
-@@ -396,7 +427,7 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
- /**
-  * build_changeset_next_level() - add level of overlay changeset
-  * @ovcs:		overlay changeset
-- * @target_node:	where to place @overlay_node in live tree
-+ * @target:		where to place @overlay_node in live tree
-  * @overlay_node:	node from within an overlay device tree fragment
-  *
-  * Add the properties (if any) and nodes (if any) from @overlay_node to the
-@@ -409,27 +440,26 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
-  * invalid @overlay_node.
-  */
- static int build_changeset_next_level(struct overlay_changeset *ovcs,
--		struct device_node *target_node,
--		const struct device_node *overlay_node)
-+		struct target *target, const struct device_node *overlay_node)
+ 	return 0;
+ }
+@@ -260,7 +254,6 @@ int dlpar_attach_node(struct device_node *dn, struct device_node *parent)
+ int dlpar_detach_node(struct device_node *dn)
  {
  	struct device_node *child;
- 	struct property *prop;
- 	int ret;
+-	int rc;
  
- 	for_each_property_of_node(overlay_node, prop) {
--		ret = add_changeset_property(ovcs, target_node, prop, 0);
-+		ret = add_changeset_property(ovcs, target, prop, 0);
- 		if (ret) {
- 			pr_debug("Failed to apply prop @%pOF/%s, err=%d\n",
--				 target_node, prop->name, ret);
-+				 target->np, prop->name, ret);
- 			return ret;
- 		}
+ 	child = of_get_next_child(dn, NULL);
+ 	while (child) {
+@@ -268,9 +261,7 @@ int dlpar_detach_node(struct device_node *dn)
+ 		child = of_get_next_child(dn, child);
  	}
  
- 	for_each_child_of_node(overlay_node, child) {
--		ret = add_changeset_node(ovcs, target_node, child);
-+		ret = add_changeset_node(ovcs, target, child);
- 		if (ret) {
- 			pr_debug("Failed to apply node @%pOF/%s, err=%d\n",
--				 target_node, child->name, ret);
-+				 target->np, child->name, ret);
- 			of_node_put(child);
- 			return ret;
- 		}
-@@ -442,17 +472,17 @@ static int build_changeset_next_level(struct overlay_changeset *ovcs,
-  * Add the properties from __overlay__ node to the @ovcs->cset changeset.
-  */
- static int build_changeset_symbols_node(struct overlay_changeset *ovcs,
--		struct device_node *target_node,
-+		struct target *target,
- 		const struct device_node *overlay_symbols_node)
- {
- 	struct property *prop;
- 	int ret;
+-	rc = of_detach_node(dn);
+-	if (rc)
+-		return rc;
++	of_detach_node(dn);
  
- 	for_each_property_of_node(overlay_symbols_node, prop) {
--		ret = add_changeset_property(ovcs, target_node, prop, 1);
-+		ret = add_changeset_property(ovcs, target, prop, 1);
- 		if (ret) {
- 			pr_debug("Failed to apply prop @%pOF/%s, err=%d\n",
--				 target_node, prop->name, ret);
-+				 target->np, prop->name, ret);
- 			return ret;
- 		}
+ 	of_node_put(dn);
+ 
+diff --git a/arch/powerpc/platforms/pseries/reconfig.c b/arch/powerpc/platforms/pseries/reconfig.c
+index 0e0208117e77..0b72098da454 100644
+--- a/arch/powerpc/platforms/pseries/reconfig.c
++++ b/arch/powerpc/platforms/pseries/reconfig.c
+@@ -47,11 +47,7 @@ static int pSeries_reconfig_add_node(const char *path, struct property *proplist
+ 		goto out_err;
  	}
-@@ -475,6 +505,7 @@ static int build_changeset_symbols_node(struct overlay_changeset *ovcs,
- static int build_changeset(struct overlay_changeset *ovcs)
- {
- 	struct fragment *fragment;
-+	struct target target;
- 	int fragments_count, i, ret;
  
- 	/*
-@@ -489,7 +520,9 @@ static int build_changeset(struct overlay_changeset *ovcs)
- 	for (i = 0; i < fragments_count; i++) {
- 		fragment = &ovcs->fragments[i];
+-	err = of_attach_node(np);
+-	if (err) {
+-		printk(KERN_ERR "Failed to add device node %s\n", path);
+-		goto out_err;
+-	}
++	of_attach_node(np);
  
--		ret = build_changeset_next_level(ovcs, fragment->target,
-+		target.np = fragment->target;
-+		target.in_livetree = true;
-+		ret = build_changeset_next_level(ovcs, &target,
- 						 fragment->overlay);
- 		if (ret) {
- 			pr_debug("apply failed '%pOF'\n", fragment->target);
-@@ -499,7 +532,10 @@ static int build_changeset(struct overlay_changeset *ovcs)
+ 	of_node_put(np->parent);
  
- 	if (ovcs->symbols_fragment) {
- 		fragment = &ovcs->fragments[ovcs->count - 1];
--		ret = build_changeset_symbols_node(ovcs, fragment->target,
-+
-+		target.np = fragment->target;
-+		target.in_livetree = true;
-+		ret = build_changeset_symbols_node(ovcs, &target,
- 						   fragment->overlay);
- 		if (ret) {
- 			pr_debug("apply failed '%pOF'\n", fragment->target);
-@@ -517,7 +553,7 @@ static int build_changeset(struct overlay_changeset *ovcs)
-  * 1) "target" property containing the phandle of the target
-  * 2) "target-path" property containing the path of the target
+diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+index 146681540487..beea792debb6 100644
+--- a/drivers/of/dynamic.c
++++ b/drivers/of/dynamic.c
+@@ -224,7 +224,7 @@ static void __of_attach_node(struct device_node *np)
+ /**
+  * of_attach_node() - Plug a device node into the tree and global list.
   */
--static struct device_node *find_target_node(struct device_node *info_node)
-+static struct device_node *find_target(struct device_node *info_node)
+-int of_attach_node(struct device_node *np)
++void of_attach_node(struct device_node *np)
  {
- 	struct device_node *node;
- 	const char *path;
-@@ -623,7 +659,7 @@ static int init_overlay_changeset(struct overlay_changeset *ovcs,
+ 	struct of_reconfig_data rd;
+ 	unsigned long flags;
+@@ -241,8 +241,6 @@ int of_attach_node(struct device_node *np)
+ 	mutex_unlock(&of_mutex);
  
- 		fragment = &fragments[cnt];
- 		fragment->overlay = overlay_node;
--		fragment->target = find_target_node(node);
-+		fragment->target = find_target(node);
- 		if (!fragment->target) {
- 			of_node_put(fragment->overlay);
- 			ret = -EINVAL;
+ 	of_reconfig_notify(OF_RECONFIG_ATTACH_NODE, &rd);
+-
+-	return 0;
+ }
+ 
+ void __of_detach_node(struct device_node *np)
+@@ -273,11 +271,10 @@ void __of_detach_node(struct device_node *np)
+ /**
+  * of_detach_node() - "Unplug" a node from the device tree.
+  */
+-int of_detach_node(struct device_node *np)
++void of_detach_node(struct device_node *np)
+ {
+ 	struct of_reconfig_data rd;
+ 	unsigned long flags;
+-	int rc = 0;
+ 
+ 	memset(&rd, 0, sizeof(rd));
+ 	rd.dn = np;
+@@ -291,8 +288,6 @@ int of_detach_node(struct device_node *np)
+ 	mutex_unlock(&of_mutex);
+ 
+ 	of_reconfig_notify(OF_RECONFIG_DETACH_NODE, &rd);
+-
+-	return rc;
+ }
+ EXPORT_SYMBOL_GPL(of_detach_node);
+ 
+diff --git a/include/linux/of.h b/include/linux/of.h
+index aa1dafaec6ae..72c593455019 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -406,8 +406,8 @@ extern int of_phandle_iterator_args(struct of_phandle_iterator *it,
+ #define OF_RECONFIG_REMOVE_PROPERTY	0x0004
+ #define OF_RECONFIG_UPDATE_PROPERTY	0x0005
+ 
+-extern int of_attach_node(struct device_node *);
+-extern int of_detach_node(struct device_node *);
++extern void of_attach_node(struct device_node *np);
++extern void of_detach_node(struct device_node *np);
+ 
+ #define of_match_ptr(_ptr)	(_ptr)
+ 
 -- 
 Frank Rowand <frank.rowand@sony.com>
 
