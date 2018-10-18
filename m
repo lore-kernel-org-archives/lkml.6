@@ -2,128 +2,100 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF220ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 00:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DB4ECDE42
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FD2E2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 00:56:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77BEC21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:01:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fllIh0Fs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FD2E2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VYDopYxw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77BEC21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbeJRIzB (ORCPT
+        id S1727349AbeJRI7u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 04:55:01 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43745 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726644AbeJRIzA (ORCPT
+        Thu, 18 Oct 2018 04:59:50 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:41384 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727019AbeJRI7u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 04:55:00 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n1-v6so31665703wrt.10
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 17:56:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2SWToVUA/ql3233vIUowK3fXJtf4wFVq/XsDPcJE7KE=;
-        b=fllIh0FsjWnA6fxDBhADTWP/h42AfGKwHG3sZ+6Ft+QlOqLeyV7QMhQTKLxZZwoIAI
-         ke1dPi+wwiAMtc2XW2cfyVaXQDpGoElmw4x9DTEK+CarT5BRgpV/zuCt/VqsEx2O/Pal
-         /gvUjwzWZQhk5jTitvuQOw9svAz/bh5p7/Sb7akZA4TXya8UysMf7INYOka0WD5/bw0i
-         Kbnzyo5sdP3QAmNBstPylcGe6HEyRe+jev5guVgph2s5VwqUMTJB4YHwEoCGstgxM+Oc
-         K67Tb4/neDR5IqkrBxmldpjF3TipZrANpwtCRFc1DXhJNPVpG4roqi76nxNi7FGDigPS
-         6HVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2SWToVUA/ql3233vIUowK3fXJtf4wFVq/XsDPcJE7KE=;
-        b=Ah9677HsB3JauYiuHmPjmWOEcYCBP4BccU2gR9ueqqydmExvKu9Nb9PasAhGIf8JSO
-         VGxiiF6TSq4FkXFen5ah2vwdLQTi54VQ5GVZZ7CcEh1HYBHpg+zsPnwcfd1aDNrB+sqN
-         MG9JlgfqfHFwlKgECZvnS+eUVeecfWslMD2zmB3hB8THmBtAmYUY2hN6QsuO0NQxOoHz
-         63CNqWhRQZh5zZ1yWCxFrpHx7j1sQvtBrrSUnC0YNZIZrg4aLCRLgpgp4QHLDsCrxSDj
-         3/VIozAIzVEYTEMwMgqYS9fF1HgZu1dLdjEoy75RDoWJtqtXuwvePUV1iurNybSUXQ9e
-         6HGA==
-X-Gm-Message-State: ABuFfoivusdlQ6bJ5ADlz6EaG8IEBhIJRjqkwdZZCmdLsUO34PxoEVfQ
-        w/ivOyN6ibyOoy+wpsuf9J5WYfoW4s4NNg==
-X-Google-Smtp-Source: ACcGV60MgTk47aKYFjsTozyoU/epWE3b7PK7678Y/dmiLXHsTpWGCkOhxaS3I4K9qTIGnza1lWEpxA==
-X-Received: by 2002:adf:eec4:: with SMTP id a4-v6mr27354128wrp.242.1539824198103;
-        Wed, 17 Oct 2018 17:56:38 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id i7-v6sm23112559wrb.30.2018.10.17.17.56.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 17:56:37 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] mfd: db8500-prcmu: Fix some section annotations
-Date:   Wed, 17 Oct 2018 17:56:28 -0700
-Message-Id: <20181018005628.8295-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Thu, 18 Oct 2018 04:59:50 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9I109nv130767;
+        Thu, 18 Oct 2018 01:01:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=7dt1x6KECeiQ/Wp8AWdh90If0ZXe41zzWCYCpUVs0bs=;
+ b=VYDopYxwcgZuEWIDoZDNEG3OgFChdmtOHcKpwinmbEe9BrgdrRKHKrTpLusrLwvfG2ND
+ HJmFL+2MzNGl7PE+tOXVOJmJuZKr+4vQeqhet4DiVb3gpgVhnB8fjkcS9xNJdSGO9vTP
+ XBLztm2cnjBgMm89u8xuVKaIv8Oo4aAV4+H3fWT2BHj7sVLFPMSfdCTjg3/Ch7dg3Vso
+ JB8F1tl6xYJgWvcjMb474LrVnS39lymaEKOx2oB0f67U/K/BnHmvO7f3hUaSjPiyImBR
+ ew4/XOl41M7JkBayZqXibvHK1IpNFKlL0c0YiJWh2UZWUE7/dRFbVKdQWBBH8vJGAPxe 9w== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2n384uaadt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 18 Oct 2018 01:01:10 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9I114kY021739
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 18 Oct 2018 01:01:04 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9I113Wn001056;
+        Thu, 18 Oct 2018 01:01:04 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 17 Oct 2018 18:01:03 -0700
+To:     Finn Thain <fthain@telegraphics.com.au>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: ips: fix missing break in switch
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20181016091223.GA19765@embeddedor.com>
+        <yq1ftx5sgw1.fsf@oracle.com>
+        <alpine.LNX.2.21.1810170922480.130@nippy.intranet>
+        <yq1r2gppdyf.fsf@oracle.com>
+        <alpine.LNX.2.21.1810171327290.8@nippy.intranet>
+Date:   Wed, 17 Oct 2018 21:01:01 -0400
+In-Reply-To: <alpine.LNX.2.21.1810171327290.8@nippy.intranet> (Finn Thain's
+        message of "Wed, 17 Oct 2018 14:24:47 +1100 (AEDT)")
+Message-ID: <yq1tvlkkr02.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9049 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=605
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810180008
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building the kernel with Clang, the following section mismatch
-warnings appear:
 
-WARNING: vmlinux.o(.text+0x7239cc): Section mismatch in reference from
-the function db8500_prcmu_probe() to the function
-.init.text:init_prcm_registers()
-The function db8500_prcmu_probe() references
-the function __init init_prcm_registers().
-This is often because db8500_prcmu_probe lacks a __init
-annotation or the annotation of init_prcm_registers is wrong.
+Finn,
 
-WARNING: vmlinux.o(.text+0x723e28): Section mismatch in reference from
-the function db8500_prcmu_probe() to the function
-.init.text:fw_project_name()
-The function db8500_prcmu_probe() references
-the function __init fw_project_name().
-This is often because db8500_prcmu_probe lacks a __init
-annotation or the annotation of fw_project_name is wrong.
+>> See the case statements above for another fast exit scenario.
+>> 
+>
+> But that's an error path.
 
-db8500_prcmu_probe should not be marked as __init so remove the __init
-annotation from fw_project_name and init_prcm_registers.
+Look further down. Several other SCSI commands are completed as NOPs the
+same way.
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/mfd/db8500-prcmu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Also, I don't see how the case statement for TUR/INQUIRY would do
+anything meaningful in terms of preparing a START STOP UNIT for the
+firmware.
 
-diff --git a/drivers/mfd/db8500-prcmu.c b/drivers/mfd/db8500-prcmu.c
-index 5970b8def548..aec20e1c7d3d 100644
---- a/drivers/mfd/db8500-prcmu.c
-+++ b/drivers/mfd/db8500-prcmu.c
-@@ -2584,7 +2584,7 @@ static struct irq_chip prcmu_irq_chip = {
- 	.irq_unmask	= prcmu_irq_unmask,
- };
- 
--static __init char *fw_project_name(u32 project)
-+static char *fw_project_name(u32 project)
- {
- 	switch (project) {
- 	case PRCMU_FW_PROJECT_U8500:
-@@ -2732,7 +2732,7 @@ void __init db8500_prcmu_early_init(u32 phy_base, u32 size)
- 	INIT_WORK(&mb0_transfer.mask_work, prcmu_mask_work);
- }
- 
--static void __init init_prcm_registers(void)
-+static void init_prcm_registers(void)
- {
- 	u32 val;
- 
 -- 
-2.19.1
-
+Martin K. Petersen	Oracle Linux Engineering
