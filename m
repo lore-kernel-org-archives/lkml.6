@@ -2,131 +2,78 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA112ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F881ECDE44
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:56:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90F142098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:56:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90F142098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 574662098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:56:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="SWyTQ2om"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 574662098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbeJRQ40 (ORCPT
+        id S1728095AbeJRQ41 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 12:56:26 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35815 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727360AbeJRQ40 (ORCPT
+        Thu, 18 Oct 2018 12:56:27 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:59540 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727949AbeJRQ40 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 18 Oct 2018 12:56:26 -0400
-Received: by mail-ed1-f68.google.com with SMTP id y19-v6so27486623edd.2;
-        Thu, 18 Oct 2018 01:56:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=r2rWFU/wp7tDeGZeG8Ld2Lbidy3HYI/XKX9aXQFmSYY=;
-        b=br3TPZugyVMOGJWhzI+aIoa62g26SIwk5GRRZbrHYMwL95t4vG/jMQfXz31JfMr4uo
-         QRs6LpJwuDSiZ7FOWqu30h17UG5VilP4plOtC+is3JUEc4ii3XUVzHN94XO0coUF4diU
-         Ae/nVcVhV0OYeFPSPCImpqe6jbbCxgrV2Q/F8W/NycMX857EIo/1d3aLsCydSzCWsm7K
-         oY/j7mVySmXZyjL2VfmzYxSeFj2oggEWzlZvRcCzplvYh1dVTWXm6iTq5dovr3bHyKNE
-         SmkiW4SmicsTnYJwUQV8vbfHoTqFMd+FncLoP9Wr0YKsalkiY1GSmFuw6f5PBYRlymUr
-         5Jxg==
-X-Gm-Message-State: ABuFfohKku75Xyg6fXvBnHmchXJeM/Jtpmyd4PWrqvFKVcq6I9jEs1G8
-        MRa0OwenTbV0PCT2LsiaB+nkcJtn
-X-Google-Smtp-Source: ACcGV633JhbDrn46JLeQ8/h9zdY+RDtwSjF8AH2mNkVZQZeej6E+ujdC68+WfBYNZFj9eVNllfyc2A==
-X-Received: by 2002:aa7:d50e:: with SMTP id y14-v6mr2847571edq.163.1539852984693;
-        Thu, 18 Oct 2018 01:56:24 -0700 (PDT)
-Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id b12-v6sm7173716edd.72.2018.10.18.01.56.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 01:56:23 -0700 (PDT)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tejun Heo <tj@kernel.org>, "David S. Miller" <davem@davemloft.net>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
-        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [RFC PATCH] cgroup, netclassid: add a preemption point to write_classid
-Date:   Thu, 18 Oct 2018 10:56:17 +0200
-Message-Id: <20181018085617.28456-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.19.0
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ha+yvnti3ZQhQfgTsKawrjwVhtS+fRMmqhLuqiyOCFU=; b=SWyTQ2omooXd6TzfFBIWYt7S1
+        XY4gqSGUtVd02Y84BPHrqNZmrgRwpI7ST0YpOViYzysGTk8/0LH/dCps5mUxPeFIrZeB5nnzO48NC
+        C4gOFtRopbr+tQP5I2zN2mvx8PtIOIUYJUuubdEQehFqjI733HpEbr70lkSupdR8kGKdc=;
+Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:58014)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gD46Q-0000Td-Vm; Thu, 18 Oct 2018 09:56:23 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gD46K-0000LT-0D; Thu, 18 Oct 2018 09:56:16 +0100
+Date:   Thu, 18 Oct 2018 09:56:09 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Teng Fei Fan <tengfei@codeaurora.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        sudeep.holla@arm.com, will.deacon@arm.com,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] arm: kernel: add support for detecting armv8 cpu cache
+ information
+Message-ID: <20181018085609.GI30658@n2100.armlinux.org.uk>
+References: <1539843407-7439-1-git-send-email-tengfei@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539843407-7439-1-git-send-email-tengfei@codeaurora.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+On Thu, Oct 18, 2018 at 02:16:47PM +0800, Teng Fei Fan wrote:
+> This patch adds support for cacheinfo on 32bit ARMv8 platform.
+> Add support for detecting cpu cache information cpu cache information
+> via sysfs for 32bit armv8 platform. And export to sysfs then userspace
+> can get from /sys/devices/system/cpu/cpuX/cache.
 
-We have seen a customer complaining about soft lockups on !PREEMPT
-kernel config with 4.4 based kernel
+You don't explain why this is needed.
 
-[1072141.435366] NMI watchdog: BUG: soft lockup - CPU#21 stuck for 22s! [systemd:1]
-[1072141.444090] Modules linked in: mpt3sas raid_class binfmt_misc af_packet 8021q garp mrp stp llc xfs libcrc32c bonding iscsi_ibft iscsi_boot_sysfs msr ext4 crc16 jbd2 mbcache cdc_ether usbnet mii joydev hid_generic usbhid intel_rapl x86_pkg_temp_thermal intel_powerclamp coretemp crct10dif_pclmul crc32_pclmul ghash_clmulni_intel ipmi_ssif mgag200 i2c_algo_bit ttm ipmi_devintf drbg ixgbe drm_kms_helper vxlan ansi_cprng ip6_udp_tunnel drm aesni_intel udp_tunnel aes_x86_64 iTCO_wdt syscopyarea ptp xhci_pci lrw iTCO_vendor_support pps_core gf128mul ehci_pci glue_helper sysfillrect mdio pcspkr sb_edac ablk_helper cryptd ehci_hcd sysimgblt xhci_hcd fb_sys_fops edac_core mei_me lpc_ich ses usbcore enclosure dca mfd_core ipmi_si mei i2c_i801 scsi_transport_sas usb_common ipmi_msghandler shpchp fjes wmi processor button acpi_pad btrfs xor raid6_pq sd_mod crc32c_intel megaraid_sas sg dm_multipath dm_mod scsi_dh_rdac scsi_dh_emc scsi_dh_alua scsi_mod md_mod autofs4
-[1072141.444146] Supported: Yes
-[1072141.444149] CPU: 21 PID: 1 Comm: systemd Not tainted 4.4.121-92.80-default #1
-[1072141.444150] Hardware name: LENOVO Lenovo System x3650 M5 -[5462P4U]- -[5462P4U]-/01GR451, BIOS -[TCE136H-2.70]- 06/13/2018
-[1072141.444151] task: ffff880191bd0040 ti: ffff880191bd4000 task.ti: ffff880191bd4000
-[1072141.444153] RIP: 0010:[<ffffffff815229f9>]  [<ffffffff815229f9>] update_classid_sock+0x29/0x40
-[1072141.444157] RSP: 0018:ffff880191bd7d58  EFLAGS: 00000286
-[1072141.444158] RAX: ffff883b177cb7c0 RBX: 0000000000000000 RCX: 0000000000000000
-[1072141.444159] RDX: 00000000000009c7 RSI: ffff880191bd7d5c RDI: ffff8822e29bb200
-[1072141.444160] RBP: ffff883a72230980 R08: 0000000000000101 R09: 0000000000000000
-[1072141.444161] R10: 0000000000000008 R11: f000000000000000 R12: ffffffff815229d0
-[1072141.444162] R13: 0000000000000000 R14: ffff881fd0a47ac0 R15: ffff880191bd7f28
-[1072141.444163] FS:  00007f3e2f1eb8c0(0000) GS:ffff882000340000(0000) knlGS:0000000000000000
-[1072141.444164] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[1072141.444165] CR2: 00007f3e2f200000 CR3: 0000001ffea4e000 CR4: 00000000001606f0
-[1072141.444166] Stack:
-[1072141.444166]  ffffffa800000246 00000000000009c7 ffffffff8121d583 ffff8818312a05c0
-[1072141.444168]  ffff8818312a1100 ffff880197c3b280 ffff881861422858 ffffffffffffffea
-[1072141.444170]  ffffffff81522b1c ffffffff81d0ca20 ffff8817fa17b950 ffff883fdd8121e0
-[1072141.444171] Call Trace:
-[1072141.444179]  [<ffffffff8121d583>] iterate_fd+0x53/0x80
-[1072141.444182]  [<ffffffff81522b1c>] write_classid+0x4c/0x80
-[1072141.444187]  [<ffffffff8111328b>] cgroup_file_write+0x9b/0x100
-[1072141.444193]  [<ffffffff81278bcb>] kernfs_fop_write+0x11b/0x150
-[1072141.444198]  [<ffffffff81201566>] __vfs_write+0x26/0x100
-[1072141.444201]  [<ffffffff81201bed>] vfs_write+0x9d/0x190
-[1072141.444203]  [<ffffffff812028c2>] SyS_write+0x42/0xa0
-[1072141.444207]  [<ffffffff815f58c3>] entry_SYSCALL_64_fastpath+0x1e/0xca
-[1072141.445490] DWARF2 unwinder stuck at entry_SYSCALL_64_fastpath+0x1e/0xca
+We don't do this for previous 32-bit CPUs, so why should we do this
+for ARMv8 running on a 32-bit kernel?
 
-If a cgroup has many tasks with many open file descriptors then we would
-end up in a large loop without any rescheduling point throught the
-operation. Add cond_resched once per task.
-
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
-Hi,
-I am sending this as an RFC because I am not sure this is the best
-approach to be honest. The customer who reported this issue was not
-entirely thrilled about testing this so it might be possible that the
-patch is not sufficient. Details about the workload are not very
-detailed either.
-
-Any comment would be highly appreciated.
-
- net/core/netclassid_cgroup.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/net/core/netclassid_cgroup.c b/net/core/netclassid_cgroup.c
-index 5e4f04004a49..7bf833598615 100644
---- a/net/core/netclassid_cgroup.c
-+++ b/net/core/netclassid_cgroup.c
-@@ -106,6 +106,7 @@ static int write_classid(struct cgroup_subsys_state *css, struct cftype *cft,
- 		iterate_fd(p->files, 0, update_classid_sock,
- 			   (void *)(unsigned long)cs->classid);
- 		task_unlock(p);
-+		cond_resched();
- 	}
- 	css_task_iter_end(&it);
- 
 -- 
-2.19.0
-
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
