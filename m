@@ -2,162 +2,143 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F1B1ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 416D8ECDE42
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E81D208E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:32:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5010208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:34:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="do0nsgQ6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E81D208E4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="snQHQ6ri"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5010208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbeJRLbf (ORCPT
+        id S1727393AbeJRLda (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 07:31:35 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44420 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727297AbeJRLbf (ORCPT
+        Thu, 18 Oct 2018 07:33:30 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33896 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727260AbeJRLda (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 07:31:35 -0400
-Received: by mail-lf1-f65.google.com with SMTP id m18-v6so21456131lfl.11
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 20:32:44 -0700 (PDT)
+        Thu, 18 Oct 2018 07:33:30 -0400
+Received: by mail-wr1-f68.google.com with SMTP id l6-v6so31508377wrt.1;
+        Wed, 17 Oct 2018 20:34:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9O8iT8L/QZEnXX5xUcU73VZOMJh/Rn1/4MXgA4Q8wBE=;
-        b=do0nsgQ6MyI3VNdTm5EVp8ag6hV1V8PyieN++JTeVvuBGU1cNU/BlB5/KHJ1ZWsbo2
-         LaT7qc30f9SlSkf3y58EqVMMpEQ/y519s4/apB5TlKRAZ0/llWYlmUtgDt+ZmYpH+nHH
-         q9M/sWPIB3qDVU4W/zfVEYhhplhNiWtsD9ydwDll3dhHZE47yWml8zkAVphrSa1jOZUf
-         rteKZE19kKP/IBXF+xOCCPEwq0UCWhkCNzpiZL2+365MGiEeAHlP5IjA8+QdyJmmSuM8
-         7agh/eDiKm8LYxMieMSq+AXAb6I88A3Q/clxNxGDd10vH4SYdrBHdrvcLBaG1R8QTDwQ
-         YBHQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WoASbx7i2cNXEiBHTRZ8+mHDH9g0Ys4mmr9WSZ92We0=;
+        b=snQHQ6ri/6GySt5UPWgMoeKhPaWSrHG6DTF0sB7Cyl/BWIiRoO/LGBL4fzpJagA6e+
+         /jEjIjPfpUjqxgBcf2LM/RN8ZpUEEQ5zLrCCR7Pu2Vn4PvBxPc7i/00DZwZTUa4z2kN2
+         KfQtZDd2MJs/aECTIAbyxwA9dzA3DAhQneIxDhiwuvA8Kl8+2qLxZFg++qFLEZK8nQ/r
+         sH6UVR4l6pkWabxGM7zfeblu2qUU/3CEcKOuLUxEP/zHloqjHbWbFT8RAUWTs5HFcwaz
+         v8lbonZpnb4nVNCU+v+H1x4aVNr4TiYnsOf9IIx/twpHBo6IkWYMj/SyuRKqZ1h/3uXz
+         Siow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9O8iT8L/QZEnXX5xUcU73VZOMJh/Rn1/4MXgA4Q8wBE=;
-        b=ihC8wycKIf/vg011EVIPY05Nplm7eM5cz6HxsyxTmjGmkQcqAzIlbqQAIvB3qoGnfx
-         jPrbsjDwzmAGdOhHpN8aBsV/U5ocHTXzSvIj+flWldPEd8uS1n/PaA+9fFa+D00jWXkB
-         a67trTgspLAKOfBb21H8v9s0vEB79OJDA90n/64AzVagXlc3P9ol0fbprw3seQu8CxY5
-         JraJkhisD4vnFFUnEntr04WT8vAC/0K0ay00yR/+dl6hg1NDAUqnSdEM/GqUooNSp9jd
-         QGiToCFUnQLjxFmcdVjqxVGnWQTLmzYsbXv9a1KddhtEdZE8MuiWicMDR7ZNxae2O8pG
-         pueA==
-X-Gm-Message-State: ABuFfoglaAX4IlW5GYV2N+gnxD/Ud4oBXPWiTVBnBuZ2p4+1lhzRtCaM
-        TSd2xNMr5HzNjojjyDcwKCUBdg3WwiGi9dv/Ul0=
-X-Google-Smtp-Source: ACcGV60wTw2G6SgFMkLC2QzHd4JlI8qCsggGPlsFU23J4/AoCKcuaC/5ZMCeDr2ZkkC0aTNwIvOXKaV1qyXTZTAgND8=
-X-Received: by 2002:a19:8d11:: with SMTP id p17-v6mr16386994lfd.116.1539833563517;
- Wed, 17 Oct 2018 20:32:43 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WoASbx7i2cNXEiBHTRZ8+mHDH9g0Ys4mmr9WSZ92We0=;
+        b=sS+hmV1aQr9JzB4OGXfYHsiZkYx/3Oi1voHIID4VefEhhXtMLc62yu+AniQNreNRUf
+         hr6IbC5JGFGWf4d9vXIBRqBuF/XA0oWkhlUDbt5Jx6pnxQ0g5ZdY1PM3WNsROM2+QCjg
+         y6r+Uwci9M5jpv4lMm5yn3h2hNtv9Mlwurw3LV9+TExMYnQy/2sjXI1jYncl2inGLL/U
+         93dIVzBrjrn21/toX8tZj3nUfFOTaWIVDbp6QBGUocKUDmcJ/kTt6LIkm9Zgvg04GTrR
+         Cp91DZgU9Fu1askrzOvLAUmr2BB8BJSGO/MaDbteXNTzyUCMwVjDHbyTyi0Nb5UEhgxz
+         bFZQ==
+X-Gm-Message-State: ABuFfogTumiRZdJoV4EhfhLXYpkC5zwjWcQOijv3q5PsAVQPaFAm50gH
+        PIRW7jbRN1ePakokFjW+9zI=
+X-Google-Smtp-Source: ACcGV60pC5by20xxC3a7Acm6tNqz5p+iEU52uOat47Oi6OkOSzoFAHx1ujIv/u71kOEo9u6qWpjQ2w==
+X-Received: by 2002:adf:e681:: with SMTP id r1-v6mr12580117wrm.294.1539833678559;
+        Wed, 17 Oct 2018 20:34:38 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id t3-v6sm17472522wru.47.2018.10.17.20.34.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 20:34:37 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 20:34:35 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     isdn@linux-pingi.de, Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] isdn: hfc_{pci,sx}: Avoid empty body if statements and
+ use proper register accessors
+Message-ID: <20181018033435.GA2734@flashbox>
+References: <20181017180657.9410-1-natechancellor@gmail.com>
+ <CAK7LNARjwZr2NPNE9aGnzQv-uUWjf1=A+kX3pjALqYfsWORv5g@mail.gmail.com>
 MIME-Version: 1.0
-References: <1538019697-14673-1-git-send-email-chunyan.zhang@unisoc.com>
-In-Reply-To: <1538019697-14673-1-git-send-email-chunyan.zhang@unisoc.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Thu, 18 Oct 2018 11:32:07 +0800
-Message-ID: <CAAfSe-sd9Zzh3Oz-fUSz-ssEpSYPYE7mbhFUuyim3V-62=sPXQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH] ARM: prevent tracing IPI_CPU_BACKTRACE
-To:     Chunyan Zhang <chunyan.zhang@unisoc.com>
-Cc:     Russell King - ARM Linux <linux@arm.linux.org.uk>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNARjwZr2NPNE9aGnzQv-uUWjf1=A+kX3pjALqYfsWORv5g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Sep 2018 at 11:42, Chunyan Zhang <chunyan.zhang@unisoc.com> wrote:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> When function tracing for IPIs is enabled, we get a warning for an
-> overflow of the ipi_types array with the IPI_CPU_BACKTRACE type
-> as triggered by raise_nmi():
->
-> arch/arm/kernel/smp.c: In function 'raise_nmi':
-> arch/arm/kernel/smp.c:489:2: error: array subscript is above array bounds [-Werror=array-bounds]
->         trace_ipi_raise(target, ipi_types[ipinr]);
->
-> This is a correct warning as we actually overflow the array here.
->
-> This patch raise_nmi() to call __smp_cross_call() instead of
-> smp_cross_call(), to avoid calling into ftrace. For clarification,
-> I'm also adding a two new code comments describing how this one
-> is special.
->
-> The warning appears to have shown up after patch e7273ff49acf
-> ("ARM: 8488/1: Make IPI_CPU_BACKTRACE a "non-secure" SGI"), which
-> changed the number assignment from '15' to '8', but as far as I can
-> tell has existed since the IPI tracepoints were first introduced.
-> If we decide to backport this patch to stable kernels, we probably
-> need to backport e7273ff49acf as well.
->
-> Resubmiting this patch is because that I found coverity is complaining
-> the issue this patch fixed, and also I got the traces like below:
-> "ipi_raise: target_mask=00000001 (machine_suspend)" which actually was
-> the TPS of suspend_resume[1] rather than ipi_raise.
->
-> [1]
-> https://elixir.bootlin.com/linux/latest/source/kernel/power/suspend.c#L80
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: e7273ff49acf ("ARM: 8488/1: Make IPI_CPU_BACKTRACE a "non-secure" SGI")
-> Fixes: 365ec7b17327 ("ARM: add IPI tracepoints") # v3.17
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> ---
->  arch/arm/include/asm/hardirq.h | 1 +
->  arch/arm/kernel/smp.c          | 6 +++++-
->  2 files changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/include/asm/hardirq.h b/arch/arm/include/asm/hardirq.h
-> index cba23ea..7a88f16 100644
-> --- a/arch/arm/include/asm/hardirq.h
-> +++ b/arch/arm/include/asm/hardirq.h
-> @@ -6,6 +6,7 @@
->  #include <linux/threads.h>
->  #include <asm/irq.h>
->
-> +/* number of IPIS _not_ including IPI_CPU_BACKTRACE */
->  #define NR_IPI 7
->
->  typedef struct {
-> diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
-> index 0978282..123be77 100644
-> --- a/arch/arm/kernel/smp.c
-> +++ b/arch/arm/kernel/smp.c
-> @@ -75,6 +75,10 @@ enum ipi_msg_type {
->         IPI_CPU_STOP,
->         IPI_IRQ_WORK,
->         IPI_COMPLETION,
-> +       /*
-> +        * CPU_BACKTRACE is special and not included in NR_IPI
-> +        * or tracable with trace_ipi_*
-> +        */
->         IPI_CPU_BACKTRACE,
->         /*
->          * SGI8-15 can be reserved by secure firmware, and thus may
-> @@ -755,7 +759,7 @@ core_initcall(register_cpufreq_notifier);
->
->  static void raise_nmi(cpumask_t *mask)
->  {
-> -       smp_cross_call(mask, IPI_CPU_BACKTRACE);
-> +       _smp_cross_call(mask, IPI_CPU_BACKTRACE);
+On Thu, Oct 18, 2018 at 12:23:37PM +0900, Masahiro Yamada wrote:
+> Hi Nathan,
+> 
+> On Thu, Oct 18, 2018 at 3:09 AM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> >
+> > Clang warns:
+> >
+> > drivers/isdn/hisax/hfc_pci.c:131:34: error: if statement has empty body
+> > [-Werror,-Wempty-body]
+> >         if (Read_hfc(cs, HFCPCI_INT_S1));
+> >                                         ^
+> > drivers/isdn/hisax/hfc_pci.c:131:34: note: put the semicolon on a
+> > separate line to silence this warning
+> >
+> > Use the format found in drivers/isdn/hardware/mISDN/hfcpci.c of casting
+> > the return of Read_hfc to void, instead of using an empty if statement.
+> >
+> > While we're at it, Masahiro Yamada pointed out that {Read,Write}_hfc
+> > should be using a standard access method in hfc_pci.h. Use the one found
+> > in drivers/isdn/hardware/mISDN/hfc_pci.h.
+> >
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/66
+> > Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
+> >  drivers/isdn/hisax/hfc_pci.c | 6 +++---
+> >  drivers/isdn/hisax/hfc_pci.h | 4 ++--
+> >  drivers/isdn/hisax/hfc_sx.c  | 6 +++---
+> >  3 files changed, 8 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
+> > index 8e5b03161b2f..a63b9155b697 100644
+> > --- a/drivers/isdn/hisax/hfc_pci.c
+> > +++ b/drivers/isdn/hisax/hfc_pci.c
+> > @@ -128,7 +128,7 @@ reset_hfcpci(struct IsdnCardState *cs)
+> >         Write_hfc(cs, HFCPCI_INT_M1, cs->hw.hfcpci.int_m1);
+> >
+> >         /* Clear already pending ints */
+> > -       if (Read_hfc(cs, HFCPCI_INT_S1));
+> > +       (void) Read_hfc(cs, HFCPCI_INT_S1);
+> 
+> 
+> 
+> Why is this '(void)' necessary?
+> 
 
-Here should be double underline, i.e.
+It's not. I never tested without it since last time I tried to remove
+the if statement, GCC complained at me but that was before the readb
+change like you suggested.
 
-> +       __smp_cross_call(mask, IPI_CPU_BACKTRACE);
+I will go ahead and send a v2 with that cleaned up.
 
->  }
->
->  void arch_trigger_cpumask_backtrace(const cpumask_t *mask, bool exclude_self)
-> --
-> 2.7.4
->
+> I see no warning without it.
+> 
+> 
+> 
+> -- 
+> Best Regards
+> Masahiro Yamada
+
+Thanks for the review!
+Nathan
