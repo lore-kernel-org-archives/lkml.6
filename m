@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 822B5ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 056BDECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BA842098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:00:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BA842098A
+	by mail.kernel.org (Postfix) with ESMTP id ACEB02087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:00:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACEB02087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=foss.arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbeJRVB3 (ORCPT
+        id S1727615AbeJRVBd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 17:01:29 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37518 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726758AbeJRVB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 17:01:28 -0400
+        Thu, 18 Oct 2018 17:01:33 -0400
+Received: from foss.arm.com ([217.140.101.70]:37528 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726758AbeJRVBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 17:01:32 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E94B15BE;
-        Thu, 18 Oct 2018 06:00:33 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9AD2B15BF;
+        Thu, 18 Oct 2018 06:00:36 -0700 (PDT)
 Received: from ssg-dev-vb.kfn.arm.com (E111387.Emea.Arm.com [10.50.33.152])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BDF753F59C;
-        Thu, 18 Oct 2018 06:00:31 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E4F313F59C;
+        Thu, 18 Oct 2018 06:00:34 -0700 (PDT)
 From:   Yael Chemla <yael.chemla@foss.arm.com>
 To:     Gilad Ben-Yossef <gilad@benyossef.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
@@ -35,9 +35,9 @@ To:     Gilad Ben-Yossef <gilad@benyossef.com>,
         linux-crypto@vger.kernel.org, Ofir Drang <ofir.drang@arm.com>,
         linux-kernel@vger.kernel.org
 Cc:     Yael Chemla <yael.chemla@foss.arm.com>
-Subject: [PATCH 2/3] crypto: ccree:  modify set_cipher_mode usage from cc_hash
-Date:   Thu, 18 Oct 2018 13:59:58 +0100
-Message-Id: <1539867599-20504-3-git-send-email-yael.chemla@foss.arm.com>
+Subject: [PATCH 3/3] crypto: ccree: add SM3 support
+Date:   Thu, 18 Oct 2018 13:59:59 +0100
+Message-Id: <1539867599-20504-4-git-send-email-yael.chemla@foss.arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1539867599-20504-1-git-send-email-yael.chemla@foss.arm.com>
 References: <1539867599-20504-1-git-send-email-yael.chemla@foss.arm.com>
@@ -46,126 +46,366 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-encapsulate set_cipher_mode call with another api,
-preparation for specific hash behavior as needed in later patches
-when SM3 introduced.
+Add support for SM3 cipher in CryptoCell 713.
 
 Signed-off-by: Yael Chemla <yael.chemla@foss.arm.com>
 ---
- drivers/crypto/ccree/cc_hash.c          | 18 +++++++++---------
- drivers/crypto/ccree/cc_hw_queue_defs.h | 14 ++++++++++++++
- 2 files changed, 23 insertions(+), 9 deletions(-)
+ drivers/crypto/Kconfig                  |   1 +
+ drivers/crypto/ccree/cc_crypto_ctx.h    |   4 +-
+ drivers/crypto/ccree/cc_hash.c          | 119 ++++++++++++++++++++++++++------
+ drivers/crypto/ccree/cc_hw_queue_defs.h |  13 ++++
+ 4 files changed, 113 insertions(+), 24 deletions(-)
 
+diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+index a8c4ce0..1588cd4 100644
+--- a/drivers/crypto/Kconfig
++++ b/drivers/crypto/Kconfig
+@@ -751,6 +751,7 @@ config CRYPTO_DEV_CCREE
+ 	select CRYPTO_ECB
+ 	select CRYPTO_CTR
+ 	select CRYPTO_XTS
++	select CRYPTO_SM3
+ 	help
+ 	  Say 'Y' to enable a driver for the REE interface of the Arm
+ 	  TrustZone CryptoCell family of processors. Currently the
+diff --git a/drivers/crypto/ccree/cc_crypto_ctx.h b/drivers/crypto/ccree/cc_crypto_ctx.h
+index e032544..c8dac27 100644
+--- a/drivers/crypto/ccree/cc_crypto_ctx.h
++++ b/drivers/crypto/ccree/cc_crypto_ctx.h
+@@ -115,7 +115,8 @@ enum drv_hash_mode {
+ 	DRV_HASH_CBC_MAC = 6,
+ 	DRV_HASH_XCBC_MAC = 7,
+ 	DRV_HASH_CMAC = 8,
+-	DRV_HASH_MODE_NUM = 9,
++	DRV_HASH_SM3 = 9,
++	DRV_HASH_MODE_NUM = 10,
+ 	DRV_HASH_RESERVE32B = S32_MAX
+ };
+ 
+@@ -127,6 +128,7 @@ enum drv_hash_hw_mode {
+ 	DRV_HASH_HW_SHA512 = 4,
+ 	DRV_HASH_HW_SHA384 = 12,
+ 	DRV_HASH_HW_GHASH = 6,
++	DRV_HASH_HW_SM3 = 14,
+ 	DRV_HASH_HW_RESERVE32B = S32_MAX
+ };
+ 
 diff --git a/drivers/crypto/ccree/cc_hash.c b/drivers/crypto/ccree/cc_hash.c
-index 7af5b61..adcd9df 100644
+index adcd9df..c80c9ae 100644
 --- a/drivers/crypto/ccree/cc_hash.c
 +++ b/drivers/crypto/ccree/cc_hash.c
-@@ -322,7 +322,7 @@ static int cc_fin_result(struct cc_hw_desc *desc, struct ahash_request *req,
+@@ -6,6 +6,7 @@
+ #include <crypto/algapi.h>
+ #include <crypto/hash.h>
+ #include <crypto/md5.h>
++#include <crypto/sm3.h>
+ #include <crypto/internal/hash.h>
  
- 	/* Get final MAC result */
- 	hw_desc_init(&desc[idx]);
--	set_cipher_mode(&desc[idx], ctx->hw_mode);
-+	set_hash_cipher_mode(&desc[idx], ctx->hw_mode, ctx->hash_mode);
- 	/* TODO */
- 	set_dout_dlli(&desc[idx], state->digest_result_dma_addr, digestsize,
- 		      NS_BIT, 1);
-@@ -441,7 +441,7 @@ static int cc_hash_digest(struct ahash_request *req)
- 	 * digest
- 	 */
- 	hw_desc_init(&desc[idx]);
--	set_cipher_mode(&desc[idx], ctx->hw_mode);
-+	set_hash_cipher_mode(&desc[idx], ctx->hw_mode, ctx->hash_mode);
- 	if (is_hmac) {
- 		set_din_type(&desc[idx], DMA_DLLI, state->digest_buff_dma_addr,
- 			     ctx->inter_digestsize, NS_BIT);
-@@ -455,7 +455,7 @@ static int cc_hash_digest(struct ahash_request *req)
+ #include "cc_driver.h"
+@@ -16,6 +17,7 @@
  
- 	/* Load the hash current length */
- 	hw_desc_init(&desc[idx]);
--	set_cipher_mode(&desc[idx], ctx->hw_mode);
-+	set_hash_cipher_mode(&desc[idx], ctx->hw_mode, ctx->hash_mode);
+ #define CC_MAX_HASH_SEQ_LEN 12
+ #define CC_MAX_OPAD_KEYS_SIZE CC_MAX_HASH_BLCK_SIZE
++#define CC_SM3_HASH_LEN_SIZE 8
  
- 	if (is_hmac) {
- 		set_din_type(&desc[idx], DMA_DLLI,
-@@ -505,7 +505,7 @@ static int cc_restore_hash(struct cc_hw_desc *desc, struct cc_hash_ctx *ctx,
+ struct cc_hash_handle {
+ 	cc_sram_addr_t digest_len_sram_addr; /* const value in SRAM*/
+@@ -43,6 +45,9 @@ static u64 sha384_init[] = {
+ static u64 sha512_init[] = {
+ 	SHA512_H7, SHA512_H6, SHA512_H5, SHA512_H4,
+ 	SHA512_H3, SHA512_H2, SHA512_H1, SHA512_H0 };
++static const u32 sm3_init[] = {
++	SM3_IVH, SM3_IVG, SM3_IVF, SM3_IVE,
++	SM3_IVD, SM3_IVC, SM3_IVB, SM3_IVA };
+ 
+ static void cc_setup_xcbc(struct ahash_request *areq, struct cc_hw_desc desc[],
+ 			  unsigned int *seq_size);
+@@ -1074,7 +1079,10 @@ static int cc_get_hash_len(struct crypto_tfm *tfm)
  {
- 	/* Restore hash digest */
- 	hw_desc_init(&desc[idx]);
--	set_cipher_mode(&desc[idx], ctx->hw_mode);
-+	set_hash_cipher_mode(&desc[idx], ctx->hw_mode, ctx->hash_mode);
- 	set_din_type(&desc[idx], DMA_DLLI, state->digest_buff_dma_addr,
- 		     ctx->inter_digestsize, NS_BIT);
- 	set_flow_mode(&desc[idx], S_DIN_to_HASH);
-@@ -514,7 +514,7 @@ static int cc_restore_hash(struct cc_hw_desc *desc, struct cc_hash_ctx *ctx,
+ 	struct cc_hash_ctx *ctx = crypto_tfm_ctx(tfm);
  
- 	/* Restore hash current length */
- 	hw_desc_init(&desc[idx]);
--	set_cipher_mode(&desc[idx], ctx->hw_mode);
-+	set_hash_cipher_mode(&desc[idx], ctx->hw_mode, ctx->hash_mode);
- 	set_cipher_config1(&desc[idx], HASH_PADDING_DISABLED);
- 	set_din_type(&desc[idx], DMA_DLLI, state->digest_bytes_len_dma_addr,
- 		     ctx->hash_len, NS_BIT);
-@@ -577,7 +577,7 @@ static int cc_hash_update(struct ahash_request *req)
+-	return cc_get_default_hash_len(ctx->drvdata);
++	if (ctx->hash_mode == DRV_HASH_SM3)
++		return CC_SM3_HASH_LEN_SIZE;
++	else
++		return cc_get_default_hash_len(ctx->drvdata);
+ }
  
- 	/* store the hash digest result in context */
- 	hw_desc_init(&desc[idx]);
--	set_cipher_mode(&desc[idx], ctx->hw_mode);
-+	set_hash_cipher_mode(&desc[idx], ctx->hw_mode, ctx->hash_mode);
- 	set_dout_dlli(&desc[idx], state->digest_buff_dma_addr,
- 		      ctx->inter_digestsize, NS_BIT, 0);
- 	set_flow_mode(&desc[idx], S_HASH_to_DOUT);
-@@ -586,7 +586,7 @@ static int cc_hash_update(struct ahash_request *req)
+ static int cc_cra_init(struct crypto_tfm *tfm)
+@@ -1523,6 +1531,7 @@ struct cc_hash_template {
+ 	char mac_name[CRYPTO_MAX_ALG_NAME];
+ 	char mac_driver_name[CRYPTO_MAX_ALG_NAME];
+ 	unsigned int blocksize;
++	bool is_mac;
+ 	bool synchronize;
+ 	struct ahash_alg template_ahash;
+ 	int hash_mode;
+@@ -1544,6 +1553,7 @@ static struct cc_hash_template driver_hash[] = {
+ 		.mac_name = "hmac(sha1)",
+ 		.mac_driver_name = "hmac-sha1-ccree",
+ 		.blocksize = SHA1_BLOCK_SIZE,
++		.is_mac = true,
+ 		.synchronize = false,
+ 		.template_ahash = {
+ 			.init = cc_hash_init,
+@@ -1570,6 +1580,7 @@ static struct cc_hash_template driver_hash[] = {
+ 		.mac_name = "hmac(sha256)",
+ 		.mac_driver_name = "hmac-sha256-ccree",
+ 		.blocksize = SHA256_BLOCK_SIZE,
++		.is_mac = true,
+ 		.template_ahash = {
+ 			.init = cc_hash_init,
+ 			.update = cc_hash_update,
+@@ -1595,6 +1606,7 @@ static struct cc_hash_template driver_hash[] = {
+ 		.mac_name = "hmac(sha224)",
+ 		.mac_driver_name = "hmac-sha224-ccree",
+ 		.blocksize = SHA224_BLOCK_SIZE,
++		.is_mac = true,
+ 		.template_ahash = {
+ 			.init = cc_hash_init,
+ 			.update = cc_hash_update,
+@@ -1620,6 +1632,7 @@ static struct cc_hash_template driver_hash[] = {
+ 		.mac_name = "hmac(sha384)",
+ 		.mac_driver_name = "hmac-sha384-ccree",
+ 		.blocksize = SHA384_BLOCK_SIZE,
++		.is_mac = true,
+ 		.template_ahash = {
+ 			.init = cc_hash_init,
+ 			.update = cc_hash_update,
+@@ -1645,6 +1658,7 @@ static struct cc_hash_template driver_hash[] = {
+ 		.mac_name = "hmac(sha512)",
+ 		.mac_driver_name = "hmac-sha512-ccree",
+ 		.blocksize = SHA512_BLOCK_SIZE,
++		.is_mac = true,
+ 		.template_ahash = {
+ 			.init = cc_hash_init,
+ 			.update = cc_hash_update,
+@@ -1670,6 +1684,7 @@ static struct cc_hash_template driver_hash[] = {
+ 		.mac_name = "hmac(md5)",
+ 		.mac_driver_name = "hmac-md5-ccree",
+ 		.blocksize = MD5_HMAC_BLOCK_SIZE,
++		.is_mac = true,
+ 		.template_ahash = {
+ 			.init = cc_hash_init,
+ 			.update = cc_hash_update,
+@@ -1690,9 +1705,34 @@ static struct cc_hash_template driver_hash[] = {
+ 		.min_hw_rev = CC_HW_REV_630,
+ 	},
+ 	{
++		.name = "sm3",
++		.driver_name = "sm3-ccree",
++		.blocksize = SM3_BLOCK_SIZE,
++		.is_mac = false,
++		.template_ahash = {
++			.init = cc_hash_init,
++			.update = cc_hash_update,
++			.final = cc_hash_final,
++			.finup = cc_hash_finup,
++			.digest = cc_hash_digest,
++			.export = cc_hash_export,
++			.import = cc_hash_import,
++			.setkey = cc_hash_setkey,
++			.halg = {
++				.digestsize = SM3_DIGEST_SIZE,
++				.statesize = CC_STATE_SIZE(SM3_DIGEST_SIZE),
++			},
++		},
++		.hash_mode = DRV_HASH_SM3,
++		.hw_mode = DRV_HASH_HW_SM3,
++		.inter_digestsize = SM3_DIGEST_SIZE,
++		.min_hw_rev = CC_HW_REV_713,
++	},
++	{
+ 		.mac_name = "xcbc(aes)",
+ 		.mac_driver_name = "xcbc-aes-ccree",
+ 		.blocksize = AES_BLOCK_SIZE,
++		.is_mac = true,
+ 		.template_ahash = {
+ 			.init = cc_hash_init,
+ 			.update = cc_mac_update,
+@@ -1716,6 +1756,7 @@ static struct cc_hash_template driver_hash[] = {
+ 		.mac_name = "cmac(aes)",
+ 		.mac_driver_name = "cmac-aes-ccree",
+ 		.blocksize = AES_BLOCK_SIZE,
++		.is_mac = true,
+ 		.template_ahash = {
+ 			.init = cc_hash_init,
+ 			.update = cc_mac_update,
+@@ -1788,6 +1829,7 @@ int cc_init_hash_sram(struct cc_drvdata *drvdata)
+ 	unsigned int larval_seq_len = 0;
+ 	struct cc_hw_desc larval_seq[CC_DIGEST_SIZE_MAX / sizeof(u32)];
+ 	bool large_sha_supported = (drvdata->hw_rev >= CC_HW_REV_712);
++	bool sm3_supported = (drvdata->hw_rev >= CC_HW_REV_713);
+ 	int rc = 0;
  
- 	/* store current hash length in context */
- 	hw_desc_init(&desc[idx]);
--	set_cipher_mode(&desc[idx], ctx->hw_mode);
-+	set_hash_cipher_mode(&desc[idx], ctx->hw_mode, ctx->hash_mode);
- 	set_dout_dlli(&desc[idx], state->digest_bytes_len_dma_addr,
- 		      ctx->hash_len, NS_BIT, 1);
- 	set_queue_last_ind(ctx->drvdata, &desc[idx]);
-@@ -650,7 +650,7 @@ static int cc_do_finup(struct ahash_request *req, bool update)
- 	/* Pad the hash */
- 	hw_desc_init(&desc[idx]);
- 	set_cipher_do(&desc[idx], DO_PAD);
--	set_cipher_mode(&desc[idx], ctx->hw_mode);
-+	set_hash_cipher_mode(&desc[idx], ctx->hw_mode, ctx->hash_mode);
- 	set_dout_dlli(&desc[idx], state->digest_bytes_len_dma_addr,
- 		      ctx->hash_len, NS_BIT, 0);
- 	set_setup_mode(&desc[idx], SETUP_WRITE_STATE1);
-@@ -2035,7 +2035,7 @@ static void cc_setup_xcbc(struct ahash_request *areq, struct cc_hw_desc desc[],
- 					    XCBC_MAC_K1_OFFSET),
- 		     CC_AES_128_BIT_KEY_SIZE, NS_BIT);
- 	set_setup_mode(&desc[idx], SETUP_LOAD_KEY0);
--	set_cipher_mode(&desc[idx], DRV_CIPHER_XCBC_MAC);
-+	set_hash_cipher_mode(&desc[idx], DRV_CIPHER_XCBC_MAC, ctx->hash_mode);
- 	set_cipher_config0(&desc[idx], DESC_DIRECTION_ENCRYPT_ENCRYPT);
- 	set_key_size_aes(&desc[idx], CC_AES_128_BIT_KEY_SIZE);
- 	set_flow_mode(&desc[idx], S_DIN_to_AES);
+ 	/* Copy-to-sram digest-len */
+@@ -1853,6 +1895,17 @@ int cc_init_hash_sram(struct cc_drvdata *drvdata)
+ 	sram_buff_ofs += sizeof(sha256_init);
+ 	larval_seq_len = 0;
+ 
++	if (sm3_supported) {
++		cc_set_sram_desc(sm3_init, sram_buff_ofs,
++				 ARRAY_SIZE(sm3_init), larval_seq,
++				 &larval_seq_len);
++		rc = send_request_init(drvdata, larval_seq, larval_seq_len);
++		if (rc)
++			goto init_digest_const_err;
++		sram_buff_ofs += sizeof(sm3_init);
++		larval_seq_len = 0;
++	}
++
+ 	if (large_sha_supported) {
+ 		cc_set_sram_desc((u32 *)sha384_init, sram_buff_ofs,
+ 				 (ARRAY_SIZE(sha384_init) * 2), larval_seq,
+@@ -1919,6 +1972,9 @@ int cc_hash_alloc(struct cc_drvdata *drvdata)
+ 			sizeof(sha224_init) +
+ 			sizeof(sha256_init);
+ 
++	if (drvdata->hw_rev >= CC_HW_REV_713)
++		sram_size_to_alloc += sizeof(sm3_init);
++
+ 	if (drvdata->hw_rev >= CC_HW_REV_712)
+ 		sram_size_to_alloc += sizeof(digest_len_sha512_init) +
+ 			sizeof(sha384_init) + sizeof(sha512_init);
+@@ -1948,27 +2004,28 @@ int cc_hash_alloc(struct cc_drvdata *drvdata)
+ 		/* We either support both HASH and MAC or none */
+ 		if (driver_hash[alg].min_hw_rev > drvdata->hw_rev)
+ 			continue;
+-
+-		/* register hmac version */
+-		t_alg = cc_alloc_hash_alg(&driver_hash[alg], dev, true);
+-		if (IS_ERR(t_alg)) {
+-			rc = PTR_ERR(t_alg);
+-			dev_err(dev, "%s alg allocation failed\n",
+-				driver_hash[alg].driver_name);
+-			goto fail;
+-		}
+-		t_alg->drvdata = drvdata;
+-
+-		rc = crypto_register_ahash(&t_alg->ahash_alg);
+-		if (rc) {
+-			dev_err(dev, "%s alg registration failed\n",
+-				driver_hash[alg].driver_name);
+-			kfree(t_alg);
+-			goto fail;
+-		} else {
+-			list_add_tail(&t_alg->entry, &hash_handle->hash_list);
++		if (driver_hash[alg].is_mac) {
++			/* register hmac version */
++			t_alg = cc_alloc_hash_alg(&driver_hash[alg], dev, true);
++			if (IS_ERR(t_alg)) {
++				rc = PTR_ERR(t_alg);
++				dev_err(dev, "%s alg allocation failed\n",
++					driver_hash[alg].driver_name);
++				goto fail;
++			}
++			t_alg->drvdata = drvdata;
++
++			rc = crypto_register_ahash(&t_alg->ahash_alg);
++			if (rc) {
++				dev_err(dev, "%s alg registration failed\n",
++					driver_hash[alg].driver_name);
++				kfree(t_alg);
++				goto fail;
++			} else {
++				list_add_tail(&t_alg->entry,
++					      &hash_handle->hash_list);
++			}
+ 		}
+-
+ 		if (hw_mode == DRV_CIPHER_XCBC_MAC ||
+ 		    hw_mode == DRV_CIPHER_CMAC)
+ 			continue;
+@@ -2170,6 +2227,8 @@ static const void *cc_larval_digest(struct device *dev, u32 mode)
+ 		return sha384_init;
+ 	case DRV_HASH_SHA512:
+ 		return sha512_init;
++	case DRV_HASH_SM3:
++		return sm3_init;
+ 	default:
+ 		dev_err(dev, "Invalid hash mode (%d)\n", mode);
+ 		return md5_init;
+@@ -2190,6 +2249,8 @@ cc_sram_addr_t cc_larval_digest_addr(void *drvdata, u32 mode)
+ 	struct cc_drvdata *_drvdata = (struct cc_drvdata *)drvdata;
+ 	struct cc_hash_handle *hash_handle = _drvdata->hash_handle;
+ 	struct device *dev = drvdata_to_dev(_drvdata);
++	bool sm3_supported = (_drvdata->hw_rev >= CC_HW_REV_713);
++	cc_sram_addr_t addr;
+ 
+ 	switch (mode) {
+ 	case DRV_HASH_NULL:
+@@ -2208,19 +2269,31 @@ cc_sram_addr_t cc_larval_digest_addr(void *drvdata, u32 mode)
+ 			sizeof(md5_init) +
+ 			sizeof(sha1_init) +
+ 			sizeof(sha224_init));
+-	case DRV_HASH_SHA384:
++	case DRV_HASH_SM3:
+ 		return (hash_handle->larval_digest_sram_addr +
+ 			sizeof(md5_init) +
+ 			sizeof(sha1_init) +
+ 			sizeof(sha224_init) +
+ 			sizeof(sha256_init));
++	case DRV_HASH_SHA384:
++		addr = (hash_handle->larval_digest_sram_addr +
++			sizeof(md5_init) +
++			sizeof(sha1_init) +
++			sizeof(sha224_init) +
++			sizeof(sha256_init));
++		if (sm3_supported)
++			addr += sizeof(sm3_init);
++		return addr;
+ 	case DRV_HASH_SHA512:
+-		return (hash_handle->larval_digest_sram_addr +
++		addr = (hash_handle->larval_digest_sram_addr +
+ 			sizeof(md5_init) +
+ 			sizeof(sha1_init) +
+ 			sizeof(sha224_init) +
+ 			sizeof(sha256_init) +
+ 			sizeof(sha384_init));
++		if (sm3_supported)
++			addr += sizeof(sm3_init);
++		return addr;
+ 	default:
+ 		dev_err(dev, "Invalid hash mode (%d)\n", mode);
+ 	}
 diff --git a/drivers/crypto/ccree/cc_hw_queue_defs.h b/drivers/crypto/ccree/cc_hw_queue_defs.h
-index 45985b9..b367b67 100644
+index b367b67..e1783ea 100644
 --- a/drivers/crypto/ccree/cc_hw_queue_defs.h
 +++ b/drivers/crypto/ccree/cc_hw_queue_defs.h
-@@ -455,6 +455,20 @@ static inline void set_cipher_mode(struct cc_hw_desc *pdesc, int mode)
+@@ -42,6 +42,7 @@
+ #define WORD3_QUEUE_LAST_IND	CC_GENMASK(3, QUEUE_LAST_IND)
+ #define WORD4_ACK_NEEDED	CC_GENMASK(4, ACK_NEEDED)
+ #define WORD4_AES_SEL_N_HASH	CC_GENMASK(4, AES_SEL_N_HASH)
++#define WORD4_AES_XOR_CRYPTO_KEY CC_GENMASK(4, AES_XOR_CRYPTO_KEY)
+ #define WORD4_BYTES_SWAP	CC_GENMASK(4, BYTES_SWAP)
+ #define WORD4_CIPHER_CONF0	CC_GENMASK(4, CIPHER_CONF0)
+ #define WORD4_CIPHER_CONF1	CC_GENMASK(4, CIPHER_CONF1)
+@@ -394,6 +395,16 @@ static inline void set_aes_not_hash_mode(struct cc_hw_desc *pdesc)
  }
  
  /*
-+ * Set the cipher mode for hash algorithms.
++ * Set aes xor crypto key, this in some secenrios select SM3 engine
 + *
 + * @pdesc: pointer HW descriptor struct
-+ * @cipher_mode:  Any one of the modes defined in [CC7x-DESC]
-+ * @hash_mode: specifies which hash is being handled
 + */
-+static inline void set_hash_cipher_mode(struct cc_hw_desc *pdesc,
-+					enum drv_cipher_mode cipher_mode,
-+					enum drv_hash_mode hash_mode)
++static inline void set_aes_xor_crypto_key(struct cc_hw_desc *pdesc)
 +{
-+	set_cipher_mode(pdesc, cipher_mode);
++	pdesc->word[4] |= FIELD_PREP(WORD4_AES_XOR_CRYPTO_KEY, 1);
 +}
 +
 +/*
-  * Set the cipher configuration fields.
-  *
-  * @pdesc: pointer HW descriptor struct
+  * Set the DOUT field of a HW descriptors to SRAM mode
+  * Note: No need to check SRAM alignment since host requests do not use SRAM and
+  * adaptor will enforce alignment check.
+@@ -466,6 +477,8 @@ static inline void set_hash_cipher_mode(struct cc_hw_desc *pdesc,
+ 					enum drv_hash_mode hash_mode)
+ {
+ 	set_cipher_mode(pdesc, cipher_mode);
++	if (hash_mode == DRV_HASH_SM3)
++		set_aes_xor_crypto_key(pdesc);
+ }
+ 
+ /*
 -- 
 2.7.4
 
