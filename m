@@ -2,107 +2,273 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0491DC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6D9C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A49C21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:55:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A49C21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 61B3321473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:56:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dY+neUu1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61B3321473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbeJRW4V (ORCPT
+        id S1727457AbeJRW5g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 18:56:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50074 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726133AbeJRW4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 18:56:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E219BAD77;
-        Thu, 18 Oct 2018 14:54:57 +0000 (UTC)
-Date:   Thu, 18 Oct 2018 16:54:56 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v12 06/12] livepatch: Simplify API by removing
- registration step
-Message-ID: <20181018145456.nrekm2iuyf5ztw3n@pathway.suse.cz>
-References: <20180828143603.4442-1-pmladek@suse.com>
- <20180828143603.4442-7-pmladek@suse.com>
- <alpine.LSU.2.21.1809051108440.7768@pobox.suse.cz>
- <20181012130120.f5berowklyccd7lj@pathway.suse.cz>
- <alpine.LSU.2.21.1810151756290.11383@pobox.suse.cz>
+        Thu, 18 Oct 2018 18:57:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52948 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726359AbeJRW5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 18:57:35 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B70DD2145D;
+        Thu, 18 Oct 2018 14:56:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539874573;
+        bh=Rm+DMuqBYvle64M/pTMGH43Bi0wdVKx8KgsxYbWh5lg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dY+neUu1miBB9zfYC3NWIMOHmda3nusRFdUXHwBHg0e+o6b9pYrNZd5bHmLl5e5H2
+         XCnkM/YKbsRr4+wW43gu177XxqCw8kXj5dFwE+chuCFbiXNNkBu7AKMTTVQ+sxJYPs
+         K2Rlz7/clqmVRadO3BxOLUZFwRSS0f8rnUGjOKuQ=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 47190142C5E; Thu, 18 Oct 2018 11:56:10 -0300 (-03)
+Date:   Thu, 18 Oct 2018 11:56:10 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Nickhu <nickhu@andestech.com>
+Cc:     greentime@andestech.com, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, deanbo422@gmail.com,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        gregkh@linuxfoundation.org, green.hu@gmail.com
+Subject: Re: [PATCH 1/1] Perf: Compile failed when compile with libelf.
+Message-ID: <20181018145610.GH3849@kernel.org>
+References: <cover.1539654517.git.nickhu@andestech.com>
+ <36763ffb49ecc0342669ca4029a4592670f6249a.1539654517.git.nickhu@andestech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.1810151756290.11383@pobox.suse.cz>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <36763ffb49ecc0342669ca4029a4592670f6249a.1539654517.git.nickhu@andestech.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2018-10-15 18:01:43, Miroslav Benes wrote:
-> On Fri, 12 Oct 2018, Petr Mladek wrote:
+Em Thu, Oct 18, 2018 at 04:36:46PM +0800, Nickhu escreveu:
+> The error message:
+> =====================================================================
+> util/symbol-elf.c:46:12: error: static declaration of 'elf_getphdrnum'
+> follows non-static declaration
+> static int elf_getphdrnum(Elf *elf, size_t *dst)
+>             ^~~~~~~~~~~~~~
+> In file included from util/symbol.h:20,
+>                  from util/symbol-elf.c:9:
+> /local/nickhu/build-system-3/toolchain/nds32le-linux-glibc-v3-upstream/
+> nds32le-linux/sysroot/usr/include/libelf.h:266:12: note: previous declaration
+> of 'elf_getphdrnum' was here
+> extern int elf_getphdrnum (Elf *__elf, size_t *__dst);
+>             ^~~~~~~~~~~~~~
+> util/symbol-elf.c:62:12: error: static declaration of 'elf_getshdrstrndx'
+> follows non-static declaration
+> static int elf_getshdrstrndx(Elf *elf __maybe_unused, size_t *dst __maybe
+> _unused)
+>             ^~~~~~~~~~~~~~~~~
+> In file included from util/symbol.h:20,
+>                  from util/symbol-elf.c:9:
+> /local/nickhu/build-system-3/toolchain/nds32le-linux-glibc-v3-upstream/
+> nds32le-linux/sysroot/usr/include/libelf.h:316:12: note: previous declaration
+> of 'elf_getshdrstrndx' was here
+> extern int elf_getshdrstrndx (Elf *__elf, size_t *__dst);
+> =====================================================================
 > 
-> > On Wed 2018-09-05 11:34:06, Miroslav Benes wrote:
-> > > On Tue, 28 Aug 2018, Petr Mladek wrote:
-> > > > Also the API and logic is much easier. It is enough to call
-> > > > klp_enable_patch() in module_init() call. The patch patch can be disabled
-> > > > by writing '0' into /sys/kernel/livepatch/<patch>/enabled. Then the module
-> > > > can be removed once the transition finishes and sysfs interface is freed.
-> > > 
-> > > I think it would be good to discuss our sysfs interface here as well.
-> > > 
-> > > Writing '1' to enabled attribute now makes sense only when you need to 
-> > > reverse an unpatching transition. Writing '0' means "disable" or a 
-> > > reversion again.
-> > > 
-> > > Wouldn't be better to split it to two different attributes? Something like 
-> > > "disable" and "reverse"? It could be more intuitive.
-> > > 
-> > > Maybe we'd also find out that even patch->enabled member is not useful 
-> > > anymore in such case.
-> > 
-> > I though about this as well. I kept "enabled" because:
-> > 
-> >   + It keeps the public interface the same as before. Most people
-> >     would not notice any change in the behavior except maybe that
-> >     the interface disappears when the patch gets disabled.
+> Fix it.
+
+Humm, I think the fix lies elsewhere.
+
+If you find that function in a header, then its probably because you
+_have_ it in your system, right? In that case
+HAVE_ELF_GETPHDRNUM_SUPPORT should be defined and that elf_getphdrnum()
+fallback implementation should not be compiled.
+
+So looking at where HAVE_ELF_GETPHDRNUM_SUPPORT is defined, in
+tools/build/feature, more specifically here:
+
+[acme@jouet perf]$ cat tools/build/feature/test-libelf-getphdrnum.c 
+// SPDX-License-Identifier: GPL-2.0
+#include <libelf.h>
+
+int main(void)
+{
+	size_t dst;
+
+	return elf_getphdrnum(0, &dst);
+}
+[acme@jouet perf]$ 
+
+[acme@jouet perf]$ find tools/ -type f | xargs grep HAVE_ELF_GETPHDRNUM_SUPPORT
+tools/perf/Makefile.config:    CFLAGS += -DHAVE_ELF_GETPHDRNUM_SUPPORT
+tools/perf/util/symbol-elf.c:#ifndef HAVE_ELF_GETPHDRNUM_SUPPORT
+[acme@jouet perf]$ 
+
+Can you take a look at:
+
+[acme@jouet perf]$ ls -la /tmp/build/perf/feature/test-libelf-getphdrnum.*
+-rwxrwxr-x. 1 acme acme 8240 Oct 17 09:20 /tmp/build/perf/feature/test-libelf-getphdrnum.bin
+-rw-rw-r--. 1 acme acme 1373 Oct 17 09:20 /tmp/build/perf/feature/test-libelf-getphdrnum.d
+-rw-rw-r--. 1 acme acme    0 Oct 17 09:20 /tmp/build/perf/feature/test-libelf-getphdrnum.make.output
+[acme@jouet perf]$ 
+
+So in my case, using this libelf:
+
+[acme@jouet perf]$ rpm -qf /usr/include/libelf.h 
+elfutils-libelf-devel-0.173-1.fc28.x86_64
+[acme@jouet perf]$
+
+the .make.output file is empty, the build was successful, without
+warnings, that binary was generated:
+
+[acme@jouet perf]$ ls -la /tmp/build/perf/feature/test-libelf-getphdrnum.bin
+-rwxrwxr-x. 1 acme acme 8240 Oct 17 09:20 /tmp/build/perf/feature/test-libelf-getphdrnum.bin
+[acme@jouet perf]$ ldd /tmp/build/perf/feature/test-libelf-getphdrnum.bin
+	linux-vdso.so.1 (0x00007ffdf93ea000)
+	libelf.so.1 => /lib64/libelf.so.1 (0x00007efc3f2d7000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007efc3ef21000)
+	libz.so.1 => /lib64/libz.so.1 (0x00007efc3ed0a000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007efc3f4ef000)
+[acme@jouet perf]$ nm /tmp/build/perf/feature/test-libelf-getphdrnum.bin | grep getphdrnum
+                 U elf_getphdrnum@@ELFUTILS_1.6
+[acme@jouet perf]$
+
+And here are the headers used:
+
+[acme@jouet perf]$ cat /tmp/build/perf/feature/test-libelf-getphdrnum.d 
+/tmp/build/perf/feature/test-libelf-getphdrnum.bin: \
+ test-libelf-getphdrnum.c /usr/include/stdc-predef.h \
+ /usr/include/libelf.h \
+ /usr/lib/gcc/x86_64-redhat-linux/7/include/stdint.h \
+ /usr/include/stdint.h /usr/include/bits/libc-header-start.h \
+ /usr/include/features.h /usr/include/sys/cdefs.h \
+ /usr/include/bits/wordsize.h /usr/include/bits/long-double.h \
+ /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
+ /usr/include/bits/types.h /usr/include/bits/typesizes.h \
+ /usr/include/bits/wchar.h /usr/include/bits/stdint-intn.h \
+ /usr/include/bits/stdint-uintn.h /usr/include/sys/types.h \
+ /usr/include/bits/types/clock_t.h /usr/include/bits/types/clockid_t.h \
+ /usr/include/bits/types/time_t.h /usr/include/bits/types/timer_t.h \
+ /usr/lib/gcc/x86_64-redhat-linux/7/include/stddef.h \
+ /usr/include/endian.h /usr/include/bits/endian.h \
+ /usr/include/bits/byteswap.h /usr/include/bits/byteswap-16.h \
+ /usr/include/bits/uintn-identity.h /usr/include/sys/select.h \
+ /usr/include/bits/select.h /usr/include/bits/types/sigset_t.h \
+ /usr/include/bits/types/__sigset_t.h \
+ /usr/include/bits/types/struct_timeval.h \
+ /usr/include/bits/types/struct_timespec.h /usr/include/sys/sysmacros.h \
+ /usr/include/bits/sysmacros.h /usr/include/bits/pthreadtypes.h \
+ /usr/include/bits/thread-shared-types.h \
+ /usr/include/bits/pthreadtypes-arch.h /usr/include/elf.h
+[acme@jouet perf]$
+
+So, taking this into account, I think the feature test is using a
+different include path than the tool, which may be a real bug in the
+feature detection, how is the command line that led to this?
+
+One other way to see that the feature test is not detecting that
+library, use VF=1 after a clean and check if this line is present:
+
+...             libelf-getphdrnum: [ OFF ]
+
+[acme@jouet perf]$ rm -rf /tmp/build/perf/ ; mkdir -p /tmp/build/perf 
+[acme@jouet perf]$ time make VF=1 -C tools/perf O=/tmp/build/perf
+make: Entering directory '/home/acme/git/perf/tools/perf'
+  BUILD:   Doing 'make -j4' parallel build
+  HOSTCC   /tmp/build/perf/fixdep.o
+  HOSTLD   /tmp/build/perf/fixdep-in.o
+  LINK     /tmp/build/perf/fixdep
+Warning: Kernel ABI header at 'tools/include/uapi/linux/mman.h' differs from latest version at 'include/uapi/linux/mman.h'
+diff -u tools/include/uapi/linux/mman.h include/uapi/linux/mman.h
+
+Auto-detecting system features:
+...                         dwarf: [ on  ]
+...            dwarf_getlocations: [ on  ]
+...                         glibc: [ on  ]
+...                          gtk2: [ on  ]
+...                      libaudit: [ on  ]
+...                        libbfd: [ on  ]
+...                        libelf: [ on  ]
+...                       libnuma: [ on  ]
+...        numa_num_possible_cpus: [ on  ]
+...                       libperl: [ on  ]
+...                     libpython: [ on  ]
+...                      libslang: [ on  ]
+...                     libcrypto: [ on  ]
+...                     libunwind: [ on  ]
+...            libdw-dwarf-unwind: [ on  ]
+...                          zlib: [ on  ]
+...                          lzma: [ on  ]
+...                     get_cpuid: [ on  ]
+...                           bpf: [ on  ]
+...                     backtrace: [ on  ]
+...                fortify-source: [ on  ]
+...         sync-compare-and-swap: [ on  ]
+...                  gtk2-infobar: [ on  ]
+...             libelf-getphdrnum: [ on  ]
+...           libelf-gelf_getnote: [ on  ]
+...          libelf-getshdrstrndx: [ on  ]
+...                   libelf-mmap: [ on  ]
+...             libpython-version: [ on  ]
+...                 libunwind-x86: [ OFF ]
+...              libunwind-x86_64: [ on  ]
+...                 libunwind-arm: [ OFF ]
+...             libunwind-aarch64: [ OFF ]
+...   pthread-attr-setaffinity-np: [ on  ]
+...               pthread-barrier: [ on  ]
+...                  reallocarray: [ on  ]
+...            stackprotector-all: [ on  ]
+...                       timerfd: [ on  ]
+...                  sched_getcpu: [ on  ]
+...                           sdt: [ on  ]
+...                         setns: [ on  ]
+...                    libopencsd: [ OFF ]
+
+ 
+> Signed-off-by: Nickhu <nickhu@andestech.com>
+> ---
+>  tools/perf/util/symbol-elf.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Well our sysfs interface is still in a testing phase as far as ABI is 
-> involved. Moreover, each live patch is bound to its base kernel by 
-> definition anyway. So we can change this without remorse, I think.
+> diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+> index 29770ea61768..3ccdfe603d67 100644
+> --- a/tools/perf/util/symbol-elf.c
+> +++ b/tools/perf/util/symbol-elf.c
+> @@ -43,7 +43,7 @@ static inline char *bfd_demangle(void __maybe_unused *v,
+>  #endif
 >  
-> >   + The reverse operation makes most sense when the transition
-> >     cannot get finished. In theory, it might be problem to
-> >     finish even the reversed one. People might want to
-> >     reverse once again and force it. Then "reverse" file
-> >     might be confusing. They might not know in which direction
-> >     they do the reverse.
-> 
-> I still think it would be better to have a less confusing interface and it 
-> would outweigh the second remark.
-
-OK, what about having just "disable" in sysfs. I agree that it makes
-much more sense than "enable" now.
-
-It might be used also for the reverse operation the same way as
-"enable" was used before. I think that standalone "reverse" might
-be confusing when we allow to reverse the operation in both
-directions.
-
-Best Regards,
-Petr
+>  #ifndef HAVE_ELF_GETPHDRNUM_SUPPORT
+> -static int elf_getphdrnum(Elf *elf, size_t *dst)
+> +int elf_getphdrnum(Elf *elf, size_t *dst)
+>  {
+>  	GElf_Ehdr gehdr;
+>  	GElf_Ehdr *ehdr;
+> @@ -59,7 +59,7 @@ static int elf_getphdrnum(Elf *elf, size_t *dst)
+>  #endif
+>  
+>  #ifndef HAVE_ELF_GETSHDRSTRNDX_SUPPORT
+> -static int elf_getshdrstrndx(Elf *elf __maybe_unused, size_t *dst __maybe_unused)
+> +int elf_getshdrstrndx(Elf *elf __maybe_unused, size_t *dst __maybe_unused)
+>  {
+>  	pr_err("%s: update your libelf to > 0.140, this one lacks elf_getshdrstrndx().\n", __func__);
+>  	return -1;
+> -- 
+> 2.17.0
