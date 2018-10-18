@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E93ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB43C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 537F0214AB
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 251E120658
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zQAQx0+2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 537F0214AB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="quR4fDo2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 251E120658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730550AbeJSCIx (ORCPT
+        id S1730561AbeJSCIz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:08:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58074 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:08:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730074AbeJSCIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:08:51 -0400
+        id S1729926AbeJSCIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:08:54 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73E982148D;
-        Thu, 18 Oct 2018 18:06:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31D3E2148D;
+        Thu, 18 Oct 2018 18:06:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539886003;
-        bh=3YJ9xM/q67rrbvodTr3yYiN9o879fjLqeULXE3gV96o=;
+        s=default; t=1539886007;
+        bh=10ZxONM01KTTzfcJEaLscfeJ4CrzGFLkir2HeyntUf0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zQAQx0+2zQJaYDbJaFH6346kV2Eu8MLA8akzBpkQwL2sMObAeYN8QLn2roS0PoJQe
-         bXh2PUWNx05CTAVFVDXGpAoVu4YsEBnjkmBLyrdlSH4A7J2Cyx8qH+62Lw4irkG28v
-         +P4NdJAq/iOUm/ws3BaweohCAD+9L/2PfECMVH2A=
+        b=quR4fDo2udpA/6Sc1wHXgwwxaT56UBIHF0/g3amydHhChlGji9wW9s8rRxjFB8zAt
+         It5KuI7m1YkmXv+XMmZkKA64tUhpBxKiuORrfP/jDeBy45/xD8hDg7rmX6t6FloFnn
+         cY8Ug4tikKqhi6qZeQMOkdasMcK0DuSW/ly/dMVI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.4 43/48] ARC: build: Get rid of toolchain check
-Date:   Thu, 18 Oct 2018 19:55:18 +0200
-Message-Id: <20181018175430.209323205@linuxfoundation.org>
+        stable@vger.kernel.org, Stephen Warren <swarren@nvidia.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.4 44/48] usb: gadget: serial: fix oops when data rxd after close
+Date:   Thu, 18 Oct 2018 19:55:19 +0200
+Message-Id: <20181018175430.254334473@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -63,65 +63,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Brodkin <abrodkin@synopsys.com>
+From: Stephen Warren <swarren@nvidia.com>
 
-commit 615f64458ad890ef94abc879a66d8b27236e733a upstream.
+commit daa35bd95634a2a2d72d1049c93576a02711cb1a upstream.
 
-This check is very naive: we simply test if GCC invoked without
-"-mcpu=XXX" has ARC700 define set. In that case we think that GCC
-was built with "--with-cpu=arc700" and has libgcc built for ARC700.
+When the gadget serial device has no associated TTY, do not pass any
+received data into the TTY layer for processing; simply drop it instead.
+This prevents the TTY layer from calling back into the gadget serial
+driver, which will then crash in e.g. gs_write_room() due to lack of
+gadget serial device to TTY association (i.e. a NULL pointer dereference).
 
-Otherwise if ARC700 is not defined we think that everythng was built
-for ARCv2.
-
-But in reality our life is much more interesting.
-
-1. Regardless of GCC configuration (i.e. what we pass in "--with-cpu"
-   it may generate code for any ARC core).
-
-2. libgcc might be built with explicitly specified "--mcpu=YYY"
-
-That's exactly what happens in case of multilibbed toolchains:
- - GCC is configured with default settings
- - All the libs built for many different CPU flavors
-
-I.e. that check gets in the way of usage of multilibbed
-toolchains. And even non-multilibbed toolchains are affected.
-OpenEmbedded also builds GCC without "--with-cpu" because
-each and every target component later is compiled with explicitly
-set "-mcpu=ZZZ".
-
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arc/Makefile |   14 --------------
- 1 file changed, 14 deletions(-)
+ drivers/usb/gadget/function/u_serial.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arc/Makefile
-+++ b/arch/arc/Makefile
-@@ -18,20 +18,6 @@ cflags-y	+= -fno-common -pipe -fno-built
- cflags-$(CONFIG_ISA_ARCOMPACT)	+= -mA7
- cflags-$(CONFIG_ISA_ARCV2)	+= -mcpu=archs
+--- a/drivers/usb/gadget/function/u_serial.c
++++ b/drivers/usb/gadget/function/u_serial.c
+@@ -518,7 +518,7 @@ static void gs_rx_push(unsigned long _po
+ 		}
  
--is_700 = $(shell $(CC) -dM -E - < /dev/null | grep -q "ARC700" && echo 1 || echo 0)
--
--ifdef CONFIG_ISA_ARCOMPACT
--ifeq ($(is_700), 0)
--    $(error Toolchain not configured for ARCompact builds)
--endif
--endif
--
--ifdef CONFIG_ISA_ARCV2
--ifeq ($(is_700), 1)
--    $(error Toolchain not configured for ARCv2 builds)
--endif
--endif
--
- ifdef CONFIG_ARC_CURR_IN_REG
- # For a global register defintion, make sure it gets passed to every file
- # We had a customer reported bug where some code built in kernel was NOT using
+ 		/* push data to (open) tty */
+-		if (req->actual) {
++		if (req->actual && tty) {
+ 			char		*packet = req->buf;
+ 			unsigned	size = req->actual;
+ 			unsigned	n;
 
 
