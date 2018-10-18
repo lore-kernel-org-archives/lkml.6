@@ -2,135 +2,138 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC24C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 903EEC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:47:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E70B2098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:42:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BE1C2098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:47:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fHDsGnUQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E70B2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nWpRxeP7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BE1C2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbeJRXoL (ORCPT
+        id S1728358AbeJRXsk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 19:44:11 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:32768 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727598AbeJRXoL (ORCPT
+        Thu, 18 Oct 2018 19:48:40 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43867 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728015AbeJRXsk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 19:44:11 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9IFeUg4067077;
-        Thu, 18 Oct 2018 10:40:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1539877230;
-        bh=SeWuOChOhwoXkaqqWM0kVgRIDhpb3mdaOvWn73fk0cQ=;
-        h=From:To:CC:Subject:Date;
-        b=fHDsGnUQOZxf+nHmh3O8OQFzhMzVndyTzl8fDzKST3cFEpHYphIgsHbWHOlBbQ4It
-         mkes2AH7YFHHZFkLchU3v8ktu7/Sx1lO+rYHdIn13kMBgCwxbJTpu0mCb0AGYQf0CU
-         0bxjHaWMT4kNG2G6yGPA9VM4ewmaujgjfij/Vx3w=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9IFeUb8016487;
-        Thu, 18 Oct 2018 10:40:30 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 18
- Oct 2018 10:40:29 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 18 Oct 2018 10:40:29 -0500
-Received: from uda0131933.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9IFePOf006432;
-        Thu, 18 Oct 2018 10:40:26 -0500
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-To:     Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <marc.zyngier@arm.com>
-CC:     Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>
-Subject: [PATCH v2 00/10] Add support for TISCI irqchip drivers
-Date:   Thu, 18 Oct 2018 21:10:07 +0530
-Message-ID: <20181018154017.7112-1-lokeshvutla@ti.com>
-X-Mailer: git-send-email 2.19.1
+        Thu, 18 Oct 2018 19:48:40 -0400
+Received: by mail-pl1-f195.google.com with SMTP id 30-v6so14488316plb.10;
+        Thu, 18 Oct 2018 08:47:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PjOqgVaJv/ojAIKUyDQMVhFrWFdFG0K0V1bDLkbd25Y=;
+        b=nWpRxeP74V25o2HXVbG1MxA/ZNQDldfzLIwIPnbKGjtmvacbUHZkRwRRxbdhXWlny0
+         1EUDGeD9hi1gtOhaFPW9rKrY3SINX9ax+ANQxhHYrl3gzubbNcOwOPgH4YsttJo3DWPf
+         NjqycDVbs/HjHnqDeLtjXeV3OuLtYsEQtmCIl1rDP/ui8Ur2G1gPyKEafr7phb/CEVpG
+         UzooJD3EX2Ixq2xkla3V1rBCoUTFwTHZvBQNBOxUdQjRdBJ+wt7CzExRVD7wXNbPVjEh
+         YUCNj+CqG2/U+Nocnaa52yLD8E5pif1OcnIxn6eBrqnURV+F4hsR7MxOk8YPwJbEWC/s
+         meCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PjOqgVaJv/ojAIKUyDQMVhFrWFdFG0K0V1bDLkbd25Y=;
+        b=sJK8OnkpBV/brkkTPW0dFKpQu5AY/2Xtp38GYWV7z6R6LM/2vE9kAd/dxKc2ehCCwI
+         8irwhD45yr3x+3OVghDKS5jOIBvDL8QswOcw3gJEaxRCGd+APpsSPKceMc/1caH9XRiO
+         5wdfTmhaxaEVQYBOPhzVUgpL9V5y0To1aP5qjxlcn9cpzIwJbkslMvJyYbbhhHPHVCpa
+         0R6TISnaAPd6uFA7RU1wbL4NW/E1S90kEFs1GMUAwOYl1vzPQppoj3HgOh/DkqeMawk6
+         edcpRXsw+z8AKea8n2DMe8rPKB3YtSZg33d86I4w90S1tml1DgOMeBaQPeyru9pWNVPv
+         QGoQ==
+X-Gm-Message-State: ABuFfojUwev8hV6omI/lvfuYsKiVPekKh7StcdXGfKlB2oSVXGYo2ePB
+        qEmdD8lF3wORMe1gPDt61Tg=
+X-Google-Smtp-Source: ACcGV61nKbG82Aq5d57hsSbFwqvkkDuGtooVET/yfgAG5JI5lEN0ZghHoq5qKjZwLMTxeOBzElqcww==
+X-Received: by 2002:a17:902:8502:: with SMTP id bj2-v6mr30188803plb.295.1539877623807;
+        Thu, 18 Oct 2018 08:47:03 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:733a])
+        by smtp.gmail.com with ESMTPSA id y24-v6sm39551131pfi.24.2018.10.18.08.47.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Oct 2018 08:47:02 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 08:46:59 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Daniel Colascione <dancol@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        netdev <netdev@vger.kernel.org>,
+        Lorenzo Colitti <lorenzo@google.com>,
+        Chenbo Feng <fengc@google.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <ast@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>, stable@vger.kernel.org
+Subject: Re: [PATCH v4] Wait for running BPF programs when updating map-in-map
+Message-ID: <20181018154657.ehgj3ozy62zy47hi@ast-mbp.dhcp.thefacebook.com>
+References: <20180816040145.gqzqicab4s6kcbye@ast-mbp.dhcp.thefacebook.com>
+ <20181012105427.243779-1-dancol@google.com>
+ <20181013023138.m445q6itdmyxdtoc@ast-mbp.dhcp.thefacebook.com>
+ <CAEXW_YQFs9mcw5Qv04ZRv=ZAK7YeBLJKByQxXYLj34iigS-Q=Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEXW_YQFs9mcw5Qv04ZRv=ZAK7YeBLJKByQxXYLj34iigS-Q=Q@mail.gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TISCI abstracts the handling of IRQ routes where interrupt sources
-are not directly connected to host interrupt controller. This series
-adds support for:
-- TISCI commands needed for IRQ configuration
-- Interrupt Router(INTR) and Interrupt Aggregator(INTA) drivers
+On Tue, Oct 16, 2018 at 10:39:57AM -0700, Joel Fernandes wrote:
+> On Fri, Oct 12, 2018 at 7:31 PM, Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> > On Fri, Oct 12, 2018 at 03:54:27AM -0700, Daniel Colascione wrote:
+> >> The map-in-map frequently serves as a mechanism for atomic
+> >> snapshotting of state that a BPF program might record.  The current
+> >> implementation is dangerous to use in this way, however, since
+> >> userspace has no way of knowing when all programs that might have
+> >> retrieved the "old" value of the map may have completed.
+> >>
+> >> This change ensures that map update operations on map-in-map map types
+> >> always wait for all references to the old map to drop before returning
+> >> to userspace.
+> >>
+> >> Signed-off-by: Daniel Colascione <dancol@google.com>
+> >> ---
+> >>  kernel/bpf/syscall.c | 14 ++++++++++++++
+> >>  1 file changed, 14 insertions(+)
+> >>
+> >> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> >> index 8339d81cba1d..d7c16ae1e85a 100644
+> >> --- a/kernel/bpf/syscall.c
+> >> +++ b/kernel/bpf/syscall.c
+> >> @@ -741,6 +741,18 @@ static int map_lookup_elem(union bpf_attr *attr)
+> >>       return err;
+> >>  }
+> >>
+> >> +static void maybe_wait_bpf_programs(struct bpf_map *map)
+> >> +{
+> >> +     /* Wait for any running BPF programs to complete so that
+> >> +      * userspace, when we return to it, knows that all programs
+> >> +      * that could be running use the new map value.
+> >> +      */
+> >> +     if (map->map_type == BPF_MAP_TYPE_HASH_OF_MAPS ||
+> >> +         map->map_type == BPF_MAP_TYPE_ARRAY_OF_MAPS) {
+> >> +             synchronize_rcu();
+> >> +     }
+> >
+> > extra {} were not necessary. I removed them while applying to bpf-next.
+> > Please run checkpatch.pl next time.
+> > Thanks
+> 
+> Thanks Alexei for taking it. Me and Lorenzo were discussing that not
+> having this causes incorrect behavior for apps using map-in-map for
+> this. So I CC'd stable as well.
 
-More information on TISCI IRQ management can be found here[1].
-Complete TISCI resource management information can be found here[2].
-AM65x SoC related TISCI information can be found here[3].
-INTR and INTA related information can be found in TRM[4].
-
-[1] http://downloads.ti.com/tisci/esd/latest/2_tisci_msgs/rm/rm_irq.html
-[2] http://downloads.ti.com/tisci/esd/latest/2_tisci_msgs/index.html#resource-management-rm
-[3] http://downloads.ti.com/tisci/esd/latest/5_soc_doc/index.html#am6-soc-family
-[4] http://www.ti.com/lit/pdf/spruid7
-
-Changes since v1:
-- Consolidated both TISCI and irqchip drivers as suggested by Marc.
-- Each patch contains respective changes.
-
-Grygorii Strashko (1):
-  firmware: ti_sci: Add support to get TISCI handle using of_phandle
-
-Lokesh Vutla (8):
-  firmware: ti_sci: Add support for RM core ops
-  firmware: ti_sci: Add support for IRQ management
-  firmware: ti_sci: Add helper apis to manage resources
-  dt-bindings: irqchip: Introduce TISCI Interrupt router bindings
-  irqchip: ti-sci-intr: Add support for Interrupt Router driver
-  dt-bindings: irqchip: Introduce TISCI Interrupt Aggregator bindings
-  irqchip: ti-sci-inta: Add support for Interrupt Aggregator driver
-  soc: ti: am6: Enable interrupt controller drivers
-
-Peter Ujfalusi (1):
-  firmware: ti_sci: Add RM mapping table for am654
-
- .../bindings/arm/keystone/ti,sci.txt          |   3 +-
- .../interrupt-controller/ti,sci-inta.txt      |  74 ++
- .../interrupt-controller/ti,sci-intr.txt      |  81 ++
- MAINTAINERS                                   |   4 +
- drivers/firmware/ti_sci.c                     | 850 ++++++++++++++++++
- drivers/firmware/ti_sci.h                     | 102 +++
- drivers/irqchip/Kconfig                       |  22 +
- drivers/irqchip/Makefile                      |   2 +
- drivers/irqchip/irq-ti-sci-inta.c             | 613 +++++++++++++
- drivers/irqchip/irq-ti-sci-intr.c             | 302 +++++++
- drivers/soc/ti/Kconfig                        |   3 +
- include/linux/irqchip/irq-ti-sci-inta.h       |  35 +
- include/linux/soc/ti/ti_sci_protocol.h        | 169 ++++
- 13 files changed, 2259 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,sci-inta.txt
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
- create mode 100644 drivers/irqchip/irq-ti-sci-inta.c
- create mode 100644 drivers/irqchip/irq-ti-sci-intr.c
- create mode 100644 include/linux/irqchip/irq-ti-sci-inta.h
-
--- 
-2.19.1
+It is too late in the release cycle.
+We can submit it to stable releases after the merge window.
 
