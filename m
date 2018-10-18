@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80DA9ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E30ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:14:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4860421473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:14:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4860421473
+	by mail.kernel.org (Postfix) with ESMTP id 97D8D21476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:14:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97D8D21476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbeJRTPH (ORCPT
+        id S1728123AbeJRTPK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 15:15:07 -0400
-Received: from mout.perfora.net ([74.208.4.196]:41937 "EHLO mout.perfora.net"
+        Thu, 18 Oct 2018 15:15:10 -0400
+Received: from mout.perfora.net ([74.208.4.196]:37695 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727676AbeJRTPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 15:15:07 -0400
+        id S1727676AbeJRTPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 15:15:10 -0400
 Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0LvTAD-1fVxZJ2b9n-010bRt; Thu, 18 Oct 2018 13:14:27 +0200
+ 0MfpSM-1g0xC40CwO-00N85q; Thu, 18 Oct 2018 13:14:20 +0200
 Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0LvTAD-1fVxZJ2b9n-010bRt; Thu, 18 Oct 2018 13:14:27 +0200
+ 0MfpSM-1g0xC40CwO-00N85q; Thu, 18 Oct 2018 13:14:20 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -37,27 +37,27 @@ Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v3 4/7] ARM: tegra: apalis-tk1: further regulator clean-up
-Date:   Thu, 18 Oct 2018 13:14:08 +0200
-Message-Id: <20181018111411.26623-5-marcel@ziswiler.com>
+Subject: [PATCH v3 1/7] ARM: tegra: fix simple-panel compatibles
+Date:   Thu, 18 Oct 2018 13:14:05 +0200
+Message-Id: <20181018111411.26623-2-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181018111411.26623-1-marcel@ziswiler.com>
 References: <20181018111411.26623-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:kTzT6JAdsm3zHPKM6L3/1IJ5wfY7DjoX6qFTriSXjKRMFrhSOl0
- f4QEXRuCbWQN3wIgkdmGkYwDgfNBNlLLQs9reL07I8NNNYjjRr6ZuGWfGXen3Yx9r/7rutV
- FVU3X6PKE0dcxOmuVGEeDawTlqqNB4dYKfVwYXf/k8G8prJ1trGiLg/P4hcV/QU8x0GeuG5
- X3HLiTAx/C6XFCuuvFAUA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Nd1EXAOAMis=:9vD6zT04Z7PoVNAf3qudmp
- N2HgWvZJkOOB2OWTAwb0RkHYopxePGkOpGWe4WoWWkwOSQxC/Frp1JjSWE/leUSob1QkWwdPG
- 9wgpwfmM182A8RTKH762PbEQ7lMSC7NMCsIrHQzhSfEt+I8tUphjmYzJaXXB7QDBBikzz7ZjO
- JVpCeGdFvG5gtFbxkpHcQXAxv938ue3BLEfUadU7V9ijP/USAjnliD3YUq0jhXU+2TykSw1WN
- OVlId1hNVGkm3TlbG+graOqBO7jIGbpb7iAtFNM3kIUY+9H0Y4ArE+a0QD1IeGrCNeqLO+qUH
- yCDtzx+69GbIX/BYW0o6f9GM5/1NO4Sw4gZ7oNPTOwmKOYm5HlGRUxCwP9L+6zCN7M1YrqcIz
- UzejEhcQfJblItorYlYYeHzxdbY2VnfpfoxB6+d0PSh4otx6iVIqKhGY9FGp+8UeTDjIe0cIw
- wFzg1L6kG0j1aGYkf4JSt+jLMMkv9/VZF12Jyn5OmK0Wf6s0Pe0CGq6+3EBckeUzIJ92/rC81
- HywAoDxYydEOIKqjt+W0/LmI6ICy7NawVfQ7svRDzAlJk/9hi9+xOKjm9ZVJ51r2dzYutcTBw
- FG0lBkveoWWe3jRu7AL4h1h3hbEzqfuV7BIwzl/6QzgG03iBdutccFvliSY3NQtiI3ctthY8/
- bM5ddPqRrvb4UUEwyv/pQXDyvTrwCKL77f7v/y6mvcGh5ELDqO1wKN7MiW/+Zf4I5KY4=
+X-Provags-ID: V03:K1:2BimFpfs3a8BrMSYA5BKBU87t6vyU/8+sUjscHjCF0Vs9NCwQWR
+ 0p/HE6RdSdda/HlU6FInNdswhSMsrC8cjNIVnY7z7BNOwoghK95WsBmsL2xeSordJEqmQMK
+ MAgLsygEwoo83k10VMcEl8Xre46p2A1AvxSkAilCXzQwciot1M9ZOScSouzbg3mdjcDTxvI
+ HXK37sQa6FcVKsFB5GbcQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:RcJj263geoo=:6qcM8NnropXy8C4hSFhe2W
+ yTeJEu/XIjPK7n/OZL8NxrU2MBITK0JMkTqcJcFYrqo7DBXJFKjmrBzYrAIJpQchtGYA4S01N
+ W1kMDqmQwJOADw2YYO3/mlVNEPzxqmAXt87apJOPaCmhWBNq/uk7DDvQEZPFxbt8nGbNNmT92
+ F4rJnnb8mX55NvEvOsT6vkkSZ+PAKF5ZMbPtMVBzqHP7iGvacM2CEPnn3GoMKUwM3+DrDCrqu
+ PnElmLUU4Hxad4NbwRtzeMvZq4hyR1P3HoU1vArRUYa6RaMyuOCfvMbANlCPCTrd39Kw3twxq
+ RpsFEi3S5oDOgPKAPaOC6pSPMNNB8HIcvn7bWCI9uY48TOUtD/OtzxVaTGnumaOpEW+HObVBO
+ GmFI0oYkcrw50y2ZHqOHJptzAcNfT+sIduVs/bF+OOKpUS5s13ORRld8TYs2XwiZfPYydrZV2
+ LDYx0hq5CenQSWCAlsi4NPBk2YSR2mDj16WbYMKmfV3TtkvReLkV/1lCGNxOinbIr4ll36v9b
+ fyYfGNYprQKtqivzbfdjJmSKzA7dG1kbntS+Ls0E0go12TP87rLmnvF85vBKhY64BgiKmduI3
+ 9DT/d5Lcq0w168f9rfgX+D/EcCIxVw5iISXNpVHZ0drfXKcp7caSSta9zMFX9708aTKPXAuLQ
+ sjn2FyCMorPQI39fhnIQAruYp90kv5TdUWzXdCZjY2vX6TbwAYbbB/t8j6eplyPLEmnI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -65,8 +65,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add reg_ prefix to vddio_sdmmc1 and vddio_sdmmc3.
-Reorder PMIC properties.
+As there is no such thing as a generic simple-panel compatible remove
+them.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -74,134 +74,194 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v3: None
 Changes in v2: None
-Changes in v1: None
+Changes in v1:
+- Remove simple-panel compatible as suggested by Rob.
 
- arch/arm/boot/dts/tegra124-apalis-eval.dts      |  4 ++--
- arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts |  4 ++--
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     | 10 +++++-----
- arch/arm/boot/dts/tegra124-apalis.dtsi          | 10 +++++-----
- 4 files changed, 14 insertions(+), 14 deletions(-)
+ arch/arm/boot/dts/tegra114-dalmore.dts         | 3 +--
+ arch/arm/boot/dts/tegra124-venice2.dts         | 2 +-
+ arch/arm/boot/dts/tegra20-colibri-eval-v3.dts  | 2 +-
+ arch/arm/boot/dts/tegra20-colibri-iris.dts     | 2 +-
+ arch/arm/boot/dts/tegra20-harmony.dts          | 2 +-
+ arch/arm/boot/dts/tegra20-medcom-wide.dts      | 2 +-
+ arch/arm/boot/dts/tegra20-paz00.dts            | 2 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts         | 2 +-
+ arch/arm/boot/dts/tegra20-ventana.dts          | 2 +-
+ arch/arm/boot/dts/tegra30-apalis-eval.dts      | 2 +-
+ arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts | 2 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi          | 2 +-
+ arch/arm/boot/dts/tegra30-colibri-eval-v3.dts  | 2 +-
+ 13 files changed, 13 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-index eaee10ef6512..e553eff50499 100644
---- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-@@ -171,7 +171,7 @@
- 		bus-width = <4>;
- 		/* MMC1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
--		vqmmc-supply = <&vddio_sdmmc1>;
-+		vqmmc-supply = <&reg_vddio_sdmmc1>;
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 1788556b4977..2ea7236d9da6 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -46,8 +46,7 @@
+ 			avdd-dsi-csi-supply = <&avdd_1v2_reg>;
+ 
+ 			panel@0 {
+-				compatible = "panasonic,vvx10f004b00",
+-					     "simple-panel";
++				compatible = "panasonic,vvx10f004b00";
+ 				reg = <0>;
+ 
+ 				power-supply = <&avdd_lcd_reg>;
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index 82d139648ef1..f54f77902774 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -1079,7 +1079,7 @@
  	};
  
- 	/* Apalis SD1 */
-@@ -180,7 +180,7 @@
- 		bus-width = <4>;
- 		/* SD1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
--		vqmmc-supply = <&vddio_sdmmc3>;
-+		vqmmc-supply = <&reg_vddio_sdmmc3>;
+ 	panel: panel {
+-		compatible = "lg,lp129qe", "simple-panel";
++		compatible = "lg,lp129qe";
+ 
+ 		backlight = <&backlight>;
+ 		ddc-i2c-bus = <&dpaux>;
+diff --git a/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
+index 3c0f2681fcde..37ad508b61d9 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
++++ b/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
+@@ -223,7 +223,7 @@
+ 		 * edt,et057090dhu: EDT 5.7" LCD TFT
+ 		 * edt,et070080dh6: EDT 7.0" LCD TFT
+ 		 */
+-		compatible = "edt,et057090dhu", "simple-panel";
++		compatible = "edt,et057090dhu";
+ 		backlight = <&backlight>;
+ 		power-supply = <&reg_3v3>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+index d8004d68efa0..af4740847769 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
++++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+@@ -205,7 +205,7 @@
+ 		 * edt,et057090dhu: EDT 5.7" LCD TFT
+ 		 * edt,et070080dh6: EDT 7.0" LCD TFT
+ 		 */
+-		compatible = "edt,et057090dhu", "simple-panel";
++		compatible = "edt,et057090dhu";
+ 		backlight = <&backlight>;
+ 		power-supply = <&reg_3v3>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index 1d96d92b72a7..02cd67ea2503 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -665,7 +665,7 @@
  	};
  
- 	/* EHCI instance 0: USB1_DP/N -> USBO1_DP/N */
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-index 7961eb4bd803..e2f94dc7ff91 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-@@ -137,7 +137,7 @@
- 		bus-width = <4>;
- 		/* MMC1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
--		vqmmc-supply = <&vddio_sdmmc1>;
-+		vqmmc-supply = <&reg_vddio_sdmmc1>;
+ 	panel: panel {
+-		compatible = "auo,b101aw03", "simple-panel";
++		compatible = "auo,b101aw03";
+ 
+ 		power-supply = <&vdd_pnl_reg>;
+ 		enable-gpios = <&gpio TEGRA_GPIO(B, 2) GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+index cda5448c2ace..c73510cd501c 100644
+--- a/arch/arm/boot/dts/tegra20-medcom-wide.dts
++++ b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+@@ -57,7 +57,7 @@
  	};
  
- 	/* Apalis SD1 */
-@@ -146,7 +146,7 @@
- 		bus-width = <4>;
- 		/* SD1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
--		vqmmc-supply = <&vddio_sdmmc3>;
-+		vqmmc-supply = <&reg_vddio_sdmmc3>;
+ 	panel: panel {
+-		compatible = "innolux,n156bge-l21", "simple-panel";
++		compatible = "innolux,n156bge-l21";
+ 
+ 		power-supply =  <&vdd_1v8_reg>, <&vdd_3v3_reg>;
+ 		enable-gpios = <&gpio TEGRA_GPIO(B, 2) GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 8861e0976e37..e75f86901dfd 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -543,7 +543,7 @@
  	};
  
- 	/* EHCI instance 0: USB1_DP/N -> USBO1_DP/N */
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 73a8e117a9b9..e532b564e4c9 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1570,12 +1570,12 @@
- 		pmic: pmic@40 {
- 			compatible = "ams,as3722";
- 			reg = <0x40>;
--			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
- 			ams,system-power-controller;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
--			gpio-controller;
--			#gpio-cells = <2>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&as3722_default>;
+ 	panel: panel {
+-		compatible = "samsung,ltn101nt05", "simple-panel";
++		compatible = "samsung,ltn101nt05";
  
-@@ -1679,7 +1679,7 @@
- 					ams,ext-control = <1>;
- 				};
+ 		ddc-i2c-bus = <&lvds_ddc>;
+ 		power-supply = <&vdd_pnl_reg>;
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index f91441683aad..376ecb6435f4 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -826,7 +826,7 @@
+ 	};
  
--				vddio_sdmmc1: ldo1 {
-+				reg_vddio_sdmmc1: ldo1 {
- 					regulator-name = "VDDIO_SDMMC1";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <3300000>;
-@@ -1711,7 +1711,7 @@
+ 	panel: panel {
+-		compatible = "chunghwa,claa101wa01a", "simple-panel";
++		compatible = "chunghwa,claa101wa01a";
  
- 				/* LDO5 not used */
+ 		power-supply = <&vdd_pnl_reg>;
+ 		enable-gpios = <&gpio TEGRA_GPIO(B, 2) GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index f44551e2d9d0..022649119821 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -611,7 +611,7 @@
+ 	};
  
--				vddio_sdmmc3: ldo6 {
-+				reg_vddio_sdmmc3: ldo6 {
- 					regulator-name = "VDDIO_SDMMC3";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <3300000>;
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 3e3b347afe56..3cab9bda918f 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1600,12 +1600,12 @@
- 		pmic: pmic@40 {
- 			compatible = "ams,as3722";
- 			reg = <0x40>;
--			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
- 			ams,system-power-controller;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
--			gpio-controller;
--			#gpio-cells = <2>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&as3722_default>;
+ 	panel: panel {
+-		compatible = "chunghwa,claa101wa01a", "simple-panel";
++		compatible = "chunghwa,claa101wa01a";
  
-@@ -1709,7 +1709,7 @@
- 					ams,ext-control = <1>;
- 				};
+ 		power-supply = <&vdd_pnl_reg>;
+ 		enable-gpios = <&gpio TEGRA_GPIO(B, 2) GPIO_ACTIVE_HIGH>;
+diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
+index 749fc6d1ff70..b39c26806bf2 100644
+--- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
++++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
+@@ -195,7 +195,7 @@
+ 		 * edt,et057090dhu: EDT 5.7" LCD TFT
+ 		 * edt,et070080dh6: EDT 7.0" LCD TFT
+ 		 */
+-		compatible = "edt,et057090dhu", "simple-panel";
++		compatible = "edt,et057090dhu";
+ 		backlight = <&backlight>;
+ 		power-supply = <&reg_3v3>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts b/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts
+index 0be50e881684..e29dca92ba0a 100644
+--- a/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts
++++ b/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts
+@@ -196,7 +196,7 @@
+ 		 * edt,et057090dhu: EDT 5.7" LCD TFT
+ 		 * edt,et070080dh6: EDT 7.0" LCD TFT
+ 		 */
+-		compatible = "edt,et057090dhu", "simple-panel";
++		compatible = "edt,et057090dhu";
+ 		backlight = <&backlight>;
+ 		power-supply = <&reg_3v3>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index fb9222b479d2..3894bf47ea8f 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -432,7 +432,7 @@
+ 	};
  
--				vddio_sdmmc1: ldo1 {
-+				reg_vddio_sdmmc1: ldo1 {
- 					regulator-name = "VDDIO_SDMMC1";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <3300000>;
-@@ -1741,7 +1741,7 @@
+ 	panel: panel {
+-		compatible = "chunghwa,claa101wb01", "simple-panel";
++		compatible = "chunghwa,claa101wb01";
+ 		ddc-i2c-bus = <&panelddc>;
  
- 				/* LDO5 not used */
- 
--				vddio_sdmmc3: ldo6 {
-+				reg_vddio_sdmmc3: ldo6 {
- 					regulator-name = "VDDIO_SDMMC3";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <3300000>;
+ 		power-supply = <&vdd_pnl1_reg>;
+diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
+index 5965150ecdd2..8e106e784dce 100644
+--- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
++++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
+@@ -159,7 +159,7 @@
+ 		 * edt,et057090dhu: EDT 5.7" LCD TFT
+ 		 * edt,et070080dh6: EDT 7.0" LCD TFT
+ 		 */
+-		compatible = "edt,et057090dhu", "simple-panel";
++		compatible = "edt,et057090dhu";
+ 		backlight = <&backlight>;
+ 		power-supply = <&reg_3v3>;
+ 	};
 -- 
 2.14.4
 
