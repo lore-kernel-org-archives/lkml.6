@@ -2,57 +2,98 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C280FC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF01C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77E0B20658
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:34:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77E0B20658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id 9008B21479
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:34:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XSQIaaBX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9008B21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728700AbeJSCg3 (ORCPT
+        id S1728728AbeJSCgf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:36:29 -0400
-Received: from ms.lwn.net ([45.79.88.28]:45020 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728570AbeJSCg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:36:29 -0400
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 6117097E;
-        Thu, 18 Oct 2018 18:34:08 +0000 (UTC)
-Date:   Thu, 18 Oct 2018 12:33:55 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Masanari Iida <standby24x7@gmail.com>
-Cc:     rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-        mchehab+samsung@kernel.org
-Subject: Re: [PATCH] docs: Fix typos in histogram.rst
-Message-ID: <20181018123355.7bbc7ee1@lwn.net>
-In-Reply-To: <20181013013057.10677-1-standby24x7@gmail.com>
-References: <20181013013057.10677-1-standby24x7@gmail.com>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 18 Oct 2018 22:36:35 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54926 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728570AbeJSCgf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:36:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=+3iQAvzvwQ7XneO3whAjSbVwJjKLCKVy3Jm0LdygrXw=; b=XSQIaaBXwQ34qALZ0i3DynB2Rb
+        HY2+I5llBlM4o82WDxfV/TuXSFF0u4W1jrCCN07zr/LOvHYGBGsO9op5Cl3uReCW1ROAqzyL3qGRj
+        jsJ/Nw6ItSBT3ufQVD00M9cvwQCyAeoCbjvPOPn9eDVplmU5CK5k+NkS0iHaZ6xHEQdgbECmpKXbQ
+        VqH8nycDq0dUNrNwV7rrBiQ8LVHdTIbZUfZLvBMHJ/xY7bGc2BR3iICWnwpaHWy3QT7AkX5Jxogi/
+        +oPwfVuTImqJHUZKYdtEBchsdE4WLlrza0OAuqQ9h5uIu1JnmhX6hq6ZD/BdGTrzPqg132Y/+20p7
+        mglHpq7Q==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gDD7G-00088L-MF; Thu, 18 Oct 2018 18:33:51 +0000
+Subject: Re: [PATCH v5 03/27] x86/fpu/xstate: Introduce XSAVES system states
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
+ <20181011151523.27101-4-yu-cheng.yu@intel.com>
+ <20181017104137.GE22535@zn.tnic>
+ <32da559b-7958-60db-e328-f0eb316e668e@infradead.org>
+ <20181017225829.GA32023@zn.tnic>
+ <fde4c237-6210-f4e4-5362-c2e24a9916a2@infradead.org>
+ <20181018092603.GB20831@zn.tnic>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <17222925-1c4c-0acd-c92c-637228326b66@infradead.org>
+Date:   Thu, 18 Oct 2018 11:33:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181018092603.GB20831@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 13 Oct 2018 10:30:57 +0900
-Masanari Iida <standby24x7@gmail.com> wrote:
-
-> This patch fixes some spelling typos.
+On 10/18/18 2:26 AM, Borislav Petkov wrote:
+> On Wed, Oct 17, 2018 at 04:17:01PM -0700, Randy Dunlap wrote:
+>> I asked what I really wanted to know.
 > 
-> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+> Then the answer is a bit better readability, I'd guess.
+> 
 
-Applied, thanks.
+Thanks for the reply.
 
-jon
+-- 
+~Randy
