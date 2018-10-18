@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB98C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E7A1C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3FF420658
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 239A62145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPF1CQdw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3FF420658
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EY/ehsgS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239A62145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730666AbeJSCJ0 (ORCPT
+        id S1730679AbeJSCJ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:09:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58838 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:09:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728851AbeJSCJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:09:25 -0400
+        id S1728851AbeJSCJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:09:29 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A85F20658;
-        Thu, 18 Oct 2018 18:07:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65BDD2145D;
+        Thu, 18 Oct 2018 18:07:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539886037;
-        bh=NAab/DawTbwz97yAymf424JRHBvr8024NQn2tkhY8Qc=;
+        s=default; t=1539886041;
+        bh=52/qiMNakQ6gPiMAttlhdfhp1MPP8UQeYkqZH0hvsN8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DPF1CQdw5m1c3FcdHu8wK9qGBgsJa4lUaP/PLlNVxXVKMsu/fMJ1Zhkz5IR67Nm6g
-         +Dkc6lXOtP2vV/C4uJq3HOPso7d7wquc6A3aMI+ZzHLPhs+07+gOf7QLqv5c9QwtP3
-         ewnqzm4oBGHoKJ5ENkEtNZG8lQrFAxh/foatOc7g=
+        b=EY/ehsgS4RFfZ6nUFOAsooU0PWRiIDIfKto6TwUx/wrLCHbNyEUG/F8VcMo13l8+n
+         Bmb2gS45oHHtV9UiMO3Ie8A2/yL/huU7V0J+8/eXxfUaUVSxuEkY70Tvy9YIc33RhT
+         8ce7HVyVEzFz8xAfrMrenWyUsWreWPc+SsvqjxmQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Karsten Merker <merker@debian.org>,
+        James Cowgill <jcowgill@debian.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 39/48] net/mlx4: Use cpumask_available for eq->affinity_mask
-Date:   Thu, 18 Oct 2018 19:55:14 +0200
-Message-Id: <20181018175430.013043847@linuxfoundation.org>
+Subject: [PATCH 4.4 40/48] RISC-V: include linux/ftrace.h in asm-prototypes.h
+Date:   Thu, 18 Oct 2018 19:55:15 +0200
+Message-Id: <20181018175430.054065335@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -63,44 +63,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: James Cowgill <jcowgill@debian.org>
 
-[ Upstream commit 8ac1ee6f4d62e781e3b3fd8b9c42b70371427669 ]
+[ Upstream commit 57a489786de9ec37d6e25ef1305dc337047f0236 ]
 
-Clang warns that the address of a pointer will always evaluated as true
-in a boolean context:
+Building a riscv kernel with CONFIG_FUNCTION_TRACER and
+CONFIG_MODVERSIONS enabled results in these two warnings:
 
-drivers/net/ethernet/mellanox/mlx4/eq.c:243:11: warning: address of
-array 'eq->affinity_mask' will always evaluate to 'true'
-[-Wpointer-bool-conversion]
-        if (!eq->affinity_mask || cpumask_empty(eq->affinity_mask))
-            ~~~~~^~~~~~~~~~~~~
-1 warning generated.
+  MODPOST vmlinux.o
+WARNING: EXPORT symbol "return_to_handler" [vmlinux] version generation failed, symbol will not be versioned.
+WARNING: EXPORT symbol "_mcount" [vmlinux] version generation failed, symbol will not be versioned.
 
-Use cpumask_available, introduced in commit f7e30f01a9e2 ("cpumask: Add
-helper cpumask_available()"), which does the proper checking and avoids
-this warning.
+When exporting symbols from an assembly file, the MODVERSIONS code
+requires their prototypes to be defined in asm-prototypes.h (see
+scripts/Makefile.build). Since both of these symbols have prototypes
+defined in linux/ftrace.h, include this header from RISC-V's
+asm-prototypes.h.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/86
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Karsten Merker <merker@debian.org>
+Signed-off-by: James Cowgill <jcowgill@debian.org>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/eq.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/riscv/include/asm/asm-prototypes.h |    7 +++++++
+ 1 file changed, 7 insertions(+)
+ create mode 100644 arch/riscv/include/asm/asm-prototypes.h
 
---- a/drivers/net/ethernet/mellanox/mlx4/eq.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/eq.c
-@@ -228,7 +228,8 @@ static void mlx4_set_eq_affinity_hint(st
- 	struct mlx4_dev *dev = &priv->dev;
- 	struct mlx4_eq *eq = &priv->eq_table.eq[vec];
- 
--	if (!eq->affinity_mask || cpumask_empty(eq->affinity_mask))
-+	if (!cpumask_available(eq->affinity_mask) ||
-+	    cpumask_empty(eq->affinity_mask))
- 		return;
- 
- 	hint_err = irq_set_affinity_hint(eq->irq, eq->affinity_mask);
+--- /dev/null
++++ b/arch/riscv/include/asm/asm-prototypes.h
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_RISCV_PROTOTYPES_H
++
++#include <linux/ftrace.h>
++#include <asm-generic/asm-prototypes.h>
++
++#endif /* _ASM_RISCV_PROTOTYPES_H */
 
 
