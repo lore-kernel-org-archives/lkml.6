@@ -2,131 +2,167 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1CDC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31145C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:31:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18F6A21477
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:30:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18F6A21477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DE3132145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:31:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE3132145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728392AbeJRXcE (ORCPT
+        id S1728398AbeJRXcx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 19:32:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47612 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728249AbeJRXcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 19:32:04 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A34AF308A95E;
-        Thu, 18 Oct 2018 15:30:32 +0000 (UTC)
-Received: from treble (ovpn-123-182.rdu2.redhat.com [10.10.123.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 67FD27A1A2;
-        Thu, 18 Oct 2018 15:30:29 +0000 (UTC)
-Date:   Thu, 18 Oct 2018 10:30:27 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Miroslav Benes <mbenes@suse.cz>, Jiri Kosina <jikos@kernel.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v12 06/12] livepatch: Simplify API by removing
- registration step
-Message-ID: <20181018153027.x4nk2ihgs5ehsln2@treble>
-References: <20180828143603.4442-1-pmladek@suse.com>
- <20180828143603.4442-7-pmladek@suse.com>
- <alpine.LSU.2.21.1809051108440.7768@pobox.suse.cz>
- <20181012130120.f5berowklyccd7lj@pathway.suse.cz>
- <alpine.LSU.2.21.1810151756290.11383@pobox.suse.cz>
- <20181018145456.nrekm2iuyf5ztw3n@pathway.suse.cz>
+        Thu, 18 Oct 2018 19:32:53 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:35272 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728200AbeJRXcx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 19:32:53 -0400
+Received: from [213.61.215.195] (helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gDAGN-0004As-2o; Thu, 18 Oct 2018 17:31:03 +0200
+Date:   Thu, 18 Oct 2018 17:31:02 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [Patch v3 13/13] x86/speculation: Create PRCTL interface to
+ restrict indirect branch speculation
+In-Reply-To: <a04ba925a19af6ad5eaad2bc5501b7ea1ece66a9.1539798901.git.tim.c.chen@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1810181717410.3566@nanos.tec.linutronix.de>
+References: <cover.1539798901.git.tim.c.chen@linux.intel.com> <a04ba925a19af6ad5eaad2bc5501b7ea1ece66a9.1539798901.git.tim.c.chen@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181018145456.nrekm2iuyf5ztw3n@pathway.suse.cz>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 18 Oct 2018 15:30:33 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 04:54:56PM +0200, Petr Mladek wrote:
-> On Mon 2018-10-15 18:01:43, Miroslav Benes wrote:
-> > On Fri, 12 Oct 2018, Petr Mladek wrote:
-> > 
-> > > On Wed 2018-09-05 11:34:06, Miroslav Benes wrote:
-> > > > On Tue, 28 Aug 2018, Petr Mladek wrote:
-> > > > > Also the API and logic is much easier. It is enough to call
-> > > > > klp_enable_patch() in module_init() call. The patch patch can be disabled
-> > > > > by writing '0' into /sys/kernel/livepatch/<patch>/enabled. Then the module
-> > > > > can be removed once the transition finishes and sysfs interface is freed.
-> > > > 
-> > > > I think it would be good to discuss our sysfs interface here as well.
-> > > > 
-> > > > Writing '1' to enabled attribute now makes sense only when you need to 
-> > > > reverse an unpatching transition. Writing '0' means "disable" or a 
-> > > > reversion again.
-> > > > 
-> > > > Wouldn't be better to split it to two different attributes? Something like 
-> > > > "disable" and "reverse"? It could be more intuitive.
-> > > > 
-> > > > Maybe we'd also find out that even patch->enabled member is not useful 
-> > > > anymore in such case.
-> > > 
-> > > I though about this as well. I kept "enabled" because:
-> > > 
-> > >   + It keeps the public interface the same as before. Most people
-> > >     would not notice any change in the behavior except maybe that
-> > >     the interface disappears when the patch gets disabled.
-> > 
-> > Well our sysfs interface is still in a testing phase as far as ABI is 
-> > involved. Moreover, each live patch is bound to its base kernel by 
-> > definition anyway. So we can change this without remorse, I think.
+On Wed, 17 Oct 2018, Tim Chen wrote:
 
-But it would break tooling, which is not kernel specific.  I'm not sure
-whether it would be worth the headache.  After all I think the livepatch
-sysfs interface is designed for tools, not humans.
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4196,7 +4196,10 @@
+>  			lite   - turn on mitigation for non-dumpable
+>  				 processes (i.e. protect daemons and other
+>  				 privileged processes that tend to be
+> -				 non-dumpable).
+> +				 non-dumpable), and processes that has indirect
+> +				 branch speculation restricted via prctl's
+> +				 PR_SET_SPECULATION_CTRL option
 
-> > >   + The reverse operation makes most sense when the transition
-> > >     cannot get finished. In theory, it might be problem to
-> > >     finish even the reversed one. People might want to
-> > >     reverse once again and force it. Then "reverse" file
-> > >     might be confusing. They might not know in which direction
-> > >     they do the reverse.
-> > 
-> > I still think it would be better to have a less confusing interface and it 
-> > would outweigh the second remark.
-> 
-> OK, what about having just "disable" in sysfs. I agree that it makes
-> much more sense than "enable" now.
-> 
-> It might be used also for the reverse operation the same way as
-> "enable" was used before. I think that standalone "reverse" might
-> be confusing when we allow to reverse the operation in both
-> directions.
+				Protect processes which are marked non-dumpable and
+				processes which have requested restricted indirect
+				branch speculation via the PR_SET_SPECULATION_CTRL
+				ptrcl().
 
-As long as we're talking about radical changes... how about we just
-don't allow disabling patches at all?  Instead a patch can be replaced
-with a 'revert' patch, or an empty 'nop' patch.  That would make our
-code simpler and also ensure there's an audit trail.
+> @@ -92,3 +92,13 @@ Speculation misfeature controls
+>     * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_ENABLE, 0, 0);
+>     * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_DISABLE, 0, 0);
+>     * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_FORCE_DISABLE, 0, 0);
+> +
+> +- PR_INDIR_BRANCH: Indirect Branch Speculation in Applications
+> +                   (Mitigate Spectre V2 style user space application
+> +                    to application attack)
 
-(Apologies if we've already talked about this.  My brain is still mushy
-thanks to Spectre and friends.)
+No. Please do not create a random name space. We have
 
-The amount of flexibility we allow is kind of crazy, considering how
-delicate of an operation live patching is.  That reminds me that I
-should bring up my other favorite idea at LPC: require modules to be
-loaded before we "patch" them.
+    PR_SPEC_STORE_BYPASS
 
--- 
-Josh
+so the logical name for this is
+
+    PR_SPEC_INDIR_BRANCH
+
+
+> +static int indir_branch_prctl_set(struct task_struct *task, unsigned long ctrl)
+> +{
+> +	bool update;
+> +
+> +	switch (ctrl) {
+> +	case PR_SPEC_ENABLE:
+> +		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_NONE)
+> +			return 0;
+> +		/*
+> +		 * Indirect branch speculation is always disabled in
+> +		 * strict mode or if the application is non dumpable
+> +		 * in lite mode. 
+> +		 */
+> +		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_STRICT)
+> +			return -ENXIO;
+
+Please stay consistent with ssb_prctl_set(). EPERM is what you want here.
+
+> +		if (task->mm && get_dumpable(task->mm) != SUID_DUMP_USER)
+> +			return -ENXIO;
+
+Ditto
+
+> +		task_clear_spec_indir_branch_disable(task);
+> +		update = test_and_clear_tsk_thread_flag(task, TIF_STIBP);
+> +		break;
+> +	case PR_SPEC_DISABLE:
+> +		/*
+> +		 * Indirect branch speculation is always enabled when
+> +		 * app to app mitigation is off.
+> +		 */
+> +		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_NONE)
+> +			return -ENXIO;
+> +		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_STRICT)
+> +			return 0;
+> +		task_set_spec_indir_branch_disable(task);
+> +		update = !test_and_set_tsk_thread_flag(task, TIF_STIBP);
+> +		break;
+> +	case PR_SPEC_FORCE_DISABLE:
+> +		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_NONE)
+> +			return -ENXIO;
+> +		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_STRICT)
+> +			return 0;
+> +		task_set_spec_indir_branch_disable(task);
+> +		task_set_spec_indir_branch_force_disable(task);
+> +		update = !test_and_set_tsk_thread_flag(task, TIF_STIBP);
+> +		break;
+> +	default:
+> +		return -ERANGE;
+> +	}
+> +
+> +	/*
+> +	 * If being set on non-current task, delay setting the CPU
+> +	 * mitigation until it is next scheduled.
+> +	 * Use speculative_store_bypass_update will update SPEC_CTRL MSR
+
+Stale comment.
+
+> +	 */
+> +	if (task == current && update)
+> +		speculation_ctrl_update_current();
+> +
+> +	return 0;
+> +}
+
+Aside of that several patches have trailing whitespace. Please be more careful.
+
+Thanks,
+
+	tglx
