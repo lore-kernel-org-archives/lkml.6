@@ -2,106 +2,110 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B45C5C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93706C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 518932098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:05:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="iJdlXUvt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 518932098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 63C5D21476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:06:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63C5D21476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbeJRXGm (ORCPT
+        id S1727809AbeJRXHh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 19:06:42 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37318 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbeJRXGm (ORCPT
+        Thu, 18 Oct 2018 19:07:37 -0400
+Received: from gateway31.websitewelcome.com ([192.185.144.96]:40594 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726133AbeJRXHg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 19:06:42 -0400
-Received: by mail-wr1-f67.google.com with SMTP id q1-v6so1181132wrs.4
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 08:05:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=hfIEmy/L0yThNprHRfv0ehO65sgCJvSFBVK5lgm1vLk=;
-        b=iJdlXUvtS4BoJ0dkUwWZ9nBCRZfl71dYK8wzKt4F8c6qU/1JXWIjV6gY35GkWBlXXM
-         gdesF002/RzcKx+lrIrkITgvQ6mEOyNA5TkjzP5G+Z2rww6c/eojy4ESuAYY+RUplLuL
-         iOigWQhM5/U8wTCpjuK1rQEwDO7mrBFtpyTXey3eFRsI3zdUy4aoyBfwa1bk3ec7tNIy
-         D5XfJOF1Jjh5QYUbImJZliwkpQxIdOOY6FzDvH0PrfbYlI2vTh7rYmDvlp6DWK5CpR62
-         PMWq9sY1ilUylhDWyQI7bQLw1BC0hbojg0navv5VQVeE+jtGGVmuNpLoxIHvVgLf7Y2I
-         rr1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=hfIEmy/L0yThNprHRfv0ehO65sgCJvSFBVK5lgm1vLk=;
-        b=VTubbZRNVT7tGxU+dKMwWiMqgRtDoKaao7QvDdmw+rG/eOCiMDnSqRHmuEJ4Tue0S7
-         ljNj0AU9c8mslZt94JqYJjjEYeT9Q+hX6WDfHDnjm6AofV1WE+rPnl6YJI67y4hRItMt
-         CgdL3QpQY8n5ppSF5g6EN9vrN/LoQ5upwIxoqew53N1Z7rImUEDJSfTX4nYtAnd8Q10i
-         YCoZ3c30a91vzy0SMAnBkKSzfz0lpgqorGQw+xyFgROItkG/dIg8YNUFDVsX95RzwZaV
-         l7oE51rlXz90ewdJpMwjaQPJiQLiT2Jxx8/JXEuanvRfe6BbBz82uXNW3/RXBgHWW6L4
-         +DVA==
-X-Gm-Message-State: ABuFfohkZdCUHN1QFIQnfcYt5PU1XsA9HIqHN+yop7dcmLIV81uNNsQb
-        aZUdu4RVzVKQKwET7/p2ZZp1v55kjOQ=
-X-Google-Smtp-Source: ACcGV60PdtL48BLBM2y7DDm1O1RJKXyOac1//ERkeekKkIU+3M+J8hbwTUbD682KVEXVepLxciEcDQ==
-X-Received: by 2002:a05:6000:1105:: with SMTP id z5mr28272690wrw.136.1539875116159;
-        Thu, 18 Oct 2018 08:05:16 -0700 (PDT)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id b71-v6sm685272wma.13.2018.10.18.08.05.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 18 Oct 2018 08:05:15 -0700 (PDT)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     andrew@lunn.ch, davem@davemloft.net, f.fainelli@gmail.com,
-        fugang.duan@nxp.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH] net: ethernet: fec: Add missing SPEED_
-Date:   Thu, 18 Oct 2018 15:05:00 +0000
-Message-Id: <1539875100-11121-1-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 18 Oct 2018 19:07:36 -0400
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id AA0312624D6
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 10:06:10 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id D9s6gdLqLFxNhD9sDgwSsO; Thu, 18 Oct 2018 10:06:10 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:56400 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gD9s5-004Bvl-2t; Thu, 18 Oct 2018 10:05:57 -0500
+Date:   Thu, 18 Oct 2018 17:05:54 +0200
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH v2 0/2] phy: ocelot-serdes: fix out-of-bounds read
+Message-ID: <cover.1539874459.git.gustavo@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gD9s5-004Bvl-2t
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:56400
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 1
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 58056c1e1b0e ("net: ethernet: Use phy_set_max_speed() to limit advertised speed"), the fec driver is unable to get any link.
-This is due to missing SPEED_.
+This patchset aims to fix an out-of-bounds bug in
+the phy-ocelot-serdes driver.
 
-Fixes: 58056c1e1b0e ("net: ethernet: Use phy_set_max_speed() to limit advertised speed")
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- drivers/net/ethernet/freescale/fec_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Currently, there is an out-of-bounds read on array ctrl->phys,
+once variable i reaches the maximum array size of SERDES_MAX
+in the for loop.
 
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index a17cc97..75fd7c9 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -1946,7 +1946,7 @@ static int fec_enet_mii_probe(struct net_device *ndev)
- 
- 	/* mask with MAC supported features */
- 	if (fep->quirks & FEC_QUIRK_HAS_GBIT) {
--		phy_set_max_speed(phy_dev, 1000);
-+		phy_set_max_speed(phy_dev, SPEED_1000);
- 		phy_remove_link_mode(phy_dev,
- 				     ETHTOOL_LINK_MODE_1000baseT_Half_BIT);
- #if !defined(CONFIG_M5272)
-@@ -1954,7 +1954,7 @@ static int fec_enet_mii_probe(struct net_device *ndev)
- #endif
- 	}
- 	else
--		phy_set_max_speed(phy_dev, 100);
-+		phy_set_max_speed(phy_dev, SPEED_100);
- 
- 	fep->link = 0;
- 	fep->full_duplex = 0;
+Quentin Schulz pointed out that SERDES_MAX is a valid value to
+index ctrl->phys. So, I updated SERDES_MAX to be SERDES6G_MAX + 1
+in include/dt-bindings/phy/phy-ocelot-serdes.h.
+
+Then I changed the condition in the for loop from
+i <= SERDES_MAX to i < SERDES_MAX in order to
+complete the fix.
+
+The reason I'm sending this fix as series is because
+checkpatch reported an error when I first tried to
+integrate the whole solution into a singe patch. So,
+changes to dt-bindings should be sent as a separate
+patch.
+
+Changes in v2:
+ - Send the whole series to Kishon Vijay Abraham I, so it
+   can be taken into the PHY tree.
+ - Add Quentin's Reviewed-by to commit log in both patches.
+
+Thanks!
+
+Gustavo A. R. Silva (2):
+  dt-bindings: phy: Update SERDES_MAX to be SERDES_MAX + 1
+  phy: ocelot-serdes: fix out-of-bounds read
+
+ drivers/phy/mscc/phy-ocelot-serdes.c        | 4 ++--
+ include/dt-bindings/phy/phy-ocelot-serdes.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
 -- 
 2.7.4
 
