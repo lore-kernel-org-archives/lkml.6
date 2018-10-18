@@ -2,242 +2,118 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B2AECDE42
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50677ECDE42
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10B6C21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:23:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10B6C21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 0EBF821473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:24:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="LDbqF+hc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EBF821473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbeJRLWh (ORCPT
+        id S1727474AbeJRLX3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 07:22:37 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:30039 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727260AbeJRLWh (ORCPT
+        Thu, 18 Oct 2018 07:23:29 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:60373 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727446AbeJRLX2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 07:22:37 -0400
-X-UUID: e51f200e0df94dda90367f309991c1a7-20181018
-X-UUID: e51f200e0df94dda90367f309991c1a7-20181018
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <honghui.zhang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 523055548; Thu, 18 Oct 2018 11:23:40 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 18 Oct 2018 11:23:37 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 18 Oct 2018 11:23:37 +0800
-From:   <honghui.zhang@mediatek.com>
-To:     <bhelgaas@google.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <ryder.lee@mediatek.com>, <lorenzo.pieralisi@arm.com>
-CC:     <linux-kernel@vger.kernel.org>, <youlin.pei@mediatek.com>,
-        <yt.shen@mediatek.com>, <jianjun.wang@mediatek.com>,
-        Honghui Zhang <honghui.zhang@mediatek.com>
-Subject: [PATCH] PCI: mediatek: Use devm_of_pci_get_host_bridge_resources() to parse DT
-Date:   Thu, 18 Oct 2018 11:23:34 +0800
-Message-ID: <1539833014-1738-1-git-send-email-honghui.zhang@mediatek.com>
-X-Mailer: git-send-email 2.6.4
+        Thu, 18 Oct 2018 07:23:28 -0400
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id w9I3OEI8024814;
+        Thu, 18 Oct 2018 12:24:14 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w9I3OEI8024814
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1539833055;
+        bh=0HoAy8lyK1GTxpmQU9CCIt4f1xXNJYMkHsEXOrpiE54=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LDbqF+hcEzMGYJw1ThfDYoDOKQvQyix5u+wWQ9HCKKMAbIeAnr4bp075X1Dbi1Hzy
+         OtdNFYKraExEUM1TMHzqLhr1u/ELI2ZueBEDmDGGQRg2fPvEPgGOFXRhH57lT+5g1W
+         f7sPOwTGZ5C0nQqdLKSamjmBjeF4BQkACW3/FlfFc0t37qQSXC0MB3Fb1aGy+kb0Ht
+         In+2nn96qrt9rWGtH2I09zV0mhZ81Hf/GlsLe9hv0QYY56sY06oQw76bOb3ys64LwK
+         Kmog58tiD8L9V4IKm7RO1m/w9smfn90w0gbcJlxNUDTM8yD7GE7W6sufq/c/z7uN0R
+         amoYdC79BEUkg==
+X-Nifty-SrcIP: [209.85.217.52]
+Received: by mail-vs1-f52.google.com with SMTP id r83so22181394vsc.4;
+        Wed, 17 Oct 2018 20:24:14 -0700 (PDT)
+X-Gm-Message-State: ABuFfohjqyETGmFNQDlrR2QkWow4vikWy6ikpdsDX9L3YM4Q/ElUB1uF
+        wlptVRsRuBURuEihqSGIfMIPyJD0asUNOYGx+2I=
+X-Google-Smtp-Source: ACcGV60H3wutY3x24BAS5j6BQ/d6boZ+rODt+4LIJa0iEa4BD16jZcTXiBMXuXd/8tLbg5BqUAs9YHTAow5XU6mMbuA=
+X-Received: by 2002:a67:3793:: with SMTP id j19mr11436330vsi.215.1539833053544;
+ Wed, 17 Oct 2018 20:24:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 02CCF5676C0ADB95BC049CEC9A168FAC163EAFCA2F550AC4B8C205C5D51D42F12000:8
-X-MTK:  N
+References: <20181017180657.9410-1-natechancellor@gmail.com>
+In-Reply-To: <20181017180657.9410-1-natechancellor@gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 18 Oct 2018 12:23:37 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARjwZr2NPNE9aGnzQv-uUWjf1=A+kX3pjALqYfsWORv5g@mail.gmail.com>
+Message-ID: <CAK7LNARjwZr2NPNE9aGnzQv-uUWjf1=A+kX3pjALqYfsWORv5g@mail.gmail.com>
+Subject: Re: [PATCH] isdn: hfc_{pci,sx}: Avoid empty body if statements and
+ use proper register accessors
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     isdn@linux-pingi.de, Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Honghui Zhang <honghui.zhang@mediatek.com>
+Hi Nathan,
 
-Use the devm_of_pci_get_host_bridge_resources() API in place of the PCI OF
-DT parser.
+On Thu, Oct 18, 2018 at 3:09 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> Clang warns:
+>
+> drivers/isdn/hisax/hfc_pci.c:131:34: error: if statement has empty body
+> [-Werror,-Wempty-body]
+>         if (Read_hfc(cs, HFCPCI_INT_S1));
+>                                         ^
+> drivers/isdn/hisax/hfc_pci.c:131:34: note: put the semicolon on a
+> separate line to silence this warning
+>
+> Use the format found in drivers/isdn/hardware/mISDN/hfcpci.c of casting
+> the return of Read_hfc to void, instead of using an empty if statement.
+>
+> While we're at it, Masahiro Yamada pointed out that {Read,Write}_hfc
+> should be using a standard access method in hfc_pci.h. Use the one found
+> in drivers/isdn/hardware/mISDN/hfc_pci.h.
+>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/66
+> Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  drivers/isdn/hisax/hfc_pci.c | 6 +++---
+>  drivers/isdn/hisax/hfc_pci.h | 4 ++--
+>  drivers/isdn/hisax/hfc_sx.c  | 6 +++---
+>  3 files changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
+> index 8e5b03161b2f..a63b9155b697 100644
+> --- a/drivers/isdn/hisax/hfc_pci.c
+> +++ b/drivers/isdn/hisax/hfc_pci.c
+> @@ -128,7 +128,7 @@ reset_hfcpci(struct IsdnCardState *cs)
+>         Write_hfc(cs, HFCPCI_INT_M1, cs->hw.hfcpci.int_m1);
+>
+>         /* Clear already pending ints */
+> -       if (Read_hfc(cs, HFCPCI_INT_S1));
+> +       (void) Read_hfc(cs, HFCPCI_INT_S1);
 
-Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
----
- drivers/pci/controller/pcie-mediatek.c | 109 +++++++++------------------------
- 1 file changed, 29 insertions(+), 80 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 2a1f97c..6632d4e 100644
---- a/drivers/pci/controller/pcie-mediatek.c
-+++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -197,29 +197,20 @@ struct mtk_pcie_port {
-  * @dev: pointer to PCIe device
-  * @base: IO mapped register base
-  * @free_ck: free-run reference clock
-- * @io: IO resource
-- * @pio: PIO resource
-  * @mem: non-prefetchable memory resource
-- * @busn: bus range
-- * @offset: IO / Memory offset
-  * @ports: pointer to PCIe port information
-  * @soc: pointer to SoC-dependent operations
-+ * @busnr: root bus number
-  */
- struct mtk_pcie {
- 	struct device *dev;
- 	void __iomem *base;
- 	struct clk *free_ck;
- 
--	struct resource io;
--	struct resource pio;
- 	struct resource mem;
--	struct resource busn;
--	struct {
--		resource_size_t mem;
--		resource_size_t io;
--	} offset;
- 	struct list_head ports;
- 	const struct mtk_pcie_soc *soc;
-+	int busnr;
- };
- 
- static void mtk_pcie_subsys_powerdown(struct mtk_pcie *pcie)
-@@ -1045,55 +1036,42 @@ static int mtk_pcie_setup(struct mtk_pcie *pcie)
- {
- 	struct device *dev = pcie->dev;
- 	struct device_node *node = dev->of_node, *child;
--	struct of_pci_range_parser parser;
--	struct of_pci_range range;
--	struct resource res;
- 	struct mtk_pcie_port *port, *tmp;
-+	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
-+	struct list_head *windows = &host->windows;
-+	struct resource_entry *win, *tmp_win;
-+	resource_size_t io_base;
- 	int err;
- 
--	if (of_pci_range_parser_init(&parser, node)) {
--		dev_err(dev, "missing \"ranges\" property\n");
--		return -EINVAL;
--	}
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-+						    windows, &io_base);
-+	if (err)
-+		return err;
- 
--	for_each_of_pci_range(&parser, &range) {
--		err = of_pci_range_to_resource(&range, node, &res);
--		if (err < 0)
--			return err;
-+	err = devm_request_pci_bus_resources(dev, windows);
-+	if (err < 0)
-+		return err;
- 
--		switch (res.flags & IORESOURCE_TYPE_BITS) {
-+	/* Get the I/O and memory ranges from DT */
-+	resource_list_for_each_entry_safe(win, tmp_win, windows) {
-+		switch (resource_type(win->res)) {
- 		case IORESOURCE_IO:
--			pcie->offset.io = res.start - range.pci_addr;
--
--			memcpy(&pcie->pio, &res, sizeof(res));
--			pcie->pio.name = node->full_name;
--
--			pcie->io.start = range.cpu_addr;
--			pcie->io.end = range.cpu_addr + range.size - 1;
--			pcie->io.flags = IORESOURCE_MEM;
--			pcie->io.name = "I/O";
--
--			memcpy(&res, &pcie->io, sizeof(res));
--			break;
--
-+			err = devm_pci_remap_iospace(dev, win->res, io_base);
-+			if (err) {
-+				dev_warn(dev, "error %d: failed to map resource %pR\n",
-+					 err, win->res);
-+				resource_list_destroy_entry(win);
-+			}
- 		case IORESOURCE_MEM:
--			pcie->offset.mem = res.start - range.pci_addr;
--
--			memcpy(&pcie->mem, &res, sizeof(res));
-+			memcpy(&pcie->mem, win->res, sizeof(*win->res));
- 			pcie->mem.name = "non-prefetchable";
- 			break;
-+		case IORESOURCE_BUS:
-+			pcie->busnr = win->res->start;
-+			break;
- 		}
- 	}
- 
--	err = of_pci_parse_bus_range(node, &pcie->busn);
--	if (err < 0) {
--		dev_err(dev, "failed to parse bus ranges property: %d\n", err);
--		pcie->busn.name = node->name;
--		pcie->busn.start = 0;
--		pcie->busn.end = 0xff;
--		pcie->busn.flags = IORESOURCE_BUS;
--	}
--
- 	for_each_available_child_of_node(node, child) {
- 		int slot;
- 
-@@ -1125,28 +1103,6 @@ static int mtk_pcie_setup(struct mtk_pcie *pcie)
- 	return 0;
- }
- 
--static int mtk_pcie_request_resources(struct mtk_pcie *pcie)
--{
--	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
--	struct list_head *windows = &host->windows;
--	struct device *dev = pcie->dev;
--	int err;
--
--	pci_add_resource_offset(windows, &pcie->pio, pcie->offset.io);
--	pci_add_resource_offset(windows, &pcie->mem, pcie->offset.mem);
--	pci_add_resource(windows, &pcie->busn);
--
--	err = devm_request_pci_bus_resources(dev, windows);
--	if (err < 0)
--		return err;
--
--	err = devm_pci_remap_iospace(dev, &pcie->pio, pcie->io.start);
--	if (err < 0)
--		return err;
--
--	return 0;
--}
--
- static int mtk_pcie_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -1169,11 +1125,7 @@ static int mtk_pcie_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
- 
--	err = mtk_pcie_request_resources(pcie);
--	if (err)
--		goto put_resources;
--
--	host->busnr = pcie->busn.start;
-+	host->busnr = pcie->busnr;
- 	host->dev.parent = pcie->dev;
- 	host->ops = pcie->soc->ops;
- 	host->map_irq = of_irq_parse_and_map_pci;
-@@ -1181,12 +1133,9 @@ static int mtk_pcie_probe(struct platform_device *pdev)
- 	host->sysdata = pcie;
- 
- 	err = pci_host_probe(host);
--	if (err)
--		goto put_resources;
--
--	return 0;
-+	if (!err)
-+		return 0;
- 
--put_resources:
- 	if (!list_empty(&pcie->ports))
- 		mtk_pcie_put_resources(pcie);
- 
+
+Why is this '(void)' necessary?
+
+I see no warning without it.
+
+
+
 -- 
-2.6.4
-
+Best Regards
+Masahiro Yamada
