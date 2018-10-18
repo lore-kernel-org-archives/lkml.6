@@ -5,67 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D7CCECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F06C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:17:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B5EA20869
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:16:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B5EA20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5612220869
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:17:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5612220869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728254AbeJRXSS (ORCPT
+        id S1728287AbeJRXSe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 19:18:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36610 "EHLO mx1.redhat.com"
+        Thu, 18 Oct 2018 19:18:34 -0400
+Received: from mga14.intel.com ([192.55.52.115]:61150 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727370AbeJRXSS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 19:18:18 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 911B48046C;
-        Thu, 18 Oct 2018 15:16:49 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 90C9D67E64;
-        Thu, 18 Oct 2018 15:16:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20181018131125.6303-2-mszeredi@redhat.com>
-References: <20181018131125.6303-2-mszeredi@redhat.com> <20181018131125.6303-1-mszeredi@redhat.com>
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Florian Weimer <fw@deneb.enyo.de>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH 2/3] uapi: get rid of STATX_ALL
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1239.1539875806.1@warthog.procyon.org.uk>
-Date:   Thu, 18 Oct 2018 16:16:46 +0100
-Message-ID: <1240.1539875806@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 18 Oct 2018 15:16:50 +0000 (UTC)
+        id S1727370AbeJRXSe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 19:18:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2018 08:17:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,396,1534834800"; 
+   d="scan'208";a="100346656"
+Received: from unknown (HELO [192.168.0.102]) ([10.10.37.145])
+  by fmsmga001.fm.intel.com with ESMTP; 18 Oct 2018 08:17:05 -0700
+Subject: Re: rdma-core doesn't install driver.h, broke libibscif
+From:   Sudeep Dutt <sudeep.dutt@intel.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Sudeep Dutt <sudeep.dutt@intel.com>,
+        "Woodruff, Robert J" <robert.j.woodruff@intel.com>,
+        james harvey <jamespharvey20@gmail.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        Nikhil Rao <nikhil.rao@intel.com>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20181017085453.GA30496@infradead.org>
+References: <20181017085453.GA30496@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Thu, 18 Oct 2018 08:10:00 -0700
+Message-ID: <1539875400.18931.450.camel@localhost>
+Mime-Version: 1.0
+X-Mailer: Evolution 2.28.3 (2.28.3-30.el6) 
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Miklos Szeredi <mszeredi@redhat.com> wrote:
-
-> Constants of the *_ALL type can be actively harmful due to the fact that
-> developers will usually fail to consider the possible effects of future
-> changes to the definition.
+On Wed, 2018-10-17 at 01:54 -0700, Christoph Hellwig wrote:
+> On Mon, Oct 15, 2018 at 05:53:44PM +0000, Woodruff, Robert J wrote:
+> > James Harvey wrote,
+> > 
+> > >Short: Is libibscif dead, and should OS repositories remove it?
+> > 
+> > Libibscif is for an old product,  Intel's KNC, that is no longer sold and the S/W is frozen. The open source libibscif is no longer maintained. 
+> > It has already been removed from the latest community OFED distribution. The individual package on the OFA downloads is for archive purposed only.
 > 
-> Remove STATX_ALL from the uapi, while no damage has been done yet.
+> Does this mean we can kill the kernel scif code as well? 
 
-You don't know that someone's not using it.  It's been there a year and a
-half, long enough.  So, regretfully, I don't think we can remove it at this
-point.
+The MIC COSM drivers are using the kernel SCIF code. These drivers have
+been upstream since 2015 and we are not sure who is using them. Our
+preference will be to keep these drivers in the kernel for now.
 
-David
+Thanks,
+Sudeep Dutt
+
