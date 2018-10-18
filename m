@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E82ADECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3162C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B00FB21476
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D06E21476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKXqlDb8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B00FB21476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfJcPhPN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D06E21476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729167AbeJSCBO (ORCPT
+        id S1729178AbeJSCBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:01:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48858 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:01:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728788AbeJSCBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:01:13 -0400
+        id S1728438AbeJSCBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:01:16 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39D2021479;
-        Thu, 18 Oct 2018 17:59:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 582F221473;
+        Thu, 18 Oct 2018 17:59:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885547;
-        bh=8fTwK+f0g0tlJVSmWk+YzwHrTgBRcCNh1LYVsZHgqkc=;
+        s=default; t=1539885551;
+        bh=zED3MtbRz54cBnxkZao/jWNT/pNYNd9VsJq4ED/7x0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jKXqlDb8fs1DJXxtIeM5B8erMoimI/aYwJC1UfrCmkoo8Eprll0N0V2Kr1T5cnwBE
-         HYuSrhnSq6qWazcRRyoWhQp7GjP34+N5fAIPVl14DCnJA8uomQqfQi0yQGLz/Iwh5t
-         dy4ngFjYrcuogOpcwZRhr5tS+68Z8972kSHHH+6s=
+        b=QfJcPhPNJB1tyb8j81OIhMMqxjuwuVhVPf2it4a38LUL1xhsexlMZA4b2OIchQBz4
+         xy7U+9PeOSfVj9Ej7WQK/MXj/9Jm7m3xGsHpOrjhoU4BITr1kEPMWtzGTBgfB/eY04
+         mYLweH1DoeRyjzpVjGbrOdl9Rm9Hyufr+ny8JlRE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Kurtz <djkurtz@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
+        Breno Leitao <leitao@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 44/53] pinctrl/amd: poll InterruptEnable bits in amd_gpio_irq_set_type
-Date:   Thu, 18 Oct 2018 19:54:37 +0200
-Message-Id: <20181018175424.041182494@linuxfoundation.org>
+Subject: [PATCH 4.18 45/53] powerpc/tm: Fix userspace r13 corruption
+Date:   Thu, 18 Oct 2018 19:54:38 +0200
+Message-Id: <20181018175424.240220832@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.561567978@linuxfoundation.org>
 References: <20181018175416.561567978@linuxfoundation.org>
@@ -63,98 +64,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Kurtz <djkurtz@chromium.org>
+From: Michael Neuling <mikey@neuling.org>
 
-[ Upstream commit b85bfa246efd24ea3fdb5ee949c28e3110c6d299 ]
+[ Upstream commit cf13435b730a502e814c63c84d93db131e563f5f ]
 
->From the AMD BKDG, if WAKE_INT_MASTER_REG.MaskStsEn is set, a software
-write to the debounce registers of *any* gpio will block wake/interrupt
-status generation for *all* gpios for a length of time that depends on
-WAKE_INT_MASTER_REG.MaskStsLength[11:0].  During this period the Interrupt
-Delivery bit (INTERRUPT_ENABLE) will read as 0.
+When we treclaim we store the userspace checkpointed r13 to a scratch
+SPR and then later save the scratch SPR to the user thread struct.
 
-In commit 4c1de0414a1340 ("pinctrl/amd: poll InterruptEnable bits in
-enable_irq") we tried to fix this same "gpio Interrupts are blocked
-immediately after writing debounce registers" problem, but incorrectly
-assumed it only affected the gpio whose debounce was being configured
-and not ALL gpios.
+Unfortunately, this doesn't work as accessing the user thread struct
+can take an SLB fault and the SLB fault handler will write the same
+scratch SPRG that now contains the userspace r13.
 
-To solve this for all gpios, we move the polling loop from
-amd_gpio_irq_enable() to amd_gpio_irq_set_type(), while holding the gpio
-spinlock.  This ensures that another gpio operation (e.g.
-amd_gpio_irq_unmask()) can read a temporarily disabled IRQ and
-incorrectly disable it while trying to modify some other register bits.
+To fix this, we store r13 to the kernel stack (which can't fault)
+before we access the user thread struct.
 
-Fixes: 4c1de0414a1340 pinctrl/amd: poll InterruptEnable bits in enable_irq
-Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Found by running P8 guest + powervm + disable_1tb_segments + TM. Seen
+as a random userspace segfault with r13 looking like a kernel address.
+
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+Reviewed-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/pinctrl-amd.c |   33 +++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
+ arch/powerpc/kernel/tm.S |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -348,21 +348,12 @@ static void amd_gpio_irq_enable(struct i
- 	unsigned long flags;
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
--	u32 mask = BIT(INTERRUPT_ENABLE_OFF) | BIT(INTERRUPT_MASK_OFF);
+--- a/arch/powerpc/kernel/tm.S
++++ b/arch/powerpc/kernel/tm.S
+@@ -175,13 +175,20 @@ _GLOBAL(tm_reclaim)
+ 	std	r1, PACATMSCRATCH(r13)
+ 	ld	r1, PACAR1(r13)
  
- 	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
- 	pin_reg |= BIT(INTERRUPT_ENABLE_OFF);
- 	pin_reg |= BIT(INTERRUPT_MASK_OFF);
- 	writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
--	/*
--	 * When debounce logic is enabled it takes ~900 us before interrupts
--	 * can be enabled.  During this "debounce warm up" period the
--	 * "INTERRUPT_ENABLE" bit will read as 0. Poll the bit here until it
--	 * reads back as 1, signaling that interrupts are now enabled.
--	 */
--	while ((readl(gpio_dev->base + (d->hwirq)*4) & mask) != mask)
--		continue;
- 	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
- }
+-	/* Store the PPR in r11 and reset to decent value */
+ 	std	r11, GPR11(r1)			/* Temporary stash */
  
-@@ -426,7 +417,7 @@ static void amd_gpio_irq_eoi(struct irq_
- static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- {
- 	int ret = 0;
--	u32 pin_reg;
-+	u32 pin_reg, pin_reg_irq_en, mask;
- 	unsigned long flags, irq_flags;
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
-@@ -495,6 +486,28 @@ static int amd_gpio_irq_set_type(struct
- 	}
- 
- 	pin_reg |= CLR_INTR_STAT << INTERRUPT_STS_OFF;
 +	/*
-+	 * If WAKE_INT_MASTER_REG.MaskStsEn is set, a software write to the
-+	 * debounce registers of any GPIO will block wake/interrupt status
-+	 * generation for *all* GPIOs for a lenght of time that depends on
-+	 * WAKE_INT_MASTER_REG.MaskStsLength[11:0].  During this period the
-+	 * INTERRUPT_ENABLE bit will read as 0.
-+	 *
-+	 * We temporarily enable irq for the GPIO whose configuration is
-+	 * changing, and then wait for it to read back as 1 to know when
-+	 * debounce has settled and then disable the irq again.
-+	 * We do this polling with the spinlock held to ensure other GPIO
-+	 * access routines do not read an incorrect value for the irq enable
-+	 * bit of other GPIOs.  We keep the GPIO masked while polling to avoid
-+	 * spurious irqs, and disable the irq again after polling.
++	 * Store r13 away so we can free up the scratch SPR for the SLB fault
++	 * handler (needed once we start accessing the thread_struct).
 +	 */
-+	mask = BIT(INTERRUPT_ENABLE_OFF);
-+	pin_reg_irq_en = pin_reg;
-+	pin_reg_irq_en |= mask;
-+	pin_reg_irq_en &= ~BIT(INTERRUPT_MASK_OFF);
-+	writel(pin_reg_irq_en, gpio_dev->base + (d->hwirq)*4);
-+	while ((readl(gpio_dev->base + (d->hwirq)*4) & mask) != mask)
-+		continue;
- 	writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
- 	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
++	GET_SCRATCH0(r11)
++	std	r11, GPR13(r1)
++
+ 	/* Reset MSR RI so we can take SLB faults again */
+ 	li	r11, MSR_RI
+ 	mtmsrd	r11, 1
  
++	/* Store the PPR in r11 and reset to decent value */
+ 	mfspr	r11, SPRN_PPR
+ 	HMT_MEDIUM
+ 
+@@ -210,7 +217,7 @@ _GLOBAL(tm_reclaim)
+ 	ld	r4, GPR7(r1)			/* user r7 */
+ 	ld	r5, GPR11(r1)			/* user r11 */
+ 	ld	r6, GPR12(r1)			/* user r12 */
+-	GET_SCRATCH0(8)				/* user r13 */
++	ld	r8, GPR13(r1)			/* user r13 */
+ 	std	r3, GPR1(r7)
+ 	std	r4, GPR7(r7)
+ 	std	r5, GPR11(r7)
 
 
