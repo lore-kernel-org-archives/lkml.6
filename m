@@ -2,113 +2,195 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E5EC67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C65EC67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:25:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE2832098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:25:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B22DD2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:25:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nb/SAAa2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE2832098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFzFophp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B22DD2145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbeJSE15 (ORCPT
+        id S1727528AbeJSE2O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 00:27:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37622 "EHLO mail.kernel.org"
+        Fri, 19 Oct 2018 00:28:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725735AbeJSE14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 00:27:56 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725735AbeJSE2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 00:28:13 -0400
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61C932098A;
-        Thu, 18 Oct 2018 20:25:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC18821486;
+        Thu, 18 Oct 2018 20:25:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539894315;
-        bh=xD9/OKztBpup7K3Sv7G2qaI36/DmGd3KCJP4VqHdJLU=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=Nb/SAAa2yHFLAv0ahcKBH7lXb9mGEYMuTrIReS75Nd0cQmxpOwbyrc+f2eMGJEJrJ
-         nghFyDIxxPYd6nHeAXagT/gVqnPxpQXRMWsl9HIRRWGqA+rU/5qL466V53LTjp/oSf
-         N7vwqMmZ1oso2NtGwIZc3ZnsXo+gYxYrDPoLnJQc=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1539894332;
+        bh=FijrFl+Jun+HKk+KfBRIss5bmX9j9o4cw4HezeO7mrc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=IFzFophpyZ4gh4CxrP09E+Ad6cWJaEmZnk2qTOeLlrhbo4w1jRZURc2+dOGd1uNsR
+         +hnBnF46tMlOq+yeipulnSXr0PgGlheZX9CuYeGKNWgEH/KwuP76QzSAd3Xjamb/7l
+         niTfgjqQxli+Y0iScbYzwmpdiFtfV5wdBhaH256I=
+Received: by mail-ed1-f49.google.com with SMTP id z21-v6so29442484edb.11;
+        Thu, 18 Oct 2018 13:25:31 -0700 (PDT)
+X-Gm-Message-State: ABuFfoiDfxj2pnjNDkSTt9GRqciILehoNnsjYHt7zVBNU8fTNlLDD57F
+        EohG7qNuJdAz9hhf9Fpnm8fky7Q/hN+iaVuMKoA=
+X-Google-Smtp-Source: ACcGV60DoMkSuQ3oj9wSaOxtCBQQmi4iSPq32E3hILxAhsLJ2eUM+3hAIvxnpELtqvfrs9ZVYTLyA/qQ55hwbffOwDQ=
+X-Received: by 2002:a50:92fd:: with SMTP id l58-v6mr4468252eda.200.1539894330243;
+ Thu, 18 Oct 2018 13:25:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        atull@kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAPybu_2MyMyM9PXANowPkZ2LjnCUarNJmyHR+-bAowPNxVUThw@mail.gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        frowand.list@gmail.com
-References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
- <1467735814-23518-11-git-send-email-ricardo.ribalda@gmail.com>
- <CANk1AXRvJQtcmAysrkfAGurGUGVHSq55=8PZARGYsEZNv2zt0g@mail.gmail.com>
- <CAPybu_2MyMyM9PXANowPkZ2LjnCUarNJmyHR+-bAowPNxVUThw@mail.gmail.com>
-Message-ID: <153989431481.53599.12103308080212712307@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v5 8/8] clk: fixed-rate: Convert into a module platform driver
-Date:   Thu, 18 Oct 2018 13:25:14 -0700
+References: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
+ <1539657458-24401-2-git-send-email-frowand.list@gmail.com> <CANk1AXS-DMhA3=8v9N28K_V6K18HcgN_Esuo=-ddmeBLO46-Rw@mail.gmail.com>
+In-Reply-To: <CANk1AXS-DMhA3=8v9N28K_V6K18HcgN_Esuo=-ddmeBLO46-Rw@mail.gmail.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Thu, 18 Oct 2018 15:24:53 -0500
+X-Gmail-Original-Message-ID: <CANk1AXT38UJ0gZze87b3jDiGfXoVEW7izhohsGRdZ5P20wfeEw@mail.gmail.com>
+Message-ID: <CANk1AXT38UJ0gZze87b3jDiGfXoVEW7izhohsGRdZ5P20wfeEw@mail.gmail.com>
+Subject: Re: [PATCH v4 01/18] of: overlay: add tests to validate kfrees from
+ overlay removal
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Moritz Fischer <mdf@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Ricardo Ribalda Delgado (2018-10-18 13:02:01)
-> Hi Alan
-> =
-
-> =
-
-> On Thu, Oct 18, 2018 at 9:21 PM Alan Tull <atull@kernel.org> wrote:
+On Wed, Oct 17, 2018 at 4:30 PM Alan Tull <atull@kernel.org> wrote:
+>
+> On Mon, Oct 15, 2018 at 9:39 PM <frowand.list@gmail.com> wrote:
+>
+> Hi Frank,
+>
 > >
-> > On Tue, Jul 5, 2016 at 11:45 AM Ricardo Ribalda Delgado
-> > <ricardo.ribalda@gmail.com> wrote:
+> > From: Frank Rowand <frank.rowand@sony.com>
 > >
-> > I've stumbled across a of_node_get/put imbalance that happens when the
-> > fixed rate clock is added and deleted using device tree.  The cause is
-> > that this driver calls of_clk_add_provider() when probed, but doesn't
-> > call of_clk_del_provider() when removed.
+> > Add checks:
+> >   - attempted kfree due to refcount reaching zero before overlay
+> >     is removed
+> >   - properties linked to an overlay node when the node is removed
+> >   - node refcount > one during node removal in a changeset destroy,
+> >     if the node was created by the changeset
 > >
-> > It looks like a lot of clock drivers share that issue:
+> > After applying this patch, several validation warnings will be
+> > reported from the devicetree unittest during boot due to
+> > pre-existing devicetree bugs. The warnings will be similar to:
 > >
-> > $ cd drivers/clk/
-> > $ git grep -l of_clk_add_provider * | xargs grep -L of_clk_del_provider=
- | wc -l
-> > 131
+> >   OF: ERROR: of_node_release() overlay node /testcase-data/overlay-node/test-bus/test-unittest11/test-unittest111 contains unexpected properties
+> >   OF: ERROR: memory leak - destroy cset entry: attach overlay node /testcase-data-2/substation@100/hvac-medium-2 expected refcount 1 instead of 2.  of_node_get() / of_node_put() are unbalanced for this node.
 > >
-> > It should be a one line fix, but for many files.
+> > Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> > ---
+> > Changes since v3:
+> >   - Add expected value of refcount for destroy cset entry error.  Also
+> >     explain the cause of the error.
 > >
-> > I'm not a clock subsystem expert, so please let me know whether I'm
-> > missing something here.
-> =
+> >  drivers/of/dynamic.c | 29 +++++++++++++++++++++++++++++
+> >  drivers/of/overlay.c |  1 +
+> >  include/linux/of.h   | 15 ++++++++++-----
+> >  3 files changed, 40 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+> > index f4f8ed9b5454..24c97b7a050f 100644
+> > --- a/drivers/of/dynamic.c
+> > +++ b/drivers/of/dynamic.c
+> > @@ -330,6 +330,25 @@ void of_node_release(struct kobject *kobj)
+> >         if (!of_node_check_flag(node, OF_DYNAMIC))
+> >                 return;
+> >
+> > +       if (of_node_check_flag(node, OF_OVERLAY)) {
+> > +
+> > +               if (!of_node_check_flag(node, OF_OVERLAY_FREE_CSET)) {
+> > +                       /* premature refcount of zero, do not free memory */
+> > +                       pr_err("ERROR: memory leak %s() overlay node %pOF before free overlay changeset\n",
+> > +                              __func__, node);
+> > +                       return;
+> > +               }
+> > +
+> > +               /*
+> > +                * If node->properties non-empty then properties were added
+> > +                * to this node either by different overlay that has not
+> > +                * yet been removed, or by a non-overlay mechanism.
+> > +                */
+> > +               if (node->properties)
+> > +                       pr_err("ERROR: %s() overlay node %pOF contains unexpected properties\n",
+> > +                              __func__, node);
+> > +       }
+> > +
+> >         property_list_free(node->properties);
+> >         property_list_free(node->deadprops);
+> >
+> > @@ -434,6 +453,16 @@ struct device_node *__of_node_dup(const struct device_node *np,
+> >
+> >  static void __of_changeset_entry_destroy(struct of_changeset_entry *ce)
+> >  {
+> > +       if (ce->action == OF_RECONFIG_ATTACH_NODE &&
+> > +           of_node_check_flag(ce->np, OF_OVERLAY)) {
+> > +               if (kref_read(&ce->np->kobj.kref) > 1) {
+> > +                       pr_err("ERROR: memory leak - destroy cset entry: attach overlay node %pOF expected refcount 1 instead of %d.  of_node_get() / of_node_put() are unbalanced for this node.\n",
+> > +                              ce->np, kref_read(&ce->np->kobj.kref));
+>
+> Still testing as much as I have time to do.
+>
+> I'm hitting this error message once when removing an overlay that adds
+> several child nodes.  The only node I get the message for was a node
+> that added a fixed-clock (the other nodes didn't trigger the error).
+> Then even if I edited all the rest of the overlay DTS and removed all
+> other child nodes and all references to the clock from other nodes, I
+> still got the error.
+>
+> Removing dtbo: 1-socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dtb
+> [   72.032270] OF: ERROR: memory leak - destroy cset entry: attach
+> overlay node /soc/base_fpga_region/clk_0 expected refcount 1 instead
+> of 2.  of_node_get() / of_node_put() are unbalanced for this node.
 
-> Not an expert either, but I believe that the affected drivers are much
-> less. We have to consider only the drivers that can be removed
-> =
+Update: with some helpful offline debug patches from Frank, I was able
+to find the source of the of_node_get/put unbalance.  The fixed-rate
+clock driver calls of_clk_add_provider() when probed but never calls
+of_clk_del_provider()
 
-> git grep -l  of_clk_add_provider  | xargs grep -l platform_driver |
-> xargs grep -l  remove | xargs grep -L of_clk_del_provider
-> drivers/clk/clk-fixed-factor.c
-> drivers/clk/clk-fixed-rate.c
-> drivers/clk/davinci/psc.c
-> drivers/clk/ti/adpll.c
-> drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
-> =
+This patchset quite likely will uncover other of_node_get/put
+unbalances around the kernel.
 
-> =
+Alan
 
-> Also there is something else that I do not undersand:
-> of_clk_add_hw_provider() is the same as of_clk_add_provider() ?
-
-The difference is the hw provider API deals with struct clk_hw and the
-other API deals with struct clk pointers. The preference is to use the
-clk_hw based APIs.
-
+>
+> Here's the very stripped down overlay:
+>
+> /dts-v1/;
+> /plugin/;
+> / {
+>         fragment@0 {
+>                 target-path = "/soc/base_fpga_region";
+>                 #address-cells = <1>;
+>                 #size-cells = <1>;
+>
+>                 __overlay__ {
+>                         external-fpga-config;
+>
+>                         #address-cells = <1>;
+>                         #size-cells = <1>;
+>
+>                         clk_0: clk_0 {
+>                                 compatible = "fixed-clock";
+>                                 #clock-cells = <0>;
+>                                 clock-frequency = <100000000>;  /* 100.00 MHz */
+>                                 clock-output-names = "clk_0-clk";
+>                         };
+>                 };
+>         };
+> };
