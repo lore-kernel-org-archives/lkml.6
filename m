@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA97ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 777C0ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5C19214AB
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 428722148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YwKvMm42"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5C19214AB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ed4nyT9v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 428722148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730148AbeJSCGx (ORCPT
+        id S1729803AbeJSCG5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:06:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55314 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:06:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729152AbeJSCGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:06:53 -0400
+        id S1726516AbeJSCG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:06:57 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A58E321479;
-        Thu, 18 Oct 2018 18:04:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25EE52148D;
+        Thu, 18 Oct 2018 18:04:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885886;
-        bh=e/CYVGV6ZD0ZOVoUerqdgP1jOjGKTcumOlmCRp1UVl4=;
+        s=default; t=1539885889;
+        bh=DSJc3g1xNMsHZFFiGfhoU4iZoYv4AfrdROhZ9gVh6zU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YwKvMm427oy1UnGFBkGGvScVOundTTgMx7eqsohYq2GtnsoUfKgyDGToARJbl6b3G
-         dBfKHG1hlEdw70RtmrKKUQAD59vvnw6AgyemUuw9ycZ0OYYwZfrtpJPk8kOpqdJ70b
-         QkPQPUsyUVZtnc5LMGbgGEVGzoTP3wQdo+6ekFTk=
+        b=ed4nyT9v4K9/VZ+m/HfTWHnbWxJaQE1cAuXysFrKCEX/0WKgWcxWVUWvpwt2yevdD
+         /V2Pi5bMeyMGieRCidTSL/HluvHDAJH6VzQRgO/eYErCzUJMalmTsxrMzJvCKOyLZI
+         b/RAkWobNr9V65MwuO0Js5kE0bfPBIBL3i2CjJKI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 01/48] ASoC: wm8804: Add ACPI support
-Date:   Thu, 18 Oct 2018 19:54:36 +0200
-Message-Id: <20181018175427.528206364@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Daniel Rosenberg <drosen@google.com>
+Subject: [PATCH 4.4 10/48] ext4: add corruption check in ext4_xattr_set_entry()
+Date:   Thu, 18 Oct 2018 19:54:45 +0200
+Message-Id: <20181018175428.537398160@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -64,66 +64,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit 960cdd50ca9fdfeb82c2757107bcb7f93c8d7d41 ]
+commit 5369a762c882c0b6e9599e4ebbb3a9ba9eee7e2d upstream.
 
-HID made of either Wolfson/CirrusLogic PCI ID + 8804 identifier.
+In theory this should have been caught earlier when the xattr list was
+verified, but in case it got missed, it's simple enough to add check
+to make sure we don't overrun the xattr buffer.
 
-This helps enumerate the HifiBerry Digi+ HAT boards on the Up2 platform.
+This addresses CVE-2018-10879.
 
-The scripts at https://github.com/thesofproject/acpi-scripts can be
-used to add the ACPI initrd overlays.
+https://bugzilla.kernel.org/show_bug.cgi?id=200001
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+[bwh: Backported to 3.16:
+ - Add inode parameter to ext4_xattr_set_entry() and update callers
+ - Adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+[adjusted for 4.4 context]
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/codecs/wm8804-i2c.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ fs/ext4/xattr.c |   22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
---- a/sound/soc/codecs/wm8804-i2c.c
-+++ b/sound/soc/codecs/wm8804-i2c.c
-@@ -13,6 +13,7 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/i2c.h>
-+#include <linux/acpi.h>
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -638,14 +638,20 @@ static size_t ext4_xattr_free_space(stru
+ }
  
- #include "wm8804.h"
+ static int
+-ext4_xattr_set_entry(struct ext4_xattr_info *i, struct ext4_xattr_search *s)
++ext4_xattr_set_entry(struct ext4_xattr_info *i, struct ext4_xattr_search *s,
++		     struct inode *inode)
+ {
+-	struct ext4_xattr_entry *last;
++	struct ext4_xattr_entry *last, *next;
+ 	size_t free, min_offs = s->end - s->base, name_len = strlen(i->name);
  
-@@ -40,17 +41,29 @@ static const struct i2c_device_id wm8804
- };
- MODULE_DEVICE_TABLE(i2c, wm8804_i2c_id);
+ 	/* Compute min_offs and last. */
+ 	last = s->first;
+-	for (; !IS_LAST_ENTRY(last); last = EXT4_XATTR_NEXT(last)) {
++	for (; !IS_LAST_ENTRY(last); last = next) {
++		next = EXT4_XATTR_NEXT(last);
++		if ((void *)next >= s->end) {
++			EXT4_ERROR_INODE(inode, "corrupted xattr entries");
++			return -EFSCORRUPTED;
++		}
+ 		if (!last->e_value_block && last->e_value_size) {
+ 			size_t offs = le16_to_cpu(last->e_value_offs);
+ 			if (offs < min_offs)
+@@ -825,7 +831,7 @@ ext4_xattr_block_set(handle_t *handle, s
+ 				ce = NULL;
+ 			}
+ 			ea_bdebug(bs->bh, "modifying in-place");
+-			error = ext4_xattr_set_entry(i, s);
++			error = ext4_xattr_set_entry(i, s, inode);
+ 			if (!error) {
+ 				if (!IS_LAST_ENTRY(s->first))
+ 					ext4_xattr_rehash(header(s->base),
+@@ -875,7 +881,7 @@ ext4_xattr_block_set(handle_t *handle, s
+ 		s->end = s->base + sb->s_blocksize;
+ 	}
  
-+#if defined(CONFIG_OF)
- static const struct of_device_id wm8804_of_match[] = {
- 	{ .compatible = "wlf,wm8804", },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, wm8804_of_match);
-+#endif
-+
-+#ifdef CONFIG_ACPI
-+static const struct acpi_device_id wm8804_acpi_match[] = {
-+	{ "1AEC8804", 0 }, /* Wolfson PCI ID + part ID */
-+	{ "10138804", 0 }, /* Cirrus Logic PCI ID + part ID */
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(acpi, wm8804_acpi_match);
-+#endif
+-	error = ext4_xattr_set_entry(i, s);
++	error = ext4_xattr_set_entry(i, s, inode);
+ 	if (error == -EFSCORRUPTED)
+ 		goto bad_block;
+ 	if (error)
+@@ -1037,7 +1043,7 @@ int ext4_xattr_ibody_inline_set(handle_t
  
- static struct i2c_driver wm8804_i2c_driver = {
- 	.driver = {
- 		.name = "wm8804",
- 		.pm = &wm8804_pm,
--		.of_match_table = wm8804_of_match,
-+		.of_match_table = of_match_ptr(wm8804_of_match),
-+		.acpi_match_table = ACPI_PTR(wm8804_acpi_match),
- 	},
- 	.probe = wm8804_i2c_probe,
- 	.remove = wm8804_i2c_remove,
+ 	if (EXT4_I(inode)->i_extra_isize == 0)
+ 		return -ENOSPC;
+-	error = ext4_xattr_set_entry(i, s);
++	error = ext4_xattr_set_entry(i, s, inode);
+ 	if (error) {
+ 		if (error == -ENOSPC &&
+ 		    ext4_has_inline_data(inode)) {
+@@ -1049,7 +1055,7 @@ int ext4_xattr_ibody_inline_set(handle_t
+ 			error = ext4_xattr_ibody_find(inode, i, is);
+ 			if (error)
+ 				return error;
+-			error = ext4_xattr_set_entry(i, s);
++			error = ext4_xattr_set_entry(i, s, inode);
+ 		}
+ 		if (error)
+ 			return error;
+@@ -1075,7 +1081,7 @@ static int ext4_xattr_ibody_set(handle_t
+ 
+ 	if (EXT4_I(inode)->i_extra_isize == 0)
+ 		return -ENOSPC;
+-	error = ext4_xattr_set_entry(i, s);
++	error = ext4_xattr_set_entry(i, s, inode);
+ 	if (error)
+ 		return error;
+ 	header = IHDR(inode, ext4_raw_inode(&is->iloc));
 
 
