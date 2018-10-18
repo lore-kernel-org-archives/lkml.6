@@ -2,189 +2,104 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B8FC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5711AECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 527542145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:13:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 527542145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 2821A21476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:13:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2821A21476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbeJSAOx (ORCPT
+        id S1728531AbeJSAP1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 20:14:53 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:35359 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727274AbeJSAOx (ORCPT
+        Thu, 18 Oct 2018 20:15:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60229 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727274AbeJSAP1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 20:14:53 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gDAv3-00059C-DJ; Thu, 18 Oct 2018 18:13:05 +0200
-Date:   Thu, 18 Oct 2018 18:13:05 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: [PATCH 04/11] x86/fpu: eager switch PKRU state
-Message-ID: <20181018161305.f4t7bdxhmpy5htrs@linutronix.de>
-References: <20181004140547.13014-1-bigeasy@linutronix.de>
- <20181004140547.13014-5-bigeasy@linutronix.de>
- <76caafd5-c85d-61bb-62ec-8056cd6d95ac@linux.intel.com>
+        Thu, 18 Oct 2018 20:15:27 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9IGDRbO882822
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 18 Oct 2018 09:13:27 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9IGDR1I882819;
+        Thu, 18 Oct 2018 09:13:27 -0700
+Date:   Thu, 18 Oct 2018 09:13:27 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Yangtao Li <tipbot@zytor.com>
+Message-ID: <tip-e45506ac0af9b56b221863e9649fe122d8bb42ff@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, mingo@kernel.org,
+        peterz@infradead.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, tiny.windzz@gmail.com
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          tiny.windzz@gmail.com, mingo@kernel.org,
+          torvalds@linux-foundation.org, peterz@infradead.org
+In-Reply-To: <20181018142133.12341-1-tiny.windzz@gmail.com>
+References: <20181018142133.12341-1-tiny.windzz@gmail.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:irq/core] softirq: Fix typo in __do_softirq() comments
+Git-Commit-ID: e45506ac0af9b56b221863e9649fe122d8bb42ff
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <76caafd5-c85d-61bb-62ec-8056cd6d95ac@linux.intel.com>
-User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-12 10:51:34 [-0700], Dave Hansen wrote:
-> > diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-> > index 16c4077ffc945..956d967ca824a 100644
-> > --- a/arch/x86/include/asm/fpu/internal.h
-> > +++ b/arch/x86/include/asm/fpu/internal.h
-> > @@ -570,11 +570,23 @@ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
-> >   */
-> >  static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
-> >  {
-> > -	bool preload = static_cpu_has(X86_FEATURE_FPU) &&
-> > -		       new_fpu->initialized;
-> > +	bool load_fpu;
-> >  
-> > -	if (preload)
-> > -		__fpregs_load_activate(new_fpu, cpu);
-> > +	load_fpu = static_cpu_has(X86_FEATURE_FPU) && new_fpu->initialized;
-> > +	if (!load_fpu)
-> > +		return;
-> 
-> Needs comments, please.  Especially around what an uninitialized new_fpu
-> means.
+Commit-ID:  e45506ac0af9b56b221863e9649fe122d8bb42ff
+Gitweb:     https://git.kernel.org/tip/e45506ac0af9b56b221863e9649fe122d8bb42ff
+Author:     Yangtao Li <tiny.windzz@gmail.com>
+AuthorDate: Thu, 18 Oct 2018 10:21:33 -0400
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 18 Oct 2018 18:10:23 +0200
 
-that ->initialized field is gone.
+softirq: Fix typo in __do_softirq() comments
 
-> > +	__fpregs_load_activate(new_fpu, cpu);
-> > +
-> > +#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
-> > +	if (static_cpu_has(X86_FEATURE_OSPKE)) {
-> 
-> FWIW, you should be able to use cpu_feature_enabled() instead of an
-> explicit #ifdef here.
-okay.
+s/s/as
 
-> > +		struct pkru_state *pk;
-> > +
-> > +		pk = __raw_xsave_addr(&new_fpu->state.xsave, XFEATURE_PKRU);
-> > +		if (pk->pkru != __read_pkru())
-> > +			__write_pkru(pk->pkru);
-> > +	}
-> > +#endif
-> >  }
-> 
-> Comments here as well, please.
-> 
-> I think the goal is to keep the PKRU state in the 'init state' when
-> possible and also to save the cost of WRPKRU.  But, it would be really
-> nice to be explicit.
+[ mingo: Also add a missing 'the', add proper punctuation and clarify what 'swap' means here. ]
 
-added:
-     /*
-      * Writting PKRU is expensive. Only write the PKRU value if it is
-      * different from the current one.
-      */
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: alexander.levin@verizon.com
+Cc: frederic@kernel.org
+Cc: joel@joelfernandes.org
+Cc: paulmck@linux.vnet.ibm.com
+Cc: rostedt@goodmis.org
+Link: http://lkml.kernel.org/r/20181018142133.12341-1-tiny.windzz@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/softirq.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> > -static inline void write_pkru(u32 pkru)
-> > -{
-> > -	if (boot_cpu_has(X86_FEATURE_OSPKE))
-> > -		__write_pkru(pkru);
-> > -}
-> > +void write_pkru(u32 pkru);
-> 
-> One reason I inlined this was because it enables the the PK code to be
-> optimized away entirely.  Putting the checks behind a function call
-> makes this optimization impossible.
-> 
-> Could you elaborate on why you chose to do this and what you think the
-> impact is or is not?
-
-One thing let to another. It gets to an include mess once I tried to do
-more than just reading / writting the value.
-I kept now write_pkru() and added __write_pkru_if_new() which does the
-extra pieces. If you don't like the new version we would need to look on
-how to make it simpler :)
-
-> > diff --git a/arch/x86/include/asm/pkeys.h b/arch/x86/include/asm/pkeys.h
-> > index 19b137f1b3beb..b184f916319e5 100644
-> > --- a/arch/x86/include/asm/pkeys.h
-> > +++ b/arch/x86/include/asm/pkeys.h
-> > @@ -119,7 +119,7 @@ extern int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
-> >  		unsigned long init_val);
-> >  extern int __arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
-> >  		unsigned long init_val);
-> > -extern void copy_init_pkru_to_fpregs(void);
-> > +extern void pkru_set_init_value(void);
-> 
-> Could you elaborate on why the name is being changed?
-
-The function name read like init_pkru value is copied to fpregs save
-area which is not the case. I could revert it if you prefer.
-
-> > +void write_pkru(u32 pkru)
-> > +{
-> > +	struct pkru_state *pk;
-> > +
-> > +	if (!boot_cpu_has(X86_FEATURE_OSPKE))
-> > +		return;
-> > +
-> > +	pk = __raw_xsave_addr(&current->thread.fpu.state.xsave, XFEATURE_PKRU);
-> > +	/*
-> > +	 * Update the PKRU value in cstate and then in the CPU. A context
-> 
-> "cstate"?  Did you mean xstate?
-
-indeed.
-
-> > +	 * switch between those two operation would load the new value from the
-> > +	 * updated xstate and then we would write (the same value) to the CPU.
-> > +	 */
-> > +	pk->pkru = pkru;
-> > +	__write_pkru(pkru);
-> > +
-> > +}
-> 
-> There's an unnecessary line there.
-> 
-> This also needs a lot more high-level context about why it is necessary.
->  I think you had that in the changelog, but we also need the function
-> commented.
-
-What is necessary? The manual update of "pk->pkru?
-
-> > -	if (!init_pkru_value_snapshot && !read_pkru())
-> > +	if (init_pkru_value_snapshot == read_pkru())
-> >  		return;
-> > -	/*
-> > -	 * Override the PKRU state that came from 'init_fpstate'
-> > -	 * with the baseline from the process.
-> > -	 */
-> > +
-> >  	write_pkru(init_pkru_value_snapshot);
-> >  }
-> 
-> Isn't this doing some of the same work (including rdpkru()) as write_pkru()?
-
-Well, yes. Since my write_pkru() checks if the new value the same as the
-current I dropped most of the code here.
-
-Sebastian
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index 6f584861d329..9526895fe4ac 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -257,9 +257,9 @@ asmlinkage __visible void __softirq_entry __do_softirq(void)
+ 	int softirq_bit;
+ 
+ 	/*
+-	 * Mask out PF_MEMALLOC s current task context is borrowed for the
+-	 * softirq. A softirq handled such as network RX might set PF_MEMALLOC
+-	 * again if the socket is related to swap
++	 * Mask out PF_MEMALLOC as the current task context is borrowed for the
++	 * softirq. A softirq handled, such as network RX, might set PF_MEMALLOC
++	 * again if the socket is related to swapping.
+ 	 */
+ 	current->flags &= ~PF_MEMALLOC;
+ 
