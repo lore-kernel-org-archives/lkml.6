@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A214C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8672EC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE57721480
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:03:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50BC821480
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:03:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EInfxGwT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE57721480
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQEiA5Sg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50BC821480
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729951AbeJSCFn (ORCPT
+        id S1729961AbeJSCFq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:05:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53876 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:05:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729134AbeJSCFm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:05:42 -0400
+        id S1729134AbeJSCFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:05:46 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 472D921476;
-        Thu, 18 Oct 2018 18:03:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B61AB21476;
+        Thu, 18 Oct 2018 18:03:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885815;
-        bh=TxGxvajX3NYJFkaW0Sf2IImg3jI0DNOvYnJatPW0uNA=;
+        s=default; t=1539885819;
+        bh=7DrysdQlVM/yjaFAu8DQLEh+g6TexoU/O/CPjFxSawQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EInfxGwTW/sjcSc50Q+o6Du0ra6kK9bZCt7W7vAZdpR95XKonHOMZz16AhQ40CBwT
-         vLwbmOc5QccH7eESsKEGZj9AA4CE25pXPJ8h5Lrs23cX/q80fCNXrKQzjeg99D20Sn
-         P46ZsAGnOMbST6IwtC6SHu6VeZvern9vj7Cr5jOA=
+        b=vQEiA5SgsqixZ9VvvuT21hSH0YbZef0SI9ycZLNCM6iN+JN9T8JkACy04LijrF3Tb
+         vB80ujJlYWrrIcQYFqYz2tvFAdjf1UxzXTrhEpYJ4X6JbFNY6XT82AZxajHmNJn23D
+         /3suhBkUGNyGAH26YdywYDUhUWABaC8I74ujCiHY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li Shuang <shuali@redhat.com>,
-        Florian Westphal <fw@strlen.de>,
-        Xin Long <lucien.xin@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.9 25/35] netfilter: check for seqadj ext existence before adding it in nf_nat_setup_info
-Date:   Thu, 18 Oct 2018 19:54:54 +0200
-Message-Id: <20181018175426.355176392@linuxfoundation.org>
+        stable@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.9 26/35] ARC: build: Get rid of toolchain check
+Date:   Thu, 18 Oct 2018 19:54:55 +0200
+Message-Id: <20181018175426.486553112@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175422.506152522@linuxfoundation.org>
 References: <20181018175422.506152522@linuxfoundation.org>
@@ -64,62 +63,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Alexey Brodkin <abrodkin@synopsys.com>
 
-commit ab6dd1beac7be3c17f8bf3d38bdf29ecb7293f1e upstream.
+commit 615f64458ad890ef94abc879a66d8b27236e733a upstream.
 
-Commit 4440a2ab3b9f ("netfilter: synproxy: Check oom when adding synproxy
-and seqadj ct extensions") wanted to drop the packet when it fails to add
-seqadj ext due to no memory by checking if nfct_seqadj_ext_add returns
-NULL.
+This check is very naive: we simply test if GCC invoked without
+"-mcpu=XXX" has ARC700 define set. In that case we think that GCC
+was built with "--with-cpu=arc700" and has libgcc built for ARC700.
 
-But that nfct_seqadj_ext_add returns NULL can also happen when seqadj ext
-already exists in a nf_conn. It will cause that userspace protocol doesn't
-work when both dnat and snat are configured.
+Otherwise if ARC700 is not defined we think that everythng was built
+for ARCv2.
 
-Li Shuang found this issue in the case:
+But in reality our life is much more interesting.
 
-Topo:
-   ftp client                   router                  ftp server
-  10.167.131.2  <-> 10.167.131.254  10.167.141.254 <-> 10.167.141.1
+1. Regardless of GCC configuration (i.e. what we pass in "--with-cpu"
+   it may generate code for any ARC core).
 
-Rules:
-  # iptables -t nat -A PREROUTING -i eth1 -p tcp -m tcp --dport 21 -j \
-    DNAT --to-destination 10.167.141.1
-  # iptables -t nat -A POSTROUTING -o eth2 -p tcp -m tcp --dport 21 -j \
-    SNAT --to-source 10.167.141.254
+2. libgcc might be built with explicitly specified "--mcpu=YYY"
 
-In router, when both dnat and snat are added, nf_nat_setup_info will be
-called twice. The packet can be dropped at the 2nd time for DNAT due to
-seqadj ext is already added at the 1st time for SNAT.
+That's exactly what happens in case of multilibbed toolchains:
+ - GCC is configured with default settings
+ - All the libs built for many different CPU flavors
 
-This patch is to fix it by checking for seqadj ext existence before adding
-it, so that the packet will not be dropped if seqadj ext already exists.
+I.e. that check gets in the way of usage of multilibbed
+toolchains. And even non-multilibbed toolchains are affected.
+OpenEmbedded also builds GCC without "--with-cpu" because
+each and every target component later is compiled with explicitly
+set "-mcpu=ZZZ".
 
-Note that as Florian mentioned, as a long term, we should review ext_add()
-behaviour, it's better to return a pointer to the existing ext instead.
-
-Fixes: 4440a2ab3b9f ("netfilter: synproxy: Check oom when adding synproxy and seqadj ct extensions")
-Reported-by: Li Shuang <shuali@redhat.com>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_nat_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arc/Makefile |   14 --------------
+ 1 file changed, 14 deletions(-)
 
---- a/net/netfilter/nf_nat_core.c
-+++ b/net/netfilter/nf_nat_core.c
-@@ -421,7 +421,7 @@ nf_nat_setup_info(struct nf_conn *ct,
- 		else
- 			ct->status |= IPS_DST_NAT;
+--- a/arch/arc/Makefile
++++ b/arch/arc/Makefile
+@@ -22,20 +22,6 @@ cflags-y	+= -fno-common -pipe -fno-built
+ cflags-$(CONFIG_ISA_ARCOMPACT)	+= -mA7
+ cflags-$(CONFIG_ISA_ARCV2)	+= -mcpu=archs
  
--		if (nfct_help(ct))
-+		if (nfct_help(ct) && !nfct_seqadj(ct))
- 			if (!nfct_seqadj_ext_add(ct))
- 				return NF_DROP;
- 	}
+-is_700 = $(shell $(CC) -dM -E - < /dev/null | grep -q "ARC700" && echo 1 || echo 0)
+-
+-ifdef CONFIG_ISA_ARCOMPACT
+-ifeq ($(is_700), 0)
+-    $(error Toolchain not configured for ARCompact builds)
+-endif
+-endif
+-
+-ifdef CONFIG_ISA_ARCV2
+-ifeq ($(is_700), 1)
+-    $(error Toolchain not configured for ARCv2 builds)
+-endif
+-endif
+-
+ ifdef CONFIG_ARC_CURR_IN_REG
+ # For a global register defintion, make sure it gets passed to every file
+ # We had a customer reported bug where some code built in kernel was NOT using
 
 
