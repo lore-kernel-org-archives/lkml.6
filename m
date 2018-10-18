@@ -2,92 +2,180 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6280AECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04770C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 326EC20658
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 326EC20658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
+	by mail.kernel.org (Postfix) with ESMTP id 9CCBE204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:09:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CCBE204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730716AbeJSCJy (ORCPT
+        id S1729706AbeJSCMG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:09:54 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:35447 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728851AbeJSCJy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:09:54 -0400
-Received: from null ([172.19.249.151]) by mrelayeu.kundenserver.de (mreue109
- [212.227.15.183]) with ESMTPSA (Nemesis) id 1M7sQ8-1gIAVq2Q30-0054XD; Thu, 18
- Oct 2018 20:07:24 +0200
-Received: from null ([172.19.249.151]) by mrelayeu.kundenserver.de (mreue109
- [212.227.15.183]) with ESMTPSA (Nemesis) id 1M7sQ8-1gIAVq2Q30-0054XD; Thu, 18
- Oct 2018 20:07:24 +0200
-Date:   Thu, 18 Oct 2018 20:07:23 +0200 (CEST)
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        gregkh@linuxfoundation.org
-Cc:     eric@anholt.net, linux-rpi-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, tiwai@suse.de,
-        devel@driverdev.osuosl.org
-Message-ID: <221690011.132173.1539886043161@email.1und1.de>
-In-Reply-To: <20181017190156.30010-1-nsaenzjulienne@suse.de>
-References: <20181017190156.30010-1-nsaenzjulienne@suse.de>
-Subject: Re: [PATCH v2 0/7] staging: bcm2835-audio: Cleanups and upgrades
+        Thu, 18 Oct 2018 22:12:06 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42200 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726918AbeJSCMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:12:05 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A159341;
+        Thu, 18 Oct 2018 11:09:56 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 38B793F5D3;
+        Thu, 18 Oct 2018 11:09:55 -0700 (PDT)
+Subject: Re: [PATCH 07/10] swiotlb: refactor swiotlb_map_page
+To:     Christoph Hellwig <hch@lst.de>, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <20181008080246.20543-1-hch@lst.de>
+ <20181008080246.20543-8-hch@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <35016142-f06d-e424-5afe-6026b6d57eda@arm.com>
+Date:   Thu, 18 Oct 2018 19:09:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20181008080246.20543-8-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev39
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:/lB9xM2UaqJYIDiCZZGsZ5TlTRlU4A0oqqEf9e2134My0yeg62y
- 1NTA4d2p2rX5Abe4q2vV1xtVaahIv8RzEtMUvR5ktfNhTbdesjnmIXS5+CEvPHkH7nKDmkd
- Wvo4bq984dHpNJGXb6N7ZLqW5b8+gmHS9KoOQbWDTID/opl3kWC1s3PgnJLs78A7WWOeWAj
- LIEnytUZM6i4QifeSjhOw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:zv1p1IVGmGA=:aFGJgS1AqIrwkVi98R5NTK
- Xvmqva+O3hXSbXA6Lt5gNGFXJxZ/LnDPdLv8p1fNFmi+GYjxJzCWNEJnZ+43d2axgtF40U0P7
- 1gg2RTP4kHSrf3c0awUXWcmBiw5wB5Eys6JY57VXFwcFYrDYh+tjBS7pJAI3U8XVUt3uNhMcA
- 3g6yFQ5a3xymdNDTHNIrCo+IDj5T1bI8hOJG3PspCbbX5GVUB5/rA+ER1IXLTV2KWaoVdEIl8
- 3fvP5jr29oaHIhhBmjIdBFvHxw6uPMQ4FjaC6P3r+hFkMAw1OpF231vgB0aKp92+fjNAMGswx
- BPMT9P5SvehyC/LiuDY3S8Ht1fc86IhQDAxb3SUIUgzk2czDm+UZVSLfNanxX5ZrquOEnLyax
- 3PD/LkijPq1pKxGVglXU/7f2RTQT8y7Ohl4wUhZFW5f6QrCjnGVJF5aC+bXWVemYONz4Q+T8q
- wpKncum804lAqhh/vefqmhuKg9w4+naixOyXpVnaaO/lbR4PHL/GQs9buVb8ik06uOVrFTDFs
- 7rISAs5Gin1vHorvxeD/V+EL7qlCO0cxwGJnHDw2PY1UMsfx1o+IXn1xCxgaA9F/HZWM0OxEF
- aFd7Se/uvLaV4NveTiQOvsmayi5P3T5DjC+73h7YcOPRM++98bepc3qOoKQZEbV4KuPhP3xDH
- j74Msgca51eXOLB3V/CrWnikO1Su5xlRof7giR2XHIagF1IjkPk/P0/45php+hsufwCcajtur
- mghs7Scfrm9LDCly
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 08/10/18 09:02, Christoph Hellwig wrote:
+> Remove the somewhat useless map_single function, and replace it with a
+> swiotlb_bounce_page handler that handles everything related to actually
+> bouncing a page.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   kernel/dma/swiotlb.c | 77 +++++++++++++++++++++-----------------------
+>   1 file changed, 36 insertions(+), 41 deletions(-)
+> 
+> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+> index 15755d7a5242..4d7a4d85d71e 100644
+> --- a/kernel/dma/swiotlb.c
+> +++ b/kernel/dma/swiotlb.c
+> @@ -543,26 +543,6 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+>   	return tlb_addr;
+>   }
+>   
+> -/*
+> - * Allocates bounce buffer and returns its physical address.
+> - */
+> -static phys_addr_t
+> -map_single(struct device *hwdev, phys_addr_t phys, size_t size,
+> -	   enum dma_data_direction dir, unsigned long attrs)
+> -{
+> -	dma_addr_t start_dma_addr;
+> -
+> -	if (swiotlb_force == SWIOTLB_NO_FORCE) {
+> -		dev_warn_ratelimited(hwdev, "Cannot do DMA to address %pa\n",
+> -				     &phys);
+> -		return SWIOTLB_MAP_ERROR;
+> -	}
+> -
+> -	start_dma_addr = __phys_to_dma(hwdev, io_tlb_start);
+> -	return swiotlb_tbl_map_single(hwdev, start_dma_addr, phys, size,
+> -				      dir, attrs);
+> -}
+> -
+>   /*
+>    * tlb_addr is the physical address of the bounce buffer to unmap.
+>    */
+> @@ -714,6 +694,34 @@ static bool swiotlb_free_buffer(struct device *dev, size_t size,
+>   	return true;
+>   }
+>   
+> +static dma_addr_t swiotlb_bounce_page(struct device *dev, phys_addr_t *phys,
+> +		size_t size, enum dma_data_direction dir, unsigned long attrs)
+> +{
+> +	dma_addr_t dma_addr;
+> +
+> +	if (unlikely(swiotlb_force == SWIOTLB_NO_FORCE)) {
+> +		dev_warn_ratelimited(dev,
+> +			"Cannot do DMA to address %pa\n", phys);
+> +		return DIRECT_MAPPING_ERROR;
+> +	}
+> +
+> +	/* Oh well, have to allocate and map a bounce buffer. */
+> +	*phys = swiotlb_tbl_map_single(dev, __phys_to_dma(dev, io_tlb_start),
+> +			*phys, size, dir, attrs);
+> +	if (*phys == SWIOTLB_MAP_ERROR)
+> +		return DIRECT_MAPPING_ERROR;
+> +
+> +	/* Ensure that the address returned is DMA'ble */
+> +	dma_addr = __phys_to_dma(dev, *phys);
+> +	if (unlikely(!dma_capable(dev, dma_addr, size))) {
+> +		swiotlb_tbl_unmap_single(dev, *phys, size, dir,
+> +			attrs | DMA_ATTR_SKIP_CPU_SYNC);
+> +		return DIRECT_MAPPING_ERROR;
+> +	}
+> +
+> +	return dma_addr;
+> +}
+> +
+>   /*
+>    * Map a single buffer of the indicated size for DMA in streaming mode.  The
+>    * physical address to use is returned.
+> @@ -726,8 +734,8 @@ dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
+>   			    enum dma_data_direction dir,
+>   			    unsigned long attrs)
+>   {
+> -	phys_addr_t map, phys = page_to_phys(page) + offset;
+> -	dma_addr_t dev_addr = phys_to_dma(dev, phys);
+> +	phys_addr_t phys = page_to_phys(page) + offset;
+> +	dma_addr_t dma_addr = phys_to_dma(dev, phys);
+>   
+>   	BUG_ON(dir == DMA_NONE);
+>   	/*
+> @@ -735,26 +743,13 @@ dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
+>   	 * we can safely return the device addr and not worry about bounce
+>   	 * buffering it.
+>   	 */
+> -	if (dma_capable(dev, dev_addr, size) && swiotlb_force != SWIOTLB_FORCE)
+> -		return dev_addr;
+> -
+> -	trace_swiotlb_bounced(dev, dev_addr, size, swiotlb_force);
+> -
+> -	/* Oh well, have to allocate and map a bounce buffer. */
+> -	map = map_single(dev, phys, size, dir, attrs);
+> -	if (map == SWIOTLB_MAP_ERROR)
+> -		return DIRECT_MAPPING_ERROR;
+> -
+> -	dev_addr = __phys_to_dma(dev, map);
+> -
+> -	/* Ensure that the address returned is DMA'ble */
+> -	if (dma_capable(dev, dev_addr, size))
+> -		return dev_addr;
+> -
+> -	attrs |= DMA_ATTR_SKIP_CPU_SYNC;
+> -	swiotlb_tbl_unmap_single(dev, map, size, dir, attrs);
+> +	if (!dma_capable(dev, dma_addr, size) ||
+> +	    swiotlb_force == SWIOTLB_FORCE) {
+> +		trace_swiotlb_bounced(dev, dma_addr, size, swiotlb_force);
+> +		dma_addr = swiotlb_bounce_page(dev, &phys, size, dir, attrs);
+> +	}
 
-> Nicolas Saenz Julienne <nsaenzjulienne@suse.de> hat am 17. Oktober 2018 um 21:01 geschrieben:
-> 
-> 
-> Hi,
-> 
-> I just received a RPi3B+ and decided to have a go at fixing stuff in the
-> audio driver. The changes are mostly cosmetic. I also took the liberty
-> to update the TODO file.
-> 
-> The series was developed on top of linux-next and tested on a RPi2B and
-> RPi3B+. Sadly I don't have an HDMI monitor with sound so I only tested
-> the mini jack output.
-> 
-> Thanks,
-> Nicolas
-> 
-> v2: Removes the device tree related patches, updates TODO accordingly
->     and adds suggestions from Takashi.
-> 
+FWIW I prefer the inverse condition and early return of the original 
+code here, which also then allows a tail-call to swiotlb_bounce_page() 
+(and saves a couple of lines), but it's no biggie.
 
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
-for the rest of the series
+>   
+> -	return DIRECT_MAPPING_ERROR;
+> +	return dma_addr;
+>   }
+>   
+>   /*
+> 
