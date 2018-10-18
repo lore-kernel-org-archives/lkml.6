@@ -2,102 +2,100 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA2FECDE44
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 833EBC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B7EF2148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:14:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A9D02148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:18:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wzx0cJqK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B7EF2148D
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Wr/n72mo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A9D02148D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728671AbeJSBQ1 (ORCPT
+        id S1728605AbeJSBUK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 21:16:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39482 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727567AbeJSBQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 21:16:27 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E736821486;
-        Thu, 18 Oct 2018 17:14:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539882872;
-        bh=UO44vunfWoF1wxqZWH/4vmmpFOYVBvIePMgaXZXSka8=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=wzx0cJqKcVXaqbNLdQ1twAXJvyVtRRWO/yIvFUv0rC8sdvJRr3zEBJ3CQiubxHamp
-         vfelu4zXdtdTy3sYtDrhgIPqh9qzfwDJMMvJ4oofTHQx6xnCVhXo/9s1bClw6uJUQd
-         CXf4o58J+NJUYIgyuZVbp7RMsTCi49URF1++BGtg=
-Content-Type: text/plain; charset="utf-8"
+        Thu, 18 Oct 2018 21:20:10 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59772 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbeJSBUJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 21:20:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5+NihUxxGU5uF5nQiGGyG8RQduKZ1JNkl6xylZY9H7s=; b=Wr/n72monYadc+zvDUxPRKDlV
+        C/yGcE+qHya7YK2URffjJZw9bwlNS0Nl0FuABSBZbDwJoC/slS7BaPmJhOex1zgoZBw9RpweNjJ82
+        OKp41NXTnbVcv8t09R0PvWAC+4ofKeGzNrP1jfbBBaXY4Xv0mmtK/QDbqhEM21AyA8xIk=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gDBvx-000708-HF; Thu, 18 Oct 2018 17:18:05 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 066E81122510; Thu, 18 Oct 2018 18:18:05 +0100 (BST)
+Date:   Thu, 18 Oct 2018 18:18:04 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc:     Ben Whitten <ben.whitten@gmail.com>, starnight@g.ncu.edu.tw,
+        hasnain.virk@arm.com, netdev@vger.kernel.org,
+        liuxuenetmail@gmail.com, shess@hessware.de,
+        Ben Whitten <ben.whitten@lairdtech.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, Stefan Rehm <rehm@miromico.ch>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
+Subject: Re: [PATCH v3 lora-next 1/5] regmap: Add regmap_noinc_write API
+Message-ID: <20181018171804.GD25340@sirena.org.uk>
+References: <1539361567-3602-1-git-send-email-ben.whitten@lairdtech.com>
+ <1539361567-3602-2-git-send-email-ben.whitten@lairdtech.com>
+ <2908e406-a2e3-29cb-579c-949ddd383e97@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1539839245-13793-2-git-send-email-jianxin.pan@amlogic.com>
-Cc:     Yixun Lan <yixun.lan@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
- <1539839245-13793-2-git-send-email-jianxin.pan@amlogic.com>
-Message-ID: <153988287137.5275.1146335138540290297@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v5 1/3] clk: meson: add emmc sub clock phase delay driver
-Date:   Thu, 18 Oct 2018 10:14:31 -0700
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="AbQceqfdZEv+FvjW"
+Content-Disposition: inline
+In-Reply-To: <2908e406-a2e3-29cb-579c-949ddd383e97@suse.de>
+X-Cookie: Pushing 30 is exercise enough.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jianxin Pan (2018-10-17 22:07:23)
-> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-> index 6b96d55..3309d78 100644
-> --- a/drivers/clk/meson/clkc.h
-> +++ b/drivers/clk/meson/clkc.h
-> @@ -105,6 +105,18 @@ struct clk_regmap _name =3D {                       =
-                         \
->         },                                                              \
->  };
->  =
 
-> +struct meson_clk_phase_delay_data {
-> +       struct parm                     phase;
-> +       struct parm                     delay;
-> +       unsigned int                    delay_step_ps;
-> +};
-> +
-> +static inline struct meson_clk_phase_delay_data *
-> +meson_clk_get_phase_delay_data(struct clk_regmap *clk)
-> +{
-> +       return (struct meson_clk_phase_delay_data *)clk->data;
+--AbQceqfdZEv+FvjW
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Is data a void *? If so, please drop the useless cast.
+On Thu, Oct 18, 2018 at 06:59:52PM +0200, Andreas F=E4rber wrote:
 
-> +}
-> +
->  /* clk_ops */
->  extern const struct clk_ops meson_clk_pll_ro_ops;
->  extern const struct clk_ops meson_clk_pll_ops;
+> Mark, please take this one through your tree - I'll rebase the LoRa
+> parts on linux-next then.
+
+I don't have a copy of it, if I didn't apply it already and send a pull
+request I probably got confused and thought I'd done that already, sorry
+- can someone resend please?
+
+--AbQceqfdZEv+FvjW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvIwEwACgkQJNaLcl1U
+h9DDuAf+Pt2HLaplxmuFbcp9svmodeVogLA7yzwMi8BIBpYy5W6KBRWmQhofb0b4
+Lw7yfyWMCe8CEMnkzSBzuqeLHLOlPMhmOpVzL1d5andcBEYUxda6Aq/+lwZVR0D5
+3ZEgqjvoCiQpJieuoiJbMK0aiZFSeUkjths0zuAFWpuscN+oeNlL2dmYjK8tl1gn
+8QSCZqKtIryODavgzDodxDESBR70wQ8g7JacIdpdlp8fUXYB5dCUkiQ4WUBRp8Af
+RRmGTUjnvI/Hc+HX4QwcqseNZ36Wx+iCDtEYJZ6QJnERnJs1NgDVGTYjTM0XoDjp
+9a5DYcrI+eFogbrZ8YjUFo2CwOTr5g==
+=o83J
+-----END PGP SIGNATURE-----
+
+--AbQceqfdZEv+FvjW--
