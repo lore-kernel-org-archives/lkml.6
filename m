@@ -2,147 +2,257 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27658C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BACACC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:28:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2A4F2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:23:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jr9P8hsO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2A4F2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5C35C21476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:28:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C35C21476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=electromag.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727668AbeJRPXJ (ORCPT
+        id S1727452AbeJRP1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 11:23:09 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44357 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727359AbeJRPXJ (ORCPT
+        Thu, 18 Oct 2018 11:27:47 -0400
+Received: from anchovy2.45ru.net.au ([203.30.46.146]:39450 "EHLO
+        anchovy2.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbeJRP1r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 11:23:09 -0400
-Received: by mail-qt1-f194.google.com with SMTP id x24-v6so1561765qtx.11;
-        Thu, 18 Oct 2018 00:23:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O7kIxwq2qKHcExhNfWzmcsriRPxkNspejgUxQxEv01Y=;
-        b=jr9P8hsOVn+LrrHJMQESCTGZakg+cJlWvuVArNccQja+NdHig6POM0QkIDNuj6ggv8
-         nyQ5cWw2aXCqpPM0Mo2QdU+2R2JP28LUpgbrAlKXi9eBQ+0D03Z4OjXQdzTRgxkQNkyY
-         WhxUDzYizChbQDM3KYxEcqWG2s5G8JQZbiQwnoKg74W0C2vAhBv0anXHv9nEXVT3N+JA
-         TaZGecbJqW/cg756u1gx++UqpXWQd2nR9i+q5ej+hRKGmmlnwfx+YmtClpaImYxbgbWz
-         MxUbhCuz+ei6BfVZieJD2ARy2q8UtxR1Q+lsy+jJwkw5D452aOsJowMJEbxTJmscPbI7
-         zs0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O7kIxwq2qKHcExhNfWzmcsriRPxkNspejgUxQxEv01Y=;
-        b=XsC/eUNsSLOxKjwAytTthFlDDsSPZGksSaQ3n62rsHXXtCADb7XD9CCnHWlcpqL2Tw
-         TB/6X1G8ocf2lprHOS3bYrjXDlTOqbKXAFURN2eJV+TgXgZto35UTF3j85x/aLacB0xA
-         ZdPS4Daqxvs2MPgjvb4C7b9HpCiZt2jkfutYpyt5hd97lbbMD23p1tp9CZ8FRYMbUjHG
-         LYRRAlvnQ54c9HLCh67FtcsD9Vu/sDfYgmUllvinlxyt2TN74Ui3/d10ZIVj7uZP4mLu
-         oOydlA/PxD/3iue+LMc/US4byLiBeZbt0VGP6d3CtsTJJRu99ZlrsyjKvvhWn2co6+wv
-         OdzA==
-X-Gm-Message-State: ABuFfojzS5RtJFCBNpMNicviklmJV1uALNP5lpcyjN2JPxvEada5+V99
-        CEyUG2colGASdQuZxsNqdkzox9WkCZzUmTZTFNfINgVZ+6o=
-X-Google-Smtp-Source: ACcGV62KVYxg4rjUnT1EREW/DiVAF+aXR+k46NOswC01dj3RKOlrmvV0bF4eAuH2MybFoPnL5Y23UiY8ys536jPbvFE=
-X-Received: by 2002:ac8:6784:: with SMTP id b4-v6mr28081655qtp.373.1539847410128;
- Thu, 18 Oct 2018 00:23:30 -0700 (PDT)
+        Thu, 18 Oct 2018 11:27:47 -0400
+Received: (qmail 1121 invoked by uid 5089); 18 Oct 2018 07:28:05 -0000
+Received: by simscan 1.2.0 ppid: 1026, pid: 1027, t: 0.0831s
+         scanners: regex: 1.2.0 attach: 1.2.0 clamav: 0.88.3/m:40/d:1950
+Received: from unknown (HELO ?192.168.0.122?) (preid@electromag.com.au@203.59.235.95)
+  by anchovy3.45ru.net.au with ESMTPA; 18 Oct 2018 07:28:04 -0000
+Subject: Re: [PATCH v2] staging: iio: ad7816: Switch to the gpio descriptor
+ interface
+To:     Nishad Kamdar <nishadkamdar@gmail.com>,
+        Lars-Peter Clausen <lars@metafoo.de>
+Cc:     Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com
+References: <20181017144716.GA11485@nishad>
+From:   Phil Reid <preid@electromag.com.au>
+Message-ID: <fdcb085c-cf34-3310-f5ab-5795d5997977@electromag.com.au>
+Date:   Thu, 18 Oct 2018 15:28:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1539755947-27014-1-git-send-email-suganath-prabu.subramani@broadcom.com>
- <1539755947-27014-3-git-send-email-suganath-prabu.subramani@broadcom.com>
- <CAHp75Ve=X9X6xG5FpuZrmRKfSpcLwFQYE_A8vhUzNn92KSoc4w@mail.gmail.com> <CA+RiK67067aV9Ky5m8uCGLGcvjbBRxqFVeyB0CsYcvSw7rgqJg@mail.gmail.com>
-In-Reply-To: <CA+RiK67067aV9Ky5m8uCGLGcvjbBRxqFVeyB0CsYcvSw7rgqJg@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 18 Oct 2018 10:23:18 +0300
-Message-ID: <CAHp75VfENTJjJVMyQ1wnD4GXYKjhgr6h+wocPOfk16p9nWrpeg@mail.gmail.com>
-Subject: Re: [v5 2/4] mpt3sas: Fix Sync cache command failure during driver unload
-To:     Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>, Lukas Wunner <lukas@wunner.de>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        ruscur@russell.cc, sbobroff@linux.ibm.com,
-        Oliver <oohall@gmail.com>,
-        Sathya Prakash <Sathya.Prakash@broadcom.com>,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181017144716.GA11485@nishad>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 10:11 AM Suganath Prabu Subramani
-<suganath-prabu.subramani@broadcom.com> wrote:
->
->
->
-> On Wed, Oct 17, 2018 at 2:02 PM Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->>
->> On Wed, Oct 17, 2018 at 8:59 AM Suganath Prabu
->> <suganath-prabu.subramani@broadcom.com> wrote:
->> >
->> > This is to fix Sync cache and start stop command
->> >  failures with DID_NO_CONNECT during driver unload.
->> >
->> > 1) Release drives first from SML, then remove internally
->> > in driver.
->> > 2) And allow sync cache and Start stop commands to firmware,
->> > even when remove_host flag is set.
->>
->> > +       if (ioc->hba_mpi_version_belonged == MPI2_VERSION) {
->> > +               if (ioc->remove_host)
->> > +                       return false;
->> > +
->> > +               return true;
->> > +       }
->> > +
->> > +       if (ioc->remove_host) {
->> > +
->> > +               switch (scmd->cmnd[0]) {
->> > +               case SYNCHRONIZE_CACHE:
->> > +               case START_STOP:
->> > +                       return true;
->> > +               default:
->> > +                       return false;
->> > +               }
->> > +       }
->> > +
->> > +       return true;
->>
->> Wouldn't be the same as
+On 17/10/2018 10:47 PM, Nishad Kamdar wrote:
+> Use the gpiod interface for rdwr_pin, convert_pin and busy_pin
+> instead of the deprecated old non-descriptor interface.
+> 
+> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> ---
+> Changes in v2:
+>   - Correct the error messages as pin number being showed
+>     has now been replaced by error code.
+> ---
+>   drivers/staging/iio/adc/ad7816.c | 80 ++++++++++++++------------------
+>   1 file changed, 34 insertions(+), 46 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/adc/ad7816.c b/drivers/staging/iio/adc/ad7816.c
+> index bf76a8620bdb..12c4e0ab4713 100644
+> --- a/drivers/staging/iio/adc/ad7816.c
+> +++ b/drivers/staging/iio/adc/ad7816.c
+> @@ -7,7 +7,7 @@
+>    */
+>   
+>   #include <linux/interrupt.h>
+> -#include <linux/gpio.h>
+> +#include <linux/gpio/consumer.h>
+>   #include <linux/device.h>
+>   #include <linux/kernel.h>
+>   #include <linux/slab.h>
+> @@ -44,9 +44,9 @@
+>   
+>   struct ad7816_chip_info {
+>   	struct spi_device *spi_dev;
+> -	u16 rdwr_pin;
+> -	u16 convert_pin;
+> -	u16 busy_pin;
+> +	struct gpio_desc *rdwr_pin;
+> +	struct gpio_desc *convert_pin;
+> +	struct gpio_desc *busy_pin;
+>   	u8  oti_data[AD7816_CS_MAX + 1];
+>   	u8  channel_id;	/* 0 always be temperature */
+>   	u8  mode;
+> @@ -61,28 +61,28 @@ static int ad7816_spi_read(struct ad7816_chip_info *chip, u16 *data)
+>   	int ret = 0;
+>   	__be16 buf;
+>   
+> -	gpio_set_value(chip->rdwr_pin, 1);
+> -	gpio_set_value(chip->rdwr_pin, 0);
+> +	gpiod_set_value(chip->rdwr_pin, 1);
+> +	gpiod_set_value(chip->rdwr_pin, 0);
+>   	ret = spi_write(spi_dev, &chip->channel_id, sizeof(chip->channel_id));
+>   	if (ret < 0) {
+>   		dev_err(&spi_dev->dev, "SPI channel setting error\n");
+>   		return ret;
+>   	}
+> -	gpio_set_value(chip->rdwr_pin, 1);
+> +	gpiod_set_value(chip->rdwr_pin, 1);
+>   
+>   	if (chip->mode == AD7816_PD) { /* operating mode 2 */
+> -		gpio_set_value(chip->convert_pin, 1);
+> -		gpio_set_value(chip->convert_pin, 0);
+> +		gpiod_set_value(chip->convert_pin, 1);
+> +		gpiod_set_value(chip->convert_pin, 0);
+>   	} else { /* operating mode 1 */
+> -		gpio_set_value(chip->convert_pin, 0);
+> -		gpio_set_value(chip->convert_pin, 1);
+> +		gpiod_set_value(chip->convert_pin, 0);
+> +		gpiod_set_value(chip->convert_pin, 1);
+>   	}
+>   
+> -	while (gpio_get_value(chip->busy_pin))
+> +	while (gpiod_get_value(chip->busy_pin))
+>   		cpu_relax();
+>   
+> -	gpio_set_value(chip->rdwr_pin, 0);
+> -	gpio_set_value(chip->rdwr_pin, 1);
+> +	gpiod_set_value(chip->rdwr_pin, 0);
+> +	gpiod_set_value(chip->rdwr_pin, 1);
+>   	ret = spi_read(spi_dev, &buf, sizeof(*data));
+>   	if (ret < 0) {
+>   		dev_err(&spi_dev->dev, "SPI data read error\n");
+> @@ -99,8 +99,8 @@ static int ad7816_spi_write(struct ad7816_chip_info *chip, u8 data)
+>   	struct spi_device *spi_dev = chip->spi_dev;
+>   	int ret = 0;
+>   
+> -	gpio_set_value(chip->rdwr_pin, 1);
+> -	gpio_set_value(chip->rdwr_pin, 0);
+> +	gpiod_set_value(chip->rdwr_pin, 1);
+> +	gpiod_set_value(chip->rdwr_pin, 0);
+>   	ret = spi_write(spi_dev, &data, sizeof(data));
+>   	if (ret < 0)
+>   		dev_err(&spi_dev->dev, "SPI oti data write error\n");
+> @@ -129,10 +129,10 @@ static ssize_t ad7816_store_mode(struct device *dev,
+>   	struct ad7816_chip_info *chip = iio_priv(indio_dev);
+>   
+>   	if (strcmp(buf, "full")) {
+> -		gpio_set_value(chip->rdwr_pin, 1);
+> +		gpiod_set_value(chip->rdwr_pin, 1);
+>   		chip->mode = AD7816_FULL;
+>   	} else {
+> -		gpio_set_value(chip->rdwr_pin, 0);
+> +		gpiod_set_value(chip->rdwr_pin, 0);
+>   		chip->mode = AD7816_PD;
+>   	}
+>   
+> @@ -345,15 +345,9 @@ static int ad7816_probe(struct spi_device *spi_dev)
+>   {
+>   	struct ad7816_chip_info *chip;
+>   	struct iio_dev *indio_dev;
+> -	unsigned short *pins = dev_get_platdata(&spi_dev->dev);
+>   	int ret = 0;
+>   	int i;
+>   
+> -	if (!pins) {
+> -		dev_err(&spi_dev->dev, "No necessary GPIO platform data.\n");
+> -		return -EINVAL;
+> -	}
+> -
+>   	indio_dev = devm_iio_device_alloc(&spi_dev->dev, sizeof(*chip));
+>   	if (!indio_dev)
+>   		return -ENOMEM;
+> @@ -364,34 +358,28 @@ static int ad7816_probe(struct spi_device *spi_dev)
+>   	chip->spi_dev = spi_dev;
+>   	for (i = 0; i <= AD7816_CS_MAX; i++)
+>   		chip->oti_data[i] = 203;
+> -	chip->rdwr_pin = pins[0];
+> -	chip->convert_pin = pins[1];
+> -	chip->busy_pin = pins[2];
+> -
+> -	ret = devm_gpio_request(&spi_dev->dev, chip->rdwr_pin,
+> -				spi_get_device_id(spi_dev)->name);
+> -	if (ret) {
+> -		dev_err(&spi_dev->dev, "Fail to request rdwr gpio PIN %d.\n",
+> -			chip->rdwr_pin);
+> +
+> +	chip->rdwr_pin = devm_gpiod_get(&spi_dev->dev, "rdwr", GPIOD_IN);
+> +	if (IS_ERR(chip->rdwr_pin)) {
+> +		ret = PTR_ERR(chip->rdwr_pin);
+> +		dev_err(&spi_dev->dev, "Failed to request rdwr GPIO: %d\n",
+> +			ret);
+>   		return ret;
+>   	}
+> -	gpio_direction_input(chip->rdwr_pin);
 
->> Yes it is same, but i feel original code is more readable.
+The RD/WR pin is an input to the AD78xx. So this doesn't make sense being GPIOD_IN.
 
-OK (I didn't compare assembly, but I assume this is slow path).
 
->> if (!ioc->remove_host || ioc->hba_mpi_version_belonged == MPI2_VERSION)
->>    return !ioc->remove_host;
->>
->>  switch (scmd->cmnd[0]) {
->>  case SYNCHRONIZE_CACHE:
->>  case START_STOP:
->>    return true;
->>  default:
->>    return false;
->>  }
->>
->> ?
->>
->> --
->> With Best Regards,
->> Andy Shevchenko
+> -	ret = devm_gpio_request(&spi_dev->dev, chip->convert_pin,
+> -				spi_get_device_id(spi_dev)->name);
+> -	if (ret) {
+> -		dev_err(&spi_dev->dev, "Fail to request convert gpio PIN %d.\n",
+> -			chip->convert_pin);
+> +	chip->convert_pin = devm_gpiod_get(&spi_dev->dev, "convert", GPIOD_IN);
+> +	if (IS_ERR(chip->convert_pin)) {
+> +		ret = PTR_ERR(chip->convert_pin);
+> +		dev_err(&spi_dev->dev, "Failed to request convert GPIO: %d\n",
+> +			ret);
+>   		return ret;
+>   	}
+> -	gpio_direction_input(chip->convert_pin);
 
+ditto, the CONVST pin is an input to the AD78xx.
+
+> -	ret = devm_gpio_request(&spi_dev->dev, chip->busy_pin,
+> -				spi_get_device_id(spi_dev)->name);
+> -	if (ret) {
+> -		dev_err(&spi_dev->dev, "Fail to request busy gpio PIN %d.\n",
+> -			chip->busy_pin);
+> +	chip->busy_pin = devm_gpiod_get(&spi_dev->dev, "busy", GPIOD_IN);
+> +	if (IS_ERR(chip->busy_pin)) {
+> +		ret = PTR_ERR(chip->busy_pin);
+> +		dev_err(&spi_dev->dev, "Failed to request busy GPIO: %d\n",
+> +			ret);
+>   		return ret;
+>   	}
+> -	gpio_direction_input(chip->busy_pin);
+
+
+The busy pin doesn't exist on the ad7818.
+Which the driver claims to support in the id table:
+
+ > static const struct spi_device_id ad7816_id[] = {
+ > 	{ "ad7816", 0 },
+ > 	{ "ad7817", 0 },
+ > 	{ "ad7818", 0 },
+ > 	{}
+ > };
+
+See:
+https://www.analog.com/media/en/technical-documentation/data-sheets/AD7817_7818.pdf
+Page 9.
+
+
+>   
+>   	indio_dev->name = spi_get_device_id(spi_dev)->name;
+>   	indio_dev->dev.parent = &spi_dev->dev;
+> 
+
+Also should the pin names be documented in a device tree binding doc?
 
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards
+Phil Reid
