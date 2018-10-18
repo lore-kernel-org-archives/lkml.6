@@ -2,81 +2,69 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D48F1ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A10ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:51:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CD372083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:50:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CD372083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 42FA0208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:51:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42FA0208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbeJRKsl (ORCPT
+        id S1727430AbeJRKty (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 06:48:41 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:50795 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727247AbeJRKsk (ORCPT
+        Thu, 18 Oct 2018 06:49:54 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:40860 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbeJRKty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 06:48:40 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1158118|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e01534;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=16;RT=16;SR=0;TI=SMTPD_---.D3j6ECc_1539830970;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D3j6ECc_1539830970)
-          by smtp.aliyun-inc.com(10.147.40.26);
-          Thu, 18 Oct 2018 10:49:30 +0800
-Date:   Thu, 18 Oct 2018 10:49:30 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        David Miller <davem@davemloft.net>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>,
+        Thu, 18 Oct 2018 06:49:54 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gCyNb-0005ic-Nl; Thu, 18 Oct 2018 02:49:43 +0000
+Date:   Thu, 18 Oct 2018 03:49:43 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     NeilBrown <neilb@suse.com>, Peter Zijlstra <peterz@infradead.org>,
+        Dmitry Safonov <dsafonov@virtuozzo.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Brian Gerst <brgerst@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, c-sky_gcc_upstream@c-sky.com
-Subject: Re: [PATCH V9 12/21] csky: ELF and module probe
-Message-ID: <20181018024929.GC13314@guoren-Inspiron-7460>
-References: <cover.1539655731.git.ren_guo@c-sky.com>
- <27589f69f513177892d39868050dccb5f21023aa.1539655732.git.ren_guo@c-sky.com>
- <CAK8P3a2vwe=4SqKfyGruKEJ1yd7txbdBqw6kD_3pN47F8u7OAA@mail.gmail.com>
+        linux-tip-commits@vger.kernel.org, jsimmons@infradead.org
+Subject: Re: in_compat_syscall() returns from kernel thread for X86_32.
+Message-ID: <20181018024943.GD32577@ZenIV.linux.org.uk>
+References: <1460987025-30360-1-git-send-email-dsafonov@virtuozzo.com>
+ <tip-abfb9498ee1327f534df92a7ecaea81a85913bae@git.kernel.org>
+ <87h8hkc9fd.fsf@notabene.neil.brown.name>
+ <CALCETrXB8PE4Ue0BeD0wUS9psLLjpv_pt+nj=SEaj+Nb_dZzUA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a2vwe=4SqKfyGruKEJ1yd7txbdBqw6kD_3pN47F8u7OAA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CALCETrXB8PE4Ue0BeD0wUS9psLLjpv_pt+nj=SEaj+Nb_dZzUA@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 05:18:49PM +0200, Arnd Bergmann wrote:
-> On Tue, Oct 16, 2018 at 5:02 AM Guo Ren <ren_guo@c-sky.com> wrote:
-> >
-> > This patch adds ELF definition and module relocate codes.
-> >
-> > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> 
-> > +#ifdef __cskyBE__
-> > +#define ELF_DATA       ELFDATA2MSB
-> > +#else
-> > +#define ELF_DATA       ELFDATA2LSB
-> > +#endif
-> 
-> You removed support for big-endian, right? I guess the #ifdef can also
-> get removed here then. Aside from that,
-Now, we only support little-endian and it could be removed. But maybe we
-need support big-endian in future, so I keep it here.
+On Wed, Oct 17, 2018 at 07:37:42PM -0700, Andy Lutomirski wrote:
 
-Best Regards
- Guo Ren
+> I could get on board with:
+> 
+> ({WARN_ON_ONCE(current->flags & PF_KTHREAD); true})
+> 
+> The point of these accessors is to be used *in a syscall*.
+> 
+> What on Earth is Lustre doing that makes it have this problem?
+
+	Plays with timestamps from a kernel thread, perhaps?
+See the old .su joke about adenoidectomy with rectal access
+for possible reasons for doing it that way...
