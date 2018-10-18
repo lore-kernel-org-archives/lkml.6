@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED5D1C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B96DEC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6B5E21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82A4A21480
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCyiWaEt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6B5E21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DewpreW3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82A4A21480
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbeJSCEV (ORCPT
+        id S1729748AbeJSCEY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:04:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52560 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:04:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729070AbeJSCEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:04:20 -0400
+        id S1729070AbeJSCEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:04:23 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A671521476;
-        Thu, 18 Oct 2018 18:02:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A35421476;
+        Thu, 18 Oct 2018 18:02:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885734;
-        bh=di6mvGnzOD8nJohG6+Zri3gqSEdc+fQuQi3HaRT++Vc=;
+        s=default; t=1539885737;
+        bh=rBVOJlv3wSGRLlQK9rVSv2XUWl1FpwMRgMbadrUp0lY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HCyiWaEtCap5ixwS0YIDgyDSNzZJqEUuKnJdUrXhPiyUueYfYBbhriyjvGXjuC8F0
-         KJYUQ59eYVsjHlt+eMRtSxVp/ekCSIY/OFysFxfIlKzsh3WJYrAmxPBSuNyoCgu3LA
-         yuwA+QH1tbRRA32eWEE+fNJTNk+/6JSpb6OhXPL8=
+        b=DewpreW3BX7AvVU6t3SLCieDQWjA784IIR6yXNwRBFHX1rQ0tnWE4kt8wtVpsum43
+         30T/kJ4u3qR1PBe4euGBlXrY6UEokCV4k/7WlodvqhyfaGfCabJBefWOri1pDlpRCU
+         4b8k/Q1APzuhaxlqVBbN1fsSUras3akKvXGmgEWQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 41/41] IB/hfi1: Fix destroy_qp hang after a link down
-Date:   Thu, 18 Oct 2018 19:54:56 +0200
-Message-Id: <20181018175423.636301145@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Robert Elliott <elliott@hpe.com>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.14 38/41] mm: disallow mappings that conflict for devm_memremap_pages()
+Date:   Thu, 18 Oct 2018 19:54:53 +0200
+Message-Id: <20181018175423.284909039@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
 References: <20181018175416.718399607@linuxfoundation.org>
@@ -65,213 +68,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael J. Ruhl <michael.j.ruhl@intel.com>
+From: Dave Jiang <dave.jiang@intel.com>
 
-commit b4a4957d3d1c328b733fce783b7264996f866ad2 upstream.
+commit 15d36fecd0bdc7510b70a0e5ec6671140b3fce0c upstream.
 
-rvt_destroy_qp() cannot complete until all in process packets have
-been released from the underlying hardware.  If a link down event
-occurs, an application can hang with a kernel stack similar to:
+When pmem namespaces created are smaller than section size, this can
+cause an issue during removal and gpf was observed:
 
-cat /proc/<app PID>/stack
- quiesce_qp+0x178/0x250 [hfi1]
- rvt_reset_qp+0x23d/0x400 [rdmavt]
- rvt_destroy_qp+0x69/0x210 [rdmavt]
- ib_destroy_qp+0xba/0x1c0 [ib_core]
- nvme_rdma_destroy_queue_ib+0x46/0x80 [nvme_rdma]
- nvme_rdma_free_queue+0x3c/0xd0 [nvme_rdma]
- nvme_rdma_destroy_io_queues+0x88/0xd0 [nvme_rdma]
- nvme_rdma_error_recovery_work+0x52/0xf0 [nvme_rdma]
- process_one_work+0x17a/0x440
- worker_thread+0x126/0x3c0
- kthread+0xcf/0xe0
- ret_from_fork+0x58/0x90
- 0xffffffffffffffff
+  general protection fault: 0000 1 SMP PTI
+  CPU: 36 PID: 3941 Comm: ndctl Tainted: G W 4.14.28-1.el7uek.x86_64 #2
+  task: ffff88acda150000 task.stack: ffffc900233a4000
+  RIP: 0010:__put_page+0x56/0x79
+  Call Trace:
+    devm_memremap_pages_release+0x155/0x23a
+    release_nodes+0x21e/0x260
+    devres_release_all+0x3c/0x48
+    device_release_driver_internal+0x15c/0x207
+    device_release_driver+0x12/0x14
+    unbind_store+0xba/0xd8
+    drv_attr_store+0x27/0x31
+    sysfs_kf_write+0x3f/0x46
+    kernfs_fop_write+0x10f/0x18b
+    __vfs_write+0x3a/0x16d
+    vfs_write+0xb2/0x1a1
+    SyS_write+0x55/0xb9
+    do_syscall_64+0x79/0x1ae
+    entry_SYSCALL_64_after_hwframe+0x3d/0x0
 
-quiesce_qp() waits until all outstanding packets have been freed.
-This wait should be momentary.  During a link down event, the cleanup
-handling does not ensure that all packets caught by the link down are
-flushed properly.
+Add code to check whether we have a mapping already in the same section
+and prevent additional mappings from being created if that is the case.
 
-This is caused by the fact that the freeze path and the link down
-event is handled the same.  This is not correct.  The freeze path
-waits until the HFI is unfrozen and then restarts PIO.  A link down
-is not a freeze event.  The link down path cannot restart the PIO
-until link is restored.  If the PIO path is restarted before the link
-comes up, the application (QP) using the PIO path will hang (until
-link is restored).
-
-Fix by separating the linkdown path from the freeze path and use the
-link down path for link down events.
-
-Close a race condition sc_disable() by acquiring both the progress
-and release locks.
-
-Close a race condition in sc_stop() by moving the setting of the flag
-bits under the alloc lock.
-
-Cc: <stable@vger.kernel.org> # 4.9.x+
-Fixes: 7724105686e7 ("IB/hfi1: add driver files")
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Link: http://lkml.kernel.org/r/152909478401.50143.312364396244072931.stgit@djiang5-desk3.ch.intel.com
+Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Robert Elliott <elliott@hpe.com>
+Cc: Jeff Moyer <jmoyer@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/infiniband/hw/hfi1/chip.c |    7 +++++-
- drivers/infiniband/hw/hfi1/pio.c  |   42 ++++++++++++++++++++++++++++++--------
- drivers/infiniband/hw/hfi1/pio.h  |    2 +
- 3 files changed, 42 insertions(+), 9 deletions(-)
+ kernel/memremap.c |   18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/hfi1/chip.c
-+++ b/drivers/infiniband/hw/hfi1/chip.c
-@@ -6722,6 +6722,7 @@ void start_freeze_handling(struct hfi1_p
- 	struct hfi1_devdata *dd = ppd->dd;
- 	struct send_context *sc;
- 	int i;
-+	int sc_flags;
+--- a/kernel/memremap.c
++++ b/kernel/memremap.c
+@@ -355,10 +355,27 @@ void *devm_memremap_pages(struct device
+ 	struct dev_pagemap *pgmap;
+ 	struct page_map *page_map;
+ 	int error, nid, is_ram, i = 0;
++	struct dev_pagemap *conflict_pgmap;
  
- 	if (flags & FREEZE_SELF)
- 		write_csr(dd, CCE_CTRL, CCE_CTRL_SPC_FREEZE_SMASK);
-@@ -6732,11 +6733,13 @@ void start_freeze_handling(struct hfi1_p
- 	/* notify all SDMA engines that they are going into a freeze */
- 	sdma_freeze_notify(dd, !!(flags & FREEZE_LINK_DOWN));
- 
-+	sc_flags = SCF_FROZEN | SCF_HALTED | (flags & FREEZE_LINK_DOWN ?
-+					      SCF_LINK_DOWN : 0);
- 	/* do halt pre-handling on all enabled send contexts */
- 	for (i = 0; i < dd->num_send_contexts; i++) {
- 		sc = dd->send_contexts[i].sc;
- 		if (sc && (sc->flags & SCF_ENABLED))
--			sc_stop(sc, SCF_FROZEN | SCF_HALTED);
-+			sc_stop(sc, sc_flags);
- 	}
- 
- 	/* Send context are frozen. Notify user space */
-@@ -10646,6 +10649,8 @@ int set_link_state(struct hfi1_pportdata
- 		add_rcvctrl(dd, RCV_CTRL_RCV_PORT_ENABLE_SMASK);
- 
- 		handle_linkup_change(dd, 1);
-+		pio_kernel_linkup(dd);
+ 	align_start = res->start & ~(SECTION_SIZE - 1);
+ 	align_size = ALIGN(res->start + resource_size(res), SECTION_SIZE)
+ 		- align_start;
++	align_end = align_start + align_size - 1;
 +
- 		ppd->host_link_state = HLS_UP_INIT;
- 		break;
- 	case HLS_UP_ARMED:
---- a/drivers/infiniband/hw/hfi1/pio.c
-+++ b/drivers/infiniband/hw/hfi1/pio.c
-@@ -942,20 +942,18 @@ void sc_free(struct send_context *sc)
- void sc_disable(struct send_context *sc)
- {
- 	u64 reg;
--	unsigned long flags;
- 	struct pio_buf *pbuf;
- 
- 	if (!sc)
- 		return;
- 
- 	/* do all steps, even if already disabled */
--	spin_lock_irqsave(&sc->alloc_lock, flags);
-+	spin_lock_irq(&sc->alloc_lock);
- 	reg = read_kctxt_csr(sc->dd, sc->hw_context, SC(CTRL));
- 	reg &= ~SC(CTRL_CTXT_ENABLE_SMASK);
- 	sc->flags &= ~SCF_ENABLED;
- 	sc_wait_for_packet_egress(sc, 1);
- 	write_kctxt_csr(sc->dd, sc->hw_context, SC(CTRL), reg);
--	spin_unlock_irqrestore(&sc->alloc_lock, flags);
- 
- 	/*
- 	 * Flush any waiters.  Once the context is disabled,
-@@ -965,7 +963,7 @@ void sc_disable(struct send_context *sc)
- 	 * proceed with the flush.
- 	 */
- 	udelay(1);
--	spin_lock_irqsave(&sc->release_lock, flags);
-+	spin_lock(&sc->release_lock);
- 	if (sc->sr) {	/* this context has a shadow ring */
- 		while (sc->sr_tail != sc->sr_head) {
- 			pbuf = &sc->sr[sc->sr_tail].pbuf;
-@@ -976,7 +974,8 @@ void sc_disable(struct send_context *sc)
- 				sc->sr_tail = 0;
- 		}
- 	}
--	spin_unlock_irqrestore(&sc->release_lock, flags);
-+	spin_unlock(&sc->release_lock);
-+	spin_unlock_irq(&sc->alloc_lock);
- }
- 
- /* return SendEgressCtxtStatus.PacketOccupancy */
-@@ -1199,11 +1198,39 @@ void pio_kernel_unfreeze(struct hfi1_dev
- 		sc = dd->send_contexts[i].sc;
- 		if (!sc || !(sc->flags & SCF_FROZEN) || sc->type == SC_USER)
- 			continue;
-+		if (sc->flags & SCF_LINK_DOWN)
-+			continue;
- 
- 		sc_enable(sc);	/* will clear the sc frozen flag */
- 	}
- }
- 
-+/**
-+ * pio_kernel_linkup() - Re-enable send contexts after linkup event
-+ * @dd: valid devive data
-+ *
-+ * When the link goes down, the freeze path is taken.  However, a link down
-+ * event is different from a freeze because if the send context is re-enabled
-+ * whowever is sending data will start sending data again, which will hang
-+ * any QP that is sending data.
-+ *
-+ * The freeze path now looks at the type of event that occurs and takes this
-+ * path for link down event.
-+ */
-+void pio_kernel_linkup(struct hfi1_devdata *dd)
-+{
-+	struct send_context *sc;
-+	int i;
-+
-+	for (i = 0; i < dd->num_send_contexts; i++) {
-+		sc = dd->send_contexts[i].sc;
-+		if (!sc || !(sc->flags & SCF_LINK_DOWN) || sc->type == SC_USER)
-+			continue;
-+
-+		sc_enable(sc);	/* will clear the sc link down flag */
++	conflict_pgmap = get_dev_pagemap(PHYS_PFN(align_start), NULL);
++	if (conflict_pgmap) {
++		dev_WARN(dev, "Conflicting mapping in same section\n");
++		put_dev_pagemap(conflict_pgmap);
++		return ERR_PTR(-ENOMEM);
 +	}
-+}
 +
- /*
-  * Wait for the SendPioInitCtxt.PioInitInProgress bit to clear.
-  * Returns:
-@@ -1403,11 +1430,10 @@ void sc_stop(struct send_context *sc, in
- {
- 	unsigned long flags;
++	conflict_pgmap = get_dev_pagemap(PHYS_PFN(align_end), NULL);
++	if (conflict_pgmap) {
++		dev_WARN(dev, "Conflicting mapping in same section\n");
++		put_dev_pagemap(conflict_pgmap);
++		return ERR_PTR(-ENOMEM);
++	}
++
+ 	is_ram = region_intersects(align_start, align_size,
+ 		IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE);
  
--	/* mark the context */
--	sc->flags |= flag;
--
- 	/* stop buffer allocations */
- 	spin_lock_irqsave(&sc->alloc_lock, flags);
-+	/* mark the context */
-+	sc->flags |= flag;
- 	sc->flags &= ~SCF_ENABLED;
- 	spin_unlock_irqrestore(&sc->alloc_lock, flags);
- 	wake_up(&sc->halt_wait);
---- a/drivers/infiniband/hw/hfi1/pio.h
-+++ b/drivers/infiniband/hw/hfi1/pio.h
-@@ -145,6 +145,7 @@ struct send_context {
- #define SCF_IN_FREE 0x02
- #define SCF_HALTED  0x04
- #define SCF_FROZEN  0x08
-+#define SCF_LINK_DOWN 0x10
+@@ -396,7 +413,6 @@ void *devm_memremap_pages(struct device
  
- struct send_context_info {
- 	struct send_context *sc;	/* allocated working context */
-@@ -312,6 +313,7 @@ void set_pio_integrity(struct send_conte
- void pio_reset_all(struct hfi1_devdata *dd);
- void pio_freeze(struct hfi1_devdata *dd);
- void pio_kernel_unfreeze(struct hfi1_devdata *dd);
-+void pio_kernel_linkup(struct hfi1_devdata *dd);
+ 	mutex_lock(&pgmap_lock);
+ 	error = 0;
+-	align_end = align_start + align_size - 1;
  
- /* global PIO send control operations */
- #define PSC_GLOBAL_ENABLE 0
+ 	foreach_order_pgoff(res, order, pgoff) {
+ 		struct dev_pagemap *dup;
 
 
