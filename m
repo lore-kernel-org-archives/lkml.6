@@ -2,286 +2,123 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CA6C67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33DAAC67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9974720645
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:55:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9974720645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id E47AA20645
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:56:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E47AA20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbeJSE6W (ORCPT
+        id S1727270AbeJSE7P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 00:58:22 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:42414 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725738AbeJSE6W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 00:58:22 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lilium.sigma-star.at (Postfix) with ESMTP id 137301812B800;
-        Thu, 18 Oct 2018 22:55:30 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     linux-um@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, anton.ivanov@cambridgegreys.com,
-        hare@suse.de, keescook@chromium.org, bvanassche@acm.org,
-        axboe@kernel.dk, jdike@addtoit.com, Christoph Hellwig <hch@lst.de>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH v2] ubd: remove use of blk_rq_map_sg
-Date:   Thu, 18 Oct 2018 22:55:03 +0200
-Message-Id: <20181018205503.6206-1-richard@nod.at>
-X-Mailer: git-send-email 2.19.1
+        Fri, 19 Oct 2018 00:59:15 -0400
+Received: from mga11.intel.com ([192.55.52.93]:23979 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725738AbeJSE7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 00:59:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2018 13:56:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,397,1534834800"; 
+   d="scan'208";a="100662755"
+Received: from ray.jf.intel.com (HELO [10.7.198.162]) ([10.7.198.162])
+  by orsmga001.jf.intel.com with ESMTP; 18 Oct 2018 13:56:25 -0700
+Subject: Re: [PATCH 05/11] x86/fpu: set PKRU state for kernel threads
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+References: <20181004140547.13014-1-bigeasy@linutronix.de>
+ <20181004140547.13014-6-bigeasy@linutronix.de>
+ <39e0a55f-4920-cfde-9bef-09c51109d211@linux.intel.com>
+ <CALCETrUdxsFA5g0M9uRFktfdi=mxK_g3kBfs-VxwDZ0xWqjFAQ@mail.gmail.com>
+ <20181018162644.qqjkzoqn2fleyi2b@linutronix.de>
+ <CC7B46F7-7A6E-4CAF-A1EB-91271CC7B092@amacapital.net>
+ <20181018182538.vgotfpsdy7qxl2tg@linutronix.de>
+ <CALCETrVjEOkNhdyAF10PaYi_rnFUWKRqPhLRCq3ZV=gxQFETxg@mail.gmail.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <aedef390-2fb1-8c09-3a69-53d3fd0505da@linux.intel.com>
+Date:   Thu, 18 Oct 2018 13:56:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CALCETrVjEOkNhdyAF10PaYi_rnFUWKRqPhLRCq3ZV=gxQFETxg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+On 10/18/2018 01:46 PM, Andy Lutomirski wrote:
+> Setting it to allow-all/none would let the operation always fail or
+> succeed which might be an improvement in terms of debugging. However it
+> is hard to judge what the correct behaviour should be. Should fail or
+> succeed.
 
-There is no good reason to create a scatterlist in the ubd driver,
-it can just iterate the request directly.
+Succeed. :)
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-[rw: Folded in improvements as discussed with hch and jens]
-Signed-off-by: Richard Weinberger <richard@nod.at>
----
- arch/um/drivers/ubd_kern.c | 158 +++++++++++++------------------------
- 1 file changed, 54 insertions(+), 104 deletions(-)
+> But this is not the only loophole: There is ptrace interface which is
+> used by gdb (just checked) and also bypasses PKRU. So…
 
-diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
-index 9cb0cabb4e02..74c002ddc0ce 100644
---- a/arch/um/drivers/ubd_kern.c
-+++ b/arch/um/drivers/ubd_kern.c
-@@ -160,12 +160,6 @@ struct ubd {
- 	spinlock_t lock;
- };
-=20
--struct ubd_pdu {
--	struct scatterlist sg[MAX_SG];
--	int start_sg, end_sg;
--	sector_t rq_pos;
--};
--
- #define DEFAULT_COW { \
- 	.file =3D			NULL, \
- 	.fd =3D			-1,	\
-@@ -197,9 +191,6 @@ static struct proc_dir_entry *proc_ide =3D NULL;
-=20
- static blk_status_t ubd_queue_rq(struct blk_mq_hw_ctx *hctx,
- 				 const struct blk_mq_queue_data *bd);
--static int ubd_init_request(struct blk_mq_tag_set *set,
--			    struct request *req, unsigned int hctx_idx,
--			    unsigned int numa_node);
-=20
- static void make_proc_ide(void)
- {
-@@ -895,7 +886,6 @@ static int ubd_disk_register(int major, u64 size, int=
- unit,
-=20
- static const struct blk_mq_ops ubd_mq_ops =3D {
- 	.queue_rq =3D ubd_queue_rq,
--	.init_request =3D ubd_init_request,
- };
-=20
- static int ubd_add(int n, char **error_out)
-@@ -918,7 +908,6 @@ static int ubd_add(int n, char **error_out)
- 	ubd_dev->tag_set.queue_depth =3D 64;
- 	ubd_dev->tag_set.numa_node =3D NUMA_NO_NODE;
- 	ubd_dev->tag_set.flags =3D BLK_MQ_F_SHOULD_MERGE;
--	ubd_dev->tag_set.cmd_size =3D sizeof(struct ubd_pdu);
- 	ubd_dev->tag_set.driver_data =3D ubd_dev;
- 	ubd_dev->tag_set.nr_hw_queues =3D 1;
-=20
-@@ -1300,123 +1289,84 @@ static void cowify_req(struct io_thread_req *req=
-, unsigned long *bitmap,
- 			   req->bitmap_words, bitmap_len);
- }
-=20
--/* Called with dev->lock held */
--static void prepare_request(struct request *req, struct io_thread_req *i=
-o_req,
--			    unsigned long long offset, int page_offset,
--			    int len, struct page *page)
-+static int ubd_queue_one_vec(struct blk_mq_hw_ctx *hctx, struct request =
-*req,
-+		u64 off, struct bio_vec *bvec)
- {
--	struct gendisk *disk =3D req->rq_disk;
--	struct ubd *ubd_dev =3D disk->private_data;
--
--	io_req->req =3D req;
--	io_req->fds[0] =3D (ubd_dev->cow.file !=3D NULL) ? ubd_dev->cow.fd :
--		ubd_dev->fd;
--	io_req->fds[1] =3D ubd_dev->fd;
--	io_req->cow_offset =3D -1;
--	io_req->offset =3D offset;
--	io_req->length =3D len;
--	io_req->error =3D 0;
--	io_req->sector_mask =3D 0;
--
--	io_req->op =3D (rq_data_dir(req) =3D=3D READ) ? UBD_READ : UBD_WRITE;
--	io_req->offsets[0] =3D 0;
--	io_req->offsets[1] =3D ubd_dev->cow.data_offset;
--	io_req->buffer =3D page_address(page) + page_offset;
--	io_req->sectorsize =3D 1 << 9;
--
--	if(ubd_dev->cow.file !=3D NULL)
--		cowify_req(io_req, ubd_dev->cow.bitmap,
--			   ubd_dev->cow.bitmap_offset, ubd_dev->cow.bitmap_len);
--
--}
-+	struct ubd *dev =3D hctx->queue->queuedata;
-+	struct io_thread_req *io_req;
-+	int ret;
-=20
--/* Called with dev->lock held */
--static void prepare_flush_request(struct request *req,
--				  struct io_thread_req *io_req)
--{
--	struct gendisk *disk =3D req->rq_disk;
--	struct ubd *ubd_dev =3D disk->private_data;
-+	io_req =3D kmalloc(sizeof(struct io_thread_req), GFP_ATOMIC);
-+	if (!io_req)
-+		return -ENOMEM;
-=20
- 	io_req->req =3D req;
--	io_req->fds[0] =3D (ubd_dev->cow.file !=3D NULL) ? ubd_dev->cow.fd :
--		ubd_dev->fd;
--	io_req->op =3D UBD_FLUSH;
--}
--
--static void submit_request(struct io_thread_req *io_req, struct ubd *dev=
-)
--{
--	int n =3D os_write_file(thread_fd, &io_req,
--			     sizeof(io_req));
-+	if (dev->cow.file)
-+		io_req->fds[0] =3D dev->cow.fd;
-+	else
-+		io_req->fds[0] =3D dev->fd;
-=20
--	if (n !=3D sizeof(io_req)) {
--		if (n !=3D -EAGAIN)
--			pr_err("write to io thread failed: %d\n", -n);
-+	if (req_op(req) =3D=3D REQ_OP_FLUSH) {
-+		io_req->op =3D UBD_FLUSH;
-+	} else {
-+		io_req->fds[1] =3D dev->fd;
-+		io_req->cow_offset =3D -1;
-+		io_req->offset =3D off;
-+		io_req->length =3D bvec->bv_len;
-+		io_req->error =3D 0;
-+		io_req->sector_mask =3D 0;
-+
-+		io_req->op =3D rq_data_dir(req) =3D=3D READ ? UBD_READ : UBD_WRITE;
-+		io_req->offsets[0] =3D 0;
-+		io_req->offsets[1] =3D dev->cow.data_offset;
-+		io_req->buffer =3D page_address(bvec->bv_page) + bvec->bv_offset;
-+		io_req->sectorsize =3D 1 << 9;
-+
-+		if (dev->cow.file) {
-+			cowify_req(io_req, dev->cow.bitmap,
-+				   dev->cow.bitmap_offset, dev->cow.bitmap_len);
-+		}
-+	}
-=20
--		blk_mq_requeue_request(io_req->req, true);
-+	ret =3D os_write_file(thread_fd, &io_req, sizeof(io_req));
-+	if (ret !=3D sizeof(io_req)) {
-+		if (ret !=3D -EAGAIN)
-+			pr_err("write to io thread failed: %d\n", -ret);
- 		kfree(io_req);
- 	}
-+
-+	return ret;
- }
-=20
- static blk_status_t ubd_queue_rq(struct blk_mq_hw_ctx *hctx,
- 				 const struct blk_mq_queue_data *bd)
- {
- 	struct request *req =3D bd->rq;
--	struct ubd *dev =3D hctx->queue->queuedata;
--	struct ubd_pdu *pdu =3D blk_mq_rq_to_pdu(req);
--	struct io_thread_req *io_req;
-+	int ret =3D 0;
-=20
- 	blk_mq_start_request(req);
-=20
--	pdu->rq_pos =3D blk_rq_pos(req);
--	pdu->start_sg =3D 0;
--	pdu->end_sg =3D blk_rq_map_sg(req->q, req, pdu->sg);
--
- 	if (req_op(req) =3D=3D REQ_OP_FLUSH) {
--		io_req =3D kmalloc(sizeof(struct io_thread_req), GFP_ATOMIC);
--		if (io_req =3D=3D NULL) {
--			blk_mq_requeue_request(req, true);
--			goto done;
-+		ret =3D ubd_queue_one_vec(hctx, req, 0, NULL);
-+	} else {
-+		struct req_iterator iter;
-+		struct bio_vec bvec;
-+		u64 off =3D (u64)blk_rq_pos(req) << 9;
-+
-+		rq_for_each_segment(bvec, req, iter) {
-+			ret =3D ubd_queue_one_vec(hctx, req, off, &bvec);
-+			if (ret < 0)
-+				goto out;
-+			off +=3D bvec.bv_len;
- 		}
--		prepare_flush_request(req, io_req);
--		submit_request(io_req, dev);
--
--		goto done;
- 	}
--
--	while (pdu->start_sg < pdu->end_sg) {
--		struct scatterlist *sg =3D &pdu->sg[pdu->start_sg];
--
--		io_req =3D kmalloc(sizeof(struct io_thread_req),
--				 GFP_ATOMIC);
--		if (io_req =3D=3D NULL) {
--			blk_mq_requeue_request(req, true);
--			goto done;
--		}
--		prepare_request(req, io_req,
--				(unsigned long long)pdu->rq_pos << 9,
--				sg->offset, sg->length, sg_page(sg));
--
--		submit_request(io_req, dev);
--
--		pdu->rq_pos +=3D sg->length >> 9;
--		pdu->start_sg++;
-+out:
-+	if (ret < 0) {
-+		blk_mq_requeue_request(req, true);
- 	}
--
--done:
- 	return BLK_STS_OK;
- }
-=20
--static int ubd_init_request(struct blk_mq_tag_set *set,
--			    struct request *req, unsigned int hctx_idx,
--			    unsigned int numa_node)
--{
--	struct ubd_pdu *pdu =3D blk_mq_rq_to_pdu(req);
--
--	sg_init_table(pdu->sg, MAX_SG);
--
--	return 0;
--}
--
- static int ubd_getgeo(struct block_device *bdev, struct hd_geometry *geo=
-)
- {
- 	struct ubd *ubd_dev =3D bdev->bd_disk->private_data;
---=20
-2.19.1
+Bypassing protection keys is not a big deal IMNHO.  In places where a
+sane one is not readily available, I'm totally fine with just
+effectively disabling it (PKRU=0) for the length of time it isn't available.
 
