@@ -6,47 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D91EFECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 508DAC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:57:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9852B21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:57:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0014021479
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:57:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KurtyGcb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9852B21473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTTBW+pk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0014021479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728908AbeJSB7s (ORCPT
+        id S1728919AbeJSB7v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 21:59:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47448 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 21:59:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728086AbeJSB7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 21:59:48 -0400
+        id S1727605AbeJSB7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 21:59:51 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 551BF21473;
-        Thu, 18 Oct 2018 17:57:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F322621476;
+        Thu, 18 Oct 2018 17:57:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885462;
-        bh=Wq+tcVeq0WWjMCmCgQ/ynKNfS+9YUAe3PXg7P8wpVQw=;
+        s=default; t=1539885465;
+        bh=GDXlObqnV+Cj8wc+A+0el9/9eGvoUkvqExmhOdRAi8s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KurtyGcbPrirXNiJt42WNc4x/cGb+hz8/IMznXh9uxoxhdWiQ9jBhbHtGDzyFbQYC
-         SozlLel9GYOHN4esXV/wxDfnF7JuhjZOuRkf9HfVu2UfFlmw7LZGK73w+ZmMgMqsLT
-         oT3QryWMm/Q8Qnxub3lvOmIUlqRUDAcvUZYYP/gA=
+        b=NTTBW+pk1tP76+qCzCKPIvEZgkpoELZPmOI69swGo7n4m3k1Pgu39tKpUr92ZF2dk
+         rj1k2OWmQYdHZLH6liTyDmvXjBRhkWByrTtLn3QBplpwz1p62AAAxJyzH/f0EP8JZh
+         tWvw2HKhYqU6e91b5OnMp8CzX0cXYWvdpSYMDdIM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Majd Dibbiny <majd@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 31/53] RDMA/uverbs: Fix validity check for modify QP
-Date:   Thu, 18 Oct 2018 19:54:24 +0200
-Message-Id: <20181018175422.258900545@linuxfoundation.org>
+Subject: [PATCH 4.18 32/53] scsi: lpfc: Synchronize access to remoteport via rport
+Date:   Thu, 18 Oct 2018 19:54:25 +0200
+Message-Id: <20181018175422.370832021@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.561567978@linuxfoundation.org>
 References: <20181018175416.561567978@linuxfoundation.org>
@@ -64,108 +63,133 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Majd Dibbiny <majd@mellanox.com>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 4eeed3686981ff887bbdd7254139e2eca276534c ]
+[ Upstream commit 9e210178267b80c4eeb832fade7e146a18c84915 ]
 
-Uverbs shouldn't enforce QP state in the command unless the user set the QP
-state bit in the attribute mask.
+The driver currently uses the ndlp to get the local rport which is then used
+to get the nvme transport remoteport pointer. There can be cases where a stale
+remoteport pointer is obtained as synchronization isn't done through the
+different dereferences.
 
-In addition, only copy qp attr fields which have the corresponding bit set
-in the attribute mask over to the internal attr structure.
+Correct by using locks to synchronize the dereferences.
 
-Fixes: 88de869bbe4f ("RDMA/uverbs: Ensure validity of current QP state value")
-Fixes: bc38a6abdd5a ("[PATCH] IB uverbs: core implementation")
-Signed-off-by: Majd Dibbiny <majd@mellanox.com>
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/uverbs_cmd.c |   68 +++++++++++++++++++++++------------
- 1 file changed, 45 insertions(+), 23 deletions(-)
+ drivers/scsi/lpfc/lpfc_attr.c    |   15 ++++++++++-----
+ drivers/scsi/lpfc/lpfc_debugfs.c |   10 +++++-----
+ drivers/scsi/lpfc/lpfc_nvme.c    |   11 ++++++++---
+ 3 files changed, 23 insertions(+), 13 deletions(-)
 
---- a/drivers/infiniband/core/uverbs_cmd.c
-+++ b/drivers/infiniband/core/uverbs_cmd.c
-@@ -2048,33 +2048,55 @@ static int modify_qp(struct ib_uverbs_fi
+--- a/drivers/scsi/lpfc/lpfc_attr.c
++++ b/drivers/scsi/lpfc/lpfc_attr.c
+@@ -320,12 +320,12 @@ lpfc_nvme_info_show(struct device *dev,
+ 			localport->port_id, statep);
  
- 	if ((cmd->base.attr_mask & IB_QP_CUR_STATE &&
- 	    cmd->base.cur_qp_state > IB_QPS_ERR) ||
--	    cmd->base.qp_state > IB_QPS_ERR) {
-+	    (cmd->base.attr_mask & IB_QP_STATE &&
-+	    cmd->base.qp_state > IB_QPS_ERR)) {
- 		ret = -EINVAL;
- 		goto release_qp;
- 	}
+ 	list_for_each_entry(ndlp, &vport->fc_nodes, nlp_listp) {
++		nrport = NULL;
++		spin_lock(&vport->phba->hbalock);
+ 		rport = lpfc_ndlp_get_nrport(ndlp);
+-		if (!rport)
+-			continue;
+-
+-		/* local short-hand pointer. */
+-		nrport = rport->remoteport;
++		if (rport)
++			nrport = rport->remoteport;
++		spin_unlock(&vport->phba->hbalock);
+ 		if (!nrport)
+ 			continue;
  
--	attr->qp_state		  = cmd->base.qp_state;
--	attr->cur_qp_state	  = cmd->base.cur_qp_state;
--	attr->path_mtu		  = cmd->base.path_mtu;
--	attr->path_mig_state	  = cmd->base.path_mig_state;
--	attr->qkey		  = cmd->base.qkey;
--	attr->rq_psn		  = cmd->base.rq_psn;
--	attr->sq_psn		  = cmd->base.sq_psn;
--	attr->dest_qp_num	  = cmd->base.dest_qp_num;
--	attr->qp_access_flags	  = cmd->base.qp_access_flags;
--	attr->pkey_index	  = cmd->base.pkey_index;
--	attr->alt_pkey_index	  = cmd->base.alt_pkey_index;
--	attr->en_sqd_async_notify = cmd->base.en_sqd_async_notify;
--	attr->max_rd_atomic	  = cmd->base.max_rd_atomic;
--	attr->max_dest_rd_atomic  = cmd->base.max_dest_rd_atomic;
--	attr->min_rnr_timer	  = cmd->base.min_rnr_timer;
--	attr->port_num		  = cmd->base.port_num;
--	attr->timeout		  = cmd->base.timeout;
--	attr->retry_cnt		  = cmd->base.retry_cnt;
--	attr->rnr_retry		  = cmd->base.rnr_retry;
--	attr->alt_port_num	  = cmd->base.alt_port_num;
--	attr->alt_timeout	  = cmd->base.alt_timeout;
--	attr->rate_limit	  = cmd->rate_limit;
-+	if (cmd->base.attr_mask & IB_QP_STATE)
-+		attr->qp_state = cmd->base.qp_state;
-+	if (cmd->base.attr_mask & IB_QP_CUR_STATE)
-+		attr->cur_qp_state = cmd->base.cur_qp_state;
-+	if (cmd->base.attr_mask & IB_QP_PATH_MTU)
-+		attr->path_mtu = cmd->base.path_mtu;
-+	if (cmd->base.attr_mask & IB_QP_PATH_MIG_STATE)
-+		attr->path_mig_state = cmd->base.path_mig_state;
-+	if (cmd->base.attr_mask & IB_QP_QKEY)
-+		attr->qkey = cmd->base.qkey;
-+	if (cmd->base.attr_mask & IB_QP_RQ_PSN)
-+		attr->rq_psn = cmd->base.rq_psn;
-+	if (cmd->base.attr_mask & IB_QP_SQ_PSN)
-+		attr->sq_psn = cmd->base.sq_psn;
-+	if (cmd->base.attr_mask & IB_QP_DEST_QPN)
-+		attr->dest_qp_num = cmd->base.dest_qp_num;
-+	if (cmd->base.attr_mask & IB_QP_ACCESS_FLAGS)
-+		attr->qp_access_flags = cmd->base.qp_access_flags;
-+	if (cmd->base.attr_mask & IB_QP_PKEY_INDEX)
-+		attr->pkey_index = cmd->base.pkey_index;
-+	if (cmd->base.attr_mask & IB_QP_EN_SQD_ASYNC_NOTIFY)
-+		attr->en_sqd_async_notify = cmd->base.en_sqd_async_notify;
-+	if (cmd->base.attr_mask & IB_QP_MAX_QP_RD_ATOMIC)
-+		attr->max_rd_atomic = cmd->base.max_rd_atomic;
-+	if (cmd->base.attr_mask & IB_QP_MAX_DEST_RD_ATOMIC)
-+		attr->max_dest_rd_atomic = cmd->base.max_dest_rd_atomic;
-+	if (cmd->base.attr_mask & IB_QP_MIN_RNR_TIMER)
-+		attr->min_rnr_timer = cmd->base.min_rnr_timer;
-+	if (cmd->base.attr_mask & IB_QP_PORT)
-+		attr->port_num = cmd->base.port_num;
-+	if (cmd->base.attr_mask & IB_QP_TIMEOUT)
-+		attr->timeout = cmd->base.timeout;
-+	if (cmd->base.attr_mask & IB_QP_RETRY_CNT)
-+		attr->retry_cnt = cmd->base.retry_cnt;
-+	if (cmd->base.attr_mask & IB_QP_RNR_RETRY)
-+		attr->rnr_retry = cmd->base.rnr_retry;
-+	if (cmd->base.attr_mask & IB_QP_ALT_PATH) {
-+		attr->alt_port_num = cmd->base.alt_port_num;
-+		attr->alt_timeout = cmd->base.alt_timeout;
-+		attr->alt_pkey_index = cmd->base.alt_pkey_index;
-+	}
-+	if (cmd->base.attr_mask & IB_QP_RATE_LIMIT)
-+		attr->rate_limit = cmd->rate_limit;
+@@ -3304,6 +3304,7 @@ lpfc_update_rport_devloss_tmo(struct lpf
+ 	struct lpfc_nodelist  *ndlp;
+ #if (IS_ENABLED(CONFIG_NVME_FC))
+ 	struct lpfc_nvme_rport *rport;
++	struct nvme_fc_remote_port *remoteport = NULL;
+ #endif
  
- 	if (cmd->base.attr_mask & IB_QP_AV)
- 		copy_ah_attr_from_uverbs(qp->device, &attr->ah_attr,
+ 	shost = lpfc_shost_from_vport(vport);
+@@ -3314,8 +3315,12 @@ lpfc_update_rport_devloss_tmo(struct lpf
+ 		if (ndlp->rport)
+ 			ndlp->rport->dev_loss_tmo = vport->cfg_devloss_tmo;
+ #if (IS_ENABLED(CONFIG_NVME_FC))
++		spin_lock(&vport->phba->hbalock);
+ 		rport = lpfc_ndlp_get_nrport(ndlp);
+ 		if (rport)
++			remoteport = rport->remoteport;
++		spin_unlock(&vport->phba->hbalock);
++		if (remoteport)
+ 			nvme_fc_set_remoteport_devloss(rport->remoteport,
+ 						       vport->cfg_devloss_tmo);
+ #endif
+--- a/drivers/scsi/lpfc/lpfc_debugfs.c
++++ b/drivers/scsi/lpfc/lpfc_debugfs.c
+@@ -551,7 +551,7 @@ lpfc_debugfs_nodelist_data(struct lpfc_v
+ 	unsigned char *statep;
+ 	struct nvme_fc_local_port *localport;
+ 	struct lpfc_nvmet_tgtport *tgtp;
+-	struct nvme_fc_remote_port *nrport;
++	struct nvme_fc_remote_port *nrport = NULL;
+ 	struct lpfc_nvme_rport *rport;
+ 
+ 	cnt = (LPFC_NODELIST_SIZE / LPFC_NODELIST_ENTRY_SIZE);
+@@ -696,11 +696,11 @@ lpfc_debugfs_nodelist_data(struct lpfc_v
+ 	len += snprintf(buf + len, size - len, "\tRport List:\n");
+ 	list_for_each_entry(ndlp, &vport->fc_nodes, nlp_listp) {
+ 		/* local short-hand pointer. */
++		spin_lock(&phba->hbalock);
+ 		rport = lpfc_ndlp_get_nrport(ndlp);
+-		if (!rport)
+-			continue;
+-
+-		nrport = rport->remoteport;
++		if (rport)
++			nrport = rport->remoteport;
++		spin_unlock(&phba->hbalock);
+ 		if (!nrport)
+ 			continue;
+ 
+--- a/drivers/scsi/lpfc/lpfc_nvme.c
++++ b/drivers/scsi/lpfc/lpfc_nvme.c
+@@ -2718,7 +2718,9 @@ lpfc_nvme_register_port(struct lpfc_vpor
+ 	rpinfo.port_name = wwn_to_u64(ndlp->nlp_portname.u.wwn);
+ 	rpinfo.node_name = wwn_to_u64(ndlp->nlp_nodename.u.wwn);
+ 
++	spin_lock_irq(&vport->phba->hbalock);
+ 	oldrport = lpfc_ndlp_get_nrport(ndlp);
++	spin_unlock_irq(&vport->phba->hbalock);
+ 	if (!oldrport)
+ 		lpfc_nlp_get(ndlp);
+ 
+@@ -2833,7 +2835,7 @@ lpfc_nvme_unregister_port(struct lpfc_vp
+ 	struct nvme_fc_local_port *localport;
+ 	struct lpfc_nvme_lport *lport;
+ 	struct lpfc_nvme_rport *rport;
+-	struct nvme_fc_remote_port *remoteport;
++	struct nvme_fc_remote_port *remoteport = NULL;
+ 
+ 	localport = vport->localport;
+ 
+@@ -2847,11 +2849,14 @@ lpfc_nvme_unregister_port(struct lpfc_vp
+ 	if (!lport)
+ 		goto input_err;
+ 
++	spin_lock_irq(&vport->phba->hbalock);
+ 	rport = lpfc_ndlp_get_nrport(ndlp);
+-	if (!rport)
++	if (rport)
++		remoteport = rport->remoteport;
++	spin_unlock_irq(&vport->phba->hbalock);
++	if (!remoteport)
+ 		goto input_err;
+ 
+-	remoteport = rport->remoteport;
+ 	lpfc_printf_vlog(vport, KERN_INFO, LOG_NVME_DISC,
+ 			 "6033 Unreg nvme remoteport %p, portname x%llx, "
+ 			 "port_id x%06x, portstate x%x port type x%x\n",
 
 
