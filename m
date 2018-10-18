@@ -2,77 +2,68 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C27AC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC51C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:22:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C29BD21477
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:18:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XMUVtVK6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C29BD21477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2176F2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:22:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2176F2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728362AbeJRXT2 (ORCPT
+        id S1728241AbeJRXYI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 19:19:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35256 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 19:24:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56753 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727370AbeJRXT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 19:19:27 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727105AbeJRXYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 19:24:08 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C1F220869;
-        Thu, 18 Oct 2018 15:17:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539875879;
-        bh=ZrYuu+lwI3LQK3VPVoLJj7umg3GZAFSUs4txNn9KuV4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XMUVtVK67lSD/3bpw0sHGiL9eYbTft3uO1VMBMaUXEQ09CWk8vk3A+FucmYB8vFz5
-         jt9vNb1F5mHxpE+UF5ADbdp0xatyN50/VW7uy+G29b3Zv9NAUiWFNCpHVQmqnYfDmI
-         iZOiI6qlFNdEl4P6lFTtwESFTV/3qubQIUYH1c2I=
-Date:   Thu, 18 Oct 2018 17:17:56 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     stable@vger.kernel.org, Felipe Balbi <balbi@ti.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        linux-kernel@vger.kernel.org,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: Re: [PATCH stable v4.4+] usb: gadget: serial: fix oops when data
- rx'd after close
-Message-ID: <20181018151756.GA10600@kroah.com>
-References: <1539872900-13011-1-git-send-email-krzk@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id A31323DBEA;
+        Thu, 18 Oct 2018 15:22:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8608161D3B;
+        Thu, 18 Oct 2018 15:22:36 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20181018131125.6303-3-mszeredi@redhat.com>
+References: <20181018131125.6303-3-mszeredi@redhat.com> <20181018131125.6303-1-mszeredi@redhat.com>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH 3/3] statx: add STATX_ATTRIBUTES flag
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1539872900-13011-1-git-send-email-krzk@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1683.1539876155.1@warthog.procyon.org.uk>
+Date:   Thu, 18 Oct 2018 16:22:35 +0100
+Message-ID: <1684.1539876155@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 18 Oct 2018 15:22:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 04:28:20PM +0200, Krzysztof Kozlowski wrote:
-> From: Stephen Warren <swarren@nvidia.com>
-> 
-> commit daa35bd95634a2a2d72d1049c93576a02711cb1a upstream
-> 
-> When the gadget serial device has no associated TTY, do not pass any
-> received data into the TTY layer for processing; simply drop it instead.
-> This prevents the TTY layer from calling back into the gadget serial
-> driver, which will then crash in e.g. gs_write_room() due to lack of
-> gadget serial device to TTY association (i.e. a NULL pointer dereference).
-> 
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Miklos Szeredi <mszeredi@redhat.com> wrote:
 
-Now queued up, thanks.
+> +	/* Having anything in attributes_mask means attributes are valid. */
+> +	if (tmp.stx_attributes_mask)
+> +		tmp.stx_mask |= STATX_ATTRIBUTES;
 
-greg k-h
+That would be superfluous, since userspace can make this check too.
+
+Note that fsinfo() might inform you better - if and when it arrives.
+
+David
