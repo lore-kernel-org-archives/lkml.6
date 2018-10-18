@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D92DC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D632BECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D781820838
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D94920645
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ehQNpyC7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D781820838
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1u/dPFQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D94920645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729414AbeJSCCa (ORCPT
+        id S1729428AbeJSCCe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:02:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50416 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:02:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727615AbeJSCCa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:02:30 -0400
+        id S1728842AbeJSCCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:02:33 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4C9720645;
-        Thu, 18 Oct 2018 18:00:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98262205C9;
+        Thu, 18 Oct 2018 18:00:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885624;
-        bh=ChW21wKuGyTkVwN/TdRbI6JcnXjbvAqlCq4b4mDZKEc=;
+        s=default; t=1539885628;
+        bh=QH0CTNT0akYVJ5nG5oRLqjDGPH5h/nk7C1d7UV6PH0w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ehQNpyC7WVYaJMWkZHHFDyPSSyRvKGrbP7/q+yv2MoS/fVKMbrLiCbbyzW9up6WpC
-         qjGLO+35UmMtIT4fL47DMcm53qXHMehrmQ1FEUcU/3TXvqtslpsH/OvsZQtkAAjM+P
-         Amba8s4m1TDl0AcE/j9kxgs54nJCteVTRyGvKypE=
+        b=G1u/dPFQHJNuOOgsmI+Ud7DLLMyTYtkuNU6mq5TldxVaTX7esdiJclhe1ghJ+1WI/
+         0VEq7kZ8CisZXnv/6mLw6iUKMRMrrCX3ZyG+caRAikWMvgEVXdUrD1FA9/JIraAjep
+         iM05OmYnZFiFuX1nQtu7DNpXMu0+WbUo2Wo724WY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 20/41] PCI: dwc: Fix scheduling while atomic issues
-Date:   Thu, 18 Oct 2018 19:54:35 +0200
-Message-Id: <20181018175420.289225862@linuxfoundation.org>
+Subject: [PATCH 4.14 21/41] drm: mali-dp: Call drm_crtc_vblank_reset on device init
+Date:   Thu, 18 Oct 2018 19:54:36 +0200
+Message-Id: <20181018175420.482666168@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
 References: <20181018175416.718399607@linuxfoundation.org>
@@ -66,89 +64,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+From: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
 
-[ Upstream commit 9024143e700f89d74b8cdaf316a3499d74fc56fe ]
+[ Upstream commit 69be1984ded00a11b1ed0888c6d8e4f35370372f ]
 
-When programming the inbound/outbound ATUs, we call usleep_range() after
-each checking PCIE_ATU_ENABLE bit. Unfortunately, the ATU programming
-can be executed in atomic context:
+Currently, if userspace calls drm_wait_vblank before the crtc is
+activated the crtc vblank_enable hook is called, which in case of
+malidp driver triggers some warninngs. This happens because on
+device init we don't inform the drm core about the vblank state
+by calling drm_crtc_vblank_on/off/reset which together with
+drm_vblank_get have some magic that prevents calling drm_vblank_enable
+when crtc is off.
 
-inbound ATU programming could be called through
-pci_epc_write_header()
-  =>dw_pcie_ep_write_header()
-    =>dw_pcie_prog_inbound_atu()
-
-outbound ATU programming could be called through
-pci_bus_read_config_dword()
-  =>dw_pcie_rd_conf()
-    =>dw_pcie_prog_outbound_atu()
-
-Fix this issue by calling mdelay() instead.
-
-Fixes: f8aed6ec624f ("PCI: dwc: designware: Add EP mode support")
-Fixes: d8bbeb39fbf3 ("PCI: designware: Wait for iATU enable")
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-[lorenzo.pieralisi@arm.com: commit log update]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Signed-off-by: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
+Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/dwc/pcie-designware.c |    8 ++++----
- drivers/pci/dwc/pcie-designware.h |    3 +--
- 2 files changed, 5 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/arm/malidp_drv.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/pci/dwc/pcie-designware.c
-+++ b/drivers/pci/dwc/pcie-designware.c
-@@ -138,7 +138,7 @@ static void dw_pcie_prog_outbound_atu_un
- 		if (val & PCIE_ATU_ENABLE)
- 			return;
+--- a/drivers/gpu/drm/arm/malidp_drv.c
++++ b/drivers/gpu/drm/arm/malidp_drv.c
+@@ -617,6 +617,7 @@ static int malidp_bind(struct device *de
+ 	drm->irq_enabled = true;
  
--		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
-+		mdelay(LINK_WAIT_IATU);
- 	}
- 	dev_err(pci->dev, "outbound iATU is not being enabled\n");
- }
-@@ -181,7 +181,7 @@ void dw_pcie_prog_outbound_atu(struct dw
- 		if (val & PCIE_ATU_ENABLE)
- 			return;
- 
--		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
-+		mdelay(LINK_WAIT_IATU);
- 	}
- 	dev_err(pci->dev, "outbound iATU is not being enabled\n");
- }
-@@ -239,7 +239,7 @@ static int dw_pcie_prog_inbound_atu_unro
- 		if (val & PCIE_ATU_ENABLE)
- 			return 0;
- 
--		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
-+		mdelay(LINK_WAIT_IATU);
- 	}
- 	dev_err(pci->dev, "inbound iATU is not being enabled\n");
- 
-@@ -285,7 +285,7 @@ int dw_pcie_prog_inbound_atu(struct dw_p
- 		if (val & PCIE_ATU_ENABLE)
- 			return 0;
- 
--		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
-+		mdelay(LINK_WAIT_IATU);
- 	}
- 	dev_err(pci->dev, "inbound iATU is not being enabled\n");
- 
---- a/drivers/pci/dwc/pcie-designware.h
-+++ b/drivers/pci/dwc/pcie-designware.h
-@@ -28,8 +28,7 @@
- 
- /* Parameters for the waiting for iATU enabled routine */
- #define LINK_WAIT_MAX_IATU_RETRIES	5
--#define LINK_WAIT_IATU_MIN		9000
--#define LINK_WAIT_IATU_MAX		10000
-+#define LINK_WAIT_IATU			9
- 
- /* Synopsys-specific PCIe configuration registers */
- #define PCIE_PORT_LINK_CONTROL		0x710
+ 	ret = drm_vblank_init(drm, drm->mode_config.num_crtc);
++	drm_crtc_vblank_reset(&malidp->crtc);
+ 	if (ret < 0) {
+ 		DRM_ERROR("failed to initialise vblank\n");
+ 		goto vblank_fail;
 
 
