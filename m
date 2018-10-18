@@ -6,80 +6,70 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C46FBC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A624C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:16:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 965E821477
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:15:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965E821477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 43CE421477
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:16:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43CE421477
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727879AbeJRRP6 (ORCPT
+        id S1727857AbeJRRQr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 13:15:58 -0400
-Received: from foss.arm.com ([217.140.101.70]:34752 "EHLO foss.arm.com"
+        Thu, 18 Oct 2018 13:16:47 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:39734 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727519AbeJRRP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 13:15:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C44480D;
-        Thu, 18 Oct 2018 02:15:53 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC0633F5D3;
-        Thu, 18 Oct 2018 02:15:51 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 10:15:43 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Huacai Chen <chenhc@lemote.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        zhangfx <zhangfx@lemote.com>, wu zhangjin <wuzhangjin@gmail.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH] cacheinfo: Keep the old value if of_property_read_u32
- fails
-Message-ID: <20181018091146.GA22021@e107155-lin>
-References: <1539739563-1886-1-git-send-email-chenhc@lemote.com>
- <20181017093540.GB16320@e107155-lin>
- <CAAhV-H64KYE6YDLrBuK_oYkyBHe8F_5Ja433tY+Pp841kJw57g@mail.gmail.com>
+        id S1727360AbeJRRQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 13:16:47 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id jo06zP08b_b2; Thu, 18 Oct 2018 11:16:23 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCA5400329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:5400:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C91CE1EC0291;
+        Thu, 18 Oct 2018 11:16:22 +0200 (CEST)
+Date:   Thu, 18 Oct 2018 11:16:07 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Leonardo Bras <leobras.c@gmail.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        lkcamp@lists.libreplanetbr.org,
+        Matthew Wilcox <willy6545@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH 1/4] Adds -Wshadow=local on KBUILD_HOSTCFLAGS
+Message-ID: <20181018091606.GA20831@zn.tnic>
+References: <20181017000809.GA21292@WindFlash>
+ <20181017081115.GA22535@zn.tnic>
+ <CAK7LNASVn7CB5uL9tCtNC2u4Ary5eb-vyiB_sS2ey5AZNweKAA@mail.gmail.com>
+ <20181017083126.GB22535@zn.tnic>
+ <CADvQ+rFa=XEuxLb=yPmtJE2QepBNjCVzjEY5urVzCaSF1tJBYw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAAhV-H64KYE6YDLrBuK_oYkyBHe8F_5Ja433tY+Pp841kJw57g@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CADvQ+rFa=XEuxLb=yPmtJE2QepBNjCVzjEY5urVzCaSF1tJBYw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Huacai,
+On Wed, Oct 17, 2018 at 09:40:53PM -0300, Leonardo Bras wrote:
+> The idea was to put it as default and fix all the shadowing warnings.
+> What do you think?  I am open to suggestions.
 
-On Thu, Oct 18, 2018 at 09:28:11AM +0800, Huacai Chen wrote:
-> Hi, Sudeep,
-> 
-> Please see this call-graph:
-> 
-> static int detect_cache_attributes(unsigned int cpu)
->         ....
->         ret = populate_cache_leaves(cpu);
->         ....
->         ret = cache_shared_cpu_map_setup(cpu); -->
-> cache_setup_of_node() --> cache_of_set_props() -->
-> cache_size()/cache_nr_sets
-> 
-> populate_cache_leaves() is arch-specific, All archs except arm64 have
-> provide initial values to cacheinfo:size and cacheinfo:number_of_sets.
-> 
-> Related files:
-> arch/nds32/kernel/cacheinfo.c
-> arch/mips/kernel/cacheinfo.c
+That's Masahiro's call. In the rest of the kernel, those warnings are behind
+the W=2 switch - i.e., not enabled by default.
 
-Only above 2 could be affected, but I want to be sure. I wasn't aware
-of MIPS arch setting values elsewhere, assumed DT, my bad.
-You have still not answered my question. Which arch are you facing issue ?
-Or are you proposing this by code inspection ? I changes look fine, but
-want to be sure if the issue you are seeing is in above architectures.
+-- 
+Regards/Gruss,
+    Boris.
 
---
-Regards,
-Sudeep
+Good mailing practices for 400: avoid top-posting and trim the reply.
