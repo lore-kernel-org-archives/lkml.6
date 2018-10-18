@@ -2,144 +2,108 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD68C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1537FECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E21B2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:17:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E21B2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id D114321473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:18:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pjTst/hd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D114321473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbeJRVSK (ORCPT
+        id S1728200AbeJRVTe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 17:18:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54082 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727403AbeJRVSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 17:18:10 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F210F2145D;
-        Thu, 18 Oct 2018 13:17:07 +0000 (UTC)
-Date:   Thu, 18 Oct 2018 09:17:06 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Geliang Tang <geliangtang@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pramod Gurav <gpramod@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
-Message-ID: <20181018091706.62310b38@gandalf.local.home>
-In-Reply-To: <58d2474c-53cd-e6cb-2d25-db38d1a88da6@codeaurora.org>
-References: <1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org>
-        <20181016112928.4b52afb5@gandalf.local.home>
-        <8c2fb318-813d-81f1-1e2f-cdbc68353077@codeaurora.org>
-        <20181016125721.236ada82@gandalf.local.home>
-        <cab1be04-be06-6f53-7fe9-159936893fc8@codeaurora.org>
-        <20181016134803.1b9260c1@gandalf.local.home>
-        <472db11e-49a6-a1ee-e298-791ee1bbb10b@codeaurora.org>
-        <20181016141610.639b9000@gandalf.local.home>
-        <accdce6d-8fd2-9f15-d4cd-704cbf0b32eb@codeaurora.org>
-        <20181016144123.24c47b38@gandalf.local.home>
-        <7781815e-cba2-9e36-db6d-268298747876@codeaurora.org>
-        <20181016150328.3450d718@gandalf.local.home>
-        <c94103d2-ed5d-bf43-fc71-c60e108f303e@codeaurora.org>
-        <20181017223334.29ca2837@vmware.local.home>
-        <58d2474c-53cd-e6cb-2d25-db38d1a88da6@codeaurora.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 18 Oct 2018 17:19:34 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35787 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727615AbeJRVTe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 17:19:34 -0400
+Received: by mail-lj1-f195.google.com with SMTP id o14-v6so27700532ljj.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 06:18:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=Y0QRf+P/QkZfVap8Av3i3+THUaj4Oa/fNo8fLfC1vZw=;
+        b=pjTst/hdDBH8e50nwJgGU+tYmjiGpEO2xLRjHd+6rZcICXjRYLIkcHrwqCl0QwvsSr
+         DQfulhDwjFBY9RQ7hr4WuZpzImRrGMCa1kcrlRGabVHqsy/yVGOfTB4zUIy1Q+N356rH
+         lIGkbbhV6+SaJlmhBuozO0KLx/h0Jfryxo98evrEu1XAr/HmxFU3CyA/lw+n3l7qjGKI
+         uZpLkMzGI+0MuxFhjdmgnvbL+W7IpaNdArNeBbKj0zzYxCKfCLmE+t2aeeuTyR2mLg38
+         tmlhj2vvWRPp1FslCuNABpSuZTI9wzB8A4Pf+S/yCxmIopAmUB7JvmWAa9rp6/Kqn8jN
+         L2+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=Y0QRf+P/QkZfVap8Av3i3+THUaj4Oa/fNo8fLfC1vZw=;
+        b=BFefyRTQ8kOf7ZJmYgRB1iYchQMVTpOC5X3AGdUnasXI0yeemkD8DbWgbYkXVxLpZH
+         3NJ/smBfbAXyuojMvJAaFEqijG/g7v3W5udytmWXMKqqPZSvhfHqecZdRkuflEJN/Ngk
+         +WiF6o+gK7Un/naVRDBfvgo//detKhlt441uZvapCQ8foaSSlTiWjlHQ6cx3mkjLGRIy
+         2JMc9bCTXVXQ5WxhMZ/LQuxLWdURxiUExbKnTZ0+h9B9+0GnEAvo9m1Cu0EOe4hx/dra
+         WvdeglzZXbADiw72nR7UioS5Xt6yWsTKb2hfZyF2zXi/ziHxgloTgjjheb/0AM8LvnlP
+         G6JA==
+X-Gm-Message-State: AGRZ1gJzSNjgX6Tpi38/IwC+g9SDKyI4aJEYbEDgAkg4Mzz9RzWRAMj8
+        dwsTfZA3XrzqhduqDBz5K18bwni/0T68mHm4Rq4=
+X-Google-Smtp-Source: AJdET5fhRB6ChUe8DnWGcmQwSiFdk0zcVAR+Sky7ycyuXEyThOaGJ6k/RgL3YUXmWMLuAsca8GjfhNw6ipI2iUaf8Ss=
+X-Received: by 2002:a2e:5109:: with SMTP id f9-v6mr1579092ljb.155.1539868712474;
+ Thu, 18 Oct 2018 06:18:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From:   Jaejoong Kim <climbbb.kim@gmail.com>
+Date:   Thu, 18 Oct 2018 22:18:20 +0900
+Message-ID: <CAL6iAa+5a1UW31+egVXnDw=O4RePmFpvV_1qHXyjPFBnhkOWWg@mail.gmail.com>
+Subject: kmemleak in nvkm_iccsense_oneinit
+To:     bskeggs@redhat.com, airlied@linux.ie
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 18 Oct 2018 10:51:18 +0530
-Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
+## I forgot the write email without checking the enable text mode. So,
+send email again. Sorry for send E-mail twice.
 
-> > So something else is causing an issue besides just msm_read.
-> > 
-> > Can you do an objdump -dr of the entire vmlinux binary and gzip it and
-> > post it somewhere. Not sure if it would be too big to email. You could
-> > try sending it to me privately. I'd like to see the binary that you are
-> > using.
-> >   
-> 
-> I have sent the objdump and dot config to you privately.
+Hi
 
-Thanks. I don't see anything that pops out, but then again, my arm asm
-foo is very rusty (it has been literally decades since I did any arm
-asm). I wonder if it could simply be a timing issue?
+I got a kmemleak and it is pointing to nvkm_iccsense_oneinit().
+Please refer to the below kmemleak message.
 
-ffff0000086eb538 <msm_read.isra.1>:
-ffff0000086eb538:       a9be7bfd        stp     x29, x30, [sp,#-32]!
-ffff0000086eb53c:       910003fd        mov     x29, sp
-ffff0000086eb540:       a90153f3        stp     x19, x20, [sp,#16]
-ffff0000086eb544:       aa0003f4        mov     x20, x0
-ffff0000086eb548:       2a0103f3        mov     w19, w1
-ffff0000086eb54c:       aa1e03e0        mov     x0, x30
-ffff0000086eb550:       97e6bae4        bl      ffff00000809a0e0 <_mcount>
+# uname -a
+Linux climb 4.19.0-rc1+ #4 SMP Thu Sep 20 11:48:55 KST 2018 x86_64
+x86_64 x86_64 GNU/Linux
 
-The above is changed to nop on boot, but then to:
+# HW
+LG Notebook. (Model Name:lg15n54)
 
-	bl ftrace_caller
+# kmemleak mesage
+unreferenced object 0xffff8801e9c58388 (size 96):
+  comm "systemd-udevd", pid 130, jiffies 4294895052 (age 295965.560s)
+  hex dump (first 32 bytes):
+    02 05 00 6b 6b 6b 6b 6b 6b 6b 10 00 02 15 6b 6b  ...kkkkkkk....kk
+    6b 6b 6b 6b 6b 6b 6b 6b 00 00 00 6b 6b 6b 6b 6b  kkkkkkkk...kkkkk
+  backtrace:
+    [<000000000f9caea9>] nvkm_iccsense_oneinit+0x231/0x1cf0 [nouveau]
+    [<00000000d7f5cb68>] nvkm_subdev_init+0x155/0x9a0 [nouveau]
+    [<00000000b2b0e9d8>] nvkm_device_init+0x332/0x5a0 [nouveau]
+    [<000000003b736a7c>] nvkm_udevice_init+0x93/0xe0 [nouveau]
+    [<00000000cc1011dc>] nvkm_object_init+0xcb/0x610 [nouveau]
+    [<0000000006253ff8>] nvkm_ioctl_new+0x412/0x9a0 [nouveau]
+    [<00000000db03ae9a>] nvkm_ioctl+0x3b4/0xbe0 [nouveau]
+    [<00000000ac40bf7e>] nvif_object_init+0x2df/0x530 [nouveau]
+    [<00000000e98baaae>] nvif_device_init+0x12/0xe0 [nouveau]
+    [<000000006d050b26>] nouveau_cli_init+0x4e7/0x15b0 [nouveau]
+    [<00000000d3f314bc>] nouveau_drm_load+0x118/0x1380 [nouveau]
+    [<000000009823b666>] drm_dev_register+0x2c5/0x5a0 [drm]
+    [<000000001a870888>] drm_get_pci_dev+0x16d/0x4b0 [drm]
+    [<000000004d6e667f>] nouveau_drm_probe+0x459/0x620 [nouveau]
+    [<00000000ad85fd78>] local_pci_probe+0xde/0x1a0
+    [<00000000c07cf5fe>] pci_device_probe+0x419/0x590
 
-When ftrace is enabled.
-
-ffff0000086eb554:       8b334280        add     x0, x20, w19, uxtw
-ffff0000086eb558:       b9400000        ldr     w0, [x0]
-ffff0000086eb55c:       a94153f3        ldp     x19, x20, [sp,#16]
-ffff0000086eb560:       a8c27bfd        ldp     x29, x30, [sp],#32
-ffff0000086eb564:       d65f03c0        ret
-
-
-
-ffff00000809a0e4 <ftrace_caller>:
-ffff00000809a0e4:       a9bf7bfd        stp     x29, x30, [sp,#-16]!
-ffff00000809a0e8:       910003fd        mov     x29, sp
-ffff00000809a0ec:       d10013c0        sub     x0, x30, #0x4
-ffff00000809a0f0:       f94003a1        ldr     x1, [x29]
-ffff00000809a0f4:       f9400421        ldr     x1, [x1,#8]
-ffff00000809a0f8:       d1001021        sub     x1, x1, #0x4
-
-ffff00000809a0fc <ftrace_call>:
-ffff00000809a0fc:       d503201f        nop
-
-The above nop gets patched to:
-
-	bl ftrace_ops_no_ops
-
-Which will iterate through all the registered functions.
-
-
-ffff00000809a100 <ftrace_graph_call>:
-ffff00000809a100:       d503201f        nop
-
-The above only gets set when function graph tracer is enabled, which it
-is not in this case.
-
-ffff00000809a104:       a8c17bfd        ldp     x29, x30, [sp],#16
-ffff00000809a108:       d65f03c0        ret
-
-
-Anyone see any problems here?
-
--- Steve
+Jaejoong
