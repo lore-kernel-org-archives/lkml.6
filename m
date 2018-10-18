@@ -2,175 +2,92 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84834C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6280AECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B85020658
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SX1nDHV9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B85020658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 326EC20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 326EC20658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730713AbeJSCJl (ORCPT
+        id S1730716AbeJSCJy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:09:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59182 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728851AbeJSCJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:09:40 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6993204FD;
-        Thu, 18 Oct 2018 18:07:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539886052;
-        bh=40zpIRugQuMGaAIOepOSf3UkDWwiG6pVdcCTtoSTvG8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SX1nDHV9Lnz5zfaI8GVdbUFEfBntdH1zN5R9X5HeCLUr0UiR73Bx8hnxTJ5PiYpDc
-         TRJ+DEQKaSb3QBP6H8n259er7bbKrhNFTwq/h4q/uM055D5DpmIwJWInfcVtOR/0jR
-         rTUE9OfuNQx3/eTlWPM1jg0EDKcct1odDUBjQu5g=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rik van Riel <riel@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, pbonzini@redhat.com,
-        Ingo Molnar <mingo@kernel.org>,
-        Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-Subject: [PATCH 4.4 33/48] x86/fpu: Remove struct fpu::counter
-Date:   Thu, 18 Oct 2018 19:55:08 +0200
-Message-Id: <20181018175429.718560543@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
-References: <20181018175427.133690306@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 18 Oct 2018 22:09:54 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:35447 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728851AbeJSCJy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:09:54 -0400
+Received: from null ([172.19.249.151]) by mrelayeu.kundenserver.de (mreue109
+ [212.227.15.183]) with ESMTPSA (Nemesis) id 1M7sQ8-1gIAVq2Q30-0054XD; Thu, 18
+ Oct 2018 20:07:24 +0200
+Received: from null ([172.19.249.151]) by mrelayeu.kundenserver.de (mreue109
+ [212.227.15.183]) with ESMTPSA (Nemesis) id 1M7sQ8-1gIAVq2Q30-0054XD; Thu, 18
+ Oct 2018 20:07:24 +0200
+Date:   Thu, 18 Oct 2018 20:07:23 +0200 (CEST)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        gregkh@linuxfoundation.org
+Cc:     eric@anholt.net, linux-rpi-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, tiwai@suse.de,
+        devel@driverdev.osuosl.org
+Message-ID: <221690011.132173.1539886043161@email.1und1.de>
+In-Reply-To: <20181017190156.30010-1-nsaenzjulienne@suse.de>
+References: <20181017190156.30010-1-nsaenzjulienne@suse.de>
+Subject: Re: [PATCH v2 0/7] staging: bcm2835-audio: Cleanups and upgrades
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev39
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:/lB9xM2UaqJYIDiCZZGsZ5TlTRlU4A0oqqEf9e2134My0yeg62y
+ 1NTA4d2p2rX5Abe4q2vV1xtVaahIv8RzEtMUvR5ktfNhTbdesjnmIXS5+CEvPHkH7nKDmkd
+ Wvo4bq984dHpNJGXb6N7ZLqW5b8+gmHS9KoOQbWDTID/opl3kWC1s3PgnJLs78A7WWOeWAj
+ LIEnytUZM6i4QifeSjhOw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:zv1p1IVGmGA=:aFGJgS1AqIrwkVi98R5NTK
+ Xvmqva+O3hXSbXA6Lt5gNGFXJxZ/LnDPdLv8p1fNFmi+GYjxJzCWNEJnZ+43d2axgtF40U0P7
+ 1gg2RTP4kHSrf3c0awUXWcmBiw5wB5Eys6JY57VXFwcFYrDYh+tjBS7pJAI3U8XVUt3uNhMcA
+ 3g6yFQ5a3xymdNDTHNIrCo+IDj5T1bI8hOJG3PspCbbX5GVUB5/rA+ER1IXLTV2KWaoVdEIl8
+ 3fvP5jr29oaHIhhBmjIdBFvHxw6uPMQ4FjaC6P3r+hFkMAw1OpF231vgB0aKp92+fjNAMGswx
+ BPMT9P5SvehyC/LiuDY3S8Ht1fc86IhQDAxb3SUIUgzk2czDm+UZVSLfNanxX5ZrquOEnLyax
+ 3PD/LkijPq1pKxGVglXU/7f2RTQT8y7Ohl4wUhZFW5f6QrCjnGVJF5aC+bXWVemYONz4Q+T8q
+ wpKncum804lAqhh/vefqmhuKg9w4+naixOyXpVnaaO/lbR4PHL/GQs9buVb8ik06uOVrFTDFs
+ 7rISAs5Gin1vHorvxeD/V+EL7qlCO0cxwGJnHDw2PY1UMsfx1o+IXn1xCxgaA9F/HZWM0OxEF
+ aFd7Se/uvLaV4NveTiQOvsmayi5P3T5DjC+73h7YcOPRM++98bepc3qOoKQZEbV4KuPhP3xDH
+ j74Msgca51eXOLB3V/CrWnikO1Su5xlRof7giR2XHIagF1IjkPk/P0/45php+hsufwCcajtur
+ mghs7Scfrm9LDCly
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+> Nicolas Saenz Julienne <nsaenzjulienne@suse.de> hat am 17. Oktober 2018 um 21:01 geschrieben:
+> 
+> 
+> Hi,
+> 
+> I just received a RPi3B+ and decided to have a go at fixing stuff in the
+> audio driver. The changes are mostly cosmetic. I also took the liberty
+> to update the TODO file.
+> 
+> The series was developed on top of linux-next and tested on a RPi2B and
+> RPi3B+. Sadly I don't have an HDMI monitor with sound so I only tested
+> the mini jack output.
+> 
+> Thanks,
+> Nicolas
+> 
+> v2: Removes the device tree related patches, updates TODO accordingly
+>     and adds suggestions from Takashi.
+> 
 
-From: Rik van Riel <riel@redhat.com>
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
 
-commit 3913cc3507575273beb165a5e027a081913ed507 upstream.
-
-With the lazy FPU code gone, we no longer use the counter field
-in struct fpu for anything. Get rid it.
-
-Signed-off-by: Rik van Riel <riel@redhat.com>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Quentin Casasnovas <quentin.casasnovas@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: pbonzini@redhat.com
-Link: http://lkml.kernel.org/r/1475627678-20788-6-git-send-email-riel@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/include/asm/fpu/internal.h |    3 ---
- arch/x86/include/asm/fpu/types.h    |   11 -----------
- arch/x86/kernel/fpu/core.c          |    3 ---
- 3 files changed, 17 deletions(-)
-
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -575,15 +575,12 @@ switch_fpu_prepare(struct fpu *old_fpu,
- 
- 		/* Don't change CR0.TS if we just switch! */
- 		if (fpu.preload) {
--			new_fpu->counter++;
- 			__fpregs_activate(new_fpu);
- 			prefetch(&new_fpu->state);
- 		}
- 	} else {
--		old_fpu->counter = 0;
- 		old_fpu->last_cpu = -1;
- 		if (fpu.preload) {
--			new_fpu->counter++;
- 			if (fpu_want_lazy_restore(new_fpu, cpu))
- 				fpu.preload = 0;
- 			else
---- a/arch/x86/include/asm/fpu/types.h
-+++ b/arch/x86/include/asm/fpu/types.h
-@@ -303,17 +303,6 @@ struct fpu {
- 	unsigned char			fpregs_active;
- 
- 	/*
--	 * @counter:
--	 *
--	 * This counter contains the number of consecutive context switches
--	 * during which the FPU stays used. If this is over a threshold, the
--	 * lazy FPU restore logic becomes eager, to save the trap overhead.
--	 * This is an unsigned char so that after 256 iterations the counter
--	 * wraps and the context switch behavior turns lazy again; this is to
--	 * deal with bursty apps that only use the FPU for a short time:
--	 */
--	unsigned char			counter;
--	/*
- 	 * @state:
- 	 *
- 	 * In-memory copy of all FPU registers that we save/restore
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -250,7 +250,6 @@ static void fpu_copy(struct fpu *dst_fpu
- 
- int fpu__copy(struct fpu *dst_fpu, struct fpu *src_fpu)
- {
--	dst_fpu->counter = 0;
- 	dst_fpu->fpregs_active = 0;
- 	dst_fpu->last_cpu = -1;
- 
-@@ -353,7 +352,6 @@ void fpu__restore(struct fpu *fpu)
- 	kernel_fpu_disable();
- 	fpregs_activate(fpu);
- 	copy_kernel_to_fpregs(&fpu->state);
--	fpu->counter++;
- 	kernel_fpu_enable();
- }
- EXPORT_SYMBOL_GPL(fpu__restore);
-@@ -370,7 +368,6 @@ EXPORT_SYMBOL_GPL(fpu__restore);
- void fpu__drop(struct fpu *fpu)
- {
- 	preempt_disable();
--	fpu->counter = 0;
- 
- 	if (fpu->fpregs_active) {
- 		/* Ignore delayed exceptions from user space */
-
-
+for the rest of the series
