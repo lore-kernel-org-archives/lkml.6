@@ -2,33 +2,32 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92858C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D227C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F83A21476
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:47:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F83A21476
+	by mail.kernel.org (Postfix) with ESMTP id D46E021477
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:54:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D46E021477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728216AbeJRVtC (ORCPT
+        id S1728031AbeJRVzO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 17:49:02 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:34615 "EHLO
+        Thu, 18 Oct 2018 17:55:14 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:34633 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726932AbeJRVtC (ORCPT
+        with ESMTP id S1727062AbeJRVzN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 17:49:02 -0400
+        Thu, 18 Oct 2018 17:55:13 -0400
 Received: from [213.61.215.195] (helo=nanos)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gD8eK-00014D-De; Thu, 18 Oct 2018 15:47:40 +0200
-Date:   Thu, 18 Oct 2018 15:47:39 +0200 (CEST)
+        id 1gD8kF-0001PK-Q4; Thu, 18 Oct 2018 15:53:47 +0200
+Date:   Thu, 18 Oct 2018 15:53:46 +0200 (CEST)
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Tim Chen <tim.c.chen@linux.intel.com>
 cc:     Jiri Kosina <jikos@kernel.org>,
@@ -45,11 +44,10 @@ cc:     Jiri Kosina <jikos@kernel.org>,
         Arjan van de Ven <arjan@linux.intel.com>,
         Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
         x86@kernel.org
-Subject: Re: [Patch v3 09/13] x86/speculation: Reorganize SPEC_CTRL MSR
- update
-In-Reply-To: <23d8ffaac99be49aa163eb16dd131399141fc432.1539798901.git.tim.c.chen@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1810181537331.1647@nanos.tec.linutronix.de>
-References: <cover.1539798901.git.tim.c.chen@linux.intel.com> <23d8ffaac99be49aa163eb16dd131399141fc432.1539798901.git.tim.c.chen@linux.intel.com>
+Subject: Re: [Patch v3 10/13] x86/speculation: Add per thread STIBP flag
+In-Reply-To: <1e4031d6642d6a835d33651fd5d8f614d95daee5.1539798901.git.tim.c.chen@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1810181548540.1647@nanos.tec.linutronix.de>
+References: <cover.1539798901.git.tim.c.chen@linux.intel.com> <1e4031d6642d6a835d33651fd5d8f614d95daee5.1539798901.git.tim.c.chen@linux.intel.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -63,85 +61,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Wed, 17 Oct 2018, Tim Chen wrote:
 
-> Reorganize the spculation control MSR update code. Currently it is limited
-> to only dynamic update of the Speculative Store Bypass Disable bit.
-> This patch consolidates the logic to check for AMD CPUs that may or may
+Again the subject is misleading, It's suggesting that it adds a per thread
+flag. But the patch does way more than that.
 
-# git grep 'This patch' Documentation/process/
+> Add per thread STIBP flag. When context switching to a process thread that
+> has the STIBP flag, the STIBP bit in the SPEC_CTRL MSR will be turned
+> on to guard against application to application Spectre v2 attack. When
+> switching to a non-security sensitive thread that doesn't have STIBP flag,
+> the STIBP bit in the SPEC_CTRL MSR is turned off.
 
-> not use this MSR to control SSBD. This prepares us to add logic to update
-> other bits in the SPEC_CTRL MSR cleanly.
-> 
-> Originally-by: Thomas Lendacky <Thomas.Lendacky@amd.com>
-> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-> ---
->  arch/x86/kernel/process.c | 39 +++++++++++++++++++++++++++++----------
->  1 file changed, 29 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-> index 8aa4960..789f1bada 100644
-> --- a/arch/x86/kernel/process.c
-> +++ b/arch/x86/kernel/process.c
-> @@ -397,25 +397,45 @@ static __always_inline void amd_set_ssb_virt_state(unsigned long tifn)
+I think I gave you quite some examples how such a changelog should look like.
+
+> --- a/arch/x86/include/asm/thread_info.h
+> +++ b/arch/x86/include/asm/thread_info.h
+> @@ -83,6 +83,7 @@ struct thread_info {
+>  #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
+>  #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
+>  #define TIF_SECCOMP		8	/* secure computing */
+> +#define TIF_STIBP              9       /* Single threaded indirect branch predict */
+>  #define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
+>  #define TIF_UPROBE		12	/* breakpointed or singlestepping */
+>  #define TIF_PATCH_PENDING	13	/* pending live patching update */
+> @@ -110,6 +111,7 @@ struct thread_info {
+>  #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
+>  #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+>  #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+> +#define _TIF_STIBP		(1 << TIF_STIBP)
+>  #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
+>  #define _TIF_UPROBE		(1 << TIF_UPROBE)
+>  #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
+> @@ -146,7 +148,8 @@ struct thread_info {
 >  
->  static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
->  {
-> -	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
-> +	u64 msr = x86_spec_ctrl_base;
-> +
+>  /* flags to check in __switch_to() */
+>  #define _TIF_WORK_CTXSW							\
+> -	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|_TIF_SSBD)
+> +	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|		\
+> +	 _TIF_SSBD|_TIF_STIBP)
+
+These flags are at random locations. I wonder whether they should be
+grouped together. Might not influence code generation, but at least worth
+to have a look.
+
 > +	/*
-> +	 * If X86_FEATURE_SSBD is not set, the SSBD
-> +	 * bit is not to be touched.
+> +	 * Need STIBP defense against Spectre v2 attack
+> +	 * if SMT is in use and we don't have enhanced IBRS.
+
+and enhanced IBRS is not supported.
+
 > +	 */
-> +	if (static_cpu_has(X86_FEATURE_SSBD))
-> +		msr |= ssbd_tif_to_spec_ctrl(tifn);
->  
+> +	if (static_branch_likely(&cpu_smt_enabled) &&
+> +	    !static_branch_unlikely(&spectre_v2_enhanced_ibrs))
+> +		msr |= stibp_tif_to_spec_ctrl(tifn);
+> +
 >  	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
 >  }
->  
-> -static __always_inline void __speculation_ctrl_update(unsigned long tifn)
-> +static __always_inline void __speculation_ctrl_update(unsigned long tifp,
-> +						      unsigned long tifn)
->  {
-> -	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
-> -		amd_set_ssb_virt_state(tifn);
-> -	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
-> -		amd_set_core_ssb_state(tifn);
-> -	else
-> +	bool updmsr = false;
-> +
-> +	/* Check for AMD cpu to see if it uses SPEC_CTRL MSR for SSBD */
-
-Errm. This checks a TIF bit and nothing AMD. The AMD specific check only
-happens when the branch is taken. Please be precise with your comments.
-
-	/* If TIF_SSBD is different, select the proper mitigation method */
-
-Hmm?
-
-> +	if ((tifp ^ tifn) & _TIF_SSBD) {
-> +		if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
-> +			amd_set_ssb_virt_state(tifn);
-> +		else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
-> +			amd_set_core_ssb_state(tifn);
-> +		else if (static_cpu_has(X86_FEATURE_SSBD))
-> +			updmsr  = true;
-> +	}
-> +
-> +	if (updmsr)
->  		spec_ctrl_update_msr(tifn);
->  }
->  
->  void speculation_ctrl_update(unsigned long tif)
->  {
-> +	/*
-> +	 * On this path we're forcing the update, so use ~tif as the
-> +	 * previous flags.
-> +	 */
-
-	/* Forced update. Make sure all relevant TIF flags are different */
-
-Hmm?
 
 Thanks,
 
