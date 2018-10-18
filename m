@@ -7,52 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A038C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B888AECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1E6D214AB
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 750DF21476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwtwPfEu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1E6D214AB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyZ3K5aw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 750DF21476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730171AbeJSCHA (ORCPT
+        id S1730182AbeJSCHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:07:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55480 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:07:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726516AbeJSCHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:07:00 -0400
+        id S1726516AbeJSCHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:07:03 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FD1D21480;
-        Thu, 18 Oct 2018 18:04:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B67EF21486;
+        Thu, 18 Oct 2018 18:04:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885893;
-        bh=AXZ7Lm6pkKWuvJ7n2sL5j2u96ZnKYxuRF9KYaIRtYww=;
+        s=default; t=1539885896;
+        bh=WCL8xG2yX/SrdodwPnGJDV12g65rWVP7iy7YPMvd7aI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZwtwPfEurJ0h9kmcCNn8YZVRprtBpWp2t/y48tkjPvTK3uMp0e8DO+rXVNUd3bXi3
-         F63kbthN2/KyU8gN70GlpDHWiYkufN3fkpZ5v9q1qyfJNNM1A6tN0vMnPpbGEHeZIB
-         6R+aw65Ng1BiFk2ruGmAqa9FUcNHNfNSBnVCyV70=
+        b=OyZ3K5aw3GvvaRQf8v+AC2HJ20DafPYROUUllye5I7QH/4e3m5rRBRjRkRI6QFBor
+         QsqZBl080PmSh+RdCIGUvNaK2mJrkxOrd6qL8r6P0z80kJHVhpwmTDKmfH4AA2He+h
+         b1M8Rv9YAb+NOC5N+X9x+YOXZNJ3l4Q2n0rQ99Zw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Christoph Lameter <clameter@sgi.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 11/48] mm/vmstat.c: fix outdated vmstat_text
-Date:   Thu, 18 Oct 2018 19:54:46 +0200
-Message-Id: <20181018175428.590247375@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <syrjala@sci.fi>
+Subject: [PATCH 4.4 12/48] mach64: detect the dot clock divider correctly on sparc
+Date:   Thu, 18 Oct 2018 19:54:47 +0200
+Message-Id: <20181018175428.639861228@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -70,47 +63,132 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 28e2c4bb99aa40f9d5f07ac130cbc4da0ea93079 upstream.
+commit 76ebebd2464c5c8a4453c98b6dbf9c95a599e810 upstream.
 
-7a9cdebdcc17 ("mm: get rid of vmacache_flush_all() entirely") removed the
-VMACACHE_FULL_FLUSHES statistics, but didn't remove the corresponding
-entry in vmstat_text.  This causes an out-of-bounds access in
-vmstat_show().
+On Sun Ultra 5, it happens that the dot clock is not set up properly for
+some videomodes. For example, if we set the videomode "r1024x768x60" in
+the firmware, Linux would incorrectly set a videomode with refresh rate
+180Hz when booting (suprisingly, my LCD monitor can display it, although
+display quality is very low).
 
-Luckily this only affects kernels with CONFIG_DEBUG_VM_VMACACHE=y, which
-is probably very rare.
+The reason is this: Older mach64 cards set the divider in the register
+VCLK_POST_DIV. The register has four 2-bit fields (the field that is
+actually used is specified in the lowest two bits of the register
+CLOCK_CNTL). The 2 bits select divider "1, 2, 4, 8". On newer mach64 cards,
+there's another bit added - the top four bits of PLL_EXT_CNTL extend the
+divider selection, so we have possible dividers "1, 2, 4, 8, 3, 5, 6, 12".
+The Linux driver clears the top four bits of PLL_EXT_CNTL and never sets
+them, so it can work regardless if the card supports them. However, the
+sparc64 firmware may set these extended dividers during boot - and the
+mach64 driver detects incorrect dot clock in this case.
 
-Link: http://lkml.kernel.org/r/20181001143138.95119-1-jannh@google.com
-Fixes: 7a9cdebdcc17 ("mm: get rid of vmacache_flush_all() entirely")
-Signed-off-by: Jann Horn <jannh@google.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Roman Gushchin <guro@fb.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Christoph Lameter <clameter@sgi.com>
-Cc: Kemi Wang <kemi.wang@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+This patch makes the driver read the additional divider bit from
+PLL_EXT_CNTL and calculate the initial refresh rate properly.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: stable@vger.kernel.org
+Acked-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Ville Syrjälä <syrjala@sci.fi>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/vmstat.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/video/fbdev/aty/atyfb.h      |    3 ++-
+ drivers/video/fbdev/aty/atyfb_base.c |    7 ++++---
+ drivers/video/fbdev/aty/mach64_ct.c  |   10 +++++-----
+ 3 files changed, 11 insertions(+), 9 deletions(-)
 
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -869,7 +869,6 @@ const char * const vmstat_text[] = {
- #ifdef CONFIG_DEBUG_VM_VMACACHE
- 	"vmacache_find_calls",
- 	"vmacache_find_hits",
--	"vmacache_full_flushes",
- #endif
- #endif /* CONFIG_VM_EVENTS_COUNTERS */
- };
+--- a/drivers/video/fbdev/aty/atyfb.h
++++ b/drivers/video/fbdev/aty/atyfb.h
+@@ -332,6 +332,8 @@ extern const struct aty_pll_ops aty_pll_
+ extern void aty_set_pll_ct(const struct fb_info *info, const union aty_pll *pll);
+ extern u8 aty_ld_pll_ct(int offset, const struct atyfb_par *par);
+ 
++extern const u8 aty_postdividers[8];
++
+ 
+     /*
+      *  Hardware cursor support
+@@ -358,7 +360,6 @@ static inline void wait_for_idle(struct
+ 
+ extern void aty_reset_engine(const struct atyfb_par *par);
+ extern void aty_init_engine(struct atyfb_par *par, struct fb_info *info);
+-extern u8   aty_ld_pll_ct(int offset, const struct atyfb_par *par);
+ 
+ void atyfb_copyarea(struct fb_info *info, const struct fb_copyarea *area);
+ void atyfb_fillrect(struct fb_info *info, const struct fb_fillrect *rect);
+--- a/drivers/video/fbdev/aty/atyfb_base.c
++++ b/drivers/video/fbdev/aty/atyfb_base.c
+@@ -3093,17 +3093,18 @@ static int atyfb_setup_sparc(struct pci_
+ 		/*
+ 		 * PLL Reference Divider M:
+ 		 */
+-		M = pll_regs[2];
++		M = pll_regs[PLL_REF_DIV];
+ 
+ 		/*
+ 		 * PLL Feedback Divider N (Dependent on CLOCK_CNTL):
+ 		 */
+-		N = pll_regs[7 + (clock_cntl & 3)];
++		N = pll_regs[VCLK0_FB_DIV + (clock_cntl & 3)];
+ 
+ 		/*
+ 		 * PLL Post Divider P (Dependent on CLOCK_CNTL):
+ 		 */
+-		P = 1 << (pll_regs[6] >> ((clock_cntl & 3) << 1));
++		P = aty_postdividers[((pll_regs[VCLK_POST_DIV] >> ((clock_cntl & 3) << 1)) & 3) |
++		                     ((pll_regs[PLL_EXT_CNTL] >> (2 + (clock_cntl & 3))) & 4)];
+ 
+ 		/*
+ 		 * PLL Divider Q:
+--- a/drivers/video/fbdev/aty/mach64_ct.c
++++ b/drivers/video/fbdev/aty/mach64_ct.c
+@@ -114,7 +114,7 @@ static void aty_st_pll_ct(int offset, u8
+  */
+ 
+ #define Maximum_DSP_PRECISION 7
+-static u8 postdividers[] = {1,2,4,8,3};
++const u8 aty_postdividers[8] = {1,2,4,8,3,5,6,12};
+ 
+ static int aty_dsp_gt(const struct fb_info *info, u32 bpp, struct pll_ct *pll)
+ {
+@@ -221,7 +221,7 @@ static int aty_valid_pll_ct(const struct
+ 		pll->vclk_post_div += (q <  64*8);
+ 		pll->vclk_post_div += (q <  32*8);
+ 	}
+-	pll->vclk_post_div_real = postdividers[pll->vclk_post_div];
++	pll->vclk_post_div_real = aty_postdividers[pll->vclk_post_div];
+ 	//    pll->vclk_post_div <<= 6;
+ 	pll->vclk_fb_div = q * pll->vclk_post_div_real / 8;
+ 	pllvclk = (1000000 * 2 * pll->vclk_fb_div) /
+@@ -512,7 +512,7 @@ static int aty_init_pll_ct(const struct
+ 		u8 mclk_fb_div, pll_ext_cntl;
+ 		pll->ct.pll_ref_div = aty_ld_pll_ct(PLL_REF_DIV, par);
+ 		pll_ext_cntl = aty_ld_pll_ct(PLL_EXT_CNTL, par);
+-		pll->ct.xclk_post_div_real = postdividers[pll_ext_cntl & 0x07];
++		pll->ct.xclk_post_div_real = aty_postdividers[pll_ext_cntl & 0x07];
+ 		mclk_fb_div = aty_ld_pll_ct(MCLK_FB_DIV, par);
+ 		if (pll_ext_cntl & PLL_MFB_TIMES_4_2B)
+ 			mclk_fb_div <<= 1;
+@@ -534,7 +534,7 @@ static int aty_init_pll_ct(const struct
+ 		xpost_div += (q <  64*8);
+ 		xpost_div += (q <  32*8);
+ 	}
+-	pll->ct.xclk_post_div_real = postdividers[xpost_div];
++	pll->ct.xclk_post_div_real = aty_postdividers[xpost_div];
+ 	pll->ct.mclk_fb_div = q * pll->ct.xclk_post_div_real / 8;
+ 
+ #ifdef CONFIG_PPC
+@@ -583,7 +583,7 @@ static int aty_init_pll_ct(const struct
+ 			mpost_div += (q <  64*8);
+ 			mpost_div += (q <  32*8);
+ 		}
+-		sclk_post_div_real = postdividers[mpost_div];
++		sclk_post_div_real = aty_postdividers[mpost_div];
+ 		pll->ct.sclk_fb_div = q * sclk_post_div_real / 8;
+ 		pll->ct.spll_cntl2 = mpost_div << 4;
+ #ifdef DEBUG
 
 
