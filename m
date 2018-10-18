@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB40FECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2E45ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2F6F21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74A0421476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gvIGy7RM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F6F21473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7uv9qfP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74A0421476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729325AbeJSCCE (ORCPT
+        id S1729336AbeJSCCO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:02:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49884 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:02:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728410AbeJSCCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:02:03 -0400
+        id S1727955AbeJSCCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:02:13 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DB8A21473;
-        Thu, 18 Oct 2018 17:59:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3110421473;
+        Thu, 18 Oct 2018 18:00:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885598;
-        bh=RMyhEmdtaSo5SVU0Lceu054bv4gP0s14A5Z1ltxD5Ts=;
+        s=default; t=1539885607;
+        bh=hdutbW9EgMTqHiGRdMXV/Ed+Hsg0dZLUEOWuhFtvBj8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gvIGy7RMeSuUkRa7Rdr4QOWOPNX3xkL1asOL8ZEfd5y/cVKG9co0KtEBNHmq8ORUO
-         j2MNrryjQbojWqD1HKBVUyml7Xi/bjXf9qTLLUXy/TPCc11eD0jDvPVqdbgJFiHYo2
-         6RtiELNssHNMLKtSxOHBoCvQO88CKELLCq9wrQJM=
+        b=n7uv9qfPTZ471ybk2sr+Zy8OpobLE28QzGxMH8hF+dfFn1ypmWLLzR4mRnnwlrnfj
+         96LOdAfFA6wEln+NdrWtKon354WJedPloJI9PJ3fX/dVPIc/89usU2Z0KcCchsfvN2
+         gnwvHCBPHxRtzVCjJm1bdaMZoKh0SliPqaWjnfsY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 15/41] intel_th: pci: Add Ice Lake PCH support
-Date:   Thu, 18 Oct 2018 19:54:30 +0200
-Message-Id: <20181018175419.573018767@linuxfoundation.org>
+Subject: [PATCH 4.14 16/41] Input: atakbd - fix Atari keymap
+Date:   Thu, 18 Oct 2018 19:54:31 +0200
+Message-Id: <20181018175419.735139624@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
 References: <20181018175416.718399607@linuxfoundation.org>
@@ -63,33 +64,133 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Andreas Schwab <schwab@linux-m68k.org>
 
-[ Upstream commit 59d08d00d43c644ee2011d7ff1807bdd69f31fe0 ]
+[ Upstream commit 9e62df51be993035c577371ffee5477697a56aad ]
 
-This adds Intel(R) Trace Hub PCI ID for Ice Lake PCH.
+Fix errors in Atari keymap (mostly in keypad, help and undo keys).
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Patch provided on debian-68k ML by Andreas Schwab <schwab@linux-m68k.org>,
+keymap array size and unhandled scancode limit adjusted to 0x73 by me.
+
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Andreas Schwab <schwab@linux-m68k.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwtracing/intel_th/pci.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/input/keyboard/atakbd.c |   64 ++++++++++++++++------------------------
+ 1 file changed, 26 insertions(+), 38 deletions(-)
 
---- a/drivers/hwtracing/intel_th/pci.c
-+++ b/drivers/hwtracing/intel_th/pci.c
-@@ -168,6 +168,11 @@ static const struct pci_device_id intel_
- 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x18e1),
- 		.driver_data = (kernel_ulong_t)&intel_th_2x,
- 	},
-+	{
-+		/* Ice Lake PCH */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x34a6),
-+		.driver_data = (kernel_ulong_t)&intel_th_2x,
-+	},
- 	{ 0 },
+--- a/drivers/input/keyboard/atakbd.c
++++ b/drivers/input/keyboard/atakbd.c
+@@ -79,8 +79,7 @@ MODULE_LICENSE("GPL");
+  */
+ 
+ 
+-static unsigned char atakbd_keycode[0x72] = {	/* American layout */
+-	[0]	 = KEY_GRAVE,
++static unsigned char atakbd_keycode[0x73] = {	/* American layout */
+ 	[1]	 = KEY_ESC,
+ 	[2]	 = KEY_1,
+ 	[3]	 = KEY_2,
+@@ -121,9 +120,9 @@ static unsigned char atakbd_keycode[0x72
+ 	[38]	 = KEY_L,
+ 	[39]	 = KEY_SEMICOLON,
+ 	[40]	 = KEY_APOSTROPHE,
+-	[41]	 = KEY_BACKSLASH,	/* FIXME, '#' */
++	[41]	 = KEY_GRAVE,
+ 	[42]	 = KEY_LEFTSHIFT,
+-	[43]	 = KEY_GRAVE,		/* FIXME: '~' */
++	[43]	 = KEY_BACKSLASH,
+ 	[44]	 = KEY_Z,
+ 	[45]	 = KEY_X,
+ 	[46]	 = KEY_C,
+@@ -149,45 +148,34 @@ static unsigned char atakbd_keycode[0x72
+ 	[66]	 = KEY_F8,
+ 	[67]	 = KEY_F9,
+ 	[68]	 = KEY_F10,
+-	[69]	 = KEY_ESC,
+-	[70]	 = KEY_DELETE,
+-	[71]	 = KEY_KP7,
+-	[72]	 = KEY_KP8,
+-	[73]	 = KEY_KP9,
++	[71]	 = KEY_HOME,
++	[72]	 = KEY_UP,
+ 	[74]	 = KEY_KPMINUS,
+-	[75]	 = KEY_KP4,
+-	[76]	 = KEY_KP5,
+-	[77]	 = KEY_KP6,
++	[75]	 = KEY_LEFT,
++	[77]	 = KEY_RIGHT,
+ 	[78]	 = KEY_KPPLUS,
+-	[79]	 = KEY_KP1,
+-	[80]	 = KEY_KP2,
+-	[81]	 = KEY_KP3,
+-	[82]	 = KEY_KP0,
+-	[83]	 = KEY_KPDOT,
+-	[90]	 = KEY_KPLEFTPAREN,
+-	[91]	 = KEY_KPRIGHTPAREN,
+-	[92]	 = KEY_KPASTERISK,	/* FIXME */
+-	[93]	 = KEY_KPASTERISK,
+-	[94]	 = KEY_KPPLUS,
+-	[95]	 = KEY_HELP,
++	[80]	 = KEY_DOWN,
++	[82]	 = KEY_INSERT,
++	[83]	 = KEY_DELETE,
+ 	[96]	 = KEY_102ND,
+-	[97]	 = KEY_KPASTERISK,	/* FIXME */
+-	[98]	 = KEY_KPSLASH,
++	[97]	 = KEY_UNDO,
++	[98]	 = KEY_HELP,
+ 	[99]	 = KEY_KPLEFTPAREN,
+ 	[100]	 = KEY_KPRIGHTPAREN,
+ 	[101]	 = KEY_KPSLASH,
+ 	[102]	 = KEY_KPASTERISK,
+-	[103]	 = KEY_UP,
+-	[104]	 = KEY_KPASTERISK,	/* FIXME */
+-	[105]	 = KEY_LEFT,
+-	[106]	 = KEY_RIGHT,
+-	[107]	 = KEY_KPASTERISK,	/* FIXME */
+-	[108]	 = KEY_DOWN,
+-	[109]	 = KEY_KPASTERISK,	/* FIXME */
+-	[110]	 = KEY_KPASTERISK,	/* FIXME */
+-	[111]	 = KEY_KPASTERISK,	/* FIXME */
+-	[112]	 = KEY_KPASTERISK,	/* FIXME */
+-	[113]	 = KEY_KPASTERISK	/* FIXME */
++	[103]	 = KEY_KP7,
++	[104]	 = KEY_KP8,
++	[105]	 = KEY_KP9,
++	[106]	 = KEY_KP4,
++	[107]	 = KEY_KP5,
++	[108]	 = KEY_KP6,
++	[109]	 = KEY_KP1,
++	[110]	 = KEY_KP2,
++	[111]	 = KEY_KP3,
++	[112]	 = KEY_KP0,
++	[113]	 = KEY_KPDOT,
++	[114]	 = KEY_KPENTER,
  };
  
+ static struct input_dev *atakbd_dev;
+@@ -195,7 +183,7 @@ static struct input_dev *atakbd_dev;
+ static void atakbd_interrupt(unsigned char scancode, char down)
+ {
+ 
+-	if (scancode < 0x72) {		/* scancodes < 0xf2 are keys */
++	if (scancode < 0x73) {		/* scancodes < 0xf3 are keys */
+ 
+ 		// report raw events here?
+ 
+@@ -209,7 +197,7 @@ static void atakbd_interrupt(unsigned ch
+ 			input_report_key(atakbd_dev, scancode, down);
+ 			input_sync(atakbd_dev);
+ 		}
+-	} else				/* scancodes >= 0xf2 are mouse data, most likely */
++	} else				/* scancodes >= 0xf3 are mouse data, most likely */
+ 		printk(KERN_INFO "atakbd: unhandled scancode %x\n", scancode);
+ 
+ 	return;
 
 
