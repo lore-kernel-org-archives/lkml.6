@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDCFECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 130ABC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D959F20658
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D08AC204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDzsclXL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D959F20658
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="whVZwCzd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D08AC204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730382AbeJSCIF (ORCPT
+        id S1730396AbeJSCII (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:08:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56940 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:08:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729763AbeJSCIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:08:04 -0400
+        id S1730384AbeJSCIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:08:07 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFEE920658;
-        Thu, 18 Oct 2018 18:05:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1CFF204FD;
+        Thu, 18 Oct 2018 18:05:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885956;
-        bh=BcgVR2o4Bq7dIhCVzE1qmTNsRD+D85kLmih/OECb0yY=;
+        s=default; t=1539885960;
+        bh=b7wRveuyhzWc6pDLQETqtF3mepB0A8qy4fZca+hV98M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BDzsclXLaxKBTdIKjB5dFivK0MM4efkAHeSwkY533QIS1rLJKd9UOVp3mPZcMmNx3
-         uGS+eT/zeaxyDb/xy5Tc1OOVIzl8NTNqOAagO/dfT1Y5ToMwdpmSPuF1Alyog6JxYD
-         2jQ/Vyu8K90ihmDcV1fDz7Cej3Y3m+lt/7ywVEFo=
+        b=whVZwCzdXaS5c2fWc98d59zTCjDCW015udqaREyN45xc1O2EOtLf3ZEu4cFMENR6F
+         cG9oKPXrp7K0HFAMyPPljYDy5h5wyMmsNpkx2NRrWtlM58IM55ZyWv2m1huxXxomXf
+         Me5BxRcUanHBdmOpmxoTOoR9q8SO+PJk4UJ4G5j8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 28/48] net: mvpp2: Extract the correct ethtype from the skb for tx csum offload
-Date:   Thu, 18 Oct 2018 19:55:03 +0200
-Message-Id: <20181018175429.482969698@linuxfoundation.org>
+Subject: [PATCH 4.4 29/48] net: systemport: Fix wake-up interrupt race during resume
+Date:   Thu, 18 Oct 2018 19:55:04 +0200
+Message-Id: <20181018175429.529030981@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -63,74 +62,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 35f3625c21852ad839f20c91c7d81c4c1101e207 ]
+[ Upstream commit 45ec318578c0c22a11f5b9927d064418e1ab1905 ]
 
-When offloading the L3 and L4 csum computation on TX, we need to extract
-the l3_proto from the ethtype, independently of the presence of a vlan
-tag.
+The AON_PM_L2 is normally used to trigger and identify the source of a
+wake-up event. Since the RX_SYS clock is no longer turned off, we also
+have an interrupt being sent to the SYSTEMPORT INTRL_2_0 controller, and
+that interrupt remains active up until the magic packet detector is
+disabled which happens much later during the driver resumption.
 
-The actual driver uses skb->protocol as-is, resulting in packets with
-the wrong L4 checksum being sent when there's a vlan tag in the packet
-header and checksum offloading is enabled.
+The race happens if we have a CPU that is entering the SYSTEMPORT
+INTRL2_0 handler during resume, and another CPU has managed to clear the
+wake-up interrupt during bcm_sysport_resume_from_wol(). In that case, we
+have the first CPU stuck in the interrupt handler with an interrupt
+cause that has been cleared under its feet, and so we keep returning
+IRQ_NONE and we never make any progress.
 
-This commit makes use of vlan_protocol_get() to get the correct ethtype
-regardless the presence of a vlan tag.
+This was not a problem before because we would always turn off the
+RX_SYS clock during WoL, so the SYSTEMPORT INTRL2_0 would also be turned
+off as well, thus not latching the interrupt.
 
-Fixes: 3f518509dedc ("ethernet: Add new driver for Marvell Armada 375 network unit")
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+The fix is to make sure we do not enable either the MPD or
+BRCM_TAG_MATCH interrupts since those are redundant with what the
+AON_PM_L2 interrupt controller already processes and they would cause
+such a race to occur.
+
+Fixes: bb9051a2b230 ("net: systemport: Add support for WAKE_FILTER")
+Fixes: 83e82f4c706b ("net: systemport: add Wake-on-LAN support")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/mvpp2.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/broadcom/bcmsysport.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
---- a/drivers/net/ethernet/marvell/mvpp2.c
-+++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -29,6 +29,7 @@
- #include <linux/clk.h>
- #include <linux/hrtimer.h>
- #include <linux/ktime.h>
-+#include <linux/if_vlan.h>
- #include <uapi/linux/ppp_defs.h>
- #include <net/ip.h>
- #include <net/ipv6.h>
-@@ -4268,7 +4269,7 @@ static void mvpp2_txq_desc_put(struct mv
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -850,14 +850,22 @@ static void bcm_sysport_resume_from_wol(
+ {
+ 	u32 reg;
+ 
+-	/* Stop monitoring MPD interrupt */
+-	intrl2_0_mask_set(priv, INTRL2_0_MPD);
+-
+ 	/* Clear the MagicPacket detection logic */
+ 	reg = umac_readl(priv, UMAC_MPD_CTRL);
+ 	reg &= ~MPD_EN;
+ 	umac_writel(priv, reg, UMAC_MPD_CTRL);
+ 
++	reg = intrl2_0_readl(priv, INTRL2_CPU_STATUS);
++	if (reg & INTRL2_0_MPD)
++		netdev_info(priv->netdev, "Wake-on-LAN (MPD) interrupt!\n");
++
++	if (reg & INTRL2_0_BRCM_MATCH_TAG) {
++		reg = rxchk_readl(priv, RXCHK_BRCM_TAG_MATCH_STATUS) &
++				  RXCHK_BRCM_TAG_MATCH_MASK;
++		netdev_info(priv->netdev,
++			    "Wake-on-LAN (filters 0x%02x) interrupt!\n", reg);
++	}
++
+ 	netif_dbg(priv, wol, priv->netdev, "resumed from WOL\n");
  }
  
- /* Set Tx descriptors fields relevant for CSUM calculation */
--static u32 mvpp2_txq_desc_csum(int l3_offs, int l3_proto,
-+static u32 mvpp2_txq_desc_csum(int l3_offs, __be16 l3_proto,
- 			       int ip_hdr_len, int l4_proto)
- {
- 	u32 command;
-@@ -5032,14 +5033,15 @@ static u32 mvpp2_skb_tx_csum(struct mvpp
- 	if (skb->ip_summed == CHECKSUM_PARTIAL) {
- 		int ip_hdr_len = 0;
- 		u8 l4_proto;
-+		__be16 l3_proto = vlan_get_protocol(skb);
+@@ -890,11 +898,6 @@ static irqreturn_t bcm_sysport_rx_isr(in
+ 	if (priv->irq0_stat & INTRL2_0_TX_RING_FULL)
+ 		bcm_sysport_tx_reclaim_all(priv);
  
--		if (skb->protocol == htons(ETH_P_IP)) {
-+		if (l3_proto == htons(ETH_P_IP)) {
- 			struct iphdr *ip4h = ip_hdr(skb);
+-	if (priv->irq0_stat & INTRL2_0_MPD) {
+-		netdev_info(priv->netdev, "Wake-on-LAN interrupt!\n");
+-		bcm_sysport_resume_from_wol(priv);
+-	}
+-
+ 	return IRQ_HANDLED;
+ }
  
- 			/* Calculate IPv4 checksum and L4 checksum */
- 			ip_hdr_len = ip4h->ihl;
- 			l4_proto = ip4h->protocol;
--		} else if (skb->protocol == htons(ETH_P_IPV6)) {
-+		} else if (l3_proto == htons(ETH_P_IPV6)) {
- 			struct ipv6hdr *ip6h = ipv6_hdr(skb);
+@@ -1915,9 +1918,6 @@ static int bcm_sysport_suspend_to_wol(st
+ 	/* UniMAC receive needs to be turned on */
+ 	umac_enable_set(priv, CMD_RX_EN, 1);
  
- 			/* Read l4_protocol from one of IPv6 extra headers */
-@@ -5051,7 +5053,7 @@ static u32 mvpp2_skb_tx_csum(struct mvpp
- 		}
+-	/* Enable the interrupt wake-up source */
+-	intrl2_0_mask_clear(priv, INTRL2_0_MPD);
+-
+ 	netif_dbg(priv, wol, ndev, "entered WOL mode\n");
  
- 		return mvpp2_txq_desc_csum(skb_network_offset(skb),
--				skb->protocol, ip_hdr_len, l4_proto);
-+					   l3_proto, ip_hdr_len, l4_proto);
- 	}
- 
- 	return MVPP2_TXD_L4_CSUM_NOT | MVPP2_TXD_IP_CSUM_DISABLE;
+ 	return 0;
 
 
