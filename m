@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC749ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F300ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A628C2148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45D3A2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="voB6pNjK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A628C2148D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kkeb9vr7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45D3A2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730237AbeJSCHT (ORCPT
+        id S1730250AbeJSCHX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:07:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55912 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:07:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729855AbeJSCHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:07:19 -0400
+        id S1729245AbeJSCHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:07:23 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5490321476;
-        Thu, 18 Oct 2018 18:05:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A95CC2148D;
+        Thu, 18 Oct 2018 18:05:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885911;
-        bh=HT78kggpkgZyK93rkE3pvXdR6J7JBCt9GRb6MeRJn5Y=;
+        s=default; t=1539885916;
+        bh=eH4amy02+wX7xmbZrak7ouu7Dx1G6xyn/1YJA5Pb1Cs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=voB6pNjKosUqX3C5KUeY5uBbx3OC0/p/UEWFAHHAypfgy0sc80vgxHfomz20zMISg
-         WLauvj7mLIs9ejaAuApv5f5Zsd04afx799NDAxiw04Q/QIvXPy+hNnp6fTZT0p5kbO
-         CUOufaKbATsCsthOi6rpvm/MghGzV/vFb6EzQ5zA=
+        b=Kkeb9vr7wSLnsLm4nOmwydlnPdvYhd6Dr2OOGUu3LIDrdJ6WL/FMsGqfKrS3SnJXr
+         4KpHJPELVYbCN1NKLf0wEEYcQLFL/sC2bfskNPEY3Us2rLoC0yxC3Ab7w2d7fJB89A
+         BZom1wrkWPmviKc1SGUDmMKdkmG4+0wW2EUeKr6Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hou Tao <houtao1@huawei.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: [PATCH 4.4 16/48] jffs2: return -ERANGE when xattr buffer is too small
-Date:   Thu, 18 Oct 2018 19:54:51 +0200
-Message-Id: <20181018175428.883959029@linuxfoundation.org>
+        stable@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 17/48] bnxt_en: Fix TX timeout during netpoll.
+Date:   Thu, 18 Oct 2018 19:54:52 +0200
+Message-Id: <20181018175428.945537350@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -62,49 +63,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hou Tao <houtao1@huawei.com>
+From: Michael Chan <michael.chan@broadcom.com>
 
-When a file have multiple xattrs and the passed buffer is
-smaller than the required size, jffs2_listxattr() should
-return -ERANGE instead of continue, else Oops may occur
-due to memory corruption.
+[ Upstream commit 73f21c653f930f438d53eed29b5e4c65c8a0f906 ]
 
-Also remove the unnecessary check ("rc < 0"), because
-xhandle->list(...) will not return an error number.
+The current netpoll implementation in the bnxt_en driver has problems
+that may miss TX completion events.  bnxt_poll_work() in effect is
+only handling at most 1 TX packet before exiting.  In addition,
+there may be in flight TX completions that ->poll() may miss even
+after we fix bnxt_poll_work() to handle all visible TX completions.
+netpoll may not call ->poll() again and HW may not generate IRQ
+because the driver does not ARM the IRQ when the budget (0 for netpoll)
+is reached.
 
-Spotted by generic/377 in xfstests-dev.
+We fix it by handling all TX completions and to always ARM the IRQ
+when we exit ->poll() with 0 budget.
 
-NB: The problem had been fixed by commit 764a5c6b1fa4 ("xattr
-handlers: Simplify list operation") in v4.5-rc1, but the
-modification in that commit may be too much because it modifies
-all file-systems which implement xattr, so I create a single
-patch for jffs2 to fix the problem.
+Also, the logic to ACK the completion ring in case it is almost filled
+with TX completions need to be adjusted to take care of the 0 budget
+case, as discussed with Eric Dumazet <edumazet@google.com>
 
-Signed-off-by: Hou Tao <houtao1@huawei.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
+Reported-by: Song Liu <songliubraving@fb.com>
+Reviewed-by: Song Liu <songliubraving@fb.com>
+Tested-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/jffs2/xattr.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/fs/jffs2/xattr.c
-+++ b/fs/jffs2/xattr.c
-@@ -1004,12 +1004,14 @@ ssize_t jffs2_listxattr(struct dentry *d
- 			rc = xhandle->list(xhandle, dentry, buffer + len,
- 					   size - len, xd->xname,
- 					   xd->name_len);
-+			if (rc > size - len) {
-+				rc = -ERANGE;
-+				goto out;
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -1343,8 +1343,11 @@ static int bnxt_poll_work(struct bnxt *b
+ 		if (TX_CMP_TYPE(txcmp) == CMP_TYPE_TX_L2_CMP) {
+ 			tx_pkts++;
+ 			/* return full budget so NAPI will complete. */
+-			if (unlikely(tx_pkts > bp->tx_wake_thresh))
++			if (unlikely(tx_pkts > bp->tx_wake_thresh)) {
+ 				rx_pkts = budget;
++				raw_cons = NEXT_RAW_CMP(raw_cons);
++				break;
 +			}
- 		} else {
- 			rc = xhandle->list(xhandle, dentry, NULL, 0,
- 					   xd->xname, xd->name_len);
+ 		} else if ((TX_CMP_TYPE(txcmp) & 0x30) == 0x10) {
+ 			rc = bnxt_rx_pkt(bp, bnapi, &raw_cons, &agg_event);
+ 			if (likely(rc >= 0))
+@@ -1362,7 +1365,7 @@ static int bnxt_poll_work(struct bnxt *b
  		}
--		if (rc < 0)
--			goto out;
- 		len += rc;
+ 		raw_cons = NEXT_RAW_CMP(raw_cons);
+ 
+-		if (rx_pkts == budget)
++		if (rx_pkts && rx_pkts == budget)
+ 			break;
  	}
- 	rc = len;
+ 
+@@ -1404,8 +1407,12 @@ static int bnxt_poll(struct napi_struct
+ 	while (1) {
+ 		work_done += bnxt_poll_work(bp, bnapi, budget - work_done);
+ 
+-		if (work_done >= budget)
++		if (work_done >= budget) {
++			if (!budget)
++				BNXT_CP_DB_REARM(cpr->cp_doorbell,
++						 cpr->cp_raw_cons);
+ 			break;
++		}
+ 
+ 		if (!bnxt_has_work(bp, cpr)) {
+ 			napi_complete(napi);
 
 
