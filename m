@@ -3,93 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2E7C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B35EC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7DC821479
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:11:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7DC821479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 33AB02087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:14:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33AB02087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727733AbeJRTM0 (ORCPT
+        id S1727825AbeJRTPB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 15:12:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41952 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726173AbeJRTMZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 15:12:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0B46AAFDB;
-        Thu, 18 Oct 2018 11:11:54 +0000 (UTC)
-Date:   Thu, 18 Oct 2018 13:11:53 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v13 02/12] livepatch: Helper macros to define livepatch
- structures
-Message-ID: <20181018111153.qcmvidttifi57u45@pathway.suse.cz>
-References: <20181015123713.25868-1-pmladek@suse.com>
- <20181015123713.25868-3-pmladek@suse.com>
- <20181017181756.cy65ujygmf3ulmiz@treble>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181017181756.cy65ujygmf3ulmiz@treble>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        Thu, 18 Oct 2018 15:15:01 -0400
+Received: from mout.perfora.net ([74.208.4.197]:35177 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726173AbeJRTPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 15:15:01 -0400
+Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
+ mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0LfyXt-1fppru2pjP-00pgHF; Thu, 18 Oct 2018 13:14:18 +0200
+Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
+ mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0LfyXt-1fppru2pjP-00pgHF; Thu, 18 Oct 2018 13:14:18 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Marcel Ziswiler <marcel@ziswiler.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v3 0/7] ARM: dts: tegra: last minute fixes
+Date:   Thu, 18 Oct 2018 13:14:04 +0200
+Message-Id: <20181018111411.26623-1-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+X-Provags-ID: V03:K1:PvD7EU+Up7K9KuIjjtPdZ16oyPoMfeo6ANUgLoHESMGz7F6z8zS
+ 6pCZnMK7qks5OE0QZr5D4XK8HPh8OUcbGjroKzbadq8Ql9D1EQR0/OqfMBsNP72ZiFVlU46
+ xTOdL3qLtF7DzNrhpiw4b4XONjHuCa3mniw9YkqS5RYeRyapawcgHvcuG5KvVMUFwRkxOWP
+ 2fGPfQSnhTaPnPuo+d8DA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:WwqGVH1D/bc=:xshE3ChDCyWmYD4rpC5W8F
+ jyY0b2Uf+/EJVIYWKpD40mKz8I7uys6TtbKMi/gmh16ynl/0c0BM1Fqblk5dUVHn1+OE/AE/4
+ 0XflAfhWoRymVgkqgLUTBZanDo6LQ9b8bFavU+p+ZXRMPTPSCPo6gIUiSzs5pjct4Dz6ywSaJ
+ K+oNTd3lXTxzqO+UaxF6iWRHCx6wRrn+GCeuDSHrWe/vtZ7vO+14JRBTxmf0K64WVFwfJBzXJ
+ 2iBeHm3glDBd/vSg5otIvZrXOLA0jeHyQIuS202OI5iMW2OW8jcH+cDuFyn01qnzRltvHOsKs
+ A+adTsB9IGd/54MD7mQf5xSTsm7OT1n0CM++2fmDM/aLIEgLdjQA1anylWXfP/BySXgBf+Mef
+ 1ipaLaZVH+f7gqVsWxQMhP4ZN2loQ8IsuK2rKcfH/lOlmjVkTc8ooHtgEENTWjA1QBLhn0i3Z
+ 38fjgPomx1jULfs9Hb/Dg/+VPa++7Ca4ipxzDHofxNkS1bk9OZNeGcF81OZt/dpX7vIvbSNS1
+ zIWpwCYtjvBsVlks+cT7M2U+LBAIefVOtCDX1341qqRRNl8kjr3KlTPV3TR394FdQVSdKMO9n
+ 1PvBAWOXC6QCuVN3bLEmd7GfrGsjwQ3x+Zd9FyDbYP8mwbED40LZrAX5akLbB/eCPij6QJa7l
+ 2xNieUE1QoGx5VFKDhVtd779c/qEk94xsZzsGjOHeOVQPLw54+kXrL+7rgW1XEunVIc0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2018-10-17 13:17:56, Josh Poimboeuf wrote:
-> On Mon, Oct 15, 2018 at 02:37:03PM +0200, Petr Mladek wrote:
-> > The definition of struct klp_func might be a bit confusing.
-> > The original function is defined by name as a string.
-> > The new function is defined by name as a function pointer
-> > casted to unsigned long.
-> > 
-> > This patch adds helper macros that hide the different types.
-> > The functions are defined just by the name. For example:
-> 
-> On one hand, these macros are kind of nice, because they do the function
-> pointer casting for the user.
-> 
-> On the other hand, they hide the field names, which hurts readability a
-> bit.  For example, it would be easy to accidentally assign the wrong
-> callback function.
 
-I am not a big fan of the macros either.
+This series comes with some last minutes fixes and further clean-up.
 
+Changes in v3:
+- Dropped ASoC patches in favour of sending them as a separate series.
 
-> Also, it's unfortunate that these macros are needed in the first place.
-> 
-> What if we just change new_addr (and old_addr) to be 'void *'?  Then the
-> macros wouldn't be as useful, and we could just get rid of them.
+Changes in v2:
+- Dropped "[PATCH v1 3/8] ARM: tegra: apalis/colibri_t30: fix hdmi
+  regulator" as suggested by Russell et. al.
+- Added 2 new patches improving/fixing audio on Apalis TK1.
 
-Hmm, I wonder if any change make sense then. The above proposal might
-just exchange one confusion with another one:
+Changes in v1:
+- Remove simple-panel compatible as suggested by Rob.
 
-   + I would expect that a variable called addr is of the type
-     unsigned long
+Marcel Ziswiler (7):
+  ARM: tegra: fix simple-panel compatibles
+  ARM: tegra: apalis-tk1/colibri_t20/t30: eval/iris: fix regulator gpio
+    enable
+  ARM: tegra: colibri_t20: reorder pmic properties
+  ARM: tegra: apalis-tk1: further regulator clean-up
+  ARM: tegra: apalis_t30/tk1: annotate power I2C being on-module
+  ARM: tegra: colibri_t30: further regulator clean-up
+  ARM: tegra: apalis_t30: further regulator clean-up
 
-   + we would need casting when calling ftrace API
+ arch/arm/boot/dts/tegra114-dalmore.dts          |  3 +-
+ arch/arm/boot/dts/tegra124-apalis-eval.dts      |  4 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts |  4 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     | 17 +++---
+ arch/arm/boot/dts/tegra124-apalis.dtsi          | 17 +++---
+ arch/arm/boot/dts/tegra124-venice2.dts          |  2 +-
+ arch/arm/boot/dts/tegra20-colibri-eval-v3.dts   |  4 +-
+ arch/arm/boot/dts/tegra20-colibri-iris.dts      |  4 +-
+ arch/arm/boot/dts/tegra20-colibri.dtsi          |  4 +-
+ arch/arm/boot/dts/tegra20-harmony.dts           |  2 +-
+ arch/arm/boot/dts/tegra20-medcom-wide.dts       |  2 +-
+ arch/arm/boot/dts/tegra20-paz00.dts             |  2 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts          |  2 +-
+ arch/arm/boot/dts/tegra20-ventana.dts           |  2 +-
+ arch/arm/boot/dts/tegra30-apalis-eval.dts       |  2 +-
+ arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts  |  4 +-
+ arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi      | 72 +++++++++++--------------
+ arch/arm/boot/dts/tegra30-apalis.dtsi           | 70 ++++++++++--------------
+ arch/arm/boot/dts/tegra30-cardhu.dtsi           |  2 +-
+ arch/arm/boot/dts/tegra30-colibri-eval-v3.dts   |  4 +-
+ arch/arm/boot/dts/tegra30-colibri.dtsi          | 45 ++++++++--------
+ 21 files changed, 123 insertions(+), 145 deletions(-)
 
-   + .new_addr = function_xxx looks a bit weird and it will
-     be used many times in all livepatch sources.
+-- 
+2.14.4
 
-
-That said I could live with any solution. The livepatch code
-is complicated from other reasons. This is only small detail
-from my (today's ;-) point of view.
-
-Best Regards,
-Petr
