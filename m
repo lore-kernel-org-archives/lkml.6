@@ -2,85 +2,110 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E60F7C67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39719C67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A28382145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:11:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9C2920866
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:12:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=comcast.net header.i=@comcast.net header.b="pFWplwbo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A28382145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=comcast.net
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gBU5MIM0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C2920866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbeJSGOB (ORCPT
+        id S1726963AbeJSGPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 02:14:01 -0400
-Received: from resqmta-ch2-08v.sys.comcast.net ([69.252.207.40]:47436 "EHLO
-        resqmta-ch2-08v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726589AbeJSGOB (ORCPT
+        Fri, 19 Oct 2018 02:15:16 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:42805 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725751AbeJSGPP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 02:14:01 -0400
-X-Greylist: delayed 489 seconds by postgrey-1.27 at vger.kernel.org; Fri, 19 Oct 2018 02:14:00 EDT
-Received: from resomta-ch2-11v.sys.comcast.net ([69.252.207.107])
-        by resqmta-ch2-08v.sys.comcast.net with ESMTP
-        id DB5DgPLsxw1tsDGNWgkzqZ; Thu, 18 Oct 2018 22:02:50 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=comcast.net;
-        s=q20161114; t=1539900170;
-        bh=0cMxcKFlvR3SkhhBGm4h7Wwy9fICa7K56nhoxu1VD+U=;
-        h=Received:Received:To:From:Subject:Message-ID:Date:MIME-Version:
-         Content-Type;
-        b=pFWplwbodJy5bDwB1pYQAlnMwpzSDJX11KE+GX8zofEGRZtU+fGJNuW6W28q+GEbD
-         p+CeDO7vtir9ujZWuMEvYM2+Oo45a2XR9CSipBpgiaQBnvkWyVIqyUMpVKdkcZp4nT
-         8mwoDRN4Ee803LCsy3I9trccQ/zQHBLgVY8GGD6xa/E2HgIv8HpvBOrHAv3QeJUiNv
-         1waZu9BZ24NVyK7qIcJsiAG0bep14MLs4e5F5c7Z76hmZYoSbV2cApdHWqoeVG/LFe
-         BqFHLjj7XUyVllkn+ziWUYWrY73vxckElfvKDlfu57LUfK1y2YkqL0NTWMnpJkdxA9
-         7ek1l+35Xn4kg==
-Received: from [IPv6:2601:500:8302:75bf:36e6:d7ff:fe01:2add] ([IPv6:2601:500:8302:75bf:36e6:d7ff:fe01:2add])
-        by resomta-ch2-11v.sys.comcast.net with ESMTPA
-        id DGNVgEQ8ZVJf4DGNVgI10W; Thu, 18 Oct 2018 22:02:50 +0000
-To:     linux-kernel@vger.kernel.org
-From:   don fisher <hdf3@comcast.net>
-Subject: netconsole on opensuse 42.3 with a 4.18.7 kernel hangs
-Message-ID: <1912e0c1-5ebe-5d76-2eb0-71d70a28f3bd@comcast.net>
-Date:   Thu, 18 Oct 2018 15:02:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 19 Oct 2018 02:15:15 -0400
+Received: by mail-yb1-f195.google.com with SMTP id p74-v6so12489105ybc.9
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 15:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=RflRliasJmTsjfk2Lq2b1UxNQSt2S82qbmyMUz0CRrI=;
+        b=gBU5MIM09vpiigNh+kYwp/D0Qm3xuT89M1reo7NH+uK4arqGkgtAyOMP1lffRpbE9U
+         dGGQLWOgGLAFPRzgAuHkwOxCYGeiGOh18TXmzHe7EE9brDjTfVIXts0qejOJW67ZbHPy
+         2kAHxalO6NVBOV1niRmxXlvwdKZ9wtNBpxeJQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=RflRliasJmTsjfk2Lq2b1UxNQSt2S82qbmyMUz0CRrI=;
+        b=X0EEBdPW38w+MaB5eyFsB+USJbmw3bkXN9Fw1qwnIE8kdwZwgz0bp7AdOKu+F8S8Lp
+         xF5zlWME5EIFNli9KRwkkYQJs69GbqMBNbnp1aEPCpQAy0bqnXGdp52tgwXsvHL5+WYc
+         eWLAq4UfBhH2xDC+PfrgxT7yGNoVFEgyMNhD8COAFdlAnKmXrrAeCb+tUYDVBHaGZkz3
+         i3EJ0mUGThWOk/LV15qmFCCP2950mOiNcWcWylf8hl1N0atftHT5CfeQFSZs1HjTAeS1
+         XcesKD3Ia2sOG/QkQ80VdtHo8kNoA+5kCkoSNu2ZRblMcCCtRHh8QOrQlEdtsMdzolqU
+         QISQ==
+X-Gm-Message-State: ABuFfogKEqWT/FnxvV+ZY3g1mB4xN0dutbHiv2JAGnYMu484kkNwoFpk
+        03F/7a/XMC6vMgRtuVSNJ38KgQGmBRs=
+X-Google-Smtp-Source: ACcGV60t/eTKQsnmyXTMGBUpKrfm9S7gGhAgJbXtmTcOsf7p5tazJW+2alrMt/RahfBCOHwBS8uzRQ==
+X-Received: by 2002:a25:1e88:: with SMTP id e130-v6mr20937214ybe.123.1539900730879;
+        Thu, 18 Oct 2018 15:12:10 -0700 (PDT)
+Received: from mail-yw1-f42.google.com (mail-yw1-f42.google.com. [209.85.161.42])
+        by smtp.gmail.com with ESMTPSA id t137-v6sm4967767ywe.1.2018.10.18.15.12.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Oct 2018 15:12:08 -0700 (PDT)
+Received: by mail-yw1-f42.google.com with SMTP id y76-v6so12457434ywd.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 15:12:08 -0700 (PDT)
+X-Received: by 2002:a81:2cc3:: with SMTP id s186-v6mr21258361yws.168.1539900727824;
+ Thu, 18 Oct 2018 15:12:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfGG6PUcGr7XeOBrjRk/MgSIeh4MXTv785jr18mJskGa7OUBDXP7NPcqTtfFErlco2tgzGIYGwQvz2kYN1nCLi/YGoHo/D+zbl2FdAXiXY3V3MtYmQkMZ
- FWLlyw5MPBE2fdBP1Kl1ks3Va59MFbuaNenzO22P3EY8La2sbf2ux3SqUrSsYC2VesIXmEFQbqJbPi3RuiyEiOvXyZ4zm1yip5mKcAV8qhjmsTXiR1Hcp/8l
- xlN/wzIRxDe0SnfBuYbK/UjSXzaJp+eWhAulLdUYZeURDOfEnmfVVlzQ4dfPKMFH
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Thu, 18 Oct 2018 15:12:07
+ -0700 (PDT)
+In-Reply-To: <20181018220124.GA14768@roeck-us.net>
+References: <20181018185616.14768-1-keescook@chromium.org> <20181018220124.GA14768@roeck-us.net>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 18 Oct 2018 15:12:07 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+aQ_Na7nQAEdo1_vGzj7hAVdsmcZeRsOm0we8OtDD4WQ@mail.gmail.com>
+Message-ID: <CAGXu5j+aQ_Na7nQAEdo1_vGzj7hAVdsmcZeRsOm0we8OtDD4WQ@mail.gmail.com>
+Subject: Re: [PATCH pstore-next v2 0/4] Refactor compression initialization
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have been watching posts on this list and see that many users employ 
-netconsole. My netconsole is native to the 4.18.7 kernel, and works 
-perfectly for about 13 sec ( 12.954965 last attempt) after boot. It then 
-hangs. 709 lines are transmitted before the hang. If I examine 
-/var/log/messages there are a lot of systemd messages printed 
-immediately after the last successful kernel message that was 
-transmitted by netconsole.
+On Thu, Oct 18, 2018 at 3:01 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> On Thu, Oct 18, 2018 at 11:56:12AM -0700, Kees Cook wrote:
+>> Sai noticed pstore wasn't catching early crashes, so Joel fixed it
+>> by moving init earlier again (with compression init done later). I
+>> refactored things a bit to avoid modular build problems noticed by
+>> Guenter. And while doing this work, I also improved /proc/iomem labels
+>> after Dan helped me get NVDIMM working so I could meaningfully test the
+>> very early crash handling.
+>>
+>> Thanks everyone!
+>>
+>
+> This version fixes the compile failure. pstore also still works with the
+> series applied on top of v4.19-rc8; tested on a Chromebook.
+>
+> Tested-by: Guenter Roeck <groeck@chromium.org>
 
-I thought that anything that went to printk also went to netconsole. But 
-netconsole does not appear to be awakened after the first systemd 
-message is logged. I have examined netconsole.c and printk.c, but am 
-overwhelmed and am not able to determine what triggers netconsole. I 
-feel that the trigger may be negated by systemd or some other part of 
-system startup. I am running opensuse 42.3 and have not had any replies 
-from their lists. I feel it is that the native netconsole is not a 
-component of their distribution so it is my problem.
+Awesome, thanks!
 
-I can forward any data desired output from dmesg, netconsole, or 
-/var/log/messages. Any assistance would be greatly appreciated.
+-Kees
 
-Don
+-- 
+Kees Cook
+Pixel Security
