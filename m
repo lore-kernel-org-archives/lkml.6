@@ -2,133 +2,136 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06871ECDE42
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3947FECDE42
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B252F2083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:44:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B252F2083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D915421473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:46:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oddMjk+l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D915421473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727466AbeJRKnb (ORCPT
+        id S1727418AbeJRKpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 06:43:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48030 "EHLO mx1.redhat.com"
+        Thu, 18 Oct 2018 06:45:14 -0400
+Received: from ozlabs.org ([203.11.71.1]:48679 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727267AbeJRKnb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 06:43:31 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727247AbeJRKpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 06:45:14 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 69C40C03D466;
-        Thu, 18 Oct 2018 02:44:50 +0000 (UTC)
-Received: from [10.72.12.103] (ovpn-12-103.pek2.redhat.com [10.72.12.103])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2A2651062243;
-        Thu, 18 Oct 2018 02:44:38 +0000 (UTC)
-Subject: Re: [PATCH net-next V2 6/8] vhost: packed ring support
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Tiwei Bie <tiwei.bie@intel.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com, maxime.coquelin@redhat.com
-References: <1531711691-6769-1-git-send-email-jasowang@redhat.com>
- <1531711691-6769-7-git-send-email-jasowang@redhat.com>
- <20181012143244.GA28400@debian>
- <20181012131812-mutt-send-email-mst@kernel.org>
- <447f47fa-32dd-a408-dd81-13a9839e0748@redhat.com>
- <20181014224208-mutt-send-email-mst@kernel.org>
- <ee3785be-b309-c4ae-e959-737018c21464@redhat.com>
- <20181015062241-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <f37dbff8-321e-7b6c-6f40-49c71d167ab6@redhat.com>
-Date:   Thu, 18 Oct 2018 10:44:36 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        by ozlabs.org (Postfix) with ESMTPSA id 42bD2X5C7Cz9sBN;
+        Thu, 18 Oct 2018 13:46:28 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1539830789;
+        bh=3XJ+ZbbI8l0BWC+9PKEhvmklCiaCYONf5OYbclRca4w=;
+        h=Date:From:To:Cc:Subject:From;
+        b=oddMjk+lrtli0R2hdABLlffGXafhGkjx8U0USuK9rcAtcHmqqQX8rXV/GGd2WHL7T
+         KFGZX2btwzZ7ADCovKf4cjlex9fqIL6IghCpA4M+VYde5SdHHUV7ll7xo7f2DbgnjA
+         kNGniTR89Sr+RCPED39S4XuzGv8IWERzvhwQo144XBX92zgnixoIe+9EO/MyvO4HJY
+         L6f2XX5FU4nHARzDKY5xR/bT0sPqEknfB+Yg4FjNMZMN6bRuQ/ygAJi5PdCjWT2lds
+         mAty4ccxgTsGGlxoU+GjNoOwu1JzsHSVbh/N0F4WvR0YnXJg8fowr4EOKgAaBZJ24J
+         I4uvcrIPRAX2Q==
+Date:   Thu, 18 Oct 2018 13:46:27 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christoffer Dall <cdall@cs.columbia.edu>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Peng Hao <peng.hao2@zte.com.cn>,
+        Jim Mattson <jmattson@google.com>
+Subject: linux-next: manual merge of the kvm-arm tree with the kvm tree
+Message-ID: <20181018134627.15bbcea9@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20181015062241-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 18 Oct 2018 02:44:50 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/iAIPVQb_jJjqO91tszIqSfC"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/iAIPVQb_jJjqO91tszIqSfC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 2018/10/15 下午6:25, Michael S. Tsirkin wrote:
-> On Mon, Oct 15, 2018 at 10:51:06AM +0800, Jason Wang wrote:
->> On 2018年10月15日 10:43, Michael S. Tsirkin wrote:
->>> On Mon, Oct 15, 2018 at 10:22:33AM +0800, Jason Wang wrote:
->>>> On 2018年10月13日 01:23, Michael S. Tsirkin wrote:
->>>>> On Fri, Oct 12, 2018 at 10:32:44PM +0800, Tiwei Bie wrote:
->>>>>> On Mon, Jul 16, 2018 at 11:28:09AM +0800, Jason Wang wrote:
->>>>>> [...]
->>>>>>> @@ -1367,10 +1397,48 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
->>>>>>>     		vq->last_avail_idx = s.num;
->>>>>>>     		/* Forget the cached index value. */
->>>>>>>     		vq->avail_idx = vq->last_avail_idx;
->>>>>>> +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED)) {
->>>>>>> +			vq->last_avail_wrap_counter = wrap_counter;
->>>>>>> +			vq->avail_wrap_counter = vq->last_avail_wrap_counter;
->>>>>>> +		}
->>>>>>>     		break;
->>>>>>>     	case VHOST_GET_VRING_BASE:
->>>>>>>     		s.index = idx;
->>>>>>>     		s.num = vq->last_avail_idx;
->>>>>>> +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
->>>>>>> +			s.num |= vq->last_avail_wrap_counter << 31;
->>>>>>> +		if (copy_to_user(argp, &s, sizeof(s)))
->>>>>>> +			r = -EFAULT;
->>>>>>> +		break;
->>>>>>> +	case VHOST_SET_VRING_USED_BASE:
->>>>>>> +		/* Moving base with an active backend?
->>>>>>> +		 * You don't want to do that.
->>>>>>> +		 */
->>>>>>> +		if (vq->private_data) {
->>>>>>> +			r = -EBUSY;
->>>>>>> +			break;
->>>>>>> +		}
->>>>>>> +		if (copy_from_user(&s, argp, sizeof(s))) {
->>>>>>> +			r = -EFAULT;
->>>>>>> +			break;
->>>>>>> +		}
->>>>>>> +		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED)) {
->>>>>>> +			wrap_counter = s.num >> 31;
->>>>>>> +			s.num &= ~(1 << 31);
->>>>>>> +		}
->>>>>>> +		if (s.num > 0xffff) {
->>>>>>> +			r = -EINVAL;
->>>>>>> +			break;
->>>>>>> +		}
->>>>>> Do we want to put wrap_counter at bit 15?
->>>>> I think I second that - seems to be consistent with
->>>>> e.g. event suppression structure and the proposed
->>>>> extension to driver notifications.
->>>> Ok, I assumes packed virtqueue support 64K but looks not. I can change it to
->>>> bit 15 and GET_VRING_BASE need to be changed as well.
->>>>
->>>>>> If put wrap_counter at bit 31, the check (s.num > 0xffff)
->>>>>> won't be able to catch the illegal index 0x8000~0xffff for
->>>>>> packed ring.
->>>>>>
->>>> Do we need to clarify this in the spec?
->>> Isn't this all internal vhost stuff?
->> I meant the illegal index 0x8000-0xffff.
-> It does say packed virtqueues support up to 2 15 entries each.
->
-> But yes we can add a requirement that devices do not expose
-> larger rings. Split does not support 2**16 either, right?
-> With 2**16 enties avail index becomes 0 and ring looks empty.
->
+Hi all,
 
-Yes, so it's better to clarify this in the spec.
+Today's linux-next merge of the kvm-arm tree got a conflict in:
 
-Thanks
+  include/uapi/linux/kvm.h
 
+between commits:
 
+  214ff83d4473 ("KVM: x86: hyperv: implement PV IPI send hypercalls")
+  0804c849f1df ("kvm/x86 : add coalesced pio support")
+  57b119da3594 ("KVM: nVMX: add KVM_CAP_HYPERV_ENLIGHTENED_VMCS capability")
+  c4f55198c7c2 ("kvm: x86: Introduce KVM_CAP_EXCEPTION_PAYLOAD")
+
+from the kvm tree and commit:
+
+  233a7cb23531 ("kvm: arm64: Allow tuning the physical address size for VM")
+
+from the kvm-arm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/uapi/linux/kvm.h
+index cb6d44e1fe02,95aa73ca65dc..000000000000
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@@ -960,11 -962,7 +969,12 @@@ struct kvm_ppc_resize_hpt=20
+  #define KVM_CAP_NESTED_STATE 157
+  #define KVM_CAP_ARM_INJECT_SERROR_ESR 158
+  #define KVM_CAP_MSR_PLATFORM_INFO 159
+ -#define KVM_CAP_ARM_VM_IPA_SIZE 160 /* returns maximum IPA bits for a VM =
+*/
+ +#define KVM_CAP_PPC_NESTED_HV 160
+ +#define KVM_CAP_HYPERV_SEND_IPI 161
+ +#define KVM_CAP_COALESCED_PIO 162
+ +#define KVM_CAP_HYPERV_ENLIGHTENED_VMCS 163
+ +#define KVM_CAP_EXCEPTION_PAYLOAD 164
+++#define KVM_CAP_ARM_VM_IPA_SIZE 165 /* returns maximum IPA bits for a VM =
+*/
+ =20
+  #ifdef KVM_CAP_IRQ_ROUTING
+ =20
+
+--Sig_/iAIPVQb_jJjqO91tszIqSfC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvH9AMACgkQAVBC80lX
+0GxVmAgApLdNQ8MhS+ddZSSSxLiNSbXCfXdHnPSUGJYLIjXjdtpKsvg+QzaQlEXP
+HqqLuJ/kWa+cw0FXmyos9xXVJMg1K1ObRwq+ya0J0dLy1BiSTMAIrpA/RibppuWt
+mI58WmgqD7kjNdgMZ+Adk6sz3CyT69iC1zQnCIUBZ6/FJYMBZcRKf0CV4jX4ctCe
+Sv2+6UqQ1IYx5YjXmxnvj02EmO5fIbgF4l5r3Tu5FcBuP74AvFFVBumWY9Rftggj
+oicAoXspn+2d06wO0txIfyCUkTaKyJCQ4d2ywlAsjy5SV3VMQO/XEHpgKnb3jDy7
+TXGmXYLTf1KXtRwSfoSRuQcm1RdMgQ==
+=gk0p
+-----END PGP SIGNATURE-----
+
+--Sig_/iAIPVQb_jJjqO91tszIqSfC--
