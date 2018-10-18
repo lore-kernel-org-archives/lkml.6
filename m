@@ -2,112 +2,418 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0360C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A383C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:45:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 588B92145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:43:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 588B92145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CA7F12145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 14:45:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA7F12145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemonage.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbeJRWo4 (ORCPT
+        id S1727274AbeJRWq3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 18:44:56 -0400
-Received: from foss.arm.com ([217.140.101.70]:39082 "EHLO foss.arm.com"
+        Thu, 18 Oct 2018 18:46:29 -0400
+Received: from smtp2.goneo.de ([85.220.129.33]:33732 "EHLO smtp2.goneo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726133AbeJRWo4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 18:44:56 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63FDEA78;
-        Thu, 18 Oct 2018 07:43:36 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 313873F71A;
-        Thu, 18 Oct 2018 07:43:35 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 15:43:32 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     peng.hao2@zte.com.cn
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        nd@arm.com
-Subject: Re: [PATCH]  arm64/pvpanic-mmio : add pvpanic mmio device
-Message-ID: <20181018144332.dfiukokzcbtxe573@lakrids.cambridge.arm.com>
-References: <20181017113816.6kub42pii5hev6fh@lakrids.cambridge.arm.com>
- <201810180956117739833@zte.com.cn>
+        id S1726133AbeJRWq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 18:46:29 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp2.goneo.de (Postfix) with ESMTP id F3FA82421BA;
+        Thu, 18 Oct 2018 16:45:04 +0200 (CEST)
+X-Virus-Scanned: by goneo
+Received: from smtp2.goneo.de ([127.0.0.1])
+        by localhost (smtp2.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id EFLE9msk4lxD; Thu, 18 Oct 2018 16:45:02 +0200 (CEST)
+Received: from lem-wkst-02.lemonage.de. (hq.lemonage.de [87.138.178.34])
+        by smtp2.goneo.de (Postfix) with ESMTPSA id 2998A23F62E;
+        Thu, 18 Oct 2018 16:45:02 +0200 (CEST)
+From:   Lars Poeschel <poeschel@lemonage.de>
+To:     devicetree@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>,
+        "GitAuthor: Lars Poeschel" <poeschel@lemonage.de>,
+        linux-kernel@vger.kernel.org (open list),
+        linux-wireless@vger.kernel.org (open list:NFC SUBSYSTEM)
+Subject: [PATCH v2 1/4] nfc: pn533: add UART phy driver
+Date:   Thu, 18 Oct 2018 16:42:41 +0200
+Message-Id: <20181018144251.30028-1-poeschel@lemonage.de>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201810180956117739833@zte.com.cn>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 09:56:11AM +0800, peng.hao2@zte.com.cn wrote:
-> >Hi,
-> >
-> >[adding devicetree]
-> >
-> >On Wed, Oct 17, 2018 at 06:08:23PM +0800, Peng Hao wrote:
+This adds the UART phy interface for the pn533 driver.
+The pn533 driver can be used through UART interface this way.
+It is implemented as a serdev device.
 
-[...]
+Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
+---
+Changes in v2:
+- switched from tty line discipline to serdev, resulting in many
+  simplifications
+- SPDX License Identifier
 
-> >> +#define PVPANIC_MMIO_CRASHED    (1 << 0)
-> >
-> >This looks like it's identical to PVPANIC_PANICKED in the existing ACPI
-> >IO pvpanic driver.
-> >
-> >I suspect on the QEMU side, there's one device, and the distinction is
-> >only in how this is described.
-> >
-> in qemu:
-> Firstly pvpanic(x86) use ioport, but arm don't support ioport.
-> secondly pvpanic device is emulated as a isa bus device, but arm don't support
-> isa bus.
+ drivers/nfc/pn533/Kconfig  |  10 ++
+ drivers/nfc/pn533/Makefile |   2 +
+ drivers/nfc/pn533/pn533.h  |   8 ++
+ drivers/nfc/pn533/uart.c   | 283 +++++++++++++++++++++++++++++++++++++
+ 4 files changed, 303 insertions(+)
+ create mode 100644 drivers/nfc/pn533/uart.c
 
-I am aware of arm platforms with an ISA bus (well, LPC, at least).
+diff --git a/drivers/nfc/pn533/Kconfig b/drivers/nfc/pn533/Kconfig
+index d94122dd30e4..da3ea2dbaa8a 100644
+--- a/drivers/nfc/pn533/Kconfig
++++ b/drivers/nfc/pn533/Kconfig
+@@ -25,3 +25,13 @@ config NFC_PN533_I2C
+ 
+ 	  If you choose to build a module, it'll be called pn533_i2c.
+ 	  Say N if unsure.
++
++config NFC_PN532_UART
++	tristate "NFC PN532 device support (UART)"
++	select NFC_PN533
++	---help---
++	  This module adds support for the NXP pn532 UART interface.
++	  Select this if your platform is using the UART bus.
++
++	  If you choose to build a module, it'll be called pn532_uart.
++	  Say N if unsure.
+diff --git a/drivers/nfc/pn533/Makefile b/drivers/nfc/pn533/Makefile
+index 51d24c622fcb..bdfd6860d5e4 100644
+--- a/drivers/nfc/pn533/Makefile
++++ b/drivers/nfc/pn533/Makefile
+@@ -3,7 +3,9 @@
+ #
+ pn533_usb-objs  = usb.o
+ pn533_i2c-objs  = i2c.o
++pn532_uart-objs  = uart.o
+ 
+ obj-$(CONFIG_NFC_PN533)     += pn533.o
+ obj-$(CONFIG_NFC_PN533_USB) += pn533_usb.o
+ obj-$(CONFIG_NFC_PN533_I2C) += pn533_i2c.o
++obj-$(CONFIG_NFC_PN532_UART) += pn532_uart.o
+diff --git a/drivers/nfc/pn533/pn533.h b/drivers/nfc/pn533/pn533.h
+index 88d569666c51..ca00508eefff 100644
+--- a/drivers/nfc/pn533/pn533.h
++++ b/drivers/nfc/pn533/pn533.h
+@@ -55,6 +55,11 @@
+ 
+ /* Preamble (1), SoPC (2), ACK Code (2), Postamble (1) */
+ #define PN533_STD_FRAME_ACK_SIZE 6
++/*
++ * Preamble (1), SoPC (2), Packet Length (1), Packet Length Checksum (1),
++ * Specific Application Level Error Code (1) , Postamble (1)
++ */
++#define PN533_STD_ERROR_FRAME_SIZE 8
+ #define PN533_STD_FRAME_CHECKSUM(f) (f->data[f->datalen])
+ #define PN533_STD_FRAME_POSTAMBLE(f) (f->data[f->datalen + 1])
+ /* Half start code (3), LEN (4) should be 0xffff for extended frame */
+@@ -96,6 +101,9 @@
+ #define PN533_CMD_MI_MASK 0x40
+ #define PN533_CMD_RET_SUCCESS 0x00
+ 
++#define PN533_FRAME_DATALEN_ACK 0x00
++#define PN533_FRAME_DATALEN_ERROR 0x01
++#define PN533_FRAME_DATALEN_EXTENDED 0xFF
+ 
+ enum  pn533_protocol_type {
+ 	PN533_PROTO_REQ_ACK_RESP = 0,
+diff --git a/drivers/nfc/pn533/uart.c b/drivers/nfc/pn533/uart.c
+new file mode 100644
+index 000000000000..8fd71c8953ca
+--- /dev/null
++++ b/drivers/nfc/pn533/uart.c
+@@ -0,0 +1,283 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Driver for NXP PN532 NFC Chip - UART transport layer
++ *
++ * Copyright (C) 2018 Lemonage Software GmbH
++ * Author: Lars Pöschel <poeschel@lemonage.de>
++ * All rights reserved.
++ */
++
++#include <linux/device.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/nfc.h>
++#include <linux/netdevice.h>
++#include <linux/of.h>
++#include <linux/serdev.h>
++#include "pn533.h"
++
++#define VERSION "0.1"
++#define PN532_UART_DRIVER_NAME "pn532_uart"
++
++#define PN532_UART_SKB_BUFF_LEN	(PN533_CMD_DATAEXCH_DATA_MAXLEN * 2)
++
++struct pn532_uart_phy {
++	struct serdev_device *serdev;
++	struct sk_buff *recv_skb;
++	struct pn533 *priv;
++	int send_wakeup;
++	struct timer_list cmd_timeout;
++	struct sk_buff *cur_out_buf;
++};
++
++static int pn532_uart_send_frame(struct pn533 *dev,
++				struct sk_buff *out)
++{
++	static const u8 wakeup[] = {
++		0x55, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++		0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
++	/* wakeup sequence and dummy bytes for waiting time */
++	struct pn532_uart_phy *pn532 = dev->phy;
++	int count;
++
++	print_hex_dump_debug("PN532_uart TX: ", DUMP_PREFIX_NONE, 16, 1,
++			     out->data, out->len, false);
++
++	pn532->cur_out_buf = out;
++	if (pn532->send_wakeup)
++		count = serdev_device_write(pn532->serdev,
++				wakeup, sizeof(wakeup),
++				MAX_SCHEDULE_TIMEOUT);
++
++	count = serdev_device_write(pn532->serdev, out->data, out->len,
++			MAX_SCHEDULE_TIMEOUT);
++	if (PN533_FRAME_CMD(((struct pn533_std_frame *)out->data)) ==
++			PN533_CMD_SAM_CONFIGURATION)
++		pn532->send_wakeup = 0;
++
++	mod_timer(&pn532->cmd_timeout, HZ / 40 + jiffies);
++	return 0;
++}
++
++static int pn532_uart_send_ack(struct pn533 *dev, gfp_t flags)
++{
++	struct pn532_uart_phy *pn532 = dev->phy;
++	static const u8 ack[PN533_STD_FRAME_ACK_SIZE] = {
++			0x00, 0x00, 0xff, 0x00, 0xff, 0x00};
++	/* spec 7.1.1.3:  Preamble, SoPC (2), ACK Code (2), Postamble */
++	int rc;
++
++	rc = serdev_device_write(pn532->serdev, ack, sizeof(ack),
++			MAX_SCHEDULE_TIMEOUT);
++
++	return 0;
++}
++
++static void pn532_uart_abort_cmd(struct pn533 *dev, gfp_t flags)
++{
++	/* An ack will cancel the last issued command */
++	pn532_uart_send_ack(dev, flags);
++	/* schedule cmd_complete_work to finish current command execution */
++	pn533_recv_frame(dev, NULL, -ENOENT);
++}
++
++static struct pn533_phy_ops uart_phy_ops = {
++	.send_frame = pn532_uart_send_frame,
++	.send_ack = pn532_uart_send_ack,
++	.abort_cmd = pn532_uart_abort_cmd,
++};
++
++static void pn532_cmd_timeout(struct timer_list *t)
++{
++	struct pn532_uart_phy *dev = from_timer(dev, t, cmd_timeout);
++
++	pn532_uart_send_frame(dev->priv, dev->cur_out_buf);
++}
++
++/*
++ * scans the buffer if it contains a pn532 frame. It is not checked if the
++ * frame is really valid. This is later done with pn533_rx_frame_is_valid.
++ * This is useful for malformed or errornous transmitted frames. Adjusts the
++ * bufferposition where the frame starts, since pn533_recv_frame expects a
++ * well formed frame.
++ */
++static int pn532_uart_rx_is_frame(struct sk_buff *skb)
++{
++	int i;
++	u16 frame_len;
++	struct pn533_std_frame *std;
++	struct pn533_ext_frame *ext;
++
++	for (i = 0; i + PN533_STD_FRAME_ACK_SIZE <= skb->len; i++) {
++		std = (struct pn533_std_frame *)&skb->data[i];
++		/* search start code */
++		if (std->start_frame != cpu_to_be16(PN533_STD_FRAME_SOF))
++			continue;
++
++		/* frame type */
++		switch (std->datalen) {
++		case PN533_FRAME_DATALEN_ACK:
++			if (std->datalen_checksum == 0xff) {
++				skb_pull(skb, i);
++				return 1;
++			}
++
++			break;
++		case PN533_FRAME_DATALEN_ERROR:
++			if ((std->datalen_checksum == 0xff) &&
++					(skb->len >=
++					 PN533_STD_ERROR_FRAME_SIZE)) {
++				skb_pull(skb, i);
++				return 1;
++			}
++
++			break;
++		case PN533_FRAME_DATALEN_EXTENDED:
++			ext = (struct pn533_ext_frame *)&skb->data[i];
++			frame_len = ext->datalen;
++			if (skb->len >= frame_len +
++					sizeof(struct pn533_ext_frame) +
++					2 /* CKS + Postamble */) {
++				skb_pull(skb, i);
++				return 1;
++			}
++
++			break;
++		default: /* normal information frame */
++			frame_len = std->datalen;
++			if (skb->len >= frame_len +
++					sizeof(struct pn533_std_frame) +
++					2 /* CKS + Postamble */) {
++				skb_pull(skb, i);
++				return 1;
++			}
++
++			break;
++		}
++	}
++
++	return 0;
++}
++
++static int pn532_receive_buf(struct serdev_device *serdev,
++		const unsigned char *data, size_t count)
++{
++	struct pn532_uart_phy *dev = serdev_device_get_drvdata(serdev);
++	size_t i;
++
++	del_timer(&dev->cmd_timeout);
++	for (i = 0; i < count; i++) {
++		skb_put_u8(dev->recv_skb, *data++);
++		if (!pn532_uart_rx_is_frame(dev->recv_skb))
++			continue;
++
++		pn533_recv_frame(dev->priv, dev->recv_skb, 0);
++		dev->recv_skb = alloc_skb(PN532_UART_SKB_BUFF_LEN, GFP_KERNEL);
++		if (dev->recv_skb == NULL)
++			return 0;
++	}
++
++	return i;
++}
++
++static struct serdev_device_ops pn532_serdev_ops = {
++	.receive_buf = pn532_receive_buf,
++	.write_wakeup = serdev_device_write_wakeup,
++};
++
++static const struct of_device_id pn532_uart_of_match[] = {
++	{ .compatible = "nxp,pn532-uart", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, pn532_uart_of_match);
++
++static int pn532_uart_probe(struct serdev_device *serdev)
++{
++	struct pn532_uart_phy *pn532;
++	struct pn533 *priv;
++	int err;
++
++	err = -ENOMEM;
++	pn532 = kzalloc(sizeof(*pn532), GFP_KERNEL);
++	if (pn532 == NULL)
++		goto err_exit;
++
++	pn532->recv_skb = alloc_skb(PN532_UART_SKB_BUFF_LEN, GFP_KERNEL);
++	if (pn532->recv_skb == NULL)
++		goto err_free;
++
++	pn532->serdev = serdev;
++	priv = pn533_register_device(PN533_DEVICE_PN532,
++				     PN533_NO_TYPE_B_PROTOCOLS,
++				     PN533_PROTO_REQ_ACK_RESP,
++				     pn532, &uart_phy_ops, NULL,
++				     &pn532->serdev->dev,
++				     &serdev->dev);
++
++	if (IS_ERR(priv)) {
++		err = PTR_ERR(priv);
++		goto err_skb;
++	}
++
++	pn532->priv = priv;
++	serdev_device_set_drvdata(serdev, pn532);
++	serdev_device_set_client_ops(serdev, &pn532_serdev_ops);
++	err = serdev_device_open(serdev);
++	if (err) {
++		dev_err(&serdev->dev, "Unable to open device %s\n",
++				serdev->dev.init_name);
++		goto err_unregister;
++	}
++
++	err = serdev_device_set_baudrate(serdev, 115200);
++	if (err != 115200) {
++		err = -EINVAL;
++		goto err_serdev;
++	}
++
++	serdev_device_set_flow_control(serdev, false);
++	pn532->send_wakeup = 1;
++	timer_setup(&pn532->cmd_timeout, pn532_cmd_timeout, 0);
++	err = pn533_finalize_setup(pn532->priv);
++	if (err)
++		goto err_serdev;
++
++	return 0;
++
++err_serdev:
++	serdev_device_close(serdev);
++err_unregister:
++	pn533_unregister_device(pn532->priv);
++err_skb:
++	kfree_skb(pn532->recv_skb);
++err_free:
++	kfree(pn532);
++err_exit:
++	return err;
++}
++
++static void pn532_uart_remove(struct serdev_device *serdev)
++{
++	struct pn532_uart_phy *pn532 = serdev_device_get_drvdata(serdev);
++
++	pn533_unregister_device(pn532->priv);
++	serdev_device_close(serdev);
++	kfree_skb(pn532->recv_skb);
++	kfree(pn532);
++}
++
++static struct serdev_device_driver pn532_uart_driver = {
++	.probe = pn532_uart_probe,
++	.remove = pn532_uart_remove,
++	.driver = {
++		.name = PN532_UART_DRIVER_NAME,
++		.of_match_table = of_match_ptr(pn532_uart_of_match),
++	},
++};
++
++module_serdev_device_driver(pn532_uart_driver);
++
++MODULE_AUTHOR("Lars Pöschel <poeschel@lemonage.de>");
++MODULE_DESCRIPTION("PN532 UART driver ver " VERSION);
++MODULE_VERSION(VERSION);
++MODULE_LICENSE("GPL");
+-- 
+2.19.1
 
-> thirdly the realization of pvpanic device is depends on ACPI in linux
-> kernel driver and in qemu the port info is passed through ACPI , but
-> It is not necessary to configure ACPI for arm guest.
-
-There are many people using ACPI with arm64 under QEMU, so while it's
-not *necessary* to use ACPI, it is a common use case that we cannot rule
-out.
-
-> in linux : I don't want to depends on ACPI .
-
-I'm not saying that you must depend on ACPI for your specific use-case.
-
-> ARM virt machine  in qemu uses FDT, and I can easily 
-> use FDT to get mmio information from QEMU. 
-> >Can't one driver support both?
-> Just like  virtio-mmio driver, It is mainly used for non x86 architecture.
-
-So? I can build virtio-mmio for x86, too.
-
-My concern is that other than the initial probing, the vast majority of
-this is *identical* to the existing pvpanic driver (ignoring cosmetic
-differences like the naming of variables).
-
-I'm worried that there could be additions to the pvpanic device in
-future (e.g. passing a pointer to some crash context), which would then
-have to be duplicated across two drivers.
-
-IMO we should:
-
-a) Move the existing pvpanic driver to a neutral location (e.g.
-   drivers/virt/qemu_pvpanic.c).
-
-b) Teach the existing pvpanic driver to handle MMIO, even for ACPI.
-
-c) Teach the existing pvpanic driver to handle DT, even if that DT
-   binding only caters for MMIO.
-
-Thanks,
-Mark.
