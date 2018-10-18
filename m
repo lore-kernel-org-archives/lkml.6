@@ -4,71 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5891EC67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3C5C67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD2AC2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:51:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1523A208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:52:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nbEAtqm/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2AC2087A
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ps50zUIE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1523A208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbeJSHyp (ORCPT
+        id S1727445AbeJSHzv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 03:54:45 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:40744 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbeJSHyp (ORCPT
+        Fri, 19 Oct 2018 03:55:51 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:36661 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726454AbeJSHzu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 03:54:45 -0400
-Received: by mail-ua1-f66.google.com with SMTP id c21so6835511uap.7
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 16:51:23 -0700 (PDT)
+        Fri, 19 Oct 2018 03:55:50 -0400
+Received: by mail-vs1-f65.google.com with SMTP id c205so24235083vsd.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 16:52:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=sRjGUXac8wI20zJFfcbJlWhBnsVPKloJQulzagUCP8s=;
-        b=nbEAtqm/XjZf+toqwpAxvdZA0wT+O8f57QJPbQhFpZxTF1nIUDkJTF4Lg1LGgxvfv8
-         9umkiybS22D2LY3pCC2ToxDIkJRT1ndnZbIvAH9lL+drlwDSUlQU6KJpyyWQ4ayviP6O
-         5lA1m8XTleTdDmc1PHZQQ0NBUBT/PjJVnPkz4=
+        bh=F0/Gpd7Z8wxWOaQYaJLB4H7s3hOZQlg8jciCad48Fx0=;
+        b=Ps50zUIERVcSMJj2QCobH4c9z14sjUX1QJYAmmGMxkTqiATV0Ftu6GbcXON35luk7A
+         x1N5AzgDKsyd/u8gZ0/ULArqP361QWcfX6VjaBTqAyIMK30wCafDBBB4JeQOaxdJ43vv
+         NC62K4cDu7BPNIocNrL4OsdcGqV14WPaN97yo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=sRjGUXac8wI20zJFfcbJlWhBnsVPKloJQulzagUCP8s=;
-        b=cZGUaiBDPbzttuOIFgj2fp6LdpG+en6p+CycMSkAy/eav7R6QnhKq94iJuq0gk6k1M
-         axfNCp4XO+Y/mDnArB5gKjssxZTQOrkielapXhMsGc30yVDMLqXFdwGqUjmD9tTftOBE
-         gh6T5bTuRefwRURGkjbyCmpUeqAhra42m5xxrTY2kck6S10gz/70AW/qOEf76hT/IFcT
-         rjKd1poPEmB+ogudYyqI1gj7lfZtg691dh6bimeeSzYz/TVjP0EkhYXqxk0Jr9Bvi6he
-         ybuppha2oNZLT/XzNLRqdRPoKRC5kjdT+xJcs5VtGaGL0Cyt3ZfbzRtFl/oXQ2j0tqST
-         N6Sg==
-X-Gm-Message-State: ABuFfojVLN6nZgANQ5hHTVyP+b9Im00V6srriG7WhMMfTfodDmZsHJli
-        +h8BO9zGqP/kIQbGHBeunBikOgCBUWI=
-X-Google-Smtp-Source: ACcGV61gYNHReP+QHsFZn43eb4iCR5rUJgnh2YlvarIhyYRxmkL/60TNOk8jDHWpbqY8hHgQUZ9Grg==
-X-Received: by 2002:ab0:1089:: with SMTP id d9mr8688696uab.42.1539906682854;
-        Thu, 18 Oct 2018 16:51:22 -0700 (PDT)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id w2sm4469481vsg.29.2018.10.18.16.51.21
+        bh=F0/Gpd7Z8wxWOaQYaJLB4H7s3hOZQlg8jciCad48Fx0=;
+        b=Sgm3iaTgGTLu+cwrqJx8a/gfOINsOv0JL31Grif5fSsxMWVFaTNYAMeChc3glrdOkz
+         HENoHyMIX/8k5UOXwT7N17XVp6hkihhg+kpKzVjVnssyth9mVm/TF0Yy8lw2ExdXwiU+
+         Jgqpkmz/WtfeipnGMibmjhxUGlZElw4x0ZseTMYOdZYQxs1hiGWB/2DqAkBLDJ3Ti5G2
+         Im5xIg/Kq6xEGPKZWMNHlXS88O3GGH1L30Zv9KaHD3s1JBv6FM9S4gMBkOyJDA+83iWX
+         GK4E3ByZaHA4hco7fPJPpOqe2Ele0cvid0oE3+QpuSh8c5qF7rZ5g5jBG2x+DlxBM1FS
+         gVpw==
+X-Gm-Message-State: ABuFfoi6mrFQz5sGzOlOYSVDyfTCtithAQ0rPKTSOHCyWmlyaix3TN0T
+        VvBX+jA5o7FtyQ+CzaJgrQqz+s3NV0s=
+X-Google-Smtp-Source: ACcGV60auriBm54Kb+xGj67MmvzPqv6ivLyMAcJG1PyJOCpoF8rxW/yau31jDfvIhZNfnZKarQQTNQ==
+X-Received: by 2002:a67:de0d:: with SMTP id q13mr13143611vsk.127.1539906747852;
+        Thu, 18 Oct 2018 16:52:27 -0700 (PDT)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
+        by smtp.gmail.com with ESMTPSA id w189-v6sm4446211vka.24.2018.10.18.16.52.26
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 16:51:21 -0700 (PDT)
-Received: by mail-vs1-f53.google.com with SMTP id q15so9951903vso.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 16:51:21 -0700 (PDT)
-X-Received: by 2002:a67:8316:: with SMTP id f22mr13374255vsd.6.1539906681339;
- Thu, 18 Oct 2018 16:51:21 -0700 (PDT)
+        Thu, 18 Oct 2018 16:52:26 -0700 (PDT)
+Received: by mail-ua1-f49.google.com with SMTP id o17so4092801uad.8
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 16:52:26 -0700 (PDT)
+X-Received: by 2002:a9f:344d:: with SMTP id s13mr13951192uab.27.1539906746319;
+ Thu, 18 Oct 2018 16:52:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181018210933.113592-1-evgreen@chromium.org> <20181018210933.113592-3-evgreen@chromium.org>
-In-Reply-To: <20181018210933.113592-3-evgreen@chromium.org>
+References: <20181018210933.113592-1-evgreen@chromium.org> <20181018210933.113592-4-evgreen@chromium.org>
+In-Reply-To: <20181018210933.113592-4-evgreen@chromium.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 18 Oct 2018 16:51:08 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VMnTEUgPoDnfF-Oh8FDj9hy+ohz6oViJOtZCD_K-t_Dg@mail.gmail.com>
-Message-ID: <CAD=FV=VMnTEUgPoDnfF-Oh8FDj9hy+ohz6oViJOtZCD_K-t_Dg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] phy: qcom-qmp: Utilize fully-specified DT registers
+Date:   Thu, 18 Oct 2018 16:52:12 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VFRxsa5CeUcKSx-Ar4sGDWCUkO1cQgHtfHjHCnfwpHTA@mail.gmail.com>
+Message-ID: <CAD=FV=VFRxsa5CeUcKSx-Ar4sGDWCUkO1cQgHtfHjHCnfwpHTA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] arm64: dts: qcom: sdm845: add UFS controller
 To:     Evan Green <evgreen@chromium.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -88,43 +87,24 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
-
-On Thu, Oct 18, 2018 at 2:09 PM Evan Green <evgreen@chromium.org> wrote:
+On Thu, Oct 18, 2018 at 2:10 PM Evan Green <evgreen@chromium.org> wrote:
 >
-> This change utilizes the newly fixed up DT bindings to get the tx2
-> and rx2 register regions for the second lane of dual-lane PHYs. Before
-> this change, the driver was simply using lane one's register region and
-> adding 0x400, which reached well beyond the DT-specified register
-> allocation. This would have been a crash were it not for the page size on
-> ARM64. Fix the driver not to rely on the magic of virtual memory by using
-> the newly specified DT register regions for tx2 and rx2.
->
-> In order to support existing device trees, this change also contains a
-> fallback mode for when those new register regions don't exist, which
-> reverts to the original behavior of overreaching and prints a complaint.
+> This change adds the UFS controller and PHY to SDM845.
 >
 > Signed-off-by: Evan Green <evgreen@chromium.org>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
->  drivers/phy/qualcomm/phy-qcom-qmp.c | 51 +++++++++++++++++++++++++++----------
->  1 file changed, 38 insertions(+), 13 deletions(-)
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 67 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 67 insertions(+)
 
-Looks good to me.  This seems like the right compromise for moving
-forward to fix the problem.
-
-A few notes:
-
-* The only current SoC that uses tx2/rx2 is SDM845 and the support of
-that SoC is in its infancy in mainline.  Thus I don't mind that using
-existing device trees with this new patch will print a warning and
-continue to take advantage of the Linux "bug" that the whole page
-could be accessed.  We should fix the old DTS files ASAP and then
-remove the nod to backward compatibility in the code.
-
-* This should land _before_ dts patches land.  If dts changes land
-without this change then the old code will end up mapping tx2 and
-using it as pcsmisc.  ...so either we'll need to delay landing the
-device tree patch by one major version or Andy / Kishon will need to
-coordinate.
+I'm already in the Signed-off-by since I did some touching of this
+patch, so not sure it makes sense to provide my Reviewed-by on this
+patch.  ...but I'll at least make the note that it seems good and
+matches my understanding
 
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+As mentioned in patch #2 ideally this patch should land after the
+driver fix so the old driver doesn't try to use the "tx2" range as
+"pcs_misc".
+
+-Doug
