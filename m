@@ -2,160 +2,235 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B65DC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2C3C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:04:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 489CB2054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:02:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 159912145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:04:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmOmbQ1D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 489CB2054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pgo0ASTC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 159912145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbeJSDEv (ORCPT
+        id S1726784AbeJSDG0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 23:04:51 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43952 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbeJSDEv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 23:04:51 -0400
-Received: by mail-pf1-f196.google.com with SMTP id p24-v6so15301617pff.10;
-        Thu, 18 Oct 2018 12:02:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7Zuyi2L6RFcg8t6RIwhB1Ct3UzeFe1haCtGu9hCmFEI=;
-        b=lmOmbQ1D5MH7rtrW5vBLYiRemArOAiWw3Ki2nyDAU+xnz/g3qLlq071DxMhl7DkOFO
-         YmrvpsEBTAYBtuPmf8DRt36lKO8NDwv7TIYBNj7WxPz+P+m/SxyvNvbvSp/hrmLgvtnt
-         sQD8JXiWQQ1PpaWdhkGGkczdmMwYerfR8drv3o8pdXdvJvuk7mKXEqSbl4cb03WTD9O0
-         1hUaxlTx44NoUeejMH94dKQ9fzSNgSs7ZC/KibKa9QxP/AukD1M1G+xzOEYRYT2x0Npm
-         Vr0MbaSbzmJg5rCX54M18u51Vl+uZLC9Itx+2U9+eQy3JDYLCBwm8y8g8lFvMM+kPfQa
-         0XgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7Zuyi2L6RFcg8t6RIwhB1Ct3UzeFe1haCtGu9hCmFEI=;
-        b=kc1a4HvWqA7pRGQzGsyhfKQ5oWMWrLuH6Vdh210sQNlUVpQJIIZbQVYH1Fe/2fxDn3
-         +2Aq3JmF98e2QDGF9ftTEeQ8UXIEug1parXBN7rcaKTqWaIDpfA890dLD3dFfuDVqamZ
-         +VVnSdZ2In8n1d4/HQ/aODHsM6wOla0+bqPWFjEiE6dCUOEgQnV4NlsT/F1U2l90dpVU
-         Jf+OfaGpdEVHrK7NgqojDMG/LnLK0G6D8UZYVibJ40L+DkWEJwJ4sUC0QqZgFR9xCWNn
-         ZmzPH8LzG2rnMkvPiP+7sh+8vmr9KXrlk9yjnLNHRO8XPswb1Jyd203aigJNvZaVCvzI
-         2BMg==
-X-Gm-Message-State: ABuFfohetGwdiMuyRTVBgeZDAYksVyjerFxhp1AcsR31Xg+6oOXYMlRH
-        1u1Fvqe77rWSKRjfIKwiIKo=
-X-Google-Smtp-Source: ACcGV63+Lg4FYVEQJ+FK6PprYbQQR2FYDH3VT1J35E00sE/WoYgUfrVyqqtUeNUIut+PFuH5moi/2w==
-X-Received: by 2002:a62:509a:: with SMTP id g26-v6mr31331087pfj.62.1539889348097;
-        Thu, 18 Oct 2018 12:02:28 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id m20-v6sm21901819pgv.93.2018.10.18.12.02.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 12:02:27 -0700 (PDT)
-Subject: Re: [PATCH v4 02/18] of: overlay: add missing of_node_put() after add
- new node to changeset
-To:     Rob Herring <robh@kernel.org>
-Cc:     Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-References: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
- <1539657458-24401-3-git-send-email-frowand.list@gmail.com>
- <20181018170502.GB15557@bogus>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <02a879fb-49b1-62b8-275c-d5ae6ccacecb@gmail.com>
-Date:   Thu, 18 Oct 2018 12:02:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 18 Oct 2018 23:06:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43180 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726173AbeJSDG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 23:06:26 -0400
+Received: from localhost (unknown [104.132.1.80])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 208F82054F;
+        Thu, 18 Oct 2018 19:04:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539889442;
+        bh=QWSP8bzfF7J7/lBgqNpUeBuOJxEL2KpA/Cq8WpYtQbE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pgo0ASTCB9T6SaEhj9C+oivWs6gKMPhTJLENkATw+AlmjmrSHuiXN3GTmDVBBhWH9
+         oBJxZDEyEvkpDbAPANGkfb80pCq6+sNYXg3Ty+Cg9eQfYFnjLMLfPx0qLKAh4zpAyc
+         ZalhuD59RZZ+mG5Z1lEexT+0IrJXpt0NywOIHUy4=
+Date:   Thu, 18 Oct 2018 12:04:01 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Weichao Guo <guoweichao@huawei.com>
+Subject: Re: [PATCH v11] f2fs: guarantee journalled quota data by checkpoint
+Message-ID: <20181018190401.GC50556@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180920120500.21026-1-chao@kernel.org>
+ <20181001000618.GC17407@jaegeuk-macbookpro.roam.corp.google.com>
+ <cd4d60b9-3f24-d408-610a-af57e0cb0165@kernel.org>
+ <20181001012911.GF17407@jaegeuk-macbookpro.roam.corp.google.com>
+ <73df627f-5b12-71cd-9a52-41f187d5516d@kernel.org>
+ <20181001014915.GG17407@jaegeuk-macbookpro.roam.corp.google.com>
+ <143b572f-8044-eae2-d321-79040beba4f4@kernel.org>
+ <20181002164514.GA93409@jaegeuk-macbookpro.roam.corp.google.com>
+ <9a3f0b96-8d29-121a-b31b-1eeb7c2e92c2@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20181018170502.GB15557@bogus>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9a3f0b96-8d29-121a-b31b-1eeb7c2e92c2@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/18/18 10:05, Rob Herring wrote:
-> On Mon, Oct 15, 2018 at 07:37:22PM -0700, frowand.list@gmail.com wrote:
->> From: Frank Rowand <frank.rowand@sony.com>
->>
->> The refcount of a newly added overlay node decrements to one
->> (instead of zero) when the overlay changeset is destroyed.  This
->> change will cause the final decrement be to zero.
->>
->> After applying this patch, new validation warnings will be
->> reported from the devicetree unittest during boot due to
->> a pre-existing devicetree bug.  The warnings will be similar to:
->>
->>   OF: ERROR: memory leak of_node_release() overlay node /testcase-data/overlay-node/test-bus/test-unittest4 before free overlay changeset
+On 10/17, Chao Yu wrote:
+> Jaegeuk,
 > 
-> Same comment on formatting.
-
-OK.
-
-
->>
->> This pre-existing devicetree bug will also trigger a WARN_ONCE() from
->> refcount_sub_and_test_checked() when an overlay changeset is
->> destroyed without having first been applied.  This scenario occurs
->> when an error in the overlay is detected during the overlay changeset
->> creation:
->>
->>   WARNING: CPU: 0 PID: 1 at lib/refcount.c:187 refcount_sub_and_test_checked+0xa8/0xbc
->>   refcount_t: underflow; use-after-free.
->>
->>   (unwind_backtrace) from (show_stack+0x10/0x14)
->>   (show_stack) from (dump_stack+0x6c/0x8c)
->>   (dump_stack) from (__warn+0xdc/0x104)
->>   (__warn) from (warn_slowpath_fmt+0x44/0x6c)
->>   (warn_slowpath_fmt) from (refcount_sub_and_test_checked+0xa8/0xbc)
->>   (refcount_sub_and_test_checked) from (kobject_put+0x24/0x208)
->>   (kobject_put) from (of_changeset_destroy+0x2c/0xb4)
->>   (of_changeset_destroy) from (free_overlay_changeset+0x1c/0x9c)
->>   (free_overlay_changeset) from (of_overlay_remove+0x284/0x2cc)
->>   (of_overlay_remove) from (of_unittest_apply_revert_overlay_check.constprop.4+0xf8/0x1e8)
->>   (of_unittest_apply_revert_overlay_check.constprop.4) from (of_unittest_overlay+0x960/0xed8)
->>   (of_unittest_overlay) from (of_unittest+0x1cc4/0x2138)
->>   (of_unittest) from (do_one_initcall+0x4c/0x28c)
->>   (do_one_initcall) from (kernel_init_freeable+0x29c/0x378)
->>   (kernel_init_freeable) from (kernel_init+0x8/0x110)
->>   (kernel_init) from (ret_from_fork+0x14/0x2c)
->>
->> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
->> ---
->>  drivers/of/overlay.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
->> index 1176cb4b6e4e..32cfee68f2e3 100644
->> --- a/drivers/of/overlay.c
->> +++ b/drivers/of/overlay.c
->> @@ -379,7 +379,9 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
->>  		if (ret)
->>  			return ret;
->>  
->> -		return build_changeset_next_level(ovcs, tchild, node);
->> +		ret = build_changeset_next_level(ovcs, tchild, node);
->> +		of_node_put(tchild);
->> +		return ret;
->>  	}
->>  
->>  	if (node->phandle && tchild->phandle)
->> -- 
->> Frank Rowand <frank.rowand@sony.com>
->>
+> Sorry for the long delay, I'm busy on other thing.
 > 
+> I'm trying your fixing code on both fsck and kernel with 'run.sh
+> por_fsstress' case.
+> 
+> And got below output, is that normal in updated fsck? I didn't have time to
+> look into this.
 
+Yeah, I just stopped to allocate new blocks to fix quota, if there may have
+some data to be reocvered at the next mount time.
+
+> 
+> Info: checkpoint state = 8c6 :  quota_need_fsck nat_bits crc
+> compacted_summary orphan_inodes sudden-power-off
+> [fsck_chk_quota_files:1755] Fixing Quota file ([  0] ino [0x4])
+> [ERROR] quotaio_tree.c:83:write_blk:: Cannot write block (1320):
+> Inappropriate ioctl for device
+> [ERROR] quotaio_tree.c:110:get_free_dqblk:: Cannot allocate new quota block
+> (out of disk space).
+> [ERROR] quotaio_tree.c:315:dq_insert_tree:: Cannot write quota (id
+> 67368348): Inappropriate ioctl for device
+> [fsck_chk_quota_files:1755] Fixing Quota file ([  1] ino [0x5])
+> [ERROR] quotaio_tree.c:83:write_blk:: Cannot write block (1332):
+> Inappropriate ioctl for device
+> [ERROR] quotaio_tree.c:110:get_free_dqblk:: Cannot allocate new quota block
+> (out of disk space).
+> [ERROR] quotaio_tree.c:315:dq_insert_tree:: Cannot write quota (id
+> 73435216): Inappropriate ioctl for device
+> 
+> Thanks,
+> 
+> 
+> On 2018/10/3 0:45, Jaegeuk Kim wrote:
+> > On 10/01, Chao Yu wrote:
+> >> On 2018-10-1 9:49, Jaegeuk Kim wrote:
+> >>> On 10/01, Chao Yu wrote:
+> >>>> On 2018-10-1 9:29, Jaegeuk Kim wrote:
+> >>>>> On 10/01, Chao Yu wrote:
+> >>>>>> Hi Jaegeuk,
+> >>>>>>
+> >>>>>> On 2018-10-1 8:06, Jaegeuk Kim wrote:
+> >>>>>>> Hi Chao,
+> >>>>>>>
+> >>>>>>> This fails on fsstress with godown without fault injection. Could you please
+> >>>>>>> test a bit? I assumed that this patch should give no fsck failure along with
+> >>>>>>> valid checkpoint having no flag.
+> >>>>>>
+> >>>>>> Okay, let me reproduce with that case.
+> >>>>>>
+> >>>>>>>
+> >>>>>>> BTW, I'm in doubt that f2fs_lock_all covers entire quota modification. What
+> >>>>>>> about prepare_write_begin() -> f2fs_get_block() ... -> inc_valid_block_count()?
+> >>>>>>
+> >>>>>> If quota data changed in above path, we will detect that in below condition:
+> >>>>>>
+> >>>>>> block_operation()
+> >>>>>>
+> >>>>>> 	down_write(&sbi->node_change);
+> >>>>>>
+> >>>>>> 	if (__need_flush_quota(sbi)) {
+> >>>>>> 		up_write(&sbi->node_change);
+> >>>>>> 		f2fs_unlock_all(sbi);
+> >>>>>> 		goto retry_flush_quotas;
+> >>>>>> 	}
+> >>>>>>
+> >>>>>> So there is no problem?
+> >>>>>
+> >>>>> We may need to check quota is dirty, since we have no way to detect by
+> >>>>> f2fs structures?
+> >>>>
+> >>>> Below condition can check that.
+> >>>>
+> >>>> static bool __need_flush_quota(struct f2fs_sb_info *sbi)
+> >>>> {
+> >>>> ...
+> >>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH))
+> >>>> 		return true;
+> >>>> 	if (get_pages(sbi, F2FS_DIRTY_QDATA))
+> >>>> 		return true;
+> >>>> ...
+> >>>> }
+> >>>>
+> >>>> static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
+> >>>> {
+> >>>> ...
+> >>>> 	ret = dquot_mark_dquot_dirty(dquot);
+> >>>>
+> >>>> 	/* if we are using journalled quota */
+> >>>> 	if (is_journalled_quota(sbi))
+> >>>> 		set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+> >>>> ...
+> >>>> }
+> >>>
+> >>> Okay, then, could you please run the above stress test to reproduce this?
+> >>
+> >> Sure, let me try this case and fix it.
+> >>
+> >> Could you check other patches in mailing list, and test them instead?
+> > 
+> > With the below change, the test result is much better for now.
+> > Let me know, if you have further concern.
+> > 
+> > ---
+> >  fs/f2fs/checkpoint.c | 6 ++++++
+> >  fs/f2fs/super.c      | 4 +++-
+> >  2 files changed, 9 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> > index a1facfbfc5c7..b111c6201023 100644
+> > --- a/fs/f2fs/checkpoint.c
+> > +++ b/fs/f2fs/checkpoint.c
+> > @@ -1111,6 +1111,8 @@ static int block_operations(struct f2fs_sb_info *sbi)
+> >  
+> >  retry_flush_quotas:
+> >  	if (__need_flush_quota(sbi)) {
+> > +		int locked;
+> > +
+> >  		if (++cnt > DEFAULT_RETRY_QUOTA_FLUSH_COUNT) {
+> >  			set_sbi_flag(sbi, SBI_QUOTA_SKIP_FLUSH);
+> >  			f2fs_lock_all(sbi);
+> > @@ -1118,7 +1120,11 @@ static int block_operations(struct f2fs_sb_info *sbi)
+> >  		}
+> >  		clear_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+> >  
+> > +		/* only failed during mount/umount/freeze/quotactl */
+> > +		locked = down_read_trylock(&sbi->sb->s_umount);
+> >  		f2fs_quota_sync(sbi->sb, -1);
+> > +		if (locked)
+> > +			up_read(&sbi->sb->s_umount);
+> >  	}
+> >  
+> >  	f2fs_lock_all(sbi);
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index a28c245b1288..b39f60d57120 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -1706,6 +1706,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+> >  				congestion_wait(BLK_RW_ASYNC, HZ/50);
+> >  				goto repeat;
+> >  			}
+> > +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> >  			return PTR_ERR(page);
+> >  		}
+> >  
+> > @@ -1717,6 +1718,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+> >  		}
+> >  		if (unlikely(!PageUptodate(page))) {
+> >  			f2fs_put_page(page, 1);
+> > +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> >  			return -EIO;
+> >  		}
+> >  
+> > @@ -1758,6 +1760,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+> >  				congestion_wait(BLK_RW_ASYNC, HZ/50);
+> >  				goto retry;
+> >  			}
+> > +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> >  			break;
+> >  		}
+> >  
+> > @@ -1794,7 +1797,6 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
+> >  
+> >  static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
+> >  {
+> > -
+> >  	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
+> >  		f2fs_msg(sbi->sb, KERN_ERR,
+> >  			"quota sysfile may be corrupted, skip loading it");
+> > 
