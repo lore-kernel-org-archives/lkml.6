@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C98BDC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C32C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 912C321473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8341121479
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mN30B/bO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 912C321473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cP/uRQRc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8341121479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729289AbeJSCBx (ORCPT
+        id S1729300AbeJSCB5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:01:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49656 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:01:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728410AbeJSCBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:01:52 -0400
+        id S1728410AbeJSCB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:01:57 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A61421473;
-        Thu, 18 Oct 2018 17:59:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A51921473;
+        Thu, 18 Oct 2018 17:59:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885587;
-        bh=XGVn9wG7UCJ7tdX3PDk0LC7zcNRlbW4Wg5HhAHozYC8=;
+        s=default; t=1539885591;
+        bh=BvdKvXd9NEtUG906LOB3N/tMWrjqikfaqO7ZlQ+bQPc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mN30B/bOWDkUeTq3FFigsdhFeqLt/rJIgsnmCiWAHrL7Vf0NYVkr8ynwTdDqDTJLE
-         +7Xg6SRykijZdQ29rrkHp0JjrymbtMjUulj0Dgup1w8mKi91igTOb0SKZB36rlGple
-         XMp0IT7xAXGPeYt4etcld4q44+x/LQJv+2JjscpU=
+        b=cP/uRQRcZrysZCywr4gDxJamvXt1KrsPOXnC2mwSRWpmBA92xnEXLWiEb7ocANvdW
+         KdEh4odHD9cdjLMxSv8fni5ssqgrQj8cIpYqfnZVZHmmGYTt1CBgKmYgZNKa8Cj979
+         +65/gvmH/PpfOFtG4QfyWN+H1HBYwxv1zoOmedh0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 12/41] clocksource/drivers/ti-32k: Add CLOCK_SOURCE_SUSPEND_NONSTOP flag for non-am43 SoCs
-Date:   Thu, 18 Oct 2018 19:54:27 +0200
-Message-Id: <20181018175419.018809610@linuxfoundation.org>
+Subject: [PATCH 4.14 13/41] scsi: ibmvscsis: Fix a stringop-overflow warning
+Date:   Thu, 18 Oct 2018 19:54:28 +0200
+Message-Id: <20181018175419.111570689@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
 References: <20181018175416.718399607@linuxfoundation.org>
@@ -64,34 +64,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Keerthy <j-keerthy@ti.com>
+From: Laura Abbott <labbott@redhat.com>
 
-[ Upstream commit 3b7d96a0dbb6b630878597a1838fc39f808b761b ]
+[ Upstream commit d792d4c4fc866ae224b0b0ca2aabd87d23b4d6cc ]
 
-The 32k clocksource is NONSTOP for non-am43 SoCs. Hence
-add the flag for all the other SoCs.
+There's currently a warning about string overflow with strncat:
 
-Reported-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function 'ibmvscsis_probe':
+drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:3479:2: error: 'strncat' specified
+bound 64 equals destination size [-Werror=stringop-overflow=]
+  strncat(vscsi->eye, vdev->name, MAX_EYE);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Switch to a single snprintf instead of a strcpy + strcat to handle this
+cleanly.
+
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Suggested-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clocksource/timer-ti-32k.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/clocksource/timer-ti-32k.c
-+++ b/drivers/clocksource/timer-ti-32k.c
-@@ -98,6 +98,9 @@ static int __init ti_32k_timer_init(stru
- 		return -ENXIO;
- 	}
+--- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
++++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+@@ -3465,8 +3465,7 @@ static int ibmvscsis_probe(struct vio_de
+ 		 vscsi->dds.window[LOCAL].liobn,
+ 		 vscsi->dds.window[REMOTE].liobn);
  
-+	if (!of_machine_is_compatible("ti,am43"))
-+		ti_32k_timer.cs.flags |= CLOCK_SOURCE_SUSPEND_NONSTOP;
-+
- 	ti_32k_timer.counter = ti_32k_timer.base;
+-	strcpy(vscsi->eye, "VSCSI ");
+-	strncat(vscsi->eye, vdev->name, MAX_EYE);
++	snprintf(vscsi->eye, sizeof(vscsi->eye), "VSCSI %s", vdev->name);
  
- 	/*
+ 	vscsi->dds.unit_id = vdev->unit_address;
+ 	strncpy(vscsi->dds.partition_name, partition_name,
 
 
