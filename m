@@ -2,126 +2,136 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7021ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D03AC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:05:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A43D21476
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:03:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o9rvMeDM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A43D21476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CDFC321476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:05:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDFC321476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728635AbeJSBF3 (ORCPT
+        id S1728327AbeJSBG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 21:05:29 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45781 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727294AbeJSBF3 (ORCPT
+        Thu, 18 Oct 2018 21:06:58 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:36792 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727294AbeJSBG5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 21:05:29 -0400
-Received: by mail-pg1-f195.google.com with SMTP id s3-v6so1253434pga.12;
-        Thu, 18 Oct 2018 10:03:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1HdtjDLDJGO58lGgH1pmwkm5pqONiy1TdcgufnJt5jk=;
-        b=o9rvMeDM4mro7no9Tu9UlzaIDA3agBLUYkXFZKlG6Tg1oWHdmHHrDAIVvTNao7HilA
-         h60Ntdqv+gF2OxbgY9M9dVtpe/SkJBCyhK1p3yaL4oFBosHJtdb01yp7CY7C5iZJLQ/o
-         mrP9im4Zpwkul7QEW5PH4+pu/saeNjx9UYo2ObhKbSTDXPj2/8ovV2qwy0pteodviU2L
-         BhjQ8rIsmNA8Bdbre/LfiH7d19kG9h9lkFHWNc4s/7ms/ltGhPjLHbJRjR9Dh9hVYIq4
-         uLG89Hd3OEljnBRx/20v0nB3Pmc8EXUn4vYNmIg8GgM/pkBF58rAPSmR3O+5CQeeMckt
-         USpw==
+        Thu, 18 Oct 2018 21:06:57 -0400
+Received: by mail-oi1-f194.google.com with SMTP id p125-v6so24605233oic.3;
+        Thu, 18 Oct 2018 10:05:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1HdtjDLDJGO58lGgH1pmwkm5pqONiy1TdcgufnJt5jk=;
-        b=KYpiJD0uE7WqsDc1TyKgTTjxzlfi//oioaiT5AoVIZpsUF0s/6WmjUIyB1K0Jdf2jn
-         WI5MT+h1DipRcOgppfhUvGMnoIEPjDDmLk65AopYWejvznhDuHEXzc4HZIUlaXZSdjsO
-         OTPprzgVXCmM98aigOla08SgwtRyzK7BiAYSJiHYYy9g/MRrj+bBZcZVXpctmHkdUZLR
-         oO32JD0Kjxk8KkjhAG303ioJbWy8g8V1UoG6VMQEsoMR4CMGTGxJ7sXd5IuLlZpX6NA0
-         ZLQ2S12NQYf/a+y4fPpJ48bCciMTlI3lFhZfDguMJPZglmwFiAOl0djNoM6iUb5mQFYj
-         aY6g==
-X-Gm-Message-State: ABuFfojZ4Oz5kcvq4YtUFnYGrNhdwwXXKNFihft3J+d4Liuo3g6YUo5e
-        yk0K0btWq/WL9Xykn4lszlo=
-X-Google-Smtp-Source: ACcGV63IK/eCpi5LYf1bdWv2iiMzhcBliG+bU1xL027vp8fvR54XyDzJTglHkBqA2ckY36VHm+RHaw==
-X-Received: by 2002:a63:a80c:: with SMTP id o12-v6mr29445959pgf.271.1539882215860;
-        Thu, 18 Oct 2018 10:03:35 -0700 (PDT)
-Received: from mail.google.com ([2001:19f0:6001:4ff6:5400:1ff:feb7:a195])
-        by smtp.gmail.com with ESMTPSA id 64-v6sm42234940pfq.10.2018.10.18.10.03.35
+        bh=6M+qZS7XzLqQ84XTnjeDXwncE2T8D23MD4m/VgPQ9Qs=;
+        b=Q1wYl2N1V61v8noKXxtOw9NJk/KBiVdycxCxfBCL+/sS9rl4ZwTVX5LxGrZ3PxHpet
+         zlNGcNm34ScdC+kKjdTo429QxYDGdu1uVJ2SIFSxXDESLjUPUiO7PVnqZKptdRfIF/9S
+         OnMlJvYQNduHp0h+zEAUwwH+KmwTOWyIz1EGLdOWqpTAZhj7RHlHeLN6B35HM09WuyTr
+         FMrEenJxKre8wCIS0KaKxM+hJWHw6QPIQ+iQhLpMsY8Wonwj3OoqX5EAKVpKATAwuHPp
+         RWplUAaZCdC5dN0ulILNWW3RmPQm/80tKufXw1Npv6hbkok05Y5za5PffGa8DqrWdrmP
+         HQPg==
+X-Gm-Message-State: ABuFfoirJxWAbKf9KIyUDs35I0gDs9T+IICJnFqSsMZlhyGXKLVarKva
+        A3oUAMFDF0uhH8Ob6eSRpg==
+X-Google-Smtp-Source: ACcGV61L8O77Qw7iX+T0760BVD9y+cMb61QydYzzRTtD8HB9t5+RhMmw9PLMZBPKq8uE+Z7rR01adA==
+X-Received: by 2002:aca:7288:: with SMTP id p130-v6mr15463816oic.252.1539882303891;
+        Thu, 18 Oct 2018 10:05:03 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id x65-v6sm6540284oix.47.2018.10.18.10.05.03
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 18 Oct 2018 10:03:35 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 17:03:33 +0000
-From:   Du Changbin <changbin.du@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Du Changbin <changbin.du@gmail.com>, yamada.masahiro@socionext.com,
-        michal.lkml@markovi.net, tglx@linutronix.de, mingo@redhat.com,
-        linux@armlinux.org.uk, akpm@linux-foundation.org, x86@kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sparse@vger.kernel.org,
-        Changbin Du <changbin.du@intel.com>
-Subject: Re: [PATCH 2/4] kernel hacking: new config NO_AUTO_INLINE to disable
- compiler auto-inline optimizations
-Message-ID: <20181018170333.ctwhuyecd5m6wxoh@mail.google.com>
-References: <20181018162548.6399-1-changbin.du@gmail.com>
- <20181018162548.6399-3-changbin.du@gmail.com>
- <20181018125948.789c72de@gandalf.local.home>
+        Thu, 18 Oct 2018 10:05:03 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 12:05:02 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     frowand.list@gmail.com
+Cc:     Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
+Subject: Re: [PATCH v4 02/18] of: overlay: add missing of_node_put() after
+ add new node to changeset
+Message-ID: <20181018170502.GB15557@bogus>
+References: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
+ <1539657458-24401-3-git-send-email-frowand.list@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181018125948.789c72de@gandalf.local.home>
-User-Agent: NeoMutt/20180716-508-7c9a6d
+In-Reply-To: <1539657458-24401-3-git-send-email-frowand.list@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 12:59:48PM -0400, Steven Rostedt wrote:
-> On Thu, 18 Oct 2018 16:25:46 +0000
-> Du Changbin <changbin.du@gmail.com> wrote:
+On Mon, Oct 15, 2018 at 07:37:22PM -0700, frowand.list@gmail.com wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
 > 
-> > From: Changbin Du <changbin.du@intel.com>
-> > 
-> > This patch add a new kernel hacking option NO_AUTO_INLINE. Selecting
-> > this option will prevent the compiler from optimizing the kernel by
-> > auto-inlining functions not marked with the inline keyword.
-> > 
-> > With this option, only functions explicitly marked with "inline" will
-> > be inlined. This will allow the function tracer to trace more functions
-> > because it only traces functions that the compiler has not inlined.
-> > 
-> > Signed-off-by: Changbin Du <changbin.du@intel.com>
-> > Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> The refcount of a newly added overlay node decrements to one
+> (instead of zero) when the overlay changeset is destroyed.  This
+> change will cause the final decrement be to zero.
 > 
-> I have acked patch this before, but this particular patch has extra
-> changes that I have not acked.
->
-Steven, no extra changes made. I just wronly rebased it on top of mainline.
-:)
+> After applying this patch, new validation warnings will be
+> reported from the devicetree unittest during boot due to
+> a pre-existing devicetree bug.  The warnings will be similar to:
+> 
+>   OF: ERROR: memory leak of_node_release() overlay node /testcase-data/overlay-node/test-bus/test-unittest4 before free overlay changeset
+
+Same comment on formatting.
 
 > 
+> This pre-existing devicetree bug will also trigger a WARN_ONCE() from
+> refcount_sub_and_test_checked() when an overlay changeset is
+> destroyed without having first been applied.  This scenario occurs
+> when an error in the overlay is detected during the overlay changeset
+> creation:
 > 
-> > +config ENABLE_WARN_DEPRECATED
-> > +	bool "Enable __deprecated logic"
-> > +	default y
-> > +	help
-> > +	  Enable the __deprecated logic in the kernel build.
-> > +	  Disable this to suppress the "warning: 'foo' is deprecated
-> > +	  (declared at kernel/power/somefile.c:1234)" messages.
-> > +
+>   WARNING: CPU: 0 PID: 1 at lib/refcount.c:187 refcount_sub_and_test_checked+0xa8/0xbc
+>   refcount_t: underflow; use-after-free.
 > 
-> What is that?
+>   (unwind_backtrace) from (show_stack+0x10/0x14)
+>   (show_stack) from (dump_stack+0x6c/0x8c)
+>   (dump_stack) from (__warn+0xdc/0x104)
+>   (__warn) from (warn_slowpath_fmt+0x44/0x6c)
+>   (warn_slowpath_fmt) from (refcount_sub_and_test_checked+0xa8/0xbc)
+>   (refcount_sub_and_test_checked) from (kobject_put+0x24/0x208)
+>   (kobject_put) from (of_changeset_destroy+0x2c/0xb4)
+>   (of_changeset_destroy) from (free_overlay_changeset+0x1c/0x9c)
+>   (free_overlay_changeset) from (of_overlay_remove+0x284/0x2cc)
+>   (of_overlay_remove) from (of_unittest_apply_revert_overlay_check.constprop.4+0xf8/0x1e8)
+>   (of_unittest_apply_revert_overlay_check.constprop.4) from (of_unittest_overlay+0x960/0xed8)
+>   (of_unittest_overlay) from (of_unittest+0x1cc4/0x2138)
+>   (of_unittest) from (do_one_initcall+0x4c/0x28c)
+>   (do_one_initcall) from (kernel_init_freeable+0x29c/0x378)
+>   (kernel_init_freeable) from (kernel_init+0x8/0x110)
+>   (kernel_init) from (ret_from_fork+0x14/0x2c)
 > 
-> -- Steve
-
--- 
-Thanks,
-Du Changbin
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> ---
+>  drivers/of/overlay.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+> index 1176cb4b6e4e..32cfee68f2e3 100644
+> --- a/drivers/of/overlay.c
+> +++ b/drivers/of/overlay.c
+> @@ -379,7 +379,9 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+>  		if (ret)
+>  			return ret;
+>  
+> -		return build_changeset_next_level(ovcs, tchild, node);
+> +		ret = build_changeset_next_level(ovcs, tchild, node);
+> +		of_node_put(tchild);
+> +		return ret;
+>  	}
+>  
+>  	if (node->phandle && tchild->phandle)
+> -- 
+> Frank Rowand <frank.rowand@sony.com>
+> 
