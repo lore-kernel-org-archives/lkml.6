@@ -2,75 +2,80 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E13E9C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8188ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:07:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 997682145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:07:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 997682145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id B878D21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:07:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B878D21473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbeJRPGz (ORCPT
+        id S1727632AbeJRPH0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 11:06:55 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:58834 "EHLO mxhk.zte.com.cn"
+        Thu, 18 Oct 2018 11:07:26 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:48884 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726131AbeJRPGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 11:06:55 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 2D8267DCAD06BAB8F18F;
-        Thu, 18 Oct 2018 15:07:18 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w9I77ANO097048;
-        Thu, 18 Oct 2018 15:07:11 +0800 (GMT-8)
-        (envelope-from peng.hao2@zte.com.cn)
-Received: from localhost.localdomain.localdomain ([10.74.120.59])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018101815074022-5264126 ;
-          Thu, 18 Oct 2018 15:07:40 +0800 
-From:   Peng Hao <peng.hao2@zte.com.cn>
-To:     ast@kernel.org, daniel@iogearbox.net, shuah@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH bpf-next]  selftests/bpf: fix file resource leak
-Date:   Thu, 18 Oct 2018 23:18:36 +0800
-Message-Id: <1539875916-28560-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-10-18 15:07:40,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-10-18 15:06:58,
-        Serialize complete at 2018-10-18 15:06:58
-X-MAIL: mse01.zte.com.cn w9I77ANO097048
+        id S1726131AbeJRPHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 11:07:25 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id D63A315D251;
+        Thu, 18 Oct 2018 07:07:46 +0000 (UTC)
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2] clk: sunxi-ng: enable so-said LDOs for A64 SoC's pll-mipi clock
+Date:   Thu, 18 Oct 2018 15:07:29 +0800
+Message-Id: <20181018070729.52943-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FILE pointer variable f is opened but never closed.
+In the user manual of A64 SoC, the bit 22 and 23 of pll-mipi control
+register is called "LDO{1,2}_EN", and according to the BSP source code
+from Allwinner , the LDOs are enabled during the clock's enabling
+process.
 
-Signed-off-by:Peng Hao <peng.hao2@zte.com.cn>
+The clock failed to generate output if the two LDOs are not enabled.
+
+Add the two bits to the clock's gate bits, so that the LDOs are enabled
+when the PLL is enabled.
+
+Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- tools/testing/selftests/bpf/trace_helpers.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v2:
+- Add a section of comments before the addition.
 
-diff --git a/tools/testing/selftests/bpf/trace_helpers.c b/tools/testing/selftests/bpf/trace_helpers.c
-index cabe2a3..a3d1dac 100644
---- a/tools/testing/selftests/bpf/trace_helpers.c
-+++ b/tools/testing/selftests/bpf/trace_helpers.c
-@@ -41,6 +41,7 @@ int load_kallsyms(void)
- 		syms[i].name = strdup(func);
- 		i++;
- 	}
-+	fclose(f);
- 	sym_cnt = i;
- 	qsort(syms, sym_cnt, sizeof(struct ksym), ksym_cmp);
- 	return 0;
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index 5f80eb018014..884d8f7863c4 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -162,7 +162,12 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
+ #define SUN50I_A64_PLL_MIPI_REG		0x040
+ 
+ static struct ccu_nkm pll_mipi_clk = {
+-	.enable		= BIT(31),
++	/*
++	 * The bit 23 and 22 are called "LDO{1,2}_EN" on the SoC's
++	 * user manual, and by experiments the PLL doesn't work without
++	 * these bits toggled.
++	 */
++	.enable		= BIT(31) | BIT(23) | BIT(22),
+ 	.lock		= BIT(28),
+ 	.n		= _SUNXI_CCU_MULT(8, 4),
+ 	.k		= _SUNXI_CCU_MULT_MIN(4, 2, 2),
 -- 
-1.8.3.1
+2.18.1
 
