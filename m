@@ -6,119 +6,116 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66609C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:22:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1853ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:22:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35B842145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:22:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35B842145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A558E2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:22:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A558E2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbeJROVx (ORCPT
+        id S1727593AbeJROWA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 10:21:53 -0400
-Received: from mga11.intel.com ([192.55.52.93]:21293 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727328AbeJROVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 10:21:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 23:22:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,395,1534834800"; 
-   d="scan'208";a="79653170"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
-  by fmsmga008.fm.intel.com with ESMTP; 17 Oct 2018 23:22:25 -0700
-Subject: Re: [PATCH 11/11] perf tools: Stop fallbacking to kallsyms for vdso
- symbols lookup
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>
-References: <20181017225501.32150-1-acme@kernel.org>
- <20181017225501.32150-12-acme@kernel.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <4c682937-3cee-6974-0970-68610e13ad37@intel.com>
-Date:   Thu, 18 Oct 2018 09:20:46 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 18 Oct 2018 10:22:00 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33803 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727328AbeJROWA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 10:22:00 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9I6Lo6s708356
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 17 Oct 2018 23:21:50 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9I6LoHi708353;
+        Wed, 17 Oct 2018 23:21:50 -0700
+Date:   Wed, 17 Oct 2018 23:21:50 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
+Message-ID: <tip-ae852495be365f6be433dde6629d3f0316f8efde@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, hpa@zytor.com, peterz@infradead.org,
+        mingo@kernel.org, torvalds@linux-foundation.org, luto@kernel.org,
+        tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+          peterz@infradead.org, torvalds@linux-foundation.org,
+          luto@kernel.org, tglx@linutronix.de, bp@alien8.de,
+          dave.hansen@linux.intel.com
+In-Reply-To: <c47daa1888dc2298e7e1d3f82bd76b776ea33393.1539542111.git.luto@kernel.org>
+References: <c47daa1888dc2298e7e1d3f82bd76b776ea33393.1539542111.git.luto@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/entry/64: Further improve paranoid_entry
+ comments
+Git-Commit-ID: ae852495be365f6be433dde6629d3f0316f8efde
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20181017225501.32150-12-acme@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/10/18 1:55 AM, Arnaldo Carvalho de Melo wrote:
-> From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> David reports that:
-> 
-> <quote>
-> Perf has this hack where it uses the kernel symbol map as a backup when
-> a symbol can't be found in the user's symbol table(s).
+Commit-ID:  ae852495be365f6be433dde6629d3f0316f8efde
+Gitweb:     https://git.kernel.org/tip/ae852495be365f6be433dde6629d3f0316f8efde
+Author:     Andy Lutomirski <luto@kernel.org>
+AuthorDate: Sun, 14 Oct 2018 11:38:18 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 17 Oct 2018 12:30:27 +0200
 
-I don't think this is a complete fix because it exposes new problems.  This
-code caters for branches from kernel space to user space and vice versa.
-That is, since there is only one cpumode so it is certain to be wrong for
-either 'ip' or 'addr' when they are not both in the kernel or both in userspace.
+x86/entry/64: Further improve paranoid_entry comments
 
-> 
-> 
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: David Ahern <dsahern@gmail.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Wang Nan <wangnan0@huawei.com>
-> Link: https://lkml.kernel.org/n/tip-cs7skq9pp0kjypiju6o7trse@git.kernel.org
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/perf/util/event.c | 21 ++-------------------
->  1 file changed, 2 insertions(+), 19 deletions(-)
-> 
-> diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-> index 0988eb3b844b..bc646185f8d9 100644
-> --- a/tools/perf/util/event.c
-> +++ b/tools/perf/util/event.c
-> @@ -1561,26 +1561,9 @@ struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
->  
->  		return NULL;
->  	}
-> -try_again:
-> +
->  	al->map = map_groups__find(mg, al->addr);
-> -	if (al->map == NULL) {
-> -		/*
-> -		 * If this is outside of all known maps, and is a negative
-> -		 * address, try to look it up in the kernel dso, as it might be
-> -		 * a vsyscall or vdso (which executes in user-mode).
-> -		 *
-> -		 * XXX This is nasty, we should have a symbol list in the
-> -		 * "[vdso]" dso, but for now lets use the old trick of looking
-> -		 * in the whole kernel symbol list.
-> -		 */
-> -		if (cpumode == PERF_RECORD_MISC_USER && machine &&
-> -		    mg != &machine->kmaps &&
-> -		    machine__kernel_ip(machine, al->addr)) {
-> -			mg = &machine->kmaps;
-> -			load_map = true;
-> -			goto try_again;
-> -		}
-> -	} else {
-> +	if (al->map != NULL) {
->  		/*
->  		 * Kernel maps might be changed when loading symbols so loading
->  		 * must be done prior to using kernel maps.
-> 
+Commit:
 
+  16561f27f94e ("x86/entry: Add some paranoid entry/exit CR3 handling comments")
+
+... added some comments.  This improves them a bit:
+
+ - When I first read the new comments, it was unclear to me whether
+   they were referring to the case where paranoid_entry interrupted
+   other entry code or where paranoid_entry was itself interrupted.
+   Clarify it.
+
+ - Remove the EBX comment.  We no longer use EBX as a SWAPGS
+   indicator.
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/c47daa1888dc2298e7e1d3f82bd76b776ea33393.1539542111.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/entry/entry_64.S | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 1d9b4a300c8c..f95dcb209fdf 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1189,15 +1189,13 @@ ENTRY(paranoid_entry)
+ 1:
+ 	/*
+ 	 * Always stash CR3 in %r14.  This value will be restored,
+-	 * verbatim, at exit.  Needed if kernel is interrupted
+-	 * after switching to the user CR3 value but before
+-	 * returning to userspace.
++	 * verbatim, at exit.  Needed if paranoid_entry interrupted
++	 * another entry that already switched to the user CR3 value
++	 * but has not yet returned to userspace.
+ 	 *
+ 	 * This is also why CS (stashed in the "iret frame" by the
+ 	 * hardware at entry) can not be used: this may be a return
+-	 * to kernel code, but with a user CR3 value.  The %ebx flag
+-	 * for SWAPGS is also unusable for CR3 because there is a
+-	 * window with a user GS and a kernel CR3.
++	 * to kernel code, but with a user CR3 value.
+ 	 */
+ 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
+ 
