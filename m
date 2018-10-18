@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A843C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C98BDC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D2DB21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 912C321473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeWVZxoE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D2DB21473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mN30B/bO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 912C321473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729277AbeJSCBs (ORCPT
+        id S1729289AbeJSCBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:01:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49538 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:01:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728410AbeJSCBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:01:47 -0400
+        id S1728410AbeJSCBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:01:52 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC1D821476;
-        Thu, 18 Oct 2018 17:59:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A61421473;
+        Thu, 18 Oct 2018 17:59:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885582;
-        bh=0fZ7koo4hdQRjXtMVQiJSNFdx7zq8HI/gZCIsvJJnoA=;
+        s=default; t=1539885587;
+        bh=XGVn9wG7UCJ7tdX3PDk0LC7zcNRlbW4Wg5HhAHozYC8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CeWVZxoEwoAQRKI56z9iE+LNdlv5F9izuCY4GbudCTnK8uo0XdDc//5Z608TmFYdG
-         mXw21+t4oYxkFApr+cFH46Tdym5dP3lINo34M5Mpb2YgEsLz/xLBm6+AQGyS1n640g
-         piTZ6Z9/2ghpRHd25+SyMvXFWvJcDbPU6KLaFzYw=
+        b=mN30B/bOWDkUeTq3FFigsdhFeqLt/rJIgsnmCiWAHrL7Vf0NYVkr8ynwTdDqDTJLE
+         +7Xg6SRykijZdQ29rrkHp0JjrymbtMjUulj0Dgup1w8mKi91igTOb0SKZB36rlGple
+         XMp0IT7xAXGPeYt4etcld4q44+x/LQJv+2JjscpU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marek Lindner <mareklindner@neomailbox.ch>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 11/41] batman-adv: fix hardif_neigh refcount on queue_work() failure
-Date:   Thu, 18 Oct 2018 19:54:26 +0200
-Message-Id: <20181018175418.862296113@linuxfoundation.org>
+Subject: [PATCH 4.14 12/41] clocksource/drivers/ti-32k: Add CLOCK_SOURCE_SUSPEND_NONSTOP flag for non-am43 SoCs
+Date:   Thu, 18 Oct 2018 19:54:27 +0200
+Message-Id: <20181018175419.018809610@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
 References: <20181018175416.718399607@linuxfoundation.org>
@@ -64,47 +64,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marek Lindner <mareklindner@neomailbox.ch>
+From: Keerthy <j-keerthy@ti.com>
 
-[ Upstream commit 4c4af6900844ab04c9434c972021d7b48610e06a ]
+[ Upstream commit 3b7d96a0dbb6b630878597a1838fc39f808b761b ]
 
-The hardif_neigh refcounter is to be decreased by the queued work and
-currently is never decreased if the queue_work() call fails.
-Fix by checking the queue_work() return value and decrease refcount
-if necessary.
+The 32k clocksource is NONSTOP for non-am43 SoCs. Hence
+add the flag for all the other SoCs.
 
-Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Reported-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/bat_v_elp.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/clocksource/timer-ti-32k.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/batman-adv/bat_v_elp.c
-+++ b/net/batman-adv/bat_v_elp.c
-@@ -254,6 +254,7 @@ static void batadv_v_elp_periodic_work(s
- 	struct batadv_priv *bat_priv;
- 	struct sk_buff *skb;
- 	u32 elp_interval;
-+	bool ret;
- 
- 	bat_v = container_of(work, struct batadv_hard_iface_bat_v, elp_wq.work);
- 	hard_iface = container_of(bat_v, struct batadv_hard_iface, bat_v);
-@@ -315,8 +316,11 @@ static void batadv_v_elp_periodic_work(s
- 		 * may sleep and that is not allowed in an rcu protected
- 		 * context. Therefore schedule a task for that.
- 		 */
--		queue_work(batadv_event_workqueue,
--			   &hardif_neigh->bat_v.metric_work);
-+		ret = queue_work(batadv_event_workqueue,
-+				 &hardif_neigh->bat_v.metric_work);
-+
-+		if (!ret)
-+			batadv_hardif_neigh_put(hardif_neigh);
+--- a/drivers/clocksource/timer-ti-32k.c
++++ b/drivers/clocksource/timer-ti-32k.c
+@@ -98,6 +98,9 @@ static int __init ti_32k_timer_init(stru
+ 		return -ENXIO;
  	}
- 	rcu_read_unlock();
  
++	if (!of_machine_is_compatible("ti,am43"))
++		ti_32k_timer.cs.flags |= CLOCK_SOURCE_SUSPEND_NONSTOP;
++
+ 	ti_32k_timer.counter = ti_32k_timer.base;
+ 
+ 	/*
 
 
