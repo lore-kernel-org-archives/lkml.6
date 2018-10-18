@@ -7,56 +7,58 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2763C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3844EECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A5322148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAC272148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C6Kb5Z1B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A5322148D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g1CnKNnt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAC272148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730026AbeJSCGH (ORCPT
+        id S1730034AbeJSCGL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:06:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54288 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:06:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728416AbeJSCGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:06:06 -0400
+        id S1728416AbeJSCGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:06:10 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7963A21480;
-        Thu, 18 Oct 2018 18:03:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8A3F21476;
+        Thu, 18 Oct 2018 18:04:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885839;
-        bh=+qkxDcDVyd0St3cpBtBevbyUobFWnTpOlwO9jd4tO8c=;
+        s=default; t=1539885842;
+        bh=F7vom+3xj1atX65evVUYyPrEa+8MXBm1FzHLlaeQZRM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C6Kb5Z1BRyyddTJXANySiDUu+I9ziGSBQM5EQKDZM7l0Fs493vcJljSyufBnOAXRK
-         Bf1+irFCVH+WjwO//1RsRYORmLojekLlQVMh5EZ9qmMj3rUXgnAAApCLxj+l+njk05
-         kGXRPh03HcyBs095O596uLIro68+1mJ5mMFGvFog=
+        b=g1CnKNntGDS3yKa3Zo+X+ZyiaVHRA0hKZFCF/D3l9lAODNwlxZn7d7fW1V2JI8qJq
+         atK/XMevZlWeJUz+/w1HJ0VcXmmAFyT58ITUOuD7yVw9mjBmPpZXQ7HKgYEPeM3wdt
+         X4uD5NbN1nprTb/PfamcdnMjQ7pJxkZx/ZY1NPVs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Tony Luck <tony.luck@intel.com>,
         Fenghua Yu <fenghua.yu@intel.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Rik van Riel <riel@redhat.com>,
         Stanislaw Gruszka <sgruszka@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>,
         Wanpeng Li <wanpeng.li@hotmail.com>,
         Ingo Molnar <mingo@kernel.org>,
         Ivan Delalande <colona@arista.com>
-Subject: [PATCH 4.9 31/35] macintosh/rack-meter: Convert cputime64_t use to u64
-Date:   Thu, 18 Oct 2018 19:55:00 +0200
-Message-Id: <20181018175426.899956596@linuxfoundation.org>
+Subject: [PATCH 4.9 32/35] sched/cputime: Increment kcpustat directly on irqtime account
+Date:   Thu, 18 Oct 2018 19:55:01 +0200
+Message-Id: <20181018175427.007210788@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175422.506152522@linuxfoundation.org>
 References: <20181018175422.506152522@linuxfoundation.org>
@@ -76,106 +78,164 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frederic Weisbecker <fweisbec@gmail.com>
 
-commit 564b733c899f4e12a64946658960fce80cad0b05 upstream.
+commit a499a5a14dbd1d0315a96fc62a8798059325e9e6 upstream.
 
-cputime_t is going to be removed and replaced by nsecs units,
-so convert the drivers/macintosh/rack-meter.c use to u64..
+The irqtime is accounted is nsecs and stored in
+cpu_irq_time.hardirq_time and cpu_irq_time.softirq_time. Once the
+accumulated amount reaches a new jiffy, this one gets accounted to the
+kcpustat.
+
+This was necessary when kcpustat was stored in cputime_t, which could at
+worst have jiffies granularity. But now kcpustat is stored in nsecs
+so this whole discretization game with temporary irqtime storage has
+become unnecessary.
+
+We can now directly account the irqtime to the kcpustat.
 
 Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
 Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Tony Luck <tony.luck@intel.com>
 Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Paul Mackerras <paulus@samba.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Rik van Riel <riel@redhat.com>
 Cc: Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
 Cc: Wanpeng Li <wanpeng.li@hotmail.com>
-Link: http://lkml.kernel.org/r/1485832191-26889-5-git-send-email-fweisbec@gmail.com
+Link: http://lkml.kernel.org/r/1485832191-26889-17-git-send-email-fweisbec@gmail.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ivan Delalande <colona@arista.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/macintosh/rack-meter.c |   32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ kernel/sched/cputime.c |   50 ++++++++++++++++---------------------------------
+ kernel/sched/sched.h   |    7 +++---
+ 2 files changed, 21 insertions(+), 36 deletions(-)
 
---- a/drivers/macintosh/rack-meter.c
-+++ b/drivers/macintosh/rack-meter.c
-@@ -52,8 +52,8 @@ struct rackmeter_dma {
- struct rackmeter_cpu {
- 	struct delayed_work	sniffer;
- 	struct rackmeter	*rm;
--	cputime64_t		prev_wall;
--	cputime64_t		prev_idle;
-+	u64			prev_wall;
-+	u64			prev_idle;
- 	int			zero;
- } ____cacheline_aligned;
- 
-@@ -81,7 +81,7 @@ static int rackmeter_ignore_nice;
- /* This is copied from cpufreq_ondemand, maybe we should put it in
-  * a common header somewhere
-  */
--static inline cputime64_t get_cpu_idle_time(unsigned int cpu)
-+static inline u64 get_cpu_idle_time(unsigned int cpu)
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -44,6 +44,7 @@ void disable_sched_clock_irqtime(void)
+ void irqtime_account_irq(struct task_struct *curr)
  {
- 	u64 retval;
+ 	struct irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
++	u64 *cpustat = kcpustat_this_cpu->cpustat;
+ 	s64 delta;
+ 	int cpu;
  
-@@ -91,7 +91,7 @@ static inline cputime64_t get_cpu_idle_t
- 	if (rackmeter_ignore_nice)
- 		retval += kcpustat_cpu(cpu).cpustat[CPUTIME_NICE];
+@@ -61,49 +62,35 @@ void irqtime_account_irq(struct task_str
+ 	 * in that case, so as not to confuse scheduler with a special task
+ 	 * that do not consume any time, but still wants to run.
+ 	 */
+-	if (hardirq_count())
+-		irqtime->hardirq_time += delta;
+-	else if (in_serving_softirq() && curr != this_cpu_ksoftirqd())
+-		irqtime->softirq_time += delta;
++	if (hardirq_count()) {
++		cpustat[CPUTIME_IRQ] += delta;
++		irqtime->tick_delta += delta;
++	} else if (in_serving_softirq() && curr != this_cpu_ksoftirqd()) {
++		cpustat[CPUTIME_SOFTIRQ] += delta;
++		irqtime->tick_delta += delta;
++	}
  
--	return nsecs_to_cputime64(retval);
-+	return retval;
+ 	u64_stats_update_end(&irqtime->sync);
+ }
+ EXPORT_SYMBOL_GPL(irqtime_account_irq);
+ 
+-static cputime_t irqtime_account_update(u64 irqtime, int idx, cputime_t maxtime)
++static cputime_t irqtime_tick_accounted(cputime_t maxtime)
+ {
+-	u64 *cpustat = kcpustat_this_cpu->cpustat;
+-	cputime_t irq_cputime;
+-
+-	irq_cputime = nsecs_to_cputime64(irqtime - cpustat[idx]);
+-	irq_cputime = min(irq_cputime, maxtime);
+-	cpustat[idx] += cputime_to_nsecs(irq_cputime);
+-
+-	return irq_cputime;
+-}
++	struct irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
++	cputime_t delta;
+ 
+-static cputime_t irqtime_account_hi_update(cputime_t maxtime)
+-{
+-	return irqtime_account_update(__this_cpu_read(cpu_irqtime.hardirq_time),
+-				      CPUTIME_IRQ, maxtime);
+-}
++	delta = nsecs_to_cputime(irqtime->tick_delta);
++	delta = min(delta, maxtime);
++	irqtime->tick_delta -= cputime_to_nsecs(delta);
+ 
+-static cputime_t irqtime_account_si_update(cputime_t maxtime)
+-{
+-	return irqtime_account_update(__this_cpu_read(cpu_irqtime.softirq_time),
+-				      CPUTIME_SOFTIRQ, maxtime);
++	return delta;
  }
  
- static void rackmeter_setup_i2s(struct rackmeter *rm)
-@@ -217,23 +217,23 @@ static void rackmeter_do_timer(struct wo
- 		container_of(work, struct rackmeter_cpu, sniffer.work);
- 	struct rackmeter *rm = rcpu->rm;
- 	unsigned int cpu = smp_processor_id();
--	cputime64_t cur_jiffies, total_idle_ticks;
--	unsigned int total_ticks, idle_ticks;
-+	u64 cur_nsecs, total_idle_nsecs;
-+	u64 total_nsecs, idle_nsecs;
- 	int i, offset, load, cumm, pause;
+ #else /* CONFIG_IRQ_TIME_ACCOUNTING */
  
--	cur_jiffies = jiffies64_to_cputime64(get_jiffies_64());
--	total_ticks = (unsigned int) (cur_jiffies - rcpu->prev_wall);
--	rcpu->prev_wall = cur_jiffies;
+ #define sched_clock_irqtime	(0)
+ 
+-static cputime_t irqtime_account_hi_update(cputime_t dummy)
+-{
+-	return 0;
+-}
 -
--	total_idle_ticks = get_cpu_idle_time(cpu);
--	idle_ticks = (unsigned int) (total_idle_ticks - rcpu->prev_idle);
--	idle_ticks = min(idle_ticks, total_ticks);
--	rcpu->prev_idle = total_idle_ticks;
-+	cur_nsecs = jiffies64_to_nsecs(get_jiffies_64());
-+	total_nsecs = cur_nsecs - rcpu->prev_wall;
-+	rcpu->prev_wall = cur_nsecs;
-+
-+	total_idle_nsecs = get_cpu_idle_time(cpu);
-+	idle_nsecs = total_idle_nsecs - rcpu->prev_idle;
-+	idle_nsecs = min(idle_nsecs, total_nsecs);
-+	rcpu->prev_idle = total_idle_nsecs;
+-static cputime_t irqtime_account_si_update(cputime_t dummy)
++static cputime_t irqtime_tick_accounted(cputime_t dummy)
+ {
+ 	return 0;
+ }
+@@ -290,10 +277,7 @@ static inline cputime_t account_other_ti
+ 	accounted = steal_account_process_time(max);
  
- 	/* We do a very dumb calculation to update the LEDs for now,
- 	 * we'll do better once we have actual PWM implemented
- 	 */
--	load = (9 * (total_ticks - idle_ticks)) / total_ticks;
-+	load = div64_u64(9 * (total_nsecs - idle_nsecs), total_nsecs);
+ 	if (accounted < max)
+-		accounted += irqtime_account_hi_update(max - accounted);
+-
+-	if (accounted < max)
+-		accounted += irqtime_account_si_update(max - accounted);
++		accounted += irqtime_tick_accounted(max - accounted);
  
- 	offset = cpu << 3;
- 	cumm = 0;
-@@ -278,7 +278,7 @@ static void rackmeter_init_cpu_sniffer(s
- 			continue;
- 		rcpu = &rm->cpu[cpu];
- 		rcpu->prev_idle = get_cpu_idle_time(cpu);
--		rcpu->prev_wall = jiffies64_to_cputime64(get_jiffies_64());
-+		rcpu->prev_wall = jiffies64_to_nsecs(get_jiffies_64());
- 		schedule_delayed_work_on(cpu, &rm->cpu[cpu].sniffer,
- 					 msecs_to_jiffies(CPU_SAMPLING_RATE));
- 	}
+ 	return accounted;
+ }
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -4,6 +4,7 @@
+ #include <linux/sched/rt.h>
+ #include <linux/u64_stats_sync.h>
+ #include <linux/sched/deadline.h>
++#include <linux/kernel_stat.h>
+ #include <linux/binfmts.h>
+ #include <linux/mutex.h>
+ #include <linux/spinlock.h>
+@@ -1742,8 +1743,7 @@ static inline void nohz_balance_exit_idl
+ 
+ #ifdef CONFIG_IRQ_TIME_ACCOUNTING
+ struct irqtime {
+-	u64			hardirq_time;
+-	u64			softirq_time;
++	u64			tick_delta;
+ 	u64			irq_start_time;
+ 	struct u64_stats_sync	sync;
+ };
+@@ -1753,12 +1753,13 @@ DECLARE_PER_CPU(struct irqtime, cpu_irqt
+ static inline u64 irq_time_read(int cpu)
+ {
+ 	struct irqtime *irqtime = &per_cpu(cpu_irqtime, cpu);
++	u64 *cpustat = kcpustat_cpu(cpu).cpustat;
+ 	unsigned int seq;
+ 	u64 total;
+ 
+ 	do {
+ 		seq = __u64_stats_fetch_begin(&irqtime->sync);
+-		total = irqtime->softirq_time + irqtime->hardirq_time;
++		total = cpustat[CPUTIME_SOFTIRQ] + cpustat[CPUTIME_IRQ];
+ 	} while (__u64_stats_fetch_retry(&irqtime->sync, seq));
+ 
+ 	return total;
 
 
