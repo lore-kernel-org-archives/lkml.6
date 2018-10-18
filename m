@@ -2,136 +2,127 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD081ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:24:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9604FC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D18021476
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:24:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D18021476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3E5E721473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:30:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JPSQUwOJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E5E721473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbeJRTYf (ORCPT
+        id S1727711AbeJRTb2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 15:24:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43906 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727365AbeJRTYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 15:24:35 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 94BBDAE10;
-        Thu, 18 Oct 2018 11:23:59 +0000 (UTC)
-Date:   Thu, 18 Oct 2018 13:23:58 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, guro@fb.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        rientjes@google.com, yang.s@alibaba-inc.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>
-Subject: Re: [PATCH v3] mm: memcontrol: Don't flood OOM messages with no
- eligible task.
-Message-ID: <20181018112358.GB18839@dhcp22.suse.cz>
-References: <20181017102821.GM18839@dhcp22.suse.cz>
- <20181017111724.GA459@jagdpanzerIV>
- <201810180246.w9I2koi3011358@www262.sakura.ne.jp>
- <20181018065519.GV18839@dhcp22.suse.cz>
- <6bbb0449-1f22-4d05-9e2a-636965b7dbc6@i-love.sakura.ne.jp>
+        Thu, 18 Oct 2018 15:31:28 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33344 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727439AbeJRTb2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 15:31:28 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8E5C81277;
+        Thu, 18 Oct 2018 13:30:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1539862251;
+        bh=e0Y+b7qIWXZvGBY1F5a6n61/01pQjUD5lQ5C5RhVioI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JPSQUwOJN+mgU3fRJLNroOq+EaAxRQg0EKBuccEDs+A4oj6+jD6HpPyuV/ki2yPpA
+         HXDBcxTSgJxxAbvb98/u69SLt/6kWREwmxJavQRf/rCLM3cT/H/O+65nS5Hx5YlIq5
+         DvM9Ki/g5mLyH8Q26JH049DOiCCDpWuFhb79FKK0=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, Icenowy Zheng <icenowy@aosc.io>,
+        devicetree@vger.kernel.org, Dave Airlie <airlied@linux.ie>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 9/9] [DO NOT MERGE] drm/sun4i: rgb: Add 5% tolerance to dot clock frequency check
+Date:   Thu, 18 Oct 2018 14:31:01 +0300
+Message-ID: <1585874.9P5eR8PMbl@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20181018094258.oahlopafvm2udvoe@flea>
+References: <20181018073327.64942-1-icenowy@aosc.io> <CAKMK7uFp2c=wqzPi096MTRB6Cdfacerkp6dM=fEqCAr99PQG9w@mail.gmail.com> <20181018094258.oahlopafvm2udvoe@flea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6bbb0449-1f22-4d05-9e2a-636965b7dbc6@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 18-10-18 19:37:18, Tetsuo Handa wrote:
-> On 2018/10/18 15:55, Michal Hocko wrote:
-> > On Thu 18-10-18 11:46:50, Tetsuo Handa wrote:
-> >> This is essentially a ratelimit approach, roughly equivalent with:
-> >>
-> >>   static DEFINE_RATELIMIT_STATE(oom_no_victim_rs, 60 * HZ, 1);
-> >>   oom_no_victim_rs.flags |= RATELIMIT_MSG_ON_RELEASE;
-> >>
-> >>   if (__ratelimit(&oom_no_victim_rs)) {
-> >>     dump_header(oc, NULL);
-> >>     pr_warn("Out of memory and no killable processes...\n");
-> >>     oom_no_victim_rs.begin = jiffies;
-> >>   }
+Hello,
+
+On Thursday, 18 October 2018 12:42:58 EEST Maxime Ripard wrote:
+> On Thu, Oct 18, 2018 at 11:18:06AM +0200, Daniel Vetter wrote:
+> > On Thu, Oct 18, 2018 at 10:55 AM Laurent Pinchart wrote:
+> >> On Thursday, 18 October 2018 10:33:27 EEST Icenowy Zheng wrote:
+> >>> From: Chen-Yu Tsai <wens@csie.org>
+> >>> 
+> >>> The panels shipped with Allwinner devices are very "generic", i.e.
+> >>> they do not have model numbers or reliable sources of information
+> >>> for the timings (that we know of) other than the fex files shipped
+> >>> on them. The dot clock frequency provided in the fex files have all
+> >>> been rounded to the nearest MHz, as that is the unit used in them.
+> >>> 
+> >>> We were using the simple panel "urt,umsh-8596md-t" as a substitute
+> >>> for the A13 Q8 tablets in the absence of a specific model for what
+> >>> may be many different but otherwise timing compatible panels. This
+> >>> was usable without any visual artifacts or side effects, until the
+> >>> dot clock rate check was added in commit bb43d40d7c83 ("drm/sun4i:
+> >>> rgb: Validate the clock rate").
+> >>> 
+> >>> The reason this check fails is because the dotclock frequency for
+> >>> this model is 33.26 MHz, which is not achievable with our dot clock
+> >>> hardware, and the rate returned by clk_round_rate deviates slightly,
+> >>> causing the driver to reject the display mode.
+> >>> 
+> >>> The LCD panels have some tolerance on the dot clock frequency, even
+> >>> if it's not specified in their datasheets.
+> >>> 
+> >>> This patch adds a 5% tolerence to the dot clock check.
+> >> 
+> >> Why do you think this shouldn't be merged ?
 > > 
-> > Then there is no reason to reinvent the wheel. So use the standard
-> > ratelimit approach. Or put it in other words, this place is no special
-> > to any other that needs some sort of printk throttling. We surely do not
-> > want an ad-hoc solutions all over the kernel.
+> > It pisses of a lot of people who really insist upon accurate timing.
 > 
-> netdev_wait_allrefs() in net/core/dev.c is doing the same thing. Since
-> out_of_memory() is serialized by oom_lock mutex, there is no need to use
-> "struct ratelimit_state"->lock field. Plain "unsigned long" is enough.
-
-That code probably predates generalized ratelimit api.
-
-> > And once you realize that the ratelimit api is the proper one (put aside
-> > any potential improvements in the implementation of this api) then you
-> > quickly learn that we already do throttle oom reports and it would be
-> > nice to unify that and ... we are back to a naked patch. So please stop
-> > being stuborn and try to cooperate finally.
+> It's not just about accurate timings. That 5% is a made-up limit, that
+> never have really been confirmed by looking at the typical tolerancies
+> of panels.
 > 
-> I don't think that ratelimit API is the proper one, for I am touching
-> "struct ratelimit_state"->begin field which is not exported by ratelimit API.
-> But if you insist on ratelimit API version, I can tolerate with below one.
-
-I just give up. I do not really see why you always have to make the code
-more complex than necessary and squash different things together. This
-is a complete kernel code development antipattern.
-
-I am not goging to reply to this thread more but let me note that this
-is beyond fun in any aspect I can think off (and yeah I have considered
-dark sense of humor as well).
-
+> And while being to relaxed might make some panels work that are not
+> working currently, it might also break some panels that currently work
+> and won't now, and ideally, we should really be able to let those
+> panels work if they can, and filter out resolutions if they can't.
 > 
->  mm/oom_kill.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+> > I think a better fix would be to have a dotclock range in drm_panel,
+> > and some magic to figure out which one of these we can actually
+> > do. Then tell userspace that this is the mode is should
+> > request. That way userspace knows what the actual dotclock/refresh
+> > rate is, and the panel still works.
 > 
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index f10aa53..7c6118e 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -1106,6 +1106,12 @@ bool out_of_memory(struct oom_control *oc)
->  	select_bad_process(oc);
->  	/* Found nothing?!?! */
->  	if (!oc->chosen) {
-> +		static DEFINE_RATELIMIT_STATE(no_eligible_rs, 60 * HZ, 1);
-> +
-> +		ratelimit_set_flags(&no_eligible_rs, RATELIMIT_MSG_ON_RELEASE);
-> +		if ((is_sysrq_oom(oc) || is_memcg_oom(oc)) &&
-> +		    !__ratelimit(&no_eligible_rs))
-> +			return false;
->  		dump_header(oc, NULL);
->  		pr_warn("Out of memory and no killable processes...\n");
->  		/*
-> @@ -1115,6 +1121,7 @@ bool out_of_memory(struct oom_control *oc)
->  		 */
->  		if (!is_sysrq_oom(oc) && !is_memcg_oom(oc))
->  			panic("System is deadlocked on memory\n");
-> +		no_eligible_rs.begin = jiffies;
->  	}
->  	if (oc->chosen && oc->chosen != (void *)-1UL)
->  		oom_kill_process(oc, !is_memcg_oom(oc) ? "Out of memory" :
-> -- 
-> 1.8.3.1
+> It's not just about panels, but also bridges with EDID where the
+> tolerancy is not exposed.
+
+Given that the tolerance is a property of the panel or bridge, I agree with 
+Daniel that it should be implemented there, or at least in cooperation with 
+drm_panel and drm_bridge.
+
+Semi-related information, I think the CEA and VESA standards allow a 0.5% 
+clock tolerance. What is the maximum clock frequency deviation required for 
+this platform ?
 
 -- 
-Michal Hocko
-SUSE Labs
+Regards,
+
+Laurent Pinchart
+
+
+
