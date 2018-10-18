@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67825C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81613ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DFA2204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 493F6204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYrtSEAK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DFA2204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QMQk9ANV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 493F6204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730633AbeJSCJO (ORCPT
+        id S1730646AbeJSCJS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:09:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58622 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:09:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729858AbeJSCJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:09:14 -0400
+        id S1730620AbeJSCJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:09:18 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0BBA204FD;
-        Thu, 18 Oct 2018 18:07:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAB25204FD;
+        Thu, 18 Oct 2018 18:07:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539886026;
-        bh=zQ4lYBtqQdUuGfvcsDTfJv1jDVnrrJ+rIEbg6UZnbaE=;
+        s=default; t=1539886030;
+        bh=YyJPP8U1CcgwLQrjHpUnLIVdOyUQ3+FBtI/M7hLhcjY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AYrtSEAKmyvqDyCyu2+p65N098JLCEesWtQLW5syLEaEowTb2gDLsztdItDU40qgC
-         uJAq39V0yePzdZVIi2grdJxjTfvCNT4tgK6D0otc2buR5yNQR6zEZ50CpgzeF1Z7kX
-         clpw3K8r4DUu5muLf8CNkWk+RA/+WOVEDFDLD4so=
+        b=QMQk9ANVnHTLcH9OdUqq5YKbSofiKYE9x4Qo74uxCudiSihmU2ov2WO3wHx3xz9rz
+         Cz/J8rTGWL3M3nGLTLYR52HBoq+u3oP7OScBV58jc3Ug2WYp2aag77nb5PdqgWkJWF
+         wxv+Y3T3/KIWOBij5Kiv1Vrz9Yfn2YyuVyMM63bU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 36/48] clocksource/drivers/ti-32k: Add CLOCK_SOURCE_SUSPEND_NONSTOP flag for non-am43 SoCs
-Date:   Thu, 18 Oct 2018 19:55:11 +0200
-Message-Id: <20181018175429.866847085@linuxfoundation.org>
+Subject: [PATCH 4.4 37/48] Input: atakbd - fix Atari keymap
+Date:   Thu, 18 Oct 2018 19:55:12 +0200
+Message-Id: <20181018175429.913176042@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -64,34 +63,133 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Keerthy <j-keerthy@ti.com>
+From: Andreas Schwab <schwab@linux-m68k.org>
 
-[ Upstream commit 3b7d96a0dbb6b630878597a1838fc39f808b761b ]
+[ Upstream commit 9e62df51be993035c577371ffee5477697a56aad ]
 
-The 32k clocksource is NONSTOP for non-am43 SoCs. Hence
-add the flag for all the other SoCs.
+Fix errors in Atari keymap (mostly in keypad, help and undo keys).
 
-Reported-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Patch provided on debian-68k ML by Andreas Schwab <schwab@linux-m68k.org>,
+keymap array size and unhandled scancode limit adjusted to 0x73 by me.
+
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Andreas Schwab <schwab@linux-m68k.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clocksource/timer-ti-32k.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/input/keyboard/atakbd.c |   64 ++++++++++++++++------------------------
+ 1 file changed, 26 insertions(+), 38 deletions(-)
 
---- a/drivers/clocksource/timer-ti-32k.c
-+++ b/drivers/clocksource/timer-ti-32k.c
-@@ -98,6 +98,9 @@ static void __init ti_32k_timer_init(str
- 		return;
- 	}
+--- a/drivers/input/keyboard/atakbd.c
++++ b/drivers/input/keyboard/atakbd.c
+@@ -79,8 +79,7 @@ MODULE_LICENSE("GPL");
+  */
  
-+	if (!of_machine_is_compatible("ti,am43"))
-+		ti_32k_timer.cs.flags |= CLOCK_SOURCE_SUSPEND_NONSTOP;
-+
- 	ti_32k_timer.counter = ti_32k_timer.base;
  
- 	/*
+-static unsigned char atakbd_keycode[0x72] = {	/* American layout */
+-	[0]	 = KEY_GRAVE,
++static unsigned char atakbd_keycode[0x73] = {	/* American layout */
+ 	[1]	 = KEY_ESC,
+ 	[2]	 = KEY_1,
+ 	[3]	 = KEY_2,
+@@ -121,9 +120,9 @@ static unsigned char atakbd_keycode[0x72
+ 	[38]	 = KEY_L,
+ 	[39]	 = KEY_SEMICOLON,
+ 	[40]	 = KEY_APOSTROPHE,
+-	[41]	 = KEY_BACKSLASH,	/* FIXME, '#' */
++	[41]	 = KEY_GRAVE,
+ 	[42]	 = KEY_LEFTSHIFT,
+-	[43]	 = KEY_GRAVE,		/* FIXME: '~' */
++	[43]	 = KEY_BACKSLASH,
+ 	[44]	 = KEY_Z,
+ 	[45]	 = KEY_X,
+ 	[46]	 = KEY_C,
+@@ -149,45 +148,34 @@ static unsigned char atakbd_keycode[0x72
+ 	[66]	 = KEY_F8,
+ 	[67]	 = KEY_F9,
+ 	[68]	 = KEY_F10,
+-	[69]	 = KEY_ESC,
+-	[70]	 = KEY_DELETE,
+-	[71]	 = KEY_KP7,
+-	[72]	 = KEY_KP8,
+-	[73]	 = KEY_KP9,
++	[71]	 = KEY_HOME,
++	[72]	 = KEY_UP,
+ 	[74]	 = KEY_KPMINUS,
+-	[75]	 = KEY_KP4,
+-	[76]	 = KEY_KP5,
+-	[77]	 = KEY_KP6,
++	[75]	 = KEY_LEFT,
++	[77]	 = KEY_RIGHT,
+ 	[78]	 = KEY_KPPLUS,
+-	[79]	 = KEY_KP1,
+-	[80]	 = KEY_KP2,
+-	[81]	 = KEY_KP3,
+-	[82]	 = KEY_KP0,
+-	[83]	 = KEY_KPDOT,
+-	[90]	 = KEY_KPLEFTPAREN,
+-	[91]	 = KEY_KPRIGHTPAREN,
+-	[92]	 = KEY_KPASTERISK,	/* FIXME */
+-	[93]	 = KEY_KPASTERISK,
+-	[94]	 = KEY_KPPLUS,
+-	[95]	 = KEY_HELP,
++	[80]	 = KEY_DOWN,
++	[82]	 = KEY_INSERT,
++	[83]	 = KEY_DELETE,
+ 	[96]	 = KEY_102ND,
+-	[97]	 = KEY_KPASTERISK,	/* FIXME */
+-	[98]	 = KEY_KPSLASH,
++	[97]	 = KEY_UNDO,
++	[98]	 = KEY_HELP,
+ 	[99]	 = KEY_KPLEFTPAREN,
+ 	[100]	 = KEY_KPRIGHTPAREN,
+ 	[101]	 = KEY_KPSLASH,
+ 	[102]	 = KEY_KPASTERISK,
+-	[103]	 = KEY_UP,
+-	[104]	 = KEY_KPASTERISK,	/* FIXME */
+-	[105]	 = KEY_LEFT,
+-	[106]	 = KEY_RIGHT,
+-	[107]	 = KEY_KPASTERISK,	/* FIXME */
+-	[108]	 = KEY_DOWN,
+-	[109]	 = KEY_KPASTERISK,	/* FIXME */
+-	[110]	 = KEY_KPASTERISK,	/* FIXME */
+-	[111]	 = KEY_KPASTERISK,	/* FIXME */
+-	[112]	 = KEY_KPASTERISK,	/* FIXME */
+-	[113]	 = KEY_KPASTERISK	/* FIXME */
++	[103]	 = KEY_KP7,
++	[104]	 = KEY_KP8,
++	[105]	 = KEY_KP9,
++	[106]	 = KEY_KP4,
++	[107]	 = KEY_KP5,
++	[108]	 = KEY_KP6,
++	[109]	 = KEY_KP1,
++	[110]	 = KEY_KP2,
++	[111]	 = KEY_KP3,
++	[112]	 = KEY_KP0,
++	[113]	 = KEY_KPDOT,
++	[114]	 = KEY_KPENTER,
+ };
+ 
+ static struct input_dev *atakbd_dev;
+@@ -195,7 +183,7 @@ static struct input_dev *atakbd_dev;
+ static void atakbd_interrupt(unsigned char scancode, char down)
+ {
+ 
+-	if (scancode < 0x72) {		/* scancodes < 0xf2 are keys */
++	if (scancode < 0x73) {		/* scancodes < 0xf3 are keys */
+ 
+ 		// report raw events here?
+ 
+@@ -209,7 +197,7 @@ static void atakbd_interrupt(unsigned ch
+ 			input_report_key(atakbd_dev, scancode, down);
+ 			input_sync(atakbd_dev);
+ 		}
+-	} else				/* scancodes >= 0xf2 are mouse data, most likely */
++	} else				/* scancodes >= 0xf3 are mouse data, most likely */
+ 		printk(KERN_INFO "atakbd: unhandled scancode %x\n", scancode);
+ 
+ 	return;
 
 
