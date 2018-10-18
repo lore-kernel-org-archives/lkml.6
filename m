@@ -2,95 +2,97 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B50C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A47C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:19:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1A2C2083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:13:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A3812083A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 10:19:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2lXoKDC1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1A2C2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20150623.gappssmtp.com header.i=@philpotter-co-uk.20150623.gappssmtp.com header.b="dBzq2M93"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A3812083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbeJRSON (ORCPT
+        id S1728053AbeJRSUK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 14:14:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54492 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728071AbeJRSOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 14:14:08 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2516C2148E;
-        Thu, 18 Oct 2018 10:13:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539857629;
-        bh=DzZbeqmv+BFpusqIGxC5Zlgyc5U2PYNysgq3bhaK2EI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2lXoKDC1zG1/nFpDHKv0L5dqr/q0Q+wnJR3Pt0CuNj0MqtI3Rvmdgcnsn7Ytt1zz7
-         pUxerZk5PR5hVP8tydLgxng1nHof2iWCZHAxaeP+oAaA73xPzBfoZd8KsO0bdPXejh
-         kCoFarX9nEJj4XsDExLHABHtnuZiAYIOuL8QoP64=
-Date:   Thu, 18 Oct 2018 12:03:55 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [GIT PULL] IDA/IDR fixes for 4.19
-Message-ID: <20181018100355.GB8451@kroah.com>
-References: <20181016171608.GA19184@bombadil.infradead.org>
- <20181018062634.GA27494@infradead.org>
+        Thu, 18 Oct 2018 14:20:10 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36455 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727451AbeJRSUJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 14:20:09 -0400
+Received: by mail-wr1-f66.google.com with SMTP id y16so33039434wrw.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 03:19:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=philpotter-co-uk.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LLBRSKNjMCTZbAz3UaCdMbbhTGEJYSrCBKMwUgZ2TOg=;
+        b=dBzq2M939w28jtwmhTNyTJ3AU0j+zdHGr4cLDuMEerMZH7lj6noxhTOcY6CtR30Tfv
+         hjWSimTnBGQBbCBtVNOcFAvNPR3jRN6umqJHFRNZMVRxm95qo6Ib0dkerkvjsOsyf1zV
+         tBDCJO6Ffcv9jcPHYnJS8XgTzk/czM5uCXbt89ariZOzl71mXRMTVTDCZdc10OWWVxCu
+         j4oVvCq7rZ8PhagW+Zi7HwF/XuniHsvaOS9gOI71511DvmSC5BnQ8bsHLu3cdVAPfUF5
+         /AF1h8P5s3jDniCKDTwN775g00uZy7oRRz+g/KE1dGfCdBBzGiyceilBW7n+CDAJo2S1
+         uQBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LLBRSKNjMCTZbAz3UaCdMbbhTGEJYSrCBKMwUgZ2TOg=;
+        b=FLAvRSsJM5ZKxY340DHqCq81EPa5nkg+S6YuR3VuVqccs1+mCkEkIHHZJi2aDHyHAN
+         CujfZYuOljVGtzX5eWkHZh0jR1NbS9BOr6Jdt8FbQFTxf5SxTo9tpbkpdnfKvLChiK5o
+         2jaWpEmNlj4erPKsLlXEXS6r88z55V3Lj8+nkWGr1N8S8iQU11KkPAjb5Lx7UCUCwpNE
+         pXT2UEmN8+kcEJiXwMlZC5RqURrnuRGYLJkHtgCNflQzWnFrn+cOYFAHcYOrc2ykhnP9
+         d10UA9aoNkcRsj7X+wqSrAYJTXmzO54IHfTPDqmjF3c2V0R0ELwEQm8brIRvp3bgUCex
+         cGuA==
+X-Gm-Message-State: ABuFfohhSob0ZrD68lAbHy9bNC8iZ872XCAwhIpgeJgGK9n3E0Zd/ZgE
+        fKC+r/tiXj5pN/C/6/yfkVgjQA==
+X-Google-Smtp-Source: ACcGV61dI4djYjxkZ2zvPJMsrjaHqQ5BvqMZlLBbU0OtVKf85/W6t2wBaHpXrxA8raKe1wXPtLr+6g==
+X-Received: by 2002:adf:f208:: with SMTP id p8-v6mr25859175wro.313.1539857988422;
+        Thu, 18 Oct 2018 03:19:48 -0700 (PDT)
+Received: from pathfinder (62-64-249-96.dynamic.dsl.as9105.com. [62.64.249.96])
+        by smtp.gmail.com with ESMTPSA id v16-v6sm16640988wru.31.2018.10.18.03.19.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Oct 2018 03:19:47 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 11:19:45 +0100
+From:   Phillip Potter <phil@philpotter.co.uk>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     dushistov@mail.ru, David.Laight@aculab.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: ufs: Remove switch statement from ufs_set_de_type
+ function
+Message-ID: <20181018101945.GA4787@pathfinder>
+References: <20181017100809.GA9070@pathfinder>
+ <fc2004614b7e4a35a67eb93a007a60f8@AcuMS.aculab.com>
+ <20181017233305.GC32577@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181018062634.GA27494@infradead.org>
+In-Reply-To: <20181017233305.GC32577@ZenIV.linux.org.uk>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 11:26:34PM -0700, Christoph Hellwig wrote:
-> On Tue, Oct 16, 2018 at 10:16:08AM -0700, Matthew Wilcox wrote:
-> > > >   git://git.infradead.org/users/willy/linux-dax.git ida-fixes-4.19-rc8
-> > > 
-> > > How about you at least test these in linux-next?  Putting things on top
-> > > of the most recent change is a huge tip-off that this branch got no
-> > > testing :(
-> > 
-> > One of the two changes is a comment line in a doc file.
-> > The other has been tested by 0day (which originally reported the issue).
-> > 
-> > I don't see how spending time in linux-next is going to achieve anything.
+On Thu, Oct 18, 2018 at 12:33:05AM +0100, Al Viro wrote:
+> They are.  BSD folks had (sanely, IMO) put the 'type' bits of st_mode
+> into directory entry verbatim.  Again, "symbolic constant" != "can be
+> expected to change"...  If, e.g., some port decides to change S_IFIFO,
+> they'll have no end of fun accessing ext*, xfs, ufs, etc. since that
+> value is stored in the on-disk inode and in effect pinned down by
+> that.
 > 
-> Especialy if we miss 4.19 final with that.  The documentation patch
-> avoids the probem of CC-BY-SA-4.0 including larger amounts of GPL files
-> in the output document, so we should have this before the release for
-> sure, and the other is just a test that isn't even in a normal kernel
-> build.
+> All S_... constants are universal and going to remain unchanged on
+> any Unices.
 
-Ok, both patches are now pulled.
+Dear Al,
 
-> Also after idr.rst is removed we should include something like this:
-> 
-> ---
-> >From c3660257f981e7a7254d18f52af64a2077f7bb49 Mon Sep 17 00:00:00 2001
-> From: Christoph Hellwig <hch@lst.de>
-> Date: Thu, 18 Oct 2018 08:22:39 +0200
-> Subject: LICENSES: Remove CC-BY-SA-4.0 license text
+Shall I resubmit without the compile-time checks in the latest patch then?
 
-<snip>
-
-Great idea, I've also merged this now as well after checking linux-next
-to ensure that no one else is using this license there either.
-
-thanks,
-
-greg k-h
+Regards,
+Phil
