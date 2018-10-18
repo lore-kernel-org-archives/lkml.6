@@ -2,141 +2,94 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC9FC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D67C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFCE22098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:10:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RORHxIv/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFCE22098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B21F42145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:11:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B21F42145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbeJROJr (ORCPT
+        id S1727579AbeJROKX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 10:09:47 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40384 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727443AbeJROJq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 10:09:46 -0400
-Received: by mail-pf1-f196.google.com with SMTP id g21-v6so7370800pfi.7
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 23:10:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=d6UyIJUDY56Iz0czXnjyJ3Ta5bTYfLXl+SolwXxU6VU=;
-        b=RORHxIv/qdF/xqYWc1J2H55HlXxVzIjuv1NT2/0vdLZfty5DliWRrTiGg7ru+S48P/
-         /+XLENC2aubRwc+a57LoLw0DneeUpJImLimbMyWVJo0u3PcsVSflFTNiWKuSLwzmPQ4r
-         rXl23DwIn75O9fVA+At7VryBt+qghPoLKTEjqGAV/YI08sYv45zZ1oL7iJCC+YnZSgCU
-         c9DtwQSYa/u5q8GLY0EG5LXBxe3MxQ1c4llmQvLCaDdrZBlm+zRkDRLbrJGO4Z3x+7oA
-         Fcp6BtNSovlv/JBT+5krJD15R0N5O8+jZIqKykAsI9yLJDkscCStrSHs5/9RLCwV8cP/
-         oydA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=d6UyIJUDY56Iz0czXnjyJ3Ta5bTYfLXl+SolwXxU6VU=;
-        b=UCOZz5XsG3HeuKYIjnl1vCne4eue6WqTvyi8D2a/Q5l9HIWS39BnDFQA+Q7pjLWpsk
-         MZOsfVAoI7Hohg5066CfHkXRt+Wa5l539gOcoFqnN6QzuvkVvNJ3x4Nn5YBiNkzC1BGh
-         6hJpLuay7C5uHqy/dsnfvNtWI3bbE70EU7khrOtmUN564soqlCGjG1Exi+DXzZF7muzL
-         A931m1sTAo7s/yDuJXFQq1gFdi4IquvsmV2wG0a70JEbJKsNt2W3Vw0ZiCjUsLrwKdqs
-         1J0VOnv5YvKTup1TREMrHXZWBr3gto/ZRSPiLsKEWY2xJYMrGPKYF/22rtAqtrajzxV6
-         HQnQ==
-X-Gm-Message-State: ABuFfoj20fJYR0u4tkNzzPaBKNJJttrvYcvk4yCObNmjVgWrcq/Gndza
-        /WuB0bDNqWr5cqmJxv1t/HU=
-X-Google-Smtp-Source: ACcGV60tYJTy6qGaq8jngeV/XPXXD+XSaqp7ZuHbARfY8Iu92OmaA4Jp8JQ9zlM515gn/hlE3seKRA==
-X-Received: by 2002:a63:1752:: with SMTP id 18-v6mr27823020pgx.131.1539843023674;
-        Wed, 17 Oct 2018 23:10:23 -0700 (PDT)
-Received: from localhost ([175.223.3.251])
-        by smtp.gmail.com with ESMTPSA id g123-v6sm36860877pfc.67.2018.10.17.23.10.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 23:10:22 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 15:10:18 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, guro@fb.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        rientjes@google.com, yang.s@alibaba-inc.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>
-Subject: Re: [PATCH v3] mm: memcontrol: Don't flood OOM messages with no
- eligible task.
-Message-ID: <20181018061018.GB650@jagdpanzerIV>
-References: <201810180246.w9I2koi3011358@www262.sakura.ne.jp>
- <20181018042739.GA650@jagdpanzerIV>
- <201810180526.w9I5QvVn032670@www262.sakura.ne.jp>
+        Thu, 18 Oct 2018 10:10:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46340 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727328AbeJROKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 10:10:22 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DCF955F7AA;
+        Thu, 18 Oct 2018 06:11:00 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-238.ams2.redhat.com [10.36.116.238])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 88C525C6DC;
+        Thu, 18 Oct 2018 06:11:00 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id CE3BC9D367; Thu, 18 Oct 2018 08:10:59 +0200 (CEST)
+Date:   Thu, 18 Oct 2018 08:10:59 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Dave Airlie <airlied@gmail.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@linux.ie>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:VIRTIO CORE, NET..." 
+        <virtualization@lists.linux-foundation.org>
+Subject: Re: [PATCH 7/8] drm/virtio: move virtio_gpu_object_{attach, detach}
+ calls.
+Message-ID: <20181018061059.d32xhg6ijlvpqyvi@sirius.home.kraxel.org>
+References: <20181001103222.11924-1-kraxel@redhat.com>
+ <20181001103222.11924-8-kraxel@redhat.com>
+ <CAPM=9tx3vX_HLyGqvSitCTb=v5QN4tk4TjbwhreLhnT8BytHEg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201810180526.w9I5QvVn032670@www262.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAPM=9tx3vX_HLyGqvSitCTb=v5QN4tk4TjbwhreLhnT8BytHEg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 18 Oct 2018 06:11:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (10/18/18 14:26), Tetsuo Handa wrote:
-> Sergey Senozhatsky wrote:
-> > To my personal taste, "baud rate of registered and enabled consoles"
-> > approach is drastically more relevant than hard coded 10 * HZ or
-> > 60 * HZ magic numbers... But not in the form of that "min baud rate"
-> > brain fart, which I have posted.
+On Thu, Oct 18, 2018 at 11:41:52AM +1000, Dave Airlie wrote:
+> On Mon, 1 Oct 2018 at 20:33, Gerd Hoffmann <kraxel@redhat.com> wrote:
+> >
+> > Remove the virtio_gpu_object_{attach,detach} calls from move_notify()
+> > callback.  Add them to the ttm_tt_{populate,unpopulate} callbacks, which
+> > is the correct place to handle this.
+> >
+> > The new ttm_tt_{populate,unpopulate} callbacks call the
+> > ttm_pool_populate()/unpopulate() functions (which are the default
+> > implementation in case the callbacks not present) for the actual ttm
+> > work.  Additionally virtio_gpu_object_{attach,detach} is called to
+> > update the state on the host.
 > 
-> I'm saying that my 60 * HZ is "duration which the OOM killer keeps refraining
->  from calling printk()". Such period is required for allowing console users
-> to do their operations without being disturbed by the OOM killer.
+> This to me feels more like a bind/unbind operation rather than a
+> populate/unpopulate operation,
 > 
+> bind is " Bind the backend pages into the aperture in the location"
+> 
+> whereas populate is
+> 
+> allocate pages for a ttm.
 
-Got you. I'm probably not paying too much attention to this discussion.
-You start your commit message with "RCU stalls" and end with a compleely
-different problem "admin interaction". I skipped the last part of the
-commit message.
+I ran into that trap too ;)
 
-OK. That makes sense if any user intervention/interaction actually happens.
-I'm not sure that someone at facebook or google logins to every server
-that is under OOM to do something critically important there. Net console
-logs and postmortem analysis, *perhaps*, would be their choice. I believe
-it was Johannes who said that his net console is capable of keeping up
-with the traffic and that 60 * HZ is too long for him. So I can see why
-people might not be happy with your patch. I don't think that 60 * HZ
-enforcement will go anywhere.
+My first attempt was to map this to bind/unbind.  But this is not
+correct and therefore didn't work very well.
 
-Now, if your problem is
-     "I'm actually logged in, and want to do something
-      sane, how do I stop this OOM report flood because
-      it wipes out everything I have on my console?"
+virtio_gpu_object_attach() will send a scatter list of the pages
+allocated for the object to the host (so the host knows where to
+copy from/to when processing the transfer_from/to calls).  So IMO
+it should be done on population not when binding.
 
-then let's formulate it as
-     "I'm actually logged in, and want to do something
-      sane, how do I stop this OOM report flood because
-      it wipes out everything I have on my console?"
+cheers,
+  Gerd
 
-and let's hear from MM people what they can suggest.
-
-Michal, Andrew, Johannes, any thoughts?
-
-For instance,
-   change /proc/sys/kernel/printk and suppress most of the warnings?
-
-   // not only OOM but possibly other printk()-s that can come from
-   // different CPUs
-
-If your problem is "syzbot hits RCU stalls" then let's have a baud rate
-based ratelimiting; I think we can get more or less reasonable timeout
-values.
-
-	-ss
