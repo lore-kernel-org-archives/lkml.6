@@ -2,153 +2,129 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE30C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0951C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:18:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 236E72145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:15:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 236E72145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A63F52087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:18:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A63F52087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbeJRUPu (ORCPT
+        id S1726744AbeJRUTR convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 16:15:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48452 "EHLO mx1.redhat.com"
+        Thu, 18 Oct 2018 16:19:17 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57574 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726325AbeJRUPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 16:15:50 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id ADEEE305B885;
-        Thu, 18 Oct 2018 12:15:05 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E986F8A0E8;
-        Thu, 18 Oct 2018 12:15:04 +0000 (UTC)
-Subject: Re: [PATCH v2] kdb: Use strscpy with destination buffer size
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Jonathan Toppins <jtoppins@redhat.com>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        kgdb-bugreport@lists.sourceforge.net
-References: <20180920125914.17920-1-prarit@redhat.com>
- <9192af58-7966-c023-8b19-5b291839a228@linaro.org>
- <78793735-c2ce-62f6-d745-5fc06a17beb1@redhat.com>
- <20181004124535.narksjioip7zo7ha@holly.lan>
-From:   Prarit Bhargava <prarit@redhat.com>
-Message-ID: <8c6b6666-e5fd-49cd-b357-f491b517d4a3@redhat.com>
-Date:   Thu, 18 Oct 2018 08:15:04 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726506AbeJRUTQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 16:19:16 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 489842090A; Thu, 18 Oct 2018 14:18:29 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-25-52.w90-88.abo.wanadoo.fr [90.88.145.52])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1619820712;
+        Thu, 18 Oct 2018 14:18:19 +0200 (CEST)
+Date:   Thu, 18 Oct 2018 14:18:19 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, Icenowy Zheng <icenowy@aosc.io>,
+        devicetree@vger.kernel.org, Dave Airlie <airlied@linux.ie>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 9/9] [DO NOT MERGE] drm/sun4i: rgb: Add 5% tolerance to
+ dot clock frequency check
+Message-ID: <20181018121819.gmup3jd7ukj52rvx@flea>
+References: <20181018073327.64942-1-icenowy@aosc.io>
+ <CAKMK7uFp2c=wqzPi096MTRB6Cdfacerkp6dM=fEqCAr99PQG9w@mail.gmail.com>
+ <20181018094258.oahlopafvm2udvoe@flea>
+ <1585874.9P5eR8PMbl@avalon>
 MIME-Version: 1.0
-In-Reply-To: <20181004124535.narksjioip7zo7ha@holly.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 18 Oct 2018 12:15:05 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <1585874.9P5eR8PMbl@avalon>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 18, 2018 at 02:31:01PM +0300, Laurent Pinchart wrote:
+> Hello,
+> 
+> On Thursday, 18 October 2018 12:42:58 EEST Maxime Ripard wrote:
+> > On Thu, Oct 18, 2018 at 11:18:06AM +0200, Daniel Vetter wrote:
+> > > On Thu, Oct 18, 2018 at 10:55 AM Laurent Pinchart wrote:
+> > >> On Thursday, 18 October 2018 10:33:27 EEST Icenowy Zheng wrote:
+> > >>> From: Chen-Yu Tsai <wens@csie.org>
+> > >>> 
+> > >>> The panels shipped with Allwinner devices are very "generic", i.e.
+> > >>> they do not have model numbers or reliable sources of information
+> > >>> for the timings (that we know of) other than the fex files shipped
+> > >>> on them. The dot clock frequency provided in the fex files have all
+> > >>> been rounded to the nearest MHz, as that is the unit used in them.
+> > >>> 
+> > >>> We were using the simple panel "urt,umsh-8596md-t" as a substitute
+> > >>> for the A13 Q8 tablets in the absence of a specific model for what
+> > >>> may be many different but otherwise timing compatible panels. This
+> > >>> was usable without any visual artifacts or side effects, until the
+> > >>> dot clock rate check was added in commit bb43d40d7c83 ("drm/sun4i:
+> > >>> rgb: Validate the clock rate").
+> > >>> 
+> > >>> The reason this check fails is because the dotclock frequency for
+> > >>> this model is 33.26 MHz, which is not achievable with our dot clock
+> > >>> hardware, and the rate returned by clk_round_rate deviates slightly,
+> > >>> causing the driver to reject the display mode.
+> > >>> 
+> > >>> The LCD panels have some tolerance on the dot clock frequency, even
+> > >>> if it's not specified in their datasheets.
+> > >>> 
+> > >>> This patch adds a 5% tolerence to the dot clock check.
+> > >> 
+> > >> Why do you think this shouldn't be merged ?
+> > > 
+> > > It pisses of a lot of people who really insist upon accurate timing.
+> > 
+> > It's not just about accurate timings. That 5% is a made-up limit, that
+> > never have really been confirmed by looking at the typical tolerancies
+> > of panels.
+> > 
+> > And while being to relaxed might make some panels work that are not
+> > working currently, it might also break some panels that currently work
+> > and won't now, and ideally, we should really be able to let those
+> > panels work if they can, and filter out resolutions if they can't.
+> > 
+> > > I think a better fix would be to have a dotclock range in drm_panel,
+> > > and some magic to figure out which one of these we can actually
+> > > do. Then tell userspace that this is the mode is should
+> > > request. That way userspace knows what the actual dotclock/refresh
+> > > rate is, and the panel still works.
+> > 
+> > It's not just about panels, but also bridges with EDID where the
+> > tolerancy is not exposed.
+> 
+> Given that the tolerance is a property of the panel or bridge, I agree with 
+> Daniel that it should be implemented there, or at least in cooperation with 
+> drm_panel and drm_bridge.
 
+How are we supposed to deal with panels without any documentation then?
 
-On 10/04/2018 08:45 AM, Daniel Thompson wrote:
-> On Thu, Oct 04, 2018 at 08:25:30AM -0400, Prarit Bhargava wrote:
->> On 10/02/2018 11:53 AM, Daniel Thompson wrote:
->>> On 20/09/2018 13:59, Prarit Bhargava wrote:
->>>> gcc 8.1.0 warns with:
->>>>
->>>> kernel/debug/kdb/kdb_support.c: In function ‘kallsyms_symbol_next’:
->>>> kernel/debug/kdb/kdb_support.c:239:4: warning: ‘strncpy’ specified bound
->>>> depends on the length of the source argument [-Wstringop-overflow=]
->>>>       strncpy(prefix_name, name, strlen(name)+1);
->>>>       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>> kernel/debug/kdb/kdb_support.c:239:31: note: length computed here
->>>>
->>>> Use strscpy() with the destination buffer size, and use ellipses when
->>>> displaying truncated symbols.
->>>>
->>>> v2: Use strscpy()
->>>>
->>>> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
->>>> Cc: Jonathan Toppins <jtoppins@redhat.com>
->>>> Cc: Jason Wessel <jason.wessel@windriver.com>
->>>> Cc: Daniel Thompson <daniel.thompson@linaro.org>
->>>> Cc: kgdb-bugreport@lists.sourceforge.net
->>>> ---
->>>>   kernel/debug/kdb/kdb_io.c      | 15 +++++++++------
->>>>   kernel/debug/kdb/kdb_private.h |  2 +-
->>>>   kernel/debug/kdb/kdb_support.c | 10 +++++-----
->>>>   3 files changed, 15 insertions(+), 12 deletions(-)
->>>>
->>>> diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
->>>> index ed5d34925ad0..6a4b41484afe 100644
->>>> --- a/kernel/debug/kdb/kdb_io.c
->>>> +++ b/kernel/debug/kdb/kdb_io.c
->>>> @@ -216,7 +216,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
->>>>       int count;
->>>>       int i;
->>>>       int diag, dtab_count;
->>>> -    int key;
->>>> +    int key, buf_size, ret;
->>>>           diag = kdbgetintenv("DTABCOUNT", &dtab_count);
->>>> @@ -336,9 +336,8 @@ static char *kdb_read(char *buffer, size_t bufsize)
->>>>           else
->>>>               p_tmp = tmpbuffer;
->>>>           len = strlen(p_tmp);
->>>> -        count = kallsyms_symbol_complete(p_tmp,
->>>> -                         sizeof(tmpbuffer) -
->>>> -                         (p_tmp - tmpbuffer));
->>>> +        buf_size = sizeof(tmpbuffer) - (p_tmp - tmpbuffer);
->>>> +        count = kallsyms_symbol_complete(p_tmp, buf_size);
->>>>           if (tab == 2 && count > 0) {
->>>>               kdb_printf("\n%d symbols are found.", count);
->>>>               if (count > dtab_count) {
->>>> @@ -350,9 +349,13 @@ static char *kdb_read(char *buffer, size_t bufsize)
->>>>               }
->>>>               kdb_printf("\n");
->>>>               for (i = 0; i < count; i++) {
->>>> -                if (WARN_ON(!kallsyms_symbol_next(p_tmp, i)))
->>>> +                ret = kallsyms_symbol_next(p_tmp, i, buf_size);
->>>> +                if (WARN_ON(!ret))
->>>>                       break;
->>> I'm getting confused by having two different branches on ret.
->>>
->>> Don't get a WARN_ON() when ret == -E2BIG?
->>>
->>>
->>
->> Should we WARN on a really long symbol?  I don't think we should as we're
->> handling that by truncating the output and adding ellipses below.
-> 
-> It's OK. You describe the behaviour I expect but I was misreading the
-> code (not realizing that kallsyms_symbol_next() had not become a 0 on
-> success success function).
-> 
-> However after reviewing the code (properly this time) I wonder if the
-> WARN_ON() should be improved to match the return value for the function:
-> 
->   WARN_ON(ret >= 0 && ret < len)
-> 
-> That said, checking the symbol length is pretty paranoid and getting
-> close to nitpicking so I'll leave it up to you and, with or without, the
-> change:
-> 
-> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-> 
-> 
+> Semi-related information, I think the CEA and VESA standards allow a 0.5% 
+> clock tolerance. What is the maximum clock frequency deviation required for 
+> this platform ?
 
-I think we should leave it as is for now.  OOC was this patch picked up by
-anyone's repo for staging for 4.20?
+Looks like it does indeed. That's definetely good to know.
 
-P.
+Thanks!
+Maxime
 
-> Daniel.
-> 
+-- 
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
