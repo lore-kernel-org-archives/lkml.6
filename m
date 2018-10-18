@@ -2,114 +2,144 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F09C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 116D1ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7144921473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:14:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7144921473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D4A852087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:14:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4A852087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728226AbeJRTPR (ORCPT
+        id S1728240AbeJRTPZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 15:15:17 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36078 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728171AbeJRTPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 15:15:25 -0400
+Received: from mout.perfora.net ([74.208.4.196]:43505 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728172AbeJRTPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 18 Oct 2018 15:15:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74137A78;
-        Thu, 18 Oct 2018 04:14:44 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.80])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1213B3F5D3;
-        Thu, 18 Oct 2018 04:14:38 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 12:14:36 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Steve Ellcey <sellcey@caviumnetworks.com>,
-        Prasun Kapoor <Prasun.Kapoor@caviumnetworks.com>,
-        Andreas Schwab <schwab@suse.de>,
-        Alexander Graf <agraf@suse.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Bamvor Zhangjian <bamv2005@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        "Manuel A. Fernandez Montecelo" <manuel.montezelo@gmail.com>,
-        James Hogan <james.hogan@imgtec.com>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Andrew Pinski <pinskia@gmail.com>,
-        Lin Yongting <linyongting@huawei.com>,
-        Alexey Klimov <klimov.linux@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Nathan Lynch <Nathan_Lynch@mentor.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        David Miller <davem@davemloft.net>,
-        Christoph Muellner <christoph.muellner@theobroma-systems.com>
-Subject: Re: [PATCH v9 00/24] ILP32 for ARM64
-Message-ID: <20181018111435.GA237391@arrakis.emea.arm.com>
-References: <20180516081910.10067-1-ynorov@caviumnetworks.com>
- <CALCETrVuabkb5ZQOSgQQTEq8CrS602NBpAkE2=4n982r1f5reQ@mail.gmail.com>
- <CAK8P3a1Yhhv1TcQTcF0MinicGovgp_0g_sXqADe3fjVTtOK_aw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1Yhhv1TcQTcF0MinicGovgp_0g_sXqADe3fjVTtOK_aw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
+ mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0LfhYy-1fpYsw3EZW-00pPIK; Thu, 18 Oct 2018 13:14:29 +0200
+Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
+ mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0LfhYy-1fpYsw3EZW-00pPIK; Thu, 18 Oct 2018 13:14:29 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v3 5/7] ARM: tegra: apalis_t30/tk1: annotate power I2C being on-module
+Date:   Thu, 18 Oct 2018 13:14:09 +0200
+Message-Id: <20181018111411.26623-6-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20181018111411.26623-1-marcel@ziswiler.com>
+References: <20181018111411.26623-1-marcel@ziswiler.com>
+X-Provags-ID: V03:K1:6ytx73dKNmKS4wTx5/ab2c+OWSE8abSKVDkRutB3nqgKttHMjut
+ J27WQ93Q8ZwQyw4/vZnjEeVCFXgKgA9UeAgKCwektj4de8WPtgDd9uE1f3j3V21bF15Sppo
+ NR5lf4IiyY/ILz0KXNHE1t0jBycru/ZcVxL0TLCHmct2YiQc6wmNb2l+lZ223K8SqiYlCju
+ SmitiD17R0IOVS6Bd9fvg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:2FouDlTDRI0=:uX8ODmuzU7Wev47uEHHzi+
+ 3zKZkVuGk1VVVZmKXRXhdW2PFxPUa0X2Eh6s3NHCDrmq6K68TOBslZ8opX9Kw1eol9zEev6j1
+ p+/EQ05a/RLCDWfHjrPf0Q4eah2Y86hQVyMav6j8L9zFZDPh8htoIwBXzDwTng3vTJjSQOzh8
+ TsZzou/UKebK/mCSSa5fjHFxNfFCbTKVvNf0mjAQSotssdwGuGFbudRWuxF4xHMbU4szDVdJx
+ BOb2+msLWGlx/+w76TgO2eeLZA7S7N6zWBpai4AvK1LFj1EMtI++k3BI/DbSOBjlnER4Nl+jB
+ fGnbZJLMy4sbUYd4AJuIP9Vt//mnk7nBpj0JLRalrMEhfPgrpQHV+OAAFrNNOhT1w3Tin9yXA
+ mxLvvbjXv1+XMv/3A4muej/ZPJLWMsKqr/IFKzpyEzXOwO9cmUqf7/VdENdIdPQDwNMrQUTSe
+ LMvAdYWV5rk67b5JBuKnPchm03aMkAFdw3LZjA0Qw/d2ECqRz2e7lIFQcQxP+8/8xyFjynkvX
+ WrnSaQRHbTDuHLGx7cLN01UXtyEepO8c4+1va5rASisKkwj40En7SKoVf1sOz9fwLDggiUy6V
+ qEwnqCHkUM7vYCBspgAQKLOgali/ie27YbtQuNCUKcGSCQKZS7h3wNk5/Iwy9Eh5Nfw29ddHX
+ ng81tnSQnRNn8cdyNQxq5dcS7SlQ8Ie2K38tSHryvV3I998lY0gAsUX0b1AY5S3p0rFg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 14, 2018 at 09:49:01PM +0200, Arnd Bergmann wrote:
-> On Sat, Oct 13, 2018 at 9:36 PM Andy Lutomirski <luto@amacapital.net> wrote:
-> >
-> > On Wed, May 16, 2018 at 1:19 AM Yury Norov <ynorov@caviumnetworks.com> wrote:
-> > >
-> > > This series enables AARCH64 with ILP32 mode.
-> > >
-> > > As supporting work, it introduces ARCH_32BIT_OFF_T configuration
-> > > option that is enabled for existing 32-bit architectures but disabled
-> > > for new arches (so 64-bit off_t userspace type is used by new userspace).
-> > > Also it deprecates getrlimit and setrlimit syscalls prior to prlimit64.
-> >
-> > Second, ILP32 user code is highly unlikely
-> > to end up with the same struct layout as ILP64 code.  The latter seems
-> > like it should be solved entirely in userspace by adding a way to
-> > annotate a structure as being a kernel ABI structure and getting the
-> > toolchain to lay it out as if it were ILP64 even though the target is
-> > ILP32.
-> 
-> The syscall ABI could be almost completely abstracted in glibc, the
-> main issue is ioctl and a couple of related interfaces that pass data
-> structures (read() on /dev/input/*, mmap on /dev/snd/*
-> or raw sockets, fcntl).
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-There is another case on struct siginfo which has some pointers and it
-wouldn't look like an LP64 structure at all (and glibc doesn't normally
-intercept the sighandler call to rewrite the structure). We could add
-padding around void * members as the kernel zeros them, I don't recall
-the kernel reading these pointers from user. Anyway, using something
-that resembles compat_siginfo looked the simplest for ILP32.
+The power I2C bus aka PWR_I2C which connects to the audio codec, PMIC,
+temperature sensor and touch screen controller is really on-module only.
 
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+---
+
+Changes in v3: None
+Changes in v2: None
+Changes in v1: None
+
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 5 ++++-
+ arch/arm/boot/dts/tegra124-apalis.dtsi      | 5 ++++-
+ arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi  | 2 +-
+ arch/arm/boot/dts/tegra30-apalis.dtsi       | 2 +-
+ 4 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+index e532b564e4c9..0d095729b46b 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+@@ -1552,7 +1552,10 @@
+ 		clock-frequency = <10000>;
+ 	};
+ 
+-	/* PWR_I2C: power I2C to audio codec, PMIC and temperature sensor */
++	/*
++	 * PWR_I2C: power I2C to audio codec, PMIC and temperature sensor
++	 * (On-module)
++	 */
+ 	i2c@7000d000 {
+ 		status = "okay";
+ 		clock-frequency = <400000>;
+diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
+index 3cab9bda918f..13127415d86b 100644
+--- a/arch/arm/boot/dts/tegra124-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
+@@ -1582,7 +1582,10 @@
+ 		clock-frequency = <10000>;
+ 	};
+ 
+-	/* PWR_I2C: power I2C to audio codec, PMIC and temperature sensor */
++	/*
++	 * PWR_I2C: power I2C to audio codec, PMIC and temperature sensor
++	 * (On-module)
++	 */
+ 	i2c@7000d000 {
+ 		status = "okay";
+ 		clock-frequency = <400000>;
+diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
+index 02f8126481a2..bc714032d771 100644
+--- a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
+@@ -845,7 +845,7 @@
+ 
+ 	/*
+ 	 * PWR_I2C: power I2C to audio codec, PMIC, temperature sensor and
+-	 * touch screen controller
++	 * touch screen controller (On-module)
+ 	 */
+ 	i2c@7000d000 {
+ 		status = "okay";
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index 7f112f192fe9..4b6a8ecaac76 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -836,7 +836,7 @@
+ 
+ 	/*
+ 	 * PWR_I2C: power I2C to audio codec, PMIC, temperature sensor and
+-	 * touch screen controller
++	 * touch screen controller (On-module)
+ 	 */
+ 	i2c@7000d000 {
+ 		status = "okay";
 -- 
-Catalin
+2.14.4
+
