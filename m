@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1F7C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42719C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E42621476
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BE1E2148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Safut3y9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E42621476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RY9jV5F8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BE1E2148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730193AbeJSCHK (ORCPT
+        id S1730210AbeJSCHO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:07:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55696 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:07:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726516AbeJSCHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:07:10 -0400
+        id S1730194AbeJSCHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:07:12 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2007E21476;
-        Thu, 18 Oct 2018 18:04:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E8E221486;
+        Thu, 18 Oct 2018 18:05:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885902;
-        bh=NN0aw00S206CPRXn3JNu+cm7IEUH4aVbsqcrB7E0rWw=;
+        s=default; t=1539885905;
+        bh=TV5fzo2lta6jTgCJCIqe5e0BsMr3c2qb5qBSPzCjRPE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Safut3y9fourdHH1yS7y9rFidNb6lvkDgFjBrwARftgUZbrI3Nm5ejA6VTD4NbKhY
-         fcxlTS0tw6dZYeIhvL88QaKjCiaKs+FAUNm8rNsmE5rYeCUBoRMI5k098hhVI6SIW+
-         Nq4PvMoIq9cxm4JtvndlGme0UnAEkJF4ftCGGw1Y=
+        b=RY9jV5F8PrSjYS+JrD208AAQaB0bTFQkkvHmVL/piZEKZ/UcGDUV0uOaShMgCUrgY
+         Sv3hk5omJcSsOnVlNrIM1IuNROmpHk7cSY6pmLsLYKs0queiJRvXL0OUqv7e/XPzvb
+         rwC/rBco4iIx2BC3FPKUtF6xIQVRWGlf44/wScWI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.4 13/48] perf script python: Fix export-to-postgresql.py occasional failure
-Date:   Thu, 18 Oct 2018 19:54:48 +0200
-Message-Id: <20181018175428.694820325@linuxfoundation.org>
+        stable@vger.kernel.org, Edgar Cherkasov <echerkasov@dev.rtsoft.ru>,
+        Viktor Krasnov <vkrasnov@dev.rtsoft.ru>,
+        Michael Brunner <Michael.Brunner@kontron.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.4 14/48] i2c: i2c-scmi: fix for i2c_smbus_write_block_data
+Date:   Thu, 18 Oct 2018 19:54:49 +0200
+Message-Id: <20181018175428.758923912@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -63,50 +64,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
 
-commit 25e11700b54c7b6b5ebfc4361981dae12299557b upstream.
+commit 08d9db00fe0e300d6df976e6c294f974988226dd upstream.
 
-Occasional export failures were found to be caused by truncating 64-bit
-pointers to 32-bits. Fix by explicitly setting types for all ctype
-arguments and results.
+The i2c-scmi driver crashes when the SMBus Write Block transaction is
+executed:
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180911114504.28516-2-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+WARNING: CPU: 9 PID: 2194 at mm/page_alloc.c:3931 __alloc_pages_slowpath+0x9db/0xec0
+ Call Trace:
+  ? get_page_from_freelist+0x49d/0x11f0
+  ? alloc_pages_current+0x6a/0xe0
+  ? new_slab+0x499/0x690
+  __alloc_pages_nodemask+0x265/0x280
+  alloc_pages_current+0x6a/0xe0
+  kmalloc_order+0x18/0x40
+  kmalloc_order_trace+0x24/0xb0
+  ? acpi_ut_allocate_object_desc_dbg+0x62/0x10c
+  __kmalloc+0x203/0x220
+  acpi_os_allocate_zeroed+0x34/0x36
+  acpi_ut_copy_eobject_to_iobject+0x266/0x31e
+  acpi_evaluate_object+0x166/0x3b2
+  acpi_smbus_cmi_access+0x144/0x530 [i2c_scmi]
+  i2c_smbus_xfer+0xda/0x370
+  i2cdev_ioctl_smbus+0x1bd/0x270
+  i2cdev_ioctl+0xaa/0x250
+  do_vfs_ioctl+0xa4/0x600
+  SyS_ioctl+0x79/0x90
+  do_syscall_64+0x73/0x130
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+ACPI Error: Evaluating _SBW: 4 (20170831/smbus_cmi-185)
+
+This problem occurs because the length of ACPI Buffer object is not
+defined/initialized in the code before a corresponding ACPI method is
+called. The obvious patch below fixes this issue.
+
+Signed-off-by: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
+Acked-by: Viktor Krasnov <vkrasnov@dev.rtsoft.ru>
+Acked-by: Michael Brunner <Michael.Brunner@kontron.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/scripts/python/export-to-postgresql.py |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/i2c/busses/i2c-scmi.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/tools/perf/scripts/python/export-to-postgresql.py
-+++ b/tools/perf/scripts/python/export-to-postgresql.py
-@@ -205,14 +205,23 @@ from ctypes import *
- libpq = CDLL("libpq.so.5")
- PQconnectdb = libpq.PQconnectdb
- PQconnectdb.restype = c_void_p
-+PQconnectdb.argtypes = [ c_char_p ]
- PQfinish = libpq.PQfinish
-+PQfinish.argtypes = [ c_void_p ]
- PQstatus = libpq.PQstatus
-+PQstatus.restype = c_int
-+PQstatus.argtypes = [ c_void_p ]
- PQexec = libpq.PQexec
- PQexec.restype = c_void_p
-+PQexec.argtypes = [ c_void_p, c_char_p ]
- PQresultStatus = libpq.PQresultStatus
-+PQresultStatus.restype = c_int
-+PQresultStatus.argtypes = [ c_void_p ]
- PQputCopyData = libpq.PQputCopyData
-+PQputCopyData.restype = c_int
- PQputCopyData.argtypes = [ c_void_p, c_void_p, c_int ]
- PQputCopyEnd = libpq.PQputCopyEnd
-+PQputCopyEnd.restype = c_int
- PQputCopyEnd.argtypes = [ c_void_p, c_void_p ]
- 
- sys.path.append(os.environ['PERF_EXEC_PATH'] + \
+--- a/drivers/i2c/busses/i2c-scmi.c
++++ b/drivers/i2c/busses/i2c-scmi.c
+@@ -152,6 +152,7 @@ acpi_smbus_cmi_access(struct i2c_adapter
+ 			mt_params[3].type = ACPI_TYPE_INTEGER;
+ 			mt_params[3].integer.value = len;
+ 			mt_params[4].type = ACPI_TYPE_BUFFER;
++			mt_params[4].buffer.length = len;
+ 			mt_params[4].buffer.pointer = data->block + 1;
+ 		}
+ 		break;
 
 
