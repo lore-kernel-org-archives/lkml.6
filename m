@@ -2,147 +2,147 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C080C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27658C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:23:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A478621476
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:23:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2A4F2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:23:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="mHORzpaK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A478621476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jr9P8hsO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2A4F2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbeJRPXC (ORCPT
+        id S1727668AbeJRPXJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 11:23:02 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:54776 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727431AbeJRPXC (ORCPT
+        Thu, 18 Oct 2018 11:23:09 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44357 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727359AbeJRPXJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 11:23:02 -0400
-Received: by mail-it1-f193.google.com with SMTP id l191-v6so5433049ita.4
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 00:23:23 -0700 (PDT)
+        Thu, 18 Oct 2018 11:23:09 -0400
+Received: by mail-qt1-f194.google.com with SMTP id x24-v6so1561765qtx.11;
+        Thu, 18 Oct 2018 00:23:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/kpmVatA215+ZEflb39W9wUN79Kg7rVZxAztLlvk4pM=;
-        b=mHORzpaK7twShXxdGzghjmfZBbDdXwHhnUN3IjjhWaxZt1ArrkDB+Y9fmq9kAd95Dc
-         eexZ9cKFCU4PRhJ4O4d4GGorMkD848lP/I9KgaubvwQ3OlEr8QKEPbpsdmy92N98WfA5
-         5XD8fCJx/pG4ZY45LBHfzYCkLnkJPwP2An7YA=
+        bh=O7kIxwq2qKHcExhNfWzmcsriRPxkNspejgUxQxEv01Y=;
+        b=jr9P8hsOVn+LrrHJMQESCTGZakg+cJlWvuVArNccQja+NdHig6POM0QkIDNuj6ggv8
+         nyQ5cWw2aXCqpPM0Mo2QdU+2R2JP28LUpgbrAlKXi9eBQ+0D03Z4OjXQdzTRgxkQNkyY
+         WhxUDzYizChbQDM3KYxEcqWG2s5G8JQZbiQwnoKg74W0C2vAhBv0anXHv9nEXVT3N+JA
+         TaZGecbJqW/cg756u1gx++UqpXWQd2nR9i+q5ej+hRKGmmlnwfx+YmtClpaImYxbgbWz
+         MxUbhCuz+ei6BfVZieJD2ARy2q8UtxR1Q+lsy+jJwkw5D452aOsJowMJEbxTJmscPbI7
+         zs0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/kpmVatA215+ZEflb39W9wUN79Kg7rVZxAztLlvk4pM=;
-        b=DG2aFtIpbFv0/nlu9hP3d8xLpHALoI6ba3rU9QlhDRyOpyYu5hnR3t94h7jABsRHKG
-         RemgsqCEUqwdvgZ1FkOiMTaVOAPffCKXxQVA+LmEUYGiGyGnns451h0JGg6vrNaoLA7U
-         mTL5iY75G+rsy5f2GxD3Y0qrczTLKp7k68nuEeT0Bc6ar2lR5e/5giI+rXqWvCk6EILO
-         9SCucqekIoLRol2Gz/xoi0WF6wZCHqHaiUoophSYbvvdqaTxvxLx4dCaBolr6L3U2Vm+
-         6OG0XPhwQ9ZRp6UXSduEdQyYrWUaf7vh5Isi01kstO8w9NeXHqHAtsrUhzhu8TTudQHG
-         SvWA==
-X-Gm-Message-State: ABuFfogGBm/L4BBcZihvSGUZ2UYNpdDDqLUFJ3RyEH+cd+uudn3ygSeB
-        zJYxD3zAac/asy9FOHKLyp3iF8Y//rvxeHH2PrN+DQ==
-X-Google-Smtp-Source: ACcGV60PtH/WdJZXoUyra2JQDd5R15e/l/SJWpzO7lbpnZGy8gzhge4u1Du1K/l7mVDLdPibclsTKd7FLK447eIKXrM=
-X-Received: by 2002:a05:660c:383:: with SMTP id x3mr3546344itj.121.1539847403149;
- Thu, 18 Oct 2018 00:23:23 -0700 (PDT)
+        bh=O7kIxwq2qKHcExhNfWzmcsriRPxkNspejgUxQxEv01Y=;
+        b=XsC/eUNsSLOxKjwAytTthFlDDsSPZGksSaQ3n62rsHXXtCADb7XD9CCnHWlcpqL2Tw
+         TB/6X1G8ocf2lprHOS3bYrjXDlTOqbKXAFURN2eJV+TgXgZto35UTF3j85x/aLacB0xA
+         ZdPS4Daqxvs2MPgjvb4C7b9HpCiZt2jkfutYpyt5hd97lbbMD23p1tp9CZ8FRYMbUjHG
+         LYRRAlvnQ54c9HLCh67FtcsD9Vu/sDfYgmUllvinlxyt2TN74Ui3/d10ZIVj7uZP4mLu
+         oOydlA/PxD/3iue+LMc/US4byLiBeZbt0VGP6d3CtsTJJRu99ZlrsyjKvvhWn2co6+wv
+         OdzA==
+X-Gm-Message-State: ABuFfojzS5RtJFCBNpMNicviklmJV1uALNP5lpcyjN2JPxvEada5+V99
+        CEyUG2colGASdQuZxsNqdkzox9WkCZzUmTZTFNfINgVZ+6o=
+X-Google-Smtp-Source: ACcGV62KVYxg4rjUnT1EREW/DiVAF+aXR+k46NOswC01dj3RKOlrmvV0bF4eAuH2MybFoPnL5Y23UiY8ys536jPbvFE=
+X-Received: by 2002:ac8:6784:: with SMTP id b4-v6mr28081655qtp.373.1539847410128;
+ Thu, 18 Oct 2018 00:23:30 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a6b:bf41:0:0:0:0:0 with HTTP; Thu, 18 Oct 2018 00:23:22
- -0700 (PDT)
-X-Originating-IP: [212.96.48.140]
-In-Reply-To: <E9903911-9289-4038-9835-9353762A3BAF@dilger.ca>
-References: <CAJfpegsxFUGeczcC-pzK0WWROjv48_PvXtNun-f5QJMoUDn1Dw@mail.gmail.com>
- <006890C4-64D4-4DE2-A1F0-335FFFD585BB@dilger.ca> <CAJfpeguvJZbP83mSULc74Yhpp_CPMBW1XvcgbvCbLnF7QCncUA@mail.gmail.com>
- <E9903911-9289-4038-9835-9353762A3BAF@dilger.ca>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 18 Oct 2018 09:23:22 +0200
-Message-ID: <CAJfpegtM2Sk2fi974rgtWXvRG=Z51KOyt8RekrR4HhAmz6Agfg@mail.gmail.com>
-Subject: Re: statx(2) API and documentation
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Michael Kerrisk <mtk.manpages@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+References: <1539755947-27014-1-git-send-email-suganath-prabu.subramani@broadcom.com>
+ <1539755947-27014-3-git-send-email-suganath-prabu.subramani@broadcom.com>
+ <CAHp75Ve=X9X6xG5FpuZrmRKfSpcLwFQYE_A8vhUzNn92KSoc4w@mail.gmail.com> <CA+RiK67067aV9Ky5m8uCGLGcvjbBRxqFVeyB0CsYcvSw7rgqJg@mail.gmail.com>
+In-Reply-To: <CA+RiK67067aV9Ky5m8uCGLGcvjbBRxqFVeyB0CsYcvSw7rgqJg@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 18 Oct 2018 10:23:18 +0300
+Message-ID: <CAHp75VfENTJjJVMyQ1wnD4GXYKjhgr6h+wocPOfk16p9nWrpeg@mail.gmail.com>
+Subject: Re: [v5 2/4] mpt3sas: Fix Sync cache command failure during driver unload
+To:     Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>, Lukas Wunner <lukas@wunner.de>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-pci@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        ruscur@russell.cc, sbobroff@linux.ibm.com,
+        Oliver <oohall@gmail.com>,
+        Sathya Prakash <Sathya.Prakash@broadcom.com>,
+        Sreekanth Reddy <sreekanth.reddy@broadcom.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 10:22 PM, Andreas Dilger <adilger@dilger.ca> wrote:
-> On Oct 17, 2018, at 1:04 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
-
->> So what's the point exactly?
+On Thu, Oct 18, 2018 at 10:11 AM Suganath Prabu Subramani
+<suganath-prabu.subramani@broadcom.com> wrote:
 >
-> Ah, I see your point...  STATX_ALL seems to be mostly useful for the kernel
-> to mask off flags that it doesn't currently understand.
-
-And even there it's quite pointless, since no sane implementation
-would put the request mask into the result mask (aka. stx_mask)
-verbatim, without picking out bits which correspond to *supported*
-fields.
-
-So it's pointless across the board.  But since it's already published
-in a userspace API, the best we can do is leave it at its current
-value, but with a comment to warn that it  should not be updated when
-new flags are added.  And remove all traces of it from the kernel.
-
->> Right, OTOH I sort of see the value in  NFS: no roundtrip to server if
->> atime value is useless anyway.
 >
-> Well, "noatime" might be a client-only option, which doesn't mean that the
-> server or some other client isn't updating the atime.  Returning an old
-> atime isn't the same as not returning anything at all.
+>
+> On Wed, Oct 17, 2018 at 2:02 PM Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>>
+>> On Wed, Oct 17, 2018 at 8:59 AM Suganath Prabu
+>> <suganath-prabu.subramani@broadcom.com> wrote:
+>> >
+>> > This is to fix Sync cache and start stop command
+>> >  failures with DID_NO_CONNECT during driver unload.
+>> >
+>> > 1) Release drives first from SML, then remove internally
+>> > in driver.
+>> > 2) And allow sync cache and Start stop commands to firmware,
+>> > even when remove_host flag is set.
+>>
+>> > +       if (ioc->hba_mpi_version_belonged == MPI2_VERSION) {
+>> > +               if (ioc->remove_host)
+>> > +                       return false;
+>> > +
+>> > +               return true;
+>> > +       }
+>> > +
+>> > +       if (ioc->remove_host) {
+>> > +
+>> > +               switch (scmd->cmnd[0]) {
+>> > +               case SYNCHRONIZE_CACHE:
+>> > +               case START_STOP:
+>> > +                       return true;
+>> > +               default:
+>> > +                       return false;
+>> > +               }
+>> > +       }
+>> > +
+>> > +       return true;
+>>
+>> Wouldn't be the same as
 
-Fs is allowed (and in case of basic stats, required) to fill in dummy
-values for even unsupported fields.
+>> Yes it is same, but i feel original code is more readable.
 
-I understand your argument, since that was my first thought, but I
-also understand the reason behind clearing STATX_ATIME.  And atime is
-something that very few applications care about anyway.   But I do
-think such behavior should be clarified in the documentation and
-handled more consistently in the code.
+OK (I didn't compare assembly, but I assume this is slow path).
 
-> To my thinking, if the user/app requests btime/ctime/size/blocks the kernel
-> should return these fields.  If DONT_SYNC is set, it means the kernel can
-> return potentially stale values, but if the kernel doesn't have *any*
-> values for these fields at all it still should query the server instead of
-> just returning random garbage.
+>> if (!ioc->remove_host || ioc->hba_mpi_version_belonged == MPI2_VERSION)
+>>    return !ioc->remove_host;
+>>
+>>  switch (scmd->cmnd[0]) {
+>>  case SYNCHRONIZE_CACHE:
+>>  case START_STOP:
+>>    return true;
+>>  default:
+>>    return false;
+>>  }
+>>
+>> ?
+>>
+>> --
+>> With Best Regards,
+>> Andy Shevchenko
 
-I'm not saying it should return garbage, instead it can just not set
-the bit in the result mask to indicate that that field cannot be
-filled (without network traffic, in this case).
 
-This requires generalizing the definition of the result mask, because
-the above (clearing STATX_ATIME on ro/noatim or clearing STATX_BTIME
-on DONT_SYNC) don't fit the current "unsupported or unrepresentable"
-definition.
 
-> That said, it seems that it isn't even possible to get into nfs_getattr()
-> without the VFS having instantiated a dentry and inode (i.e. queried the
-> server via nfs_lookup() at some point), so the inode fields have already
-> been filled with *something*.
-
-There's no "i_btime" field.
-
-But it's hard to argue this point with btime, so lets instead think
-about a theoretical attribute that is:
-
- - hard to calculate, so filesystem will not want to cache it on inode
-initialization (because it's very unlikely to be actually needed)
-
- - isn't constant and can be cached, so all sync types make sense.
-
-I think the following semantics would be the most useful and sane:
-FORCE_SYNC or SYNC_AS_STAT would always retrieve the attribute if
-supported, and set the bit in the result mask; DONT_SYNC would only
-set the bit in the result mask if the attribute is already cached.
-
-Thanks,
-Miklos
+-- 
+With Best Regards,
+Andy Shevchenko
