@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 130ABC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66EBEC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D08AC204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C52A204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="whVZwCzd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D08AC204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x2g6/r+6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C52A204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730396AbeJSCII (ORCPT
+        id S1730408AbeJSCIN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:08:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57030 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:08:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730384AbeJSCIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:08:07 -0400
+        id S1730384AbeJSCIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:08:12 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1CFF204FD;
-        Thu, 18 Oct 2018 18:05:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A2D4204FD;
+        Thu, 18 Oct 2018 18:06:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885960;
-        bh=b7wRveuyhzWc6pDLQETqtF3mepB0A8qy4fZca+hV98M=;
+        s=default; t=1539885965;
+        bh=4rf81d2IDKpgm8Z3TBqRNGoDxaMfjSs6tdZz8Q6L+u0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=whVZwCzdXaS5c2fWc98d59zTCjDCW015udqaREyN45xc1O2EOtLf3ZEu4cFMENR6F
-         cG9oKPXrp7K0HFAMyPPljYDy5h5wyMmsNpkx2NRrWtlM58IM55ZyWv2m1huxXxomXf
-         Me5BxRcUanHBdmOpmxoTOoR9q8SO+PJk4UJ4G5j8=
+        b=x2g6/r+62f0uTFi1zWRovSVdQwXkatUvGi32ieKRSopXoXTIbtbHfk2zUVFDZR9+e
+         ucBo+De+5juhm4vgr6uVi4u7niYU4ygHeSLXhyG491XBjWAtQp/+7mBlmgYa34wmFt
+         qwY596cMnbLhcvx38ACTBVaFxFNK7vyIxSgJlGng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 29/48] net: systemport: Fix wake-up interrupt race during resume
-Date:   Thu, 18 Oct 2018 19:55:04 +0200
-Message-Id: <20181018175429.529030981@linuxfoundation.org>
+        stable@vger.kernel.org, Lei Yang <Lei.Yang@windriver.com>,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 03/48] selftests/efivarfs: add required kernel configs
+Date:   Thu, 18 Oct 2018 19:54:38 +0200
+Message-Id: <20181018175427.986113056@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -62,90 +62,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Lei Yang <Lei.Yang@windriver.com>
 
-[ Upstream commit 45ec318578c0c22a11f5b9927d064418e1ab1905 ]
+[ Upstream commit 53cf59d6c0ad3edc4f4449098706a8f8986258b6 ]
 
-The AON_PM_L2 is normally used to trigger and identify the source of a
-wake-up event. Since the RX_SYS clock is no longer turned off, we also
-have an interrupt being sent to the SYSTEMPORT INTRL_2_0 controller, and
-that interrupt remains active up until the magic packet detector is
-disabled which happens much later during the driver resumption.
+add config file
 
-The race happens if we have a CPU that is entering the SYSTEMPORT
-INTRL2_0 handler during resume, and another CPU has managed to clear the
-wake-up interrupt during bcm_sysport_resume_from_wol(). In that case, we
-have the first CPU stuck in the interrupt handler with an interrupt
-cause that has been cleared under its feet, and so we keep returning
-IRQ_NONE and we never make any progress.
-
-This was not a problem before because we would always turn off the
-RX_SYS clock during WoL, so the SYSTEMPORT INTRL2_0 would also be turned
-off as well, thus not latching the interrupt.
-
-The fix is to make sure we do not enable either the MPD or
-BRCM_TAG_MATCH interrupts since those are redundant with what the
-AON_PM_L2 interrupt controller already processes and they would cause
-such a race to occur.
-
-Fixes: bb9051a2b230 ("net: systemport: Add support for WAKE_FILTER")
-Fixes: 83e82f4c706b ("net: systemport: add Wake-on-LAN support")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Lei Yang <Lei.Yang@windriver.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bcmsysport.c |   22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ tools/testing/selftests/efivarfs/config |    1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 tools/testing/selftests/efivarfs/config
 
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -850,14 +850,22 @@ static void bcm_sysport_resume_from_wol(
- {
- 	u32 reg;
- 
--	/* Stop monitoring MPD interrupt */
--	intrl2_0_mask_set(priv, INTRL2_0_MPD);
--
- 	/* Clear the MagicPacket detection logic */
- 	reg = umac_readl(priv, UMAC_MPD_CTRL);
- 	reg &= ~MPD_EN;
- 	umac_writel(priv, reg, UMAC_MPD_CTRL);
- 
-+	reg = intrl2_0_readl(priv, INTRL2_CPU_STATUS);
-+	if (reg & INTRL2_0_MPD)
-+		netdev_info(priv->netdev, "Wake-on-LAN (MPD) interrupt!\n");
-+
-+	if (reg & INTRL2_0_BRCM_MATCH_TAG) {
-+		reg = rxchk_readl(priv, RXCHK_BRCM_TAG_MATCH_STATUS) &
-+				  RXCHK_BRCM_TAG_MATCH_MASK;
-+		netdev_info(priv->netdev,
-+			    "Wake-on-LAN (filters 0x%02x) interrupt!\n", reg);
-+	}
-+
- 	netif_dbg(priv, wol, priv->netdev, "resumed from WOL\n");
- }
- 
-@@ -890,11 +898,6 @@ static irqreturn_t bcm_sysport_rx_isr(in
- 	if (priv->irq0_stat & INTRL2_0_TX_RING_FULL)
- 		bcm_sysport_tx_reclaim_all(priv);
- 
--	if (priv->irq0_stat & INTRL2_0_MPD) {
--		netdev_info(priv->netdev, "Wake-on-LAN interrupt!\n");
--		bcm_sysport_resume_from_wol(priv);
--	}
--
- 	return IRQ_HANDLED;
- }
- 
-@@ -1915,9 +1918,6 @@ static int bcm_sysport_suspend_to_wol(st
- 	/* UniMAC receive needs to be turned on */
- 	umac_enable_set(priv, CMD_RX_EN, 1);
- 
--	/* Enable the interrupt wake-up source */
--	intrl2_0_mask_clear(priv, INTRL2_0_MPD);
--
- 	netif_dbg(priv, wol, ndev, "entered WOL mode\n");
- 
- 	return 0;
+--- /dev/null
++++ b/tools/testing/selftests/efivarfs/config
+@@ -0,0 +1 @@
++CONFIG_EFIVAR_FS=y
 
 
