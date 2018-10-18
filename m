@@ -2,128 +2,73 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C30C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6E1C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 763FA21477
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:19:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 763FA21477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 2FB6420658
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:20:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FB6420658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbeJRRTq (ORCPT
+        id S1727805AbeJRRUZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 13:19:46 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:17211 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727378AbeJRRTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 13:19:46 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42bNmB2b5Qz9ttC1;
-        Thu, 18 Oct 2018 11:19:38 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id sOxzyRvrlBZn; Thu, 18 Oct 2018 11:19:38 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42bNmB1yFcz9ttBy;
-        Thu, 18 Oct 2018 11:19:38 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 25CA28B8B0;
-        Thu, 18 Oct 2018 11:19:38 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 9V9ufNzhy7Bx; Thu, 18 Oct 2018 11:19:38 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0FD518B8AB;
-        Thu, 18 Oct 2018 11:19:37 +0200 (CEST)
-Subject: Re: [PATCH] powerpc/uaccess: fix warning/error with access_ok()
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <40873f45f922b28c727c013e3883be467fc31c56.1539852411.git.christophe.leroy@c-s.fr>
-Message-ID: <4d7c00d5-f42f-1eff-c5c5-34903f342d40@c-s.fr>
-Date:   Thu, 18 Oct 2018 11:19:36 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 18 Oct 2018 13:20:25 -0400
+Received: from mx1.unisoc.com ([222.66.158.135]:43200 "EHLO
+        SHSQR01.spreadtrum.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727378AbeJRRUZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 13:20:25 -0400
+Received: from ig2.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+        by SHSQR01.spreadtrum.com with ESMTP id w9I9EaCJ097909
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Thu, 18 Oct 2018 17:14:37 +0800 (CST)
+        (envelope-from Chunyan.Zhang@unisoc.com)
+Received: from localhost (10.0.93.106) by BJMBX02.spreadtrum.com (10.0.64.8)
+ with Microsoft SMTP Server (TLS) id 15.0.847.32; Thu, 18 Oct 2018 17:17:34
+ +0800
+From:   Chunyan Zhang <chunyan.zhang@unisoc.com>
+To:     arm-soc <arm@kernel.org>, Suzuki K Poulose <suzuki.poulose@arm.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: [GIT PULL] sprd dts for kernel v4.20-rc1
+Date:   Thu, 18 Oct 2018 17:17:33 +0800
+Message-ID: <1539854253-4784-1-git-send-email-chunyan.zhang@unisoc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <40873f45f922b28c727c013e3883be467fc31c56.1539852411.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.0.93.106]
+X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL: SHSQR01.spreadtrum.com w9I9EaCJ097909
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Arnd,
 
+For 4.20-rc1 there's one patch only for sprd devicetree, please pull from my git tree:
 
-Le 18/10/2018 à 10:48, Christophe Leroy a écrit :
-> With the following peace of code, the following compilation warning
-> is encountered:
-> 
-> 	if (_IOC_DIR(ioc) != _IOC_NONE) {
-> 		int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
-> 
-> 		if (!access_ok(verify, ioarg, _IOC_SIZE(ioc))) {
-> 
-> drivers/platform/test/dev.c: In function ‘my_ioctl’:
-> drivers/platform/test/dev.c:219:7: warning: unused variable ‘verify’ [-Wunused-variable]
->     int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
-> 
-> This patch fixes it by handing the type to __access_ok(), changing it
-> to an inline function for PPC64 as already done for PPC32
+https://github.com/lyrazhang/linux.git m-v4.19-rc1
 
-Oops, not that easy, there are places using __access_ok() directly, 
-those need to be modified as well.
+Please let me know if there's some problem.
 
-Christophe
+Thanks,
+Chunyan
 
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->   arch/powerpc/include/asm/uaccess.h | 13 ++++++++-----
->   1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-> index 15bea9a0f260..97faf0353919 100644
-> --- a/arch/powerpc/include/asm/uaccess.h
-> +++ b/arch/powerpc/include/asm/uaccess.h
-> @@ -47,13 +47,16 @@ static inline void set_fs(mm_segment_t fs)
->    * This check is sufficient because there is a large enough
->    * gap between user addresses and the kernel addresses
->    */
-> -#define __access_ok(addr, size, segment)	\
-> -	(((addr) <= (segment).seg) && ((size) <= (segment).seg))
-> +static inline int __access_ok(int type, unsigned long addr, unsigned long size,
-> +			      mm_segment_t seg)
-> +{
-> +	return addr <= seg.seg && size <= seg.seg;
-> +}
->   
->   #else
->   
-> -static inline int __access_ok(unsigned long addr, unsigned long size,
-> -			mm_segment_t seg)
-> +static inline int __access_ok(int type, unsigned long addr, unsigned long size,
-> +			      mm_segment_t seg)
->   {
->   	if (addr > seg.seg)
->   		return 0;
-> @@ -64,7 +67,7 @@ static inline int __access_ok(unsigned long addr, unsigned long size,
->   
->   #define access_ok(type, addr, size)		\
->   	(__chk_user_ptr(addr),			\
-> -	 __access_ok((__force unsigned long)(addr), (size), get_fs()))
-> +	 __access_ok((type), (__force unsigned long)(addr), (size), get_fs()))
->   
->   /*
->    * These are the main single-value transfer routines.  They automatically
-> 
+----------------------------------------------------------------
+
+Suzuki K Poulose (1):
+  arm64: dts: sc9836/sc9860: Update coresight bindings for hardware
+    ports
+
+ arch/arm64/boot/dts/sprd/sc9836.dtsi |  78 +++++++------
+ arch/arm64/boot/dts/sprd/sc9860.dtsi | 215 ++++++++++++++++++-----------------
+ 2 files changed, 151 insertions(+), 142 deletions(-)
