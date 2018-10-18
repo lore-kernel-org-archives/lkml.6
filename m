@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2C9ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABFFFECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15FBF205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7409F21480
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PVSfkqi9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15FBF205C9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fpy3IpH5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7409F21480
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729459AbeJSCCo (ORCPT
+        id S1729462AbeJSCCx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:02:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50748 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:02:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728616AbeJSCCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:02:43 -0400
+        id S1728298AbeJSCCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:02:52 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87A8B20838;
-        Thu, 18 Oct 2018 18:00:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AB96205C9;
+        Thu, 18 Oct 2018 18:00:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885638;
-        bh=IWrt68STWbcoHqWHtpvAsJrUlVA/ghFXZnrlUZcqkFU=;
+        s=default; t=1539885646;
+        bh=77hvDowjz7rAVIZna4bdt+g6VhEtBpYV1d4AsVIWCb4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PVSfkqi9cx74vKNCtfduVsDKoIV0CK2frGsRddOY30U/jpd8Ze7hqMzTfxJOwsZ1y
-         VutI7lG+ifCb5LNWgX5+F4RUV/zb3PXyQE0ynrvFg5fybFvbJ79/diJtU45WqZsW5q
-         jjBOdOYeh5hf/wIJl1SC5TlXv6fRUSinAaTSdt/I=
+        b=fpy3IpH5poRko3Y6KqooVe0NP62wnYBd3goB1fw72Sg0Kug/zkzIAk5EsvSbnXe0c
+         sP/N0uRftK7XU5eMChSwW/d56jLWv6vWsGKmjRRc/DY63EIuo84B0rU6fqBKrhV5f0
+         lxqUwAqzr+tPPXh+JsT9hRHhY3IDbkeAl+FCaGAw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Tao Ren <taoren@fb.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lei YU <mine260309@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 24/41] net/mlx4: Use cpumask_available for eq->affinity_mask
-Date:   Thu, 18 Oct 2018 19:54:39 +0200
-Message-Id: <20181018175421.172063171@linuxfoundation.org>
+Subject: [PATCH 4.14 25/41] clocksource/drivers/fttmr010: Fix set_next_event handler
+Date:   Thu, 18 Oct 2018 19:54:40 +0200
+Message-Id: <20181018175421.419733800@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
 References: <20181018175416.718399607@linuxfoundation.org>
@@ -64,44 +65,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Tao Ren <taoren@fb.com>
 
-[ Upstream commit 8ac1ee6f4d62e781e3b3fd8b9c42b70371427669 ]
+[ Upstream commit 4451d3f59f2a6f95e5d205c2d04ea072955d080d ]
 
-Clang warns that the address of a pointer will always evaluated as true
-in a boolean context:
+Currently, the aspeed MATCH1 register is updated to <current_count -
+cycles> in set_next_event handler, with the assumption that COUNT
+register value is preserved when the timer is disabled and it continues
+decrementing after the timer is enabled. But the assumption is wrong:
+RELOAD register is loaded into COUNT register when the aspeed timer is
+enabled, which means the next event may be delayed because timer
+interrupt won't be generated until <0xFFFFFFFF - current_count +
+cycles>.
 
-drivers/net/ethernet/mellanox/mlx4/eq.c:243:11: warning: address of
-array 'eq->affinity_mask' will always evaluate to 'true'
-[-Wpointer-bool-conversion]
-        if (!eq->affinity_mask || cpumask_empty(eq->affinity_mask))
-            ~~~~~^~~~~~~~~~~~~
-1 warning generated.
+The problem can be fixed by updating RELOAD register to <cycles>, and
+COUNT register will be re-loaded when the timer is enabled and interrupt
+is generated when COUNT register overflows.
 
-Use cpumask_available, introduced in commit f7e30f01a9e2 ("cpumask: Add
-helper cpumask_available()"), which does the proper checking and avoids
-this warning.
+The test result on Facebook Backpack-CMM BMC hardware (AST2500) shows
+the issue is fixed: without the patch, usleep(100) suspends the process
+for several milliseconds (and sometimes even over 40 milliseconds);
+after applying the fix, usleep(100) takes averagely 240 microseconds to
+return under the same workload level.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/86
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tao Ren <taoren@fb.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: Lei YU <mine260309@gmail.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/eq.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clocksource/timer-fttmr010.c |   18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx4/eq.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/eq.c
-@@ -240,7 +240,8 @@ static void mlx4_set_eq_affinity_hint(st
- 	struct mlx4_dev *dev = &priv->dev;
- 	struct mlx4_eq *eq = &priv->eq_table.eq[vec];
+--- a/drivers/clocksource/timer-fttmr010.c
++++ b/drivers/clocksource/timer-fttmr010.c
+@@ -130,13 +130,17 @@ static int fttmr010_timer_set_next_event
+ 	cr &= ~fttmr010->t1_enable_val;
+ 	writel(cr, fttmr010->base + TIMER_CR);
  
--	if (!eq->affinity_mask || cpumask_empty(eq->affinity_mask))
-+	if (!cpumask_available(eq->affinity_mask) ||
-+	    cpumask_empty(eq->affinity_mask))
- 		return;
+-	/* Setup the match register forward/backward in time */
+-	cr = readl(fttmr010->base + TIMER1_COUNT);
+-	if (fttmr010->count_down)
+-		cr -= cycles;
+-	else
+-		cr += cycles;
+-	writel(cr, fttmr010->base + TIMER1_MATCH1);
++	if (fttmr010->count_down) {
++		/*
++		 * ASPEED Timer Controller will load TIMER1_LOAD register
++		 * into TIMER1_COUNT register when the timer is re-enabled.
++		 */
++		writel(cycles, fttmr010->base + TIMER1_LOAD);
++	} else {
++		/* Setup the match register forward in time */
++		cr = readl(fttmr010->base + TIMER1_COUNT);
++		writel(cr + cycles, fttmr010->base + TIMER1_MATCH1);
++	}
  
- 	hint_err = irq_set_affinity_hint(eq->irq, eq->affinity_mask);
+ 	/* Start */
+ 	cr = readl(fttmr010->base + TIMER_CR);
 
 
