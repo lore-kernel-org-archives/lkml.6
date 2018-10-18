@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66EBEC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9607ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C52A204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0A75204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x2g6/r+6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C52A204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qESYb8+P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0A75204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730408AbeJSCIN (ORCPT
+        id S1730418AbeJSCIQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:08:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57108 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:08:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730384AbeJSCIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:08:12 -0400
+        id S1729977AbeJSCIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:08:15 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A2D4204FD;
-        Thu, 18 Oct 2018 18:06:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77FA220658;
+        Thu, 18 Oct 2018 18:06:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885965;
-        bh=4rf81d2IDKpgm8Z3TBqRNGoDxaMfjSs6tdZz8Q6L+u0=;
+        s=default; t=1539885968;
+        bh=Gnps1+kPXzLfisvtJJdGmB0gbfrLsF4J4bCUYNLLs2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x2g6/r+62f0uTFi1zWRovSVdQwXkatUvGi32ieKRSopXoXTIbtbHfk2zUVFDZR9+e
-         ucBo+De+5juhm4vgr6uVi4u7niYU4ygHeSLXhyG491XBjWAtQp/+7mBlmgYa34wmFt
-         qwY596cMnbLhcvx38ACTBVaFxFNK7vyIxSgJlGng=
+        b=qESYb8+PT4MQiM6t+vLPsavW/ZEvUludhvgLQs4Ue/QSZT5++FqSNZztswCiwbdUN
+         ng6pTbI32fTNGwnZbkXw9L7l4b3F7sPjJagVPgtq97zCpH4gKG/ZSoXkbh82KaZGem
+         CDf7tiY+iAKo9H64c6oh9d4zm7lZeB+uzBEIWUuI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lei Yang <Lei.Yang@windriver.com>,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 03/48] selftests/efivarfs: add required kernel configs
-Date:   Thu, 18 Oct 2018 19:54:38 +0200
-Message-Id: <20181018175427.986113056@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 30/48] rtnl: limit IFLA_NUM_TX_QUEUES and IFLA_NUM_RX_QUEUES to 4096
+Date:   Thu, 18 Oct 2018 19:55:05 +0200
+Message-Id: <20181018175429.575034056@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -62,24 +62,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lei Yang <Lei.Yang@windriver.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 53cf59d6c0ad3edc4f4449098706a8f8986258b6 ]
+[ Upstream commit 0e1d6eca5113858ed2caea61a5adc03c595f6096 ]
 
-add config file
+We have an impressive number of syzkaller bugs that are linked
+to the fact that syzbot was able to create a networking device
+with millions of TX (or RX) queues.
 
-Signed-off-by: Lei Yang <Lei.Yang@windriver.com>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Let's limit the number of RX/TX queues to 4096, this really should
+cover all known cases.
+
+A separate patch will add various cond_resched() in the loops
+handling sysfs entries at device creation and dismantle.
+
+Tested:
+
+lpaa6:~# ip link add gre-4097 numtxqueues 4097 numrxqueues 4097 type ip6gretap
+RTNETLINK answers: Invalid argument
+
+lpaa6:~# time ip link add gre-4096 numtxqueues 4096 numrxqueues 4096 type ip6gretap
+
+real	0m0.180s
+user	0m0.000s
+sys	0m0.107s
+
+Fixes: 76ff5cc91935 ("rtnl: allow to specify number of rx and tx queues on device creation")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/efivarfs/config |    1 +
- 1 file changed, 1 insertion(+)
- create mode 100644 tools/testing/selftests/efivarfs/config
+ net/core/rtnetlink.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- /dev/null
-+++ b/tools/testing/selftests/efivarfs/config
-@@ -0,0 +1 @@
-+CONFIG_EFIVAR_FS=y
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -2116,6 +2116,12 @@ struct net_device *rtnl_create_link(stru
+ 	else if (ops->get_num_rx_queues)
+ 		num_rx_queues = ops->get_num_rx_queues();
+ 
++	if (num_tx_queues < 1 || num_tx_queues > 4096)
++		return ERR_PTR(-EINVAL);
++
++	if (num_rx_queues < 1 || num_rx_queues > 4096)
++		return ERR_PTR(-EINVAL);
++
+ 	err = -ENOMEM;
+ 	dev = alloc_netdev_mqs(ops->priv_size, ifname, name_assign_type,
+ 			       ops->setup, num_tx_queues, num_rx_queues);
 
 
