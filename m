@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EFAC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDDEC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0D01204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:57:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 667CF2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:57:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xyxsWg+M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0D01204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="piM6i7ET"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 667CF2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728785AbeJSB7F (ORCPT
+        id S1728799AbeJSB7K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 21:59:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46846 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 21:59:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728728AbeJSB7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 21:59:05 -0400
+        id S1728786AbeJSB7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 21:59:09 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D2422145D;
-        Thu, 18 Oct 2018 17:56:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D0372145D;
+        Thu, 18 Oct 2018 17:57:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885420;
-        bh=e1weOQmCsA9xZiadk69ZwbiO95DdKO5H03RTeNVkkZA=;
+        s=default; t=1539885424;
+        bh=1OoKbIWXXBxslYRhMoGOg5OMAa/ApiP8ZMYSzbRli3g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xyxsWg+MNpr0Hb/EnK3Lgwbixe91w3LHNH7BfB1HsnT0SuTxAEnsoIrhRYoPWlQck
-         KXvRzoFWJeiPlzDODUvtoGSjr9eJrzwu/GiWYrtFN2dLgX6+iXFnNDotHMVTx+oTae
-         GMwml0B/0iKqRGlXdmJ17c2QeuPI2XSNheLHAF2o=
+        b=piM6i7ETLVjgmnQnKRc9pZXQxr5u3meIIY5yUvXAtL7cdwI+63k0yMZ1CGU1IzxMR
+         kGrdjyjbr4SZa15KmM8r6WaQV6l4MN3syJViTxlBjCRdddawpQcTsphlRDyyVfjVAh
+         /spU/iveYj0ko5FIyUwgCSWHb88PsdxpstgjScQc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
-        Stefano Brivio <sbrivio@redhat.com>,
+        stable@vger.kernel.org, Christian Lamparter <chunkeey@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 23/53] selftests: pmtu: properly redirect stderr to /dev/null
-Date:   Thu, 18 Oct 2018 19:54:16 +0200
-Message-Id: <20181018175420.790185616@linuxfoundation.org>
+Subject: [PATCH 4.18 24/53] net: emac: fix fixed-link setup for the RTL8363SB switch
+Date:   Thu, 18 Oct 2018 19:54:17 +0200
+Message-Id: <20181018175421.168877636@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.561567978@linuxfoundation.org>
 References: <20181018175416.561567978@linuxfoundation.org>
@@ -64,37 +63,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Christian Lamparter <chunkeey@gmail.com>
 
-[ Upstream commit 0a286afee5a1e8dca86d824209dbd3200294f86f ]
+[ Upstream commit 08e39982ef64f800fd1f9b9b92968d14d5fafa82 ]
 
-The cleanup function uses "$CMD 2 > /dev/null", which doesn't actually
-send stderr to /dev/null, so when the netns doesn't exist, the error
-message is shown. Use "2> /dev/null" instead, so that those messages
-disappear, as was intended.
+On the Netgear WNDAP620, the emac ethernet isn't receiving nor
+xmitting any frames from/to the RTL8363SB (identifies itself
+as a RTL8367RB).
 
-Fixes: d1f1b9cbf34c ("selftests: net: Introduce first PMTU test")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Acked-by: Stefano Brivio <sbrivio@redhat.com>
+This is caused by the emac hardware not knowing the forced link
+parameters for speed, duplex, pause, etc.
+
+This begs the question, how this was working on the original
+driver code, when it was necessary to set the phy_address and
+phy_map to 0xffffffff. But I guess without access to the old
+PPC405/440/460 hardware, it's not possible to know.
+
+Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/net/pmtu.sh |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/ibm/emac/core.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/tools/testing/selftests/net/pmtu.sh
-+++ b/tools/testing/selftests/net/pmtu.sh
-@@ -178,8 +178,8 @@ setup() {
+--- a/drivers/net/ethernet/ibm/emac/core.c
++++ b/drivers/net/ethernet/ibm/emac/core.c
+@@ -2677,12 +2677,17 @@ static int emac_init_phy(struct emac_ins
+ 		if (of_phy_is_fixed_link(np)) {
+ 			int res = emac_dt_mdio_probe(dev);
  
- cleanup() {
- 	[ ${cleanup_done} -eq 1 ] && return
--	ip netns del ${NS_A} 2 > /dev/null
--	ip netns del ${NS_B} 2 > /dev/null
-+	ip netns del ${NS_A} 2> /dev/null
-+	ip netns del ${NS_B} 2> /dev/null
- 	cleanup_done=1
- }
- 
+-			if (!res) {
+-				res = of_phy_register_fixed_link(np);
+-				if (res)
+-					mdiobus_unregister(dev->mii_bus);
++			if (res)
++				return res;
++
++			res = of_phy_register_fixed_link(np);
++			dev->phy_dev = of_phy_find_device(np);
++			if (res || !dev->phy_dev) {
++				mdiobus_unregister(dev->mii_bus);
++				return res ? res : -EINVAL;
+ 			}
+-			return res;
++			emac_adjust_link(dev->ndev);
++			put_device(&dev->phy_dev->mdio.dev);
+ 		}
+ 		return 0;
+ 	}
 
 
