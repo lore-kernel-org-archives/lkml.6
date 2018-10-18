@@ -2,117 +2,105 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A052FC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D38B9C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E38821473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:08:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E38821473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 879CA2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:10:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g8iE1W1B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 879CA2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728478AbeJSAK0 (ORCPT
+        id S1728432AbeJSAMF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 20:10:26 -0400
-Received: from foss.arm.com ([217.140.101.70]:40220 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727859AbeJSAK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 20:10:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D41EF341;
-        Thu, 18 Oct 2018 09:08:45 -0700 (PDT)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B73A3F71A;
-        Thu, 18 Oct 2018 09:08:42 -0700 (PDT)
-Subject: Re: [PATCH 2/4] iommu/arm-smmu: Workaround for Marvell Armada-AP806
- SoC erratum #582743
-To:     Hanna Hawa <hannah@marvell.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, corbet@lwn.net, joro@8bytes.org,
-        robh+dt@kernel.org, gregory.clement@bootlin.com,
-        mark.rutland@arm.com, jason@lakedaemon.net, andrew@lunn.ch,
-        sebastian.hesselbarth@gmail.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        devicetree@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        nadavh@marvell.com, omrii@marvell.com, nd@arm.com
-References: <1539604846-21151-1-git-send-email-hannah@marvell.com>
- <1539604846-21151-3-git-send-email-hannah@marvell.com>
- <8a7eefcf-6a77-8dc1-2ce9-9bb7395a3bb7@arm.com>
- <2e4f2b02-4b02-877d-1f51-c617170398a6@marvell.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <38360fdf-8bc0-9fea-870f-fdb8b6103248@arm.com>
-Date:   Thu, 18 Oct 2018 17:08:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 18 Oct 2018 20:12:05 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37296 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727417AbeJSAME (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 20:12:04 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 185-v6so889572wmt.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 09:10:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TLdFKQdJScMjrSvDQSmPVZ+rdRsNi8sWryyHKi+FXPg=;
+        b=g8iE1W1BY97ABe1Z54TeflMXNB2HpDjslZ7oTThl6nZAyQLldOeG3kWlImBPrALSnV
+         IyKJApOtz7xBi0W2E1E9VNYwKRZmTOzFjL4ZPnneIKy6/7+OkbmD4onRFAIHiZWXo0Td
+         Xr3vuX1jE3WvPWrd3oQDKYG4H1tMG4JK1f6+CMTjrsyE/TML5/ukQzN/Ojj1tkpOKYRf
+         gYsE6onxY0rTAHKknlCSejZ6Caec/0kCbdt08x8RLeQJby1JMSz9QnCh2zAA/bK2pP6c
+         afO+lY0mgoFu3FWzrjW42uko8NC0TuvNf1H12K1qamdG/WJ3XPGDCm+mVm0J1kS8CuG2
+         NUWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TLdFKQdJScMjrSvDQSmPVZ+rdRsNi8sWryyHKi+FXPg=;
+        b=g4UFOLTeDVk5lzwiD9kjU9VW3XgmgpScNOyu1oISVabWHFFMAj+sxaKB14wgV7c9qc
+         CAfv8vNwq3I5n1JLTPvs+jpUGoZg2QtPQle1/pbl9ZyLbVPTEqjLThzsy6mVewP3uy8C
+         xd+a0t5XqhDmnI55yZ3/LSyd8LMdO9swGcgkKMnw5Eh3Vzf2ruPp8fdMkcxlZxJkSbiO
+         sCqUZorOWlpKT2t7kCagU0JgsTtXTFaDCfzzycvBvP9iNingHXoiCZCGuFQ0W/N2OIS3
+         +Tzpyc0hwZuyXH/VL/Ka17e/gK3ybOEdxgU3aHZWikBl+oyMTG5p84ue0rLbZzdIsAT9
+         YuHg==
+X-Gm-Message-State: ABuFfogASLSV6EcGsOf4q/9PwVEHuqhtjWc2Gg0qHmr4wCOArGN1ZIZ4
+        iuUbSJOdIcuCjwmI2R7Vd3U=
+X-Google-Smtp-Source: ACcGV61QjIjVF86Xb6J61FphI6pDZJjjcRQKLKup/k1HNBFspSjvN3sDbqk/XceJ/XE+wDMkTwajcQ==
+X-Received: by 2002:a1c:924d:: with SMTP id u74-v6mr1022370wmd.105.1539879022878;
+        Thu, 18 Oct 2018 09:10:22 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id j2-v6sm15741605wrw.29.2018.10.18.09.10.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Oct 2018 09:10:22 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 18:10:19 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     joel@joelfernandes.org, tglx@linutronix.de, rostedt@goodmis.org,
+        frederic@kernel.org, paulmck@linux.vnet.ibm.com,
+        alexander.levin@verizon.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] softirq: modify comments about PF_MEMALLOC in
+ __do_softirq
+Message-ID: <20181018161019.GA7573@gmail.com>
+References: <20181018142133.12341-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <2e4f2b02-4b02-877d-1f51-c617170398a6@marvell.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181018142133.12341-1-tiny.windzz@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/10/18 09:25, Hanna Hawa wrote:
-> Hi Robin,
+
+* Yangtao Li <tiny.windzz@gmail.com> wrote:
+
+> ---
+>  kernel/softirq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> 
-> On 10/15/2018 04:00 PM, Robin Murphy wrote:
->> Hi Hanna,
->>
->> On 15/10/18 13:00, hannah@marvell.com wrote:
->>> From: Hanna Hawa <hannah@marvell.com>
->>>
->>> Due to erratum #582743, the Marvell Armada-AP806 can't access 64bit
->>> to ARM SMMUv2 registers.
->>> This patch split the writeq/readq to two accesses of writel/readl.
->>>
->>> Note that separate writes/reads to 2 is not problem regards to 
->>> atomicity,
->>> because the driver use the readq/writeq while initialize the SMMU, 
->>> report
->>> for SMMU fault, and use spinlock in one case (iova_to_phys).
->>
->> In general, this doesn't work. Here's what the SMMU spec says about
->> SMMU_CBn_TLBIVA, but others are similar:
->>
->> "If SMMU_CBA2Rn.VA64 is one, then AArch64 format is selected. The
->> programmer should use 64 bit accesses to this register. If 32-bit
->> accesses are used then writes to the top 32 bits are ignored and writes
->> to the lower 32 bits are zero extended."
->>
->> If your interconnect won't let 64-bit transactions through, then you
->> can't use AArch64 format at stage 1 at all, since there's no way to
->> invalidate entries with the correct ASID, and you'll have to restrict
->> stage 2 formats to at most 44-bit IOVAs in order for TLBIIPAS2{L} not to
->> invalidate the wrong thing.
-> Thanks for your suggestion.
-> 
-> To restrict the IOVAs i need to add another work-around to the driver to 
-> limit the va_size, is that acceptable?
+> diff --git a/kernel/softirq.c b/kernel/softirq.c
+> index 6f584861d329..6193e1d1b30d 100644
+> --- a/kernel/softirq.c
+> +++ b/kernel/softirq.c
+> @@ -257,7 +257,7 @@ asmlinkage __visible void __softirq_entry __do_softirq(void)
+>  	int softirq_bit;
+>  
+>  	/*
+> -	 * Mask out PF_MEMALLOC s current task context is borrowed for the
+> +	 * Mask out PF_MEMALLOC as current task context is borrowed for the
+>  	 * softirq. A softirq handled such as network RX might set PF_MEMALLOC
+>  	 * again if the socket is related to swap
+>  	 */
 
-Yeah, constraining AArch64 stage 2 to 44 bits should just be a case of 
-adjusting smmu->ipa_size at probe time, but you'd still need to add the 
-writel()-based TLBI path to take advantage of it.
+Can I add your Signed-off-by?
 
-How big is the physical memory map on these SoCs? If everything fits 
-into 40 bits then I think you could get away with simply hiding the 
-SMMU_IDR2.PTFSv8 fields to sidestep the AArch64 formats altogether, and 
-everything else should fall out in the wash. Otherwise, you'll have to 
-just disable stage 1 support in addition to the stage 2 workaround as 
-above.
+Thanks,
 
-> What the different in the driver between AARCH32_L & AARCH32_S?
-
-AARCH32_L is the 3-level LPAE format, which gives you 32-bit 
-input/40-bit output at stage 1 and 40-bit input/40-bit output at stage 
-2. AARCH32_S is the legacy 2-level short-descriptor format which only 
-supports stage 1 and is limited to 32-bit output addresses - MMU-500 
-does support it, but you probably want to avoid it if possible ;)
-
-Robin.
+	Ingo
