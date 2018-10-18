@@ -2,334 +2,158 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11EA2C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17483C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:00:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C297E21486
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 16:59:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C297E21486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id C4A0B21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:00:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="1qmNJklk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4A0B21473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728630AbeJSBBs (ORCPT
+        id S1728638AbeJSBCc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 21:01:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40158 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728554AbeJSBBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 21:01:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DD1E3B03A;
-        Thu, 18 Oct 2018 16:59:52 +0000 (UTC)
-Subject: Re: [PATCH v3 lora-next 1/5] regmap: Add regmap_noinc_write API
-To:     Ben Whitten <ben.whitten@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     starnight@g.ncu.edu.tw, hasnain.virk@arm.com,
-        netdev@vger.kernel.org, liuxuenetmail@gmail.com, shess@hessware.de,
-        Ben Whitten <ben.whitten@lairdtech.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, Stefan Rehm <rehm@miromico.ch>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
-References: <1539361567-3602-1-git-send-email-ben.whitten@lairdtech.com>
- <1539361567-3602-2-git-send-email-ben.whitten@lairdtech.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- xsFNBE6W6ZQBEAC/BIukDnkVenIkK9O14UucicBIVvRB5WSMHC23msS+R2h915mW7/vXfn+V
- 0nrr5ECmEg/5OjujKf0x/uhJYrsxcp45nDyYCk+RYoOJmGzzUFya1GvT/c04coZ8VmgFUWGE
- vCfhHJro85dZUL99IoLP21VXEVlCPyIngSstikeuf14SY17LPTN1aIpGQDI2Qt8HHY1zOVWv
- iz53aiFLFeIVhQlBmOABH2Ifr2M9loRC9yOyGcE2GhlzgyHGlQxEVGFn/QptX6iYbtaTBTU0
- c72rpmbe1Nec6hWuzSwu2uE8lF+HYcYi+22ml1XBHNMBeAdSEbSfDbwc///8QKtckUzbDvME
- S8j4KuqQhwvYkSg7dV9rs53WmjO2Wd4eygkC3tBhPM5s38/6CVGl3ABiWJs3kB08asUNy8Wk
- juusU/nRJbXDzxu1d+hv0d+s5NOBy/5+7Pa6HeyBnh1tUmCs5/f1D/cJnuzzYwAmZTHFUsfQ
- ygGBRRKpAVu0VxCFNPSYKW0ULi5eZV6bcj+NAhtafGsWcv8WPFXgVE8s2YU38D1VtlBvCo5/
- 0MPtQORqAQ/Itag1EHHtnfuK3MBtA0fNxQbb2jha+/oMAi5hKpmB/zAlFoRtYHwjFPFldHfv
- Iljpe1S0rDASaF9NsQPfUBEm7dA5UUkyvvi00HZ3e7/uyBGb0QARAQABzSJBbmRyZWFzIEbD
- pHJiZXIgPGFmYWVyYmVyQHN1c2UuZGU+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgID
- AQIeAQIXgAUCTqGJnQIZAQAKCRD6LtEtPn4BPzetD/4rF6k/HF+9U9KqykfJaWdUHJvXpI85
- Roab12rQbiIrL4hVEYKrYwPEKpCf+FthXpgOq+JdTGJ831DMlTx7Ed5/QJ9KAAQuhZlSNjSc
- +FNobJm7EbFv9jWFjQC0JcOl17Ji1ikgRcIRDCul1nQh9jCdfh1b848GerZmzteNdT9afRJm
- 7rrvMqXs1Y52/dTlfIW0ygMA2n5Vv3EwykXJOPF6fRimkErKO84sFMNg0eJV9mXs+Zyionfi
- g2sZJfVeKjkDqjxy7sDDBZZR68I9HWq5VJQrXqQkCZUvtr6TBLI+uiDLbGRUDNxA3wgjVdS2
- v9bhjYceSOHpKU+h3H2S8ju9rjhOADT2F5lUQMTSpjlzglh8IatV5rXLGkXEyum4MzMo2sCE
- Cr+GD6i2M3pHCtaIVV3xV0nRGALa6DdF7jBWqM54KHaKsE883kFH2+6ARcPCPrnPm7LX98h2
- 4VpG984ysoq6fpzHHG/KCaYCEOe1bpr3Plmmp3sqj0utA6lwzJy0hj5dqug+lqmg7QKAnxl+
- porgluoY56U0X0PIVBc0yO0dWqRxtylJa9kDX/TKwFYNVddMn2NQNjOJXzx2H9hf0We7rG7+
- F/vgwALVVYbiTzvp2L0XATTv/oX4BHagAa/Qc3dIsBYJH+KVhBp+ZX4uguxk4xlc2hm75b1s
- cqeAD87BTQROlumUARAAzd7eu+tw/52FB7xQZWDv5aF+6CAkoz7AuY4s1fo0AQQDqjLOdpQF
- bifdH7B8SnsA4eo0syfs+1tZW6nn9hdy1GHEMbeuvdhNwkhEfYGDYpSue7oVxB4jajKvRHAP
- VcewKZIxvIiZ5aSp5n1Bd7B0c0C443DHiWE/0XWSpvbU7fTzTNvdz+2OZmGtqCn610gBqScv
- 1BOiP3OfLly8ghxcJsos23c0mkB/1iWlzh3UMFIGrzsK3sZJ/3uRaLYFimmqqPlSwFqx3b0M
- 1gFdHWKfOpvQ4wwP5P10xwvqNXLWC30wB1QmJGD/X8aAoVNnGsmEL7GcWF4cLoOSRidSoccz
- znShE+Ap+FVDD6MRyesNT4D67l792//B38CGJRdELtNacdwazaFgxH9O85Vnd70ZC7fIcwzG
- yg/4ZEf96DlAvrSOnu/kgklofEYdzpZmW+Fqas6cnk6ZaHa35uHuBPesdE13MVz5TeiHGQTW
- xP1jbgWQJGPvJZ+htERT8SZGBQRb1paoRd1KWQ1mlr3CQvXtfA/daq8p/wL48sXrKNwedrLV
- iZOeJOFwfpJgsFU4xLoO/8N0RNFsnelBgWgZE3ZEctEd4BsWFUw+czYCPYfqOcJ556QUGA9y
- DeDcxSitpYrNIvpk4C5CHbvskVLKPIUVXxTNl8hAGo1Ahm1VbNkYlocAEQEAAcLBXwQYAQIA
- CQUCTpbplAIbDAAKCRD6LtEtPn4BPzA6D/9TbSBOPM99SHPX9JiEQAw4ITCBF2oTWeZQ6RJg
- RKpB15lzyPfyFbNSceJp9dCiwDWe+pzKaX6KYOFZ5+YTS0Ph2eCR+uT2l6Mt6esAun8dvER/
- xlPDW7p88dwGUcV8mHEukWdurSEDTj8V3K29vpgvIgRq2lHCn2wqRQBGpiJAt72Vg0HxUlwN
- GAJNvhpeW8Yb43Ek7lWExkUgOfNsDCTvDInF8JTFtEXMnUcPxC0d/GdAuvBilL9SlmzvoDIZ
- 5k2k456bkY3+3/ydDvKU5WIgThydyCEQUHlmE6RdA3C1ccIrIvKjVEwSH27Pzy5jKQ78qnhv
- dtLLAavOXyBJnOGlNDOpOyBXfv02x91RoRiyrSIM7dKmMEINKQlAMgB/UU/6B+mvzosbs5d3
- 4FPzBLuuRz9WYzXmnC460m2gaEVk1GjpidBWw0yY6kgnAM3KhwCFSecqUQCvwKFDGSXDDbCr
- w08b3GDk40UoCoUq9xrGfhlf05TUSFTg2NlSrK7+wAEsTUgs2ZYLpHyEeftoDDnKpM4ghs/O
- ceCeyZUP1zSgRSjgITQp691Uli5Nd1mIzaaM8RjOE/Rw67FwgblKR6HAhSy/LYw1HVOu+Ees
- RAEdbtRt37A8brlb/ENxbLd9SGC8/j20FQjit7oPNMkTJDs7Uo2eb7WxOt5pSTVVqZkv7Q==
-Organization: SUSE Linux GmbH
-Message-ID: <2908e406-a2e3-29cb-579c-949ddd383e97@suse.de>
-Date:   Thu, 18 Oct 2018 18:59:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <1539361567-3602-2-git-send-email-ben.whitten@lairdtech.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 18 Oct 2018 21:02:32 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40435 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727294AbeJSBCc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 21:02:32 -0400
+Received: by mail-pf1-f196.google.com with SMTP id g21-v6so8161939pfi.7
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 10:00:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=5zEikSzxXVf3Yi7XWwHiObXXQT1zzQeMLYzg5UzCkmk=;
+        b=1qmNJklkKtPS/s/y9U4MZYSZ/mRwfQyKff9A9zbrvXsx9fAe1twIYP2VTqYNmI0PHU
+         W7fzOfmD8kaORKMWjFgu1wtlECG8VA6yTrW1Qjw3qNZjFWMWCykNEiK7GPAKGrQebosK
+         GWJ15gazRhD7RPhm3MvGT1jhZholPYjgPDlDJakA2KP8ehs61VqVpd9Vu/5XATaaKdId
+         LMzy8A6HVK7I4vtni920fmsOrD/NYHTf/TA0MPyLd2BKeXyrCmFE0u62P8PWDU/3AHG7
+         Pa4fnKUuC6s2rwrqir7sXU+2F2x+EG5+LffZFnc74cvXBQGfg4ODtJeBQMyn5+hGq1XW
+         xiCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=5zEikSzxXVf3Yi7XWwHiObXXQT1zzQeMLYzg5UzCkmk=;
+        b=BMazvgiFtJ2JI3VHtSwCpvmZGRzH4cwAwR1qvEFzYRGZhjfeJCVUJStnRRrGOoN9cV
+         MGfaZDAvscI/P4wsW3fTETWClrdQ5cMJTNzBoO7kU8MtcJbMTZ1A/jjeerMiPEL4e+5R
+         aS2slwwDGDDUHsboUttkOocyNkpvtDh9M5WZ6Ck2IZXC/mQs+P9YJHFKFrnXzMuipSJY
+         MH5A8P16jmyfqqGnjfyvX/D/yQmqcVpRb6m800E9SEFFUOepacX3YOHYFDwHs305AejA
+         9SLHGzW4qzPIxvPp7FmZNLEqR82iTR/4ird4+61QqF51SjZ0mddzWSU2pVwwz61GLc+F
+         Xdnw==
+X-Gm-Message-State: ABuFfogsvwS1cEUYPVICSTao7PG6SNODws5bqiio67NfK0JaS/F0+kHC
+        sho96HVF8u4N8laIh1wJ915xdnlloQ8=
+X-Google-Smtp-Source: ACcGV604Nbh9dGGkNFeK/cERDQ+NwJ4miv9QZKJVbmPrvqmOinIlSv2m2Dmnldt54OLASoAxFbmDHg==
+X-Received: by 2002:a63:541e:: with SMTP id i30-v6mr29383959pgb.413.1539882040095;
+        Thu, 18 Oct 2018 10:00:40 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:7429:3007:d8c7:a746:3822? ([2601:646:c200:7429:3007:d8c7:a746:3822])
+        by smtp.gmail.com with ESMTPSA id h65-v6sm27014180pgc.88.2018.10.18.10.00.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Oct 2018 10:00:38 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH 1/5] x86: introduce preemption disable prefix
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A366)
+In-Reply-To: <925F22EA-F8CB-4194-B96B-378409ED7918@vmware.com>
+Date:   Thu, 18 Oct 2018 10:00:37 -0700
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <2626124E-7344-42F3-AD07-0BB34D62A9EE@amacapital.net>
+References: <20181018005420.82993-1-namit@vmware.com> <20181018005420.82993-2-namit@vmware.com> <D247AB7C-2890-49CE-B102-163E5B368FC2@amacapital.net> <07255D2B-0243-4254-B62A-37050C44207E@vmware.com> <CALCETrXEG8OrMpB3VBS9RF41O_MwtPmXBazkdSGE0ohZmXDcBw@mail.gmail.com> <925F22EA-F8CB-4194-B96B-378409ED7918@vmware.com>
+To:     Nadav Amit <namit@vmware.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 12.10.18 um 18:26 schrieb Ben Whitten:
-> The regmap API had a noinc_read function added for instances where devices
-> supported returning data from an internal FIFO in a single read.
-> 
-> This commit adds the noinc_write variant to allow writing to a non
-> incrementing register, this is used in devices such as the sx1301 for
-> loading firmware.
-> 
-> Signed-off-by: Ben Whitten <ben.whitten@lairdtech.com>
-
-Reviewed-by: Andreas Färber <afaerber@suse.de>
-
-Mark, please take this one through your tree - I'll rebase the LoRa
-parts on linux-next then.
-
-Thanks,
-Andreas
-
-> ---
->  drivers/base/regmap/internal.h |  3 ++
->  drivers/base/regmap/regmap.c   | 77 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/regmap.h         | 19 +++++++++++
->  3 files changed, 99 insertions(+)
-> 
-> diff --git a/drivers/base/regmap/internal.h b/drivers/base/regmap/internal.h
-> index a6bf34d63..404f123 100644
-> --- a/drivers/base/regmap/internal.h
-> +++ b/drivers/base/regmap/internal.h
-> @@ -94,11 +94,13 @@ struct regmap {
->  	bool (*readable_reg)(struct device *dev, unsigned int reg);
->  	bool (*volatile_reg)(struct device *dev, unsigned int reg);
->  	bool (*precious_reg)(struct device *dev, unsigned int reg);
-> +	bool (*writeable_noinc_reg)(struct device *dev, unsigned int reg);
->  	bool (*readable_noinc_reg)(struct device *dev, unsigned int reg);
->  	const struct regmap_access_table *wr_table;
->  	const struct regmap_access_table *rd_table;
->  	const struct regmap_access_table *volatile_table;
->  	const struct regmap_access_table *precious_table;
-> +	const struct regmap_access_table *wr_noinc_table;
->  	const struct regmap_access_table *rd_noinc_table;
->  
->  	int (*reg_read)(void *context, unsigned int reg, unsigned int *val);
-> @@ -183,6 +185,7 @@ bool regmap_writeable(struct regmap *map, unsigned int reg);
->  bool regmap_readable(struct regmap *map, unsigned int reg);
->  bool regmap_volatile(struct regmap *map, unsigned int reg);
->  bool regmap_precious(struct regmap *map, unsigned int reg);
-> +bool regmap_writeable_noinc(struct regmap *map, unsigned int reg);
->  bool regmap_readable_noinc(struct regmap *map, unsigned int reg);
->  
->  int _regmap_write(struct regmap *map, unsigned int reg,
-> diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-> index 0360a90..d4f1fc6 100644
-> --- a/drivers/base/regmap/regmap.c
-> +++ b/drivers/base/regmap/regmap.c
-> @@ -168,6 +168,17 @@ bool regmap_precious(struct regmap *map, unsigned int reg)
->  	return false;
->  }
->  
-> +bool regmap_writeable_noinc(struct regmap *map, unsigned int reg)
-> +{
-> +	if (map->writeable_noinc_reg)
-> +		return map->writeable_noinc_reg(map->dev, reg);
-> +
-> +	if (map->wr_noinc_table)
-> +		return regmap_check_range_table(map, reg, map->wr_noinc_table);
-> +
-> +	return true;
-> +}
-> +
->  bool regmap_readable_noinc(struct regmap *map, unsigned int reg)
->  {
->  	if (map->readable_noinc_reg)
-> @@ -777,11 +788,13 @@ struct regmap *__regmap_init(struct device *dev,
->  	map->rd_table = config->rd_table;
->  	map->volatile_table = config->volatile_table;
->  	map->precious_table = config->precious_table;
-> +	map->wr_noinc_table = config->wr_noinc_table;
->  	map->rd_noinc_table = config->rd_noinc_table;
->  	map->writeable_reg = config->writeable_reg;
->  	map->readable_reg = config->readable_reg;
->  	map->volatile_reg = config->volatile_reg;
->  	map->precious_reg = config->precious_reg;
-> +	map->writeable_noinc_reg = config->writeable_noinc_reg;
->  	map->readable_noinc_reg = config->readable_noinc_reg;
->  	map->cache_type = config->cache_type;
->  
-> @@ -1298,6 +1311,7 @@ int regmap_reinit_cache(struct regmap *map, const struct regmap_config *config)
->  	map->readable_reg = config->readable_reg;
->  	map->volatile_reg = config->volatile_reg;
->  	map->precious_reg = config->precious_reg;
-> +	map->writeable_noinc_reg = config->writeable_noinc_reg;
->  	map->readable_noinc_reg = config->readable_noinc_reg;
->  	map->cache_type = config->cache_type;
->  
-> @@ -1898,6 +1912,69 @@ int regmap_raw_write(struct regmap *map, unsigned int reg,
->  EXPORT_SYMBOL_GPL(regmap_raw_write);
->  
->  /**
-> + * regmap_noinc_write(): Write data from a register without incrementing the
-> + *			register number
-> + *
-> + * @map: Register map to write to
-> + * @reg: Register to write to
-> + * @val: Pointer to data buffer
-> + * @val_len: Length of output buffer in bytes.
-> + *
-> + * The regmap API usually assumes that bulk bus write operations will write a
-> + * range of registers. Some devices have certain registers for which a write
-> + * operation can write to an internal FIFO.
-> + *
-> + * The target register must be volatile but registers after it can be
-> + * completely unrelated cacheable registers.
-> + *
-> + * This will attempt multiple writes as required to write val_len bytes.
-> + *
-> + * A value of zero will be returned on success, a negative errno will be
-> + * returned in error cases.
-> + */
-> +int regmap_noinc_write(struct regmap *map, unsigned int reg,
-> +		      const void *val, size_t val_len)
-> +{
-> +	size_t write_len;
-> +	int ret;
-> +
-> +	if (!map->bus)
-> +		return -EINVAL;
-> +	if (!map->bus->write)
-> +		return -ENOTSUPP;
-> +	if (val_len % map->format.val_bytes)
-> +		return -EINVAL;
-> +	if (!IS_ALIGNED(reg, map->reg_stride))
-> +		return -EINVAL;
-> +	if (val_len == 0)
-> +		return -EINVAL;
-> +
-> +	map->lock(map->lock_arg);
-> +
-> +	if (!regmap_volatile(map, reg) || !regmap_writeable_noinc(map, reg)) {
-> +		ret = -EINVAL;
-> +		goto out_unlock;
-> +	}
-> +
-> +	while (val_len) {
-> +		if (map->max_raw_write && map->max_raw_write < val_len)
-> +			write_len = map->max_raw_write;
-> +		else
-> +			write_len = val_len;
-> +		ret = _regmap_raw_write(map, reg, val, write_len);
-> +		if (ret)
-> +			goto out_unlock;
-> +		val = ((u8 *)val) + write_len;
-> +		val_len -= write_len;
-> +	}
-> +
-> +out_unlock:
-> +	map->unlock(map->lock_arg);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(regmap_noinc_write);
-> +
-> +/**
->   * regmap_field_update_bits_base() - Perform a read/modify/write cycle a
->   *                                   register field.
->   *
-> diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-> index 379505a..de04dc4 100644
-> --- a/include/linux/regmap.h
-> +++ b/include/linux/regmap.h
-> @@ -268,6 +268,13 @@ typedef void (*regmap_unlock)(void *);
->   *                field is NULL but precious_table (see below) is not, the
->   *                check is performed on such table (a register is precious if
->   *                it belongs to one of the ranges specified by precious_table).
-> + * @writeable_noinc_reg: Optional callback returning true if the register
-> + *			supports multiple write operations without incrementing
-> + *			the register number. If this field is NULL but
-> + *			wr_noinc_table (see below) is not, the check is
-> + *			performed on such table (a register is no increment
-> + *			writeable if it belongs to one of the ranges specified
-> + *			by wr_noinc_table).
->   * @readable_noinc_reg: Optional callback returning true if the register
->   *			supports multiple read operations without incrementing
->   *			the register number. If this field is NULL but
-> @@ -302,6 +309,7 @@ typedef void (*regmap_unlock)(void *);
->   * @rd_table:     As above, for read access.
->   * @volatile_table: As above, for volatile registers.
->   * @precious_table: As above, for precious registers.
-> + * @wr_noinc_table: As above, for no increment writeable registers.
->   * @rd_noinc_table: As above, for no increment readable registers.
->   * @reg_defaults: Power on reset values for registers (for use with
->   *                register cache support).
-> @@ -352,6 +360,7 @@ struct regmap_config {
->  	bool (*readable_reg)(struct device *dev, unsigned int reg);
->  	bool (*volatile_reg)(struct device *dev, unsigned int reg);
->  	bool (*precious_reg)(struct device *dev, unsigned int reg);
-> +	bool (*writeable_noinc_reg)(struct device *dev, unsigned int reg);
->  	bool (*readable_noinc_reg)(struct device *dev, unsigned int reg);
->  
->  	bool disable_locking;
-> @@ -369,6 +378,7 @@ struct regmap_config {
->  	const struct regmap_access_table *rd_table;
->  	const struct regmap_access_table *volatile_table;
->  	const struct regmap_access_table *precious_table;
-> +	const struct regmap_access_table *wr_noinc_table;
->  	const struct regmap_access_table *rd_noinc_table;
->  	const struct reg_default *reg_defaults;
->  	unsigned int num_reg_defaults;
-> @@ -979,6 +989,8 @@ int regmap_write(struct regmap *map, unsigned int reg, unsigned int val);
->  int regmap_write_async(struct regmap *map, unsigned int reg, unsigned int val);
->  int regmap_raw_write(struct regmap *map, unsigned int reg,
->  		     const void *val, size_t val_len);
-> +int regmap_noinc_write(struct regmap *map, unsigned int reg,
-> +		     const void *val, size_t val_len);
->  int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
->  			size_t val_count);
->  int regmap_multi_reg_write(struct regmap *map, const struct reg_sequence *regs,
-> @@ -1222,6 +1234,13 @@ static inline int regmap_raw_write_async(struct regmap *map, unsigned int reg,
->  	return -EINVAL;
->  }
->  
-> +static inline int regmap_noinc_write(struct regmap *map, unsigned int reg,
-> +				    const void *val, size_t val_len)
-> +{
-> +	WARN_ONCE(1, "regmap API is disabled");
-> +	return -EINVAL;
-> +}
-> +
->  static inline int regmap_bulk_write(struct regmap *map, unsigned int reg,
->  				    const void *val, size_t val_count)
->  {
-> 
 
 
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+> On Oct 18, 2018, at 9:47 AM, Nadav Amit <namit@vmware.com> wrote:
+>=20
+> at 8:51 PM, Andy Lutomirski <luto@amacapital.net> wrote:
+>=20
+>>> On Wed, Oct 17, 2018 at 8:12 PM Nadav Amit <namit@vmware.com> wrote:
+>>> at 6:22 PM, Andy Lutomirski <luto@amacapital.net> wrote:
+>>>=20
+>>>>> On Oct 17, 2018, at 5:54 PM, Nadav Amit <namit@vmware.com> wrote:
+>>>>>=20
+>>>>> It is sometimes beneficial to prevent preemption for very few
+>>>>> instructions, or prevent preemption for some instructions that precede=
+
+>>>>> a branch (this latter case will be introduced in the next patches).
+>>>>>=20
+>>>>> To provide such functionality on x86-64, we use an empty REX-prefix
+>>>>> (opcode 0x40) as an indication that preemption is disabled for the
+>>>>> following instruction.
+>>>>=20
+>>>> Nifty!
+>>>>=20
+>>>> That being said, I think you have a few bugs. First, you can=E2=80=99t j=
+ust ignore
+>>>> a rescheduling interrupt, as you introduce unbounded latency when this
+>>>> happens =E2=80=94 you=E2=80=99re effectively emulating preempt_enable_n=
+o_resched(), which
+>>>> is not a drop-in replacement for preempt_enable(). To fix this, you may=
+
+>>>> need to jump to a slow-path trampoline that calls schedule() at the end=
+ or
+>>>> consider rewinding one instruction instead. Or use TF, which is only a
+>>>> little bit terrifying=E2=80=A6
+>>>=20
+>>> Yes, I didn=E2=80=99t pay enough attention here. For my use-case, I thin=
+k that the
+>>> easiest solution would be to make synchronize_sched() ignore preemptions=
+
+>>> that happen while the prefix is detected. It would slightly change the
+>>> meaning of the prefix.
+>=20
+> So thinking about it further, rewinding the instruction seems the easiest
+> and most robust solution. I=E2=80=99ll do it.
+>=20
+>>>> You also aren=E2=80=99t accounting for the case where you get an except=
+ion that
+>>>> is, in turn, preempted.
+>>>=20
+>>> Hmm.. Can you give me an example for such an exception in my use-case? I=
+
+>>> cannot think of an exception that might be preempted (assuming #BP, #MC
+>>> cannot be preempted).
+>>=20
+>> Look for cond_local_irq_enable().
+>=20
+> I looked at it. Yet, I still don=E2=80=99t see how exceptions might happen=
+ in my
+> use-case, but having said that - this can be fixed too.
+
+I=E2=80=99m not totally certain there=E2=80=99s a case that matters.  But it=
+=E2=80=99s worth checking=20
+
+>=20
+> To be frank, I paid relatively little attention to this subject. Any
+> feedback about the other parts and especially on the high-level approach? I=
+s
+> modifying the retpolines in the proposed manner (assembly macros)
+> acceptable?
+>=20
+
+It=E2=80=99s certainly a neat idea, and it could be a real speedup.
+
+> Thanks,
+> Nadav
