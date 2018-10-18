@@ -2,105 +2,199 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A05ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F1FFECDE3D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5182145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:06:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20F6121470
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 01:15:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DrNFK2MS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5182145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ysrjk40B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20F6121470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727331AbeJRJFK (ORCPT
+        id S1727266AbeJRJN1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 05:05:10 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41773 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726706AbeJRJFK (ORCPT
+        Thu, 18 Oct 2018 05:13:27 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44198 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbeJRJN1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 05:05:10 -0400
-Received: by mail-pl1-f195.google.com with SMTP id q17-v6so13507943plr.8;
-        Wed, 17 Oct 2018 18:06:47 -0700 (PDT)
+        Thu, 18 Oct 2018 05:13:27 -0400
+Received: by mail-ot1-f66.google.com with SMTP id p23so28143290otf.11
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 18:15:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Gvl4zoNyk8NSWqjElwjKwUam7V6+b5fwjkgRVFdAJbQ=;
-        b=DrNFK2MS3RpmZSwr5DEhh1ETxEEu0G29z//O6ibaBayLRhgb9hHxAkeaZexw2/6pom
-         1dnbaC1kAA5+qbpayAYrixQw85J/1gV4U5f4YOlXg28wSkgj4YMM4q2zsjoDJv3rDx5v
-         zUQqxm2H4z/YweVGKUD5hLmS2zgYnCeVk2QBnYxx7xjXPQ+IZ3ylK7UqEgRcSo9BOOFZ
-         DEQiqV+BiFGX1tTEGCTtPNl7ZM8jEBG8bFiwqU4wNrPVJsYIViKnaSEXO6nEkX2Ly6Nj
-         KH8uWCSxzORmDSidG6GmvjUUVvkxbJitPsIp+5No7FTYe37VpUA9fKXJN6jVrqE5+Ypx
-         sU/g==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aGuzJU80PFUHIskyAueEiEH4rpUPgJ8eZQqpuYFEm1I=;
+        b=Ysrjk40B5o74rAN1O0ctn0ffD31V1ZJ8SgeerE16XK2YHIQ90RFo/QX1VHncxsurZB
+         BCWXQoRCIwuyKMtl3cln1LGZICaNmzsSKqx3L8HXqmPAm/fzoIbGr0EkQsQfaRypPYmC
+         7hPNbDQwqr8NLrp0q1HodrrE83uWWm/NJNEApkncLqUlF5eUNwXGVmH/h7Vi9c8WKUtA
+         /DaYade5/5NOtErqs8UWScrulmz7iEfFMbe3zElZZma6y33rb+2B/0Kt4AIPAafIPnqy
+         JGZLrAi0psFlSPqHdzf2vXHdyeGO5ZkWHJ7ocdoiTZJ7fJ9TdZOVtUeDd9xH4StFD+uP
+         Pvxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Gvl4zoNyk8NSWqjElwjKwUam7V6+b5fwjkgRVFdAJbQ=;
-        b=s21kIRdvHZu8ILcVpNpcAILBhb4JMEcsJyMu2Rlxr9tbwEuv1utt5MJPxC0GVROY3k
-         QbuKHh6TV3gdS9mVh/4BlvNKCSW9g0iNj2rWQmxwQza7JreI4eXEQLi48FN08M2kpcrh
-         L46UCk0eYkegChwe9fM/mCWH0iXkPJbXAvCQmbWBQ94dJMPJ0cWGy46XGXjOahYr+f5F
-         n+2H9gckPvq4irjSan8eGISdgKHEydn9JJu5Uqi+/qfqxENi78ZjfybIqoveQ9FTxh+v
-         w+ovEtbnhOJNnbFxz6MW+wQbJ1jUMm0xNHIhZNvz2Atfc7j9KDXWDKNEZ8wQkfiS87Rk
-         +6TA==
-X-Gm-Message-State: ABuFfogUlADY3RQl8LU0XmcxgzKT/r+6j3mA7VrjnEcuQQ1KElPvUOAl
-        yXHfBXhemHrTgjzqzvMKpuI=
-X-Google-Smtp-Source: ACcGV63kq6gGlDfjCF2IoJ28VRZcFqMB7gM3ORLOJK3apXqU89WKPIOkXrfo0EqGXSvVm6ihQTNoww==
-X-Received: by 2002:a17:902:d01:: with SMTP id 1-v6mr28383014plu.88.1539824807142;
-        Wed, 17 Oct 2018 18:06:47 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id g62-v6sm24185692pgc.22.2018.10.17.18.06.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 18:06:46 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 18:06:43 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [RFC PATCH 0/5] device property: Introducing software nodes
-Message-ID: <20181018010643.GB205061@dtor-ws>
-References: <20181012113934.29942-1-heikki.krogerus@linux.intel.com>
- <20181016173244.GB230131@dtor-ws>
- <20181017133612.GK24771@kuha.fi.intel.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aGuzJU80PFUHIskyAueEiEH4rpUPgJ8eZQqpuYFEm1I=;
+        b=WxVSYWm1Hz8sY0NyXBbpH+vExCmKPfBNCuo4ykTfi03QWpyM48en5j4snQmNlIBI8n
+         iGAAeOl+6d6QkbWq4+DR7v8qsBZOC7RsZHD5FV1YMdZ9eFbP8rHdTIDBjIthU11PLJb+
+         MHv/ZEICHqDBAKBwMO0cHLMLGa1KZ4pDfbxhBrgocql6esVZKQy6NLaFJdWZ0rgLdO4g
+         pXCwsnmKDKIRVQF2iwFmgRRJ7ae6SIsMmRd+06xscyeVmI3eoGFy9yZbOxIDB+s+y3Ew
+         fcdWRBjZ+OKG6TEh0uQoSB2SeXJCPpI4Or6Ktnb654Q+l7JmG4Lx3w47t0fKuRl8Ifdo
+         hTFA==
+X-Gm-Message-State: ABuFfohvnjqxOABWv9S6QzMZtAXRNaCwRbGPNZ7+rJ6Z7AYuB9WvURT1
+        FLLcwm2jnnquo2OEVCxVqNLsLdmP3f2FjWcI9Ecr3A==
+X-Google-Smtp-Source: ACcGV60pkAeS+H2+VwyI3Hl2WIiugmNMxFN/t7GpYHhuOYPE3cKqvCILzUIVyj1YoAcS1tJzQ3SWIJw/Xk+8PFm0Jb8=
+X-Received: by 2002:a9d:2117:: with SMTP id i23mr17274277otb.230.1539825301680;
+ Wed, 17 Oct 2018 18:15:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181017133612.GK24771@kuha.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181016235120.138227-1-brendanhiggins@google.com>
+ <20181016235120.138227-27-brendanhiggins@google.com> <CABGGisyMYC12UZtZ3wBw_1GO1Qq9-MEzSznq0r8796kVsQ6DoA@mail.gmail.com>
+In-Reply-To: <CABGGisyMYC12UZtZ3wBw_1GO1Qq9-MEzSznq0r8796kVsQ6DoA@mail.gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Wed, 17 Oct 2018 18:14:49 -0700
+Message-ID: <CAFd5g445rkyALoe=RYsSzsn_coDX67c8dYC+8EAG3gXbAzMkPQ@mail.gmail.com>
+Subject: Re: [RFC v1 26/31] arch: um: added stubs for mock iomem for KUnit
+To:     Rob Herring <robh@kernel.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, mcgrof@kernel.org,
+        shuah@kernel.org, Joel Stanley <joel@jms.id.au>,
+        mpe@ellerman.id.au, joe@perches.com, brakmo@fb.com,
+        rostedt@goodmis.org, Tim.Bird@sony.com, khilman@baylibre.com,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heikki,
+On Wed, Oct 17, 2018 at 3:28 PM Rob Herring <robh@kernel.org> wrote:
+<snip>
+> > diff --git a/arch/um/Kconfig.common b/arch/um/Kconfig.common
+> > index 07f84c842cc31..72e7efb74f7fd 100644
+> > --- a/arch/um/Kconfig.common
+> > +++ b/arch/um/Kconfig.common
+> > @@ -19,7 +19,13 @@ config MMU
+> >         default y
+> >
+> >  config NO_IOMEM
+> > -       def_bool y
+> > +       bool
+> > +       default y if !KUNIT
+> > +
+> > +config HAS_IOMEM
+>
+> HAS_IOMEM is essentially a disable flag for lots of drivers on UML.
+> Ignoring drivers, it doesn't really control a significant amount of
+> code (albeit small amount of code you need for this series). As a
+> driver disable, it does a poor job as lots of drivers aren't MMIO and
+> aren't disabled. I think we should decouple these 2 things. Perhaps
+> get rid of the driver disable part altogether. We already do 'depends
+> on ARCH_FOO || COMPILE_TEST' for lots of drivers.
+>
+I think that makes sense. Any code that can build should be able to
+build under KUnit, but we probably want to turn that on on a per
+driver basis as we write tests for them.
 
-On Wed, Oct 17, 2018 at 04:36:12PM +0300, Heikki Krogerus wrote:
-> @@ -189,7 +210,7 @@ static int cht_int33fe_probe(struct i2c_client *client)
->  	memset(&board_info, 0, sizeof(board_info));
->  	strlcpy(board_info.type, "typec_fusb302", I2C_NAME_SIZE);
->  	board_info.dev_name = "fusb302";
-> -	board_info.properties = fusb302_props;
-> +	board_info.fwnode = data->fusb302_node;
->  	board_info.irq = fusb302_irq;
->  
->  	data->fusb302 = i2c_acpi_new_device(dev, 2, &board_info);
+> Also, I wouldn't be surprised if turning on HAS_IOMEM causes UML
+> randconfig failures. Arnd does lots of randconfig testing and might be
+> willing to help check.
+>
+It almost certainly would fail randconfig. As you point out below, I
+don't implement everything that's required, just enough to show off
+KUnit in a couple examples.
 
-OK, this totally explains it. I forgot how we can supply the properties
-in board info for I2C/SPI devices and they would get attached to a
-device later, and this obviously does not work if one wants to attach a
-sub-tree.
+> > +       bool "Turns on fake IOMEM support for KUnit"
+> > +       depends on KUNIT
+> > +       select MOCK_IOMEM
+> >
+> >  config ISA
+> >         bool
+> > diff --git a/arch/um/Kconfig.um b/arch/um/Kconfig.um
+> > index 20da5a8ca9490..8d35e0e2c23d1 100644
+> > --- a/arch/um/Kconfig.um
+> > +++ b/arch/um/Kconfig.um
+> > @@ -122,3 +122,8 @@ config SECCOMP
+> >           defined by each seccomp mode.
+> >
+> >           If unsure, say Y.
+> > +
+> > +config PLATFORM_MOCK
+> > +       bool "Enable a mock architecture used for unit testing."
+> > +       depends on KUNIT && OF
+> > +       default n
+> > diff --git a/arch/um/include/asm/Kbuild b/arch/um/include/asm/Kbuild
+> > index b10dde6cb793b..9fd2827ab76d1 100644
+> > --- a/arch/um/include/asm/Kbuild
+> > +++ b/arch/um/include/asm/Kbuild
+> > @@ -12,7 +12,6 @@ generic-y += ftrace.h
+> >  generic-y += futex.h
+> >  generic-y += hardirq.h
+> >  generic-y += hw_irq.h
+> > -generic-y += io.h
+> >  generic-y += irq_regs.h
+> >  generic-y += irq_work.h
+> >  generic-y += kdebug.h
+> > diff --git a/arch/um/include/asm/io-mock-shared.h b/arch/um/include/asm/io-mock-shared.h
+> > new file mode 100644
+> > index 0000000000000..6baf59cb17a58
+> > --- /dev/null
+> > +++ b/arch/um/include/asm/io-mock-shared.h
+> > @@ -0,0 +1,33 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +#ifndef _ASM_UM_IO_MOCK_SHARED_H
+> > +#define _ASM_UM_IO_MOCK_SHARED_H
+> > +
+> > +#define readb readb
+> > +u8 readb(const volatile void __iomem *);
+>
+> What about all the other flavors of MMIO accessors like __raw_readb,
+> readb_relaxed, etc.? readX/writeX is intended for PCI based drivers
+> which doesn't seem to be what you are targeting in this series.
+>
+Those need to be done too. I just mostly wanted to illustrate that it
+can be done, and what is needed to support mocking MMIO. I wasn't sure
+how controversial my approach would be, so I didn't want to put any
+more work than was necessary for illustration without getting some
+feedback.
 
-Thank you for providing this example.
+> I think it would be good if this capability was not just on UML. I
+> could also imagine wanting to run tests on real h/w. Perhaps you just
 
--- 
-Dmitry
+I think that's reasonable.
+
+> want to log and/or check i/o accesses. Or you need some dependencies
+> in place rather than trying to fake everything (clocks, gpios, pinmux,
+> irq, etc.). That being said, I'm not trying to add a bunch of things
+> for you to do. Though maybe it makes sense to split this series some.
+
+Almost definitely. I figured this patchset, as is, is a good
+illustration of what I am trying to do, what is possible, and the kind
+of work that is necessary to get there. If people like what I am doing
+and want more of this type of thing, I think focussing on getting base
+support in and then working on features separately is the way to go.
+
+> How many of the patches are needed to convert the DT unittests for
+> example?
+
+At first glance, just you probably only need the stuff in the first 9
+patches for that. You don't appear to be doing any IO of any sort, so
+you don't need this stuff. You appear to depend only on some fake
+data; everything else seems pretty self contained, so you don't need
+any of the mocking support for that. So if I understand correctly you
+just need the base support needed for bare bones unit tests, all that
+stuff is in the first 9 patches.
+
+Cheers
