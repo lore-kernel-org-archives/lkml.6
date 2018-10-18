@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E0FC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98703C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27CD021480
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:31:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27CD021480
+	by mail.kernel.org (Postfix) with ESMTP id 53FA420866
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:34:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53FA420866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbeJRNbH (ORCPT
+        id S1727506AbeJRNdR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 09:31:07 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:55068 "EHLO
+        Thu, 18 Oct 2018 09:33:17 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:55120 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbeJRNbH (ORCPT
+        with ESMTP id S1727328AbeJRNdR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 09:31:07 -0400
+        Thu, 18 Oct 2018 09:33:17 -0400
 Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id C134D13AE6FC0;
-        Wed, 17 Oct 2018 22:31:52 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 22:31:52 -0700 (PDT)
-Message-Id: <20181017.223152.1247618584989583539.davem@davemloft.net>
-To:     gustavo@embeddedor.com
-Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH net-next] net: skbuff.h: Mark expected switch
- fall-throughs
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7629113AE96A3;
+        Wed, 17 Oct 2018 22:34:02 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 22:34:02 -0700 (PDT)
+Message-Id: <20181017.223402.1520667880142559637.davem@davemloft.net>
+To:     gregory.clement@bootlin.com
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        alexandre.belloni@bootlin.com
+Subject: Re: [PATCH] net: mscc: ocelot: Fix comment in
+ ocelot_vlant_wait_for_completion()
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181017130137.GA739@embeddedor.com>
-References: <20181017130137.GA739@embeddedor.com>
+In-Reply-To: <20181017152635.22981-1-gregory.clement@bootlin.com>
+References: <20181017152635.22981-1-gregory.clement@bootlin.com>
 X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 17 Oct 2018 22:31:53 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 17 Oct 2018 22:34:02 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Wed, 17 Oct 2018 15:01:37 +0200
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Date: Wed, 17 Oct 2018 17:26:35 +0200
 
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
+> The ocelot_vlant_wait_for_completion() function is very similar to the
+> ocelot_mact_wait_for_completion(). It seemed to have be copied but the
+> comment was not updated, so let's fix it.
 > 
-> Acked-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 
 Applied.
