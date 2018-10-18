@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA1D3ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CF6C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E5D7205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:01:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 367D421479
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:01:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tnxSxEOY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E5D7205C9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LH0AY61x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367D421479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729536AbeJSCDQ (ORCPT
+        id S1729544AbeJSCDZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:03:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51366 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:03:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727439AbeJSCDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:03:15 -0400
+        id S1727439AbeJSCDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:03:24 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8065F205C9;
-        Thu, 18 Oct 2018 18:01:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 744BA205C9;
+        Thu, 18 Oct 2018 18:01:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885670;
-        bh=vrE0/SuZQ4G0J3qA+Walsn0S5SlXByPdQq7EqWLpTmM=;
+        s=default; t=1539885678;
+        bh=mJ8sVgiYfAXFLpxgHzINW8aDuIgHRpntmiUryWGAmN4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tnxSxEOYFuj5NXWFOyhNNNEew01nyuL6whZmSOgPaU4UcqFHQgylT/GFY6++HdeO8
-         JUQrzadiAQkxAred/HpYJN3NIvlyWJJSC14RKLdXFj+9cCoCxE8VLQ3Lgf6PGQf3Zj
-         20YusNqqEIYjPVJsRShz0Owu8WpddjyZIw9QhoKI=
+        b=LH0AY61xJbucISEjQ9bfYhYZAMjb1gANbxOCXxZqDrmOl9jli93Xrkt6sShVIRJwE
+         2J/uskrTc9jUgUu4fFIRYrlaSQTX0mYurPH6X0oK/jTVNZboHJp7Cf2MePGYpoerFB
+         uWNUOnchqtT4/TATtlcQViHxwrYl8sKH4x8OYHbE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 31/41] Revert "vfs: fix freeze protection in mnt_want_write_file() for overlayfs"
-Date:   Thu, 18 Oct 2018 19:54:46 +0200
-Message-Id: <20181018175422.226233899@linuxfoundation.org>
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 32/41] mremap: properly flush TLB before releasing the page
+Date:   Thu, 18 Oct 2018 19:54:47 +0200
+Message-Id: <20181018175422.413452766@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
 References: <20181018175416.718399607@linuxfoundation.org>
@@ -64,47 +64,169 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-This reverts commit 4f4374a9bd25b333971e6f2656b642d29e2efe7b which was
-commit a6795a585929d94ca3e931bc8518f8deb8bbe627 upstream.
+commit eb66ae030829605d61fbef1909ce310e29f78821 upstream.
 
-Turns out this causes problems and was to fix a patch only in the 4.19
-and newer tree.
+Jann Horn points out that our TLB flushing was subtly wrong for the
+mremap() case.  What makes mremap() special is that we don't follow the
+usual "add page to list of pages to be freed, then flush tlb, and then
+free pages".  No, mremap() obviously just _moves_ the page from one page
+table location to another.
 
-Reported-by: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Sasha Levin <alexander.levin@microsoft.com>
+That matters, because mremap() thus doesn't directly control the
+lifetime of the moved page with a freelist: instead, the lifetime of the
+page is controlled by the page table locking, that serializes access to
+the entry.
+
+As a result, we need to flush the TLB not just before releasing the lock
+for the source location (to avoid any concurrent accesses to the entry),
+but also before we release the destination page table lock (to avoid the
+TLB being flushed after somebody else has already done something to that
+page).
+
+This also makes the whole "need_flush" logic unnecessary, since we now
+always end up flushing the TLB for every valid entry.
+
+Reported-and-tested-by: Jann Horn <jannh@google.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Tested-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/namespace.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -446,10 +446,10 @@ int mnt_want_write_file_path(struct file
+---
+ include/linux/huge_mm.h |    2 +-
+ mm/huge_memory.c        |   10 ++++------
+ mm/mremap.c             |   30 +++++++++++++-----------------
+ 3 files changed, 18 insertions(+), 24 deletions(-)
+
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -42,7 +42,7 @@ extern int mincore_huge_pmd(struct vm_ar
+ 			unsigned char *vec);
+ extern bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
+ 			 unsigned long new_addr, unsigned long old_end,
+-			 pmd_t *old_pmd, pmd_t *new_pmd, bool *need_flush);
++			 pmd_t *old_pmd, pmd_t *new_pmd);
+ extern int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+ 			unsigned long addr, pgprot_t newprot,
+ 			int prot_numa);
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1765,7 +1765,7 @@ static pmd_t move_soft_dirty_pmd(pmd_t p
+ 
+ bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
+ 		  unsigned long new_addr, unsigned long old_end,
+-		  pmd_t *old_pmd, pmd_t *new_pmd, bool *need_flush)
++		  pmd_t *old_pmd, pmd_t *new_pmd)
  {
- 	int ret;
+ 	spinlock_t *old_ptl, *new_ptl;
+ 	pmd_t pmd;
+@@ -1796,7 +1796,7 @@ bool move_huge_pmd(struct vm_area_struct
+ 		if (new_ptl != old_ptl)
+ 			spin_lock_nested(new_ptl, SINGLE_DEPTH_NESTING);
+ 		pmd = pmdp_huge_get_and_clear(mm, old_addr, old_pmd);
+-		if (pmd_present(pmd) && pmd_dirty(pmd))
++		if (pmd_present(pmd))
+ 			force_flush = true;
+ 		VM_BUG_ON(!pmd_none(*new_pmd));
  
--	sb_start_write(file_inode(file)->i_sb);
-+	sb_start_write(file->f_path.mnt->mnt_sb);
- 	ret = __mnt_want_write_file(file);
- 	if (ret)
--		sb_end_write(file_inode(file)->i_sb);
-+		sb_end_write(file->f_path.mnt->mnt_sb);
- 	return ret;
- }
- 
-@@ -540,8 +540,7 @@ void __mnt_drop_write_file(struct file *
- 
- void mnt_drop_write_file_path(struct file *file)
+@@ -1807,12 +1807,10 @@ bool move_huge_pmd(struct vm_area_struct
+ 		}
+ 		pmd = move_soft_dirty_pmd(pmd);
+ 		set_pmd_at(mm, new_addr, new_pmd, pmd);
+-		if (new_ptl != old_ptl)
+-			spin_unlock(new_ptl);
+ 		if (force_flush)
+ 			flush_tlb_range(vma, old_addr, old_addr + PMD_SIZE);
+-		else
+-			*need_flush = true;
++		if (new_ptl != old_ptl)
++			spin_unlock(new_ptl);
+ 		spin_unlock(old_ptl);
+ 		return true;
+ 	}
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -115,7 +115,7 @@ static pte_t move_soft_dirty_pte(pte_t p
+ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
+ 		unsigned long old_addr, unsigned long old_end,
+ 		struct vm_area_struct *new_vma, pmd_t *new_pmd,
+-		unsigned long new_addr, bool need_rmap_locks, bool *need_flush)
++		unsigned long new_addr, bool need_rmap_locks)
  {
--	__mnt_drop_write_file(file);
--	sb_end_write(file_inode(file)->i_sb);
-+	mnt_drop_write(file->f_path.mnt);
- }
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	pte_t *old_pte, *new_pte, pte;
+@@ -163,15 +163,17 @@ static void move_ptes(struct vm_area_str
  
- void mnt_drop_write_file(struct file *file)
+ 		pte = ptep_get_and_clear(mm, old_addr, old_pte);
+ 		/*
+-		 * If we are remapping a dirty PTE, make sure
++		 * If we are remapping a valid PTE, make sure
+ 		 * to flush TLB before we drop the PTL for the
+-		 * old PTE or we may race with page_mkclean().
++		 * PTE.
+ 		 *
+-		 * This check has to be done after we removed the
+-		 * old PTE from page tables or another thread may
+-		 * dirty it after the check and before the removal.
++		 * NOTE! Both old and new PTL matter: the old one
++		 * for racing with page_mkclean(), the new one to
++		 * make sure the physical page stays valid until
++		 * the TLB entry for the old mapping has been
++		 * flushed.
+ 		 */
+-		if (pte_present(pte) && pte_dirty(pte))
++		if (pte_present(pte))
+ 			force_flush = true;
+ 		pte = move_pte(pte, new_vma->vm_page_prot, old_addr, new_addr);
+ 		pte = move_soft_dirty_pte(pte);
+@@ -179,13 +181,11 @@ static void move_ptes(struct vm_area_str
+ 	}
+ 
+ 	arch_leave_lazy_mmu_mode();
++	if (force_flush)
++		flush_tlb_range(vma, old_end - len, old_end);
+ 	if (new_ptl != old_ptl)
+ 		spin_unlock(new_ptl);
+ 	pte_unmap(new_pte - 1);
+-	if (force_flush)
+-		flush_tlb_range(vma, old_end - len, old_end);
+-	else
+-		*need_flush = true;
+ 	pte_unmap_unlock(old_pte - 1, old_ptl);
+ 	if (need_rmap_locks)
+ 		drop_rmap_locks(vma);
+@@ -200,7 +200,6 @@ unsigned long move_page_tables(struct vm
+ {
+ 	unsigned long extent, next, old_end;
+ 	pmd_t *old_pmd, *new_pmd;
+-	bool need_flush = false;
+ 	unsigned long mmun_start;	/* For mmu_notifiers */
+ 	unsigned long mmun_end;		/* For mmu_notifiers */
+ 
+@@ -231,8 +230,7 @@ unsigned long move_page_tables(struct vm
+ 				if (need_rmap_locks)
+ 					take_rmap_locks(vma);
+ 				moved = move_huge_pmd(vma, old_addr, new_addr,
+-						    old_end, old_pmd, new_pmd,
+-						    &need_flush);
++						    old_end, old_pmd, new_pmd);
+ 				if (need_rmap_locks)
+ 					drop_rmap_locks(vma);
+ 				if (moved)
+@@ -250,10 +248,8 @@ unsigned long move_page_tables(struct vm
+ 		if (extent > LATENCY_LIMIT)
+ 			extent = LATENCY_LIMIT;
+ 		move_ptes(vma, old_pmd, old_addr, old_addr + extent, new_vma,
+-			  new_pmd, new_addr, need_rmap_locks, &need_flush);
++			  new_pmd, new_addr, need_rmap_locks);
+ 	}
+-	if (need_flush)
+-		flush_tlb_range(vma, old_end-len, old_addr);
+ 
+ 	mmu_notifier_invalidate_range_end(vma->vm_mm, mmun_start, mmun_end);
+ 
 
 
