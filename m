@@ -2,53 +2,54 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B8DC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59FE1C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:33:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48C8C20658
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:31:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48C8C20658
+	by mail.kernel.org (Postfix) with ESMTP id 0E41C20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:33:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E41C20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbeJSBdm (ORCPT
+        id S1728158AbeJSBfi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 21:33:42 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41514 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726444AbeJSBdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 21:33:42 -0400
+        Thu, 18 Oct 2018 21:35:38 -0400
+Received: from foss.arm.com ([217.140.101.70]:41560 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726269AbeJSBfh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 21:35:37 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C8D69341;
-        Thu, 18 Oct 2018 10:31:42 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D355F341;
+        Thu, 18 Oct 2018 10:33:37 -0700 (PDT)
 Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.80])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B000B3F5D3;
-        Thu, 18 Oct 2018 10:31:38 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 18:31:36 +0100
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 98F373F5D3;
+        Thu, 18 Oct 2018 10:33:33 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 18:33:31 +0100
 From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
+To:     Evgenii Stepanov <eugenis@google.com>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Kate Stewart <kstewart@linuxfoundation.org>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         Will Deacon <will.deacon@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
         "open list:KERNEL SELFTEST FRAMEWORK" 
         <linux-kselftest@vger.kernel.org>,
         Chintan Pandya <cpandya@codeaurora.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
         Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
         linux-arch <linux-arch@vger.kernel.org>,
         Jacob Bramley <Jacob.Bramley@arm.com>,
         Dmitry Vyukov <dvyukov@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
         Kees Cook <keescook@chromium.org>,
         Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
         Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
+        Kostya Serebryany <kcc@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
@@ -56,63 +57,67 @@ Cc:     Mark Rutland <mark.rutland@arm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Robin Murphy <robin.murphy@arm.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v7 7/8] arm64: update
- Documentation/arm64/tagged-pointers.txt
-Message-ID: <20181018173135.GF237391@arrakis.emea.arm.com>
+Subject: Re: [PATCH v7 0/8] arm64: untag user pointers passed to the kernel
+Message-ID: <20181018173330.GG237391@arrakis.emea.arm.com>
 References: <cover.1538485901.git.andreyknvl@google.com>
- <47a464307d4df3c0cb65f88d1fe83f9a741dd74b.1538485901.git.andreyknvl@google.com>
- <20181003173256.GG12998@arrakis.emea.arm.com>
- <CAAeHK+yPCRNAOSi6OpYC_Tdbo9SoXRVRbx8pjXNq96v8csO-Wg@mail.gmail.com>
+ <be684ce5-92fd-e970-b002-83452cf50abd@arm.com>
+ <CAAeHK+yEZTLjgSj8YUzeJec9Pp2TwuLT5nCa1OpfBLXJkx_hhg@mail.gmail.com>
+ <CAFKCwrh4-BvFB_R1J0LWcbfeR=d02OazowFuMU+hmq8Y=Dx+4w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAAeHK+yPCRNAOSi6OpYC_Tdbo9SoXRVRbx8pjXNq96v8csO-Wg@mail.gmail.com>
+In-Reply-To: <CAFKCwrh4-BvFB_R1J0LWcbfeR=d02OazowFuMU+hmq8Y=Dx+4w@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 04:09:25PM +0200, Andrey Konovalov wrote:
-> On Wed, Oct 3, 2018 at 7:32 PM, Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > On Tue, Oct 02, 2018 at 03:12:42PM +0200, Andrey Konovalov wrote:
-[...]
-> > Also, how is user space supposed to know that it can now pass tagged
-> > pointers into the kernel? An ABI change (or relaxation), needs to be
-> > advertised by the kernel, usually via a new HWCAP bit (e.g. HWCAP_TBI).
-> > Once we have a HWCAP bit in place, we need to be pretty clear about
-> > which syscalls can and cannot cope with tagged pointers. The "as of now"
-> > implies potential further relaxation which, again, would need to be
-> > advertised to user in some (additional) way.
-> 
-> How exactly should I do that? Something like this [1]? Or is it only
-> for hardware specific things and for this patchset I need to do
-> something else?
-> 
-> [1] https://github.com/torvalds/linux/commit/7206dc93a58fb76421c4411eefa3c003337bcb2d
-
-Thinking some more on this, we should probably keep the HWCAP_* bits for
-actual hardware features. Maybe someone else has a better idea (the
-linux-abi list?). An option would be to make use of AT_FLAGS auxv
-(currently 0) in Linux. I've seen some MIPS patches in the past but
-nothing upstream.
-
-Yet another option would be for the user to probe on some innocuous
-syscall currently returning -EFAULT on tagged pointer arguments but I
-don't particularly like this.
-
-> >> - - pointer arguments to system calls, including pointers in structures
-> >> -   passed to system calls,
-> >> +  - pointer arguments (including pointers in structures), which don't
-> >> +    describe virtual memory ranges, passed to system calls
+On Wed, Oct 17, 2018 at 01:25:42PM -0700, Evgenii Stepanov wrote:
+> On Wed, Oct 17, 2018 at 7:20 AM, Andrey Konovalov <andreyknvl@google.com> wrote:
+> > On Wed, Oct 17, 2018 at 4:06 PM, Vincenzo Frascino
+> > <vincenzo.frascino@arm.com> wrote:
+> >> I have been thinking a bit lately on how to address the problem of
+> >> user tagged pointers passed to the kernel through syscalls, and
+> >> IMHO probably the best way we have to catch them all and make sure
+> >> that the approach is maintainable in the long term is to introduce
+> >> shims that tag/untag the pointers passed to the kernel.
+> >>
+> >> In details, what I am proposing can live either in userspace
+> >> (preferred solution so that we do not have to relax the ABI) or in
+> >> kernel space and can be summarized as follows:
+> >>  - A shim is specific to a syscall and is called by the libc when
+> >>  it needs to invoke the respective syscall.
+> >>  - It is required only if the syscall accepts pointers.
+> >>  - It saves the tags of a pointers passed to the syscall in memory
+> >>  (same approach if the we are passing a struct that contains
+> >>  pointers to the kernel, with the difference that all the tags of
+> >>  the pointers in the struct need to be saved singularly)
+> >>  - Untags the pointers
+> >>  - Invokes the syscall
+> >>  - Retags the pointers with the tags stored in memory
+> >>  - Returns
+> >>
+> >> What do you think?
 > >
-> > I think we need to be more precise here...
+> > If I correctly understand what you are proposing, I'm not sure if that
+> > would work with the countless number of different ioctl calls. For
+> > example when an ioctl accepts a struct with a bunch of pointer fields.
+> > In this case a shim like the one you propose can't live in userspace,
+> > since libc doesn't know about the interface of all ioctls, so it can't
+> > know which fields to untag. The kernel knows about those interfaces
+> > (since the kernel implements them), but then we would need a custom
+> > shim for each ioctl variation, which doesn't seem practical.
 > 
-> In what way?
+> The current patchset handles majority of pointers in a just a few
+> common places, like copy_from_user. Userspace shims will need to untag
+> & retag all pointer arguments - we are looking at hundreds if not
+> thousands of shims. They will also be located in a different code base
+> from the syscall / ioctl implementations, which would make them
+> impossible to keep up to date.
 
-In the way of being explicit about which syscalls support tagged
-pointers, unless we find a good reason to support tagged pointers on all
-syscalls and avoid any lists.
+I think ioctls are a good reason not to attempt such user-space shim
+layer (though it would have been much easier for the kernel ;)).
 
 -- 
 Catalin
