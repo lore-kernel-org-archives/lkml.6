@@ -5,76 +5,79 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53DB9C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4561C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:40:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A86D21477
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:39:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A86D21477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deneb.enyo.de
+	by mail.kernel.org (Postfix) with ESMTP id 659FE2098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:40:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 659FE2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=metafoo.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727670AbeJRPjH (ORCPT
+        id S1727577AbeJRPkU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 11:39:07 -0400
-Received: from albireo.enyo.de ([5.158.152.32]:51896 "EHLO albireo.enyo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727440AbeJRPjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 11:39:07 -0400
-Received: from [172.17.203.2] (helo=deneb.enyo.de)
-        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1gD2tt-0000E6-Fa; Thu, 18 Oct 2018 07:39:21 +0000
-Received: from fw by deneb.enyo.de with local (Exim 4.89)
-        (envelope-from <fw@deneb.enyo.de>)
-        id 1gD2tt-00044L-8m; Thu, 18 Oct 2018 09:39:21 +0200
-From:   Florian Weimer <fw@deneb.enyo.de>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Andreas Dilger <adilger@dilger.ca>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: statx(2) API and documentation
-References: <CAJfpegsxFUGeczcC-pzK0WWROjv48_PvXtNun-f5QJMoUDn1Dw@mail.gmail.com>
-        <006890C4-64D4-4DE2-A1F0-335FFFD585BB@dilger.ca>
-        <CAJfpeguvJZbP83mSULc74Yhpp_CPMBW1XvcgbvCbLnF7QCncUA@mail.gmail.com>
-        <E9903911-9289-4038-9835-9353762A3BAF@dilger.ca>
-        <878t2wb4dr.fsf@mid.deneb.enyo.de>
-        <CAJfpegscdd7Q7waB4me7RMC_SJv4=rQwEGXBYNGAr2F3WE5=zA@mail.gmail.com>
-Date:   Thu, 18 Oct 2018 09:39:21 +0200
-In-Reply-To: <CAJfpegscdd7Q7waB4me7RMC_SJv4=rQwEGXBYNGAr2F3WE5=zA@mail.gmail.com>
-        (Miklos Szeredi's message of "Thu, 18 Oct 2018 09:37:44 +0200")
-Message-ID: <87sh13ya8m.fsf@mid.deneb.enyo.de>
+        Thu, 18 Oct 2018 11:40:20 -0400
+Received: from www381.your-server.de ([78.46.137.84]:56172 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727395AbeJRPkT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 11:40:19 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www381.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <lars@metafoo.de>)
+        id 1gD2uy-0001JM-86; Thu, 18 Oct 2018 09:40:28 +0200
+Received: from eisbaer.ursus-maritimus.org ([78.47.220.141] helo=[127.0.0.1])
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <lars@metafoo.de>)
+        id 1gD2ux-0005u0-Su; Thu, 18 Oct 2018 09:40:28 +0200
+Subject: Re: [PATCH v2] staging: iio: ad7816: Switch to the gpio descriptor
+ interface
+To:     Phil Reid <preid@electromag.com.au>,
+        Nishad Kamdar <nishadkamdar@gmail.com>
+Cc:     Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com
+References: <20181017144716.GA11485@nishad>
+ <fdcb085c-cf34-3310-f5ab-5795d5997977@electromag.com.au>
+From:   Lars-Peter Clausen <lars@metafoo.de>
+Message-ID: <e3d4308c-9608-db52-c51e-5bb5d126284a@metafoo.de>
+Date:   Thu, 18 Oct 2018 09:40:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <fdcb085c-cf34-3310-f5ab-5795d5997977@electromag.com.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: lars@metafoo.de
+X-Virus-Scanned: Clear (ClamAV 0.100.1/25047/Thu Oct 18 06:56:19 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Miklos Szeredi:
+On 10/18/2018 09:28 AM, Phil Reid wrote:
+[...]
+>> +    chip->rdwr_pin = devm_gpiod_get(&spi_dev->dev, "rdwr", GPIOD_IN);
+>> +    if (IS_ERR(chip->rdwr_pin)) {
+>> +        ret = PTR_ERR(chip->rdwr_pin);
+>> +        dev_err(&spi_dev->dev, "Failed to request rdwr GPIO: %d\n",
+>> +            ret);
+>>           return ret;
+>>       }
+>> -    gpio_direction_input(chip->rdwr_pin);
+> 
+> The RD/WR pin is an input to the AD78xx. So this doesn't make sense being
+> GPIOD_IN.
 
-> On Thu, Oct 18, 2018 at 12:22 AM, Florian Weimer <fw@deneb.enyo.de> wrote:
->> * Andreas Dilger:
->>
->>>> So what's the point exactly?
->>>
->>> Ah, I see your point...  STATX_ALL seems to be mostly useful for the kernel
->>> to mask off flags that it doesn't currently understand.  It doesn't make
->>> much sense for applications to specify STATX_ALL, since they don't have any
->>> way to know what each flag means unless they are hard-coded to check each of
->>> the STATX_* flags individually.  They should build up a mask of STATX_* flags
->>> based on what they care about (e.g. "find" should only request attributes
->>> based on the command-line options given).
->>
->> Could you remove it from the UAPI header?  I didn't want to put it
->> into the glibc header, but was overruled.
->
-> To summarize Linus' rule of backward incompatibility: you can do it as
-> long as nobody notices.  So yeah, we could try removing STATX_ALL from
-> the uapi header, but we'd have to put it back in, once somebody
-> complains.
+One thing at a time. This patch is a straight forward conversion to the GPIO
+descriptor interface. It keeps the existing semantics of the driver as they are.
 
-I don't recall a rule about backwards-incompatible API changes.  This
-wouldn't impact ABI at all.
+Now these semantics are obviously wrong and should be fixed but that should
+be a separate patch from changing the interface.
