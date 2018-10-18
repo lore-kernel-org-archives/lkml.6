@@ -2,109 +2,166 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E647DECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5058C67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7F8020644
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:48:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D9C42098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:51:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="itjFww/i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7F8020644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cB5TpWgY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D9C42098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbeJSFvu (ORCPT
+        id S1726698AbeJSFyH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 01:51:50 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33661 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725738AbeJSFvu (ORCPT
+        Fri, 19 Oct 2018 01:54:07 -0400
+Received: from mail-vs1-f73.google.com ([209.85.217.73]:43674 "EHLO
+        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725777AbeJSFyH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 01:51:50 -0400
-Received: by mail-wr1-f68.google.com with SMTP id e4-v6so35291711wrs.0;
-        Thu, 18 Oct 2018 14:48:50 -0700 (PDT)
+        Fri, 19 Oct 2018 01:54:07 -0400
+Received: by mail-vs1-f73.google.com with SMTP id v76so13972405vsc.10
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 14:51:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lNv++1abTTRnYPMGGuIwfM1wdQiQQQZALUdqCqNOOL8=;
-        b=itjFww/ircLy9jzzboIwitT3h/iCC3y2+tdvn3H55Bu0YYaNB3CtpKXtv9ktpoBM5g
-         DJ3lABnIPbZxjDjI4LNVQCOHTO84eYFY5i9TocNoYD+u3yHuDy/9Ebzdc433/m2ouTxb
-         0NhcsK3hK1xqsEcg7ckIAGDPssxEG97kpYI59J7cOA4/8I0SkiXFF5EAd0WcF0fuD9CC
-         QGUMV3wyPc0AyeU7QTcIvikL6DJY6eyiCTi0raoeqMKYWTgPg/LEmTS7FmAVSqvSXU+D
-         0eJbEas5WVhBnHgC/36xtZ9y1frCSYDt7sabjjEN9bFaZpNv7oquohM5wT4q3dsvsfGF
-         2Kvg==
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=12a0pPTT0t2IzJ36ztwDZOEfbUvwt5h/3nY2mXK8uJc=;
+        b=cB5TpWgYBTtKOMQv91oq6S6S9p8w1pitUcikiprRdaMczHJWuzo3gl+q02Nudqrd7a
+         K+VrAM+8HPrCMzcrq1kINBnRbSKxyJ5hn2ul4ec+DfutZ4MmyATosrPKVsD5kdnV7DEP
+         e3k2BFJvuJNHJUH+QqXb0Znm+FRrc9XxON9PSQPzlo6F3/1PQSaX87+spEPCFl3frbvF
+         8O2Mb69sgaCemPYSrklpwAD4AJ1y8WJbuApn22v2mKZ1aRZVpfYRlvUxMlFdV7tGu4hy
+         jNvQUVqS4fBD3UxUpT1ZYWli8y7aKe9I+63zhgWR9Qwz5wowluqbzpJWoiZMNIIFHf0Q
+         Lsbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lNv++1abTTRnYPMGGuIwfM1wdQiQQQZALUdqCqNOOL8=;
-        b=JR0A5oPgiyC0cfxAOl3bbbA85L+SyXfyKElliGly4DxsIMQEPolfpuvA3Usuo1pMT4
-         YM7LT1tT297eeimi8YFYYhBw01DrJXZbYKRjeknrxAqJ+JQC9qQ8ZDKKzDOuqpKjHQ/s
-         6r0Ho2VdusJZrLtzS4FYA1UOJ6dOb3cnflcZSpA9uP4epJ8kn6PS/eC4YcFHHoZFDcKP
-         MB1c+EmG4pzILAOssRUnqcue0e09Rg1p47pd1ezkkPlpb8ALzFrd4qzo4mfCdU37uAZE
-         DdE5QJluHsSUI7RqGPi8WrmU44wH0GTABNryqDZt7auRnWyL/1J/hW+J8BdG+2sfGt+W
-         i0vw==
-X-Gm-Message-State: ABuFfojlhElTwXVFjr8qBSfeF4XU33Q7wPymOwbLAZJYUS5G+L2vHq0N
-        8EJfKNbzLrdfu4Ytfjkoii0=
-X-Google-Smtp-Source: ACcGV631ADclRGkV2xO3KIenbHKvG8G7iRrVLee8XjiofdNO9KlsG7DkXet1q530y1/747yEbsCfyw==
-X-Received: by 2002:adf:f14a:: with SMTP id y10-v6mr29716831wro.29.1539899329706;
-        Thu, 18 Oct 2018 14:48:49 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id z2-v6sm15139791wrh.8.2018.10.18.14.48.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 14:48:49 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] rtc: s35390a: Make buf an unsigned char in s35390a_init
-Date:   Thu, 18 Oct 2018 14:42:07 -0700
-Message-Id: <20181018214207.4223-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=12a0pPTT0t2IzJ36ztwDZOEfbUvwt5h/3nY2mXK8uJc=;
+        b=fltTpIMGksiBwrcPBF6CfhSWUCXq0+wbxsHJQooFTd+Ay9+2SsVpmVSjNsO0qm7KFw
+         LT/lUjpDhHImaXfG9WNmWrcJTHyY/y+x2Lba4XCSZVpd+ux6rqLQdlowgJm94OR9pVb9
+         nX9PzgAVyEP0lGKP4AipZSYhFEjfXZDAgJvSx0EGK2AFt0NCErOXCb+TjqhvnX5r5SPa
+         c6FGr9vrVFMY1+++cTtmKNK9JqHXD+RmS0R6qc9sw1qMbZ4S9fXNZH2o8Z7L+EpypvR/
+         Mab/xexApoCK5lb640M6LL6s46RGTjBryLh2gmEA0o4NpAFc5SrBR5EH1yiW1hDIp+Ux
+         KpMw==
+X-Gm-Message-State: ABuFfojbrCwKHFpuC9zQKt2fQdb6UOMpQIwGpIUyTXGP/xsLT4EtTrk2
+        7LbFVC1ENxT0S5VAG0DlF1CtR4E2aYAg
+X-Google-Smtp-Source: ACcGV61gfqpFSuyIr4qqAbKGzTlNKLWH6dt6aPWzSlNZ4VAvPqjf1u9eFeYpj1dLiKviQsbUVl3ZpVT+fwNP
+X-Received: by 2002:ab0:e03:: with SMTP id g3mr24551977uak.4.1539899467277;
+ Thu, 18 Oct 2018 14:51:07 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 14:51:01 -0700
+In-Reply-To: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
+Message-Id: <20181018215101.169847-1-rajatja@google.com>
+Mime-Version: 1.0
+References: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
+X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
+Subject: [PATCH] mmc: sdhci-pci: Try "cd" for card-detect lookup before using NULL
+From:   Rajat Jain <rajatja@google.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc:     Rajat Jain <rajatja@google.com>, rajatxjain@gmail.com,
+        linux-kernel@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+Problem:
 
-drivers/rtc/rtc-s35390a.c:124:27: warning: implicit conversion from
-'int' to 'char' changes value from 192 to -64 [-Wconstant-conversion]
-        buf = S35390A_FLAG_RESET | S35390A_FLAG_24H;
-            ~ ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
-1 warning generated.
+The card detect IRQ does not work with modern BIOS (that want
+to use DSD to provide the card detect GPIO to the driver).
 
-Update buf to be an unsigned char, which matches the size and signedness
-of the buf member in struct i2c_msg (__u8).
+Details:
 
-https://github.com/ClangBuiltLinux/linux/issues/145
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+(Discussion: https://lkml.org/lkml/2018/9/25/1113)
+
+The mmc core provides the mmc_gpiod_request_cd() API to let host drivers
+request the gpio descriptor for the "card detect" (or carrier detect?) pin.
+This pin is specified in the ACPI for the SDHC device:
+
+ * Either as a resource using _CRS. This is a method used by legacy BIOS.
+   (The driver needs to tell which resource index).
+
+ * Or as a named property ("cd-gpio") in DSD (which may internally point
+   to an entry in _CRS). This way, the driver can lookup using a string.
+   This is what modern BIOS prefer to use.
+
+This API finally results in a call to the following code:
+
+struct gpio_desc *acpi_find_gpio(..., const char *con_id,...)
+{
+...
+   /* Lookup gpio (using "<con_id>-gpio") in the _DSD */
+...
+   if (!acpi_can_fallback_to_crs(adev, con_id))
+          return ERR_PTR(-ENOENT);
+...
+   /* Falling back to _CRS is allowed, Lookup gpio in the _CRS */
+...
+}
+
+Note that this means that if the ACPI has _DSD properties, the kernel
+will never use _CRS for the lookup (Because acpi_can_fallback_to_crs()
+will always be false for any device hat has _DSD entries).
+
+The SDHCI driver is thus currently broken on a modern BIOS (even if
+BIOS provides both _CRS and DSD entries, either of which could be used for
+a successful lookup). Ironically, none of these will be used for the
+lookup currently because:
+
+* Since the con_id is NULL, acpi_find_gpio() does not find a matching
+  entry in DSDT. (The DSDT entry has the property name = "cd-gpio")
+
+* Because ACPI contains DSDT entries, thus acpi_can_fallback_to_crs()
+  returns false (because device properties have been populated from
+  DSD), thus the _CRS is never used for the lookup.
+
+Fix:
+
+Try "cd" for lookup in the _DSD before falling back to using NULL so
+as to try looking up in the _CRS.
+
+I've tested this patch successfully with both Legacy BIOS (that
+provide only _CRS method) as well as modern BIOS (that provide both
+_CRS and DSD). Also the use of "cd" also appears to be farly consistent
+across other users of this API (other MMC host controller drivers).
+
+Signed-off-by: Rajat Jain <rajatja@google.com>
 ---
- drivers/rtc/rtc-s35390a.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/sdhci-pci-core.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-s35390a.c b/drivers/rtc/rtc-s35390a.c
-index 77feb603cd4c..9fd51337cfae 100644
---- a/drivers/rtc/rtc-s35390a.c
-+++ b/drivers/rtc/rtc-s35390a.c
-@@ -108,7 +108,7 @@ static int s35390a_get_reg(struct s35390a *s35390a, int reg, char *buf, int len)
+diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+index 7bfd366d970d..e53333c695b3 100644
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -1762,8 +1762,13 @@ static struct sdhci_pci_slot *sdhci_pci_probe_slot(
+ 		device_init_wakeup(&pdev->dev, true);
  
- static int s35390a_init(struct s35390a *s35390a)
- {
--	char buf;
-+	unsigned char buf;
- 	int ret;
- 	unsigned initcount = 0;
+ 	if (slot->cd_idx >= 0) {
+-		ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
++		ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
+ 					   slot->cd_override_level, 0, NULL);
++		if (ret && ret != -EPROBE_DEFER)
++			ret = mmc_gpiod_request_cd(host->mmc, NULL,
++						   slot->cd_idx,
++						   slot->cd_override_level,
++						   0, NULL);
+ 		if (ret == -EPROBE_DEFER)
+ 			goto remove;
  
 -- 
-2.19.1
+2.19.1.568.g152ad8e336-goog
 
