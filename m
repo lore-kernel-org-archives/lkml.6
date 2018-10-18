@@ -2,130 +2,133 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2CBC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0906ECDE44
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3908208E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:13:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81A3D208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:14:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pnFY9ePt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3908208E4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/uvFBvu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81A3D208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbeJSDPc (ORCPT
+        id S1727118AbeJSDQb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 23:15:32 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39599 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726325AbeJSDPc (ORCPT
+        Thu, 18 Oct 2018 23:16:31 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39322 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726325AbeJSDQb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 23:15:32 -0400
-Received: by mail-pl1-f195.google.com with SMTP id e67-v6so5756614plb.6;
-        Thu, 18 Oct 2018 12:13:06 -0700 (PDT)
+        Thu, 18 Oct 2018 23:16:31 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y144-v6so1406536wmd.4;
+        Thu, 18 Oct 2018 12:14:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QF/LrY7iuL/AJgxskEfZ1z5Dz2J5Os8EfJ/RaKbgPVQ=;
-        b=pnFY9ePt8LIwvV6bnejjjQHDnPGo/nBouYD0Rck4HJJi+YgAg8NNgD1IDPLbVb8Rkf
-         9xUDJG5d4tiBLNSPC8+E4YDl6W1bZ2H5NhOeNpOKVXfDUdzQVSLutECVh/uCOgBbExbs
-         JoEqOUIW9JtJvYC3TRehXL/UuEn5L9ie7LZv/fcWjd3Nuei/wioLqtNc/74DY2BQcsxO
-         O8vXEda8QnWmCbg3Xb+K0pvm28qiT30XatVvl2TdKn3Wfece4HqGm1Nd2kXk6+4SzirB
-         PEJ4Uk1iS6ngMThTPQ3W6m/YnMRFzQm74LCS8GgsUCyThooXYZc1bluvbakwuE8TXo5K
-         dohg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qZXQeUL2Phm8+NeAfrMgtacBVMU0b1IlXEufV7dqh/4=;
+        b=Z/uvFBvu1iVOuUAxd0GUyXadmZWY5o5Jo+djtbVOdGlOH69RW4jKg1KSjxxa1o1NGQ
+         LX8AlQSLikK/Pi9N3qc0iArW1a70+hjAyeLC2stWCpKe+SBcpF33fGzJDVlxsfL/o1kk
+         JY5zc0RLBgnXlnbPg+nuzVflHe+lCdafFLO6NqXTnvrN+d1oMMbEewd33ry0F3sTdfLE
+         E3IB+gSN5DB7ZCdPwgeEcFKVCGd8dngOrzRk5tRkv+cguuAbp0RjSphTjwRjvrYL9vrR
+         w9T1uKo0AGLtcn+OsG7vJQgVSl2mJuoID6+CQnXYZrhfGHybUzJ93gA4YrlBUlEPLd0F
+         wtZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=QF/LrY7iuL/AJgxskEfZ1z5Dz2J5Os8EfJ/RaKbgPVQ=;
-        b=SHXYBMcApZ+FK08bc+kspHa4NKd6YYIDqNL0uSCQNoPJvroWFbuHiSUJELk83Zh4bm
-         HQTPJrQZnrOAyK8cVf1iT1gxGU0kyV7P1cv6mHgq33HyIlOnUwCCcppIMzxrVjFSiOJy
-         49Wo9U5g/BZitFZIdl/jO12LbpSmAl0lCjLCYXXVmVxKTPBieyuUkozcRgYitaA9D3k6
-         FrLna1uBUbXaxcyKYYPnJ5UhDrsYndNwB6Z5S9VYs3pj7marGiRV79WbyFXQ1MdlIfbs
-         9MPBswQRgGZWlCL/ExXsit/rP36JdamqSKoxQ04oDYR68O+TRvFGoa3xDs99X35d2XSi
-         tGdw==
-X-Gm-Message-State: ABuFfohTJ5DG2VPp2iMLcCUBYWSLMNb6+bpuZfcfQjhbhbtQ5gf8QOCf
-        GJVYJnEKqD/lHjmW5FxZ0g8=
-X-Google-Smtp-Source: ACcGV61vCE0ZwCYVrWt4ggVKaQd2SaX1lI2I5hvx6jI+0dIOMQozHakxBBOsX1H0sVlhQ5jQZbqHLw==
-X-Received: by 2002:a17:902:bf44:: with SMTP id u4-v6mr2975568pls.48.1539889986567;
-        Thu, 18 Oct 2018 12:13:06 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id 25-v6sm45982117pfm.36.2018.10.18.12.13.05
+        bh=qZXQeUL2Phm8+NeAfrMgtacBVMU0b1IlXEufV7dqh/4=;
+        b=o2gTHY9CwwpZsyxbzOnjinvosbmEKaqFd/Xy6Nu+KPrw3Gleb6ykFoN2s345NURDZa
+         lzP59Li0Xjg5WS5+plD+3TVqjAvCog2EWbh++/uD0RP4pU0ZvfMRiuV0IkBhYVxl0Hfi
+         dHU/y7aEnHHLmvTJYSJqGK2KcH9Q64dFTac6wElHarq6a/toZkGiTZ9E7f/LiRLCr/Mp
+         DVA4RD78fV5h13L0ZZRwuBk/jJYnmEIl/GuPDeFaqNFLNxZoAkMNqqUg3W5dE9Gpnsnw
+         1KnPBO3H5vxwAv5s1/spMTZD5fFs23+RfGXuP4M5jCeIqjro6tCnX/qh3orMvX3ecSUl
+         n80Q==
+X-Gm-Message-State: ABuFfohqvLImB1ua07NhfwUBSfok06pLD4qaz0iH6yXi6HCgUiKwAqa6
+        z7TT52nqA8W6CH+URIMfSVU=
+X-Google-Smtp-Source: ACcGV61HKv6oEGdYP6uObias8Ihn/NuapsF4bBXczcyZ/cblIDrMN7u1kXEVkQBuG/HeYyJpyThefQ==
+X-Received: by 2002:a1c:5801:: with SMTP id m1-v6mr1616439wmb.118.1539890044130;
+        Thu, 18 Oct 2018 12:14:04 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id 5-v6sm541916wra.48.2018.10.18.12.14.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 12:13:06 -0700 (PDT)
-Subject: Re: [PATCH v4 09/18] of: overlay: validate overlay properties
- #address-cells and #size-cells
-To:     Rob Herring <robh@kernel.org>
-Cc:     Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-References: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
- <1539657458-24401-10-git-send-email-frowand.list@gmail.com>
- <20181018181338.GD15557@bogus>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <b6c378d0-19db-5426-7c3a-dbbc5907c37c@gmail.com>
-Date:   Thu, 18 Oct 2018 12:13:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 18 Oct 2018 12:14:03 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Sangbeom Kim <sbkim73@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] clk: s2mps11: Add used attribute to s2mps11_dt_match
+Date:   Thu, 18 Oct 2018 12:13:40 -0700
+Message-Id: <20181018191340.30440-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20181018181338.GD15557@bogus>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/18/18 11:13, Rob Herring wrote:
-> On Mon, Oct 15, 2018 at 07:37:29PM -0700, frowand.list@gmail.com wrote:
->> From: Frank Rowand <frank.rowand@sony.com>
->>
->> If overlay properties #address-cells or #size-cells are already in
->> the live devicetree for any given node, then the values in the
->> overlay must match the values in the live tree.
->>
->> If the properties are already in the live tree then there is no
->> need to create a changeset entry to add them since they must
->> have the same value.  This reduces the memory used by the
->> changeset and eliminates a possible memory leak.  This is
->> verified by 12 fewer warnings during the devicetree unittest,
->> as the possible memory leak warnings about #address-cells and
-> 
-> Still missing the rest...
-> 
-> And what about my other comments too?
+Clang warns after commit 8985167ecf57 ("clk: s2mps11: Fix matching when
+built as module and DT node contains compatible"):
 
-Apologies, paper bag.  Will fix all.
+drivers/clk/clk-s2mps11.c:242:34: warning: variable 's2mps11_dt_match'
+is not needed and will not be emitted [-Wunneeded-internal-declaration]
+static const struct of_device_id s2mps11_dt_match[] = {
+                                 ^
+1 warning generated.
 
--Frank
+This warning happens when a variable is used in some construct that
+doesn't require a reference to that variable to be emitted in the symbol
+table; in this case, it's MODULE_DEVICE_TABLE, which only needs to hold
+the data of the variable, not the variable itself.
 
-> 
->>
->> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
->> ---
->> Changes since v3:
->>   - for errors of an overlay changing the value of #size-cells or
->>     #address-cells, return -EINVAL so that overlay apply will fail
->>   - for errors of an overlay changing the value of #size-cells or
->>     #address-cells, make the message more direct.
->>     Old message:
->>       OF: overlay: ERROR: overlay and/or live tree #size-cells invalid in node /soc/base_fpga_region
->>     New message:
->>       OF: overlay: ERROR: changing value of /soc/base_fpga_region/#size-cells not allowed
->>
->>  drivers/of/overlay.c | 42 +++++++++++++++++++++++++++++++++++++++---
->>  1 file changed, 39 insertions(+), 3 deletions(-)
-> 
+$ nm -S drivers/clk/clk-s2mps11.o | rg s2mps11_dt_match
+00000078 000003d4 R __mod_of__s2mps11_dt_match_device_table
+
+Normally, with device ID table variables, it means that the variable
+just needs to be tied to the device declaration at the bottom of the
+file, like s2mps11_clk_id:
+
+$ nm -S drivers/clk/clk-s2mps11.o | rg s2mps11_clk_id
+00000000 00000078 R __mod_platform__s2mps11_clk_id_device_table
+00000000 00000078 r s2mps11_clk_id
+
+However, because the comment above this deliberately doesn't want this
+variable added to .of_match_table, we need to mark s2mps11_dt_match as
+__used to silence this warning. This makes it clear to Clang that the
+variable is used for something, even if a reference to it isn't being
+emitted.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/clk/clk-s2mps11.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index 9c2e6be392e3..5b419b82f7ca 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -239,7 +239,7 @@ MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
+  * This requires of_device_id table.  In the same time this will not change the
+  * actual *device* matching so do not add .of_match_table.
+  */
+-static const struct of_device_id s2mps11_dt_match[] = {
++static const struct of_device_id s2mps11_dt_match[] __used = {
+ 	{
+ 		.compatible = "samsung,s2mps11-clk",
+ 		.data = (void *)S2MPS11X,
+-- 
+2.19.1
 
