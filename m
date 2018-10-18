@@ -2,61 +2,59 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3FBC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B91FFC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F9942145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:45:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77CFD208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:45:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vith4LQ0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F9942145D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="c0yCzCep"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77CFD208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbeJRRpT (ORCPT
+        id S1727979AbeJRRp2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 13:45:19 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42811 "EHLO
+        Thu, 18 Oct 2018 13:45:28 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43430 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbeJRRpS (ORCPT
+        with ESMTP id S1727363AbeJRRp1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 13:45:18 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r17-v6so548738wrt.9
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 02:45:06 -0700 (PDT)
+        Thu, 18 Oct 2018 13:45:27 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n1-v6so32901345wrt.10
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 02:45:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=axE8sf2kya7XyE6oqYQW09Iob6sWcrc2BxSlNfVwAGA=;
-        b=Vith4LQ0PZzjKOvoXY28jgaGUNyIFR1M3iDVLWQkOfSozRhI0TkrWSbSh7bRn1q7pM
-         ShcpAsuxjtCgn5jZqpvRbotRAEiW4N5+fCWraR+cZ1mPPtqy+L5wlebksZI/GSG7O3KK
-         DgN7BttcFBpmJ1qu/sOceKKz2EaFbbqZjGzjo=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ML7BC+6djTXaiO8RLCoqQuER7nYUMEieYbNI6AwQsNM=;
+        b=c0yCzCepjoxWx7YcNmhbQu/ScnPLtkTaWmT8c9RtF3xAwQLm9r5ejfxXmQwio64eNt
+         1AW732GjuZJmStsdMwv6w6hPJHQys9AXNjMEsxYi05y+HCSHUShdZsZi+ywiGmD7mLYw
+         r4mdZQNoWC0yolt5ldF2OkzyesDiWauLW5A1Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=axE8sf2kya7XyE6oqYQW09Iob6sWcrc2BxSlNfVwAGA=;
-        b=DPdrVWNB22fpgBoqTBNv7SRYjpcgT6llEjal2Y6Xi3waVC/WZARiQVQiqMYuBI2+3R
-         aW3qb+UZmnY1y+Vshu6wGujweh87wZ4RsrL/zo4Ujz9e2NaUvcDGGjZFx/k0qtoOyxoO
-         cU5ajTKUoIx5d1dhE/BKh2idumz1eSY/n7vgUeoCrVGoclNGQ68dI7lVXDc6lWFBDyf2
-         swL6T+Yu6edzal8Vqd9Wf1qxA4quBizezEZG6sSIjI5huHHpM4eXq+NzVCBEtdfbeMhT
-         BlYSBhsSVca1/SS4cPkNh86aprv+aWoGqbHcBJnubJGtnB9Y91zWHCi9JFhRKB/HCuha
-         czqw==
-X-Gm-Message-State: ABuFfoiDvPcxTrKvrMXNjBVn7TyOsFqRf8O8ZIBvp9nwX+tuQMbQ/mDy
-        bTlhuRbXT4oKkT8J0XWk5kwVZw==
-X-Google-Smtp-Source: ACcGV61KxeoOZ/WfnDkDXPQM2oNEKBigL1b+f2WFbVHj186NFKSm33H1vEXQhDKDR6GN8O/IuWkdHw==
-X-Received: by 2002:a5d:4306:: with SMTP id h6-v6mr29670480wrq.189.1539855905462;
-        Thu, 18 Oct 2018 02:45:05 -0700 (PDT)
-Received: from [192.168.0.40] (77.65.136.77.rev.sfr.net. [77.136.65.77])
-        by smtp.googlemail.com with ESMTPSA id z4-v6sm15731724wrt.13.2018.10.18.02.45.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 02:45:04 -0700 (PDT)
-Subject: Re: [PATCH 1/2] sched/cpufreq: Reorganize the cpufreq files
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ML7BC+6djTXaiO8RLCoqQuER7nYUMEieYbNI6AwQsNM=;
+        b=O+LfTnvGEcUxlXwTpjIq6KkFcT80Wj+bVkWNbtcEmgC7HCA89QHeV3flJnvRyivNwL
+         j50gt/YGL/1CttGjd/RMkc3H28Q7RVsCEFh/6qS90uvemSseBoXnXQ6MWFFGjXQ+Mzq6
+         pzaxuPs6j0x/Lsf2MC41mpzaQxOXFF1gsblowFg8bTACfD1g9PbMObyfqi9Sr4yf2p2J
+         gDZcpxrfQf4YApemwZ3tclhqyuZ9eo/irr2UIyAzyFbkDoMdNzJSvJp85Cx8bKahm25g
+         gVSPnFuSYvz8IsPWtOO31ypoa5xpwPLtSwLKmd+r4SF5klLI4WGi9wUcgdbEmdahYBzJ
+         1RsQ==
+X-Gm-Message-State: ABuFfohZ7JI+JVm7q67v76i4MEDnkahAFRJBHa+v3AezXM9lR8kWGc7w
+        qbCK9qhww0iOmSNzLAFTkQz/gw==
+X-Google-Smtp-Source: ACcGV635rRRH2B61L7+KLIZouzC7QMHvC+kvOpQet61wifZbYTqj7zAD7xdolPLp9O6FxGibXqnrAg==
+X-Received: by 2002:adf:a201:: with SMTP id p1-v6mr27743114wra.89.1539855914405;
+        Thu, 18 Oct 2018 02:45:14 -0700 (PDT)
+Received: from localhost.localdomain (77.65.136.77.rev.sfr.net. [77.136.65.77])
+        by smtp.gmail.com with ESMTPSA id 195-v6sm4321756wmx.21.2018.10.18.02.45.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 18 Oct 2018 02:45:13 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     rafael@kernel.org, mingo@kernel.org
 Cc:     thara.gopinath@linaro.org, linux-kernel@vger.kernel.org,
@@ -69,49 +67,104 @@ Cc:     thara.gopinath@linaro.org, linux-kernel@vger.kernel.org,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Juri Lelli <juri.lelli@redhat.com>,
         Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: [PATCH V2 1/2] sched/cpufreq: Reorganize the cpufreq files
+Date:   Thu, 18 Oct 2018 11:44:14 +0200
+Message-Id: <1539855869-13524-1-git-send-email-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <CAJZ5v0iALqLw+Y_tKw86dh2oxnmvALhoVJxEcWWA+x1jU3GjdA@mail.gmail.com>
 References: <CAJZ5v0iALqLw+Y_tKw86dh2oxnmvALhoVJxEcWWA+x1jU3GjdA@mail.gmail.com>
- <1539855372-11472-1-git-send-email-daniel.lezcano@linaro.org>
-Message-ID: <ff7cd793-e186-9f38-5e9e-f77cccc749bf@linaro.org>
-Date:   Thu, 18 Oct 2018 11:45:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1539855372-11472-1-git-send-email-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/10/2018 11:35, Daniel Lezcano wrote:
-> It was suggested to set the scene for the PM components in the
-> scheduler code organization in the recent discussion about making the
-> scheduler aware of the capacity capping from the thermal framework.
-> 
-> Move the cpufreq files into its own directory as suggested at:
-> 
-> https://lkml.org/lkml/2018/10/18/353
-> https://lkml.org/lkml/2018/10/18/408
-> 
-> Suggested-by: Ingo Molnar <mingo@kernel.org>
-> Cc: Rafael J. Wysocki <rafael@kernel.org>
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  kernel/sched/Makefile                                   | 3 +--
->  kernel/sched/{cpufreq.c => cpufreq/core.c}              | 2 +-
->  kernel/sched/{cpufreq_schedutil.c => cpufreq/metrics.c} | 2 +-
+It was suggested to set the scene for the PM components in the
+scheduler code organization in the recent discussion about making the
+scheduler aware of the capacity capping from the thermal framework.
 
+Move the cpufreq files into its own directory as suggested at:
 
-I forget to git add the cpufreq/Makefile, resending.
+https://lkml.org/lkml/2018/10/18/353
+https://lkml.org/lkml/2018/10/18/408
 
+Suggested-by: Ingo Molnar <mingo@kernel.org>
+Cc: Rafael J. Wysocki <rafael@kernel.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+Changelog:
+ * git added the Makefile in cpufreq/Makefile (V2)
 
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ kernel/sched/Makefile                                   | 3 +--
+ kernel/sched/cpufreq/Makefile                           | 3 +++
+ kernel/sched/{cpufreq.c => cpufreq/core.c}              | 2 +-
+ kernel/sched/{cpufreq_schedutil.c => cpufreq/metrics.c} | 2 +-
+ 4 files changed, 6 insertions(+), 4 deletions(-)
+ create mode 100644 kernel/sched/cpufreq/Makefile
+ rename kernel/sched/{cpufreq.c => cpufreq/core.c} (99%)
+ rename kernel/sched/{cpufreq_schedutil.c => cpufreq/metrics.c} (99%)
 
+diff --git a/kernel/sched/Makefile b/kernel/sched/Makefile
+index 7fe1834..bc6bce0 100644
+--- a/kernel/sched/Makefile
++++ b/kernel/sched/Makefile
+@@ -19,13 +19,12 @@ endif
+ obj-y += core.o loadavg.o clock.o cputime.o
+ obj-y += idle.o fair.o rt.o deadline.o
+ obj-y += wait.o wait_bit.o swait.o completion.o
++obj-y += cpufreq/
+ 
+ obj-$(CONFIG_SMP) += cpupri.o cpudeadline.o topology.o stop_task.o pelt.o
+ obj-$(CONFIG_SCHED_AUTOGROUP) += autogroup.o
+ obj-$(CONFIG_SCHEDSTATS) += stats.o
+ obj-$(CONFIG_SCHED_DEBUG) += debug.o
+ obj-$(CONFIG_CGROUP_CPUACCT) += cpuacct.o
+-obj-$(CONFIG_CPU_FREQ) += cpufreq.o
+-obj-$(CONFIG_CPU_FREQ_GOV_SCHEDUTIL) += cpufreq_schedutil.o
+ obj-$(CONFIG_MEMBARRIER) += membarrier.o
+ obj-$(CONFIG_CPU_ISOLATION) += isolation.o
+diff --git a/kernel/sched/cpufreq/Makefile b/kernel/sched/cpufreq/Makefile
+new file mode 100644
+index 0000000..4bf1087
+--- /dev/null
++++ b/kernel/sched/cpufreq/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_CPU_FREQ) += core.o
++obj-$(CONFIG_CPU_FREQ_GOV_SCHEDUTIL) += metrics.o
+diff --git a/kernel/sched/cpufreq.c b/kernel/sched/cpufreq/core.c
+similarity index 99%
+rename from kernel/sched/cpufreq.c
+rename to kernel/sched/cpufreq/core.c
+index 5e54cbc..8c17a63 100644
+--- a/kernel/sched/cpufreq.c
++++ b/kernel/sched/cpufreq/core.c
+@@ -8,7 +8,7 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
+-#include "sched.h"
++#include "../sched.h"
+ 
+ DEFINE_PER_CPU(struct update_util_data *, cpufreq_update_util_data);
+ 
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq/metrics.c
+similarity index 99%
+rename from kernel/sched/cpufreq_schedutil.c
+rename to kernel/sched/cpufreq/metrics.c
+index 3fffad3..597df47 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq/metrics.c
+@@ -11,7 +11,7 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+-#include "sched.h"
++#include "../sched.h"
+ 
+ #include <trace/events/power.h>
+ 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.7.4
 
