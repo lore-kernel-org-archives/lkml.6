@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8315C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D65FEC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADBCA21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EE4321476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwEu3JBt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADBCA21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5KKtMU+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EE4321476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729133AbeJSCA4 (ORCPT
+        id S1729147AbeJSCA6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:00:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48542 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:00:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726534AbeJSCAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:00:55 -0400
+        id S1729134AbeJSCA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:00:58 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8683421476;
-        Thu, 18 Oct 2018 17:58:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92E9121476;
+        Thu, 18 Oct 2018 17:58:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885530;
-        bh=kpFJYfLVPE5dDHvF09iNlV/k+pYQ7CqXz+NWieHSas8=;
+        s=default; t=1539885533;
+        bh=bjOqUdXs6gNZXH03iVCr2v9/mYX8u2aGHsJsOPSonUs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lwEu3JBtLjsxi4RQKSaQVb0YE8F5lxksR9evM5Mdg3dT7oKdefjuLAy8mWHAmOAG/
-         UMhQRf02kCsp7eQrF0fHbYwvxekfT7+qYfHT9phjnVsIcOaqFSmRvQ+7U5nWepBweq
-         BPA6DW+fn1hYj7QSrGyy9Gucqxott8UywODivTkA=
+        b=W5KKtMU+luZOihAZvOIbOnB5vpWvfod/dcciQmaEjSJK4Z/BTQiUuXfcMz38aFnKX
+         ezaNeWUrfJaWzc1dZKSLbElyMM1pfC8YQjzvUaOOmDcFI8X+Mamd4Ix/DXn1ocd+Zx
+         Dw7ZCZ+EyXweC3zY0+FTYM84SJct+r0cMP2V0zVI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Rob Herring <robh@kernel.org>,
         Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.18 52/53] ARC: build: Get rid of toolchain check
-Date:   Thu, 18 Oct 2018 19:54:45 +0200
-Message-Id: <20181018175425.446192719@linuxfoundation.org>
+Subject: [PATCH 4.18 53/53] ARC: build: Dont set CROSS_COMPILE in archs Makefile
+Date:   Thu, 18 Oct 2018 19:54:46 +0200
+Message-Id: <20181018175425.568632810@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.561567978@linuxfoundation.org>
 References: <20181018175416.561567978@linuxfoundation.org>
@@ -65,63 +66,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alexey Brodkin <abrodkin@synopsys.com>
 
-commit 615f64458ad890ef94abc879a66d8b27236e733a upstream.
+commit 40660f1fcee8d524a60b5101538e42b1f39f106d upstream.
 
-This check is very naive: we simply test if GCC invoked without
-"-mcpu=XXX" has ARC700 define set. In that case we think that GCC
-was built with "--with-cpu=arc700" and has libgcc built for ARC700.
+There's not much sense in doing that because if user or
+his build-system didn't set CROSS_COMPILE we still may
+very well make incorrect guess.
 
-Otherwise if ARC700 is not defined we think that everythng was built
-for ARCv2.
+But as it turned out setting CROSS_COMPILE is not as harmless
+as one may think: with recent changes that implemented automatic
+discovery of __host__ gcc features unconditional setup of
+CROSS_COMPILE leads to failures on execution of "make xxx_defconfig"
+with absent cross-compiler, for more info see [1].
 
-But in reality our life is much more interesting.
+Set CROSS_COMPILE as well gets in the way if we want only to build
+.dtb's (again with absent cross-compiler which is not really needed
+for building .dtb's), see [2].
 
-1. Regardless of GCC configuration (i.e. what we pass in "--with-cpu"
-   it may generate code for any ARC core).
+Note, we had to change LIBGCC assignment type from ":=" to "="
+so that is is resolved on its usage, otherwise if it is resolved
+at declaration time with missing CROSS_COMPILE we're getting this
+error message from host GCC:
 
-2. libgcc might be built with explicitly specified "--mcpu=YYY"
+| gcc: error: unrecognized command line option -mmedium-calls
+| gcc: error: unrecognized command line option -mno-sdata
 
-That's exactly what happens in case of multilibbed toolchains:
- - GCC is configured with default settings
- - All the libs built for many different CPU flavors
+[1] http://lists.infradead.org/pipermail/linux-snps-arc/2018-September/004308.html
+[2] http://lists.infradead.org/pipermail/linux-snps-arc/2018-September/004320.html
 
-I.e. that check gets in the way of usage of multilibbed
-toolchains. And even non-multilibbed toolchains are affected.
-OpenEmbedded also builds GCC without "--with-cpu" because
-each and every target component later is compiled with explicitly
-set "-mcpu=ZZZ".
-
-Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Rob Herring <robh@kernel.org>
 Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arc/Makefile |   14 --------------
- 1 file changed, 14 deletions(-)
+ arch/arc/Makefile |   10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
 --- a/arch/arc/Makefile
 +++ b/arch/arc/Makefile
-@@ -20,20 +20,6 @@ cflags-y	+= -fno-common -pipe -fno-built
- cflags-$(CONFIG_ISA_ARCOMPACT)	+= -mA7
- cflags-$(CONFIG_ISA_ARCV2)	+= -mcpu=archs
+@@ -6,14 +6,6 @@
+ # published by the Free Software Foundation.
+ #
  
--is_700 = $(shell $(CC) -dM -E - < /dev/null | grep -q "ARC700" && echo 1 || echo 0)
--
--ifdef CONFIG_ISA_ARCOMPACT
--ifeq ($(is_700), 0)
--    $(error Toolchain not configured for ARCompact builds)
+-ifeq ($(CROSS_COMPILE),)
+-ifndef CONFIG_CPU_BIG_ENDIAN
+-CROSS_COMPILE := arc-linux-
+-else
+-CROSS_COMPILE := arceb-linux-
 -endif
 -endif
 -
--ifdef CONFIG_ISA_ARCV2
--ifeq ($(is_700), 1)
--    $(error Toolchain not configured for ARCv2 builds)
--endif
--endif
--
- ifdef CONFIG_ARC_CURR_IN_REG
- # For a global register defintion, make sure it gets passed to every file
- # We had a customer reported bug where some code built in kernel was NOT using
+ KBUILD_DEFCONFIG := nsim_700_defconfig
+ 
+ cflags-y	+= -fno-common -pipe -fno-builtin -mmedium-calls -D__linux__
+@@ -73,7 +65,7 @@ ldflags-$(CONFIG_CPU_BIG_ENDIAN)	+= -EB
+ # --build-id w/o "-marclinux". Default arc-elf32-ld is OK
+ ldflags-$(upto_gcc44)			+= -marclinux
+ 
+-LIBGCC	:= $(shell $(CC) $(cflags-y) --print-libgcc-file-name)
++LIBGCC	= $(shell $(CC) $(cflags-y) --print-libgcc-file-name)
+ 
+ # Modules with short calls might break for calls into builtin-kernel
+ KBUILD_CFLAGS_MODULE	+= -mlong-calls -mno-millicode
 
 
