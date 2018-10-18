@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C66FEC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 780C2C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9040A21480
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23FD321476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2uREfogO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9040A21480
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2PJJokxd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23FD321476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729159AbeJSCBD (ORCPT
+        id S1728812AbeJSCBK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:01:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48684 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:01:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728724AbeJSCBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:01:02 -0400
+        id S1727608AbeJSCBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:01:09 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D54B21476;
-        Thu, 18 Oct 2018 17:58:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1AF321473;
+        Thu, 18 Oct 2018 17:59:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885537;
-        bh=60r8qyRzV/ueA68i7m4dRAZRqNOHmJQhyVj7JKyKtcw=;
+        s=default; t=1539885544;
+        bh=zutqkF59nIVYBOTXf60RRb6y5wwy2F/x5ib8mK1rcPY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2uREfogOozPB7l318sR/jr0/vy+NxpP1Slc5uQvrBfm4QmNPr6jcEQJZkMSHGVddQ
-         +7J9jIxjT+TQ6Mc0P9VxAAmZZZMoEjYLVuGgJpyz70LAmKCbrU/VsMr3nC8aD54fzL
-         Wzm31KeCAAB9UUlJw7eS8/g1j7AHP3orsb4YQpwI=
+        b=2PJJokxdsD9Z0OIy6cB5htli8DP3Oct8d7qp4k+w3+2+m318gPHcF4I1N5BHEQoFg
+         TrmWvIiPNO31P/qnWIzLGuP+uAmVzEDGIaLB7CLK/d2yudN98F8L7eHN5DAjeWL0FH
+         W6W8a2evR/FiJAFismprHBEoVGVEZsxgf2+k+OKw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Karsten Merker <merker@debian.org>,
-        James Cowgill <jcowgill@debian.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
+        stable@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 42/53] RISC-V: include linux/ftrace.h in asm-prototypes.h
-Date:   Thu, 18 Oct 2018 19:54:35 +0200
-Message-Id: <20181018175423.687063206@linuxfoundation.org>
+Subject: [PATCH 4.18 43/53] iommu/rockchip: Free irqs in shutdown handler
+Date:   Thu, 18 Oct 2018 19:54:36 +0200
+Message-Id: <20181018175423.843074215@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.561567978@linuxfoundation.org>
 References: <20181018175416.561567978@linuxfoundation.org>
@@ -64,42 +66,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Cowgill <jcowgill@debian.org>
+From: Heiko Stuebner <heiko@sntech.de>
 
-[ Upstream commit 57a489786de9ec37d6e25ef1305dc337047f0236 ]
+[ Upstream commit 74bc2abca7603c956d1e331e8b9bee7b874c1eec ]
 
-Building a riscv kernel with CONFIG_FUNCTION_TRACER and
-CONFIG_MODVERSIONS enabled results in these two warnings:
+In the iommu's shutdown handler we disable runtime-pm which could
+result in the irq-handler running unclocked and since commit
+    3fc7c5c0cff3 ("iommu/rockchip: Handle errors returned from PM framework")
+we warn about that fact.
 
-  MODPOST vmlinux.o
-WARNING: EXPORT symbol "return_to_handler" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "_mcount" [vmlinux] version generation failed, symbol will not be versioned.
+This can cause warnings on shutdown on some Rockchip machines, so
+free the irqs in the shutdown handler before we disable runtime-pm.
 
-When exporting symbols from an assembly file, the MODVERSIONS code
-requires their prototypes to be defined in asm-prototypes.h (see
-scripts/Makefile.build). Since both of these symbols have prototypes
-defined in linux/ftrace.h, include this header from RISC-V's
-asm-prototypes.h.
-
-Reported-by: Karsten Merker <merker@debian.org>
-Signed-off-by: James Cowgill <jcowgill@debian.org>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+Reported-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Fixes: 3fc7c5c0cff3 ("iommu/rockchip: Handle errors returned from PM framework")
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/riscv/include/asm/asm-prototypes.h |    7 +++++++
- 1 file changed, 7 insertions(+)
- create mode 100644 arch/riscv/include/asm/asm-prototypes.h
+ drivers/iommu/rockchip-iommu.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- /dev/null
-+++ b/arch/riscv/include/asm/asm-prototypes.h
-@@ -0,0 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_RISCV_PROTOTYPES_H
+--- a/drivers/iommu/rockchip-iommu.c
++++ b/drivers/iommu/rockchip-iommu.c
+@@ -1242,6 +1242,12 @@ err_unprepare_clocks:
+ 
+ static void rk_iommu_shutdown(struct platform_device *pdev)
+ {
++	struct rk_iommu *iommu = platform_get_drvdata(pdev);
++	int i = 0, irq;
 +
-+#include <linux/ftrace.h>
-+#include <asm-generic/asm-prototypes.h>
++	while ((irq = platform_get_irq(pdev, i++)) != -ENXIO)
++		devm_free_irq(iommu->dev, irq, iommu);
 +
-+#endif /* _ASM_RISCV_PROTOTYPES_H */
+ 	pm_runtime_force_suspend(&pdev->dev);
+ }
+ 
 
 
