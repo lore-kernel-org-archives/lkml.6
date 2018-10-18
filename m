@@ -2,147 +2,160 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A91C67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0186DC67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:17:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A536F21477
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:12:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4DE4208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 23:17:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mendozajonas.com header.i=@mendozajonas.com header.b="JCa2LC7B";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XP6d0pBV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A536F21477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mendozajonas.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="n7X5bIB6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4DE4208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbeJSHQG (ORCPT
+        id S1726963AbeJSHUR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 03:16:06 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:46595 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725934AbeJSHQG (ORCPT
+        Fri, 19 Oct 2018 03:20:17 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:36666 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725777AbeJSHUR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 03:16:06 -0400
-X-Greylist: delayed 451 seconds by postgrey-1.27 at vger.kernel.org; Fri, 19 Oct 2018 03:16:05 EDT
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id 58B58226DF;
-        Thu, 18 Oct 2018 19:05:19 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Thu, 18 Oct 2018 19:05:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        mendozajonas.com; h=message-id:subject:from:to:cc:date
-        :in-reply-to:references:content-type:mime-version
-        :content-transfer-encoding; s=fm1; bh=qReEp1SB7cdYYzkyrhBEtjS5cQ
-        F4GJTebujWTxuRncA=; b=JCa2LC7BX3wwMhgy3ermK4atJ8UBvW00AVWfTv5Uz7
-        E6FyWdsusA2/7U4QMmKh0nkCROMYCH69zkbprrc0rNFF8Ae8fnlB2Lk+WZCFU/Wc
-        5uCO8cD8oUMVb0pYeZEuOqHO3ubQy4KW8DeFFbDV0kQbCXA0vQPtiA7Fkh/GRJ7X
-        dADIiZoyzi3eoghzuVx9G5qLKCOuzYuX6WXYot3G+hx15zCHkiIVXfLcnGj8e9lc
-        enhI8Uq87/e9XlxnLDyiNvtCxXWwE/GgVm4VcfNgiYe0meIMak+jiNE0Ufo26130
-        3KtLntKVjSA0MMidMBc70IiXMxzFiEUFoab7IM4AmqdA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=qReEp1SB7cdYYzkyrhBEtjS5cQF4GJTebujWTxuRn
-        cA=; b=XP6d0pBVsU4AVtBnlDeymuNjTXbykOEcgZ5Py2pGeSXMQwiovxfWB3rLg
-        hn6evMyiqcCBQK+9ZviKKB0yhk78CK1u59m6DAAyLOEgIrhIO+XtCQC6nucg8ltJ
-        k+NfG/nqcHY4Ez6Pby7JAQSN3p/Bz6M2nISSPpFjeFmm7M7pkqlxPOnmjAH0s9bt
-        z6icUg0t0wbFYFXn1XKp2D57u+6d8oTJdVjndIymC72obyiglUZW/sNgd3aeeNJT
-        9IpygvCrq7DN5iT2IR7sm0WOCVf1q/PB+iW70MvXNRm7rAO4AUembE8Lkh/zIf95
-        ZWjztn4U+E2xYxBDhhTrlPiONIDEw==
-X-ME-Sender: <xms:rhHJW3tJEQF5ywNKF1yrN44Ch2XeZ6LbzIWIhuaFIsTEQcGEdopIsg>
-X-ME-Proxy: <xmx:rhHJW45tDjwuG0DqaCii-vJARso8RPbcDLGB__JTeqKdgaR9Z_x9IA>
-    <xmx:rhHJW_At2cW7npGkHmsB6Kpk_alsbZ_oleLis-cOyHBfIu3LnbSPvw>
-    <xmx:rhHJW6YG0FK4rgBpxxREr5LzRwh_y_ezTtpbQttna5YiLhqT-vRm0Q>
-    <xmx:rhHJWzJB4HDJcNXQ2rEPQ1HARKq_TS_N8n8N40UZisJPV4lfM6wDgA>
-    <xmx:rhHJWzD9KdxdT-q3RybEcUG5RCFMz631eW5DUyTRWYTN_O-4SWQqww>
-    <xmx:rxHJWwSceZ0OlL-WImt6Jlw7NJCnX5aJh9g2StnciXjzGhN4uutY7g>
-Received: from v4 (pa49-180-141-13.pa.nsw.optusnet.com.au [49.180.141.13])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 14EE8E462B;
-        Thu, 18 Oct 2018 19:05:14 -0400 (EDT)
-Message-ID: <7f3744217190fe94bb1df879fa107593e911d7b5.camel@mendozajonas.com>
-Subject: Re: [PATCH net-next 0/6] net/ncsi: Allow enabling multiple packages
- & channels
-From:   Samuel Mendoza-Jonas <sam@mendozajonas.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, Justin.Lee1@Dell.com,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
-Date:   Fri, 19 Oct 2018 10:05:09 +1100
-In-Reply-To: <20181018.155647.1045018243241594303.davem@davemloft.net>
-References: <20181018035917.19413-1-sam@mendozajonas.com>
-         <20181018.155647.1045018243241594303.davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1 
-Mime-Version: 1.0
+        Fri, 19 Oct 2018 03:20:17 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9IN9nkK099712;
+        Thu, 18 Oct 2018 23:16:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=nPVFryI0pCs/xJbexKiYz8erMunSxOIVHjBA0pKw0mo=;
+ b=n7X5bIB6H+MZJ4P2LK6fovILbd5J4zwwzrSYU2OR0b2u87WH3EQU5GxMXUFb6vi4fzRv
+ ARuVY2Kl0KQJnNDJkexlN0xPjVcaOG5wRHdVAGnjocrR/b6tE/ywEjQjnAzRplLVJeDX
+ D516JKOycOOPe+sMHqdVeSAaWaFeLMeuDXBXJbGyqfmImV5TrmjKrvkS924iYimYQtjp
+ 9j6Oi5t4q3Fo2c5/pTlGCoeqssIdY4Mh0c8N84kww5RNBTu83wK2LXood0WaEDMLUqYU
+ GZgGjg0bDAxhXVYpMle8qkxMT2KCCCa8k+7l/dhtFz/moarYQQ/DEAhryUBPNLoG+QYN lw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2n39brs7fq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 18 Oct 2018 23:16:45 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9INGha5014170
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 18 Oct 2018 23:16:44 GMT
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9INGgUx019962;
+        Thu, 18 Oct 2018 23:16:42 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 18 Oct 2018 16:16:42 -0700
+Subject: Re: [PATCH] hugetlbfs: dirty pages as they are added to pagecache
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        stable@vger.kernel.org
+References: <20181018041022.4529-1-mike.kravetz@oracle.com>
+ <20181018160827.0cb656d594ffb2f0f069326c@linux-foundation.org>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <6d6e4733-39aa-a958-c0a2-c5a47cdcc7d0@oracle.com>
+Date:   Thu, 18 Oct 2018 16:16:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181018160827.0cb656d594ffb2f0f069326c@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9050 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810180195
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-18 at 15:56 -0700, David Miller wrote:
-> From: Samuel Mendoza-Jonas <sam@mendozajonas.com>
-> Date: Thu, 18 Oct 2018 14:59:11 +1100
+On 10/18/18 4:08 PM, Andrew Morton wrote:
+> On Wed, 17 Oct 2018 21:10:22 -0700 Mike Kravetz <mike.kravetz@oracle.com> wrote:
 > 
-> > This series extends the NCSI driver to configure multiple packages
-> > and/or channels simultaneously. Since the RFC series this includes a few
-> > extra changes to fix areas in the driver that either made this harder or
-> > were roadblocks due to deviations from the NCSI specification.
-> > 
-> > Patches 1 & 2 fix two issues where the driver made assumptions about the
-> > capabilities of the NCSI topology.
-> > Patches 3 & 4 change some internal semantics slightly to make multi-mode
-> > easier.
-> > Patch 5 introduces a cleaner way of reconfiguring the NCSI configuration
-> > and keeping track of channel states.
-> > Patch 6 implements the main multi-package/multi-channel configuration,
-> > configured via the Netlink interface.
-> > 
-> > Readers who have an interesting NCSI setup - especially multi-package
-> > with HWA - please test! I think I've covered all permutations but I
-> > don't have infinite hardware to test on.
+>> Some test systems were experiencing negative huge page reserve
+>> counts and incorrect file block counts.  This was traced to
+>> /proc/sys/vm/drop_caches removing clean pages from hugetlbfs
+>> file pagecaches.  When non-hugetlbfs explicit code removes the
+>> pages, the appropriate accounting is not performed.
+>>
+>> This can be recreated as follows:
+>>  fallocate -l 2M /dev/hugepages/foo
+>>  echo 1 > /proc/sys/vm/drop_caches
+>>  fallocate -l 2M /dev/hugepages/foo
+>>  grep -i huge /proc/meminfo
+>>    AnonHugePages:         0 kB
+>>    ShmemHugePages:        0 kB
+>>    HugePages_Total:    2048
+>>    HugePages_Free:     2047
+>>    HugePages_Rsvd:    18446744073709551615
+>>    HugePages_Surp:        0
+>>    Hugepagesize:       2048 kB
+>>    Hugetlb:         4194304 kB
+>>  ls -lsh /dev/hugepages/foo
+>>    4.0M -rw-r--r--. 1 root root 2.0M Oct 17 20:05 /dev/hugepages/foo
+>>
+>> To address this issue, dirty pages as they are added to pagecache.
+>> This can easily be reproduced with fallocate as shown above. Read
+>> faulted pages will eventually end up being marked dirty.  But there
+>> is a window where they are clean and could be impacted by code such
+>> as drop_caches.  So, just dirty them all as they are added to the
+>> pagecache.
+>>
+>> In addition, it makes little sense to even try to drop hugetlbfs
+>> pagecache pages, so disable calls to these filesystems in drop_caches
+>> code.
+>>
+>> ...
+>>
+>> --- a/fs/drop_caches.c
+>> +++ b/fs/drop_caches.c
+>> @@ -9,6 +9,7 @@
+>>  #include <linux/writeback.h>
+>>  #include <linux/sysctl.h>
+>>  #include <linux/gfp.h>
+>> +#include <linux/magic.h>
+>>  #include "internal.h"
+>>  
+>>  /* A global variable is a bit ugly, but it keeps the code simple */
+>> @@ -18,6 +19,12 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+>>  {
+>>  	struct inode *inode, *toput_inode = NULL;
+>>  
+>> +	/*
+>> +	 * It makes no sense to try and drop hugetlbfs page cache pages.
+>> +	 */
+>> +	if (sb->s_magic == HUGETLBFS_MAGIC)
+>> +		return;
 > 
-> This doesn't apply cleanly to net-next.  Does it depend upon changes
-> applied elsewhere?  You must always make that explicit.
+> Hardcoding hugetlbfs seems wrong here.  There are other filesystems
+> where it makes no sense to try to drop pagecache.  ramfs and, errrr...
+> 
+> I'm struggling to remember which is the correct thing to test here. 
+> BDI_CAP_NO_WRITEBACK should get us there, but doesn't seem quite
+> appropriate.
 
-Ah, my mistake; I hadn't updated my net-next branch recently enough and
-missed Vijay's OEM command patch. Will rebase.
+I was not sure about this, and expected someone could come up with
+something better.  It just seems there are filesystems like huegtlbfs,
+where it makes no sense wasting cycles traversing the filesystem.  So,
+let's not even try.
 
-> 
-> Also, please explain this locking in ncsi_reset_dev():
-> 
-> +       NCSI_FOR_EACH_PACKAGE(ndp, np) {
-> +               NCSI_FOR_EACH_CHANNEL(np, nc) {
-> +                       spin_lock_irqsave(&nc->lock, flags);
-> +                       enabled = nc->monitor.enabled;
-> +                       state = nc->state;
-> +                       spin_unlock_irqrestore(&nc->lock, flags);
-> +
-> +                       if (enabled)
-> +                               ncsi_stop_channel_monitor(nc);
-> +                       if (state == NCSI_CHANNEL_ACTIVE) {
-> +                               active = nc;
-> +                               break;
-> +                       }
-> 
-> Is that really protecting anything?
-> 
-> Right after you drop np->lock those two values can change, the state
-> of the 'nc' can change such that it isn't NCSI_CHANNEL_ACTIVE anymore
-> etc.
-> 
-> At best this locking makes sure thatn enabled and state are consistent
-> with respect to eachother, only.  It doesn't guarantee anything about
-> the stability of the state of the object at all, and it can change
-> right from under you.
-
-And you've caught this correctly, I'll fix this up in the rebase to
-protect actually checking the channel/monitor state.
-
-Thanks,
-Sam
-
-
+Hoping someone can come up with a better method than hard coding as
+I have done above.
+-- 
+Mike Kravetz
