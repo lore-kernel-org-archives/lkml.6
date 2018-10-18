@@ -2,257 +2,608 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BACACC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFD3C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:29:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C35C21476
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:28:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C35C21476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=electromag.com.au
+	by mail.kernel.org (Postfix) with ESMTP id 1AAE12098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:29:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AAE12098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbeJRP1r (ORCPT
+        id S1727518AbeJRP3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 11:27:47 -0400
-Received: from anchovy2.45ru.net.au ([203.30.46.146]:39450 "EHLO
-        anchovy2.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbeJRP1r (ORCPT
+        Thu, 18 Oct 2018 11:29:36 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:45898 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727359AbeJRP3g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 11:27:47 -0400
-Received: (qmail 1121 invoked by uid 5089); 18 Oct 2018 07:28:05 -0000
-Received: by simscan 1.2.0 ppid: 1026, pid: 1027, t: 0.0831s
-         scanners: regex: 1.2.0 attach: 1.2.0 clamav: 0.88.3/m:40/d:1950
-Received: from unknown (HELO ?192.168.0.122?) (preid@electromag.com.au@203.59.235.95)
-  by anchovy3.45ru.net.au with ESMTPA; 18 Oct 2018 07:28:04 -0000
-Subject: Re: [PATCH v2] staging: iio: ad7816: Switch to the gpio descriptor
- interface
-To:     Nishad Kamdar <nishadkamdar@gmail.com>,
-        Lars-Peter Clausen <lars@metafoo.de>
-Cc:     Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com
-References: <20181017144716.GA11485@nishad>
-From:   Phil Reid <preid@electromag.com.au>
-Message-ID: <fdcb085c-cf34-3310-f5ab-5795d5997977@electromag.com.au>
-Date:   Thu, 18 Oct 2018 15:28:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 18 Oct 2018 11:29:36 -0400
+Received: by mail-oi1-f195.google.com with SMTP id e17-v6so23200570oig.12;
+        Thu, 18 Oct 2018 00:29:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZgjLW0hoCOF0tDaGKpaCfCVljfycy0xi0fTcAsfUnGY=;
+        b=HVIAQZEpdrm3J1u8mj6OR+Xb+ZFUj14qlvFDRZqcrgwI7r+V1vejinu6R/MTEfe745
+         m+qDSYCRPt0+iveqxP4UxDrGjDkvk6YYi3xBFdPVWEbwCjLNhzvMbiCQD6RNUH2jOoKZ
+         DbelvNvMw9Sa5d7yjwnbOlqOvhyHnv/wnlLlF8Lr4NXpckCE1PATAUIAQjBjwVOagMXH
+         DcR/5rk0+aBv30uGLNxS+JEhPFpkRdoDiSS52xzOH/ofYig5IwIJXrzWQNArdXn8yZpj
+         tKk5MnRyeFAk+ar8WcFp5UcP1bIGvl5t86R3Bw8dsTxfwQ32DLvP3X7WufXela0/4NH8
+         7FMQ==
+X-Gm-Message-State: ABuFfojofQZA6V6vkTOpZSpih8QHSjnWU3VXIgzEJu6OlWFNbn9YTBGH
+        yJ/O13XVJZctn1M+LbiBrLNrk85iKm/WS7QUkZA=
+X-Google-Smtp-Source: ACcGV62sExUhslwz5MlUbU5W2EKTTbyj9HNlJYoHTS3Ds0EBOrUZnrP7CN97IKmuLoBqatBCHN4jlJWMNxfqyQkbZ7w=
+X-Received: by 2002:aca:af91:: with SMTP id y139-v6mr14619737oie.322.1539847794508;
+ Thu, 18 Oct 2018 00:29:54 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181017144716.GA11485@nishad>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-AU
-Content-Transfer-Encoding: 7bit
+References: <20180923144510.4564-1-hdegoede@redhat.com> <20180923144510.4564-2-hdegoede@redhat.com>
+In-Reply-To: <20180923144510.4564-2-hdegoede@redhat.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 18 Oct 2018 09:29:42 +0200
+Message-ID: <CAJZ5v0iu5eikTw3wOK7wHOVe+xHTv5xPTnQELEyA2oF8sL3S=g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] x86: baytrail/cherrytrail: Rework and move P-Unit
+ PMIC bus semaphore code
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/10/2018 10:47 PM, Nishad Kamdar wrote:
-> Use the gpiod interface for rdwr_pin, convert_pin and busy_pin
-> instead of the deprecated old non-descriptor interface.
-> 
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+On Sun, Sep 23, 2018 at 4:45 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> On some BYT/CHT systems the SoC's P-Unit shares the I2C bus with the
+> kernel. The P-Unit has a semaphore for the PMIC bus which we can take to
+> block it from accessing the shared bus while the kernel wants to access it.
+>
+> Currently we have the I2C-controller driver acquiring and releasing the
+> semaphore around each I2C transfer. There are 2 problems with this:
+>
+> 1) PMIC accesses often come in the form of a read-modify-write on one of
+> the PMIC registers, we currently release the P-Unit's PMIC bus semaphore
+> between the read and the write. If the P-Unit modifies the register during
+> this window?, then we end up overwriting the P-Unit's changes.
+> I believe that this is mostly an academic problem, but I'm not sure.
+>
+> 2) To safely access the shared I2C bus, we need to do 3 things:
+> a) Notify the GPU driver that we are starting a window in which it may not
+> access the P-Unit, since the P-Unit seems to ignore the semaphore for
+> explicit power-level requests made by the GPU driver
+> b) Make a pm_qos request to force all CPU cores out of C6/C7 since entering
+> C6/C7 while we hold the semaphore hangs the SoC
+> c) Finally take the P-Unit's PMIC bus semaphore
+> All 3 these steps together are somewhat expensive, so ideally if we have
+> a bunch of i2c transfers grouped together we only do this once for the
+> entire group.
+>
+> Taking the read-modify-write on a PMIC register as example then ideally we
+> would only do all 3 steps once at the beginning and undo all 3 steps once
+> at the end.
+>
+> For this we need to be able to take the semaphore from within e.g. the PMIC
+> opregion driver, yet we do not want to remove the taking of the semaphore
+> from the I2C-controller driver, as that is still necessary to protect many
+> other code-paths leading to accessing the shared I2C bus.
+>
+> This means that we first have the PMIC driver acquire the semaphore and
+> then have the I2C controller driver trying to acquire it again.
+>
+> To make this possible this commit does the following:
+>
+> 1) Move the semaphore code from being private to the I2C controller driver
+> into the generic iosf_mbi code, which already has other code to deal with
+> the shared bus so that it can be accessed outside of the I2C bus driver.
+>
+> 2) Rework the code so that it can be called multiple times nested, while
+> still blocking I2C accesses while e.g. the GPU driver has indicated the
+> P-Unit needs the bus through a iosf_mbi_punit_acquire() call.
+>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+
+If there are no objections or concerns regarding this patch, I'm
+inclined to take the entire series including it.
+
 > ---
-> Changes in v2:
->   - Correct the error messages as pin number being showed
->     has now been replaced by error code.
+> Note this commit deliberately limits the i2c-designware changes to
+> only touch i2c-designware-baytrail.c, deliberately not doing some cleanups
+> which become possible after removing the semaphore code from the
+> i2c-designmware code. This is done so that this commit can be merged
+> through the x86 tree without causing conflicts in the i2c tree.
+>
+> The cleanups to the i2c-designware tree will be done in a follow up
+> patch which can be merged once this commit is in place.
 > ---
->   drivers/staging/iio/adc/ad7816.c | 80 ++++++++++++++------------------
->   1 file changed, 34 insertions(+), 46 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/adc/ad7816.c b/drivers/staging/iio/adc/ad7816.c
-> index bf76a8620bdb..12c4e0ab4713 100644
-> --- a/drivers/staging/iio/adc/ad7816.c
-> +++ b/drivers/staging/iio/adc/ad7816.c
-> @@ -7,7 +7,7 @@
->    */
->   
->   #include <linux/interrupt.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
->   #include <linux/device.h>
->   #include <linux/kernel.h>
->   #include <linux/slab.h>
-> @@ -44,9 +44,9 @@
->   
->   struct ad7816_chip_info {
->   	struct spi_device *spi_dev;
-> -	u16 rdwr_pin;
-> -	u16 convert_pin;
-> -	u16 busy_pin;
-> +	struct gpio_desc *rdwr_pin;
-> +	struct gpio_desc *convert_pin;
-> +	struct gpio_desc *busy_pin;
->   	u8  oti_data[AD7816_CS_MAX + 1];
->   	u8  channel_id;	/* 0 always be temperature */
->   	u8  mode;
-> @@ -61,28 +61,28 @@ static int ad7816_spi_read(struct ad7816_chip_info *chip, u16 *data)
->   	int ret = 0;
->   	__be16 buf;
->   
-> -	gpio_set_value(chip->rdwr_pin, 1);
-> -	gpio_set_value(chip->rdwr_pin, 0);
-> +	gpiod_set_value(chip->rdwr_pin, 1);
-> +	gpiod_set_value(chip->rdwr_pin, 0);
->   	ret = spi_write(spi_dev, &chip->channel_id, sizeof(chip->channel_id));
->   	if (ret < 0) {
->   		dev_err(&spi_dev->dev, "SPI channel setting error\n");
->   		return ret;
->   	}
-> -	gpio_set_value(chip->rdwr_pin, 1);
-> +	gpiod_set_value(chip->rdwr_pin, 1);
->   
->   	if (chip->mode == AD7816_PD) { /* operating mode 2 */
-> -		gpio_set_value(chip->convert_pin, 1);
-> -		gpio_set_value(chip->convert_pin, 0);
-> +		gpiod_set_value(chip->convert_pin, 1);
-> +		gpiod_set_value(chip->convert_pin, 0);
->   	} else { /* operating mode 1 */
-> -		gpio_set_value(chip->convert_pin, 0);
-> -		gpio_set_value(chip->convert_pin, 1);
-> +		gpiod_set_value(chip->convert_pin, 0);
-> +		gpiod_set_value(chip->convert_pin, 1);
->   	}
->   
-> -	while (gpio_get_value(chip->busy_pin))
-> +	while (gpiod_get_value(chip->busy_pin))
->   		cpu_relax();
->   
-> -	gpio_set_value(chip->rdwr_pin, 0);
-> -	gpio_set_value(chip->rdwr_pin, 1);
-> +	gpiod_set_value(chip->rdwr_pin, 0);
-> +	gpiod_set_value(chip->rdwr_pin, 1);
->   	ret = spi_read(spi_dev, &buf, sizeof(*data));
->   	if (ret < 0) {
->   		dev_err(&spi_dev->dev, "SPI data read error\n");
-> @@ -99,8 +99,8 @@ static int ad7816_spi_write(struct ad7816_chip_info *chip, u8 data)
->   	struct spi_device *spi_dev = chip->spi_dev;
->   	int ret = 0;
->   
-> -	gpio_set_value(chip->rdwr_pin, 1);
-> -	gpio_set_value(chip->rdwr_pin, 0);
-> +	gpiod_set_value(chip->rdwr_pin, 1);
-> +	gpiod_set_value(chip->rdwr_pin, 0);
->   	ret = spi_write(spi_dev, &data, sizeof(data));
->   	if (ret < 0)
->   		dev_err(&spi_dev->dev, "SPI oti data write error\n");
-> @@ -129,10 +129,10 @@ static ssize_t ad7816_store_mode(struct device *dev,
->   	struct ad7816_chip_info *chip = iio_priv(indio_dev);
->   
->   	if (strcmp(buf, "full")) {
-> -		gpio_set_value(chip->rdwr_pin, 1);
-> +		gpiod_set_value(chip->rdwr_pin, 1);
->   		chip->mode = AD7816_FULL;
->   	} else {
-> -		gpio_set_value(chip->rdwr_pin, 0);
-> +		gpiod_set_value(chip->rdwr_pin, 0);
->   		chip->mode = AD7816_PD;
->   	}
->   
-> @@ -345,15 +345,9 @@ static int ad7816_probe(struct spi_device *spi_dev)
->   {
->   	struct ad7816_chip_info *chip;
->   	struct iio_dev *indio_dev;
-> -	unsigned short *pins = dev_get_platdata(&spi_dev->dev);
->   	int ret = 0;
->   	int i;
->   
-> -	if (!pins) {
-> -		dev_err(&spi_dev->dev, "No necessary GPIO platform data.\n");
-> -		return -EINVAL;
-> -	}
-> -
->   	indio_dev = devm_iio_device_alloc(&spi_dev->dev, sizeof(*chip));
->   	if (!indio_dev)
->   		return -ENOMEM;
-> @@ -364,34 +358,28 @@ static int ad7816_probe(struct spi_device *spi_dev)
->   	chip->spi_dev = spi_dev;
->   	for (i = 0; i <= AD7816_CS_MAX; i++)
->   		chip->oti_data[i] = 203;
-> -	chip->rdwr_pin = pins[0];
-> -	chip->convert_pin = pins[1];
-> -	chip->busy_pin = pins[2];
-> -
-> -	ret = devm_gpio_request(&spi_dev->dev, chip->rdwr_pin,
-> -				spi_get_device_id(spi_dev)->name);
-> -	if (ret) {
-> -		dev_err(&spi_dev->dev, "Fail to request rdwr gpio PIN %d.\n",
-> -			chip->rdwr_pin);
+>  arch/x86/include/asm/iosf_mbi.h              |  39 +++--
+>  arch/x86/platform/intel/iosf_mbi.c           | 161 +++++++++++++++++--
+>  drivers/i2c/busses/i2c-designware-baytrail.c | 125 +-------------
+>  3 files changed, 180 insertions(+), 145 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/iosf_mbi.h b/arch/x86/include/asm/iosf_mbi.h
+> index 3de0489deade..5270ff39b9af 100644
+> --- a/arch/x86/include/asm/iosf_mbi.h
+> +++ b/arch/x86/include/asm/iosf_mbi.h
+> @@ -105,8 +105,10 @@ int iosf_mbi_modify(u8 port, u8 opcode, u32 offset, u32 mdr, u32 mask);
+>   * the PMIC bus while another driver is also accessing the PMIC bus various bad
+>   * things happen.
+>   *
+> - * To avoid these problems this function must be called before accessing the
+> - * P-Unit or the PMIC, be it through iosf_mbi* functions or through other means.
+> + * Call this function before sending requests to the P-Unit which may make it
+> + * access the PMIC, be it through iosf_mbi* functions or through other means.
+> + * This function will block all kernel access to the PMIC I2C bus, so that the
+> + * P-Unit can safely access the PMIC over the shared I2C bus.
+>   *
+>   * Note on these systems the i2c-bus driver will request a sempahore from the
+>   * P-Unit for exclusive access to the PMIC bus when i2c drivers are accessing
+> @@ -122,6 +124,31 @@ void iosf_mbi_punit_acquire(void);
+>   */
+>  void iosf_mbi_punit_release(void);
+>
+> +/**
+> + * iosf_mbi_block_punit_i2c_access() - Block P-Unit accesses to the PMIC bus
+> + *
+> + * Call this function to block P-Unit access to the PMIC I2C bus, so that the
+> + * kernel can safely access the PMIC over the shared I2C bus.
+> + *
+> + * This function acquires the P-Unit bus semaphore and notifies
+> + * pmic_bus_access_notifier listeners that they may no longer access the
+> + * P-Unit in a way which may cause it to access the shared I2C bus.
+> + *
+> + * Note this function may be called multiple times and the bus will not
+> + * be released until iosf_mbi_unblock_punit_i2c_access() has been called the
+> + * same amount of times.
+> + *
+> + * Return: Nonzero on error
+> + */
+> +int iosf_mbi_block_punit_i2c_access(void);
 > +
-> +	chip->rdwr_pin = devm_gpiod_get(&spi_dev->dev, "rdwr", GPIOD_IN);
-> +	if (IS_ERR(chip->rdwr_pin)) {
-> +		ret = PTR_ERR(chip->rdwr_pin);
-> +		dev_err(&spi_dev->dev, "Failed to request rdwr GPIO: %d\n",
-> +			ret);
->   		return ret;
->   	}
-> -	gpio_direction_input(chip->rdwr_pin);
-
-The RD/WR pin is an input to the AD78xx. So this doesn't make sense being GPIOD_IN.
-
-
-> -	ret = devm_gpio_request(&spi_dev->dev, chip->convert_pin,
-> -				spi_get_device_id(spi_dev)->name);
-> -	if (ret) {
-> -		dev_err(&spi_dev->dev, "Fail to request convert gpio PIN %d.\n",
-> -			chip->convert_pin);
-> +	chip->convert_pin = devm_gpiod_get(&spi_dev->dev, "convert", GPIOD_IN);
-> +	if (IS_ERR(chip->convert_pin)) {
-> +		ret = PTR_ERR(chip->convert_pin);
-> +		dev_err(&spi_dev->dev, "Failed to request convert GPIO: %d\n",
-> +			ret);
->   		return ret;
->   	}
-> -	gpio_direction_input(chip->convert_pin);
-
-ditto, the CONVST pin is an input to the AD78xx.
-
-> -	ret = devm_gpio_request(&spi_dev->dev, chip->busy_pin,
-> -				spi_get_device_id(spi_dev)->name);
-> -	if (ret) {
-> -		dev_err(&spi_dev->dev, "Fail to request busy gpio PIN %d.\n",
-> -			chip->busy_pin);
-> +	chip->busy_pin = devm_gpiod_get(&spi_dev->dev, "busy", GPIOD_IN);
-> +	if (IS_ERR(chip->busy_pin)) {
-> +		ret = PTR_ERR(chip->busy_pin);
-> +		dev_err(&spi_dev->dev, "Failed to request busy GPIO: %d\n",
-> +			ret);
->   		return ret;
->   	}
-> -	gpio_direction_input(chip->busy_pin);
-
-
-The busy pin doesn't exist on the ad7818.
-Which the driver claims to support in the id table:
-
- > static const struct spi_device_id ad7816_id[] = {
- > 	{ "ad7816", 0 },
- > 	{ "ad7817", 0 },
- > 	{ "ad7818", 0 },
- > 	{}
- > };
-
-See:
-https://www.analog.com/media/en/technical-documentation/data-sheets/AD7817_7818.pdf
-Page 9.
-
-
->   
->   	indio_dev->name = spi_get_device_id(spi_dev)->name;
->   	indio_dev->dev.parent = &spi_dev->dev;
-> 
-
-Also should the pin names be documented in a device tree binding doc?
-
-
--- 
-Regards
-Phil Reid
+> +/*
+> + * iosf_mbi_unblock_punit_i2c_access() - Release PMIC I2C bus block
+> + *
+> + * Release i2c access block gotten through iosf_mbi_block_punit_i2c_access().
+> + */
+> +void iosf_mbi_unblock_punit_i2c_access(void);
+> +
+>  /**
+>   * iosf_mbi_register_pmic_bus_access_notifier - Register PMIC bus notifier
+>   *
+> @@ -158,14 +185,6 @@ int iosf_mbi_unregister_pmic_bus_access_notifier(struct notifier_block *nb);
+>  int iosf_mbi_unregister_pmic_bus_access_notifier_unlocked(
+>         struct notifier_block *nb);
+>
+> -/**
+> - * iosf_mbi_call_pmic_bus_access_notifier_chain - Call PMIC bus notifier chain
+> - *
+> - * @val: action to pass into listener's notifier_call function
+> - * @v: data pointer to pass into listener's notifier_call function
+> - */
+> -int iosf_mbi_call_pmic_bus_access_notifier_chain(unsigned long val, void *v);
+> -
+>  /**
+>   * iosf_mbi_assert_punit_acquired - Assert that the P-Unit has been acquired.
+>   */
+> diff --git a/arch/x86/platform/intel/iosf_mbi.c b/arch/x86/platform/intel/iosf_mbi.c
+> index 6f37a2137a79..5623a315f004 100644
+> --- a/arch/x86/platform/intel/iosf_mbi.c
+> +++ b/arch/x86/platform/intel/iosf_mbi.c
+> @@ -18,12 +18,14 @@
+>   * enumerate the device using PCI.
+>   */
+>
+> +#include <linux/delay.h>
+>  #include <linux/module.h>
+>  #include <linux/init.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/pci.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/capability.h>
+> +#include <linux/pm_qos.h>
+>
+>  #include <asm/iosf_mbi.h>
+>
+> @@ -34,8 +36,8 @@
+>
+>  static struct pci_dev *mbi_pdev;
+>  static DEFINE_SPINLOCK(iosf_mbi_lock);
+> -static DEFINE_MUTEX(iosf_mbi_punit_mutex);
+> -static BLOCKING_NOTIFIER_HEAD(iosf_mbi_pmic_bus_access_notifier);
+> +
+> +/**************** Generic iosf_mbi access helpers ****************/
+>
+>  static inline u32 iosf_mbi_form_mcr(u8 op, u8 port, u8 offset)
+>  {
+> @@ -192,6 +194,30 @@ bool iosf_mbi_available(void)
+>  }
+>  EXPORT_SYMBOL(iosf_mbi_available);
+>
+> +/*
+> + **************** PUNIT/kernel shared i2c bus arbritration ****************
+> + *
+> + * Some Bay Trail and Cherry Trail devices have the PUNIT and us (the kernel)
+> + * share a single I2C bus to the PMIC. Below are helpers to arbitrate the
+> + * accesses between the kernel and the PUNIT.
+> + *
+> + * See arch/x86/include/asm/iosf_mbi.h for kernel-doc text for each function.
+> + */
+> +
+> +#define SEMAPHORE_TIMEOUT              500
+> +#define PUNIT_SEMAPHORE_BYT            0x7
+> +#define PUNIT_SEMAPHORE_CHT            0x10e
+> +#define PUNIT_SEMAPHORE_BIT            BIT(0)
+> +#define PUNIT_SEMAPHORE_ACQUIRE                BIT(1)
+> +
+> +static DEFINE_MUTEX(iosf_mbi_punit_mutex);
+> +static DEFINE_MUTEX(iosf_mbi_block_punit_i2c_access_count_mutex);
+> +static BLOCKING_NOTIFIER_HEAD(iosf_mbi_pmic_bus_access_notifier);
+> +static u32 iosf_mbi_block_punit_i2c_access_count;
+> +static u32 iosf_mbi_sem_address;
+> +static unsigned long iosf_mbi_sem_acquired;
+> +static struct pm_qos_request iosf_mbi_pm_qos;
+> +
+>  void iosf_mbi_punit_acquire(void)
+>  {
+>         mutex_lock(&iosf_mbi_punit_mutex);
+> @@ -204,6 +230,113 @@ void iosf_mbi_punit_release(void)
+>  }
+>  EXPORT_SYMBOL(iosf_mbi_punit_release);
+>
+> +static int iosf_mbi_get_sem(u32 *sem)
+> +{
+> +       int ret;
+> +
+> +       ret = iosf_mbi_read(BT_MBI_UNIT_PMC, MBI_REG_READ,
+> +                           iosf_mbi_sem_address, sem);
+> +       if (ret) {
+> +               dev_err(&mbi_pdev->dev, "Error punit semaphore read failed\n");
+> +               return ret;
+> +       }
+> +
+> +       *sem &= PUNIT_SEMAPHORE_BIT;
+> +       return 0;
+> +}
+> +
+> +static void iosf_mbi_reset_semaphore(void)
+> +{
+> +       if (iosf_mbi_modify(BT_MBI_UNIT_PMC, MBI_REG_READ,
+> +                           iosf_mbi_sem_address, 0, PUNIT_SEMAPHORE_BIT))
+> +               dev_err(&mbi_pdev->dev, "Error punit semaphore reset failed\n");
+> +
+> +       pm_qos_update_request(&iosf_mbi_pm_qos, PM_QOS_DEFAULT_VALUE);
+> +
+> +       blocking_notifier_call_chain(&iosf_mbi_pmic_bus_access_notifier,
+> +                                    MBI_PMIC_BUS_ACCESS_END, NULL);
+> +       mutex_unlock(&iosf_mbi_punit_mutex);
+> +}
+> +
+> +int iosf_mbi_block_punit_i2c_access(void)
+> +{
+> +       unsigned long start, end;
+> +       int ret = 0;
+> +       u32 sem;
+> +
+> +       if (WARN_ON(!mbi_pdev || !iosf_mbi_sem_address))
+> +               return -ENXIO;
+> +
+> +       mutex_lock(&iosf_mbi_block_punit_i2c_access_count_mutex);
+> +
+> +       if (iosf_mbi_block_punit_i2c_access_count > 0)
+> +               goto out;
+> +
+> +       mutex_lock(&iosf_mbi_punit_mutex);
+> +       blocking_notifier_call_chain(&iosf_mbi_pmic_bus_access_notifier,
+> +                                    MBI_PMIC_BUS_ACCESS_BEGIN, NULL);
+> +
+> +       /*
+> +        * Disallow the CPU to enter C6 or C7 state, entering these states
+> +        * requires the punit to talk to the pmic and if this happens while
+> +        * we're holding the semaphore, the SoC hangs.
+> +        */
+> +       pm_qos_update_request(&iosf_mbi_pm_qos, 0);
+> +
+> +       /* host driver writes to side band semaphore register */
+> +       ret = iosf_mbi_write(BT_MBI_UNIT_PMC, MBI_REG_WRITE,
+> +                            iosf_mbi_sem_address, PUNIT_SEMAPHORE_ACQUIRE);
+> +       if (ret) {
+> +               dev_err(&mbi_pdev->dev, "Error punit semaphore request failed\n");
+> +               goto out;
+> +       }
+> +
+> +       /* host driver waits for bit 0 to be set in semaphore register */
+> +       start = jiffies;
+> +       end = start + msecs_to_jiffies(SEMAPHORE_TIMEOUT);
+> +       do {
+> +               ret = iosf_mbi_get_sem(&sem);
+> +               if (!ret && sem) {
+> +                       iosf_mbi_sem_acquired = jiffies;
+> +                       dev_dbg(&mbi_pdev->dev, "punit semaphore acquired after %ums\n",
+> +                               jiffies_to_msecs(jiffies - start));
+> +                       goto out; /* Success, done. */
+> +               }
+> +
+> +               usleep_range(1000, 2000);
+> +       } while (time_before(jiffies, end));
+> +
+> +       ret = -ETIMEDOUT;
+> +       dev_err(&mbi_pdev->dev, "Error punit semaphore timed out, resetting\n");
+> +       iosf_mbi_reset_semaphore();
+> +
+> +       if (!iosf_mbi_get_sem(&sem))
+> +               dev_err(&mbi_pdev->dev, "PUNIT SEM: %d\n", sem);
+> +out:
+> +       if (!WARN_ON(ret))
+> +               iosf_mbi_block_punit_i2c_access_count++;
+> +
+> +       mutex_unlock(&iosf_mbi_block_punit_i2c_access_count_mutex);
+> +
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL(iosf_mbi_block_punit_i2c_access);
+> +
+> +void iosf_mbi_unblock_punit_i2c_access(void)
+> +{
+> +       mutex_lock(&iosf_mbi_block_punit_i2c_access_count_mutex);
+> +
+> +       iosf_mbi_block_punit_i2c_access_count--;
+> +       if (iosf_mbi_block_punit_i2c_access_count == 0) {
+> +               iosf_mbi_reset_semaphore();
+> +               dev_dbg(&mbi_pdev->dev, "punit semaphore held for %ums\n",
+> +                       jiffies_to_msecs(jiffies - iosf_mbi_sem_acquired));
+> +       }
+> +
+> +       mutex_unlock(&iosf_mbi_block_punit_i2c_access_count_mutex);
+> +}
+> +EXPORT_SYMBOL(iosf_mbi_unblock_punit_i2c_access);
+> +
+>  int iosf_mbi_register_pmic_bus_access_notifier(struct notifier_block *nb)
+>  {
+>         int ret;
+> @@ -241,19 +374,14 @@ int iosf_mbi_unregister_pmic_bus_access_notifier(struct notifier_block *nb)
+>  }
+>  EXPORT_SYMBOL(iosf_mbi_unregister_pmic_bus_access_notifier);
+>
+> -int iosf_mbi_call_pmic_bus_access_notifier_chain(unsigned long val, void *v)
+> -{
+> -       return blocking_notifier_call_chain(
+> -                               &iosf_mbi_pmic_bus_access_notifier, val, v);
+> -}
+> -EXPORT_SYMBOL(iosf_mbi_call_pmic_bus_access_notifier_chain);
+> -
+>  void iosf_mbi_assert_punit_acquired(void)
+>  {
+>         WARN_ON(!mutex_is_locked(&iosf_mbi_punit_mutex));
+>  }
+>  EXPORT_SYMBOL(iosf_mbi_assert_punit_acquired);
+>
+> +/**************** iosf_mbi debug code ****************/
+> +
+>  #ifdef CONFIG_IOSF_MBI_DEBUG
+>  static u32     dbg_mdr;
+>  static u32     dbg_mcr;
+> @@ -338,7 +466,7 @@ static inline void iosf_debugfs_remove(void) { }
+>  #endif /* CONFIG_IOSF_MBI_DEBUG */
+>
+>  static int iosf_mbi_probe(struct pci_dev *pdev,
+> -                         const struct pci_device_id *unused)
+> +                         const struct pci_device_id *dev_id)
+>  {
+>         int ret;
+>
+> @@ -349,12 +477,16 @@ static int iosf_mbi_probe(struct pci_dev *pdev,
+>         }
+>
+>         mbi_pdev = pci_dev_get(pdev);
+> +       iosf_mbi_sem_address = dev_id->driver_data;
+> +
+>         return 0;
+>  }
+>
+>  static const struct pci_device_id iosf_mbi_pci_ids[] = {
+> -       { PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_BAYTRAIL) },
+> -       { PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_BRASWELL) },
+> +       { PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_BAYTRAIL),
+> +         .driver_data = PUNIT_SEMAPHORE_BYT },
+> +       { PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_BRASWELL),
+> +         .driver_data = PUNIT_SEMAPHORE_CHT },
+>         { PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_QUARK_X1000) },
+>         { PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_TANGIER) },
+>         { 0, },
+> @@ -371,6 +503,9 @@ static int __init iosf_mbi_init(void)
+>  {
+>         iosf_debugfs_init();
+>
+> +       pm_qos_add_request(&iosf_mbi_pm_qos, PM_QOS_CPU_DMA_LATENCY,
+> +                          PM_QOS_DEFAULT_VALUE);
+> +
+>         return pci_register_driver(&iosf_mbi_pci_driver);
+>  }
+>
+> @@ -381,6 +516,8 @@ static void __exit iosf_mbi_exit(void)
+>         pci_unregister_driver(&iosf_mbi_pci_driver);
+>         pci_dev_put(mbi_pdev);
+>         mbi_pdev = NULL;
+> +
+> +       pm_qos_remove_request(&iosf_mbi_pm_qos);
+>  }
+>
+>  module_init(iosf_mbi_init);
+> diff --git a/drivers/i2c/busses/i2c-designware-baytrail.c b/drivers/i2c/busses/i2c-designware-baytrail.c
+> index 9ca1feaba98f..8c84fa0b0384 100644
+> --- a/drivers/i2c/busses/i2c-designware-baytrail.c
+> +++ b/drivers/i2c/busses/i2c-designware-baytrail.c
+> @@ -3,139 +3,23 @@
+>   * Intel BayTrail PMIC I2C bus semaphore implementaion
+>   * Copyright (c) 2014, Intel Corporation.
+>   */
+> -#include <linux/delay.h>
+>  #include <linux/device.h>
+>  #include <linux/acpi.h>
+>  #include <linux/i2c.h>
+>  #include <linux/interrupt.h>
+> -#include <linux/pm_qos.h>
+>
+>  #include <asm/iosf_mbi.h>
+>
+>  #include "i2c-designware-core.h"
+>
+> -#define SEMAPHORE_TIMEOUT      500
+> -#define PUNIT_SEMAPHORE                0x7
+> -#define PUNIT_SEMAPHORE_CHT    0x10e
+> -#define PUNIT_SEMAPHORE_BIT    BIT(0)
+> -#define PUNIT_SEMAPHORE_ACQUIRE        BIT(1)
+> -
+> -static unsigned long acquired;
+> -
+> -static u32 get_sem_addr(struct dw_i2c_dev *dev)
+> -{
+> -       if (dev->flags & MODEL_CHERRYTRAIL)
+> -               return PUNIT_SEMAPHORE_CHT;
+> -       else
+> -               return PUNIT_SEMAPHORE;
+> -}
+> -
+> -static int get_sem(struct dw_i2c_dev *dev, u32 *sem)
+> -{
+> -       u32 addr = get_sem_addr(dev);
+> -       u32 data;
+> -       int ret;
+> -
+> -       ret = iosf_mbi_read(BT_MBI_UNIT_PMC, MBI_REG_READ, addr, &data);
+> -       if (ret) {
+> -               dev_err(dev->dev, "iosf failed to read punit semaphore\n");
+> -               return ret;
+> -       }
+> -
+> -       *sem = data & PUNIT_SEMAPHORE_BIT;
+> -
+> -       return 0;
+> -}
+> -
+> -static void reset_semaphore(struct dw_i2c_dev *dev)
+> -{
+> -       if (iosf_mbi_modify(BT_MBI_UNIT_PMC, MBI_REG_READ, get_sem_addr(dev),
+> -                           0, PUNIT_SEMAPHORE_BIT))
+> -               dev_err(dev->dev, "iosf failed to reset punit semaphore during write\n");
+> -
+> -       pm_qos_update_request(&dev->pm_qos, PM_QOS_DEFAULT_VALUE);
+> -
+> -       iosf_mbi_call_pmic_bus_access_notifier_chain(MBI_PMIC_BUS_ACCESS_END,
+> -                                                    NULL);
+> -       iosf_mbi_punit_release();
+> -}
+> -
+>  static int baytrail_i2c_acquire(struct dw_i2c_dev *dev)
+>  {
+> -       u32 addr;
+> -       u32 sem = PUNIT_SEMAPHORE_ACQUIRE;
+> -       int ret;
+> -       unsigned long start, end;
+> -
+> -       might_sleep();
+> -
+> -       if (!dev || !dev->dev)
+> -               return -ENODEV;
+> -
+> -       if (!dev->release_lock)
+> -               return 0;
+> -
+> -       iosf_mbi_punit_acquire();
+> -       iosf_mbi_call_pmic_bus_access_notifier_chain(MBI_PMIC_BUS_ACCESS_BEGIN,
+> -                                                    NULL);
+> -
+> -       /*
+> -        * Disallow the CPU to enter C6 or C7 state, entering these states
+> -        * requires the punit to talk to the pmic and if this happens while
+> -        * we're holding the semaphore, the SoC hangs.
+> -        */
+> -       pm_qos_update_request(&dev->pm_qos, 0);
+> -
+> -       addr = get_sem_addr(dev);
+> -
+> -       /* host driver writes to side band semaphore register */
+> -       ret = iosf_mbi_write(BT_MBI_UNIT_PMC, MBI_REG_WRITE, addr, sem);
+> -       if (ret) {
+> -               dev_err(dev->dev, "iosf punit semaphore request failed\n");
+> -               goto out;
+> -       }
+> -
+> -       /* host driver waits for bit 0 to be set in semaphore register */
+> -       start = jiffies;
+> -       end = start + msecs_to_jiffies(SEMAPHORE_TIMEOUT);
+> -       do {
+> -               ret = get_sem(dev, &sem);
+> -               if (!ret && sem) {
+> -                       acquired = jiffies;
+> -                       dev_dbg(dev->dev, "punit semaphore acquired after %ums\n",
+> -                               jiffies_to_msecs(jiffies - start));
+> -                       return 0;
+> -               }
+> -
+> -               usleep_range(1000, 2000);
+> -       } while (time_before(jiffies, end));
+> -
+> -       dev_err(dev->dev, "punit semaphore timed out, resetting\n");
+> -out:
+> -       reset_semaphore(dev);
+> -
+> -       ret = iosf_mbi_read(BT_MBI_UNIT_PMC, MBI_REG_READ, addr, &sem);
+> -       if (ret)
+> -               dev_err(dev->dev, "iosf failed to read punit semaphore\n");
+> -       else
+> -               dev_err(dev->dev, "PUNIT SEM: %d\n", sem);
+> -
+> -       WARN_ON(1);
+> -
+> -       return -ETIMEDOUT;
+> +       return iosf_mbi_block_punit_i2c_access();
+>  }
+>
+>  static void baytrail_i2c_release(struct dw_i2c_dev *dev)
+>  {
+> -       if (!dev || !dev->dev)
+> -               return;
+> -
+> -       if (!dev->acquire_lock)
+> -               return;
+> -
+> -       reset_semaphore(dev);
+> -       dev_dbg(dev->dev, "punit semaphore held for %ums\n",
+> -               jiffies_to_msecs(jiffies - acquired));
+> +       iosf_mbi_unblock_punit_i2c_access();
+>  }
+>
+>  int i2c_dw_probe_lock_support(struct dw_i2c_dev *dev)
+> @@ -166,14 +50,9 @@ int i2c_dw_probe_lock_support(struct dw_i2c_dev *dev)
+>         dev->release_lock = baytrail_i2c_release;
+>         dev->shared_with_punit = true;
+>
+> -       pm_qos_add_request(&dev->pm_qos, PM_QOS_CPU_DMA_LATENCY,
+> -                          PM_QOS_DEFAULT_VALUE);
+> -
+>         return 0;
+>  }
+>
+>  void i2c_dw_remove_lock_support(struct dw_i2c_dev *dev)
+>  {
+> -       if (dev->acquire_lock)
+> -               pm_qos_remove_request(&dev->pm_qos);
+>  }
+> --
+> 2.19.0.rc1
+>
