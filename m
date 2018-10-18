@@ -2,109 +2,141 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36EB3C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C17C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:42:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEF7D2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:42:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="gjk+w3oL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEF7D2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	by mail.kernel.org (Postfix) with ESMTP id E5FA92145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:42:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5FA92145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbeJRPmC (ORCPT
+        id S1727741AbeJRPmh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 11:42:02 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:54883 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727360AbeJRPmB (ORCPT
+        Thu, 18 Oct 2018 11:42:37 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49864 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727360AbeJRPmh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 11:42:01 -0400
-Received: by mail-it1-f196.google.com with SMTP id l191-v6so5480011ita.4
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 00:42:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=22M500sfgMIP1n4i/C/OLVOxgSVvN2ro60oCQqNUGFk=;
-        b=gjk+w3oLY/4lEqBtgIdfQDGAaWsyt/AIALChKxzx+JS74iIYbBXFA3jQ0ZzSfV4eEC
-         1FW8AqwzfdLfNNl3p0728kd5WUQAvroX9FdYvYPVG96erNOiXDUaO8ATd6Se+bY9pwXz
-         ljbetlAE6FbLNsqaF9Ew6/WJS9aPSDaC5Ztwg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=22M500sfgMIP1n4i/C/OLVOxgSVvN2ro60oCQqNUGFk=;
-        b=gAI+q3J2Eo1OV4wCEz18Jkr+4i+zap7f6l+/wNaXYxMa8K+t64eIHbb+5IGiSfBQmQ
-         dMshUygywjoIRL5NIAOvHEOISMi3YSt0OpbC5DClIEShUVMVT2FTaWDyQUkZeF0qI5jN
-         FEckxPPmNT0f4exjcueQNW/E3JHNnUsldnl29kVIef2tyVb0s3A8fNxNsBZzGkoxVCCY
-         O6pTpEB2PJV2CS2wUNHdIXyVgZwJk014CFu271XU6k7dsmnt6xcPafo1AeS/dvs7A3Yi
-         JI4hw1+JXCTvDh5hml8XpHPaPLUD3ECOeIlQ/8vLbEFVQYcZsGMknt8MC/BAOmbIxGXl
-         je1g==
-X-Gm-Message-State: ABuFfojBs0QOs+ldkacRSKdbhpkaINX3LjpAen/a4VLrL19nVsXSEbjO
-        ZTszQ6wNzSJuaYd9372JYn0rTO1K1jbAW/k7J+I36w==
-X-Google-Smtp-Source: ACcGV628XecVjusBQKeb4/RFuvKFDek5zW+Y7UTEGbRJQpS39nxBs4TZELpZg6QsB5kE2jC24+EofqCvNiGkLiQ3LyU=
-X-Received: by 2002:a24:75d6:: with SMTP id y205-v6mr4143781itc.1.1539848537620;
- Thu, 18 Oct 2018 00:42:17 -0700 (PDT)
+        Thu, 18 Oct 2018 11:42:37 -0400
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1gD2xH-0001q0-DZ; Thu, 18 Oct 2018 07:42:51 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH] USB: Wait for extra delay time after USB_PORT_FEAT_RESET for quirky hub
+Date:   Thu, 18 Oct 2018 15:42:47 +0800
+Message-Id: <20181018074247.6858-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Received: by 2002:a6b:bf41:0:0:0:0:0 with HTTP; Thu, 18 Oct 2018 00:42:17
- -0700 (PDT)
-X-Originating-IP: [212.96.48.140]
-In-Reply-To: <87sh13ya8m.fsf@mid.deneb.enyo.de>
-References: <CAJfpegsxFUGeczcC-pzK0WWROjv48_PvXtNun-f5QJMoUDn1Dw@mail.gmail.com>
- <006890C4-64D4-4DE2-A1F0-335FFFD585BB@dilger.ca> <CAJfpeguvJZbP83mSULc74Yhpp_CPMBW1XvcgbvCbLnF7QCncUA@mail.gmail.com>
- <E9903911-9289-4038-9835-9353762A3BAF@dilger.ca> <878t2wb4dr.fsf@mid.deneb.enyo.de>
- <CAJfpegscdd7Q7waB4me7RMC_SJv4=rQwEGXBYNGAr2F3WE5=zA@mail.gmail.com> <87sh13ya8m.fsf@mid.deneb.enyo.de>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 18 Oct 2018 09:42:17 +0200
-Message-ID: <CAJfpegseDedv47mSWE=Noue+Y2e6xBDPe2WVb+tU=Y-Cq-zcyw@mail.gmail.com>
-Subject: Re: statx(2) API and documentation
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     Andreas Dilger <adilger@dilger.ca>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 9:39 AM, Florian Weimer <fw@deneb.enyo.de> wrote:
-> * Miklos Szeredi:
->
->> On Thu, Oct 18, 2018 at 12:22 AM, Florian Weimer <fw@deneb.enyo.de> wrote:
->>> * Andreas Dilger:
->>>
->>>>> So what's the point exactly?
->>>>
->>>> Ah, I see your point...  STATX_ALL seems to be mostly useful for the kernel
->>>> to mask off flags that it doesn't currently understand.  It doesn't make
->>>> much sense for applications to specify STATX_ALL, since they don't have any
->>>> way to know what each flag means unless they are hard-coded to check each of
->>>> the STATX_* flags individually.  They should build up a mask of STATX_* flags
->>>> based on what they care about (e.g. "find" should only request attributes
->>>> based on the command-line options given).
->>>
->>> Could you remove it from the UAPI header?  I didn't want to put it
->>> into the glibc header, but was overruled.
->>
->> To summarize Linus' rule of backward incompatibility: you can do it as
->> long as nobody notices.  So yeah, we could try removing STATX_ALL from
->> the uapi header, but we'd have to put it back in, once somebody
->> complains.
->
-> I don't recall a rule about backwards-incompatible API changes.  This
-> wouldn't impact ABI at all.
+Devices connected under Terminus Technology Inc. Hub (1a40:0101) may
+fail to work after the system resumes from suspend:
+[  206.063325] usb 3-2.4: reset full-speed USB device number 4 using xhci_hcd
+[  206.143691] usb 3-2.4: device descriptor read/64, error -32
+[  206.351671] usb 3-2.4: device descriptor read/64, error -32
 
-Right, API rules maybe are softer.   I'll do some patches...
+Info for this hub:
+T:  Bus=03 Lev=01 Prnt=01 Port=01 Cnt=01 Dev#=  2 Spd=480 MxCh= 4
+D:  Ver= 2.00 Cls=09(hub  ) Sub=00 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=1a40 ProdID=0101 Rev=01.11
+S:  Product=USB 2.0 Hub
+C:  #Ifs= 1 Cfg#= 1 Atr=e0 MxPwr=100mA
+I:  If#= 0 Alt= 0 #EPs= 1 Cls=09(hub  ) Sub=00 Prot=00 Driver=hub
 
-Thanks,
-Miklos
+Some expirements indicate that the USB devices connected to the hub are
+innocent, it's the hub itself is to blame. The hub needs extra delay
+time after it resets its port.
+
+Hence wait for extra delay, if the device is connected to this quirky
+hub.
+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt | 2 ++
+ drivers/usb/core/hub.c                          | 5 +++++
+ drivers/usb/core/quirks.c                       | 6 ++++++
+ include/linux/usb/quirks.h                      | 3 +++
+ 4 files changed, 16 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 92eb1f42240d..626bb7892ab3 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4683,6 +4683,8 @@
+ 					prevent spurious wakeup);
+ 				n = USB_QUIRK_DELAY_CTRL_MSG (Device needs a
+ 					pause after every control message);
++				o = USB_QUIRK_HUB_SLOW_RESET (Hub needs extra
++					delay after resetting its port);
+ 			Example: quirks=0781:5580:bk,0a5c:5834:gij
+ 
+ 	usbhid.mousepoll=
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 462ce49f683a..4d7e6f8dd40a 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -2891,6 +2891,11 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
+ 		if (udev) {
+ 			struct usb_hcd *hcd = bus_to_hcd(udev->bus);
+ 
++			/* Hub needs extra delay after resetting its port. */
++			if (udev->parent &&
++			    udev->parent->quirks & USB_QUIRK_HUB_SLOW_RESET)
++				msleep(100);
++
+ 			update_devnum(udev, 0);
+ 			/* The xHC may think the device is already reset,
+ 			 * so ignore the status.
+diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
+index 178d6c6063c0..4d7d948eae63 100644
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -128,6 +128,9 @@ static int quirks_param_set(const char *val, const struct kernel_param *kp)
+ 			case 'n':
+ 				flags |= USB_QUIRK_DELAY_CTRL_MSG;
+ 				break;
++			case 'o':
++				flags |= USB_QUIRK_HUB_SLOW_RESET;
++				break;
+ 			/* Ignore unrecognized flag characters */
+ 			}
+ 		}
+@@ -380,6 +383,9 @@ static const struct usb_device_id usb_quirk_list[] = {
+ 	{ USB_DEVICE(0x1a0a, 0x0200), .driver_info =
+ 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
+ 
++	/* Terminus Technology Inc. Hub */
++	{ USB_DEVICE(0x1a40, 0x0101), .driver_info = USB_QUIRK_HUB_SLOW_RESET },
++
+ 	/* Corsair K70 RGB */
+ 	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
+ 
+diff --git a/include/linux/usb/quirks.h b/include/linux/usb/quirks.h
+index b7a99ce56bc9..a1be64c9940f 100644
+--- a/include/linux/usb/quirks.h
++++ b/include/linux/usb/quirks.h
+@@ -66,4 +66,7 @@
+ /* Device needs a pause after every control message. */
+ #define USB_QUIRK_DELAY_CTRL_MSG		BIT(13)
+ 
++/* Hub needs extra delay after resetting its port. */
++#define USB_QUIRK_HUB_SLOW_RESET		BIT(14)
++
+ #endif /* __LINUX_USB_QUIRKS_H */
+-- 
+2.19.1
+
