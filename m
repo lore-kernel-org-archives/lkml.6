@@ -2,123 +2,115 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BACC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89774ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93703204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:53:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93703204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 503F1204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:53:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 503F1204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbeJSBzO (ORCPT
+        id S1728271AbeJSBzm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 21:55:14 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41894 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbeJSBzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 21:55:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11432341;
-        Thu, 18 Oct 2018 10:53:10 -0700 (PDT)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CFF913F5D3;
-        Thu, 18 Oct 2018 10:53:08 -0700 (PDT)
-Subject: Re: [PATCH 06/10] swiotlb: use swiotlb_map_page in
- swiotlb_map_sg_attrs
-To:     Christoph Hellwig <hch@lst.de>, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-References: <20181008080246.20543-1-hch@lst.de>
- <20181008080246.20543-7-hch@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <3ffc4e16-979c-7d04-2d6c-f784be583b70@arm.com>
-Date:   Thu, 18 Oct 2018 18:53:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181008080246.20543-7-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+        Thu, 18 Oct 2018 21:55:42 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43389 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbeJSBzm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 21:55:42 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d8-v6so3313318pgv.10;
+        Thu, 18 Oct 2018 10:53:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=uLnWq5PZ49KLY9JiTaNR4OlFx96vg9mA6pqi1thD+H4=;
+        b=lcRm6I5Y/A4cU/gvicjAp1jR+jc/gPEaQxdRhpvVzyGyrvqWVkPoSQQapp9lDqsu7h
+         m/sewJVMJwPaphwIugnXeJytEjLNMo++4RH+HCFwcPKMLOWJd/lCLZ7w5VBqxZKoqqS3
+         TomzKD4s9yFFKCbeqAvfgGWLRi+Tt5d/7FfpstsVWF1Ea/racwWRXY6DFEg5Z1CIORit
+         L+Eb9UJcrunAL8mGZRqKQhjfHsiqfTYyVZdnjz8QH2nLUkpJFgz/KN9Gm0w4OuFxivtS
+         hzJS6cBRVwPfA4eaBrYI35Dwsbb6abR1KxgD+C2ZRECvUc2oR1WmcI7zTV+5o1JOnVZK
+         Brcg==
+X-Gm-Message-State: ABuFfognzHS5KwlYF1BRaRWgS/EqxH5XN9TjonExcg1V8t+JvX4F/Uyh
+        w7vGoVSG3yeqA0OlDT/O/8U=
+X-Google-Smtp-Source: ACcGV62PCzsftFOCdaGIifIBSJzSPxZZLiNjgBo6OidbQfyOxu8lZGRG0uA6Vg/vEpOmfQ9jqMZoqg==
+X-Received: by 2002:a63:9a42:: with SMTP id e2-v6mr29693110pgo.340.1539885217577;
+        Thu, 18 Oct 2018 10:53:37 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id t22-v6sm30287095pfk.141.2018.10.18.10.53.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Oct 2018 10:53:36 -0700 (PDT)
+Message-ID: <1539885215.81977.8.camel@acm.org>
+Subject: Re: [driver-core PATCH v4 3/6] device core: Consolidate locking and
+ unlocking of parent and device
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+Cc:     len.brown@intel.com, rafael@kernel.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, pavel@ucw.cz, zwisler@kernel.org,
+        tj@kernel.org, akpm@linux-foundation.org
+Date:   Thu, 18 Oct 2018 10:53:35 -0700
+In-Reply-To: <20181015150920.29520.32815.stgit@localhost.localdomain>
+References: <20181015150305.29520.86363.stgit@localhost.localdomain>
+         <20181015150920.29520.32815.stgit@localhost.localdomain>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/10/18 09:02, Christoph Hellwig wrote:
-> No need to duplicate the code - map_sg is equivalent to map_page
-> for each page in the scatterlist.
+On Mon, 2018-10-15 at 08:09 -0700, Alexander Duyck wrote:
++AD4 This patch is meant to try and consolidate all of the locking and unlocking
++AD4 of both the parent and device when attaching or removing a driver from a
++AD4 given device.
++AD4 
++AD4 To do that I first consolidated the lock pattern into two functions
++AD4 +AF8AXw-device+AF8-driver+AF8-lock and +AF8AXw-device+AF8-driver+AF8-unlock. After doing that I then
++AD4 created functions specific to attaching and detaching the driver while
++AD4 acquiring this locks. By doing this I was able to reduce the number of
+            +AF4AXgBeAF4
+Should +ACI-this+ACI perhaps be changed into +ACI-these+ACI?
+ 
++AD4 +-/+ACo
++AD4 +- +ACo +AF8AXw-device+AF8-driver+AF8-lock - acquire locks needed to manipulate dev-+AD4-drv
++AD4 +- +ACo +AEA-dev: Device we will update driver info for
++AD4 +- +ACo +AEA-parent: Parent device needed if the bus requires parent lock
 
-Even better, this will also make map_sg actually fire the tracepoint 
-(which I've certainly found handy in the past for debugging a mask 
-cockup that led to excessive bouncing).
+Please consider splitting that description into two sentences to enhance
+clarity, e.g. +ACI-Parent device. Needed if the bus requires parent lock.+ACI
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
++AD4 +- +ACo +AEA-parent: Parent device needed if the bus requires parent lock
 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   kernel/dma/swiotlb.c | 34 ++++++++++++----------------------
->   1 file changed, 12 insertions(+), 22 deletions(-)
-> 
-> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> index 15335f3a1bf3..15755d7a5242 100644
-> --- a/kernel/dma/swiotlb.c
-> +++ b/kernel/dma/swiotlb.c
-> @@ -845,37 +845,27 @@ swiotlb_sync_single_for_device(struct device *hwdev, dma_addr_t dev_addr,
->    * same here.
->    */
->   int
-> -swiotlb_map_sg_attrs(struct device *hwdev, struct scatterlist *sgl, int nelems,
-> +swiotlb_map_sg_attrs(struct device *dev, struct scatterlist *sgl, int nelems,
->   		     enum dma_data_direction dir, unsigned long attrs)
->   {
->   	struct scatterlist *sg;
->   	int i;
->   
-> -	BUG_ON(dir == DMA_NONE);
-> -
->   	for_each_sg(sgl, sg, nelems, i) {
-> -		phys_addr_t paddr = sg_phys(sg);
-> -		dma_addr_t dev_addr = phys_to_dma(hwdev, paddr);
-> -
-> -		if (swiotlb_force == SWIOTLB_FORCE ||
-> -		    !dma_capable(hwdev, dev_addr, sg->length)) {
-> -			phys_addr_t map = map_single(hwdev, sg_phys(sg),
-> -						     sg->length, dir, attrs);
-> -			if (map == SWIOTLB_MAP_ERROR) {
-> -				/* Don't panic here, we expect map_sg users
-> -				   to do proper error handling. */
-> -				attrs |= DMA_ATTR_SKIP_CPU_SYNC;
-> -				swiotlb_unmap_sg_attrs(hwdev, sgl, i, dir,
-> -						       attrs);
-> -				sg_dma_len(sgl) = 0;
-> -				return 0;
-> -			}
-> -			sg->dma_address = __phys_to_dma(hwdev, map);
-> -		} else
-> -			sg->dma_address = dev_addr;
-> +		sg->dma_address = swiotlb_map_page(dev, sg_page(sg), sg->offset,
-> +				sg->length, dir, attrs);
-> +		if (sg->dma_address == DIRECT_MAPPING_ERROR)
-> +			goto out_error;
->   		sg_dma_len(sg) = sg->length;
->   	}
-> +
->   	return nelems;
-> +
-> +out_error:
-> +	swiotlb_unmap_sg_attrs(dev, sgl, i, dir,
-> +			attrs | DMA_ATTR_SKIP_CPU_SYNC);
-> +	sg_dma_len(sgl) = 0;
-> +	return 0;
->   }
->   
->   /*
-> 
+Same comment here.
+
++AD4  /+ACoAKg
++AD4 +- +ACo device+AF8-driver+AF8-detach - detach driver from a specific device
++AD4 +- +ACo +AEA-dev: device to detach driver from
++AD4 +- +ACo
++AD4 +- +ACo Manually detach driver from device. Will acquire both +AEA-dev lock and
++AD4 +- +ACo +AEA-dev-+AD4-parent lock if needed.
++AD4 +- +ACo-/
++AD4 +-void device+AF8-driver+AF8-detach(struct device +ACo-dev)
++AD4 +-+AHs
++AD4 +-	device+AF8-release+AF8-driver+AF8-internal(dev, NULL, dev-+AD4-parent)+ADs
++AD4 +-+AH0
++AD4 +-
++AD4 +-/+ACoAKg
++AD4   +ACo driver+AF8-detach - detach driver from all devices it controls.
++AD4   +ACo +AEA-drv: driver.
++AD4   +ACo-/
+
+Elsewhere in the driver core the word +ACI-manually+ACI only appears in comments
+above exported functions and functions that implement sysfs store methods.
+Since device+AF8-driver+AF8-detach() is neither, I think the word +ACI-manually+ACI should
+not be used in the comment block above that function. But since the rest of
+this patch looks fine to me, feel free to add:
+
+Reviewed-by: Bart Van Assche +ADw-bvanassche+AEA-acm.org+AD4-
