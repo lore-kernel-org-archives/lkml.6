@@ -2,163 +2,156 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6280CECDE3D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 00:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25452ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 00:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BE472083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 00:15:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB35D2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 00:24:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="OsRfInzJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BE472083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="K32FGNLk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB35D2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbeJRINv (ORCPT
+        id S1727247AbeJRIWS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 04:13:51 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:47861 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727090AbeJRINu (ORCPT
+        Thu, 18 Oct 2018 04:22:18 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36632 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727028AbeJRIWS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 04:13:50 -0400
-Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
-  by relmlie3.idc.renesas.com with ESMTP; 18 Oct 2018 09:15:35 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 5258151943;
-        Thu, 18 Oct 2018 09:15:35 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.54,393,1534777200"; 
-   d="scan'208";a="293836242"
-Received: from mail-os2jpn01lp0144.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.144])
-  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Oct 2018 09:15:35 +0900
+        Thu, 18 Oct 2018 04:22:18 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f18-v6so13323162pgv.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 17:24:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xHBddyKZBbkEQZxMGxlWJf100lt2dW2J6hGmdLCj0ic=;
- b=OsRfInzJKPn3GooLJe45dBEqAKAGe93Bc0A7YXMdlKSeRGdhUy/c6Ya5VF1o0TEQJDJ/wjNKBBCMHY/4kmGtLiJRvAxNlleLkf4Ool8t2F3mOg46NpAIWP580h8zOyfoQOwN0Ury9dIVW15/VhaSiQfa5UBvAO2lgvTSlbSXbRk=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
-Received: from morimoto-PC.renesas.com (211.11.155.130) by
- TYXPR01MB0624.jpnprd01.prod.outlook.com (2603:1096:401:7::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.24; Thu, 18 Oct 2018 00:15:33 +0000
-Message-ID: <87k1mgw219.wl-kuninori.morimoto.gx@renesas.com>
-From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EF63PHOqsqot2WwzV5xuJ1sWjkW68oS+F3aJ08W+6WI=;
+        b=K32FGNLkM53O1S+uAUJH1MqaCLICNuipZDgCmeKaAyImN1UG5c2uyLkWjfR1qNi5cJ
+         0Fn0VPe2TTiMzAYKaWpu62Pa7Bj4UCAoJIdV5H0k6RQp/noPvXM1yHwCqyIgb1aaVuto
+         HeouzchDkqz+kitTP4rTnXnsBRhbT/maWhuJQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EF63PHOqsqot2WwzV5xuJ1sWjkW68oS+F3aJ08W+6WI=;
+        b=G3DDQGESs52+AkV5efJfcO/pjf0c71ePxszj25NRQAwOlaf24GfBPvnHVScj57V8qV
+         qMbBSKsnx5oJbrEjs3Gv8eBjhfwOABl+U7we96SC71LjsU9F+uKQDnj3L212Iqt11Zmy
+         mgD+zGGPLwJvNBt8om1FPKX+37sA00BRa6YHNPW1RiTghBHeNtn8N99W20R6frKbw9zB
+         VtdAuSjsYL2/zobhXECe5L6t5929tmMvO2EXbFlJSzs8xVIG6aKuDRc31uBtyJSLFc/T
+         Hhh5DLzQaQYlzb1oxnjCTgz4obo4e7iwqRtfhRUu08EMjdLrwoG2PCa0gUpYOW3T+5rv
+         zkog==
+X-Gm-Message-State: ABuFfoiKvvNCI93LAQFNCbzWuMOVR6N7QeqNA5LQX5aY1SH5dzOrZEkj
+        DT/y9LEebU7DYjk7U1O6EI8pKQ==
+X-Google-Smtp-Source: ACcGV61LB3KrINUPkwMnJ5WTVk1DUOxwoNYyF1rjRBGxRYm0YZCCn+uhDu3mPWLkwYAdokUBZGqhXw==
+X-Received: by 2002:a63:8343:: with SMTP id h64-v6mr24979767pge.368.1539822243611;
+        Wed, 17 Oct 2018 17:24:03 -0700 (PDT)
+Received: from rodete-desktop-imager.corp.google.com ([2620:15c:202:1:299d:6b87:5478:d28a])
+        by smtp.gmail.com with ESMTPSA id y144-v6sm28321384pfb.81.2018.10.17.17.24.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 17:24:01 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 17:23:59 -0700
+From:   Brian Norris <briannorris@chromium.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: add description of 74aup1g157gw
-In-Reply-To: <20181017160556.GA14935@bogus>
-References: <87efcy1rm4.wl-kuninori.morimoto.gx@renesas.com>
-        <87d0si1rkt.wl-kuninori.morimoto.gx@renesas.com>
-        <20181017160556.GA14935@bogus>
-User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Date:   Thu, 18 Oct 2018 00:15:33 +0000
-X-Originating-IP: [211.11.155.130]
-X-ClientProxiedBy: TY2PR02CA0002.apcprd02.prod.outlook.com
- (2603:1096:404:56::14) To TYXPR01MB0624.jpnprd01.prod.outlook.com
- (2603:1096:401:7::7)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2d0720b4-fd44-4219-5cb4-08d6348ed22f
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TYXPR01MB0624;
-X-Microsoft-Exchange-Diagnostics: 1;TYXPR01MB0624;3:gp5kAe6CTel3O2iFuBNog6FZZzMK/+YzReHI4fIT9XgwjPghRzNOB+UDGt1uGkz4CXh+ZaFCjTFN4AR2ckQTwJIDQn/gNGM08/bM4f8CGOBQR986YicYu4Xw5RSyYDqPayDnGa47Qp0MIYtfWLPGt1pfRXF9AFKzKqp0YD7eq7ipnl809HI47aAzsgkF7ZTdekoNyKQIQaYueLbWvbms8uIZejfAloA749JW4bVdh6w1kug7grMcUUt7lFzkrwd2;25:4yU4S3AdadEcalSJmmdGcjF7f6RjyGQdR0QuNvlxMYHNTT6w2VgULqFs3+apL5xNuD0ujSkc2wPjRSsMnkYhOQVyghw5eC2qkH/GOFEgKY+bo2cclpLMOvXZ4tkW8DSwMnix1UWJfBZcI9sHkhFGpSvVjvjYZ1W593fZG5vyULrUR3FJIq5X2DQY/56ATMtJUGnimdSywHhMegXIL2/JCvOUM/PbtDaR0rXn46DAJj5CMtDDSK7G0zUt6vmthz0CmRKha5QNk496bpa9RpnYtQmdgDNY7ySAXcbDUPWhEQ5t7HRg5qAPlES4FZ09seo11YDzlW0HGNcD/l2OkhUrYEEdLbxfPQpuyboBvIek77c=;31:jbJRPwILX1Oq9sIIaZZnWUFGrHofcU/deKSy5rk9a02qpnnmsddiCmEtceQUIdkD90FaKF6fpsu/HrCUmzhPOKZgJvptRFFq9Se9ppzVs0CY8N2lEuurpx1k+uEqod214X5tXzQNjB4DezGVhvKvzP2XJyw1Kj2Z7Dg3tQ2+vVCznu36XiMzS7wS3dFxBzTeE+sT2Apch2T5aY92maRJ+P9d59Zn3q2+62v6NuocQsI=
-X-MS-TrafficTypeDiagnostic: TYXPR01MB0624:
-X-Microsoft-Exchange-Diagnostics: 1;TYXPR01MB0624;20:yhMXj6wMyd6EQL+UFe60qt+sOkC1ePI3+LDQ8CBCWebV0fpF48tfVQH+pQYfNluhq6pp6MxruI2rwQusA33dhQEiANfVPOsQtBGqCFhQap4iOMd18TkZT67YEqfHksq5NBnyRppcBNc7Cz+geXwW6vV8iwDP+vn6nzz3QF9gj+j0oMuzYXBa+ZqbqFsCnJHUudyIDWeNHB4L/clhQPBYa4dEcr2uNhUAqId8JAebo+vzd2+SQSVWYcFI0YC9llcvoy2cHjp8355h4l44my79VqgGjWK3EnWTSIHAGB2VVMUe0Xi8jYwKCidKvqY22RaZIHM3L4aBPOn6SChhKu74nt98XIPbRzdGxMOCIfzoIepUeBltxFqiX4IKiYU+OBCvApql0bNyKLVfPvo5jw5HFJqHPypj7i9c5egJ/vSaF43wPqalNQqlCFVRd8RrGU7wCz4kLnfUzaox+2NMXowS8CCSkg70TcCUzZiJlmg5xEEH8vP7ar9BIc09DIgF6Eva;4:WZETZCwS6ebKMzMpMSAgX4jfQ+oa0Ufpqp8l1imRpFdOKAvyLU5msdB8CCP7N++4cOCpW5AL+Fw0cHvyo98jU5y0x2YChlFYcwHkbyCbuTmv/Rw3kXSmzEthdD6MYEecOqvdgW0vAsftrJlul4S2EXVywXVP8JkMhLC8IHUAMCmqTWGPAFYXonFlRHwGN0BdjqfnIaR5TsUzm8aCe50ZD2p8hTVCpOa5KQLs9PET3s3Zk6n524LLYwuCLj65xNSM8kVV8MCparzu27cyr2uAsg==
-X-Microsoft-Antispam-PRVS: <TYXPR01MB0624D1847ED28CDC0563B966D4F80@TYXPR01MB0624.jpnprd01.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:TYXPR01MB0624;BCL:0;PCL:0;RULEID:;SRVR:TYXPR01MB0624;
-X-Forefront-PRVS: 08296C9B35
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(396003)(376002)(136003)(346002)(199004)(189003)(97736004)(508600001)(52116002)(86362001)(7696005)(76176011)(54906003)(58126008)(36756003)(105586002)(3846002)(6116002)(53416004)(23726003)(6916009)(4326008)(5660300001)(25786009)(47776003)(106356001)(2906002)(66066001)(316002)(81166006)(81156014)(16586007)(8936002)(68736007)(8676002)(6486002)(69596002)(6246003)(50466002)(53936002)(229853002)(345774005)(305945005)(7736002)(186003)(11346002)(476003)(16526019)(26005)(446003)(386003)(956004)(2616005)(486006)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYXPR01MB0624;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TYXPR01MB0624;23:hGq8dxYdPPabKXle5Jb+gSmjCrJ8pKhWLzybkXRa2?=
- =?us-ascii?Q?wMNktVB76DHiETG2feen7ePJejWA1/3XKb1rrlMAnt7774uf5xVIIBuU8ON2?=
- =?us-ascii?Q?1Xu3sz8OXWiOvvBA5Sa6f1PIWm/BoQ2ZxTJvzCrJwIg0IYgX77a5d1gmVs3S?=
- =?us-ascii?Q?ySN/GRxdiV5udmEy2zoF3BPZomkLh+hgRezeDELi/92tbkdOe8LvrGEvgM0R?=
- =?us-ascii?Q?XbXbCXFaBhFsbKnVIZJtj4TiqKTOGizpPgngsEI9ydiCMhISn+NEv7S+ARYm?=
- =?us-ascii?Q?BBqM9NZSTpQ1qO4T/ginwti3CO3aNkv3l0MAJO7vEc0+2k+Eno6+lvyRZPao?=
- =?us-ascii?Q?n4cwkSm+zFfR8uPIZ8OeU5jokQvRlXdygm5U+UWM+qNd5frs7AXXo3TsvXhe?=
- =?us-ascii?Q?7sfiSqSDtKXMaIgUL3nvWBZGN2bIh3KHwvCft68gBWaDASFCssNwujoG1l+d?=
- =?us-ascii?Q?e0VLdb7gZtK+ek8nTSMoUEH7pkN4yxBYnhvfD/cQ8LInBm7yJ+eOSKoOfKOl?=
- =?us-ascii?Q?x0VGcxO6lNuW1WM4Gr8usQR56T1Z8EKTPmxcH0yq1RpER5GMIySuENVB+1Qu?=
- =?us-ascii?Q?SdrS1pTdAOQWCen9cpgrD2CH5MkEGIZD8jr8N9a9JQN/kE0BbB8fetYXK8X+?=
- =?us-ascii?Q?nlukp128d8YbyDEF8dQgwpjyqIy8MfE80YUBZFiwachcWe+Eu0J0MyYlQwBd?=
- =?us-ascii?Q?/6f/iC2ZACDkkWZZV+MvcD6mVa95cXHgnjt/ubPtmGcHpWlorlN44X53WXuA?=
- =?us-ascii?Q?niZNDsLkj+TB1WJQpAtWCpRnSyf//9U3PdPqHd/+HdZsMJZrwopvnn7nbsDN?=
- =?us-ascii?Q?wMqNoltrFCD5oSklqjTK5VQkmcgRFbQnCFcYrfr0SB3+l3vmzpP30Ujf/WP8?=
- =?us-ascii?Q?LJjwkkStZJl9JTj/noGn9km1RntM3cJxUB4Jl7wX4Q8s4QT9cjJ5OT5MpQP3?=
- =?us-ascii?Q?7qTv97/L5lfxtFug2z36CaX7tAnlaBJ2ZIM9Twb0CRCTGzjJOKRD/mBNYWyL?=
- =?us-ascii?Q?vDEKLdvFkEgCPtgF4rCOsN4yKWxCS59MtbbXBRgY22DFLxLPZyxJvxvxR8x/?=
- =?us-ascii?Q?ahrJjQi9SB3hdbKOtT2Tgpp5haswZvndNWF6V7bn9kH1peYwBPkRDv3UX2mH?=
- =?us-ascii?Q?/st0mWea8gdCWH1s3sMN7IJUuKMbW0N0Q8jsGWNXQKjrwRAWG9ZZjrYFr0v9?=
- =?us-ascii?Q?z1PXz7l8ffC+ne/VHG780WK29qhAfmFb6FIprBLCUvaKoQvwsN0FuzyVkkrc?=
- =?us-ascii?Q?phoLGCFmiQsX7e86J5JKAdTwmiZW51RC/aXlRMw?=
-X-Microsoft-Antispam-Message-Info: gAm9rkzi/Mu1RKiSOVLpcv7gjf9d0Tp2KLN/wBLM9yzivgCalBYNh4J4lXfVfvNOK5aOBGqe9gXmbPFPP7xLSCQvAGcv5Ty0IwQqtF6lj5RlCXbPM2yf4LTxLc3Yz58IFkxWjI3VdLqJ3TXGOqFEHean2AaBJsjJFGZqwak64GerFSIyN6yPyFMlZfwp8AHVPXytw4owHY0sYo6jyenhrQpDe5014MYv3mvR2lrYkjygYFclGx4QnkUInJAVwvrGgJdeB8hYKXpRzKrD+p9Qik9nYq4tZ3JUU/7ZZpFsUb5FDV32YZ9jMUd3AwqXzEqgE/ecKn/9e//wTySSN1F95EE+m+cjaJky51P8jMBeRg4=
-X-Microsoft-Exchange-Diagnostics: 1;TYXPR01MB0624;6:5FHBOPZWTx1+jUu4mWMbEo2u7exzbdnzJLKcmRxPnJKt27s6tlXHuZ2uLxnnNHMoN2GmCblRNgvT1HsTPAfsnk1645Cty/XywuTktNHCgJo2ACn23Nu3vZ9bu7Zebrw7hWs+EIMXclyjuZU3/kuahd2L0aFQgK29RswwJVWwyyOXCWsLwbv6Sz6XgSOcYtY7Pr34svlDb5QcP7KRIoamimgvgPjFze9haAy2jDy3yXgvxeHwSZ8KxfD+mm4fm+5GbTrRHgxHPCWLdcGnsYZUyBUs6S9mD9EfnJS7ZBfWJ01rmfnPJHfUMEpX9V0u+GXwDQ1v4k+5UkhDWH6vhIKw17/r9ft/wNzf7K2oDan1+Kes6aNM8AT+L9HAcxtjXdn4lWHx/d8XSfLeSI5PdPCvV8n+g5YFVx+2H+4okdJylRJ7NswxP6a9scZhGTRm/EoWeRZrnUiHJVr/cdq71X1IUA==;5:yd55qPP2fXrKA6gh3medNwHdXCZaFNYZZ1ssFz1uGHx+Tmr8zTkoyeTOtmYCfWwr6YjIVxKIaqjziQe/e6DtAf1xiNEl55Rkg1Z8TMtwIUnS4qulgf8nzr5rNrmv5WnkvCgWm0w25LXNSDU9HU00dEf2XhUrcE6sXkhnO23rIRY=;7:rMHBhCIjg+ks/jPqnCIWLSPVdnxKl73/CN0QwJLcwv13uaxQjSsmDLcvAUTbthBZEVqcza3NiEknchKCEBm39j3fYz10di4eoaTECwrn2e6juEq9OB/rLXV2FYrkxo9qQUU7kcvS2VcRzDNrA1I673RrpzrAGSeNJbOpRJpf4YcVTbgHV55cDQ340aMidh4BhKne9ujyYuimhRX+kHjce/tzQbjbUyzXczwT3TbwhUOUOO8J/nnI03b0T1I4KNIy
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;TYXPR01MB0624;20:J1akSrG7xwrUiQDFXaKPFLoKV0gohmEckCGMwVSTqsbWXctyetjxnYkbhn/G7QdrgTYOX47GRJl+zOowkaaP2XTw8gELiAoqKDrDIZSi6qcAPrOk1tD5niOwmEDFLJ1SzFblrI7w3UTSehtwFC9MMBA8pFCVK3hQIv+HALUUd9Y=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2018 00:15:33.4885 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d0720b4-fd44-4219-5cb4-08d6348ed22f
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYXPR01MB0624
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [RFC PATCH] soc: qcom: rmtfs_mem: Control remoteproc from
+ rmtfs_mem
+Message-ID: <20181018002350.GB179852@rodete-desktop-imager.corp.google.com>
+References: <20180925080607.30565-1-bjorn.andersson@linaro.org>
+ <20180925172943.GA118699@ban.mtv.corp.google.com>
+ <37621d4fadff8e3a0bbe034119351d16@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <37621d4fadff8e3a0bbe034119351d16@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Sibi,
 
-Hi Rob
-
-Thank you for your feedback
-
-> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+On Sun, Sep 30, 2018 at 08:58:49PM +0530, Sibi Sankar wrote:
+> On 2018-09-25 22:59, Brian Norris wrote:
+> > On Tue, Sep 25, 2018 at 01:06:07AM -0700, Bjorn Andersson wrote:
+> > So rather than looking for open(), I think somebody needs to be looking
+> > for the appearance and disappearance of the RMTFS_QMI_SERVICE. (Looking
+> > for disappearance would resolve the daemon restart issue, no?) That
+> > "somebody" could be the remoteproc driver I suppose (qmi_add_lookup()?),
+> > or...couldn't it just be the modem itself? Do you actually need to
+> > restart the entire modem when the RMTFS service goes away, or do you
+> > just need to pause storage activity?
 > > 
-> > 74aup1g157gw needs i0 and i1 pin as input, select and output it by
-> > sel gpio pin. This patch adds description for 74aup1g157gw as clock
-> > multiplexer.
-> > "nxp,74aup1g157gw-clk" will select most closest input as output,
-> > "nxp,74aup1g157gw-audio-clk" will select 48kHz/44.1kHz categorized
-> > input as output.
-> > 
-> > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> > ---
-> >  .../devicetree/bindings/clock/nxp,74aup1g157gw.txt    | 19 +++++++++++++++++++
-> >  1 file changed, 19 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/nxp,74aup1g157gw.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/nxp,74aup1g157gw.txt b/Documentation/devicetree/bindings/clock/nxp,74aup1g157gw.txt
-> > new file mode 100644
-> > index 0000000..d07bc04
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/nxp,74aup1g157gw.txt
-> > @@ -0,0 +1,19 @@
-> > +NXP 74AUP1G157GW Low-power 2-input multiplexer for clock
-> > +
-> > +Required properties:
-> > +- compatible:	"nxp,74aup1g157gw-clk"      (select closest input as output)
-> > +		"nxp,74aup1g157gw-audio-clk (select 48kHz / 44.1kHz as output)
 > 
-> I don't understand why you need the second one.
+> Hi Brian,
 > 
-> 
-> What's wrong with the existing gpio-mux-clock binding?
+> It might be more logical to make that "somebody" the rmtfs_mem driver
+> itself, since
+> the modem as such does not have any direct functional dependency on
+> rmtfs_mem i.e
+> the firmware can be configured to run on rmtfs_mem or internal fs. So in
 
-Thanks.
-I already noticed that gpio-mux-clock is very OK to me
-(and I think I posted it to ML).
-Please drop this patch.
+How exactly is the firmware configured for this? Isn't this something
+that's just determined at (firmware) build time? I seem to recall seeing
+early firmware releases that booted OK without rmtfs (and therefore
+probably had an internal FS?) and later ones that didn't.
 
+Anyway, this sounds even more like an argument for:
+(1) not describing this in the device tree; and
+(2) as a result of (1), probably not handled in the kernel either
+
+The reasoning for (1): this is purely a software configuration, and does
+not really describe the hardware. There's nothing about the hardware
+that says the modem won't have an internal FS; so you have to choose
+whether to add a rmtfs-to-rproc phandle based on which firmware you're
+building in.
+
+On second thought, that might even be an argument for killing the entire
+rmtfs_mem node in DT actually -- and as a matter of fact, I think you
+have the same "configuration" (i.e., DT isn't just describing hardware)
+problem with the rmtfs_mem node. AIUI, you may have to choose a
+different memory region size based on the number of firmware features
+a particular product supports. That's typically a Device Tree no-no.
+
+But I don't know how far down that rabbit hole we should go...
+
+> such cases
+> where the modem is running on internal fs, it would be undesirable to have a
+> hard
+> coded dependency for rmtfs_mem in remoteproc modem itself.
+
+OK, sure. But as per the above, the whole software-configuration-in-DT
+thing is undesirable as well.
+
+Anyway, I'll take a look at your v2.
+
+> Wouldn't it be simpler/quicker to fix this in kernel than churning out new
+> firmware
+> releases. A fix in firmware will also mean that this becomes one-off fix for
+> dragon
+> boards diverging the firmware branch from whats used in android for
+> 8916/8974/8996.
+
+I'm not so sure. Well, sure, it's probably quicker. But this is a known
+bug in Android that you've clearly added Android workarounds for. Fixing
+it in later firmware doesn't preclude you also continuing to use your
+hack on Android.
+
+And can you explain: why can't this fix be applied on all new firmware?
+Why does it have to be a "one-off" for dragon boards?
+
+Brian
