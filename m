@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F10C67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E8AECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:49:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA21F20866
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:49:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16D452098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:49:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DsEqbp5m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA21F20866
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="taqEy43K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16D452098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727844AbeJSGwj (ORCPT
+        id S1727469AbeJSGvT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 02:52:39 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39727 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbeJSGvW (ORCPT
+        Fri, 19 Oct 2018 02:51:19 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45686 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727410AbeJSGvR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 02:51:22 -0400
-Received: by mail-pg1-f196.google.com with SMTP id r9-v6so14866376pgv.6;
-        Thu, 18 Oct 2018 15:48:12 -0700 (PDT)
+        Fri, 19 Oct 2018 02:51:17 -0400
+Received: by mail-pg1-f195.google.com with SMTP id s3-v6so1642812pga.12;
+        Thu, 18 Oct 2018 15:48:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Y8f+zX4OUAoqVg/3NA0TrDwr4Zjok9K4JF3715XNZDg=;
-        b=DsEqbp5maz0a9jQB9S6km5gyjg9OMujfKYuRvlTgDSfBuZK/Gxk4tGs1787JTxgdAW
-         oP6UWhSyWmT6q5iQJ4R+NuF+rbuVOOIK8Z8J1wTk8YIARA9MUIrj+Y+SHbeobtpJ78wd
-         sZcuXIrP3/ArgSICLC0vHTo2eCGTdaMhGjPu5H1FCGIm0vyUufdQBcL3fXINZ6z+Rtmx
-         8ZHmSyd616uqO/IVWb8Uv+sWEWo+5N3dcalWAU79QTxZrchh+1CwBL4kx798OpOJzHzQ
-         dwkF1Uyv7G+P8WfTXoTzKFG3VncN+Qq19OiaHVtE4t0HpeBeB9orgSLqofAv3k7ILKIZ
-         kCVA==
+        bh=UkGmi/9uJ2cCYbyUNwZsGr2ZdTjlRhMEjWVQ61ER+Cw=;
+        b=taqEy43Kxhig/LXfGVWqTBnelE+49dshuohkZnlQdp3Qjip9G1jBeYbkAkQxQE345D
+         ZWnI9hdFl7fFXx6XOjTL2zN05hRu/1x+wXFl10W8/nK2PAmQD9iqNNBpRcRQOqho7cmU
+         wzyEvm2y5U2MobAaXQ2sctltsP9zH6+USVIrtwxUbtX+M1+gEADn9iRildNFjFuCEbVi
+         5xQb8wnNKPlNsgelXgY8AgwPWFM7F8B8W4oCVqzdfc8eKfIuR0D407XmtQDceTlLFBB8
+         XnBlDSrv+dAZNZkCpdL3CorPp6qeWpaRMMgxyksqL9EDOi+/+jH/Lp4baRJX9sAl1Wi+
+         YOvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Y8f+zX4OUAoqVg/3NA0TrDwr4Zjok9K4JF3715XNZDg=;
-        b=UrsljCUr0Oc6AcGCy2kKeFI3I5QyH+OQp0sB7JHUYJD8FSYTupFQnumhBQ/ub/BC3I
-         4VtrdkGuabhH/moUkprmhZOP8wHQzBqDOKZJ33EbxmhpDJX/XSW9+a+a7QrhDqEY+ll4
-         NyhUeoJaGdoxUgW71dnJnjgUSRhpAG2nZ8jqvE2WFkN9HYv+MSGYJ/AXhBrljlXettOD
-         FUicJOOUQE18WqxmrXGXdr2voDMqXFbgBuOA/1Q3Sm6TAzTGUWU2F+QQmfLwf2DuaTqc
-         FUp7w4Nqyc3TaY415FCEUG9iGqqP/qCzE35DEzWSpSzdH9/QZlHYPmw/497ssGEtiR3X
-         /BjQ==
-X-Gm-Message-State: ABuFfoiZ08RYtlWnmLd6Fkp07+kHLQC6OX28W9ihlCajQfwTkHabY/un
-        ynZ80A12BEJ4wZydRdOJ90Y=
-X-Google-Smtp-Source: ACcGV63HjomW5BejkyH0P48UtnxAoYZqja5t4Qt2H3pTR0wep7TuXb+qMrIeSbRzgAKu5mJvSDtKEg==
-X-Received: by 2002:a63:4a0e:: with SMTP id x14-v6mr29542038pga.34.1539902892048;
-        Thu, 18 Oct 2018 15:48:12 -0700 (PDT)
+        bh=UkGmi/9uJ2cCYbyUNwZsGr2ZdTjlRhMEjWVQ61ER+Cw=;
+        b=EGtXF37BCnsR85X0VtBHv2JKap6HZHlTwQJX/KV9ofSYQu558cq5dLukqd8JVJ6jon
+         sSIoWUpKKKUY6dYHKodQWECqTl/QXDqNQpJ/cWTYrVZZtCY+9UbL99PUI+/jJvbdSee8
+         nciOzYJ9pm4/ZbgR/xc8rs1m/z7bqgsB57o/XNi1N2hlZXFUX111hwJJW5r79FcUWiOc
+         LH4Bw3Tr+K4V1TGO+J/4cYNZdGpNT5RoQk1PYFHwA2MvPSThSZcO8GOn74KHi1sichEt
+         +JNFrQxIWtBuOBdQXiVnPFHmwPiPMUJMLgEUMo1Xk7VICDLSpYSqHwBCVZvb5cEGFJ37
+         PHOQ==
+X-Gm-Message-State: ABuFfojuAwMrswVrO/0LVyTefxuPWLV8ic8kBzWRLRnwAvYgt3KoYnOu
+        xOFIAcWR8kMmp0xwlg/NW3M=
+X-Google-Smtp-Source: ACcGV60ZLNKzt1yoclqWHTuCOhkBSXlJ4phdE8lj8UWvA7DtMGvVDgAmSbswV9Beh+dA23ANl2h1RA==
+X-Received: by 2002:a63:7c5e:: with SMTP id l30-v6mr29773428pgn.45.1539902887329;
+        Thu, 18 Oct 2018 15:48:07 -0700 (PDT)
 Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id v81-v6sm38129268pfj.25.2018.10.18.15.48.10
+        by smtp.gmail.com with ESMTPSA id v81-v6sm38129268pfj.25.2018.10.18.15.48.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 18 Oct 2018 15:48:11 -0700 (PDT)
+        Thu, 18 Oct 2018 15:48:06 -0700 (PDT)
 From:   frowand.list@gmail.com
 To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
@@ -67,9 +67,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH v5 06/18] of: overlay: do not duplicate properties from overlay for new nodes
-Date:   Thu, 18 Oct 2018 15:46:24 -0700
-Message-Id: <1539902796-8382-7-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH v5 02/18] of: overlay: add missing of_node_put() after add new node to changeset
+Date:   Thu, 18 Oct 2018 15:46:20 -0700
+Message-Id: <1539902796-8382-3-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1539902796-8382-1-git-send-email-frowand.list@gmail.com>
 References: <1539902796-8382-1-git-send-email-frowand.list@gmail.com>
@@ -80,43 +80,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-When allocating a new node, add_changeset_node() was duplicating the
-properties from the respective node in the overlay instead of
-allocating a node with no properties.
+The refcount of a newly added overlay node decrements to one
+(instead of zero) when the overlay changeset is destroyed.  This
+change will cause the final decrement be to zero.
 
-When this patch is applied the errors reported by the devictree
-unittest from patch "of: overlay: add tests to validate kfrees from
-overlay removal" will no longer occur.  These error messages are of
-the form:
+After applying this patch, new validation warnings will be
+reported from the devicetree unittest during boot due to
+a pre-existing devicetree bug.  The warnings will be similar to:
 
-   "OF: ERROR: ..."
+  OF: ERROR: memory leak before free overlay changeset,  /testcase-data/overlay-node/test-bus/test-unittest4
 
-and the unittest results will change from:
+This pre-existing devicetree bug will also trigger a WARN_ONCE() from
+refcount_sub_and_test_checked() when an overlay changeset is
+destroyed without having first been applied.  This scenario occurs
+when an error in the overlay is detected during the overlay changeset
+creation:
 
-   ### dt-test ### end of unittest - 203 passed, 7 failed
+  WARNING: CPU: 0 PID: 1 at lib/refcount.c:187 refcount_sub_and_test_checked+0xa8/0xbc
+  refcount_t: underflow; use-after-free.
 
-to
-
-   ### dt-test ### end of unittest - 210 passed, 0 failed
+  (unwind_backtrace) from (show_stack+0x10/0x14)
+  (show_stack) from (dump_stack+0x6c/0x8c)
+  (dump_stack) from (__warn+0xdc/0x104)
+  (__warn) from (warn_slowpath_fmt+0x44/0x6c)
+  (warn_slowpath_fmt) from (refcount_sub_and_test_checked+0xa8/0xbc)
+  (refcount_sub_and_test_checked) from (kobject_put+0x24/0x208)
+  (kobject_put) from (of_changeset_destroy+0x2c/0xb4)
+  (of_changeset_destroy) from (free_overlay_changeset+0x1c/0x9c)
+  (free_overlay_changeset) from (of_overlay_remove+0x284/0x2cc)
+  (of_overlay_remove) from (of_unittest_apply_revert_overlay_check.constprop.4+0xf8/0x1e8)
+  (of_unittest_apply_revert_overlay_check.constprop.4) from (of_unittest_overlay+0x960/0xed8)
+  (of_unittest_overlay) from (of_unittest+0x1cc4/0x2138)
+  (of_unittest) from (do_one_initcall+0x4c/0x28c)
+  (do_one_initcall) from (kernel_init_freeable+0x29c/0x378)
+  (kernel_init_freeable) from (kernel_init+0x8/0x110)
+  (kernel_init) from (ret_from_fork+0x14/0x2c)
 
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
- drivers/of/overlay.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/of/overlay.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index 94740f4ee34c..7fcf4a812d06 100644
+index 1176cb4b6e4e..32cfee68f2e3 100644
 --- a/drivers/of/overlay.c
 +++ b/drivers/of/overlay.c
-@@ -393,7 +393,7 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
- 			break;
+@@ -379,7 +379,9 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+ 		if (ret)
+ 			return ret;
  
- 	if (!tchild) {
--		tchild = __of_node_dup(node, node_kbasename);
-+		tchild = __of_node_dup(NULL, node_kbasename);
- 		if (!tchild)
- 			return -ENOMEM;
+-		return build_changeset_next_level(ovcs, tchild, node);
++		ret = build_changeset_next_level(ovcs, tchild, node);
++		of_node_put(tchild);
++		return ret;
+ 	}
  
+ 	if (node->phandle && tchild->phandle)
 -- 
 Frank Rowand <frank.rowand@sony.com>
 
