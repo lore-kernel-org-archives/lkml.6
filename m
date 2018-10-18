@@ -2,145 +2,80 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A102ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:37:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFA9ECDE42
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:39:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F30EC21470
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:37:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="pmI+U0Wh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F30EC21470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id B0A5221473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 02:39:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0A5221473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbeJRKgf (ORCPT
+        id S1727471AbeJRKiK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 06:36:35 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34295 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbeJRKgf (ORCPT
+        Thu, 18 Oct 2018 06:38:10 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:46030 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727309AbeJRKiJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 06:36:35 -0400
-Received: by mail-wm1-f66.google.com with SMTP id z25-v6so812117wmf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 19:37:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I7/bMHPSVbQLZNWyMUxGXJS3zoiQOs09IGRLpyhmr4s=;
-        b=pmI+U0Wh/1Nja4HGlWqnUPvSxNaYCbfBtaedGQg7Phs4W3peq7iyhHIdkDMv0oCFs3
-         YYfUqerBre9xFa/Oe6E6o082zGFN8bIxMchAVHFEypmYYPjefg5zFPtDAvKxU72bAvTq
-         joydZa0o7g1x6362YhNgBptHvVZu9/1a29WxBazR2+7pwoM8cK/OemE2/NDkGs7SdyID
-         0LzoX8HqqwP5kUG25a+jDLcUe5gAsDR5CStTgeuNLWtJJbkxQHVGVKWT8rauueYWJndW
-         bzRiw02jTX8VKyVG16ySAiwwjRupw/Yhy1REJmvC8omh/Vvo/Lbg4ImoBUACR8vfRrdw
-         J25w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I7/bMHPSVbQLZNWyMUxGXJS3zoiQOs09IGRLpyhmr4s=;
-        b=ZDxw7Q2BBZTwdVYxAtBGoJLtJhUHxmFuykXdTRpqEcw1A/yHyN/2N6Msk9gwzAI3zp
-         218h2t/JdIJUkyESAevGDzG1NXMLd5uE3EvHmDfJS/TKVsoYedljX4DePvZT6H2R43zz
-         frrUi74H5NKv3DyJLoWdYknVZvZ8je6Is3LLaFlncuKphx4raADfGRdHm29TGac8+pRs
-         6vy0MtnOxYXAnE9/ZmQ3x/3VlSAPhQ5Fi4oCZGbube0CsMa49S+L3vTfPNiBe88lcykb
-         3cqxjQA2g67rVpuoxk1FdvjCFW1ltlXIw+EeuUQ3JXv0O4xH3Mg0MtRnMXpLACnJWPS6
-         Dzyg==
-X-Gm-Message-State: ABuFfohi72AeYwRCXLOuav3xBRFNXpZUk2L5NoguyEsHVXJ0Dvi0xZc2
-        p2Twtl8W2zHu5KR2JUJXyxHSCUZlZc5WSghYs+IzXA==
-X-Google-Smtp-Source: ACcGV62UuWPBDjHNB+T0m/liPx71szV/pyDoNGDaN6nvQyPMpNl2asZDTvwlCA4mzfpuuFZc/OruMmjXILe7YaIK/yc=
-X-Received: by 2002:a1c:4054:: with SMTP id n81-v6mr5347619wma.82.1539830274165;
- Wed, 17 Oct 2018 19:37:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <1460987025-30360-1-git-send-email-dsafonov@virtuozzo.com>
- <tip-abfb9498ee1327f534df92a7ecaea81a85913bae@git.kernel.org> <87h8hkc9fd.fsf@notabene.neil.brown.name>
-In-Reply-To: <87h8hkc9fd.fsf@notabene.neil.brown.name>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Wed, 17 Oct 2018 19:37:42 -0700
-Message-ID: <CALCETrXB8PE4Ue0BeD0wUS9psLLjpv_pt+nj=SEaj+Nb_dZzUA@mail.gmail.com>
-Subject: Re: in_compat_syscall() returns from kernel thread for X86_32.
-To:     NeilBrown <neilb@suse.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Thu, 18 Oct 2018 06:38:09 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1358182|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03309;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=16;RT=16;SR=0;TI=SMTPD_---.D3idqql_1539830359;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D3idqql_1539830359)
+          by smtp.aliyun-inc.com(10.147.41.178);
+          Thu, 18 Oct 2018 10:39:19 +0800
+Date:   Thu, 18 Oct 2018 10:39:19 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        David Miller <davem@davemloft.net>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-tip-commits@vger.kernel.org, jsimmons@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, c-sky_gcc_upstream@c-sky.com
+Subject: Re: [PATCH V9 10/21] csky: IRQ handling
+Message-ID: <20181018023919.GA13314@guoren-Inspiron-7460>
+References: <cover.1539655731.git.ren_guo@c-sky.com>
+ <131eaaee23e5f55cdce90b76b2a64f67cdf0c685.1539655732.git.ren_guo@c-sky.com>
+ <CAK8P3a1B9jtV=3e0HrBXNyf=-HvnLmCgeFUhsr0-HZmOyFEHzA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1B9jtV=3e0HrBXNyf=-HvnLmCgeFUhsr0-HZmOyFEHzA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 6:48 PM NeilBrown <neilb@suse.com> wrote:
->
->
-> Was: Re: [tip:x86/asm] x86/entry: Rename is_{ia32,x32}_task() to in_{ia32,x32}_syscall()
-> On Tue, Apr 19 2016, tip-bot for Dmitry Safonov wrote:
->
-> > Commit-ID:  abfb9498ee1327f534df92a7ecaea81a85913bae
-> > Gitweb:     http://git.kernel.org/tip/abfb9498ee1327f534df92a7ecaea81a85913bae
-> > Author:     Dmitry Safonov <dsafonov@virtuozzo.com>
-> > AuthorDate: Mon, 18 Apr 2016 16:43:43 +0300
-> > Committer:  Ingo Molnar <mingo@kernel.org>
-> > CommitDate: Tue, 19 Apr 2016 10:44:52 +0200
+On Wed, Oct 17, 2018 at 05:14:48PM +0200, Arnd Bergmann wrote:
+> On Tue, Oct 16, 2018 at 5:02 AM Guo Ren <ren_guo@c-sky.com> wrote:
 > >
-> > x86/entry: Rename is_{ia32,x32}_task() to in_{ia32,x32}_syscall()
+> > This patch adds IRQ handling files.
 > >
-> ...
-> > @@ -318,7 +318,7 @@ static inline bool is_x32_task(void)
-> >
-> >  static inline bool in_compat_syscall(void)
-> >  {
-> > -     return is_ia32_task() || is_x32_task();
-> > +     return in_ia32_syscall() || in_x32_syscall();
-> >  }
->
-> Hi,
->  I'm reply to this patch largely to make sure I get the right people
->  .....
->
-> This test is always true when CONFIG_X86_32 is set, as that forces
-> in_ia32_syscall() to true.
-> However we might not be in a syscall at all - we might be running a
-> kernel thread which is always in 64 mode.
-> Every other implementation of in_compat_syscall() that I found is
-> dependant on a thread flag or syscall register flag, and so returns
-> "false" in a kernel thread.
->
-> Might something like this be appropriate?
->
-> diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-> index 2ff2a30a264f..c265b40a78f2 100644
-> --- a/arch/x86/include/asm/thread_info.h
-> +++ b/arch/x86/include/asm/thread_info.h
-> @@ -219,7 +219,7 @@ static inline int arch_within_stack_frames(const void * const stack,
->  #ifndef __ASSEMBLY__
->
->  #ifdef CONFIG_X86_32
-> -#define in_ia32_syscall() true
-> +#define in_ia32_syscall() (!(current->flags & PF_KTHREAD))
->  #else
->  #define in_ia32_syscall() (IS_ENABLED(CONFIG_IA32_EMULATION) && \
->                            current_thread_info()->status & TS_COMPAT)
->
-> This came up in the (no out-of-tree) lustre filesystem where some code
-> needs to assume 32-bit mode in X86_32 syscalls, and 64-bit mode in kernel
-> threads.
->
+> > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > ---
+> > Changelog:
+> >  - Use CONFIG_GENERIC_IRQ_MULTI_HANDLER
+> 
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> Using CONFIG_GENERIC_IRQ_MULTI_HANDLER makes this really
+> short, nice!
+Yes, this is tglx's suggestion.
 
-I could get on board with:
-
-({WARN_ON_ONCE(current->flags & PF_KTHREAD); true})
-
-The point of these accessors is to be used *in a syscall*.
-
-What on Earth is Lustre doing that makes it have this problem?
+Best Regards
+ Guo Ren
