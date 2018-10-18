@@ -7,58 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 157FDC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4703ECDE44
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE6802148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49D232145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="e0hDx0st"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE6802148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqrWOJtL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49D232145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730438AbeJSCIY (ORCPT
+        id S1730448AbeJSCI0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:08:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57342 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:08:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726822AbeJSCIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:08:23 -0400
+        id S1726822AbeJSCI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:08:26 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2104204FD;
-        Thu, 18 Oct 2018 18:06:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D70E120658;
+        Thu, 18 Oct 2018 18:06:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885975;
-        bh=9iJiCd2zEDHjGAlppXYF3FsUNtTWY3mBuNSzZljOruE=;
+        s=default; t=1539885978;
+        bh=xJb0c1oyBo1O/MtR2zxf5Kh2i6JDNQGziMAKtW4q+Jo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e0hDx0stAxpHj5Q0pqM7PJ6wBNa4Qrxgf6AUm55+qEs017tFaSl1bIg+crpd42mB0
-         1fg5TbYu3F8lZ83LGbQhKU8o4lG2NpWG+60oKTv5Oz2CsJCzhHgJqsdNRb5THmaUx+
-         9ke8/ci+L1m1MvLDsccb/fBBjYee/xY7C7j4brkA=
+        b=VqrWOJtLUyIpJzQpYEAE5IaVETrqqHPUKFgIlf239gpli7tTmAfO664cLjNAp2mKw
+         AGUA/GsEKSt/JqhX/WCwp4ZS8VD8uuHLpnNmF7A3vWTFMH+DBwKaCs9A6a6ubX7FTK
+         UdBr49WlThZx+uNIZUnvnT88YCCs8nUp7aCG2BEs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, pbonzini@redhat.com,
-        Ingo Molnar <mingo@kernel.org>,
-        Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-Subject: [PATCH 4.4 32/48] x86/fpu: Remove use_eager_fpu()
-Date:   Thu, 18 Oct 2018 19:55:07 +0200
-Message-Id: <20181018175429.672632710@linuxfoundation.org>
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Roger Quadros <rogerq@ti.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 04/48] mfd: omap-usb-host: Fix dts probe of children
+Date:   Thu, 18 Oct 2018 19:54:39 +0200
+Message-Id: <20181018175428.064612168@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -76,328 +64,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Tony Lindgren <tony@atomide.com>
 
-commit c592b57347069abfc0dcad3b3a302cf882602597 upstream.
+[ Upstream commit 10492ee8ed9188d6d420e1f79b2b9bdbc0624e65 ]
 
-This removes all the obvious code paths that depend on lazy FPU mode.
-It shouldn't change the generated code at all.
+It currently only works if the parent bus uses "simple-bus". We
+currently try to probe children with non-existing compatible values.
+And we're missing .probe.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Rik van Riel <riel@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Quentin Casasnovas <quentin.casasnovas@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: pbonzini@redhat.com
-Link: http://lkml.kernel.org/r/1475627678-20788-5-git-send-email-riel@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+I noticed this while testing devices configured to probe using ti-sysc
+interconnect target module driver. For that we also may want to rebind
+the driver, so let's remove __init and __exit.
+
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/crypto/crc32c-intel_glue.c |   17 +++-------------
- arch/x86/include/asm/fpu/internal.h |   34 --------------------------------
- arch/x86/kernel/fpu/core.c          |   38 ++++--------------------------------
- arch/x86/kernel/fpu/signal.c        |    8 ++-----
- arch/x86/kvm/cpuid.c                |    4 ---
- arch/x86/kvm/x86.c                  |   10 ---------
- 6 files changed, 14 insertions(+), 97 deletions(-)
+ drivers/mfd/omap-usb-host.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/arch/x86/crypto/crc32c-intel_glue.c
-+++ b/arch/x86/crypto/crc32c-intel_glue.c
-@@ -48,21 +48,13 @@
- #ifdef CONFIG_X86_64
+--- a/drivers/mfd/omap-usb-host.c
++++ b/drivers/mfd/omap-usb-host.c
+@@ -548,8 +548,8 @@ static int usbhs_omap_get_dt_pdata(struc
+ }
+ 
+ static const struct of_device_id usbhs_child_match_table[] = {
+-	{ .compatible = "ti,omap-ehci", },
+-	{ .compatible = "ti,omap-ohci", },
++	{ .compatible = "ti,ehci-omap", },
++	{ .compatible = "ti,ohci-omap3", },
+ 	{ }
+ };
+ 
+@@ -875,6 +875,7 @@ static struct platform_driver usbhs_omap
+ 		.pm		= &usbhsomap_dev_pm_ops,
+ 		.of_match_table = usbhs_omap_dt_ids,
+ 	},
++	.probe		= usbhs_omap_probe,
+ 	.remove		= usbhs_omap_remove,
+ };
+ 
+@@ -884,9 +885,9 @@ MODULE_ALIAS("platform:" USBHS_DRIVER_NA
+ MODULE_LICENSE("GPL v2");
+ MODULE_DESCRIPTION("usb host common core driver for omap EHCI and OHCI");
+ 
+-static int __init omap_usbhs_drvinit(void)
++static int omap_usbhs_drvinit(void)
+ {
+-	return platform_driver_probe(&usbhs_omap_driver, usbhs_omap_probe);
++	return platform_driver_register(&usbhs_omap_driver);
+ }
+ 
  /*
-  * use carryless multiply version of crc32c when buffer
-- * size is >= 512 (when eager fpu is enabled) or
-- * >= 1024 (when eager fpu is disabled) to account
-+ * size is >= 512 to account
-  * for fpu state save/restore overhead.
+@@ -898,7 +899,7 @@ static int __init omap_usbhs_drvinit(voi
   */
--#define CRC32C_PCL_BREAKEVEN_EAGERFPU	512
--#define CRC32C_PCL_BREAKEVEN_NOEAGERFPU	1024
-+#define CRC32C_PCL_BREAKEVEN	512
+ fs_initcall_sync(omap_usbhs_drvinit);
  
- asmlinkage unsigned int crc_pcl(const u8 *buffer, int len,
- 				unsigned int crc_init);
--static int crc32c_pcl_breakeven = CRC32C_PCL_BREAKEVEN_EAGERFPU;
--#define set_pcl_breakeven_point()					\
--do {									\
--	if (!use_eager_fpu())						\
--		crc32c_pcl_breakeven = CRC32C_PCL_BREAKEVEN_NOEAGERFPU;	\
--} while (0)
- #endif /* CONFIG_X86_64 */
- 
- static u32 crc32c_intel_le_hw_byte(u32 crc, unsigned char const *data, size_t length)
-@@ -185,7 +177,7 @@ static int crc32c_pcl_intel_update(struc
- 	 * use faster PCL version if datasize is large enough to
- 	 * overcome kernel fpu state save/restore overhead
- 	 */
--	if (len >= crc32c_pcl_breakeven && irq_fpu_usable()) {
-+	if (len >= CRC32C_PCL_BREAKEVEN && irq_fpu_usable()) {
- 		kernel_fpu_begin();
- 		*crcp = crc_pcl(data, len, *crcp);
- 		kernel_fpu_end();
-@@ -197,7 +189,7 @@ static int crc32c_pcl_intel_update(struc
- static int __crc32c_pcl_intel_finup(u32 *crcp, const u8 *data, unsigned int len,
- 				u8 *out)
+-static void __exit omap_usbhs_drvexit(void)
++static void omap_usbhs_drvexit(void)
  {
--	if (len >= crc32c_pcl_breakeven && irq_fpu_usable()) {
-+	if (len >= CRC32C_PCL_BREAKEVEN && irq_fpu_usable()) {
- 		kernel_fpu_begin();
- 		*(__le32 *)out = ~cpu_to_le32(crc_pcl(data, len, *crcp));
- 		kernel_fpu_end();
-@@ -256,7 +248,6 @@ static int __init crc32c_intel_mod_init(
- 		alg.update = crc32c_pcl_intel_update;
- 		alg.finup = crc32c_pcl_intel_finup;
- 		alg.digest = crc32c_pcl_intel_digest;
--		set_pcl_breakeven_point();
- 	}
- #endif
- 	return crypto_register_shash(&alg);
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -57,11 +57,6 @@ extern u64 fpu__get_supported_xfeatures_
- /*
-  * FPU related CPU feature flag helper routines:
-  */
--static __always_inline __pure bool use_eager_fpu(void)
--{
--	return true;
--}
--
- static __always_inline __pure bool use_xsaveopt(void)
- {
- 	return static_cpu_has(X86_FEATURE_XSAVEOPT);
-@@ -498,24 +493,6 @@ static inline int fpu_want_lazy_restore(
+ 	platform_driver_unregister(&usbhs_omap_driver);
  }
- 
- 
--/*
-- * Wrap lazy FPU TS handling in a 'hw fpregs activation/deactivation'
-- * idiom, which is then paired with the sw-flag (fpregs_active) later on:
-- */
--
--static inline void __fpregs_activate_hw(void)
--{
--	if (!use_eager_fpu())
--		clts();
--}
--
--static inline void __fpregs_deactivate_hw(void)
--{
--	if (!use_eager_fpu())
--		stts();
--}
--
--/* Must be paired with an 'stts' (fpregs_deactivate_hw()) after! */
- static inline void __fpregs_deactivate(struct fpu *fpu)
- {
- 	WARN_ON_FPU(!fpu->fpregs_active);
-@@ -524,7 +501,6 @@ static inline void __fpregs_deactivate(s
- 	this_cpu_write(fpu_fpregs_owner_ctx, NULL);
- }
- 
--/* Must be paired with a 'clts' (fpregs_activate_hw()) before! */
- static inline void __fpregs_activate(struct fpu *fpu)
- {
- 	WARN_ON_FPU(fpu->fpregs_active);
-@@ -549,22 +525,17 @@ static inline int fpregs_active(void)
- }
- 
- /*
-- * Encapsulate the CR0.TS handling together with the
-- * software flag.
-- *
-  * These generally need preemption protection to work,
-  * do try to avoid using these on their own.
-  */
- static inline void fpregs_activate(struct fpu *fpu)
- {
--	__fpregs_activate_hw();
- 	__fpregs_activate(fpu);
- }
- 
- static inline void fpregs_deactivate(struct fpu *fpu)
- {
- 	__fpregs_deactivate(fpu);
--	__fpregs_deactivate_hw();
- }
- 
- /*
-@@ -591,8 +562,7 @@ switch_fpu_prepare(struct fpu *old_fpu,
- 	 * or if the past 5 consecutive context-switches used math.
- 	 */
- 	fpu.preload = static_cpu_has(X86_FEATURE_FPU) &&
--		      new_fpu->fpstate_active &&
--		      (use_eager_fpu() || new_fpu->counter > 5);
-+		      new_fpu->fpstate_active;
- 
- 	if (old_fpu->fpregs_active) {
- 		if (!copy_fpregs_to_fpstate(old_fpu))
-@@ -608,8 +578,6 @@ switch_fpu_prepare(struct fpu *old_fpu,
- 			new_fpu->counter++;
- 			__fpregs_activate(new_fpu);
- 			prefetch(&new_fpu->state);
--		} else {
--			__fpregs_deactivate_hw();
- 		}
- 	} else {
- 		old_fpu->counter = 0;
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -53,27 +53,9 @@ static bool kernel_fpu_disabled(void)
- 	return this_cpu_read(in_kernel_fpu);
- }
- 
--/*
-- * Were we in an interrupt that interrupted kernel mode?
-- *
-- * On others, we can do a kernel_fpu_begin/end() pair *ONLY* if that
-- * pair does nothing at all: the thread must not have fpu (so
-- * that we don't try to save the FPU state), and TS must
-- * be set (so that the clts/stts pair does nothing that is
-- * visible in the interrupted kernel thread).
-- *
-- * Except for the eagerfpu case when we return true; in the likely case
-- * the thread has FPU but we are not going to set/clear TS.
-- */
- static bool interrupted_kernel_fpu_idle(void)
- {
--	if (kernel_fpu_disabled())
--		return false;
--
--	if (use_eager_fpu())
--		return true;
--
--	return !current->thread.fpu.fpregs_active && (read_cr0() & X86_CR0_TS);
-+	return !kernel_fpu_disabled();
- }
- 
- /*
-@@ -121,7 +103,6 @@ void __kernel_fpu_begin(void)
- 		copy_fpregs_to_fpstate(fpu);
- 	} else {
- 		this_cpu_write(fpu_fpregs_owner_ctx, NULL);
--		__fpregs_activate_hw();
- 	}
- }
- EXPORT_SYMBOL(__kernel_fpu_begin);
-@@ -132,8 +113,6 @@ void __kernel_fpu_end(void)
- 
- 	if (fpu->fpregs_active)
- 		copy_kernel_to_fpregs(&fpu->state);
--	else
--		__fpregs_deactivate_hw();
- 
- 	kernel_fpu_enable();
- }
-@@ -194,10 +173,7 @@ void fpu__save(struct fpu *fpu)
- 	preempt_disable();
- 	if (fpu->fpregs_active) {
- 		if (!copy_fpregs_to_fpstate(fpu)) {
--			if (use_eager_fpu())
--				copy_kernel_to_fpregs(&fpu->state);
--			else
--				fpregs_deactivate(fpu);
-+			copy_kernel_to_fpregs(&fpu->state);
- 		}
- 	}
- 	preempt_enable();
-@@ -245,8 +221,7 @@ static void fpu_copy(struct fpu *dst_fpu
- 	 * Don't let 'init optimized' areas of the XSAVE area
- 	 * leak into the child task:
- 	 */
--	if (use_eager_fpu())
--		memset(&dst_fpu->state.xsave, 0, xstate_size);
-+	memset(&dst_fpu->state.xsave, 0, xstate_size);
- 
- 	/*
- 	 * Save current FPU registers directly into the child
-@@ -268,10 +243,7 @@ static void fpu_copy(struct fpu *dst_fpu
- 	if (!copy_fpregs_to_fpstate(dst_fpu)) {
- 		memcpy(&src_fpu->state, &dst_fpu->state, xstate_size);
- 
--		if (use_eager_fpu())
--			copy_kernel_to_fpregs(&src_fpu->state);
--		else
--			fpregs_deactivate(src_fpu);
-+		copy_kernel_to_fpregs(&src_fpu->state);
- 	}
- 	preempt_enable();
- }
-@@ -437,7 +409,7 @@ void fpu__clear(struct fpu *fpu)
- {
- 	WARN_ON_FPU(fpu != &current->thread.fpu); /* Almost certainly an anomaly */
- 
--	if (!use_eager_fpu() || !static_cpu_has(X86_FEATURE_FPU)) {
-+	if (!static_cpu_has(X86_FEATURE_FPU)) {
- 		/* FPU state will be reallocated lazily at the first use. */
- 		fpu__drop(fpu);
- 	} else {
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -319,11 +319,9 @@ static int __fpu__restore_sig(void __use
- 		}
- 
- 		fpu->fpstate_active = 1;
--		if (use_eager_fpu()) {
--			preempt_disable();
--			fpu__restore(fpu);
--			preempt_enable();
--		}
-+		preempt_disable();
-+		fpu__restore(fpu);
-+		preempt_enable();
- 
- 		return err;
- 	} else {
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -16,7 +16,6 @@
- #include <linux/module.h>
- #include <linux/vmalloc.h>
- #include <linux/uaccess.h>
--#include <asm/fpu/internal.h> /* For use_eager_fpu.  Ugh! */
- #include <asm/user.h>
- #include <asm/fpu/xstate.h>
- #include "cpuid.h"
-@@ -104,8 +103,7 @@ int kvm_update_cpuid(struct kvm_vcpu *vc
- 	if (best && (best->eax & (F(XSAVES) | F(XSAVEC))))
- 		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
- 
--	if (use_eager_fpu())
--		kvm_x86_ops->fpu_activate(vcpu);
-+	kvm_x86_ops->fpu_activate(vcpu);
- 
- 	/*
- 	 * The existing code assumes virtual address is 48-bit in the canonical
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7319,16 +7319,6 @@ void kvm_put_guest_fpu(struct kvm_vcpu *
- 	copy_fpregs_to_fpstate(&vcpu->arch.guest_fpu);
- 	__kernel_fpu_end();
- 	++vcpu->stat.fpu_reload;
--	/*
--	 * If using eager FPU mode, or if the guest is a frequent user
--	 * of the FPU, just leave the FPU active for next time.
--	 * Every 255 times fpu_counter rolls over to 0; a guest that uses
--	 * the FPU in bursts will revert to loading it on demand.
--	 */
--	if (!use_eager_fpu()) {
--		if (++vcpu->fpu_counter < 5)
--			kvm_make_request(KVM_REQ_DEACTIVATE_FPU, vcpu);
--	}
- 	trace_kvm_fpu(0);
- }
- 
 
 
