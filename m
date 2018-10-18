@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B25ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B3AECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B7D52145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A84C21476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYE3m+jr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B7D52145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzO8soxM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A84C21476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729069AbeJSCAd (ORCPT
+        id S1729079AbeJSCAg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:00:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48214 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:00:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726650AbeJSCAc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:00:32 -0400
+        id S1726650AbeJSCAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:00:35 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADDBB21476;
-        Thu, 18 Oct 2018 17:58:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D277B204FD;
+        Thu, 18 Oct 2018 17:58:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885507;
-        bh=UwhtS79I2kIbhG3ok3hjKu9+xYqoTXeKjaFCaQHsJnc=;
+        s=default; t=1539885510;
+        bh=ZepONSE7vRYlFCstYC+CVESULLXP+dtB6Ihp3pHOy9Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NYE3m+jrsrMb8IM2PY6bge5bKSCMSxeAGTodKTdpjdyRbZpDKE7wuWV/4JZ+UMnhc
-         Ih/wc6YAGGApvY6KpKb1vgpR0aZMBRKl2BD3x26KaTguYFSzw/6FstT5Y+7jqycisX
-         9tZAAISosRIYjM0UeDk7q95JivcYEkMzBDNnkRPg=
+        b=GzO8soxMlUFsrseRxsqesrN78jJmCdpkCAGGoXQMFnk5xz+N4E5T/+RrVU+XAMQoZ
+         ezVzvUkJPDshiwrl7z1DC9nRdVSp/5P1JM46pOd7gzvL7tp/kPa0uqfgu/OfxolNip
+         yQ9lY4hRUzYPja1RWRHxML07cmzhwvrDTW8M++mo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -44,9 +44,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Marek Lindner <mareklindner@neomailbox.ch>,
         Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 08/53] batman-adv: Fix segfault when writing to sysfs elp_interval
-Date:   Thu, 18 Oct 2018 19:54:01 +0200
-Message-Id: <20181018175418.280321081@linuxfoundation.org>
+Subject: [PATCH 4.18 09/53] batman-adv: Prevent duplicated gateway_node entry
+Date:   Thu, 18 Oct 2018 19:54:02 +0200
+Message-Id: <20181018175418.470883959@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.561567978@linuxfoundation.org>
 References: <20181018175416.561567978@linuxfoundation.org>
@@ -66,110 +66,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit a25bab9d723a08bd0bdafb1529faf9094c690b70 ]
+[ Upstream commit dff9bc42ab0b2d38c5e90ddd79b238fed5b4c7ad ]
 
-The per hardif sysfs file "batman_adv/elp_interval" is using the generic
-functions to store/show uint values. The helper __batadv_store_uint_attr
-requires the softif net_device as parameter to print the resulting change
-as info text when the users writes to this file. It uses the helper
-function batadv_info to add it at the same time to the kernel ring buffer
-and to the batman-adv debug log (when CONFIG_BATMAN_ADV_DEBUG is enabled).
+The function batadv_gw_node_add is responsible for adding new gw_node to
+the gateway_list. It is expecting that the caller already checked that
+there is not already an entry with the same key or not.
 
-The function batadv_info requires as first parameter the batman-adv softif
-net_device. This parameter is then used to find the private buffer which
-contains the debug log for this batman-adv interface. But
-batadv_store_throughput_override used as first argument the slave
-net_device. This slave device doesn't have the batadv_priv private data
-which is access by batadv_info.
+But the lock for the list is only held when the list is really modified.
+This could lead to duplicated entries because another context could create
+an entry with the same key between the check and the list manipulation.
 
-Writing to this file with CONFIG_BATMAN_ADV_DEBUG enabled can either lead
-to a segfault or to memory corruption.
+The check and the manipulation of the list must therefore be in the same
+locked code section.
 
-Fixes: 0744ff8fa8fa ("batman-adv: Add hard_iface specific sysfs wrapper macros for UINT")
+Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
 Signed-off-by: Sven Eckelmann <sven@narfation.org>
 Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
 Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/sysfs.c |   25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ net/batman-adv/gateway_client.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/net/batman-adv/sysfs.c
-+++ b/net/batman-adv/sysfs.c
-@@ -188,7 +188,8 @@ ssize_t batadv_store_##_name(struct kobj
- 									\
- 	return __batadv_store_uint_attr(buff, count, _min, _max,	\
- 					_post_func, attr,		\
--					&bat_priv->_var, net_dev);	\
-+					&bat_priv->_var, net_dev,	\
-+					NULL);	\
- }
- 
- #define BATADV_ATTR_SIF_SHOW_UINT(_name, _var)				\
-@@ -262,7 +263,9 @@ ssize_t batadv_store_##_name(struct kobj
- 									\
- 	length = __batadv_store_uint_attr(buff, count, _min, _max,	\
- 					  _post_func, attr,		\
--					  &hard_iface->_var, net_dev);	\
-+					  &hard_iface->_var,		\
-+					  hard_iface->soft_iface,	\
-+					  net_dev);			\
- 									\
- 	batadv_hardif_put(hard_iface);				\
- 	return length;							\
-@@ -356,10 +359,12 @@ __batadv_store_bool_attr(char *buff, siz
- 
- static int batadv_store_uint_attr(const char *buff, size_t count,
- 				  struct net_device *net_dev,
-+				  struct net_device *slave_dev,
- 				  const char *attr_name,
- 				  unsigned int min, unsigned int max,
- 				  atomic_t *attr)
+--- a/net/batman-adv/gateway_client.c
++++ b/net/batman-adv/gateway_client.c
+@@ -32,6 +32,7 @@
+ #include <linux/kernel.h>
+ #include <linux/kref.h>
+ #include <linux/list.h>
++#include <linux/lockdep.h>
+ #include <linux/netdevice.h>
+ #include <linux/netlink.h>
+ #include <linux/rculist.h>
+@@ -348,6 +349,9 @@ out:
+  * @bat_priv: the bat priv with all the soft interface information
+  * @orig_node: originator announcing gateway capabilities
+  * @gateway: announced bandwidth information
++ *
++ * Has to be called with the appropriate locks being acquired
++ * (gw.list_lock).
+  */
+ static void batadv_gw_node_add(struct batadv_priv *bat_priv,
+ 			       struct batadv_orig_node *orig_node,
+@@ -355,6 +359,8 @@ static void batadv_gw_node_add(struct ba
  {
-+	char ifname[IFNAMSIZ + 3] = "";
- 	unsigned long uint_val;
- 	int ret;
+ 	struct batadv_gw_node *gw_node;
  
-@@ -385,8 +390,11 @@ static int batadv_store_uint_attr(const
- 	if (atomic_read(attr) == uint_val)
- 		return count;
- 
--	batadv_info(net_dev, "%s: Changing from: %i to: %lu\n",
--		    attr_name, atomic_read(attr), uint_val);
-+	if (slave_dev)
-+		snprintf(ifname, sizeof(ifname), "%s: ", slave_dev->name);
++	lockdep_assert_held(&bat_priv->gw.list_lock);
 +
-+	batadv_info(net_dev, "%s: %sChanging from: %i to: %lu\n",
-+		    attr_name, ifname, atomic_read(attr), uint_val);
+ 	if (gateway->bandwidth_down == 0)
+ 		return;
  
- 	atomic_set(attr, uint_val);
- 	return count;
-@@ -397,12 +405,13 @@ static ssize_t __batadv_store_uint_attr(
- 					void (*post_func)(struct net_device *),
- 					const struct attribute *attr,
- 					atomic_t *attr_store,
--					struct net_device *net_dev)
-+					struct net_device *net_dev,
-+					struct net_device *slave_dev)
+@@ -369,10 +375,8 @@ static void batadv_gw_node_add(struct ba
+ 	gw_node->bandwidth_down = ntohl(gateway->bandwidth_down);
+ 	gw_node->bandwidth_up = ntohl(gateway->bandwidth_up);
+ 
+-	spin_lock_bh(&bat_priv->gw.list_lock);
+ 	kref_get(&gw_node->refcount);
+ 	hlist_add_head_rcu(&gw_node->list, &bat_priv->gw.gateway_list);
+-	spin_unlock_bh(&bat_priv->gw.list_lock);
+ 
+ 	batadv_dbg(BATADV_DBG_BATMAN, bat_priv,
+ 		   "Found new gateway %pM -> gw bandwidth: %u.%u/%u.%u MBit\n",
+@@ -428,11 +432,14 @@ void batadv_gw_node_update(struct batadv
  {
- 	int ret;
+ 	struct batadv_gw_node *gw_node, *curr_gw = NULL;
  
--	ret = batadv_store_uint_attr(buff, count, net_dev, attr->name, min, max,
--				     attr_store);
-+	ret = batadv_store_uint_attr(buff, count, net_dev, slave_dev,
-+				     attr->name, min, max, attr_store);
- 	if (post_func && ret)
- 		post_func(net_dev);
++	spin_lock_bh(&bat_priv->gw.list_lock);
+ 	gw_node = batadv_gw_node_get(bat_priv, orig_node);
+ 	if (!gw_node) {
+ 		batadv_gw_node_add(bat_priv, orig_node, gateway);
++		spin_unlock_bh(&bat_priv->gw.list_lock);
+ 		goto out;
+ 	}
++	spin_unlock_bh(&bat_priv->gw.list_lock);
  
-@@ -571,7 +580,7 @@ static ssize_t batadv_store_gw_sel_class
- 	return __batadv_store_uint_attr(buff, count, 1, BATADV_TQ_MAX_VALUE,
- 					batadv_post_gw_reselect, attr,
- 					&bat_priv->gw.sel_class,
--					bat_priv->soft_iface);
-+					bat_priv->soft_iface, NULL);
- }
- 
- static ssize_t batadv_show_gw_bwidth(struct kobject *kobj,
+ 	if (gw_node->bandwidth_down == ntohl(gateway->bandwidth_down) &&
+ 	    gw_node->bandwidth_up == ntohl(gateway->bandwidth_up))
 
 
