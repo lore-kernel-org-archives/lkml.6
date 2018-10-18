@@ -2,396 +2,151 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 044A3C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C65ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 733AD20645
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:50:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 733AD20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4242620645
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:50:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="SkkdHVVW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4242620645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728172AbeJRTu5 (ORCPT
+        id S1728130AbeJRTu5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 18 Oct 2018 15:50:57 -0400
-Received: from mga05.intel.com ([192.55.52.43]:48235 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727649AbeJRTu5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35480 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727510AbeJRTu5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 18 Oct 2018 15:50:57 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2018 04:50:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,396,1534834800"; 
-   d="gz'50?scan'50,208,50";a="89296432"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 18 Oct 2018 04:50:15 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1gD6oh-0004qF-2G; Thu, 18 Oct 2018 19:50:15 +0800
-Date:   Thu, 18 Oct 2018 19:49:55 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Kun Yi <kunyi@google.com>
-Cc:     kbuild-all@01.org, linus.walleij@linaro.org,
-        linux-gpio@vger.kernel.org, tmaimon77@gmail.com,
-        linux-kernel@vger.kernel.org, avifishman70@gmail.com,
-        openbmc@lists.ozlabs.org, Kun Yi <kunyi@google.com>
-Subject: Re: [PATCH 1/2] gpio: gpio-mmio: Allow volatile shadow regs
-Message-ID: <201810181941.ROCfPe4e%fengguang.wu@intel.com>
-References: <20181017213012.233957-2-kunyi@google.com>
+Received: by mail-ed1-f66.google.com with SMTP id y19-v6so27941585edd.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 04:50:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=0/6Vyo1g3saa4jN+EGk4pZ9PCjBMj47nRR0799DVnJU=;
+        b=SkkdHVVWhLavR92HwefmddUuqacJu6tYLcDZTi2me+Yjd/C4Bti4yqvaCA1PAHju4I
+         LV3BAvFYY5fol2pUE/zAbAsxtriU2Lcp5mf0cCb6OyOnVHgbvVsDM8uiixMth+IT8pO2
+         ky2WlpK2auRrenIZUPlk9AdGa5FqPeVcXogNQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=0/6Vyo1g3saa4jN+EGk4pZ9PCjBMj47nRR0799DVnJU=;
+        b=DP1dcmRFgSrf1s+T869Bye9j9erN6mWIJnP2yXLo56RFEWn2y+0jUkZ0AEXriw2fqa
+         xXklf1HsUZSlfHgXHQavtUEUZdscftJOZujjOCO/e3ADB9fYswk8VoX+AOy8W0j0XkUC
+         YmCfkJ/wwPOKGvKmoHuKvfZ1Mhy/pHN9K9rFFA1t6dbnqGEVKxYofAILBAgMZUD8ik3h
+         5VGA7cKRN6H5xy+2L+lV8tXkogpRAPHeoEs9fARYw+9eroUzK4cG1jf8jNI8iMPfS+ne
+         WbRoqY9vyIFGG0CcbGXBun8xfC3i3k2OVGyHdylSAq6t8zkEwsEaxogf55gDIiYG90hs
+         Pa2w==
+X-Gm-Message-State: ABuFfohzuB6/hWI7vygPj3+Arhx31bg8b5+D0zDXjvGHVaPfNxiy7/Zf
+        TDGuGGOAb1SJ0xo1e2DpDBH/7A==
+X-Google-Smtp-Source: ACcGV63MLa7pjGR889HrfrnXS0U9UTuILyz0YrAZ2sRyQ2kX2uOf1SatxDFuUyJVqnQK6oOh/qvwrA==
+X-Received: by 2002:aa7:d142:: with SMTP id r2-v6mr3346073edo.65.1539863416906;
+        Thu, 18 Oct 2018 04:50:16 -0700 (PDT)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id a40-v6sm8482865edd.61.2018.10.18.04.50.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Oct 2018 04:50:16 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 13:50:09 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Shuah Khan <shuah@kernel.org>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the kselftest tree with the kvm tree
+Message-ID: <20181018115009.GA6819@andrea>
+References: <20181018155030.1d75c506@canb.auug.org.au>
+ <2e7090d2-5c80-7fcf-6e50-7155280b998a@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="BOKacYhQ+x31HxR3"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181017213012.233957-2-kunyi@google.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2e7090d2-5c80-7fcf-6e50-7155280b998a@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> Shuah, I think it's best if in the future the
+> tools/testing/selftests/kvm/ changes go through my tree, unless they
+> affect many selftests subdirectories.
 
---BOKacYhQ+x31HxR3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Would the patch below make sense ?
 
-Hi Kun,
+(It wasn't the case of my patch, but you never know... ;D)
 
-Thank you for the patch! Perhaps something to improve:
+Output of get_maintainer.pl on tools/testing/selftests/kvm/:
 
-[auto build test WARNING on gpio/for-next]
-[also build test WARNING on v4.19-rc8 next-20181018]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Before:
 
-url:    https://github.com/0day-ci/linux/commits/Kun-Yi/gpio-gpio-mmio-Allow-volatile-shadow-regs/20181018-144115
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git for-next
-reproduce: make htmldocs
+Shuah Khan <shuah@kernel.org> (maintainer:KERNEL SELFTEST FRAMEWORK,commit_signer:5/23=22%)
+Paolo Bonzini <pbonzini@redhat.com> (commit_signer:20/23=87%,authored:10/23=43%)
+Peter Xu <peterx@redhat.com> (commit_signer:4/23=17%,authored:4/23=17%)
+Anders Roxell <anders.roxell@linaro.org> (commit_signer:3/23=13%,authored:3/23=13%)
+Ken Hofsass <hofsass@google.com> (commit_signer:2/23=9%)
+linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+linux-kernel@vger.kernel.org (open list)
 
-All warnings (new ones prefixed by >>):
+After:
 
-   WARNING: convert(1) not found, for SVG to PDF conversion install ImageMagick (https://www.imagemagick.org)
-   include/linux/srcu.h:175: warning: Function parameter or member 'p' not described in 'srcu_dereference_notrace'
-   include/linux/srcu.h:175: warning: Function parameter or member 'sp' not described in 'srcu_dereference_notrace'
-   include/linux/gfp.h:1: warning: no structured comments found
-   include/net/cfg80211.h:4381: warning: Function parameter or member 'wext.ibss' not described in 'wireless_dev'
-   include/net/cfg80211.h:4381: warning: Function parameter or member 'wext.connect' not described in 'wireless_dev'
-   include/net/cfg80211.h:4381: warning: Function parameter or member 'wext.keys' not described in 'wireless_dev'
-   include/net/cfg80211.h:4381: warning: Function parameter or member 'wext.ie' not described in 'wireless_dev'
-   include/net/cfg80211.h:4381: warning: Function parameter or member 'wext.ie_len' not described in 'wireless_dev'
-   include/net/cfg80211.h:4381: warning: Function parameter or member 'wext.bssid' not described in 'wireless_dev'
-   include/net/cfg80211.h:4381: warning: Function parameter or member 'wext.ssid' not described in 'wireless_dev'
-   include/net/cfg80211.h:4381: warning: Function parameter or member 'wext.default_key' not described in 'wireless_dev'
-   include/net/cfg80211.h:4381: warning: Function parameter or member 'wext.default_mgmt_key' not described in 'wireless_dev'
-   include/net/cfg80211.h:4381: warning: Function parameter or member 'wext.prev_bssid_valid' not described in 'wireless_dev'
-   include/net/mac80211.h:2328: warning: Function parameter or member 'radiotap_timestamp.units_pos' not described in 'ieee80211_hw'
-   include/net/mac80211.h:2328: warning: Function parameter or member 'radiotap_timestamp.accuracy' not described in 'ieee80211_hw'
-   include/net/mac80211.h:977: warning: Function parameter or member 'control.rates' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'control.rts_cts_rate_idx' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'control.use_rts' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'control.use_cts_prot' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'control.short_preamble' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'control.skip_table' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'control.jiffies' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'control.vif' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'control.hw_key' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'control.flags' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'control.enqueue_time' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'ack' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'ack.cookie' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'status.rates' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'status.ack_signal' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'status.ampdu_ack_len' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'status.ampdu_len' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'status.antenna' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'status.tx_time' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'status.is_valid_ack_signal' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'status.status_driver_data' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'driver_rates' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'pad' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:977: warning: Function parameter or member 'rate_driver_data' not described in 'ieee80211_tx_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'rx_stats_avg' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'rx_stats_avg.signal' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'rx_stats_avg.chain_signal' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.filtered' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.retry_failed' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.retry_count' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.lost_packets' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.last_tdls_pkt_time' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.msdu_retries' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.msdu_failed' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.last_ack' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.last_ack_signal' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.ack_signal_filled' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.avg_ack_signal' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx_stats.packets' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx_stats.bytes' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx_stats.last_rate' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx_stats.msdu' not described in 'sta_info'
-   include/linux/mod_devicetable.h:763: warning: Function parameter or member 'driver_data' not described in 'typec_device_id'
-   kernel/sched/fair.c:3371: warning: Function parameter or member 'flags' not described in 'attach_entity_load_avg'
-   arch/x86/include/asm/atomic.h:84: warning: Excess function parameter 'i' description in 'arch_atomic_sub_and_test'
-   arch/x86/include/asm/atomic.h:84: warning: Excess function parameter 'v' description in 'arch_atomic_sub_and_test'
-   arch/x86/include/asm/atomic.h:96: warning: Excess function parameter 'v' description in 'arch_atomic_inc'
-   arch/x86/include/asm/atomic.h:109: warning: Excess function parameter 'v' description in 'arch_atomic_dec'
-   arch/x86/include/asm/atomic.h:124: warning: Excess function parameter 'v' description in 'arch_atomic_dec_and_test'
-   arch/x86/include/asm/atomic.h:138: warning: Excess function parameter 'v' description in 'arch_atomic_inc_and_test'
-   arch/x86/include/asm/atomic.h:153: warning: Excess function parameter 'i' description in 'arch_atomic_add_negative'
-   arch/x86/include/asm/atomic.h:153: warning: Excess function parameter 'v' description in 'arch_atomic_add_negative'
-   include/linux/dma-buf.h:304: warning: Function parameter or member 'cb_excl.cb' not described in 'dma_buf'
-   include/linux/dma-buf.h:304: warning: Function parameter or member 'cb_excl.poll' not described in 'dma_buf'
-   include/linux/dma-buf.h:304: warning: Function parameter or member 'cb_excl.active' not described in 'dma_buf'
-   include/linux/dma-buf.h:304: warning: Function parameter or member 'cb_shared.cb' not described in 'dma_buf'
-   include/linux/dma-buf.h:304: warning: Function parameter or member 'cb_shared.poll' not described in 'dma_buf'
-   include/linux/dma-buf.h:304: warning: Function parameter or member 'cb_shared.active' not described in 'dma_buf'
-   include/linux/dma-fence-array.h:54: warning: Function parameter or member 'work' not described in 'dma_fence_array'
-   include/linux/gpio/driver.h:369: warning: Function parameter or member 'init_valid_mask' not described in 'gpio_chip'
->> include/linux/gpio/driver.h:369: warning: Function parameter or member 'bgpio_regs_are_volatile' not described in 'gpio_chip'
-   include/linux/iio/hw-consumer.h:1: warning: no structured comments found
-   include/linux/input/sparse-keymap.h:46: warning: Function parameter or member 'sw' not described in 'key_entry'
-   drivers/pci/pci.c:218: warning: Excess function parameter 'p' description in 'pci_dev_str_match_path'
-   include/linux/regulator/driver.h:227: warning: Function parameter or member 'resume' not described in 'regulator_ops'
-   drivers/regulator/core.c:4479: warning: Excess function parameter 'state' description in 'regulator_suspend'
-   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw0' not described in 'irb'
-   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw1' not described in 'irb'
-   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw2' not described in 'irb'
-   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw3' not described in 'irb'
-   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.eadm' not described in 'irb'
-   drivers/slimbus/stream.c:1: warning: no structured comments found
-   drivers/target/target_core_device.c:1: warning: no structured comments found
-   drivers/usb/dwc3/gadget.c:510: warning: Excess function parameter 'dwc' description in 'dwc3_gadget_start_config'
-   drivers/usb/typec/class.c:1497: warning: Excess function parameter 'drvdata' description in 'typec_port_register_altmode'
-   drivers/usb/typec/class.c:1497: warning: Excess function parameter 'drvdata' description in 'typec_port_register_altmode'
-   drivers/usb/typec/class.c:1497: warning: Excess function parameter 'drvdata' description in 'typec_port_register_altmode'
-   drivers/usb/typec/class.c:1497: warning: Excess function parameter 'drvdata' description in 'typec_port_register_altmode'
-   drivers/usb/typec/class.c:1497: warning: Excess function parameter 'drvdata' description in 'typec_port_register_altmode'
-   drivers/usb/typec/class.c:1497: warning: Excess function parameter 'drvdata' description in 'typec_port_register_altmode'
-   drivers/usb/typec/class.c:1497: warning: Excess function parameter 'drvdata' description in 'typec_port_register_altmode'
-   drivers/usb/typec/class.c:1497: warning: Excess function parameter 'drvdata' description in 'typec_port_register_altmode'
-   drivers/usb/typec/class.c:1497: warning: Excess function parameter 'drvdata' description in 'typec_port_register_altmode'
-   drivers/usb/typec/class.c:1497: warning: Excess function parameter 'drvdata' description in 'typec_port_register_altmode'
-   drivers/usb/typec/class.c:1497: warning: Excess function parameter 'drvdata' description in 'typec_port_register_altmode'
-   drivers/usb/typec/class.c:1497: warning: Excess function parameter 'drvdata' description in 'typec_port_register_altmode'
-   drivers/usb/typec/bus.c:1: warning: no structured comments found
-   drivers/usb/typec/bus.c:268: warning: Function parameter or member 'mode' not described in 'typec_match_altmode'
-   drivers/usb/typec/class.c:1497: warning: Excess function parameter 'drvdata' description in 'typec_port_register_altmode'
-   drivers/usb/typec/class.c:1: warning: no structured comments found
-   include/linux/w1.h:281: warning: Function parameter or member 'of_match_table' not described in 'w1_family'
-   fs/direct-io.c:257: warning: Excess function parameter 'offset' description in 'dio_complete'
-   fs/file_table.c:1: warning: no structured comments found
-   fs/libfs.c:477: warning: Excess function parameter 'available' description in 'simple_write_end'
-   fs/posix_acl.c:646: warning: Function parameter or member 'inode' not described in 'posix_acl_update_mode'
-   fs/posix_acl.c:646: warning: Function parameter or member 'mode_p' not described in 'posix_acl_update_mode'
-   fs/posix_acl.c:646: warning: Function parameter or member 'acl' not described in 'posix_acl_update_mode'
-   drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c:183: warning: Function parameter or member 'blockable' not described in 'amdgpu_mn_read_lock'
-   drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c:254: warning: Function parameter or member 'blockable' not described in 'amdgpu_mn_invalidate_range_start_gfx'
-   drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c:302: warning: Function parameter or member 'blockable' not described in 'amdgpu_mn_invalidate_range_start_hsa'
-   drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:2986: warning: Excess function parameter 'dev' description in 'amdgpu_vm_get_task_info'
-   drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:2987: warning: Function parameter or member 'adev' not described in 'amdgpu_vm_get_task_info'
-   drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:2987: warning: Excess function parameter 'dev' description in 'amdgpu_vm_get_task_info'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_pin' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_unpin' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_res_obj' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_get_sg_table' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_import_sg_table' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_vmap' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_vunmap' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_mmap' not described in 'drm_driver'
-   include/drm/drm_panel.h:98: warning: Function parameter or member 'link' not described in 'drm_panel'
-   drivers/gpu/drm/i915/i915_vma.h:49: warning: cannot understand function prototype: 'struct i915_vma '
-   drivers/gpu/drm/i915/i915_vma.h:1: warning: no structured comments found
-   drivers/gpu/drm/i915/intel_guc_fwif.h:553: warning: cannot understand function prototype: 'struct guc_log_buffer_state '
-   drivers/gpu/drm/i915/i915_trace.h:1: warning: no structured comments found
-   include/linux/skbuff.h:860: warning: Function parameter or member 'dev_scratch' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'list' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'ip_defrag_offset' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'skb_mstamp' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member '__cloned_offset' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'head_frag' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member '__pkt_type_offset' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'encapsulation' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'encap_hdr_csum' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'csum_valid' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'csum_complete_sw' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'csum_level' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'inner_protocol_type' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'remcsum_offload' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'offload_fwd_mark' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'offload_mr_fwd_mark' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'sender_cpu' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'reserved_tailroom' not described in 'sk_buff'
-   include/linux/skbuff.h:860: warning: Function parameter or member 'inner_ipproto' not described in 'sk_buff'
-   include/net/sock.h:238: warning: Function parameter or member 'skc_addrpair' not described in 'sock_common'
-   include/net/sock.h:238: warning: Function parameter or member 'skc_portpair' not described in 'sock_common'
-   include/net/sock.h:238: warning: Function parameter or member 'skc_ipv6only' not described in 'sock_common'
-   include/net/sock.h:238: warning: Function parameter or member 'skc_net_refcnt' not described in 'sock_common'
-   include/net/sock.h:238: warning: Function parameter or member 'skc_v6_daddr' not described in 'sock_common'
-   include/net/sock.h:238: warning: Function parameter or member 'skc_v6_rcv_saddr' not described in 'sock_common'
-   include/net/sock.h:238: warning: Function parameter or member 'skc_cookie' not described in 'sock_common'
-   include/net/sock.h:238: warning: Function parameter or member 'skc_listener' not described in 'sock_common'
-   include/net/sock.h:238: warning: Function parameter or member 'skc_tw_dr' not described in 'sock_common'
-   include/net/sock.h:238: warning: Function parameter or member 'skc_rcv_wnd' not described in 'sock_common'
-   include/net/sock.h:238: warning: Function parameter or member 'skc_tw_rcv_nxt' not described in 'sock_common'
-   include/net/sock.h:509: warning: Function parameter or member 'sk_backlog.rmem_alloc' not described in 'sock'
-   include/net/sock.h:509: warning: Function parameter or member 'sk_backlog.len' not described in 'sock'
-   include/net/sock.h:509: warning: Function parameter or member 'sk_backlog.head' not described in 'sock'
-   include/net/sock.h:509: warning: Function parameter or member 'sk_backlog.tail' not described in 'sock'
-   include/net/sock.h:509: warning: Function parameter or member 'sk_wq_raw' not described in 'sock'
-   include/net/sock.h:509: warning: Function parameter or member 'tcp_rtx_queue' not described in 'sock'
-   include/net/sock.h:509: warning: Function parameter or member 'sk_route_forced_caps' not described in 'sock'
-   include/net/sock.h:509: warning: Function parameter or member 'sk_txtime_report_errors' not described in 'sock'
-   include/net/sock.h:509: warning: Function parameter or member 'sk_validate_xmit_skb' not described in 'sock'
-   include/linux/netdevice.h:2018: warning: Function parameter or member 'adj_list.upper' not described in 'net_device'
-   include/linux/netdevice.h:2018: warning: Function parameter or member 'adj_list.lower' not described in 'net_device'
-   include/linux/netdevice.h:2018: warning: Function parameter or member 'gso_partial_features' not described in 'net_device'
-   include/linux/netdevice.h:2018: warning: Function parameter or member 'switchdev_ops' not described in 'net_device'
-   include/linux/netdevice.h:2018: warning: Function parameter or member 'l3mdev_ops' not described in 'net_device'
-   include/linux/netdevice.h:2018: warning: Function parameter or member 'xfrmdev_ops' not described in 'net_device'
+Paolo Bonzini <pbonzini@redhat.com> (supporter:KERNEL VIRTUAL MACHINE (KVM))
+"Radim Krčmář" <rkrcmar@redhat.com> (supporter:KERNEL VIRTUAL MACHINE (KVM))
+Shuah Khan <shuah@kernel.org> (maintainer:KERNEL SELFTEST FRAMEWORK)
+kvm@vger.kernel.org (open list:KERNEL VIRTUAL MACHINE (KVM))
+linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+linux-kernel@vger.kernel.org (open list)
 
-vim +369 include/linux/gpio/driver.h
-
-79a9becd Alexandre Courbot 2013-10-17 @369  
-
-:::::: The code at line 369 was first introduced by commit
-:::::: 79a9becda8940deb2274b5aa4577c86d52ee7ecb gpiolib: export descriptor-based GPIO interface
-
-:::::: TO: Alexandre Courbot <acourbot@nvidia.com>
-:::::: CC: Linus Walleij <linus.walleij@linaro.org>
+Cheers,
+  Andrea
 
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+commit 59fc1af0d7d0ae0c1ec9400bfbacaadce11e5f50
+Author: Andrea Parri <andrea.parri@amarulasolutions.com>
+Date:   Thu Oct 18 13:11:09 2018 +0200
 
---BOKacYhQ+x31HxR3
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+    MAINTAINERS: Add selftests to the KVM entry
+    
+    Should ensure that Joe random dev will Cc: the KVM maintainers.
+    
+    Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+    Cc: Paolo Bonzini <pbonzini@redhat.com>
+    Cc: "Radim Krčmář" <rkrcmar@redhat.com>
+    Cc: Shuah Khan <shuah@kernel.org>
 
-H4sICB9pyFsAAy5jb25maWcAjFxZc9u4ln7vX8FKV00ldSuJt7jdM+UHCAQltLiFALX4haXI
-dKK6tuTR0p38+zkHIMXtwHe6ujsxDgBiOct3Fvj333732Om4e1kdN+vV8/Mv73u5LferY/no
-PW2ey//x/MSLE+0JX+pP0DncbE8/P2+u7269m0+Xf366+LhfX3rTcr8tnz2+2z5tvp9g+Ga3
-/e333+Df36Hx5RVm2v+39329/viH994vv21WW++PT9cw+vKD/Qt05UkcyHHBeSFVMeb8/lfd
-BD8UM5EpmcT3f1xcX1yc+4YsHp9J52aZfS3mSTZtZhjlMvS1jEQhFpqNQlGoJNMNXU8ywfxC
-xkEC/ys0UzjYrH9sDuTZO5TH02uzzFGWTEVcJHGhorSZSMZSFyKeFSwbF6GMpL6/vsJTqBac
-RKmEr2uhtLc5eNvdESeuR4cJZ2G9nXfvmnFtQsFynRCDzR4LxUKNQ6vGCZuJYiqyWITF+EG2
-VtqmjIByRZPCh4jRlMWDa0TiItw0hO6azhttL6i9x34HXNZb9MXD26OTt8k3xPn6ImB5qItJ
-onTMInH/7v12ty0/tK5JLdVMppycm2eJUkUkoiRbFkxrxidkv1yJUI6I75ujZBmfAAOANMK3
-gCfCmk2B573D6dvh1+FYvjRsOhaxyCQ3IpFmyUi0pKpFUpNkTlMyoUQ2YxoZL0r81nikBknG
-hV+Jj4zHDVWlLFMCOzVtHNh4qpIcxhRzpvnET1ojzNbaXXymGT14xkIJVFGETOmCL3lI7MuI
-+6w5ph7ZzCdmItbqTWIRgUJg/l+50kS/KFFFnuJa6ovQm5dyf6DuYvJQpDAq8SVvs3ycIEX6
-oSD5wZBJykSOJ3g/ZqeZIlgmzYSIUg1zxKL9ybp9loR5rFm2JOeverVpVqOn+We9OvzbO8JW
-vdX20TscV8eDt1qvd6ftcbP93uxZSz4tYEDBOE/gW5ZHzp9AHjL31JAHn8t47qnhaULfZQG0
-9nTwIyh4OGRKuSrbuT1c9cbLqf2LS/ryWFXWg0+A7Q2X9Bh4zmJdjJC5oUMeRywtdDgqgjBX
-k/an+DhL8lTRqmIi+DRNJMwE16uTjOYMuwi0BmYusk8mQkbf7iicgkqbGYuV+cSOwegmKVyO
-fBAo58i78EfEYt7hpX43BX8hZmPAg/At0CCqZx1y6V/ethQHCKwO4Rq5SI3W0Rnjojcm5Sqd
-wpJCpnFNDdXefnt9EehsCUo1o89wLHQE1r6o9ATdaakC9WaPYMJilwCniZILQkZbcgY3PaUv
-KR/TQ7r7p8cy0L9B7lpxrsWCpIg0cZ2DHMcsDHySaDbooBlN6qCpCdhEksIkbaWZP5Owteo+
-6DOFOUcsy6Tj2qc4cBnRY0dp8OZlIzMZKBBQYmO0wISp1hJgthhsBchxR1kp8ZUYD6OE7wu/
-z/HwzeJsrlqMcHlxM1CZFR5Py/3Tbv+y2q5LT/xdbkFHM9DWHLU02KhGlzom9wXwnyXCnotZ
-BCeS0OhmFtnxhVHjLk5H+MtAPWY0t6uQUcBHhfmovSwVJiPneDj2bCxqsObuFoBxCyWghwwk
-N6EZsNtxwjIfzD7NxYCtAhn2zFdFW9zdFtcteA0/tx0GpbOcG03nCw76MWuISa7TXBdG7QKq
-L5+frq8+ovP1rsNtsFn74/271X794/PPu9vPa+OLHYyrVjyWT/bn8zi0XL5IC5WnaccTAgPH
-p0blDmlRlPesXYT2LYv9YiQtUrq/e4vOFveXt3SHmjX+wzydbp3pzqBVscJv+yw1YTIXAJh0
-fwdsWZuUIvBbTmc2VyIqFnwyZj5Y2XCcZFJPIgIDAhgdZYhGfTS2vflREyD+QUO8oGjgBwCO
-lbEwlpPoAXwFAlWkY+Ax3dMKSug8RQm1GAtQeNMhFoAOapLRKjBVhnh5ksdTR7+UgfCQ3ex6
-5AhcJOsNgF1TchT2l6xylQq4KQfZ4KNJDl9JI/BWQajIHuZwWWh6An4afMNwpjojD3Td4Qw7
-Hki3Z6XLYHtGiXWkEaQTPImHZTFWruG5cZ5a5ABsumBZuOToGIkWX6RjixFDUIihur9q4Sm8
-TsXwqlHK8D4FB3hXuw7pfrcuD4fd3jv+erXI+qlcHU/78mCBt53oAdA8sjitsyIaCOI2A8F0
-nokCvVdaQY+T0A+koj3TTGiABsCpJBUwDLjOmU/rXPy8WGhgDGS2t2BLdR8yk/QSLepNIgl6
-MYONFAYoO+z8ZAmMDWgBcOk4p2Mu4F+NkkTbK2zww83dLQ0svrxB0Iq2jkiLogXx9ejWGIOm
-J8gOwNVISnqiM/ltOn20NfWGpk4dG5v+4Wi/o9t5lquEZpJIBIHkIolp6lzGfCJT7lhIRb6m
-TXAEGtYx71iAXR0vLt+gFiGNhiO+zOTCed4zyfh1QYeqDNFxdggGHaOYdsARlIzK6DhQhhEE
-9LEqs6ImMtD3X9pdwks3DUFeClrJOqAqj7paEri728CjFO3j7U2/OZl1W8CgyyiPjIUJWCTD
-5f1tm26UM3h9kcq6YYqEC4XCq0QImpJyUmFGUNJW+7SCRVWzubwO+KopLPKJ7iAfLM+GBABE
-sYqEZuRcecRte6N3UqGtR0TepB9JShMZE6wQkYJ5HIkxwKBLmgh6dEiqMO+AAA0dHsLdp5LW
-VOa2eEd4rWlquRIvu+3muNvbOE9zWY0PgYcLannu2L1hQzFmfAlug0Ob6gT4c0SbOHlHuw84
-byZQmYNxdsVWIsmBq0BE3NtX7mXDcUpa+8QJhuN6rmzNDZZy0wl9VY23N5TLMItUGoKFu+4M
-aVoR+Dj8MNvlio4bNOT/OMMltS4DD5MgANx5f/GTX9h/evskMCy0As/ybJn28XcAWMBSGYEl
-TRDZTTZaoY6pY3S6pQJkiDwW1vAAY8a5uL/oXkCq3XxglCB4GolC1z3LTTTKoXhtlByMSDK/
-v71pcZvOaGYy63/D9cRJFTg9TqKFW4AE6C5KcHSVaFD0UFxeXFB8+lBcfbnoMOlDcd3t2puF
-nuYepmlnVRbClRNhCtzXvLvQmtcmSyXBuUKwnCG7XVbc1g5uJpwZtP3WePDPxjGMv+oNr3zJ
-ma/oOBOPfOOXgUahA0HAcTJYFqGvqXhR+6Yt+9acOkl0GubjM+zf/VPuPdCtq+/lS7k9GuDP
-eCq93StmUjvgv3Kv6CAEpXy6fgxO24mlBB1LVMf3vWBf/u+p3K5/eYf16rmn6o0Zz7rRq/NI
-+fhc9jv3kxuGPjod6g1671MuvfK4/vShY1I4ZSah1YQvQoAGhW07nyQMENvH191me+xNhCbT
-qALapChWjHIqhVKFE9BidjIFyuF+cWQzkpSEjswg8CeNPWOhv3y5oFFryjnLaDYwumOpgtHw
-yDfb1f6XJ15Oz6uas7rCcN1PAyMaxahKAsqoR6oDIOM8rS8g2Oxf/lntS8/fb/62IcYmCOzT
-yw1kFs1ZZqTDpfFAs4NvOcppIvdHzOXPJuNQnD8xOBBdft+vvKd61Y9m1a2Mnclezzqe4Uxm
-Oocre2B9e9ApF8BA3OZYrtF7//hYvpbbRxTtRqLbn0hs+LBl3+qWIo6kBZLtNfwFGrMI2UhQ
-CsfMaPwsiQHZPDb6DzNFHNF0z4Yi5sfKAS3jYqTmg0uW4Khg8I0IPk37MRHbimECigCAgx5g
-W7GUIqByPUEe2/CoyDJwBWT8lzA/97rBQfVZF/dnZpwkybRHRJmGn7Uc50lOZIAVnDCqrSq3
-TcXlQKGi+rc5aaIDgKRK45MLsyUnNvpbzCdSmzAzEQwDZL+MGUqhNpkqM6I3ZSbGoNxj30aW
-qquulFannxJfe02TeTGCpdiEY48WyQUwTkNW5kP9BB5gHwwO5VkMMBjORLZj2P3sBXFRGFlH
-jQ6OiS9sSMyMoCYhvl8nKLJq84gnqBNvpGZwWZZ/CsUCUXu1/RkqIaruC4Fwr0c1ztbqOGh+
-kjtCojLlhS2ZqOt/iB1UqK4KCfdjwf2YYq3Zq7hjhzwoCeiSXWrFrlfqCWgLe9gmBte/ESKt
-75DNGCG+qELCxKECxKpdAcGBs1oRCCDlgAGMBhMhcsbwXpWlGJzdia43i+ikKHodxAIcIVIB
-dEfddS87SZe1eOuwNScPMXI7gmMDY+S3CAkWbslxhe2uBwTWU3iNitGgq3Rdt5TNWxmGN0j9
-4fYkHX0yTC7lcSenXrcN0suD003hVq6vaqQOm1A1VBjzZPbx2+pQPnr/tunK1/3uafPcKR85
-rwJ7F7VN7NTzIJIGbsSqLM7v333/17+6xW9YPGj7dHKbrWZiAyZ3rjDf2Q6eVBxHhXErXtSZ
-QCcwmeadqrYRajcKXMY28ZPCBvIYO3ULpiq64SRLf4tGjp1nYFhcg9vE7uie12BBIIAoAj18
-zUWOihE2YUq03F2yOdXBMGKdIC9GIsA/UJ1X5WaGW8TPcn06rr49l6Yu1TPBqGMHX45kHEQa
-BZ7O6luy4plMqUii5dkk7zB6NQib35o0ko7AP26p796aNUflyw6QeNQ4fQNk+GZ0ow6bRCzO
-jbVpFPk5ZmJpxFarwd3ZChM3tuNa5rOZDvS9butfq59FNOqyVqe5mrQ9oc1Yw4GBCiSG2+BT
-qs1oE728aR8nOCncEYdBYF7oBP249nlMFeUV18WcRo/bCj8/u7+5+PO2FYMkzBMVtm3nT6cd
-X4GHgsUm3O4IMNBO5EPqijg8jHLaiXpQw+KMHqI12coaz3fC7CIzkWy4X4cXBcBsJGI+iVhG
-qbGzGKdaWEPdZUnwY51+Chbb/CV1Led++fdm3XYfG6dqs66avWQYFslt9clEhKkr5i5mOkoD
-R1JRA0RgaJ4d1R12+rOramqtB0J99n6fd6tH40c2Tu4czALzHWvDq5ubajxKYbS2gDlsP5Mz
-5x5NBzHLHPld2wGrz6tpwH5EyYxi63N5AxYW5DpxVA8jeZaHmK0fSRBdKc4WHgM8j+Y+O1c1
-jpUjNK9p3k4CF89FWNBxLt8AUa3qVZqLs02Dm4pnkfDU6fV1tz/WTBZtDmtqvXAd0RKtI7k4
-EIswUZhVxwiw5I6DVwCTaR1wRS5QCDjvyDucl9h80FCKP6/54nYwTJc/VwdPbg/H/enFFHwd
-fgBDPnrH/Wp7wKk8AFil9wh73bziX+vds+djuV95QTpmrXjI7p8t8rL3sns8gdV9j1HBzb6E
-T1zxD/VQuT0CegOA4P2Xty+fzeORQ/dsmy7IFH4dZjE0BbieaJ4lKdHaTDTZHY5OIl/tH6nP
-OPvvXs+1F+oIO2hb5vc8UdGHvk7C9Z2na26HT6i3GdYrauCM4kpWvNY6qppXgIj2vlMXwDi4
-3wlGy43cqsHVy+3r6Tics4lYxmk+5LMJHJS5avk58XBIN9iM5er/P+EzXTsAG/xCkrU5cORq
-DdxGCZvWdLUy6DRXmSiQpi4aroqFRrP2wrvNuaTg+NvyXUcNyfytRE08c0l2yu/+uL79WYxT
-Rx1rrLibCCsa2wyUO42sOfyX0l/XIuR9r6Px38x+AODkWOeV5kNmuuIkD13RMBewv6M9ogkT
-Rben6ZCxU5166+fd+t99pSK2xh9IJ0t8MINJEwAa+O4LUz/m2MCsRykWZR53MF/pHX+U3urx
-cYPwYfVsZz186mQKZMx1RoMvvKve05wzbe6I0mMSvGAzR+G3oWLukPYuLB29sJCWisk8cpTS
-6An4T4zeR/30hhBspUbtwr3mIhVVmDsCAEt2H/WQrbWvp+fj5um0XePp14rqcZgniALfPJYq
-HElDpEcIpWjwPNGIBJTk187RUxGloaOICCfXt9d/Oup2gKwiV06GjRZfLi4MhnOPXiruKn8C
-spYFi66vvyyw2ob59AlkYpyDx5bQWiESvmS17z7MT+xXrz826wMl3r6jJA/aCx+rY/hgOsZT
-7z07PW52YEPP9Ysf6KegLPK9cPNtjzmo/e50BPhxNqfBfvVSet9OT09gGPyhYQhoucNgWmgM
-Uch9atMNCyd5TNXr58DyyQRzilLr0JTWSNaKtSF9UAmNjWevZ8I7pjpXw8Qbthn09dgFEdie
-/vh1wMe3Xrj6hUZxKBFxkpovLriQM3JzSB0zf+xQJHqZOoQJB+ZhKp3mMZ/TBx9FDukUkcJH
-X46EJrhBwqe/ZHMW0ngRS+KihM94HYlSPMtbRcGGNLikDDQB6OtuQ8Qvb27vLu8qSiNTGl/9
-MYdr4qPCGaB767FGbJQHZKoeg1oYsKS3my98qVLX86zcgQtMlIPAgJ0OMoF7iIdmPdqs97vD
-7unoTX69lvuPM+/7qQQYTegCMJ3j3nOGToK5ruEtiHNpnJsJuCri3Nf1VCcMWZws3i4Lnszr
-AOMQUBpwoHanfcegnGMwU5XxQt5dfWkF1qFVzDTROgr9c2sLfctwlNBJeplEUe5Ut1n5sjuW
-6FxQgo3Ot0Z/bqhYs9eXw3dyTBqp+pbdim4uiWy3gu+8V+YdpZdsAYhvXj94h9dyvXk6B1fO
-qom9PO++Q7Pa8b7WGu3BJ1zvXihavEg/B/uyxLKR0vu628uvVLfNp2hBtX89rZ5h5v7Urc3h
-w97BzhaYN/jpGrTAlzmLYsbp+oHUMHG/oKVx6RbaabFNbJZmC8ftpPNosHqMLazhMoauIAMB
-G4O+i9iiiLN2LkKmmH1zaW2DKU1+O0tCl2MTREO2A+TceWzbgN8q3oMdSEPMo2KaxAwtypWz
-FwLzdMGKq7s4QieAtiGdXjifGx1zR8FIxIdGmKhhpTRfxoZKnm0f97vNY7sbuFBZ4igG9Zmj
-oKfvxFoffI7hmfVm+51WxLRCtAWAmn6qYcI4pHKQDjWmQhn1uKmKaYIYW3ZoKVXf1pCDs9Uq
-K2lJDOrCQNm8V5E4SnFNLg97uOwMzFAVjUqHAPqm3sAhgZZWON/+BuyN0V/zRNNHiMHQQN0U
-jlCyJbuoAabDHLQEbDrAgR7Z8sJq/aOHh9Ugr2CZ/FCeHncmSdbcWiMzYGpcnzc0PpGhnwn6
-tM07aNo622daDqr9w30omD4z3AAf0MIBE+JweCyqXJ/2m+MvCn1NxdIRihU8zwBiAqgTyqhK
-kwV/s2934fWBYTG0feslVRIyoiipfjNqmNDUBZgsDbMFGq1gT68bzTudgiN6vSZHd86eDtMh
-tdxU6a/mLFgrs9endn4VjZHHZHAVhF/XsxxwzDGHEwgwfI0rJIquoEsoYgc1kHH9hHEkiV/G
-gVWevTrF86PQZJiDNDVc+PtDzG8ISEPZrbHjABo5B5+QZumMX9IvF3CcvrzwJZ2GRrLUeeGc
-9pq2dkC5pd9tAcVJoKMY4PqYD7mKsjn9sMtGDa+vMDMd9H+DUQO2HvAdM8FzeN5wD+28s21C
-Y1H0yktV9w2vybEq44eBAxmP9cRRi2rL+iYCk7YthoZWHxAx12iMOrcMFsyBQnyfNhvmV+kk
-7lpvU8+Avs//FXIlu23DQPTer/Cxh7ZwUgPtJQc68SJYmyU76k1IXSMNjLhBkwD9/M5CUSI1
-Q5+6cEyJQ2pmSL73TJL7CKsKEp3ovA8D0v7vh8OJMTD0vy9/n85vJzrd/PV8hC3BCCcAf0D0
-wUy6Isqp4wF9Uy22+2Sxu5k59Arkb4xlox5mnoTXZ9J7gUR0OL3SCx2stJcUfvmmEQW15KLa
-AuLpABqPuQVvMr2zMVV+czW9nvmeLFtTZ62q4YCwGHqCqeXyaZ9DkMHjuGxeKBoSTHZp8uhl
-q5gZ1gs8n6x5ZMM1wL+pGcCKeS/Ds1gt9XhG5Ii2yFPpbMRjwo4fSDJNbbMwmw6oIOdhg3sN
-SMKVJEzBXTGerLvHsjCWu+PP98fHkBCG7iPOb62Wbz4pW58FGFld5FqdyN1UBQpGjaTVAqti
-jvBhcdIIFsyDhCiVgrfGnuxaIk9gXOS+DtAigdW9ytWg4Mc2DDUfv4VtiHRvUUMo7hOxilDW
-emfQeLA2XaYkEiYNt2sWeupp7wjhY2WJ8lboZx1csVs8CKysSfrncHp/4aCzfjg/BkcCy12A
-HpZr1DHKWHENNkJJC8EaAdeiUbMVr1EGqzaHTwk+3yLY/UjtjpvmNeIFFsLRBowl5r7zAkON
-hVHkDHyKXWwWi1KS1UKf9h/u5OPry9OZ7sM+TZ7f347/jvAXZOR8IU5OVzngfo76XlEuc0eu
-w13EfXxXR31goRr7hoSzvnCFo4BRFObSNGyEgjFNaZStMtvSS+lBiI26w+cUXHqhL/SOKROX
-7eX3pKfCOiRVBjVw9eOI1V29cIvcCWYPGCBqmEExhWhM/VLbxjqOlbGRJtFYWyaXLOpYQO+4
-BLE5vq1gLPkuMcLuEIXjxMyEMnFEGlCdiRYX54WMVIeTFt3WhvLYKrUqim2lJ+bOEyEFRjnW
-wL2baNPVPo4roQj9+LwbMgrZBq51VZlyLdt0tBWR1uM3EqlAInfY5ozx5lDCQ8EeEh+Ye8nv
-wDSVkH5hf5h1SHbbiL9Q4thSn1lLB4zMbIWch4yXDvYfXsYMD5DV5UXVSk4qmAoBuf/2TVbK
-wPQeib9Z3XkXXvjvWAmyn0PKxrSd7FDajzH3ffmMrfEKBs86UcqXwI1DPTOeUcj2y9Ssasn5
-eMEEFcW8qIl9u1PEDRnRGpHPo4uq3QU8ZSMfiDJVR1cRsxk2nZO0o+b6LEsK5SNLChaMotvZ
-dvrj+3SgYBy0LQZyD37bnkWnruVWYvl8HbXRw4Zs1r5B0TdzFvy8uE0e4Gidx2xoGr7isLy5
-LU3ko3Iqk53UU2RaICUo9zJObqRd+sHW7QubJIfNm76lchaoKOR9c/8Bt9T7zE5bAAA=
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6ac000cc006d1..25755bf6365ee 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7997,6 +7997,7 @@ F:	include/linux/kvm*
+ F:	include/kvm/iodev.h
+ F:	virt/kvm/*
+ F:	tools/kvm/
++F:	tools/testing/selftests/kvm/
+ 
+ KERNEL VIRTUAL MACHINE FOR AMD-V (KVM/amd)
+ M:	Joerg Roedel <joro@8bytes.org>
+---
 
---BOKacYhQ+x31HxR3--
+> 
+> Thanks,
+> 
+> Paolo
+> 
+
+
+
