@@ -2,85 +2,110 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43569C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34A76C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:29:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1240A21476
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:26:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1240A21476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id D76382098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:29:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GcQQeFbg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D76382098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbeJRR0p (ORCPT
+        id S1727695AbeJRR3o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 13:26:45 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:40234 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727363AbeJRR0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 13:26:45 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id P7o-Mj3cbUcT; Thu, 18 Oct 2018 11:26:18 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCA5400329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:5400:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C33AC1EC06CA;
-        Thu, 18 Oct 2018 11:26:05 +0200 (CEST)
-Date:   Thu, 18 Oct 2018 11:26:03 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [PATCH v5 03/27] x86/fpu/xstate: Introduce XSAVES system states
-Message-ID: <20181018092603.GB20831@zn.tnic>
-References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
- <20181011151523.27101-4-yu-cheng.yu@intel.com>
- <20181017104137.GE22535@zn.tnic>
- <32da559b-7958-60db-e328-f0eb316e668e@infradead.org>
- <20181017225829.GA32023@zn.tnic>
- <fde4c237-6210-f4e4-5362-c2e24a9916a2@infradead.org>
+        Thu, 18 Oct 2018 13:29:44 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44022 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727427AbeJRR3o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 13:29:44 -0400
+Received: by mail-lj1-f194.google.com with SMTP id r8-v6so27046048ljc.10
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 02:29:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=YFH9pFRXluxPNu/YYLTUn3Lkxhl/ttUHuGZwdRPk9Yc=;
+        b=GcQQeFbgI/J3aWeVRZYMT8IcY9PVWCNR2vhSOlwC9BNx+ym0V3ehS/rWBhpKbhdeij
+         QfbStSueRJOHYrLaxFjo5JPsCkFOOyAupt95KtdWkuI1905zyEntoSrPphuTWpt/Qh0f
+         IxacBj/rG0BKwFuiSwOrhj5znUcd98xYiCwIU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=YFH9pFRXluxPNu/YYLTUn3Lkxhl/ttUHuGZwdRPk9Yc=;
+        b=MNedmARJDIklsN/fI+wlF26LzRFMgYh3Vdths908Xcep2Y0ecMyELXiO791wW2U3Ub
+         jLokkzHqVWqtpOh6tJmbFLypqHnJwC/mxCv301QnYih4VweMZYBEvAovcjP8tUutaZwl
+         KXQ1O2iTK7TAqK7C4VpXMxOX4zGbUlTK/HKZTii83gpFKrj1SduyhgMubcVPWdIl6G2o
+         IQHPsefauWDkJnmKs4OOZjWOf6Jv2+H6Twyo7qexSJfzuOlBj6wY++/RTmodqLPQb9vy
+         4tLog2/8g+G2S1gbJoFnuqrw0QNf7NycKDjqjd7B9ECXpKr8dOmlgoa8SHwAHV+ZVXby
+         Cv1w==
+X-Gm-Message-State: ABuFfohdzo94AslhtginKiJjuMDIspnkG6+JLhKa98GpedRhBDp3hfgE
+        3DY2iVL015MTtZjtgeATdVv3ya0I7ac8/NRfpS0d5Q==
+X-Google-Smtp-Source: ACcGV61rEoSEQGmEABs+QfKCTtVwVhbs6P630uRUcsUrujk5m3CnSSCBhEm6FsKCjvMu0wPWU6dTS6sMPdL2h/bF3V8=
+X-Received: by 2002:a2e:2f1b:: with SMTP id v27-v6mr18906846ljv.31.1539854974486;
+ Thu, 18 Oct 2018 02:29:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fde4c237-6210-f4e4-5362-c2e24a9916a2@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a2e:95d7:0:0:0:0:0 with HTTP; Thu, 18 Oct 2018 02:29:33
+ -0700 (PDT)
+In-Reply-To: <cover.1538199697.git.baolin.wang@linaro.org>
+References: <cover.1538199697.git.baolin.wang@linaro.org>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Thu, 18 Oct 2018 17:29:33 +0800
+Message-ID: <CAMz4kuKFtbLMmNEbQ0oVgW87HPRwJuwFJH9cXVymz=6jH7xzOA@mail.gmail.com>
+Subject: Re: [PATCH 0/7] Add some fixes and new feature for SPRD DMA
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Eric Long <eric.long@spreadtrum.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 04:17:01PM -0700, Randy Dunlap wrote:
-> I asked what I really wanted to know.
+Hi Vinod,
 
-Then the answer is a bit better readability, I'd guess.
+On 29 September 2018 at 13:48, Baolin Wang <baolin.wang@linaro.org> wrote:
+> This patchset removes the direction usage from struct dma_slave_config,
+> and add one new field to save the direction. It also fixes some issues
+> for link-list transfer. Moreover this patchset adds new 2-stage transfer
+> support for our DMA.
+
+Do you have any comments for this patchset? Thanks a lot.
+
+>
+> Baolin Wang (1):
+>   dmaengine: sprd: Remove direction usage from struct dma_slave_config
+>
+> Eric Long (6):
+>   dmaengine: sprd: Get transfer residue depending on the transfer
+>     direction
+>   dmaengine: sprd: Fix the last link-list configuration
+>   dmaengine: sprd: Set cur_desc as NULL when free or terminate one dma
+>     channel
+>   dmaengine: sprd: Support DMA link-list cyclic callback
+>   dmaengine: sprd: Support DMA 2-stage transfer mode
+>   dmaengine: sprd: Add me as one of the module authors
+>
+>  drivers/dma/sprd-dma.c       |  152 +++++++++++++++++++++++++++++++++++++-----
+>  include/linux/dma/sprd-dma.h |   62 ++++++++++++++++-
+>  2 files changed, 194 insertions(+), 20 deletions(-)
+>
+> --
+> 1.7.9.5
+>
+
+
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Baolin Wang
+Best Regards
