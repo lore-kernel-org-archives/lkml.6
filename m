@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F424ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B91ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D91B321473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBE3A21476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BmvbM/n9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D91B321473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GcfCNg+d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBE3A21476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbeJSCBZ (ORCPT
+        id S1729217AbeJSCB3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:01:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49082 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:01:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728438AbeJSCBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:01:24 -0400
+        id S1728438AbeJSCB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:01:28 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4524421473;
-        Thu, 18 Oct 2018 17:59:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D909D21476;
+        Thu, 18 Oct 2018 17:59:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885559;
-        bh=B7UFHkokjjPNiSVD8SAc/uX9onBGmI8cn6jXCmG7yBg=;
+        s=default; t=1539885562;
+        bh=tOidYsrbvzWGdohuUBvwktXVtb9jaquL69Ey8pG/YbQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BmvbM/n9RCAx/AElMLxaFWoALt3DveIRGr0D2cwOfwNWTvTxVnVZg3xr7q1qqgH46
-         bBPHPGQ8GmGwsvYbgqo1ukjHouGO7DLc/NIS4icOlGYj836/dwxOPuKwEMBHKsm+pC
-         ngg0IpahNa/WVDUUiTblvfqSaUWya9oqve87Y+Yo=
+        b=GcfCNg+dY1MLA9KXDbkH5xyEbc3vh3HuwuROjn/AVVJjmXuJd8SHqHanFMfiv9cdb
+         rpkeTWwTL3i3iIswLdxJjGtxcKqv+QQy9xXgY9Mk9GdewzpWyFHBO/jIyFf+o+Do+z
+         W9ar0E7NUQYMqUWltJaHRGxinKhFhvP8Gbzd/T2I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Arindam Nath <arindam.nath@amd.com>,
+        Joerg Roedel <jroedel@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 47/53] powerpc/numa: Use associativity if VPHN hcall is successful
-Date:   Thu, 18 Oct 2018 19:54:40 +0200
-Message-Id: <20181018175424.614074034@linuxfoundation.org>
+Subject: [PATCH 4.18 48/53] iommu/amd: Return devid as alias for ACPI HID devices
+Date:   Thu, 18 Oct 2018 19:54:41 +0200
+Message-Id: <20181018175424.840403669@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.561567978@linuxfoundation.org>
 References: <20181018175416.561567978@linuxfoundation.org>
@@ -63,88 +62,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+From: Arindam Nath <arindam.nath@amd.com>
 
-[ Upstream commit 2483ef056f6e42f61cd266452e2841165dfe1b5c ]
+[ Upstream commit 5ebb1bc2d63d90dd204169e21fd7a0b4bb8c776e ]
 
-Currently associativity is used to lookup node-id even if the
-preceding VPHN hcall failed. However this can cause CPU to be made
-part of the wrong node, (most likely to be node 0). This is because
-VPHN is not enabled on KVM guests.
+ACPI HID devices do not actually have an alias for
+them in the IVRS. But dev_data->alias is still used
+for indexing into the IOMMU device table for devices
+being handled by the IOMMU. So for ACPI HID devices,
+we simply return the corresponding devid as an alias,
+as parsed from IVRS table.
 
-With 2ea6263 ("powerpc/topology: Get topology for shared processors at
-boot"), associativity is used to set to the wrong node. Hence KVM
-guest topology is broken.
-
-For example : A 4 node KVM guest before would have reported.
-
-  [root@localhost ~]#  numactl -H
-  available: 4 nodes (0-3)
-  node 0 cpus: 0 1 2 3
-  node 0 size: 1746 MB
-  node 0 free: 1604 MB
-  node 1 cpus: 4 5 6 7
-  node 1 size: 2044 MB
-  node 1 free: 1765 MB
-  node 2 cpus: 8 9 10 11
-  node 2 size: 2044 MB
-  node 2 free: 1837 MB
-  node 3 cpus: 12 13 14 15
-  node 3 size: 2044 MB
-  node 3 free: 1903 MB
-  node distances:
-  node   0   1   2   3
-    0:  10  40  40  40
-    1:  40  10  40  40
-    2:  40  40  10  40
-    3:  40  40  40  10
-
-Would now report:
-
-  [root@localhost ~]# numactl -H
-  available: 4 nodes (0-3)
-  node 0 cpus: 0 2 3 4 5 6 7 8 9 10 11 12 13 14 15
-  node 0 size: 1746 MB
-  node 0 free: 1244 MB
-  node 1 cpus:
-  node 1 size: 2044 MB
-  node 1 free: 2032 MB
-  node 2 cpus: 1
-  node 2 size: 2044 MB
-  node 2 free: 2028 MB
-  node 3 cpus:
-  node 3 size: 2044 MB
-  node 3 free: 2032 MB
-  node distances:
-  node   0   1   2   3
-    0:  10  40  40  40
-    1:  40  10  40  40
-    2:  40  40  10  40
-    3:  40  40  40  10
-
-Fix this by skipping associativity lookup if the VPHN hcall failed.
-
-Fixes: 2ea626306810 ("powerpc/topology: Get topology for shared processors at boot")
-Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Arindam Nath <arindam.nath@amd.com>
+Fixes: 2bf9a0a12749 ('iommu/amd: Add iommu support for ACPI HID devices')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/mm/numa.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/iommu/amd_iommu.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/arch/powerpc/mm/numa.c
-+++ b/arch/powerpc/mm/numa.c
-@@ -1204,7 +1204,9 @@ int find_and_online_cpu_nid(int cpu)
- 	int new_nid;
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -246,7 +246,13 @@ static u16 get_alias(struct device *dev)
  
- 	/* Use associativity from first thread for all siblings */
--	vphn_get_associativity(cpu, associativity);
-+	if (vphn_get_associativity(cpu, associativity))
-+		return cpu_to_node(cpu);
+ 	/* The callers make sure that get_device_id() does not fail here */
+ 	devid = get_device_id(dev);
 +
- 	new_nid = associativity_to_nid(associativity);
- 	if (new_nid < 0 || !node_possible(new_nid))
- 		new_nid = first_online_node;
++	/* For ACPI HID devices, we simply return the devid as such */
++	if (!dev_is_pci(dev))
++		return devid;
++
+ 	ivrs_alias = amd_iommu_alias_table[devid];
++
+ 	pci_for_each_dma_alias(pdev, __last_alias, &pci_alias);
+ 
+ 	if (ivrs_alias == pci_alias)
 
 
