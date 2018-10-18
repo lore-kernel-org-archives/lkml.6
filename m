@@ -2,75 +2,203 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10614C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:32:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BD6C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:33:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8FFF21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:32:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8FFF21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=physik.fu-berlin.de
+	by mail.kernel.org (Postfix) with ESMTP id 8433B2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:33:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8433B2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbeJRUdd convert rfc822-to-8bit (ORCPT
+        id S1727042AbeJRUeU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 16:33:33 -0400
-Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:52739 "EHLO
-        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726417AbeJRUdc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 16:33:32 -0400
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.85)
-          with esmtps (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id <1gD7Tm-002dNz-MP>; Thu, 18 Oct 2018 14:32:42 +0200
-Received: from z92e7.pia.fu-berlin.de ([87.77.146.231] helo=[10.146.231.3])
-          by inpost2.zedat.fu-berlin.de (Exim 4.85)
-          with esmtpsa (TLSv1.2:AES128-SHA:128)
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id <1gD7Tm-003N5A-Cj>; Thu, 18 Oct 2018 14:32:42 +0200
-Subject: Re: [PATCH] ata: add Buddha PATA controller driver
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-References: <CGME20181018122951eucas1p2be43dc17df8d2c754e771785b3ad7457@eucas1p2.samsung.com>
- <20181018122951eucas1p2be43dc17df8d2c754e771785b3ad7457~es8dn4Tg90035600356eucas1p2H@eucas1p2.samsung.com>
-From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Message-ID: <113f6584-0645-3484-2847-627e8d17b9b4@physik.fu-berlin.de>
-Date:   Thu, 18 Oct 2018 14:32:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 18 Oct 2018 16:34:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52716 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726417AbeJRUeU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 16:34:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AB51FAE30;
+        Thu, 18 Oct 2018 12:33:29 +0000 (UTC)
+Date:   Thu, 18 Oct 2018 14:33:29 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 06/12] livepatch: Simplify API by removing
+ registration step
+Message-ID: <20181018123329.5xvo5hjtqpbih4d2@pathway.suse.cz>
+References: <20181015123713.25868-1-pmladek@suse.com>
+ <20181015123713.25868-7-pmladek@suse.com>
+ <20181017190657.dv3kwx467brzhdnz@treble>
 MIME-Version: 1.0
-In-Reply-To: <20181018122951eucas1p2be43dc17df8d2c754e771785b3ad7457~es8dn4Tg90035600356eucas1p2H@eucas1p2.samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: 87.77.146.231
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017190657.dv3kwx467brzhdnz@treble>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+On Wed 2018-10-17 14:06:57, Josh Poimboeuf wrote:
+> On Mon, Oct 15, 2018 at 02:37:07PM +0200, Petr Mladek wrote:
+> > @@ -319,96 +316,66 @@ forced it is guaranteed that no task sleeps or runs in the old code.
+> >  5. Livepatch life-cycle
+> >  =======================
+> >  
+> > -Livepatching defines four basic operations that define the life cycle of each
+> > -live patch: registration, enabling, disabling and unregistration.  There are
+> > -several reasons why it is done this way.
+> > +Livepatches get automatically enabled when the respective module is loaded.
+> 
+> (only true if the module enables the patch in its init function)
 
-On 10/18/18 2:29 PM, Bartlomiej Zolnierkiewicz wrote:
-> John, please test if possible..
+Great catch! Will fix it.
 
-Yes, will test ASAP. @Michael: Can you build an updated kernel from your
-tree for elgar and copy it over. I'll make sure to test it and also
-hook up an IDE drive for testing.
+> > @@ -502,6 +483,9 @@ static void klp_free_objects(struct klp_patch *patch)
+> >  }
+> >  
+> >  /*
+> > + * The synchronous variant is needed when the patch is freed in
+> > + * the klp_enable_patch() error paths.
+> > + *
+> 
+> Hm?  This comment seems confusingly out of context.
 
-Adrian
+Ah, the comment is just a left over from the previous version. It does
+not longer make sense. I'll remove it.
 
--- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
+> > @@ -528,6 +512,23 @@ static void klp_free_patch_finish(struct klp_patch *patch)
+> >  		kobject_put(&patch->kobj);
+> >  		wait_for_completion(&patch->finish);
+> >  	}
+> > +
+> > +	/* Put the module after the last access to struct klp_patch. */
+> > +	if (patch->module_put)
+> > +		module_put(patch->mod);
+> > +}
+> > +
+> > +/*
+> > + * The livepatch might be freed from sysfs interface created by the patch.
+> > + * This work allows to wait until the interface is destroyed in a separate
+> > + * context.
+> > + */
+> > +static void klp_free_patch_fn(struct work_struct *work)
+> 
+> To clarify that it's a work function, how about calling it
+> "klp_free_patch_work_fn"?
+
+OK
+
+> >  static int klp_init_func(struct klp_object *obj, struct klp_func *func)
+> > @@ -642,116 +643,38 @@ static int klp_init_patch(struct klp_patch *patch)
+> >  	struct klp_object *obj;
+> >  	int ret;
+> >  
+> > -	if (!patch->objs)
+> > -		return -EINVAL;
+> > -
+> > -	mutex_lock(&klp_mutex);
+> > -
+> >  	patch->enabled = false;
+> > -	patch->forced = false;
+> > +	patch->module_put = false;
+> >  	INIT_LIST_HEAD(&patch->list);
+> > +	INIT_WORK(&patch->free_work, klp_free_patch_fn);
+> >  	init_completion(&patch->finish);
+> >  
+> > +	if (!patch->objs)
+> > +		return -EINVAL;
+> > +
+> > +	/*
+> > +	 * A reference is taken on the patch module to prevent it from being
+> > +	 * unloaded.
+> > +	 */
+> > +	if (!try_module_get(patch->mod))
+> > +		return -ENODEV;
+> 
+> This comment isn't needed.  It describes what try_module_get() does,
+> which is common kernel knowledge.
+
+Yup. I'll remove it. Note that it was there even before. I have just
+moved it with the code.
+
+
+> > +	patch->module_put = true;
+> 
+> The naming and semantics of the 'module_put' field are a little
+> confusing.  It's false in two cases:
+> 
+> 1) try_module_get() failure
+> 2) forced patch
+> 
+> Maybe we can get rid of the need for the first case by moving the
+> try_module_get() call to klp_enable_patch(), before calling
+> klp_init_lists().  Then klp_free_patch_finish() will always be called
+> with a module reference, so it doesn't have to check the 'module_put'
+> field.
+> 
+> We'd still need it for the force case, but then it can just be called
+> 'forced' again.
+
+Great idea! I'll do it in v14.
+
+
+> > --- a/samples/livepatch/livepatch-callbacks-demo.c
+> > +++ b/samples/livepatch/livepatch-callbacks-demo.c
+> > @@ -184,22 +184,11 @@ static struct klp_patch patch = {
+> >  
+> >  static int livepatch_callbacks_demo_init(void)
+> >  {
+> > -	int ret;
+> > -
+> > -	ret = klp_register_patch(&patch);
+> > -	if (ret)
+> > -		return ret;
+> > -	ret = klp_enable_patch(&patch);
+> > -	if (ret) {
+> > -		WARN_ON(klp_unregister_patch(&patch));
+> > -		return ret;
+> > -	}
+> > -	return 0;
+> > +	return klp_enable_patch(&patch);
+> >  }
+> >  
+> >  static void livepatch_callbacks_demo_exit(void)
+> >  {
+> > -	WARN_ON(klp_unregister_patch(&patch));
+> >  }
+> 
+> This module exit function is no longer needed.
+
+I have been there ;-) It is required. Otherewise the module
+can't get removed. See the following code in kernel/module.c:
+
+SYSCALL_DEFINE2(delete_module, const char __user *, name_user,
+		unsigned int, flags)
+{
+[...]
+	/* If it has an init func, it must have an exit func to unload */
+	if (mod->init && !mod->exit) {
+		forced = try_force_unload(flags);
+		if (!forced) {
+			/* This module can't be removed */
+			ret = -EBUSY;
+			goto out;
+		}
+	}
+
+
+Best Regards,
+Petr
