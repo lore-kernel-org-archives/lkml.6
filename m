@@ -7,49 +7,51 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8191ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F472ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F9C321480
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63F3D21479
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IP2fK+OU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F9C321480
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bisSa7BM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63F3D21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729760AbeJSCE1 (ORCPT
+        id S1729774AbeJSCEa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:04:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52706 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:04:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729070AbeJSCE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:04:27 -0400
+        id S1729761AbeJSCEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:04:30 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17A4121479;
-        Thu, 18 Oct 2018 18:02:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BD8221479;
+        Thu, 18 Oct 2018 18:02:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885740;
-        bh=sNM/uklTRzpuf1DpOU1o7QcEMtw704TBnGfFT95hkRI=;
+        s=default; t=1539885743;
+        bh=Sas7zr9qWMmRvDwpruvjF3CYrk2b4pkg4o2gAa9pDUQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IP2fK+OUSTi7cOJ7TnG2wTLVsNX93jTSamyEkT2SpTlgRFvR+g9t9mvLlsEy4D/PW
-         7mipvxpOBEGgK9ZK4JMeG5jXMzIypEdWgwcdnYvS/66yyjljV4siQWqvWWixG144ql
-         +6aGTxN3TuyNuWuaHinGXI+Isyi5nXt55bcvHB3k=
+        b=bisSa7BMaqhEUOuvq/8oWv0xQsdF5TPQnKnMefoACDcsUEybo2nEb4Zi6/rP1pepy
+         1Q9rx+d3JoeIv7cug2zJw3sfbpw3WWDi0HY7wZFmU9Cx4yREeoBW71SaMZ1WlLei6a
+         3+AZgcu9My5AKqlifCodw4VYoMx8ozKfNATvbacs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jozef Balga <jozef.balga@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 01/35] media: af9035: prevent buffer overflow on write
-Date:   Thu, 18 Oct 2018 19:54:30 +0200
-Message-Id: <20181018175422.665119275@linuxfoundation.org>
+Subject: [PATCH 4.9 10/35] clocksource/drivers/ti-32k: Add CLOCK_SOURCE_SUSPEND_NONSTOP flag for non-am43 SoCs
+Date:   Thu, 18 Oct 2018 19:54:39 +0200
+Message-Id: <20181018175424.085307188@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175422.506152522@linuxfoundation.org>
 References: <20181018175422.506152522@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -62,40 +64,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jozef Balga <jozef.balga@gmail.com>
+From: Keerthy <j-keerthy@ti.com>
 
-[ Upstream commit 312f73b648626a0526a3aceebb0a3192aaba05ce ]
+[ Upstream commit 3b7d96a0dbb6b630878597a1838fc39f808b761b ]
 
-When less than 3 bytes are written to the device, memcpy is called with
-negative array size which leads to buffer overflow and kernel panic. This
-patch adds a condition and returns -EOPNOTSUPP instead.
-Fixes bugzilla issue 64871
+The 32k clocksource is NONSTOP for non-am43 SoCs. Hence
+add the flag for all the other SoCs.
 
-[mchehab+samsung@kernel.org: fix a merge conflict and changed the
- condition to match the patch's comment, e. g. len == 3 could
- also be valid]
-Signed-off-by: Jozef Balga <jozef.balga@gmail.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Reported-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/dvb-usb-v2/af9035.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clocksource/timer-ti-32k.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/media/usb/dvb-usb-v2/af9035.c
-+++ b/drivers/media/usb/dvb-usb-v2/af9035.c
-@@ -406,8 +406,10 @@ static int af9035_i2c_master_xfer(struct
- 			    msg[0].addr == (state->af9033_i2c_addr[1] >> 1))
- 				reg |= 0x100000;
+--- a/drivers/clocksource/timer-ti-32k.c
++++ b/drivers/clocksource/timer-ti-32k.c
+@@ -98,6 +98,9 @@ static int __init ti_32k_timer_init(stru
+ 		return -ENXIO;
+ 	}
  
--			ret = af9035_wr_regs(d, reg, &msg[0].buf[3],
--					msg[0].len - 3);
-+			ret = (msg[0].len >= 3) ? af9035_wr_regs(d, reg,
-+							         &msg[0].buf[3],
-+							         msg[0].len - 3)
-+					        : -EOPNOTSUPP;
- 		} else {
- 			/* I2C write */
- 			u8 buf[MAX_XFER_SIZE];
++	if (!of_machine_is_compatible("ti,am43"))
++		ti_32k_timer.cs.flags |= CLOCK_SOURCE_SUSPEND_NONSTOP;
++
+ 	ti_32k_timer.counter = ti_32k_timer.base;
+ 
+ 	/*
 
 
