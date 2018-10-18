@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF459C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2C9ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB11521476
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15FBF205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i8f00+ZR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB11521476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PVSfkqi9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15FBF205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729450AbeJSCCl (ORCPT
+        id S1729459AbeJSCCo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:02:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50614 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:02:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728822AbeJSCCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:02:40 -0400
+        id S1728616AbeJSCCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:02:43 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CD5D205C9;
-        Thu, 18 Oct 2018 18:00:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87A8B20838;
+        Thu, 18 Oct 2018 18:00:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885635;
-        bh=fZiI0LRMrhZ70Pvo/0lLrGthasdzNL1NZDdvs3kUdhU=;
+        s=default; t=1539885638;
+        bh=IWrt68STWbcoHqWHtpvAsJrUlVA/ghFXZnrlUZcqkFU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i8f00+ZRzyjqV5jL5G4RpTCB847mcifuxWZ0Oj7+Ibuf081EGrxcaZCrs6sjvu6nA
-         +WKypc3mGFnPO7hNgAvqgaLoUwUQfI5Up4R1QCrO7s4JrtMyNMNrhDHK1NMhp9IH6y
-         2Ip3YSJkjXDkCofk9UCyWg9e9ktIb1PizEjn1Nzg=
+        b=PVSfkqi9cx74vKNCtfduVsDKoIV0CK2frGsRddOY30U/jpd8Ze7hqMzTfxJOwsZ1y
+         VutI7lG+ifCb5LNWgX5+F4RUV/zb3PXyQE0ynrvFg5fybFvbJ79/diJtU45WqZsW5q
+         jjBOdOYeh5hf/wIJl1SC5TlXv6fRUSinAaTSdt/I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 23/41] scsi: sd: dont crash the host on invalid commands
-Date:   Thu, 18 Oct 2018 19:54:38 +0200
-Message-Id: <20181018175420.805611901@linuxfoundation.org>
+Subject: [PATCH 4.14 24/41] net/mlx4: Use cpumask_available for eq->affinity_mask
+Date:   Thu, 18 Oct 2018 19:54:39 +0200
+Message-Id: <20181018175421.172063171@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
 References: <20181018175416.718399607@linuxfoundation.org>
@@ -66,44 +64,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johannes Thumshirn <jthumshirn@suse.de>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit f1f1fadacaf08b7cf11714c0c29f8fa4d4ef68a9 ]
+[ Upstream commit 8ac1ee6f4d62e781e3b3fd8b9c42b70371427669 ]
 
-When sd_init_command() get's a command with a unknown req_op() it crashes the
-system via BUG().
+Clang warns that the address of a pointer will always evaluated as true
+in a boolean context:
 
-This makes debugging the actual reason for the broken request cmd_flags pretty
-hard as the system is down before it's able to write out debugging data on the
-serial console or the trace buffer.
+drivers/net/ethernet/mellanox/mlx4/eq.c:243:11: warning: address of
+array 'eq->affinity_mask' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+        if (!eq->affinity_mask || cpumask_empty(eq->affinity_mask))
+            ~~~~~^~~~~~~~~~~~~
+1 warning generated.
 
-Change the BUG() to a WARN_ON() and return BLKPREP_KILL to fail gracefully and
-return an I/O error to the producer of the request.
+Use cpumask_available, introduced in commit f7e30f01a9e2 ("cpumask: Add
+helper cpumask_available()"), which does the proper checking and avoids
+this warning.
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Hannes Reinecke <hare@suse.de>
-Cc: Bart Van Assche <bvanassche@acm.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/86
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/sd.c |    3 ++-
+ drivers/net/ethernet/mellanox/mlx4/eq.c |    3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -1285,7 +1285,8 @@ static int sd_init_command(struct scsi_c
- 	case REQ_OP_ZONE_RESET:
- 		return sd_zbc_setup_reset_cmnd(cmd);
- 	default:
--		BUG();
-+		WARN_ON_ONCE(1);
-+		return BLKPREP_KILL;
- 	}
- }
+--- a/drivers/net/ethernet/mellanox/mlx4/eq.c
++++ b/drivers/net/ethernet/mellanox/mlx4/eq.c
+@@ -240,7 +240,8 @@ static void mlx4_set_eq_affinity_hint(st
+ 	struct mlx4_dev *dev = &priv->dev;
+ 	struct mlx4_eq *eq = &priv->eq_table.eq[vec];
  
+-	if (!eq->affinity_mask || cpumask_empty(eq->affinity_mask))
++	if (!cpumask_available(eq->affinity_mask) ||
++	    cpumask_empty(eq->affinity_mask))
+ 		return;
+ 
+ 	hint_err = irq_set_affinity_hint(eq->irq, eq->affinity_mask);
 
 
