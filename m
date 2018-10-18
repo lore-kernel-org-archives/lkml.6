@@ -2,112 +2,121 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F066ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D1A8C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:58:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32C2321479
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:56:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="h6FGtnmD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32C2321479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 2E7CA208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:58:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E7CA208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728127AbeJRQ4t (ORCPT
+        id S1727881AbeJRQ6J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 12:56:49 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38014 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727489AbeJRQ4t (ORCPT
+        Thu, 18 Oct 2018 12:58:09 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:49274 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727461AbeJRQ6J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 12:56:49 -0400
-Received: by mail-qt1-f195.google.com with SMTP id l9-v6so33331656qtf.5
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 01:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X6xjmYMFwjAXpy6FDafW/Cc3gYvg5c8BxwdbpQblls8=;
-        b=h6FGtnmDbc8CBVzmwUoWDRq/79oaQhpFsuFSyBch9J6FcfCc5Dy25aYKqbSNHf6mFb
-         k93KyXSFX9s3VGD69MAOHDtm15kwyxf0I/HrLvSCr0XeaAuFig1TIuPatNR4Pv0iB+ZY
-         nDV8IXRCeJJ3aBg35gPYNQ9jxXCHlSNZoRmN4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X6xjmYMFwjAXpy6FDafW/Cc3gYvg5c8BxwdbpQblls8=;
-        b=NT/szvJIvxGW8/1qawP6x+YrBS1oNpRhT8SByMHM3k7TlxeQmHYG5TYH1kXKXWx/mt
-         sJFx4TaHqYXUWXczQsgMHPTS0FBuUdqqqLk9I/aOky2SOOD6mYnTdXKz/Z9aYVeBMppz
-         IXMCN/L3FY2FPqdOaJXZ8prvFLiJ/zUPi+K+Oi87eq06MJHdtm/eoxSIJseXQ+oi/UxI
-         KMn5LMd1GLPV3pQpK1Ud7ahoWZxH5i/ZtuxOD6G4fqN+0JZTcgsFuQlrYlS72oTGoc40
-         Zo5SSCsn3Hli3WZ74B7r9qLsFYHLRysn9vb2O26ebBRF9F5yHXibzcXB8LIbQ+6cVZ3D
-         /apw==
-X-Gm-Message-State: ABuFfog+UWqKPpiBrH+ihMjt5u7T97o3rQRFVoNQVU33Wz8JZOLJXWdt
-        MinzIy7aee9KnwXlaQOWYAxNkAwlvVYvjoR/PK5czg==
-X-Google-Smtp-Source: ACcGV60d9gzx01zLHu3WR82Fex5roPmOjo+3T+UdTX43hFuR50Qlnsl4iN0LjtQRTRGI8qdqSkAAJRueWwwWmAYYvmw=
-X-Received: by 2002:ac8:2413:: with SMTP id c19-v6mr27564990qtc.194.1539853008505;
- Thu, 18 Oct 2018 01:56:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20171207100849.407-1-daniel.vetter@ffwll.ch> <20171208105419.jdzene5wrsriwm2n@hirez.programming.kicks-ass.net>
- <20171211091928.cpw3srz2rddmruxj@phenom.ffwll.local> <20171218071159.GW26573@phenom.ffwll.local>
- <CA+55aFwD+0hhehWHmh8PW9eDCVtEBTi9KCmCrJXZRUFj77r82Q@mail.gmail.com>
- <20171219095925.GY26573@phenom.ffwll.local> <aae95b90-a0c8-4825-17fb-b31eb1aecf80@lge.com>
- <CAKMK7uHdk1CT9YP00fb0mpBQdg_Di6CKv+z5ZXSS9Q4tbOcwAg@mail.gmail.com>
- <20180315124130.GY4064@hirez.programming.kicks-ass.net> <30162a1d-74d4-3bce-f901-12a29f38632e@lge.com>
-In-Reply-To: <30162a1d-74d4-3bce-f901-12a29f38632e@lge.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Thu, 18 Oct 2018 10:56:37 +0200
-Message-ID: <CAKMK7uE=k4X-wc0nJ6OqwwtoUvKDcXjnEZ0YpKd62VbXEw8CqA@mail.gmail.com>
-Subject: Re: [PATCH] kthread: finer-grained lockdep/cross-release completion
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thu, 18 Oct 2018 12:58:09 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07684846|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03298;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=16;RT=16;SR=0;TI=SMTPD_---.D3txbJc_1539853072;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D3txbJc_1539853072)
+          by smtp.aliyun-inc.com(10.147.41.178);
+          Thu, 18 Oct 2018 16:57:52 +0800
+Date:   Thu, 18 Oct 2018 16:57:52 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        David Miller <davem@davemloft.net>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Marta Lofstedt <marta.lofstedt@intel.com>,
-        Ingo Molnar <mingo@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Shaohua Li <shli@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>, kernel-team@lge.com,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Theodore Ts'o" <tytso@mit.edu>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arch <linux-arch@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, c-sky_gcc_upstream@c-sky.com
+Subject: Re: [PATCH V9 21/21] csky: support dword access for get_user_size()
+Message-ID: <20181018085751.GA21934@guoren-Inspiron-7460>
+References: <cover.1539655731.git.ren_guo@c-sky.com>
+ <4bc11ff0cff5960892a464189605f9bc808383fc.1539655732.git.ren_guo@c-sky.com>
+ <CAK8P3a1wfeWboHvU1o_kooMc2hML8iWcNrz=mp6tYT52iGwfjw@mail.gmail.com>
+ <20181018034117.GD15088@guoren-Inspiron-7460>
+ <CAK8P3a0cFhBE1tX0xisP__MYiBfaAUQHsW6ZhkmTPocRf1Zb6w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a0cFhBE1tX0xisP__MYiBfaAUQHsW6ZhkmTPocRf1Zb6w@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 12:26 AM Byungchul Park <byungchul.park@lge.com> wrote:
->
-> On 3/15/2018 9:41 PM, Peter Zijlstra wrote:
-> > On Thu, Mar 15, 2018 at 11:31:57AM +0100, Daniel Vetter wrote:
-> >> Is there any progress on getting cross-release enabled again?
+On Thu, Oct 18, 2018 at 10:34:00AM +0200, Arnd Bergmann wrote:
+> On Thu, Oct 18, 2018 at 5:41 AM Guo Ren <ren_guo@c-sky.com> wrote:
 > >
-> > Not yet, I'm still fighting the meltdown/spectre induced backlog.
+> > On Wed, Oct 17, 2018 at 05:44:17PM +0200, Arnd Bergmann wrote:
+> > > On Tue, Oct 16, 2018 at 5:33 AM Guo Ren <ren_guo@c-sky.com> wrote:
+> > > >
+> > > > Support dword access for get_user_size and redesign put_user_size with
+> > > > the same style of get_user_size. It's Ok to use xxx_user_asm_common for
+> > > > all size of variable with ldb, ldh, ldw, ld.d
+> > > >
+> > > > ld.d rx, (addr, 0) could "rx <= addr" "and r(x+1) <= addr+4" and this also
+> > > > follow abiv2 gcc ABI for dword access.
+> > >
+> > > Are you sure this is correct for this?
+> > >
+> > > static inline u32 get_64_to_32(__u64 __user *p)
+> > > {
+> > >       u32 ret;
+> > >       get_user(ret, p);
+> > >       return ret;
+> > > }
+> > >
+> > > If I read __get_user_asm_common() right, the ld.d would overwrite
+> > > two registers, but the caller only expects one, so it clobbers one
+> > > that might be in use.
+> > Ah... BUG! I only consider the get_user(u64, u64 *) :P
 > >
-> > We'll get to it eventually.
->
-> Please let me know when you get available so that I can start.
+> > Change to:
+> > case 8:                                                 \
+> > __get_user_asm_dword((x), ptr, "ld.d", retval);         \
+> > break;
+> >
+> > #define __get_user_asm_dword(x, ptr, err)               \
+> > do {                                                    \
+> >         u64 tmp;                                        \
+> >         __get_user_asm_common(tmp, ptr, "ld.d", err);   \
+> >         x = typeof(x) tmp;                              \
+> > } while(0)
+> >
+> > #define __put_user_asm_dword(x, ptr, err)               \
+> > do {                                                    \
+> >         u64 tmp = (u64) x;                              \
+> >         __put_user_asm_common(tmp, ptr, "st.d", err);   \
+> > } while(0)
+> >
+> 
+> I think this will cause warnings for code that passes a pointer.
+> 
+> The 64-bit __get_user() is really hard, and most 32-bit architectures don't
+> implement it at all. If you really want to add it, have a look at what
+> x86 and arm do. IIRC they both use __builtin_choose_expr(),
+Thx for the tips and I'll drop the patch first for the upstream. 
 
-Hi Byungchul,
+I want to implement it because of make allmodconfig and
+drivers/android/binder.c need it. I'll learn __builtin_choose_expr()
+and prepare patch next.
 
-Do you have a branch somewhere with latest/rebased cross-release
-patches? I'd be interested in resurrecting them, and least for local
-testing in drm. I'm still carrying around some patches to improve
-annotations here.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Best Regards
+ Guo Ren
