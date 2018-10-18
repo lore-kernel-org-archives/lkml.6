@@ -2,170 +2,195 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 003A7C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D170CC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8420621476
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:01:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VAzeEQgW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8420621476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7ABDF21476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:03:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ABDF21476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbeJSBDp (ORCPT
+        id S1728615AbeJSBE7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 21:03:45 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43199 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727294AbeJSBDo (ORCPT
+        Thu, 18 Oct 2018 21:04:59 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46969 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727294AbeJSBE7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 21:03:44 -0400
-Received: by mail-pf1-f194.google.com with SMTP id p24-v6so15159866pff.10;
-        Thu, 18 Oct 2018 10:01:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=77GeRJFBJlE1tV/KEwIV6u9FdAYIwCOFSWKbfMNgFUY=;
-        b=VAzeEQgW+tYp7oiG4XhQb7N/EWTi3WkD8AvLC00Tx+QdzDSNnVjdM2+nmEtn3IrA0W
-         XZZzXAkZI1JJ8DAqJgxYxt7F6SHOCTAE6O2H4i61+6idEMU67Fx7NzQFZDOLYM22U3fq
-         Z3uruTfDA92RKQZhECcFtsv2JLnUq1PZinDCQLcfC1u1OOOt8PXGEfR91Mu/sNr3MYLI
-         IWw6YqaJjE3mOdUCZNmguYTf91WEG6Hh6d31J/N3clu2TZIZPjCFBDwQPLJFL7AAJtZb
-         iVE4+7ICcL5LFJboo1vctGjQbWfUFWulR6Q+c3Ij2dZ4pYtfHqs1MB/lAPdN3oYF+5PW
-         LSzA==
+        Thu, 18 Oct 2018 21:04:59 -0400
+Received: by mail-ot1-f66.google.com with SMTP id o21so30445196otb.13;
+        Thu, 18 Oct 2018 10:03:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=77GeRJFBJlE1tV/KEwIV6u9FdAYIwCOFSWKbfMNgFUY=;
-        b=J8UhIOJtMcS+rKMK/ws4ZzI4noF6cEmuEuc3OCty/at2Bd1F0y0kVZDmK1UrCVXr/x
-         u+MpgDfxf0j06TkRt950FVok52aRKs00d4u+knqM4qMnzSB1imBMLsH/M3yN1DOpzUTT
-         80t+MBmHxhKA0LvuWZaXitfmA0mAVCCeovKU94+gnqVtznE06yYKZQwFMqplMPNCRJz9
-         gUzbt8nDYKEjlw/qUUq+QrzhUh0uYJNfbIePWFYnH3tQMGJG0Xsh24i5/x1fuAKjZOul
-         ZH7VBDJQ76wZeX/2t6yf8/G4Ns19NVVIJJycKmrgbFdBtBO1jBrEgHxUocJX/bTTYewL
-         J64g==
-X-Gm-Message-State: ABuFfohWufOZCXucdrhGfDI1DbFprRdZJK2U42wFcu2V526sKJzDnDKy
-        wYnTcGP87T9jwwtSGNhO52o=
-X-Google-Smtp-Source: ACcGV61X7cGZ9xXKKG6bu7EIl8JXwi1RN54uXHx37+PqApQaCcO2HF4HwOFTyZBTD11hYgguiReWLg==
-X-Received: by 2002:a65:6204:: with SMTP id d4-v6mr28986991pgv.121.1539882112127;
-        Thu, 18 Oct 2018 10:01:52 -0700 (PDT)
-Received: from mail.google.com ([2001:19f0:6001:4ff6:5400:1ff:feb7:a195])
-        by smtp.gmail.com with ESMTPSA id v189-v6sm27307462pfb.54.2018.10.18.10.01.51
+        bh=cETW7hbTpVAjv5VCuBz0OkmilWTcZUemT5Kzp8m8Bq8=;
+        b=PNkELAodDoEuq2o3ERN6usYQuM4RKKPisPNYl1+3IyLJyVrlLUfr1OSgpKBUHuko06
+         KsdX6esnWYan+Cc4ctJsMKcZ/AoV1H4zJBcUN2Lv5ccj2Um5PKWk9m26HS6bdzXbUlr6
+         c7mw6oIVTgDmtMUIWxOe9vbZAcZ0wAGhHHflW7/J+m/QeVWkuXaSvMYcH4+0KorNipVk
+         stI/a6xMDoIZbwuHqgpHukegxzFjO9aKcLhQ+bTEHAlH2QUwcP0BirFDrPsNVJXTDqTg
+         L1I+9OFqfDarudKhXpoc1UV6CLtfw1OxGI99G5MhZYLS3EflZhHlaEIqe9v4AkbUeLq/
+         aBwQ==
+X-Gm-Message-State: ABuFfohfYlpknQaQm8I42IQ/lbe9u0uF8B3qUr9FKEK019Mjt9U4N6Tm
+        gXBOHIsHfnI9fhjtilGH5A==
+X-Google-Smtp-Source: ACcGV63HVBX6F1IcWwcrKaQRnKvwZWcBLPpimTQ8OzIUZxxJVHPjutSTC5afwQMV7f5Q9peed6p0rw==
+X-Received: by 2002:a9d:3cbd:: with SMTP id z58mr20537878otc.159.1539882185222;
+        Thu, 18 Oct 2018 10:03:05 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id u107sm3866233otb.71.2018.10.18.10.03.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 18 Oct 2018 10:01:51 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 17:01:49 +0000
-From:   Du Changbin <changbin.du@gmail.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Du Changbin <changbin.du@gmail.com>, yamada.masahiro@socionext.com,
-        michal.lkml@markovi.net, tglx@linutronix.de, mingo@redhat.com,
-        linux@armlinux.org.uk, akpm@linux-foundation.org,
-        linux-kbuild@vger.kernel.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        Changbin Du <changbin.du@intel.com>,
-        linux-sparse@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/4] kernel hacking: new config NO_AUTO_INLINE to disable
- compiler auto-inline optimizations
-Message-ID: <20181018170148.47zbtfno5cjh4wb6@mail.google.com>
-References: <20181018162548.6399-1-changbin.du@gmail.com>
- <20181018162548.6399-3-changbin.du@gmail.com>
- <62bcdf3d-87be-407f-b971-5a53dbb1e4b8@arm.com>
+        Thu, 18 Oct 2018 10:03:04 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 12:03:03 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     frowand.list@gmail.com
+Cc:     Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
+Subject: Re: [PATCH v4 01/18] of: overlay: add tests to validate kfrees from
+ overlay removal
+Message-ID: <20181018170303.GA15557@bogus>
+References: <1539657458-24401-1-git-send-email-frowand.list@gmail.com>
+ <1539657458-24401-2-git-send-email-frowand.list@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <62bcdf3d-87be-407f-b971-5a53dbb1e4b8@arm.com>
-User-Agent: NeoMutt/20180716-508-7c9a6d
+In-Reply-To: <1539657458-24401-2-git-send-email-frowand.list@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 05:57:56PM +0100, Robin Murphy wrote:
-> On 18/10/18 17:25, Du Changbin wrote:
-> > From: Changbin Du <changbin.du@intel.com>
-> > 
-> > This patch add a new kernel hacking option NO_AUTO_INLINE. Selecting
-> > this option will prevent the compiler from optimizing the kernel by
-> > auto-inlining functions not marked with the inline keyword.
-> > 
-> > With this option, only functions explicitly marked with "inline" will
-> > be inlined. This will allow the function tracer to trace more functions
-> > because it only traces functions that the compiler has not inlined.
-> > 
-> > Signed-off-by: Changbin Du <changbin.du@intel.com>
-> > Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > ---
-> >   Makefile          |  6 ++++++
-> >   lib/Kconfig.debug | 25 +++++++++++++++++++++++++
-> >   2 files changed, 31 insertions(+)
-> > 
-> > diff --git a/Makefile b/Makefile
-> > index e8b599b4dcde..757d6507cb5c 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -749,6 +749,12 @@ KBUILD_CFLAGS 	+= $(call cc-option, -femit-struct-debug-baseonly) \
-> >   		   $(call cc-option,-fno-var-tracking)
-> >   endif
-> > +ifdef CONFIG_NO_AUTO_INLINE
-> > +KBUILD_CFLAGS   += $(call cc-option, -fno-inline-functions) \
-> > +		   $(call cc-option, -fno-inline-small-functions) \
-> > +		   $(call cc-option, -fno-inline-functions-called-once)
-> > +endif
-> > +
-> >   ifdef CONFIG_FUNCTION_TRACER
-> >   ifdef CONFIG_FTRACE_MCOUNT_RECORD
-> >     # gcc 5 supports generating the mcount tables directly
-> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> > index 4966c4fbe7f7..0f9b4fa78b1c 100644
-> > --- a/lib/Kconfig.debug
-> > +++ b/lib/Kconfig.debug
-> > @@ -211,6 +211,31 @@ config GDB_SCRIPTS
-> >   	  instance. See Documentation/dev-tools/gdb-kernel-debugging.rst
-> >   	  for further details.
-> > +config NO_AUTO_INLINE
-> > +	bool "Disable compiler auto-inline optimizations"
-> > +	help
-> > +	  This will prevent the compiler from optimizing the kernel by
-> > +	  auto-inlining functions not marked with the inline keyword.
-> > +	  With this option, only functions explicitly marked with
-> > +	  "inline" will be inlined. This will allow the function tracer
-> > +	  to trace more functions because it only traces functions that
-> > +	  the compiler has not inlined.
-> > +
-> > +	  Enabling this function can help debugging a kernel if using
-> > +	  the function tracer. But it can also change how the kernel
-> > +	  works, because inlining functions may change the timing,
-> > +	  which could make it difficult while debugging race conditions.
-> > +
-> > +	  If unsure, select N.
-> > +
-> > +config ENABLE_WARN_DEPRECATED
+On Mon, Oct 15, 2018 at 07:37:21PM -0700, frowand.list@gmail.com wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
 > 
-> This part doesn't look like it belongs in this patch, and judging by the
-> commit message in 771c035372a0 wouldn't be welcome back anyway.
+> Add checks:
+>   - attempted kfree due to refcount reaching zero before overlay
+>     is removed
+>   - properties linked to an overlay node when the node is removed
+>   - node refcount > one during node removal in a changeset destroy,
+>     if the node was created by the changeset
 > 
-opps, this is a rebasing mistake. Let me update it. Thanks.
+> After applying this patch, several validation warnings will be
+> reported from the devicetree unittest during boot due to
+> pre-existing devicetree bugs. The warnings will be similar to:
+> 
+>   OF: ERROR: of_node_release() overlay node /testcase-data/overlay-node/test-bus/test-unittest11/test-unittest111 contains unexpected properties
+>   OF: ERROR: memory leak - destroy cset entry: attach overlay node /testcase-data-2/substation@100/hvac-medium-2 expected refcount 1 instead of 2.  of_node_get() / of_node_put() are unbalanced for this node.
 
-> Robin.
-> 
-> > +	bool "Enable __deprecated logic"
-> > +	default y
-> > +	help
-> > +	  Enable the __deprecated logic in the kernel build.
-> > +	  Disable this to suppress the "warning: 'foo' is deprecated
-> > +	  (declared at kernel/power/somefile.c:1234)" messages.
-> > +
-> >   config ENABLE_MUST_CHECK
-> >   	bool "Enable __must_check logic"
-> >   	default y
-> > 
+These messages could be formatted more consistently. Put the path either 
+at the beginning (after any prefix) or end. Beginning is more like a 
+compiler error. End puts what the problem is before it's off the edge of 
+the screen. 
 
--- 
-Thanks,
-Du Changbin
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> ---
+> Changes since v3:
+>   - Add expected value of refcount for destroy cset entry error.  Also
+>     explain the cause of the error.
+> 
+>  drivers/of/dynamic.c | 29 +++++++++++++++++++++++++++++
+>  drivers/of/overlay.c |  1 +
+>  include/linux/of.h   | 15 ++++++++++-----
+>  3 files changed, 40 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+> index f4f8ed9b5454..24c97b7a050f 100644
+> --- a/drivers/of/dynamic.c
+> +++ b/drivers/of/dynamic.c
+> @@ -330,6 +330,25 @@ void of_node_release(struct kobject *kobj)
+>  	if (!of_node_check_flag(node, OF_DYNAMIC))
+>  		return;
+>  
+> +	if (of_node_check_flag(node, OF_OVERLAY)) {
+> +
+> +		if (!of_node_check_flag(node, OF_OVERLAY_FREE_CSET)) {
+
+I worry the flags are getting unwieldy.
+
+> +			/* premature refcount of zero, do not free memory */
+> +			pr_err("ERROR: memory leak %s() overlay node %pOF before free overlay changeset\n",
+> +			       __func__, node);
+> +			return;
+> +		}
+> +
+> +		/*
+> +		 * If node->properties non-empty then properties were added
+> +		 * to this node either by different overlay that has not
+> +		 * yet been removed, or by a non-overlay mechanism.
+> +		 */
+> +		if (node->properties)
+> +			pr_err("ERROR: %s() overlay node %pOF contains unexpected properties\n",
+> +			       __func__, node);
+> +	}
+> +
+>  	property_list_free(node->properties);
+>  	property_list_free(node->deadprops);
+>  
+> @@ -434,6 +453,16 @@ struct device_node *__of_node_dup(const struct device_node *np,
+>  
+>  static void __of_changeset_entry_destroy(struct of_changeset_entry *ce)
+>  {
+> +	if (ce->action == OF_RECONFIG_ATTACH_NODE &&
+> +	    of_node_check_flag(ce->np, OF_OVERLAY)) {
+> +		if (kref_read(&ce->np->kobj.kref) > 1) {
+> +			pr_err("ERROR: memory leak - destroy cset entry: attach overlay node %pOF expected refcount 1 instead of %d.  of_node_get() / of_node_put() are unbalanced for this node.\n",
+> +			       ce->np, kref_read(&ce->np->kobj.kref));
+> +		} else {
+> +			of_node_set_flag(ce->np, OF_OVERLAY_FREE_CSET);
+> +		}
+> +	}
+> +
+>  	of_node_put(ce->np);
+>  	list_del(&ce->node);
+>  	kfree(ce);
+> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+> index eda57ef12fd0..1176cb4b6e4e 100644
+> --- a/drivers/of/overlay.c
+> +++ b/drivers/of/overlay.c
+> @@ -373,6 +373,7 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+>  			return -ENOMEM;
+>  
+>  		tchild->parent = target_node;
+> +		of_node_set_flag(tchild, OF_OVERLAY);
+>  
+>  		ret = of_changeset_attach_node(&ovcs->cset, tchild);
+>  		if (ret)
+> diff --git a/include/linux/of.h b/include/linux/of.h
+> index 4d25e4f952d9..aa1dafaec6ae 100644
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@ -138,11 +138,16 @@ static inline void of_node_put(struct device_node *node) { }
+>  extern struct device_node *of_stdout;
+>  extern raw_spinlock_t devtree_lock;
+>  
+> -/* flag descriptions (need to be visible even when !CONFIG_OF) */
+> -#define OF_DYNAMIC	1 /* node and properties were allocated via kmalloc */
+> -#define OF_DETACHED	2 /* node has been detached from the device tree */
+> -#define OF_POPULATED	3 /* device already created for the node */
+> -#define OF_POPULATED_BUS	4 /* of_platform_populate recursed to children of this node */
+> +/*
+> + * struct device_node flag descriptions
+> + * (need to be visible even when !CONFIG_OF)
+> + */
+> +#define OF_DYNAMIC		1 /* (and properties) allocated via kmalloc */
+> +#define OF_DETACHED		2 /* detached from the device tree */
+> +#define OF_POPULATED		3 /* device already created */
+> +#define OF_POPULATED_BUS	4 /* platform bus created for children */
+> +#define OF_OVERLAY		5 /* allocated for an overlay */
+> +#define OF_OVERLAY_FREE_CSET	6 /* in overlay cset being freed */
+>  
+>  #define OF_BAD_ADDR	((u64)-1)
+>  
+> -- 
+> Frank Rowand <frank.rowand@sony.com>
+> 
