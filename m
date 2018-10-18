@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14419ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E6DC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0841205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:01:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F08A21476
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:01:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgNlhKy2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0841205C9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0SI7MMBh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F08A21476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729506AbeJSCDG (ORCPT
+        id S1729515AbeJSCDK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:03:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51194 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:03:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728086AbeJSCDG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:03:06 -0400
+        id S1728086AbeJSCDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:03:09 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B929621476;
-        Thu, 18 Oct 2018 18:00:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 090B821479;
+        Thu, 18 Oct 2018 18:01:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885660;
-        bh=WD1dgnjHut/QriST6YW/NAyB2PyXTplWm8+ksw3d55c=;
+        s=default; t=1539885663;
+        bh=5QTJxqfTtt2lkREeBvv8czVcA58xWVUGwdIy5XPY3gY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DgNlhKy2SMI4tIaF8vWSAbh5unjmTJ2cUCg2fSHNNfzL1OBPXycOqUvTl5fM22nfs
-         gUwKdLBMpdD+5MV9Tw+MY+OuwGwEYLnQqi7moVDF+u3wTghEPWqZsN0pZd5idwCA/W
-         Bq7g1nWizeq8GZhxdP3lzeFvXXc3WTJfnaXTC2zk=
+        b=0SI7MMBhAWtEhpfAeEkeG1EzcDPGcgH1DQp6Rf7NqEDdpL7/MqHJ9G60c3HGvl0ci
+         A/dluQSdyjlO9d2vQUuw/NlIfB/OOHqXbURlsXTLk0WkLS9SIFbNyomLps2mlXelk3
+         /PI57YxnhyfqnBDUh5zZNaZ+aMXHLgr8gh8zX70s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arindam Nath <arindam.nath@amd.com>,
-        Joerg Roedel <jroedel@suse.de>,
+        stable@vger.kernel.org, Sven Eckelmann <sven@narfation.org>,
+        Marek Lindner <mareklindner@neomailbox.ch>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 29/41] iommu/amd: Return devid as alias for ACPI HID devices
-Date:   Thu, 18 Oct 2018 19:54:44 +0200
-Message-Id: <20181018175421.957676235@linuxfoundation.org>
+Subject: [PATCH 4.14 03/41] batman-adv: Fix segfault when writing to throughput_override
+Date:   Thu, 18 Oct 2018 19:54:18 +0200
+Message-Id: <20181018175417.169590775@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
 References: <20181018175416.718399607@linuxfoundation.org>
@@ -63,41 +64,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arindam Nath <arindam.nath@amd.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit 5ebb1bc2d63d90dd204169e21fd7a0b4bb8c776e ]
+[ Upstream commit b9fd14c20871e6189f635e49b32d7789e430b3c8 ]
 
-ACPI HID devices do not actually have an alias for
-them in the IVRS. But dev_data->alias is still used
-for indexing into the IOMMU device table for devices
-being handled by the IOMMU. So for ACPI HID devices,
-we simply return the corresponding devid as an alias,
-as parsed from IVRS table.
+The per hardif sysfs file "batman_adv/throughput_override" prints the
+resulting change as info text when the users writes to this file. It uses
+the helper function batadv_info to add it at the same time to the kernel
+ring buffer and to the batman-adv debug log (when CONFIG_BATMAN_ADV_DEBUG
+is enabled).
 
-Signed-off-by: Arindam Nath <arindam.nath@amd.com>
-Fixes: 2bf9a0a12749 ('iommu/amd: Add iommu support for ACPI HID devices')
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+The function batadv_info requires as first parameter the batman-adv softif
+net_device. This parameter is then used to find the private buffer which
+contains the debug log for this batman-adv interface. But
+batadv_store_throughput_override used as first argument the slave
+net_device. This slave device doesn't have the batadv_priv private data
+which is access by batadv_info.
+
+Writing to this file with CONFIG_BATMAN_ADV_DEBUG enabled can either lead
+to a segfault or to memory corruption.
+
+Fixes: 0b5ecc6811bd ("batman-adv: add throughput override attribute to hard_ifaces")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iommu/amd_iommu.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ net/batman-adv/sysfs.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -253,7 +253,13 @@ static u16 get_alias(struct device *dev)
+--- a/net/batman-adv/sysfs.c
++++ b/net/batman-adv/sysfs.c
+@@ -1078,8 +1078,9 @@ static ssize_t batadv_store_throughput_o
+ 	if (old_tp_override == tp_override)
+ 		goto out;
  
- 	/* The callers make sure that get_device_id() does not fail here */
- 	devid = get_device_id(dev);
-+
-+	/* For ACPI HID devices, we simply return the devid as such */
-+	if (!dev_is_pci(dev))
-+		return devid;
-+
- 	ivrs_alias = amd_iommu_alias_table[devid];
-+
- 	pci_for_each_dma_alias(pdev, __last_alias, &pci_alias);
+-	batadv_info(net_dev, "%s: Changing from: %u.%u MBit to: %u.%u MBit\n",
+-		    "throughput_override",
++	batadv_info(hard_iface->soft_iface,
++		    "%s: %s: Changing from: %u.%u MBit to: %u.%u MBit\n",
++		    "throughput_override", net_dev->name,
+ 		    old_tp_override / 10, old_tp_override % 10,
+ 		    tp_override / 10, tp_override % 10);
  
- 	if (ivrs_alias == pci_alias)
 
 
