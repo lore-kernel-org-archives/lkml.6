@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8200C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDCFECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:06:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B085204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D959F20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:05:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgnLq7Kw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B085204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDzsclXL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D959F20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730372AbeJSCIB (ORCPT
+        id S1730382AbeJSCIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:08:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56858 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:08:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726599AbeJSCIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:08:00 -0400
+        id S1729763AbeJSCIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:08:04 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B710204FD;
-        Thu, 18 Oct 2018 18:05:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFEE920658;
+        Thu, 18 Oct 2018 18:05:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885953;
-        bh=UQ5lhNNED9PvOe/TGkkNLuJmB6tqcBhv7pQLWcXTk2I=;
+        s=default; t=1539885956;
+        bh=BcgVR2o4Bq7dIhCVzE1qmTNsRD+D85kLmih/OECb0yY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mgnLq7KwN1zgi3YZxcefrJOqqDJXNnZYYMHp1t/jl9q9cl9MGJMb4ob+tNew+jmRD
-         h/iBI2iSsIWTmdI15bz5yB3rtAXfz+7TPV0qGxtpSUL23Sr1KhqrNEmYKeBTnUllLq
-         PnINIdAIY3l+S2sB6qWT83O4vmvk3Rui+NcfUU8k=
+        b=BDzsclXLaxKBTdIKjB5dFivK0MM4efkAHeSwkY533QIS1rLJKd9UOVp3mPZcMmNx3
+         uGS+eT/zeaxyDb/xy5Tc1OOVIzl8NTNqOAagO/dfT1Y5ToMwdpmSPuF1Alyog6JxYD
+         2jQ/Vyu8K90ihmDcV1fDz7Cej3Y3m+lt/7ywVEFo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        stable@vger.kernel.org,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 27/48] team: Forbid enslaving team device to itself
-Date:   Thu, 18 Oct 2018 19:55:02 +0200
-Message-Id: <20181018175429.442004576@linuxfoundation.org>
+Subject: [PATCH 4.4 28/48] net: mvpp2: Extract the correct ethtype from the skb for tx csum offload
+Date:   Thu, 18 Oct 2018 19:55:03 +0200
+Message-Id: <20181018175429.482969698@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -62,124 +63,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ido Schimmel <idosch@mellanox.com>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-[ Upstream commit 471b83bd8bbe4e89743683ef8ecb78f7029d8288 ]
+[ Upstream commit 35f3625c21852ad839f20c91c7d81c4c1101e207 ]
 
-team's ndo_add_slave() acquires 'team->lock' and later tries to open the
-newly enslaved device via dev_open(). This emits a 'NETDEV_UP' event
-that causes the VLAN driver to add VLAN 0 on the team device. team's
-ndo_vlan_rx_add_vid() will also try to acquire 'team->lock' and
-deadlock.
+When offloading the L3 and L4 csum computation on TX, we need to extract
+the l3_proto from the ethtype, independently of the presence of a vlan
+tag.
 
-Fix this by checking early at the enslavement function that a team
-device is not being enslaved to itself.
+The actual driver uses skb->protocol as-is, resulting in packets with
+the wrong L4 checksum being sent when there's a vlan tag in the packet
+header and checksum offloading is enabled.
 
-A similar check was added to the bond driver in commit 09a89c219baf
-("bonding: disallow enslaving a bond to itself").
+This commit makes use of vlan_protocol_get() to get the correct ethtype
+regardless the presence of a vlan tag.
 
-WARNING: possible recursive locking detected
-4.18.0-rc7+ #176 Not tainted
---------------------------------------------
-syz-executor4/6391 is trying to acquire lock:
-(____ptrval____) (&team->lock){+.+.}, at: team_vlan_rx_add_vid+0x3b/0x1e0 drivers/net/team/team.c:1868
-
-but task is already holding lock:
-(____ptrval____) (&team->lock){+.+.}, at: team_add_slave+0xdb/0x1c30 drivers/net/team/team.c:1947
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&team->lock);
-  lock(&team->lock);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-2 locks held by syz-executor4/6391:
- #0: (____ptrval____) (rtnl_mutex){+.+.}, at: rtnl_lock net/core/rtnetlink.c:77 [inline]
- #0: (____ptrval____) (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x412/0xc30 net/core/rtnetlink.c:4662
- #1: (____ptrval____) (&team->lock){+.+.}, at: team_add_slave+0xdb/0x1c30 drivers/net/team/team.c:1947
-
-stack backtrace:
-CPU: 1 PID: 6391 Comm: syz-executor4 Not tainted 4.18.0-rc7+ #176
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
- print_deadlock_bug kernel/locking/lockdep.c:1765 [inline]
- check_deadlock kernel/locking/lockdep.c:1809 [inline]
- validate_chain kernel/locking/lockdep.c:2405 [inline]
- __lock_acquire.cold.64+0x1fb/0x486 kernel/locking/lockdep.c:3435
- lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
- __mutex_lock_common kernel/locking/mutex.c:757 [inline]
- __mutex_lock+0x176/0x1820 kernel/locking/mutex.c:894
- mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:909
- team_vlan_rx_add_vid+0x3b/0x1e0 drivers/net/team/team.c:1868
- vlan_add_rx_filter_info+0x14a/0x1d0 net/8021q/vlan_core.c:210
- __vlan_vid_add net/8021q/vlan_core.c:278 [inline]
- vlan_vid_add+0x63e/0x9d0 net/8021q/vlan_core.c:308
- vlan_device_event.cold.12+0x2a/0x2f net/8021q/vlan.c:381
- notifier_call_chain+0x180/0x390 kernel/notifier.c:93
- __raw_notifier_call_chain kernel/notifier.c:394 [inline]
- raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
- call_netdevice_notifiers_info+0x3f/0x90 net/core/dev.c:1735
- call_netdevice_notifiers net/core/dev.c:1753 [inline]
- dev_open+0x173/0x1b0 net/core/dev.c:1433
- team_port_add drivers/net/team/team.c:1219 [inline]
- team_add_slave+0xa8b/0x1c30 drivers/net/team/team.c:1948
- do_set_master+0x1c9/0x220 net/core/rtnetlink.c:2248
- do_setlink+0xba4/0x3e10 net/core/rtnetlink.c:2382
- rtnl_setlink+0x2a9/0x400 net/core/rtnetlink.c:2636
- rtnetlink_rcv_msg+0x46e/0xc30 net/core/rtnetlink.c:4665
- netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2455
- rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4683
- netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
- netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1343
- netlink_sendmsg+0xa18/0xfd0 net/netlink/af_netlink.c:1908
- sock_sendmsg_nosec net/socket.c:642 [inline]
- sock_sendmsg+0xd5/0x120 net/socket.c:652
- ___sys_sendmsg+0x7fd/0x930 net/socket.c:2126
- __sys_sendmsg+0x11d/0x290 net/socket.c:2164
- __do_sys_sendmsg net/socket.c:2173 [inline]
- __se_sys_sendmsg net/socket.c:2171 [inline]
- __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2171
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x456b29
-Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f9706bf8c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f9706bf96d4 RCX: 0000000000456b29
-RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000004
-RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004d3548 R14: 00000000004c8227 R15: 0000000000000000
-
-Fixes: 87002b03baab ("net: introduce vlan_vid_[add/del] and use them instead of direct [add/kill]_vid ndo calls")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reported-and-tested-by: syzbot+bd051aba086537515cdb@syzkaller.appspotmail.com
+Fixes: 3f518509dedc ("ethernet: Add new driver for Marvell Armada 375 network unit")
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/team/team.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/marvell/mvpp2.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -1142,6 +1142,11 @@ static int team_port_add(struct team *te
- 		return -EBUSY;
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -29,6 +29,7 @@
+ #include <linux/clk.h>
+ #include <linux/hrtimer.h>
+ #include <linux/ktime.h>
++#include <linux/if_vlan.h>
+ #include <uapi/linux/ppp_defs.h>
+ #include <net/ip.h>
+ #include <net/ipv6.h>
+@@ -4268,7 +4269,7 @@ static void mvpp2_txq_desc_put(struct mv
+ }
+ 
+ /* Set Tx descriptors fields relevant for CSUM calculation */
+-static u32 mvpp2_txq_desc_csum(int l3_offs, int l3_proto,
++static u32 mvpp2_txq_desc_csum(int l3_offs, __be16 l3_proto,
+ 			       int ip_hdr_len, int l4_proto)
+ {
+ 	u32 command;
+@@ -5032,14 +5033,15 @@ static u32 mvpp2_skb_tx_csum(struct mvpp
+ 	if (skb->ip_summed == CHECKSUM_PARTIAL) {
+ 		int ip_hdr_len = 0;
+ 		u8 l4_proto;
++		__be16 l3_proto = vlan_get_protocol(skb);
+ 
+-		if (skb->protocol == htons(ETH_P_IP)) {
++		if (l3_proto == htons(ETH_P_IP)) {
+ 			struct iphdr *ip4h = ip_hdr(skb);
+ 
+ 			/* Calculate IPv4 checksum and L4 checksum */
+ 			ip_hdr_len = ip4h->ihl;
+ 			l4_proto = ip4h->protocol;
+-		} else if (skb->protocol == htons(ETH_P_IPV6)) {
++		} else if (l3_proto == htons(ETH_P_IPV6)) {
+ 			struct ipv6hdr *ip6h = ipv6_hdr(skb);
+ 
+ 			/* Read l4_protocol from one of IPv6 extra headers */
+@@ -5051,7 +5053,7 @@ static u32 mvpp2_skb_tx_csum(struct mvpp
+ 		}
+ 
+ 		return mvpp2_txq_desc_csum(skb_network_offset(skb),
+-				skb->protocol, ip_hdr_len, l4_proto);
++					   l3_proto, ip_hdr_len, l4_proto);
  	}
  
-+	if (dev == port_dev) {
-+		netdev_err(dev, "Cannot enslave team device to itself\n");
-+		return -EINVAL;
-+	}
-+
- 	if (port_dev->features & NETIF_F_VLAN_CHALLENGED &&
- 	    vlan_uses_dev(dev)) {
- 		netdev_err(dev, "Device %s is VLAN challenged and team device has VLAN set up\n",
+ 	return MVPP2_TXD_L4_CSUM_NOT | MVPP2_TXD_IP_CSUM_DISABLE;
 
 
