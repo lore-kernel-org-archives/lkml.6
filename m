@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A92C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA6DECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6149221486
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B65C21480
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:58:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UU2gHZTp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6149221486
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUICC+Ip"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B65C21480
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728995AbeJSCAN (ORCPT
+        id S1729006AbeJSCAR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:00:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47876 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:00:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727605AbeJSCAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:00:12 -0400
+        id S1727605AbeJSCAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:00:16 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9F9C2145D;
-        Thu, 18 Oct 2018 17:58:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E96B21479;
+        Thu, 18 Oct 2018 17:58:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885487;
-        bh=vgQRyVfDxrpS5RoXKk+8a2ETI646bbm0ywHAkpgZsCM=;
+        s=default; t=1539885490;
+        bh=ydsa7Q2gGwslZXZvOLYigOBlcjZQnqZZhFihHnR733E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UU2gHZTpG9xe1K1PSbEYXQNCFeDLG+CHvlapAb8yMLgb3uSLncKZ77OD786649GIx
-         S/111Mux3pAWhHWnZYbDSSMezs1zG2/gYX+gi52RRkiJnfi6c3gRp20xaC1U7XMzUh
-         I1x3dZdknGgDE2+w557eAcqHZ+FM7SkjPPVjWONc=
+        b=DUICC+IpB2AY+TCAVKqBROSjZ+S/XwNVBSsmj7gLxaLjBKnJTRC25FQpFa+sIZqxn
+         V1vL3W02ETKQ/Lyn734HIBdX1ei8/CZ7fOk/yBrAJutWQ8gbWv0SPimquCeMNMvFQB
+         lVr3PQGQ6OQ/Gg8IW/46/A1vFqJJ3gLyaASX52xA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Fastabend <john.fastabend@gmail.com>,
-        Yonghong Song <yhs@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 38/53] bpf: test_maps, only support ESTABLISHED socks
-Date:   Thu, 18 Oct 2018 19:54:31 +0200
-Message-Id: <20181018175423.172687610@linuxfoundation.org>
+Subject: [PATCH 4.18 39/53] net/mlx4: Use cpumask_available for eq->affinity_mask
+Date:   Thu, 18 Oct 2018 19:54:32 +0200
+Message-Id: <20181018175423.262056371@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.561567978@linuxfoundation.org>
 References: <20181018175416.561567978@linuxfoundation.org>
@@ -63,55 +63,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: John Fastabend <john.fastabend@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 5028027844cfc6168e39650abecd817ba64c9d98 ]
+[ Upstream commit 8ac1ee6f4d62e781e3b3fd8b9c42b70371427669 ]
 
-Ensure that sockets added to a sock{map|hash} that is not in the
-ESTABLISHED state is rejected.
+Clang warns that the address of a pointer will always evaluated as true
+in a boolean context:
 
-Fixes: 1aa12bdf1bfb ("bpf: sockmap, add sock close() hook to remove socks")
-Signed-off-by: John Fastabend <john.fastabend@gmail.com>
-Acked-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+drivers/net/ethernet/mellanox/mlx4/eq.c:243:11: warning: address of
+array 'eq->affinity_mask' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+        if (!eq->affinity_mask || cpumask_empty(eq->affinity_mask))
+            ~~~~~^~~~~~~~~~~~~
+1 warning generated.
+
+Use cpumask_available, introduced in commit f7e30f01a9e2 ("cpumask: Add
+helper cpumask_available()"), which does the proper checking and avoids
+this warning.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/86
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/bpf/test_maps.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/eq.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/tools/testing/selftests/bpf/test_maps.c
-+++ b/tools/testing/selftests/bpf/test_maps.c
-@@ -566,7 +566,11 @@ static void test_sockmap(int tasks, void
- 	/* Test update without programs */
- 	for (i = 0; i < 6; i++) {
- 		err = bpf_map_update_elem(fd, &i, &sfd[i], BPF_ANY);
--		if (err) {
-+		if (i < 2 && !err) {
-+			printf("Allowed update sockmap '%i:%i' not in ESTABLISHED\n",
-+			       i, sfd[i]);
-+			goto out_sockmap;
-+		} else if (i >= 2 && err) {
- 			printf("Failed noprog update sockmap '%i:%i'\n",
- 			       i, sfd[i]);
- 			goto out_sockmap;
-@@ -727,7 +731,7 @@ static void test_sockmap(int tasks, void
- 	}
+--- a/drivers/net/ethernet/mellanox/mlx4/eq.c
++++ b/drivers/net/ethernet/mellanox/mlx4/eq.c
+@@ -240,7 +240,8 @@ static void mlx4_set_eq_affinity_hint(st
+ 	struct mlx4_dev *dev = &priv->dev;
+ 	struct mlx4_eq *eq = &priv->eq_table.eq[vec];
  
- 	/* Test map update elem afterwards fd lives in fd and map_fd */
--	for (i = 0; i < 6; i++) {
-+	for (i = 2; i < 6; i++) {
- 		err = bpf_map_update_elem(map_fd_rx, &i, &sfd[i], BPF_ANY);
- 		if (err) {
- 			printf("Failed map_fd_rx update sockmap %i '%i:%i'\n",
-@@ -831,7 +835,7 @@ static void test_sockmap(int tasks, void
- 	}
+-	if (!eq->affinity_mask || cpumask_empty(eq->affinity_mask))
++	if (!cpumask_available(eq->affinity_mask) ||
++	    cpumask_empty(eq->affinity_mask))
+ 		return;
  
- 	/* Delete the elems without programs */
--	for (i = 0; i < 6; i++) {
-+	for (i = 2; i < 6; i++) {
- 		err = bpf_map_delete_elem(fd, &i);
- 		if (err) {
- 			printf("Failed delete sockmap %i '%i:%i'\n",
+ 	hint_err = irq_set_affinity_hint(eq->irq, eq->affinity_mask);
 
 
