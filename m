@@ -2,235 +2,110 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2C3C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F667C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:06:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 159912145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:04:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0271208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:06:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pgo0ASTC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 159912145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cij7h36m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0271208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbeJSDG0 (ORCPT
+        id S1726744AbeJSDIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 23:06:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43180 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 23:08:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726173AbeJSDG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 23:06:26 -0400
+        id S1726417AbeJSDIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 23:08:37 -0400
 Received: from localhost (unknown [104.132.1.80])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 208F82054F;
-        Thu, 18 Oct 2018 19:04:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CF0320658;
+        Thu, 18 Oct 2018 19:06:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539889442;
-        bh=QWSP8bzfF7J7/lBgqNpUeBuOJxEL2KpA/Cq8WpYtQbE=;
+        s=default; t=1539889573;
+        bh=d2vxqH0MTFQ8DliGvtKwPIFdyJoFP7uHBZQYoLyEH8Q=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pgo0ASTCB9T6SaEhj9C+oivWs6gKMPhTJLENkATw+AlmjmrSHuiXN3GTmDVBBhWH9
-         oBJxZDEyEvkpDbAPANGkfb80pCq6+sNYXg3Ty+Cg9eQfYFnjLMLfPx0qLKAh4zpAyc
-         ZalhuD59RZZ+mG5Z1lEexT+0IrJXpt0NywOIHUy4=
-Date:   Thu, 18 Oct 2018 12:04:01 -0700
+        b=Cij7h36mSd52QEEwdBCCHRkrlDgy6fjBEHlcY/jXVJaCgH9hZvs5uSBoUfgzgTJVm
+         i08GDdFsyQxamULf7N6XUSJrV7lD6M4rvn/siTMwxq9bOmV0Jv3zeFNw5WXWpphErq
+         fCIyURDDuJiuB6Aukhdd8UF3eFFokNT2dTXx/K8c=
+Date:   Thu, 18 Oct 2018 12:06:12 -0700
 From:   Jaegeuk Kim <jaegeuk@kernel.org>
 To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Weichao Guo <guoweichao@huawei.com>
-Subject: Re: [PATCH v11] f2fs: guarantee journalled quota data by checkpoint
-Message-ID: <20181018190401.GC50556@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180920120500.21026-1-chao@kernel.org>
- <20181001000618.GC17407@jaegeuk-macbookpro.roam.corp.google.com>
- <cd4d60b9-3f24-d408-610a-af57e0cb0165@kernel.org>
- <20181001012911.GF17407@jaegeuk-macbookpro.roam.corp.google.com>
- <73df627f-5b12-71cd-9a52-41f187d5516d@kernel.org>
- <20181001014915.GG17407@jaegeuk-macbookpro.roam.corp.google.com>
- <143b572f-8044-eae2-d321-79040beba4f4@kernel.org>
- <20181002164514.GA93409@jaegeuk-macbookpro.roam.corp.google.com>
- <9a3f0b96-8d29-121a-b31b-1eeb7c2e92c2@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, chao@kernel.org
+Subject: Re: [PATCH] f2fs: fix to account IO correctly
+Message-ID: <20181018190612.GD50556@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20181017094954.67547-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9a3f0b96-8d29-121a-b31b-1eeb7c2e92c2@huawei.com>
+In-Reply-To: <20181017094954.67547-1-yuchao0@huawei.com>
 User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+
 On 10/17, Chao Yu wrote:
-> Jaegeuk,
+> Below race can cause reversed reference on F2FS_RD_DATA, there is
+> the same issue in f2fs_submit_page_bio(), fix them by relocate
+> __submit_bio() and inc_page_count.
 > 
-> Sorry for the long delay, I'm busy on other thing.
-> 
-> I'm trying your fixing code on both fsck and kernel with 'run.sh
-> por_fsstress' case.
-> 
-> And got below output, is that normal in updated fsck? I didn't have time to
-> look into this.
+> Thread A			Thread B
+> - f2fs_write_begin
+>  - f2fs_submit_page_read
+>  - __submit_bio
+> 				- f2fs_read_end_io
+> 				 - __read_end_io
+> 				 - dec_page_count(, F2FS_RD_DATA)
+>  - inc_page_count(, F2FS_RD_DATA)
 
-Yeah, I just stopped to allocate new blocks to fix quota, if there may have
-some data to be reocvered at the next mount time.
+Let me integrate the change into the original patch and test a bit.
+
+Thanks,
 
 > 
-> Info: checkpoint state = 8c6 :  quota_need_fsck nat_bits crc
-> compacted_summary orphan_inodes sudden-power-off
-> [fsck_chk_quota_files:1755] Fixing Quota file ([  0] ino [0x4])
-> [ERROR] quotaio_tree.c:83:write_blk:: Cannot write block (1320):
-> Inappropriate ioctl for device
-> [ERROR] quotaio_tree.c:110:get_free_dqblk:: Cannot allocate new quota block
-> (out of disk space).
-> [ERROR] quotaio_tree.c:315:dq_insert_tree:: Cannot write quota (id
-> 67368348): Inappropriate ioctl for device
-> [fsck_chk_quota_files:1755] Fixing Quota file ([  1] ino [0x5])
-> [ERROR] quotaio_tree.c:83:write_blk:: Cannot write block (1332):
-> Inappropriate ioctl for device
-> [ERROR] quotaio_tree.c:110:get_free_dqblk:: Cannot allocate new quota block
-> (out of disk space).
-> [ERROR] quotaio_tree.c:315:dq_insert_tree:: Cannot write quota (id
-> 73435216): Inappropriate ioctl for device
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/data.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> Thanks,
-> 
-> 
-> On 2018/10/3 0:45, Jaegeuk Kim wrote:
-> > On 10/01, Chao Yu wrote:
-> >> On 2018-10-1 9:49, Jaegeuk Kim wrote:
-> >>> On 10/01, Chao Yu wrote:
-> >>>> On 2018-10-1 9:29, Jaegeuk Kim wrote:
-> >>>>> On 10/01, Chao Yu wrote:
-> >>>>>> Hi Jaegeuk,
-> >>>>>>
-> >>>>>> On 2018-10-1 8:06, Jaegeuk Kim wrote:
-> >>>>>>> Hi Chao,
-> >>>>>>>
-> >>>>>>> This fails on fsstress with godown without fault injection. Could you please
-> >>>>>>> test a bit? I assumed that this patch should give no fsck failure along with
-> >>>>>>> valid checkpoint having no flag.
-> >>>>>>
-> >>>>>> Okay, let me reproduce with that case.
-> >>>>>>
-> >>>>>>>
-> >>>>>>> BTW, I'm in doubt that f2fs_lock_all covers entire quota modification. What
-> >>>>>>> about prepare_write_begin() -> f2fs_get_block() ... -> inc_valid_block_count()?
-> >>>>>>
-> >>>>>> If quota data changed in above path, we will detect that in below condition:
-> >>>>>>
-> >>>>>> block_operation()
-> >>>>>>
-> >>>>>> 	down_write(&sbi->node_change);
-> >>>>>>
-> >>>>>> 	if (__need_flush_quota(sbi)) {
-> >>>>>> 		up_write(&sbi->node_change);
-> >>>>>> 		f2fs_unlock_all(sbi);
-> >>>>>> 		goto retry_flush_quotas;
-> >>>>>> 	}
-> >>>>>>
-> >>>>>> So there is no problem?
-> >>>>>
-> >>>>> We may need to check quota is dirty, since we have no way to detect by
-> >>>>> f2fs structures?
-> >>>>
-> >>>> Below condition can check that.
-> >>>>
-> >>>> static bool __need_flush_quota(struct f2fs_sb_info *sbi)
-> >>>> {
-> >>>> ...
-> >>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH))
-> >>>> 		return true;
-> >>>> 	if (get_pages(sbi, F2FS_DIRTY_QDATA))
-> >>>> 		return true;
-> >>>> ...
-> >>>> }
-> >>>>
-> >>>> static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
-> >>>> {
-> >>>> ...
-> >>>> 	ret = dquot_mark_dquot_dirty(dquot);
-> >>>>
-> >>>> 	/* if we are using journalled quota */
-> >>>> 	if (is_journalled_quota(sbi))
-> >>>> 		set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
-> >>>> ...
-> >>>> }
-> >>>
-> >>> Okay, then, could you please run the above stress test to reproduce this?
-> >>
-> >> Sure, let me try this case and fix it.
-> >>
-> >> Could you check other patches in mailing list, and test them instead?
-> > 
-> > With the below change, the test result is much better for now.
-> > Let me know, if you have further concern.
-> > 
-> > ---
-> >  fs/f2fs/checkpoint.c | 6 ++++++
-> >  fs/f2fs/super.c      | 4 +++-
-> >  2 files changed, 9 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > index a1facfbfc5c7..b111c6201023 100644
-> > --- a/fs/f2fs/checkpoint.c
-> > +++ b/fs/f2fs/checkpoint.c
-> > @@ -1111,6 +1111,8 @@ static int block_operations(struct f2fs_sb_info *sbi)
-> >  
-> >  retry_flush_quotas:
-> >  	if (__need_flush_quota(sbi)) {
-> > +		int locked;
-> > +
-> >  		if (++cnt > DEFAULT_RETRY_QUOTA_FLUSH_COUNT) {
-> >  			set_sbi_flag(sbi, SBI_QUOTA_SKIP_FLUSH);
-> >  			f2fs_lock_all(sbi);
-> > @@ -1118,7 +1120,11 @@ static int block_operations(struct f2fs_sb_info *sbi)
-> >  		}
-> >  		clear_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
-> >  
-> > +		/* only failed during mount/umount/freeze/quotactl */
-> > +		locked = down_read_trylock(&sbi->sb->s_umount);
-> >  		f2fs_quota_sync(sbi->sb, -1);
-> > +		if (locked)
-> > +			up_read(&sbi->sb->s_umount);
-> >  	}
-> >  
-> >  	f2fs_lock_all(sbi);
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index a28c245b1288..b39f60d57120 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -1706,6 +1706,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
-> >  				congestion_wait(BLK_RW_ASYNC, HZ/50);
-> >  				goto repeat;
-> >  			}
-> > +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
-> >  			return PTR_ERR(page);
-> >  		}
-> >  
-> > @@ -1717,6 +1718,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
-> >  		}
-> >  		if (unlikely(!PageUptodate(page))) {
-> >  			f2fs_put_page(page, 1);
-> > +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
-> >  			return -EIO;
-> >  		}
-> >  
-> > @@ -1758,6 +1760,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
-> >  				congestion_wait(BLK_RW_ASYNC, HZ/50);
-> >  				goto retry;
-> >  			}
-> > +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
-> >  			break;
-> >  		}
-> >  
-> > @@ -1794,7 +1797,6 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
-> >  
-> >  static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
-> >  {
-> > -
-> >  	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
-> >  		f2fs_msg(sbi->sb, KERN_ERR,
-> >  			"quota sysfile may be corrupted, skip loading it");
-> > 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index c03bd0c2ed22..8b9240762156 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -480,10 +480,10 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+>  	}
+>  	bio_set_op_attrs(bio, fio->op, fio->op_flags);
+>  
+> -	__submit_bio(fio->sbi, bio, fio->type);
+> -
+>  	inc_page_count(fio->sbi, is_read_io(fio->op) ?
+>  			__read_io_type(page): WB_DATA_TYPE(fio->page));
+> +
+> +	__submit_bio(fio->sbi, bio, fio->type);
+>  	return 0;
+>  }
+>  
+> @@ -612,8 +612,8 @@ static int f2fs_submit_page_read(struct inode *inode, struct page *page,
+>  		return -EFAULT;
+>  	}
+>  	ClearPageError(page);
+> -	__submit_bio(F2FS_I_SB(inode), bio, DATA);
+>  	inc_page_count(F2FS_I_SB(inode), F2FS_RD_DATA);
+> +	__submit_bio(F2FS_I_SB(inode), bio, DATA);
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.18.0.rc1
