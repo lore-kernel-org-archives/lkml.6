@@ -2,107 +2,145 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D01FC67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B09C67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:58:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB1152098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:58:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="LFEgt4kW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB1152098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 0A80B2098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:58:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A80B2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbeJSGBU (ORCPT
+        id S1727039AbeJSGBt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 02:01:20 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35284 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725751AbeJSGBT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 02:01:19 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 32-v6so3632913pgu.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 14:58:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=SsYQRzp9Y9EowT8w7pXhhEuLE3rv1uvmE5mK6UjAHX4=;
-        b=LFEgt4kWmUU8PY5PsG9zKbLqmOuqBHag/W6JD4WhjNvwLCVRbSWNV9vrEun7ECJmuH
-         Z1cP7+cmjCSXoWYadbRcaCQJX5sUOoqoXKsbqYSpdSiDMVqTJzakVNBa9jOXfuaBpB8H
-         3kKIjFn1k8cZ83r94YsUkvz95mnXamfQ2qZRwbu97c6loX6OkoTd+zL6ctoT1BF9q91Z
-         ZLJoW/SHI7G7brvUq+ZTvUzvcxjHul+pDe7TuZOjVZEJJLgeO8rO9eILZ7o4onILigbF
-         CKerPs1ZMvUU8txQzP/1T55FtOoZH+9/PWZR5kYvFRrBHhSXyZwFoVWXlldb++m24tDw
-         wHRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=SsYQRzp9Y9EowT8w7pXhhEuLE3rv1uvmE5mK6UjAHX4=;
-        b=JaoFMsOM5vXlFFesDgEZYKKizcBq8VDlH2F0ZNIhbvC2+HeRQa9iNFS5txrWXI5VJE
-         AiMSFwz8PgKeoN6dgJYaohxuVfiimFSX3Qw9RWC+fo55Ish5CTpYR6OEmJfnUZ6c9a4r
-         usH9YRTwujgTyCaTMK/KqwUcsg5p4fE18gAY/nXZFTDkpxN7arQiAo6OTGjcdhxV/Nn1
-         zN1SjYtb6rV0/NDTVNx9akyKIsQxwxHxct74srQq559rVmbFUEOkMtrakaxU7NZUF5w1
-         gntRggNucZBzksZ4OBiTr4SEO7qOxtQYcCCYUyaM7sHY6LpXS16rX1i4tfkvAYRq5O+X
-         xHlA==
-X-Gm-Message-State: ABuFfoiuR3Bv2Fx/6eNWvelbljzbdQJ8wPP7gaEM6S3I2Wv0VPr6wdde
-        NJuL+3H7PQY8dzAtT2OoAewh2w==
-X-Google-Smtp-Source: ACcGV62TW2+Il+9/RT1R3OuJSCD+h+MIImONiMgB2iis2GimU61wPkmi36TeeRkxrvDCox94WYGpHw==
-X-Received: by 2002:a63:5c1f:: with SMTP id q31-v6mr30199432pgb.452.1539899898835;
-        Thu, 18 Oct 2018 14:58:18 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b055:c039:8d1c:3674:f40d:d2a1? ([2600:1010:b055:c039:8d1c:3674:f40d:d2a1])
-        by smtp.gmail.com with ESMTPSA id s13-v6sm45568514pgs.76.2018.10.18.14.58.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 14:58:17 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 05/11] x86/fpu: set PKRU state for kernel threads
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A366)
-In-Reply-To: <20181018212421.ndjtawc34cqdycyy@linutronix.de>
-Date:   Thu, 18 Oct 2018 14:58:16 -0700
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A6DB636D-0021-48A4-98C5-7F4B3DFC98D2@amacapital.net>
-References: <20181004140547.13014-1-bigeasy@linutronix.de> <20181004140547.13014-6-bigeasy@linutronix.de> <39e0a55f-4920-cfde-9bef-09c51109d211@linux.intel.com> <CALCETrUdxsFA5g0M9uRFktfdi=mxK_g3kBfs-VxwDZ0xWqjFAQ@mail.gmail.com> <20181018162644.qqjkzoqn2fleyi2b@linutronix.de> <CC7B46F7-7A6E-4CAF-A1EB-91271CC7B092@amacapital.net> <20181018182538.vgotfpsdy7qxl2tg@linutronix.de> <CALCETrVjEOkNhdyAF10PaYi_rnFUWKRqPhLRCq3ZV=gxQFETxg@mail.gmail.com> <aedef390-2fb1-8c09-3a69-53d3fd0505da@linux.intel.com> <20181018212421.ndjtawc34cqdycyy@linutronix.de>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+        Fri, 19 Oct 2018 02:01:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33752 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726678AbeJSGBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 02:01:49 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4C00F308212C;
+        Thu, 18 Oct 2018 21:58:48 +0000 (UTC)
+Received: from sky.random (ovpn-120-228.rdu2.redhat.com [10.10.120.228])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 643EF7AB66;
+        Thu, 18 Oct 2018 21:58:43 +0000 (UTC)
+Date:   Thu, 18 Oct 2018 17:58:42 -0400
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Christian Brauner <christian@brauner.io>, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, ebiederm@xmission.com,
+        mcgrof@kernel.org, akpm@linux-foundation.org,
+        joe.lawrence@redhat.com, longman@redhat.com,
+        linux@dominikbrodowski.net, adobriyan@gmail.com,
+        linux-api@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Eric Dumazet <eric.dumazet@gmail.com>
+Subject: Re: [PATCH v3 2/2] sysctl: handle overflow for file-max
+Message-ID: <20181018215842.GE20140@redhat.com>
+References: <20181016223322.16844-1-christian@brauner.io>
+ <20181016223322.16844-3-christian@brauner.io>
+ <20181017003548.GA32577@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017003548.GA32577@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 18 Oct 2018 21:58:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Al,
 
+On Wed, Oct 17, 2018 at 01:35:48AM +0100, Al Viro wrote:
+> On Wed, Oct 17, 2018 at 12:33:22AM +0200, Christian Brauner wrote:
+> > Currently, when writing
+> > 
+> > echo 18446744073709551616 > /proc/sys/fs/file-max
+> > 
+> > /proc/sys/fs/file-max will overflow and be set to 0. That quickly
+> > crashes the system.
+> > This commit sets the max and min value for file-max and returns -EINVAL
+> > when a long int is exceeded. Any higher value cannot currently be used as
+> > the percpu counters are long ints and not unsigned integers. This behavior
+> > also aligns with other tuneables that return -EINVAL when their range is
+> > exceeded. See e.g. [1], [2] and others.
+> 
+> Mostly sane, but...  get_max_files() users are bloody odd.  The one in
+> file-max limit reporting looks like a half-arsed attempt in "[PATCH] fix
+> file counting".  The one in af_unix.c, though...  I don't remember how
+> that check had come to be - IIRC that was a strange fallout of a thread
+> with me, Andrea and ANK involved, circa 1999, but I don't remember details;
+> Andrea, any memories?  It might be worth reconsidering...  The change in
+> question is in 2.2.4pre6; what do we use unix_nr_socks for?  We try to
+> limit the number of PF_UNIX socks by 2 * max_files, but max_files can be
+> huge *and* non-constant (i.e. it can decrease).  What's more, unix_tot_inflight
+> is unsigned int and max_files might exceed 2^31 just fine since "fs: allow
+> for more than 2^31 files" back in 2010...  Something's fishy there...
 
-> On Oct 18, 2018, at 2:24 PM, Sebastian Andrzej Siewior <bigeasy@linutronix=
-.de> wrote:
->=20
-> On 2018-10-18 13:56:24 [-0700], Dave Hansen wrote:
->>> But this is not the only loophole: There is ptrace interface which is
->>> used by gdb (just checked) and also bypasses PKRU. So=E2=80=A6
->>=20
->> Bypassing protection keys is not a big deal IMNHO.  In places where a
->> sane one is not readily available, I'm totally fine with just
->> effectively disabling it (PKRU=3D0) for the length of time it isn't avail=
-able.
->=20
-> Okay, this makes things easier. Let document that for kernel threads we
-> use PKRU=3D0. This should be happening in my try right now. I double check=
+Feels like a lifetime ago :), but looking into I remembered some of
+it. That thread was about some instability in unix sockets for an
+unrelated bug in the garbage collector. While reviewing your fix, I
+probably incidentally found a resource exhaustion problem in doing a
+connect();close() loop on a listening stream af_unix. I found an
+exploit somewhere in my home dated in 99 in ls -l. Then ANK found
+another resource exhaustion by sending datagram sockets, which I also
+found an exploit for in my home.
 
-> tomorrow just in case=E2=80=A6
->=20
->=20
+ANK pointed out that a connect syscall allocates two sockets, one to
+be accepted by the listening process, the other is the connect
+itself. That must be the explanation of the "*2".
 
-If you document that, please at least document that it=E2=80=99s a bug and n=
-ot intended behavior.=
+The "max_files*2" is probably a patch was from you (which was not
+overflowing back then), in attempt to fix the garbage collector issue
+which initially looked like resource exhaustion.
+
+I may have suggested to check sk_max_ack_backlog and fail connect() in
+such case to solve the resource exhaustion, but my proposal was
+obviously broken because connect() would return an error when the
+backlog was full and I suppose I didn't implement anything like
+unix_wait_for_peer. So I guess (not 100% sure) the get_max_files()*2
+check stayed, not because of the bug in the garbage collector that was
+fixed independently, but as a stop gap measure for the
+connect();close() loop resource exhaustion.
+
+I tried the exploit that does a connect();close() in a loop and it
+gracefully hangs in unix_wait_for_peer() after sk_max_ack_backlog
+connects.
+
+Out of curiosity I tried also the dgram exploit and it hangs in
+sock_alloc_send_pskb with sk_wmem_alloc_get(sk) < sk->sk_sndbuf
+check. The file*2 limit couldn't have helped that one anyway.
+
+If I set /proc/sys/net/core/somaxconn to 1000000 the exploit works
+fine again and the connect;close loop again allocates infinite amount
+of kernel RAM into a tiny RSS process and it triggered OOM (there was
+no OOM killer in v2.2 I suppose). By default it's 128. There's also
+sysctl_max_dgram_qlen for dgram that on Android is set to 600 (by
+default 10).
+
+I tend to think these resources are now capped by other means (notably
+somaxconn, sysctl_max_dgram_qlen, sk_wmem_alloc_get) and unix_nr_socks
+can be dropped. Or if that atomic counter is still needed it's not for
+a trivial exploit anymore than just does listen(); SIGSTOP() from one
+process and a connect();close() loop in another process. It'd require
+more than a listening socket and heavily forking or a large increase
+on the max number of file descriptors (a privileged op) to do a ton of
+listens, but forking has its own memory footprint in userland too. At
+the very least it should be a per-cpu counter synced to the atomic
+global after a threshold.
+
+The other reason for dropping is that it wasn't ideal that the trivial
+exploit could still allocated max_files*2 SYN skbs with a loop of
+connect;close, max_files*2 is too much already so I suppose it was
+only a stop-gap measure to begin with.
+
+Thanks,
+Andrea
