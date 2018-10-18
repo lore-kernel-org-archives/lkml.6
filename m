@@ -2,152 +2,135 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE0EC67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0B5C67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:40:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5BBB2054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:38:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55E3E2054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 19:40:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IZOvbkLs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5BBB2054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Okw1lxEk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E3E2054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727173AbeJSDlO (ORCPT
+        id S1727197AbeJSDmo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 23:41:14 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:36492 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbeJSDlN (ORCPT
+        Thu, 18 Oct 2018 23:42:44 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38778 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbeJSDmn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 23:41:13 -0400
-Received: by mail-yw1-f67.google.com with SMTP id z206-v6so1036606ywb.3;
-        Thu, 18 Oct 2018 12:38:42 -0700 (PDT)
+        Thu, 18 Oct 2018 23:42:43 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f8-v6so14655301pgq.5
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 12:40:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FCneM4fQ+B4dxSypMB1sytKLOXrmUQdGBXY5xNYsN9Y=;
-        b=IZOvbkLskaJzz7TbcderU35yY/GstxqYZtimLe4xjEOCEseiQdocs0vP5tXGTp7elV
-         6HUEfuYO/jx7i4RMsLO0oH3jqOr12Z1EtTYz0ll114IJObD6naegw2aogHJuBechY4Q+
-         0QaYcSej3vQmdOj3TqnHhIor4YirZYeNOmsOL+RS4Lx0hxHHFexMgFDFkfSicj3LKYGQ
-         SsPW9+CFSHjIhPbtBPDPHTYg/0KXpEc0s0ZQKOtFbEE/G1tq85UaNAhEgShFy83RMpCZ
-         ZuSUyZlEwcMr8FLPufFVoyMnV0TfVHCMcgVKqX0KvSIy6wJ0b/UJlfOfq5No81dsJ2QT
-         fLgg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KmlPXodtEEbQmRptkxxzZvv1Wlj1GyycFew+5+SLaSM=;
+        b=Okw1lxEkUFyLrpJqpfLqV9whlEtcZVV82E9BCCMXeIYVD18Qq2yL2UdlI+QBcPUhjy
+         zmuBXz0ghlaSD4sme+3q4RL+N4Ya4Mz5Ll0kSDtQiU60qp136S3uR8x/K9FhKTev6P6j
+         /6h8oLueosR9oLKHRFxRdHCRire+mjLfv9Meo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=FCneM4fQ+B4dxSypMB1sytKLOXrmUQdGBXY5xNYsN9Y=;
-        b=H2ssEPjB98/X0jrLHj1hCsk1mJ2y0yVhCm/0682varAR1m0BRs3PG6DvEFwO/r0gEE
-         rZGsadcP9B/5q5Vt2NUuZcVm7htszlTygFHgP+odPcbpVbBcM9WaFc8IIN1WVxcnpXLB
-         mzqlrs5OdOcrYIvIZ7qym3wsrKIEDqxatZxR/J1qMlr6Gf8GcH2HtDKxx0c6Gpv9xa8Y
-         eX2cKpd8bA+flFPKJXMlPmmRDfEzX0HFLejsS/ZWzoZ3+EKlqGeZjQGN2kH8p3qZY4bB
-         kWEIzMPGIey1Tt8nPEYxAX1PAzFCJ6I0anupTki0qo4jR2ra9z0xhfOYzHbfBm8qWv58
-         BA+g==
-X-Gm-Message-State: ABuFfojHw4ODzBxIqQLtX8IXIwhuVjwyjvfGaYip5pSyrBEivTbddAdR
-        BH1dC8XYawamQoXFDran8vcyjcfW
-X-Google-Smtp-Source: ACcGV62zCTpaYn4kLrKImMQaoszKZxDhTfMTfiaCtFxcWedwXsO52EmzLKaWacxuqBENSsny4vbVMg==
-X-Received: by 2002:a0d:e081:: with SMTP id j123-v6mr20166600ywe.267.1539891521922;
-        Thu, 18 Oct 2018 12:38:41 -0700 (PDT)
-Received: from [10.67.48.209] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id x133-v6sm6422436ywg.66.2018.10.18.12.38.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 12:38:40 -0700 (PDT)
-Subject: Re: [PATCH] net: ethernet: fec: Add missing SPEED_
-To:     LABBE Corentin <clabbe@baylibre.com>
-Cc:     andrew@lunn.ch, davem@davemloft.net, fugang.duan@nxp.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <1539875100-11121-1-git-send-email-clabbe@baylibre.com>
- <2621cbc9-47ed-ce2a-b7ee-262f17dc138f@gmail.com> <20181018184715.GA31736@Red>
- <d1461619-1344-e581-4eef-35cf8bbb5336@gmail.com> <20181018191612.GB31736@Red>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
- xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
- X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
- AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
- ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
- SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
- nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
- qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz80nRmxvcmlhbiBG
- YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+wmYEExECACYCGyMGCwkIBwMCBBUCCAME
- FgIDAQIeAQIXgAUCVF/S8QUJHlwd3wAKCRBhV5kVtWN2DvCVAJ4u4/bPF4P3jxb4qEY8I2gS
- 6hG0gACffNWlqJ2T4wSSn+3o7CCZNd7SLSDOw00ESM+4EhAQAL/o09boR9D3Vk1Tt7+gpYr3
- WQ6hgYVON905q2ndEoA2J0dQxJNRw3snabHDDzQBAcqOvdi7YidfBVdKi0wxHhSuRBfuOppu
- pdXkb7zxuPQuSveCLqqZWRQ+Cc2QgF7SBqgznbe6Ngout5qXY5Dcagk9LqFNGhJQzUGHAsIs
- hap1f0B1PoUyUNeEInV98D8Xd/edM3mhO9nRpUXRK9Bvt4iEZUXGuVtZLT52nK6Wv2EZ1TiT
- OiqZlf1P+vxYLBx9eKmabPdm3yjalhY8yr1S1vL0gSA/C6W1o/TowdieF1rWN/MYHlkpyj9c
- Rpc281gAO0AP3V1G00YzBEdYyi0gaJbCEQnq8Vz1vDXFxHzyhgGz7umBsVKmYwZgA8DrrB0M
- oaP35wuGR3RJcaG30AnJpEDkBYHznI2apxdcuTPOHZyEilIRrBGzDwGtAhldzlBoBwE3Z3MY
- 31TOpACu1ZpNOMysZ6xiE35pWkwc0KYm4hJA5GFfmWSN6DniimW3pmdDIiw4Ifcx8b3mFrRO
- BbDIW13E51j9RjbO/nAaK9ndZ5LRO1B/8Fwat7bLzmsCiEXOJY7NNpIEpkoNoEUfCcZwmLrU
- +eOTPzaF6drw6ayewEi5yzPg3TAT6FV3oBsNg3xlwU0gPK3v6gYPX5w9+ovPZ1/qqNfOrbsE
- FRuiSVsZQ5s3AAMFD/9XjlnnVDh9GX/r/6hjmr4U9tEsM+VQXaVXqZuHKaSmojOLUCP/YVQo
- 7IiYaNssCS4FCPe4yrL4FJJfJAsbeyDykMN7wAnBcOkbZ9BPJPNCbqU6dowLOiy8AuTYQ48m
- vIyQ4Ijnb6GTrtxIUDQeOBNuQC/gyyx3nbL/lVlHbxr4tb6YkhkO6shjXhQh7nQb33FjGO4P
- WU11Nr9i/qoV8QCo12MQEo244RRA6VMud06y/E449rWZFSTwGqb0FS0seTcYNvxt8PB2izX+
- HZA8SL54j479ubxhfuoTu5nXdtFYFj5Lj5x34LKPx7MpgAmj0H7SDhpFWF2FzcC1bjiW9mjW
- HaKaX23Awt97AqQZXegbfkJwX2Y53ufq8Np3e1542lh3/mpiGSilCsaTahEGrHK+lIusl6mz
- Joil+u3k01ofvJMK0ZdzGUZ/aPMZ16LofjFA+MNxWrZFrkYmiGdv+LG45zSlZyIvzSiG2lKy
- kuVag+IijCIom78P9jRtB1q1Q5lwZp2TLAJlz92DmFwBg1hyFzwDADjZ2nrDxKUiybXIgZp9
- aU2d++ptEGCVJOfEW4qpWCCLPbOT7XBr+g/4H3qWbs3j/cDDq7LuVYIe+wchy/iXEJaQVeTC
- y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
- X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <5cb0731b-83c5-5ed5-d022-98f8627d1737@gmail.com>
-Date:   Thu, 18 Oct 2018 12:38:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KmlPXodtEEbQmRptkxxzZvv1Wlj1GyycFew+5+SLaSM=;
+        b=NIAsWt8WoI6rw8lZQd9stC0MyQidEAKekzF9kCRi0mfTFlIwUm5Q7NHFLRf2JsBzXI
+         7yoy38iEp/6n5wfkKHjiioj5uNPOPnHyWyoMHqYB0J0qLRYYlTUIksT09Tu/pLz/Ox/e
+         do+Cbg5tc/KtnEdlukDDVQLDy+qnpauzL53JsyvLMRo6qQr/51qFlLBdFnyV27KOh/8F
+         TLZiii4M+jRd4KwxKjcLiWjFTnGxUiwv1Gmbuc7o/SEdUAmbjmIpgo/IQAq4obfA2Qa9
+         ORjoEvF8GeVq1qL4GnDUUBYezg4XuZKQpiUwbMr5fBBUwkkSF//qKg56B75cYVX5YlUc
+         tiQg==
+X-Gm-Message-State: ABuFfoicO6u39D2vt+hNIQof+rflp0lgWV6S3Yv1dWRRWBQ8Yt53BbDm
+        ZyK0TbsbuJt5JJshZB3NW8gNDw==
+X-Google-Smtp-Source: ACcGV62psRnjK2PObO+U2YNehxCABi/IlR2a4piP4Bh2kQz+zD7OXe2A7ev+EEFN3+5xnXwtAXb2Cg==
+X-Received: by 2002:a63:4f20:: with SMTP id d32-v6mr27908718pgb.231.1539891612053;
+        Thu, 18 Oct 2018 12:40:12 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id t184-v6sm22621900pfd.14.2018.10.18.12.40.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Oct 2018 12:40:11 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 12:40:10 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v5 1/2] dt-bindings: iio: vadc: Update example to include
+ unit address for node 'usb-id-nopull'
+Message-ID: <20181018194010.GV22824@google.com>
+References: <20181004001432.21218-1-mka@chromium.org>
+ <20181004001432.21218-2-mka@chromium.org>
+ <20181005204743.GA17135@bogus>
+ <20181012171523.GQ22824@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20181018191612.GB31736@Red>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20181012171523.GQ22824@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/18/2018 12:16 PM, LABBE Corentin wrote:
-> On Thu, Oct 18, 2018 at 11:55:49AM -0700, Florian Fainelli wrote:
->> On 10/18/2018 11:47 AM, LABBE Corentin wrote:
->>> On Thu, Oct 18, 2018 at 11:39:24AM -0700, Florian Fainelli wrote:
->>>> On 10/18/2018 08:05 AM, Corentin Labbe wrote:
->>>>> Since commit 58056c1e1b0e ("net: ethernet: Use phy_set_max_speed() to limit advertised speed"), the fec driver is unable to get any link.
->>>>> This is due to missing SPEED_.
->>>>
->>>> But SPEED_1000 is defined in include/uapi/linux/ethtool.h as 1000, so
->>>> surely this would amount to the same code paths being taken or am I
->>>> missing something here?
->>>
->>> The bisect session pointed your patch, reverting it fix the issue.
->>> BUT since the fix seemed trivial I sent the patch without more test then compile it.
->>> Sorry, I have just found some minutes ago that it didnt fix the issue.
->>>
->>> But your patch is still the cause for sure.
->>>
->>
->> What you are writing is really lowering the confidence level, first
->> Andrew is the author of that patch, and second "just compiling" and
->> pretending this fixes a problem when it does not is not quite what I
->> would expect.
->>
->> I don't have a problem helping you find the solution or the right fix
->> though, even if it is not my patch, but please get the author and actual
->> problem right so we can move forward in confidence, thanks!
+On Fri, Oct 12, 2018 at 10:15:23AM -0700, Matthias Kaehlcke wrote:
+> On Fri, Oct 05, 2018 at 03:47:43PM -0500, Rob Herring wrote:
+> > On Wed, Oct 03, 2018 at 05:14:31PM -0700, Matthias Kaehlcke wrote:
+> > > The node has a reg property, therefore its name should include a unit
+> > > address.
+> > > 
+> > > Also change the name from 'usb_id_nopull' to 'usb-id-nopull' to follow
+> > > DT conventions.
+> > 
+> > This is ADC channels? If so, then DT convention would really be 
+> > "adc@...". 
 > 
-> Sorry again, I wanted to acknoledge my error but I did it too fast and late.
-> And sorry to have confound you with Andrew.
+> Is it really? A grep for 'adc@' in arch/${ARCH}/boot/dts yields
+> mostly ADC controller not channel nodes.
+> 
+> I'm totally fine with changing the name to 'adc@...' if that's the
+> preference/convention, just want to reconfirm since the actual use is
+> a bit ambiguous.
 
-No worries, here to help, let us know what your bisection points to. THanks
--- 
-Florian
+Could we please reach a conclusion on this?
+
+Summarizing the options on the table so far are:
+
+1. usb-id-nopull@VADC_LR_MUX10_USB_ID
+2. usb-id-nopull@57
+3. adc@VADC_LR_MUX10_USB_ID
+4. adc@57
+
+My personal preference goes to something <node name>@<define>
+since the unit address doesn't just resolve to an ADC channel number
+but also includes configuation information. A literal like '57'
+conveys less information than the define, it's easier to introduce
+errors and these errors are harder to spot.
+
+If 'adc@...' really was the convention (or should be) I'd be clearly
+in favor of following it. As mentioned above, in practice the use of
+the 'adc@...' node name seems to be more prevalent for ADC controllers
+than channels, so I'm more inclined towards 'usb-id-nopull@...' or
+similar.
+
+All that said, these are just my preferences for the reasons outlined
+above, if DT maintainers really want it to be 'adc@57' or some
+variation of that, I'm fine with that too. Please let me know and we
+can move forward with this trivial series.
+
+Thanks
+
+Matthias
