@@ -2,91 +2,83 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0301ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:20:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BADD2C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1BDE21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:20:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1BDE21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=metafoo.de
+	by mail.kernel.org (Postfix) with ESMTP id 7F657204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:20:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F657204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728652AbeJSBWC (ORCPT
+        id S1728679AbeJSBWL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 21:22:02 -0400
-Received: from www381.your-server.de ([78.46.137.84]:45698 "EHLO
-        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726444AbeJSBWC (ORCPT
+        Thu, 18 Oct 2018 21:22:11 -0400
+Received: from smtprelay0122.hostedemail.com ([216.40.44.122]:45880 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726444AbeJSBWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 21:22:02 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www381.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <lars@metafoo.de>)
-        id 1gDBxn-0005Fo-9C; Thu, 18 Oct 2018 19:19:59 +0200
-Received: from eisbaer.ursus-maritimus.org ([78.47.220.141] helo=[127.0.0.1])
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <lars@metafoo.de>)
-        id 1gDBxm-000WBD-Lj; Thu, 18 Oct 2018 19:19:59 +0200
-Subject: Re: [PATCH 1/2] staging: iio: ad7606: Move out of staging
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Stefan Popa <stefan.popa@analog.com>
-Cc:     jic23@kernel.org, devel@driverdev.osuosl.org,
-        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        pmeerw@pmeerw.net, knaack.h@gmx.de
-References: <1539853832-26534-1-git-send-email-stefan.popa@analog.com>
- <20181018125502.2hnp3s45lk6dggqt@mwanda>
-From:   Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <2199f866-4c23-5424-3459-b966514414ce@metafoo.de>
-Date:   Thu, 18 Oct 2018 19:19:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181018125502.2hnp3s45lk6dggqt@mwanda>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Thu, 18 Oct 2018 21:22:11 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 64720182CF671;
+        Thu, 18 Oct 2018 17:20:13 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: ball44_1ed36987a3056
+X-Filterd-Recvd-Size: 1774
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 18 Oct 2018 17:20:11 +0000 (UTC)
+Message-ID: <5cfa9ed2b8eee3622715a7c0c62b09461dea607c.camel@perches.com>
+Subject: Re: [PATCH] drivers/vfio: Fix an 8-byte alignment issue
+From:   Joe Perches <joe@perches.com>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "open list:VFIO DRIVER" <kvm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Date:   Thu, 18 Oct 2018 10:20:10 -0700
+In-Reply-To: <1539800299-2787-1-git-send-email-wang6495@umn.edu>
+References: <1539800299-2787-1-git-send-email-wang6495@umn.edu>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: lars@metafoo.de
-X-Virus-Scanned: Clear (ClamAV 0.100.1/25048/Thu Oct 18 14:58:26 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/18/2018 02:55 PM, Dan Carpenter wrote:
-> On Thu, Oct 18, 2018 at 12:10:32PM +0300, Stefan Popa wrote:
->> +static int ad7606_read_samples(struct ad7606_state *st)
->> +{
->> +	unsigned int num = st->chip_info->num_channels;
->> +	u16 *data = st->data;
->> +	int ret;
->> +
->> +	/*
->> +	 * The frstdata signal is set to high while and after reading the sample
->> +	 * of the first channel and low for all other channels. This can be used
->> +	 * to check that the incoming data is correctly aligned. During normal
->> +	 * operation the data should never become unaligned, but some glitch or
->> +	 * electrostatic discharge might cause an extra read or clock cycle.
->> +	 * Monitoring the frstdata signal allows to recover from such failure
->> +	 * situations.
->> +	 */
->> +
->> +	if (st->gpio_frstdata) {
->> +		ret = st->bops->read_block(st->dev, 1, data);
->> +		if (ret)
->> +			return ret;
->> +
->> +		if (!gpiod_get_value(st->gpio_frstdata)) {
+On Wed, 2018-10-17 at 13:18 -0500, Wenwen Wang wrote:
+> This patch adds a 4-byte reserved field in the structure
+> vfio_eeh_pe_op to make sure that the u64 fields in the structure
+> vfio_eeh_pe_err are 8-byte aligned.
 > 
-> This check should maybe be:
+> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> ---
+>  include/uapi/linux/vfio.h | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> 		if (gpiod_get_value(st->gpio_frstdata) <= 0) {
-> 
-> (Or possibly not, I don't know the code very well).
+> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> index 1aa7b82..3e71ded 100644
+> --- a/include/uapi/linux/vfio.h
+> +++ b/include/uapi/linux/vfio.h
+> @@ -729,6 +729,7 @@ struct vfio_eeh_pe_op {
+>  	__u32 argsz;
+>  	__u32 flags;
+>  	__u32 op;
+> +	__u32 __res;
+>  	union {
+>  		struct vfio_eeh_pe_err err;
+>  	};
 
-gpiod_get_value() is only allowed to return either 0 or 1.
+Why use an anonymous union for a single element?
+Why not make struct vfio_eeh_pe_err __aligned(8)?
+Why not make the u64 structure elements of
+struct ufio_eeh_pe_err __aligned_u64?
+
+
