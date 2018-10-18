@@ -7,49 +7,51 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BE7ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C85DECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C6E021476
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E839D21486
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCk0eSSu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C6E021476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y8z0qUoL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E839D21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729252AbeJSCBk (ORCPT
+        id S1729263AbeJSCBo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:01:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49386 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:01:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728410AbeJSCBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:01:40 -0400
+        id S1728410AbeJSCBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:01:43 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE64121479;
-        Thu, 18 Oct 2018 17:59:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1946E21476;
+        Thu, 18 Oct 2018 17:59:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885574;
-        bh=e5gT0movRkBc/0j4QflRTegBrdpp4JysnYeuA8VYFcg=;
+        s=default; t=1539885578;
+        bh=TokiljljUwvcOLRsjVvxKifkG3JbnJwaEDkW8nlomDU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mCk0eSSuwJTdUqclcWvMPf6MtJv53TO/p0efSMpm+0e/X1Ltd8MmZIzaFypibouSa
-         2M5idMFhq05FDRgNp/KKLddKKQawaxzbYZUijnxguYbHQIHTO1UrRXgaQQDq8Y90z2
-         Js83S3BtVKI71tWzS+cvHFsGee6F68NWc1snv5pM=
+        b=y8z0qUoLgYGxnslOdIGxvjrMrq5yQaNLYlC69z3tLrzSOOsqJzNdkjZkQciNLbzq9
+         p5WoshgUdwbdiIzjbIm1seZQHLU0PVmauTcTOgDzuYmlt0X3ACstSBLEdJWbgEO8m/
+         +kSkL3YYGk++q8Z/AWaJg+gNex4piQJ9SpXI87NA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jozef Balga <jozef.balga@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Marek Lindner <mareklindner@neomailbox.ch>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 01/41] media: af9035: prevent buffer overflow on write
-Date:   Thu, 18 Oct 2018 19:54:16 +0200
-Message-Id: <20181018175416.858412783@linuxfoundation.org>
+Subject: [PATCH 4.14 10/41] batman-adv: fix backbone_gw refcount on queue_work() failure
+Date:   Thu, 18 Oct 2018 19:54:25 +0200
+Message-Id: <20181018175418.690509119@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
 References: <20181018175416.718399607@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -62,40 +64,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jozef Balga <jozef.balga@gmail.com>
+From: Marek Lindner <mareklindner@neomailbox.ch>
 
-[ Upstream commit 312f73b648626a0526a3aceebb0a3192aaba05ce ]
+[ Upstream commit 5af96b9c59c72fb2af2d19c5cc2f3cdcee391dff ]
 
-When less than 3 bytes are written to the device, memcpy is called with
-negative array size which leads to buffer overflow and kernel panic. This
-patch adds a condition and returns -EOPNOTSUPP instead.
-Fixes bugzilla issue 64871
+The backbone_gw refcounter is to be decreased by the queued work and
+currently is never decreased if the queue_work() call fails.
+Fix by checking the queue_work() return value and decrease refcount
+if necessary.
 
-[mchehab+samsung@kernel.org: fix a merge conflict and changed the
- condition to match the patch's comment, e. g. len == 3 could
- also be valid]
-Signed-off-by: Jozef Balga <jozef.balga@gmail.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/dvb-usb-v2/af9035.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/batman-adv/bridge_loop_avoidance.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/media/usb/dvb-usb-v2/af9035.c
-+++ b/drivers/media/usb/dvb-usb-v2/af9035.c
-@@ -402,8 +402,10 @@ static int af9035_i2c_master_xfer(struct
- 			if (msg[0].addr == state->af9033_i2c_addr[1])
- 				reg |= 0x100000;
+--- a/net/batman-adv/bridge_loop_avoidance.c
++++ b/net/batman-adv/bridge_loop_avoidance.c
+@@ -1772,6 +1772,7 @@ batadv_bla_loopdetect_check(struct batad
+ {
+ 	struct batadv_bla_backbone_gw *backbone_gw;
+ 	struct ethhdr *ethhdr;
++	bool ret;
  
--			ret = af9035_wr_regs(d, reg, &msg[0].buf[3],
--					msg[0].len - 3);
-+			ret = (msg[0].len >= 3) ? af9035_wr_regs(d, reg,
-+							         &msg[0].buf[3],
-+							         msg[0].len - 3)
-+					        : -EOPNOTSUPP;
- 		} else {
- 			/* I2C write */
- 			u8 buf[MAX_XFER_SIZE];
+ 	ethhdr = eth_hdr(skb);
+ 
+@@ -1795,8 +1796,13 @@ batadv_bla_loopdetect_check(struct batad
+ 	if (unlikely(!backbone_gw))
+ 		return true;
+ 
+-	queue_work(batadv_event_workqueue, &backbone_gw->report_work);
+-	/* backbone_gw is unreferenced in the report work function function */
++	ret = queue_work(batadv_event_workqueue, &backbone_gw->report_work);
++
++	/* backbone_gw is unreferenced in the report work function function
++	 * if queue_work() call was successful
++	 */
++	if (!ret)
++		batadv_backbone_gw_put(backbone_gw);
+ 
+ 	return true;
+ }
 
 
