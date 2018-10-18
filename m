@@ -2,138 +2,131 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD3CECDE44
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1CDC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7587921473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:29:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="siZ2aYQt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7587921473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 18F6A21477
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 15:30:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18F6A21477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728352AbeJRXbT (ORCPT
+        id S1728392AbeJRXcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 19:31:19 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45511 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727437AbeJRXbQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 19:31:16 -0400
-Received: by mail-pg1-f195.google.com with SMTP id s3-v6so1136543pga.12;
-        Thu, 18 Oct 2018 08:29:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=epaOL4uh+0jP5+eEJbbSmv1y9ZWo3nh4hRogVt+eKjk=;
-        b=siZ2aYQtifyeYiHGVoVJ7lJVnEYt1UsLfiHnPmNXzW2OqlJISpafs0kGTi65KJjk86
-         BphfVJ5WCyGxIwbf3ms2Hqs6IjRyWE5heKJcCed2kfWSqgMSnuDUaxPZEhGSb3rbhOb6
-         mSeK18vQTBdmb5fsPQYmUCh4jwaOOXWPUyxETMS5nVp73nJTIjSGcGAKCH7A7+SGux4V
-         aOMwzeRd3JvJClvSrOEiOsESS/StoC+aC/mGruzOrsxhXquMwuW4ZyuMd9ee2rEJVmmy
-         5vhroMlYixKYbKyfWfjOD2S3oxRHeRnvqAD105C/DPVgYheWIWOOseKV5yxpxqOfjcE4
-         zrOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=epaOL4uh+0jP5+eEJbbSmv1y9ZWo3nh4hRogVt+eKjk=;
-        b=tInGMnuisS7BHiBqZuRHuIAn7dWdzWsuxjn8Ajmq2lZIvIEBRXOJgjOEszhpOWZFSb
-         D0vxeHa1bTbKti5DgfQDmgKO3yzZY0dCXQO2XM3dzJMiNux7+YhyIPh0WC9pZJwKUqP4
-         3yNe2IKk/plrP6UAf4WjJG6y8JC3QN4Od0Qjb1P8YH7hPj7AupGGGInMOx+B2zshmucb
-         rExiRgjCusVVELa4dJTMndDZnHPnnchGuJN20ocHhkIrPvdJLKDQsnmAdFuJxUN6HvKy
-         Zm/LLQEhGBIuNE+LZbeEBN21T86U2c3FM+Mxfy04aVwy8CSxov8uqYUhi5qEH2PGhlXq
-         lWRg==
-X-Gm-Message-State: ABuFfoirnDNdObze8A9CHg3QTcXUqu+q++apfwYY0f7TTmtuqcudvPUy
-        9NZ1gf93PxHqL3wuBtPlbq87IEdD
-X-Google-Smtp-Source: ACcGV61MekrPYpziSwk/ZviIW/Dej3Cc8J05myJy19XAwrQdoxTSPdZxx3MTxrgqqMG/voTM4hqxmA==
-X-Received: by 2002:a63:3ec3:: with SMTP id l186-v6mr1780183pga.96.1539876584456;
-        Thu, 18 Oct 2018 08:29:44 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id i2-v6sm20139861pgq.35.2018.10.18.08.29.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 08:29:43 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 08:29:42 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: Tree for Oct 18
-Message-ID: <20181018152942.GA5540@roeck-us.net>
-References: <20181018180216.25e6fb79@canb.auug.org.au>
+        Thu, 18 Oct 2018 19:32:04 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47612 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728249AbeJRXcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 19:32:04 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A34AF308A95E;
+        Thu, 18 Oct 2018 15:30:32 +0000 (UTC)
+Received: from treble (ovpn-123-182.rdu2.redhat.com [10.10.123.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 67FD27A1A2;
+        Thu, 18 Oct 2018 15:30:29 +0000 (UTC)
+Date:   Thu, 18 Oct 2018 10:30:27 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Miroslav Benes <mbenes@suse.cz>, Jiri Kosina <jikos@kernel.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 06/12] livepatch: Simplify API by removing
+ registration step
+Message-ID: <20181018153027.x4nk2ihgs5ehsln2@treble>
+References: <20180828143603.4442-1-pmladek@suse.com>
+ <20180828143603.4442-7-pmladek@suse.com>
+ <alpine.LSU.2.21.1809051108440.7768@pobox.suse.cz>
+ <20181012130120.f5berowklyccd7lj@pathway.suse.cz>
+ <alpine.LSU.2.21.1810151756290.11383@pobox.suse.cz>
+ <20181018145456.nrekm2iuyf5ztw3n@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181018180216.25e6fb79@canb.auug.org.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181018145456.nrekm2iuyf5ztw3n@pathway.suse.cz>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 18 Oct 2018 15:30:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 06:02:16PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Thu, Oct 18, 2018 at 04:54:56PM +0200, Petr Mladek wrote:
+> On Mon 2018-10-15 18:01:43, Miroslav Benes wrote:
+> > On Fri, 12 Oct 2018, Petr Mladek wrote:
+> > 
+> > > On Wed 2018-09-05 11:34:06, Miroslav Benes wrote:
+> > > > On Tue, 28 Aug 2018, Petr Mladek wrote:
+> > > > > Also the API and logic is much easier. It is enough to call
+> > > > > klp_enable_patch() in module_init() call. The patch patch can be disabled
+> > > > > by writing '0' into /sys/kernel/livepatch/<patch>/enabled. Then the module
+> > > > > can be removed once the transition finishes and sysfs interface is freed.
+> > > > 
+> > > > I think it would be good to discuss our sysfs interface here as well.
+> > > > 
+> > > > Writing '1' to enabled attribute now makes sense only when you need to 
+> > > > reverse an unpatching transition. Writing '0' means "disable" or a 
+> > > > reversion again.
+> > > > 
+> > > > Wouldn't be better to split it to two different attributes? Something like 
+> > > > "disable" and "reverse"? It could be more intuitive.
+> > > > 
+> > > > Maybe we'd also find out that even patch->enabled member is not useful 
+> > > > anymore in such case.
+> > > 
+> > > I though about this as well. I kept "enabled" because:
+> > > 
+> > >   + It keeps the public interface the same as before. Most people
+> > >     would not notice any change in the behavior except maybe that
+> > >     the interface disappears when the patch gets disabled.
+> > 
+> > Well our sysfs interface is still in a testing phase as far as ABI is 
+> > involved. Moreover, each live patch is bound to its base kernel by 
+> > definition anyway. So we can change this without remorse, I think.
+
+But it would break tooling, which is not kernel specific.  I'm not sure
+whether it would be worth the headache.  After all I think the livepatch
+sysfs interface is designed for tools, not humans.
+
+> > >   + The reverse operation makes most sense when the transition
+> > >     cannot get finished. In theory, it might be problem to
+> > >     finish even the reversed one. People might want to
+> > >     reverse once again and force it. Then "reverse" file
+> > >     might be confusing. They might not know in which direction
+> > >     they do the reverse.
+> > 
+> > I still think it would be better to have a less confusing interface and it 
+> > would outweigh the second remark.
 > 
-> News: I will not be doing linux-next releases next week.  Unfortunately
-> this will probably be the first week of the merge window. :-(
+> OK, what about having just "disable" in sysfs. I agree that it makes
+> much more sense than "enable" now.
 > 
+> It might be used also for the reverse operation the same way as
+> "enable" was used before. I think that standalone "reverse" might
+> be confusing when we allow to reverse the operation in both
+> directions.
 
-Note: Every individual on Cc: might want to have a look. Either one of
-your patches or one you approved causes at least one of the problems.
+As long as we're talking about radical changes... how about we just
+don't allow disabling patches at all?  Instead a patch can be replaced
+with a 'revert' patch, or an empty 'nop' patch.  That would make our
+code simpler and also ensure there's an audit trail.
 
-Build results:
-	total: 135 pass: 120 fail: 15
-Failed builds: 
-	alpha:allmodconfig 
-	arm:allmodconfig 
-	arm64:allmodconfig 
-	i386:allyesconfig 
-	i386:allmodconfig 
-	m68k:allmodconfig 
-	mips:allmodconfig 
-	nds32:allmodconfig 
-	parisc:allmodconfig 
-	powerpc:allmodconfig 
-	powerpc:ppc6xx_defconfig
-	s390:allmodconfig 
-	sh:dreamcast_defconfig 
-	sparc64:allmodconfig 
-	xtensa:allmodconfig 
-Qemu test results:
-	total: 318 pass: 318 fail: 0
+(Apologies if we've already talked about this.  My brain is still mushy
+thanks to Spectre and friends.)
 
-Build failures:
+The amount of flexibility we allow is kind of crazy, considering how
+delicate of an operation live patching is.  That reminds me that I
+should bring up my other favorite idea at LPC: require modules to be
+loaded before we "patch" them.
 
-allmodconfig for all architectures:
-
-fs/pstore/platform.o: In function `pstore_compression_late_init':
-fs/pstore/.tmp_platform.o:(.init.text+0x0): multiple definition of `init_module'
-fs/pstore/inode.o:(.init.text+0x0): first defined here
-
-i386 (and probably other 32-bit builds):
-
-ERROR: "__udivdi3" [drivers/scsi/myrs.ko] undefined!
-
-powerpc:ppc6xx_defconfig:
-
-net/sunrpc/auth_gss/gss_krb5_seal.c: In function 'gss_seq_send64_fetch_and_inc':
-net/sunrpc/auth_gss/gss_krb5_seal.c:144:14: error: implicit declaration of function 'cmpxchg64'
-
-sh:dreamcast_defconfig:
-
-drivers/cdrom/gdrom.c: In function 'probe_gdrom':
-drivers/cdrom/gdrom.c:797:3: error: 'rc' undeclared
-
-Guenter
+-- 
+Josh
