@@ -2,165 +2,115 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2281ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9811C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:11:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A469E21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:08:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A469E21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 62FAC2098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 13:11:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FAC2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbeJRVI7 convert rfc822-to-8bit (ORCPT
+        id S1727490AbeJRVMa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 17:08:59 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59204 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726871AbeJRVI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 17:08:59 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A4CD420723; Thu, 18 Oct 2018 15:07:59 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-25-52.w90-88.abo.wanadoo.fr [90.88.145.52])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7126B20712;
-        Thu, 18 Oct 2018 15:07:49 +0200 (CEST)
-Date:   Thu, 18 Oct 2018 15:07:49 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        devicetree@vger.kernel.org, Dave Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 9/9] [DO NOT MERGE] drm/sun4i: rgb: Add 5% tolerance to
- dot clock frequency check
-Message-ID: <20181018130749.jkcda4epfb3xshvi@flea>
-References: <20181018073327.64942-1-icenowy@aosc.io>
- <CAKMK7uFp2c=wqzPi096MTRB6Cdfacerkp6dM=fEqCAr99PQG9w@mail.gmail.com>
- <20181018094258.oahlopafvm2udvoe@flea>
- <1585874.9P5eR8PMbl@avalon>
- <20181018121819.gmup3jd7ukj52rvx@flea>
- <0c8e2417ec79b44d88a3054d0526bfc5abb364d6.camel@aosc.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <0c8e2417ec79b44d88a3054d0526bfc5abb364d6.camel@aosc.io>
-User-Agent: NeoMutt/20180716
+        Thu, 18 Oct 2018 17:12:30 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33610 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726871AbeJRVMa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 17:12:30 -0400
+Received: by mail-wr1-f67.google.com with SMTP id e4-v6so33640645wrs.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 06:11:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=SMDQxmau8DWThpIhYjetUOOGiLigaeZDiZzGJtsaTwY=;
+        b=ufzUJhj/ou2PRQcD/aOpTApazhofWUFISDyfgjQbqaBXXQBdBZQ8kw5ScT37t3KZU1
+         VFQubz3Y3Z32N1U/Ge9Gr1/f29J7Gb95TICP85M24Rr0mqyenLCBcmwWnns00BDhJmjE
+         J+8suVLVtyRvDFPOZfjqa8VElu3/CBBPzPeAIReeyWHmENJP5kwYeIdqJVQhXCtFR6vo
+         Cwgt73CkFxP0Ig/NTOkJXOxk01WVooA1a/9F+VXALHSxLpEkuD/9RwSb18vn/RAFJNVg
+         778E2NSBl+Ylj1wAysPKPxH+pIHYL4awY+FjSO2Wr/UzSieCQfyCg4fuRmEwClRPQOOT
+         LQeg==
+X-Gm-Message-State: ABuFfogueZYdhOVNhvcQIUs30OOz7ZrfzRANob22oba/u8CK6HFY6Q2t
+        klY+8xrjqUq7MxX7DzclC25e0w==
+X-Google-Smtp-Source: ACcGV609Nre9UfohobsKg8Q5C3X6Z5Ukg8Tabur8K3kEugM7t4lw5Dqa/Ff33qF8FDneozpL/VYjXw==
+X-Received: by 2002:adf:cc8a:: with SMTP id p10-v6mr7521732wrj.208.1539868290937;
+        Thu, 18 Oct 2018 06:11:30 -0700 (PDT)
+Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id u5-v6sm22246965wru.16.2018.10.18.06.11.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Oct 2018 06:11:29 -0700 (PDT)
+From:   Miklos Szeredi <mszeredi@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>
+Subject: [PATCH 1/3] orangefs: fix request_mask misuse
+Date:   Thu, 18 Oct 2018 15:11:23 +0200
+Message-Id: <20181018131125.6303-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 08:50:15PM +0800, Icenowy Zheng wrote:
-> 在 2018-10-18四的 14:18 +0200，Maxime Ripard写道：
-> > On Thu, Oct 18, 2018 at 02:31:01PM +0300, Laurent Pinchart wrote:
-> > > Hello,
-> > > 
-> > > On Thursday, 18 October 2018 12:42:58 EEST Maxime Ripard wrote:
-> > > > On Thu, Oct 18, 2018 at 11:18:06AM +0200, Daniel Vetter wrote:
-> > > > > On Thu, Oct 18, 2018 at 10:55 AM Laurent Pinchart wrote:
-> > > > > > On Thursday, 18 October 2018 10:33:27 EEST Icenowy Zheng
-> > > > > > wrote:
-> > > > > > > From: Chen-Yu Tsai <wens@csie.org>
-> > > > > > > 
-> > > > > > > The panels shipped with Allwinner devices are very
-> > > > > > > "generic", i.e.
-> > > > > > > they do not have model numbers or reliable sources of
-> > > > > > > information
-> > > > > > > for the timings (that we know of) other than the fex files
-> > > > > > > shipped
-> > > > > > > on them. The dot clock frequency provided in the fex files
-> > > > > > > have all
-> > > > > > > been rounded to the nearest MHz, as that is the unit used
-> > > > > > > in them.
-> > > > > > > 
-> > > > > > > We were using the simple panel "urt,umsh-8596md-t" as a
-> > > > > > > substitute
-> > > > > > > for the A13 Q8 tablets in the absence of a specific model
-> > > > > > > for what
-> > > > > > > may be many different but otherwise timing compatible
-> > > > > > > panels. This
-> > > > > > > was usable without any visual artifacts or side effects,
-> > > > > > > until the
-> > > > > > > dot clock rate check was added in commit bb43d40d7c83
-> > > > > > > ("drm/sun4i:
-> > > > > > > rgb: Validate the clock rate").
-> > > > > > > 
-> > > > > > > The reason this check fails is because the dotclock
-> > > > > > > frequency for
-> > > > > > > this model is 33.26 MHz, which is not achievable with our
-> > > > > > > dot clock
-> > > > > > > hardware, and the rate returned by clk_round_rate deviates
-> > > > > > > slightly,
-> > > > > > > causing the driver to reject the display mode.
-> > > > > > > 
-> > > > > > > The LCD panels have some tolerance on the dot clock
-> > > > > > > frequency, even
-> > > > > > > if it's not specified in their datasheets.
-> > > > > > > 
-> > > > > > > This patch adds a 5% tolerence to the dot clock check.
-> > > > > > 
-> > > > > > Why do you think this shouldn't be merged ?
-> > > > > 
-> > > > > It pisses of a lot of people who really insist upon accurate
-> > > > > timing.
-> > > > 
-> > > > It's not just about accurate timings. That 5% is a made-up limit,
-> > > > that
-> > > > never have really been confirmed by looking at the typical
-> > > > tolerancies
-> > > > of panels.
-> > > > 
-> > > > And while being to relaxed might make some panels work that are
-> > > > not
-> > > > working currently, it might also break some panels that currently
-> > > > work
-> > > > and won't now, and ideally, we should really be able to let those
-> > > > panels work if they can, and filter out resolutions if they
-> > > > can't.
-> > > > 
-> > > > > I think a better fix would be to have a dotclock range in
-> > > > > drm_panel,
-> > > > > and some magic to figure out which one of these we can actually
-> > > > > do. Then tell userspace that this is the mode is should
-> > > > > request. That way userspace knows what the actual
-> > > > > dotclock/refresh
-> > > > > rate is, and the panel still works.
-> > > > 
-> > > > It's not just about panels, but also bridges with EDID where the
-> > > > tolerancy is not exposed.
-> > > 
-> > > Given that the tolerance is a property of the panel or bridge, I
-> > > agree with 
-> > > Daniel that it should be implemented there, or at least in
-> > > cooperation with 
-> > > drm_panel and drm_bridge.
-> > 
-> > How are we supposed to deal with panels without any documentation
-> > then?
-> > 
-> > > Semi-related information, I think the CEA and VESA standards allow
-> > > a 0.5% 
-> > > clock tolerance. What is the maximum clock frequency deviation
-> > > required for 
-> > > this platform ?
-> > 
-> > Looks like it does indeed. That's definetely good to know.
-> 
-> Then maybe we can choose to allow 0.5% error when a bridge is attached?
+Orangefs only handles STATX_BASIC_STATS in its getattr implementation, so
+mask off all other flags.  Not doing so results in statx(2) forcing a
+refresh of cached attributes on any other requested flag (i.e. STATX_BTIME
+currently) due to the following test in orangefs_inode_getattr():
 
-It doesn't fix the panel case, but that sounds reasonable yes
+  (request_mask & orangefs_inode->getattr_mask) == request_mask
 
-Maxime
+Also clean up gratuitous uses of STATX_ALL.
 
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Cc: Mike Marshall <hubcap@omnibond.com>
+Cc: Martin Brandenburg <martin@omnibond.com>
+---
+ fs/orangefs/inode.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+index 31932879b716..bd7f15a831dc 100644
+--- a/fs/orangefs/inode.c
++++ b/fs/orangefs/inode.c
+@@ -256,7 +256,8 @@ int orangefs_getattr(const struct path *path, struct kstat *stat,
+ 		     "orangefs_getattr: called on %pd\n",
+ 		     path->dentry);
+ 
+-	ret = orangefs_inode_getattr(inode, 0, 0, request_mask);
++	ret = orangefs_inode_getattr(inode, 0, 0,
++				     request_mask & STATX_BASIC_STATS);
+ 	if (ret == 0) {
+ 		generic_fillattr(inode, stat);
+ 
+@@ -408,7 +409,7 @@ struct inode *orangefs_iget(struct super_block *sb,
+ 	if (!inode || !(inode->i_state & I_NEW))
+ 		return inode;
+ 
+-	error = orangefs_inode_getattr(inode, 1, 1, STATX_ALL);
++	error = orangefs_inode_getattr(inode, 1, 1, STATX_BASIC_STATS);
+ 	if (error) {
+ 		iget_failed(inode);
+ 		return ERR_PTR(error);
+@@ -453,7 +454,7 @@ struct inode *orangefs_new_inode(struct super_block *sb, struct inode *dir,
+ 	orangefs_set_inode(inode, ref);
+ 	inode->i_ino = hash;	/* needed for stat etc */
+ 
+-	error = orangefs_inode_getattr(inode, 1, 1, STATX_ALL);
++	error = orangefs_inode_getattr(inode, 1, 1, STATX_BASIC_STATS);
+ 	if (error)
+ 		goto out_iput;
+ 
 -- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.14.3
+
