@@ -2,278 +2,155 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0858EECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02EEFC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C20632145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:26:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C20632145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id BE85A2083A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:31:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="Id1BtKqY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE85A2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redchan.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbeJRO0I (ORCPT
+        id S1727418AbeJRObS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 10:26:08 -0400
-Received: from alexa-out-tai-02.qualcomm.com ([103.229.16.227]:19987 "EHLO
-        alexa-out-tai-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727351AbeJRO0H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 10:26:07 -0400
-X-Greylist: delayed 527 seconds by postgrey-1.27 at vger.kernel.org; Thu, 18 Oct 2018 10:26:05 EDT
-X-IronPort-AV: E=Sophos;i="5.54,395,1534780800"; 
-   d="scan'208";a="1369258"
-Received: from ironmsg01-tai.qualcomm.com ([10.249.140.6])
-  by alexa-out-tai-02.qualcomm.com with ESMTP; 18 Oct 2018 14:16:51 +0800
-X-IronPort-AV: E=McAfee;i="5900,7806,9049"; a="17679162"
-Received: from c-fan-gv.ap.qualcomm.com (HELO c-fan-gv) ([10.231.253.105])
-  by ironmsg01-tai.qualcomm.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Oct 2018 14:16:50 +0800
-From:   Teng Fei Fan <tengfei@codeaurora.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-        sudeep.holla@arm.com, will.deacon@arm.com,
-        linux-arm-msm@vger.kernel.org, tengfei@codeaurora.org,
-        Russell King <linux@arm.linux.org.uk>
-Subject: [PATCH] arm: kernel: add support for detecting armv8 cpu cache information
-Date:   Thu, 18 Oct 2018 14:16:47 +0800
-Message-Id: <1539843407-7439-1-git-send-email-tengfei@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 18 Oct 2018 10:31:18 -0400
+Received: from cock.li ([185.100.85.212]:59214 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727331AbeJRObS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 10:31:18 -0400
+MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1539844306; bh=F0pEJ0Nhvoec7kGwrCUbaykg40SorDKEJL5kGqUZmhs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Id1BtKqY3kOVXHfPJwBeuNcvO2sTKFyk4xDJgLr2A87R1zLxAzVwA7CiW75JDrXPr
+         8LfxaOYtZgGtWw9ZtufFPCzH3/S9SYhExuVx+d/yUmvo10VjPLPG6fAujw4Hdh7F3m
+         pTD3Z+oLyM0liFsuvRR8hNHgZX56JZ65yBmHTYPD8HZpBPwp+vgZM8YR8Oq0/61YE6
+         Ou/GdFmb7UmVF0EqfPMGg7rSBkgqpgUoMw80qR5JOPe+4hjYdCX2+n/jKYOJdSio7A
+         wwMxI8DhHWxFoCzXNMjIv40kQznKUtQLHv/niST/om8FAe56QglZWw2gdqCYmu2/16
+         9uy8U+sQtDJsg==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 18 Oct 2018 06:31:45 +0000
+From:   visionsofalice@redchan.it
+To:     rohit@thelawfirm.io, contact@grsecurity.net
+Cc:     linux-kernel@vger.kernel.org, legal@lists.fedoraproject.org
+Subject: Bruce Perens, inconsistent statements regarding Copyright, GPL, Open
+ Source Security.
+Message-ID: <f1841eb0d494dc32f09c40a120f55e75@redchan.it>
+X-Sender: visionsofalice@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for cacheinfo on 32bit ARMv8 platform.
-Add support for detecting cpu cache information cpu cache information
-via sysfs for 32bit armv8 platform. And export to sysfs then userspace
-can get from /sys/devices/system/cpu/cpuX/cache.
+In a prior public statement, Bruce Perens put forth a legal theory where 
+users of a certain piece of Software would be liable for contributory 
+copyright infringement*[1]. This statement, specifically the 
+pronouncement of such damages reachable, is predicated on a pure 
+copyright License theory regarding the grant under-which the Linux 
+Kernel is distributed and modified.
 
-Signed-off-by: Teng Fei Fan <tengfei@codeaurora.org>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
----
- arch/arm/include/asm/cachetype.h |  38 ++++++++++++
- arch/arm/kernel/Makefile         |   3 +-
- arch/arm/kernel/cacheinfo.c      | 128 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 168 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/kernel/cacheinfo.c
+* 
+(https://perens.com/2017/06/28/warning-grsecurity-potential-contributory-infringement-risk-for-customers/ 
+)
 
-diff --git a/arch/arm/include/asm/cachetype.h b/arch/arm/include/asm/cachetype.h
-index 01509ae..f639c64 100644
---- a/arch/arm/include/asm/cachetype.h
-+++ b/arch/arm/include/asm/cachetype.h
-@@ -1,6 +1,31 @@
- #ifndef __ASM_ARM_CACHETYPE_H
- #define __ASM_ARM_CACHETYPE_H
- 
-+/*
-+ * NumSets, bits[27:13] - (Number of sets in cache) - 1
-+ * Associativity, bits[12:3] - (Associativity of cache) - 1
-+ * LineSize, bits[2:0] - (Log2(Number of words in cache line)) - 2
-+ */
-+#define CCSIDR_EL1_WRITE_THROUGH	BIT(31)
-+#define CCSIDR_EL1_WRITE_BACK		BIT(30)
-+#define CCSIDR_EL1_READ_ALLOCATE	BIT(29)
-+#define CCSIDR_EL1_WRITE_ALLOCATE	BIT(28)
-+#define CCSIDR_EL1_LINESIZE_MASK	0x7
-+#define CCSIDR_EL1_LINESIZE(x)		((x) & CCSIDR_EL1_LINESIZE_MASK)
-+#define CCSIDR_EL1_ASSOCIATIVITY_SHIFT	3
-+#define CCSIDR_EL1_ASSOCIATIVITY_MASK	0x3ff
-+#define CCSIDR_EL1_ASSOCIATIVITY(x) \
-+	(((x) >> CCSIDR_EL1_ASSOCIATIVITY_SHIFT) \
-+	& CCSIDR_EL1_ASSOCIATIVITY_MASK)
-+#define CCSIDR_EL1_NUMSETS_SHIFT	13
-+#define CCSIDR_EL1_NUMSETS_MASK		0x7fff
-+#define CCSIDR_EL1_NUMSETS(x) \
-+	(((x) >> CCSIDR_EL1_NUMSETS_SHIFT) & CCSIDR_EL1_NUMSETS_MASK)
-+
-+#define CACHE_LINESIZE(x)	(16 << CCSIDR_EL1_LINESIZE(x))
-+#define CACHE_NUMSETS(x)	(CCSIDR_EL1_NUMSETS(x) + 1)
-+#define CACHE_ASSOCIATIVITY(x)	(CCSIDR_EL1_ASSOCIATIVITY(x) + 1)
-+
- #define CACHEID_VIVT			(1 << 0)
- #define CACHEID_VIPT_NONALIASING	(1 << 1)
- #define CACHEID_VIPT_ALIASING		(1 << 2)
-@@ -80,6 +105,14 @@ static inline unsigned int read_ccsidr(void)
- 	asm volatile("mrc p15, 1, %0, c0, c0, 0" : "=r" (val));
- 	return val;
- }
-+
-+static inline unsigned int read_clidr(void)
-+{
-+	unsigned int val;
-+
-+	asm volatile("mrc	p15, 1, %0, c0, c0, 1" : "=r" (val));
-+	return val;
-+}
- #else /* CONFIG_CPU_V7M */
- #include <linux/io.h>
- #include "asm/v7m.h"
-@@ -93,6 +126,11 @@ static inline unsigned int read_ccsidr(void)
- {
- 	return readl(BASEADDR_V7M_SCB + V7M_SCB_CCSIDR);
- }
-+
-+static inline unsigned int read_clidr(void)
-+{
-+	return readl_relaxed(BASEADDR_V7M_SCB + V7M_SCB_CLIDR);
-+}
- #endif
- 
- #endif
-diff --git a/arch/arm/kernel/Makefile b/arch/arm/kernel/Makefile
-index ad325a8..3abd6aa 100644
---- a/arch/arm/kernel/Makefile
-+++ b/arch/arm/kernel/Makefile
-@@ -18,7 +18,8 @@ CFLAGS_REMOVE_return_address.o = -pg
- obj-y		:= elf.o entry-common.o irq.o opcodes.o \
- 		   process.o ptrace.o reboot.o return_address.o \
- 		   setup.o signal.o sigreturn_codes.o \
--		   stacktrace.o sys_arm.o time.o traps.o
-+		   stacktrace.o sys_arm.o time.o traps.o \
-+		   cacheinfo.o
- 
- obj-$(CONFIG_ATAGS)		+= atags_parse.o
- obj-$(CONFIG_ATAGS_PROC)	+= atags_proc.o
-diff --git a/arch/arm/kernel/cacheinfo.c b/arch/arm/kernel/cacheinfo.c
-new file mode 100644
-index 0000000..2880b34
---- /dev/null
-+++ b/arch/arm/kernel/cacheinfo.c
-@@ -0,0 +1,128 @@
-+/*
-+ *  ARM cacheinfo support
-+ *
-+ *  Copyright (C) 2015 ARM Ltd.
-+ *  All Rights Reserved
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether express or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/cacheinfo.h>
-+#include <linux/cpu.h>
-+#include <linux/compiler.h>
-+#include <linux/of.h>
-+
-+#include <asm/cachetype.h>
-+#include <asm/processor.h>
-+
-+#define MAX_CACHE_LEVEL			7	/* Max 7 level supported */
-+/* Ctypen, bits[3(n - 1) + 2 : 3(n - 1)], for n = 1 to 7 */
-+#define CLIDR_CTYPE_SHIFT(level)	(3 * (level - 1))
-+#define CLIDR_CTYPE_MASK(level)		(7 << CLIDR_CTYPE_SHIFT(level))
-+#define CLIDR_CTYPE(clidr, level)	\
-+	(((clidr) & CLIDR_CTYPE_MASK(level)) >> CLIDR_CTYPE_SHIFT(level))
-+
-+static inline enum cache_type get_cache_type(int level)
-+{
-+	unsigned int clidr;
-+
-+	if (level > MAX_CACHE_LEVEL)
-+		return CACHE_TYPE_NOCACHE;
-+	clidr = read_clidr();
-+
-+	return CLIDR_CTYPE(clidr, level);
-+}
-+
-+/*
-+ * Cache Size Selection Register(CSSELR) selects which Cache Size ID
-+ * Register(CCSIDR) is accessible by specifying the required cache
-+ * level and the cache type. We need to ensure that no one else changes
-+ * CSSELR by calling this in non-preemtible context
-+ */
-+static unsigned int __attribute_const__ cache_get_ccsidr(unsigned int csselr)
-+{
-+	unsigned int ccsidr;
-+
-+	WARN_ON(preemptible());
-+
-+	/* Put value into CSSELR */
-+	set_csselr(csselr);
-+	isb();
-+	ccsidr = read_ccsidr();
-+
-+	return ccsidr;
-+}
-+
-+static void ci_leaf_init(struct cacheinfo *this_leaf,
-+			 enum cache_type type, unsigned int level)
-+{
-+	bool is_icache = type & CACHE_TYPE_INST;
-+	unsigned int tmp = cache_get_ccsidr((level - 1) << 1 | is_icache);
-+
-+	this_leaf->level = level;
-+	this_leaf->type = type;
-+	this_leaf->coherency_line_size = CACHE_LINESIZE(tmp);
-+	this_leaf->number_of_sets = CACHE_NUMSETS(tmp);
-+	this_leaf->ways_of_associativity = CACHE_ASSOCIATIVITY(tmp);
-+	this_leaf->size = this_leaf->number_of_sets *
-+	this_leaf->coherency_line_size * this_leaf->ways_of_associativity;
-+	this_leaf->attributes =
-+		((tmp & CCSIDR_EL1_WRITE_THROUGH) ? CACHE_WRITE_THROUGH : 0) |
-+		((tmp & CCSIDR_EL1_WRITE_BACK) ? CACHE_WRITE_BACK : 0) |
-+		((tmp & CCSIDR_EL1_READ_ALLOCATE) ? CACHE_READ_ALLOCATE : 0) |
-+		((tmp & CCSIDR_EL1_WRITE_ALLOCATE) ? CACHE_WRITE_ALLOCATE : 0);
-+}
-+
-+static int __init_cache_level(unsigned int cpu)
-+{
-+	unsigned int ctype, level, leaves;
-+	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
-+
-+	for (level = 1, leaves = 0; level <= MAX_CACHE_LEVEL; level++) {
-+		ctype = get_cache_type(level);
-+		if (ctype == CACHE_TYPE_NOCACHE) {
-+			level--;
-+			break;
-+		}
-+		/* Separate instruction and data caches */
-+		leaves += (ctype == CACHE_TYPE_SEPARATE) ? 2 : 1;
-+	}
-+
-+	this_cpu_ci->num_levels = level;
-+	this_cpu_ci->num_leaves = leaves;
-+	return 0;
-+}
-+
-+static int __populate_cache_leaves(unsigned int cpu)
-+{
-+	unsigned int level, idx;
-+	enum cache_type type;
-+	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
-+	struct cacheinfo *this_leaf = this_cpu_ci->info_list;
-+
-+	for (idx = 0, level = 1; level <= this_cpu_ci->num_levels &&
-+	     idx < this_cpu_ci->num_leaves; idx++, level++) {
-+		type = get_cache_type(level);
-+		if (type == CACHE_TYPE_SEPARATE) {
-+			ci_leaf_init(this_leaf++, CACHE_TYPE_DATA, level);
-+			ci_leaf_init(this_leaf++, CACHE_TYPE_INST, level);
-+		} else {
-+			ci_leaf_init(this_leaf++, type, level);
-+		}
-+	}
-+	return 0;
-+}
-+
-+DEFINE_SMP_CALL_CACHE_FUNCTION(init_cache_level)
-+DEFINE_SMP_CALL_CACHE_FUNCTION(populate_cache_leaves)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+As we all know, under a contract theory, damages are quite limited 
+regarding opensource licenses** (See the initial district court 
+determination of Jacobsen v. Katzer) and the legal theory published by 
+Bruce Perens, if analyzed under a contract theory regarding the GPL 
+would become a less-than-likely scenario.
 
+** (For this very reason, the FSF specifically drafted version 2 of the 
+GPL to avoid language that would tend to induce a contract reading 
+rather than a bare license construction. The FSF has maintained for 
+decades that the GPL is a bare license and is not a contract)
+
+It is just that utterance, added by Bruce Perens, regarding contributory 
+copyright infringement damages reachable vis a vis the GPL version 2, 
+that induced upwards of 70 of Open Source Security's clients to cease 
+their business dealings with Open Source Security.
+
+Bruce Perens has recently made known, publicly, that he currently 
+believes in a Contract theory regarding the GPL version 2, specifically 
+regarding the Linux Kernel. He has stated that he, infact, in the past 
+has supplied expert testimony praying to the court for it to find that 
+the GPL is, in fact, a contract (and not a bare (copyright) license). He 
+has stated that the court has indeed relied on his testimony in various 
+pleadings. ***[3]
+
+Here, ( 
+https://developers.slashdot.org/comments.pl?sid=12767438&cid=57489528 ) 
+Bruce Perens argues that case law has overridden the esteemed Raymond 
+Nimmer's opinion that the GPL is not a contract and is, at best, a 
+failed contract, and likely a bare license akin to a property license. 
+Bruce Perens further clarifies that it was his very own testimony that 
+has convinced the court that the GPL is infact not a bare license and is 
+instead a contract.
+
+If these pleadings were to have occurred prior to the theory published 
+regarding Open Source Security and its Contributor Access Agreement, 
+that would put the lie to any suggestion that Bruce Perens in fact 
+believed in the theory that he published at the time of publication and 
+would instead suggest that rather than proffering his opinion regarding 
+a matter - he was instead intentionally publishing a theory he believed 
+to be a lie in-order to harm Open Source Security - A goal that has 
+indeed been effected (specifically by the "Contributory Copyright 
+Infringement" addendum).
+
+
+
+
+*[1]
+-------
+https://perens.com/2017/06/28/warning-grsecurity-potential-contributory-infringement-risk-for-customers/
+Posted on June 28, 2017 by Bruce
+Warning: Grsecurity: Potential contributory infringement and breach of 
+contract risk for customers
+
+
+
+
+***[3]
+-------
+https://developers.slashdot.org/comments.pl?sid=12767438&cid=57489528
+-------
+
+Re:Who gives a FUCK about Nimmer? (Score:2)
+by Bruce Perens ( 3872 ) <bruce@perens.com> on Tuesday October 16, 2018 
+@09:10PM (#57489528) Homepage Journal
+
+If lawyers were never wrong, we'd have no need for courts. Which means 
+they're wrong half the time, or at least the adopt unsupportable 
+arguments half of the time.
+
+Case law has overridden him on the GPL question, thanks in part to my 
+pro-bono testimony. But courts and lawyers still take him seriously. And 
+me, sometimes.
+
+-------
+
+In response to:
+
+> Who gives a FUCK about Nimmer? (Score:0)
+> by Anonymous Coward on Tuesday October 16, 2018 @08:30PM (#57489396)
+> 
+> Who gives a FUCK about Nimmer?
+> 
+> He said the GPLv2 was "not a contract" - was "at best" "a failed 
+> contract" - "has no consideration" - and thus it is a bare license 
+> revocable by >the grantor.
+> 
+> Free Software has REJECTED this CLOWN Nimmer.
+> Thus he is wrong.
+> 
+> http://illinoisjltp.com/journal/wp-content/uploads/2013/10/kumar.pdf
+> http://oxwugzccvk3dk6tj.onion/tech/res/987076.html
+> ...
