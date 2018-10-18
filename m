@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB74ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2763C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9024F21486
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:03:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A5322148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:04:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DRQX9is4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9024F21486
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C6Kb5Z1B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A5322148D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730015AbeJSCGD (ORCPT
+        id S1730026AbeJSCGH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:06:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54236 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:06:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728416AbeJSCGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:06:02 -0400
+        id S1728416AbeJSCGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:06:06 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C52BE21479;
-        Thu, 18 Oct 2018 18:03:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7963A21480;
+        Thu, 18 Oct 2018 18:03:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885835;
-        bh=gwRJI8Vr5cF8M1f+U1MogZRwaop1MYVhih2XCyJlXiE=;
+        s=default; t=1539885839;
+        bh=+qkxDcDVyd0St3cpBtBevbyUobFWnTpOlwO9jd4tO8c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DRQX9is4vKn7qhcCi+HGeUAVzdqgv10UMnSrYW3n8VHNvkwZDbchaCkuFC75cNYEJ
-         OQ9QtBFDYddTiAoFmrM1P6wncKXtLcDcHSuDOyKCkayAa1SUGLitm95B/QBNvPahFd
-         7jx/x7DNqT7h+027P2MxyKTxYib+A54aN5peei4g=
+        b=C6Kb5Z1BRyyddTJXANySiDUu+I9ziGSBQM5EQKDZM7l0Fs493vcJljSyufBnOAXRK
+         Bf1+irFCVH+WjwO//1RsRYORmLojekLlQVMh5EZ9qmMj3rUXgnAAApCLxj+l+njk05
+         kGXRPh03HcyBs095O596uLIro68+1mJ5mMFGvFog=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -54,9 +54,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Wanpeng Li <wanpeng.li@hotmail.com>,
         Ingo Molnar <mingo@kernel.org>,
         Ivan Delalande <colona@arista.com>
-Subject: [PATCH 4.9 30/35] sched/cputime: Convert kcpustat to nsecs
-Date:   Thu, 18 Oct 2018 19:54:59 +0200
-Message-Id: <20181018175426.816420321@linuxfoundation.org>
+Subject: [PATCH 4.9 31/35] macintosh/rack-meter: Convert cputime64_t use to u64
+Date:   Thu, 18 Oct 2018 19:55:00 +0200
+Message-Id: <20181018175426.899956596@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175422.506152522@linuxfoundation.org>
 References: <20181018175422.506152522@linuxfoundation.org>
@@ -76,14 +76,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frederic Weisbecker <fweisbec@gmail.com>
 
-commit 7fb1327ee9b92fca27662f9b9d60c7c3376d6c69 upstream.
+commit 564b733c899f4e12a64946658960fce80cad0b05 upstream.
 
-Kernel CPU stats are stored in cputime_t which is an architecture
-defined type, and hence a bit opaque and requiring accessors and mutators
-for any operation.
-
-Converting them to nsecs simplifies the code and is one step toward
-the removal of cputime_t in the core code.
+cputime_t is going to be removed and replaced by nsecs units,
+so convert the drivers/macintosh/rack-meter.c use to u64..
 
 Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
 Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
@@ -97,345 +93,89 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Rik van Riel <riel@redhat.com>
 Cc: Stanislaw Gruszka <sgruszka@redhat.com>
 Cc: Wanpeng Li <wanpeng.li@hotmail.com>
-Link: http://lkml.kernel.org/r/1485832191-26889-4-git-send-email-fweisbec@gmail.com
+Link: http://lkml.kernel.org/r/1485832191-26889-5-git-send-email-fweisbec@gmail.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[colona: minor conflict as 527b0a76f41d ("sched/cpuacct: Avoid %lld seq_printf
- warning") is missing from v4.9]
 Signed-off-by: Ivan Delalande <colona@arista.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/s390/appldata/appldata_os.c   |   16 ++++----
- drivers/cpufreq/cpufreq.c          |    6 +--
- drivers/cpufreq/cpufreq_governor.c |    2 -
- drivers/cpufreq/cpufreq_stats.c    |    1 
- drivers/macintosh/rack-meter.c     |    2 -
- fs/proc/stat.c                     |   68 ++++++++++++++++++-------------------
- fs/proc/uptime.c                   |    7 +--
- kernel/sched/cpuacct.c             |    2 -
- kernel/sched/cputime.c             |   22 +++++------
- 9 files changed, 61 insertions(+), 65 deletions(-)
 
---- a/arch/s390/appldata/appldata_os.c
-+++ b/arch/s390/appldata/appldata_os.c
-@@ -113,21 +113,21 @@ static void appldata_get_os_data(void *d
- 	j = 0;
- 	for_each_online_cpu(i) {
- 		os_data->os_cpu[j].per_cpu_user =
--			cputime_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_USER]);
-+			nsecs_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_USER]);
- 		os_data->os_cpu[j].per_cpu_nice =
--			cputime_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_NICE]);
-+			nsecs_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_NICE]);
- 		os_data->os_cpu[j].per_cpu_system =
--			cputime_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_SYSTEM]);
-+			nsecs_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_SYSTEM]);
- 		os_data->os_cpu[j].per_cpu_idle =
--			cputime_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_IDLE]);
-+			nsecs_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_IDLE]);
- 		os_data->os_cpu[j].per_cpu_irq =
--			cputime_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_IRQ]);
-+			nsecs_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_IRQ]);
- 		os_data->os_cpu[j].per_cpu_softirq =
--			cputime_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_SOFTIRQ]);
-+			nsecs_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_SOFTIRQ]);
- 		os_data->os_cpu[j].per_cpu_iowait =
--			cputime_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_IOWAIT]);
-+			nsecs_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_IOWAIT]);
- 		os_data->os_cpu[j].per_cpu_steal =
--			cputime_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_STEAL]);
-+			nsecs_to_jiffies(kcpustat_cpu(i).cpustat[CPUTIME_STEAL]);
- 		os_data->os_cpu[j].cpu_id = i;
- 		j++;
- 	}
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -132,7 +132,7 @@ static inline u64 get_cpu_idle_time_jiff
- 	u64 cur_wall_time;
- 	u64 busy_time;
- 
--	cur_wall_time = jiffies64_to_cputime64(get_jiffies_64());
-+	cur_wall_time = jiffies64_to_nsecs(get_jiffies_64());
- 
- 	busy_time = kcpustat_cpu(cpu).cpustat[CPUTIME_USER];
- 	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_SYSTEM];
-@@ -143,9 +143,9 @@ static inline u64 get_cpu_idle_time_jiff
- 
- 	idle_time = cur_wall_time - busy_time;
- 	if (wall)
--		*wall = cputime_to_usecs(cur_wall_time);
-+		*wall = div_u64(cur_wall_time, NSEC_PER_USEC);
- 
--	return cputime_to_usecs(idle_time);
-+	return div_u64(idle_time, NSEC_PER_USEC);
- }
- 
- u64 get_cpu_idle_time(unsigned int cpu, u64 *wall, int io_busy)
---- a/drivers/cpufreq/cpufreq_governor.c
-+++ b/drivers/cpufreq/cpufreq_governor.c
-@@ -152,7 +152,7 @@ unsigned int dbs_update(struct cpufreq_p
- 		if (ignore_nice) {
- 			u64 cur_nice = kcpustat_cpu(j).cpustat[CPUTIME_NICE];
- 
--			idle_time += cputime_to_usecs(cur_nice - j_cdbs->prev_cpu_nice);
-+			idle_time += div_u64(cur_nice - j_cdbs->prev_cpu_nice, NSEC_PER_USEC);
- 			j_cdbs->prev_cpu_nice = cur_nice;
- 		}
- 
---- a/drivers/cpufreq/cpufreq_stats.c
-+++ b/drivers/cpufreq/cpufreq_stats.c
-@@ -13,7 +13,6 @@
- #include <linux/cpufreq.h>
- #include <linux/module.h>
- #include <linux/slab.h>
--#include <linux/cputime.h>
- 
- static DEFINE_SPINLOCK(cpufreq_stats_lock);
- 
+---
+ drivers/macintosh/rack-meter.c |   32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
 --- a/drivers/macintosh/rack-meter.c
 +++ b/drivers/macintosh/rack-meter.c
+@@ -52,8 +52,8 @@ struct rackmeter_dma {
+ struct rackmeter_cpu {
+ 	struct delayed_work	sniffer;
+ 	struct rackmeter	*rm;
+-	cputime64_t		prev_wall;
+-	cputime64_t		prev_idle;
++	u64			prev_wall;
++	u64			prev_idle;
+ 	int			zero;
+ } ____cacheline_aligned;
+ 
+@@ -81,7 +81,7 @@ static int rackmeter_ignore_nice;
+ /* This is copied from cpufreq_ondemand, maybe we should put it in
+  * a common header somewhere
+  */
+-static inline cputime64_t get_cpu_idle_time(unsigned int cpu)
++static inline u64 get_cpu_idle_time(unsigned int cpu)
+ {
+ 	u64 retval;
+ 
 @@ -91,7 +91,7 @@ static inline cputime64_t get_cpu_idle_t
  	if (rackmeter_ignore_nice)
  		retval += kcpustat_cpu(cpu).cpustat[CPUTIME_NICE];
  
--	return retval;
-+	return nsecs_to_cputime64(retval);
+-	return nsecs_to_cputime64(retval);
++	return retval;
  }
  
  static void rackmeter_setup_i2s(struct rackmeter *rm)
---- a/fs/proc/stat.c
-+++ b/fs/proc/stat.c
-@@ -21,23 +21,23 @@
+@@ -217,23 +217,23 @@ static void rackmeter_do_timer(struct wo
+ 		container_of(work, struct rackmeter_cpu, sniffer.work);
+ 	struct rackmeter *rm = rcpu->rm;
+ 	unsigned int cpu = smp_processor_id();
+-	cputime64_t cur_jiffies, total_idle_ticks;
+-	unsigned int total_ticks, idle_ticks;
++	u64 cur_nsecs, total_idle_nsecs;
++	u64 total_nsecs, idle_nsecs;
+ 	int i, offset, load, cumm, pause;
  
- #ifdef arch_idle_time
+-	cur_jiffies = jiffies64_to_cputime64(get_jiffies_64());
+-	total_ticks = (unsigned int) (cur_jiffies - rcpu->prev_wall);
+-	rcpu->prev_wall = cur_jiffies;
+-
+-	total_idle_ticks = get_cpu_idle_time(cpu);
+-	idle_ticks = (unsigned int) (total_idle_ticks - rcpu->prev_idle);
+-	idle_ticks = min(idle_ticks, total_ticks);
+-	rcpu->prev_idle = total_idle_ticks;
++	cur_nsecs = jiffies64_to_nsecs(get_jiffies_64());
++	total_nsecs = cur_nsecs - rcpu->prev_wall;
++	rcpu->prev_wall = cur_nsecs;
++
++	total_idle_nsecs = get_cpu_idle_time(cpu);
++	idle_nsecs = total_idle_nsecs - rcpu->prev_idle;
++	idle_nsecs = min(idle_nsecs, total_nsecs);
++	rcpu->prev_idle = total_idle_nsecs;
  
--static cputime64_t get_idle_time(int cpu)
-+static u64 get_idle_time(int cpu)
- {
--	cputime64_t idle;
-+	u64 idle;
+ 	/* We do a very dumb calculation to update the LEDs for now,
+ 	 * we'll do better once we have actual PWM implemented
+ 	 */
+-	load = (9 * (total_ticks - idle_ticks)) / total_ticks;
++	load = div64_u64(9 * (total_nsecs - idle_nsecs), total_nsecs);
  
- 	idle = kcpustat_cpu(cpu).cpustat[CPUTIME_IDLE];
- 	if (cpu_online(cpu) && !nr_iowait_cpu(cpu))
--		idle += arch_idle_time(cpu);
-+		idle += cputime_to_nsecs(arch_idle_time(cpu));
- 	return idle;
- }
- 
--static cputime64_t get_iowait_time(int cpu)
-+static u64 get_iowait_time(int cpu)
- {
--	cputime64_t iowait;
-+	u64 iowait;
- 
- 	iowait = kcpustat_cpu(cpu).cpustat[CPUTIME_IOWAIT];
- 	if (cpu_online(cpu) && nr_iowait_cpu(cpu))
--		iowait += arch_idle_time(cpu);
-+		iowait += cputime_to_nsecs(arch_idle_time(cpu));
- 	return iowait;
- }
- 
-@@ -45,32 +45,32 @@ static cputime64_t get_iowait_time(int c
- 
- static u64 get_idle_time(int cpu)
- {
--	u64 idle, idle_time = -1ULL;
-+	u64 idle, idle_usecs = -1ULL;
- 
- 	if (cpu_online(cpu))
--		idle_time = get_cpu_idle_time_us(cpu, NULL);
-+		idle_usecs = get_cpu_idle_time_us(cpu, NULL);
- 
--	if (idle_time == -1ULL)
-+	if (idle_usecs == -1ULL)
- 		/* !NO_HZ or cpu offline so we can rely on cpustat.idle */
- 		idle = kcpustat_cpu(cpu).cpustat[CPUTIME_IDLE];
- 	else
--		idle = usecs_to_cputime64(idle_time);
-+		idle = idle_usecs * NSEC_PER_USEC;
- 
- 	return idle;
- }
- 
- static u64 get_iowait_time(int cpu)
- {
--	u64 iowait, iowait_time = -1ULL;
-+	u64 iowait, iowait_usecs = -1ULL;
- 
- 	if (cpu_online(cpu))
--		iowait_time = get_cpu_iowait_time_us(cpu, NULL);
-+		iowait_usecs = get_cpu_iowait_time_us(cpu, NULL);
- 
--	if (iowait_time == -1ULL)
-+	if (iowait_usecs == -1ULL)
- 		/* !NO_HZ or cpu offline so we can rely on cpustat.iowait */
- 		iowait = kcpustat_cpu(cpu).cpustat[CPUTIME_IOWAIT];
- 	else
--		iowait = usecs_to_cputime64(iowait_time);
-+		iowait = iowait_usecs * NSEC_PER_USEC;
- 
- 	return iowait;
- }
-@@ -115,16 +115,16 @@ static int show_stat(struct seq_file *p,
+ 	offset = cpu << 3;
+ 	cumm = 0;
+@@ -278,7 +278,7 @@ static void rackmeter_init_cpu_sniffer(s
+ 			continue;
+ 		rcpu = &rm->cpu[cpu];
+ 		rcpu->prev_idle = get_cpu_idle_time(cpu);
+-		rcpu->prev_wall = jiffies64_to_cputime64(get_jiffies_64());
++		rcpu->prev_wall = jiffies64_to_nsecs(get_jiffies_64());
+ 		schedule_delayed_work_on(cpu, &rm->cpu[cpu].sniffer,
+ 					 msecs_to_jiffies(CPU_SAMPLING_RATE));
  	}
- 	sum += arch_irq_stat();
- 
--	seq_put_decimal_ull(p, "cpu  ", cputime64_to_clock_t(user));
--	seq_put_decimal_ull(p, " ", cputime64_to_clock_t(nice));
--	seq_put_decimal_ull(p, " ", cputime64_to_clock_t(system));
--	seq_put_decimal_ull(p, " ", cputime64_to_clock_t(idle));
--	seq_put_decimal_ull(p, " ", cputime64_to_clock_t(iowait));
--	seq_put_decimal_ull(p, " ", cputime64_to_clock_t(irq));
--	seq_put_decimal_ull(p, " ", cputime64_to_clock_t(softirq));
--	seq_put_decimal_ull(p, " ", cputime64_to_clock_t(steal));
--	seq_put_decimal_ull(p, " ", cputime64_to_clock_t(guest));
--	seq_put_decimal_ull(p, " ", cputime64_to_clock_t(guest_nice));
-+	seq_put_decimal_ull(p, "cpu  ", nsec_to_clock_t(user));
-+	seq_put_decimal_ull(p, " ", nsec_to_clock_t(nice));
-+	seq_put_decimal_ull(p, " ", nsec_to_clock_t(system));
-+	seq_put_decimal_ull(p, " ", nsec_to_clock_t(idle));
-+	seq_put_decimal_ull(p, " ", nsec_to_clock_t(iowait));
-+	seq_put_decimal_ull(p, " ", nsec_to_clock_t(irq));
-+	seq_put_decimal_ull(p, " ", nsec_to_clock_t(softirq));
-+	seq_put_decimal_ull(p, " ", nsec_to_clock_t(steal));
-+	seq_put_decimal_ull(p, " ", nsec_to_clock_t(guest));
-+	seq_put_decimal_ull(p, " ", nsec_to_clock_t(guest_nice));
- 	seq_putc(p, '\n');
- 
- 	for_each_online_cpu(i) {
-@@ -140,16 +140,16 @@ static int show_stat(struct seq_file *p,
- 		guest = kcpustat_cpu(i).cpustat[CPUTIME_GUEST];
- 		guest_nice = kcpustat_cpu(i).cpustat[CPUTIME_GUEST_NICE];
- 		seq_printf(p, "cpu%d", i);
--		seq_put_decimal_ull(p, " ", cputime64_to_clock_t(user));
--		seq_put_decimal_ull(p, " ", cputime64_to_clock_t(nice));
--		seq_put_decimal_ull(p, " ", cputime64_to_clock_t(system));
--		seq_put_decimal_ull(p, " ", cputime64_to_clock_t(idle));
--		seq_put_decimal_ull(p, " ", cputime64_to_clock_t(iowait));
--		seq_put_decimal_ull(p, " ", cputime64_to_clock_t(irq));
--		seq_put_decimal_ull(p, " ", cputime64_to_clock_t(softirq));
--		seq_put_decimal_ull(p, " ", cputime64_to_clock_t(steal));
--		seq_put_decimal_ull(p, " ", cputime64_to_clock_t(guest));
--		seq_put_decimal_ull(p, " ", cputime64_to_clock_t(guest_nice));
-+		seq_put_decimal_ull(p, " ", nsec_to_clock_t(user));
-+		seq_put_decimal_ull(p, " ", nsec_to_clock_t(nice));
-+		seq_put_decimal_ull(p, " ", nsec_to_clock_t(system));
-+		seq_put_decimal_ull(p, " ", nsec_to_clock_t(idle));
-+		seq_put_decimal_ull(p, " ", nsec_to_clock_t(iowait));
-+		seq_put_decimal_ull(p, " ", nsec_to_clock_t(irq));
-+		seq_put_decimal_ull(p, " ", nsec_to_clock_t(softirq));
-+		seq_put_decimal_ull(p, " ", nsec_to_clock_t(steal));
-+		seq_put_decimal_ull(p, " ", nsec_to_clock_t(guest));
-+		seq_put_decimal_ull(p, " ", nsec_to_clock_t(guest_nice));
- 		seq_putc(p, '\n');
- 	}
- 	seq_put_decimal_ull(p, "intr ", (unsigned long long)sum);
---- a/fs/proc/uptime.c
-+++ b/fs/proc/uptime.c
-@@ -5,23 +5,20 @@
- #include <linux/seq_file.h>
- #include <linux/time.h>
- #include <linux/kernel_stat.h>
--#include <linux/cputime.h>
- 
- static int uptime_proc_show(struct seq_file *m, void *v)
- {
- 	struct timespec uptime;
- 	struct timespec idle;
--	u64 idletime;
- 	u64 nsec;
- 	u32 rem;
- 	int i;
- 
--	idletime = 0;
-+	nsec = 0;
- 	for_each_possible_cpu(i)
--		idletime += (__force u64) kcpustat_cpu(i).cpustat[CPUTIME_IDLE];
-+		nsec += (__force u64) kcpustat_cpu(i).cpustat[CPUTIME_IDLE];
- 
- 	get_monotonic_boottime(&uptime);
--	nsec = cputime64_to_jiffies64(idletime) * TICK_NSEC;
- 	idle.tv_sec = div_u64_rem(nsec, NSEC_PER_SEC, &rem);
- 	idle.tv_nsec = rem;
- 	seq_printf(m, "%lu.%02lu %lu.%02lu\n",
---- a/kernel/sched/cpuacct.c
-+++ b/kernel/sched/cpuacct.c
-@@ -297,7 +297,7 @@ static int cpuacct_stats_show(struct seq
- 	for (stat = 0; stat < CPUACCT_STAT_NSTATS; stat++) {
- 		seq_printf(sf, "%s %lld\n",
- 			   cpuacct_stat_desc[stat],
--			   cputime64_to_clock_t(val[stat]));
-+			   nsec_to_clock_t(val[stat]));
- 	}
- 
- 	return 0;
---- a/kernel/sched/cputime.c
-+++ b/kernel/sched/cputime.c
-@@ -75,9 +75,9 @@ static cputime_t irqtime_account_update(
- 	u64 *cpustat = kcpustat_this_cpu->cpustat;
- 	cputime_t irq_cputime;
- 
--	irq_cputime = nsecs_to_cputime64(irqtime) - cpustat[idx];
-+	irq_cputime = nsecs_to_cputime64(irqtime - cpustat[idx]);
- 	irq_cputime = min(irq_cputime, maxtime);
--	cpustat[idx] += irq_cputime;
-+	cpustat[idx] += cputime_to_nsecs(irq_cputime);
- 
- 	return irq_cputime;
- }
-@@ -143,7 +143,7 @@ void account_user_time(struct task_struc
- 	index = (task_nice(p) > 0) ? CPUTIME_NICE : CPUTIME_USER;
- 
- 	/* Add user time to cpustat. */
--	task_group_account_field(p, index, (__force u64) cputime);
-+	task_group_account_field(p, index, cputime_to_nsecs(cputime));
- 
- 	/* Account for user time used */
- 	acct_account_cputime(p);
-@@ -168,11 +168,11 @@ static void account_guest_time(struct ta
- 
- 	/* Add guest time to cpustat. */
- 	if (task_nice(p) > 0) {
--		cpustat[CPUTIME_NICE] += (__force u64) cputime;
--		cpustat[CPUTIME_GUEST_NICE] += (__force u64) cputime;
-+		cpustat[CPUTIME_NICE] += cputime_to_nsecs(cputime);
-+		cpustat[CPUTIME_GUEST_NICE] += cputime_to_nsecs(cputime);
- 	} else {
--		cpustat[CPUTIME_USER] += (__force u64) cputime;
--		cpustat[CPUTIME_GUEST] += (__force u64) cputime;
-+		cpustat[CPUTIME_USER] += cputime_to_nsecs(cputime);
-+		cpustat[CPUTIME_GUEST] += cputime_to_nsecs(cputime);
- 	}
- }
- 
-@@ -193,7 +193,7 @@ void __account_system_time(struct task_s
- 	account_group_system_time(p, cputime);
- 
- 	/* Add system time to cpustat. */
--	task_group_account_field(p, index, (__force u64) cputime);
-+	task_group_account_field(p, index, cputime_to_nsecs(cputime));
- 
- 	/* Account for system time used */
- 	acct_account_cputime(p);
-@@ -234,7 +234,7 @@ void account_steal_time(cputime_t cputim
- {
- 	u64 *cpustat = kcpustat_this_cpu->cpustat;
- 
--	cpustat[CPUTIME_STEAL] += (__force u64) cputime;
-+	cpustat[CPUTIME_STEAL] += cputime_to_nsecs(cputime);
- }
- 
- /*
-@@ -247,9 +247,9 @@ void account_idle_time(cputime_t cputime
- 	struct rq *rq = this_rq();
- 
- 	if (atomic_read(&rq->nr_iowait) > 0)
--		cpustat[CPUTIME_IOWAIT] += (__force u64) cputime;
-+		cpustat[CPUTIME_IOWAIT] += cputime_to_nsecs(cputime);
- 	else
--		cpustat[CPUTIME_IDLE] += (__force u64) cputime;
-+		cpustat[CPUTIME_IDLE] += cputime_to_nsecs(cputime);
- }
- 
- /*
 
 
