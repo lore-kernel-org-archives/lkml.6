@@ -2,154 +2,153 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A68ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE30C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 168982145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:12:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yyM9rvVC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 168982145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 236E72145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 12:15:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 236E72145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726979AbeJRUNk (ORCPT
+        id S1726642AbeJRUPu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 16:13:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41528 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 16:15:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48452 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726507AbeJRUNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 16:13:40 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726325AbeJRUPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 16:15:50 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09A5B2087A;
-        Thu, 18 Oct 2018 12:12:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539864774;
-        bh=SZ+0oZ0M/PLxkW1jcFYUO4ajkHewrtsnNaPItuliGJU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yyM9rvVCt4CyEKLJ8U1RGgUN0RKjY3rLGcheYBYvilBPgwFTM9ltAQ8n8PmcJi65Y
-         8tt+V/M9wVRVHcDNbrogFEJumxFy7U6bdQ3tpUg0jgguxbipXPgBKrOd3UQJeCcWbj
-         me+9izo857WkoOmQaUOF+ELnm/uN63f/FmOEjNkc=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>, Shuah Khan <shuah@kernel.org>
-Cc:     Tom Zanussi <zanussi@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] selftests: ftrace: Add synthetic event syntax testcase
-Date:   Thu, 18 Oct 2018 21:12:32 +0900
-Message-Id: <153986475200.1671.9988462244645010350.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <153986466551.1671.11399119973192957474.stgit@devbox>
-References: <153986466551.1671.11399119973192957474.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        by mx1.redhat.com (Postfix) with ESMTPS id ADEEE305B885;
+        Thu, 18 Oct 2018 12:15:05 +0000 (UTC)
+Received: from prarit.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E986F8A0E8;
+        Thu, 18 Oct 2018 12:15:04 +0000 (UTC)
+Subject: Re: [PATCH v2] kdb: Use strscpy with destination buffer size
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Jonathan Toppins <jtoppins@redhat.com>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        kgdb-bugreport@lists.sourceforge.net
+References: <20180920125914.17920-1-prarit@redhat.com>
+ <9192af58-7966-c023-8b19-5b291839a228@linaro.org>
+ <78793735-c2ce-62f6-d745-5fc06a17beb1@redhat.com>
+ <20181004124535.narksjioip7zo7ha@holly.lan>
+From:   Prarit Bhargava <prarit@redhat.com>
+Message-ID: <8c6b6666-e5fd-49cd-b357-f491b517d4a3@redhat.com>
+Date:   Thu, 18 Oct 2018 08:15:04 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20181004124535.narksjioip7zo7ha@holly.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 18 Oct 2018 12:15:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a testcase to check the syntax and field types for
-synthetic_events interface.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- .../inter-event/trigger-synthetic-event-syntax.tc  |   80 ++++++++++++++++++++
- 1 file changed, 80 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc
 
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc
-new file mode 100644
-index 000000000000..88e6c3f43006
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc
-@@ -0,0 +1,80 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: event trigger - test synthetic_events syntax parser
-+
-+do_reset() {
-+    reset_trigger
-+    echo > set_event
-+    clear_trace
-+}
-+
-+fail() { #msg
-+    do_reset
-+    echo $1
-+    exit_fail
-+}
-+
-+if [ ! -f set_event ]; then
-+    echo "event tracing is not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -f synthetic_events ]; then
-+    echo "synthetic event is not supported"
-+    exit_unsupported
-+fi
-+
-+reset_tracer
-+do_reset
-+
-+echo "Test synthetic_events syntax parser"
-+
-+echo > synthetic_events
-+
-+# synthetic event must have a field
-+! echo "myevent" >> synthetic_events
-+echo "myevent u64 var1" >> synthetic_events
-+
-+# synthetic event must be found in synthetic_events
-+grep "myevent[[:space:]]u64 var1" synthetic_events
-+
-+# it is not possible to add same name event
-+! echo "myevent u64 var2" >> synthetic_events
-+
-+# Non-append open will cleanup all events and add new one
-+echo "myevent u64 var2" > synthetic_events
-+
-+# multiple fields with different spaces
-+echo "myevent u64 var1; u64 var2;" > synthetic_events
-+grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
-+echo "myevent u64 var1 ; u64 var2 ;" > synthetic_events
-+grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
-+echo "myevent u64 var1 ;u64 var2" > synthetic_events
-+grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
-+
-+# test field types
-+echo "myevent u32 var" > synthetic_events
-+echo "myevent u16 var" > synthetic_events
-+echo "myevent u8 var" > synthetic_events
-+echo "myevent s64 var" > synthetic_events
-+echo "myevent s32 var" > synthetic_events
-+echo "myevent s16 var" > synthetic_events
-+echo "myevent s8 var" > synthetic_events
-+
-+echo "myevent char var" > synthetic_events
-+echo "myevent int var" > synthetic_events
-+echo "myevent long var" > synthetic_events
-+echo "myevent pid_t var" > synthetic_events
-+
-+echo "myevent unsigned char var" > synthetic_events
-+echo "myevent unsigned int var" > synthetic_events
-+echo "myevent unsigned long var" > synthetic_events
-+grep "myevent[[:space:]]unsigned long var" synthetic_events
-+
-+# test string type
-+echo "myevent char var[10]" > synthetic_events
-+grep "myevent[[:space:]]char\[10\] var" synthetic_events
-+
-+do_reset
-+
-+exit 0
+On 10/04/2018 08:45 AM, Daniel Thompson wrote:
+> On Thu, Oct 04, 2018 at 08:25:30AM -0400, Prarit Bhargava wrote:
+>> On 10/02/2018 11:53 AM, Daniel Thompson wrote:
+>>> On 20/09/2018 13:59, Prarit Bhargava wrote:
+>>>> gcc 8.1.0 warns with:
+>>>>
+>>>> kernel/debug/kdb/kdb_support.c: In function ‘kallsyms_symbol_next’:
+>>>> kernel/debug/kdb/kdb_support.c:239:4: warning: ‘strncpy’ specified bound
+>>>> depends on the length of the source argument [-Wstringop-overflow=]
+>>>>       strncpy(prefix_name, name, strlen(name)+1);
+>>>>       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>> kernel/debug/kdb/kdb_support.c:239:31: note: length computed here
+>>>>
+>>>> Use strscpy() with the destination buffer size, and use ellipses when
+>>>> displaying truncated symbols.
+>>>>
+>>>> v2: Use strscpy()
+>>>>
+>>>> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+>>>> Cc: Jonathan Toppins <jtoppins@redhat.com>
+>>>> Cc: Jason Wessel <jason.wessel@windriver.com>
+>>>> Cc: Daniel Thompson <daniel.thompson@linaro.org>
+>>>> Cc: kgdb-bugreport@lists.sourceforge.net
+>>>> ---
+>>>>   kernel/debug/kdb/kdb_io.c      | 15 +++++++++------
+>>>>   kernel/debug/kdb/kdb_private.h |  2 +-
+>>>>   kernel/debug/kdb/kdb_support.c | 10 +++++-----
+>>>>   3 files changed, 15 insertions(+), 12 deletions(-)
+>>>>
+>>>> diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
+>>>> index ed5d34925ad0..6a4b41484afe 100644
+>>>> --- a/kernel/debug/kdb/kdb_io.c
+>>>> +++ b/kernel/debug/kdb/kdb_io.c
+>>>> @@ -216,7 +216,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
+>>>>       int count;
+>>>>       int i;
+>>>>       int diag, dtab_count;
+>>>> -    int key;
+>>>> +    int key, buf_size, ret;
+>>>>           diag = kdbgetintenv("DTABCOUNT", &dtab_count);
+>>>> @@ -336,9 +336,8 @@ static char *kdb_read(char *buffer, size_t bufsize)
+>>>>           else
+>>>>               p_tmp = tmpbuffer;
+>>>>           len = strlen(p_tmp);
+>>>> -        count = kallsyms_symbol_complete(p_tmp,
+>>>> -                         sizeof(tmpbuffer) -
+>>>> -                         (p_tmp - tmpbuffer));
+>>>> +        buf_size = sizeof(tmpbuffer) - (p_tmp - tmpbuffer);
+>>>> +        count = kallsyms_symbol_complete(p_tmp, buf_size);
+>>>>           if (tab == 2 && count > 0) {
+>>>>               kdb_printf("\n%d symbols are found.", count);
+>>>>               if (count > dtab_count) {
+>>>> @@ -350,9 +349,13 @@ static char *kdb_read(char *buffer, size_t bufsize)
+>>>>               }
+>>>>               kdb_printf("\n");
+>>>>               for (i = 0; i < count; i++) {
+>>>> -                if (WARN_ON(!kallsyms_symbol_next(p_tmp, i)))
+>>>> +                ret = kallsyms_symbol_next(p_tmp, i, buf_size);
+>>>> +                if (WARN_ON(!ret))
+>>>>                       break;
+>>> I'm getting confused by having two different branches on ret.
+>>>
+>>> Don't get a WARN_ON() when ret == -E2BIG?
+>>>
+>>>
+>>
+>> Should we WARN on a really long symbol?  I don't think we should as we're
+>> handling that by truncating the output and adding ellipses below.
+> 
+> It's OK. You describe the behaviour I expect but I was misreading the
+> code (not realizing that kallsyms_symbol_next() had not become a 0 on
+> success success function).
+> 
+> However after reviewing the code (properly this time) I wonder if the
+> WARN_ON() should be improved to match the return value for the function:
+> 
+>   WARN_ON(ret >= 0 && ret < len)
+> 
+> That said, checking the symbol length is pretty paranoid and getting
+> close to nitpicking so I'll leave it up to you and, with or without, the
+> change:
+> 
+> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+> 
+> 
 
+I think we should leave it as is for now.  OOC was this patch picked up by
+anyone's repo for staging for 4.20?
+
+P.
+
+> Daniel.
+> 
