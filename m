@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C85DECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A843C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E839D21486
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D2DB21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:59:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y8z0qUoL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E839D21486
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeWVZxoE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D2DB21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729263AbeJSCBo (ORCPT
+        id S1729277AbeJSCBs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:01:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49472 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:01:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728410AbeJSCBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:01:43 -0400
+        id S1728410AbeJSCBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:01:47 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1946E21476;
-        Thu, 18 Oct 2018 17:59:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC1D821476;
+        Thu, 18 Oct 2018 17:59:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885578;
-        bh=TokiljljUwvcOLRsjVvxKifkG3JbnJwaEDkW8nlomDU=;
+        s=default; t=1539885582;
+        bh=0fZ7koo4hdQRjXtMVQiJSNFdx7zq8HI/gZCIsvJJnoA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y8z0qUoLgYGxnslOdIGxvjrMrq5yQaNLYlC69z3tLrzSOOsqJzNdkjZkQciNLbzq9
-         p5WoshgUdwbdiIzjbIm1seZQHLU0PVmauTcTOgDzuYmlt0X3ACstSBLEdJWbgEO8m/
-         +kSkL3YYGk++q8Z/AWaJg+gNex4piQJ9SpXI87NA=
+        b=CeWVZxoEwoAQRKI56z9iE+LNdlv5F9izuCY4GbudCTnK8uo0XdDc//5Z608TmFYdG
+         mXw21+t4oYxkFApr+cFH46Tdym5dP3lINo34M5Mpb2YgEsLz/xLBm6+AQGyS1n640g
+         piTZ6Z9/2ghpRHd25+SyMvXFWvJcDbPU6KLaFzYw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -44,9 +44,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sven Eckelmann <sven@narfation.org>,
         Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 10/41] batman-adv: fix backbone_gw refcount on queue_work() failure
-Date:   Thu, 18 Oct 2018 19:54:25 +0200
-Message-Id: <20181018175418.690509119@linuxfoundation.org>
+Subject: [PATCH 4.14 11/41] batman-adv: fix hardif_neigh refcount on queue_work() failure
+Date:   Thu, 18 Oct 2018 19:54:26 +0200
+Message-Id: <20181018175418.862296113@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
 References: <20181018175416.718399607@linuxfoundation.org>
@@ -66,9 +66,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marek Lindner <mareklindner@neomailbox.ch>
 
-[ Upstream commit 5af96b9c59c72fb2af2d19c5cc2f3cdcee391dff ]
+[ Upstream commit 4c4af6900844ab04c9434c972021d7b48610e06a ]
 
-The backbone_gw refcounter is to be decreased by the queued work and
+The hardif_neigh refcounter is to be decreased by the queued work and
 currently is never decreased if the queue_work() call fails.
 Fix by checking the queue_work() return value and decrease refcount
 if necessary.
@@ -79,34 +79,32 @@ Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/batman-adv/bridge_loop_avoidance.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ net/batman-adv/bat_v_elp.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/net/batman-adv/bridge_loop_avoidance.c
-+++ b/net/batman-adv/bridge_loop_avoidance.c
-@@ -1772,6 +1772,7 @@ batadv_bla_loopdetect_check(struct batad
- {
- 	struct batadv_bla_backbone_gw *backbone_gw;
- 	struct ethhdr *ethhdr;
+--- a/net/batman-adv/bat_v_elp.c
++++ b/net/batman-adv/bat_v_elp.c
+@@ -254,6 +254,7 @@ static void batadv_v_elp_periodic_work(s
+ 	struct batadv_priv *bat_priv;
+ 	struct sk_buff *skb;
+ 	u32 elp_interval;
 +	bool ret;
  
- 	ethhdr = eth_hdr(skb);
- 
-@@ -1795,8 +1796,13 @@ batadv_bla_loopdetect_check(struct batad
- 	if (unlikely(!backbone_gw))
- 		return true;
- 
--	queue_work(batadv_event_workqueue, &backbone_gw->report_work);
--	/* backbone_gw is unreferenced in the report work function function */
-+	ret = queue_work(batadv_event_workqueue, &backbone_gw->report_work);
+ 	bat_v = container_of(work, struct batadv_hard_iface_bat_v, elp_wq.work);
+ 	hard_iface = container_of(bat_v, struct batadv_hard_iface, bat_v);
+@@ -315,8 +316,11 @@ static void batadv_v_elp_periodic_work(s
+ 		 * may sleep and that is not allowed in an rcu protected
+ 		 * context. Therefore schedule a task for that.
+ 		 */
+-		queue_work(batadv_event_workqueue,
+-			   &hardif_neigh->bat_v.metric_work);
++		ret = queue_work(batadv_event_workqueue,
++				 &hardif_neigh->bat_v.metric_work);
 +
-+	/* backbone_gw is unreferenced in the report work function function
-+	 * if queue_work() call was successful
-+	 */
-+	if (!ret)
-+		batadv_backbone_gw_put(backbone_gw);
++		if (!ret)
++			batadv_hardif_neigh_put(hardif_neigh);
+ 	}
+ 	rcu_read_unlock();
  
- 	return true;
- }
 
 
