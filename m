@@ -2,92 +2,246 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20195C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E95ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC36E2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:57:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC36E2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 6CEBC2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:57:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CEBC2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chris-wilson.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbeJRO46 (ORCPT
+        id S1727583AbeJRO5I convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 10:56:58 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:56031 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727337AbeJRO45 (ORCPT
+        Thu, 18 Oct 2018 10:57:08 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:52848 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727337AbeJRO5I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 10:56:57 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 206-v6so4240957wmb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 23:57:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Wu3atd0TLXGOQNx8SJ45TWS7tUV7tC5mUWwfFKFiRxc=;
-        b=o3qRTvLRaaDGwJoy1LXH8a+qdWSV+gl6hTdurlymeBBcf/5LOXclFs9zvhjSX8HETb
-         FzRxnRWo+QCQ1hrifUfgSrpgOw6Yijm3ZbetAwwv11tIWbh2Z9a9JE3eeqz2lejuPOf9
-         PSPqi+nlZIzeBVtKRDMWFz+soaVTIy6Kz6uJPnZVWMPbM+C3khxLpo3R1Ph84+MyDbDX
-         y9kzdweWMOZxRlIw3cOLUOF2YgcWGck8kTgBG+/C5D+3dNhuauNWMB/+ZEtfXqUFLpd6
-         6esoN1ztaZTdaeQOycG/TSwcYYYFbrDQxQXS4wOIp39FVt8hxbZ8v4Qnv0zFHNWhZNnA
-         /LGQ==
-X-Gm-Message-State: ABuFfojIxi6axaDtKE8tZX1UEaOrFbxKwshuxDfoFxNEq8pt/bPiK9do
-        sAG5x2HILCO7PXsHhMenmHM=
-X-Google-Smtp-Source: ACcGV63Qbi6xauc30O9Wo+QPH6BtDnxeXoqEOFE8BeLVRBsl+YnIoX3ft72C08u9fvWO2WbE+9xCCw==
-X-Received: by 2002:a1c:3e48:: with SMTP id l69-v6mr5932627wma.143.1539845844186;
-        Wed, 17 Oct 2018 23:57:24 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id 64-v6sm16466433wrr.64.2018.10.17.23.57.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 23:57:23 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id ABDCA125AEA; Thu, 18 Oct 2018 08:57:22 +0200 (CEST)
-Date:   Thu, 18 Oct 2018 08:57:22 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     akpm@linux-foundation.org, mhocko@suse.com,
-        dan.j.williams@intel.com, yasu.isimatu@gmail.com,
-        rppt@linux.vnet.ibm.com, malat@debian.org,
-        linux-kernel@vger.kernel.org, pavel.tatashin@microsoft.com,
-        jglisse@redhat.com, Jonathan.Cameron@huawei.com, rafael@kernel.org,
-        dave.jiang@intel.com, linux-mm@kvack.org,
-        alexander.h.duyck@linux.intel.com,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH 2/5] mm/memory_hotplug: Create add/del_device_memory
- functions
-Message-ID: <20181018065722.GA29999@techadventures.net>
-References: <20181015153034.32203-1-osalvador@techadventures.net>
- <20181015153034.32203-3-osalvador@techadventures.net>
- <d0a12eb5-3824-8d25-75f8-3e62f1e81994@redhat.com>
- <20181017093331.GA25724@techadventures.net>
- <883d3ab7-b2df-9b9a-7681-1019ce3b9e18@redhat.com>
+        Thu, 18 Oct 2018 10:57:08 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 14143354-1500050 
+        for multiple; Thu, 18 Oct 2018 07:56:48 +0100
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <883d3ab7-b2df-9b9a-7681-1019ce3b9e18@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8BIT
+To:     Kuo-Hsin Yang <vovoy@chromium.org>,
+        Michal Hocko <mhocko@kernel.org>
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <153971466599.22931.16793398326492316920@skylake-alporthouse-com>
+Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        peterz@infradead.org, dave.hansen@intel.com, corbet@lwn.net,
+        hughd@google.com, joonas.lahtinen@linux.intel.com,
+        marcheu@chromium.org, hoegsberg@chromium.org
+References: <20181016174300.197906-1-vovoy@chromium.org>
+ <20181016174300.197906-3-vovoy@chromium.org>
+ <20181016182155.GW18839@dhcp22.suse.cz>
+ <153971466599.22931.16793398326492316920@skylake-alporthouse-com>
+Message-ID: <153984580501.19935.11456945882099910977@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: [PATCH 2/2] drm/i915: Mark pinned shmemfs pages as unevictable
+Date:   Thu, 18 Oct 2018 07:56:45 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 11:45:50AM +0200, David Hildenbrand wrote:
-> Here you go ;)
-> 
-> Reviewed-by: David Hildenbrand <david@redhat.com>
+Quoting Chris Wilson (2018-10-16 19:31:06)
+> Fwiw, the shmem_unlock_mapping() call feels quite expensive, almost
+> nullifying the advantage gained from not walking the lists in reclaim.
+> I'll have better numbers in a couple of days.
 
-thanks!
+Using a test ("igt/benchmarks/gem_syslatency -t 120 -b -m" on kbl)
+consisting of cycletest with a background load of trying to allocate +
+populate 2MiB (to hit thp) while catting all files to /dev/null, the
+result of using mapping_set_unevictable is mixed.
 
-> I'm planning to look into the other patches as well, but I'll be busy
-> with traveling and KVM forum the next 1.5 weeks.
+Each test run consists of running cycletest for 120s measuring the mean
+and maximum wakeup latency and then repeating that 120 times.
 
-No need to hurry, this can wait.
+x baseline-mean.txt # no i915 activity
++ tip-mean.txt # current stock i915 with a continuous load
++------------------------------------------------------------------------+
+| x      +                                                               |
+| x      +                                                               |
+|xx      +                                                               |
+|xx      +                                                               |
+|xx      +                                                               |
+|xx     ++                                                               |
+|xx    +++                                                               |
+|xx    +++                                                               |
+|xx    +++                                                               |
+|xx    +++                                                               |
+|xx    +++                                                               |
+|xx    ++++                                                              |
+|xx   +++++                                                              |
+|xx  ++++++                                                              |
+|xx  ++++++                                                              |
+|xx  ++++++                                                              |
+|xx  ++++++                                                              |
+|xx  ++++++                                                              |
+|xx  +++++++ +                                                           |
+|xx ++++++++ +                                                           |
+|xx ++++++++++                                                           |
+|xx+++++++++++ +     +                                                   |
+|xx+++++++++++ +     +  +          +      +       ++                    +|
+| A                                                                      |
+||______M_A_________|                                                    |
++------------------------------------------------------------------------+
+    N           Min           Max        Median           Avg        Stddev
+x 120       359.153       876.915       863.548     778.80319     186.15875
++ 120      2475.318     73172.303      7666.812     9579.4671      9552.865
 
--- 
-Oscar Salvador
-SUSE L3
+Our target then is 863us, but currently i915 adds 7ms of uninterruptable
+delay on hitting the shrinker.
+
+x baseline-mean.txt
++ mapping-mean.txt # applying the mapping_set_evictable patch
+* tip-mean.txt
++------------------------------------------------------------------------+
+| x      *         +                                                     |
+| x      *         +                                                     |
+|xx      *         +                                                     |
+|xx      *         +                                                     |
+|xx      *         +                                                     |
+|xx     **         +                                                     |
+|xx    ***         ++                                                    |
+|xx    ***         ++                                                    |
+|xx    ***         ++                                                    |
+|xx    ***         ++                                                    |
+|xx    ***         ++                                                    |
+|xx    ****  +     ++                                                    |
+|xx   *****+ ++    ++                                                    |
+|xx  ******+ ++    ++                                                    |
+|xx  ******+ ++  + ++                                                    |
+|xx  ******+ ++  + ++                                                    |
+|xx  ******+ ++  ++++                                                    |
+|xx  ******+ ++  ++++                                                    |
+|xx  ******* *+  ++++                                                    |
+|xx ******** *+ +++++                                                    |
+|xx **********+ +++++                                                    |
+|xx***********+*+++++*                                                   |
+|xx***********+*+++++*  *  +       *      *       **                    *|
+| A                                                                      |
+|          |___AM___|                                                    |
+||______M_A_________|                                                    |
++------------------------------------------------------------------------+
+    N           Min           Max        Median           Avg        Stddev
+x 120       359.153       876.915       863.548     778.80319     186.15875
++ 120      3291.633     26644.894     15829.186     14654.781     4466.6997
+* 120      2475.318     73172.303      7666.812     9579.4671      9552.865
+
+Shows that if we use the mapping_set_evictable() +
+shmem_unlock_mapping() we add a further 8ms uninterruptable delay to the
+system... That's the opposite of our goal! ;)
+
+x baseline-mean.txt
++ lock_vma-mean.txt # the old approach of pinning each page
+* tip-mean.txt
++------------------------------------------------------------------------+
+| *+     *                                                               |
+| *+   * *                                                               |
+| *+   * *                                                               |
+| *+   * *                                                               |
+| *+   ***                                                               |
+| *+   ***                                                               |
+| *+   ***                                                               |
+| *+   ***                                                               |
+| *+   ***                                                               |
+| *+   ***                                                               |
+| *+   ***                                                               |
+| *+   ****                                                              |
+| *+  *****                                                              |
+| *+  ******                                                             |
+| *+  ****** *                                                           |
+| *+  ****** *                                                           |
+| *+ ******* *                                                           |
+| *+******** *                                                           |
+| *+******** *                                                           |
+| *+******** *                                                           |
+| *+******** * *     *                                                   |
+| *+******** * *   + *  *          *      *       * *                   *|
+| A                                                                      |
+||MA|                                                                    |
+||_______M_A________|                                                    |
++------------------------------------------------------------------------+
+    N           Min           Max        Median           Avg        Stddev
+x 120       359.153       876.915       863.548     778.80319     186.15875
++ 120       511.415     18757.367      1276.302     1416.0016     1679.3965
+* 120      2475.318     73172.303      7666.812     9579.4671      9552.865
+
+By contrast, the previous approach of using mlock_page_vma() does
+dramatically reduce the uninterruptable delay -- which suggests that the
+mapping_set_evictable() isn't keeping our unshrinkable pages off the
+shrinker lru.
+
+However, if instead of looking at the average uninterruptable delay
+during the 120s of cycletest, but look at the worst case, things get a
+little more interesting. Currently i915 is terrible.
+
+x baseline-max.txt
++ tip-max.txt
++------------------------------------------------------------------------+
+|      *                                                                 |
+[snip 100 lines]
+|      *                                                                 |
+|      *                                                                 |
+|      *                                                                 |
+|      *                                                                 |
+|      *                                                                 |
+|      *                                                                 |
+|      *                                                                 |
+|      *                                                                 |
+|      * +++      ++ +           +  +      +                            +|
+|      A                                                                 |
+||_____M_A_______|                                                       |
++------------------------------------------------------------------------+
+    N           Min           Max        Median           Avg        Stddev
+x 120          7391         58543         51953     51564.033     5044.6375
++ 120       2284928  6.752085e+08       3385097      20825362      80352645
+
+Worst case with no i915 is 52ms, but as soon as we load up i915 with
+some work, the worst case uninterruptable delay is on average 20s!!! As
+suggested by the median, the data is severely skewed by a few outliers.
+(Worst worst case is so bad khungtaskd often makes an appearance.)
+
+x baseline-max.txt
++ mapping-max.txt
+* tip-max.txt
++------------------------------------------------------------------------+
+|      *                                                                 |
+[snip 100 lines]
+|      *                                                                 |
+|      *                                                                 |
+|      *                                                                 |
+|      *                                                                 |
+|      *                                                                 |
+|      *                                                                 |
+|      *                                                                 |
+|      *+                                                                |
+|      *+***      ** *           * +*      *                            *|
+|      A                                                                 |
+|    |_A__|                                                              |
+||_____M_A_______|                                                       |
++------------------------------------------------------------------------+
+    N           Min           Max        Median           Avg        Stddev
+x 120          7391         58543         51953     51564.033     5044.6375
++ 120       3088140 2.9181602e+08       4022581     6528993.3      26278426
+* 120       2284928  6.752085e+08       3385097      20825362      80352645
+
+So while the mapping_set_evictable patch did reduce the maximum observed
+delay within the 4 hour sample, on average (median, to exclude those worst
+worst case outliers) it still fares worse than stock i915. The
+mlock_page_vma() has no impact on worst case wrt stock.
+
+My conclusion is that the mapping_set_evictable patch makes both the
+average and worst case uninterruptable latency (as observed by other
+users of the system) significantly worse. (Although the maximum latency
+is not stable enough to draw a real conclusion other than i915 is
+shockingly terrible.)
+-Chris
