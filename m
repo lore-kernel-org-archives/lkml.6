@@ -2,76 +2,114 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 196B3ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F09C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:14:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8CE62087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:14:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8CE62087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7144921473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:14:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7144921473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728206AbeJRTPP (ORCPT
+        id S1728226AbeJRTPR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 18 Oct 2018 15:15:17 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36078 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728171AbeJRTPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 18 Oct 2018 15:15:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50864 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728171AbeJRTPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 15:15:13 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B879030F8BEC;
-        Thu, 18 Oct 2018 11:14:42 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5D58310018F8;
-        Thu, 18 Oct 2018 11:14:40 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Jim Mattson <jmattson@google.com>
-Cc:     Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Liran Alon <liran.alon@oracle.com>,
-        kvm list <kvm@vger.kernel.org>
-Subject: Re: [PATCH v6 06/13] KVM: nVMX: optimize prepare_vmcs02{,_full} for Enlightened VMCS case
-In-Reply-To: <173cc977-58fd-9431-6199-c2eb8e898f7c@redhat.com>
-References: <20181016165011.6607-1-vkuznets@redhat.com> <20181016165011.6607-7-vkuznets@redhat.com> <2064be05-4286-e3d5-cd22-13fd957b7003@redhat.com> <8736t4sk8w.fsf@vitty.brq.redhat.com> <0ff3acb0-1d20-cbb0-5f40-887d9db93d9e@redhat.com> <CALMp9eTtSuguXb=gCWKL9ZKWy5kUve0SNY1Toduf8x2Qn=1s9Q@mail.gmail.com> <173cc977-58fd-9431-6199-c2eb8e898f7c@redhat.com>
-Date:   Thu, 18 Oct 2018 13:14:38 +0200
-Message-ID: <87sh13qzfl.fsf@vitty.brq.redhat.com>
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74137A78;
+        Thu, 18 Oct 2018 04:14:44 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.80])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1213B3F5D3;
+        Thu, 18 Oct 2018 04:14:38 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 12:14:36 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Yury Norov <ynorov@caviumnetworks.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Steve Ellcey <sellcey@caviumnetworks.com>,
+        Prasun Kapoor <Prasun.Kapoor@caviumnetworks.com>,
+        Andreas Schwab <schwab@suse.de>,
+        Alexander Graf <agraf@suse.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Bamvor Zhangjian <bamv2005@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Adam Borowski <kilobyte@angband.pl>,
+        "Manuel A. Fernandez Montecelo" <manuel.montezelo@gmail.com>,
+        James Hogan <james.hogan@imgtec.com>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Andrew Pinski <pinskia@gmail.com>,
+        Lin Yongting <linyongting@huawei.com>,
+        Alexey Klimov <klimov.linux@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Nathan Lynch <Nathan_Lynch@mentor.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Ramana Radhakrishnan <ramana.gcc@googlemail.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        David Miller <davem@davemloft.net>,
+        Christoph Muellner <christoph.muellner@theobroma-systems.com>
+Subject: Re: [PATCH v9 00/24] ILP32 for ARM64
+Message-ID: <20181018111435.GA237391@arrakis.emea.arm.com>
+References: <20180516081910.10067-1-ynorov@caviumnetworks.com>
+ <CALCETrVuabkb5ZQOSgQQTEq8CrS602NBpAkE2=4n982r1f5reQ@mail.gmail.com>
+ <CAK8P3a1Yhhv1TcQTcF0MinicGovgp_0g_sXqADe3fjVTtOK_aw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 18 Oct 2018 11:14:42 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1Yhhv1TcQTcF0MinicGovgp_0g_sXqADe3fjVTtOK_aw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Bonzini <pbonzini@redhat.com> writes:
+On Sun, Oct 14, 2018 at 09:49:01PM +0200, Arnd Bergmann wrote:
+> On Sat, Oct 13, 2018 at 9:36 PM Andy Lutomirski <luto@amacapital.net> wrote:
+> >
+> > On Wed, May 16, 2018 at 1:19 AM Yury Norov <ynorov@caviumnetworks.com> wrote:
+> > >
+> > > This series enables AARCH64 with ILP32 mode.
+> > >
+> > > As supporting work, it introduces ARCH_32BIT_OFF_T configuration
+> > > option that is enabled for existing 32-bit architectures but disabled
+> > > for new arches (so 64-bit off_t userspace type is used by new userspace).
+> > > Also it deprecates getrlimit and setrlimit syscalls prior to prlimit64.
+> >
+> > Second, ILP32 user code is highly unlikely
+> > to end up with the same struct layout as ILP64 code.  The latter seems
+> > like it should be solved entirely in userspace by adding a way to
+> > annotate a structure as being a kernel ABI structure and getting the
+> > toolchain to lay it out as if it were ILP64 even though the target is
+> > ILP32.
+> 
+> The syscall ABI could be almost completely abstracted in glibc, the
+> main issue is ioctl and a couple of related interfaces that pass data
+> structures (read() on /dev/input/*, mmap on /dev/snd/*
+> or raw sockets, fcntl).
 
-> On 17/10/2018 19:08, Jim Mattson wrote:
->> I believe that ESXi reads GUEST_CS_AR_BYTES on every VM-exit to
->> determine code size.
->
-> Which makes me wonder, maybe we should add GUEST_SS_AR_BYTES which is
-> where the CPL lives.  But then your tests from last year didn't find it.
->
-
-Hyper-V does read GUEST_SS_AR_BYTES. Way less frequent than
-GUEST_CS_AR_BYTES but still.
-
-Based on that my suggestion would be to shadow GUEST_SS_AR_BYTES, keep
-GUEST_SS_AR_BYTES and unshadow the rest (GUEST_ES_BASE,
-GUEST_CS_SELECTOR, GUEST_CS_LIMIT, GUEST_CS_BASE). I can do this as a
-separate patch as I see this series is already in kvm/queue.
+There is another case on struct siginfo which has some pointers and it
+wouldn't look like an LP64 structure at all (and glibc doesn't normally
+intercept the sighandler call to rewrite the structure). We could add
+padding around void * members as the kernel zeros them, I don't recall
+the kernel reading these pointers from user. Anyway, using something
+that resembles compat_siginfo looked the simplest for ILP32.
 
 -- 
-Vitaly
+Catalin
