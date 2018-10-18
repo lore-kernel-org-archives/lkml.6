@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 771A1ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2A0ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FCCC21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93C8820645
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w/+at5MD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FCCC21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jf1Wragd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93C8820645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729341AbeJSCCR (ORCPT
+        id S1729356AbeJSCCU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:02:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50096 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:02:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728712AbeJSCCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:02:16 -0400
+        id S1728712AbeJSCCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:02:19 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1A9221473;
-        Thu, 18 Oct 2018 18:00:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D9D221473;
+        Thu, 18 Oct 2018 18:00:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885610;
-        bh=TtDDB1KzIeHDGh/2T2aZGiPudyS00GncYgq0zGjwhA0=;
+        s=default; t=1539885613;
+        bh=mB2M4HVF1nOmKAYthiDAvgGFsblqi1x/FwJYRe3oYbo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w/+at5MD2TAjjJ24BkogjdImas46Yr8P08B2St/P8//nPShnS40SqMjNm+0aWV1Rt
-         eWBygVMnHC1Oj49gcDaFP40Nbi9KhKxqHXx/Moeg0FGUUKaGunECoHUcSO2lSLmoO3
-         ahrt5l9pHyNKUvyel2uIdBYPYdrv1hKwRUdAh6vo=
+        b=Jf1Wragd1vYYEDxDfEK3V25pUPZTqAV6M+Az/6HdgrxUEUXx8iQwiGuj1PXiTD3pr
+         OTqJ5FFJiRcxgicFhpyKixgD42t/9NRTSlnkPybvFEOWa2wbreBj9C2ABmSBtFt1l2
+         3OZgC13iCHgEYA2HgnzQ8EgDtoErbOyok6L0xl3w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
-        Andreas Schwab <schwab@linux-m68k.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, Christian Lamparter <chunkeey@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 17/41] Input: atakbd - fix Atari CapsLock behaviour
-Date:   Thu, 18 Oct 2018 19:54:32 +0200
-Message-Id: <20181018175419.864012371@linuxfoundation.org>
+Subject: [PATCH 4.14 18/41] net: emac: fix fixed-link setup for the RTL8363SB switch
+Date:   Thu, 18 Oct 2018 19:54:33 +0200
+Message-Id: <20181018175420.036389425@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
 References: <20181018175416.718399607@linuxfoundation.org>
@@ -64,44 +63,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Schmitz <schmitzmic@gmail.com>
+From: Christian Lamparter <chunkeey@gmail.com>
 
-[ Upstream commit 52d2c7bf7c90217fbe875d2d76f310979c48eb83 ]
+[ Upstream commit 08e39982ef64f800fd1f9b9b92968d14d5fafa82 ]
 
-The CapsLock key on Atari keyboards is not a toggle, it does send the
-normal make and break scancodes.
+On the Netgear WNDAP620, the emac ethernet isn't receiving nor
+xmitting any frames from/to the RTL8363SB (identifies itself
+as a RTL8367RB).
 
-Drop the CapsLock toggle handling code, which did cause the CapsLock
-key to merely act as a Shift key.
+This is caused by the emac hardware not knowing the forced link
+parameters for speed, duplex, pause, etc.
 
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Andreas Schwab <schwab@linux-m68k.org>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+This begs the question, how this was working on the original
+driver code, when it was necessary to set the phy_address and
+phy_map to 0xffffffff. But I guess without access to the old
+PPC405/440/460 hardware, it's not possible to know.
+
+Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/input/keyboard/atakbd.c |   10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/ibm/emac/core.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/drivers/input/keyboard/atakbd.c
-+++ b/drivers/input/keyboard/atakbd.c
-@@ -189,14 +189,8 @@ static void atakbd_interrupt(unsigned ch
+--- a/drivers/net/ethernet/ibm/emac/core.c
++++ b/drivers/net/ethernet/ibm/emac/core.c
+@@ -2671,12 +2671,17 @@ static int emac_init_phy(struct emac_ins
+ 		if (of_phy_is_fixed_link(np)) {
+ 			int res = emac_dt_mdio_probe(dev);
  
- 		scancode = atakbd_keycode[scancode];
- 
--		if (scancode == KEY_CAPSLOCK) {	/* CapsLock is a toggle switch key on Amiga */
--			input_report_key(atakbd_dev, scancode, 1);
--			input_report_key(atakbd_dev, scancode, 0);
--			input_sync(atakbd_dev);
--		} else {
--			input_report_key(atakbd_dev, scancode, down);
--			input_sync(atakbd_dev);
--		}
-+		input_report_key(atakbd_dev, scancode, down);
-+		input_sync(atakbd_dev);
- 	} else				/* scancodes >= 0xf3 are mouse data, most likely */
- 		printk(KERN_INFO "atakbd: unhandled scancode %x\n", scancode);
- 
+-			if (!res) {
+-				res = of_phy_register_fixed_link(np);
+-				if (res)
+-					mdiobus_unregister(dev->mii_bus);
++			if (res)
++				return res;
++
++			res = of_phy_register_fixed_link(np);
++			dev->phy_dev = of_phy_find_device(np);
++			if (res || !dev->phy_dev) {
++				mdiobus_unregister(dev->mii_bus);
++				return res ? res : -EINVAL;
+ 			}
+-			return res;
++			emac_adjust_link(dev->ndev);
++			put_device(&dev->phy_dev->mdio.dev);
+ 		}
+ 		return 0;
+ 	}
 
 
