@@ -2,221 +2,131 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BADC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74570C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ABE3208E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:12:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TvXRJKbM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ABE3208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E6882098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 08:13:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E6882098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbeJRQMa (ORCPT
+        id S1727600AbeJRQNP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 12:12:30 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:45356 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbeJRQMa (ORCPT
+        Thu, 18 Oct 2018 12:13:15 -0400
+Received: from gateway22.websitewelcome.com ([192.185.46.156]:36774 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727378AbeJRQNP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 12:12:30 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181018081239euoutp023238cb62a519976f4f7ed14b352a54eb~epb5W0S7U0688706887euoutp02P
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 08:12:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181018081239euoutp023238cb62a519976f4f7ed14b352a54eb~epb5W0S7U0688706887euoutp02P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1539850359;
-        bh=c6C6h5a+JUjlckMI5xgYQjKlgLQlLPtyXbf7HPWhgDM=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=TvXRJKbMXVhzsss4e/cou9eF9DJOp9c1KabKBq1SqefSj0tVv1rFwbhMLXVyT+Xvr
-         4VdbKqlR2sb/33ds3Y2ikzw6MAxy+/u/VUWBK//PuE1lziFxvQJFT/dyQWFmXApRTB
-         F1H0nQ+7Y+0DL515yY1LTmQShsHb4sFwh2nsD/wA=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181018081238eucas1p1aa1019e68dd0744e1a14df6ee0e09d5f~epb4DWTOu2170621706eucas1p1I;
-        Thu, 18 Oct 2018 08:12:38 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 49.A2.04441.57048CB5; Thu, 18
-        Oct 2018 09:12:37 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181018081237eucas1p1380ba533db3f718b6ada8289e83f0f10~epb3RbYC73110831108eucas1p1j;
-        Thu, 18 Oct 2018 08:12:37 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181018081237eusmtrp180501b7cca49eb32f17036a4e0edc9ed~epb3Aztv11288912889eusmtrp1a;
-        Thu, 18 Oct 2018 08:12:37 +0000 (GMT)
-X-AuditID: cbfec7f2-5e3ff70000001159-63-5bc84075fe24
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id CA.A2.04128.47048CB5; Thu, 18
-        Oct 2018 09:12:36 +0100 (BST)
-Received: from [106.120.51.20] (unknown [106.120.51.20]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20181018081236eusmtip1d96001ee542d5337c71797789e1b1220~epb2Yh1kX1409014090eusmtip1m;
-        Thu, 18 Oct 2018 08:12:36 +0000 (GMT)
-Subject: Re: [RFC PATCH 0/7] Introduce thermal pressure
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Thara Gopinath <thara.gopinath@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kachhap <amit.kachhap@gmail.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Javi Merino <javi.merino@kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Ionela Voinescu <ionela.voinescu@arm.com>,
-        b.zolnierkie@samsung.com
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-Date:   Thu, 18 Oct 2018 10:12:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.9.1
+        Thu, 18 Oct 2018 12:13:15 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 5711B174D4
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 03:13:24 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id D3Qgg66xsPvAdD3Qmgtt9E; Thu, 18 Oct 2018 03:13:23 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:45790 helo=[192.168.1.41])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gD3Qf-0006zf-PF; Thu, 18 Oct 2018 03:13:14 -0500
+Subject: Re: [PATCH] RDMA/ucma: Fix Spectre v1 vulnerability
+To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181016145901.GA8811@embeddedor.com>
+ <b6585727108669e0c85e7871575c7700d69b5f5d.camel@redhat.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <ada1ea3b-8dbd-ed10-5106-d725d5b17116@embeddedor.com>
+Date:   Thu, 18 Oct 2018 10:13:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtBZam-+3sbKa+XffhoxkPX_ndTLoxioVwU-iz0qTnnPAw@mail.gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SWUwTURSGczvT6VCtuS0IJ7jFRhJFZYmiNxFFIzFjjNuLMWAiI4yIAtYO
-        4PqA0QAiEJegtJbFGAGbRqQ2gIrKpgURRBFUlFgMJLggSLVRH1DbKZG375zz/2e5uSylGZcH
-        skmpaYI+lU/WMkq65vGvZ0vT17bGhjnKwsjvrwYFqS6qkpMS5xxS+rJXTk5dq2JIYWO+jEyY
-        ixnSfdfEEGd+CyIvGspkxJ7fICND1iqaFH8vpMjgQAFDugoNFMlpcVGk+ge3Vs1ZSiyIu2Ps
-        V3C3K4O5a/UfZZzVfIbh3vXWM9zDYouCG33Qw3AFNjPinNa525QxysgEITkpQ9CHrolT7svK
-        rUS6N/5Hmhr7UCbK1eQiHxbwcrB+MChykZLV4EoET9s7aSn4jqDh/g2ZFDgRdEx8kk9aBtqe
-        ei0VCB4Nt3otIwgaO7ORW+WLV8KT/iIP++Ew+PVtnHKLKFwmh/q86n99WZbBIVBnPuTW0DgI
-        TM1/PBNm4p3Q4rjq8aqwGtoMg7SbffB2uHm5h3EzhQOgb7BUJvE8qB0xefoDvsrC6exuhWTO
-        gFtFRbS0djScf+RgJPaFT3abQuLZ0H4xz6sRoSPH7NWcgOy2Oq9mFTTbn8vdO1N4EVTdDZXS
-        6+Cz4YonDXgGvB5RS+vMgAs1lykprYKcLO9TLwRbXpdMYn+osFxSnENa45QjjVMOM045zPh/
-        bhmizShASBdTEgUxPFU4HCLyKWJ6amJI/MEUK/r3E9sn7ON16MeLPU0Is0g7XeUQ7LEaOZ8h
-        Hk1pQsBSWj/V8RWtsRpVAn/0mKA/uFufniyITWgWS2sDVOUl1bEanMinCQcEQSfoJ6sy1icw
-        E9UuSFsStXrkZFR/uWnn4uj3rk0dMVnzNmwkhA8dvVMRV/BWzfP5P38HjXVfd83tebU+vn6v
-        +vQJTfiy5sX8UIRpf7mrZMcS+p7O12XE29ixTZY03bCN+xK4g3x+HK9rD4jcHGFOXAhJDYEf
-        d0WfdTg6g5wx67dsnfbNOd82v7VDS4v7+PBgSi/yfwFlUKLphQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplleLIzCtJLcpLzFFi42I5/e/4Xd0ShxPRBuvfWlv8ejeT3WLjjPWs
-        FvM+y1rMv3KN1aJ58Xo2i6kHe5ks/q2ay2ZxedccNovPvUcYLS4dWMBkcbz3AJPF003rWSzm
-        fpnKbPHkYR+bxYWpM5ktOo58Y7bY+NXDQdBjzbw1jB47Z91l99i8Qstj8Z6XTB6bVnWyedy5
-        tofNY//cNewe7/ddZfPo27KK0ePzJrkArig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1D
-        Y/NYKyNTJX07m5TUnMyy1CJ9uwS9jLauFYwFN8UqDh28xdjA2CXUxcjJISFgIvHw5Bn2LkYu
-        DiGBpYwS18/9ZYNIiElM2redHcIWlvhzrYsNoug1o8TE6U2MIAlhAXOJU3dngNkiAgYSPz9+
-        YgYpYhZYwipxZtcqsElCAneZJU7dY+pi5OBgE9CT2LGqECTMK+AmsWbtF7AFLAKqEnMO/2cF
-        sUUFIiRWL3/BClEjKHFy5hMWEJtTIFBi3fSrYCOZBcwk5m1+yAxhi0vcejKfCcKWl9j+dg7z
-        BEahWUjaZyFpmYWkZRaSlgWMLKsYRVJLi3PTc4uN9IoTc4tL89L1kvNzNzECk8C2Yz+37GDs
-        ehd8iFGAg1GJh/dB6vFoIdbEsuLK3EOMEhzMSiK81WYnooV4UxIrq1KL8uOLSnNSiw8xmgI9
-        N5FZSjQ5H5ig8kriDU0NzS0sDc2NzY3NLJTEec8bVEYJCaQnlqRmp6YWpBbB9DFxcEo1MO7o
-        WqRT+8Po1cTGe1vWCLPWZfKnJEedX+r2oi1HOOUqdz1/x/WVK864Jx2f4eMRYOjI7jUzq+dC
-        iVMe76wVYYsNOfRz231Lo5Uq6ldcOfzHVEXqt+FSZoupU9i+iusJlJj+lYzescS3iqf/mfb2
-        1HrxxRfY05c8d/VxlDi2dsbL8zc7dLT5lFiKMxINtZiLihMBfeW3vRgDAAA=
-Message-Id: <20181018081237eucas1p1380ba533db3f718b6ada8289e83f0f10~epb3RbYC73110831108eucas1p1j@eucas1p1.samsung.com>
-X-CMS-MailID: 20181018081237eucas1p1380ba533db3f718b6ada8289e83f0f10
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181009162509epcas1p4fdd2e23039caa24586a4a52c6d2e7336
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181009162509epcas1p4fdd2e23039caa24586a4a52c6d2e7336
-References: <CGME20181009162509epcas1p4fdd2e23039caa24586a4a52c6d2e7336@epcas1p4.samsung.com>
-        <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org>
-        <20181010153553eucas1p1b8f74f4aa45751ef029805fd118affc1~cSUmU58-F2963929639eucas1p1L@eucas1p1.samsung.com>
-        <5BBE3751.7000908@linaro.org>
-        <20181011111025eucas1p2125db99d798a60a8e38da97c2a1c7436~ciWHHd0YW0102601026eucas1p2b@eucas1p2.samsung.com>
-        <CAKfTPtBZam-+3sbKa+XffhoxkPX_ndTLoxioVwU-iz0qTnnPAw@mail.gmail.com>
+In-Reply-To: <b6585727108669e0c85e7871575c7700d69b5f5d.camel@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gD3Qf-0006zf-PF
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:45790
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincent,
 
-On 10/16/2018 07:11 PM, Vincent Guittot wrote:
-> Hi Lukasz,
-> 
-> On Thu, 11 Oct 2018 at 13:10, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->>
->>
->>
->> On 10/10/2018 07:30 PM, Thara Gopinath wrote:
->>> Hello Lukasz,
->>>
->>> On 10/10/2018 11:35 AM, Lukasz Luba wrote:
->>>> Hi Thara,
->>>>
->>>> I have run it on Exynos5433 mainline.
->>>> When it is enabled with step_wise thermal governor,
->>>> some of my tests are showing ~30-50% regression (i.e. hackbench),
->>>> dhrystone ~10%.
->>>
->>> That is interesting. If I understand correctly, dhrystone spawns 16
->>> threads or so and floods the system. In "theory", such a test should not
->>> see any performance improvement and degradation. What is the thermal
->>> activity like in your system? I will try running one of these tests on
->>> hikey960.
->> I use this dhrystone implementation:
->> https://github.com/Keith-S-Thompson/dhrystone/blob/master/v2.2/dry.c
->> It does not span new threads/processes and I pinned it to a single cpu.
->>
->> My thermal setup is probably different than yours.
->> You have (on hikey960) probably 1 sensor for whole SoC and one thermal
->> zone (if it is this mainline file:
->> arch/arm64/boot/dts/hisilicon/hi3660.dtsi).
->> This thermal zone has two cooling devices - two clusters with dvfs.
->> Your temperature signal read out from that sensor is probably much
->> smoother. When you have sensor inside cluster, the rising factor
->> can be even 20deg/s (for big cores).
->> In my case, there are 4 thermal zones, each cluster has it's private
->> sensor and thermal zone. There is no 'SoC sensor' or 'PCB sensor',
->> which is recommended for IPA.
->>>>
->>>> Could you tell me which thermal governor was used in your case?
->>>> Please also share the name of that benchmark, i will give it a try.
->>>> Is it single threaded compute-intensive?
->>>
->>> Step-wise governor.
->>> I use aobench which is part of phoronix-test-suite.
->>>
->>> Regards
->>> Thara
->>>
->> I have built this aobench and run it pinned to single big cpu:
->> time taskset -c 4 ./aobench
-> 
-> Why have you pinned the test only on CPU4 ?
-> Goal of thermal pressure is to inform the scheduler of reduced compute
-> capacity and help the scheduler to take better decision in tasks
-> placement.
-> So I would not expect perf impact on your test as the bench will stay
-> pinned on the cpu4
-> That being said you obviously have perf impact as shown below in your results
-> And other tasks on the system are not pinned and might come and
-> disturb your bench
-Unpinned runs on this platform have a lot of variation. The tests take
-even 16min to finish.
 
-Regards,
-Lukasz
-> 
->> The results:
->> 3min-5:30min [mainline]
->> 5:15min-5:50min [+patchset]
+On 10/16/18 6:49 PM, Doug Ledford wrote:
+
 >>
->> The idea is definitely worth to investigate further.
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > 
-> Yes I agree
+> Thanks, applied to for-rc.
 > 
-> Vincent
->>
->> Regards,
->> Lukasz
->>
->>
->>
-> 
-> 
+
+Thanks, Doug.
+--
+Gustavo
