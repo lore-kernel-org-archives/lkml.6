@@ -2,135 +2,89 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA1EC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61323C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9944208E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:21:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="glafo7wi";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mh8/qnea"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9944208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 327BD208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 05:21:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 327BD208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbeJRNUj (ORCPT
+        id S1727524AbeJRNVC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 09:20:39 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43186 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727331AbeJRNUj (ORCPT
+        Thu, 18 Oct 2018 09:21:02 -0400
+Received: from a2nlsmtp01-04.prod.iad2.secureserver.net ([198.71.225.38]:49668
+        "EHLO a2nlsmtp01-04.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727328AbeJRNVB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 09:20:39 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E9BE960769; Thu, 18 Oct 2018 05:21:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539840087;
-        bh=nQoDGkmfN16CkYckyCILAgjSZHqfzn1YWNY2gUH//4M=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=glafo7wipGZO4/ZCFF5uELRqPB0+3PPa2KYP/3dUTp5+EjlOyFfxiHAoeKaMsqH1x
-         BhdWy6RrTSUH3jUaWT8GuwlASNhZSS0GXcF1wTJw6yxiMGnjaaqQTg72Uz+6GCadc1
-         ykKa5bUO9CEzxYRccoIdXzfeh/xQdUsBF+S2TUmk=
-Received: from [10.79.129.10] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CA270606DC;
-        Thu, 18 Oct 2018 05:21:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539840085;
-        bh=nQoDGkmfN16CkYckyCILAgjSZHqfzn1YWNY2gUH//4M=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mh8/qnea3uVXyZr9jDXJWbIAIshkZJoIpV5j9RkB1k2QMkaIb3sXMVFyyI+wW2XKY
-         ywB5OgtDymbGw9CdnkaMI+W134CXM7/ESfC1U/8XzjeFCxHvppD40WEBHeCD9Zf8Cc
-         8ado0uGYPH7csiMYOr/LAvUz39Ct830IORf1b0o0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CA270606DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Geliang Tang <geliangtang@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pramod Gurav <gpramod@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-References: <1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org>
- <20181016112928.4b52afb5@gandalf.local.home>
- <8c2fb318-813d-81f1-1e2f-cdbc68353077@codeaurora.org>
- <20181016125721.236ada82@gandalf.local.home>
- <cab1be04-be06-6f53-7fe9-159936893fc8@codeaurora.org>
- <20181016134803.1b9260c1@gandalf.local.home>
- <472db11e-49a6-a1ee-e298-791ee1bbb10b@codeaurora.org>
- <20181016141610.639b9000@gandalf.local.home>
- <accdce6d-8fd2-9f15-d4cd-704cbf0b32eb@codeaurora.org>
- <20181016144123.24c47b38@gandalf.local.home>
- <7781815e-cba2-9e36-db6d-268298747876@codeaurora.org>
- <20181016150328.3450d718@gandalf.local.home>
- <c94103d2-ed5d-bf43-fc71-c60e108f303e@codeaurora.org>
- <20181017223334.29ca2837@vmware.local.home>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <58d2474c-53cd-e6cb-2d25-db38d1a88da6@codeaurora.org>
-Date:   Thu, 18 Oct 2018 10:51:18 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181017223334.29ca2837@vmware.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 18 Oct 2018 09:21:01 -0400
+X-Greylist: delayed 677 seconds by postgrey-1.27 at vger.kernel.org; Thu, 18 Oct 2018 09:20:04 EDT
+Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
+        by : HOSTING RELAY : with ESMTP
+        id D0YwgQ5o5CT0vD0Ywg5fab; Wed, 17 Oct 2018 22:09:34 -0700
+x-originating-ip: 107.180.71.197
+Received: from kys by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
+        (envelope-from <kys@linuxonhyperv2.linuxonhyperv.com>)
+        id 1gD0Yw-0007HY-8s; Wed, 17 Oct 2018 22:09:34 -0700
+From:   kys@linuxonhyperv.com
+To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
+        jasowang@redhat.com, sthemmin@microsoft.com,
+        Michael.H.Kelley@microsoft.com, vkuznets@redhat.com
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        "K . Y . Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>
+Subject: [PATCH V2 4/5] Drivers: hv: kvp: Use %u to print U32
+Date:   Thu, 18 Oct 2018 05:09:31 +0000
+Message-Id: <20181018050932.27932-4-kys@linuxonhyperv.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20181018050932.27932-1-kys@linuxonhyperv.com>
+References: <20181018050835.27828-1-kys@linuxonhyperv.com>
+ <20181018050932.27932-1-kys@linuxonhyperv.com>
+Reply-To: kys@microsoft.com
+X-CMAE-Envelope: MS4wfJbTiuNGTPomJQdGJNRkfgKGYubBcOElpjXylFhd08E4jMOor935orxaD194k5mCbvPLVO0o9qasEPtDfqJclSWynci63EgKkNH6rzciS/FN2W7//C89
+ CAhl2GaGBzaO7NJ6jsUL9EoRS+qzNC5oqHH/PPPRa9x6hk4Tti2UORgAYtCfrKEgxzSyswi/rbXXJse85KqHejoMfPi3Q/YGH7+bqXGwt2DCshnefTTrvHvB
+ 9ZbomQGULGRnTeZiJy9eIRWcm3XaX0hLMJDwa2kAdlLGhJXutpsWoATPokDs3HFuPu+YtMCimljl93no6cZRhFyoLR4aHotl/Nt7zHCOZjt4+418zVmoK9Jg
+ yIOx1MLcXKfhcJCl+IMz8myc+y53YehEoadwPLUELSUygMHcwjzBm2aE52oPO9Co5MVIxgan9T0djUh2gVMhCKpm+gmgE0Lzxnxp/NFA4SNS90YB22qEm8l1
+ gkZ1efQnYj7dUd5As27H/vLqK2cdL7eEBUsL6/rQTrWs8yqZ0IzOqyYD7kgN+iBBDHrgad0JdnvvUrphylqM7X27lk9/hCInAVQqxqY2Z27Br2OhwUAaTnGM
+ gBEvOeXiH/gXLbM/CosODl4R
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/18/2018 8:03 AM, Steven Rostedt wrote:
-> On Wed, 17 Oct 2018 00:36:05 +0530
-> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
-> 
->> On 10/17/2018 12:33 AM, Steven Rostedt wrote:
->>> On Wed, 17 Oct 2018 00:31:03 +0530
->>> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
->>>    
->>>> Haa seems like you are right! With "ftrace=function
->>>> ftrace_filter=msm_read" , I can trigger the crash, but
->>>> sadly "ftrace_notrace=msm_read" also crashes.
->>>
->>> So there's more than one problem area.
->>>
->>> What about ftrace_notrace=m*
->>>
->>> ?
->>>    
->>
->> That too crashes.
->>
-> 
-> So something else is causing an issue besides just msm_read.
-> 
-> Can you do an objdump -dr of the entire vmlinux binary and gzip it and
-> post it somewhere. Not sure if it would be too big to email. You could
-> try sending it to me privately. I'd like to see the binary that you are
-> using.
-> 
+From: Dexuan Cui <decui@microsoft.com>
 
-I have sent the objdump and dot config to you privately.
+I didn't find a real issue. Let's just make it consistent with the
+next "case REG_U64:" where %llu is used.
 
-Thanks,
-Sai
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+---
+ drivers/hv/hv_kvp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hv/hv_kvp.c b/drivers/hv/hv_kvp.c
+index d6106e1a0d4a..5054d1105236 100644
+--- a/drivers/hv/hv_kvp.c
++++ b/drivers/hv/hv_kvp.c
+@@ -437,7 +437,7 @@ kvp_send_key(struct work_struct *dummy)
+ 			val32 = in_msg->body.kvp_set.data.value_u32;
+ 			message->body.kvp_set.data.value_size =
+ 				sprintf(message->body.kvp_set.data.value,
+-					"%d", val32) + 1;
++					"%u", val32) + 1;
+ 			break;
+ 
+ 		case REG_U64:
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.18.0
+
