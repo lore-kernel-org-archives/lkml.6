@@ -2,72 +2,81 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1714C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FDC3C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F8892145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:56:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F8892145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CF4742145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:56:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF4742145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbeJRP4A (ORCPT
+        id S1727683AbeJRP4e convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 11:56:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42120 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726031AbeJRP4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 11:56:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0BC15AF74;
-        Thu, 18 Oct 2018 07:56:13 +0000 (UTC)
-Date:   Thu, 18 Oct 2018 09:56:11 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, guro@fb.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        rientjes@google.com, yang.s@alibaba-inc.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>
-Subject: Re: [PATCH v3] mm: memcontrol: Don't flood OOM messages with no
- eligible task.
-Message-ID: <20181018075611.GY18839@dhcp22.suse.cz>
-References: <201810180246.w9I2koi3011358@www262.sakura.ne.jp>
- <20181018042739.GA650@jagdpanzerIV>
- <201810180526.w9I5QvVn032670@www262.sakura.ne.jp>
- <20181018061018.GB650@jagdpanzerIV>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181018061018.GB650@jagdpanzerIV>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 18 Oct 2018 11:56:34 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:60349 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726031AbeJRP4e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 11:56:34 -0400
+Received: from marcel-macbook.fritz.box (p4FF9F655.dip0.t-ipconnect.de [79.249.246.85])
+        by mail.holtmann.org (Postfix) with ESMTPSA id C98D2CEF8D;
+        Thu, 18 Oct 2018 10:04:08 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: Re: [PATCH v3] Bluetooth: hci_qca: Add support for controller debug
+ logs.
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20181016142135.16480-1-bgodavar@codeaurora.org>
+Date:   Thu, 18 Oct 2018 09:56:45 +0200
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>, mka@chromium.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        c-hbandi@codeaurora.orhg, Harish Bandi <c-hbandi@codeaurora.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <CE79934F-718A-4941-830C-C179F96B0425@holtmann.org>
+References: <20181016142135.16480-1-bgodavar@codeaurora.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+X-Mailer: Apple Mail (2.3445.100.39)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 18-10-18 15:10:18, Sergey Senozhatsky wrote:
-[...]
-> and let's hear from MM people what they can suggest.
+Hi Balakrishna,
+
+> This patch will prevent error messages splashing on console.
 > 
-> Michal, Andrew, Johannes, any thoughts?
+> [   78.426697] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+> [   78.436682] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+> [   78.446639] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+> [   78.456596] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+> 
+> QCA wcn3990 will send the debug logs in the form of ACL packets.
+> While decoding packet in qca_recv(), marking the received debug log
+> packet as diagnostic packet.
+> 
+> Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> ---
+> v3:
+>  * used get_unaligned_le16() instead of checking individual bytes
+> v2: 
+>  * Addressed reviewer comments.
+> v1: 
+>  * initial patch
+> ---
+> drivers/bluetooth/hci_qca.c | 19 ++++++++++++++++++-
+> 1 file changed, 18 insertions(+), 1 deletion(-)
 
-I have already stated my position. Let's not reinvent the wheel and use
-the standard printk throttling. If there are cases where oom reports
-cause more harm than good I am open to add a knob to allow disabling it
-altogether (it can be even fine grained one to control whether to dump
-show_mem, task_list etc.).
+patch has been applied to bluetooth-next tree.
 
-But please let's stop this dubious one-off approaches.
--- 
-Michal Hocko
-SUSE Labs
+Regards
+
+Marcel
+
