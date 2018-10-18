@@ -6,150 +6,119 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A8CC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66609C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:22:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DADC32145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:22:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DADC32145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 35B842145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 06:22:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35B842145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727544AbeJROVq (ORCPT
+        id S1727579AbeJROVx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 10:21:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33249 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbeJROVp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 10:21:45 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9I6LHoE708313
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 17 Oct 2018 23:21:17 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9I6LFT7708302;
-        Wed, 17 Oct 2018 23:21:15 -0700
-Date:   Wed, 17 Oct 2018 23:21:15 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jan Kiszka <tipbot@zytor.com>
-Message-ID: <tip-04f4f954b69526d7af8ffb8e5780f08b8a6cda2d@git.kernel.org>
-Cc:     jkosina@suse.cz, jpoimboe@redhat.com, x86@kernel.org,
-        jgross@suse.com, aarcange@redhat.com, linux-kernel@vger.kernel.org,
-        jroedel@suse.de, gregkh@linuxfoundation.org, mingo@kernel.org,
-        luto@kernel.org, boris.ostrovsky@oracle.com, linux-mm@kvack.org,
-        torvalds@linux-foundation.org, dave.hansen@intel.com,
-        jan.kiszka@siemens.com, eduval@amazon.com, hpa@zytor.com,
-        dvlasenk@redhat.com, tglx@linutronix.de, brgerst@gmail.com,
-        David.Laight@aculab.com, peterz@infradead.org, bp@suse.de,
-        will.deacon@arm.com
-Reply-To: jgross@suse.com, jpoimboe@redhat.com, jkosina@suse.cz,
-          x86@kernel.org, gregkh@linuxfoundation.org, luto@kernel.org,
-          mingo@kernel.org, linux-kernel@vger.kernel.org,
-          aarcange@redhat.com, jroedel@suse.de, hpa@zytor.com,
-          dvlasenk@redhat.com, boris.ostrovsky@oracle.com,
-          torvalds@linux-foundation.org, linux-mm@kvack.org,
-          dave.hansen@intel.com, jan.kiszka@siemens.com, eduval@amazon.com,
-          bp@suse.de, will.deacon@arm.com, tglx@linutronix.de,
-          David.Laight@aculab.com, brgerst@gmail.com, peterz@infradead.org
-In-Reply-To: <f271c747-1714-5a5b-a71f-ae189a093b8d@siemens.com>
-References: <f271c747-1714-5a5b-a71f-ae189a093b8d@siemens.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/entry/32: Clear the CS high bits
-Git-Commit-ID: 04f4f954b69526d7af8ffb8e5780f08b8a6cda2d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 18 Oct 2018 10:21:53 -0400
+Received: from mga11.intel.com ([192.55.52.93]:21293 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727328AbeJROVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 10:21:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 23:22:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,395,1534834800"; 
+   d="scan'208";a="79653170"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
+  by fmsmga008.fm.intel.com with ESMTP; 17 Oct 2018 23:22:25 -0700
+Subject: Re: [PATCH 11/11] perf tools: Stop fallbacking to kallsyms for vdso
+ symbols lookup
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Wang Nan <wangnan0@huawei.com>
+References: <20181017225501.32150-1-acme@kernel.org>
+ <20181017225501.32150-12-acme@kernel.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <4c682937-3cee-6974-0970-68610e13ad37@intel.com>
+Date:   Thu, 18 Oct 2018 09:20:46 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20181017225501.32150-12-acme@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  04f4f954b69526d7af8ffb8e5780f08b8a6cda2d
-Gitweb:     https://git.kernel.org/tip/04f4f954b69526d7af8ffb8e5780f08b8a6cda2d
-Author:     Jan Kiszka <jan.kiszka@siemens.com>
-AuthorDate: Mon, 15 Oct 2018 16:09:29 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 17 Oct 2018 12:30:20 +0200
+On 18/10/18 1:55 AM, Arnaldo Carvalho de Melo wrote:
+> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> David reports that:
+> 
+> <quote>
+> Perf has this hack where it uses the kernel symbol map as a backup when
+> a symbol can't be found in the user's symbol table(s).
 
-x86/entry/32: Clear the CS high bits
+I don't think this is a complete fix because it exposes new problems.  This
+code caters for branches from kernel space to user space and vice versa.
+That is, since there is only one cpumode so it is certain to be wrong for
+either 'ip' or 'addr' when they are not both in the kernel or both in userspace.
 
-Even if not on an entry stack, the CS's high bits must be
-initialized because they are unconditionally evaluated in
-PARANOID_EXIT_TO_KERNEL_MODE.
+> 
+> 
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: David Ahern <dsahern@gmail.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Wang Nan <wangnan0@huawei.com>
+> Link: https://lkml.kernel.org/n/tip-cs7skq9pp0kjypiju6o7trse@git.kernel.org
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
+>  tools/perf/util/event.c | 21 ++-------------------
+>  1 file changed, 2 insertions(+), 19 deletions(-)
+> 
+> diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+> index 0988eb3b844b..bc646185f8d9 100644
+> --- a/tools/perf/util/event.c
+> +++ b/tools/perf/util/event.c
+> @@ -1561,26 +1561,9 @@ struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
+>  
+>  		return NULL;
+>  	}
+> -try_again:
+> +
+>  	al->map = map_groups__find(mg, al->addr);
+> -	if (al->map == NULL) {
+> -		/*
+> -		 * If this is outside of all known maps, and is a negative
+> -		 * address, try to look it up in the kernel dso, as it might be
+> -		 * a vsyscall or vdso (which executes in user-mode).
+> -		 *
+> -		 * XXX This is nasty, we should have a symbol list in the
+> -		 * "[vdso]" dso, but for now lets use the old trick of looking
+> -		 * in the whole kernel symbol list.
+> -		 */
+> -		if (cpumode == PERF_RECORD_MISC_USER && machine &&
+> -		    mg != &machine->kmaps &&
+> -		    machine__kernel_ip(machine, al->addr)) {
+> -			mg = &machine->kmaps;
+> -			load_map = true;
+> -			goto try_again;
+> -		}
+> -	} else {
+> +	if (al->map != NULL) {
+>  		/*
+>  		 * Kernel maps might be changed when loading symbols so loading
+>  		 * must be done prior to using kernel maps.
+> 
 
-Failing to do so broke the boot on Galileo Gen2 and IOT2000 boards.
-
- [ bp: Make the commit message tone passive and impartial. ]
-
-Fixes: b92a165df17e ("x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack")
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Joerg Roedel <jroedel@suse.de>
-Acked-by: Joerg Roedel <jroedel@suse.de>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Andrea Arcangeli <aarcange@redhat.com>
-CC: Andy Lutomirski <luto@kernel.org>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: Brian Gerst <brgerst@gmail.com>
-CC: Dave Hansen <dave.hansen@intel.com>
-CC: David Laight <David.Laight@aculab.com>
-CC: Denys Vlasenko <dvlasenk@redhat.com>
-CC: Eduardo Valentin <eduval@amazon.com>
-CC: Greg KH <gregkh@linuxfoundation.org>
-CC: Ingo Molnar <mingo@kernel.org>
-CC: Jiri Kosina <jkosina@suse.cz>
-CC: Josh Poimboeuf <jpoimboe@redhat.com>
-CC: Juergen Gross <jgross@suse.com>
-CC: Linus Torvalds <torvalds@linux-foundation.org>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Will Deacon <will.deacon@arm.com>
-CC: aliguori@amazon.com
-CC: daniel.gruss@iaik.tugraz.at
-CC: hughd@google.com
-CC: keescook@google.com
-CC: linux-mm <linux-mm@kvack.org>
-CC: x86-ml <x86@kernel.org>
-Link: http://lkml.kernel.org/r/f271c747-1714-5a5b-a71f-ae189a093b8d@siemens.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/entry/entry_32.S | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 2767c625a52c..fbbf1ba57ec6 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -389,6 +389,13 @@
- 	 * that register for the time this macro runs
- 	 */
- 
-+	/*
-+	 * The high bits of the CS dword (__csh) are used for
-+	 * CS_FROM_ENTRY_STACK and CS_FROM_USER_CR3. Clear them in case
-+	 * hardware didn't do this for us.
-+	 */
-+	andl	$(0x0000ffff), PT_CS(%esp)
-+
- 	/* Are we on the entry stack? Bail out if not! */
- 	movl	PER_CPU_VAR(cpu_entry_area), %ecx
- 	addl	$CPU_ENTRY_AREA_entry_stack + SIZEOF_entry_stack, %ecx
-@@ -407,12 +414,6 @@
- 	/* Load top of task-stack into %edi */
- 	movl	TSS_entry2task_stack(%edi), %edi
- 
--	/*
--	 * Clear unused upper bits of the dword containing the word-sized CS
--	 * slot in pt_regs in case hardware didn't clear it for us.
--	 */
--	andl	$(0x0000ffff), PT_CS(%esp)
--
- 	/* Special case - entry from kernel mode via entry stack */
- #ifdef CONFIG_VM86
- 	movl	PT_EFLAGS(%esp), %ecx		# mix EFLAGS and CS
