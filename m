@@ -2,967 +2,135 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7032FC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E789EC5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:05:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF5612145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:03:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF5612145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id A21332087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 07:05:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A21332087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727596AbeJRPDX (ORCPT
+        id S1727597AbeJRPEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 11:03:23 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13672 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726031AbeJRPDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 11:03:23 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id CBF51906D22C3;
-        Thu, 18 Oct 2018 15:03:38 +0800 (CST)
-Received: from localhost.localdomain (10.175.34.53) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.399.0; Thu, 18 Oct 2018 15:03:29 +0800
-From:   Xue Chaojing <xuechaojing@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <xuechaojing@huawei.com>,
-        <netdev@vger.kernel.org>, <wulike1@huawei.com>,
-        <chiqijun@huawei.com>, <fy.wang@huawei.com>,
-        <zhaochen6@huawei.com>, <tony.qu@huawei.com>,
-        <luoshaokai@huawei.com>
-Subject: [PATCH v2] net-next/hinic: add checksum offload and TSO support
-Date:   Thu, 18 Oct 2018 15:02:51 +0000
-Message-ID: <20181018150251.28802-1-xuechaojing@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 18 Oct 2018 11:04:51 -0400
+Received: from mga06.intel.com ([134.134.136.31]:35541 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727351AbeJRPEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 11:04:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2018 00:05:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,395,1534834800"; 
+   d="scan'208";a="92966026"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga003.jf.intel.com with ESMTP; 18 Oct 2018 00:05:16 -0700
+Received: from [10.125.252.18] (abudanko-mobl.ccr.corp.intel.com [10.125.252.18])
+        by linux.intel.com (Postfix) with ESMTP id 465B2580117;
+        Thu, 18 Oct 2018 00:05:13 -0700 (PDT)
+Subject: Re: [RFC][PATCH] perf: Rewrite core context handling
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        songliubraving@fb.com, eranian@google.com, tglx@linutronix.de,
+        mark.rutland@arm.com, megha.dey@intel.com, frederic@kernel.org
+References: <20181010104559.GO5728@hirez.programming.kicks-ass.net>
+ <f12f2d18-2e25-1879-fe34-227c82618abd@linux.intel.com>
+ <20181017163021.GP3121@hirez.programming.kicks-ass.net>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <1fd51130-d8b8-e3cc-0e48-8599ddb6c4f2@linux.intel.com>
+Date:   Thu, 18 Oct 2018 10:05:11 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.34.53]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20181017163021.GP3121@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhao Chen <zhaochen6@huawei.com>
+Hi,
 
-This patch adds checksum offload and TSO support for the HiNIC
-driver. Perfomance test (Iperf) shows more than 100% improvement
-in TCP streams.
+On 17.10.2018 19:30, Peter Zijlstra wrote:
+> On Wed, Oct 17, 2018 at 11:57:49AM +0300, Alexey Budankov wrote:
+>> Hi,
+>>
+>> On 10.10.2018 13:45, Peter Zijlstra wrote:
+>> <SNIP>
+>>> -static bool perf_rotate_context(struct perf_cpu_context *cpuctx)
+>>> +/*
+>>> + * XXX somewhat completely buggered; this is in cpu_pmu_context, but we need
+>>> + * event_pmu_context for rotations. We also need event_pmu_context specific
+>>> + * scheduling routines. ARGH
+>>> + *
+>>> + *  - fixed the cpu_pmu_context vs event_pmu_context thingy
+>>> + *    (cpu_pmu_context embeds an event_pmu_context)
+>>> + *
+>>> + *  - need nr_events/nr_active in epc to do per epc rotation
+>>> + *    (done)
+>>> + *
+>>> + *  - need cpu and task pmu ctx together...
+>>> + *    (cpc->task_epc)
+>>> + */
+>>> +static bool perf_rotate_context(struct perf_cpu_pmu_context *cpc)
+>>
+>> Since it reduces to single cpu context (and single task context) at all times, 
+>> ideally, it would probably be coded as simple as this: 
+>>
+>> 	perf_rotate_context()
+>> 	{
+>>             cpu = this_cpu_ptr(&cpu_context)
+>>             for_every_pmu(pmu, cpu)
+> 
+> Can't do that, because we have per PMU rotation periods..
 
-Signed-off-by: Zhao Chen <zhaochen6@huawei.com>
-Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
----
-v2: made all the local variables from longest to shortest line.
+Well, yes, the callback is already called per-cpu per-pmu, 
+so then this simplifies a bit, like this:
 
- .../net/ethernet/huawei/hinic/hinic_hw_dev.h  |   2 +
- .../net/ethernet/huawei/hinic/hinic_hw_qp.c   | 121 +++++--
- .../net/ethernet/huawei/hinic/hinic_hw_qp.h   |  27 ++
- .../net/ethernet/huawei/hinic/hinic_hw_wq.c   |  14 +
- .../net/ethernet/huawei/hinic/hinic_hw_wq.h   |   2 +
- .../net/ethernet/huawei/hinic/hinic_hw_wqe.h  |  97 ++++--
- .../net/ethernet/huawei/hinic/hinic_main.c    |  23 +-
- .../net/ethernet/huawei/hinic/hinic_port.c    |  32 ++
- .../net/ethernet/huawei/hinic/hinic_port.h    |  18 ++
- drivers/net/ethernet/huawei/hinic/hinic_tx.c  | 295 +++++++++++++++++-
- 10 files changed, 571 insertions(+), 60 deletions(-)
+perf_rotate_context(pmu, cpu)
+{
+	for_every_event_ctx(event_ctx, pmu)
+		rotate(event_ctx, pmu)
+}
 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h
-index 0f5563f3b779..097b5502603f 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h
-@@ -58,6 +58,8 @@ enum hinic_port_cmd {
- 
- 	HINIC_PORT_CMD_GET_GLOBAL_QPN   = 102,
- 
-+	HINIC_PORT_CMD_SET_TSO          = 112,
-+
- 	HINIC_PORT_CMD_GET_CAP          = 170,
- };
- 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
-index cb239627770f..967c993d5303 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
-@@ -70,8 +70,6 @@
- #define SQ_MASKED_IDX(sq, idx)  ((idx) & (sq)->wq->mask)
- #define RQ_MASKED_IDX(rq, idx)  ((idx) & (rq)->wq->mask)
- 
--#define TX_MAX_MSS_DEFAULT      0x3E00
--
- enum sq_wqe_type {
- 	SQ_NORMAL_WQE = 0,
- };
-@@ -494,33 +492,16 @@ static void sq_prepare_ctrl(struct hinic_sq_ctrl *ctrl, u16 prod_idx,
- 			  HINIC_SQ_CTRL_SET(SQ_NORMAL_WQE, DATA_FORMAT)     |
- 			  HINIC_SQ_CTRL_SET(ctrl_size, LEN);
- 
--	ctrl->queue_info = HINIC_SQ_CTRL_SET(TX_MAX_MSS_DEFAULT,
--					     QUEUE_INFO_MSS);
-+	ctrl->queue_info = HINIC_SQ_CTRL_SET(HINIC_MSS_DEFAULT,
-+					     QUEUE_INFO_MSS) |
-+			   HINIC_SQ_CTRL_SET(1, QUEUE_INFO_UC);
- }
- 
- static void sq_prepare_task(struct hinic_sq_task *task)
- {
--	task->pkt_info0 =
--		HINIC_SQ_TASK_INFO0_SET(0, L2HDR_LEN) |
--		HINIC_SQ_TASK_INFO0_SET(HINIC_L4_OFF_DISABLE, L4_OFFLOAD) |
--		HINIC_SQ_TASK_INFO0_SET(HINIC_OUTER_L3TYPE_UNKNOWN,
--					INNER_L3TYPE) |
--		HINIC_SQ_TASK_INFO0_SET(HINIC_VLAN_OFF_DISABLE,
--					VLAN_OFFLOAD) |
--		HINIC_SQ_TASK_INFO0_SET(HINIC_PKT_NOT_PARSED, PARSE_FLAG);
--
--	task->pkt_info1 =
--		HINIC_SQ_TASK_INFO1_SET(HINIC_MEDIA_UNKNOWN, MEDIA_TYPE) |
--		HINIC_SQ_TASK_INFO1_SET(0, INNER_L4_LEN) |
--		HINIC_SQ_TASK_INFO1_SET(0, INNER_L3_LEN);
--
--	task->pkt_info2 =
--		HINIC_SQ_TASK_INFO2_SET(0, TUNNEL_L4_LEN) |
--		HINIC_SQ_TASK_INFO2_SET(0, OUTER_L3_LEN)  |
--		HINIC_SQ_TASK_INFO2_SET(HINIC_TUNNEL_L4TYPE_UNKNOWN,
--					TUNNEL_L4TYPE)    |
--		HINIC_SQ_TASK_INFO2_SET(HINIC_OUTER_L3TYPE_UNKNOWN,
--					OUTER_L3TYPE);
-+	task->pkt_info0 = 0;
-+	task->pkt_info1 = 0;
-+	task->pkt_info2 = 0;
- 
- 	task->ufo_v6_identify = 0;
- 
-@@ -529,6 +510,86 @@ static void sq_prepare_task(struct hinic_sq_task *task)
- 	task->zero_pad = 0;
- }
- 
-+void hinic_task_set_l2hdr(struct hinic_sq_task *task, u32 len)
-+{
-+	task->pkt_info0 |= HINIC_SQ_TASK_INFO0_SET(len, L2HDR_LEN);
-+}
-+
-+void hinic_task_set_outter_l3(struct hinic_sq_task *task,
-+			      enum hinic_l3_offload_type l3_type,
-+			      u32 network_len)
-+{
-+	task->pkt_info2 |= HINIC_SQ_TASK_INFO2_SET(l3_type, OUTER_L3TYPE) |
-+			   HINIC_SQ_TASK_INFO2_SET(network_len, OUTER_L3LEN);
-+}
-+
-+void hinic_task_set_inner_l3(struct hinic_sq_task *task,
-+			     enum hinic_l3_offload_type l3_type,
-+			     u32 network_len)
-+{
-+	task->pkt_info0 |= HINIC_SQ_TASK_INFO0_SET(l3_type, INNER_L3TYPE);
-+	task->pkt_info1 |= HINIC_SQ_TASK_INFO1_SET(network_len, INNER_L3LEN);
-+}
-+
-+void hinic_task_set_tunnel_l4(struct hinic_sq_task *task,
-+			      enum hinic_l4_offload_type l4_type,
-+			      u32 tunnel_len)
-+{
-+	task->pkt_info2 |= HINIC_SQ_TASK_INFO2_SET(l4_type, TUNNEL_L4TYPE) |
-+			   HINIC_SQ_TASK_INFO2_SET(tunnel_len, TUNNEL_L4LEN);
-+}
-+
-+void hinic_set_cs_inner_l4(struct hinic_sq_task *task, u32 *queue_info,
-+			   enum hinic_l4_offload_type l4_offload,
-+			   u32 l4_len, u32 offset)
-+{
-+	u32 tcp_udp_cs = 0, sctp = 0;
-+	u32 mss = HINIC_MSS_DEFAULT;
-+
-+	if (l4_offload == TCP_OFFLOAD_ENABLE ||
-+	    l4_offload == UDP_OFFLOAD_ENABLE)
-+		tcp_udp_cs = 1;
-+	else if (l4_offload == SCTP_OFFLOAD_ENABLE)
-+		sctp = 1;
-+
-+	task->pkt_info0 |= HINIC_SQ_TASK_INFO0_SET(l4_offload, L4_OFFLOAD);
-+	task->pkt_info1 |= HINIC_SQ_TASK_INFO1_SET(l4_len, INNER_L4LEN);
-+
-+	*queue_info |= HINIC_SQ_CTRL_SET(offset, QUEUE_INFO_PLDOFF) |
-+		       HINIC_SQ_CTRL_SET(tcp_udp_cs, QUEUE_INFO_TCPUDP_CS) |
-+		       HINIC_SQ_CTRL_SET(sctp, QUEUE_INFO_SCTP);
-+
-+	*queue_info = HINIC_SQ_CTRL_CLEAR(*queue_info, QUEUE_INFO_MSS);
-+	*queue_info |= HINIC_SQ_CTRL_SET(mss, QUEUE_INFO_MSS);
-+}
-+
-+void hinic_set_tso_inner_l4(struct hinic_sq_task *task, u32 *queue_info,
-+			    enum hinic_l4_offload_type l4_offload,
-+			    u32 l4_len, u32 offset, u32 ip_ident, u32 mss)
-+{
-+	u32 tso = 0, ufo = 0;
-+
-+	if (l4_offload == TCP_OFFLOAD_ENABLE)
-+		tso = 1;
-+	else if (l4_offload == UDP_OFFLOAD_ENABLE)
-+		ufo = 1;
-+
-+	task->ufo_v6_identify = ip_ident;
-+
-+	task->pkt_info0 |= HINIC_SQ_TASK_INFO0_SET(l4_offload, L4_OFFLOAD);
-+	task->pkt_info0 |= HINIC_SQ_TASK_INFO0_SET(tso || ufo, TSO_FLAG);
-+	task->pkt_info1 |= HINIC_SQ_TASK_INFO1_SET(l4_len, INNER_L4LEN);
-+
-+	*queue_info |= HINIC_SQ_CTRL_SET(offset, QUEUE_INFO_PLDOFF) |
-+		       HINIC_SQ_CTRL_SET(tso, QUEUE_INFO_TSO) |
-+		       HINIC_SQ_CTRL_SET(ufo, QUEUE_INFO_UFO) |
-+		       HINIC_SQ_CTRL_SET(!!l4_offload, QUEUE_INFO_TCPUDP_CS);
-+
-+	/* set MSS value */
-+	*queue_info = HINIC_SQ_CTRL_CLEAR(*queue_info, QUEUE_INFO_MSS);
-+	*queue_info |= HINIC_SQ_CTRL_SET(mss, QUEUE_INFO_MSS);
-+}
-+
- /**
-  * hinic_sq_prepare_wqe - prepare wqe before insert to the queue
-  * @sq: send queue
-@@ -612,6 +673,16 @@ struct hinic_sq_wqe *hinic_sq_get_wqe(struct hinic_sq *sq,
- 	return &hw_wqe->sq_wqe;
- }
- 
-+/**
-+ * hinic_sq_return_wqe - return the wqe to the sq
-+ * @sq: send queue
-+ * @wqe_size: the size of the wqe
-+ **/
-+void hinic_sq_return_wqe(struct hinic_sq *sq, unsigned int wqe_size)
-+{
-+	hinic_return_wqe(sq->wq, wqe_size);
-+}
-+
- /**
-  * hinic_sq_write_wqe - write the wqe to the sq
-  * @sq: send queue
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
-index 6c84f83ec283..a0dc63a4bfc7 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
-@@ -149,6 +149,31 @@ int hinic_get_sq_free_wqebbs(struct hinic_sq *sq);
- 
- int hinic_get_rq_free_wqebbs(struct hinic_rq *rq);
- 
-+void hinic_task_set_l2hdr(struct hinic_sq_task *task, u32 len);
-+
-+void hinic_task_set_outter_l3(struct hinic_sq_task *task,
-+			      enum hinic_l3_offload_type l3_type,
-+			      u32 network_len);
-+
-+void hinic_task_set_inner_l3(struct hinic_sq_task *task,
-+			     enum hinic_l3_offload_type l3_type,
-+			     u32 network_len);
-+
-+void hinic_task_set_tunnel_l4(struct hinic_sq_task *task,
-+			      enum hinic_l4_offload_type l4_type,
-+			      u32 tunnel_len);
-+
-+void hinic_set_cs_inner_l4(struct hinic_sq_task *task,
-+			   u32 *queue_info,
-+			   enum hinic_l4_offload_type l4_offload,
-+			   u32 l4_len, u32 offset);
-+
-+void hinic_set_tso_inner_l4(struct hinic_sq_task *task,
-+			    u32 *queue_info,
-+			    enum hinic_l4_offload_type l4_offload,
-+			    u32 l4_len,
-+			    u32 offset, u32 ip_ident, u32 mss);
-+
- void hinic_sq_prepare_wqe(struct hinic_sq *sq, u16 prod_idx,
- 			  struct hinic_sq_wqe *wqe, struct hinic_sge *sges,
- 			  int nr_sges);
-@@ -159,6 +184,8 @@ void hinic_sq_write_db(struct hinic_sq *sq, u16 prod_idx, unsigned int wqe_size,
- struct hinic_sq_wqe *hinic_sq_get_wqe(struct hinic_sq *sq,
- 				      unsigned int wqe_size, u16 *prod_idx);
- 
-+void hinic_sq_return_wqe(struct hinic_sq *sq, unsigned int wqe_size);
-+
- void hinic_sq_write_wqe(struct hinic_sq *sq, u16 prod_idx,
- 			struct hinic_sq_wqe *wqe, struct sk_buff *skb,
- 			unsigned int wqe_size);
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c b/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c
-index 3e3181c089bd..f92f1bf3901a 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c
-@@ -774,6 +774,20 @@ struct hinic_hw_wqe *hinic_get_wqe(struct hinic_wq *wq, unsigned int wqe_size,
- 	return WQ_PAGE_ADDR(wq, *prod_idx) + WQE_PAGE_OFF(wq, *prod_idx);
- }
- 
-+/**
-+ * hinic_return_wqe - return the wqe when transmit failed
-+ * @wq: wq to return wqe
-+ * @wqe_size: wqe size
-+ **/
-+void hinic_return_wqe(struct hinic_wq *wq, unsigned int wqe_size)
-+{
-+	int num_wqebbs = ALIGN(wqe_size, wq->wqebb_size) / wq->wqebb_size;
-+
-+	atomic_sub(num_wqebbs, &wq->prod_idx);
-+
-+	atomic_add(num_wqebbs, &wq->delta);
-+}
-+
- /**
-  * hinic_put_wqe - return the wqe place to use for a new wqe
-  * @wq: wq to return wqe
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.h
-index 9c030a0f035e..9b66545ba563 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.h
-@@ -104,6 +104,8 @@ void hinic_wq_free(struct hinic_wqs *wqs, struct hinic_wq *wq);
- struct hinic_hw_wqe *hinic_get_wqe(struct hinic_wq *wq, unsigned int wqe_size,
- 				   u16 *prod_idx);
- 
-+void hinic_return_wqe(struct hinic_wq *wq, unsigned int wqe_size);
-+
- void hinic_put_wqe(struct hinic_wq *wq, unsigned int wqe_size);
- 
- struct hinic_hw_wqe *hinic_read_wqe(struct hinic_wq *wq, unsigned int wqe_size,
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_wqe.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_wqe.h
-index bc73485483c5..9754d6ed5f4a 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_wqe.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_wqe.h
-@@ -62,19 +62,33 @@
- 			(((val) >> HINIC_CMDQ_WQE_HEADER_##member##_SHIFT) \
- 			 & HINIC_CMDQ_WQE_HEADER_##member##_MASK)
- 
--#define HINIC_SQ_CTRL_BUFDESC_SECT_LEN_SHIFT    0
--#define HINIC_SQ_CTRL_TASKSECT_LEN_SHIFT        16
--#define HINIC_SQ_CTRL_DATA_FORMAT_SHIFT         22
--#define HINIC_SQ_CTRL_LEN_SHIFT                 29
--
--#define HINIC_SQ_CTRL_BUFDESC_SECT_LEN_MASK     0xFF
--#define HINIC_SQ_CTRL_TASKSECT_LEN_MASK         0x1F
--#define HINIC_SQ_CTRL_DATA_FORMAT_MASK          0x1
--#define HINIC_SQ_CTRL_LEN_MASK                  0x3
--
--#define HINIC_SQ_CTRL_QUEUE_INFO_MSS_SHIFT      13
--
--#define HINIC_SQ_CTRL_QUEUE_INFO_MSS_MASK       0x3FFF
-+#define HINIC_SQ_CTRL_BUFDESC_SECT_LEN_SHIFT           0
-+#define HINIC_SQ_CTRL_TASKSECT_LEN_SHIFT               16
-+#define HINIC_SQ_CTRL_DATA_FORMAT_SHIFT                22
-+#define HINIC_SQ_CTRL_LEN_SHIFT                        29
-+
-+#define HINIC_SQ_CTRL_BUFDESC_SECT_LEN_MASK            0xFF
-+#define HINIC_SQ_CTRL_TASKSECT_LEN_MASK                0x1F
-+#define HINIC_SQ_CTRL_DATA_FORMAT_MASK                 0x1
-+#define HINIC_SQ_CTRL_LEN_MASK                         0x3
-+
-+#define HINIC_SQ_CTRL_QUEUE_INFO_PLDOFF_SHIFT          2
-+#define HINIC_SQ_CTRL_QUEUE_INFO_UFO_SHIFT             10
-+#define HINIC_SQ_CTRL_QUEUE_INFO_TSO_SHIFT             11
-+#define HINIC_SQ_CTRL_QUEUE_INFO_TCPUDP_CS_SHIFT       12
-+#define HINIC_SQ_CTRL_QUEUE_INFO_MSS_SHIFT             13
-+#define HINIC_SQ_CTRL_QUEUE_INFO_SCTP_SHIFT            27
-+#define HINIC_SQ_CTRL_QUEUE_INFO_UC_SHIFT              28
-+#define HINIC_SQ_CTRL_QUEUE_INFO_PRI_SHIFT             29
-+
-+#define HINIC_SQ_CTRL_QUEUE_INFO_PLDOFF_MASK           0xFF
-+#define HINIC_SQ_CTRL_QUEUE_INFO_UFO_MASK              0x1
-+#define HINIC_SQ_CTRL_QUEUE_INFO_TSO_MASK              0x1
-+#define HINIC_SQ_CTRL_QUEUE_INFO_TCPUDP_CS_MASK	       0x1
-+#define HINIC_SQ_CTRL_QUEUE_INFO_MSS_MASK              0x3FFF
-+#define HINIC_SQ_CTRL_QUEUE_INFO_SCTP_MASK             0x1
-+#define HINIC_SQ_CTRL_QUEUE_INFO_UC_MASK               0x1
-+#define HINIC_SQ_CTRL_QUEUE_INFO_PRI_MASK              0x7
- 
- #define HINIC_SQ_CTRL_SET(val, member)          \
- 		(((u32)(val) & HINIC_SQ_CTRL_##member##_MASK) \
-@@ -84,6 +98,10 @@
- 		(((val) >> HINIC_SQ_CTRL_##member##_SHIFT) \
- 		 & HINIC_SQ_CTRL_##member##_MASK)
- 
-+#define HINIC_SQ_CTRL_CLEAR(val, member)	\
-+		((u32)(val) & (~(HINIC_SQ_CTRL_##member##_MASK \
-+		 << HINIC_SQ_CTRL_##member##_SHIFT)))
-+
- #define HINIC_SQ_TASK_INFO0_L2HDR_LEN_SHIFT     0
- #define HINIC_SQ_TASK_INFO0_L4_OFFLOAD_SHIFT    8
- #define HINIC_SQ_TASK_INFO0_INNER_L3TYPE_SHIFT  10
-@@ -108,28 +126,28 @@
- 
- /* 8 bits reserved */
- #define HINIC_SQ_TASK_INFO1_MEDIA_TYPE_SHIFT    8
--#define HINIC_SQ_TASK_INFO1_INNER_L4_LEN_SHIFT  16
--#define HINIC_SQ_TASK_INFO1_INNER_L3_LEN_SHIFT  24
-+#define HINIC_SQ_TASK_INFO1_INNER_L4LEN_SHIFT   16
-+#define HINIC_SQ_TASK_INFO1_INNER_L3LEN_SHIFT   24
- 
- /* 8 bits reserved */
- #define HINIC_SQ_TASK_INFO1_MEDIA_TYPE_MASK     0xFF
--#define HINIC_SQ_TASK_INFO1_INNER_L4_LEN_MASK   0xFF
--#define HINIC_SQ_TASK_INFO1_INNER_L3_LEN_MASK   0xFF
-+#define HINIC_SQ_TASK_INFO1_INNER_L4LEN_MASK    0xFF
-+#define HINIC_SQ_TASK_INFO1_INNER_L3LEN_MASK    0xFF
- 
- #define HINIC_SQ_TASK_INFO1_SET(val, member)    \
- 		(((u32)(val) & HINIC_SQ_TASK_INFO1_##member##_MASK) <<  \
- 		 HINIC_SQ_TASK_INFO1_##member##_SHIFT)
- 
--#define HINIC_SQ_TASK_INFO2_TUNNEL_L4_LEN_SHIFT 0
--#define HINIC_SQ_TASK_INFO2_OUTER_L3_LEN_SHIFT  12
--#define HINIC_SQ_TASK_INFO2_TUNNEL_L4TYPE_SHIFT 19
-+#define HINIC_SQ_TASK_INFO2_TUNNEL_L4LEN_SHIFT  0
-+#define HINIC_SQ_TASK_INFO2_OUTER_L3LEN_SHIFT   8
-+#define HINIC_SQ_TASK_INFO2_TUNNEL_L4TYPE_SHIFT 16
- /* 1 bit reserved */
--#define HINIC_SQ_TASK_INFO2_OUTER_L3TYPE_SHIFT  22
-+#define HINIC_SQ_TASK_INFO2_OUTER_L3TYPE_SHIFT  24
- /* 8 bits reserved */
- 
--#define HINIC_SQ_TASK_INFO2_TUNNEL_L4_LEN_MASK  0xFFF
--#define HINIC_SQ_TASK_INFO2_OUTER_L3_LEN_MASK   0x7F
--#define HINIC_SQ_TASK_INFO2_TUNNEL_L4TYPE_MASK  0x3
-+#define HINIC_SQ_TASK_INFO2_TUNNEL_L4LEN_MASK   0xFF
-+#define HINIC_SQ_TASK_INFO2_OUTER_L3LEN_MASK    0xFF
-+#define HINIC_SQ_TASK_INFO2_TUNNEL_L4TYPE_MASK  0x7
- /* 1 bit reserved */
- #define HINIC_SQ_TASK_INFO2_OUTER_L3TYPE_MASK   0x3
- /* 8 bits reserved */
-@@ -187,12 +205,15 @@
- 		 sizeof(struct hinic_sq_task) + \
- 		 (nr_sges) * sizeof(struct hinic_sq_bufdesc))
- 
--#define HINIC_SCMD_DATA_LEN             16
-+#define HINIC_SCMD_DATA_LEN                     16
-+
-+#define HINIC_MAX_SQ_BUFDESCS                   17
- 
--#define HINIC_MAX_SQ_BUFDESCS           17
-+#define HINIC_SQ_WQE_MAX_SIZE                   320
-+#define HINIC_RQ_WQE_SIZE                       32
- 
--#define HINIC_SQ_WQE_MAX_SIZE           320
--#define HINIC_RQ_WQE_SIZE               32
-+#define HINIC_MSS_DEFAULT		        0x3E00
-+#define HINIC_MSS_MIN		                0x50
- 
- enum hinic_l4offload_type {
- 	HINIC_L4_OFF_DISABLE            = 0,
-@@ -211,6 +232,26 @@ enum hinic_pkt_parsed {
- 	HINIC_PKT_PARSED     = 1,
- };
- 
-+enum hinic_l3_offload_type {
-+	L3TYPE_UNKNOWN = 0,
-+	IPV6_PKT = 1,
-+	IPV4_PKT_NO_CHKSUM_OFFLOAD = 2,
-+	IPV4_PKT_WITH_CHKSUM_OFFLOAD = 3,
-+};
-+
-+enum hinic_l4_offload_type {
-+	OFFLOAD_DISABLE     = 0,
-+	TCP_OFFLOAD_ENABLE  = 1,
-+	SCTP_OFFLOAD_ENABLE = 2,
-+	UDP_OFFLOAD_ENABLE  = 3,
-+};
-+
-+enum hinic_l4_tunnel_type {
-+	NOT_TUNNEL,
-+	TUNNEL_UDP_NO_CSUM,
-+	TUNNEL_UDP_CSUM,
-+};
-+
- enum hinic_outer_l3type {
- 	HINIC_OUTER_L3TYPE_UNKNOWN              = 0,
- 	HINIC_OUTER_L3TYPE_IPV6                 = 1,
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_main.c b/drivers/net/ethernet/huawei/hinic/hinic_main.c
-index 4a8f82938ed5..fdf2bdb6b0d0 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_main.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_main.c
-@@ -805,7 +805,8 @@ static const struct net_device_ops hinic_netdev_ops = {
- 
- static void netdev_features_init(struct net_device *netdev)
- {
--	netdev->hw_features = NETIF_F_SG | NETIF_F_HIGHDMA;
-+	netdev->hw_features = NETIF_F_SG | NETIF_F_HIGHDMA | NETIF_F_IP_CSUM |
-+			      NETIF_F_IPV6_CSUM | NETIF_F_TSO | NETIF_F_TSO6;
- 
- 	netdev->vlan_features = netdev->hw_features;
- 
-@@ -863,6 +864,20 @@ static void link_status_event_handler(void *handle, void *buf_in, u16 in_size,
- 	*out_size = sizeof(*ret_link_status);
- }
- 
-+static int set_features(struct hinic_dev *nic_dev,
-+			netdev_features_t pre_features,
-+			netdev_features_t features, bool force_change)
-+{
-+	netdev_features_t changed = force_change ? ~0 : pre_features ^ features;
-+	int err = 0;
-+
-+	if (changed & NETIF_F_TSO)
-+		err = hinic_port_set_tso(nic_dev, (features & NETIF_F_TSO) ?
-+					 HINIC_TSO_ENABLE : HINIC_TSO_DISABLE);
-+
-+	return err;
-+}
-+
- /**
-  * nic_dev_init - Initialize the NIC device
-  * @pdev: the NIC pci device
-@@ -963,7 +978,12 @@ static int nic_dev_init(struct pci_dev *pdev)
- 	hinic_hwdev_cb_register(nic_dev->hwdev, HINIC_MGMT_MSG_CMD_LINK_STATUS,
- 				nic_dev, link_status_event_handler);
- 
-+	err = set_features(nic_dev, 0, nic_dev->netdev->features, true);
-+	if (err)
-+		goto err_set_features;
-+
- 	SET_NETDEV_DEV(netdev, &pdev->dev);
-+
- 	err = register_netdev(netdev);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to register netdev\n");
-@@ -973,6 +993,7 @@ static int nic_dev_init(struct pci_dev *pdev)
- 	return 0;
- 
- err_reg_netdev:
-+err_set_features:
- 	hinic_hwdev_cb_unregister(nic_dev->hwdev,
- 				  HINIC_MGMT_MSG_CMD_LINK_STATUS);
- 	cancel_work_sync(&rx_mode_work->work);
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_port.c b/drivers/net/ethernet/huawei/hinic/hinic_port.c
-index 4d4e3f05fb5f..7575a7d3bd9f 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_port.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_port.c
-@@ -377,3 +377,35 @@ int hinic_port_get_cap(struct hinic_dev *nic_dev,
- 
- 	return 0;
- }
-+
-+/**
-+ * hinic_port_set_tso - set port tso configuration
-+ * @nic_dev: nic device
-+ * @state: the tso state to set
-+ *
-+ * Return 0 - Success, negative - Failure
-+ **/
-+int hinic_port_set_tso(struct hinic_dev *nic_dev, enum hinic_tso_state state)
-+{
-+	struct hinic_hwdev *hwdev = nic_dev->hwdev;
-+	struct hinic_hwif *hwif = hwdev->hwif;
-+	struct hinic_tso_config tso_cfg = {0};
-+	struct pci_dev *pdev = hwif->pdev;
-+	u16 out_size;
-+	int err;
-+
-+	tso_cfg.func_id = HINIC_HWIF_FUNC_IDX(hwif);
-+	tso_cfg.tso_en = state;
-+
-+	err = hinic_port_msg_cmd(hwdev, HINIC_PORT_CMD_SET_TSO,
-+				 &tso_cfg, sizeof(tso_cfg),
-+				 &tso_cfg, &out_size);
-+	if (err || out_size != sizeof(tso_cfg) || tso_cfg.status) {
-+		dev_err(&pdev->dev,
-+			"Failed to set port tso, ret = %d\n",
-+			tso_cfg.status);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_port.h b/drivers/net/ethernet/huawei/hinic/hinic_port.h
-index 9404365195dd..f6e3220fe28f 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_port.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_port.h
-@@ -72,6 +72,11 @@ enum hinic_speed {
- 	HINIC_SPEED_UNKNOWN = 0xFF,
- };
- 
-+enum hinic_tso_state {
-+	HINIC_TSO_DISABLE = 0,
-+	HINIC_TSO_ENABLE  = 1,
-+};
-+
- struct hinic_port_mac_cmd {
- 	u8              status;
- 	u8              version;
-@@ -167,6 +172,17 @@ struct hinic_port_cap {
- 	u8      rsvd2[3];
- };
- 
-+struct hinic_tso_config {
-+	u8	status;
-+	u8	version;
-+	u8	rsvd0[6];
-+
-+	u16	func_id;
-+	u16	rsvd1;
-+	u8	tso_en;
-+	u8	resv2[3];
-+};
-+
- int hinic_port_add_mac(struct hinic_dev *nic_dev, const u8 *addr,
- 		       u16 vlan_id);
- 
-@@ -195,4 +211,6 @@ int hinic_port_set_func_state(struct hinic_dev *nic_dev,
- int hinic_port_get_cap(struct hinic_dev *nic_dev,
- 		       struct hinic_port_cap *port_cap);
- 
-+int hinic_port_set_tso(struct hinic_dev *nic_dev, enum hinic_tso_state state);
-+
- #endif
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_tx.c b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-index c5fca0356c9c..11e73e67358d 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
-@@ -26,6 +26,13 @@
- #include <linux/skbuff.h>
- #include <linux/smp.h>
- #include <asm/byteorder.h>
-+#include <linux/ip.h>
-+#include <linux/tcp.h>
-+#include <linux/sctp.h>
-+#include <linux/ipv6.h>
-+#include <net/ipv6.h>
-+#include <net/checksum.h>
-+#include <net/ip6_checksum.h>
- 
- #include "hinic_common.h"
- #include "hinic_hw_if.h"
-@@ -45,9 +52,31 @@
- #define CI_UPDATE_NO_PENDING            0
- #define CI_UPDATE_NO_COALESC            0
- 
--#define HW_CONS_IDX(sq)         be16_to_cpu(*(u16 *)((sq)->hw_ci_addr))
-+#define HW_CONS_IDX(sq)                 be16_to_cpu(*(u16 *)((sq)->hw_ci_addr))
- 
--#define MIN_SKB_LEN             64
-+#define MIN_SKB_LEN                     17
-+
-+#define	MAX_PAYLOAD_OFFSET	        221
-+#define TRANSPORT_OFFSET(l4_hdr, skb)	((u32)((l4_hdr) - (skb)->data))
-+
-+union hinic_l3 {
-+	struct iphdr *v4;
-+	struct ipv6hdr *v6;
-+	unsigned char *hdr;
-+};
-+
-+union hinic_l4 {
-+	struct tcphdr *tcp;
-+	struct udphdr *udp;
-+	unsigned char *hdr;
-+};
-+
-+enum hinic_offload_type {
-+	TX_OFFLOAD_TSO     = BIT(0),
-+	TX_OFFLOAD_CSUM    = BIT(1),
-+	TX_OFFLOAD_VLAN    = BIT(2),
-+	TX_OFFLOAD_INVALID = BIT(3),
-+};
- 
- /**
-  * hinic_txq_clean_stats - Clean the statistics of specific queue
-@@ -175,18 +204,263 @@ static void tx_unmap_skb(struct hinic_dev *nic_dev, struct sk_buff *skb,
- 			 DMA_TO_DEVICE);
- }
- 
-+static void get_inner_l3_l4_type(struct sk_buff *skb, union hinic_l3 *ip,
-+				 union hinic_l4 *l4,
-+				 enum hinic_offload_type offload_type,
-+				 enum hinic_l3_offload_type *l3_type,
-+				 u8 *l4_proto)
-+{
-+	u8 *exthdr;
-+
-+	if (ip->v4->version == 4) {
-+		*l3_type = (offload_type == TX_OFFLOAD_CSUM) ?
-+			   IPV4_PKT_NO_CHKSUM_OFFLOAD :
-+			   IPV4_PKT_WITH_CHKSUM_OFFLOAD;
-+		*l4_proto = ip->v4->protocol;
-+	} else if (ip->v4->version == 6) {
-+		*l3_type = IPV6_PKT;
-+		exthdr = ip->hdr + sizeof(*ip->v6);
-+		*l4_proto = ip->v6->nexthdr;
-+		if (exthdr != l4->hdr) {
-+			int start = exthdr - skb->data;
-+			__be16 frag_off;
-+
-+			ipv6_skip_exthdr(skb, start, l4_proto, &frag_off);
-+		}
-+	} else {
-+		*l3_type = L3TYPE_UNKNOWN;
-+		*l4_proto = 0;
-+	}
-+}
-+
-+static void get_inner_l4_info(struct sk_buff *skb, union hinic_l4 *l4,
-+			      enum hinic_offload_type offload_type, u8 l4_proto,
-+			      enum hinic_l4_offload_type *l4_offload,
-+			      u32 *l4_len, u32 *offset)
-+{
-+	*l4_offload = OFFLOAD_DISABLE;
-+	*offset = 0;
-+	*l4_len = 0;
-+
-+	switch (l4_proto) {
-+	case IPPROTO_TCP:
-+		*l4_offload = TCP_OFFLOAD_ENABLE;
-+		/* doff in unit of 4B */
-+		*l4_len = l4->tcp->doff * 4;
-+		*offset = *l4_len + TRANSPORT_OFFSET(l4->hdr, skb);
-+		break;
-+
-+	case IPPROTO_UDP:
-+		*l4_offload = UDP_OFFLOAD_ENABLE;
-+		*l4_len = sizeof(struct udphdr);
-+		*offset = TRANSPORT_OFFSET(l4->hdr, skb);
-+		break;
-+
-+	case IPPROTO_SCTP:
-+		/* only csum offload support sctp */
-+		if (offload_type != TX_OFFLOAD_CSUM)
-+			break;
-+
-+		*l4_offload = SCTP_OFFLOAD_ENABLE;
-+		*l4_len = sizeof(struct sctphdr);
-+		*offset = TRANSPORT_OFFSET(l4->hdr, skb);
-+		break;
-+
-+	default:
-+		break;
-+	}
-+}
-+
-+static __sum16 csum_magic(union hinic_l3 *ip, unsigned short proto)
-+{
-+	return (ip->v4->version == 4) ?
-+		csum_tcpudp_magic(ip->v4->saddr, ip->v4->daddr, 0, proto, 0) :
-+		csum_ipv6_magic(&ip->v6->saddr, &ip->v6->daddr, 0, proto, 0);
-+}
-+
-+static int offload_tso(struct hinic_sq_task *task, u32 *queue_info,
-+		       struct sk_buff *skb)
-+{
-+	u32 offset, l4_len, ip_identify, network_hdr_len;
-+	enum hinic_l3_offload_type l3_offload;
-+	enum hinic_l4_offload_type l4_offload;
-+	union hinic_l3 ip;
-+	union hinic_l4 l4;
-+	u8 l4_proto;
-+
-+	if (!skb_is_gso(skb))
-+		return 0;
-+
-+	if (skb_cow_head(skb, 0) < 0)
-+		return -EPROTONOSUPPORT;
-+
-+	if (skb->encapsulation) {
-+		u32 gso_type = skb_shinfo(skb)->gso_type;
-+		u32 tunnel_type = 0;
-+		u32 l4_tunnel_len;
-+
-+		ip.hdr = skb_network_header(skb);
-+		l4.hdr = skb_transport_header(skb);
-+		network_hdr_len = skb_inner_network_header_len(skb);
-+
-+		if (ip.v4->version == 4) {
-+			ip.v4->tot_len = 0;
-+			l3_offload = IPV4_PKT_WITH_CHKSUM_OFFLOAD;
-+		} else if (ip.v4->version == 6) {
-+			l3_offload = IPV6_PKT;
-+		} else {
-+			l3_offload = 0;
-+		}
-+
-+		hinic_task_set_outter_l3(task, l3_offload,
-+					 skb_network_header_len(skb));
-+
-+		if (gso_type & SKB_GSO_UDP_TUNNEL_CSUM) {
-+			l4.udp->check = ~csum_magic(&ip, IPPROTO_UDP);
-+			tunnel_type = TUNNEL_UDP_CSUM;
-+		} else if (gso_type & SKB_GSO_UDP_TUNNEL) {
-+			tunnel_type = TUNNEL_UDP_NO_CSUM;
-+		}
-+
-+		l4_tunnel_len = skb_inner_network_offset(skb) -
-+				skb_transport_offset(skb);
-+		hinic_task_set_tunnel_l4(task, tunnel_type, l4_tunnel_len);
-+
-+		ip.hdr = skb_inner_network_header(skb);
-+		l4.hdr = skb_inner_transport_header(skb);
-+	} else {
-+		ip.hdr = skb_network_header(skb);
-+		l4.hdr = skb_transport_header(skb);
-+		network_hdr_len = skb_network_header_len(skb);
-+	}
-+
-+	/* initialize inner IP header fields */
-+	if (ip.v4->version == 4)
-+		ip.v4->tot_len = 0;
-+	else
-+		ip.v6->payload_len = 0;
-+
-+	get_inner_l3_l4_type(skb, &ip, &l4, TX_OFFLOAD_TSO, &l3_offload,
-+			     &l4_proto);
-+
-+	hinic_task_set_inner_l3(task, l3_offload, network_hdr_len);
-+
-+	ip_identify = 0;
-+	if (l4_proto == IPPROTO_TCP)
-+		l4.tcp->check = ~csum_magic(&ip, IPPROTO_TCP);
-+
-+	get_inner_l4_info(skb, &l4, TX_OFFLOAD_TSO, l4_proto, &l4_offload,
-+			  &l4_len, &offset);
-+
-+	hinic_set_tso_inner_l4(task, queue_info, l4_offload, l4_len, offset,
-+			       ip_identify, skb_shinfo(skb)->gso_size);
-+
-+	return 1;
-+}
-+
-+static int offload_csum(struct hinic_sq_task *task, u32 *queue_info,
-+			struct sk_buff *skb)
-+{
-+	enum hinic_l4_offload_type l4_offload;
-+	u32 offset, l4_len, network_hdr_len;
-+	enum hinic_l3_offload_type l3_type;
-+	union hinic_l3 ip;
-+	union hinic_l4 l4;
-+	u8 l4_proto;
-+
-+	if (skb->ip_summed != CHECKSUM_PARTIAL)
-+		return 0;
-+
-+	if (skb->encapsulation) {
-+		u32 l4_tunnel_len;
-+
-+		ip.hdr = skb_network_header(skb);
-+
-+		if (ip.v4->version == 4)
-+			l3_type = IPV4_PKT_NO_CHKSUM_OFFLOAD;
-+		else if (ip.v4->version == 6)
-+			l3_type = IPV6_PKT;
-+		else
-+			l3_type = L3TYPE_UNKNOWN;
-+
-+		hinic_task_set_outter_l3(task, l3_type,
-+					 skb_network_header_len(skb));
-+
-+		l4_tunnel_len = skb_inner_network_offset(skb) -
-+				skb_transport_offset(skb);
-+
-+		hinic_task_set_tunnel_l4(task, TUNNEL_UDP_NO_CSUM,
-+					 l4_tunnel_len);
-+
-+		ip.hdr = skb_inner_network_header(skb);
-+		l4.hdr = skb_inner_transport_header(skb);
-+		network_hdr_len = skb_inner_network_header_len(skb);
-+	} else {
-+		ip.hdr = skb_network_header(skb);
-+		l4.hdr = skb_transport_header(skb);
-+		network_hdr_len = skb_network_header_len(skb);
-+	}
-+
-+	get_inner_l3_l4_type(skb, &ip, &l4, TX_OFFLOAD_CSUM, &l3_type,
-+			     &l4_proto);
-+
-+	hinic_task_set_inner_l3(task, l3_type, network_hdr_len);
-+
-+	get_inner_l4_info(skb, &l4, TX_OFFLOAD_CSUM, l4_proto, &l4_offload,
-+			  &l4_len, &offset);
-+
-+	hinic_set_cs_inner_l4(task, queue_info, l4_offload, l4_len, offset);
-+
-+	return 1;
-+}
-+
-+static int hinic_tx_offload(struct sk_buff *skb, struct hinic_sq_task *task,
-+			    u32 *queue_info)
-+{
-+	enum hinic_offload_type offload = 0;
-+	int enabled;
-+
-+	enabled = offload_tso(task, queue_info, skb);
-+	if (enabled > 0) {
-+		offload |= TX_OFFLOAD_TSO;
-+	} else if (enabled == 0) {
-+		enabled = offload_csum(task, queue_info, skb);
-+		if (enabled)
-+			offload |= TX_OFFLOAD_CSUM;
-+	} else {
-+		return -EPROTONOSUPPORT;
-+	}
-+
-+	if (offload)
-+		hinic_task_set_l2hdr(task, skb_network_offset(skb));
-+
-+	/* payload offset should not more than 221 */
-+	if (HINIC_SQ_CTRL_GET(*queue_info, QUEUE_INFO_PLDOFF) >
-+	    MAX_PAYLOAD_OFFSET) {
-+		return -EPROTONOSUPPORT;
-+	}
-+
-+	/* mss should not less than 80 */
-+	if (HINIC_SQ_CTRL_GET(*queue_info, QUEUE_INFO_MSS) < HINIC_MSS_MIN) {
-+		*queue_info = HINIC_SQ_CTRL_CLEAR(*queue_info, QUEUE_INFO_MSS);
-+		*queue_info |= HINIC_SQ_CTRL_SET(HINIC_MSS_MIN, QUEUE_INFO_MSS);
-+	}
-+
-+	return 0;
-+}
-+
- netdev_tx_t hinic_xmit_frame(struct sk_buff *skb, struct net_device *netdev)
- {
- 	struct hinic_dev *nic_dev = netdev_priv(netdev);
-+	u16 prod_idx, q_id = skb->queue_mapping;
- 	struct netdev_queue *netdev_txq;
- 	int nr_sges, err = NETDEV_TX_OK;
- 	struct hinic_sq_wqe *sq_wqe;
- 	unsigned int wqe_size;
- 	struct hinic_txq *txq;
- 	struct hinic_qp *qp;
--	u16 prod_idx;
- 
--	txq = &nic_dev->txqs[skb->queue_mapping];
-+	txq = &nic_dev->txqs[q_id];
- 	qp = container_of(txq->sq, struct hinic_qp, sq);
- 
- 	if (skb->len < MIN_SKB_LEN) {
-@@ -236,15 +510,23 @@ netdev_tx_t hinic_xmit_frame(struct sk_buff *skb, struct net_device *netdev)
- process_sq_wqe:
- 	hinic_sq_prepare_wqe(txq->sq, prod_idx, sq_wqe, txq->sges, nr_sges);
- 
-+	err = hinic_tx_offload(skb, &sq_wqe->task, &sq_wqe->ctrl.queue_info);
-+	if (err)
-+		goto offload_error;
-+
- 	hinic_sq_write_wqe(txq->sq, prod_idx, sq_wqe, skb, wqe_size);
- 
- flush_skbs:
--	netdev_txq = netdev_get_tx_queue(netdev, skb->queue_mapping);
-+	netdev_txq = netdev_get_tx_queue(netdev, q_id);
- 	if ((!skb->xmit_more) || (netif_xmit_stopped(netdev_txq)))
- 		hinic_sq_write_db(txq->sq, prod_idx, wqe_size, 0);
- 
- 	return err;
- 
-+offload_error:
-+	hinic_sq_return_wqe(txq->sq, wqe_size);
-+	tx_unmap_skb(nic_dev, skb, txq->sges);
-+
- skb_error:
- 	dev_kfree_skb_any(skb);
- 
-@@ -252,7 +534,8 @@ netdev_tx_t hinic_xmit_frame(struct sk_buff *skb, struct net_device *netdev)
- 	u64_stats_update_begin(&txq->txq_stats.syncp);
- 	txq->txq_stats.tx_dropped++;
- 	u64_stats_update_end(&txq->txq_stats.syncp);
--	return err;
-+
-+	return NETDEV_TX_OK;
- }
- 
- /**
--- 
-2.17.1
 
+                                        event_ctx
+                                           |
+                                           v
+    pmu (struct perf_cpu_pmu_context) ->  ctx__0 -> ctx__1
+                                           |         |
+                                           v         v
+                           sched_out -> fgroup00  fgroup01 -> event001 -> event101 -> event201
+                                          |  ^      |  ^
+                                          v  |      v  |
+                                        fgroup10  fgroup11
+                                          |  |      |  |
+                                          v  |      v  |
+                            sched_in -> fgroup20  fgroup21
+
+> 
+>>                     for_every_event_ctx(event_ctx, pmu)
+>> 	                    rotate(event_ctx, pmu)
+>> 	}
+> 
+> I'm also not sure I get the rest that follows... you only have to rotate
+> _one_ event per PMU.
+
+Yes. One group per PMU. It could end up in several HW counters reprogramming.
+
+Thanks,
+Alexey
+
+> 
+> I'll try and understand the rest of you email later; brain has checked
+> out for the day.
+> 
