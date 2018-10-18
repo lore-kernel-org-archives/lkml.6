@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 186BBC5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B80C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D617F21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:57:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F03BD21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 17:57:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KdRX44/n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D617F21473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0CgNw1DG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F03BD21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728859AbeJSB7d (ORCPT
+        id S1728872AbeJSB7g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 21:59:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47182 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 21:59:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728086AbeJSB7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 21:59:32 -0400
+        id S1728086AbeJSB7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 21:59:36 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3675F21476;
-        Thu, 18 Oct 2018 17:57:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A90621476;
+        Thu, 18 Oct 2018 17:57:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885446;
-        bh=I5NhsYvo278S99xAwRPWaw8SdQ1YFlllPdMYa60RV0w=;
+        s=default; t=1539885450;
+        bh=yDwjVsuhXfO5A2tuWOC2voeTPLNpru5jO4u4OZmCVoA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KdRX44/nyX1XpI/C1zcVL6qeIRcgoQZXjy5aD3YKiSESp7vIlfe6grm9y8Q1UkljK
-         71Gh29T+yzDUWHbvSX80GMkSYd5Ne0CVgbc+usNAwwIdEtteI7SGQav3YsXO9MN7Dz
-         RbCLepCLc2imj3nE1ywkiIBW0qYJE0UsGDFitQwA=
+        b=0CgNw1DGNLQMyG2lrO96UTDdDoBa21QSuoUfhmW1r3JREzKmfvuvc5L5yL+OF3Fnk
+         t5C5nleGol3jmRZWPOHPepbudKFpvhnptUFDMnU6B6t0i+HznXuZPWVENup/27uJiI
+         YzsBdsOR+u7vwhDb4DF4bj7X3UiLXBO1vDOZpz0Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -45,9 +45,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Tomer Tayar <Tomer.Tayar@cavium.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 28/53] qed: Fix populating the invalid stag value in multi function mode.
-Date:   Thu, 18 Oct 2018 19:54:21 +0200
-Message-Id: <20181018175421.795336229@linuxfoundation.org>
+Subject: [PATCH 4.18 29/53] qed: Do not add VLAN 0 tag to untagged frames in multi-function mode.
+Date:   Thu, 18 Oct 2018 19:54:22 +0200
+Message-Id: <20181018175421.947023228@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.561567978@linuxfoundation.org>
 References: <20181018175416.561567978@linuxfoundation.org>
@@ -67,13 +67,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-[ Upstream commit 50fdf60181b01b7383b85d4b9acbb842263d96a2 ]
+[ Upstream commit 0216da9413afa546627a1b0d319dfd17fef34050 ]
 
-In multi-function mode, driver receives the stag value (outer vlan)
-for a PF from management FW (MFW). If the stag value is negotiated prior to
-the driver load, then the stag is not notified to the driver and hence
-driver will have the invalid stag value.
-The fix is to request the MFW for STAG value during the driver load time.
+In certain multi-function switch dependent modes, firmware adds vlan tag 0
+to the untagged frames. This leads to double tagging for the traffic
+if the dcbx is enabled, which is not the desired behavior. To avoid this,
+driver needs to set "dcb_dont_add_vlan0" flag.
 
 Fixes: cac6f691 ("qed: Add support for Unified Fabric Port")
 Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
@@ -82,60 +81,58 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_dev.c |   15 ++++++++++++++-
- drivers/net/ethernet/qlogic/qed/qed_hsi.h |    4 ++++
- 2 files changed, 18 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qed/qed_dcbx.c |    9 ++++++++-
+ drivers/net/ethernet/qlogic/qed/qed_dcbx.h |    1 +
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-@@ -1636,7 +1636,7 @@ static int qed_vf_start(struct qed_hwfn
- int qed_hw_init(struct qed_dev *cdev, struct qed_hw_init_params *p_params)
- {
- 	struct qed_load_req_params load_req_params;
--	u32 load_code, param, drv_mb_param;
-+	u32 load_code, resp, param, drv_mb_param;
- 	bool b_default_mtu = true;
- 	struct qed_hwfn *p_hwfn;
- 	int rc = 0, mfw_rc, i;
-@@ -1782,6 +1782,19 @@ int qed_hw_init(struct qed_dev *cdev, st
+--- a/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
+@@ -190,6 +190,7 @@ qed_dcbx_dp_protocol(struct qed_hwfn *p_
  
- 	if (IS_PF(cdev)) {
- 		p_hwfn = QED_LEADING_HWFN(cdev);
-+
-+		/* Get pre-negotiated values for stag, bandwidth etc. */
-+		DP_VERBOSE(p_hwfn,
-+			   QED_MSG_SPQ,
-+			   "Sending GET_OEM_UPDATES command to trigger stag/bandwidth attention handling\n");
-+		drv_mb_param = 1 << DRV_MB_PARAM_DUMMY_OEM_UPDATES_OFFSET;
-+		rc = qed_mcp_cmd(p_hwfn, p_hwfn->p_main_ptt,
-+				 DRV_MSG_CODE_GET_OEM_UPDATES,
-+				 drv_mb_param, &resp, &param);
-+		if (rc)
-+			DP_NOTICE(p_hwfn,
-+				  "Failed to send GET_OEM_UPDATES attention request\n");
-+
- 		drv_mb_param = STORM_FW_VERSION;
- 		rc = qed_mcp_cmd(p_hwfn, p_hwfn->p_main_ptt,
- 				 DRV_MSG_CODE_OV_UPDATE_STORM_FW_VER,
---- a/drivers/net/ethernet/qlogic/qed/qed_hsi.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed_hsi.h
-@@ -12415,6 +12415,7 @@ struct public_drv_mb {
- #define DRV_MSG_SET_RESOURCE_VALUE_MSG		0x35000000
- #define DRV_MSG_CODE_OV_UPDATE_WOL              0x38000000
- #define DRV_MSG_CODE_OV_UPDATE_ESWITCH_MODE     0x39000000
-+#define DRV_MSG_CODE_GET_OEM_UPDATES            0x41000000
+ static void
+ qed_dcbx_set_params(struct qed_dcbx_results *p_data,
++		    struct qed_hwfn *p_hwfn,
+ 		    struct qed_hw_info *p_info,
+ 		    bool enable,
+ 		    u8 prio,
+@@ -206,6 +207,11 @@ qed_dcbx_set_params(struct qed_dcbx_resu
+ 	else
+ 		p_data->arr[type].update = DONT_UPDATE_DCB_DSCP;
  
- #define DRV_MSG_CODE_BW_UPDATE_ACK		0x32000000
- #define DRV_MSG_CODE_NIG_DRAIN			0x30000000
-@@ -12540,6 +12541,9 @@ struct public_drv_mb {
- #define DRV_MB_PARAM_ESWITCH_MODE_VEB	0x1
- #define DRV_MB_PARAM_ESWITCH_MODE_VEPA	0x2
- 
-+#define DRV_MB_PARAM_DUMMY_OEM_UPDATES_MASK	0x1
-+#define DRV_MB_PARAM_DUMMY_OEM_UPDATES_OFFSET	0
++	/* Do not add vlan tag 0 when DCB is enabled and port in UFP/OV mode */
++	if ((test_bit(QED_MF_8021Q_TAGGING, &p_hwfn->cdev->mf_bits) ||
++	     test_bit(QED_MF_8021AD_TAGGING, &p_hwfn->cdev->mf_bits)))
++		p_data->arr[type].dont_add_vlan0 = true;
 +
- #define DRV_MB_PARAM_SET_LED_MODE_OPER		0x0
- #define DRV_MB_PARAM_SET_LED_MODE_ON		0x1
- #define DRV_MB_PARAM_SET_LED_MODE_OFF		0x2
+ 	/* QM reconf data */
+ 	if (p_info->personality == personality)
+ 		p_info->offload_tc = tc;
+@@ -233,7 +239,7 @@ qed_dcbx_update_app_info(struct qed_dcbx
+ 		personality = qed_dcbx_app_update[i].personality;
+ 		name = qed_dcbx_app_update[i].name;
+ 
+-		qed_dcbx_set_params(p_data, p_info, enable,
++		qed_dcbx_set_params(p_data, p_hwfn, p_info, enable,
+ 				    prio, tc, type, personality);
+ 	}
+ }
+@@ -956,6 +962,7 @@ static void qed_dcbx_update_protocol_dat
+ 	p_data->dcb_enable_flag = p_src->arr[type].enable;
+ 	p_data->dcb_priority = p_src->arr[type].priority;
+ 	p_data->dcb_tc = p_src->arr[type].tc;
++	p_data->dcb_dont_add_vlan0 = p_src->arr[type].dont_add_vlan0;
+ }
+ 
+ /* Set pf update ramrod command params */
+--- a/drivers/net/ethernet/qlogic/qed/qed_dcbx.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_dcbx.h
+@@ -55,6 +55,7 @@ struct qed_dcbx_app_data {
+ 	u8 update;		/* Update indication */
+ 	u8 priority;		/* Priority */
+ 	u8 tc;			/* Traffic Class */
++	bool dont_add_vlan0;	/* Do not insert a vlan tag with id 0 */
+ };
+ 
+ #define QED_DCBX_VERSION_DISABLED       0
 
 
