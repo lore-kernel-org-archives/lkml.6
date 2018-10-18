@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EB6C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED5D1C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFBDE21486
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6B5E21479
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOAs5OX4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFBDE21486
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCyiWaEt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6B5E21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729723AbeJSCER (ORCPT
+        id S1729736AbeJSCEV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:04:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52494 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:04:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729102AbeJSCER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:04:17 -0400
+        id S1729070AbeJSCEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:04:20 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12A7821479;
-        Thu, 18 Oct 2018 18:02:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A671521476;
+        Thu, 18 Oct 2018 18:02:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885731;
-        bh=fYyZMYmxOAeN0yKtKVRV7WXt4hiGiAPfTNF2jyK+g/4=;
+        s=default; t=1539885734;
+        bh=di6mvGnzOD8nJohG6+Zri3gqSEdc+fQuQi3HaRT++Vc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LOAs5OX4XH+WDrAwz91mOLXAwix3cjka0lXLzIC94cN3aWHWxFamQAo5BTSvYGmm9
-         PB12YAf0XYMMzt/h/bRiNJYosQZhmiqfjbFAyXDGhssJgkTq8NJxKMvmWbZVNF9Mxh
-         xjbiID/gNT50g1s5lJdJ7YAC+b2H/+K8sDpNc0VU=
+        b=HCyiWaEtCap5ixwS0YIDgyDSNzZJqEUuKnJdUrXhPiyUueYfYBbhriyjvGXjuC8F0
+         KJYUQ59eYVsjHlt+eMRtSxVp/ekCSIY/OFysFxfIlKzsh3WJYrAmxPBSuNyoCgu3LA
+         yuwA+QH1tbRRA32eWEE+fNJTNk+/6JSpb6OhXPL8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 40/41] i2c: rcar: handle RXDMA HW behaviour on Gen3
-Date:   Thu, 18 Oct 2018 19:54:55 +0200
-Message-Id: <20181018175423.512745849@linuxfoundation.org>
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 41/41] IB/hfi1: Fix destroy_qp hang after a link down
+Date:   Thu, 18 Oct 2018 19:54:56 +0200
+Message-Id: <20181018175423.636301145@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
 References: <20181018175416.718399607@linuxfoundation.org>
@@ -65,140 +65,213 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Michael J. Ruhl <michael.j.ruhl@intel.com>
 
-commit 2b16fd63059ab9a46d473620749672dc342e1d21 upstream.
+commit b4a4957d3d1c328b733fce783b7264996f866ad2 upstream.
 
-On Gen3, we can only do RXDMA once per transfer reliably. For that, we
-must reset the device, then we can have RXDMA once. This patch
-implements this. When there is no reset controller or the reset fails,
-RXDMA will be blocked completely. Otherwise, it will be disabled after
-the first RXDMA transfer. Based on a commit from the BSP by Hiromitsu
-Yamasaki, yet completely refactored to handle multiple read messages
-within one transfer.
+rvt_destroy_qp() cannot complete until all in process packets have
+been released from the underlying hardware.  If a link down event
+occurs, an application can hang with a kernel stack similar to:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@kernel.org
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+cat /proc/<app PID>/stack
+ quiesce_qp+0x178/0x250 [hfi1]
+ rvt_reset_qp+0x23d/0x400 [rdmavt]
+ rvt_destroy_qp+0x69/0x210 [rdmavt]
+ ib_destroy_qp+0xba/0x1c0 [ib_core]
+ nvme_rdma_destroy_queue_ib+0x46/0x80 [nvme_rdma]
+ nvme_rdma_free_queue+0x3c/0xd0 [nvme_rdma]
+ nvme_rdma_destroy_io_queues+0x88/0xd0 [nvme_rdma]
+ nvme_rdma_error_recovery_work+0x52/0xf0 [nvme_rdma]
+ process_one_work+0x17a/0x440
+ worker_thread+0x126/0x3c0
+ kthread+0xcf/0xe0
+ ret_from_fork+0x58/0x90
+ 0xffffffffffffffff
+
+quiesce_qp() waits until all outstanding packets have been freed.
+This wait should be momentary.  During a link down event, the cleanup
+handling does not ensure that all packets caught by the link down are
+flushed properly.
+
+This is caused by the fact that the freeze path and the link down
+event is handled the same.  This is not correct.  The freeze path
+waits until the HFI is unfrozen and then restarts PIO.  A link down
+is not a freeze event.  The link down path cannot restart the PIO
+until link is restored.  If the PIO path is restarted before the link
+comes up, the application (QP) using the PIO path will hang (until
+link is restored).
+
+Fix by separating the linkdown path from the freeze path and use the
+link down path for link down events.
+
+Close a race condition sc_disable() by acquiring both the progress
+and release locks.
+
+Close a race condition in sc_stop() by moving the setting of the flag
+bits under the alloc lock.
+
+Cc: <stable@vger.kernel.org> # 4.9.x+
+Fixes: 7724105686e7 ("IB/hfi1: add driver files")
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/i2c/busses/i2c-rcar.c |   54 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 51 insertions(+), 3 deletions(-)
 
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -32,6 +32,7 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/reset.h>
- #include <linux/slab.h>
+---
+ drivers/infiniband/hw/hfi1/chip.c |    7 +++++-
+ drivers/infiniband/hw/hfi1/pio.c  |   42 ++++++++++++++++++++++++++++++--------
+ drivers/infiniband/hw/hfi1/pio.h  |    2 +
+ 3 files changed, 42 insertions(+), 9 deletions(-)
+
+--- a/drivers/infiniband/hw/hfi1/chip.c
++++ b/drivers/infiniband/hw/hfi1/chip.c
+@@ -6722,6 +6722,7 @@ void start_freeze_handling(struct hfi1_p
+ 	struct hfi1_devdata *dd = ppd->dd;
+ 	struct send_context *sc;
+ 	int i;
++	int sc_flags;
  
- /* register offsets */
-@@ -111,8 +112,9 @@
- #define ID_ARBLOST	(1 << 3)
- #define ID_NACK		(1 << 4)
- /* persistent flags */
-+#define ID_P_NO_RXDMA	(1 << 30) /* HW forbids RXDMA sometimes */
- #define ID_P_PM_BLOCKED	(1 << 31)
--#define ID_P_MASK	ID_P_PM_BLOCKED
-+#define ID_P_MASK	(ID_P_PM_BLOCKED | ID_P_NO_RXDMA)
+ 	if (flags & FREEZE_SELF)
+ 		write_csr(dd, CCE_CTRL, CCE_CTRL_SPC_FREEZE_SMASK);
+@@ -6732,11 +6733,13 @@ void start_freeze_handling(struct hfi1_p
+ 	/* notify all SDMA engines that they are going into a freeze */
+ 	sdma_freeze_notify(dd, !!(flags & FREEZE_LINK_DOWN));
  
- enum rcar_i2c_type {
- 	I2C_RCAR_GEN1,
-@@ -140,6 +142,8 @@ struct rcar_i2c_priv {
- 	struct dma_chan *dma_rx;
- 	struct scatterlist sg;
- 	enum dma_data_direction dma_direction;
++	sc_flags = SCF_FROZEN | SCF_HALTED | (flags & FREEZE_LINK_DOWN ?
++					      SCF_LINK_DOWN : 0);
+ 	/* do halt pre-handling on all enabled send contexts */
+ 	for (i = 0; i < dd->num_send_contexts; i++) {
+ 		sc = dd->send_contexts[i].sc;
+ 		if (sc && (sc->flags & SCF_ENABLED))
+-			sc_stop(sc, SCF_FROZEN | SCF_HALTED);
++			sc_stop(sc, sc_flags);
+ 	}
+ 
+ 	/* Send context are frozen. Notify user space */
+@@ -10646,6 +10649,8 @@ int set_link_state(struct hfi1_pportdata
+ 		add_rcvctrl(dd, RCV_CTRL_RCV_PORT_ENABLE_SMASK);
+ 
+ 		handle_linkup_change(dd, 1);
++		pio_kernel_linkup(dd);
 +
-+	struct reset_control *rstc;
- };
+ 		ppd->host_link_state = HLS_UP_INIT;
+ 		break;
+ 	case HLS_UP_ARMED:
+--- a/drivers/infiniband/hw/hfi1/pio.c
++++ b/drivers/infiniband/hw/hfi1/pio.c
+@@ -942,20 +942,18 @@ void sc_free(struct send_context *sc)
+ void sc_disable(struct send_context *sc)
+ {
+ 	u64 reg;
+-	unsigned long flags;
+ 	struct pio_buf *pbuf;
  
- #define rcar_i2c_priv_to_dev(p)		((p)->adap.dev.parent)
-@@ -321,6 +325,11 @@ static void rcar_i2c_dma_unmap(struct rc
- 	dma_unmap_single(chan->device->dev, sg_dma_address(&priv->sg),
- 			 sg_dma_len(&priv->sg), priv->dma_direction);
- 
-+	/* Gen3 can only do one RXDMA per transfer and we just completed it */
-+	if (priv->devtype == I2C_RCAR_GEN3 &&
-+	    priv->dma_direction == DMA_FROM_DEVICE)
-+		priv->flags |= ID_P_NO_RXDMA;
-+
- 	priv->dma_direction = DMA_NONE;
- }
- 
-@@ -358,8 +367,9 @@ static void rcar_i2c_dma(struct rcar_i2c
- 	unsigned char *buf;
- 	int len;
- 
--	/* Do not use DMA if it's not available or for messages < 8 bytes */
--	if (IS_ERR(chan) || msg->len < 8)
-+	/* Do various checks to see if DMA is feasible at all */
-+	if (IS_ERR(chan) || msg->len < 8 ||
-+	    (read && priv->flags & ID_P_NO_RXDMA))
+ 	if (!sc)
  		return;
  
- 	if (read) {
-@@ -688,6 +698,25 @@ static void rcar_i2c_release_dma(struct
+ 	/* do all steps, even if already disabled */
+-	spin_lock_irqsave(&sc->alloc_lock, flags);
++	spin_lock_irq(&sc->alloc_lock);
+ 	reg = read_kctxt_csr(sc->dd, sc->hw_context, SC(CTRL));
+ 	reg &= ~SC(CTRL_CTXT_ENABLE_SMASK);
+ 	sc->flags &= ~SCF_ENABLED;
+ 	sc_wait_for_packet_egress(sc, 1);
+ 	write_kctxt_csr(sc->dd, sc->hw_context, SC(CTRL), reg);
+-	spin_unlock_irqrestore(&sc->alloc_lock, flags);
+ 
+ 	/*
+ 	 * Flush any waiters.  Once the context is disabled,
+@@ -965,7 +963,7 @@ void sc_disable(struct send_context *sc)
+ 	 * proceed with the flush.
+ 	 */
+ 	udelay(1);
+-	spin_lock_irqsave(&sc->release_lock, flags);
++	spin_lock(&sc->release_lock);
+ 	if (sc->sr) {	/* this context has a shadow ring */
+ 		while (sc->sr_tail != sc->sr_head) {
+ 			pbuf = &sc->sr[sc->sr_tail].pbuf;
+@@ -976,7 +974,8 @@ void sc_disable(struct send_context *sc)
+ 				sc->sr_tail = 0;
+ 		}
+ 	}
+-	spin_unlock_irqrestore(&sc->release_lock, flags);
++	spin_unlock(&sc->release_lock);
++	spin_unlock_irq(&sc->alloc_lock);
+ }
+ 
+ /* return SendEgressCtxtStatus.PacketOccupancy */
+@@ -1199,11 +1198,39 @@ void pio_kernel_unfreeze(struct hfi1_dev
+ 		sc = dd->send_contexts[i].sc;
+ 		if (!sc || !(sc->flags & SCF_FROZEN) || sc->type == SC_USER)
+ 			continue;
++		if (sc->flags & SCF_LINK_DOWN)
++			continue;
+ 
+ 		sc_enable(sc);	/* will clear the sc frozen flag */
  	}
  }
  
-+/* I2C is a special case, we need to poll the status of a reset */
-+static int rcar_i2c_do_reset(struct rcar_i2c_priv *priv)
++/**
++ * pio_kernel_linkup() - Re-enable send contexts after linkup event
++ * @dd: valid devive data
++ *
++ * When the link goes down, the freeze path is taken.  However, a link down
++ * event is different from a freeze because if the send context is re-enabled
++ * whowever is sending data will start sending data again, which will hang
++ * any QP that is sending data.
++ *
++ * The freeze path now looks at the type of event that occurs and takes this
++ * path for link down event.
++ */
++void pio_kernel_linkup(struct hfi1_devdata *dd)
 +{
-+	int i, ret;
++	struct send_context *sc;
++	int i;
 +
-+	ret = reset_control_reset(priv->rstc);
-+	if (ret)
-+		return ret;
++	for (i = 0; i < dd->num_send_contexts; i++) {
++		sc = dd->send_contexts[i].sc;
++		if (!sc || !(sc->flags & SCF_LINK_DOWN) || sc->type == SC_USER)
++			continue;
 +
-+	for (i = 0; i < LOOP_TIMEOUT; i++) {
-+		ret = reset_control_status(priv->rstc);
-+		if (ret == 0)
-+			return 0;
-+		udelay(1);
++		sc_enable(sc);	/* will clear the sc link down flag */
 +	}
-+
-+	return -ETIMEDOUT;
 +}
 +
- static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
- 				struct i2c_msg *msgs,
- 				int num)
-@@ -699,6 +728,16 @@ static int rcar_i2c_master_xfer(struct i
+ /*
+  * Wait for the SendPioInitCtxt.PioInitInProgress bit to clear.
+  * Returns:
+@@ -1403,11 +1430,10 @@ void sc_stop(struct send_context *sc, in
+ {
+ 	unsigned long flags;
  
- 	pm_runtime_get_sync(dev);
+-	/* mark the context */
+-	sc->flags |= flag;
+-
+ 	/* stop buffer allocations */
+ 	spin_lock_irqsave(&sc->alloc_lock, flags);
++	/* mark the context */
++	sc->flags |= flag;
+ 	sc->flags &= ~SCF_ENABLED;
+ 	spin_unlock_irqrestore(&sc->alloc_lock, flags);
+ 	wake_up(&sc->halt_wait);
+--- a/drivers/infiniband/hw/hfi1/pio.h
++++ b/drivers/infiniband/hw/hfi1/pio.h
+@@ -145,6 +145,7 @@ struct send_context {
+ #define SCF_IN_FREE 0x02
+ #define SCF_HALTED  0x04
+ #define SCF_FROZEN  0x08
++#define SCF_LINK_DOWN 0x10
  
-+	/* Gen3 needs a reset before allowing RXDMA once */
-+	if (priv->devtype == I2C_RCAR_GEN3) {
-+		priv->flags |= ID_P_NO_RXDMA;
-+		if (!IS_ERR(priv->rstc)) {
-+			ret = rcar_i2c_do_reset(priv);
-+			if (ret == 0)
-+				priv->flags &= ~ID_P_NO_RXDMA;
-+		}
-+	}
-+
- 	rcar_i2c_init(priv);
+ struct send_context_info {
+ 	struct send_context *sc;	/* allocated working context */
+@@ -312,6 +313,7 @@ void set_pio_integrity(struct send_conte
+ void pio_reset_all(struct hfi1_devdata *dd);
+ void pio_freeze(struct hfi1_devdata *dd);
+ void pio_kernel_unfreeze(struct hfi1_devdata *dd);
++void pio_kernel_linkup(struct hfi1_devdata *dd);
  
- 	ret = rcar_i2c_bus_barrier(priv);
-@@ -868,6 +907,15 @@ static int rcar_i2c_probe(struct platfor
- 	if (ret < 0)
- 		goto out_pm_put;
- 
-+	if (priv->devtype == I2C_RCAR_GEN3) {
-+		priv->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
-+		if (!IS_ERR(priv->rstc)) {
-+			ret = reset_control_status(priv->rstc);
-+			if (ret < 0)
-+				priv->rstc = ERR_PTR(-ENOTSUPP);
-+		}
-+	}
-+
- 	/* Stay always active when multi-master to keep arbitration working */
- 	if (of_property_read_bool(dev->of_node, "multi-master"))
- 		priv->flags |= ID_P_PM_BLOCKED;
+ /* global PIO send control operations */
+ #define PSC_GLOBAL_ENABLE 0
 
 
