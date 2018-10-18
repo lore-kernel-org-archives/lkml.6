@@ -2,112 +2,83 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 847B1C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13079ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 420192087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:21:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 420192087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id D296A2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 11:21:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D296A2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728134AbeJRTVc (ORCPT
+        id S1728215AbeJRTVr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 15:21:32 -0400
-Received: from outbound-smtp11.blacknight.com ([46.22.139.106]:42170 "EHLO
-        outbound-smtp11.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727461AbeJRTVc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 15:21:32 -0400
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp11.blacknight.com (Postfix) with ESMTPS id 8B2261C2041
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 12:20:57 +0100 (IST)
-Received: (qmail 19169 invoked from network); 18 Oct 2018 11:20:57 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.142])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 18 Oct 2018 11:20:57 -0000
-Date:   Thu, 18 Oct 2018 12:20:55 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Aaron Lu <aaron.lu@intel.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>
-Subject: Re: [RFC v4 PATCH 3/5] mm/rmqueue_bulk: alloc without touching
- individual page structure
-Message-ID: <20181018112055.GN5819@techsingularity.net>
-References: <20181017063330.15384-1-aaron.lu@intel.com>
- <20181017063330.15384-4-aaron.lu@intel.com>
- <20181017112042.GK5819@techsingularity.net>
- <20181017142327.GB9167@intel.com>
+        Thu, 18 Oct 2018 15:21:47 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:54926 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727470AbeJRTVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 15:21:46 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6624DAC082A15;
+        Thu, 18 Oct 2018 19:21:10 +0800 (CST)
+Received: from [127.0.0.1] (10.177.223.23) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.399.0; Thu, 18 Oct 2018
+ 19:21:02 +0800
+Subject: Re: [PATCH 3/4] irqchip/mbigen: add support for a MBIGEN generating
+ SPIs
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <tglx@linutronix.de>
+References: <1539681316-19300-1-git-send-email-yangyingliang@huawei.com>
+ <1539681316-19300-4-git-send-email-yangyingliang@huawei.com>
+ <a8ea3f08-8d60-13bf-edcc-03298a9cfb0d@arm.com> <5BC800EB.5070201@huawei.com>
+ <15c4ab00-3bfa-0eb8-a341-fc7a2be857f7@arm.com>
+From:   Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <df892248-4f9c-c095-df9b-885f1e650ba0@huawei.com>
+Date:   Thu, 18 Oct 2018 19:20:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20181017142327.GB9167@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <15c4ab00-3bfa-0eb8-a341-fc7a2be857f7@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 10:23:27PM +0800, Aaron Lu wrote:
-> > RT has had problems with cpu_relax in the past but more importantly, as
-> > this delay for parallel compactions and allocations of contig ranges,
-> > we could be stuck here for very long periods of time with interrupts
+Hi Marc,
+
+>>>>
+>>> Now, the biggest question of them all: how does it work with ACPI? Last
+>>> time I checked, there was no DT support for platforms using the MBIGEN.
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/hisilicon/hip07.dtsi
+>> This DT describes how platform devices using the MBIGEN.
 > 
-> The longest possible time is one CPU accessing pcp->batch number cold
-> cachelines. Reason:
-> When zone_wait_cluster_alloc() is called, we already held zone lock so
-> no more allocations are possible. Waiting in_progress to become zero
-> means waiting any CPU that increased in_progress to finish processing
-> their allocated pages. Since they will at most allocate pcp->batch pages
-> and worse case are all these page structres are cache cold, so the
-> longest wait time is one CPU accessing pcp->batch number cold cache lines.
-> 
-> I have no idea if this time is too long though.
-> 
+> That's not how my own D05 boots. It is ACPI only. How is that going to
+> work on this platform?
 
-But compact_zone calls zone_wait_and_disable_cluster_alloc so how is the
-disabled time there bound by pcp->batch?
+D05 is ACPI only so it has no dtb in the firmware, that's why we can
+boot D05 without acpi=on in the boot cmdline, but if you want to
+boot D05 with dtb, you could try to specify the dtb in the grub
+(seems centos based):
 
-> > disabled. It gets even worse if it's from an interrupt context such as
-> > jumbo frame allocation or a high-order slab allocation that is atomic.
-> 
-> My understanding is atomic allocation won't trigger compaction, no?
-> 
+menuentry "example" --id example{
+        linux /Image-kernel root=... rdinit=...
+        initrd /example.img
+        devicetree /d05.dtb
+}
 
-No, they can't. I didn't check properly but be wary of any possibility
-whereby interrupts can get delayed in zone_wait_cluster_alloc. I didn't
-go back and check if it can -- partially because I'm more focused on the
-lazy buddy aspect at the moment.
+Hope it helps.
 
-> > It may be necessary to consider instead minimising the number
-> > of struct page update when merging to PCP and then either increasing the
-> > size of the PCP or allowing it to exceed pcp->high for short periods of
-> > time to batch the struct page updates.
-> 
-> I don't quite follow this part. It doesn't seem possible we can exceed
-> pcp->high in allocation path, or are you talking about free path?
-> 
+Thanks
+Hanjun
 
-I'm talking about the free path.
-
-> And thanks a lot for the review!
-
-My pleasure, hope it helps.
-
--- 
-Mel Gorman
-SUSE Labs
