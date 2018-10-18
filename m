@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 634CAECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EB6C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D8C021480
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFBDE21486
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:02:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kFrFiFQY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D8C021480
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOAs5OX4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFBDE21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729710AbeJSCEP (ORCPT
+        id S1729723AbeJSCER (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:04:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52430 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:04:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729102AbeJSCEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:04:14 -0400
+        id S1729102AbeJSCER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:04:17 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2471121476;
-        Thu, 18 Oct 2018 18:02:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12A7821479;
+        Thu, 18 Oct 2018 18:02:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885727;
-        bh=5IUf3G1nsiu8Sqc/97UlP36MbwKv64RaNqvr5/I+5YM=;
+        s=default; t=1539885731;
+        bh=fYyZMYmxOAeN0yKtKVRV7WXt4hiGiAPfTNF2jyK+g/4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kFrFiFQYOzWIfXH1ayDELPOBxUS8JXmscKfnuJkOp9WK9g+VHlQz3LzXit3NjYy6X
-         TJw45xBa81uoHVl6MMz35ahbs9s/wRW/yvg4DAV/IF4B/I/Tc80ux7nSfP2aFsXIpu
-         MogXPim2GYt/lZCXaSjcnu4i/ox3fpaLRfxm0GvI=
+        b=LOAs5OX4XH+WDrAwz91mOLXAwix3cjka0lXLzIC94cN3aWHWxFamQAo5BTSvYGmm9
+         PB12YAf0XYMMzt/h/bRiNJYosQZhmiqfjbFAyXDGhssJgkTq8NJxKMvmWbZVNF9Mxh
+         xjbiID/gNT50g1s5lJdJ7YAC+b2H/+K8sDpNc0VU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Imre Deak <imre.deak@intel.com>,
-        Clint Taylor <clinton.a.taylor@intel.com>,
-        Daniel Scheller <d.scheller.oss@gmail.com>,
-        Radhakrishna Sripada <radhakrishna.sripada@intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        stable@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 39/41] drm/i915/glk: Add Quirk for GLK NUC HDMI port issues.
-Date:   Thu, 18 Oct 2018 19:54:54 +0200
-Message-Id: <20181018175423.387024104@linuxfoundation.org>
+Subject: [PATCH 4.14 40/41] i2c: rcar: handle RXDMA HW behaviour on Gen3
+Date:   Thu, 18 Oct 2018 19:54:55 +0200
+Message-Id: <20181018175423.512745849@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
 References: <20181018175416.718399607@linuxfoundation.org>
@@ -66,140 +65,140 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Clint Taylor <clinton.a.taylor@intel.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 0ca9488193e61ec5f31a631d8147f74525629e8a upstream.
+commit 2b16fd63059ab9a46d473620749672dc342e1d21 upstream.
 
-On GLK NUC platforms the HDMI retiming buffer needs additional disabled
-time to correctly sync to a faster incoming signal.
+On Gen3, we can only do RXDMA once per transfer reliably. For that, we
+must reset the device, then we can have RXDMA once. This patch
+implements this. When there is no reset controller or the reset fails,
+RXDMA will be blocked completely. Otherwise, it will be disabled after
+the first RXDMA transfer. Based on a commit from the BSP by Hiromitsu
+Yamasaki, yet completely refactored to handle multiple read messages
+within one transfer.
 
-When measured on a scope the highspeed lines of the HDMI clock turn off
- for ~400uS during a normal resolution change. The HDMI retimer on the
- GLK NUC appears to require at least a full frame of quiet time before a
-new faster clock can be correctly sync'd. Wait 100ms due to msleep
-inaccuracies while waiting for a completed frame. Add a quirk to the
-driver for GLK boards that use ITE66317 HDMI retimers.
-
-V2: Add more devices to the quirk list
-V3: Delay increased to 100ms, check to confirm crtc type is HDMI.
-V4: crtc type check extended to include _DDI and whitespace fixes
-v5: Fix white spaces, remove the macro for delay. Revert the crtc type
-    check introduced in v4.
-
-Cc: Imre Deak <imre.deak@intel.com>
-Cc: <stable@vger.kernel.org> # v4.14+
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105887
-Signed-off-by: Clint Taylor <clinton.a.taylor@intel.com>
-Tested-by: Daniel Scheller <d.scheller.oss@gmail.com>
-Signed-off-by: Radhakrishna Sripada <radhakrishna.sripada@intel.com>
-Signed-off-by: Imre Deak <imre.deak@intel.com>
-Reviewed-by: Imre Deak <imre.deak@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180710200205.1478-1-radhakrishna.sripada@intel.com
-(cherry picked from commit 90c3e2198777aaa355b6994a31a79c636c8d4306)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@kernel.org
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/i915/i915_drv.h      |    1 +
- drivers/gpu/drm/i915/intel_ddi.c     |   13 +++++++++++--
- drivers/gpu/drm/i915/intel_display.c |   21 ++++++++++++++++++++-
- drivers/gpu/drm/i915/intel_drv.h     |    3 +--
- 4 files changed, 33 insertions(+), 5 deletions(-)
+ drivers/i2c/busses/i2c-rcar.c |   54 +++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 51 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/i915/i915_drv.h
-+++ b/drivers/gpu/drm/i915/i915_drv.h
-@@ -1183,6 +1183,7 @@ enum intel_sbi_destination {
- #define QUIRK_BACKLIGHT_PRESENT (1<<3)
- #define QUIRK_PIN_SWIZZLED_PAGES (1<<5)
- #define QUIRK_INCREASE_T12_DELAY (1<<6)
-+#define QUIRK_INCREASE_DDI_DISABLED_TIME (1<<7)
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -32,6 +32,7 @@
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
  
- struct intel_fbdev;
- struct intel_fbc_work;
---- a/drivers/gpu/drm/i915/intel_ddi.c
-+++ b/drivers/gpu/drm/i915/intel_ddi.c
-@@ -1526,15 +1526,24 @@ void intel_ddi_enable_transcoder_func(co
- 	I915_WRITE(TRANS_DDI_FUNC_CTL(cpu_transcoder), temp);
- }
+ /* register offsets */
+@@ -111,8 +112,9 @@
+ #define ID_ARBLOST	(1 << 3)
+ #define ID_NACK		(1 << 4)
+ /* persistent flags */
++#define ID_P_NO_RXDMA	(1 << 30) /* HW forbids RXDMA sometimes */
+ #define ID_P_PM_BLOCKED	(1 << 31)
+-#define ID_P_MASK	ID_P_PM_BLOCKED
++#define ID_P_MASK	(ID_P_PM_BLOCKED | ID_P_NO_RXDMA)
  
--void intel_ddi_disable_transcoder_func(struct drm_i915_private *dev_priv,
--				       enum transcoder cpu_transcoder)
-+void intel_ddi_disable_transcoder_func(const struct intel_crtc_state *crtc_state)
- {
-+	struct intel_crtc *crtc = to_intel_crtc(crtc_state->base.crtc);
-+	struct drm_i915_private *dev_priv = to_i915(crtc->base.dev);
-+	enum transcoder cpu_transcoder = crtc_state->cpu_transcoder;
- 	i915_reg_t reg = TRANS_DDI_FUNC_CTL(cpu_transcoder);
- 	uint32_t val = I915_READ(reg);
- 
- 	val &= ~(TRANS_DDI_FUNC_ENABLE | TRANS_DDI_PORT_MASK | TRANS_DDI_DP_VC_PAYLOAD_ALLOC);
- 	val |= TRANS_DDI_PORT_NONE;
- 	I915_WRITE(reg, val);
+ enum rcar_i2c_type {
+ 	I2C_RCAR_GEN1,
+@@ -140,6 +142,8 @@ struct rcar_i2c_priv {
+ 	struct dma_chan *dma_rx;
+ 	struct scatterlist sg;
+ 	enum dma_data_direction dma_direction;
 +
-+	if (dev_priv->quirks & QUIRK_INCREASE_DDI_DISABLED_TIME &&
-+	    intel_crtc_has_type(crtc_state, INTEL_OUTPUT_HDMI)) {
-+		DRM_DEBUG_KMS("Quirk Increase DDI disabled time\n");
-+		/* Quirk time at 100ms for reliable operation */
-+		msleep(100);
-+	}
- }
- 
- bool intel_ddi_connector_get_hw_state(struct intel_connector *intel_connector)
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -5653,7 +5653,7 @@ static void haswell_crtc_disable(struct
- 		intel_ddi_set_vc_payload_alloc(intel_crtc->config, false);
- 
- 	if (!transcoder_is_dsi(cpu_transcoder))
--		intel_ddi_disable_transcoder_func(dev_priv, cpu_transcoder);
-+		intel_ddi_disable_transcoder_func(old_crtc_state);
- 
- 	if (INTEL_GEN(dev_priv) >= 9)
- 		skylake_scaler_disable(intel_crtc);
-@@ -14286,6 +14286,18 @@ static void quirk_increase_t12_delay(str
- 	DRM_INFO("Applying T12 delay quirk\n");
- }
- 
-+/*
-+ * GeminiLake NUC HDMI outputs require additional off time
-+ * this allows the onboard retimer to correctly sync to signal
-+ */
-+static void quirk_increase_ddi_disabled_time(struct drm_device *dev)
-+{
-+	struct drm_i915_private *dev_priv = to_i915(dev);
-+
-+	dev_priv->quirks |= QUIRK_INCREASE_DDI_DISABLED_TIME;
-+	DRM_INFO("Applying Increase DDI Disabled quirk\n");
-+}
-+
- struct intel_quirk {
- 	int device;
- 	int subsystem_vendor;
-@@ -14372,6 +14384,13 @@ static struct intel_quirk intel_quirks[]
- 
- 	/* Toshiba Satellite P50-C-18C */
- 	{ 0x191B, 0x1179, 0xF840, quirk_increase_t12_delay },
-+
-+	/* GeminiLake NUC */
-+	{ 0x3185, 0x8086, 0x2072, quirk_increase_ddi_disabled_time },
-+	{ 0x3184, 0x8086, 0x2072, quirk_increase_ddi_disabled_time },
-+	/* ASRock ITX*/
-+	{ 0x3185, 0x1849, 0x2212, quirk_increase_ddi_disabled_time },
-+	{ 0x3184, 0x1849, 0x2212, quirk_increase_ddi_disabled_time },
++	struct reset_control *rstc;
  };
  
- static void intel_init_quirks(struct drm_device *dev)
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@ -1254,8 +1254,7 @@ void intel_ddi_init(struct drm_i915_priv
- enum port intel_ddi_get_encoder_port(struct intel_encoder *intel_encoder);
- bool intel_ddi_get_hw_state(struct intel_encoder *encoder, enum pipe *pipe);
- void intel_ddi_enable_transcoder_func(const struct intel_crtc_state *crtc_state);
--void intel_ddi_disable_transcoder_func(struct drm_i915_private *dev_priv,
--				       enum transcoder cpu_transcoder);
-+void intel_ddi_disable_transcoder_func(const struct intel_crtc_state *crtc_state);
- void intel_ddi_enable_pipe_clock(const struct intel_crtc_state *crtc_state);
- void intel_ddi_disable_pipe_clock(const  struct intel_crtc_state *crtc_state);
- struct intel_encoder *
+ #define rcar_i2c_priv_to_dev(p)		((p)->adap.dev.parent)
+@@ -321,6 +325,11 @@ static void rcar_i2c_dma_unmap(struct rc
+ 	dma_unmap_single(chan->device->dev, sg_dma_address(&priv->sg),
+ 			 sg_dma_len(&priv->sg), priv->dma_direction);
+ 
++	/* Gen3 can only do one RXDMA per transfer and we just completed it */
++	if (priv->devtype == I2C_RCAR_GEN3 &&
++	    priv->dma_direction == DMA_FROM_DEVICE)
++		priv->flags |= ID_P_NO_RXDMA;
++
+ 	priv->dma_direction = DMA_NONE;
+ }
+ 
+@@ -358,8 +367,9 @@ static void rcar_i2c_dma(struct rcar_i2c
+ 	unsigned char *buf;
+ 	int len;
+ 
+-	/* Do not use DMA if it's not available or for messages < 8 bytes */
+-	if (IS_ERR(chan) || msg->len < 8)
++	/* Do various checks to see if DMA is feasible at all */
++	if (IS_ERR(chan) || msg->len < 8 ||
++	    (read && priv->flags & ID_P_NO_RXDMA))
+ 		return;
+ 
+ 	if (read) {
+@@ -688,6 +698,25 @@ static void rcar_i2c_release_dma(struct
+ 	}
+ }
+ 
++/* I2C is a special case, we need to poll the status of a reset */
++static int rcar_i2c_do_reset(struct rcar_i2c_priv *priv)
++{
++	int i, ret;
++
++	ret = reset_control_reset(priv->rstc);
++	if (ret)
++		return ret;
++
++	for (i = 0; i < LOOP_TIMEOUT; i++) {
++		ret = reset_control_status(priv->rstc);
++		if (ret == 0)
++			return 0;
++		udelay(1);
++	}
++
++	return -ETIMEDOUT;
++}
++
+ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
+ 				struct i2c_msg *msgs,
+ 				int num)
+@@ -699,6 +728,16 @@ static int rcar_i2c_master_xfer(struct i
+ 
+ 	pm_runtime_get_sync(dev);
+ 
++	/* Gen3 needs a reset before allowing RXDMA once */
++	if (priv->devtype == I2C_RCAR_GEN3) {
++		priv->flags |= ID_P_NO_RXDMA;
++		if (!IS_ERR(priv->rstc)) {
++			ret = rcar_i2c_do_reset(priv);
++			if (ret == 0)
++				priv->flags &= ~ID_P_NO_RXDMA;
++		}
++	}
++
+ 	rcar_i2c_init(priv);
+ 
+ 	ret = rcar_i2c_bus_barrier(priv);
+@@ -868,6 +907,15 @@ static int rcar_i2c_probe(struct platfor
+ 	if (ret < 0)
+ 		goto out_pm_put;
+ 
++	if (priv->devtype == I2C_RCAR_GEN3) {
++		priv->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
++		if (!IS_ERR(priv->rstc)) {
++			ret = reset_control_status(priv->rstc);
++			if (ret < 0)
++				priv->rstc = ERR_PTR(-ENOTSUPP);
++		}
++	}
++
+ 	/* Stay always active when multi-master to keep arbitration working */
+ 	if (of_property_read_bool(dev->of_node, "multi-master"))
+ 		priv->flags |= ID_P_PM_BLOCKED;
 
 
