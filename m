@@ -5,137 +5,79 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C338ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08859ECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E984B208E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:03:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E984B208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id BEC84208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:03:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEC84208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbeJRRDZ convert rfc822-to-8bit (ORCPT
+        id S1728122AbeJRRDo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 13:03:25 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:55262 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727523AbeJRRCl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 13:02:41 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w9I8xNUf027482;
-        Thu, 18 Oct 2018 11:02:13 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2n37kfy3pj-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 18 Oct 2018 11:02:13 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B0BB931;
-        Thu, 18 Oct 2018 09:02:11 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node3.st.com [10.75.127.18])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4AAEF2765;
-        Thu, 18 Oct 2018 09:02:11 +0000 (GMT)
-Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE3.st.com
- (10.75.127.18) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 18 Oct
- 2018 11:02:10 +0200
-Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
- SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
- 15.00.1347.000; Thu, 18 Oct 2018 11:02:10 +0200
-From:   Pascal PAILLET-LME <p.paillet@st.com>
-To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
-        "eballetbo@gmail.com" <eballetbo@gmail.com>
-CC:     Pascal PAILLET-LME <p.paillet@st.com>
-Subject: [PATCH v4 0/8] Introduce STPMIC1 PMIC Driver
-Thread-Topic: [PATCH v4 0/8] Introduce STPMIC1 PMIC Driver
-Thread-Index: AQHUZsFB0gWlL/wS9kKVi2d1dlPUCA==
-Date:   Thu, 18 Oct 2018 09:02:10 +0000
-Message-ID: <1539853324-29051-1-git-send-email-p.paillet@st.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.50]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Thu, 18 Oct 2018 13:03:44 -0400
+Received: from mga18.intel.com ([134.134.136.126]:53891 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727378AbeJRRDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 13:03:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2018 02:03:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,395,1534834800"; 
+   d="scan'208";a="83585581"
+Received: from shao2-debian.sh.intel.com (HELO [10.239.13.6]) ([10.239.13.6])
+  by orsmga006.jf.intel.com with ESMTP; 18 Oct 2018 02:03:41 -0700
+Subject: Re: [kbuild-all] [PATCH RT] rt: convert mm/kasan/quarantine_lock to
+ raw_spinlock
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        kbuild test robot <lkp@intel.com>
+Cc:     Clark Williams <williams@redhat.com>,
+        linux-rt-users@vger.kernel.org, kbuild-all@01.org,
+        linux-kernel@vger.kernel.org
+References: <20180918152931.17322-1-williams@redhat.com>
+ <201809190442.itGUBZK3%fengguang.wu@intel.com>
+ <20181005163754.2eexrmhzvdltswdr@linutronix.de>
+From:   Rong Chen <rong.a.chen@intel.com>
+Message-ID: <83c8a7a7-00be-b29b-fa2e-be9c8276be94@intel.com>
+Date:   Thu, 18 Oct 2018 17:04:01 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-17_15:,,
- signatures=0
+In-Reply-To: <20181005163754.2eexrmhzvdltswdr@linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The goal of this patch-set is to propose a driver for the STPMIC1 PMIC from 
-STMicroelectronics. 
-The STPMIC1 regulators supply power to an application processor as well as 
-to external system peripherals such as DDR, Flash memories and system
-devices. It also features onkey button input and an hardware watchdog.
-The STPMIC1 is controlled via I2C. 
 
-Main driver is drivers/mfd/stpmic1 that handle I2C regmap configuration and
-irqchip. stpmic1_regulator, stpmic1_onkey and stpmic1_wdt need stpmic1 mfd
-as parent.
 
-stpmic1 mfd and regulator drivers maybe mandatory at boot time.
+On 10/06/2018 12:37 AM, Sebastian Andrzej Siewior wrote:
+> On 2018-09-19 04:34:50 [+0800], kbuild test robot wrote:
+>> Hi Clark,
+>>
+>> Thank you for the patch! Perhaps something to improve:
+>>
+>> [auto build test WARNING on linux-rt-devel/for-kbuild-bot/current-stable]
+>>
+>> url:    https://github.com/0day-ci/linux/commits/Clark-Williams/rt-convert-mm-kasan-quarantine_lock-to-raw_spinlock/20180919-021343
+>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git for-kbuild-bot/current-stable
+>> config: x86_64-allmodconfig (attached as .config)
+>> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+>> reproduce:
+>>          # save the attached .config to linux build tree
+>>          make ARCH=x86_64
+>>
+>> All warnings (new ones prefixed by >>):
+> how is this related? Could someone please explain this.
+>
+>
+It Iooks like a kbuild issue, we will looking into it.
 
-changes in v4:
-* fix watchdog stop function
-* rework onkey probe function
-* various fixes in bindings
-
-pascal paillet (8):
-  dt-bindings: mfd: document stpmic1
-  mfd: stpmic1: add stpmic1 driver
-  dt-bindings: regulator: document stpmic1 pmic regulators
-  regulator: stpmic1: add stpmic1 regulator driver
-  dt-bindings: input: document stpmic1 pmic onkey
-  input: stpmic1: add stpmic1 onkey driver
-  dt-bindings: watchdog: document stpmic1 pmic watchdog
-  watchdog: stpmic1: add stpmic1 watchdog driver
-
- .../devicetree/bindings/input/st,stpmic1-onkey.txt |  28 +
- .../devicetree/bindings/mfd/st,stpmic1.txt         | 131 ++++
- .../bindings/regulator/st,stpmic1-regulator.txt    |  68 +++
- .../bindings/watchdog/st,stpmic1-wdt.txt           |  11 +
- drivers/input/misc/Kconfig                         |  11 +
- drivers/input/misc/Makefile                        |   2 +
- drivers/input/misc/stpmic1_onkey.c                 | 197 ++++++
- drivers/mfd/Kconfig                                |  13 +
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/stpmic1.c                              | 401 ++++++++++++
- drivers/regulator/Kconfig                          |  12 +
- drivers/regulator/Makefile                         |   1 +
- drivers/regulator/stpmic1_regulator.c              | 674 +++++++++++++++++++++
- drivers/watchdog/Kconfig                           |  12 +
- drivers/watchdog/Makefile                          |   1 +
- drivers/watchdog/stpmic1_wdt.c                     | 139 +++++
- include/dt-bindings/mfd/st,stpmic1.h               |  46 ++
- include/linux/mfd/stpmic1.h                        | 212 +++++++
- 18 files changed, 1960 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/st,stpmic1-onkey.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/st,stpmic1-regulator.txt
- create mode 100644 Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt
- create mode 100644 drivers/input/misc/stpmic1_onkey.c
- create mode 100644 drivers/mfd/stpmic1.c
- create mode 100644 drivers/regulator/stpmic1_regulator.c
- create mode 100644 drivers/watchdog/stpmic1_wdt.c
- create mode 100644 include/dt-bindings/mfd/st,stpmic1.h
- create mode 100644 include/linux/mfd/stpmic1.h
-
--- 
-1.9.1
+Best Regards,
+Rong Chen
