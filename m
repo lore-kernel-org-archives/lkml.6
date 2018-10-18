@@ -2,115 +2,105 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2A0ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B97C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93C8820645
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1B7720645
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:00:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jf1Wragd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93C8820645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VbY11R8s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1B7720645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729356AbeJSCCU (ORCPT
+        id S1728806AbeJSCCV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 18 Oct 2018 22:02:21 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46125 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729342AbeJSCCU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 18 Oct 2018 22:02:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50144 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728712AbeJSCCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:02:19 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D9D221473;
-        Thu, 18 Oct 2018 18:00:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539885613;
-        bh=mB2M4HVF1nOmKAYthiDAvgGFsblqi1x/FwJYRe3oYbo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jf1Wragd1vYYEDxDfEK3V25pUPZTqAV6M+Az/6HdgrxUEUXx8iQwiGuj1PXiTD3pr
-         OTqJ5FFJiRcxgicFhpyKixgD42t/9NRTSlnkPybvFEOWa2wbreBj9C2ABmSBtFt1l2
-         3OZgC13iCHgEYA2HgnzQ8EgDtoErbOyok6L0xl3w=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christian Lamparter <chunkeey@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 18/41] net: emac: fix fixed-link setup for the RTL8363SB switch
-Date:   Thu, 18 Oct 2018 19:54:33 +0200
-Message-Id: <20181018175420.036389425@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
-References: <20181018175416.718399607@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by mail-lj1-f196.google.com with SMTP id x3-v6so28534379lji.13
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 11:00:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=JfQGwIrwrD1CvEnjr+HtowFFhShfNj5LOkGinrHbu/8=;
+        b=VbY11R8swKAm1KTZ8V+5/NheT9ftarHsnwgt6h6G3YrDEYzP2z5VtbH9BZCRX9L7RA
+         9LmyyDTs0ki0vNrnuhbZaA8n9A7izNXuHPQ7Y/XqZFBJwvSiWvEhJe6ptG/fWhSwfc+p
+         I4K5oTEsa+ozkF/ljQBKvta6/n0tLmh7CoHDY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JfQGwIrwrD1CvEnjr+HtowFFhShfNj5LOkGinrHbu/8=;
+        b=jgEhnVwTJYm8ipsexwF3/yAzEDyEUmwhXvXVx0LZiSO2rIHcRCDOZyzEhdJYsss+zi
+         CyWXFNWsVLZ4Bk5tPPPEZHNROeD11/mUV3Hd8/1t/tgOtIHb8YLj+ZLorLYBszT/YDUb
+         b1rim4oNO/VdlVSgYY/gSVUykHCCDXFc3a0iEGEu6jLe6AiMg+jN+nTE5x1P3wbU6ras
+         VmyuiT7Vfp0E3lH4HU7ZpRZysrI8WVvSwRgTlVgdgqMX58xLQ0pKIrO2o7F0WphuZIie
+         +uk9ncGOWfz5iMDzPeWRP4Z+/p29Gow5LbRISu7MbCbL6XmhvPeVWchD0IwlAgUQOXv3
+         Sbdw==
+X-Gm-Message-State: ABuFfoj3wW2rNat+vPrTtzUrwbL+Di8wnv5ThgBv0DcXq5rlDbH5/Q7V
+        BFyDbhMw40Gub5u+TsfhYdefqA==
+X-Google-Smtp-Source: ACcGV62KRPrLWS14LB0TptIULZKWUZrgKrW0LNBKgm5ci8dx8fZSzinTQwdhdtkI1xTuJr1aynadYw==
+X-Received: by 2002:a2e:5215:: with SMTP id g21-v6mr20429816ljb.144.1539885613356;
+        Thu, 18 Oct 2018 11:00:13 -0700 (PDT)
+Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id o185-v6sm944988lfo.40.2018.10.18.11.00.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Oct 2018 11:00:12 -0700 (PDT)
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     grygorii.strashko@ti.com, davem@davemloft.net
+Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH net-next] net: ethernet: ti: cpsw: don't flush mcast entries while switch promisc mode
+Date:   Thu, 18 Oct 2018 21:00:06 +0300
+Message-Id: <20181018180006.7065-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+No need now to flush mcast entries in switch mode while toggling to
+promiscuous mode. It's not needed as vlan reg_mcast = ALL_PORTS
+and mcast/vlan ports = ALL_PORTS, the same happening for vlan
+unreg_mcast, it's set to ALL_PORT_MASK just after calling promisc
+mode routine by calling set allmulti. I suppose main reason to flush
+them is to use unreg_mcast to receive all to host port. Thus, now, all
+mcast packets are received anyway and no reason to flush mcast entries
+unsafely, as they were synced with __dev_mc_sync() previously and are
+not restored. Another way is to _dev_mc_unsync() them, but no need.
 
-------------------
-
-From: Christian Lamparter <chunkeey@gmail.com>
-
-[ Upstream commit 08e39982ef64f800fd1f9b9b92968d14d5fafa82 ]
-
-On the Netgear WNDAP620, the emac ethernet isn't receiving nor
-xmitting any frames from/to the RTL8363SB (identifies itself
-as a RTL8367RB).
-
-This is caused by the emac hardware not knowing the forced link
-parameters for speed, duplex, pause, etc.
-
-This begs the question, how this was working on the original
-driver code, when it was necessary to set the phy_address and
-phy_map to 0xffffffff. But I guess without access to the old
-PPC405/440/460 hardware, it's not possible to know.
-
-Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 ---
- drivers/net/ethernet/ibm/emac/core.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/ibm/emac/core.c
-+++ b/drivers/net/ethernet/ibm/emac/core.c
-@@ -2671,12 +2671,17 @@ static int emac_init_phy(struct emac_ins
- 		if (of_phy_is_fixed_link(np)) {
- 			int res = emac_dt_mdio_probe(dev);
+Based on net-next/master
+Tasted on am572x EVM and BBB
+
+ drivers/net/ethernet/ti/cpsw.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
+index 226be2a56c1f..0e475020a674 100644
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -638,9 +638,6 @@ static void cpsw_set_promiscious(struct net_device *ndev, bool enable)
+ 			} while (time_after(timeout, jiffies));
+ 			cpsw_ale_control_set(ale, 0, ALE_AGEOUT, 1);
  
--			if (!res) {
--				res = of_phy_register_fixed_link(np);
--				if (res)
--					mdiobus_unregister(dev->mii_bus);
-+			if (res)
-+				return res;
-+
-+			res = of_phy_register_fixed_link(np);
-+			dev->phy_dev = of_phy_find_device(np);
-+			if (res || !dev->phy_dev) {
-+				mdiobus_unregister(dev->mii_bus);
-+				return res ? res : -EINVAL;
- 			}
--			return res;
-+			emac_adjust_link(dev->ndev);
-+			put_device(&dev->phy_dev->mdio.dev);
- 		}
- 		return 0;
- 	}
-
+-			/* Clear all mcast from ALE */
+-			cpsw_ale_flush_multicast(ale, ALE_ALL_PORTS, -1);
+-
+ 			/* Flood All Unicast Packets to Host port */
+ 			cpsw_ale_control_set(ale, 0, ALE_P0_UNI_FLOOD, 1);
+ 			dev_dbg(&ndev->dev, "promiscuity enabled\n");
+-- 
+2.17.1
 
