@@ -3,78 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4E8ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:35:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADCF6C67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8989620658
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:35:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8989620658
+	by mail.kernel.org (Postfix) with ESMTP id 7A82D20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 20:38:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A82D20658
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbeJSEiW (ORCPT
+        id S1726764AbeJSEkz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 00:38:22 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:42075 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725751AbeJSEiW (ORCPT
+        Fri, 19 Oct 2018 00:40:55 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44109 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725751AbeJSEky (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 00:38:22 -0400
-Received: by mail-ot1-f65.google.com with SMTP id c23so29328814otl.9;
-        Thu, 18 Oct 2018 13:35:38 -0700 (PDT)
+        Fri, 19 Oct 2018 00:40:54 -0400
+Received: by mail-ot1-f68.google.com with SMTP id p23so31098642otf.11;
+        Thu, 18 Oct 2018 13:38:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PrM7XZQAKRWgV4vYT9n8NCSMrNhconiFMYbYrdAhufs=;
-        b=ugAsapCOOTkqGW9pOs++yvtfbwYs5IJWKyQmQFFcH+9WDf/BVxcN5jthZs8R3H+Hgm
-         EiV/S66RRvwkLcWTx3tJxvPazsY+/+zzIrAHrPrM5E16YwypdDhU+HxI81RFt9vJodVN
-         LyhgWTM8XRA4hH4wey3gf760JyxsvRbyJ7xdbeUC0843GrWlktLiB3XlSUOukEExryLf
-         /rFxNZ/yKUCBhHJpLaAbTCzF5r8mKjCJtuLbO2NlzfP70U0ZUUm5nx4XqXb9UrUSaRut
-         DYkpJ9rUYbgfsc5W/K558sy6avRNHjtLBA9y8cpKyW9+P3NWeJmp6TjFl6tnaUpS5jAe
-         fFRA==
-X-Gm-Message-State: ABuFfogYlzFuXpboqrF2xiYoIHcl9IcaVvcpDgUAXq1C+rmn1rBxKHD/
-        pJF4hg4EEJhcUwfv1yvaTA==
-X-Google-Smtp-Source: ACcGV63z6vcTZghm3/EkbCgJJGPgd7I8PsBOiqh1LcCrq1gCBl/8ryXOW+TZBwRFNHwZcXZDTLoSGw==
-X-Received: by 2002:a9d:7a91:: with SMTP id l17mr20996001otn.62.1539894938028;
-        Thu, 18 Oct 2018 13:35:38 -0700 (PDT)
+        bh=mCogzujPw/hhZbA96628/M8fvrcCaSzhuryL7oNfZqQ=;
+        b=YM79A82swqOVdXDQT34P4dCbDXw9TK4bscy2vLPqkfx9dF7eoxpM9uki7PcMzW91R7
+         sQboVe+Sl+wEL1Nw12vpNjYsUSRSkdcv/MhG5KAVIobNgoJZ04wtHlg5FldREDZhL8jh
+         0aqkhCV0fSn5TuUh2LRmY0WJdCW9kLKgeByiL9ySX7rDm8a2Xj6Qur9h76jWDC+gM98e
+         sZJgDiXD5o4IlvAVftBWZqx9jEHZ5QIu/8mHjVgwGO1yzbf5z+pBbQxdnIYtUF0R/rAs
+         rzGDyReLRT0uL8aPTU3XomnANb+Xdoqz6OuS79Afzkrt/IUK99x+fWxpg7/VAm1dMUlm
+         WAdA==
+X-Gm-Message-State: ABuFfohLhMl8pcBKMXUTQ8cbe2Cjok7FQIzuAgeb3962CerIzEWteMLY
+        7fihgTNKOdkKTZ1ALRt78Q==
+X-Google-Smtp-Source: ACcGV63DewAZM7F5DDtZ/5d3QEcQ8VceQO2+Rq5+0xOFrnHSRWsYJl2MvnW3hFTDdxItC0M86RaliA==
+X-Received: by 2002:a9d:1ea5:: with SMTP id n34mr19779096otn.160.1539895089659;
+        Thu, 18 Oct 2018 13:38:09 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id p185-v6sm7164386oic.36.2018.10.18.13.35.37
+        by smtp.gmail.com with ESMTPSA id h29sm3077012otg.34.2018.10.18.13.38.08
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 18 Oct 2018 13:35:37 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 15:35:36 -0500
+        Thu, 18 Oct 2018 13:38:09 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 15:38:08 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Richard Leitner <richard.leitner@skidata.com>
-Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Richard Leitner <richard.leitner@skidata.com>
-Subject: Re: [PATCH v2 5/8] dt-bindings: input: touchscreen: sx8654: add
- sx8650 to comatibles
-Message-ID: <20181018203536.GA21783@bogus>
-References: <20181017125116.20077-1-richard.leitner@skidata.com>
- <20181017125116.20077-6-richard.leitner@skidata.com>
+To:     Al Cooper <alcooperx@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Al Cooper <alcooperx@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Alban Bedel <albeu@free.fr>, Alex Elder <elder@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Avi Fishman <avifishman70@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jianguo Sun <sunjianguo1@huawei.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kees Cook <keescook@chromium.org>, linux-usb@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Roger Quadros <rogerq@ti.com>
+Subject: Re: [PATCH V2 1/6] dt-bindings: Add Broadcom STB OHCI, EHCI and XHCI
+ binding document
+Message-ID: <20181018203808.GA25281@bogus>
+References: <1539815349-24126-1-git-send-email-alcooperx@gmail.com>
+ <1539815349-24126-2-git-send-email-alcooperx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181017125116.20077-6-richard.leitner@skidata.com>
+In-Reply-To: <1539815349-24126-2-git-send-email-alcooperx@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 17 Oct 2018 14:51:13 +0200, Richard Leitner wrote:
-> As the sx8650 is quite similar to the sx8654 support for it will be
-> added in the driver. Therefore add it to the compatibles.
+On Wed, 17 Oct 2018 18:29:04 -0400, Al Cooper wrote:
+> Add DT bindings document for Broadcom STB USB OHCI, EHCI and
+> XHCI drivers.
 > 
-> Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
+> Signed-off-by: Al Cooper <alcooperx@gmail.com>
 > ---
->  Documentation/devicetree/bindings/input/touchscreen/sx8654.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  .../devicetree/bindings/usb/brcm,bcm7445-ehci.txt  | 22 +++++++++++++++++++++
+>  .../devicetree/bindings/usb/brcm,bcm7445-ohci.txt  | 22 +++++++++++++++++++++
+>  .../devicetree/bindings/usb/brcm,bcm7445-xhci.txt  | 23 ++++++++++++++++++++++
+>  3 files changed, 67 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/brcm,bcm7445-ehci.txt
+>  create mode 100644 Documentation/devicetree/bindings/usb/brcm,bcm7445-ohci.txt
+>  create mode 100644 Documentation/devicetree/bindings/usb/brcm,bcm7445-xhci.txt
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
