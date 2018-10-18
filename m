@@ -5,59 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7110CC67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 858C7C67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:48:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27F6520866
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:48:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E02A20866
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:48:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IsjnurNq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27F6520866
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZR4PRXS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E02A20866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbeJSGvY (ORCPT
+        id S1727621AbeJSGv0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 02:51:24 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35397 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727474AbeJSGvX (ORCPT
+        Fri, 19 Oct 2018 02:51:26 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38860 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727474AbeJSGvZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 02:51:23 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 32-v6so3684342pgu.2;
-        Thu, 18 Oct 2018 15:48:13 -0700 (PDT)
+        Fri, 19 Oct 2018 02:51:25 -0400
+Received: by mail-pf1-f196.google.com with SMTP id f29-v6so15558995pff.5;
+        Thu, 18 Oct 2018 15:48:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hBF4GTCYQtWD7OTyqHilkMQ3AcRwpf9bLhC6OceDmtA=;
-        b=IsjnurNqMSNRl0sIuQsRMfniBJGTCnIsdWRuifa0ndgANP9IAYYJQaAkl81R/yQHw/
-         OqH9Zrhe/GDD1nqNiiWmw9gcoIqktJSe7lZ3PVbDxbJ4osDosTCD2MA5r0gvSlJdqgnZ
-         FmZ4uernFdSA64abYrSSAbj0voH9bMlnraL3BD63u8+ts3WxvtbLLJglGlSi5ws34Mop
-         ekrtCc9pYhAAJtLWmNkC5orvi3+Z0isYI6BtgIo02r+FBFtvTGgj8kgBz5LbuIMtHMLT
-         l0Yp9SmDUJ5FR0t86jPxyy8QYtAx2vOl51Iqcpno9wVuHU2zDxP1yv/e1jDoFayHapw9
-         p5kg==
+        bh=3p9z0Ehj9iwgF9Lhv52flr3WKpZAxs8EQb4W3gnL4wU=;
+        b=HZR4PRXSXC3f+OMGauO6hcsGtA18EWWZyAT13lTC6JiP5/njGLW9QpgSTrjkm7AeTO
+         Pzmpj4MLhYvoEk+cie1GsGqJaiagsjDi7S0n8R2EhGyO484/VyfjWaH13PygS5PYvk40
+         WwPi66GZ5/4OCIz7qmmL/QWx9pFrFTdN5CbtAmZIHGRHd5cOn+c1KHWYAukRamdds023
+         nvmun3DYUlpi+ItHi37r2vXpUD3wQju2cOI6OkHwSlra/QeFcBYY5ASZHKho8CW+xakb
+         Wfb3ySCml32Gdsk8DkDsHlzGzyi5GcS7qIcLChl0fNRPs08grrWiuESLsBbqh5wHJylE
+         JObw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=hBF4GTCYQtWD7OTyqHilkMQ3AcRwpf9bLhC6OceDmtA=;
-        b=QWQGU8M8nGntiy2bbTW4pWWSDtYHEnJNYaDZhkyd0evJeWzFEa/OxmpaJmUNK+DpSz
-         cgUrZGCA9RVOvz6xY8i1kAgxh2SglAeMkkfNDK6TlpJEYvfp5FPiV+gRAy/Zgles3y4+
-         L48DJbF6qizqHTRAEtOPHt9iRHAuLvWKi26Nsqml8t4hVnoAhmZoVyyFEbnL+11f3ktO
-         bz1vBeh+fDpbl2QXs4i1gsdckQRwVOZa7yzsGUP2hoSaOqhbkk8vFEcwfe43PmvIgkX6
-         MmKawmRuaEZ5xserNolHK/zZLF1x15rfuq6eopadXaOFwhwptZVIek7RyU4GxHKxnmcU
-         4DUQ==
-X-Gm-Message-State: ABuFfoggdE14vc8XKPvJg+t+vYSVxmQ8oNlS5miWPC8F1U4O6wcrC4LO
-        cnep/HjBQ29QQ+gJL8zPkOI=
-X-Google-Smtp-Source: ACcGV61LFJDW7XEZjTnBXaCmFQNnW0lf/zFG9MdU2pjZtJMOhfPrGSXAKiaKY7qh6o0qp0viQpNSfg==
-X-Received: by 2002:a63:e601:: with SMTP id g1-v6mr30604733pgh.290.1539902893223;
-        Thu, 18 Oct 2018 15:48:13 -0700 (PDT)
+        bh=3p9z0Ehj9iwgF9Lhv52flr3WKpZAxs8EQb4W3gnL4wU=;
+        b=oJXaTuH1hTOHoGg1bIced/mVvMEJXBjbcsYacA5Km9pvx6Ki64qxC9l7Qx/+dXk+4l
+         kD+Huomme1S0KwXkdqLHk6Ux91Lz4aIDk3jhzJHfYhMtlHdxCuirRvH3OLgCkHfIM3ds
+         NTTgkpTHuyZ5Iq2xpOol4mdwtzjWjWo/hevDmfUZ6T4IegbCJ+L7wYhl/wlzvyq1QvhH
+         NGJsZ7IYUxs9vp6GAeZ276z4gblUzmgbsVINyfODdmLmXezNxR4EjTrcovFfmgT/8xgD
+         8HmkC8KW3MLJrUAs6C9rseBnROs2EaiP0qPhzrIWulR/aiqqwZxota6h6DkFCvn24kTf
+         7fAw==
+X-Gm-Message-State: ABuFfoh7W1qSmSJFHqK2RDGqbpnf5Juqo+NJh3ctXmKSsxkFU/yQM1Cy
+        Ki1rz5JL/EwMRXF7BoNQ7no=
+X-Google-Smtp-Source: ACcGV62j6brXEhvm6NxaHvXh8fuyuIlHYH77b5IHomUnKE2awpa6wXOXu3BxaUyrg4+cW2Injfp+/g==
+X-Received: by 2002:a62:8f:: with SMTP id 137-v6mr31996648pfa.24.1539902895523;
+        Thu, 18 Oct 2018 15:48:15 -0700 (PDT)
 Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id v81-v6sm38129268pfj.25.2018.10.18.15.48.12
+        by smtp.gmail.com with ESMTPSA id v81-v6sm38129268pfj.25.2018.10.18.15.48.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 18 Oct 2018 15:48:12 -0700 (PDT)
+        Thu, 18 Oct 2018 15:48:15 -0700 (PDT)
 From:   frowand.list@gmail.com
 To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
@@ -67,9 +68,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH v5 07/18] of: dynamic: change type of of_{at,de}tach_node() to void
-Date:   Thu, 18 Oct 2018 15:46:25 -0700
-Message-Id: <1539902796-8382-8-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH v5 09/18] of: overlay: validate overlay properties #address-cells and #size-cells
+Date:   Thu, 18 Oct 2018 15:46:27 -0700
+Message-Id: <1539902796-8382-10-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1539902796-8382-1-git-send-email-frowand.list@gmail.com>
 References: <1539902796-8382-1-git-send-email-frowand.list@gmail.com>
@@ -80,134 +81,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-of_attach_node() and of_detach_node() always return zero, so
-their return value is meaningless.  Change their type to void
-and fix all callers to ignore return value.
+If overlay properties #address-cells or #size-cells are already in
+the live devicetree for any given node, then the values in the
+overlay must match the values in the live tree.
+
+If the properties are already in the live tree then there is no
+need to create a changeset entry to add them since they must
+have the same value.  This reduces the memory used by the
+changeset and eliminates a possible memory leak.
 
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
- arch/powerpc/platforms/pseries/dlpar.c    | 13 ++-----------
- arch/powerpc/platforms/pseries/reconfig.c |  6 +-----
- drivers/of/dynamic.c                      |  9 ++-------
- include/linux/of.h                        |  4 ++--
- 4 files changed, 7 insertions(+), 25 deletions(-)
 
-diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
-index e3010b14aea5..0027eea94a8b 100644
---- a/arch/powerpc/platforms/pseries/dlpar.c
-+++ b/arch/powerpc/platforms/pseries/dlpar.c
-@@ -244,15 +244,9 @@ struct device_node *dlpar_configure_connector(__be32 drc_index,
- 
- int dlpar_attach_node(struct device_node *dn, struct device_node *parent)
+Changes since v4:
+  - create of_prop_val_eq() and change open code to use it
+  - remove extra blank lines
+
+ drivers/of/overlay.c | 32 +++++++++++++++++++++++++++++---
+ include/linux/of.h   |  6 ++++++
+ 2 files changed, 35 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+index 272a0d1a5e18..e20d8923f475 100644
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -287,7 +287,12 @@ static struct property *dup_and_fixup_symbol_prop(
+  * @target may be either in the live devicetree or in a new subtree that
+  * is contained in the changeset.
+  *
+- * Some special properties are not updated (no error returned).
++ * Some special properties are not added or updated (no error returned):
++ * "name", "phandle", "linux,phandle".
++ *
++ * Properties "#address-cells" and "#size-cells" are not updated if they
++ * are already in the live tree, but if present in the live tree, the values
++ * in the overlay must match the values in the live tree.
+  *
+  * Update of property in symbols node is not allowed.
+  *
+@@ -300,6 +305,7 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
  {
--	int rc;
--
- 	dn->parent = parent;
+ 	struct property *new_prop = NULL, *prop;
+ 	int ret = 0;
++	bool check_for_non_overlay_node = false;
  
--	rc = of_attach_node(dn);
--	if (rc) {
--		printk(KERN_ERR "Failed to add device node %pOF\n", dn);
--		return rc;
--	}
-+	of_attach_node(dn);
+ 	if (!of_prop_cmp(overlay_prop->name, "name") ||
+ 	    !of_prop_cmp(overlay_prop->name, "phandle") ||
+@@ -322,12 +328,32 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
+ 	if (!new_prop)
+ 		return -ENOMEM;
  
- 	return 0;
- }
-@@ -260,7 +254,6 @@ int dlpar_attach_node(struct device_node *dn, struct device_node *parent)
- int dlpar_detach_node(struct device_node *dn)
- {
- 	struct device_node *child;
--	int rc;
+-	if (!prop)
++	if (!prop) {
++		check_for_non_overlay_node = true;
+ 		ret = of_changeset_add_property(&ovcs->cset, target->np,
+ 						new_prop);
+-	else
++	} else if (!of_prop_cmp(prop->name, "#address-cells")) {
++		if (!of_prop_val_eq(prop, new_prop)) {
++			pr_err("ERROR: changing value of #address-cells is not allowed in %pOF\n",
++			       target->np);
++			ret = -EINVAL;
++		}
++	} else if (!of_prop_cmp(prop->name, "#size-cells")) {
++		if (!of_prop_val_eq(prop, new_prop)) {
++			pr_err("ERROR: changing value of #size-cells is not allowed in %pOF\n",
++			       target->np);
++			ret = -EINVAL;
++		}
++	} else {
++		check_for_non_overlay_node = true;
+ 		ret = of_changeset_update_property(&ovcs->cset, target->np,
+ 						   new_prop);
++	}
++
++	if (check_for_non_overlay_node &&
++	    !of_node_check_flag(target->np, OF_OVERLAY))
++		pr_err("WARNING: memory leak will occur if overlay removed, property: %pOF/%s\n",
++		       target->np, new_prop->name);
  
- 	child = of_get_next_child(dn, NULL);
- 	while (child) {
-@@ -268,9 +261,7 @@ int dlpar_detach_node(struct device_node *dn)
- 		child = of_get_next_child(dn, child);
- 	}
- 
--	rc = of_detach_node(dn);
--	if (rc)
--		return rc;
-+	of_detach_node(dn);
- 
- 	of_node_put(dn);
- 
-diff --git a/arch/powerpc/platforms/pseries/reconfig.c b/arch/powerpc/platforms/pseries/reconfig.c
-index 0e0208117e77..0b72098da454 100644
---- a/arch/powerpc/platforms/pseries/reconfig.c
-+++ b/arch/powerpc/platforms/pseries/reconfig.c
-@@ -47,11 +47,7 @@ static int pSeries_reconfig_add_node(const char *path, struct property *proplist
- 		goto out_err;
- 	}
- 
--	err = of_attach_node(np);
--	if (err) {
--		printk(KERN_ERR "Failed to add device node %s\n", path);
--		goto out_err;
--	}
-+	of_attach_node(np);
- 
- 	of_node_put(np->parent);
- 
-diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-index 146681540487..beea792debb6 100644
---- a/drivers/of/dynamic.c
-+++ b/drivers/of/dynamic.c
-@@ -224,7 +224,7 @@ static void __of_attach_node(struct device_node *np)
- /**
-  * of_attach_node() - Plug a device node into the tree and global list.
-  */
--int of_attach_node(struct device_node *np)
-+void of_attach_node(struct device_node *np)
- {
- 	struct of_reconfig_data rd;
- 	unsigned long flags;
-@@ -241,8 +241,6 @@ int of_attach_node(struct device_node *np)
- 	mutex_unlock(&of_mutex);
- 
- 	of_reconfig_notify(OF_RECONFIG_ATTACH_NODE, &rd);
--
--	return 0;
- }
- 
- void __of_detach_node(struct device_node *np)
-@@ -273,11 +271,10 @@ void __of_detach_node(struct device_node *np)
- /**
-  * of_detach_node() - "Unplug" a node from the device tree.
-  */
--int of_detach_node(struct device_node *np)
-+void of_detach_node(struct device_node *np)
- {
- 	struct of_reconfig_data rd;
- 	unsigned long flags;
--	int rc = 0;
- 
- 	memset(&rd, 0, sizeof(rd));
- 	rd.dn = np;
-@@ -291,8 +288,6 @@ int of_detach_node(struct device_node *np)
- 	mutex_unlock(&of_mutex);
- 
- 	of_reconfig_notify(OF_RECONFIG_DETACH_NODE, &rd);
--
--	return rc;
- }
- EXPORT_SYMBOL_GPL(of_detach_node);
- 
+ 	if (ret) {
+ 		kfree(new_prop->name);
 diff --git a/include/linux/of.h b/include/linux/of.h
-index aa1dafaec6ae..72c593455019 100644
+index 72c593455019..1bb14a1f7227 100644
 --- a/include/linux/of.h
 +++ b/include/linux/of.h
-@@ -406,8 +406,8 @@ extern int of_phandle_iterator_args(struct of_phandle_iterator *it,
- #define OF_RECONFIG_REMOVE_PROPERTY	0x0004
- #define OF_RECONFIG_UPDATE_PROPERTY	0x0005
+@@ -947,6 +947,12 @@ static inline int of_cpu_node_to_id(struct device_node *np)
+ #define of_node_cmp(s1, s2)		strcasecmp((s1), (s2))
+ #endif
  
--extern int of_attach_node(struct device_node *);
--extern int of_detach_node(struct device_node *);
-+extern void of_attach_node(struct device_node *np);
-+extern void of_detach_node(struct device_node *np);
- 
- #define of_match_ptr(_ptr)	(_ptr)
- 
++static inline int of_prop_val_eq(struct property *p1, struct property *p2)
++{
++	return p1->length == p2->length &&
++	       !memcmp(p1->value, p2->value, (size_t)p1->length);
++}
++
+ #if defined(CONFIG_OF) && defined(CONFIG_NUMA)
+ extern int of_node_to_nid(struct device_node *np);
+ #else
 -- 
 Frank Rowand <frank.rowand@sony.com>
 
