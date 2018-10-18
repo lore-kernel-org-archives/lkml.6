@@ -2,145 +2,125 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B09C67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64CDAC67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A80B2098A
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:58:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A80B2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0ABE22098A
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 22:01:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LjRPH1OC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ABE22098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbeJSGBt (ORCPT
+        id S1726678AbeJSGE2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 02:01:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33752 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726678AbeJSGBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 02:01:49 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4C00F308212C;
-        Thu, 18 Oct 2018 21:58:48 +0000 (UTC)
-Received: from sky.random (ovpn-120-228.rdu2.redhat.com [10.10.120.228])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 643EF7AB66;
-        Thu, 18 Oct 2018 21:58:43 +0000 (UTC)
-Date:   Thu, 18 Oct 2018 17:58:42 -0400
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Christian Brauner <christian@brauner.io>, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, ebiederm@xmission.com,
-        mcgrof@kernel.org, akpm@linux-foundation.org,
-        joe.lawrence@redhat.com, longman@redhat.com,
-        linux@dominikbrodowski.net, adobriyan@gmail.com,
-        linux-api@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Eric Dumazet <eric.dumazet@gmail.com>
-Subject: Re: [PATCH v3 2/2] sysctl: handle overflow for file-max
-Message-ID: <20181018215842.GE20140@redhat.com>
-References: <20181016223322.16844-1-christian@brauner.io>
- <20181016223322.16844-3-christian@brauner.io>
- <20181017003548.GA32577@ZenIV.linux.org.uk>
+        Fri, 19 Oct 2018 02:04:28 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44456 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725738AbeJSGE2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 02:04:28 -0400
+Received: by mail-pf1-f195.google.com with SMTP id r9-v6so15489402pff.11
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 15:01:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fJMxiMhuSmSU6CULjVs2+RF0FIVyp0Z5EaJ6LHHaCxw=;
+        b=LjRPH1OCh7RK6hBpnTiVGdRPzm5fUBEW7OJvx3U5Kir/VRp1M8CvG+WyxekHDRB4YU
+         8rvfYPQmiBEEHPP7cK0ssnBg4L14JkOgajSbyrafSotl2otifbYtI4yni9whWD0e4USl
+         8Btp7Kv4O4I+rf52M/AEGJPr99j4seIPtVU5AwdkFdcCs1Rz4o3Gc5PIqGJPStwCcJoX
+         jY2RKoyC/yeQxLSJ0G/pdpYivgOCkLPXVSS3/sJauNRH1xemdUvS2y0idzCcnthH9uyQ
+         qY97vw1UwdiQB1u9bGQu4WP+kmMeqi2nI6YFnzS+DPHoXOT22VLoUqYfo3AD4dH4FjNm
+         4K1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fJMxiMhuSmSU6CULjVs2+RF0FIVyp0Z5EaJ6LHHaCxw=;
+        b=BD3M54xHCDNNUf9UjCWi1v3ApU2B5lJnP+SCmMvN/VGKgbsVnelWSsvzzbHoEhZ+Hm
+         YfXolvxUKGThgu2zjeZFPDmuqjETyT7S1fePWy4qLVu2fqt1sdeDVzbMHNjGwrxANmJW
+         O7uyh/mZBegPuLFqQSQjWeAyKCvSeCMHfnKn2IwN/xsVSIQN0sxssTCSEeaHgipPXwV2
+         cR92OI5VqDTtI5spQPHoHQbpKgPhbaLyCeivFn6I/VssIHk1/x7LHASgLBI9uIVlBdUO
+         rFcBrIBpjcAUcu3vuLVwiQWpsp7hY3pLKmJmUnfbeeHSM6bWZsYkX3Zy7xVKIFCcb8Wq
+         +LeQ==
+X-Gm-Message-State: ABuFfogH63I3CoO0tpDCpYCkxn5+bvGfd+mZdkCh+U1q6X2Ag9p6mc1e
+        3lsN2yDQca71vWyk7sOb8l4mapNj
+X-Google-Smtp-Source: ACcGV62yfpp8tMnvBGAWa+D1uuKPmdEMnf5MKHFcoNmsdmwEcgqiTPetmP6wI+cr72L9eszgbUG0Bw==
+X-Received: by 2002:a63:4384:: with SMTP id q126-v6mr30156688pga.142.1539900086923;
+        Thu, 18 Oct 2018 15:01:26 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id k24-v6sm26283863pfi.11.2018.10.18.15.01.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Oct 2018 15:01:25 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 15:01:24 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Subject: Re: [PATCH pstore-next v2 0/4] Refactor compression initialization
+Message-ID: <20181018220124.GA14768@roeck-us.net>
+References: <20181018185616.14768-1-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181017003548.GA32577@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 18 Oct 2018 21:58:49 +0000 (UTC)
+In-Reply-To: <20181018185616.14768-1-keescook@chromium.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Al,
-
-On Wed, Oct 17, 2018 at 01:35:48AM +0100, Al Viro wrote:
-> On Wed, Oct 17, 2018 at 12:33:22AM +0200, Christian Brauner wrote:
-> > Currently, when writing
-> > 
-> > echo 18446744073709551616 > /proc/sys/fs/file-max
-> > 
-> > /proc/sys/fs/file-max will overflow and be set to 0. That quickly
-> > crashes the system.
-> > This commit sets the max and min value for file-max and returns -EINVAL
-> > when a long int is exceeded. Any higher value cannot currently be used as
-> > the percpu counters are long ints and not unsigned integers. This behavior
-> > also aligns with other tuneables that return -EINVAL when their range is
-> > exceeded. See e.g. [1], [2] and others.
+On Thu, Oct 18, 2018 at 11:56:12AM -0700, Kees Cook wrote:
+> Sai noticed pstore wasn't catching early crashes, so Joel fixed it
+> by moving init earlier again (with compression init done later). I
+> refactored things a bit to avoid modular build problems noticed by
+> Guenter. And while doing this work, I also improved /proc/iomem labels
+> after Dan helped me get NVDIMM working so I could meaningfully test the
+> very early crash handling.
 > 
-> Mostly sane, but...  get_max_files() users are bloody odd.  The one in
-> file-max limit reporting looks like a half-arsed attempt in "[PATCH] fix
-> file counting".  The one in af_unix.c, though...  I don't remember how
-> that check had come to be - IIRC that was a strange fallout of a thread
-> with me, Andrea and ANK involved, circa 1999, but I don't remember details;
-> Andrea, any memories?  It might be worth reconsidering...  The change in
-> question is in 2.2.4pre6; what do we use unix_nr_socks for?  We try to
-> limit the number of PF_UNIX socks by 2 * max_files, but max_files can be
-> huge *and* non-constant (i.e. it can decrease).  What's more, unix_tot_inflight
-> is unsigned int and max_files might exceed 2^31 just fine since "fs: allow
-> for more than 2^31 files" back in 2010...  Something's fishy there...
+> Thanks everyone!
+> 
 
-Feels like a lifetime ago :), but looking into I remembered some of
-it. That thread was about some instability in unix sockets for an
-unrelated bug in the garbage collector. While reviewing your fix, I
-probably incidentally found a resource exhaustion problem in doing a
-connect();close() loop on a listening stream af_unix. I found an
-exploit somewhere in my home dated in 99 in ls -l. Then ANK found
-another resource exhaustion by sending datagram sockets, which I also
-found an exploit for in my home.
+This version fixes the compile failure. pstore also still works with the
+series applied on top of v4.19-rc8; tested on a Chromebook.
 
-ANK pointed out that a connect syscall allocates two sockets, one to
-be accepted by the listening process, the other is the connect
-itself. That must be the explanation of the "*2".
+Tested-by: Guenter Roeck <groeck@chromium.org>
 
-The "max_files*2" is probably a patch was from you (which was not
-overflowing back then), in attempt to fix the garbage collector issue
-which initially looked like resource exhaustion.
+Guenter
 
-I may have suggested to check sk_max_ack_backlog and fail connect() in
-such case to solve the resource exhaustion, but my proposal was
-obviously broken because connect() would return an error when the
-backlog was full and I suppose I didn't implement anything like
-unix_wait_for_peer. So I guess (not 100% sure) the get_max_files()*2
-check stayed, not because of the bug in the garbage collector that was
-fixed independently, but as a stop gap measure for the
-connect();close() loop resource exhaustion.
-
-I tried the exploit that does a connect();close() in a loop and it
-gracefully hangs in unix_wait_for_peer() after sk_max_ack_backlog
-connects.
-
-Out of curiosity I tried also the dgram exploit and it hangs in
-sock_alloc_send_pskb with sk_wmem_alloc_get(sk) < sk->sk_sndbuf
-check. The file*2 limit couldn't have helped that one anyway.
-
-If I set /proc/sys/net/core/somaxconn to 1000000 the exploit works
-fine again and the connect;close loop again allocates infinite amount
-of kernel RAM into a tiny RSS process and it triggered OOM (there was
-no OOM killer in v2.2 I suppose). By default it's 128. There's also
-sysctl_max_dgram_qlen for dgram that on Android is set to 600 (by
-default 10).
-
-I tend to think these resources are now capped by other means (notably
-somaxconn, sysctl_max_dgram_qlen, sk_wmem_alloc_get) and unix_nr_socks
-can be dropped. Or if that atomic counter is still needed it's not for
-a trivial exploit anymore than just does listen(); SIGSTOP() from one
-process and a connect();close() loop in another process. It'd require
-more than a listening socket and heavily forking or a large increase
-on the max number of file descriptors (a privileged op) to do a ton of
-listens, but forking has its own memory footprint in userland too. At
-the very least it should be a per-cpu counter synced to the atomic
-global after a threshold.
-
-The other reason for dropping is that it wasn't ideal that the trivial
-exploit could still allocated max_files*2 SYN skbs with a loop of
-connect;close, max_files*2 is too much already so I suppose it was
-only a stop-gap measure to begin with.
-
-Thanks,
-Andrea
+> -Kees
+> 
+> v2:
+> - add init refactoring to avoid modular build failures.
+> 
+> 
+> Joel Fernandes (Google) (1):
+>   pstore: Allocate compression during late_initcall()
+> 
+> Kees Cook (3):
+>   pstore: Centralize init/exit routines
+>   pstore: Refactor compression initialization
+>   pstore/ram: Clarify resource reservation labels
+> 
+>  fs/pstore/inode.c          | 11 +-----
+>  fs/pstore/internal.h       |  5 ++-
+>  fs/pstore/platform.c       | 75 +++++++++++++++++++++++++++++++-------
+>  fs/pstore/ram.c            | 18 +++++++--
+>  fs/pstore/ram_core.c       | 11 ++++--
+>  include/linux/pstore_ram.h |  3 +-
+>  6 files changed, 90 insertions(+), 33 deletions(-)
+> 
+> -- 
+> 2.17.1
+> 
