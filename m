@@ -2,191 +2,138 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3695C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 04:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FB1C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 04:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F7BF2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 04:27:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6992F21477
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 04:32:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qQXBT8eh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F7BF2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hYrvkGYb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6992F21477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbeJRM0p (ORCPT
+        id S1727418AbeJRMbE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 08:26:45 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34167 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727316AbeJRM0p (ORCPT
+        Thu, 18 Oct 2018 08:31:04 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:42291 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727352AbeJRMbE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 08:26:45 -0400
-Received: by mail-pl1-f195.google.com with SMTP id f18-v6so13725923plr.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 21:27:44 -0700 (PDT)
+        Thu, 18 Oct 2018 08:31:04 -0400
+Received: by mail-yw1-f67.google.com with SMTP id a197-v6so11288518ywh.9
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 21:32:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5pfu05udHnH1V44TWBGSOex3asOJMVORE6XkaOCUrNs=;
-        b=qQXBT8ehg/A075OXndPr3dC2Tf25O/lCZhV2n2CA2/G6LbyIEiYiRHG6KZmSbzU/Xr
-         g6BSO9Fe/Ime2xIbsBeefd5KiGzJlU0tbc1cQGvvIf/I1oHx/scgd7qIqnBywxknRo2l
-         I5P/IprjSswEFmil18KQsUCkNrKw19egcUkn3nupiHdToM+s48reHt3IVnupEbPHQEhg
-         g8a+XjUuiBUazlravYvxfD5USC5jhCEMSqEPB4Nqa+WHg1EsHpx/KHZjEVcmh28fWGep
-         U2htOBQjLpY4OfvOR2LQw2IUKx3/SVcfGdxiK4OvydGyTLQnVMpAODYV2fJUxudHLhfF
-         p75g==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OZSwTv+XUMKcJR+cvGYCOtARHhGLWiPAZFlDPUtfuPc=;
+        b=hYrvkGYbr32sxDFKZKgBGLbDNHk55eVJSshas2d/4fU1fwsP5iAyNURKbNiepBC/0J
+         3PPMma7L/oMZAyVcFg8JPynYgvzh99kUGPfjmn5jYxvMTc4COHbMFKq3YXiIOcS8SVIL
+         uic/rpHKFESfOIvBj3mCVTO213wYyvtFYdXmI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5pfu05udHnH1V44TWBGSOex3asOJMVORE6XkaOCUrNs=;
-        b=p525yIW9bXFoADEsaF64IMZl0ck7rUwx9u7csYnTlwYf2bl0IfDKfMhiAYsCfDL8Lq
-         u0tR7bJgRwgK9FAYwSXdkdPTPSnXg1Vo9cQDzY+OKORfXQQ3uXdcXn51KWIsst22s8QJ
-         Gh/KgkqwH0veVjbL0Pc6Nn2XPEcUVCCgQYtyDjpvdzB2S4jdS8vK6fpNylDoNdGgGD2/
-         Yj+ZV/a/c39UAWyeYkeVQGA3s5/Zk9FU/q7ssAq9oYKMMBf0C5+sC9FThczO2G/FXLPA
-         K88M29c4CzHa5sFK14H0DB8MHIfkJTqBWoZJ2n50M1tPG1KIB4P7QBf2+NwcMWGAwqCx
-         XQow==
-X-Gm-Message-State: ABuFfojLUjlAn/3XeCsTqWbCBf8Dz4sgihn/qVhmqPw6T2TvaoiGbvU3
-        CU2ad/WPqFL2ecnfSn3RLYI=
-X-Google-Smtp-Source: ACcGV61z3MMXVMIALgwWWO0CpMEOfwLWIRPjNqTtfQLyfCavv7ss3jfCg9dxScRZjgiCon+Bybj9VQ==
-X-Received: by 2002:a17:902:76c3:: with SMTP id j3-v6mr28840664plt.339.1539836864400;
-        Wed, 17 Oct 2018 21:27:44 -0700 (PDT)
-Received: from localhost ([175.223.3.251])
-        by smtp.gmail.com with ESMTPSA id s85-v6sm28914670pfi.15.2018.10.17.21.27.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Oct 2018 21:27:43 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 13:27:39 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, guro@fb.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        rientjes@google.com, yang.s@alibaba-inc.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        syzbot <syzbot+77e6b28a7a7106ad0def@syzkaller.appspotmail.com>
-Subject: Re: [PATCH v3] mm: memcontrol: Don't flood OOM messages with no
- eligible task.
-Message-ID: <20181018042739.GA650@jagdpanzerIV>
-References: <20181017102821.GM18839@dhcp22.suse.cz>
- <20181017111724.GA459@jagdpanzerIV>
- <201810180246.w9I2koi3011358@www262.sakura.ne.jp>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OZSwTv+XUMKcJR+cvGYCOtARHhGLWiPAZFlDPUtfuPc=;
+        b=bqVZyz7uHv9Ism9Sd9T7LUg35cuCKsRtriDwMHKU4O0+05dPh8UbD8YxE/e4iFR8Uz
+         Wn6E6KipIR+q8Ok8tblMDvmyolLz2bSEKon2rKYPiVKSptOYLy4I9BZmOTOAsue4o4bE
+         PHGkpz35HM4ZkzeZxK1a6qFTVO76vRncSeWPoqLGuIF4CMrL9FNdYqteeVKmYygICZil
+         Q+95UzO6IfHzwP7SlbnaBVXOekM7rLgdsMZIbjxIgzZnLWaQXnu+mES3jlyjvAlfdO86
+         q4UF+OT2WHuCR2o3Yf3HJPVSlR3kpreiVtA51dMTVkCUfCh6vpdMx0Ib4VZsSEXjn/N6
+         Ppdw==
+X-Gm-Message-State: ABuFfojF1ZmWzpCqwDEc3yQNbMzxs2ZRiabQa9oV8TS4j3lQjpVObP5t
+        SR3Qp3eCPRAgbMZDm1cTJ4gZXLz5s02u/w==
+X-Google-Smtp-Source: ACcGV62PwU/dRRtD6kwRuvbrVH0KsU8AAH+0fyR6t00AXrlgO5WbeiBOO6Dd2nGTk8t13JxXzpK6bQ==
+X-Received: by 2002:a81:c545:: with SMTP id o5-v6mr17231868ywj.102.1539837122174;
+        Wed, 17 Oct 2018 21:32:02 -0700 (PDT)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id y198-v6sm6119614ywy.64.2018.10.17.21.32.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Oct 2018 21:32:00 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id 5-v6so11335202ybf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Oct 2018 21:32:00 -0700 (PDT)
+X-Received: by 2002:a25:24c6:: with SMTP id k189-v6mr6595231ybk.373.1539837119869;
+ Wed, 17 Oct 2018 21:31:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201810180246.w9I2koi3011358@www262.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181017075242.21790-1-henryhsu@chromium.org> <13883852.6N9L7C0n48@avalon>
+ <CAAFQd5B+4x4aSUywtdukwgUmQNQsQsbK4sjedNphwNFteaTscg@mail.gmail.com> <2355808.GKno8i6Ks9@avalon>
+In-Reply-To: <2355808.GKno8i6Ks9@avalon>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Thu, 18 Oct 2018 13:31:48 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5AL2CnnWLk+i133RRa36HTa0baFkezRhpTXf9YP0DSF1Q@mail.gmail.com>
+Message-ID: <CAAFQd5AL2CnnWLk+i133RRa36HTa0baFkezRhpTXf9YP0DSF1Q@mail.gmail.com>
+Subject: Re: [PATCH] media: uvcvideo: Add boottime clock support
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        gwendal@chromium.org, amstan@chromium.org
+Cc:     Heng-Ruey Hsu <henryhsu@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ricky Liang <jcliang@chromium.org>, linux-iio@vger.kernel.org,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (10/18/18 11:46), Tetsuo Handa wrote:
-> Sergey Senozhatsky wrote:
-> > 
-> > int printk_ratelimit_interval(void)
-> > {
-> >        int ret = DEFAULT_RATELIMIT_INTERVAL;
-> >        struct tty_driver *driver = NULL;
-> >        speed_t min_baud = MAX_INT;
-> > 
-> >        console_lock();
-> >        for_each_console(c) {
-> >                speed_t br;
-> > 
-> >                if (!c->device)
-> >                        continue;
-> >                if (!(c->flags & CON_ENABLED))
-> >                        continue;
-> >                if (!c->write)
-> >                        continue;
-> >                driver = c->device(c, index);
-> >                if (!driver)
-> >                        continue;
-> > 
-> >                br = tty_get_baud_rate(tty_driver to tty_struct [???]);
-> >                min_baud = min(min_baud, br);
-> >        }
-> >        console_unlock();
-> > 
-> >        switch (min_baud) {
-> >        case 115200:
-> >                return ret;
-> > 
-> >        case ...blah blah...:
-> >                return ret * 2;
-> > 
-> >        case 9600:
-> >                return ret * 4;
-> >        }
-> >        return ret;
-> > }
-> 
-> I don't think that baud rate is relevant. Writing to console messes up
-> operations by console users. What matters is that we don't mess up consoles
-> to the level (or frequency) where console users cannot do their operations.
-> That is, interval between the last moment we wrote to a console and the
-> first moment we will write to a console for the next time matters. Roughly
-> speaking, remember the time stamp when we called call_console_drivers() for
-> the last time, and compare with that stamp before trying to call a sort of
-> ratelimited printk(). My patch is doing it using per call-site stamp recording.
+On Thu, Oct 18, 2018 at 5:50 AM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Tomasz,
+>
+> On Wednesday, 17 October 2018 11:28:52 EEST Tomasz Figa wrote:
+> > On Wed, Oct 17, 2018 at 5:02 PM Laurent Pinchart wrote:
+> > > On Wednesday, 17 October 2018 10:52:42 EEST Heng-Ruey Hsu wrote:
+> > >> Android requires camera timestamps to be reported with
+> > >> CLOCK_BOOTTIME to sync timestamp with other sensor sources.
+> > >
+> > > What's the rationale behind this, why can't CLOCK_MONOTONIC work ? If the
+> > > monotonic clock has shortcomings that make its use impossible for proper
+> > > synchronization, then we should consider switching to CLOCK_BOOTTIME
+> > > globally in V4L2, not in selected drivers only.
+> >
+> > CLOCK_BOOTTIME includes the time spent in suspend, while
+> > CLOCK_MONOTONIC doesn't. I can imagine the former being much more
+> > useful for anything that cares about the actual, long term, time
+> > tracking. Especially important since suspend is a very common event on
+> > Android and doesn't stop the time flow there, i.e. applications might
+> > wake up the device to perform various tasks at necessary times.
+>
+> Sure, but this patch mentions timestamp synchronization with other sensors,
+> and from that point of view, I'd like to know what is wrong with the monotonic
+> clock if all devices use it.
 
-To my personal taste, "baud rate of registered and enabled consoles"
-approach is drastically more relevant than hard coded 10 * HZ or
-60 * HZ magic numbers... But not in the form of that "min baud rate"
-brain fart, which I have posted.
+AFAIK the sensors mentioned there are not camera sensors, but rather
+things we normally put under IIO, e.g. accelerometers, gyroscopes and
+so on. I'm not sure how IIO deals with timestamps, but Android seems
+to operate in the CLOCK_BOTTIME domain. Let me add some IIO folks.
 
-What I'd do:
+Gwendal, Alexandru, do you think you could shed some light on how we
+handle IIO sensors timestamps across the kernel, Chrome OS and
+Android?
 
--- Iterate over all registered and enabled serial consoles
--- Sum up all the baud rates
--- Calculate (*roughly*) how many bytes per second/minute/etc my
-   call_console_driver() can push
+>
+> > Generally, I'd see a V4L2_BUF_FLAG_TIMESTAMP_BOOTTIME flag being added
+> > and user space being given choice to select the time stamp base it
+> > needs, perhaps by setting the flag in v4l2_buffer struct at QBUF time?
+>
+> I would indeed prefer a mechanism specified at the V4L2 API level, with an
+> implementation in the V4L2 core, over a module parameter. If the goal is to
+> use the boottime clock for synchronization purpose, we need to make sure that
+> all drivers will support it correctly. Patching drivers one by one doesn't
+> really scale.
 
-        -- we actually don't even have to iterate all consoles. Just
-	   add a baud rate in register_console() and sub baud rate
-	   in unregister_console() of each console individually
-	-- and have a static unsigned long in printk.c, which OOM
-	   can use in rate-limit interval check
+Agreed.
 
--- Leave all the noise behind: e.g. console_sem can be locked by
-   a preempted fbcon, etc. It's out of my control; bad luck, there
-   is nothing I can do about it.
--- Then I would, probably, take the most recent, say, 100 OOM
-   reports, and calculate the *average* strlen() value
-   (including \r and \n at the end of each line)
-
-	(strlen(oom_report1) + ... + strlen(omm_report100)) / 100
-
-   Then I'd try to reach an agreement with MM people that we will
-   use this "average" oom_report_strlen() in ratelimit interval
-   calculation. Yes, some reports will be longer, some shorter.
-
-	Say, suppose...
-	
-	I have 2 consoles, and I can write 250 bytes per second.
-	And average oom_report is 5000 bytes.
-	Then I can print one oom_report every (5000 / 250) seconds
-	in the *best* case. That's the optimistic baseline. There
-	can be printk()-s from other CPUs, etc. etc. No one can
-	predict those things.
-
-	Note, how things change when I have just 1 console enabled.
-
-	I have 1 console, and I can write 500 bytes per second.
-	And average oom_report is 5000 bytes.
-	Then I can print one oom_report every (5000 / 500) seconds
-	in the *best* case.
-
-Just my $0.02. Who knows, may be it's dumb and ugly.
-I don't have a dog in this fight.
-
-	-ss
+Best regards,
+Tomasz
