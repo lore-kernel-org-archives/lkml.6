@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E7A1C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E8AECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 239A62145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8511A20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 18:07:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EY/ehsgS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239A62145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGEDPQMN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8511A20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730679AbeJSCJ3 (ORCPT
+        id S1730692AbeJSCJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 22:09:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58930 "EHLO mail.kernel.org"
+        Thu, 18 Oct 2018 22:09:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728851AbeJSCJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 22:09:29 -0400
+        id S1728851AbeJSCJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Oct 2018 22:09:32 -0400
 Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65BDD2145D;
-        Thu, 18 Oct 2018 18:07:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C472B20658;
+        Thu, 18 Oct 2018 18:07:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539886041;
-        bh=52/qiMNakQ6gPiMAttlhdfhp1MPP8UQeYkqZH0hvsN8=;
+        s=default; t=1539886044;
+        bh=1IlCrphBLd2ppfoYdkqdtmJNwEQBvrMip9VYqERm9Ho=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EY/ehsgS4RFfZ6nUFOAsooU0PWRiIDIfKto6TwUx/wrLCHbNyEUG/F8VcMo13l8+n
-         Bmb2gS45oHHtV9UiMO3Ie8A2/yL/huU7V0J+8/eXxfUaUVSxuEkY70Tvy9YIc33RhT
-         8ce7HVyVEzFz8xAfrMrenWyUsWreWPc+SsvqjxmQ=
+        b=gGEDPQMNQ2KvT8apyf0HhUzdeyI5RlKeXaHE7ncmJRi+G4VQLW/1R1KefK27y/FnO
+         TO9Y8O1W2ig4O9gj85nUTn9FvRooIJG1bdEWaGsczXCaO6WH782o7imV9sBQ/EuyoX
+         /7wg3frF0hy3/0BVi6yPBHAKOAGEMAobrghOufjE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Karsten Merker <merker@debian.org>,
-        James Cowgill <jcowgill@debian.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
+        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
+        Breno Leitao <leitao@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 40/48] RISC-V: include linux/ftrace.h in asm-prototypes.h
-Date:   Thu, 18 Oct 2018 19:55:15 +0200
-Message-Id: <20181018175430.054065335@linuxfoundation.org>
+Subject: [PATCH 4.4 41/48] powerpc/tm: Fix userspace r13 corruption
+Date:   Thu, 18 Oct 2018 19:55:16 +0200
+Message-Id: <20181018175430.101932836@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 References: <20181018175427.133690306@linuxfoundation.org>
@@ -63,42 +63,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Cowgill <jcowgill@debian.org>
+From: Michael Neuling <mikey@neuling.org>
 
-[ Upstream commit 57a489786de9ec37d6e25ef1305dc337047f0236 ]
+[ Upstream commit cf13435b730a502e814c63c84d93db131e563f5f ]
 
-Building a riscv kernel with CONFIG_FUNCTION_TRACER and
-CONFIG_MODVERSIONS enabled results in these two warnings:
+When we treclaim we store the userspace checkpointed r13 to a scratch
+SPR and then later save the scratch SPR to the user thread struct.
 
-  MODPOST vmlinux.o
-WARNING: EXPORT symbol "return_to_handler" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "_mcount" [vmlinux] version generation failed, symbol will not be versioned.
+Unfortunately, this doesn't work as accessing the user thread struct
+can take an SLB fault and the SLB fault handler will write the same
+scratch SPRG that now contains the userspace r13.
 
-When exporting symbols from an assembly file, the MODVERSIONS code
-requires their prototypes to be defined in asm-prototypes.h (see
-scripts/Makefile.build). Since both of these symbols have prototypes
-defined in linux/ftrace.h, include this header from RISC-V's
-asm-prototypes.h.
+To fix this, we store r13 to the kernel stack (which can't fault)
+before we access the user thread struct.
 
-Reported-by: Karsten Merker <merker@debian.org>
-Signed-off-by: James Cowgill <jcowgill@debian.org>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+Found by running P8 guest + powervm + disable_1tb_segments + TM. Seen
+as a random userspace segfault with r13 looking like a kernel address.
+
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+Reviewed-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/riscv/include/asm/asm-prototypes.h |    7 +++++++
- 1 file changed, 7 insertions(+)
- create mode 100644 arch/riscv/include/asm/asm-prototypes.h
+ arch/powerpc/kernel/tm.S |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- /dev/null
-+++ b/arch/riscv/include/asm/asm-prototypes.h
-@@ -0,0 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_RISCV_PROTOTYPES_H
+--- a/arch/powerpc/kernel/tm.S
++++ b/arch/powerpc/kernel/tm.S
+@@ -199,13 +199,20 @@ dont_backup_fp:
+ 	std	r1, PACATMSCRATCH(r13)
+ 	ld	r1, PACAR1(r13)
+ 
+-	/* Store the PPR in r11 and reset to decent value */
+ 	std	r11, GPR11(r1)			/* Temporary stash */
+ 
++	/*
++	 * Store r13 away so we can free up the scratch SPR for the SLB fault
++	 * handler (needed once we start accessing the thread_struct).
++	 */
++	GET_SCRATCH0(r11)
++	std	r11, GPR13(r1)
 +
-+#include <linux/ftrace.h>
-+#include <asm-generic/asm-prototypes.h>
-+
-+#endif /* _ASM_RISCV_PROTOTYPES_H */
+ 	/* Reset MSR RI so we can take SLB faults again */
+ 	li	r11, MSR_RI
+ 	mtmsrd	r11, 1
+ 
++	/* Store the PPR in r11 and reset to decent value */
+ 	mfspr	r11, SPRN_PPR
+ 	HMT_MEDIUM
+ 
+@@ -234,7 +241,7 @@ dont_backup_fp:
+ 	ld	r4, GPR7(r1)			/* user r7 */
+ 	ld	r5, GPR11(r1)			/* user r11 */
+ 	ld	r6, GPR12(r1)			/* user r12 */
+-	GET_SCRATCH0(8)				/* user r13 */
++	ld	r8, GPR13(r1)			/* user r13 */
+ 	std	r3, GPR1(r7)
+ 	std	r4, GPR7(r7)
+ 	std	r5, GPR11(r7)
 
 
