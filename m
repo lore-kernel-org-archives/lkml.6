@@ -2,32 +2,32 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F20D0C5ACCC
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69102C5ACCC
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB9C721473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:41:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB9C721473
+	by mail.kernel.org (Postfix) with ESMTP id 259832145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 03:46:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 259832145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbeJRLkt (ORCPT
+        id S1727427AbeJRLpV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 07:40:49 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:40939 "EHLO
+        Thu, 18 Oct 2018 07:45:21 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:37145 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727297AbeJRLkt (ORCPT
+        by vger.kernel.org with ESMTP id S1727297AbeJRLpV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 07:40:49 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.09651969|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03301;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=16;RT=16;SR=0;TI=SMTPD_---.D3koQ0i_1539834078;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D3koQ0i_1539834078)
-          by smtp.aliyun-inc.com(10.147.44.145);
-          Thu, 18 Oct 2018 11:41:19 +0800
-Date:   Thu, 18 Oct 2018 11:41:18 +0800
+        Thu, 18 Oct 2018 07:45:21 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.0880377|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03303;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=16;RT=16;SR=0;TI=SMTPD_---.D3kYJ5p_1539834355;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D3kYJ5p_1539834355)
+          by smtp.aliyun-inc.com(10.147.41.121);
+          Thu, 18 Oct 2018 11:45:55 +0800
+Date:   Thu, 18 Oct 2018 11:45:50 +0800
 From:   Guo Ren <ren_guo@c-sky.com>
 To:     Arnd Bergmann <arnd@arndb.de>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -44,64 +44,37 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-arch <linux-arch@vger.kernel.org>,
         DTML <devicetree@vger.kernel.org>,
         Rob Herring <robh+dt@kernel.org>, c-sky_gcc_upstream@c-sky.com
-Subject: Re: [PATCH V9 21/21] csky: support dword access for get_user_size()
-Message-ID: <20181018034117.GD15088@guoren-Inspiron-7460>
+Subject: Re: [PATCH V9 18/21] dt-bindings: csky CPU Bindings
+Message-ID: <20181018034549.GA17276@guoren-Inspiron-7460>
 References: <cover.1539655731.git.ren_guo@c-sky.com>
- <4bc11ff0cff5960892a464189605f9bc808383fc.1539655732.git.ren_guo@c-sky.com>
- <CAK8P3a1wfeWboHvU1o_kooMc2hML8iWcNrz=mp6tYT52iGwfjw@mail.gmail.com>
+ <867b2328e3dbaef58d0b5e7fc58e8545d1510951.1539655732.git.ren_guo@c-sky.com>
+ <CAK8P3a1WM08tTDKH7E9hQP7GLUXmHndKCyEuaWrvTq5YKGR5+Q@mail.gmail.com>
+ <20181018032130.GC15088@guoren-Inspiron-7460>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a1wfeWboHvU1o_kooMc2hML8iWcNrz=mp6tYT52iGwfjw@mail.gmail.com>
+In-Reply-To: <20181018032130.GC15088@guoren-Inspiron-7460>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 05:44:17PM +0200, Arnd Bergmann wrote:
-> On Tue, Oct 16, 2018 at 5:33 AM Guo Ren <ren_guo@c-sky.com> wrote:
-> >
-> > Support dword access for get_user_size and redesign put_user_size with
-> > the same style of get_user_size. It's Ok to use xxx_user_asm_common for
-> > all size of variable with ldb, ldh, ldw, ld.d
-> >
-> > ld.d rx, (addr, 0) could "rx <= addr" "and r(x+1) <= addr+4" and this also
-> > follow abiv2 gcc ABI for dword access.
+On Thu, Oct 18, 2018 at 11:21:30AM +0800, Guo Ren wrote:
+> On Wed, Oct 17, 2018 at 05:50:33PM +0200, Arnd Bergmann wrote:
+> > On Tue, Oct 16, 2018 at 5:30 AM Guo Ren <ren_guo@c-sky.com> wrote:
+> > >
+> > > This patch adds the documentation to describe that how to add cpu nodes in
+> > > dts for SMP.
+> > >
+> > > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> > > Cc: Rob Herring <robh@kernel.org>
+> > 
+> > I don't see anything wrong, but I'll let Rob or some other DT maintainer
+> > provide an Ack when they are happy.
+> Yes, Rob help a lot for reviewing the DT-docs of csky subsystem. Thx Bob :)
+
+Sorry, Thx Rob.
 > 
-> Are you sure this is correct for this?
-> 
-> static inline u32 get_64_to_32(__u64 __user *p)
-> {
->       u32 ret;
->       get_user(ret, p);
->       return ret;
-> }
-> 
-> If I read __get_user_asm_common() right, the ld.d would overwrite
-> two registers, but the caller only expects one, so it clobbers one
-> that might be in use.
-Ah... BUG! I only consider the get_user(u64, u64 *) :P
-
-Change to:
-case 8:							\
-__get_user_asm_dword((x), ptr, "ld.d", retval);		\
-break;
-
-#define __get_user_asm_dword(x, ptr, err)		\
-do {							\
-	u64 tmp;					\
-	__get_user_asm_common(tmp, ptr, "ld.d", err);	\
-	x = typeof(x) tmp;				\
-} while(0)
-
-#define __put_user_asm_dword(x, ptr, err)		\
-do {							\
-	u64 tmp = (u64) x;				\
-	__put_user_asm_common(tmp, ptr, "st.d", err);	\
-} while(0)
-
-Hmm?
-
-Best Regards
- Guo Ren
+> Best Regards
+>  Guo Ren
