@@ -2,137 +2,138 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E12C67863
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:35:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15299C67863
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:45:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93FE520644
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:35:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE10620644
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 21:45:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="XmQnB5Eh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93FE520644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=omnibond-com.20150623.gappssmtp.com header.i=@omnibond-com.20150623.gappssmtp.com header.b="HnfyWpv6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE10620644
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726465AbeJSFiv (ORCPT
+        id S1726653AbeJSFsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 01:38:51 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39465 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725735AbeJSFiu (ORCPT
+        Fri, 19 Oct 2018 01:48:19 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:34512 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725751AbeJSFsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 01:38:50 -0400
-Received: by mail-oi1-f193.google.com with SMTP id y81-v6so25259209oia.6
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 14:35:53 -0700 (PDT)
+        Fri, 19 Oct 2018 01:48:19 -0400
+Received: by mail-yb1-f193.google.com with SMTP id 184-v6so12484549ybg.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 14:45:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Xo5IdB7RWsUA00e0IebT8XTDQdWVlTBdq9nvmfMqNg4=;
-        b=XmQnB5EhvV/jzSSArGBDnFu1OBKu/AnBLVuR20NHyGg7DC+PteJlUOltUyx0QsRhyF
-         esyt00+YNN2+ZwJ8GNp6oHCbSt5Jv4wWAi/Yr1DU1vlSjputKEqg5NCZ9rNyWSntvY7o
-         b7ktl9cOnzZ14/F+5UuK6J7o28ZlZvc9C9rMGgTqcosE8xd0Rh9aMiLIf3sQc3V2srBJ
-         K/xXuec+Xg1keX6uXRbC+7dyTFJOoapWiqIaw5aAx69q1fU4J1yNdv9mtgUtICAOwa6c
-         kxjFKTfG/8++dnt4IZuoTboLTYy+9HbBxuNQgkviKh6137QUkQClQL8JgT7Mq2UJEnhm
-         jeQQ==
+        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cKO6C4CuFmlcQMHod2k6MX0M8iJXUgxmWJyTyPMmdH0=;
+        b=HnfyWpv6P/ai9KVTY/w8rHoTFouxeKSrPlJtTFlB+lGN/YR3dfMyedG8I3NhM9OUtM
+         kcxcpzBUVfKMazA1cRvRUSX0K6vR4bFrA10adWv0PLABT/QYe8HQLtuIX2GC1pknLRER
+         /utDiGFztGnOPqX+wqFSj5w4TasZFC0+Df1Bi+/dDvOMVEJJBKQMH84QsPrhHBpJ1deY
+         IgtcEoPBM/kixs/R4r8NT/0qL2UGALHB6ha2q+sTMo/vyy+omisg6/CdE0FIQ6uPh0/D
+         UvrMetVPlNsKjzSuG1PVy7eCtNmj+UVINa/qBpCm1MLSStdo3F7BB/CGrHBacsdQuzX+
+         g9yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Xo5IdB7RWsUA00e0IebT8XTDQdWVlTBdq9nvmfMqNg4=;
-        b=gBevDaWGVVgROjen426ofiI8NJbPaA015P66+rMGbDXmFYYf2koaVYa671YX9LdNJp
-         o7w297jtKjMMF/j2fADD1kAzhmaMn4s4UQgA7kFRp9I42/tcTtcIv6yoDVJphGa3bbWw
-         4SwzAaEhd25rWi8pAlHhcQTiK1wK8CqlcqyI1jO2fHpIphDPQ70hJGHxEI9GuRXPon3E
-         Of7RZVEtrgwUBKIupm4I+I4ndCGMqOyniDVioE/4DIB9BuNOtrBYOISNeWxmnqmYA06B
-         OVm+2+5lwP/KRtGv2Iu19dI8nGjyykzcWmPVLWFYIxlXR12KcutgKZrf+wWfh0p14j99
-         Pu7g==
-X-Gm-Message-State: ABuFfohTf+VvxMGLIa5dfemJ2M1jaf1D1Qwdrm603czjGupfPsNgAJ/9
-        mReGlYRtcOcnxlGHgAc6iOEL2jbqkz7PMelsYNA0nw==
-X-Google-Smtp-Source: ACcGV6039qlj/oJtSrVvCJpD54JiUcJIc8mS37BzHXZdKs65jIciqsSkzpS5mkG8GsqLrCDdzmnY8IGzPVEux6Wn6aU=
-X-Received: by 2002:aca:44d7:: with SMTP id r206-v6mr16512295oia.280.1539898553459;
- Thu, 18 Oct 2018 14:35:53 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cKO6C4CuFmlcQMHod2k6MX0M8iJXUgxmWJyTyPMmdH0=;
+        b=marXTr8lHnzyWVWAJcVqf8WPNBNrGQX3Ss7GaPxxbanv0766jb7WFvSwsXuB/k8xWh
+         lp/JaKFwTIMLjwjsx7GA57SNvX6fsz04f7FFCd1AfkQlNs1JNJhWkg6HNrobhuDoEdCl
+         0qhITHTvdAYFA2AV/sNZKzQgAC8f2Q3+qvgFFHR0rpPzvDuGeualv3dQDCKKHqFVTZbQ
+         lbmTUVcUX1olaNMpsfw0+O+s4Nm041l5foo77tM47HSiFbelKbTFrLqDUWDJw7+yytOl
+         wKOvDj5Xv54lUk9MSPp2QLSiV5K9yKFK39qZ/3d/twTS+WofklQdUqJNZ5Z7H2lOOeYt
+         nROw==
+X-Gm-Message-State: ABuFfoh02xItQSgOoaaRqu8UShQ2vv/hrXMi+xly/eQTkE+3g8CbxOBz
+        HUAli/reCdXBOrMZRvVNGygtfg==
+X-Google-Smtp-Source: ACcGV62xAAwkvc27TDbWs0TnX0mm5BP1xzu7iIHfIvEYiqkRQaFhfYtaoRET/EHjwgNBR7mrvpI77w==
+X-Received: by 2002:a25:67d6:: with SMTP id b205-v6mr3049621ybc.521.1539899121109;
+        Thu, 18 Oct 2018 14:45:21 -0700 (PDT)
+Received: from t480s.mkb.name (47-49-164-163.static.spbg.sc.charter.com. [47.49.164.163])
+        by smtp.gmail.com with ESMTPSA id x64-v6sm5978439ywx.103.2018.10.18.14.45.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Oct 2018 14:45:19 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 17:45:17 -0400
+From:   martin@omnibond.com
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Mike Marshall <hubcap@omnibond.com>
+Subject: Re: [PATCH 1/3] orangefs: fix request_mask misuse
+Message-ID: <20181018214517.GA44581@t480s.mkb.name>
+References: <20181018131125.6303-1-mszeredi@redhat.com>
 MIME-Version: 1.0
-References: <20181018002924.GA42803@beast> <CAPcyv4g_W5KJq8vrVdi8-Hij4zQLLjZdZMkmP7oWABSrmGfLRw@mail.gmail.com>
- <CAGXu5jK5GrgoHSC_peChp9Uzx-_EbPqZgtpDC=F+V1cP92cKxA@mail.gmail.com>
- <CAPcyv4gO2zN-ixVE1eLpe4RT1Vkkyp_C+LbGnNVT+gnJG=h3KQ@mail.gmail.com> <CAGXu5jKUc0+EnV0m1ii_aRVa2XJSDtKY4Xq77Q+an1Z1VUqV7w@mail.gmail.com>
-In-Reply-To: <CAGXu5jKUc0+EnV0m1ii_aRVa2XJSDtKY4Xq77Q+an1Z1VUqV7w@mail.gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 18 Oct 2018 14:35:42 -0700
-Message-ID: <CAPcyv4jzic5zd1AJci439zWzJ0-nP_vf3k7Xzkm7AGvvge8SEA@mail.gmail.com>
-Subject: Re: [PATCH] pstore/ram: Clarify resource reservation labels
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        "Luck, Tony" <tony.luck@intel.com>, joel@joelfernandes.org,
-        zwisler@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181018131125.6303-1-mszeredi@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 1:31 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Thu, Oct 18, 2018 at 8:33 AM, Dan Williams <dan.j.williams@intel.com> wrote:
-> > [ add Ross ]
->
-> Hi Ross! :)
->
-> > On Thu, Oct 18, 2018 at 12:15 AM Kees Cook <keescook@chromium.org> wrote:
-> >> As for nvdimm specifically, yes, I'd love to get pstore hooked up
-> >> correctly to nvdimm. How do the namespaces work? Right now pstore
-> >> depends one of platform driver data, device tree specification, or
-> >> manual module parameters.
-> >
-> > From the userspace side we have the ndctl utility to wrap
-> > personalities on top of namespaces. So for example, I envision we
-> > would be able to do:
-> >
-> >     ndctl create-namespace --mode=pstore --size=128M
-> >
-> > ...and create a small namespace that will register with the pstore sub-system.
-> >
-> > On the kernel side this would involve registering a 'pstore_dev' child
-> > / seed device under each region device. The 'seed-device' sysfs scheme
-> > is described in our documentation [1]. The short summary is ndctl
-> > finds a seed device assigns a namespace to it and then binding that
-> > device to a driver causes it to be initialized by the kernel.
-> >
-> > [1]: https://www.kernel.org/doc/Documentation/nvdimm/nvdimm.txt
->
-> Interesting!
->
-> Really, this would be a way to configure "ramoops" (the persistent RAM
-> backend to pstore), rather than pstore itself (pstore is just the
-> framework). From reading the ndctl man page it sounds like there isn't
-> a way to store configuration information beyond just size?
->
-> ramoops will auto-configure itself and fill available space using its
-> default parameters, but it might be nice to have a way to store that
-> somewhere (traditionally it's part of device tree or platform data).
-> ramoops could grow a "header", but normally the regions are very small
-> so I've avoided that.
->
-> I'm not sure I understand the right way to glue ramoops_probe() to the
-> "seed-device" stuff. (It needs to be probed VERY early to catch early
-> crashes -- ramoops uses postcore_initcall() normally.)
+On Thu, Oct 18, 2018 at 03:11:23PM +0200, Miklos Szeredi wrote:
+> Orangefs only handles STATX_BASIC_STATS in its getattr implementation, so
+> mask off all other flags.  Not doing so results in statx(2) forcing a
+> refresh of cached attributes on any other requested flag (i.e. STATX_BTIME
+> currently) due to the following test in orangefs_inode_getattr():
+> 
+>   (request_mask & orangefs_inode->getattr_mask) == request_mask
+> 
+> Also clean up gratuitous uses of STATX_ALL.
+> 
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> Cc: Mike Marshall <hubcap@omnibond.com>
+> Cc: Martin Brandenburg <martin@omnibond.com>
 
-Irk, yeah, that's early. On some configurations we can't delineate
-namespaces until after ACPI has come up. Ideally the address range
-would be reserved and communicated in the memory-map from the BIOS.
+Reviewed-by: Martin Brandenburg <martin@omnibond.com>
 
-In EFI terms I think early ramoops is only suitable for
-EfiACPIMemoryNVS, but we could certainly support a late arriving
-ramoops for EfiPersistentMemory with this proposed namespace scheme.
-
-I cringe at users picking addresses because someone is going to enable
-ramoops on top of their persistent memory namespace and wonder why
-their filesystem got clobbered. Should attempts to specify an explicit
-ramoops range that intersects EfiPersistentMemory fail by default? The
-memmap=ss!nn parameter has burned us many times with users picking the
-wrong address, so I'd be inclined to hide this ramoops sharp edge from
-them.
+> ---
+>  fs/orangefs/inode.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+> index 31932879b716..bd7f15a831dc 100644
+> --- a/fs/orangefs/inode.c
+> +++ b/fs/orangefs/inode.c
+> @@ -256,7 +256,8 @@ int orangefs_getattr(const struct path *path, struct kstat *stat,
+>  		     "orangefs_getattr: called on %pd\n",
+>  		     path->dentry);
+>  
+> -	ret = orangefs_inode_getattr(inode, 0, 0, request_mask);
+> +	ret = orangefs_inode_getattr(inode, 0, 0,
+> +				     request_mask & STATX_BASIC_STATS);
+>  	if (ret == 0) {
+>  		generic_fillattr(inode, stat);
+>  
+> @@ -408,7 +409,7 @@ struct inode *orangefs_iget(struct super_block *sb,
+>  	if (!inode || !(inode->i_state & I_NEW))
+>  		return inode;
+>  
+> -	error = orangefs_inode_getattr(inode, 1, 1, STATX_ALL);
+> +	error = orangefs_inode_getattr(inode, 1, 1, STATX_BASIC_STATS);
+>  	if (error) {
+>  		iget_failed(inode);
+>  		return ERR_PTR(error);
+> @@ -453,7 +454,7 @@ struct inode *orangefs_new_inode(struct super_block *sb, struct inode *dir,
+>  	orangefs_set_inode(inode, ref);
+>  	inode->i_ino = hash;	/* needed for stat etc */
+>  
+> -	error = orangefs_inode_getattr(inode, 1, 1, STATX_ALL);
+> +	error = orangefs_inode_getattr(inode, 1, 1, STATX_BASIC_STATS);
+>  	if (error)
+>  		goto out_iput;
+>  
+> -- 
+> 2.14.3
+> 
