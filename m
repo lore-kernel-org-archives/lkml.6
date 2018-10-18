@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68FB2ECDE43
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E686EECDE43
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:03:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23FFA21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:02:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23FFA21473
+	by mail.kernel.org (Postfix) with ESMTP id AC45321473
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 09:03:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC45321473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbeJRRCr convert rfc822-to-8bit (ORCPT
+        id S1728096AbeJRRDA convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 13:02:47 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:40911 "EHLO
+        Thu, 18 Oct 2018 13:03:00 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:15177 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727977AbeJRRCq (ORCPT
+        by vger.kernel.org with ESMTP id S1727969AbeJRRCr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 13:02:46 -0400
+        Thu, 18 Oct 2018 13:02:47 -0400
 Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w9I8whSA030778;
-        Thu, 18 Oct 2018 11:02:15 +0200
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w9I8wj5U030789;
+        Thu, 18 Oct 2018 11:02:16 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2n35u5ygkc-1
+        by mx08-00178001.pphosted.com with ESMTP id 2n35u5ygkg-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 18 Oct 2018 11:02:15 +0200
+        Thu, 18 Oct 2018 11:02:16 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5D85B3D;
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 31C6548;
+        Thu, 18 Oct 2018 09:02:15 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E22A62771;
         Thu, 18 Oct 2018 09:02:14 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F07442771;
-        Thu, 18 Oct 2018 09:02:13 +0000 (GMT)
-Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE2.st.com
- (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 18 Oct
- 2018 11:02:13 +0200
+Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 18 Oct
+ 2018 11:02:14 +0200
 Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
  SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
- 15.00.1347.000; Thu, 18 Oct 2018 11:02:13 +0200
+ 15.00.1347.000; Thu, 18 Oct 2018 11:02:14 +0200
 From:   Pascal PAILLET-LME <p.paillet@st.com>
 To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>,
@@ -58,11 +58,11 @@ To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
         "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
         "eballetbo@gmail.com" <eballetbo@gmail.com>
 CC:     Pascal PAILLET-LME <p.paillet@st.com>
-Subject: [PATCH v4 6/8] input: stpmic1: add stpmic1 onkey driver
-Thread-Topic: [PATCH v4 6/8] input: stpmic1: add stpmic1 onkey driver
-Thread-Index: AQHUZsFCvnEZjcckq0aBst1glZqQuA==
-Date:   Thu, 18 Oct 2018 09:02:13 +0000
-Message-ID: <1539853324-29051-7-git-send-email-p.paillet@st.com>
+Subject: [PATCH v4 8/8] watchdog: stpmic1: add stpmic1 watchdog driver
+Thread-Topic: [PATCH v4 8/8] watchdog: stpmic1: add stpmic1 watchdog driver
+Thread-Index: AQHUZsFDQ3Gdf8Iq40GyidgZ/ej36Q==
+Date:   Thu, 18 Oct 2018 09:02:14 +0000
+Message-ID: <1539853324-29051-9-git-send-email-p.paillet@st.com>
 References: <1539853324-29051-1-git-send-email-p.paillet@st.com>
 In-Reply-To: <1539853324-29051-1-git-send-email-p.paillet@st.com>
 Accept-Language: en-US
@@ -84,263 +84,197 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: pascal paillet <p.paillet@st.com>
 
-The stpmic1 pmic is able to manage an onkey button. This driver exposes
-the stpmic1 onkey as an input device. It can also be configured to
-shut-down the power supplies on a long key-press with an adjustable
-duration.
+The stpmic1 PMIC embeds a watchdog which is disabled by default. As soon
+as the watchdog is started, it must be refreshed periodically otherwise
+the PMIC goes off.
 
 Signed-off-by: pascal paillet <p.paillet@st.com>
 ---
 changes in v4:
-* remove remove function
-* merge stpmic1_onkey_dt_params() in probe function
-* suppresse struct pmic_onkey_config
-* rename PONKEY_PU_ACTIVE to PONKEY_PU_INACTIVE
+* fix stop watchdog function
+* Kconfig: fix grammar issue
 
- drivers/input/misc/Kconfig         |  11 +++
- drivers/input/misc/Makefile        |   2 +
- drivers/input/misc/stpmic1_onkey.c | 197 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 210 insertions(+)
- create mode 100644 drivers/input/misc/stpmic1_onkey.c
+ drivers/watchdog/Kconfig       |  12 ++++
+ drivers/watchdog/Makefile      |   1 +
+ drivers/watchdog/stpmic1_wdt.c | 139 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 152 insertions(+)
+ create mode 100644 drivers/watchdog/stpmic1_wdt.c
 
-diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-index ca59a2b..279fb02 100644
---- a/drivers/input/misc/Kconfig
-+++ b/drivers/input/misc/Kconfig
-@@ -851,4 +851,15 @@ config INPUT_SC27XX_VIBRA
- 	  To compile this driver as a module, choose M here. The module will
- 	  be called sc27xx_vibra.
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 5ea8909..6d2ffef 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -806,6 +806,18 @@ config STM32_WATCHDOG
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called stm32_iwdg.
  
-+config INPUT_STPMIC1_ONKEY
-+	tristate "STPMIC1 PMIC Onkey support"
++config STPMIC1_WATCHDOG
++	tristate "STPMIC1 PMIC watchdog support"
 +	depends on MFD_STPMIC1
++	select WATCHDOG_CORE
 +	help
-+	  Say Y to enable support of onkey embedded into STPMIC1 PMIC. onkey
-+	  can be used to wakeup from low power modes and force a shut-down on
-+	  long press.
++	  Say Y here to include watchdog support embedded into STPMIC1 PMIC.
++	  If the watchdog timer expires, stpmic1 will shut down all its power
++	  supplies.
 +
 +	  To compile this driver as a module, choose M here: the
-+	  module will be called stpmic1_onkey.
++	  module will be called spmic1_wdt.
 +
- endif
-diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
-index 9d0f9d1..1b44202 100644
---- a/drivers/input/misc/Makefile
-+++ b/drivers/input/misc/Makefile
-@@ -71,6 +71,7 @@ obj-$(CONFIG_INPUT_SGI_BTNS)		+= sgi_btns.o
- obj-$(CONFIG_INPUT_SIRFSOC_ONKEY)	+= sirfsoc-onkey.o
- obj-$(CONFIG_INPUT_SOC_BUTTON_ARRAY)	+= soc_button_array.o
- obj-$(CONFIG_INPUT_SPARCSPKR)		+= sparcspkr.o
-+obj-$(CONFIG_INPUT_STPMIC1_ONKEY)  	+= stpmic1_onkey.o
- obj-$(CONFIG_INPUT_TPS65218_PWRBUTTON)	+= tps65218-pwrbutton.o
- obj-$(CONFIG_INPUT_TWL4030_PWRBUTTON)	+= twl4030-pwrbutton.o
- obj-$(CONFIG_INPUT_TWL4030_VIBRA)	+= twl4030-vibra.o
-@@ -81,3 +82,4 @@ obj-$(CONFIG_INPUT_WM831X_ON)		+= wm831x-on.o
- obj-$(CONFIG_INPUT_XEN_KBDDEV_FRONTEND)	+= xen-kbdfront.o
- obj-$(CONFIG_INPUT_YEALINK)		+= yealink.o
- obj-$(CONFIG_INPUT_IDEAPAD_SLIDEBAR)	+= ideapad_slidebar.o
-+
-diff --git a/drivers/input/misc/stpmic1_onkey.c b/drivers/input/misc/stpmic1_onkey.c
+ config UNIPHIER_WATCHDOG
+ 	tristate "UniPhier watchdog support"
+ 	depends on ARCH_UNIPHIER || COMPILE_TEST
+diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+index bf92e7b..2649cf3 100644
+--- a/drivers/watchdog/Makefile
++++ b/drivers/watchdog/Makefile
+@@ -217,3 +217,4 @@ obj-$(CONFIG_SOFT_WATCHDOG) += softdog.o
+ obj-$(CONFIG_MENF21BMC_WATCHDOG) += menf21bmc_wdt.o
+ obj-$(CONFIG_MENZ069_WATCHDOG) += menz69_wdt.o
+ obj-$(CONFIG_RAVE_SP_WATCHDOG) += rave-sp-wdt.o
++obj-$(CONFIG_STPMIC1_WATCHDOG) += stpmic1_wdt.o
+diff --git a/drivers/watchdog/stpmic1_wdt.c b/drivers/watchdog/stpmic1_wdt.c
 new file mode 100644
-index 0000000..6a7f08b
+index 0000000..a6cbc27
 --- /dev/null
-+++ b/drivers/input/misc/stpmic1_onkey.c
-@@ -0,0 +1,197 @@
++++ b/drivers/watchdog/stpmic1_wdt.c
+@@ -0,0 +1,139 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (C) STMicroelectronics 2018
 +// Author: Pascal Paillet <p.paillet@st.com> for STMicroelectronics.
 +
-+#include <linux/input.h>
-+#include <linux/interrupt.h>
++#include <linux/kernel.h>
 +#include <linux/mfd/stpmic1.h>
 +#include <linux/module.h>
-+#include <linux/of.h>
 +#include <linux/platform_device.h>
-+#include <linux/property.h>
++#include <linux/of.h>
 +#include <linux/regmap.h>
++#include <linux/slab.h>
++#include <linux/watchdog.h>
 +
-+/**
-+ * struct stpmic1_onkey - OnKey data
-+ * @input_dev:		pointer to input device
-+ * @irq_falling:	irq that we are hooked on to
-+ * @irq_rising:		irq that we are hooked on to
-+ */
-+struct stpmic1_onkey {
-+	struct input_dev *input_dev;
-+	int irq_falling;
-+	int irq_rising;
++/* WATCHDOG CONTROL REGISTER bit */
++#define WDT_START		BIT(0)
++#define WDT_PING		BIT(1)
++#define WDT_START_MASK		BIT(0)
++#define WDT_PING_MASK		BIT(1)
++#define WDT_STOP		0
++
++#define PMIC_WDT_MIN_TIMEOUT 1
++#define PMIC_WDT_MAX_TIMEOUT 256
++#define PMIC_WDT_DEFAULT_TIMEOUT 30
++
++static bool nowayout = WATCHDOG_NOWAYOUT;
++module_param(nowayout, bool, 0);
++MODULE_PARM_DESC(nowayout,
++		"Watchdog cannot be stopped once started (default="
++				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
++
++struct stpmic1_wdt {
++	struct stpmic1 *pmic;
++	struct watchdog_device wdtdev;
 +};
 +
-+static irqreturn_t onkey_falling_irq(int irq, void *ponkey)
++static int pmic_wdt_start(struct watchdog_device *wdd)
 +{
-+	struct stpmic1_onkey *onkey = ponkey;
-+	struct input_dev *input_dev = onkey->input_dev;
++	struct stpmic1_wdt *wdt = watchdog_get_drvdata(wdd);
 +
-+	input_report_key(input_dev, KEY_POWER, 1);
-+	pm_wakeup_event(input_dev->dev.parent, 0);
-+	input_sync(input_dev);
-+
-+	return IRQ_HANDLED;
++	return regmap_update_bits(wdt->pmic->regmap,
++				  WCHDG_CR, WDT_START_MASK, WDT_START);
 +}
 +
-+static irqreturn_t onkey_rising_irq(int irq, void *ponkey)
++static int pmic_wdt_stop(struct watchdog_device *wdd)
 +{
-+	struct stpmic1_onkey *onkey = ponkey;
-+	struct input_dev *input_dev = onkey->input_dev;
++	struct stpmic1_wdt *wdt = watchdog_get_drvdata(wdd);
 +
-+	input_report_key(input_dev, KEY_POWER, 0);
-+	pm_wakeup_event(input_dev->dev.parent, 0);
-+	input_sync(input_dev);
-+
-+	return IRQ_HANDLED;
++	return regmap_update_bits(wdt->pmic->regmap,
++				  WCHDG_CR, WDT_START_MASK, WDT_STOP);
 +}
 +
-+static int stpmic1_onkey_probe(struct platform_device *pdev)
++static int pmic_wdt_ping(struct watchdog_device *wdd)
 +{
-+	struct stpmic1 *pmic = dev_get_drvdata(pdev->dev.parent);
-+	struct device *dev = &pdev->dev;
-+	struct input_dev *input_dev;
-+	struct stpmic1_onkey *onkey;
-+	unsigned int val, reg = 0;
-+	int error;
++	struct stpmic1_wdt *wdt = watchdog_get_drvdata(wdd);
 +
-+	onkey = devm_kzalloc(dev, sizeof(*onkey), GFP_KERNEL);
-+	if (!onkey)
++	return regmap_update_bits(wdt->pmic->regmap,
++				  WCHDG_CR, WDT_PING_MASK, WDT_PING);
++}
++
++static int pmic_wdt_set_timeout(struct watchdog_device *wdd,
++				unsigned int timeout)
++{
++	struct stpmic1_wdt *wdt = watchdog_get_drvdata(wdd);
++
++	wdd->timeout = timeout;
++	/* timeout is equal to register value + 1 */
++	return regmap_write(wdt->pmic->regmap, WCHDG_TIMER_CR, timeout - 1);
++}
++
++static const struct watchdog_info pmic_watchdog_info = {
++	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
++	.identity = "STPMIC1 PMIC Watchdog",
++};
++
++static const struct watchdog_ops pmic_watchdog_ops = {
++	.owner = THIS_MODULE,
++	.start = pmic_wdt_start,
++	.stop = pmic_wdt_stop,
++	.ping = pmic_wdt_ping,
++	.set_timeout = pmic_wdt_set_timeout,
++};
++
++static int pmic_wdt_probe(struct platform_device *pdev)
++{
++	int ret;
++	struct stpmic1 *pmic;
++	struct stpmic1_wdt *wdt;
++
++	if (!pdev->dev.parent)
++		return -EINVAL;
++
++	pmic = dev_get_drvdata(pdev->dev.parent);
++	if (!pmic)
++		return -EINVAL;
++
++	wdt = devm_kzalloc(&pdev->dev, sizeof(struct stpmic1_wdt), GFP_KERNEL);
++	if (!wdt)
 +		return -ENOMEM;
 +
-+	onkey->irq_falling = platform_get_irq_byname(pdev, "onkey-falling");
-+	if (onkey->irq_falling < 0) {
-+		dev_err(dev, "failed: request IRQ onkey-falling %d\n",
-+			onkey->irq_falling);
-+		return onkey->irq_falling;
-+	}
++	wdt->pmic = pmic;
 +
-+	onkey->irq_rising = platform_get_irq_byname(pdev, "onkey-rising");
-+	if (onkey->irq_rising < 0) {
-+		dev_err(dev, "failed: request IRQ onkey-rising %d\n",
-+			onkey->irq_rising);
-+		return onkey->irq_rising;
-+	}
++	wdt->wdtdev.info = &pmic_watchdog_info;
++	wdt->wdtdev.ops = &pmic_watchdog_ops;
++	wdt->wdtdev.min_timeout = PMIC_WDT_MIN_TIMEOUT;
++	wdt->wdtdev.max_timeout = PMIC_WDT_MAX_TIMEOUT;
 +
-+	if (!device_property_read_u32(dev, "power-off-time-sec", &val)) {
-+		if ((val > 0) && (val <= 16)) {
-+			dev_dbg(dev, "power-off-time=%d seconds\n", val);
-+			reg |= PONKEY_PWR_OFF;
-+			reg |= ((16 - val) & PONKEY_TURNOFF_TIMER_MASK);
-+		} else {
-+			dev_err(dev, "power-off-time-sec out of range\n");
-+			return -EINVAL;
-+		}
-+	}
++	wdt->wdtdev.timeout = PMIC_WDT_DEFAULT_TIMEOUT;
++	watchdog_init_timeout(&wdt->wdtdev, 0, &pdev->dev);
 +
-+	if (device_property_present(dev, "st,onkey-clear-cc-flag"))
-+		reg |= PONKEY_CC_FLAG_CLEAR;
++	watchdog_set_nowayout(&wdt->wdtdev, nowayout);
++	watchdog_set_drvdata(&wdt->wdtdev, wdt);
 +
-+	error = regmap_update_bits(pmic->regmap, PKEY_TURNOFF_CR,
-+				   PONKEY_TURNOFF_MASK, reg);
-+	if (error) {
-+		dev_err(dev, "PKEY_TURNOFF_CR write failed: %d\n", error);
-+		return error;
-+	}
++	ret = devm_watchdog_register_device(&pdev->dev, &wdt->wdtdev);
++	if (ret)
++		return ret;
 +
-+	if (device_property_present(dev, "st,onkey-pu-inactive")) {
-+		error = regmap_update_bits(pmic->regmap, PADS_PULL_CR,
-+					   PONKEY_PU_INACTIVE,
-+					   PONKEY_PU_INACTIVE);
-+		if (error) {
-+			dev_err(dev, "ONKEY Pads configuration failed: %d\n", error);
-+			return error;
-+		}
-+	}
-+
-+	input_dev = devm_input_allocate_device(dev);
-+	if (!input_dev) {
-+		dev_err(dev, "Can't allocate Pwr Onkey Input Device\n");
-+		return -ENOMEM;
-+	}
-+
-+	input_dev->name = "pmic_onkey";
-+	input_dev->phys = "pmic_onkey/input0";
-+
-+	input_set_capability(input_dev, EV_KEY, KEY_POWER);
-+
-+	onkey->input_dev = input_dev;
-+
-+	/* interrupt is nested in a thread */
-+	error = devm_request_threaded_irq(dev, onkey->irq_falling, NULL,
-+					  onkey_falling_irq, IRQF_ONESHOT,
-+					  dev_name(dev), onkey);
-+	if (error) {
-+		dev_err(dev, "Can't get IRQ Onkey Falling: %d\n", error);
-+		return error;
-+	}
-+
-+	error = devm_request_threaded_irq(dev, onkey->irq_rising, NULL,
-+					  onkey_rising_irq, IRQF_ONESHOT,
-+					  dev_name(dev), onkey);
-+	if (error) {
-+		dev_err(dev, "Can't get IRQ Onkey Rising: %d\n", error);
-+		return error;
-+	}
-+
-+	error = input_register_device(input_dev);
-+	if (error) {
-+		dev_err(dev, "Can't register power button: %d\n", error);
-+		return error;
-+	}
-+
-+	platform_set_drvdata(pdev, onkey);
-+	device_init_wakeup(dev, true);
-+
++	dev_dbg(wdt->pmic->dev, "PMIC Watchdog driver probed\n");
 +	return 0;
 +}
 +
-+static int __maybe_unused stpmic1_onkey_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct stpmic1_onkey *onkey = platform_get_drvdata(pdev);
-+
-+	if (device_may_wakeup(dev)) {
-+		enable_irq_wake(onkey->irq_falling);
-+		enable_irq_wake(onkey->irq_rising);
-+	}
-+	return 0;
-+}
-+
-+static int __maybe_unused stpmic1_onkey_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct stpmic1_onkey *onkey = platform_get_drvdata(pdev);
-+
-+	if (device_may_wakeup(dev)) {
-+		disable_irq_wake(onkey->irq_falling);
-+		disable_irq_wake(onkey->irq_rising);
-+	}
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(stpmic1_onkey_pm,
-+			 stpmic1_onkey_suspend,
-+			 stpmic1_onkey_resume);
-+
-+static const struct of_device_id of_stpmic1_onkey_match[] = {
-+	{ .compatible = "st,stpmic1-onkey" },
++static const struct of_device_id of_pmic_wdt_match[] = {
++	{ .compatible = "st,stpmic1-wdt" },
 +	{ },
 +};
 +
-+MODULE_DEVICE_TABLE(of, of_stpmic1_onkey_match);
++MODULE_DEVICE_TABLE(of, of_pmic_wdt_match);
 +
-+static struct platform_driver stpmic1_onkey_driver = {
-+	.probe	= stpmic1_onkey_probe,
-+	.driver	= {
-+		.name	= "stpmic1_onkey",
-+		.of_match_table = of_match_ptr(of_stpmic1_onkey_match),
-+		.pm	= &stpmic1_onkey_pm,
++static struct platform_driver stpmic1_wdt_driver = {
++	.probe = pmic_wdt_probe,
++	.driver = {
++		.name = "stpmic1-wdt",
++		.of_match_table = of_pmic_wdt_match,
 +	},
 +};
-+module_platform_driver(stpmic1_onkey_driver);
++module_platform_driver(stpmic1_wdt_driver);
 +
-+MODULE_DESCRIPTION("Onkey driver for STPMIC1");
++MODULE_DESCRIPTION("Watchdog driver for STPMIC1 device");
 +MODULE_AUTHOR("Pascal Paillet <p.paillet@st.com>");
 +MODULE_LICENSE("GPL v2");
 -- 
