@@ -2,131 +2,118 @@ Return-Path: <SRS0=Z5ET=M6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBFBEECDE3D
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 00:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED823ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 00:38:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B77621470
-	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 00:36:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/xntCYl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B77621470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BA04D21470
+	for <linux-kernel@archiver.kernel.org>; Thu, 18 Oct 2018 00:38:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA04D21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbeJRIfH (ORCPT
+        id S1727344AbeJRIgw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 18 Oct 2018 04:35:07 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:32827 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726644AbeJRIfH (ORCPT
+        Thu, 18 Oct 2018 04:36:52 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44701 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726644AbeJRIgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Oct 2018 04:35:07 -0400
-Received: by mail-ot1-f65.google.com with SMTP id q50so28135009otd.0;
-        Wed, 17 Oct 2018 17:36:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2PL4hFv0GE0rxeKh7sQXxDq7sromb5wbNNXMy5vuzHs=;
-        b=S/xntCYlsnBxx9ryB/NsyXw8/oeDFgHzNVK+lJ++0/5MDJX78G6W/Z3wZRYuLqUggR
-         aDHKL7i4ISJx7cVLZETciX4DjXAljjDwESPHkbY1guZe2lErTqPvvYDeO++P3xz0gsgI
-         bFrAIyLEMpuwnybAuGFr5s/CIeFCFKPL1eT9eFuNC3PGYu92S5BHDpxT/vLd+N+tzgPS
-         ZEfQhV2ZeSOdiXaRcr3QOL/7TlI7gS2nE9cXfMW6h0PkaOPk46QaPY3ZhLUUjgeQ6FFU
-         emO45VWYHEpN4gV1pmf12hLTIuwTA0c6HrZtO6gH9I5HD2geF6nXsymX3+o/0XbxluHx
-         k9eA==
+        Thu, 18 Oct 2018 04:36:52 -0400
+Received: by mail-ot1-f66.google.com with SMTP id p23so28081045otf.11;
+        Wed, 17 Oct 2018 17:38:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2PL4hFv0GE0rxeKh7sQXxDq7sromb5wbNNXMy5vuzHs=;
-        b=HQwRmoVTkxE84IXN7sQgyyxG9P6q4/6jvbg2OqskLyc8DYYmyP/mRSytlWYj28Q039
-         LL7C6YQFGJSnBD0EMRpUU1N1lb1ZyTdgo/5igMk2pzzGuSRYO6z1c8Ow2HQnlsScThT2
-         iUQX3+GOHI46qCrT2ymnJxdJsvT3vYnFV6BBP4S6WZZgLOITlYAE0xnrUIUsy35PuVvZ
-         yDw7L4ygd2g4y54JDQr9EaT5fy9Jox+S4IRHn0yyWLv2Q1i3+7dFpTNtPijTu/NlisOm
-         b9AN7kO+4sGozED2UB9ZcYeH2RuI4696fgpkR7ZWonnsasATXFalCd0xXA5bMEv5NPXT
-         7IJw==
-X-Gm-Message-State: ABuFfojh0hGnKNHSYfSfQ+Bm3B2PEWFT2pKdmR8BdvgZfbSutw8A5C0Y
-        0M4I29ZwhPGN9ErbN2CYizWg9gHrVqK0Y0JbIm0=
-X-Google-Smtp-Source: ACcGV60wK2GlJAtKjrrhDq/F4nTMgUrY2dHq23I+QsS2sJjl8gjSc+d2iweWHHphjHR+rqktxVUwMQzeIXNVqBlMK/A=
-X-Received: by 2002:a9d:2568:: with SMTP id j37mr19054980otd.263.1539823010099;
- Wed, 17 Oct 2018 17:36:50 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fbUGO/MpLvaNZayhZDrcUBZwBkzGqdyAp27ZxJmaXeQ=;
+        b=EjMJJAUt0Jn3hdSodHr/rzvGj3CmxA//TlZVsyVxMHZ6nz+SJ0zzmMgmgatmT8yL2i
+         DvODCm+fDJ3/d34mtXoh9RExHMIilgz0if2L37D0RFyDLQtN10KJQ+2GSpAQPDQZbkmw
+         B5uIYpuTGucgiycPQ5qq6/xxLjO990oY0ntuYDO9cwuqIuvZDUC2OsUrevppgBUB76ie
+         wM6qsuvdAYcR0sVW8PYwLHcjpZLw34/mn788G0mDmX/eY9C6USu1TFd6mLJDze60W1bj
+         1B0Zkysui/3WGjBmtR+ZzqCmOXcuu26kf3WjBIx6wfzOKDofoyFIQ99vjg7m7Vn7bMLH
+         F1rg==
+X-Gm-Message-State: ABuFfogro2jTzYAWNjNmLIYtT7epkUVyo+GJA5fvyx5QnJ/AAH4vonK9
+        Foqi98CMpjEPh4jy37EY2w==
+X-Google-Smtp-Source: ACcGV60ZkmEpMiCfYOt+AbpAdiEQIbD0L7wi2JhOZt6VV2e0dcE0H6RJ0lMhFasL5yJ26A2Rqea64g==
+X-Received: by 2002:a9d:1ea5:: with SMTP id n34mr17526280otn.160.1539823114925;
+        Wed, 17 Oct 2018 17:38:34 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 84-v6sm5350402oid.42.2018.10.17.17.38.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Oct 2018 17:38:34 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 19:38:33 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Can Guo <cang@codeaurora.org>, evgreen@chromium.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, sayalil@codeaurora.org,
+        Varadarajan Narayanan <varada@codeaurora.org>,
+        asutoshd@codeaurora.org, Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] dt-bindings: phy-qcom-qmp: Fix several mistakes from
+ prior commits
+Message-ID: <20181018003833.GA573@bogus>
+References: <20181012213632.252346-1-dianders@chromium.org>
 MIME-Version: 1.0
-References: <20181017000809.GA21292@WindFlash> <20181017081115.GA22535@zn.tnic>
- <CAK7LNASVn7CB5uL9tCtNC2u4Ary5eb-vyiB_sS2ey5AZNweKAA@mail.gmail.com>
-In-Reply-To: <CAK7LNASVn7CB5uL9tCtNC2u4Ary5eb-vyiB_sS2ey5AZNweKAA@mail.gmail.com>
-From:   Leonardo Bras <leobras.c@gmail.com>
-Date:   Wed, 17 Oct 2018 21:36:38 -0300
-Message-ID: <CADvQ+rGVLG85p82O-joY6yU4maMdP0RsyJr-JGPNCrfjy4-WbA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] Adds -Wshadow=local on KBUILD_HOSTCFLAGS
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Borislav Petkov <bp@alien8.de>, lkcamp@lists.libreplanetbr.org,
-        Matthew Wilcox <willy6545@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181012213632.252346-1-dianders@chromium.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 5:21 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> On Wed, Oct 17, 2018 at 5:11 PM Borislav Petkov <bp@alien8.de> wrote:
-> >
-> > On Tue, Oct 16, 2018 at 09:08:09PM -0300, Leonardo Br=C3=A1s wrote:
-> > > Adds -Wshadow=3Dlocal on KBUILD_HOSTCFLAGS to show shadow warnings
-> > > on tools built for HOST.
-> > >
-> > > Signed-off-by: Leonardo Br=C3=A1s <leobras.c@gmail.com>
-> > > ---
-> > >  Makefile | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/Makefile b/Makefile
-> > > index e8b599b4dcde..fb0a9ac195e7 100644
-> > > --- a/Makefile
-> > > +++ b/Makefile
-> > > @@ -360,7 +360,7 @@ HOST_LFS_LIBS :=3D $(shell getconf LFS_LIBS 2>/de=
-v/null)
-> > >
-> > >  HOSTCC       =3D gcc
-> > >  HOSTCXX      =3D g++
-> > > -KBUILD_HOSTCFLAGS   :=3D -Wall -Wmissing-prototypes -Wstrict-prototy=
-pes -O2 \
-> > > +KBUILD_HOSTCFLAGS   :=3D -Wall -Wshadow=3Dlocal -Wmissing-prototypes=
- -Wstrict-prototypes -O2 \
-> > >               -fomit-frame-pointer -std=3Dgnu89 $(HOST_LFS_CFLAGS) \
-> > >               $(HOSTCFLAGS)
-> > >  KBUILD_HOSTCXXFLAGS :=3D -O2 $(HOST_LFS_CFLAGS) $(HOSTCXXFLAGS)
-> > > --
-> >
-> > You might wanna take a look at scripts/Makefile.extrawarn which already
-> > has -Wshadow.
->
->
-> scripts/Makefile.extrawarn provides options for the target compiler (CC),
-> whereas this patch adds -Wshadow=3Dlocal for the host compiler (HOSTCC).
->
->
+On Fri, 12 Oct 2018 14:36:32 -0700, Douglas Anderson wrote:
+> Digging through the "phy-qcom-qmp" showed me many inconsistencies
+> between the bindings and the reality of the driver.  Let's fix them
+> all.
+> 
+> * In commit 2d66eab18375 ("dt-bindings: phy: qmp: Add support for QMP
+>   phy in IPQ8074") we probably should have explicitly listed that
+>   there are no clocks for this PHY and also added the reset names in
+>   alphabetical order.  You can see that there are no clocks in the
+>   driver where "clk_list" is NULL.
+> 
+> * In commit 8587b220f05e ("dt-bindings: phy-qcom-qmp: Update bindings
+>   for QMP V3 USB PHY") we probably should have listed the resets for
+>   this new PHY and also removed the "(Optional)" marking for the "cfg"
+>   reset since PHYs that need "cfg" really do need it.  It's just that
+>   not all PHYs need it.
+> 
+> * In commit 7f0802074120 ("dt-bindings: phy-qcom-qmp: Update bindings
+>   for sdm845") we forgot to update one instance of the string
+>   "qcom,qmp-v3-usb3-phy" to be "qcom,sdm845-qmp-usb3-phy".  Let's fix
+>   that.  We should also have added "qcom,sdm845-qmp-usb3-uni-phy" to
+>   the clock-names and reset-names lists.
+> 
+> * In commit 99c7c7364b71 ("dt-bindings: phy-qcom-qmp: Add UFS phy
+>   compatible string for sdm845") we should have added the set of
+>   clocks and resets for "qcom,sdm845-qmp-ufs-phy".  These were taken
+>   from the driver.
+> 
+> * Cleanup the wording for what properties child nodes have to make it
+>   more obvious which types of PHYs need clocks and resets.  This was
+>   sorta implicit in the "-names" description but I found myself
+>   confused.
+> 
+> * As per the code not all "pcie qmp phys" have resets.  Specifically
+>   note that the "has_lane_rst" property in the driver is false for
+>   "ipq8074-qmp-pcie-phy".  Thus make it clear exactly which PHYs need
+>   child nodes with resets.
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> 
+>  .../devicetree/bindings/phy/qcom-qmp-phy.txt  | 31 ++++++++++++++-----
+>  1 file changed, 23 insertions(+), 8 deletions(-)
+> 
 
-
-Thanks for helping, :)
-
-Leonardo Bras
-
->
-> --
-> Best Regards
-> Masahiro Yamada
+Reviewed-by: Rob Herring <robh@kernel.org>
