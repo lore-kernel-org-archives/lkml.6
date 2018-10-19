@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4C1ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A3E5ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:10:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4018220645
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:10:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E37E720645
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:10:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FBDMkgd/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4018220645
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JBtkL/RV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E37E720645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbeJSUQN (ORCPT
+        id S1727718AbeJSUQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:16:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44462 "EHLO
+        Fri, 19 Oct 2018 16:16:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44650 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726784AbeJSUQM (ORCPT
+        with ESMTP id S1726784AbeJSUQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:16:12 -0400
+        Fri, 19 Oct 2018 16:16:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=vO9O93GajdDXduRDF43DPT00bwScMBAp27VPr40ZcTw=; b=FBDMkgd/t63Omj6TFTv2hlROC5
-        bUbnrlTphdi4yvPAW9s5dMTsb7FkTADBFUTpobXckGGxaZ8dbN5rfog8u/Q1ydq9D8WU8DhZscpGj
-        wCE/+0sxrGXzgNmrul2MzTWp+ZeT9Z5bSq0SE1e10NUZ0LhZPCOqtqPAdy4IgNipVwmljwkPfE+4N
-        MeDBXT3CtMU3I5JW4bh8lI21af0xLcCBbdMdIskjDk9tpjFJSHAUf6gFG5Rbnj6xW6Bd2O6uo09iA
-        ZrE5dk63ztpNNMZ2F5iO2YZ1gjAmpWoas4zWvvBCQqMADqu3KNzKm8YU7ps9eQ5UgH+VURWG+exyl
-        I3fqLm4A==;
+        bh=g3Ofp2yKFio2DWF3K0YYAwI8DA2raI+ejnrdGDleVlk=; b=JBtkL/RVN396nN53LFB0IS8f4d
+        edXyd1isCPYn8lfy5jeFzCX0GUUGrrL/dP7vCO+fVJhP541VEzUed3MWaUZrSBuEyB0yyF1kw9TdJ
+        in+3z7FLkYYCU7f47BFXLA+Em/wq8aNtetItuoOvMe41fgorzklZc0/zazP6tbFLwttowWFYnqRk+
+        hHuabtcD4WEfYUfhN2aVQKwc9ca86mXSdEgxQoInneTo4ZZh3cOMg9f/ToNYlr7WcQnd2Ahd/k+VW
+        OtOFoYkRhjj2BK3oCRmL0aoUuUZ10Ob65TuBBNP46iwMXWmfEIA47+dfWQTAyjtgLN1bmHWrapG3j
+        CxxqRQ5g==;
 Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gDTbQ-0000wF-Ih; Fri, 19 Oct 2018 12:10:05 +0000
+        id 1gDTbT-00010a-P2; Fri, 19 Oct 2018 12:10:08 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     Matt Porter <mporter@kernel.crashing.org>,
@@ -50,9 +50,9 @@ Cc:     Matt Porter <mporter@kernel.crashing.org>,
         linux-pci@vger.kernel.org, linux-scsi@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 3/9] powerpc: remove CONFIG_PCI_QSPAN
-Date:   Fri, 19 Oct 2018 14:09:46 +0200
-Message-Id: <20181019120952.32763-4-hch@lst.de>
+Subject: [PATCH 4/9] powerpc: remove CONFIG_MCA leftovers
+Date:   Fri, 19 Oct 2018 14:09:47 +0200
+Message-Id: <20181019120952.32763-5-hch@lst.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181019120952.32763-1-hch@lst.de>
 References: <20181019120952.32763-1-hch@lst.de>
@@ -64,41 +64,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This option isn't actually used anywhere.
-
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/powerpc/Kconfig | 9 ---------
- 1 file changed, 9 deletions(-)
+ arch/powerpc/Kconfig | 4 ----
+ drivers/scsi/Kconfig | 6 +++---
+ 2 files changed, 3 insertions(+), 7 deletions(-)
 
 diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index a80669209155..e8c8970248bc 100644
+index e8c8970248bc..d4e97469a5f0 100644
 --- a/arch/powerpc/Kconfig
 +++ b/arch/powerpc/Kconfig
-@@ -955,7 +955,6 @@ config PCI
- 	bool "PCI support" if PPC_PCI_CHOICE
- 	default y if !40x && !CPM2 && !PPC_8xx && !PPC_83xx \
- 		&& !PPC_85xx && !PPC_86xx && !GAMECUBE_COMMON
--	default PCI_QSPAN if PPC_8xx
- 	select GENERIC_PCI_IOMAP
+@@ -941,10 +941,6 @@ config FSL_GTM
  	help
- 	  Find out whether your system includes a PCI bus. PCI is the name of
-@@ -969,14 +968,6 @@ config PCI_DOMAINS
- config PCI_SYSCALL
- 	def_bool PCI
+ 	  Freescale General-purpose Timers support
  
--config PCI_QSPAN
--	bool "QSpan PCI"
--	depends on PPC_8xx
--	select PPC_I8259
--	help
--	  Say Y here if you have a system based on a Motorola 8xx-series
--	  embedded processor with a QSPAN PCI interface, otherwise say N.
+-# Yes MCA RS/6000s exist but Linux-PPC does not currently support any
+-config MCA
+-	bool
 -
- config PCI_8260
- 	bool
- 	depends on PCI && 8260
+ # Platforms that what PCI turned unconditionally just do select PCI
+ # in their config node.  Platforms that want to choose at config
+ # time should select PPC_PCI_CHOICE
+diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+index 7c097006c54d..d3734c54aec9 100644
+--- a/drivers/scsi/Kconfig
++++ b/drivers/scsi/Kconfig
+@@ -535,7 +535,7 @@ config SCSI_HPTIOP
+ 
+ config SCSI_BUSLOGIC
+ 	tristate "BusLogic SCSI support"
+-	depends on (PCI || ISA || MCA) && SCSI && ISA_DMA_API && VIRT_TO_BUS
++	depends on (PCI || ISA) && SCSI && ISA_DMA_API && VIRT_TO_BUS
+ 	---help---
+ 	  This is support for BusLogic MultiMaster and FlashPoint SCSI Host
+ 	  Adapters. Consult the SCSI-HOWTO, available from
+@@ -1142,12 +1142,12 @@ config SCSI_LPFC_DEBUG_FS
+ 
+ config SCSI_SIM710
+ 	tristate "Simple 53c710 SCSI support (Compaq, NCR machines)"
+-	depends on (EISA || MCA) && SCSI
++	depends on EISA && SCSI
+ 	select SCSI_SPI_ATTRS
+ 	---help---
+ 	  This driver is for NCR53c710 based SCSI host adapters.
+ 
+-	  It currently supports Compaq EISA cards and NCR MCA cards
++	  It currently supports Compaq EISA cards.
+ 
+ config SCSI_DC395x
+ 	tristate "Tekram DC395(U/UW/F) and DC315(U) SCSI support"
 -- 
 2.19.1
 
