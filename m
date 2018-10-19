@@ -2,108 +2,97 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4ACECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A00D3ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:02:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A115821479
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:02:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A115821479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 6948421479
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:02:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="xO/NPDN3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6948421479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbeJSUIA (ORCPT
+        id S1727596AbeJSUIC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:08:00 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:50096 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727544AbeJSUH7 (ORCPT
+        Fri, 19 Oct 2018 16:08:02 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54192 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727544AbeJSUIB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:07:59 -0400
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 20FB172CC59;
-        Fri, 19 Oct 2018 15:02:11 +0300 (MSK)
-Received: from sole.flsd.net (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 05DDD4A4A16;
-        Fri, 19 Oct 2018 15:02:11 +0300 (MSK)
-Date:   Fri, 19 Oct 2018 15:02:10 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com,
-        Jonathan Corbet <corbet@lwn.net>, Shaohua Li <shli@kernel.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-raid@vger.kernel.org
-Subject: Re: dm: add secdel target
-Message-ID: <20181019120209.osicx2v3vebvsxqr@sole.flsd.net>
-References: <20181014112439.8119-1-vt@altlinux.org>
- <20181018200124.GA6996@redhat.com>
+        Fri, 19 Oct 2018 16:08:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qwqC5CfpDWmcoA89HysqBrOnlZpBTsRCijrtk8dw7ZM=; b=xO/NPDN3BFxE0GqVeLMp1Y9C2
+        Gg5mfwADVT5kANr7k2cae0JwJkKKEiDGcJvBVv6yp12GBjkvywQWRSH79BYtQ7cSNaDz0WjcpKdMj
+        9VyyHWv3/Cu/w5kp0n7fvtbOtz9hPcwr+OPvps4joJBXwAP8h4H0h2aJRsMclHHOpjT28=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gDTTn-0008Rv-1R; Fri, 19 Oct 2018 12:02:11 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id AACEF1122548; Fri, 19 Oct 2018 13:02:10 +0100 (BST)
+Date:   Fri, 19 Oct 2018 13:02:10 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc:     Ben Whitten <ben.whitten@gmail.com>,
+        Ben Whitten <ben.whitten@lairdtech.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 RESEND] regmap: Add regmap_noinc_write API
+Message-ID: <20181019120210.GF5895@sirena.org.uk>
+References: <1539941631-4421-1-git-send-email-ben.whitten@lairdtech.com>
+ <20181019115652.GD5895@sirena.org.uk>
+ <6dc0a6f0-7bb9-4ad0-73ef-f3527da6894e@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="l+goss899txtYvYf"
 Content-Disposition: inline
-In-Reply-To: <20181018200124.GA6996@redhat.com>
-User-Agent: NeoMutt/20171215-106-ac61c7
+In-Reply-To: <6dc0a6f0-7bb9-4ad0-73ef-f3527da6894e@suse.de>
+X-Cookie: Obey all traffic laws.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 04:01:25PM -0400, Mike Snitzer wrote:
-> On Sun, Oct 14 2018 at  7:24am -0400,
-> Vitaly Chikunov <vt@altlinux.org> wrote:
-> 
-> > Report to the upper level ability to discard, and translate arriving
-> > discards to the writes of random or zero data to the underlying level.
-> > 
-> > Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-> > ---
-> >   This target is the same as the linear target except that is reports ability to
-> >   discard to the upper level and translates arriving discards into sector
-> >   overwrites with random (or zero) data.
-> 
-> There is a fair amount of code duplication between dm-linear.c and this
-> new target.
-> 
-> Something needs to give, ideally you'd factor out methods that are
-> shared by both targets, but those methods must _not_ introduce overhead
-> to dm-linear.
 
-I see three possible solutions:
- - integrate 'secdel' into dm-linear;
- - export functions like linear_dax_copy_to_iter and fill them into
-   secdel's `struct target_type`;
- - call methods of linear's `struct target_type` from secdel's one.
+--l+goss899txtYvYf
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Could be that dm-linear methods just get called by the wrapper
-> dm-sec-erase target (more on the "dm-sec-erase" name below).
+On Fri, Oct 19, 2018 at 01:59:07PM +0200, Andreas F=E4rber wrote:
+> Am 19.10.18 um 13:56 schrieb Mark Brown:
 
-> > diff --git a/drivers/md/dm-secdel.c b/drivers/md/dm-secdel.c
-> > new file mode 100644
-> > index 000000000000..9aeaf3f243c0
-> > --- /dev/null
-> > +++ b/drivers/md/dm-secdel.c
-> ... 
-> > +			if (mode == SECDEL_MODE_RAND) {
-> > +				page = alloc_page(gfp_mask);
-> > +				if (!page) {
-> > +					DMERR("%s %lu[%lu]: no memory to allocate page for random data",
-> > +					      __func__, sector, nr_sects);
-> > +					/* will fallback to zero filling */
-> 
-> In general, performing memory allocations to service IO is something all
-> DM core and DM targets must work to avoid.  This smells bad.
-> 
-> ...
+> >   regmap: Add regmap_noinc_write API (2018-10-19 12:51:19 +0100)
 
-Yes, but we need to create and write random data, so I don't see other
-solution. In zero overwriting mode page is not allocated. And it's fall
-back to zero overwriting if page allocation fails for random data.
+> You two forgot my Reviewed-by... oh well.
 
-> Mike
+Ah, sorry - I tend to trust people to carry these things forward :(
 
-I will address these and other your concerns in v2.
+--l+goss899txtYvYf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks!
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvJx8EACgkQJNaLcl1U
+h9CpaQf/cd+hxS5GWDaeSZyhkY5cBhWwnLl8Caz8gyfIJqN6KZMyZndm/pam3zsr
+fRKZXmrTvxtleI0w/aNL5rMonySC65L7xmM475828hTQda1H2eKF03mLAnILRTP6
+rf1Y5cfMIO7rL7WP5naJ+UUwuRwc9dim7/Mvb/f2GBRcAZz8xGntYlyn8+oPm/XW
+TXv5oCEiPRJ/Zpvp6vywL4CyUJxzS3O9vofeZwcXeSDrgaHEns4jMA+i8m3ZyPcG
+4zMtPWAEmfdJqSC50VmnlJQ4iV/yOZNazQJpd9jUTU5hT+ujg8a59Yeec7kCKDII
+0xFsf/YTMaEtV6G9s1DVw35yaOSBmg==
+=+Zz7
+-----END PGP SIGNATURE-----
+
+--l+goss899txtYvYf--
