@@ -2,669 +2,159 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED76ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC3DECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:23:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF2D62145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:21:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF2D62145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emutex.com
+	by mail.kernel.org (Postfix) with ESMTP id AC20C2087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:23:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Cj2sEjdg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC20C2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727767AbeJTB21 (ORCPT
+        id S1727814AbeJTBac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 21:28:27 -0400
-Received: from mr33.theemaillaundry.net ([176.9.125.106]:33346 "EHLO
-        mr33.theemaillaundry.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727474AbeJTB20 (ORCPT
+        Fri, 19 Oct 2018 21:30:32 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:38464 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727549AbeJTBac (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 21:28:26 -0400
-X-Greylist: delayed 317 seconds by postgrey-1.27 at vger.kernel.org; Fri, 19 Oct 2018 21:28:22 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mr33.theemaillaundry.net (Postfix) with ESMTP id 6BBCA51C1CE9;
-        Fri, 19 Oct 2018 18:16:05 +0100 (IST)
-X-Amavis-Modified: Mail body modified (using disclaimer) -
-        mr33.theemaillaundry.net
-X-Virus-Scanned: amavisd-new at theemaillaundry.net
-Received: from mr33.theemaillaundry.net ([127.0.0.1])
-        by localhost (mr33.theemaillaundry.net [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id XoR9WaBJmkAu; Fri, 19 Oct 2018 18:16:02 +0100 (IST)
-Received: from statler.emutex.com (unknown [92.51.199.138])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mr33.theemaillaundry.net (Postfix) with ESMTPS id 8739151C10BA;
-        Fri, 19 Oct 2018 18:16:02 +0100 (IST)
-Received: from [10.10.68.81] (helo=dan-Latitude-E5450.emutex.com)
-        by statler.emutex.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
-        (Exim 4.84)
-        (envelope-from <dan@emutex.com>)
-        id 1gDYNV-0005CM-AQ; Fri, 19 Oct 2018 18:16:01 +0100
-From:   Dan O'Donovan <dan@emutex.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org,
-        linux-leds@vger.kernel.org,
-        Carlos Iglesias <carlos.iglesias@emutex.com>,
-        Javier Arteaga <javier@emutex.com>,
-        Dan O'Donovan <dan@emutex.com>
-Subject: [PATCH v2 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
-Date:   Fri, 19 Oct 2018 18:15:34 +0100
-Message-Id: <1539969334-24577-4-git-send-email-dan@emutex.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1539969334-24577-1-git-send-email-dan@emutex.com>
-References: <20180421085009.28773-1-javier@emutex.com>
- <1539969334-24577-1-git-send-email-dan@emutex.com>
+        Fri, 19 Oct 2018 21:30:32 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9JHNSeO015806;
+        Fri, 19 Oct 2018 12:23:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1539969808;
+        bh=RpaX5RQi6eRvEAn203m8TI2WfcrsoILHSLUFEaQMnSo=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=Cj2sEjdgPhLqMXqPR7QeXwnnw4k5Dpv+RORas+Deuuw0I3gVMYCnuIjZYbqNFoUW0
+         hDgoBvrjqlXKFvEce6VGx0ef0DsM4DClMsrnFlG5bycO1QvoId3RS2NWLjc1RS4678
+         fMyyY4mcjIsrU+p6KvnhHTeP7xEjc2K0jtg6puXU=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9JHNSrY003586;
+        Fri, 19 Oct 2018 12:23:28 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 19
+ Oct 2018 12:23:28 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 19 Oct 2018 12:23:28 -0500
+Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9JHNSNe021938;
+        Fri, 19 Oct 2018 12:23:28 -0500
+Subject: Re: [PATCH net-next] net: ethernet: ti: cpsw: don't flush mcast
+ entries while switch promisc mode
+To:     <davem@davemloft.net>, <linux-omap@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20181018180006.7065-1-ivan.khoronzhuk@linaro.org>
+ <6c34a3ce-dbee-538e-bda7-8dd485315267@ti.com>
+ <20181019120408.GA3909@khorivan>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <36da9bb2-38b7-cc70-9569-8895e20c6d1f@ti.com>
+Date:   Fri, 19 Oct 2018 12:23:28 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181019120408.GA3909@khorivan>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Javier Arteaga <javier@emutex.com>
 
-The UP2 board features a Raspberry Pi compatible pin header (HAT) and a
-board-specific expansion connector (EXHAT). Both expose assorted
-functions from either the SoC (such as GPIO, I2C, SPI, UART...) or other
-on-board devices (ADC, FPGA IP blocks...).
 
-These lines are routed through an on-board FPGA. The platform controller
-in its stock firmware provides register fields to change:
+On 10/19/18 7:04 AM, Ivan Khoronzhuk wrote:
+> On Thu, Oct 18, 2018 at 07:03:06PM -0500, Grygorii Strashko wrote:
+>>
+>>
+>> On 10/18/18 1:00 PM, Ivan Khoronzhuk wrote:
+>>> No need now to flush mcast entries in switch mode while toggling to
+>>> promiscuous mode. It's not needed as vlan reg_mcast = ALL_PORTS
+>>> and mcast/vlan ports = ALL_PORTS, the same happening for vlan
+>>> unreg_mcast, it's set to ALL_PORT_MASK just after calling promisc
+>>> mode routine by calling set allmulti. I suppose main reason to flush
+>>> them is to use unreg_mcast to receive all to host port. Thus, now, all
+>>> mcast packets are received anyway and no reason to flush mcast entries
+>>> unsafely, as they were synced with __dev_mc_sync() previously and are
+>>> not restored. Another way is to _dev_mc_unsync() them, but no need.
+>>
+>> User have possibility to add additional mcast entries or edit existing 
+>> in switch-mode, which is now done using custom tool. So, Host in promisc
+>> mode will not receive packets for mcast address X if port mask for this
+>> addr set to (ALL_PORTS - HOST_PORT). Am I missing smth?
+> 
+> I didn't take into account the custom tool changing entries directly,
+> but even in this case there is at least a couple of interesting
+> questions:
+> 
+> 1) Before the patch applied only several days ago -
+>    5da1948969bc1991920987ce4361ea56046e5a98
+>    "ti: cpsw: fix lost of mcast packets while rx_mode update"
+>    It was impossible to do correctly anyway, as all mcast entries not
+>    in the mc list were flushed (after rx_mode cb), by:
+>    cpsw_ale_flush_multicast(cpsw->ale, ALE_ALL_PORTS, vid);
+>    and those in mc, rewritten by adding them back in corrected form.
+>    ... or this cb was not supposed to be called at all ...
 
-- Line enable (FPGA pins enabled / high impedance)
-- Line direction (SoC driven / FPGA driven)
+It's not allowed to manipulate ALE table in dual_mac mode, so your
+patches are safe in dual_mac mode. For switch-mode (unless we  move
+forward with switch dev) standard linux interfaces allows create
+default mcast entries which then (if required) corrected using custom
+tool now.
 
-To enable using SoC GPIOs on the pin header, this arrangement requires
-both configuring the platform controller, and updating the SoC pad
-registers in sync.
+> 
+> 2) What is the reason to add mcast switch entires
+>    (ALL_PORTS - HOST_PORT) if its function is added anyway by
+>    unreq_mcast & (ALL_PORTS - HOST_PORT) ?
+>    So, doesn't matter it's added or not - it will work :-|.
 
-Add a frontend pinctrl/GPIO driver that registers a new set of GPIO
-lines for the header pins. When these are requested, the driver
-propagates this request to the backend SoC pinctrl/GPIO driver by
-grabbing a GPIO descriptor for the matching SoC GPIO line. The needed
-mapping for this is retrieved via ACPI properties.
+because in switch mode not all traffic directed to the Host port -
+only in promisc mode. Reason safety and performance - Host should not
+receive traffic which is not designated for it.
 
-Signed-off-by: Javier Arteaga <javier@emutex.com>
-Signed-off-by: Dan O'Donovan <dan@emutex.com>
----
- drivers/pinctrl/Kconfig           |  13 +
- drivers/pinctrl/Makefile          |   1 +
- drivers/pinctrl/pinctrl-upboard.c | 519 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 533 insertions(+)
- create mode 100644 drivers/pinctrl/pinctrl-upboard.c
+promiscuous in switch mode:
+- disables learning
+- enables unicast flooding to Host port
+- enables unregistered multi-cast flooding to the Host port
+In other words, CPSW will continue forwarding packets between P1&P2, but 
+also will "duplicate" packets to Host port. This will work only for
+vlans which have host port as member.
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index e86752b..c65438f 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -338,6 +338,19 @@ config PINCTRL_OCELOT
- 	select GENERIC_PINMUX_FUNCTIONS
- 	select REGMAP_MMIO
- 
-+config PINCTRL_UPBOARD
-+	tristate "UP Squared pinctrl and GPIO driver"
-+	depends on ACPI
-+	depends on MFD_UPBOARD
-+	select PINMUX
-+	help
-+	  Pinctrl driver for the pin headers on the UP Squared board. It
-+	  handles pin control for lines routed through the on-board FPGA and
-+	  propagates changes to the SoC pinctrl to keep them in sync.
-+
-+	  This driver can also be built as a module. If so, the module will be
-+	  called pinctrl-upboard.
-+
- source "drivers/pinctrl/actions/Kconfig"
- source "drivers/pinctrl/aspeed/Kconfig"
- source "drivers/pinctrl/bcm/Kconfig"
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index 46ef9bd..cfe59b7 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -42,6 +42,7 @@ obj-$(CONFIG_PINCTRL_ZYNQ)	+= pinctrl-zynq.o
- obj-$(CONFIG_PINCTRL_INGENIC)	+= pinctrl-ingenic.o
- obj-$(CONFIG_PINCTRL_RK805)	+= pinctrl-rk805.o
- obj-$(CONFIG_PINCTRL_OCELOT)	+= pinctrl-ocelot.o
-+obj-$(CONFIG_PINCTRL_UPBOARD)	+= pinctrl-upboard.o
- 
- obj-y				+= actions/
- obj-$(CONFIG_ARCH_ASPEED)	+= aspeed/
-diff --git a/drivers/pinctrl/pinctrl-upboard.c b/drivers/pinctrl/pinctrl-upboard.c
-new file mode 100644
-index 0000000..b74383b
---- /dev/null
-+++ b/drivers/pinctrl/pinctrl-upboard.c
-@@ -0,0 +1,519 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// UP Board pin controller driver
-+//
-+// Copyright (c) 2018, Emutex Ltd.
-+//
-+// Authors: Javier Arteaga <javier@emutex.com>
-+//          Dan O'Donovan <dan@emutex.com>
-+//
-+
-+#include <linux/acpi.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/upboard.h>
-+#include <linux/module.h>
-+#include <linux/pinctrl/consumer.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinmux.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/string.h>
-+
-+#include "core.h"
-+
-+struct upboard_pin {
-+	struct regmap_field *func_en;
-+	struct regmap_field *gpio_en;
-+	struct regmap_field *gpio_dir;
-+};
-+
-+struct upboard_pinctrl {
-+	struct pinctrl_dev *pctldev;
-+	struct gpio_chip chip;
-+	unsigned int nsoc_gpios;
-+	struct gpio_desc **soc_gpios;
-+};
-+
-+enum upboard_func0_enables {
-+	UPBOARD_I2C0_EN = 8,
-+	UPBOARD_I2C1_EN = 9,
-+};
-+
-+static const struct reg_field upboard_i2c0_reg =
-+	REG_FIELD(UPBOARD_REG_FUNC_EN0, UPBOARD_I2C0_EN, UPBOARD_I2C0_EN);
-+
-+static const struct reg_field upboard_i2c1_reg =
-+	REG_FIELD(UPBOARD_REG_FUNC_EN0, UPBOARD_I2C1_EN, UPBOARD_I2C1_EN);
-+
-+#define UPBOARD_BIT_TO_PIN(r, bit) \
-+	((r) * UPBOARD_REGISTER_SIZE + (bit))
-+
-+/*
-+ * UP Squared data
-+ */
-+
-+#define UPBOARD_UP2_BIT_TO_PIN(r, id) (UPBOARD_BIT_TO_PIN(r, UPBOARD_UP2_##id))
-+
-+#define UPBOARD_UP2_PIN_ANON(r, bit)					\
-+	{								\
-+		.number = UPBOARD_BIT_TO_PIN(r, bit),			\
-+	}
-+
-+#define UPBOARD_UP2_PIN_NAME(r, id)					\
-+	{								\
-+		.number = UPBOARD_UP2_BIT_TO_PIN(r, id),		\
-+		.name = #id,						\
-+	}
-+
-+#define UPBOARD_UP2_PIN_FUNC(r, id, data)				\
-+	{								\
-+		.number = UPBOARD_UP2_BIT_TO_PIN(r, id),		\
-+		.name = #id,						\
-+		.drv_data = (void *)(data),				\
-+	}
-+
-+enum upboard_up2_reg0_bit {
-+	UPBOARD_UP2_UART1_TXD,
-+	UPBOARD_UP2_UART1_RXD,
-+	UPBOARD_UP2_UART1_RTS,
-+	UPBOARD_UP2_UART1_CTS,
-+	UPBOARD_UP2_GPIO3,
-+	UPBOARD_UP2_GPIO5,
-+	UPBOARD_UP2_GPIO6,
-+	UPBOARD_UP2_GPIO11,
-+	UPBOARD_UP2_EXHAT_LVDS1n,
-+	UPBOARD_UP2_EXHAT_LVDS1p,
-+	UPBOARD_UP2_SPI2_TXD,
-+	UPBOARD_UP2_SPI2_RXD,
-+	UPBOARD_UP2_SPI2_FS1,
-+	UPBOARD_UP2_SPI2_FS0,
-+	UPBOARD_UP2_SPI2_CLK,
-+	UPBOARD_UP2_SPI1_TXD,
-+};
-+
-+enum upboard_up2_reg1_bit {
-+	UPBOARD_UP2_SPI1_RXD,
-+	UPBOARD_UP2_SPI1_FS1,
-+	UPBOARD_UP2_SPI1_FS0,
-+	UPBOARD_UP2_SPI1_CLK,
-+	UPBOARD_UP2_BIT20,
-+	UPBOARD_UP2_BIT21,
-+	UPBOARD_UP2_BIT22,
-+	UPBOARD_UP2_BIT23,
-+	UPBOARD_UP2_PWM1,
-+	UPBOARD_UP2_PWM0,
-+	UPBOARD_UP2_EXHAT_LVDS0n,
-+	UPBOARD_UP2_EXHAT_LVDS0p,
-+	UPBOARD_UP2_I2C0_SCL,
-+	UPBOARD_UP2_I2C0_SDA,
-+	UPBOARD_UP2_I2C1_SCL,
-+	UPBOARD_UP2_I2C1_SDA,
-+};
-+
-+enum upboard_up2_reg2_bit {
-+	UPBOARD_UP2_EXHAT_LVDS3n,
-+	UPBOARD_UP2_EXHAT_LVDS3p,
-+	UPBOARD_UP2_EXHAT_LVDS4n,
-+	UPBOARD_UP2_EXHAT_LVDS4p,
-+	UPBOARD_UP2_EXHAT_LVDS5n,
-+	UPBOARD_UP2_EXHAT_LVDS5p,
-+	UPBOARD_UP2_I2S_SDO,
-+	UPBOARD_UP2_I2S_SDI,
-+	UPBOARD_UP2_I2S_WS_SYNC,
-+	UPBOARD_UP2_I2S_BCLK,
-+	UPBOARD_UP2_EXHAT_LVDS6n,
-+	UPBOARD_UP2_EXHAT_LVDS6p,
-+	UPBOARD_UP2_EXHAT_LVDS7n,
-+	UPBOARD_UP2_EXHAT_LVDS7p,
-+	UPBOARD_UP2_EXHAT_LVDS2n,
-+	UPBOARD_UP2_EXHAT_LVDS2p,
-+};
-+
-+static struct pinctrl_pin_desc upboard_up2_pins[] = {
-+	UPBOARD_UP2_PIN_NAME(0, UART1_TXD),
-+	UPBOARD_UP2_PIN_NAME(0, UART1_RXD),
-+	UPBOARD_UP2_PIN_NAME(0, UART1_RTS),
-+	UPBOARD_UP2_PIN_NAME(0, UART1_CTS),
-+	UPBOARD_UP2_PIN_NAME(0, GPIO3),
-+	UPBOARD_UP2_PIN_NAME(0, GPIO5),
-+	UPBOARD_UP2_PIN_NAME(0, GPIO6),
-+	UPBOARD_UP2_PIN_NAME(0, GPIO11),
-+	UPBOARD_UP2_PIN_NAME(0, EXHAT_LVDS1n),
-+	UPBOARD_UP2_PIN_NAME(0, EXHAT_LVDS1p),
-+	UPBOARD_UP2_PIN_NAME(0, SPI2_TXD),
-+	UPBOARD_UP2_PIN_NAME(0, SPI2_RXD),
-+	UPBOARD_UP2_PIN_NAME(0, SPI2_FS1),
-+	UPBOARD_UP2_PIN_NAME(0, SPI2_FS0),
-+	UPBOARD_UP2_PIN_NAME(0, SPI2_CLK),
-+	UPBOARD_UP2_PIN_NAME(0, SPI1_TXD),
-+	UPBOARD_UP2_PIN_NAME(1, SPI1_RXD),
-+	UPBOARD_UP2_PIN_NAME(1, SPI1_FS1),
-+	UPBOARD_UP2_PIN_NAME(1, SPI1_FS0),
-+	UPBOARD_UP2_PIN_NAME(1, SPI1_CLK),
-+	UPBOARD_UP2_PIN_ANON(1, 4),
-+	UPBOARD_UP2_PIN_ANON(1, 5),
-+	UPBOARD_UP2_PIN_ANON(1, 6),
-+	UPBOARD_UP2_PIN_ANON(1, 7),
-+	UPBOARD_UP2_PIN_NAME(1, PWM1),
-+	UPBOARD_UP2_PIN_NAME(1, PWM0),
-+	UPBOARD_UP2_PIN_NAME(1, EXHAT_LVDS0n),
-+	UPBOARD_UP2_PIN_NAME(1, EXHAT_LVDS0p),
-+	UPBOARD_UP2_PIN_FUNC(1, I2C0_SCL, &upboard_i2c0_reg),
-+	UPBOARD_UP2_PIN_FUNC(1, I2C0_SDA, &upboard_i2c0_reg),
-+	UPBOARD_UP2_PIN_FUNC(1, I2C1_SCL, &upboard_i2c1_reg),
-+	UPBOARD_UP2_PIN_FUNC(1, I2C1_SDA, &upboard_i2c1_reg),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS3n),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS3p),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS4n),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS4p),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS5n),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS5p),
-+	UPBOARD_UP2_PIN_NAME(2, I2S_SDO),
-+	UPBOARD_UP2_PIN_NAME(2, I2S_SDI),
-+	UPBOARD_UP2_PIN_NAME(2, I2S_WS_SYNC),
-+	UPBOARD_UP2_PIN_NAME(2, I2S_BCLK),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS6n),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS6p),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS7n),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS7p),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS2n),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS2p),
-+};
-+
-+static int upboard_get_functions_count(struct pinctrl_dev *pctldev)
-+{
-+	return 0;
-+}
-+
-+static int upboard_get_function_groups(struct pinctrl_dev *pctldev,
-+				       unsigned int selector,
-+				       const char * const **groups,
-+				       unsigned int *num_groups)
-+{
-+	*groups = NULL;
-+	*num_groups = 0;
-+	return 0;
-+}
-+
-+static const char *upboard_get_function_name(struct pinctrl_dev *pctldev,
-+					     unsigned int selector)
-+{
-+	return NULL;
-+}
-+
-+static int upboard_set_mux(struct pinctrl_dev *pctldev, unsigned int function,
-+			   unsigned int group)
-+{
-+	return 0;
-+}
-+
-+static int upboard_gpio_request_enable(struct pinctrl_dev *pctldev,
-+				       struct pinctrl_gpio_range *range,
-+				       unsigned int pin)
-+{
-+	const struct pin_desc * const pd = pin_desc_get(pctldev, pin);
-+	const struct upboard_pin *p;
-+	int ret;
-+
-+	if (!pd)
-+		return -EINVAL;
-+	p = pd->drv_data;
-+
-+	/* if this pin has an associated function bit, disable it first */
-+	if (p->func_en) {
-+		ret = regmap_field_write(p->func_en, 0);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (p->gpio_en) {
-+		ret = regmap_field_write(p->gpio_en, 1);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int upboard_gpio_set_direction(struct pinctrl_dev *pctldev,
-+				      struct pinctrl_gpio_range *range,
-+				      unsigned int pin, bool input)
-+{
-+	const struct pin_desc * const pd = pin_desc_get(pctldev, pin);
-+	const struct upboard_pin *p;
-+
-+	if (!pd)
-+		return -EINVAL;
-+	p = pd->drv_data;
-+
-+	return regmap_field_write(p->gpio_dir, input);
-+}
-+
-+static const struct pinmux_ops upboard_pinmux_ops = {
-+	.get_functions_count = upboard_get_functions_count,
-+	.get_function_groups = upboard_get_function_groups,
-+	.get_function_name = upboard_get_function_name,
-+	.set_mux = upboard_set_mux,
-+	.gpio_request_enable = upboard_gpio_request_enable,
-+	.gpio_set_direction = upboard_gpio_set_direction,
-+};
-+
-+static int upboard_get_groups_count(struct pinctrl_dev *pctldev)
-+{
-+	return 0;
-+}
-+
-+static const char *upboard_get_group_name(struct pinctrl_dev *pctldev,
-+					  unsigned int selector)
-+{
-+	return NULL;
-+}
-+
-+static const struct pinctrl_ops upboard_pinctrl_ops = {
-+	.get_groups_count = upboard_get_groups_count,
-+	.get_group_name = upboard_get_group_name,
-+};
-+
-+static struct pinctrl_desc upboard_up2_pinctrl_desc = {
-+	.pins = upboard_up2_pins,
-+	.npins = ARRAY_SIZE(upboard_up2_pins),
-+	.pctlops = &upboard_pinctrl_ops,
-+	.pmxops = &upboard_pinmux_ops,
-+	.owner = THIS_MODULE,
-+};
-+
-+static struct gpio_desc *upboard_offset_to_soc_gpio(struct gpio_chip *gc,
-+						    unsigned int offset)
-+{
-+	struct upboard_pinctrl *pctrl =
-+		container_of(gc, struct upboard_pinctrl, chip);
-+
-+	if (offset + 1 > pctrl->nsoc_gpios || !pctrl->soc_gpios[offset])
-+		return ERR_PTR(-ENODEV);
-+
-+	return pctrl->soc_gpios[offset];
-+}
-+
-+static int upboard_gpio_request(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct upboard_pinctrl *pctrl =
-+		container_of(gc, struct upboard_pinctrl, chip);
-+	struct gpio_desc *desc;
-+	int ret;
-+
-+	ret = pinctrl_gpio_request(gc->base + offset);
-+	if (ret)
-+		return ret;
-+
-+	desc = devm_gpiod_get_index(gc->parent, "external", offset, GPIOD_ASIS);
-+	if (IS_ERR(desc))
-+		return PTR_ERR(desc);
-+
-+	pctrl->soc_gpios[offset] = desc;
-+	return 0;
-+}
-+
-+static void upboard_gpio_free(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct upboard_pinctrl *pctrl =
-+		container_of(gc, struct upboard_pinctrl, chip);
-+
-+	if (offset + 1 > pctrl->nsoc_gpios || !pctrl->soc_gpios[offset])
-+		return;
-+
-+	devm_gpiod_put(gc->parent, pctrl->soc_gpios[offset]);
-+	pctrl->soc_gpios[offset] = NULL;
-+
-+	pinctrl_gpio_free(gc->base + offset);
-+}
-+
-+static int upboard_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc, offset);
-+
-+	if (IS_ERR(desc))
-+		return PTR_ERR(desc);
-+
-+	return gpiod_get_direction(desc);
-+}
-+
-+static int upboard_gpio_direction_input(struct gpio_chip *gc,
-+					unsigned int offset)
-+{
-+	struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc, offset);
-+	int ret;
-+
-+	if (IS_ERR(desc))
-+		return PTR_ERR(desc);
-+
-+	ret = gpiod_direction_input(desc);
-+	if (ret)
-+		return ret;
-+
-+	return pinctrl_gpio_direction_input(gc->base + offset);
-+}
-+
-+static int upboard_gpio_direction_output(struct gpio_chip *gc,
-+					 unsigned int offset, int value)
-+{
-+	struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc, offset);
-+	int ret;
-+
-+	if (IS_ERR(desc))
-+		return PTR_ERR(desc);
-+
-+	ret = pinctrl_gpio_direction_output(gc->base + offset);
-+	if (ret)
-+		return ret;
-+
-+	return gpiod_direction_output(desc, value);
-+}
-+
-+static int upboard_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc, offset);
-+
-+	if (IS_ERR(desc))
-+		return PTR_ERR(desc);
-+
-+	return gpiod_get_value(desc);
-+}
-+
-+static void upboard_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
-+				   int value)
-+{
-+	struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc, offset);
-+
-+	if (IS_ERR(desc))
-+		return;
-+
-+	gpiod_set_value(desc, value);
-+}
-+
-+static struct gpio_chip upboard_gpio_chip = {
-+	.label = "UP pin controller",
-+	.owner = THIS_MODULE,
-+	.request = upboard_gpio_request,
-+	.free = upboard_gpio_free,
-+	.get_direction = upboard_gpio_get_direction,
-+	.direction_input = upboard_gpio_direction_input,
-+	.direction_output = upboard_gpio_direction_output,
-+	.get = upboard_gpio_get_value,
-+	.set = upboard_gpio_set_value,
-+	.base = -1,
-+};
-+
-+static struct regmap_field *upboard_field_alloc(struct device *dev,
-+						struct regmap *regmap,
-+						unsigned int base,
-+						unsigned int number)
-+{
-+	const unsigned int reg = number / UPBOARD_REGISTER_SIZE;
-+	const unsigned int bit = number % UPBOARD_REGISTER_SIZE;
-+	const struct reg_field field = {
-+		.reg = base + reg,
-+		.msb = bit,
-+		.lsb = bit,
-+	};
-+
-+	return devm_regmap_field_alloc(dev, regmap, field);
-+}
-+
-+static int upboard_pinctrl_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct pinctrl_desc *pctldesc;
-+	struct upboard_pinctrl *pctrl;
-+	struct upboard_pin *pins;
-+	struct acpi_device *adev;
-+	struct regmap *regmap;
-+	unsigned int i;
-+	int ret;
-+
-+	adev = ACPI_COMPANION(dev);
-+	if (!adev || strcmp(acpi_device_hid(adev), "AANT0F01"))
-+		return -ENODEV;
-+
-+	if (!dev->parent)
-+		return -EINVAL;
-+
-+	regmap = dev_get_regmap(dev->parent, NULL);
-+	if (!regmap)
-+		return -EINVAL;
-+
-+	pctldesc = &upboard_up2_pinctrl_desc;
-+	pctldesc->name = dev_name(dev);
-+
-+	pins = devm_kzalloc(dev, sizeof(*pins) * pctldesc->npins, GFP_KERNEL);
-+	if (!pins)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < pctldesc->npins; i++) {
-+		struct upboard_pin *pin = &pins[i];
-+		const struct pinctrl_pin_desc *pd = &pctldesc->pins[i];
-+
-+		pin->func_en = NULL;
-+		if (pd->drv_data) {
-+			struct reg_field *field = pd->drv_data;
-+
-+			pin->func_en = devm_regmap_field_alloc(dev, regmap,
-+							       *field);
-+			if (IS_ERR(pin->func_en))
-+				return PTR_ERR(pin->func_en);
-+		}
-+
-+		pin->gpio_en = upboard_field_alloc(dev, regmap,
-+						   UPBOARD_REG_GPIO_EN0, i);
-+		if (IS_ERR(pin->gpio_en))
-+			return PTR_ERR(pin->gpio_en);
-+
-+		pin->gpio_dir = upboard_field_alloc(dev, regmap,
-+						    UPBOARD_REG_GPIO_DIR0, i);
-+		if (IS_ERR(pin->gpio_dir))
-+			return PTR_ERR(pin->gpio_dir);
-+
-+		((struct pinctrl_pin_desc *)pd)->drv_data = pin;
-+	}
-+
-+	pctrl = devm_kzalloc(dev, sizeof(*pctrl), GFP_KERNEL);
-+	if (!pctrl)
-+		return -ENOMEM;
-+
-+	pctrl->chip = upboard_gpio_chip;
-+	pctrl->chip.parent = dev;
-+	pctrl->chip.ngpio = pctldesc->npins;
-+
-+	pctrl->nsoc_gpios = gpiod_count(dev, "external");
-+	pctrl->soc_gpios = devm_kzalloc(dev,
-+					pctrl->nsoc_gpios * sizeof(*pctrl->soc_gpios),
-+					GFP_KERNEL);
-+	if (!pctrl->soc_gpios)
-+		return -ENOMEM;
-+
-+	pctrl->pctldev = devm_pinctrl_register(dev, pctldesc, pctrl);
-+	if (IS_ERR(pctrl->pctldev))
-+		return PTR_ERR(pctrl->pctldev);
-+
-+	ret = devm_gpiochip_add_data(dev, &pctrl->chip, &pctrl->chip);
-+	if (ret)
-+		return ret;
-+
-+	return gpiochip_add_pin_range(&pctrl->chip, pctldesc->name, 0, 0,
-+				      pctldesc->npins);
-+}
-+
-+static struct platform_driver upboard_pinctrl_driver = {
-+	.driver = {
-+		.name = "upboard-pinctrl",
-+	},
-+};
-+
-+module_platform_driver_probe(upboard_pinctrl_driver, upboard_pinctrl_probe);
-+
-+MODULE_ALIAS("platform:upboard-pinctrl");
-+MODULE_AUTHOR("Javier Arteaga <javier@emutex.com>");
-+MODULE_AUTHOR("Dan O'Donovan <dan@emutex.com>");
-+MODULE_DESCRIPTION("UP Board pin control and GPIO driver");
-+MODULE_LICENSE("GPL v2");
+> 
+> 3) Even so, toggling promisc mode will clear all these changes anyway,
+>    even I will call _dev_mc_unsync() after flushing them.
+
+there can be records which are not under control of Linux now.
+
+> 
+> 4) If user can tune ALE table by hand, what stops him do it after moving
+>    to promisc mode, seems he knows what he's doing?
+> 
+> 5) It could be possible only for not default vlan entries, but mcast
+>    vlan support is not supported yet. Who is gona restore those
+>    entries after promisc off?
+> 
+> This behaviour is arguable, and flushing mcast entries can bring more
+> issues then leaving. For me it doesn't matter, I can archive the same
+> by adding after flush one line, it's even shorter:
+> __dev_mc_unsync(priv->ndev, NULL);
+
+Again, unless we move forward with switch dev you can't assume that
+Linux stack has full control over ALE table. Sry, hence this patch is
+not a fix and can introduce changes in current behavior and cause
+regression reports - NACK.
+
 -- 
-2.7.4
-
-
-------
-This email has been scanned for spam and malware by The Email Laundry.
-
+regards,
+-grygorii
