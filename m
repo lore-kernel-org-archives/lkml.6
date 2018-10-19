@@ -2,111 +2,77 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51DE4C67863
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 01:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 322E1C67863
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 01:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04C9520C0E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 01:27:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="xckwqF9G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C9520C0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id 0335C20C0E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 01:27:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0335C20C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbeJSJbj (ORCPT
+        id S1726930AbeJSJbm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 05:31:39 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39412 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbeJSJbj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 05:31:39 -0400
-Received: by mail-pg1-f196.google.com with SMTP id r9-v6so15025575pgv.6
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 18:27:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KKFhgH3/F8G99ClT0GhiKaoexzY9BTl1bxJm2dsagMU=;
-        b=xckwqF9GVGjx2A8lLsM/Xa02KOoGvNUPlkbTBzoWhsGEw2Ylzq51k8fC4qnsrpJEuS
-         XfwZBX1FwBvColB8DvAbbxSzTIh7OBso+q9AxwEpjmz1iLCg4JTQmNwD6X6n18WdTeyj
-         Tto1A8h2gHAUxBa/YS+IuEceEA1ZAsj0pnxjc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KKFhgH3/F8G99ClT0GhiKaoexzY9BTl1bxJm2dsagMU=;
-        b=py8x8ekTy29AQr5py7Pur1rkigYG12EzHKLyR1dLbpm40auDQcq9JKToIlMhMQiOI5
-         QnoKwvVP9NP8SNo6Ah3u8MHJb0ZRn/DE3sKkzo43BIdbkl7YgeDsUaFWj28Z4ybQz+aI
-         QCZ8vZlLlVzLsQ+IkKzqS5WPgCOurCjftZy/pUJKI1Ou3oAzMRUOidgAT7aOjFt6Ylg3
-         QVCjpU35jl+yj6/BM5LuT35Py+KIX5xZ5LW7E/aRPW44uVY8bQxYdqkz0b+dTD+mgeCz
-         cY/e5/4p+3Mx/G3RwUbp30le9kb/MBpTp/VINwHa6rKyg94moW6P1/Gef0JM+w1QUEse
-         RA/g==
-X-Gm-Message-State: ABuFfoh0PXtXIjbfXF4omzkM+dX2MH0ZGb1UOhBrxrJo5SSAvfgBC0aT
-        13vbk65AKVJq6bT84yODmAqrRQ==
-X-Google-Smtp-Source: ACcGV6196JmE96Ph3cjoEUxg7JuUXMYuCXvaCR9EFcXQ135DpfIHBBIp/fm/rOqoxkhGTU6Mj4+H7w==
-X-Received: by 2002:a63:2f42:: with SMTP id v63-v6mr16433344pgv.202.1539912472547;
-        Thu, 18 Oct 2018 18:27:52 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id h6-v6sm29618671pgn.84.2018.10.18.18.27.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 18 Oct 2018 18:27:51 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 18:27:50 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH RFC] doc: rcu: remove obsolete (non-)requirement about
- disabling preemption
-Message-ID: <20181019012750.GD89903@joelaf.mtv.corp.google.com>
-References: <20181016112611.GA27405@linux.ibm.com>
- <20181016204122.GA8176@joelaf.mtv.corp.google.com>
- <20181017161100.GP2674@linux.ibm.com>
- <20181017181505.GC107185@joelaf.mtv.corp.google.com>
- <20181017203324.GS2674@linux.ibm.com>
- <20181018020751.GB99677@joelaf.mtv.corp.google.com>
- <20181018144637.GD2674@linux.ibm.com>
- <20181019000350.GB89903@joelaf.mtv.corp.google.com>
- <20181019001932.GR2674@linux.ibm.com>
- <20181018211245.10baf496@vmware.local.home>
+        Fri, 19 Oct 2018 05:31:42 -0400
+Received: from mga12.intel.com ([192.55.52.136]:63668 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726245AbeJSJbl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 05:31:41 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2018 18:27:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,397,1534834800"; 
+   d="scan'208";a="82646210"
+Received: from ssarabia-mobl7.amr.corp.intel.com ([10.7.189.87])
+  by orsmga008.jf.intel.com with ESMTP; 18 Oct 2018 18:27:54 -0700
+Date:   Thu, 18 Oct 2018 18:27:52 -0700
+From:   Solio Sarabia <solio.sarabia@intel.com>
+To:     Len Brown <lenb@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        shiny.sebastian@intel.com
+Subject: Re: turbostat-17.06.23 floating point exception
+Message-ID: <20181019012751.GA11600@ssarabia-MOBL7.amr.corp.intel.com>
+References: <20181012182630.GA13352@ssarabia-MOBL7.amr.corp.intel.com>
+ <20181012222743.GA14100@ssarabia-MOBL7.amr.corp.intel.com>
+ <CAJvTdKmQUomRnZnPD3O0-Wq0Tp+9PKewBEqQnn4OUg=0Fpzh5w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181018211245.10baf496@vmware.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAJvTdKmQUomRnZnPD3O0-Wq0Tp+9PKewBEqQnn4OUg=0Fpzh5w@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 09:12:45PM -0400, Steven Rostedt wrote:
-> On Thu, 18 Oct 2018 17:19:32 -0700
-> "Paul E. McKenney" <paulmck@linux.ibm.com> wrote:
+On Fri, Oct 12, 2018 at 07:03:41PM -0400, Len Brown wrote:
+> > Why would the cpu topology report 0 cpus?  I added a debug entry to
+> > cpu_usage_stat and /proc/stat showed it as an extra column.  Then
+> > fscanf parsing in for_all_cpus() failed, causing the SIGFPE.
+> >
+> > This is not an issue. Thanks.
 > 
-> > I figured that whoever calls preempt_enable_no_resched() is taking the
-> > responsibility for permitting preemption in the near future, and if they
-> > fail to do so, they will get called on it.  Hard to hide from the latency
-> > tracer, after all.  ;-)
-> 
-> Correct, and doing a search of preempt_enable_no_resched() I see
-> there's one in the ftrace ring buffer code, that was added a long time
-> ago (2008) to fix a recursion bug that no longer exists, and this now
-> can leak a preemption point.
-> 
-> I'll have to go fix that :-(
+> Yes, it is true that turbostat doesn't check for systems with 0 cpus.
+> I'm curious how you provoked the kernel to claim that.  If it is
+> something others might do, we can have check for it and gracefully
+> exit.
 
-Cool! Glad you found this issue in the code while we are discussing it ;)
+source/tools/power/x86/turbostat/turbostat.c
+int for_all_proc_cpus(int (func)(int))
+{
+    retval = fscanf(fp, "cpu %*d %*d %*d %*d %*d %*d %*d %*d %*d %*d\n");
+    ^
+    This fails due to an extra debug entry in /proc/stat
+    (total of 11 columns).  I was measuring time in a hot
+    function and decided to add this time in an extra
+    cpu_usage_stat. This was an experiment though.
 
-thanks,
-
-- Joel
-
+Thanks,
+-S.
