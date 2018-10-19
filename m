@@ -2,99 +2,111 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A893ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:14:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30830ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46F8320838
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:14:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46F8320838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id E473B20838
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:15:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E473B20838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727818AbeJTAVM (ORCPT
+        id S1727840AbeJTAWS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 20:21:12 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:39061 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727567AbeJTAVL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 20:21:11 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by eu-smtp-1.mimecast.com with ESMTP id
- uk-mta-1-mF0juKmjPuevShxwYYO93Q-1; Fri, 19 Oct 2018 17:14:23 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 19 Oct 2018 17:14:25 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 19 Oct 2018 17:14:25 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     "casey.fitzpatrick@timesys.com" <casey.fitzpatrick@timesys.com>,
-        "lukas@wunner.de" <lukas@wunner.de>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "m.duckeck@kunbus.de" <m.duckeck@kunbus.de>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "akshay.bhat@timesys.com" <akshay.bhat@timesys.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tip-commits@vger.kernel.org" 
-        <linux-tip-commits@vger.kernel.org>
-Subject: RE: [tip:irq/core] genirq: Fix race on spurious interrupt detection
-Thread-Topic: [tip:irq/core] genirq: Fix race on spurious interrupt detection
-Thread-Index: AQHUZ8EwaebSceNiZEOcNx/JXfS6JKUmuolg
-Date:   Fri, 19 Oct 2018 16:14:25 +0000
-Message-ID: <2bbbe6ba27424b3b83d7f22bafea13ad@AcuMS.aculab.com>
-References: <1dfd8bbd16163940648045495e3e9698e63b50ad.1539867047.git.lukas@wunner.de>
- <tip-746a923b863a1065ef77324e1e43f19b1a3eab5c@git.kernel.org>
-In-Reply-To: <tip-746a923b863a1065ef77324e1e43f19b1a3eab5c@git.kernel.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 19 Oct 2018 20:22:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45310 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727603AbeJTAWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 20:22:18 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 135912DE41E;
+        Fri, 19 Oct 2018 16:15:32 +0000 (UTC)
+Received: from [10.36.112.30] (ovpn-112-30.ams2.redhat.com [10.36.112.30])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8F2CB751EA;
+        Fri, 19 Oct 2018 16:15:07 +0000 (UTC)
+Subject: Re: [PATCH] selftests/kvm: add missing executables to .gitignore
+To:     Anders Roxell <anders.roxell@linaro.org>, rkrcmar@redhat.com,
+        shuah@kernel.org
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181019143816.4509-1-anders.roxell@linaro.org>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <54a935cb-4023-b414-c55a-c89cbefe942c@redhat.com>
+Date:   Fri, 19 Oct 2018 18:15:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-X-MC-Unique: mF0juKmjPuevShxwYYO93Q-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+In-Reply-To: <20181019143816.4509-1-anders.roxell@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 19 Oct 2018 16:15:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTHVrYXMgV3VubmVyDQo+IFNlbnQ6IDE5IE9jdG9iZXIgMjAxOCAxNjozNA0KPiANCj4g
-Z2VuaXJxOiBGaXggcmFjZSBvbiBzcHVyaW91cyBpbnRlcnJ1cHQgZGV0ZWN0aW9uDQo+IA0KPiBD
-b21taXQgMWU3N2QwYTFlZDc0ICgiZ2VuaXJxOiBTYW5pdGl6ZSBzcHVyaW91cyBpbnRlcnJ1cHQg
-ZGV0ZWN0aW9uIG9mDQo+IHRocmVhZGVkIGlycXMiKSBtYWRlIGRldGVjdGlvbiBvZiBzcHVyaW91
-cyBpbnRlcnJ1cHRzIHdvcmsgZm9yIHRocmVhZGVkDQo+IGhhbmRsZXJzIGJ5Og0KPiANCj4gYSkg
-aW5jcmVtZW50aW5nIGEgY291bnRlciBldmVyeSB0aW1lIHRoZSB0aHJlYWQgcmV0dXJucyBJUlFf
-SEFORExFRCwgYW5kDQo+IGIpIGNoZWNraW5nIHdoZXRoZXIgdGhhdCBjb3VudGVyIGhhcyBpbmNy
-ZWFzZWQgZXZlcnkgdGltZSB0aGUgdGhyZWFkIGlzDQo+ICAgIHdva2VuLg0KDQpUaGF0IHNlZW1z
-IGhvcnJpYmx5IGJyb2tlbi4NCldoYXQgaXMgaXQgdHJ5aW5nIHRvIGFjaGlldmU/DQoNClRoZXJl
-IGFyZSAoYXQgbGVhc3QpIHR3byBjb21tb24gY2FzZXMgd2hlcmUgSVJRX0hBTkRMRUQgZG9lc24n
-dCBnZXQgcmV0dXJuZWQuDQooVW5sZXNzIHRoZSBkcml2ZXIgYWx3YXlzIHJldHVybnMgaXQgdG8g
-YXZvaWQgdGhlIG1lc3NhZ2UuKQ0KDQoxKSBUaGUgSU9XIHRoYXQgY2F1c2VzIHRoZSBoYXJkd2Fy
-ZSB0byBkcm9wIGEgbGV2ZWwgc2Vuc2l0aXZlIElSUSBpcyBwb3N0ZWQNCiAgIG9uIHRoZSBidXMg
-KGV0YykgYW5kIGhhcHBlbnMgbGF0ZSBlbm91Z2ggdGhhdCB0aGUgSVJRIGxpbmUgaXMgc3RpbGwN
-CiAgIGFzc2VydGVkIHdoZW4gdGhlIGlyZXQgZXhlY3V0ZXMuDQogICBJZiB0aGlzIGhhcHBlbnMg
-YWxsIHRoZSB0aW1lIHlvdSBuZWVkIHRvIGZsdXNoIHRoZSBJT1csIGJ1dCBpZiBvbmx5DQogICBv
-Y2Nhc2lvbmFsbHkgaXQgZG9lc24ndCBtYXR0ZXIgYW5kIHlvdSBkb24ndCB3YW50IGEgbWVzc2Fn
-ZS4NCg0KMikgVHlwaWNhbGx5IGFuIGV0aGVybmV0IGRyaXZlciBJU1IgaGFzIHRvIGVuYWJsZSB0
-aGUgaW50ZXJydXB0IGFuZCB0aGVuDQogICBjaGVjayB0aGUgcmluZyBmb3Igd29yayBiZWZvcmUg
-cmV0dXJuaW5nIGZyb20gdGhlIGludGVycnVwdC4NCiAgIElmIGEgcGFja2V0IGFycml2ZXMgYXQg
-dGhpcyB0aW1lIGl0IG1pZ2h0IGJlIHByb2Nlc3NlZCBieSB0aGUgJ29sZCcNCiAgIElTUiBpbnZv
-Y2F0aW9uIGJ1dCBzdGlsbCBnZW5lcmF0ZSBhbm90aGVyIGludGVycnVwdC4NCiAgIElmIG5vIG1v
-cmUgcGFja2V0cyBhcnJpdmUgdGhlIHNlY29uZCBJU1IgaW52b2NhdGlvbiB3aWxsIGZpbmQgbm8g
-d29yay4NCiAgIEFnYWluIHRoaXMgaXMgbm9ybWFsIGJlaGF2aW91ci4NCiAgIChEZWZlcnJpbmcg
-ZXZlcnl0aGluZyB3aXRoIE5BUEkgbWlnaHQgbWFrZSB0aGlzIG5vdCBoYXBwZW4gLSBidXQgb3Ro
-ZXINCiAgIGludGVycnVwdHMgZW5kIHVwIHdvcmtpbmcgdGhlIHNhbWUgd2F5LikNCg0KSWYgeW91
-IGFyZSByZWFsbHkgdHJ5aW5nIHRvIGRldGVjdCAnc3R1Y2snIGludGVycnVwdHMgdGhlbiB5b3Ug
-cHJvYmFibHkNCndhbnQgdG8gY291bnQgdW4taGFuZGxlZCBvbmVzIGFuZCB6ZXJvIHRoZSBjb3Vu
-dCBvbiBoYW5kbGVkIG9uZXMuDQpJJ20gYWxzbyBwcmV0dHkgc3VyZSB5b3UgZG9uJ3QgbmVlZCBh
-biBhdG9taWMgY291bnRlci4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtl
-c2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBV
-Sw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On 19/10/2018 16:38, Anders Roxell wrote:
+> Fixes: 18178ff86217 ("KVM: selftests: add Enlightened VMCS test")
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
+>  tools/testing/selftests/kvm/.gitignore | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/testing/selftests/kvm/.gitignore b/tools/testing/selftests/kvm/.gitignore
+> index 552b0d9a49f4..6210ba41c29e 100644
+> --- a/tools/testing/selftests/kvm/.gitignore
+> +++ b/tools/testing/selftests/kvm/.gitignore
+> @@ -1,4 +1,5 @@
+>  /x86_64/cr4_cpuid_sync_test
+> +/x86_64/evmcs_test
+>  /x86_64/platform_info_test
+>  /x86_64/set_sregs_test
+>  /x86_64/sync_regs_test
+> 
 
+Queued, thanks.
+
+Paolo
