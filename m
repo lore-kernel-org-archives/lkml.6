@@ -2,103 +2,200 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C33ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:12:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A22EECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:13:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF2D620869
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:12:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF2D620869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemonage.de
+	by mail.kernel.org (Postfix) with ESMTP id ABEBE20869
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:13:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dzQmMMOy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABEBE20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727178AbeJSRRk (ORCPT
+        id S1727335AbeJSRSu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 13:17:40 -0400
-Received: from smtp3-1.goneo.de ([85.220.129.38]:53562 "EHLO smtp3-1.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726399AbeJSRRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 13:17:40 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp3.goneo.de (Postfix) with ESMTP id 879E123F016;
-        Fri, 19 Oct 2018 11:12:24 +0200 (CEST)
-X-Virus-Scanned: by goneo
-Received: from smtp3.goneo.de ([127.0.0.1])
-        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id giTZjLlhmmzq; Fri, 19 Oct 2018 11:12:23 +0200 (CEST)
-Received: from lem-wkst-02.lemonage (hq.lemonage.de [87.138.178.34])
-        by smtp3.goneo.de (Postfix) with ESMTPSA id 8603323F121;
-        Fri, 19 Oct 2018 11:12:22 +0200 (CEST)
-Date:   Fri, 19 Oct 2018 11:12:21 +0200
-From:   Lars Poeschel <poeschel@lemonage.de>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Rosin <peda@axentia.se>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        Lei YU <mine260309@gmail.com>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/4] nfc: pn532_uart: Add NXP PN532 to devicetree docs
-Message-ID: <20181019091221.GB26696@lem-wkst-02.lemonage>
-References: <20181018144251.30028-1-poeschel@lemonage.de>
- <20181018144251.30028-2-poeschel@lemonage.de>
- <F2B73CDB-434A-41F5-8A9E-3E4E76DB89C9@holtmann.org>
- <20181018204129.GA25436@bogus>
+        Fri, 19 Oct 2018 13:18:50 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:34033 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726399AbeJSRSt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 13:18:49 -0400
+Received: by mail-qt1-f193.google.com with SMTP id o17-v6so37558567qtr.1;
+        Fri, 19 Oct 2018 02:13:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XjkhtnZXlORa9jpt4NPlWTyaIGde8zW2/vaHprMs4h0=;
+        b=dzQmMMOyxlrGhumx+pbnpUJEPOoy8e56DAvX7sFaBFElWTBq6+tkwsFUh2unqhFjV3
+         wMuGQ65Hnbfk8JLqJzofcyipV+QZ/V+JKTq2MAMysEuotP8xDe0HjQyzLjkssWxRkmWg
+         6nTq8hZMgr/PKC8vbepjlkwAvU8AsqpLRzhql+NrTLdAw9JtP9w98Vv3W+0t/HqQ4RL0
+         j4v/ZnnBCPfFeSRI+oZpJkeRkIC13K6umSJo31LBlaE3/axIf4erH80CZ6wbAnJgKYVk
+         zIjFFT+xlH7SEMC10ykYQvWqDI/u3J96jknoEf18eZfCOif9JCav3Gx/e+VuCkrph9My
+         yjJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XjkhtnZXlORa9jpt4NPlWTyaIGde8zW2/vaHprMs4h0=;
+        b=KHbRt8dCFZS3CHB5nO5xWNEJmn6/mB9dUzqgHU0L3lAlKSEiafpt/Hziz2xndVvNi0
+         10vET2SltobMKgpbEuUVAZkjvQLYS5wPc08O+rXL9ryw0ChKjVzXI6AdKxf6YhuEEgYv
+         k0mJpS1dPPhNdWYh1yUx0L0hgrjEt93YHNp3Vb1BUjFsDcC4l9U4WHMeUbG4OkSjgvY+
+         Apk98AYIC9wjHmfeH5DrTrm54m7m7sCnW3IJELKgNjPsVY4TiMkaUm30qvqAs7UtJeha
+         HXPYPSEj7h7d/McvOP/E1mHPWNRrdaqfphmiYm8X0QInpzaamOS7nu7A/4KzeDQW5ovQ
+         iOgQ==
+X-Gm-Message-State: ABuFfoiE2rLCYKkWfuQkaA3uXhixeUMBvU/rtitiZwwBUDAwE4SB6poM
+        kTjwS/XRAh/EU5gbL62WJZBFpNmMDjkNjXOfVAQ=
+X-Google-Smtp-Source: ACcGV627NZqatPnfgltvZ4TKIHtZXNdxqG8s+UNA+B9CZWBf2MQf2/plhYZOh7wQAVUASscEBOFheFzYcc5izK4PMr8=
+X-Received: by 2002:a0c:819c:: with SMTP id 28mr34285479qvd.7.1539940415754;
+ Fri, 19 Oct 2018 02:13:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181018204129.GA25436@bogus>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
+ <20181018215101.169847-1-rajatja@google.com>
+In-Reply-To: <20181018215101.169847-1-rajatja@google.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 19 Oct 2018 12:13:24 +0300
+Message-ID: <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-pci: Try "cd" for card-detect lookup before
+ using NULL
+To:     Rajat Jain <rajatja@google.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rajat Jain <rajatxjain@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 03:41:29PM -0500, Rob Herring wrote:
-> On Thu, Oct 18, 2018 at 05:03:13PM +0200, Marcel Holtmann wrote:
-> > Hi Lars,
-> > 
-> > > Add pn532 to the trivial-devices.txt binding doc.
-> > > 
-> > > Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
-> > > ---
-> > > Documentation/devicetree/bindings/trivial-devices.txt | 1 +
-> > > 1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/trivial-devices.txt b/Documentation/devicetree/bindings/trivial-devices.txt
-> > > index 763a2808a95c..c580be08a380 100644
-> > > --- a/Documentation/devicetree/bindings/trivial-devices.txt
-> > > +++ b/Documentation/devicetree/bindings/trivial-devices.txt
-> > > @@ -172,6 +172,7 @@ nxp,pcf2129		Real-time clock
-> > > nxp,pcf8523		Real-time Clock
-> > > nxp,pcf8563		Real-time clock/calendar
-> > > nxp,pcf85063		Tiny Real-Time Clock
-> > > +nxp,pn532-uart		NXP PN532 NFC-/RFID-Chip, using UART interface
-> > 
-> > is this really such a trivial device? It doesn’t require any GPIO to enable / reset the NFC chip?
+On Fri, Oct 19, 2018 at 12:53 AM Rajat Jain <rajatja@google.com> wrote:
+>
+> Problem:
+>
+> The card detect IRQ does not work with modern BIOS (that want
+> to use DSD to provide the card detect GPIO to the driver).
+>
+> Details:
+>
 
-It does not require any additional things like GPIO or Interrupts. These
-are optional and at the moment not supported by the driver.
+> (Discussion: https://lkml.org/lkml/2018/9/25/1113)
 
-> Considering it supports multiple interfaces, it is not.
-> 
-> The '-uart' can be dropped and the same compatible used for any 
-> of the bus connections because the device is bound based on the bus 
-> type.
+We have a Link tag for such references.
 
-Ok.
-I drop the '-uart' part from the compatible string and provide a
-seperate, little binding doc, documenting the compatible string used.
+> The mmc core provides the mmc_gpiod_request_cd() API to let host drivers
+> request the gpio descriptor for the "card detect" (or carrier detect?) pin.
 
-But does this also have consequences for the already existing -i2c
-driver? This one uses 'nxp,pn532-i2c' as compatible string.
+card detect is a right term.
 
-Thanks,
-Lars
+> This pin is specified in the ACPI for the SDHC device:
+>
+>  * Either as a resource using _CRS. This is a method used by legacy BIOS.
+>    (The driver needs to tell which resource index).
+>
+>  * Or as a named property ("cd-gpio") in DSD (which may internally point
+
+cd-gpios (gpio suffix is a legacy).
+
+>    to an entry in _CRS). This way, the driver can lookup using a string.
+>    This is what modern BIOS prefer to use.
+>
+> This API finally results in a call to the following code:
+>
+> struct gpio_desc *acpi_find_gpio(..., const char *con_id,...)
+> {
+> ...
+>    /* Lookup gpio (using "<con_id>-gpio") in the _DSD */
+> ...
+>    if (!acpi_can_fallback_to_crs(adev, con_id))
+>           return ERR_PTR(-ENOENT);
+> ...
+>    /* Falling back to _CRS is allowed, Lookup gpio in the _CRS */
+> ...
+> }
+>
+> Note that this means that if the ACPI has _DSD properties, the kernel
+> will never use _CRS for the lookup (Because acpi_can_fallback_to_crs()
+> will always be false for any device hat has _DSD entries).
+>
+> The SDHCI driver is thus currently broken on a modern BIOS
+
+> (even if
+> BIOS provides both _CRS and DSD entries, either of which could be used for
+
+_DSD
+
+> a successful lookup).
+
+This is incorrect. _DSD for GPIOs without any accompanying _CRS
+doesn't make any sense.
+
+> Ironically, none of these will be used for the
+> lookup currently because:
+>
+> * Since the con_id is NULL, acpi_find_gpio() does not find a matching
+>   entry in DSDT. (The DSDT entry has the property name = "cd-gpio")
+
+cd-gpios
+
+>
+> * Because ACPI contains DSDT entries, thus acpi_can_fallback_to_crs()
+>   returns false (because device properties have been populated from
+>   DSD), thus the _CRS is never used for the lookup.
+
+_DSD
+
+>
+> Fix:
+>
+> Try "cd" for lookup in the _DSD before falling back to using NULL so
+> as to try looking up in the _CRS.
+>
+> I've tested this patch successfully with both Legacy BIOS (that
+> provide only _CRS method) as well as modern BIOS (that provide both
+> _CRS and DSD). Also the use of "cd" also appears to be farly consistent
+
+_DSD
+fairly
+
+> across other users of this API (other MMC host controller drivers).
+
+>         if (slot->cd_idx >= 0) {
+> -               ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
+> +               ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
+>                                            slot->cd_override_level, 0, NULL);
+
+Yes.
+
+> +               if (ret && ret != -EPROBE_DEFER)
+> +                       ret = mmc_gpiod_request_cd(host->mmc, NULL,
+> +                                                  slot->cd_idx,
+> +                                                  slot->cd_override_level,
+> +                                                  0, NULL);
+
+And no. Instead of this part you need to provide an ACPI GPIO mapping table.
+
+See examples, like
+net/rfkill/rfkill-gpio.c
+
+(look for acpi_rfkill_default_gpios)
+
+>                 if (ret == -EPROBE_DEFER)
+>                         goto remove;
+
+-- 
+With Best Regards,
+Andy Shevchenko
