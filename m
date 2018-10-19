@@ -2,155 +2,92 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C47BECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA81ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4FEA2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:14:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4FEA2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 8372D20869
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:15:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8372D20869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=digi.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbeJSXV2 (ORCPT
+        id S1727246AbeJSXW1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 19:21:28 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:11991 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726663AbeJSXV2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 19:21:28 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42c8bg0gMsz9ttS0;
-        Fri, 19 Oct 2018 17:14:55 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 5yksk3zlssSd; Fri, 19 Oct 2018 17:14:55 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42c8bf6rrWz9ttRV;
-        Fri, 19 Oct 2018 17:14:54 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D382B8B93C;
-        Fri, 19 Oct 2018 17:14:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id PDDxes12-UzN; Fri, 19 Oct 2018 17:14:54 +0200 (CEST)
-Received: from pc13168vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9A7118B935;
-        Fri, 19 Oct 2018 17:14:54 +0200 (CEST)
-Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 5FF53674CC; Fri, 19 Oct 2018 15:14:54 +0000 (UTC)
-Message-Id: <336eb81e62d6c683a69d312f533899dcb6bcf770.1539959864.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [RFC PATCH] mm: add probe_user_read() and probe_user_address()
-To:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mm@kvack.org
-Date:   Fri, 19 Oct 2018 15:14:54 +0000 (UTC)
+        Fri, 19 Oct 2018 19:22:27 -0400
+Received: from mail1.bemta23.messagelabs.com ([67.219.246.212]:56108 "EHLO
+        mail1.bemta23.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726663AbeJSXW1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 19:22:27 -0400
+Received: from [67.219.246.101] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-2.bemta.az-b.us-east-1.aws.symcld.net id EC/98-10938-A25F9CB5; Fri, 19 Oct 2018 15:15:54 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIIsWRWlGSWpSXmKPExsXi5LtOQFfz68l
+  ogzPdRhbzj5xjtdi4+TaLxaqpO1ksNj2+xmrR9Wsls8XlXXPYLJZev8hk0br3CLvF3+2bWCxe
+  bBF34PJYM28No8emVZ1sHpuX1HtsfLeDyaP/r4HH501yAWxRrJl5SfkVCawZ16ZvYin4wFwx6
+  ehrpgbG9cxdjFwcQgKrGSVajx5hg3DWMEr0TpnJCuFsYZTY+OciexcjJwebgI7ElP2HWUBsEQ
+  FJibUrF4G1MwtMYZI4/W0XG0hCWCBE4suvvWBFLAKqEme3/WcGsXkF3CQWdzaA2RICchI3z3V
+  CxQUlTs58AlbPLCAhcfDFC7C4kICyxJYVFxgh6hUk1h44zzSBkW8WkpZZSFoWMDKtYjRLKspM
+  zyjJTczM0TU0MNA1NDTSNdY1MjTWS6zSTdIrLdZNTSwu0TXUSywv1iuuzE3OSdHLSy3ZxAgM/
+  pQC5qs7GOd3pB9ilORgUhLlLVA/GS3El5SfUpmRWJwRX1Sak1p8iFGGg0NJgpfvC1BOsCg1Pb
+  UiLTMHGIcwaQkOHiUR3imfgdK8xQWJucWZ6RCpU4y6HG1Pr89gFmLJy89LlRLntQWZIQBSlFG
+  aBzcClhIuMcpKCfMyMjAwCPEUpBblZpagyr9iFOdgVBLm/QayiiczrwRu0yugI5iAjjhhegLk
+  iJJEhJRUA+MdNfWGx0XqPGwP9qZ72096lB2Zdm9WCfcvCQuXpeKv30e9e/3/qMR1+7LNWapHd
+  Vaf/5LT9+KxyP2SoF+9rK9fyb24pXJ508TsO2YrtwjN+X2tbeoXMZOaROeF15O9E5ff3b/+T1
+  qoQdos/o1SWfJOfPsTa97LcF7O8eN4tjdo6v50972rpi5UYinOSDTUYi4qTgQAfzn2sQQDAAA
+  =
+X-Env-Sender: Alex.Gonzalez@digi.com
+X-Msg-Ref: server-12.tower-385.messagelabs.com!1539962153!919622!1
+X-Originating-IP: [66.77.174.16]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.14.24; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 21344 invoked from network); 19 Oct 2018 15:15:53 -0000
+Received: from owa.digi.com (HELO MCL-VMS-XCH01.digi.com) (66.77.174.16)
+  by server-12.tower-385.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 19 Oct 2018 15:15:53 -0000
+Received: from MTK-SMS-XCH04.digi.com (10.10.8.198) by MCL-VMS-XCH01.digi.com
+ (10.5.8.49) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 19 Oct 2018
+ 10:15:53 -0500
+Received: from DOR-SMS-XCH01.digi.com (10.49.8.99) by MTK-SMS-XCH04.digi.com
+ (10.10.8.198) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 19 Oct
+ 2018 10:15:52 -0500
+Received: from log-linux-hp-agonzal.digi.com (10.101.2.214) by
+ dor-sms-xch01.digi.com (10.49.8.99) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 19 Oct 2018 17:15:50 +0200
+From:   Alex Gonzalez <alex.gonzalez@digi.com>
+To:     <shawnguo@kernel.org>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
+        <fabio.estevam@nxp.com>, <linux-imx@nxp.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <alex.gonzalez@digi.com>
+Subject: [PATCH] ARM: dts: imx6ul: ccimx6ulsom: Add support for wireless SOM variant
+Date:   Fri, 19 Oct 2018 17:15:40 +0200
+Message-ID: <1539962141-32418-1-git-send-email-alex.gonzalez@digi.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.101.2.214]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the powerpc, there are several places implementing safe
-access to user data. This is sometimes implemented using
-probe_kerne_address() with additional access_ok() verification,
-sometimes with get_user() enclosed in a pagefault_disable()/enable()
-pair, etc... :
-    show_user_instructions()
-    bad_stack_expansion()
-    p9_hmi_special_emu()
-    fsl_pci_mcheck_exception()
-    read_user_stack_64()
-    read_user_stack_32() on PPC64
-    read_user_stack_32() on PPC32
-    power_pmu_bhrb_to()
+The wireless variants of the ConnecCore 6UL SOM include a Qualcomm
+QCA6564 wireless chip with dual WiFi and Bluetooth.
 
-In the same spirit as probe_kernel_read() and probe_kernel_address(),
-this patch adds probe_user_read() and probe_user_address().
+The QCA6564 uses the out-of-tree driver at:
+https://source.codeaurora.org/quic/la/platform/vendor/qcom-opensource/wlan/qcacld-2.0/
 
-probe_user_read() does the same as probe_kernel_read() but
-first checks that it is really a user address.
+Blueooth uses the HCI H4 UART driver.
 
-probe_user_address() is a shortcut to probe_user_read()
+Alex Gonzalez (1):
+  ARM: dts: imx6ul: ccimx6ulsom: Add support for wireless SOM variant
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- include/linux/uaccess.h | 10 ++++++++++
- mm/maccess.c            | 33 +++++++++++++++++++++++++++++++++
- 2 files changed, 43 insertions(+)
-
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index efe79c1cdd47..fb00e3f847d7 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -266,6 +266,16 @@ extern long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count);
- #define probe_kernel_address(addr, retval)		\
- 	probe_kernel_read(&retval, addr, sizeof(retval))
- 
-+/**
-+ * probe_user_address(): safely attempt to read from a user location
-+ * @addr: address to read from
-+ * @retval: read into this variable
-+ *
-+ * Returns 0 on success, or -EFAULT.
-+ */
-+#define probe_user_address(addr, retval)		\
-+	probe_user_read(&(retval), addr, sizeof(retval))
-+
- #ifndef user_access_begin
- #define user_access_begin() do { } while (0)
- #define user_access_end() do { } while (0)
-diff --git a/mm/maccess.c b/mm/maccess.c
-index ec00be51a24f..85d4a88a6917 100644
---- a/mm/maccess.c
-+++ b/mm/maccess.c
-@@ -67,6 +67,39 @@ long __probe_kernel_write(void *dst, const void *src, size_t size)
- EXPORT_SYMBOL_GPL(probe_kernel_write);
- 
- /**
-+ * probe_user_read(): safely attempt to read from a user location
-+ * @dst: pointer to the buffer that shall take the data
-+ * @src: address to read from
-+ * @size: size of the data chunk
-+ *
-+ * Safely read from address @src to the buffer at @dst.  If a kernel fault
-+ * happens, handle that and return -EFAULT.
-+ *
-+ * We ensure that the copy_from_user is executed in atomic context so that
-+ * do_page_fault() doesn't attempt to take mmap_sem.  This makes
-+ * probe_user_read() suitable for use within regions where the caller
-+ * already holds mmap_sem, or other locks which nest inside mmap_sem.
-+ */
-+
-+long __weak probe_user_read(void *dst, const void *src, size_t size)
-+	__attribute__((alias("__probe_user_read")));
-+
-+long __probe_user_read(void *dst, const void __user *src, size_t size)
-+{
-+	long ret;
-+
-+	if (!access_ok(VERIFY_READ, src, size))
-+		return -EFAULT;
-+
-+	pagefault_disable();
-+	ret = __copy_from_user_inatomic(dst, src, size);
-+	pagefault_enable();
-+
-+	return ret ? -EFAULT : 0;
-+}
-+EXPORT_SYMBOL_GPL(probe_user_read);
-+
-+/**
-  * strncpy_from_unsafe: - Copy a NUL terminated string from unsafe address.
-  * @dst:   Destination address, in kernel space.  This buffer must be at
-  *         least @count bytes long.
--- 
-2.13.3
+ arch/arm/boot/dts/imx6ul-ccimx6ulsom.dtsi | 65 +++++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
