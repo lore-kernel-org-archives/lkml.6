@@ -2,168 +2,141 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C01FBECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 829D6ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EE0821486
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:30:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=orbital-systems-com.20150623.gappssmtp.com header.i=@orbital-systems-com.20150623.gappssmtp.com header.b="A2PRjejP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EE0821486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=orbital-systems.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B9B620836
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:31:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B9B620836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbeJSSfr (ORCPT
+        id S1727220AbeJSSgq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 14:35:47 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:37768 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726690AbeJSSfr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 14:35:47 -0400
-Received: by mail-vs1-f67.google.com with SMTP id r83so24954177vsc.4
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 03:30:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=orbital-systems-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=27VeGjkstgB/rAvrWrvrmLOqMq29C9n9d/ioyLE95UM=;
-        b=A2PRjejPB3p25531ltPOhB/uiQinxu3wUiX73pGibcw/6GOIywqOIygD0Vc08DeXi5
-         84M3zRvmdTN3ykD3vBIHteAXmxM14KfbDD6B6TdKnsVTf66tvMKPu/Xr6Hhq5cLBvIXx
-         8rxUMQe1xUKEoEWh13UN36NMlPzGs0dxvqP2a+Mq0GYkRjmwRSzthAw+E94dzRocjs3Z
-         I35pv59qHsB029WLU+2ebHczT5H5VmQL61IYrDUNFGaggQ2n27H3LMGGsNko1bL52/Ij
-         hjUK5xyaVVkIXu44Yso/XIs/WCjS8/WCmxXPH0ulYBNZuvdQUXUxL0P/fErQr1LoxCBu
-         I7Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=27VeGjkstgB/rAvrWrvrmLOqMq29C9n9d/ioyLE95UM=;
-        b=lQ91mR680NEX74sg3h1leGJShsdv+I7Q9q4V5f/xwTlpVBUUVVSq+vVOrIY4iechgx
-         9TtP456/iwoLpnDQFg5Mu4NHQiH2cDynUOpch+QI3UP2TsZqdkUjA56L8SfUsB16y5Io
-         pfbp9KBATv9GEsDINN6me3iEGu8NcaGmjp+SRsCI9hNqIjqRYsFvxi+c8bo8m8A3aoJo
-         LHQnHmepWXZ8XpjgqOC7AuA8PqWeZhSavTlsI5STV9oXOYN824uc/OhQuoxEDJINTbcB
-         4F3vGgZwfY5oR+fMe5ictIkxwNaLMC+DvRH45mytY16XfdmveHme+0mIYeD0JcH/INZL
-         HFgA==
-X-Gm-Message-State: ABuFfoia9pScr+hiNGCzZpfNrJZrfszu+UC4JK+c//PpmgqK90SymJxb
-        nd+4GVqnMKtbTNRjX21QrXt3j4WkgTEvvPr0hoTTiQ==
-X-Google-Smtp-Source: ACcGV61Yc7LOSizYpYtzdIX1DVn+ufbXJt22iCecKwO/uHmPPl9GQdri4c0gfV1JXGuLWo2K7cDMut2eHTDlg0CmGfo=
-X-Received: by 2002:a67:8255:: with SMTP id e82mr14104494vsd.178.1539945017738;
- Fri, 19 Oct 2018 03:30:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181007125815.8392-1-jonas@threetimestwo.org>
- <80993f04-c8ce-5a71-4f04-7edab5e1857b@microchip.com> <2351196.3BzoFE0xYq@ws-140106>
- <CALDOjzhZg3X1y22KE1yw_0ZFjuvaa=3GhEF2iU=KUk6-eRZN2g@mail.gmail.com> <11b4bcb4-8882-bdd2-c7f7-6a74d0758cbc@microchip.com>
-In-Reply-To: <11b4bcb4-8882-bdd2-c7f7-6a74d0758cbc@microchip.com>
-From:   Jonas Danielsson <jonas@orbital-systems.com>
-Date:   Fri, 19 Oct 2018 12:30:05 +0200
-Message-ID: <CALDOjzhgqcx5XEWon9EQXEGxt9J280Z6AvuFQcBa=nh-9VA6PQ@mail.gmail.com>
-Subject: Re: [PATCH] power: reset: at91-reset: enable I-cache for at91sam9260_reset
-To:     Claudiu.Beznea@microchip.com
-Cc:     alexander.stein@systec-electronic.com,
-        linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-        Nicolas Ferre <Nicolas.Ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 19 Oct 2018 14:36:46 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:9198 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726690AbeJSSgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 14:36:46 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42c2JM2H94z9ttFs;
+        Fri, 19 Oct 2018 12:31:15 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id kKSO2KcjeTIX; Fri, 19 Oct 2018 12:31:15 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42c2JM1cq9z9ttBP;
+        Fri, 19 Oct 2018 12:31:15 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id A6D9D8B912;
+        Fri, 19 Oct 2018 12:31:16 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id jxpMXR9qskEF; Fri, 19 Oct 2018 12:31:16 +0200 (CEST)
+Received: from pc13168vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6B0938B90C;
+        Fri, 19 Oct 2018 12:31:16 +0200 (CEST)
+Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 493E06F469; Fri, 19 Oct 2018 10:31:16 +0000 (UTC)
+Message-Id: <285fcf8852b5924cb01de00be1152ea617527c52.1539944940.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2] idle/x86: remove the call to boot_init_stack_canary() from
+ cpu_startup_entry()
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org
+Date:   Fri, 19 Oct 2018 10:31:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 3:10 PM <Claudiu.Beznea@microchip.com> wrote:
->
-> >
-> > We take the normal path of sys_reboot =3D> kernel_restart =3D> machine_=
-restart ...
-> >
-> > I added code to print the c1 register in different paths. And I-cache
-> > is enabled.
-> > So now I am really confused about why the patch worked.
->
-> Just saying... maybe your instructions add some delay on the execution pa=
-th
-> and this is why it helps... try to access cp15 co-processor for read and
-> write back the value you read without actually to modify it, to see if th=
-is
-> could be the reason: e.g.:
->
-> mrc     p15, 0, r0, c1, c0, 0
-> orr     r1, r1, #4096           // whatever is in r1, doesn't matter
-> mcr     p15, 0, r0, c1, c0, 0
->
+commit d7880812b359 ("idle: Add the stack canary init to
+cpu_startup_entry()") added the call to boot_init_stack_canary()
+in cpu_startup_entry() in an #ifdef CONFIG_X86 statement, with
+the intention to remove that #ifdef later.
 
-Yes, this also seems to work. I have over 100 reboots completed with this c=
-ode.
-So what could be the issue here? It seem related to the powering down
-of the sdram at least.
+While implementing stack protector for powerpc, it has been
+observed that calling boot_init_stack_canary() is also needed
+for powerpc which uses per task (TLS) stack canary like the X86.
 
-This thread on the AT91SAM community deals with the same issue:
-http://www.at91.com/viewtopic.php?t=3D25830
-There the solution people chose was removing the SDRAM powering down.
-But that leaves one open to the cause of the errata.
+However, calling boot_init_stack_canary() would break arches
+using global stack canary (ARM, SH, MIPS and XTENSA).
 
-Do you have any thought on how to approach this?
+Instead of modifying the #ifdef CONFIG_X86 in an
+ #if defined(CONFIG_X86) || defined(CONFIG_PPC), powerpc
+implemented the call to boot_init_stack_canary() in the function
+calling cpu_startup_entry()
 
-> Thank you,
-> Claudiu Beznea
->
+On x86, we have two functions calling cpu_startup_entry():
+- start_secondary()
+- cpu_bringup_and_idle()
 
-Regards
-Jonas
+start_secondary() already calls boot_init_stack_canary().
 
+This patch adds the call to boot_init_stack_canary() in
+cpu_bringup_and_idle() and removes it from cpu_startup_entry()
 
-> >
-> >> Best regards,
-> >> Alexander
-> >
-> > Jonas
-> >
-> >>
-> >>
-> >>
-> >
-> >
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v2: Revised commit log (#if defined  had been droped by 'git commit')
 
+ arch/x86/xen/smp_pv.c |  1 +
+ kernel/sched/idle.c   | 15 ---------------
+ 2 files changed, 1 insertion(+), 15 deletions(-)
 
+diff --git a/arch/x86/xen/smp_pv.c b/arch/x86/xen/smp_pv.c
+index e3b18ad49889..0e05e8e23998 100644
+--- a/arch/x86/xen/smp_pv.c
++++ b/arch/x86/xen/smp_pv.c
+@@ -88,6 +88,7 @@ static void cpu_bringup(void)
+ asmlinkage __visible void cpu_bringup_and_idle(void)
+ {
+ 	cpu_bringup();
++	boot_init_stack_canary();
+ 	cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
+ }
+ 
+diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+index 16f84142f2f4..f5516bae0c1b 100644
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -347,21 +347,6 @@ EXPORT_SYMBOL_GPL(play_idle);
+ 
+ void cpu_startup_entry(enum cpuhp_state state)
+ {
+-	/*
+-	 * This #ifdef needs to die, but it's too late in the cycle to
+-	 * make this generic (ARM and SH have never invoked the canary
+-	 * init for the non boot CPUs!). Will be fixed in 3.11
+-	 */
+-#ifdef CONFIG_X86
+-	/*
+-	 * If we're the non-boot CPU, nothing set the stack canary up
+-	 * for us. The boot CPU already has it initialized but no harm
+-	 * in doing it again. This is a good place for updating it, as
+-	 * we wont ever return from this function (so the invalid
+-	 * canaries already on the stack wont ever trigger).
+-	 */
+-	boot_init_stack_canary();
+-#endif
+ 	arch_cpu_idle_prepare();
+ 	cpuhp_online_idle(state);
+ 	while (1)
+-- 
+2.13.3
 
---=20
-
-
-
-
-
-
-JONAS DANIELSSON
-Software Developer
-
-+46 72 361 5022
-Malm=C3=B6 - Sweden
-
-ORBITAL SYSTEMS
-orbital-systems.com
-
-
-
-
-The information contained in this message is intended for the personal
-and confidential use of the designated recipients named above and may
-contain confidential and/or privileged material. If the reader of this
-message is not the intended recipient or an agent responsible for
-delivering it to the intended recipient, you are hereby notified that
-you have received this document in error, and that any review,
-dissemination, distribution, or copying of this message is strictly
-prohibited. If you have received this communication in error, please
-notify the sender immediately and delete this e-mail from your system.
-
-Although this transmission and any attachments are believed to be free
-of any virus or other defect that might affect any computer system
-into which it is received and opened, it is the responsibility of the
-recipient to ensure that it is virus free and no responsibility is
-accepted by ORBITAL SYSTEMS AB, its subsidiaries and affiliates, as
-applicable, for any loss or damage arising in any way.
