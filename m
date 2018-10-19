@@ -2,166 +2,252 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C9EECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02D52ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:18:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9D6D20836
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:17:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A53CA21486
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:18:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="DWQ6zVLm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9D6D20836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QVuxYWmH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A53CA21486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbeJSUXr (ORCPT
+        id S1727205AbeJSUYp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:23:47 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:2729 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726542AbeJSUXr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:23:47 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bc9cb680000>; Fri, 19 Oct 2018 05:17:46 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 19 Oct 2018 05:17:54 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 19 Oct 2018 05:17:54 -0700
-Received: from [10.26.11.35] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 19 Oct
- 2018 12:17:42 +0000
-Subject: Re: [PATCH v1 1/2] soc/tegra: pmc: Turn powergates_lock into spinlock
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180830183635.4474-1-digetx@gmail.com>
- <7369869e-e58f-3760-d428-b00fb9cd28d9@nvidia.com>
- <57c3b1a6-0a60-613e-a4e7-5d66c199b860@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <cf5b7db9-5109-a9c6-3352-068d205c1b98@nvidia.com>
-Date:   Fri, 19 Oct 2018 13:17:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 19 Oct 2018 16:24:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36124 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726542AbeJSUYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 16:24:45 -0400
+Received: from linux-8ccs (charybdis-ext.suse.de [195.135.221.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9CC820836;
+        Fri, 19 Oct 2018 12:18:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539951533;
+        bh=PVbqaZNqC689u+sR/UzyVBMwB9iZ0l2qQ+j1J2R68q0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QVuxYWmHnk8KR8Xm2HhpzIRGQ640zeWPv/nHfd9zfc9Y9TlQG/s5yvWhzDsPg7K4K
+         D8RR+izgujQIkEVsEBwT9YLL+St7oDe90hKLKW4/oqjurihzjPqXNst10NQOzqx6PN
+         y6I8H/1XZI+1Gapkl2aZQbw5WLS//2VTy9V+xb0I=
+Date:   Fri, 19 Oct 2018 14:18:48 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     Torsten Duwe <duwe@lst.de>, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] arm64: implement live patching
+Message-ID: <20181019121847.eug4p2mxr32cebk2@linux-8ccs>
+References: <20181001140910.086E768BC7@newverein.lst.de>
+ <20181001141652.5478C68BE1@newverein.lst.de>
+ <alpine.LSU.2.21.1810171051560.21847@pobox.suse.cz>
+ <20181018125820.iw54zbirq74ulknj@linux-8ccs>
+ <alpine.LSU.2.21.1810191338020.4692@pobox.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <57c3b1a6-0a60-613e-a4e7-5d66c199b860@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1539951466; bh=zpx9okRbwne3kIxyJRf//lOO+qtCKHAzkIVShzVgADI=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=DWQ6zVLmDRljGy7bGL24WH+/E+13bLR0ET3bGefujA0NHw36/ANkP9yS87JzfSW5w
-         Oi0ze9hUoOylRIn6+JqRNT7bh1wp4w1DZ0l7EE9jv4Y67Skcyo0PAdi9E8okO2N6VZ
-         ya5EZKs+EiYzUhxgQ8k9jplxefcwyVQSKBldpBcI0fmtiOoYEqpGm6UeVtp3d/iFr8
-         hkUgankgb0Ceu4juAqnb0zLkLAN/fZuZCoaOLU81V5yqk7ts4pfSM+F/kQjOZQ8/2K
-         Ow9EggZu7s/AuTGCt+H+O91SJmz/4ciRyI8QdXEPm9HCvbytuqXZjPH48u98BZI5ip
-         3SwppsAR/IQLA==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1810191338020.4692@pobox.suse.cz>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.16-default x86_64
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 15/10/2018 14:52, Dmitry Osipenko wrote:
-> On 10/15/18 3:52 PM, Jon Hunter wrote:
++++ Miroslav Benes [19/10/18 13:59 +0200]:
+>On Thu, 18 Oct 2018, Jessica Yu wrote:
+>
+>> +++ Miroslav Benes [17/10/18 15:39 +0200]:
+>> >On Mon, 1 Oct 2018, Torsten Duwe wrote:
+>> >
+>> >Ad relocations. I checked that everything in struct mod_arch_specific
+>> >stays after the module is load. Both core and init get SHF_ALLOC set
+>> >(mod->arch.core.plt->sh_flags in module_frob_arch_sections(). It is
+>> >important because apply_relocate_add() may use those sections
+>> >through module_emit_plt_entry() call.
 >>
->> On 30/08/18 19:36, Dmitry Osipenko wrote:
->>> This fixes splats like the one below if CONFIG_DEBUG_ATOMIC_SLEEP=y
->>> and machine (Tegra30) booted with SMP=n or all secondary CPU's are put
->>> offline.
->>>
->>>  BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
->>>  in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
->>>  CPU: 0 PID: 0 Comm: swapper/0 Tainted: G         C        4.18.0-next-20180821-00180-gc3ebb6544e44-dirty #823
->>>  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
->>>  [<c01134f4>] (unwind_backtrace) from [<c010db2c>] (show_stack+0x20/0x24)
->>>  [<c010db2c>] (show_stack) from [<c0bd0f3c>] (dump_stack+0x94/0xa8)
->>>  [<c0bd0f3c>] (dump_stack) from [<c0151df8>] (___might_sleep+0x13c/0x174)
->>>  [<c0151df8>] (___might_sleep) from [<c0151ea0>] (__might_sleep+0x70/0xa8)
->>>  [<c0151ea0>] (__might_sleep) from [<c0bec2b8>] (mutex_lock+0x2c/0x70)
->>>  [<c0bec2b8>] (mutex_lock) from [<c0589844>] (tegra_powergate_is_powered+0x44/0xa8)
->>>  [<c0589844>] (tegra_powergate_is_powered) from [<c0581a60>] (tegra30_cpu_rail_off_ready+0x30/0x74)
->>>  [<c0581a60>] (tegra30_cpu_rail_off_ready) from [<c0122244>] (tegra30_idle_lp2+0xa0/0x108)
->>>  [<c0122244>] (tegra30_idle_lp2) from [<c0853438>] (cpuidle_enter_state+0x140/0x540)
->>>  [<c0853438>] (cpuidle_enter_state) from [<c08538a4>] (cpuidle_enter+0x40/0x4c)
->>>  [<c08538a4>] (cpuidle_enter) from [<c01595e0>] (call_cpuidle+0x30/0x48)
->>>  [<c01595e0>] (call_cpuidle) from [<c01599f8>] (do_idle+0x238/0x28c)
->>>  [<c01599f8>] (do_idle) from [<c0159d28>] (cpu_startup_entry+0x28/0x2c)
->>>  [<c0159d28>] (cpu_startup_entry) from [<c0be76c8>] (rest_init+0xd8/0xdc)
->>>  [<c0be76c8>] (rest_init) from [<c1200f50>] (start_kernel+0x41c/0x430)
+>> Yes, it looks like the needed .plt sections will remain in module
+>> memory. However, I think I found a slight issue... :/
 >>
->> Given the above, rather than converting to a spinlock I wonder if we are
->> just better off dropping the mutex completely from
->> tegra_powergate_is_powered()? Otherwise ...
+>> In module_frob_arch_sections(), mod->arch.core.plt is set to an offset
+>> within info->sechdrs:
 >>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/soc/tegra/pmc.c | 36 ++++++++++++++++++------------------
->>>  1 file changed, 18 insertions(+), 18 deletions(-)
->>>
->>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>> index 2d6f3fcf3211..d6bc9f66f1cd 100644
->>> --- a/drivers/soc/tegra/pmc.c
->>> +++ b/drivers/soc/tegra/pmc.c
->>> @@ -186,7 +186,7 @@ struct tegra_pmc_soc {
->>>   * @lp0_vec_phys: physical base address of the LP0 warm boot code
->>>   * @lp0_vec_size: size of the LP0 warm boot code
->>>   * @powergates_available: Bitmap of available power gates
->>> - * @powergates_lock: mutex for power gate register access
->>> + * @powergates_lock: lock for power gate register access
->>>   */
->>>  struct tegra_pmc {
->>>  	struct device *dev;
->>> @@ -215,7 +215,7 @@ struct tegra_pmc {
->>>  	u32 lp0_vec_size;
->>>  	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
->>>  
->>> -	struct mutex powergates_lock;
->>> +	spinlock_t powergates_lock;
->>>  };
->>>  
->>>  static struct tegra_pmc *pmc = &(struct tegra_pmc) {
->>> @@ -288,10 +288,10 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
->>>  	if (id == TEGRA_POWERGATE_3D && pmc->soc->has_gpu_clamps)
->>>  		return -EINVAL;
->>>  
->>> -	mutex_lock(&pmc->powergates_lock);
->>> +	spin_lock(&pmc->powergates_lock);
->>>  
->>>  	if (tegra_powergate_state(id) == new_state) {
->>> -		mutex_unlock(&pmc->powergates_lock);
->>> +		spin_unlock(&pmc->powergates_lock);
->>>  		return 0;
->>>  	}
->>>  
->>> @@ -300,7 +300,7 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
->>>  	err = readx_poll_timeout(tegra_powergate_state, id, status,
->>>  				 status == new_state, 10, 100000);
->>>  
->>> -	mutex_unlock(&pmc->powergates_lock);
->>> +	spin_unlock(&pmc->powergates_lock);
+>>             if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt"))
+>>                     mod->arch.core.plt = sechdrs + i;
 >>
->> ... the above readx_poll_timeout needs to be converted to the atomic
->> version. Furthermore, the above 100ms timeout is probably not suited to
->> spinlock.
-> 
-> It's converted in the second patch. Seems mutex indeed could be dropped from tegra_powergate_is_powered, at least for now I can't recall why decided to keep the locking. Thank you for the review, I'll try to drop the mutex and come back with v2 if it will be fine.
+>> sechdrs is from info->sechdrs, which is freed at the end of
+>> load_module() via free_copy(). So although the relevant plt section(s)
+>> are in module memory, mod->arch.core.plt will point to invalid memory
+>> after info is freed. In other words, the section (.plt) *is* in memory
+>> but the section header (struct elf64_shdr) containing section metadata
+>> like sh_addr, sh_size etc., is not.
+>>
+>> But we have mod->klp_info->sechdrs (which is a copy of the section
+>> headers) for this very reason. It is initialized only at the very end
+>> of load_module(). I don't think copy_module_elf() is dependent on
+>> anything, so it can just be moved earlier.
+>>
+>> Note that we cannot set mod->arch.core.plt to mod->klp_info->sechdrs + i
+>> during module_frob_arch_sections() because it is still too early, none
+>> of the module sections have been copied and none of their sh_addr's
+>> have been set to their final locations as this is all happening before
+>> move_module() is called. So we can use a module_finalize() function
+>> for arm64 to switch the mod->arch.core.plt to use the klp_info section
+>> headers.
+>
+>Thanks for the analysis. You seem to be right.
+>
+>> Maybe this will be more clear in the example fix below (completely
+>> untested and unreviewed!):
+>>
+>> diff --git a/arch/arm64/include/asm/module.h b/arch/arm64/include/asm/module.h
+>> index 97d0ef12e2ff..150afc29171b 100644
+>> --- a/arch/arm64/include/asm/module.h
+>> +++ b/arch/arm64/include/asm/module.h
+>> @@ -25,6 +25,7 @@ struct mod_plt_sec {
+>> 	struct elf64_shdr	*plt;
+>> 	int			plt_num_entries;
+>> 	int			plt_max_entries;
+>> +	int			plt_shndx;
+>> };
+>>
+>> struct mod_arch_specific {
+>> diff --git a/arch/arm64/kernel/module-plts.c b/arch/arm64/kernel/module-plts.c
+>> index f0690c2ca3e0..c23cef8f0165 100644
+>> --- a/arch/arm64/kernel/module-plts.c
+>> +++ b/arch/arm64/kernel/module-plts.c
+>> @@ -196,6 +196,21 @@ static unsigned int count_plts(Elf64_Sym *syms,
+>> Elf64_Rela *rela, int num,
+>> 	return ret;
+>> }
+>>
+>> +int module_finalize(const Elf_Ehdr *hdr, const Elf_Shdr *sechdrs,
+>> +		    struct module *mod)
+>> +{
+>> +	/*
+>> +	 * Livepatch modules need to keep access to section headers to apply
+>> +	 * relocations. Note mod->klp_info should have already been
+>> initialized
+>> +	 * and all section sh_addr's should have their final addresses by the
+>> +	 * time module_finalize() is called.
+>> +	 */
+>> +	if (is_livepatch_module(mod))
+>> +		mod->arch.core.plt = mod->klp_info->sechdrs +
+>> mod->arch.core.plt_shndx;
+>> +
+>> +	return 0;
+>> +}
+>
+>There is already module_finalize() in arch/arm64/kernel/module.c, so this
+>should probably go there.
 
-Sorry if you were waiting for my response, but yes sounds good to me.
+Ah yeah, I missed that :) Yep, that would be where it'd go.
 
-Cheers
-Jon
+>If I am not mistaken, we do not care for arch.init.plt in livepatch. Is
+>that correct?
 
--- 
-nvpublic
+I do not believe patching of __init functions is supported (right?) So
+we do not need to keep arch.init.plt alive post-module-load.
+
+>> int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+>> 			      char *secstrings, struct module *mod)
+>> {
+>> @@ -210,11 +225,13 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr
+>> *sechdrs,
+>> 	 * entries. Record the symtab address as well.
+>> 	 */
+>> 	for (i = 0; i < ehdr->e_shnum; i++) {
+>> -		if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt"))
+>> +		if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt")) {
+>> 			mod->arch.core.plt = sechdrs + i;
+>> -		else if (!strcmp(secstrings + sechdrs[i].sh_name,
+>> ".init.plt"))
+>> +			mod->arch.core.plt_shndx = i;
+>> +		} else if (!strcmp(secstrings + sechdrs[i].sh_name,
+>> ".init.plt")) {
+>> 			mod->arch.init.plt = sechdrs + i;
+>> -		else if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE) &&
+>> +			mod->arch.init.plt_shndx = i;
+>
+>It is initialized here, but that's not necessarily a bad thing.
+
+I think I added this line for consistency, but I actually don't think
+it is needed. We only would need to keep the section index for
+arch.core.plt then.
+
+>> +		} else if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE) &&
+>> 			 !strcmp(secstrings + sechdrs[i].sh_name,
+>> 				 ".text.ftrace_trampoline"))
+>> 			tramp = sechdrs + i;
+>> diff --git a/kernel/module.c b/kernel/module.c
+>> index 6746c85511fe..2fc4d74288dd 100644
+>> --- a/kernel/module.c
+>> +++ b/kernel/module.c
+>> @@ -3363,6 +3363,12 @@ static int post_relocation(struct module *mod, const
+>> struct load_info *info)
+>> 	/* Setup kallsyms-specific fields. */
+>> 	add_kallsyms(mod, info);
+>>
+>> +	if (is_livepatch_module(mod)) {
+>> +		err = copy_module_elf(mod, info);
+>> +		if (err < 0)
+>> +			return err;
+>> +	}
+>> +
+>> 	/* Arch-specific module finalizing. */
+>> 	return module_finalize(info->hdr, info->sechdrs, mod);
+>> }
+>> @@ -3775,12 +3781,6 @@ static int load_module(struct load_info *info, const
+>> char __user *uargs,
+>> 	if (err < 0)
+>> 		goto coming_cleanup;
+>>
+>> -	if (is_livepatch_module(mod)) {
+>> -		err = copy_module_elf(mod, info);
+>> -		if (err < 0)
+>> -			goto sysfs_cleanup;
+>> -	}
+>> -
+>> 	/* Get rid of temporary copy. */
+>> 	free_copy(info);
+>
+>Hm, this is hopefully all right. We'd need to change the error handling a
+>bit. free_module_elf() is now called in free_module() and it should be
+>moved somewhere to load_module(). Probably under free_arch_cleanup label.
+>Although it would be much better to rework post_relocation() and handle it
+>right there.
+>
+>Something like
+>
+>-	return module_finalize(info->hdr, info->sechdrs, mod);
+>+	err = module_finalize(info->hdr, info->sechdrs, mod);
+>+	if (err < 0)
+>+		free_module_elf();
+>+
+>+	return err;
+
+Ah yeah, I'll clean up the error handling. I'll re-submit this as a
+real patch after cleaning it up a bit and it could be added to this
+series after review.
+
+>> Thoughts? Does the fix make sense?
+>
+>I think so.
+
+Thanks Miroslav for the impromptu review :-)
+
+Jessica
