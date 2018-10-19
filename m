@@ -7,70 +7,71 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB929ECDE3D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCC6ECDE44
 	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FAB421470
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:20:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6420B21476
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:20:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E5ulmdwK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FAB421470
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nPqzb0BO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6420B21476
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbeJTE1n (ORCPT
+        id S1727096AbeJTE1q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 00:27:43 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34743 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbeJTE1n (ORCPT
+        Sat, 20 Oct 2018 00:27:46 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38436 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726686AbeJTE1p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 00:27:43 -0400
-Received: by mail-pl1-f193.google.com with SMTP id f18-v6so16333157plr.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 13:20:07 -0700 (PDT)
+        Sat, 20 Oct 2018 00:27:45 -0400
+Received: by mail-pl1-f194.google.com with SMTP id q19-v6so13247046pll.5
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 13:20:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ypr1b3a+zTVdUsID9jpNzwdeEbE3kjN+Jye3j5dNozs=;
-        b=E5ulmdwKluwmNGIOt/jql1ysD/0xZKGGOcItwTmi+EPPB6A/MwVdHyxS93zpYYKAzA
-         AfoEHspCw9abUiseXBZPFdaN4X0UBbFKWR+zA0bzfa+rmKuSwOiW4jBgJg8QKg+dAlbI
-         DfR5NoRi0QLCtTzIh5WPBN5mhcf/bqvq4VdY8=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=CMdWozsdXVjUEKyRAJeDLJEom6q5Exv1pHWt7qF5ZiM=;
+        b=nPqzb0BOL6Ymae/PfZ251oOFWNDISM+Z4Vo5sitiK0dwLYv9uOR/suU2GqkmINYsb1
+         naksXkExXhhZcmmhQQzv3BvtiqI7L7zOc7EsboWiul3KrAqcCxs/isQ+aYGN3V3mAwxF
+         LiF2uXCvfi6Zi2AhtZQ6fEPbYmXBE+xokzuco=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ypr1b3a+zTVdUsID9jpNzwdeEbE3kjN+Jye3j5dNozs=;
-        b=td9YmLUnXUwlrcaVIyyaZDbVzpqQbTlsoEJcyQ4nq8l6cbXmjjp3OFFeaDKvlDH6ZK
-         muogo64NmkSl/X7gTaTrr0OKv3hCjxD0BxCMNTgefS9puaT1NtYKqItFi9J/WA8GYMwB
-         G2HlFrKsfM9F/t2Y04T7kStlnta1xFsc0ACJlttGXR3H4zv818O1Bl+1Javjv38+sSlU
-         ExKv6/PqFg0jUaY+cg3C6ln3e92AcWuZvcVIZKJf9HxSBZ5TFXqu1nFxKDYT7dici5tZ
-         0Tplof02fSfKp55aq9P+lKMJIINp7PshCCTd301T7YnSGiMajuaJmLJ1pIxu8EaEcM3M
-         R4hg==
-X-Gm-Message-State: ABuFfogqBbUTylc9QzULiu4qXUlq1Tx0AjIuS8Nq8gcjv1ekRwPRCJST
-        jgnkxhXo/qvAkVPJliSk0MV19A==
-X-Google-Smtp-Source: ACcGV63l9PCzkCFguh++1dbH5hO4c7VDo4aZTvkBcrQOxkODTpeNviy5w0TXpgWq04LfYELdrl9eAA==
-X-Received: by 2002:a17:902:8e8b:: with SMTP id bg11-v6mr34975271plb.219.1539980407151;
-        Fri, 19 Oct 2018 13:20:07 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=CMdWozsdXVjUEKyRAJeDLJEom6q5Exv1pHWt7qF5ZiM=;
+        b=qSnY8XqCSe1JY8yTs6yIYKXfQBwc2E0WY9yp6deFDM9npsb/SCbpLxzUD3bRldLT7O
+         Td63O1sgJ4QK5H1fk51AxBK88m5+M2Wie316v8Giyx97cH4PHpn9QeLZs8OSdhqANO/H
+         iSs8yhoaAj06ZMTAhm+Os3e3hC4U0+VC2rso99GUAB+TFf5B7i33WC0A6yfc+iAVEk3i
+         hObzmwMhNShUBmftlXPC5M3u6piemMXSrHjn4tt1KieYqAFPmQrAZvkc/+KMOt2idm9o
+         ujZq2zXY7Cl//+iWBFGHUPvlYmBt6X1WeMfym4jNMWHFBE+ZzUXWa9UoDHUuP3wD4+Ro
+         FPMQ==
+X-Gm-Message-State: ABuFfohSGO9emr1O0WpaFgSEOC2Jx7K4Uba5lkSpCVYNQ+y+0RFSl5wp
+        aRJwr/5mWYhzHS+gXfQ2iye6qPfHDA0=
+X-Google-Smtp-Source: ACcGV604hIcC7dA3C1ysPHg9aCVDOqjxmVIWoJ9ZrdGSyRCZ8QVzB3yXfruNrobjvdLNBzpy8RARsw==
+X-Received: by 2002:a17:902:3fe4:: with SMTP id a91-v6mr35363027pld.187.1539980408689;
+        Fri, 19 Oct 2018 13:20:08 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id i184-v6sm38281573pfg.88.2018.10.19.13.20.05
+        by smtp.gmail.com with ESMTPSA id i184-v6sm38281573pfg.88.2018.10.19.13.20.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Oct 2018 13:20:06 -0700 (PDT)
+        Fri, 19 Oct 2018 13:20:07 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Sandeep Panda <spanda@codeaurora.org>,
         Sean Paul <seanpaul@chromium.org>
 Cc:     linux-arm-msm@vger.kernel.org, jsanka@codeaurora.org,
         ryandcase@chromium.org, Douglas Anderson <dianders@chromium.org>,
         Andrzej Hajda <a.hajda@samsung.com>,
-        Stephen Boyd <swboyd@chromium.org>,
+        Archit Taneja <architt@codeaurora.org>,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 1/2] dt-bindings: drm/bridge: sn65dsi86: Add panel-hpd-delay
-Date:   Fri, 19 Oct 2018 13:19:39 -0700
-Message-Id: <20181019201940.138179-1-dianders@chromium.org>
+        David Airlie <airlied@linux.ie>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Subject: [PATCH 2/2] drm/bridge: ti-sn65dsi86: Allow DT to set "HPD delay"
+Date:   Fri, 19 Oct 2018 13:19:40 -0700
+Message-Id: <20181019201940.138179-2-dianders@chromium.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
+In-Reply-To: <20181019201940.138179-1-dianders@chromium.org>
+References: <20181019201940.138179-1-dianders@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,69 +79,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The timing diagram of some eDP panels says that you're supposed to
-wait for HPD to be asserted before the aux channel is operational.
+Let's solve the mystery of commit bf1178c98930 ("drm/bridge:
+ti-sn65dsi86: Add mystery delay to enable()").  Specifically the
+reason we needed that mystery delay is that we weren't paying
+attention to HPD.
 
-In some cases, however, it's better to just hardcode the max delay
-instead of trying to use HPD.  Why?
+Looking at the datasheet for the same panel that was tested for the
+original commit, I see there's a timing "t3" that times from power on
+to the aux channel being operational.  This time is specced as 0 - 200
+ms.  The datasheet says that the aux channel is operational at exactly
+the same time that HPD is asserted.
 
-The sn65dsi86 datasheet says that it only reports the debounced
-HPD signal to software.  It will tell software about HPD assertion
-as quickly as 100 ms after it's asserted, but sometimes it might
-take 400 ms because it's timed with a very inaccurate ring
-oscillator.  In practice it was measured at 200 ms on at least
-one system.
+Scoping the signals on this board showed that HPD was asserted 84 ms
+after power was asserted.  That very closely matches the magic 70 ms
+delay that we had.  ...and actually, in my esting the 70 ms wasn't
+quite enough of a delay and some percentage of the time the display
+didn't come up until I bumped it to 100 ms.
 
-On a particular panel, HPD was asserted 84 ms after power was given.
-This same panel specified that HPD would always be asserted within
-200 ms of applying power.  Thus on this panel with the measured
-84 ms to assert HPD + the 200 ms measured debounce we'd wait 284 ms
-which is 84 ms longer than just hardcoding the sleep.
+To solve this, we tried to hook up the HPD signal in the bridge.
+...but in doing so we found that that the bridge didn't report that
+HPD was asserted until ~280 ms after we powered it (!).  This is
+explained by looking at the sn65dsi86 datasheet section "8.4.5.1 HPD
+(Hot Plug/Unplug Detection)".  Reading there we see that the bridge
+isn't even intended to report HPD until 100 ms after it's asserted.
+...but that would have left us at 184 ms.  The extra 100 ms
+(presumably) comes from this part in the datasheet:
 
-Let's allow boards to explicitly choose the hardcoded delay by adding
-a device tree attribute for it.  A few notes:
-a) This delay can't easily be in the panel bindings because the delay
-   wouldn't actually be needed if the same panel were hooked somewhere
-   else (someplace with more sane HPD behavior).
-b) The nice thing about being able to set this delay is that it's also
-   useful on boards where HPD wasn't hooked up at all (for whatever
-   reason).
+> The HPD state machine operates off an internal ring oscillator. The
+> ring oscillator frequency will vary [ ... ]. The min/max range in
+> the HPD State Diagram refers to the possible times based off
+> variation in the ring oscillator frequency.
+
+Given that the 280 ms we'll end up delaying if we hook up HPD is
+_slower_ than the 200 ms we could just hardcode, for now we'll solve
+the problem by just allowing boards to hardcode a value.  If someone
+using this part finds that they can get things to work more quickly by
+actually hooking up HPD that can always be a future patch.
+
+One last note is that I tried to solve this through another way: In
+ti_sn_bridge_enable() I tried to use various combinations of
+dp_dpcd_writeb() and dp_dpcd_readb() to detect when the aux channel
+was up.  In theory that would let me detect _exactly_ when I could
+continue and do link training.  Unfortunately even if I did an aux
+transfer w/out waiting I couldn't see any errors.  Possibly I could
+keep looping over link training until it came back with success, but
+that seemed a little overly hacky to me.
 
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
- .../bindings/display/bridge/ti,sn65dsi86.txt          | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c | 45 ++++++++++++++++++++++-----
+ 1 file changed, 37 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.txt b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.txt
-index 0a3fbb53a16e..1a1ca0f7a1d8 100644
---- a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.txt
-@@ -33,6 +33,15 @@ Optional properties:
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+index f8a931cf3665..5deed667480c 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+@@ -93,6 +93,7 @@ struct ti_sn_bridge {
+ 	struct clk			*refclk;
+ 	struct drm_panel		*panel;
+ 	struct gpio_desc		*enable_gpio;
++	int				panel_hpd_delay_ms;
+ 	struct regulator_bulk_data	supplies[SN_REGULATOR_SUPPLY_NUM];
+ };
  
- - suspend-gpios: specification for GPIO1 pin on bridge (active low)
+@@ -459,16 +460,37 @@ static void ti_sn_bridge_enable(struct drm_bridge *bridge)
+ 	int ret;
  
-+- ti,panel-hpd-delay-ms: Assume that HPD from the panel will be asserted within
-+			 this many milliseconds after giving power to the panel.
-+			 With this number we can ignore the HPD signal from
-+			 the panel and just hardcode a delay.  This is useful
-+			 to do because the bridge chip only provides the
-+			 debounced HPD signal to software and the timing of the
-+			 debounce is very inaccurate so it's often faster to
-+			 hardcode the max from the panel spec.
+ 	/*
+-	 * FIXME:
+-	 * This 70ms was found necessary by experimentation. If it's not
+-	 * present, link training fails. It seems like it can go anywhere from
+-	 * pre_enable() up to semi-auto link training initiation below.
++	 * The timing diagram of some eDP panels says that you're supposed to
++	 * wait for HPD to be asserted before the aux channel is operational.
+ 	 *
+-	 * Neither the datasheet for the bridge nor the panel tested mention a
+-	 * delay of this magnitude in the timing requirements. So for now, add
+-	 * the mystery delay until someone figures out a better fix.
++	 * While we could configure the bridge to report the HPD signal to us
++	 * and add a delay here until the HPD is asserted, it turns out that's
++	 * slower than just hardcoding the max delay from the panel in some
++	 * cases.  Why?
++	 *
++	 * The sn65dsi86 datasheet says that it only reports the debounced
++	 * HPD signal to software.  It will tell software about HPD assertion
++	 * as quickly as 100 ms after it's asserted, but sometimes it might
++	 * take 400 ms because it's timed with a very inaccurate ring
++	 * oscillator.  In practice it was measured at 200 ms on at least
++	 * one system.
++	 *
++	 * On a particular panel, HPD was asserted 84 ms after power was given.
++	 * This same panel specified that HPD would always be asserted within
++	 * 200 ms of applying power.  Thus on this panel with the measured
++	 * 84 ms to assert HPD + the 200 ms measured debounce we'd wait 284 ms
++	 * which is 84 ms longer than just hardcoding the sleep.
++	 *
++	 * For now we don't know of any cases where paying attention to HPD
++	 * is better than hardcoding the value.  Thus for now only support the
++	 * hardcoded delay and print a warning if it wasn't specified.  Later
++	 * one could imagine improving the driver to enable HPD support if
++	 * panel-hpd-delay-ms wasn't specified in the device tree.
+ 	 */
+-	msleep(70);
++	if (pdata->panel_hpd_delay_ms >= 0)
++		msleep(pdata->panel_hpd_delay_ms);
++	else
++		DRM_WARN("HPD not supported; consider a hardcoded delay\n");
+ 
+ 	/* DSI_A lane config */
+ 	val = CHA_DSI_LANES(4 - pdata->dsi->lanes);
+@@ -656,6 +678,7 @@ static int ti_sn_bridge_probe(struct i2c_client *client,
+ {
+ 	struct ti_sn_bridge *pdata;
+ 	int ret;
++	u32 val;
+ 
+ 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
+ 		DRM_ERROR("device doesn't support I2C\n");
+@@ -712,6 +735,12 @@ static int ti_sn_bridge_probe(struct i2c_client *client,
+ 	if (ret)
+ 		return ret;
+ 
++	if (!of_property_read_u32(pdata->dev->of_node,
++				  "ti,panel-hpd-delay-ms", &val))
++		pdata->panel_hpd_delay_ms = val;
++	else
++		pdata->panel_hpd_delay_ms = -1;
 +
- Required nodes:
- This device has two video ports. Their connections are modelled using the
- OF graph bindings specified in Documentation/devicetree/bindings/graph.txt.
-@@ -62,6 +71,8 @@ edp-bridge@2d {
- 	clock-names = "refclk";
- 	clocks = <&input_refclk>;
+ 	pm_runtime_enable(pdata->dev);
  
-+	ti,panel-hpd-delay-ms = <200>;
-+
- 	ports {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+ 	i2c_set_clientdata(client, pdata);
 -- 
 2.19.1.568.g152ad8e336-goog
 
