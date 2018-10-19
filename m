@@ -2,161 +2,265 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DATE_IN_FUTURE_12_24,
-	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA362ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02CDDECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4961B21470
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:45:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FC1821470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:48:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="dKIn2Uq4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4961B21470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iBlAsMHx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FC1821470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbeJSQuh (ORCPT
+        id S1727118AbeJSQyC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 12:50:37 -0400
-Received: from mail-eopbgr730075.outbound.protection.outlook.com ([40.107.73.75]:9760
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726609AbeJSQug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 12:50:36 -0400
+        Fri, 19 Oct 2018 12:54:02 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37750 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbeJSQyB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 12:54:01 -0400
+Received: by mail-ed1-f68.google.com with SMTP id c22-v6so30727558edc.4;
+        Fri, 19 Oct 2018 01:48:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CEclwk9aZl+uNkB6u9frMR+91lfdpA7lTVpLlI8tQcc=;
- b=dKIn2Uq4uS3lSex9T2+KrmNYtg3Wfpin9auLht1Qm08w06CgIoSg4zKuGhazW7qpJ89vY5w5Ylw/LnuqgW0foxnPRw5vcrWRND0gLhwbBnx8RNJFul2FJzYvXWLwdQ2MAPRA4WpNyy+/rsnNJNaNbswfUH01w9ZbZBc4D/UeRnk=
-Received: from BN6PR02CA0104.namprd02.prod.outlook.com (2603:10b6:405:60::45)
- by MWHPR0201MB3514.namprd02.prod.outlook.com (2603:10b6:301:77::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1228.25; Fri, 19 Oct
- 2018 08:42:35 +0000
-Received: from CY1NAM02FT058.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::203) by BN6PR02CA0104.outlook.office365.com
- (2603:10b6:405:60::45) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1250.22 via Frontend
- Transport; Fri, 19 Oct 2018 08:42:34 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT058.mail.protection.outlook.com (10.152.74.149) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1250.11
- via Frontend Transport; Fri, 19 Oct 2018 08:42:33 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <nava.manne@xilinx.com>)
-        id 1gDQMa-0003kA-Tj; Fri, 19 Oct 2018 01:42:32 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <nava.manne@xilinx.com>)
-        id 1gDQMV-00023M-Pi; Fri, 19 Oct 2018 01:42:27 -0700
-Received: from xsj-pvapsmtp01 (xsj-smtp.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w9J8gMVZ002491;
-        Fri, 19 Oct 2018 01:42:22 -0700
-Received: from [172.23.37.118] (helo=xhdnavam40.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <nava.manne@xilinx.com>)
-        id 1gDQMP-00022V-G7; Fri, 19 Oct 2018 01:42:21 -0700
-From:   Nava kishore Manne <nava.manne@xilinx.com>
-To:     <p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <michal.simek@xilinx.com>,
-        <rajanv@xilinx.com>, <jollys@xilinx.com>, <nava.manne@xilinx.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <chinnikishore369@gmail.com>
-Subject: [PATCH 0/3] Add reset driver support for ZynqMP
-Date:   Sat, 20 Oct 2018 14:11:04 +0530
-Message-ID: <20181020084107.28251-1-nava.manne@xilinx.com>
-X-Mailer: git-send-email 2.18.0
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(39860400002)(396003)(2980300002)(438002)(189003)(199004)(26005)(63266004)(36386004)(77096007)(478600001)(106466001)(81156014)(47776003)(81166006)(8676002)(36756003)(186003)(39060400002)(8936002)(2201001)(305945005)(426003)(2906002)(316002)(16586007)(50466002)(476003)(486006)(2616005)(1076002)(126002)(7696005)(51416003)(336012)(356004)(9786002)(48376002)(5660300001)(106002)(110136005)(50226002)(6666004)(921003)(107986001)(1121003)(2101003)(83996005);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR0201MB3514;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT058;1:ALMGgH6gJasBNgd52DIjfNqbQMf3uhqrZ2Ouyovt47fI9RUJSMf911N1eDQxERGyUSz5+8aILqFPZeiwGNf/Zaz/VCmfRV9Cqr2gzgMDSN1yOSLSXePBi7UwmwFJQYXG
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5PyWh3DIEuBD6OjiJ2xlnGiXa4cwft71UmBzEHvO/uU=;
+        b=iBlAsMHx83RS+Zo/l0iw7lUsi9736TWRovFCzM13och+j3i2exMMHmaKjpoVfo7yhC
+         NCd2jIZ3aoRM4l4l11suieR5SvyBVdcWFJDw1Z71ziyTlZ3CwpZcJETVhaIFAtHkRdut
+         oZrIX8egmaMSfWnu6ZIxU+ulbNEeBzAcepHhXM0NUK3LDJTt6pBsaKkWdpGlvWlD0c/0
+         RoOdq/7KU1gYu2xz4qkHVkkH45lvE8l6IIEV7408wSRqPdfG6kgKlJ1mAZcDcugdY9/Z
+         ZAR/Kesje2t5BaYjA/JU317YpbRfiKSWuR9BXNZpEW7Y+rEyT6CtcuuA3bWKDaU2x2ip
+         tKmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=5PyWh3DIEuBD6OjiJ2xlnGiXa4cwft71UmBzEHvO/uU=;
+        b=AreCdqhrZ3SKiBCAjkIkK1Uu/1+7jqD7PoI4V2KfHh7pJpwyn2bOmBIJAk4inrKrJX
+         v190FFJbpCwHZzwhsB491Nm9p2NcF1kdQXopyl8zcJoSdD71BkPXKZsO5DU5S2/zjYqY
+         gegwWEMww/8L5VivfXBhCdMbUrJDbv5w/SKWJmUzZcCIYEfAi4ApfUcDeTh2fWroBjmK
+         DNyt2lunK56TxbWJ5xAZsvJNQnwyqmYTd0PydZykOa7tzvysC4V5gkhMBUNCeknfjtPG
+         zcUGYJpigSM2vR1YcxYqu8W4nzhHi3sq2JRzi6jU4Pet+A0Or/OCZMfytUH7SgJq68g3
+         2XHg==
+X-Gm-Message-State: ABuFfoj0ZUM+n7vosjYZCQ/xLf71ROze9nwPitXz3t8R0S2ZB38s7EBg
+        icNysk2xR2OtqW7ggdQ8ZMM=
+X-Google-Smtp-Source: ACcGV62UsgUyU88mZAIFNpBbOtyDoDALIycU+NvdqHvVFNqrUsXPexRvO0WThcFqb2W6ZTYRsHLmBw==
+X-Received: by 2002:a05:6402:6d8:: with SMTP id n24mr5191553edy.99.1539938931516;
+        Fri, 19 Oct 2018 01:48:51 -0700 (PDT)
+Received: from ziggy.stardust ([93.176.144.101])
+        by smtp.gmail.com with ESMTPSA id s46-v6sm10692662edb.49.2018.10.19.01.48.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 19 Oct 2018 01:48:50 -0700 (PDT)
+Subject: Re: [PATCH 4/6] mmc: mediatek: tune CMD/DATA together
+To:     Chaotian Jing <chaotian.jing@mediatek.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Sean Wang <sean.wang@mediatek.com>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        srv_heupstream@mediatek.com, jjian.zhou@mediatek.com,
+        wenbin.mei@mediatek.com
+References: <1539415250-32337-1-git-send-email-chaotian.jing@mediatek.com>
+ <1539415250-32337-5-git-send-email-chaotian.jing@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <51d95ab5-896e-c386-7a3e-362e8a3c2960@gmail.com>
+Date:   Fri, 19 Oct 2018 10:46:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 41714a5b-ae1f-4c82-7caf-08d6359ed079
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:MWHPR0201MB3514;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR0201MB3514;3:Efv1H/z4tYz1qTRh75Y/xTIrM9Hls4gmIjiPy6E2BLZDxIfG9wiJFJLZfnfjJfh01s7U3taGN/pJgwTWeyrBdAtiJ5u4xpCdrlgcy1u6jdVVLJxTevZCzyE/tQlgumqZNa4c0vA0WWLX5xqrDdegSNA+BQPwYxq7TL+UZt3pKzUZRKQMfZn7WmKb6Yr8+/7CNB0HZw1JopZ3vmbWges480NZuu0BeNnIY4jxg+DfukEA5AkP7oy4zQ4J82VSvJUu5CLiEf0enUmtomDwzs7u1rvD3vh2OJSydfWw1Mfd9V9WVB8akZiB/srs/jMwKq1m80cCR+QA7rLN6s2vv3gpJPFBDjNS6vc+tE0Zp0orvWg=;25:2tq0jKFIxxhtRXlwv25/kmqGriMx7BBu6p2TjM6O7DG7pHdiHhExCGjDkVhwCHby5HOzqzirXjPTinFVXpJtOhPwf81iSMitxZQ07hfuUBzV4lPWVzTXyEFG4gcUzfft8iFxWOUX5EJs164Cr3li08rA9EzDiGYbE0MF9cwyGoHYge/DCtf2Vfb/vVc8GUkMVsxYE9gvvYb5kgNMswBlTqajO3KdvCTEIutT8Y8LfXgQp8HfodZKNojwHx1La15zUIUmvrTusyRq1vObIgx5rAec3HG8+NRmaHbVsN7u4wLY1xGZKGcIACBPa4IozYSGYeppPEUMChuezXDl/nsqwA==
-X-MS-TrafficTypeDiagnostic: MWHPR0201MB3514:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR0201MB3514;31:DpJYEx81gqebKY/15XWO3tNIUmeH6oKgQzfsRqNQCOkrhgfxFyG8VGqbgbQqCwsM4ZscgK1LDNSplP580PlX5ic6lKcwcwo7evm0bBBE1kq0jqukKqgS8IcySvAELNMxfmAUPGxzfXvS+/mCbvyy4UBZ/OBDzZj6UHBJMMcXRzRzNPPFrBDZoK7GXy9WKrBnA+UWEk01PnnX9QqkgoQdSh9m/P5bC9RXlUdGw2Ardi0=;20:aav6jvbADs18aEwGkYs0E4vfhHHS/s82LIQiqpWFaAFryTAd/lI9P7QtAP+o5o2NLMjoFFv2f7Tt6x4VCw3x7wuUCCrIAlZXifqHhayLjenv1ePPfpSXaiVSJ4ZwKNVmYQ/O/PA2SL61ZDqh7cwqT9snbXJo4cvFbr2jg+W+hA0YJPwOnqTmhlc9Ufxscgp7RqO4K1z+HwF34OLGZFnu8mk2CFREVQkaDcLPnSuFgkS/UiEeCyvCZYGrbSySkmKnR7Qms0nO1cHk86ICrE16Io50TPIHqUu6PW/CRthvjda/ZWv95aYtxyQxqJmmjEEFZ7RPxtxWCKSFlLKk1ww04GNWJNgPBVflmp7FfpybLyNGMTQKKnZmJ18kJjFViztcg2KRcrNbMm4wn0MFM0f+LMq9dGDBAfd3dBg30vm4x/hL21ac1nHTCw1OEih0H3AuEeWLRXHPL9ZPnCvy9xCJe08HufBW9uSjYsKw2W73M7pxL8PCCNLnRp7AlDBqymOw
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <MWHPR0201MB35143677C27A0B8899667065C2F90@MWHPR0201MB3514.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(84791874153150);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93004095)(3231355)(944501410)(52105095)(3002001)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:MWHPR0201MB3514;BCL:0;PCL:0;RULEID:;SRVR:MWHPR0201MB3514;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR0201MB3514;4:VFv+itQcgUdH0XaPJHZ5gcRqsMNtS4fXqks3/as9ovUXQIyuEFbKoHFh9CQHEYaJeKuzwkHq2T1GDy7z9+FEEFLcRZJDU5RDYChy1hr3xKS20/ZY09I4Zn4FHJ3b5QhUQyQx1y5tncyUPZG+NrzkDJbM5D4b63ASIlo1BrB+t3a/xwuy0TPEYk9grd4jHhDj0Y+ZLE9nQDzuEOmhE5YsA1PpokMMqD+f4P9DVhRnAzW+hBNFKtVEqML7QiT1AoNX97uiFHObcbglNsAa8ZMUvbJEapwbadFmzZ3yKHq17su4QHg+cpoOwOYaEC5leu4O
-X-Forefront-PRVS: 0830866D19
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR0201MB3514;23:bi8Z0zLrEa1y3UDwEteFiqC8U+I9u+Zk2kjHkJO?=
- =?us-ascii?Q?AnADIcpRu36JDd4GXqREnprEpjijZCa9W06yUXvybDCQa3GE3ovmf4pNi3D6?=
- =?us-ascii?Q?8idXyJjheyrBs1r0tRul6Ff52t5/KWzg12eEQgD+aiSg+l+gxTxji7ahkN3E?=
- =?us-ascii?Q?UVw/taj3Df78hzx2CJH5nhFr9qgzJTSLuTkzPtWv8i9x/qGhrdhhTvHRrDpB?=
- =?us-ascii?Q?F0YDXQAn9soY9TMdXoZk4B63mhv8FsADzJwiSwglNBoWULDDxA4Ofqle0fn9?=
- =?us-ascii?Q?benbcqY78j/6g275O3mSxx6wCMth+N3XMt+J/ym6IhU2nUQmOCohwrxd4uM3?=
- =?us-ascii?Q?iPdfCnGxIxfxVgYxK+oNU6FJ+cEuMKIbWkQg+ug8n6pSaMlF4haFR5Djpg9o?=
- =?us-ascii?Q?sclgAlXIT/K8TbnZz6inSTmDXjv5cY6RFmg6DwdAVXamgnDqEFjwtaY8kdQt?=
- =?us-ascii?Q?Lsj2fxvMqig5BG+NeO1gCMZVz1RpzFYBhN9HGfG3zoMgqjj2hXNwb7gZwYLM?=
- =?us-ascii?Q?yThnxp2yULuatKGTGOR8Mv/EmjYVw3wT5g98JL2o4hn1djW/zcB6RMVU6Y+U?=
- =?us-ascii?Q?2496YRxmI/58hDM2Ao0j5/SlNc0wxFqi9vv5aBkgjyFr9IeUryIuLx6yVBjr?=
- =?us-ascii?Q?sjOa6WY3PONaqMbMVARWfzcRj8uGTTwNtJluNaiOUUhgvakV9KjcgkoAtXZ7?=
- =?us-ascii?Q?pyfrEaPRACl73t4254bAsvXQ13/AY2HoEh9kPoL+3KaOxhZKvC+VgmMFw4u7?=
- =?us-ascii?Q?9grj/GKaKrZIIbrfq6alsFO3Nt55GdLHOBl1KXMyqc673+pVtO+D7Vyy4V/h?=
- =?us-ascii?Q?dB+Zo/bL0d2qwgzFQgbDOwMd+1pS4AcYVfEknSXpklDkvG+8P56X4WM7D0tf?=
- =?us-ascii?Q?Fo8KiktXGnHx+4s4TPNYHfipfyg20ZqPC//5B0JOeIjIEizGVAWEbzktYqlf?=
- =?us-ascii?Q?lEkW4Svzcd6kSX0d/5OmQlpbVvKmqsuvYETq+BlXsgyscsdg30g5ovfDPgBS?=
- =?us-ascii?Q?Dlu7XbLPtJVcOZsjjUaHIAPeXnoBhgAAdTN1ZX0M18c25Rv5/6JL4lfZogjz?=
- =?us-ascii?Q?cdgq5E2HFG2nPig1NfrCZMCpI0b+mt8yJ/yBE7x2um8wFA6p7ptd2fK3uRVI?=
- =?us-ascii?Q?R+MVOgXAUQfs=3D?=
-X-Microsoft-Antispam-Message-Info: 0E3Xz/uHceF8Lm7toz9/+ENK+OlqV7DZaj50v9L4t9OSMin4rwvgFRq7xT98UyHa8Ege9uc8scGwflbYSbdiDiLIhQeUsN4/U4jzjCLxdOtZc7zxMg1yaWrOzRKHLOwrgHq3nOnfR5uInVqW9SQh008jefheols0Q4Lf3i8i+0aUUC9kne5X3G8WpT3Plv/QUe7+TwHyMmXzLl/ZRkvjf4nA4NDVGLcnZFhNUSQ5/P10mUgqWhoQGzO8HPPSRUqlVL4XvBGyubKxvFhe6eosVtzcruCPpOtBGdvZQq+JIdFYQukz1E8cFEt/tSfC7o64/HsAmH/Kodab1yoQnZ9tudzJ6JZqlZfYjGlWERsFEyk=
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR0201MB3514;6:T9jCpygbhNOGHKROPa1iP2ICjdwW0ekqkkJG656P3faTHj3S7WlxKkeskvsCo+MufNL9XQYPc80sFQwsT4uDmUwUvWL1g2WY+npcYYMgKqHQ+XbDHcOdxK21wRs0EjaMa+gdeZbOHDbKcQeHeSQmnHGWyNQx068GcXWhLelPJD0FYqiKzshgZ7C5/3uOZzCgGNrOl2vwAveJCGSnXEojQDrH1dbSL+z/qCawFwstFqB22HAdJzRWm6MQJmPYVlUtSF1k6RIllPcE3GG106iZEob4SjmQJ74JUFpniFhEWYwrdYX/o7fYjw/UlxzUNb7RkjBcpiJnOnqiK0WXpd81bDyTtBwpiz4dTJXViknKJUuAosDel9EA4/+HyaMLwZLeQRQLD3AGu87KhnCz9Ww+7B6NrtWPrzQUWVKijnyhk7CswjhZFj56tz6kPN/Al+USMbI4nd8UJmvfgj/5oJ+YLQ==;5:fw0N6qsyhn3MGEicvT3w93ViwP7Dwe4VIg++PlOLA/333NczxM+N4XzwGXW07ad+zm11u0swr+LEQ4Huu+IrJnU17hxpoYLIJye9DIHCn12E1PdWfbjonZdDUGeCEbLiY7h5I69wgRNv8+yG9yMg2PYvuIS4SzaD6FU5PgnNHJ0=;7:/FRbM3PZ772WXQFYGAIhAwQMtVyJXa95V5lDV4qzibaODv2sdyjWtYxjbtujzkW4x3FF65Vh6KPgKTYGf358vKDzQV8i/+uSzjzVPkipvKS/R85K6Xo87kVJnrBMYyMukEgqrWODl2mb8dcBmGTWdsoEif7X7XZ2GdRZqun/WEs29Dhh16gqxD+YMcDQcEJPjSGhYzXp9TxkEHefY54fBoRPdmRUhTSEws0VaCRPe2qCXFPfCUIREfPn4vSeSWNh
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2018 08:42:33.3856
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 41714a5b-ae1f-4c82-7caf-08d6359ed079
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0201MB3514
+In-Reply-To: <1539415250-32337-5-git-send-email-chaotian.jing@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series of patches are created On top of the
-below repo. 
-git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git (fetch)
-BRANCH: next/drivers
- 
-Nava kishore Manne (3):
-  firmware: xilinx: Add reset API's
-  dt-bindings: reset: Add bindings for ZynqMP reset driver
-  reset: reset-zynqmp: Adding support for Xilinx zynqmp reset
-    controller.
 
- .../bindings/reset/xlnx,zynqmp-reset.txt      | 146 ++++++++++++++++++
- drivers/firmware/xilinx/zynqmp.c              |  40 +++++
- drivers/reset/Makefile                        |   1 +
- drivers/reset/reset-zynqmp.c                  | 117 ++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h          | 136 ++++++++++++++++
- 5 files changed, 440 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/xlnx,zynqmp-reset.txt
- create mode 100644 drivers/reset/reset-zynqmp.c
 
--- 
-2.18.0
+On 13/10/2018 09:20, Chaotian Jing wrote:
+> for MSDC IP which supports both data tune and async fifo, it can
+> tune cmd/data together. which can save the time and make the tune
+> result of CMD more stable as data line are 4bit or 8bit.
+> 
+> Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+> ---
+>  drivers/mmc/host/mtk-sd.c | 87 +++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 87 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+> index fe80a1d..09d7e44 100644
+> --- a/drivers/mmc/host/mtk-sd.c
+> +++ b/drivers/mmc/host/mtk-sd.c
+> @@ -1773,12 +1773,98 @@ static int msdc_tune_data(struct mmc_host *mmc, u32 opcode)
+>  	return final_delay == 0xff ? -EIO : 0;
+>  }
+>  
+> +/*
+> + * MSDC IP which supports data tune + async fifo can do CMD/DAT tune
+> + * together, which can save the tuning time.
+> + */
+> +static int msdc_tune_together(struct mmc_host *mmc, u32 opcode)
+> +{
+> +	struct msdc_host *host = mmc_priv(mmc);
+> +	u32 rise_delay = 0, fall_delay = 0;
+> +	struct msdc_delay_phase final_rise_delay, final_fall_delay = { 0,};
+> +	u8 final_delay, final_maxlen;
+> +	u32 tune_reg = host->dev_comp->pad_tune_reg;
+> +	int i, ret;
+> +
+> +	sdr_set_field(host->base + MSDC_PATCH_BIT, MSDC_INT_DAT_LATCH_CK_SEL,
+> +		      host->latch_ck);
+> +
+> +	sdr_clr_bits(host->base + MSDC_IOCON, MSDC_IOCON_RSPL);
+> +	sdr_clr_bits(host->base + MSDC_IOCON,
+> +		     MSDC_IOCON_DSPL | MSDC_IOCON_W_DSPL);
+> +	for (i = 0 ; i < PAD_DELAY_MAX; i++) {
+> +		sdr_set_field(host->base + tune_reg,
+> +			      MSDC_PAD_TUNE_CMDRDLY, i);
+> +		sdr_set_field(host->base + tune_reg,
+> +			      MSDC_PAD_TUNE_DATRRDLY, i);
+> +		ret = mmc_send_tuning(mmc, opcode, NULL);
+> +		if (!ret)
+> +			rise_delay |= (1 << i);
+> +	}
+> +	final_rise_delay = get_best_delay(host, rise_delay);
+> +	/* if rising edge has enough margin, then do not scan falling edge */
+> +	if (final_rise_delay.maxlen >= 12 ||
+> +	    (final_rise_delay.start == 0 && final_rise_delay.maxlen >= 4))
+> +		goto skip_fall;
+> +
+> +	sdr_set_bits(host->base + MSDC_IOCON, MSDC_IOCON_RSPL);
+> +	sdr_set_bits(host->base + MSDC_IOCON,
+> +		     MSDC_IOCON_DSPL | MSDC_IOCON_W_DSPL);
+> +	for (i = 0; i < PAD_DELAY_MAX; i++) {
+> +		sdr_set_field(host->base + tune_reg,
+> +			      MSDC_PAD_TUNE_CMDRDLY, i);
+> +		sdr_set_field(host->base + tune_reg,
+> +			      MSDC_PAD_TUNE_DATRRDLY, i);
+> +		ret = mmc_send_tuning(mmc, opcode, NULL);
+> +		if (!ret)
+> +			fall_delay |= (1 << i);
+> +	}
+> +	final_fall_delay = get_best_delay(host, fall_delay);
+> +
+> +skip_fall:
+> +	final_maxlen = max(final_rise_delay.maxlen, final_fall_delay.maxlen);
+> +	if (final_maxlen == final_rise_delay.maxlen) {
+> +		sdr_clr_bits(host->base + MSDC_IOCON, MSDC_IOCON_RSPL);
+> +		sdr_clr_bits(host->base + MSDC_IOCON,
+> +			     MSDC_IOCON_DSPL | MSDC_IOCON_W_DSPL);
+> +		sdr_set_field(host->base + tune_reg, MSDC_PAD_TUNE_CMDRDLY,
+> +			      final_rise_delay.final_phase);
+> +		sdr_set_field(host->base + tune_reg,
+> +			      MSDC_PAD_TUNE_DATRRDLY,
+> +			      final_rise_delay.final_phase);
+> +		final_delay = final_rise_delay.final_phase;
+> +	} else {
+> +		sdr_set_bits(host->base + MSDC_IOCON, MSDC_IOCON_RSPL);
+> +		sdr_set_bits(host->base + MSDC_IOCON,
+> +			     MSDC_IOCON_DSPL | MSDC_IOCON_W_DSPL);
+> +		sdr_set_field(host->base + tune_reg, MSDC_PAD_TUNE_CMDRDLY,
+> +			      final_fall_delay.final_phase);
+> +		sdr_set_field(host->base + tune_reg,
+> +			      MSDC_PAD_TUNE_DATRRDLY,
+> +			      final_fall_delay.final_phase);
+> +		final_delay = final_fall_delay.final_phase;
+> +	}
+> +
+> +	dev_dbg(host->dev, "Final pad delay: %x\n", final_delay);
+> +	return final_delay == 0xff ? -EIO : 0;
+> +}
+> +
+>  static int msdc_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  {
+>  	struct msdc_host *host = mmc_priv(mmc);
+>  	int ret;
+>  	u32 tune_reg = host->dev_comp->pad_tune_reg;
+>  
+> +	if (host->dev_comp->data_tune && host->dev_comp->async_fifo) {
+> +		ret = msdc_tune_together(mmc, opcode);
+> +		if (host->hs400_mode) {
+> +			sdr_clr_bits(host->base + MSDC_IOCON,
+> +				     MSDC_IOCON_DSPL | MSDC_IOCON_W_DSPL);
+> +			sdr_set_field(host->base + tune_reg,
+> +				      MSDC_PAD_TUNE_DATRRDLY, 0);
+> +		}
+> +		goto tune_done;
+> +	}
+>  	if (host->hs400_mode &&
 
+Couldn't we put a else if here instead of using a goto?
+
+Regards,
+Matthias
+
+>  	    host->dev_comp->hs400_tune)
+>  		ret = hs400_tune_response(mmc, opcode);
+> @@ -1794,6 +1880,7 @@ static int msdc_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  			dev_err(host->dev, "Tune data fail!\n");
+>  	}
+>  
+> +tune_done:
+>  	host->saved_tune_para.iocon = readl(host->base + MSDC_IOCON);
+>  	host->saved_tune_para.pad_tune = readl(host->base + tune_reg);
+>  	host->saved_tune_para.pad_cmd_tune = readl(host->base + PAD_CMD_TUNE);
+> 
