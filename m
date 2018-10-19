@@ -2,508 +2,202 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2207AECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 030C4ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C775F2087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:34:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B27EB2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:34:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="hExvb7PH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C775F2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nlaovzMi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B27EB2148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbeJSUkO (ORCPT
+        id S1727589AbeJSUkP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:40:14 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51900 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727305AbeJSUkO (ORCPT
+        Fri, 19 Oct 2018 16:40:15 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:37642 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727333AbeJSUkO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 19 Oct 2018 16:40:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=6axTDiC61E5CJx72mInLurSdmAEzh+NXIJ8XCGh32+A=; b=hExvb7PHBdFm
-        2oVyOmcd/1T6RtUSnsc1VD8WafsT6bCb4Iwlzq9UH8I9kJSAu558asJ/WZMSefrGxex1EoZpCSTsr
-        DB9k/5c7zWJJw2htP4sJd67Vq3vdYsvBfL7B5H764+tfnioE++33IybrL5Wk3yrhapxLxbria1FXt
-        y0u0k=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gDTyX-00006i-IQ; Fri, 19 Oct 2018 12:33:57 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 50C171122548; Fri, 19 Oct 2018 13:33:57 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Olivier Moysan <olivier.moysan@st.com>
-Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        alsa-devel@alsa-project.org, robh@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-kernel@vger.kernel.org, olivier.moysan@st.com,
-        arnaud.pouliquen@st.com, benjamin.gaignard@st.com,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: stm32: sai: set sai as mclk clock provider" to the asoc tree
-In-Reply-To:  <1539612216-12602-4-git-send-email-olivier.moysan@st.com>
-Message-Id: <20181019123357.50C171122548@debutante.sirena.org.uk>
-Date:   Fri, 19 Oct 2018 13:33:57 +0100 (BST)
+Received: by mail-qk1-f195.google.com with SMTP id x8-v6so20852058qka.4;
+        Fri, 19 Oct 2018 05:34:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lAApRODXqEbLLpdIPOMqFoFJPc5hRMv3/FQob/W29ek=;
+        b=nlaovzMiOBFDTYxeh+RvRdJ2TBbRgu7WUfo5cGDXDRw6cJrVO0gcRCy/4DuihE3Cin
+         gYNAOoeyTJIC6JKsAFohUD5JzT4r9+csiWyVNK8FjOrYmEh+qd2h3Sct6zuVIud9rEgR
+         sG9IGrkwWsIDAbdEThccIh5wstPUTy7VqiOVNFHo5cR0xOwj38N2jJtKpuGCfx/blf/5
+         kd7QZKUikbbBQmrC8MLwhDv9NChokHjwHvvJnIDL3tIB5dlWLl0ulACmiI++R88U55tx
+         oC8K6r56ilRrA+iB4SJyarcgPZn+4I1dvZuHG5fSYIubWaMc7QHdxMgJDAbyd1sIesnJ
+         1Wjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lAApRODXqEbLLpdIPOMqFoFJPc5hRMv3/FQob/W29ek=;
+        b=UFwKAkhgix/EW8QSocn+iMM7j0aRwkRBjCsusTljEGDbHtiGY3AApPkfgKrhY02grM
+         dewWyrDY0Y4vJHuAebgHrNwsZfVh2oidAg+Pgx00WlxNveR+w99nhDYOH8SBspd4CQsj
+         sRXIbH1ZH3aV8XzMroYTnIDqOJSozQidd9nWXBcXfWSRyJhN9xMa56hT+CxSM+2Wrbe8
+         F2nTg2SVruMcdKA8b/hRIGF8j/BYoAiCazlgYA/zZiWcQbSyNvcbz8HVpNzUMhG1i9oJ
+         D7h05+oM9CScgBLFdSQDcvf4DaET983cNDNlJaGdaB85DTqXAK5mYT7tm0RGclqYWtVX
+         7pnQ==
+X-Gm-Message-State: ABuFfojVlqd1bXWQYKW74KtWHDmW1WJzkavhPqTCtF8q6V1+pVGFvXQa
+        nOO3Nt6XZbEhFnZ+wxfpUQcCvtJIurUPq6a7svQ9FTb9
+X-Google-Smtp-Source: ACcGV63yX696WTBOMcwpR5rDTYCfSCZybiyb2AN0bjikz6qCysZF6E2RHUX14TtMgXNUo5Bxn8aZ2yzgMXkXBJHPBU8=
+X-Received: by 2002:ae9:c307:: with SMTP id n7-v6mr32553090qkg.70.1539952458354;
+ Fri, 19 Oct 2018 05:34:18 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181006065113.669-1-rajneesh.bhardwaj@linux.intel.com> <20181006065113.669-3-rajneesh.bhardwaj@linux.intel.com>
+In-Reply-To: <20181006065113.669-3-rajneesh.bhardwaj@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 19 Oct 2018 15:34:07 +0300
+Message-ID: <CAHp75VcLN6g-6FJsVgxPZRV675N6YQzxsbm19BWgKhpiYfmG3w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] platform/x86: intel_pmc_core: Decode Snoop / Non
+ Snoop LTR
+To:     rajneesh.bhardwaj@linux.intel.com
+Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Sat, Oct 6, 2018 at 9:54 AM Rajneesh Bhardwaj
+<rajneesh.bhardwaj@linux.intel.com> wrote:
+>
+> The LTR values follow PCIE LTR encoding format and can be decoded as per
+> https://pcisig.com/sites/default/files/specification_documents/ECN_LatencyTolnReporting_14Aug08.pdf
+>
+> This adds support to translate the raw LTR values as read from the PMC
+> to meaningful values in nanosecond units of time.
 
-   ASoC: stm32: sai: set sai as mclk clock provider
+While I have pushed this to my review and testing queue, it needs a
+bit more work. See my comments below.
 
-has been applied to the asoc tree at
+> +static u32 convert_ltr_scale(u32 val)
+> +{
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+> +       u32 scale = 0;
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Redundant, see below.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> +       /*
+> +        * As per PCIE specification supporting document
+> +        * ECN_LatencyTolnReporting_14Aug08.pdf the Latency
+> +        * Tolerance Reporting data payload is encoded in a
+> +        * 3 bit scale and 10 bit value fields. Values are
+> +        * multiplied by the indicated scale to yield an absolute time
+> +        * value, expressible in a range from 1 nanosecond to
+> +        * 2^25*(2^10-1) = 34,326,183,936 nanoseconds.
+> +        *
+> +        * scale encoding is as follows:
+> +        *
+> +        * ----------------------------------------------
+> +        * |scale factor        |       Multiplier (ns) |
+> +        * ----------------------------------------------
+> +        * |    0               |       1               |
+> +        * |    1               |       32              |
+> +        * |    2               |       1024            |
+> +        * |    3               |       32768           |
+> +        * |    4               |       1048576         |
+> +        * |    5               |       33554432        |
+> +        * |    6               |       Invalid         |
+> +        * |    7               |       Invalid         |
+> +        * ----------------------------------------------
+> +        */
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> +       if (val > 5)
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> +               pr_warn("Invalid LTR scale factor.\n");
 
-Thanks,
-Mark
+if (...) {
+ pr_warn(...); // Btw, Does it recoverable state? What user will get
+with returned 0 as a multiplier?
+ return 0; // Btw, is 0 fits better than ~0? How hw would behave with
+this value?
+}
 
-From 8307b2afd386ccce369821daa2196068c47fe8cd Mon Sep 17 00:00:00 2001
-From: Olivier Moysan <olivier.moysan@st.com>
-Date: Mon, 15 Oct 2018 16:03:35 +0200
-Subject: [PATCH] ASoC: stm32: sai: set sai as mclk clock provider
+> +       else
+> +               scale = 1U << (5 * (val));
+> +
+> +       return scale;
 
-Add master clock generation support in STM32 SAI.
-The master clock provided by SAI can be used to feed a codec.
+return 1U << (5 * val);
 
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/stm/stm32_sai.h     |   3 +
- sound/soc/stm/stm32_sai_sub.c | 275 +++++++++++++++++++++++++++++-----
- 2 files changed, 242 insertions(+), 36 deletions(-)
+> +}
 
-diff --git a/sound/soc/stm/stm32_sai.h b/sound/soc/stm/stm32_sai.h
-index f25422174909..08de899c766b 100644
---- a/sound/soc/stm/stm32_sai.h
-+++ b/sound/soc/stm/stm32_sai.h
-@@ -91,6 +91,9 @@
- #define SAI_XCR1_OSR_SHIFT	26
- #define SAI_XCR1_OSR		BIT(SAI_XCR1_OSR_SHIFT)
- 
-+#define SAI_XCR1_MCKEN_SHIFT	27
-+#define SAI_XCR1_MCKEN		BIT(SAI_XCR1_MCKEN_SHIFT)
-+
- /******************* Bit definition for SAI_XCR2 register *******************/
- #define SAI_XCR2_FTH_SHIFT	0
- #define SAI_XCR2_FTH_MASK	GENMASK(2, SAI_XCR2_FTH_SHIFT)
-diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
-index 56a227e0bd71..31d22abd3204 100644
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -17,6 +17,7 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of_irq.h>
-@@ -68,6 +69,8 @@
- #define SAI_IEC60958_BLOCK_FRAMES	192
- #define SAI_IEC60958_STATUS_BYTES	24
- 
-+#define SAI_MCLK_NAME_LEN		32
-+
- /**
-  * struct stm32_sai_sub_data - private data of SAI sub block (block A or B)
-  * @pdev: device data pointer
-@@ -80,6 +83,7 @@
-  * @pdata: SAI block parent data pointer
-  * @np_sync_provider: synchronization provider node
-  * @sai_ck: kernel clock feeding the SAI clock generator
-+ * @sai_mclk: master clock from SAI mclk provider
-  * @phys_addr: SAI registers physical base address
-  * @mclk_rate: SAI block master clock frequency (Hz). set at init
-  * @id: SAI sub block id corresponding to sub-block A or B
-@@ -110,6 +114,7 @@ struct stm32_sai_sub_data {
- 	struct stm32_sai_data *pdata;
- 	struct device_node *np_sync_provider;
- 	struct clk *sai_ck;
-+	struct clk *sai_mclk;
- 	dma_addr_t phys_addr;
- 	unsigned int mclk_rate;
- 	unsigned int id;
-@@ -251,6 +256,177 @@ static const struct snd_kcontrol_new iec958_ctls = {
- 	.put = snd_pcm_iec958_put,
- };
- 
-+struct stm32_sai_mclk_data {
-+	struct clk_hw hw;
-+	unsigned long freq;
-+	struct stm32_sai_sub_data *sai_data;
-+};
-+
-+#define to_mclk_data(_hw) container_of(_hw, struct stm32_sai_mclk_data, hw)
-+#define STM32_SAI_MAX_CLKS 1
-+
-+static int stm32_sai_get_clk_div(struct stm32_sai_sub_data *sai,
-+				 unsigned long input_rate,
-+				 unsigned long output_rate)
-+{
-+	int version = sai->pdata->conf->version;
-+	int div;
-+
-+	div = DIV_ROUND_CLOSEST(input_rate, output_rate);
-+	if (div > SAI_XCR1_MCKDIV_MAX(version)) {
-+		dev_err(&sai->pdev->dev, "Divider %d out of range\n", div);
-+		return -EINVAL;
-+	}
-+	dev_dbg(&sai->pdev->dev, "SAI divider %d\n", div);
-+
-+	if (input_rate % div)
-+		dev_dbg(&sai->pdev->dev,
-+			"Rate not accurate. requested (%ld), actual (%ld)\n",
-+			output_rate, input_rate / div);
-+
-+	return div;
-+}
-+
-+static int stm32_sai_set_clk_div(struct stm32_sai_sub_data *sai,
-+				 unsigned int div)
-+{
-+	int version = sai->pdata->conf->version;
-+	int ret, cr1, mask;
-+
-+	if (div > SAI_XCR1_MCKDIV_MAX(version)) {
-+		dev_err(&sai->pdev->dev, "Divider %d out of range\n", div);
-+		return -EINVAL;
-+	}
-+
-+	mask = SAI_XCR1_MCKDIV_MASK(SAI_XCR1_MCKDIV_WIDTH(version));
-+	cr1 = SAI_XCR1_MCKDIV_SET(div);
-+	ret = regmap_update_bits(sai->regmap, STM_SAI_CR1_REGX, mask, cr1);
-+	if (ret < 0)
-+		dev_err(&sai->pdev->dev, "Failed to update CR1 register\n");
-+
-+	return ret;
-+}
-+
-+static long stm32_sai_mclk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long *prate)
-+{
-+	struct stm32_sai_mclk_data *mclk = to_mclk_data(hw);
-+	struct stm32_sai_sub_data *sai = mclk->sai_data;
-+	int div;
-+
-+	div = stm32_sai_get_clk_div(sai, *prate, rate);
-+	if (div < 0)
-+		return div;
-+
-+	mclk->freq = *prate / div;
-+
-+	return mclk->freq;
-+}
-+
-+static unsigned long stm32_sai_mclk_recalc_rate(struct clk_hw *hw,
-+						unsigned long parent_rate)
-+{
-+	struct stm32_sai_mclk_data *mclk = to_mclk_data(hw);
-+
-+	return mclk->freq;
-+}
-+
-+static int stm32_sai_mclk_set_rate(struct clk_hw *hw, unsigned long rate,
-+				   unsigned long parent_rate)
-+{
-+	struct stm32_sai_mclk_data *mclk = to_mclk_data(hw);
-+	struct stm32_sai_sub_data *sai = mclk->sai_data;
-+	unsigned int div;
-+	int ret;
-+
-+	div = stm32_sai_get_clk_div(sai, parent_rate, rate);
-+	if (div < 0)
-+		return div;
-+
-+	ret = stm32_sai_set_clk_div(sai, div);
-+	if (ret)
-+		return ret;
-+
-+	mclk->freq = rate;
-+
-+	return 0;
-+}
-+
-+static int stm32_sai_mclk_enable(struct clk_hw *hw)
-+{
-+	struct stm32_sai_mclk_data *mclk = to_mclk_data(hw);
-+	struct stm32_sai_sub_data *sai = mclk->sai_data;
-+
-+	dev_dbg(&sai->pdev->dev, "Enable master clock\n");
-+
-+	return regmap_update_bits(sai->regmap, STM_SAI_CR1_REGX,
-+				  SAI_XCR1_MCKEN, SAI_XCR1_MCKEN);
-+}
-+
-+static void stm32_sai_mclk_disable(struct clk_hw *hw)
-+{
-+	struct stm32_sai_mclk_data *mclk = to_mclk_data(hw);
-+	struct stm32_sai_sub_data *sai = mclk->sai_data;
-+
-+	dev_dbg(&sai->pdev->dev, "Disable master clock\n");
-+
-+	regmap_update_bits(sai->regmap, STM_SAI_CR1_REGX, SAI_XCR1_MCKEN, 0);
-+}
-+
-+static const struct clk_ops mclk_ops = {
-+	.enable = stm32_sai_mclk_enable,
-+	.disable = stm32_sai_mclk_disable,
-+	.recalc_rate = stm32_sai_mclk_recalc_rate,
-+	.round_rate = stm32_sai_mclk_round_rate,
-+	.set_rate = stm32_sai_mclk_set_rate,
-+};
-+
-+static int stm32_sai_add_mclk_provider(struct stm32_sai_sub_data *sai)
-+{
-+	struct clk_hw *hw;
-+	struct stm32_sai_mclk_data *mclk;
-+	struct device *dev = &sai->pdev->dev;
-+	const char *pname = __clk_get_name(sai->sai_ck);
-+	char *mclk_name, *p, *s = (char *)pname;
-+	int ret, i = 0;
-+
-+	mclk = devm_kzalloc(dev, sizeof(mclk), GFP_KERNEL);
-+	if (!mclk)
-+		return -ENOMEM;
-+
-+	mclk_name = devm_kcalloc(dev, sizeof(char),
-+				 SAI_MCLK_NAME_LEN, GFP_KERNEL);
-+	if (!mclk_name)
-+		return -ENOMEM;
-+
-+	/*
-+	 * Forge mclk clock name from parent clock name and suffix.
-+	 * String after "_" char is stripped in parent name.
-+	 */
-+	p = mclk_name;
-+	while (*s && *s != '_' && (i < (SAI_MCLK_NAME_LEN - 6))) {
-+		*p++ = *s++;
-+		i++;
-+	}
-+	STM_SAI_IS_SUB_A(sai) ?
-+		strncat(p, "a_mclk", 6) : strncat(p, "b_mclk", 6);
-+
-+	mclk->hw.init = CLK_HW_INIT(mclk_name, pname, &mclk_ops, 0);
-+	mclk->sai_data = sai;
-+	hw = &mclk->hw;
-+
-+	dev_dbg(dev, "Register master clock %s\n", mclk_name);
-+	ret = devm_clk_hw_register(&sai->pdev->dev, hw);
-+	if (ret) {
-+		dev_err(dev, "mclk register returned %d\n", ret);
-+		return ret;
-+	}
-+	sai->sai_mclk = hw->clk;
-+
-+	/* register mclk provider */
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
-+}
-+
- static irqreturn_t stm32_sai_isr(int irq, void *devid)
- {
- 	struct stm32_sai_sub_data *sai = (struct stm32_sai_sub_data *)devid;
-@@ -312,15 +488,25 @@ static int stm32_sai_set_sysclk(struct snd_soc_dai *cpu_dai,
- 	struct stm32_sai_sub_data *sai = snd_soc_dai_get_drvdata(cpu_dai);
- 	int ret;
- 
--	if ((dir == SND_SOC_CLOCK_OUT) && sai->master) {
-+	if (dir == SND_SOC_CLOCK_OUT) {
- 		ret = regmap_update_bits(sai->regmap, STM_SAI_CR1_REGX,
- 					 SAI_XCR1_NODIV,
- 					 (unsigned int)~SAI_XCR1_NODIV);
- 		if (ret < 0)
- 			return ret;
- 
--		sai->mclk_rate = freq;
- 		dev_dbg(cpu_dai->dev, "SAI MCLK frequency is %uHz\n", freq);
-+		sai->mclk_rate = freq;
-+
-+		if (sai->sai_mclk) {
-+			ret = clk_set_rate_exclusive(sai->sai_mclk,
-+						     sai->mclk_rate);
-+			if (ret) {
-+				dev_err(cpu_dai->dev,
-+					"Could not set mclk rate\n");
-+				return ret;
-+			}
-+		}
- 	}
- 
- 	return 0;
-@@ -715,15 +901,9 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
- {
- 	struct stm32_sai_sub_data *sai = snd_soc_dai_get_drvdata(cpu_dai);
- 	int cr1, mask, div = 0;
--	int sai_clk_rate, mclk_ratio, den, ret;
--	int version = sai->pdata->conf->version;
-+	int sai_clk_rate, mclk_ratio, den;
- 	unsigned int rate = params_rate(params);
- 
--	if (!sai->mclk_rate) {
--		dev_err(cpu_dai->dev, "Mclk rate is null\n");
--		return -EINVAL;
--	}
--
- 	if (!(rate % 11025))
- 		clk_set_parent(sai->sai_ck, sai->pdata->clk_x11k);
- 	else
-@@ -731,14 +911,22 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
- 	sai_clk_rate = clk_get_rate(sai->sai_ck);
- 
- 	if (STM_SAI_IS_F4(sai->pdata)) {
--		/*
--		 * mclk_rate = 256 * fs
--		 * MCKDIV = 0 if sai_ck < 3/2 * mclk_rate
--		 * MCKDIV = sai_ck / (2 * mclk_rate) otherwise
-+		/* mclk on (NODIV=0)
-+		 *   mclk_rate = 256 * fs
-+		 *   MCKDIV = 0 if sai_ck < 3/2 * mclk_rate
-+		 *   MCKDIV = sai_ck / (2 * mclk_rate) otherwise
-+		 * mclk off (NODIV=1)
-+		 *   MCKDIV ignored. sck = sai_ck
- 		 */
--		if (2 * sai_clk_rate >= 3 * sai->mclk_rate)
--			div = DIV_ROUND_CLOSEST(sai_clk_rate,
--						2 * sai->mclk_rate);
-+		if (!sai->mclk_rate)
-+			return 0;
-+
-+		if (2 * sai_clk_rate >= 3 * sai->mclk_rate) {
-+			div = stm32_sai_get_clk_div(sai, sai_clk_rate,
-+						    2 * sai->mclk_rate);
-+			if (div < 0)
-+				return div;
-+		}
- 	} else {
- 		/*
- 		 * TDM mode :
-@@ -750,8 +938,10 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
- 		 * Note: NOMCK/NODIV correspond to same bit.
- 		 */
- 		if (STM_SAI_PROTOCOL_IS_SPDIF(sai)) {
--			div = DIV_ROUND_CLOSEST(sai_clk_rate,
--						(params_rate(params) * 128));
-+			div = stm32_sai_get_clk_div(sai, sai_clk_rate,
-+						    rate * 128);
-+			if (div < 0)
-+				return div;
- 		} else {
- 			if (sai->mclk_rate) {
- 				mclk_ratio = sai->mclk_rate / rate;
-@@ -764,31 +954,22 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
- 						mclk_ratio);
- 					return -EINVAL;
- 				}
--				div = DIV_ROUND_CLOSEST(sai_clk_rate,
--							sai->mclk_rate);
-+				div = stm32_sai_get_clk_div(sai, sai_clk_rate,
-+							    sai->mclk_rate);
-+				if (div < 0)
-+					return div;
- 			} else {
- 				/* mclk-fs not set, master clock not active */
- 				den = sai->fs_length * params_rate(params);
--				div = DIV_ROUND_CLOSEST(sai_clk_rate, den);
-+				div = stm32_sai_get_clk_div(sai, sai_clk_rate,
-+							    den);
-+				if (div < 0)
-+					return div;
- 			}
- 		}
- 	}
- 
--	if (div > SAI_XCR1_MCKDIV_MAX(version)) {
--		dev_err(cpu_dai->dev, "Divider %d out of range\n", div);
--		return -EINVAL;
--	}
--	dev_dbg(cpu_dai->dev, "SAI clock %d, divider %d\n", sai_clk_rate, div);
--
--	mask = SAI_XCR1_MCKDIV_MASK(SAI_XCR1_MCKDIV_WIDTH(version));
--	cr1 = SAI_XCR1_MCKDIV_SET(div);
--	ret = regmap_update_bits(sai->regmap, STM_SAI_CR1_REGX, mask, cr1);
--	if (ret < 0) {
--		dev_err(cpu_dai->dev, "Failed to update CR1 register\n");
--		return ret;
--	}
--
--	return 0;
-+	return stm32_sai_set_clk_div(sai, div);
- }
- 
- static int stm32_sai_hw_params(struct snd_pcm_substream *substream,
-@@ -881,6 +1062,9 @@ static void stm32_sai_shutdown(struct snd_pcm_substream *substream,
- 			   SAI_XCR1_NODIV);
- 
- 	clk_disable_unprepare(sai->sai_ck);
-+
-+	clk_rate_exclusive_put(sai->sai_mclk);
-+
- 	sai->substream = NULL;
- }
- 
-@@ -903,6 +1087,8 @@ static int stm32_sai_dai_probe(struct snd_soc_dai *cpu_dai)
- 	struct stm32_sai_sub_data *sai = dev_get_drvdata(cpu_dai->dev);
- 	int cr1 = 0, cr1_mask;
- 
-+	sai->cpu_dai = cpu_dai;
-+
- 	sai->dma_params.addr = (dma_addr_t)(sai->phys_addr + STM_SAI_DR_REGX);
- 	/*
- 	 * DMA supports 4, 8 or 16 burst sizes. Burst size 4 is the best choice,
-@@ -1181,6 +1367,23 @@ static int stm32_sai_sub_parse_of(struct platform_device *pdev,
- 		return PTR_ERR(sai->sai_ck);
- 	}
- 
-+	if (STM_SAI_IS_F4(sai->pdata))
-+		return 0;
-+
-+	/* Register mclk provider if requested */
-+	if (of_find_property(np, "#clock-cells", NULL)) {
-+		ret = stm32_sai_add_mclk_provider(sai);
-+		if (ret < 0)
-+			return ret;
-+	} else {
-+		sai->sai_mclk = devm_clk_get(&pdev->dev, "MCLK");
-+		if (IS_ERR(sai->sai_mclk)) {
-+			if (PTR_ERR(sai->sai_mclk) != -ENOENT)
-+				return PTR_ERR(sai->sai_mclk);
-+			sai->sai_mclk = NULL;
-+		}
-+	}
-+
- 	return 0;
- }
- 
+>         for (index = 0; map[index].name ; index++) {
+> -               seq_printf(s, "IP %-2d :%-32s\tRAW LTR: 0x%x\n", index,
+> -                          map[index].name,
+> -                          pmc_core_reg_read(pmcdev, map[index].bit_mask));
+
+We use 32 characters for the names. Here are two minor issues:
+- inconsistency with the rest
+- ping-pong style of programming (you changed 32 to 24 in the same
+series where you introduced 32 in the first place).
+
+
+> +               decoded_snoop_ltr = decoded_non_snoop_ltr = 0;
+> +               ltr_raw_data = pmc_core_reg_read(pmcdev,
+> +                                                map[index].bit_mask);
+> +               snoop_ltr = ltr_raw_data & ~MTPMC_MASK;
+> +               nonsnoop_ltr = (ltr_raw_data >> 0x10) & ~MTPMC_MASK;
+> +
+> +               if (FIELD_GET(LTR_REQ_NONSNOOP, ltr_raw_data)) {
+> +                       scale = FIELD_GET(LTR_DECODED_SCALE, nonsnoop_ltr);
+> +                       val = FIELD_GET(LTR_DECODED_VAL, nonsnoop_ltr);
+> +                       decoded_non_snoop_ltr = val * convert_ltr_scale(scale);
+> +               }
+> +
+> +               if (FIELD_GET(LTR_REQ_SNOOP, ltr_raw_data)) {
+> +                       scale = FIELD_GET(LTR_DECODED_SCALE, snoop_ltr);
+> +                       val = FIELD_GET(LTR_DECODED_VAL, snoop_ltr);
+> +                       decoded_snoop_ltr = val * convert_ltr_scale(scale);
+> +               }
+> +
+
+> +               seq_printf(s, "IP %-2d :%-24s\tRaw LTR: 0x%-16x\t Non-Snoop LTR (ns): %-16llu\t Snoop LTR (ns): %-16llu\n",
+
+Here 0x%-16x would look a bit strange and difficult to parse. 0x%016x
+much better.
+After you remove the index, it would give you 4 more characters,
+though it 4 less than 8 you got from reducing 32 to 24.
+
+OTOH, those long texts perhaps may be compressed somehow, at least
+remove LTR duplicating from the last two. Remove spaces after '\t' as
+well.
+
+> +                          index, map[index].name, ltr_raw_data,
+> +                          decoded_non_snoop_ltr,
+> +                          decoded_snoop_ltr);
+>         }
+>         return 0;
+>  }
+
+> --- a/drivers/platform/x86/intel_pmc_core.h
+> +++ b/drivers/platform/x86/intel_pmc_core.h
+> @@ -177,6 +177,11 @@ enum ppfear_regs {
+
+It might be good idea to include linux/bits.h here.
+
+> +#define LTR_REQ_NONSNOOP                       BIT(31)
+> +#define LTR_REQ_SNOOP                          BIT(15)
+> +#define LTR_DECODED_VAL                                GENMASK(9, 0)
+> +#define LTR_DECODED_SCALE                      GENMASK(12, 10)
+
 -- 
-2.19.0.rc2
-
+With Best Regards,
+Andy Shevchenko
