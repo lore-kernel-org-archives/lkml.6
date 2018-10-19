@@ -5,63 +5,63 @@ X-Spam-Level:
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71464ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 654ECECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:50:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C89021479
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:48:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 097EE2083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:50:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IfAMX05c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C89021479
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QRLmnZEq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 097EE2083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbeJSVyb (ORCPT
+        id S1727502AbeJSV4m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 17:54:31 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:41989 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727004AbeJSVyb (ORCPT
+        Fri, 19 Oct 2018 17:56:42 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:34796 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727014AbeJSV4m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 17:54:31 -0400
-Received: by mail-qt1-f196.google.com with SMTP id j46-v6so38290952qtc.9;
-        Fri, 19 Oct 2018 06:48:17 -0700 (PDT)
+        Fri, 19 Oct 2018 17:56:42 -0400
+Received: by mail-qt1-f195.google.com with SMTP id o17-v6so38371721qtr.1;
+        Fri, 19 Oct 2018 06:50:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=6xK9YTAE9DGhx2VC74aytfUA6OTknMViBhk/qS3zmqw=;
-        b=IfAMX05cbC6iYcjiXztLpVCqMks5h8yuflY2Z1YicL5Tw51jVlItqfoTdFKgcJpBqR
-         NYgIBZrIkO0/jrX8DerBqOpF/heWoQjO4ESgulWWxTLwuf6r8ub/yClPH3HXVoxDiNRG
-         LHUUankFM3cVtM7kkz+oeKrjLff1qQ1eNfUfS9K6CUIMHXSVh9afs4XlL17hPS7w5fZd
-         NoZsLFDirmuhIJgQm3xEswBdwZHcQwZjKyKWtIXWiH4LxpGy/YhGDAwuQ+655AnHDzaW
-         Cxycephnb0fBAKuDVTaiFAtcQlzY8OwCYCcgMQMF0l3Rpua73cMa6WxEJEB4Nym8uSih
-         u/EQ==
+        bh=ufWBQfM2kbZrdDzh9HvQ+8set22R/DcaspBmj9YUF8I=;
+        b=QRLmnZEqeLKvF8AZbOgfvuJugXFxI3y5HKwYhSPjNSfKEzwnjQ82uNOuuyuj+YWmxG
+         ZwBEDRP42NjVvfgA8QZfTsFfYKnHUUK0PG08J2YdlavK7/gqYwp0fHBqMKbaGq0Q15LW
+         76uiBbe94DewGE9i+VCuF4T2n7dsH6CLmzNm8xrj73p5v0pSiQOw1TsaObX5TOjpVTJx
+         GRue7SCIpRSTEhK9+GuKOxr1ROFmRRKVoWC5ua/A/FNOxKfV/kifu6TM9BTS2EXQwI+z
+         soUgi/+6zphESh+83LC0WspoGn0q4AO9Pl4euejnzhEVFhxJT2eDkOZsSuEqU1aQicJw
+         lCyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6xK9YTAE9DGhx2VC74aytfUA6OTknMViBhk/qS3zmqw=;
-        b=icP5k0KqWcSaHQD1NVxDh3Js1zyN48jf+Iqx47QKWZTg83tBTElc4EDusWCkyl8Ww+
-         ryUrG0tvncTMwyfTqpqkX9lVgZ4tlslFkR5tbqtqRzJSUktKteJMdnl/FMHNdj0b8W7h
-         RmQF63w7bqvUvpaNFmgQE8Jo/fOrR0RR1ag6sBugCoJ7Q6NrMpwfwOAcyL99g4L214hj
-         aLya8uOYcCQ4dCNzU2BEu9pkkmjGh25jw9cp48+YYsIsK7fFj8eQIS/IL/xm6hm0EQP5
-         wviRfGath4OpXPsFNnJo/rKt1tKdIsUXXxMUMyW2HCuucfXws99tCYY/oa/Bwobgu9HU
-         h9kw==
-X-Gm-Message-State: ABuFfohPyf9/GBUguP633AsCKzEQQVPkkmOIQ3Z3D0fxoy19//kukbmr
-        2jbRR3IQDFVqoImJOMxer787B3HqfpT0cUzV9c0=
-X-Google-Smtp-Source: ACcGV63lEVgKUbmageLxOBlDCBBo6Cv2w8K78UQDs24uufVLjcV8l/vCvtNzpy9rZR5HgSuwlX+rl4wQPpy/lQ3Bl/U=
-X-Received: by 2002:a0c:819c:: with SMTP id 28mr35209820qvd.7.1539956897371;
- Fri, 19 Oct 2018 06:48:17 -0700 (PDT)
+        bh=ufWBQfM2kbZrdDzh9HvQ+8set22R/DcaspBmj9YUF8I=;
+        b=lMKofWN4yW63DyKncfH0ZJ1xouS1xY82rUXSslUwG98WykaHqQZlYz5C2tDLLOzUff
+         d0WsJWyDO4ms4rwrLJ9MNbtUC2QygF02HJYsfUAas5gvllnV9CidXKJ8xwhVla/zPxpA
+         v4fnRtvLFa83bb9IggCGt4BFDwjAGFmbCz3OYUjXPt1N7gUMx+qoybRREgJ7FfeIDLh0
+         TnjkVi35bR99qhXsm/J+p4yn49OUT57rwt8nOIMVPlF6ovBZePdhdFvwrjcWJu7BO71Y
+         lorPMtyG0VojgWevpZIERqzhQfWeQRAyNz+asoQaldOL4FSCGDNue1o9LRULtOhjW0by
+         toQg==
+X-Gm-Message-State: AGRZ1gK2weCb1uJ/OWxOwy/ZK4CIEwT9f5pZsWsbAl/KQeU/tDvznWk5
+        VoNsIQ+KmprUrrqcV+m1sMTjj73wDm2PwMGfVuI=
+X-Google-Smtp-Source: ACcGV61zHqE1iNyeJqMZudL/+hdAt/RcKe8ivYvstqjrKY042WRTRruLDCCN1ohNxdccLxOh4EQwafnwifMjeXj1FaI=
+X-Received: by 2002:ac8:191a:: with SMTP id t26-v6mr1417499qtj.327.1539957027503;
+ Fri, 19 Oct 2018 06:50:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181010172300.317643-1-lkundrak@v3.sk> <20181010172300.317643-14-lkundrak@v3.sk>
-In-Reply-To: <20181010172300.317643-14-lkundrak@v3.sk>
+References: <20181010172300.317643-1-lkundrak@v3.sk> <20181010172300.317643-15-lkundrak@v3.sk>
+In-Reply-To: <20181010172300.317643-15-lkundrak@v3.sk>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 19 Oct 2018 16:48:06 +0300
-Message-ID: <CAHp75VfDHFVHbxfdQp_Ug9SCx9d0=Rd9vBQYK0kYnok9B_kqrg@mail.gmail.com>
-Subject: Re: [PATCH 13/15] power: supply: olpc_battery: Move priv data to a struct
+Date:   Fri, 19 Oct 2018 16:50:16 +0300
+Message-ID: <CAHp75VcQVv-WToo-Lf1uUG0YOhusDqRN3x6HAGt-ccSbp5B+xg@mail.gmail.com>
+Subject: Re: [PATCH 14/15] power: supply: olpc_battery: Avoid using platform_info
 To:     Lubomir Rintel <lkundrak@v3.sk>
 Cc:     Mark Brown <broonie@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -89,181 +89,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Wed, Oct 10, 2018 at 8:24 PM Lubomir Rintel <lkundrak@v3.sk> wrote:
 >
-> The global variables for private data are not too nice. I'd like some
-> more, and that would clutter the global name space even further.
+> This wouldn't work on the DT-based ARM platform. Let's read the EC version
+> directly from the EC driver instead.
 >
-
-Good change!
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
+> This makes the driver no longer x86 specific.
+>
 > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 > ---
->  drivers/power/supply/olpc_battery.c | 73 +++++++++++++++--------------
->  1 file changed, 38 insertions(+), 35 deletions(-)
+>  drivers/power/supply/Kconfig        |  2 +-
+>  drivers/power/supply/olpc_battery.c | 35 +++++++++++++++++++++--------
+>  2 files changed, 27 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+> index ff6dab0bf0dd..f0361e4dd457 100644
+> --- a/drivers/power/supply/Kconfig
+> +++ b/drivers/power/supply/Kconfig
+> @@ -151,7 +151,7 @@ config BATTERY_PMU
+>
+>  config BATTERY_OLPC
+>         tristate "One Laptop Per Child battery"
+> -       depends on X86_32 && OLPC
+> +       depends on OLPC
+>         help
+>           Say Y to enable support for the battery on the OLPC laptop.
 >
 > diff --git a/drivers/power/supply/olpc_battery.c b/drivers/power/supply/olpc_battery.c
-> index 540d44bf536f..2a2d7cc995f0 100644
+> index 2a2d7cc995f0..dde9863e5c4a 100644
 > --- a/drivers/power/supply/olpc_battery.c
 > +++ b/drivers/power/supply/olpc_battery.c
-> @@ -53,6 +53,12 @@
+> @@ -20,8 +20,6 @@
+>  #include <linux/sched.h>
+>  #include <linux/olpc-ec.h>
+
+>  #include <linux/of.h>
+
+Btw, Kconfig might miss
+depends on OF
+part.
+
+> -#include <asm/olpc.h>
+> -
 >
->  #define BAT_ADDR_MFR_TYPE      0x5F
+>  #define EC_BAT_VOLTAGE 0x10    /* uint16_t,    *9.76/32,    mV   */
+>  #define EC_BAT_CURRENT 0x11    /* int16_t,     *15.625/120, mA   */
+> @@ -57,6 +55,7 @@ struct olpc_battery_data {
+>         struct power_supply *olpc_ac;
+>         struct power_supply *olpc_bat;
+>         char bat_serial[17];
+> +       int new_proto;
+>  };
 >
-> +struct olpc_battery_data {
-> +       struct power_supply *olpc_ac;
-> +       struct power_supply *olpc_bat;
-> +       char bat_serial[17];
-> +};
-> +
 >  /*********************************************************************
->   *             Power
->   *********************************************************************/
-> @@ -91,11 +97,8 @@ static const struct power_supply_desc olpc_ac_desc = {
->         .get_property = olpc_ac_get_prop,
->  };
->
-> -static struct power_supply *olpc_ac;
-> -
-> -static char bat_serial[17]; /* Ick */
-> -
-> -static int olpc_bat_get_status(union power_supply_propval *val, uint8_t ec_byte)
-> +static int olpc_bat_get_status(struct olpc_battery_data *data,
-> +               union power_supply_propval *val, uint8_t ec_byte)
+> @@ -100,7 +99,7 @@ static const struct power_supply_desc olpc_ac_desc = {
+>  static int olpc_bat_get_status(struct olpc_battery_data *data,
+>                 union power_supply_propval *val, uint8_t ec_byte)
 >  {
->         if (olpc_platform_info.ecver > 0x44) {
+> -       if (olpc_platform_info.ecver > 0x44) {
+> +       if (data->new_proto) {
 >                 if (ec_byte & (BAT_STAT_CHARGING | BAT_STAT_TRICKLE))
-> @@ -326,6 +329,7 @@ static int olpc_bat_get_property(struct power_supply *psy,
->                                  enum power_supply_property psp,
->                                  union power_supply_propval *val)
->  {
-> +       struct olpc_battery_data *data = power_supply_get_drvdata(psy);
->         int ret = 0;
->         __be16 ec_word;
->         uint8_t ec_byte;
-> @@ -347,7 +351,7 @@ static int olpc_bat_get_property(struct power_supply *psy,
->
->         switch (psp) {
->         case POWER_SUPPLY_PROP_STATUS:
-> -               ret = olpc_bat_get_status(val, ec_byte);
-> +               ret = olpc_bat_get_status(data, val, ec_byte);
->                 if (ret)
->                         return ret;
->                 break;
-> @@ -450,8 +454,8 @@ static int olpc_bat_get_property(struct power_supply *psy,
->                 if (ret)
->                         return ret;
->
-> -               sprintf(bat_serial, "%016llx", (long long)be64_to_cpu(ser_buf));
-> -               val->strval = bat_serial;
-> +               sprintf(data->bat_serial, "%016llx", (long long)be64_to_cpu(ser_buf));
-> +               val->strval = data->bat_serial;
->                 break;
->         case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
->                 ret = olpc_bat_get_voltage_max_design(val);
-> @@ -579,17 +583,17 @@ static struct power_supply_desc olpc_bat_desc = {
->         .use_for_apm = 1,
->  };
->
-> -static struct power_supply *olpc_bat;
-> -
->  static int olpc_battery_suspend(struct platform_device *pdev,
->                                 pm_message_t state)
->  {
-> -       if (device_may_wakeup(&olpc_ac->dev))
-> +       struct olpc_battery_data *data = platform_get_drvdata(pdev);
-> +
-> +       if (device_may_wakeup(&data->olpc_ac->dev))
->                 olpc_ec_wakeup_set(EC_SCI_SRC_ACPWR);
->         else
->                 olpc_ec_wakeup_clear(EC_SCI_SRC_ACPWR);
->
-> -       if (device_may_wakeup(&olpc_bat->dev))
-> +       if (device_may_wakeup(&data->olpc_bat->dev))
->                 olpc_ec_wakeup_set(EC_SCI_SRC_BATTERY | EC_SCI_SRC_BATSOC
->                                    | EC_SCI_SRC_BATERR);
->         else
-> @@ -601,7 +605,8 @@ static int olpc_battery_suspend(struct platform_device *pdev,
->
->  static int olpc_battery_probe(struct platform_device *pdev)
->  {
-> -       int ret;
-> +       struct power_supply_config psy_cfg = {};
-> +       struct olpc_battery_data *data;
+>                         val->intval = POWER_SUPPLY_STATUS_CHARGING;
+>                 else if (ec_byte & BAT_STAT_DISCHARGING)
+> @@ -608,14 +607,32 @@ static int olpc_battery_probe(struct platform_device *pdev)
+>         struct power_supply_config psy_cfg = {};
+>         struct olpc_battery_data *data;
 >         uint8_t status;
->
->         /*
-> @@ -620,9 +625,13 @@ static int olpc_battery_probe(struct platform_device *pdev)
->
->         /* Ignore the status. It doesn't actually matter */
->
-> -       olpc_ac = power_supply_register(&pdev->dev, &olpc_ac_desc, NULL);
-> -       if (IS_ERR(olpc_ac))
-> -               return PTR_ERR(olpc_ac);
-> +       psy_cfg.of_node = pdev->dev.of_node;
-> +       psy_cfg.drv_data = data;
+
+> +       unsigned char ecver[1];
+
+isn't it simple
+ uint8_t ecver;
+?
+
+> +       int ret;
 > +
-> +       data->olpc_ac = devm_power_supply_register(&pdev->dev, &olpc_ac_desc, &psy_cfg);
-> +       if (IS_ERR(data->olpc_ac))
-> +               return PTR_ERR(data->olpc_ac);
+> +       data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+> +       if (!data)
+> +               return -ENOMEM;
+> +       platform_set_drvdata(pdev, data);
 > +
->         if (of_property_match_string(pdev->dev.of_node, "compatible",
->                                         "olpc,xo1.5-battery") >= 0) {
->                 /* XO-1.5 */
-> @@ -634,42 +643,36 @@ static int olpc_battery_probe(struct platform_device *pdev)
->                 olpc_bat_desc.num_properties = ARRAY_SIZE(olpc_xo1_bat_props);
->         }
->
-> -       olpc_bat = power_supply_register(&pdev->dev, &olpc_bat_desc, NULL);
-> -       if (IS_ERR(olpc_bat)) {
-> -               ret = PTR_ERR(olpc_bat);
-> -               goto battery_failed;
-> -       }
-> +       data->olpc_bat = devm_power_supply_register(&pdev->dev, &olpc_bat_desc, &psy_cfg);
-> +       if (IS_ERR(data->olpc_bat))
-> +               return PTR_ERR(data->olpc_bat);
->
-> -       ret = device_create_bin_file(&olpc_bat->dev, &olpc_bat_eeprom);
-> +       ret = device_create_bin_file(&data->olpc_bat->dev, &olpc_bat_eeprom);
->         if (ret)
-> -               goto eeprom_failed;
+> +       /* See if the EC is already there and get the EC revision */
+> +       ret = olpc_ec_cmd(EC_FIRMWARE_REV, NULL, 0, ecver, ARRAY_SIZE(ecver));
+
+> +       if (ret) {
+
+> +               if (ret == -ENODEV)
+> +                       return -EPROBE_DEFER;
+
+Yeah, exactly a question I asked somewhere in the first part of the series.
+
 > +               return ret;
+> +       }
 >
-> -       ret = device_create_file(&olpc_bat->dev, &olpc_bat_error);
-> +       ret = device_create_file(&data->olpc_bat->dev, &olpc_bat_error);
->         if (ret)
->                 goto error_failed;
->
->         if (olpc_ec_wakeup_available()) {
-> -               device_set_wakeup_capable(&olpc_ac->dev, true);
-> -               device_set_wakeup_capable(&olpc_bat->dev, true);
-> +               device_set_wakeup_capable(&data->olpc_ac->dev, true);
-> +               device_set_wakeup_capable(&data->olpc_bat->dev, true);
+> -       /*
+> -        * We've seen a number of EC protocol changes; this driver requires
+> -        * the latest EC protocol, supported by 0x44 and above.
+> -        */
+> -       if (olpc_platform_info.ecver < 0x44) {
+> +       if (ecver[0] > 0x44) {
+> +               /* XO 1 or 1.5 with a new EC firmware. */
+> +               data->new_proto = 1;
+> +       } else if (ecver[0] < 0x44) {
+> +               /*
+> +                * We've seen a number of EC protocol changes; this driver
+> +                * requires the latest EC protocol, supported by 0x44 and above.
+> +                */
+>                 printk(KERN_NOTICE "OLPC EC version 0x%02x too old for "
+> -                       "battery driver.\n", olpc_platform_info.ecver);
+> +                       "battery driver.\n", ecver[0]);
+>                 return -ENXIO;
 >         }
->
->         return 0;
->
->  error_failed:
-> -       device_remove_bin_file(&olpc_bat->dev, &olpc_bat_eeprom);
-> -eeprom_failed:
-> -       power_supply_unregister(olpc_bat);
-> -battery_failed:
-> -       power_supply_unregister(olpc_ac);
-> +       device_remove_bin_file(&data->olpc_bat->dev, &olpc_bat_eeprom);
->         return ret;
->  }
->
->  static int olpc_battery_remove(struct platform_device *pdev)
->  {
-> -       device_remove_file(&olpc_bat->dev, &olpc_bat_error);
-> -       device_remove_bin_file(&olpc_bat->dev, &olpc_bat_eeprom);
-> -       power_supply_unregister(olpc_bat);
-> -       power_supply_unregister(olpc_ac);
-> +       struct olpc_battery_data *data = platform_get_drvdata(pdev);
-> +
-> +       device_remove_file(&data->olpc_bat->dev, &olpc_bat_error);
-> +       device_remove_bin_file(&data->olpc_bat->dev, &olpc_bat_eeprom);
->         return 0;
->  }
 >
 > --
 > 2.19.0
