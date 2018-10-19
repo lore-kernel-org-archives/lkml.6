@@ -2,108 +2,115 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE09FECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7D4ECDE45
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:27:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D8C32086E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:27:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uS1/SbCK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D8C32086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EB2BC2086E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:27:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB2BC2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbeJTCeP (ORCPT
+        id S1727784AbeJTCep (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 22:34:15 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55022 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727547AbeJTCeP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 22:34:15 -0400
-Received: by mail-wm1-f66.google.com with SMTP id r63-v6so4521977wma.4;
-        Fri, 19 Oct 2018 11:27:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZdxoQoo4AkSpovn00yKshE09tvQAz5dvOIoBV8/11ec=;
-        b=uS1/SbCKnFBhH5ldRAPjvOydJGeMLotG9AAxj5N2Emf4zAQSsNT0v/zk3C31X9i3Pr
-         0vTGEYJc5TjklobvP47r/u05qI4dWOhWaI4H/F06yfenFpelpZqpkCaglXud98vupjVJ
-         TQspfPMXE7cs1pOricBcnrAkhoTmRKJtzbMMzTW+Qi11lil0TVbMr23tozOdswhQ9Met
-         f6ADxVk3ZE1X81vj/GzPpad04zr/t4lAPf+vmepIyhTx5KUkVmjsScNX0WeLmj7ANrJ2
-         dkAzgXEv0ndfy/nn+Zqs4YdgKWjZLHyXYDX0oA5q0JuPA9iNW1bhD4W7NtDQuPP7JV18
-         wN1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZdxoQoo4AkSpovn00yKshE09tvQAz5dvOIoBV8/11ec=;
-        b=Unmu/g5BJcB/oOZOgnkOVvFebokrVz7wnR12DW3Va0MC0z56aBYxwpYHXxet5gQFtp
-         OQuu8TFn2NbeW/761vtsOtjuiGpv0F+dsr1TIFVYjPjqe6pkrf7rg72mcj8vYiKdmITG
-         ogGpmfJzURCFeyBOEwW0RGPZWbkJ6WOrEGcY2e2etxYISpvcsw1sLpye81xiL7Gyoa3F
-         11QNdOgqkqTTeAA2+3JheD/4fFonGzm1Hi4yX/lmMBSlDC8YIiJYbIBNJhWDdAjev1VU
-         vjnhzQTjrxPYHsfA6i8ju3NfnUX7FdAuSDKMMtTtdLAZOQMkrxSPQL5+NUMtkBmlIzQv
-         /opw==
-X-Gm-Message-State: ABuFfojFxvx9j39GNUgubwT5I9C5aa3R2uho5oDVhvrTQFHAQfW0TVtE
-        2x/MNDFN0jxFmNX8tnYobx8=
-X-Google-Smtp-Source: ACcGV60V7K0RvwDQj8XkkosK28saFClhbIa830C+dEfD0FaGiutZYmwbdoB0NKdCaqlql5MvE9JNxw==
-X-Received: by 2002:a1c:c683:: with SMTP id w125-v6mr5895086wmf.117.1539973620581;
-        Fri, 19 Oct 2018 11:27:00 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id j46-v6sm34692376wre.91.2018.10.19.11.26.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Oct 2018 11:26:59 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] bpf/test_run: Add braces to initialization in bpf_prog_test_run_skb
-Date:   Fri, 19 Oct 2018 11:26:50 -0700
-Message-Id: <20181019182649.24301-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 19 Oct 2018 22:34:45 -0400
+Received: from mga01.intel.com ([192.55.52.88]:54180 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727193AbeJTCep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 22:34:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 11:27:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,401,1534834800"; 
+   d="scan'208";a="267150062"
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
+  by orsmga005.jf.intel.com with ESMTP; 19 Oct 2018 11:27:19 -0700
+From:   Tomas Winkler <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH v7 00/21] tpm: separate tpm 1.x and tpm 2.x commands
+Date:   Fri, 19 Oct 2018 21:22:46 +0300
+Message-Id: <20181019182307.17745-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.14.4
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+This patch series provides initial separation of tpm 1.x and tpm 2.x
+commands, in foresight that the tpm 1.x chips will eventually phase out
+and can be compiled out for modern systems.
+ A new file is added tpm1-cmd.c that contains tpm 1.x specific commands.
+In addition, tpm 1.x commands are now implemented using tpm_buf
+structure and instead of tpm_cmd_t construct. The latter is now removed.
 
-net/bpf/test_run.c:120:20: error: suggest braces around initialization
-of subobject [-Werror,-Wmissing-braces]
-        struct sock sk = {0};
-                          ^
-                          {}
+Note: my tpm 1.x HW availability is limited hence some more testing is needed.
 
-Add the braces to properly initialize all subobjects.
+This series also contains two trivial cleanups and addition of new
+commands by TCG spec 1.36, now supported on new Intet's platforms.
 
-Fixes: 75079847e9d0 ("bpf: add tests for direct packet access from CGROUP_SKB")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- net/bpf/test_run.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+V6: 1. Dropping tpm: move pcr extend code to tpm2-cmd.c and rebasing code over that change
+    2. Trivial fixes in kdoc and header
+V7: 1. Add backportable patch for nuvoton duration calculation
+    2. Rebase durations patches over it.
+    3. Fix notorious typo tmp->tpm
 
-diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
-index 8dccac305268..65e049c61a7a 100644
---- a/net/bpf/test_run.c
-+++ b/net/bpf/test_run.c
-@@ -117,7 +117,7 @@ int bpf_prog_test_run_skb(struct bpf_prog *prog, const union bpf_attr *kattr,
- 	u32 retval, duration;
- 	int hh_len = ETH_HLEN;
- 	struct sk_buff *skb;
--	struct sock sk = {0};
-+	struct sock sk = { { {0} } };
- 	void *data;
- 	int ret;
- 
+
+Tomas Winkler (21):
+  tpm: tpm_i2c_nuvoton: use correct command duration for TPM 2.x
+  tpm2: add new tpm2 commands according to TCG 1.36
+  tpm: sort objects in the Makefile
+  tpm: factor out tpm 1.x duration calculation to tpm1-cmd.c
+  tpm: add tpm_calc_ordinal_duration() wrapper
+  tpm: factor out tpm_get_timeouts()
+  tpm: move tpm1_pcr_extend to tpm1-cmd.c
+  tpm: move tpm_getcap to tpm1-cmd.c
+  tpm: factor out tpm1_get_random into tpm1-cmd.c
+  tpm: move tpm 1.x selftest code from tpm-interface.c tpm1-cmd.c
+  tpm: factor out tpm 1.x pm suspend flow into tpm1-cmd.c
+  tpm: factor out tpm_startup function
+  tpm: add tpm_auto_startup() into tpm-interface.c
+  tpm: tpm-interface.c drop unused macros
+  tpm: tpm-space.c remove unneeded semicolon
+  tpm: tpm1: rewrite tpm1_get_random() using tpm_buf structure
+  tpm1: implement tpm1_pcr_read_dev() using tpm_buf structure
+  tpm1: rename tpm1_pcr_read_dev to tpm1_pcr_read()
+  tpm1: reimplement SAVESTATE using tpm_buf
+  tpm1: reimplement tpm1_continue_selftest() using tpm_buf
+  tpm: use u32 instead of int for PCR index
+
+ drivers/char/tpm/Makefile            |  16 +-
+ drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
+ drivers/char/tpm/tpm-chip.c          |  11 +-
+ drivers/char/tpm/tpm-interface.c     | 817 +++--------------------------------
+ drivers/char/tpm/tpm-sysfs.c         |  52 +--
+ drivers/char/tpm/tpm.h               |  97 ++---
+ drivers/char/tpm/tpm1-cmd.c          | 781 +++++++++++++++++++++++++++++++++
+ drivers/char/tpm/tpm2-cmd.c          | 301 +++++++------
+ drivers/char/tpm/tpm2-space.c        |   2 +-
+ drivers/char/tpm/tpm_i2c_nuvoton.c   |  11 +-
+ drivers/char/tpm/tpm_tis_core.c      |  10 +-
+ include/linux/tpm.h                  |  11 +-
+ security/integrity/ima/ima_crypto.c  |   5 +-
+ 13 files changed, 1082 insertions(+), 1034 deletions(-)
+ create mode 100644 drivers/char/tpm/tpm1-cmd.c
+
 -- 
-2.19.1
+2.14.4
 
