@@ -6,178 +6,353 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E21A9ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1829FECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:56:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A35B721476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:55:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A35B721476
+	by mail.kernel.org (Postfix) with ESMTP id AC9D22086E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:56:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC9D22086E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbeJSPAT (ORCPT
+        id S1726960AbeJSPBR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 11:00:19 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:40054 "EHLO pegase1.c-s.fr"
+        Fri, 19 Oct 2018 11:01:17 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:46926 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727610AbeJSPAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 11:00:18 -0400
+        id S1727043AbeJSO7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 10:59:40 -0400
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42bxWS0w8Wz9ttFY;
-        Fri, 19 Oct 2018 08:55:32 +0200 (CEST)
+        by localhost (Postfix) with ESMTP id 42bxVl1hVDz9ttFY;
+        Fri, 19 Oct 2018 08:54:55 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id sELrb-9WrBYd; Fri, 19 Oct 2018 08:55:32 +0200 (CEST)
+        with ESMTP id I58wARqLSPXJ; Fri, 19 Oct 2018 08:54:55 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42bxWR6n4mz9ttFM;
-        Fri, 19 Oct 2018 08:55:31 +0200 (CEST)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42bxVl17bzz9ttFM;
+        Fri, 19 Oct 2018 08:54:55 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2BBD58B8DF;
-        Fri, 19 Oct 2018 08:55:33 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5C2618B8DF;
+        Fri, 19 Oct 2018 08:54:56 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id O2c4tmC1pPrD; Fri, 19 Oct 2018 08:55:33 +0200 (CEST)
+        with ESMTP id nFumCtOIjvfB; Fri, 19 Oct 2018 08:54:56 +0200 (CEST)
 Received: from pc13168vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 09C0C8B75B;
-        Fri, 19 Oct 2018 08:55:33 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 349208B75B;
+        Fri, 19 Oct 2018 08:54:56 +0200 (CEST)
 Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id B96956F496; Fri, 19 Oct 2018 06:55:32 +0000 (UTC)
-Message-Id: <e6d55509dbb979da8c1a3a2b704d300d2f4e19d2.1539931703.git.christophe.leroy@c-s.fr>
+        id 29E6A6F496; Fri, 19 Oct 2018 06:54:56 +0000 (UTC)
+Message-Id: <f9ba93eb7e3de229e7d65a2c8bbcb03603f7df88.1539931702.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1539931702.git.christophe.leroy@c-s.fr>
 References: <cover.1539931702.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v6 20/20] powerpc/mm: reintroduce 16K pages with HW assistance
- on 8xx
+Subject: [PATCH v6 02/20] powerpc/mm: Move pte_fragment_alloc() to a common
+ location
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Fri, 19 Oct 2018 06:55:32 +0000 (UTC)
+Date:   Fri, 19 Oct 2018 06:54:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using this HW assistance implies some constraints on the
-page table structure:
-- Regardless of the main page size used (4k or 16k), the
-level 1 table (PGD) contains 1024 entries and each PGD entry covers
-a 4Mbytes area which is managed by a level 2 table (PTE) containing
-also 1024 entries each describing a 4k page.
-- 16k pages require 4 identifical entries in the L2 table
-- 512k pages PTE have to be spread every 128 bytes in the L2 table
-- 8M pages PTE are at the address pointed by the L1 entry and each
-8M page require 2 identical entries in the PGD.
+In preparation of next patch which generalises the use of
+pte_fragment_alloc() for all, this patch moves the related functions
+in a place that is common to all subarches.
 
-In order to use hardware assistance with 16K pages, this patch does
-the following modifications:
-- Make PGD size independent of the main page size
-- In 16k pages mode, redefine pte_t as a struct with 4 elements,
-and populate those 4 elements in __set_pte_at() and pte_update()
-- Adapt the size of the hugepage tables.
+The 8xx will need that for supporting 16k pages, as in that mode
+page tables still have a size of 4k.
 
+Since pte_fragment with only once fragment is not different
+from what is done in the general case, we can easily migrate all
+subarchs to pte fragments.
+
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/Kconfig                         |  2 +-
- arch/powerpc/include/asm/nohash/32/pgtable.h | 18 +++++++++++++++++-
- arch/powerpc/include/asm/nohash/pgtable.h    |  4 ++++
- arch/powerpc/include/asm/pgtable-types.h     |  4 ++++
- 4 files changed, 26 insertions(+), 2 deletions(-)
+ arch/powerpc/include/asm/book3s/64/pgalloc.h |   1 +
+ arch/powerpc/mm/Makefile                     |   4 +-
+ arch/powerpc/mm/mmu_context_book3s64.c       |  15 ----
+ arch/powerpc/mm/pgtable-book3s64.c           |  85 --------------------
+ arch/powerpc/mm/pgtable-frag.c               | 116 +++++++++++++++++++++++++++
+ 5 files changed, 120 insertions(+), 101 deletions(-)
+ create mode 100644 arch/powerpc/mm/pgtable-frag.c
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 287befcf37ab..3d008115fe18 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -690,7 +690,7 @@ config PPC_4K_PAGES
+diff --git a/arch/powerpc/include/asm/book3s/64/pgalloc.h b/arch/powerpc/include/asm/book3s/64/pgalloc.h
+index bfed4cf3b2f3..6c2808c0f052 100644
+--- a/arch/powerpc/include/asm/book3s/64/pgalloc.h
++++ b/arch/powerpc/include/asm/book3s/64/pgalloc.h
+@@ -39,6 +39,7 @@ extern struct vmemmap_backing *vmemmap_list;
+ extern struct kmem_cache *pgtable_cache[];
+ #define PGT_CACHE(shift) pgtable_cache[shift]
  
- config PPC_16K_PAGES
- 	bool "16k page size"
--	depends on 44x
-+	depends on 44x || PPC_8xx
++void pte_frag_destroy(void *pte_frag);
+ extern pte_t *pte_fragment_alloc(struct mm_struct *, unsigned long, int);
+ extern pmd_t *pmd_fragment_alloc(struct mm_struct *, unsigned long);
+ extern void pte_fragment_free(unsigned long *, int);
+diff --git a/arch/powerpc/mm/Makefile b/arch/powerpc/mm/Makefile
+index ca96e7be4d0e..3cbb1acf0745 100644
+--- a/arch/powerpc/mm/Makefile
++++ b/arch/powerpc/mm/Makefile
+@@ -15,7 +15,9 @@ obj-$(CONFIG_PPC_MMU_NOHASH)	+= mmu_context_nohash.o tlb_nohash.o \
+ obj-$(CONFIG_PPC_BOOK3E)	+= tlb_low_$(BITS)e.o
+ hash64-$(CONFIG_PPC_NATIVE)	:= hash_native_64.o
+ obj-$(CONFIG_PPC_BOOK3E_64)   += pgtable-book3e.o
+-obj-$(CONFIG_PPC_BOOK3S_64)	+= pgtable-hash64.o hash_utils_64.o slb.o $(hash64-y) mmu_context_book3s64.o pgtable-book3s64.o
++obj-$(CONFIG_PPC_BOOK3S_64)	+= pgtable-hash64.o hash_utils_64.o slb.o \
++				   $(hash64-y) mmu_context_book3s64.o \
++				   pgtable-book3s64.o pgtable-frag.o
+ obj-$(CONFIG_PPC_RADIX_MMU)	+= pgtable-radix.o tlb-radix.o
+ obj-$(CONFIG_PPC_STD_MMU_32)	+= ppc_mmu_32.o hash_low_32.o mmu_context_hash32.o
+ obj-$(CONFIG_PPC_STD_MMU)	+= tlb_hash$(BITS).o
+diff --git a/arch/powerpc/mm/mmu_context_book3s64.c b/arch/powerpc/mm/mmu_context_book3s64.c
+index 510f103d7813..f720c5cc0b5e 100644
+--- a/arch/powerpc/mm/mmu_context_book3s64.c
++++ b/arch/powerpc/mm/mmu_context_book3s64.c
+@@ -164,21 +164,6 @@ static void destroy_contexts(mm_context_t *ctx)
+ 	}
+ }
  
- config PPC_64K_PAGES
- 	bool "64k page size"
-diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index c33fbbb7ce82..19941fb8d690 100644
---- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -19,9 +19,15 @@ extern int icache_44x_need_flush;
- 
- #endif /* __ASSEMBLY__ */
- 
-+#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
-+#define PTE_INDEX_SIZE  (PTE_SHIFT - 2)
-+#define PTE_FRAG_NR		4
-+#define PTE_FRAG_SIZE_SHIFT	12
-+#else
- #define PTE_INDEX_SIZE	PTE_SHIFT
- #define PTE_FRAG_NR		1
- #define PTE_FRAG_SIZE_SHIFT	PAGE_SHIFT
-+#endif
- #define PTE_FRAG_SIZE (1UL << PTE_FRAG_SIZE_SHIFT)
- 
- #define PMD_INDEX_SIZE	0
-@@ -52,7 +58,11 @@ extern int icache_44x_need_flush;
-  * -Matt
-  */
- /* PGDIR_SHIFT determines what a top-level page table entry can map */
-+#ifdef CONFIG_PPC_8xx
-+#define PGDIR_SHIFT	22
-+#else
- #define PGDIR_SHIFT	(PAGE_SHIFT + PTE_INDEX_SIZE)
-+#endif
- #define PGDIR_SIZE	(1UL << PGDIR_SHIFT)
- #define PGDIR_MASK	(~(PGDIR_SIZE-1))
- 
-@@ -236,7 +246,13 @@ static inline unsigned long pte_update(pte_t *p,
- 	: "cc" );
- #else /* PTE_ATOMIC_UPDATES */
- 	unsigned long old = pte_val(*p);
--	*p = __pte((old & ~clr) | set);
-+	unsigned long new = (old & ~clr) | set;
-+
-+#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
-+	p->pte = p->pte1 = p->pte2 = p->pte3 = new;
-+#else
-+	*p = __pte(new);
-+#endif
- #endif /* !PTE_ATOMIC_UPDATES */
- 
- #ifdef CONFIG_44x
-diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
-index 70ff23974b59..1ca1c1864b32 100644
---- a/arch/powerpc/include/asm/nohash/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/pgtable.h
-@@ -209,7 +209,11 @@ static inline void __set_pte_at(struct mm_struct *mm, unsigned long addr,
- 	/* Anything else just stores the PTE normally. That covers all 64-bit
- 	 * cases, and 32-bit non-hash with 32-bit PTEs.
- 	 */
-+#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
-+	ptep->pte = ptep->pte1 = ptep->pte2 = ptep->pte3 = pte_val(pte);
-+#else
- 	*ptep = pte;
-+#endif
- 
- 	/*
- 	 * With hardware tablewalk, a sync is needed to ensure that
-diff --git a/arch/powerpc/include/asm/pgtable-types.h b/arch/powerpc/include/asm/pgtable-types.h
-index eccb30b38b47..3b0edf041b2e 100644
---- a/arch/powerpc/include/asm/pgtable-types.h
-+++ b/arch/powerpc/include/asm/pgtable-types.h
-@@ -3,7 +3,11 @@
- #define _ASM_POWERPC_PGTABLE_TYPES_H
- 
- /* PTE level */
-+#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
-+typedef struct { pte_basic_t pte, pte1, pte2, pte3; } pte_t;
-+#else
- typedef struct { pte_basic_t pte; } pte_t;
-+#endif
- #define __pte(x)	((pte_t) { (x) })
- static inline pte_basic_t pte_val(pte_t x)
+-static void pte_frag_destroy(void *pte_frag)
+-{
+-	int count;
+-	struct page *page;
+-
+-	page = virt_to_page(pte_frag);
+-	/* drop all the pending references */
+-	count = ((unsigned long)pte_frag & ~PAGE_MASK) >> PTE_FRAG_SIZE_SHIFT;
+-	/* We allow PTE_FRAG_NR fragments from a PTE page */
+-	if (atomic_sub_and_test(PTE_FRAG_NR - count, &page->pt_frag_refcount)) {
+-		pgtable_page_dtor(page);
+-		__free_page(page);
+-	}
+-}
+-
+ static void pmd_frag_destroy(void *pmd_frag)
  {
+ 	int count;
+diff --git a/arch/powerpc/mm/pgtable-book3s64.c b/arch/powerpc/mm/pgtable-book3s64.c
+index 43e99e1d947b..84ff3403239c 100644
+--- a/arch/powerpc/mm/pgtable-book3s64.c
++++ b/arch/powerpc/mm/pgtable-book3s64.c
+@@ -321,91 +321,6 @@ void pmd_fragment_free(unsigned long *pmd)
+ 	}
+ }
+ 
+-static pte_t *get_pte_from_cache(struct mm_struct *mm)
+-{
+-	void *pte_frag, *ret;
+-
+-	spin_lock(&mm->page_table_lock);
+-	ret = mm->context.pte_frag;
+-	if (ret) {
+-		pte_frag = ret + PTE_FRAG_SIZE;
+-		/*
+-		 * If we have taken up all the fragments mark PTE page NULL
+-		 */
+-		if (((unsigned long)pte_frag & ~PAGE_MASK) == 0)
+-			pte_frag = NULL;
+-		mm->context.pte_frag = pte_frag;
+-	}
+-	spin_unlock(&mm->page_table_lock);
+-	return (pte_t *)ret;
+-}
+-
+-static pte_t *__alloc_for_ptecache(struct mm_struct *mm, int kernel)
+-{
+-	void *ret = NULL;
+-	struct page *page;
+-
+-	if (!kernel) {
+-		page = alloc_page(PGALLOC_GFP | __GFP_ACCOUNT);
+-		if (!page)
+-			return NULL;
+-		if (!pgtable_page_ctor(page)) {
+-			__free_page(page);
+-			return NULL;
+-		}
+-	} else {
+-		page = alloc_page(PGALLOC_GFP);
+-		if (!page)
+-			return NULL;
+-	}
+-
+-	atomic_set(&page->pt_frag_refcount, 1);
+-
+-	ret = page_address(page);
+-	/*
+-	 * if we support only one fragment just return the
+-	 * allocated page.
+-	 */
+-	if (PTE_FRAG_NR == 1)
+-		return ret;
+-	spin_lock(&mm->page_table_lock);
+-	/*
+-	 * If we find pgtable_page set, we return
+-	 * the allocated page with single fragement
+-	 * count.
+-	 */
+-	if (likely(!mm->context.pte_frag)) {
+-		atomic_set(&page->pt_frag_refcount, PTE_FRAG_NR);
+-		mm->context.pte_frag = ret + PTE_FRAG_SIZE;
+-	}
+-	spin_unlock(&mm->page_table_lock);
+-
+-	return (pte_t *)ret;
+-}
+-
+-pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int kernel)
+-{
+-	pte_t *pte;
+-
+-	pte = get_pte_from_cache(mm);
+-	if (pte)
+-		return pte;
+-
+-	return __alloc_for_ptecache(mm, kernel);
+-}
+-
+-void pte_fragment_free(unsigned long *table, int kernel)
+-{
+-	struct page *page = virt_to_page(table);
+-
+-	BUG_ON(atomic_read(&page->pt_frag_refcount) <= 0);
+-	if (atomic_dec_and_test(&page->pt_frag_refcount)) {
+-		if (!kernel)
+-			pgtable_page_dtor(page);
+-		__free_page(page);
+-	}
+-}
+-
+ static inline void pgtable_free(void *table, int index)
+ {
+ 	switch (index) {
+diff --git a/arch/powerpc/mm/pgtable-frag.c b/arch/powerpc/mm/pgtable-frag.c
+new file mode 100644
+index 000000000000..d61e7c2a9a79
+--- /dev/null
++++ b/arch/powerpc/mm/pgtable-frag.c
+@@ -0,0 +1,116 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ *  Handling Page Tables through page fragments
++ *
++ */
++
++#include <linux/kernel.h>
++#include <linux/gfp.h>
++#include <linux/mm.h>
++#include <linux/percpu.h>
++#include <linux/hardirq.h>
++#include <linux/hugetlb.h>
++#include <asm/pgalloc.h>
++#include <asm/tlbflush.h>
++#include <asm/tlb.h>
++
++void pte_frag_destroy(void *pte_frag)
++{
++	int count;
++	struct page *page;
++
++	page = virt_to_page(pte_frag);
++	/* drop all the pending references */
++	count = ((unsigned long)pte_frag & ~PAGE_MASK) >> PTE_FRAG_SIZE_SHIFT;
++	/* We allow PTE_FRAG_NR fragments from a PTE page */
++	if (atomic_sub_and_test(PTE_FRAG_NR - count, &page->pt_frag_refcount)) {
++		pgtable_page_dtor(page);
++		__free_page(page);
++	}
++}
++
++static pte_t *get_pte_from_cache(struct mm_struct *mm)
++{
++	void *pte_frag, *ret;
++
++	spin_lock(&mm->page_table_lock);
++	ret = mm->context.pte_frag;
++	if (ret) {
++		pte_frag = ret + PTE_FRAG_SIZE;
++		/*
++		 * If we have taken up all the fragments mark PTE page NULL
++		 */
++		if (((unsigned long)pte_frag & ~PAGE_MASK) == 0)
++			pte_frag = NULL;
++		mm->context.pte_frag = pte_frag;
++	}
++	spin_unlock(&mm->page_table_lock);
++	return (pte_t *)ret;
++}
++
++static pte_t *__alloc_for_ptecache(struct mm_struct *mm, int kernel)
++{
++	void *ret = NULL;
++	struct page *page;
++
++	if (!kernel) {
++		page = alloc_page(PGALLOC_GFP | __GFP_ACCOUNT);
++		if (!page)
++			return NULL;
++		if (!pgtable_page_ctor(page)) {
++			__free_page(page);
++			return NULL;
++		}
++	} else {
++		page = alloc_page(PGALLOC_GFP);
++		if (!page)
++			return NULL;
++	}
++
++	atomic_set(&page->pt_frag_refcount, 1);
++
++	ret = page_address(page);
++	/*
++	 * if we support only one fragment just return the
++	 * allocated page.
++	 */
++	if (PTE_FRAG_NR == 1)
++		return ret;
++	spin_lock(&mm->page_table_lock);
++	/*
++	 * If we find pgtable_page set, we return
++	 * the allocated page with single fragement
++	 * count.
++	 */
++	if (likely(!mm->context.pte_frag)) {
++		atomic_set(&page->pt_frag_refcount, PTE_FRAG_NR);
++		mm->context.pte_frag = ret + PTE_FRAG_SIZE;
++	}
++	spin_unlock(&mm->page_table_lock);
++
++	return (pte_t *)ret;
++}
++
++pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int kernel)
++{
++	pte_t *pte;
++
++	pte = get_pte_from_cache(mm);
++	if (pte)
++		return pte;
++
++	return __alloc_for_ptecache(mm, kernel);
++}
++
++void pte_fragment_free(unsigned long *table, int kernel)
++{
++	struct page *page = virt_to_page(table);
++
++	BUG_ON(atomic_read(&page->pt_frag_refcount) <= 0);
++	if (atomic_dec_and_test(&page->pt_frag_refcount)) {
++		if (!kernel)
++			pgtable_page_dtor(page);
++		__free_page(page);
++	}
++}
 -- 
 2.13.3
 
