@@ -2,83 +2,131 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3289ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D9B3ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:47:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EDBF21476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:47:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EDBF21476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codemonkey.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 2449A21479
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:47:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="NBfmFR7a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2449A21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727720AbeJSVxU (ORCPT
+        id S1727744AbeJSVxZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 17:53:20 -0400
-Received: from scorn.kernelslacker.org ([45.56.101.199]:54586 "EHLO
-        scorn.kernelslacker.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727004AbeJSVxT (ORCPT
+        Fri, 19 Oct 2018 17:53:25 -0400
+Received: from mta-p6.oit.umn.edu ([134.84.196.206]:33296 "EHLO
+        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727004AbeJSVxZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 17:53:19 -0400
-Received: from [2601:196:4600:5b90:ae9e:17ff:feb7:72ca] (helo=wopr.kernelslacker.org)
-        by scorn.kernelslacker.org with esmtp (Exim 4.89)
-        (envelope-from <davej@codemonkey.org.uk>)
-        id 1gDV7I-0000wi-RP; Fri, 19 Oct 2018 09:47:04 -0400
-Received: by wopr.kernelslacker.org (Postfix, from userid 1026)
-        id 78E8356028D; Fri, 19 Oct 2018 09:47:04 -0400 (EDT)
-Date:   Fri, 19 Oct 2018 09:47:04 -0400
-From:   Dave Jones <davej@codemonkey.org.uk>
-To:     Meelis Roos <mroos@linux.ee>
-Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        davem@davemloft.net
-Subject: Re: netconsole warning in 4.19.0-rc7
-Message-ID: <20181019134704.ky2vqeij6m77qrpg@codemonkey.org.uk>
-Mail-Followup-To: Dave Jones <davej@codemonkey.org.uk>,
-        Meelis Roos <mroos@linux.ee>, Cong Wang <xiyou.wangcong@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        davem@davemloft.net
-References: <e0611057-1b5b-9990-b9fa-060a9b5eba40@linux.ee>
- <CAM_iQpU0+LVwgMea32KQWf8z6Bp1VTmWOGnWNwNSmV0PZzf_ew@mail.gmail.com>
- <20181017034047.nrhstc3b4wzevnri@codemonkey.org.uk>
- <20181017035038.czaqown24rnjn2pw@codemonkey.org.uk>
- <fc91f629-8b91-c8c6-3c62-ffb400588597@linux.ee>
- <20181018145922.ytqxvdihp3iqounl@codemonkey.org.uk>
- <ddc5fea8-6c66-d096-57bb-c86a3771fec4@linux.ee>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ddc5fea8-6c66-d096-57bb-c86a3771fec4@linux.ee>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Fri, 19 Oct 2018 17:53:25 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 0039DD0B
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 13:47:11 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p6.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id DMIA55incBgg for <linux-kernel@vger.kernel.org>;
+        Fri, 19 Oct 2018 08:47:11 -0500 (CDT)
+Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com [209.85.210.69])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id C9A32D00
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 08:47:11 -0500 (CDT)
+Received: by mail-ot1-f69.google.com with SMTP id j47so24577267ota.16
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 06:47:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=8Zv4rM0IDAQMH6W4AX5bAjSa1qfI0Q6lKVETucG8J98=;
+        b=NBfmFR7aP/pl2L1KUTnvbg1rmmmal3rXAIuOG66As/XkPZuXtLDB4qcKLixKG7S6kw
+         G2JB4a70411Y5mn8QnASH/cpgnyKayy/rLTub8eiu/lSr6jOrjwV/bT3odtTr4EsoBdd
+         Cst6i5e/+c7BFvt98yxBJgck2vRhxrvFORSbs4N3TzE1jNLULCjUv+gxzZTUi1EZyesk
+         JSOdh1ceQZ//h78Q8ERX/IvFidV+cbzw/2jurXAt07itXIh4YHZu3rWg9r4MEHArsxjf
+         bxaGszNxP5G0xsLYJpG4wPIhGPZnsmRsDDraOME/RrtAb5QNMTOL5pM6dtFlZYVeBGob
+         ooMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8Zv4rM0IDAQMH6W4AX5bAjSa1qfI0Q6lKVETucG8J98=;
+        b=Y56GWPkODliQyIvdj87Uepz2/OCVN6D+DpforQI3kyplu4ZdneSZ0xmw8dg4Z7uDSu
+         UChb40JOjo9fvUksoSQc2BVgibXB16ATLbyxU5Mm8tA5ZijQa71v14aGwKnvljAGiTAz
+         GuTprfpE3QePOVh4GsMoVpzo10vJq6vKRuSCiKsXbbZSD9MwEIiQf9CuXolYF1VQStHP
+         Kw4vvS2ZCWXaqJpmPMs8hvhAIN8AP7QNstEz3Hu4juFQKWV6rEhPbXce42r7Z7eYHHIF
+         VKh1fwNvKTpCgUBOO9X46CLZrY/Q/t1ra98owd4emtqngM6pDm0AcCgYaotkqlZoV20+
+         BNhg==
+X-Gm-Message-State: ABuFfogmugzFMZxZtNmajCRhNwiP2+XSycZVA3P+1wY2wHRnC92BiBPi
+        LkIcHMaQO1DyzfJd+/GV0UooHflvKHx2eiurN3Rx/ze1Gg4LievTSZabmpsK++os7n9vCRi6EdB
+        oRjg3b0uEUxPB3osRkxRfdmrLHKhN
+X-Received: by 2002:aca:5c85:: with SMTP id q127-v6mr17761598oib.301.1539956831059;
+        Fri, 19 Oct 2018 06:47:11 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV62nb7Bjxfsip/54qZLyxdZnlBVmka/gQnvpQiMCPTFuKHB3bfmTU0bog7UaB62L7WlDjSVMjQ==
+X-Received: by 2002:aca:5c85:: with SMTP id q127-v6mr17761585oib.301.1539956830638;
+        Fri, 19 Oct 2018 06:47:10 -0700 (PDT)
+Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
+        by smtp.gmail.com with ESMTPSA id n65-v6sm7428519oib.40.2018.10.19.06.47.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 19 Oct 2018 06:47:09 -0700 (PDT)
+From:   Wenwen Wang <wang6495@umn.edu>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] intel_th: Fix a missing-check bug
+Date:   Fri, 19 Oct 2018 08:46:52 -0500
+Message-Id: <1539956812-11300-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 12:51:38PM +0300, Meelis Roos wrote:
- > >   > > I took another look at that error path. Turns out this is all we need I
- > >   > > think..
- > >   >
- > >   > With this patch applied on top of 4.19-rc8, I stll get the warning:
- > >   >
- > >   > [   13.722919] WARNING: CPU: 0 PID: 0 at kernel/softirq.c:168 __local_bh_enable_ip+0x2e/0x44
- > > 
- > > It's going to be a couple days before I get chance to get back to this.
- > > Did the previous patch in this thread (without the _bh) fare any better?
- > 
- > Tried it with rcu_read_unlock() instead, still the same.
+In msc_data_sz(), the 'valid_dw' field of the msc block descriptor 'bdesc'
+is firstly checked to see whether the descriptor has a valid data width. If
+yes, i.e., 'bdesc->valid_dw' is not 0, the data size of this descriptor
+will be returned. It is worth noting that the data size is calculated from
+'bdesc->valid_dw'. The problem here is that 'bdesc' actually points to a
+consistent DMA region, which is allocated through dma_alloc_coherent() in
+msc_buffer_win_alloc(). Given that the device also has the permission to
+access this DMA region, it is possible that a malicious device controlled
+by an attacker can modify the 'valid_dw' field after the if statement but
+before the return statement in msc_data_sz(). Through this way, the device
+can bypass the check and supply unexpected data width.
 
-Ok, this is going to take more time than I have.  DaveM, do you want
-to revert 6fe9487892b32cb1c8b8b0d552ed7222a527fe30, or do you want a
-patch doing the same ?
+This patch copies the 'valid_dw' field to a local variable and then
+performs the check and the calculation on the local variable to avoid the
+above issue.
 
-That'll bring back the rcu warning, but fewer people were complaining
-about that than this new issue..
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+---
+ drivers/hwtracing/intel_th/msu.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-	Dave
+diff --git a/drivers/hwtracing/intel_th/msu.h b/drivers/hwtracing/intel_th/msu.h
+index 9cc8ace..b7d846e 100644
+--- a/drivers/hwtracing/intel_th/msu.h
++++ b/drivers/hwtracing/intel_th/msu.h
+@@ -79,10 +79,12 @@ struct msc_block_desc {
+ 
+ static inline unsigned long msc_data_sz(struct msc_block_desc *bdesc)
+ {
+-	if (!bdesc->valid_dw)
++	u32 valid_dw = bdesc->valid_dw;
++
++	if (!valid_dw)
+ 		return 0;
+ 
+-	return bdesc->valid_dw * 4 - MSC_BDESC;
++	return valid_dw * 4 - MSC_BDESC;
+ }
+ 
+ static inline bool msc_block_wrapped(struct msc_block_desc *bdesc)
+-- 
+2.7.4
 
