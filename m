@@ -2,140 +2,216 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C54EECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6297ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC9A42087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:47:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A35BE2087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:48:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="F/ImssKz";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="k8MJ9oh+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC9A42087A
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NxViLa2A";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fe4rvQCz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A35BE2087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728092AbeJTDyp (ORCPT
+        id S1728097AbeJTDzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 23:54:45 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41160 "EHLO
+        Fri, 19 Oct 2018 23:55:36 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41470 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727983AbeJTDyp (ORCPT
+        with ESMTP id S1727965AbeJTDzg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 23:54:45 -0400
+        Fri, 19 Oct 2018 23:55:36 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 119D060913; Fri, 19 Oct 2018 19:47:14 +0000 (UTC)
+        id 773A460227; Fri, 19 Oct 2018 19:48:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539978434;
-        bh=Wo+QO7O3evTvC7M8Vuj82IXGQtKK22fZ7UGiHjWS+so=;
+        s=default; t=1539978485;
+        bh=tzHvyWRsy1gFGjmfEpLLSS10BjK0trEumcoYifNWtNo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=F/ImssKzckO2pXxS05iRDa3DeBM8OIXUm5Q3jqtbctaL0qTtRbBVDsW8JeH1umOwK
-         smaVXOL3+wm5DeeM34XNSEuNNMis+t1raKAUrepCNB/2LSsRXoWCaIBfrsKbNyRSmU
-         4SegNdVvSU8UZoFfwLzk0tinJGI5joxX2zxTCUHM=
+        b=NxViLa2A+UMvXYQRBpXdlzm2bHh/O9/mshdHX/6+LsecBbe2Kd8HIinN5izVT4jrP
+         tB5Y0oyu+zG8VNMqjXHkJTPpwIDX1FcrCgJ+Ue2DuwNa/kNj8rgJe+d/0KhJkiUMyX
+         6EMjtJG623NaSxNgq5iTo+gytaIWB5qtcOu0pxkQ=
 Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1B2C76034D;
-        Fri, 19 Oct 2018 19:47:13 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6ACF86034D;
+        Fri, 19 Oct 2018 19:48:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1539978433;
-        bh=Wo+QO7O3evTvC7M8Vuj82IXGQtKK22fZ7UGiHjWS+so=;
+        s=default; t=1539978484;
+        bh=tzHvyWRsy1gFGjmfEpLLSS10BjK0trEumcoYifNWtNo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k8MJ9oh+SyqSRm2Lc4bu2ehry6sdlxNmfa2pD0d9/7hNdlWcLtq35+Fb01oMp96ON
-         jWvOJop6UYNY/f9RsOXgiD96FMCim3x0qVCAo61e9eS/Vrca4cYhjeuVh6Q9u4/ylZ
-         sSoCdvVE0jo3tF+fWKBNfTU69IS+vPlGq3dApSLo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1B2C76034D
+        b=fe4rvQCz7QWBwRG3iOo+PSTULoa9Mo1qb+I1lIQ8sgYju3XQYZgYQFRtmY37qGkYK
+         ywgKXQ3C5kGGvn9iHWlO+vtb7eA1M8US3dhSNh1Om+rr5OOdUSYL2nBKBufuXf4mC0
+         w/k4fVSXYBWtryf/MAW4T+ynMt9qjZLMu0DIOQjs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6ACF86034D
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Fri, 19 Oct 2018 13:47:12 -0600
+Date:   Fri, 19 Oct 2018 13:48:03 -0600
 From:   Lina Iyer <ilina@codeaurora.org>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     sboyd@kernel.org, evgreen@chromium.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/1] drivers: pinctrl: qcom: add wakeup capability to
- GPIO
-Message-ID: <20181019194712.GB17444@codeaurora.org>
-References: <20181011002958.2597-1-ilina@codeaurora.org>
- <20181011002958.2597-2-ilina@codeaurora.org>
- <20181019153222.GA17444@codeaurora.org>
- <ad6e314b-2d68-2a77-b77c-54cade0fe0b2@arm.com>
+To:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, mka@chromium.org
+Subject: Re: [PATCH] arm64: dts: sdm845: Add PSCI cpuidle low power states
+Message-ID: <20181019194803.GC17444@codeaurora.org>
+References: <1539622953-4188-1-git-send-email-rplsssn@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <ad6e314b-2d68-2a77-b77c-54cade0fe0b2@arm.com>
+In-Reply-To: <1539622953-4188-1-git-send-email-rplsssn@codeaurora.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19 2018 at 09:53 -0600, Marc Zyngier wrote:
->Hi Lina,
+On Mon, Oct 15 2018 at 11:02 -0600, Raju P.L.S.S.S.N wrote:
+>Add device bindings for cpuidle states for cpu devices.
 >
->On 19/10/18 16:32, Lina Iyer wrote:
->> Hi folks,
->>
->> On Wed, Oct 10 2018 at 18:30 -0600, Lina Iyer wrote:
+>Cc: <devicetree@vger.kernel.org>
+>Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+>---
+Reviewed-by: Lina Iyer <ilina@codeaurora.org>
 
-[...]
-
->>> +static irqreturn_t wake_irq_gpio_handler(int irq, void *data)
->>> +{
->>> +	struct irq_data *irqd = data;
->>> +	struct irq_desc *desc = irq_to_desc(irqd->irq);
->>> +
->>> +	desc->handle_irq(desc);
->> Do we see any problem calling handle_irq()?
+> arch/arm64/boot/dts/qcom/sdm845.dtsi | 62 ++++++++++++++++++++++++++++++++++++
+> 1 file changed, 62 insertions(+)
 >
->Good timing, I was just looking at this.
+>diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>index 0c9a2aa..32262b0 100644
+>--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>@@ -96,6 +96,7 @@
+> 			reg = <0x0 0x0>;
+> 			enable-method = "psci";
+> 			next-level-cache = <&L2_0>;
+>+			cpu-idle-states = <&C0_CPU_SPC &C0_CPU_PC &CLUSTER_PC>;
+> 			L2_0: l2-cache {
+> 				compatible = "cache";
+> 				next-level-cache = <&L3_0>;
+>@@ -111,6 +112,7 @@
+> 			reg = <0x0 0x100>;
+> 			enable-method = "psci";
+> 			next-level-cache = <&L2_100>;
+>+			cpu-idle-states = <&C0_CPU_SPC &C0_CPU_PC &CLUSTER_PC>;
+> 			L2_100: l2-cache {
+> 				compatible = "cache";
+> 				next-level-cache = <&L3_0>;
+>@@ -123,6 +125,7 @@
+> 			reg = <0x0 0x200>;
+> 			enable-method = "psci";
+> 			next-level-cache = <&L2_200>;
+>+			cpu-idle-states = <&C0_CPU_SPC &C0_CPU_PC &CLUSTER_PC>;
+> 			L2_200: l2-cache {
+> 				compatible = "cache";
+> 				next-level-cache = <&L3_0>;
+>@@ -135,6 +138,7 @@
+> 			reg = <0x0 0x300>;
+> 			enable-method = "psci";
+> 			next-level-cache = <&L2_300>;
+>+			cpu-idle-states = <&C0_CPU_SPC &C0_CPU_PC &CLUSTER_PC>;
+> 			L2_300: l2-cache {
+> 				compatible = "cache";
+> 				next-level-cache = <&L3_0>;
+>@@ -147,6 +151,7 @@
+> 			reg = <0x0 0x400>;
+> 			enable-method = "psci";
+> 			next-level-cache = <&L2_400>;
+>+			cpu-idle-states = <&C4_CPU_SPC &C4_CPU_PC &CLUSTER_PC>;
+> 			L2_400: l2-cache {
+> 				compatible = "cache";
+> 				next-level-cache = <&L3_0>;
+>@@ -159,6 +164,7 @@
+> 			reg = <0x0 0x500>;
+> 			enable-method = "psci";
+> 			next-level-cache = <&L2_500>;
+>+			cpu-idle-states = <&C4_CPU_SPC &C4_CPU_PC &CLUSTER_PC>;
+> 			L2_500: l2-cache {
+> 				compatible = "cache";
+> 				next-level-cache = <&L3_0>;
+>@@ -171,6 +177,7 @@
+> 			reg = <0x0 0x600>;
+> 			enable-method = "psci";
+> 			next-level-cache = <&L2_600>;
+>+			cpu-idle-states = <&C4_CPU_SPC &C4_CPU_PC &CLUSTER_PC>;
+> 			L2_600: l2-cache {
+> 				compatible = "cache";
+> 				next-level-cache = <&L3_0>;
+>@@ -183,11 +190,66 @@
+> 			reg = <0x0 0x700>;
+> 			enable-method = "psci";
+> 			next-level-cache = <&L2_700>;
+>+			cpu-idle-states = <&C4_CPU_SPC &C4_CPU_PC &CLUSTER_PC>;
+> 			L2_700: l2-cache {
+> 				compatible = "cache";
+> 				next-level-cache = <&L3_0>;
+> 			};
+> 		};
+>+
+>+		idle-states {
+>+			entry-method = "psci";
+>+
+>+			C0_CPU_SPC: c0_spc {
+>+				compatible = "arm,idle-state";
+>+				arm,psci-suspend-param = <0x40000003>;
+>+				entry-latency-us = <350>;
+>+				exit-latency-us = <461>;
+>+				min-residency-us = <1890>;
+>+				local-timer-stop;
+>+				idle-state-name = "pc";
+>+			};
+>+
+>+			C0_CPU_PC: c0_pc {
+>+				compatible = "arm,idle-state";
+>+				arm,psci-suspend-param = <0x40000004>;
+>+				entry-latency-us = <360>;
+>+				exit-latency-us = <531>;
+>+				min-residency-us = <3934>;
+>+				local-timer-stop;
+>+				idle-state-name = "rail pc";
+>+			};
+>+
+>+			C4_CPU_SPC: c4_spc {
+>+				compatible = "arm,idle-state";
+>+				arm,psci-suspend-param = <0x40000003>;
+>+				entry-latency-us = <264>;
+>+				exit-latency-us = <621>;
+>+				min-residency-us = <952>;
+>+				local-timer-stop;
+>+				idle-state-name = "pc";
+>+			};
+>+
+>+			C4_CPU_PC: c4_pc {
+>+				compatible = "arm,idle-state";
+>+				arm,psci-suspend-param = <0x40000004>;
+>+				entry-latency-us = <702>;
+>+				exit-latency-us = <1061>;
+>+				min-residency-us = <4488>;
+>+				local-timer-stop;
+>+				idle-state-name = "rail pc";
+>+			};
+>+
+>+			CLUSTER_PC: cluster_pc {
+>+				compatible = "arm,idle-state";
+>+				arm,psci-suspend-param = <0x400000F4>;
+>+				entry-latency-us = <3263>;
+>+				exit-latency-us = <6562>;
+>+				min-residency-us = <9987>;
+>+				local-timer-stop;
+>+				idle-state-name = "cluster pc";
+>+			};
+>+		};
+> 	};
 >
-:) Thanks for your time.
-
->One thing I can see is that you will end-up calling the EOI callback on
->the root interrupt controller (the GIC), thus writing to ICC_EOIR1_EL1.
+> 	pmu {
+>--
+>QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+>of the Code Aurora Forum, hosted by The Linux Foundation.
 >
->But you've never acked this interrupt the first place by reading
->ICC_IAR1_EL1, and that puts you violently out of spec, according to the
->GICv3 spec (8.2.10), which reads:
->
->"A write to this register must correspond to the most recent valid read
->by this PE from an Interrupt Acknowledge Register, and must correspond
->to the INTID that was read from ICC_IAR1_EL1, otherwise the system
->behavior is UNPREDICTABLE."
->
->Here, you definitely risk the sanity of the CPU interface state machine.
->
-Oh, thanks Marc. Will look into it. The problem is because I call
-handle_irq() directly for the GPIO IRQ which is not triggered but we end
-up mask, eoi etc.
-
-How about calling handle_simple_irq(), which doesn't seem to the IRQ
-registers?
-
->So stepping back a bit: At some point, you had a version that just
->relied on regenerating edge interrupts by writing to some register
->(knowing that level interrupts are safe by definition). Why isn't that
->the right solution? It'd avoid the above minefield by just letting the
->HW do its thing...
->
-There are some unnecessary complexity with the approach that we are
-trying to avoid.
-
-The TLMM may or not may not be powered off (depending on the SoC state)
-and Linux has no control on it. The PDC will remain powered on but we
-don't want the PDC interrupt enabled always, since we will receive to
-interrupts (one from TLMM and one from PDC) for every event. So we have
-to keep the PDC interrupt configured as wakeup interrupt but operate on
-the fact that when we go into suspend or cpuidle we will have to switch
-to enabling the PDC interrupt and disabling the GPIO IRQ and swap back
-when we resume. This dance is harder with cpuidle (notifying the TLMM
-driver, when all the CPUs are in idle) than suspend/resume which has
-nice callbacks and is what we are trying to avoid but using the PDC
-interrupt always.
-
-Thanks,
-Lina
