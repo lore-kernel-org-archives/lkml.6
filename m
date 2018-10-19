@@ -2,205 +2,140 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F4BECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C54EECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:47:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0788721476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:46:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC9A42087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:47:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="KyjNpNTS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0788721476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="F/ImssKz";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="k8MJ9oh+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC9A42087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbeJTDxj (ORCPT
+        id S1728092AbeJTDyp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 23:53:39 -0400
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:10257 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727631AbeJTDxj (ORCPT
+        Fri, 19 Oct 2018 23:54:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41160 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727983AbeJTDyp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 23:53:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1539978366; x=1571514366;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:mime-version:
-   content-transfer-encoding;
-  bh=sECQ2trIF9k3acH0FMMbv6m+ZhDaC6vFy4zmiaRELzk=;
-  b=KyjNpNTSW3W3e1xlCFNe0YnQIOYcmw/fDdI09aZjlLQX3tvYISPptjqU
-   zVc0jYG/zrqIHfKs/05C9A1xbT/sAmJL3+IhIoGhIRAjunVtQ3AmwneHN
-   TMbuT6/fZbvK+nKvEaC6ShiVYCuFnZwknJ4dgwpIbj+szw5pAHD3qOuld
-   M=;
-X-IronPort-AV: E=Sophos;i="5.54,401,1534809600"; 
-   d="scan'208";a="765086473"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1e-17c49630.us-east-1.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 19 Oct 2018 19:45:57 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1e-17c49630.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w9JJjjHO040186
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Fri, 19 Oct 2018 19:45:54 GMT
-Received: from EX13D01EUB004.ant.amazon.com (10.43.166.180) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 19 Oct 2018 19:45:53 +0000
-Received: from EX13D01EUB003.ant.amazon.com (10.43.166.248) by
- EX13D01EUB004.ant.amazon.com (10.43.166.180) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 19 Oct 2018 19:45:52 +0000
-Received: from EX13D01EUB003.ant.amazon.com ([10.43.166.248]) by
- EX13D01EUB003.ant.amazon.com ([10.43.166.248]) with mapi id 15.00.1367.000;
- Fri, 19 Oct 2018 19:45:52 +0000
-From:   "Raslan, KarimAllah" <karahmed@amazon.de>
-To:     "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>
-Subject: Re: [PATCH] rcu: Benefit from expedited grace period in __wait_rcu_gp
-Thread-Topic: [PATCH] rcu: Benefit from expedited grace period in
- __wait_rcu_gp
-Thread-Index: AQHUZ0WmuGw2yI8jPE29yOd22Eq+PqUmgKoAgAB5dwA=
-Date:   Fri, 19 Oct 2018 19:45:51 +0000
-Message-ID: <1539978350.11839.6.camel@amazon.de>
-References: <1539910145-24305-1-git-send-email-karahmed@amazon.de>
-         <20181019123106.GX2674@linux.ibm.com>
-In-Reply-To: <20181019123106.GX2674@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.164.211]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <415507094A1DC949A19403377AFFE7B2@amazon.com>
+        Fri, 19 Oct 2018 23:54:45 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 119D060913; Fri, 19 Oct 2018 19:47:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539978434;
+        bh=Wo+QO7O3evTvC7M8Vuj82IXGQtKK22fZ7UGiHjWS+so=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=F/ImssKzckO2pXxS05iRDa3DeBM8OIXUm5Q3jqtbctaL0qTtRbBVDsW8JeH1umOwK
+         smaVXOL3+wm5DeeM34XNSEuNNMis+t1raKAUrepCNB/2LSsRXoWCaIBfrsKbNyRSmU
+         4SegNdVvSU8UZoFfwLzk0tinJGI5joxX2zxTCUHM=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1B2C76034D;
+        Fri, 19 Oct 2018 19:47:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539978433;
+        bh=Wo+QO7O3evTvC7M8Vuj82IXGQtKK22fZ7UGiHjWS+so=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=k8MJ9oh+SyqSRm2Lc4bu2ehry6sdlxNmfa2pD0d9/7hNdlWcLtq35+Fb01oMp96ON
+         jWvOJop6UYNY/f9RsOXgiD96FMCim3x0qVCAo61e9eS/Vrca4cYhjeuVh6Q9u4/ylZ
+         sSoCdvVE0jo3tF+fWKBNfTU69IS+vPlGq3dApSLo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1B2C76034D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Fri, 19 Oct 2018 13:47:12 -0600
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     sboyd@kernel.org, evgreen@chromium.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 1/1] drivers: pinctrl: qcom: add wakeup capability to
+ GPIO
+Message-ID: <20181019194712.GB17444@codeaurora.org>
+References: <20181011002958.2597-1-ilina@codeaurora.org>
+ <20181011002958.2597-2-ilina@codeaurora.org>
+ <20181019153222.GA17444@codeaurora.org>
+ <ad6e314b-2d68-2a77-b77c-54cade0fe0b2@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <ad6e314b-2d68-2a77-b77c-54cade0fe0b2@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDE4LTEwLTE5IGF0IDA1OjMxIC0wNzAwLCBQYXVsIEUuIE1jS2VubmV5IHdyb3Rl
-Og0KPiBPbiBGcmksIE9jdCAxOSwgMjAxOCBhdCAwMjo0OTowNUFNICswMjAwLCBLYXJpbUFsbGFo
-IEFobWVkIHdyb3RlOg0KPiA+IA0KPiA+IFdoZW4gZXhwZWRpdGVkIGdyYWNlLXBlcmlvZCBpcyBz
-ZXQsIGJvdGggc3luY2hyb25pemVfc2NoZWQNCj4gPiBzeW5jaHJvbml6ZV9yY3VfYmggY2FuIGJl
-IG9wdGltaXplZCB0byBoYXZlIGEgc2lnbmlmaWNhbnRseSBsb3dlciBsYXRlbmN5Lg0KPiA+IA0K
-PiA+IEltcHJvdmUgd2FpdF9yY3VfZ3AgaGFuZGxpbmcgdG8gYWxzbyBhY2NvdW50IGZvciBleHBl
-ZGl0ZWQgZ3JhY2UtcGVyaW9kLg0KPiA+IFRoZSBkb3duc2lkZSBpcyB0aGF0IHdhaXRfcmN1X2dw
-IHdpbGwgbm90IHdhaXQgYW55bW9yZSBmb3IgYWxsIFJDVSB2YXJpYW50cw0KPiA+IGNvbmN1cnJl
-bnRseSB3aGVuIGFuIGV4cGVkaXRlZCBncmFjZS1wZXJpb2QgaXMgc2V0LCBob3dldmVyLCBnaXZl
-biB0aGUNCj4gPiBpbXByb3ZlZCBsYXRlbmN5IGl0IGRvZXMgbm90IHJlYWxseSBtYXR0ZXIuDQo+
-ID4gDQo+ID4gQ2M6IFBhdWwgRS4gTWNLZW5uZXkgPHBhdWxtY2tAbGludXgudm5ldC5pYm0uY29t
-Pg0KPiA+IENjOiBKb3NoIFRyaXBsZXR0IDxqb3NoQGpvc2h0cmlwbGV0dC5vcmc+DQo+ID4gQ2M6
-IFN0ZXZlbiBSb3N0ZWR0IDxyb3N0ZWR0QGdvb2RtaXMub3JnPg0KPiA+IENjOiBNYXRoaWV1IERl
-c25veWVycyA8bWF0aGlldS5kZXNub3llcnNAZWZmaWNpb3MuY29tPg0KPiA+IENjOiBMYWkgSmlh
-bmdzaGFuIDxqaWFuZ3NoYW5sYWlAZ21haWwuY29tPg0KPiA+IENjOiBsaW51eC1rZXJuZWxAdmdl
-ci5rZXJuZWwub3JnDQo+ID4gU2lnbmVkLW9mZi1ieTogS2FyaW1BbGxhaCBBaG1lZCA8a2FyYWht
-ZWRAYW1hem9uLmRlPg0KPiANCj4gQ3V0ZSENCj4gDQo+IFVuZm9ydHVuYXRlbHksIHRoZXJlIGFy
-ZSBhIGZldyBwcm9ibGVtcyB3aXRoIHRoaXMgcGF0Y2g6DQo+IA0KPiAxLglJIHdpbGwgYmUgZWxp
-bWluYXRpbmcgc3luY2hyb25pemVfcmN1X211bHQoKSBkdWUgdG8gdGhlIGZhY3QgdGhhdA0KPiAJ
-dGhlIHVwY29taW5nIFJDVSBmbGF2b3IgY29uc29saWRhdGlvbiBlbGltaW5hdGVzIGl0cyBzb2xl
-IGNhbGxlci4NCj4gCVNlZSA1ZmM5ZDRlMDAwYjEgKCJyY3U6IEVsaW1pbmF0ZSBzeW5jaHJvbml6
-ZV9yY3VfbXVsdCgpIikNCj4gCWluIG15IC1yY3UgdHJlZS4gIFRoaXMgd291bGQgb2YgY291cnNl
-IGFsc28gZWxpbWluYXRlIHRoZSBlZmZlY3RzDQo+IAlvZiB0aGlzIHBhdGNoLg0KDQpZb3VyIHBh
-dGNoIGNvdmVycyBvdXIgdXNlLWNhc2UgYWxyZWFkeSwgYnV0IEkgc3RpbGwgdGhpbmsgdGhhdCB0
-aGUgc2VtYW50aWNzwqANCmZvcsKgd2FpdF9yY3VfZ3AgaXMgbm90IGNsZWFyIHRvIG1lLg0KDQpU
-aGUgcHJvYmxlbSBmb3IgdXMgd2FzIHRoYXQgc2NoZWRfY3B1X2RlYWN0aXZhdGUgd291bGQgY2Fs
-bA0Kc3luY2hyb25pemVfcmN1X211bHQgd2hpY2ggZG9lcyBub3QgY2hlY2sgZm9yICJleHBlZGl0
-ZWQiIGF0IGFsbC4gU28gZXZlbg0KdGhvdWdoIHdlIGFyZSBhbHJlYWR5IHVzaW5nIHJjdV9leHBl
-ZGl0ZWQgc3lzY3RsIHZhcmlhYmxlLCBzeW5jaHJvbml6ZV9yY3VfbXVsdMKgDQp3YXMganVzdCBp
-Z25vcmluZyBpdC4NCg0KVGhhdCBiZWluZyBzYWlkLCBJIGluZGVlZCBvdmVybG9va2VkIHJjdV9u
-b3JtYWwgYW5kIHRoYXQgaXQgdGFrZXMgcHJlY2VkZW5jZcKgDQpvdmVyIGV4cGVkaXRlZCBhbmQg
-SSBkaWQgbm90IG5vdGljZSBhdCBhbGwgdGhlIGRlYWRsb2NrIHlvdSBtZW50aW9uZWQgYmVsb3ch
-DQoNClRoYXQgY2FuIGhvd2V2ZXIgYmUgZWFzaWx5IGZpeGVkIGJ5IGFsc28gY2hlY2tpbmcgZm9y
-ICFyY3VfZ3BfaXNfbm9ybWFsLg0KDQo+IA0KPiAyLglUaGUgcmVhbC10aW1lIGd1eXMnIHVzZXJz
-IGFyZSBub3QgZ29pbmcgdG8gYmUgYXQgYWxsIGhhcHB5DQo+IAl3aXRoIHRoZSBJUElzIHJlc3Vs
-dGluZyBmcm9tIHRoZSBfZXhwZWRpdGVkKCkgQVBJIG1lbWJlcnMuDQo+IAlZZXMsIHRoZXkgY2Fu
-IGJvb3Qgd2l0aCByY3VwZGF0ZS5yY3Vfbm9ybWFsPTEsIGJ1dCB0aGV5IGRvbid0DQo+IAlhbHdh
-eXMgbmVlZCB0aGF0IGJpZyBhIGhhbW1lciwgYW5kIHVzZSBvZiB0aGlzIGtlcm5lbCBwYXJhbWV0
-ZXINCj4gCWNhbiBzbG93IGRvd24gYm9vdCwgaGliZXJuYXRpb24sIHN1c3BlbmQsIG5ldHdvcmsg
-Y29uZmlndXJhdGlvbiwNCj4gCWFuZCBtdWNoIGVsc2UgYmVzaWRlcy4JV2UgdGhlcmVmb3JlIGRv
-bid0IHdhbnQgdGhlbSB0byBoYXZlIHRvDQo+IAl1c2UgcmN1cGRhdGUucmN1X25vcm1hbD0xIHVu
-bGVzcyBhYnNvbHV0ZWx5IG5lY2Vzc2FyeS4NCg0KSSBtaWdodCBiZSBtaXNzaW5nIHNvbWV0aGlu
-ZyBoZXJlLiBXaHkgd291bGQgdGhleSBuZWVkIHRvICJleHBsaWNpdGx5IiB1c2XCoA0KcmN1X25v
-cm1hbD8gSWYgcmN1X2V4cGVkaXRlZCBpcyBzZXQsIHdvdWxkIG5vdCB0aGUgZXhwZWN0ZWQgYmVo
-YXZpb3IgaXMgdG8gY2FsbMKgDQppbnRvIHRoZSBleHBlZGl0ZWQgdmVyc2lvbj8NCg0KTXkgcGF0
-Y2ggc2hvdWxkIG9ubHkgYWN0aXZhdGUgKmV4cGVkaXRlZCogaWYgYW5kIG9ubHkgaWYgaXQgaXMg
-c2V0Lg0KDQpJIHRoaW5rIEkgbWlnaHQgYmUgbWlzdW5kZXJzdGFuZGluZyB0aGUgZXhwZWN0ZWQg
-YmVoYXZpb3LCoA0KZnJvbcKgc3luY2hyb25pemVfcmN1X211bHQuIE15IHVuZGVyc3RhbmRpbmcg
-aXMgdGhhdCBzb21ldGhpbmcgbGlrZToNCg0Kc3luY2hyb25pemVfcmN1X211bHQoY2FsbF9yY3Vf
-c2NoZWQpIGFuZCBzeW5jaHJvbml6ZV9yY3UoKSBzaG91bGQgaGF2ZSBhbsKgDQppZGVudGljYWwg
-YmVoYXZpb3IsIHJpZ2h0Pw0KDQpBdCBsZWFzdCBpbiB0aGlzIGNvbW1pdDoNCg0KY29tbWl0IGQ3
-ZDM0ZDVlNDYxNDAgKCJzY2hlZDogUmVseSBvbiBzeW5jaHJvbml6ZV9yY3VfbXVsdCgpIGRlLWR1
-cGxpY2F0aW9uIikNCg0KLi4gdGhlIGNoYW5nZSBjbGVhcmx5IGdpdmVzIHRoZSBpbXByZXNzaW9u
-IHRoYXQgdGhleSBjYW4gYmUgdXNlZMKgDQppbnRlcmNoYW5nZWFibHkuIFRoZSBwcm9ibGVtIGlz
-IHRoYXQgdGhpcyBpcyBub3QgdHJ1ZSB3aGVuIHlvdSBsb29rIGF0IHRoZcKgDQppbXBsZW1lbnRh
-dGlvbi4gT25lIG9mIHRoZW0gKGkuZS4gc3luY2hyb25pemVfcmN1KSB3aWxsIHJlc3BlY3QgdGhl
-DQpleHBlZGl0ZV9yY3UgZmxhZyBzZXQgYnkgc3lzZnMgd2hpbGUgdGhlIG90aGVyIChpLmUuIHN5
-bmNocm9uaXplX3JjdV9tdWx0KcKgDQpzaW1wbHkgaWdub3JlcyBpdC4NCg0KU28gbXkgcGF0Y2gg
-aXMgYWJvdXQgbWFraW5nIHN1cmUgdGhhdCBib3RoIG9mIHRoZSB2YXJpYW50cyBhY3R1YWxseSBy
-ZXNwZWN0wqANCml0Lg0KDQoNCj4gMy4JSWYgdGhlIHJlYWwtdGltZSBndXlzJyB1c2VycyB3ZXJl
-IHRvIGhhdmUgYm9vdGVkIHdpdGgNCj4gCXJjdXBkYXRlLnJjdV9ub3JtYWw9MSwgdGhlbiBzeW5j
-aHJvbml6ZV9zY2hlZF9leHBlZGl0ZWQoKQ0KPiAJd291bGQgaW52b2tlIF9zeW5jaHJvbml6ZV9y
-Y3VfZXhwZWRpdGVkLCB3aGljaCB3b3VsZCBpbnZva2UNCj4gCXdhaXRfcmN1X2dwKCksIHdoaWNo
-IHdvdWxkIGludm9rZSBfd2FpdF9yY3VfZ3AoKSB3aGljaCB3b3VsZA0KPiAJaW52b2tlIF9fd2Fp
-dF9yY3VfZ3AoKSwgd2hpY2gsIGdpdmVuIHlvdXIgcGF0Y2gsIHdvdWxkIGluIHR1cm4NCj4gCWlu
-dm9rZSBzeW5jaHJvbml6ZV9zY2hlZF9leHBlZGl0ZWQoKS4gIFRoaXMgc2l0dWF0aW9uIGNvdWxk
-DQo+IAl3ZWxsIHByZXZlbnQgdGhlaXIgc3lzdGVtcyBmcm9tIG1lZXRpbmcgdGhlaXIgcmVzcG9u
-c2UtdGltZQ0KPiAJcmVxdWlyZW1lbnRzLg0KPiANCj4gU28gSSBjYW5ub3QgYWNjZXB0IHRoaXMg
-cGF0Y2ggbm9yIGZvciB0aGF0IG1hdHRlciBhbnkgc2ltaWxhciBwYXRjaC4NCj4gDQo+IEJ1dCB3
-aGF0IHdlcmUgeW91IHJlYWxseSB0cnlpbmcgdG8gZ2V0IGRvbmUgaGVyZT8gIElmIHlvdSB3ZXJl
-IHRoaW5raW5nDQo+IG9mIGFkZGluZyBhbm90aGVyIHN5bmNocm9uaXplX3JjdV9tdWx0KCksIHRo
-ZSBmbGF2b3IgY29uc29saWRhdGlvbiB3aWxsDQo+IG1ha2UgdGhhdCB1bm5lY2Vzc2FyeSBpbiBt
-b3N0IGNhc2VzLiAgSWYgeW91IGFyZSB0cnlpbmcgdG8gc3BlZWQgdXANCj4gQ1BVLWhvdHBsdWcg
-b3BlcmF0aW9ucywgSSBzdWdnZXN0IHVzaW5nIHRoZSByY3VfZXhwZWRpdGVkIHN5c2N0bCB2YXJp
-YWJsZQ0KPiB3aGVuIHRha2luZyBhIENQVSBvZmZsaW5lLiAgSWYgc29tZXRoaW5nIGVsc2UsIHBs
-ZWFzZSBsZXQgbWUga25vdyB3aGF0DQo+IGl0IGlzIHNvIHRoYXQgd2UgY2FuIHdvcmsgb3V0IGhv
-dyB0aGUgcHJvYmxlbSBtaWdodCBiZXN0IGJlIHNvbHZlZC4NCj4gDQo+IAkJCQkJCQlUaGFueCwg
-UGF1bA0KPiANCj4gPiANCj4gPiAtLS0NCj4gPiAga2VybmVsL3JjdS91cGRhdGUuYyB8IDM0ICsr
-KysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDI4
-IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2tl
-cm5lbC9yY3UvdXBkYXRlLmMgYi9rZXJuZWwvcmN1L3VwZGF0ZS5jDQo+ID4gaW5kZXggNjhmYTE5
-YS4uNDRiODgxNyAxMDA2NDQNCj4gPiAtLS0gYS9rZXJuZWwvcmN1L3VwZGF0ZS5jDQo+ID4gKysr
-IGIva2VybmVsL3JjdS91cGRhdGUuYw0KPiA+IEBAIC0zOTIsMTMgKzM5MiwyNyBAQCB2b2lkIF9f
-d2FpdF9yY3VfZ3AoYm9vbCBjaGVja3RpbnksIGludCBuLCBjYWxsX3JjdV9mdW5jX3QgKmNyY3Vf
-YXJyYXksDQo+ID4gIAkJCW1pZ2h0X3NsZWVwKCk7DQo+ID4gIAkJCWNvbnRpbnVlOw0KPiA+ICAJ
-CX0NCj4gPiAtCQlpbml0X3JjdV9oZWFkX29uX3N0YWNrKCZyc19hcnJheVtpXS5oZWFkKTsNCj4g
-PiAtCQlpbml0X2NvbXBsZXRpb24oJnJzX2FycmF5W2ldLmNvbXBsZXRpb24pOw0KPiA+ICsNCj4g
-PiAgCQlmb3IgKGogPSAwOyBqIDwgaTsgaisrKQ0KPiA+ICAJCQlpZiAoY3JjdV9hcnJheVtqXSA9
-PSBjcmN1X2FycmF5W2ldKQ0KPiA+ICAJCQkJYnJlYWs7DQo+ID4gLQkJaWYgKGogPT0gaSkNCj4g
-PiAtCQkJKGNyY3VfYXJyYXlbaV0pKCZyc19hcnJheVtpXS5oZWFkLCB3YWtlbWVfYWZ0ZXJfcmN1
-KTsNCj4gPiArCQlpZiAoaiAhPSBpKQ0KPiA+ICsJCQljb250aW51ZTsNCj4gPiArDQo+ID4gKwkJ
-aWYgKChjcmN1X2FycmF5W2ldID09IGNhbGxfcmN1X3NjaGVkIHx8DQo+ID4gKwkJICAgICBjcmN1
-X2FycmF5W2ldID09IGNhbGxfcmN1X2JoKQ0KPiA+ICsJCSAgICAmJiByY3VfZ3BfaXNfZXhwZWRp
-dGVkKCkpIHsNCj4gPiArCQkJaWYgKGNyY3VfYXJyYXlbaV0gPT0gY2FsbF9yY3Vfc2NoZWQpDQo+
-ID4gKwkJCQlzeW5jaHJvbml6ZV9zY2hlZF9leHBlZGl0ZWQoKTsNCj4gPiArCQkJZWxzZQ0KPiA+
-ICsJCQkJc3luY2hyb25pemVfcmN1X2JoX2V4cGVkaXRlZCgpOw0KPiA+ICsNCj4gPiArCQkJY29u
-dGludWU7DQo+ID4gKwkJfQ0KPiA+ICsNCj4gPiArCQlpbml0X3JjdV9oZWFkX29uX3N0YWNrKCZy
-c19hcnJheVtpXS5oZWFkKTsNCj4gPiArCQlpbml0X2NvbXBsZXRpb24oJnJzX2FycmF5W2ldLmNv
-bXBsZXRpb24pOw0KPiA+ICsJCShjcmN1X2FycmF5W2ldKSgmcnNfYXJyYXlbaV0uaGVhZCwgd2Fr
-ZW1lX2FmdGVyX3JjdSk7DQo+ID4gIAl9DQo+ID4gDQo+ID4gIAkvKiBXYWl0IGZvciBhbGwgY2Fs
-bGJhY2tzIHRvIGJlIGludm9rZWQuICovDQo+ID4gQEAgLTQwNywxMSArNDIxLDE5IEBAIHZvaWQg
-X193YWl0X3JjdV9ncChib29sIGNoZWNrdGlueSwgaW50IG4sIGNhbGxfcmN1X2Z1bmNfdCAqY3Jj
-dV9hcnJheSwNCj4gPiAgCQkgICAgKGNyY3VfYXJyYXlbaV0gPT0gY2FsbF9yY3UgfHwNCj4gPiAg
-CQkgICAgIGNyY3VfYXJyYXlbaV0gPT0gY2FsbF9yY3VfYmgpKQ0KPiA+ICAJCQljb250aW51ZTsN
-Cj4gPiArDQo+ID4gKwkJaWYgKChjcmN1X2FycmF5W2ldID09IGNhbGxfcmN1X3NjaGVkIHx8DQo+
-ID4gKwkJICAgICBjcmN1X2FycmF5W2ldID09IGNhbGxfcmN1X2JoKQ0KPiA+ICsJCSAgICAmJiBy
-Y3VfZ3BfaXNfZXhwZWRpdGVkKCkpDQo+ID4gKwkJCWNvbnRpbnVlOw0KPiA+ICsNCj4gPiAgCQlm
-b3IgKGogPSAwOyBqIDwgaTsgaisrKQ0KPiA+ICAJCQlpZiAoY3JjdV9hcnJheVtqXSA9PSBjcmN1
-X2FycmF5W2ldKQ0KPiA+ICAJCQkJYnJlYWs7DQo+ID4gLQkJaWYgKGogPT0gaSkNCj4gPiAtCQkJ
-d2FpdF9mb3JfY29tcGxldGlvbigmcnNfYXJyYXlbaV0uY29tcGxldGlvbik7DQo+ID4gKwkJaWYg
-KGogIT0gaSkNCj4gPiArCQkJY29udGludWU7DQo+ID4gKw0KPiA+ICsJCXdhaXRfZm9yX2NvbXBs
-ZXRpb24oJnJzX2FycmF5W2ldLmNvbXBsZXRpb24pOw0KPiA+ICAJCWRlc3Ryb3lfcmN1X2hlYWRf
-b25fc3RhY2soJnJzX2FycmF5W2ldLmhlYWQpOw0KPiA+ICAJfQ0KPiA+ICB9DQo+ID4gLS0gDQo+
-ID4gMi43LjQNCj4gPiANCj4gDQpBbWF6b24gRGV2ZWxvcG1lbnQgQ2VudGVyIEdlcm1hbnkgR21i
-SApCZXJsaW4gLSBEcmVzZGVuIC0gQWFjaGVuCm1haW4gb2ZmaWNlOiBLcmF1c2Vuc3RyLiAzOCwg
-MTAxMTcgQmVybGluCkdlc2NoYWVmdHNmdWVocmVyOiBEci4gUmFsZiBIZXJicmljaCwgQ2hyaXN0
-aWFuIFNjaGxhZWdlcgpVc3QtSUQ6IERFMjg5MjM3ODc5CkVpbmdldHJhZ2VuIGFtIEFtdHNnZXJp
-Y2h0IENoYXJsb3R0ZW5idXJnIEhSQiAxNDkxNzMgQgo=
+On Fri, Oct 19 2018 at 09:53 -0600, Marc Zyngier wrote:
+>Hi Lina,
+>
+>On 19/10/18 16:32, Lina Iyer wrote:
+>> Hi folks,
+>>
+>> On Wed, Oct 10 2018 at 18:30 -0600, Lina Iyer wrote:
 
+[...]
+
+>>> +static irqreturn_t wake_irq_gpio_handler(int irq, void *data)
+>>> +{
+>>> +	struct irq_data *irqd = data;
+>>> +	struct irq_desc *desc = irq_to_desc(irqd->irq);
+>>> +
+>>> +	desc->handle_irq(desc);
+>> Do we see any problem calling handle_irq()?
+>
+>Good timing, I was just looking at this.
+>
+:) Thanks for your time.
+
+>One thing I can see is that you will end-up calling the EOI callback on
+>the root interrupt controller (the GIC), thus writing to ICC_EOIR1_EL1.
+>
+>But you've never acked this interrupt the first place by reading
+>ICC_IAR1_EL1, and that puts you violently out of spec, according to the
+>GICv3 spec (8.2.10), which reads:
+>
+>"A write to this register must correspond to the most recent valid read
+>by this PE from an Interrupt Acknowledge Register, and must correspond
+>to the INTID that was read from ICC_IAR1_EL1, otherwise the system
+>behavior is UNPREDICTABLE."
+>
+>Here, you definitely risk the sanity of the CPU interface state machine.
+>
+Oh, thanks Marc. Will look into it. The problem is because I call
+handle_irq() directly for the GPIO IRQ which is not triggered but we end
+up mask, eoi etc.
+
+How about calling handle_simple_irq(), which doesn't seem to the IRQ
+registers?
+
+>So stepping back a bit: At some point, you had a version that just
+>relied on regenerating edge interrupts by writing to some register
+>(knowing that level interrupts are safe by definition). Why isn't that
+>the right solution? It'd avoid the above minefield by just letting the
+>HW do its thing...
+>
+There are some unnecessary complexity with the approach that we are
+trying to avoid.
+
+The TLMM may or not may not be powered off (depending on the SoC state)
+and Linux has no control on it. The PDC will remain powered on but we
+don't want the PDC interrupt enabled always, since we will receive to
+interrupts (one from TLMM and one from PDC) for every event. So we have
+to keep the PDC interrupt configured as wakeup interrupt but operate on
+the fact that when we go into suspend or cpuidle we will have to switch
+to enabling the PDC interrupt and disabling the GPIO IRQ and swap back
+when we resume. This dance is harder with cpuidle (notifying the TLMM
+driver, when all the CPUs are in idle) than suspend/resume which has
+nice callbacks and is what we are trying to avoid but using the PDC
+interrupt always.
+
+Thanks,
+Lina
