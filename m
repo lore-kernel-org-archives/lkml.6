@@ -3,44 +3,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA85ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5748ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8E542087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:26:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BECF2087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:26:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="w0khUXej"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8E542087A
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="UJlqc+tq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BECF2087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbeJSUcf (ORCPT
+        id S1727454AbeJSUck (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:32:35 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38870 "EHLO
+        Fri, 19 Oct 2018 16:32:40 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39026 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbeJSUce (ORCPT
+        with ESMTP id S1726609AbeJSUck (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:32:34 -0400
+        Fri, 19 Oct 2018 16:32:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=iSVSD4UqzdaVJQYjif86HPRztS0sE98o03+gpKRbI7o=; b=w0khUXejzdVv
-        aR0am+9kGVFZrjAZcQxpVIGG+o5eFXF0wiZyybKWwvIW7mjCVJhdBfa+29hjRDd1gLmsEIsXWqxUb
-        //xw3x3/LesuY8MrkcFxU/f+DcOgb5QfUArSAc5LfoexRSQDMUDn7wSya9E+s4kNbUhhI/Y5UuDbJ
-        e3tTQ=;
+        List-Archive; bh=nh2kojcw2jaKby+BJCN49CIPjDIrukbxVKSOzGMgGOY=; b=UJlqc+tqNMsn
+        1JbGX5l5B9O+7WnAChre+wIwHnk1qb/lVhtPNfhbB9wxcOPQaaZdA6M/qM+1EqV04xFu/GmqcUM7X
+        Vuj1T8jFglUg0CiVyrAyOl7YhJvwn0YK3w6wQGIcV23GXSLAwVmymucrdac68O+6Fhur+Oct8GYSC
+        5rE2k=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gDTrG-0008Ub-5P; Fri, 19 Oct 2018 12:26:26 +0000
+        id 1gDTqq-0008U7-I2; Fri, 19 Oct 2018 12:26:00 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id DD8F91122548; Fri, 19 Oct 2018 13:26:25 +0100 (BST)
+        id 3E2301122548; Fri, 19 Oct 2018 13:26:00 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Olivier Moysan <olivier.moysan@st.com>
 Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
@@ -52,10 +52,10 @@ Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
         linux-kernel@vger.kernel.org, olivier.moysan@st.com,
         arnaud.pouliquen@st.com, benjamin.gaignard@st.com,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: dt-bindings: add mclk provider support to stm32 sai" to the asoc tree
-In-Reply-To:  <1539612216-12602-2-git-send-email-olivier.moysan@st.com>
-Message-Id: <20181019122625.DD8F91122548@debutante.sirena.org.uk>
-Date:   Fri, 19 Oct 2018 13:26:25 +0100 (BST)
+Subject: Applied "ASoC: cs42l51: add mclk support" to the asoc tree
+In-Reply-To:  <1539612216-12602-5-git-send-email-olivier.moysan@st.com>
+Message-Id: <20181019122600.3E2301122548@debutante.sirena.org.uk>
+Date:   Fri, 19 Oct 2018 13:26:00 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,7 +63,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: dt-bindings: add mclk provider support to stm32 sai
+   ASoC: cs42l51: add mclk support
 
 has been applied to the asoc tree at
 
@@ -88,45 +88,46 @@ to this mail.
 Thanks,
 Mark
 
-From af16112457d8175b444baa9aac02558a1e1154b5 Mon Sep 17 00:00:00 2001
+From 5e8d63a726f8f2fef089515e9a501785cc67dcdc Mon Sep 17 00:00:00 2001
 From: Olivier Moysan <olivier.moysan@st.com>
-Date: Mon, 15 Oct 2018 16:03:33 +0200
-Subject: [PATCH] ASoC: dt-bindings: add mclk provider support to stm32 sai
+Date: Mon, 15 Oct 2018 16:03:36 +0200
+Subject: [PATCH] ASoC: cs42l51: add mclk support
 
-add mclk provider support to stm32 sai
+Add MCLK dapm to allow configuration of cirrus CS42l51
+codec as a master clock consumer.
 
 Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/devicetree/bindings/sound/st,stm32-sai.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+ sound/soc/codecs/cs42l51.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/st,stm32-sai.txt b/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
-index 3a3fc506e43a..3f4467ff0aa2 100644
---- a/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
-+++ b/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
-@@ -31,7 +31,11 @@ SAI subnodes required properties:
-   - reg: Base address and size of SAI sub-block register set.
-   - clocks: Must contain one phandle and clock specifier pair
- 	for sai_ck which feeds the internal clock generator.
-+	If the SAI shares a master clock, with another SAI set as MCLK
-+	clock provider, SAI provider phandle must be specified here.
-   - clock-names: Must contain "sai_ck".
-+	Must also contain "MCLK", if SAI shares a master clock,
-+	with a SAI set as MCLK clock provider.
-   - dmas: see Documentation/devicetree/bindings/dma/stm32-dma.txt
-   - dma-names: identifier string for each DMA request line
- 	"tx": if sai sub-block is configured as playback DAI
-@@ -51,6 +55,9 @@ SAI subnodes Optional properties:
- 	configured according to protocol defined in related DAI link node,
- 	such as i2s, left justified, right justified, dsp and pdm protocols.
- 	Note: ac97 protocol is not supported by SAI driver
-+   - #clock-cells: should be 0. This property must be present if the SAI device
-+	is a master clock provider, according to clocks bindings, described in
-+	Documentation/devicetree/bindings/clock/clock-bindings.txt.
+diff --git a/sound/soc/codecs/cs42l51.c b/sound/soc/codecs/cs42l51.c
+index 5080d7a3c279..eb40bff54cec 100644
+--- a/sound/soc/codecs/cs42l51.c
++++ b/sound/soc/codecs/cs42l51.c
+@@ -237,6 +237,10 @@ static const struct snd_soc_dapm_widget cs42l51_dapm_widgets[] = {
+ 		&cs42l51_adcr_mux_controls),
+ };
  
- The device node should contain one 'port' child node with one child 'endpoint'
- node, according to the bindings defined in Documentation/devicetree/bindings/
++static const struct snd_soc_dapm_widget cs42l51_dapm_mclk_widgets[] = {
++	SND_SOC_DAPM_CLOCK_SUPPLY("MCLK")
++};
++
+ static const struct snd_soc_dapm_route cs42l51_routes[] = {
+ 	{"HPL", NULL, "Left DAC"},
+ 	{"HPR", NULL, "Right DAC"},
+@@ -487,6 +491,10 @@ static struct snd_soc_dai_driver cs42l51_dai = {
+ static int cs42l51_component_probe(struct snd_soc_component *component)
+ {
+ 	int ret, reg;
++	struct snd_soc_dapm_context *dapm;
++
++	dapm = snd_soc_component_get_dapm(component);
++	snd_soc_dapm_new_controls(dapm, cs42l51_dapm_mclk_widgets, 1);
+ 
+ 	/*
+ 	 * DAC configuration
 -- 
 2.19.0.rc2
 
