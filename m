@@ -2,156 +2,438 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 285D8C67863
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 01:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 506DDC67863
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 01:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D829720866
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 01:50:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NY5u0BGG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D829720866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E5AB22087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 01:58:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5AB22087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbeJSJyp (ORCPT
+        id S1726678AbeJSKCa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 05:54:45 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36963 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726608AbeJSJyo (ORCPT
+        Fri, 19 Oct 2018 06:02:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37970 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbeJSKC3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 05:54:44 -0400
-Received: by mail-lf1-f65.google.com with SMTP id a82-v6so24061822lfa.4
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 18:50:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=TPMkdWvBGvg4FvnssSVbk6AEM880kMjROnlvB26fBzY=;
-        b=NY5u0BGGW/AWgtwB7T95Txn3sebGYEuSqoaiEIRifkkOcmlQlJ+JHygHgqAGBAsvUo
-         Z3q5vOG6Lz69DFbytRD4tLocthMMtGFAZPBj+3V27aoLOvUd/UaNCojxy8ahG6TrFp5p
-         iAla2TRDMfWO2WCcz+31oUp5n7jdEsSRHxsHw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=TPMkdWvBGvg4FvnssSVbk6AEM880kMjROnlvB26fBzY=;
-        b=kygYNDHUw2OQjgwWQiRucPxWhQ5g6PaDQ6Gb2gFQbU3jm/AP8j0t+f5AEGUnq+xYx0
-         FmmhQEshsfo44IvDUyzZ7eZd6Hte+6QG7FUyOapPtsFIZpk+DomKNB89GKujN/slFDzM
-         pQlfaivhJgKqo+fl7Kd8oIDIAOF/B/e7Mod68opPXSDL3ZUukTa+cRUpxRmrM8C2vH16
-         4yZ9ZMN1k/9tP0bkQ9vIaa3GK4vI9Rqai8ZjGSGzOtCOVAOyWJ0bp2a2+BtdkTFj04wY
-         na37b4svSGK1apeNQPjDKM5m/IsA5Ql96oAHaFUYr5vq/7l+A46QDvEGADTgxqIYJnkF
-         CRkA==
-X-Gm-Message-State: ABuFfojIc7DuPmws/sFNWWaehJfr6jBSv6G64uVR7PUY4MsmU1xeZYMJ
-        kIY7b10T8W+ZRXJ6LGEL3vhrU+rZ6+fkupE+FEXrig==
-X-Google-Smtp-Source: ACcGV618DA9P/BrObQVqF3T1q8/+5F6C+2u7Tm42Vm54Gk5aoOJSf79Jtn/a+g5KDoLdoWyqOmn/Z3k+TDFdLiYutVg=
-X-Received: by 2002:a19:771b:: with SMTP id s27-v6mr1623242lfc.84.1539913851673;
- Thu, 18 Oct 2018 18:50:51 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:95d7:0:0:0:0:0 with HTTP; Thu, 18 Oct 2018 18:50:51
- -0700 (PDT)
-In-Reply-To: <20181018165101.GA11562@bogus>
-References: <e7c061535f2dcca54d6498405fdd5ed7098b19f9.1539587217.git.baolin.wang@linaro.org>
- <eb56baf2e2d127067e459b6014516071ba9005c0.1539587217.git.baolin.wang@linaro.org>
- <20181018165101.GA11562@bogus>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Fri, 19 Oct 2018 09:50:51 +0800
-Message-ID: <CAMz4kuK7FjFSs0gUENsGekg+0eWyd40yaG6d27A-gMJCG-9_Sw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/6] dt-bindings: power: Introduce properties to
- present the battery OCV capacity table
-To:     Rob Herring <robh@kernel.org>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, yuanjiang.yu@unisoc.com,
-        Mark Brown <broonie@kernel.org>,
-        Craig Tatlor <ctatlor97@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 19 Oct 2018 06:02:29 -0400
+Received: from localhost.localdomain (c-24-4-154-175.hsd1.ca.comcast.net [24.4.154.175])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03082B8E;
+        Fri, 19 Oct 2018 01:58:35 +0000 (UTC)
+Date:   Thu, 18 Oct 2018 18:58:34 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Michal Hocko <mhocko@kernel.org>,
+        linux-alpha <linux-alpha@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND PATCH v2] alpha: switch to NO_BOOTMEM
+Message-Id: <20181018185834.a3925ae72b9d7bbf43b1b8a3@linux-foundation.org>
+In-Reply-To: <1535952894-10967-1-git-send-email-rppt@linux.vnet.ibm.com>
+References: <1535952894-10967-1-git-send-email-rppt@linux.vnet.ibm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19 October 2018 at 00:51, Rob Herring <robh@kernel.org> wrote:
-> On Mon, Oct 15, 2018 at 04:09:22PM +0800, Baolin Wang wrote:
->> Some battery driver will use the open circuit voltage (OCV) value to look
->> up the corresponding battery capacity percent in one certain degree Celsius.
->> Thus this patch provides some battery properties to present the OCV table
->> temperatures and OCV capacity table values.
->>
->> Suggested-by: Sebastian Reichel <sre@kernel.org>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->> Changes from v3:
->>  - Split binding into one separate patch.
->>  - Rename ocv-capacity-table-temperatures to ocv-capacity-celsius.
->>  - Add some words to specify the OCV's unit.
->>
->> Changes from v2:
->>  - Use type __be32 to calculate the table length.
->>  - Update error messages.
->>  - Add some helper functions.
->>
->> Changes from v1:
->>  - New patch in v2.
->> ---
->>  .../devicetree/bindings/power/supply/battery.txt   |   15 +++++++++++++++
->>  1 file changed, 15 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/power/supply/battery.txt b/Documentation/devicetree/bindings/power/supply/battery.txt
->> index 938d027..1f70e5d 100644
->> --- a/Documentation/devicetree/bindings/power/supply/battery.txt
->> +++ b/Documentation/devicetree/bindings/power/supply/battery.txt
->> @@ -23,6 +23,17 @@ Optional Properties:
->>   - constant-charge-current-max-microamp: maximum constant input current
->>   - constant-charge-voltage-max-microvolt: maximum constant input voltage
->>   - factory-internal-resistance-micro-ohms: battery factory internal resistance
->> + - ocv-capacity-table-0: An array providing the battery capacity percent
->> +   with corresponding open circuit voltage (OCV) of the battery, which
->> +   is used to look up battery capacity according to current OCV value.
->> +   And the open circuit voltage unit is microvolt.
->
-> The order percent and voltage is still not clear. I'd guess one way
-> based on the text here, but the example is the opposite. The description
-> here must stand on its own.
+No reviews or acks for this one yet?
 
-Yes, you are right. I will correct the order of ocv-capacity-table-n. Thanks.
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: alpha: switch to NO_BOOTMEM
 
->> + - ocv-capacity-table-1: Same as ocv-capacity-table-0
->> + ......
->> + - ocv-capacity-table-n: Same as ocv-capacity-table-0
->> + - ocv-capacity-celsius: An array containing the temperature in degree Celsius,
->> +   for each of the battery capacity lookup table. The first temperature value
->> +   specifies the OCV table 0, and the second temperature value specifies the
->> +   OCV table 1, and so on.
->>
->>  Battery properties are named, where possible, for the corresponding
->>  elements in enum power_supply_property, defined in
->> @@ -44,6 +55,10 @@ Example:
->>               constant-charge-current-max-microamp = <900000>;
->>               constant-charge-voltage-max-microvolt = <4200000>;
->>               factory-internal-resistance-micro-ohms = <250000>;
->> +             ocv-capacity-celsius = <(-10) 0 10>;
->> +             ocv-capacity-table-0 = <4185000 100>, <4113000 95>, <4066000 90>, ...;
->> +             ocv-capacity-table-1 = <4200000 100>, <4185000 95>, <4113000 90>, ...;
->> +             ocv-capacity-table-2 = <4250000 100>, <4200000 95>, <4185000 90>, ...;
->>       };
->>
->>       charger: charger@11 {
->> --
->> 1.7.9.5
->>
+Replace bootmem allocator with memblock and enable use of NO_BOOTMEM like
+on most other architectures.
+
+Alpha gets the description of the physical memory from the firmware as an
+array of memory clusters.  Each cluster that is not reserved by the
+firmware is added to memblock.memory.
+
+Once the memblock.memory is set up, we reserve the kernel and initrd pages
+with memblock reserve.
+
+Since we don't need the bootmem bitmap anymore, the code that finds an
+appropriate place is removed.
+
+The conversion does not take care of NUMA support which is marked broken
+for more than 10 years now.
+
+Link: http://lkml.kernel.org/r/1535952894-10967-1-git-send-email-rppt@linux.vnet.ibm.com
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
 
 
+--- a/arch/alpha/Kconfig~alpha-switch-to-no_bootmem
++++ a/arch/alpha/Kconfig
+@@ -31,6 +31,8 @@ config ALPHA
+ 	select ODD_RT_SIGACTION
+ 	select OLD_SIGSUSPEND
+ 	select CPU_NO_EFFICIENT_FFS if !ALPHA_EV67
++	select HAVE_MEMBLOCK
++	select NO_BOOTMEM
+ 	help
+ 	  The Alpha is a 64-bit general-purpose processor designed and
+ 	  marketed by the Digital Equipment Corporation of blessed memory,
+--- a/arch/alpha/kernel/core_irongate.c~alpha-switch-to-no_bootmem
++++ a/arch/alpha/kernel/core_irongate.c
+@@ -21,6 +21,7 @@
+ #include <linux/init.h>
+ #include <linux/initrd.h>
+ #include <linux/bootmem.h>
++#include <linux/memblock.h>
+ 
+ #include <asm/ptrace.h>
+ #include <asm/cacheflush.h>
+@@ -241,8 +242,7 @@ albacore_init_arch(void)
+ 				       size / 1024);
+ 		}
+ #endif
+-		reserve_bootmem_node(NODE_DATA(0), pci_mem, memtop -
+-				pci_mem, BOOTMEM_DEFAULT);
++		memblock_reserve(pci_mem, memtop - pci_mem);
+ 		printk("irongate_init_arch: temporarily reserving "
+ 			"region %08lx-%08lx for PCI\n", pci_mem, memtop - 1);
+ 	}
+--- a/arch/alpha/kernel/setup.c~alpha-switch-to-no_bootmem
++++ a/arch/alpha/kernel/setup.c
+@@ -30,6 +30,7 @@
+ #include <linux/ioport.h>
+ #include <linux/platform_device.h>
+ #include <linux/bootmem.h>
++#include <linux/memblock.h>
+ #include <linux/pci.h>
+ #include <linux/seq_file.h>
+ #include <linux/root_dev.h>
+@@ -312,9 +313,7 @@ setup_memory(void *kernel_end)
+ {
+ 	struct memclust_struct * cluster;
+ 	struct memdesc_struct * memdesc;
+-	unsigned long start_kernel_pfn, end_kernel_pfn;
+-	unsigned long bootmap_size, bootmap_pages, bootmap_start;
+-	unsigned long start, end;
++	unsigned long kernel_size;
+ 	unsigned long i;
+ 
+ 	/* Find free clusters, and init and free the bootmem accordingly.  */
+@@ -322,6 +321,8 @@ setup_memory(void *kernel_end)
+ 	  (hwrpb->mddt_offset + (unsigned long) hwrpb);
+ 
+ 	for_each_mem_cluster(memdesc, cluster, i) {
++		unsigned long end;
++
+ 		printk("memcluster %lu, usage %01lx, start %8lu, end %8lu\n",
+ 		       i, cluster->usage, cluster->start_pfn,
+ 		       cluster->start_pfn + cluster->numpages);
+@@ -335,6 +336,9 @@ setup_memory(void *kernel_end)
+ 		end = cluster->start_pfn + cluster->numpages;
+ 		if (end > max_low_pfn)
+ 			max_low_pfn = end;
++
++		memblock_add(PFN_PHYS(cluster->start_pfn),
++			     cluster->numpages << PAGE_SHIFT);
+ 	}
+ 
+ 	/*
+@@ -363,87 +367,9 @@ setup_memory(void *kernel_end)
+ 		max_low_pfn = mem_size_limit;
+ 	}
+ 
+-	/* Find the bounds of kernel memory.  */
+-	start_kernel_pfn = PFN_DOWN(KERNEL_START_PHYS);
+-	end_kernel_pfn = PFN_UP(virt_to_phys(kernel_end));
+-	bootmap_start = -1;
+-
+- try_again:
+-	if (max_low_pfn <= end_kernel_pfn)
+-		panic("not enough memory to boot");
+-
+-	/* We need to know how many physically contiguous pages
+-	   we'll need for the bootmap.  */
+-	bootmap_pages = bootmem_bootmap_pages(max_low_pfn);
+-
+-	/* Now find a good region where to allocate the bootmap.  */
+-	for_each_mem_cluster(memdesc, cluster, i) {
+-		if (cluster->usage & 3)
+-			continue;
+-
+-		start = cluster->start_pfn;
+-		end = start + cluster->numpages;
+-		if (start >= max_low_pfn)
+-			continue;
+-		if (end > max_low_pfn)
+-			end = max_low_pfn;
+-		if (start < start_kernel_pfn) {
+-			if (end > end_kernel_pfn
+-			    && end - end_kernel_pfn >= bootmap_pages) {
+-				bootmap_start = end_kernel_pfn;
+-				break;
+-			} else if (end > start_kernel_pfn)
+-				end = start_kernel_pfn;
+-		} else if (start < end_kernel_pfn)
+-			start = end_kernel_pfn;
+-		if (end - start >= bootmap_pages) {
+-			bootmap_start = start;
+-			break;
+-		}
+-	}
+-
+-	if (bootmap_start == ~0UL) {
+-		max_low_pfn >>= 1;
+-		goto try_again;
+-	}
+-
+-	/* Allocate the bootmap and mark the whole MM as reserved.  */
+-	bootmap_size = init_bootmem(bootmap_start, max_low_pfn);
+-
+-	/* Mark the free regions.  */
+-	for_each_mem_cluster(memdesc, cluster, i) {
+-		if (cluster->usage & 3)
+-			continue;
+-
+-		start = cluster->start_pfn;
+-		end = cluster->start_pfn + cluster->numpages;
+-		if (start >= max_low_pfn)
+-			continue;
+-		if (end > max_low_pfn)
+-			end = max_low_pfn;
+-		if (start < start_kernel_pfn) {
+-			if (end > end_kernel_pfn) {
+-				free_bootmem(PFN_PHYS(start),
+-					     (PFN_PHYS(start_kernel_pfn)
+-					      - PFN_PHYS(start)));
+-				printk("freeing pages %ld:%ld\n",
+-				       start, start_kernel_pfn);
+-				start = end_kernel_pfn;
+-			} else if (end > start_kernel_pfn)
+-				end = start_kernel_pfn;
+-		} else if (start < end_kernel_pfn)
+-			start = end_kernel_pfn;
+-		if (start >= end)
+-			continue;
+-
+-		free_bootmem(PFN_PHYS(start), PFN_PHYS(end) - PFN_PHYS(start));
+-		printk("freeing pages %ld:%ld\n", start, end);
+-	}
+-
+-	/* Reserve the bootmap memory.  */
+-	reserve_bootmem(PFN_PHYS(bootmap_start), bootmap_size,
+-			BOOTMEM_DEFAULT);
+-	printk("reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
++	/* Reserve the kernel memory. */
++	kernel_size = virt_to_phys(kernel_end) - KERNEL_START_PHYS;
++	memblock_reserve(KERNEL_START_PHYS, kernel_size);
+ 
+ #ifdef CONFIG_BLK_DEV_INITRD
+ 	initrd_start = INITRD_START;
+@@ -459,8 +385,8 @@ setup_memory(void *kernel_end)
+ 				       initrd_end,
+ 				       phys_to_virt(PFN_PHYS(max_low_pfn)));
+ 		} else {
+-			reserve_bootmem(virt_to_phys((void *)initrd_start),
+-					INITRD_SIZE, BOOTMEM_DEFAULT);
++			memblock_reserve(virt_to_phys((void *)initrd_start),
++					INITRD_SIZE);
+ 		}
+ 	}
+ #endif /* CONFIG_BLK_DEV_INITRD */
+--- a/arch/alpha/mm/numa.c~alpha-switch-to-no_bootmem
++++ a/arch/alpha/mm/numa.c
+@@ -11,6 +11,7 @@
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/bootmem.h>
++#include <linux/memblock.h>
+ #include <linux/swap.h>
+ #include <linux/initrd.h>
+ #include <linux/pfn.h>
+@@ -59,12 +60,10 @@ setup_memory_node(int nid, void *kernel_
+ 	struct memclust_struct * cluster;
+ 	struct memdesc_struct * memdesc;
+ 	unsigned long start_kernel_pfn, end_kernel_pfn;
+-	unsigned long bootmap_size, bootmap_pages, bootmap_start;
+ 	unsigned long start, end;
+ 	unsigned long node_pfn_start, node_pfn_end;
+ 	unsigned long node_min_pfn, node_max_pfn;
+ 	int i;
+-	unsigned long node_datasz = PFN_UP(sizeof(pg_data_t));
+ 	int show_init = 0;
+ 
+ 	/* Find the bounds of current node */
+@@ -134,24 +133,14 @@ setup_memory_node(int nid, void *kernel_
+ 	/* Cute trick to make sure our local node data is on local memory */
+ 	node_data[nid] = (pg_data_t *)(__va(node_min_pfn << PAGE_SHIFT));
+ #endif
+-	/* Quasi-mark the pg_data_t as in-use */
+-	node_min_pfn += node_datasz;
+-	if (node_min_pfn >= node_max_pfn) {
+-		printk(" not enough mem to reserve NODE_DATA");
+-		return;
+-	}
+-	NODE_DATA(nid)->bdata = &bootmem_node_data[nid];
+-
+ 	printk(" Detected node memory:   start %8lu, end %8lu\n",
+ 	       node_min_pfn, node_max_pfn);
+ 
+ 	DBGDCONT(" DISCONTIG: node_data[%d]   is at 0x%p\n", nid, NODE_DATA(nid));
+-	DBGDCONT(" DISCONTIG: NODE_DATA(%d)->bdata is at 0x%p\n", nid, NODE_DATA(nid)->bdata);
+ 
+ 	/* Find the bounds of kernel memory.  */
+ 	start_kernel_pfn = PFN_DOWN(KERNEL_START_PHYS);
+ 	end_kernel_pfn = PFN_UP(virt_to_phys(kernel_end));
+-	bootmap_start = -1;
+ 
+ 	if (!nid && (node_max_pfn < end_kernel_pfn || node_min_pfn > start_kernel_pfn))
+ 		panic("kernel loaded out of ram");
+@@ -161,89 +150,11 @@ setup_memory_node(int nid, void *kernel_
+ 	   has much larger alignment than 8Mb, so it's safe. */
+ 	node_min_pfn &= ~((1UL << (MAX_ORDER-1))-1);
+ 
+-	/* We need to know how many physically contiguous pages
+-	   we'll need for the bootmap.  */
+-	bootmap_pages = bootmem_bootmap_pages(node_max_pfn-node_min_pfn);
+-
+-	/* Now find a good region where to allocate the bootmap.  */
+-	for_each_mem_cluster(memdesc, cluster, i) {
+-		if (cluster->usage & 3)
+-			continue;
+-
+-		start = cluster->start_pfn;
+-		end = start + cluster->numpages;
+-
+-		if (start >= node_max_pfn || end <= node_min_pfn)
+-			continue;
+-
+-		if (end > node_max_pfn)
+-			end = node_max_pfn;
+-		if (start < node_min_pfn)
+-			start = node_min_pfn;
+-
+-		if (start < start_kernel_pfn) {
+-			if (end > end_kernel_pfn
+-			    && end - end_kernel_pfn >= bootmap_pages) {
+-				bootmap_start = end_kernel_pfn;
+-				break;
+-			} else if (end > start_kernel_pfn)
+-				end = start_kernel_pfn;
+-		} else if (start < end_kernel_pfn)
+-			start = end_kernel_pfn;
+-		if (end - start >= bootmap_pages) {
+-			bootmap_start = start;
+-			break;
+-		}
+-	}
+-
+-	if (bootmap_start == -1)
+-		panic("couldn't find a contiguous place for the bootmap");
+-
+-	/* Allocate the bootmap and mark the whole MM as reserved.  */
+-	bootmap_size = init_bootmem_node(NODE_DATA(nid), bootmap_start,
+-					 node_min_pfn, node_max_pfn);
+-	DBGDCONT(" bootmap_start %lu, bootmap_size %lu, bootmap_pages %lu\n",
+-		 bootmap_start, bootmap_size, bootmap_pages);
+-
+-	/* Mark the free regions.  */
+-	for_each_mem_cluster(memdesc, cluster, i) {
+-		if (cluster->usage & 3)
+-			continue;
+-
+-		start = cluster->start_pfn;
+-		end = cluster->start_pfn + cluster->numpages;
+-
+-		if (start >= node_max_pfn || end <= node_min_pfn)
+-			continue;
++	memblock_add(PFN_PHYS(node_min_pfn),
++		     (node_max_pfn - node_min_pfn) << PAGE_SHIFT);
+ 
+-		if (end > node_max_pfn)
+-			end = node_max_pfn;
+-		if (start < node_min_pfn)
+-			start = node_min_pfn;
+-
+-		if (start < start_kernel_pfn) {
+-			if (end > end_kernel_pfn) {
+-				free_bootmem_node(NODE_DATA(nid), PFN_PHYS(start),
+-					     (PFN_PHYS(start_kernel_pfn)
+-					      - PFN_PHYS(start)));
+-				printk(" freeing pages %ld:%ld\n",
+-				       start, start_kernel_pfn);
+-				start = end_kernel_pfn;
+-			} else if (end > start_kernel_pfn)
+-				end = start_kernel_pfn;
+-		} else if (start < end_kernel_pfn)
+-			start = end_kernel_pfn;
+-		if (start >= end)
+-			continue;
+-
+-		free_bootmem_node(NODE_DATA(nid), PFN_PHYS(start), PFN_PHYS(end) - PFN_PHYS(start));
+-		printk(" freeing pages %ld:%ld\n", start, end);
+-	}
+-
+-	/* Reserve the bootmap memory.  */
+-	reserve_bootmem_node(NODE_DATA(nid), PFN_PHYS(bootmap_start),
+-			bootmap_size, BOOTMEM_DEFAULT);
+-	printk(" reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
++	NODE_DATA(nid)->node_start_pfn = node_min_pfn;
++	NODE_DATA(nid)->node_present_pages = node_max_pfn - node_min_pfn;
+ 
+ 	node_set_online(nid);
+ }
+@@ -251,6 +162,7 @@ setup_memory_node(int nid, void *kernel_
+ void __init
+ setup_memory(void *kernel_end)
+ {
++	unsigned long kernel_size;
+ 	int nid;
+ 
+ 	show_mem_layout();
+@@ -262,6 +174,9 @@ setup_memory(void *kernel_end)
+ 	for (nid = 0; nid < MAX_NUMNODES; nid++)
+ 		setup_memory_node(nid, kernel_end);
+ 
++	kernel_size = virt_to_phys(kernel_end) - KERNEL_START_PHYS;
++	memblock_reserve(KERNEL_START_PHYS, kernel_size);
++
+ #ifdef CONFIG_BLK_DEV_INITRD
+ 	initrd_start = INITRD_START;
+ 	if (initrd_start) {
+@@ -279,9 +194,8 @@ setup_memory(void *kernel_end)
+ 				       phys_to_virt(PFN_PHYS(max_low_pfn)));
+ 		} else {
+ 			nid = kvaddr_to_nid(initrd_start);
+-			reserve_bootmem_node(NODE_DATA(nid),
+-					     virt_to_phys((void *)initrd_start),
+-					     INITRD_SIZE, BOOTMEM_DEFAULT);
++			memblock_reserve(virt_to_phys((void *)initrd_start),
++					 INITRD_SIZE);
+ 		}
+ 	}
+ #endif /* CONFIG_BLK_DEV_INITRD */
+@@ -303,9 +217,8 @@ void __init paging_init(void)
+ 	dma_local_pfn = virt_to_phys((char *)MAX_DMA_ADDRESS) >> PAGE_SHIFT;
+ 
+ 	for_each_online_node(nid) {
+-		bootmem_data_t *bdata = &bootmem_node_data[nid];
+-		unsigned long start_pfn = bdata->node_min_pfn;
+-		unsigned long end_pfn = bdata->node_low_pfn;
++		unsigned long start_pfn = NODE_DATA(nid)->node_start_pfn;
++		unsigned long end_pfn = start_pfn + NODE_DATA(nid)->node_present_pages;
+ 
+ 		if (dma_local_pfn >= end_pfn - start_pfn)
+ 			zones_size[ZONE_DMA] = end_pfn - start_pfn;
+_
 
--- 
-Baolin Wang
-Best Regards
