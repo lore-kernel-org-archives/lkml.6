@@ -2,120 +2,98 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D8DECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFB4ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:22:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A962D21470
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:22:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A962D21470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 85BD121470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:22:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FPKolBfq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85BD121470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727405AbeJSR1V (ORCPT
+        id S1727444AbeJSR1z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 13:27:21 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.36]:33398 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726968AbeJSR1V (ORCPT
+        Fri, 19 Oct 2018 13:27:55 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:54156 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727227AbeJSR1z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 13:27:21 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 50141E6A8
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 04:22:06 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id DQyTgnNwRtz4jDQygguYqN; Fri, 19 Oct 2018 04:22:05 -0500
-X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:50444 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gDQyR-000oCc-Ac; Fri, 19 Oct 2018 04:21:39 -0500
-Date:   Fri, 19 Oct 2018 11:21:38 +0200
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        netdev@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH v3 2/2] phy: ocelot-serdes: fix out-of-bounds read
-Message-ID: <5fd576c0aa6e5ae4a20bffc281dc1a3535afa90b.1539940387.git.gustavo@embeddedor.com>
-References: <cover.1539940387.git.gustavo@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1539940387.git.gustavo@embeddedor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 86.245.173.13
-X-Source-L: No
-X-Exim-ID: 1gDQyR-000oCc-Ac
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:50444
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 17
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Fri, 19 Oct 2018 13:27:55 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9J9JQ8p187685;
+        Fri, 19 Oct 2018 09:22:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=elVnaE5MJgkuZBx44YoTIEIMQxUMI9tISOx6nAl3fSo=;
+ b=FPKolBfqbIS2dWRDbg3KJK0Z5/GaqM3mJb6APWBvQNIeHbMAjzWeEhpoWReIyajuH1ln
+ qz2VtSie4TkX1VoomT6zVPilsqPtciGx2cMzszGauxihIn7nFUOZUY/I9MYfC0AUt2Mm
+ Sm1njEqth8TwsHmEryGD5xfmNrUgMVqTLCHsFF63h0UNC/kI7/CwlsmKY0zIQIi8iSQq
+ nJAF2KUXpDhIwbpxPOKLprVG7F7iXFDbTDs1tTgmpFhI2oR5ZjgBEtQGSqRxhJ5R9nTN
+ bl8Hm6H1+M8SApEOJ9qFgKSekhqElFxZBXy5/pmdRIXjHBPOXtgrsZL6vXE1yUXLAHuE LA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2n38nqk200-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Oct 2018 09:22:38 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9J9Mbc0015894
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Oct 2018 09:22:38 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9J9Mbch009727;
+        Fri, 19 Oct 2018 09:22:37 GMT
+Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 19 Oct 2018 02:22:36 -0700
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     axboe@kernel.dk
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] block: don't check position contiguity for DISCARD in attempt_merge
+Date:   Fri, 19 Oct 2018 17:24:53 +0800
+Message-Id: <1539941093-32058-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9050 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=937
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810190085
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, there is an out-of-bounds read on array ctrl->phys,
-once variable i reaches the maximum array size of SERDES_MAX
-in the for loop.
+Discard command supports multiple ranges of blocks, so needn't
+checking position contiguity when merging. Let's do the same thing
+in attempt_merge as the blk_try_merge.
 
-Fix this by changing the condition in the for loop from
-i <= SERDES_MAX to i < SERDES_MAX.
-
-Addresses-Coverity-ID: 1473966 ("Out-of-bounds read")
-Addresses-Coverity-ID: 1473959 ("Out-of-bounds read")
-Fixes: 51f6b410fc22 ("phy: add driver for Microsemi Ocelot SerDes muxing")
-Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 ---
-Changes in v3:
- - Post the patch to netdev.
+ block/blk-merge.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Changes in v2:
- - Rebase and add Quentin's Reviewed-by to commit log.
-
- drivers/phy/mscc/phy-ocelot-serdes.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/phy/mscc/phy-ocelot-serdes.c b/drivers/phy/mscc/phy-ocelot-serdes.c
-index b2be546..cbb49d9 100644
---- a/drivers/phy/mscc/phy-ocelot-serdes.c
-+++ b/drivers/phy/mscc/phy-ocelot-serdes.c
-@@ -206,7 +206,7 @@ static struct phy *serdes_simple_xlate(struct device *dev,
- 	port = args->args[0];
- 	idx = args->args[1];
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index 42a4674..c94749b 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -732,9 +732,10 @@ static struct request *attempt_merge(struct request_queue *q,
+ 		return NULL;
  
--	for (i = 0; i <= SERDES_MAX; i++) {
-+	for (i = 0; i < SERDES_MAX; i++) {
- 		struct serdes_macro *macro = phy_get_drvdata(ctrl->phys[i]);
+ 	/*
+-	 * not contiguous
++	 * not contiguous, except for DISCARD
+ 	 */
+-	if (blk_rq_pos(req) + blk_rq_sectors(req) != blk_rq_pos(next))
++	if ((req_op(req) != REQ_OP_DISCARD) &&
++	    (blk_rq_pos(req) + blk_rq_sectors(req) != blk_rq_pos(next)))
+ 		return NULL;
  
- 		if (idx != macro->idx)
-@@ -260,7 +260,7 @@ static int serdes_probe(struct platform_device *pdev)
- 	if (IS_ERR(ctrl->regs))
- 		return PTR_ERR(ctrl->regs);
- 
--	for (i = 0; i <= SERDES_MAX; i++) {
-+	for (i = 0; i < SERDES_MAX; i++) {
- 		ret = serdes_phy_create(ctrl, i, &ctrl->phys[i]);
- 		if (ret)
- 			return ret;
+ 	if (rq_data_dir(req) != rq_data_dir(next)
 -- 
 2.7.4
 
