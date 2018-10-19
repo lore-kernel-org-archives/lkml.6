@@ -2,99 +2,137 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6963DECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E4EECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29B8F21476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:25:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NQhXwO9y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29B8F21476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F76E21470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:29:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F76E21470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbeJSRbC (ORCPT
+        id S1727393AbeJSRe5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 13:31:02 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:40291 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726578AbeJSRbC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 13:31:02 -0400
-Received: by mail-vs1-f66.google.com with SMTP id y195so9109551vsc.7
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 02:25:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Iim0wBvDiJ99yf4NNYppkFey1FpkyJEg0f3tzp8xDT8=;
-        b=NQhXwO9yqNxQnrIdlt2Ri2JDmFkfiENprHMcNRZOEh4yLVtbkJjM9J9A9W1LhrufEV
-         OuN5cMYHBBjiM6IcCqm+hbPFMVlWvoZnQtp+osRumkg/5ZWnvZwP0xFqxrjYvj5YzVnz
-         uFsRomwpw+ddiuT4oNt+VoY9rPIn/JHJmXhHVzmuMUm4KbEKQ4pxcpE71X8gupyENvf3
-         hPhfbBFRWrIepPAFqyRV9+lpHJjKPxXK76uYSubNtKSyf0SlUVpBRRaai54R2o4Y8/pP
-         xg8Qg94HOHE347vmZD6XpR3mQbredJZ7kPBvPLbpY9LVFZ5M0FbSFzJVD+/HF+bNicl7
-         gHww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Iim0wBvDiJ99yf4NNYppkFey1FpkyJEg0f3tzp8xDT8=;
-        b=TpRJWs6dupFw3+XQTtC3s3f2XnqUtPYwnM3Vj1MZOe4EXMEOhQZSyDHYijvD6tvm2Y
-         jdBaU3ggJfcHSTQmnHwXrUjgxuUiddvweG1o5iJ1CGAtjXjxUWPfiaWgoY7rqz6DlLk4
-         QkGlsZ1SpoKKD15BpqCZONoBHvJrLtvVgCGCvKZz/6Tz4YjiW+scrvRv2gTZmnrZu+Rz
-         R+G5oBRQxlLspeyzuGifvlj2MuHPOvMhgeYZ3XTnIsH8GpvtPLls9/+RKMmL3SavdPfM
-         tWdYWnaqGPHeutSwSRM/dL3gybfgbef4wGYMPArVpfYbHjPXp76ihd+XWm2bw31U4Aox
-         NvxQ==
-X-Gm-Message-State: ABuFfohSageEE/G+3HkB/gqwK1Ks8YLHJm9uNNTR/Cu2k6AC3AzGHtoG
-        YnqB1nLu5//rTgnSFhhSKKhRtldVafaIlKg0KG0=
-X-Google-Smtp-Source: ACcGV616zX7DAaViL9+QNjydwC2tRdR1KFfr+NPjc2e+QT1DE4e6iH35jruzPNZt1zL1ojp675AagRfMDnrssg692iY=
-X-Received: by 2002:a67:33d1:: with SMTP id z200mr14161253vsz.40.1539941146085;
- Fri, 19 Oct 2018 02:25:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1539654056.git.nickhu@andestech.com>
-In-Reply-To: <cover.1539654056.git.nickhu@andestech.com>
-From:   Greentime Hu <green.hu@gmail.com>
-Date:   Fri, 19 Oct 2018 17:25:09 +0800
-Message-ID: <CAEbi=3f+q5tCD-t1nLkkp3vHrHyYpVF_nwaNZ2thu4g_i0vpTw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] nds32: Unaligned access handler fix
-To:     Nickhu <nickhu@andestech.com>
-Cc:     Greentime <greentime@andestech.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Zong Li <zong@andestech.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 19 Oct 2018 13:34:57 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:51628 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726578AbeJSRe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 13:34:57 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42c0wx3HM5z9ttFp;
+        Fri, 19 Oct 2018 11:29:21 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id PTkX-FbHhTio; Fri, 19 Oct 2018 11:29:21 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42c0wx1y8Nz9ttBP;
+        Fri, 19 Oct 2018 11:29:21 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id A18798B902;
+        Fri, 19 Oct 2018 11:29:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 5_R4DiSewkGy; Fri, 19 Oct 2018 11:29:22 +0200 (CEST)
+Received: from pc13168vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 724CB8B8F6;
+        Fri, 19 Oct 2018 11:29:22 +0200 (CEST)
+Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 4907B6F496; Fri, 19 Oct 2018 09:29:22 +0000 (UTC)
+Message-Id: <f1b058d6a73cfb68b36dc755df5aaa7a064875b1.1539935852.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] idle/x86: remove the call to boot_init_stack_canary() from
+ cpu_startup_entry()
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org
+Date:   Fri, 19 Oct 2018 09:29:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nickhu <nickhu@andestech.com> =E6=96=BC 2018=E5=B9=B410=E6=9C=8818=E6=97=A5=
- =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=884:34=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> The patches are about unaligned access handler. We fix some
-> bugs in unaligned access handler and add some kernel configs
-> for unaligned access handler. Then we add the kernel unaligned
-> access handled by software in handler.
->
-> Nickhu (3):
->   nds32: Fix instruction simulator bug for unaligned access handler.
->   nds32: Add 'HAVE_EFFICIENT_UNALIGNED_ACCESS' config
->   nds32: Add unaligned access in kernel space.
->
->  arch/nds32/Kconfig.cpu    |  3 ++-
->  arch/nds32/kernel/traps.c |  4 +++-
->  arch/nds32/mm/alignment.c | 43 +++++++++++++++++++++++----------------
->  3 files changed, 30 insertions(+), 20 deletions(-)
->
+commit d7880812b359 ("idle: Add the stack canary init to
+cpu_startup_entry()") added the call to boot_init_stack_canary()
+in cpu_startup_entry() in an #ifdef CONFIG_X86 statement, with
+the intention to remove that #ifdef later.
 
-Hi Nick,
-Thanks
-Acked-by: Greentime Hu <greentime@andestech.com>
+While implementing stack protector for powerpc, it has been
+observed that calling boot_init_stack_canary() is also needed
+for powerpc which uses per task (TLS) stack canary like the X86.
+
+However, calling boot_init_stack_canary() would break arches
+using global stack canary (ARM, SH, MIPS and XTENSA).
+
+Instead of adding modifying the #ifdef in a
+implemented the call to boot_init_stack_canary() in the function
+calling cpu_startup_entry()
+
+On x86, we have two functions calling cpu_startup_entry():
+- start_secondary()
+- cpu_bringup_and_idle()
+
+start_secondary() already calls boot_init_stack_canary().
+
+This patch adds the call to boot_init_stack_canary() in
+cpu_bringup_and_idle() and removes it from cpu_startup_entry()
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/x86/xen/smp_pv.c |  1 +
+ kernel/sched/idle.c   | 15 ---------------
+ 2 files changed, 1 insertion(+), 15 deletions(-)
+
+diff --git a/arch/x86/xen/smp_pv.c b/arch/x86/xen/smp_pv.c
+index e3b18ad49889..0e05e8e23998 100644
+--- a/arch/x86/xen/smp_pv.c
++++ b/arch/x86/xen/smp_pv.c
+@@ -88,6 +88,7 @@ static void cpu_bringup(void)
+ asmlinkage __visible void cpu_bringup_and_idle(void)
+ {
+ 	cpu_bringup();
++	boot_init_stack_canary();
+ 	cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
+ }
+ 
+diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+index 16f84142f2f4..f5516bae0c1b 100644
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -347,21 +347,6 @@ EXPORT_SYMBOL_GPL(play_idle);
+ 
+ void cpu_startup_entry(enum cpuhp_state state)
+ {
+-	/*
+-	 * This #ifdef needs to die, but it's too late in the cycle to
+-	 * make this generic (ARM and SH have never invoked the canary
+-	 * init for the non boot CPUs!). Will be fixed in 3.11
+-	 */
+-#ifdef CONFIG_X86
+-	/*
+-	 * If we're the non-boot CPU, nothing set the stack canary up
+-	 * for us. The boot CPU already has it initialized but no harm
+-	 * in doing it again. This is a good place for updating it, as
+-	 * we wont ever return from this function (so the invalid
+-	 * canaries already on the stack wont ever trigger).
+-	 */
+-	boot_init_stack_canary();
+-#endif
+ 	arch_cpu_idle_prepare();
+ 	cpuhp_online_idle(state);
+ 	while (1)
+-- 
+2.13.3
+
