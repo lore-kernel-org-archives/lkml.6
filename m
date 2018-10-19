@@ -2,526 +2,293 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D25ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C46ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F12742145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:58:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7yfVXGl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F12742145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C7DC521470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:59:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7DC521470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbeJTCFG (ORCPT
+        id S1728029AbeJTCHG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 22:05:06 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33303 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727738AbeJTCFG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 22:05:06 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y140-v6so4567771wmd.0;
-        Fri, 19 Oct 2018 10:57:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JC5ppqmB1iQu+BM9NVurJ/K9S8RBRYnP7d9EVerx4QY=;
-        b=E7yfVXGlnfHDpeiUgo0Ol76sCOg1KTqvAs2wP49741Xwf9eBQKe5datN3ajbxAhe78
-         SNA1KnzTCQSwCdmP1H3i9ekWfPqpzKsqX+1Lu0QsBZNRoV1EL+ghh3FoDIY4/g3Kc+JE
-         UJ7iuLpUZ7v0pAAiPUMd2xMZ+4bXWKI8TvYqra58KXRaixO+zLv7npv2AFhglWnDjnDl
-         317QahmF0PT+9TLJlqw+f9ihr/vltFpa52jnXGQPRRL2gdA2jNYkaIpWfOzTvFavLzSb
-         AXz39tb9odAiE+BoPtXHx+yAHL5qjRECVafS02btoZzPWhgnsdJvb8THSr7AQSO5F5TL
-         gY+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JC5ppqmB1iQu+BM9NVurJ/K9S8RBRYnP7d9EVerx4QY=;
-        b=hHxszVI6odxCBM4RbH9ziD3RW4scyz0taq+Rwe1FoFovqITgXhoFKseCJfi7+Ku9vO
-         OmUTi2BFjb3GqVI92Ca6qEpJcuayC8udIzJ2X+y1yhGdiZH6M4lcCduqGn/T22xxxgfM
-         DPf2trV+ih7P5yGEA4fuQvyY3Q4Qm6SIV9B+dr/BthopI+llTg71xTWXpyp+XVZshoJ8
-         Oxw0T8xz4Zx9WvYAF8S1b280EvYlbnQJ1+eq14EfEI2M4ff/4skjs850KcBFDzj+hWOE
-         KZQpaupdArBsaj6TBdjHiRIPkqiHsjrZrszLBQxQIk7x31PpqmTOOaA72vY546n5X5kf
-         Jb1g==
-X-Gm-Message-State: ABuFfogQJAivQ7jfigXqYW9aZDf7KXFxy7zWDROK/W/iSE1Wr3m/aoXr
-        qHJdX7ELhRPg75S2IAG8peMbxXAB5u0RlQ==
-X-Google-Smtp-Source: ACcGV63PzRKNsKeHGp5iF2odf2BL5pMPci0uVg8/gaoT1XvOmQWM+LzH+M41Ips3c/OHTCiJ8sUd8w==
-X-Received: by 2002:a1c:5e49:: with SMTP id s70-v6mr5780719wmb.131.1539971874973;
-        Fri, 19 Oct 2018 10:57:54 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id y64-v6sm2268092wmy.35.2018.10.19.10.57.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Oct 2018 10:57:54 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
-        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
-        Bradley Grove <linuxdrivers@attotech.com>,
-        Don Brace <don.brace@microsemi.com>,
-        Brian King <brking@us.ibm.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, esc.storagedev@microsemi.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] scsi/ata: Use unsigned int for cmd's type in ioctls in scsi_host_template
-Date:   Fri, 19 Oct 2018 10:57:15 -0700
-Message-Id: <20181019175714.444-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 19 Oct 2018 22:07:06 -0400
+Received: from foss.arm.com ([217.140.101.70]:56566 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726976AbeJTCHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 22:07:05 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6F88A78;
+        Fri, 19 Oct 2018 10:59:57 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.80])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 74F803F71D;
+        Fri, 19 Oct 2018 10:59:56 -0700 (PDT)
+Date:   Fri, 19 Oct 2018 18:59:53 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] arm64 updated for 4.20
+Message-ID: <20181019175952.GA57321@arrakis.emea.arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns several times in the scsi subsystem (trimmed for brevity):
+Hi Linus, Greg,
 
-drivers/scsi/hpsa.c:6209:7: warning: overflow converting case value to
-switch condition type (2147762695 to 18446744071562347015) [-Wswitch]
-        case CCISS_GETBUSTYPES:
-             ^
-drivers/scsi/hpsa.c:6208:7: warning: overflow converting case value to
-switch condition type (2147762694 to 18446744071562347014) [-Wswitch]
-        case CCISS_GETHEARTBEAT:
-             ^
+I'm sending the pull request for 4.20 slightly earlier as I'm on holiday
+next week (not in Edinburgh). Apart from some new arm64 features and
+clean-ups, this request also contains the core mmu_gather changes for
+tracking the levels of the page table being cleared and a minor update
+to the generic compat_sys_sigaltstack() introducing COMPAT_SIGMINSKSZ.
 
-The root cause is that the _IOC macro can generate really large numbers,
-which don't find into type 'int', which is used for the cmd paremeter in
-the ioctls in scsi_host_template. My research into how GCC and Clang are
-handling this at a low level didn't prove fruitful. However, looking at
-the rest of the kernel tree, all ioctls use an 'unsigned int' for the
-cmd parameter, which will fit all of the _IOC values in the scsi/ata
-subsystems.
+Thanks.
 
-Make that change because none of the ioctls expect to take a negative
-value, it brings the ioctls inline with the reset of the kernel, and it
-removes ambiguity, which is never good when dealing with compilers.
+The following changes since commit 57361846b52bc686112da6ca5368d11210796804:
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/85
-Link: https://github.com/ClangBuiltLinux/linux/issues/154
-Link: https://github.com/ClangBuiltLinux/linux/issues/157
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/ata/libata-scsi.c             |  5 +++--
- drivers/scsi/aacraid/aachba.c         |  2 +-
- drivers/scsi/aacraid/aacraid.h        |  4 ++--
- drivers/scsi/aacraid/commctrl.c       |  2 +-
- drivers/scsi/aacraid/linit.c          |  6 ++++--
- drivers/scsi/cxlflash/superpipe.c     | 12 +++++-------
- drivers/scsi/esas2r/esas2r.h          |  4 ++--
- drivers/scsi/esas2r/esas2r_ioctl.c    | 13 ++++++-------
- drivers/scsi/esas2r/esas2r_main.c     |  2 +-
- drivers/scsi/hpsa.c                   | 15 +++++++++------
- drivers/scsi/ipr.c                    |  3 ++-
- drivers/scsi/libsas/sas_scsi_host.c   |  2 +-
- drivers/scsi/scsi_debug.c             |  3 ++-
- drivers/scsi/smartpqi/smartpqi_init.c |  3 ++-
- include/linux/libata.h                |  5 +++--
- include/scsi/libsas.h                 |  3 ++-
- include/scsi/scsi_host.h              |  6 ++++--
- 17 files changed, 50 insertions(+), 40 deletions(-)
+  Linux 4.19-rc2 (2018-09-02 14:37:30 -0700)
 
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index 3d4887d0e84a..6291f1dbf342 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -778,7 +778,7 @@ static int ata_ioc32(struct ata_port *ap)
- }
- 
- int ata_sas_scsi_ioctl(struct ata_port *ap, struct scsi_device *scsidev,
--		     int cmd, void __user *arg)
-+		     unsigned int cmd, void __user *arg)
- {
- 	unsigned long val;
- 	int rc = -EINVAL;
-@@ -829,7 +829,8 @@ int ata_sas_scsi_ioctl(struct ata_port *ap, struct scsi_device *scsidev,
- }
- EXPORT_SYMBOL_GPL(ata_sas_scsi_ioctl);
- 
--int ata_scsi_ioctl(struct scsi_device *scsidev, int cmd, void __user *arg)
-+int ata_scsi_ioctl(struct scsi_device *scsidev, unsigned int cmd,
-+		   void __user *arg)
- {
- 	return ata_sas_scsi_ioctl(ata_shost_to_port(scsidev->host),
- 				scsidev, cmd, arg);
-diff --git a/drivers/scsi/aacraid/aachba.c b/drivers/scsi/aacraid/aachba.c
-index bd7f352c28f3..a6399fac3333 100644
---- a/drivers/scsi/aacraid/aachba.c
-+++ b/drivers/scsi/aacraid/aachba.c
-@@ -3452,7 +3452,7 @@ static int delete_disk(struct aac_dev *dev, void __user *arg)
- 	}
- }
- 
--int aac_dev_ioctl(struct aac_dev *dev, int cmd, void __user *arg)
-+int aac_dev_ioctl(struct aac_dev *dev, unsigned int cmd, void __user *arg)
- {
- 	switch (cmd) {
- 	case FSACTL_QUERY_DISK:
-diff --git a/drivers/scsi/aacraid/aacraid.h b/drivers/scsi/aacraid/aacraid.h
-index 39eb415987fc..1965072ab673 100644
---- a/drivers/scsi/aacraid/aacraid.h
-+++ b/drivers/scsi/aacraid/aacraid.h
-@@ -2705,12 +2705,12 @@ void aac_set_intx_mode(struct aac_dev *dev);
- int aac_get_config_status(struct aac_dev *dev, int commit_flag);
- int aac_get_containers(struct aac_dev *dev);
- int aac_scsi_cmd(struct scsi_cmnd *cmd);
--int aac_dev_ioctl(struct aac_dev *dev, int cmd, void __user *arg);
-+int aac_dev_ioctl(struct aac_dev *dev, unsigned int cmd, void __user *arg);
- #ifndef shost_to_class
- #define shost_to_class(shost) &shost->shost_dev
- #endif
- ssize_t aac_get_serial_number(struct device *dev, char *buf);
--int aac_do_ioctl(struct aac_dev * dev, int cmd, void __user *arg);
-+int aac_do_ioctl(struct aac_dev *dev, unsigned int cmd, void __user *arg);
- int aac_rx_init(struct aac_dev *dev);
- int aac_rkt_init(struct aac_dev *dev);
- int aac_nark_init(struct aac_dev *dev);
-diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
-index 25f6600d6c09..fd8a10871598 100644
---- a/drivers/scsi/aacraid/commctrl.c
-+++ b/drivers/scsi/aacraid/commctrl.c
-@@ -1061,7 +1061,7 @@ static int aac_send_reset_adapter(struct aac_dev *dev, void __user *arg)
- 	return retval;
- }
- 
--int aac_do_ioctl(struct aac_dev * dev, int cmd, void __user *arg)
-+int aac_do_ioctl(struct aac_dev *dev, unsigned int cmd, void __user *arg)
- {
- 	int status;
- 
-diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
-index 2d4e4ddc5ace..cd2efb44f62c 100644
---- a/drivers/scsi/aacraid/linit.c
-+++ b/drivers/scsi/aacraid/linit.c
-@@ -616,7 +616,8 @@ static struct device_attribute *aac_dev_attrs[] = {
- 	NULL,
- };
- 
--static int aac_ioctl(struct scsi_device *sdev, int cmd, void __user * arg)
-+static int aac_ioctl(struct scsi_device *sdev, unsigned int cmd,
-+		     void __user *arg)
- {
- 	struct aac_dev *dev = (struct aac_dev *)sdev->host->hostdata;
- 	if (!capable(CAP_SYS_RAWIO))
-@@ -1205,7 +1206,8 @@ static long aac_compat_do_ioctl(struct aac_dev *dev, unsigned cmd, unsigned long
- 	return ret;
- }
- 
--static int aac_compat_ioctl(struct scsi_device *sdev, int cmd, void __user *arg)
-+static int aac_compat_ioctl(struct scsi_device *sdev, unsigned int cmd,
-+			    void __user *arg)
- {
- 	struct aac_dev *dev = (struct aac_dev *)sdev->host->hostdata;
- 	if (!capable(CAP_SYS_RAWIO))
-diff --git a/drivers/scsi/cxlflash/superpipe.c b/drivers/scsi/cxlflash/superpipe.c
-index acac6152f50b..1a94a469051e 100644
---- a/drivers/scsi/cxlflash/superpipe.c
-+++ b/drivers/scsi/cxlflash/superpipe.c
-@@ -1924,7 +1924,7 @@ static int cxlflash_disk_verify(struct scsi_device *sdev,
-  *
-  * Return: A string identifying the decoded ioctl.
-  */
--static char *decode_ioctl(int cmd)
-+static char *decode_ioctl(unsigned int cmd)
- {
- 	switch (cmd) {
- 	case DK_CXLFLASH_ATTACH:
-@@ -2051,7 +2051,7 @@ static int cxlflash_disk_direct_open(struct scsi_device *sdev, void *arg)
-  *
-  * Return: 0 on success, -errno on failure
-  */
--static int ioctl_common(struct scsi_device *sdev, int cmd)
-+static int ioctl_common(struct scsi_device *sdev, unsigned int cmd)
- {
- 	struct cxlflash_cfg *cfg = shost_priv(sdev->host);
- 	struct device *dev = &cfg->dev->dev;
-@@ -2096,7 +2096,7 @@ static int ioctl_common(struct scsi_device *sdev, int cmd)
-  *
-  * Return: 0 on success, -errno on failure
-  */
--int cxlflash_ioctl(struct scsi_device *sdev, int cmd, void __user *arg)
-+int cxlflash_ioctl(struct scsi_device *sdev, unsigned int cmd, void __user *arg)
- {
- 	typedef int (*sioctl) (struct scsi_device *, void *);
- 
-@@ -2179,8 +2179,7 @@ int cxlflash_ioctl(struct scsi_device *sdev, int cmd, void __user *arg)
- 	}
- 
- 	if (unlikely(copy_from_user(&buf, arg, size))) {
--		dev_err(dev, "%s: copy_from_user() fail "
--			"size=%lu cmd=%d (%s) arg=%p\n",
-+		dev_err(dev, "%s: copy_from_user() fail size=%lu cmd=%u (%s) arg=%p\n",
- 			__func__, size, cmd, decode_ioctl(cmd), arg);
- 		rc = -EFAULT;
- 		goto cxlflash_ioctl_exit;
-@@ -2203,8 +2202,7 @@ int cxlflash_ioctl(struct scsi_device *sdev, int cmd, void __user *arg)
- 	rc = do_ioctl(sdev, (void *)&buf);
- 	if (likely(!rc))
- 		if (unlikely(copy_to_user(arg, &buf, size))) {
--			dev_err(dev, "%s: copy_to_user() fail "
--				"size=%lu cmd=%d (%s) arg=%p\n",
-+			dev_err(dev, "%s: copy_to_user() fail size=%lu cmd=%u (%s) arg=%p\n",
- 				__func__, size, cmd, decode_ioctl(cmd), arg);
- 			rc = -EFAULT;
- 		}
-diff --git a/drivers/scsi/esas2r/esas2r.h b/drivers/scsi/esas2r/esas2r.h
-index 858c3b33db78..7f43b95f4e94 100644
---- a/drivers/scsi/esas2r/esas2r.h
-+++ b/drivers/scsi/esas2r/esas2r.h
-@@ -965,8 +965,8 @@ struct esas2r_adapter {
- const char *esas2r_info(struct Scsi_Host *);
- int esas2r_write_params(struct esas2r_adapter *a, struct esas2r_request *rq,
- 			struct esas2r_sas_nvram *data);
--int esas2r_ioctl_handler(void *hostdata, int cmd, void __user *arg);
--int esas2r_ioctl(struct scsi_device *dev, int cmd, void __user *arg);
-+int esas2r_ioctl_handler(void *hostdata, unsigned int cmd, void __user *arg);
-+int esas2r_ioctl(struct scsi_device *dev, unsigned int cmd, void __user *arg);
- u8 handle_hba_ioctl(struct esas2r_adapter *a,
- 		    struct atto_ioctl *ioctl_hba);
- int esas2r_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd);
-diff --git a/drivers/scsi/esas2r/esas2r_ioctl.c b/drivers/scsi/esas2r/esas2r_ioctl.c
-index 34bcc8c04ff4..916b9adf4921 100644
---- a/drivers/scsi/esas2r/esas2r_ioctl.c
-+++ b/drivers/scsi/esas2r/esas2r_ioctl.c
-@@ -1274,7 +1274,7 @@ int esas2r_write_params(struct esas2r_adapter *a, struct esas2r_request *rq,
- 
- 
- /* This function only cares about ATTO-specific ioctls (atto_express_ioctl) */
--int esas2r_ioctl_handler(void *hostdata, int cmd, void __user *arg)
-+int esas2r_ioctl_handler(void *hostdata, unsigned int cmd, void __user *arg)
- {
- 	struct atto_express_ioctl *ioctl = NULL;
- 	struct esas2r_adapter *a;
-@@ -1292,7 +1292,7 @@ int esas2r_ioctl_handler(void *hostdata, int cmd, void __user *arg)
- 	ioctl = memdup_user(arg, sizeof(struct atto_express_ioctl));
- 	if (IS_ERR(ioctl)) {
- 		esas2r_log(ESAS2R_LOG_WARN,
--			   "ioctl_handler access_ok failed for cmd %d, "
-+			   "ioctl_handler access_ok failed for cmd %u, "
- 			   "address %p", cmd,
- 			   arg);
- 		return PTR_ERR(ioctl);
-@@ -1493,7 +1493,7 @@ int esas2r_ioctl_handler(void *hostdata, int cmd, void __user *arg)
- ioctl_done:
- 
- 	if (err < 0) {
--		esas2r_log(ESAS2R_LOG_WARN, "err %d on ioctl cmd %d", err,
-+		esas2r_log(ESAS2R_LOG_WARN, "err %d on ioctl cmd %u", err,
- 			   cmd);
- 
- 		switch (err) {
-@@ -1518,9 +1518,8 @@ int esas2r_ioctl_handler(void *hostdata, int cmd, void __user *arg)
- 	err = __copy_to_user(arg, ioctl, sizeof(struct atto_express_ioctl));
- 	if (err != 0) {
- 		esas2r_log(ESAS2R_LOG_WARN,
--			   "ioctl_handler copy_to_user didn't copy "
--			   "everything (err %d, cmd %d)", err,
--			   cmd);
-+			   "ioctl_handler copy_to_user didn't copy everything (err %d, cmd %u)",
-+			   err, cmd);
- 		kfree(ioctl);
- 
- 		return -EFAULT;
-@@ -1531,7 +1530,7 @@ int esas2r_ioctl_handler(void *hostdata, int cmd, void __user *arg)
- 	return 0;
- }
- 
--int esas2r_ioctl(struct scsi_device *sd, int cmd, void __user *arg)
-+int esas2r_ioctl(struct scsi_device *sd, unsigned int cmd, void __user *arg)
- {
- 	return esas2r_ioctl_handler(sd->host->hostdata, cmd, arg);
- }
-diff --git a/drivers/scsi/esas2r/esas2r_main.c b/drivers/scsi/esas2r/esas2r_main.c
-index c07118617d89..25dc8d44ed8e 100644
---- a/drivers/scsi/esas2r/esas2r_main.c
-+++ b/drivers/scsi/esas2r/esas2r_main.c
-@@ -624,7 +624,7 @@ static int esas2r_proc_major;
- long esas2r_proc_ioctl(struct file *fp, unsigned int cmd, unsigned long arg)
- {
- 	return esas2r_ioctl_handler(esas2r_proc_host->hostdata,
--				    (int)cmd, (void __user *)arg);
-+				    cmd, (void __user *)arg);
- }
- 
- static void __exit esas2r_exit(void)
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index c9cccf35e9d7..c9d41d3b50f1 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -251,10 +251,11 @@ static int number_of_controllers;
- 
- static irqreturn_t do_hpsa_intr_intx(int irq, void *dev_id);
- static irqreturn_t do_hpsa_intr_msi(int irq, void *dev_id);
--static int hpsa_ioctl(struct scsi_device *dev, int cmd, void __user *arg);
-+static int hpsa_ioctl(struct scsi_device *dev, unsigned int cmd,
-+		      void __user *arg);
- 
- #ifdef CONFIG_COMPAT
--static int hpsa_compat_ioctl(struct scsi_device *dev, int cmd,
-+static int hpsa_compat_ioctl(struct scsi_device *dev, unsigned int cmd,
- 	void __user *arg);
- #endif
- 
-@@ -6123,7 +6124,7 @@ static void cmd_free(struct ctlr_info *h, struct CommandList *c)
- 
- #ifdef CONFIG_COMPAT
- 
--static int hpsa_ioctl32_passthru(struct scsi_device *dev, int cmd,
-+static int hpsa_ioctl32_passthru(struct scsi_device *dev, unsigned int cmd,
- 	void __user *arg)
- {
- 	IOCTL32_Command_struct __user *arg32 =
-@@ -6160,7 +6161,7 @@ static int hpsa_ioctl32_passthru(struct scsi_device *dev, int cmd,
- }
- 
- static int hpsa_ioctl32_big_passthru(struct scsi_device *dev,
--	int cmd, void __user *arg)
-+	unsigned int cmd, void __user *arg)
- {
- 	BIG_IOCTL32_Command_struct __user *arg32 =
- 	    (BIG_IOCTL32_Command_struct __user *) arg;
-@@ -6197,7 +6198,8 @@ static int hpsa_ioctl32_big_passthru(struct scsi_device *dev,
- 	return err;
- }
- 
--static int hpsa_compat_ioctl(struct scsi_device *dev, int cmd, void __user *arg)
-+static int hpsa_compat_ioctl(struct scsi_device *dev, unsigned int cmd,
-+			     void __user *arg)
- {
- 	switch (cmd) {
- 	case CCISS_GETPCIINFO:
-@@ -6517,7 +6519,8 @@ static void check_ioctl_unit_attention(struct ctlr_info *h,
- /*
-  * ioctl
-  */
--static int hpsa_ioctl(struct scsi_device *dev, int cmd, void __user *arg)
-+static int hpsa_ioctl(struct scsi_device *dev, unsigned int cmd,
-+		      void __user *arg)
- {
- 	struct ctlr_info *h;
- 	void __user *argp = (void __user *)arg;
-diff --git a/drivers/scsi/ipr.c b/drivers/scsi/ipr.c
-index 271990bc065b..97fcc881f9f1 100644
---- a/drivers/scsi/ipr.c
-+++ b/drivers/scsi/ipr.c
-@@ -6696,7 +6696,8 @@ static int ipr_queuecommand(struct Scsi_Host *shost,
-  * Return value:
-  * 	0 on success / other on failure
-  **/
--static int ipr_ioctl(struct scsi_device *sdev, int cmd, void __user *arg)
-+static int ipr_ioctl(struct scsi_device *sdev, unsigned int cmd,
-+		     void __user *arg)
- {
- 	struct ipr_resource_entry *res;
- 
-diff --git a/drivers/scsi/libsas/sas_scsi_host.c b/drivers/scsi/libsas/sas_scsi_host.c
-index 33229348dcb6..4eeaafbe0504 100644
---- a/drivers/scsi/libsas/sas_scsi_host.c
-+++ b/drivers/scsi/libsas/sas_scsi_host.c
-@@ -805,7 +805,7 @@ void sas_scsi_recover_host(struct Scsi_Host *shost)
- 		    shost->host_failed, tries);
- }
- 
--int sas_ioctl(struct scsi_device *sdev, int cmd, void __user *arg)
-+int sas_ioctl(struct scsi_device *sdev, unsigned int cmd, void __user *arg)
- {
- 	struct domain_device *dev = sdev_to_domain_dev(sdev);
- 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index 60bcc6df97a9..4c513651c95f 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -836,7 +836,8 @@ static void mk_sense_invalid_opcode(struct scsi_cmnd *scp)
- 	mk_sense_buffer(scp, ILLEGAL_REQUEST, INVALID_OPCODE, 0);
- }
- 
--static int scsi_debug_ioctl(struct scsi_device *dev, int cmd, void __user *arg)
-+static int scsi_debug_ioctl(struct scsi_device *dev, unsigned int cmd,
-+			    void __user *arg)
- {
- 	if (sdebug_verbose) {
- 		if (0x1261 == cmd)
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
-index a25a07a0b7f0..498bdfbbebfa 100644
---- a/drivers/scsi/smartpqi/smartpqi_init.c
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c
-@@ -5572,7 +5572,8 @@ static int pqi_passthru_ioctl(struct pqi_ctrl_info *ctrl_info, void __user *arg)
- 	return rc;
- }
- 
--static int pqi_ioctl(struct scsi_device *sdev, int cmd, void __user *arg)
-+static int pqi_ioctl(struct scsi_device *sdev, unsigned int cmd,
-+		     void __user *arg)
- {
- 	int rc;
- 	struct pqi_ctrl_info *ctrl_info;
-diff --git a/include/linux/libata.h b/include/linux/libata.h
-index 38c95d66ab12..263ca4f05c24 100644
---- a/include/linux/libata.h
-+++ b/include/linux/libata.h
-@@ -1123,10 +1123,11 @@ extern int ata_host_activate(struct ata_host *host, int irq,
- extern void ata_host_detach(struct ata_host *host);
- extern void ata_host_init(struct ata_host *, struct device *, struct ata_port_operations *);
- extern int ata_scsi_detect(struct scsi_host_template *sht);
--extern int ata_scsi_ioctl(struct scsi_device *dev, int cmd, void __user *arg);
-+extern int ata_scsi_ioctl(struct scsi_device *dev, unsigned int cmd,
-+			  void __user *arg);
- extern int ata_scsi_queuecmd(struct Scsi_Host *h, struct scsi_cmnd *cmd);
- extern int ata_sas_scsi_ioctl(struct ata_port *ap, struct scsi_device *dev,
--			    int cmd, void __user *arg);
-+			    unsigned int cmd, void __user *arg);
- extern void ata_sas_port_destroy(struct ata_port *);
- extern struct ata_port *ata_sas_port_alloc(struct ata_host *,
- 					   struct ata_port_info *, struct Scsi_Host *);
-diff --git a/include/scsi/libsas.h b/include/scsi/libsas.h
-index 3de3b10da19a..70461264d6e7 100644
---- a/include/scsi/libsas.h
-+++ b/include/scsi/libsas.h
-@@ -709,7 +709,8 @@ int sas_eh_target_reset_handler(struct scsi_cmnd *cmd);
- 
- extern void sas_target_destroy(struct scsi_target *);
- extern int sas_slave_alloc(struct scsi_device *);
--extern int sas_ioctl(struct scsi_device *sdev, int cmd, void __user *arg);
-+extern int sas_ioctl(struct scsi_device *sdev, unsigned int cmd,
-+		     void __user *arg);
- extern int sas_drain_work(struct sas_ha_struct *ha);
- 
- extern void sas_ssp_task_response(struct device *dev, struct sas_task *task,
-diff --git a/include/scsi/scsi_host.h b/include/scsi/scsi_host.h
-index 5ea06d310a25..5c1df26e1d4f 100644
---- a/include/scsi/scsi_host.h
-+++ b/include/scsi/scsi_host.h
-@@ -65,7 +65,8 @@ struct scsi_host_template {
- 	 *
- 	 * Status: OPTIONAL
- 	 */
--	int (* ioctl)(struct scsi_device *dev, int cmd, void __user *arg);
-+	int (*ioctl)(struct scsi_device *dev, unsigned int cmd,
-+		     void __user *arg);
- 
- 
- #ifdef CONFIG_COMPAT
-@@ -75,7 +76,8 @@ struct scsi_host_template {
- 	 *
- 	 * Status: OPTIONAL
- 	 */
--	int (* compat_ioctl)(struct scsi_device *dev, int cmd, void __user *arg);
-+	int (*compat_ioctl)(struct scsi_device *dev, unsigned int cmd,
-+			    void __user *arg);
- #endif
- 
- 	/*
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-upstream
+
+for you to fetch changes up to 4debef5510071032c6d5dace31ca1cc42a120073:
+
+  arm64: KVM: Guests can skip __install_bp_hardening_cb()s HYP work (2018-10-19 15:37:25 +0100)
+
+----------------------------------------------------------------
+arm64 updates for 4.20:
+
+- Core mmu_gather changes which allow tracking the levels of page-table
+  being cleared together with the arm64 low-level flushing routines
+
+- Support for the new ARMv8.5 PSTATE.SSBS bit which can be used to
+  mitigate Spectre-v4 dynamically without trapping to EL3 firmware
+
+- Introduce COMPAT_SIGMINSTKSZ for use in compat_sys_sigaltstack
+
+- Optimise emulation of MRS instructions to ID_* registers on ARMv8.4
+
+- Support for Common Not Private (CnP) translations allowing threads of
+  the same CPU to share the TLB entries
+
+- Accelerated crc32 routines
+
+- Move swapper_pg_dir to the rodata section
+
+- Trap WFI instruction executed in user space
+
+- ARM erratum 1188874 workaround (arch_timer)
+
+- Miscellaneous fixes and clean-ups
+
+----------------------------------------------------------------
+Andrew Murray (1):
+      arm64: Remove unused VGA console support
+
+Anshuman Khandual (8):
+      arm64/cpufeatures: Introduce ESR_ELx_SYS64_ISS_RT()
+      arm64/cpufeatures: Factorize emulate_mrs()
+      arm64/cpufeatures: Emulate MRS instructions by parsing ESR_ELx.ISS
+      arm64/mm: Use ESR_ELx_FSC macro while decoding fault exception
+      arm64/mm: Reorganize arguments for is_el1_permission_fault()
+      arm64/mm: Define esr_to_debug_fault_info()
+      arm64/numa: Report correct memblock range for the dummy node
+      arm64/numa: Unify common error path in numa_init()
+
+Ard Biesheuvel (4):
+      lib/crc32: make core crc32() routines weak so they can be overridden
+      arm64: cpufeature: add feature for CRC32 instructions
+      arm64/lib: add accelerated crc32 routines
+      arm64: remove unused asm/compiler.h header file
+
+Arnd Bergmann (1):
+      arm64: arch_timer: avoid unused function warning
+
+Giacomo Travaglini (1):
+      arm64: docs: Fix typos in ELF hwcaps
+
+Hari Vyas (1):
+      arm64: fix for bad_mode() handler to always result in panic
+
+James Morse (6):
+      arm64: Kconfig: Remove ARCH_HAS_HOLES_MEMORYMODEL
+      arm64: mm: Use #ifdef for the __PAGETABLE_P?D_FOLDED defines
+      MAINTAINERS: fix bad sdei paths
+      Revert "arm64: uaccess: implement unsafe accessors"
+      arm64: mm: Use __pa_symbol() for set_swapper_pgd()
+      arm64: KVM: Guests can skip __install_bp_hardening_cb()s HYP work
+
+Julien Thierry (4):
+      arm64: uaccess: implement unsafe accessors
+      arm64: daifflags: Use irqflags functions for daifflags
+      arm64: Use daifflag_restore after bp_hardening
+      arm64: xen: Use existing helper to check interrupt status
+
+Jun Yao (4):
+      arm64/mm: Pass ttbr1 as a parameter to __enable_mmu()
+      arm64/mm: Separate boot-time page tables from swapper_pg_dir
+      arm64/mm: use fixmap to modify swapper_pg_dir
+      arm64/mm: move runtime pgds to rodata
+
+Kyrylo Tkachov (1):
+      arm64: Fix typo in a comment in arch/arm64/mm/kasan_init.c
+
+Marc Zyngier (9):
+      arm64: Add decoding macros for CP15_32 and CP15_64 traps
+      arm64: compat: Add separate CP15 trapping hook
+      arm64: compat: Add condition code checks and IT advance
+      arm64: compat: Add cp15_32 and cp15_64 handler arrays
+      arm64: compat: Add CNTVCT trap handler
+      arm64: compat: Add CNTFRQ trap handler
+      arm64: arch_timer: Add workaround for ARM erratum 1188873
+      arm64: Trap WFI executed in userspace
+      arm64: Add silicon-errata.txt entry for ARM erratum 1188873
+
+Peter Zijlstra (2):
+      asm-generic/tlb: Track freeing of page-table directories in struct mmu_gather
+      mm/memory: Move mmu_gather and TLB invalidation code into its own file
+
+Punit Agrawal (1):
+      Documentation/arm64: HugeTLB page implementation
+
+Rob Herring (1):
+      perf: Convert to using %pOFn instead of device_node.name
+
+Shaokun Zhang (1):
+      arm64: mm: Drop the unused cpu parameter
+
+Suzuki K Poulose (4):
+      arm64: sysreg: Clean up instructions for modifying PSTATE fields
+      arm64: cpufeature: ctr: Fix cpu capability check for late CPUs
+      arm64: cpufeature: Fix handling of CTR_EL0.IDC field
+      arm64: cpufeature: Trap CTR_EL0 access only where it is necessary
+
+Tri Vo (1):
+      arm64: lse: remove -fcall-used-x0 flag
+
+Vladimir Murzin (2):
+      arm64: mm: Support Common Not Private translations
+      arm64: KVM: Enable Common Not Private translations
+
+Will Deacon (26):
+      asm-generic/tlb: Guard with #ifdef CONFIG_MMU
+      asm-generic/tlb: Track which levels of the page tables have been cleared
+      MAINTAINERS: Add entry for MMU GATHER AND TLB INVALIDATION
+      Merge branch 'tlb/asm-generic' into aarch64/for-next/core
+      arm64: dump: Use consistent capitalisation for page-table dumps
+      arm64: tlb: Use last-level invalidation in flush_tlb_kernel_range()
+      arm64: tlb: Add DSB ISHST prior to TLBI in __flush_tlb_[kernel_]pgtable()
+      arm64: pgtable: Implement p[mu]d_valid() and check in set_p[mu]d()
+      arm64: tlb: Justify non-leaf invalidation in flush_tlb_range()
+      arm64: tlbflush: Allow stride to be specified for __flush_tlb_range()
+      arm64: tlb: Remove redundant !CONFIG_HAVE_RCU_TABLE_FREE code
+      arm64: tlb: Adjust stride and type of TLBI according to mmu_gather
+      arm64: tlb: Avoid synchronous TLBIs when freeing page tables
+      arm64: tlb: Rewrite stale comment in asm/tlbflush.h
+      arm64: Fix silly typo in comment
+      arm64: cpufeature: Detect SSBS and advertise to userspace
+      arm64: ssbd: Drop #ifdefs for PR_SPEC_STORE_BYPASS
+      arm64: entry: Allow handling of undefined instructions from EL1
+      arm64: ssbd: Add support for PSTATE.SSBS rather than trapping to EL3
+      KVM: arm64: Set SCTLR_EL2.DSSBS if SSBD is forcefully disabled and !vhe
+      arm64: cpu: Move errata and feature enable callbacks closer to callers
+      arm64: force_signal_inject: WARN if called from kernel context
+      arm64: cpu_errata: Remove ARM64_MISMATCHED_CACHE_LINE_SIZE
+      signal: Introduce COMPAT_SIGMINSTKSZ for use in compat_sys_sigaltstack
+      arm64: compat: Provide definition for COMPAT_SIGMINSTKSZ
+      arm64: docs: Document SSBS HWCAP
+
+zhong jiang (1):
+      arm64/kprobes: remove an extra semicolon in arch_prepare_kprobe
+
+ Documentation/arm64/elf_hwcaps.txt      |  12 +-
+ Documentation/arm64/hugetlbpage.txt     |  38 +++++
+ Documentation/arm64/silicon-errata.txt  |   1 +
+ MAINTAINERS                             |  17 ++-
+ arch/arm/include/asm/kvm_arm.h          |   1 +
+ arch/arm/include/asm/kvm_mmu.h          |   5 +
+ arch/arm64/Kconfig                      |  34 ++++-
+ arch/arm64/include/asm/assembler.h      |   7 +-
+ arch/arm64/include/asm/cache.h          |  40 +++++
+ arch/arm64/include/asm/compat.h         |   1 +
+ arch/arm64/include/asm/compiler.h       |  30 ----
+ arch/arm64/include/asm/cpucaps.h        |   7 +-
+ arch/arm64/include/asm/cpufeature.h     |   9 +-
+ arch/arm64/include/asm/cputype.h        |   2 +
+ arch/arm64/include/asm/daifflags.h      |  15 +-
+ arch/arm64/include/asm/esr.h            |  77 ++++++++++
+ arch/arm64/include/asm/kernel-pgtable.h |   2 +-
+ arch/arm64/include/asm/kvm_arm.h        |   1 +
+ arch/arm64/include/asm/kvm_emulate.h    |   2 +-
+ arch/arm64/include/asm/kvm_host.h       |  11 ++
+ arch/arm64/include/asm/kvm_mmu.h        |   5 +
+ arch/arm64/include/asm/mmu.h            |   3 +
+ arch/arm64/include/asm/mmu_context.h    |  17 ++-
+ arch/arm64/include/asm/page.h           |   2 -
+ arch/arm64/include/asm/pgtable-hwdef.h  |   2 +
+ arch/arm64/include/asm/pgtable.h        |  48 +++++-
+ arch/arm64/include/asm/processor.h      |  11 +-
+ arch/arm64/include/asm/ptrace.h         |   1 +
+ arch/arm64/include/asm/sysreg.h         |  44 ++++--
+ arch/arm64/include/asm/tlb.h            |  34 ++---
+ arch/arm64/include/asm/tlbflush.h       | 112 +++++++++-----
+ arch/arm64/include/asm/uaccess.h        |   1 -
+ arch/arm64/include/asm/xen/events.h     |   2 +-
+ arch/arm64/include/uapi/asm/hwcap.h     |   1 +
+ arch/arm64/include/uapi/asm/ptrace.h    |   1 +
+ arch/arm64/kernel/cpu_errata.c          |  96 +++++++++---
+ arch/arm64/kernel/cpufeature.c          | 195 +++++++++++++++++++++---
+ arch/arm64/kernel/cpuinfo.c             |  11 +-
+ arch/arm64/kernel/entry.S               |  18 ++-
+ arch/arm64/kernel/head.S                |  40 ++---
+ arch/arm64/kernel/probes/kprobes.c      |   2 +-
+ arch/arm64/kernel/process.c             |   4 +
+ arch/arm64/kernel/psci.c                |   1 -
+ arch/arm64/kernel/setup.c               |   4 -
+ arch/arm64/kernel/sleep.S               |   1 +
+ arch/arm64/kernel/ssbd.c                |  24 ++-
+ arch/arm64/kernel/suspend.c             |   4 +
+ arch/arm64/kernel/traps.c               | 211 ++++++++++++++++++++++++--
+ arch/arm64/kernel/vmlinux.lds.S         |  35 +++--
+ arch/arm64/kvm/hyp-init.S               |   3 +
+ arch/arm64/kvm/hyp/sysreg-sr.c          |  11 ++
+ arch/arm64/lib/Makefile                 |   4 +-
+ arch/arm64/lib/crc32.S                  |  60 ++++++++
+ arch/arm64/mm/context.c                 |  11 +-
+ arch/arm64/mm/dump.c                    |   6 +-
+ arch/arm64/mm/fault.c                   |  38 ++---
+ arch/arm64/mm/init.c                    |   2 -
+ arch/arm64/mm/kasan_init.c              |   2 +-
+ arch/arm64/mm/mmu.c                     |  46 +++---
+ arch/arm64/mm/numa.c                    |  13 +-
+ arch/arm64/mm/proc.S                    |  11 +-
+ drivers/clocksource/arm_arch_timer.c    |  15 ++
+ drivers/perf/arm_pmu_platform.c         |   6 +-
+ include/asm-generic/tlb.h               |  86 +++++++++--
+ include/linux/compat.h                  |   3 +
+ kernel/signal.c                         |  14 +-
+ lib/crc32.c                             |  11 +-
+ mm/Makefile                             |   6 +-
+ mm/memory.c                             | 247 ------------------------------
+ mm/mmu_gather.c                         | 261 ++++++++++++++++++++++++++++++++
+ virt/kvm/arm/arm.c                      |   4 +-
+ 71 files changed, 1511 insertions(+), 591 deletions(-)
+ create mode 100644 Documentation/arm64/hugetlbpage.txt
+ delete mode 100644 arch/arm64/include/asm/compiler.h
+ create mode 100644 arch/arm64/lib/crc32.S
+ create mode 100644 mm/mmu_gather.c
+
 -- 
-2.19.1
-
+Catalin
