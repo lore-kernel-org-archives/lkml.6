@@ -2,214 +2,310 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCC6ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B2FECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6420B21476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:20:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nPqzb0BO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6420B21476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 8C7082087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:22:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C7082087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbeJTE1q (ORCPT
+        id S1727231AbeJTE3i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 00:27:46 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38436 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbeJTE1p (ORCPT
+        Sat, 20 Oct 2018 00:29:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33188 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726274AbeJTE3i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 00:27:45 -0400
-Received: by mail-pl1-f194.google.com with SMTP id q19-v6so13247046pll.5
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 13:20:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=CMdWozsdXVjUEKyRAJeDLJEom6q5Exv1pHWt7qF5ZiM=;
-        b=nPqzb0BOL6Ymae/PfZ251oOFWNDISM+Z4Vo5sitiK0dwLYv9uOR/suU2GqkmINYsb1
-         naksXkExXhhZcmmhQQzv3BvtiqI7L7zOc7EsboWiul3KrAqcCxs/isQ+aYGN3V3mAwxF
-         LiF2uXCvfi6Zi2AhtZQ6fEPbYmXBE+xokzuco=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=CMdWozsdXVjUEKyRAJeDLJEom6q5Exv1pHWt7qF5ZiM=;
-        b=qSnY8XqCSe1JY8yTs6yIYKXfQBwc2E0WY9yp6deFDM9npsb/SCbpLxzUD3bRldLT7O
-         Td63O1sgJ4QK5H1fk51AxBK88m5+M2Wie316v8Giyx97cH4PHpn9QeLZs8OSdhqANO/H
-         iSs8yhoaAj06ZMTAhm+Os3e3hC4U0+VC2rso99GUAB+TFf5B7i33WC0A6yfc+iAVEk3i
-         hObzmwMhNShUBmftlXPC5M3u6piemMXSrHjn4tt1KieYqAFPmQrAZvkc/+KMOt2idm9o
-         ujZq2zXY7Cl//+iWBFGHUPvlYmBt6X1WeMfym4jNMWHFBE+ZzUXWa9UoDHUuP3wD4+Ro
-         FPMQ==
-X-Gm-Message-State: ABuFfohSGO9emr1O0WpaFgSEOC2Jx7K4Uba5lkSpCVYNQ+y+0RFSl5wp
-        aRJwr/5mWYhzHS+gXfQ2iye6qPfHDA0=
-X-Google-Smtp-Source: ACcGV604hIcC7dA3C1ysPHg9aCVDOqjxmVIWoJ9ZrdGSyRCZ8QVzB3yXfruNrobjvdLNBzpy8RARsw==
-X-Received: by 2002:a17:902:3fe4:: with SMTP id a91-v6mr35363027pld.187.1539980408689;
-        Fri, 19 Oct 2018 13:20:08 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id i184-v6sm38281573pfg.88.2018.10.19.13.20.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Oct 2018 13:20:07 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Sandeep Panda <spanda@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>
-Cc:     linux-arm-msm@vger.kernel.org, jsanka@codeaurora.org,
-        ryandcase@chromium.org, Douglas Anderson <dianders@chromium.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Subject: [PATCH 2/2] drm/bridge: ti-sn65dsi86: Allow DT to set "HPD delay"
-Date:   Fri, 19 Oct 2018 13:19:40 -0700
-Message-Id: <20181019201940.138179-2-dianders@chromium.org>
-X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
-In-Reply-To: <20181019201940.138179-1-dianders@chromium.org>
-References: <20181019201940.138179-1-dianders@chromium.org>
+        Sat, 20 Oct 2018 00:29:38 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9JKJq0u142635
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 16:22:00 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n7m0dd9vp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 16:22:00 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 19 Oct 2018 16:21:59 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 19 Oct 2018 16:21:57 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9JKLuu125755732
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 19 Oct 2018 20:21:56 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0B80FB2067;
+        Fri, 19 Oct 2018 20:21:56 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CF9BCB2066;
+        Fri, 19 Oct 2018 20:21:55 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.109])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 19 Oct 2018 20:21:55 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id C894616C359E; Fri, 19 Oct 2018 13:21:55 -0700 (PDT)
+Date:   Fri, 19 Oct 2018 13:21:55 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     "Raslan, KarimAllah" <karahmed@amazon.de>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>
+Subject: Re: [PATCH] rcu: Benefit from expedited grace period in __wait_rcu_gp
+Reply-To: paulmck@linux.ibm.com
+References: <1539910145-24305-1-git-send-email-karahmed@amazon.de>
+ <20181019123106.GX2674@linux.ibm.com>
+ <1539978350.11839.6.camel@amazon.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1539978350.11839.6.camel@amazon.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18101920-0052-0000-0000-00000346A8B3
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009902; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01105080; UDB=6.00572140; IPR=6.00885131;
+ MB=3.00023828; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-19 20:21:58
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101920-0053-0000-0000-00005E7907C0
+Message-Id: <20181019202155.GR2674@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-19_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810190180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's solve the mystery of commit bf1178c98930 ("drm/bridge:
-ti-sn65dsi86: Add mystery delay to enable()").  Specifically the
-reason we needed that mystery delay is that we weren't paying
-attention to HPD.
+On Fri, Oct 19, 2018 at 07:45:51PM +0000, Raslan, KarimAllah wrote:
+> On Fri, 2018-10-19 at 05:31 -0700, Paul E. McKenney wrote:
+> > On Fri, Oct 19, 2018 at 02:49:05AM +0200, KarimAllah Ahmed wrote:
+> > > 
+> > > When expedited grace-period is set, both synchronize_sched
+> > > synchronize_rcu_bh can be optimized to have a significantly lower latency.
+> > > 
+> > > Improve wait_rcu_gp handling to also account for expedited grace-period.
+> > > The downside is that wait_rcu_gp will not wait anymore for all RCU variants
+> > > concurrently when an expedited grace-period is set, however, given the
+> > > improved latency it does not really matter.
+> > > 
+> > > Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > Cc: Josh Triplett <josh@joshtriplett.org>
+> > > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> > > Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+> > > Cc: linux-kernel@vger.kernel.org
+> > > Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+> > 
+> > Cute!
+> > 
+> > Unfortunately, there are a few problems with this patch:
+> > 
+> > 1.	I will be eliminating synchronize_rcu_mult() due to the fact that
+> > 	the upcoming RCU flavor consolidation eliminates its sole caller.
+> > 	See 5fc9d4e000b1 ("rcu: Eliminate synchronize_rcu_mult()")
+> > 	in my -rcu tree.  This would of course also eliminate the effects
+> > 	of this patch.
+> 
+> Your patch covers our use-case already, but I still think that the semantics 
+> for wait_rcu_gp is not clear to me.
+> 
+> The problem for us was that sched_cpu_deactivate would call
+> synchronize_rcu_mult which does not check for "expedited" at all. So even
+> though we are already using rcu_expedited sysctl variable, synchronize_rcu_mult 
+> was just ignoring it.
+> 
+> That being said, I indeed overlooked rcu_normal and that it takes precedence 
+> over expedited and I did not notice at all the deadlock you mentioned below!
+> 
+> That can however be easily fixed by also checking for !rcu_gp_is_normal.
 
-Looking at the datasheet for the same panel that was tested for the
-original commit, I see there's a timing "t3" that times from power on
-to the aux channel being operational.  This time is specced as 0 - 200
-ms.  The datasheet says that the aux channel is operational at exactly
-the same time that HPD is asserted.
+???
 
-Scoping the signals on this board showed that HPD was asserted 84 ms
-after power was asserted.  That very closely matches the magic 70 ms
-delay that we had.  ...and actually, in my esting the 70 ms wasn't
-quite enough of a delay and some percentage of the time the display
-didn't come up until I bumped it to 100 ms.
+The aforementioned 5fc9d4e000b1 commit replaces the synchronize_rcu_mult()
+with synchronize_rcu(), which really would be subject to the sysfs
+variables.  Of course, this is not yet in mainline, so it perhaps cannot
+solve your immediate problem, which probably involve older kernels in
+any case.  More on this below...
 
-To solve this, we tried to hook up the HPD signal in the bridge.
-...but in doing so we found that that the bridge didn't report that
-HPD was asserted until ~280 ms after we powered it (!).  This is
-explained by looking at the sn65dsi86 datasheet section "8.4.5.1 HPD
-(Hot Plug/Unplug Detection)".  Reading there we see that the bridge
-isn't even intended to report HPD until 100 ms after it's asserted.
-...but that would have left us at 184 ms.  The extra 100 ms
-(presumably) comes from this part in the datasheet:
+> > 2.	The real-time guys' users are not going to be at all happy
+> > 	with the IPIs resulting from the _expedited() API members.
+> > 	Yes, they can boot with rcupdate.rcu_normal=1, but they don't
+> > 	always need that big a hammer, and use of this kernel parameter
+> > 	can slow down boot, hibernation, suspend, network configuration,
+> > 	and much else besides.	We therefore don't want them to have to
+> > 	use rcupdate.rcu_normal=1 unless absolutely necessary.
+> 
+> I might be missing something here. Why would they need to "explicitly" use 
+> rcu_normal? If rcu_expedited is set, would not the expected behavior is to call 
+> into the expedited version?
+> 
+> My patch should only activate *expedited* if and only if it is set.
 
-> The HPD state machine operates off an internal ring oscillator. The
-> ring oscillator frequency will vary [ ... ]. The min/max range in
-> the HPD State Diagram refers to the possible times based off
-> variation in the ring oscillator frequency.
+You are right, I was confused.  However...
 
-Given that the 280 ms we'll end up delaying if we hook up HPD is
-_slower_ than the 200 ms we could just hardcode, for now we'll solve
-the problem by just allowing boards to hardcode a value.  If someone
-using this part finds that they can get things to work more quickly by
-actually hooking up HPD that can always be a future patch.
+> I think I might be misunderstanding the expected behavior 
+> from synchronize_rcu_mult. My understanding is that something like:
+> 
+> synchronize_rcu_mult(call_rcu_sched) and synchronize_rcu() should have an 
+> identical behavior, right?
 
-One last note is that I tried to solve this through another way: In
-ti_sn_bridge_enable() I tried to use various combinations of
-dp_dpcd_writeb() and dp_dpcd_readb() to detect when the aux channel
-was up.  In theory that would let me detect _exactly_ when I could
-continue and do link training.  Unfortunately even if I did an aux
-transfer w/out waiting I couldn't see any errors.  Possibly I could
-keep looping over link training until it came back with success, but
-that seemed a little overly hacky to me.
+You would clearly prefer that it did, and the commit log does seem to
+read that way, but synchronize_rcu_mult() is going away anyway, so there
+isn't a whole lot of point in arguing about what it should have done.
+And the eventual implementation (with 5fc9d4e000b1 or its successor)
+will act as you want.
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+> At least in this commit:
+> 
+> commit d7d34d5e46140 ("sched: Rely on synchronize_rcu_mult() de-duplication")
+> 
+> .. the change clearly gives the impression that they can be used 
+> interchangeably. The problem is that this is not true when you look at the 
+> implementation. One of them (i.e. synchronize_rcu) will respect the
+> expedite_rcu flag set by sysfs while the other (i.e. synchronize_rcu_mult) 
+> simply ignores it.
+> 
+> So my patch is about making sure that both of the variants actually respect 
+> it.
 
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 45 ++++++++++++++++++++++-----
- 1 file changed, 37 insertions(+), 8 deletions(-)
+I am guessing that you need to make an older version of the kernel
+expedite the CPU-hotplug grace periods.  I am also guessing that you can
+carry patches to your kernels.  If so, I suggest the following simpler
+change to sched_cpu_deactivate() in kernel/sched/core.c:
 
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-index f8a931cf3665..5deed667480c 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-@@ -93,6 +93,7 @@ struct ti_sn_bridge {
- 	struct clk			*refclk;
- 	struct drm_panel		*panel;
- 	struct gpio_desc		*enable_gpio;
-+	int				panel_hpd_delay_ms;
- 	struct regulator_bulk_data	supplies[SN_REGULATOR_SUPPLY_NUM];
- };
- 
-@@ -459,16 +460,37 @@ static void ti_sn_bridge_enable(struct drm_bridge *bridge)
- 	int ret;
- 
- 	/*
--	 * FIXME:
--	 * This 70ms was found necessary by experimentation. If it's not
--	 * present, link training fails. It seems like it can go anywhere from
--	 * pre_enable() up to semi-auto link training initiation below.
-+	 * The timing diagram of some eDP panels says that you're supposed to
-+	 * wait for HPD to be asserted before the aux channel is operational.
- 	 *
--	 * Neither the datasheet for the bridge nor the panel tested mention a
--	 * delay of this magnitude in the timing requirements. So for now, add
--	 * the mystery delay until someone figures out a better fix.
-+	 * While we could configure the bridge to report the HPD signal to us
-+	 * and add a delay here until the HPD is asserted, it turns out that's
-+	 * slower than just hardcoding the max delay from the panel in some
-+	 * cases.  Why?
-+	 *
-+	 * The sn65dsi86 datasheet says that it only reports the debounced
-+	 * HPD signal to software.  It will tell software about HPD assertion
-+	 * as quickly as 100 ms after it's asserted, but sometimes it might
-+	 * take 400 ms because it's timed with a very inaccurate ring
-+	 * oscillator.  In practice it was measured at 200 ms on at least
-+	 * one system.
-+	 *
-+	 * On a particular panel, HPD was asserted 84 ms after power was given.
-+	 * This same panel specified that HPD would always be asserted within
-+	 * 200 ms of applying power.  Thus on this panel with the measured
-+	 * 84 ms to assert HPD + the 200 ms measured debounce we'd wait 284 ms
-+	 * which is 84 ms longer than just hardcoding the sleep.
-+	 *
-+	 * For now we don't know of any cases where paying attention to HPD
-+	 * is better than hardcoding the value.  Thus for now only support the
-+	 * hardcoded delay and print a warning if it wasn't specified.  Later
-+	 * one could imagine improving the driver to enable HPD support if
-+	 * panel-hpd-delay-ms wasn't specified in the device tree.
- 	 */
--	msleep(70);
-+	if (pdata->panel_hpd_delay_ms >= 0)
-+		msleep(pdata->panel_hpd_delay_ms);
-+	else
-+		DRM_WARN("HPD not supported; consider a hardcoded delay\n");
- 
- 	/* DSI_A lane config */
- 	val = CHA_DSI_LANES(4 - pdata->dsi->lanes);
-@@ -656,6 +678,7 @@ static int ti_sn_bridge_probe(struct i2c_client *client,
- {
- 	struct ti_sn_bridge *pdata;
- 	int ret;
-+	u32 val;
- 
- 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
- 		DRM_ERROR("device doesn't support I2C\n");
-@@ -712,6 +735,12 @@ static int ti_sn_bridge_probe(struct i2c_client *client,
- 	if (ret)
- 		return ret;
- 
-+	if (!of_property_read_u32(pdata->dev->of_node,
-+				  "ti,panel-hpd-delay-ms", &val))
-+		pdata->panel_hpd_delay_ms = val;
-+	else
-+		pdata->panel_hpd_delay_ms = -1;
-+
- 	pm_runtime_enable(pdata->dev);
- 
- 	i2c_set_clientdata(client, pdata);
--- 
-2.19.1.568.g152ad8e336-goog
+	if (rcu_gp_is_expedited()) {
+		synchronize_sched_expedited();
+		if (IS_ENABLED(CONFIG_PREEMPT))
+			synchronize_rcu_expedited();
+	} else {
+		synchronize_rcu_mult(call_rcu, call_rcu_sched);
+	}
+
+As soon as this patch conflicts due to the synchronize_rcu_mult()
+becoming synchronize_rcu(), you can drop the patch.  And this is the only
+use of synchronize_rcu_mult(), so this approach loses no generality.
+Longer term, this patch might possibly be the backport of 5fc9d4e000b1
+back to v4.14, but at the end of the day this is up to the various
+-stable maintainers.
+
+Hmmm...  If you are running CONFIG_PREEMPT=n, you can use an even
+simpler replacement for synchronize_rcu_mult():
+
+	synchronize_sched_expedited(); /* Bug if CONFIG_PREEMPT=y!!! */
+
+Would either of those two approaches work for you, or am I still missing
+something?
+
+							Thanx, Paul
+
+> > 3.	If the real-time guys' users were to have booted with
+> > 	rcupdate.rcu_normal=1, then synchronize_sched_expedited()
+> > 	would invoke _synchronize_rcu_expedited, which would invoke
+> > 	wait_rcu_gp(), which would invoke _wait_rcu_gp() which would
+> > 	invoke __wait_rcu_gp(), which, given your patch, would in turn
+> > 	invoke synchronize_sched_expedited().  This situation could
+> > 	well prevent their systems from meeting their response-time
+> > 	requirements.
+> > 
+> > So I cannot accept this patch nor for that matter any similar patch.
+> > 
+> > But what were you really trying to get done here?  If you were thinking
+> > of adding another synchronize_rcu_mult(), the flavor consolidation will
+> > make that unnecessary in most cases.  If you are trying to speed up
+> > CPU-hotplug operations, I suggest using the rcu_expedited sysctl variable
+> > when taking a CPU offline.  If something else, please let me know what
+> > it is so that we can work out how the problem might best be solved.
+> > 
+> > 							Thanx, Paul
+> > 
+> > > 
+> > > ---
+> > >  kernel/rcu/update.c | 34 ++++++++++++++++++++++++++++------
+> > >  1 file changed, 28 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> > > index 68fa19a..44b8817 100644
+> > > --- a/kernel/rcu/update.c
+> > > +++ b/kernel/rcu/update.c
+> > > @@ -392,13 +392,27 @@ void __wait_rcu_gp(bool checktiny, int n, call_rcu_func_t *crcu_array,
+> > >  			might_sleep();
+> > >  			continue;
+> > >  		}
+> > > -		init_rcu_head_on_stack(&rs_array[i].head);
+> > > -		init_completion(&rs_array[i].completion);
+> > > +
+> > >  		for (j = 0; j < i; j++)
+> > >  			if (crcu_array[j] == crcu_array[i])
+> > >  				break;
+> > > -		if (j == i)
+> > > -			(crcu_array[i])(&rs_array[i].head, wakeme_after_rcu);
+> > > +		if (j != i)
+> > > +			continue;
+> > > +
+> > > +		if ((crcu_array[i] == call_rcu_sched ||
+> > > +		     crcu_array[i] == call_rcu_bh)
+> > > +		    && rcu_gp_is_expedited()) {
+> > > +			if (crcu_array[i] == call_rcu_sched)
+> > > +				synchronize_sched_expedited();
+> > > +			else
+> > > +				synchronize_rcu_bh_expedited();
+> > > +
+> > > +			continue;
+> > > +		}
+> > > +
+> > > +		init_rcu_head_on_stack(&rs_array[i].head);
+> > > +		init_completion(&rs_array[i].completion);
+> > > +		(crcu_array[i])(&rs_array[i].head, wakeme_after_rcu);
+> > >  	}
+> > > 
+> > >  	/* Wait for all callbacks to be invoked. */
+> > > @@ -407,11 +421,19 @@ void __wait_rcu_gp(bool checktiny, int n, call_rcu_func_t *crcu_array,
+> > >  		    (crcu_array[i] == call_rcu ||
+> > >  		     crcu_array[i] == call_rcu_bh))
+> > >  			continue;
+> > > +
+> > > +		if ((crcu_array[i] == call_rcu_sched ||
+> > > +		     crcu_array[i] == call_rcu_bh)
+> > > +		    && rcu_gp_is_expedited())
+> > > +			continue;
+> > > +
+> > >  		for (j = 0; j < i; j++)
+> > >  			if (crcu_array[j] == crcu_array[i])
+> > >  				break;
+> > > -		if (j == i)
+> > > -			wait_for_completion(&rs_array[i].completion);
+> > > +		if (j != i)
+> > > +			continue;
+> > > +
+> > > +		wait_for_completion(&rs_array[i].completion);
+> > >  		destroy_rcu_head_on_stack(&rs_array[i].head);
+> > >  	}
+> > >  }
+> > > -- 
+> > > 2.7.4
+> > > 
+> > 
+> Amazon Development Center Germany GmbH
+> Berlin - Dresden - Aachen
+> main office: Krausenstr. 38, 10117 Berlin
+> Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+> Ust-ID: DE289237879
+> Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
 
