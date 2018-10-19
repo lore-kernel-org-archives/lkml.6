@@ -5,136 +5,111 @@ X-Spam-Level:
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5FFECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 710D0ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:52:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 823B721486
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:50:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2440820644
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:52:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KoPun1SX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 823B721486
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvzF+EPF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2440820644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbeJSU4m (ORCPT
+        id S1727427AbeJSU6F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:56:42 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:39748 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727130AbeJSU4m (ORCPT
+        Fri, 19 Oct 2018 16:58:05 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:39954 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727039AbeJSU6F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:56:42 -0400
-Received: by mail-qt1-f194.google.com with SMTP id e21-v6so1875549qtp.6;
-        Fri, 19 Oct 2018 05:50:43 -0700 (PDT)
+        Fri, 19 Oct 2018 16:58:05 -0400
+Received: by mail-oi1-f196.google.com with SMTP id j68-v6so26705774oib.7;
+        Fri, 19 Oct 2018 05:52:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=IRLfH+zFWyRmA+m82P30majiknJm0Q6QJEbapEMu4yU=;
-        b=KoPun1SXU0gtcybYINsTkKg3/0uDFPdS5+Ry5XJuzG1BGX1ASL0jTqA1009vf71R17
-         A73wszEClJG/aI/B7boh6w+LfZ3Yr17h4mTBHVcgWQ0YbpA06JHAaqtU4u+fcqjlhWxN
-         hmfgxGkMLXpJYs/9CaC1ofFBPUbCjZXhioj5UfA+aI0FJOTNiDQ9fFdrGMi9y6FEH8pV
-         OPkob7OaqhHMySOVTcQ7xXCrjwzXN0vCKEnhvt1SwbXaErC91s+ZefejiMI3Sf/oD75j
-         oUNTMAdkXpLWzX7mbD8y55XdxzzBkLPjilGq+ixX+n1OdqoMTg8/OQjgkV3/7Ikv3Hsu
-         uMvw==
+        bh=Fuw1h4GK8wNV4ILgy/wPRw3Q0q49RLc7Bf4oU1kaISQ=;
+        b=kvzF+EPF2m0gTwA5TSFojpjSQROFYxRnmXSZwM94DwPF503ix8ai0lxB7D3x1/Vz6W
+         D+/SIjo/BSoxXugofmPQHVXKHBhbfhqk8dKL2IvCBW6Q+Wr3rXQV6xFoH3zEIJFlwgGY
+         QihBJV6K5L+8WzcMGRTg1T1vcUuxnZeP7QWIUZkfVYdNocCf+TEsxb4vZzSILGLKero5
+         Tkd5x4lsryHqY9QUpXC5jkpDKA+j5ur7vn7SPrT/QSwU4kZoVzUpJdbg0pzcduCCYy9J
+         SAIxrzLBcHvNC9aSbcbC1KZglyHrL/e64lt2LPPIROfpqX5pq3Gdrj/KkqjNxW10sTza
+         i90g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=IRLfH+zFWyRmA+m82P30majiknJm0Q6QJEbapEMu4yU=;
-        b=cIPraLzlP2QJV/LddIGkjCBWSmzjqbdnO7hMSqFMEiOxtqIAFXry+Sr4XXX9aWFxxM
-         smG+BDUgo93L45M5wVl82P8erMY6yUAIcPnMsyj6UaOhU0EWRuAHPBAhkds0E0jpsnZT
-         um65sGrxcawraVminybmeR9JOZyBQkVnH637dDWBH4jGEf6iT8uI26WjqoVFfxECveW5
-         E2oFGPR76lfWhU4MEUTECHvJXilzlUDLI9q973iksCe6ZDDgwuA3vAA0dDgDaApvy1WL
-         CFaG65d3kFlBrd5BUyvKzLwR0Sb1o/k+q/NKqUtkogFY8cAqYXU34E8Ki7wVjA3fim6x
-         1h0g==
-X-Gm-Message-State: ABuFfohmmR+Hn539FGNZhCDaeH4+SkwSlfoN6/NrTOA+OJIhnawH+oqC
-        +KDP4+2dcxiHWzc2PSRC6rUfKKbX124Mgq0ETCRz14m96cA=
-X-Google-Smtp-Source: ACcGV60mc3jFXVK8pqnMrcjGXbtp5W3AOdWj1Mv7k+MwnbPuh1WgUpsO+UAygY1BzLn4hXOMrvkGMk14Yu5KvGz84yY=
-X-Received: by 2002:ac8:6784:: with SMTP id b4-v6mr33352712qtp.373.1539953442882;
- Fri, 19 Oct 2018 05:50:42 -0700 (PDT)
+        bh=Fuw1h4GK8wNV4ILgy/wPRw3Q0q49RLc7Bf4oU1kaISQ=;
+        b=TaQ9xxSQiVezy0bOy9MDC/z+XPXQGD9zrK4Ap1wqWij+3CHk9b3DK7RciR1+wAzUZm
+         iN/rhLVFXekG0GwdmhYhoTEnjBcO6xQ2YJea6Yw2gYLvU88TtmHcZiDCHZ6CNWNo+kP6
+         XZ/g/MahznTdgGTfb5NLu8AvFfAkMV8g/nD4ZXPb1sRwMbz1jQvRlbJ/boeyPD47j5rr
+         9+Nj7HzirNdm5xikJrrTnaQT2kleIEuqU266dZVwjkqXy9nFdXABpARdY1pyf2mZbsIU
+         bmFfasvr/sMRHvjw0Dw/stbpiT3+J8On9WKeR+ITmr69JY9vbDr0yJErTeGG8sj6IND6
+         ztcQ==
+X-Gm-Message-State: ABuFfoj81AQH+wXcCPv8D3hiVqVZuaMruQANqZNxL3kLrVS37oeioNP7
+        IdVhfkWYAWAXo9odI/92bCxHozjvrufT6jCOBU4=
+X-Google-Smtp-Source: ACcGV62KnlTAgPkH2gFDe0e2krT9rOPZV7jjMTTSvRh7Q2SnZcrXVJNEJrStaY6SQ2ExxosyrOFzT8KKyCBUGk+j8bk=
+X-Received: by 2002:aca:3006:: with SMTP id w6-v6mr19052781oiw.342.1539953525489;
+ Fri, 19 Oct 2018 05:52:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181010131640.27440-1-hdegoede@redhat.com>
-In-Reply-To: <20181010131640.27440-1-hdegoede@redhat.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 19 Oct 2018 15:50:31 +0300
-Message-ID: <CAHp75Vd74JJxyiqE4KV4h-uxaGDaVvEZKQykznhdKe5zp1xz4w@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: touchscreen_dmi: Add info for the Onda V80
- Plus v3 tablet
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181019094031.22492-1-qiangqing.zhang@nxp.com>
+In-Reply-To: <20181019094031.22492-1-qiangqing.zhang@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Fri, 19 Oct 2018 09:51:55 -0300
+Message-ID: <CAOMZO5AqZrYmc474NjvG1nF94ZNvgHyv7Q3R+QxrLmSN6EhYDw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: imx6sx-sdb: Add flexcan support
+To:     qiangqing.zhang@nxp.com
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 4:17 PM Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Add touchscreen platform data for the Onda V80 Plus v3 tablet.
->
+Hi Joakim,
 
-Pushed to my review and testing queue, thanks!
-
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+On Fri, Oct 19, 2018 at 6:43 AM Joakim Zhang <qiangqing.zhang@nxp.com> wrote:
+>
+> From: Dong Aisheng <aisheng.dong@nxp.com>
+>
+> CAN transceiver is different on RevA and RevB board.
+> It's active high on RevA while active low on Rev B.
+>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
 > ---
->  drivers/platform/x86/touchscreen_dmi.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
+>  arch/arm/boot/dts/imx6sx-sdb.dts  |  5 ++++
+>  arch/arm/boot/dts/imx6sx-sdb.dtsi | 42 +++++++++++++++++++++++++++++++
+>  2 files changed, 47 insertions(+)
 >
-> diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
-> index 4e6fdc1fbfdf..00b5e54f09cc 100644
-> --- a/drivers/platform/x86/touchscreen_dmi.c
-> +++ b/drivers/platform/x86/touchscreen_dmi.c
-> @@ -282,6 +282,24 @@ static const struct ts_dmi_data onda_obook_20_plus_data = {
->         .properties     = onda_obook_20_plus_props,
->  };
+> diff --git a/arch/arm/boot/dts/imx6sx-sdb.dts b/arch/arm/boot/dts/imx6sx-sdb.dts
+> index 6dd9bebfe027..092b8de142a8 100644
+> --- a/arch/arm/boot/dts/imx6sx-sdb.dts
+> +++ b/arch/arm/boot/dts/imx6sx-sdb.dts
+> @@ -10,6 +10,11 @@
 >
-> +static const struct property_entry onda_v80_plus_v3_props[] = {
-> +       PROPERTY_ENTRY_U32("touchscreen-min-x", 22),
-> +       PROPERTY_ENTRY_U32("touchscreen-min-y", 15),
-> +       PROPERTY_ENTRY_U32("touchscreen-size-x", 1698),
-> +       PROPERTY_ENTRY_U32("touchscreen-size-y", 1140),
-> +       PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
-> +       PROPERTY_ENTRY_STRING("firmware-name",
-> +                             "gsl3676-onda-v80-plus-v3.fw"),
-> +       PROPERTY_ENTRY_U32("silead,max-fingers", 10),
-> +       PROPERTY_ENTRY_BOOL("silead,home-button"),
-> +       { }
-> +};
+>  / {
+>         model = "Freescale i.MX6 SoloX SDB RevB Board";
 > +
-> +static const struct ts_dmi_data onda_v80_plus_v3_data = {
-> +       .acpi_name      = "MSSL1680:00",
-> +       .properties     = onda_v80_plus_v3_props,
-> +};
-> +
->  static const struct property_entry onda_v820w_32g_props[] = {
->         PROPERTY_ENTRY_U32("touchscreen-size-x", 1665),
->         PROPERTY_ENTRY_U32("touchscreen-size-y", 1140),
-> @@ -637,6 +655,14 @@ const struct dmi_system_id touchscreen_dmi_table[] = {
->                         DMI_MATCH(DMI_PRODUCT_NAME, "OBOOK 20 PLUS"),
->                 },
->         },
-> +       {
-> +               /* ONDA V80 plus v3 (P80PSBG9V3A01501) */
-> +               .driver_data = (void *)&onda_v80_plus_v3_data,
-> +               .matches = {
-> +                       DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ONDA"),
-> +                       DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "V80 PLUS")
-> +               },
-> +       },
->         {
->                 /* ONDA V820w DualOS */
->                 .driver_data = (void *)&onda_v820w_32g_data,
-> --
-> 2.19.0
->
+> +       /* Transceiver EN/STBY is active low on RevB board */
+> +       reg_can_stby: regulator-can-stby {
+> +               gpio = <&gpio4 27 GPIO_ACTIVE_LOW>;
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+Don't we need a  gpio = <&gpio4 27 GPIO_ACTIVE_HIGH>; and also a
+"enable-active-high" entries in the imx6sx-sdb-reva.dts?
