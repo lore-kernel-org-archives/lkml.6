@@ -2,299 +2,173 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EFA8ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:19:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BFCECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE6D721470
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:19:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CFAA21476
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:20:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="LFZsWAWw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE6D721470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FTqJmQbX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CFAA21476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbeJSVZy (ORCPT
+        id S1727460AbeJSV1D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 17:25:54 -0400
-Received: from aer-iport-1.cisco.com ([173.38.203.51]:12040 "EHLO
-        aer-iport-1.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727333AbeJSVZx (ORCPT
+        Fri, 19 Oct 2018 17:27:03 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39993 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727227AbeJSV1D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 17:25:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=6545; q=dns/txt; s=iport;
-  t=1539955187; x=1541164787;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=iz5INASBGnhODmSnZV04w/lxNogeADDtmeIQFt3u9g4=;
-  b=LFZsWAWwT+Kl4b9g2VqiUIcmdVpwp+LGvPR1S19f6Sva8hObtrv5qnAF
-   pB2zqP4iVTkYpTIeDgGbsNf+RTa8Dyq/n8pgD+ptWIqSPo4NW8x1doGwD
-   WIs2dBrK/Pzt1ruxZYDGqWF03+OmEYvVTPzUFYRCzbJPtI2n5UMNdwXGl
-   c=;
-X-IronPort-AV: E=Sophos;i="5.54,400,1534809600"; 
-   d="scan'208";a="7368429"
-Received: from aer-iport-nat.cisco.com (HELO aer-core-1.cisco.com) ([173.38.203.22])
-  by aer-iport-1.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 13:19:46 +0000
-Received: from [10.47.79.81] ([10.47.79.81])
-        (authenticated bits=0)
-        by aer-core-1.cisco.com (8.15.2/8.15.2) with ESMTPSA id w9JDJjGb030321
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Fri, 19 Oct 2018 13:19:45 GMT
-Subject: Re: [PATCH v3 1/2] media: add SECO cec driver
-To:     ektor5 <ek5.chimenti@gmail.com>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     luca.pisani@udoo.org, jose.abreu@synopsys.com, sean@mess.org,
-        sakari.ailus@linux.intel.com, jacopo@jmondi.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-References: <cover.1539807092.git.ek5.chimenti@gmail.com>
- <3682be6c6cf7263f165080b9a1123017a23489a0.1539807092.git.ek5.chimenti@gmail.com>
- <d874bf66-e4ad-0c98-711d-3c79d0342a67@xs4all.nl>
- <20181019130205.lqb3sopqqangefr4@Ettosoft-T55>
-From:   Hans Verkuil <hansverk@cisco.com>
-Message-ID: <0ae193a7-b651-0564-c4de-a159b1e2bfb2@cisco.com>
-Date:   Fri, 19 Oct 2018 15:19:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 19 Oct 2018 17:27:03 -0400
+Received: by mail-ot1-f67.google.com with SMTP id w67so33121869ota.7
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 06:20:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=QZP7J5TaRm4ahVFM9hMV2APPsTbezNiP5Ip1GvLBdgI=;
+        b=FTqJmQbXSpjiRiiggkiKfh7Qyv46o/FiTjn0mc3o6vaMEw5EIAYOB8Q6MFy+AmWc7o
+         m3cHwa70xxM+vVOQ2qAAaL+/uuw5JMZV92cWhifKJlobDBmE2l+sQNzqX1uYJRom3OSq
+         r27kAuubYqWH5ZX17JjEBk/30sx4hAKuND19g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=QZP7J5TaRm4ahVFM9hMV2APPsTbezNiP5Ip1GvLBdgI=;
+        b=rs7eZUmB2e6UbusnQbB0smyFRtuQVXT02klpyaOMFXfxqcgQ3bJqSwOZBwIuTvZG2W
+         neEEI4Tfljo+V3ECcHWSDNcyMo4Z0PzKW5Btgg/CLZrNV6Z+C27CJtpDqn1bZLXQJIyT
+         U+74MuCTJF8gmXgJkmAy86WFis+9URXajveMHpBzGpDfxjC/rm1nZjVEh8FK2Fdf1yKu
+         D1LXpHfoV7QFY4kO05Lu/iXQpO874Dqr43cLlsg1T8pdNRNC9zYzd8TxyIz4lpOpbdpW
+         x7JMmKmK+VKTn8nNggaPWcgCaa38RDjVZ5MPP1E3E3129s4184cTQSisRfkYh9GSOt5p
+         w0xQ==
+X-Gm-Message-State: ABuFfoiB7kTcEt2RK+o6zMvvN0bIuu1rorVmR3NfgFfcSPpK0PbiJ5d8
+        9pECEMSyUNWafDpE5Uq+iVRoLs40ALz2tg==
+X-Google-Smtp-Source: ACcGV62gf8Ju9IIcmcacGbK/8K7Zepa5B0Xxxmfydtbp04MQgbKc8idAfw0uivRcqpyiqZppjo1CTQ==
+X-Received: by 2002:a9d:a82:: with SMTP id 2mr23231064otq.136.1539955255844;
+        Fri, 19 Oct 2018 06:20:55 -0700 (PDT)
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com. [209.85.167.171])
+        by smtp.gmail.com with ESMTPSA id c62sm7133680otb.60.2018.10.19.06.20.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 19 Oct 2018 06:20:54 -0700 (PDT)
+Received: by mail-oi1-f171.google.com with SMTP id e17-v6so26762821oib.4
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 06:20:54 -0700 (PDT)
+X-Received: by 2002:aca:c743:: with SMTP id x64-v6mr17554766oif.139.1539955253826;
+ Fri, 19 Oct 2018 06:20:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181019130205.lqb3sopqqangefr4@Ettosoft-T55>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-User: hansverk
-X-Outbound-SMTP-Client: 10.47.79.81, [10.47.79.81]
-X-Outbound-Node: aer-core-1.cisco.com
+Received: by 2002:ac9:7915:0:0:0:0:0 with HTTP; Fri, 19 Oct 2018 06:20:23
+ -0700 (PDT)
+In-Reply-To: <20181018175422.506152522@linuxfoundation.org>
+References: <20181018175422.506152522@linuxfoundation.org>
+From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
+Date:   Fri, 19 Oct 2018 10:20:23 -0300
+X-Gmail-Original-Message-ID: <CABdQkv89pU7qpRWm_GSQEp9h+Xtunc0fjBxKbk8b9uOcsa4teg@mail.gmail.com>
+Message-ID: <CABdQkv89pU7qpRWm_GSQEp9h+Xtunc0fjBxKbk8b9uOcsa4teg@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/35] 4.9.135-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/19/18 15:02, ektor5 wrote:
-> Hi Hans,
-> 
-> On Thu, Oct 18, 2018 at 09:14:55AM +0200, Hans Verkuil wrote:
->> Hi Ettore,
->>
->> Just a few small things and it is ready to go:
->>
->> On 10/17/2018 11:31 PM, ektor5 wrote:
->>> From: Ettore Chimenti <ek5.chimenti@gmail.com>
->>>
->>> This patch adds support to the CEC device implemented with a STM32
->>> microcontroller in X86 SECO Boards, including UDOO X86.
->>>
->>> The communication is achieved via Braswell integrated SMBus
->>> (i2c-i801). The driver use direct access to the PCI addresses, due to
->>> the limitations of the specific driver in presence of ACPI calls.
->>>
->>> The basic functionalities are tested with success with cec-ctl and
->>> cec-compliance.
->>>
->>> Inspired by cros-ec-cec implementation, attaches to i915 driver
->>> cec-notifier.
->>>
->>> Signed-off-by: Ettore Chimenti <ek5.chimenti@gmail.com>
->>> ---
->>>  MAINTAINERS                                |   6 +
->>>  drivers/media/platform/Kconfig             |  12 +
->>>  drivers/media/platform/Makefile            |   2 +
->>>  drivers/media/platform/seco-cec/Makefile   |   1 +
->>>  drivers/media/platform/seco-cec/seco-cec.c | 699 +++++++++++++++++++++
->>>  drivers/media/platform/seco-cec/seco-cec.h | 130 ++++
->>>  6 files changed, 850 insertions(+)
->>>  create mode 100644 drivers/media/platform/seco-cec/Makefile
->>>  create mode 100644 drivers/media/platform/seco-cec/seco-cec.c
->>>  create mode 100644 drivers/media/platform/seco-cec/seco-cec.h
+On Thu, Oct 18, 2018 at 2:54 PM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.9.135 release.
+> There are 35 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat Oct 20 17:54:00 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.135-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-<snip>
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
->>> +static int secocec_adap_log_addr(struct cec_adapter *adap, u8 logical_addr)
->>> +{
->>> +	u16 enable_val = 0;
->>> +	int status;
->>
->> If logical_addr == CEC_LOG_ADDR_INVALID, then this function must not return
->> an error or the CEC framework will WARN about it.
->>
->>> +
->>> +	/* Disable device */
->>> +	status = smb_rd16(SECOCEC_ENABLE_REG_1, &enable_val);
->>> +	if (status)
->>> +		return status;
->>> +
->>> +	status = smb_wr16(SECOCEC_ENABLE_REG_1,
->>> +			  enable_val & ~SECOCEC_ENABLE_REG_1_CEC);
->>> +	if (status)
->>> +		return status;
->>> +
->>> +	/* Write logical address */
->>> +	status = smb_wr16(SECOCEC_DEVICE_LA, logical_addr);
->>
->> So does writing CEC_LOG_ADDR_INVALID (0xff) invalidate all logical
->> addresses? I see no special code for that. If that is indeed the
->> case, then you should document this.
-> 
-> The micro can have only one LA at a time. 
-> 
-> In the micro datasheet there isn't any reference to an invalid addr, so
-> it shouldn't complain. It will just set LA = 0xf. Is this correct or it
-> should disable the device instead?
+Summary
+------------------------------------------------------------------------
 
-Setting it to 0xf is OK, but you might want to write 'logical_addr & 0xf'
-to the register with a note that CEC_LOG_ADDR_INVALID is mapped to the
-'Unregistered' logical address.
+kernel: 4.9.135-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: 199d569d5f73d62a53a8ed6ce5cfecffefde3bb5
+git describe: v4.9.133-106-g199d569d5f73
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.133-106-g199d569d5f73
 
-> 
->>
->>> +	if (status)
->>> +		return status;
->>> +
->>> +	/* Re-enable device */
->>> +	status = smb_wr16(SECOCEC_ENABLE_REG_1,
->>> +			  enable_val | SECOCEC_ENABLE_REG_1_CEC);
->>> +	if (status)
->>> +		return status;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int secocec_adap_transmit(struct cec_adapter *adap, u8 attempts,
->>> +				 u32 signal_free_time, struct cec_msg *msg)
->>> +{
->>> +	struct secocec_data *cec = cec_get_drvdata(adap);
->>> +	struct device *dev = cec->dev;
->>> +	u16 payload_len, payload_id_len, destination, val = 0;
->>> +	u8 *payload_msg;
->>> +	int status;
->>> +	u8 i;
->>> +
->>> +	/* Device msg len already accounts for header */
->>> +	payload_id_len = msg->len - 1;
->>> +
->>> +	/* Send data length */
->>> +	status = smb_wr16(SECOCEC_WRITE_DATA_LENGTH, payload_id_len);
->>> +	if (status)
->>> +		goto err;
->>> +
->>> +	/* Send Operation ID if present */
->>> +	if (payload_id_len > 0) {
->>> +		status = smb_wr16(SECOCEC_WRITE_OPERATION_ID, msg->msg[1]);
->>> +		if (status)
->>> +			goto err;
->>> +	}
->>> +	/* Send data if present */
->>> +	if (payload_id_len > 1) {
->>> +		/* Only data; */
->>> +		payload_len = msg->len - 2;
->>> +		payload_msg = &msg->msg[2];
->>> +
->>> +		/* Copy message into registers */
->>> +		for (i = 0; i < payload_len; i += 2) {
->>> +			/* hi byte */
->>> +			val = payload_msg[i + 1] << 8;
->>> +
->>> +			/* lo byte */
->>> +			val |= payload_msg[i];
->>> +
->>> +			status = smb_wr16(SECOCEC_WRITE_DATA_00 + i / 2, val);
->>> +			if (status)
->>> +				goto err;
->>> +		}
->>> +	}
->>> +	/* Send msg source/destination and fire msg */
->>> +	destination = msg->msg[0];
->>> +	status = smb_wr16(SECOCEC_WRITE_BYTE0, destination);
->>> +	if (status)
->>> +		goto err;
->>> +
->>> +	return 0;
->>> +
->>> +err:
->>> +	dev_err(dev, "Transmit failed (%d)", status);
->>
->> You can drop this: the cec module has already debug code for that.
->>
->>> +	return status;
->>> +}
->>> +
->>> +static int secocec_tx_done(struct cec_adapter *adap, u16 status_val)
->>
->> Just return void since the return code is ignored anyway.
-> 
-> Ok, will drop those.
-> 
->>
->>> +{
->>> +	int status = 0;
->>> +
->>> +	if (status_val & SECOCEC_STATUS_TX_ERROR_MASK) {
->>> +		if (status_val & SECOCEC_STATUS_TX_NACK_ERROR) {
->>> +			cec_transmit_attempt_done(adap, CEC_TX_STATUS_NACK);
->>> +			status = -EAGAIN;
->>> +		} else {
->>> +			cec_transmit_attempt_done(adap, CEC_TX_STATUS_ERROR);
->>> +			status = -EIO;
->>> +		}
->>> +	} else {
->>> +		cec_transmit_attempt_done(adap, CEC_TX_STATUS_OK);
->>> +	}
->>> +
->>> +	/* Reset status reg */
->>> +	status_val = SECOCEC_STATUS_TX_ERROR_MASK |
->>> +		SECOCEC_STATUS_MSG_SENT_MASK |
->>> +		SECOCEC_STATUS_TX_NACK_ERROR;
->>> +	smb_wr16(SECOCEC_STATUS, status_val);
->>> +
->>> +	return status;
->>> +}
->>> +
->>> +static int secocec_rx_done(struct cec_adapter *adap, u16 status_val)
->>> +{
->>
->> Ditto.
->>
->>> +	struct secocec_data *cec = cec_get_drvdata(adap);
->>> +	struct device *dev = cec->dev;
->>> +	struct cec_msg msg = { };
->>> +	bool flag_overflow = false;
->>> +	u8 payload_len, i = 0;
->>> +	u8 *payload_msg;
->>> +	u16 val = 0;
->>> +	int status;
->>> +
->>> +	if (status_val & SECOCEC_STATUS_RX_OVERFLOW_MASK) {
->>> +		dev_warn(dev, "Received more than 16 bytes. Discarding");
->>
->> Is it better to just receive the first 16 bytes?
-> 
-> In case of an overflow, it should discard the overflowing bytes, but I
-> don't have any equipment that can test this. (this device can send up to
-> 16 bytes).
 
-Add a note that this might not be necessary, but that you couldn't test
-this. I can test it when I find some time.
+No regressions (compared to build v4.9.134)
 
-> 
->>
->>> +		flag_overflow = true;
->>> +	}
 
-Regards,
+No fixes (compared to build v4.9.134)
 
-	Hans
 
+Ran 21028 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
