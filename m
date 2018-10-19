@@ -2,127 +2,110 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB24ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EFCDECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C4BD21476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:41:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W48iTrVy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C4BD21476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id E4F8421470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:44:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4F8421470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727871AbeJTCtL (ORCPT
+        id S1727825AbeJTCvu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 22:49:11 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:44417 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727329AbeJTCtK (ORCPT
+        Fri, 19 Oct 2018 22:51:50 -0400
+Received: from gateway23.websitewelcome.com ([192.185.50.161]:29858 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727705AbeJTCvu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 22:49:10 -0400
-Received: by mail-yb1-f193.google.com with SMTP id x5-v6so13634276ybl.11
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 11:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=GHdCJSoI+zu3PbazuLHwj91d31caO5n91pvxwEyTTqU=;
-        b=W48iTrVymcEREQFSSzxJclxoLFAkfSXZMwqkicZwfRU5ICGamBrkVhF0GN0ZAEFkaz
-         K8/GZkuotNzZT7dNST7C2py4DaHWnCBH+PeMCkJKKPECHjg59BgsL7nJOyXiRGEXXH6O
-         JLKvDCaw0/WPK2fnZDGVp7qjK7TLf2x7p/JQY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=GHdCJSoI+zu3PbazuLHwj91d31caO5n91pvxwEyTTqU=;
-        b=AYGSL7pU0c49f43rwf+K5IAEu+fQwohyhFi+O7q1n97CLSq6DSpV31FdjGmH+DWYN/
-         nfLfRc2GEeVkEpHefbMDWGg9UBzEBKUopKt0ns7B6/j73VSR7EPtr4nWe200JijqzkUY
-         RQnOZJQv1sC8F+AFSdpzMNaDEdRJvlDLEgTLPYvQzmnhdqiiWHPmwGOo+0s15bmRDumv
-         ve11uYhc3qlr7wKAdl2yUheBp6PTVF/aQQ1TgkoZlwi3EEFD8xbkmVTU8IykIe4HnqOI
-         rgWFz6yOkr60zIOA7aZYSEj7mNwLfTrf2fd2L3fv5x8K9bFlDRxFq80eUVvwQ+oTjYL5
-         aXSA==
-X-Gm-Message-State: ABuFfoipoRMw4fZJLalRfbirKYYeI9zGrIwTEpYmrU6SAuF/sg37TnvN
-        26zI/tQ12r3nS7UZ2SPFUcmweQd5on4=
-X-Google-Smtp-Source: ACcGV63nDYivkE2OnpEJvUDh1X1VKax+HG6M8bsRY+rtYV1gMQXfUg5XWlXxijseLh69QvXc6zdzaw==
-X-Received: by 2002:a25:8546:: with SMTP id f6-v6mr24010664ybn.506.1539974512970;
-        Fri, 19 Oct 2018 11:41:52 -0700 (PDT)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id j81-v6sm5828656ywc.93.2018.10.19.11.41.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Oct 2018 11:41:51 -0700 (PDT)
-Received: by mail-yb1-f181.google.com with SMTP id v92-v6so891549ybi.5
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 11:41:51 -0700 (PDT)
-X-Received: by 2002:a25:3588:: with SMTP id c130-v6mr23841530yba.410.1539974510920;
- Fri, 19 Oct 2018 11:41:50 -0700 (PDT)
+        Fri, 19 Oct 2018 22:51:50 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 49BFFA9F8
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 13:44:32 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id DZkzg2DIbaSeyDZl5gMMWv; Fri, 19 Oct 2018 13:44:31 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:60794 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gDZky-001Pga-0Z; Fri, 19 Oct 2018 13:44:20 -0500
+Date:   Fri, 19 Oct 2018 20:44:17 +0200
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] skd: fix unchecked return values
+Message-ID: <20181019184417.GA21154@embeddedor.com>
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Fri, 19 Oct 2018 11:41:50
- -0700 (PDT)
-In-Reply-To: <20181019183729.27684-1-natechancellor@gmail.com>
-References: <20181019183729.27684-1-natechancellor@gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 19 Oct 2018 11:41:50 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKtfNDwygALbkwusMH+ann55FV5tjOTw3zFNFRjb379jw@mail.gmail.com>
-Message-ID: <CAGXu5jKtfNDwygALbkwusMH+ann55FV5tjOTw3zFNFRjb379jw@mail.gmail.com>
-Subject: Re: [PATCH] pstore: Fix annotation on declaration of pstore_exit_fs
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gDZky-001Pga-0Z
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:60794
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 11:37 AM, Nathan Chancellor
-<natechancellor@gmail.com> wrote:
-> Clang warns (trimmed for brevity):
->
-> fs/pstore/inode.c:504:6: error: section does not match previous
-> declaration [-Werror,-Wsection]
-> void __exit pstore_exit_fs(void)
->      ^
-> fs/pstore/internal.h:42:6: note: previous attribute is here
-> void __init     pstore_exit_fs(void);
->      ^
->
-> Fixes: a4fb3d2fefd2 ("pstore: Centralize init/exit routines")
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  fs/pstore/internal.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/pstore/internal.h b/fs/pstore/internal.h
-> index 98bb4fa6e6a7..7062ea4bc57c 100644
-> --- a/fs/pstore/internal.h
-> +++ b/fs/pstore/internal.h
-> @@ -39,6 +39,6 @@ extern void   pstore_record_init(struct pstore_record *record,
->
->  /* Called during pstore init/exit. */
->  int __init     pstore_init_fs(void);
-> -void __init    pstore_exit_fs(void);
-> +void __exit    pstore_exit_fs(void);
+Check return values of dma_set_mask_and_coherent().
 
-Whoops! Thanks, I'll fold this fix into the patch.
+Otherwise, if dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+fails, the following piece of code will be executed even when the call
+to dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32)); returns 0:
 
--Kees
+dev_err(&pdev->dev, "DMA mask error %d\n", rc);
+goto err_out_regions;
 
->
->  #endif
-> --
-> 2.19.1
->
+Addresses-Coverity-ID: 1474553 ("Unchecked return value")
+Fixes: 138126214868 ("skd: switch to the generic DMA API")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/block/skd_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-
+diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
+index 7c5fc69..2459dcc 100644
+--- a/drivers/block/skd_main.c
++++ b/drivers/block/skd_main.c
+@@ -3175,7 +3175,7 @@ static int skd_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		goto err_out;
+ 	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (rc)
+-		dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
++		rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (rc) {
+ 		dev_err(&pdev->dev, "DMA mask error %d\n", rc);
+ 		goto err_out_regions;
+@@ -3364,7 +3364,7 @@ static int skd_pci_resume(struct pci_dev *pdev)
+ 		goto err_out;
+ 	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (rc)
+-		dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
++		rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (rc) {
+ 		dev_err(&pdev->dev, "DMA mask error %d\n", rc);
+ 		goto err_out_regions;
 -- 
-Kees Cook
-Pixel Security
+2.7.4
+
