@@ -2,115 +2,259 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3764ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A50DECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:50:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 972022083E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:50:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 972022083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id D0B6521470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:50:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0B6521470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbeJTE6F (ORCPT
+        id S1727641AbeJTE6f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 00:58:05 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:40216 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbeJTE6E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 00:58:04 -0400
-Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gDbic-00065n-4e; Fri, 19 Oct 2018 22:50:02 +0200
-Date:   Fri, 19 Oct 2018 22:50:01 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     John Stultz <john.stultz@linaro.org>
-cc:     Christopher Hall <christopher.s.hall@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        jesus.sanchez-palencia@intel.com, gavin.hindman@intel.com,
-        liam.r.girdwood@intel.com, Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: TSC to Mono-raw Drift
-In-Reply-To: <CALAqxLVrPH-SFacys6pWBvL79OBwiAMUOL55oy3S7C+7pNffHA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1810192244150.1651@nanos.tec.linutronix.de>
-References: <20181015160945.5993-1-christopher.s.hall@intel.com> <alpine.DEB.2.21.1810191720590.6075@nanos.tec.linutronix.de> <alpine.DEB.2.21.1810191955250.1651@nanos.tec.linutronix.de> <CALAqxLWHdZn9RCcYbYicKXeu3QiCuVna27mWBQPbFvaj9gm-fw@mail.gmail.com>
- <alpine.DEB.2.21.1810192050250.1651@nanos.tec.linutronix.de> <CALAqxLVrPH-SFacys6pWBvL79OBwiAMUOL55oy3S7C+7pNffHA@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Sat, 20 Oct 2018 00:58:35 -0400
+Received: from mga09.intel.com ([134.134.136.24]:44517 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726157AbeJTE6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 00:58:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 13:50:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,401,1534834800"; 
+   d="scan'208";a="100971842"
+Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.168])
+  by orsmga001.jf.intel.com with ESMTP; 19 Oct 2018 13:50:51 -0700
+From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
+To:     kernel-hardening@lists.openwall.com, daniel@iogearbox.net,
+        keescook@chromium.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, davem@davemloft.net, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, arnd@arndb.de,
+        jeyu@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        jannh@google.com
+Cc:     kristen@linux.intel.com, dave.hansen@intel.com,
+        arjan@linux.intel.com, deneen.t.dock@intel.com,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH v3 1/3] modules: Create arch versions of module alloc/free
+Date:   Fri, 19 Oct 2018 13:47:21 -0700
+Message-Id: <20181019204723.3903-2-rick.p.edgecombe@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181019204723.3903-1-rick.p.edgecombe@intel.com>
+References: <20181019204723.3903-1-rick.p.edgecombe@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-John,
+In prep for module space rlimit, create a singular cross platform
+module_alloc and module_memfree that call into arch specific
+implementations.
 
-On Fri, 19 Oct 2018, John Stultz wrote:
-> On Fri, Oct 19, 2018 at 11:57 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > I don't think you need complex oscillation for that. The error is constant
-> > and small enough that it is a fractional nanoseconds thing with an interval
-> > <= 1s. So you can just add that in a regular interval. Due to it being
-> > small you can't observe time jumping I think.
-> 
-> Well, from the examples the trouble is we seem to be a bit fast,
-> rather then slow.
-> So we'll have to reduce mult by one, and rework the calculations, but
-> maybe something like this (correcting the raw_interval value) would
-> work.
+This has only been tested on x86.
 
-Shouldn't be rocket science. It's a one off calculation of adjustment value
-and maybe the period at which the correction happens.
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+---
+ arch/arm/kernel/module.c       |  2 +-
+ arch/arm64/kernel/module.c     |  2 +-
+ arch/mips/kernel/module.c      |  2 +-
+ arch/nds32/kernel/module.c     |  2 +-
+ arch/nios2/kernel/module.c     |  4 ++--
+ arch/parisc/kernel/module.c    |  2 +-
+ arch/s390/kernel/module.c      |  2 +-
+ arch/sparc/kernel/module.c     |  2 +-
+ arch/unicore32/kernel/module.c |  2 +-
+ arch/x86/kernel/module.c       |  2 +-
+ kernel/module.c                | 14 ++++++++++++--
+ 11 files changed, 23 insertions(+), 13 deletions(-)
 
-> But this also sort of breaks, fundamental argument that the raw clock
-> is a simple mult/shift transformation of the underlying clocksource
-> counter. Its not the accuracy of the clock but the consistency that
-> was key.
-> 
-> The counter argument is that the raw clock is abstracting the
-> underlying hardware so folks who would have used the TSC directly can
-> now use the raw clock and have a generic abstracted hardware-counter
-> interface. So userland shouldn't really be worried about the
-> occasional injections made since they shouldn't be trying to
-> re-generate the abstraction from the hardware themselves.  <--
-> Remember this point as we move to the next comment:)
-> 
-> > The end-result is 'correct' as much correct it is in relation to real
-> > nanoseconds. :)
-> >
-> >> I guess I'd want to understand more of the use here and the need to
-> >> tie the raw clock back to the hardware counter it abstracts.
-> >
-> > The problem there is ART which is distributed to PCIe devices and ART time
-> > stamps are exposed in various ways. ART has a fixed ratio vs. TSC so there
-> > is a reasonable expectation that MONOTONIC_RAW is accurate.
-> 
-> Which is maybe sort of my issue here. The raw clock provided a
-> abstraction away from the hardware for generic usage, but then its
-> being re-used with other un-abstracted hardware references. So unless
-> they use the same method of transformation, there will be problems (of
-> varying degree).
+diff --git a/arch/arm/kernel/module.c b/arch/arm/kernel/module.c
+index 3ff571c2c71c..359838a4bb06 100644
+--- a/arch/arm/kernel/module.c
++++ b/arch/arm/kernel/module.c
+@@ -38,7 +38,7 @@
+ #endif
+ 
+ #ifdef CONFIG_MMU
+-void *module_alloc(unsigned long size)
++void *arch_module_alloc(unsigned long size)
+ {
+ 	gfp_t gfp_mask = GFP_KERNEL;
+ 	void *p;
+diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
+index f0f27aeefb73..a6891eb2fc16 100644
+--- a/arch/arm64/kernel/module.c
++++ b/arch/arm64/kernel/module.c
+@@ -30,7 +30,7 @@
+ #include <asm/insn.h>
+ #include <asm/sections.h>
+ 
+-void *module_alloc(unsigned long size)
++void *arch_module_alloc(unsigned long size)
+ {
+ 	gfp_t gfp_mask = GFP_KERNEL;
+ 	void *p;
+diff --git a/arch/mips/kernel/module.c b/arch/mips/kernel/module.c
+index 491605137b03..e9ee8e7544f9 100644
+--- a/arch/mips/kernel/module.c
++++ b/arch/mips/kernel/module.c
+@@ -45,7 +45,7 @@ static LIST_HEAD(dbe_list);
+ static DEFINE_SPINLOCK(dbe_lock);
+ 
+ #ifdef MODULE_START
+-void *module_alloc(unsigned long size)
++void *arch_module_alloc(unsigned long size)
+ {
+ 	return __vmalloc_node_range(size, 1, MODULE_START, MODULE_END,
+ 				GFP_KERNEL, PAGE_KERNEL, 0, NUMA_NO_NODE,
+diff --git a/arch/nds32/kernel/module.c b/arch/nds32/kernel/module.c
+index 1e31829cbc2a..75535daa22a5 100644
+--- a/arch/nds32/kernel/module.c
++++ b/arch/nds32/kernel/module.c
+@@ -7,7 +7,7 @@
+ #include <linux/moduleloader.h>
+ #include <asm/pgtable.h>
+ 
+-void *module_alloc(unsigned long size)
++void *arch_module_alloc(unsigned long size)
+ {
+ 	return __vmalloc_node_range(size, 1, MODULES_VADDR, MODULES_END,
+ 				    GFP_KERNEL, PAGE_KERNEL, 0, NUMA_NO_NODE,
+diff --git a/arch/nios2/kernel/module.c b/arch/nios2/kernel/module.c
+index e2e3f13f98d5..cd059a8e9a7b 100644
+--- a/arch/nios2/kernel/module.c
++++ b/arch/nios2/kernel/module.c
+@@ -28,7 +28,7 @@
+  * from 0x80000000 (vmalloc area) to 0xc00000000 (kernel) (kmalloc returns
+  * addresses in 0xc0000000)
+  */
+-void *module_alloc(unsigned long size)
++void *arch_module_alloc(unsigned long size)
+ {
+ 	if (size == 0)
+ 		return NULL;
+@@ -36,7 +36,7 @@ void *module_alloc(unsigned long size)
+ }
+ 
+ /* Free memory returned from module_alloc */
+-void module_memfree(void *module_region)
++void arch_module_memfree(void *module_region)
+ {
+ 	kfree(module_region);
+ }
+diff --git a/arch/parisc/kernel/module.c b/arch/parisc/kernel/module.c
+index b5b3cb00f1fb..72ab3c8b103b 100644
+--- a/arch/parisc/kernel/module.c
++++ b/arch/parisc/kernel/module.c
+@@ -213,7 +213,7 @@ static inline int reassemble_22(int as22)
+ 		((as22 & 0x0003ff) << 3));
+ }
+ 
+-void *module_alloc(unsigned long size)
++void *arch_module_alloc(unsigned long size)
+ {
+ 	/* using RWX means less protection for modules, but it's
+ 	 * easier than trying to map the text, data, init_text and
+diff --git a/arch/s390/kernel/module.c b/arch/s390/kernel/module.c
+index d298d3cb46d0..e07c4a9384c0 100644
+--- a/arch/s390/kernel/module.c
++++ b/arch/s390/kernel/module.c
+@@ -30,7 +30,7 @@
+ 
+ #define PLT_ENTRY_SIZE 20
+ 
+-void *module_alloc(unsigned long size)
++void *arch_module_alloc(unsigned long size)
+ {
+ 	if (PAGE_ALIGN(size) > MODULES_LEN)
+ 		return NULL;
+diff --git a/arch/sparc/kernel/module.c b/arch/sparc/kernel/module.c
+index df39580f398d..870581ba9205 100644
+--- a/arch/sparc/kernel/module.c
++++ b/arch/sparc/kernel/module.c
+@@ -40,7 +40,7 @@ static void *module_map(unsigned long size)
+ }
+ #endif /* CONFIG_SPARC64 */
+ 
+-void *module_alloc(unsigned long size)
++void *arch_module_alloc(unsigned long size)
+ {
+ 	void *ret;
+ 
+diff --git a/arch/unicore32/kernel/module.c b/arch/unicore32/kernel/module.c
+index e191b3448bd3..53ea96459d8c 100644
+--- a/arch/unicore32/kernel/module.c
++++ b/arch/unicore32/kernel/module.c
+@@ -22,7 +22,7 @@
+ #include <asm/pgtable.h>
+ #include <asm/sections.h>
+ 
+-void *module_alloc(unsigned long size)
++void *arch_module_alloc(unsigned long size)
+ {
+ 	return __vmalloc_node_range(size, 1, MODULES_VADDR, MODULES_END,
+ 				GFP_KERNEL, PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
+diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
+index f58336af095c..032e49180577 100644
+--- a/arch/x86/kernel/module.c
++++ b/arch/x86/kernel/module.c
+@@ -77,7 +77,7 @@ static unsigned long int get_module_load_offset(void)
+ }
+ #endif
+ 
+-void *module_alloc(unsigned long size)
++void *arch_module_alloc(unsigned long size)
+ {
+ 	void *p;
+ 
+diff --git a/kernel/module.c b/kernel/module.c
+index 6746c85511fe..41c22aba8209 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2110,11 +2110,16 @@ static void free_module_elf(struct module *mod)
+ }
+ #endif /* CONFIG_LIVEPATCH */
+ 
+-void __weak module_memfree(void *module_region)
++void __weak arch_module_memfree(void *module_region)
+ {
+ 	vfree(module_region);
+ }
+ 
++void module_memfree(void *module_region)
++{
++	arch_module_memfree(module_region);
++}
++
+ void __weak module_arch_cleanup(struct module *mod)
+ {
+ }
+@@ -2728,11 +2733,16 @@ static void dynamic_debug_remove(struct module *mod, struct _ddebug *debug)
+ 		ddebug_remove_module(mod->name);
+ }
+ 
+-void * __weak module_alloc(unsigned long size)
++void * __weak arch_module_alloc(unsigned long size)
+ {
+ 	return vmalloc_exec(size);
+ }
+ 
++void *module_alloc(unsigned long size)
++{
++	return arch_module_alloc(size);
++}
++
+ #ifdef CONFIG_DEBUG_KMEMLEAK
+ static void kmemleak_load_module(const struct module *mod,
+ 				 const struct load_info *info)
+-- 
+2.17.1
 
-OTOH. If people use the CPUID provided frequency information and the TSC
-from userspace then they get different results which is contrary to the
-goal of providing them an abstracted way of doing it.
-
-> We might be able to reduce the degree in this case, but I worry the
-> extra complexity may only cause problems for others.
-
-Is it really that complex to add a fixed correction value periodically?
-
-I don't think so and it should just work for any clocksource which is
-exposed this way. Famous last words .....
-
-Thanks,
-
-	tglx
