@@ -2,202 +2,150 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 432EBECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 21:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA577ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 22:00:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D038421476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 21:51:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D038421476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 58ED620658
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 22:00:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58ED620658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbeJTF7C (ORCPT
+        id S1727410AbeJTGHx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 01:59:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59804 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726678AbeJTF7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 01:59:02 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1724830024E5;
-        Fri, 19 Oct 2018 21:51:09 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5CE0A10021B2;
-        Fri, 19 Oct 2018 21:50:53 +0000 (UTC)
-Date:   Fri, 19 Oct 2018 17:50:50 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-audit@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        luto@kernel.org, carlos@redhat.com, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH ghak90 (was ghak32) V4 02/10] audit: add container id
-Message-ID: <20181019215050.kuonluie6h3aokkt@madcap2.tricolour.ca>
-References: <cover.1533065887.git.rgb@redhat.com>
- <12396e378a78ee8dd38c75f7730d67d8fbb08e02.1533065887.git.rgb@redhat.com>
- <CAHC9VhTT7n4wDoaDGFXAK+wtcsMDDMRkQVCQ2jNYLKSFqFc+bA@mail.gmail.com>
+        Sat, 20 Oct 2018 02:07:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48516 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726604AbeJTGHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 02:07:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 67C7CAFDA;
+        Fri, 19 Oct 2018 21:59:57 +0000 (UTC)
+Subject: Re: [PATCH] reiserfs: remove workaround code for GCC 3.x
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        reiserfs-devel@vger.kernel.org
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <1535337230-13222-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Jeff Mahoney <jeffm@suse.com>
+Message-ID: <c5b98062-9646-a1ba-12df-2b1e3dbebe5b@suse.com>
+Date:   Fri, 19 Oct 2018 17:59:53 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:63.0)
+ Gecko/20100101 Thunderbird/63.0a1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhTT7n4wDoaDGFXAK+wtcsMDDMRkQVCQ2jNYLKSFqFc+bA@mail.gmail.com>
-User-Agent: NeoMutt/20180512
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 19 Oct 2018 21:51:09 +0000 (UTC)
+In-Reply-To: <1535337230-13222-1-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="lb7navskWOuaBitd5eWXyL2iYCNBMedzw"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-19 15:38, Paul Moore wrote:
-> On Tue, Jul 31, 2018 at 4:11 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >
-> > Implement the proc fs write to set the audit container identifier of a
-> > process, emitting an AUDIT_CONTAINER_OP record to document the event.
-> >
-> > This is a write from the container orchestrator task to a proc entry of
-> > the form /proc/PID/audit_containerid where PID is the process ID of the
-> > newly created task that is to become the first task in a container, or
-> > an additional task added to a container.
-> >
-> > The write expects up to a u64 value (unset: 18446744073709551615).
-> >
-> > The writer must have capability CAP_AUDIT_CONTROL.
-> >
-> > This will produce a record such as this:
-> >   type=CONTAINER_ID msg=audit(2018-06-06 12:39:29.636:26949) : op=set opid=2209 old-contid=18446744073709551615 contid=123456 pid=628 auid=root uid=root tty=ttyS0 ses=1 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 comm=bash exe=/usr/bin/bash res=yes
-> 
-> You need to update the record type in the example above.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--lb7navskWOuaBitd5eWXyL2iYCNBMedzw
+Content-Type: multipart/mixed; boundary="kKRYqH4TJvOSvFJMguNRLdlj2tthsOgXq";
+ protected-headers="v1"
+From: Jeff Mahoney <jeffm@suse.com>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+ reiserfs-devel@vger.kernel.org
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+ Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>,
+ linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ Philippe Ombredanne <pombredanne@nexb.com>,
+ Kate Stewart <kstewart@linuxfoundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Message-ID: <c5b98062-9646-a1ba-12df-2b1e3dbebe5b@suse.com>
+Subject: Re: [PATCH] reiserfs: remove workaround code for GCC 3.x
+References: <1535337230-13222-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1535337230-13222-1-git-send-email-yamada.masahiro@socionext.com>
 
-Yup, thanks.
+--kKRYqH4TJvOSvFJMguNRLdlj2tthsOgXq
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-> > The "op" field indicates an initial set.  The "pid" to "ses" fields are
-> > the orchestrator while the "opid" field is the object's PID, the process
-> > being "contained".  Old and new audit container identifier values are
-> > given in the "contid" fields, while res indicates its success.
-> 
-> I understand Steve's concern around the "op" field, but I think it
-> might be a bit premature to think we might not need to do some sort of
-> audit container ID management in the future that would want to make
-> use of the CONTAINER_OP message type.  I would like to see the "op"
-> field preserved.
+On 8/26/18 10:33 PM, Masahiro Yamada wrote:
+> Commit cafa0010cd51 ("Raise the minimum required gcc version to 4.6")
+> bumped the minimum GCC version to 4.6 for all architectures.
+>=20
+> The workaround code in fs/reiserfs/Makefile is obsolete now.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-I strongly agree.
+Acked-by: Jeff Mahoney <jeffm@suse.com>
 
-> > It is not permitted to unset the audit container identifier.
-> > A child inherits its parent's audit container identifier.
-> >
-> > See: https://github.com/linux-audit/audit-kernel/issues/90
-> > See: https://github.com/linux-audit/audit-userspace/issues/51
-> > See: https://github.com/linux-audit/audit-testsuite/issues/64
-> > See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
-> >
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > Acked-by: Serge Hallyn <serge@hallyn.com>
-> > Acked-by: Steve Grubb <sgrubb@redhat.com>
-> > ---
-> >  fs/proc/base.c             | 37 +++++++++++++++++++++++++
-> >  include/linux/audit.h      | 24 ++++++++++++++++
-> >  include/uapi/linux/audit.h |  2 ++
-> >  kernel/auditsc.c           | 68 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 131 insertions(+)
-> 
-> ...
-> 
-> > @@ -2112,6 +2114,72 @@ int audit_set_loginuid(kuid_t loginuid)
-> >  }
-> >
-> >  /**
-> > + * audit_set_contid - set current task's audit_context contid
-> > + * @contid: contid value
-> > + *
-> > + * Returns 0 on success, -EPERM on permission failure.
-> > + *
-> > + * Called (set) from fs/proc/base.c::proc_contid_write().
-> > + */
-> > +int audit_set_contid(struct task_struct *task, u64 contid)
-> > +{
-> > +       u64 oldcontid;
-> > +       int rc = 0;
-> > +       struct audit_buffer *ab;
-> > +       uid_t uid;
-> > +       struct tty_struct *tty;
-> > +       char comm[sizeof(current->comm)];
-> > +
-> > +       task_lock(task);
-> > +       /* Can't set if audit disabled */
-> > +       if (!task->audit) {
-> > +               task_unlock(task);
-> > +               return -ENOPROTOOPT;
-> > +       }
-> > +       oldcontid = audit_get_contid(task);
-> > +       read_lock(&tasklist_lock);
-> 
-> I assume lockdep was happy with nesting the tasklist_lock inside the task lock?
+Thanks,
 
-Yup, I had gone through the logic and at first I had doubts, but the
-function comments and other usage reassured me (as well as in-kernel
-lock checks on boot) that this was the right order and approach.
+-Jeff
 
-> > +       /* Don't allow the audit containerid to be unset */
-> > +       if (!audit_contid_valid(contid))
-> > +               rc = -EINVAL;
-> > +       /* if we don't have caps, reject */
-> > +       else if (!capable(CAP_AUDIT_CONTROL))
-> > +               rc = -EPERM;
-> > +       /* if task has children or is not single-threaded, deny */
-> > +       else if (!list_empty(&task->children))
-> > +               rc = -EBUSY;
-> > +       else if (!(thread_group_leader(task) && thread_group_empty(task)))
-> > +               rc = -EALREADY;
-> > +       read_unlock(&tasklist_lock);
-> > +       if (!rc)
-> > +               task->audit->contid = contid;
-> > +       task_unlock(task);
-> > +
-> > +       if (!audit_enabled)
-> > +               return rc;
-> > +
-> > +       ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONTAINER_OP);
-> > +       if (!ab)
-> > +               return rc;
-> > +
-> > +       uid = from_kuid(&init_user_ns, task_uid(current));
-> > +       tty = audit_get_tty(current);
-> > +       audit_log_format(ab, "op=set opid=%d old-contid=%llu contid=%llu pid=%d uid=%u auid=%u tty=%s ses=%u",
-> > +                        task_tgid_nr(task), oldcontid, contid,
-> > +                        task_tgid_nr(current), uid,
-> > +                        from_kuid(&init_user_ns, audit_get_loginuid(current)),
-> > +                        tty ? tty_name(tty) : "(none)",
-> > +                        audit_get_sessionid(current));
-> > +       audit_put_tty(tty);
-> > +       audit_log_task_context(ab);
-> > +       audit_log_format(ab, " comm=");
-> > +       audit_log_untrustedstring(ab, get_task_comm(comm, current));
-> > +       audit_log_d_path_exe(ab, current->mm);
-> > +       audit_log_format(ab, " res=%d", !rc);
-> > +       audit_log_end(ab);
-> > +       return rc;
-> > +}
-> 
-> -- 
-> paul moore
-> www.paul-moore.com
+> ---
+>=20
+>  fs/reiserfs/Makefile | 9 ---------
+>  1 file changed, 9 deletions(-)
+>=20
+> diff --git a/fs/reiserfs/Makefile b/fs/reiserfs/Makefile
+> index a39a562..bd29c58 100644
+> --- a/fs/reiserfs/Makefile
+> +++ b/fs/reiserfs/Makefile
+> @@ -26,14 +26,5 @@ ifeq ($(CONFIG_REISERFS_FS_POSIX_ACL),y)
+>  reiserfs-objs +=3D xattr_acl.o
+>  endif
+> =20
+> -# gcc -O2 (the kernel default)  is overaggressive on ppc32 when many i=
+nline
+> -# functions are used.  This causes the compiler to advance the stack
+> -# pointer out of the available stack space, corrupting kernel space,
+> -# and causing a panic. Since this behavior only affects ppc32, this if=
+eq
+> -# will work around it. If any other architecture displays this behavio=
+r,
+> -# add it here.
+> -ccflags-$(CONFIG_PPC32) :=3D $(call cc-ifversion, -lt, 0400, -O1)
+> -
+>  TAGS:
+>  	etags *.c
+> -
+>=20
 
-- RGB
+--=20
+Jeff Mahoney
+SUSE Labs
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+
+
+--kKRYqH4TJvOSvFJMguNRLdlj2tthsOgXq--
+
+--lb7navskWOuaBitd5eWXyL2iYCNBMedzw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE8wzgbmZ74SnKPwtDHntLYyF55bIFAlvKU9kACgkQHntLYyF5
+5bJ6Og/8DeqevT05j6HyWeux/L1Cje0Smqxt9JOitTBvsivl0KwHvfem2WEyXQct
+RJgAMC0Ei7w+zbKPhcSJL3K0tu+dILlPESUSkhbzcOuEAkZtxG8jV3ruhAj8psKn
+uQOk0n7qoFpeVrroWrhs2OE6NtL6VSFAlk0mTNiUT5y58MzHMGdXr/HS6+OJTv0s
+xzuj28Sgkxvju5lkMS7gZ/v07vdJAiYnPA/PcCT2hGhVQG0pHGd88hS04tGVzaUd
++n17pxbofTq/0J1nBFK+LvFefCdg5/shFFXMVDMPNpjixSNE2bv+MgtkW9P24/HP
+lE6tX3KJMxoWYm06k41NPWOx458JaaLhtdUkCXG6ojreKsMOG11i+pLP2WmvQLLb
+xgqxRF9jV09frVNLVd+jzEWi2yzaZewEgtPRrnPPh+Q9bMzbQgF2YyQw8tGmSE0y
+QrCxZaMPNttJDGdllE46s6pE+b7IBi4HQV58pZQyvqFoda1UcDJ3zzre2xs37JGH
+k/QY26TP4X8JJP/cqTHYqb970azVD/b+dsmpKLsNo7bnyr2VxTD07xM9ipG5yYqY
+BZxP36i9LTebM0H15QpVvsjAMI74HH2FHfKZ/0K72CjkPcfSdOK7xncfM4oTDCMK
+gX/Iqqu7SiUeS461fwhEqWswfJXMSsCeh1DwEU0Ojrwr7SKpH5o=
+=TEuL
+-----END PGP SIGNATURE-----
+
+--lb7navskWOuaBitd5eWXyL2iYCNBMedzw--
