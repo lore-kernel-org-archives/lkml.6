@@ -2,164 +2,300 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A56BC67863
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5359CECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:19:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E239421476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:18:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BTARdLq2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E239421476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id EDF432145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:19:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDF432145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbeJSIWO (ORCPT
+        id S1727044AbeJSIWr convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 04:22:14 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50948 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbeJSIWO (ORCPT
+        Fri, 19 Oct 2018 04:22:47 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:43400 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbeJSIWr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 04:22:14 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9J0EZoi143500;
-        Fri, 19 Oct 2018 00:18:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=iK7BR+7JN+IZuh47YI3hyIHy7r1pb7htFurZINZ3eJI=;
- b=BTARdLq2r2rRvU77KzMKnrUWlf2foQ07X2VfI78X/5FqCZ1RR0pxPJxSZtGDI0XdemGv
- G9ishzxn4Wr6TexFUFJ2f6wBNysnTBEBEKa/ls8hvIAjVNR7yEGL8GYMroXHD3H3F1ob
- 4k9TWO0xPOCUBvu9y2jhRd3s1tVOrxgIbs8rVn8rrAxMtFb/U6AQe2FiPLsMyRIxkLDt
- iVU42QRiEn4gg26e57UD5QTBuICXodr0HgHPtUQeJGXK2nh/atJlA+Kma1uce1XH3YGU
- pqoY/AVtmVEeVmvb+z5bOXyBWPSPrcvBQ9T34Je8qZuEmcuOKc71CUlDTcdIcOapyqSa EA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2n39brsc2j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Oct 2018 00:18:05 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9J0I5t6026113
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Oct 2018 00:18:05 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9J0I4Cu030545;
-        Fri, 19 Oct 2018 00:18:05 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 18 Oct 2018 17:18:04 -0700
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id C23B26A0136; Thu, 18 Oct 2018 20:18:03 -0400 (EDT)
-Date:   Thu, 18 Oct 2018 20:18:03 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/10] swiotlb: do not panic on mapping failures
-Message-ID: <20181019001803.GE1251@char.us.oracle.com>
-References: <20181008080246.20543-1-hch@lst.de>
- <20181008080246.20543-4-hch@lst.de>
- <ff847d0d-a2a1-65ba-ed18-aa71f632194d@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ff847d0d-a2a1-65ba-ed18-aa71f632194d@arm.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9050 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810190001
+        Fri, 19 Oct 2018 04:22:47 -0400
+Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4C49A140DA5D1;
+        Thu, 18 Oct 2018 17:19:15 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 17:19:14 -0700 (PDT)
+Message-Id: <20181018.171914.1210096727703399564.davem@davemloft.net>
+To:     gregkh@linuxfoundation.org
+CC:     akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT] Networking
+From:   David Miller <davem@davemloft.net>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 18 Oct 2018 17:19:15 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 07:06:31PM +0100, Robin Murphy wrote:
-> On 08/10/18 09:02, Christoph Hellwig wrote:
-> > All properly written drivers now have error handling in the
-> > dma_map_single / dma_map_page callers.  As swiotlb_tbl_map_single already
-> > prints a useful warning when running out of swiotlb pool swace we can
-> > also remove swiotlb_full entirely as it serves no purpose now.
-> 
-> $ git grep -l 'dma_map_\(page\|single\)' drivers/ | wc -l
-> 385
-> $ git grep -l dma_mapping_error drivers/ | wc -l
-> 396
-> 
-> Close enough, to first approximation :D
-> 
-> I agree the other (non-fatal) warning seems sufficient, and frankly the
-> panic can be a bit of a pain for development sometimes.
 
-What would you recommend instead?
-> 
-> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-> 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> >   kernel/dma/swiotlb.c | 33 +--------------------------------
-> >   1 file changed, 1 insertion(+), 32 deletions(-)
-> > 
-> > diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> > index 26d3af52956f..69bf305ee5f8 100644
-> > --- a/kernel/dma/swiotlb.c
-> > +++ b/kernel/dma/swiotlb.c
-> > @@ -761,34 +761,6 @@ static bool swiotlb_free_buffer(struct device *dev, size_t size,
-> >   	return true;
-> >   }
-> > -static void
-> > -swiotlb_full(struct device *dev, size_t size, enum dma_data_direction dir,
-> > -	     int do_panic)
-> > -{
-> > -	if (swiotlb_force == SWIOTLB_NO_FORCE)
-> > -		return;
-> > -
-> > -	/*
-> > -	 * Ran out of IOMMU space for this operation. This is very bad.
-> > -	 * Unfortunately the drivers cannot handle this operation properly.
-> > -	 * unless they check for dma_mapping_error (most don't)
-> > -	 * When the mapping is small enough return a static buffer to limit
-> > -	 * the damage, or panic when the transfer is too big.
-> > -	 */
-> > -	dev_err_ratelimited(dev, "DMA: Out of SW-IOMMU space for %zu bytes\n",
-> > -			    size);
-> > -
-> > -	if (size <= io_tlb_overflow || !do_panic)
-> > -		return;
-> > -
-> > -	if (dir == DMA_BIDIRECTIONAL)
-> > -		panic("DMA: Random memory could be DMA accessed\n");
-> > -	if (dir == DMA_FROM_DEVICE)
-> > -		panic("DMA: Random memory could be DMA written\n");
-> > -	if (dir == DMA_TO_DEVICE)
-> > -		panic("DMA: Random memory could be DMA read\n");
-> > -}
-> > -
-> >   /*
-> >    * Map a single buffer of the indicated size for DMA in streaming mode.  The
-> >    * physical address to use is returned.
-> > @@ -817,10 +789,8 @@ dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
-> >   	/* Oh well, have to allocate and map a bounce buffer. */
-> >   	map = map_single(dev, phys, size, dir, attrs);
-> > -	if (map == SWIOTLB_MAP_ERROR) {
-> > -		swiotlb_full(dev, size, dir, 1);
-> > +	if (map == SWIOTLB_MAP_ERROR)
-> >   		return __phys_to_dma(dev, io_tlb_overflow_buffer);
-> > -	}
-> >   	dev_addr = __phys_to_dma(dev, map);
-> > @@ -948,7 +918,6 @@ swiotlb_map_sg_attrs(struct device *hwdev, struct scatterlist *sgl, int nelems,
-> >   			if (map == SWIOTLB_MAP_ERROR) {
-> >   				/* Don't panic here, we expect map_sg users
-> >   				   to do proper error handling. */
-> > -				swiotlb_full(hwdev, sg->length, dir, 0);
-> >   				attrs |= DMA_ATTR_SKIP_CPU_SYNC;
-> >   				swiotlb_unmap_sg_attrs(hwdev, sgl, i, dir,
-> >   						       attrs);
-> > 
+1) Fix gro_cells leak in xfrm layer, from Li RongQing.
+
+2) BPF selftests change RLIMIT_MEMLOCK blindly, don't do that.
+   From Eric Dumazet.
+
+3) AF_XDP calls synchronize_net() under RCU lock, fix from Björn
+   Töpel.
+
+4) Out of bounds packet access in _decode_session6(), from Alexei
+   Starovoitov.
+
+5) Several ethtool bugs, where we copy a struct into the kernel
+   twice and our validations of the values in the first copy can
+   be invalidated by the second copy due to asynchronous updates
+   to the memory by the user.  From Wenwen Wang.
+
+6) Missing netlink attribute validation in cls_api, from Davide
+   Caratti.
+
+7) LLC SAP sockets neet to be SOCK_RCU FREE, from Cong Wang.
+
+8) rxrpc operates on wrong kvec, from Yue Haibing.
+
+9) A regression was introduced by the disassosciation of route
+   neighbour references in rt6_probe(), causing probe for
+   neighbourless routes to not be properly rate limited.  Fix
+   from Sabrina Dubroca.
+
+10) Unsafe RCU locking in tipc, from Tung Nguyen.
+
+11) Use after free in inet6_mc_check(), from Eric Dumazet.
+
+12) PMTU from icmp packets should update the SCTP transport
+    pathmtu, from Xin Long.
+
+13) Missing peer put on error in rxrpc, from David Howells.
+
+14) Fix pedit in nfp driver, from Pieter Jansen van Vuuren.
+
+15) Fix overflowing shift statement in qla3xxx driver, from Nathan
+    Chancellor.
+
+16) Fix Spectre v1 in ptp code, from Gustavo A. R. Silva.
+
+17) udp6_unicast_rcv_skb() interprets udpv6_queue_rcv_skb() return
+    value in an inverted manner, fix from Paolo Abeni.
+
+18) Fix missed unresolved entries in ipmr dumps, from Nikolay
+    Aleksandrov.
+
+19) Fix NAPI handling under high load, we can completely miss events
+    when NAPI has to loop more than one time in a cycle.  From Heiner
+    Kallweit.
+
+Please pull, thanks a lot!
+
+The following changes since commit bab5c80b211035739997ebd361a679fa85b39465:
+
+  Merge tag 'armsoc-fixes-4.19' of git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc (2018-10-12 17:41:27 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git 
+
+for you to fetch changes up to d4d576f5ab7edcb757bb33e6a5600666a0b1232d:
+
+  ip6_tunnel: Fix encapsulation layout (2018-10-18 16:54:40 -0700)
+
+----------------------------------------------------------------
+Ake Koomsin (1):
+      virtio_net: avoid using netif_tx_disable() for serializing tx routine
+
+Alexei Starovoitov (1):
+      net/xfrm: fix out-of-bounds packet access
+
+Björn Töpel (1):
+      xsk: do not call synchronize_net() under RCU read lock
+
+Colin Ian King (1):
+      qed: fix spelling mistake "Ireelevant" -> "Irrelevant"
+
+Cong Wang (1):
+      llc: set SOCK_RCU_FREE in llc_sap_add_socket()
+
+David Howells (3):
+      rxrpc: Fix an uninitialised variable
+      rxrpc: Fix incorrect conditional on IPV6
+      rxrpc: Fix a missing rxrpc_put_peer() in the error_report handler
+
+David S. Miller (5):
+      Merge git://git.kernel.org/.../bpf/bpf
+      Merge tag 'mlx5-fixes-2018-10-10' of git://git.kernel.org/.../saeed/linux
+      Merge branch 'nfp-fix-pedit-set-action-offloads'
+      Merge branch 'geneve-vxlan-mtu'
+      Merge branch 'master' of git://git.kernel.org/.../klassert/ipsec
+
+Davide Caratti (1):
+      net/sched: cls_api: add missing validation of netlink attributes
+
+Eric Dumazet (2):
+      bpf: do not blindly change rlimit in reuseport net selftest
+      ipv6: mcast: fix a use-after-free in inet6_mc_check
+
+Florian Fainelli (1):
+      net: bcmgenet: Poll internal PHY for GENETv5
+
+Florian Westphal (1):
+      xfrm: policy: use hlist rcu variants on insert
+
+Fugang Duan (1):
+      net: fec: don't dump RX FIFO register when not available
+
+Gregory CLEMENT (1):
+      net: mscc: ocelot: Fix comment in ocelot_vlant_wait_for_completion()
+
+Gustavo A. R. Silva (1):
+      ptp: fix Spectre v1 vulnerability
+
+Heiner Kallweit (2):
+      r8169: re-enable MSI-X on RTL8168g
+      r8169: fix NAPI handling under high load
+
+Huy Nguyen (1):
+      net/mlx5: Take only bit 24-26 of wqe.pftype_wq for page fault type
+
+Ido Schimmel (1):
+      mlxsw: core: Fix use-after-free when flashing firmware during init
+
+Jian-Hong Pan (1):
+      r8169: Enable MSI-X on RTL8106e
+
+Jon Maloy (2):
+      tipc: initialize broadcast link stale counter correctly
+      tipc: fix info leak from kernel tipc_event
+
+Li RongQing (1):
+      xfrm: fix gro_cells leak when remove virtual xfrm interfaces
+
+Marcelo Ricardo Leitner (1):
+      sctp: fix race on sctp_id2asoc
+
+Nathan Chancellor (1):
+      net: qla3xxx: Remove overflowing shift statement
+
+Nikolay Aleksandrov (1):
+      net: ipmr: fix unresolved entry dumps
+
+Paolo Abeni (1):
+      udp6: fix encap return code for resubmitting
+
+Phil Sutter (1):
+      net: sched: Fix for duplicate class dump
+
+Pieter Jansen van Vuuren (3):
+      nfp: flower: fix pedit set actions for multiple partial masks
+      nfp: flower: fix multiple keys per pedit action
+      nfp: flower: use offsets provided by pedit instead of index for ipv6
+
+Sabrina Dubroca (1):
+      ipv6: rate-limit probes for neighbourless routes
+
+Stefano Brivio (3):
+      geneve, vxlan: Don't check skb_dst() twice
+      geneve, vxlan: Don't set exceptions if skb->len < mtu
+      ip6_tunnel: Fix encapsulation layout
+
+Steffen Klassert (1):
+      MAINTAINERS: Remove net/core/flow.c
+
+Taehee Yoo (1):
+      net: bpfilter: use get_pid_task instead of pid_task
+
+Talat Batheesh (1):
+      net/mlx5: Fix memory leak when setting fpga ipsec caps
+
+Tariq Toukan (1):
+      net/mlx5: WQ, fixes for fragmented WQ buffers API
+
+Tung Nguyen (1):
+      tipc: fix unsafe rcu locking when accessing publication list
+
+Wenwen Wang (3):
+      ethtool: fix a missing-check bug
+      ethtool: fix a privilege escalation bug
+      net: socket: fix a missing-check bug
+
+Xin Long (4):
+      sctp: use the pmtu from the icmp packet to update transport pathmtu
+      sctp: get pr_assoc and pr_stream all status with SCTP_PR_SCTP_ALL instead
+      sctp: not free the new asoc when sctp_wait_for_connect returns err
+      sctp: fix the data size calculation in sctp_data_size
+
+YueHaibing (1):
+      rxrpc: use correct kvec num when sending BUSY response packet
+
+ MAINTAINERS                                           |  1 -
+ drivers/net/ethernet/broadcom/genet/bcmmii.c          |  7 +++++--
+ drivers/net/ethernet/freescale/fec.h                  |  4 ++++
+ drivers/net/ethernet/freescale/fec_main.c             | 16 ++++++++++++----
+ drivers/net/ethernet/mellanox/mlx5/core/en_rx.c       | 12 +++++-------
+ drivers/net/ethernet/mellanox/mlx5/core/en_tx.c       | 22 +++++++++++-----------
+ drivers/net/ethernet/mellanox/mlx5/core/eq.c          |  2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c  |  9 ++++-----
+ drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.h |  5 ++---
+ drivers/net/ethernet/mellanox/mlx5/core/wq.c          |  5 -----
+ drivers/net/ethernet/mellanox/mlx5/core/wq.h          | 11 +++++------
+ drivers/net/ethernet/mellanox/mlxsw/core.c            |  2 ++
+ drivers/net/ethernet/mellanox/mlxsw/core.h            |  4 ++++
+ drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c      | 17 +++++++++++------
+ drivers/net/ethernet/mscc/ocelot.c                    |  6 +++---
+ drivers/net/ethernet/netronome/nfp/flower/action.c    | 51 +++++++++++++++++++++++++++++++++------------------
+ drivers/net/ethernet/qlogic/qed/qed_int.c             |  2 +-
+ drivers/net/ethernet/qlogic/qla3xxx.c                 |  2 --
+ drivers/net/ethernet/realtek/r8169.c                  | 20 +++++---------------
+ drivers/net/geneve.c                                  | 14 +++-----------
+ drivers/net/virtio_net.c                              |  5 ++++-
+ drivers/net/vxlan.c                                   | 12 ++----------
+ drivers/ptp/ptp_chardev.c                             |  4 ++++
+ include/linux/mlx5/driver.h                           |  8 ++++++++
+ include/net/dst.h                                     | 10 ++++++++++
+ include/net/ip6_fib.h                                 |  4 ++++
+ include/net/sctp/sm.h                                 |  2 +-
+ include/net/sctp/structs.h                            |  2 ++
+ include/uapi/linux/sctp.h                             |  1 +
+ kernel/bpf/xskmap.c                                   | 10 ++--------
+ net/bpfilter/bpfilter_kern.c                          |  6 ++++--
+ net/core/ethtool.c                                    | 11 +++++++++--
+ net/ipv4/ipmr_base.c                                  |  2 --
+ net/ipv6/ip6_tunnel.c                                 | 10 +++++-----
+ net/ipv6/mcast.c                                      | 16 ++++++++--------
+ net/ipv6/route.c                                      | 12 ++++++------
+ net/ipv6/udp.c                                        |  6 ++----
+ net/ipv6/xfrm6_policy.c                               |  4 ++--
+ net/llc/llc_conn.c                                    |  1 +
+ net/rxrpc/call_accept.c                               |  2 +-
+ net/rxrpc/local_object.c                              |  2 +-
+ net/rxrpc/output.c                                    |  3 ++-
+ net/rxrpc/peer_event.c                                |  1 +
+ net/sched/cls_api.c                                   | 13 ++++++++-----
+ net/sched/sch_api.c                                   | 11 ++++++-----
+ net/sctp/associola.c                                  |  3 ++-
+ net/sctp/input.c                                      |  1 +
+ net/sctp/output.c                                     |  6 ++++++
+ net/sctp/socket.c                                     | 17 +++++++++--------
+ net/socket.c                                          | 11 ++++++++---
+ net/tipc/group.c                                      |  1 +
+ net/tipc/link.c                                       |  1 +
+ net/tipc/name_distr.c                                 |  4 ++--
+ net/xdp/xsk.c                                         |  2 ++
+ net/xfrm/xfrm_interface.c                             |  3 +++
+ net/xfrm/xfrm_policy.c                                |  8 ++++----
+ tools/testing/selftests/net/reuseport_bpf.c           | 13 +++++++++----
+ 57 files changed, 253 insertions(+), 187 deletions(-)
