@@ -6,67 +6,68 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D4E1ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D8A9ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CF3221476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:20:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CF3221476
+	by mail.kernel.org (Postfix) with ESMTP id DF2FD2064A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:20:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF2FD2064A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=skynet.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbeJSQZN (ORCPT
+        id S1727433AbeJSQZO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 12:25:13 -0400
-Received: from mailrelay101.isp.belgacom.be ([195.238.20.128]:36159 "EHLO
+        Fri, 19 Oct 2018 12:25:14 -0400
+Received: from mailrelay101.isp.belgacom.be ([195.238.20.128]:36171 "EHLO
         mailrelay101.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727215AbeJSQZM (ORCPT
+        by vger.kernel.org with ESMTP id S1727366AbeJSQZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 12:25:12 -0400
+        Fri, 19 Oct 2018 12:25:14 -0400
 X-Belgacom-Dynamic: yes
-IronPort-PHdr: =?us-ascii?q?9a23=3A11Di3hwkVF+LyUrXCy+O+j09IxM/srCxBDY+r6?=
- =?us-ascii?q?Qd2uMVIJqq85mqBkHD//Il1AaPAd2Eraocw8Pt8InYEVQa5piAtH1QOLdtbD?=
- =?us-ascii?q?Qizfssogo7HcSeAlf6JvO5JwYzHcBFSUM3tyrjaRsdF8nxfUDdrWOv5jAOBB?=
- =?us-ascii?q?r/KRB1JuPoEYLOksi7ze+/94HRbglSmDaxfa55IQmrownWqsQYm5ZpJLwryh?=
- =?us-ascii?q?vOrHtIeuBWyn1tKFmOgRvy5dq+8YB6/ShItP0v68BPUaPhf6QlVrNYFygpM3?=
- =?us-ascii?q?o05MLwqxbOSxaE62YGXWUXlhpIBBXF7A3/U5zsvCb2qvZx1S+HNsDwULs6Wy?=
- =?us-ascii?q?mt771zRRHolikJKjA3/mLQhMNygqJWuw6tqwBlzoLIeoyZKOZyc6XAdt0aX2?=
- =?us-ascii?q?pBWcNRWjRBDIymdIQPDvAOPeBFpIf9vVsBswaxChe2BOPu1jBIhWL90Ko00+?=
- =?us-ascii?q?s7Cg7G0hctH8kNsHXUqtX6KrsSXfquw6bW1DjOae5d1zTl6IXQcR0so+uAUL?=
- =?us-ascii?q?NxfMbLy0QiExnJgkiTpIHrOT6ey/4DvHKB7+V6UOKik2snqwZsrTex3soskY?=
- =?us-ascii?q?zJhp4NylDD6CV53J45Jd2mR05/Zt6pCJ9QtyaGOIRsRsMiQ2ZouD0myrEcvZ?=
- =?us-ascii?q?67ezQFx44jxxHCbPyHdpKH4hPlVOqJIDd4gmxqeK6nihux80Ws0OzxW8iu3F?=
- =?us-ascii?q?tIqidJiMTAu3MD2hDL78iIUPp9/kOv2TaV0ADT7/lJIU4umqXAJZ4s2aUwlp?=
- =?us-ascii?q?kTsETFACD2hF/6g7SIeUk84Oin9/znYqn6pp+bL4J7kAL+MrwrmsGkBeQ4Mw?=
- =?us-ascii?q?4OX3WU+Oil2r3j+lD5QLNXgfIsjqnZsZfaJcIBqq6+GQ9V3Z4p6wyjADe+zN?=
- =?us-ascii?q?QYgX4HIUpHeB2dj4jmIUvOIPPmAvekmFmjjCxry+raMb3kH5XBNGbMn6r8fb?=
- =?us-ascii?q?xl8U5T1BIzzcxD55JTErwOPPXzVVLru9HDEhA5KBa4zPriCNVgzI8RR3+AAr?=
- =?us-ascii?q?KBOqPIrVCI/v4vI/WLZIINvDb9Kv4l5+PhjHMgl18dZrSm0oUJaH+mGvRrOF?=
- =?us-ascii?q?uZYXXyjdcbC2sKvRQxTPbsiFKcVT5ffXGyX7gz5jsjEoKpEZ/DRpyxgLyGxC?=
- =?us-ascii?q?q7GpxWZmZbClGDCHvodJuLW+0KaC2MJs9siSIEVbe/RI87zx2utxH1y6BhLu?=
- =?us-ascii?q?XK/i0Ur5Xj1MJ65+fLjxE96SR0D9iB02GKV2x0kHkHSCQ43K1kukx9yVeC0a?=
- =?us-ascii?q?5mjPxED9Bc/O1GAU8GMsvVzPR/I9TzXB/RO9mOVVCqS8mnBjd3Scg+kPEUZE?=
- =?us-ascii?q?MoNdyojxnFlwSwDrMYjb2AB9Rg/KvW0VDqJNd7xmqA3qR33ApueddGKWDz3v?=
- =?us-ascii?q?03zAPUHYOcy0g=3D?=
+IronPort-PHdr: =?us-ascii?q?9a23=3AYsTFhxVsajMx/9vAz2YFLNqj38/V8LGtZVwlr6?=
+ =?us-ascii?q?E/grcLSJyIuqrYbR2Et8tkgFKBZ4jH8fUM07OQ7/i/HzRYqb+681k6OKRWUB?=
+ =?us-ascii?q?EEjchE1ycBO+WiTXPBEfjxciYhF95DXlI2t1uyMExSBdqsLwaK+i764jEdAA?=
+ =?us-ascii?q?jwOhRoLerpBIHSk9631+ev8JHPfglEnjWwba9wIRmssQndqtQdjJd/JKo21h?=
+ =?us-ascii?q?bHuGZDdf5MxWNvK1KTnhL86dm18ZV+7SleuO8v+tBZX6nicKs2UbJXDDI9M2?=
+ =?us-ascii?q?Ao/8LrrgXMTRGO5nQHTGoblAdDDhXf4xH7WpfxtTb6tvZ41SKHM8D6Uaw4VD?=
+ =?us-ascii?q?K/5KptVRTmijoINyQh/W/XlMJ+kaxVrhGmqRN9zY7Ze52ZOOZkc6/BZ94WWX?=
+ =?us-ascii?q?ZNU8BMXCJBGIO8aI4PAvIBM+lCtIb9pkEBrR2jDgesHuPg1CJHiWHs3a07z+?=
+ =?us-ascii?q?shEhzN0QsuH90Uq3vUos74NLwRUeG1yqnH0ynDY+lN1jjj8YXFdA0qr/KUXb?=
+ =?us-ascii?q?9ocsfcy1MjGgLEg1mKq4HoOymZ2vkOvmWV6edrSPihhHQ9qw5rpzii3sIsio?=
+ =?us-ascii?q?7UiY0L0l3E7iB5wJotJd2/VU57fcaoEJtOuCGeMIt7WsciQ2Z0tykgzr0GuZ?=
+ =?us-ascii?q?m7fDMWyJg9wx7fbOCIfJKM4h3+U+aRJC13hHNjeL6nhhay91avyvHkW8S30l?=
+ =?us-ascii?q?tGtCtIn9jWun0P0xHf8NWLR/hz80u53DaAzQHT6uVKIUAukqrbLoYswrAqmZ?=
+ =?us-ascii?q?UIv0TOBTT2mEb2ja+QaEok5vKk5P/5bbn+vJ+TK5d0ih3iMqQpgsGwG+c4Mh?=
+ =?us-ascii?q?ALX2WA/eS81bvj/VD2QblTgP02lbTZsJbHKssBuq65AghV0oA55xa4FTem38?=
+ =?us-ascii?q?wSnWMbI1JdZBKHk4/pNknMIP/iDfewmU6skDR1yPDdJbDuHo7NImLfn7fkYL?=
+ =?us-ascii?q?Zx8VBTxxcuzdpH/ZJbFqkBIO7vWk/2rNHXEhg5PBGuzOv8FNp9zZkSVn6KAq?=
+ =?us-ascii?q?+EKq/dr0KH5v83KemWeIAVoCr9K+Qi5/P2iX85mFkdfbSm3JcOZnC4BelpLF?=
+ =?us-ascii?q?uHYXXyhtcMCnkKvgUgQ+zwklGCUiBcZ2y0X60i4jE3EoWmDZ3MRoq1mryOwD?=
+ =?us-ascii?q?+7HoFKZmBBEl2MFXbod4OZW/YDcS6SIdFukiYCVbe/T48szg+utADkxLp9NO?=
+ =?us-ascii?q?bU+TMXtYjl1Ndr4+3fjxYy9SZ7D86FyWGCU3l0nn8URz8xxK1/r1ZyxUyN0a?=
+ =?us-ascii?q?VjmPxYFtxS5/VXXQcmL5LT1PJ1WJjOXVfIfc+MYFKnRMi2RD82U9Q9ysMPZE?=
+ =?us-ascii?q?A7HM+t3T7Z2C//LbYflrWNTLIu/67RxXn6JI4pxX/M2oE6jEggT9cJP2Dw1f?=
+ =?us-ascii?q?03zBTaG4OcyxbRrK2tb6lJhCM=3D?=
 X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AxAACMkslb/7dPQldjHAEBAQQBAQc?=
- =?us-ascii?q?EAQGBUQcBAQsBgQh8gVMSKIwNX41+AYhQjgmBejgBhDoEAgKFAyI0DQ0BAwE?=
- =?us-ascii?q?BAgEBAgFsKII2IoJiBicvIxBROR4ZgyGBdRGnWjODfYYnhyyEOoFBP4hqgQS?=
- =?us-ascii?q?FDQKeQQmGIYpLAhWBQI5pmBU4gVVNIBiDJ5BZPTCBAwE9AYdlgk0BAQ?=
-X-IPAS-Result: =?us-ascii?q?A2AxAACMkslb/7dPQldjHAEBAQQBAQcEAQGBUQcBAQsBg?=
- =?us-ascii?q?Qh8gVMSKIwNX41+AYhQjgmBejgBhDoEAgKFAyI0DQ0BAwEBAgEBAgFsKII2I?=
- =?us-ascii?q?oJiBicvIxBROR4ZgyGBdRGnWjODfYYnhyyEOoFBP4hqgQSFDQKeQQmGIYpLA?=
- =?us-ascii?q?hWBQI5pmBU4gVVNIBiDJ5BZPTCBAwE9AYdlgk0BAQ?=
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AQAACMkslb/7dPQldjGwEBAQEDAQE?=
+ =?us-ascii?q?BBwMBAQGBUQYBAQELAYEIfIFTEiiMDV+NfgGIUI4JgXo4AYQ6BAIChQMiNA0?=
+ =?us-ascii?q?NAQMBAQIBAQIBbCiCNiKCYgZWIxBROR4ZgyGBdRGoDYN9hieHLIQ6gUE/iGq?=
+ =?us-ascii?q?BBIUNAp5BCYYhiksCFYFAjmksl2k4gVVNIBiDJ4ImF44cPTCBAwE9AYdlgk0?=
+ =?us-ascii?q?BAQ?=
+X-IPAS-Result: =?us-ascii?q?A2AQAACMkslb/7dPQldjGwEBAQEDAQEBBwMBAQGBUQYBA?=
+ =?us-ascii?q?QELAYEIfIFTEiiMDV+NfgGIUI4JgXo4AYQ6BAIChQMiNA0NAQMBAQIBAQIBb?=
+ =?us-ascii?q?CiCNiKCYgZWIxBROR4ZgyGBdRGoDYN9hieHLIQ6gUE/iGqBBIUNAp5BCYYhi?=
+ =?us-ascii?q?ksCFYFAjmksl2k4gVVNIBiDJ4ImF44cPTCBAwE9AYdlgk0BAQ?=
 Received: from 183.79-66-87.adsl-dyn.isp.belgacom.be (HELO localhost.localdomain) ([87.66.79.183])
-  by relay.skynet.be with ESMTP; 19 Oct 2018 10:20:09 +0200
+  by relay.skynet.be with ESMTP; 19 Oct 2018 10:20:11 +0200
 From:   Fabian Frederick <fabf@skynet.be>
 To:     akpm@linux-foundation.org
 Cc:     jaharkes@cs.cmu.edu, coda@cs.cmu.edu,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         fabf@skynet.be
-Subject: [PATCH 3/7 linux-next] coda: use SIZE() for stat
-Date:   Fri, 19 Oct 2018 10:19:29 +0200
-Message-Id: <1539937173-26260-4-git-send-email-fabf@skynet.be>
+Subject: [PATCH 4/7 linux-next] coda: add __init to init_coda_psdev()
+Date:   Fri, 19 Oct 2018 10:19:30 +0200
+Message-Id: <1539937173-26260-5-git-send-email-fabf@skynet.be>
 X-Mailer: git-send-email 2.4.11
 In-Reply-To: <1539937173-26260-1-git-send-email-fabf@skynet.be>
 References: <1539937173-26260-1-git-send-email-fabf@skynet.be>
@@ -75,26 +76,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-max_t expression was already defined in coda sources
+init_coda_psdev() was only called by __init function.
 
 Signed-off-by: Fabian Frederick <fabf@skynet.be>
 ---
- fs/coda/upcall.c | 2 +-
+ fs/coda/psdev.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/coda/upcall.c b/fs/coda/upcall.c
-index d0d0fed..1323793 100644
---- a/fs/coda/upcall.c
-+++ b/fs/coda/upcall.c
-@@ -553,7 +553,7 @@ int venus_statfs(struct dentry *dentry, struct kstatfs *sfs)
-         union outputArgs *outp;
-         int insize, outsize, error;
-         
--	insize = max_t(unsigned int, INSIZE(statfs), OUTSIZE(statfs));
-+	insize = SIZE(statfs);
- 	UPARG(CODA_STATFS);
+diff --git a/fs/coda/psdev.c b/fs/coda/psdev.c
+index cbdddf4..6d1c95f 100644
+--- a/fs/coda/psdev.c
++++ b/fs/coda/psdev.c
+@@ -352,7 +352,7 @@ static const struct file_operations coda_psdev_fops = {
+ 	.llseek		= noop_llseek,
+ };
  
- 	error = coda_upcall(coda_vcp(dentry->d_sb), insize, &outsize, inp);
+-static int init_coda_psdev(void)
++static int __init init_coda_psdev(void)
+ {
+ 	int i, err = 0;
+ 	if (register_chrdev(CODA_PSDEV_MAJOR, "coda", &coda_psdev_fops)) {
 -- 
 2.4.11
 
