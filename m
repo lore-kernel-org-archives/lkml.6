@@ -2,106 +2,135 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D06C67863
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 02:52:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB7E3C67863
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 03:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5977521476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 02:52:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5977521476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 8D71C20C0E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 03:03:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="QWqhl34S";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tZx9wtx3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D71C20C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sholland.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeJSK42 (ORCPT
+        id S1726690AbeJSLHN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 06:56:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45738 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726245AbeJSK42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 06:56:28 -0400
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CBE120C0E;
-        Fri, 19 Oct 2018 02:52:25 +0000 (UTC)
-Date:   Thu, 18 Oct 2018 22:52:23 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH RFC] doc: rcu: remove obsolete (non-)requirement about
- disabling preemption
-Message-ID: <20181018225223.42641c73@vmware.local.home>
-In-Reply-To: <20181019022529.GA155753@joelaf.mtv.corp.google.com>
-References: <20181016204122.GA8176@joelaf.mtv.corp.google.com>
-        <20181017161100.GP2674@linux.ibm.com>
-        <20181017181505.GC107185@joelaf.mtv.corp.google.com>
-        <20181017203324.GS2674@linux.ibm.com>
-        <20181018020751.GB99677@joelaf.mtv.corp.google.com>
-        <20181018144637.GD2674@linux.ibm.com>
-        <20181019000350.GB89903@joelaf.mtv.corp.google.com>
-        <20181019001932.GR2674@linux.ibm.com>
-        <20181019012645.GC89903@joelaf.mtv.corp.google.com>
-        <20181018215035.5e8ff553@vmware.local.home>
-        <20181019022529.GA155753@joelaf.mtv.corp.google.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 19 Oct 2018 07:07:13 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:34845 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726424AbeJSLHM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 07:07:12 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 8E2E921FAA;
+        Thu, 18 Oct 2018 23:03:06 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 18 Oct 2018 23:03:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        subject:to:cc:references:from:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm3; bh=f
+        U9Z+zOBXzPr0M2qDsgxYxsgam4NzfGbB+xY6OdFe4A=; b=QWqhl34SLJOhu7Ep7
+        N5idUgVEEVPPs/D8VrFsS9Q6ZWdZIDTqmxAit3tRzG8ifnL3j2dCgz6ktoregxBq
+        eWzaXw7yntOAAnEu7vk+BA7L1e+NzQI9JWbsUjW2X4eF5MuckzTxJjSGpHZmae5K
+        fe4J/HBwTdH3eu0ZCh+claGPkhNawRgYG+lyY+TERyjlQ0HiJP0ti+ywejTWhJXI
+        EHK/cYvNLfniOVRMHswfjuTzYYGHk+fuFvdiT/PLmnXRIHUl+fZkSpK6sCWgfUoO
+        jGAO0k0zqrDL9SOPsz6dWxrbjtjEEBF9H2xyMhhQADSVE7D6cY61A5/i4NXSFdTz
+        7iqNg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=fU9Z+zOBXzPr0M2qDsgxYxsgam4NzfGbB+xY6OdFe
+        4A=; b=tZx9wtx3++1I8PzCC8qmTGvK3pCexMbGCCfoj+JXSmMGU9mKNUxhqLCH9
+        MRaIllBT8VLJS4mIgnPX5CpupKYElhtEGxvZjeAUkfEDdHmtxWt9Etp6eVvtqo7a
+        MIQYajrHqnJpbygziULCnnNavqd/saoAhLHq/DaqGjBjfwumfFDUDTKlMVYky7WI
+        VCy5rhAinvQ0h0Yq/cGT2VY3toF7SS7ADLMguJzueeXO9PYSsVQnuGo3EDyGEwmh
+        tDFqdMtUNP2+mW6Iak58A850Tvm28owwUJR7Og6Ae/QNoQ9217hgTD1uYx5Bn39c
+        Hop0DjHpunfIyuD+tmqwDJ08JEcwQ==
+X-ME-Sender: <xms:aknJW3POYYLADoCXX0XKm6x-MzuVtN3S4_5I16uXvVASwZ1mlTcn6w>
+X-ME-Proxy: <xmx:aknJW0vTiQL21BDxPquxs9BMkwh6W-fzpEJLFfb_DWKQQivcJfhfxA>
+    <xmx:aknJW66O6Wj0KYi_iZzWlL7uCPrVKq61cirh4MMioVvmgrozZ__vbQ>
+    <xmx:aknJW_VhoDxsiCIyAj-v66OkGZBbEkYOVe_PZ4lPztAXwfIlkQbiPQ>
+    <xmx:aknJW8_mEjTRTSezqLJftiEAQMqwdDeE8-68JS5YQbLpFsfYoS0Jiw>
+    <xmx:aknJW7kma4vF3wfiNifHOh29dhURyO-KrZEm5MHR_LXcCT0kKmlBUQ>
+    <xmx:aknJW29DmMLE2UM6i6wIbPrXHJ0fAQid9WWrcUzWlDAIdWA6aQVRmQ>
+Received: from [192.168.50.162] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id CF0A0102DD;
+        Thu, 18 Oct 2018 23:03:04 -0400 (EDT)
+Subject: Re: [PATCH] firmware: coreboot: Fix a missing-check bug
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1539877023-6398-1-git-send-email-wang6495@umn.edu>
+From:   Samuel Holland <samuel@sholland.org>
+Message-ID: <a5f57d38-4345-ae87-0a25-b7429a8b97ea@sholland.org>
+Date:   Thu, 18 Oct 2018 22:03:02 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1539877023-6398-1-git-send-email-wang6495@umn.edu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 18 Oct 2018 19:25:29 -0700
-Joel Fernandes <joel@joelfernandes.org> wrote:
+On 10/18/18 10:37, Wenwen Wang wrote:
+> In coreboot_table_init(), a for loop is used to copy the entries of the
+> coreboot table. For each entry, the header of the entry, which is a
+> structure coreboot_table_entry and includes the size of the entry, is
+> firstly copied from the IO region 'ptr_entry' to 'entry' through the first
+> memcpy_fromio(). Then the 'entry.size' is used to allocate the
+> coreboot_device 'device' through kzalloc(). After 'device' is allocated,
+> the whole entry, including the header, is then copied to 'device->entry'
+> through the second memcpy_fromio(). Obviously, the header of the entry is
+> copied twice here. More importantly, no check is enforced after the second
+> copy to make sure the two copies obtain the same values. Given that the IO
+> region can also be accessed by the device, it is possible that
+> 'device->entry.size' is different from 'entry.size' after the second copy,
+> especially when the device race to modify the size value between these two
+> copies. This can cause undefined behavior of the kernel and introduce
+> potential security risk, because 'device->entry.size' is inconsistent with
+> the actual size of the entry.
 
-> On Thu, Oct 18, 2018 at 09:50:35PM -0400, Steven Rostedt wrote:
-> > On Thu, 18 Oct 2018 18:26:45 -0700
-> > Joel Fernandes <joel@joelfernandes.org> wrote:
-> >   
-> > > Yes, local_irq_restore is light weight, and does not check for reschedules.
-> > > 
-> > > I was thinking of case where ksoftirqd is woken up, but does not run unless
-> > > we set the NEED_RESCHED flag. But that should get set anyway since probably
-> > > ksoftirqd is of high enough priority than the currently running task..
-> > > 
-> > > Roughly speaking the scenario could be something like:
-> > > 
-> > > rcu_read_lock();
-> > >                  <-- IPI comes in for the expedited GP, sets exp_hint
-> > > local_irq_disable();
-> > > // do a bunch of stuff
-> > > rcu_read_unlock();   <-- This calls the rcu_read_unlock_special which raises
-> > >                          the soft irq, and wakesup softirqd.  
-> > 
-> > If softirqd is of higher priority than the current running task, then
-> > the try_to_wake_up() will set NEED_RESCHED of the current task here.
-> >   
+Thanks for the patch.
+
+However, this IO region is not associated with a hardware device. It is a table
+in RAM that is only written to by firmware (coreboot) before Linux is ever run.
+So there's no device on the other side that could race with the kernel here.
+
+Regards,
+Samuel
+
+> This patch rewrites the header of each entry after the second copy, using
+> the value acquired in the first copy. Through this way, the above issue can
+> be avoided.
 > 
-> Yes, only *if*. On my system, ksoftirqd is CFS nice 0. I thought expedited
-> grace periods are quite important and they should complete quickly which is
-> the whole reason for interrupting rcu read sections with an IPI and stuff.
-> IMO there should be no harm in setting NEED_RESCHED unconditionally anyway
-> for possible benefit of systems where the ksoftirqd is not of higher priority
-> than the currently running task, and we need to run it soon on the CPU. But
-> I'm Ok with whatever Paul and you want to do here.
+> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> ---
+>  drivers/firmware/google/coreboot_table.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/firmware/google/coreboot_table.c b/drivers/firmware/google/coreboot_table.c
+> index 19db570..20fcd54 100644
+> --- a/drivers/firmware/google/coreboot_table.c
+> +++ b/drivers/firmware/google/coreboot_table.c
+> @@ -128,6 +128,7 @@ int coreboot_table_init(struct device *dev, void __iomem *ptr)
+>  		device->dev.bus = &coreboot_bus_type;
+>  		device->dev.release = coreboot_device_release;
+>  		memcpy_fromio(&device->entry, ptr_entry, entry.size);
+> +		device->entry = entry;
+>  
+>  		ret = device_register(&device->dev);
+>  		if (ret) {
+> 
 
-
-Setting NEED_RESCHED unconditionally wont help. Because even if we call
-schedule() ksoftirqd will not be scheduled! If it's CFS nice 0, and the
-current task still has quota to run, if you call schedule, you'll just
-waste time calculating that the current task should still be running.
-It's equivalent to calling yield() (which is why we removed all yield()
-users in the kernel, because *all* of them were buggy!). This is *why*
-it only calls schedule *if* softirqd is of higher priority.
-
--- Steve
