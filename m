@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0193DECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D51FECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B45E320836
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:20:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B45E320836
+	by mail.kernel.org (Postfix) with ESMTP id DC2B720836
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:21:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC2B720836
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbeJSU0r (ORCPT
+        id S1727470AbeJSU0w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:26:47 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42722 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbeJSU0q (ORCPT
+        Fri, 19 Oct 2018 16:26:52 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33512 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727289AbeJSU0t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:26:46 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r17-v6so4851954wrt.9
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 05:20:55 -0700 (PDT)
+        Fri, 19 Oct 2018 16:26:49 -0400
+Received: by mail-wr1-f68.google.com with SMTP id u1-v6so1410888wrn.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 05:20:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=5UiLIhWujnM+LjJO0qECMbozVNcKb22o+ATWjj/yvtc=;
-        b=Gc97IzCrC2bTro8yGWPMlkEnBP3mwjf7fqcta8XdCeRXqsugRc+b3lXloJ3qL1a1Bh
-         ponIMyH/cnJimocsz5+j3KQZ/T9KmYFuyuOpv/7r7lcTzcr28uLNqtPE76baQnD4Tj4/
-         G8Q1roCWIAIK+ZkqlNgcTtXUZGs+TzaGFO8JTJ2oSM6pq7oCDHd6qNWNy+6GkmuZDtNo
-         cRrYQkUNaNb2Xmym4A1Wca9MXdUKD4dHdwTbmK2d24ynMf9pR3u5PXEdvOkkHGmP1TzK
-         Xzui+iSeG/N9RZGXvGeLVsfGssQS/MWUA4k6Xq/BAKyl9uyJxPOz8FEPKEX7kWcVT+TP
-         HQew==
-X-Gm-Message-State: ABuFfoiJGuYqXJUxTOZDVgwJ9ezYW7biT7E7x7T9TclimdQxZkk4JVOk
-        doreEF8d/PK15aPRtJmVNUDLHA==
-X-Google-Smtp-Source: ACcGV60vRfJhTFPvszF9k3YAhPt12knVsndlCbDqWUIyNi4NZCiunsVkoaENF8uMUI0ln1DGQu/muw==
-X-Received: by 2002:adf:e18e:: with SMTP id k14-v6mr34944727wri.36.1539951654307;
-        Fri, 19 Oct 2018 05:20:54 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=QiX6G6Rss/s3Z2ESVsPcwLLseTLtcA8j6G3yIKnw1pw=;
+        b=d/8K/OBd3c1cH1A0jdB6wQT4/v56Oe3vWDjkZQFf3nnorignzDk0gxFKBPDrJ5bQip
+         7rWRsGQYaRiOvYgKYVEI8f8W5Yjob/jKkd4lrTBDiwV9DSAkx0UNFUam2t2u4SgHUcX7
+         da8iwIiIJLNc8M3z7Ob+pLlvUFMq372lpvJA8rhQHj+HSYFFBxn8xjZJUIj9K9P9hzNw
+         aD/7yWFJw2fBpla3I0RcAnoA0qwWqKwb1W9Sypzy30iZ9bGz7Bv1yP9A2gqMrQv+1WUw
+         7chnrUEjjO3gl1jtAiOCBftIrActXsNKoD4M+oouBxN/nLp6nkBzIUijb2KGhUMZcu1M
+         wvpQ==
+X-Gm-Message-State: ABuFfoi5zU3Hz2DkmBGlP0TIR31MptLG3niz4WohQAKaRJOMWC5M2FnZ
+        Rxe4Rb4C4xiCf2AUydfXd49hBUQRXGY=
+X-Google-Smtp-Source: ACcGV613y3NQMF/LiP7aPzM1qIkY2dEkxrAgqAQLzGpz3ks12NHwBpBBZyxI9GumRaL7NkAh2AJtIg==
+X-Received: by 2002:adf:a387:: with SMTP id l7-v6mr36446142wrb.1.1539951655714;
+        Fri, 19 Oct 2018 05:20:55 -0700 (PDT)
 Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id s10-v6sm1858283wmf.15.2018.10.19.05.20.52
+        by smtp.gmail.com with ESMTPSA id s10-v6sm1858283wmf.15.2018.10.19.05.20.54
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 19 Oct 2018 05:20:53 -0700 (PDT)
+        Fri, 19 Oct 2018 05:20:55 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
@@ -51,65 +52,113 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Andreas Dilger <adilger@dilger.ca>,
         Florian Weimer <fw@deneb.enyo.de>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Mike Marshall <hubcap@omnibond.com>
-Subject: [PATCH v2 1/5] orangefs: fix request_mask misuse
-Date:   Fri, 19 Oct 2018 14:20:45 +0200
-Message-Id: <20181019122049.27121-1-mszeredi@redhat.com>
+        Amir Goldstein <amir73il@gmail.com>
+Subject: [PATCH v2 2/5] uapi: deprecate STATX_ALL
+Date:   Fri, 19 Oct 2018 14:20:46 +0200
+Message-Id: <20181019122049.27121-2-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20181019122049.27121-1-mszeredi@redhat.com>
+References: <20181019122049.27121-1-mszeredi@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Orangefs only handles STATX_BASIC_STATS in its getattr implementation, so
-mask off all other flags.  Not doing so results in statx(2) forcing a
-refresh of cached attributes on any other requested flag (i.e. STATX_BTIME
-currently) due to the following test in orangefs_inode_getattr():
+Constants of the *_ALL type can be actively harmful due to the fact that
+developers will usually fail to consider the possible effects of future
+changes to the definition.
 
-  (request_mask & orangefs_inode->getattr_mask) == request_mask
+Deprecate STATX_ALL in the uapi, while no damage has been done yet.
 
-Also clean up gratuitous uses of STATX_ALL.
+We could keep something like this around in the kernel, but there's
+actually no point, since all filesystems should be explicitly checking
+flags that they support and not rely on the VFS masking unknown ones out: a
+flag could be known to the VFS, yet not known to the filesystem (see
+orangefs bug fixed in the previous patch).
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Reviewed-by: Martin Brandenburg <martin@omnibond.com>
-Cc: Mike Marshall <hubcap@omnibond.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
 ---
- fs/orangefs/inode.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/stat.c                       |  1 -
+ include/uapi/linux/stat.h       | 11 ++++++++++-
+ samples/statx/test-statx.c      |  2 +-
+ tools/include/uapi/linux/stat.h | 11 ++++++++++-
+ 4 files changed, 21 insertions(+), 4 deletions(-)
 
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 31932879b716..bd7f15a831dc 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -256,7 +256,8 @@ int orangefs_getattr(const struct path *path, struct kstat *stat,
- 		     "orangefs_getattr: called on %pd\n",
- 		     path->dentry);
+diff --git a/fs/stat.c b/fs/stat.c
+index f8e6fb2c3657..8d297a279991 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -73,7 +73,6 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
  
--	ret = orangefs_inode_getattr(inode, 0, 0, request_mask);
-+	ret = orangefs_inode_getattr(inode, 0, 0,
-+				     request_mask & STATX_BASIC_STATS);
- 	if (ret == 0) {
- 		generic_fillattr(inode, stat);
+ 	memset(stat, 0, sizeof(*stat));
+ 	stat->result_mask |= STATX_BASIC_STATS;
+-	request_mask &= STATX_ALL;
+ 	query_flags &= KSTAT_QUERY_FLAGS;
+ 	if (inode->i_op->getattr)
+ 		return inode->i_op->getattr(path, stat, request_mask,
+diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+index 7b35e98d3c58..ed456ac0f90d 100644
+--- a/include/uapi/linux/stat.h
++++ b/include/uapi/linux/stat.h
+@@ -148,9 +148,18 @@ struct statx {
+ #define STATX_BLOCKS		0x00000400U	/* Want/got stx_blocks */
+ #define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat struct */
+ #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
+-#define STATX_ALL		0x00000fffU	/* All currently supported flags */
++
+ #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
  
-@@ -408,7 +409,7 @@ struct inode *orangefs_iget(struct super_block *sb,
- 	if (!inode || !(inode->i_state & I_NEW))
- 		return inode;
++#ifndef __KERNEL__
++/*
++ * This is deprecated, and shall remain the same value in the future.  To avoid
++ * confusion please use the equivalent (STATX_BASIC_STATS | STATX_BTIME)
++ * instead.
++ */
++#define STATX_ALL		0x00000fffU
++#endif
++
+ /*
+  * Attributes to be found in stx_attributes and masked in stx_attributes_mask.
+  *
+diff --git a/samples/statx/test-statx.c b/samples/statx/test-statx.c
+index d4d77b09412c..e354048dea3c 100644
+--- a/samples/statx/test-statx.c
++++ b/samples/statx/test-statx.c
+@@ -211,7 +211,7 @@ int main(int argc, char **argv)
+ 	struct statx stx;
+ 	int ret, raw = 0, atflag = AT_SYMLINK_NOFOLLOW;
  
--	error = orangefs_inode_getattr(inode, 1, 1, STATX_ALL);
-+	error = orangefs_inode_getattr(inode, 1, 1, STATX_BASIC_STATS);
- 	if (error) {
- 		iget_failed(inode);
- 		return ERR_PTR(error);
-@@ -453,7 +454,7 @@ struct inode *orangefs_new_inode(struct super_block *sb, struct inode *dir,
- 	orangefs_set_inode(inode, ref);
- 	inode->i_ino = hash;	/* needed for stat etc */
+-	unsigned int mask = STATX_ALL;
++	unsigned int mask = STATX_BASIC_STATS | STATX_BTIME;
  
--	error = orangefs_inode_getattr(inode, 1, 1, STATX_ALL);
-+	error = orangefs_inode_getattr(inode, 1, 1, STATX_BASIC_STATS);
- 	if (error)
- 		goto out_iput;
+ 	for (argv++; *argv; argv++) {
+ 		if (strcmp(*argv, "-F") == 0) {
+diff --git a/tools/include/uapi/linux/stat.h b/tools/include/uapi/linux/stat.h
+index 7b35e98d3c58..ed456ac0f90d 100644
+--- a/tools/include/uapi/linux/stat.h
++++ b/tools/include/uapi/linux/stat.h
+@@ -148,9 +148,18 @@ struct statx {
+ #define STATX_BLOCKS		0x00000400U	/* Want/got stx_blocks */
+ #define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat struct */
+ #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
+-#define STATX_ALL		0x00000fffU	/* All currently supported flags */
++
+ #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
  
++#ifndef __KERNEL__
++/*
++ * This is deprecated, and shall remain the same value in the future.  To avoid
++ * confusion please use the equivalent (STATX_BASIC_STATS | STATX_BTIME)
++ * instead.
++ */
++#define STATX_ALL		0x00000fffU
++#endif
++
+ /*
+  * Attributes to be found in stx_attributes and masked in stx_attributes_mask.
+  *
 -- 
 2.14.3
 
