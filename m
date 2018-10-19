@@ -2,91 +2,97 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D394ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E8CECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:55:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27D6F2054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:50:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27D6F2054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C49C20C01
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:55:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jUs9hXNF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C49C20C01
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbeJTH6t (ORCPT
+        id S1726967AbeJTID7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 03:58:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33726 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726601AbeJTH6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 03:58:48 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8C5DC30024D8;
-        Fri, 19 Oct 2018 23:50:35 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7DE376F927;
-        Fri, 19 Oct 2018 23:50:33 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAJfpegtPv4+QxzcqMAGwTt7QALjBaxQtt2Qet98pdmuT1MRUeA@mail.gmail.com>
-References: <CAJfpegtPv4+QxzcqMAGwTt7QALjBaxQtt2Qet98pdmuT1MRUeA@mail.gmail.com> <20181019143932.6697-1-mszeredi@redhat.com> <18142.1539964788@warthog.procyon.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Florian Weimer <fw@deneb.enyo.de>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v2 6/5] statx: add STATX_RESULT_MASK flag
+        Sat, 20 Oct 2018 04:03:59 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:48778 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726471AbeJTID7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 04:03:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=u865q4kRFH65IiCFJeJ/orv4tGFA1Q4k3KsjMAJEtUk=; b=jUs9hXNF1dgg3VJheSciv/8i06
+        S7dqDt2pKBSq3xT6aEEbghNHE3aIkBz25H/11NtzW28yU2PuZohj1N808JANCEnai9MQ48PkJ3ui2
+        dw3GtmnskIeM16BMAMXCHpnKRJp9LBRJsdv3LjWMKGKS5l7j0squRyD9bv8KTp1p1/WRykjphLBEL
+        cuswwEZfhgR5ucHwdKvWR9JVoRWLsmR/zfmnkWbuxOlt0tysUl3EL///lqkVCV762eUYMz/eFKUPw
+        40mUz0M+d5w7An8+EOe9UBjnTYyAofukGw6fZtaaorNgDIqBnsinPrukBIh97pl+1WolNgNbtrRDf
+        aoZzuQtw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gDecD-0001L2-Il; Fri, 19 Oct 2018 23:55:37 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Jason Baron <jbaron@akamai.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] Documentation: dynamic_debug: fix a couple of typos
+Message-ID: <73dabf1e-e6a5-2c4e-9495-289953fa510f@infradead.org>
+Date:   Fri, 19 Oct 2018 16:55:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2954.1539993032.1@warthog.procyon.org.uk>
-Date:   Sat, 20 Oct 2018 00:50:32 +0100
-Message-ID: <2955.1539993032@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 19 Oct 2018 23:50:35 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+From: Randy Dunlap <rdunlap@infradead.org>
 
-> This is very much about the basic statx fields.  I.e. what does
-> result_mask == STATX_BASIC_STATS means?
-> 
->  a) this is a legacy stat() implementation that doesn't fill in the
-> result_mask properly
-> 
->  b) this is an up-todate stat() implementation that does fill the
-> result_mask properly and all fields are valid
-> 
-> There's no way to tell which one it is, and no way to request that
-> filesystem try b) even if it's more costly.
+Fix a few "typos" in dynamic-debug-howto.rst.
 
-Okay, I think I see what you're getting at.  We need to be able to tell the
-user that we don't actually know what's good and what's not.  I guess this
-doesn't only apply to fuse, but could also apply to nfs potentially as nfs
-doesn't necessarily know what the server is capable of and where it's making
-stuff up (imagine an NFS server backing both an ext4 and a fat filesystem).
+s/dyndbg_query/ddebug_query/
+s/sysfs/debugfs/
 
-I would be tempted to represent this with an attribute flag instead, say:
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jason Baron <jbaron@akamai.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org
+---
+ Documentation/admin-guide/dynamic-debug-howto.rst |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-	STATX_ATTR_UNCERTAIN_VALUES
+--- lnx-419-rc8.orig/Documentation/admin-guide/dynamic-debug-howto.rst
++++ lnx-419-rc8/Documentation/admin-guide/dynamic-debug-howto.rst
+@@ -258,7 +258,7 @@ this boot parameter for debugging purpos
+ 
+ If ``foo`` module is not built-in, ``foo.dyndbg`` will still be processed at
+ boot time, without effect, but will be reprocessed when module is
+-loaded later. ``dyndbg_query=`` and bare ``dyndbg=`` are only processed at
++loaded later. ``ddebug_query=`` and bare ``dyndbg=`` are only processed at
+ boot.
+ 
+ 
+@@ -301,7 +301,7 @@ The ``dyndbg`` option is a "fake" module
+ 
+ For ``CONFIG_DYNAMIC_DEBUG`` kernels, any settings given at boot-time (or
+ enabled by ``-DDEBUG`` flag during compilation) can be disabled later via
+-the sysfs interface if the debug messages are no longer needed::
++the debugfs interface if the debug messages are no longer needed::
+ 
+    echo "module module_name -p" > <debugfs>/dynamic_debug/control
+ 
 
-Your attributes are actually in one of at least three states, not two:
-unsupported, definite and uncertain.  Definite things might include such as
-STATX_TYPE - after all, if you don't know what type a file is, you can't
-really use it.
 
-If someone really needs to know, it might be worth deferring further
-information to fsinfo().
-
-David
