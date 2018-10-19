@@ -2,138 +2,317 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E416CECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:49:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07322ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:56:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFD7521476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:49:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFD7521476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
+	by mail.kernel.org (Postfix) with ESMTP id AEBF32086E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:56:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEBF32086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbeJTC4j (ORCPT
+        id S1727745AbeJTDDl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 22:56:39 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:35522 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727770AbeJTC4j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 22:56:39 -0400
-Received: from mr6.cc.vt.edu (mr6.cc.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w9JInKOU018933
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 14:49:20 -0400
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w9JInFlk028836
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 14:49:20 -0400
-Received: by mail-qk1-f199.google.com with SMTP id y201-v6so36824160qka.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 11:49:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=rpWcHs7QjgVgvMYBkCCy+N/bC7/0xCUlUJeesVOVucA=;
-        b=b0HMWF3VBzoByj6j3NhGgIOzYDA68W0S2cfHa5N1eGvjGmg85UCPa1yxwHlOKhZoXP
-         37IXb0tjMioPbY10tGdi8+iY8QO3tXAq48yCCvrQqS4zEWNCqgbFnl/QN++oKRLgslsq
-         a+xE+jf7oUqDgzDlF3hCxxhXGr80RpC7FSkBHAQ8u9duRzVcjop01Ovrx+3qvU4EfqC3
-         CqTNFxBP47KpqWIy02pXhH/2QHaUIgDd/8gqpb/22+5Q8Nx/QiFBW2ArvcNoSWBv2qqy
-         OClLQJM95fkuMWUr+FuwiTHxk7ibWM5z1VmFQ3pOe7zldY6E8h1+YadZNuLEAsuxVAsi
-         HQAg==
-X-Gm-Message-State: ABuFfohZd4ThLKVDlwmJj7DPNTpu+N2++XddpqEbB9ahRG6NLLuDkmi8
-        GvgtouP105BP+CBoKCdUbnf5TghbIAokCpvEoStFKt9izFRVDB6dLxJ0fmxvOQhdv+hxfAnN4EI
-        GNy65/h0PWPIDfWTbBcPeFuJAdcreilg8Tgw=
-X-Received: by 2002:a37:2825:: with SMTP id o37-v6mr6693167qkh.350.1539974954944;
-        Fri, 19 Oct 2018 11:49:14 -0700 (PDT)
-X-Google-Smtp-Source: AJdET5fY5eJY7KhRo4eOXdYZD8iVavTJlGwYdLjbpXnbEmTaFLUZ2rQSmeCJKbzP03lS9o1frCvOgg==
-X-Received: by 2002:a37:2825:: with SMTP id o37-v6mr6693140qkh.350.1539974954529;
-        Fri, 19 Oct 2018 11:49:14 -0700 (PDT)
-Received: from turing-police.cc.vt.edu (turing-police.cc.ipv6.vt.edu. [2001:468:c80:2103:f21f:afff:fe0c:8ada])
-        by smtp.gmail.com with ESMTPSA id k39-v6sm4792358qtf.3.2018.10.19.11.49.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 19 Oct 2018 11:49:12 -0700 (PDT)
-From:   valdis.kletnieks@vt.edu
-X-Google-Original-From: Valdis.Kletnieks@vt.edu
-X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>,
-        John Reck <jreck@google.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Colascione <dancol@google.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, marcandre.lureau@redhat.com,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v3 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to memfd
-In-Reply-To: <CAEXW_YTS2n2tOpXs3eVQZhYu7tmM_at0ZBA-04qYkHw4UE80nw@mail.gmail.com>
-References: <20181018065908.254389-1-joel@joelfernandes.org> <42922.1539970322@turing-police.cc.vt.edu>
- <CAEXW_YTS2n2tOpXs3eVQZhYu7tmM_at0ZBA-04qYkHw4UE80nw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1539974951_3102P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 19 Oct 2018 14:49:11 -0400
-Message-ID: <118792.1539974951@turing-police.cc.vt.edu>
+        Fri, 19 Oct 2018 23:03:41 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35014 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727329AbeJTDDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 23:03:40 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E32BC461D0;
+        Fri, 19 Oct 2018 18:56:19 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B2F7268885;
+        Fri, 19 Oct 2018 18:56:13 +0000 (UTC)
+Subject: Re: [PATCH v14 12/12] cpuset: Show descriptive text when reading
+ cpuset.sched.partition
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Tom Hromatka <tom.hromatka@oracle.com>
+References: <1539635377-22335-1-git-send-email-longman@redhat.com>
+ <1539635377-22335-13-git-send-email-longman@redhat.com>
+ <20181017150836.GS270328@devbig004.ftw2.facebook.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <b797288a-6088-f7b0-c881-81633c071754@redhat.com>
+Date:   Fri, 19 Oct 2018 14:56:13 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20181017150836.GS270328@devbig004.ftw2.facebook.com>
+Content-Type: multipart/mixed;
+ boundary="------------275CDF22CC2523499699C9E0"
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 19 Oct 2018 18:56:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1539974951_3102P
-Content-Type: text/plain; charset=us-ascii
+This is a multi-part message in MIME format.
+--------------275CDF22CC2523499699C9E0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 19 Oct 2018 10:57:31 -0700, Joel Fernandes said:
-> On Fri, Oct 19, 2018 at 10:32 AM,  <valdis.kletnieks@vt.edu> wrote:
-> > What is supposed to happen if some other process has an already existing R/W
-> > mmap of the region?  (For that matter, the test program doesn't seem to
-> > actually test that the existing mmap region remains writable?)
+On 10/17/2018 11:08 AM, Tejun Heo wrote:
+> On Mon, Oct 15, 2018 at 04:29:37PM -0400, Waiman Long wrote:
+>> Currently, cpuset.sched.partition returns the values, 0, 1 or -1 on
+>> read. A person who is not familiar with the partition code may not
+>> understand what they mean.
+>>
+>> In order to make cpuset.sched.partition more user-friendly, it will
+>> now display the following descriptive text on read:
+>>
+>>   "normal" - A normal cpuset, not a partition root
+>>   "partition" - A partition root
+>>   "partition invalid" - An invalid partition root
+>>
+>> Suggested-by: Tejun Heo <tj@kernel.org>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+> Can you also make this consistent when writing to the file?
+>
+> Thanks.
+>
+How about the attached patch instead?
 
-> Why would it not remain writable? We don't change anything in the
-> mapping that prevents it from being writable, in the patch.
+Cheers,
+Longman
 
-OK, if the meaning here is "if another process races and gets its own R/W mmap
-before we seal our mmap, it's OK".  Seems like somewhat shaky security-wise - a
-possibly malicious process can fail to get a R/W map because we just sealed it,
-but if it had done the attempt a few milliseconds earlier it would have its own
-R/W mmap to do as it pleases...
 
-On the other hand, decades of trying have proven that trying to do any sort
-of revoke() is a lot harder to do than it looks...
+--------------275CDF22CC2523499699C9E0
+Content-Type: text/x-patch;
+ name="v14-0012-cpuset-Use-descriptive-text-when-reading-writing.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="v14-0012-cpuset-Use-descriptive-text-when-reading-writing.pa";
+ filename*1="tch"
 
-> We do test that existing writable mmaps can continue to exist after
-> the seal is set, in a way, because we test that setting of the seal
-> succeeds.
+From ab96b5d735102b0167a5e92f0aee92caa18a18ae Mon Sep 17 00:00:00 2001
+From: Waiman Long <longman@redhat.com>
+Date: Fri, 19 Oct 2018 11:46:41 -0400
+Subject: [PATCH v14 12/12] cpuset: Use descriptive text when reading/writing
+ cpuset.sched.partition
 
-Well, if the semantics are "We don't bother trying to deal with existing R/W
-maps", then it doesn't really matter - I was thinking along the lines of "If we're
-revoking other R/W accesses, we should test that we didn't nuke *this* one in
-the bargain"....
+Currently, cpuset.sched.partition returns the values, 0, 1 or -1 on
+read. A person who is not familiar with the partition code may not
+understand what they mean.
 
---==_Exmh_1539974951_3102P
-Content-Type: application/pgp-signature
+In order to make cpuset.sched.partition more user-friendly, it will
+now display the following descriptive text on read:
 
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.8.0 04/21/2017
+  "normal" - A normal cpuset, not a partition root
+  "partition" - A partition root
+  "partition invalid" - An invalid partition root
 
-iQEVAwUBW8onJ40DS38y7CIcAQK8gAgAn0hFoG/7NzVOy5Rst3e/VtBaNha/e3V0
-N+mOczsxE3dMEijB1Uyu9c9Lzla9XW612XLu/DIgfET40+gYywBE39PQQovZomc3
-QEc1GfcRkVUQqncDVvKSAN9JQ7QdWLTvqAva+ChFl8+yAn2Y7hCqg+WHKT7XMqVZ
-IQl7IZxHgfik1Id2h5IizZgSeBS91WoYehfIrgH59TcFA+Fjek8beOJpBvC4es3m
-jDyp2LTlACh55TkUM3N7pQtKsNGSMUSekMG+ylFykgY76LS+K1rS9KBpABMFZL0Y
-+McJX3of+FHEVoJy2W42G6+SRr82+4pVysAeVa8XxGRvS/wvMgTySQ==
-=GvDD
------END PGP SIGNATURE-----
+The cpuset.sched.partition file will now also accept "normal" and
+"partition" besides 1 and 0 as valid input values. The "partition
+invalid" value is internal only and cannot be written to the file.
 
---==_Exmh_1539974951_3102P--
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ Documentation/admin-guide/cgroup-v2.rst | 50 +++++++++++++++-------------
+ kernel/cgroup/cpuset.c                  | 58 +++++++++++++++++++++++++++++----
+ 2 files changed, 79 insertions(+), 29 deletions(-)
+
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 178cda4..072f09d 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1688,18 +1688,23 @@ Cpuset Interface Files
+ 
+   cpuset.sched.partition
+ 	A read-write single value file which exists on non-root
+-	cpuset-enabled cgroups.  It accepts either "0" (off) or "1"
+-	(on) when written to.  This flag is set and owned by the
++	cpuset-enabled cgroups.  This file is set and owned by the
+ 	parent cgroup.
+ 
+-	If set, it indicates that the current cgroup is the root of a
+-	new partition or scheduling domain that comprises itself and
++        It accepts only the following input values when written to.
++
++        "normal" or "0" - normal cpuset, not a partition root
++        "partition" or "1" - partition root
++
++	When set to a partition root, the current cgroup is the root of
++	a new partition or scheduling domain that comprises itself and
+ 	all its descendants except those that are separate partition
+ 	roots themselves and their descendants.  The root cgroup is
+ 	always a partition root.
+ 
+-	There are constraints on where this flag can be set.  It can
+-	only be set in a cgroup if all the following conditions are true.
++	There are constraints on where a partition root can be set.
++	It can only be set in a cgroup if all the following conditions
++	are true.
+ 
+ 	1) The "cpuset.cpus" is not empty and the list of CPUs are
+ 	   exclusive, i.e. they are not shared by any of its siblings.
+@@ -1710,9 +1715,10 @@ Cpuset Interface Files
+ 	   eliminating corner cases that have to be handled if such a
+ 	   condition is allowed.
+ 
+-	Setting this flag will take the CPUs away from the effective
+-	CPUs of the parent cgroup.  Once it is set, this flag cannot
+-	be cleared if there are any child cgroups with cpuset enabled.
++	Setting it to partition root will take the CPUs away from the
++	effective CPUs of the parent cgroup.  Once it is set, this
++	file cannot be reverted back to "normal" if there are any child
++	cgroups with cpuset enabled.
+ 
+ 	A parent partition cannot distribute all its CPUs to its
+ 	child partitions.  There must be at least one cpu left in the
+@@ -1729,28 +1735,28 @@ Cpuset Interface Files
+ 	root to change.  On read, the "cpuset.sched.partition" file
+ 	can show the following values.
+ 
+-	"0"  Not a partition root
+-	"1"  Partition root
+-	"-1" Erroneous partition root
++	"normal" - Normal cpuset, not a partition root
++	"partition" - Partition root
++	"partition invalid" - Invalid partition root
+ 
+ 	It is a partition root if the first 2 partition root conditions
+ 	above are true and at least one CPU from "cpuset.cpus" is
+ 	granted by the parent cgroup.
+ 
+-	A partition root can become an erroneous partition root if none
+-	of CPUs requested in "cpuset.cpus" can be granted by the parent
+-	cgroup or the parent cgroup is no longer a partition root.
+-	In this case, it is not a real partition even though the
++	A partition root can become an invalid partition root if none
++	of the CPUs requested in "cpuset.cpus" can be granted by the
++	parent cgroup or the parent cgroup is no longer a partition
++	root.  In this case, it is not a real partition even though the
+ 	restriction of the first partition root condition above will
+ 	still apply.  All the tasks in the cgroup will be migrated to
+ 	the nearest ancestor partition.
+ 
+-	An erroneous partition root can be transitioned back to a real
+-	partition root if at least one of the requested CPUs can now be
+-	granted by its parent.	In this case, the tasks will be migrated
+-	back to the newly created partition.  Clearing the partition
+-	flag of an erroneous partition root is always allowed even if
+-	child cpusets are present.
++	An invalid partition root can be transitioned back to a real
++	partition root if at least one of the requested CPUs can now
++	be granted by its parent.  In this case, the tasks will be
++	migrated back to the newly created partition.  Converting an
++	invalid partition root back to "normal" is always allowed even
++	if child cpusets are present.
+ 
+ 
+ Device controller
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 34d47e4..d356205 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -2274,9 +2274,6 @@ static int cpuset_write_s64(struct cgroup_subsys_state *css, struct cftype *cft,
+ 	case FILE_SCHED_RELAX_DOMAIN_LEVEL:
+ 		retval = update_relax_domain_level(cs, val);
+ 		break;
+-	case FILE_PARTITION_ROOT:
+-		retval = update_prstate(cs, val);
+-		break;
+ 	default:
+ 		retval = -EINVAL;
+ 		break;
+@@ -2430,8 +2427,6 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
+ 	switch (type) {
+ 	case FILE_SCHED_RELAX_DOMAIN_LEVEL:
+ 		return cs->relax_domain_level;
+-	case FILE_PARTITION_ROOT:
+-		return cs->partition_root_state;
+ 	default:
+ 		BUG();
+ 	}
+@@ -2440,6 +2435,55 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
+ 	return 0;
+ }
+ 
++static int sched_partition_show(struct seq_file *seq, void *v)
++{
++	struct cpuset *cs = css_cs(seq_css(seq));
++
++	switch (cs->partition_root_state) {
++	case PRS_ENABLED:
++		seq_puts(seq, "partition\n");
++		break;
++	case PRS_DISABLED:
++		seq_puts(seq, "normal\n");
++		break;
++	case PRS_ERROR:
++		seq_puts(seq, "partition invalid\n");
++		break;
++	}
++	return 0;
++}
++
++static ssize_t sched_partition_write(struct kernfs_open_file *of, char *buf,
++				     size_t nbytes, loff_t off)
++{
++	struct cpuset *cs = css_cs(of_css(of));
++	int val;
++	int retval = -ENODEV;
++
++	buf = strstrip(buf);
++
++	/*
++	 * Convert "partition"/"1" to 1, and convert "normal"/"0" to 0.
++	 */
++	if (!strcmp(buf, "partition") || !strcmp(buf, "1"))
++		val = PRS_ENABLED;
++	else if (!strcmp(buf, "normal") || !strcmp(buf, "0"))
++		val = PRS_DISABLED;
++	else
++		return -EINVAL;
++
++	css_get(&cs->css);
++	mutex_lock(&cpuset_mutex);
++	if (!is_cpuset_online(cs))
++		goto out_unlock;
++
++	retval = update_prstate(cs, val);
++out_unlock:
++	mutex_unlock(&cpuset_mutex);
++	css_put(&cs->css);
++	return retval ?: nbytes;
++}
++
+ /*
+  * for the common functions, 'private' gives the type of file
+  */
+@@ -2583,8 +2627,8 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
+ 
+ 	{
+ 		.name = "sched.partition",
+-		.read_s64 = cpuset_read_s64,
+-		.write_s64 = cpuset_write_s64,
++		.seq_show = sched_partition_show,
++		.write = sched_partition_write,
+ 		.private = FILE_PARTITION_ROOT,
+ 		.flags = CFTYPE_NOT_ON_ROOT,
+ 	},
+-- 
+1.8.3.1
+
+
+--------------275CDF22CC2523499699C9E0--
