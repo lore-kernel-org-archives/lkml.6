@@ -5,128 +5,92 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBCF6ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 22:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F15ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 22:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DFD120843
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 22:35:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DFD120843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B506D2087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 22:36:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B506D2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726772AbeJTGnH (ORCPT
+        id S1726895AbeJTGoV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 02:43:07 -0400
-Received: from mga18.intel.com ([134.134.136.126]:31509 "EHLO mga18.intel.com"
+        Sat, 20 Oct 2018 02:44:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36338 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726194AbeJTGnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 02:43:07 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 15:35:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,401,1534834800"; 
-   d="scan'208";a="242754322"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga004.jf.intel.com with ESMTP; 19 Oct 2018 15:35:06 -0700
-Message-ID: <b07027cb4b9d51ec8f27d9e6c0b73b3032610ebd.camel@linux.intel.com>
-Subject: Re: [driver-core PATCH v4 4/6] driver core: Probe devices
- asynchronously instead of the driver
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Bart Van Assche <bvanassche@acm.org>,
-        Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, len.brown@intel.com,
-        rafael@kernel.org, linux-pm@vger.kernel.org,
-        jiangshanlai@gmail.com, pavel@ucw.cz, zwisler@kernel.org,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Date:   Fri, 19 Oct 2018 15:35:06 -0700
-In-Reply-To: <1e061fe5-9be4-77be-5350-4cb7175afdf8@acm.org>
-References: <20181015150305.29520.86363.stgit@localhost.localdomain>
-         <20181015150926.29520.45280.stgit@localhost.localdomain>
-         <1539886275.81977.17.camel@acm.org>
-         <e870da1d-48fa-7f2e-6909-b168a06633f2@linux.intel.com>
-         <1539893636.81977.29.camel@acm.org>
-         <CAKgT0Ucf-v3FNTA0z=3nPR-xS=0NYeqDjRfDW-KjDE5Ed-n1_g@mail.gmail.com>
-         <1e061fe5-9be4-77be-5350-4cb7175afdf8@acm.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726194AbeJTGoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 02:44:21 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A598281F0C;
+        Fri, 19 Oct 2018 22:36:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0CC351001914;
+        Fri, 19 Oct 2018 22:36:19 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <97872123-70be-2833-ea7a-a463ce204b53@gmail.com>
+References: <97872123-70be-2833-ea7a-a463ce204b53@gmail.com> <862e36a2-2a6f-4e26-3228-8cab4b4cf230@gmail.com> <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk> <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk> <de050902-f3d0-b2db-2627-983a36c87b3c@gmail.com> <6518.1539956277@warthog.procyon.org.uk>
+To:     Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org, ebiederm@xmission.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mszeredi@redhat.com
+Subject: Re: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE [ver #12]
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <29901.1539988579.1@warthog.procyon.org.uk>
+Date:   Fri, 19 Oct 2018 23:36:19 +0100
+Message-ID: <29902.1539988579@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 19 Oct 2018 22:36:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-18 at 19:31 -0700, Bart Van Assche wrote:
-> On 10/18/18 7:20 PM, Alexander Duyck wrote:
-> > I see what you are talking about now. Actually I think this was an
-> > existing issue before my patch even came into play. Basically the
-> > code
-> > as it currently stands is device specific in terms of the attach
-> > and
-> > release code.
-> > 
-> > I wonder if we shouldn't have the async_synchronize_full call in
-> > __device_release_driver moved down and into driver_detach before we
-> > even start the for loop. Assuming the driver is no longer
-> > associated
-> > with the bus that should flush out all devices so that we can then
-> > pull them out of the devices list at least. I may look at adding an
-> > additional bitflag to the device struct to indicate that it has a
-> > driver attach pending. Then for things like races between any
-> > attach
-> > and detach calls the logic becomes pretty straight forward. Attach
-> > will set the bit and provide driver data, detach will clear the bit
-> > and the driver data. If a driver loads in between it should clear
-> > the
-> > bit as well.
-> > 
-> > I'll work on it over the next couple days and hopefully have
-> > something
-> > ready for testing/review early next week.
+Alan Jenkins <alan.christopher.jenkins@gmail.com> wrote:
+
+> # open_tree_clone 3</mnt 3 sh
+> # cd /proc/self/fd/3
+> # mount --move . /mnt
+> [   41.747831] mnt_flags=1020 umount=0
+> # cd /
+> # umount /mnt
+> umount: /mnt: target is busy
 > 
-> Hi Alex,
-> 
-> How about checking in __driver_attach_async_helper() whether the
-> driver 
-> pointer is still valid by checking whether bus_for_each_drv(dev-
-> >bus, 
-> ...) can still find the driver pointer? That approach requires 
-> protection with a mutex to avoid races with the driver detach code
-> but 
-> shouldn't require any new flags in struct device.
-> 
-> Thanks,
-> 
-> Bart.
+> ^ a newly introduced bug? I do not remember having this problem before.
 
-That doesn't solve the problem I was pointing out though.
+The reason EBUSY is returned is because propagate_mount_busy() is called by
+do_umount() with refcnt == 2, but mnt_count == 3:
 
-So the issue you are addressing by rechecking the bus should already be
-handled by just calling async_synchronize_full in driver_detach. After
-all we can't have a driver that is being added to the bus while it is
-also being removed. So if we are detaching the driver calling
-async_synchronize_full will flush out any deferred attach calls and
-there will be no further calls since the driver has already been
-removed from the bus.
+          umount-3577  M=f8898a34 u=3 0x555 sp=__x64_sys_umount+0x12/0x15
 
-The issue I was thinking of is how do we deal with races between
-device_attach and device_release_driver. In that case we know the
-device we want to remove a driver from, but we may not have information
-about the driver. The easiest solution is to basically just disable the
-pending enable. I could use the approach I am doing now and just NULL
-out the driver_data if dev->driver is NULL. The only thing I am
-thinking about is if just dev->driver being NULL is enough to signal
-that we are using driver_data to carry a pointer to a pending driver,
-or if we should add an extra bit to carry that meaning. It would be
-pretty easy to just add a bit and then use that to prevent any false
-reads of the deferred driver as driver data, or driver data as a
-deferred driver as it would essentially act as a type bit.
+the trace line being added here:
 
-Thanks.
+		if (!propagate_mount_busy(mnt, 2)) {
+			if (!list_empty(&mnt->mnt_list))
+				umount_tree(mnt, UMOUNT_PROPAGATE|UMOUNT_SYNC);
+			retval = 0;
+		} else {
+			trace_mnt_count(mnt, mnt->mnt_id,
+					atomic_read(&mnt->mnt_count),
+					0x555, __builtin_return_address(0));
+		}
 
-- Alex
+The busy evaluation is a result of this check:
 
+	if (!list_empty(&mnt->mnt_mounts) || do_refcount_check(mnt, refcnt))
+
+in propagate_mount_busy().
+
+
+The problem apparently being that mnt_count counts both refs from mountings
+and refs from other sources, such as file descriptors or pathwalk.
+
+David
