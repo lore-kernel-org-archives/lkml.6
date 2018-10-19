@@ -2,154 +2,210 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC12ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C37BAECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 678DB2087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:35:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83F3F2087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:35:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="syXSz+ry"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 678DB2087A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HqRPaXPO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83F3F2087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727983AbeJTBm7 (ORCPT
+        id S1728003AbeJTBnA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 21:42:59 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46778 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727501AbeJTBm6 (ORCPT
+        Fri, 19 Oct 2018 21:43:00 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39571 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727756AbeJTBm6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 19 Oct 2018 21:42:58 -0400
-Received: by mail-lf1-f65.google.com with SMTP id p143-v6so14796140lfp.13
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 10:35:54 -0700 (PDT)
+Received: by mail-wr1-f65.google.com with SMTP id 61-v6so38252533wrb.6;
+        Fri, 19 Oct 2018 10:35:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QOpxQtsqnZO1O69woFc9jT6MsNTDcWqgsVf/VQ7puy8=;
-        b=syXSz+rynUT0XXnSrP7QxmpOFvRr5Bfr0xP2NEUQePfz5z37UIDck093aaGr+Jxa4v
-         EIInTHwHm0Q1NDl5tr94Fdjbza1caupFFHFKQVtbRprJ360q4FOBCZ13lGxR4Zf+HMxQ
-         094PnyXuCxKdPliwGRChjlwkjH/W/vP9duBjC07du/+d5V8+x2QdLY3kZaPjdshVJdVP
-         mh7t5Ai8b+R+dVx7nyy1No4zBKV5LFDhL/DjNTVsa9XiKP8BHHkRrRYw72bQ2wMQIHVv
-         bGpn8T5tGgIOlqUQy7B5X1gv9wggtCiGwjIPj9TcxxaN8O1vYv1Sexy5i8ne01YMXcxG
-         VupA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=eb++9XtKprC6SuhVZywnYbT0B2BuX413KBiZkrXepD0=;
+        b=HqRPaXPO0c0s5IJblJPc1hPjSyJ0/R0RzPbvWw6++awREe0esGVMSYiQfMZtWroh/g
+         BIBWLi6N/xcEe4ah4Mhdt4V2C4Rg9InHZZqf9rxpMBStSGK04s1sjQLkDp8CUUl0kv3/
+         h7/Vin4Lfgtqrd1ThTxc8cRkppKqLbLyLqUNDhdwxMcATzaGwzFzmRgmczKHEKRTnT3J
+         /aMFwrR/1SC30Eq9SqjZmVdl3tUHrYTwj54SKquUpJ2Ar7mINNUXFVRe2m4qieqSCjr/
+         pKDCDiLfXXcXReiP2rOr+oTMg9q+CAlrXuwGMNHtcQIKTBzLoFpOVRx/MzN6Ad4QfUZY
+         CseA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=QOpxQtsqnZO1O69woFc9jT6MsNTDcWqgsVf/VQ7puy8=;
-        b=WLQXZElCAfJWJeObH4/n07gqH21AECqYqoOVBiycOqvl/fKvFQgO5/V4UBsDfOa5Qw
-         li7UQHsRlcfCS4XdTsFsQXX6U/GHlXXI2QWgYBPhclSKRLZ6IF+sKk0OTFvhwgT/ZcZ+
-         mpC1CkRv1wMYT9Q6fcmII7QjzeZTA1JiLOWWMuVyLeNKzS9waCZEGoRGZagTFQD4gvVc
-         5ZmNZQdBrO0WyV3nV7GRzB4d2D0dHdn+M5dH4catv+GmnTDwyXJTQrp7MDltvazwGzgZ
-         y8fEjVcldrKMIZ1h3adU4wPIfVDD2NbmCw/q/PL16kSgB/Oa3FGbYdQXMLrnzY4leKGS
-         SUSQ==
-X-Gm-Message-State: ABuFfojOexhyuj9nfBDYagBn9vUBK/oZvGkgu6/KJl5rW1LV4ZUADOEI
-        vE7j3o3eGpDEbHd15DK2c1o=
-X-Google-Smtp-Source: ACcGV61jzkETd02239M3JQrg7GcoPJDUVxeCvyghNY325cP/LpZXE8bIG+qEVdYd9SXYWUownIJSJg==
-X-Received: by 2002:a19:a501:: with SMTP id o1-v6mr3480817lfe.41.1539970553327;
-        Fri, 19 Oct 2018 10:35:53 -0700 (PDT)
-Received: from pc636.semobile.internal ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id k9-v6sm5531530lje.51.2018.10.19.10.35.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=eb++9XtKprC6SuhVZywnYbT0B2BuX413KBiZkrXepD0=;
+        b=BcyDoz3qkz+BHhTQD8vyTsGxtiupebvjo2E030ZC2FGKMcCHQ2Y+Op4lGVQhWgHqwj
+         cno2uX+aT0Mrm5tQ0aHb7uHhcnAJEMp0SD6VG3mZi5A3kp93K/hT0sAO1BwJCogsmHtz
+         AqkvnealcXxCILKX+H6wHU6YWG73wflfG+SmTYtA8VErdxQSaUOUYl6WeUrQBkkFv+M2
+         HjdH584kBJSwqno1fGLQF9ow5FRnjZMLb4FOPIrt/M3+GcLgUAhRdAa4mmYs6vePkEkz
+         D7Ht4Xt/fUMLOqeXMBob+wGM8+Q6QPnALV0V+TcBxsdIlnQt3Ecal3Tuk6KrRe7l20WW
+         9XsA==
+X-Gm-Message-State: ABuFfojaB3iY8gXy3AyAF6ljYbDTYTIIU4X7YUEQpxgTredYCrmtrGaK
+        7sf43Lp3fuNkglEt+mkaJIY=
+X-Google-Smtp-Source: ACcGV617X8AzUyh82wjvOlcfhf9kjLziGLJJ1lh1QWomg9h9Ap4FxGkjBdv1vkX/UOz4lrk7c2Tyzw==
+X-Received: by 2002:adf:ee52:: with SMTP id w18-v6mr35205382wro.63.1539970552732;
         Fri, 19 Oct 2018 10:35:52 -0700 (PDT)
-From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
-        "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Subject: [RFC PATCH 2/2] mm: add priority threshold to __purge_vmap_area_lazy()
-Date:   Fri, 19 Oct 2018 19:35:38 +0200
-Message-Id: <20181019173538.590-3-urezki@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181019173538.590-1-urezki@gmail.com>
-References: <20181019173538.590-1-urezki@gmail.com>
+Received: from [172.16.8.139] (host-89-243-172-161.as13285.net. [89.243.172.161])
+        by smtp.gmail.com with ESMTPSA id x15-v6sm14550241wrt.90.2018.10.19.10.35.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 19 Oct 2018 10:35:51 -0700 (PDT)
+Subject: Re: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE
+ [ver #12]
+To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
+Cc:     torvalds@linux-foundation.org, ebiederm@xmission.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mszeredi@redhat.com
+References: <862e36a2-2a6f-4e26-3228-8cab4b4cf230@gmail.com>
+ <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
+ <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk>
+ <de050902-f3d0-b2db-2627-983a36c87b3c@gmail.com>
+ <6518.1539956277@warthog.procyon.org.uk>
+From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Message-ID: <97872123-70be-2833-ea7a-a463ce204b53@gmail.com>
+Date:   Fri, 19 Oct 2018 18:35:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <6518.1539956277@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 763b218ddfaf ("mm: add preempt points into
-__purge_vmap_area_lazy()")
+On 19/10/2018 14:37, David Howells wrote:
+> Alan Jenkins <alan.christopher.jenkins@gmail.com> wrote:
+>
+>> If I close() the mount FD "mfd", and then do "mount --move . /mnt", my
+>> printk() shows MNT_UMOUNT has been set. ( I guess fchdir() works more like
+>> openat(... , O_PATH) than dup() ). Then unmounting /mnt hangs, as I would
+>> expect from my previous test.
+> Okay, I think the attached should fix it.
+>
+> The issue being that do_move_mount() calls attach_recursive_mnt() with a NULL
+> parent_path, which means that the moved-mount doesn't get its refcount
+> incremented.
+>
+> David
+> ---
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 6370bfabec99..ce9fff980549 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -1935,7 +1935,8 @@ int count_mounts(struct mnt_namespace *ns, struct mount *mnt)
+>   static int attach_recursive_mnt(struct mount *source_mnt,
+>   			struct mount *dest_mnt,
+>   			struct mountpoint *dest_mp,
+> -			struct path *parent_path)
+> +			struct path *parent_path,
+> +			bool moving)
+>   {
+>   	HLIST_HEAD(tree_list);
+>   	struct mnt_namespace *ns = dest_mnt->mnt_ns;
+> @@ -1976,6 +1977,8 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+>   		attach_mnt(source_mnt, dest_mnt, dest_mp);
+>   		touch_mnt_namespace(source_mnt->mnt_ns);
+>   	} else {
+> +		if (moving)
+> +			mnt_add_count(source_mnt, 1);
+>   		mnt_set_mountpoint(dest_mnt, dest_mp, source_mnt);
+>   		commit_tree(source_mnt);
+>   	}
+> @@ -2062,7 +2065,7 @@ static int graft_tree(struct mount *mnt, struct mount *p, struct mountpoint *mp)
+>   	      d_is_dir(mnt->mnt.mnt_root))
+>   		return -ENOTDIR;
+>   
+> -	return attach_recursive_mnt(mnt, p, mp, NULL);
+> +	return attach_recursive_mnt(mnt, p, mp, NULL, false);
+>   }
+>   
+>   /*
+> @@ -2522,7 +2525,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+>   			goto out1;
+>   
+>   	err = attach_recursive_mnt(old, real_mount(new_path->mnt), mp,
+> -				   attached ? &parent_path : NULL);
+> +				   attached ? &parent_path : NULL, true);
+>   	if (err)
+>   		goto out1;
+>   
 
-introduced some preempt points, one of those is making
-an allocation more prioritized.
+I guess this tries to fix the second of the two sequences I mentioned - 
+mount+unmount, then close the FD.  It doesn't seem to work.
 
-Prioritizing an allocation over freeing does not work
-well all the time, i.e. it should be rather a compromise.
+# open_tree_clone 3</mnt 3 sh
+# cd /proc/self/fd/3
+# mount --move . /mnt
+[   41.747831] mnt_flags=1020 umount=0
+# cd /
+# umount /mnt
+umount: /mnt: target is busy
 
-1) Number of lazy pages directly influence on busy list
-length thus on operations like: allocation, lookup, unmap,
-remove, etc.
+^ a newly introduced bug? I do not remember having this problem before.
 
-2) Under heavy simultaneous allocations/releases there may
-be a situation when memory usage grows too fast hitting
-out_of_memory -> panic.
+# umount -l /mnt
+# exec 3<&-  # close FD 3
+[   95.984094] watchdog: BUG: soft lockup - CPU#1 stuck for 22s! [sh:1423]
+...
+[   96.000032] RIP: 0010:pin_kill+0x128/0x140
 
-Establish a threshold passing which the freeing path is
-prioritized over allocation creating a balance between both.
+And the first sequence I mentioned - close the FD, then mount+unmount - 
+seems to be unchanged.
 
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- mm/vmalloc.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+# open_tree_clone 3</mnt 3 sh
+# cd /proc/self/fd/3
+# exec 3<&-  # close FD 3
+# mount --move . /mnt
+[   76.175127] mnt_flags=8000020 umount=1
+# cd /
+# umount /mnt
+watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [umount:1472]
+...
+RIP: 0010:pin_kill+0x128/0x140
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index a7f257540a05..bbafcff6632b 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -1124,23 +1124,23 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
- 	struct llist_node *valist;
- 	struct vmap_area *va;
- 	struct vmap_area *n_va;
--	bool do_free = false;
-+	int resched_threshold;
- 
- 	lockdep_assert_held(&vmap_purge_lock);
- 
- 	valist = llist_del_all(&vmap_purge_list);
-+	if (unlikely(valist == NULL))
-+		return false;
-+
- 	llist_for_each_entry(va, valist, purge_list) {
- 		if (va->va_start < start)
- 			start = va->va_start;
- 		if (va->va_end > end)
- 			end = va->va_end;
--		do_free = true;
- 	}
- 
--	if (!do_free)
--		return false;
--
- 	flush_tlb_kernel_range(start, end);
-+	resched_threshold = (int) lazy_max_pages() << 1;
- 
- 	spin_lock(&vmap_area_lock);
- 	llist_for_each_entry_safe(va, n_va, valist, purge_list) {
-@@ -1148,7 +1148,9 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
- 
- 		__free_vmap_area(va);
- 		atomic_sub(nr, &vmap_lazy_nr);
--		cond_resched_lock(&vmap_area_lock);
-+
-+		if (atomic_read(&vmap_lazy_nr) < resched_threshold)
-+			cond_resched_lock(&vmap_area_lock);
- 	}
- 	spin_unlock(&vmap_area_lock);
- 	return true;
--- 
-2.11.0
+The close-then-mount test seemed to be solved by the diff you suggested 
+earlier.
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2469,7 +2469,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+  	if (old->mnt_ns && !attached)
+  		goto out1;
+  
+-	if (old->mnt.mnt_flags & MNT_LOCKED)
++	if (old->mnt.mnt_flags & (MNT_LOCKED | MNT_UMOUNT))
+  		goto out1;
+  
+  	if (old_path->dentry != old_path->mnt->mnt_root)
+
+If we can do that, then is it possible to solve mount-unmount-close the 
+same way?
+
+@@ -1763,7 +1763,7 @@ void dissolve_on_fput(struct vfsmount *mnt)
+  {
+  	namespace_lock();
+  	lock_mount_hash();
+-	if (!real_mount(mnt)->mnt_ns) {
++	if (!real_mount(mnt)->mnt_ns && !(mnt->mnt_flags & MNT_UMOUNT)) {
+  		mntget(mnt);
+  		umount_tree(real_mount(mnt), UMOUNT_CONNECTED);
+  	}
+
+Regards
+
+Alan
 
