@@ -4,42 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08621ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B1F8ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:10:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C043121479
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:10:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF10520645
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:10:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hIuucJV4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C043121479
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UOynJtN6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF10520645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727643AbeJSUPy (ORCPT
+        id S1727672AbeJSUQF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:15:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44122 "EHLO
+        Fri, 19 Oct 2018 16:16:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44308 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726784AbeJSUPy (ORCPT
+        with ESMTP id S1726784AbeJSUQE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:15:54 -0400
+        Fri, 19 Oct 2018 16:16:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
-        To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=wa8mXHNqTbUu054mBu2kjK6L8KueXUky9nnr1sHKXVs=; b=hIuucJV43asLn2SscvQuG6pFb
-        51LjdB7NMUgaT3eIagvM5e9ET31GGsN0mgMLSteWt8XFzpkTr3Tr5/WRLdH5C8MpAlvg7m0C6MW9D
-        dDRa53T3xe4e4mz3yIOhIxCivsEWjqqFBmoQnhST6OIdoMmN6aznMRd2I5jevLXUD8nxMtG7ydtF8
-        c96adbVVB7J/0DgdK8c7TfiT1oCbXnVZIyTXPpc/lH472clTUAL9B/kvkjHl0CbkqS4hi+hrS56B1
-        Hq7S8OwcdSBPi/A0AZhwzwY/v/bA5k7qzgWempHup4Gl+L+NKDHXIkF7dHuvDOS4Ut4727FcfYsq/
-        xJjAwP9mw==;
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=OLdpU/Lx2kG/LtqEJaUA/6yYmO6K2xQpzfu8jS6tJX0=; b=UOynJtN6fLkjrjEuEDJdlfRI7r
+        rJKtlO3dI54AaE6B6RSOAyJxw1hxddhhm/0oNeZqt8s95JOErgutKjT2yiDBr1So6LvguiCYNCEID
+        +HKNIbfIaCgJkRonBCbU+oLJFfWzzDv/aiIkwlAnuUGMM1C9OGxnD2g7u//Ab+/VBxnf1deDqqnjw
+        JNQmBU4m9TEpLdU1sxH028jNNnqizi9n0zJ/CW2K8flUJEn5+FM5l6knlCPypUfxR7sb8oeEoJ/9g
+        YUvdPwrXuwgwHbIZJITzO5L98+821rws8Nfkja3HvsFnUPh87VFo7CvLKPBRfe0ED+tERWUclITOF
+        kWfX3dfQ==;
 Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gDTbK-0000te-C7; Fri, 19 Oct 2018 12:09:58 +0000
+        id 1gDTbN-0000uR-Jn; Fri, 19 Oct 2018 12:10:02 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     Matt Porter <mporter@kernel.crashing.org>,
@@ -49,14 +50,13 @@ Cc:     Matt Porter <mporter@kernel.crashing.org>,
         linux-pci@vger.kernel.org, linux-scsi@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 1/9] aha152x: rename the PCMCIA define
-Date:   Fri, 19 Oct 2018 14:09:44 +0200
-Message-Id: <20181019120952.32763-2-hch@lst.de>
+Subject: [PATCH 2/9] arm: remove EISA kconfig option
+Date:   Fri, 19 Oct 2018 14:09:45 +0200
+Message-Id: <20181019120952.32763-3-hch@lst.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181019120952.32763-1-hch@lst.de>
 References: <20181019120952.32763-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,89 +64,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We plan to enable building the PCMCIA core and drivers, and the
-non-prefixed PCMCIA name clashes with some arch headers.
+No arm config enables EISA, and arm does not include drivers/eisa/Kconfig
+which provides support for things like PCI to EISA bridges, so it is most
+likely dead.
 
+If this is wrong we will be able to resurrect it easily by selecting
+HAVE_EISA for the right arm configs after this series.
+
+Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- drivers/scsi/aha152x.c             | 14 +++++++-------
- drivers/scsi/pcmcia/aha152x_core.c |  2 +-
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ arch/arm/Kconfig | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-diff --git a/drivers/scsi/aha152x.c b/drivers/scsi/aha152x.c
-index 4d7b0e0adbf7..301b3cad15f8 100644
---- a/drivers/scsi/aha152x.c
-+++ b/drivers/scsi/aha152x.c
-@@ -269,7 +269,7 @@ static LIST_HEAD(aha152x_host_list);
- /* DEFINES */
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index e8cd55a5b04c..e33735ce1c14 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -165,21 +165,6 @@ config HAVE_PROC_CPU
+ config NO_IOPORT_MAP
+ 	bool
  
- /* For PCMCIA cards, always use AUTOCONF */
--#if defined(PCMCIA) || defined(MODULE)
-+#if defined(AHA152X_PCMCIA) || defined(MODULE)
- #if !defined(AUTOCONF)
- #define AUTOCONF
- #endif
-@@ -297,7 +297,7 @@ CMD_INC_RESID(struct scsi_cmnd *cmd, int inc)
+-config EISA
+-	bool
+-	---help---
+-	  The Extended Industry Standard Architecture (EISA) bus was
+-	  developed as an open alternative to the IBM MicroChannel bus.
+-
+-	  The EISA bus provided some of the features of the IBM MicroChannel
+-	  bus while maintaining backward compatibility with cards made for
+-	  the older ISA bus.  The EISA bus saw limited use between 1988 and
+-	  1995 when it was made obsolete by the PCI bus.
+-
+-	  Say Y here if you are building a kernel for an EISA-based machine.
+-
+-	  Otherwise, say N.
+-
+ config SBUS
+ 	bool
  
- #define DELAY_DEFAULT 1000
- 
--#if defined(PCMCIA)
-+#if defined(AHA152X_PCMCIA)
- #define IRQ_MIN 0
- #define IRQ_MAX 16
- #else
-@@ -328,7 +328,7 @@ MODULE_AUTHOR("Jürgen Fischer");
- MODULE_DESCRIPTION(AHA152X_REVID);
- MODULE_LICENSE("GPL");
- 
--#if !defined(PCMCIA)
-+#if !defined(AHA152X_PCMCIA)
- #if defined(MODULE)
- static int io[] = {0, 0};
- module_param_hw_array(io, int, ioport, NULL, 0);
-@@ -391,7 +391,7 @@ static struct isapnp_device_id id_table[] = {
- MODULE_DEVICE_TABLE(isapnp, id_table);
- #endif /* ISAPNP */
- 
--#endif /* !PCMCIA */
-+#endif /* !AHA152X_PCMCIA */
- 
- static struct scsi_host_template aha152x_driver_template;
- 
-@@ -863,7 +863,7 @@ void aha152x_release(struct Scsi_Host *shpnt)
- 	if (shpnt->irq)
- 		free_irq(shpnt->irq, shpnt);
- 
--#if !defined(PCMCIA)
-+#if !defined(AHA152X_PCMCIA)
- 	if (shpnt->io_port)
- 		release_region(shpnt->io_port, IO_RANGE);
- #endif
-@@ -2924,7 +2924,7 @@ static struct scsi_host_template aha152x_driver_template = {
- 	.slave_alloc			= aha152x_adjust_queue,
- };
- 
--#if !defined(PCMCIA)
-+#if !defined(AHA152X_PCMCIA)
- static int setup_count;
- static struct aha152x_setup setup[2];
- 
-@@ -3392,4 +3392,4 @@ static int __init aha152x_setup(char *str)
- __setup("aha152x=", aha152x_setup);
- #endif
- 
--#endif /* !PCMCIA */
-+#endif /* !AHA152X_PCMCIA */
-diff --git a/drivers/scsi/pcmcia/aha152x_core.c b/drivers/scsi/pcmcia/aha152x_core.c
-index dba3716511c5..24b89228b241 100644
---- a/drivers/scsi/pcmcia/aha152x_core.c
-+++ b/drivers/scsi/pcmcia/aha152x_core.c
-@@ -1,3 +1,3 @@
--#define PCMCIA	1
-+#define AHA152X_PCMCIA 1
- #define AHA152X_STAT 1
- #include "aha152x.c"
 -- 
 2.19.1
 
