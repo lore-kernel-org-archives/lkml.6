@@ -2,99 +2,87 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,
-	URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E64ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 014E9ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96E812087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:50:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A136920869
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:02:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NaDoqWh0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96E812087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bf1xZD0t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A136920869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbeJTD55 (ORCPT
+        id S1726321AbeJTEKS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 23:57:57 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34730 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727767AbeJTD55 (ORCPT
+        Sat, 20 Oct 2018 00:10:18 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47488 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbeJTEKS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 23:57:57 -0400
-Received: by mail-pf1-f194.google.com with SMTP id f78-v6so11164834pfe.1;
-        Fri, 19 Oct 2018 12:50:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Iur8hPsukETw6y4JXqu78UhYQAM+pNXERbH5P7QLFfI=;
-        b=NaDoqWh0exJaWToqIodJ1NMmncESpGcxepVyvRsP3bmILPytVtOUx4kVfn415CgYBj
-         OGila7/rhW1srktYawt4PIw8e+PwJYt1jEtkIV8q/6MM0Lq1DHeCmJi6nuWpTDiQfDnM
-         7EkqvvPD6BTNIpbOryL2IPEQFTkRu1gBKlOCbfJH0eU9RK+++z4ONGvjkhZYRYqC5Cdx
-         weNU1DfNo9jg27RZ731qh34lfyDH2u9c95bSmyvzcHYwDX5UnzzOF6CGy3MFi0YJFN6f
-         kAdxXVGE0lGDlDiS0U839NE8gblBAi9yFp+gNrLDNMCQ+p27f4sCtOtuKRZNc96lD7lC
-         p95A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Iur8hPsukETw6y4JXqu78UhYQAM+pNXERbH5P7QLFfI=;
-        b=mKQP/3uo0fZTn2z6ziAy1mwGiyN/W7mPJ7Yz/vrS30QVrx2F7NUuPEFN9IRff/1EYE
-         mg5z6AhXJcz8e0yk2MmR6N592J2ckXqzuCZG0UEy0rl89/xvjRFW0zlrdDY9NFtYwWq1
-         gJDcAmPowldsu0Sa0WqV36wWm2bteDQPrDDhztQfdgsvDtdSN9QzMB2h4WBodIDJRUDj
-         NtxiBwCk5zu5nS/WCb9ZuL21M4o/fgizGoobs66wwpwvwzjKG80+0CjfcLL4QOX8iYHM
-         X37X3HmRxC+YE7zPSe/aXk0TSJHGV5nXZvpdR1UVsnlBi+oo2o309S/3gSTmAv50Kmuj
-         PDSw==
-X-Gm-Message-State: ABuFfojXi56unNnsolriGZ+IgmzGWr7dcGyt/+2/TKSm6XGF0mv6jZLW
-        WEUyBwIogdSv2/FLLFKPa5m5khcK
-X-Google-Smtp-Source: ACcGV61O2q6wxySpfUfio83Q+TytfESV5x2AC2s9+fo6GyWpKX2At6eZXt9T8EwmmVAh9RGq7IehpQ==
-X-Received: by 2002:a63:5b14:: with SMTP id p20-v6mr33522563pgb.56.1539978625536;
-        Fri, 19 Oct 2018 12:50:25 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id 84-v6sm30275472pfv.33.2018.10.19.12.50.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Oct 2018 12:50:24 -0700 (PDT)
-Date:   Fri, 19 Oct 2018 12:50:23 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/48] 4.4.162-stable review
-Message-ID: <20181019195023.GA13552@roeck-us.net>
-References: <20181018175427.133690306@linuxfoundation.org>
+        Sat, 20 Oct 2018 00:10:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oPdpR5gcW7QHsL2d/MOijsg33e39WfrLH8GatrLJgno=; b=bf1xZD0tJSCBvniqENLJUkjNZ
+        G09Ctify2NSsLBAB8TiRrRpp5VWYhnmJV64GeYfujciY0ql5IfPJ1tRyCO9bflSPxWl+5Sk3YwhE7
+        eo+bY573wWpXPtg6G62hCYdAk0pgamV8xNRK8eV7sZbDHrE2xnVW50F9ERmyn9SDr6ymCPyDLqi5g
+        mt2Wk3hAzvk5P85odjmg0g7XWYdSnEq+ZmAP25w0i3eUSuQqBFpAqwLk2JapN8YcapEitajJUnplc
+        ro59DfyCZSRjLo7fbA7dy5Ul00Sej/hrC5KRuCH+JAUj9D+c63b2sEVjUFlN7Fig8sgYVtBAslyny
+        3SeBBVbmg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gDayb-0000k4-VN; Fri, 19 Oct 2018 20:02:30 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 28503202A40A2; Fri, 19 Oct 2018 22:02:27 +0200 (CEST)
+Date:   Fri, 19 Oct 2018 22:02:27 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [Patch v3 06/13] mm: Pass task instead of task->mm as argument
+ to set_dumpable
+Message-ID: <20181019200227.GC31016@hirez.programming.kicks-ass.net>
+References: <cover.1539798901.git.tim.c.chen@linux.intel.com>
+ <c793fcd092063a68f1de7ce982df2ebb347a3542.1539798901.git.tim.c.chen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <c793fcd092063a68f1de7ce982df2ebb347a3542.1539798901.git.tim.c.chen@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 07:54:35PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.162 release.
-> There are 48 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat Oct 20 17:54:03 UTC 2018.
-> Anything received after that time might be too late.
-> 
+On Wed, Oct 17, 2018 at 10:59:34AM -0700, Tim Chen wrote:
+> Change the argument to set_dumpable from task->mm to task.  This allows us
+> to later add hooks to modify a task's property according to whether it is
+> a non-dumpable task. Non dumpable tasks demand a higher level of security.
+> Changes the dumpable value from in to unsigned int as negative number is
+> not allowed.
 
-For v4.4.161-49-g3918330:
+Per task dumpable doesn't make any kind of sense. Dumpable is about
+coredumps, that's an mm property.
 
-Build results:
-	total: 150 pass: 150 fail: 0
-Qemu test results:
-	total: 285 pass: 285 fail: 0
-
-Details are available at https://kerneltests.org/builders/.
-
-Guenter
+If you want to introduce other (per task) state; give that a new name
+and check for that explicitly. Don't create confusion like this.
