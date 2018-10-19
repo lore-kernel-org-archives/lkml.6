@@ -6,49 +6,48 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 818A2ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B9BECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 305232087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:29:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C184B2087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:29:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="pvBre4Tj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 305232087A
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="WBahQy/3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C184B2087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727348AbeJSUf2 (ORCPT
+        id S1727426AbeJSUfc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:35:28 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43766 "EHLO
+        Fri, 19 Oct 2018 16:35:32 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43912 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbeJSUf1 (ORCPT
+        with ESMTP id S1726609AbeJSUfc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:35:27 -0400
+        Fri, 19 Oct 2018 16:35:32 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=stTohkAM0VrQtox+epeCOVa0bu2RyOIYJ5g1Kg1Ugvw=; b=pvBre4Tjmkfn
-        bFLk9QEJPoB0pUICll8lnOsAi4uj+5SEF5LLKJmNz08aq7uRF5/NbaMyC7vgHwkwzCOqBWM9gE9gL
-        cBsbJc/3pZ83lpRo9rSZwefDh5NxUaru6I8YBf3mnsn7iJgFii7+4vJaOvcMOG6FMvMO0vH/ojdZ7
-        bwCbU=;
+        List-Archive; bh=9NfnbJzx6hqcMB0vqyMSMQijHRMIMnezZtKr84yeW18=; b=WBahQy/3YWMx
+        c4a7PJJ7jiHxbNafwlGg1tF3x163lx26x6HzBSqYTS8IOTfpOLhbQma0tW/wmJP2DqT8KUIMyN9MR
+        nYjD2CKWbbNqDd2Shfu9pRluo8JTPMukcJ5iz2QWybZQSIpglEWCcELxcKilMdXreEQm+/5eysOM8
+        lZHH0=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gDTuE-0008WJ-3J; Fri, 19 Oct 2018 12:29:30 +0000
+        id 1gDTuK-0008WR-IA; Fri, 19 Oct 2018 12:29:36 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D2E071122548; Fri, 19 Oct 2018 13:29:29 +0100 (BST)
+        id 445E11122548; Fri, 19 Oct 2018 13:29:36 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Ben Whitten <ben.whitten@gmail.com>
-Cc:     Ben Whitten <ben.whitten@lairdtech.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regmap: Add regmap_noinc_write API" to the regmap tree
+To:     Axel Lin <axel.lin@ingics.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: bd718x7: Remove struct bd718xx_pmic" to the regulator tree
 In-Reply-To: 
-Message-Id: <20181019122929.D2E071122548@debutante.sirena.org.uk>
-Date:   Fri, 19 Oct 2018 13:29:29 +0100 (BST)
+Message-Id: <20181019122936.445E11122548@debutante.sirena.org.uk>
+Date:   Fri, 19 Oct 2018 13:29:36 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -56,11 +55,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regmap: Add regmap_noinc_write API
+   regulator: bd718x7: Remove struct bd718xx_pmic
 
-has been applied to the regmap tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -81,231 +80,198 @@ to this mail.
 Thanks,
 Mark
 
-From cdf6b11daa77d4b55ddf0530842a551cc5562a93 Mon Sep 17 00:00:00 2001
-From: Ben Whitten <ben.whitten@gmail.com>
-Date: Fri, 19 Oct 2018 10:33:50 +0100
-Subject: [PATCH] regmap: Add regmap_noinc_write API
+From bcb047ebf28453da56f0265aeeb9edc52b797ea7 Mon Sep 17 00:00:00 2001
+From: Axel Lin <axel.lin@ingics.com>
+Date: Thu, 4 Oct 2018 15:25:58 +0800
+Subject: [PATCH] regulator: bd718x7: Remove struct bd718xx_pmic
 
-The regmap API had a noinc_read function added for instances where devices
-supported returning data from an internal FIFO in a single read.
+All the fields in struct bd718xx_pmic are not really necessary.
+Remove struct bd718xx_pmic to simplify the code.
 
-This commit adds the noinc_write variant to allow writing to a non
-incrementing register, this is used in devices such as the sx1301 for
-loading firmware.
-
-Signed-off-by: Ben Whitten <ben.whitten@lairdtech.com>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/base/regmap/internal.h |  3 ++
- drivers/base/regmap/regmap.c   | 77 ++++++++++++++++++++++++++++++++++
- include/linux/regmap.h         | 19 +++++++++
- 3 files changed, 99 insertions(+)
+ drivers/regulator/bd718x7-regulator.c | 59 +++++++++------------------
+ include/linux/mfd/rohm-bd718x7.h      |  2 -
+ 2 files changed, 20 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/base/regmap/internal.h b/drivers/base/regmap/internal.h
-index a6bf34d6394e..404f123cbe55 100644
---- a/drivers/base/regmap/internal.h
-+++ b/drivers/base/regmap/internal.h
-@@ -94,11 +94,13 @@ struct regmap {
- 	bool (*readable_reg)(struct device *dev, unsigned int reg);
- 	bool (*volatile_reg)(struct device *dev, unsigned int reg);
- 	bool (*precious_reg)(struct device *dev, unsigned int reg);
-+	bool (*writeable_noinc_reg)(struct device *dev, unsigned int reg);
- 	bool (*readable_noinc_reg)(struct device *dev, unsigned int reg);
- 	const struct regmap_access_table *wr_table;
- 	const struct regmap_access_table *rd_table;
- 	const struct regmap_access_table *volatile_table;
- 	const struct regmap_access_table *precious_table;
-+	const struct regmap_access_table *wr_noinc_table;
- 	const struct regmap_access_table *rd_noinc_table;
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index d2522d4e1505..3a47e0372e77 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -15,13 +15,6 @@
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/slab.h>
  
- 	int (*reg_read)(void *context, unsigned int reg, unsigned int *val);
-@@ -183,6 +185,7 @@ bool regmap_writeable(struct regmap *map, unsigned int reg);
- bool regmap_readable(struct regmap *map, unsigned int reg);
- bool regmap_volatile(struct regmap *map, unsigned int reg);
- bool regmap_precious(struct regmap *map, unsigned int reg);
-+bool regmap_writeable_noinc(struct regmap *map, unsigned int reg);
- bool regmap_readable_noinc(struct regmap *map, unsigned int reg);
- 
- int _regmap_write(struct regmap *map, unsigned int reg,
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 0360a90ad6b6..d4f1fc642600 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -168,6 +168,17 @@ bool regmap_precious(struct regmap *map, unsigned int reg)
- 	return false;
- }
- 
-+bool regmap_writeable_noinc(struct regmap *map, unsigned int reg)
-+{
-+	if (map->writeable_noinc_reg)
-+		return map->writeable_noinc_reg(map->dev, reg);
-+
-+	if (map->wr_noinc_table)
-+		return regmap_check_range_table(map, reg, map->wr_noinc_table);
-+
-+	return true;
-+}
-+
- bool regmap_readable_noinc(struct regmap *map, unsigned int reg)
+-struct bd718xx_pmic {
+-	struct bd718xx_regulator_data *rdata;
+-	struct bd718xx *mfd;
+-	struct platform_device *pdev;
+-	struct regulator_dev *rdev[BD718XX_REGULATOR_AMOUNT];
+-};
+-
+ /*
+  * BUCK1/2/3/4
+  * BUCK1RAMPRATE[1:0] BUCK1 DVS ramp rate setting
+@@ -33,12 +26,10 @@ struct bd718xx_pmic {
+ static int bd718xx_buck1234_set_ramp_delay(struct regulator_dev *rdev,
+ 					   int ramp_delay)
  {
- 	if (map->readable_noinc_reg)
-@@ -777,11 +788,13 @@ struct regmap *__regmap_init(struct device *dev,
- 	map->rd_table = config->rd_table;
- 	map->volatile_table = config->volatile_table;
- 	map->precious_table = config->precious_table;
-+	map->wr_noinc_table = config->wr_noinc_table;
- 	map->rd_noinc_table = config->rd_noinc_table;
- 	map->writeable_reg = config->writeable_reg;
- 	map->readable_reg = config->readable_reg;
- 	map->volatile_reg = config->volatile_reg;
- 	map->precious_reg = config->precious_reg;
-+	map->writeable_noinc_reg = config->writeable_noinc_reg;
- 	map->readable_noinc_reg = config->readable_noinc_reg;
- 	map->cache_type = config->cache_type;
+-	struct bd718xx_pmic *pmic = rdev_get_drvdata(rdev);
+-	struct bd718xx *mfd = pmic->mfd;
+ 	int id = rdev->desc->id;
+ 	unsigned int ramp_value = BUCK_RAMPRATE_10P00MV;
  
-@@ -1298,6 +1311,7 @@ int regmap_reinit_cache(struct regmap *map, const struct regmap_config *config)
- 	map->readable_reg = config->readable_reg;
- 	map->volatile_reg = config->volatile_reg;
- 	map->precious_reg = config->precious_reg;
-+	map->writeable_noinc_reg = config->writeable_noinc_reg;
- 	map->readable_noinc_reg = config->readable_noinc_reg;
- 	map->cache_type = config->cache_type;
+-	dev_dbg(&pmic->pdev->dev, "Buck[%d] Set Ramp = %d\n", id + 1,
++	dev_dbg(&rdev->dev, "Buck[%d] Set Ramp = %d\n", id + 1,
+ 		ramp_delay);
+ 	switch (ramp_delay) {
+ 	case 1 ... 1250:
+@@ -55,12 +46,12 @@ static int bd718xx_buck1234_set_ramp_delay(struct regulator_dev *rdev,
+ 		break;
+ 	default:
+ 		ramp_value = BUCK_RAMPRATE_10P00MV;
+-		dev_err(&pmic->pdev->dev,
++		dev_err(&rdev->dev,
+ 			"%s: ramp_delay: %d not supported, setting 10000mV//us\n",
+ 			rdev->desc->name, ramp_delay);
+ 	}
  
-@@ -1897,6 +1911,69 @@ int regmap_raw_write(struct regmap *map, unsigned int reg,
- }
- EXPORT_SYMBOL_GPL(regmap_raw_write);
- 
-+/**
-+ * regmap_noinc_write(): Write data from a register without incrementing the
-+ *			register number
-+ *
-+ * @map: Register map to write to
-+ * @reg: Register to write to
-+ * @val: Pointer to data buffer
-+ * @val_len: Length of output buffer in bytes.
-+ *
-+ * The regmap API usually assumes that bulk bus write operations will write a
-+ * range of registers. Some devices have certain registers for which a write
-+ * operation can write to an internal FIFO.
-+ *
-+ * The target register must be volatile but registers after it can be
-+ * completely unrelated cacheable registers.
-+ *
-+ * This will attempt multiple writes as required to write val_len bytes.
-+ *
-+ * A value of zero will be returned on success, a negative errno will be
-+ * returned in error cases.
-+ */
-+int regmap_noinc_write(struct regmap *map, unsigned int reg,
-+		      const void *val, size_t val_len)
-+{
-+	size_t write_len;
-+	int ret;
-+
-+	if (!map->bus)
-+		return -EINVAL;
-+	if (!map->bus->write)
-+		return -ENOTSUPP;
-+	if (val_len % map->format.val_bytes)
-+		return -EINVAL;
-+	if (!IS_ALIGNED(reg, map->reg_stride))
-+		return -EINVAL;
-+	if (val_len == 0)
-+		return -EINVAL;
-+
-+	map->lock(map->lock_arg);
-+
-+	if (!regmap_volatile(map, reg) || !regmap_writeable_noinc(map, reg)) {
-+		ret = -EINVAL;
-+		goto out_unlock;
-+	}
-+
-+	while (val_len) {
-+		if (map->max_raw_write && map->max_raw_write < val_len)
-+			write_len = map->max_raw_write;
-+		else
-+			write_len = val_len;
-+		ret = _regmap_raw_write(map, reg, val, write_len);
-+		if (ret)
-+			goto out_unlock;
-+		val = ((u8 *)val) + write_len;
-+		val_len -= write_len;
-+	}
-+
-+out_unlock:
-+	map->unlock(map->lock_arg);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(regmap_noinc_write);
-+
- /**
-  * regmap_field_update_bits_base() - Perform a read/modify/write cycle a
-  *                                   register field.
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index 379505a53722..de04dc46c7a9 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -268,6 +268,13 @@ typedef void (*regmap_unlock)(void *);
-  *                field is NULL but precious_table (see below) is not, the
-  *                check is performed on such table (a register is precious if
-  *                it belongs to one of the ranges specified by precious_table).
-+ * @writeable_noinc_reg: Optional callback returning true if the register
-+ *			supports multiple write operations without incrementing
-+ *			the register number. If this field is NULL but
-+ *			wr_noinc_table (see below) is not, the check is
-+ *			performed on such table (a register is no increment
-+ *			writeable if it belongs to one of the ranges specified
-+ *			by wr_noinc_table).
-  * @readable_noinc_reg: Optional callback returning true if the register
-  *			supports multiple read operations without incrementing
-  *			the register number. If this field is NULL but
-@@ -302,6 +309,7 @@ typedef void (*regmap_unlock)(void *);
-  * @rd_table:     As above, for read access.
-  * @volatile_table: As above, for volatile registers.
-  * @precious_table: As above, for precious registers.
-+ * @wr_noinc_table: As above, for no increment writeable registers.
-  * @rd_noinc_table: As above, for no increment readable registers.
-  * @reg_defaults: Power on reset values for registers (for use with
-  *                register cache support).
-@@ -352,6 +360,7 @@ struct regmap_config {
- 	bool (*readable_reg)(struct device *dev, unsigned int reg);
- 	bool (*volatile_reg)(struct device *dev, unsigned int reg);
- 	bool (*precious_reg)(struct device *dev, unsigned int reg);
-+	bool (*writeable_noinc_reg)(struct device *dev, unsigned int reg);
- 	bool (*readable_noinc_reg)(struct device *dev, unsigned int reg);
- 
- 	bool disable_locking;
-@@ -369,6 +378,7 @@ struct regmap_config {
- 	const struct regmap_access_table *rd_table;
- 	const struct regmap_access_table *volatile_table;
- 	const struct regmap_access_table *precious_table;
-+	const struct regmap_access_table *wr_noinc_table;
- 	const struct regmap_access_table *rd_noinc_table;
- 	const struct reg_default *reg_defaults;
- 	unsigned int num_reg_defaults;
-@@ -979,6 +989,8 @@ int regmap_write(struct regmap *map, unsigned int reg, unsigned int val);
- int regmap_write_async(struct regmap *map, unsigned int reg, unsigned int val);
- int regmap_raw_write(struct regmap *map, unsigned int reg,
- 		     const void *val, size_t val_len);
-+int regmap_noinc_write(struct regmap *map, unsigned int reg,
-+		     const void *val, size_t val_len);
- int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
- 			size_t val_count);
- int regmap_multi_reg_write(struct regmap *map, const struct reg_sequence *regs,
-@@ -1222,6 +1234,13 @@ static inline int regmap_raw_write_async(struct regmap *map, unsigned int reg,
- 	return -EINVAL;
+-	return regmap_update_bits(mfd->regmap, BD718XX_REG_BUCK1_CTRL + id,
++	return regmap_update_bits(rdev->regmap, BD718XX_REG_BUCK1_CTRL + id,
+ 				  BUCK_RAMPRATE_MASK, ramp_value << 6);
  }
  
-+static inline int regmap_noinc_write(struct regmap *map, unsigned int reg,
-+				    const void *val, size_t val_len)
-+{
-+	WARN_ONCE(1, "regmap API is disabled");
-+	return -EINVAL;
-+}
-+
- static inline int regmap_bulk_write(struct regmap *map, unsigned int reg,
- 				    const void *val, size_t val_count)
+@@ -1022,7 +1013,7 @@ struct bd718xx_pmic_inits {
+ 
+ static int bd718xx_probe(struct platform_device *pdev)
  {
+-	struct bd718xx_pmic *pmic;
++	struct bd718xx *mfd;
+ 	struct regulator_config config = { 0 };
+ 	struct bd718xx_pmic_inits pmic_regulators[] = {
+ 		[BD718XX_TYPE_BD71837] = {
+@@ -1037,54 +1028,46 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 
+ 	int i, j, err;
+ 
+-	pmic = devm_kzalloc(&pdev->dev, sizeof(*pmic), GFP_KERNEL);
+-	if (!pmic)
+-		return -ENOMEM;
+-
+-	pmic->pdev = pdev;
+-	pmic->mfd = dev_get_drvdata(pdev->dev.parent);
+-
+-	if (!pmic->mfd) {
++	mfd = dev_get_drvdata(pdev->dev.parent);
++	if (!mfd) {
+ 		dev_err(&pdev->dev, "No MFD driver data\n");
+ 		err = -EINVAL;
+ 		goto err;
+ 	}
+-	if (pmic->mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
+-	    !pmic_regulators[pmic->mfd->chip_type].r_datas) {
++
++	if (mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
++	    !pmic_regulators[mfd->chip_type].r_datas) {
+ 		dev_err(&pdev->dev, "Unsupported chip type\n");
+ 		err = -EINVAL;
+ 		goto err;
+ 	}
+ 
+-	platform_set_drvdata(pdev, pmic);
+-
+ 	/* Register LOCK release */
+-	err = regmap_update_bits(pmic->mfd->regmap, BD718XX_REG_REGLOCK,
++	err = regmap_update_bits(mfd->regmap, BD718XX_REG_REGLOCK,
+ 				 (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
+ 	if (err) {
+-		dev_err(&pmic->pdev->dev, "Failed to unlock PMIC (%d)\n", err);
++		dev_err(&pdev->dev, "Failed to unlock PMIC (%d)\n", err);
+ 		goto err;
+ 	} else {
+-		dev_dbg(&pmic->pdev->dev, "Unlocked lock register 0x%x\n",
++		dev_dbg(&pdev->dev, "Unlocked lock register 0x%x\n",
+ 			BD718XX_REG_REGLOCK);
+ 	}
+ 
+-	for (i = 0; i < pmic_regulators[pmic->mfd->chip_type].r_amount; i++) {
++	for (i = 0; i < pmic_regulators[mfd->chip_type].r_amount; i++) {
+ 
+ 		const struct regulator_desc *desc;
+ 		struct regulator_dev *rdev;
+ 		const struct bd718xx_regulator_data *r;
+ 
+-		r = &(*pmic_regulators[pmic->mfd->chip_type].r_datas)[i];
++		r = &(*pmic_regulators[mfd->chip_type].r_datas)[i];
+ 		desc = &r->desc;
+ 
+ 		config.dev = pdev->dev.parent;
+-		config.driver_data = pmic;
+-		config.regmap = pmic->mfd->regmap;
++		config.regmap = mfd->regmap;
+ 
+ 		rdev = devm_regulator_register(&pdev->dev, desc, &config);
+ 		if (IS_ERR(rdev)) {
+-			dev_err(pmic->mfd->dev,
++			dev_err(&pdev->dev,
+ 				"failed to register %s regulator\n",
+ 				desc->name);
+ 			err = PTR_ERR(rdev);
+@@ -1096,28 +1079,26 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		 * can now switch the control from PMIC state machine to the
+ 		 * register interface
+ 		 */
+-		err = regmap_update_bits(pmic->mfd->regmap, r->init.reg,
++		err = regmap_update_bits(mfd->regmap, r->init.reg,
+ 					 r->init.mask, r->init.val);
+ 		if (err) {
+-			dev_err(&pmic->pdev->dev,
++			dev_err(&pdev->dev,
+ 				"Failed to write BUCK/LDO SEL bit for (%s)\n",
+ 				desc->name);
+ 			goto err;
+ 		}
+ 		for (j = 0; j < r->additional_init_amnt; j++) {
+-			err = regmap_update_bits(pmic->mfd->regmap,
++			err = regmap_update_bits(mfd->regmap,
+ 						 r->additional_inits[j].reg,
+ 						 r->additional_inits[j].mask,
+ 						 r->additional_inits[j].val);
+ 			if (err) {
+-				dev_err(&pmic->pdev->dev,
++				dev_err(&pdev->dev,
+ 					"Buck (%s) initialization failed\n",
+ 					desc->name);
+ 				goto err;
+ 			}
+ 		}
+-
+-		pmic->rdev[i] = rdev;
+ 	}
+ 
+ err:
+diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
+index 26acf9a92498..fd194bfc836f 100644
+--- a/include/linux/mfd/rohm-bd718x7.h
++++ b/include/linux/mfd/rohm-bd718x7.h
+@@ -321,7 +321,6 @@ enum {
+ 	BD718XX_PWRBTN_LONG_PRESS_15S
+ };
+ 
+-struct bd718xx_pmic;
+ struct bd718xx_clk;
+ 
+ struct bd718xx {
+@@ -333,7 +332,6 @@ struct bd718xx {
+ 	int chip_irq;
+ 	struct regmap_irq_chip_data *irq_data;
+ 
+-	struct bd718xx_pmic *pmic;
+ 	struct bd718xx_clk *clk;
+ };
+ 
 -- 
 2.19.0.rc2
 
