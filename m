@@ -2,89 +2,92 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A2CECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD2AECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8A1E21486
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:59:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jagnw5Ye"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8A1E21486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id C01F321479
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:02:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C01F321479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbeJSTEd (ORCPT
+        id S1727187AbeJSTH4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 15:04:33 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42184 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbeJSTEd (ORCPT
+        Fri, 19 Oct 2018 15:07:56 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:35427 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726987AbeJSTH4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 15:04:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=L2HhGR0Jvs5NQOqmSuWE7snZ2hvk4LUH6PSmxPO6MfY=; b=Jagnw5Ye34yPxo+qne0ftlsRN
-        Mys2xteLfLLwEkoYzu72fgpj3i4+yvylciN17Zc7gLkGBOfwScQgtLlZb2qXvzKXn/jOfdc+GtjnW
-        vG3dYHyIz+75e79Uoc3pW5wmlh2575CHQa9K2E/157KfawvLLXuh5FZnzxkm/QA9k3mDXZNMG/kci
-        9N0sKPgi2PZ1NU3B5N4apORPgRRrO6TPyHt1SlCne5VIeuRA4EMm293sEN9kfuoZjPBqJlSLMxCtz
-        KJQrBDXoHx0pCtMqKnMmtYaC3xFIlJmRjXckiHH/fXLcOeyOnw3jG3TfJU4JiTSrMs/oj2mXsB+eR
-        nR6m9FtFA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gDSUX-0005JY-SH; Fri, 19 Oct 2018 10:58:54 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8268020297B7B; Fri, 19 Oct 2018 12:58:51 +0200 (CEST)
-Date:   Fri, 19 Oct 2018 12:58:51 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Clark Williams <williams@redhat.com>,
-        Alexander Potapenko <glider@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] mm/kasan: make quarantine_lock a raw_spinlock_t
-Message-ID: <20181019105851.GG3121@hirez.programming.kicks-ass.net>
-References: <20181009142742.ikh7xv2dn5skjjbe@linutronix.de>
- <CACT4Y+ZB38pKvT8+BAjDZ1t4ZjXQQKoya+ytXT+ASQxHUkWwnA@mail.gmail.com>
- <20181010092929.a5gd3fkkw6swco4c@linutronix.de>
- <CACT4Y+agGPSTZ-8A8r8haSeRM8UpRYMAF8BC4A87yeM9nvpP6w@mail.gmail.com>
- <20181010095343.6qxved3owi6yokoa@linutronix.de>
- <CACT4Y+ZpMjYBPS0GHP0AsEJZZmDjwV9DJBiVUzYKBnD+r9W4+A@mail.gmail.com>
- <20181010214945.5owshc3mlrh74z4b@linutronix.de>
- <20181012165655.f067886428a394dc7fbae7af@linux-foundation.org>
- <20181013135058.GC4931@worktop.programming.kicks-ass.net>
- <20181015163529.30ed9b0ac18e20dd975f4253@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181015163529.30ed9b0ac18e20dd975f4253@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 19 Oct 2018 15:07:56 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gDSXs-0000CA-F6; Fri, 19 Oct 2018 13:02:20 +0200
+Message-ID: <1539946939.3688.58.camel@pengutronix.de>
+Subject: Re: [PATCH 1/2] media: mst3367: add support for mstar mst3367 HDMI
+ RX
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Michael Grzeschik <m.grzeschik@pengutronix.de>,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, stoth@kernellabs.com,
+        laurent.pinchart@ideasonboard.com, kernel@pengutronix.de,
+        mchehab@kernel.org, davem@davemloft.net
+Date:   Fri, 19 Oct 2018 13:02:19 +0200
+In-Reply-To: <20181019105439.27796-2-m.grzeschik@pengutronix.de>
+References: <20181019105439.27796-1-m.grzeschik@pengutronix.de>
+         <20181019105439.27796-2-m.grzeschik@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 04:35:29PM -0700, Andrew Morton wrote:
-> On Sat, 13 Oct 2018 15:50:58 +0200 Peter Zijlstra <peterz@infradead.org> wrote:
+Am Freitag, den 19.10.2018, 12:54 +0200 schrieb Michael Grzeschik:
+> > From: Steven Toth <stoth@kernellabs.com>
 > 
-> > The whole raw_spinlock_t is for RT, no other reason.
+> This patch is based on the work of Steven Toth. He reverse engineered
+> the driver by tracing the windows driver.
 > 
-> Oh.  I never realised that.
+> https://github.com/stoth68000/hdcapm/
 > 
-> Is this documented anywhere?  Do there exist guidelines which tell
-> non-rt developers and reviewers when it should be used?
+> > Signed-off-by: Steven Toth <stoth@kernellabs.com>
+> > Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+> ---
+>  MAINTAINERS                 |    6 +
+>  drivers/media/i2c/Kconfig   |   10 +
+>  drivers/media/i2c/Makefile  |    1 +
+>  drivers/media/i2c/mst3367.c | 1104 +++++++++++++++++++++++++++++++++++
+>  include/media/i2c/mst3367.h |   29 +
+>  5 files changed, 1150 insertions(+)
+>  create mode 100644 drivers/media/i2c/mst3367.c
+>  create mode 100644 include/media/i2c/mst3367.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 556f902b3766..9c69b7f9b2f9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9787,6 +9787,12 @@ L:	linux-mtd@lists.infradead.org
+> >  S:	Maintained
+> >  F:	drivers/mtd/devices/docg3*
+>  
+> +MT9M032 APTINA SENSOR DRIVER
+> > > +M:	Michael Grzeschik <m.grzeschik@pengutronix.de>
+> > +S:	Maintained
+> > +F:	drivers/media/i2c/mst3367.c
+> > +F:	include/media/i2c/mst3367.h
 
-I'm afraid not; I'll put it on the todo list ... I've also been working
-on some lockdep validation for the lock order stuff.
+Das sollte nicht in diesem Patch landen, oder?
+
+Gruß
+Lucas
