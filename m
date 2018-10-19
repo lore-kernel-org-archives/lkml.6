@@ -2,230 +2,439 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D10ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04AD3ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E69F120658
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:28:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E69F120658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id A2E5520658
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:32:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2E5520658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727824AbeJTAet (ORCPT
+        id S1727832AbeJTAiz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 20:34:49 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60910 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727038AbeJTAes (ORCPT
+        Fri, 19 Oct 2018 20:38:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40576 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727482AbeJTAiz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 20:34:48 -0400
-Received: from [IPv6:2a00:5f00:102:0:ba02:a122:2d73:c919] (unknown [IPv6:2a00:5f00:102:0:ba02:a122:2d73:c919])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: koike)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id C0D90260CC2;
-        Fri, 19 Oct 2018 17:27:57 +0100 (BST)
-Subject: Re: [PATCH 0/2] boot to a mapped device
-To:     Mike Snitzer <snitzer@redhat.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Richard Weinberger <richard.weinberger@gmail.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        Alasdair G Kergon <agk@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Will Drewry <wad@chromium.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-lvm@redhat.com, kernel@collabora.com
-References: <cover.1537936397.git.helen.koike@collabora.com>
- <CAFLxGvzCDOTR4stPmp1TTLkQ39x3e8MQuL=AR754abKc5skhpA@mail.gmail.com>
- <20180927142328.GA4074@redhat.com>
- <CAGXu5j+Y5e_oTZVCAHa48XgVcvEKGnVW_74oXZOUyLnfYPAjAg@mail.gmail.com>
- <20180927183141.GA4921@redhat.com>
-From:   Helen Koike <helen.koike@collabora.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=helen.koike@collabora.com; keydata=
- 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
-Message-ID: <90071912-047f-fb7b-3372-32cca9f2de06@collabora.com>
-Date:   Fri, 19 Oct 2018 13:27:55 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 19 Oct 2018 20:38:55 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9JGTVqk085427
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 12:32:04 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2n7fcram7v-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 12:32:02 -0400
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
+        Fri, 19 Oct 2018 10:32:01 -0600
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 19 Oct 2018 10:31:56 -0600
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9JGVtWL27721772
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 19 Oct 2018 09:31:55 -0700
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1AF65136059;
+        Fri, 19 Oct 2018 16:31:55 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1EE59136055;
+        Fri, 19 Oct 2018 16:31:54 +0000 (GMT)
+Received: from [9.41.179.222] (unknown [9.41.179.222])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri, 19 Oct 2018 16:31:53 +0000 (GMT)
+Subject: Re: [PATCH v4 2/2] media: platform: Add Aspeed Video Engine driver
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Eddie James <eajames@linux.ibm.com>,
+        linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, andrew@aj.id.au,
+        openbmc@lists.ozlabs.org, robh+dt@kernel.org, mchehab@kernel.org,
+        linux-media@vger.kernel.org
+References: <1538769466-14860-1-git-send-email-eajames@linux.ibm.com>
+ <1538769466-14860-3-git-send-email-eajames@linux.ibm.com>
+ <4a02833e-67a6-ec4f-d2f6-e0368412eca8@xs4all.nl>
+From:   Eddie James <eajames@linux.vnet.ibm.com>
+Date:   Fri, 19 Oct 2018 11:31:53 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180927183141.GA4921@redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <4a02833e-67a6-ec4f-d2f6-e0368412eca8@xs4all.nl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18101916-0020-0000-0000-00000E7C8228
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009901; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01105004; UDB=6.00572094; IPR=6.00885054;
+ MB=3.00023825; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-19 16:31:59
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101916-0021-0000-0000-0000636EB12D
+Message-Id: <8f204b56-71a9-7df8-ffb2-46b8a2935065@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-19_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810190146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
 
-Sorry the delay of my reply.
 
-On 9/27/18 3:31 PM, Mike Snitzer wrote:
-> On Thu, Sep 27 2018 at 12:36pm -0400,
-> Kees Cook <keescook@chromium.org> wrote:
-> 
->> On Thu, Sep 27, 2018 at 7:23 AM, Mike Snitzer <snitzer@redhat.com> wrote:
->>> On Wed, Sep 26 2018 at  3:16am -0400,
->>> Richard Weinberger <richard.weinberger@gmail.com> wrote:
->>>
->>>> Helen,
->>>>
->>>> On Wed, Sep 26, 2018 at 7:01 AM Helen Koike <helen.koike@collabora.com> wrote:
->>>>>
->>>>> This series is reviving an old patchwork.
->>>>> Booting from a mapped device requires an initramfs. This series is
->>>>> allows for device-mapper targets to be configured at boot time for
->>>>> use early in the boot process (as the root device or otherwise).
->>>>
->>>> What is the reason for this patch series?
->>>> Setting up non-trivial root filesystems/storage always requires an
->>>> initramfs, there is nothing
->>>> wrong about this.
->>>
->>> Exactly.  If phones or whatever would benefit from this patchset then
->>> say as much.
+On 10/17/2018 05:41 AM, Hans Verkuil wrote:
+> On 10/05/2018 09:57 PM, Eddie James wrote:
+>> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+>> can capture and compress video data from digital or analog sources. With
+>> the Aspeed chip acting a service processor, the Video Engine can capture
+>> the host processor graphics output.
 >>
->> I think some of the context for the series was lost in commit logs,
->> but yes, both Android and Chrome OS do not use initramfs. The only
->> thing that was needed to do this was being able to configure dm
->> devices on the kernel command line, so the overhead of a full
->> initramfs was seen as a boot time liability, a boot image size
->> liability (e.g. Chrome OS has a limited amount of storage available
->> for the boot image that is covered by the static root of trust
->> signature), and a complexity risk: everything that is needed for boot
->> could be specified on the kernel command line, so better to avoid the
->> whole initramfs dance.
+>> Add a V4L2 driver to capture video data and compress it to JPEG images.
+>> Make the video frames available through the V4L2 streaming interface.
 >>
->> So, instead, this plumbs the dm commands directly instead of bringing
->> up a full userspace and performing ioctls.
-
-Sorry about the missing context, I should've added the change log and
-worked a bit more in the cover letter with a more verbose explanation on
-the reasons for this patch.
-
-Just for reference (I'll describe better the changes in the next version):
-
-v5: https://www.redhat.com/archives/dm-devel/2016-February/msg00112.html
-v6: https://www.redhat.com/archives/dm-devel/2017-April/msg00316.html
-v7: http://lkml.iu.edu/hypermail/linux/kernel/1705.2/02657.html
-v8: https://www.redhat.com/archives/linux-lvm/2017-May/msg00055.html
-
+>> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+>> ---
+>>   MAINTAINERS                           |    8 +
+>>   drivers/media/platform/Kconfig        |    8 +
+>>   drivers/media/platform/Makefile       |    1 +
+>>   drivers/media/platform/aspeed-video.c | 1674 +++++++++++++++++++++++++++++++++
+>>   4 files changed, 1691 insertions(+)
+>>   create mode 100644 drivers/media/platform/aspeed-video.c
 >>
->>> I will not accept this patchset at this time.
->>>
->>>>> Example, the following could be added in the boot parameters.
->>>>> dm="lroot,,,rw, 0 4096 linear 98:16 0, 4096 4096 linear 98:32 0" root=/dev/dm-0
->>>>
->>>> Hmmm, the new dm= parameter is anything but easy to get right.
->>>
->>> No, it isn't.. exposes way too much potential for users hanging
->>> themselves.
->>
->> IIRC, the changes in syntax were suggested back when I was trying to
->> drive this series:
->> https://www.redhat.com/archives/dm-devel/2016-February/msg00199.html
->>
->> And it matches the "concise" format in dmsetup:
->> https://sourceware.org/git/?p=lvm2.git;a=commit;h=827be01758ec5adb7b9d5ea75b658092adc65534
+> <snip>
+>
+>> +static void aspeed_video_check_polarity(struct aspeed_video *video)
+>> +{
+>> +	int i;
+>> +	int hsync_counter = 0;
+>> +	int vsync_counter = 0;
+>> +	u32 sts;
+>> +
+>> +	for (i = 0; i < NUM_POLARITY_CHECKS; ++i) {
+>> +		sts = aspeed_video_read(video, VE_MODE_DETECT_STATUS);
+>> +		if (sts & VE_MODE_DETECT_STATUS_VSYNC)
+>> +			vsync_counter--;
+>> +		else
+>> +			vsync_counter++;
+>> +
+>> +		if (sts & VE_MODE_DETECT_STATUS_HSYNC)
+>> +			hsync_counter--;
+>> +		else
+>> +			hsync_counter++;
+>> +	}
+>> +
+>> +	if (hsync_counter < 0 || vsync_counter < 0) {
+>> +		u32 ctrl;
+>> +
+>> +		if (hsync_counter < 0)
+>> +			ctrl = VE_CTRL_HSYNC_POL;
+>> +		else
+>> +			video->timings.polarities |= V4L2_DV_HSYNC_POS_POL;
+>> +
+>> +		if (vsync_counter < 0)
+>> +			ctrl = VE_CTRL_VSYNC_POL;
+>> +		else
+>> +			video->timings.polarities |= V4L2_DV_VSYNC_POS_POL;
+>> +
+>> +		aspeed_video_update(video, VE_CTRL, 0, ctrl);
+>> +	}
+>> +}
+>> +
+>> +static bool aspeed_video_alloc_buf(struct aspeed_video *video,
+>> +				   struct aspeed_video_addr *addr,
+>> +				   unsigned int size)
+>> +{
+>> +	addr->virt = dma_alloc_coherent(video->dev, size, &addr->dma,
+>> +					GFP_KERNEL);
+>> +	if (!addr->virt)
+>> +		return false;
+>> +
+>> +	addr->size = size;
+>> +	return true;
+>> +}
+>> +
+>> +static void aspeed_video_free_buf(struct aspeed_video *video,
+>> +				  struct aspeed_video_addr *addr)
+>> +{
+>> +	dma_free_coherent(video->dev, addr->size, addr->virt, addr->dma);
+>> +	addr->size = 0;
+>> +	addr->dma = 0ULL;
+>> +	addr->virt = NULL;
+>> +}
+>> +
+>> +/*
+>> + * Get the minimum HW-supported compression buffer size for the frame size.
+>> + * Assume worst-case JPEG compression size is 1/8 raw size. This should be
+>> + * plenty even for maximum quality; any worse and the engine will simply return
+>> + * incomplete JPEGs.
+>> + */
+>> +static void aspeed_video_calc_compressed_size(struct aspeed_video *video)
+>> +{
+>> +	int i, j;
+>> +	u32 compression_buffer_size_reg = 0;
+>> +	unsigned int size;
+>> +	const unsigned int num_compression_packets = 4;
+>> +	const unsigned int compression_packet_size = 1024;
+>> +	const unsigned int max_compressed_size =
+>> +		video->width * video->height / 2;	/* 4 Bpp / 8 */
+>> +
+>> +	video->max_compressed_size = UINT_MAX;
+>> +
+>> +	for (i = 0; i < 6; ++i) {
+>> +		for (j = 0; j < 8; ++j) {
+>> +			size = (num_compression_packets << i) *
+>> +				(compression_packet_size << j);
+>> +			if (size < max_compressed_size)
+>> +				continue;
+>> +
+>> +			if (size < video->max_compressed_size) {
+>> +				compression_buffer_size_reg = (i << 3) | j;
+>> +				video->max_compressed_size = size;
+>> +			}
+>> +		}
+>> +	}
+>> +
+>> +	aspeed_video_write(video, VE_STREAM_BUF_SIZE,
+>> +			   compression_buffer_size_reg);
+>> +
+>> +	dev_dbg(video->dev, "max compressed size: %x\n",
+>> +		video->max_compressed_size);
+>> +}
+>> +
+>> +#define res_check(v) test_and_clear_bit(VIDEO_MODE_DETECT_DONE, &(v)->flags)
+>> +
+>> +static int aspeed_video_get_resolution(struct aspeed_video *video)
+>> +{
+>> +	bool invalid_resolution = true;
+>> +	int rc;
+>> +	int tries = 0;
+>> +	unsigned int bottom;
+>> +	unsigned int left;
+>> +	unsigned int right;
+>> +	unsigned int size;
+>> +	unsigned int top;
+>> +	u32 mds;
+>> +	u32 src_lr_edge;
+>> +	u32 src_tb_edge;
+>> +	u32 sync;
+>> +	struct aspeed_video_addr src;
+>> +
+>> +	if (video->srcs[1].size)
+>> +		aspeed_video_free_buf(video, &video->srcs[1]);
+>> +
+>> +	if (video->srcs[0].size >= VE_MAX_SRC_BUFFER_SIZE) {
+>> +		src = video->srcs[0];
+>> +	} else {
+>> +		if (video->srcs[0].size)
+>> +			aspeed_video_free_buf(video, &video->srcs[0]);
+>> +
+>> +		if (!aspeed_video_alloc_buf(video, &src,
+>> +					    VE_MAX_SRC_BUFFER_SIZE))
+>> +			goto err_mem;
+>> +	}
+>> +
+>> +	aspeed_video_write(video, VE_SRC0_ADDR, src.dma);
+>> +
+>> +	video->width = 0;
+>> +	video->height = 0;
+>> +
+>> +	do {
+>> +		if (tries) {
+>> +			set_current_state(TASK_INTERRUPTIBLE);
+>> +			if (schedule_timeout(INVALID_RESOLUTION_DELAY))
+>> +				return -EINTR;
+>> +		}
+>> +
+>> +		aspeed_video_start_mode_detect(video);
+>> +
+>> +		rc = wait_event_interruptible_timeout(video->wait,
+>> +						      res_check(video),
+>> +						      MODE_DETECT_TIMEOUT);
+>> +		if (!rc) {
+>> +			dev_err(video->dev, "timed out on 1st mode detect\n");
+>> +			aspeed_video_disable_mode_detect(video);
+>> +			return -ETIMEDOUT;
+>> +		}
+>> +
+>> +		/* Disable mode detect in order to re-trigger */
+>> +		aspeed_video_update(video, VE_SEQ_CTRL,
+>> +				    VE_SEQ_CTRL_TRIG_MODE_DET, 0);
+>> +
+>> +		aspeed_video_check_polarity(video);
+>> +
+>> +		aspeed_video_start_mode_detect(video);
+>> +
+>> +		rc = wait_event_interruptible_timeout(video->wait,
+>> +						      res_check(video),
+>> +						      MODE_DETECT_TIMEOUT);
+>> +		if (!rc) {
+>> +			dev_err(video->dev, "timed out on 2nd mode detect\n");
+>> +			aspeed_video_disable_mode_detect(video);
+>> +			return -ETIMEDOUT;
+>> +		}
+>> +
+>> +		src_lr_edge = aspeed_video_read(video, VE_SRC_LR_EDGE_DET);
+>> +		src_tb_edge = aspeed_video_read(video, VE_SRC_TB_EDGE_DET);
+>> +		mds = aspeed_video_read(video, VE_MODE_DETECT_STATUS);
+>> +		sync = aspeed_video_read(video, VE_SYNC_STATUS);
+>> +
+>> +		bottom = (src_tb_edge & VE_SRC_TB_EDGE_DET_BOT) >>
+>> +			VE_SRC_TB_EDGE_DET_BOT_SHF;
+>> +		top = src_tb_edge & VE_SRC_TB_EDGE_DET_TOP;
+>> +		video->timings.vfrontporch = top;
+>> +		video->timings.vbackporch = ((mds & VE_MODE_DETECT_V_LINES) >>
+>> +			VE_MODE_DETECT_V_LINES_SHF) - bottom;
+>> +		video->timings.vsync = (sync & VE_SYNC_STATUS_VSYNC) >>
+>> +			VE_SYNC_STATUS_VSYNC_SHF;
+>> +		if (top > bottom)
+>> +			continue;
+>> +
+>> +		right = (src_lr_edge & VE_SRC_LR_EDGE_DET_RT) >>
+>> +			VE_SRC_LR_EDGE_DET_RT_SHF;
+>> +		left = src_lr_edge & VE_SRC_LR_EDGE_DET_LEFT;
+>> +		video->timings.hfrontporch = left;
+>> +		video->timings.hbackporch = (mds & VE_MODE_DETECT_H_PIXELS) -
+>> +			right;
+>> +		video->timings.hsync = sync & VE_SYNC_STATUS_HSYNC;
+> It's a bit odd that timings.width/height isn't set here.
+>
+>> +		if (left > right)
+>> +			continue;
+>> +
+>> +		invalid_resolution = false;
+>> +	} while (invalid_resolution && (tries++ < INVALID_RESOLUTION_RETRIES));
+>> +
+>> +	if (invalid_resolution) {
+>> +		dev_err(video->dev, "invalid resolution detected\n");
+>> +		return -ERANGE;
+>> +	}
+> So far, so good. You now have detected the new resolution, but...
+>
+>> +
+>> +	video->height = (bottom - top) + 1;
+>> +	video->width = (right - left) + 1;
+>> +	size = video->height * video->width;
+> here and below you appear to actually switch the capture timings to the new
+> resolution as well.
 
-Exactly, this is the "concise" format from dmsetup, it also makes it
-easier for users to copy and paste from "dmsetup --concise", which
-doesn't mean this format is ideal, but imho keeping it consistent with
-dmsetup is a good thing, please let me know if you have any other ideas.
+Hmm. I'm not sure I understand, the video->height and width represent 
+the actual detected resolution. When a resolution change occurs, the 
+entire engine is switched off and all buffers are set to error state 
+(see the irq handler). Then (after a delay to wait for VGA stability) 
+the engine is switched back on and the new resolution detected.
 
->>
->> What do you feel are next steps?
-> 
-> There is quite a lot of init/ code, to handle parsing the concise DM
-> format, that is being proposed for inclusion.  I question why that
-> DM-specific code would be located in init/
+Regardless of how I keep track of the resolution, the video engine will 
+return frames of the new size. The driver cannot control the actual 
+resolution.
 
-The main reason was that, taking "md=" and "raid=" as a reference, its
-command line arguments are parsed in init/do_mounts_md.c, I could move
-the parsing logic to drivers/md/* but I was wondering if it wouldn't be
-better to be consistent with init/do_mounts_md.c, what do you think?
+If userspace is determined to ignore the source change event, probably 
+there will be bad memory access regardless of how everything is set up I 
+would think.
 
-> 
-> There also needs to be a careful comparison done between the proposed
-> init/ code to support consise DM format and the userspace lvm2
-> equivalent (e.g. lvm2.git commit 827be0175)
+>
+> That should only happen when s_dv_timings is called.
+>
+> It is always very dangerous to automatically switch resolution since a new
+> resolution might mean larger buffers, and userspace has to prepare for that.
+>
+> The normal sequence is:
+>
+> 1) the driver detects a change in resolution (or the video signal disappears
+> completely). It will send V4L2_EVENT_SOURCE_CHANGE to let userspace know.
+>
+> 2) Userspace stops streaming, frees all buffers, calls QUERY_DV_TIMINGS and,
+>     if valid, follows with S_DV_TIMINGS.
+>
+> 3) Userspace calls REQBUFS to allocate the new buffers sized for the new timings
+>     and starts streaming again.
+>
+> That way everything remains under control of the application.
 
-Yes, I am taking a deeper look into the lvm2 parsing code, and actually
-we can use almost the same logic for parsing, which seems better because
-lvm2 is already using it, we already have some validation/review and it
-also seems cleaner.
-I'll update this in the next version.
+Yep, that's exactly how it works now, its just that the driver stops 
+streaming internally before detecting new resolution.
 
-> 
-> That aside, the DM targets that are allowed to be supported by this dm=
-> commandline boot interface must be constrained (there are serious risks
-> in allowing activation of certain DM targets without first using
-> userspace tools to check the validity of associated metadata, as is done
-> by the DM thin and cache targets).  Also, all targets supported must be
-> upstream.  "linear", "verity" and "bootcache" DM targets are referenced
-> in Documentation, "bootcache" must be a Google target.  I'm not aware of
-> it.
-> 
-> Mike
-> 
+Thanks,
+Eddie
 
-I see, I can add this constraint and I'll clean up the documentation for
-the next version.
+>
+>> +
+>> +	/* Don't use direct mode below 1024 x 768 (irqs don't fire) */
+>> +	if (size < DIRECT_FETCH_THRESHOLD) {
+>> +		aspeed_video_write(video, VE_TGS_0,
+>> +				   FIELD_PREP(VE_TGS_FIRST, left - 1) |
+>> +				   FIELD_PREP(VE_TGS_LAST, right));
+>> +		aspeed_video_write(video, VE_TGS_1,
+>> +				   FIELD_PREP(VE_TGS_FIRST, top) |
+>> +				   FIELD_PREP(VE_TGS_LAST, bottom + 1));
+>> +		aspeed_video_update(video, VE_CTRL, 0, VE_CTRL_INT_DE);
+>> +	} else {
+>> +		aspeed_video_update(video, VE_CTRL, 0, VE_CTRL_DIRECT_FETCH);
+>> +	}
+>> +
+>> +	aspeed_video_write(video, VE_CAP_WINDOW,
+>> +			   video->width << 16 | video->height);
+>> +	aspeed_video_write(video, VE_COMP_WINDOW,
+>> +			   video->width << 16 | video->height);
+>> +	aspeed_video_write(video, VE_SRC_SCANLINE_OFFSET, video->width * 4);
+>> +
+>> +	aspeed_video_update(video, VE_INTERRUPT_CTRL, 0,
+>> +			    VE_INTERRUPT_MODE_DETECT_WD);
+>> +	aspeed_video_update(video, VE_SEQ_CTRL, 0,
+>> +			    VE_SEQ_CTRL_AUTO_COMP | VE_SEQ_CTRL_EN_WATCHDOG);
+>> +
+>> +	dev_dbg(video->dev, "got resolution[%dx%d]\n", video->width,
+>> +		video->height);
+>> +
+>> +	size *= 4;
+>> +	if (size == src.size / 2) {
+>> +		aspeed_video_write(video, VE_SRC1_ADDR, src.dma + size);
+>> +		video->srcs[0] = src;
+>> +	} else if (size == src.size) {
+>> +		video->srcs[0] = src;
+>> +
+>> +		if (!aspeed_video_alloc_buf(video, &video->srcs[1], size))
+>> +			goto err_mem;
+>> +
+>> +		aspeed_video_write(video, VE_SRC1_ADDR, video->srcs[1].dma);
+>> +	} else {
+>> +		aspeed_video_free_buf(video, &src);
+>> +
+>> +		if (!aspeed_video_alloc_buf(video, &video->srcs[0], size))
+>> +			goto err_mem;
+>> +
+>> +		if (!aspeed_video_alloc_buf(video, &video->srcs[1], size))
+>> +			goto err_mem;
+>> +
+>> +		aspeed_video_write(video, VE_SRC0_ADDR, video->srcs[0].dma);
+>> +		aspeed_video_write(video, VE_SRC1_ADDR, video->srcs[1].dma);
+>> +	}
+>> +
+>> +	aspeed_video_calc_compressed_size(video);
+>> +
+>> +	return 0;
+>> +
+>> +err_mem:
+>> +	dev_err(video->dev, "failed to allocate source buffers\n");
+>> +
+>> +	if (video->srcs[0].size)
+>> +		aspeed_video_free_buf(video, &video->srcs[0]);
+>> +
+>> +	return -ENOMEM;
+>> +}
+> Regards,
+>
+> 	Hans
+>
 
-
-Thank you all for your comments and reviews, I am working on the next
-version of this patch series taking yours comments into consideration
-and cleaning up several parts of the code and documentation.
-
-Please let me know if you have any other concerns.
-
-Thanks
-Helen
