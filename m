@@ -2,74 +2,72 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B78ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A366ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:27:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDC5E20836
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:27:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDC5E20836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CD4CF214C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:27:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4CF214C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727130AbeJSScl (ORCPT
+        id S1727241AbeJSSdA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 14:32:41 -0400
-Received: from foss.arm.com ([217.140.101.70]:50068 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726609AbeJSScl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 14:32:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0490480D;
-        Fri, 19 Oct 2018 03:27:14 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C83F23F71D;
-        Fri, 19 Oct 2018 03:27:13 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id CF0D21AE06EF; Fri, 19 Oct 2018 11:27:16 +0100 (BST)
-Date:   Fri, 19 Oct 2018 11:27:16 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Mark Rutland <mark.rutland@arm.com>, mingo@kernel.org
-Cc:     arnd@arndb.de, aryabinin@virtuozzo.com, boqun.feng@gmail.com,
-        catalin.marinas@arm.com, dvyukov@google.com, glider@google.com,
-        linuxdrivers@attotech.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv3 0/6] atomics: generate atomic headers / instrument arm64
-Message-ID: <20181019102715.GA14246@arm.com>
-References: <20180904104830.2975-1-mark.rutland@arm.com>
- <20181008171523.rw34hyaqap2yb3py@lakrids.cambridge.arm.com>
+        Fri, 19 Oct 2018 14:33:00 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:56728 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbeJSSc7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 14:32:59 -0400
+Received: from 79.184.253.168.ipv4.supernova.orange.pl (79.184.253.168) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
+ id 7989406d1f238ce8; Fri, 19 Oct 2018 12:27:30 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc:     Len Brown <lenb@kernel.org>, Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/1] ACPI / scan: Create platform device for INT33FE ACPI nodes
+Date:   Fri, 19 Oct 2018 12:24:14 +0200
+Message-ID: <2477276.ZfWzuKp1JK@aspire.rjw.lan>
+In-Reply-To: <CAHp75VcxnGzKbOwEDu_MSKQ1D28=pESTVm+YSHQTjrMXUaKMoA@mail.gmail.com>
+References: <20181017085928.13406-1-hdegoede@redhat.com> <CAHp75VcxnGzKbOwEDu_MSKQ1D28=pESTVm+YSHQTjrMXUaKMoA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181008171523.rw34hyaqap2yb3py@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ingo,
-
-On Mon, Oct 08, 2018 at 06:15:24PM +0100, Mark Rutland wrote:
-> On Tue, Sep 04, 2018 at 11:48:24AM +0100, Mark Rutland wrote:
-> > As previously requested, this is a (trivial) rebase of the remaining generated
-> > atomic patches atop of v4.19-rc2, avoiding any potential conflict with Peter's
-> > ldsem atomic cleanup patch that got taken through the tty tree.
-> > 
-> > Are you still happy to pick this up? Full blurb below.
+On Wednesday, October 17, 2018 1:39:54 PM CEST Andy Shevchenko wrote:
+> On Wed, Oct 17, 2018 at 11:59 AM Hans de Goede <hdegoede@redhat.com> wrote:
+> >
+> > Hi Rafael, Andy,
+> >
+> > For the why and what of this patch see the (somewhat long) commit message.
+> >
+> > The single patch in this set both touches drivers/acpi/scan.c and
+> > drivers/platform/x86/intel_cht_int33fe.c, this is done this way to avoid
+> > regressions when bisecting.
+> >
+> > The main change here really is to ACPI change and intel_cht_int33fe.c is
+> > modified to follow suit. Also I do not expect intel_cht_int33fe.c to see
+> > much changes this cycle. As such I believe it would be best to merge this
+> > patch through Rafael's tree (after review).
+> >
+> > Andy is that ok with you and we have your ack for this?
 > 
-> Ping!
+> I love this patch!
 > 
-> Do you have any comments, or would you be happy to queue this?
-> 
-> I'm happy to resend come rc1, if you'd prefer?
+> Definitely,
+> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-It would be really nice to see this merged. Any chance we could get this
-queued at -rc1 for 4.21, please? If not, what more needs to be done?
+Patch applied, thanks!
 
-Cheers,
-
-Will
