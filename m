@@ -2,357 +2,167 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1829FECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC38DECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:58:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC9D22086E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:56:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC9D22086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 6B4C62086E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:58:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qp87nx8J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B4C62086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbeJSPBR (ORCPT
+        id S1726987AbeJSPDB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 11:01:17 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:46926 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727043AbeJSO7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 10:59:40 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42bxVl1hVDz9ttFY;
-        Fri, 19 Oct 2018 08:54:55 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id I58wARqLSPXJ; Fri, 19 Oct 2018 08:54:55 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42bxVl17bzz9ttFM;
-        Fri, 19 Oct 2018 08:54:55 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5C2618B8DF;
-        Fri, 19 Oct 2018 08:54:56 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id nFumCtOIjvfB; Fri, 19 Oct 2018 08:54:56 +0200 (CEST)
-Received: from pc13168vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 349208B75B;
-        Fri, 19 Oct 2018 08:54:56 +0200 (CEST)
-Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 29E6A6F496; Fri, 19 Oct 2018 06:54:56 +0000 (UTC)
-Message-Id: <f9ba93eb7e3de229e7d65a2c8bbcb03603f7df88.1539931702.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1539931702.git.christophe.leroy@c-s.fr>
-References: <cover.1539931702.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v6 02/20] powerpc/mm: Move pte_fragment_alloc() to a common
- location
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Fri, 19 Oct 2018 06:54:56 +0000 (UTC)
+        Fri, 19 Oct 2018 11:03:01 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:37790 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726465AbeJSPDB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 11:03:01 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9J6hoKc008051;
+        Fri, 19 Oct 2018 06:58:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2018-07-02; bh=MhUMVM3LmkFtbZ90mXzL3UpE7iXgF0OVUvkcxo87VRw=;
+ b=qp87nx8J6TJpYczz5bYbIkaxIQVduM7SsAA1BPpTx8wioZhjB7ofLf5lsFJ8GYsfFwb7
+ QciVHgUHylHuF4qxy5udxMJxjlTvc1s8sDTwtQOTiZKe6+c+Vc9myv/Vdo7B8H3Opj05
+ anENFmYLMHrqAP+Gq/sIgwYJNSiCab8dp3rq/d4vecXAb2l/NsaIgM6gn7oY3cyQOBrW
+ 72C3KnNlaIkdPDxJhbHMhIcycDMkV+fw/1r+OnoNYidXaRb5BS7LDW0FpqAPV5R1GiGg
+ BQ3YvBi/XUs4eaYIcD9Xk/3CNxLSdy0V3h+qMnKB1/DUmGEGeNKZPnVusPuaBDkwx5/E 3A== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2n39brt9e9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Oct 2018 06:58:10 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9J6w9mU006584
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Oct 2018 06:58:09 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9J6w8b3002461;
+        Fri, 19 Oct 2018 06:58:08 GMT
+Received: from mwanda (/129.205.6.86)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 18 Oct 2018 23:58:08 -0700
+Date:   Fri, 19 Oct 2018 09:58:01 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@01.org, Marcin Ciupak <marcin.s.ciupak@gmail.com>
+Cc:     kbuild-all@01.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joe Perches <joe@perches.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] staging: nrf24: add new driver for 2.4GHz radio
+ transceiver
+Message-ID: <20181019065801.vp6nmaodt7n7qyqh@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017110001.65pcxebwsirsclim@metis.ciupak.eu>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9050 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810190064
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation of next patch which generalises the use of
-pte_fragment_alloc() for all, this patch moves the related functions
-in a place that is common to all subarches.
+Hi Marcin,
 
-The 8xx will need that for supporting 16k pages, as in that mode
-page tables still have a size of 4k.
+Thank you for the patch! Perhaps something to improve:
 
-Since pte_fragment with only once fragment is not different
-from what is done in the general case, we can easily migrate all
-subarchs to pte fragments.
+url:    https://github.com/0day-ci/linux/commits/Marcin-Ciupak/staging-nrf24-add-new-driver-for-2-4GHz-radio-transceiver/20181018-164230
 
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+smatch warnings:
+drivers/staging/nrf24/nrf24_if.c:538 nrf24_create_pipe() error: 'p->dev' dereferencing possible ERR_PTR()
+drivers/staging/nrf24/nrf24_if.c:753 nrf24_probe() error: 'device' dereferencing possible ERR_PTR()
+drivers/staging/nrf24/nrf24_sysfs.c:118 plw_store() warn: impossible condition '(old < 0) => (0-255 < 0)'
+
+# https://github.com/0day-ci/linux/commit/f4952b4a228f4dc0149a814630c94e0e87a9f473
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout f4952b4a228f4dc0149a814630c94e0e87a9f473
+vim +538 drivers/staging/nrf24/nrf24_if.c
+
+f4952b4a Marcin Ciupak 2018-10-17  503  
+f4952b4a Marcin Ciupak 2018-10-17  504  static struct nrf24_pipe *nrf24_create_pipe(struct nrf24_device *device, int id)
+f4952b4a Marcin Ciupak 2018-10-17  505  {
+f4952b4a Marcin Ciupak 2018-10-17  506  	int ret;
+f4952b4a Marcin Ciupak 2018-10-17  507  	struct nrf24_pipe *p;
+f4952b4a Marcin Ciupak 2018-10-17  508  
+f4952b4a Marcin Ciupak 2018-10-17  509  	//sets flags to false as well
+f4952b4a Marcin Ciupak 2018-10-17  510  	p = kzalloc(sizeof(*p), GFP_KERNEL);
+f4952b4a Marcin Ciupak 2018-10-17  511  	if (!p) {
+f4952b4a Marcin Ciupak 2018-10-17  512  		ret = -ENOMEM;
+f4952b4a Marcin Ciupak 2018-10-17  513  		goto err_return;
+f4952b4a Marcin Ciupak 2018-10-17  514  	}
+f4952b4a Marcin Ciupak 2018-10-17  515  
+f4952b4a Marcin Ciupak 2018-10-17  516  	ret = ida_simple_get(&nrf24_ida_pipe, 0, 0, GFP_KERNEL);
+f4952b4a Marcin Ciupak 2018-10-17  517  	if (ret < 0) {
+f4952b4a Marcin Ciupak 2018-10-17  518  		dev_err(&device->dev, "%s: get_minor failed\n", __func__);
+f4952b4a Marcin Ciupak 2018-10-17  519  		goto err_free_mem;
+f4952b4a Marcin Ciupak 2018-10-17  520  	}
+f4952b4a Marcin Ciupak 2018-10-17  521  
+f4952b4a Marcin Ciupak 2018-10-17  522  	p->devt = MKDEV(MAJOR(nrf24_dev), ret);
+f4952b4a Marcin Ciupak 2018-10-17  523  	p->id = id;
+f4952b4a Marcin Ciupak 2018-10-17  524  
+f4952b4a Marcin Ciupak 2018-10-17  525  	INIT_KFIFO(p->rx_fifo);
+f4952b4a Marcin Ciupak 2018-10-17  526  	init_waitqueue_head(&p->poll_wait_queue);
+f4952b4a Marcin Ciupak 2018-10-17  527  
+f4952b4a Marcin Ciupak 2018-10-17  528  	p->dev = device_create_with_groups(nrf24_class,
+f4952b4a Marcin Ciupak 2018-10-17  529  					   &device->dev,
+f4952b4a Marcin Ciupak 2018-10-17  530  					   p->devt,
+f4952b4a Marcin Ciupak 2018-10-17  531  					   p,
+f4952b4a Marcin Ciupak 2018-10-17  532  					   nrf24_pipe_groups,
+f4952b4a Marcin Ciupak 2018-10-17  533  					   "%s.%d",
+f4952b4a Marcin Ciupak 2018-10-17  534  					   dev_name(&device->dev),
+f4952b4a Marcin Ciupak 2018-10-17  535  					   id);
+f4952b4a Marcin Ciupak 2018-10-17  536  
+f4952b4a Marcin Ciupak 2018-10-17  537  	if (IS_ERR(p->dev)) {
+f4952b4a Marcin Ciupak 2018-10-17 @538  		dev_err(&device->dev,
+f4952b4a Marcin Ciupak 2018-10-17  539  			"%s: device_create of '%s' failed\n",
+f4952b4a Marcin Ciupak 2018-10-17  540  			__func__,
+f4952b4a Marcin Ciupak 2018-10-17  541  			dev_name(p->dev));
+f4952b4a Marcin Ciupak 2018-10-17  542  		ret = PTR_ERR(p->dev);
+f4952b4a Marcin Ciupak 2018-10-17  543  		goto err_ida_remove;
+f4952b4a Marcin Ciupak 2018-10-17  544  	}
+f4952b4a Marcin Ciupak 2018-10-17  545  
+f4952b4a Marcin Ciupak 2018-10-17  546  	cdev_init(&p->cdev, &nrf24_fops);
+f4952b4a Marcin Ciupak 2018-10-17  547  	p->cdev.owner = THIS_MODULE;
+f4952b4a Marcin Ciupak 2018-10-17  548  	ret = cdev_add(&p->cdev, p->devt, 1);
+f4952b4a Marcin Ciupak 2018-10-17  549  	if (ret < 0) {
+f4952b4a Marcin Ciupak 2018-10-17  550  		dev_err(&device->dev, "%s: cdev failed\n", __func__);
+f4952b4a Marcin Ciupak 2018-10-17  551  		goto err_dev_destroy;
+f4952b4a Marcin Ciupak 2018-10-17  552  	}
+f4952b4a Marcin Ciupak 2018-10-17  553  
+f4952b4a Marcin Ciupak 2018-10-17  554  	dev_dbg(&device->dev,
+f4952b4a Marcin Ciupak 2018-10-17  555  		"%s: device created: major(%d), minor(%d)\n",
+f4952b4a Marcin Ciupak 2018-10-17  556  		__func__,
+f4952b4a Marcin Ciupak 2018-10-17  557  		MAJOR(p->devt),
+f4952b4a Marcin Ciupak 2018-10-17  558  		MINOR(p->devt));
+f4952b4a Marcin Ciupak 2018-10-17  559  
+f4952b4a Marcin Ciupak 2018-10-17  560  	return p;
+f4952b4a Marcin Ciupak 2018-10-17  561  
+f4952b4a Marcin Ciupak 2018-10-17  562  err_dev_destroy:
+f4952b4a Marcin Ciupak 2018-10-17  563  	device_destroy(nrf24_class, p->devt);
+f4952b4a Marcin Ciupak 2018-10-17  564  err_ida_remove:
+f4952b4a Marcin Ciupak 2018-10-17  565  	ida_simple_remove(&nrf24_ida_pipe, MINOR(p->devt));
+f4952b4a Marcin Ciupak 2018-10-17  566  err_free_mem:
+f4952b4a Marcin Ciupak 2018-10-17  567  	kfree(p);
+f4952b4a Marcin Ciupak 2018-10-17  568  err_return:
+f4952b4a Marcin Ciupak 2018-10-17  569  	return ERR_PTR(ret);
+f4952b4a Marcin Ciupak 2018-10-17  570  }
+f4952b4a Marcin Ciupak 2018-10-17  571  
+
 ---
- arch/powerpc/include/asm/book3s/64/pgalloc.h |   1 +
- arch/powerpc/mm/Makefile                     |   4 +-
- arch/powerpc/mm/mmu_context_book3s64.c       |  15 ----
- arch/powerpc/mm/pgtable-book3s64.c           |  85 --------------------
- arch/powerpc/mm/pgtable-frag.c               | 116 +++++++++++++++++++++++++++
- 5 files changed, 120 insertions(+), 101 deletions(-)
- create mode 100644 arch/powerpc/mm/pgtable-frag.c
-
-diff --git a/arch/powerpc/include/asm/book3s/64/pgalloc.h b/arch/powerpc/include/asm/book3s/64/pgalloc.h
-index bfed4cf3b2f3..6c2808c0f052 100644
---- a/arch/powerpc/include/asm/book3s/64/pgalloc.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgalloc.h
-@@ -39,6 +39,7 @@ extern struct vmemmap_backing *vmemmap_list;
- extern struct kmem_cache *pgtable_cache[];
- #define PGT_CACHE(shift) pgtable_cache[shift]
- 
-+void pte_frag_destroy(void *pte_frag);
- extern pte_t *pte_fragment_alloc(struct mm_struct *, unsigned long, int);
- extern pmd_t *pmd_fragment_alloc(struct mm_struct *, unsigned long);
- extern void pte_fragment_free(unsigned long *, int);
-diff --git a/arch/powerpc/mm/Makefile b/arch/powerpc/mm/Makefile
-index ca96e7be4d0e..3cbb1acf0745 100644
---- a/arch/powerpc/mm/Makefile
-+++ b/arch/powerpc/mm/Makefile
-@@ -15,7 +15,9 @@ obj-$(CONFIG_PPC_MMU_NOHASH)	+= mmu_context_nohash.o tlb_nohash.o \
- obj-$(CONFIG_PPC_BOOK3E)	+= tlb_low_$(BITS)e.o
- hash64-$(CONFIG_PPC_NATIVE)	:= hash_native_64.o
- obj-$(CONFIG_PPC_BOOK3E_64)   += pgtable-book3e.o
--obj-$(CONFIG_PPC_BOOK3S_64)	+= pgtable-hash64.o hash_utils_64.o slb.o $(hash64-y) mmu_context_book3s64.o pgtable-book3s64.o
-+obj-$(CONFIG_PPC_BOOK3S_64)	+= pgtable-hash64.o hash_utils_64.o slb.o \
-+				   $(hash64-y) mmu_context_book3s64.o \
-+				   pgtable-book3s64.o pgtable-frag.o
- obj-$(CONFIG_PPC_RADIX_MMU)	+= pgtable-radix.o tlb-radix.o
- obj-$(CONFIG_PPC_STD_MMU_32)	+= ppc_mmu_32.o hash_low_32.o mmu_context_hash32.o
- obj-$(CONFIG_PPC_STD_MMU)	+= tlb_hash$(BITS).o
-diff --git a/arch/powerpc/mm/mmu_context_book3s64.c b/arch/powerpc/mm/mmu_context_book3s64.c
-index 510f103d7813..f720c5cc0b5e 100644
---- a/arch/powerpc/mm/mmu_context_book3s64.c
-+++ b/arch/powerpc/mm/mmu_context_book3s64.c
-@@ -164,21 +164,6 @@ static void destroy_contexts(mm_context_t *ctx)
- 	}
- }
- 
--static void pte_frag_destroy(void *pte_frag)
--{
--	int count;
--	struct page *page;
--
--	page = virt_to_page(pte_frag);
--	/* drop all the pending references */
--	count = ((unsigned long)pte_frag & ~PAGE_MASK) >> PTE_FRAG_SIZE_SHIFT;
--	/* We allow PTE_FRAG_NR fragments from a PTE page */
--	if (atomic_sub_and_test(PTE_FRAG_NR - count, &page->pt_frag_refcount)) {
--		pgtable_page_dtor(page);
--		__free_page(page);
--	}
--}
--
- static void pmd_frag_destroy(void *pmd_frag)
- {
- 	int count;
-diff --git a/arch/powerpc/mm/pgtable-book3s64.c b/arch/powerpc/mm/pgtable-book3s64.c
-index 43e99e1d947b..84ff3403239c 100644
---- a/arch/powerpc/mm/pgtable-book3s64.c
-+++ b/arch/powerpc/mm/pgtable-book3s64.c
-@@ -321,91 +321,6 @@ void pmd_fragment_free(unsigned long *pmd)
- 	}
- }
- 
--static pte_t *get_pte_from_cache(struct mm_struct *mm)
--{
--	void *pte_frag, *ret;
--
--	spin_lock(&mm->page_table_lock);
--	ret = mm->context.pte_frag;
--	if (ret) {
--		pte_frag = ret + PTE_FRAG_SIZE;
--		/*
--		 * If we have taken up all the fragments mark PTE page NULL
--		 */
--		if (((unsigned long)pte_frag & ~PAGE_MASK) == 0)
--			pte_frag = NULL;
--		mm->context.pte_frag = pte_frag;
--	}
--	spin_unlock(&mm->page_table_lock);
--	return (pte_t *)ret;
--}
--
--static pte_t *__alloc_for_ptecache(struct mm_struct *mm, int kernel)
--{
--	void *ret = NULL;
--	struct page *page;
--
--	if (!kernel) {
--		page = alloc_page(PGALLOC_GFP | __GFP_ACCOUNT);
--		if (!page)
--			return NULL;
--		if (!pgtable_page_ctor(page)) {
--			__free_page(page);
--			return NULL;
--		}
--	} else {
--		page = alloc_page(PGALLOC_GFP);
--		if (!page)
--			return NULL;
--	}
--
--	atomic_set(&page->pt_frag_refcount, 1);
--
--	ret = page_address(page);
--	/*
--	 * if we support only one fragment just return the
--	 * allocated page.
--	 */
--	if (PTE_FRAG_NR == 1)
--		return ret;
--	spin_lock(&mm->page_table_lock);
--	/*
--	 * If we find pgtable_page set, we return
--	 * the allocated page with single fragement
--	 * count.
--	 */
--	if (likely(!mm->context.pte_frag)) {
--		atomic_set(&page->pt_frag_refcount, PTE_FRAG_NR);
--		mm->context.pte_frag = ret + PTE_FRAG_SIZE;
--	}
--	spin_unlock(&mm->page_table_lock);
--
--	return (pte_t *)ret;
--}
--
--pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int kernel)
--{
--	pte_t *pte;
--
--	pte = get_pte_from_cache(mm);
--	if (pte)
--		return pte;
--
--	return __alloc_for_ptecache(mm, kernel);
--}
--
--void pte_fragment_free(unsigned long *table, int kernel)
--{
--	struct page *page = virt_to_page(table);
--
--	BUG_ON(atomic_read(&page->pt_frag_refcount) <= 0);
--	if (atomic_dec_and_test(&page->pt_frag_refcount)) {
--		if (!kernel)
--			pgtable_page_dtor(page);
--		__free_page(page);
--	}
--}
--
- static inline void pgtable_free(void *table, int index)
- {
- 	switch (index) {
-diff --git a/arch/powerpc/mm/pgtable-frag.c b/arch/powerpc/mm/pgtable-frag.c
-new file mode 100644
-index 000000000000..d61e7c2a9a79
---- /dev/null
-+++ b/arch/powerpc/mm/pgtable-frag.c
-@@ -0,0 +1,116 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ *  Handling Page Tables through page fragments
-+ *
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/gfp.h>
-+#include <linux/mm.h>
-+#include <linux/percpu.h>
-+#include <linux/hardirq.h>
-+#include <linux/hugetlb.h>
-+#include <asm/pgalloc.h>
-+#include <asm/tlbflush.h>
-+#include <asm/tlb.h>
-+
-+void pte_frag_destroy(void *pte_frag)
-+{
-+	int count;
-+	struct page *page;
-+
-+	page = virt_to_page(pte_frag);
-+	/* drop all the pending references */
-+	count = ((unsigned long)pte_frag & ~PAGE_MASK) >> PTE_FRAG_SIZE_SHIFT;
-+	/* We allow PTE_FRAG_NR fragments from a PTE page */
-+	if (atomic_sub_and_test(PTE_FRAG_NR - count, &page->pt_frag_refcount)) {
-+		pgtable_page_dtor(page);
-+		__free_page(page);
-+	}
-+}
-+
-+static pte_t *get_pte_from_cache(struct mm_struct *mm)
-+{
-+	void *pte_frag, *ret;
-+
-+	spin_lock(&mm->page_table_lock);
-+	ret = mm->context.pte_frag;
-+	if (ret) {
-+		pte_frag = ret + PTE_FRAG_SIZE;
-+		/*
-+		 * If we have taken up all the fragments mark PTE page NULL
-+		 */
-+		if (((unsigned long)pte_frag & ~PAGE_MASK) == 0)
-+			pte_frag = NULL;
-+		mm->context.pte_frag = pte_frag;
-+	}
-+	spin_unlock(&mm->page_table_lock);
-+	return (pte_t *)ret;
-+}
-+
-+static pte_t *__alloc_for_ptecache(struct mm_struct *mm, int kernel)
-+{
-+	void *ret = NULL;
-+	struct page *page;
-+
-+	if (!kernel) {
-+		page = alloc_page(PGALLOC_GFP | __GFP_ACCOUNT);
-+		if (!page)
-+			return NULL;
-+		if (!pgtable_page_ctor(page)) {
-+			__free_page(page);
-+			return NULL;
-+		}
-+	} else {
-+		page = alloc_page(PGALLOC_GFP);
-+		if (!page)
-+			return NULL;
-+	}
-+
-+	atomic_set(&page->pt_frag_refcount, 1);
-+
-+	ret = page_address(page);
-+	/*
-+	 * if we support only one fragment just return the
-+	 * allocated page.
-+	 */
-+	if (PTE_FRAG_NR == 1)
-+		return ret;
-+	spin_lock(&mm->page_table_lock);
-+	/*
-+	 * If we find pgtable_page set, we return
-+	 * the allocated page with single fragement
-+	 * count.
-+	 */
-+	if (likely(!mm->context.pte_frag)) {
-+		atomic_set(&page->pt_frag_refcount, PTE_FRAG_NR);
-+		mm->context.pte_frag = ret + PTE_FRAG_SIZE;
-+	}
-+	spin_unlock(&mm->page_table_lock);
-+
-+	return (pte_t *)ret;
-+}
-+
-+pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int kernel)
-+{
-+	pte_t *pte;
-+
-+	pte = get_pte_from_cache(mm);
-+	if (pte)
-+		return pte;
-+
-+	return __alloc_for_ptecache(mm, kernel);
-+}
-+
-+void pte_fragment_free(unsigned long *table, int kernel)
-+{
-+	struct page *page = virt_to_page(table);
-+
-+	BUG_ON(atomic_read(&page->pt_frag_refcount) <= 0);
-+	if (atomic_dec_and_test(&page->pt_frag_refcount)) {
-+		if (!kernel)
-+			pgtable_page_dtor(page);
-+		__free_page(page);
-+	}
-+}
--- 
-2.13.3
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
