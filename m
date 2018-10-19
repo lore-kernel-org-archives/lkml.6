@@ -2,120 +2,122 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C52C67863
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 02:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7001C67863
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 02:25:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FCB221476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 02:23:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FCB221476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B9DD21476
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 02:25:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="hpn8leeT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B9DD21476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbeJSK1a (ORCPT
+        id S1727023AbeJSK3a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 06:27:30 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:41988 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726463AbeJSK1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 06:27:30 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B5B7769334D02;
-        Fri, 19 Oct 2018 10:23:31 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.399.0; Fri, 19 Oct 2018
- 10:23:32 +0800
-Subject: Re: [PATCH] f2fs: fix to account IO correctly
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20181017094954.67547-1-yuchao0@huawei.com>
- <20181018190612.GD50556@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <9e586616-5cfa-5515-008c-e7bba1e3c4a1@huawei.com>
-Date:   Fri, 19 Oct 2018 10:23:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 19 Oct 2018 06:29:30 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36754 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbeJSK3a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 06:29:30 -0400
+Received: by mail-pf1-f196.google.com with SMTP id l81-v6so15779718pfg.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 19:25:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CKUsTW0mu0TMb5zqP3PVGKvleD94SeUvhyXg5ouDahM=;
+        b=hpn8leeT3kpcKbjiDCveIb2uj4nmm3dxH5lc4MVIVlAcR83zcs2OTKJzy1Rn93qa7/
+         UU1RFHGVybubzQrG4ZHo6EkqOMfVVZcQTm+1D1fmFjxWnJ4VVJ3mNRUENJUNf0eZWVZP
+         xajK3sOHqoexpg+65caW34FupW0gLOZuFJv5Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CKUsTW0mu0TMb5zqP3PVGKvleD94SeUvhyXg5ouDahM=;
+        b=WXYEJd9MkD1/2K9dB9z/JDeLh+b+Zdv6RUusQczRaLIclODHyNE0f00uS/CPpaxP0M
+         L4zTxBP4eh0wx+YIDR49G0o2BKbjx165OjvylKdyanJEI6BYPYd3OstWpYetBGN5xP3V
+         MTzW2iKqw6QjuTJ8G8y98H4MFB1sInsKCaBNBHvI/DYR+XUZZm0HdH5zyDHGuuJs8ydE
+         hXLJrR+jtgP+YwgK3RSKbhX8k9YrJ29REQptl3c5VoKzcy7QHSXx8AxhXeIHYO91rXrV
+         FLk991Gn6EmTN5kwU3qicfAgmMAOLzEXkS0aaQyq4SfwDIfE5VEcc3SGnVxKjd8EoKk5
+         IONg==
+X-Gm-Message-State: ABuFfojQqTAJk5UYQ2FikjzRuloVC4nCZi68hvDwTBiWvXXOiECtYziU
+        7R/SjzlPbl2KjwTW0BLoC5+Wtg==
+X-Google-Smtp-Source: ACcGV62AxMnSsLnc/5KINoxpxr/0/J8bXrhXPqwc7BWfEEMko2vKFckCk4EPsOjEt3pHD+SDiz1ESw==
+X-Received: by 2002:a62:4803:: with SMTP id v3-v6mr33843473pfa.89.1539915931885;
+        Thu, 18 Oct 2018 19:25:31 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id t85-v6sm33063332pfi.73.2018.10.18.19.25.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Oct 2018 19:25:30 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 19:25:29 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH RFC] doc: rcu: remove obsolete (non-)requirement about
+ disabling preemption
+Message-ID: <20181019022529.GA155753@joelaf.mtv.corp.google.com>
+References: <20181016204122.GA8176@joelaf.mtv.corp.google.com>
+ <20181017161100.GP2674@linux.ibm.com>
+ <20181017181505.GC107185@joelaf.mtv.corp.google.com>
+ <20181017203324.GS2674@linux.ibm.com>
+ <20181018020751.GB99677@joelaf.mtv.corp.google.com>
+ <20181018144637.GD2674@linux.ibm.com>
+ <20181019000350.GB89903@joelaf.mtv.corp.google.com>
+ <20181019001932.GR2674@linux.ibm.com>
+ <20181019012645.GC89903@joelaf.mtv.corp.google.com>
+ <20181018215035.5e8ff553@vmware.local.home>
 MIME-Version: 1.0
-In-Reply-To: <20181018190612.GD50556@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181018215035.5e8ff553@vmware.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/19 3:06, Jaegeuk Kim wrote:
+On Thu, Oct 18, 2018 at 09:50:35PM -0400, Steven Rostedt wrote:
+> On Thu, 18 Oct 2018 18:26:45 -0700
+> Joel Fernandes <joel@joelfernandes.org> wrote:
 > 
-> On 10/17, Chao Yu wrote:
->> Below race can cause reversed reference on F2FS_RD_DATA, there is
->> the same issue in f2fs_submit_page_bio(), fix them by relocate
->> __submit_bio() and inc_page_count.
->>
->> Thread A			Thread B
->> - f2fs_write_begin
->>  - f2fs_submit_page_read
->>  - __submit_bio
->> 				- f2fs_read_end_io
->> 				 - __read_end_io
->> 				 - dec_page_count(, F2FS_RD_DATA)
->>  - inc_page_count(, F2FS_RD_DATA)
+> > Yes, local_irq_restore is light weight, and does not check for reschedules.
+> > 
+> > I was thinking of case where ksoftirqd is woken up, but does not run unless
+> > we set the NEED_RESCHED flag. But that should get set anyway since probably
+> > ksoftirqd is of high enough priority than the currently running task..
+> > 
+> > Roughly speaking the scenario could be something like:
+> > 
+> > rcu_read_lock();
+> >                  <-- IPI comes in for the expedited GP, sets exp_hint
+> > local_irq_disable();
+> > // do a bunch of stuff
+> > rcu_read_unlock();   <-- This calls the rcu_read_unlock_special which raises
+> >                          the soft irq, and wakesup softirqd.
 > 
-> Let me integrate the change into the original patch and test a bit.
+> If softirqd is of higher priority than the current running task, then
+> the try_to_wake_up() will set NEED_RESCHED of the current task here.
+> 
 
-IMO, it will be better to split this change into two, we can fix the
-location of inc_page_count(, F2FS_RD_DATA) directly in your patch,
-meanwhile we can add one more patch to fix the same issue in
-f2fs_submit_page_bio(), in where the problem exists for long time, it needs
-to send fixing patch to stable kernel mailing list.
+Yes, only *if*. On my system, ksoftirqd is CFS nice 0. I thought expedited
+grace periods are quite important and they should complete quickly which is
+the whole reason for interrupting rcu read sections with an IPI and stuff.
+IMO there should be no harm in setting NEED_RESCHED unconditionally anyway
+for possible benefit of systems where the ksoftirqd is not of higher priority
+than the currently running task, and we need to run it soon on the CPU. But
+I'm Ok with whatever Paul and you want to do here.
 
-Thanks,
-
-> 
-> Thanks,
-> 
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/data.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index c03bd0c2ed22..8b9240762156 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -480,10 +480,10 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
->>  	}
->>  	bio_set_op_attrs(bio, fio->op, fio->op_flags);
->>  
->> -	__submit_bio(fio->sbi, bio, fio->type);
->> -
->>  	inc_page_count(fio->sbi, is_read_io(fio->op) ?
->>  			__read_io_type(page): WB_DATA_TYPE(fio->page));
->> +
->> +	__submit_bio(fio->sbi, bio, fio->type);
->>  	return 0;
->>  }
->>  
->> @@ -612,8 +612,8 @@ static int f2fs_submit_page_read(struct inode *inode, struct page *page,
->>  		return -EFAULT;
->>  	}
->>  	ClearPageError(page);
->> -	__submit_bio(F2FS_I_SB(inode), bio, DATA);
->>  	inc_page_count(F2FS_I_SB(inode), F2FS_RD_DATA);
->> +	__submit_bio(F2FS_I_SB(inode), bio, DATA);
->>  	return 0;
->>  }
->>  
->> -- 
->> 2.18.0.rc1
-> 
-> .
-> 
+- Joel
 
