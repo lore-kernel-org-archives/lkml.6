@@ -2,300 +2,355 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5359CECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E57CBECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:19:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDF432145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:19:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDF432145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 8D98D21476
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:19:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D98D21476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeJSIWr convert rfc822-to-8bit (ORCPT
+        id S1726747AbeJSIXO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 04:22:47 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:43400 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbeJSIWr (ORCPT
+        Fri, 19 Oct 2018 04:23:14 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54412 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725934AbeJSIXO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 04:22:47 -0400
-Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4C49A140DA5D1;
-        Thu, 18 Oct 2018 17:19:15 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 17:19:14 -0700 (PDT)
-Message-Id: <20181018.171914.1210096727703399564.davem@davemloft.net>
-To:     gregkh@linuxfoundation.org
-CC:     akpm@linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT] Networking
-From:   David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 18 Oct 2018 17:19:15 -0700 (PDT)
+        Fri, 19 Oct 2018 04:23:14 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9J0EIeF120505
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 20:19:40 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n6yu5aq7q-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 20:19:40 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 18 Oct 2018 20:19:38 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 18 Oct 2018 20:19:34 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9J0JXHo17367056
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 19 Oct 2018 00:19:33 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5FCFEB2064;
+        Fri, 19 Oct 2018 00:19:33 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 278BAB2065;
+        Fri, 19 Oct 2018 00:19:33 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.132.214])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 19 Oct 2018 00:19:33 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id D9F8516C3AA2; Thu, 18 Oct 2018 17:19:32 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 17:19:32 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Nikolay Borisov <nborisov@suse.com>, linux-kernel@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH RFC] doc: rcu: remove obsolete (non-)requirement about
+ disabling preemption
+Reply-To: paulmck@linux.ibm.com
+References: <20181015201556.GA43575@joelaf.mtv.corp.google.com>
+ <20181015210856.GE2674@linux.ibm.com>
+ <20181016112611.GA27405@linux.ibm.com>
+ <20181016204122.GA8176@joelaf.mtv.corp.google.com>
+ <20181017161100.GP2674@linux.ibm.com>
+ <20181017181505.GC107185@joelaf.mtv.corp.google.com>
+ <20181017203324.GS2674@linux.ibm.com>
+ <20181018020751.GB99677@joelaf.mtv.corp.google.com>
+ <20181018144637.GD2674@linux.ibm.com>
+ <20181019000350.GB89903@joelaf.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181019000350.GB89903@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18101900-0052-0000-0000-000003462BB5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009898; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01104680; UDB=6.00571900; IPR=6.00884730;
+ MB=3.00023815; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-19 00:19:37
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101900-0053-0000-0000-00005E769596
+Message-Id: <20181019001932.GR2674@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-18_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810190001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 18, 2018 at 05:03:50PM -0700, Joel Fernandes wrote:
+> On Thu, Oct 18, 2018 at 07:46:37AM -0700, Paul E. McKenney wrote:
+> [..]
+> > > > > > > > ------------------------------------------------------------------------
+> > > > > > > > 
+> > > > > > > > commit 07921e8720907f58f82b142f2027fc56d5abdbfd
+> > > > > > > > Author: Paul E. McKenney <paulmck@linux.ibm.com>
+> > > > > > > > Date:   Tue Oct 16 04:12:58 2018 -0700
+> > > > > > > > 
+> > > > > > > >     rcu: Speed up expedited GPs when interrupting RCU reader
+> > > > > > > >     
+> > > > > > > >     In PREEMPT kernels, an expedited grace period might send an IPI to a
+> > > > > > > >     CPU that is executing an RCU read-side critical section.  In that case,
+> > > > > > > >     it would be nice if the rcu_read_unlock() directly interacted with the
+> > > > > > > >     RCU core code to immediately report the quiescent state.  And this does
+> > > > > > > >     happen in the case where the reader has been preempted.  But it would
+> > > > > > > >     also be a nice performance optimization if immediate reporting also
+> > > > > > > >     happened in the preemption-free case.
+> > > > > > > >     
+> > > > > > > >     This commit therefore adds an ->exp_hint field to the task_struct structure's
+> > > > > > > >     ->rcu_read_unlock_special field.  The IPI handler sets this hint when
+> > > > > > > >     it has interrupted an RCU read-side critical section, and this causes
+> > > > > > > >     the outermost rcu_read_unlock() call to invoke rcu_read_unlock_special(),
+> > > > > > > >     which, if preemption is enabled, reports the quiescent state immediately.
+> > > > > > > >     If preemption is disabled, then the report is required to be deferred
+> > > > > > > >     until preemption (or bottom halves or interrupts or whatever) is re-enabled.
+> > > > > > > >     
+> > > > > > > >     Because this is a hint, it does nothing for more complicated cases.  For
+> > > > > > > >     example, if the IPI interrupts an RCU reader, but interrupts are disabled
+> > > > > > > >     across the rcu_read_unlock(), but another rcu_read_lock() is executed
+> > > > > > > >     before interrupts are re-enabled, the hint will already have been cleared.
+> > > > > > > >     If you do crazy things like this, reporting will be deferred until some
+> > > > > > > >     later RCU_SOFTIRQ handler, context switch, cond_resched(), or similar.
+> > > > > > > >     
+> > > > > > > >     Reported-by: Joel Fernandes <joel@joelfernandes.org>
+> > > > > > > >     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> > > > > > > > 
+> > > > > > > > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > > > > > > > index 004ca21f7e80..64ce751b5fe9 100644
+> > > > > > > > --- a/include/linux/sched.h
+> > > > > > > > +++ b/include/linux/sched.h
+> > > > > > > > @@ -571,8 +571,10 @@ union rcu_special {
+> > > > > > > >  	struct {
+> > > > > > > >  		u8			blocked;
+> > > > > > > >  		u8			need_qs;
+> > > > > > > > +		u8			exp_hint; /* Hint for performance. */
+> > > > > > > > +		u8			pad; /* No garbage from compiler! */
+> > > > > > > >  	} b; /* Bits. */
+> > > > > > > > -	u16 s; /* Set of bits. */
+> > > > > > > > +	u32 s; /* Set of bits. */
+> > > > > > > >  };
+> > > > > > > >  
+> > > > > > > >  enum perf_event_task_context {
+> > > > > > > > diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+> > > > > > > > index e669ccf3751b..928fe5893a57 100644
+> > > > > > > > --- a/kernel/rcu/tree_exp.h
+> > > > > > > > +++ b/kernel/rcu/tree_exp.h
+> > > > > > > > @@ -692,8 +692,10 @@ static void sync_rcu_exp_handler(void *unused)
+> > > > > > > >  	 */
+> > > > > > > >  	if (t->rcu_read_lock_nesting > 0) {
+> > > > > > > >  		raw_spin_lock_irqsave_rcu_node(rnp, flags);
+> > > > > > > > -		if (rnp->expmask & rdp->grpmask)
+> > > > > > > > +		if (rnp->expmask & rdp->grpmask) {
+> > > > > > > >  			rdp->deferred_qs = true;
+> > > > > > > > +			WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
+> > > > > > > > +		}
+> > > > > > > >  		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> > > > > > > >  	}
+> > > > > > > >  
+> > > > > > > > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> > > > > > > > index 8b48bb7c224c..d6286eb6e77e 100644
+> > > > > > > > --- a/kernel/rcu/tree_plugin.h
+> > > > > > > > +++ b/kernel/rcu/tree_plugin.h
+> > > > > > > > @@ -643,8 +643,9 @@ static void rcu_read_unlock_special(struct task_struct *t)
+> > > > > > > >  	local_irq_save(flags);
+> > > > > > > >  	irqs_were_disabled = irqs_disabled_flags(flags);
+> > > > > > > >  	if ((preempt_bh_were_disabled || irqs_were_disabled) &&
+> > > > > > > > -	    t->rcu_read_unlock_special.b.blocked) {
+> > > > > > > > +	    t->rcu_read_unlock_special.s) {
+> > > > > > > >  		/* Need to defer quiescent state until everything is enabled. */
+> > > > > > > > +		WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
+> > > > > > > >  		raise_softirq_irqoff(RCU_SOFTIRQ);
+> > > > > > > 
+> > > > > > > Still going through this patch, but it seems to me like the fact that
+> > > > > > > rcu_read_unlock_special is called means someone has requested for a grace
+> > > > > > > period. Then in that case, does it not make sense to raise the softirq
+> > > > > > > for processing anyway?
+> > > > > > 
+> > > > > > Not necessarily.  Another reason that rcu_read_unlock_special() might
+> > > > > > be called is if the RCU read-side critical section had been preempted,
+> > > > > > in which case there might not even be a grace period in progress.
+> > > > > 
+> > > > > Yes true, it was at the back of my head ;) It needs to remove itself from the
+> > > > > blocked lists on the unlock. And ofcourse the preemption case is alsoo
+> > > > > clearly mentioned in this function's comments. (slaps self).
+> > > > 
+> > > > Sometimes rcutorture reminds me of interesting RCU corner cases...  ;-)
+> > > > 
+> > > > > > In addition, if interrupts, bottom halves, and preemption are all enabled,
+> > > > > > the code in rcu_preempt_deferred_qs_irqrestore() doesn't need to bother
+> > > > > > raising softirq, as it can instead just immediately report the quiescent
+> > > > > > state.
+> > > > > 
+> > > > > Makes sense. I will go through these code paths more today. Thank you for the
+> > > > > explanations!
+> > > > > 
+> > > > > I think something like need_exp_qs instead of 'exp_hint' may be more
+> > > > > descriptive?
+> > > > 
+> > > > Well, it is only a hint due to the fact that it is not preserved across
+> > > > complex sequences of overlapping RCU read-side critical sections of
+> > > > different types.  So if you have the following sequence:
+> > > > 
+> > > > 	rcu_read_lock();
+> > > > 	/* Someone does synchronize_rcu_expedited(), which sets ->exp_hint. */
+> > > > 	preempt_disable();
+> > > > 	rcu_read_unlock(); /* Clears ->exp_hint. */
+> > > > 	preempt_enable(); /* But ->exp_hint is already cleared. */
+> > > > 
+> > > > This is OK because there will be some later event that passes the quiescent
+> > > > state to the RCU core.  This will slow down the expedited grace period,
+> > > > but this case should be uncommon.  If it does turn out to be common, then
+> > > > some more complex scheme can be put in place.
+> > > > 
+> > > > Hmmm...  This patch does need some help, doesn't it?  How about the following
+> > > > to be folded into the original?
+> > > > 
+> > > > commit d8d996385055d4708121fa253e04b4272119f5e2
+> > > > Author: Paul E. McKenney <paulmck@linux.ibm.com>
+> > > > Date:   Wed Oct 17 13:32:25 2018 -0700
+> > > > 
+> > > >     fixup! rcu: Speed up expedited GPs when interrupting RCU reader
+> > > >     
+> > > >     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> > > > 
+> > > > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> > > > index d6286eb6e77e..117aeb582fdc 100644
+> > > > --- a/kernel/rcu/tree_plugin.h
+> > > > +++ b/kernel/rcu/tree_plugin.h
+> > > > @@ -650,6 +650,7 @@ static void rcu_read_unlock_special(struct task_struct *t)
+> > > >  		local_irq_restore(flags);
+> > > >  		return;
+> > > >  	}
+> > > > +	WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
+> > > >  	rcu_preempt_deferred_qs_irqrestore(t, flags);
+> > > >  }
+> > > >  
+> > > 
+> > > Sure, I believe so. I was also thinking out load about if we can avoid
+> > > raising of the softirq for some cases in rcu_read_unlock_special:
+> > > 
+> > > For example, in rcu_read_unlock_special()
+> > > 
+> > > static void rcu_read_unlock_special(struct task_struct *t)
+> > > {
+> > > [...]
+> > > 	if ((preempt_bh_were_disabled || irqs_were_disabled) &&
+> > > 	    t->rcu_read_unlock_special.s) {
+> > > 		/* Need to defer quiescent state until everything is enabled. */
+> > > 		raise_softirq_irqoff(RCU_SOFTIRQ);
+> > > 		local_irq_restore(flags);
+> > > 		return;
+> > > 	}
+> > > 	rcu_preempt_deferred_qs_irqrestore(t, flags);
+> > > }
+> > > 
+> > > Instead of raising the softirq, for the case where irqs are enabled, but
+> > > preemption is disabled, can we not just do:
+> > > 
+> > > 		set_tsk_need_resched(current);
+> > > 		set_preempt_need_resched();
+> > > 
+> > > and return? Not sure the benefits of doing that are, but it seems nice to
+> > > avoid raising the softirq if possible, for benefit of real-time workloads.
+> > 
+> > This approach would work very well in the case when preemption or bottom
+> > halves were disabled, but would not handle the case where interrupts were
+> > enabled during the RCU read-side critical section, an expedited grace
+> > period started (thus setting ->exp_hint), interrupts where then disabled,
+> > and finally rcu_read_unlock() was invoked.  Re-enabling interrupts would
+> > not cause either softirq or the scheduler to do anything, so the end of
+> > the expedited grace period might be delayed for some time, for example,
+> > until the next scheduling-clock interrupt.
+> > 
+> > But please see below.
+> > 
+> > > Also it seems like there is a chance the softirq might run before the
+> > > preemption is reenabled anyway right?
+> > 
+> > Not unless the rcu_read_unlock() is invoked from within a softirq
+> > handler on the one hand or within an interrupt handler that interrupted
+> > a preempt-disable region of code.  Otherwise, because interrupts are
+> > disabled, the raise_softirq() will wake up ksoftirqd, which cannot run
+> > until both preemption and bottom halves are enabled.
+> > 
+> > > Also one last thing, in your patch - do we really need to test for
+> > > "t->rcu_read_unlock_special.s" in rcu_read_unlock_special()? AFAICT,
+> > > rcu_read_unlock_special would only be called if t->rcu_read_unlock_special.s
+> > > is set in the first place so we can drop the test for that.
+> > 
+> > Good point!
+> > 
+> > How about the following?
+> > 
+> > 							Thanx, Paul
+> > 
+> > ------------------------------------------------------------------------
+> > 
+> > static void rcu_read_unlock_special(struct task_struct *t)
+> > {
+> > 	unsigned long flags;
+> > 	bool preempt_bh_were_disabled =
+> > 			!!(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK));
+> > 	bool irqs_were_disabled;
+> > 
+> > 	/* NMI handlers cannot block and cannot safely manipulate state. */
+> > 	if (in_nmi())
+> > 		return;
+> > 
+> > 	local_irq_save(flags);
+> > 	irqs_were_disabled = irqs_disabled_flags(flags);
+> > 	if (preempt_bh_were_disabled || irqs_were_disabled) {
+> > 		WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
+> > 		/* Need to defer quiescent state until everything is enabled. */
+> > 		if (irqs_were_disabled) {
+> > 			raise_softirq_irqoff(RCU_SOFTIRQ);
+> > 		} else {
+> > 			set_tsk_need_resched(current);
+> > 			set_preempt_need_resched();
+> > 		}
+> 
+> Looks good to me, thanks! Maybe some code comments would be nice as well.
+> 
+> Shouldn't we also set_tsk_need_resched for the irqs_were_disabled case, so
+> that say if we are in an IRQ disabled region (local_irq_disable), then
+> ksoftirqd would run as possible once IRQs are renabled?
 
-1) Fix gro_cells leak in xfrm layer, from Li RongQing.
+Last I checked, local_irq_restore() didn't check for reschedules, instead
+relying on IPIs and scheduling-clock interrupts to do its dirty work.
+Has that changed?
 
-2) BPF selftests change RLIMIT_MEMLOCK blindly, don't do that.
-   From Eric Dumazet.
+> By the way, the user calling preempt_enable_no_resched would be another case
+> where the expedited grace period might extend longer than needed with the
+> above patch, but that seems unlikely enough to worry about :-)
 
-3) AF_XDP calls synchronize_net() under RCU lock, fix from Björn
-   Töpel.
+I figured that whoever calls preempt_enable_no_resched() is taking the
+responsibility for permitting preemption in the near future, and if they
+fail to do so, they will get called on it.  Hard to hide from the latency
+tracer, after all.  ;-)
 
-4) Out of bounds packet access in _decode_session6(), from Alexei
-   Starovoitov.
+							Thanx, Paul
 
-5) Several ethtool bugs, where we copy a struct into the kernel
-   twice and our validations of the values in the first copy can
-   be invalidated by the second copy due to asynchronous updates
-   to the memory by the user.  From Wenwen Wang.
-
-6) Missing netlink attribute validation in cls_api, from Davide
-   Caratti.
-
-7) LLC SAP sockets neet to be SOCK_RCU FREE, from Cong Wang.
-
-8) rxrpc operates on wrong kvec, from Yue Haibing.
-
-9) A regression was introduced by the disassosciation of route
-   neighbour references in rt6_probe(), causing probe for
-   neighbourless routes to not be properly rate limited.  Fix
-   from Sabrina Dubroca.
-
-10) Unsafe RCU locking in tipc, from Tung Nguyen.
-
-11) Use after free in inet6_mc_check(), from Eric Dumazet.
-
-12) PMTU from icmp packets should update the SCTP transport
-    pathmtu, from Xin Long.
-
-13) Missing peer put on error in rxrpc, from David Howells.
-
-14) Fix pedit in nfp driver, from Pieter Jansen van Vuuren.
-
-15) Fix overflowing shift statement in qla3xxx driver, from Nathan
-    Chancellor.
-
-16) Fix Spectre v1 in ptp code, from Gustavo A. R. Silva.
-
-17) udp6_unicast_rcv_skb() interprets udpv6_queue_rcv_skb() return
-    value in an inverted manner, fix from Paolo Abeni.
-
-18) Fix missed unresolved entries in ipmr dumps, from Nikolay
-    Aleksandrov.
-
-19) Fix NAPI handling under high load, we can completely miss events
-    when NAPI has to loop more than one time in a cycle.  From Heiner
-    Kallweit.
-
-Please pull, thanks a lot!
-
-The following changes since commit bab5c80b211035739997ebd361a679fa85b39465:
-
-  Merge tag 'armsoc-fixes-4.19' of git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc (2018-10-12 17:41:27 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git 
-
-for you to fetch changes up to d4d576f5ab7edcb757bb33e6a5600666a0b1232d:
-
-  ip6_tunnel: Fix encapsulation layout (2018-10-18 16:54:40 -0700)
-
-----------------------------------------------------------------
-Ake Koomsin (1):
-      virtio_net: avoid using netif_tx_disable() for serializing tx routine
-
-Alexei Starovoitov (1):
-      net/xfrm: fix out-of-bounds packet access
-
-Björn Töpel (1):
-      xsk: do not call synchronize_net() under RCU read lock
-
-Colin Ian King (1):
-      qed: fix spelling mistake "Ireelevant" -> "Irrelevant"
-
-Cong Wang (1):
-      llc: set SOCK_RCU_FREE in llc_sap_add_socket()
-
-David Howells (3):
-      rxrpc: Fix an uninitialised variable
-      rxrpc: Fix incorrect conditional on IPV6
-      rxrpc: Fix a missing rxrpc_put_peer() in the error_report handler
-
-David S. Miller (5):
-      Merge git://git.kernel.org/.../bpf/bpf
-      Merge tag 'mlx5-fixes-2018-10-10' of git://git.kernel.org/.../saeed/linux
-      Merge branch 'nfp-fix-pedit-set-action-offloads'
-      Merge branch 'geneve-vxlan-mtu'
-      Merge branch 'master' of git://git.kernel.org/.../klassert/ipsec
-
-Davide Caratti (1):
-      net/sched: cls_api: add missing validation of netlink attributes
-
-Eric Dumazet (2):
-      bpf: do not blindly change rlimit in reuseport net selftest
-      ipv6: mcast: fix a use-after-free in inet6_mc_check
-
-Florian Fainelli (1):
-      net: bcmgenet: Poll internal PHY for GENETv5
-
-Florian Westphal (1):
-      xfrm: policy: use hlist rcu variants on insert
-
-Fugang Duan (1):
-      net: fec: don't dump RX FIFO register when not available
-
-Gregory CLEMENT (1):
-      net: mscc: ocelot: Fix comment in ocelot_vlant_wait_for_completion()
-
-Gustavo A. R. Silva (1):
-      ptp: fix Spectre v1 vulnerability
-
-Heiner Kallweit (2):
-      r8169: re-enable MSI-X on RTL8168g
-      r8169: fix NAPI handling under high load
-
-Huy Nguyen (1):
-      net/mlx5: Take only bit 24-26 of wqe.pftype_wq for page fault type
-
-Ido Schimmel (1):
-      mlxsw: core: Fix use-after-free when flashing firmware during init
-
-Jian-Hong Pan (1):
-      r8169: Enable MSI-X on RTL8106e
-
-Jon Maloy (2):
-      tipc: initialize broadcast link stale counter correctly
-      tipc: fix info leak from kernel tipc_event
-
-Li RongQing (1):
-      xfrm: fix gro_cells leak when remove virtual xfrm interfaces
-
-Marcelo Ricardo Leitner (1):
-      sctp: fix race on sctp_id2asoc
-
-Nathan Chancellor (1):
-      net: qla3xxx: Remove overflowing shift statement
-
-Nikolay Aleksandrov (1):
-      net: ipmr: fix unresolved entry dumps
-
-Paolo Abeni (1):
-      udp6: fix encap return code for resubmitting
-
-Phil Sutter (1):
-      net: sched: Fix for duplicate class dump
-
-Pieter Jansen van Vuuren (3):
-      nfp: flower: fix pedit set actions for multiple partial masks
-      nfp: flower: fix multiple keys per pedit action
-      nfp: flower: use offsets provided by pedit instead of index for ipv6
-
-Sabrina Dubroca (1):
-      ipv6: rate-limit probes for neighbourless routes
-
-Stefano Brivio (3):
-      geneve, vxlan: Don't check skb_dst() twice
-      geneve, vxlan: Don't set exceptions if skb->len < mtu
-      ip6_tunnel: Fix encapsulation layout
-
-Steffen Klassert (1):
-      MAINTAINERS: Remove net/core/flow.c
-
-Taehee Yoo (1):
-      net: bpfilter: use get_pid_task instead of pid_task
-
-Talat Batheesh (1):
-      net/mlx5: Fix memory leak when setting fpga ipsec caps
-
-Tariq Toukan (1):
-      net/mlx5: WQ, fixes for fragmented WQ buffers API
-
-Tung Nguyen (1):
-      tipc: fix unsafe rcu locking when accessing publication list
-
-Wenwen Wang (3):
-      ethtool: fix a missing-check bug
-      ethtool: fix a privilege escalation bug
-      net: socket: fix a missing-check bug
-
-Xin Long (4):
-      sctp: use the pmtu from the icmp packet to update transport pathmtu
-      sctp: get pr_assoc and pr_stream all status with SCTP_PR_SCTP_ALL instead
-      sctp: not free the new asoc when sctp_wait_for_connect returns err
-      sctp: fix the data size calculation in sctp_data_size
-
-YueHaibing (1):
-      rxrpc: use correct kvec num when sending BUSY response packet
-
- MAINTAINERS                                           |  1 -
- drivers/net/ethernet/broadcom/genet/bcmmii.c          |  7 +++++--
- drivers/net/ethernet/freescale/fec.h                  |  4 ++++
- drivers/net/ethernet/freescale/fec_main.c             | 16 ++++++++++++----
- drivers/net/ethernet/mellanox/mlx5/core/en_rx.c       | 12 +++++-------
- drivers/net/ethernet/mellanox/mlx5/core/en_tx.c       | 22 +++++++++++-----------
- drivers/net/ethernet/mellanox/mlx5/core/eq.c          |  2 +-
- drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c  |  9 ++++-----
- drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.h |  5 ++---
- drivers/net/ethernet/mellanox/mlx5/core/wq.c          |  5 -----
- drivers/net/ethernet/mellanox/mlx5/core/wq.h          | 11 +++++------
- drivers/net/ethernet/mellanox/mlxsw/core.c            |  2 ++
- drivers/net/ethernet/mellanox/mlxsw/core.h            |  4 ++++
- drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c      | 17 +++++++++++------
- drivers/net/ethernet/mscc/ocelot.c                    |  6 +++---
- drivers/net/ethernet/netronome/nfp/flower/action.c    | 51 +++++++++++++++++++++++++++++++++------------------
- drivers/net/ethernet/qlogic/qed/qed_int.c             |  2 +-
- drivers/net/ethernet/qlogic/qla3xxx.c                 |  2 --
- drivers/net/ethernet/realtek/r8169.c                  | 20 +++++---------------
- drivers/net/geneve.c                                  | 14 +++-----------
- drivers/net/virtio_net.c                              |  5 ++++-
- drivers/net/vxlan.c                                   | 12 ++----------
- drivers/ptp/ptp_chardev.c                             |  4 ++++
- include/linux/mlx5/driver.h                           |  8 ++++++++
- include/net/dst.h                                     | 10 ++++++++++
- include/net/ip6_fib.h                                 |  4 ++++
- include/net/sctp/sm.h                                 |  2 +-
- include/net/sctp/structs.h                            |  2 ++
- include/uapi/linux/sctp.h                             |  1 +
- kernel/bpf/xskmap.c                                   | 10 ++--------
- net/bpfilter/bpfilter_kern.c                          |  6 ++++--
- net/core/ethtool.c                                    | 11 +++++++++--
- net/ipv4/ipmr_base.c                                  |  2 --
- net/ipv6/ip6_tunnel.c                                 | 10 +++++-----
- net/ipv6/mcast.c                                      | 16 ++++++++--------
- net/ipv6/route.c                                      | 12 ++++++------
- net/ipv6/udp.c                                        |  6 ++----
- net/ipv6/xfrm6_policy.c                               |  4 ++--
- net/llc/llc_conn.c                                    |  1 +
- net/rxrpc/call_accept.c                               |  2 +-
- net/rxrpc/local_object.c                              |  2 +-
- net/rxrpc/output.c                                    |  3 ++-
- net/rxrpc/peer_event.c                                |  1 +
- net/sched/cls_api.c                                   | 13 ++++++++-----
- net/sched/sch_api.c                                   | 11 ++++++-----
- net/sctp/associola.c                                  |  3 ++-
- net/sctp/input.c                                      |  1 +
- net/sctp/output.c                                     |  6 ++++++
- net/sctp/socket.c                                     | 17 +++++++++--------
- net/socket.c                                          | 11 ++++++++---
- net/tipc/group.c                                      |  1 +
- net/tipc/link.c                                       |  1 +
- net/tipc/name_distr.c                                 |  4 ++--
- net/xdp/xsk.c                                         |  2 ++
- net/xfrm/xfrm_interface.c                             |  3 +++
- net/xfrm/xfrm_policy.c                                |  8 ++++----
- tools/testing/selftests/net/reuseport_bpf.c           | 13 +++++++++----
- 57 files changed, 253 insertions(+), 187 deletions(-)
