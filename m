@@ -3,54 +3,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDA6ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F20ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89EEF2087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:29:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B8BD21486
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:29:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="xKcjIz9T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89EEF2087A
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="VKTwWL40"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B8BD21486
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbeJSUfp (ORCPT
+        id S1727596AbeJSUft (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:35:45 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44288 "EHLO
+        Fri, 19 Oct 2018 16:35:49 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44406 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbeJSUfp (ORCPT
+        with ESMTP id S1726609AbeJSUfs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:35:45 -0400
+        Fri, 19 Oct 2018 16:35:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=1tJgNCU6ampVhhEakSX9sXxAB5mJeex5rc1gnKV21J0=; b=xKcjIz9TbSgm
-        nchVGXCzyynn836eqlRzlYjRmJc0qulkMvWWbpIdJuBVULBzhNBag84pRKyY66eyphUHUV6FGCzx7
-        88BbcdOFDGrw4ulen920POVon1Vsf7ZF3h0mYyUzjvJqa7Ms7DZenMOzy50My0tka7oO9d5BHWwvN
-        H7Dzs=;
+        List-Archive; bh=PynLrFwNeq4+TkN/uvMrmAN7nhUqL6NuhM7JUdQkavs=; b=VKTwWL40aoCc
+        KG6h8Dp47mPA/A/K2QKwn8vwtfoKFQ9rvj3UD42vwrbh0AKoIxta99MaC3ZReXhb9m6HXlIPyl4Sr
+        aYp0LXxt0kpEskJNCqrjWzrpdws7oiJ5cW6uRoKi2HQD7Sj0X2oJZ6MbxE1lEIOVAPfkOg8/YkU5+
+        VX7Wk=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gDTuW-00004x-AP; Fri, 19 Oct 2018 12:29:48 +0000
+        id 1gDTua-000053-8C; Fri, 19 Oct 2018 12:29:52 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 131CE1122548; Fri, 19 Oct 2018 13:29:48 +0100 (BST)
+        id F3F881122548; Fri, 19 Oct 2018 13:29:51 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Vignesh R <vigneshr@ti.com>
 Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         linux-spi@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-kernel@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
         linux-spi@vger.kernel.org
-Subject: Applied "spi: omap2-mcspi: Set FIFO DMA trigger level to word length" to the spi tree
-In-Reply-To:  <20181015063829.26978-3-vigneshr@ti.com>
-Message-Id: <20181019122948.131CE1122548@debutante.sirena.org.uk>
-Date:   Fri, 19 Oct 2018 13:29:48 +0100 (BST)
+Subject: Applied "spi: omap2-mcspi: Switch to readl_poll_timeout()" to the spi tree
+In-Reply-To:  <20181015063829.26978-2-vigneshr@ti.com>
+Message-Id: <20181019122951.F3F881122548@debutante.sirena.org.uk>
+Date:   Fri, 19 Oct 2018 13:29:51 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -58,7 +58,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: omap2-mcspi: Set FIFO DMA trigger level to word length
+   spi: omap2-mcspi: Switch to readl_poll_timeout()
 
 has been applied to the spi tree at
 
@@ -83,110 +83,54 @@ to this mail.
 Thanks,
 Mark
 
-From c367dadf3cfda3760005eecb7613db49bd9aba7c Mon Sep 17 00:00:00 2001
+From 4d3eea971b45792882a5b6b7bc7ceccea4ae6c76 Mon Sep 17 00:00:00 2001
 From: Vignesh R <vigneshr@ti.com>
-Date: Mon, 15 Oct 2018 12:08:28 +0530
-Subject: [PATCH] spi: omap2-mcspi: Set FIFO DMA trigger level to word length
+Date: Mon, 15 Oct 2018 12:08:27 +0530
+Subject: [PATCH] spi: omap2-mcspi: Switch to readl_poll_timeout()
 
-McSPI has 32 byte FIFO in Transmit-Receive mode. Current code tries to
-configuration FIFO watermark level for DMA trigger to be GCD of transfer
-length and max FIFO size which would mean trigger level may be set to 32
-for transmit-receive mode if length is aligned. This does not work in
-case of SPI slave mode where FIFO always needs to have data ready
-whenever master starts the clock. With DMA trigger size of 32 there will
-be a small window during slave TX where DMA is still putting data into
-FIFO but master would have started clock for next byte, resulting in
-shifting out of stale data. Similarly, on Slave RX side there may be RX
-FIFO overflow
-Fix this by setting FIFO watermark for DMA trigger to word
-length. This means DMA is triggered as soon as FIFO has space for word
-length bytes and DMA would make sure FIFO is almost always full
-therefore improving FIFO occupancy in both master and slave mode.
+Use standard readl_poll_timeout() macro for polling on status bits.
 
 Signed-off-by: Vignesh R <vigneshr@ti.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-omap2-mcspi.c | 26 +++++++-------------------
- 1 file changed, 7 insertions(+), 19 deletions(-)
+ drivers/spi/spi-omap2-mcspi.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
-index 985f00d8a964..88469bb22235 100644
+index 508c61c669e7..985f00d8a964 100644
 --- a/drivers/spi/spi-omap2-mcspi.c
 +++ b/drivers/spi/spi-omap2-mcspi.c
-@@ -300,7 +300,7 @@ static void omap2_mcspi_set_fifo(const struct spi_device *spi,
- 	struct omap2_mcspi_cs *cs = spi->controller_state;
- 	struct omap2_mcspi *mcspi;
- 	unsigned int wcnt;
--	int max_fifo_depth, fifo_depth, bytes_per_word;
-+	int max_fifo_depth, bytes_per_word;
- 	u32 chconf, xferlevel;
+@@ -33,6 +33,7 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/gcd.h>
++#include <linux/iopoll.h>
  
- 	mcspi = spi_master_get_devdata(master);
-@@ -316,10 +316,6 @@ static void omap2_mcspi_set_fifo(const struct spi_device *spi,
- 		else
- 			max_fifo_depth = OMAP2_MCSPI_MAX_FIFODEPTH;
+ #include <linux/spi/spi.h>
+ #include <linux/gpio.h>
+@@ -353,19 +354,9 @@ static void omap2_mcspi_set_fifo(const struct spi_device *spi,
  
--		fifo_depth = gcd(t->len, max_fifo_depth);
--		if (fifo_depth < 2 || fifo_depth % bytes_per_word != 0)
--			goto disable_fifo;
+ static int mcspi_wait_for_reg_bit(void __iomem *reg, unsigned long bit)
+ {
+-	unsigned long timeout;
 -
- 		wcnt = t->len / bytes_per_word;
- 		if (wcnt > OMAP2_MCSPI_MAX_FIFOWCNT)
- 			goto disable_fifo;
-@@ -327,16 +323,17 @@ static void omap2_mcspi_set_fifo(const struct spi_device *spi,
- 		xferlevel = wcnt << 16;
- 		if (t->rx_buf != NULL) {
- 			chconf |= OMAP2_MCSPI_CHCONF_FFER;
--			xferlevel |= (fifo_depth - 1) << 8;
-+			xferlevel |= (bytes_per_word - 1) << 8;
- 		}
-+
- 		if (t->tx_buf != NULL) {
- 			chconf |= OMAP2_MCSPI_CHCONF_FFET;
--			xferlevel |= fifo_depth - 1;
-+			xferlevel |= bytes_per_word - 1;
- 		}
- 
- 		mcspi_write_reg(master, OMAP2_MCSPI_XFERLEVEL, xferlevel);
- 		mcspi_write_chconf0(spi, chconf);
--		mcspi->fifo_depth = fifo_depth;
-+		mcspi->fifo_depth = max_fifo_depth;
- 
- 		return;
- 	}
-@@ -576,7 +573,6 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
- 	struct dma_slave_config	cfg;
- 	enum dma_slave_buswidth width;
- 	unsigned es;
--	u32			burst;
- 	void __iomem		*chstat_reg;
- 	void __iomem            *irqstat_reg;
- 	int			wait_res;
-@@ -596,22 +592,14 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
- 	}
- 
- 	count = xfer->len;
--	burst = 1;
--
--	if (mcspi->fifo_depth > 0) {
--		if (count > mcspi->fifo_depth)
--			burst = mcspi->fifo_depth / es;
--		else
--			burst = count / es;
+-	timeout = jiffies + msecs_to_jiffies(1000);
+-	while (!(readl_relaxed(reg) & bit)) {
+-		if (time_after(jiffies, timeout)) {
+-			if (!(readl_relaxed(reg) & bit))
+-				return -ETIMEDOUT;
+-			else
+-				return 0;
+-		}
+-		cpu_relax();
 -	}
+-	return 0;
++	u32 val;
++
++	return readl_poll_timeout(reg, val, val & bit, 1, MSEC_PER_SEC);
+ }
  
- 	memset(&cfg, 0, sizeof(cfg));
- 	cfg.src_addr = cs->phys + OMAP2_MCSPI_RX0;
- 	cfg.dst_addr = cs->phys + OMAP2_MCSPI_TX0;
- 	cfg.src_addr_width = width;
- 	cfg.dst_addr_width = width;
--	cfg.src_maxburst = burst;
--	cfg.dst_maxburst = burst;
-+	cfg.src_maxburst = es;
-+	cfg.dst_maxburst = es;
- 
- 	rx = xfer->rx_buf;
- 	tx = xfer->tx_buf;
+ static void omap2_mcspi_rx_callback(void *data)
 -- 
 2.19.0.rc2
 
