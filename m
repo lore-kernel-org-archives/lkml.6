@@ -2,183 +2,161 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98AF4ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 05:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0519ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 05:58:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 347F321470
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 05:57:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 347F321470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B3A821476
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 05:58:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qqzx3RqG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B3A821476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbeJSOBl (ORCPT
+        id S1726903AbeJSODW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 10:01:41 -0400
-Received: from mga11.intel.com ([192.55.52.93]:59433 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726340AbeJSOBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 10:01:40 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2018 22:57:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,398,1534834800"; 
-   d="scan'208";a="96568399"
-Received: from aaronlu.sh.intel.com (HELO intel.com) ([10.239.159.44])
-  by fmsmga002.fm.intel.com with ESMTP; 18 Oct 2018 22:57:04 -0700
-Date:   Fri, 19 Oct 2018 13:57:03 +0800
-From:   Aaron Lu <aaron.lu@intel.com>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>
-Subject: Re: [RFC v4 PATCH 2/5] mm/__free_one_page: skip merge for order-0
- page unless compaction failed
-Message-ID: <20181019055703.GA2401@intel.com>
-References: <20181017063330.15384-1-aaron.lu@intel.com>
- <20181017063330.15384-3-aaron.lu@intel.com>
- <20181017104427.GJ5819@techsingularity.net>
- <20181017131059.GA9167@intel.com>
- <20181017135807.GL5819@techsingularity.net>
- <20181017145904.GC9167@intel.com>
- <20181018111632.GM5819@techsingularity.net>
+        Fri, 19 Oct 2018 10:03:22 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37060 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbeJSODW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 10:03:22 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 185-v6so2472326wmt.2;
+        Thu, 18 Oct 2018 22:58:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YNVUw8oVV4jSPk/R/7kyGC47hGiOBUnXZDJK+RSuRk8=;
+        b=Qqzx3RqGKLb8SMjTOInEjV03rp8NqSu6rHRkHM+akH7VSS9D9fTCoAQn4DYiU0xQaH
+         1cZfwHVCjWaEkPRF5p4rIFsu0i1ckjbJu3+53zXvrk7U8Ed3dWwhC4OyOLlS4rxOBZQH
+         X8AYqOSxNzgPOt2BCg0pf/YoBfRRQJ7unHaA7vjR7JlMeUJ11HFgUWbpjDdiJve1Phe5
+         ajzk/V8NKEkbK0L9ln9q2uDCKXcgkmNGAcjbOsJD16MJRlRt3cnVhBIdnD9a/Rm9/7sy
+         BVOKFM3qQu7N4tdqDje4MWiivN2nqeR86Z2RIhgtTq6lstZi2cz3Mfj0xgTkbsXMEI1A
+         Ap8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YNVUw8oVV4jSPk/R/7kyGC47hGiOBUnXZDJK+RSuRk8=;
+        b=JYPmXid5EKHWUYvp+LcDMEpIFuAQ9SfzUP5qzC3xdr7Gr97A9HcKNeOEbBMuvEFywS
+         zEMSLSB4UeOk2ES0CVfNoXkQnG/oKCuEbR3aHFBKXFxXTsWojgqT2t2I0K6mFHhyK2wS
+         fY+0pKKxpj7WZZ1vspJ0x7zmL8gBOfF8dc73RNboEr9cPfgII4JJ6pS22IHwHlqYf/Bi
+         LFtx2wXbAjkjIlIRO2ZUZJ+p1PEpZo8raXMvLG8WTHNruTl+lfqS+PqYXgZrLtyxtWls
+         RvO9kYRs1uirWxi541criLdR1JMjB4EASdSp3Qazi1rWTaDI+3tfSgXXdLE571nBXYm5
+         PdSg==
+X-Gm-Message-State: AGRZ1gI7TijtkImZsxonwu091ZZp7mXViK0sTwP3VdVaZ/Xssmz3RP2w
+        W3m8+alemv/Xt3bIFrUa+jqz/0jU
+X-Google-Smtp-Source: ACcGV62vzzyRxqmtieYwM33AhFe9E2EmnaAM0D9hZ24KReP1YRhRSFi1aYrQcO9sbpUQGWpdryf2LA==
+X-Received: by 2002:a1c:234c:: with SMTP id j73-v6mr3197562wmj.68.1539928727414;
+        Thu, 18 Oct 2018 22:58:47 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id i7-v6sm29336566wrb.30.2018.10.18.22.58.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Oct 2018 22:58:46 -0700 (PDT)
+Date:   Fri, 19 Oct 2018 07:58:44 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     tip-bot for Dave Hansen <tipbot@zytor.com>,
+        linux-tip-commits@vger.kernel.org, dave.hansen@linux.intel.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        jannh@google.com, sean.j.christopherson@intel.com,
+        peterz@infradead.org, luto@kernel.org
+Subject: Re: [tip:x86/mm] x86/mm: Break out user address space handling
+Message-ID: <20181019055844.GA50013@gmail.com>
+References: <20180928160223.9C4F6440@viggo.jf.intel.com>
+ <tip-aa37c51b9421d66f7931c5fdcb9ce80c450974be@git.kernel.org>
+ <87k1mjpxwi.fsf@xmission.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181018111632.GM5819@techsingularity.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87k1mjpxwi.fsf@xmission.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 12:16:32PM +0100, Mel Gorman wrote:
-> On Wed, Oct 17, 2018 at 10:59:04PM +0800, Aaron Lu wrote:
-> > > Any particuular reason why? I assume it's related to the number of zone
-> > > locks with the increase number of zones and the number of threads used
-> > > for the test.
-> > 
-> > I think so too.
-> > 
-> > The 4 sockets server has 192 CPUs in total while the 2 sockets server
-> > has 112 CPUs in total. Assume only ZONE_NORMAL are used, for the 4
-> > sockets server it would be 192/4=48(CPUs per zone) while for the 2
-> > sockets server it is 112/2=56(CPUs per zone). The test is started with
-> > nr_task=nr_cpu so for the 2 sockets servers, it ends up having more CPUs
-> > consuming one zone.
-> > 
+
+* Eric W. Biederman <ebiederm@xmission.com> wrote:
+
+> tip-bot for Dave Hansen <tipbot@zytor.com> writes:
 > 
-> Nice that the prediction is accurate. It brings us to another option --
-> breaking up the zone lock by either hash or address space ranges. The
-> address space ranges would probably be easier to implement. Where it
-> gets hairy is that PFN walkers would need different zone locks. However,
-> overall it might be a better option because it's not order-0 specific.
-
-I think the 'address space range' lock is worth a try.
-
-> It would be a lot of legwork because all uses of the zone lock would
-> have to be audited to see which ones protect the free lists and which
-> ones protect "something else".
-
-Yes a lot of details.
-
-> > > That's important to know. It does reduce the utility of the patch
-> > > somewhat but not all arches support THP and THP is not always enabled on
-> > > x86.
-> > 
-> > I always wondered how systems are making use of THP.
-> > After all, when system has been runing a while(days or months), file
-> > cache should consumed a lot of memory and high order pages will become
-> > more and more scare. If order9 page can't be reliably allocated, will
-> > workload rely on it?
-> > Just a thought.
-> > 
+> > Commit-ID:  aa37c51b9421d66f7931c5fdcb9ce80c450974be
+> > Gitweb:     https://git.kernel.org/tip/aa37c51b9421d66f7931c5fdcb9ce80c450974be
+> > Author:     Dave Hansen <dave.hansen@linux.intel.com>
+> > AuthorDate: Fri, 28 Sep 2018 09:02:23 -0700
+> > Committer:  Peter Zijlstra <peterz@infradead.org>
+> > CommitDate: Tue, 9 Oct 2018 16:51:15 +0200
+> >
+> > x86/mm: Break out user address space handling
+> >
+> > The last patch broke out kernel address space handing into its own
+> > helper.  Now, do the same for user address space handling.
+> >
+> > Cc: x86@kernel.org
+> > Cc: Jann Horn <jannh@google.com>
+> > Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Andy Lutomirski <luto@kernel.org>
+> > Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > Link: http://lkml.kernel.org/r/20180928160223.9C4F6440@viggo.jf.intel.com
+> > ---
+> >  arch/x86/mm/fault.c | 47 ++++++++++++++++++++++++++++-------------------
+> >  1 file changed, 28 insertions(+), 19 deletions(-)
+> >
+> > diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+> > index c7e32f453852..0d1f5d39fc63 100644
+> > --- a/arch/x86/mm/fault.c
+> > +++ b/arch/x86/mm/fault.c
+> > @@ -966,6 +966,7 @@ bad_area_access_error(struct pt_regs *regs, unsigned long error_code,
+> >  		__bad_area(regs, error_code, address, vma, SEGV_ACCERR);
+> >  }
+> >  
+> > +/* Handle faults in the kernel portion of the address space */
+>                            ^^^^^^
+> I believe you mean the __user__ portion of the address space.
+> Given that the call chain is:
 > 
-> File cache can usually be trivially reclaimed and moved. It's a "how
-> long is a piece of string" to determine at what point a system can get
-> fragmented and whether than can be prevented. It's somewhat outside the
-> scope of this patch but anecdotally I'm looking at a machine with 20 days
-> uptime and it still has 2390GB worth of THPs free after a large amount
-> of reclaim activity over the system lifetime so fragmentation avoidance
-> does work in some cases.
+> do_user_addr_fault
+>    handle_mm_fault
+>       do_sigbus      
 
-Good to know, thanks.
+It's both:
 
-> 
-> > THP is of course pretty neat that it reduced TLB cost, needs fewer page
-> > table etc. I just wondered if people really rely on it, or using it
-> > after their system has been up for a long time.
-> > 
-> 
-> If people didn't rely on it then we might as well delete THP and the
-> declare the whole tmpfs-backed-THP as worthless.
-> 
-> > > Yes, but note that the concept is still problematic.
-> > > isolate_migratepages_block is not guaranteed to find a pageblock with
-> > > unmerged buddies in it. If there are pageblocks towards the end of the
-> > > zone with unmerged pages, they may never be found. This will be very hard
-> > > to detect at runtime because it's heavily dependant on the exact state
-> > > of the system.
-> > 
-> > Quite true.
-> > 
-> > The intent here though, is not to have compaction merge back all
-> > unmerged pages, but did the merge for these unmerged pages in a
-> > piggyback way, i.e. since isolate_migratepages_block() is doing the
-> > scan, why don't we let it handle these unmerged pages when it meets
-> > them?
-> > 
-> > If for some reason isolate_migratepages_block() didn't meet a single
-> > unmerged page before compaction succeed, we probably do not need worry
-> > much yet since compaction succeeded anyway.
-> > 
-> 
-> I don't think this is the right way of thinking about it because it's
-> possible to have the system split in such a way so that the migration
-> scanner only encounters unmovable pages before it meets the free scanner
-> where unmerged buddies were in the higher portion of the address space.
+  /* Handle faults in the kernel portion of the address space */
+  static void
+  do_sigbus(struct pt_regs *regs, unsigned long error_code, unsigned long address,
+            u32 *pkey, unsigned int fault)
+  {
+        struct task_struct *tsk = current;
+        int code = BUS_ADRERR;
 
-Yes it is possible unmerged pages are in the higher portion.
+        /* Kernel mode? Handle exceptions or die: */
+        if (!(error_code & X86_PF_USER)) {
+                no_context(regs, error_code, address, SIGBUS, BUS_ADRERR);
+                return;
+        }
 
-My understanding is, when the two scanners meet, all unmerged pages will
-be either used by the free scanner as migrate targets or sent to merge
-by the migration scanner.
+        /* User-space => ok to do another page fault: */
+        if (is_prefetch(regs, error_code, address))
+                return;
 
-> 
-> You either need to keep unmerged buddies on a separate list or search
-> the order-0 free list for merge candidates prior to compaction.
-> 
-> > > It's needed to form them efficiently but excessive reclaim or writing 3
-> > > to drop_caches can also do it. Be careful of tying lazy buddy too
-> > > closely to compaction.
-> > 
-> > That's the current design of this patchset, do you see any immediate
-> > problem of this? Is it that you are worried about high-order allocation
-> > success rate using this design?
-> 
-> I've pointed out what I see are the design flaws but yes, in general, I'm
-> worried about the high order allocation success rate using this design,
-> the reliance on compaction and the fact that the primary motivation is
-> when THP is disabled.
+        tsk->thread.cr2         = address;
+        tsk->thread.error_code  = error_code;
+        tsk->thread.trap_nr     = X86_TRAP_PF;
 
-When THP is in use, zone lock contention is pretty much nowhere :-)
 
-I'll see what I can get with 'address space range' lock first and will
-come back to 'lazy buddy' if it doesn't work out. Thank you and
-Vlastimil for all the suggestions.
+Note the X86_PF_USER check: that's what determines whether the fault was 
+for user or system mappings.
+
+I agree that the comment is misleading and should be clarified.
+
+Thanks,
+
+	Ingo
