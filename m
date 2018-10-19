@@ -2,175 +2,226 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7448EECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F2BECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:39:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1F2F21486
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:35:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1F2F21486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D03A521476
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:39:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="bTr4bHyV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D03A521476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbeJTEn1 (ORCPT
+        id S1726624AbeJTErI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 00:43:27 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57890 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726403AbeJTEn1 (ORCPT
+        Sat, 20 Oct 2018 00:47:08 -0400
+Received: from mta-p7.oit.umn.edu ([134.84.196.207]:45000 "EHLO
+        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726246AbeJTErI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 00:43:27 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9JKYN9B137942
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 16:35:46 -0400
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n7kfk7764-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 16:35:46 -0400
-Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tyreld@linux.vnet.ibm.com>;
-        Fri, 19 Oct 2018 14:35:45 -0600
-Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
-        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 19 Oct 2018 14:35:40 -0600
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9JKZdIE41681078
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 19 Oct 2018 13:35:39 -0700
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7A31A136055;
-        Fri, 19 Oct 2018 20:35:39 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DA33B136059;
-        Fri, 19 Oct 2018 20:35:36 +0000 (GMT)
-Received: from oc6857751186.ibm.com (unknown [9.80.206.97])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri, 19 Oct 2018 20:35:36 +0000 (GMT)
-Subject: Re: [PATCH v2] idle/x86: remove the call to boot_init_stack_canary()
- from cpu_startup_entry()
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     xen-devel@lists.xenproject.org, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <285fcf8852b5924cb01de00be1152ea617527c52.1539944940.git.christophe.leroy@c-s.fr>
-From:   Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Date:   Fri, 19 Oct 2018 13:35:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <285fcf8852b5924cb01de00be1152ea617527c52.1539944940.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18101920-0020-0000-0000-00000E7C9FD8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009902; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01105085; UDB=6.00572143; IPR=6.00885136;
- MB=3.00023828; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-19 20:35:43
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101920-0021-0000-0000-0000636F395D
-Message-Id: <34e3d329-86bb-2194-0c8f-f2795aafd116@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-19_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810190183
+        Sat, 20 Oct 2018 00:47:08 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p7.oit.umn.edu (Postfix) with ESMTP id EBC4ECFD
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 20:39:26 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p7.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 8j3vWuAI9_Xb for <linux-kernel@vger.kernel.org>;
+        Fri, 19 Oct 2018 15:39:26 -0500 (CDT)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id BC83180E
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 15:39:26 -0500 (CDT)
+Received: by mail-io1-f70.google.com with SMTP id f9-v6so31255037iok.23
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 13:39:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=8xYoiRynmnEoMoJLcYQvBlb5siR4tDJjtLBRz6IrP84=;
+        b=bTr4bHyVTmxp5TjN/XzPj31Q574T+9i6j5m1ZY9g+7lbZMWVNMBuObw1+S2JYbnmFx
+         wnFA4UGSE0WZKx//S9EgwdSy5cKMwP33/VsDVwxXz+4kX65i1T6KLD7y0LhN6z8XB8ZR
+         g6sXeTwlyAB908cg9posXrTJrFsOOYPrik/r9xMwUUhMF/2mZcO72OCjLKio/LLv2cnX
+         Vso7vQvgBw2LJsj84mSTlm3qgyMsvkkuoBGU6QwUmz1XnAUUwruuTE0WJHDqR8yzvgQ7
+         PlhxTR+Gv1sAV86yX3mZtULOiOLzugvEyQIYoCPo5qlLN++7ffkx6vFByI6eGjgK0bh0
+         G9Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8xYoiRynmnEoMoJLcYQvBlb5siR4tDJjtLBRz6IrP84=;
+        b=iNnLrj1cq4kZFjNwJ3wXUWon5T4vEL4fjCHtlaMhj6G6Ln/1Py9uBFDsymVqChWTCy
+         nqCiq9NlPY9ooZQ2ITXqzgLokV7ll9XmWBkpim6nseY3+YWVGQxchd5M10hUntNkwfvt
+         0I3UlUI4VJI40gO1yHr1R1UuzcbHTMlwtSMTEObvQ1o9U7Z0C90KTkvc5qVF2sYrm42/
+         lrHBtwRDywkkMuL5Tmhfvio8exFZqAcpE4tThgzfUOTKQVOjRPV2wUilu1wVe9w04EYU
+         PT+E7gKoYhvNquEI0izFG/TfrVr0uWBQvJsKzcnxNDb09vMBOTIb1jRqmZ8ldTC7A7JG
+         NRBQ==
+X-Gm-Message-State: AGRZ1gKstlU1fdAeeWrBJDAq6U3x6D+EkXzO4hghBKVjLom2or2HdCn2
+        Ny9P53RA79hL1FTltQpczzUI9iIz2K+x6d1T7mYHJYlx6cRh93dlYnRRZ+u7sTFXrdz2EKCNHZp
+        hxaabxeORaVARzUbnVuypu12hswc0
+X-Received: by 2002:a5e:dd0a:: with SMTP id t10-v6mr3964761iop.62.1539981566037;
+        Fri, 19 Oct 2018 13:39:26 -0700 (PDT)
+X-Google-Smtp-Source: AJdET5e9D2AwVhI+4ifydxZ1szmWyEZb8Y/yYPv7TgFl9kHsKXwqwRsV16mH7W/yz9VE6stCb570SA==
+X-Received: by 2002:a5e:dd0a:: with SMTP id t10-v6mr3964752iop.62.1539981565780;
+        Fri, 19 Oct 2018 13:39:25 -0700 (PDT)
+Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
+        by smtp.gmail.com with ESMTPSA id 82-v6sm1595304ita.17.2018.10.19.13.39.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 19 Oct 2018 13:39:24 -0700 (PDT)
+From:   Wenwen Wang <wang6495@umn.edu>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        Thomas Winischhofer <thomas@winischhofer.net>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org (open list:FRAMEBUFFER LAYER),
+        linux-fbdev@vger.kernel.org (open list:FRAMEBUFFER LAYER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] video: fbdev: sis: fix a missing-check bug
+Date:   Fri, 19 Oct 2018 15:39:17 -0500
+Message-Id: <1539981557-13590-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/19/2018 03:31 AM, Christophe Leroy wrote:
-> commit d7880812b359 ("idle: Add the stack canary init to
-> cpu_startup_entry()") added the call to boot_init_stack_canary()
-> in cpu_startup_entry() in an #ifdef CONFIG_X86 statement, with
-> the intention to remove that #ifdef later.
-> 
-> While implementing stack protector for powerpc, it has been
-> observed that calling boot_init_stack_canary() is also needed
-> for powerpc which uses per task (TLS) stack canary like the X86.
-> 
-> However, calling boot_init_stack_canary() would break arches
-> using global stack canary (ARM, SH, MIPS and XTENSA).
-> 
-> Instead of modifying the #ifdef CONFIG_X86 in an
->  #if defined(CONFIG_X86) || defined(CONFIG_PPC), powerpc
-> implemented the call to boot_init_stack_canary() in the function
-> calling cpu_startup_entry()
-> 
-> On x86, we have two functions calling cpu_startup_entry():
-> - start_secondary()
-> - cpu_bringup_and_idle()
-> 
-> start_secondary() already calls boot_init_stack_canary().
-> 
-> This patch adds the call to boot_init_stack_canary() in
-> cpu_bringup_and_idle() and removes it from cpu_startup_entry()
-> 
-> Reviewed-by: Juergen Gross <jgross@suse.com>
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  v2: Revised commit log (#if defined  had been droped by 'git commit')
-> 
->  arch/x86/xen/smp_pv.c |  1 +
->  kernel/sched/idle.c   | 15 ---------------
->  2 files changed, 1 insertion(+), 15 deletions(-)
-> 
-> diff --git a/arch/x86/xen/smp_pv.c b/arch/x86/xen/smp_pv.c
-> index e3b18ad49889..0e05e8e23998 100644
-> --- a/arch/x86/xen/smp_pv.c
-> +++ b/arch/x86/xen/smp_pv.c
-> @@ -88,6 +88,7 @@ static void cpu_bringup(void)
->  asmlinkage __visible void cpu_bringup_and_idle(void)
->  {
->  	cpu_bringup();
-> +	boot_init_stack_canary();
+In sisfb_find_rom(), the official pci ROM is checked to see whether it
+contains the expected value at specific locations. This is done by firstly
+mapping the rom into the IO memory region 'rom_base' and then invoking
+sisfb_check_rom() to perform the checks. If the checks succeed, i.e.,
+sisfb_check_rom() returns 1, the whole content of the rom is then copied to
+'myrombase' through memcpy_fromio(). The problem here is that the checks
+are conducted on the IO region 'rom_base' directly. Given that the device
+also has the permission to access the IO region, it is possible that a
+malicious device controlled by an attacker can race to modify the values in
+the region after the checks but before memcpy_fromio(). By doing so, the
+attacker can supply unexpected roms, which can cause undefined behavior of
+the kernel and introduce potential security risk. The following for loop
+also has a similar issue.
 
-I think I saw from the kbuild test robot in your first pass that this is an implicit declaration. Quick look at my local git tree and I don't see an include for stackprotector.h in this file.
+To avoid the above issue, this patch firstly copies the content of the rom
+and then performs the checks on the copied version. If all the checks are
+satisfied, the copied version will then be returned.
 
--Tyrel
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+---
+ drivers/video/fbdev/sis/sis_main.c | 52 ++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 30 deletions(-)
 
->  	cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
->  }
-> 
-> diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-> index 16f84142f2f4..f5516bae0c1b 100644
-> --- a/kernel/sched/idle.c
-> +++ b/kernel/sched/idle.c
-> @@ -347,21 +347,6 @@ EXPORT_SYMBOL_GPL(play_idle);
-> 
->  void cpu_startup_entry(enum cpuhp_state state)
->  {
-> -	/*
-> -	 * This #ifdef needs to die, but it's too late in the cycle to
-> -	 * make this generic (ARM and SH have never invoked the canary
-> -	 * init for the non boot CPUs!). Will be fixed in 3.11
-> -	 */
-> -#ifdef CONFIG_X86
-> -	/*
-> -	 * If we're the non-boot CPU, nothing set the stack canary up
-> -	 * for us. The boot CPU already has it initialized but no harm
-> -	 * in doing it again. This is a good place for updating it, as
-> -	 * we wont ever return from this function (so the invalid
-> -	 * canaries already on the stack wont ever trigger).
-> -	 */
-> -	boot_init_stack_canary();
-> -#endif
->  	arch_cpu_idle_prepare();
->  	cpuhp_online_idle(state);
->  	while (1)
-> 
+diff --git a/drivers/video/fbdev/sis/sis_main.c b/drivers/video/fbdev/sis/sis_main.c
+index 20aff90..a2d8051 100644
+--- a/drivers/video/fbdev/sis/sis_main.c
++++ b/drivers/video/fbdev/sis/sis_main.c
+@@ -4089,29 +4089,29 @@ static int __init sisfb_setup(char *options)
+ }
+ #endif
+ 
+-static int sisfb_check_rom(void __iomem *rom_base,
++static int sisfb_check_rom(unsigned char *rom_base,
+ 			   struct sis_video_info *ivideo)
+ {
+-	void __iomem *rom;
++	unsigned char *rom;
+ 	int romptr;
+ 
+-	if((readb(rom_base) != 0x55) || (readb(rom_base + 1) != 0xaa))
++	if ((*rom_base != 0x55) || (*(rom_base + 1) != 0xaa))
+ 		return 0;
+ 
+-	romptr = (readb(rom_base + 0x18) | (readb(rom_base + 0x19) << 8));
++	romptr = (*(rom_base + 0x18) | (*(rom_base + 0x19) << 8));
+ 	if(romptr > (0x10000 - 8))
+ 		return 0;
+ 
+ 	rom = rom_base + romptr;
+ 
+-	if((readb(rom)     != 'P') || (readb(rom + 1) != 'C') ||
+-	   (readb(rom + 2) != 'I') || (readb(rom + 3) != 'R'))
++	if ((*(rom)     != 'P') || (*(rom + 1) != 'C') ||
++	   (*(rom + 2) != 'I') || (*(rom + 3) != 'R'))
+ 		return 0;
+ 
+-	if((readb(rom + 4) | (readb(rom + 5) << 8)) != ivideo->chip_vendor)
++	if ((*(rom + 4) | (*(rom + 5) << 8)) != ivideo->chip_vendor)
+ 		return 0;
+ 
+-	if((readb(rom + 6) | (readb(rom + 7) << 8)) != ivideo->chip_id)
++	if ((*(rom + 6) | (*(rom + 7) << 8)) != ivideo->chip_id)
+ 		return 0;
+ 
+ 	return 1;
+@@ -4124,6 +4124,10 @@ static unsigned char *sisfb_find_rom(struct pci_dev *pdev)
+ 	unsigned char *myrombase = NULL;
+ 	size_t romsize;
+ 
++	myrombase = vmalloc(65536);
++	if (!myrombase)
++		return NULL;
++
+ 	/* First, try the official pci ROM functions (except
+ 	 * on integrated chipsets which have no ROM).
+ 	 */
+@@ -4131,20 +4135,15 @@ static unsigned char *sisfb_find_rom(struct pci_dev *pdev)
+ 	if(!ivideo->nbridge) {
+ 
+ 		if((rom_base = pci_map_rom(pdev, &romsize))) {
+-
+-			if(sisfb_check_rom(rom_base, ivideo)) {
+-
+-				if((myrombase = vmalloc(65536))) {
+-					memcpy_fromio(myrombase, rom_base,
+-							(romsize > 65536) ? 65536 : romsize);
+-				}
+-			}
++			memcpy_fromio(myrombase, rom_base,
++					(romsize > 65536) ? 65536 : romsize);
+ 			pci_unmap_rom(pdev, rom_base);
++
++			if (sisfb_check_rom(myrombase, ivideo))
++				return myrombase;
+ 		}
+ 	}
+ 
+-	if(myrombase) return myrombase;
+-
+ 	/* Otherwise do it the conventional way. */
+ 
+ #if defined(__i386__) || defined(__x86_64__)
+@@ -4156,24 +4155,17 @@ static unsigned char *sisfb_find_rom(struct pci_dev *pdev)
+ 			rom_base = ioremap(temp, 65536);
+ 			if (!rom_base)
+ 				continue;
+-
+-			if (!sisfb_check_rom(rom_base, ivideo)) {
+-				iounmap(rom_base);
+-				continue;
+-			}
+-
+-			if ((myrombase = vmalloc(65536)))
+-				memcpy_fromio(myrombase, rom_base, 65536);
+-
++			memcpy_fromio(myrombase, rom_base, 65536);
+ 			iounmap(rom_base);
+-			break;
+ 
++			if (sisfb_check_rom(myrombase, ivideo))
++				return myrombase;
+ 		}
+ 
+ 	}
+ #endif
+-
+-	return myrombase;
++	vfree(myrombase);
++	return NULL;
+ }
+ 
+ static void sisfb_post_map_vram(struct sis_video_info *ivideo,
+-- 
+2.7.4
 
