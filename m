@@ -2,95 +2,145 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 948ECECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D15ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5061C2064A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:36:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5061C2064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 074A32064A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:37:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="OYj/E641"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 074A32064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbeJSUml (ORCPT
+        id S1727444AbeJSUnH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:42:41 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51820 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727011AbeJSUmk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:42:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD869A78;
-        Fri, 19 Oct 2018 05:36:44 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7D2BE3F71D;
-        Fri, 19 Oct 2018 05:36:44 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 8CD561AE06FD; Fri, 19 Oct 2018 13:36:47 +0100 (BST)
-Date:   Fri, 19 Oct 2018 13:36:47 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Kristina Martsenko <kristina.martsenko@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Adam Wallis <awallis@codeaurora.org>,
-        Amit Kachhap <Amit.Kachhap@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
-        Jacob Bramley <jacob.bramley@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        "Suzuki K . Poulose" <suzuki.poulose@arm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/17] ARMv8.3 pointer authentication support
-Message-ID: <20181019123646.GG14246@arm.com>
-References: <20181005084754.20950-1-kristina.martsenko@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181005084754.20950-1-kristina.martsenko@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Fri, 19 Oct 2018 16:43:07 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56864 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727011AbeJSUnH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 16:43:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=nYBKH8KQVvnkLlrTR3gJ3d4MtYEJLLVAMM53bDn5e6E=; b=OYj/E641JqUv
+        1IKRgtYWwhlNh/TXxqMjamyDDNx/lV1y6JzkU0U3i5PxGQuDCebzKiDKlyV4FLU7LkoqbxeermGMU
+        LiLRzlp0jZMokZI07iyYadX6+yqv3u0FcE5vXhugjpq+BvyX1ak1IQQRd8DtRmFgTnO/yAOg23E1B
+        2Zpjk=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gDU1d-00008q-41; Fri, 19 Oct 2018 12:37:09 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id D58ED1122548; Fri, 19 Oct 2018 13:37:08 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Ben Dooks <ben.dooks@codethink.co.uk>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regmap: use less #ifdef for LOG_DEVICE" to the regmap tree
+In-Reply-To: 
+Message-Id: <20181019123708.D58ED1122548@debutante.sirena.org.uk>
+Date:   Fri, 19 Oct 2018 13:37:08 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 09:47:37AM +0100, Kristina Martsenko wrote:
-> 1) Key support
-> 
-> This series enables the use of instructions using APIAKey, which is
-> initialised and maintained per-process (shared by all threads). GCC
-> currently only makes use of APIAKey.
-> 
-> This series does not add support for APIBKey, APDAKey, APDBKey, nor
-> APGAKey. HINT-space instructions using these keys will currently execute
-> as NOPs. Support for these keys can be added as users appear.
-> 
-> Note that while we expose the cpuid register (ID_AA64ISAR1_EL1) to
-> userspace, it only contains one feature for address authentication
-> (API/APA), so it cannot be used by userspace to tell which keys the
-> kernel supports. For this the kernel exposes HWCAP bits, one per key
-> (currently only APIAKey), which must be checked instead.
+The patch
 
-Given that the architecture doesn't provide an identification mechanism
-for the case where only one of the keys is available, I would much prefer
-that we expose both of the keys to userspace. Is the only downside of
-that a possible exception entry overhead if the kernel wants to use pointer
-authentication as well?
+   regmap: use less #ifdef for LOG_DEVICE
 
-Having an initial implementation where the B key operations act as NOPs
-isn't ideal if we want to support future users -- chances are they'll
-be put off because deployed kernels don't give them whatever security
-guarantees they require. It's a bit of a chicken-and-egg problem, so
-unless we have good reasons to keep the B key hidden, I think we should
-be exposing it from the start.
+has been applied to the regmap tree at
 
-Will
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 950937624079f8ab78939f1effbe21df8e39d420 Mon Sep 17 00:00:00 2001
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Date: Tue, 2 Oct 2018 11:42:05 +0100
+Subject: [PATCH] regmap: use less #ifdef for LOG_DEVICE
+
+Move the checking of the LOG_DEVICE into a function to reduce the
+number of #ifdefs and  ensure more of the code gets compiled/checked,
+and make it easier to change this for internal debugging purposes
+(such as checking >1 device).
+
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/base/regmap/regmap.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 0360a90ad6b6..0d9ad7c07d51 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -35,6 +35,16 @@
+  */
+ #undef LOG_DEVICE
+ 
++#ifdef LOG_DEVICE
++static inline bool regmap_should_log(struct regmap *map)
++{
++	return (map->dev && strcmp(dev_name(map->dev), LOG_DEVICE) == 0);
++}
++#else
++static inline bool regmap_should_log(struct regmap *map) { return false; }
++#endif
++
++
+ static int _regmap_update_bits(struct regmap *map, unsigned int reg,
+ 			       unsigned int mask, unsigned int val,
+ 			       bool *change, bool force_write);
+@@ -1755,10 +1765,8 @@ int _regmap_write(struct regmap *map, unsigned int reg,
+ 		}
+ 	}
+ 
+-#ifdef LOG_DEVICE
+-	if (map->dev && strcmp(dev_name(map->dev), LOG_DEVICE) == 0)
++	if (regmap_should_log(map))
+ 		dev_info(map->dev, "%x <= %x\n", reg, val);
+-#endif
+ 
+ 	trace_regmap_reg_write(map, reg, val);
+ 
+@@ -2450,10 +2458,8 @@ static int _regmap_read(struct regmap *map, unsigned int reg,
+ 
+ 	ret = map->reg_read(context, reg, val);
+ 	if (ret == 0) {
+-#ifdef LOG_DEVICE
+-		if (map->dev && strcmp(dev_name(map->dev), LOG_DEVICE) == 0)
++		if (regmap_should_log(map))
+ 			dev_info(map->dev, "%x => %x\n", reg, *val);
+-#endif
+ 
+ 		trace_regmap_reg_read(map, reg, *val);
+ 
+-- 
+2.19.0.rc2
+
