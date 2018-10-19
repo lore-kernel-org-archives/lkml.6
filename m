@@ -2,100 +2,134 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE792ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F33ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F5B820869
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:58:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="aSjdQuG2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F5B820869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 9992C20869
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:59:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9992C20869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=oregano.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbeJTAFe (ORCPT
+        id S1727793AbeJTAFw convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 20:05:34 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:57833 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727010AbeJTAFe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 20:05:34 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 895d9314;
-        Fri, 19 Oct 2018 15:56:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=daGgA772UPnfYGuXtkaT2VNFif8=; b=aSjdQu
-        G2hqBonl0n0bURM+8WnMiTZWsZyKkwNR2747UQbZlG+eW0LGRE6pnzqFO4w5wzZH
-        5thqKQT0DYiMma6izHNoyweceoeKN5Hg3e8RC16y1baKVfSstsDf51uWKFqTy6NZ
-        1Wz5IUdifOMkGG1yll+ZUPg4yjteOmoLLcnNuMtXBBHu6PfLM3HRKzfpfN1TBaqY
-        +nhzE1l4oLX10hr4v9zt06A3hE4aHV+2JGsZxsuTRJeFiVl2HLx+bnMweH+7bnsK
-        I/NIXGT/tqwWjCf5Y1fwdjR1iOHAlLwwCEJ9Xa8AI8HZxTJrvpDh4Lo9aMSTRd2F
-        KZO53mcZ8cAqz4Dg==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 71656bb5 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Fri, 19 Oct 2018 15:56:39 +0000 (UTC)
-Received: by mail-oi1-f180.google.com with SMTP id l197-v6so27184755oib.8;
-        Fri, 19 Oct 2018 08:58:48 -0700 (PDT)
-X-Gm-Message-State: ABuFfogwh4oYyO+kUEG3dWRE7PR9ISyrVeG0VrmZLXHZC4dFq0zWBT8q
-        znv1/b5+pQrB0yxL3qbGlML7u8+HjLCK2YtLG14=
-X-Google-Smtp-Source: ACcGV63RrtI02kX4Ei1p0N2a3/SIl92k/Wn5+KuUCcMb5YkPppHSYgBol3vSzVx1dGWsLLmArf0+wAhRyuaJgWI0+SA=
-X-Received: by 2002:aca:1111:: with SMTP id 17-v6mr19511053oir.278.1539964727505;
- Fri, 19 Oct 2018 08:58:47 -0700 (PDT)
+        Fri, 19 Oct 2018 20:05:52 -0400
+Received: from mx01.busymouse24.de ([83.246.107.19]:53149 "EHLO
+        mx01.busymouse24.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727010AbeJTAFw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 20:05:52 -0400
+X-Greylist: delayed 365 seconds by postgrey-1.27 at vger.kernel.org; Fri, 19 Oct 2018 20:05:50 EDT
+Received: from maskedhost [127.0.0.1] by mx01.busymouse24.de stage1 with esmtps 
+        (Exim MailCleaner) 
+        id 1gDX5D-0008k6-Ny  
+        from <puhm@oregano.at>; Fri, 19 Oct 2018 17:53:03 +0200
+Received: from SRV188.busymouse24.de (192.168.100.188) by
+ SRV177.busymouse24.de (192.168.100.177) with Microsoft SMTP Server (TLS) id
+ 15.0.1263.5; Fri, 19 Oct 2018 17:53:03 +0200
+Received: from SRV177.busymouse24.de (192.168.100.177) by
+ SRV188.busymouse24.de (192.168.100.188) with Microsoft SMTP Server (TLS) id
+ 15.0.1263.5; Fri, 19 Oct 2018 17:53:02 +0200
+Received: from SRV177.busymouse24.de ([fe80::f87a:2c8c:90ef:d29a]) by
+ SRV177.busymouse24.de ([fe80::f87a:2c8c:90ef:d29a%14]) with mapi id
+ 15.00.1263.000; Fri, 19 Oct 2018 17:53:02 +0200
+From:   Andreas Puhm <puhm@oregano.at>
+To:     Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
+CC:     "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [Bug] altera_cvp registers a PCI device (Altera/Intel FPGA) without
+ verifying that it supports CVP
+Thread-Topic: [Bug] altera_cvp registers a PCI device (Altera/Intel FPGA)
+ without verifying that it supports CVP
+Thread-Index: AdRnw6sLsfLCE4NLQri3QW4UMzXDuw==
+Date:   Fri, 19 Oct 2018 15:53:02 +0000
+Message-ID: <2c6313a3f7c04b70b8a06a50934fe27a@SRV177.busymouse24.de>
+Accept-Language: de-AT, de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [83.246.107.135]
+x-exclaimer-md-config: 1802f3fe-bc94-4301-9dc2-d59a74e6de3a
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20181015175424.97147-1-ebiggers@kernel.org>
-In-Reply-To: <20181015175424.97147-1-ebiggers@kernel.org>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Fri, 19 Oct 2018 17:58:35 +0200
-X-Gmail-Original-Message-ID: <CAHmME9p1aiqWZ4+viaLscO8+qmixdVhMA1MAtMAFEHPG36DcPg@mail.gmail.com>
-Message-ID: <CAHmME9p1aiqWZ4+viaLscO8+qmixdVhMA1MAtMAFEHPG36DcPg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/12] crypto: Adiantum support
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Paul Crowley <paulcrowley@google.com>,
-        Greg Kaiser <gkaiser@google.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Samuel Neves <samuel.c.p.neves@gmail.com>,
-        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Eric,
+Hello,
 
-> As before, some of these patches conflict with the new "Zinc" crypto
-> library.  But I don't know when Zinc will be merged, so for now I've
-> continued to base this patchset on the current 'cryptodev'.
+I hope the following information is descriptive enough.
+If this is no the case, I will provide further details.
 
-I'd appreciate it if you waited to merge this until you can rebase it
-on top of Zinc. In fact, if you already want to build it on top of
-Zinc, I'm happy to work with you on that in a shared repo or similar.
-We can also hash out the details of that in person in Vancouver in a
-few weeks. I think pushing this in before will create undesirable
-churn for both of us.
+--------------------------------------------------------------------
+Full description:
+The altera_cvp probe function only checks, 
+if the Altera/Intel PCI device configuration space contains a vendor specific entry (VSEC Capability Header 0x000b) at offset 0x200.
+ But the probe function does not verify, if the PCI device (and further the FPGA), 
+for which it has been called, actually supports the Configure-via-Protocol feature.
 
-> Therefore, we (well, Paul Crowley did the real work) designed a new
-> encryption mode, Adiantum.  In essence, Adiantum makes it secure to use
-> the ChaCha stream cipher for disk encryption.  Adiantum is specified by
-> our paper here: https://eprint.iacr.org/2018/720.pdf ("Adiantum:
-> length-preserving encryption for entry-level processors").  Reference
-> code and test vectors are here: https://github.com/google/adiantum.
-> Most of the high-level concepts of Adiantum are not new; similar
-> existing modes include XCB, HCTR, and HCH.  Adiantum and these modes are
-> true wide-block modes (tweakable super-pseudorandom permutations), so
-> they actually provide a stronger notion of security than XTS.
+The PCI device (FPGA) can explicitly disable the Configur-via-Protocol (CvP) feature by setting the CVP_EN bit, index 20 of CVP_STATUS register, to '0'. 
+As the altera_cvp probe function does not check this it registers the device in any way. 
+At this point, the altera_cvp module cannot be used to program this device via CvP. 
+In addition no other module can use the device, as it is still registered by altera_cvp.
 
-Great, I'm very happy to see you've created such a high performance alternative.
+Keywords: altera_cvp module, PCI, Configure-via-Protocol
 
-Before merging this into the kernel, do you want to wait until you've
-received some public review from academia?
+Kernel version: problem occured with v4.15, should occur from 4.14+
 
-Jason
+Instructions to reproduce: 
+Proper hardware is necessary to reproduce this, i.e., FPGA with instantiated Altera/Intel PCIe IP Core with disabled CvP feature.
+
+Workaround:
+It is possible to circumvent this problem by manually unloading or blacklisting the altera_cvp module.
+
+Suggested Patch:
+This patch was successfully build and tested for 4.15 and 4.18
+
+Subject: [PATCH] register device only, if it supports CvP operation
+
+This patch is based on: git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tag/?h=v4.18
+
+Signed-off-by: Andreas Puhm <puhm@oregano.at>
+---
+ drivers/fpga/altera-cvp.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index 7fa793672a7a..838abcfca0fb 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -403,6 +403,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ 	struct altera_cvp_conf *conf;
+ 	struct fpga_manager *mgr;
+ 	u16 cmd, val;
++	u32 val32;
+ 	int ret;
+ 
+ 	/*
+@@ -416,6 +417,14 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ 		return -ENODEV;
+ 	}
+ 
++	pci_read_config_dword(pdev, VSE_CVP_STATUS, &val32);
++	if (!(val32 & VSE_CVP_STATUS_CVP_EN)) {
++		dev_err(&pdev->dev,
++			"CVP is disabled for this device: CVP_STATUS Reg 0x%x\n",
++			val32);
++		return -ENODEV;
++	}
++
+ 	conf = devm_kzalloc(&pdev->dev, sizeof(*conf), GFP_KERNEL);
+ 	if (!conf)
+ 		return -ENOMEM;
+--
+
+With best regards,
+Andreas Puhm <puhm@oregano.at>
