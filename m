@@ -2,173 +2,160 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BFCECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA08ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:23:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CFAA21476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:20:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E50C21476
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:23:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FTqJmQbX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CFAA21476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="W2Fi8Ntv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E50C21476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbeJSV1D (ORCPT
+        id S1727427AbeJSV3H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 17:27:03 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39993 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727227AbeJSV1D (ORCPT
+        Fri, 19 Oct 2018 17:29:07 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14116 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727004AbeJSV3G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 17:27:03 -0400
-Received: by mail-ot1-f67.google.com with SMTP id w67so33121869ota.7
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 06:20:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=QZP7J5TaRm4ahVFM9hMV2APPsTbezNiP5Ip1GvLBdgI=;
-        b=FTqJmQbXSpjiRiiggkiKfh7Qyv46o/FiTjn0mc3o6vaMEw5EIAYOB8Q6MFy+AmWc7o
-         m3cHwa70xxM+vVOQ2qAAaL+/uuw5JMZV92cWhifKJlobDBmE2l+sQNzqX1uYJRom3OSq
-         r27kAuubYqWH5ZX17JjEBk/30sx4hAKuND19g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=QZP7J5TaRm4ahVFM9hMV2APPsTbezNiP5Ip1GvLBdgI=;
-        b=rs7eZUmB2e6UbusnQbB0smyFRtuQVXT02klpyaOMFXfxqcgQ3bJqSwOZBwIuTvZG2W
-         neEEI4Tfljo+V3ECcHWSDNcyMo4Z0PzKW5Btgg/CLZrNV6Z+C27CJtpDqn1bZLXQJIyT
-         U+74MuCTJF8gmXgJkmAy86WFis+9URXajveMHpBzGpDfxjC/rm1nZjVEh8FK2Fdf1yKu
-         D1LXpHfoV7QFY4kO05Lu/iXQpO874Dqr43cLlsg1T8pdNRNC9zYzd8TxyIz4lpOpbdpW
-         x7JMmKmK+VKTn8nNggaPWcgCaa38RDjVZ5MPP1E3E3129s4184cTQSisRfkYh9GSOt5p
-         w0xQ==
-X-Gm-Message-State: ABuFfoiB7kTcEt2RK+o6zMvvN0bIuu1rorVmR3NfgFfcSPpK0PbiJ5d8
-        9pECEMSyUNWafDpE5Uq+iVRoLs40ALz2tg==
-X-Google-Smtp-Source: ACcGV62gf8Ju9IIcmcacGbK/8K7Zepa5B0Xxxmfydtbp04MQgbKc8idAfw0uivRcqpyiqZppjo1CTQ==
-X-Received: by 2002:a9d:a82:: with SMTP id 2mr23231064otq.136.1539955255844;
-        Fri, 19 Oct 2018 06:20:55 -0700 (PDT)
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com. [209.85.167.171])
-        by smtp.gmail.com with ESMTPSA id c62sm7133680otb.60.2018.10.19.06.20.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Oct 2018 06:20:54 -0700 (PDT)
-Received: by mail-oi1-f171.google.com with SMTP id e17-v6so26762821oib.4
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 06:20:54 -0700 (PDT)
-X-Received: by 2002:aca:c743:: with SMTP id x64-v6mr17554766oif.139.1539955253826;
- Fri, 19 Oct 2018 06:20:53 -0700 (PDT)
+        Fri, 19 Oct 2018 17:29:06 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bc9daae0000>; Fri, 19 Oct 2018 06:22:54 -0700
+Received: from HQMAIL103.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 19 Oct 2018 06:22:59 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 19 Oct 2018 06:22:59 -0700
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 19 Oct
+ 2018 13:22:59 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 19 Oct
+ 2018 13:22:58 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Fri, 19 Oct 2018 13:22:58 +0000
+Received: from moonraker.nvidia.com (Not Verified[10.26.11.35]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5bc9dab10000>; Fri, 19 Oct 2018 06:22:58 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Lee Jones <lee.jones@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        "Dmitry Osipenko" <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH] mfd: tps6586x: Handle interrupts on suspend
+Date:   Fri, 19 Oct 2018 14:22:53 +0100
+Message-ID: <1539955373-13735-1-git-send-email-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Received: by 2002:ac9:7915:0:0:0:0:0 with HTTP; Fri, 19 Oct 2018 06:20:23
- -0700 (PDT)
-In-Reply-To: <20181018175422.506152522@linuxfoundation.org>
-References: <20181018175422.506152522@linuxfoundation.org>
-From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
-Date:   Fri, 19 Oct 2018 10:20:23 -0300
-X-Gmail-Original-Message-ID: <CABdQkv89pU7qpRWm_GSQEp9h+Xtunc0fjBxKbk8b9uOcsa4teg@mail.gmail.com>
-Message-ID: <CABdQkv89pU7qpRWm_GSQEp9h+Xtunc0fjBxKbk8b9uOcsa4teg@mail.gmail.com>
-Subject: Re: [PATCH 4.9 00/35] 4.9.135-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1539955374; bh=D1OzL+Krrnfn/sN8NoMgBPfPYz55geZZmrN5sdOs2C8=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=W2Fi8NtvVr9iN2BQiD0MUIioUTgl6jT1azwBC7SE1gClNiNLMUumAbvZsXyCV19eI
+         m2wJXsiY70JBBmm2pR/eZGVI+S6hcKTuJSQD791z/0sfCfSh6J7fXMEIlgAkCSEyLG
+         MlqzaLOoTciQOB9Vuj2beq9dlnX8uBu0WwvDqMO67nCAHmdE5V+zgVFa7tGfQ7fgRS
+         uEF/S/MdgcAfORWNi06JEpmLkSnm7op2doeBTESq6homHNV4aMM9T93zyddCg9Hf4M
+         zhM4PEiNqnViYQh+NXqm4RfiCcXoU22JfHlYCaszKZJgRC2FPHOpNpoDI1w7rqzMNl
+         tXEhgiQ0OSplQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 2:54 PM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> This is the start of the stable review cycle for the 4.9.135 release.
-> There are 35 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat Oct 20 17:54:00 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.9.135-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.9.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+From: Jonathan Hunter <jonathanh@nvidia.com>
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+The tps6586x driver creates an irqchip that is used by its various child
+devices for managing interrupts. The tps6586x-rtc device is one of its
+children that uses the tps6586x irqchip. When using the tps6586x-rtc as
+a wake-up device from suspend, the following is seen:
 
-Summary
-------------------------------------------------------------------------
+ PM: Syncing filesystems ... done.
+ Freezing user space processes ... (elapsed 0.001 seconds) done.
+ OOM killer disabled.
+ Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
+ Disabling non-boot CPUs ...
+ Entering suspend state LP1
+ Enabling non-boot CPUs ...
+ CPU1 is up
+ tps6586x 3-0034: failed to read interrupt status
+ tps6586x 3-0034: failed to read interrupt status
 
-kernel: 4.9.135-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.9.y
-git commit: 199d569d5f73d62a53a8ed6ce5cfecffefde3bb5
-git describe: v4.9.133-106-g199d569d5f73
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
-ld/v4.9.133-106-g199d569d5f73
+The reason why the tps6586x interrupt status cannot be read is because
+the tps6586x interrupt is not masked during suspend and when the
+tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
+seen before the i2c controller has been resumed in order to read the
+tps6586x interrupt status.
 
+The tps6586x-rtc driver sets it's interrupt as a wake-up source during
+suspend, which gets propagated to the parent tps6586x interrupt.
+However, the tps6586x-rtc driver cannot disable it's interrupt during
+suspend otherwise we would never be woken up and so the tps6586x must
+disable it's interrupt instead.
 
-No regressions (compared to build v4.9.134)
+Prevent the tps6586x interrupt handler from executing on exiting suspend
+before the i2c controller has been resumed by disabling the tps6586x
+interrupt on entering suspend and re-enabling it on resuming from
+suspend.
 
+Cc: stable@vger.kernel.org
 
-No fixes (compared to build v4.9.134)
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/mfd/tps6586x.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
+diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
+index b89379782741..9c7925ca13cf 100644
+--- a/drivers/mfd/tps6586x.c
++++ b/drivers/mfd/tps6586x.c
+@@ -592,6 +592,29 @@ static int tps6586x_i2c_remove(struct i2c_client *client)
+ 	return 0;
+ }
+ 
++static int __maybe_unused tps6586x_i2c_suspend(struct device *dev)
++{
++	struct tps6586x *tps6586x = dev_get_drvdata(dev);
++
++	if (tps6586x->client->irq)
++		disable_irq(tps6586x->client->irq);
++
++	return 0;
++}
++
++static int __maybe_unused tps6586x_i2c_resume(struct device *dev)
++{
++	struct tps6586x *tps6586x = dev_get_drvdata(dev);
++
++	if (tps6586x->client->irq)
++		enable_irq(tps6586x->client->irq);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(tps6586x_pm_ops, tps6586x_i2c_suspend,
++			 tps6586x_i2c_resume);
++
+ static const struct i2c_device_id tps6586x_id_table[] = {
+ 	{ "tps6586x", 0 },
+ 	{ },
+@@ -602,6 +625,7 @@ static struct i2c_driver tps6586x_driver = {
+ 	.driver	= {
+ 		.name	= "tps6586x",
+ 		.of_match_table = of_match_ptr(tps6586x_of_match),
++		.pm	= &tps6586x_pm_ops,
+ 	},
+ 	.probe		= tps6586x_i2c_probe,
+ 	.remove		= tps6586x_i2c_remove,
+-- 
+2.7.4
 
-Ran 21028 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
