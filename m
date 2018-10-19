@@ -2,216 +2,74 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 760C9ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E44EECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:08:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24E8E21470
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:04:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F10D8214C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:08:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHdIQH8T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24E8E21470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fMVMWELb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F10D8214C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbeJTCLt (ORCPT
+        id S1727583AbeJTCPW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 22:11:49 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39451 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727049AbeJTCLt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 22:11:49 -0400
-Received: by mail-wr1-f68.google.com with SMTP id 61-v6so38329808wrb.6;
-        Fri, 19 Oct 2018 11:04:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/5cSpu0cZRgdO1UwQAiAW5oSeJBBHkkpdR8fsRT0mfM=;
-        b=fHdIQH8TmvWYCIVzvfmN7iOYdaW2HRH2yzZcWStZUoMum5RLznD6VAdRuDgZGt0dKz
-         S4+ZjqSpCzkNzRjReR+S5uSv/iSbTurMujvNa8row9UyKU6tIq75dmtaoKItYII0gOzJ
-         4VH/l288jN7OaaXf6YzfEyx8cZFKmx2HriDvpJP9o94vUsoNPV0MgO2v7I6JS66GAoxA
-         xuM0yjCkqDKqKk44Z7kjQNtVIvjJ4iNLxNchL/FZEyQEnFBaFJsiK85StJYqUb1FrFuO
-         C6wp7NlGxAL7O/end1vTYOBeiEE+1xZD/jFtF0XqgtmUeMzuHeyvTxhFQP2peo9D8bVl
-         eSlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/5cSpu0cZRgdO1UwQAiAW5oSeJBBHkkpdR8fsRT0mfM=;
-        b=q6L2+YUP4ipDyUiVVm5fJ6nINm1lmJZBv4E5aUOgUnBT1+3bAv8HE/navYmOwGJHfE
-         bK/7q32YkGDe4LS1rCcaIHxHfpyKuKDIu3MEoVv3aXjFmiyTTimcSgP92r7rlUfqCLpw
-         UPkOUuDBSS7tBkSRbexeYan96YQTtrugHwYdPl/NvypYdyGd6Rdb+yAoRcU9vq0mzVLt
-         E0MbVrD2mPhaWspjsvD/wh7ioBwmEdrmWI9wEgTbsz5EhYP3uyxudu3AQQezICXC4CK/
-         MVpyk3BfFqaiMX1C5gmu+/LJ+T7rcjXXbNcEG4MRzk2fmuyO0dWBWl2Jfric9KpeuakW
-         gKYQ==
-X-Gm-Message-State: ABuFfohkH+TE71yPqk92/cHDlp3WcPkm1ofzsIMel+dUP+DlJi2XkbzS
-        /HLM8JBGa44LggjQ3wRXtvA=
-X-Google-Smtp-Source: ACcGV61rabeF9O7yCZzu7wgbwgVeY2vJVhJBAD2tfXqZvn26+rQ2tYXntohNaKBeXOSQB5INfEgCng==
-X-Received: by 2002:adf:e70f:: with SMTP id c15-v6mr36854745wrm.165.1539972278574;
-        Fri, 19 Oct 2018 11:04:38 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id 78-v6sm2243658wma.38.2018.10.19.11.04.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Oct 2018 11:04:37 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Kirti Wankhede <kwankhede@nvidia.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] vfio-mdev/samples: Use u8 instead of char for handle functions
-Date:   Fri, 19 Oct 2018 11:04:27 -0700
-Message-Id: <20181019180427.1386-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 19 Oct 2018 22:15:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44260 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726976AbeJTCPW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 22:15:22 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF9B42087A;
+        Fri, 19 Oct 2018 18:08:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539972492;
+        bh=6tq3LVWQ6nMo7VSw02tRTmCTazWjGJjoPaix6mGuISI=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=fMVMWELbwz5YdiP2H/OYgpijk4a+9Iwl6sZPB90s1XI0+SPYRq8XxZ2bh/eE5DVlj
+         QeyMzmnbLJ3YgeMkZvS+6wZjVuXR+bFXQx7PNDrsgxmMb37xLmts9ET08vvk6yxyvS
+         J+bcpvZorKl3PwQNI4K0DT72B3GNdhtb4s3sYnis=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>, broonie@kernel.org,
+        lee.jones@linaro.org, linus.walleij@linaro.org,
+        mturquette@baylibre.com, robh+dt@kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
+Cc:     mark.rutland@arm.com, lgirdwood@gmail.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+References: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
+Message-ID: <153997249215.53599.6652762320741988515@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 1/5] mfd: lochnagar: Add initial binding documentation
+Date:   Fri, 19 Oct 2018 11:08:12 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+Quoting Charles Keepax (2018-10-19 02:49:59)
+> Lochnagar is an evaluation and development board for Cirrus
+> Logic Smart CODEC and Amp devices. It allows the connection of
+> most Cirrus Logic devices on mini-cards, as well as allowing
+> connection of various application processor systems to provide a
+> full evaluation platform. This driver supports the board
+> controller chip on the Lochnagar board.
+> =
 
-samples/vfio-mdev/mtty.c:592:39: warning: implicit conversion from 'int'
-to 'char' changes value from 162 to -94 [-Wconstant-conversion]
-                *buf = UART_MSR_DSR | UART_MSR_DDSR | UART_MSR_DCD;
-                     ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-1 warning generated.
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
 
-Turns out that all uses of buf in this function ultimately end up stored
-or cast to an unsigned type. Just use u8, which has the same number of
-bits but can store this larger number so Clang no longer warns.
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- samples/vfio-mdev/mtty.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
-
-diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
-index 7abb79d8313d..f6732aa16bb1 100644
---- a/samples/vfio-mdev/mtty.c
-+++ b/samples/vfio-mdev/mtty.c
-@@ -171,7 +171,7 @@ static struct mdev_state *find_mdev_state_by_uuid(uuid_le uuid)
- 	return NULL;
- }
- 
--void dump_buffer(char *buf, uint32_t count)
-+void dump_buffer(u8 *buf, uint32_t count)
- {
- #if defined(DEBUG)
- 	int i;
-@@ -250,7 +250,7 @@ static void mtty_create_config_space(struct mdev_state *mdev_state)
- }
- 
- static void handle_pci_cfg_write(struct mdev_state *mdev_state, u16 offset,
--				 char *buf, u32 count)
-+				 u8 *buf, u32 count)
- {
- 	u32 cfg_addr, bar_mask, bar_index = 0;
- 
-@@ -304,7 +304,7 @@ static void handle_pci_cfg_write(struct mdev_state *mdev_state, u16 offset,
- }
- 
- static void handle_bar_write(unsigned int index, struct mdev_state *mdev_state,
--				u16 offset, char *buf, u32 count)
-+				u16 offset, u8 *buf, u32 count)
- {
- 	u8 data = *buf;
- 
-@@ -475,7 +475,7 @@ static void handle_bar_write(unsigned int index, struct mdev_state *mdev_state,
- }
- 
- static void handle_bar_read(unsigned int index, struct mdev_state *mdev_state,
--			    u16 offset, char *buf, u32 count)
-+			    u16 offset, u8 *buf, u32 count)
- {
- 	/* Handle read requests by guest */
- 	switch (offset) {
-@@ -650,7 +650,7 @@ static void mdev_read_base(struct mdev_state *mdev_state)
- 	}
- }
- 
--static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
-+static ssize_t mdev_access(struct mdev_device *mdev, u8 *buf, size_t count,
- 			   loff_t pos, bool is_write)
- {
- 	struct mdev_state *mdev_state;
-@@ -698,7 +698,7 @@ static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
- #if defined(DEBUG_REGS)
- 			pr_info("%s: BAR%d  WR @0x%llx %s val:0x%02x dlab:%d\n",
- 				__func__, index, offset, wr_reg[offset],
--				(u8)*buf, mdev_state->s[index].dlab);
-+				*buf, mdev_state->s[index].dlab);
- #endif
- 			handle_bar_write(index, mdev_state, offset, buf, count);
- 		} else {
-@@ -708,7 +708,7 @@ static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
- #if defined(DEBUG_REGS)
- 			pr_info("%s: BAR%d  RD @0x%llx %s val:0x%02x dlab:%d\n",
- 				__func__, index, offset, rd_reg[offset],
--				(u8)*buf, mdev_state->s[index].dlab);
-+				*buf, mdev_state->s[index].dlab);
- #endif
- 		}
- 		break;
-@@ -827,7 +827,7 @@ ssize_t mtty_read(struct mdev_device *mdev, char __user *buf, size_t count,
- 		if (count >= 4 && !(*ppos % 4)) {
- 			u32 val;
- 
--			ret =  mdev_access(mdev, (char *)&val, sizeof(val),
-+			ret =  mdev_access(mdev, (u8 *)&val, sizeof(val),
- 					   *ppos, false);
- 			if (ret <= 0)
- 				goto read_err;
-@@ -839,7 +839,7 @@ ssize_t mtty_read(struct mdev_device *mdev, char __user *buf, size_t count,
- 		} else if (count >= 2 && !(*ppos % 2)) {
- 			u16 val;
- 
--			ret = mdev_access(mdev, (char *)&val, sizeof(val),
-+			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
- 					  *ppos, false);
- 			if (ret <= 0)
- 				goto read_err;
-@@ -851,7 +851,7 @@ ssize_t mtty_read(struct mdev_device *mdev, char __user *buf, size_t count,
- 		} else {
- 			u8 val;
- 
--			ret = mdev_access(mdev, (char *)&val, sizeof(val),
-+			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
- 					  *ppos, false);
- 			if (ret <= 0)
- 				goto read_err;
-@@ -889,7 +889,7 @@ ssize_t mtty_write(struct mdev_device *mdev, const char __user *buf,
- 			if (copy_from_user(&val, buf, sizeof(val)))
- 				goto write_err;
- 
--			ret = mdev_access(mdev, (char *)&val, sizeof(val),
-+			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
- 					  *ppos, true);
- 			if (ret <= 0)
- 				goto write_err;
-@@ -901,7 +901,7 @@ ssize_t mtty_write(struct mdev_device *mdev, const char __user *buf,
- 			if (copy_from_user(&val, buf, sizeof(val)))
- 				goto write_err;
- 
--			ret = mdev_access(mdev, (char *)&val, sizeof(val),
-+			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
- 					  *ppos, true);
- 			if (ret <= 0)
- 				goto write_err;
-@@ -913,7 +913,7 @@ ssize_t mtty_write(struct mdev_device *mdev, const char __user *buf,
- 			if (copy_from_user(&val, buf, sizeof(val)))
- 				goto write_err;
- 
--			ret = mdev_access(mdev, (char *)&val, sizeof(val),
-+			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
- 					  *ppos, true);
- 			if (ret <= 0)
- 				goto write_err;
--- 
-2.19.1
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
