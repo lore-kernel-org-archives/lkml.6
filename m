@@ -2,154 +2,1105 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EC7ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 609A0ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D1BD20644
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:00:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D89CD2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:02:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kmGdlL11"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D1BD20644
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j1sLolXl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D89CD2148E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbeJSVGq (ORCPT
+        id S1727469AbeJSVIV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 17:06:46 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33778 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727681AbeJSVGq (ORCPT
+        Fri, 19 Oct 2018 17:08:21 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40323 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727334AbeJSVIV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 17:06:46 -0400
-Received: by mail-qt1-f196.google.com with SMTP id q40-v6so38150440qte.0;
-        Fri, 19 Oct 2018 06:00:44 -0700 (PDT)
+        Fri, 19 Oct 2018 17:08:21 -0400
+Received: by mail-wr1-f68.google.com with SMTP id d2-v6so37361267wro.7;
+        Fri, 19 Oct 2018 06:02:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8eatvjCtQArRR+RWSaGNj713Zv+wOaev5807kh6p8yo=;
-        b=kmGdlL115YME3g5gtJnQUuFw0RiPxDCqJqzDBsoWYsgN77q5u5PRpG/53IyF1lbIQJ
-         2buZjuROWKGj3nbuvdHk3BoZJa88PTYfLXKnJ+kJTdAKpqeKjTXtBoS0yZBqo/zpQrXx
-         KvzCkFjS8aMSf+xbbDmWdeHnitC+yDiTUerUJud79zV17lP55kdCwO1iqJGpZuSmtwcY
-         qqVdR2glZ+yg7UxPQOr7G34kWdcoTvw3+/8aP8ptjIVyMNbn+OxnkQm/UUvhWTwQtqsg
-         7+DOxD2i7LYaVGdfJJcjFlcO1dNfkVzInkK63pTUiK5IY4X1ivFjWzByHkHS+0iY3Ons
-         MhhQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mQZ+aWFXSGeBUeDLWP69RtTMTkqwLLen/ZTOlliSYl0=;
+        b=j1sLolXlxfTLSWQLy28UPnNCKgjvgqQcUxEwBfyTYsWnR1OF5uTCbCjXd9WT3yFRbv
+         zHw/Z7mbXKqSk+pC+aMdAAXKN5Xm1c3Vv2S19IatStyMn5nE0uIcPVte7jueWHaYIdgT
+         ve3GbTsg0ZjGLFyh62Y7CbzVkgHVRQ57FoYue5AUmj2py+JXXnqYYVdEZHI0R8Oz9ek+
+         eU+G97A5m1UpPuzw84ReVCJWwT/Cg9XYprm7Sst5X6V8O6IGLjA9HGTVI4CAQtmyTm//
+         3rnlXn66eyjwrM2C0o1fOdR6Umsx0FP6ZocebXg48LeopaIGLktRvQ5nRqJ18DOCzQse
+         bodQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8eatvjCtQArRR+RWSaGNj713Zv+wOaev5807kh6p8yo=;
-        b=e/f4mWUJMkI9I3VjxSzv2J4DhVcmBONi2cBkvhNY9dgD7AgEvDecLcQdmx4WD26OCo
-         1Ud7jnW3vTEC4CGG80O+3L7LrmzEt+8zF9HFSJUV1YQ+qLDFgFG2vhnLKYHUjrYsKMey
-         CH5b1UobN+zBFWJdiYdFlu3zPY3opJwzSF/aGFkKKO4TUsCYN01xK6Eu6L5uFpprZ8Nf
-         2DwPEgzAqQwyv7ETyBhfMHI2TkDE275S1FEmFv33Js9aGpJcHgW7UUgm4fZRxfUbtcKz
-         xi0mSikI6+sl8nHkOzhrAWOtPP4AuiuraJKOAFSZ22Kb1/QoUxHBWkrXCIpXeCbuDXIb
-         VHyQ==
-X-Gm-Message-State: AGRZ1gL5PDxv2nnpwZPWbgu9hX1v5oZ6zco8TaWhcFvJhIMVDfQ86blw
-        zlhjmR90Xzq93KLheP1Ci2vpehCv97xSLDFX0TM=
-X-Google-Smtp-Source: ACcGV606vi3DEy+PkS0eTCYM98hKI+JlWMnFRSSlt2/8iayuUm7yWdmJWVVeac0+1EwSmvMONSGaDwyDHnAR0oQlQWM=
-X-Received: by 2002:ac8:191a:: with SMTP id t26-v6mr1222999qtj.327.1539954043712;
- Fri, 19 Oct 2018 06:00:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181010172300.317643-1-lkundrak@v3.sk> <20181010172300.317643-2-lkundrak@v3.sk>
-In-Reply-To: <20181010172300.317643-2-lkundrak@v3.sk>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 19 Oct 2018 16:00:32 +0300
-Message-ID: <CAHp75VenECSZWR3RVh=t35Os93t-MzEH_YzPgT=qQWL-SwjgFQ@mail.gmail.com>
-Subject: Re: [PATCH 01/15] power: supply: olpc_battery: correct the
- temperature units
-To:     Lubomir Rintel <lkundrak@v3.sk>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mQZ+aWFXSGeBUeDLWP69RtTMTkqwLLen/ZTOlliSYl0=;
+        b=E3q/02TwTnd3pxJEyZ/SNEpMe73hakMYaW9XP15Ln0jE3E8nc92m3EghTV1hsCwAmG
+         kQ4wg2KAMDO/N5SFuzPCYDUcgroun0gU0nVXN+Ai+dDiHvGRPcJQaIY9wXP6ytNz94Xd
+         glOXo+bW+edS2VPrDneh9ubdo6m/HdlQdxAcGG4vXrv9EQmFRo2vN2U0LJ4U632AIz5L
+         5UVkng6lYVMVI4rSBffCgxZrLkf/8rvbAkWQRiqjCDIY4tEFz3U/Dqu9M8ftCjZHEuXi
+         83RxU8hXEirDqvrQk5UhYVTNFH323Ee9Ow0Z8cAlVnMbPBIr81rEcsEHqyWjlKFzWpsk
+         /ZlA==
+X-Gm-Message-State: ABuFfohr7Ab6rvdXNsLsAcy+tKcgjdU8Y9ttlIajw/rzDn0zk/GdbLNY
+        GshlyFIaJkbkAFvO6FMNTXg=
+X-Google-Smtp-Source: ACcGV61th6gsWaC5WVeNrZHHb8n5LsXVhj1EdledCai/1n23KsnAvR5x/DP0y9M4o+V8Ur87x24Udw==
+X-Received: by 2002:adf:ea84:: with SMTP id s4-v6mr15040342wrm.284.1539954135531;
+        Fri, 19 Oct 2018 06:02:15 -0700 (PDT)
+Received: from Ettosoft-T55 (generic-nat1.unisi.it. [193.205.5.2])
+        by smtp.gmail.com with ESMTPSA id i7-v6sm3787775wmd.41.2018.10.19.06.02.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 19 Oct 2018 06:02:14 -0700 (PDT)
+Date:   Fri, 19 Oct 2018 15:02:07 +0200
+From:   ektor5 <ek5.chimenti@gmail.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     luca.pisani@udoo.org, jose.abreu@synopsys.com, sean@mess.org,
+        sakari.ailus@linux.intel.com, jacopo@jmondi.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        quozl@laptop.org, Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        devel@driverdev.osuosl.org, Linux PM <linux-pm@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] media: add SECO cec driver
+Message-ID: <20181019130205.lqb3sopqqangefr4@Ettosoft-T55>
+References: <cover.1539807092.git.ek5.chimenti@gmail.com>
+ <3682be6c6cf7263f165080b9a1123017a23489a0.1539807092.git.ek5.chimenti@gmail.com>
+ <d874bf66-e4ad-0c98-711d-3c79d0342a67@xs4all.nl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d874bf66-e4ad-0c98-711d-3c79d0342a67@xs4all.nl>
+User-Agent: NeoMutt/20180716-421-ff8684
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 8:23 PM Lubomir Rintel <lkundrak@v3.sk> wrote:
->
-> According to [1] and [2], the temperature values are in tenths of degree
-> Celsius. Exposing the Celsius value makes the battery appear on fire:
->
->   $ upower -i /org/freedesktop/UPower/devices/battery_olpc_battery
->   ...
->       temperature:         236.9 degrees C
->
-> Tested on OLPC XO-1 and OLPC XO-1.75 laptops.
+Hi Hans,
 
-It's interesting that the very author of that code is not included in
-so-o long Cc list :)
-Cc: David.
+On Thu, Oct 18, 2018 at 09:14:55AM +0200, Hans Verkuil wrote:
+> Hi Ettore,
+> 
+> Just a few small things and it is ready to go:
+> 
+> On 10/17/2018 11:31 PM, ektor5 wrote:
+> > From: Ettore Chimenti <ek5.chimenti@gmail.com>
+> > 
+> > This patch adds support to the CEC device implemented with a STM32
+> > microcontroller in X86 SECO Boards, including UDOO X86.
+> > 
+> > The communication is achieved via Braswell integrated SMBus
+> > (i2c-i801). The driver use direct access to the PCI addresses, due to
+> > the limitations of the specific driver in presence of ACPI calls.
+> > 
+> > The basic functionalities are tested with success with cec-ctl and
+> > cec-compliance.
+> > 
+> > Inspired by cros-ec-cec implementation, attaches to i915 driver
+> > cec-notifier.
+> > 
+> > Signed-off-by: Ettore Chimenti <ek5.chimenti@gmail.com>
+> > ---
+> >  MAINTAINERS                                |   6 +
+> >  drivers/media/platform/Kconfig             |  12 +
+> >  drivers/media/platform/Makefile            |   2 +
+> >  drivers/media/platform/seco-cec/Makefile   |   1 +
+> >  drivers/media/platform/seco-cec/seco-cec.c | 699 +++++++++++++++++++++
+> >  drivers/media/platform/seco-cec/seco-cec.h | 130 ++++
+> >  6 files changed, 850 insertions(+)
+> >  create mode 100644 drivers/media/platform/seco-cec/Makefile
+> >  create mode 100644 drivers/media/platform/seco-cec/seco-cec.c
+> >  create mode 100644 drivers/media/platform/seco-cec/seco-cec.h
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 4ece30f15777..1062912a5ff4 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -12972,6 +12972,12 @@ L:	sdricohcs-devel@lists.sourceforge.net (subscribers-only)
+> >  S:	Maintained
+> >  F:	drivers/mmc/host/sdricoh_cs.c
+> >  
+> > +SECO BOARDS CEC DRIVER
+> > +M:	Ettore Chimenti <ek5.chimenti@gmail.com>
+> > +S:	Maintained
+> > +F:	drivers/media/platform/seco-cec/seco-cec.c
+> > +F:	drivers/media/platform/seco-cec/seco-cec.h
+> > +
+> >  SECURE COMPUTING
+> >  M:	Kees Cook <keescook@chromium.org>
+> >  R:	Andy Lutomirski <luto@amacapital.net>
+> > diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+> > index 94c1fe0e9787..51cd1fd005e3 100644
+> > --- a/drivers/media/platform/Kconfig
+> > +++ b/drivers/media/platform/Kconfig
+> > @@ -613,6 +613,18 @@ config VIDEO_TEGRA_HDMI_CEC
+> >  	 The CEC bus is present in the HDMI connector and enables communication
+> >  	 between compatible devices.
+> >  
+> > +config VIDEO_SECO_CEC
+> > +	tristate "SECO Boards HDMI CEC driver"
+> > +	depends on (X86 || IA64) || COMPILE_TEST
+> > +	depends on PCI && DMI
+> > +	select CEC_CORE
+> > +	select CEC_NOTIFIER
+> > +	help
+> > +	  This is a driver for SECO Boards integrated CEC interface.
+> > +	  Selecting it will enable support for this device.
+> > +	  CEC bus is present in the HDMI connector and enables communication
+> > +	  between compatible devices.
+> > +
+> >  endif #CEC_PLATFORM_DRIVERS
+> >  
+> >  menuconfig SDR_PLATFORM_DRIVERS
+> > diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
+> > index 41322ab65802..5d2b06c4c68a 100644
+> > --- a/drivers/media/platform/Makefile
+> > +++ b/drivers/media/platform/Makefile
+> > @@ -53,6 +53,8 @@ obj-$(CONFIG_VIDEO_TEGRA_HDMI_CEC)	+= tegra-cec/
+> >  
+> >  obj-y					+= stm32/
+> >  
+> > +obj-$(CONFIG_VIDEO_SECO_CEC)		+= seco-cec/
+> > +
+> >  obj-y					+= davinci/
+> >  
+> >  obj-$(CONFIG_VIDEO_SH_VOU)		+= sh_vou.o
+> > diff --git a/drivers/media/platform/seco-cec/Makefile b/drivers/media/platform/seco-cec/Makefile
+> > new file mode 100644
+> > index 000000000000..09900b087d02
+> > --- /dev/null
+> > +++ b/drivers/media/platform/seco-cec/Makefile
+> > @@ -0,0 +1 @@
+> > +obj-y += seco-cec.o
+> > diff --git a/drivers/media/platform/seco-cec/seco-cec.c b/drivers/media/platform/seco-cec/seco-cec.c
+> > new file mode 100644
+> > index 000000000000..9ac9a1f36bc0
+> > --- /dev/null
+> > +++ b/drivers/media/platform/seco-cec/seco-cec.c
+> > @@ -0,0 +1,699 @@
+> > +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+> > +/*
+> > + * CEC driver for SECO X86 Boards
+> > + *
+> > + * Author:  Ettore Chimenti <ek5.chimenti@gmail.com>
+> > + * Copyright (C) 2018, SECO Srl.
+> > + * Copyright (C) 2018, Aidilab Srl.
+> > + */
+> > +
+> > +#include <linux/acpi.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/dmi.h>
+> > +#include <linux/gpio/consumer.h>
+> > +#include <linux/gpio.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/pci.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +/* CEC Framework */
+> > +#include <media/cec.h>
+> > +
+> > +#include "seco-cec.h"
+> > +
+> > +struct secocec_data {
+> > +	struct device *dev;
+> > +	struct platform_device *pdev;
+> > +	struct cec_adapter *cec_adap;
+> > +	struct cec_notifier *notifier;
+> > +	int irq;
+> > +};
+> > +
+> > +#define smb_wr16(cmd, data) smb_word_op(CMD_WORD_DATA, SECOCEC_MICRO_ADDRESS, \
+> > +					     cmd, data, SMBUS_WRITE, NULL)
+> > +#define smb_rd16(cmd, res) smb_word_op(CMD_WORD_DATA, SECOCEC_MICRO_ADDRESS, \
+> > +				       cmd, 0, SMBUS_READ, res)
+> > +
+> > +static int smb_word_op(short data_format, u16 slave_addr, u8 cmd, u16 data,
+> > +		       u8 operation, u16 *result)
+> > +{
+> > +	unsigned int count;
+> > +	short _data_format;
+> > +	int status = 0;
+> > +
+> > +	switch (data_format) {
+> > +	case CMD_BYTE_DATA:
+> > +		_data_format = BRA_SMB_CMD_BYTE_DATA;
+> > +		break;
+> > +	case CMD_WORD_DATA:
+> > +		_data_format = BRA_SMB_CMD_WORD_DATA;
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	/* Active wait until ready */
+> > +	for (count = 0; count <= SMBTIMEOUT; ++count) {
+> > +		if (!(inb(HSTS) & BRA_INUSE_STS))
+> > +			break;
+> > +		udelay(SMB_POLL_UDELAY);
+> > +	}
+> > +
+> > +	if (count > SMBTIMEOUT)
+> > +		/* Reset the lock instead of failing */
+> > +		outb(0xff, HSTS);
+> > +
+> > +	outb(0x00, HCNT);
+> > +	outb((u8)(slave_addr & 0xfe) | operation, XMIT_SLVA);
+> > +	outb(cmd, HCMD);
+> > +	inb(HCNT);
+> > +
+> > +	if (operation == SMBUS_WRITE) {
+> > +		outb((u8)data, HDAT0);
+> > +		outb((u8)(data >> 8), HDAT1);
+> > +	}
+> > +
+> > +	outb(BRA_START + _data_format, HCNT);
+> > +
+> > +	for (count = 0; count <= SMBTIMEOUT; count++) {
+> > +		if (!(inb(HSTS) & BRA_HOST_BUSY))
+> > +			break;
+> > +		udelay(SMB_POLL_UDELAY);
+> > +	}
+> > +
+> > +	if (count > SMBTIMEOUT) {
+> > +		status = -EBUSY;
+> > +		goto err;
+> > +	}
+> > +
+> > +	if (inb(HSTS) & BRA_HSTS_ERR_MASK) {
+> > +		status = -EIO;
+> > +		goto err;
+> > +	}
+> > +
+> > +	if (operation == SMBUS_READ)
+> > +		*result = ((inb(HDAT0) & 0xff) + ((inb(HDAT1) & 0xff) << 8));
+> > +
+> > +err:
+> > +	outb(0xff, HSTS);
+> > +	return status;
+> > +}
+> > +
+> > +static int secocec_adap_enable(struct cec_adapter *adap, bool enable)
+> > +{
+> > +	struct secocec_data *cec = cec_get_drvdata(adap);
+> > +	struct device *dev = cec->dev;
+> > +	u16 val = 0;
+> > +	int status;
+> > +
+> > +	if (enable) {
+> > +		/* Clear the status register */
+> > +		status = smb_rd16(SECOCEC_STATUS_REG_1, &val);
+> > +		if (status)
+> > +			goto err;
+> > +
+> > +		status = smb_wr16(SECOCEC_STATUS_REG_1, val);
+> > +		if (status)
+> > +			goto err;
+> > +
+> > +		/* Enable the interrupts */
+> > +		status = smb_rd16(SECOCEC_ENABLE_REG_1, &val);
+> > +		if (status)
+> > +			goto err;
+> > +
+> > +		status = smb_wr16(SECOCEC_ENABLE_REG_1,
+> > +				  val | SECOCEC_ENABLE_REG_1_CEC);
+> > +		if (status)
+> > +			goto err;
+> > +
+> > +		dev_dbg(dev, "Device enabled");
+> > +	} else {
+> > +		/* Clear the status register */
+> > +		status = smb_rd16(SECOCEC_STATUS_REG_1, &val);
+> > +		if (status)
+> > +			goto err;
+> > +
+> > +		status = smb_wr16(SECOCEC_STATUS_REG_1, val);
+> > +		if (status)
+> > +			goto err;
+> > +
+> > +		/* Disable the interrupts */
+> > +		status = smb_rd16(SECOCEC_ENABLE_REG_1, &val);
+> > +		if (status)
+> > +			goto err;
+> > +
+> > +		status = smb_wr16(SECOCEC_ENABLE_REG_1, val &
+> > +				  ~SECOCEC_ENABLE_REG_1_CEC &
+> > +				  ~SECOCEC_ENABLE_REG_1_IR);
+> > +		if (status)
+> > +			goto err;
+> > +
+> > +		dev_dbg(dev, "Device disabled");
+> > +	}
+> > +
+> > +	return 0;
+> > +err:
+> > +	dev_err(dev, "Adapter setup failed (%d)", status);
+> 
+> Drop the dev_dbg/dev_err lines: the cec module has enough debugging
+> already.
+> 
+> > +	return status;
+> 
+> This should be:
+> 
+> 	return enable ? status : 0;
+> 
+> Disabling shouldn't return an error, it would result in a WARN from
+> the cec framework.
+> 
+> In fact, I would drop all the error checks in the disable path since they
+> are ignored anyway.
 
-David, do you remember if and how you had tested temperature report of
-the battery on OLPC?
-I guess this kind of error would be appear immediately.
+Ah, ok. I'll remove all goto in the disable part.
 
-OTOH it might be that power framework had changed requirements (which
-would be noticeable change).
-If the latter is true, this patch misses Fixes tag. Actually in any
-case it misses it.
+> 
+> > +}
+> > +
+> > +static int secocec_adap_log_addr(struct cec_adapter *adap, u8 logical_addr)
+> > +{
+> > +	u16 enable_val = 0;
+> > +	int status;
+> 
+> If logical_addr == CEC_LOG_ADDR_INVALID, then this function must not return
+> an error or the CEC framework will WARN about it.
+> 
+> > +
+> > +	/* Disable device */
+> > +	status = smb_rd16(SECOCEC_ENABLE_REG_1, &enable_val);
+> > +	if (status)
+> > +		return status;
+> > +
+> > +	status = smb_wr16(SECOCEC_ENABLE_REG_1,
+> > +			  enable_val & ~SECOCEC_ENABLE_REG_1_CEC);
+> > +	if (status)
+> > +		return status;
+> > +
+> > +	/* Write logical address */
+> > +	status = smb_wr16(SECOCEC_DEVICE_LA, logical_addr);
+> 
+> So does writing CEC_LOG_ADDR_INVALID (0xff) invalidate all logical
+> addresses? I see no special code for that. If that is indeed the
+> case, then you should document this.
 
->
-> [1] include/linux/power_supply.h
-> [2] Documentation/power/power_supply_class.txt
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
->  drivers/power/supply/olpc_battery.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/power/supply/olpc_battery.c b/drivers/power/supply/olpc_battery.c
-> index 6da79ae14860..5a97e42a3547 100644
-> --- a/drivers/power/supply/olpc_battery.c
-> +++ b/drivers/power/supply/olpc_battery.c
-> @@ -428,14 +428,14 @@ static int olpc_bat_get_property(struct power_supply *psy,
->                 if (ret)
->                         return ret;
->
-> -               val->intval = (s16)be16_to_cpu(ec_word) * 100 / 256;
-> +               val->intval = (s16)be16_to_cpu(ec_word) * 10 / 256;
->                 break;
->         case POWER_SUPPLY_PROP_TEMP_AMBIENT:
->                 ret = olpc_ec_cmd(EC_AMB_TEMP, NULL, 0, (void *)&ec_word, 2);
->                 if (ret)
->                         return ret;
->
-> -               val->intval = (int)be16_to_cpu(ec_word) * 100 / 256;
-> +               val->intval = (int)be16_to_cpu(ec_word) * 10 / 256;
->                 break;
->         case POWER_SUPPLY_PROP_CHARGE_COUNTER:
->                 ret = olpc_ec_cmd(EC_BAT_ACR, NULL, 0, (void *)&ec_word, 2);
-> --
-> 2.19.0
->
+The micro can have only one LA at a time. 
 
+In the micro datasheet there isn't any reference to an invalid addr, so
+it shouldn't complain. It will just set LA = 0xf. Is this correct or it
+should disable the device instead?
 
--- 
-With Best Regards,
-Andy Shevchenko
+> 
+> > +	if (status)
+> > +		return status;
+> > +
+> > +	/* Re-enable device */
+> > +	status = smb_wr16(SECOCEC_ENABLE_REG_1,
+> > +			  enable_val | SECOCEC_ENABLE_REG_1_CEC);
+> > +	if (status)
+> > +		return status;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int secocec_adap_transmit(struct cec_adapter *adap, u8 attempts,
+> > +				 u32 signal_free_time, struct cec_msg *msg)
+> > +{
+> > +	struct secocec_data *cec = cec_get_drvdata(adap);
+> > +	struct device *dev = cec->dev;
+> > +	u16 payload_len, payload_id_len, destination, val = 0;
+> > +	u8 *payload_msg;
+> > +	int status;
+> > +	u8 i;
+> > +
+> > +	/* Device msg len already accounts for header */
+> > +	payload_id_len = msg->len - 1;
+> > +
+> > +	/* Send data length */
+> > +	status = smb_wr16(SECOCEC_WRITE_DATA_LENGTH, payload_id_len);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	/* Send Operation ID if present */
+> > +	if (payload_id_len > 0) {
+> > +		status = smb_wr16(SECOCEC_WRITE_OPERATION_ID, msg->msg[1]);
+> > +		if (status)
+> > +			goto err;
+> > +	}
+> > +	/* Send data if present */
+> > +	if (payload_id_len > 1) {
+> > +		/* Only data; */
+> > +		payload_len = msg->len - 2;
+> > +		payload_msg = &msg->msg[2];
+> > +
+> > +		/* Copy message into registers */
+> > +		for (i = 0; i < payload_len; i += 2) {
+> > +			/* hi byte */
+> > +			val = payload_msg[i + 1] << 8;
+> > +
+> > +			/* lo byte */
+> > +			val |= payload_msg[i];
+> > +
+> > +			status = smb_wr16(SECOCEC_WRITE_DATA_00 + i / 2, val);
+> > +			if (status)
+> > +				goto err;
+> > +		}
+> > +	}
+> > +	/* Send msg source/destination and fire msg */
+> > +	destination = msg->msg[0];
+> > +	status = smb_wr16(SECOCEC_WRITE_BYTE0, destination);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	return 0;
+> > +
+> > +err:
+> > +	dev_err(dev, "Transmit failed (%d)", status);
+> 
+> You can drop this: the cec module has already debug code for that.
+> 
+> > +	return status;
+> > +}
+> > +
+> > +static int secocec_tx_done(struct cec_adapter *adap, u16 status_val)
+> 
+> Just return void since the return code is ignored anyway.
+
+Ok, will drop those.
+
+> 
+> > +{
+> > +	int status = 0;
+> > +
+> > +	if (status_val & SECOCEC_STATUS_TX_ERROR_MASK) {
+> > +		if (status_val & SECOCEC_STATUS_TX_NACK_ERROR) {
+> > +			cec_transmit_attempt_done(adap, CEC_TX_STATUS_NACK);
+> > +			status = -EAGAIN;
+> > +		} else {
+> > +			cec_transmit_attempt_done(adap, CEC_TX_STATUS_ERROR);
+> > +			status = -EIO;
+> > +		}
+> > +	} else {
+> > +		cec_transmit_attempt_done(adap, CEC_TX_STATUS_OK);
+> > +	}
+> > +
+> > +	/* Reset status reg */
+> > +	status_val = SECOCEC_STATUS_TX_ERROR_MASK |
+> > +		SECOCEC_STATUS_MSG_SENT_MASK |
+> > +		SECOCEC_STATUS_TX_NACK_ERROR;
+> > +	smb_wr16(SECOCEC_STATUS, status_val);
+> > +
+> > +	return status;
+> > +}
+> > +
+> > +static int secocec_rx_done(struct cec_adapter *adap, u16 status_val)
+> > +{
+> 
+> Ditto.
+> 
+> > +	struct secocec_data *cec = cec_get_drvdata(adap);
+> > +	struct device *dev = cec->dev;
+> > +	struct cec_msg msg = { };
+> > +	bool flag_overflow = false;
+> > +	u8 payload_len, i = 0;
+> > +	u8 *payload_msg;
+> > +	u16 val = 0;
+> > +	int status;
+> > +
+> > +	if (status_val & SECOCEC_STATUS_RX_OVERFLOW_MASK) {
+> > +		dev_warn(dev, "Received more than 16 bytes. Discarding");
+> 
+> Is it better to just receive the first 16 bytes?
+
+In case of an overflow, it should discard the overflowing bytes, but I
+don't have any equipment that can test this. (this device can send up to
+16 bytes).
+
+> 
+> > +		flag_overflow = true;
+> > +	}
+> > +
+> > +	if (status_val & SECOCEC_STATUS_RX_ERROR_MASK) {
+> > +		dev_warn(dev, "Message received with errors. Discarding");
+> > +		status = -EIO;
+> > +		goto rxerr;
+> > +	}
+> > +
+> > +	/* Read message length */
+> > +	status = smb_rd16(SECOCEC_READ_DATA_LENGTH, &val);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	/* Device msg len already accounts for the header */
+> > +	msg.len = min(val + 1, CEC_MAX_MSG_SIZE);
+> > +
+> > +	/* Read logical address */
+> > +	status = smb_rd16(SECOCEC_READ_BYTE0, &val);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	/* device stores source LA and destination */
+> > +	msg.msg[0] = val;
+> > +
+> > +	/* Read operation ID */
+> > +	status = smb_rd16(SECOCEC_READ_OPERATION_ID, &val);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	msg.msg[1] = val;
+> > +
+> > +	/* Read data if present */
+> > +	if (msg.len > 1) {
+> > +		payload_len = msg.len - 2;
+> > +		payload_msg = &msg.msg[2];
+> > +
+> > +		/* device stores 2 bytes in every 16-bit val */
+> > +		for (i = 0; i < payload_len; i += 2) {
+> > +			status = smb_rd16(SECOCEC_READ_DATA_00 + i / 2, &val);
+> > +			if (status)
+> > +				goto err;
+> > +
+> > +			/* low byte, skipping header */
+> > +			payload_msg[i] = val & 0x00ff;
+> > +
+> > +			/* hi byte */
+> > +			payload_msg[i + 1] = (val & 0xff00) >> 8;
+> > +		}
+> > +	}
+> > +
+> > +	cec_received_msg(cec->cec_adap, &msg);
+> > +
+> > +	/* Reset status reg */
+> > +	status_val = SECOCEC_STATUS_MSG_RECEIVED_MASK;
+> > +	if (flag_overflow)
+> > +		status_val |= SECOCEC_STATUS_RX_OVERFLOW_MASK;
+> > +
+> > +	status = smb_wr16(SECOCEC_STATUS, status_val);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	return 0;
+> > +
+> > +rxerr:
+> > +	/* Reset error reg */
+> > +	status_val = SECOCEC_STATUS_MSG_RECEIVED_MASK |
+> > +		SECOCEC_STATUS_RX_ERROR_MASK;
+> > +	if (flag_overflow)
+> > +		status_val |= SECOCEC_STATUS_RX_OVERFLOW_MASK;
+> > +	smb_wr16(SECOCEC_STATUS, status_val);
+> > +
+> > +err:
+> > +	dev_err(dev, "Receive message failed (%d)", status);
+> > +	return status;
+> > +}
+> > +
+> > +struct cec_adap_ops secocec_cec_adap_ops = {
+> > +	/* Low-level callbacks */
+> > +	.adap_enable = secocec_adap_enable,
+> > +	.adap_log_addr = secocec_adap_log_addr,
+> > +	.adap_transmit = secocec_adap_transmit,
+> > +};
+> > +
+> > +static irqreturn_t secocec_irq_handler(int irq, void *priv)
+> > +{
+> > +	struct secocec_data *cec = priv;
+> > +	struct device *dev = cec->dev;
+> > +	u16 status_val, cec_val, val = 0;
+> > +	int status;
+> > +
+> > +	/*  Read status register */
+> > +	status = smb_rd16(SECOCEC_STATUS_REG_1, &status_val);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	if (status_val & SECOCEC_STATUS_REG_1_CEC) {
+> > +		/* Read CEC status register */
+> > +		status = smb_rd16(SECOCEC_STATUS, &cec_val);
+> > +		if (status)
+> > +			goto err;
+> > +
+> > +		if (cec_val & SECOCEC_STATUS_MSG_RECEIVED_MASK)
+> > +			secocec_rx_done(cec->cec_adap, cec_val);
+> > +
+> > +		if (cec_val & SECOCEC_STATUS_MSG_SENT_MASK)
+> > +			secocec_tx_done(cec->cec_adap, cec_val);
+> > +
+> > +		if ((~cec_val & SECOCEC_STATUS_MSG_SENT_MASK) &&
+> > +		    (~cec_val & SECOCEC_STATUS_MSG_RECEIVED_MASK))
+> > +			dev_warn(dev,
+> > +				 "Message not received or sent, but interrupt fired");
+> 
+> Use dev_warn_once
+> 
+> > +
+> > +		val = SECOCEC_STATUS_REG_1_CEC;
+> > +	}
+> > +
+> > +	if (status_val & SECOCEC_STATUS_REG_1_IR) {
+> > +		dev_dbg(dev, "IR RC5 Interrupt Caught");
+> > +		val |= SECOCEC_STATUS_REG_1_IR;
+> > +		/* TODO IRDA RX */
+> > +	}
+> > +
+> > +	/*  Reset status register */
+> > +	status = smb_wr16(SECOCEC_STATUS_REG_1, val);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	return IRQ_HANDLED;
+> > +
+> > +err:
+> > +	dev_err(dev, "IRQ: Read/Write SMBus operation failed (%d)", status);
+> 
+> dev_err_once
+> 
+> This really shouldn't happen, but if it happens, then you don't want
+> this flooding the log.
+
+I didn't know this function, will use more often for sure.
+
+> 
+> > +
+> > +	/*  Reset status register */
+> > +	val = SECOCEC_STATUS_REG_1_CEC | SECOCEC_STATUS_REG_1_IR;
+> > +	smb_wr16(SECOCEC_STATUS_REG_1, val);
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +struct cec_dmi_match {
+> > +	char *sys_vendor;
+> > +	char *product_name;
+> > +	char *devname;
+> > +	char *conn;
+> > +};
+> > +
+> > +static const struct cec_dmi_match secocec_dmi_match_table[] = {
+> > +	/* UDOO X86 */
+> > +	{ "SECO", "UDOO x86", "0000:00:02.0", "Port B" },
+> > +};
+> > +
+> > +static int secocec_cec_get_notifier(struct cec_notifier **notify)
+> > +{
+> > +	int i;
+> > +
+> > +	for (i = 0 ; i < ARRAY_SIZE(secocec_dmi_match_table) ; ++i) {
+> > +		const struct cec_dmi_match *m = &secocec_dmi_match_table[i];
+> > +
+> > +		if (dmi_match(DMI_SYS_VENDOR, m->sys_vendor) &&
+> > +		    dmi_match(DMI_PRODUCT_NAME, m->product_name)) {
+> > +			struct device *d;
+> > +
+> > +			/* Find the device, bail out if not yet registered */
+> > +			d = bus_find_device_by_name(&pci_bus_type, NULL,
+> > +						    m->devname);
+> > +			if (!d)
+> > +				return -EPROBE_DEFER;
+> > +
+> > +			*notify = cec_notifier_get_conn(d, m->conn);
+> > +
+> > +			return 0;
+> > +		}
+> > +	}
+> > +
+> > +	return -EINVAL;
+> > +}
+> > +
+> > +static int secocec_acpi_probe(struct secocec_data *sdev)
+> > +{
+> > +	struct device *dev = sdev->dev;
+> > +	struct gpio_desc *gpio;
+> > +	int irq = 0;
+> > +
+> > +	gpio = devm_gpiod_get(dev, NULL, GPIOF_IN);
+> > +	if (IS_ERR(gpio)) {
+> > +		dev_err(dev, "Cannot request interrupt gpio");
+> > +		return PTR_ERR(gpio);
+> > +	}
+> > +
+> > +	irq = gpiod_to_irq(gpio);
+> > +	if (irq < 0) {
+> > +		dev_err(dev, "Cannot find valid irq");
+> > +		return -ENODEV;
+> > +	}
+> > +	dev_dbg(dev, "irq-gpio is bound to IRQ %d", irq);
+> > +
+> > +	sdev->irq = irq;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int secocec_probe(struct platform_device *pdev)
+> > +{
+> > +	struct secocec_data *secocec;
+> > +	struct device *dev = &pdev->dev;
+> > +	int ret;
+> > +	u16 val;
+> > +
+> > +	secocec = devm_kzalloc(dev, sizeof(*secocec), GFP_KERNEL);
+> > +	if (!secocec)
+> > +		return -ENOMEM;
+> > +
+> > +	dev_set_drvdata(dev, secocec);
+> > +
+> > +	/* Request SMBus regions */
+> > +	if (!request_muxed_region(BRA_SMB_BASE_ADDR, 7, "CEC00001")) {
+> > +		dev_err(dev, "Request memory region failed");
+> > +		return -ENXIO;
+> > +	}
+> > +
+> > +	secocec->pdev = pdev;
+> > +	secocec->dev = dev;
+> > +
+> > +	if (!has_acpi_companion(dev)) {
+> > +		dev_dbg(dev, "Cannot find any ACPI companion");
+> > +		ret = -ENODEV;
+> > +		goto err;
+> > +	}
+> > +
+> > +	ret = secocec_acpi_probe(secocec);
+> > +	if (ret) {
+> > +		dev_err(dev, "Cannot assign gpio to IRQ");
+> > +		ret = -ENODEV;
+> > +		goto err;
+> > +	}
+> > +
+> > +	dev_dbg(dev, "IRQ detected at %d", secocec->irq);
+> > +
+> > +	/* Firmware version check */
+> > +	ret = smb_rd16(SECOCEC_VERSION, &val);
+> > +	if (ret) {
+> > +		dev_err(dev, "Cannot check fw version");
+> > +		goto err;
+> > +	}
+> > +	if (val < SECOCEC_LATEST_FW) {
+> > +		dev_err(dev, "CEC Firmware not supported (v.%04x). Use ver > v.%04x",
+> > +			val, SECOCEC_LATEST_FW);
+> > +		ret = -EINVAL;
+> > +		goto err;
+> > +	}
+> > +
+> > +	ret = secocec_cec_get_notifier(&secocec->notifier);
+> > +	if (ret) {
+> > +		dev_err(dev, "no CEC notifier available\n");
+> > +		goto err;
+> > +	}
+> > +
+> > +	ret = devm_request_threaded_irq(dev,
+> > +					secocec->irq,
+> > +					NULL,
+> > +					secocec_irq_handler,
+> > +					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+> > +					dev_name(&pdev->dev), secocec);
+> > +
+> > +	if (ret) {
+> > +		dev_err(dev, "Cannot request IRQ %d", secocec->irq);
+> > +		ret = -EIO;
+> > +		goto err;
+> > +	}
+> > +
+> > +	/* Allocate CEC adapter */
+> > +	secocec->cec_adap = cec_allocate_adapter(&secocec_cec_adap_ops,
+> > +						 secocec,
+> > +						 dev_name(dev),
+> > +						 CEC_CAP_DEFAULTS,
+> > +						 SECOCEC_MAX_ADDRS);
+> > +
+> > +	if (IS_ERR(secocec->cec_adap)) {
+> > +		ret = PTR_ERR(secocec->cec_adap);
+> > +		goto err;
+> > +	}
+> > +
+> > +	ret = cec_register_adapter(secocec->cec_adap, dev);
+> > +	if (ret)
+> > +		goto err_delete_adapter;
+> > +
+> > +	if (secocec->notifier)
+> > +		cec_register_cec_notifier(secocec->cec_adap, secocec->notifier);
+> > +
+> > +	platform_set_drvdata(pdev, secocec);
+> > +
+> > +	dev_dbg(dev, "Device registered");
+> > +
+> > +	return ret;
+> > +
+> > +err_delete_adapter:
+> > +	cec_delete_adapter(secocec->cec_adap);
+> > +err:
+> > +	dev_err(dev, "%s device probe failed\n", dev_name(dev));
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int secocec_remove(struct platform_device *pdev)
+> > +{
+> > +	struct secocec_data *secocec = platform_get_drvdata(pdev);
+> > +
+> > +	cec_unregister_adapter(secocec->cec_adap);
+> > +
+> > +	if (secocec->notifier)
+> > +		cec_notifier_put(secocec->notifier);
+> > +
+> > +	release_region(BRA_SMB_BASE_ADDR, 7);
+> > +
+> > +	dev_dbg(&pdev->dev, "CEC device removed");
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +#ifdef CONFIG_PM_SLEEP
+> > +static int secocec_suspend(struct device *dev)
+> > +{
+> > +	int status;
+> > +	u16 val;
+> > +
+> > +	dev_dbg(dev, "Device going to suspend, disabling");
+> > +
+> > +	/* Clear the status register */
+> > +	status = smb_rd16(SECOCEC_STATUS_REG_1, &val);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	status = smb_wr16(SECOCEC_STATUS_REG_1, val);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	/* Disable the interrupts */
+> > +	status = smb_rd16(SECOCEC_ENABLE_REG_1, &val);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	status = smb_wr16(SECOCEC_ENABLE_REG_1, val &
+> > +			  ~SECOCEC_ENABLE_REG_1_CEC & ~SECOCEC_ENABLE_REG_1_IR);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	return 0;
+> > +
+> > +err:
+> > +	dev_err(dev, "Suspend failed (err: %d)", status);
+> > +	return status;
+> > +}
+> > +
+> > +static int secocec_resume(struct device *dev)
+> > +{
+> > +	int status;
+> > +	u16 val;
+> > +
+> > +	dev_dbg(dev, "Resuming device from suspend");
+> > +
+> > +	/* Clear the status register */
+> > +	status = smb_rd16(SECOCEC_STATUS_REG_1, &val);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	status = smb_wr16(SECOCEC_STATUS_REG_1, val);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	/* Enable the interrupts */
+> > +	status = smb_rd16(SECOCEC_ENABLE_REG_1, &val);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	status = smb_wr16(SECOCEC_ENABLE_REG_1, val | SECOCEC_ENABLE_REG_1_CEC);
+> > +	if (status)
+> > +		goto err;
+> > +
+> > +	dev_dbg(dev, "Device resumed from suspend");
+> > +
+> > +	return 0;
+> > +
+> > +err:
+> > +	dev_err(dev, "Resume failed (err: %d)", status);
+> > +	return status;
+> > +}
+> > +
+> > +static SIMPLE_DEV_PM_OPS(secocec_pm_ops, secocec_suspend, secocec_resume);
+> > +#define SECOCEC_PM_OPS (&secocec_pm_ops)
+> > +#else
+> > +#define SECOCEC_PM_OPS NULL
+> > +#endif
+> > +
+> > +#ifdef CONFIG_ACPI
+> > +static const struct acpi_device_id secocec_acpi_match[] = {
+> > +	{"CEC00001", 0},
+> > +	{},
+> > +};
+> > +
+> > +MODULE_DEVICE_TABLE(acpi, secocec_acpi_match);
+> > +#endif
+> > +
+> > +static struct platform_driver secocec_driver = {
+> > +	.driver = {
+> > +		   .name = SECOCEC_DEV_NAME,
+> > +		   .acpi_match_table = ACPI_PTR(secocec_acpi_match),
+> > +		   .pm = SECOCEC_PM_OPS,
+> > +	},
+> > +	.probe = secocec_probe,
+> > +	.remove = secocec_remove,
+> > +};
+> > +
+> > +module_platform_driver(secocec_driver);
+> > +
+> > +MODULE_DESCRIPTION("SECO CEC X86 Driver");
+> > +MODULE_AUTHOR("Ettore Chimenti <ek5.chimenti@gmail.com>");
+> > +MODULE_LICENSE("Dual BSD/GPL");
+> > diff --git a/drivers/media/platform/seco-cec/seco-cec.h b/drivers/media/platform/seco-cec/seco-cec.h
+> > new file mode 100644
+> > index 000000000000..93020900935e
+> > --- /dev/null
+> > +++ b/drivers/media/platform/seco-cec/seco-cec.h
+> > @@ -0,0 +1,130 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause */
+> > +/*
+> > + * SECO X86 Boards CEC register defines
+> > + *
+> > + * Author:  Ettore Chimenti <ek5.chimenti@gmail.com>
+> > + * Copyright (C) 2018, SECO Srl.
+> > + * Copyright (C) 2018, Aidilab Srl.
+> > + */
+> > +
+> > +#ifndef __SECO_CEC_H__
+> > +#define __SECO_CEC_H__
+> > +
+> > +#define SECOCEC_MAX_ADDRS		1
+> > +#define SECOCEC_DEV_NAME		"secocec"
+> > +#define SECOCEC_LATEST_FW		0x0f0b
+> > +
+> > +#define SMBTIMEOUT			0xffff
+> > +#define SMB_POLL_UDELAY			10
+> > +
+> > +#define SMBUS_WRITE			0
+> > +#define SMBUS_READ			1
+> > +
+> > +#define CMD_BYTE_DATA			0
+> > +#define CMD_WORD_DATA			1
+> > +
+> > +/*
+> > + * SMBus definitons for Braswell
+> > + */
+> > +
+> > +#define BRA_DONE_STATUS			BIT(7)
+> > +#define BRA_INUSE_STS			BIT(6)
+> > +#define BRA_FAILED_OP			BIT(4)
+> > +#define BRA_BUS_ERR			BIT(3)
+> > +#define BRA_DEV_ERR			BIT(2)
+> > +#define BRA_INTR			BIT(1)
+> > +#define BRA_HOST_BUSY			BIT(0)
+> > +#define BRA_HSTS_ERR_MASK   (BRA_FAILED_OP | BRA_BUS_ERR | BRA_DEV_ERR)
+> > +
+> > +#define BRA_PEC_EN			BIT(7)
+> > +#define BRA_START			BIT(6)
+> > +#define BRA_LAST__BYTE			BIT(5)
+> > +#define BRA_INTREN			BIT(0)
+> > +#define BRA_SMB_CMD			(7 << 2)
+> > +#define BRA_SMB_CMD_QUICK		(0 << 2)
+> > +#define BRA_SMB_CMD_BYTE		(1 << 2)
+> > +#define BRA_SMB_CMD_BYTE_DATA		(2 << 2)
+> > +#define BRA_SMB_CMD_WORD_DATA		(3 << 2)
+> > +#define BRA_SMB_CMD_PROCESS_CALL	(4 << 2)
+> > +#define BRA_SMB_CMD_BLOCK		(5 << 2)
+> > +#define BRA_SMB_CMD_I2CREAD		(6 << 2)
+> > +#define BRA_SMB_CMD_BLOCK_PROCESS	(7 << 2)
+> > +
+> > +#define BRA_SMB_BASE_ADDR  0x2040
+> > +#define HSTS               (BRA_SMB_BASE_ADDR + 0)
+> > +#define HCNT               (BRA_SMB_BASE_ADDR + 2)
+> > +#define HCMD               (BRA_SMB_BASE_ADDR + 3)
+> > +#define XMIT_SLVA          (BRA_SMB_BASE_ADDR + 4)
+> > +#define HDAT0              (BRA_SMB_BASE_ADDR + 5)
+> > +#define HDAT1              (BRA_SMB_BASE_ADDR + 6)
+> > +
+> > +/*
+> > + * Microcontroller Address
+> > + */
+> > +
+> > +#define SECOCEC_MICRO_ADDRESS		0x40
+> > +
+> > +/*
+> > + * STM32 SMBus Registers
+> > + */
+> > +
+> > +#define SECOCEC_VERSION			0x00
+> > +#define SECOCEC_ENABLE_REG_1		0x01
+> > +#define SECOCEC_ENABLE_REG_2		0x02
+> > +#define SECOCEC_STATUS_REG_1		0x03
+> > +#define SECOCEC_STATUS_REG_2		0x04
+> > +
+> > +#define SECOCEC_STATUS			0x28
+> > +#define SECOCEC_DEVICE_LA		0x29
+> > +#define SECOCEC_READ_OPERATION_ID	0x2a
+> > +#define SECOCEC_READ_DATA_LENGTH	0x2b
+> > +#define SECOCEC_READ_DATA_00		0x2c
+> > +#define SECOCEC_READ_DATA_02		0x2d
+> > +#define SECOCEC_READ_DATA_04		0x2e
+> > +#define SECOCEC_READ_DATA_06		0x2f
+> > +#define SECOCEC_READ_DATA_08		0x30
+> > +#define SECOCEC_READ_DATA_10		0x31
+> > +#define SECOCEC_READ_DATA_12		0x32
+> > +#define SECOCEC_READ_BYTE0		0x33
+> > +#define SECOCEC_WRITE_OPERATION_ID	0x34
+> > +#define SECOCEC_WRITE_DATA_LENGTH	0x35
+> > +#define SECOCEC_WRITE_DATA_00		0x36
+> > +#define SECOCEC_WRITE_DATA_02		0x37
+> > +#define SECOCEC_WRITE_DATA_04		0x38
+> > +#define SECOCEC_WRITE_DATA_06		0x39
+> > +#define SECOCEC_WRITE_DATA_08		0x3a
+> > +#define SECOCEC_WRITE_DATA_10		0x3b
+> > +#define SECOCEC_WRITE_DATA_12		0x3c
+> > +#define SECOCEC_WRITE_BYTE0		0x3d
+> > +
+> > +#define SECOCEC_IR_READ_DATA		0x3e
+> > +
+> > +/*
+> > + * Enabling register
+> > + */
+> > +
+> > +#define SECOCEC_ENABLE_REG_1_CEC		0x1000
+> > +#define SECOCEC_ENABLE_REG_1_IR			0x2000
+> > +#define SECOCEC_ENABLE_REG_1_IR_PASSTHROUGH	0x4000
+> > +
+> > +/*
+> > + * Status register
+> > + */
+> > +
+> > +#define SECOCEC_STATUS_REG_1_CEC	SECOCEC_ENABLE_REG_1_CEC
+> > +#define SECOCEC_STATUS_REG_1_IR		SECOCEC_ENABLE_REG_1_IR
+> > +#define SECOCEC_STATUS_REG_1_IR_PASSTHR	SECOCEC_ENABLE_REG_1_IR_PASSTHR
+> > +
+> > +/*
+> > + * Status data
+> > + */
+> > +
+> > +#define SECOCEC_STATUS_MSG_RECEIVED_MASK	BIT(0)
+> > +#define SECOCEC_STATUS_RX_ERROR_MASK		BIT(1)
+> > +#define SECOCEC_STATUS_MSG_SENT_MASK		BIT(2)
+> > +#define SECOCEC_STATUS_TX_ERROR_MASK		BIT(3)
+> > +
+> > +#define SECOCEC_STATUS_TX_NACK_ERROR		BIT(4)
+> > +#define SECOCEC_STATUS_RX_OVERFLOW_MASK		BIT(5)
+> > +
+> > +#endif /* __SECO_CEC_H__ */
+> > 
+
+Thanks,
+	Ettore
+
+> 
+> Regards,
+> 
+> 	Hans
