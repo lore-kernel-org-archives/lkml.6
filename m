@@ -3,518 +3,239 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D80ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDFB5ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 373B721479
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:57:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 373B721479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C418214C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:59:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C418214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727510AbeJSUCv convert rfc822-to-8bit (ORCPT
+        id S1727494AbeJSUEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:02:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38826 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726784AbeJSUCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:02:50 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0F89EC06021C;
-        Fri, 19 Oct 2018 11:57:05 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 392CC60927;
-        Fri, 19 Oct 2018 11:57:03 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <12081.1539896287@warthog.procyon.org.uk>
-References: <12081.1539896287@warthog.procyon.org.uk> <7833.1539893347@warthog.procyon.org.uk> <862e36a2-2a6f-4e26-3228-8cab4b4cf230@gmail.com> <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk> <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk> <de050902-f3d0-b2db-2627-983a36c87b3c@gmail.com>
-To:     Alan Jenkins <alan.christopher.jenkins@gmail.com>,
-        viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
-        ebiederm@xmission.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mszeredi@redhat.com
-Subject: Re: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE [ver #12]
+        Fri, 19 Oct 2018 16:04:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39698 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727170AbeJSUEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 16:04:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E50F4AE10;
+        Fri, 19 Oct 2018 11:59:02 +0000 (UTC)
+Date:   Fri, 19 Oct 2018 13:59:01 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Jessica Yu <jeyu@kernel.org>
+cc:     Torsten Duwe <duwe@lst.de>, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] arm64: implement live patching
+In-Reply-To: <20181018125820.iw54zbirq74ulknj@linux-8ccs>
+Message-ID: <alpine.LSU.2.21.1810191338020.4692@pobox.suse.cz>
+References: <20181001140910.086E768BC7@newverein.lst.de> <20181001141652.5478C68BE1@newverein.lst.de> <alpine.LSU.2.21.1810171051560.21847@pobox.suse.cz> <20181018125820.iw54zbirq74ulknj@linux-8ccs>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <10764.1539950222.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Fri, 19 Oct 2018 12:57:02 +0100
-Message-ID: <10765.1539950222@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 19 Oct 2018 11:57:05 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Okay, I put in a tracepoint (patch attached) and got a trace from the life of
-the offending mount object.  I've cropped non-useful information out of the
-lines, inserted a blank line every time the usage count goes down to 2 and
-dropped most of the lines generated by fsnotify.
+On Thu, 18 Oct 2018, Jessica Yu wrote:
 
-Most of the lines are irrelevant.  You can see system calls being issued and
-commands being run that make no difference on balance.
+> +++ Miroslav Benes [17/10/18 15:39 +0200]:
+> >On Mon, 1 Oct 2018, Torsten Duwe wrote:
+> >
+> >Ad relocations. I checked that everything in struct mod_arch_specific
+> >stays after the module is load. Both core and init get SHF_ALLOC set
+> >(mod->arch.core.plt->sh_flags in module_frob_arch_sections(). It is
+> >important because apply_relocate_add() may use those sections
+> >through module_emit_plt_entry() call.
+> 
+> Yes, it looks like the needed .plt sections will remain in module
+> memory. However, I think I found a slight issue... :/
+> 
+> In module_frob_arch_sections(), mod->arch.core.plt is set to an offset
+> within info->sechdrs:
+> 
+>             if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt"))
+>                     mod->arch.core.plt = sechdrs + i;
+> 
+> sechdrs is from info->sechdrs, which is freed at the end of
+> load_module() via free_copy(). So although the relevant plt section(s)
+> are in module memory, mod->arch.core.plt will point to invalid memory
+> after info is freed. In other words, the section (.plt) *is* in memory
+> but the section header (struct elf64_shdr) containing section metadata
+> like sh_addr, sh_size etc., is not.
+> 
+> But we have mod->klp_info->sechdrs (which is a copy of the section
+> headers) for this very reason. It is initialized only at the very end
+> of load_module(). I don't think copy_module_elf() is dependent on
+> anything, so it can just be moved earlier.
+> 
+> Note that we cannot set mod->arch.core.plt to mod->klp_info->sechdrs + i
+> during module_frob_arch_sections() because it is still too early, none
+> of the module sections have been copied and none of their sh_addr's
+> have been set to their final locations as this is all happening before
+> move_module() is called. So we can use a module_finalize() function
+> for arm64 to switch the mod->arch.core.plt to use the klp_info section
+> headers.
 
-What matters are the first four lines, the two mounts and the umount.  You can
-see it go splat on the last line when the usage count has become poisoned.
-
-            bash-3597  M=93785f8a u=1 ALC sp=clone_mnt+0x31/0x30a
-            bash-3597  M=93785f8a u=2 GET sp=do_dentry_open+0x24/0x2d3
-            bash-3597  M=93785f8a u=1 PUT sp=__se_sys_open_tree+0x195/0x1da
-
-^--- These three lines look like the open_tree() syscall done by test-fsmount.
-
-            bash-3597  M=93785f8a u=2 GET sp=set_fs_pwd+0x37/0xdb
-
-^--- And this the fchdir() syscall from test-fsmount.  At this point u=2 would
-     seem correct as the subtree isn't actually mounted anywhere (1 for pwd, 1
-     for fd).
-
-v--- test-fsmount then called execl() on bash, which did some stat'ing to find
-     the executable...
-
-            bash-3597  M=93785f8a u=3 GET sp=legitimize_path.isra.7+0x16/0x50
-            bash-3597  M=93785f8a u=2 PUT sp=vfs_statx+0x95/0xcc
-
-            bash-3597  M=93785f8a u=3 GET sp=legitimize_path.isra.7+0x16/0x50
-            bash-3597  M=93785f8a u=2 PUT sp=vfs_statx+0x95/0xcc
-
-v--- and then exec'd it.
-
-            bash-3597  M=93785f8a u=3 GET sp=legitimize_path.isra.7+0x16/0x50
-            bash-3597  M=93785f8a u=4 GET sp=do_dentry_open+0x24/0x2d3
-            bash-3597  M=93785f8a u=3 PUT sp=terminate_walk+0x20/0xda
-            bash-3597  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-            bash-3597  M=93785f8a u=3 PUT sp=vfs_statx+0x95/0xcc
-            bash-3597  M=93785f8a u=2 PUT sp=__fput+0x180/0x1c1
-
-v--- bash then did stuff:
-
-            bash-3597  M=93785f8a u=3 GET sp=legitimize_path.isra.7+0x16/0x50
-            bash-3597  M=93785f8a u=2 PUT sp=vfs_statx+0x95/0xcc
-
-            bash-3597  M=93785f8a u=3 GET sp=copy_fs_struct+0xcc/0xde
-     grepconf.sh-3598  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-     grepconf.sh-3598  M=93785f8a u=3 PUT sp=vfs_statx+0x95/0xcc
-     grepconf.sh-3598  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-     grepconf.sh-3598  M=93785f8a u=3 PUT sp=vfs_statx+0x95/0xcc
-     grepconf.sh-3598  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-     grepconf.sh-3598  M=93785f8a u=5 GET sp=do_dentry_open+0x24/0x2d3
-     grepconf.sh-3598  M=93785f8a u=4 PUT sp=terminate_walk+0x20/0xda
-     grepconf.sh-3598  M=93785f8a u=5 GET sp=legitimize_path.isra.7+0x16/0x50
-     grepconf.sh-3598  M=93785f8a u=4 PUT sp=vfs_statx+0x95/0xcc
-     grepconf.sh-3598  M=93785f8a u=3 PUT sp=__fput+0x180/0x1c1
-     grepconf.sh-3598  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-     grepconf.sh-3598  M=93785f8a u=3 PUT sp=vfs_statx+0x95/0xcc
-     grepconf.sh-3598  M=93785f8a u=4 GET sp=copy_fs_struct+0xcc/0xde
-            grep-3599  M=93785f8a u=3 PUT sp=free_fs_struct+0x1e/0x2e
-     grepconf.sh-3598  M=93785f8a u=2 PUT sp=free_fs_struct+0x1e/0x2e
-
-            bash-3597  M=93785f8a u=3 GET sp=copy_fs_struct+0xcc/0xde
-            bash-3600  M=93785f8a u=4 GET sp=copy_fs_struct+0xcc/0xde
-             tty-3601  M=93785f8a u=3 PUT sp=free_fs_struct+0x1e/0x2e
-            bash-3600  M=93785f8a u=4 GET sp=copy_fs_struct+0xcc/0xde
-            tput-3602  M=93785f8a u=3 PUT sp=free_fs_struct+0x1e/0x2e
-            bash-3600  M=93785f8a u=2 PUT sp=free_fs_struct+0x1e/0x2e
-
-            bash-3597  M=93785f8a u=3 GET sp=copy_fs_struct+0xcc/0xde
-            bash-3603  M=93785f8a u=4 GET sp=copy_fs_struct+0xcc/0xde
-       dircolors-3604  M=93785f8a u=3 PUT sp=free_fs_struct+0x1e/0x2e
-            bash-3603  M=93785f8a u=2 PUT sp=free_fs_struct+0x1e/0x2e
-
-            bash-3597  M=93785f8a u=3 GET sp=copy_fs_struct+0xcc/0xde
-            grep-3605  M=93785f8a u=2 PUT sp=free_fs_struct+0x1e/0x2e
-
-            bash-3597  M=93785f8a u=3 GET sp=copy_fs_struct+0xcc/0xde
-     grepconf.sh-3606  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-     grepconf.sh-3606  M=93785f8a u=3 PUT sp=vfs_statx+0x95/0xcc
-     grepconf.sh-3606  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-     grepconf.sh-3606  M=93785f8a u=3 PUT sp=vfs_statx+0x95/0xcc
-     grepconf.sh-3606  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-     grepconf.sh-3606  M=93785f8a u=5 GET sp=do_dentry_open+0x24/0x2d3
-     grepconf.sh-3606  M=93785f8a u=4 PUT sp=terminate_walk+0x20/0xda
-     grepconf.sh-3606  M=93785f8a u=5 GET sp=legitimize_path.isra.7+0x16/0x50
-     grepconf.sh-3606  M=93785f8a u=4 PUT sp=vfs_statx+0x95/0xcc
-     grepconf.sh-3606  M=93785f8a u=3 PUT sp=__fput+0x180/0x1c1
-     grepconf.sh-3606  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-     grepconf.sh-3606  M=93785f8a u=3 PUT sp=vfs_statx+0x95/0xcc
-     grepconf.sh-3606  M=93785f8a u=4 GET sp=copy_fs_struct+0xcc/0xde
-            grep-3607  M=93785f8a u=3 PUT sp=free_fs_struct+0x1e/0x2e
-     grepconf.sh-3606  M=93785f8a u=2 PUT sp=free_fs_struct+0x1e/0x2e
-
-            bash-3597  M=93785f8a u=3 GET sp=copy_fs_struct+0xcc/0xde
-     grepconf.sh-3608  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-     grepconf.sh-3608  M=93785f8a u=3 PUT sp=vfs_statx+0x95/0xcc
-     grepconf.sh-3608  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-     grepconf.sh-3608  M=93785f8a u=3 PUT sp=vfs_statx+0x95/0xcc
-     grepconf.sh-3608  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-     grepconf.sh-3608  M=93785f8a u=5 GET sp=do_dentry_open+0x24/0x2d3
-     grepconf.sh-3608  M=93785f8a u=4 PUT sp=terminate_walk+0x20/0xda
-     grepconf.sh-3608  M=93785f8a u=5 GET sp=legitimize_path.isra.7+0x16/0x50
-     grepconf.sh-3608  M=93785f8a u=4 PUT sp=vfs_statx+0x95/0xcc
-     grepconf.sh-3608  M=93785f8a u=3 PUT sp=__fput+0x180/0x1c1
-     grepconf.sh-3608  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-     grepconf.sh-3608  M=93785f8a u=3 PUT sp=vfs_statx+0x95/0xcc
-     grepconf.sh-3608  M=93785f8a u=4 GET sp=copy_fs_struct+0xcc/0xde
-            grep-3609  M=93785f8a u=3 PUT sp=free_fs_struct+0x1e/0x2e
-     grepconf.sh-3608  M=93785f8a u=2 PUT sp=free_fs_struct+0x1e/0x2e
-
-            bash-3597  M=93785f8a u=3 GET sp=legitimize_path.isra.7+0x16/0x50
-            bash-3597  M=93785f8a u=2 PUT sp=vfs_statx+0x95/0xcc
-
-I ran "mount --move . /mnt":
-
-            bash-3597  M=93785f8a u=3 GET sp=copy_fs_struct+0xcc/0xde
-           mount-3610  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-           mount-3610  M=93785f8a u=3 PUT sp=vfs_statx+0x95/0xcc
-           mount-3610  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-           mount-3610  M=93785f8a u=5 GET sp=do_dentry_open+0x24/0x2d3
-           mount-3610  M=93785f8a u=4 PUT sp=terminate_walk+0x20/0xda
-           mount-3610  M=93785f8a u=5 GET sp=legitimize_path.isra.7+0x16/0x50
-           mount-3610  M=93785f8a u=4 PUT sp=vfs_statx+0x95/0xcc
-           mount-3610  M=93785f8a u=3 PUT sp=__fput+0x180/0x1c1
-           mount-3610  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-           mount-3610  M=93785f8a u=3 PUT sp=do_mount+0x715/0x929
-           mount-3610  M=93785f8a u=2 PUT sp=free_fs_struct+0x1e/0x2e
-
-which worked.  Herein lieth the problem.  The usage count should be 3 now (1
-for pwd, 1 for fd, 1 for mount) - but how does VFS know that this mount object
-isn't mounted yet?
-
-I ran "mount --move /mnt /mnt":
-
-            bash-3597  M=93785f8a u=3 GET sp=copy_fs_struct+0xcc/0xde
-           mount-3611  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-           mount-3611  M=93785f8a u=3 PUT sp=vfs_statx+0x95/0xcc
-           mount-3611  M=93785f8a u=4 GET sp=legitimize_path.isra.7+0x16/0x50
-           mount-3611  M=93785f8a u=5 GET sp=legitimize_path.isra.7+0x16/0x50
-           mount-3611  M=93785f8a u=4 PUT sp=do_mount+0x715/0x929
-           mount-3611  M=93785f8a u=3 PUT sp=do_mount+0x1cf/0x929
-           mount-3611  M=93785f8a u=2 PUT sp=free_fs_struct+0x1e/0x2e
-
-which failed with ELOOP.
-
-I ran "cd":
-
-            bash-3597  M=93785f8a u=1 PUT sp=set_fs_pwd+0xb8/0xdb
-
-I ran "umount /mnt":
-
-          umount-3612  M=93785f8a u=2 GET sp=legitimize_path.isra.7+0x16/0x50
-          umount-3612  M=93785f8a u=1 PUT sp=vfs_statx+0x95/0xcc
-          umount-3612  M=93785f8a u=2 GET sp=legitimize_path.isra.7+0x16/0x50
-          umount-3612  M=93785f8a u=1 PUT sp=vfs_statx+0x95/0xcc
-          umount-3612  M=93785f8a u=2 GET sp=legitimize_path.isra.7+0x16/0x50
-          umount-3612  M=93785f8a u=1 PUT sp=user_statfs+0x61/0x98
-          umount-3612  M=93785f8a u=2 GET sp=legitimize_mnt+0x12/0x108
-          umount-3612  M=93785f8a u=1 PUT sp=pin_kill+0x11c/0x325
-          umount-3612  M=93785f8a u=0 PUT sp=ksys_umount+0x3e8/0x40e
-          umount-3612  M=93785f8a u=0 FRE sp=cleanup_mnt+0x4d/0x5e
-
-And finally, I exited the shell, which then tried to release the fd inherited
-from open_tree():
-
-            bash-3597  M=93785f8a u=1802201963 NFY sp=__fput+0xac/0x1c1
-
-Note that the subtree attached to the fd has not at this point been directly
-mounted by move_mount(), but implicitly mounted by fchdir() into it and then
-using mount(MS_MOVE) of "." to "/mnt".
-
-Note also that if I run the commands all as one go rather than pasting them
-individually, a crash occurs in pin_kill() instead.
-
-So, I'm not sure how to proceed from here.  There's no easy way to remove the
-FMODE_NEED_UNMOUNT flag left by open_tree().
-
-David
----
-commit e7c8e6590aa0dd3bf2e10450b8992d496c44be8b
-Author: David Howells <dhowells@redhat.com>
-Date:   Fri Oct 19 10:38:35 2018 +0100
-
-    mnt_count trace
-
-diff --git a/fs/mount.h b/fs/mount.h
-index f39bc9da4d73..124a6dd73936 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -20,7 +20,7 @@ struct mnt_namespace {
- } __randomize_layout;
+Thanks for the analysis. You seem to be right.
  
- struct mnt_pcp {
--	int mnt_count;
-+	int mnt_countxxx;
- 	int mnt_writers;
- };
- 
-@@ -46,6 +46,7 @@ struct mount {
- 	int mnt_count;
- 	int mnt_writers;
- #endif
-+	atomic_t mnt_count;
- 	struct list_head mnt_mounts;	/* list of children, anchored here */
- 	struct list_head mnt_child;	/* and going through their mnt_child */
- 	struct list_head mnt_instance;	/* mount instance on sb->s_mounts */
-diff --git a/fs/namei.c b/fs/namei.c
-index fb913148d4d1..da1489f6925c 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -460,32 +460,6 @@ int inode_permission(struct inode *inode, int mask)
- }
- EXPORT_SYMBOL(inode_permission);
- 
--/**
-- * path_get - get a reference to a path
-- * @path: path to get the reference to
-- *
-- * Given a path increment the reference count to the dentry and the vfsmount.
-- */
--void path_get(const struct path *path)
--{
--	mntget(path->mnt);
--	dget(path->dentry);
--}
--EXPORT_SYMBOL(path_get);
--
--/**
-- * path_put - put a reference to a path
-- * @path: path to put the reference to
-- *
-- * Given a path decrement the reference count to the dentry and the vfsmount.
-- */
--void path_put(const struct path *path)
--{
--	dput(path->dentry);
--	mntput(path->mnt);
--}
--EXPORT_SYMBOL(path_put);
--
- #define EMBEDDED_LEVELS 2
- struct nameidata {
- 	struct path	path;
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 6370bfabec99..389e806e1a65 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -29,6 +29,8 @@
- #include <linux/sched/task.h>
- #include <uapi/linux/mount.h>
- #include <linux/fs_context.h>
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/mnt.h>
- 
- #include "pnode.h"
- #include "internal.h"
-@@ -109,8 +111,10 @@ static int mnt_alloc_id(struct mount *mnt)
- 	return 0;
- }
- 
--static void mnt_free_id(struct mount *mnt)
-+static noinline void mnt_free_id(struct mount *mnt)
- {
-+	trace_mnt_count(mnt, mnt->mnt_id, atomic_read(&mnt->mnt_count), 99,
-+			__builtin_return_address(0));
- 	ida_free(&mnt_id_ida, mnt->mnt_id);
- }
- 
-@@ -141,6 +145,9 @@ void mnt_release_group_id(struct mount *mnt)
-  */
- static inline void mnt_add_count(struct mount *mnt, int n)
- {
-+	int u;
+> Maybe this will be more clear in the example fix below (completely
+> untested and unreviewed!):
+> 
+> diff --git a/arch/arm64/include/asm/module.h b/arch/arm64/include/asm/module.h
+> index 97d0ef12e2ff..150afc29171b 100644
+> --- a/arch/arm64/include/asm/module.h
+> +++ b/arch/arm64/include/asm/module.h
+> @@ -25,6 +25,7 @@ struct mod_plt_sec {
+> 	struct elf64_shdr	*plt;
+> 	int			plt_num_entries;
+> 	int			plt_max_entries;
+> +	int			plt_shndx;
+> };
+> 
+> struct mod_arch_specific {
+> diff --git a/arch/arm64/kernel/module-plts.c b/arch/arm64/kernel/module-plts.c
+> index f0690c2ca3e0..c23cef8f0165 100644
+> --- a/arch/arm64/kernel/module-plts.c
+> +++ b/arch/arm64/kernel/module-plts.c
+> @@ -196,6 +196,21 @@ static unsigned int count_plts(Elf64_Sym *syms,
+> Elf64_Rela *rela, int num,
+> 	return ret;
+> }
+> 
+> +int module_finalize(const Elf_Ehdr *hdr, const Elf_Shdr *sechdrs,
+> +		    struct module *mod)
+> +{
+> +	/*
+> +	 * Livepatch modules need to keep access to section headers to apply
+> +	 * relocations. Note mod->klp_info should have already been
+> initialized
+> +	 * and all section sh_addr's should have their final addresses by the
+> +	 * time module_finalize() is called.
+> +	 */
+> +	if (is_livepatch_module(mod))
+> +		mod->arch.core.plt = mod->klp_info->sechdrs +
+> mod->arch.core.plt_shndx;
+> +
+> +	return 0;
+> +}
+
+There is already module_finalize() in arch/arm64/kernel/module.c, so this 
+should probably go there.
+
+If I am not mistaken, we do not care for arch.init.plt in livepatch. Is 
+that correct?
+
+> int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+> 			      char *secstrings, struct module *mod)
+> {
+> @@ -210,11 +225,13 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr
+> *sechdrs,
+> 	 * entries. Record the symtab address as well.
+> 	 */
+> 	for (i = 0; i < ehdr->e_shnum; i++) {
+> -		if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt"))
+> +		if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt")) {
+> 			mod->arch.core.plt = sechdrs + i;
+> -		else if (!strcmp(secstrings + sechdrs[i].sh_name,
+> ".init.plt"))
+> +			mod->arch.core.plt_shndx = i;
+> +		} else if (!strcmp(secstrings + sechdrs[i].sh_name,
+> ".init.plt")) {
+> 			mod->arch.init.plt = sechdrs + i;
+> -		else if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE) &&
+> +			mod->arch.init.plt_shndx = i;
+
+It is initialized here, but that's not necessarily a bad thing.
+
+> +		} else if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE) &&
+> 			 !strcmp(secstrings + sechdrs[i].sh_name,
+> 				 ".text.ftrace_trampoline"))
+> 			tramp = sechdrs + i;
+> diff --git a/kernel/module.c b/kernel/module.c
+> index 6746c85511fe..2fc4d74288dd 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -3363,6 +3363,12 @@ static int post_relocation(struct module *mod, const
+> struct load_info *info)
+> 	/* Setup kallsyms-specific fields. */
+> 	add_kallsyms(mod, info);
+> 
+> +	if (is_livepatch_module(mod)) {
+> +		err = copy_module_elf(mod, info);
+> +		if (err < 0)
+> +			return err;
+> +	}
+> +
+> 	/* Arch-specific module finalizing. */
+> 	return module_finalize(info->hdr, info->sechdrs, mod);
+> }
+> @@ -3775,12 +3781,6 @@ static int load_module(struct load_info *info, const
+> char __user *uargs,
+> 	if (err < 0)
+> 		goto coming_cleanup;
+> 
+> -	if (is_livepatch_module(mod)) {
+> -		err = copy_module_elf(mod, info);
+> -		if (err < 0)
+> -			goto sysfs_cleanup;
+> -	}
+> -
+> 	/* Get rid of temporary copy. */
+> 	free_copy(info);
+
+Hm, this is hopefully all right. We'd need to change the error handling a 
+bit. free_module_elf() is now called in free_module() and it should be 
+moved somewhere to load_module(). Probably under free_arch_cleanup label. 
+Although it would be much better to rework post_relocation() and handle it 
+right there.
+
+Something like
+
+-	return module_finalize(info->hdr, info->sechdrs, mod);
++	err = module_finalize(info->hdr, info->sechdrs, mod);
++	if (err < 0)
++		free_module_elf();
 +
-+#if 0
- #ifdef CONFIG_SMP
- 	this_cpu_add(mnt->mnt_pcp->mnt_count, n);
- #else
-@@ -148,6 +155,9 @@ static inline void mnt_add_count(struct mount *mnt, int n)
- 	mnt->mnt_count += n;
- 	preempt_enable();
- #endif
-+#endif
-+	u = atomic_add_return(n, &mnt->mnt_count);
-+	trace_mnt_count(mnt, mnt->mnt_id, u, n, __builtin_return_address(0));
- }
- 
- /*
-@@ -155,6 +165,7 @@ static inline void mnt_add_count(struct mount *mnt, int n)
-  */
- unsigned int mnt_get_count(struct mount *mnt)
- {
-+#if 0
- #ifdef CONFIG_SMP
- 	unsigned int count = 0;
- 	int cpu;
-@@ -167,6 +178,8 @@ unsigned int mnt_get_count(struct mount *mnt)
- #else
- 	return mnt->mnt_count;
- #endif
-+#endif
-+	return atomic_read(&mnt->mnt_count);
- }
- 
- static void drop_mountpoint(struct fs_pin *p)
-@@ -198,11 +211,15 @@ static struct mount *alloc_vfsmnt(const char *name)
- 		if (!mnt->mnt_pcp)
- 			goto out_free_devname;
- 
-+#if 0
- 		this_cpu_add(mnt->mnt_pcp->mnt_count, 1);
-+#endif
- #else
- 		mnt->mnt_count = 1;
- 		mnt->mnt_writers = 0;
- #endif
-+		atomic_set(&mnt->mnt_count, 1);
-+		trace_mnt_count(mnt, mnt->mnt_id, 1, 0, __builtin_return_address(0));
- 
- 		INIT_HLIST_NODE(&mnt->mnt_hash);
- 		INIT_LIST_HEAD(&mnt->mnt_child);
-@@ -1128,7 +1145,7 @@ static void mntput_no_expire(struct mount *mnt)
- 	cleanup_mnt(mnt);
- }
- 
--void mntput(struct vfsmount *mnt)
-+inline void mntput(struct vfsmount *mnt)
- {
- 	if (mnt) {
- 		struct mount *m = real_mount(mnt);
-@@ -1140,7 +1157,7 @@ void mntput(struct vfsmount *mnt)
- }
- EXPORT_SYMBOL(mntput);
- 
--struct vfsmount *mntget(struct vfsmount *mnt)
-+inline struct vfsmount *mntget(struct vfsmount *mnt)
- {
- 	if (mnt)
- 		mnt_add_count(real_mount(mnt), 1);
-@@ -3970,3 +3987,29 @@ const struct proc_ns_operations mntns_operations = {
- 	.install	= mntns_install,
- 	.owner		= mntns_owner,
- };
-+
-+/**
-+ * path_get - get a reference to a path
-+ * @path: path to get the reference to
-+ *
-+ * Given a path increment the reference count to the dentry and the vfsmount.
-+ */
-+void path_get(const struct path *path)
-+{
-+	mntget(path->mnt);
-+	dget(path->dentry);
-+}
-+EXPORT_SYMBOL(path_get);
-+
-+/**
-+ * path_put - put a reference to a path
-+ * @path: path to put the reference to
-+ *
-+ * Given a path decrement the reference count to the dentry and the vfsmount.
-+ */
-+void path_put(const struct path *path)
-+{
-+	dput(path->dentry);
-+	mntput(path->mnt);
-+}
-+EXPORT_SYMBOL(path_put);
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index ababdbfab537..aaef44d6204c 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -23,6 +23,7 @@
- #include <linux/module.h>
- #include <linux/mount.h>
- #include <linux/srcu.h>
-+#include <trace/events/mnt.h>
- 
- #include <linux/fsnotify_backend.h>
- #include "fsnotify.h"
-@@ -324,10 +325,13 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
- 	/* global tests shouldn't care about events on child only the specific event */
- 	__u32 test_mask = (mask & ~FS_EVENT_ON_CHILD);
- 
--	if (data_is == FSNOTIFY_EVENT_PATH)
-+	if (data_is == FSNOTIFY_EVENT_PATH) {
- 		mnt = real_mount(((const struct path *)data)->mnt);
--	else
-+		trace_mnt_count(mnt, mnt->mnt_id, atomic_read(&mnt->mnt_count), 88,
-+				__builtin_return_address(0));
-+	} else {
- 		mnt = NULL;
-+	}
- 
- 	/*
- 	 * Optimization: srcu_read_lock() has a memory barrier which can
-diff --git a/include/trace/events/mnt.h b/include/trace/events/mnt.h
-new file mode 100644
-index 000000000000..da1a981f1a61
---- /dev/null
-+++ b/include/trace/events/mnt.h
-@@ -0,0 +1,57 @@
-+/* Mount tracepoints
-+ *
-+ * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM mnt
-+
-+#if !defined(_TRACE_MNT_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_MNT_H
-+
-+#include <linux/tracepoint.h>
-+
-+TRACE_EVENT(mnt_count,
-+	    TP_PROTO(const void *mnt, int mnt_id, int mnt_count,
-+		     int delta, const void *where),
-+
-+	    TP_ARGS(mnt, mnt_id, mnt_count, delta, where),
-+
-+	    TP_STRUCT__entry(
-+		    __field(int,			mnt_id		)
-+		    __field(int,			mnt_count	)
-+		    __field(int,			delta		)
-+		    __field(const void *,		mnt		)
-+		    __field(const void *,		where		)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->mnt_id = mnt_id;
-+		    __entry->mnt_count = mnt_count;
-+		    __entry->delta = delta;
-+		    __entry->mnt = mnt;
-+		    __entry->where = where;
-+			   ),
-+
-+	    TP_printk("M=%p m=%08x u=%d %s sp=%pSR",
-+		      __entry->mnt,
-+		      __entry->mnt_id,
-+		      __entry->mnt_count,
-+		      __print_symbolic(__entry->delta,
-+				       { 0, "ALC" },
-+				       { 1, "GET" },
-+				       { -1, "PUT" },
-+				       { 88, "NFY" },
-+				       { 99, "FRE" }),
-+		      __entry->where)
-+	    );
-+
-+#endif /* _TRACE_MNT_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
++	return err;
+
+> Thoughts? Does the fix make sense?
+
+I think so.
+
+> >The last thing is count_plts() function called from
+> >module_frob_arch_sections(). It needed to be changed in 2016 as well. See
+> >Jessica's patch
+> >(20160713001113.GA30925@packer-debian-8-amd64.digitalocean.com). The logic
+> >in the function has changed since then. If I am not mistaken,
+> >count_plts() is fine as it is right now. It does not consider SHN_UNDEF
+> >anymore, it looks at the destination section (where a symbol should
+> >resolved to) only.
+> >
+> >Jessica, could you doublecheck, please?
+> 
+> Yes, I think count_plts() is fine now in this case (because it is
+> always true that sym->st_shndx != dstidx for SHN_LIVEPATCH symbols)
+> and my old patch from 2016 is no longer needed.
+
+Thanks a lot, Jessica.
+
+Torsten, could you include the outcome to your patch set once we settle on 
+it? Thanks.
+
+Miroslav
