@@ -2,64 +2,299 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6701BECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EFA8ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:19:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C80021476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:18:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C80021476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id AE6D721470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:19:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="LFZsWAWw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE6D721470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbeJSVYY (ORCPT
+        id S1727444AbeJSVZy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 17:24:24 -0400
-Received: from ms.lwn.net ([45.79.88.28]:50804 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727104AbeJSVYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 17:24:24 -0400
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id A1DB87F5;
-        Fri, 19 Oct 2018 13:18:18 +0000 (UTC)
-Date:   Fri, 19 Oct 2018 07:18:16 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Will Korteland <will@korte.land>
-Cc:     gregkh@linuxfoundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] docs/uio: fix a grammar nitpick
-Message-ID: <20181019071816.07e80ed5@lwn.net>
-In-Reply-To: <fa74b1f965d5a33d708f74d9fe8d7517@korte.land>
-References: <7e426c03c0e342ade7ce86a977ef13b2@korte.land>
-        <20181018123126.3e59c3fd@lwn.net>
-        <fa74b1f965d5a33d708f74d9fe8d7517@korte.land>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 19 Oct 2018 17:25:54 -0400
+Received: from aer-iport-1.cisco.com ([173.38.203.51]:12040 "EHLO
+        aer-iport-1.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727333AbeJSVZx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 17:25:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=6545; q=dns/txt; s=iport;
+  t=1539955187; x=1541164787;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=iz5INASBGnhODmSnZV04w/lxNogeADDtmeIQFt3u9g4=;
+  b=LFZsWAWwT+Kl4b9g2VqiUIcmdVpwp+LGvPR1S19f6Sva8hObtrv5qnAF
+   pB2zqP4iVTkYpTIeDgGbsNf+RTa8Dyq/n8pgD+ptWIqSPo4NW8x1doGwD
+   WIs2dBrK/Pzt1ruxZYDGqWF03+OmEYvVTPzUFYRCzbJPtI2n5UMNdwXGl
+   c=;
+X-IronPort-AV: E=Sophos;i="5.54,400,1534809600"; 
+   d="scan'208";a="7368429"
+Received: from aer-iport-nat.cisco.com (HELO aer-core-1.cisco.com) ([173.38.203.22])
+  by aer-iport-1.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 13:19:46 +0000
+Received: from [10.47.79.81] ([10.47.79.81])
+        (authenticated bits=0)
+        by aer-core-1.cisco.com (8.15.2/8.15.2) with ESMTPSA id w9JDJjGb030321
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 19 Oct 2018 13:19:45 GMT
+Subject: Re: [PATCH v3 1/2] media: add SECO cec driver
+To:     ektor5 <ek5.chimenti@gmail.com>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     luca.pisani@udoo.org, jose.abreu@synopsys.com, sean@mess.org,
+        sakari.ailus@linux.intel.com, jacopo@jmondi.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+References: <cover.1539807092.git.ek5.chimenti@gmail.com>
+ <3682be6c6cf7263f165080b9a1123017a23489a0.1539807092.git.ek5.chimenti@gmail.com>
+ <d874bf66-e4ad-0c98-711d-3c79d0342a67@xs4all.nl>
+ <20181019130205.lqb3sopqqangefr4@Ettosoft-T55>
+From:   Hans Verkuil <hansverk@cisco.com>
+Message-ID: <0ae193a7-b651-0564-c4de-a159b1e2bfb2@cisco.com>
+Date:   Fri, 19 Oct 2018 15:19:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181019130205.lqb3sopqqangefr4@Ettosoft-T55>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-User: hansverk
+X-Outbound-SMTP-Client: 10.47.79.81, [10.47.79.81]
+X-Outbound-Node: aer-core-1.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 19 Oct 2018 10:55:58 +0000 (UTC)
-Will Korteland <will@korte.land> wrote:
+On 10/19/18 15:02, ektor5 wrote:
+> Hi Hans,
+> 
+> On Thu, Oct 18, 2018 at 09:14:55AM +0200, Hans Verkuil wrote:
+>> Hi Ettore,
+>>
+>> Just a few small things and it is ready to go:
+>>
+>> On 10/17/2018 11:31 PM, ektor5 wrote:
+>>> From: Ettore Chimenti <ek5.chimenti@gmail.com>
+>>>
+>>> This patch adds support to the CEC device implemented with a STM32
+>>> microcontroller in X86 SECO Boards, including UDOO X86.
+>>>
+>>> The communication is achieved via Braswell integrated SMBus
+>>> (i2c-i801). The driver use direct access to the PCI addresses, due to
+>>> the limitations of the specific driver in presence of ACPI calls.
+>>>
+>>> The basic functionalities are tested with success with cec-ctl and
+>>> cec-compliance.
+>>>
+>>> Inspired by cros-ec-cec implementation, attaches to i915 driver
+>>> cec-notifier.
+>>>
+>>> Signed-off-by: Ettore Chimenti <ek5.chimenti@gmail.com>
+>>> ---
+>>>  MAINTAINERS                                |   6 +
+>>>  drivers/media/platform/Kconfig             |  12 +
+>>>  drivers/media/platform/Makefile            |   2 +
+>>>  drivers/media/platform/seco-cec/Makefile   |   1 +
+>>>  drivers/media/platform/seco-cec/seco-cec.c | 699 +++++++++++++++++++++
+>>>  drivers/media/platform/seco-cec/seco-cec.h | 130 ++++
+>>>  6 files changed, 850 insertions(+)
+>>>  create mode 100644 drivers/media/platform/seco-cec/Makefile
+>>>  create mode 100644 drivers/media/platform/seco-cec/seco-cec.c
+>>>  create mode 100644 drivers/media/platform/seco-cec/seco-cec.h
 
-> Thanks for
-> the pointer to the email docs, but unfortunately my client isn't covered
-> there. Still, I've used it as a guide for the kind of settings I need,
-> hopefully my patches won't get mangled from now on.
+<snip>
 
-When you figure out what's needed to bring your client into line, I would
-more than welcome a patch to email-clients.rst providing the necessary
-information for the next person who comes along!
+>>> +static int secocec_adap_log_addr(struct cec_adapter *adap, u8 logical_addr)
+>>> +{
+>>> +	u16 enable_val = 0;
+>>> +	int status;
+>>
+>> If logical_addr == CEC_LOG_ADDR_INVALID, then this function must not return
+>> an error or the CEC framework will WARN about it.
+>>
+>>> +
+>>> +	/* Disable device */
+>>> +	status = smb_rd16(SECOCEC_ENABLE_REG_1, &enable_val);
+>>> +	if (status)
+>>> +		return status;
+>>> +
+>>> +	status = smb_wr16(SECOCEC_ENABLE_REG_1,
+>>> +			  enable_val & ~SECOCEC_ENABLE_REG_1_CEC);
+>>> +	if (status)
+>>> +		return status;
+>>> +
+>>> +	/* Write logical address */
+>>> +	status = smb_wr16(SECOCEC_DEVICE_LA, logical_addr);
+>>
+>> So does writing CEC_LOG_ADDR_INVALID (0xff) invalidate all logical
+>> addresses? I see no special code for that. If that is indeed the
+>> case, then you should document this.
+> 
+> The micro can have only one LA at a time. 
+> 
+> In the micro datasheet there isn't any reference to an invalid addr, so
+> it shouldn't complain. It will just set LA = 0xf. Is this correct or it
+> should disable the device instead?
 
-Thanks,
+Setting it to 0xf is OK, but you might want to write 'logical_addr & 0xf'
+to the register with a note that CEC_LOG_ADDR_INVALID is mapped to the
+'Unregistered' logical address.
 
-jon
+> 
+>>
+>>> +	if (status)
+>>> +		return status;
+>>> +
+>>> +	/* Re-enable device */
+>>> +	status = smb_wr16(SECOCEC_ENABLE_REG_1,
+>>> +			  enable_val | SECOCEC_ENABLE_REG_1_CEC);
+>>> +	if (status)
+>>> +		return status;
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int secocec_adap_transmit(struct cec_adapter *adap, u8 attempts,
+>>> +				 u32 signal_free_time, struct cec_msg *msg)
+>>> +{
+>>> +	struct secocec_data *cec = cec_get_drvdata(adap);
+>>> +	struct device *dev = cec->dev;
+>>> +	u16 payload_len, payload_id_len, destination, val = 0;
+>>> +	u8 *payload_msg;
+>>> +	int status;
+>>> +	u8 i;
+>>> +
+>>> +	/* Device msg len already accounts for header */
+>>> +	payload_id_len = msg->len - 1;
+>>> +
+>>> +	/* Send data length */
+>>> +	status = smb_wr16(SECOCEC_WRITE_DATA_LENGTH, payload_id_len);
+>>> +	if (status)
+>>> +		goto err;
+>>> +
+>>> +	/* Send Operation ID if present */
+>>> +	if (payload_id_len > 0) {
+>>> +		status = smb_wr16(SECOCEC_WRITE_OPERATION_ID, msg->msg[1]);
+>>> +		if (status)
+>>> +			goto err;
+>>> +	}
+>>> +	/* Send data if present */
+>>> +	if (payload_id_len > 1) {
+>>> +		/* Only data; */
+>>> +		payload_len = msg->len - 2;
+>>> +		payload_msg = &msg->msg[2];
+>>> +
+>>> +		/* Copy message into registers */
+>>> +		for (i = 0; i < payload_len; i += 2) {
+>>> +			/* hi byte */
+>>> +			val = payload_msg[i + 1] << 8;
+>>> +
+>>> +			/* lo byte */
+>>> +			val |= payload_msg[i];
+>>> +
+>>> +			status = smb_wr16(SECOCEC_WRITE_DATA_00 + i / 2, val);
+>>> +			if (status)
+>>> +				goto err;
+>>> +		}
+>>> +	}
+>>> +	/* Send msg source/destination and fire msg */
+>>> +	destination = msg->msg[0];
+>>> +	status = smb_wr16(SECOCEC_WRITE_BYTE0, destination);
+>>> +	if (status)
+>>> +		goto err;
+>>> +
+>>> +	return 0;
+>>> +
+>>> +err:
+>>> +	dev_err(dev, "Transmit failed (%d)", status);
+>>
+>> You can drop this: the cec module has already debug code for that.
+>>
+>>> +	return status;
+>>> +}
+>>> +
+>>> +static int secocec_tx_done(struct cec_adapter *adap, u16 status_val)
+>>
+>> Just return void since the return code is ignored anyway.
+> 
+> Ok, will drop those.
+> 
+>>
+>>> +{
+>>> +	int status = 0;
+>>> +
+>>> +	if (status_val & SECOCEC_STATUS_TX_ERROR_MASK) {
+>>> +		if (status_val & SECOCEC_STATUS_TX_NACK_ERROR) {
+>>> +			cec_transmit_attempt_done(adap, CEC_TX_STATUS_NACK);
+>>> +			status = -EAGAIN;
+>>> +		} else {
+>>> +			cec_transmit_attempt_done(adap, CEC_TX_STATUS_ERROR);
+>>> +			status = -EIO;
+>>> +		}
+>>> +	} else {
+>>> +		cec_transmit_attempt_done(adap, CEC_TX_STATUS_OK);
+>>> +	}
+>>> +
+>>> +	/* Reset status reg */
+>>> +	status_val = SECOCEC_STATUS_TX_ERROR_MASK |
+>>> +		SECOCEC_STATUS_MSG_SENT_MASK |
+>>> +		SECOCEC_STATUS_TX_NACK_ERROR;
+>>> +	smb_wr16(SECOCEC_STATUS, status_val);
+>>> +
+>>> +	return status;
+>>> +}
+>>> +
+>>> +static int secocec_rx_done(struct cec_adapter *adap, u16 status_val)
+>>> +{
+>>
+>> Ditto.
+>>
+>>> +	struct secocec_data *cec = cec_get_drvdata(adap);
+>>> +	struct device *dev = cec->dev;
+>>> +	struct cec_msg msg = { };
+>>> +	bool flag_overflow = false;
+>>> +	u8 payload_len, i = 0;
+>>> +	u8 *payload_msg;
+>>> +	u16 val = 0;
+>>> +	int status;
+>>> +
+>>> +	if (status_val & SECOCEC_STATUS_RX_OVERFLOW_MASK) {
+>>> +		dev_warn(dev, "Received more than 16 bytes. Discarding");
+>>
+>> Is it better to just receive the first 16 bytes?
+> 
+> In case of an overflow, it should discard the overflowing bytes, but I
+> don't have any equipment that can test this. (this device can send up to
+> 16 bytes).
+
+Add a note that this might not be necessary, but that you couldn't test
+this. I can test it when I find some time.
+
+> 
+>>
+>>> +		flag_overflow = true;
+>>> +	}
+
+Regards,
+
+	Hans
+
