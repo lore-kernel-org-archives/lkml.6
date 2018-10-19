@@ -2,108 +2,132 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CCFECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C45EECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C98702086E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:57:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C98702086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id E45342086E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:03:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bwa5P1Er"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E45342086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbeJTDE7 (ORCPT
+        id S1727774AbeJTDK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 23:04:59 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:40049 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727329AbeJTDE7 (ORCPT
+        Fri, 19 Oct 2018 23:10:26 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53949 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727526AbeJTDK0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 23:04:59 -0400
-Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gDZxW-0004hY-HS; Fri, 19 Oct 2018 20:57:18 +0200
-Date:   Fri, 19 Oct 2018 20:57:18 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     John Stultz <john.stultz@linaro.org>
-cc:     Christopher Hall <christopher.s.hall@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        jesus.sanchez-palencia@intel.com, gavin.hindman@intel.com,
-        liam.r.girdwood@intel.com, Peter Zijlstra <peterz@infradead.org>,
+        Fri, 19 Oct 2018 23:10:26 -0400
+Received: by mail-wm1-f65.google.com with SMTP id y11-v6so4600028wma.3;
+        Fri, 19 Oct 2018 12:03:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=F1JxZ4IreQC7ELXhFy+O5x12lV3oLSAYXVMa99+fi6I=;
+        b=Bwa5P1ErJGc/AAnlfK8iNuObcHZqyAK87bDq6lxUY1iXPsXjWw447vNUo1odG7LGXG
+         qxlb46P8IQRMpC76iycB+eYbA+0UGvLnhGCbZSGyxZpzbHjj9XQB4ZI+sPnzJkX0tEai
+         uT3WB8e8UG+mRhWrHPuJWig/Tgmeyj8P3yJNrzfvbCO/d1sOrMI80uqBfgoMgydTZ7cr
+         EyzV235Egty/Otd/mWzge2SKeW7RjGTBHBARn8P+IbBmb9NU1FMB/2fM7oqQ/HnV8CHD
+         PJny8zULT+egvL1b3gN+XRNTwpiLu1Ab3+p2C1WsHKbZzPQCwEFQoTeKkcoTuluFQsvJ
+         VMcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=F1JxZ4IreQC7ELXhFy+O5x12lV3oLSAYXVMa99+fi6I=;
+        b=B468aevYXAIDP/FlWCKcm8DuD4TBtsWT1xNMhVF1IYx3XZ/KcjNO/56YHifLxvAjVh
+         WztTK3SPWkNUkcxXwD8mgYil+OglDme4wNdQ/iNAM2usR96EB/lYB7/0+ain+laH6rXx
+         ERwbxr/24GorBpOh0ke9kD96/ye25QZhKZ1yS2ONwHCF5mi3OPY16uf78sFjY7xZKNbB
+         a9ApNYQ/4Dbh0wDtZUSzBt/fDW+yvawfvZsyZHIrVIAy2AgH3wFA7keagZ6JHOp9qz3F
+         F3AkUsoGU5UUlhgF6WSLFLr8tuAomAieMY3iiS9mlxSG8zPP7sGL6eG8gE8n3GMMDOmg
+         QZuQ==
+X-Gm-Message-State: AGRZ1gJ5uagbB/6TvRWnGmCmGO8MpZGz/zgB8R4SzLcQenel7O4R2hT3
+        UeeCqMWqc+pfIXH9CQQV6ZI=
+X-Google-Smtp-Source: ACcGV63PKN7wYm8OmjLTwVQ0N0XZZLGrZNEfr9pScuZxWFIAY2AUg0ATwxrS0ISBStPlAXFCVY3h/Q==
+X-Received: by 2002:a1c:cf4e:: with SMTP id f75-v6mr6069338wmg.81.1539975783075;
+        Fri, 19 Oct 2018 12:03:03 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id c14-v6sm5130000wmh.44.2018.10.19.12.03.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 19 Oct 2018 12:03:02 -0700 (PDT)
+Date:   Fri, 19 Oct 2018 12:03:00 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Network Development <netdev@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: Re: TSC to Mono-raw Drift
-In-Reply-To: <CALAqxLWHdZn9RCcYbYicKXeu3QiCuVna27mWBQPbFvaj9gm-fw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1810192050250.1651@nanos.tec.linutronix.de>
-References: <20181015160945.5993-1-christopher.s.hall@intel.com> <alpine.DEB.2.21.1810191720590.6075@nanos.tec.linutronix.de> <alpine.DEB.2.21.1810191955250.1651@nanos.tec.linutronix.de> <CALAqxLWHdZn9RCcYbYicKXeu3QiCuVna27mWBQPbFvaj9gm-fw@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+Subject: Re: [PATCH] bpf/test_run: Add braces to initialization in
+ bpf_prog_test_run_skb
+Message-ID: <20181019190300.GA12563@flashbox>
+References: <20181019182649.24301-1-natechancellor@gmail.com>
+ <3e2e5343-3ead-5b4d-758d-14f04183b39e@gmail.com>
+ <CAADnVQKyaU=kPZN5+Bi=NJDGh6AMV0HKZoDg+tzLGQdq+L8xaQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAADnVQKyaU=kPZN5+Bi=NJDGh6AMV0HKZoDg+tzLGQdq+L8xaQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 19 Oct 2018, John Stultz wrote:
-> On Fri, Oct 19, 2018 at 11:37 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > On Fri, 19 Oct 2018, Thomas Gleixner wrote:
-> >> On Mon, 15 Oct 2018, Christopher Hall wrote:
-> >> > TSC kHz used to calculate mult/shift value: 3312000
-> >>
-> >> Now the most interesting information here would be the resulting mult/shift
-> >> value which the kernel uses. Can you please provide that?
+On Fri, Oct 19, 2018 at 11:47:34AM -0700, Alexei Starovoitov wrote:
+> On Fri, Oct 19, 2018 at 11:46 AM Eric Dumazet <eric.dumazet@gmail.com> wrote:
 > >
-> > But aside of the actual values it's pretty obvious why this happens. It's a
-> > simple rounding error. Minimal, but still. To avoid rounding errors you'd
-> > have to find mult and shift values which exactly result in:
 > >
-> >      (freq * mult) >> shift = 1e9
 > >
-> > which is impossible for freq = 3312 * 1e6.
+> > On 10/19/2018 11:26 AM, Nathan Chancellor wrote:
+> > > Clang warns:
+> > >
+> > > net/bpf/test_run.c:120:20: error: suggest braces around initialization
+> > > of subobject [-Werror,-Wmissing-braces]
+> > >         struct sock sk = {0};
+> > >                           ^
+> > >                           {}
+> > >
+> > > Add the braces to properly initialize all subobjects.
+> > >
+> > > Fixes: 75079847e9d0 ("bpf: add tests for direct packet access from CGROUP_SKB")
+> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > ---
+> > >  net/bpf/test_run.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
+> > > index 8dccac305268..65e049c61a7a 100644
+> > > --- a/net/bpf/test_run.c
+> > > +++ b/net/bpf/test_run.c
+> > > @@ -117,7 +117,7 @@ int bpf_prog_test_run_skb(struct bpf_prog *prog, const union bpf_attr *kattr,
+> > >       u32 retval, duration;
+> > >       int hh_len = ETH_HLEN;
+> > >       struct sk_buff *skb;
+> > > -     struct sock sk = {0};
+> > > +     struct sock sk = { { {0} } };
+> > >       void *data;
+> > >       int ret;
+> > >
+> > >
+> >
+> > Strange, I thought this patch was still under discussion.
+> > Has an old version of it being merged somewhere ?
+
+Looks like it made its way into -next in the 20181019 version, which
+is what I am working off of.
+
 > 
-> Right.
-> 
-> > A possible fix for this is, because the error is in the low PPB range, to
-> > adjust the error once per second or in some other sensible regular
-> > interval.
-> 
-> Ehh.. I mean, this is basically what all the complicated ntp_error
-> logic does for the long-term accuracy compensation.  Part of the
-> allure of the raw clock is that there is no changes made over time.
-> Its a very simple constant calculation.
-> 
-> We could try to do something like pre-seed the ntpinterval value so
-> the default ntp_tick value corrects for this, but that's only going to
-> effect the monotonic/realtime clock until ntpd or anyone else sets a
-> different interval rate.
-> 
-> So  I'm not particularly eager in trying to do the type of small
-> frequency oscillation we do for monotonic/realtime for long-term
-> accuracy to the raw clock as that feels a bit antithetical to the
-> point of the raw clock.
+> merged and reverted. This patch is not necessary.
 
-I don't think you need complex oscillation for that. The error is constant
-and small enough that it is a fractional nanoseconds thing with an interval
-<= 1s. So you can just add that in a regular interval. Due to it being
-small you can't observe time jumping I think.
-
-The end-result is 'correct' as much correct it is in relation to real
-nanoseconds. :)
-
-> I guess I'd want to understand more of the use here and the need to
-> tie the raw clock back to the hardware counter it abstracts.
-
-The problem there is ART which is distributed to PCIe devices and ART time
-stamps are exposed in various ways. ART has a fixed ratio vs. TSC so there
-is a reasonable expectation that MONOTONIC_RAW is accurate.
-
-Thanks,
-
-	tglx
+Thank you for the heads up and sorry for the noise!
+Nathan
