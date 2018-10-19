@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96561ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9732FECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 21:04:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 365EF21486
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:59:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 269AF21470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 21:04:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YBzOiixm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 365EF21486
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VT02FVOe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 269AF21470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbeJTFHm (ORCPT
+        id S1727113AbeJTFLt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 01:07:42 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:34361 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbeJTFHm (ORCPT
+        Sat, 20 Oct 2018 01:11:49 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45335 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbeJTFLs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 01:07:42 -0400
-Received: by mail-oi1-f195.google.com with SMTP id v69-v6so27897646oif.1;
-        Fri, 19 Oct 2018 13:59:57 -0700 (PDT)
+        Sat, 20 Oct 2018 01:11:48 -0400
+Received: by mail-ot1-f65.google.com with SMTP id u22so34470130ota.12;
+        Fri, 19 Oct 2018 14:04:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+q89g1JP+/BTT9VWEclDbxxqLPPAV6In3M7Y30v4eEs=;
-        b=YBzOiixmbroxcq5Rtyc7QRmHyLFv43UBiLlwFjas/sDsTNJ3lVXmkfZwGYOhZrA0ac
-         BOSmTArmdvHbvMNqiE8xJnEeAwA71yge02CwcQ2aepXIhO/UoGC+1iEGjKygwqpUhoLo
-         SS7U4XeYQRexn3Sn9k7EVmQituogaE9hs32cUgnW9QcMCmutN+WMLQ4zZZAMqCoA1/Mw
-         hoXr330Kgp6myc7yftdwoCt7gypDywbgm6JHRlCJbBTepZllafRpz8OwF5lSkMe8lnhG
-         7/f2Tm7Jtfp10/6TMpwWP9JGwujAZ0l/6ndHKd3hV9fAUO0/h5B+sY2xmgOwbc5p8E7J
-         QB9A==
+        bh=Zoh6txiyDi4L1dzHMfc/bmbMkgXWGspmTLUIbbiPGJg=;
+        b=VT02FVOegNPss1UybztqF3wOm8c8XaTaYZVkZOXuO4Pw5cjP9bLftyGXb+FU/0oeOC
+         lFvVuiXHdHyvx+HBf7KZlmU7GU7PSh1MX/h8Y50DEtrSAPRjeJqI97UwkQeo3KMUgod+
+         Y1CuPqw+oTlnsBBqoDX7MNgILQYKeHRN28zeRJTI9ok0HE2D5ob4H0Rd+Qmcy9CZoLPY
+         NSjFhXTAhmF+Y0qLWAqTD9Y8/2cw519aJxffjDbaQ0611IkeuS2juKY4n15xII4Cb4b2
+         XWsRJOul1Y8Hm84IQ8LPTyR/eg/yMg8a2d8eqIVv6t19nDESPJEY5FV0HTKLyl1FrCUh
+         +w3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+q89g1JP+/BTT9VWEclDbxxqLPPAV6In3M7Y30v4eEs=;
-        b=C0+aEAhV0F1bV1hkGH7aGYGDki6NfSz6zYRKRJQVsc4/rQ1vIpeF4Q2ruj5YXAJm7V
-         jD03FbK9WeYjGXztytAHoUcHFWYEzYHNHtUAxSFEQOHKQ0lu27wOCc4tIbo0EK2Jwq1x
-         XTMLP1Mxmi15g/MoaKzaLlBCA2IuiZg3hUeY/fTmzPNimRQ1+ijCBtU1t3yqVf4z02jS
-         zvRwYy8kW2CXnULNqgF5jFMZBTAg/VXhJwGMJpNmCxPA9G5dDbfGmpHvUGLdGUZp2R1Z
-         jLmkx/cN2tU7r2xly4CrpHfdabO3sxE9JqSo3zY7KrS4u0+/eElclWAyM2uZgg68el+7
-         V0ew==
-X-Gm-Message-State: ABuFfogjP+vckz4Mnr35TM+/CyCwZCK1NgYNakgP0AzDXPn/G7V0hiHV
-        unuyNJ/CXLFrqm5PGN13tFS9/pLMP82yG+du71M=
-X-Google-Smtp-Source: ACcGV62j1xd7IofCbBSw2SlbET0hdTZZDQdSfZvR11cLOxHTj40fVatmdsoBNdRYS/tzMQGN/UXgcmOsT+I8QO0g7SY=
-X-Received: by 2002:aca:e144:: with SMTP id y65-v6mr18038530oig.90.1539982796364;
- Fri, 19 Oct 2018 13:59:56 -0700 (PDT)
+        bh=Zoh6txiyDi4L1dzHMfc/bmbMkgXWGspmTLUIbbiPGJg=;
+        b=YZTBi60G3zzlZyOApofAuuQo0Sqmv+uBs+h5LxTsgTC4AbwZxeFwI/DqGdm9xrPaz+
+         BJ02UG998PzaPXxTP+47RePmOxi2cKCdgzN5RuboGPx7XR4P8IlNWQMhArCzFsBTmfFb
+         UMqpEJ7mPMvcM1leFEO2kAussgYT91uTjw37FyjJaQOYtfy/fnKztmrN47x+hoDuENA1
+         WoT28ZqG6Un6FP/cCbJsOQw4x14vQm9CySaw7wDW48lQ8M8aYpBQXKDzrhUyndFscRkx
+         oJJUrcbuie/nVHr/i1SrebEYdNS414SS2rQVxOquZm3FHHkhYripjozjIG7TUVRXQLUZ
+         lvhA==
+X-Gm-Message-State: ABuFfohOfi7TkputMdn+zNIRRLD081hayOVFE8DaOtUZEqg6xfOO1E8J
+        JweoQX6LC8arAspO7+kSDHYV0RDmj0u4tXLfVwulpA==
+X-Google-Smtp-Source: ACcGV61OgSlcfI+qWVop2gcTxiRObwUhbjZjpKTxoT4yN4jX2HpiCIX/FHUHlWtjxX/SPfMpg+7G5AL+yAimtwf/CDM=
+X-Received: by 2002:a9d:720e:: with SMTP id u14mr21870987otj.211.1539983042163;
+ Fri, 19 Oct 2018 14:04:02 -0700 (PDT)
 MIME-Version: 1.0
 References: <20181018215541.4768-1-natechancellor@gmail.com>
 In-Reply-To: <20181018215541.4768-1-natechancellor@gmail.com>
 From:   adam radford <aradford@gmail.com>
-Date:   Fri, 19 Oct 2018 13:59:45 -0700
-Message-ID: <CAHtARFESqN+3S+uy8pV40BFe0PZ96fDHL7WtRW3=cmtg24igzQ@mail.gmail.com>
+Date:   Fri, 19 Oct 2018 14:03:51 -0700
+Message-ID: <CAHtARFFUNUty00qfmwdNQftc6HPpSDUthNfA96TO2BZpAP+OEg@mail.gmail.com>
 Subject: Re: [PATCH] scsi: 3w-{sas,9xxx}: Use unsigned char for cdb
-To:     natechancellor@gmail.com
+To:     Nathan Chancellor <natechancellor@gmail.com>
 Cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         linux-scsi <linux-scsi@vger.kernel.org>,
@@ -176,6 +176,6 @@ On Thu, Oct 18, 2018 at 2:55 PM Nathan Chancellor
 
 Looks ok.
 
-Signed-off-by: Adam Radford <aradford@gmail.com>
+Acked-by: Adam Radford <aradford@gmail.com>
 
 -Adam
