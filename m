@@ -2,277 +2,173 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A2BC67863
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6271AC67863
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D5DB21480
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:41:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBA9920C0E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:42:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GnBZnhvl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D5DB21480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+0h/xzb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBA9920C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbeJSIpR (ORCPT
+        id S1726790AbeJSIqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 04:45:17 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:39138 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725910AbeJSIpR (ORCPT
+        Fri, 19 Oct 2018 04:46:34 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35265 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726424AbeJSIqe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 04:45:17 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9J0d14q159919;
-        Fri, 19 Oct 2018 00:40:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=Eoq81b1jj0db9rvXBVs9vmDZ/R/FglvGc4MiC6l7+kM=;
- b=GnBZnhvlDPxuxKh0OpHRDfoanOrFngAhV2WmIhZH8LWCed90b21xjF4irRSehDNM9SnD
- saBql0JmRGWUlgkiW3pgOhrJl5LN+lZ4oROVc5n9gnnMcVZOQKRQj9yifkCtqXpLPAYq
- BhaMsUp8gPM1Zcc4OdvYt8Z8xjsuSwnXIyxLM8AOvJzfvVztE10akYV4ql9In4QbBYOu
- PjuXKcBewulrFIQvkPjBDO8+krN3V1ZAD29Uj73LaT/LlQyIey8yNVl3GgcC0zrzas1L
- fo7hOtmWElWQrhsr3/1f58wU6Ke+tEOf1gZaM2S6+xeTtyK+w3h13EPHBd7DbI1ejmps 6w== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2n39brsdts-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Oct 2018 00:40:52 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9J0elJ9030891
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Oct 2018 00:40:47 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9J0ekTQ019532;
-        Fri, 19 Oct 2018 00:40:46 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 18 Oct 2018 17:40:46 -0700
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 0C8AF6A0136; Thu, 18 Oct 2018 20:40:45 -0400 (EDT)
-Date:   Thu, 18 Oct 2018 20:40:44 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/10] swiotlb: don't dip into swiotlb pool for coherent
- allocations
-Message-ID: <20181019004044.GJ1251@char.us.oracle.com>
-References: <20181008080246.20543-1-hch@lst.de>
- <20181008080246.20543-9-hch@lst.de>
+        Fri, 19 Oct 2018 04:46:34 -0400
+Received: by mail-wr1-f65.google.com with SMTP id w5-v6so35563212wrt.2;
+        Thu, 18 Oct 2018 17:42:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OXb89f1IGdtgSlefq0AQ1SPhDz/M09nFhlYfzUCCQpA=;
+        b=S+0h/xzbfyLTsf8Yp+kXR8gCtZn1ZIsJtwE9rWUCipsiTiRNbojbYciclDqWGB0ml8
+         AnbEDUA0tehQQHa1DL6y1ewsCAPozDtD6pXgK+50UHj9X07w11CTYC2j8MiBGGr2OLXe
+         i0nJ47C6jAUZfmMeSySpyU+fU0aWE+SaL/JcO2Mx3O3i9MHGYrakfY3YCW79mUjJsZR5
+         j1+AayX+0AMx3Vu7MuJzqi4HIet4HSj6B28vyd+T4Bl91nhSfQjASW3R2Vt0fs6OWzbi
+         sjUQ65i1AV/PtTD+pYxzPlCunIYiH/oOLeAVp7GMEm5kSzYojPoFCSFXYMSOIxNx1t7m
+         cvtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OXb89f1IGdtgSlefq0AQ1SPhDz/M09nFhlYfzUCCQpA=;
+        b=RCYUWFD7Q+PeLBsFkAsvGQ08XoX7MzdR7o0KcH1GLtzs9E4l+EqkKeDM0oMiapbucM
+         kvlHAGv8xVGEe2PX686u5vNoe7JVQFmwtq+G57MRSaOjf1yleCPFtF9T2UYXilL8VVQN
+         2t5Ebyk2PqmVYcJtmEnrQNn/nr3657d7Ur5M3qQJhILF5WuFYvKbCU+7+66auSECXria
+         WATh5hpU/xfJIOafLGLEhX0v9wFkG/kDTjepP+Ja5CM+xWdJWTbmvU3VM5AqmmTJU3Np
+         yVqqSGULfMDy7KSGl7dagfn1imVB67ijKjCSv64tjDxpStMXPOrOcmwXvYh+Zq6y9lmJ
+         NJ8w==
+X-Gm-Message-State: ABuFfojhejn61wYdG9b4NtBhhu38gqJDfa7GjNa0b5SjXxe53BAddQPp
+        w+bUyRRz/D93yf624EWLTVI=
+X-Google-Smtp-Source: ACcGV63h2HHtIebC5Nc62xkMIQFBLkiIk2QjLeqwh2imjEutmzuvcWKcjAKelHk+18MSuS2R29eePw==
+X-Received: by 2002:adf:8347:: with SMTP id 65-v6mr30910476wrd.264.1539909774463;
+        Thu, 18 Oct 2018 17:42:54 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id l67-v6sm3778363wma.20.2018.10.18.17.42.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Oct 2018 17:42:53 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 17:42:51 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     isdn@linux-pingi.de, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com
+Subject: Re: [PATCH v2] isdn: hfc_{pci,sx}: Avoid empty body if statements
+Message-ID: <20181019004251.GA28878@flashbox>
+References: <20181018034935.16819-1-natechancellor@gmail.com>
+ <20181018.154219.1246620018001438422.davem@davemloft.net>
+ <20181019002117.GA10161@flashbox>
+ <20181018.172310.35380794084221855.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181008080246.20543-9-hch@lst.de>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9050 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810190005
+In-Reply-To: <20181018.172310.35380794084221855.davem@davemloft.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 10:02:44AM +0200, Christoph Hellwig wrote:
-> All architectures that support swiotlb also have a zone that backs up
-> these less than full addressing allocations (usually ZONE_DMA32).
+On Thu, Oct 18, 2018 at 05:23:10PM -0700, David Miller wrote:
+> From: Nathan Chancellor <natechancellor@gmail.com>
+> Date: Thu, 18 Oct 2018 17:21:17 -0700
 > 
-> Because of that it is rather pointless to fall back to the global swiotlb
-> buffer if the normal dma direct allocation failed - the only thing this
-> will do is to eat up bounce buffers that would be more useful to serve
-> streaming mappings.
+> > Thanks for the review, I went ahead and compiled with the following diff
+> > on top of v2 and got no warnings from Clang, GCC, or sparse, does this
+> > seem satisfactory for v3?
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Well, one thing I notice.
+> 
 
-Thank you!
-> ---
->  arch/arm64/mm/dma-mapping.c |   6 +--
->  include/linux/swiotlb.h     |   5 --
->  kernel/dma/swiotlb.c        | 105 +-----------------------------------
->  3 files changed, 5 insertions(+), 111 deletions(-)
+> > @@ -86,7 +86,7 @@ release_io_hfcpci(struct IsdnCardState *cs)
+> >         pci_free_consistent(cs->hw.hfcpci.dev, 0x8000,
+> >                             cs->hw.hfcpci.fifos, cs->hw.hfcpci.dma);
+> >         cs->hw.hfcpci.fifos = NULL;
+> > -       iounmap((void *)cs->hw.hfcpci.pci_io);
+> > +       iounmap(cs->hw.hfcpci.pci_io);
+> >  }
 > 
-> diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-> index 8d91b927e09e..eee6cfcfde9e 100644
-> --- a/arch/arm64/mm/dma-mapping.c
-> +++ b/arch/arm64/mm/dma-mapping.c
-> @@ -112,7 +112,7 @@ static void *__dma_alloc(struct device *dev, size_t size,
->  		return addr;
->  	}
->  
-> -	ptr = swiotlb_alloc(dev, size, dma_handle, flags, attrs);
-> +	ptr = dma_direct_alloc_pages(dev, size, dma_handle, flags, attrs);
->  	if (!ptr)
->  		goto no_mem;
->  
-> @@ -133,7 +133,7 @@ static void *__dma_alloc(struct device *dev, size_t size,
->  	return coherent_ptr;
->  
->  no_map:
-> -	swiotlb_free(dev, size, ptr, *dma_handle, attrs);
-> +	dma_direct_free_pages(dev, size, ptr, *dma_handle, attrs);
->  no_mem:
->  	return NULL;
->  }
-> @@ -151,7 +151,7 @@ static void __dma_free(struct device *dev, size_t size,
->  			return;
->  		vunmap(vaddr);
->  	}
-> -	swiotlb_free(dev, size, swiotlb_addr, dma_handle, attrs);
-> +	dma_direct_free_pages(dev, size, swiotlb_addr, dma_handle, attrs);
->  }
->  
->  static dma_addr_t __swiotlb_map_page(struct device *dev, struct page *page,
-> diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
-> index f847c1b265c4..a387b59640a4 100644
-> --- a/include/linux/swiotlb.h
-> +++ b/include/linux/swiotlb.h
-> @@ -67,11 +67,6 @@ extern void swiotlb_tbl_sync_single(struct device *hwdev,
->  
->  /* Accessory functions. */
->  
-> -void *swiotlb_alloc(struct device *hwdev, size_t size, dma_addr_t *dma_handle,
-> -		gfp_t flags, unsigned long attrs);
-> -void swiotlb_free(struct device *dev, size_t size, void *vaddr,
-> -		dma_addr_t dma_addr, unsigned long attrs);
-> -
->  extern dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
->  				   unsigned long offset, size_t size,
->  				   enum dma_data_direction dir,
-> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> index 4d7a4d85d71e..475a41eff3dc 100644
-> --- a/kernel/dma/swiotlb.c
-> +++ b/kernel/dma/swiotlb.c
-> @@ -622,78 +622,6 @@ void swiotlb_tbl_sync_single(struct device *hwdev, phys_addr_t tlb_addr,
->  	}
->  }
->  
-> -static inline bool dma_coherent_ok(struct device *dev, dma_addr_t addr,
-> -		size_t size)
-> -{
-> -	u64 mask = DMA_BIT_MASK(32);
-> -
-> -	if (dev && dev->coherent_dma_mask)
-> -		mask = dev->coherent_dma_mask;
-> -	return addr + size - 1 <= mask;
-> -}
-> -
-> -static void *
-> -swiotlb_alloc_buffer(struct device *dev, size_t size, dma_addr_t *dma_handle,
-> -		unsigned long attrs)
-> -{
-> -	phys_addr_t phys_addr;
-> -
-> -	if (swiotlb_force == SWIOTLB_NO_FORCE)
-> -		goto out_warn;
-> -
-> -	phys_addr = swiotlb_tbl_map_single(dev,
-> -			__phys_to_dma(dev, io_tlb_start),
-> -			0, size, DMA_FROM_DEVICE, attrs);
-> -	if (phys_addr == SWIOTLB_MAP_ERROR)
-> -		goto out_warn;
-> -
-> -	*dma_handle = __phys_to_dma(dev, phys_addr);
-> -	if (!dma_coherent_ok(dev, *dma_handle, size))
-> -		goto out_unmap;
-> -
-> -	memset(phys_to_virt(phys_addr), 0, size);
-> -	return phys_to_virt(phys_addr);
-> -
-> -out_unmap:
-> -	dev_warn(dev, "hwdev DMA mask = 0x%016Lx, dev_addr = 0x%016Lx\n",
-> -		(unsigned long long)dev->coherent_dma_mask,
-> -		(unsigned long long)*dma_handle);
-> -
-> -	/*
-> -	 * DMA_TO_DEVICE to avoid memcpy in unmap_single.
-> -	 * DMA_ATTR_SKIP_CPU_SYNC is optional.
-> -	 */
-> -	swiotlb_tbl_unmap_single(dev, phys_addr, size, DMA_TO_DEVICE,
-> -			DMA_ATTR_SKIP_CPU_SYNC);
-> -out_warn:
-> -	if (!(attrs & DMA_ATTR_NO_WARN) && printk_ratelimit()) {
-> -		dev_warn(dev,
-> -			"swiotlb: coherent allocation failed, size=%zu\n",
-> -			size);
-> -		dump_stack();
-> -	}
-> -	return NULL;
-> -}
-> -
-> -static bool swiotlb_free_buffer(struct device *dev, size_t size,
-> -		dma_addr_t dma_addr)
-> -{
-> -	phys_addr_t phys_addr = dma_to_phys(dev, dma_addr);
-> -
-> -	WARN_ON_ONCE(irqs_disabled());
-> -
-> -	if (!is_swiotlb_buffer(phys_addr))
-> -		return false;
-> -
-> -	/*
-> -	 * DMA_TO_DEVICE to avoid memcpy in swiotlb_tbl_unmap_single.
-> -	 * DMA_ATTR_SKIP_CPU_SYNC is optional.
-> -	 */
-> -	swiotlb_tbl_unmap_single(dev, phys_addr, size, DMA_TO_DEVICE,
-> -				 DMA_ATTR_SKIP_CPU_SYNC);
-> -	return true;
-> -}
-> -
->  static dma_addr_t swiotlb_bounce_page(struct device *dev, phys_addr_t *phys,
->  		size_t size, enum dma_data_direction dir, unsigned long attrs)
->  {
-> @@ -928,39 +856,10 @@ swiotlb_dma_supported(struct device *hwdev, u64 mask)
->  	return __phys_to_dma(hwdev, io_tlb_end - 1) <= mask;
->  }
->  
-> -void *swiotlb_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
-> -		gfp_t gfp, unsigned long attrs)
-> -{
-> -	void *vaddr;
-> -
-> -	/* temporary workaround: */
-> -	if (gfp & __GFP_NOWARN)
-> -		attrs |= DMA_ATTR_NO_WARN;
-> -
-> -	/*
-> -	 * Don't print a warning when the first allocation attempt fails.
-> -	 * swiotlb_alloc_coherent() will print a warning when the DMA memory
-> -	 * allocation ultimately failed.
-> -	 */
-> -	gfp |= __GFP_NOWARN;
-> -
-> -	vaddr = dma_direct_alloc(dev, size, dma_handle, gfp, attrs);
-> -	if (!vaddr)
-> -		vaddr = swiotlb_alloc_buffer(dev, size, dma_handle, attrs);
-> -	return vaddr;
-> -}
-> -
-> -void swiotlb_free(struct device *dev, size_t size, void *vaddr,
-> -		dma_addr_t dma_addr, unsigned long attrs)
-> -{
-> -	if (!swiotlb_free_buffer(dev, size, dma_addr))
-> -		dma_direct_free(dev, size, vaddr, dma_addr, attrs);
-> -}
-> -
->  const struct dma_map_ops swiotlb_dma_ops = {
->  	.mapping_error		= dma_direct_mapping_error,
-> -	.alloc			= swiotlb_alloc,
-> -	.free			= swiotlb_free,
-> +	.alloc			= dma_direct_alloc,
-> +	.free			= dma_direct_free,
->  	.sync_single_for_cpu	= swiotlb_sync_single_for_cpu,
->  	.sync_single_for_device	= swiotlb_sync_single_for_device,
->  	.sync_sg_for_cpu	= swiotlb_sync_sg_for_cpu,
-> -- 
-> 2.19.0
+> Driver uses iounmap().
 > 
+> > @@ -1692,7 +1692,7 @@ setup_hfcpci(struct IsdnCard *card)
+> >                 printk(KERN_WARNING "HFC-PCI: No IRQ for PCI card found\n");
+> >                 return (0);
+> >         }
+> > -       cs->hw.hfcpci.pci_io = (char *)(unsigned long)dev_hfcpci->resource[1].start;
+> > +       cs->hw.hfcpci.pci_io = (void __iomem *)(unsigned long)dev_hfcpci->resource[1].start;
+> >         printk(KERN_INFO "HiSax: HFC-PCI card manufacturer: %s card name: %s\n", id_list[i].vendor_name, id_list[i].card_name);
+> 
+> But does not use iomap().  You won't need any cast here if it did use
+> iomap() properly.
+> 
+> Thanks.
+
+So this?
+
+diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
+index 3dbaee8c604f..ea0e4c6de3fb 100644
+--- a/drivers/isdn/hisax/hfc_pci.c
++++ b/drivers/isdn/hisax/hfc_pci.c
+@@ -1692,7 +1692,7 @@ setup_hfcpci(struct IsdnCard *card)
+                printk(KERN_WARNING "HFC-PCI: No IRQ for PCI card found\n");
+                return (0);
+        }
+-       cs->hw.hfcpci.pci_io = (void __iomem *)(unsigned long)dev_hfcpci->resource[1].start;
++       cs->hw.hfcpci.pci_io = ioremap(dev_hfcpci->resource[1].start, 256);
+        printk(KERN_INFO "HiSax: HFC-PCI card manufacturer: %s card name: %s\n", id_list[i].vendor_name, id_list[i].card_name);
+ 
+        if (!cs->hw.hfcpci.pci_io) {
+@@ -1716,7 +1716,6 @@ setup_hfcpci(struct IsdnCard *card)
+                return 0;
+        }
+        pci_write_config_dword(cs->hw.hfcpci.dev, 0x80, (u32)cs->hw.hfcpci.dma);
+-       cs->hw.hfcpci.pci_io = ioremap((ulong) cs->hw.hfcpci.pci_io, 256);
+        printk(KERN_INFO
+               "HFC-PCI: defined at mem %p fifo %p(%lx) IRQ %d HZ %d\n",
+               cs->hw.hfcpci.pci_io,
+
+
+
+Full context before the above diff should it be needed:
+
+
+        cs->hw.hfcpci.pci_io = (void *)(unsigned long)dev_hfcpci->resource[1].start;
+        printk(KERN_INFO "HiSax: HFC-PCI card manufacturer: %s card name: %s\n", id_list[i].vendor_name, id_list[i].card_name);
+
+        if (!cs->hw.hfcpci.pci_io) {
+                printk(KERN_WARNING "HFC-PCI: No IO-Mem for PCI card found\n");
+                return (0);
+        }
+
+        /* Allocate memory for FIFOS */
+        cs->hw.hfcpci.fifos = pci_alloc_consistent(cs->hw.hfcpci.dev,
+                                                   0x8000, &cs->hw.hfcpci.dma);
+        if (!cs->hw.hfcpci.fifos) {
+                printk(KERN_WARNING "HFC-PCI: Error allocating FIFO memory!\n");
+                return 0;
+        }
+        if (cs->hw.hfcpci.dma & 0x7fff) {
+                printk(KERN_WARNING
+                       "HFC-PCI: Error DMA memory not on 32K boundary (%lx)\n",
+                       (u_long)cs->hw.hfcpci.dma);
+                pci_free_consistent(cs->hw.hfcpci.dev, 0x8000,
+                                    cs->hw.hfcpci.fifos, cs->hw.hfcpci.dma);
+                return 0;
+        }
+        pci_write_config_dword(cs->hw.hfcpci.dev, 0x80, (u32)cs->hw.hfcpci.dma);
+        cs->hw.hfcpci.pci_io = ioremap((ulong) cs->hw.hfcpci.pci_io, 256);
+
+
+Thanks,
+Nathan
