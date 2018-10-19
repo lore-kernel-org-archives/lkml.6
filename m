@@ -2,202 +2,99 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2850ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 22:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD9EECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 22:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AC2420843
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 22:21:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AC2420843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E3B4920843
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 22:29:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="R5fYi+jh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3B4920843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbeJTG3C (ORCPT
+        id S1726881AbeJTGhH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 02:29:02 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:47102 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbeJTG3C (ORCPT
+        Sat, 20 Oct 2018 02:37:07 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:41052 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726403AbeJTGhH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 02:29:02 -0400
-Received: by mail-yw1-f67.google.com with SMTP id j202-v6so13762090ywa.13;
-        Fri, 19 Oct 2018 15:21:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DNViDtx2bCu3o/RtjRC4+649fRKwTO3vSVqtsn1LuNk=;
-        b=ix6Pptiqql6pD7lm2mod9Nn/ucq/ZxQCxC3bbhVEjLvGI2zvdVpMkA7jYB4ZChyB4n
-         L4X8xtEzCt0r0/1/4Xhixb3i/lfBWjBp4hd2eYAZhd/XIlDyD5ajMsx0iEoAZNd7jOmW
-         /iJ4z77rem41rOOfNQn6PAvop4PT7FWUaz5wPoiKPwyEjiBDupJ/2UlATLXcOG9cVHQR
-         75OxxL7CyeLmm4CU4UCNLcNgCpPhrVOOT0j2+Wu6F4dS/wedbCNO0a8RzqplpO6SCzzc
-         XPqtndceLeXlBy1H06i3LVjZiWx72VdOkA5ZsPV0CTpAF0YpC8wMPyf7oylA6eD8bTmA
-         lBcA==
-X-Gm-Message-State: ABuFfohpKI/p7pnkOcI43+Zp0M8xlhnvMxdEOdKEQUcp5OWJK4ymqBIt
-        hEw2h9XDPPFdfInxayUdARvgtqXO
-X-Google-Smtp-Source: ACcGV60jOdi5salOBvjniwNCPHqFbGgncAtfYksfaXxrBGtjfQb4aPgn2PM811CwTglRD04frDPNRg==
-X-Received: by 2002:a81:2e81:: with SMTP id u123-v6mr4602660ywu.424.1539987663965;
-        Fri, 19 Oct 2018 15:21:03 -0700 (PDT)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::4:a7a6])
-        by smtp.gmail.com with ESMTPSA id h37-v6sm5911591ywk.98.2018.10.19.15.21.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Oct 2018 15:21:02 -0700 (PDT)
-Date:   Fri, 19 Oct 2018 18:21:00 -0400
-From:   Dennis Zhou <dennis@kernel.org>
-To:     valdis.kletnieks@vt.edu
-Cc:     Dennis Zhou <dennis@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: Re: [BUG] ext4/block null pointer crashes in linux-next
-Message-ID: <20181019222100.GA20900@dennisz-mbp.dhcp.thefacebook.com>
-References: <13987.1539646128@turing-police.cc.vt.edu>
- <20181016160203.GA88193@dennisz-mbp.dhcp.thefacebook.com>
- <20181016182513.GA9886@dennisz-mbp.dhcp.thefacebook.com>
- <13448.1539791255@turing-police.cc.vt.edu>
- <20181017212029.GA85639@dennisz-mbp.dhcp.thefacebook.com>
- <14614.1539964356@turing-police.cc.vt.edu>
+        Sat, 20 Oct 2018 02:37:07 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9JMSjUf173939;
+        Fri, 19 Oct 2018 22:28:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=ShMaIsTXErDUBnEjJ+7Lm1TY3ym2vE15QhVw0KNx4L8=;
+ b=R5fYi+jhHDpuBvcHntZ5vN+sp78uBXrDIYEVKBcPf5dpqAoyg1kcMy6bws08bmyGy+/b
+ kheryEDmiC/LbCZfjiwgF0qnyvgnQ1xtKTKbsglUW6HYgIHDrYTmZjycH3a1FYPxeYKP
+ 6ZXH+HHZn0KrWJJQ245PYtpYcCzT5zbHqVSTmIA1lzgmuKdlBZ6CCM5vl0sM3ac0BZAj
+ NzGWzpITy5odrg07lNvcT2jKiILoPJKXfEV+coV3Rg4xnMherwTliIs2RJUNN9QvYbjn
+ 0qLFrBbryPVaFJHINaYXTdoePoGsg18fbrU9ny06uOHD2mH9apcBojDFV44wn98P8xeB uw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2n39brx8gp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Oct 2018 22:28:45 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9JMSfwa030786
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Oct 2018 22:28:42 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9JMSfUZ015845;
+        Fri, 19 Oct 2018 22:28:41 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 19 Oct 2018 15:28:40 -0700
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     John Garry <john.garry@huawei.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Xiang Chen <chenxiang66@hisilicon.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] scsi: hisi_sas: Fix NULL pointer dereference
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20181018165939.GA26491@embeddedor.com>
+Date:   Fri, 19 Oct 2018 18:28:38 -0400
+In-Reply-To: <20181018165939.GA26491@embeddedor.com> (Gustavo A. R. Silva's
+        message of "Thu, 18 Oct 2018 18:59:39 +0200")
+Message-ID: <yq1efclinah.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <14614.1539964356@turing-police.cc.vt.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9051 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=605
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810190200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 11:52:36AM -0400, valdis.kletnieks@vt.edu wrote:
-> On Wed, 17 Oct 2018 17:20:29 -0400, Dennis Zhou said:
-> >
-> > I apologize, but I'm having a hard time reproducing this myself. I am
-> > not able to hit this issue in my qemu instance with linux-next built
-> > with your config. I have been running 'rpm -Hvh --force fio.rpm' several
-> > times and haven't seen the issue.
-> 
-> I wouldn't be surprised if there's something oddball in my system config
-> that changes the situation.
-> 
 
-Do you by chance run any encryption or anything on top of your hard
-drive or ssd?
+Gustavo,
 
-> > Would it be possible for you to create a minimal qemu image that
-> > reproduces the issue as I'm having issues reproducing it with my setup?
-> 
-> Hmm.. I'd first have to figure out how to build a qemu image at all..
-> 
-> > Additionally, I've added some more debug text in the diff below. If you
-> > could apply that and send me the full dmesg that would be great. Lastly,
-> > can you just confirm for me that the commit before, f0fcb3ec89f3
-> > "blkcg: remove additional reference to the css", isn't seeing this
-> > issue?
-> 
-> Full dmesg attached.  Had to piece it together from a 'dmesg' and what
-> got saved in pstore when it crashed.  I was surprised that the printk_once
-> popped during very early boot (2.88 seconds in), and then only 2 lines of output
-> right before the crash:
-> 
-> [  106.465848] audit: type=1130 audit(1539957798.984:101): pid=1 uid=0 auid=4294967295 ses=4294967295 subj=system_u:syst
-> em_r:init_t:s0-s15:c0.c1023 msg='unit=run-r93ac4731e4724fd6a3670e7d0c417522 comm="systemd" exe="/usr/lib/systemd/systemd
-> " hostname=? addr=? terminal=? res=success'
-> [  106.564711] dennis: q ffff9e3c57152000 != rl->q ffff9e3a8fe48040
-> [  106.564713] dennis: bio: ffff9e3a8fcf5400, root: ffffffffbbdd89e0
-> [  106.564761] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-> [  106.568786] PGD 0 P4D 0
-> [  106.570761] Oops: 0000 [#1] PREEMPT SMP PTI
-> [  106.573115] CPU: 2 PID: 1205 Comm: sh Tainted: G                T 4.19.0-rc8-next-20181016-dirty #639
-> 
-> I'll cook up a kernel checked out at that commit and test later today...
+> There is a NULL pointer dereference in case *slot* happens to
+> be NULL at lines 1053 and 1878:
+>
+> struct hisi_sas_cq *cq =
+> 	&hisi_hba->cq[slot->dlvry_queue];
+>
+> Notice that *slot* is being NULL checked at lines 1057 and 1881:
+> if (slot), which implies it may be NULL.
+>
+> Fix this by placing the declaration and definition of variable cq,
+> which contains the pointer dereference slot->dlvry_queue, after
+> slot has been properly NULL checked.
 
-I thought of another issue that may explain what's going on. It has to
-do with how a bio can go through make_request() several times. However,
-I do association on the first entry, but subsequent requests may go to
-separate queues. Therefore association and the blk_get_rl() returns the
-wrong request_list. It may be that a particular blkg doesn't have a
-fully initialized request_list.
+Applied to 4.20/scsi-queue, thanks!
 
-I've currently only been testing on a drive directly, but my try with md
-still worked.. So I am still trying other ways to reproduce it.
-
-Thanks for being patient with me. Would you be able to try the following
-on Jens' for-4.20/block branch? His tree is available here:
-https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git
-
-Thanks,
-Dennis
-
----
- block/bio.c         | 20 ++++++++++++++++++++
- block/blk-core.c    |  1 +
- include/linux/bio.h |  3 +++
- 3 files changed, 24 insertions(+)
-
-diff --git a/block/bio.c b/block/bio.c
-index 17a8b0aa7050..bbfeb4ee2892 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -2083,6 +2083,26 @@ int bio_associate_create_blkg(struct request_queue *q, struct bio *bio)
- 	return ret;
- }
- 
-+/**
-+ * bio_reassociate_blkg - reassociate a bio with a blkg from q
-+ * @q: request_queue where bio is going
-+ * @bio: target bio
-+ *
-+ * When submitting a bio, multiple recursive calls to make_request() may occur.
-+ * This causes the initial associate done in blkcg_bio_issue_check() to be
-+ * incorrect and reference the prior request_queue.  This performs reassociation
-+ * when this situation happens.
-+ */
-+int bio_reassociate_blkg(struct request_queue *q, struct bio *bio)
-+{
-+	if (bio->bi_blkg) {
-+		blkg_put(bio->bi_blkg);
-+		bio->bi_blkg = NULL;
-+	}
-+
-+	return bio_associate_create_blkg(q, bio);
-+}
-+
- /**
-  * bio_disassociate_task - undo bio_associate_current()
-  * @bio: target bio
-diff --git a/block/blk-core.c b/block/blk-core.c
-index cdfabc5646da..3ed60723e242 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -2433,6 +2433,7 @@ blk_qc_t generic_make_request(struct bio *bio)
- 			if (q)
- 				blk_queue_exit(q);
- 			q = bio->bi_disk->queue;
-+			bio_reassociate_blkg(q, bio);
- 			flags = 0;
- 			if (bio->bi_opf & REQ_NOWAIT)
- 				flags = BLK_MQ_REQ_NOWAIT;
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index f447b0ebb288..b47c7f716731 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -514,6 +514,7 @@ int bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg);
- int bio_associate_blkg_from_css(struct bio *bio,
- 				struct cgroup_subsys_state *css);
- int bio_associate_create_blkg(struct request_queue *q, struct bio *bio);
-+int bio_reassociate_blkg(struct request_queue *q, struct bio *bio);
- void bio_disassociate_task(struct bio *bio);
- void bio_clone_blkg_association(struct bio *dst, struct bio *src);
- #else	/* CONFIG_BLK_CGROUP */
-@@ -522,6 +523,8 @@ static inline int bio_associate_blkg_from_css(struct bio *bio,
- { return 0; }
- static inline int bio_associate_create_blkg(struct request_queue *q,
- 					    struct bio *bio) { return 0; }
-+static inline int bio_reassociate_blkg(struct request_queue *q, struct bio *bio)
-+{ return 0; }
- static inline void bio_disassociate_task(struct bio *bio) { }
- static inline void bio_clone_blkg_association(struct bio *dst,
- 					      struct bio *src) { }
 -- 
-2.17.1
+Martin K. Petersen	Oracle Linux Engineering
