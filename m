@@ -2,156 +2,143 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A95ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26356ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:16:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01B2D20645
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:13:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R6l60hmA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01B2D20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D5B3C20836
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:16:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5B3C20836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbeJSUTb (ORCPT
+        id S1727670AbeJSUWN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:19:31 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:46522 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbeJSUTa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:19:30 -0400
-Received: by mail-qt1-f193.google.com with SMTP id d8-v6so37938706qtk.13;
-        Fri, 19 Oct 2018 05:13:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FJwP2bgS/FoVh1EYwS4zKqQD+3FXQyLnh+jfAK9WhLg=;
-        b=R6l60hmAg9bA2Vo4rlThJil3PGzfmIb2vDpFyhxhHMxqfuak/JAtJE8qglcir0i/pJ
-         /yM5z8nDyaATZJacSBrwEyNjdTGgtr+Fq0HsUDnraDwvR6BdaU+9ls4rRWOM5btiYoy/
-         kwHUQj2tuahDQ1JTGYngWPGoUqEkctLUdfY245vIN5Hwyd8USH3f3tEmis4SGRZ8v2T1
-         5SX3USot4t+Nz/AR+73FKMJmBg5IHPzIMg6QzgtwgZmHeDIQGxAiuPIuIKiwvW1/Z2CZ
-         YYZ5RtEdLLXlgL60xthJq9r+gh4FuY1gScDJYev4Q7uH2u7nkSkY0gk+dnjc7gyTiaZO
-         sIyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FJwP2bgS/FoVh1EYwS4zKqQD+3FXQyLnh+jfAK9WhLg=;
-        b=OUgW30NWhmjoIFwVrfTLJg0s9y/oOEmpW9Rk+Qt7HrtysA+oGswDv2qMTJqa+J2W5C
-         8ketD/y4W4d8exdqOawJ1UHzKpBo4iRgi8tF1Gp/rRXr/V3UOdq8rB6A8S2pxtbAFyoA
-         LFxoOdmXmxlRu5yr3uTLYvGf0JzBSgiHHhkLbfTPXKIONmw/Gba4AnojUOPP50Up3HEP
-         Il0M5qCVuo3zWoaU7LhFwJFnmnbs0I03Dp1LdM6cqeX38rhc/3Sl6kpeUb5yDhOm1Cv9
-         tAOes3DsuAZhPLAJFb0ubdPTMW/GyJqL20YcdAZoakIXpd9ItBm7jv0XnGHCCMVDIKgj
-         CSIw==
-X-Gm-Message-State: ABuFfohnN+7lYoaAc7vqaRifjBpX5Y4EicBnJM2s/doQN0bIWHKL/CK4
-        UQYLluIt0CaPXlhswNEKT5Ym0MDhrq0PHIjHdl8=
-X-Google-Smtp-Source: ACcGV616S27ztvh2OqNFFnoIUDKgB/CbalQj4Z2Q3RX+q+lU4kIelVoYwOeEFVZj6OvoHVevytYKpAz6xcMWdgiMm4g=
-X-Received: by 2002:aed:2de3:: with SMTP id i90-v6mr14268810qtd.229.1539951220173;
- Fri, 19 Oct 2018 05:13:40 -0700 (PDT)
+        Fri, 19 Oct 2018 16:22:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43708 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727417AbeJSUWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 16:22:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6678BAFFB;
+        Fri, 19 Oct 2018 12:16:20 +0000 (UTC)
+Date:   Fri, 19 Oct 2018 14:16:19 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+cc:     Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 06/12] livepatch: Simplify API by removing registration
+ step
+In-Reply-To: <20181018153027.x4nk2ihgs5ehsln2@treble>
+Message-ID: <alpine.LSU.2.21.1810191400320.4692@pobox.suse.cz>
+References: <20180828143603.4442-1-pmladek@suse.com> <20180828143603.4442-7-pmladek@suse.com> <alpine.LSU.2.21.1809051108440.7768@pobox.suse.cz> <20181012130120.f5berowklyccd7lj@pathway.suse.cz> <alpine.LSU.2.21.1810151756290.11383@pobox.suse.cz>
+ <20181018145456.nrekm2iuyf5ztw3n@pathway.suse.cz> <20181018153027.x4nk2ihgs5ehsln2@treble>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-References: <20181006065113.669-1-rajneesh.bhardwaj@linux.intel.com> <20181006065113.669-2-rajneesh.bhardwaj@linux.intel.com>
-In-Reply-To: <20181006065113.669-2-rajneesh.bhardwaj@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 19 Oct 2018 15:13:29 +0300
-Message-ID: <CAHp75Vde__h3XDjw_TLQA8YVrnCU+_JJgr-Mr_gtQE77Pwjy2A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] platform/x86: intel_pmc_core: Fix LTR IGNORE Max offset
-To:     rajneesh.bhardwaj@linux.intel.com
-Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 6, 2018 at 9:54 AM Rajneesh Bhardwaj
-<rajneesh.bhardwaj@linux.intel.com> wrote:
->
-> Cannonlake PCH allows us to ignore LTR from more IPs than Sunrisepoint
-> PCH so make the LTR ignore platform specific.
->
+On Thu, 18 Oct 2018, Josh Poimboeuf wrote:
 
-Pushed to my reviewing and testing queue, thanks!
+> On Thu, Oct 18, 2018 at 04:54:56PM +0200, Petr Mladek wrote:
+> > On Mon 2018-10-15 18:01:43, Miroslav Benes wrote:
+> > > On Fri, 12 Oct 2018, Petr Mladek wrote:
+> > > 
+> > > > On Wed 2018-09-05 11:34:06, Miroslav Benes wrote:
+> > > > > On Tue, 28 Aug 2018, Petr Mladek wrote:
+> > > > > > Also the API and logic is much easier. It is enough to call
+> > > > > > klp_enable_patch() in module_init() call. The patch patch can be disabled
+> > > > > > by writing '0' into /sys/kernel/livepatch/<patch>/enabled. Then the module
+> > > > > > can be removed once the transition finishes and sysfs interface is freed.
+> > > > > 
+> > > > > I think it would be good to discuss our sysfs interface here as well.
+> > > > > 
+> > > > > Writing '1' to enabled attribute now makes sense only when you need to 
+> > > > > reverse an unpatching transition. Writing '0' means "disable" or a 
+> > > > > reversion again.
+> > > > > 
+> > > > > Wouldn't be better to split it to two different attributes? Something like 
+> > > > > "disable" and "reverse"? It could be more intuitive.
+> > > > > 
+> > > > > Maybe we'd also find out that even patch->enabled member is not useful 
+> > > > > anymore in such case.
+> > > > 
+> > > > I though about this as well. I kept "enabled" because:
+> > > > 
+> > > >   + It keeps the public interface the same as before. Most people
+> > > >     would not notice any change in the behavior except maybe that
+> > > >     the interface disappears when the patch gets disabled.
+> > > 
+> > > Well our sysfs interface is still in a testing phase as far as ABI is 
+> > > involved. Moreover, each live patch is bound to its base kernel by 
+> > > definition anyway. So we can change this without remorse, I think.
+> 
+> But it would break tooling, which is not kernel specific.  I'm not sure
+> whether it would be worth the headache.  After all I think the livepatch
+> sysfs interface is designed for tools, not humans.
 
-> Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-> ---
->  drivers/platform/x86/intel_pmc_core.c | 4 +++-
->  drivers/platform/x86/intel_pmc_core.h | 4 +++-
->  2 files changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-> index 217a822a8da1..c616cfedf2be 100644
-> --- a/drivers/platform/x86/intel_pmc_core.c
-> +++ b/drivers/platform/x86/intel_pmc_core.c
-> @@ -148,6 +148,7 @@ static const struct pmc_reg_map spt_reg_map = {
->         .ppfear_buckets = SPT_PPFEAR_NUM_ENTRIES,
->         .pm_cfg_offset = SPT_PMC_PM_CFG_OFFSET,
->         .pm_read_disable_bit = SPT_PMC_READ_DISABLE_BIT,
-> +       .ltr_ignore_max = SPT_NUM_IP_IGN_ALLOWED,
->  };
->
->  /* Cannonlake: PGD PFET Enable Ack Status Register(s) bitmap */
-> @@ -319,6 +320,7 @@ static const struct pmc_reg_map cnp_reg_map = {
->         .ppfear_buckets = CNP_PPFEAR_NUM_ENTRIES,
->         .pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
->         .pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
-> +       .ltr_ignore_max = CNP_NUM_IP_IGN_ALLOWED,
->  };
->
->  static inline u8 pmc_core_reg_read_byte(struct pmc_dev *pmcdev, int offset)
-> @@ -565,7 +567,7 @@ static ssize_t pmc_core_ltr_ignore_write(struct file *file, const char __user
->                 goto out_unlock;
->         }
->
-> -       if (val > NUM_IP_IGN_ALLOWED) {
-> +       if (val > map->ltr_ignore_max) {
->                 err = -EINVAL;
->                 goto out_unlock;
->         }
-> diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
-> index 7a00436e337d..7f8181057ec8 100644
-> --- a/drivers/platform/x86/intel_pmc_core.h
-> +++ b/drivers/platform/x86/intel_pmc_core.h
-> @@ -44,7 +44,7 @@
->  #define SPT_PMC_READ_DISABLE_BIT               0x16
->  #define SPT_PMC_MSG_FULL_STS_BIT               0x18
->  #define NUM_RETRIES                            100
-> -#define NUM_IP_IGN_ALLOWED                     17
-> +#define SPT_NUM_IP_IGN_ALLOWED                 17
->
->  #define SPT_PMC_LTR_CUR_PLT                    0x350
->  #define SPT_PMC_LTR_CUR_ASLT                   0x354
-> @@ -154,6 +154,7 @@ enum ppfear_regs {
->  #define CNP_PPFEAR_NUM_ENTRIES                 8
->  #define CNP_PMC_READ_DISABLE_BIT               22
->  #define CNP_PMC_LATCH_SLPS0_EVENTS             BIT(31)
-> +#define CNP_NUM_IP_IGN_ALLOWED                 19
->  #define CNP_PMC_LTR_CUR_PLT                    0x1B50
->  #define CNP_PMC_LTR_CUR_ASLT                   0x1B54
->  #define CNP_PMC_LTR_SPA                                0x1B60
-> @@ -216,6 +217,7 @@ struct pmc_reg_map {
->         const u32 pm_cfg_offset;
->         const int pm_read_disable_bit;
->         const u32 slps0_dbg_offset;
-> +       const u32 ltr_ignore_max;
->  };
->
->  /**
-> --
-> 2.17.1
->
+You're right. It's probably not worth it. Oh well.
+ 
+> > > >   + The reverse operation makes most sense when the transition
+> > > >     cannot get finished. In theory, it might be problem to
+> > > >     finish even the reversed one. People might want to
+> > > >     reverse once again and force it. Then "reverse" file
+> > > >     might be confusing. They might not know in which direction
+> > > >     they do the reverse.
+> > > 
+> > > I still think it would be better to have a less confusing interface and it 
+> > > would outweigh the second remark.
+> > 
+> > OK, what about having just "disable" in sysfs. I agree that it makes
+> > much more sense than "enable" now.
+> > 
+> > It might be used also for the reverse operation the same way as
+> > "enable" was used before. I think that standalone "reverse" might
+> > be confusing when we allow to reverse the operation in both
+> > directions.
+> 
+> As long as we're talking about radical changes... how about we just
+> don't allow disabling patches at all?  Instead a patch can be replaced
+> with a 'revert' patch, or an empty 'nop' patch.  That would make our
+> code simpler and also ensure there's an audit trail.
+> 
+> (Apologies if we've already talked about this.  My brain is still mushy
+> thanks to Spectre and friends.)
 
+I think we talked about it last year in Prague and I think we convinced 
+you that it was not a good idea (...not to allow disabling patches at 
+all).
 
--- 
-With Best Regards,
-Andy Shevchenko
+BUT! Empty 'nop' patch is a new idea and we may certainly discuss it.
+
+> The amount of flexibility we allow is kind of crazy, considering how
+> delicate of an operation live patching is.  That reminds me that I
+> should bring up my other favorite idea at LPC: require modules to be
+> loaded before we "patch" them.
+
+We talked about this as well and if I remember correctly we came to a 
+conclusion that it is all about a distribution and maintenance. We cannot 
+ask customers to load modules they do not need just because we need to 
+patch them. One cumulative patch is not that great in this case. I 
+remember you had a crazy idea how to solve it, but I don't remember 
+details. My notes from the event say...
+
+	- livepatch code complexity
+		- make it synchronous with respect to modules loading
+		- Josh's crazy idea
+
+That's not much :D
+
+So yes, we can talk about it and hopefully make proper notes this time.
+
+Miroslav
