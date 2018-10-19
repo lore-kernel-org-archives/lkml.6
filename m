@@ -2,177 +2,113 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 514BFECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DCEEECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:38:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 172B721476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:36:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVDKPwkW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 172B721476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1BA1D21476
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:38:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BA1D21476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbeJSVnA (ORCPT
+        id S1727550AbeJSVoJ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 17:43:00 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:36631 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727189AbeJSVnA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 17:43:00 -0400
-Received: by mail-qt1-f196.google.com with SMTP id u34-v6so38253486qth.3;
-        Fri, 19 Oct 2018 06:36:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tpM5xXLW29RSoZzLA8S0G2+850bYM/4wxXlGzx7dsgM=;
-        b=nVDKPwkW/4F51QY7uX4XeF56szuOPqCw429OazPfwej47MAUjU8OlN/GGny1kIQY2t
-         u6Yl+GYzovV3Gv4I+5ziwM/optbKyqMeiNpcJchmgEmcpwadOlCSicNL7c3j1TNg/sHu
-         sMLprRs99FrgoSM/LAR8DjoRJ8TwXCEH/Xt766hNl8rjMx0Ac+tPaGBqAPkzDUByplTS
-         dEIjjPfzmcf3PJfIBWPBlZfgFGocktaerK4kZFulMVqngus0mYuAh47y5m6xnHF1VG78
-         egLkm8NX9fdwaHCPBkypllCxzF8FIcx6TrkTeHrq1Tg+EAFmwDyLK89WFlNM+2fQvJkH
-         LtBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tpM5xXLW29RSoZzLA8S0G2+850bYM/4wxXlGzx7dsgM=;
-        b=NrOGFJM1c9xQB8V8f7xyME7JZdNsGPXGVmXrgB/XvNhWmlaIjhxPxmATgvwPDxgb2t
-         QRDaRtSIfLFO7/TUv77+WRRJiav4f2JhGil9xwyJp5uFDazg+upH1nDAy9qBOXi9mMWK
-         U7GnKznQ+61eCNQGqeOX6GGJQXFoUQT+wa/q71caeXJpeiqAYlWQcqFSbojmLKhjqOj8
-         B+LzmCQFC2W0LMsQh33HX+fh4qE7N181NvFqw1wOnRQfoKrfVZAqxI9JY2jqnK8ZHy5G
-         rLlFsqtSMKxueB/TTUm3qow+A6Q7OXIhqfVHKfkQK2oZm6SnwtQjAu0CPUQ1mowRtBjc
-         f/0A==
-X-Gm-Message-State: ABuFfoj3E5Yt8NaVmCkeY74E3rWfv5IvwIhOJZvIob5/mCbab9EucKiD
-        ijqPRfq8Ttx5Y72Bhix1cVhWpRHvGJxLVnf/Za0=
-X-Google-Smtp-Source: ACcGV63ErgqgNl1kCNt88A9JJ0eB8onYoGVhFWjFgNcNXC9kONq9ky2FYt9Mwiy0txuApZYhcPIt93y7t1PQ0mn409U=
-X-Received: by 2002:ac8:6784:: with SMTP id b4-v6mr33542907qtp.373.1539956209650;
- Fri, 19 Oct 2018 06:36:49 -0700 (PDT)
+        Fri, 19 Oct 2018 17:44:09 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60806 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727357AbeJSVoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 17:44:09 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 769CD3002F71;
+        Fri, 19 Oct 2018 13:37:59 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D6E431077D48;
+        Fri, 19 Oct 2018 13:37:57 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <862e36a2-2a6f-4e26-3228-8cab4b4cf230@gmail.com>
+References: <862e36a2-2a6f-4e26-3228-8cab4b4cf230@gmail.com> <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk> <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk> <de050902-f3d0-b2db-2627-983a36c87b3c@gmail.com>
+To:     Alan Jenkins <alan.christopher.jenkins@gmail.com>,
+        viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
+        ebiederm@xmission.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mszeredi@redhat.com
+Subject: Re: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE [ver #12]
 MIME-Version: 1.0
-References: <20181010172300.317643-1-lkundrak@v3.sk> <20181010172300.317643-9-lkundrak@v3.sk>
-In-Reply-To: <20181010172300.317643-9-lkundrak@v3.sk>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 19 Oct 2018 16:36:38 +0300
-Message-ID: <CAHp75VfVYUyurEkrCuRsuC_jk94e3CqsxPket+DZqNk0VNMPFA@mail.gmail.com>
-Subject: Re: [PATCH 08/15] Platform: OLPC: Move EC-specific functionality out
- from x86
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        quozl@laptop.org, Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        devel@driverdev.osuosl.org, Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <6517.1539956277.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Fri, 19 Oct 2018 14:37:57 +0100
+Message-ID: <6518.1539956277@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 19 Oct 2018 13:37:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 8:24 PM Lubomir Rintel <lkundrak@v3.sk> wrote:
->
-> It is actually plaform independent. Move it to the olpc-ec driver from
-> the X86 OLPC platform, so that it could be used by the ARM based laptops
-> too.
+Alan Jenkins <alan.christopher.jenkins@gmail.com> wrote:
 
-What is platform independent exactly?
+> If I close() the mount FD "mfd", and then do "mount --move . /mnt", my
+> printk() shows MNT_UMOUNT has been set. ( I guess fchdir() works more like
+> openat(... , O_PATH) than dup() ). Then unmounting /mnt hangs, as I would
+> expect from my previous test.
 
->  #define OLPC_F_PRESENT         0x01
->  #define OLPC_F_DCON            0x02
-> -#define OLPC_F_EC_WIDE_SCI     0x04
+Okay, I think the attached should fix it.
 
-I think these lines grouped on purpose. Thus, I don't like this.
-Either move either all or none.
+The issue being that do_move_mount() calls attach_recursive_mnt() with a NULL
+parent_path, which means that the moved-mount doesn't get its refcount
+incremented.
 
-> +int olpc_ec_mask_write(u16 bits)
-> +{
->  #ifdef CONFIG_DEBUG_FS
->
->  /*
-> @@ -277,14 +369,17 @@ static int olpc_ec_probe(struct platform_device *pdev)
->         ec_priv = ec;
->         platform_set_drvdata(pdev, ec);
->
-
-> +       /* EC version 0x5f adds support for wide SCI mask */
-> +       if (ec->version >= 0x5f) {
-> +               __be16 ec_word = cpu_to_be16(bits);
-> +
-
-> +               return olpc_ec_cmd(EC_WRITE_EXT_SCI_MASK, (void *) &ec_word, 2,
-> +                                  NULL, 0);
-
-I would leave it on one line.
-
-> +       } else {
-
-> +               unsigned char ec_byte = bits & 0xff;
-
-You may noticed that the parameter is of type u8, which clearly makes
-& 0xff part redundant.
-
-> +               return olpc_ec_cmd(EC_WRITE_SCI_MASK, &ec_byte, 1, NULL, 0);
-> +       }
-> +}
-> +EXPORT_SYMBOL_GPL(olpc_ec_mask_write);
-
-I see that the above is inherited from older code, so, no need to
-address those comments in here, but consider a follow up fix.
-
-
-> +int olpc_ec_sci_query(u16 *sci_value)
-> +{
-
-> +}
-> +EXPORT_SYMBOL_GPL(olpc_ec_sci_query);
-
-Similar comments are applied here.
-
-> +
-> -       err = ec_driver->probe ? ec_driver->probe(pdev) : 0;
-> +       /* get the EC revision */
-> +       err = olpc_ec_cmd(EC_FIRMWARE_REV, NULL, 0,
-> +               (unsigned char *) &ec->version, 1);
-
-Perhaps version should be defined as u8.
-
-> +/* SCI source values */
-> +#define EC_SCI_SRC_EMPTY        0x00
-> +#define EC_SCI_SRC_GAME         0x01
-> +#define EC_SCI_SRC_BATTERY      0x02
-> +#define EC_SCI_SRC_BATSOC       0x04
-> +#define EC_SCI_SRC_BATERR       0x08
-> +#define EC_SCI_SRC_EBOOK        0x10    /* XO-1 only */
-> +#define EC_SCI_SRC_WLAN         0x20    /* XO-1 only */
-> +#define EC_SCI_SRC_ACPWR        0x40
-> +#define EC_SCI_SRC_BATCRIT      0x80
-> +#define EC_SCI_SRC_GPWAKE       0x100   /* XO-1.5 only */
-
-BIT() ?
-
-> +#define EC_SCI_SRC_ALL          0x1FF
-
-GENMASK()?
-
--- 
-With Best Regards,
-Andy Shevchenko
+David
+---
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 6370bfabec99..ce9fff980549 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1935,7 +1935,8 @@ int count_mounts(struct mnt_namespace *ns, struct mount *mnt)
+ static int attach_recursive_mnt(struct mount *source_mnt,
+ 			struct mount *dest_mnt,
+ 			struct mountpoint *dest_mp,
+-			struct path *parent_path)
++			struct path *parent_path,
++			bool moving)
+ {
+ 	HLIST_HEAD(tree_list);
+ 	struct mnt_namespace *ns = dest_mnt->mnt_ns;
+@@ -1976,6 +1977,8 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ 		attach_mnt(source_mnt, dest_mnt, dest_mp);
+ 		touch_mnt_namespace(source_mnt->mnt_ns);
+ 	} else {
++		if (moving)
++			mnt_add_count(source_mnt, 1);
+ 		mnt_set_mountpoint(dest_mnt, dest_mp, source_mnt);
+ 		commit_tree(source_mnt);
+ 	}
+@@ -2062,7 +2065,7 @@ static int graft_tree(struct mount *mnt, struct mount *p, struct mountpoint *mp)
+ 	      d_is_dir(mnt->mnt.mnt_root))
+ 		return -ENOTDIR;
+ 
+-	return attach_recursive_mnt(mnt, p, mp, NULL);
++	return attach_recursive_mnt(mnt, p, mp, NULL, false);
+ }
+ 
+ /*
+@@ -2522,7 +2525,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+ 			goto out1;
+ 
+ 	err = attach_recursive_mnt(old, real_mount(new_path->mnt), mp,
+-				   attached ? &parent_path : NULL);
++				   attached ? &parent_path : NULL, true);
+ 	if (err)
+ 		goto out1;
+ 
