@@ -2,104 +2,102 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E82ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A34ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:28:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B2052145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:26:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="n8N0BH6g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B2052145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D726A2145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:28:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D726A2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbeJSTcI (ORCPT
+        id S1727323AbeJSTd7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 15:32:08 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50694 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbeJSTcI (ORCPT
+        Fri, 19 Oct 2018 15:33:59 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:52631 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726784AbeJSTd7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 15:32:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bYycFRvrZvxBQxR30VMW4UwgNSTrypt7K4a4UMUm7gs=; b=n8N0BH6gK36WJehNLv+dVf9Jm
-        ueXLVDCoj4KC0wqEdQz7wWMP3j8e7CG8cNHtvnejuXN5jBeXznsN0jKz5mlcIOPbErwxwz6CNzaGD
-        BSBiFh43wLxBqzU6Z3xVYUPvVCjF8QDOBVVQVNYpkItKytTvKsQCxv7VLGr/p4iD9TpCI=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gDSv9-0008PM-A3; Fri, 19 Oct 2018 11:26:23 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id CF27E1122547; Fri, 19 Oct 2018 12:26:22 +0100 (BST)
-Date:   Fri, 19 Oct 2018 12:26:22 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] regulator: lochnagar: Add support for the Cirrus
- Logic Lochnagar
-Message-ID: <20181019112622.GB5895@sirena.org.uk>
-References: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
- <20181019095003.26046-4-ckeepax@opensource.cirrus.com>
+        Fri, 19 Oct 2018 15:33:59 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-148-6hZ5yJn7P9ei7r-xcDAz8Q-1; Fri, 19 Oct 2018 12:28:17 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 19 Oct 2018 12:28:19 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 19 Oct 2018 12:28:19 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Masahiro Yamada' <yamada.masahiro@socionext.com>,
+        Borislav Petkov <bp@alien8.de>
+CC:     =?utf-8?B?TGVvbmFyZG8gQnLDoXM=?= <leobras.c@gmail.com>,
+        "lkcamp@lists.libreplanetbr.org" <lkcamp@lists.libreplanetbr.org>,
+        "Matthew Wilcox" <willy6545@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Subject: RE: [PATCH 1/4] Adds -Wshadow=local on KBUILD_HOSTCFLAGS
+Thread-Topic: [PATCH 1/4] Adds -Wshadow=local on KBUILD_HOSTCFLAGS
+Thread-Index: AQHUZwE94ZhritarS0iSYOE/UiGZ1aUmbYcQ
+Date:   Fri, 19 Oct 2018 11:28:19 +0000
+Message-ID: <7b87404e2a0347968013e024e52e4cb2@AcuMS.aculab.com>
+References: <20181017000809.GA21292@WindFlash>
+ <20181017081115.GA22535@zn.tnic>
+ <CAK7LNASVn7CB5uL9tCtNC2u4Ary5eb-vyiB_sS2ey5AZNweKAA@mail.gmail.com>
+ <20181017083126.GB22535@zn.tnic>
+ <CADvQ+rFa=XEuxLb=yPmtJE2QepBNjCVzjEY5urVzCaSF1tJBYw@mail.gmail.com>
+ <20181018091606.GA20831@zn.tnic>
+ <CAK7LNAQq7aE_2QYwqei7M9fg8Yen7-ucjz-t2E_hq2xkznKsQw@mail.gmail.com>
+In-Reply-To: <CAK7LNAQq7aE_2QYwqei7M9fg8Yen7-ucjz-t2E_hq2xkznKsQw@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="b5gNqxB1S1yM7hjW"
-Content-Disposition: inline
-In-Reply-To: <20181019095003.26046-4-ckeepax@opensource.cirrus.com>
-X-Cookie: Obey all traffic laws.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MC-Unique: 6hZ5yJn7P9ei7r-xcDAz8Q-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+RnJvbTogTWFzYWhpcm8gWWFtYWRhDQo+IFNlbnQ6IDE4IE9jdG9iZXIgMjAxOCAxNzozOQ0KPiAN
+Cj4gT24gVGh1LCBPY3QgMTgsIDIwMTggYXQgNjoxOCBQTSBCb3Jpc2xhdiBQZXRrb3YgPGJwQGFs
+aWVuOC5kZT4gd3JvdGU6DQo+ID4NCj4gPiBPbiBXZWQsIE9jdCAxNywgMjAxOCBhdCAwOTo0MDo1
+M1BNIC0wMzAwLCBMZW9uYXJkbyBCcmFzIHdyb3RlOg0KPiA+ID4gVGhlIGlkZWEgd2FzIHRvIHB1
+dCBpdCBhcyBkZWZhdWx0IGFuZCBmaXggYWxsIHRoZSBzaGFkb3dpbmcgd2FybmluZ3MuDQo+ID4g
+PiBXaGF0IGRvIHlvdSB0aGluaz8gIEkgYW0gb3BlbiB0byBzdWdnZXN0aW9ucy4NCj4gPg0KPiA+
+IFRoYXQncyBNYXNhaGlybydzIGNhbGwuIEluIHRoZSByZXN0IG9mIHRoZSBrZXJuZWwsIHRob3Nl
+IHdhcm5pbmdzIGFyZSBiZWhpbmQNCj4gPiB0aGUgVz0yIHN3aXRjaCAtIGkuZS4sIG5vdCBlbmFi
+bGVkIGJ5IGRlZmF1bHQuDQo+IA0KPiANCj4gSXQgaXMgbm90IHJlYWxpc3RpYyB0byBlbmFibGUg
+dGhpcyB3YXJuaW5nIG9wdGlvbiBieSBkZWZhdWx0Lg0KPiBFdmVuIC1Xc2hhZG93PWxvY2FsIGVt
+aXRzIHRvbnMgb2Ygd2FybmluZ3MuDQo+IChNb3JlIHdpdGggLVdzaGFkb3cpDQoNClRoZSBxdWVz
+dGlvbiBpcywgaG93IG1hbnkgb2YgdGhlbSBhcmUgYWN0dWFsIGJ1Z3MuDQpJTUhPIC1Xc2hhZG93
+IGlzIGEgZ29vZCBpZGVhLg0KDQo+IFRoZSBwcm9ibGVtIG9mIHRoaXMgZmxhZyBpcywNCj4gaXQg
+aXMgZmFsc2UgcG9zaXRpdmUgaW4gbWFjcm8gZXhwYW5zaW9ucy4NCg0KUmlnaHQsIGJ1dCBtYWNy
+byBleHBhbnNpb25zIGluc2lkZSBtYWNybyBkZWZpbml0aW9ucyBjb3VsZCBhY2NpZGVudGFsbHkN
+CnVzZSB0aGUgc2FtZSBsb2NhbCB2YXJpYWJsZSAtIGxlYWRpbmcgdG8gY2hvYXMuDQoNCj4gRm9y
+IGV4YW1wbGUsIEkgdGhpbmsgdGhlIGZvbGxvd2luZyBpcyBhIGxlZ2l0aW1hdGUgY2FzZS4NCi4u
+Lg0KPiBhcmNoL2FybTY0L2tlcm5lbC9mcHNpbWQuYzo3MTM6Mjogbm90ZTogaW4gZXhwYW5zaW9u
+IG9mIG1hY3JvIOKAmHdyaXRlX3N5c3JlZ+KAmQ0KPiAgIHdyaXRlX3N5c3JlZyhyZWFkX3N5c3Jl
+ZyhDUEFDUl9FTDEpIHwgQ1BBQ1JfRUwxX1pFTl9FTDFFTiwgQ1BBQ1JfRUwxKTsNCj4gICBefn5+
+fn5+fn5+fn4NCg0KRWFzaWx5IGZpeGVkIGJ5IHVzaW5nIGRpZmZlcmVudCBuYW1lZCB0ZW1wb3Jh
+cmllcyBpbiB0aGUgdHdvIG1hY3Jvcy4NClRoZXJlIHByb2JhYmx5IGFyZW4ndCB0aGF0IG1hbnkg
+bWFjcm8gcGFpcnMgd2hlcmUgdGhhdCBoYXBwZW5zLg0KRXNwZWNpYWxseSBzaW5jZSBtYW55IGFy
+ZSBub3cgaW5saW5lZCBmdW5jdGlvbnMuDQoNCkl0IG1pZ2h0IGJlIHRoYXQgYSBzbWFsbCBudW1i
+ZXIgb2YgY2hhbmdlcyBnZXQgcmlkIG9mIG1vc3Qgb2YgdGhlIHdhcm5pbmdzLg0KDQoJRGF2aWQN
+Cg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZh
+cm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYg
+KFdhbGVzKQ0K
 
---b5gNqxB1S1yM7hjW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Oct 19, 2018 at 10:50:02AM +0100, Charles Keepax wrote:
-
-Please do not submit new versions of already applied patches, please
-submit incremental updates to the existing code.  Modifying existing
-commits creates problems for other users building on top of those
-commits so it's best practice to only change pubished git commits if
-absolutely essential.
-
-> +++ b/drivers/regulator/lochnagar-regulator.c
-> @@ -0,0 +1,255 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Lochnagar regulator driver
-
-Please don't mix C and C++ comments like this in the same block, just
-have it be a C++ block so it looks consistent.
-
---b5gNqxB1S1yM7hjW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvJv14ACgkQJNaLcl1U
-h9CEHQf+PHqc2tgv1Kfy2yfK7QJ0WcQGfD+cYkoRa+izvWVAHfElb/sZmJouxUkb
-NYZDF51pizrkjR7p+/0Y4HaXJAYwygYO0GGdk6sWUASW10yobyHyCeZsJQWU2eyo
-2GHUsm2RB/5dgLV8azPhazUNdI1UNmWYsvMkoh07cj1I/9BQdS/XoYPzx/ePFtf0
-IMWE+mhP4nfGAY5GuS8JlGVHLZaMQU6L38J/J4/RgK3+H4+7eB8N4I0EFsGYcSfU
-IXxNZsGvmObRQ2bSWs+tJV8IfcufGj+f/kv66ooh5Y1AIVhrksO6kauugASyIs4u
-WQ4G2lPTapbOAOAysu0V2JZlQyFQPA==
-=devJ
------END PGP SIGNATURE-----
-
---b5gNqxB1S1yM7hjW--
