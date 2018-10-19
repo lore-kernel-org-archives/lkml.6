@@ -2,149 +2,173 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E6C1ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B94ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4371E2064A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:39:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43FA921486
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:44:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m12ZUazy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4371E2064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V5yhcwwx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43FA921486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbeJSUpb (ORCPT
+        id S1727348AbeJSUuD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:45:31 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:33571 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727199AbeJSUpb (ORCPT
+        Fri, 19 Oct 2018 16:50:03 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:43339 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbeJSUuD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:45:31 -0400
-Received: by mail-qk1-f196.google.com with SMTP id 84-v6so20870031qkf.0;
-        Fri, 19 Oct 2018 05:39:33 -0700 (PDT)
+        Fri, 19 Oct 2018 16:50:03 -0400
+Received: by mail-ot1-f65.google.com with SMTP id k9so33027739otl.10
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 05:44:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RpIHd6By5nuAJPsoG56U/syqFR6s+RFeCrjWGSEZvMc=;
-        b=m12ZUazyaMBuK2fQtv041WpzQfisEh+ObllKfI5xhzSRLyKOuPpJaB+8/b9MiQ630m
-         d5KL1PiDX62IPmB9WkA3FVnSpEemhdlgDDRUV5oSExvPqEuabHyqduRo19gi1ru/GoRv
-         KoAgyQnQrw2NudizYMOHI7vv9nZb1fNX3+1cMG9pfYs4sC/7x/f/YMrHZHHsULk7Bn2g
-         cTcVy4LQh3TopOpYtQ2M8GLlJL5ffhcJFEQGDOvmfueMYS+ZfVBe2WmtnnFgpP6ku8qr
-         gc194YqkcCRu0iwV3WBjp091+0ik8dlJieBqYHvmogOZoEq1hPNAFjxVwWGXxRVF69kh
-         RJrg==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=PjYxYBoyeAexRESl5ZH5s0eqiIiEjHQn7C/A2r7P2YQ=;
+        b=V5yhcwwxkzD8cZNcwCvTDAAKwNNHR6ns1PE4FEX/goQMi9Ec3l4ReOaxBTCnPNwEtN
+         ZJ3MPSvTNOQUlCBrb82vNEYAY/2DIpq27MiR+3RHpW7mpxsKrSmNbdqwS/00TCuewqRX
+         3zNO5FXItlwonBb2/tz3O/B8zJ9jneko0B1Zo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RpIHd6By5nuAJPsoG56U/syqFR6s+RFeCrjWGSEZvMc=;
-        b=NuC98oDd4hqCUDtk7jeNGZjsKem8s8j5bJ/wKecehMYJNQfkmz/eBk6byOGj8MsMK0
-         dX0CX0WoLG/duwmCMF9wxCQxC11fSBgopAGHPqCt1m3EX32JnOa4qfe6UM4IF9tKkeO5
-         YiZirNHlhrVcxczMC3Ki8L4Lr1a45L1VGZt548ypKQsIDFtXm/KeITwEOUfnwGUWZufN
-         AdN82x8k77z5o93weEi0ZzRQyOsw7CkltmCjxvDFRfknVocaPSZFjVcrplh1bGo7c7qI
-         +c14p0t15l4PPkUUHG4fnoc38Z0J89dhOTqDLDBq6LsjWoaZnYCWuvPwlPX4+Q7H8lt9
-         7wnQ==
-X-Gm-Message-State: ABuFfoiTuRROsBXfNuFoko68QRlFlAW2APvn8DnGLkwLcecJqZguEH/V
-        pyum30SCye5tc70uC08a34ISfXfsy/5/5rJDCzaUGsrx
-X-Google-Smtp-Source: ACcGV609tLL53HOnztfTqDNjZCnhHpt4nHjpX8U5SMiop64UIVCqk6tO/CA2+AnmP5GPbSYKmlFzmJJWdFbSA8x/zwQ=
-X-Received: by 2002:ae9:f40b:: with SMTP id y11-v6mr33525409qkl.137.1539952773168;
- Fri, 19 Oct 2018 05:39:33 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=PjYxYBoyeAexRESl5ZH5s0eqiIiEjHQn7C/A2r7P2YQ=;
+        b=jZXiud1x52/Ow/vo9HpBSjbZe4Qw4MdJVNyKern5rw3K5keMe+e34TOQwzTryWXn2k
+         3Gvm7WenbUfkbtOeSp2uFKi7YPTtj3rEfdy7cdTwNs46eaREP5Uncr2+WAKaCbN5jndY
+         aQoAfj/S89oqtz5ZmQtIHQhhJXPg6O0Jo9mMjjk2Aydl8OQ/N31UgE6rYphu3iOrDtNx
+         rrofOC/+756YFEDAHxgj/FoNmv6xMRd+YjAAiuZKIArx5xlcQOySt9PGa/94ruAxXbIv
+         9q26J9fH4ULbP+zLFyyV0165umgrXWkDx2vheSaBmzUYUYh923o0YNZtwV9Ie9mPQWji
+         AcDg==
+X-Gm-Message-State: ABuFfogq/KVUtgf0mATBbeyqZ3w8SwkzLv5XATFMjzH26uWunMv0AAP+
+        hF+68piVcV7rJOUoPHVs4eeRRDVvi9xidQ==
+X-Google-Smtp-Source: ACcGV61l3vdvLeN9PnujOOQVuZ7NtUDauuA3AsSJvRCwmUEo4v1DPzXoDSLVVspf/v95e+ChRgpLHw==
+X-Received: by 2002:a9d:2949:: with SMTP id d67mr23362368otb.74.1539953044011;
+        Fri, 19 Oct 2018 05:44:04 -0700 (PDT)
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com. [209.85.167.172])
+        by smtp.gmail.com with ESMTPSA id f75-v6sm7765234oib.30.2018.10.19.05.44.01
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 19 Oct 2018 05:44:02 -0700 (PDT)
+Received: by mail-oi1-f172.google.com with SMTP id v69-v6so26708280oif.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 05:44:01 -0700 (PDT)
+X-Received: by 2002:aca:c593:: with SMTP id v141-v6mr19182737oif.113.1539953041398;
+ Fri, 19 Oct 2018 05:44:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181006065113.669-1-rajneesh.bhardwaj@linux.intel.com> <20181006065113.669-4-rajneesh.bhardwaj@linux.intel.com>
-In-Reply-To: <20181006065113.669-4-rajneesh.bhardwaj@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 19 Oct 2018 15:39:22 +0300
-Message-ID: <CAHp75VfS2cB3fh1R_iQk91skU-p+yZ_X1Jx2sBaiwHmtAZ0dpw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] platform/x86: intel_telemetry: report debugfs failure
-To:     rajneesh.bhardwaj@linux.intel.com
-Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-        matt.turner@intel.com, "Brown, Len" <len.brown@intel.com>,
-        Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>,
-        Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>
+Received: by 2002:ac9:7915:0:0:0:0:0 with HTTP; Fri, 19 Oct 2018 05:43:30
+ -0700 (PDT)
+In-Reply-To: <20181018175416.561567978@linuxfoundation.org>
+References: <20181018175416.561567978@linuxfoundation.org>
+From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
+Date:   Fri, 19 Oct 2018 09:43:30 -0300
+X-Gmail-Original-Message-ID: <CABdQkv9tZZVofvmCjkwprpirBSRg-fFoG9qUsdHNCi=u+fZjdw@mail.gmail.com>
+Message-ID: <CABdQkv9tZZVofvmCjkwprpirBSRg-fFoG9qUsdHNCi=u+fZjdw@mail.gmail.com>
+Subject: Re: [PATCH 4.18 00/53] 4.18.16-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 6, 2018 at 9:54 AM Rajneesh Bhardwaj
-<rajneesh.bhardwaj@linux.intel.com> wrote:
+On Thu, Oct 18, 2018 at 2:53 PM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.18.16 release.
+> There are 53 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> On some Goldmont based systems such as ASRock J3455M the BIOS may not
-> enable the IPC1 device that provides access to the PMC and PUNIT. In
-> such scenarios, the IOSS and PSS resources from the platform device can
-> not be obtained and result in a invalid telemetry_plt_config which is an
-> internal data structure that holds platform config and is maintained by
-> the telemetry platform driver.
+> Responses should be made by Sat Oct 20 17:53:52 UTC 2018.
+> Anything received after that time might be too late.
 >
-> This is also applicable to the platforms where the BIOS supports IPC1
-> device under debug configurations but IPC1 is disabled by user or the
-> policy.
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.18.16-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.18.y
+> and the diffstat can be found below.
 >
-> This change allows user to know the reason for not seeing entries under
-> /sys/kernel/debug/telemetry/* when there is no apparent failure at boot.
+> thanks,
 >
+> greg k-h
 
-Pushed to my review and testing queue, thanks!
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-P.S. I appended one more patch against this file, please check if it's okay.
+Summary
+------------------------------------------------------------------------
 
-> Cc: Matt Turner <matt.turner@intel.com>
-> Cc: Len Brown <len.brown@intel.com>
-> Cc: Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>
-> Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@intel.com>
->
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198779
-> Acked-by: Matt Turner <matt.turner@intel.com>
-> Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-> ---
-> Changes in v2:
->  * Removed print and out label both as suggested by Andy.
->  * changed to pr_info.
->  * Other minor style fixes.
->
->
->  drivers/platform/x86/intel_telemetry_debugfs.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/platform/x86/intel_telemetry_debugfs.c b/drivers/platform/x86/intel_telemetry_debugfs.c
-> index ffd0474b0531..1423fa8710fd 100644
-> --- a/drivers/platform/x86/intel_telemetry_debugfs.c
-> +++ b/drivers/platform/x86/intel_telemetry_debugfs.c
-> @@ -951,12 +951,16 @@ static int __init telemetry_debugfs_init(void)
->         debugfs_conf = (struct telemetry_debugfs_conf *)id->driver_data;
->
->         err = telemetry_pltconfig_valid();
-> -       if (err < 0)
-> +       if (err < 0) {
-> +               pr_info("Invalid pltconfig, ensure IPC1 device is enabled in BIOS\n");
->                 return -ENODEV;
-> +       }
->
->         err = telemetry_debugfs_check_evts();
-> -       if (err < 0)
-> +       if (err < 0) {
-> +               pr_info("telemetry_debugfs_check_evts failed\n");
->                 return -EINVAL;
-> +       }
->
->         register_pm_notifier(&pm_notifier);
->
-> --
-> 2.17.1
->
+kernel: 4.18.16-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.18.y
+git commit: 5a51f0f88556afcacaab1fad30ca0e1f20a4b097
+git describe: v4.18.14-189-g5a51f0f88556
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.18-oe/bu=
+ild/v4.18.14-189-g5a51f0f88556
 
 
--- 
-With Best Regards,
-Andy Shevchenko
+No regressions (compared to build v4.18.15)
+
+
+No fixes (compared to build v4.18.15)
+
+
+Ran 21223 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
