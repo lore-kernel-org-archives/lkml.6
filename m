@@ -2,161 +2,183 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B131ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 561C6ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE3E62086E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:53:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE3E62086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id D86F62086E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:54:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ONo8PHwm";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DmGpfp9q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D86F62086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbeJSO5m (ORCPT
+        id S1727033AbeJSO7C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 10:57:42 -0400
-Received: from verein.lst.de ([213.95.11.211]:43608 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726465AbeJSO5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 10:57:42 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 7B12B68C76; Fri, 19 Oct 2018 08:52:58 +0200 (CEST)
-Date:   Fri, 19 Oct 2018 08:52:58 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/10] swiotlb: refactor swiotlb_map_page
-Message-ID: <20181019065258.GA29249@lst.de>
-References: <20181008080246.20543-1-hch@lst.de> <20181008080246.20543-8-hch@lst.de> <35016142-f06d-e424-5afe-6026b6d57eda@arm.com> <20181019003715.GI1251@char.us.oracle.com>
+        Fri, 19 Oct 2018 10:59:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42046 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbeJSO7B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 10:59:01 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id EB1F060B73; Fri, 19 Oct 2018 06:54:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539932057;
+        bh=Sro5rLP1zks4xnLrYUKVViZYycmd0Ebsy4ilLXACb4M=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ONo8PHwmO4w8Hw9PVeXY6vvmxNesr0Wi1JaZk5hASZe2Z7GDA1ZcOgt0v9Y14nhn9
+         r4CrOt4u8i9MBJpPUO1LpdeZjcYk9X08uwbon4/cAHKUWkgL58xUWmg9m+MqGtwX/l
+         THWl301yicJmOXvh8saOCNp+upsXa4AcsEPG+KKw=
+Received: from [192.168.43.47] (unknown [223.227.22.91])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 608A360364;
+        Fri, 19 Oct 2018 06:54:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539932056;
+        bh=Sro5rLP1zks4xnLrYUKVViZYycmd0Ebsy4ilLXACb4M=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=DmGpfp9qDLVUMg8xB7yD/9fZuMmlzkQwDoAfq8suHZrLuLPK5YIdVgOtq1wVVx5Bj
+         ln6sGih37H52X4kRWb2SKww7VhvA8StoenqCt6W4Yao0jO/6CNuhfIJW+zRWYjNh/a
+         b++Wpmz1Bp2WGx02dPnUWX0LgxR8nYax8pr4kdvA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 608A360364
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
+To:     Joel Fernandes <joel@joelfernandes.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        Geliang Tang <geliangtang@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pramod Gurav <gpramod@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+References: <472db11e-49a6-a1ee-e298-791ee1bbb10b@codeaurora.org>
+ <20181016141610.639b9000@gandalf.local.home>
+ <accdce6d-8fd2-9f15-d4cd-704cbf0b32eb@codeaurora.org>
+ <20181016144123.24c47b38@gandalf.local.home>
+ <7781815e-cba2-9e36-db6d-268298747876@codeaurora.org>
+ <20181016150328.3450d718@gandalf.local.home>
+ <c94103d2-ed5d-bf43-fc71-c60e108f303e@codeaurora.org>
+ <20181017223334.29ca2837@vmware.local.home>
+ <58d2474c-53cd-e6cb-2d25-db38d1a88da6@codeaurora.org>
+ <20181018091706.62310b38@gandalf.local.home>
+ <20181019041740.GB141835@joelaf.mtv.corp.google.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <8a75f2d5-f1bd-504e-b545-ae2e2f61ca8f@codeaurora.org>
+Date:   Fri, 19 Oct 2018 12:24:05 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181019003715.GI1251@char.us.oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20181019041740.GB141835@joelaf.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 08:37:15PM -0400, Konrad Rzeszutek Wilk wrote:
-> > > +	if (!dma_capable(dev, dma_addr, size) ||
-> > > +	    swiotlb_force == SWIOTLB_FORCE) {
-> > > +		trace_swiotlb_bounced(dev, dma_addr, size, swiotlb_force);
-> > > +		dma_addr = swiotlb_bounce_page(dev, &phys, size, dir, attrs);
-> > > +	}
-> > 
-> > FWIW I prefer the inverse condition and early return of the original code
-> > here, which also then allows a tail-call to swiotlb_bounce_page() (and saves
-> > a couple of lines), but it's no biggie.
-> > 
-> > Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+On 10/19/2018 9:47 AM, Joel Fernandes wrote:
+> On Thu, Oct 18, 2018 at 09:17:06AM -0400, Steven Rostedt wrote:
+>> On Thu, 18 Oct 2018 10:51:18 +0530
+>> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
+>>
+>>>> So something else is causing an issue besides just msm_read.
+>>>>
+>>>> Can you do an objdump -dr of the entire vmlinux binary and gzip it and
+>>>> post it somewhere. Not sure if it would be too big to email. You could
+>>>> try sending it to me privately. I'd like to see the binary that you are
+>>>> using.
+>>>>    
+>>>
+>>> I have sent the objdump and dot config to you privately.
+>>
+>> Thanks. I don't see anything that pops out, but then again, my arm asm
+>> foo is very rusty (it has been literally decades since I did any arm
+>> asm). I wonder if it could simply be a timing issue?
+>>
+>> ffff0000086eb538 <msm_read.isra.1>:
+>> ffff0000086eb538:       a9be7bfd        stp     x29, x30, [sp,#-32]!
+>> ffff0000086eb53c:       910003fd        mov     x29, sp
+>> ffff0000086eb540:       a90153f3        stp     x19, x20, [sp,#16]
+>> ffff0000086eb544:       aa0003f4        mov     x20, x0
+>> ffff0000086eb548:       2a0103f3        mov     w19, w1
+>> ffff0000086eb54c:       aa1e03e0        mov     x0, x30
+>> ffff0000086eb550:       97e6bae4        bl      ffff00000809a0e0 <_mcount>
+>>
+>> The above is changed to nop on boot, but then to:
+>>
+>> 	bl ftrace_caller
+>>
+>> When ftrace is enabled.
+>>
+>> ffff0000086eb554:       8b334280        add     x0, x20, w19, uxtw
+>> ffff0000086eb558:       b9400000        ldr     w0, [x0]
+>> ffff0000086eb55c:       a94153f3        ldp     x19, x20, [sp,#16]
+>> ffff0000086eb560:       a8c27bfd        ldp     x29, x30, [sp],#32
+>> ffff0000086eb564:       d65f03c0        ret
+>>
+>>
+>>
+>> ffff00000809a0e4 <ftrace_caller>:
+>> ffff00000809a0e4:       a9bf7bfd        stp     x29, x30, [sp,#-16]!
+>> ffff00000809a0e8:       910003fd        mov     x29, sp
+>> ffff00000809a0ec:       d10013c0        sub     x0, x30, #0x4
+>> ffff00000809a0f0:       f94003a1        ldr     x1, [x29]
+>> ffff00000809a0f4:       f9400421        ldr     x1, [x1,#8]
+>> ffff00000809a0f8:       d1001021        sub     x1, x1, #0x4
+>>
+>> ffff00000809a0fc <ftrace_call>:
+>> ffff00000809a0fc:       d503201f        nop
+>>
+>> The above nop gets patched to:
+>>
+>> 	bl ftrace_ops_no_ops
+>>
+>> Which will iterate through all the registered functions.
+>>
+>>
+>> ffff00000809a100 <ftrace_graph_call>:
+>> ffff00000809a100:       d503201f        nop
+>>
+>> The above only gets set when function graph tracer is enabled, which it
+>> is not in this case.
+>>
+>> ffff00000809a104:       a8c17bfd        ldp     x29, x30, [sp],#16
+>> ffff00000809a108:       d65f03c0        ret
+>>
+>>
+>> Anyone see any problems here?
 > 
-> I agree with Robin - it certainly makes it easier to read.
+> This seems sane to me, he says in the other thread that he put 'notrace' to
+> the msm serial functions (which AIUI should prevent ftrace instrumentation)
+> and he still sees the issue.
 > 
-> With that small change:
-> Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-So I did this edit, and in this patch it does indeed look much cleaner.
-But in patch 9 we introduce the cache maintainance, and have to invert
-the condition again if we don't want a goto mess:
+Yes I did add notrace to all functions in msm serial and checked the 
+objdump to make sure that those were not instrumented, and yet the 
+target crashed. This doesnt seem like an issue with ftrace but rather 
+with msm early con.
 
----
-From e840ec23360788d54a8ebd2ebc7cd0f0ef8bdb01 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Fri, 19 Oct 2018 08:51:53 +0200
-Subject: swiotlb: add support for non-coherent DMA
+Thanks,
+Sai
 
-Handle architectures that are not cache coherent directly in the main
-swiotlb code by calling arch_sync_dma_for_{device,cpu} in all the right
-places from the various dma_map/unmap/sync methods when the device is
-non-coherent.
-
-Because swiotlb now uses dma_direct_alloc for the coherent allocation
-that side is already taken care of by the dma-direct code calling into
-arch_dma_{alloc,free} for devices that are non-coherent.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- kernel/dma/swiotlb.c | 33 +++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index 1a01b0ac0a5e..ebecaf255ea2 100644
---- a/kernel/dma/swiotlb.c
-+++ b/kernel/dma/swiotlb.c
-@@ -21,6 +21,7 @@
- 
- #include <linux/cache.h>
- #include <linux/dma-direct.h>
-+#include <linux/dma-noncoherent.h>
- #include <linux/mm.h>
- #include <linux/export.h>
- #include <linux/spinlock.h>
-@@ -671,11 +672,17 @@ dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
- 	 * we can safely return the device addr and not worry about bounce
- 	 * buffering it.
- 	 */
--	if (dma_capable(dev, dev_addr, size) && swiotlb_force != SWIOTLB_FORCE)
--		return dev_addr;
-+	if (!dma_capable(dev, dev_addr, size) ||
-+	    swiotlb_force == SWIOTLB_FORCE) {
-+		trace_swiotlb_bounced(dev, dev_addr, size, swiotlb_force);
-+		dev_addr = swiotlb_bounce_page(dev, &phys, size, dir, attrs);
-+	}
-+
-+	if (!dev_is_dma_coherent(dev) &&
-+	    (attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
-+		arch_sync_dma_for_device(dev, phys, size, dir);
- 
--	trace_swiotlb_bounced(dev, dev_addr, size, swiotlb_force);
--	return swiotlb_bounce_page(dev, &phys, size, dir, attrs);
-+	return dev_addr;
- }
- 
- /*
-@@ -694,6 +701,10 @@ void swiotlb_unmap_page(struct device *hwdev, dma_addr_t dev_addr,
- 
- 	BUG_ON(dir == DMA_NONE);
- 
-+	if (!dev_is_dma_coherent(hwdev) &&
-+	    (attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
-+		arch_sync_dma_for_cpu(hwdev, paddr, size, dir);
-+
- 	if (is_swiotlb_buffer(paddr)) {
- 		swiotlb_tbl_unmap_single(hwdev, paddr, size, dir, attrs);
- 		return;
-@@ -730,15 +741,17 @@ swiotlb_sync_single(struct device *hwdev, dma_addr_t dev_addr,
- 
- 	BUG_ON(dir == DMA_NONE);
- 
--	if (is_swiotlb_buffer(paddr)) {
-+	if (!dev_is_dma_coherent(hwdev) && target == SYNC_FOR_CPU)
-+		arch_sync_dma_for_cpu(hwdev, paddr, size, dir);
-+
-+	if (is_swiotlb_buffer(paddr))
- 		swiotlb_tbl_sync_single(hwdev, paddr, size, dir, target);
--		return;
--	}
- 
--	if (dir != DMA_FROM_DEVICE)
--		return;
-+	if (!dev_is_dma_coherent(hwdev) && target == SYNC_FOR_DEVICE)
-+		arch_sync_dma_for_device(hwdev, paddr, size, dir);
- 
--	dma_mark_clean(phys_to_virt(paddr), size);
-+	if (!is_swiotlb_buffer(paddr) && dir == DMA_FROM_DEVICE)
-+		dma_mark_clean(phys_to_virt(paddr), size);
- }
- 
- void
 -- 
-2.19.1
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
