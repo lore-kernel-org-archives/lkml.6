@@ -2,234 +2,175 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E024ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80948ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC8EC2083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:02:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC8EC2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 353752145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:17:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="RKBgQm2O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 353752145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbeJSMGu (ORCPT
+        id S1726566AbeJSMV7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 08:06:50 -0400
-Received: from ipmail03.adl2.internode.on.net ([150.101.137.141]:17602 "EHLO
-        ipmail03.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726667AbeJSMGu (ORCPT
+        Fri, 19 Oct 2018 08:21:59 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:32787 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726648AbeJSMV7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 08:06:50 -0400
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail03.adl2.internode.on.net with ESMTP; 19 Oct 2018 14:18:49 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gDLmJ-0006c2-OT; Fri, 19 Oct 2018 14:48:47 +1100
-Date:   Fri, 19 Oct 2018 14:48:47 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     kernel-team@fb.com, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, tj@kernel.org,
-        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, riel@fb.com, linux-mm@kvack.org
-Subject: Re: [PATCH 7/7] btrfs: drop mmap_sem in mkwrite for btrfs
-Message-ID: <20181019034847.GM18822@dastard>
-References: <20181018202318.9131-1-josef@toxicpanda.com>
- <20181018202318.9131-8-josef@toxicpanda.com>
+        Fri, 19 Oct 2018 08:21:59 -0400
+Received: by mail-pl1-f196.google.com with SMTP id s4-v6so15302112plp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 21:17:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Lb9ipAF0X1qc723pxRiwYkaTJTsvnjoQaz9AFLyOAZA=;
+        b=RKBgQm2OiQy/H7CBecA3mc+edR3ZXQctYAMSTHRyWoGBUUYxO4FRqn4malIDOpUj13
+         3NmOjoy9RUo1CUyaMFtu3htE+efy87qPVh4oeW+4cORSH2byR6VYl6sFOJwWgpru7IUm
+         fdnSooqjt4Xttxti6+qDXenJTZr/v6lhqMBQY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Lb9ipAF0X1qc723pxRiwYkaTJTsvnjoQaz9AFLyOAZA=;
+        b=Ten9PFf1QnGilyQ/ulYpMG+7HCCaPvgy7hzUr95rTbGP0wPf6Fq5IkWn7/tONPEDVe
+         j2YJsQqnmBof7LhZzJ3u3yVx3dZ8+92sHvLghPjqP6Ji3MfOh4X3P8RjyvXzdYJtp6or
+         rq8BDoazTGDU+j5/4ALtbFoLB8G+jNHlzTUaOyJ19Fa78aBOCkUkuOqjfswpV1wODull
+         pIVK7uzUEjPnp/P4eKmr95c2sGmZxP9BUl0w/9tDKK/JBgtTjwSjjsmgqTOWaOqMwvdD
+         PQzBHemOgKZUFsOaI2NBzEMCXPfBLggvYqkZQIv0LRess+2wDtiNn3Ein+lEIW2/iq1N
+         BWrQ==
+X-Gm-Message-State: ABuFfogC5fhgTRlVtCDcWz76C+u5EcR2KSNCNeUdoDyXCpxsF8GerOsh
+        wK4yzh+y68ui/ydc5knYPvKSSg==
+X-Google-Smtp-Source: ACcGV61z6Rp3Ocm3Sq0dX8QJPRSkSUYdG0WCat4yu2dbR33yb0H29Y8yxZxvklQhDryzgO3x5Fi+7g==
+X-Received: by 2002:a17:902:7109:: with SMTP id a9-v6mr32463219pll.310.1539922662831;
+        Thu, 18 Oct 2018 21:17:42 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id 189-v6sm25701022pfe.121.2018.10.18.21.17.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Oct 2018 21:17:41 -0700 (PDT)
+Date:   Thu, 18 Oct 2018 21:17:40 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        Geliang Tang <geliangtang@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pramod Gurav <gpramod@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
+Message-ID: <20181019041740.GB141835@joelaf.mtv.corp.google.com>
+References: <472db11e-49a6-a1ee-e298-791ee1bbb10b@codeaurora.org>
+ <20181016141610.639b9000@gandalf.local.home>
+ <accdce6d-8fd2-9f15-d4cd-704cbf0b32eb@codeaurora.org>
+ <20181016144123.24c47b38@gandalf.local.home>
+ <7781815e-cba2-9e36-db6d-268298747876@codeaurora.org>
+ <20181016150328.3450d718@gandalf.local.home>
+ <c94103d2-ed5d-bf43-fc71-c60e108f303e@codeaurora.org>
+ <20181017223334.29ca2837@vmware.local.home>
+ <58d2474c-53cd-e6cb-2d25-db38d1a88da6@codeaurora.org>
+ <20181018091706.62310b38@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181018202318.9131-8-josef@toxicpanda.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181018091706.62310b38@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 04:23:18PM -0400, Josef Bacik wrote:
-> ->page_mkwrite is extremely expensive in btrfs.  We have to reserve
-> space, which can take 6 lifetimes, and we could possibly have to wait on
-> writeback on the page, another several lifetimes.  To avoid this simply
-> drop the mmap_sem if we didn't have the cached page and do all of our
-> work and return the appropriate retry error.  If we have the cached page
-> we know we did all the right things to set this page up and we can just
-> carry on.
+On Thu, Oct 18, 2018 at 09:17:06AM -0400, Steven Rostedt wrote:
+> On Thu, 18 Oct 2018 10:51:18 +0530
+> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
 > 
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> ---
->  fs/btrfs/inode.c   | 41 +++++++++++++++++++++++++++++++++++++++--
->  include/linux/mm.h | 14 ++++++++++++++
->  mm/filemap.c       |  3 ++-
->  3 files changed, 55 insertions(+), 3 deletions(-)
+> > > So something else is causing an issue besides just msm_read.
+> > > 
+> > > Can you do an objdump -dr of the entire vmlinux binary and gzip it and
+> > > post it somewhere. Not sure if it would be too big to email. You could
+> > > try sending it to me privately. I'd like to see the binary that you are
+> > > using.
+> > >   
+> > 
+> > I have sent the objdump and dot config to you privately.
 > 
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 3ea5339603cf..6b723d29bc0c 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -8809,7 +8809,9 @@ static void btrfs_invalidatepage(struct page *page, unsigned int offset,
->  vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
->  {
->  	struct page *page = vmf->page;
-> -	struct inode *inode = file_inode(vmf->vma->vm_file);
-> +	struct file *file = vmf->vma->vm_file, *fpin;
-> +	struct mm_struct *mm = vmf->vma->vm_mm;
-> +	struct inode *inode = file_inode(file);
->  	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
->  	struct extent_io_tree *io_tree = &BTRFS_I(inode)->io_tree;
->  	struct btrfs_ordered_extent *ordered;
-> @@ -8828,6 +8830,29 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
->  
->  	reserved_space = PAGE_SIZE;
->  
-> +	/*
-> +	 * We have our cached page from a previous mkwrite, check it to make
-> +	 * sure it's still dirty and our file size matches when we ran mkwrite
-> +	 * the last time.  If everything is OK then return VM_FAULT_LOCKED,
-> +	 * otherwise do the mkwrite again.
-> +	 */
-> +	if (vmf->flags & FAULT_FLAG_USED_CACHED) {
-> +		lock_page(page);
-> +		if (vmf->cached_size == i_size_read(inode) &&
-> +		    PageDirty(page))
-> +			return VM_FAULT_LOCKED;
-> +		unlock_page(page);
-> +	}
+> Thanks. I don't see anything that pops out, but then again, my arm asm
+> foo is very rusty (it has been literally decades since I did any arm
+> asm). I wonder if it could simply be a timing issue?
+> 
+> ffff0000086eb538 <msm_read.isra.1>:
+> ffff0000086eb538:       a9be7bfd        stp     x29, x30, [sp,#-32]!
+> ffff0000086eb53c:       910003fd        mov     x29, sp
+> ffff0000086eb540:       a90153f3        stp     x19, x20, [sp,#16]
+> ffff0000086eb544:       aa0003f4        mov     x20, x0
+> ffff0000086eb548:       2a0103f3        mov     w19, w1
+> ffff0000086eb54c:       aa1e03e0        mov     x0, x30
+> ffff0000086eb550:       97e6bae4        bl      ffff00000809a0e0 <_mcount>
+> 
+> The above is changed to nop on boot, but then to:
+> 
+> 	bl ftrace_caller
+> 
+> When ftrace is enabled.
+> 
+> ffff0000086eb554:       8b334280        add     x0, x20, w19, uxtw
+> ffff0000086eb558:       b9400000        ldr     w0, [x0]
+> ffff0000086eb55c:       a94153f3        ldp     x19, x20, [sp,#16]
+> ffff0000086eb560:       a8c27bfd        ldp     x29, x30, [sp],#32
+> ffff0000086eb564:       d65f03c0        ret
+> 
+> 
+> 
+> ffff00000809a0e4 <ftrace_caller>:
+> ffff00000809a0e4:       a9bf7bfd        stp     x29, x30, [sp,#-16]!
+> ffff00000809a0e8:       910003fd        mov     x29, sp
+> ffff00000809a0ec:       d10013c0        sub     x0, x30, #0x4
+> ffff00000809a0f0:       f94003a1        ldr     x1, [x29]
+> ffff00000809a0f4:       f9400421        ldr     x1, [x1,#8]
+> ffff00000809a0f8:       d1001021        sub     x1, x1, #0x4
+> 
+> ffff00000809a0fc <ftrace_call>:
+> ffff00000809a0fc:       d503201f        nop
+> 
+> The above nop gets patched to:
+> 
+> 	bl ftrace_ops_no_ops
+> 
+> Which will iterate through all the registered functions.
+> 
+> 
+> ffff00000809a100 <ftrace_graph_call>:
+> ffff00000809a100:       d503201f        nop
+> 
+> The above only gets set when function graph tracer is enabled, which it
+> is not in this case.
+> 
+> ffff00000809a104:       a8c17bfd        ldp     x29, x30, [sp],#16
+> ffff00000809a108:       d65f03c0        ret
+> 
+> 
+> Anyone see any problems here?
 
-What does the file size have to do with whether we can use the
-initialised page or not? The file can be extended by other
-data operations (like write()) while a page fault is in progress,
-so I'm not sure how or why this check makes any sense.
+This seems sane to me, he says in the other thread that he put 'notrace' to
+the msm serial functions (which AIUI should prevent ftrace instrumentation)
+and he still sees the issue.
 
-I also don't see anything btrfs specific here, so....
+thanks,
 
-> +	/*
-> +	 * mkwrite is extremely expensive, and we are holding the mmap_sem
-> +	 * during this, which means we can starve out anybody trying to
-> +	 * down_write(mmap_sem) for a long while, especially if we throw cgroups
-> +	 * into the mix.  So just drop the mmap_sem and do all of our work,
-> +	 * we'll loop back through and verify everything is ok the next time and
-> +	 * hopefully avoid doing the work twice.
-> +	 */
-> +	fpin = maybe_unlock_mmap_for_io(vmf->vma, vmf->flags);
+ - Joel
 
-why can't all this be done by the caller of ->page_mkwrite?
-
->  	sb_start_pagefault(inode->i_sb);
->  	page_start = page_offset(page);
->  	page_end = page_start + PAGE_SIZE - 1;
-> @@ -8844,7 +8869,7 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
->  	ret2 = btrfs_delalloc_reserve_space(inode, &data_reserved, page_start,
->  					   reserved_space);
->  	if (!ret2) {
-> -		ret2 = file_update_time(vmf->vma->vm_file);
-> +		ret2 = file_update_time(file);
->  		reserved = 1;
->  	}
->  	if (ret2) {
-> @@ -8943,6 +8968,14 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
->  		btrfs_delalloc_release_extents(BTRFS_I(inode), PAGE_SIZE, true);
->  		sb_end_pagefault(inode->i_sb);
->  		extent_changeset_free(data_reserved);
-> +		if (fpin) {
-> +			unlock_page(page);
-> +			fput(fpin);
-> +			get_page(page);
-> +			vmf->cached_size = size;
-> +			vmf->cached_page = page;
-> +			return VM_FAULT_RETRY;
-> +		}
->  		return VM_FAULT_LOCKED;
-
-And this can all be done by the caller, too.
-
-I'm not seeing anything btrfs sepcific here - maybe I'm missing
-something, but this all looks likes it should be in the high level
-mm/ code, not in the filesystem code.
-
->  	}
->  
-> @@ -8955,6 +8988,10 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
->  out_noreserve:
->  	sb_end_pagefault(inode->i_sb);
->  	extent_changeset_free(data_reserved);
-> +	if (fpin) {
-> +		fput(fpin);
-> +		down_read(&mm->mmap_sem);
-> +	}
->  	return ret;
->  }
->  
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index a7305d193c71..02b420be6b06 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -370,6 +370,13 @@ struct vm_fault {
->  					 * next time we loop through the fault
->  					 * handler for faster lookup.
->  					 */
-> +	loff_t cached_size;		/* ->page_mkwrite handlers may drop
-> +					 * the mmap_sem to avoid starvation, in
-> +					 * which case they need to save the
-> +					 * i_size in order to verify the cached
-> +					 * page we're using the next loop
-> +					 * through hasn't changed under us.
-> +					 */
-
-You still haven't explained what the size verification is actually
-required for.
-
->  	/* These three entries are valid only while holding ptl lock */
->  	pte_t *pte;			/* Pointer to pte entry matching
->  					 * the 'address'. NULL if the page
-> @@ -1437,6 +1444,8 @@ extern vm_fault_t handle_mm_fault_cacheable(struct vm_fault *vmf);
->  extern int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
->  			    unsigned long address, unsigned int fault_flags,
->  			    bool *unlocked);
-> +extern struct file *maybe_unlock_mmap_for_io(struct vm_area_struct *vma,
-> +					     int flags);
->  void unmap_mapping_pages(struct address_space *mapping,
->  		pgoff_t start, pgoff_t nr, bool even_cows);
->  void unmap_mapping_range(struct address_space *mapping,
-> @@ -1463,6 +1472,11 @@ static inline int fixup_user_fault(struct task_struct *tsk,
->  	BUG();
->  	return -EFAULT;
->  }
-> +static inline struct file *maybe_unlock_mmap_for_io(struct vm_area_struct *vma,
-> +						    int flags)
-> +{
-> +	return NULL;
-> +}
->  static inline void unmap_mapping_pages(struct address_space *mapping,
->  		pgoff_t start, pgoff_t nr, bool even_cows) { }
->  static inline void unmap_mapping_range(struct address_space *mapping,
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index e9cb44bd35aa..8027f082d74f 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2366,7 +2366,7 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
->  EXPORT_SYMBOL(generic_file_read_iter);
->  
->  #ifdef CONFIG_MMU
-> -static struct file *maybe_unlock_mmap_for_io(struct vm_area_struct *vma, int flags)
-> +struct file *maybe_unlock_mmap_for_io(struct vm_area_struct *vma, int flags)
->  {
->  	if ((flags & (FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_RETRY_NOWAIT)) == FAULT_FLAG_ALLOW_RETRY) {
->  		struct file *file;
-> @@ -2377,6 +2377,7 @@ static struct file *maybe_unlock_mmap_for_io(struct vm_area_struct *vma, int fla
->  	}
->  	return NULL;
->  }
-> +EXPORT_SYMBOL_GPL(maybe_unlock_mmap_for_io);
-
-These API mods (if this functionality remains in the filesystem
-code) belong in whatever patch introduced this function.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
