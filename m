@@ -2,88 +2,117 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C4FECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD85ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67ED421476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:47:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67ED421476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B9A5C2054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:50:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9A5C2054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbeJTHz4 (ORCPT
+        id S1727008AbeJTH6a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 03:55:56 -0400
-Received: from mga03.intel.com ([134.134.136.65]:50443 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726244AbeJTHz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 03:55:56 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 16:47:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,401,1534834800"; 
-   d="scan'208";a="267219026"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by orsmga005.jf.intel.com with ESMTP; 19 Oct 2018 16:47:43 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 13755300FC1; Fri, 19 Oct 2018 16:47:43 -0700 (PDT)
-Date:   Fri, 19 Oct 2018 16:47:43 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Andi Kleen <andi@firstfloor.org>, peterz@infradead.org,
-        x86@kernel.org, eranian@google.com, kan.liang@intel.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] x86/cpufeature: Add facility to match microcode
- revisions
-Message-ID: <20181019234743.GA27951@tassilo.jf.intel.com>
-References: <20181010162608.23899-1-andi@firstfloor.org>
- <alpine.DEB.2.21.1810171151010.6000@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1810171151010.6000@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sat, 20 Oct 2018 03:58:30 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:37186 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726604AbeJTH6a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 03:58:30 -0400
+Received: from mr2.cc.vt.edu (mr2.cc.vt.edu [IPv6:2607:b400:92:8400:0:90:e077:bf22])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w9JNoGrH021444
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 19:50:16 -0400
+Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com [209.85.221.198])
+        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w9JNoBA5020798
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 19:50:16 -0400
+Received: by mail-vk1-f198.google.com with SMTP id n134so1464926vkc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 16:50:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=xyUdJ/Qfgkkbyiw00yv6LAIC9S00tI7PqHQcrZvtvWY=;
+        b=Rx09PW/7SBktpkqUV4U13Rjt0TgpCdKdD84nLKkFJ7/K9Av+SORC5vvZeQ4sf/EgiD
+         Ap7YYJvOuvVHSfyMxFXvbeROqKkIZ/c4rMkj6oAiOUbIe73OBOmQqb/3AprjTEXDKLBs
+         6fUEujx8XF8pBGBZRzFbHtfbmFqE57CPTLZcFzxhmAjT1txvH0C79ALiG0HUE+RtrzPV
+         Tg6XsuZ+ngdAlnJpMRhCOZZ2dZbWlcAvK+EdcXXaGUct0ibKAYghkALj7sQvOgfUzynb
+         iAnE0t9Qa8bytZ+5PU4UcpFgGPHC/ahAmEg5jSVhLFsUBaNo8mrMJcioCaW35CiRMO5E
+         cEGg==
+X-Gm-Message-State: ABuFfojKpg1fLWgihNaGUm/ftlkeB9fjT0D/MJzP/zm/qt+9Wxl4bLgr
+        UyjRdqkCTUvBPkiR5YYL9fS5PUuvJMiKc0j/GkiCdQiL9Y5IrJm4J8UbZSWQkWKqfOV7uunWDOE
+        Fn4vNS9xlsDj5YESnYTrvgz8hqsNYQJQZfQ8=
+X-Received: by 2002:a67:d595:: with SMTP id m21mr1243194vsj.139.1539993011197;
+        Fri, 19 Oct 2018 16:50:11 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV60ZArgK7ZifPGSk3eNlHa0BYs+VNGy13VIrs+OUAhLWrbtggeqYxoyy0j/8BUoYyu4z77kX5Q==
+X-Received: by 2002:a67:d595:: with SMTP id m21mr1243183vsj.139.1539993010689;
+        Fri, 19 Oct 2018 16:50:10 -0700 (PDT)
+Received: from turing-police.cc.vt.edu ([2601:5c0:c001:4340::be3])
+        by smtp.gmail.com with ESMTPSA id v127-v6sm3011874vke.46.2018.10.19.16.50.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 19 Oct 2018 16:50:09 -0700 (PDT)
+From:   valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+To:     Dennis Zhou <dennis@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [BUG] ext4/block null pointer crashes in linux-next
+In-Reply-To: <20181017212029.GA85639@dennisz-mbp.dhcp.thefacebook.com>
+References: <13987.1539646128@turing-police.cc.vt.edu> <20181016160203.GA88193@dennisz-mbp.dhcp.thefacebook.com> <20181016182513.GA9886@dennisz-mbp.dhcp.thefacebook.com> <13448.1539791255@turing-police.cc.vt.edu>
+ <20181017212029.GA85639@dennisz-mbp.dhcp.thefacebook.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1539993007_2536P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 19 Oct 2018 19:50:08 -0400
+Message-ID: <3699.1539993008@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > +	u32 min_ucode;
-> > +};
-> > +
-> > +const struct x86_ucode_id *x86_match_ucode(const struct x86_ucode_id *match)
-> 
-> What's the point of returning the struct pointer? Shouldn't it be enough to
-> make it return bool? Also the function name really should reflect that this
-> checks whether the minimal required microcode revision is active.
+--==_Exmh_1539993007_2536P
+Content-Type: text/plain; charset=us-ascii
 
-This allows the user to find the table entry to tie something to it
-(e.g. use the index to match some other table)
+On Wed, 17 Oct 2018 17:20:29 -0400, Dennis Zhou said:
 
-Same pattern as pci discovery etc. use.
+> could apply that and send me the full dmesg that would be great. Lastly,
+> can you just confirm for me that the commit before, f0fcb3ec89f3
+> "blkcg: remove additional reference to the css", isn't seeing this
+> issue?
 
-Given the current caller doesn't need it, but we still follow standard
-conventions.
+Script started on 2018-10-19 18:53:41-04:00
+[root@turing-police x86_64]# uname -a
+Linux turing-police.cc.vt.edu 4.19.0-rc2-00202-gf0fcb3ec89f3 #640 SMP PREEMPT Fri Oct 19 14:20:22 EDT 2018 x86_64 x86_64 x86_64 GNU/Linux
+[root@turing-police x86_64]# rpm -Uvh --force dracut-049-4.git20181010.fc30.x86_64.rpm
+Verifying...                          ################################# [100%]
+warning: Unable to get systemd shutdown inhibition lock: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+Preparing...                          ################################# [100%]
+Updating / installing...
+   1:dracut-049-4.git20181010.fc30    ################################# [100%]
+[root@turing-police x86_64]# exit
+exit
 
-> 
-> > +{
-> > +	struct cpuinfo_x86 *c = &boot_cpu_data;
-> > +	const struct x86_ucode_id *m;
-> > +
-> > +	for (m = match; m->vendor | m->family | m->model; m++) {
-> 
-> VENDOR_INTEL = 0, so this check is obscure to begin with. Either you chose
-> a explicit condition to put at the end of the table, e.g. vendor = U8_MAX
-> or you hand in the array size to the function.
+Script done on 2018-10-19 18:54:09-04:00
 
-That would both be awkward. It's the same as match_cpu, and 0 terminators
-are standard practice in practical all similar code. I removed
-the or with the family.
+That commit comes up "good" - broken kernels die before I ever get the prompt back...
 
--Andi
+--==_Exmh_1539993007_2536P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
+
+iQEVAwUBW8ptr40DS38y7CIcAQIuegf/QtQ9PQOKoXVijewIucqhWzvzZWIRvWeb
+A1JO8Eang9AUDjkX5FvSs6RW7veaViMJ+Mgt12FmCJkdJzJjxjcgQI1H1p0kIe3U
+bQTmxEGBO7PpsasVyhIYsc2dDssgW5rjkTn3PHZzuua76WAq7y4cJq8TsDns1GgO
+bfGlipvUKdlfu/hVt/YwlHWswIZm1acyQHtuYoFU1KGTE3/4ZFLzjxe6cw9vAKNS
+3ZMMLsnEQQPdG9hrTrhkCM9hIybc1+uSWoHkrEYFygSZnWX/+cVZfoLSeu0eL9il
+qh8TDKyh4ccwILfpvAWfo4W0fcOxVppHUei5Z/kpzKC+NUAnk2dsvg==
+=l+JZ
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1539993007_2536P--
