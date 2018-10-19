@@ -2,115 +2,138 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C99AECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 14:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A66A4ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 14:48:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC40220869
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 14:47:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D61320869
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 14:48:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajaFMpao"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC40220869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VwYi+KJN";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VwYi+KJN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D61320869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbeJSWx6 (ORCPT
+        id S1727681AbeJSWy6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 18:53:58 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36013 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbeJSWx6 (ORCPT
+        Fri, 19 Oct 2018 18:54:58 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44370 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727315AbeJSWy6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 18:53:58 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y16so37744902wrw.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 07:47:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S+kqQcne43yBtKD0A4xPWMBbdtznaufs+fBWnD76mFs=;
-        b=ajaFMpaoYsmG0R762tYUnDS3ksRvUUxalZbggHmdQC2PI9u6nq8evZSodJ/XAin/Wh
-         XqbjxeKHlW2iHvn+sI2gzmNoelDy4u3qX7ZSleOKVwZkcHWoe1fADaJ+rKfkJA1MgfXi
-         Jzzwesil0arauW0D1ynGEzK/EKqmxMkXYRHmXpHhsihBS2NjM+HBOBCL8Yyroy4bq6zV
-         hpqreRvdzpRC829K4sw9n3Q22bYOEwDnCo37zs9vjG+7F/97pf34sdEiOARFp2vr5ofA
-         CpDGk5OY5yq9zel17C4DDVe0KijNkCT3pF7EfhMBQKhscaHtOrnkWgrR4tuOTA3l0uJg
-         v53g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S+kqQcne43yBtKD0A4xPWMBbdtznaufs+fBWnD76mFs=;
-        b=BpKemf3blsSiV+rDy/FgAMpGp3qgp2s2f15xPIO6XcNUmfyIEyDx5BlqayjxIjmFWX
-         xq8OJfofuboFGkFz1N4IgDdn+7Tb506UZaOcIiJ/3PrmyodkMJCbuWt2AkC9bFkRqln2
-         SKKBRnMxka41rm8Uo7WWOPh/cBwqTaZi2Gpzb+2Ubt1TPw8eCjdx0TfXA1XhYzTS+Rn0
-         ZjBlOdFImjFfWEqg5y3gxZiVxfHfbK295lEwT0+fhjfbHIxrBn9tEUDCjn0OisCcRQlM
-         r4wGoaXQZ9te2UopG+CcD1ubBzEYwNTYVkzOav9queKeARh+ftrMaUcQ+Fx1qcXT7MbB
-         pRbw==
-X-Gm-Message-State: ABuFfojGmTUPjlACsvIiaDe4d0QaWOsLH+Y8MtFQbcs+Jn8vRl77fq5v
-        OVmkdUF3dWynAHg8J3vgAsZrYaoTkIRERTpWWqg=
-X-Google-Smtp-Source: ACcGV634pvV/ZWhB3UDnctkJjOFMmd9ukQLKaEzSLetJJIKIg3mkncIqeEzdntN3xC8i9P2UjxqRVSMTZCKzlQRqT3U=
-X-Received: by 2002:adf:f712:: with SMTP id r18-v6mr34293605wrp.85.1539960450696;
- Fri, 19 Oct 2018 07:47:30 -0700 (PDT)
+        Fri, 19 Oct 2018 18:54:58 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id EAE5461313; Fri, 19 Oct 2018 14:48:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539960510;
+        bh=f+9WH9lO0R/rp/E0M2s+lUPu334QwfiDFHKgp1lftCw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=VwYi+KJNp3bKjMv7bAmLh4wQQpENsgdhTnHktuu8KHJ/MixWxbY6cJdQ0MphEgFyy
+         7UQmJ2HdxmqMMqersSWO63c4NWYqjO43Evb3OkA6gjgMWKTXAELhfQsvjOkLK37XFR
+         UbKs+qHbOZzTykVU8t0mCWary82TQpMly4V4HpOQ=
+Received: from [192.168.43.47] (unknown [223.227.22.91])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 25B1F6028D;
+        Fri, 19 Oct 2018 14:48:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539960510;
+        bh=f+9WH9lO0R/rp/E0M2s+lUPu334QwfiDFHKgp1lftCw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=VwYi+KJNp3bKjMv7bAmLh4wQQpENsgdhTnHktuu8KHJ/MixWxbY6cJdQ0MphEgFyy
+         7UQmJ2HdxmqMMqersSWO63c4NWYqjO43Evb3OkA6gjgMWKTXAELhfQsvjOkLK37XFR
+         UbKs+qHbOZzTykVU8t0mCWary82TQpMly4V4HpOQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 25B1F6028D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        Geliang Tang <geliangtang@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pramod Gurav <gpramod@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+References: <472db11e-49a6-a1ee-e298-791ee1bbb10b@codeaurora.org>
+ <20181016141610.639b9000@gandalf.local.home>
+ <accdce6d-8fd2-9f15-d4cd-704cbf0b32eb@codeaurora.org>
+ <20181016144123.24c47b38@gandalf.local.home>
+ <7781815e-cba2-9e36-db6d-268298747876@codeaurora.org>
+ <20181016150328.3450d718@gandalf.local.home>
+ <c94103d2-ed5d-bf43-fc71-c60e108f303e@codeaurora.org>
+ <20181017223334.29ca2837@vmware.local.home>
+ <58d2474c-53cd-e6cb-2d25-db38d1a88da6@codeaurora.org>
+ <20181018091706.62310b38@gandalf.local.home>
+ <20181019041740.GB141835@joelaf.mtv.corp.google.com>
+ <8a75f2d5-f1bd-504e-b545-ae2e2f61ca8f@codeaurora.org>
+ <20181019095122.0f1c0946@gandalf.local.home>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <9cafe321-87f6-98a3-3bda-c2f7a3d7fc67@codeaurora.org>
+Date:   Fri, 19 Oct 2018 20:18:19 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181018005420.82993-1-namit@vmware.com> <20181018005420.82993-2-namit@vmware.com>
- <D247AB7C-2890-49CE-B102-163E5B368FC2@amacapital.net> <07255D2B-0243-4254-B62A-37050C44207E@vmware.com>
- <CALCETrXEG8OrMpB3VBS9RF41O_MwtPmXBazkdSGE0ohZmXDcBw@mail.gmail.com>
- <925F22EA-F8CB-4194-B96B-378409ED7918@vmware.com> <2626124E-7344-42F3-AD07-0BB34D62A9EE@amacapital.net>
- <6F1FD9DA-5E86-42A2-8EAF-05F5D70FE2EF@vmware.com> <CALCETrWjeqMs7Z6auStk9VGT9vAn+U5REGE+=TBv1Yh4kmOF3w@mail.gmail.com>
- <20181019050051.bs2kk4sagu7hpwxx@ast-mbp.dhcp.thefacebook.com> <20181019082202.GB3121@hirez.programming.kicks-ass.net>
-In-Reply-To: <20181019082202.GB3121@hirez.programming.kicks-ass.net>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Fri, 19 Oct 2018 07:47:18 -0700
-Message-ID: <CAADnVQ+et48gk7+gsJb5Wmp6pGuU3t=Yg5t73sKxPJOdbu8K8Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/5] x86: introduce preemption disable prefix
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andy Lutomirski <luto@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Roman Gushchin <guro@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181019095122.0f1c0946@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 1:22 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Thu, Oct 18, 2018 at 10:00:53PM -0700, Alexei Starovoitov wrote:
-> > >
-> > > >
-> > > > Another example is __BPF_PROG_RUN_ARRAY(), which also uses
-> > > > preempt_enable_no_resched().
-> > >
-> > > Alexei, I think this code is just wrong.
-> >
-> > why 'just wrong' ?
->
-> Because you lost a preemption point, this is a no-no.
->
-> >
-> > > Do you know why it uses
-> > > preempt_enable_no_resched()?
-> >
-> > dont recall precisely.
-> > we could be preemptable at the point where macro is called.
-> > I think the goal of no_resched was to avoid adding scheduling points
-> > where they didn't exist before just because a prog ran for few nsec.
-> > May be Daniel or Roman remember.
->
-> No, you did the exact opposite, where there previously was a preemption,
-> you just ate it. The band saw didn't get stopped in time, you loose your
-> hand etc..
+On 10/19/2018 7:21 PM, Steven Rostedt wrote:
+> On Fri, 19 Oct 2018 12:24:05 +0530
+> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
+> 
+>>>> Anyone see any problems here?
+>>>
+>>> This seems sane to me, he says in the other thread that he put 'notrace' to
+>>> the msm serial functions (which AIUI should prevent ftrace instrumentation)
+>>> and he still sees the issue.
+>>>    
+>>
+>> Yes I did add notrace to all functions in msm serial and checked the
+>> objdump to make sure that those were not instrumented, and yet the
+>> target crashed. This doesnt seem like an issue with ftrace but rather
+>> with msm early con.
+> 
+> The thing that still bothers me is that it boots fine without ftrace
+> running, and that it requires tracing something to cause the problem.
+> This tells me that ftrace has something to do with it. Perhaps it's
+> just changing the timing.
+> 
 
-Let me do few experiments then.
-We will fix it up.
+Yes tracing does cause issue but only if earlycon is present. If I 
+disable earlycon, then even tracing wont cause any issue and target 
+boots fine.
+
+> You said that if you add 'ftrace_filter=msm_read' to the command line,
+> it still crashes?
+> 
+> So only tracing that function we have an issue, right?
+> 
+
+Tracing msm_read does cause the crash, but that is not the only one 
+causing the crash because even after "ftrace_notrace=msm_read" the board 
+crashes which is why I suspect msm earlycon and not ftrace.
+
+Thanks,
+Sai
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
