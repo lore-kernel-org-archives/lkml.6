@@ -2,100 +2,67 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5450C67863
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 02:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF22C67863
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 02:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8890020645
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 02:06:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8890020645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 09DC320C0E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 02:07:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09DC320C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbeJSKKZ (ORCPT
+        id S1726982AbeJSKLG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 06:10:25 -0400
-Received: from mail.windriver.com ([147.11.1.11]:58761 "EHLO
-        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbeJSKKZ (ORCPT
+        Fri, 19 Oct 2018 06:11:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38274 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbeJSKLF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 06:10:25 -0400
-Received: from ALA-HCB.corp.ad.wrs.com ([147.11.189.41])
-        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id w9J263Jt010256
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Thu, 18 Oct 2018 19:06:03 -0700 (PDT)
-Received: from pek-lpg-core1-vm2.wrs.com (128.224.156.107) by
- ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 18 Oct 2018 19:06:02 -0700
-From:   Hongxu Jia <hongxu.jia@windriver.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>
-CC:     <kim.phillips@arm.com>, <brueckner@linux.ibm.com>,
-        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
-        <mpe@ellerman.id.au>, <peterz@infradead.org>,
-        <ravi.bangoria@linux.vnet.ibm.com>, <tmricht@linux.vnet.ibm.com>,
-        <acme@redhat.com>, <namhyung@kernel.org>,
-        <hongxu.jia@windriver.com>
-Subject: [PATCH V2] perf arm64: Fix generate system call table failed with /tmp mounted with noexec
-Date:   Fri, 19 Oct 2018 10:16:19 +0800
-Message-ID: <1539915379-11910-1-git-send-email-hongxu.jia@windriver.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1c6964d0-a7d2-83ef-16f2-bdf349e3f0af@gydle.com>
-References: <1c6964d0-a7d2-83ef-16f2-bdf349e3f0af@gydle.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 19 Oct 2018 06:11:05 -0400
+Received: from localhost.localdomain (c-24-4-154-175.hsd1.ca.comcast.net [24.4.154.175])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 55E42A64;
+        Fri, 19 Oct 2018 02:07:11 +0000 (UTC)
+Date:   Thu, 18 Oct 2018 19:07:10 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Mike Galbraith <efault@gmx.de>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 0/9] psi: pressure stall information for CPU, memory,
+ and IO v4
+Message-Id: <20181018190710.fcea1c5f9c3b0c15d37ee762@linux-foundation.org>
+In-Reply-To: <20180828172258.3185-1-hannes@cmpxchg.org>
+References: <20180828172258.3185-1-hannes@cmpxchg.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When /tmp is mounted with noexec, mksyscalltbl fails.
-[snip]
-|perf-1.0/tools/perf/arch/arm64/entry/syscalls//mksyscalltbl:
-/tmp/create-table-6VGPSt: Permission denied
-[snip]
+On Tue, 28 Aug 2018 13:22:49 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
 
-Add variable TMPDIR as prefix dir of the temporary file, if it is set,
-replace default /tmp
+> This version 4 of the PSI series incorporates feedback from Peter and
+> fixes two races in the lockless aggregator that Suren found in his
+> testing and which caused the sample calculation to sometimes underflow
+> and record bogusly large samples; details at the bottom of this email.
 
-Remove extra slash from `syscalls//mksyscalltbl'
-
-Fixes: 2b5882435606 ("perf arm64: Generate system call table from asm/unistd.h")
-
-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
----
- tools/perf/arch/arm64/Makefile                    | 2 +-
- tools/perf/arch/arm64/entry/syscalls/mksyscalltbl | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/arch/arm64/Makefile b/tools/perf/arch/arm64/Makefile
-index dbef716..bc2a284 100644
---- a/tools/perf/arch/arm64/Makefile
-+++ b/tools/perf/arch/arm64/Makefile
-@@ -13,7 +13,7 @@ out    := $(OUTPUT)arch/arm64/include/generated/asm
- header := $(out)/syscalls.c
- incpath := $(srctree)/tools
- sysdef := $(srctree)/tools/arch/arm64/include/uapi/asm/unistd.h
--sysprf := $(srctree)/tools/perf/arch/arm64/entry/syscalls/
-+sysprf := $(srctree)/tools/perf/arch/arm64/entry/syscalls
- systbl := $(sysprf)/mksyscalltbl
- 
- # Create output directory if not already present
-diff --git a/tools/perf/arch/arm64/entry/syscalls/mksyscalltbl b/tools/perf/arch/arm64/entry/syscalls/mksyscalltbl
-index 2dbb8cad..c88fd32 100755
---- a/tools/perf/arch/arm64/entry/syscalls/mksyscalltbl
-+++ b/tools/perf/arch/arm64/entry/syscalls/mksyscalltbl
-@@ -23,7 +23,7 @@ create_table_from_c()
- {
- 	local sc nr last_sc
- 
--	create_table_exe=`mktemp /tmp/create-table-XXXXXX`
-+	create_table_exe=`mktemp ${TMPDIR:-/tmp}/create-table-XXXXXX`
- 
- 	{
- 
--- 
-2.7.4
+We've had very little in the way of review activity for the PSI
+patchset.  According to the changelog tags, anyway.
 
