@@ -2,178 +2,128 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0519ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6746DECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 921F120869
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:10:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 921F120869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F53420869
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:11:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="Zhka//Sm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F53420869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbeJSXRG (ORCPT
+        id S1726944AbeJSXSU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 19:17:06 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54684 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726664AbeJSXRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 19:17:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A901A78;
-        Fri, 19 Oct 2018 08:10:35 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.80])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1534B3F71A;
-        Fri, 19 Oct 2018 08:10:31 -0700 (PDT)
-Date:   Fri, 19 Oct 2018 16:10:29 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Kristina Martsenko <kristina.martsenko@arm.com>
-Cc:     Mark Rutland <Mark.Rutland@arm.com>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        Andrew Jones <drjones@redhat.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Adam Wallis <awallis@codeaurora.org>,
-        Suzuki Poulose <Suzuki.Poulose@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Christoffer Dall <Christoffer.Dall@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
-        Amit Kachhap <Amit.Kachhap@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@foss.arm.com>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v5 11/17] arm64: docs: document pointer authentication
-Message-ID: <20181019151029.GD3985@arrakis.emea.arm.com>
-References: <20181005084754.20950-1-kristina.martsenko@arm.com>
- <20181005084754.20950-12-kristina.martsenko@arm.com>
- <9acb0cd2-66b0-1c41-b1a8-7c70608e9a9b@foss.arm.com>
- <7b0de19b-45b9-f4df-25d1-c7e80fab49dc@arm.com>
- <20181019113556.ljbdmjo5pdw7muvz@mbp>
- <e73035eb-2157-7a9c-3631-d4d2ad0b7d38@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e73035eb-2157-7a9c-3631-d4d2ad0b7d38@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 19 Oct 2018 19:18:20 -0400
+Received: from mta-p8.oit.umn.edu ([134.84.196.208]:56884 "EHLO
+        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726465AbeJSXST (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 19:18:19 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p8.oit.umn.edu (Postfix) with ESMTP id BB6C683A
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 15:11:47 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p8.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Shdtgeqzitm7 for <linux-kernel@vger.kernel.org>;
+        Fri, 19 Oct 2018 10:11:47 -0500 (CDT)
+Received: from mail-it1-f197.google.com (mail-it1-f197.google.com [209.85.166.197])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 8D069D12
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 10:11:47 -0500 (CDT)
+Received: by mail-it1-f197.google.com with SMTP id k69-v6so4073595ite.9
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 08:11:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=KiNkAMv4vigjZ1KFfGZFY57CAVsceXIlagVNUKEhWKw=;
+        b=Zhka//SmED2qrbLWPs1tc4W+mbNAKKC8sw+HdLMr+S94yZ3hUbtGXpL42n+/b2/ORp
+         OcGj8v6EWnHm1P0W2vbvzn+6MD5Rxlf05WIx9Tb9UypOkM6CThIg4wqzc74BBxrRzEPn
+         tXn3i5JMlJcGlxHKPNKX4MSWP7SO/jayQGABisTAaWrnz/mLhyQU+rbfhepo+woY8g/g
+         v8lb1UDnG3EcKbuR4s9f5OSyVaxfYhSOiOg3KojCdQbgMH3tvLJ8IbnVic98qHNZQpZn
+         TRUlYRXw0OzjAmWTOHgiSmbntegBEnht8h2n55uuEewzn1YTlBRJ7xkgAhrI+v9uFCkx
+         /JxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KiNkAMv4vigjZ1KFfGZFY57CAVsceXIlagVNUKEhWKw=;
+        b=ZoZUkRdlr/MJHATLDPiheXLgxUrZuC52liG60D7oC58kJHvwYoyLEbu6PQssKiilIg
+         jcLGTurkLT1/Cru2vVNVCE2MErzXcrRzb3Ng2yTRvrztznXlYKbY2Y1B57KHwJU+s2HT
+         9MS5j9e/VV/1Y3cFwpHbj+SzV/+YfmvvJH4ni+rUbIqE57x2eJ/0oQeQBuC0gFBbCkp8
+         ZVXEOOHDPs69HSCyxxGC+jHbu+tStX+bCMdIH0JyWVD2R1QLkjTdhAUCa94Ovtd9gxeR
+         pnu+mrntwzDMD7hw6R1IfgESk0OMrfoLqF0QSlGe2MBZ/RSrNiwE8X2jxBIowRkdyXMN
+         LpZg==
+X-Gm-Message-State: ABuFfoi6R3WrBB3KYDjilM3yx0ufbx+CnZJ6ITxCKMcE4m87+B4yoNYo
+        0f+zGvAoD+zQohElIXHEH70cvp8laK1Lt4cxI9bIdx6fvSY+vASCy8KGHIyJ5Rfa/Cidz8a7iHK
+        Ab1EyaUwYmqD5X699T4Ql4UvoarhF
+X-Received: by 2002:a05:660c:551:: with SMTP id w17mr3388311itk.63.1539961907005;
+        Fri, 19 Oct 2018 08:11:47 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV62wBmHCcdv09vcqxVpg6w2816s7zUCKM6bmq21FhDRvjGMlvK/8qOYoCiDcWw6OdIQgBDvjMQ==
+X-Received: by 2002:a05:660c:551:: with SMTP id w17mr3388300itk.63.1539961906812;
+        Fri, 19 Oct 2018 08:11:46 -0700 (PDT)
+Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
+        by smtp.gmail.com with ESMTPSA id z13-v6sm7264935ioj.86.2018.10.19.08.11.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 19 Oct 2018 08:11:45 -0700 (PDT)
+From:   Wenwen Wang <wang6495@umn.edu>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        Johannes Thumshirn <morbidrsa@gmail.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] mcb: fix a missing-check bug
+Date:   Fri, 19 Oct 2018 10:11:34 -0500
+Message-Id: <1539961894-11928-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 03:42:23PM +0100, Kristina Martsenko wrote:
-> On 19/10/2018 12:35, Catalin Marinas wrote:
-> > On Tue, Oct 16, 2018 at 05:14:39PM +0100, Kristina Martsenko wrote:
-> >> On 05/10/2018 10:04, Ramana Radhakrishnan wrote:
-> >>> On 05/10/2018 09:47, Kristina Martsenko wrote:
-> >>>> +Virtualization
-> >>>> +--------------
-> >>>> +
-> >>>> +Pointer authentication is not currently supported in KVM guests. KVM
-> >>>> +will mask the feature bits from ID_AA64ISAR1_EL1, and attempted use of
-> >>>> +the feature will result in an UNDEFINED exception being injected into
-> >>>> +the guest.
-> >>>
-> >>> However applications using instructions from the hint space will
-> >>> continue to work albeit without any protection (as they would just be
-> >>> nops) ?
-> >>
-> >> Mostly, yes. If the guest leaves SCTLR_EL1.EnIA unset (and
-> >> EnIB/EnDA/EnDB), then PAC* and AUT* instructions in the HINT space will
-> >> execute as NOPs. If the guest sets EnIA, then PAC*/AUT* instructions
-> >> will trap and KVM will inject an "Unknown reason" exception into the
-> >> guest (which will cause a Linux guest to send a SIGILL to the application).
-> > 
-> > I think that part is fine. If KVM (a fairly recent version with CPUID
-> > sanitisation) does not enable ptr auth, the CPUID should not advertise
-> > this feature either so the guest kernel should not enable it. For the
-> > above instructions in the HINT space, they will just be NOPs. If the
-> > guest kernel enables the feature regardless of the CPUID information, it
-> > deserves to get an "Unknown reason" exception.
-> > 
-> >> In the latter case we could instead pretend the instruction was a NOP
-> >> and not inject an exception, but trapping twice per every function would
-> >> probably be terrible for performance. The guest shouldn't be setting
-> >> EnIA anyway if ID_AA64ISAR1_EL1 reports that pointer authentication is
-> >> not present (because KVM has hidden it).
-> > 
-> > I don't think we should. The SCTLR_EL1 bits are RES0 unless you know
-> > that the feature is present via CPUID.
-> > 
-> >> The other special case is the XPACLRI instruction, which is also in the
-> >> HINT space. Currently it will trap and KVM will inject an exception into
-> >> the guest. We should probably change this to NOP instead, as that's what
-> >> applications will expect. Unfortunately there is no EnIA-like control to
-> >> make it NOP.
-> > 
-> > Very good catch. Basically if EL2 doesn't know about ptr auth (older
-> > distro), EL1 may or may not know but leaves SCTLR_EL1 disabled (based on
-> > CPUID), the default HCR_EL2 is to trap (I'm ignoring EL3 as that's like
-> > to have ptr auth enabled, being built for the specific HW). So a user
-> > app considering XPACLRI a NOP (or inoffensive) will get a SIGILL
-> > (injected by the guest kernel following the injection of "Unknown
-> > reason" exception by KVM).
-> > 
-> > Ramana, is XPACLRI commonly generated by gcc and expects it to be a NOP?
-> > Could we restrict it to only being used at run-time if the corresponding
-> > HWCAP is set? This means redefining this instruction as no longer in the
-> > NOP space.
-> 
-> I think an alternative solution is to just disable trapping of pointer
-> auth instructions in KVM. This will mean that the instructions will
-> behave the same in the guest as they do in the host. HINT-space
-> instructions (including XPACLRI) will behave as NOPs (or perform their
-> function, if enabled by the guest), and will not trap.
+In chameleon_parse_cells(), to parse each cell, the descriptor type 'dtype'
+is acquired from the IO memory region pointed by 'p' through readl() in
+get_next_dtype(). Then 'dtype' is checked to see whether it is
+CHAMELEON_DTYPE_GENERAL. If yes, chameleon_parse_gdd() is invoked to parse
+Chameleon general device descriptor. In chameleon_parse_gdd(), the data in
+the IO memory region is read again through readl() field by field.
+Specifically, the 'reg1' field contains the type information. That means
+the type is read twice. More importantly, no check is re-enforced after the
+second read. Given that the IO memory region can also be accessed by the
+device, it is possible that a malicious device controlled by an attacker
+can modify the type information between the two reads. This can cause
+undefined behavior of the kernel and introduce potential security risk.
 
-OK, so this means disabling the trap (during early EL2 setup) but still
-sanitizing the CPUID not to report the feature to EL1 unless fully
-supported on all CPUs.
+This patch adds a necessary check after the second read to make sure the
+descriptor type is CHAMELEON_DTYPE_GENERAL. Otherwise, an error code EINVAL
+will be returned.
 
-> A side effect of disabling trapping is that keys may effectively leak
-> from one guest to another, since one guest may set a key and another
-> guest may use an instruction that uses that key. But this can be fixed
-> by zeroing the keys every time we enter a guest. We can additionally
-> trap key accesses (which is separate from instruction trapping), to have
-> guests fail more reliably and avoid restoring host keys on guest exit.
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+---
+ drivers/mcb/mcb-parse.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Actually, if the CPUID doesn't report the feature present, do we care
-that a stupid guest writes some register and expects it to be preserved
-and not leaked?
-
-> Things still won't work well on big.LITTLE systems with mismatched
-> pointer auth support between CPUs, but as Marc pointed out in the other
-> email, we can just disable KVM on such systems when we detect a pointer
-> auth mismatch.
-
-If we ever see such system, we could follow the approach above - disable
-trapping at EL2 if the feature is present but do not report it to EL1
-via CPUID. A guest should not expect it to work properly.
-
-> If we want current stable kernels to support guests that use HINT-space
-> pointer auth instructions, we'll need to backport the above changes to
-> stable kernels as well.
-
-I agree.
-
-> Even if we restricted userspace to only use XPACLRI if the HWCAP is set,
-> current stable kernels would still not be able to handle the HINT-space
-> PAC/AUT instructions that GCC generates, if the guest is pointer auth
-> aware. None of the stable kernels have the CPUID sanitisation patches,
-> so the guest would enable pointer auth, which would cause the PAC/AUT
-> instructions to trap.
-
-Ah, CPUID sanitisation would have to be backported as well. We can
-probably get away with something simpler which does not sanitise
-big.LITTLE (and I would not expect "enterprise" big.LITTLE machines) but
-simply cap/mask the CPUID to what is known to the respective kernel
-version. That shouldn't be too intrusive.
-
+diff --git a/drivers/mcb/mcb-parse.c b/drivers/mcb/mcb-parse.c
+index 7369bda..f01a6c7 100644
+--- a/drivers/mcb/mcb-parse.c
++++ b/drivers/mcb/mcb-parse.c
+@@ -51,6 +51,10 @@ static int chameleon_parse_gdd(struct mcb_bus *bus,
+ 		return -ENOMEM;
+ 
+ 	reg1 = readl(&gdd->reg1);
++	if ((reg1 >> 28) != CHAMELEON_DTYPE_GENERAL) {
++		ret = -EINVAL;
++		goto err;
++	}
+ 	reg2 = readl(&gdd->reg2);
+ 	offset = readl(&gdd->offset);
+ 	size = readl(&gdd->size);
 -- 
-Catalin
+2.7.4
+
