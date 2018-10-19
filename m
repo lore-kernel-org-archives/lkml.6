@@ -6,54 +6,56 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B23FECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:26:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8DCEECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F15A214C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:26:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8222C2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:26:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="mAxIYIyZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F15A214C2
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="kWdHd5RA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8222C2148E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727487AbeJSUcm (ORCPT
+        id S1727516AbeJSUcr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:32:42 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38996 "EHLO
+        Fri, 19 Oct 2018 16:32:47 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39210 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727405AbeJSUck (ORCPT
+        with ESMTP id S1727178AbeJSUcr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:32:40 -0400
+        Fri, 19 Oct 2018 16:32:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=NOtCaKC5fv900rZWcbtBdHBaxAa1HR+cqs+gWnO8H4k=; b=mAxIYIyZPESi
-        uK5nscUKkrSSm2dBTVrQ9uYbpuBHHqlZydRFWcFrMDeC8ofw8Q1+Cr7qHvDlhFozS+OpOmfSUqpZM
-        ScaqezJFxj1FPWDghGwLvQ1snhzO5fEwlC2U7TbajcmaG9Su7RDikj9xxzZ5IjORZ6JlERN0ocgOr
-        TpJiQ=;
+        List-Archive; bh=6axTDiC61E5CJx72mInLurSdmAEzh+NXIJ8XCGh32+A=; b=kWdHd5RAEB+9
+        XiOf96+9OPq+ij7Lezd9TXHQQBUWnBEdvt9K50n/sMdryYRg/SmFVahaIbHvaxRZMvqip5/KOBGA6
+        gpHMGSHtw5uI5SWWzPnj3ys9QDFFaADXeQxGeEjVk2j2ddaAizO6UJwt/fd8XmCAzRKfNcYVUvt/i
+        B/g/s=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gDTrR-0008Uq-1W; Fri, 19 Oct 2018 12:26:37 +0000
+        id 1gDTqy-0008UG-Dc; Fri, 19 Oct 2018 12:26:08 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id B10F41122548; Fri, 19 Oct 2018 13:26:36 +0100 (BST)
+        id 26E211122548; Fri, 19 Oct 2018 13:26:08 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiri Kosina <trivial@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+To:     Olivier Moysan <olivier.moysan@st.com>
+Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        alsa-devel@alsa-project.org, robh@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-kernel@vger.kernel.org, olivier.moysan@st.com,
+        arnaud.pouliquen@st.com, benjamin.gaignard@st.com,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: soc-core: fix trivial checkpatch issues" to the asoc tree
-In-Reply-To:  <20181018111829.27056-3-marcel@ziswiler.com>
-Message-Id: <20181019122636.B10F41122548@debutante.sirena.org.uk>
-Date:   Fri, 19 Oct 2018 13:26:36 +0100 (BST)
+Subject: Applied "ASoC: stm32: sai: set sai as mclk clock provider" to the asoc tree
+In-Reply-To:  <1539612216-12602-4-git-send-email-olivier.moysan@st.com>
+Message-Id: <20181019122608.26E211122548@debutante.sirena.org.uk>
+Date:   Fri, 19 Oct 2018 13:26:08 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +63,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: soc-core: fix trivial checkpatch issues
+   ASoC: stm32: sai: set sai as mclk clock provider
 
 has been applied to the asoc tree at
 
@@ -86,510 +88,422 @@ to this mail.
 Thanks,
 Mark
 
-From 2c7b696a7589ab14854c132dc732973fbd498d5a Mon Sep 17 00:00:00 2001
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Date: Thu, 18 Oct 2018 13:18:28 +0200
-Subject: [PATCH] ASoC: soc-core: fix trivial checkpatch issues
+From 8307b2afd386ccce369821daa2196068c47fe8cd Mon Sep 17 00:00:00 2001
+From: Olivier Moysan <olivier.moysan@st.com>
+Date: Mon, 15 Oct 2018 16:03:35 +0200
+Subject: [PATCH] ASoC: stm32: sai: set sai as mclk clock provider
 
-Fix a few trivial aka cosmetic only checkpatch issues like long lines,
-wrong indentations, spurious blanks and newlines, missing newlines,
-multi-line comments etc.
+Add master clock generation support in STM32 SAI.
+The master clock provided by SAI can be used to feed a codec.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-core.c | 146 ++++++++++++++++++++++++++-----------------
- 1 file changed, 88 insertions(+), 58 deletions(-)
+ sound/soc/stm/stm32_sai.h     |   3 +
+ sound/soc/stm/stm32_sai_sub.c | 275 +++++++++++++++++++++++++++++-----
+ 2 files changed, 242 insertions(+), 36 deletions(-)
 
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 62e8e36062df..6ddcf12bc030 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -66,8 +66,9 @@ static int pmdown_time = 5000;
- module_param(pmdown_time, int, 0);
- MODULE_PARM_DESC(pmdown_time, "DAPM stream powerdown time (msecs)");
+diff --git a/sound/soc/stm/stm32_sai.h b/sound/soc/stm/stm32_sai.h
+index f25422174909..08de899c766b 100644
+--- a/sound/soc/stm/stm32_sai.h
++++ b/sound/soc/stm/stm32_sai.h
+@@ -91,6 +91,9 @@
+ #define SAI_XCR1_OSR_SHIFT	26
+ #define SAI_XCR1_OSR		BIT(SAI_XCR1_OSR_SHIFT)
  
--/* If a DMI filed contain strings in this blacklist (e.g.
-- * "Type2 - Board Manufacturer" or  "Type1 - TBD by OEM"), it will be taken
-+/*
-+ * If a DMI filed contain strings in this blacklist (e.g.
-+ * "Type2 - Board Manufacturer" or "Type1 - TBD by OEM"), it will be taken
-  * as invalid and dropped when setting the card long name from DMI info.
-  */
- static const char * const dmi_blacklist[] = {
-@@ -222,7 +223,7 @@ static void soc_init_card_debugfs(struct snd_soc_card *card)
- 						    &card->pop_time);
- 	if (!card->debugfs_pop_time)
- 		dev_warn(card->dev,
--		       "ASoC: Failed to create pop time debugfs file\n");
-+			 "ASoC: Failed to create pop time debugfs file\n");
- }
- 
- static void soc_cleanup_card_debugfs(struct snd_soc_card *card)
-@@ -426,7 +427,8 @@ EXPORT_SYMBOL_GPL(snd_soc_get_pcm_runtime);
- 
- static void codec2codec_close_delayed_work(struct work_struct *work)
- {
--	/* Currently nothing to do for c2c links
-+	/*
-+	 * Currently nothing to do for c2c links
- 	 * Since c2c links are internal nodes in the DAPM graph and
- 	 * don't interface with the outside world or application layer
- 	 * we don't have to do any special handling on close.
-@@ -446,8 +448,9 @@ int snd_soc_suspend(struct device *dev)
- 	if (!card->instantiated)
- 		return 0;
- 
--	/* Due to the resume being scheduled into a workqueue we could
--	* suspend before that's finished - wait for it to complete.
-+	/*
-+	 * Due to the resume being scheduled into a workqueue we could
-+	 * suspend before that's finished - wait for it to complete.
- 	 */
- 	snd_power_wait(card->snd_card, SNDRV_CTL_POWER_D0);
- 
-@@ -514,10 +517,13 @@ int snd_soc_suspend(struct device *dev)
- 
- 	/* suspend all COMPONENTs */
- 	for_each_card_components(card, component) {
--		struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
-+		struct snd_soc_dapm_context *dapm =
-+				snd_soc_component_get_dapm(component);
- 
--		/* If there are paths active then the COMPONENT will be held with
--		 * bias _ON and should not be suspended. */
-+		/*
-+		 * If there are paths active then the COMPONENT will be held
-+		 * with bias _ON and should not be suspended.
-+		 */
- 		if (!component->suspended) {
- 			switch (snd_soc_dapm_get_bias_level(dapm)) {
- 			case SND_SOC_BIAS_STANDBY:
-@@ -571,18 +577,21 @@ int snd_soc_suspend(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(snd_soc_suspend);
- 
--/* deferred resume work, so resume can complete before we finished
-+/*
-+ * deferred resume work, so resume can complete before we finished
-  * setting our codec back up, which can be very slow on I2C
-  */
- static void soc_resume_deferred(struct work_struct *work)
- {
- 	struct snd_soc_card *card =
--			container_of(work, struct snd_soc_card, deferred_resume_work);
-+			container_of(work, struct snd_soc_card,
-+				     deferred_resume_work);
- 	struct snd_soc_pcm_runtime *rtd;
- 	struct snd_soc_component *component;
- 	int i;
- 
--	/* our power state is still SNDRV_CTL_POWER_D3hot from suspend time,
-+	/*
-+	 * our power state is still SNDRV_CTL_POWER_D3hot from suspend time,
- 	 * so userspace apps are blocked from touching us
- 	 */
- 
-@@ -699,6 +708,7 @@ int snd_soc_resume(struct device *dev)
- 	 */
- 	for_each_card_rtds(card, rtd) {
- 		struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
++#define SAI_XCR1_MCKEN_SHIFT	27
++#define SAI_XCR1_MCKEN		BIT(SAI_XCR1_MCKEN_SHIFT)
 +
- 		bus_control |= cpu_dai->driver->bus_control;
- 	}
- 	if (bus_control) {
-@@ -777,7 +787,7 @@ struct snd_soc_dai *snd_soc_find_dai(
+ /******************* Bit definition for SAI_XCR2 register *******************/
+ #define SAI_XCR2_FTH_SHIFT	0
+ #define SAI_XCR2_FTH_MASK	GENMASK(2, SAI_XCR2_FTH_SHIFT)
+diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
+index 56a227e0bd71..31d22abd3204 100644
+--- a/sound/soc/stm/stm32_sai_sub.c
++++ b/sound/soc/stm/stm32_sai_sub.c
+@@ -17,6 +17,7 @@
+  */
  
- 	lockdep_assert_held(&client_mutex);
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of_irq.h>
+@@ -68,6 +69,8 @@
+ #define SAI_IEC60958_BLOCK_FRAMES	192
+ #define SAI_IEC60958_STATUS_BYTES	24
  
--	/* Find CPU DAI from registered DAIs*/
-+	/* Find CPU DAI from registered DAIs */
- 	for_each_component(component) {
- 		if (!snd_soc_is_matching_component(dlc, component))
- 			continue;
-@@ -795,7 +805,6 @@ struct snd_soc_dai *snd_soc_find_dai(
- }
- EXPORT_SYMBOL_GPL(snd_soc_find_dai);
- 
--
++#define SAI_MCLK_NAME_LEN		32
++
  /**
-  * snd_soc_find_dai_link - Find a DAI link
-  *
-@@ -918,7 +927,7 @@ static int soc_bind_dai_link(struct snd_soc_card *card,
+  * struct stm32_sai_sub_data - private data of SAI sub block (block A or B)
+  * @pdev: device data pointer
+@@ -80,6 +83,7 @@
+  * @pdata: SAI block parent data pointer
+  * @np_sync_provider: synchronization provider node
+  * @sai_ck: kernel clock feeding the SAI clock generator
++ * @sai_mclk: master clock from SAI mclk provider
+  * @phys_addr: SAI registers physical base address
+  * @mclk_rate: SAI block master clock frequency (Hz). set at init
+  * @id: SAI sub block id corresponding to sub-block A or B
+@@ -110,6 +114,7 @@ struct stm32_sai_sub_data {
+ 	struct stm32_sai_data *pdata;
+ 	struct device_node *np_sync_provider;
+ 	struct clk *sai_ck;
++	struct clk *sai_mclk;
+ 	dma_addr_t phys_addr;
+ 	unsigned int mclk_rate;
+ 	unsigned int id;
+@@ -251,6 +256,177 @@ static const struct snd_kcontrol_new iec958_ctls = {
+ 	.put = snd_pcm_iec958_put,
+ };
  
- _err_defer:
- 	soc_free_pcm_runtime(rtd);
--	return  -EPROBE_DEFER;
-+	return -EPROBE_DEFER;
- }
- 
- static void soc_remove_component(struct snd_soc_component *component)
-@@ -1074,7 +1083,7 @@ static int snd_soc_init_multicodec(struct snd_soc_card *card,
- }
- 
- static int soc_init_dai_link(struct snd_soc_card *card,
--				   struct snd_soc_dai_link *link)
-+			     struct snd_soc_dai_link *link)
- {
- 	int i, ret;
- 	struct snd_soc_dai_link_component *codec;
-@@ -1148,7 +1157,8 @@ static int soc_init_dai_link(struct snd_soc_card *card,
- 
- void snd_soc_disconnect_sync(struct device *dev)
- {
--	struct snd_soc_component *component = snd_soc_lookup_component(dev, NULL);
-+	struct snd_soc_component *component =
-+			snd_soc_lookup_component(dev, NULL);
- 
- 	if (!component || !component->card)
- 		return;
-@@ -1179,7 +1189,8 @@ int snd_soc_add_dai_link(struct snd_soc_card *card,
- 	}
- 
- 	lockdep_assert_held(&client_mutex);
--	/* Notify the machine driver for extra initialization
++struct stm32_sai_mclk_data {
++	struct clk_hw hw;
++	unsigned long freq;
++	struct stm32_sai_sub_data *sai_data;
++};
++
++#define to_mclk_data(_hw) container_of(_hw, struct stm32_sai_mclk_data, hw)
++#define STM32_SAI_MAX_CLKS 1
++
++static int stm32_sai_get_clk_div(struct stm32_sai_sub_data *sai,
++				 unsigned long input_rate,
++				 unsigned long output_rate)
++{
++	int version = sai->pdata->conf->version;
++	int div;
++
++	div = DIV_ROUND_CLOSEST(input_rate, output_rate);
++	if (div > SAI_XCR1_MCKDIV_MAX(version)) {
++		dev_err(&sai->pdev->dev, "Divider %d out of range\n", div);
++		return -EINVAL;
++	}
++	dev_dbg(&sai->pdev->dev, "SAI divider %d\n", div);
++
++	if (input_rate % div)
++		dev_dbg(&sai->pdev->dev,
++			"Rate not accurate. requested (%ld), actual (%ld)\n",
++			output_rate, input_rate / div);
++
++	return div;
++}
++
++static int stm32_sai_set_clk_div(struct stm32_sai_sub_data *sai,
++				 unsigned int div)
++{
++	int version = sai->pdata->conf->version;
++	int ret, cr1, mask;
++
++	if (div > SAI_XCR1_MCKDIV_MAX(version)) {
++		dev_err(&sai->pdev->dev, "Divider %d out of range\n", div);
++		return -EINVAL;
++	}
++
++	mask = SAI_XCR1_MCKDIV_MASK(SAI_XCR1_MCKDIV_WIDTH(version));
++	cr1 = SAI_XCR1_MCKDIV_SET(div);
++	ret = regmap_update_bits(sai->regmap, STM_SAI_CR1_REGX, mask, cr1);
++	if (ret < 0)
++		dev_err(&sai->pdev->dev, "Failed to update CR1 register\n");
++
++	return ret;
++}
++
++static long stm32_sai_mclk_round_rate(struct clk_hw *hw, unsigned long rate,
++				      unsigned long *prate)
++{
++	struct stm32_sai_mclk_data *mclk = to_mclk_data(hw);
++	struct stm32_sai_sub_data *sai = mclk->sai_data;
++	int div;
++
++	div = stm32_sai_get_clk_div(sai, *prate, rate);
++	if (div < 0)
++		return div;
++
++	mclk->freq = *prate / div;
++
++	return mclk->freq;
++}
++
++static unsigned long stm32_sai_mclk_recalc_rate(struct clk_hw *hw,
++						unsigned long parent_rate)
++{
++	struct stm32_sai_mclk_data *mclk = to_mclk_data(hw);
++
++	return mclk->freq;
++}
++
++static int stm32_sai_mclk_set_rate(struct clk_hw *hw, unsigned long rate,
++				   unsigned long parent_rate)
++{
++	struct stm32_sai_mclk_data *mclk = to_mclk_data(hw);
++	struct stm32_sai_sub_data *sai = mclk->sai_data;
++	unsigned int div;
++	int ret;
++
++	div = stm32_sai_get_clk_div(sai, parent_rate, rate);
++	if (div < 0)
++		return div;
++
++	ret = stm32_sai_set_clk_div(sai, div);
++	if (ret)
++		return ret;
++
++	mclk->freq = rate;
++
++	return 0;
++}
++
++static int stm32_sai_mclk_enable(struct clk_hw *hw)
++{
++	struct stm32_sai_mclk_data *mclk = to_mclk_data(hw);
++	struct stm32_sai_sub_data *sai = mclk->sai_data;
++
++	dev_dbg(&sai->pdev->dev, "Enable master clock\n");
++
++	return regmap_update_bits(sai->regmap, STM_SAI_CR1_REGX,
++				  SAI_XCR1_MCKEN, SAI_XCR1_MCKEN);
++}
++
++static void stm32_sai_mclk_disable(struct clk_hw *hw)
++{
++	struct stm32_sai_mclk_data *mclk = to_mclk_data(hw);
++	struct stm32_sai_sub_data *sai = mclk->sai_data;
++
++	dev_dbg(&sai->pdev->dev, "Disable master clock\n");
++
++	regmap_update_bits(sai->regmap, STM_SAI_CR1_REGX, SAI_XCR1_MCKEN, 0);
++}
++
++static const struct clk_ops mclk_ops = {
++	.enable = stm32_sai_mclk_enable,
++	.disable = stm32_sai_mclk_disable,
++	.recalc_rate = stm32_sai_mclk_recalc_rate,
++	.round_rate = stm32_sai_mclk_round_rate,
++	.set_rate = stm32_sai_mclk_set_rate,
++};
++
++static int stm32_sai_add_mclk_provider(struct stm32_sai_sub_data *sai)
++{
++	struct clk_hw *hw;
++	struct stm32_sai_mclk_data *mclk;
++	struct device *dev = &sai->pdev->dev;
++	const char *pname = __clk_get_name(sai->sai_ck);
++	char *mclk_name, *p, *s = (char *)pname;
++	int ret, i = 0;
++
++	mclk = devm_kzalloc(dev, sizeof(mclk), GFP_KERNEL);
++	if (!mclk)
++		return -ENOMEM;
++
++	mclk_name = devm_kcalloc(dev, sizeof(char),
++				 SAI_MCLK_NAME_LEN, GFP_KERNEL);
++	if (!mclk_name)
++		return -ENOMEM;
++
 +	/*
-+	 * Notify the machine driver for extra initialization
- 	 * on the link created by topology.
- 	 */
- 	if (dai_link->dobj.type && card->add_dai_link)
-@@ -1214,7 +1225,8 @@ void snd_soc_remove_dai_link(struct snd_soc_card *card,
- 	}
- 
- 	lockdep_assert_held(&client_mutex);
--	/* Notify the machine driver for extra destruction
-+	/*
-+	 * Notify the machine driver for extra destruction
- 	 * on the link created by topology.
- 	 */
- 	if (dai_link->dobj.type && card->remove_dai_link)
-@@ -1274,7 +1286,8 @@ static void soc_set_name_prefix(struct snd_soc_card *card,
- static int soc_probe_component(struct snd_soc_card *card,
- 	struct snd_soc_component *component)
++	 * Forge mclk clock name from parent clock name and suffix.
++	 * String after "_" char is stripped in parent name.
++	 */
++	p = mclk_name;
++	while (*s && *s != '_' && (i < (SAI_MCLK_NAME_LEN - 6))) {
++		*p++ = *s++;
++		i++;
++	}
++	STM_SAI_IS_SUB_A(sai) ?
++		strncat(p, "a_mclk", 6) : strncat(p, "b_mclk", 6);
++
++	mclk->hw.init = CLK_HW_INIT(mclk_name, pname, &mclk_ops, 0);
++	mclk->sai_data = sai;
++	hw = &mclk->hw;
++
++	dev_dbg(dev, "Register master clock %s\n", mclk_name);
++	ret = devm_clk_hw_register(&sai->pdev->dev, hw);
++	if (ret) {
++		dev_err(dev, "mclk register returned %d\n", ret);
++		return ret;
++	}
++	sai->sai_mclk = hw->clk;
++
++	/* register mclk provider */
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
++}
++
+ static irqreturn_t stm32_sai_isr(int irq, void *devid)
  {
--	struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
-+	struct snd_soc_dapm_context *dapm =
-+			snd_soc_component_get_dapm(component);
- 	struct snd_soc_dai *dai;
+ 	struct stm32_sai_sub_data *sai = (struct stm32_sai_sub_data *)devid;
+@@ -312,15 +488,25 @@ static int stm32_sai_set_sysclk(struct snd_soc_dai *cpu_dai,
+ 	struct stm32_sai_sub_data *sai = snd_soc_dai_get_drvdata(cpu_dai);
  	int ret;
  
-@@ -1406,8 +1419,7 @@ static int soc_post_component_init(struct snd_soc_pcm_runtime *rtd,
- }
+-	if ((dir == SND_SOC_CLOCK_OUT) && sai->master) {
++	if (dir == SND_SOC_CLOCK_OUT) {
+ 		ret = regmap_update_bits(sai->regmap, STM_SAI_CR1_REGX,
+ 					 SAI_XCR1_NODIV,
+ 					 (unsigned int)~SAI_XCR1_NODIV);
+ 		if (ret < 0)
+ 			return ret;
  
- static int soc_probe_link_components(struct snd_soc_card *card,
--			struct snd_soc_pcm_runtime *rtd,
--				     int order)
-+				     struct snd_soc_pcm_runtime *rtd, int order)
- {
- 	struct snd_soc_component *component;
- 	struct snd_soc_rtdcom_list *rtdcom;
-@@ -1434,6 +1446,7 @@ static int soc_probe_dai(struct snd_soc_dai *dai, int order)
- 
- 	if (dai->driver->probe) {
- 		int ret = dai->driver->probe(dai);
+-		sai->mclk_rate = freq;
+ 		dev_dbg(cpu_dai->dev, "SAI MCLK frequency is %uHz\n", freq);
++		sai->mclk_rate = freq;
 +
- 		if (ret < 0) {
- 			dev_err(dai->dev, "ASoC: failed to probe DAI %s: %d\n",
- 				dai->name, ret);
-@@ -1541,7 +1554,7 @@ static int soc_probe_link_dais(struct snd_soc_card *card,
++		if (sai->sai_mclk) {
++			ret = clk_set_rate_exclusive(sai->sai_mclk,
++						     sai->mclk_rate);
++			if (ret) {
++				dev_err(cpu_dai->dev,
++					"Could not set mclk rate\n");
++				return ret;
++			}
++		}
  	}
  
- 	if (cpu_dai->driver->compress_new) {
--		/*create compress_device"*/
-+		/* create compress_device" */
- 		ret = cpu_dai->driver->compress_new(rtd, num);
- 		if (ret < 0) {
- 			dev_err(card->dev, "ASoC: can't create compress %s\n",
-@@ -1555,7 +1568,7 @@ static int soc_probe_link_dais(struct snd_soc_card *card,
- 			ret = soc_new_pcm(rtd, num);
- 			if (ret < 0) {
- 				dev_err(card->dev, "ASoC: can't create pcm %s :%d\n",
--				       dai_link->stream_name, ret);
-+					dai_link->stream_name, ret);
- 				return ret;
- 			}
- 			ret = soc_link_dai_pcm_new(&cpu_dai, 1, rtd);
-@@ -1683,8 +1696,10 @@ int snd_soc_runtime_set_dai_fmt(struct snd_soc_pcm_runtime *rtd,
- 		}
- 	}
- 
--	/* Flip the polarity for the "CPU" end of a CODEC<->CODEC link */
--	/* the component which has non_legacy_dai_naming is Codec */
-+	/*
-+	 * Flip the polarity for the "CPU" end of a CODEC<->CODEC link
-+	 * the component which has non_legacy_dai_naming is Codec
-+	 */
- 	if (cpu_dai->component->driver->non_legacy_dai_naming) {
- 		unsigned int inv_dai_fmt;
- 
-@@ -1718,9 +1733,9 @@ int snd_soc_runtime_set_dai_fmt(struct snd_soc_pcm_runtime *rtd,
- }
- EXPORT_SYMBOL_GPL(snd_soc_runtime_set_dai_fmt);
- 
--
- #ifdef CONFIG_DMI
--/* Trim special characters, and replace '-' with '_' since '-' is used to
-+/*
-+ * Trim special characters, and replace '-' with '_' since '-' is used to
-  * separate different DMI fields in the card long name. Only number and
-  * alphabet characters and a few separator characters are kept.
-  */
-@@ -1739,7 +1754,8 @@ static void cleanup_dmi_name(char *name)
- 	name[j] = '\0';
- }
- 
--/* Check if a DMI field is valid, i.e. not containing any string
-+/*
-+ * Check if a DMI field is valid, i.e. not containing any string
-  * in the black list.
-  */
- static int is_dmi_valid(const char *field)
-@@ -1802,7 +1818,6 @@ int snd_soc_set_dmi_name(struct snd_soc_card *card, const char *flavour)
- 		return 0;
- 	}
- 
--
- 	snprintf(card->dmi_longname, sizeof(card->snd_card->longname),
- 			 "%s", vendor);
- 	cleanup_dmi_name(card->dmi_longname);
-@@ -1818,7 +1833,8 @@ int snd_soc_set_dmi_name(struct snd_soc_card *card, const char *flavour)
- 		if (len < longname_buf_size)
- 			cleanup_dmi_name(card->dmi_longname + len);
- 
--		/* some vendors like Lenovo may only put a self-explanatory
-+		/*
-+		 * some vendors like Lenovo may only put a self-explanatory
- 		 * name in the product version field
- 		 */
- 		product_version = dmi_get_system_info(DMI_PRODUCT_VERSION);
-@@ -1914,7 +1930,8 @@ static void soc_check_tplg_fes(struct snd_soc_card *card)
- 			dai_link->be_hw_params_fixup =
- 				component->driver->be_hw_params_fixup;
- 
--			/* most BE links don't set stream name, so set it to
-+			/*
-+			 * most BE links don't set stream name, so set it to
- 			 * dai link name if it's NULL to help bind widgets.
- 			 */
- 			if (!dai_link->stream_name)
-@@ -1924,7 +1941,7 @@ static void soc_check_tplg_fes(struct snd_soc_card *card)
- 		/* Inform userspace we are using alternate topology */
- 		if (component->driver->topology_name_prefix) {
- 
--			/* topology shortname created ? */
-+			/* topology shortname created? */
- 			if (!card->topology_shortname_created) {
- 				comp_drv = component->driver;
- 
-@@ -2029,7 +2046,8 @@ static int snd_soc_instantiate_card(struct snd_soc_card *card)
- 	if (ret < 0)
- 		goto probe_dai_err;
- 
--	/* Find new DAI links added during probing components and bind them.
-+	/*
-+	 * Find new DAI links added during probing components and bind them.
- 	 * Components with topology may bring new DAIs and DAI links.
- 	 */
- 	for_each_card_links(card, dai_link) {
-@@ -2061,7 +2079,8 @@ static int snd_soc_instantiate_card(struct snd_soc_card *card)
- 	snd_soc_dapm_connect_dai_link_widgets(card);
- 
- 	if (card->controls)
--		snd_soc_add_card_controls(card, card->controls, card->num_controls);
-+		snd_soc_add_card_controls(card, card->controls,
-+					  card->num_controls);
- 
- 	if (card->dapm_routes)
- 		snd_soc_dapm_add_routes(&card->dapm, card->dapm_routes,
-@@ -2207,8 +2226,10 @@ int snd_soc_poweroff(struct device *dev)
- 	if (!card->instantiated)
- 		return 0;
- 
--	/* Flush out pmdown_time work - we actually do want to run it
--	 * now, we're shutting down so no imminent restart. */
-+	/*
-+	 * Flush out pmdown_time work - we actually do want to run it
-+	 * now, we're shutting down so no imminent restart.
-+	 */
- 	for_each_card_rtds(card, rtd)
- 		flush_delayed_work(&rtd->delayed_work);
- 
-@@ -2301,6 +2322,7 @@ static int snd_soc_add_controls(struct snd_card *card, struct device *dev,
- 
- 	for (i = 0; i < num_controls; i++) {
- 		const struct snd_kcontrol_new *control = &controls[i];
-+
- 		err = snd_ctl_add(card, snd_soc_cnew(control, data,
- 						     control->name, prefix));
- 		if (err < 0) {
-@@ -2418,8 +2440,9 @@ EXPORT_SYMBOL_GPL(snd_soc_dai_set_sysclk);
-  *
-  * Configures the CODEC master (MCLK) or system (SYSCLK) clocking.
-  */
--int snd_soc_component_set_sysclk(struct snd_soc_component *component, int clk_id,
--			     int source, unsigned int freq, int dir)
-+int snd_soc_component_set_sysclk(struct snd_soc_component *component,
-+				 int clk_id, int source, unsigned int freq,
-+				 int dir)
+ 	return 0;
+@@ -715,15 +901,9 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
  {
- 	if (component->driver->set_sysclk)
- 		return component->driver->set_sysclk(component, clk_id, source,
-@@ -2487,7 +2510,7 @@ int snd_soc_component_set_pll(struct snd_soc_component *component, int pll_id,
- {
- 	if (component->driver->set_pll)
- 		return component->driver->set_pll(component, pll_id, source,
--					      freq_in, freq_out);
-+						  freq_in, freq_out);
+ 	struct stm32_sai_sub_data *sai = snd_soc_dai_get_drvdata(cpu_dai);
+ 	int cr1, mask, div = 0;
+-	int sai_clk_rate, mclk_ratio, den, ret;
+-	int version = sai->pdata->conf->version;
++	int sai_clk_rate, mclk_ratio, den;
+ 	unsigned int rate = params_rate(params);
  
- 	return -EINVAL;
- }
-@@ -2533,8 +2556,8 @@ EXPORT_SYMBOL_GPL(snd_soc_dai_set_fmt);
-  * Generates the TDM tx and rx slot default masks for DAI.
-  */
- static int snd_soc_xlate_tdm_slot_mask(unsigned int slots,
--					  unsigned int *tx_mask,
--					  unsigned int *rx_mask)
-+				       unsigned int *tx_mask,
-+				       unsigned int *rx_mask)
- {
- 	if (*tx_mask || *rx_mask)
- 		return 0;
-@@ -2684,7 +2707,7 @@ static int snd_soc_bind_card(struct snd_soc_card *card)
- 		return ret;
- 
- 	/* deactivate pins to sleep state */
--	for_each_card_rtds(card, rtd)  {
-+	for_each_card_rtds(card, rtd) {
- 		struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
- 		struct snd_soc_dai *codec_dai;
- 		int j;
-@@ -2799,7 +2822,7 @@ static char *fmt_single_name(struct device *dev, int *id)
- 		}
- 
- 	} else {
--		/* I2C component devices are named "bus-addr"  */
-+		/* I2C component devices are named "bus-addr" */
- 		if (sscanf(name, "%x-%x", &id1, &id2) == 2) {
- 			char tmp[NAME_SIZE];
- 
-@@ -2807,7 +2830,8 @@ static char *fmt_single_name(struct device *dev, int *id)
- 			*id = ((id1 & 0xffff) << 16) + id2;
- 
- 			/* sanitize component name for DAI link creation */
--			snprintf(tmp, NAME_SIZE, "%s.%s", dev->driver->name, name);
-+			snprintf(tmp, NAME_SIZE, "%s.%s", dev->driver->name,
-+				 name);
- 			strlcpy(name, tmp, NAME_SIZE);
- 		} else
- 			*id = 0;
-@@ -2874,7 +2898,7 @@ static struct snd_soc_dai *soc_add_dai(struct snd_soc_component *component,
- 	 * component-less anymore.
- 	 */
- 	if (legacy_dai_naming &&
--	   (dai_drv->id == 0 || dai_drv->name == NULL)) {
-+	    (dai_drv->id == 0 || dai_drv->name == NULL)) {
- 		dai->name = fmt_single_name(dev, &dai->id);
- 	} else {
- 		dai->name = fmt_multiple_name(dev, dai_drv);
-@@ -2910,7 +2934,8 @@ static struct snd_soc_dai *soc_add_dai(struct snd_soc_component *component,
-  * @count: Number of DAIs
-  */
- static int snd_soc_register_dais(struct snd_soc_component *component,
--				 struct snd_soc_dai_driver *dai_drv, size_t count)
-+				 struct snd_soc_dai_driver *dai_drv,
-+				 size_t count)
- {
- 	struct device *dev = component->dev;
- 	struct snd_soc_dai *dai;
-@@ -2921,8 +2946,8 @@ static int snd_soc_register_dais(struct snd_soc_component *component,
- 
- 	for (i = 0; i < count; i++) {
- 
--		dai = soc_add_dai(component, dai_drv + i,
--				  count == 1 && !component->driver->non_legacy_dai_naming);
-+		dai = soc_add_dai(component, dai_drv + i, count == 1 &&
-+				  !component->driver->non_legacy_dai_naming);
- 		if (dai == NULL) {
- 			ret = -ENOMEM;
- 			goto err;
-@@ -2966,7 +2991,8 @@ int snd_soc_register_dai(struct snd_soc_component *component,
- 	if (!dai)
- 		return -ENOMEM;
- 
--	/* Create the DAI widgets here. After adding DAIs, topology may
-+	/*
-+	 * Create the DAI widgets here. After adding DAIs, topology may
- 	 * also add routes that need these widgets as source or sink.
- 	 */
- 	ret = snd_soc_dapm_new_dai_widgets(dapm, dai);
-@@ -3048,7 +3074,8 @@ static void snd_soc_component_setup_regmap(struct snd_soc_component *component)
- #ifdef CONFIG_REGMAP
- 
- /**
-- * snd_soc_component_init_regmap() - Initialize regmap instance for the component
-+ * snd_soc_component_init_regmap() - Initialize regmap instance for the
-+ *                                   component
-  * @component: The component for which to initialize the regmap instance
-  * @regmap: The regmap instance that should be used by the component
-  *
-@@ -3066,7 +3093,8 @@ void snd_soc_component_init_regmap(struct snd_soc_component *component,
- EXPORT_SYMBOL_GPL(snd_soc_component_init_regmap);
- 
- /**
-- * snd_soc_component_exit_regmap() - De-initialize regmap instance for the component
-+ * snd_soc_component_exit_regmap() - De-initialize regmap instance for the
-+ *                                   component
-  * @component: The component for which to de-initialize the regmap instance
-  *
-  * Calls regmap_exit() on the regmap instance associated to the component and
-@@ -3090,7 +3118,8 @@ static void snd_soc_component_add(struct snd_soc_component *component)
- 
- 	if (!component->driver->write && !component->driver->read) {
- 		if (!component->regmap)
--			component->regmap = dev_get_regmap(component->dev, NULL);
-+			component->regmap = dev_get_regmap(component->dev,
-+							   NULL);
- 		if (component->regmap)
- 			snd_soc_component_setup_regmap(component);
- 	}
-@@ -3235,23 +3264,24 @@ static int __snd_soc_unregister_component(struct device *dev)
- 		if (dev != component->dev)
- 			continue;
- 
--		snd_soc_tplg_component_remove(component, SND_SOC_TPLG_INDEX_ALL);
-+		snd_soc_tplg_component_remove(component,
-+					      SND_SOC_TPLG_INDEX_ALL);
- 		snd_soc_component_del_unlocked(component);
- 		found = 1;
- 		break;
- 	}
- 	mutex_unlock(&client_mutex);
- 
--	if (found) {
-+	if (found)
- 		snd_soc_component_cleanup(component);
+-	if (!sai->mclk_rate) {
+-		dev_err(cpu_dai->dev, "Mclk rate is null\n");
+-		return -EINVAL;
 -	}
+-
+ 	if (!(rate % 11025))
+ 		clk_set_parent(sai->sai_ck, sai->pdata->clk_x11k);
+ 	else
+@@ -731,14 +911,22 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
+ 	sai_clk_rate = clk_get_rate(sai->sai_ck);
  
- 	return found;
+ 	if (STM_SAI_IS_F4(sai->pdata)) {
+-		/*
+-		 * mclk_rate = 256 * fs
+-		 * MCKDIV = 0 if sai_ck < 3/2 * mclk_rate
+-		 * MCKDIV = sai_ck / (2 * mclk_rate) otherwise
++		/* mclk on (NODIV=0)
++		 *   mclk_rate = 256 * fs
++		 *   MCKDIV = 0 if sai_ck < 3/2 * mclk_rate
++		 *   MCKDIV = sai_ck / (2 * mclk_rate) otherwise
++		 * mclk off (NODIV=1)
++		 *   MCKDIV ignored. sck = sai_ck
+ 		 */
+-		if (2 * sai_clk_rate >= 3 * sai->mclk_rate)
+-			div = DIV_ROUND_CLOSEST(sai_clk_rate,
+-						2 * sai->mclk_rate);
++		if (!sai->mclk_rate)
++			return 0;
++
++		if (2 * sai_clk_rate >= 3 * sai->mclk_rate) {
++			div = stm32_sai_get_clk_div(sai, sai_clk_rate,
++						    2 * sai->mclk_rate);
++			if (div < 0)
++				return div;
++		}
+ 	} else {
+ 		/*
+ 		 * TDM mode :
+@@ -750,8 +938,10 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
+ 		 * Note: NOMCK/NODIV correspond to same bit.
+ 		 */
+ 		if (STM_SAI_PROTOCOL_IS_SPDIF(sai)) {
+-			div = DIV_ROUND_CLOSEST(sai_clk_rate,
+-						(params_rate(params) * 128));
++			div = stm32_sai_get_clk_div(sai, sai_clk_rate,
++						    rate * 128);
++			if (div < 0)
++				return div;
+ 		} else {
+ 			if (sai->mclk_rate) {
+ 				mclk_ratio = sai->mclk_rate / rate;
+@@ -764,31 +954,22 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
+ 						mclk_ratio);
+ 					return -EINVAL;
+ 				}
+-				div = DIV_ROUND_CLOSEST(sai_clk_rate,
+-							sai->mclk_rate);
++				div = stm32_sai_get_clk_div(sai, sai_clk_rate,
++							    sai->mclk_rate);
++				if (div < 0)
++					return div;
+ 			} else {
+ 				/* mclk-fs not set, master clock not active */
+ 				den = sai->fs_length * params_rate(params);
+-				div = DIV_ROUND_CLOSEST(sai_clk_rate, den);
++				div = stm32_sai_get_clk_div(sai, sai_clk_rate,
++							    den);
++				if (div < 0)
++					return div;
+ 			}
+ 		}
+ 	}
+ 
+-	if (div > SAI_XCR1_MCKDIV_MAX(version)) {
+-		dev_err(cpu_dai->dev, "Divider %d out of range\n", div);
+-		return -EINVAL;
+-	}
+-	dev_dbg(cpu_dai->dev, "SAI clock %d, divider %d\n", sai_clk_rate, div);
+-
+-	mask = SAI_XCR1_MCKDIV_MASK(SAI_XCR1_MCKDIV_WIDTH(version));
+-	cr1 = SAI_XCR1_MCKDIV_SET(div);
+-	ret = regmap_update_bits(sai->regmap, STM_SAI_CR1_REGX, mask, cr1);
+-	if (ret < 0) {
+-		dev_err(cpu_dai->dev, "Failed to update CR1 register\n");
+-		return ret;
+-	}
+-
+-	return 0;
++	return stm32_sai_set_clk_div(sai, div);
  }
  
- void snd_soc_unregister_component(struct device *dev)
- {
--	while (__snd_soc_unregister_component(dev));
-+	while (__snd_soc_unregister_component(dev))
-+		;
- }
- EXPORT_SYMBOL_GPL(snd_soc_unregister_component);
+ static int stm32_sai_hw_params(struct snd_pcm_substream *substream,
+@@ -881,6 +1062,9 @@ static void stm32_sai_shutdown(struct snd_pcm_substream *substream,
+ 			   SAI_XCR1_NODIV);
  
-@@ -3832,7 +3862,7 @@ int snd_soc_of_get_dai_link_codecs(struct device *dev,
- 	for_each_link_codecs(dai_link, index, component) {
- 		ret = of_parse_phandle_with_args(of_node, name,
- 						 "#sound-dai-cells",
--						  index, &args);
-+						 index, &args);
- 		if (ret)
- 			goto err;
- 		component->of_node = args.np;
+ 	clk_disable_unprepare(sai->sai_ck);
++
++	clk_rate_exclusive_put(sai->sai_mclk);
++
+ 	sai->substream = NULL;
+ }
+ 
+@@ -903,6 +1087,8 @@ static int stm32_sai_dai_probe(struct snd_soc_dai *cpu_dai)
+ 	struct stm32_sai_sub_data *sai = dev_get_drvdata(cpu_dai->dev);
+ 	int cr1 = 0, cr1_mask;
+ 
++	sai->cpu_dai = cpu_dai;
++
+ 	sai->dma_params.addr = (dma_addr_t)(sai->phys_addr + STM_SAI_DR_REGX);
+ 	/*
+ 	 * DMA supports 4, 8 or 16 burst sizes. Burst size 4 is the best choice,
+@@ -1181,6 +1367,23 @@ static int stm32_sai_sub_parse_of(struct platform_device *pdev,
+ 		return PTR_ERR(sai->sai_ck);
+ 	}
+ 
++	if (STM_SAI_IS_F4(sai->pdata))
++		return 0;
++
++	/* Register mclk provider if requested */
++	if (of_find_property(np, "#clock-cells", NULL)) {
++		ret = stm32_sai_add_mclk_provider(sai);
++		if (ret < 0)
++			return ret;
++	} else {
++		sai->sai_mclk = devm_clk_get(&pdev->dev, "MCLK");
++		if (IS_ERR(sai->sai_mclk)) {
++			if (PTR_ERR(sai->sai_mclk) != -ENOENT)
++				return PTR_ERR(sai->sai_mclk);
++			sai->sai_mclk = NULL;
++		}
++	}
++
+ 	return 0;
+ }
+ 
 -- 
 2.19.0.rc2
 
