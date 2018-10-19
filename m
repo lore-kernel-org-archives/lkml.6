@@ -3,158 +3,142 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 062EEECDE48
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F111BECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CED9720869
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:04:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CED9720869
+	by mail.kernel.org (Postfix) with ESMTP id C09EF20869
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:05:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C09EF20869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbeJTALj (ORCPT
+        id S1727857AbeJTALy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 20:11:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40202 "EHLO mx1.redhat.com"
+        Fri, 19 Oct 2018 20:11:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48426 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727825AbeJTALi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 20:11:38 -0400
+        id S1727740AbeJTALe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 20:11:34 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 82A9A30020AB;
-        Fri, 19 Oct 2018 16:04:54 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1AF9F32B660;
+        Fri, 19 Oct 2018 16:04:51 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-124-217.rdu2.redhat.com [10.10.124.217])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B073D65949;
-        Fri, 19 Oct 2018 16:04:53 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6220165314;
+        Fri, 19 Oct 2018 16:04:50 +0000 (UTC)
 From:   jglisse@redhat.com
 To:     linux-mm@kvack.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 6/6] mm/hmm: invalidate device page table at start of invalidation
-Date:   Fri, 19 Oct 2018 12:04:42 -0400
-Message-Id: <20181019160442.18723-7-jglisse@redhat.com>
+        Ralph Campbell <rcampbell@nvidia.com>, stable@vger.kernel.org
+Subject: [PATCH 3/6] mm/hmm: fix race between hmm_mirror_unregister() and mmu_notifier callback
+Date:   Fri, 19 Oct 2018 12:04:39 -0400
+Message-Id: <20181019160442.18723-4-jglisse@redhat.com>
 In-Reply-To: <20181019160442.18723-1-jglisse@redhat.com>
 References: <20181019160442.18723-1-jglisse@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 19 Oct 2018 16:04:54 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 19 Oct 2018 16:04:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jérôme Glisse <jglisse@redhat.com>
+From: Ralph Campbell <rcampbell@nvidia.com>
 
-Invalidate device page table at start of invalidation and invalidate
-in progress CPU page table snapshooting at both start and end of any
-invalidation.
+In hmm_mirror_unregister(), mm->hmm is set to NULL and then
+mmu_notifier_unregister_no_release() is called. That creates a small
+window where mmu_notifier can call mmu_notifier_ops with mm->hmm equal
+to NULL. Fix this by first unregistering mmu notifier callbacks and
+then setting mm->hmm to NULL.
 
-This is helpful when device need to dirty page because the device page
-table report the page as dirty. Dirtying page must happen in the start
-mmu notifier callback and not in the end one.
+Similarly in hmm_register(), set mm->hmm before registering mmu_notifier
+callbacks so callback functions always see mm->hmm set.
 
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
+Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+Reviewed-by: Balbir Singh <bsingharora@gmail.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: stable@vger.kernel.org
 ---
- mm/hmm.c | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+ mm/hmm.c | 36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
 
 diff --git a/mm/hmm.c b/mm/hmm.c
-index 0eacf9627bc9..1aecf7c08cff 100644
+index 9a068a1da487..a16678d08127 100644
 --- a/mm/hmm.c
 +++ b/mm/hmm.c
-@@ -43,7 +43,6 @@ static const struct mmu_notifier_ops hmm_mmu_notifier_ops;
-  *
-  * @mm: mm struct this HMM struct is bound to
-  * @lock: lock protecting ranges list
-- * @sequence: we track updates to the CPU page table with a sequence number
-  * @ranges: list of range being snapshotted
-  * @mirrors: list of mirrors for this mm
-  * @mmu_notifier: mmu notifier to track updates to CPU page table
-@@ -52,7 +51,6 @@ static const struct mmu_notifier_ops hmm_mmu_notifier_ops;
- struct hmm {
- 	struct mm_struct	*mm;
- 	spinlock_t		lock;
--	atomic_t		sequence;
- 	struct list_head	ranges;
- 	struct list_head	mirrors;
- 	struct mmu_notifier	mmu_notifier;
-@@ -85,7 +83,6 @@ static struct hmm *hmm_register(struct mm_struct *mm)
- 		return NULL;
- 	INIT_LIST_HEAD(&hmm->mirrors);
- 	init_rwsem(&hmm->mirrors_sem);
--	atomic_set(&hmm->sequence, 0);
- 	hmm->mmu_notifier.ops = NULL;
- 	INIT_LIST_HEAD(&hmm->ranges);
+@@ -91,16 +91,6 @@ static struct hmm *hmm_register(struct mm_struct *mm)
  	spin_lock_init(&hmm->lock);
-@@ -126,7 +123,7 @@ void hmm_mm_destroy(struct mm_struct *mm)
- 	kfree(mm->hmm);
- }
+ 	hmm->mm = mm;
  
--static int hmm_invalidate_range(struct hmm *hmm,
-+static int hmm_invalidate_range(struct hmm *hmm, bool device,
- 				const struct hmm_update *update)
- {
- 	struct hmm_mirror *mirror;
-@@ -147,6 +144,9 @@ static int hmm_invalidate_range(struct hmm *hmm,
- 	}
- 	spin_unlock(&hmm->lock);
- 
-+	if (!device)
-+		return 0;
-+
- 	down_read(&hmm->mirrors_sem);
- 	list_for_each_entry(mirror, &hmm->mirrors, list) {
- 		int ret;
-@@ -189,18 +189,21 @@ static void hmm_release(struct mmu_notifier *mn, struct mm_struct *mm)
- }
- 
- static int hmm_invalidate_range_start(struct mmu_notifier *mn,
--				       struct mm_struct *mm,
--				       unsigned long start,
--				       unsigned long end,
--				       bool blockable)
-+				      struct mm_struct *mm,
-+				      unsigned long start,
-+				      unsigned long end,
-+				      bool blockable)
- {
-+	struct hmm_update update;
- 	struct hmm *hmm = mm->hmm;
- 
- 	VM_BUG_ON(!hmm);
- 
--	atomic_inc(&hmm->sequence);
+-	/*
+-	 * We should only get here if hold the mmap_sem in write mode ie on
+-	 * registration of first mirror through hmm_mirror_register()
+-	 */
+-	hmm->mmu_notifier.ops = &hmm_mmu_notifier_ops;
+-	if (__mmu_notifier_register(&hmm->mmu_notifier, mm)) {
+-		kfree(hmm);
+-		return NULL;
+-	}
 -
--	return 0;
-+	update.start = start;
-+	update.end = end;
-+	update.event = HMM_UPDATE_INVALIDATE;
-+	update.blockable = blockable;
-+	return hmm_invalidate_range(hmm, true, &update);
+ 	spin_lock(&mm->page_table_lock);
+ 	if (!mm->hmm)
+ 		mm->hmm = hmm;
+@@ -108,12 +98,27 @@ static struct hmm *hmm_register(struct mm_struct *mm)
+ 		cleanup = true;
+ 	spin_unlock(&mm->page_table_lock);
+ 
+-	if (cleanup) {
+-		mmu_notifier_unregister(&hmm->mmu_notifier, mm);
+-		kfree(hmm);
+-	}
++	if (cleanup)
++		goto error;
++
++	/*
++	 * We should only get here if hold the mmap_sem in write mode ie on
++	 * registration of first mirror through hmm_mirror_register()
++	 */
++	hmm->mmu_notifier.ops = &hmm_mmu_notifier_ops;
++	if (__mmu_notifier_register(&hmm->mmu_notifier, mm))
++		goto error_mm;
+ 
+ 	return mm->hmm;
++
++error_mm:
++	spin_lock(&mm->page_table_lock);
++	if (mm->hmm == hmm)
++		mm->hmm = NULL;
++	spin_unlock(&mm->page_table_lock);
++error:
++	kfree(hmm);
++	return NULL;
  }
  
- static void hmm_invalidate_range_end(struct mmu_notifier *mn,
-@@ -217,7 +220,7 @@ static void hmm_invalidate_range_end(struct mmu_notifier *mn,
- 	update.end = end;
- 	update.event = HMM_UPDATE_INVALIDATE;
- 	update.blockable = true;
--	hmm_invalidate_range(hmm, &update);
-+	hmm_invalidate_range(hmm, false, &update);
- }
+ void hmm_mm_destroy(struct mm_struct *mm)
+@@ -278,12 +283,13 @@ void hmm_mirror_unregister(struct hmm_mirror *mirror)
+ 	if (!should_unregister || mm == NULL)
+ 		return;
  
- static const struct mmu_notifier_ops hmm_mmu_notifier_ops = {
++	mmu_notifier_unregister_no_release(&hmm->mmu_notifier, mm);
++
+ 	spin_lock(&mm->page_table_lock);
+ 	if (mm->hmm == hmm)
+ 		mm->hmm = NULL;
+ 	spin_unlock(&mm->page_table_lock);
+ 
+-	mmu_notifier_unregister_no_release(&hmm->mmu_notifier, mm);
+ 	kfree(hmm);
+ }
+ EXPORT_SYMBOL(hmm_mirror_unregister);
 -- 
 2.17.2
 
