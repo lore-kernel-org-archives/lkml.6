@@ -2,134 +2,93 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 772FAECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF466ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CB5D21476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:29:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CB5D21476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id B337620645
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:30:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fF3T4eE3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B337620645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeJSPeQ (ORCPT
+        id S1727188AbeJSPfa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 11:34:16 -0400
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:23115 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbeJSPeP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 11:34:15 -0400
-Received: from [10.28.18.51] (10.28.18.51) by mail-sz2.amlogic.com
- (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 19 Oct
- 2018 15:29:13 +0800
-Subject: Re: [PATCH v5 2/2] mtd: rawnand: meson: add support for Amlogic NAND
- flash controller
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>
-CC:     <linux-mtd@lists.infradead.org>, Yixun Lan <yixun.lan@amlogic.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1539839345-14021-1-git-send-email-jianxin.pan@amlogic.com>
- <1539839345-14021-3-git-send-email-jianxin.pan@amlogic.com>
- <20181018162449.3fe433e7@bbrezillon>
-From:   Liang Yang <liang.yang@amlogic.com>
-Message-ID: <30ceed2f-03a2-8e4c-b267-df14d052f13d@amlogic.com>
-Date:   Fri, 19 Oct 2018 15:29:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 19 Oct 2018 11:35:30 -0400
+Received: from ozlabs.org ([203.11.71.1]:37679 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726340AbeJSPf3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 11:35:29 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42byHv5f3bz9sCf;
+        Fri, 19 Oct 2018 18:30:34 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1539934235;
+        bh=iAQsVVMt05FB27yaSq+5xYlkhJyUsS4O2xI4LNEh4ZE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=fF3T4eE3umCOlYhf/MVasiSPFavHY84gv+HaTRnP6/ykivfQL4XUuMb983SS/8mSu
+         8W1KJB77PTW79RCe0ppkSSMZ2YxeKd9o4+GpBB1q7R6Fx2wqrMrbez/zLd3EM2a4Pa
+         Aq98LOPP2rqPJ1/90T/oODSGsCHQ30ufcDRmssJHPMEE3mwUPsgDlPynKtQweesNG6
+         QroKtzzJk5mXxItX8JBg3D64kcBu67tK5K4/qDn+X19LacIxdfS80aragJqgcCS5dm
+         Jf9Dc6YPeSMSiJqg+TUEL9kKL5+vvvJhVft7KMnEFjJQaiHdpuHQXkqh8ojO9uLLP/
+         AFOo2eMEOsUmw==
+Date:   Fri, 19 Oct 2018 18:30:33 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: linux-next: Signed-off-by missing for commits in the net-next tree
+Message-ID: <20181019183033.4fc5b93b@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20181018162449.3fe433e7@bbrezillon>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.18.51]
-X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
- (10.28.11.6)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/eNdFC5miAgY4ao7/5OsbdG0"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/eNdFC5miAgY4ao7/5OsbdG0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 2018/10/18 22:24, Boris Brezillon wrote:
-> On Thu, 18 Oct 2018 13:09:05 +0800
-> Jianxin Pan <jianxin.pan@amlogic.com> wrote:
-> 
->> +static int meson_nfc_exec_op(struct nand_chip *chip,
->> +			     const struct nand_operation *op, bool check_only)
->> +{
->> +	struct mtd_info *mtd = nand_to_mtd(chip);
->> +	struct meson_nfc *nfc = nand_get_controller_data(chip);
->> +	const struct nand_op_instr *instr = NULL;
->> +	int ret = 0, cmd;
->> +	unsigned int op_id;
->> +	int i;
->> +
->> +	for (op_id = 0; op_id < op->ninstrs; op_id++) {
->> +		instr = &op->instrs[op_id];
->> +		switch (instr->type) {
->> +		case NAND_OP_CMD_INSTR:
->> +			if (instr->ctx.cmd.opcode == NAND_CMD_STATUS)
->> +				meson_nfc_cmd_idle(nfc, nfc->timing.twb);
-> 
-> Hm, I don't want drivers to base their decisions on the opcode value.
-> There's a ->delay_ns field in the instruction object, can't you use
-> that one instead? Also, I don't understand why this is only needed for
-> the STATUS command. It should normally be applied to all instructions.
-> 
-em, it should be applied to all instructions.
-i will fix it and use instr->delay_ns instead.
+Commits
 
->> +			cmd = nfc->param.chip_select | NFC_CMD_CLE;
->> +			cmd |= instr->ctx.cmd.opcode & 0xff;
->> +			writel(cmd, nfc->reg_base + NFC_REG_CMD);
->> +			if (instr->ctx.cmd.opcode == NAND_CMD_STATUS)
->> +				meson_nfc_cmd_idle(nfc, nfc->timing.twhr);
->> +			break;
->> +
->> +		case NAND_OP_ADDR_INSTR:
->> +			for (i = 0; i < instr->ctx.addr.naddrs; i++) {
->> +				cmd = nfc->param.chip_select | NFC_CMD_ALE;
->> +				cmd |= instr->ctx.addr.addrs[i] & 0xff;
->> +				writel(cmd, nfc->reg_base + NFC_REG_CMD);
->> +			}
->> +			break;
->> +
->> +		case NAND_OP_DATA_IN_INSTR:
->> +			meson_nfc_read_buf(mtd, instr->ctx.data.buf.in,
->> +					   instr->ctx.data.len);
->> +			break;
->> +
->> +		case NAND_OP_DATA_OUT_INSTR:
->> +			meson_nfc_write_buf(mtd, instr->ctx.data.buf.out,
->> +					    instr->ctx.data.len);
->> +			break;
->> +
->> +		case NAND_OP_WAITRDY_INSTR:
->> +			meson_nfc_queue_rb(nfc, instr->ctx.waitrdy.timeout_ms);
->> +			break;
->> +		}
->> +	}
->> +	return ret;
->> +}
-> 
-> .
-> 
+  2a4c42980250 ("net/mlx5: Remove counter from idr after removing it from l=
+ist")
+  fd3307130344 ("net/mlx5: Take fs_counters dellist before addlist")
+
+are missing a Signed-off-by from their committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/eNdFC5miAgY4ao7/5OsbdG0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvJiBkACgkQAVBC80lX
+0GxrGgf+KxxtNI1r0JqcSV79x+dGvOfLzyuFyRLHb1ebY6EZo+idarlc4Py60TAa
+LQQRlJQGCc5MeLCVWUfuegtpG56O/sWsnXnk8297rP1t7unyhnxAWs7wIzu1w8Oa
+rHmlU6+2WgEVBZ6Uthv3SzSs9h+htbQGBSL8QbmmcmD2pKp3IJ9C5NR7mDNk/SIt
+Ehgfb1Iv875qGrDNGPZjOx9uLf+7axmDIam+4ll3/FhKHvMiptwTProCQBxkV3rD
+1T7odgvH+x82u2PFKrZpgN3dtx+UhUQvTOhTOP47aWwaVGdh1r0nsDCZI3sV/733
+rNmVrSrKLm3Sk7Nisq62X6sw0KN28Q==
+=JgKI
+-----END PGP SIGNATURE-----
+
+--Sig_/eNdFC5miAgY4ao7/5OsbdG0--
