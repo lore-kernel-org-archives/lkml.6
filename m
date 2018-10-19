@@ -2,121 +2,154 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8ACECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05715ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:35:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E2512086E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:32:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B00172086E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:35:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Euf02FmD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E2512086E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HB3Qs66H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B00172086E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727808AbeJTCjW (ORCPT
+        id S1727695AbeJTCmO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 22:39:22 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41916 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727193AbeJTCjW (ORCPT
+        Fri, 19 Oct 2018 22:42:14 -0400
+Received: from mail-wm1-f51.google.com ([209.85.128.51]:50912 "EHLO
+        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727509AbeJTCmN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 22:39:22 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 23-v6so16108483pgc.8
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 11:32:07 -0700 (PDT)
+        Fri, 19 Oct 2018 22:42:13 -0400
+Received: by mail-wm1-f51.google.com with SMTP id i8-v6so4507837wmg.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 11:34:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hCLPGpZ744OWUlwVBqLzAUFi89kvnnrXopdGAHnOhz4=;
-        b=Euf02FmDGuVLSGHxdlE21wOaYPuWmUpgJ9A2VFz85b36shGFH+dXSwLlGQ+g14mCiR
-         2ZnPoqhhwLgSrP9DVuDSzYOUlIZeRr1JbD5wQK1FLm3NV+oplevSG1qa80uo2Iw+8otH
-         bSaiJi+bvY0n/s+w0E4bxH2Ac38/2w3otob8A=
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Wz+BkX+jS429M18ljEcTfAiXvi/IyhkaKd/p+qvUfmk=;
+        b=HB3Qs66H21jCJIDD+hGiqsQ8AKeAbp3nTOlXWvQpacpejRwZRvA6wXIPAcr3ijwu4W
+         aC725BD5XrwcBZSiq++gFaSdMnNgda/SqvjGtz+aPUuFoRxGQjpCuG9f+AbL2Wjh36If
+         gEv97gbBldb0nKDh+sVg5Ki3mnPb/zvzYzJ9k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hCLPGpZ744OWUlwVBqLzAUFi89kvnnrXopdGAHnOhz4=;
-        b=ZoB+zKD7rOVyIFqV+hvV0XAJdMdazhg35Zt5/mFWQLmc1VHhd3/nN6tBXv+eNmOXp1
-         /6s4jh7cm7Zv5NzBmt1fhwXuaWsxafP+igOsHg9fpiW/VftiBjBaJ09wbrdR549ZVj+f
-         HWnIvwXLyPCqz8znvkoovYL1vNM12TC/Ec1asEFwXtLMf/OoKUdDf/zZWU+o7Y5rwDQ5
-         98znTLcaaLu764U+6UCny391fjecoflnv4w5hG6p2r/NdDQRyHpYRLeOAYAT6iny9xly
-         UDbJssQW3CCsO7aBbPrcnxH/WiGhbTUu76B5jMrV+nBfJMR+FYqPoMbvFbZWtjYex1/3
-         dX5A==
-X-Gm-Message-State: ABuFfohco4LWAn13Sm8RAqE6gLUe0si1dB7SbCE8h/fS37OoOM3pA3EN
-        +YcLbCurCxp62Lyle54049pMSA==
-X-Google-Smtp-Source: ACcGV60Cu5aMR5lU1jrY7T9eOogtmxA2gsGj162wjx3XUpjR6L1Zk1+NAjqaFw1FvFsYB6ZvnNGseQ==
-X-Received: by 2002:a62:d046:: with SMTP id p67-v6mr36879282pfg.147.1539973926808;
-        Fri, 19 Oct 2018 11:32:06 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id x186-v6sm23706316pfb.125.2018.10.19.11.32.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 19 Oct 2018 11:32:06 -0700 (PDT)
-Date:   Fri, 19 Oct 2018 11:35:16 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     ohad@wizery.com, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        tsoni@codeaurora.org, sricharan@codeaurora.org,
-        akdwived@codeaurora.org, kyan@codeaurora.org
-Subject: Re: [PATCH v5 0/5] Add coredump support for Q6v5 Modem remoteproc
-Message-ID: <20181019183514.GU12063@builder>
-References: <20181017135527.30592-1-sibis@codeaurora.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Wz+BkX+jS429M18ljEcTfAiXvi/IyhkaKd/p+qvUfmk=;
+        b=tYulnzL5/VlzvQNqEU6ZtnjCHknNKcDXedicsdQXmFiVe0LkG9h1f3s9JG8/cq4SxM
+         0MsRNRik/V6xdc1OuNUeSAl+WOnlnQ3W6TT8JXij5AkN/eQ2/Bok6LGdGgtRqwn9x+HY
+         X/ltFbG4j8lj4j9yvvrsZzVp+EY4zVGyhMNjYhxBqxgCWjyup3s3a6X4iMYpccQwf6cu
+         I2gm9roroJkOrMShIYsiUBWTQbZrTqvcZi4arWSWV+BqQgUuoVRPkK9FcnBnL4pBA3kX
+         ocdRRpd3c0SXVqxMFefTr0vyXPk6ufxm8AaTXu9h+y8taktZfD+vg7i9RHv7vCGGLYcY
+         IhqQ==
+X-Gm-Message-State: ABuFfogVS5xDDZV0Y1IY1pjQuDqFRxnBbym0L2mFr8sFxMigBrBoadbo
+        4wui0W56Q8TjI7i2XUiXUX7zAvGOeMQvclB/aEHXgQ==
+X-Google-Smtp-Source: ACcGV6111lqYiXKmhKAE+yJjXqw8mT6jba4TNwcaBLw2R3yQ4qIQZcmeFf6YwNazwh8blbmFPqO0kvACrkCcJDClrnk=
+X-Received: by 2002:a1c:603:: with SMTP id 3-v6mr5836611wmg.64.1539974096622;
+ Fri, 19 Oct 2018 11:34:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181017135527.30592-1-sibis@codeaurora.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a1c:b485:0:0:0:0:0 with HTTP; Fri, 19 Oct 2018 11:34:55
+ -0700 (PDT)
+In-Reply-To: <alpine.DEB.2.21.1810191720590.6075@nanos.tec.linutronix.de>
+References: <20181015160945.5993-1-christopher.s.hall@intel.com> <alpine.DEB.2.21.1810191720590.6075@nanos.tec.linutronix.de>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Fri, 19 Oct 2018 11:34:55 -0700
+Message-ID: <CALAqxLU-riM7e2u3c-eOnsSJwvvHvq75aYpwELCCmMTSdGAdxw@mail.gmail.com>
+Subject: Re: TSC to Mono-raw Drift
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Christopher Hall <christopher.s.hall@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        jesus.sanchez-palencia@intel.com, gavin.hindman@intel.com,
+        liam.r.girdwood@intel.com, Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 17 Oct 06:55 PDT 2018, Sibi Sankar wrote:
+On Fri, Oct 19, 2018 at 8:25 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> Christopher,
+>
+> Please Cc LKML on such issues in the future.
+>
+> On Mon, 15 Oct 2018, Christopher Hall wrote:
+>
+> Leaving context around for new readers:
+>
+>> Problem Statement:
+>>
+>> The TSC clocksource mult/shift values are derived from CPUID[15H], but the
+>> monotonic raw clock value is not equal to TSC in nominal nanoseconds, i.e.
+>> the timekeeping code is not accurately transforming TSC ticks to nominal
+>> nanoseconds based on CPUID[15H}.
+>>
+>> The included code calculates the drift between nominal TSC nanoseconds and
+>> the monotonic raw clock.
+>>
+>> Background:
+>>
+>> Starting with 6th generation Intel CPUs, the TSC is "phase locked" to the
+>> Always Running Timer (ART). The relation between TSC and ART is read from
+>> CPUID[15H]. Details of the TSC-ART relation are in the "Invariant
+>> Timekeeping" section of the SDM.
+>>
+>> CPUID[15H].ECX returns the nominal frequency of ART (or crystal frequency).
+>> CPU feature TSC_KNOWN_FREQ indicates that tsc_khz (tsc.c) is derived from
+>> CPUID[15H]. The calculation is in tsc.c:native_calibrate_tsc().
+>>
+>> When the TSC clocksource is selected, the timekeeping code uses mult/shift
+>> values to transform TSC into nanoseconds. The mult/shift value is determined
+>> using tsc_khz.
+>>
+>> Example Output:
+>>
+>> Running for 3 seconds trial 1
+>> Scaled TSC delta: 3000328845
+>> Monotonic raw delta: 3000329117
+>> Ran for 3 seconds with 272 ns skew
+>>
+>> Running for 3 seconds trial 2
+>> Scaled TSC delta: 3000295209
+>> Monotonic raw delta: 3000295482
+>> Ran for 3 seconds with 273 ns skew
+>>
+>> Running for 3 seconds trial 3
+>> Scaled TSC delta: 3000262870
+>> Monotonic raw delta: 3000263142
+>> Ran for 3 seconds with 272 ns skew
+>>
+>> Running for 300 seconds trial 4
+>> Scaled TSC delta: 300000281725
+>> Monotonic raw delta: 300000308905
+>> Ran for 300 seconds with 27180 ns skew
+>>
+>> The skew between tsc and monotonic raw is about 91 PPB.
+>>
+>> System Information:
+>>
+>> CPU model string: Intel(R) Core(TM) i5-6600 CPU @ 3.30GHz
+>> Kernel version tested: 4.14.71-rt44
+>>       NOTE: The skew seems to be insensitive to kernel version after
+>>               introduction of TSC_KNOWN_FREQ capability
+>>
+>> >From CPUID[15H]:
+>>       Time Stamp Counter/Core Crystal Clock Information (0x15):
+>>               TSC/clock ratio = 276/2
+>>               nominal core crystal clock = 24000000 Hz (table lookup)
+>>
+>> TSC kHz used to calculate mult/shift value: 3312000
 
-> This patch series add coredump support for modem on SDM845, MSM8996
-> and MSM8916 SoCs. Modem requires the mba to be loaded before a
-> coredump can be performed and this is achieved using a custom per
-> segment dump function.
-> 
-> V5:
->   Add software bypass to avoid high MX current in mpss_load error path.
->   Remove the proxy votes of clk/regs only after the active/reset clks/regs.
->   Reclaim MBA memory after mpss_load failure in mba_reclaim func.
->   Revert to dump_fn to as done with v3 with a mask based approach.
-> 
-> V4:
->   Addressed Bjorn's comments.
-> 
-> V3:
->   [bjorn]:replace prepare/unprepare ops with a more generalised per segment
->   dump function
-> 
-> V2:
->   Introduce prepare/unprepare ops for rproc coredump
-> 
+So, just to understand, your saying the problem that we calculate a
+tsc_khz value before calculating the mult/shift and the intermediate
+step is losing some precision?
 
-Applied
+Or is the cause from something else?
 
-Regards,
-Bjorn
-
-> Sibi Sankar (5):
->   remoteproc: Introduce custom dump function for each remoteproc segment
->   remoteproc: Add mechanism for custom dump function assignment
->   remoteproc: qcom: q6v5-mss: Refactor mba load/unload sequence
->   remoteproc: qcom: q6v5-mss: Add custom dump function for modem
->   remoteproc: qcom: q6v5-mss: Register segments/dumpfn for coredump
-> 
->  drivers/remoteproc/qcom_q6v5_mss.c   | 379 +++++++++++++++++----------
->  drivers/remoteproc/remoteproc_core.c |  55 +++-
->  include/linux/remoteproc.h           |  11 +
->  3 files changed, 303 insertions(+), 142 deletions(-)
-> 
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+thanks
+-john
