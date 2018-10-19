@@ -2,106 +2,109 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CCAECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEC7ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:22:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5844020836
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:21:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="OcWqm1D2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5844020836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EC27A20836
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:22:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC27A20836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727494AbeJSU1R (ORCPT
+        id S1727525AbeJSU1z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:27:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58134 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbeJSU1R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:27:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=faQiBSpR0QmwjrLMPUvKhOP6fjDzGqi+Sqy0bsHPjlg=; b=OcWqm1D290UzhN+vZ7NMFvpnj
-        dHnYg7Re4RPv8YuA0fPPZg89RMxQwZrl/xj/SRyffVcY46tjdy4bPg4HMOyWGPz64F3aq7ZqKSY7a
-        pJSBXeY23UqwTFVKdLFKAG8t6nFeCnurPViumbfsnJiV+pnlaAYPDZrjnXtXi9JvD2T7w=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gDTmJ-0008TT-68; Fri, 19 Oct 2018 12:21:19 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D36051122548; Fri, 19 Oct 2018 13:21:18 +0100 (BST)
-Date:   Fri, 19 Oct 2018 13:21:18 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] regulator: lochnagar: Add support for the Cirrus
- Logic Lochnagar
-Message-ID: <20181019122118.GI5895@sirena.org.uk>
-References: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
- <20181019095003.26046-4-ckeepax@opensource.cirrus.com>
- <20181019112622.GB5895@sirena.org.uk>
- <20181019121920.GL1653@imbe.wolfsonmicro.main>
+        Fri, 19 Oct 2018 16:27:55 -0400
+Received: from foss.arm.com ([217.140.101.70]:51540 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726867AbeJSU1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 16:27:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D35980D;
+        Fri, 19 Oct 2018 05:22:02 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3B6D13F71D;
+        Fri, 19 Oct 2018 05:22:02 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 459A51AE06FD; Fri, 19 Oct 2018 13:22:05 +0100 (BST)
+Date:   Fri, 19 Oct 2018 13:22:05 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Kristina Martsenko <kristina.martsenko@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@foss.arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        Andrew Jones <drjones@redhat.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Marc Zyngier <Marc.Zyngier@arm.com>,
+        Adam Wallis <awallis@codeaurora.org>,
+        Suzuki Poulose <Suzuki.Poulose@arm.com>,
+        Christoffer Dall <Christoffer.Dall@arm.com>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        Amit Kachhap <Amit.Kachhap@arm.com>,
+        Dave P Martin <Dave.Martin@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v5 11/17] arm64: docs: document pointer authentication
+Message-ID: <20181019122204.GE14246@arm.com>
+References: <20181005084754.20950-1-kristina.martsenko@arm.com>
+ <20181005084754.20950-12-kristina.martsenko@arm.com>
+ <9acb0cd2-66b0-1c41-b1a8-7c70608e9a9b@foss.arm.com>
+ <7b0de19b-45b9-f4df-25d1-c7e80fab49dc@arm.com>
+ <20181019113556.ljbdmjo5pdw7muvz@mbp>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="SdaPbLtAangIkrMZ"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181019121920.GL1653@imbe.wolfsonmicro.main>
-X-Cookie: Obey all traffic laws.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181019113556.ljbdmjo5pdw7muvz@mbp>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 19, 2018 at 12:35:56PM +0100, Catalin Marinas wrote:
+> On Tue, Oct 16, 2018 at 05:14:39PM +0100, Kristina Martsenko wrote:
+> > On 05/10/2018 10:04, Ramana Radhakrishnan wrote:
+> > > On 05/10/2018 09:47, Kristina Martsenko wrote:
+> > The other special case is the XPACLRI instruction, which is also in the
+> > HINT space. Currently it will trap and KVM will inject an exception into
+> > the guest. We should probably change this to NOP instead, as that's what
+> > applications will expect. Unfortunately there is no EnIA-like control to
+> > make it NOP.
+> 
+> Very good catch. Basically if EL2 doesn't know about ptr auth (older
+> distro), EL1 may or may not know but leaves SCTLR_EL1 disabled (based on
+> CPUID), the default HCR_EL2 is to trap (I'm ignoring EL3 as that's like
+> to have ptr auth enabled, being built for the specific HW). So a user
+> app considering XPACLRI a NOP (or inoffensive) will get a SIGILL
+> (injected by the guest kernel following the injection of "Unknown
+> reason" exception by KVM).
+> 
+> Ramana, is XPACLRI commonly generated by gcc and expects it to be a NOP?
+> Could we restrict it to only being used at run-time if the corresponding
+> HWCAP is set? This means redefining this instruction as no longer in the
+> NOP space.
 
---SdaPbLtAangIkrMZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+My main worry is that this instruction is used when unwinding C++
+exceptions, so I think we'll see it fairly often.
 
-On Fri, Oct 19, 2018 at 01:19:20PM +0100, Charles Keepax wrote:
-> On Fri, Oct 19, 2018 at 12:26:22PM +0100, Mark Brown wrote:
+Effectively, the architecture means these instructions can result in a
+SIGILL if they are used under an OS/hypervisor that doesn't know about
+the feature (i.e. any mainline kernel release so far). I think that's a
+massive problem for the current implementation in GCC. Worse, if
+distributions are currently shipping binaries built with this, they
+basically have a ticking bomb in their applications where things will
+start crashing when they encounter CPUs that implement pointer
+authentication.
 
-> > Please do not submit new versions of already applied patches, please
-> > submit incremental updates to the existing code.  Modifying existing
-> > commits creates problems for other users building on top of those
-> > commits so it's best practice to only change pubished git commits if
-> > absolutely essential.
+Ramana: do you know whether people are building binaries with this stuff
+enabled by default?
 
-> I don't think any of this has been applied anywhere yet.
-
-It looks a lot like
-
-bef9391cbec547351c6a13e52f3a26bb2d271ec7 regulator: lochnagar: Add support for the Cirrus Logic Lochnagar
-
-in -next.
-
---SdaPbLtAangIkrMZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvJzD4ACgkQJNaLcl1U
-h9AKnwf/UDfl1GLXVqX2b9G5IuHvIFzmhxgxkZdhFkTn+1So7ZJHnPi8Xokpa69C
-ZgL8GAuIu7ZtvTJyOgNKcZQisyZnNRhAzn59ZFec4eOkl2KahYhB88iST4BPmQ5E
-axOdt6c2/3wTJlvZjwmclUdulp5GGR7HB0omIhDPGaKu/5RDMyPrVNLl+qqZIXmH
-x4mjWvnNd9i5BeczEl4UkmqVXx1fGIbBSDbMHq3sfSRyjyTAwTQBN0+tfOB4Zpon
-muXfHs1x4cyTecQngjhlKQoXl5KhGX36eNrjaPqxrCMjQ3UIVUxDa2CvdPqFV5lv
-FBbsC/EwWntiepoQS2f6XT0XtpJjaA==
-=FmEB
------END PGP SIGNATURE-----
-
---SdaPbLtAangIkrMZ--
+Will
