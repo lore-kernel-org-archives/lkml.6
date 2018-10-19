@@ -6,67 +6,67 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33DE9ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A79FECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 036CC21476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:20:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 036CC21476
+	by mail.kernel.org (Postfix) with ESMTP id 328A02064A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:20:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 328A02064A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=skynet.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbeJSQZS (ORCPT
+        id S1727498AbeJSQZU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 12:25:18 -0400
+        Fri, 19 Oct 2018 12:25:20 -0400
 Received: from mailrelay101.isp.belgacom.be ([195.238.20.128]:36172 "EHLO
         mailrelay101.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727215AbeJSQZP (ORCPT
+        by vger.kernel.org with ESMTP id S1727366AbeJSQZT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 12:25:15 -0400
+        Fri, 19 Oct 2018 12:25:19 -0400
 X-Belgacom-Dynamic: yes
-IronPort-PHdr: =?us-ascii?q?9a23=3AMKI9/xJn2Gabliak2NmcpTZWNBhigK39O0sv0r?=
- =?us-ascii?q?FitYgfI//xwZ3uMQTl6Ol3ixeRBMOHs60C07KempujcFRI2YyGvnEGfc4EfD?=
- =?us-ascii?q?4+ouJSoTYdBtWYA1bwNv/gYn9yNs1DUFh44yPzahANS47xaFLIv3K98yMZFA?=
- =?us-ascii?q?nhOgppPOT1HZPZg9iq2+yo9JDffwdFiCChbb9uMR67sRjfus4KjIV4N60/0A?=
- =?us-ascii?q?HJonxGe+RXwWNnO1eelAvi68mz4ZBu7T1et+ou+MBcX6r6eb84TaFDAzQ9L2?=
- =?us-ascii?q?81/szrugLdQgaJ+3ART38ZkhtMAwjC8RH6QpL8uTb0u+ZhxCWXO9D9QLYpUj?=
- =?us-ascii?q?qg8qhrUgflhicZOTAk/m/Zict+g6BVoB+6uxBz35TZbJ2POfZiYq/Qe84RS2?=
- =?us-ascii?q?pbXsZWUixMGoOyYJEUAOoAJ+lYqZT2qVsUrRSgGAajGvnvyj5UiX/1wKY31O?=
- =?us-ascii?q?ohHhvd0wwuBN8Oq3fUrdXzNKgMTeC51rLHwivaYv5QxDzz65DIfwgirPyOR7?=
- =?us-ascii?q?59cMvcxVMtGg7BlFmctI/oMj2T2+8QqWaU9fBgWviqi2M/rgFxpSWgydk0h4?=
- =?us-ascii?q?nSg4IV1kjE9SJkwIYpPdG4SFB0YdqjEJZIsyGaMJd5TdkmQ2FovyY60aEGtY?=
- =?us-ascii?q?S/fCgN1Jso3RrfZOGAc4iN+B3jVeCRLS95hHJjZr2/mw6//Euix+HmV8S50U?=
- =?us-ascii?q?xGoyhBn9XWq3wA1BLe5tCCSvRn/0eh3TiP1xrU6uFBOU00m7DUJIUvwrMrjZ?=
- =?us-ascii?q?oTskTCHinol0XqlqOZbVsr9vCy6+v7erXmuoOcN4hshw7kMaQugsm/DP88Mg?=
- =?us-ascii?q?gPWWib5Ou92KTt/U3+XbVKiOA5nbPFsJDbIsQboLS1AwhP0oYs8xy/FSup0M?=
- =?us-ascii?q?wEnXkbK1JIYBCHgJLpO17UOvD4Dumwg0+3nTh33PDKJKHuApDQLnTZjrjuYK?=
- =?us-ascii?q?t94VZGyAUv1dBf+45UCrYZLf3vXU/+qcbXAwQlPAyv2eroFNB91p4EVW2RH6?=
- =?us-ascii?q?CZLbvYsUWU6eI3P+mMeIgVtS75K/gk4f7ukHA4lUYTfamywJQYdm64EepiI0?=
- =?us-ascii?q?iCf3rsjckOEX0Qsgo9UuPqkluCXiBXZ3qoWKI8/D47Apq8DYjfXoCtnKCB3C?=
- =?us-ascii?q?CjE51SZ2BGDE2MEHjxe4WHRfgMciSSLdFlkjEfS7ihRJEu1Qu0uA/51bVnNO?=
- =?us-ascii?q?zU9TMctZ7509h1/eLTnwko9TNoF8Sdz32NT2Zsk2MGXTA5x65/rFdmyleA0a?=
- =?us-ascii?q?l4heJXFcBJ6/xSTAhpfaLbmuV5E9XaXgPHY8fMRlG7RNmvHTA2SJQ22dBdTV?=
- =?us-ascii?q?x6HoCMhxrC1iziLaUYm7GRBZc3uvbS1nL/D91+2nDLyO8rgg91EYN0KWS6i/?=
- =?us-ascii?q?snpEDoDInTnhDBmg=3D=3D?=
+IronPort-PHdr: =?us-ascii?q?9a23=3AFTLfSxfCLYXT9hgsbdMGYWx+lGMj4u6mDksu8p?=
+ =?us-ascii?q?Mizoh2WeGdxcWzZx7h7PlgxGXEQZ/co6odzbaO7Oa4ASQp2tWoiDg6aptCVh?=
+ =?us-ascii?q?sI2409vjcLJ4q7M3D9N+PgdCcgHc5PBxdP9nC/NlVJSo6lPwWB6nK94iQPFR?=
+ =?us-ascii?q?rhKAF7Ovr6GpLIj8Swyuu+54Dfbx9HiTahY75+Ngm6oRnMvcQKnIVuLbo8xA?=
+ =?us-ascii?q?HUqXVSYeRWwm1oJVOXnxni48q74YBu/SdNtf8/7sBMSar1cbg2QrxeFzQmLn?=
+ =?us-ascii?q?s65Nb3uhnZTAuA/WUTX2MLmRdVGQfF7RX6XpDssivms+d2xSeXMdHqQb0yRD?=
+ =?us-ascii?q?+v6bpgRh31hycdLzM38H/ZhNF+gqxYpxyupRJ/zpXIbI2JLvdyYrnQcc8GSW?=
+ =?us-ascii?q?dHQ81fVzZBAoS5b4YXD+QOJ/1Xr4jnqFsIsBCwBROsC/3yxTBWnH/23LE10+?=
+ =?us-ascii?q?c8GgzB0gwvBckBsHrPodXuN6cTUea1w7fUzTnZdPxZxy7w5Y7VeR4iufGBRb?=
+ =?us-ascii?q?F9fMjLxUQuFg7JlFedpIj/Mz+I1ekAvW6W5Pd6W+21kW4osQRxryCqxscrl4?=
+ =?us-ascii?q?bGmJoYykvB9SVl2IY1IsC4SFJjbd6kDpRQsyaaOpNyQsMlX25noiI6yr0BuZ?=
+ =?us-ascii?q?6gYCgG0pAnxxnDZPOdd4iH/xXjVOOLLjd5gnJpYLO/hxCs/ki80uDxVcu53E?=
+ =?us-ascii?q?xLoydEiNXBtHQA2wbO5sWERPZx5kKh1iyO1wDX5OFEO0c0la/DJp4v2LE/jZ?=
+ =?us-ascii?q?QTvF/YHi/1mET2irGZdlk+9uez9evreq/mqYOEN49olgH+Nbwjlda8AeQgNw?=
+ =?us-ascii?q?gDRGyb+eW61L3+8kz1WbtKjvorkqnfrZ/VP9gbpq++Aw9TyIoj7Ay/Dzi+2t?=
+ =?us-ascii?q?QCgXYHNE5FeA6Aj4XxOVHBOvD4Au2lg1Svjjhr3OvLMaH6ApnXMnfDlarhca?=
+ =?us-ascii?q?xj5EFB1Qo51cpf6I5MCrEdPPLzXVf8u8DfDhAkKQO52ProCM5n2owCXGKPH7?=
+ =?us-ascii?q?WVP73Pvl+V/ugvOfWDZJcJuDbhLPgo//rujX4/mV8AcqilxJUXaGulEft4PU?=
+ =?us-ascii?q?WWf37sj8wfEWcFoAU+VvbmiF6cXj5JYXa9QaY86is8CIK8AofJXpqtj6CZ3C?=
+ =?us-ascii?q?enAp1WYXhLClSNEXfuaoWFVO4AaCGMLc97lDwLS7yhRpQ/1RGhqgD60aBrLu?=
+ =?us-ascii?q?nK9S0Cs5Lsytx16/fUlREo+jx+F96d3H2VT2FogmMIQCc73K5lrkNmxFeOyr?=
+ =?us-ascii?q?N4g/9YFNxV+fxJTh02OoXCwL8yN9enUwHZe/+NSVC7UpCoBiw3QtstwtgIJU?=
+ =?us-ascii?q?FnFIaMlBfGigSjCb4ckfSlHpE4/7jd1Hu5c8h0wXjuz6owiVQ6BMFCYz71zp?=
+ =?us-ascii?q?Vj/hTeUtaa236SkLynIPwR?=
 X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AxAACMkslb/7dPQldjHAEBAQQBAQc?=
- =?us-ascii?q?EAQGBUQcBAQsBgQh8gVMSKIwNX41+AYhQjgmBejgBhEAChQMiNA0NAQMBAQI?=
- =?us-ascii?q?BAQIBbCiCNiKCYgZWIxBROR4ZgyGBdRGoDYN9hieHLIQ6gUE/gRGIXYUNAoh?=
- =?us-ascii?q?tlVQJhiGKSwIVgU+Ec4lnmBU4gVVNIBiDJ4ImF44cPTCBAwE9AYoyAQE?=
-X-IPAS-Result: =?us-ascii?q?A2AxAACMkslb/7dPQldjHAEBAQQBAQcEAQGBUQcBAQsBg?=
- =?us-ascii?q?Qh8gVMSKIwNX41+AYhQjgmBejgBhEAChQMiNA0NAQMBAQIBAQIBbCiCNiKCY?=
- =?us-ascii?q?gZWIxBROR4ZgyGBdRGoDYN9hieHLIQ6gUE/gRGIXYUNAohtlVQJhiGKSwIVg?=
- =?us-ascii?q?U+Ec4lnmBU4gVVNIBiDJ4ImF44cPTCBAwE9AYoyAQE?=
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AQAACMkslb/7dPQldjGwEBAQEDAQE?=
+ =?us-ascii?q?BBwMBAQGBUQYBAQELAYEIfIFTEiiMDV+NfgGIUI4JgXo4AYRAAoUDIjQNDQE?=
+ =?us-ascii?q?DAQECAQECAWwogjYigmIGJy8jEFE5HhmDIYF1EadaM4N9hieHLIQ6gUE/gRG?=
+ =?us-ascii?q?NagKIbZVUCYYhiksCFZApmBU4gVVNIBiDJ4ImF44cPTCBAwE9AYoyAQE?=
+X-IPAS-Result: =?us-ascii?q?A2AQAACMkslb/7dPQldjGwEBAQEDAQEBBwMBAQGBUQYBA?=
+ =?us-ascii?q?QELAYEIfIFTEiiMDV+NfgGIUI4JgXo4AYRAAoUDIjQNDQEDAQECAQECAWwog?=
+ =?us-ascii?q?jYigmIGJy8jEFE5HhmDIYF1EadaM4N9hieHLIQ6gUE/gRGNagKIbZVUCYYhi?=
+ =?us-ascii?q?ksCFZApmBU4gVVNIBiDJ4ImF44cPTCBAwE9AYoyAQE?=
 Received: from 183.79-66-87.adsl-dyn.isp.belgacom.be (HELO localhost.localdomain) ([87.66.79.183])
-  by relay.skynet.be with ESMTP; 19 Oct 2018 10:20:12 +0200
+  by relay.skynet.be with ESMTP; 19 Oct 2018 10:20:14 +0200
 From:   Fabian Frederick <fabf@skynet.be>
 To:     akpm@linux-foundation.org
 Cc:     jaharkes@cs.cmu.edu, coda@cs.cmu.edu,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         fabf@skynet.be
-Subject: [PATCH 5/7 linux-next] coda: remove sysctl object from module when unused
-Date:   Fri, 19 Oct 2018 10:19:31 +0200
-Message-Id: <1539937173-26260-6-git-send-email-fabf@skynet.be>
+Subject: [PATCH 7/7 linux-next] coda: ftoc validity check integration
+Date:   Fri, 19 Oct 2018 10:19:33 +0200
+Message-Id: <1539937173-26260-8-git-send-email-fabf@skynet.be>
 X-Mailer: git-send-email 2.4.11
 In-Reply-To: <1539937173-26260-1-git-send-email-fabf@skynet.be>
 References: <1539937173-26260-1-git-send-email-fabf@skynet.be>
@@ -75,95 +75,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Inspired by NFS sysctl process
+This patch moves cfi check in coda_ftoc() instead of repeating
+it in the wild.
+
+Module size
+   text	   data	    bss	    dec	    hex	filename
+  28297	   1040	    700	  30037	   7555	fs/coda/coda.ko.before
+  28263	    980	    700	  29943	   74f7	fs/coda/coda.ko.after
 
 Signed-off-by: Fabian Frederick <fabf@skynet.be>
 ---
- fs/coda/Makefile     |  3 ++-
- fs/coda/coda_int.h   | 10 ++++++++++
- fs/coda/coda_linux.h |  4 ----
- fs/coda/sysctl.c     | 11 -----------
- 4 files changed, 12 insertions(+), 16 deletions(-)
+ fs/coda/cnode.c     | 10 ++++++++++
+ fs/coda/coda_fs_i.h |  3 +--
+ fs/coda/dir.c       |  6 ++----
+ fs/coda/file.c      | 17 +++++------------
+ 4 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/fs/coda/Makefile b/fs/coda/Makefile
-index 1bab69a..30e4e1b 100644
---- a/fs/coda/Makefile
-+++ b/fs/coda/Makefile
-@@ -5,7 +5,8 @@
- obj-$(CONFIG_CODA_FS) += coda.o
- 
- coda-objs := psdev.o cache.o cnode.o inode.o dir.o file.o upcall.o \
--	     coda_linux.o symlink.o pioctl.o sysctl.o 
-+	     coda_linux.o symlink.o pioctl.o
-+coda-$(CONFIG_SYSCTL) += sysctl.o
- 
- # If you want debugging output, please uncomment the following line.
- 
-diff --git a/fs/coda/coda_int.h b/fs/coda/coda_int.h
-index bb0b3e0..f82b59c 100644
---- a/fs/coda/coda_int.h
-+++ b/fs/coda/coda_int.h
-@@ -13,9 +13,19 @@ extern int coda_fake_statfs;
- void coda_destroy_inodecache(void);
- int __init coda_init_inodecache(void);
- int coda_fsync(struct file *coda_file, loff_t start, loff_t end, int datasync);
-+
-+#ifdef CONFIG_SYSCTL
- void coda_sysctl_init(void);
- void coda_sysctl_clean(void);
-+#else
-+static inline void coda_sysctl_init(void)
-+{
-+}
- 
-+static inline void coda_sysctl_clean(void)
-+{
-+}
-+#endif
- #endif  /*  _CODA_INT_  */
- 
- 
-diff --git a/fs/coda/coda_linux.h b/fs/coda/coda_linux.h
-index 903f2a3..4087264 100644
---- a/fs/coda/coda_linux.h
-+++ b/fs/coda/coda_linux.h
-@@ -59,10 +59,6 @@ void coda_vattr_to_iattr(struct inode *, struct coda_vattr *);
- void coda_iattr_to_vattr(struct iattr *, struct coda_vattr *);
- unsigned short coda_flags_to_cflags(unsigned short);
- 
--/* sysctl.h */
--void coda_sysctl_init(void);
--void coda_sysctl_clean(void);
--
- #define CODA_ALLOC(ptr, cast, size) do { \
-     if (size < PAGE_SIZE) \
-         ptr = kzalloc((unsigned long) size, GFP_KERNEL); \
-diff --git a/fs/coda/sysctl.c b/fs/coda/sysctl.c
-index 0301d45..fda3b70 100644
---- a/fs/coda/sysctl.c
-+++ b/fs/coda/sysctl.c
-@@ -12,7 +12,6 @@
- 
- #include "coda_int.h"
- 
--#ifdef CONFIG_SYSCTL
- static struct ctl_table_header *fs_table_header;
- 
- static struct ctl_table coda_table[] = {
-@@ -62,13 +61,3 @@ void coda_sysctl_clean(void)
- 		fs_table_header = NULL;
- 	}
+diff --git a/fs/coda/cnode.c b/fs/coda/cnode.c
+index c42d340..36414438 100644
+--- a/fs/coda/cnode.c
++++ b/fs/coda/cnode.c
+@@ -148,6 +148,16 @@ struct inode *coda_fid_to_inode(struct CodaFid *fid, struct super_block *sb)
+ 	return inode;
  }
+ 
++struct coda_file_info *coda_ftoc(struct file *file)
++{
++	struct coda_file_info *cfi = file->private_data;
++
++	BUG_ON(!cfi || cfi->cfi_magic != CODA_MAGIC);
++
++	return cfi;
++
++}
++
+ /* the CONTROL inode is made without asking attributes from Venus */
+ struct inode *coda_cnode_makectl(struct super_block *sb)
+ {
+diff --git a/fs/coda/coda_fs_i.h b/fs/coda/coda_fs_i.h
+index d702ba1a..c99d574 100644
+--- a/fs/coda/coda_fs_i.h
++++ b/fs/coda/coda_fs_i.h
+@@ -42,8 +42,6 @@ struct coda_file_info {
+ 	unsigned int	   cfi_mapcount;  /* nr of times this file is mapped */
+ };
+ 
+-#define CODA_FTOC(file) ((struct coda_file_info *)((file)->private_data))
 -
--#else
--void coda_sysctl_init(void)
--{
--}
+ /* flags */
+ #define C_VATTR       0x1   /* Validity of vattr in inode */
+ #define C_FLUSH       0x2   /* used after a flush */
+@@ -54,6 +52,7 @@ struct inode *coda_cnode_make(struct CodaFid *, struct super_block *);
+ struct inode *coda_iget(struct super_block *sb, struct CodaFid *fid, struct coda_vattr *attr);
+ struct inode *coda_cnode_makectl(struct super_block *sb);
+ struct inode *coda_fid_to_inode(struct CodaFid *fid, struct super_block *sb);
++struct coda_file_info *coda_ftoc(struct file *file);
+ void coda_replace_fid(struct inode *, struct CodaFid *, struct CodaFid *);
+ 
+ #endif
+diff --git a/fs/coda/dir.c b/fs/coda/dir.c
+index 00876dd..3e80770 100644
+--- a/fs/coda/dir.c
++++ b/fs/coda/dir.c
+@@ -356,8 +356,7 @@ static int coda_venus_readdir(struct file *coda_file, struct dir_context *ctx)
+ 	ino_t ino;
+ 	int ret;
+ 
+-	cfi = CODA_FTOC(coda_file);
+-	BUG_ON(!cfi || cfi->cfi_magic != CODA_MAGIC);
++	cfi = coda_ftoc(coda_file);
+ 	host_file = cfi->cfi_container;
+ 
+ 	cii = ITOC(file_inode(coda_file));
+@@ -426,8 +425,7 @@ static int coda_readdir(struct file *coda_file, struct dir_context *ctx)
+ 	struct file *host_file;
+ 	int ret;
+ 
+-	cfi = CODA_FTOC(coda_file);
+-	BUG_ON(!cfi || cfi->cfi_magic != CODA_MAGIC);
++	cfi = coda_ftoc(coda_file);
+ 	host_file = cfi->cfi_container;
+ 
+ 	if (host_file->f_op->iterate || host_file->f_op->iterate_shared) {
+diff --git a/fs/coda/file.c b/fs/coda/file.c
+index 1cbc1f2..55c22e2 100644
+--- a/fs/coda/file.c
++++ b/fs/coda/file.c
+@@ -31,9 +31,7 @@ static ssize_t
+ coda_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
+ 	struct file *coda_file = iocb->ki_filp;
+-	struct coda_file_info *cfi = CODA_FTOC(coda_file);
 -
--void coda_sysctl_clean(void)
--{
--}
--#endif
+-	BUG_ON(!cfi || cfi->cfi_magic != CODA_MAGIC);
++	struct coda_file_info *cfi = coda_ftoc(coda_file);
+ 
+ 	return vfs_iter_read(cfi->cfi_container, to, &iocb->ki_pos, 0);
+ }
+@@ -43,12 +41,10 @@ coda_file_write_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
+ 	struct file *coda_file = iocb->ki_filp;
+ 	struct inode *coda_inode = file_inode(coda_file);
+-	struct coda_file_info *cfi = CODA_FTOC(coda_file);
++	struct coda_file_info *cfi = coda_ftoc(coda_file);
+ 	struct file *host_file;
+ 	ssize_t ret;
+ 
+-	BUG_ON(!cfi || cfi->cfi_magic != CODA_MAGIC);
+-
+ 	host_file = cfi->cfi_container;
+ 	file_start_write(host_file);
+ 	inode_lock(coda_inode);
+@@ -69,8 +65,7 @@ coda_file_mmap(struct file *coda_file, struct vm_area_struct *vma)
+ 	struct file *host_file;
+ 	struct inode *coda_inode, *host_inode;
+ 
+-	cfi = CODA_FTOC(coda_file);
+-	BUG_ON(!cfi || cfi->cfi_magic != CODA_MAGIC);
++	cfi = coda_ftoc(coda_file);
+ 	host_file = cfi->cfi_container;
+ 
+ 	if (!host_file->f_op->mmap)
+@@ -142,8 +137,7 @@ int coda_release(struct inode *coda_inode, struct file *coda_file)
+ 	struct inode *host_inode;
+ 	int err;
+ 
+-	cfi = CODA_FTOC(coda_file);
+-	BUG_ON(!cfi || cfi->cfi_magic != CODA_MAGIC);
++	cfi = coda_ftoc(coda_file);
+ 
+ 	err = venus_close(coda_inode->i_sb, coda_i2f(coda_inode),
+ 			  coda_flags, coda_file->f_cred->fsuid);
+@@ -185,8 +179,7 @@ int coda_fsync(struct file *coda_file, loff_t start, loff_t end, int datasync)
+ 		return err;
+ 	inode_lock(coda_inode);
+ 
+-	cfi = CODA_FTOC(coda_file);
+-	BUG_ON(!cfi || cfi->cfi_magic != CODA_MAGIC);
++	cfi = coda_ftoc(coda_file);
+ 	host_file = cfi->cfi_container;
+ 
+ 	err = vfs_fsync(host_file, datasync);
 -- 
 2.4.11
 
