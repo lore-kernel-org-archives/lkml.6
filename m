@@ -2,427 +2,161 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E035BECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF59ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A68552148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:17:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A68552148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 3314121470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 19:21:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KF5rFqt3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3314121470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbeJTDZM (ORCPT
+        id S1727859AbeJTD3P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 23:25:12 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:45808 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727981AbeJTDYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 23:24:40 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 37E19D9D2AD3B;
-        Sat, 20 Oct 2018 03:17:12 +0800 (CST)
-Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.399.0; Sat, 20 Oct 2018 03:17:06 +0800
-From:   Salil Mehta <salil.mehta@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Shiju Jose <shiju.jose@huawei.com>
-Subject: [PATCH net-next 4/7] net: hns3: Add enable and process common ecc errors
-Date:   Fri, 19 Oct 2018 20:15:29 +0100
-Message-ID: <20181019191532.10088-5-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20181019191532.10088-1-salil.mehta@huawei.com>
-References: <20181019191532.10088-1-salil.mehta@huawei.com>
+        Fri, 19 Oct 2018 23:29:15 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:56232 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727738AbeJTD3P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 23:29:15 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 206-v6so4627182wmb.5
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 12:21:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ZlMlQPOJclJv+xXGcoxBjGLiqyoC1ZhiiZGbeszupIU=;
+        b=KF5rFqt3R8pxhKJyFAbL3sBUPXiHPYQv1gtKHV1+zpWimMWbmDcdbH4Dpfmn5LBYLJ
+         t8+/P78UOoBivrf+qsK4StxMwZdz9KvWFYO9oevFw5jA1YPkJHlONRIph2EKf9tDDpJI
+         iX+T74rKXsm7J1YUp0Bmyl9SeKmPCMs07yBYg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ZlMlQPOJclJv+xXGcoxBjGLiqyoC1ZhiiZGbeszupIU=;
+        b=EEVAtOWv/GyVNle9WPECWUtMpVz8SIo3IVsNBoTeZBHn/cPJ0mPc122PT24+vxobrU
+         DQlTElq703P0/d6dFwTS4nkmqrEyoLV+36vTf8gaaIxrlTfKC4zRoibnXM6GwE0Wt0Hd
+         ESkw2UpLIGiOQgG6AVhSnCGdyRiLj4ismu33X6mWr5YdyknvS22STTBsVZ3YZ3FwQf3u
+         gThJ5TLIIoBnqwM1OPAvIza2FLXN4/3JhPFRXJE6MdXW8EHN5QnBzIQmG1AceZhbw1a7
+         LlV+ktSjRdil889c25VK1lN9KqS6FRcRfbQI4Adn+i6RjwaZcxiIDmP8YoXgWXjHxTT0
+         AD5Q==
+X-Gm-Message-State: ABuFfoikoZvNxFC20VDSJ57bsPF081AGw3UNhIChj/WUN67TGlBS6pYt
+        aosYtK/9YVC7lwH3G+FnecaYPpx8IPibpQPpRsK2fQ==
+X-Google-Smtp-Source: ACcGV629VjYCwlorgdm8hlpB/KrEq1QplbxZaji1QwsR/vDCodyeQP0c/esMm1xz2a8W6n40VSfQpSgtlnpbN0WckgU=
+X-Received: by 2002:a1c:bce:: with SMTP id 197-v6mr5875085wml.15.1539976908025;
+ Fri, 19 Oct 2018 12:21:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.226.54]
-X-CFilter-Loop: Reflected
+Received: by 2002:a1c:b485:0:0:0:0:0 with HTTP; Fri, 19 Oct 2018 12:21:47
+ -0700 (PDT)
+In-Reply-To: <alpine.DEB.2.21.1810192050250.1651@nanos.tec.linutronix.de>
+References: <20181015160945.5993-1-christopher.s.hall@intel.com>
+ <alpine.DEB.2.21.1810191720590.6075@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1810191955250.1651@nanos.tec.linutronix.de>
+ <CALAqxLWHdZn9RCcYbYicKXeu3QiCuVna27mWBQPbFvaj9gm-fw@mail.gmail.com> <alpine.DEB.2.21.1810192050250.1651@nanos.tec.linutronix.de>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Fri, 19 Oct 2018 12:21:47 -0700
+Message-ID: <CALAqxLVrPH-SFacys6pWBvL79OBwiAMUOL55oy3S7C+7pNffHA@mail.gmail.com>
+Subject: Re: TSC to Mono-raw Drift
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Christopher Hall <christopher.s.hall@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        jesus.sanchez-palencia@intel.com, gavin.hindman@intel.com,
+        liam.r.girdwood@intel.com, Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shiju Jose <shiju.jose@huawei.com>
+On Fri, Oct 19, 2018 at 11:57 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> On Fri, 19 Oct 2018, John Stultz wrote:
+>> On Fri, Oct 19, 2018 at 11:37 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>> > On Fri, 19 Oct 2018, Thomas Gleixner wrote:
+>> >> On Mon, 15 Oct 2018, Christopher Hall wrote:
+>> >> > TSC kHz used to calculate mult/shift value: 3312000
+>> >>
+>> >> Now the most interesting information here would be the resulting mult/shift
+>> >> value which the kernel uses. Can you please provide that?
+>> >
+>> > But aside of the actual values it's pretty obvious why this happens. It's a
+>> > simple rounding error. Minimal, but still. To avoid rounding errors you'd
+>> > have to find mult and shift values which exactly result in:
+>> >
+>> >      (freq * mult) >> shift = 1e9
+>> >
+>> > which is impossible for freq = 3312 * 1e6.
+>>
+>> Right.
+>>
+>> > A possible fix for this is, because the error is in the low PPB range, to
+>> > adjust the error once per second or in some other sensible regular
+>> > interval.
+>>
+>> Ehh.. I mean, this is basically what all the complicated ntp_error
+>> logic does for the long-term accuracy compensation.  Part of the
+>> allure of the raw clock is that there is no changes made over time.
+>> Its a very simple constant calculation.
+>>
+>> We could try to do something like pre-seed the ntpinterval value so
+>> the default ntp_tick value corrects for this, but that's only going to
+>> effect the monotonic/realtime clock until ntpd or anyone else sets a
+>> different interval rate.
+>>
+>> So  I'm not particularly eager in trying to do the type of small
+>> frequency oscillation we do for monotonic/realtime for long-term
+>> accuracy to the raw clock as that feels a bit antithetical to the
+>> point of the raw clock.
+>
+> I don't think you need complex oscillation for that. The error is constant
+> and small enough that it is a fractional nanoseconds thing with an interval
+> <= 1s. So you can just add that in a regular interval. Due to it being
+> small you can't observe time jumping I think.
 
-This patch adds enable and processing of ecc errors from
-common HNS blocks, CMDQ(Command Queue),
-IMP(Integrated Management Processor) and TQP(Task Queue Pair).
+Well, from the examples the trouble is we seem to be a bit fast,
+rather then slow.
+So we'll have to reduce mult by one, and rework the calculations, but
+maybe something like this (correcting the raw_interval value) would
+work.
 
-Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
----
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |   3 +
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 285 +++++++++++++++++++++
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h |  30 +++
- 3 files changed, 318 insertions(+)
+But this also sort of breaks, fundamental argument that the raw clock
+is a simple mult/shift transformation of the underlying clocksource
+counter. Its not the accuracy of the clock but the consistency that
+was key.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index 1ccde67..8525f18 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -209,6 +209,9 @@ enum hclge_opcode_type {
- 
- 	/* Led command */
- 	HCLGE_OPC_LED_STATUS_CFG	= 0xB000,
-+
-+	/* Error INT commands */
-+	HCLGE_COMMON_ECC_INT_CFG	= 0x1505,
- };
- 
- #define HCLGE_TQP_REG_OFFSET		0x80000
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-index d2640d1..8b37de4 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-@@ -3,7 +3,292 @@
- 
- #include "hclge_err.h"
- 
-+static const struct hclge_hw_error hclge_imp_tcm_ecc_int[] = {
-+	{ .int_msk = BIT(0), .msg = "imp_itcm0_ecc_1bit_err" },
-+	{ .int_msk = BIT(1), .msg = "imp_itcm0_ecc_mbit_err" },
-+	{ .int_msk = BIT(2), .msg = "imp_itcm1_ecc_1bit_err" },
-+	{ .int_msk = BIT(3), .msg = "imp_itcm1_ecc_mbit_err" },
-+	{ .int_msk = BIT(4), .msg = "imp_itcm2_ecc_1bit_err" },
-+	{ .int_msk = BIT(5), .msg = "imp_itcm2_ecc_mbit_err" },
-+	{ .int_msk = BIT(6), .msg = "imp_itcm3_ecc_1bit_err" },
-+	{ .int_msk = BIT(7), .msg = "imp_itcm3_ecc_mbit_err" },
-+	{ .int_msk = BIT(8), .msg = "imp_dtcm0_mem0_ecc_1bit_err" },
-+	{ .int_msk = BIT(9), .msg = "imp_dtcm0_mem0_ecc_mbit_err" },
-+	{ .int_msk = BIT(10), .msg = "imp_dtcm0_mem1_ecc_1bit_err" },
-+	{ .int_msk = BIT(11), .msg = "imp_dtcm0_mem1_ecc_mbit_err" },
-+	{ .int_msk = BIT(12), .msg = "imp_dtcm1_mem0_ecc_1bit_err" },
-+	{ .int_msk = BIT(13), .msg = "imp_dtcm1_mem0_ecc_mbit_err" },
-+	{ .int_msk = BIT(14), .msg = "imp_dtcm1_mem1_ecc_1bit_err" },
-+	{ .int_msk = BIT(15), .msg = "imp_dtcm1_mem1_ecc_mbit_err" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct hclge_hw_error hclge_imp_itcm4_ecc_int[] = {
-+	{ .int_msk = BIT(0), .msg = "imp_itcm4_ecc_1bit_err" },
-+	{ .int_msk = BIT(1), .msg = "imp_itcm4_ecc_mbit_err" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct hclge_hw_error hclge_cmdq_nic_mem_ecc_int[] = {
-+	{ .int_msk = BIT(0), .msg = "cmdq_nic_rx_depth_ecc_1bit_err" },
-+	{ .int_msk = BIT(1), .msg = "cmdq_nic_rx_depth_ecc_mbit_err" },
-+	{ .int_msk = BIT(2), .msg = "cmdq_nic_tx_depth_ecc_1bit_err" },
-+	{ .int_msk = BIT(3), .msg = "cmdq_nic_tx_depth_ecc_mbit_err" },
-+	{ .int_msk = BIT(4), .msg = "cmdq_nic_rx_tail_ecc_1bit_err" },
-+	{ .int_msk = BIT(5), .msg = "cmdq_nic_rx_tail_ecc_mbit_err" },
-+	{ .int_msk = BIT(6), .msg = "cmdq_nic_tx_tail_ecc_1bit_err" },
-+	{ .int_msk = BIT(7), .msg = "cmdq_nic_tx_tail_ecc_mbit_err" },
-+	{ .int_msk = BIT(8), .msg = "cmdq_nic_rx_head_ecc_1bit_err" },
-+	{ .int_msk = BIT(9), .msg = "cmdq_nic_rx_head_ecc_mbit_err" },
-+	{ .int_msk = BIT(10), .msg = "cmdq_nic_tx_head_ecc_1bit_err" },
-+	{ .int_msk = BIT(11), .msg = "cmdq_nic_tx_head_ecc_mbit_err" },
-+	{ .int_msk = BIT(12), .msg = "cmdq_nic_rx_addr_ecc_1bit_err" },
-+	{ .int_msk = BIT(13), .msg = "cmdq_nic_rx_addr_ecc_mbit_err" },
-+	{ .int_msk = BIT(14), .msg = "cmdq_nic_tx_addr_ecc_1bit_err" },
-+	{ .int_msk = BIT(15), .msg = "cmdq_nic_tx_addr_ecc_mbit_err" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct hclge_hw_error hclge_cmdq_rocee_mem_ecc_int[] = {
-+	{ .int_msk = BIT(0), .msg = "cmdq_rocee_rx_depth_ecc_1bit_err" },
-+	{ .int_msk = BIT(1), .msg = "cmdq_rocee_rx_depth_ecc_mbit_err" },
-+	{ .int_msk = BIT(2), .msg = "cmdq_rocee_tx_depth_ecc_1bit_err" },
-+	{ .int_msk = BIT(3), .msg = "cmdq_rocee_tx_depth_ecc_mbit_err" },
-+	{ .int_msk = BIT(4), .msg = "cmdq_rocee_rx_tail_ecc_1bit_err" },
-+	{ .int_msk = BIT(5), .msg = "cmdq_rocee_rx_tail_ecc_mbit_err" },
-+	{ .int_msk = BIT(6), .msg = "cmdq_rocee_tx_tail_ecc_1bit_err" },
-+	{ .int_msk = BIT(7), .msg = "cmdq_rocee_tx_tail_ecc_mbit_err" },
-+	{ .int_msk = BIT(8), .msg = "cmdq_rocee_rx_head_ecc_1bit_err" },
-+	{ .int_msk = BIT(9), .msg = "cmdq_rocee_rx_head_ecc_mbit_err" },
-+	{ .int_msk = BIT(10), .msg = "cmdq_rocee_tx_head_ecc_1bit_err" },
-+	{ .int_msk = BIT(11), .msg = "cmdq_rocee_tx_head_ecc_mbit_err" },
-+	{ .int_msk = BIT(12), .msg = "cmdq_rocee_rx_addr_ecc_1bit_err" },
-+	{ .int_msk = BIT(13), .msg = "cmdq_rocee_rx_addr_ecc_mbit_err" },
-+	{ .int_msk = BIT(14), .msg = "cmdq_rocee_tx_addr_ecc_1bit_err" },
-+	{ .int_msk = BIT(15), .msg = "cmdq_rocee_tx_addr_ecc_mbit_err" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct hclge_hw_error hclge_tqp_int_ecc_int[] = {
-+	{ .int_msk = BIT(0), .msg = "tqp_int_cfg_even_ecc_1bit_err" },
-+	{ .int_msk = BIT(1), .msg = "tqp_int_cfg_odd_ecc_1bit_err" },
-+	{ .int_msk = BIT(2), .msg = "tqp_int_ctrl_even_ecc_1bit_err" },
-+	{ .int_msk = BIT(3), .msg = "tqp_int_ctrl_odd_ecc_1bit_err" },
-+	{ .int_msk = BIT(4), .msg = "tx_que_scan_int_ecc_1bit_err" },
-+	{ .int_msk = BIT(5), .msg = "rx_que_scan_int_ecc_1bit_err" },
-+	{ .int_msk = BIT(6), .msg = "tqp_int_cfg_even_ecc_mbit_err" },
-+	{ .int_msk = BIT(7), .msg = "tqp_int_cfg_odd_ecc_mbit_err" },
-+	{ .int_msk = BIT(8), .msg = "tqp_int_ctrl_even_ecc_mbit_err" },
-+	{ .int_msk = BIT(9), .msg = "tqp_int_ctrl_odd_ecc_mbit_err" },
-+	{ .int_msk = BIT(10), .msg = "tx_que_scan_int_ecc_mbit_err" },
-+	{ .int_msk = BIT(11), .msg = "rx_que_scan_int_ecc_mbit_err" },
-+	{ /* sentinel */ }
-+};
-+
-+static void hclge_log_error(struct device *dev,
-+			    const struct hclge_hw_error *err_list,
-+			    u32 err_sts)
-+{
-+	const struct hclge_hw_error *err;
-+	int i = 0;
-+
-+	while (err_list[i].msg) {
-+		err = &err_list[i];
-+		if (!(err->int_msk & err_sts)) {
-+			i++;
-+			continue;
-+		}
-+		dev_warn(dev, "%s [error status=0x%x] found\n",
-+			 err->msg, err_sts);
-+		i++;
-+	}
-+}
-+
-+/* hclge_cmd_query_error: read the error information
-+ * @hdev: pointer to struct hclge_dev
-+ * @desc: descriptor for describing the command
-+ * @cmd:  command opcode
-+ * @flag: flag for extended command structure
-+ * @w_num: offset for setting the read interrupt type.
-+ * @int_type: select which type of the interrupt for which the error
-+ * info will be read(RAS-CE/RAS-NFE/RAS-FE etc).
-+ *
-+ * This function query the error info from hw register/s using command
-+ */
-+static int hclge_cmd_query_error(struct hclge_dev *hdev,
-+				 struct hclge_desc *desc, u32 cmd,
-+				 u16 flag, u8 w_num,
-+				 enum hclge_err_int_type int_type)
-+{
-+	struct device *dev = &hdev->pdev->dev;
-+	int num = 1;
-+	int ret;
-+
-+	hclge_cmd_setup_basic_desc(&desc[0], cmd, true);
-+	if (flag) {
-+		desc[0].flag |= cpu_to_le16(flag);
-+		hclge_cmd_setup_basic_desc(&desc[1], cmd, true);
-+		num = 2;
-+	}
-+	if (w_num)
-+		desc[0].data[w_num] = cpu_to_le32(int_type);
-+
-+	ret = hclge_cmd_send(&hdev->hw, &desc[0], num);
-+	if (ret)
-+		dev_err(dev, "query error cmd failed (%d)\n", ret);
-+
-+	return ret;
-+}
-+
-+/* hclge_cmd_clear_error: clear the error status
-+ * @hdev: pointer to struct hclge_dev
-+ * @desc: descriptor for describing the command
-+ * @desc_src: prefilled descriptor from the previous command for reusing
-+ * @cmd:  command opcode
-+ * @flag: flag for extended command structure
-+ *
-+ * This function clear the error status in the hw register/s using command
-+ */
-+static int hclge_cmd_clear_error(struct hclge_dev *hdev,
-+				 struct hclge_desc *desc,
-+				 struct hclge_desc *desc_src,
-+				 u32 cmd, u16 flag)
-+{
-+	struct device *dev = &hdev->pdev->dev;
-+	int num = 1;
-+	int ret, i;
-+
-+	if (cmd) {
-+		hclge_cmd_setup_basic_desc(&desc[0], cmd, false);
-+		if (flag) {
-+			desc[0].flag |= cpu_to_le16(flag);
-+			hclge_cmd_setup_basic_desc(&desc[1], cmd, false);
-+			num = 2;
-+		}
-+		if (desc_src) {
-+			for (i = 0; i < 6; i++) {
-+				desc[0].data[i] = desc_src[0].data[i];
-+				if (flag)
-+					desc[1].data[i] = desc_src[1].data[i];
-+			}
-+		}
-+	} else {
-+		hclge_cmd_reuse_desc(&desc[0], false);
-+		if (flag) {
-+			desc[0].flag |= cpu_to_le16(flag);
-+			hclge_cmd_reuse_desc(&desc[1], false);
-+			num = 2;
-+		}
-+	}
-+	ret = hclge_cmd_send(&hdev->hw, &desc[0], num);
-+	if (ret)
-+		dev_err(dev, "clear error cmd failed (%d)\n", ret);
-+
-+	return ret;
-+}
-+
-+static int hclge_enable_common_error(struct hclge_dev *hdev, bool en)
-+{
-+	struct device *dev = &hdev->pdev->dev;
-+	struct hclge_desc desc[2];
-+	int ret;
-+
-+	hclge_cmd_setup_basic_desc(&desc[0], HCLGE_COMMON_ECC_INT_CFG, false);
-+	desc[0].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
-+	hclge_cmd_setup_basic_desc(&desc[1], HCLGE_COMMON_ECC_INT_CFG, false);
-+
-+	if (en) {
-+		/* enable COMMON error interrupts */
-+		desc[0].data[0] = cpu_to_le32(HCLGE_IMP_TCM_ECC_ERR_INT_EN);
-+		desc[0].data[2] = cpu_to_le32(HCLGE_CMDQ_NIC_ECC_ERR_INT_EN |
-+					HCLGE_CMDQ_ROCEE_ECC_ERR_INT_EN);
-+		desc[0].data[3] = cpu_to_le32(HCLGE_IMP_RD_POISON_ERR_INT_EN);
-+		desc[0].data[4] = cpu_to_le32(HCLGE_TQP_ECC_ERR_INT_EN);
-+		desc[0].data[5] = cpu_to_le32(HCLGE_IMP_ITCM4_ECC_ERR_INT_EN);
-+	} else {
-+		/* disable COMMON error interrupts */
-+		desc[0].data[0] = 0;
-+		desc[0].data[2] = 0;
-+		desc[0].data[3] = 0;
-+		desc[0].data[4] = 0;
-+		desc[0].data[5] = 0;
-+	}
-+	desc[1].data[0] = cpu_to_le32(HCLGE_IMP_TCM_ECC_ERR_INT_EN_MASK);
-+	desc[1].data[2] = cpu_to_le32(HCLGE_CMDQ_NIC_ECC_ERR_INT_EN_MASK |
-+				HCLGE_CMDQ_ROCEE_ECC_ERR_INT_EN_MASK);
-+	desc[1].data[3] = cpu_to_le32(HCLGE_IMP_RD_POISON_ERR_INT_EN_MASK);
-+	desc[1].data[4] = cpu_to_le32(HCLGE_TQP_ECC_ERR_INT_EN_MASK);
-+	desc[1].data[5] = cpu_to_le32(HCLGE_IMP_ITCM4_ECC_ERR_INT_EN_MASK);
-+
-+	ret = hclge_cmd_send(&hdev->hw, &desc[0], 2);
-+	if (ret)
-+		dev_err(dev,
-+			"failed(%d) to enable/disable COMMON err interrupts\n",
-+			ret);
-+
-+	return ret;
-+}
-+
-+static void hclge_process_common_error(struct hclge_dev *hdev,
-+				       enum hclge_err_int_type type)
-+{
-+	struct device *dev = &hdev->pdev->dev;
-+	struct hclge_desc desc[2];
-+	u32 err_sts;
-+	int ret;
-+
-+	/* read err sts */
-+	ret = hclge_cmd_query_error(hdev, &desc[0],
-+				    HCLGE_COMMON_ECC_INT_CFG,
-+				    HCLGE_CMD_FLAG_NEXT, 0, 0);
-+	if (ret) {
-+		dev_err(dev,
-+			"failed(=%d) to query COMMON error interrupt status\n",
-+			ret);
-+		return;
-+	}
-+
-+	/* log err */
-+	err_sts = (le32_to_cpu(desc[0].data[0])) & HCLGE_IMP_TCM_ECC_INT_MASK;
-+	hclge_log_error(dev, &hclge_imp_tcm_ecc_int[0], err_sts);
-+
-+	err_sts = (le32_to_cpu(desc[0].data[1])) & HCLGE_CMDQ_ECC_INT_MASK;
-+	hclge_log_error(dev, &hclge_cmdq_nic_mem_ecc_int[0], err_sts);
-+
-+	err_sts = (le32_to_cpu(desc[0].data[1]) >> HCLGE_CMDQ_ROC_ECC_INT_SHIFT)
-+		   & HCLGE_CMDQ_ECC_INT_MASK;
-+	hclge_log_error(dev, &hclge_cmdq_rocee_mem_ecc_int[0], err_sts);
-+
-+	if ((le32_to_cpu(desc[0].data[3])) & BIT(0))
-+		dev_warn(dev, "imp_rd_data_poison_err found\n");
-+
-+	err_sts = (le32_to_cpu(desc[0].data[3]) >> HCLGE_TQP_ECC_INT_SHIFT) &
-+		   HCLGE_TQP_ECC_INT_MASK;
-+	hclge_log_error(dev, &hclge_tqp_int_ecc_int[0], err_sts);
-+
-+	err_sts = (le32_to_cpu(desc[0].data[5])) &
-+		   HCLGE_IMP_ITCM4_ECC_INT_MASK;
-+	hclge_log_error(dev, &hclge_imp_itcm4_ecc_int[0], err_sts);
-+
-+	/* clear error interrupts */
-+	desc[1].data[0] = cpu_to_le32(HCLGE_IMP_TCM_ECC_CLR_MASK);
-+	desc[1].data[1] = cpu_to_le32(HCLGE_CMDQ_NIC_ECC_CLR_MASK |
-+				HCLGE_CMDQ_ROCEE_ECC_CLR_MASK);
-+	desc[1].data[3] = cpu_to_le32(HCLGE_TQP_IMP_ERR_CLR_MASK);
-+	desc[1].data[5] = cpu_to_le32(HCLGE_IMP_ITCM4_ECC_CLR_MASK);
-+
-+	ret = hclge_cmd_clear_error(hdev, &desc[0], NULL, 0,
-+				    HCLGE_CMD_FLAG_NEXT);
-+	if (ret)
-+		dev_err(dev,
-+			"failed(%d) to clear COMMON error interrupt status\n",
-+			ret);
-+}
-+
- static const struct hclge_hw_blk hw_blk[] = {
-+	{ .msk = BIT(5), .name = "COMMON",
-+	  .enable_error = hclge_enable_common_error,
-+	  .process_error = hclge_process_common_error, },
- 	{ /* sentinel */ }
- };
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
-index 373e9bf..b413141 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
-@@ -11,6 +11,31 @@
- #define HCLGE_RAS_REG_NFE_MASK   0xFF00
- #define HCLGE_RAS_REG_NFE_SHIFT	8
- 
-+#define HCLGE_IMP_TCM_ECC_ERR_INT_EN	0xFFFF0000
-+#define HCLGE_IMP_TCM_ECC_ERR_INT_EN_MASK	0xFFFF0000
-+#define HCLGE_IMP_ITCM4_ECC_ERR_INT_EN	0x300
-+#define HCLGE_IMP_ITCM4_ECC_ERR_INT_EN_MASK	0x300
-+#define HCLGE_CMDQ_NIC_ECC_ERR_INT_EN	0xFFFF
-+#define HCLGE_CMDQ_NIC_ECC_ERR_INT_EN_MASK	0xFFFF
-+#define HCLGE_CMDQ_ROCEE_ECC_ERR_INT_EN	0xFFFF0000
-+#define HCLGE_CMDQ_ROCEE_ECC_ERR_INT_EN_MASK	0xFFFF0000
-+#define HCLGE_IMP_RD_POISON_ERR_INT_EN	0x0100
-+#define HCLGE_IMP_RD_POISON_ERR_INT_EN_MASK	0x0100
-+#define HCLGE_TQP_ECC_ERR_INT_EN	0x0FFF
-+#define HCLGE_TQP_ECC_ERR_INT_EN_MASK	0x0FFF
-+
-+#define HCLGE_IMP_TCM_ECC_INT_MASK	0xFFFF
-+#define HCLGE_IMP_ITCM4_ECC_INT_MASK	0x3
-+#define HCLGE_CMDQ_ECC_INT_MASK		0xFFFF
-+#define HCLGE_CMDQ_ROC_ECC_INT_SHIFT	16
-+#define HCLGE_TQP_ECC_INT_MASK		0xFFF
-+#define HCLGE_TQP_ECC_INT_SHIFT		16
-+#define HCLGE_IMP_TCM_ECC_CLR_MASK	0xFFFF
-+#define HCLGE_IMP_ITCM4_ECC_CLR_MASK	0x3
-+#define HCLGE_CMDQ_NIC_ECC_CLR_MASK	0xFFFF
-+#define HCLGE_CMDQ_ROCEE_ECC_CLR_MASK	0xFFFF0000
-+#define HCLGE_TQP_IMP_ERR_CLR_MASK	0x0FFF0001
-+
- enum hclge_err_int_type {
- 	HCLGE_ERR_INT_MSIX = 0,
- 	HCLGE_ERR_INT_RAS_CE = 1,
-@@ -26,6 +51,11 @@ struct hclge_hw_blk {
- 			      enum hclge_err_int_type type);
- };
- 
-+struct hclge_hw_error {
-+	u32 int_msk;
-+	const char *msg;
-+};
-+
- int hclge_hw_error_set_state(struct hclge_dev *hdev, bool state);
- pci_ers_result_t hclge_process_ras_hw_error(struct hnae3_ae_dev *ae_dev);
- #endif
--- 
-2.7.4
+The counter argument is that the raw clock is abstracting the
+underlying hardware so folks who would have used the TSC directly can
+now use the raw clock and have a generic abstracted hardware-counter
+interface. So userland shouldn't really be worried about the
+occasional injections made since they shouldn't be trying to
+re-generate the abstraction from the hardware themselves.  <--
+Remember this point as we move to the next comment:)
 
+> The end-result is 'correct' as much correct it is in relation to real
+> nanoseconds. :)
+>
+>> I guess I'd want to understand more of the use here and the need to
+>> tie the raw clock back to the hardware counter it abstracts.
+>
+> The problem there is ART which is distributed to PCIe devices and ART time
+> stamps are exposed in various ways. ART has a fixed ratio vs. TSC so there
+> is a reasonable expectation that MONOTONIC_RAW is accurate.
 
+Which is maybe sort of my issue here. The raw clock provided a
+abstraction away from the hardware for generic usage, but then its
+being re-used with other un-abstracted hardware references. So unless
+they use the same method of transformation, there will be problems (of
+varying degree).
+
+We might be able to reduce the degree in this case, but I worry the
+extra complexity may only cause problems for others.
+
+thanks
+-john
