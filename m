@@ -2,163 +2,110 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DCAC67863
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 03:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF86C67863
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 03:25:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA90820836
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 03:14:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA90820836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id C3E382145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 03:25:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jHaaRB3M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3E382145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbeJSLTB (ORCPT
+        id S1726860AbeJSL3d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 07:19:01 -0400
-Received: from ipmail02.adl2.internode.on.net ([150.101.137.139]:56973 "EHLO
-        ipmail02.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726245AbeJSLTB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 07:19:01 -0400
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail02.adl2.internode.on.net with ESMTP; 19 Oct 2018 13:44:46 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gDLFO-0006ZQ-3K; Fri, 19 Oct 2018 14:14:46 +1100
-Date:   Fri, 19 Oct 2018 14:14:46 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     kernel-team@fb.com, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, tj@kernel.org,
-        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, riel@fb.com, linux-mm@kvack.org
-Subject: Re: [PATCH 2/7] mm: drop mmap_sem for page cache read IO submission
-Message-ID: <20181019031446.GH18822@dastard>
-References: <20181018202318.9131-1-josef@toxicpanda.com>
- <20181018202318.9131-3-josef@toxicpanda.com>
+        Fri, 19 Oct 2018 07:29:33 -0400
+Received: from ozlabs.org ([203.11.71.1]:49351 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726562AbeJSL3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 07:29:32 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42brrx4ym2z9sC2;
+        Fri, 19 Oct 2018 14:25:21 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1539919523;
+        bh=rtee8WIobVFDHiyv++6phgw5Eh+emisB85ZjXpuWTbQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=jHaaRB3MN1VhjgJ87DD32LEpoq6+nwa3HspClBzqGWLSAthTSIrWmiv9PF9IPkgln
+         VFzBoyWs0mhFMHnqmdnj0/fHiNapcghg20c6WLMUEKCh43hSeQ0koZ006nTVZlYpHs
+         n8lmAlD8UuKAT+FUouibM6haeGV6/bpF1xIQsxtpTYb+FfjBi+jBfu86D/LTq+b+wu
+         A27mFt6euGxKVvlOElWifkgSqOfSWFE0zymthuaVX7Z0CY3f/b6lqDRb5QwyesLS/S
+         uDfbpeHbvH67K/84pqMSMB5PmFCy5//9sQZOCc0bUgpCmE7/GgpCszc8sZzKr327PB
+         ZkT1gSc9qgfkQ==
+Date:   Fri, 19 Oct 2018 14:25:08 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: linux-next: manual merge of the kvm tree with the tip tree
+Message-ID: <20181019142508.72650fa8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181018202318.9131-3-josef@toxicpanda.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/2CB9Ba.p/spzxBLrrZ/338C"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 04:23:13PM -0400, Josef Bacik wrote:
-> From: Johannes Weiner <hannes@cmpxchg.org>
-> 
-> Reads can take a long time, and if anybody needs to take a write lock on
-> the mmap_sem it'll block any subsequent readers to the mmap_sem while
-> the read is outstanding, which could cause long delays.  Instead drop
-> the mmap_sem if we do any reads at all.
-> 
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> ---
-.....
->  vm_fault_t filemap_fault(struct vm_fault *vmf)
->  {
->  	int error;
-> +	struct mm_struct *mm = vmf->vma->vm_mm;
->  	struct file *file = vmf->vma->vm_file;
->  	struct address_space *mapping = file->f_mapping;
->  	struct file_ra_state *ra = &file->f_ra;
->  	struct inode *inode = mapping->host;
->  	pgoff_t offset = vmf->pgoff;
-> +	int flags = vmf->flags;
+--Sig_/2CB9Ba.p/spzxBLrrZ/338C
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-local copy of flags.
+Hi all,
 
->  	pgoff_t max_off;
->  	struct page *page;
->  	vm_fault_t ret = 0;
-> @@ -2509,27 +2540,44 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
->  	 * Do we have something in the page cache already?
->  	 */
->  	page = find_get_page(mapping, offset);
-> -	if (likely(page) && !(vmf->flags & FAULT_FLAG_TRIED)) {
-> +	if (likely(page) && !(flags & FAULT_FLAG_TRIED)) {
+Today's linux-next merge of the kvm tree got a conflict in:
 
-Used here.
+  tools/include/uapi/linux/kvm.h
 
->  		/*
->  		 * We found the page, so try async readahead before
->  		 * waiting for the lock.
->  		 */
-> -		do_async_mmap_readahead(vmf->vma, ra, file, page, offset);
-> +		error = do_async_mmap_readahead(vmf->vma, ra, file, page, offset, vmf->flags);
+between commit:
 
-Not here.
+  25fe15e54fe5 ("tools headers uapi: Sync kvm.h copy")
 
-> +		if (error == -EAGAIN)
-> +			goto out_retry_wait;
->  	} else if (!page) {
->  		/* No page in the page cache at all */
-> -		do_sync_mmap_readahead(vmf->vma, ra, file, offset);
-> -		count_vm_event(PGMAJFAULT);
-> -		count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);
->  		ret = VM_FAULT_MAJOR;
-> +		count_vm_event(PGMAJFAULT);
-> +		count_memcg_event_mm(mm, PGMAJFAULT);
-> +		error = do_sync_mmap_readahead(vmf->vma, ra, file, offset, vmf->flags);
+from the tip tree and commit:
 
-or here.
+  c939989d74e2 ("tools/headers: update kvm.h")
 
-(Also, the vmf is passed through to where these flags
-are used, so why is it passed as a separate flag parameter?)
+from the kvm tree.
 
-> +		if (error == -EAGAIN)
-> +			goto out_retry_wait;
->  retry_find:
->  		page = find_get_page(mapping, offset);
->  		if (!page)
->  			goto no_cached_page;
->  	}
->  
-> -	if (!lock_page_or_retry(page, vmf->vma->vm_mm, vmf->flags)) {
-> -		put_page(page);
-> -		return ret | VM_FAULT_RETRY;
-> +	if (!trylock_page(page)) {
-> +		if (flags & FAULT_FLAG_ALLOW_RETRY) {
-> +			if (flags & FAULT_FLAG_RETRY_NOWAIT)
-> +				goto out_retry;
-> +			up_read(&mm->mmap_sem);
-> +			goto out_retry_wait;
-> +		}
-> +		if (flags & FAULT_FLAG_KILLABLE) {
+I fixed it up (the latter is a superset of the former) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
 
-but is used here...
+--=20
+Cheers,
+Stephen Rothwell
 
-> +			int ret = __lock_page_killable(page);
-> +
-> +			if (ret) {
-> +				up_read(&mm->mmap_sem);
-> +				goto out_retry;
-> +			}
-> +		} else
-> +			__lock_page(page);
->  	}
->  
->  	/* Did it get truncated? */
-> @@ -2607,6 +2655,19 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
->  	/* Things didn't work out. Return zero to tell the mm layer so. */
->  	shrink_readahead_size_eio(file, ra);
->  	return VM_FAULT_SIGBUS;
-> +
-> +out_retry_wait:
-> +	if (page) {
-> +		if (flags & FAULT_FLAG_KILLABLE)
+--Sig_/2CB9Ba.p/spzxBLrrZ/338C
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-and here.
+-----BEGIN PGP SIGNATURE-----
 
-Any reason for this discrepancy?
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvJTpQACgkQAVBC80lX
+0Gx+Egf8CQ7DNoiYjZHbVoyzcV8ARP63u7zlJ+MmmaX+DDeA2VyOxJZ1xH3ihCvV
+eEjIMkx6anherK7UUHYNYvrHyUBZbeASboSKeVU3ibsUQwcS8gD5o1KV4N4nO20i
+NjfgDKQdZAwco3GAqdXTzuI/vXFcV+3OSkt5y31xs/DSP8BdvpJPa66bx5GHEVu7
+kqwAdMDR95X4MvyAkC32clXlESdcVxZEWDNdnf350blspUpjifK02dKenUMiY2Ut
+9E1hRtc7eCzBnKNFg2r0IbjbtFW82Rgiuucj0QaGZP0XWuCfZrGKx/YFt9mXwE3q
++R3q2FaQUxhSi55MBWOzCWm0GRrnFQ==
+=FxcI
+-----END PGP SIGNATURE-----
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--Sig_/2CB9Ba.p/spzxBLrrZ/338C--
