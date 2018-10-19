@@ -2,137 +2,97 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8289EECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D60ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50F5E21486
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:59:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50F5E21486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 7254A21486
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:00:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b6V+vzHN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7254A21486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbeJSUE4 (ORCPT
+        id S1727532AbeJSUGW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:04:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39728 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727170AbeJSUE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:04:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BDAE6AE60;
-        Fri, 19 Oct 2018 11:59:08 +0000 (UTC)
-Subject: Re: [PATCH v3 RESEND] regmap: Add regmap_noinc_write API
-To:     Mark Brown <broonie@kernel.org>,
-        Ben Whitten <ben.whitten@gmail.com>
-Cc:     Ben Whitten <ben.whitten@lairdtech.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <1539941631-4421-1-git-send-email-ben.whitten@lairdtech.com>
- <20181019115652.GD5895@sirena.org.uk>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <6dc0a6f0-7bb9-4ad0-73ef-f3527da6894e@suse.de>
-Date:   Fri, 19 Oct 2018 13:59:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 19 Oct 2018 16:06:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40496 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbeJSUGW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 16:06:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WpJ5D07eJ33zRkw9eHZ6OBLrJWSPkwsd/VPUtOLOtKQ=; b=b6V+vzHNTNNiuF+hlKCPvhVLn
+        o7Ah1sVWOxXkyRz1AVA2lPrUGE9Wk40CrPoZBzpeVOMj5xnvVbgXyBM/15VWlBNtwBuOOcXHtNngB
+        cfvkO3t5LAx06SaAKvn5+PZ1mmNJhrXenJ1as5HejN+ZIMhVbgyDUdNMRa+Z6m8EyZ4SSOt9lGhbp
+        rylLy3fQsWVcC1qBRyaT68k4hPUDPy7lHaGvfbgBHvF3k5TCKq5l4dXk9Psc8rsUI27uqNgv/ohzz
+        YFzXLxZPVtiB7WMkAua41Fndk5lgCXshzpMPwKtfP3y5PWGjWyxGwS91XYxSBUS73l43qKHI7k1Or
+        +NAHxUqKg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gDTSE-0006yc-6B; Fri, 19 Oct 2018 12:00:34 +0000
+Date:   Fri, 19 Oct 2018 05:00:33 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Vitaly Chikunov <vt@altlinux.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Jonathan Corbet <corbet@lwn.net>, Shaohua Li <shli@kernel.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org
+Subject: Re: [dm-devel] [PATCH] dm: add secdel target
+Message-ID: <20181019120033.GA7869@infradead.org>
+References: <20181014112439.8119-1-vt@altlinux.org>
+ <20181019061945.GA7403@infradead.org>
+ <20181019114944.syemvziebwfuruof@sole.flsd.net>
 MIME-Version: 1.0
-In-Reply-To: <20181019115652.GD5895@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181019114944.syemvziebwfuruof@sole.flsd.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 19.10.18 um 13:56 schrieb Mark Brown:
-> On Fri, Oct 19, 2018 at 10:33:50AM +0100, Ben Whitten wrote:
->> The regmap API had a noinc_read function added for instances where devices
->> supported returning data from an internal FIFO in a single read.
+On Fri, Oct 19, 2018 at 02:49:44PM +0300, Vitaly Chikunov wrote:
+> On Thu, Oct 18, 2018 at 11:19:45PM -0700, Christoph Hellwig wrote:
+> > Just as a note:  the name is a complete misowner, a couple overwrite
+> > are not in any way secure deletion.  So naming it this way and exposing
+> > this as erase is a problem that is going to get back to bite us.
 > 
-> The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+> In what way it's not secure deletion?
 > 
->   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-noinc-write
-> 
-> for you to fetch changes up to cdf6b11daa77d4b55ddf0530842a551cc5562a93:
-> 
->   regmap: Add regmap_noinc_write API (2018-10-19 12:51:19 +0100)
+> It's secure deletion by overwriting discarded data instead of leaving it
+> as is.
 
-You two forgot my Reviewed-by... oh well.
-
-Thanks anyway,
-Andreas
-
-> 
-> ----------------------------------------------------------------
-> regmap: Add noinc write support
-> 
-> Mirroring the read support
-> 
-> ----------------------------------------------------------------
-> Ben Whitten (1):
->       regmap: Add regmap_noinc_write API
-> 
->  drivers/base/regmap/internal.h |  3 ++
->  drivers/base/regmap/regmap.c   | 77 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/regmap.h         | 19 +++++++++++
->  3 files changed, 99 insertions(+)
-> 
+Overwriting data does not delete data.  Most certainly not in Flash based
+SSDs, but also not in many storage arrays, or for that matter many modern
+disks that have sectore remapping and various kinds of non-volatile
+caches.  There is a reason why devices tend to have special commands to
+perform secure erase - depending on the media they might or might not
+overwrite internally, but at least they do it in a way that actually
+works for the given media and device configuration.
 
 
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+> dm-erase or dm-wipe? dm-discerase?
+
+dm-overwrite?
+
+> But still provide REQ_OP_SECURE_ERASE
+> support?
+
+On the one hand that is highly misleading and would warrant a warning
+(see above), on the other hand discard is purely advisory and can
+be skipped any time, including by intermediate layers.  So I don't think
+you can actually do what you want without major changes to the whole
+I/O stack.
