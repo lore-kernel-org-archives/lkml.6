@@ -2,95 +2,120 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B155ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80877ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:59:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE9D92145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:58:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 313DC21476
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:59:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YnDkUrg4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE9D92145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nb41G2bD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 313DC21476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727178AbeJSNC3 (ORCPT
+        id S1727213AbeJSNDs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 09:02:29 -0400
-Received: from ozlabs.org ([203.11.71.1]:33941 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726542AbeJSNC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 09:02:28 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42btvv6H5rz9sBn;
-        Fri, 19 Oct 2018 15:58:03 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539925083;
-        bh=GTZZETFK7CYIHuYGLYe+YMbs5uIxPxi1Qy0vmpPYov8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YnDkUrg45Vu8x71avQTM94WWxp03iNq/DShMYd9dsajcFBg98qZ+0wYrkwood5pxq
-         oPWBfTK6jytuWFhHtMKfLXdZGa5Yx+N3WyrpVbLDeX+3+oJ5iDQF8tZFd36q322PaE
-         jvIJsHjRoLhg/lb+eZMZRWZEGhOLXZ044GqgqVgtz48nuditanwrJHAKF6jFmN3ajI
-         hTOibKaJukf9gnWa8MEp1jANedXUhg6SlDzeP2TfVlQQAkkWmG3LX5i2NvPd0Gi3sY
-         UB+xvubIA3BNzZgnAK5YbxJ1v+1GGfg7wv69FGjKpkd7NGCk6TLnMwUFdsxWYZDe+x
-         L0vZPGMVS+Chg==
-Date:   Fri, 19 Oct 2018 15:58:02 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: linux-next: build warning after merge of the scsi tree
-Message-ID: <20181019155802.0b75dd69@canb.auug.org.au>
-In-Reply-To: <1539924843.18970.35.camel@HansenPartnership.com>
-References: <20181019155034.2cf7f864@canb.auug.org.au>
-        <1539924843.18970.35.camel@HansenPartnership.com>
+        Fri, 19 Oct 2018 09:03:48 -0400
+Received: from mail-qt1-f170.google.com ([209.85.160.170]:45557 "EHLO
+        mail-qt1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726478AbeJSNDs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 09:03:48 -0400
+Received: by mail-qt1-f170.google.com with SMTP id e10-v6so36993198qtq.12
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 21:59:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=XfKiwIcusmyybiuGqWHfRw2YW44uN5ht5bJxIJ2cGyw=;
+        b=nb41G2bD7MFQIcGiFTR/1wM3MF8IvClde0ssDS/10JiQv0M43FWoHbiVPHSamkt8i/
+         I+Cs8BSTphqvXTXkJhkIT+CsSE79JJmIC7Pov4nMnXLX16+db+2nL3By9SEfVDYpU4e6
+         V+JNNbw9Zm3rspkhbqkKrhK8eJEypZw6RJ0lHvCFIQ9NHyzJkleITThYUkK9OkqmUahd
+         gdmCOQvB8V20XofARGfOdR5urijjXr/TyImmMquBK/yTeAOmp2YuQCP3Zkic4XBKuNxP
+         ChJRyh+Kx8/FSZ0yhukWs72lcpcggW08UfvT/Pnc2lsF3KZkoJrVFl/nH1zAqCUvcA2l
+         XRCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=XfKiwIcusmyybiuGqWHfRw2YW44uN5ht5bJxIJ2cGyw=;
+        b=mghNIOGFVX7LABw8dJLWZifBlLq3KrK7wDDzFuKHp9Z8TjqeKadmgxD4DXKJTK7mmb
+         vn6RV/XMqkKapR68wVrQrRyflTHg3+qP3dxd3LTOMQ3viILhcdiw4Ob9seSsaP3OVQsn
+         AfVHSKKXbL36NnZpu7CiHc+AgnBTxZPdXLrkfl/2MFKKdblT9yfLlWvtvTeE++AbTz+I
+         kfhvyIh/PpFNZkG6q0/0kBAP7bUnHIsyVfqgYZX6JRuc2+9pUOZPivDBWfRCI/4/pDKv
+         hlGkclKrwIIVvsUl+dsJH/BHDpEWPWNqtXxqwr/wEkUkUmIZcU1nL6urgm3vVDCb3whe
+         aIWQ==
+X-Gm-Message-State: ABuFfogfnzr/ur2lNe3hyUH3CPcEqpqkhR3eG5hv/T/6hWMco6kxU2GP
+        GU6rOt6RvHFpa4jPcaxy+4xfazJv3MVw0e1FIp9aGs+/
+X-Google-Smtp-Source: ACcGV63ttRGfcUZKmwzcmKXTv0A3sVjTjVZJbEe03UImf2Lj1jKIH62Ii9rnAl1A7yznJ2hpZ5bnMns7wJu0a5n9RNE=
+X-Received: by 2002:ac8:1739:: with SMTP id w54-v6mr31372263qtj.76.1539925164109;
+ Thu, 18 Oct 2018 21:59:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/pop22MGTLMa4b4IQHSGox+R"; protocol="application/pgp-signature"
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Fri, 19 Oct 2018 14:59:11 +1000
+Message-ID: <CAPM=9txsa9pSu0QaL3rWfSViRBkY3GB2Hm8=_SDp_TTiwsP_pQ@mail.gmail.com>
+Subject: [git pull] drm fixes for 4.19 final
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/pop22MGTLMa4b4IQHSGox+R
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Greg,
 
-Hi James,
+Just a last set of misc core fixes for final.
 
-On Thu, 18 Oct 2018 21:54:03 -0700 James Bottomley <James.Bottomley@HansenP=
-artnership.com> wrote:
->
-> It's the merge commit ... it was obviously the wrong choice; I'll fix
-> it.
+4 fixes, one use after free, one fb integration fix, one EDID fix, and
+one laptop panel quirk,
 
-OK, thanks.
+Thanks,
+Dave.
 
---=20
-Cheers,
-Stephen Rothwell
+drm-fixes-2018-10-19:
+drm: one set of misc fixes for final release
+The following changes since commit 35a7f35ad1b150ddf59a41dcac7b2fa32982be0e:
 
---Sig_/pop22MGTLMa4b4IQHSGox+R
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+  Linux 4.19-rc8 (2018-10-15 07:20:24 +0200)
 
------BEGIN PGP SIGNATURE-----
+are available in the Git repository at:
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvJZFoACgkQAVBC80lX
-0GzdsAgAlzNWpVObA2JYzjWB0EbpGrWDhNHfzRGfWlIu6iinrIUuwj8EAimemt7K
-RBjL6Y6Dgc6umD0GC5lddlYuKGEWDdRTedJCUf2c0JYWp9Cz3GaWNdR/AtcW7W5Z
-jWOmlrBAjVrCGPmXgX1Yv4qdDDLAxyTaERe+B/T7SJinH8oSbIJZ5i+HZS77W8Wm
-ZnvSEKbx+MgWD2kQ+UYxf3oV9zF0QUngZIM5cR7OJXi+HFDxxVTz37Qe5XT+6vww
-nfnrRkU1ZYL/B7cnJ9FTZwTNfHaxS77Uu2f2OVb5tMvu8j/KSf3ptc3skLWWbZ2w
-8djzBC1HxpbJiYOCDADxZG5t5MtehQ==
-=/juR
------END PGP SIGNATURE-----
+  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-10-19
 
---Sig_/pop22MGTLMa4b4IQHSGox+R--
+for you to fetch changes up to f8e6e1b6f0ae3bb91cdcd08213d36a0ce6e98535:
+
+  Merge tag 'drm-misc-fixes-2018-10-18' of
+git://anongit.freedesktop.org/drm/drm-misc into drm-fixes (2018-10-19
+13:52:03 +1000)
+
+----------------------------------------------------------------
+drm: one set of misc fixes for final release
+
+----------------------------------------------------------------
+Clint Taylor (1):
+      drm/edid: VSDB yCBCr420 Deep Color mode bit definitions
+
+Dave Airlie (1):
+      Merge tag 'drm-misc-fixes-2018-10-18' of
+git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
+
+Eugeniy Paltsev (1):
+      drm: fb-helper: Reject all pixel format changing requests
+
+Kai-Heng Feng (1):
+      drm/edid: Add 6 bpc quirk for BOE panel in HP Pavilion 15-n233sl
+
+Tomi Valkeinen (1):
+      drm: fix use of freed memory in drm_mode_setcrtc
+
+ drivers/gpu/drm/drm_crtc.c      | 10 +++--
+ drivers/gpu/drm/drm_edid.c      |  5 ++-
+ drivers/gpu/drm/drm_fb_helper.c | 91 ++++++++++++-----------------------------
+ include/drm/drm_edid.h          |  6 +--
+ 4 files changed, 40 insertions(+), 72 deletions(-)
