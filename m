@@ -2,113 +2,171 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD13ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6048ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:50:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 854D521479
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:50:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39AD621479
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:50:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="jxQzSS+t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 854D521479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HWesi3Qy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39AD621479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbeJST4I (ORCPT
+        id S1727497AbeJST4c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 15:56:08 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34314 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726784AbeJST4H (ORCPT
+        Fri, 19 Oct 2018 15:56:32 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:40806 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbeJST4c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 15:56:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=T6p3ScLAe1S4fQqF1dBZ9aBFTF76lhkFkRc+OI9lmaU=; b=jxQzSS+tSS5a0LxulXkHxVrnS
-        9MvG5fgjXOGmIaaJYQ3pRm7lUPlJ67fy/SAdREqZz9hGC1YCZdG+DGG/dEsxkcq+8k9lSlesyKNHT
-        oBpDOSnlFPRcbbmM1MJ+POnqTI0C+uzPBW3gv80q/IJf4ffHAw7+E7klKdQKeHFmslFc4=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gDTIG-0008Qo-0q; Fri, 19 Oct 2018 11:50:16 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id A0F5F1122548; Fri, 19 Oct 2018 12:50:15 +0100 (BST)
-Date:   Fri, 19 Oct 2018 12:50:15 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Pascal PAILLET-LME <p.paillet@st.com>
-Cc:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
-        "eballetbo@gmail.com" <eballetbo@gmail.com>
-Subject: Re: [PATCH v4 4/8] regulator: stpmic1: add stpmic1 regulator driver
-Message-ID: <20181019115015.GC5895@sirena.org.uk>
-References: <1539853324-29051-1-git-send-email-p.paillet@st.com>
- <1539853324-29051-5-git-send-email-p.paillet@st.com>
+        Fri, 19 Oct 2018 15:56:32 -0400
+Received: by mail-qt1-f196.google.com with SMTP id b4-v6so37846118qtc.7;
+        Fri, 19 Oct 2018 04:50:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5OYeKVybDJxpBWjokZ6ezZUIG4m6mBvzEAu4w17rNTQ=;
+        b=HWesi3Qyz3oo4B2gsr2QE6Lzmbf7A0KV50XMarG8txiFtLA+gtKRbB6crjtt2zsrTJ
+         FK3Zk5O0bxeRQcJsf9Fjcc9aVF/gHAVK0AoUwdhlNpbynhpuFTlkVL2i0TxRyhA2MOij
+         uomL+/nuq/TXNG9ug5gq2YPQTX/PxX/qDfMmLvfTI45WRWgx9ZcxfzajUu/BboqB0MaP
+         vtgheEr3PvMUwaWAAGwT+QDbRvsxnCI/PzcBdMrhL4NbZrXMEMi3G3NgHowxaSIGG5ia
+         6LKkiY8d4LAKGWV7L9MF3Hc+4RBPLh4+FjKV9DGZGDcDlvfxKIyDyoZhJ+GXIbHldObE
+         mtig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5OYeKVybDJxpBWjokZ6ezZUIG4m6mBvzEAu4w17rNTQ=;
+        b=Jzh2/j+CR0azTZtSvlAjxiyJcWwTEzJG8U37cKlY9EeThJjvbko7kQgGlDNDzp6MCT
+         6b7htyPM/3U0v1onCIwjP9Adp2soKCu38riiL1H+6SpF8nLsBlQ2zi0duvyNXNqyGBxP
+         lwK5GNlyV8eV1LtKqvaxtyzOQrr1UG4waI3RJ8HYwFTNMGhywYnS4ZVG99PoQNa3eQ50
+         25wl5w0Y4SaFf4gxCjCn/h1eMEgjbuUYVwpqamzA09uSdkZAZk32Euxm+txBbbEMcoHk
+         fD4000yPTUt61/WpQKfM2yiNR+1glaOXnIq+8m1YjXnxVj59qbxxdQyFkOid0Pa7AwW5
+         LdMQ==
+X-Gm-Message-State: ABuFfojSG1/05HgL20MB61ynCmPrfux1viGxzNiFp1qTR8xAY5bw/4gU
+        cOOuWgEa4SY1WUIXJ3mRhXJ60450epB+rLaq0zM=
+X-Google-Smtp-Source: ACcGV610AZzRsoysgJjN4NzN7hreVg9Llzt2vB/fSl5SQzUvo6u5TfYGw86E1EuVkV2WubNGy2Srr3QZ6qDM2SCbFv8=
+X-Received: by 2002:a0c:819c:: with SMTP id 28mr34737302qvd.7.1539949847632;
+ Fri, 19 Oct 2018 04:50:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="TYecfFk8j8mZq+dy"
-Content-Disposition: inline
-In-Reply-To: <1539853324-29051-5-git-send-email-p.paillet@st.com>
-X-Cookie: Obey all traffic laws.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180816084104.434-1-jian-hong@endlessm.com> <20180927085009.4190-1-jian-hong@endlessm.com>
+In-Reply-To: <20180927085009.4190-1-jian-hong@endlessm.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 19 Oct 2018 14:50:36 +0300
+Message-ID: <CAHp75VeqVXh8LsAppBmNJCbjL6T4g6ZhS=PSQbNqigrmKwbsdw@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: asus-wmi: Simplify the keyboard brightness
+ updating process
+To:     Jian-Hong Pan <jian-hong@endlessm.com>
+Cc:     Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 27, 2018 at 11:52 AM Jian-Hong Pan <jian-hong@endlessm.com> wrote:
+>
+> The original asus-wmi queues a work which calls the ACPI/WMI methods to
+> update the keyboard LED brightness.  Similar drivers - acer-wmi,
+> dell-wmi-led just call the ACPI/WMI methods directly without workqueues.
+>
+> This patch simplifies the keyboard brightness updating process which
+> calls the kbd_led_update function directly without workqueue in
+> asus-wmi.
+>
 
---TYecfFk8j8mZq+dy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Okay, this wasn't get any comment so far and my brief reading of the
+call chain doesn't give me any objections.
+I'm about to push this to accepted queue (for-next) since it was
+already enough time passed in reviewing and testing queue.
 
-On Thu, Oct 18, 2018 at 09:02:12AM +0000, Pascal PAILLET-LME wrote:
+Thanks!
 
-> +	for (i = 0; i < ARRAY_SIZE(stpmic1_regulator_cfgs); i++) {
-> +		/* Parse DT & find regulators to register */
-> +		init_data = stpmic1_regulators_matches[i].init_data;
-> +		if (init_data)
-> +			init_data->regulator_init = &stpmic1_regulator_parse_dt;
-> +
-> +		rdev = stpmic1_regulator_register(pdev, i, init_data, regul);
-> +		if (IS_ERR(rdev))
-> +			return PTR_ERR(rdev);
+> Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+> ---
+>  drivers/platform/x86/asus-wmi.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 2d6e272315a8..9441cce636e6 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -239,7 +239,6 @@ struct asus_wmi {
+>         int lightbar_led_wk;
+>         struct workqueue_struct *led_workqueue;
+>         struct work_struct tpd_led_work;
+> -       struct work_struct kbd_led_work;
+>         struct work_struct wlan_led_work;
+>         struct work_struct lightbar_led_work;
+>
+> @@ -456,12 +455,9 @@ static enum led_brightness tpd_led_get(struct led_classdev *led_cdev)
+>         return read_tpd_led_state(asus);
+>  }
+>
+> -static void kbd_led_update(struct work_struct *work)
+> +static void kbd_led_update(struct asus_wmi *asus)
+>  {
+>         int ctrl_param = 0;
+> -       struct asus_wmi *asus;
+> -
+> -       asus = container_of(work, struct asus_wmi, kbd_led_work);
+>
+>         /*
+>          * bits 0-2: level
+> @@ -516,7 +512,7 @@ static void do_kbd_led_set(struct led_classdev *led_cdev, int value)
+>                 value = 0;
+>
+>         asus->kbd_led_wk = value;
+> -       queue_work(asus->led_workqueue, &asus->kbd_led_work);
+> +       kbd_led_update(asus);
+>  }
+>
+>  static void kbd_led_set(struct led_classdev *led_cdev,
+> @@ -671,8 +667,6 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
+>
+>         led_val = kbd_led_read(asus, NULL, NULL);
+>         if (led_val >= 0) {
+> -               INIT_WORK(&asus->kbd_led_work, kbd_led_update);
+> -
+>                 asus->kbd_led_wk = led_val;
+>                 asus->kbd_led.name = "asus::kbd_backlight";
+>                 asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
+> @@ -2310,7 +2304,7 @@ static int asus_hotk_resume(struct device *device)
+>         struct asus_wmi *asus = dev_get_drvdata(device);
+>
+>         if (!IS_ERR_OR_NULL(asus->kbd_led.dev))
+> -               queue_work(asus->led_workqueue, &asus->kbd_led_work);
+> +               kbd_led_update(asus);
+>
+>         return 0;
+>  }
+> @@ -2346,7 +2340,7 @@ static int asus_hotk_restore(struct device *device)
+>                 rfkill_set_sw_state(asus->uwb.rfkill, bl);
+>         }
+>         if (!IS_ERR_OR_NULL(asus->kbd_led.dev))
+> -               queue_work(asus->led_workqueue, &asus->kbd_led_work);
+> +               kbd_led_update(asus);
+>
+>         return 0;
+>  }
+> --
+> 2.11.0
+>
 
-This looks mostly good, the only big thing is this - the default is to
-just unconditionally register all the regulators that exist rather than
-only those that are configured on that particular platform.  This is a
-bit simpler and means that all the readback of the configuration for the
-unconfigured regulators is available for diagnostics.  Is there a reason
-not to do that?
 
---TYecfFk8j8mZq+dy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvJxPYACgkQJNaLcl1U
-h9AVFwf9HuCK1nKd89bM5cuVWMEtrJN5wwS0dwfV9NJNvZ8H5h6NdUcTYb8JASZo
-c2MckaIg5ZWdFkVtQseoT85lrBAtbROJWGrSks44FXy+fmQM6SBosll+LKRavA2b
-1VPuCiyqBHPTUz6+dVUeAQRidxERF+dZdfK2FrJGaw7G96WKeHfg7zQXy4cRNJJ0
-kcfl9qNCYjF7I4FKDqugM0gKnEARpRPThYY0agxvSnJvjsR9HAcEKDNh2BBIrDQG
-acGQE+u8/nDkD6a0Wo8NgQ+V2GsJeSjMgBVUgl+gUFaoEcogr8t0wuAlnG+kvxtX
-/pYld58dINQUYBa8+hAqgvDZK9V+iQ==
-=W0oL
------END PGP SIGNATURE-----
-
---TYecfFk8j8mZq+dy--
+-- 
+With Best Regards,
+Andy Shevchenko
