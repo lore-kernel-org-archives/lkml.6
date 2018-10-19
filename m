@@ -2,130 +2,161 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD0DECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B131ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACCA321470
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:51:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uaG20aXo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACCA321470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BE3E62086E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:53:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE3E62086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbeJSOzw (ORCPT
+        id S1726967AbeJSO5m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 10:55:52 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41445 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbeJSOzw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 10:55:52 -0400
-Received: by mail-wr1-f67.google.com with SMTP id q7-v6so8333118wrr.8;
-        Thu, 18 Oct 2018 23:51:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ijcZ61+Aih4TeGCBVHN2MUNaatFjoSqj+Zv/KEE3h18=;
-        b=uaG20aXolGUjW64VLJ7bACQ4qz3o8Gu6tDH5mp7Jbdv0mqc+LzIPIPYDNnWLZALZ05
-         90ULl1YNmWVPNmtGVoZM0RnsJjZhpA1P1MYEvm5NSL5HY0opIilwyUnAfna9+GDYzmxI
-         gZrduMJETcw55mYUG+jFz2dvIlh1ZI3OcEPuOMLEoogMYPBBrpuOVge5Hc1tl1I36Val
-         ROugQTP0S02d4YEdCleJEQh2/pwh5EByOwlQOczYDRbDoWqpIHevjJ2FERRLM6eBW1Af
-         wJ8yLlLfk3ge04pYZNagMWj9ys0MQv4QXK3v/uvjcTefYOI6eyJ4/6LsRoD6QMzypyXn
-         2y3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ijcZ61+Aih4TeGCBVHN2MUNaatFjoSqj+Zv/KEE3h18=;
-        b=JVKlAGfohIN2HWrghGCX88rtjjAg1xD4rYfOzTAxHmRzXj1x0pD9eDEPPiyRf3ymE8
-         KRoplP/kjaM/tFqCqsvwDHR6lnsk2gMz6hpG5Hi+bgnDzfCGKjdfKgIb2yO4nZdLDcNb
-         LcN3mZsqB+Y/0wWIiiogrXfIiJgsP+IgzS+vCR1j/V9sVc/hZqqH37g1PTuPFUGqR1RF
-         BkqZn1DbtJMwuFk7AFnoVM0McrilPgO1ttzD/T91F9gVu5/8eDQRfl6UNwETWQjuXeWQ
-         X0eoyAnh4xJ5S5e6fR8vxflUkDJJIDVO13+gO0yYChGj81kIfjYsfNAl/6aISKIpvAJR
-         BMQA==
-X-Gm-Message-State: ABuFfogWhLyhYhL1BoXdgNI7dMbj2q8C4XXz58r5VCVkPcdhy2F4pn63
-        K131pO+yZiq5afcow4in202gUhzMNxCsOw==
-X-Google-Smtp-Source: ACcGV60Z7Mr1gC/QsLoPs7RBJRO77wz9fGyCIQtH4jmzkPgz5EGTMU4fddVtgN9NVSPf4MxcVLZqJA==
-X-Received: by 2002:a5d:6551:: with SMTP id z17-v6mr30989026wrv.194.1539931867453;
-        Thu, 18 Oct 2018 23:51:07 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id z4-v6sm18297558wrt.13.2018.10.18.23.51.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 18 Oct 2018 23:51:06 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 23:51:04 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: -Wswitch Clang warnings in drivers/scsi
-Message-ID: <20181019065104.GA27170@flashbox>
-References: <20181004183047.GA1885@flashbox>
- <1538678069.230807.6.camel@acm.org>
- <20181004184540.GA17513@flashbox>
- <CAKwvOd=FrGZ-oh5Q9RGQD2GNORZrqwAZUzNYN+hTKkp5wrfrqw@mail.gmail.com>
- <20181005065754.GA18637@flashbox>
- <1539024429.64374.40.camel@acm.org>
+        Fri, 19 Oct 2018 10:57:42 -0400
+Received: from verein.lst.de ([213.95.11.211]:43608 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726465AbeJSO5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 10:57:42 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 7B12B68C76; Fri, 19 Oct 2018 08:52:58 +0200 (CEST)
+Date:   Fri, 19 Oct 2018 08:52:58 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/10] swiotlb: refactor swiotlb_map_page
+Message-ID: <20181019065258.GA29249@lst.de>
+References: <20181008080246.20543-1-hch@lst.de> <20181008080246.20543-8-hch@lst.de> <35016142-f06d-e424-5afe-6026b6d57eda@arm.com> <20181019003715.GI1251@char.us.oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1539024429.64374.40.camel@acm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181019003715.GI1251@char.us.oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 11:47:09AM -0700, Bart Van Assche wrote:
-> On Thu, 2018-10-04 at 23:57 -0700, Nathan Chancellor wrote:
-> > Regardless of how the overflow is handled within the switch statement,
-> > the overflow is also happening when passing in these values to the ioctl,
-> > right? I mean these case values are defined in the uapi files so that
-> > userspace can easily pass them in to the ioctl, meaning those values are
-> > being passed in as a signed integer and I would assume subsequently
-> > overflowing unless I'm just missing something here.
+On Thu, Oct 18, 2018 at 08:37:15PM -0400, Konrad Rzeszutek Wilk wrote:
+> > > +	if (!dma_capable(dev, dma_addr, size) ||
+> > > +	    swiotlb_force == SWIOTLB_FORCE) {
+> > > +		trace_swiotlb_bounced(dev, dma_addr, size, swiotlb_force);
+> > > +		dma_addr = swiotlb_bounce_page(dev, &phys, size, dir, attrs);
+> > > +	}
+> > 
+> > FWIW I prefer the inverse condition and early return of the original code
+> > here, which also then allows a tail-call to swiotlb_bounce_page() (and saves
+> > a couple of lines), but it's no biggie.
+> > 
+> > Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 > 
-> From the user space header <sys/ioctl.h>:
+> I agree with Robin - it certainly makes it easier to read.
 > 
-> extern int ioctl (int __fd, unsigned long int __request, ...) __THROW;
-> 
-> From the kernel header <linux/fs.h>:
-> 
-> 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
-> 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
-> 
-> Why has the second argument been declared as "unsigned long" in the glibc
-> headers and as "unsigned int" in the kernel headers? That's not clear to me.
-> 
-> Bart.
-> 
+> With that small change:
+> Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-Hi Bart,
+So I did this edit, and in this patch it does indeed look much cleaner.
+But in patch 9 we introduce the cache maintainance, and have to invert
+the condition again if we don't want a goto mess:
 
-Sorry it took me so long to reply, somehow this email got lost in my
-inbox...
+---
+From e840ec23360788d54a8ebd2ebc7cd0f0ef8bdb01 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Fri, 19 Oct 2018 08:51:53 +0200
+Subject: swiotlb: add support for non-coherent DMA
 
-Unfortuntely, I am unsure why there is that discrepency between the
-headers. I tried to do some research but I didn't come up with much.
+Handle architectures that are not cache coherent directly in the main
+swiotlb code by calling arch_sync_dma_for_{device,cpu} in all the right
+places from the various dma_map/unmap/sync methods when the device is
+non-coherent.
 
-However, I did test changing the type of ioctl/compat_ioctl's cmd
-parameter to 'unsigned int' and came up with the following diff (rather
-large so sharing via a gist instead of pasting here):
+Because swiotlb now uses dma_direct_alloc for the coherent allocation
+that side is already taken care of by the dma-direct code calling into
+arch_dma_{alloc,free} for devices that are non-coherent.
 
-https://gist.github.com/nathanchance/8febc92735f4228574cb0464520f0f6f
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ kernel/dma/swiotlb.c | 33 +++++++++++++++++++++++----------
+ 1 file changed, 23 insertions(+), 10 deletions(-)
 
-I'll obviously draft up a proper commit message before formally sending
-but I can address any major concerns before that happens. I checked
-every single ioctl for a negative value and there aren't any so I think
-this change makes sense to fix this warning.
+diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+index 1a01b0ac0a5e..ebecaf255ea2 100644
+--- a/kernel/dma/swiotlb.c
++++ b/kernel/dma/swiotlb.c
+@@ -21,6 +21,7 @@
+ 
+ #include <linux/cache.h>
+ #include <linux/dma-direct.h>
++#include <linux/dma-noncoherent.h>
+ #include <linux/mm.h>
+ #include <linux/export.h>
+ #include <linux/spinlock.h>
+@@ -671,11 +672,17 @@ dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
+ 	 * we can safely return the device addr and not worry about bounce
+ 	 * buffering it.
+ 	 */
+-	if (dma_capable(dev, dev_addr, size) && swiotlb_force != SWIOTLB_FORCE)
+-		return dev_addr;
++	if (!dma_capable(dev, dev_addr, size) ||
++	    swiotlb_force == SWIOTLB_FORCE) {
++		trace_swiotlb_bounced(dev, dev_addr, size, swiotlb_force);
++		dev_addr = swiotlb_bounce_page(dev, &phys, size, dir, attrs);
++	}
++
++	if (!dev_is_dma_coherent(dev) &&
++	    (attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
++		arch_sync_dma_for_device(dev, phys, size, dir);
+ 
+-	trace_swiotlb_bounced(dev, dev_addr, size, swiotlb_force);
+-	return swiotlb_bounce_page(dev, &phys, size, dir, attrs);
++	return dev_addr;
+ }
+ 
+ /*
+@@ -694,6 +701,10 @@ void swiotlb_unmap_page(struct device *hwdev, dma_addr_t dev_addr,
+ 
+ 	BUG_ON(dir == DMA_NONE);
+ 
++	if (!dev_is_dma_coherent(hwdev) &&
++	    (attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
++		arch_sync_dma_for_cpu(hwdev, paddr, size, dir);
++
+ 	if (is_swiotlb_buffer(paddr)) {
+ 		swiotlb_tbl_unmap_single(hwdev, paddr, size, dir, attrs);
+ 		return;
+@@ -730,15 +741,17 @@ swiotlb_sync_single(struct device *hwdev, dma_addr_t dev_addr,
+ 
+ 	BUG_ON(dir == DMA_NONE);
+ 
+-	if (is_swiotlb_buffer(paddr)) {
++	if (!dev_is_dma_coherent(hwdev) && target == SYNC_FOR_CPU)
++		arch_sync_dma_for_cpu(hwdev, paddr, size, dir);
++
++	if (is_swiotlb_buffer(paddr))
+ 		swiotlb_tbl_sync_single(hwdev, paddr, size, dir, target);
+-		return;
+-	}
+ 
+-	if (dir != DMA_FROM_DEVICE)
+-		return;
++	if (!dev_is_dma_coherent(hwdev) && target == SYNC_FOR_DEVICE)
++		arch_sync_dma_for_device(hwdev, paddr, size, dir);
+ 
+-	dma_mark_clean(phys_to_virt(paddr), size);
++	if (!is_swiotlb_buffer(paddr) && dir == DMA_FROM_DEVICE)
++		dma_mark_clean(phys_to_virt(paddr), size);
+ }
+ 
+ void
+-- 
+2.19.1
 
-Cheers,
-Nathan
