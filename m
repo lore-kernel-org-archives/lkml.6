@@ -2,276 +2,109 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D8CECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 163E2ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 826EF2148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:37:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2F5B21486
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:38:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Zsq7hFfw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 826EF2148E
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="voSjHxcD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2F5B21486
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeJSUnM (ORCPT
+        id S1727547AbeJSUoo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:43:12 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57010 "EHLO
+        Fri, 19 Oct 2018 16:44:44 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59544 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727011AbeJSUnM (ORCPT
+        with ESMTP id S1727011AbeJSUoo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:43:12 -0400
+        Fri, 19 Oct 2018 16:44:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=9NfnbJzx6hqcMB0vqyMSMQijHRMIMnezZtKr84yeW18=; b=Zsq7hFfwgx9f
-        zzGKNtZWbjeSDsKEk5RqfodKLn27keSdRr5X79FNwdAigoVG2MZjX5XTDePVJsvKPWNOVtutF7cR3
-        NpUypcXtV5LOt3W2LHcAyaC9Nfifml8+ePm1Ko8tGVW1QpLjpIeYrILy87q3EZ8xLMXZKxY4aC/S7
-        htme4=;
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NTHM+hUmysi02WJjSwOg+yOHqodh7BLy55z9nZNro0s=; b=voSjHxcD3XrgbW/fVwCZHGtQ9
+        nI71Fr3aIsap5rRpmAVpViBqSIfAu2Qu+VfaYceydTbxd9y76jwjWOPHg1ZbRO7zQugjGhXqWJ5QH
+        zFprQh4tePdKuCtbJmxhz+x+nvijOrnYkI6xh7X1dkOnB50EuWk79i6sJabyOoerEsz8A=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gDU1i-00008w-W6; Fri, 19 Oct 2018 12:37:15 +0000
+        id 1gDU36-000098-Hy; Fri, 19 Oct 2018 12:38:40 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id B977E1122548; Fri, 19 Oct 2018 13:37:14 +0100 (BST)
+        id 301101122548; Fri, 19 Oct 2018 13:38:40 +0100 (BST)
+Date:   Fri, 19 Oct 2018 13:38:40 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: bd718x7: Remove struct bd718xx_pmic" to the regulator tree
-In-Reply-To: 
-Message-Id: <20181019123714.B977E1122548@debutante.sirena.org.uk>
-Date:   Fri, 19 Oct 2018 13:37:14 +0100 (BST)
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] regulator: lochnagar: Add support for the Cirrus
+ Logic Lochnagar
+Message-ID: <20181019123840.GL5895@sirena.org.uk>
+References: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
+ <20181019095003.26046-4-ckeepax@opensource.cirrus.com>
+ <20181019112622.GB5895@sirena.org.uk>
+ <20181019121920.GL1653@imbe.wolfsonmicro.main>
+ <20181019122118.GI5895@sirena.org.uk>
+ <20181019123442.GM1653@imbe.wolfsonmicro.main>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="oOpJzULQ70+PGW7h"
+Content-Disposition: inline
+In-Reply-To: <20181019123442.GM1653@imbe.wolfsonmicro.main>
+X-Cookie: Obey all traffic laws.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
 
-   regulator: bd718x7: Remove struct bd718xx_pmic
+--oOpJzULQ70+PGW7h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-has been applied to the regulator tree at
+On Fri, Oct 19, 2018 at 01:34:42PM +0100, Charles Keepax wrote:
+> On Fri, Oct 19, 2018 at 01:21:18PM +0100, Mark Brown wrote:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+> > It looks a lot like
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> > bef9391cbec547351c6a13e52f3a26bb2d271ec7 regulator: lochnagar: Add support for the Cirrus Logic Lochnagar
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> > in -next.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> Well it sure does look a lot like my patch :-). Apologies
+> something must have gone wrong on one of our ends as I don't
+> seem to have ever received your usual confirmation email it
+> was merged. I will try to keep a closer eye on people's trees
+> in future.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+They do sometimes seem to get flagged as spam, I think due to the amount
+of boilerplate and possibly even the fact that they include the patches.
 
-Thanks,
-Mark
+--oOpJzULQ70+PGW7h
+Content-Type: application/pgp-signature; name="signature.asc"
 
-From bcb047ebf28453da56f0265aeeb9edc52b797ea7 Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Thu, 4 Oct 2018 15:25:58 +0800
-Subject: [PATCH] regulator: bd718x7: Remove struct bd718xx_pmic
+-----BEGIN PGP SIGNATURE-----
 
-All the fields in struct bd718xx_pmic are not really necessary.
-Remove struct bd718xx_pmic to simplify the code.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvJ0E8ACgkQJNaLcl1U
+h9AbXgf8DhZ8F5ouO3YDC0DRt0RqX2RDoLGELBtfApk5ZkNbeHJCCVV0hScGSfK3
+XQ0aRncbrXuR8w4HV7uS7yqXUM9zvjTrhZ1pP6bBskFCnnpjXyLUvbILlJUZuViq
+JSbTJHGmbMrK1x9Tm9u2CamGRM8gE+5fpKPt67p/PQ/z0peADKBGRZ1sVY2Yu0t7
+qHqFdSvmYgkRkmQVfOAOZ0RxNJk/t8i5R3j4Hy01xqkMQI9UitQPY2JpBPFterLn
+exCRh2Oi3KQrCynABN9+fpd4S4H3izOkLBaj6/3f7H+F2/d4/7LAImpcg8M/DA4C
+R5LlPB2DMmxonXXT2UzFds/dcRz2+g==
+=o511
+-----END PGP SIGNATURE-----
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/bd718x7-regulator.c | 59 +++++++++------------------
- include/linux/mfd/rohm-bd718x7.h      |  2 -
- 2 files changed, 20 insertions(+), 41 deletions(-)
-
-diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
-index d2522d4e1505..3a47e0372e77 100644
---- a/drivers/regulator/bd718x7-regulator.c
-+++ b/drivers/regulator/bd718x7-regulator.c
-@@ -15,13 +15,6 @@
- #include <linux/regulator/of_regulator.h>
- #include <linux/slab.h>
- 
--struct bd718xx_pmic {
--	struct bd718xx_regulator_data *rdata;
--	struct bd718xx *mfd;
--	struct platform_device *pdev;
--	struct regulator_dev *rdev[BD718XX_REGULATOR_AMOUNT];
--};
--
- /*
-  * BUCK1/2/3/4
-  * BUCK1RAMPRATE[1:0] BUCK1 DVS ramp rate setting
-@@ -33,12 +26,10 @@ struct bd718xx_pmic {
- static int bd718xx_buck1234_set_ramp_delay(struct regulator_dev *rdev,
- 					   int ramp_delay)
- {
--	struct bd718xx_pmic *pmic = rdev_get_drvdata(rdev);
--	struct bd718xx *mfd = pmic->mfd;
- 	int id = rdev->desc->id;
- 	unsigned int ramp_value = BUCK_RAMPRATE_10P00MV;
- 
--	dev_dbg(&pmic->pdev->dev, "Buck[%d] Set Ramp = %d\n", id + 1,
-+	dev_dbg(&rdev->dev, "Buck[%d] Set Ramp = %d\n", id + 1,
- 		ramp_delay);
- 	switch (ramp_delay) {
- 	case 1 ... 1250:
-@@ -55,12 +46,12 @@ static int bd718xx_buck1234_set_ramp_delay(struct regulator_dev *rdev,
- 		break;
- 	default:
- 		ramp_value = BUCK_RAMPRATE_10P00MV;
--		dev_err(&pmic->pdev->dev,
-+		dev_err(&rdev->dev,
- 			"%s: ramp_delay: %d not supported, setting 10000mV//us\n",
- 			rdev->desc->name, ramp_delay);
- 	}
- 
--	return regmap_update_bits(mfd->regmap, BD718XX_REG_BUCK1_CTRL + id,
-+	return regmap_update_bits(rdev->regmap, BD718XX_REG_BUCK1_CTRL + id,
- 				  BUCK_RAMPRATE_MASK, ramp_value << 6);
- }
- 
-@@ -1022,7 +1013,7 @@ struct bd718xx_pmic_inits {
- 
- static int bd718xx_probe(struct platform_device *pdev)
- {
--	struct bd718xx_pmic *pmic;
-+	struct bd718xx *mfd;
- 	struct regulator_config config = { 0 };
- 	struct bd718xx_pmic_inits pmic_regulators[] = {
- 		[BD718XX_TYPE_BD71837] = {
-@@ -1037,54 +1028,46 @@ static int bd718xx_probe(struct platform_device *pdev)
- 
- 	int i, j, err;
- 
--	pmic = devm_kzalloc(&pdev->dev, sizeof(*pmic), GFP_KERNEL);
--	if (!pmic)
--		return -ENOMEM;
--
--	pmic->pdev = pdev;
--	pmic->mfd = dev_get_drvdata(pdev->dev.parent);
--
--	if (!pmic->mfd) {
-+	mfd = dev_get_drvdata(pdev->dev.parent);
-+	if (!mfd) {
- 		dev_err(&pdev->dev, "No MFD driver data\n");
- 		err = -EINVAL;
- 		goto err;
- 	}
--	if (pmic->mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
--	    !pmic_regulators[pmic->mfd->chip_type].r_datas) {
-+
-+	if (mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
-+	    !pmic_regulators[mfd->chip_type].r_datas) {
- 		dev_err(&pdev->dev, "Unsupported chip type\n");
- 		err = -EINVAL;
- 		goto err;
- 	}
- 
--	platform_set_drvdata(pdev, pmic);
--
- 	/* Register LOCK release */
--	err = regmap_update_bits(pmic->mfd->regmap, BD718XX_REG_REGLOCK,
-+	err = regmap_update_bits(mfd->regmap, BD718XX_REG_REGLOCK,
- 				 (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
- 	if (err) {
--		dev_err(&pmic->pdev->dev, "Failed to unlock PMIC (%d)\n", err);
-+		dev_err(&pdev->dev, "Failed to unlock PMIC (%d)\n", err);
- 		goto err;
- 	} else {
--		dev_dbg(&pmic->pdev->dev, "Unlocked lock register 0x%x\n",
-+		dev_dbg(&pdev->dev, "Unlocked lock register 0x%x\n",
- 			BD718XX_REG_REGLOCK);
- 	}
- 
--	for (i = 0; i < pmic_regulators[pmic->mfd->chip_type].r_amount; i++) {
-+	for (i = 0; i < pmic_regulators[mfd->chip_type].r_amount; i++) {
- 
- 		const struct regulator_desc *desc;
- 		struct regulator_dev *rdev;
- 		const struct bd718xx_regulator_data *r;
- 
--		r = &(*pmic_regulators[pmic->mfd->chip_type].r_datas)[i];
-+		r = &(*pmic_regulators[mfd->chip_type].r_datas)[i];
- 		desc = &r->desc;
- 
- 		config.dev = pdev->dev.parent;
--		config.driver_data = pmic;
--		config.regmap = pmic->mfd->regmap;
-+		config.regmap = mfd->regmap;
- 
- 		rdev = devm_regulator_register(&pdev->dev, desc, &config);
- 		if (IS_ERR(rdev)) {
--			dev_err(pmic->mfd->dev,
-+			dev_err(&pdev->dev,
- 				"failed to register %s regulator\n",
- 				desc->name);
- 			err = PTR_ERR(rdev);
-@@ -1096,28 +1079,26 @@ static int bd718xx_probe(struct platform_device *pdev)
- 		 * can now switch the control from PMIC state machine to the
- 		 * register interface
- 		 */
--		err = regmap_update_bits(pmic->mfd->regmap, r->init.reg,
-+		err = regmap_update_bits(mfd->regmap, r->init.reg,
- 					 r->init.mask, r->init.val);
- 		if (err) {
--			dev_err(&pmic->pdev->dev,
-+			dev_err(&pdev->dev,
- 				"Failed to write BUCK/LDO SEL bit for (%s)\n",
- 				desc->name);
- 			goto err;
- 		}
- 		for (j = 0; j < r->additional_init_amnt; j++) {
--			err = regmap_update_bits(pmic->mfd->regmap,
-+			err = regmap_update_bits(mfd->regmap,
- 						 r->additional_inits[j].reg,
- 						 r->additional_inits[j].mask,
- 						 r->additional_inits[j].val);
- 			if (err) {
--				dev_err(&pmic->pdev->dev,
-+				dev_err(&pdev->dev,
- 					"Buck (%s) initialization failed\n",
- 					desc->name);
- 				goto err;
- 			}
- 		}
--
--		pmic->rdev[i] = rdev;
- 	}
- 
- err:
-diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
-index 26acf9a92498..fd194bfc836f 100644
---- a/include/linux/mfd/rohm-bd718x7.h
-+++ b/include/linux/mfd/rohm-bd718x7.h
-@@ -321,7 +321,6 @@ enum {
- 	BD718XX_PWRBTN_LONG_PRESS_15S
- };
- 
--struct bd718xx_pmic;
- struct bd718xx_clk;
- 
- struct bd718xx {
-@@ -333,7 +332,6 @@ struct bd718xx {
- 	int chip_irq;
- 	struct regmap_irq_chip_data *irq_data;
- 
--	struct bd718xx_pmic *pmic;
- 	struct bd718xx_clk *clk;
- };
- 
--- 
-2.19.0.rc2
-
+--oOpJzULQ70+PGW7h--
