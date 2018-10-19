@@ -2,173 +2,70 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C31ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC67ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:40:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32AC32083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:36:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fL3KJX8F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32AC32083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 312342086E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:40:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 312342086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbeJSXn1 (ORCPT
+        id S1727467AbeJSXqu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 19:43:27 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:38439 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbeJSXn1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 19:43:27 -0400
-Received: by mail-yw1-f66.google.com with SMTP id d126-v6so13348158ywa.5
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 08:36:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=zyUmzzoNxoKLcxVLBiJahX1b1lQexKm/qTY8nETdCho=;
-        b=fL3KJX8Fmns3RKMdNSbp6cZWwIHpSQD2IcTeID+4CR5UMmV/KRoqk2fkprRWb1+EB+
-         q4FuOWsjgBbHDKBdVj18GHg0QJaigMdiUNR8HmP2uaipG42JdkSlGsmbIU/83jINypOL
-         BPga/CJs4uV0xkEceeUoaEwfpcYqcXgy/yia0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=zyUmzzoNxoKLcxVLBiJahX1b1lQexKm/qTY8nETdCho=;
-        b=XTtWD0JmOju0me8KLD1a0w5J8csqcJtZHiDjqzm8tvzmJOcwqU1pyb4CqF9aQCE/89
-         tALEw9McF1Fgtd7DFTVoMYVoxSIiHzPo52AqY6IiX5gIrgTLY8RhTWZxIdeS/kfbXH3E
-         Up6OevZ1JD4UOqbYS3l1KyKeDJvPUWj8KR09wbt4do/vmpf4yeMZj1iXBOHAUuBg1z8o
-         yAYP1qHm+pepeTTwdhhJe/4fZ3a1tJB+HdSL0gjSxRtxBMdOHGCk67DC96y9PEVTDvO0
-         BzMYtALtHc8JLEWzKvHaMMlmHMzlPYfz0Co6HEp4mwWaysfhWrlB4HeQno01PUPOHn9T
-         6ofg==
-X-Gm-Message-State: ABuFfog3e3UzXC6vpHk99Oy2Qcz8S6NtUnOKTyswp1O12KIleSEquSjS
-        mqe5ZHwxhyAauz6/M3PU2sGdIgCIz0s=
-X-Google-Smtp-Source: ACcGV61BKPceY7xH3oF/Y+ZCDSSmYPIQqkACa7JDV1dMNOA6SmtIjsImDuVxDmZQHT7r/ng/8PhGOg==
-X-Received: by 2002:a81:4c97:: with SMTP id z145-v6mr2829051ywa.131.1539963408997;
-        Fri, 19 Oct 2018 08:36:48 -0700 (PDT)
-Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
-        by smtp.gmail.com with ESMTPSA id j76-v6sm6950481ywj.5.2018.10.19.08.36.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Oct 2018 08:36:47 -0700 (PDT)
-Received: by mail-yw1-f52.google.com with SMTP id v1-v6so13341009ywv.6
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 08:36:46 -0700 (PDT)
-X-Received: by 2002:a0d:fec6:: with SMTP id o189-v6mr24033659ywf.237.1539963405935;
- Fri, 19 Oct 2018 08:36:45 -0700 (PDT)
+        Fri, 19 Oct 2018 19:46:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47224 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726702AbeJSXqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 19:46:50 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 216393078AAF;
+        Fri, 19 Oct 2018 15:40:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 25BBA56D7B;
+        Fri, 19 Oct 2018 15:40:10 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20181019122049.27121-4-mszeredi@redhat.com>
+References: <20181019122049.27121-4-mszeredi@redhat.com> <20181019122049.27121-1-mszeredi@redhat.com>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v2 4/5] statx: don't clear STATX_ATIME on SB_RDONLY
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Fri, 19 Oct 2018 08:36:45
- -0700 (PDT)
-In-Reply-To: <20181019112404.GD14246@arm.com>
-References: <20181005084754.20950-1-kristina.martsenko@arm.com>
- <20181005084754.20950-8-kristina.martsenko@arm.com> <20181019111542.6wrvjguirglzg7vg@mbp>
- <20181019112404.GD14246@arm.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 19 Oct 2018 08:36:45 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+2axuzPJji_eCvMZDiPvrPsP3kAnG0CY_rsL5c=uFQFA@mail.gmail.com>
-Message-ID: <CAGXu5j+2axuzPJji_eCvMZDiPvrPsP3kAnG0CY_rsL5c=uFQFA@mail.gmail.com>
-Subject: Re: [PATCH v5 07/17] arm64: add basic pointer authentication support
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Andrew Jones <drjones@redhat.com>,
-        Jacob Bramley <jacob.bramley@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Adam Wallis <awallis@codeaurora.org>,
-        "Suzuki K . Poulose" <suzuki.poulose@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        kvmarm@lists.cs.columbia.edu,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Amit Kachhap <Amit.Kachhap@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Cyrill Gorcunov <gorcunov@openvz.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <16707.1539963610.1@warthog.procyon.org.uk>
+Date:   Fri, 19 Oct 2018 16:40:10 +0100
+Message-ID: <16708.1539963610@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 19 Oct 2018 15:40:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 4:24 AM, Will Deacon <will.deacon@arm.com> wrote:
-> [+Cyrill Gorcunov for CRIU stuff]
->
-> On Fri, Oct 19, 2018 at 12:15:43PM +0100, Catalin Marinas wrote:
->> On Fri, Oct 05, 2018 at 09:47:44AM +0100, Kristina Martsenko wrote:
->> > diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
->> > new file mode 100644
->> > index 000000000000..2aefedc31d9e
->> > --- /dev/null
->> > +++ b/arch/arm64/include/asm/pointer_auth.h
->> > @@ -0,0 +1,63 @@
->> > +// SPDX-License-Identifier: GPL-2.0
->> > +#ifndef __ASM_POINTER_AUTH_H
->> > +#define __ASM_POINTER_AUTH_H
->> > +
->> > +#include <linux/random.h>
->> > +
->> > +#include <asm/cpufeature.h>
->> > +#include <asm/sysreg.h>
->> > +
->> > +#ifdef CONFIG_ARM64_PTR_AUTH
->> > +/*
->> > + * Each key is a 128-bit quantity which is split across a pair of 64-bit
->> > + * registers (Lo and Hi).
->> > + */
->> > +struct ptrauth_key {
->> > +   unsigned long lo, hi;
->> > +};
->> > +
->> > +/*
->> > + * We give each process its own instruction A key (APIAKey), which is shared by
->> > + * all threads. This is inherited upon fork(), and reinitialised upon exec*().
->> > + * All other keys are currently unused, with APIBKey, APDAKey, and APBAKey
->> > + * instructions behaving as NOPs.
->> > + */
->>
->> I don't remember the past discussions but I assume the tools guys are ok
->> with a single key shared by multiple threads. Ramana, could you ack this
->> part, FTR?
->>
->> (and it would help if someone from the Android and Chrome camps can
->> confirm)
->
-> FWIW: I think we should be entertaining a prctl() interface to use a new
-> key on a per-thread basis. Obviously, this would need to be used with care
-> (e.g. you'd fork(); use the prctl() and then you'd better not return from
-> the calling function!).
->
-> Assuming we want this (Kees -- I was under the impression that everything in
-> Android would end up with the same key otherwise?), then the question is
-> do we want:
->
->   - prctl() get/set operations for the key, or
->   - prctl() set_random_key operation, or
->   - both of the above?
->
-> Part of the answer to that may lie in the requirements of CRIU, where I
-> strongly suspect they need explicit get/set operations, although these
-> could be gated on CONFIG_CHECKPOINT_RESTORE=y.
+Miklos Szeredi <mszeredi@redhat.com> wrote:
 
-Oh CRIU. Yikes. I'd like the get/set to be gated by the CONFIG, yes.
-No reason to allow explicit access to the key (and selected algo) if
-we don't have to.
+> IS_NOATIME(inode) is defined as __IS_FLG(inode, SB_RDONLY|SB_NOATIME), so
+> generic_fillattr() will clear STATX_ATIME from the result_mask if the super
+> block is marked read only.
+> 
+> This was probably not the intention, so fix to only clear STATX_ATIME if
+> the fs doesn't support atime at all.
+> 
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 
-As for per-thread or not, having a "pick a new key now" prctl() sounds
-good, but I'd like to have an eye toward having it just be "automatic"
-on clone().
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+Acked-by: David Howells <dhowells@redhat.com>
