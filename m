@@ -2,163 +2,252 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,
-	URIBL_SBL_A autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 731DFECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:31:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFED3ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:32:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FFBB2083E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:31:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97EC720869
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:32:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Umvk3dYf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FFBB2083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SrKXpRbT";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="N7l3Zqyq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97EC720869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbeJSXhr (ORCPT
+        id S1727081AbeJSXjC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 19:37:47 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39323 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726667AbeJSXhq (ORCPT
+        Fri, 19 Oct 2018 19:39:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58234 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726465AbeJSXjB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 19:37:46 -0400
-Received: by mail-wr1-f68.google.com with SMTP id 61-v6so37874766wrb.6
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 08:31:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nFFqgeamZ3c8VrHtxsPbFzSqJgGZR+RfMEy5QmGcCUc=;
-        b=Umvk3dYf70+85UyR2F/S8kU3YkdS0zoc5n3EOVfSSO/TItiY1GoK2nzPO4S+zSzC8N
-         aS/G4oj+xMqpuEBg4ui/5Yjk0YHBzqs4WXujDL5bZpAzSp3jI5mCcug9TsUF6R81koY+
-         qQ0eFzRC/FgW0gm6hKvXDUQUDgpaeDV6ek+FfwPJqM0Cub2iABmp2DX9VYtxGc+DnWJJ
-         vkjFnKmoKxeyRFRzVPpO49qLFR0Fz4vVUEMgJwlqLm3IyCRwGsZOEJZEiESGXdKssC98
-         AcI9duTt7CqmhhSiNJZOB5Gye06D708hnSkuIjYuI4PXWCh1K52mmwxD7lfmdOh0SUDS
-         MFTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nFFqgeamZ3c8VrHtxsPbFzSqJgGZR+RfMEy5QmGcCUc=;
-        b=aJ5qep+0Wusf2hC8VI7XvTY4eUINR9vUDrhJxhELOiva8MGYTTFlIy4amFi8lCEb/5
-         bxlUHA/GAywqq0lHSrl7h6rC9cuJVTxIKts8gsKd5pXrw3SlPYBpzHXd2AEpnshs9a0W
-         pKvrw3fWNubsa4Q4Mxd09+ZJPt5Icdx4aLsZc3A9wGRoMD5j/6AoWl5Sk51l767NvcbK
-         N7E3OfbMM/isESgsvIgh5TARiCjg4CXNsNW8DtDwtnDonrY5ka4640ukcXo6qJkuA3VD
-         w5HAqkaccHWs7j8OwT1VtGyJMEgzP8XZPT8at7pXQE0I96Bx9N+UwbOjbvCAH22pbzvR
-         kFew==
-X-Gm-Message-State: ABuFfojk2AEJ22+nf+jIkot5CJ9oeLc2zFqOlTLiDfCXUpVsxEWniklX
-        rwXNu9vvFQV+AQ7fZv7Www7MSIZNunUZ7qT/AiIqkw==
-X-Google-Smtp-Source: ACcGV61JLM3CYBnNrFP2GZ3NVrUEoNUghr2g7Xok8eAhuWnpf0si/ECZ/Rhw6njAYSPvjGATUX/G2gkgswiJ2czfMkM=
-X-Received: by 2002:adf:81e1:: with SMTP id 88-v6mr38205054wra.19.1539963069081;
- Fri, 19 Oct 2018 08:31:09 -0700 (PDT)
+        Fri, 19 Oct 2018 19:39:01 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7BC2560A33; Fri, 19 Oct 2018 15:32:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539963145;
+        bh=mX4YIU8oUFtTRXUuIpjAu4rq2pTU87rFHJdaa6LsCgA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SrKXpRbTkBrUof4vDQ1/BoewU3imLD029kzi0cIBTN/vDbu8kn2oU4O94hy0RnZUI
+         I/cpZVyaucDHT4GryE0kRqrFojScVWazzvCCcMHNkY41YhWqwgnWAaYbllCVhikkE1
+         LX3gIKsf08lsy5w0rWBFtUOPax8S6JRhiA1N23g4=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BD5C360866;
+        Fri, 19 Oct 2018 15:32:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539963144;
+        bh=mX4YIU8oUFtTRXUuIpjAu4rq2pTU87rFHJdaa6LsCgA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=N7l3Zqyqef9/Z9j2VCG3Y3DGtjdrrChIhrbZIoenIFKvW75kuU8siO0yY94MvYwql
+         FdkQiiA6q8PjwTZdJ9ReeIqh3iBWhkSXBcvatGpcUmrSe5ferQCTPo7dzbeaztVCgN
+         GZ6fpMJKBeHdDAG/AsfFyCTNMI+T/4YbeF9NY5PA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BD5C360866
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Fri, 19 Oct 2018 09:32:22 -0600
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     sboyd@kernel.org, evgreen@chromium.org, marc.zyngier@arm.com
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 1/1] drivers: pinctrl: qcom: add wakeup capability to
+ GPIO
+Message-ID: <20181019153222.GA17444@codeaurora.org>
+References: <20181011002958.2597-1-ilina@codeaurora.org>
+ <20181011002958.2597-2-ilina@codeaurora.org>
 MIME-Version: 1.0
-References: <022e41c0-8465-dc7a-a45c-64187ecd9684@amd.com> <4772f72c-6018-3556-6324-5f49faa00073@roeck-us.net>
- <4da23fcb-4a94-2695-ad80-929025e84bd2@gmail.com> <c72a23ea-efea-4c0e-d397-623d6ac16ebb@roeck-us.net>
- <c43669b7-1074-714c-fb22-81685826b3ad@amd.com> <74078dc6-ef08-586b-fd58-51eb2c0b5060@roeck-us.net>
- <BN6PR12MB1809E1A07CD1B5B0F41273EBF7E60@BN6PR12MB1809.namprd12.prod.outlook.com>
- <c6880c5b-e259-4923-8d5a-80c620563398@amd.com> <20181008174628.GB11442@roeck-us.net>
- <4a1faa3b-8c42-b742-9b55-9d2711f7ecc1@amd.com> <20181019085308.GY31561@phenom.ffwll.local>
- <8081f60d-ef19-14a5-a589-874afc050d94@roeck-us.net>
-In-Reply-To: <8081f60d-ef19-14a5-a589-874afc050d94@roeck-us.net>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Fri, 19 Oct 2018 11:30:55 -0400
-Message-ID: <CADnq5_PFdgZFfejWKdt6jp-Fc1sHDgX6F8kcCpAO4BmpDHHsEQ@mail.gmail.com>
-Subject: Re: [PATCH] amdgpu/gmc : fix compile warning
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Christian Koenig <Christian.Koenig@amd.com>, peng.hao2@zte.com.cn,
-        Dave Airlie <airlied@linux.ie>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        Martin Peres <martin.peres@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20181011002958.2597-2-ilina@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 9:31 AM Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 10/19/2018 01:53 AM, Daniel Vetter wrote:
-> > On Mon, Oct 08, 2018 at 06:13:56PM +0000, Koenig, Christian wrote:
-> >> Am 08.10.2018 um 19:46 schrieb Guenter Roeck:
-> >>> On Mon, Oct 08, 2018 at 05:22:24PM +0000, Koenig, Christian wrote:
-> >>>> Am 08.10.2018 um 17:57 schrieb Deucher, Alexander:
-> >>>>>>>> One thing I found missing in the discussion was the reference to the
-> >>>>>>>> C standard.
-> >>>>>>>> The C99 standard states in section 6.7.8 (Initialization) clause 19:
-> >>>>>>>> "... all
-> >>>>>>>> subobjects that are not initialized explicitly shall be initialized
-> >>>>>>>> implicitly the same as objects that have static storage duration".
-> >>>>>>>> Clause 21 makes further reference to partial initialization,
-> >>>>>>>> suggesting the same. Various online resources, including the gcc
-> >>>>>>>> documentation, all state the same. I don't find any reference to a
-> >>>>>>>> partial initialization which would leave members of a structure
-> >>>>>>>> undefined. It would be interesting for me to understand how and why
-> >>>>>>>> this does not apply here.
-> >>>>>>>>
-> >>>>>>>> In this context, it is interesting that the other 48 instances of the
-> >>>>>>>> { { 0 } } initialization in the same driver don't raise similar
-> >>>>>>>> concerns, nor seemed to have caused any operational problems.
-> >>>>>>> Feel free to provide patches to replace those with memset().
-> >>>>>>>
-> >>>>>> Not me. As I see it, the problem, if it exists, would be a violation of the C
-> >>>>>> standard. I don't believe hacking around bad C compilers. I would rather
-> >>>>>> blacklist such compilers.
-> >>>> Well then you would need to blacklist basically all gcc variants of the
-> >>>> last decade or so.
-> >>>>
-> >>>> Initializing only known members of structures is a perfectly valid
-> >>>> optimization and well known issue when you then compare the structure
-> >>>> with memcpy() or use the bytes for hashing or something similar.
-> >>>>
-> >>> Isn't that about padding ? That is a completely different issue.
-> >>
-> >> Correct, yes. But that is the reason why I recommend using memset() for
-> >> zero initialization.
-> >>
-> >> See we don't know the inner layout of the structure, could be another
-> >> structure or an union.
-> >>
-> >> If it's a structure everything is fine because if you initialize one
-> >> structure member all other get their default type (whatever that means),
-> >> but if it's an union.....
-> >>
-> >> Not sure if compilers still react allergic to that, but its the status
-> >> I've learned the hard way when the C99 standard came out and it still
-> >> seems like people are working around that so I recommend everybody to
-> >> stick with memset().
-> >
-> > Went boom:
-> >
-> > https://bugs.freedesktop.org/show_bug.cgi?id=108490
-> >
->
-> What went boom ? This patch wasn't accepted, and I don't immediately see
-> the correlation of the suggested revert with the rejected patch.
+Hi folks,
 
-Daniel accidentally replied to the wrong thread.  Please ignore.
+On Wed, Oct 10 2018 at 18:30 -0600, Lina Iyer wrote:
+>QCOM SoC's that have Power Domain Controller (PDC) chip in the always-on
+>domain can wakeup the SoC, when interrupts and GPIOs are routed to its
+>interrupt controller. Only select GPIOs that are deemed wakeup capable
+>are routed to specific PDC pins. During low power state, the pinmux
+>interrupt controller may be non-functional but the PDC would be. The PDC
+>can detect the wakeup GPIO is triggered and bring the TLMM to an
+>operational state.
+>
+>Interrupts that are level triggered will be detected at the TLMM when
+>the controller becomes operational. Edge interrupts however need to be
+>replayed again.
+>
+>Request the corresponding PDC IRQ, when the GPIO is requested as an IRQ,
+>but keep it disabled. During suspend, we can enable the PDC IRQ instead
+>of the GPIO IRQ, which may or not be detected.
+>
+>Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>---
+>Changes in v4:
+>	- Redesign to use PDC interrupts instead of TLMM interrupt
+>Changes in v3:
+>	- free action->name
+>Changes in v2:
+>	- Remove IRQF_NO_SUSPEND and IRQF_ONE_SHOT from PDC IRQ
+>Changes in v1:
+>	- Trigger GPIO in h/w from PDC IRQ handler
+>	- Avoid big tables for GPIO-PDC map, pick from DT instead
+>	- Use handler_data
+>---
+> drivers/pinctrl/qcom/pinctrl-msm.c | 91 +++++++++++++++++++++++++++++-
+> 1 file changed, 90 insertions(+), 1 deletion(-)
+>
+>diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+>index 5d72ffad32c2..70b9178eba30 100644
+>--- a/drivers/pinctrl/qcom/pinctrl-msm.c
+>+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+>@@ -719,6 +719,12 @@ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+> 	const struct msm_pingroup *g;
+> 	unsigned long flags;
+> 	u32 val;
+>+	struct irq_data *pdc_irqd = irq_get_handler_data(d->irq);
+>+
+>+	if (pdc_irqd) {
+>+		irq_set_irq_type(pdc_irqd->irq, type);
+>+		goto handler;
+>+	}
+>
+> 	g = &pctrl->soc->groups[d->hwirq];
+>
+>@@ -798,6 +804,7 @@ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+>
+> 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+>
+>+handler:
+> 	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
+> 		irq_set_handler_locked(d, handle_level_irq);
+> 	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
+>@@ -811,9 +818,13 @@ static int msm_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
+> 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> 	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
+> 	unsigned long flags;
+>+	struct irq_data *pdc_irqd = irq_get_handler_data(d->irq);
+>
+> 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+>
+>+	if (pdc_irqd)
+>+		irq_set_irq_wake(pdc_irqd->irq, on);
+>+
+> 	irq_set_irq_wake(pctrl->irq, on);
+>
+> 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+>@@ -895,6 +906,83 @@ static bool msm_gpio_needs_valid_mask(struct msm_pinctrl *pctrl)
+> 	return device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0) > 0;
+> }
+>
+>+static irqreturn_t wake_irq_gpio_handler(int irq, void *data)
+>+{
+>+	struct irq_data *irqd = data;
+>+	struct irq_desc *desc = irq_to_desc(irqd->irq);
+>+
+>+	desc->handle_irq(desc);
+Do we see any problem calling handle_irq()?
 
-Alex
-
+Thanks,
+Lina
+>+
+>+	return IRQ_HANDLED;
+>+}
+>+
+>+static int msm_gpio_pdc_pin_request(struct irq_data *d)
+>+{
+>+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>+	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
+>+	struct platform_device *pdev = to_platform_device(pctrl->dev);
+>+	const char *pin_name;
+>+	int irq;
+>+	int ret;
+>+
+>+	pin_name = kasprintf(GFP_KERNEL, "gpio%lu", d->hwirq);
+>+	if (!pin_name)
+>+		return -ENOMEM;
+>+
+>+	irq = platform_get_irq_byname(pdev, pin_name);
+>+	if (irq < 0) {
+>+		kfree(pin_name);
+>+		return 0;
+>+	}
+>+
+>+	ret = request_irq(irq, wake_irq_gpio_handler, irqd_get_trigger_type(d),
+>+			  pin_name, d);
+>+	if (ret) {
+>+		pr_warn("Error requesting PDC interrupt %d for %s\n",
+>+			irq, pin_name);
+>+		kfree(pin_name);
+>+		return ret;
+>+	}
+>+	irq_set_handler_data(d->irq, irq_get_irq_data(irq));
+>+
+>+	return 0;
+>+}
+>+
+>+static int msm_gpio_pdc_pin_release(struct irq_data *d)
+>+{
+>+	struct irq_data *pdc_irqd = irq_get_handler_data(d->irq);
+>+	const void *name;
+>+
+>+	if (pdc_irqd) {
+>+		irq_set_handler_data(d->irq, NULL);
+>+		name = free_irq(pdc_irqd->irq, d);
+>+		kfree(name);
+>+	}
+>+
+>+	return 0;
+>+}
+>+
+>+static int msm_gpio_irq_reqres(struct irq_data *d)
+>+{
+>+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>+
+>+	if (gpiochip_lock_as_irq(gc, irqd_to_hwirq(d))) {
+>+		dev_err(gc->parent, "unable to lock HW IRQ %lu for IRQ\n",
+>+			irqd_to_hwirq(d));
+>+		return -EINVAL;
+>+	}
+>+
+>+	return msm_gpio_pdc_pin_request(d);
+>+}
+>+
+>+static void msm_gpio_irq_relres(struct irq_data *d)
+>+{
+>+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>+
+>+	msm_gpio_pdc_pin_release(d);
+>+	gpiochip_unlock_as_irq(gc, irqd_to_hwirq(d));
+>+}
+>+
+> static int msm_gpio_init(struct msm_pinctrl *pctrl)
+> {
+> 	struct gpio_chip *chip;
+>@@ -919,6 +1007,8 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
+> 	pctrl->irq_chip.irq_ack = msm_gpio_irq_ack;
+> 	pctrl->irq_chip.irq_set_type = msm_gpio_irq_set_type;
+> 	pctrl->irq_chip.irq_set_wake = msm_gpio_irq_set_wake;
+>+	pctrl->irq_chip.irq_request_resources = msm_gpio_irq_reqres;
+>+	pctrl->irq_chip.irq_release_resources = msm_gpio_irq_relres;
 >
-> Guenter
+> 	ret = gpiochip_add_data(&pctrl->chip, pctrl);
+> 	if (ret) {
+>@@ -1072,4 +1162,3 @@ int msm_pinctrl_remove(struct platform_device *pdev)
+> 	return 0;
+> }
+> EXPORT_SYMBOL(msm_pinctrl_remove);
+>-
+>--
+>The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>a Linux Foundation Collaborative Project
 >
-> > Can we revert?
-> >
-> > Also, can we properly igt this so that intel-gfx-ci could test this before
-> > it's all fireworks?
-> >
-> > Thanks, Daniel
-> >
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
