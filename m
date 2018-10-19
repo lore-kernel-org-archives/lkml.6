@@ -2,111 +2,120 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30830ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE13BECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E473B20838
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:15:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E473B20838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7183B20838
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:16:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7183B20838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbeJTAWS (ORCPT
+        id S1727788AbeJTAXg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 20:22:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45310 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727603AbeJTAWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 20:22:18 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 135912DE41E;
-        Fri, 19 Oct 2018 16:15:32 +0000 (UTC)
-Received: from [10.36.112.30] (ovpn-112-30.ams2.redhat.com [10.36.112.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8F2CB751EA;
-        Fri, 19 Oct 2018 16:15:07 +0000 (UTC)
-Subject: Re: [PATCH] selftests/kvm: add missing executables to .gitignore
-To:     Anders Roxell <anders.roxell@linaro.org>, rkrcmar@redhat.com,
-        shuah@kernel.org
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181019143816.4509-1-anders.roxell@linaro.org>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
- CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
- hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
- DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
- P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
- Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
- UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
- tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
- wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
- UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
- AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
- sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
- FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
- VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
- Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
- znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
- IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
- du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
- dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
- utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
- Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
- wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
- fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
- 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
- zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
- oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
- uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
- plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
- HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
- 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
- iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
- 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
- /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
- 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <54a935cb-4023-b414-c55a-c89cbefe942c@redhat.com>
-Date:   Fri, 19 Oct 2018 18:15:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 19 Oct 2018 20:23:36 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55758 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727219AbeJTAXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 20:23:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C042580D;
+        Fri, 19 Oct 2018 09:16:48 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8FB273F71D;
+        Fri, 19 Oct 2018 09:16:48 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id AE6311AE06FD; Fri, 19 Oct 2018 17:16:51 +0100 (BST)
+Date:   Fri, 19 Oct 2018 17:16:51 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Andrew Jones <drjones@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jacob Bramley <jacob.bramley@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Adam Wallis <awallis@codeaurora.org>,
+        "Suzuki K . Poulose" <suzuki.poulose@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        Dave P Martin <Dave.Martin@arm.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Amit Kachhap <Amit.Kachhap@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v5 07/17] arm64: add basic pointer authentication support
+Message-ID: <20181019161651.GE16771@arm.com>
+References: <20181005084754.20950-1-kristina.martsenko@arm.com>
+ <20181005084754.20950-8-kristina.martsenko@arm.com>
+ <20181019111542.6wrvjguirglzg7vg@mbp>
+ <20181019112404.GD14246@arm.com>
+ <CAGXu5j+2axuzPJji_eCvMZDiPvrPsP3kAnG0CY_rsL5c=uFQFA@mail.gmail.com>
+ <20181019154948.GD16771@arm.com>
+ <CAGXu5jK8OK+430FQtztwVD8B95_SCjTWoysZXBdkZaDeSiV+ow@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181019143816.4509-1-anders.roxell@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 19 Oct 2018 16:15:32 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jK8OK+430FQtztwVD8B95_SCjTWoysZXBdkZaDeSiV+ow@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/10/2018 16:38, Anders Roxell wrote:
-> Fixes: 18178ff86217 ("KVM: selftests: add Enlightened VMCS test")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->  tools/testing/selftests/kvm/.gitignore | 1 +
->  1 file changed, 1 insertion(+)
+On Fri, Oct 19, 2018 at 09:05:57AM -0700, Kees Cook wrote:
+> On Fri, Oct 19, 2018 at 8:49 AM, Will Deacon <will.deacon@arm.com> wrote:
+> > On Fri, Oct 19, 2018 at 08:36:45AM -0700, Kees Cook wrote:
+> >> On Fri, Oct 19, 2018 at 4:24 AM, Will Deacon <will.deacon@arm.com> wrote:
+> >> > FWIW: I think we should be entertaining a prctl() interface to use a new
+> >> > key on a per-thread basis. Obviously, this would need to be used with care
+> >> > (e.g. you'd fork(); use the prctl() and then you'd better not return from
+> >> > the calling function!).
+> >> >
+> >> > Assuming we want this (Kees -- I was under the impression that everything in
+> >> > Android would end up with the same key otherwise?), then the question is
+> >> > do we want:
+> >> >
+> >> >   - prctl() get/set operations for the key, or
+> >> >   - prctl() set_random_key operation, or
+> >> >   - both of the above?
+> >> >
+> >> > Part of the answer to that may lie in the requirements of CRIU, where I
+> >> > strongly suspect they need explicit get/set operations, although these
+> >> > could be gated on CONFIG_CHECKPOINT_RESTORE=y.
+> >>
+> >> Oh CRIU. Yikes. I'd like the get/set to be gated by the CONFIG, yes.
+> >> No reason to allow explicit access to the key (and selected algo) if
+> >> we don't have to.
+> >
+> > Makes sense.
+> >
+> >> As for per-thread or not, having a "pick a new key now" prctl() sounds
+> >> good, but I'd like to have an eye toward having it just be "automatic"
+> >> on clone().
+> >
+> > I thought about that too, but we're out of clone() flags afaict and there's
+> > no arch hook in there. We could add yet another clone syscall, but yuck (and
+> > I reckon viro would kill us).
+> >
+> > Or are you saying that we could infer the behaviour from the existing set
+> > of flags?
 > 
-> diff --git a/tools/testing/selftests/kvm/.gitignore b/tools/testing/selftests/kvm/.gitignore
-> index 552b0d9a49f4..6210ba41c29e 100644
-> --- a/tools/testing/selftests/kvm/.gitignore
-> +++ b/tools/testing/selftests/kvm/.gitignore
-> @@ -1,4 +1,5 @@
->  /x86_64/cr4_cpuid_sync_test
-> +/x86_64/evmcs_test
->  /x86_64/platform_info_test
->  /x86_64/set_sregs_test
->  /x86_64/sync_regs_test
+> I mean if it's starting a new thread, it should get a new key
+> automatically, just like the ssp canary happens in dup_task_struct().
 > 
+> (Or did I miss some context for why that's not possible?)
 
-Queued, thanks.
+The problem with that is if the child thread (in userspace) returns from
+the function that called fork(), then it will explode because the link
+register will have been signed with the parent key.
 
-Paolo
+Will
