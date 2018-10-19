@@ -2,89 +2,98 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25051ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A107ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:50:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CADEC2083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:49:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C93682083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:50:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="0iIMhwfs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CADEC2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kmxtQtRl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C93682083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbeJSMxW (ORCPT
+        id S1727042AbeJSMzF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 08:53:22 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:37776 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726424AbeJSMxW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 08:53:22 -0400
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id w9J4mto3016890;
-        Fri, 19 Oct 2018 13:48:56 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w9J4mto3016890
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1539924536;
-        bh=FyBXPZb6jyuBzv8irLjTgnaBuu5+uDweGqVCUHokX+Y=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0iIMhwfspe5XKMeWAwT04VJ5MmgmULvXe3FY9yFVdIQArEwjLUeyeMAlgKadghEzd
-         uNQRC3O6S+XrUE9wNM6jMvnfuNp0yMKOe6dXaSubWrMGS7auskPZbyTM9ftMc5/eFE
-         GqZjgk2XISMmgyUbO/nbTT3YHMou3RXUD73G5nHoA/F4LdZ0XvZDBtKYlC0RC3FKrR
-         dEsFoQ/43iK9JBPA6KQlD2s3blCXQU2ERctvViEIZnSj/enWHl5OvrSpjNBCeh0cTt
-         XFM0+K4k27VcPAd1bciULI1vW7FBoI9QDmopbsQzDgJxMfy/1ekb9J6km9PtpKSS7I
-         jqqcgz3LVsybw==
-X-Nifty-SrcIP: [209.85.221.169]
-Received: by mail-vk1-f169.google.com with SMTP id y128-v6so7806026vky.4;
-        Thu, 18 Oct 2018 21:48:56 -0700 (PDT)
-X-Gm-Message-State: ABuFfogixMZnXWgWuxdP4Zc8r+V3+0ho3pkXrmY7Z0yuWDe/IuM3rxry
-        yglDRCrhDm+YIfgzyk0OLp4NCHofyPYEEWzizVM=
-X-Google-Smtp-Source: ACcGV61ED3uOk4PfLYjkeDtUX81TT1OdfmxJ+WdXMJn3e2O3hj/T8Nd6sgKwrZ6bQ1llnke/KRBnWBXfL30XVLPPeqI=
-X-Received: by 2002:a1f:5503:: with SMTP id j3-v6mr13630030vkb.34.1539924535097;
- Thu, 18 Oct 2018 21:48:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181017080201.10866-1-hch@lst.de> <20181017080201.10866-8-hch@lst.de>
-In-Reply-To: <20181017080201.10866-8-hch@lst.de>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 19 Oct 2018 13:48:19 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATAk1oL8xbwp4RqMcZc5CtU7=YCqN2wHcSOq4RsJtJgRA@mail.gmail.com>
-Message-ID: <CAK7LNATAk1oL8xbwp4RqMcZc5CtU7=YCqN2wHcSOq4RsJtJgRA@mail.gmail.com>
-Subject: Re: [PATCH 7/8] eisa: consolidate EISA Kconfig entry in drivers/eisa
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     mporter@kernel.crashing.org, Alex Bounine <alex.bou9@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
+        Fri, 19 Oct 2018 08:55:05 -0400
+Received: from ozlabs.org ([203.11.71.1]:38883 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726542AbeJSMzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 08:55:05 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42btlP5K8Jz9sBn;
+        Fri, 19 Oct 2018 15:50:41 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1539924641;
+        bh=ZC3c8xnQaox8jbPn3nPb3Bqpl0B4LJsz1IqFAwGU8Os=;
+        h=Date:From:To:Cc:Subject:From;
+        b=kmxtQtRl8QPo0g3nN1+S3VdqF26j5oohzgC/GQml+/ymTuuicRcOvQaBFZACE/oEc
+         TWaBCP53Z6Ce/9LAU77O/crr67ey/au0YUn4EgQZ+i+gV6n/kRTPjmvzO+dJwF/OIq
+         FQJE4W8Tqhdsxdy2TbI/DHz+Iz5InMLgKHWn0tsHFZDMTw248Ny/tuHKDfbJkuw0iX
+         f1dtxOsb4lEwtkUZAsl2SA9r7X+xDe7EsMZCnZn4RiyHPE4SscYeM0fDxtHd4B4Gvx
+         JeBQ/PpxEJKnrJf52EZNvYg7MzyAkKiEG4MK71ZaW55kGi7fqK3eOnSO3YNJfejMTl
+         +MSZ6nOEqjivQ==
+Date:   Fri, 19 Oct 2018 15:50:34 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: linux-next: build warning after merge of the scsi tree
+Message-ID: <20181019155034.2cf7f864@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/YhnTqcejkmKsHIn==Lt+2KQ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 5:03 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> Let architectures opt into EISA support by selecting HAS_EISA and
+--Sig_/YhnTqcejkmKsHIn==Lt+2KQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Nit.
+Hi James,
 
-HAS_EISA -> HAVE_EISA
-since you renamed it in this version.
+After merging the scsi tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
+drivers/scsi/lpfc/lpfc_debugfs.c: In function 'lpfc_debugfs_nodelist_open':
+drivers/scsi/lpfc/lpfc_debugfs.c:706:17: warning: 'nrport' may be used unin=
+itialized in this function [-Wmaybe-uninitialized]
+   switch (nrport->port_state) {
+           ~~~~~~^~~~~~~~~~~~
+drivers/scsi/lpfc/lpfc_debugfs.c:553:30: note: 'nrport' was declared here
+  struct nvme_fc_remote_port *nrport;
+                              ^~~~~~
 
+I am not sure where this has come from :-(
 
-> handle everything else in drivers/eisa.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
--- 
-Best Regards
-Masahiro Yamada
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/YhnTqcejkmKsHIn==Lt+2KQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvJYpoACgkQAVBC80lX
+0GzAzAf/Q29BgDltr7uqPOkiypn8fnVrlkvwvHw06lO8/CXLrrLKiFIWxrzHyaTW
+d46aWRHrGiu00wwhI2juf3K9w4H+yGXYGCxS8g2/GdMhoTSJucYSPzx69w81pKL1
+//6Grth0xYldeHNhbIQyE0kan/5ffanJgi9OqnITaSYyTrw3Nv9Vj13Moaaqwm31
+Z2r7UFiivKt2ArBNRFF637PVCO7FRNK5gVg1erJAqQLvi3SFGw9UAeRTzA8WWQlE
+kD24vV3+B16t+ci9PewtLQFh8Qrc08DNta8nwmWejIdzFs1mejtz4gdtJ/Ww2Y7E
+G6BP9hlwJPQ3VaBzCagHgB/7adrX/A==
+=o9z7
+-----END PGP SIGNATURE-----
+
+--Sig_/YhnTqcejkmKsHIn==Lt+2KQ--
