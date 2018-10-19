@@ -2,107 +2,103 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 748F8ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC00FECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 280592145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:54:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A00622145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:54:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="tEM0mk/M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 280592145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="qJfHf/u8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A00622145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbeJSM6e (ORCPT
+        id S1727130AbeJSM6j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 08:58:34 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:46198 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726542AbeJSM6d (ORCPT
+        Fri, 19 Oct 2018 08:58:39 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:26252 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726542AbeJSM6i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 08:58:33 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id D08348EE108;
-        Thu, 18 Oct 2018 21:54:11 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id oISp8a1CZPZW; Thu, 18 Oct 2018 21:54:11 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 6CBA98EE0D5;
-        Thu, 18 Oct 2018 21:54:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1539924851;
-        bh=iWBS837HpxOLEB1msdNNcGBsS1ydeC4ha5uhfuI5sUQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=tEM0mk/M9jn4iwNz7WUiY0QhguEfMFzCckBfgPw21AvrTbaaEcyoPLBAMgE71BfiO
-         sgNXu6W/JhxhLvWgTxiydC/72Srt66R3qDS3clm9CrPGU0E6RGpeXjnog1fNmLnsGh
-         mhivGHpjMgWjcrVy8AkZBIHRWm0SnE49HxU4OSt0=
-Message-ID: <1539924843.18970.35.camel@HansenPartnership.com>
-Subject: Re: linux-next: build warning after merge of the scsi tree
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Fri, 19 Oct 2018 08:58:38 -0400
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id w9J4s1sX025423;
+        Fri, 19 Oct 2018 13:54:01 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w9J4s1sX025423
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1539924842;
+        bh=RNkLfLEq3b1sRQCAYs++9f55uIJFFKxyLPJfhC9T2Aw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qJfHf/u8FhXixU0ilqZedST8iJ1W1PIdeDL1fVUyIwzDJsg4Z5ST4R6yourONQzzN
+         awVlWuWyA278Uu5nTn8Ft4nwOwS5MdGjDp3dYgnGmp7YAkcYiD+dhsuMwwJxB3Xtis
+         klcQaBxGpMdretBm2+Ivzwcgly3vVlwpWrBmpGcLPLs75LevBw4ZrcwH2qZbJJEwvI
+         JmlcX1XJ188AhD7vFeGA8R85efoQFRibx0ZLypIFSmiY8P7zJUSpOzNlhZRBw+o6d8
+         Eno6aI1nR8+fx1jf9FkS9D1qyvUKgleiEw3S2k6tdqzNBOB9Fgy9a1MvWLQ1fLS64l
+         tA47w20SAbyLw==
+X-Nifty-SrcIP: [209.85.217.42]
+Received: by mail-vs1-f42.google.com with SMTP id y195so8776559vsc.7;
+        Thu, 18 Oct 2018 21:54:01 -0700 (PDT)
+X-Gm-Message-State: ABuFfoixF6mbxfJjcduO+8toPGMMWdsqUCkdpJmWn3flUlS+w7X8+F/Y
+        IieO8PrzhQQ+OLtfLdjKW1CsQ043gdNVFfv2/n8=
+X-Google-Smtp-Source: ACcGV614NCU3U5tl4IH6UVmjLSYbhNBDCyShM6XvSrcxkB5ZyAbXiToqAFqwdzImaDPGXuq6OVnOPtfyUM9GhgoLfe8=
+X-Received: by 2002:a67:65c3:: with SMTP id z186mr14242000vsb.54.1539924840809;
+ Thu, 18 Oct 2018 21:54:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181017080201.10866-1-hch@lst.de> <20181017080201.10866-7-hch@lst.de>
+In-Reply-To: <20181017080201.10866-7-hch@lst.de>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 19 Oct 2018 13:53:24 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASnVLk50oYjGSE0ir3SDja3acPq1=oLjzZCLoSNiUNVdQ@mail.gmail.com>
+Message-ID: <CAK7LNASnVLk50oYjGSE0ir3SDja3acPq1=oLjzZCLoSNiUNVdQ@mail.gmail.com>
+Subject: Re: [PATCH 6/8] rapidio: consolidate RAPIDIO config entry in drivers/rapidio
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     mporter@kernel.crashing.org, Alex Bounine <alex.bou9@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Date:   Thu, 18 Oct 2018 21:54:03 -0700
-In-Reply-To: <20181019155034.2cf7f864@canb.auug.org.au>
-References: <20181019155034.2cf7f864@canb.auug.org.au>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-t6+FJjiqLsyK2mQ5G4Ul"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 17, 2018 at 5:03 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> There is no good reason to duplicate the RAPIDIO menu in various
+> architectures.  Instead provide a selectable HAS_RAPIDIO symbol
 
---=-t6+FJjiqLsyK2mQ5G4Ul
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Nit.
 
-On Fri, 2018-10-19 at 15:50 +1100, Stephen Rothwell wrote:
-> Hi James,
->=20
-> After merging the scsi tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
->=20
-> drivers/scsi/lpfc/lpfc_debugfs.c: In function
-> 'lpfc_debugfs_nodelist_open':
-> drivers/scsi/lpfc/lpfc_debugfs.c:706:17: warning: 'nrport' may be
-> used uninitialized in this function [-Wmaybe-uninitialized]
->    switch (nrport->port_state) {
->            ~~~~~~^~~~~~~~~~~~
-> drivers/scsi/lpfc/lpfc_debugfs.c:553:30: note: 'nrport' was declared
-> here
->   struct nvme_fc_remote_port *nrport;
->                               ^~~~~~
->=20
-> I am not sure where this has come from :-(
+HAS_RAPIDIO -> HAVE_RAPIDIO.
 
-It's the merge commit ... it was obviously the wrong choice; I'll fix
-it.
 
-James
 
---=-t6+FJjiqLsyK2mQ5G4Ul
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+> that indicates native availability of RAPIDIO support and the handle
+> the rest in drivers/pci.
 
------BEGIN PGP SIGNATURE-----
+Copy-paste mistake?
 
-iHUEABMIAB0WIQTnYEDbdso9F2cI+arnQslM7pishQUCW8ljawAKCRDnQslM7pis
-hY0SAQC+UTjH/MHC0MlO40CsXZOqqa57+sxS9ALQaJ1uU72HaQD8DvXRaqc85GQf
-3efCPD1vS0dideELBA/zVCBOgSSvmwk=
-=bgKI
------END PGP SIGNATURE-----
+drivers/pci -> drivers/rapidio
 
---=-t6+FJjiqLsyK2mQ5G4Ul--
 
+
+>  This also means we now provide support
+> for PCI(e) to Rapidio bridges for every architecture instead of a
+> limited subset.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: Thomas Gleixner <tglx@linutronix.de>
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
