@@ -2,122 +2,98 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B04ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:28:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FE8ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 480E221476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:28:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYBl9sA5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 480E221476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 892652086E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:29:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 892652086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728164AbeJTCfW (ORCPT
+        id S1727943AbeJTCge (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 22:35:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47872 "EHLO mail.kernel.org"
+        Fri, 19 Oct 2018 22:36:34 -0400
+Received: from mga01.intel.com ([192.55.52.88]:54191 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727509AbeJTCfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 22:35:21 -0400
-Received: from gmail.com (unknown [104.132.51.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C9FB2086E;
-        Fri, 19 Oct 2018 18:28:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539973687;
-        bh=Lic+bmBwgTZYCKOk4vb2DxF8sAEEHd55Yyu/Acg0Dqc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QYBl9sA5TbLQ6NUL8laDFUU2UDZXdulDFHgXVkXaCizSdbWb84WEwJLnVmeFdcLJr
-         /Ihsxu9kSN6z/CTU85alYwMK+TdUJKZ44tcY+YkkIuMLMnF/3Y5z4xqAobOO67wjHe
-         JZKnxDqXhaVH2K9wal9izNTRH51Zj6vRBfGIM5YY=
-Date:   Fri, 19 Oct 2018 11:28:05 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Greg Kaiser <gkaiser@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Samuel Neves <samuel.c.p.neves@gmail.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Paul Crowley <paulcrowley@google.com>
-Subject: Re: [RFC PATCH v2 04/12] crypto: chacha - add XChaCha12 support
-Message-ID: <20181019182804.GA246441@gmail.com>
-References: <20181015175424.97147-1-ebiggers@kernel.org>
- <20181015175424.97147-5-ebiggers@kernel.org>
- <CAKv+Gu_wVmnEND3MGTG7bqqynbBqyzmE_gTmqZfrT551_n9Hmw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu_wVmnEND3MGTG7bqqynbBqyzmE_gTmqZfrT551_n9Hmw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727786AbeJTCeq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 22:34:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 11:27:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,401,1534834800"; 
+   d="scan'208";a="267150089"
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
+  by orsmga005.jf.intel.com with ESMTP; 19 Oct 2018 11:27:28 -0700
+From:   Tomas Winkler <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH v7 03/21] tpm: sort objects in the Makefile
+Date:   Fri, 19 Oct 2018 21:22:49 +0300
+Message-Id: <20181019182307.17745-4-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20181019182307.17745-1-tomas.winkler@intel.com>
+References: <20181019182307.17745-1-tomas.winkler@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ard,
+Make the tpm Makefile a bit more in order by putting
+objects in one column.
 
-On Fri, Oct 19, 2018 at 10:34:41PM +0800, Ard Biesheuvel wrote:
-> > diff --git a/include/crypto/chacha.h b/include/crypto/chacha.h
-> > index ae79e9983c72f..3d261f5cd156d 100644
-> > --- a/include/crypto/chacha.h
-> > +++ b/include/crypto/chacha.h
-> > @@ -5,6 +5,11 @@
-> >   * XChaCha extends ChaCha's nonce to 192 bits, while provably retaining ChaCha's
-> >   * security.  Here they share the same key size, tfm context, and setkey
-> >   * function; only their IV size and encrypt/decrypt function differ.
-> > + *
-> > + * The ChaCha paper specifies 20, 12, and 8-round variants.  In general, it is
-> > + * recommended to use the 20-round variant ChaCha20.  However, the other
-> > + * variants can be needed in some performance-sensitive scenarios.  The generic
-> > + * ChaCha code currently allows only the 20 and 12-round variants.
-> >   */
-> >
-> >  #ifndef _CRYPTO_CHACHA_H
-> > @@ -39,6 +44,8 @@ void crypto_chacha_init(u32 *state, struct chacha_ctx *ctx, u8 *iv);
-> >
-> >  int crypto_chacha20_setkey(struct crypto_skcipher *tfm, const u8 *key,
-> >                            unsigned int keysize);
-> > +int crypto_chacha12_setkey(struct crypto_skcipher *tfm, const u8 *key,
-> > +                          unsigned int keysize);
-> >
-> >  int crypto_chacha_crypt(struct skcipher_request *req);
-> >  int crypto_xchacha_crypt(struct skcipher_request *req);
-> > diff --git a/lib/chacha.c b/lib/chacha.c
-> > index 0a2c2e5b7b84d..c4d69a83fcd2d 100644
-> > --- a/lib/chacha.c
-> > +++ b/lib/chacha.c
-> > @@ -21,7 +21,7 @@ static void chacha_permute(u32 *x, int nrounds)
-> >         int i;
-> >
-> >         /* whitelist the allowed round counts */
-> > -       BUG_ON(nrounds != 20);
-> > +       BUG_ON(nrounds != 20 && nrounds != 12);
-> >
-> 
-> I didn't spot this until this patch, but BUG_ON() may bring down the
-> kernel, and so it should really only be used as a last resort. (i.e.,
-> if this is called from non-process context things may explode rather
-> painfully)
-> 
-> I didn't look at the entire file [which is a bit cumbersome while
-> reviewing incremental changes like this] and so I don't really have
-> another suggestion right now, but please try to come up with something
-> better if you can.
-> 
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+V2: 1. back to tpm-y notation
+    2. Partially sort files alphanumerically.
+V3: Rebase
+V4: Remove redunant sentence in commit message.
+V5-7: Resend
 
-I'll change it to WARN_ON_ONCE(), I guess.  I do still want it to be very noisy
-if something fishy is going on with the round count.
+ drivers/char/tpm/Makefile | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-- Eric
+diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+index 4e9c33ca1f8f..efc785053627 100644
+--- a/drivers/char/tpm/Makefile
++++ b/drivers/char/tpm/Makefile
+@@ -3,9 +3,18 @@
+ # Makefile for the kernel tpm device drivers.
+ #
+ obj-$(CONFIG_TCG_TPM) += tpm.o
+-tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
+-	 tpm-dev-common.o tpmrm-dev.o eventlog/common.o eventlog/tpm1.o \
+-	 eventlog/tpm2.o tpm2-space.o
++tpm-y := tpm-chip.o
++tpm-y += tpm-dev-common.o
++tpm-y += tpm-dev.o
++tpm-y += tpm-interface.o
++tpm-y += tpm2-cmd.o
++tpm-y += tpmrm-dev.o
++tpm-y += tpm2-space.o
++tpm-y += tpm-sysfs.o
++tpm-y += eventlog/common.o
++tpm-y += eventlog/tpm1.o
++tpm-y += eventlog/tpm2.o
++
+ tpm-$(CONFIG_ACPI) += tpm_ppi.o eventlog/acpi.o
+ tpm-$(CONFIG_EFI) += eventlog/efi.o
+ tpm-$(CONFIG_OF) += eventlog/of.o
+-- 
+2.14.4
+
