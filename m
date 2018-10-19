@@ -2,162 +2,86 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EED3ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C68E8ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0612E214C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:15:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0612E214C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 8996821477
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:15:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UeMPvdpv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8996821477
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbeJSQUJ (ORCPT
+        id S1727261AbeJSQUz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 12:20:09 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47290 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726584AbeJSQUJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 12:20:09 -0400
-Received: from 220-133-187-190.hinet-ip.hinet.net ([220.133.187.190] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gDPw1-0003st-AT; Fri, 19 Oct 2018 08:15:06 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     gregkh@linuxfoundation.org
-Cc:     stern@rowland.harvard.edu, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH v2] USB: Wait for extra delay time after USB_PORT_FEAT_RESET for quirky hub
-Date:   Fri, 19 Oct 2018 16:14:50 +0800
-Message-Id: <20181019081450.21230-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 19 Oct 2018 12:20:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37508 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726584AbeJSQUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 12:20:55 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B92B22064A;
+        Fri, 19 Oct 2018 08:15:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539936955;
+        bh=+dCfjwA/NOWbHdb6Dbwt/nnPIZ9Sk6IZa5Uqiox7QRg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UeMPvdpvRcdIWI+QkqqeiCEqqFtfsFEvb0O7X+nilZvOpzwZ+rkwwfFDgXRxBY4EX
+         e1H/Of9WbHGCBew5LJG/o5nKkCU4olf1BW9QD+9K9GDF3UVwcrn3I+5jlwlh3MCV6f
+         gPH4dZyVKEvHJmfQ8Z9kqCyKVXzO8eube8uLFe6A=
+Date:   Fri, 19 Oct 2018 10:15:53 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 00/41] 4.14.78-stable review
+Message-ID: <20181019081553.GA21716@kroah.com>
+References: <20181018175416.718399607@linuxfoundation.org>
+ <20181019014132.GC19093@flashbox>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181019014132.GC19093@flashbox>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Devices connected under Terminus Technology Inc. Hub (1a40:0101) may
-fail to work after the system resumes from suspend:
-[  206.063325] usb 3-2.4: reset full-speed USB device number 4 using xhci_hcd
-[  206.143691] usb 3-2.4: device descriptor read/64, error -32
-[  206.351671] usb 3-2.4: device descriptor read/64, error -32
+On Thu, Oct 18, 2018 at 06:41:32PM -0700, Nathan Chancellor wrote:
+> On Thu, Oct 18, 2018 at 07:54:15PM +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.14.78 release.
+> > There are 41 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sat Oct 20 17:53:55 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.78-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> 
+> Merged, compiled, and installed onto my Raspberry Pi.
+> 
+> No initial issues noticed in dmesg or general usage.
 
-Info for this hub:
-T:  Bus=03 Lev=01 Prnt=01 Port=01 Cnt=01 Dev#=  2 Spd=480 MxCh= 4
-D:  Ver= 2.00 Cls=09(hub  ) Sub=00 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=1a40 ProdID=0101 Rev=01.11
-S:  Product=USB 2.0 Hub
-C:  #Ifs= 1 Cfg#= 1 Atr=e0 MxPwr=100mA
-I:  If#= 0 Alt= 0 #EPs= 1 Cls=09(hub  ) Sub=00 Prot=00 Driver=hub
+Thanks for testing 3 of these and letting me know.
 
-Some expirements indicate that the USB devices connected to the hub are
-innocent, it's the hub itself is to blame. The hub needs extra delay
-time after it resets its port.
-
-Hence wait for extra delay, if the device is connected to this quirky
-hub.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
-v2:
-  - Use hub->hdev to check quirk.
-  - Merge the delay with TRSTRCY.
-
- Documentation/admin-guide/kernel-parameters.txt |  2 ++
- drivers/usb/core/hub.c                          | 14 +++++++++++---
- drivers/usb/core/quirks.c                       |  6 ++++++
- include/linux/usb/quirks.h                      |  3 +++
- 4 files changed, 22 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 92eb1f42240d..626bb7892ab3 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4683,6 +4683,8 @@
- 					prevent spurious wakeup);
- 				n = USB_QUIRK_DELAY_CTRL_MSG (Device needs a
- 					pause after every control message);
-+				o = USB_QUIRK_HUB_SLOW_RESET (Hub needs extra
-+					delay after resetting its port);
- 			Example: quirks=0781:5580:bk,0a5c:5834:gij
- 
- 	usbhid.mousepoll=
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 462ce49f683a..6e0823790bee 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -2791,6 +2791,7 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
- 	int i, status;
- 	u16 portchange, portstatus;
- 	struct usb_port *port_dev = hub->ports[port1 - 1];
-+	int reset_recovery_time;
- 
- 	if (!hub_is_superspeed(hub->hdev)) {
- 		if (warm) {
-@@ -2882,11 +2883,18 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
- 
- done:
- 	if (status == 0) {
--		/* TRSTRCY = 10 ms; plus some extra */
- 		if (port_dev->quirks & USB_PORT_QUIRK_FAST_ENUM)
- 			usleep_range(10000, 12000);
--		else
--			msleep(10 + 40);
-+		else {
-+			/* TRSTRCY = 10 ms; plus some extra */
-+			reset_recovery_time = 10 + 40;
-+
-+			/* Hub needs extra delay after resetting its port. */
-+			if (hub->hdev->quirks & USB_QUIRK_HUB_SLOW_RESET)
-+				reset_recovery_time += 100;
-+
-+			msleep(reset_recovery_time);
-+		}
- 
- 		if (udev) {
- 			struct usb_hcd *hcd = bus_to_hcd(udev->bus);
-diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-index 178d6c6063c0..4d7d948eae63 100644
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -128,6 +128,9 @@ static int quirks_param_set(const char *val, const struct kernel_param *kp)
- 			case 'n':
- 				flags |= USB_QUIRK_DELAY_CTRL_MSG;
- 				break;
-+			case 'o':
-+				flags |= USB_QUIRK_HUB_SLOW_RESET;
-+				break;
- 			/* Ignore unrecognized flag characters */
- 			}
- 		}
-@@ -380,6 +383,9 @@ static const struct usb_device_id usb_quirk_list[] = {
- 	{ USB_DEVICE(0x1a0a, 0x0200), .driver_info =
- 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
- 
-+	/* Terminus Technology Inc. Hub */
-+	{ USB_DEVICE(0x1a40, 0x0101), .driver_info = USB_QUIRK_HUB_SLOW_RESET },
-+
- 	/* Corsair K70 RGB */
- 	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
- 
-diff --git a/include/linux/usb/quirks.h b/include/linux/usb/quirks.h
-index b7a99ce56bc9..a1be64c9940f 100644
---- a/include/linux/usb/quirks.h
-+++ b/include/linux/usb/quirks.h
-@@ -66,4 +66,7 @@
- /* Device needs a pause after every control message. */
- #define USB_QUIRK_DELAY_CTRL_MSG		BIT(13)
- 
-+/* Hub needs extra delay after resetting its port. */
-+#define USB_QUIRK_HUB_SLOW_RESET		BIT(14)
-+
- #endif /* __LINUX_USB_QUIRKS_H */
--- 
-2.17.1
-
+greg k-h
