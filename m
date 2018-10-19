@@ -2,114 +2,140 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B4F8ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:57:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC9BECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:57:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAAFB21479
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:57:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA39221486
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:57:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Pk2a7+lL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAAFB21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qko/V2et"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA39221486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbeJSUCn (ORCPT
+        id S1727485AbeJSUCq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:02:43 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45358 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726784AbeJSUCn (ORCPT
+        Fri, 19 Oct 2018 16:02:46 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:34616 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbeJSUCp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:02:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=z8P7+dNT9o+sk6gh3sTI29Hs0l96xz/pOc2hLzwLXIQ=; b=Pk2a7+lLg/d8HmWGyt9HXQNK1
-        poTs6YSSrZNQo6ay8Zu0sTAOT2D2gppnSyOy7CCFmjtYmHdQFQgzcbXVSSdtQo6ExV1E0mgIQTSjQ
-        /wUTfGWlTeTgDv16knpWYrtnwRfR+iq3bL1NjGX0LTMWvRGWLSk/E6QWLRzBJNQ1FpJbw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gDTOe-0008RU-PU; Fri, 19 Oct 2018 11:56:52 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 5B9691122548; Fri, 19 Oct 2018 12:56:52 +0100 (BST)
-Date:   Fri, 19 Oct 2018 12:56:52 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Ben Whitten <ben.whitten@gmail.com>
-Cc:     afaerber@suse.de, Ben Whitten <ben.whitten@lairdtech.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 RESEND] regmap: Add regmap_noinc_write API
-Message-ID: <20181019115652.GD5895@sirena.org.uk>
-References: <1539941631-4421-1-git-send-email-ben.whitten@lairdtech.com>
+        Fri, 19 Oct 2018 16:02:45 -0400
+Received: by mail-qt1-f195.google.com with SMTP id o17-v6so37962493qtr.1;
+        Fri, 19 Oct 2018 04:56:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1lzd5byMeV2j0yu5naG+w6QIxCuXPAvx7FmVStL3e3s=;
+        b=qko/V2et6fv8Jh+Ba5g4mQvHjLVC1x/9B9S/GoC3cCBKjrdfZgV66rU9Br9QiiS9zA
+         lIdhfLw7CPvyf4VpMgnFO2Fxm/gPggQLpBwgdq3s09ybrdZet9ljknPJSaAD+MrgedEn
+         SXCDfB/26kRPpTeGeiZB7zpcEPe11Dj/a6jXgXMbEpKyBZV+vxrjrKCBVZk+yZ/itd5/
+         +AE8H8OHsMNeEqW60YMrCXlodjRd9o3OoVWB2UKId2dwARewmnikfnLA4gfMxY2HRLsn
+         OgmWSJvtonyI1TVym9HLx9ts6MAQWNMl16W7T2oXPQRx6Ye5ImAGwXQkap/RBRIeJkhp
+         T0rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1lzd5byMeV2j0yu5naG+w6QIxCuXPAvx7FmVStL3e3s=;
+        b=QwQh4XCs3xzklnvK9b6Ks6bN9DR7RLnmKFZrIGi1Lbjwzypf0jzeumwTCyVThRwVvP
+         F1NeeKrJQ5dBi2spasfhYiUR6HHvBW2BiyHFIUwEs6F/COKAgTdIGcECOP58sYKSzdlQ
+         4LPcNESktI0RAgwH+7d5RDa/3qNFYR7zc7M4OG4/RfKgL1RdhYYeAKCdJ/ObWLujmkUS
+         sCAF/i7UbeHdU326jtJ0XAm9nCQCgGvCKTa9a5e8xJ4ZCQdmUdEmudDzu6peIUhUo9td
+         s8bvVXKg5My6lUJC38i4c1wecI8U/gu24HrILSgfaBBoRkLwVmUWjsRG98a5sQuymidj
+         ZXoQ==
+X-Gm-Message-State: ABuFfoiEhS6xsctmGTGexlnvAYLC2SbEz0QPqEHc+wxrnNpr2A8TZaz6
+        pdgEjS6kB6IMzzwsqreG4kvT2QMepuAHaRDlJzlHG9sF
+X-Google-Smtp-Source: ACcGV60KSG12T66ipCqV5uQWfhWl3cRwFHCxJAvT4o5e57TbsKBqAuODP0ZJVC/uNKvLPQJfdofMgvglnRMHA/9FKU4=
+X-Received: by 2002:a0c:aa06:: with SMTP id d6-v6mr33992893qvb.26.1539950218914;
+ Fri, 19 Oct 2018 04:56:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zbGR4y+acU1DwHSi"
-Content-Disposition: inline
-In-Reply-To: <1539941631-4421-1-git-send-email-ben.whitten@lairdtech.com>
-X-Cookie: Obey all traffic laws.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181004123445.17497-1-hdegoede@redhat.com>
+In-Reply-To: <20181004123445.17497-1-hdegoede@redhat.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 19 Oct 2018 14:56:47 +0300
+Message-ID: <CAHp75VepsK+3o5qH9i8x=uvCABt-QOuBq2WNiqGAQYVSFOqTyA@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: touchscreen_dmi: Add info for the Trekstor
+ Primebook C11 convertible
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ahormann@gmx.net
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 4, 2018 at 3:35 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Add touchscreen info for the Trekstor Primebook C11 convertible.
+>
 
---zbGR4y+acU1DwHSi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied, thanks!
 
-On Fri, Oct 19, 2018 at 10:33:50AM +0100, Ben Whitten wrote:
-> The regmap API had a noinc_read function added for instances where devices
-> supported returning data from an internal FIFO in a single read.
+> Cc: Alicia Hormann <ahormann@gmx.net>
+> Suggested-by: Alicia Hormann <ahormann@gmx.net>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+>  drivers/platform/x86/touchscreen_dmi.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>
+> diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
+> index f30337d68007..4e6fdc1fbfdf 100644
+> --- a/drivers/platform/x86/touchscreen_dmi.c
+> +++ b/drivers/platform/x86/touchscreen_dmi.c
+> @@ -421,6 +421,22 @@ static const struct ts_dmi_data teclast_x98plus2_data = {
+>         .properties     = teclast_x98plus2_props,
+>  };
+>
+> +static const struct property_entry trekstor_primebook_c11_props[] = {
+> +       PROPERTY_ENTRY_U32("touchscreen-size-x", 1970),
+> +       PROPERTY_ENTRY_U32("touchscreen-size-y", 1530),
+> +       PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
+> +       PROPERTY_ENTRY_STRING("firmware-name",
+> +                             "gsl1680-trekstor-primebook-c11.fw"),
+> +       PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+> +       PROPERTY_ENTRY_BOOL("silead,home-button"),
+> +       { }
+> +};
+> +
+> +static const struct ts_dmi_data trekstor_primebook_c11_data = {
+> +       .acpi_name      = "MSSL1680:00",
+> +       .properties     = trekstor_primebook_c11_props,
+> +};
+> +
+>  static const struct property_entry trekstor_primebook_c13_props[] = {
+>         PROPERTY_ENTRY_U32("touchscreen-size-x", 2624),
+>         PROPERTY_ENTRY_U32("touchscreen-size-y", 1920),
+> @@ -706,6 +722,14 @@ const struct dmi_system_id touchscreen_dmi_table[] = {
+>                         DMI_MATCH(DMI_PRODUCT_NAME, "X98 Plus II"),
+>                 },
+>         },
+> +       {
+> +               /* Trekstor Primebook C11 */
+> +               .driver_data = (void *)&trekstor_primebook_c11_data,
+> +               .matches = {
+> +                       DMI_MATCH(DMI_SYS_VENDOR, "TREKSTOR"),
+> +                       DMI_MATCH(DMI_PRODUCT_NAME, "Primebook C11"),
+> +               },
+> +       },
+>         {
+>                 /* Trekstor Primebook C13 */
+>                 .driver_data = (void *)&trekstor_primebook_c13_data,
+> --
+> 2.19.0
+>
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-noinc-write
-
-for you to fetch changes up to cdf6b11daa77d4b55ddf0530842a551cc5562a93:
-
-  regmap: Add regmap_noinc_write API (2018-10-19 12:51:19 +0100)
-
-----------------------------------------------------------------
-regmap: Add noinc write support
-
-Mirroring the read support
-
-----------------------------------------------------------------
-Ben Whitten (1):
-      regmap: Add regmap_noinc_write API
-
- drivers/base/regmap/internal.h |  3 ++
- drivers/base/regmap/regmap.c   | 77 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/regmap.h         | 19 +++++++++++
- 3 files changed, 99 insertions(+)
-
---zbGR4y+acU1DwHSi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvJxoMACgkQJNaLcl1U
-h9BvFwf/Q+S/rFvNeLEMykZrSCknRpGVos2CKVdAjwOiAom+zd2k0FmTfMbrHjEM
-PJ08CYjMP6NccYNcouYHo4HehZvjRYpoFssghc0PvuxRxHtOYx9PE9R6mzTxe6kz
-CjI3778g6lymDnzM6xPHL6tntY+ipgo3mD83ts+auz+01Pvo3Ol9G6A+TgpF8bPk
-gmCxMQ8kMLJTW6jIEfvRbBR3PnV6EZInohX1xPiQGBQOOdE3krniPv14yXRRcL+T
-tx47fwzpB4he87fDcUA6o5jSqTN+Y3C58L6ArARAS07BM9lGUb8QECRTqU4vBRa5
-SKoJoxCXDYHG9+jVv+n/LEFKHONcRg==
-=G+fi
------END PGP SIGNATURE-----
-
---zbGR4y+acU1DwHSi--
+-- 
+With Best Regards,
+Andy Shevchenko
