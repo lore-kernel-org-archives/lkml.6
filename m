@@ -2,150 +2,140 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 492A9ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 225B7ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE367205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:43:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="L/RGYbCQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE367205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id CC1A4205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:47:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC1A4205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbeJSTsq (ORCPT
+        id S1727427AbeJSTxH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 15:48:46 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:43566 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727112AbeJSTsq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 15:48:46 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9JBgsU4077802;
-        Fri, 19 Oct 2018 06:42:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1539949374;
-        bh=9gHq1cF63AmQeQCfVFhHe9ubx3kFwWjdkdmq93kmVv8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=L/RGYbCQ+WSsRZcKOsuiHiiB/ER7ym0nHeh47tq7n43vVEoVM/acKil9BTbY7X+vh
-         pMETPzcnU/55n3/KXUWJJg6z2rH9RfkGqaO8SVBFh/JYVF2jwJ4vfmtcAYyDskr7hR
-         LURfhk6zz7DOFmsvY+BX/q56SbsclS39M3D1pFgY=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9JBgslN008220;
-        Fri, 19 Oct 2018 06:42:54 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 19
- Oct 2018 06:42:54 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 19 Oct 2018 06:42:54 -0500
-Received: from [172.22.151.114] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9JBgs1L019890;
-        Fri, 19 Oct 2018 06:42:54 -0500
-Subject: Re: [PATCH v3 2/9] dt-bindings: ti-lmu: Remove LM3697
-To:     Pavel Machek <pavel@ucw.cz>
-CC:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Tony Lindgren <tony@atomide.com>, <devicetree@vger.kernel.org>,
+        Fri, 19 Oct 2018 15:53:07 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50984 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726784AbeJSTxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 15:53:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6FB9A80D;
+        Fri, 19 Oct 2018 04:47:23 -0700 (PDT)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 015F93F71D;
+        Fri, 19 Oct 2018 04:47:17 -0700 (PDT)
+Subject: Re: [PATCH v5 11/17] arm64: docs: document pointer authentication
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>
+Cc:     Ramana Radhakrishnan <ramana.radhakrishnan@foss.arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        Andrew Jones <drjones@redhat.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Adam Wallis <awallis@codeaurora.org>,
+        Suzuki Poulose <Suzuki.Poulose@arm.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Christoffer Dall <Christoffer.Dall@arm.com>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        Amit Kachhap <Amit.Kachhap@arm.com>,
+        Dave P Martin <Dave.Martin@arm.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
-References: <4fcb91c7-b2b2-798d-8a41-fa1b475086e0@ti.com>
- <8c1559e1-b703-4c98-8bd9-7c9993bd59f5@gmail.com>
- <20181012162619.GA28573@bogus> <20181012180312.GB5565@amd>
- <60cc9238-aba2-aa6a-64a4-2b5e20835549@gmail.com>
- <CAL_Jsq+Yspr_iNP1eYanvtmiuMf-xNEZ0suDH3tQayV=V5r5=g@mail.gmail.com>
- <73647af4-0258-49a9-d9b6-eeef7e7813dc@gmail.com>
- <5c7f03cc-4d45-6010-523d-46721c218731@ti.com> <20181015214512.GA2001@amd>
- <aa401333-9650-c925-2085-6e6d17b576bd@ti.com> <20181018221048.GA6364@amd>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <b3d390c8-46bf-2c94-fad5-ec85b1cca2fe@ti.com>
-Date:   Fri, 19 Oct 2018 06:42:52 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Kees Cook <keescook@chromium.org>
+References: <20181005084754.20950-1-kristina.martsenko@arm.com>
+ <20181005084754.20950-12-kristina.martsenko@arm.com>
+ <9acb0cd2-66b0-1c41-b1a8-7c70608e9a9b@foss.arm.com>
+ <7b0de19b-45b9-f4df-25d1-c7e80fab49dc@arm.com>
+ <20181019113556.ljbdmjo5pdw7muvz@mbp>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <05738017-5886-fe4d-e8fd-a834da6b1576@arm.com>
+Date:   Fri, 19 Oct 2018 12:47:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181018221048.GA6364@amd>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
+In-Reply-To: <20181019113556.ljbdmjo5pdw7muvz@mbp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/18/2018 05:10 PM, Pavel Machek wrote:
-> Hi!
+On 19/10/18 12:35, Catalin Marinas wrote:
+> On Tue, Oct 16, 2018 at 05:14:39PM +0100, Kristina Martsenko wrote:
+>> On 05/10/2018 10:04, Ramana Radhakrishnan wrote:
+>>> On 05/10/2018 09:47, Kristina Martsenko wrote:
+
+[...]
+
+>> The other option is to turn off trapping entirely. However then on a
+>> big.LITTLE system with mismatched pointer authentication support
+>> instructions will work intermittently on some CPUs but not others.
 > 
->>>>>> Given this one seems to have not really been finished, it's probably
->>>>>> okay to make changes in this case. Still, it would be good to see
->>>>>> patches structured so that it's obvious we're breaking things. But how
->>>>>> the patches are structured doesn't matter until there's some agreement
->>>>>> on the end result.
->>>>>
->>>>> OK, so if I'm getting it right, the correct patch structure in this case
->>>>> means that changes removing bindings from MFD and moving them along
->>>>> with the modifications to the LED subsystem should be placed in a single
->>>>> patch.
->>>>>
->>>>> Dan, could you please arrange the next patch set version accordingly?
->>>>
->>>> Yes I can squash the DT bindings patches and call it a "move and modify"
->>>
->>> You can do move without problems. But if you plan to modify them,
->>> please try to change as little as possible, make it separate patch and
->>> explain why new version is better than old one.
->>>
->>
->> I have been thinking of how to do this.  Since the 2 devices are part of the current
->> binding there really is not a way to move them.  Since there are still MFD capable
->> devices available.
->>
->> I would still need to remove the current active binding and create a new binding in the LED
->> bindings directory.
->>
->> I would have to remove and create in the same patch.
-> 
-> Yeah, and this all is a sign that you should just keep the current
-> binding, and make your code use it, see?
+> That's another case but let's assume we never see such configurations ;).
 
+I'd like to put it on the record that I'm not willing to support such a
+configuration. So my ask is that if we detect a system where only some
+of the CPUs have pointer authentication support, we either:
 
-No I don't actually see this as a sign.  This is just operational issues
-nothing to do with actually correcting the incomplete unused bindings.
+1) prevent some of the CPUs from booting (that's harsh)
+2) disable KVM (that's easy)
 
-And actually moving and creating the bindings in the same patch makes
-sense as the change is self contained in a single patch and is easier to
-track.
+I'm perfectly happy with (2).
 
-> 
-> You are free to use Sebastian's updated binding. It has "suggested by:
-> Rob" or something like that on it, so it should be fine.
-> 
-> You can add note to bindings/leds pointing to mfd binding.
-> 
-> Now... this is what I've suggested before. If you don't agree, you may
-> want to contact Tony Lindgren, IIRC he works for TI, too, and might be
-> willing to help.
+Thanks,
 
-I will ping Tony just to close the loop.  I will be posting v4 today after making the changes.
-I was hoping to have some code review prior to posting v4 but have not received any comments so
-v4 will just be a patch rearrangement.
-
-Dan
-
-> 
-> Thank you,
-> 									Pavel
-> 
-
-
+	M.
 -- 
-------------------
-Dan Murphy
+Jazz is not dead. It just smells funny...
