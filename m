@@ -2,151 +2,173 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8BBECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C31ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:36:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58CDB2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:36:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32AC32083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:36:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="S4hxkkoL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58CDB2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fL3KJX8F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32AC32083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbeJSXnD (ORCPT
+        id S1727656AbeJSXn1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 19:43:03 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:58628 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbeJSXnD (ORCPT
+        Fri, 19 Oct 2018 19:43:27 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:38439 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727111AbeJSXn1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 19:43:03 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9JFY069048968;
-        Fri, 19 Oct 2018 15:36:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=HXYgnJ3P5i00nVrBX3BRh1qEJz/jjKvHMDodfy1uMuE=;
- b=S4hxkkoLtY2CG3AX8T3NKKAwJtfSaIa2PdQa+iW3yGgtRkhaErLLAQ50/XRDzZ5YU/kw
- q6EKwrKf0aRM9hjaWyIM7R92BdSQ9lOH9e17cPXyI5imH5feGnydW8Fqa1XJgvL1lz3Z
- flr7RTVhKdAwsO9BIL2fkqZpuv4QoJ5Jzmnvqrx7/QYfZOY/YGuM/MP7ubtiAqwCTSQ4
- QKdk82m+NbObQIk52pkxDYj8vIaDyZ6+pE3FfUWDAskz0+h0jnxLyuvW43nJQYXUoHU+
- zonC1VGbSNSvynYNjms2h46whCjAGhK/7RbgzaE/WfSe4JkA0pAhKVruaAq5gJCKA33U cQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2n39brvm9x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Oct 2018 15:36:04 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9JFa2BB016162
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Oct 2018 15:36:02 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9JFZs8D020684;
-        Fri, 19 Oct 2018 15:35:55 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 19 Oct 2018 08:35:51 -0700
-Date:   Fri, 19 Oct 2018 08:35:55 -0700
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
-        dave.dice@oracle.com, dave.hansen@linux.intel.com,
-        hannes@cmpxchg.org, levyossi@icloud.com,
-        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
-        mhocko@kernel.org, Pavel.Tatashin@microsoft.com,
-        steven.sistare@oracle.com, tim.c.chen@intel.com,
-        vdavydov.dev@gmail.com, ying.huang@intel.com
-Subject: Re: [RFC PATCH v2 0/8] lru_lock scalability and SMP list functions
-Message-ID: <20181019153555.mza7t5siubhk3ohu@ca-dmjordan1.us.oracle.com>
-References: <20180911004240.4758-1-daniel.m.jordan@oracle.com>
- <2705c814-a6b8-0b14-7ea8-790325833d95@suse.cz>
+        Fri, 19 Oct 2018 19:43:27 -0400
+Received: by mail-yw1-f66.google.com with SMTP id d126-v6so13348158ywa.5
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 08:36:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=zyUmzzoNxoKLcxVLBiJahX1b1lQexKm/qTY8nETdCho=;
+        b=fL3KJX8Fmns3RKMdNSbp6cZWwIHpSQD2IcTeID+4CR5UMmV/KRoqk2fkprRWb1+EB+
+         q4FuOWsjgBbHDKBdVj18GHg0QJaigMdiUNR8HmP2uaipG42JdkSlGsmbIU/83jINypOL
+         BPga/CJs4uV0xkEceeUoaEwfpcYqcXgy/yia0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=zyUmzzoNxoKLcxVLBiJahX1b1lQexKm/qTY8nETdCho=;
+        b=XTtWD0JmOju0me8KLD1a0w5J8csqcJtZHiDjqzm8tvzmJOcwqU1pyb4CqF9aQCE/89
+         tALEw9McF1Fgtd7DFTVoMYVoxSIiHzPo52AqY6IiX5gIrgTLY8RhTWZxIdeS/kfbXH3E
+         Up6OevZ1JD4UOqbYS3l1KyKeDJvPUWj8KR09wbt4do/vmpf4yeMZj1iXBOHAUuBg1z8o
+         yAYP1qHm+pepeTTwdhhJe/4fZ3a1tJB+HdSL0gjSxRtxBMdOHGCk67DC96y9PEVTDvO0
+         BzMYtALtHc8JLEWzKvHaMMlmHMzlPYfz0Co6HEp4mwWaysfhWrlB4HeQno01PUPOHn9T
+         6ofg==
+X-Gm-Message-State: ABuFfog3e3UzXC6vpHk99Oy2Qcz8S6NtUnOKTyswp1O12KIleSEquSjS
+        mqe5ZHwxhyAauz6/M3PU2sGdIgCIz0s=
+X-Google-Smtp-Source: ACcGV61BKPceY7xH3oF/Y+ZCDSSmYPIQqkACa7JDV1dMNOA6SmtIjsImDuVxDmZQHT7r/ng/8PhGOg==
+X-Received: by 2002:a81:4c97:: with SMTP id z145-v6mr2829051ywa.131.1539963408997;
+        Fri, 19 Oct 2018 08:36:48 -0700 (PDT)
+Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
+        by smtp.gmail.com with ESMTPSA id j76-v6sm6950481ywj.5.2018.10.19.08.36.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 19 Oct 2018 08:36:47 -0700 (PDT)
+Received: by mail-yw1-f52.google.com with SMTP id v1-v6so13341009ywv.6
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 08:36:46 -0700 (PDT)
+X-Received: by 2002:a0d:fec6:: with SMTP id o189-v6mr24033659ywf.237.1539963405935;
+ Fri, 19 Oct 2018 08:36:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2705c814-a6b8-0b14-7ea8-790325833d95@suse.cz>
-User-Agent: NeoMutt/20180323-268-5a959c
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9050 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810190137
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Fri, 19 Oct 2018 08:36:45
+ -0700 (PDT)
+In-Reply-To: <20181019112404.GD14246@arm.com>
+References: <20181005084754.20950-1-kristina.martsenko@arm.com>
+ <20181005084754.20950-8-kristina.martsenko@arm.com> <20181019111542.6wrvjguirglzg7vg@mbp>
+ <20181019112404.GD14246@arm.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 19 Oct 2018 08:36:45 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+2axuzPJji_eCvMZDiPvrPsP3kAnG0CY_rsL5c=uFQFA@mail.gmail.com>
+Message-ID: <CAGXu5j+2axuzPJji_eCvMZDiPvrPsP3kAnG0CY_rsL5c=uFQFA@mail.gmail.com>
+Subject: Re: [PATCH v5 07/17] arm64: add basic pointer authentication support
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Andrew Jones <drjones@redhat.com>,
+        Jacob Bramley <jacob.bramley@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Adam Wallis <awallis@codeaurora.org>,
+        "Suzuki K . Poulose" <suzuki.poulose@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Amit Kachhap <Amit.Kachhap@arm.com>,
+        Dave P Martin <Dave.Martin@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Cyrill Gorcunov <gorcunov@openvz.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 01:35:11PM +0200, Vlastimil Babka wrote:
-> On 9/11/18 2:42 AM, Daniel Jordan wrote:
-> > On large systems, lru_lock can become heavily contended in memory-intensive
-> > workloads such as decision support, applications that manage their memory
-> > manually by allocating and freeing pages directly from the kernel, and
-> > workloads with short-lived processes that force many munmap and exit
-> > operations.  lru_lock also inhibits scalability in many of the MM paths that
-> > could be parallelized, such as freeing pages during exit/munmap and inode
-> > eviction.
-> 
-> Interesting, I would have expected isolate_lru_pages() to be the main
-> culprit, as the comment says:
-> 
->  * For pagecache intensive workloads, this function is the hottest
->  * spot in the kernel (apart from copy_*_user functions).
+On Fri, Oct 19, 2018 at 4:24 AM, Will Deacon <will.deacon@arm.com> wrote:
+> [+Cyrill Gorcunov for CRIU stuff]
+>
+> On Fri, Oct 19, 2018 at 12:15:43PM +0100, Catalin Marinas wrote:
+>> On Fri, Oct 05, 2018 at 09:47:44AM +0100, Kristina Martsenko wrote:
+>> > diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
+>> > new file mode 100644
+>> > index 000000000000..2aefedc31d9e
+>> > --- /dev/null
+>> > +++ b/arch/arm64/include/asm/pointer_auth.h
+>> > @@ -0,0 +1,63 @@
+>> > +// SPDX-License-Identifier: GPL-2.0
+>> > +#ifndef __ASM_POINTER_AUTH_H
+>> > +#define __ASM_POINTER_AUTH_H
+>> > +
+>> > +#include <linux/random.h>
+>> > +
+>> > +#include <asm/cpufeature.h>
+>> > +#include <asm/sysreg.h>
+>> > +
+>> > +#ifdef CONFIG_ARM64_PTR_AUTH
+>> > +/*
+>> > + * Each key is a 128-bit quantity which is split across a pair of 64-bit
+>> > + * registers (Lo and Hi).
+>> > + */
+>> > +struct ptrauth_key {
+>> > +   unsigned long lo, hi;
+>> > +};
+>> > +
+>> > +/*
+>> > + * We give each process its own instruction A key (APIAKey), which is shared by
+>> > + * all threads. This is inherited upon fork(), and reinitialised upon exec*().
+>> > + * All other keys are currently unused, with APIBKey, APDAKey, and APBAKey
+>> > + * instructions behaving as NOPs.
+>> > + */
+>>
+>> I don't remember the past discussions but I assume the tools guys are ok
+>> with a single key shared by multiple threads. Ramana, could you ack this
+>> part, FTR?
+>>
+>> (and it would help if someone from the Android and Chrome camps can
+>> confirm)
+>
+> FWIW: I think we should be entertaining a prctl() interface to use a new
+> key on a per-thread basis. Obviously, this would need to be used with care
+> (e.g. you'd fork(); use the prctl() and then you'd better not return from
+> the calling function!).
+>
+> Assuming we want this (Kees -- I was under the impression that everything in
+> Android would end up with the same key otherwise?), then the question is
+> do we want:
+>
+>   - prctl() get/set operations for the key, or
+>   - prctl() set_random_key operation, or
+>   - both of the above?
+>
+> Part of the answer to that may lie in the requirements of CRIU, where I
+> strongly suspect they need explicit get/set operations, although these
+> could be gated on CONFIG_CHECKPOINT_RESTORE=y.
 
-Yes, I'm planning to stress reclaim to see how lru_lock responds.  I've
-experimented some with using dd on lots of nvme drives to keep kswapd busy, but
-I'm always looking for more realistic stuff.  Suggestions welcome :)
+Oh CRIU. Yikes. I'd like the get/set to be gated by the CONFIG, yes.
+No reason to allow explicit access to the key (and selected algo) if
+we don't have to.
 
-> It also says "Some of the functions that shrink the lists perform better
-> by taking out a batch of pages and working on them outside the LRU
-> lock." Makes me wonder why isolate_lru_pages() also doesn't cut the list
-> first instead of doing per-page list_move() (and perhaps also prefetch
-> batch of struct pages outside the lock first? Could be doable with some
-> care hopefully).
+As for per-thread or not, having a "pick a new key now" prctl() sounds
+good, but I'd like to have an eye toward having it just be "automatic"
+on clone().
 
-Seems like the batch prefetching and list cutting would go hand in hand, since
-cutting requires walking the LRU to find where to cut, which could miss on all
-the page list nodes along the way.
+-Kees
 
-I'll experiment with this.
-
-> > Second, lru_lock is converted from a spinlock to a rwlock.  The idea is to
-> > repurpose rwlock as a two-mode lock, where callers take the lock in shared
-> > (i.e. read) mode for code using the SMP list functions, and exclusive (i.e.
-> > write) mode for existing code that expects exclusive access to the LRUs.
-> > Multiple threads are allowed in under the read lock, of course, and they use
-> > the SMP list functions to synchronize amongst themselves.
-> > 
-> > The rwlock is scaffolding to facilitate the transition from big-hammer lru_lock
-> > as it exists today to just using the list locking primitives and getting rid of
-> > lru_lock entirely.  Such an approach allows incremental conversion of lru_lock
-> > writers until everything uses the SMP list functions and takes the lock in
-> > shared mode, at which point lru_lock can just go away.
-> 
-> Yeah I guess that will need more care, e.g. I think smp_list_del() can
-> break any thread doing just a read-only traversal as it can end up with
-> an entry that's been deleted and its next/prev poisoned.
-
-As far as I can see from checking everywhere the kernel takes lru_lock, nothing
-currently walks the LRUs.  LRU-using code just deletes a page from anywhere, or
-adds one page at a time from the head or tail, so it seems safe to use
-smp_list_* for all LRU paths.
-
-This RFC doesn't handle adding and removing from list tails yet, but that seems
-doable.
-
-> It's a bit
-> counterintuitive that "read lock" is now enough for selected modify
-> operations, while read-only traversal would need a write lock.
-
-Yes, I considered introducing wrappers to clarify this, e.g. an inline function
-exclusive_lock_irqsave that just calls write_lock_irqsave, to let people know
-the locks are being used specially.  Would be happy to add these in.
-
-Thanks for taking a look, Vlastimil, and for your comments!
+-- 
+Kees Cook
+Pixel Security
