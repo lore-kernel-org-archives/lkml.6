@@ -2,126 +2,101 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7708CECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3795FECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C24F2064A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:17:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PQ/q34I6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C24F2064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A3C8D2064A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:19:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3C8D2064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=skynet.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbeJSQWd (ORCPT
+        id S1727213AbeJSQY6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 12:22:33 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38991 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbeJSQWd (ORCPT
+        Fri, 19 Oct 2018 12:24:58 -0400
+Received: from mailrelay101.isp.belgacom.be ([195.238.20.128]:36125 "EHLO
+        mailrelay101.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726609AbeJSQY5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 12:22:33 -0400
-Received: by mail-ed1-f67.google.com with SMTP id d15-v6so30642376edq.6
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 01:17:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wZg0kGQbzA1q4AVBwEpmWKwln8RWfeHxLgwGYvHtXZs=;
-        b=PQ/q34I6n4a3qcQ8ZoSaphkK3zEzvLtHE4xVAzZ8jlEYH2ysBndLw1q791AB0jzvYu
-         CvmnC+ry9OH+XCrwz2tvbgCY4b2S1xt2pgMMiAdfwCezRF6WGS8kh04P2C9MyB0/VyJz
-         A7MTzXjLtlZfwixHMqD9K4/U97hYq3ZQsKRWhwe1fiJS3C9xJ7oS2r7H8Gu1GT/w4dCd
-         N+71IbjzK5stnWgkzr00Gof6muI1PYh6T9qFU9KocMAJN6jmLObIY1r5DsxYgFcfL8ST
-         0cZzfJjy/cHdYi8sxdAl7qreY/oo8qxdMmXJoly9udO7k2usnrDPQM4KhnUBfq7EqH34
-         QvIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wZg0kGQbzA1q4AVBwEpmWKwln8RWfeHxLgwGYvHtXZs=;
-        b=AYPlROpbBh222/qfYvLOEOJb79IhQcil8G1vQUB4yfjAbOWuk+x7bHtp5fPwdEFRxu
-         Z2qqvN4G8hOHaIgdhHGJEAn+1zgmSspWXjKhHwdSW2j7vLO3MmWTPtQxM/gn5NFiRjQu
-         W6FO9nScSiXRtHR/Hn82zbFyarYcTMrlv6tPuNpVEFm9G9WgLIUMvdSzRNi5rtTWTekp
-         6xZGZ65ihzxd7eW2EFZxQ6JJT1LLOTE5wPfn15IdhXzyQmxUYyj4IXz6Rqn/NFI6bYZs
-         S8f1lj/l9Jeh1EKPjugM40GRwKx5jA2OGBQCvMfz2kDg/98PiNZX8S6aKnumqKex0hl2
-         PldA==
-X-Gm-Message-State: ABuFfojZQNIa2V9WVPUIBCqkAxrhicT0SngTB/orTpA+Z2bujbAgvnj6
-        G0bEJ/Bclyx+yMQIokZzbMM=
-X-Google-Smtp-Source: ACcGV62gnR1H9eJI3Uq13IhCjR7F61UtaBspbHArZgmhZCFwz1102/7GGz93lGHMP/j4CiOlKhkURQ==
-X-Received: by 2002:a17:906:480e:: with SMTP id w14-v6mr30418468ejq.68.1539937051581;
-        Fri, 19 Oct 2018 01:17:31 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id z7-v6sm4842072ejp.49.2018.10.19.01.17.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 19 Oct 2018 01:17:30 -0700 (PDT)
-Date:   Fri, 19 Oct 2018 08:17:30 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] memblock: remove stale #else and the code it protects
-Message-ID: <20181019081729.klvckcytnhheaian@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <1538067825-24835-1-git-send-email-rppt@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1538067825-24835-1-git-send-email-rppt@linux.vnet.ibm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Fri, 19 Oct 2018 12:24:57 -0400
+X-Belgacom-Dynamic: yes
+IronPort-PHdr: =?us-ascii?q?9a23=3ALEGQdxQG3BhN9i/LBxHQjzRa/dpsv+yvbD5Q0Y?=
+ =?us-ascii?q?Iujvd0So/mwa6zbB2N2/xhgRfzUJnB7Loc0qyK6/+mATRIyK3CmUhKSIZLWR?=
+ =?us-ascii?q?4BhJdetC0bK+nBN3fGKuX3ZTcxBsVIWQwt1Xi6NU9IBJS2PAWK8TW94jEIBx?=
+ =?us-ascii?q?rwKxd+KPjrFY7OlcS30P2594HObwlSizexfbF/IA+qoQnNq8IbnZZsJqEtxx?=
+ =?us-ascii?q?XTv3BGYf5WxWRmJVKSmxbz+MK994N9/ipTpvws6ddOXb31cKokQ7NYCi8mM3?=
+ =?us-ascii?q?0u683wqRbDVwqP6WACXWgQjxFFHhLK7BD+Xpf2ryv6qu9w0zSUMMHqUbw5Xy?=
+ =?us-ascii?q?mp4qF2QxHqlSgHLSY0/mHJhMJtgqxVoxWvqgdjz4LIeoyZKOBzcr/Bcd4cWG?=
+ =?us-ascii?q?FPXtxRVytEAo6kb4UAFfEOPedCoIn7ulAArQG+ChexC+zx0D9Ih2P53a4n2O?=
+ =?us-ascii?q?kmHwHJxhcvH9wVvXTPr9X0NKESXv6pzKXS1jrMcepb1DHg44bLahAsufKBUL?=
+ =?us-ascii?q?BqfcfQyEQjDQHIg1GKpYD4PD6Y2OIAuHWB4eV6T+KgkWsnphl0ojio28gjlJ?=
+ =?us-ascii?q?HEhpkQylDY7SV5x5s1JcGgRE57f9GkFJxQujmeN4txXswtWWVouCY9yr0dpZ?=
+ =?us-ascii?q?63ZiwKyJM7yBHFb/yIbo+I4hf5W+aQJzd0nHNleLShiBau6UWtye/xWtO13V?=
+ =?us-ascii?q?tLtCZIkN3BumoQ2xHQ5MWLUv598V2g2TaL2QDT8OZEIUUsmKrVMZEu2bAwm4?=
+ =?us-ascii?q?EIsUTAHi72nlv5jLOMeko/5Oek8/7nban+pp+AK490jRnzPb4tmsynBOQ1KQ?=
+ =?us-ascii?q?wOX2md+eSh27zv5EP5QLJXjv0wj6bWqozaJcUcpq6/GQNV1Zwj6xmnBTe8zN?=
+ =?us-ascii?q?sYhWUHLE5CeB+fjYjmIVHOL+riDfe8nVusiyxmyOzdPrH7HprNK2XDnK3/cr?=
+ =?us-ascii?q?lg9k5W0BAzwsxH55JIFrEBJ+r+VVP2tNPFFBA0KBC7w/39BNph04MeRHiDDb?=
+ =?us-ascii?q?GEP6PPqVWI/P4gI/GQZI8JvzbwM/wl5//ojX8kll4RZKep3YAKZ3+mAPRpPU?=
+ =?us-ascii?q?GZbGHygtcOD2gKpBAyTO/0h12YVz5ceXKyU7g75jEhB4KsFZ3DSZy1gLydwC?=
+ =?us-ascii?q?e7GYVbZmRHClCKDHfpeJyIW/QSZyKIJM9ujDgEWKO/S48uyx6urhX2y7l5Ie?=
+ =?us-ascii?q?rO/C0Xq5bj2MJy5+3JmhE47SZ0ANiF02GRU2F0mXsFRzEs069kr0xw0UyD0a?=
+ =?us-ascii?q?t4gvxeC9NT++lFXRwkOs2U8+svAtPqXyrFf9GUWBOoRcigDTgtT9U3hdgUbB?=
+ =?us-ascii?q?VTAdKn2z7K1SujBfc7jbGHCYY1+aGUi3b4LchV0HXX0qQ9yVMrFJgcfVa6j7?=
+ =?us-ascii?q?JyolCAT7XClF+Uwv6n?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AxAACMkslb/7dPQldjHAEBAQQBAQc?=
+ =?us-ascii?q?EAQGBUQcBAQsBgQh8gVMSjDVfjX4BiFCOCYF6OAGEQIUFIjQNDQEDAQECAQE?=
+ =?us-ascii?q?CAWwogjYigz4jgRqDWIF1EagNg32GJ4cshDqBQT+JboUNAohtlVQJhiGKSwI?=
+ =?us-ascii?q?VkCmYFTiBVU0gGIMokFg9gTMBPQGKMgEB?=
+X-IPAS-Result: =?us-ascii?q?A2AxAACMkslb/7dPQldjHAEBAQQBAQcEAQGBUQcBAQsBg?=
+ =?us-ascii?q?Qh8gVMSjDVfjX4BiFCOCYF6OAGEQIUFIjQNDQEDAQECAQECAWwogjYigz4jg?=
+ =?us-ascii?q?RqDWIF1EagNg32GJ4cshDqBQT+JboUNAohtlVQJhiGKSwIVkCmYFTiBVU0gG?=
+ =?us-ascii?q?IMokFg9gTMBPQGKMgEB?=
+Received: from 183.79-66-87.adsl-dyn.isp.belgacom.be (HELO localhost.localdomain) ([87.66.79.183])
+  by relay.skynet.be with ESMTP; 19 Oct 2018 10:19:54 +0200
+From:   Fabian Frederick <fabf@skynet.be>
+To:     akpm@linux-foundation.org
+Cc:     jaharkes@cs.cmu.edu, coda@cs.cmu.edu,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        fabf@skynet.be
+Subject: [PATCH 0/7 linux-next] coda: fs clean-up
+Date:   Fri, 19 Oct 2018 10:19:26 +0200
+Message-Id: <1539937173-26260-1-git-send-email-fabf@skynet.be>
+X-Mailer: git-send-email 2.4.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Which tree it applies?
+This small patchset applies some sparse clean-up / optimizations
 
-On Thu, Sep 27, 2018 at 08:03:45PM +0300, Mike Rapoport wrote:
->During removal of HAVE_MEMBLOCK definition, the #else clause of the
->
->	#ifdef CONFIG_HAVE_MEMBLOCK
->		...
->	#else
->		...
->	#endif
->
->conditional was not removed.
->
->Remove it now.
->
->Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
->Reported-by: Alexander Duyck <alexander.duyck@gmail.com>
->Cc: Michal Hocko <mhocko@suse.com>
->---
-> include/linux/memblock.h | 5 -----
-> 1 file changed, 5 deletions(-)
->
->diff --git a/include/linux/memblock.h b/include/linux/memblock.h
->index d3bc270..d4d0e01 100644
->--- a/include/linux/memblock.h
->+++ b/include/linux/memblock.h
->@@ -597,11 +597,6 @@ static inline void early_memtest(phys_addr_t start, phys_addr_t end)
-> {
-> }
-> #endif
->-#else
->-static inline phys_addr_t memblock_alloc(phys_addr_t size, phys_addr_t align)
->-{
->-	return 0;
->-}
-> 
-> #endif /* __KERNEL__ */
-> 
->-- 
->2.7.4
+Fabian Frederick (7):
+  coda: remove CODA_FREE
+  coda: destroy mutex in put_super()
+  coda: use SIZE() for stat
+  coda: add __init to init_coda_psdev()
+  coda: remove sysctl object from module when unused
+  coda: remove sb test in coda_fid_to_inode()
+  coda: ftoc validity check integration
+
+ fs/coda/Makefile     |  3 ++-
+ fs/coda/cnode.c      | 15 ++++++++++-----
+ fs/coda/coda_fs_i.h  |  3 +--
+ fs/coda/coda_int.h   | 10 ++++++++++
+ fs/coda/coda_linux.h |  6 ------
+ fs/coda/dir.c        |  6 ++----
+ fs/coda/file.c       | 17 +++++------------
+ fs/coda/inode.c      |  1 +
+ fs/coda/psdev.c      | 10 +++++-----
+ fs/coda/sysctl.c     | 11 -----------
+ fs/coda/upcall.c     | 38 +++++++++++++++++++-------------------
+ 11 files changed, 55 insertions(+), 65 deletions(-)
 
 -- 
-Wei Yang
-Help you, Help me
+2.4.11
+
