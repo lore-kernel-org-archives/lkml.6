@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D51FECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC657ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:21:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC2B720836
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:21:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC2B720836
+	by mail.kernel.org (Postfix) with ESMTP id AC52B2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:21:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC52B2148E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbeJSU0w (ORCPT
+        id S1727508AbeJSU0x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:26:52 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33512 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727289AbeJSU0t (ORCPT
+        Fri, 19 Oct 2018 16:26:53 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53973 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727333AbeJSU0w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:26:49 -0400
-Received: by mail-wr1-f68.google.com with SMTP id u1-v6so1410888wrn.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 05:20:56 -0700 (PDT)
+        Fri, 19 Oct 2018 16:26:52 -0400
+Received: by mail-wm1-f65.google.com with SMTP id y11-v6so3431301wma.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 05:21:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=QiX6G6Rss/s3Z2ESVsPcwLLseTLtcA8j6G3yIKnw1pw=;
-        b=d/8K/OBd3c1cH1A0jdB6wQT4/v56Oe3vWDjkZQFf3nnorignzDk0gxFKBPDrJ5bQip
-         7rWRsGQYaRiOvYgKYVEI8f8W5Yjob/jKkd4lrTBDiwV9DSAkx0UNFUam2t2u4SgHUcX7
-         da8iwIiIJLNc8M3z7Ob+pLlvUFMq372lpvJA8rhQHj+HSYFFBxn8xjZJUIj9K9P9hzNw
-         aD/7yWFJw2fBpla3I0RcAnoA0qwWqKwb1W9Sypzy30iZ9bGz7Bv1yP9A2gqMrQv+1WUw
-         7chnrUEjjO3gl1jtAiOCBftIrActXsNKoD4M+oouBxN/nLp6nkBzIUijb2KGhUMZcu1M
-         wvpQ==
-X-Gm-Message-State: ABuFfoi5zU3Hz2DkmBGlP0TIR31MptLG3niz4WohQAKaRJOMWC5M2FnZ
-        Rxe4Rb4C4xiCf2AUydfXd49hBUQRXGY=
-X-Google-Smtp-Source: ACcGV613y3NQMF/LiP7aPzM1qIkY2dEkxrAgqAQLzGpz3ks12NHwBpBBZyxI9GumRaL7NkAh2AJtIg==
-X-Received: by 2002:adf:a387:: with SMTP id l7-v6mr36446142wrb.1.1539951655714;
-        Fri, 19 Oct 2018 05:20:55 -0700 (PDT)
+        bh=qE3Rs28MEBDxBAAHmciCMpu1FI8X4EuBPjRL/1BPcXM=;
+        b=FpMFHVhQKrxszzRH9AtMdnwWxkcAkG3UdiKj0/fZABl2YH0qFBz9FdZGpNolaW4kCJ
+         9vHLmkruJ7M+CW8D8BqwZGrhfP6uDFLVDfKDb/RSGWjiNtf8g4kQzuU1j/qm6i5g2wZL
+         8/Ggq6EIXXq6iaI88MQSGVQSZYAUgRn0mNv+btX/aTvGQlN7CqvaFaZeB8RGmCFhF8kM
+         Scb0SYUdldodJdFPDafJvCFZtr6iEmQhX/RTUqQI6nSW52V2FuRrbRfFtvB5EoCTPxfd
+         T/gCiR3Bu3Tncb3bmS+ciycCu6Gq6kKoYsMuLlelJ+Akc3zXetb9uqEw/a4e7ixNX5Tz
+         KDYw==
+X-Gm-Message-State: ABuFfohX2xVLImDAfoU8BqchVEdQGP8Cf8BPch9RACyrvepYiM9FFqMx
+        LQyRGg5NFoQPN2v09w6madItUw==
+X-Google-Smtp-Source: ACcGV61JyOlB7Yq+Dwrp0lv4vqfDXCTk8IG9UEfYUoQDYpYyzQwE5HBISNweTrOIuW7U7+JW+jMPJQ==
+X-Received: by 2002:a1c:1b84:: with SMTP id b126-v6mr4763334wmb.121.1539951659662;
+        Fri, 19 Oct 2018 05:20:59 -0700 (PDT)
 Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id s10-v6sm1858283wmf.15.2018.10.19.05.20.54
+        by smtp.gmail.com with ESMTPSA id s10-v6sm1858283wmf.15.2018.10.19.05.20.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 19 Oct 2018 05:20:55 -0700 (PDT)
+        Fri, 19 Oct 2018 05:20:59 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
@@ -52,10 +52,11 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Andreas Dilger <adilger@dilger.ca>,
         Florian Weimer <fw@deneb.enyo.de>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: [PATCH v2 2/5] uapi: deprecate STATX_ALL
-Date:   Fri, 19 Oct 2018 14:20:46 +0200
-Message-Id: <20181019122049.27121-2-mszeredi@redhat.com>
+        Amir Goldstein <amir73il@gmail.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>
+Subject: [PATCH v2 5/5] nfs: don't clear STATX_ATIME from result_mask
+Date:   Fri, 19 Oct 2018 14:20:49 +0200
+Message-Id: <20181019122049.27121-5-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20181019122049.27121-1-mszeredi@redhat.com>
 References: <20181019122049.27121-1-mszeredi@redhat.com>
@@ -64,101 +65,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Constants of the *_ALL type can be actively harmful due to the fact that
-developers will usually fail to consider the possible effects of future
-changes to the definition.
+As per statx(2) man page only clear out flags that are unsupported by the
+fs or have an unrepresentable value.  Atime is supported by NFS as long as
+it's supported on the server.
 
-Deprecate STATX_ALL in the uapi, while no damage has been done yet.
+So the STATX_ATIME flag should not be cleared in the result_mask if the
+operation was requested on a MNT_NOATIME or MNT_NODIRATIME mount.
 
-We could keep something like this around in the kernel, but there's
-actually no point, since all filesystems should be explicitly checking
-flags that they support and not rely on the VFS masking unknown ones out: a
-flag could be known to the VFS, yet not known to the filesystem (see
-orangefs bug fixed in the previous patch).
+This patch doesn't change the revalidation algorithm in any way, just the
+clearing of flags in stat->result_mask.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+Fixes: 9ccee940bd5b ("Support statx() mask and query flags parameters")
+Cc: Trond Myklebust <trond.myklebust@primarydata.com>
 ---
- fs/stat.c                       |  1 -
- include/uapi/linux/stat.h       | 11 ++++++++++-
- samples/statx/test-statx.c      |  2 +-
- tools/include/uapi/linux/stat.h | 11 ++++++++++-
- 4 files changed, 21 insertions(+), 4 deletions(-)
+ fs/nfs/inode.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/fs/stat.c b/fs/stat.c
-index f8e6fb2c3657..8d297a279991 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -73,7 +73,6 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
+diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+index b65aee481d13..34bb3e591709 100644
+--- a/fs/nfs/inode.c
++++ b/fs/nfs/inode.c
+@@ -811,7 +811,7 @@ int nfs_getattr(const struct path *path, struct kstat *stat,
+ 	if (!(request_mask & (STATX_MODE|STATX_NLINK|STATX_ATIME|STATX_CTIME|
+ 					STATX_MTIME|STATX_UID|STATX_GID|
+ 					STATX_SIZE|STATX_BLOCKS)))
+-		goto out_no_revalidate;
++		goto out_no_update;
  
- 	memset(stat, 0, sizeof(*stat));
- 	stat->result_mask |= STATX_BASIC_STATS;
--	request_mask &= STATX_ALL;
- 	query_flags &= KSTAT_QUERY_FLAGS;
- 	if (inode->i_op->getattr)
- 		return inode->i_op->getattr(path, stat, request_mask,
-diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-index 7b35e98d3c58..ed456ac0f90d 100644
---- a/include/uapi/linux/stat.h
-+++ b/include/uapi/linux/stat.h
-@@ -148,9 +148,18 @@ struct statx {
- #define STATX_BLOCKS		0x00000400U	/* Want/got stx_blocks */
- #define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat struct */
- #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
--#define STATX_ALL		0x00000fffU	/* All currently supported flags */
-+
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
-+#ifndef __KERNEL__
-+/*
-+ * This is deprecated, and shall remain the same value in the future.  To avoid
-+ * confusion please use the equivalent (STATX_BASIC_STATS | STATX_BTIME)
-+ * instead.
-+ */
-+#define STATX_ALL		0x00000fffU
-+#endif
-+
- /*
-  * Attributes to be found in stx_attributes and masked in stx_attributes_mask.
-  *
-diff --git a/samples/statx/test-statx.c b/samples/statx/test-statx.c
-index d4d77b09412c..e354048dea3c 100644
---- a/samples/statx/test-statx.c
-+++ b/samples/statx/test-statx.c
-@@ -211,7 +211,7 @@ int main(int argc, char **argv)
- 	struct statx stx;
- 	int ret, raw = 0, atflag = AT_SYMLINK_NOFOLLOW;
- 
--	unsigned int mask = STATX_ALL;
-+	unsigned int mask = STATX_BASIC_STATS | STATX_BTIME;
- 
- 	for (argv++; *argv; argv++) {
- 		if (strcmp(*argv, "-F") == 0) {
-diff --git a/tools/include/uapi/linux/stat.h b/tools/include/uapi/linux/stat.h
-index 7b35e98d3c58..ed456ac0f90d 100644
---- a/tools/include/uapi/linux/stat.h
-+++ b/tools/include/uapi/linux/stat.h
-@@ -148,9 +148,18 @@ struct statx {
- #define STATX_BLOCKS		0x00000400U	/* Want/got stx_blocks */
- #define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat struct */
- #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
--#define STATX_ALL		0x00000fffU	/* All currently supported flags */
-+
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
-+#ifndef __KERNEL__
-+/*
-+ * This is deprecated, and shall remain the same value in the future.  To avoid
-+ * confusion please use the equivalent (STATX_BASIC_STATS | STATX_BTIME)
-+ * instead.
-+ */
-+#define STATX_ALL		0x00000fffU
-+#endif
-+
- /*
-  * Attributes to be found in stx_attributes and masked in stx_attributes_mask.
-  *
+ 	/* Check whether the cached attributes are stale */
+ 	do_update |= force_sync || nfs_attribute_cache_expired(inode);
+@@ -833,9 +833,6 @@ int nfs_getattr(const struct path *path, struct kstat *stat,
+ 			goto out;
+ 	} else
+ 		nfs_readdirplus_parent_cache_hit(path->dentry);
+-out_no_revalidate:
+-	/* Only return attributes that were revalidated. */
+-	stat->result_mask &= request_mask;
+ out_no_update:
+ 	generic_fillattr(inode, stat);
+ 	stat->ino = nfs_compat_user_ino64(NFS_FILEID(inode));
 -- 
 2.14.3
 
