@@ -2,143 +2,140 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9379BECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 14:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDCDECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 14:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 523E0204EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 14:16:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 523E0204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 003852064A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 14:16:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 003852064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbeJSWWZ (ORCPT
+        id S1727672AbeJSWW6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 18:22:25 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57294 "EHLO mx1.redhat.com"
+        Fri, 19 Oct 2018 18:22:58 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:33050 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727439AbeJSWWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 18:22:25 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 868913024646;
-        Fri, 19 Oct 2018 14:16:06 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B5FAA5D77C;
-        Fri, 19 Oct 2018 14:16:03 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/kvm/nVMX: tweak shadow fields
-Date:   Fri, 19 Oct 2018 16:16:03 +0200
-Message-Id: <20181019141603.15995-1-vkuznets@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 19 Oct 2018 14:16:06 +0000 (UTC)
+        id S1727413AbeJSWW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 18:22:58 -0400
+X-Greylist: delayed 541 seconds by postgrey-1.27 at vger.kernel.org; Fri, 19 Oct 2018 18:22:57 EDT
+Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id A25E4CE26;
+        Fri, 19 Oct 2018 17:07:38 +0300 (EEST)
+From:   Todor Tomov <todor.tomov@linaro.org>
+To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org
+Cc:     robdclark@gmail.com, linux-kernel@vger.kernel.org,
+        Todor Tomov <todor.tomov@linaro.org>
+Subject: [PATCH] drm/msm/hdmi: Enable HPD after HDMI IRQ is set up
+Date:   Fri, 19 Oct 2018 17:07:22 +0300
+Message-Id: <1539958042-28612-1-git-send-email-todor.tomov@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems we have some leftovers from times when 'unrestricted guest'
-wasn't exposed to L1. Stop shadowing GUEST_CS_{BASE,LIMIT,AR_SELECTOR}
-and GUEST_ES_BASE, shadow GUEST_SS_AR_BYTES as it was found that some
-hypervisors (e.g. Hyper-V without Enlightened VMCS) access it pretty
-often.
+SoCs that contain MDP5 have a top level wrapper called MDSS that
+manages locks, power and irq for the sub-blocks within it.
 
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Irq for HDMI is also routed through the MDSS.
+
+Shortly after the Hot Plug Detection (HPD) is enabled in HDMI,
+HDMI interrupts are recieved by the MDSS interrupt handler.
+However at this moment the HDMI irq is still not mapped to
+the MDSS irq domain so the HDMI irq handler cannot be called
+to process the interrupts.
+
+This leads to a flood of HDMI interrupts on CPU 0.
+
+If we are lucky to have the HDMI initialization running on a
+different CPU, it will eventually map the HDMI irq to MDSS irq
+domain, the next HDMI interrupt will be handled by the HDMI irq
+handler, the interrupt flood will stop and we will recover.
+
+If the HDMI initialization is running on CPU 0, then it cannot
+complete and there is nothing to stop the interrupt flood on
+CPU 0. The system is stuck.
+
+Fix this by moving the HPD enablement after the HDMI irq is
+mapped to the MDSS irq domain.
+
+Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 ---
- arch/x86/kvm/vmx.c               | 10 +++++-----
- arch/x86/kvm/vmx_shadow_fields.h |  5 +----
- 2 files changed, 6 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/msm/hdmi/hdmi.c           |  6 ++++++
+ drivers/gpu/drm/msm/hdmi/hdmi.h           |  1 +
+ drivers/gpu/drm/msm/hdmi/hdmi_connector.c | 10 ++--------
+ 3 files changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index abeeb45d1c33..641a65b30685 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -12715,6 +12715,7 @@ static void prepare_vmcs02_full(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
- 	if (!hv_evmcs || !(hv_evmcs->hv_clean_fields &
- 			   HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2)) {
- 		vmcs_write16(GUEST_ES_SELECTOR, vmcs12->guest_es_selector);
-+		vmcs_write16(GUEST_CS_SELECTOR, vmcs12->guest_cs_selector);
- 		vmcs_write16(GUEST_SS_SELECTOR, vmcs12->guest_ss_selector);
- 		vmcs_write16(GUEST_DS_SELECTOR, vmcs12->guest_ds_selector);
- 		vmcs_write16(GUEST_FS_SELECTOR, vmcs12->guest_fs_selector);
-@@ -12722,6 +12723,7 @@ static void prepare_vmcs02_full(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
- 		vmcs_write16(GUEST_LDTR_SELECTOR, vmcs12->guest_ldtr_selector);
- 		vmcs_write16(GUEST_TR_SELECTOR, vmcs12->guest_tr_selector);
- 		vmcs_write32(GUEST_ES_LIMIT, vmcs12->guest_es_limit);
-+		vmcs_write32(GUEST_CS_LIMIT, vmcs12->guest_cs_limit);
- 		vmcs_write32(GUEST_SS_LIMIT, vmcs12->guest_ss_limit);
- 		vmcs_write32(GUEST_DS_LIMIT, vmcs12->guest_ds_limit);
- 		vmcs_write32(GUEST_FS_LIMIT, vmcs12->guest_fs_limit);
-@@ -12731,12 +12733,13 @@ static void prepare_vmcs02_full(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
- 		vmcs_write32(GUEST_GDTR_LIMIT, vmcs12->guest_gdtr_limit);
- 		vmcs_write32(GUEST_IDTR_LIMIT, vmcs12->guest_idtr_limit);
- 		vmcs_write32(GUEST_ES_AR_BYTES, vmcs12->guest_es_ar_bytes);
--		vmcs_write32(GUEST_SS_AR_BYTES, vmcs12->guest_ss_ar_bytes);
- 		vmcs_write32(GUEST_DS_AR_BYTES, vmcs12->guest_ds_ar_bytes);
- 		vmcs_write32(GUEST_FS_AR_BYTES, vmcs12->guest_fs_ar_bytes);
- 		vmcs_write32(GUEST_GS_AR_BYTES, vmcs12->guest_gs_ar_bytes);
- 		vmcs_write32(GUEST_LDTR_AR_BYTES, vmcs12->guest_ldtr_ar_bytes);
- 		vmcs_write32(GUEST_TR_AR_BYTES, vmcs12->guest_tr_ar_bytes);
-+		vmcs_writel(GUEST_ES_BASE, vmcs12->guest_es_base);
-+		vmcs_writel(GUEST_CS_BASE, vmcs12->guest_cs_base);
- 		vmcs_writel(GUEST_SS_BASE, vmcs12->guest_ss_base);
- 		vmcs_writel(GUEST_DS_BASE, vmcs12->guest_ds_base);
- 		vmcs_writel(GUEST_FS_BASE, vmcs12->guest_fs_base);
-@@ -12838,11 +12841,8 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
- 	 */
- 	if (!hv_evmcs || !(hv_evmcs->hv_clean_fields &
- 			   HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2)) {
--		vmcs_write16(GUEST_CS_SELECTOR, vmcs12->guest_cs_selector);
--		vmcs_write32(GUEST_CS_LIMIT, vmcs12->guest_cs_limit);
- 		vmcs_write32(GUEST_CS_AR_BYTES, vmcs12->guest_cs_ar_bytes);
--		vmcs_writel(GUEST_ES_BASE, vmcs12->guest_es_base);
--		vmcs_writel(GUEST_CS_BASE, vmcs12->guest_cs_base);
-+		vmcs_write32(GUEST_SS_AR_BYTES, vmcs12->guest_ss_ar_bytes);
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
+index c79659c..e74df38 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
+@@ -332,6 +332,12 @@ int msm_hdmi_modeset_init(struct hdmi *hdmi,
+ 		goto fail;
  	}
  
- 	if (vmx->nested.nested_run_pending &&
-diff --git a/arch/x86/kvm/vmx_shadow_fields.h b/arch/x86/kvm/vmx_shadow_fields.h
-index cd0c75f6d037..132432f375c2 100644
---- a/arch/x86/kvm/vmx_shadow_fields.h
-+++ b/arch/x86/kvm/vmx_shadow_fields.h
-@@ -28,7 +28,6 @@
-  */
++	ret = msm_hdmi_hpd_enable(hdmi->connector);
++	if (ret < 0) {
++		dev_err(&hdmi->pdev->dev, "failed to enable HPD: %d\n", ret);
++		goto fail;
++	}
++
+ 	encoder->bridge = hdmi->bridge;
  
- /* 16-bits */
--SHADOW_FIELD_RW(GUEST_CS_SELECTOR)
- SHADOW_FIELD_RW(GUEST_INTR_STATUS)
- SHADOW_FIELD_RW(GUEST_PML_INDEX)
- SHADOW_FIELD_RW(HOST_FS_SELECTOR)
-@@ -47,8 +46,8 @@ SHADOW_FIELD_RW(VM_ENTRY_EXCEPTION_ERROR_CODE)
- SHADOW_FIELD_RW(VM_ENTRY_INTR_INFO_FIELD)
- SHADOW_FIELD_RW(VM_ENTRY_INSTRUCTION_LEN)
- SHADOW_FIELD_RW(TPR_THRESHOLD)
--SHADOW_FIELD_RW(GUEST_CS_LIMIT)
- SHADOW_FIELD_RW(GUEST_CS_AR_BYTES)
-+SHADOW_FIELD_RW(GUEST_SS_AR_BYTES)
- SHADOW_FIELD_RW(GUEST_INTERRUPTIBILITY_INFO)
- SHADOW_FIELD_RW(VMX_PREEMPTION_TIMER_VALUE)
+ 	priv->bridges[priv->num_bridges++]       = hdmi->bridge;
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.h b/drivers/gpu/drm/msm/hdmi/hdmi.h
+index accc9a6..5c5df6a 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi.h
++++ b/drivers/gpu/drm/msm/hdmi/hdmi.h
+@@ -245,6 +245,7 @@ void msm_hdmi_bridge_destroy(struct drm_bridge *bridge);
  
-@@ -61,8 +60,6 @@ SHADOW_FIELD_RW(GUEST_CR0)
- SHADOW_FIELD_RW(GUEST_CR3)
- SHADOW_FIELD_RW(GUEST_CR4)
- SHADOW_FIELD_RW(GUEST_RFLAGS)
--SHADOW_FIELD_RW(GUEST_CS_BASE)
--SHADOW_FIELD_RW(GUEST_ES_BASE)
- SHADOW_FIELD_RW(CR0_GUEST_HOST_MASK)
- SHADOW_FIELD_RW(CR0_READ_SHADOW)
- SHADOW_FIELD_RW(CR4_READ_SHADOW)
+ void msm_hdmi_connector_irq(struct drm_connector *connector);
+ struct drm_connector *msm_hdmi_connector_init(struct hdmi *hdmi);
++int msm_hdmi_hpd_enable(struct drm_connector *connector);
+ 
+ /*
+  * i2c adapter for ddc:
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_connector.c b/drivers/gpu/drm/msm/hdmi/hdmi_connector.c
+index e9c9a0a..30e908d 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi_connector.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi_connector.c
+@@ -167,8 +167,9 @@ static void enable_hpd_clocks(struct hdmi *hdmi, bool enable)
+ 	}
+ }
+ 
+-static int hpd_enable(struct hdmi_connector *hdmi_connector)
++int msm_hdmi_hpd_enable(struct drm_connector *connector)
+ {
++	struct hdmi_connector *hdmi_connector = to_hdmi_connector(connector);
+ 	struct hdmi *hdmi = hdmi_connector->hdmi;
+ 	const struct hdmi_platform_config *config = hdmi->config;
+ 	struct device *dev = &hdmi->pdev->dev;
+@@ -450,7 +451,6 @@ struct drm_connector *msm_hdmi_connector_init(struct hdmi *hdmi)
+ {
+ 	struct drm_connector *connector = NULL;
+ 	struct hdmi_connector *hdmi_connector;
+-	int ret;
+ 
+ 	hdmi_connector = kzalloc(sizeof(*hdmi_connector), GFP_KERNEL);
+ 	if (!hdmi_connector)
+@@ -471,12 +471,6 @@ struct drm_connector *msm_hdmi_connector_init(struct hdmi *hdmi)
+ 	connector->interlace_allowed = 0;
+ 	connector->doublescan_allowed = 0;
+ 
+-	ret = hpd_enable(hdmi_connector);
+-	if (ret) {
+-		dev_err(&hdmi->pdev->dev, "failed to enable HPD: %d\n", ret);
+-		return ERR_PTR(ret);
+-	}
+-
+ 	drm_connector_attach_encoder(connector, hdmi->encoder);
+ 
+ 	return connector;
 -- 
-2.17.2
+2.7.4
 
