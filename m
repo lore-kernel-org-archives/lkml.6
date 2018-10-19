@@ -7,73 +7,76 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EADF6ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1916ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94682214C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:53:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7990F21479
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:53:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NzKaUFA7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94682214C2
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UnHMeEeq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7990F21479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbeJSS7F (ORCPT
+        id S1727175AbeJSS7K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 14:59:05 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37013 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbeJSS7F (ORCPT
+        Fri, 19 Oct 2018 14:59:10 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40731 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbeJSS7J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 14:59:05 -0400
-Received: by mail-pl1-f194.google.com with SMTP id bh10-v6so2331784plb.4
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 03:53:32 -0700 (PDT)
+        Fri, 19 Oct 2018 14:59:09 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n31-v6so15621956pgm.7
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 03:53:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=SosU5iF7Ey+1v+4vcDwsnnSkHEG3BRB043fFaX95JpI=;
-        b=NzKaUFA7uW8Qqw8bJsA1H+ca3lfOsCI6241EZDrw0IQeIIQalm5JvoUuM84ae154wx
-         VCkdfzJnHGvuUbuWHqxSza5v7L+9rNuKO8LCsxBUYOs4iyw9z3ldq7WXnVN5qRZzQdZ1
-         o72Vob3LeIT0oOHbUcfZoMmONULWd17TwL51g=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=iqKD9byHso6OMx8L+zAYM7NHKckUL6NGilBoDBaqk1Y=;
+        b=UnHMeEeq5DgBn1FBAnCUVHjVAQ3cCPpbV2op4fk/HIXIw0+1RzpNUfolS7d8PK5jN5
+         IGH6HUMRsn34E4vn/bAfWLblkzE0bZ+9QJ4G36bIUpM6YFxNV65fAunw3AEIOCi7etb6
+         1PEnP3GkQTvWwkc/inwzmM2p9P3M6LRCW7DtU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=SosU5iF7Ey+1v+4vcDwsnnSkHEG3BRB043fFaX95JpI=;
-        b=n0+glMikWtRMjPgjdnP9Xga3P1t+MBBeO1nmVEOiI5q34pRtY6VvqbXxbPrRKMYHgw
-         OJJlDA79IcDmVXc9QSt3I2nKBwT5aRRXTJPcLyCWq5X07eK634D2/7QyPN93VrJm6L/1
-         LljF6tNv7V/ck3j4lU/pDjaT7Z9tNt2TePaCpnlvSpefr7LkaEbtVUO7duuAZu7o1wfz
-         rkkb7hVJEY0glCZZ5dUhK8ZtqxBUH+dc68Wc6nB4IU5xcOB6uPTt/aEhjuLeOiJebuha
-         V0grD4NBLaik6mJekK5Vi0wRyVMGBuc/eKYu++55GsqtcNCEefT+E3NL9zKoFtQ+tUXw
-         CnOw==
-X-Gm-Message-State: ABuFfoiaKxqoP/DzReJfnosX01kpIBB1gz6UIbIEkfI3SAceonImuA77
-        HxdKxPiZGUNLg9LSWOnkap1ecg==
-X-Google-Smtp-Source: ACcGV6106ejfio9Q8lrybMNCFXBJUgbCsudni40iKHwEV5qi3r4J7Cw569PhIEq2YDiEBXyR7g6L+g==
-X-Received: by 2002:a17:902:a7:: with SMTP id a36-v6mr20823295pla.87.1539946412361;
-        Fri, 19 Oct 2018 03:53:32 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=iqKD9byHso6OMx8L+zAYM7NHKckUL6NGilBoDBaqk1Y=;
+        b=LHphmTcIBBlpFHhQP3/Z8oEgneZ4lpuGYpkqTxvKXizcOvTGRaZRi0mhNJNUwuCW/L
+         MF0KA/vVRyWAhDYe3+6M52OWCz/s8ZVk65Jjo0uFxELwOjCSsA8510y2n+EkUPn+FbFu
+         qc2wslQ6ix4JNmFxcykSduA0UWLzmZBb04pD09pa7voULn9ITCk9mG5gsblIMWOndjr4
+         BbJ9dNoF/P8HbSJDr4rzBqb2yTJ4z8XfM9F3ZTlzGPYwh/hB8/d/sUqWiYT2u0u97mKL
+         90dbaBg/ERXqUJQj1ypw2UvEDFO60SzL+F+npj2IOR89eJK7HmBZEeZCQtjMHwbzf3aO
+         du9g==
+X-Gm-Message-State: ABuFfojC92Kp3Civfnx6FxmXO6lfJag5F4egYzXQBAgkLN6xPr43v62Z
+        V6ZiYj9PccOxDfdlNAdH9iom/g==
+X-Google-Smtp-Source: ACcGV62Am2lsPpsnG0Iu0GwhNgThjpQG3bRhAvEahZTp1lygHgBnIqGTWL0NbHmkHJ5NcJdLXBKTjw==
+X-Received: by 2002:a63:1f05:: with SMTP id f5-v6mr1341281pgf.313.1539946416809;
+        Fri, 19 Oct 2018 03:53:36 -0700 (PDT)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id m67-v6sm54918pfm.13.2018.10.19.03.53.28
+        by smtp.gmail.com with ESMTPSA id m67-v6sm54918pfm.13.2018.10.19.03.53.32
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 19 Oct 2018 03:53:31 -0700 (PDT)
+        Fri, 19 Oct 2018 03:53:35 -0700 (PDT)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
 Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, yuanjiang.yu@unisoc.com,
         baolin.wang@linaro.org, broonie@kernel.org, ctatlor97@gmail.com,
         linus.walleij@linaro.org
-Subject: [PATCH v5 1/6] dt-bindings: power: Introduce one property to present the battery internal resistance
-Date:   Fri, 19 Oct 2018 18:53:10 +0800
-Message-Id: <e7c061535f2dcca54d6498405fdd5ed7098b19f9.1539915051.git.baolin.wang@linaro.org>
+Subject: [PATCH v5 2/6] power: supply: core: Add one field to present the battery internal resistance
+Date:   Fri, 19 Oct 2018 18:53:11 +0800
+Message-Id: <b70d55f008cfbbb79abf27018261d8a6f16e9673.1539915051.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <e7c061535f2dcca54d6498405fdd5ed7098b19f9.1539915051.git.baolin.wang@linaro.org>
+References: <e7c061535f2dcca54d6498405fdd5ed7098b19f9.1539915051.git.baolin.wang@linaro.org>
+In-Reply-To: <e7c061535f2dcca54d6498405fdd5ed7098b19f9.1539915051.git.baolin.wang@linaro.org>
+References: <e7c061535f2dcca54d6498405fdd5ed7098b19f9.1539915051.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The internal resistance of a battery is not a constant in its life cycle,
-this varies over the age of the battery or temperature and so on. But we
-just want use one constant battery internal resistance to estimate the
-battery capacity. Thus this patch introduces one property to present
-the battery factory internal resistance for battery information.
+Add one field for 'struct power_supply_battery_info' to present the battery
+factory internal resistance.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
@@ -82,39 +85,46 @@ Changes from v4:
  - None.
 
 Changes from v3:
- - Split binding into one separate patch.
- - Add LinusW reviewed tag.
-
-Changes from v2:
- - Rename the property.
- - Improve the commit message.
-
-Changes from v1:
- - New patch in v2.
+ - New patch in v3, which splits code into one separate patch.
+ - Add Linusw reviewed tag.
 ---
- .../devicetree/bindings/power/supply/battery.txt   |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/power/supply/power_supply_core.c |    3 +++
+ include/linux/power_supply.h             |    1 +
+ 2 files changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/power/supply/battery.txt b/Documentation/devicetree/bindings/power/supply/battery.txt
-index f4d3b4a..938d027 100644
---- a/Documentation/devicetree/bindings/power/supply/battery.txt
-+++ b/Documentation/devicetree/bindings/power/supply/battery.txt
-@@ -22,6 +22,7 @@ Optional Properties:
-  - charge-term-current-microamp: current for charge termination phase
-  - constant-charge-current-max-microamp: maximum constant input current
-  - constant-charge-voltage-max-microvolt: maximum constant input voltage
-+ - factory-internal-resistance-micro-ohms: battery factory internal resistance
+diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
+index e853618..307e0995 100644
+--- a/drivers/power/supply/power_supply_core.c
++++ b/drivers/power/supply/power_supply_core.c
+@@ -579,6 +579,7 @@ int power_supply_get_battery_info(struct power_supply *psy,
+ 	info->charge_term_current_ua         = -EINVAL;
+ 	info->constant_charge_current_max_ua = -EINVAL;
+ 	info->constant_charge_voltage_max_uv = -EINVAL;
++	info->factory_internal_resistance_uohm  = -EINVAL;
  
- Battery properties are named, where possible, for the corresponding
- elements in enum power_supply_property, defined in
-@@ -42,6 +43,7 @@ Example:
- 		charge-term-current-microamp = <128000>;
- 		constant-charge-current-max-microamp = <900000>;
- 		constant-charge-voltage-max-microvolt = <4200000>;
-+		factory-internal-resistance-micro-ohms = <250000>;
- 	};
+ 	if (!psy->of_node) {
+ 		dev_warn(&psy->dev, "%s currently only supports devicetree\n",
+@@ -616,6 +617,8 @@ int power_supply_get_battery_info(struct power_supply *psy,
+ 			     &info->constant_charge_current_max_ua);
+ 	of_property_read_u32(battery_np, "constant_charge_voltage_max_microvolt",
+ 			     &info->constant_charge_voltage_max_uv);
++	of_property_read_u32(battery_np, "factory-internal-resistance-micro-ohms",
++			     &info->factory_internal_resistance_uohm);
  
- 	charger: charger@11 {
+ 	return 0;
+ }
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+index f807691..d089566 100644
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -326,6 +326,7 @@ struct power_supply_battery_info {
+ 	int charge_term_current_ua;	    /* microAmps */
+ 	int constant_charge_current_max_ua; /* microAmps */
+ 	int constant_charge_voltage_max_uv; /* microVolts */
++	int factory_internal_resistance_uohm;   /* microOhms */
+ };
+ 
+ extern struct atomic_notifier_head power_supply_notifier;
 -- 
 1.7.9.5
 
