@@ -2,140 +2,209 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 225B7ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12ADAECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC1A4205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:47:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC1A4205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C3ED621486
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:47:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mOUG2pTv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3ED621486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeJSTxH (ORCPT
+        id S1727453AbeJSTxj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 15:53:07 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50984 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726784AbeJSTxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 15:53:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6FB9A80D;
-        Fri, 19 Oct 2018 04:47:23 -0700 (PDT)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 015F93F71D;
-        Fri, 19 Oct 2018 04:47:17 -0700 (PDT)
-Subject: Re: [PATCH v5 11/17] arm64: docs: document pointer authentication
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Kristina Martsenko <kristina.martsenko@arm.com>
-Cc:     Ramana Radhakrishnan <ramana.radhakrishnan@foss.arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        Andrew Jones <drjones@redhat.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Adam Wallis <awallis@codeaurora.org>,
-        Suzuki Poulose <Suzuki.Poulose@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Christoffer Dall <Christoffer.Dall@arm.com>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        Amit Kachhap <Amit.Kachhap@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-References: <20181005084754.20950-1-kristina.martsenko@arm.com>
- <20181005084754.20950-12-kristina.martsenko@arm.com>
- <9acb0cd2-66b0-1c41-b1a8-7c70608e9a9b@foss.arm.com>
- <7b0de19b-45b9-f4df-25d1-c7e80fab49dc@arm.com>
- <20181019113556.ljbdmjo5pdw7muvz@mbp>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <05738017-5886-fe4d-e8fd-a834da6b1576@arm.com>
-Date:   Fri, 19 Oct 2018 12:47:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
+        Fri, 19 Oct 2018 15:53:39 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:44016 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbeJSTxi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 15:53:38 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9JBlnFL054532;
+        Fri, 19 Oct 2018 06:47:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1539949670;
+        bh=IKiJbUh/xxigwHfiLYtgyespnDsWOnrhaC06V7DQeQs=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=mOUG2pTvpLMxRvDq7hJ8hJDo2ASW4EHb+4VsCZIosBLucLAZ+miPdWdHnaByu5RES
+         CSJIIntaZUEis8b60Wx4u08lr0HcWDcSiBtuELllJA/9QeSYisLPPaCEeOP4+hlXIn
+         st05ABbmhOcKlMzxbXlrFbHmALb09R864089yDnM=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9JBlneY015601;
+        Fri, 19 Oct 2018 06:47:49 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 19
+ Oct 2018 06:47:49 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 19 Oct 2018 06:47:49 -0500
+Received: from [172.22.151.114] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9JBlnBZ019993;
+        Fri, 19 Oct 2018 06:47:49 -0500
+Subject: Re: [PATCH v3 4/9] dt-bindings: leds: Add bindings for lm3697 driver
+To:     Rob Herring <robh@kernel.org>
+CC:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+        <lee.jones@linaro.org>, <tony@atomide.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>
+References: <20181011165123.32198-1-dmurphy@ti.com>
+ <20181011165123.32198-5-dmurphy@ti.com> <20181012162702.GA5672@bogus>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <3b96b65f-edd6-aa13-9f47-cdc58eac6c9d@ti.com>
+Date:   Fri, 19 Oct 2018 06:47:47 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181019113556.ljbdmjo5pdw7muvz@mbp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <20181012162702.GA5672@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/10/18 12:35, Catalin Marinas wrote:
-> On Tue, Oct 16, 2018 at 05:14:39PM +0100, Kristina Martsenko wrote:
->> On 05/10/2018 10:04, Ramana Radhakrishnan wrote:
->>> On 05/10/2018 09:47, Kristina Martsenko wrote:
+Rob
 
-[...]
+Thanks for the review.
 
->> The other option is to turn off trapping entirely. However then on a
->> big.LITTLE system with mismatched pointer authentication support
->> instructions will work intermittently on some CPUs but not others.
+On 10/12/2018 11:27 AM, Rob Herring wrote:
+> On Thu, Oct 11, 2018 at 11:51:18AM -0500, Dan Murphy wrote:
+>> Add the device tree bindings for the lm3697
+>> LED driver for backlighting and display.
 > 
-> That's another case but let's assume we never see such configurations ;).
+> Bindings are for h/w, not drivers...
+> 
 
-I'd like to put it on the record that I'm not willing to support such a
-configuration. So my ask is that if we detect a system where only some
-of the CPUs have pointer authentication support, we either:
+ACK
 
-1) prevent some of the CPUs from booting (that's harsh)
-2) disable KVM (that's easy)
+Dan
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>>  .../devicetree/bindings/leds/leds-lm3697.txt  | 98 +++++++++++++++++++
+>>  1 file changed, 98 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>> new file mode 100644
+>> index 000000000000..4bb2ed51025b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>> @@ -0,0 +1,98 @@
+>> +* Texas Instruments - LM3697 Highly Efficient White LED Driver
+>> +
+>> +The LM3697 11-bit LED driver provides high-
+>> +performance backlight dimming for 1, 2, or 3 series
+>> +LED strings while delivering up to 90% efficiency.
+>> +
+>> +This device is suitable for display and keypad Lighting
+>> +
+>> +Required properties:
+>> +	- compatible:
+>> +		"ti,lm3697"
+>> +	- reg :  I2C slave address
+>> +	- #address-cells : 1
+>> +	- #size-cells : 0
+>> +
+>> +Optional properties:
+>> +	- enable-gpios : GPIO pin to enable/disable the device
+>> +	- vled-supply : LED supply
+>> +
+>> +Required child properties:
+>> +	- reg : 0 - LED is Controlled by bank A
+>> +		1 - LED is Controlled by bank B
+>> +	- led-sources : Indicates which HVLED string is associated to which
+>> +			control bank.  Each element in the array is associated
+>> +			with a specific HVLED string.  Element 0 is HVLED1,
+>> +			element 1 is HVLED2 and element 2 HVLED3.
+>> +			Additional information is contained
+>> +			in Documentation/devicetree/bindings/leds/common.txt
+>> +			0 - HVLED is not active in this control bank
+>> +			1 - HVLED string is controlled by this control bank
+>> +
+>> +Optional child properties:
+>> +	- runtime-ramp-up-msec: Current ramping from one brightness level to
+>> +				the a higher brightness level.
+>> +				Range from 2048 us - 117.44 s
+>> +	- runtime-ramp-down-msec: Current ramping from one brightness level to
+>> +				  the a lower brightness level.
+>> +				  Range from 2048 us - 117.44 s
+>> +	- label : see Documentation/devicetree/bindings/leds/common.txt
+>> +	- linux,default-trigger :
+>> +	   see Documentation/devicetree/bindings/leds/common.txt
+>> +
+>> +Example:
+>> +
+>> +HVLED string 1 and 3 are controlled by control bank A and HVLED 2 string is
+>> +controlled by control bank B.
+>> +
+>> +led-controller@36 {
+>> +	compatible = "ti,lm3697";
+>> +	reg = <0x36>;
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +
+>> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+>> +	vled-supply = <&vbatt>;
+>> +
+>> +	led@0 {
+>> +		reg = <0>;
+>> +		led-sources = <1 0 1>;
+>> +		runtime-ramp-up-msec = <5000>;
+>> +		runtime-ramp-down-msec = <1000>;
+>> +		label = "white:first_backlight_cluster";
+>> +		linux,default-trigger = "backlight";
+>> +	};
+>> +
+>> +	led@1 {
+>> +		reg = <1>;
+>> +		led-sources = <0 1 0>;
+>> +		runtime-ramp-up-msec = <500>;
+>> +		runtime-ramp-down-msec = <1000>;
+>> +		label = "white:second_backlight_cluster";
+>> +		linux,default-trigger = "backlight";
+>> +	};
+>> +}
+>> +
+>> +All HVLED strings controlled by control bank A
+>> +
+>> +led-controller@36 {
+>> +	compatible = "ti,lm3697";
+>> +	reg = <0x36>;
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +
+>> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+>> +	vled-supply = <&vbatt>;
+>> +
+>> +	led@0 {
+>> +		reg = <0>;
+>> +		led-sources = <1 1 1>;
+>> +		runtime-ramp-up-msec = <500>;
+>> +		runtime-ramp-down-msec = <1000>;
+>> +		label = "white:backlight_cluster";
+>> +		linux,default-trigger = "backlight";
+>> +	};
+>> +}
+>> +
+>> +For more product information please see the link below:
+>> +http://www.ti.com/lit/ds/symlink/lm3697.pdf
+>> -- 
+>> 2.19.0
+>>
 
-I'm perfectly happy with (2).
 
-Thanks,
-
-	M.
 -- 
-Jazz is not dead. It just smells funny...
+------------------
+Dan Murphy
