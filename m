@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB24ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8609BECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C059F21486
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:21:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C059F21486
+	by mail.kernel.org (Postfix) with ESMTP id 57C7220836
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:21:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57C7220836
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbeJSU0w (ORCPT
+        id S1727378AbeJSU0v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:26:52 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37988 "EHLO
+        Fri, 19 Oct 2018 16:26:51 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39105 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727302AbeJSU0u (ORCPT
+        with ESMTP id S1727308AbeJSU0v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:26:50 -0400
-Received: by mail-wr1-f65.google.com with SMTP id a13-v6so37220761wrt.5
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 05:20:57 -0700 (PDT)
+        Fri, 19 Oct 2018 16:26:51 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 61-v6so37208925wrb.6
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 05:20:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Oy3EdcsKa921bauMTdkdlc8KG+Gne7gsHnChldkrCS0=;
-        b=RidsJkzDY/P9wiIGmqfs4qsw1prUnO4CZhSpGKxc102qvb+7aXo2ZE+tOP6VQdcIzk
-         GAoUBjgaR5qm1S5BrMvyS1b7C1Shxzvk2n9H90FdVLUnx7yN6KnuRPlnz8g4h/e4WH27
-         cpZz37q1sb7gFykWmWPaehd0KTeFufz6rG0Tb/hQrmnaqFK4GmRyuRk+VZ+JBHxSqjUz
-         9duC4LF8+6r8Q0ehgd97DOxW3R11mNRWJuMkrawy0MLTzH6t2CJEDwglDVMaVVyYjJdc
-         7djHjmjT6zRxqKcCGzRnXyi2oLrnQsOCjYHfYe2u6AkT6DeW/QOH74cxKRhmjewtdCH0
-         lH6g==
-X-Gm-Message-State: ABuFfojk9y46FIoX1ext4ZYdggVmWoN3/0xeF1Ms0ptZd88PHKOPhAFj
-        rY494ZNaG5t95kR9xyYzxxWr6Q==
-X-Google-Smtp-Source: ACcGV63Q2WNpklcdTTebLgqFJd4fZ4Fxil/zKeUwoZ+vaD3MJ4/FIiPZbARPK5D+O06p84shW32F1w==
-X-Received: by 2002:adf:84e6:: with SMTP id 93-v6mr35672038wrg.144.1539951656957;
-        Fri, 19 Oct 2018 05:20:56 -0700 (PDT)
+        bh=DI3eyO7hOOE8k7ziSgipDwQ5lk17cCZDpBqUZ5GEV1w=;
+        b=ANpmYx+iUQ8iIzKPZzwHaGfFx3eYv7AM/srvGQ1n3BZ3yZXleUwUPbmxNfTKSzA6nz
+         LfT7fZuBWj7J2a5SdOzG6ZfXvNHzUH+c7qHmvwBsf+mpymcdTkwcOlUh1hjRSJH3ke0X
+         FKqoDWFIeK4DtppKKxGsxHm1qJ+OaXuXBNGy9fv4L0oqU2hWVzPYzFTklw1EOAwdCfDK
+         JM29dDAiq8/b+Li7hIIjW2o7oXD9xX6hvwhixH2x5xutTL9Y7D8HFYg4Z8XEndScciRl
+         0HJ/9M65wtTkCRTenZvYOvEXxCzjJYzHsQ5IxwCixVtz3AiUhdPd0o41+QYix/JtrD2X
+         b5Ng==
+X-Gm-Message-State: ABuFfohpCtj+FomikZd3Rutb/T62NfVN+kY/kWuF9IXM0eqoWqD68c/2
+        +wZwKxydHHRqvpJXx7Br9p99R+BaQhk=
+X-Google-Smtp-Source: ACcGV634JBN7TrHiFqPsGayChQBFFmQa8RGgGFJh/Kxux8CHobnJ/MYVFEkq4LZWmC3pv7dqWNsz7Q==
+X-Received: by 2002:adf:ef90:: with SMTP id d16-v6mr28773996wro.204.1539951658316;
+        Fri, 19 Oct 2018 05:20:58 -0700 (PDT)
 Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id s10-v6sm1858283wmf.15.2018.10.19.05.20.55
+        by smtp.gmail.com with ESMTPSA id s10-v6sm1858283wmf.15.2018.10.19.05.20.57
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 19 Oct 2018 05:20:56 -0700 (PDT)
+        Fri, 19 Oct 2018 05:20:57 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
@@ -53,9 +53,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Andreas Dilger <adilger@dilger.ca>,
         Florian Weimer <fw@deneb.enyo.de>,
         Amir Goldstein <amir73il@gmail.com>
-Subject: [PATCH v2 3/5] statx: add STATX_ATTRIBUTES flag
-Date:   Fri, 19 Oct 2018 14:20:47 +0200
-Message-Id: <20181019122049.27121-3-mszeredi@redhat.com>
+Subject: [PATCH v2 4/5] statx: don't clear STATX_ATIME on SB_RDONLY
+Date:   Fri, 19 Oct 2018 14:20:48 +0200
+Message-Id: <20181019122049.27121-4-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20181019122049.27121-1-mszeredi@redhat.com>
 References: <20181019122049.27121-1-mszeredi@redhat.com>
@@ -64,58 +64,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FUSE will want to know if stx_attributes is interesting or not, because
-there's a non-zero cost of retreiving it.
+IS_NOATIME(inode) is defined as __IS_FLG(inode, SB_RDONLY|SB_NOATIME), so
+generic_fillattr() will clear STATX_ATIME from the result_mask if the super
+block is marked read only.
 
-This just a "want" flag, since stx_attributes_mask already indicates
-whether we "got" stx_attributes or not.
+This was probably not the intention, so fix to only clear STATX_ATIME if
+the fs doesn't support atime at all.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Cc: David Howells <dhowells@redhat.com>
-Cc: Michael Kerrisk <mtk.manpages@gmail.com>
 ---
- include/uapi/linux/stat.h       | 1 +
- samples/statx/test-statx.c      | 2 +-
- tools/include/uapi/linux/stat.h | 1 +
- 3 files changed, 3 insertions(+), 1 deletion(-)
+ fs/stat.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-index ed456ac0f90d..7d3cce078652 100644
---- a/include/uapi/linux/stat.h
-+++ b/include/uapi/linux/stat.h
-@@ -148,6 +148,7 @@ struct statx {
- #define STATX_BLOCKS		0x00000400U	/* Want/got stx_blocks */
- #define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat struct */
- #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
-+#define STATX_ATTRIBUTES	0x00001000U	/* Want stx_attributes */
+diff --git a/fs/stat.c b/fs/stat.c
+index 8d297a279991..b46583df70d4 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -46,7 +46,8 @@ void generic_fillattr(struct inode *inode, struct kstat *stat)
+ 	stat->blksize = i_blocksize(inode);
+ 	stat->blocks = inode->i_blocks;
  
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
-diff --git a/samples/statx/test-statx.c b/samples/statx/test-statx.c
-index e354048dea3c..deef9a68ff68 100644
---- a/samples/statx/test-statx.c
-+++ b/samples/statx/test-statx.c
-@@ -211,7 +211,7 @@ int main(int argc, char **argv)
- 	struct statx stx;
- 	int ret, raw = 0, atflag = AT_SYMLINK_NOFOLLOW;
- 
--	unsigned int mask = STATX_BASIC_STATS | STATX_BTIME;
-+	unsigned int mask = STATX_BASIC_STATS | STATX_BTIME | STATX_ATTRIBUTES;
- 
- 	for (argv++; *argv; argv++) {
- 		if (strcmp(*argv, "-F") == 0) {
-diff --git a/tools/include/uapi/linux/stat.h b/tools/include/uapi/linux/stat.h
-index ed456ac0f90d..60cd0a3f52e7 100644
---- a/tools/include/uapi/linux/stat.h
-+++ b/tools/include/uapi/linux/stat.h
-@@ -148,6 +148,7 @@ struct statx {
- #define STATX_BLOCKS		0x00000400U	/* Want/got stx_blocks */
- #define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat struct */
- #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
-+#define STATX_ATTRIBUTES	0x00001000U	/* Want/got stx_attributes */
- 
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
+-	if (IS_NOATIME(inode))
++	/* SB_NOATIME means filesystem supplies dummy atime value */
++	if (inode->i_sb->s_flags & SB_NOATIME)
+ 		stat->result_mask &= ~STATX_ATIME;
+ 	if (IS_AUTOMOUNT(inode))
+ 		stat->attributes |= STATX_ATTR_AUTOMOUNT;
 -- 
 2.14.3
 
