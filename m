@@ -2,144 +2,389 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E56ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01097ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F27C221476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:49:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F27C221476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 997E520645
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:50:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 997E520645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbeJSRyY (ORCPT
+        id S1727341AbeJSRzf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 13:54:24 -0400
-Received: from mail-it1-f200.google.com ([209.85.166.200]:55536 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726867AbeJSRyY (ORCPT
+        Fri, 19 Oct 2018 13:55:35 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:60374 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726903AbeJSRzf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 13:54:24 -0400
-Received: by mail-it1-f200.google.com with SMTP id m123-v6so3024237ith.5
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 02:49:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
-         :content-transfer-encoding;
-        bh=MhwPxJoK7rK2OrfwqNEywrDeYWqiD2EeJZ/XHQDclhA=;
-        b=DZpCUl97rGtVwFiu7YbSIlrvgtIKtmTPeUQGIpneQJ2zuUaL7VgBeOsrvrKEJltEmQ
-         sdOB8cstCZeiMdxdvv92M1kAd/qMeaz3g4w0cGjAtVK9fdwoLn4cMFASF3hE/QIm9G20
-         BBRuYJGDWfQxnWpS7KkRE9fNaUmQKoWN7UMBdIGW3JJW1yeY4GfjjrCfbulkHy/UHti+
-         lwlkH7SU3Ry/BMxlZhkQYnytNEwnRhoegYn+1MO4xgtPl4s0dDT60ufZ/faWJ30QMlOZ
-         kjYRoN1LjSZxv3j1fyfk/BY55BlYK+uBAMv4VTiXgrfO41KeykfxDzaMphSIAhYSWpZC
-         Q8Zw==
-X-Gm-Message-State: AGRZ1gJpYPMmwrEn52GdceJkf929TjF/PVZqVU7J15c1U+3G598RK97K
-        2qNGyig1FlunrNXZb1tx2JfZ1FomM3tlJPvF0TKzzi4czkn8
-X-Google-Smtp-Source: AJdET5cYUzvbtEnPIgGsemRsIlmMYc3G8uM58FlKrxEUm4myPvFSOgtDbRUTfTVXiVC72PaiVaL15AyvulU0puqlxsZ6vgGY+gvX
+        Fri, 19 Oct 2018 13:55:35 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9J9nq6q018797;
+        Fri, 19 Oct 2018 04:50:05 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail4.cirrus.com ([87.246.98.35])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2n3es40mhc-1;
+        Fri, 19 Oct 2018 04:50:05 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail4.cirrus.com (Postfix) with ESMTP id 1A6BD611C8B8;
+        Fri, 19 Oct 2018 04:52:56 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Fri, 19 Oct 2018
+ 10:50:03 +0100
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w9J9o3p1015276; Fri,
+ 19 Oct 2018 10:50:04 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <lee.jones@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <broonie@kernel.org>,
+        <linus.walleij@linaro.org>, <robh+dt@kernel.org>
+CC:     <mark.rutland@arm.com>, <lgirdwood@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>
+Subject: [PATCH v3 4/5] regulator: lochnagar: Add support for the Cirrus Logic Lochnagar
+Date:   Fri, 19 Oct 2018 10:50:02 +0100
+Message-ID: <20181019095003.26046-4-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
+References: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:4614:: with SMTP id t20-v6mr2866333ioa.13.1539942542815;
- Fri, 19 Oct 2018 02:49:02 -0700 (PDT)
-Date:   Fri, 19 Oct 2018 02:49:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003d3f70057891d0a7@google.com>
-Subject: BUG: unable to handle kernel NULL pointer dereference in __do_softirq
-From:   syzbot <syzbot+6528c946c37ba2809d0a@syzkaller.appspotmail.com>
-To:     brouer@redhat.com, davem@davemloft.net, edumazet@google.com,
-        jasowang@redhat.com, linux-kernel@vger.kernel.org, mst@redhat.com,
-        netdev@vger.kernel.org, sd@queasysnail.net,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1810190090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
-bW1pdDogICAgNGNiOTY3YTNkOWQ5IHNlbGZ0ZXN0cy9icGY6IGZpeCBmaWxlIHJlc291cmNlIGxl
-YWsNCmdpdCB0cmVlOiAgICAgICBicGYtbmV4dA0KY29uc29sZSBvdXRwdXQ6IGh0dHBzOi8vc3l6
-a2FsbGVyLmFwcHNwb3QuY29tL3gvbG9nLnR4dD94PTE1YTgyYmExNDAwMDAwDQprZXJuZWwgY29u
-ZmlnOiAgaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20veC8uY29uZmlnP3g9MmM4ZTU3ODY5
-NGUxM2YyOQ0KZGFzaGJvYXJkIGxpbms6IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL2J1
-Zz9leHRpZD02NTI4Yzk0NmMzN2JhMjgwOWQwYQ0KY29tcGlsZXI6ICAgICAgIGdjYyAoR0NDKSA4
-LjAuMSAyMDE4MDQxMyAoZXhwZXJpbWVudGFsKQ0Kc3l6IHJlcHJvOiAgICAgIGh0dHBzOi8vc3l6
-a2FsbGVyLmFwcHNwb3QuY29tL3gvcmVwcm8uc3l6P3g9MTI3NjY0ZjY0MDAwMDANCg0KSU1QT1JU
-QU5UOiBpZiB5b3UgZml4IHRoZSBidWcsIHBsZWFzZSBhZGQgdGhlIGZvbGxvd2luZyB0YWcgdG8g
-dGhlIGNvbW1pdDoNClJlcG9ydGVkLWJ5OiBzeXpib3QrNjUyOGM5NDZjMzdiYTI4MDlkMGFAc3l6
-a2FsbGVyLmFwcHNwb3RtYWlsLmNvbQ0KDQpkZXZpY2UgbnIwASBlbnRlcmVkIHByb21pc2N1b3Vz
-IG1vZGUNCmRldmljZSBucjABIGVudGVyZWQgcHJvbWlzY3VvdXMgbW9kZQ0KZGV2aWNlIG5yMAEg
-ZW50ZXJlZCBwcm9taXNjdW91cyBtb2RlDQpkZXZpY2UgbnIwASBlbnRlcmVkIHByb21pc2N1b3Vz
-IG1vZGUNCmRldmljZSBucjABIGVudGVyZWQgcHJvbWlzY3VvdXMgbW9kZQ0KQlVHOiB1bmFibGUg
-dG8gaGFuZGxlIGtlcm5lbCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UgYXQgMDAwMDAwMDAwMDAw
-MDAwMA0KUEdEIDFkM2E1NDA2NyBQNEQgMWQzYTU0MDY3IFBVRCAxYmE3OGEwNjcgUE1EIDANCk9v
-cHM6IDAwMTAgWyMxXSBQUkVFTVBUIFNNUCBLQVNBTg0KQ1BVOiAxIFBJRDogMTA1MTEgQ29tbTog
-c3l6LWV4ZWN1dG9yNCBOb3QgdGFpbnRlZCA0LjE5LjAtcmM3KyAjMTI1DQpIYXJkd2FyZSBuYW1l
-OiBHb29nbGUgR29vZ2xlIENvbXB1dGUgRW5naW5lL0dvb2dsZSBDb21wdXRlIEVuZ2luZSwgQklP
-UyAgDQpHb29nbGUgMDEvMDEvMjAxMQ0KUklQOiAwMDEwOiAgICAgICAgICAobnVsbCkNCkNvZGU6
-IEJhZCBSSVAgdmFsdWUuDQpSU1A6IDAwMTg6ZmZmZjg4MDFkYWYwNzg2OCBFRkxBR1M6IDAwMDEw
-MjQ2DQpSQVg6IDAwMDAwMDAwMDAwMDAwMDAgUkJYOiAwMDAwMDAwMDAwMDAwMDAwIFJDWDogZmZm
-ZmZmZmY4NjBhMjdiZg0KUkRYOiAwMDAwMDAwMDAwMDAwMTAwIFJTSTogMDAwMDAwMDAwMDAwMDAw
-MCBSREk6IGZmZmY4ODAxYWIyYmQyOTgNClJCUDogZmZmZjg4MDFkYWYwN2RmOCBSMDg6IGZmZmY4
-ODAxYzdiMmUxNDAgUjA5OiAwMDAwMDAwMDAwMDAwMDAwDQpSMTA6IDAwMDAwMDAwMDAwMDAwMDAg
-UjExOiAwMDAwMDAwMDAwMDAwMDAwIFIxMjogMDAwMDAwMDAwMDAwMDAwMQ0KUjEzOiBkZmZmZmMw
-MDAwMDAwMDAwIFIxNDogZmZmZjg4MDFkYWYwN2RkMCBSMTU6IGZmZmY4ODAxYWIyYmQyOTgNCkZT
-OiAgMDAwMDdmODUxY2FjYzcwMCgwMDAwKSBHUzpmZmZmODgwMWRhZjAwMDAwKDAwMDApIGtubEdT
-OjAwMDAwMDAwMDAwMDAwMDANCkNTOiAgMDAxMCBEUzogMDAwMCBFUzogMDAwMCBDUjA6IDAwMDAw
-MDAwODAwNTAwMzMNCkNSMjogZmZmZmZmZmZmZmZmZmZkNiBDUjM6IDAwMDAwMDAxYmM5MDgwMDAg
-Q1I0OiAwMDAwMDAwMDAwMTQwNmUwDQpEUjA6IDAwMDAwMDAwMDAwMDAwMDAgRFIxOiAwMDAwMDAw
-MDAwMDAwMDAwIERSMjogMDAwMDAwMDAwMDAwMDAwMA0KRFIzOiAwMDAwMDAwMDAwMDAwMDAwIERS
-NjogMDAwMDAwMDBmZmZlMGZmMCBEUjc6IDAwMDAwMDAwMDAwMDA0MDANCkNhbGwgVHJhY2U6DQog
-IDxJUlE+DQogIF9fZG9fc29mdGlycSsweDMwYi8weGFkOCBrZXJuZWwvc29mdGlycS5jOjI5Mg0K
-ICBkb19zb2Z0aXJxX293bl9zdGFjaysweDJhLzB4NDAgYXJjaC94ODYvZW50cnkvZW50cnlfNjQu
-UzoxMDQ3DQogIDwvSVJRPg0KICBkb19zb2Z0aXJxLnBhcnQuMTMrMHgxMjYvMHgxNjAga2VybmVs
-L3NvZnRpcnEuYzozMzYNCiAgZG9fc29mdGlycSBrZXJuZWwvc29mdGlycS5jOjMyOCBbaW5saW5l
-XQ0KICBfX2xvY2FsX2JoX2VuYWJsZV9pcCsweDIxZC8weDI2MCBrZXJuZWwvc29mdGlycS5jOjE4
-OQ0KICBsb2NhbF9iaF9lbmFibGUgaW5jbHVkZS9saW51eC9ib3R0b21faGFsZi5oOjMyIFtpbmxp
-bmVdDQogIHR1bl9nZXRfdXNlcisweDFjMGIvMHg0MjUwIGRyaXZlcnMvbmV0L3R1bi5jOjE5NjMN
-CiAgdHVuX2Nocl93cml0ZV9pdGVyKzB4YjkvMHgxNjAgZHJpdmVycy9uZXQvdHVuLmM6MTk5Mw0K
-ICBjYWxsX3dyaXRlX2l0ZXIgaW5jbHVkZS9saW51eC9mcy5oOjE4MDggW2lubGluZV0NCiAgbmV3
-X3N5bmNfd3JpdGUgZnMvcmVhZF93cml0ZS5jOjQ3NCBbaW5saW5lXQ0KICBfX3Zmc193cml0ZSsw
-eDZiOC8weDlmMCBmcy9yZWFkX3dyaXRlLmM6NDg3DQogIHZmc193cml0ZSsweDFmYy8weDU2MCBm
-cy9yZWFkX3dyaXRlLmM6NTQ5DQogIGtzeXNfd3JpdGUrMHgxMDEvMHgyNjAgZnMvcmVhZF93cml0
-ZS5jOjU5OA0KICBfX2RvX3N5c193cml0ZSBmcy9yZWFkX3dyaXRlLmM6NjEwIFtpbmxpbmVdDQog
-IF9fc2Vfc3lzX3dyaXRlIGZzL3JlYWRfd3JpdGUuYzo2MDcgW2lubGluZV0NCiAgX194NjRfc3lz
-X3dyaXRlKzB4NzMvMHhiMCBmcy9yZWFkX3dyaXRlLmM6NjA3DQogIGRvX3N5c2NhbGxfNjQrMHgx
-YjkvMHg4MjAgYXJjaC94ODYvZW50cnkvY29tbW9uLmM6MjkwDQogIGVudHJ5X1NZU0NBTExfNjRf
-YWZ0ZXJfaHdmcmFtZSsweDQ5LzB4YmUNClJJUDogMDAzMzoweDQ1NzU2OQ0KQ29kZTogZmQgYjMg
-ZmIgZmYgYzMgNjYgMmUgMGYgMWYgODQgMDAgMDAgMDAgMDAgMDAgNjYgOTAgNDggODkgZjggNDgg
-ODkgZjcgIA0KNDggODkgZDYgNDggODkgY2EgNGQgODkgYzIgNGQgODkgYzggNGMgOGIgNGMgMjQg
-MDggMGYgMDUgPDQ4PiAzZCAwMSBmMCBmZiAgDQpmZiAwZiA4MyBjYiBiMyBmYiBmZiBjMyA2NiAy
-ZSAwZiAxZiA4NCAwMCAwMCAwMCAwMA0KUlNQOiAwMDJiOjAwMDA3Zjg1MWNhY2JjNzggRUZMQUdT
-OiAwMDAwMDI0NiBPUklHX1JBWDogMDAwMDAwMDAwMDAwMDAwMQ0KUkFYOiBmZmZmZmZmZmZmZmZm
-ZmRhIFJCWDogMDAwMDAwMDAwMDAwMDAwMyBSQ1g6IDAwMDAwMDAwMDA0NTc1NjkNClJEWDogMDAw
-MDAwMDAwMDAwMDE3YiBSU0k6IDAwMDAwMDAwMjAwMDAwMDAgUkRJOiAwMDAwMDAwMDAwMDAwMDBl
-DQpSQlA6IDAwMDAwMDAwMDA3MmMwNDAgUjA4OiAwMDAwMDAwMDAwMDAwMDAwIFIwOTogMDAwMDAw
-MDAwMDAwMDAwMA0KUjEwOiAwMDAwMDAwMDAwMDAwMDAwIFIxMTogMDAwMDAwMDAwMDAwMDI0NiBS
-MTI6IDAwMDA3Zjg1MWNhY2M2ZDQNClIxMzogMDAwMDAwMDAwMDRjNTU2MCBSMTQ6IDAwMDAwMDAw
-MDA0ZDhlOTggUjE1OiAwMDAwMDAwMGZmZmZmZmZmDQpNb2R1bGVzIGxpbmtlZCBpbjoNCkNSMjog
-MDAwMDAwMDAwMDAwMDAwMA0KLS0tWyBlbmQgdHJhY2UgMTA4ZTMwMDMwNDIzOGE2ZSBdLS0tDQpS
-SVA6IDAwMTA6ICAgICAgICAgIChudWxsKQ0KQ29kZTogQmFkIFJJUCB2YWx1ZS4NClJTUDogMDAx
-ODpmZmZmODgwMWRhZjA3ODY4IEVGTEFHUzogMDAwMTAyNDYNClJBWDogMDAwMDAwMDAwMDAwMDAw
-MCBSQlg6IDAwMDAwMDAwMDAwMDAwMDAgUkNYOiBmZmZmZmZmZjg2MGEyN2JmDQpSRFg6IDAwMDAw
-MDAwMDAwMDAxMDAgUlNJOiAwMDAwMDAwMDAwMDAwMDAwIFJESTogZmZmZjg4MDFhYjJiZDI5OA0K
-UkJQOiBmZmZmODgwMWRhZjA3ZGY4IFIwODogZmZmZjg4MDFjN2IyZTE0MCBSMDk6IDAwMDAwMDAw
-MDAwMDAwMDANClIxMDogMDAwMDAwMDAwMDAwMDAwMCBSMTE6IDAwMDAwMDAwMDAwMDAwMDAgUjEy
-OiAwMDAwMDAwMDAwMDAwMDAxDQpSMTM6IGRmZmZmYzAwMDAwMDAwMDAgUjE0OiBmZmZmODgwMWRh
-ZjA3ZGQwIFIxNTogZmZmZjg4MDFhYjJiZDI5OA0KRlM6ICAwMDAwN2Y4NTFjYWNjNzAwKDAwMDAp
-IEdTOmZmZmY4ODAxZGFmMDAwMDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMA0KQ1M6ICAw
-MDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMw0KQ1IyOiBmZmZmZmZm
-ZmZmZmZmZmQ2IENSMzogMDAwMDAwMDFiYzkwODAwMCBDUjQ6IDAwMDAwMDAwMDAxNDA2ZTANCkRS
-MDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAwMDAwMDAwMDAwMDAgRFIyOiAwMDAwMDAwMDAw
-MDAwMDAwDQpEUjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUwZmYwIERSNzog
-MDAwMDAwMDAwMDAwMDQwMA0KDQoNCi0tLQ0KVGhpcyBidWcgaXMgZ2VuZXJhdGVkIGJ5IGEgYm90
-LiBJdCBtYXkgY29udGFpbiBlcnJvcnMuDQpTZWUgaHR0cHM6Ly9nb28uZ2wvdHBzbUVKIGZvciBt
-b3JlIGluZm9ybWF0aW9uIGFib3V0IHN5emJvdC4NCnN5emJvdCBlbmdpbmVlcnMgY2FuIGJlIHJl
-YWNoZWQgYXQgc3l6a2FsbGVyQGdvb2dsZWdyb3Vwcy5jb20uDQoNCnN5emJvdCB3aWxsIGtlZXAg
-dHJhY2sgb2YgdGhpcyBidWcgcmVwb3J0LiBTZWU6DQpodHRwczovL2dvby5nbC90cHNtRUojYnVn
-LXN0YXR1cy10cmFja2luZyBmb3IgaG93IHRvIGNvbW11bmljYXRlIHdpdGggIA0Kc3l6Ym90Lg0K
-c3l6Ym90IGNhbiB0ZXN0IHBhdGNoZXMgZm9yIHRoaXMgYnVnLCBmb3IgZGV0YWlscyBzZWU6DQpo
-dHRwczovL2dvby5nbC90cHNtRUojdGVzdGluZy1wYXRjaGVzDQo=
+Lochnagar is an evaluation and development board for Cirrus
+Logic Smart CODEC and Amp devices. It allows the connection of
+most Cirrus Logic devices on mini-cards, as well as allowing
+connection of various application processor systems to provide a
+full evaluation platform. This driver supports the board
+controller chip on the Lochnagar board.
+
+The Lochnagar board provides power supplies for the attached
+CODEC/Amp device. Currently this driver supports the microphone
+supplies and the digital core voltage for the attached
+device. There are some additional supplies that will be
+added in time but these supplies are sufficient for most
+systems/use-cases.
+
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+
+No changes since v2.
+
+Thanks,
+Charles
+
+ drivers/regulator/Kconfig               |   7 +
+ drivers/regulator/Makefile              |   1 +
+ drivers/regulator/lochnagar-regulator.c | 255 ++++++++++++++++++++++++++++++++
+ 3 files changed, 263 insertions(+)
+ create mode 100644 drivers/regulator/lochnagar-regulator.c
+
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 329cdd33ed624..3eda02afdcdeb 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -356,6 +356,13 @@ config REGULATOR_LM363X
+ 	  One boost output voltage is configurable and always on.
+ 	  Other LDOs are used for the display module.
+ 
++config REGULATOR_LOCHNAGAR
++	tristate "Cirrus Logic Lochnagar regulator driver"
++	depends on MFD_LOCHNAGAR
++	help
++	  This enables regulator support on the Cirrus Logic Lochnagar audio
++	  development board.
++
+ config REGULATOR_LP3971
+ 	tristate "National Semiconductors LP3971 PMIC regulator driver"
+ 	depends on I2C
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index 801d9a34a2037..0c715fa77bd62 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -46,6 +46,7 @@ obj-$(CONFIG_REGULATOR_HI655X) += hi655x-regulator.o
+ obj-$(CONFIG_REGULATOR_ISL6271A) += isl6271a-regulator.o
+ obj-$(CONFIG_REGULATOR_ISL9305) += isl9305.o
+ obj-$(CONFIG_REGULATOR_LM363X) += lm363x-regulator.o
++obj-$(CONFIG_REGULATOR_LOCHNAGAR) += lochnagar-regulator.o
+ obj-$(CONFIG_REGULATOR_LP3971) += lp3971.o
+ obj-$(CONFIG_REGULATOR_LP3972) += lp3972.o
+ obj-$(CONFIG_REGULATOR_LP872X) += lp872x.o
+diff --git a/drivers/regulator/lochnagar-regulator.c b/drivers/regulator/lochnagar-regulator.c
+new file mode 100644
+index 0000000000000..54d791d204080
+--- /dev/null
++++ b/drivers/regulator/lochnagar-regulator.c
+@@ -0,0 +1,255 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Lochnagar regulator driver
++ *
++ * Copyright (c) 2017-2018 Cirrus Logic, Inc. and
++ *                         Cirrus Logic International Semiconductor Ltd.
++ *
++ * Author: Charles Keepax <ckeepax@opensource.cirrus.com>
++ */
++
++#include <linux/bitops.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/regulator/driver.h>
++#include <linux/regulator/machine.h>
++#include <linux/regulator/of_regulator.h>
++
++#include <linux/mfd/lochnagar.h>
++
++static const struct regulator_ops lochnagar_micvdd_ops = {
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++
++	.list_voltage = regulator_list_voltage_linear_range,
++	.map_voltage = regulator_map_voltage_linear_range,
++
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++};
++
++static const struct regulator_linear_range lochnagar_micvdd_ranges[] = {
++	REGULATOR_LINEAR_RANGE(1000000, 0,    0xC, 50000),
++	REGULATOR_LINEAR_RANGE(1700000, 0xD, 0x1F, 100000),
++};
++
++static int lochnagar_micbias_enable(struct regulator_dev *rdev)
++{
++	struct lochnagar *lochnagar = rdev_get_drvdata(rdev);
++	int ret;
++
++	mutex_lock(&lochnagar->analogue_config_lock);
++
++	ret = regulator_enable_regmap(rdev);
++	if (ret < 0)
++		goto err;
++
++	ret = lochnagar_update_config(lochnagar);
++
++err:
++	mutex_unlock(&lochnagar->analogue_config_lock);
++
++	return ret;
++}
++
++static int lochnagar_micbias_disable(struct regulator_dev *rdev)
++{
++	struct lochnagar *lochnagar = rdev_get_drvdata(rdev);
++	int ret;
++
++	mutex_lock(&lochnagar->analogue_config_lock);
++
++	ret = regulator_disable_regmap(rdev);
++	if (ret < 0)
++		goto err;
++
++	ret = lochnagar_update_config(lochnagar);
++
++err:
++	mutex_unlock(&lochnagar->analogue_config_lock);
++
++	return ret;
++}
++
++static const struct regulator_ops lochnagar_micbias_ops = {
++	.enable = lochnagar_micbias_enable,
++	.disable = lochnagar_micbias_disable,
++	.is_enabled = regulator_is_enabled_regmap,
++};
++
++static const struct regulator_ops lochnagar_vddcore_ops = {
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++
++	.list_voltage = regulator_list_voltage_linear_range,
++	.map_voltage = regulator_map_voltage_linear_range,
++
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++};
++
++static const struct regulator_linear_range lochnagar_vddcore_ranges[] = {
++	REGULATOR_LINEAR_RANGE(600000, 0x8, 0x41, 12500),
++};
++
++enum lochnagar_regulators {
++	LOCHNAGAR_MICVDD,
++	LOCHNAGAR_MIC1VDD,
++	LOCHNAGAR_MIC2VDD,
++	LOCHNAGAR_VDDCORE,
++};
++
++static int lochnagar_micbias_of_parse(struct device_node *np,
++				      const struct regulator_desc *desc,
++				      struct regulator_config *config)
++{
++	struct lochnagar *lochnagar = config->driver_data;
++	int shift = (desc->id - LOCHNAGAR_MIC1VDD) *
++		    LOCHNAGAR2_P2_MICBIAS_SRC_SHIFT;
++	int mask = LOCHNAGAR2_P1_MICBIAS_SRC_MASK << shift;
++	unsigned int val;
++	int ret;
++
++	ret = of_property_read_u32(np, "cirrus,micbias-input", &val);
++	if (ret >= 0) {
++		mutex_lock(&lochnagar->analogue_config_lock);
++		ret = regmap_update_bits(lochnagar->regmap,
++					 LOCHNAGAR2_ANALOGUE_PATH_CTRL2,
++					 mask, val << shift);
++		mutex_unlock(&lochnagar->analogue_config_lock);
++		if (ret < 0) {
++			dev_err(lochnagar->dev,
++				"Failed to update micbias source: %d\n", ret);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++static const struct regulator_desc lochnagar_regulators[] = {
++	[LOCHNAGAR_MICVDD] = {
++		.name = "MICVDD",
++		.supply_name = "SYSVDD",
++		.type = REGULATOR_VOLTAGE,
++		.n_voltages = 32,
++		.ops = &lochnagar_micvdd_ops,
++
++		.id = LOCHNAGAR_MICVDD,
++		.of_match = of_match_ptr("MICVDD"),
++
++		.enable_reg = LOCHNAGAR2_MICVDD_CTRL1,
++		.enable_mask = LOCHNAGAR2_MICVDD_REG_ENA_MASK,
++		.vsel_reg = LOCHNAGAR2_MICVDD_CTRL2,
++		.vsel_mask = LOCHNAGAR2_MICVDD_VSEL_MASK,
++
++		.linear_ranges = lochnagar_micvdd_ranges,
++		.n_linear_ranges = ARRAY_SIZE(lochnagar_micvdd_ranges),
++
++		.enable_time = 3000,
++		.ramp_delay = 1000,
++
++		.owner = THIS_MODULE,
++	},
++	[LOCHNAGAR_MIC1VDD] = {
++		.name = "MIC1VDD",
++		.supply_name = "MICBIAS1",
++		.type = REGULATOR_VOLTAGE,
++		.ops = &lochnagar_micbias_ops,
++
++		.id = LOCHNAGAR_MIC1VDD,
++		.of_match = of_match_ptr("MIC1VDD"),
++		.of_parse_cb = lochnagar_micbias_of_parse,
++
++		.enable_reg = LOCHNAGAR2_ANALOGUE_PATH_CTRL2,
++		.enable_mask = LOCHNAGAR2_P1_INPUT_BIAS_ENA_MASK,
++
++		.owner = THIS_MODULE,
++	},
++	[LOCHNAGAR_MIC2VDD] = {
++		.name = "MIC2VDD",
++		.supply_name = "MICBIAS2",
++		.type = REGULATOR_VOLTAGE,
++		.ops = &lochnagar_micbias_ops,
++
++		.id = LOCHNAGAR_MIC2VDD,
++		.of_match = of_match_ptr("MIC2VDD"),
++		.of_parse_cb = lochnagar_micbias_of_parse,
++
++		.enable_reg = LOCHNAGAR2_ANALOGUE_PATH_CTRL2,
++		.enable_mask = LOCHNAGAR2_P2_INPUT_BIAS_ENA_MASK,
++
++		.owner = THIS_MODULE,
++	},
++	[LOCHNAGAR_VDDCORE] = {
++		.name = "VDDCORE",
++		.supply_name = "SYSVDD",
++		.type = REGULATOR_VOLTAGE,
++		.n_voltages = 57,
++		.ops = &lochnagar_vddcore_ops,
++
++		.id = LOCHNAGAR_VDDCORE,
++		.of_match = of_match_ptr("VDDCORE"),
++
++		.enable_reg = LOCHNAGAR2_VDDCORE_CDC_CTRL1,
++		.enable_mask = LOCHNAGAR2_VDDCORE_CDC_REG_ENA_MASK,
++		.vsel_reg = LOCHNAGAR2_VDDCORE_CDC_CTRL2,
++		.vsel_mask = LOCHNAGAR2_VDDCORE_CDC_VSEL_MASK,
++
++		.linear_ranges = lochnagar_vddcore_ranges,
++		.n_linear_ranges = ARRAY_SIZE(lochnagar_vddcore_ranges),
++
++		.enable_time = 3000,
++		.ramp_delay = 1000,
++
++		.owner = THIS_MODULE,
++	},
++};
++
++static int lochnagar_regulator_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct lochnagar *lochnagar = dev_get_drvdata(dev->parent);
++	struct regulator_config config = { };
++	struct regulator_dev *rdev;
++	int ret, i;
++
++	config.dev = lochnagar->dev;
++	config.regmap = lochnagar->regmap;
++	config.driver_data = lochnagar;
++
++	for (i = 0; i < ARRAY_SIZE(lochnagar_regulators); i++) {
++		const struct regulator_desc *desc = &lochnagar_regulators[i];
++
++		rdev = devm_regulator_register(dev, desc, &config);
++		if (IS_ERR(rdev)) {
++			ret = PTR_ERR(rdev);
++			dev_err(dev, "Failed to register %s regulator: %d\n",
++				desc->name, ret);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++static struct platform_driver lochnagar_regulator_driver = {
++	.driver = {
++		.name = "lochnagar-regulator",
++	},
++
++	.probe = lochnagar_regulator_probe,
++};
++module_platform_driver(lochnagar_regulator_driver);
++
++MODULE_AUTHOR("Charles Keepax <ckeepax@opensource.cirrus.com>");
++MODULE_DESCRIPTION("Regulator driver for Cirrus Logic Lochnagar Board");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:lochnagar-regulator");
+-- 
+2.11.0
+
