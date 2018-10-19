@@ -2,157 +2,117 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE55EECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A39A6ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C22821470
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:38:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39D762148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:42:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jhR9MZOC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C22821470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="fHRYTKAJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39D762148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727949AbeJTBpX (ORCPT
+        id S1727820AbeJTBtd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 21:45:23 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36770 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727549AbeJTBpW (ORCPT
+        Fri, 19 Oct 2018 21:49:33 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:53733 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727549AbeJTBtc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 21:45:22 -0400
-Received: by mail-lj1-f194.google.com with SMTP id p89-v6so31554547ljb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 10:38:18 -0700 (PDT)
+        Fri, 19 Oct 2018 21:49:32 -0400
+Received: by mail-it1-f194.google.com with SMTP id q70-v6so5209424itb.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 10:42:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=szeredi.hu; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=7KHiUF44bQRZmdTMHbZLI0eFZBW8U/wdhwfWfOTuAfM=;
-        b=jhR9MZOCo3rl8duzGeJEFSuZpC1uu4U/aOSsMgOUhkeqsaTnzZMJGu0Pkbs9obAT/6
-         cNjMHnP7yNHC1HyTwHO2dlYEc+JqicZuNsA5xCxYdpjOk1LnSY3xW87EaGUAst0SnIvI
-         3Q9z5gIlOztZV+9QYM80nv45lwMXB3XhnbLYA=
+        bh=8JSFsW4o40O8KZj0mDu5Ev8RmkQ3Fw9lxAJE8kguQs4=;
+        b=fHRYTKAJyuU6K1PNDU4LDW/ff/BeP81AOrOGSFuu4DUcjaPGdOYt5P4SMw9X/rbe/1
+         LzUw1YNFvSoaOlKrc20Wn4HLlx0v5239yBPD0O/zxK/2zlLZk2FPGxQJpdtiTIiqqG1w
+         UiYvFG9atqqOrGif/BWp5SmtI/ew0M1YPMdXM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=7KHiUF44bQRZmdTMHbZLI0eFZBW8U/wdhwfWfOTuAfM=;
-        b=gToaW5/vaA44XLWCJKRY44eSZm2aznPvhvs5My5CnipMCcAmVZnio7Ql6hZiMcxkM3
-         7eOU2U8WG4PRNkTEo3tYe5+Aqqf1qgwYUYn7mDl6nQ4ts0tTHtbnKheuXzpxAYc0MG/l
-         /ZYl/JxBEZoQdVHJxjMMC/Xxv6Hc3BAW8ujLlODATiDOaX4674JpM21q6uOwffWUzZM3
-         GHMtlB8vbRR74Wymzewf0DTuo7eHO5PBQnU305QS3m9w0telHhMYFoeGb7/vE2XAIZtT
-         mWfh+3Twc5XEh081+GCMqOd9shusYMXQIWnp2TqH8K5soJLsfkZlqGl5DqfcUQlcZNWh
-         E4Ig==
-X-Gm-Message-State: ABuFfogZCcICeJigFrE0od/zyunuejx0qTx7MdiAv4mh/kvyD4LkvKll
-        w39oJcgwli0r6ioKl5PEaLhZQDczJQo=
-X-Google-Smtp-Source: AJdET5frCinIgg3XfZjFcekZJXUSyDBbmqgaMSPZnvtqFGtzpr4UI52ihbsVB5jSlgPKObrzfOvu3g==
-X-Received: by 2002:a2e:2997:: with SMTP id p23-v6mr5036602ljp.12.1539970697161;
-        Fri, 19 Oct 2018 10:38:17 -0700 (PDT)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
-        by smtp.gmail.com with ESMTPSA id 71-v6sm5541029lja.90.2018.10.19.10.38.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Oct 2018 10:38:14 -0700 (PDT)
-Received: by mail-lf1-f49.google.com with SMTP id a82-v6so25845629lfa.4
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 10:38:12 -0700 (PDT)
-X-Received: by 2002:a19:1cb:: with SMTP id 194mr3571764lfb.61.1539970692112;
- Fri, 19 Oct 2018 10:38:12 -0700 (PDT)
+        bh=8JSFsW4o40O8KZj0mDu5Ev8RmkQ3Fw9lxAJE8kguQs4=;
+        b=pdtnwiVNIUPlaB6GZkArdqOghcuG8MRIYuxuFauY9YTxAwDPVIcQbP5ybbtAAV+LO3
+         7G/HHKTQB4S/OZ9kXHvThFhfXDFA2QRMZeExXuNLOYMbhAOEBFQ0jWwX138VGEZjW2nI
+         bJeCEso+gYnfzC1EwFBPPqRgqLvZ6UTPiVZAnrD0iKk+OHMLJGesufn2zOb0t2xsDOu1
+         Ka7VHdeUGn8PVGTYoUjAa55vRgW0490iimenlgM5eyA+BTdZT7MhzJRnsgONM4aZgrcx
+         p+cMG/Q2JaVSzNs/II75feQWYX4s8eF8CdmNK6MAZ9njEgGY/P25aa0G7ERDAw8DXnTf
+         AmfQ==
+X-Gm-Message-State: ABuFfojuLEyWdU7a3ib7fLDHjKAMda9wOMNzYNEQLhdeCWcFOgZU4BZk
+        ZNMvCdS+3TBedyCIDavQWYCjpnovCLsaFf3g6RWpUg==
+X-Google-Smtp-Source: ACcGV628AVqaTI7toxtM0tR9AISOiLZ5J3ubjgEVzJZxxMh8NxhWhN9voLAb5kqJpE2HRfVW29aX4x6cs7zpnitfohQ=
+X-Received: by 2002:a24:75d6:: with SMTP id y205-v6mr3972264itc.1.1539970947827;
+ Fri, 19 Oct 2018 10:42:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180920182903.19991-1-georgi.djakov@linaro.org>
-In-Reply-To: <20180920182903.19991-1-georgi.djakov@linaro.org>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Fri, 19 Oct 2018 10:37:35 -0700
-X-Gmail-Original-Message-ID: <CAE=gft4BCgrPCf5UuhxMh8ORCk40C4tnFxWy-QQJ4ag+yObwvg@mail.gmail.com>
-Message-ID: <CAE=gft4BCgrPCf5UuhxMh8ORCk40C4tnFxWy-QQJ4ag+yObwvg@mail.gmail.com>
-Subject: Re: [RFC] i2c: qup: Use the interconnect API
-To:     georgi.djakov@linaro.org
-Cc:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        rjw@rjwysocki.net, robh+dt@kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, mark.rutland@arm.com,
-        lorenzo.pieralisi@arm.com, Alexandre Bailon <abailon@baylibre.com>,
-        maxime.ripard@bootlin.com, Arnd Bergmann <arnd@arndb.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, wsa@the-dreams.de,
-        linux-i2c@vger.kernel.org
+Received: by 2002:a6b:bf41:0:0:0:0:0 with HTTP; Fri, 19 Oct 2018 10:42:27
+ -0700 (PDT)
+X-Originating-IP: [212.96.48.140]
+In-Reply-To: <18142.1539964788@warthog.procyon.org.uk>
+References: <20181019143932.6697-1-mszeredi@redhat.com> <18142.1539964788@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 19 Oct 2018 19:42:27 +0200
+Message-ID: <CAJfpegtPv4+QxzcqMAGwTt7QALjBaxQtt2Qet98pdmuT1MRUeA@mail.gmail.com>
+Subject: Re: [PATCH v2 6/5] statx: add STATX_RESULT_MASK flag
+To:     David Howells <dhowells@redhat.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        Amir Goldstein <amir73il@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 11:29 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+On Fri, Oct 19, 2018 at 5:59 PM, David Howells <dhowells@redhat.com> wrote:
+> Miklos Szeredi <mszeredi@redhat.com> wrote:
 >
-> The interconnect API provides an interface for consumer drivers to express
-> their bandwidth needs in the SoC. This data is aggregated and the on-chip
-> interconnect hardware is configured to the appropriate power/performance
-> profile.
+>> FUSE needs this, because it uses legacy inode initialization, that doesn't
+>> return a result_mask, so needs a refresh when caller asks for it with
+>> statx().
 >
-> Use the interconnect API to get() the path between the endpoints used for
-> data transfers by the I2C QUP and report the needed bandwidth based on the
-> i2c mode.
->
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
->
-> This patch depends on the interconnect API: https://lkml.org/lkml/2018/8/31/444
->
-> TODO: Use a macro for converting and rounding to icc units instead of
-> converting between kilobits, kilobytes etc. in the consumer drivers.
->
->  drivers/i2c/busses/i2c-qup.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->
-> diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
-> index c86c3ae1318f..436747a74dc6 100644
-> --- a/drivers/i2c/busses/i2c-qup.c
-> +++ b/drivers/i2c/busses/i2c-qup.c
-> @@ -14,6 +14,7 @@
->  #include <linux/dma-mapping.h>
->  #include <linux/err.h>
->  #include <linux/i2c.h>
-> +#include <linux/interconnect.h>
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
->  #include <linux/module.h>
-> @@ -280,6 +281,11 @@ struct qup_i2c_dev {
->         void (*read_rx_fifo)(struct qup_i2c_dev *qup);
->         /* function to write tags in tx fifo for i2c read transfer */
->         void (*write_rx_tags)(struct qup_i2c_dev *qup);
-> +
-> +       /* frequency mode standard */
-> +       u32                     clk_freq;
-> +       /* interconnect path to scale according to bandwidth needs */
-> +       struct icc_path         *path;
->  };
->
->  static irqreturn_t qup_i2c_interrupt(int irq, void *dev)
-> @@ -1657,6 +1663,16 @@ static void qup_i2c_disable_clocks(struct qup_i2c_dev *qup)
->         clk_disable_unprepare(qup->pclk);
->  }
->
-> +static void qup_i2c_enable_icc(struct qup_i2c_dev *qup)
-> +{
-> +       icc_set(qup->path, 0, qup->clk_freq / 8000);
+> Can't you just make it up in fuse?  Presumably, fuse doesn't support any of
+> the non-basic statx fields either?
 
-So this specifies an average bandwidth of zero, and a peak bandwidth
-of freq / 8000? Can you explain why that is the right choice?
-Also, where is this 8000 coming from? Can that be a define, and
-possibly explained?
+This is very much about the basic statx fields.  I.e. what does
+result_mask == STATX_BASIC_STATS means?
 
-> +}
-> +
-> +static void qup_i2c_disable_icc(struct qup_i2c_dev *qup)
-> +{
-> +       icc_set(qup->path, 0, 0);
-> +}
-> +
+ a) this is a legacy stat() implementation that doesn't fill in the
+result_mask properly
+
+ b) this is an up-todate stat() implementation that does fill the
+result_mask properly and all fields are valid
+
+There's no way to tell which one it is, and no way to request that
+filesystem try b) even if it's more costly.
+
+>> It might make sense later to promote this to a proper statx mask flag and
+>> return it in stx_mask to userspace.
+>
+> That sounds kind of recursive - a bit in stx_mask would be saying whether or
+> not stx_mask can be used.
+
+Yes.  See above.
+
+>> +#define STATX_RESULT_MASK STATX__RESERVED
+>
+> Please don't use that bit.
+
+Using it internally is perfectly harmless.   If we'll need to extend
+statx in the future and make use of this flag externally, then we can
+easily move the internal flag somewhere else (e.g. extend request_mask
+to 64bit, which we'll probably need to do anyway in that case).
+
+Thanks,
+Miklos
