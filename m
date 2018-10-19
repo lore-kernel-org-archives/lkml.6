@@ -2,145 +2,245 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E6CECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8345DECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:58:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC05621486
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:57:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="lpz/fs9J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC05621486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 2334221486
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:58:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2334221486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeJSVD1 (ORCPT
+        id S1727444AbeJSVED (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 17:03:27 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:47664 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbeJSVD1 (ORCPT
+        Fri, 19 Oct 2018 17:04:03 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41963 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727011AbeJSVEC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 17:03:27 -0400
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id w9JCvBPU031957;
-        Fri, 19 Oct 2018 21:57:12 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w9JCvBPU031957
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1539953832;
-        bh=Gq+3Ld2a9I8XpUsYwDmPMl4YFsFY0o/2/Az/R14YyMk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lpz/fs9Jy4/Y7041ZzGJbETYaWGtKcQJGM+GaCZpEwCnYYFcmS+6tuqmsFrpurFC6
-         OL0ZftqDx2mi6cmGYFV78uuS+cY6S9fZRk6D0IzPBagyOidF8RCbPwdQe1pWoAa3TM
-         C/PSWoSn0bf1ZsyUotvwbkEmisQtEn+2qJmcsIMCjcKEWUF7JTqk8CROWgjKHFpsMv
-         ZVa2g1SpxD3YXzywmn/jpIsL64GKJvsHLfXk2Y6nScPp9tVTGX9os/A1lVokiScl53
-         6XycF6P2344x9N5OqQloXeVgb4D0EvjXtdaeP23slNdJWH7m12xfZ2Tu6VomNMzJzf
-         +1szLlWpaNb+g==
-X-Nifty-SrcIP: [209.85.222.45]
-Received: by mail-ua1-f45.google.com with SMTP id c1so7405412uaq.9;
-        Fri, 19 Oct 2018 05:57:11 -0700 (PDT)
-X-Gm-Message-State: ABuFfohovKwrvB+xirQfyhKAHkkTYnuaaLd8UAwM3jwJJTEbAVZCQPvW
-        Z7aJ11ENTiNr41JNOV1GEjMWNyMtslgmHW2gGF0=
-X-Google-Smtp-Source: ACcGV61X1bzrIsFQWEoWVcGsHYTpyfbXhPp5BlcP63vGcyIM6DnI7rbGVuMZiHaMY+tzDAeaKL5s36q2zXrOfzloNDc=
-X-Received: by 2002:ab0:115b:: with SMTP id g27mr15609617uac.89.1539953830707;
- Fri, 19 Oct 2018 05:57:10 -0700 (PDT)
+        Fri, 19 Oct 2018 17:04:02 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9JCvqxx1242651
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 19 Oct 2018 05:57:53 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9JCvquq1242648;
+        Fri, 19 Oct 2018 05:57:52 -0700
+Date:   Fri, 19 Oct 2018 05:57:52 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jithu Joseph <tipbot@zytor.com>
+Message-ID: <tip-b61b8bba18fe2b63d38fdaf9b83de25e2d787dfe@git.kernel.org>
+Cc:     reinette.chatre@intel.com, jithu.joseph@intel.com,
+        mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        hpa@zytor.com
+Reply-To: jithu.joseph@intel.com, reinette.chatre@intel.com,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+          mingo@kernel.org
+In-Reply-To: <231f742dbb7b00a31cc104416860e27dba6b072d.1539384145.git.reinette.chatre@intel.com>
+References: <231f742dbb7b00a31cc104416860e27dba6b072d.1539384145.git.reinette.chatre@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cache] x86/intel_rdt: Prevent pseudo-locking from using
+ stale pointers
+Git-Commit-ID: b61b8bba18fe2b63d38fdaf9b83de25e2d787dfe
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20181019120952.32763-1-hch@lst.de> <20181019120952.32763-3-hch@lst.de>
-In-Reply-To: <20181019120952.32763-3-hch@lst.de>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 19 Oct 2018 21:56:34 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATc54ZMaKLzabW=NqCQ+WSr-3C7PNAGL6OmOnQf_kgOyQ@mail.gmail.com>
-Message-ID: <CAK7LNATc54ZMaKLzabW=NqCQ+WSr-3C7PNAGL6OmOnQf_kgOyQ@mail.gmail.com>
-Subject: Re: [PATCH 2/9] arm: remove EISA kconfig option
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     mporter@kernel.crashing.org, Alex Bounine <alex.bou9@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-pci@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Russell King <linux@armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 9:10 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> No arm config enables EISA, and arm does not include drivers/eisa/Kconfig
-> which provides support for things like PCI to EISA bridges, so it is most
-> likely dead.
->
-> If this is wrong we will be able to resurrect it easily by selecting
-> HAVE_EISA for the right arm configs after this series.
+Commit-ID:  b61b8bba18fe2b63d38fdaf9b83de25e2d787dfe
+Gitweb:     https://git.kernel.org/tip/b61b8bba18fe2b63d38fdaf9b83de25e2d787dfe
+Author:     Jithu Joseph <jithu.joseph@intel.com>
+AuthorDate: Fri, 12 Oct 2018 15:51:01 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 19 Oct 2018 14:54:28 +0200
 
-What is your concern?
+x86/intel_rdt: Prevent pseudo-locking from using stale pointers
 
-This absolutely looks dead to me.
+When the last CPU in an rdt_domain goes offline, its rdt_domain struct gets
+freed. Current pseudo-locking code is unaware of this scenario and tries to
+dereference the freed structure in a few places.
 
+Add checks to prevent pseudo-locking code from doing this.
 
-> Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/arm/Kconfig | 15 ---------------
->  1 file changed, 15 deletions(-)
->
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index e8cd55a5b04c..e33735ce1c14 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -165,21 +165,6 @@ config HAVE_PROC_CPU
->  config NO_IOPORT_MAP
->         bool
->
-> -config EISA
-> -       bool
+While further work is needed to seamlessly restore resource groups (not
+just pseudo-locking) to their configuration when the domain is brought back
+online, the immediate issue of invalid pointers is addressed here.
 
-There is no prompt for this symbol.
-Hence, there is no way for a user to enable this directly.
+Fixes: f4e80d67a5274 ("x86/intel_rdt: Resctrl files reflect pseudo-locked information")
+Fixes: 443810fe61605 ("x86/intel_rdt: Create debugfs files for pseudo-locking testing")
+Fixes: 746e08590b864 ("x86/intel_rdt: Create character device exposing pseudo-locked region")
+Fixes: 33dc3e410a0d9 ("x86/intel_rdt: Make CPU information accessible for pseudo-locked regions")
+Signed-off-by: Jithu Joseph <jithu.joseph@intel.com>
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: fenghua.yu@intel.com
+Cc: tony.luck@intel.com
+Cc: gavin.hindman@intel.com
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/231f742dbb7b00a31cc104416860e27dba6b072d.1539384145.git.reinette.chatre@intel.com
 
-'select EISA' is the only way to enable it.
+---
+ arch/x86/kernel/cpu/intel_rdt.c             |  7 ++++++
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 12 +++++++--
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 10 ++++++++
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 38 +++++++++++++++++++++--------
+ 4 files changed, 55 insertions(+), 12 deletions(-)
 
-git grep 'select EISA'
-gave no hit.
-
-So, we can say it is dead.
-
-
-
-
-
-> -       ---help---
-> -         The Extended Industry Standard Architecture (EISA) bus was
-> -         developed as an open alternative to the IBM MicroChannel bus.
-> -
-> -         The EISA bus provided some of the features of the IBM MicroChannel
-> -         bus while maintaining backward compatibility with cards made for
-> -         the older ISA bus.  The EISA bus saw limited use between 1988 and
-> -         1995 when it was made obsolete by the PCI bus.
-> -
-> -         Say Y here if you are building a kernel for an EISA-based machine.
-> -
-> -         Otherwise, say N.
-> -
->  config SBUS
->         bool
-
-
-
-I guess the situation is the same as powerpc.
-
-The difference between arm and powerpc is the presence of help.
-
-You fold the powerpc change in 9/9.
-
-
--- 
-Best Regards
-Masahiro Yamada
+diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
+index 1214f3f7ec6d..44272b7107ad 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.c
++++ b/arch/x86/kernel/cpu/intel_rdt.c
+@@ -608,6 +608,13 @@ static void domain_remove_cpu(int cpu, struct rdt_resource *r)
+ 			cancel_delayed_work(&d->cqm_limbo);
+ 		}
+ 
++		/*
++		 * rdt_domain "d" is going to be freed below, so clear
++		 * its pointer from pseudo_lock_region struct.
++		 */
++		if (d->plr)
++			d->plr->d = NULL;
++
+ 		kfree(d->ctrl_val);
+ 		kfree(d->mbps_val);
+ 		bitmap_free(d->rmid_busy_llc);
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index 0f53049719cd..27937458c231 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -404,8 +404,16 @@ int rdtgroup_schemata_show(struct kernfs_open_file *of,
+ 			for_each_alloc_enabled_rdt_resource(r)
+ 				seq_printf(s, "%s:uninitialized\n", r->name);
+ 		} else if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
+-			seq_printf(s, "%s:%d=%x\n", rdtgrp->plr->r->name,
+-				   rdtgrp->plr->d->id, rdtgrp->plr->cbm);
++			if (!rdtgrp->plr->d) {
++				rdt_last_cmd_clear();
++				rdt_last_cmd_puts("Cache domain offline\n");
++				ret = -ENODEV;
++			} else {
++				seq_printf(s, "%s:%d=%x\n",
++					   rdtgrp->plr->r->name,
++					   rdtgrp->plr->d->id,
++					   rdtgrp->plr->cbm);
++			}
+ 		} else {
+ 			closid = rdtgrp->closid;
+ 			for_each_alloc_enabled_rdt_resource(r) {
+diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+index 41aeb431e834..966ac0c20d67 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
++++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+@@ -1174,6 +1174,11 @@ static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp, int sel)
+ 		goto out;
+ 	}
+ 
++	if (!plr->d) {
++		ret = -ENODEV;
++		goto out;
++	}
++
+ 	plr->thread_done = 0;
+ 	cpu = cpumask_first(&plr->d->cpu_mask);
+ 	if (!cpu_online(cpu)) {
+@@ -1494,6 +1499,11 @@ static int pseudo_lock_dev_mmap(struct file *filp, struct vm_area_struct *vma)
+ 
+ 	plr = rdtgrp->plr;
+ 
++	if (!plr->d) {
++		mutex_unlock(&rdtgroup_mutex);
++		return -ENODEV;
++	}
++
+ 	/*
+ 	 * Task is required to run with affinity to the cpus associated
+ 	 * with the pseudo-locked region. If this is not the case the task
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index dbc7fc98b60a..f27b8115ffa2 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -268,17 +268,27 @@ static int rdtgroup_cpus_show(struct kernfs_open_file *of,
+ 			      struct seq_file *s, void *v)
+ {
+ 	struct rdtgroup *rdtgrp;
++	struct cpumask *mask;
+ 	int ret = 0;
+ 
+ 	rdtgrp = rdtgroup_kn_lock_live(of->kn);
+ 
+ 	if (rdtgrp) {
+-		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED)
+-			seq_printf(s, is_cpu_list(of) ? "%*pbl\n" : "%*pb\n",
+-				   cpumask_pr_args(&rdtgrp->plr->d->cpu_mask));
+-		else
++		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
++			if (!rdtgrp->plr->d) {
++				rdt_last_cmd_clear();
++				rdt_last_cmd_puts("Cache domain offline\n");
++				ret = -ENODEV;
++			} else {
++				mask = &rdtgrp->plr->d->cpu_mask;
++				seq_printf(s, is_cpu_list(of) ?
++					   "%*pbl\n" : "%*pb\n",
++					   cpumask_pr_args(mask));
++			}
++		} else {
+ 			seq_printf(s, is_cpu_list(of) ? "%*pbl\n" : "%*pb\n",
+ 				   cpumask_pr_args(&rdtgrp->cpu_mask));
++		}
+ 	} else {
+ 		ret = -ENOENT;
+ 	}
+@@ -1282,6 +1292,7 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
+ 	struct rdt_resource *r;
+ 	struct rdt_domain *d;
+ 	unsigned int size;
++	int ret = 0;
+ 	bool sep;
+ 	u32 ctrl;
+ 
+@@ -1292,11 +1303,18 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
+ 	}
+ 
+ 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
+-		seq_printf(s, "%*s:", max_name_width, rdtgrp->plr->r->name);
+-		size = rdtgroup_cbm_to_size(rdtgrp->plr->r,
+-					    rdtgrp->plr->d,
+-					    rdtgrp->plr->cbm);
+-		seq_printf(s, "%d=%u\n", rdtgrp->plr->d->id, size);
++		if (!rdtgrp->plr->d) {
++			rdt_last_cmd_clear();
++			rdt_last_cmd_puts("Cache domain offline\n");
++			ret = -ENODEV;
++		} else {
++			seq_printf(s, "%*s:", max_name_width,
++				   rdtgrp->plr->r->name);
++			size = rdtgroup_cbm_to_size(rdtgrp->plr->r,
++						    rdtgrp->plr->d,
++						    rdtgrp->plr->cbm);
++			seq_printf(s, "%d=%u\n", rdtgrp->plr->d->id, size);
++		}
+ 		goto out;
+ 	}
+ 
+@@ -1326,7 +1344,7 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
+ out:
+ 	rdtgroup_kn_unlock(of->kn);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ /* rdtgroup information files for one cache resource. */
