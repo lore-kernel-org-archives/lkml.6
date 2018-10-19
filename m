@@ -2,160 +2,202 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA60ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 21:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 432EBECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 21:51:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C90820843
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 21:49:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="Vi8hlYD1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C90820843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=Dell.com
+	by mail.kernel.org (Postfix) with ESMTP id D038421476
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 21:51:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D038421476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbeJTF5s (ORCPT
+        id S1727638AbeJTF7C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 01:57:48 -0400
-Received: from esa1.dell-outbound.iphmx.com ([68.232.153.90]:57784 "EHLO
-        esa1.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726678AbeJTF5s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 01:57:48 -0400
-X-Greylist: delayed 666 seconds by postgrey-1.27 at vger.kernel.org; Sat, 20 Oct 2018 01:57:47 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1539985790; x=1571521790;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=e3G2PKsG2imjg7T1pMydF10IrOP0C1sL0Wb8z37I8Nw=;
-  b=Vi8hlYD1wr+zxtttywzOsUAF/OaUtWQt/qa99xeeomNdRrsn8vxr1sIU
-   6e74Wjrxh9XFlt20ARvLZH4cm5XoTHDRZHYGSh4vYt7JaJ1eXK5rV9dxr
-   VwPIH4vvuBZaus8hWkp8451FIS6zBxX88k3u6Xnr3hjWXh8xlrxShemOD
-   0=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EQAABNTspbhiWd50NkHAEBAQQBAQc?=
- =?us-ascii?q?EAQGBUQcBAQsBgVWCAhIoCowDX41HgXeVGIF6CwEBhGwChSo0DQ0BAwEBAgE?=
- =?us-ascii?q?BAgEBAhABAQEKCQsIKS+CNiKCYwEBAQMBEhUTLRIFCwIBCBQBIRBXAgQBDQU?=
- =?us-ascii?q?IGoJ/gXoInQiJVwEBAYFoM4oXjWaBEYMSilgCgSoBjRyPegYBApBkH4FPhHO?=
- =?us-ascii?q?JZ5YrAgQCBAUCFIFDgg5wgW6BToImDgmOGm+LBoEfAQE?=
-X-IPAS-Result: =?us-ascii?q?A2EQAABNTspbhiWd50NkHAEBAQQBAQcEAQGBUQcBAQsBg?=
- =?us-ascii?q?VWCAhIoCowDX41HgXeVGIF6CwEBhGwChSo0DQ0BAwEBAgEBAgEBAhABAQEKC?=
- =?us-ascii?q?QsIKS+CNiKCYwEBAQMBEhUTLRIFCwIBCBQBIRBXAgQBDQUIGoJ/gXoInQiJV?=
- =?us-ascii?q?wEBAYFoM4oXjWaBEYMSilgCgSoBjRyPegYBApBkH4FPhHOJZ5YrAgQCBAUCF?=
- =?us-ascii?q?IFDgg5wgW6BToImDgmOGm+LBoEfAQE?=
-Received: from mx0b-00154901.pphosted.com (HELO mx0a-00154901.pphosted.com) ([67.231.157.37])
-  by esa1.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 19 Oct 2018 16:38:15 -0500
-Received: from pps.filterd (m0089484.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9JLcQd5048451;
-        Fri, 19 Oct 2018 17:38:50 -0400
-Received: from esa3.dell-outbound2.iphmx.com (esa3.dell-outbound2.iphmx.com [68.232.154.63])
-        by mx0b-00154901.pphosted.com with ESMTP id 2n7ajvbupc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 19 Oct 2018 17:38:50 -0400
-From:   <Justin.Lee1@Dell.com>
-Received: from ausxippc101.us.dell.com ([143.166.85.207])
-  by esa3.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 20 Oct 2018 03:38:47 +0600
-X-LoopCount0: from 10.166.135.98
-X-IronPort-AV: E=Sophos;i="5.54,401,1534827600"; 
-   d="scan'208";a="1150324336"
-To:     <davem@davemloft.net>, <sam@mendozajonas.com>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <openbmc@lists.ozlabs.org>
-Subject: RE: [PATCH net-next 0/6] net/ncsi: Allow enabling multiple packages &
- channels
-Thread-Topic: [PATCH net-next 0/6] net/ncsi: Allow enabling multiple packages
- & channels
-Thread-Index: AQHUZpcNEQCD9YIJq0mCdRbo1sv1t6Ul8lWAgAEg4PA=
-Date:   Fri, 19 Oct 2018 21:38:47 +0000
-Message-ID: <79ee8c9befaa40e781bfeba4ba25d396@AUSX13MPS302.AMER.DELL.COM>
-References: <20181018035917.19413-1-sam@mendozajonas.com>
- <20181018.155647.1045018243241594303.davem@davemloft.net>
-In-Reply-To: <20181018.155647.1045018243241594303.davem@davemloft.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Sat, 20 Oct 2018 01:59:02 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59804 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726678AbeJTF7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 01:59:02 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1724830024E5;
+        Fri, 19 Oct 2018 21:51:09 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5CE0A10021B2;
+        Fri, 19 Oct 2018 21:50:53 +0000 (UTC)
+Date:   Fri, 19 Oct 2018 17:50:50 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-audit@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        luto@kernel.org, carlos@redhat.com, dhowells@redhat.com,
+        viro@zeniv.linux.org.uk, simo@redhat.com,
+        Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 (was ghak32) V4 02/10] audit: add container id
+Message-ID: <20181019215050.kuonluie6h3aokkt@madcap2.tricolour.ca>
+References: <cover.1533065887.git.rgb@redhat.com>
+ <12396e378a78ee8dd38c75f7730d67d8fbb08e02.1533065887.git.rgb@redhat.com>
+ <CAHC9VhTT7n4wDoaDGFXAK+wtcsMDDMRkQVCQ2jNYLKSFqFc+bA@mail.gmail.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-19_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=853 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810190193
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhTT7n4wDoaDGFXAK+wtcsMDDMRkQVCQ2jNYLKSFqFc+bA@mail.gmail.com>
+User-Agent: NeoMutt/20180512
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 19 Oct 2018 21:51:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sam,
+On 2018-10-19 15:38, Paul Moore wrote:
+> On Tue, Jul 31, 2018 at 4:11 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> >
+> > Implement the proc fs write to set the audit container identifier of a
+> > process, emitting an AUDIT_CONTAINER_OP record to document the event.
+> >
+> > This is a write from the container orchestrator task to a proc entry of
+> > the form /proc/PID/audit_containerid where PID is the process ID of the
+> > newly created task that is to become the first task in a container, or
+> > an additional task added to a container.
+> >
+> > The write expects up to a u64 value (unset: 18446744073709551615).
+> >
+> > The writer must have capability CAP_AUDIT_CONTROL.
+> >
+> > This will produce a record such as this:
+> >   type=CONTAINER_ID msg=audit(2018-06-06 12:39:29.636:26949) : op=set opid=2209 old-contid=18446744073709551615 contid=123456 pid=628 auid=root uid=root tty=ttyS0 ses=1 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 comm=bash exe=/usr/bin/bash res=yes
+> 
+> You need to update the record type in the example above.
 
-When I run the testing (enable multi-package (package 0 and 1) and=20
-multi-channel (channel 0 and 1 on both packages)), I see there are two chan=
-nels
-with TX enable.
+Yup, thanks.
 
-When I unplug/plug network cable, it seems the behavior is to keep one TX p=
-er
-package, is it the behavior you expect? All channels are behind the same et=
-h2,
-I would expect there is only one active TX.
+> > The "op" field indicates an initial set.  The "pid" to "ses" fields are
+> > the orchestrator while the "opid" field is the object's PID, the process
+> > being "contained".  Old and new audit container identifier values are
+> > given in the "contid" fields, while res indicates its success.
+> 
+> I understand Steve's concern around the "op" field, but I think it
+> might be a bit premature to think we might not need to do some sort of
+> audit container ID management in the future that would want to make
+> use of the CONTAINER_OP message type.  I would like to see the "op"
+> field preserved.
 
-I create the below file to expose driver's status. RX and TX are printing=20
-from the follow variables.
-nc->modes[NCSI_MODE_ENABLE].enable,
-nc->modes[NCSI_MODE_TX_ENABLE].enable,
+I strongly agree.
 
-cat /sys/kernel/debug/ncsi_protocol/ncsi_device_status;
-IFIDX IFNAME NAME   PID CID RX TX MP MC WP WC PS RU CR NQ
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-  2   eth2   ncsi0  000 000 1  1  1  1  1  1  1  1  1  0=20
-  2   eth2   ncsi1  000 001 1  0  1  1  1  1  1  1  1  0=20
-  2   eth2   ncsi2  001 000 1  1  1  1  1  1  1  1  1  0=20
-  2   eth2   ncsi3  001 001 1  0  1  1  1  1  1  1  1  0=20
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-M:  Multi-mode      P:  Package ID
-W:  Whitelist       C:  Channel ID
-PS: Poll Status
-RU: Running
-CR: Carrier OK
-NQ: Queue Stopped
+> > It is not permitted to unset the audit container identifier.
+> > A child inherits its parent's audit container identifier.
+> >
+> > See: https://github.com/linux-audit/audit-kernel/issues/90
+> > See: https://github.com/linux-audit/audit-userspace/issues/51
+> > See: https://github.com/linux-audit/audit-testsuite/issues/64
+> > See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
+> >
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > Acked-by: Serge Hallyn <serge@hallyn.com>
+> > Acked-by: Steve Grubb <sgrubb@redhat.com>
+> > ---
+> >  fs/proc/base.c             | 37 +++++++++++++++++++++++++
+> >  include/linux/audit.h      | 24 ++++++++++++++++
+> >  include/uapi/linux/audit.h |  2 ++
+> >  kernel/auditsc.c           | 68 ++++++++++++++++++++++++++++++++++++++++++++++
+> >  4 files changed, 131 insertions(+)
+> 
+> ...
+> 
+> > @@ -2112,6 +2114,72 @@ int audit_set_loginuid(kuid_t loginuid)
+> >  }
+> >
+> >  /**
+> > + * audit_set_contid - set current task's audit_context contid
+> > + * @contid: contid value
+> > + *
+> > + * Returns 0 on success, -EPERM on permission failure.
+> > + *
+> > + * Called (set) from fs/proc/base.c::proc_contid_write().
+> > + */
+> > +int audit_set_contid(struct task_struct *task, u64 contid)
+> > +{
+> > +       u64 oldcontid;
+> > +       int rc = 0;
+> > +       struct audit_buffer *ab;
+> > +       uid_t uid;
+> > +       struct tty_struct *tty;
+> > +       char comm[sizeof(current->comm)];
+> > +
+> > +       task_lock(task);
+> > +       /* Can't set if audit disabled */
+> > +       if (!task->audit) {
+> > +               task_unlock(task);
+> > +               return -ENOPROTOOPT;
+> > +       }
+> > +       oldcontid = audit_get_contid(task);
+> > +       read_lock(&tasklist_lock);
+> 
+> I assume lockdep was happy with nesting the tasklist_lock inside the task lock?
 
-Thanks,
-Justin
+Yup, I had gone through the logic and at first I had doubts, but the
+function comments and other usage reassured me (as well as in-kernel
+lock checks on boot) that this was the right order and approach.
 
+> > +       /* Don't allow the audit containerid to be unset */
+> > +       if (!audit_contid_valid(contid))
+> > +               rc = -EINVAL;
+> > +       /* if we don't have caps, reject */
+> > +       else if (!capable(CAP_AUDIT_CONTROL))
+> > +               rc = -EPERM;
+> > +       /* if task has children or is not single-threaded, deny */
+> > +       else if (!list_empty(&task->children))
+> > +               rc = -EBUSY;
+> > +       else if (!(thread_group_leader(task) && thread_group_empty(task)))
+> > +               rc = -EALREADY;
+> > +       read_unlock(&tasklist_lock);
+> > +       if (!rc)
+> > +               task->audit->contid = contid;
+> > +       task_unlock(task);
+> > +
+> > +       if (!audit_enabled)
+> > +               return rc;
+> > +
+> > +       ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONTAINER_OP);
+> > +       if (!ab)
+> > +               return rc;
+> > +
+> > +       uid = from_kuid(&init_user_ns, task_uid(current));
+> > +       tty = audit_get_tty(current);
+> > +       audit_log_format(ab, "op=set opid=%d old-contid=%llu contid=%llu pid=%d uid=%u auid=%u tty=%s ses=%u",
+> > +                        task_tgid_nr(task), oldcontid, contid,
+> > +                        task_tgid_nr(current), uid,
+> > +                        from_kuid(&init_user_ns, audit_get_loginuid(current)),
+> > +                        tty ? tty_name(tty) : "(none)",
+> > +                        audit_get_sessionid(current));
+> > +       audit_put_tty(tty);
+> > +       audit_log_task_context(ab);
+> > +       audit_log_format(ab, " comm=");
+> > +       audit_log_untrustedstring(ab, get_task_comm(comm, current));
+> > +       audit_log_d_path_exe(ab, current->mm);
+> > +       audit_log_format(ab, " res=%d", !rc);
+> > +       audit_log_end(ab);
+> > +       return rc;
+> > +}
+> 
+> -- 
+> paul moore
+> www.paul-moore.com
 
-From: Samuel Mendoza-Jonas <sam@mendozajonas.com>
-Date: Thu, 18 Oct 2018 14:59:11 +1100
+- RGB
 
-> This series extends the NCSI driver to configure multiple packages
-> and/or channels simultaneously. Since the RFC series this includes a few
-> extra changes to fix areas in the driver that either made this harder or
-> were roadblocks due to deviations from the NCSI specification.
->=20
-> Patches 1 & 2 fix two issues where the driver made assumptions about the
-> capabilities of the NCSI topology.
-> Patches 3 & 4 change some internal semantics slightly to make multi-mode
-> easier.
-> Patch 5 introduces a cleaner way of reconfiguring the NCSI configuration
-> and keeping track of channel states.
-> Patch 6 implements the main multi-package/multi-channel configuration,
-> configured via the Netlink interface.
->=20
-> Readers who have an interesting NCSI setup - especially multi-package
-> with HWA - please test! I think I've covered all permutations but I
-> don't have infinite hardware to test on.
-
-
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
