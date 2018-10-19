@@ -7,115 +7,120 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80877ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E84FECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 05:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 313DC21476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 04:59:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14D8B2145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 05:00:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nb41G2bD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 313DC21476
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s45Wc0k0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14D8B2145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbeJSNDs (ORCPT
+        id S1727232AbeJSNEd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 09:03:48 -0400
-Received: from mail-qt1-f170.google.com ([209.85.160.170]:45557 "EHLO
-        mail-qt1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726478AbeJSNDs (ORCPT
+        Fri, 19 Oct 2018 09:04:33 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33903 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726478AbeJSNEd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 09:03:48 -0400
-Received: by mail-qt1-f170.google.com with SMTP id e10-v6so36993198qtq.12
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 21:59:24 -0700 (PDT)
+        Fri, 19 Oct 2018 09:04:33 -0400
+Received: by mail-pg1-f195.google.com with SMTP id g12-v6so15242798pgs.1;
+        Thu, 18 Oct 2018 22:00:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=XfKiwIcusmyybiuGqWHfRw2YW44uN5ht5bJxIJ2cGyw=;
-        b=nb41G2bD7MFQIcGiFTR/1wM3MF8IvClde0ssDS/10JiQv0M43FWoHbiVPHSamkt8i/
-         I+Cs8BSTphqvXTXkJhkIT+CsSE79JJmIC7Pov4nMnXLX16+db+2nL3By9SEfVDYpU4e6
-         V+JNNbw9Zm3rspkhbqkKrhK8eJEypZw6RJ0lHvCFIQ9NHyzJkleITThYUkK9OkqmUahd
-         gdmCOQvB8V20XofARGfOdR5urijjXr/TyImmMquBK/yTeAOmp2YuQCP3Zkic4XBKuNxP
-         ChJRyh+Kx8/FSZ0yhukWs72lcpcggW08UfvT/Pnc2lsF3KZkoJrVFl/nH1zAqCUvcA2l
-         XRCw==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=sLS02Ys+OMIWhw+yNf5/06qzYeiO5cQY5DdT8X34mjU=;
+        b=s45Wc0k0Byoj2VVd+itXhQaAdS3xZwW8qY/k1ZDe6vyOX/GVyITR+P/1um4jMHzIx7
+         ZD7XgV4FBRkcelP4ABKxfzU3JsbZQ/kZuFOYW8hwmPrryZ/GiO1HkTG6F2xQCO9ACe89
+         r/xXsuY6BdeHqvfOhqjulMhvQRiib88P2vyT1iL2Krbd9e9Tv85z/ATHjHiutA4gbx3X
+         zgS0eeLBpbQl3eoZSui0nUSvE1o1cfyAz8kMV+x1RzM9/mQUc6HLBd0XSJuskw7AwJlE
+         nAjmIwUrJlpSV4d+tQj6X07fR/MohCPAHp2d4qcj+ggiCFZwJVLol4KSEN9c+o1yrayH
+         Ot4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=XfKiwIcusmyybiuGqWHfRw2YW44uN5ht5bJxIJ2cGyw=;
-        b=mghNIOGFVX7LABw8dJLWZifBlLq3KrK7wDDzFuKHp9Z8TjqeKadmgxD4DXKJTK7mmb
-         vn6RV/XMqkKapR68wVrQrRyflTHg3+qP3dxd3LTOMQ3viILhcdiw4Ob9seSsaP3OVQsn
-         AfVHSKKXbL36NnZpu7CiHc+AgnBTxZPdXLrkfl/2MFKKdblT9yfLlWvtvTeE++AbTz+I
-         kfhvyIh/PpFNZkG6q0/0kBAP7bUnHIsyVfqgYZX6JRuc2+9pUOZPivDBWfRCI/4/pDKv
-         hlGkclKrwIIVvsUl+dsJH/BHDpEWPWNqtXxqwr/wEkUkUmIZcU1nL6urgm3vVDCb3whe
-         aIWQ==
-X-Gm-Message-State: ABuFfogfnzr/ur2lNe3hyUH3CPcEqpqkhR3eG5hv/T/6hWMco6kxU2GP
-        GU6rOt6RvHFpa4jPcaxy+4xfazJv3MVw0e1FIp9aGs+/
-X-Google-Smtp-Source: ACcGV63ttRGfcUZKmwzcmKXTv0A3sVjTjVZJbEe03UImf2Lj1jKIH62Ii9rnAl1A7yznJ2hpZ5bnMns7wJu0a5n9RNE=
-X-Received: by 2002:ac8:1739:: with SMTP id w54-v6mr31372263qtj.76.1539925164109;
- Thu, 18 Oct 2018 21:59:24 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sLS02Ys+OMIWhw+yNf5/06qzYeiO5cQY5DdT8X34mjU=;
+        b=bS5PXt3gUzbQhKTu8Xwe4KGlKUCCEnsQiKhncTfB6PqJj5m6gHZgVF4eXsK2tnavj2
+         ZuKXRBipcPn8YF7jx3YfUjnkoZsF0JZ33a3BfN2TBqs0s78zDhg3Tc4FeIrJ6FIZYOKz
+         FRjtMegSm0zangG654L6d+FCccV3fwo/ju3NT7sbiFLfaqadlrJR0k4K79e+dhONiPZK
+         6Lnxvg8eMV0gbTZXzmQ6EU7mGkndQaRSxpiU0+v8n1x7FXP8cAVgHFBQ+kIZaLh4zldV
+         mUBIOVs5v4rmqIjGlaWM0Oi7BT45LqiE/RsN+4X3/G/eHHJ806fpLVpgBcKC8ogidYMe
+         nG/A==
+X-Gm-Message-State: ABuFfoj8sAXjegRqCec8leQfz29yvYNcADX6KMSlZ9CCb4/neTovTZSx
+        DC3+LBs4vzenuo0qUSh+EWl1Iv6w
+X-Google-Smtp-Source: ACcGV61CCl6CBmfAeR+uXrxnDlA6la1edxKuEVcTLg4w63AJov7qKKF8wfFoOYf5d7b+71J6qUiQZg==
+X-Received: by 2002:a65:4882:: with SMTP id n2-v6mr29726099pgs.225.1539925209479;
+        Thu, 18 Oct 2018 22:00:09 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id b81-v6sm40921622pfm.96.2018.10.18.22.00.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Oct 2018 22:00:08 -0700 (PDT)
+Subject: Re: [PATCH v5 00/18] of: overlay: validation checks, subsequent fixes
+From:   Frank Rowand <frowand.list@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
+References: <1539902796-8382-1-git-send-email-frowand.list@gmail.com>
+Message-ID: <5d8a5e46-b186-9c15-890a-ae6481652eaa@gmail.com>
+Date:   Thu, 18 Oct 2018 22:00:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Fri, 19 Oct 2018 14:59:11 +1000
-Message-ID: <CAPM=9txsa9pSu0QaL3rWfSViRBkY3GB2Hm8=_SDp_TTiwsP_pQ@mail.gmail.com>
-Subject: [git pull] drm fixes for 4.19 final
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1539902796-8382-1-git-send-email-frowand.list@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On 10/18/18 15:46, frowand.list@gmail.com wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
+> 
+> Add checks to (1) overlay apply process and (2) memory freeing
+> triggered by overlay release.  The checks are intended to detect
+> possible memory leaks and invalid overlays.
+> 
+> The checks revealed bugs in existing code.  Fixed the bugs.
+> 
+> While fixing bugs, noted other issues, which are fixed in
+> separate patches.
 
-Just a last set of misc core fixes for final.
 
-4 fixes, one use after free, one fb integration fix, one EDID fix, and
-one laptop panel quirk,
+git version of the series:
 
-Thanks,
-Dave.
 
-drm-fixes-2018-10-19:
-drm: one set of misc fixes for final release
-The following changes since commit 35a7f35ad1b150ddf59a41dcac7b2fa32982be0e:
+git://git.kernel.org/pub/scm/linux/kernel/git/frowand/linux.git
 
-  Linux 4.19-rc8 (2018-10-15 07:20:24 +0200)
+$ git checkout v4.19-rc1--kfree_validate--v5
 
-are available in the Git repository at:
-
-  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-10-19
-
-for you to fetch changes up to f8e6e1b6f0ae3bb91cdcd08213d36a0ce6e98535:
-
-  Merge tag 'drm-misc-fixes-2018-10-18' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-fixes (2018-10-19
-13:52:03 +1000)
-
-----------------------------------------------------------------
-drm: one set of misc fixes for final release
-
-----------------------------------------------------------------
-Clint Taylor (1):
-      drm/edid: VSDB yCBCr420 Deep Color mode bit definitions
-
-Dave Airlie (1):
-      Merge tag 'drm-misc-fixes-2018-10-18' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
-
-Eugeniy Paltsev (1):
-      drm: fb-helper: Reject all pixel format changing requests
-
-Kai-Heng Feng (1):
-      drm/edid: Add 6 bpc quirk for BOE panel in HP Pavilion 15-n233sl
-
-Tomi Valkeinen (1):
-      drm: fix use of freed memory in drm_mode_setcrtc
-
- drivers/gpu/drm/drm_crtc.c      | 10 +++--
- drivers/gpu/drm/drm_edid.c      |  5 ++-
- drivers/gpu/drm/drm_fb_helper.c | 91 ++++++++++++-----------------------------
- include/drm/drm_edid.h          |  6 +--
- 4 files changed, 40 insertions(+), 72 deletions(-)
+$ git log --oneline v4.19-rc1..
+62e8f28bb14b of: unittest: initialize args before calling of_*parse_*()
+cc8b630f0c7f of: unittest: find overlays[] entry by name instead of index
+b80a8e974e0f of: unittest: allow base devicetree to have symbol metadata
+bbcd6ead8e36 of: overlay: set node fields from properties when add new overlay node
+e02d06f99646 of: unittest: remove unused of_unittest_apply_overlay() argument
+484ba7f7eb4a of: overlay: check prevents multiple fragments touching same property
+4640b81a605b of: overlay: check prevents multiple fragments add or delete same node
+698f942ee230 of: overlay: test case of two fragments adding same node
+5fe758e00f1f of: overlay: make all pr_debug() and pr_err() messages unique
+868c6f70eed5 of: overlay: validate overlay properties #address-cells and #size-cells
+06bc44ce477f of: overlay: reorder fields in struct fragment
+584f4537377c of: dynamic: change type of of_{at,de}tach_node() to void
+54f30ea3bf65 of: overlay: do not duplicate properties from overlay for new nodes
+ad4180c300fc of: overlay: use prop add changeset entry for property in new nodes
+b1bdca739700 powerpc/pseries: add of_node_put() in dlpar_detach_node()
+8e0290d5cb62 of: overlay: add missing of_node_get() in __of_attach_node_sysfs
+93e221495a9f of: overlay: add missing of_node_put() after add new node to changeset
+86043f08e539 of: overlay: add tests to validate kfrees from overlay removal
