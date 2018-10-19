@@ -2,111 +2,127 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A09ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 05:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7358ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 05:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F0A72145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 05:00:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D39321470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 05:08:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mIF+7pkE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F0A72145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="1JTGbee2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D39321470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727245AbeJSNFV (ORCPT
+        id S1727220AbeJSNML (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 09:05:21 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42670 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726478AbeJSNFU (ORCPT
+        Fri, 19 Oct 2018 09:12:11 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:61395 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726942AbeJSNML (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 09:05:20 -0400
-Received: by mail-pf1-f193.google.com with SMTP id f26-v6so15927603pfn.9
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 22:00:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zH1B+xgskiRAT5rePx+9xDVnmVM332/H+OPze+6IO8M=;
-        b=mIF+7pkE+wr9lXdJ8VZ/A1XiWXaygWgjgn2ODpz76BjD7bGiMG0j/dLaRqct8Y3ym2
-         7GE43WxFkKeiueEB/gULfyANzeNe+CrnedE4pN1NsNg5RgdmQlIT5jIZeK9hQDdisD3a
-         Oi6ckYeb7a0X2WY2yJzhmKoIG4YDqvtFlGGQJojgxRDs6viojtv6l0KWaNwo0rkYL3Go
-         bnvYwzBaqbzYheQb6dyCnQxd9eNkAfpUIZQMv4dd65BobvhIY7N+3/nW/qqbsuKy9sz/
-         aBIUWM2FJRJmiOm4T8c5Zb+K/43X66WrZmw61HVBqJ1UtOsweMVOEFi0C4s6Josi00+e
-         a9+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zH1B+xgskiRAT5rePx+9xDVnmVM332/H+OPze+6IO8M=;
-        b=tuBw/2codle+mYtpfIfBoSnrSIvoBVIxN+SrGFA65I9WhAAZWYkANDanEz286TbP8c
-         RYAFCPl4usAc4naR7EC/O6t34DfWnxYCwMW2TA/HPmun/qBvpmwVLUvrNp0MGs0eIUrG
-         OdOIRFNE1v6ljg1nqnIYi58uU5x7H0VWeY8Kfn75+JjiNLmYOQ2p8L67uMPs54i7Z88H
-         pU06FdbE//myMidRMYMhXQQuvrE+uJh1/T5fxnyOdGboecgHT4BLus8DEBrT6RUWYNea
-         pIfHH3F0DQn7EC1XQDUzg9dNJYCwWjj8MIKWreC1n+/LZbRuE9oRe7Bamii3oDr/G1+M
-         lXbg==
-X-Gm-Message-State: ABuFfojOx6jq0y9rY+rrmZqmUHkcixOuTMg12HDDgWxBszZE7rwSroNQ
-        d/CeTFNxDHB11BqJo3cC2yU=
-X-Google-Smtp-Source: ACcGV63djeapbjuMqyAqh1aNlW9o02l9oInXubQKuYTJwfyicwVnkJ4YIlaeY/r80bBSUaq/LDVc2w==
-X-Received: by 2002:a62:2e02:: with SMTP id u2-v6mr34184042pfu.134.1539925256202;
-        Thu, 18 Oct 2018 22:00:56 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:8c1d])
-        by smtp.gmail.com with ESMTPSA id q2-v6sm37402955pfc.17.2018.10.18.22.00.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 22:00:55 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 22:00:53 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Nadav Amit <namit@vmware.com>, Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>, daniel@iogearbox.net,
-        guro@fb.com
-Subject: Re: [RFC PATCH 1/5] x86: introduce preemption disable prefix
-Message-ID: <20181019050051.bs2kk4sagu7hpwxx@ast-mbp.dhcp.thefacebook.com>
-References: <20181018005420.82993-1-namit@vmware.com>
- <20181018005420.82993-2-namit@vmware.com>
- <D247AB7C-2890-49CE-B102-163E5B368FC2@amacapital.net>
- <07255D2B-0243-4254-B62A-37050C44207E@vmware.com>
- <CALCETrXEG8OrMpB3VBS9RF41O_MwtPmXBazkdSGE0ohZmXDcBw@mail.gmail.com>
- <925F22EA-F8CB-4194-B96B-378409ED7918@vmware.com>
- <2626124E-7344-42F3-AD07-0BB34D62A9EE@amacapital.net>
- <6F1FD9DA-5E86-42A2-8EAF-05F5D70FE2EF@vmware.com>
- <CALCETrWjeqMs7Z6auStk9VGT9vAn+U5REGE+=TBv1Yh4kmOF3w@mail.gmail.com>
+        Fri, 19 Oct 2018 09:12:11 -0400
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w9J57fTS026021;
+        Fri, 19 Oct 2018 14:07:41 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w9J57fTS026021
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1539925662;
+        bh=mYjXID3VQmfIEufK9cARuqSnPYUqryDcSZUlpJZAewA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=1JTGbee2r9AFN486BefMRz+x/MnvhV782D5VOFcoLzFR25CTcHR80+3mm3JDRkCVY
+         voUk5wfnlP2AHBX8/ksMEsrO82fOFpQh8Xt/3ATIox7X5C42WwK8Qw5H74XbFDiOFO
+         iP71hw/QkMrPNLCs71S8JySOqbsNhxkG/V34wEH8pw/miIPOUnOZdWY4yg8+Og9pqA
+         C5yp2T7BXiiTOOZNfKEjkgjDAJQNW3CEdLH00x6on3LdN7JGEzWlkpZneYvvFOQ35S
+         B+5KF7EiHwXrgeZ3LUtukmSe2etI+MKICK56+U4Yo2d3ujJPG2XB2iL89NuL8N9Pnj
+         r6KvV12Ubwxrg==
+X-Nifty-SrcIP: [209.85.217.54]
+Received: by mail-vs1-f54.google.com with SMTP id i10so24520711vsm.13;
+        Thu, 18 Oct 2018 22:07:41 -0700 (PDT)
+X-Gm-Message-State: ABuFfohJZwtVE5evqJlF5rKjjTo4aoJZEf5fJTkmcrRkt7e0vCV/LhAf
+        2dqtQSBECpaLs2Ct3qrZEbOmT8Z1gje5qo+22go=
+X-Google-Smtp-Source: ACcGV60+ZPcmOytHtgLIeEc9t4tMNXp0dYDWA083Ni5ycAjI7Cy45BYFIxfylO9JQUtZhKE4X5jSt+ZyOSVmOoUm1Dk=
+X-Received: by 2002:a67:3793:: with SMTP id j19mr13514804vsi.215.1539925660531;
+ Thu, 18 Oct 2018 22:07:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrWjeqMs7Z6auStk9VGT9vAn+U5REGE+=TBv1Yh4kmOF3w@mail.gmail.com>
-User-Agent: NeoMutt/20180223
+References: <20181017080201.10866-1-hch@lst.de> <20181017080201.10866-5-hch@lst.de>
+In-Reply-To: <20181017080201.10866-5-hch@lst.de>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 19 Oct 2018 14:07:04 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASJaRrut2neRa92CudohW4A-2=GHMzgEpOzT97VdGuhng@mail.gmail.com>
+Message-ID: <CAK7LNASJaRrut2neRa92CudohW4A-2=GHMzgEpOzT97VdGuhng@mail.gmail.com>
+Subject: Re: [PATCH 4/8] PCI: consolidate PCI config entry in drivers/pci
+To:     Christoph Hellwig <hch@lst.de>, linux-pci@vger.kernel.org
+Cc:     mporter@kernel.crashing.org, Alex Bounine <alex.bou9@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> >
-> > Another example is __BPF_PROG_RUN_ARRAY(), which also uses
-> > preempt_enable_no_resched().
-> 
-> Alexei, I think this code is just wrong.
+On Wed, Oct 17, 2018 at 5:04 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> There is no good reason to duplicate the PCI menu in every architecture.
+> Instead provide a selectable HAS_PCI symbol that indicates availability
 
-why 'just wrong' ?
+HAS_PCI -> HAVE_PCI
 
-> Do you know why it uses
-> preempt_enable_no_resched()?
 
-dont recall precisely.
-we could be preemptable at the point where macro is called.
-I think the goal of no_resched was to avoid adding scheduling points
-where they didn't exist before just because a prog ran for few nsec.
-May be Daniel or Roman remember.
+> of PCI support and the handle the rest in drivers/pci.
+>
+> Note that for powerpc we now select HAVE_PCI globally instead of the
+> convoluted mess of conditional or or non-conditional support per board,
+> similar to what we do e.g. on x86.  For alpha PCI is selected for the
+> non-jensen configs as it was the default before, and a lot of code does
+> not compile without PCI enabled.  On other architectures with limited
+> PCI support that wasn't as complicated I've left the selection as-is.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: Thomas Gleixner <tglx@linutronix.de>
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
+
+
+Just in case, could you double-check these?
+PCI_ENDPOINT
+PCI_ENDPOINT_CONFIGFS
+PCI_EPF_TEST
+
+
+Previously, architecture without "source drivers/pci/Kconfig"
+could not enable PCI_ENDPOINT.
+
+Now, any architecture can enable it
+regardless of its actual PCI availability
+because PCI_ENDPOINT is only guarded by HAS_DMA.
+
+
+We could add 'depends on HAVE_PCI' or something
+to guard it to avoid changing the logic.
+
+
+config PCI_ENDPOINT
+        bool "PCI Endpoint Support"
+        depends on HAVE_PCI     # Is this correct ??
+        depends on HAS_DMA
+
+
+or better to have 'depends on PCI' ?
+
+
+PCI ML is also CC'ed, so comments are appreciated.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
