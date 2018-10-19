@@ -2,119 +2,112 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7ACDECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F4DECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:06:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A61AA2064A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:04:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A61AA2064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CF8982064A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:06:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PouQE5fA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF8982064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbeJSRKC (ORCPT
+        id S1727382AbeJSRLQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 13:10:02 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49210 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726399AbeJSRKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 13:10:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 917C180D;
-        Fri, 19 Oct 2018 02:04:50 -0700 (PDT)
-Received: from [10.37.10.27] (unknown [10.37.10.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C4CD83F5D3;
-        Fri, 19 Oct 2018 02:04:44 -0700 (PDT)
-Subject: Re: [PATCH v7 0/8] arm64: untag user pointers passed to the kernel
-To:     Evgenii Stepanov <eugenis@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        Fri, 19 Oct 2018 13:11:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56844 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726399AbeJSRLQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 13:11:16 -0400
+Received: from localhost (unknown [106.200.232.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 857402064A;
+        Fri, 19 Oct 2018 09:06:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539939964;
+        bh=wzUNtwyRnyAUzdraZceJTyz87zIdF0S0nCg0zyQDH2U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PouQE5fAwKVXYtvI9FHEoKRHTrvvWWstQrCLCO1WufsHL3YDJKY7MppR67lhKUynJ
+         IA9YfZHfOl6PCWitNro9us1xeiLF2hdydU5U/RXMqmWJ51OCaSRtOafurDm0YDC72e
+         89JbxR+2L0Q5eshrd/UPTV1GVkxGjlANBSCT5b8s=
+Date:   Fri, 19 Oct 2018 14:35:55 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-References: <cover.1538485901.git.andreyknvl@google.com>
- <be684ce5-92fd-e970-b002-83452cf50abd@arm.com>
- <CAAeHK+yEZTLjgSj8YUzeJec9Pp2TwuLT5nCa1OpfBLXJkx_hhg@mail.gmail.com>
- <CAFKCwrh4-BvFB_R1J0LWcbfeR=d02OazowFuMU+hmq8Y=Dx+4w@mail.gmail.com>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <9bb7fefd-3f8f-266a-3cc9-cc64f8927206@arm.com>
-Date:   Fri, 19 Oct 2018 10:04:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: pm8941-pwrkey - Add pms405 pwrkey support
+Message-ID: <20181019090555.GH2400@vkoul-mobl>
+References: <20180920014928.15422-1-bjorn.andersson@linaro.org>
+ <20181018052437.GW2400@vkoul-mobl>
+ <20181019000116.GD210757@dtor-ws>
 MIME-Version: 1.0
-In-Reply-To: <CAFKCwrh4-BvFB_R1J0LWcbfeR=d02OazowFuMU+hmq8Y=Dx+4w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181019000116.GD210757@dtor-ws>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/18 9:25 PM, Evgenii Stepanov wrote:
-> On Wed, Oct 17, 2018 at 7:20 AM, Andrey Konovalov <andreyknvl@google.com> wrote:
->> On Wed, Oct 17, 2018 at 4:06 PM, Vincenzo Frascino
->> <vincenzo.frascino@arm.com> wrote:
->>> Hi Andrey,
->>> I have been thinking a bit lately on how to address the problem of user tagged pointers passed to the kernel through syscalls, and IMHO probably the best way we have to catch them all and make sure that the approach is maintainable in the long term is to introduce shims that tag/untag the pointers passed to the kernel.
->>>
->>> In details, what I am proposing can live either in userspace (preferred solution so that we do not have to relax the ABI) or in kernel space and can be summarized as follows:
->>>  - A shim is specific to a syscall and is called by the libc when it needs to invoke the respective syscall.
->>>  - It is required only if the syscall accepts pointers.
->>>  - It saves the tags of a pointers passed to the syscall in memory (same approach if the we are passing a struct that contains pointers to the kernel, with the difference that all the tags of the pointers in the struct need to be saved singularly)
->>>  - Untags the pointers
->>>  - Invokes the syscall
->>>  - Retags the pointers with the tags stored in memory
->>>  - Returns
->>>
->>> What do you think?
->>
->> Hi Vincenzo,
->>
->> If I correctly understand what you are proposing, I'm not sure if that
->> would work with the countless number of different ioctl calls. For
->> example when an ioctl accepts a struct with a bunch of pointer fields.
->> In this case a shim like the one you propose can't live in userspace,
->> since libc doesn't know about the interface of all ioctls, so it can't
->> know which fields to untag. The kernel knows about those interfaces
->> (since the kernel implements them), but then we would need a custom
->> shim for each ioctl variation, which doesn't seem practical.
+On 18-10-18, 17:01, Dmitry Torokhov wrote:
+> On Thu, Oct 18, 2018 at 10:54:37AM +0530, Vinod wrote:
+> > On 19-09-18, 18:49, Bjorn Andersson wrote:
+> > > From: Vinod Koul <vkoul@kernel.org>
+> > > 
+> > > Update the binding and driver for pms405 pwrkey.
+> > 
+> > Rob, Dmitry
+> > 
+> > Gentle reminder for this patch...
+> > 
+> > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > ---
+> > >  Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt | 1 +
+> > >  drivers/input/misc/pm8941-pwrkey.c                             | 1 +
+> > >  2 files changed, 2 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
+> > > index 34ab5763f494..736fba3bad54 100644
+> > > --- a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
+> > > +++ b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
+> > > @@ -8,6 +8,7 @@ PROPERTIES
+> > >  	Definition: must be one of:
+> > >  		    "qcom,pm8941-pwrkey"
+> > >  		    "qcom,pm8941-resin"
+> > > +		    "qcom,pms405-pwrkey"
+> > >  
+> > >  - reg:
+> > >  	Usage: required
+> > > diff --git a/drivers/input/misc/pm8941-pwrkey.c b/drivers/input/misc/pm8941-pwrkey.c
+> > > index 48153e0ca19a..fccf63263c1c 100644
+> > > --- a/drivers/input/misc/pm8941-pwrkey.c
+> > > +++ b/drivers/input/misc/pm8941-pwrkey.c
+> > > @@ -317,6 +317,7 @@ static const struct pm8941_data resin_data = {
+> > >  static const struct of_device_id pm8941_pwr_key_id_table[] = {
+> > >  	{ .compatible = "qcom,pm8941-pwrkey", .data = &pwrkey_data },
+> > >  	{ .compatible = "qcom,pm8941-resin", .data = &resin_data },
+> > > +	{ .compatible = "qcom,pms405-pwrkey", .data = &pwrkey_data },
 > 
-> The current patchset handles majority of pointers in a just a few
-> common places, like copy_from_user. Userspace shims will need to untag
-> & retag all pointer arguments - we are looking at hundreds if not
-> thousands of shims. They will also be located in a different code base
-> from the syscall / ioctl implementations, which would make them
-> impossible to keep up to date.
-> 
+> I am sure I asked this question before (in context of a different
+> driver), but why do we need this compatible if we already have
+> pm8941-pwrkey compatible? Isn't pms405-pwrkey compatible with
+> pm8941-pwrkey as far as power key block goes? In which cases do we need
+> new compatibles and when can we reuse existing ones? Rob?
 
-I agree with both of you, ioctl is the real show stopper for this approach. Thanks for pointing this out.
+Relooking I do think that reuse of pm8941-pwrkey is entirely feasible,
+thanks for the suggestion. We can drop this and I will update DTS
 
 -- 
-Regards,
-Vincenzo
+~Vinod
