@@ -2,129 +2,127 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5ADECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:20:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1E7ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:20:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 613DF21486
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:20:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E09321486
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:20:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="r0EVb9Iw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 613DF21486
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="rYUZi0+S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E09321486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbeJSTZo (ORCPT
+        id S1727334AbeJSTZq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 15:25:44 -0400
+        Fri, 19 Oct 2018 15:25:46 -0400
 Received: from esa3.microchip.iphmx.com ([68.232.153.233]:24716 "EHLO
         esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726931AbeJSTZo (ORCPT
+        with ESMTP id S1726931AbeJSTZp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 15:25:44 -0400
+        Fri, 19 Oct 2018 15:25:45 -0400
 X-IronPort-AV: E=Sophos;i="5.54,399,1534834800"; 
-   d="scan'208";a="21941064"
+   d="scan'208";a="21941075"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 19 Oct 2018 04:20:04 -0700
-Received: from NAM01-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Fri, 19 Oct 2018 04:18:44 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 19 Oct 2018 04:20:07 -0700
+Received: from NAM05-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.106) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Fri, 19 Oct 2018 04:18:46 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=microchiptechnology.onmicrosoft.com;
  s=selector1-microchiptechnology-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aW2WIqGUDlhCSUS28KR7GLp7cYk3J1e+dvgtU1S9ycA=;
- b=r0EVb9Iw26jSdcRHI/BHfqg0hNhCH1UUIswjE+bRtDMxYVRO48ZKullcHDcOi5lVdioP3dPOZ7dsFXWUsoD6Hta+6mZCRvsIaSPdVMGWY4uMKD+Q2+Hm+PWB/j8OUmnGtwGfbcEOxHLDp/Sbz5W5hMLcW7Y+tEzTbggwstCmyrM=
+ bh=CKDgLUd7PYs5mqmYHbgG6J02CmXbh3LIMhbyfX1iomE=;
+ b=rYUZi0+SEbYrt3FHDJVobi5MV+B317CuRgYfSCe8GT/u0fCcJ7Th4AWpXiIwk68i9R6tc1avP4cQBnWQqIs9TJ4LhRGIDFiGR5t4L0zqCHpdK226xpG4Yxd65nrNtQ9a3uT53PLzClnP5N8d1GtFpOyh9fqScP/ffqTD2bReipE=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Claudiu.Beznea@microchip.com; 
 Received: from [10.145.4.38] (94.177.32.154) by
- SN1PR11MB0750.namprd11.prod.outlook.com (2a01:111:e400:c426::16) with
+ BLUPR11MB0738.namprd11.prod.outlook.com (2a01:111:e400:594c::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1228.25; Fri, 19 Oct
- 2018 11:18:36 +0000
-Subject: Re: [RESEND PATCH v5 0/9] extend PWM framework to support PWM modes
+ 2018 11:18:35 +0000
+Subject: Re: [RESEND PATCH v5 1/9] pwm: extend PWM framework with PWM modes
 To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <Nicolas.Ferre@microchip.com>, <robh+dt@kernel.org>,
-        <alexandre.belloni@bootlin.com>, <linux-pwm@vger.kernel.org>,
-        <treding@nvidia.com>, <shc_work@mail.ru>, <mark.rutland@arm.com>,
-        <corbet@lwn.net>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <thomas.petazzoni@bootlin.com>
+CC:     <mark.rutland@arm.com>, <linux-pwm@vger.kernel.org>,
+        <alexandre.belloni@bootlin.com>, <shc_work@mail.ru>,
+        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <robh+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>
 References: <1535461286-12308-1-git-send-email-claudiu.beznea@microchip.com>
- <b95d0de2-1a97-36f0-03ad-3b5e52b1fa5d@microchip.com>
- <20181016120321.GG8852@ulmo>
- <fca49cff-f883-baf4-4bd3-80f45635bb5a@microchip.com>
- <20181018160038.GD6226@ulmo>
+ <1535461286-12308-2-git-send-email-claudiu.beznea@microchip.com>
+ <20181016122508.GH8852@ulmo>
+ <139cc421-ac12-1262-bc32-763731528ccf@microchip.com>
+ <20181018153250.GC6226@ulmo>
 From:   Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Message-ID: <67708c92-edbb-0429-d7e7-ac000968c271@microchip.com>
-Date:   Fri, 19 Oct 2018 14:18:25 +0300
+Message-ID: <1e98ea6f-1ff8-9822-fa77-ffbedb8e2443@microchip.com>
+Date:   Fri, 19 Oct 2018 14:18:22 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181018160038.GD6226@ulmo>
+In-Reply-To: <20181018153250.GC6226@ulmo>
 Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [94.177.32.154]
-X-ClientProxiedBy: CWLP265CA0064.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:401:12::28) To SN1PR11MB0750.namprd11.prod.outlook.com
- (2a01:111:e400:c426::16)
+X-ClientProxiedBy: CWLP265CA0063.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:401:12::27) To BLUPR11MB0738.namprd11.prod.outlook.com
+ (2a01:111:e400:594c::16)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 51a8a025-6ab6-4350-a18e-08d635b49f94
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN1PR11MB0750;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR11MB0750;3:f0TDMxpyODFH3u2LaKXg5IOJQB1UPTOioT4xsdekbtpa+LKvduzzsXc3Jw/u4gAlFu2weSjuQZXBl4W5ahPn4R1XDBXq54ExeaE4b2HY0TJQwwDSYZgMgddTgg9/AsD6SVCn2G1onQ5m96/56FviJSjmfZtq+lYZth7Xfq6qBlXzUpiTTMqMPtDB1+QfICsck9rZJquUsPVmSR7GHwl1JxD9mM2SxIt7uK381UC41SUGDki1/zRzLXXzksblrZSG;25:uq4iUY2dmcPuro/aqZT4Mc82Mnl/2u8nL6Tl6Hu/aEG59xDiWNfSMCMtjc1af5l2Hpk3ZenlvYK7AbSpMIxEFup/lGGWa9ArL0XDZ+mUJdCEKooG49QqzjS82M96YuHGHjyiyR6AXyr/+QBk7g1hrDoRvBi/VzerKas/Zj99mQEOd/i2VQd9KuOWeKLqQ5OUB5W6kmkbQcIQOK1F68sUcqMHDVHDs5DlGfzUSaP/gx7xFkBFY/P53Jjs0COJFRFRjfwS0TZz9QdkxKNs65lpQDepxY6L+BmWqXpnnBOEr0j3NU4t/Iml801CQW3yjpa87oEgy5h2HQxgd2qXfBC5gPU5JfzSy1Pb0HpWAZ3byKE=;31:/WnaPsjD7cMPIrBbYjw4QCKCbl3aBAIH1u5704m1I2sPZVje3QJI1aEMwGYP4gulxe9EMBtFA6z5nr+Cxb8qrB2CxaoOIMk3HRjVQySu7VmnQL+vHQ3k0q+GHQlR8JW1XxssBpVZ+uH00cHBDHdn86eC3/YcY4+UOtj0oGy9/1JGQai2CEAi0RvmxOqGN+RYmhTPqmuqdcwxeJUhlswdbdpRWNQxTHXv5k3CFW97M7I=
-X-MS-TrafficTypeDiagnostic: SN1PR11MB0750:
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR11MB0750;20:sqIsLL3iXxyoAvFJox7G9/p7vqbNaSJLHfDyKDT+FosvjtaVEJdUkYfXCnW1qwQLxrd6CBGAe6Th/QlVZUV84Xl4Yfue2b6tPlxVLcsrN1G7WCukoPiGLkhFEA538D6RSuRLPKRINaA/+w8mnVU9taWFgAqUDV45syyvHHS9RGBb9ff/hJlsgx1646/fDBLXYpqdMMYL3OGsBjDJtqllHItqCHyGyFoI3we7Gai8Gg5hpSuTa2lPFT79Na00J543QuMNxWb2qQmTzbHf8t206NRXMTKWZHb8veUeCoepST14Ervs51Q4QMuDShUC1/D5pAc7/aTW3M3zqprRJlfXVQxwDiqbiRto5bRXaMJ4BJgEmymXc8xU6doN+uAl1mFgeMJI4PhYEplbm+kb/FEh0QKfhwCXUuEqb90Ih7clKqE=;4:cL097il5HlhZJ3JwVHrGfR3wSn2R8O2lvNb3pHLukfLD6jhNI1IUk9SfAwYjo3yVSMFqwSPtqwOQMEME6WnuglZdT7xVWtHYi+jMmVAolWaMYxDQWuZ4WPG/ZzCX/AieIgfG5hBYWdMHZRkLViCn0ziUujay08j3rHILIfXDS6YviU3Q5LBcXVpEofxeZfmUmCCGkf1cVim43ZNFs4iI6rfqyfqAU3p28TyFLkQuEddtSGaszvTop8j2xUQFxsK8IG5igzs50PHFBHZuWce9Yw==
-X-Microsoft-Antispam-PRVS: <SN1PR11MB0750BD3CF218CD11CAD07A3E87F90@SN1PR11MB0750.namprd11.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Office365-Filtering-Correlation-Id: bafa16ba-9f5b-4745-d8e9-08d635b49db7
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BLUPR11MB0738;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR11MB0738;3:tf8Liw+OWL8mjTXhlmzU++WXZSDzf8E4L69GAvs/Zxij1OL7kyYfVHEPUtDhWX2UkEdA8fg53n1t6eCiKJoCoJDzvSkCHLZ/0d+S0hMsDiFQaflyp+9emMKhD+2dMWSvNKT65qsXDPxPHWr6GgvOSxsjRX2NpuyOkg9vAlCajo9KHDmTICz+gmmH+EEe1i/2nn+W5EhUfmVG7GzPRwY4ysDfNdV/AMce5pIYnLUlQ2YtoctViXp4rZNaUylm+6LC;25:eEuIP5RbDzTTzVD8utZ0TJlGNyE9XdIqDgbe9c3wLE/5YJMHojcfpvmMj8WiYCDJIg9oBjlWdc5TbOML2wYcVCZxdWXDE3zcZ+VeZ+P1ZkKwJSFTVcgYGGMUhcKS3RTtK7714f4OLD0S3JmcP2zRovbm1SWDffWh8hHNlTyE6+1fpSP474bgdQ1dRGhiCc4TeFKWBtBSg8VoTOVLs11sKqzwoFSNCQc39e2GzJndscTrs7FNhDeCWTc5FhPjti12qqf1I0UB6my3Op3bvuRReSE9njmdRztJoBiBKsdNkSed0qQ/HBCMsprXhIlSu+zpgmk/tbHZtXHIfZ8ma8ovt81YwdvA7KH+HdUfIV+i8BU=;31:ksOPnmn+8BPAP3tFfysRaHjV7zMpY3iTupdS7dNX6m4M3+ge2M1+BD7WieWh9NOepGiM93vpfrDSB6hdarpXW3ByYJXfDiSR83zUEhbebgzdtxx/zL1G0Ue5TVAbW7NHsemWdyR/uxec9hYgshpXO0N+9Y9K5feEr+437DIemXOZOZMHyWh6bV/i6OGFzjWTKSDLEuoGqljw9HZOxRbruvoaqkFlIIgdI/5onrNdnfY=
+X-MS-TrafficTypeDiagnostic: BLUPR11MB0738:
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR11MB0738;20:mu83EVaA7056V3Ri2EPhoz0JpSFu7ExHWnlPKuM/UGGzQ4qqREbU5GOr9eM7J5bU6bb/N2BfYfxlmQYpQkS/X+8fkCk8VYSB8OOpP+GM59nODVVD4jrfmn5ZUdHzr/xBLOg8/xpaXV+LZxL9Fj4sfLHUq22PKO7zOXE6mhZeYaol1Mc43idgC7WGZU1DGyY6J8y9sOBMv3/LpXApgMZvE7ftRJF2o7pRD9ORVu3xST4JifaXZn0cFm6XhWe4pZ6YLMoIuca/c3ytFa5CQeSjH4wiyROvCB+N/jPoVw5dufU6Lrdt0Gjpwj3kILMFlxORKFKYsEdcB8UKn2hAtcx/LrFNnWQ/SSbs7JaZ9Jx/JGL81KBRA1iEulHSdh8gnFIgY/VFi3RL+1JmtcyyL3qLXfBINY1qaRmuN1BUjDmKHmY=;4:j4yHT1SAX4XrLyTwBVDtFD0Rn2pU8NMBQ7uVihlNxhKizO59CT/CGFMVqVR2pHG9bIlfC6p1zTb5BFYqeMfkVHXvT3ENS3AbOaTDyNIj5BLugM/VS0KrcBIrhlJiDZAj9ChfgQmMHT3FqcLhdNwPwsBRcglJueBSkH1OX+UYXtpEoPuSis0w5o68PK7IkKvekA1nRN5dtRVTQ5z+wHHPuavwjLk4YbQOELU65uiI0LRw462JV2mxMBiTVbYLByh2MxE5P4hXB5RE3tdC8v4SWt+Uu8hOGByI6y5c2DwtpZnr4yTgfLpuAiXH8aKGkA3T
+X-Microsoft-Antispam-PRVS: <BLUPR11MB07380FC2CE5D94F74D8B053087F90@BLUPR11MB0738.namprd11.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(211171220733660);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(4982022)(52105095)(3002001)(10201501046)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:SN1PR11MB0750;BCL:0;PCL:0;RULEID:;SRVR:SN1PR11MB0750;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231355)(944501410)(4982022)(52105095)(3002001)(93006095)(93001095)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BLUPR11MB0738;BCL:0;PCL:0;RULEID:;SRVR:BLUPR11MB0738;
 X-Forefront-PRVS: 0830866D19
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(39860400002)(376002)(396003)(136003)(366004)(346002)(199004)(189003)(52314003)(72206003)(956004)(68736007)(66066001)(81166006)(476003)(16526019)(11346002)(230700001)(65806001)(106356001)(26005)(8676002)(105586002)(478600001)(65956001)(31686004)(77096007)(2616005)(186003)(47776003)(58126008)(31696002)(23746002)(76176011)(486006)(446003)(25786009)(81156014)(86362001)(966005)(8936002)(97736004)(16576012)(53936002)(316002)(6306002)(65826007)(14444005)(6116002)(6666004)(4744004)(2906002)(39060400002)(5660300001)(36756003)(217873002)(4326008)(52116002)(229853002)(305945005)(7736002)(53546011)(386003)(6246003)(7416002)(6916009)(50466002)(64126003)(6486002)(93886005)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR11MB0750;H:[10.145.4.38];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(366004)(376002)(346002)(39830400003)(136003)(396003)(52314003)(189003)(199004)(97736004)(31686004)(8936002)(6666004)(16576012)(58126008)(316002)(68736007)(93886005)(6116002)(966005)(3846002)(478600001)(77096007)(8676002)(72206003)(26005)(16526019)(186003)(230700001)(6306002)(66066001)(65956001)(47776003)(65806001)(36756003)(2906002)(31696002)(86362001)(6246003)(53936002)(6486002)(25786009)(105586002)(106356001)(4326008)(446003)(11346002)(486006)(956004)(476003)(2616005)(305945005)(81156014)(81166006)(229853002)(50466002)(39060400002)(7736002)(7416002)(52116002)(217873002)(5660300001)(14444005)(65826007)(76176011)(53546011)(386003)(23746002)(6916009)(64126003);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR11MB0738;H:[10.145.4.38];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: microchip.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?Windows-1252?Q?1;SN1PR11MB0750;23:n6ADTB4aGQ4NZLpiuxNcWqa0ouPsYD0RXj6j9?=
- =?Windows-1252?Q?vseLKpRG/7of5PBOVadjFYiayBZAlN1VrqsI6OnCwrev4bDd4shPAEJj?=
- =?Windows-1252?Q?+V9TG5T0HK1cFExC/fXv8WhTFNd7bsMtwVBCDSE3wgQIwJQpyrgFlzEq?=
- =?Windows-1252?Q?7TlZ0CNxmLQmFW6TOrKuJLQIwEC0Q7c9+2wWxpuejNVnCn0k2lajRhYe?=
- =?Windows-1252?Q?srY+rfidnOYiM8M5woVObmLEiTBe3BKyWO3rRjujDHs896koxGdseDIB?=
- =?Windows-1252?Q?HGWx1RZ2XfWHw2rjLwOsvHPCvpUCadWdEt0k6+KahBudwZZBmCEC4mub?=
- =?Windows-1252?Q?Y4olFCU/Fin+urWk1IF6J6yJhBjEFV9iSLXcfy0R5yeMsBOpLdUm/nT8?=
- =?Windows-1252?Q?m+KX1po3JFfGmuWB0gtmbB7nvexKBQyLfmlOCof7xGlEmARP2AxQCTWR?=
- =?Windows-1252?Q?7fFe0KWhEXbULakrmUx4y3uKAdN5dVbgPzp04aJFbIvvStVmsyvQHxK+?=
- =?Windows-1252?Q?r8A2SXQ1VtIjyRQ5uzRe9gvLE484Mbws6VZ+ZcstdzLAg2LK6HEkdGIQ?=
- =?Windows-1252?Q?aGFDS5AjtjjNUp4BCAwSFkY6V8x7Gro2kdhNuw2DfNRroVx2DxOj5CLx?=
- =?Windows-1252?Q?u5JdPE8WmrL4ItllSObg841qSYkqAIevPy9L2KLd/zgvxevGnaXWxib8?=
- =?Windows-1252?Q?Mh1DdegN6lujQKXHgzyc8+UXZKx5VJoQuIH4s/Qk6EvlBsnofaMaSg4y?=
- =?Windows-1252?Q?VEIgXlMtaTMEztNIOD6MZg0Xz85rVAcyyUn+XUJ1MBaVU1YqsUPouTPR?=
- =?Windows-1252?Q?lAbQDBSF+/d11nVoStqmfSCvQV/o5oLbtwmXvObJoAAsce1dKZzJEya7?=
- =?Windows-1252?Q?JgQ4fdJkO9LB0o1wzjT9g6d6UfhiAxsyuZgllhjKUq/KABKGPvFvus4d?=
- =?Windows-1252?Q?sQUP136fuGiQOq/mAAjI5naDPWFEA7n9dcAY519oJ1WtkkSpQYsoY7C1?=
- =?Windows-1252?Q?t/ktKt8Vqs5u040tNiu6BOEaXQog85R5Aqv2CUoXvAeyBUYmv4b/HHJC?=
- =?Windows-1252?Q?57j1fsG3B92Gj3zKhVfEYZibIctr66a4vDTAU/PoVxVc+w6Q924G60Ie?=
- =?Windows-1252?Q?bYgK2p7BAs/yDUtyCcvQsEaFoM3/AqBwt86RXBidx0NHs1WrSWQ4nybv?=
- =?Windows-1252?Q?hYSaX1BvJXvQHsTSC/JiHKQwYj8rchcFRBul2OI2xxMN+VC3+H2GBDwM?=
- =?Windows-1252?Q?m9QKdXQeHaqfAxAQIuogovnlOu8LNJ+4gPxO+4B0CkHmd0zE6h+8G+Jh?=
- =?Windows-1252?Q?tel5Omt0ArkYcJc1RlSY35+moAr32Eopb33eMfO/Sj2RQsAOnLJlDCBf?=
- =?Windows-1252?Q?UU5kgK4SXNEdE+MlvdIjCRk1gBGG1H+CeZHVsrzu5L0baRPBx7qwdLJM?=
- =?Windows-1252?Q?x9AJQP/atPpNJiV9ZD1hxmIhPSRlmolmsK0qVcGEIDJ9/0Ax8CcVqG38?=
- =?Windows-1252?Q?LjB8D05+wy6Vo+iWGATcwtAY1jF3GUCUoGTJoxRbQwRzx/8Fe4KoCfDI?=
- =?Windows-1252?Q?b9+sjAOGeMAH0uGHPjSqTU29HgL6RPscZXMXS5OueeX2A3Ntandc1qbL?=
- =?Windows-1252?Q?qj9Z1LDYUORdlGEr9i2U9uOdlZPn7OxpjmLkBhFR2vrv7xQ93B8xJ80I?=
- =?Windows-1252?Q?mFBQWmaRid6OlD60JhfUdtW4dBY+WQ=3D?=
-X-Microsoft-Antispam-Message-Info: 6YFs+bkPkI2LiGUVnTPv0yv07+0UDkIg+/jvaz0mgKzOcgPY1BXOr5gIkDZmjT9MeyAGDZ0m2EwQe6WOShuBPbLkhU6qKeihqrMry2cCwTMBZQ5qH1nApOthuGDOAeC9JRh2pi7JeVJ8uAa6Ws7DTaAxoi/+qV4wJwItWfK/kPL1WJrUna1qtx2wDGP/kZWZuw6Acu9SF1MaJq7KK+rHCgZaa45mi5bolaePa/fFIhEjJTwt/W12EezU0cNGsLatPZplDQKpERfUj5+knsX+uwI2EPUyzZC4MLAF3lPsli70KTDVf/6Oygo55LKL42KRwGKpS5tCd/6ssBFV/yPL4RHoKO7VhnLpJfHKu19PxK4=
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR11MB0750;6:sEOTq+TWKUmw7eWY6xGu+TgfUl/6u9GkWbu4yn7+GBj8BO3AkPRmZIZgRp7swX4NQPWn6Pp0ABuQEgRmJamaHYxHd09TUmYLiCVn9kYwoCnKtfJsHLvHzgNOtRjJ5oTz//nPBokROG8if65Q5Ek6kszOD5YntI4Bff1nSeEIOVX50WK92NYBc+oYfp9bHz8SptRJ6S7bqpJRcvEfk0OLaGsiiS7PBjDCdN8NPGk8f79AoVZcMv2O1mFMKEc60GY+CzEe/RYiGBz03r7bxF4q5TJ4Y/BkJlPk9C1a6oBqq5NBVaC/GhDRUShARNwSADWXfs2i/6m8Sr5GKhibav5N1WLfa7FrQ4EF+ilSZzkSYqanufCrXTv5sShocCZuXUM8HwCaG76sHLu5I/PBhw/42j0WncJTfmZDfNa+Wt7zt1wB3qRUtkGzSjfiDlIbcuPpOp8vj4jIhCqYaluHwnCdXiCDJEf6qosVRn/tBLWr2q4=;5:vjACiiBk719cx3WGyGjX05My7Dcc9VbR6LfFL5wgkv1GlOC4W7Y7Qt7Ps6z+SL9h3qxG/QhJLYS5JmiuyG/RqMuOlJqrEREV+3FdNb+1e/LSTdst2Z0d6pOYdwYrN3hHzkITENXrNseKuVcIx7YEM5XP249C/uB6LX3Fv5t8Mb4=;7:g/w6fJsQr8TFLKr6UXMV0xZlpn9CHnaVpaIuW+E3WXgX+RPmm93eLG2ifI+AZJlZQfTrQcQc0A/0x7st6qUHF0Ldx5dqTa1DIXQwKZIAMYo+Gyia0+vAtl4JtRGdJ0UP1Aglq8bNlZJ9Yi5v0JX5TdDPgBKMCgk/Lxqpva3iRkZ4rR3sRI328/rZbHEf0qwUNbmoYs+mg5/vDgbkfrGTbXcl2HUAiGbezdiEZ4n5vXl1jirwDzvAxe66n7zM1/NK
+X-Microsoft-Exchange-Diagnostics: =?Windows-1252?Q?1;BLUPR11MB0738;23:L+T99UK6TTAnMay+/suaEPKg5A4kYh31Tim/f?=
+ =?Windows-1252?Q?PjbD6+NOm8HxDoW4wtAp74cQcvrQiXACR11LyxuVe4DYlQ3qo7SvyrMP?=
+ =?Windows-1252?Q?97sYoJtUHul8EbdK4IvKg1tN7GC4y7499WyqDgUFNXdn5PesuQ81IH9w?=
+ =?Windows-1252?Q?hYfyw5tRR4FsQjnP0k069xeQOhsTixTysQ36ejbjKYIy+S1EVCf1uehO?=
+ =?Windows-1252?Q?VPuEwUSMTv3lCJWml8sD2JnnwnMsSS2S++NRQLv7D1kClxc1jMR6xQkh?=
+ =?Windows-1252?Q?J+H1yoT+CAjIlyukx5/ihghpCMg9X3u7sYxFpDcmNIBGRWg131SXgh/S?=
+ =?Windows-1252?Q?hP5pi0Dv9vgPYYDbvxJASMLlxLKgLCfXuMxlfjJOB95dN9lwZIL9UE4B?=
+ =?Windows-1252?Q?CxLkVH8AyE7ZQ1ebVXt+zbByZTNhIrmPuBZEPUi72IHj0EqCNPlioNpF?=
+ =?Windows-1252?Q?E+QVhTooeugyUZjSwu3RoCW/Z6kIwD4fJwMKhrkcrvLt4fsJSM8N0zd1?=
+ =?Windows-1252?Q?CjAhTi025qPrDNHgTXfe/NVg7Qx6xwGaXcym+FbvxQagAy0wWn1PztJM?=
+ =?Windows-1252?Q?uS5NbS79vybp4Cax9GKjFoinlEqVJyqZQ2BGwyZKrmZy9n4/Vs8extwS?=
+ =?Windows-1252?Q?uWCrGJWUfkkNvv2selTwWx2Raqvt6lIxNo8nCjcLBldSnab0qSUoPGQW?=
+ =?Windows-1252?Q?MfIwR+Adm5PbqqbrAAk7wkBIWjeo9EpVotqGZ0okKMe4g+ie4fdHbWI1?=
+ =?Windows-1252?Q?WLyx9TT1l87aiTK8DGfEDoINsS0fMnt3qXjvbA8AQslzJVnVjNGK0DmT?=
+ =?Windows-1252?Q?JezkKqDNShgSfZ3g07Yn/N5A5FdEtA9SfO6/77pXaE85KOaVf+lzMto5?=
+ =?Windows-1252?Q?Y7QCgCWXDZj0W3pTYt4p0F9lYIuQub8bN9xHnEcvo+4h5IrGFi5BCae6?=
+ =?Windows-1252?Q?Z+bVd/LzFBIeiBCqFaRBDZuKEhh0T+8XAzrrcDVg9PSPwuRy2F+U2CR/?=
+ =?Windows-1252?Q?RPsubClPzONQcOfO9p3agEk+atW0rV6oJy0zL/7+Zy5kYyLFnetgLwkS?=
+ =?Windows-1252?Q?e0wpgy1huwY4PaGkZesoIzVGexvzCsKmlGM8TaeKfO7dLo8XIFXLsC5J?=
+ =?Windows-1252?Q?ayXMnYOrLRbiWmNmWFQLw/zCAnE92tw9Yc8Gfbmo7xIkEZfJo9ETR/qp?=
+ =?Windows-1252?Q?IXUP3mhlavA6Kq0L7G3TFRRXdcxC36UL5C7xJ1ZJRedcuUdTC8gMhka4?=
+ =?Windows-1252?Q?7yLGYHJd2jay6U4llhmDLVYzqBKbtE5AFomNYYgtA/iUvJrbTUzHh6lF?=
+ =?Windows-1252?Q?JECweTp4wSxjwDgFmc+Grwmqmca30CF9N7SsQsYJScgxCjAsocknpCtT?=
+ =?Windows-1252?Q?xiXKfZWN96sSaRpzAP19bTU5fJQ1BYrCFl7hdVu7h9DB4sPP2CgVxWqD?=
+ =?Windows-1252?Q?k9kTgawpr8jPJSlr1ighv/LusaAos0kPjFjYFwwRRwep1PxYDERDJClZ?=
+ =?Windows-1252?Q?ZZt3liT22mCvtYP+nH4/dTGIh7CM+IzKaNrN/v8ukH1yNE20KQWoyIzU?=
+ =?Windows-1252?Q?ZsH9Xntamxs3FkzloDDPHBcnQii3m2xH3aK4auYGb4dSyGvLvPQ8wCUl?=
+ =?Windows-1252?Q?Ax2mUujHBnyRJkGMByk4puGOaUsHog9sIAPT/cCOtf2sogfSAWYuGDpF?=
+ =?Windows-1252?Q?Ywy60iHUQ=3D=3D?=
+X-Microsoft-Antispam-Message-Info: GGU6G0HkAzzJCEomQjbRvOoV4ytIPxr/lXwcDp1rG+rLQdv92htiwV1rzDOdX8CyjQneCRhjC+hP3yAHX9oT67F9mTq+/LeyJ+PJ+P1m/MAULMQIt9ELgIvnqV4m0DPkIRCfVsZHOUzhSowBWsPs/UtF3O3hgN90fDYwX/xNzQzPbmkXOST9ImVbLATzOA+3AGn6LLduLOCbmXbGX+8Z7zdpPcv/yVpUUevbhU+v6EVL12N/SbvoL9MW7w+NXxqjWkBAuxk9NPq7HjMtjAaN2toU6eBwHr+0PF/kyE5CGhV5U8p1O69vI/b3yEsFvuaoXe86xx/k1zzTuzoHMzfhbX7Q+vAxJtxQ41giPlKIVAI=
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR11MB0738;6:5cX5l8yLTWvEvzCu2tq7czuyfOwi2wzuj5Nxmi6HYbztg6Tob8uAqquG02LTJUyyTGQ+M6yVlPt0rrekOW3fUia4zScdO4dVZ8y5j2CfT/l1WQN2ZwflplQxBR+qnbnfnd9/H80mg6vpmG1aeuu3+wByhBT9XXHZo5k42ymHPVT4TXiSYX+s/uzTE0JvA4HfafdJKhdCVpBDV8tk9I3M+Y/j4LjGIpVlnzl1HI1QNEfoUD/WJ6lJG8CdZicIWfvLkWotnzubtgs8gwanYfmF5tt3V2d8IEliPNRV83bsMvTgEYqMDXhaXDJV3ltnUpOYY2T3SCsKHhACanbFwCJQqwPhWUskvjvohi4jBYPQaiZD8ltmVOcbutTQGyIQ+CSENLGYozc1Mec6vwoPue2esv9emz/r4X4DYH3z9LN4feZsQnwpz0y+KoudY7fA7qNwcZ+ZCzeXrEQlxcatM8A0nw==;5:OpSHCOb1NhRra4NcY8A577V0f+HNoYB0SzMfyXvkuaEz3Re+oKW8A165elWxZ5KLw2BORalA+/9Rg/0Pk/a1GsD3rfbhwlN3b9hRaQJyn6bZWb30kAGCRe9cRiU+NRpLZiHFBSEfvINBL+Qyfn+pQSMWEybxChC5uUKHj7/tcjM=;7:hQninHbkjPUTlV1O0K/A35IzX+FsSg4tidY3YgH8GEOyjYxt05B7rLMcj/5n2KErn4GINZkT4qxC2QCH7cPtv4os8NNVMHZ6KPHyZuoQMUcuW8JFiaRhbKYlILC9j7OYktXW5y8fAW0IPVSor5T1lifOyqIaDZspUl8a6k3algMQgO4cQgzvVC0YNz0LyT4932nkfaOxJbTwt+kIg4fp1LfxuX9k2mf+GCVllDr5OTKz2BH1XNJ1KgS8l9A8VWJb
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2018 11:18:36.9392 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51a8a025-6ab6-4350-a18e-08d635b49f94
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2018 11:18:35.2522 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bafa16ba-9f5b-4745-d8e9-08d635b49db7
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR11MB0750
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR11MB0738
 X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -133,373 +131,265 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 18.10.2018 19:00, Thierry Reding wrote:
-> On Wed, Oct 17, 2018 at 12:41:53PM +0000, Claudiu.Beznea@microchip.com wrote:
->>
->>
->> On 16.10.2018 15:03, Thierry Reding wrote:
->>> On Fri, Sep 14, 2018 at 06:20:48PM +0200, Nicolas Ferre wrote:
->>>> Thierry,
->>>>
->>>> On 28/08/2018 at 15:01, Claudiu Beznea wrote:
->>>>> Hi,
->>>>>
->>>>> Please give feedback on these patches which extends the PWM framework in
->>>>> order to support multiple PWM modes of operations. This series is a rework
->>>>> of [1] and [2].
->>>>
->>>> This series started with a RFC back on 5 April 2017 "extend PWM framework to
->>>> support PWM modes". The continuous work starting with v2 of this series on
->>>> January 12, 2018.
->>>>
->>>> Then Claudiu tried to address all comments up to v4 which didn't have any
->>>> more reviews. He posted a v5 without comments since May 22, 2018. This
->>>> series is basically a resent of the v5 (as said in the $subject).
->>>>
->>>> We would like to know what is preventing this series to be included in the
->>>> PWM sub-system. Note that if some issue still remain with it, we are ready
->>>> to help to solve them.
->>>>
->>>> Without feedback from you side, we fear that we would miss a merge window
->>>> again for no obvious reason (DT part is Acked by Rob: patch 5/9).
+On 18.10.2018 18:32, Thierry Reding wrote:
+> On Wed, Oct 17, 2018 at 12:42:00PM +0000, Claudiu.Beznea@microchip.com wrote:
+>> On 16.10.2018 15:25, Thierry Reding wrote:
+>>> On Tue, Aug 28, 2018 at 04:01:18PM +0300, Claudiu Beznea wrote:
+> [...]
+>>>> +const char *pwm_mode_desc(struct pwm_device *pwm, unsigned long mode)
+>>>> +{
+>>>> +	static const char * const modes[] = {
+>>>> +		"invalid",
+>>>> +		"normal",
+>>>> +		"complementary",
+>>>> +	};
+>>>> +
+>>>> +	if (!pwm_mode_valid(pwm, mode))
+>>>> +		return modes[0];
+>>>> +
+>>>> +	return modes[ffs(mode)];
+>>>> +}
 >>>
->>> First off, apologies for not getting around to this earlier.
->>>
->>> I think this series is mostly fine, but I still have doubts about the DT
->>> aspects of this. In particular, Rob raised a concern about this here:
->>>
->>> 	https://lkml.org/lkml/2018/1/22/655
->>>
->>> and it seems like that particular question was never fully resolved as
->>> the discussion veered off that particular topic.
+>>> Do we really need to be able to get the name of the mode in the context
+>>> of a given PWM channel? Couldn't we drop the pwm parameter and simply
+>>> return the name (pwm_get_mode_name()?) and at the same time remove the
+>>> extra "invalid" mode in there? I'm not sure what the use-case here is,
+>>> but it seems to me like the code should always check for supported modes
+>>> first before reporting their names in any way.
 >>
->> 1/ If you are talking about this sentence:
->> "Yes, but you have to make "normal" be no bit set to be compatible with
->> everything already out there."
+>> Looking back at this code, the main use case for checking PWM mode validity
+>> in pwm_mode_desc() was only with regards to mode_store(). But there is not
+>> need for this checking since the same thing will be checked in
+>> pwm_apply_state() and, in case user provides an invalid mode via sysfs the
+>> pwm_apply_state() will fail.
 >>
->> The current implementation consider that if no mode is provided then, the
->> old approach is considered, meaning the normal mode will be used by every
->> PWM in-kernel clients.
+>> To conclude, I will change this function in something like:
 >>
->> In of_pwm_xlate_with_flags() the pmw->args.mode is initialized with what
->> pwm_mode_get_valid() returns. In case of controllers which does not
->> implement something special for PWM modes the PWM normal mode will be
->> returned (pwmchip_get_default_caps() function has to be called in the end).
->> Otherwise the pwm->args.mode will be populated with what user provided as
->> input from DT, if what was provided from DT is valid for PWM channel.
->> Please see that pwm_mode_valid() is used to validate user input, otherwise
->> PWM normal mode will be used.
+>> if (mode == PWM_MODE_NORMAL)
+>> 	return "normal";
+>> else if (mode == PWM_MODE_COMPLEMENTARY)
+>> 	return "complementary";
+>> else if (mode == PWM_MODE_PUSH_PULL)
+>> 	return "push-pull";
+>> else
+>> 	return "invalid";
+>>
+>> Please let me know if it is OK for you.
 > 
-> No, that part looks fine.
-> 
->>
->> +	pwm->args.mode = pwm_mode_get_valid(pc, pwm);
->>
->> -	if (args->args_count > 2 && args->args[2] & PWM_POLARITY_INVERTED)
->> -		pwm->args.polarity = PWM_POLARITY_INVERSED;
->> +	if (args->args_count > 2) {
->> +		if (args->args[2] & PWM_POLARITY_INVERTED)
->> +			pwm->args.polarity = PWM_POLARITY_INVERSED;
->> +
->> +		for (modebit = PWMC_MODE_COMPLEMENTARY_BIT;
->> +		     modebit < PWMC_MODE_CNT; modebit++) {
->> +			unsigned long mode = BIT(modebit);
->> +
->> +			if ((args->args[2] & mode) &&
->> +			    pwm_mode_valid(pwm, mode)) {
->> +				pwm->args.mode = mode;
->> +				break;
->> +			}
->> +		}
->> +	}
->>
->>
->> 2/ If you are talking about this sentence:
->> "Thinking about this some more, shouldn't the new modes just be
->> implied? A client is going to require one of these modes or it won't
->> work right."
->>
->> As explained at point 1, if there is no mode requested from DT the default
->> mode for channel will be used, which, in case of PWM controller which are
->> not implementing the new modes, will be PWM normal mode.
-> 
-> I don't think that's an issue. I think what Rob was referring to and
-> which mirrors my concern is that these modes are a feature that doesn't
-> extend to typical use-cases. So for all existing use-cases (like LED or
-> backlight) we always assume a PWM running in normal mode. Now, if you
-> write a driver for some particular piece of hardware that needs a mode
-> that is not the normal mode, the question is: wouldn't that driver know
-> that it wants exactly push-pull or complementary mode?
+> Do we even have to check here for validity of the mode in the first
+> place? Shouldn't this already happen at a higher level? I mean we do
+> need to check for valid input in mode_store(), but whatever mode we
+> pass into this could already have been validated, so that this would
+> never return "invalid".
 
-It should, yes.
+Ok, now I see your point. I agree, there is no need here for "invalid" here
+neither since in mode_store there is a look through all the defined modes
+and, anyway, if nothing valid matches with what user provides, yes, the:
 
-Wouldn't it have
-> to explicitly check that the PWM supports it and select it (i.e. in the
-> driver code)?
++	if (modebit == PWMC_MODE_CNT)
++		return -EINVAL;
 
-Yes, that should be the flow. I added the DT changes for cases where a
-driver could use more than one mode and to be able to choose one of the
-modes it may needs.
+will return anyway.
+
+And every place this pwm_mode_desc() is used, the mode has been already
+checked and it is valid.
 
 > 
-> Say you have a driver that requires push-pull mode. It doesn't really
-> make sense to require the mode to be encoded in DT, because the driver
-> will only work with one specific mode anyway. So might as well require
-> it and have the driver check for support and fail if the PWM is not
-> compatible. This would likely never happen, because hardware engineers
-> couldn't have validated the design in that case, but there's no reason
-> for the mode to be specified in DT because it is fixed by the very use-
-> case anyway.
+> For example, you already define an enum for the PWM modes. I think it'd
+> be best if we then used that enum to pass the modes around. That way it
+> becomes easy to check for validity.
 
-Yes, agree.
+Ok.
 
 > 
-> Also, leaving it out of DT simplifies things.
-
-Agree.
-
-> If you allow the mode to
-> be specified in DT you could end up with a situation where the driver
-> required push-pull mode, but the DT specifies complementary mode. What
-> do you do in such a situation? Warn about it and just go with push-pull
-> anyway? Then why give the users a way of screwing things up in the first
-> place?
-
-I only introduce this because I had in mind the PWM regulator and I was
-thinking to make it work for either push-pull mode and normal mode. But
-since there is no code for this at the moment I totally agree with you to
-not introduce the DT part. My bad I push it here without a use case.
-
-> 
->> 3/ If you are talking about:
->> "Also complementary mode could be accomplished with a single pwm output
->> and a board level inverter, right? How would that be handled when the
->> PWM driver doesn't support that mode?"
->> This complicates the things and I think it requires extra device tree
->> bindings to describe extra per-pwm channel capabilities. For the moment,
->> with this series I've stopped to only have the capabilities registered from
->> driver. My understanding is that this could be accomplished with extra
->> device tree bindings in PWM controller to describe PWM channels
->> capabilities. If you also want me to look into this direction please let me
->> know. And also, suggestions would be appreciated.
-> 
-> I think this is very interesting, but I don't think this needs to be
-> done as part of this series.
-> 
->> I know that Rob acked
->>> the DT parts of this, but I suspect that this might have been glossed
->>> over.
->>
->> If this is about point 3 I've emphasize above I would like to have some
->> inputs from your side, if you agree with a behavior like having extra DT
->> bindings. The intention wasn't to left this over but to have a better
->> understanding of the subject. I'm thinking if it is ok to have modules
->> outside of the SoC that model a behavior that could not be controlled from
->> software (it could be only hardware) but to behave in a single way. Take
->> for instance this scenario:
->>
->> - new DT bindings are implemented to specify this behavior per channel
->> - hardware modules are soldered outside of a PWM channel with one output
->> - the new DT bindings are not specified for the soldered PWM channel
->> - user enables this channel, it will have only normal mode available for it
->> to configure (because the new DT bindings were not provided)
->> - but the real output the user will see would be in complementary or even
->> push-pull mode.
-> 
-> I think we could possible model this as a "logical" PWM in DT. We could
-> for example have something like this:
-> 
-> 	/ {
-> 		...
-> 
-> 		pwms {
-> 			pwm@0 {
-> 				compatible = "pwm-fixed"; /* or whatever */
-> 				pwms = <&pwm 0 40000>; /* input PWM */
-> 				mode = <PWM_MODE_COMPLEMENTARY>;
-> 			};
-> 
-> 			...
-> 		};
-> 
-> 		...
-> 	};
-> 
-> The above would model a logical PWM that is driven by the specified PWM
-> in normal mode but which is effectively complementary because of some
-> additional circuitry on the board.
-
-Ok, i see it. Sounds good to me.
-
-> 
->>> To restate the concern: these extended modes have special uses and none
->>> of the users in the kernel, other than sysfs, can use anything other
->>> than the normal mode. They may work fine with other modes, but only if
->>> they ignore the extras that come with them. Therefore I think it's safe
->>> to say that anyone who would want to use these modes would want to
->>> explicitly say so. For example the sysfs interface already does that by
->>> changing the mode only after the "mode" attribute is written. Any users
->>> for special use-cases would want to do the same thing, that is, drive a
->>> PWM in a specific mode, on purpose. You wouldn't have a "generic" user
->>> such as pwm-backlight or leds-pwm request anything other than the normal
->>> mode.
->>>
->>> So my question is, do we really need to represent these modes in DT? The
->>> series currently doesn't contain any patches that add users of these new
->>> modes. Are such patches available somewhere, or is the only user of this
->>> supposed to be sysfs?
->>
->> For the moment, no, there is no in-kernel user for this, only sysfs. I had
->> in mind to adapt the use of these new mode for PWM regulator for scenarios
->> described in [1] page 2126. Anyway, since these patches doesn't introduce
->> any user other that sysfs it will not disturbed me to drop the changes. By
->> the time I or someone else will do some other changes that requires this,
->> the DT part should also be introduced.
->>
->> [1] http://ww1.microchip.com/downloads/en/DeviceDoc/DS60001476B.pdf
-> 
-> Yes, I'd like that. The half-bridge converter certainly sounds like
-> something that may be able to use the DT bindings that you specified,
-> but I'd be less concerned about these changes if we had actual users.
-
-I understand.
-
-Now, thinking again at what you proposed above with regards to logical PWM
-channels I'm wondering if, for future, if needed, would be good for PWM
-clients that could used a PWM channel in more than one PWM mode, to have
-specified in device tree, as a child of PWM controller, the mode that the
-client would use that channel. E.g. if DriverX wants to use PWM0 in
-complementary mode:
-
-pwm@00aabbcc {
-	// ...
-	pwm@0 {
-		mode = <PWM_MODE_COMPLEMENTARY>;
-		// this being the only mode that could be used for
-		// PWM channel 0
-	};
-}
-
-driverx@00ffffff {
-	pwms=<pwm 0 50000>;
-}
-
-For future reference, do you find this feasible?
-
-> 
->>> I'm hesitant to move forward with this as-is without seeing how it will
->>> be used.
->>
->> For the moment only sysfs is supposed to use this.
->>
->> The PWM specifier flags are somewhat abused by adding modes to
->>> them. 
->>
->> I see.
->>
->> I think this hasn't been completely thought through, because the
->>> only reason to specify a mode is to actually set that mode.
->>
->> Maybe it wasn't clear understand, with the current implementation if no
->> mode will be specified the default mode will be used. There is no impose to
->> specify a mode.
->>
->>  But then the
->>> DT ABI allows a bitmask of modes to be requested via DT. I know that
->>> only the first of those modes will end up being used, but then why even
->>> allow it in the first place?
->>
->> I had in mind that I will change the PWM regulator driver to work in
->> scenarios like the one specified in the link above.
-> 
-> Yeah, that sounds like it would be reasonable from a quick look.
-> However, what I don't quite understand yet is why the mode in the PWM
-> specifier would need to be a bitmask.
-
-You are talking to have them as bitmask in pwm-flags cell right?
-I though to stick this to the current way to request the PWM mode.
-
-Take for example the pwm-regulator
-> case for a half-bridge converter. If your board uses such a setup, then
-> you absolutely must drive the PWM in push-pull mode, otherwise the
-> converter will not work, right?
+> So taking one step back, I think we can remove some of the ambiguities
+> by making sure we only ever specify one mode. When the mode is
+> explicitly being set, we only ever want one, right?
 
 Right!
 
-So you want exactly one mode to be
-> applied. Then why complicate matters by allowing the mode to be a
-> bitmask? 
+> The only point in
+> time where we can store more than one is for the capabilities. So I
+> think being more explicit about that would be useful.
 
-Just to have everything behaving almost in the same way as it was
-previously.  I'm saying to request the PWM channel from a PWM client (via
-DT) as it was previously done but just adding the PWM mode (in pwm-flags
-cell as per this version).
+Ok.
 
-I also was not sure about this: in the 2nd version of this series I
-introduced a new cell for PWM modes but this new cell was after pwm-flags
-cell, and pwm-flags cell is optional, so to have simpler code, in scenarios
-with PWM modes user would have also specified the pwm-flags cell (although
-maybe it was not necessary).
-
-> We could just as easily reserve, say, 8 bits (24-31) for the
-> mode, which could then be identical to enum pwm_mode.
-
-In pwm-flags cell, right?
-
-
+> That way we remove
+> any uncertainties about what the unsigned long might contain at any
+> point in time.
 > 
->>> And again, even if we allow the mode to be specified in DT, how do the
->>> consumer drivers know that the correct mode was being set in DT. 
+>>>> +/**
+>>>>   * pwmchip_add_with_polarity() - register a new PWM chip
+>>>>   * @chip: the PWM chip to add
+>>>>   * @polarity: initial polarity of PWM channels
+>>>> @@ -275,6 +382,8 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
+>>>>  
+>>>>  	mutex_lock(&pwm_lock);
+>>>>  
+>>>> +	chip->get_default_caps = pwmchip_get_default_caps;
+>>>> +
+>>>>  	ret = alloc_pwms(chip->base, chip->npwm);
+>>>>  	if (ret < 0)
+>>>>  		goto out;
+>>>> @@ -294,6 +403,7 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
+>>>>  		pwm->pwm = chip->base + i;
+>>>>  		pwm->hwpwm = i;
+>>>>  		pwm->state.polarity = polarity;
+>>>> +		pwm->state.mode = pwm_mode_get_valid(chip, pwm);
+>>>>  
+>>>>  		if (chip->ops->get_state)
+>>>>  			chip->ops->get_state(chip, pwm, &pwm->state);
+>>>> @@ -469,7 +579,8 @@ int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *state)
+>>>>  	int err;
+>>>>  
+>>>>  	if (!pwm || !state || !state->period ||
+>>>> -	    state->duty_cycle > state->period)
+>>>> +	    state->duty_cycle > state->period ||
+>>>> +	    !pwm_mode_valid(pwm, state->mode))
+>>>>  		return -EINVAL;
+>>>>  
+>>>>  	if (!memcmp(state, &pwm->state, sizeof(*state)))
+>>>> @@ -530,6 +641,9 @@ int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *state)
+>>>>  
+>>>>  			pwm->state.enabled = state->enabled;
+>>>>  		}
+>>>> +
+>>>> +		/* No mode support for non-atomic PWM. */
+>>>> +		pwm->state.mode = state->mode;
+>>>
+>>> That comment seems misplaced. This is actually part of atomic PWM, so
+>>> maybe just reverse the logic and say "mode support only for atomic PWM"
+>>> or something. I would personally just leave it away.
 >>
->> PWM user will call at some point devm_pwm_get() which, in turn, will call
->> of_pwm_get() which in turn will initialize PWM args with inputs from DT.
->> After that PWM user will, at some point, apply a PWM state; if it is
->> initialized with PWM args initialized when devm_pwm_get() was called then
->> pwm_apply_state() would fail if no good mode is provided as input via DT.
+>> Ok, sure. I will remove the comment. But the code has to be there to avoid
+>> unassigned mode value for PWM state (normal mode means BIT(0)) and so to
+>> avoid future PWM applies failure.
+> 
+> Oh yeah, definitely keep the code around. I was only commenting on
+> the... comment. =)
+> 
+>> The legacy API has
+>>> no way of setting the mode, which is indication enough that we don't
+>>> support it.
+>>>
+>>>> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+>>>> index 56518adc31dd..a4ce4ad7edf0 100644
+>>>> --- a/include/linux/pwm.h
+>>>> +++ b/include/linux/pwm.h
+>>>> @@ -26,9 +26,32 @@ enum pwm_polarity {
+>>>>  };
+>>>>  
+>>>>  /**
+>>>> + * PWM modes capabilities
+>>>> + * @PWMC_MODE_NORMAL_BIT: PWM has one output
+>>>> + * @PWMC_MODE_COMPLEMENTARY_BIT: PWM has 2 outputs with opposite polarities
+>>>> + * @PWMC_MODE_CNT: PWM modes count
+>>>> + */
+>>>> +enum {
+>>>> +	PWMC_MODE_NORMAL_BIT,
+>>>> +	PWMC_MODE_COMPLEMENTARY_BIT,
+>>>> +	PWMC_MODE_CNT,
+>>>> +};
+>>>> +
+>>>> +#define PWMC_MODE(name)		BIT(PWMC_MODE_##name##_BIT)
+>>>
+>>> Why the C in the prefix? Why not just PWM_MODE_* for all of the above?
 >>
->> Same thing happens if a bad period is provided via DT.
+>> Well... PWM_MODE() macro was already took by pwm-sun4i.c driver at the time
+>> I wrote this patch... So I choose to add extra C to this macro, "C" meaning
+>> "constant" in my mind. I was not sure it was the best solution at that time
+>> either.
 > 
-> But that only checks that the DT specified a supported mode, it doesn't
-> mean that it's the correct one. For cases like pwm-regulator this may be
-> fine because the driver ultimately doesn't care about the exact mode. If
-> you have a driver that only works with a specific mode, however, it can
-> be problematic.
+> We can always rename definitions in drivers if we want to use
+> conflicting names in the core. In this particular case, and given what I
+> said above regarding the PWM mode definitions, I think it'd be better to
+> drop the _BIT suffix from the enum values, so that we get something like
+> this:
+> 
+> 	enum pwm_mode {
+> 		PWM_MODE_NORMAL,
+> 		PWM_MODE_COMPLEMENTARY,
+> 		PWM_MODE_COUNT
+> 	};
+> 
+> Then in order to create the actual bitmasks we can use a macro that is
+> explicit about creating bitmasks:
+> 
+> 	#define PWM_MODE_MASK(name) BIT(PWM_MODE_##name##)
+> 
+> With that, the conflict with pwm-sun4i conveniently goes away.
 
-Yes, agree.
+Ok, thanks!
 
 > 
->> Let's
->>> say we have a consumer that requires the PWM to be driven in
->>> complementary mode. Should it rely on the DT to contain the correct
->>> specification for the mode? And if it knows that it needs complementary
->>> mode, why not just set that mode itself?
+>>>> +struct pwm_caps {
+>>>> +	unsigned long modes;
+>>>> +};
+>>>> +
+>>>> +/**
+>>>>   * struct pwm_args - board-dependent PWM arguments
+>>>>   * @period: reference period
+>>>>   * @polarity: reference polarity
+>>>> + * @mode: reference mode
+>>>
+>>> As discussed in my reply to the cover letter, what is the use for the
+>>> reference mode? Drivers want to use either normal or some other mode.
+>>> What good is it to get this from board-dependent arguments if the
+>>> driver already knows which one it wants or needs?
 >>
->> I'm thinking it's the same way as is with PWM period which could also be
->> provided from DT. In the end a bad period value could be provided from
->> device tree. E.g. Atmel PWM controller could generate PWM signals who's
->> periods could not be higher than ~0.6 seconds. If a bad value is provided
->> the pwm_apply_state() will fail.
+>> For the moment, no, there is no in-kernel user. Only sysfs. I was thinking
+>> I would also adapt, e.g., the pwm-regulator driver to also make use of this
+>> features in setups like the one described in [1], page 2126
+>> (Figure 56-13: Half-Bridge Converter Application: No Feedback Regulation).
+>> But, for the moment there is no in-kernel user.
+>>
+>> [1] http://ww1.microchip.com/downloads/en/DeviceDoc/DS60001476B.pdf
 > 
-> I understand that. And it's good to validate these things in the driver.
-> However, the PWM driver can only validate for the PWM that it is
-> driving. It doesn't know if the consumer has any special requirements
-> regarding the mode. So if the PWM supports push-pull mode and the DT
-> contains PWM_MODE_PUSH_PULL, then everything is fine as far as the PWM
-> driver is concerned. However, if the consumer driver strictly requires
-> complementary mode, there's nothing the PWM driver can do about it. So
-> we either need the consumer to be able to query the mode if it has any
-> specific needs and refuse to use a PWM that has the wrong mode in the
-> specifier, or the consumer needs to explicitly set a mode, in which case
-> there's no need to have it in DT and the PWM driver needs to reject it
-> if the PWM doesn't support it.
+> Okay, so that means we don't have any use-cases where we even need the
+> mode in DT? If so, I don't think we should add that code yet.
 
-Ok, I see your point and understand that DT part may be risky and
-complicates the things. And I agree to remove it from this series since,
-anyway, there is no in-kernel user for that.
+Agree!
+
+> We'd be
+> adding an ABI that we don't know how it will be used or if it is even
+> sufficient. Granted, as long as nobody uses it we could probably just
+> silently drop it again, but why risk if it's just dead code anyway.
+
+I agree with you. My bad that I added without having a user. I've just had
+in mind that I will work with it around PWM regulator.
+
+> 
+> If I understand the half-bridge converter application correctly you
+> would want to model that with pwm-regulator and instead of using a
+> regular PWM (normal mode) you'd use a PWM_MODE_PUSH_PULL instead. 
+
+Yes, that was the idea.
+
+> Is
+> that really all there is to support this?
+
+Than and the the variation at page 2127, same datasheet [1] (figure
+Figure 56-14: Half-Bridge Converter Application: Feedback Regulation).
+Also, complementary could also be used in motor control applications.
+
+[1] http://ww1.microchip.com/downloads/en/DeviceDoc/DS60001476B.pdf
+
+> Does the voltage output of
+> the half-bridge converter vary linearly with the duty-cycle?
+
+That's my understanding.
+
+> I suppose
+> one could always combine the push-pull PWM with a voltage table to make
+> it work. I'm not opposed to the idea, just trying to figure out if the
+> pwm-regulator driver would be viable or whether there are other things
+> we need to make these setups work.
+
+Till now I didn't do any changes on PWM regulator to check how it the
+current behavior with push-pull mode.
 
 Thank you,
 Claudiu Beznea
-
 
 > 
 > Thierry
