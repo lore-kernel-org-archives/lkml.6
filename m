@@ -2,107 +2,96 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,
+	URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC710ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D3B8ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF0C820658
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:49:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF0C820658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 00697205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:50:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QS9U7FSV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00697205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeJSX41 (ORCPT
+        id S1727681AbeJSX5L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 19:56:27 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55252 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726935AbeJSX4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 19:56:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BEAAAEBD;
-        Fri, 19 Oct 2018 08:49:45 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8D6E03F71A;
-        Fri, 19 Oct 2018 08:49:45 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id A4C1B1AE06FD; Fri, 19 Oct 2018 16:49:48 +0100 (BST)
-Date:   Fri, 19 Oct 2018 16:49:48 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Andrew Jones <drjones@redhat.com>,
-        Jacob Bramley <jacob.bramley@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Adam Wallis <awallis@codeaurora.org>,
-        "Suzuki K . Poulose" <suzuki.poulose@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        kvmarm@lists.cs.columbia.edu,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Amit Kachhap <Amit.Kachhap@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Cyrill Gorcunov <gorcunov@openvz.org>
-Subject: Re: [PATCH v5 07/17] arm64: add basic pointer authentication support
-Message-ID: <20181019154948.GD16771@arm.com>
-References: <20181005084754.20950-1-kristina.martsenko@arm.com>
- <20181005084754.20950-8-kristina.martsenko@arm.com>
- <20181019111542.6wrvjguirglzg7vg@mbp>
- <20181019112404.GD14246@arm.com>
- <CAGXu5j+2axuzPJji_eCvMZDiPvrPsP3kAnG0CY_rsL5c=uFQFA@mail.gmail.com>
+        Fri, 19 Oct 2018 19:57:11 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44476 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726935AbeJSX5K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 19:57:10 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w3-v6so387066pgs.11;
+        Fri, 19 Oct 2018 08:50:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YMKaHBXlkYTK4ZlPLlwWfjH6ij2NcA2gw7y+bm4qsec=;
+        b=QS9U7FSVIpiq1GSfbDpJTW0UZBoYoAM00XV8FfwSaPma9xei11yVYM8fGwUjUp6YuK
+         fhaI65TpOAhaD3CM3SQoXjVh7ogkkw9H2GOKai5nMr+FjOBHrYiInVchg2ve3cxUkHi0
+         TRtYbjSYotsY7XoqIVp9i1Oe6H2IhuGq7HLf/OAWF/wtBAKs6F8o7Lrp+qeInrumpaPz
+         dbOHmUlLz4FlxpEprQSUJlglncfa3VDTt6rVuJrk7SHghP8npSxQg1TGq+xsd0KJfVxW
+         5AuiCt7VHl3e4VOkH3TOQrbZW0cTcK1jpwyjrEh6p36L/6C3TVOidd29wNF7mYLxj0/l
+         uGwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YMKaHBXlkYTK4ZlPLlwWfjH6ij2NcA2gw7y+bm4qsec=;
+        b=VETo8KMM4nXm2WYsmMMylUyOWJlQIozP3CVHbrvHkL1s9DEcN4JIzuq4e9rv+V6xrx
+         dQWZEq8D4nqmvH6f0ov2tX3iTVASkeNaUreCjMKjgEJNnFQcvcWeCr5ej5L8HvRsbB6E
+         h/l6e0drMzDvrh7/yOFnRHuUUNQGzYuN4Nvm4lkn8LoiXbOFYcmUh7e4TZ89KE7YxDUD
+         FSrxc18WE0ZJjXSkmz9JsJy9ZoAAF+GZeoHBsob9RVHuGkx8lRbdD/Xb6qW7xXZ6IoYH
+         uvLfk8/Yv4HYjkwnPeCBzeuUuEoXUSBH3hWOb7dM3tLG6GEhRKa6D/Aa18UvweWfi9Vj
+         vF0w==
+X-Gm-Message-State: ABuFfohVLs/1tkfCOimaX4cNW6fs96uMMs+1lkEJXhbzLT67StGU4Z+Y
+        CUFjDhPtBdMK2D32kwe0YKI=
+X-Google-Smtp-Source: ACcGV60GNHVDYqqTo1YXSTwrEu3OMkDz24BIB+tY6h9tD66SHWWR3PbtNfjGvEB2T5gC4vjnWzs9CA==
+X-Received: by 2002:a63:65c7:: with SMTP id z190-v6mr5227410pgb.330.1539964230712;
+        Fri, 19 Oct 2018 08:50:30 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id v81-v6sm42001850pfj.25.2018.10.19.08.50.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 19 Oct 2018 08:50:30 -0700 (PDT)
+Date:   Fri, 19 Oct 2018 08:50:29 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.18 00/53] 4.18.16-stable review
+Message-ID: <20181019155029.GC2992@roeck-us.net>
+References: <20181018175416.561567978@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGXu5j+2axuzPJji_eCvMZDiPvrPsP3kAnG0CY_rsL5c=uFQFA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181018175416.561567978@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 08:36:45AM -0700, Kees Cook wrote:
-> On Fri, Oct 19, 2018 at 4:24 AM, Will Deacon <will.deacon@arm.com> wrote:
-> > FWIW: I think we should be entertaining a prctl() interface to use a new
-> > key on a per-thread basis. Obviously, this would need to be used with care
-> > (e.g. you'd fork(); use the prctl() and then you'd better not return from
-> > the calling function!).
-> >
-> > Assuming we want this (Kees -- I was under the impression that everything in
-> > Android would end up with the same key otherwise?), then the question is
-> > do we want:
-> >
-> >   - prctl() get/set operations for the key, or
-> >   - prctl() set_random_key operation, or
-> >   - both of the above?
-> >
-> > Part of the answer to that may lie in the requirements of CRIU, where I
-> > strongly suspect they need explicit get/set operations, although these
-> > could be gated on CONFIG_CHECKPOINT_RESTORE=y.
+On Thu, Oct 18, 2018 at 07:53:53PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.18.16 release.
+> There are 53 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Oh CRIU. Yikes. I'd like the get/set to be gated by the CONFIG, yes.
-> No reason to allow explicit access to the key (and selected algo) if
-> we don't have to.
 
-Makes sense.
+For v4.18.15-54-g5a51f0f:
 
-> As for per-thread or not, having a "pick a new key now" prctl() sounds
-> good, but I'd like to have an eye toward having it just be "automatic"
-> on clone().
+Build results:
+	total: 136 pass: 136 fail: 0
+Qemu test results:
+	total: 321 pass: 321 fail: 0
 
-I thought about that too, but we're out of clone() flags afaict and there's
-no arch hook in there. We could add yet another clone syscall, but yuck (and
-I reckon viro would kill us).
+Details are available at https://kerneltests.org/builders/.
 
-Or are you saying that we could infer the behaviour from the existing set
-of flags?
-
-Will
+Guenter
