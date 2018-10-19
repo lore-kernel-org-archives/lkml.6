@@ -3,136 +3,140 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E4EECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9896FECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F76E21470
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:29:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F76E21470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 5138421470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:34:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5138421470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbeJSRe5 (ORCPT
+        id S1726987AbeJSRkC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 13:34:57 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:51628 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726578AbeJSRe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 13:34:57 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42c0wx3HM5z9ttFp;
-        Fri, 19 Oct 2018 11:29:21 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id PTkX-FbHhTio; Fri, 19 Oct 2018 11:29:21 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42c0wx1y8Nz9ttBP;
-        Fri, 19 Oct 2018 11:29:21 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A18798B902;
-        Fri, 19 Oct 2018 11:29:22 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 5_R4DiSewkGy; Fri, 19 Oct 2018 11:29:22 +0200 (CEST)
-Received: from pc13168vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 724CB8B8F6;
-        Fri, 19 Oct 2018 11:29:22 +0200 (CEST)
-Received: by pc13168vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 4907B6F496; Fri, 19 Oct 2018 09:29:22 +0000 (UTC)
-Message-Id: <f1b058d6a73cfb68b36dc755df5aaa7a064875b1.1539935852.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] idle/x86: remove the call to boot_init_stack_canary() from
- cpu_startup_entry()
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org
-Date:   Fri, 19 Oct 2018 09:29:22 +0000 (UTC)
+        Fri, 19 Oct 2018 13:40:02 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38735 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbeJSRkC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 13:40:02 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9J9XpBn1183584
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 19 Oct 2018 02:33:51 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9J9Xpvu1183581;
+        Fri, 19 Oct 2018 02:33:51 -0700
+Date:   Fri, 19 Oct 2018 02:33:51 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Waiman Long <tipbot@zytor.com>
+Message-ID: <tip-9506a7425b094d2f1d9c877ed5a78f416669269b@git.kernel.org>
+Cc:     longman@redhat.com, paulmck@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        tglx@linutronix.de, mingo@kernel.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, hpa@zytor.com, will.deacon@arm.com
+Reply-To: hpa@zytor.com, will.deacon@arm.com,
+          torvalds@linux-foundation.org, akpm@linux-foundation.org,
+          mingo@kernel.org, longman@redhat.com, paulmck@linux.vnet.ibm.com,
+          tglx@linutronix.de, peterz@infradead.org,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <1539913518-15598-1-git-send-email-longman@redhat.com>
+References: <1539913518-15598-1-git-send-email-longman@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] locking/lockdep: Fix debug_locks off performance
+ problem
+Git-Commit-ID: 9506a7425b094d2f1d9c877ed5a78f416669269b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit d7880812b359 ("idle: Add the stack canary init to
-cpu_startup_entry()") added the call to boot_init_stack_canary()
-in cpu_startup_entry() in an #ifdef CONFIG_X86 statement, with
-the intention to remove that #ifdef later.
+Commit-ID:  9506a7425b094d2f1d9c877ed5a78f416669269b
+Gitweb:     https://git.kernel.org/tip/9506a7425b094d2f1d9c877ed5a78f416669269b
+Author:     Waiman Long <longman@redhat.com>
+AuthorDate: Thu, 18 Oct 2018 21:45:17 -0400
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 19 Oct 2018 07:53:17 +0200
 
-While implementing stack protector for powerpc, it has been
-observed that calling boot_init_stack_canary() is also needed
-for powerpc which uses per task (TLS) stack canary like the X86.
+locking/lockdep: Fix debug_locks off performance problem
 
-However, calling boot_init_stack_canary() would break arches
-using global stack canary (ARM, SH, MIPS and XTENSA).
+It was found that when debug_locks was turned off because of a problem
+found by the lockdep code, the system performance could drop quite
+significantly when the lock_stat code was also configured into the
+kernel. For instance, parallel kernel build time on a 4-socket x86-64
+server nearly doubled.
 
-Instead of adding modifying the #ifdef in a
-implemented the call to boot_init_stack_canary() in the function
-calling cpu_startup_entry()
+Further analysis into the cause of the slowdown traced back to the
+frequent call to debug_locks_off() from the __lock_acquired() function
+probably due to some inconsistent lockdep states with debug_locks
+off. The debug_locks_off() function did an unconditional atomic xchg
+to write a 0 value into debug_locks which had already been set to 0.
+This led to severe cacheline contention in the cacheline that held
+debug_locks.  As debug_locks is being referenced in quite a few different
+places in the kernel, this greatly slow down the system performance.
 
-On x86, we have two functions calling cpu_startup_entry():
-- start_secondary()
-- cpu_bringup_and_idle()
+To prevent that trashing of debug_locks cacheline, lock_acquired()
+and lock_contended() now checks the state of debug_locks before
+proceeding. The debug_locks_off() function is also modified to check
+debug_locks before calling __debug_locks_off().
 
-start_secondary() already calls boot_init_stack_canary().
-
-This patch adds the call to boot_init_stack_canary() in
-cpu_bringup_and_idle() and removes it from cpu_startup_entry()
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Waiman Long <longman@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Link: http://lkml.kernel.org/r/1539913518-15598-1-git-send-email-longman@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/xen/smp_pv.c |  1 +
- kernel/sched/idle.c   | 15 ---------------
- 2 files changed, 1 insertion(+), 15 deletions(-)
+ kernel/locking/lockdep.c | 4 ++--
+ lib/debug_locks.c        | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/xen/smp_pv.c b/arch/x86/xen/smp_pv.c
-index e3b18ad49889..0e05e8e23998 100644
---- a/arch/x86/xen/smp_pv.c
-+++ b/arch/x86/xen/smp_pv.c
-@@ -88,6 +88,7 @@ static void cpu_bringup(void)
- asmlinkage __visible void cpu_bringup_and_idle(void)
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index be76f476c63f..1efada2dd9dd 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -4066,7 +4066,7 @@ void lock_contended(struct lockdep_map *lock, unsigned long ip)
  {
- 	cpu_bringup();
-+	boot_init_stack_canary();
- 	cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
- }
+ 	unsigned long flags;
  
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index 16f84142f2f4..f5516bae0c1b 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -347,21 +347,6 @@ EXPORT_SYMBOL_GPL(play_idle);
+-	if (unlikely(!lock_stat))
++	if (unlikely(!lock_stat || !debug_locks))
+ 		return;
  
- void cpu_startup_entry(enum cpuhp_state state)
+ 	if (unlikely(current->lockdep_recursion))
+@@ -4086,7 +4086,7 @@ void lock_acquired(struct lockdep_map *lock, unsigned long ip)
  {
--	/*
--	 * This #ifdef needs to die, but it's too late in the cycle to
--	 * make this generic (ARM and SH have never invoked the canary
--	 * init for the non boot CPUs!). Will be fixed in 3.11
--	 */
--#ifdef CONFIG_X86
--	/*
--	 * If we're the non-boot CPU, nothing set the stack canary up
--	 * for us. The boot CPU already has it initialized but no harm
--	 * in doing it again. This is a good place for updating it, as
--	 * we wont ever return from this function (so the invalid
--	 * canaries already on the stack wont ever trigger).
--	 */
--	boot_init_stack_canary();
--#endif
- 	arch_cpu_idle_prepare();
- 	cpuhp_online_idle(state);
- 	while (1)
--- 
-2.13.3
-
+ 	unsigned long flags;
+ 
+-	if (unlikely(!lock_stat))
++	if (unlikely(!lock_stat || !debug_locks))
+ 		return;
+ 
+ 	if (unlikely(current->lockdep_recursion))
+diff --git a/lib/debug_locks.c b/lib/debug_locks.c
+index 96c4c633d95e..124fdf238b3d 100644
+--- a/lib/debug_locks.c
++++ b/lib/debug_locks.c
+@@ -37,7 +37,7 @@ EXPORT_SYMBOL_GPL(debug_locks_silent);
+  */
+ int debug_locks_off(void)
+ {
+-	if (__debug_locks_off()) {
++	if (debug_locks && __debug_locks_off()) {
+ 		if (!debug_locks_silent) {
+ 			console_verbose();
+ 			return 1;
