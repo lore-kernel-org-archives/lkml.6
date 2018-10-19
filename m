@@ -2,180 +2,123 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9732FECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 21:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E268ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 21:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 269AF21470
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 21:04:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FE342064A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 21:25:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VT02FVOe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 269AF21470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="d+GY3kDZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FE342064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbeJTFLt (ORCPT
+        id S1727220AbeJTFd2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 01:11:49 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45335 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbeJTFLs (ORCPT
+        Sat, 20 Oct 2018 01:33:28 -0400
+Received: from mta-p4.oit.umn.edu ([134.84.196.204]:45290 "EHLO
+        mta-p4.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbeJTFd2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 01:11:48 -0400
-Received: by mail-ot1-f65.google.com with SMTP id u22so34470130ota.12;
-        Fri, 19 Oct 2018 14:04:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Zoh6txiyDi4L1dzHMfc/bmbMkgXWGspmTLUIbbiPGJg=;
-        b=VT02FVOegNPss1UybztqF3wOm8c8XaTaYZVkZOXuO4Pw5cjP9bLftyGXb+FU/0oeOC
-         lFvVuiXHdHyvx+HBf7KZlmU7GU7PSh1MX/h8Y50DEtrSAPRjeJqI97UwkQeo3KMUgod+
-         Y1CuPqw+oTlnsBBqoDX7MNgILQYKeHRN28zeRJTI9ok0HE2D5ob4H0Rd+Qmcy9CZoLPY
-         NSjFhXTAhmF+Y0qLWAqTD9Y8/2cw519aJxffjDbaQ0611IkeuS2juKY4n15xII4Cb4b2
-         XWsRJOul1Y8Hm84IQ8LPTyR/eg/yMg8a2d8eqIVv6t19nDESPJEY5FV0HTKLyl1FrCUh
-         +w3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Zoh6txiyDi4L1dzHMfc/bmbMkgXWGspmTLUIbbiPGJg=;
-        b=YZTBi60G3zzlZyOApofAuuQo0Sqmv+uBs+h5LxTsgTC4AbwZxeFwI/DqGdm9xrPaz+
-         BJ02UG998PzaPXxTP+47RePmOxi2cKCdgzN5RuboGPx7XR4P8IlNWQMhArCzFsBTmfFb
-         UMqpEJ7mPMvcM1leFEO2kAussgYT91uTjw37FyjJaQOYtfy/fnKztmrN47x+hoDuENA1
-         WoT28ZqG6Un6FP/cCbJsOQw4x14vQm9CySaw7wDW48lQ8M8aYpBQXKDzrhUyndFscRkx
-         oJJUrcbuie/nVHr/i1SrebEYdNS414SS2rQVxOquZm3FHHkhYripjozjIG7TUVRXQLUZ
-         lvhA==
-X-Gm-Message-State: ABuFfohOfi7TkputMdn+zNIRRLD081hayOVFE8DaOtUZEqg6xfOO1E8J
-        JweoQX6LC8arAspO7+kSDHYV0RDmj0u4tXLfVwulpA==
-X-Google-Smtp-Source: ACcGV61OgSlcfI+qWVop2gcTxiRObwUhbjZjpKTxoT4yN4jX2HpiCIX/FHUHlWtjxX/SPfMpg+7G5AL+yAimtwf/CDM=
-X-Received: by 2002:a9d:720e:: with SMTP id u14mr21870987otj.211.1539983042163;
- Fri, 19 Oct 2018 14:04:02 -0700 (PDT)
+        Sat, 20 Oct 2018 01:33:28 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mta-p4.oit.umn.edu (Postfix) with ESMTP id 3E2CE80C
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 21:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=umn.edu; h=
+        content-type:content-type:subject:subject:message-id:date:date
+        :from:from:in-reply-to:references:mime-version:received:received
+        :received; s=20160920; t=1539984338; x=1541798739; bh=3Fixb27unm
+        XUYpicVVsBKcmASiV1ccbWyAzOM6v0khU=; b=d+GY3kDZrATWkss03IB5W9x6E5
+        Y+O3P9ryc4YaF8i5VZlpiHSVgfJXVckVzpBXArTQg5dPsYAfJWyUO5FERAwes8Xe
+        wxJDEXO6cI9wzgy/nrYZ7I+BJXH4E4UJqD/lLAMzR/vj50pvKDuovhmTPS98/9ko
+        HkakGLmnfLXTEgyd/09l4xOub3HfYrOa9pRHWhwc4bDItB5loz7/QO9LXYm1w4k/
+        a6q/OlezUlVCBjOzIA5ZJGuo1l+1Yrdqc7iFt4W8In9IfQgz+xWc4t1Kasb61hDb
+        vfRf2BJzyQP8eARXbQS2UXIbjxo3ZxKbpWwpbQ9hOFkPcpSo8kELf90toDbg==
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p4.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p4.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 4Tv3Ug13DK2C for <linux-kernel@vger.kernel.org>;
+        Fri, 19 Oct 2018 16:25:38 -0500 (CDT)
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+        (using TLSv1 with cipher AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: wang6495)
+        by mta-p4.oit.umn.edu (Postfix) with ESMTPSA id 004E6126
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 16:25:38 -0500 (CDT)
+Received: by mail-ot1-f49.google.com with SMTP id w67so34532441ota.7
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 14:25:37 -0700 (PDT)
+X-Gm-Message-State: ABuFfoj46Ilq5y+sV5R8zFalRo9SZlRmLjR2tSSL7Rkk1qAg1m5jHyDI
+        9kL+kf2JG+ThN6L+9d3+jkht7jQrQUkoI9Z1Xmc=
+X-Google-Smtp-Source: ACcGV62ysWcjQ+dN0G8RL0UzzeRjYrmc9egd2RPQnZWASbDACK5+BjHDlpaeC1JkjI235vKOnzURhNYKWuB+Ioj/jPo=
+X-Received: by 2002:a9d:f61:: with SMTP id 88mr24064594ott.364.1539984337727;
+ Fri, 19 Oct 2018 14:25:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181018215541.4768-1-natechancellor@gmail.com>
-In-Reply-To: <20181018215541.4768-1-natechancellor@gmail.com>
-From:   adam radford <aradford@gmail.com>
-Date:   Fri, 19 Oct 2018 14:03:51 -0700
-Message-ID: <CAHtARFFUNUty00qfmwdNQftc6HPpSDUthNfA96TO2BZpAP+OEg@mail.gmail.com>
-Subject: Re: [PATCH] scsi: 3w-{sas,9xxx}: Use unsigned char for cdb
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1539784829-1159-1-git-send-email-wang6495@umn.edu> <20181018091319.GT2302@lahna.fi.intel.com>
+In-Reply-To: <20181018091319.GT2302@lahna.fi.intel.com>
+From:   Wenwen Wang <wang6495@umn.edu>
+Date:   Fri, 19 Oct 2018 16:25:01 -0500
+X-Gmail-Original-Message-ID: <CAAa=b7f-Q2ySZt2vqa1L2GyTA1FrT7+7_ui-eSLEYgN6iXSTFQ@mail.gmail.com>
+Message-ID: <CAAa=b7f-Q2ySZt2vqa1L2GyTA1FrT7+7_ui-eSLEYgN6iXSTFQ@mail.gmail.com>
+Subject: Re: [PATCH] thunderbolt: Fix a missing-check bug
+To:     mika.westerberg@linux.intel.com
+Cc:     Kangjie Lu <kjlu@umn.edu>, andreas.noever@gmail.com,
+        michael.jamet@intel.com, YehezkelShB@gmail.com,
+        open list <linux-kernel@vger.kernel.org>,
+        Wenwen Wang <wang6495@umn.edu>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 2:55 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
+On Thu, Oct 18, 2018 at 4:13 AM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 >
-> Clang warns a few times:
+> Hi Wenwen,
 >
-> drivers/scsi/3w-sas.c:386:11: warning: implicit conversion from 'int' to
-> 'char' changes value from 128 to -128 [-Wconstant-conversion]
->         cdb[4] = TW_ALLOCATION_LENGTH; /* allocation length */
->                ~ ^~~~~~~~~~~~~~~~~~~~
+> On Wed, Oct 17, 2018 at 09:00:29AM -0500, Wenwen Wang wrote:
+> > In tb_cfg_copy(), the header of the received control package, which is in
+> > the buffer 'pkg->buffer', is firstly parsed through parse_header() to make
+> > sure the header is in the expected format. In parse_header(), the header is
+> > actually checked by invoking check_header(), which checks the 'unknown'
+> > field of the header and the response route acquired through
+> > 'tb_cfg_get_route(header)'. If there is no error in this checking process,
+> > the package, including the header, is then copied to 'req->response' in
+> > tb_cfg_copy() through memcpy() and the parsing result is saved to
+> > 'req->result'.
+> >
+> > The problem here is that the whole parsing and checking process is
+> > conducted directly on the buffer 'pkg->buffer', which is actually a DMA
+> > region and allocated through dma_pool_alloc() in tb_ctl_pkg_alloc(). Given
+> > that the DMA region can also be accessed directly by a device at any time,
+> > it is possible that a malicious device can race to modify the package data
+> > after the parsing and checking process but before memcpy() is invoked in
+> > tb_cfg_copy(). Through this way, the attacker can bypass the parsing and
+> > checking process and inject malicious data. This can potentially cause
+> > undefined behavior of the kernel and introduce unexpected security risk.
 >
-> Update cdb's type to unsigned char, which matches the type of the cdb
-> member in struct TW_Command_Apache.
+> Here the device doing DMA is the Thunderbolt host controller which is
+> soldered on the motherboard (not anything connected via the TBT ports).
+> In addition the buffers we are dealing here are already marked ready by
+> the host controller hardware so it is not expected to touch them anymore
+> (if it did, then it would be a quite nasty bug).
 >
-> Link: https://github.com/ClangBuiltLinux/linux/issues/158
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/scsi/3w-9xxx.c | 12 ++++++++----
->  drivers/scsi/3w-sas.c  |  8 +++++---
->  2 files changed, 13 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/scsi/3w-9xxx.c b/drivers/scsi/3w-9xxx.c
-> index 05293babb031..2d655a97b959 100644
-> --- a/drivers/scsi/3w-9xxx.c
-> +++ b/drivers/scsi/3w-9xxx.c
-> @@ -143,7 +143,9 @@ static int twa_poll_status_gone(TW_Device_Extension *tw_dev, u32 flag, int secon
->  static int twa_post_command_packet(TW_Device_Extension *tw_dev, int request_id, char internal);
->  static int twa_reset_device_extension(TW_Device_Extension *tw_dev);
->  static int twa_reset_sequence(TW_Device_Extension *tw_dev, int soft_reset);
-> -static int twa_scsiop_execute_scsi(TW_Device_Extension *tw_dev, int request_id, char *cdb, int use_sg, TW_SG_Entry *sglistarg);
-> +static int twa_scsiop_execute_scsi(TW_Device_Extension *tw_dev, int request_id,
-> +                                  unsigned char *cdb, int use_sg,
-> +                                  TW_SG_Entry *sglistarg);
->  static void twa_scsiop_execute_scsi_complete(TW_Device_Extension *tw_dev, int request_id);
->  static char *twa_string_lookup(twa_message_type *table, unsigned int aen_code);
->
-> @@ -278,7 +280,7 @@ static int twa_aen_complete(TW_Device_Extension *tw_dev, int request_id)
->  static int twa_aen_drain_queue(TW_Device_Extension *tw_dev, int no_check_reset)
->  {
->         int request_id = 0;
-> -       char cdb[TW_MAX_CDB_LEN];
-> +       unsigned char cdb[TW_MAX_CDB_LEN];
->         TW_SG_Entry sglist[1];
->         int finished = 0, count = 0;
->         TW_Command_Full *full_command_packet;
-> @@ -423,7 +425,7 @@ static void twa_aen_queue_event(TW_Device_Extension *tw_dev, TW_Command_Apache_H
->  /* This function will read the aen queue from the isr */
->  static int twa_aen_read_queue(TW_Device_Extension *tw_dev, int request_id)
->  {
-> -       char cdb[TW_MAX_CDB_LEN];
-> +       unsigned char cdb[TW_MAX_CDB_LEN];
->         TW_SG_Entry sglist[1];
->         TW_Command_Full *full_command_packet;
->         int retval = 1;
-> @@ -1798,7 +1800,9 @@ static int twa_scsi_queue_lck(struct scsi_cmnd *SCpnt, void (*done)(struct scsi_
->  static DEF_SCSI_QCMD(twa_scsi_queue)
->
->  /* This function hands scsi cdb's to the firmware */
-> -static int twa_scsiop_execute_scsi(TW_Device_Extension *tw_dev, int request_id, char *cdb, int use_sg, TW_SG_Entry *sglistarg)
-> +static int twa_scsiop_execute_scsi(TW_Device_Extension *tw_dev, int request_id,
-> +                                  unsigned char *cdb, int use_sg,
-> +                                  TW_SG_Entry *sglistarg)
->  {
->         TW_Command_Full *full_command_packet;
->         TW_Command_Apache *command_packet;
-> diff --git a/drivers/scsi/3w-sas.c b/drivers/scsi/3w-sas.c
-> index 266bdac75304..480cf82700e9 100644
-> --- a/drivers/scsi/3w-sas.c
-> +++ b/drivers/scsi/3w-sas.c
-> @@ -287,7 +287,9 @@ static int twl_post_command_packet(TW_Device_Extension *tw_dev, int request_id)
->  } /* End twl_post_command_packet() */
->
->  /* This function hands scsi cdb's to the firmware */
-> -static int twl_scsiop_execute_scsi(TW_Device_Extension *tw_dev, int request_id, char *cdb, int use_sg, TW_SG_Entry_ISO *sglistarg)
-> +static int twl_scsiop_execute_scsi(TW_Device_Extension *tw_dev, int request_id,
-> +                                  unsigned char *cdb, int use_sg,
-> +                                  TW_SG_Entry_ISO *sglistarg)
->  {
->         TW_Command_Full *full_command_packet;
->         TW_Command_Apache *command_packet;
-> @@ -372,7 +374,7 @@ static int twl_scsiop_execute_scsi(TW_Device_Extension *tw_dev, int request_id,
->  /* This function will read the aen queue from the isr */
->  static int twl_aen_read_queue(TW_Device_Extension *tw_dev, int request_id)
->  {
-> -       char cdb[TW_MAX_CDB_LEN];
-> +       unsigned char cdb[TW_MAX_CDB_LEN];
->         TW_SG_Entry_ISO sglist[1];
->         TW_Command_Full *full_command_packet;
->         int retval = 1;
-> @@ -554,7 +556,7 @@ static int twl_poll_response(TW_Device_Extension *tw_dev, int request_id, int se
->  static int twl_aen_drain_queue(TW_Device_Extension *tw_dev, int no_check_reset)
->  {
->         int request_id = 0;
-> -       char cdb[TW_MAX_CDB_LEN];
-> +       unsigned char cdb[TW_MAX_CDB_LEN];
->         TW_SG_Entry_ISO sglist[1];
->         int finished = 0, count = 0;
->         TW_Command_Full *full_command_packet;
-> --
-> 2.19.1
->
+> What kind of use-case you had in mind that could possibly inject
+> malicious data to these buffers?
 
-Looks ok.
+Hi Mika,
 
-Acked-by: Adam Radford <aradford@gmail.com>
+Thanks for your response. The current version of the code assumes that
+the Thunderbolt controller behaves as expected, e.g., the host
+controller should not touch the data after it is marked ready.
+However, it is not impossible that the controller is exploited by an
+attacker through a security vulnerability, even though it is soldered
+on the motherboard. In that case, the controller may behave in an
+unexpected way and this bug will offer more opportunities for the
+attacker.
 
--Adam
+Wenwen
