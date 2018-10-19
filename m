@@ -2,98 +2,173 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19FE8ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 506D8ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFB3B20645
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:11:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFB3B20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 18AF620645
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:11:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="a2l15UxD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18AF620645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbeJSURN (ORCPT
+        id S1727851AbeJSURT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:17:13 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:60350 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbeJSURN (ORCPT
+        Fri, 19 Oct 2018 16:17:19 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:43452 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbeJSURS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:17:13 -0400
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 7299572CC59;
-        Fri, 19 Oct 2018 15:11:21 +0300 (MSK)
-Received: from sole.flsd.net (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 5D8D74A4A16;
-        Fri, 19 Oct 2018 15:11:21 +0300 (MSK)
-Date:   Fri, 19 Oct 2018 15:11:21 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Jonathan Corbet <corbet@lwn.net>, Shaohua Li <shli@kernel.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-raid@vger.kernel.org
-Subject: Re: [dm-devel] [PATCH] dm: add secdel target
-Message-ID: <20181019121121.k6nv6we37y52ymuc@sole.flsd.net>
-References: <20181014112439.8119-1-vt@altlinux.org>
- <20181019061945.GA7403@infradead.org>
- <20181019114944.syemvziebwfuruof@sole.flsd.net>
- <20181019120033.GA7869@infradead.org>
+        Fri, 19 Oct 2018 16:17:18 -0400
+Received: by mail-ot1-f67.google.com with SMTP id k9so32940448otl.10
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 05:11:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=jDJ9et9TD3onWgXlgq4YgRk4LiQ21Y28bz9MsUjV3z4=;
+        b=a2l15UxD7PXXl36iPUMToeKr+8WFoWf0zR6bp03uTYPDcKfWx9lSUIJWoeU7TwvZZP
+         VaBJ52Hm99CMP72cAZ5VfzXsARiO5qaa6+lH1vBpd4eGj273UZ8x31z5wofW6ZpB47VR
+         +oOUAFa2/y8NnhwMA/lqwNnDYAJsaLOuvjS38=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jDJ9et9TD3onWgXlgq4YgRk4LiQ21Y28bz9MsUjV3z4=;
+        b=QLDuvZiHEuuhplNH7XGhUKq7Qk2A0r4tA2Ey2x7HdP8rECVsCThqguDSG0M5OuoWbv
+         sgiIbjB1+GVT+qfIZ69LebAD/lEDry37CL6CBQE/AdSIAjv8jJnLj2gg4pawhDTNg+X3
+         egXSEEeHWu7CSfWEK8u9mojq8dMqw4ADN3JN0iR8RKCJhveAuLKzcD1AjkCKT9n/v6qP
+         MW15Uu9CzbfohfDVKVJZENUBlfHnWAjd8N7vWtDvF/czsI+5fesbBM/kExj+gZhvfVPS
+         X9+/Nn9Ytd2hwZcL8jKwOJDCR+LAYy0aeKARNf54cAsnL+K/MjJKQBjyk+hBwwhBQA0O
+         lP3Q==
+X-Gm-Message-State: ABuFfohfp4k9wTIFOovSnYUYifWK7TqSTPQYUxIx07E/w7Urbae24nIb
+        VPL61aivVat0x9oosfhR241tBkPOfWDaXQ==
+X-Google-Smtp-Source: ACcGV603a+ZzjR/waPj1lOAffH437sseyJmm2dYzI8zPwP72DyEKrSOjD5mJNE4aObPSa4Xj4eJ2MA==
+X-Received: by 2002:a9d:fd6:: with SMTP id m22mr23073940otd.227.1539951089120;
+        Fri, 19 Oct 2018 05:11:29 -0700 (PDT)
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com. [209.85.210.48])
+        by smtp.gmail.com with ESMTPSA id u107sm4711638otb.71.2018.10.19.05.11.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 19 Oct 2018 05:11:27 -0700 (PDT)
+Received: by mail-ot1-f48.google.com with SMTP id c32so32951657otb.8
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 05:11:26 -0700 (PDT)
+X-Received: by 2002:a9d:9c3:: with SMTP id 3mr22582152otz.181.1539951086330;
+ Fri, 19 Oct 2018 05:11:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <20181019120033.GA7869@infradead.org>
-User-Agent: NeoMutt/20171215-106-ac61c7
+Received: by 2002:ac9:7915:0:0:0:0:0 with HTTP; Fri, 19 Oct 2018 05:10:55
+ -0700 (PDT)
+In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
+References: <20181018175416.718399607@linuxfoundation.org>
+From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
+Date:   Fri, 19 Oct 2018 09:10:55 -0300
+X-Gmail-Original-Message-ID: <CABdQkv9-k9K3c21TgzrY_gdjOvVpuugGTLJjx3XbDAdvzPvQcA@mail.gmail.com>
+Message-ID: <CABdQkv9-k9K3c21TgzrY_gdjOvVpuugGTLJjx3XbDAdvzPvQcA@mail.gmail.com>
+Subject: Re: [PATCH 4.14 00/41] 4.14.78-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 05:00:33AM -0700, Christoph Hellwig wrote:
-> On Fri, Oct 19, 2018 at 02:49:44PM +0300, Vitaly Chikunov wrote:
-> > On Thu, Oct 18, 2018 at 11:19:45PM -0700, Christoph Hellwig wrote:
-> > > Just as a note:  the name is a complete misowner, a couple overwrite
-> > > are not in any way secure deletion.  So naming it this way and exposing
-> > > this as erase is a problem that is going to get back to bite us.
-> > 
-> > In what way it's not secure deletion?
-> > 
-> > It's secure deletion by overwriting discarded data instead of leaving it
-> > as is.
-> 
-> Overwriting data does not delete data.  Most certainly not in Flash based
-> SSDs, but also not in many storage arrays, or for that matter many modern
-> disks that have sectore remapping and various kinds of non-volatile
-> caches.  There is a reason why devices tend to have special commands to
-> perform secure erase - depending on the media they might or might not
-> overwrite internally, but at least they do it in a way that actually
-> works for the given media and device configuration.
+On Thu, Oct 18, 2018 at 2:54 PM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.14.78 release.
+> There are 41 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat Oct 20 17:53:55 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.14.78-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.14.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-I know that. This is why it says "The target does not try to determine
-if the underlying drive reliably support data overwrites, this decision
-is solely on the discretion of a user. Please note that not all drivers
-support this ability."
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.14.78-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.14.y
+git commit: 901b7ab9634ee1196ac3e77271f7d70dbacf12e9
+git describe: v4.14.76-152-g901b7ab9634e
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
+ild/v4.14.76-152-g901b7ab9634e
 
 
-> > dm-erase or dm-wipe? dm-discerase?
-> 
-> dm-overwrite?
+No regressions (compared to build v4.14.77)
 
-These are all good to me.
 
-> 
-> > But still provide REQ_OP_SECURE_ERASE support?
-> 
-> On the one hand that is highly misleading and would warrant a warning
-> (see above), on the other hand discard is purely advisory and can be
-> skipped any time, including by intermediate layers.  So I don't think
-> you can actually do what you want without major changes to the whole
-> I/O stack.
+No fixes (compared to build v4.14.77)
 
-Probably, a concerned user should test his setup to be sure discards
-reach dm-secdel (after that they go as writes), and data he thinks
-should be erased is erased.
+
+Ran 21098 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-fsx-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
