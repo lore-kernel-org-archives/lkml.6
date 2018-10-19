@@ -2,131 +2,103 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68942ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A65DEECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E07C21486
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:34:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="kLcyIq2q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E07C21486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 701002087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:34:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 701002087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbeJSUk2 (ORCPT
+        id S1727682AbeJSUkt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:40:28 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52318 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727333AbeJSUk1 (ORCPT
+        Fri, 19 Oct 2018 16:40:49 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:44424 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727333AbeJSUks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:40:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=iSVSD4UqzdaVJQYjif86HPRztS0sE98o03+gpKRbI7o=; b=kLcyIq2qtjWG
-        SGuHeTCxC9S1dLUnt0qvOBq4O+E2lux/AH8sSyK88NB20/tDY50IBh1KkcubC6sQA27TuCvZulIRa
-        UyMPwV1Vxl2zC7fb4keU/ox9dpPXIcIHSZ+MKt2Eb6swUrUSIFCZXMCSbZvsPGgaqvPGBeTzFXQS5
-        ktuUk=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gDTyj-000078-S4; Fri, 19 Oct 2018 12:34:09 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 994A81122548; Fri, 19 Oct 2018 13:34:09 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Olivier Moysan <olivier.moysan@st.com>
-Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        alsa-devel@alsa-project.org, robh@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-kernel@vger.kernel.org, olivier.moysan@st.com,
-        arnaud.pouliquen@st.com, benjamin.gaignard@st.com,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: dt-bindings: add mclk provider support to stm32 sai" to the asoc tree
-In-Reply-To:  <1539612216-12602-2-git-send-email-olivier.moysan@st.com>
-Message-Id: <20181019123409.994A81122548@debutante.sirena.org.uk>
-Date:   Fri, 19 Oct 2018 13:34:09 +0100 (BST)
+        Fri, 19 Oct 2018 16:40:48 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9JCY6pZ007103;
+        Fri, 19 Oct 2018 07:34:44 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2n3es40sey-1;
+        Fri, 19 Oct 2018 07:34:44 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 23A1E611E120;
+        Fri, 19 Oct 2018 07:34:44 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Fri, 19 Oct 2018
+ 13:34:42 +0100
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w9JCYgL2020117; Fri,
+ 19 Oct 2018 13:34:42 +0100
+Date:   Fri, 19 Oct 2018 13:34:42 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     <lee.jones@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v3 4/5] regulator: lochnagar: Add support for the Cirrus
+ Logic Lochnagar
+Message-ID: <20181019123442.GM1653@imbe.wolfsonmicro.main>
+References: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
+ <20181019095003.26046-4-ckeepax@opensource.cirrus.com>
+ <20181019112622.GB5895@sirena.org.uk>
+ <20181019121920.GL1653@imbe.wolfsonmicro.main>
+ <20181019122118.GI5895@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181019122118.GI5895@sirena.org.uk>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=946 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1810190113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Fri, Oct 19, 2018 at 01:21:18PM +0100, Mark Brown wrote:
+> On Fri, Oct 19, 2018 at 01:19:20PM +0100, Charles Keepax wrote:
+> > On Fri, Oct 19, 2018 at 12:26:22PM +0100, Mark Brown wrote:
+> 
+> > > Please do not submit new versions of already applied patches, please
+> > > submit incremental updates to the existing code.  Modifying existing
+> > > commits creates problems for other users building on top of those
+> > > commits so it's best practice to only change pubished git commits if
+> > > absolutely essential.
+> 
+> > I don't think any of this has been applied anywhere yet.
+> 
+> It looks a lot like
+> 
+> bef9391cbec547351c6a13e52f3a26bb2d271ec7 regulator: lochnagar: Add support for the Cirrus Logic Lochnagar
+> 
+> in -next.
 
-   ASoC: dt-bindings: add mclk provider support to stm32 sai
+Well it sure does look a lot like my patch :-). Apologies
+something must have gone wrong on one of our ends as I don't
+seem to have ever received your usual confirmation email it
+was merged. I will try to keep a closer eye on people's trees
+in future.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+No changes in this version, was just updating other patches in the
+chain for some feedback so no harm done. Will send an incremental
+patch for comment style.
 
 Thanks,
-Mark
-
-From af16112457d8175b444baa9aac02558a1e1154b5 Mon Sep 17 00:00:00 2001
-From: Olivier Moysan <olivier.moysan@st.com>
-Date: Mon, 15 Oct 2018 16:03:33 +0200
-Subject: [PATCH] ASoC: dt-bindings: add mclk provider support to stm32 sai
-
-add mclk provider support to stm32 sai
-
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/sound/st,stm32-sai.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/sound/st,stm32-sai.txt b/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
-index 3a3fc506e43a..3f4467ff0aa2 100644
---- a/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
-+++ b/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
-@@ -31,7 +31,11 @@ SAI subnodes required properties:
-   - reg: Base address and size of SAI sub-block register set.
-   - clocks: Must contain one phandle and clock specifier pair
- 	for sai_ck which feeds the internal clock generator.
-+	If the SAI shares a master clock, with another SAI set as MCLK
-+	clock provider, SAI provider phandle must be specified here.
-   - clock-names: Must contain "sai_ck".
-+	Must also contain "MCLK", if SAI shares a master clock,
-+	with a SAI set as MCLK clock provider.
-   - dmas: see Documentation/devicetree/bindings/dma/stm32-dma.txt
-   - dma-names: identifier string for each DMA request line
- 	"tx": if sai sub-block is configured as playback DAI
-@@ -51,6 +55,9 @@ SAI subnodes Optional properties:
- 	configured according to protocol defined in related DAI link node,
- 	such as i2s, left justified, right justified, dsp and pdm protocols.
- 	Note: ac97 protocol is not supported by SAI driver
-+   - #clock-cells: should be 0. This property must be present if the SAI device
-+	is a master clock provider, according to clocks bindings, described in
-+	Documentation/devicetree/bindings/clock/clock-bindings.txt.
- 
- The device node should contain one 'port' child node with one child 'endpoint'
- node, according to the bindings defined in Documentation/devicetree/bindings/
--- 
-2.19.0.rc2
-
+Charles
