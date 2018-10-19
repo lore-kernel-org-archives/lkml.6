@@ -2,47 +2,47 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D83B0ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6BFECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:57:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92A3C21479
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:52:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66CB920869
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:57:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RP39iibQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92A3C21479
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bKnmwr1s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66CB920869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbeJSP5J (ORCPT
+        id S1727033AbeJSQCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 11:57:09 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:59950 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbeJSP5I (ORCPT
+        Fri, 19 Oct 2018 12:02:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60156 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726816AbeJSQCu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 11:57:08 -0400
+        Fri, 19 Oct 2018 12:02:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EtKCwHnLysgUzaTI4hoy2nKzepCbWBQgKD7G65lI364=; b=RP39iibQr4OtneTKIVsANQENd
-        VWL7zpOJl5R3eIhDFqNu0UqaU4l9CYn72X5sQLUC76h45j+qeJz/ZqK7lvZk6lDaGGyxBRJFvpKu0
-        FVknkpMGO/xGloBc8AfQLareLV6Fwa9PtJkndtdYG9r1x7/MDAEKcasF7xLVF3SOIh/nv8dmBxrnC
-        oMZhZOdcqJT7ol3WEdeFpOgK8M4MrSCBv7dEYlx+oMAmHWG3yIRI345jN9wEUO9Vws9Sv6m9pMPhG
-        CJVhgucEYeJBeoVvszLxO2Z9ooajL4RuQUVZRMDJUknl1xNqXWRPsjngbHH+Jnt/STU5aumQNDBBQ
-        0ymxQI1fA==;
+         bh=FKfGf15lTCE2qWYEuxk2CyD205uap9gIjQA3A3fBAT8=; b=bKnmwr1sPeSYq/65hswCppC4h
+        KmMI2m4e4WOTH2G4tbXupbAvzSEXVUyhAX3aesunvpA/fl93JSOxnGyISH1vijKhpA7yqlKvg9y77
+        /PS7SlAtIsUTRzgl02JBJk/0JE2BXDDa+LDsLeM/gPCQKmo/HH3yiFapqDyqi8llOUYZIcRg7dnQv
+        kybyO26JAZ8GR9/1djjJpojzat1FQEkfDtwlOCnuhp9GIzuKn4oc/ooWqavmGIAtG+7MMIRGP1XDv
+        MioZkX8Pc7Zoj2aN8PsVscQ4nThrcG48Cd9ss2NDXkputfI9FY+GCw1gQgPp8ZfPqT+d6lhgYR5Vh
+        lbrh1MI2A==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gDPZh-0002gp-Gt; Fri, 19 Oct 2018 07:52:02 +0000
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gDPfC-0000za-On; Fri, 19 Oct 2018 07:57:42 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id AB7E02029856B; Fri, 19 Oct 2018 09:51:58 +0200 (CEST)
-Date:   Fri, 19 Oct 2018 09:51:58 +0200
+        id 6906A2029856B; Fri, 19 Oct 2018 09:57:40 +0200 (CEST)
+Date:   Fri, 19 Oct 2018 09:57:40 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Tim Chen <tim.c.chen@linux.intel.com>
 Cc:     Jiri Kosina <jikos@kernel.org>,
@@ -59,32 +59,22 @@ Cc:     Jiri Kosina <jikos@kernel.org>,
         Arjan van de Ven <arjan@linux.intel.com>,
         Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
         x86@kernel.org
-Subject: Re: [Patch v3 05/13] x86/smt: Create cpu_smt_enabled static key for
- SMT specific code
-Message-ID: <20181019075158.GX3121@hirez.programming.kicks-ass.net>
+Subject: Re: [Patch v3 00/13] Provide process property based options to
+ enable Spectre v2 userspace-userspace protection
+Message-ID: <20181019075740.GY3121@hirez.programming.kicks-ass.net>
 References: <cover.1539798901.git.tim.c.chen@linux.intel.com>
- <ed49c63227dcfa8fd6e53c492e38ce0e22a5b11f.1539798901.git.tim.c.chen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ed49c63227dcfa8fd6e53c492e38ce0e22a5b11f.1539798901.git.tim.c.chen@linux.intel.com>
+In-Reply-To: <cover.1539798901.git.tim.c.chen@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 10:59:33AM -0700, Tim Chen wrote:
-> diff --git a/kernel/cpu.c b/kernel/cpu.c
-> index 3adecda..ad28afc 100644
-> --- a/kernel/cpu.c
-> +++ b/kernel/cpu.c
-> @@ -349,6 +349,8 @@ EXPORT_SYMBOL_GPL(cpu_hotplug_enable);
->  #ifdef CONFIG_HOTPLUG_SMT
->  enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
->  EXPORT_SYMBOL_GPL(cpu_smt_control);
-> +DEFINE_STATIC_KEY_TRUE(cpu_smt_enabled);
-> +EXPORT_SYMBOL_GPL(cpu_smt_enabled);
+On Wed, Oct 17, 2018 at 10:59:28AM -0700, Tim Chen wrote:
+> Application to application exploit is in general difficult due to address
+> space layout randomization in applications and the need to know an
 
-We already have sched_smt_present; please merge the two. It is pointless
-having this twice.
+Does the BTB attack on KASLR not work for userspace?
