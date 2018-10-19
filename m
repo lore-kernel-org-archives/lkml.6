@@ -2,93 +2,104 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF466ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0415AECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B337620645
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:30:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fF3T4eE3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B337620645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id C544521470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:30:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C544521470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbeJSPfa (ORCPT
+        id S1727226AbeJSPfq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 11:35:30 -0400
-Received: from ozlabs.org ([203.11.71.1]:37679 "EHLO ozlabs.org"
+        Fri, 19 Oct 2018 11:35:46 -0400
+Received: from mga01.intel.com ([192.55.52.88]:1924 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726340AbeJSPf3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 11:35:29 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42byHv5f3bz9sCf;
-        Fri, 19 Oct 2018 18:30:34 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1539934235;
-        bh=iAQsVVMt05FB27yaSq+5xYlkhJyUsS4O2xI4LNEh4ZE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=fF3T4eE3umCOlYhf/MVasiSPFavHY84gv+HaTRnP6/ykivfQL4XUuMb983SS/8mSu
-         8W1KJB77PTW79RCe0ppkSSMZ2YxeKd9o4+GpBB1q7R6Fx2wqrMrbez/zLd3EM2a4Pa
-         Aq98LOPP2rqPJ1/90T/oODSGsCHQ30ufcDRmssJHPMEE3mwUPsgDlPynKtQweesNG6
-         QroKtzzJk5mXxItX8JBg3D64kcBu67tK5K4/qDn+X19LacIxdfS80aragJqgcCS5dm
-         Jf9Dc6YPeSMSiJqg+TUEL9kKL5+vvvJhVft7KMnEFjJQaiHdpuHQXkqh8ojO9uLLP/
-         AFOo2eMEOsUmw==
-Date:   Fri, 19 Oct 2018 18:30:33 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: linux-next: Signed-off-by missing for commits in the net-next tree
-Message-ID: <20181019183033.4fc5b93b@canb.auug.org.au>
+        id S1726340AbeJSPfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 11:35:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 00:30:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,399,1534834800"; 
+   d="scan'208";a="242572382"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by orsmga004.jf.intel.com with ESMTP; 19 Oct 2018 00:30:54 -0700
+Received: from hasmsx107.ger.corp.intel.com (10.184.198.27) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 19 Oct 2018 00:30:54 -0700
+Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
+ hasmsx107.ger.corp.intel.com ([169.254.2.223]) with mapi id 14.03.0319.002;
+ Fri, 19 Oct 2018 10:30:51 +0300
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>,
+        "nayna@linux.ibm.com" <nayna@linux.ibm.com>
+CC:     "nayna@linux.vnet.ibm.com" <nayna@linux.vnet.ibm.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tpm: tpm_i2c_nuvoton: use correct command duration for
+ TPM 2.x
+Thread-Topic: [PATCH] tpm: tpm_i2c_nuvoton: use correct command duration for
+ TPM 2.x
+Thread-Index: AQHUZ2btLmkTCCBG+k+DpgFokEiphqUl+QmA
+Date:   Fri, 19 Oct 2018 07:30:50 +0000
+Message-ID: <1539933995.19334.9.camel@intel.com>
+References: <20181017163223.25141-1-tomas.winkler@intel.com>
+         <6e12d4b6-cb84-3be5-8a62-6868be43d43d@linux.ibm.com>
+In-Reply-To: <6e12d4b6-cb84-3be5-8a62-6868be43d43d@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.12.91.48]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <87AC378C383C2C49A85DEC6491EE7FF0@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/eNdFC5miAgY4ao7/5OsbdG0"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/eNdFC5miAgY4ao7/5OsbdG0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Commits
-
-  2a4c42980250 ("net/mlx5: Remove counter from idr after removing it from l=
-ist")
-  fd3307130344 ("net/mlx5: Take fs_counters dellist before addlist")
-
-are missing a Signed-off-by from their committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/eNdFC5miAgY4ao7/5OsbdG0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvJiBkACgkQAVBC80lX
-0GxrGgf+KxxtNI1r0JqcSV79x+dGvOfLzyuFyRLHb1ebY6EZo+idarlc4Py60TAa
-LQQRlJQGCc5MeLCVWUfuegtpG56O/sWsnXnk8297rP1t7unyhnxAWs7wIzu1w8Oa
-rHmlU6+2WgEVBZ6Uthv3SzSs9h+htbQGBSL8QbmmcmD2pKp3IJ9C5NR7mDNk/SIt
-Ehgfb1Iv875qGrDNGPZjOx9uLf+7axmDIam+4ll3/FhKHvMiptwTProCQBxkV3rD
-1T7odgvH+x82u2PFKrZpgN3dtx+UhUQvTOhTOP47aWwaVGdh1r0nsDCZI3sV/733
-rNmVrSrKLm3Sk7Nisq62X6sw0KN28Q==
-=JgKI
------END PGP SIGNATURE-----
-
---Sig_/eNdFC5miAgY4ao7/5OsbdG0--
+T24gRnJpLCAyMDE4LTEwLTE5IGF0IDEwOjE0ICswNTMwLCBOYXluYSBKYWluIHdyb3RlOg0KPiAN
+Cj4gT24gMTAvMTcvMjAxOCAxMDowMiBQTSwgVG9tYXMgV2lua2xlciB3cm90ZToNCj4gPiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9jaGFyL3RwbS90cG1faTJjX251dm90b24uYyBiL2RyaXZlcnMvY2hh
+ci90cG0vdHBtX2kyY19udXZvdG9uLmMNCj4gPiBpbmRleCBjYWE4NmIxOWM3NmQuLmY3NGY0NTFi
+YWY2YSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2NoYXIvdHBtL3RwbV9pMmNfbnV2b3Rvbi5j
+DQo+ID4gKysrIGIvZHJpdmVycy9jaGFyL3RwbS90cG1faTJjX251dm90b24uYw0KPiA+IEBAIC0z
+NjksNiArMzY5LDcgQEAgc3RhdGljIGludCBpMmNfbnV2b3Rvbl9zZW5kKHN0cnVjdCB0cG1fY2hp
+cCAqY2hpcCwgdTggKmJ1Ziwgc2l6ZV90IGxlbikNCj4gPiAgIAlzdHJ1Y3QgZGV2aWNlICpkZXYg
+PSBjaGlwLT5kZXYucGFyZW50Ow0KPiA+ICAgCXN0cnVjdCBpMmNfY2xpZW50ICpjbGllbnQgPSB0
+b19pMmNfY2xpZW50KGRldik7DQo+ID4gICAJdTMyIG9yZGluYWw7DQo+ID4gKwl1bnNpZ25lZCBs
+b25nIGR1cmF0aW9uOw0KPiA+ICAgCXNpemVfdCBjb3VudCA9IDA7DQo+ID4gICAJaW50IGJ1cnN0
+X2NvdW50LCBieXRlczJ3cml0ZSwgcmV0cmllcywgcmMgPSAtRUlPOw0KPiA+IA0KPiA+IEBAIC00
+NTUsMTAgKzQ1NiwxMiBAQCBzdGF0aWMgaW50IGkyY19udXZvdG9uX3NlbmQoc3RydWN0IHRwbV9j
+aGlwICpjaGlwLCB1OCAqYnVmLCBzaXplX3QgbGVuKQ0KPiA+ICAgCQlyZXR1cm4gcmM7DQo+ID4g
+ICAJfQ0KPiA+ICAgCW9yZGluYWwgPSBiZTMyX3RvX2NwdSgqKChfX2JlMzIgKikgKGJ1ZiArIDYp
+KSk7DQo+ID4gLQlyYyA9IGkyY19udXZvdG9uX3dhaXRfZm9yX2RhdGFfYXZhaWwoY2hpcCwNCj4g
+PiAtCQkJCQkgICAgIHRwbV9jYWxjX29yZGluYWxfZHVyYXRpb24oY2hpcCwNCj4gPiAtCQkJCQkJ
+CQkgICAgICAgb3JkaW5hbCksDQo+ID4gLQkJCQkJICAgICAmcHJpdi0+cmVhZF9xdWV1ZSk7DQo+
+ID4gKwlpZiAoY2hpcC0+ZmxhZ3MgJiBUUE1fQ0hJUF9GTEFHX1RQTTIpDQo+ID4gKwkJZHVyYXRp
+b24gPSB0cG0yX2NhbGNfb3JkaW5hbF9kdXJhdGlvbihjaGlwLCBvcmRpbmFsKTsNCj4gPiArCWVs
+c2UNCj4gPiArCQlkdXJhdGlvbiA9IHRwbV9jYWxjX29yZGluYWxfZHVyYXRpb24oY2hpcCwgb3Jk
+aW5hbCk7DQo+ID4gKw0KPiA+ICsJcmMgPSBpMmNfbnV2b3Rvbl93YWl0X2Zvcl9kYXRhX2F2YWls
+KGNoaXAsIGR1cmF0aW9uLCAmcHJpdi0+cmVhZF9xdWV1ZSk7DQo+ID4gICAJaWYgKHJjKSB7DQo+
+ID4gICAJCWRldl9lcnIoZGV2LCAiJXMoKSB0aW1lb3V0IGNvbW1hbmQgZHVyYXRpb25cbiIsIF9f
+ZnVuY19fKTsNCj4gPiAgIAkJaTJjX251dm90b25fcmVhZHkoY2hpcCk7DQo+IA0KPiBJIG9ubHkg
+aGF2ZSBOdXZvdG9uIFRQTSAyLjAsIHRlc3RlZCBmb3IgdGhhdC4NCj4gDQo+IFJldmlld2VkLWJ5
+OiBOYXluYSBKYWluIDxuYXluYUBsaW51eC5pYm0uY29tPg0KPiBUZXN0ZWQtYnk6IE5heW5hIEph
+aW4gPG5heW5hQGxpbnV4LmlibS5jb20+IChGb3IgVFBNIDIuMCkNCg0KVGhhdCdzIHdoYXQgd2Ug
+bmVlZGVkIGFzIFRQTSAxLjIgc2hvdWxkIGJlIHVuY2hhbmdlZC4NClJlYWxseSBhcHByZWNpYXRl
+IHRoZSBxdWljayByZXNwb25zZS4gSSB3aWxsIHJlYmFzZSB0aGUgc2VyaWVzIG9uIHRvIG9mDQp0
+aGlzIHBhdGNoLiANCg0KVGhhbmtzDQpUb21hcw0K
