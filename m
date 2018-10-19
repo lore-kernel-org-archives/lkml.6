@@ -2,391 +2,89 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4789ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8800ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A0062086E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:29:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A0062086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 693C82086E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:31:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qgWzP8Qx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 693C82086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728270AbeJTCgn (ORCPT
+        id S1727835AbeJTCiX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 22:36:43 -0400
-Received: from mga01.intel.com ([192.55.52.88]:54180 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727193AbeJTCeq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 22:34:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 11:27:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,401,1534834800"; 
-   d="scan'208";a="267150082"
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by orsmga005.jf.intel.com with ESMTP; 19 Oct 2018 11:27:25 -0700
-From:   Tomas Winkler <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v7 02/21] tpm2: add new tpm2 commands according to TCG 1.36
-Date:   Fri, 19 Oct 2018 21:22:48 +0300
-Message-Id: <20181019182307.17745-3-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20181019182307.17745-1-tomas.winkler@intel.com>
-References: <20181019182307.17745-1-tomas.winkler@intel.com>
+        Fri, 19 Oct 2018 22:38:23 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46966 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727193AbeJTCiX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 22:38:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8t9WA+vtwYEHOtSdG6iDh3KbCzULva9NgiwMtHEE5Cc=; b=qgWzP8QxV7AJDvuNUhOZO0o4W
+        I9FdzM0+9PZ295hOwFPh4QT9yc3jcmKartxY2Pq+tZRYQbRX2R5DGHasMevs4VXy6dBtnW3pCcBhy
+        egORTbWjf0SUB4YUEpz/V9M5sydPyfoxeRZKgYFlYunASx1IMepQ0zsM41TQh4He6AA8Wh4eGW42d
+        KGXgAoGmX0jnwAWudAbqiGrShKr2for6O+yFy+8qdfLvgT9OsIPOnbvnmCrK0zFlXfQAOw+Jfz1yd
+        j1kd6r4rdcHda8KjMhdjiCJ7WW92u2LbgYjTgWsS80P0Iuj1AXN+BnIMQCtXJDMHKje7cA54exZN4
+        Xy+WqWcAg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gDZY3-0007g8-NE; Fri, 19 Oct 2018 18:31:00 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5031520296B3E; Fri, 19 Oct 2018 20:30:57 +0200 (CEST)
+Date:   Fri, 19 Oct 2018 20:30:57 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Peng Hao <penghao122@sina.com.cn>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        Peng Hao <peng.hao2@zte.com.cn>
+Subject: Re: [PATCH]  sched/fair : modify comment of fbq_type description
+Message-ID: <20181019183057.GA31016@hirez.programming.kicks-ass.net>
+References: <1539967494-12493-1-git-send-email-penghao122@sina.com.cn>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539967494-12493-1-git-send-email-penghao122@sina.com.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1. TPM2_CC_LAST has moved from 182 to 193
-2. Convert tpm2_ordinal_duration from an array into a switch statement,
-   as there are not so many commands that require special duration
-   relative to a number of commands, the switch statement function
-   is called tpm2_ordinal_duration_index().
-3. Fix kdoc comments for tpm2_calc_ordinal_duration().
+On Fri, Oct 19, 2018 at 12:44:54PM -0400, Peng Hao wrote:
+> 
+> From: Peng Hao <peng.hao2@zte.com.cn>
+> 
+> for type 'all', the comment 'there is no distinction' is vague.
+> make it clearer.
+> 
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> ---
+>  kernel/sched/fair.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index f808ddf..3a0543f 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8304,7 +8304,7 @@ static struct rq *find_busiest_queue(struct lb_env *env,
+>  		 * We classify groups/runqueues into three groups:
+>  		 *  - regular: there are !numa tasks
+>  		 *  - remote:  there are numa tasks that run on the 'wrong' node
+> -		 *  - all:     there is no distinction
+> +		 *  - all:     there are numa tasks that run on the 'right' node
 
+No, that is actively wrong. Both the previous cases inlcude that.
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-V2-V3: Rebase.
-V4: 1. Fix kdoc
-    2. Rename tpm2_ordinal_duration() to tpm2_ordinal_duration_index()
-    3. Move the two functions close to each other in the file.
-V5: Adjust the kdoc to the new standard.
-V6: Remove redundant comma in the kdoc.
-V7: Resend.
-
- drivers/char/tpm/tpm.h      |  41 +++++---
- drivers/char/tpm/tpm2-cmd.c | 241 +++++++++++++++++---------------------------
- 2 files changed, 118 insertions(+), 164 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index f20dc8ece348..0f08518b525d 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -134,22 +134,31 @@ enum tpm2_algorithms {
- };
- 
- enum tpm2_command_codes {
--	TPM2_CC_FIRST		= 0x011F,
--	TPM2_CC_CREATE_PRIMARY  = 0x0131,
--	TPM2_CC_SELF_TEST	= 0x0143,
--	TPM2_CC_STARTUP		= 0x0144,
--	TPM2_CC_SHUTDOWN	= 0x0145,
--	TPM2_CC_CREATE		= 0x0153,
--	TPM2_CC_LOAD		= 0x0157,
--	TPM2_CC_UNSEAL		= 0x015E,
--	TPM2_CC_CONTEXT_LOAD	= 0x0161,
--	TPM2_CC_CONTEXT_SAVE	= 0x0162,
--	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
--	TPM2_CC_GET_CAPABILITY	= 0x017A,
--	TPM2_CC_GET_RANDOM	= 0x017B,
--	TPM2_CC_PCR_READ	= 0x017E,
--	TPM2_CC_PCR_EXTEND	= 0x0182,
--	TPM2_CC_LAST		= 0x018F,
-+	TPM2_CC_FIRST		        = 0x011F,
-+	TPM2_CC_HIERARCHY_CONTROL       = 0x0121,
-+	TPM2_CC_HIERARCHY_CHANGE_AUTH   = 0x0129,
-+	TPM2_CC_CREATE_PRIMARY          = 0x0131,
-+	TPM2_CC_SEQUENCE_COMPLETE       = 0x013E,
-+	TPM2_CC_SELF_TEST	        = 0x0143,
-+	TPM2_CC_STARTUP		        = 0x0144,
-+	TPM2_CC_SHUTDOWN	        = 0x0145,
-+	TPM2_CC_NV_READ                 = 0x014E,
-+	TPM2_CC_CREATE		        = 0x0153,
-+	TPM2_CC_LOAD		        = 0x0157,
-+	TPM2_CC_SEQUENCE_UPDATE         = 0x015C,
-+	TPM2_CC_UNSEAL		        = 0x015E,
-+	TPM2_CC_CONTEXT_LOAD	        = 0x0161,
-+	TPM2_CC_CONTEXT_SAVE	        = 0x0162,
-+	TPM2_CC_FLUSH_CONTEXT	        = 0x0165,
-+	TPM2_CC_VERIFY_SIGNATURE        = 0x0177,
-+	TPM2_CC_GET_CAPABILITY	        = 0x017A,
-+	TPM2_CC_GET_RANDOM	        = 0x017B,
-+	TPM2_CC_PCR_READ	        = 0x017E,
-+	TPM2_CC_PCR_EXTEND	        = 0x0182,
-+	TPM2_CC_EVENT_SEQUENCE_COMPLETE = 0x0185,
-+	TPM2_CC_HASH_SEQUENCE_START     = 0x0186,
-+	TPM2_CC_CREATE_LOADED           = 0x0191,
-+	TPM2_CC_LAST		        = 0x0193, /* Spec 1.36 */
- };
- 
- enum tpm2_permanent_handles {
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 3acf4fd4e5a5..d26b439976bc 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -40,129 +40,100 @@ static struct tpm2_hash tpm2_hash_map[] = {
- 	{HASH_ALGO_SM3_256, TPM2_ALG_SM3_256},
- };
- 
--/*
-- * Array with one entry per ordinal defining the maximum amount
-- * of time the chip could take to return the result. The values
-- * of the SHORT, MEDIUM, and LONG durations are taken from the
-- * PC Client Profile (PTP) specification.
-- * LONG_LONG is for commands that generates keys which empirically
-- * takes longer time on some systems.
-+/**
-+ * tpm2_ordinal_duration_index() - returns an index to the chip duration table
-+ * @ordinal: TPM command ordinal.
-+ *
-+ * The function returns an index to the chip duration table
-+ * (enum tpm_duration), that describes the maximum amount of
-+ * time the chip could take to return the result for a  particular ordinal.
-+ *
-+ * The values of the MEDIUM, and LONG durations are taken
-+ * from the PC Client Profile (PTP) specification (750, 2000 msec)
-+ *
-+ * LONG_LONG is for commands that generates keys which empirically takes
-+ * a longer time on some systems.
-+ *
-+ * Return:
-+ * * TPM_MEDIUM
-+ * * TPM_LONG
-+ * * TPM_LONG_LONG
-+ * * TPM_UNDEFINED
-  */
--static const u8 tpm2_ordinal_duration[TPM2_CC_LAST - TPM2_CC_FIRST + 1] = {
--	TPM_UNDEFINED,		/* 11F */
--	TPM_UNDEFINED,		/* 120 */
--	TPM_LONG,		/* 121 */
--	TPM_UNDEFINED,		/* 122 */
--	TPM_UNDEFINED,		/* 123 */
--	TPM_UNDEFINED,		/* 124 */
--	TPM_UNDEFINED,		/* 125 */
--	TPM_UNDEFINED,		/* 126 */
--	TPM_UNDEFINED,		/* 127 */
--	TPM_UNDEFINED,		/* 128 */
--	TPM_LONG,		/* 129 */
--	TPM_UNDEFINED,		/* 12a */
--	TPM_UNDEFINED,		/* 12b */
--	TPM_UNDEFINED,		/* 12c */
--	TPM_UNDEFINED,		/* 12d */
--	TPM_UNDEFINED,		/* 12e */
--	TPM_UNDEFINED,		/* 12f */
--	TPM_UNDEFINED,		/* 130 */
--	TPM_LONG_LONG,		/* 131 */
--	TPM_UNDEFINED,		/* 132 */
--	TPM_UNDEFINED,		/* 133 */
--	TPM_UNDEFINED,		/* 134 */
--	TPM_UNDEFINED,		/* 135 */
--	TPM_UNDEFINED,		/* 136 */
--	TPM_UNDEFINED,		/* 137 */
--	TPM_UNDEFINED,		/* 138 */
--	TPM_UNDEFINED,		/* 139 */
--	TPM_UNDEFINED,		/* 13a */
--	TPM_UNDEFINED,		/* 13b */
--	TPM_UNDEFINED,		/* 13c */
--	TPM_UNDEFINED,		/* 13d */
--	TPM_MEDIUM,		/* 13e */
--	TPM_UNDEFINED,		/* 13f */
--	TPM_UNDEFINED,		/* 140 */
--	TPM_UNDEFINED,		/* 141 */
--	TPM_UNDEFINED,		/* 142 */
--	TPM_LONG,		/* 143 */
--	TPM_MEDIUM,		/* 144 */
--	TPM_UNDEFINED,		/* 145 */
--	TPM_UNDEFINED,		/* 146 */
--	TPM_UNDEFINED,		/* 147 */
--	TPM_UNDEFINED,		/* 148 */
--	TPM_UNDEFINED,		/* 149 */
--	TPM_UNDEFINED,		/* 14a */
--	TPM_UNDEFINED,		/* 14b */
--	TPM_UNDEFINED,		/* 14c */
--	TPM_UNDEFINED,		/* 14d */
--	TPM_LONG,		/* 14e */
--	TPM_UNDEFINED,		/* 14f */
--	TPM_UNDEFINED,		/* 150 */
--	TPM_UNDEFINED,		/* 151 */
--	TPM_UNDEFINED,		/* 152 */
--	TPM_LONG_LONG,		/* 153 */
--	TPM_UNDEFINED,		/* 154 */
--	TPM_UNDEFINED,		/* 155 */
--	TPM_UNDEFINED,		/* 156 */
--	TPM_UNDEFINED,		/* 157 */
--	TPM_UNDEFINED,		/* 158 */
--	TPM_UNDEFINED,		/* 159 */
--	TPM_UNDEFINED,		/* 15a */
--	TPM_UNDEFINED,		/* 15b */
--	TPM_MEDIUM,		/* 15c */
--	TPM_UNDEFINED,		/* 15d */
--	TPM_UNDEFINED,		/* 15e */
--	TPM_UNDEFINED,		/* 15f */
--	TPM_UNDEFINED,		/* 160 */
--	TPM_UNDEFINED,		/* 161 */
--	TPM_UNDEFINED,		/* 162 */
--	TPM_UNDEFINED,		/* 163 */
--	TPM_UNDEFINED,		/* 164 */
--	TPM_UNDEFINED,		/* 165 */
--	TPM_UNDEFINED,		/* 166 */
--	TPM_UNDEFINED,		/* 167 */
--	TPM_UNDEFINED,		/* 168 */
--	TPM_UNDEFINED,		/* 169 */
--	TPM_UNDEFINED,		/* 16a */
--	TPM_UNDEFINED,		/* 16b */
--	TPM_UNDEFINED,		/* 16c */
--	TPM_UNDEFINED,		/* 16d */
--	TPM_UNDEFINED,		/* 16e */
--	TPM_UNDEFINED,		/* 16f */
--	TPM_UNDEFINED,		/* 170 */
--	TPM_UNDEFINED,		/* 171 */
--	TPM_UNDEFINED,		/* 172 */
--	TPM_UNDEFINED,		/* 173 */
--	TPM_UNDEFINED,		/* 174 */
--	TPM_UNDEFINED,		/* 175 */
--	TPM_UNDEFINED,		/* 176 */
--	TPM_LONG,		/* 177 */
--	TPM_UNDEFINED,		/* 178 */
--	TPM_UNDEFINED,		/* 179 */
--	TPM_MEDIUM,		/* 17a */
--	TPM_LONG,		/* 17b */
--	TPM_UNDEFINED,		/* 17c */
--	TPM_UNDEFINED,		/* 17d */
--	TPM_UNDEFINED,		/* 17e */
--	TPM_UNDEFINED,		/* 17f */
--	TPM_UNDEFINED,		/* 180 */
--	TPM_UNDEFINED,		/* 181 */
--	TPM_MEDIUM,		/* 182 */
--	TPM_UNDEFINED,		/* 183 */
--	TPM_UNDEFINED,		/* 184 */
--	TPM_MEDIUM,		/* 185 */
--	TPM_MEDIUM,		/* 186 */
--	TPM_UNDEFINED,		/* 187 */
--	TPM_UNDEFINED,		/* 188 */
--	TPM_UNDEFINED,		/* 189 */
--	TPM_UNDEFINED,		/* 18a */
--	TPM_UNDEFINED,		/* 18b */
--	TPM_UNDEFINED,		/* 18c */
--	TPM_UNDEFINED,		/* 18d */
--	TPM_UNDEFINED,		/* 18e */
--	TPM_UNDEFINED		/* 18f */
--};
-+static u8 tpm2_ordinal_duration_index(u32 ordinal)
-+{
-+	switch (ordinal) {
-+	/* Startup */
-+	case TPM2_CC_STARTUP:                 /* 144 */
-+		return TPM_MEDIUM;
-+
-+	case TPM2_CC_SELF_TEST:               /* 143 */
-+		return TPM_LONG;
-+
-+	case TPM2_CC_GET_RANDOM:              /* 17B */
-+		return TPM_LONG;
-+
-+	case TPM2_CC_SEQUENCE_UPDATE:         /* 15C */
-+		return TPM_MEDIUM;
-+	case TPM2_CC_SEQUENCE_COMPLETE:       /* 13E */
-+		return TPM_MEDIUM;
-+	case TPM2_CC_EVENT_SEQUENCE_COMPLETE: /* 185 */
-+		return TPM_MEDIUM;
-+	case TPM2_CC_HASH_SEQUENCE_START:     /* 186 */
-+		return TPM_MEDIUM;
-+
-+	case TPM2_CC_VERIFY_SIGNATURE:        /* 177 */
-+		return TPM_LONG;
-+
-+	case TPM2_CC_PCR_EXTEND:              /* 182 */
-+		return TPM_MEDIUM;
-+
-+	case TPM2_CC_HIERARCHY_CONTROL:       /* 121 */
-+		return TPM_LONG;
-+	case TPM2_CC_HIERARCHY_CHANGE_AUTH:   /* 129 */
-+		return TPM_LONG;
-+
-+	case TPM2_CC_GET_CAPABILITY:          /* 17A */
-+		return TPM_MEDIUM;
-+
-+	case TPM2_CC_NV_READ:                 /* 14E */
-+		return TPM_LONG;
-+
-+	case TPM2_CC_CREATE_PRIMARY:          /* 131 */
-+		return TPM_LONG_LONG;
-+	case TPM2_CC_CREATE:                  /* 153 */
-+		return TPM_LONG_LONG;
-+	case TPM2_CC_CREATE_LOADED:           /* 191 */
-+		return TPM_LONG_LONG;
-+
-+	default:
-+		return TPM_UNDEFINED;
-+	}
-+}
-+
-+/**
-+ * tpm2_calc_ordinal_duration() - calculate the maximum command duration
-+ * @chip:    TPM chip to use.
-+ * @ordinal: TPM command ordinal.
-+ *
-+ * The function returns the maximum amount of time the chip could take
-+ * to return the result for a particular ordinal in jiffies.
-+ *
-+ * Return: A maximal duration time for an ordinal in jiffies.
-+ */
-+unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
-+{
-+	unsigned int index;
-+
-+	index = tpm2_ordinal_duration_index(ordinal);
-+
-+	if (index != TPM_UNDEFINED)
-+		return chip->duration[index];
-+	else
-+		return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
-+}
-+EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
-+
- 
- struct tpm2_pcr_read_out {
- 	__be32	update_cnt;
-@@ -748,32 +719,6 @@ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
- 	tpm_buf_destroy(&buf);
- }
- 
--/*
-- * tpm2_calc_ordinal_duration() - maximum duration for a command
-- *
-- * @chip:	TPM chip to use.
-- * @ordinal:	command code number.
-- *
-- * Return: maximum duration for a command
-- */
--unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
--{
--	int index = TPM_UNDEFINED;
--	int duration = 0;
--
--	if (ordinal >= TPM2_CC_FIRST && ordinal <= TPM2_CC_LAST)
--		index = tpm2_ordinal_duration[ordinal - TPM2_CC_FIRST];
--
--	if (index != TPM_UNDEFINED)
--		duration = chip->duration[index];
--
--	if (duration <= 0)
--		duration = msecs_to_jiffies(TPM2_DURATION_DEFAULT);
--
--	return duration;
--}
--EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
--
- /**
-  * tpm2_do_selftest() - ensure that all self tests have passed
-  *
--- 
-2.14.4
-
+If anything, it should be: all tasks are numa tasks and run on the
+'right' node.
