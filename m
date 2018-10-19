@@ -2,112 +2,216 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3551FECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 760C9ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:04:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC5E121476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:04:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24E8E21470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:04:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/6quLI1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC5E121476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHdIQH8T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24E8E21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbeJTCLR (ORCPT
+        id S1727691AbeJTCLt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 22:11:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43592 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727050AbeJTCLQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 22:11:16 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25BB421470;
-        Fri, 19 Oct 2018 18:04:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539972248;
-        bh=l+48uxuwMCp7aRsfH+1ouqo/EKevGKWiDgWwWjFUyQs=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=G/6quLI11VAdoY6U1q62BFJM1SRRDiLucuJraWbh95MdyrmYwdLbSmly4rkLnnw+D
-         uX+QD9yckHwORS7SpOI38/j9v5RT4FncaxOjlkW+IxPhZm2Y+FNrCMpMcert2pAO3H
-         gKdTgpc/2ygdBCW59vEIgqDl49Jj5+Z6z7+y43Ek=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 19 Oct 2018 22:11:49 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39451 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727049AbeJTCLt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 22:11:49 -0400
+Received: by mail-wr1-f68.google.com with SMTP id 61-v6so38329808wrb.6;
+        Fri, 19 Oct 2018 11:04:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/5cSpu0cZRgdO1UwQAiAW5oSeJBBHkkpdR8fsRT0mfM=;
+        b=fHdIQH8TmvWYCIVzvfmN7iOYdaW2HRH2yzZcWStZUoMum5RLznD6VAdRuDgZGt0dKz
+         S4+ZjqSpCzkNzRjReR+S5uSv/iSbTurMujvNa8row9UyKU6tIq75dmtaoKItYII0gOzJ
+         4VH/l288jN7OaaXf6YzfEyx8cZFKmx2HriDvpJP9o94vUsoNPV0MgO2v7I6JS66GAoxA
+         xuM0yjCkqDKqKk44Z7kjQNtVIvjJ4iNLxNchL/FZEyQEnFBaFJsiK85StJYqUb1FrFuO
+         C6wp7NlGxAL7O/end1vTYOBeiEE+1xZD/jFtF0XqgtmUeMzuHeyvTxhFQP2peo9D8bVl
+         eSlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/5cSpu0cZRgdO1UwQAiAW5oSeJBBHkkpdR8fsRT0mfM=;
+        b=q6L2+YUP4ipDyUiVVm5fJ6nINm1lmJZBv4E5aUOgUnBT1+3bAv8HE/navYmOwGJHfE
+         bK/7q32YkGDe4LS1rCcaIHxHfpyKuKDIu3MEoVv3aXjFmiyTTimcSgP92r7rlUfqCLpw
+         UPkOUuDBSS7tBkSRbexeYan96YQTtrugHwYdPl/NvypYdyGd6Rdb+yAoRcU9vq0mzVLt
+         E0MbVrD2mPhaWspjsvD/wh7ioBwmEdrmWI9wEgTbsz5EhYP3uyxudu3AQQezICXC4CK/
+         MVpyk3BfFqaiMX1C5gmu+/LJ+T7rcjXXbNcEG4MRzk2fmuyO0dWBWl2Jfric9KpeuakW
+         gKYQ==
+X-Gm-Message-State: ABuFfohkH+TE71yPqk92/cHDlp3WcPkm1ofzsIMel+dUP+DlJi2XkbzS
+        /HLM8JBGa44LggjQ3wRXtvA=
+X-Google-Smtp-Source: ACcGV61rabeF9O7yCZzu7wgbwgVeY2vJVhJBAD2tfXqZvn26+rQ2tYXntohNaKBeXOSQB5INfEgCng==
+X-Received: by 2002:adf:e70f:: with SMTP id c15-v6mr36854745wrm.165.1539972278574;
+        Fri, 19 Oct 2018 11:04:38 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id 78-v6sm2243658wma.38.2018.10.19.11.04.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 19 Oct 2018 11:04:37 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Kirti Wankhede <kwankhede@nvidia.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] vfio-mdev/samples: Use u8 instead of char for handle functions
+Date:   Fri, 19 Oct 2018 11:04:27 -0700
+Message-Id: <20181019180427.1386-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <efc5b030-f344-80ce-f57e-582207f436fe@amlogic.com>
-Cc:     Yixun Lan <yixun.lan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
- <1539839245-13793-3-git-send-email-jianxin.pan@amlogic.com>
- <153988248599.5275.8444799485095155762@swboyd.mtv.corp.google.com>
- <efc5b030-f344-80ce-f57e-582207f436fe@amlogic.com>
-Message-ID: <153997224756.53599.3138050846693192599@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v5 2/3] clk: meson: add DT documentation for emmc clock controller
-Date:   Fri, 19 Oct 2018 11:04:07 -0700
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jianxin Pan (2018-10-19 08:50:08)
-> On 2018/10/19 1:08, Stephen Boyd wrote:
-> > Quoting Jianxin Pan (2018-10-17 22:07:24)
-> >> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.=
-txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
-> >> new file mode 100644
-> >> index 0000000..9e6d343
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
-> >> @@ -0,0 +1,31 @@
-> >> +* Amlogic MMC Sub Clock Controller Driver
-> >> +
-> >> +The Amlogic MMC clock controller generates and supplies clock to supp=
-ort
-> >> +MMC and NAND controller
-> >> +
-> >> +Required Properties:
-> >> +
-> >> +- compatible: should be:
-> >> +               "amlogic,gx-mmc-clkc"
-> >> +               "amlogic,axg-mmc-clkc"
-> >> +
-> >> +- #clock-cells: should be 1.
-> >> +- clocks: phandles to clocks corresponding to the clock-names property
-> >> +- clock-names: list of parent clock names
-> >> +       - "clkin0", "clkin1"
-> >> +
-> >> +Parent node should have the following properties :
-> > =
+Clang warns:
 
-> > The example only has one node. Can you add two nodes?
-> OK. This clock is used by nand and emmc. I will add a new example for emm=
-c too.
-> Thank you for your review.
+samples/vfio-mdev/mtty.c:592:39: warning: implicit conversion from 'int'
+to 'char' changes value from 162 to -94 [-Wconstant-conversion]
+                *buf = UART_MSR_DSR | UART_MSR_DDSR | UART_MSR_DCD;
+                     ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+1 warning generated.
 
-Maybe I misunderstand. I thought the clk controller was two nodes, but
-it isn't? This wording is trying to explain what a consumer should look
-like?
+Turns out that all uses of buf in this function ultimately end up stored
+or cast to an unsigned type. Just use u8, which has the same number of
+bits but can store this larger number so Clang no longer warns.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ samples/vfio-mdev/mtty.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
+index 7abb79d8313d..f6732aa16bb1 100644
+--- a/samples/vfio-mdev/mtty.c
++++ b/samples/vfio-mdev/mtty.c
+@@ -171,7 +171,7 @@ static struct mdev_state *find_mdev_state_by_uuid(uuid_le uuid)
+ 	return NULL;
+ }
+ 
+-void dump_buffer(char *buf, uint32_t count)
++void dump_buffer(u8 *buf, uint32_t count)
+ {
+ #if defined(DEBUG)
+ 	int i;
+@@ -250,7 +250,7 @@ static void mtty_create_config_space(struct mdev_state *mdev_state)
+ }
+ 
+ static void handle_pci_cfg_write(struct mdev_state *mdev_state, u16 offset,
+-				 char *buf, u32 count)
++				 u8 *buf, u32 count)
+ {
+ 	u32 cfg_addr, bar_mask, bar_index = 0;
+ 
+@@ -304,7 +304,7 @@ static void handle_pci_cfg_write(struct mdev_state *mdev_state, u16 offset,
+ }
+ 
+ static void handle_bar_write(unsigned int index, struct mdev_state *mdev_state,
+-				u16 offset, char *buf, u32 count)
++				u16 offset, u8 *buf, u32 count)
+ {
+ 	u8 data = *buf;
+ 
+@@ -475,7 +475,7 @@ static void handle_bar_write(unsigned int index, struct mdev_state *mdev_state,
+ }
+ 
+ static void handle_bar_read(unsigned int index, struct mdev_state *mdev_state,
+-			    u16 offset, char *buf, u32 count)
++			    u16 offset, u8 *buf, u32 count)
+ {
+ 	/* Handle read requests by guest */
+ 	switch (offset) {
+@@ -650,7 +650,7 @@ static void mdev_read_base(struct mdev_state *mdev_state)
+ 	}
+ }
+ 
+-static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
++static ssize_t mdev_access(struct mdev_device *mdev, u8 *buf, size_t count,
+ 			   loff_t pos, bool is_write)
+ {
+ 	struct mdev_state *mdev_state;
+@@ -698,7 +698,7 @@ static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
+ #if defined(DEBUG_REGS)
+ 			pr_info("%s: BAR%d  WR @0x%llx %s val:0x%02x dlab:%d\n",
+ 				__func__, index, offset, wr_reg[offset],
+-				(u8)*buf, mdev_state->s[index].dlab);
++				*buf, mdev_state->s[index].dlab);
+ #endif
+ 			handle_bar_write(index, mdev_state, offset, buf, count);
+ 		} else {
+@@ -708,7 +708,7 @@ static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
+ #if defined(DEBUG_REGS)
+ 			pr_info("%s: BAR%d  RD @0x%llx %s val:0x%02x dlab:%d\n",
+ 				__func__, index, offset, rd_reg[offset],
+-				(u8)*buf, mdev_state->s[index].dlab);
++				*buf, mdev_state->s[index].dlab);
+ #endif
+ 		}
+ 		break;
+@@ -827,7 +827,7 @@ ssize_t mtty_read(struct mdev_device *mdev, char __user *buf, size_t count,
+ 		if (count >= 4 && !(*ppos % 4)) {
+ 			u32 val;
+ 
+-			ret =  mdev_access(mdev, (char *)&val, sizeof(val),
++			ret =  mdev_access(mdev, (u8 *)&val, sizeof(val),
+ 					   *ppos, false);
+ 			if (ret <= 0)
+ 				goto read_err;
+@@ -839,7 +839,7 @@ ssize_t mtty_read(struct mdev_device *mdev, char __user *buf, size_t count,
+ 		} else if (count >= 2 && !(*ppos % 2)) {
+ 			u16 val;
+ 
+-			ret = mdev_access(mdev, (char *)&val, sizeof(val),
++			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
+ 					  *ppos, false);
+ 			if (ret <= 0)
+ 				goto read_err;
+@@ -851,7 +851,7 @@ ssize_t mtty_read(struct mdev_device *mdev, char __user *buf, size_t count,
+ 		} else {
+ 			u8 val;
+ 
+-			ret = mdev_access(mdev, (char *)&val, sizeof(val),
++			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
+ 					  *ppos, false);
+ 			if (ret <= 0)
+ 				goto read_err;
+@@ -889,7 +889,7 @@ ssize_t mtty_write(struct mdev_device *mdev, const char __user *buf,
+ 			if (copy_from_user(&val, buf, sizeof(val)))
+ 				goto write_err;
+ 
+-			ret = mdev_access(mdev, (char *)&val, sizeof(val),
++			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
+ 					  *ppos, true);
+ 			if (ret <= 0)
+ 				goto write_err;
+@@ -901,7 +901,7 @@ ssize_t mtty_write(struct mdev_device *mdev, const char __user *buf,
+ 			if (copy_from_user(&val, buf, sizeof(val)))
+ 				goto write_err;
+ 
+-			ret = mdev_access(mdev, (char *)&val, sizeof(val),
++			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
+ 					  *ppos, true);
+ 			if (ret <= 0)
+ 				goto write_err;
+@@ -913,7 +913,7 @@ ssize_t mtty_write(struct mdev_device *mdev, const char __user *buf,
+ 			if (copy_from_user(&val, buf, sizeof(val)))
+ 				goto write_err;
+ 
+-			ret = mdev_access(mdev, (char *)&val, sizeof(val),
++			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
+ 					  *ppos, true);
+ 			if (ret <= 0)
+ 				goto write_err;
+-- 
+2.19.1
 
