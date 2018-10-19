@@ -5,63 +5,63 @@ X-Spam-Level:
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 856AEECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 858CAECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:05:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DB0520644
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:04:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A4E82148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:05:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gY0T9+4J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DB0520644
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V3IRRqAz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A4E82148E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727488AbeJSVKc (ORCPT
+        id S1727454AbeJSVL4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 17:10:32 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:35939 "EHLO
+        Fri, 19 Oct 2018 17:11:56 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:45841 "EHLO
         mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727199AbeJSVKb (ORCPT
+        with ESMTP id S1727014AbeJSVL4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 17:10:31 -0400
-Received: by mail-qt1-f194.google.com with SMTP id u34-v6so38126230qth.3;
-        Fri, 19 Oct 2018 06:04:28 -0700 (PDT)
+        Fri, 19 Oct 2018 17:11:56 -0400
+Received: by mail-qt1-f194.google.com with SMTP id e10-v6so38120740qtq.12;
+        Fri, 19 Oct 2018 06:05:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=oylsM2zK6/l3A+PXXsb1ZIpUQ35rMzTgyxoyXHPqRLA=;
-        b=gY0T9+4JvnxXQsUxQHurAxo96O4u0FERd6ehsEoQth7m2l+DIf9xJQUPmzAfCJYumC
-         QwPukLbV++0zK/Ak7SccKBlUSlWmerLLEhp2BpqEfVK/5FWnppkBDtnvktcpEBqJdISu
-         yOYN+ktmts+UMybKKOVUB85y7IAKbDWNlfxIE2Xv6dz1M2DvtaS7kJIjFuAtQ7wr7uMm
-         GA7PYQQOK1LQnmKVZzyjigT9CreG6lDACDBtLrhxxAqGZ3qzlGBdvGCgTxf/rNwJzQvb
-         yt2gsHzJOhKMHSCRwspa9MONNQdVK6JGNv1MEnCSnGRvgoZphPwEKDyZe+rxsfnk49t0
-         9BmQ==
+        bh=96hz6EhFgEc1BSlQGsWFNwOcwLVKwGkXH+9+l6XZgF8=;
+        b=V3IRRqAzgkAoqk6DA9MJN9dmeiMuW1Wftya01sVbd8lCY/1ASPAzX7Je5rk0N/ERmp
+         4gu8nJumb19PT+QzVVkJLfCDYNG7oleh027CYy7CBaWSZKOX/OaHuinDc6ldbPbB1X2L
+         HEkH0zfYa9SleB+Y3xupI5RnwGfqqT700z5zKi/UkoVQghCW48KIJGf5aJUfMjgXqwft
+         amjWnTEH70GjkyZxQb8Az6Fx3CPibF1r+EMQaQ456sxvi+N7phlvhue5QAHtzfnLyAIu
+         OKLW3jFdjLiUK0gX5ILxeG68NVYQrcZlckS89RoeDlP67rwjVCtslyNr3y3YgEVDgLkU
+         k2/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=oylsM2zK6/l3A+PXXsb1ZIpUQ35rMzTgyxoyXHPqRLA=;
-        b=S4mdX/wwweqfN4uAFkTLFisCWn3Kx/mG12yFwPsaHQFpJpNerE8QnqXEajnAYKL/FC
-         61py8WU2lt9b65D2dqXXtMEJE+61XYDGv6Zgo5kGbgK9e/UPgmHHj+6lyN9p61QNHnUZ
-         zl0Bx6Sr80sc/e75eW5dv87A6SW92K3oyKLV/6pMNgBDJydq+N0RfT3duV7RSVT6t7+r
-         DTdB+gnhC3z7l1qqOfACVTLeqM7z79pmTp+nqCM2N2cBcJzGYHmKrekRBkyCpwY3lmvS
-         45wPEEB98K4jGzqkikKQmUdCwZ92EV8K/IuXYDLjj8euAluoq41YuscX9l+DBFERkAZI
-         4lsg==
-X-Gm-Message-State: ABuFfojPcC6MrZtTMHbKIFp2KRMPVCt2fbt6kEmGsAv7PFZ18s63gefO
-        zsJowbuDW7rpVCmhRk0eIyqGxKMFiteRwpQ6VUs=
-X-Google-Smtp-Source: ACcGV61P4bGsVm0DdogMOICDNaYYhBzqohuFy3378RAKqMR7f+WIoLNTPOmk26dxkY4gJi+wFfmKy0W8T5aoPsRTgvg=
-X-Received: by 2002:ac8:2413:: with SMTP id c19-v6mr32532192qtc.194.1539954268123;
- Fri, 19 Oct 2018 06:04:28 -0700 (PDT)
+        bh=96hz6EhFgEc1BSlQGsWFNwOcwLVKwGkXH+9+l6XZgF8=;
+        b=ee9TwyGEHl9vRQmub6ukgPOVU0qjsbHFsD8F3mPB6uWZ4Zf9FRR2gzIj0BZZDzsYEQ
+         1z1CzNBDaIy7rP9UzXXYlGpRQ50VFZKv4PYWeGSV2pzslz1zMIasrmNyOJAyJzaGt8Nw
+         j3ZSED9BIsa+PAl63vlOt5X9PMjcRKjBpRFRkSrcMZFQPA/OplkvkbaGmBp61KTCCuQL
+         zKiEJmAlZrbcT84oWchHgS052mcBkWDa5ZD18msJrrVkAa/Hl79fWICEn7rRFrR6n5AR
+         Aforr8kUskAmr3QSCdqk06A8tJ4GTSlihPmUcUyT56rnRanCU78UJ9QZxazwpD/sJ1s3
+         Ozqg==
+X-Gm-Message-State: AGRZ1gIMmbqx5h+GEave9bfopQ8kCtvicvyDMrl8y/SDpQ+T7VG1rmAE
+        dDkuUZ9L8ElHbyPOthnY81RxI1KXoJSphtB6RSE=
+X-Google-Smtp-Source: ACcGV61t2pyR+dOl/F2YGz12HEYD5JUX5ACwarWgiHTb/RrB7AAVPvmSXkuITRW6SV2Zrf0QLrUW20MxlttqPZFDUcQ=
+X-Received: by 2002:ac8:191a:: with SMTP id t26-v6mr1249266qtj.327.1539954352070;
+ Fri, 19 Oct 2018 06:05:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181010172300.317643-1-lkundrak@v3.sk> <20181010172300.317643-3-lkundrak@v3.sk>
-In-Reply-To: <20181010172300.317643-3-lkundrak@v3.sk>
+References: <20181010172300.317643-1-lkundrak@v3.sk> <20181010172300.317643-5-lkundrak@v3.sk>
+In-Reply-To: <20181010172300.317643-5-lkundrak@v3.sk>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 19 Oct 2018 16:04:17 +0300
-Message-ID: <CAHp75Vfrna+htxyDQmmUnyoP3Q=61WWF0LYWNWpNjfScwX2irg@mail.gmail.com>
-Subject: Re: [PATCH 02/15] Revert "platform/olpc: Make ec explicitly non-modular"
+Date:   Fri, 19 Oct 2018 16:05:40 +0300
+Message-ID: <CAHp75Veb++-F3yd9r5h305UQFvBFosRQvmPDfTTMFak9ZNVc7g@mail.gmail.com>
+Subject: Re: [PATCH 04/15] Platform: OLPC: Remove an unused include
 To:     Lubomir Rintel <lkundrak@v3.sk>
 Cc:     Mark Brown <broonie@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -89,54 +89,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Wed, Oct 10, 2018 at 8:23 PM Lubomir Rintel <lkundrak@v3.sk> wrote:
 >
-> It doesn't make sense to always have this built-in, e.g. on ARM
-> multiplatform kernels. A better way to address the problem the original
-> commit aimed to solve is to fix Kconfig.
+> Also, the header is x86 specific, while there are non-x86 OLPC machines.
+
+Same concern. as per patch 2.
+
+Also, you might want to sort headers in alphabetical order.
+
 >
-> This reverts commit f48d1496b8537d75776478c6942dd87f34d7f270.
->
-
-This change doesn't make any sense when put in _this_ order in the series.
-
-First, you need to show the CONFIG_OLPC as tristate, which doesn't (Am
-I missing something?).
-
 > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 > ---
->  drivers/platform/olpc/olpc-ec.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+>  drivers/platform/olpc/olpc-ec.c | 1 -
+>  1 file changed, 1 deletion(-)
 >
 > diff --git a/drivers/platform/olpc/olpc-ec.c b/drivers/platform/olpc/olpc-ec.c
-> index 374a8028fec7..f99b183d5296 100644
+> index f99b183d5296..35a21c66cd0d 100644
 > --- a/drivers/platform/olpc/olpc-ec.c
 > +++ b/drivers/platform/olpc/olpc-ec.c
-> @@ -1,8 +1,6 @@
->  /*
->   * Generic driver for the OLPC Embedded Controller.
->   *
-> - * Author: Andres Salomon <dilinger@queued.net>
-> - *
->   * Copyright (C) 2011-2012 One Laptop per Child Foundation.
->   *
->   * Licensed under the GPL v2 or later.
-> @@ -14,7 +12,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
->  #include <linux/workqueue.h>
-> -#include <linux/init.h>
-> +#include <linux/module.h>
+> @@ -15,7 +15,6 @@
+>  #include <linux/module.h>
 >  #include <linux/list.h>
 >  #include <linux/olpc-ec.h>
->  #include <asm/olpc.h>
-> @@ -328,4 +326,8 @@ static int __init olpc_ec_init_module(void)
->  {
->         return platform_driver_register(&olpc_ec_plat_driver);
->  }
-> +
->  arch_initcall(olpc_ec_init_module);
-> +
-> +MODULE_AUTHOR("Andres Salomon <dilinger@queued.net>");
-> +MODULE_LICENSE("GPL");
+> -#include <asm/olpc.h>
+>
+>  struct ec_cmd_desc {
+>         u8 cmd;
 > --
 > 2.19.0
 >
