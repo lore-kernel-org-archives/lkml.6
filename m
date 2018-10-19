@@ -2,73 +2,100 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9D0ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24EBEECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3107020658
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:47:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3107020658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D2B0B20658
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:48:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p1fjVgYi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2B0B20658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbeJSXyY convert rfc822-to-8bit (ORCPT
+        id S1727542AbeJSXz2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 19:54:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51678 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726935AbeJSXyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 19:54:24 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A16C2307D913;
-        Fri, 19 Oct 2018 15:47:44 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9D0272D027;
-        Fri, 19 Oct 2018 15:47:42 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAJfpegviiy=9fru3zButbqLnhshH85srH3qyZO2zf-_RPqSs=g@mail.gmail.com>
-References: <CAJfpegviiy=9fru3zButbqLnhshH85srH3qyZO2zf-_RPqSs=g@mail.gmail.com> <20181019122049.27121-1-mszeredi@redhat.com> <20181019122049.27121-2-mszeredi@redhat.com> <16382.1539963322@warthog.procyon.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Florian Weimer <fw@deneb.enyo.de>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v2 2/5] uapi: deprecate STATX_ALL
+        Fri, 19 Oct 2018 19:55:28 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33506 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726935AbeJSXz2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 19:55:28 -0400
+Received: by mail-pg1-f196.google.com with SMTP id y18-v6so15949017pge.0;
+        Fri, 19 Oct 2018 08:48:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RP3lV235UutvfcYhCGXLH1lCk8abTi+f9ZTOJ+CAicY=;
+        b=p1fjVgYik0G9Jp99hND1UA0ZuZXULrkDmoZlHvzBXSvjD1YsGFGPT+ni6/c6/8jCN/
+         6XO8oQQxw0SCTDEVi7qPkBEP+YHrGygbwB52w7PDcVJ4N+ZWOY2JxbNEPeP6vuFeD0zU
+         T+zaiYgw1v0UOSG/mepYQQYu+Cx0xoiN/0JJvoQ70g8NQGCZXf6wSwhVSR6pAVvlZ47/
+         bUZq0HiT8ZS/zciRh9YfYUW202M3MGkeAsGMMspprPxZ+U/+9bmnr+oVPx22uNPwvVkr
+         cy1hBe5rGSZrZz1koxxTGOtBLSZqechz1atmdIMFlrn9jlI6sOwNaSDGUmOo6xQNcpKr
+         m92g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RP3lV235UutvfcYhCGXLH1lCk8abTi+f9ZTOJ+CAicY=;
+        b=C7RVgn/QkPXRwqcKE6Olhd3Xfq4qoeK6xY8jqJwnrwcsW9YZV+Sfb2rx+A8aaryar2
+         y6E0tsEuEH+IyasfbtZarNqgRAAvDLM8eKp5ZFdT7pOgNIddFIRyKF2oqPR21xrmnrOf
+         qduAXNTN7jYSQOOkrajzS25HTZUTXPaGAlP27wDTumPerZ3N6H1ni78PSzaHgux9E0lZ
+         XuThJNMdZ40Strbb2iGG/P19NXIQ+WS2n2pJmZ0jFegEcdhA3MpUSBcvLjfyDVAZFkmc
+         nKoZMimbT/KllCPBksbd9zSrtbo4aG3x/wB0/VMNU5FCIln788xLlJ7uMruzwa/q1Hxs
+         t30A==
+X-Gm-Message-State: ABuFfohNzAiTzGfLXQhVrUQaSejx/alKg14ZhG0cFL3KhBoURhIBsOA1
+        0yFX6CfcbJUemsol+ok5cE8=
+X-Google-Smtp-Source: ACcGV61ZJBG44fwmVKLiZlSJI75l2Bfm//D35Jnt/3Y6XcYT0AzzpFSn6OajiKeKRPJ4djlOvc9BtA==
+X-Received: by 2002:a63:5558:: with SMTP id f24-v6mr33922209pgm.37.1539964128387;
+        Fri, 19 Oct 2018 08:48:48 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id 126-v6sm9668643pff.105.2018.10.19.08.48.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 19 Oct 2018 08:48:47 -0700 (PDT)
+Date:   Fri, 19 Oct 2018 08:48:45 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 00/35] 4.9.135-stable review
+Message-ID: <20181019154845.GA2992@roeck-us.net>
+References: <20181018175422.506152522@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <17322.1539964061.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Fri, 19 Oct 2018 16:47:41 +0100
-Message-ID: <17323.1539964061@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 19 Oct 2018 15:47:44 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181018175422.506152522@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Thu, Oct 18, 2018 at 07:54:29PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.135 release.
+> There are 35 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Oct 20 17:54:00 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-> What is misleading about this?
+For v4.9.134-36-g199d569d5f73:
 
-The manpage says:
+Build results:
+	total: 150 pass: 150 fail: 0
+Qemu test results:
+	total: 308 pass: 308 fail: 0
 
-           STATX_ALL           [All currently available fields]
+Details are available at https://kerneltests.org/builders/.
 
-> If you feel confused by this comment, then maybe I should just drop that part.
-
-I think that would be better.  Don't try to give it a definition.
-
-David
+Guenter
