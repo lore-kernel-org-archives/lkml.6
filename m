@@ -2,107 +2,183 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 174ADECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 05:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98AF4ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 05:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D89A421470
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 05:55:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D89A421470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 347F321470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 05:57:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 347F321470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbeJSN7d (ORCPT
+        id S1726698AbeJSOBl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 09:59:33 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50435 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726542AbeJSN7d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 09:59:33 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9J5so3J1121917
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 18 Oct 2018 22:54:50 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9J5snYS1121914;
-        Thu, 18 Oct 2018 22:54:49 -0700
-Date:   Thu, 18 Oct 2018 22:54:49 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Christoph Hellwig <tipbot@zytor.com>
-Message-ID: <tip-485734f3fc77c1eb77ffe138c027b9a4bf0178f3@git.kernel.org>
-Cc:     hch@lst.de, mingo@kernel.org, tedheadster@gmail.com, hpa@zytor.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org
-Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-          mingo@kernel.org, hch@lst.de, tedheadster@gmail.com
-In-Reply-To: <20181014075208.2715-1-hch@lst.de>
-References: <20181014075208.2715-1-hch@lst.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/swiotlb: Enable swiotlb for > 4GiG RAM on
- 32-bit kernels
-Git-Commit-ID: 485734f3fc77c1eb77ffe138c027b9a4bf0178f3
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 19 Oct 2018 10:01:41 -0400
+Received: from mga11.intel.com ([192.55.52.93]:59433 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726340AbeJSOBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 10:01:40 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Oct 2018 22:57:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,398,1534834800"; 
+   d="scan'208";a="96568399"
+Received: from aaronlu.sh.intel.com (HELO intel.com) ([10.239.159.44])
+  by fmsmga002.fm.intel.com with ESMTP; 18 Oct 2018 22:57:04 -0700
+Date:   Fri, 19 Oct 2018 13:57:03 +0800
+From:   Aaron Lu <aaron.lu@intel.com>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>
+Subject: Re: [RFC v4 PATCH 2/5] mm/__free_one_page: skip merge for order-0
+ page unless compaction failed
+Message-ID: <20181019055703.GA2401@intel.com>
+References: <20181017063330.15384-1-aaron.lu@intel.com>
+ <20181017063330.15384-3-aaron.lu@intel.com>
+ <20181017104427.GJ5819@techsingularity.net>
+ <20181017131059.GA9167@intel.com>
+ <20181017135807.GL5819@techsingularity.net>
+ <20181017145904.GC9167@intel.com>
+ <20181018111632.GM5819@techsingularity.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181018111632.GM5819@techsingularity.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  485734f3fc77c1eb77ffe138c027b9a4bf0178f3
-Gitweb:     https://git.kernel.org/tip/485734f3fc77c1eb77ffe138c027b9a4bf0178f3
-Author:     Christoph Hellwig <hch@lst.de>
-AuthorDate: Sun, 14 Oct 2018 09:52:08 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 19 Oct 2018 07:49:32 +0200
+On Thu, Oct 18, 2018 at 12:16:32PM +0100, Mel Gorman wrote:
+> On Wed, Oct 17, 2018 at 10:59:04PM +0800, Aaron Lu wrote:
+> > > Any particuular reason why? I assume it's related to the number of zone
+> > > locks with the increase number of zones and the number of threads used
+> > > for the test.
+> > 
+> > I think so too.
+> > 
+> > The 4 sockets server has 192 CPUs in total while the 2 sockets server
+> > has 112 CPUs in total. Assume only ZONE_NORMAL are used, for the 4
+> > sockets server it would be 192/4=48(CPUs per zone) while for the 2
+> > sockets server it is 112/2=56(CPUs per zone). The test is started with
+> > nr_task=nr_cpu so for the 2 sockets servers, it ends up having more CPUs
+> > consuming one zone.
+> > 
+> 
+> Nice that the prediction is accurate. It brings us to another option --
+> breaking up the zone lock by either hash or address space ranges. The
+> address space ranges would probably be easier to implement. Where it
+> gets hairy is that PFN walkers would need different zone locks. However,
+> overall it might be a better option because it's not order-0 specific.
 
-x86/swiotlb: Enable swiotlb for > 4GiG RAM on 32-bit kernels
+I think the 'address space range' lock is worth a try.
 
-We already build the swiotlb code for 32-bit kernels with PAE support,
-but the code to actually use swiotlb has only been enabled for 64-bit
-kernels for an unknown reason.
+> It would be a lot of legwork because all uses of the zone lock would
+> have to be audited to see which ones protect the free lists and which
+> ones protect "something else".
 
-Before Linux v4.18 we paper over this fact because the networking code,
-the SCSI layer and some random block drivers implemented their own
-bounce buffering scheme.
+Yes a lot of details.
 
-[ mingo: Changelog fixes. ]
+> > > That's important to know. It does reduce the utility of the patch
+> > > somewhat but not all arches support THP and THP is not always enabled on
+> > > x86.
+> > 
+> > I always wondered how systems are making use of THP.
+> > After all, when system has been runing a while(days or months), file
+> > cache should consumed a lot of memory and high order pages will become
+> > more and more scare. If order9 page can't be reliably allocated, will
+> > workload rely on it?
+> > Just a thought.
+> > 
+> 
+> File cache can usually be trivially reclaimed and moved. It's a "how
+> long is a piece of string" to determine at what point a system can get
+> fragmented and whether than can be prevented. It's somewhat outside the
+> scope of this patch but anecdotally I'm looking at a machine with 20 days
+> uptime and it still has 2390GB worth of THPs free after a large amount
+> of reclaim activity over the system lifetime so fragmentation avoidance
+> does work in some cases.
 
-Fixes: 21e07dba9fb1 ("scsi: reduce use of block bounce buffers")
-Fixes: ab74cfebafa3 ("net: remove the PCI_DMA_BUS_IS_PHYS check in illegal_highdma")
-Reported-by: Matthew Whitehead <tedheadster@gmail.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Matthew Whitehead <tedheadster@gmail.com>
-Cc: konrad.wilk@oracle.com
-Cc: iommu@lists.linux-foundation.org
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181014075208.2715-1-hch@lst.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/kernel/pci-swiotlb.c | 2 --
- 1 file changed, 2 deletions(-)
+Good to know, thanks.
 
-diff --git a/arch/x86/kernel/pci-swiotlb.c b/arch/x86/kernel/pci-swiotlb.c
-index 661583662430..71c0b01d93b1 100644
---- a/arch/x86/kernel/pci-swiotlb.c
-+++ b/arch/x86/kernel/pci-swiotlb.c
-@@ -42,10 +42,8 @@ IOMMU_INIT_FINISH(pci_swiotlb_detect_override,
- int __init pci_swiotlb_detect_4gb(void)
- {
- 	/* don't initialize swiotlb if iommu=off (no_iommu=1) */
--#ifdef CONFIG_X86_64
- 	if (!no_iommu && max_possible_pfn > MAX_DMA32_PFN)
- 		swiotlb = 1;
--#endif
- 
- 	/*
- 	 * If SME is active then swiotlb will be set to 1 so that bounce
+> 
+> > THP is of course pretty neat that it reduced TLB cost, needs fewer page
+> > table etc. I just wondered if people really rely on it, or using it
+> > after their system has been up for a long time.
+> > 
+> 
+> If people didn't rely on it then we might as well delete THP and the
+> declare the whole tmpfs-backed-THP as worthless.
+> 
+> > > Yes, but note that the concept is still problematic.
+> > > isolate_migratepages_block is not guaranteed to find a pageblock with
+> > > unmerged buddies in it. If there are pageblocks towards the end of the
+> > > zone with unmerged pages, they may never be found. This will be very hard
+> > > to detect at runtime because it's heavily dependant on the exact state
+> > > of the system.
+> > 
+> > Quite true.
+> > 
+> > The intent here though, is not to have compaction merge back all
+> > unmerged pages, but did the merge for these unmerged pages in a
+> > piggyback way, i.e. since isolate_migratepages_block() is doing the
+> > scan, why don't we let it handle these unmerged pages when it meets
+> > them?
+> > 
+> > If for some reason isolate_migratepages_block() didn't meet a single
+> > unmerged page before compaction succeed, we probably do not need worry
+> > much yet since compaction succeeded anyway.
+> > 
+> 
+> I don't think this is the right way of thinking about it because it's
+> possible to have the system split in such a way so that the migration
+> scanner only encounters unmovable pages before it meets the free scanner
+> where unmerged buddies were in the higher portion of the address space.
+
+Yes it is possible unmerged pages are in the higher portion.
+
+My understanding is, when the two scanners meet, all unmerged pages will
+be either used by the free scanner as migrate targets or sent to merge
+by the migration scanner.
+
+> 
+> You either need to keep unmerged buddies on a separate list or search
+> the order-0 free list for merge candidates prior to compaction.
+> 
+> > > It's needed to form them efficiently but excessive reclaim or writing 3
+> > > to drop_caches can also do it. Be careful of tying lazy buddy too
+> > > closely to compaction.
+> > 
+> > That's the current design of this patchset, do you see any immediate
+> > problem of this? Is it that you are worried about high-order allocation
+> > success rate using this design?
+> 
+> I've pointed out what I see are the design flaws but yes, in general, I'm
+> worried about the high order allocation success rate using this design,
+> the reliance on compaction and the fact that the primary motivation is
+> when THP is disabled.
+
+When THP is in use, zone lock contention is pretty much nowhere :-)
+
+I'll see what I can get with 'address space range' lock first and will
+come back to 'lazy buddy' if it doesn't work out. Thank you and
+Vlastimil for all the suggestions.
