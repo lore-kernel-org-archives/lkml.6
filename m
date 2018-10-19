@@ -2,80 +2,125 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE646ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 261DEECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DD0A2064A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:11:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DD0A2064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D96DD2064A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:13:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTNm+93r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D96DD2064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbeJSQQR (ORCPT
+        id S1727182AbeJSQSk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 12:16:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60322 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726609AbeJSQQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 12:16:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 81068AD75;
-        Fri, 19 Oct 2018 08:11:16 +0000 (UTC)
-Date:   Fri, 19 Oct 2018 10:11:15 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/6] mm: introduce page->dma_pinned_flags, _count
-Message-ID: <20181019081115.GM18839@dhcp22.suse.cz>
-References: <20181012060014.10242-1-jhubbard@nvidia.com>
- <20181012060014.10242-5-jhubbard@nvidia.com>
- <20181013035516.GA18822@dastard>
- <7c2e3b54-0b1d-6726-a508-804ef8620cfd@nvidia.com>
- <20181013230124.GB18822@dastard>
- <20181016085102.GB18918@quack2.suse.cz>
- <a9f1df2f-da9d-bf7b-b977-d3d3ca710776@nvidia.com>
- <20181017110952.GN18839@dhcp22.suse.cz>
- <2367ff26-809c-da94-a8f0-e921bdc4862a@nvidia.com>
+        Fri, 19 Oct 2018 12:18:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37010 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726790AbeJSQSk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 12:18:40 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 329C12064A;
+        Fri, 19 Oct 2018 08:13:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539936820;
+        bh=M0Nv6tRQvAOn7Hihd9TNgq8tGOenGSu+8sGly1voZIE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WTNm+93r2A7pdu00ZWDAXofkbRjhB1BhwUebDmZ+8j6OZHcHlp8mSACEMQDXweAg1
+         DCk3J6/AYCxUZH+rqXIwWzs2Ctfmu1B8lC83LGd9e4L46cXCiUHQjghNCtO18lXOSC
+         lmiSUyAXFcF+9P6Es+hgzUNhU3yog/KzmnPGTpoY=
+Date:   Fri, 19 Oct 2018 10:13:38 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     David Miller <davem@davemloft.net>
+Cc:     akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [GIT] Networking
+Message-ID: <20181019081338.GA21456@kroah.com>
+References: <20181018.171914.1210096727703399564.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <2367ff26-809c-da94-a8f0-e921bdc4862a@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181018.171914.1210096727703399564.davem@davemloft.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 17-10-18 17:03:03, John Hubbard wrote:
-> On 10/17/18 4:09 AM, Michal Hocko wrote:
-> > On Tue 16-10-18 18:48:23, John Hubbard wrote:
-> > [...]
-> >> It's hard to say exactly what the active/inactive/unevictable list should
-> >> be when DMA is done and put_user_page*() is called, because we don't know
-> >> if some device read, wrote, or ignored any of those pages. Although if 
-> >> put_user_pages_dirty() is called, that's an argument for "active", at least.
-> > 
-> > Any reason to not use putback_lru_page?
+On Thu, Oct 18, 2018 at 05:19:14PM -0700, David Miller wrote:
 > 
-> That does help with which LRU to use. I guess I'd still need to track whether
-> a page was on an LRU when get_user_pages() was called, because it seems
-> that that is not necessarily always the case. And putback_lru_page() definitely
-> wants to deal with a page that *was* previously on an LRU.
+> 1) Fix gro_cells leak in xfrm layer, from Li RongQing.
+> 
+> 2) BPF selftests change RLIMIT_MEMLOCK blindly, don't do that.
+>    From Eric Dumazet.
+> 
+> 3) AF_XDP calls synchronize_net() under RCU lock, fix from Björn
+>    Töpel.
+> 
+> 4) Out of bounds packet access in _decode_session6(), from Alexei
+>    Starovoitov.
+> 
+> 5) Several ethtool bugs, where we copy a struct into the kernel
+>    twice and our validations of the values in the first copy can
+>    be invalidated by the second copy due to asynchronous updates
+>    to the memory by the user.  From Wenwen Wang.
+> 
+> 6) Missing netlink attribute validation in cls_api, from Davide
+>    Caratti.
+> 
+> 7) LLC SAP sockets neet to be SOCK_RCU FREE, from Cong Wang.
+> 
+> 8) rxrpc operates on wrong kvec, from Yue Haibing.
+> 
+> 9) A regression was introduced by the disassosciation of route
+>    neighbour references in rt6_probe(), causing probe for
+>    neighbourless routes to not be properly rate limited.  Fix
+>    from Sabrina Dubroca.
+> 
+> 10) Unsafe RCU locking in tipc, from Tung Nguyen.
+> 
+> 11) Use after free in inet6_mc_check(), from Eric Dumazet.
+> 
+> 12) PMTU from icmp packets should update the SCTP transport
+>     pathmtu, from Xin Long.
+> 
+> 13) Missing peer put on error in rxrpc, from David Howells.
+> 
+> 14) Fix pedit in nfp driver, from Pieter Jansen van Vuuren.
+> 
+> 15) Fix overflowing shift statement in qla3xxx driver, from Nathan
+>     Chancellor.
+> 
+> 16) Fix Spectre v1 in ptp code, from Gustavo A. R. Silva.
+> 
+> 17) udp6_unicast_rcv_skb() interprets udpv6_queue_rcv_skb() return
+>     value in an inverted manner, fix from Paolo Abeni.
+> 
+> 18) Fix missed unresolved entries in ipmr dumps, from Nikolay
+>     Aleksandrov.
+> 
+> 19) Fix NAPI handling under high load, we can completely miss events
+>     when NAPI has to loop more than one time in a cycle.  From Heiner
+>     Kallweit.
+> 
+> Please pull, thanks a lot!
+> 
+> The following changes since commit bab5c80b211035739997ebd361a679fa85b39465:
+> 
+>   Merge tag 'armsoc-fixes-4.19' of git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc (2018-10-12 17:41:27 +0200)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git 
 
-Well, if you ever g-u-p pages which are never going to go to LRU then
-sure (e.g. hugetlb pages).
--- 
-Michal Hocko
-SUSE Labs
+Now merged, thanks.
+
+greg k-h
