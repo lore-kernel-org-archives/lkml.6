@@ -2,94 +2,100 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8363FC67863
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 02:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E18C67863
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 02:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42B1121477
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 02:32:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42B1121477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D70F21476
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 02:42:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="EjLsBP2/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D70F21476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbeJSKgb (ORCPT
+        id S1727076AbeJSKq0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 06:36:31 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46336 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbeJSKgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 06:36:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC45C341;
-        Thu, 18 Oct 2018 19:32:32 -0700 (PDT)
-Received: from [10.162.0.72] (p8cg001049571a15.blr.arm.com [10.162.0.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 338883F71D;
-        Thu, 18 Oct 2018 19:32:28 -0700 (PDT)
-Subject: Re: [PATCH V2 2/5] mm/hugetlb: Distinguish between migratability and
- movability
-To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-        "punit.agrawal@arm.com" <punit.agrawal@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "Steven.Price@arm.com" <Steven.Price@arm.com>,
-        "steve.capper@arm.com" <steve.capper@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>
-References: <1539316799-6064-1-git-send-email-anshuman.khandual@arm.com>
- <1539316799-6064-3-git-send-email-anshuman.khandual@arm.com>
- <20181019015931.GA18973@hori1.linux.bs1.fc.nec.co.jp>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <e7a3d5d8-dc65-72fc-5764-010af02d1517@arm.com>
-Date:   Fri, 19 Oct 2018 08:02:26 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 19 Oct 2018 06:46:26 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:32540 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbeJSKq0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 06:46:26 -0400
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id w9J2g7bL003522;
+        Fri, 19 Oct 2018 11:42:08 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w9J2g7bL003522
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1539916928;
+        bh=RZR8C5Ssbmf1f+TZriYgPVcFQt5aZvhOnMDJa7+4MWo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=EjLsBP2/LUMHbSwRo5UICGDIhlvjjqBctIWOBdB5D8m/idjKdZbaGnRx3zUd+lySY
+         sFlVeQf7Av9p+gF9ojY02atH/AAxRd7MYcGEXzaT3UXmBW1oSYd/m+q+cl6Tf0mpfS
+         u783Nvn5q+rQFeN4DoYi+dkfsgomAGM7zqtQHhVy9X7tcuDLTt47q+qGq9UBApNwdE
+         uQJLiziFfRbLKWnh65nvtcYHSQ1j/DL6NPqj+go++IFk0c5EDXTeyveE7kzkb/GCPJ
+         Y+LL2iO/1AFNNfF0GN8A4hm13VhHgcD5j/8TxBXjIl9vRi7KHcz/Prb9VL1cBesSsv
+         NBlXJCAhdexBQ==
+X-Nifty-SrcIP: [209.85.217.52]
+Received: by mail-vs1-f52.google.com with SMTP id g201so24388092vsd.12;
+        Thu, 18 Oct 2018 19:42:08 -0700 (PDT)
+X-Gm-Message-State: ABuFfohQeb9wA2M9C3TqweOEcKz6GkRtOlaG+krjuqcyv6zyCDW7SH0R
+        /dBaKu4odFabS7Uw97yi7qgQYG/mDYliofLwf14=
+X-Google-Smtp-Source: ACcGV63yKR188utpZAXo1BEvvnbQVKAZ+dtS0UA12pW7wmgBQ8Vt1ZCDQNPcZ9872T2sT1+WLkqmbI7PH/2/vbzr4Ks=
+X-Received: by 2002:a67:5fc7:: with SMTP id t190mr13800721vsb.155.1539916927299;
+ Thu, 18 Oct 2018 19:42:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181019015931.GA18973@hori1.linux.bs1.fc.nec.co.jp>
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181017000809.GA21292@WindFlash> <20181017081115.GA22535@zn.tnic>
+ <CAK7LNASVn7CB5uL9tCtNC2u4Ary5eb-vyiB_sS2ey5AZNweKAA@mail.gmail.com>
+ <20181017083126.GB22535@zn.tnic> <CADvQ+rFa=XEuxLb=yPmtJE2QepBNjCVzjEY5urVzCaSF1tJBYw@mail.gmail.com>
+ <20181018091606.GA20831@zn.tnic> <CAK7LNAQq7aE_2QYwqei7M9fg8Yen7-ucjz-t2E_hq2xkznKsQw@mail.gmail.com>
+ <20181018165057.GH20831@zn.tnic>
+In-Reply-To: <20181018165057.GH20831@zn.tnic>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 19 Oct 2018 11:41:31 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQhbn-qZg_Bywk8rf0+oZhVbDjJ=PtcKGCL+k4Fp-ijSw@mail.gmail.com>
+Message-ID: <CAK7LNAQhbn-qZg_Bywk8rf0+oZhVbDjJ=PtcKGCL+k4Fp-ijSw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] Adds -Wshadow=local on KBUILD_HOSTCFLAGS
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     =?UTF-8?Q?Leonardo_Br=C3=A1s?= <leobras.c@gmail.com>,
+        lkcamp@lists.libreplanetbr.org,
+        Matthew Wilcox <willy6545@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 19, 2018 at 1:53 AM Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Fri, Oct 19, 2018 at 01:39:21AM +0900, Masahiro Yamada wrote:
+> > It is not realistic to enable this warning option by default.
+>
+> I believe the question is whether to enable that warning by default in
+> KBUILD_HOSTCFLAGS. Enabling it by default for the target kernel is of
+> course, too noisy. That's why it is hidden behind W=2 there.
 
 
-On 10/19/2018 07:29 AM, Naoya Horiguchi wrote:
-> On Fri, Oct 12, 2018 at 09:29:56AM +0530, Anshuman Khandual wrote:
->> During huge page allocation it's migratability is checked to determine if
->> it should be placed under movable zones with GFP_HIGHUSER_MOVABLE. But the
->> movability aspect of the huge page could depend on other factors than just
->> migratability. Movability in itself is a distinct property which should not
->> be tied with migratability alone.
->>
->> This differentiates these two and implements an enhanced movability check
->> which also considers huge page size to determine if it is feasible to be
->> placed under a movable zone. At present it just checks for gigantic pages
->> but going forward it can incorporate other enhanced checks.
-> 
-> (nitpicking...)
-> The following code just checks hugepage_migration_supported(), so maybe
-> s/Movability/Migratability/ is expected in the comment?
-> 
->   static int unmap_and_move_huge_page(...)
->   {
->           ...
->           /*
->            * Movability of hugepages depends on architectures and hugepage size.
->            * This check is necessary because some callers of hugepage migration
->            * like soft offline and memory hotremove don't walk through page
->            * tables or check whether the hugepage is pmd-based or not before
->            * kicking migration.
->            */
->           if (!hugepage_migration_supported(page_hstate(hpage))) {
-> 
-Sure, will update this patch only unless other changes are suggested.
+Sorry, I misunderstood the question.
+
+The difference about the noisiness between CC and HOSTCC
+is just comes from the amount of source code.
+
+Adding -Wshadow to KBUILD_HOSTCFLAGS emits another warning in Kconfig.
+Of course, it is easy to fix.
+But, I just started to think this option is a kind of harsh...
+
+
+--
+Best Regards
+Masahiro Yamada
