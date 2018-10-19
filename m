@@ -3,34 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A104ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50428ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E039521476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:27:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E039521476
+	by mail.kernel.org (Postfix) with ESMTP id 2180F21476
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 18:28:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2180F21476
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728094AbeJTCfK (ORCPT
+        id S1728111AbeJTCfN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 22:35:10 -0400
+        Fri, 19 Oct 2018 22:35:13 -0400
 Received: from mga01.intel.com ([192.55.52.88]:54192 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727547AbeJTCfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 22:35:10 -0400
+        id S1727547AbeJTCfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 22:35:13 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 11:27:56 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 11:28:00 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,401,1534834800"; 
-   d="scan'208";a="267150211"
+   d="scan'208";a="267150245"
 Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by orsmga005.jf.intel.com with ESMTP; 19 Oct 2018 11:27:54 -0700
+  by orsmga005.jf.intel.com with ESMTP; 19 Oct 2018 11:27:56 -0700
 From:   Tomas Winkler <tomas.winkler@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -41,9 +41,9 @@ Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v7 12/21] tpm: factor out tpm_startup function
-Date:   Fri, 19 Oct 2018 21:22:58 +0300
-Message-Id: <20181019182307.17745-13-tomas.winkler@intel.com>
+Subject: [PATCH v7 13/21] tpm: add tpm_auto_startup() into tpm-interface.c
+Date:   Fri, 19 Oct 2018 21:22:59 +0300
+Message-Id: <20181019182307.17745-14-tomas.winkler@intel.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181019182307.17745-1-tomas.winkler@intel.com>
 References: <20181019182307.17745-1-tomas.winkler@intel.com>
@@ -52,209 +52,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TPM manual startup is used only from within TPM 1.x or TPM 2.x
-code, hence remove tpm_startup() function from tpm-interface.c
-and add two static functions implementations tpm1_startup()
-and tpm2_startup() into to tpm1-cmd.c and tpm2-cmd.c respectively.
+Add wrapper tpm_auto_startup() to tpm-interface.c
+instead of open coded decision between TPM 1.x and TPM 2.x
+in tpm-chip.c
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
-V2-V2: Resend.
+V3: New in the series.
 V4: Fix the commit message.
-V5: 1. A small fix in the kdoc.
-    2. Fixed Jarkko's name in Tested-by.
-V6: Rebase.
-V7: Resend.
+V5-7: Resend.
 
- drivers/char/tpm/tpm-interface.c | 41 ----------------------------------------
- drivers/char/tpm/tpm.h           |  1 -
- drivers/char/tpm/tpm1-cmd.c      | 37 +++++++++++++++++++++++++++++++++++-
- drivers/char/tpm/tpm2-cmd.c      | 34 +++++++++++++++++++++++++++++++--
- 4 files changed, 68 insertions(+), 45 deletions(-)
+ drivers/char/tpm/tpm-chip.c      | 11 +++--------
+ drivers/char/tpm/tpm-interface.c | 15 +++++++++++++++
+ drivers/char/tpm/tpm.h           |  1 +
+ 3 files changed, 19 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index e7f220f691f9..54b81700561b 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -414,47 +414,6 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
- }
- EXPORT_SYMBOL_GPL(tpm_transmit_cmd);
- 
--#define TPM_ORD_STARTUP 153
--#define TPM_ST_CLEAR 1
--
--/**
-- * tpm_startup - turn on the TPM
-- * @chip: TPM chip to use
-- *
-- * Normally the firmware should start the TPM. This function is provided as a
-- * workaround if this does not happen. A legal case for this could be for
-- * example when a TPM emulator is used.
-- *
-- * Return: same as tpm_transmit_cmd()
-- */
--int tpm_startup(struct tpm_chip *chip)
--{
--	struct tpm_buf buf;
--	int rc;
--
--	dev_info(&chip->dev, "starting up the TPM manually\n");
--
--	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_STARTUP);
--		if (rc < 0)
--			return rc;
--
--		tpm_buf_append_u16(&buf, TPM2_SU_CLEAR);
--	} else {
--		rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_STARTUP);
--		if (rc < 0)
--			return rc;
--
--		tpm_buf_append_u16(&buf, TPM_ST_CLEAR);
--	}
--
--	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
--			      "attempting to start the TPM");
--
--	tpm_buf_destroy(&buf);
--	return rc;
--}
--
- int tpm_get_timeouts(struct tpm_chip *chip)
- {
- 	if (chip->flags & TPM_CHIP_FLAG_HAVE_TIMEOUTS)
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 754f7bcb15fa..2eb73f6966c3 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -540,7 +540,6 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
- 			 void *buf, size_t bufsiz,
- 			 size_t min_rsp_body_length, unsigned int flags,
- 			 const char *desc);
--int tpm_startup(struct tpm_chip *chip);
- int tpm_get_timeouts(struct tpm_chip *);
- 
- int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 3bd9f1fa77ce..8a84db315676 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -308,6 +308,40 @@ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- 		return duration;
- }
- 
-+#define TPM_ORD_STARTUP 153
-+#define TPM_ST_CLEAR 1
-+
-+/**
-+ * tpm_startup() - turn on the TPM
-+ * @chip: TPM chip to use
-+ *
-+ * Normally the firmware should start the TPM. This function is provided as a
-+ * workaround if this does not happen. A legal case for this could be for
-+ * example when a TPM emulator is used.
-+ *
-+ * Return: same as tpm_transmit_cmd()
-+ */
-+static int tpm1_startup(struct tpm_chip *chip)
-+{
-+	struct tpm_buf buf;
-+	int rc;
-+
-+	dev_info(&chip->dev, "starting up the TPM manually\n");
-+
-+	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_STARTUP);
-+	if (rc < 0)
-+		return rc;
-+
-+	tpm_buf_append_u16(&buf, TPM_ST_CLEAR);
-+
-+	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-+			      "attempting to start the TPM");
-+
-+	tpm_buf_destroy(&buf);
-+
-+	return rc;
-+}
-+
- int tpm1_get_timeouts(struct tpm_chip *chip)
- {
- 	cap_t cap;
-@@ -317,7 +351,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
- 	rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
- 			 sizeof(cap.timeout));
- 	if (rc == TPM_ERR_INVALID_POSTINIT) {
--		if (tpm_startup(chip))
-+		if (tpm1_startup(chip))
- 			return rc;
- 
- 		rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap,
-@@ -727,3 +761,4 @@ int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
- 
- 	return rc;
- }
-+
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index dd2e98f4de08..6ca4fc0a0d6f 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -948,6 +948,36 @@ static int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip)
- 	return rc;
- }
- 
-+/**
-+ * tpm2_startup - turn on the TPM
-+ * @chip: TPM chip to use
-+ *
-+ * Normally the firmware should start the TPM. This function is provided as a
-+ * workaround if this does not happen. A legal case for this could be for
-+ * example when a TPM emulator is used.
-+ *
-+ * Return: same as tpm_transmit_cmd()
-+ */
-+
-+static int tpm2_startup(struct tpm_chip *chip)
-+{
-+	struct tpm_buf buf;
-+	int rc;
-+
-+	dev_info(&chip->dev, "starting up the TPM manually\n");
-+
-+	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_STARTUP);
-+	if (rc < 0)
-+		return rc;
-+
-+	tpm_buf_append_u16(&buf, TPM2_SU_CLEAR);
-+	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-+			      "attempting to start the TPM");
-+	tpm_buf_destroy(&buf);
-+
-+	return rc;
-+}
-+
- /**
-  * tpm2_auto_startup - Perform the standard automatic TPM initialization
-  *                     sequence
-@@ -959,7 +989,7 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index 46caadca916a..32db84683c40 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -451,14 +451,9 @@ int tpm_chip_register(struct tpm_chip *chip)
  {
  	int rc;
  
--	rc = tpm_get_timeouts(chip);
-+	rc = tpm2_get_timeouts(chip);
- 	if (rc)
- 		goto out;
+-	if (chip->ops->flags & TPM_OPS_AUTO_STARTUP) {
+-		if (chip->flags & TPM_CHIP_FLAG_TPM2)
+-			rc = tpm2_auto_startup(chip);
+-		else
+-			rc = tpm1_auto_startup(chip);
+-		if (rc)
+-			return rc;
+-	}
++	rc = tpm_auto_startup(chip);
++	if (rc)
++		return rc;
  
-@@ -968,7 +998,7 @@ int tpm2_auto_startup(struct tpm_chip *chip)
- 		goto out;
+ 	tpm_sysfs_add_device(chip);
  
- 	if (rc == TPM2_RC_INITIALIZE) {
--		rc = tpm_startup(chip);
-+		rc = tpm2_startup(chip);
- 		if (rc)
- 			goto out;
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 54b81700561b..69e007a198ce 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -545,6 +545,21 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
+ }
+ EXPORT_SYMBOL_GPL(tpm_send);
  
++int tpm_auto_startup(struct tpm_chip *chip)
++{
++	int rc;
++
++	if (!(chip->ops->flags & TPM_OPS_AUTO_STARTUP))
++		return 0;
++
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
++		rc = tpm2_auto_startup(chip);
++	else
++		rc = tpm1_auto_startup(chip);
++
++	return rc;
++}
++
+ /*
+  * We are about to suspend. Save the TPM state
+  * so that it can be restored.
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 2eb73f6966c3..daca1d0190b1 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -541,6 +541,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+ 			 size_t min_rsp_body_length, unsigned int flags,
+ 			 const char *desc);
+ int tpm_get_timeouts(struct tpm_chip *);
++int tpm_auto_startup(struct tpm_chip *chip);
+ 
+ int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
+ int tpm1_auto_startup(struct tpm_chip *chip);
 -- 
 2.14.4
 
