@@ -2,212 +2,82 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE60AECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 759A3ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4B9E214C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:51:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4B9E214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 26B4D21470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:56:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26B4D21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbeJTE6k (ORCPT
+        id S1726823AbeJTFDw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 00:58:40 -0400
-Received: from mga09.intel.com ([134.134.136.24]:44518 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727645AbeJTE6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 00:58:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 13:50:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,401,1534834800"; 
-   d="scan'208";a="100971849"
-Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.168])
-  by orsmga001.jf.intel.com with ESMTP; 19 Oct 2018 13:50:51 -0700
-From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
-To:     kernel-hardening@lists.openwall.com, daniel@iogearbox.net,
-        keescook@chromium.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, davem@davemloft.net, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, arnd@arndb.de,
-        jeyu@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        jannh@google.com
-Cc:     kristen@linux.intel.com, dave.hansen@intel.com,
-        arjan@linux.intel.com, deneen.t.dock@intel.com,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v3 3/3] bpf: Add system wide BPF JIT limit
-Date:   Fri, 19 Oct 2018 13:47:23 -0700
-Message-Id: <20181019204723.3903-4-rick.p.edgecombe@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181019204723.3903-1-rick.p.edgecombe@intel.com>
-References: <20181019204723.3903-1-rick.p.edgecombe@intel.com>
+        Sat, 20 Oct 2018 01:03:52 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:54790 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbeJTFDw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 01:03:52 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id E7A5823370;
+        Fri, 19 Oct 2018 20:56:07 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 1D9SkigNk4jG; Fri, 19 Oct 2018 20:56:07 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 915E023356;
+        Fri, 19 Oct 2018 20:55:53 +0000 (UTC)
+Subject: Re: [PATCH 4.9 00/35] 4.9.135-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+References: <20181018175422.506152522@linuxfoundation.org>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <a32f36ab-f59c-0f6c-123c-0a28050af959@kernel.org>
+Date:   Fri, 19 Oct 2018 14:55:52 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181018175422.506152522@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case of games played with multiple users, also add a system wide limit
-(in bytes) for BPF JIT. The default intends to be big enough for 10000 BPF JIT
-filters. This cannot help with the DOS in the case of
-CONFIG_BPF_JIT_ALWAYS_ON, but it can help with DOS for module space and
-with forcing a module to be loaded at a paticular address.
+On 10/18/2018 11:54 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.135 release.
+> There are 35 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Oct 20 17:54:00 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.135-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-The limit can be set like this:
-echo 5000000 > /proc/sys/net/core/bpf_jit_limit
+Compiled and booted on my test system. No dmesg regressions.
 
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
----
- include/linux/bpf.h        |  7 +++++++
- include/linux/filter.h     |  1 +
- kernel/bpf/core.c          | 22 +++++++++++++++++++++-
- kernel/bpf/inode.c         | 16 ++++++++++++++++
- net/core/sysctl_net_core.c |  7 +++++++
- 5 files changed, 52 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 523481a3471b..4d7b729a1fe7 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -827,4 +827,11 @@ extern const struct bpf_func_proto bpf_get_local_storage_proto;
- void bpf_user_rnd_init_once(void);
- u64 bpf_user_rnd_u32(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5);
- 
-+#ifndef MOD_BPF_LIMIT_DEFAULT
-+/*
-+ * Leave room for 10000 large eBPF filters as default.
-+ */
-+#define MOD_BPF_LIMIT_DEFAULT (5 * PAGE_SIZE * 10000)
-+#endif
-+
- #endif /* _LINUX_BPF_H */
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index 6791a0ac0139..3e91ffc7962b 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -854,6 +854,7 @@ bpf_run_sk_reuseport(struct sock_reuseport *reuse, struct sock *sk,
- extern int bpf_jit_enable;
- extern int bpf_jit_harden;
- extern int bpf_jit_kallsyms;
-+extern int bpf_jit_limit;
- 
- typedef void (*bpf_jit_fill_hole_t)(void *area, unsigned int size);
- 
-diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 3f5bf1af0826..12c20fa6f04b 100644
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -369,6 +369,9 @@ void bpf_prog_kallsyms_del_all(struct bpf_prog *fp)
- int bpf_jit_enable   __read_mostly = IS_BUILTIN(CONFIG_BPF_JIT_ALWAYS_ON);
- int bpf_jit_harden   __read_mostly;
- int bpf_jit_kallsyms __read_mostly;
-+int bpf_jit_limit __read_mostly;
-+
-+static atomic_long_t module_vm;
- 
- static __always_inline void
- bpf_get_prog_addr_region(const struct bpf_prog *prog,
-@@ -583,17 +586,31 @@ bpf_jit_binary_alloc(unsigned int proglen, u8 **image_ptr,
- 		     bpf_jit_fill_hole_t bpf_fill_ill_insns)
- {
- 	struct bpf_binary_header *hdr;
--	unsigned int size, hole, start;
-+	unsigned int size, hole, start, vpages;
- 
- 	/* Most of BPF filters are really small, but if some of them
- 	 * fill a page, allow at least 128 extra bytes to insert a
- 	 * random section of illegal instructions.
- 	 */
- 	size = round_up(proglen + sizeof(*hdr) + 128, PAGE_SIZE);
-+
-+	/* Size plus a guard page */
-+	vpages = (PAGE_ALIGN(size) >> PAGE_SHIFT) + 1;
-+
-+	if (atomic_long_read(&module_vm) + vpages > bpf_jit_limit >> PAGE_SHIFT)
-+		return NULL;
-+
- 	hdr = module_alloc(size);
- 	if (hdr == NULL)
- 		return NULL;
- 
-+	atomic_long_add(vpages, &module_vm);
-+
-+	if (atomic_long_read(&module_vm) > bpf_jit_limit >> PAGE_SHIFT) {
-+		bpf_jit_binary_free(hdr);
-+		return NULL;
-+	}
-+
- 	/* Fill space with illegal/arch-dep instructions. */
- 	bpf_fill_ill_insns(hdr, size);
- 
-@@ -610,7 +627,10 @@ bpf_jit_binary_alloc(unsigned int proglen, u8 **image_ptr,
- 
- void bpf_jit_binary_free(struct bpf_binary_header *hdr)
- {
-+	/* Size plus the guard page */
-+	unsigned int vpages = hdr->pages + 1;
- 	module_memfree(hdr);
-+	atomic_long_sub(vpages, &module_vm);
- }
- 
- /* This symbol is only overridden by archs that have different
-diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-index 2ada5e21dfa6..d0a109733294 100644
---- a/kernel/bpf/inode.c
-+++ b/kernel/bpf/inode.c
-@@ -667,10 +667,26 @@ static struct file_system_type bpf_fs_type = {
- 	.kill_sb	= kill_litter_super,
- };
- 
-+#ifdef CONFIG_BPF_JIT
-+void set_bpf_jit_limit(void)
-+{
-+	bpf_jit_limit = MOD_BPF_LIMIT_DEFAULT;
-+}
-+#else
-+void set_bpf_jit_limit(void)
-+{
-+}
-+#endif
-+
- static int __init bpf_init(void)
- {
- 	int ret;
- 
-+	/*
-+	 * Module space size can be non-compile time constant so set it here.
-+	 */
-+	set_bpf_jit_limit();
-+
- 	ret = sysfs_create_mount_point(fs_kobj, "bpf");
- 	if (ret)
- 		return ret;
-diff --git a/net/core/sysctl_net_core.c b/net/core/sysctl_net_core.c
-index b1a2c5e38530..6bdf4a3da2b2 100644
---- a/net/core/sysctl_net_core.c
-+++ b/net/core/sysctl_net_core.c
-@@ -396,6 +396,13 @@ static struct ctl_table net_core_table[] = {
- 		.extra1		= &zero,
- 		.extra2		= &one,
- 	},
-+	{
-+		.procname	= "bpf_jit_limit",
-+		.data		= &bpf_jit_limit,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0600,
-+		.proc_handler	= proc_dointvec,
-+	},
- # endif
- #endif
- 	{
--- 
-2.17.1
+thanks,
+-- Shuah
 
