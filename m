@@ -2,113 +2,147 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF464ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C95ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7783D2083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:01:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7783D2083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CB3A22083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:01:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OzI8O4tB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB3A22083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbeJSXHf (ORCPT
+        id S1727657AbeJSXIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 19:07:35 -0400
-Received: from mga17.intel.com ([192.55.52.151]:8316 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726664AbeJSXHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 19:07:34 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 08:01:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,400,1534834800"; 
-   d="scan'208";a="100889079"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga001.jf.intel.com with ESMTP; 19 Oct 2018 08:01:04 -0700
-Date:   Fri, 19 Oct 2018 08:58:20 -0600
-From:   Keith Busch <keith.busch@intel.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Jon Derrick <jonathan.derrick@intel.com>,
-        Dongdong Liu <liudongdong3@huawei.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Oza Pawandeep <poza@codeaurora.org>,
+        Fri, 19 Oct 2018 19:08:05 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:48244 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbeJSXIF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 19:08:05 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9JEsTfE065901;
+        Fri, 19 Oct 2018 15:00:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=y3cYouPi3PtPv8jCD+2d3VGWQJY0aKfow3pqumR+ih8=;
+ b=OzI8O4tB8I288iCnc+U7qEh5UAxkSfaGYxXXPj8DFhIxco9SUobncIqE5MWp4ieLUTMl
+ C69ai2vHVlI/YW1IsNv5byEZOY/7TmszuuOHCOhz2KdKWqLlOBb7RLX9gHIqjS1UXjcC
+ V0Zy+WJRsG5Fs3GwJd5zThsO5vUdpS+Yu9EDKaEMUq10UBhRPIDMj/6ubmzN35NWr1sl
+ R3f8baISxD8sieuXa6P2zdj8QqXfI6eLjOS+yiJ0UaRPACNdPoxqzwykaS58Q0VVF+84
+ dobQwUoh9tXTZhsI0FqENf7/oeCFRJ9Ak3435F204v9HHx0rkfmh8ULRjXmqAWyIl/Ju 8g== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2n38nqmgg0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Oct 2018 15:00:56 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9JF0tY3018294
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Oct 2018 15:00:56 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9JF0rWe027937;
+        Fri, 19 Oct 2018 15:00:53 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 19 Oct 2018 08:00:53 -0700
+Date:   Fri, 19 Oct 2018 08:00:53 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Aaron Lu <aaron.lu@intel.com>, Vlastimil Babka <vbabka@suse.cz>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Lukas Wunner <lukas@wunner.de>, Christoph Hellwig <hch@lst.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] PCI/AER: Enable error reporting for all ports
-Message-ID: <20181019145820.GB23571@localhost.localdomain>
-References: <153989603841.78375.436243401553964151.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <20181018230312.GB23301@localhost.localdomain>
- <20181019011135.GP5906@bhelgaas-glaptop.roam.corp.google.com>
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>
+Subject: Re: [RFC v4 PATCH 2/5] mm/__free_one_page: skip merge for order-0
+ page unless compaction failed
+Message-ID: <20181019150053.iaubsdtcsi64mqb7@ca-dmjordan1.us.oracle.com>
+References: <20181017063330.15384-1-aaron.lu@intel.com>
+ <20181017063330.15384-3-aaron.lu@intel.com>
+ <20181017104427.GJ5819@techsingularity.net>
+ <20181017131059.GA9167@intel.com>
+ <20181017135807.GL5819@techsingularity.net>
+ <20181017145904.GC9167@intel.com>
+ <20181018111632.GM5819@techsingularity.net>
+ <20181019055703.GA2401@intel.com>
+ <20181019085435.GR5819@techsingularity.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181019011135.GP5906@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20181019085435.GR5819@techsingularity.net>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9050 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=661
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810190132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 08:11:35PM -0500, Bjorn Helgaas wrote:
-> On Thu, Oct 18, 2018 at 05:03:13PM -0600, Keith Busch wrote:
-> > On Thu, Oct 18, 2018 at 03:53:58PM -0500, Bjorn Helgaas wrote:
-> > > Change the AER service driver so it binds to *all* PCIe Ports,
-> > > including Switch Upstream and Downstream Ports.  Enable AER error
-> > > reporting for all these Ports, but not for any children.
+On Fri, Oct 19, 2018 at 09:54:35AM +0100, Mel Gorman wrote:
+> On Fri, Oct 19, 2018 at 01:57:03PM +0800, Aaron Lu wrote:
+> > > 
+> > > I don't think this is the right way of thinking about it because it's
+> > > possible to have the system split in such a way so that the migration
+> > > scanner only encounters unmovable pages before it meets the free scanner
+> > > where unmerged buddies were in the higher portion of the address space.
 > > 
-> > I'm looking at this again and think enabling/disabling error
-> > reporting for ports is the responsibility of the port driver, not
-> > the AER service.
+> > Yes it is possible unmerged pages are in the higher portion.
+> > 
+> > My understanding is, when the two scanners meet, all unmerged pages will
+> > be either used by the free scanner as migrate targets or sent to merge
+> > by the migration scanner.
+> > 
 > 
-> That's an interesting idea.  Can you expand on this a little more?
-> Why is it the responsibility of the port driver?
+> It's not guaranteed if the lower portion of the address space consisted
+> entirely of pages that cannot migrate (because they are unmovable or because
+> migration failed due to pins). It's actually a fundamental limitation
+> of compaction that it can miss migration and compaction opportunities
+> due to how the scanners are implemented. It was designed that way to
+> avoid pageblocks being migrated unnecessarily back and forth but the
+> downside is missed opportunities.
 > 
-> Do you think pci_enable_pcie_error_reporting() shouldn't be part of
-> the AER service because it updates the Device Control register, which
-> is in the PCIe Capability, not the AER Capability?
-> 
-> What about pci_aer_clear_device_status(), which clears Device Status,
-> which is also in the PCIe Capability?
+> > > You either need to keep unmerged buddies on a separate list or search
+> > > the order-0 free list for merge candidates prior to compaction.
+> > > 
+> > > > > It's needed to form them efficiently but excessive reclaim or writing 3
+> > > > > to drop_caches can also do it. Be careful of tying lazy buddy too
+> > > > > closely to compaction.
+> > > > 
+> > > > That's the current design of this patchset, do you see any immediate
+> > > > problem of this? Is it that you are worried about high-order allocation
+> > > > success rate using this design?
+> > > 
+> > > I've pointed out what I see are the design flaws but yes, in general, I'm
+> > > worried about the high order allocation success rate using this design,
+> > > the reliance on compaction and the fact that the primary motivation is
+> > > when THP is disabled.
+> > 
+> > When THP is in use, zone lock contention is pretty much nowhere :-)
+> > 
+> > I'll see what I can get with 'address space range' lock first and will
+> > come back to 'lazy buddy' if it doesn't work out.
 
-I was comparing how other end device driver's enable this, and they all call
-pci_enable_pcie_error_reporting() somewhere along their pci_driver->probe
-path. With that in mind, are ports special compared to end devices for this
-particular feature?
- 
-> > The following should do the same as this patch, but without making
-> > AER driver handle non-root ports.  The report enabling/disabling
-> > functions are already stubbed for '!CONFIG_PCIE_AER' and have checks
-> > for aer_cap and firmware first.
-> 
-> If we thought we should enable error reporting *always*, regardless of
-> whether the AER service is enabled, this would make perfect sense to
-> me, and I might suggest doing it in an even more generic place like
-> pci_configure_device() or pci_init_capabilities().
+With the address space range idea, wouldn't the zone free_area require changes
+too?  I can't see how locking by address range could synchronize it as it
+exists now otherwise, with per order/mt list heads.
 
-There are unfortunately still pci_driver instances that don't implement
-the err_handler callbacks, and may cause problems if we enable error
-reporting in the device when its driver isn't capable of reacting to them.
-
-If it wasn't for that, I think it would make more sense to move this
-responsibility from drivers to the pci core.
-
-> But that doesn't seem like where you're headed.  It seems like you
-> still only want error reporting enabled when CONFIG_PCIEAR=y.  If
-> that's the case, it seems like doing it in portdrv only obfuscates the
-> connection with AER.  When CONFIG_PCIEAER is unset, the portdrv code
-> *looks* like it's doing something but it's really not because of the
-> #ifdef magic.
-
-Right, but that's no different than every other Linux pci_driver. The
-component that provides the pci_driver.err_handler should be responsible
-for requesting to enable device error reporting, and that's provided by
-the port driver, not AER.
+One idea is to further subdivide the free area according to how the locking
+works and find some reasonable way to handle having to search for pages of a
+given order/mt in multiple places.
