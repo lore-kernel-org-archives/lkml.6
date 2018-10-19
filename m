@@ -2,114 +2,125 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 710D0ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DB6ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2440820644
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:52:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvzF+EPF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2440820644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D288420644
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 12:52:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D288420644
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeJSU6F (ORCPT
+        id S1727465AbeJSU63 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:58:05 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:39954 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727039AbeJSU6F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 16:58:05 -0400
-Received: by mail-oi1-f196.google.com with SMTP id j68-v6so26705774oib.7;
-        Fri, 19 Oct 2018 05:52:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Fuw1h4GK8wNV4ILgy/wPRw3Q0q49RLc7Bf4oU1kaISQ=;
-        b=kvzF+EPF2m0gTwA5TSFojpjSQROFYxRnmXSZwM94DwPF503ix8ai0lxB7D3x1/Vz6W
-         D+/SIjo/BSoxXugofmPQHVXKHBhbfhqk8dKL2IvCBW6Q+Wr3rXQV6xFoH3zEIJFlwgGY
-         QihBJV6K5L+8WzcMGRTg1T1vcUuxnZeP7QWIUZkfVYdNocCf+TEsxb4vZzSILGLKero5
-         Tkd5x4lsryHqY9QUpXC5jkpDKA+j5ur7vn7SPrT/QSwU4kZoVzUpJdbg0pzcduCCYy9J
-         SAIxrzLBcHvNC9aSbcbC1KZglyHrL/e64lt2LPPIROfpqX5pq3Gdrj/KkqjNxW10sTza
-         i90g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Fuw1h4GK8wNV4ILgy/wPRw3Q0q49RLc7Bf4oU1kaISQ=;
-        b=TaQ9xxSQiVezy0bOy9MDC/z+XPXQGD9zrK4Ap1wqWij+3CHk9b3DK7RciR1+wAzUZm
-         iN/rhLVFXekG0GwdmhYhoTEnjBcO6xQ2YJea6Yw2gYLvU88TtmHcZiDCHZ6CNWNo+kP6
-         XZ/g/MahznTdgGTfb5NLu8AvFfAkMV8g/nD4ZXPb1sRwMbz1jQvRlbJ/boeyPD47j5rr
-         9+Nj7HzirNdm5xikJrrTnaQT2kleIEuqU266dZVwjkqXy9nFdXABpARdY1pyf2mZbsIU
-         bmFfasvr/sMRHvjw0Dw/stbpiT3+J8On9WKeR+ITmr69JY9vbDr0yJErTeGG8sj6IND6
-         ztcQ==
-X-Gm-Message-State: ABuFfoj81AQH+wXcCPv8D3hiVqVZuaMruQANqZNxL3kLrVS37oeioNP7
-        IdVhfkWYAWAXo9odI/92bCxHozjvrufT6jCOBU4=
-X-Google-Smtp-Source: ACcGV62KnlTAgPkH2gFDe0e2krT9rOPZV7jjMTTSvRh7Q2SnZcrXVJNEJrStaY6SQ2ExxosyrOFzT8KKyCBUGk+j8bk=
-X-Received: by 2002:aca:3006:: with SMTP id w6-v6mr19052781oiw.342.1539953525489;
- Fri, 19 Oct 2018 05:52:05 -0700 (PDT)
+        Fri, 19 Oct 2018 16:58:29 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:57776 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727011AbeJSU62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 16:58:28 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 2E3982076FC56;
+        Fri, 19 Oct 2018 20:52:26 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.399.0; Fri, 19 Oct 2018 20:52:19 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Sunil Goutham <sgoutham@marvell.com>,
+        Linu Cherian <lcherian@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        Jerin Jacob <jerinj@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     YueHaibing <yuehaibing@huawei.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH net-next] octeontx2-af: Remove set but not used variables 'devnum, is_pf'
+Date:   Fri, 19 Oct 2018 13:03:06 +0000
+Message-ID: <1539954186-193695-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-References: <20181019094031.22492-1-qiangqing.zhang@nxp.com>
-In-Reply-To: <20181019094031.22492-1-qiangqing.zhang@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 19 Oct 2018 09:51:55 -0300
-Message-ID: <CAOMZO5AqZrYmc474NjvG1nF94ZNvgHyv7Q3R+QxrLmSN6EhYDw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: imx6sx-sdb: Add flexcan support
-To:     qiangqing.zhang@nxp.com
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joakim,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On Fri, Oct 19, 2018 at 6:43 AM Joakim Zhang <qiangqing.zhang@nxp.com> wrote:
->
-> From: Dong Aisheng <aisheng.dong@nxp.com>
->
-> CAN transceiver is different on RevA and RevB board.
-> It's active high on RevA while active low on Rev B.
->
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
-> ---
->  arch/arm/boot/dts/imx6sx-sdb.dts  |  5 ++++
->  arch/arm/boot/dts/imx6sx-sdb.dtsi | 42 +++++++++++++++++++++++++++++++
->  2 files changed, 47 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/imx6sx-sdb.dts b/arch/arm/boot/dts/imx6sx-sdb.dts
-> index 6dd9bebfe027..092b8de142a8 100644
-> --- a/arch/arm/boot/dts/imx6sx-sdb.dts
-> +++ b/arch/arm/boot/dts/imx6sx-sdb.dts
-> @@ -10,6 +10,11 @@
->
->  / {
->         model = "Freescale i.MX6 SoloX SDB RevB Board";
-> +
-> +       /* Transceiver EN/STBY is active low on RevB board */
-> +       reg_can_stby: regulator-can-stby {
-> +               gpio = <&gpio4 27 GPIO_ACTIVE_LOW>;
+drivers/net/ethernet/marvell/octeontx2/af/rvu.c: In function 'rvu_detach_rsrcs':
+drivers/net/ethernet/marvell/octeontx2/af/rvu.c:855:6: warning:
+ variable 'devnum' set but not used [-Wunused-but-set-variable]
+ 
+drivers/net/ethernet/marvell/octeontx2/af/rvu.c:853:7: warning:
+ variable 'is_pf' set but not used [-Wunused-but-set-variable]
 
-Don't we need a  gpio = <&gpio4 27 GPIO_ACTIVE_HIGH>; and also a
-"enable-active-high" entries in the imx6sx-sdb-reva.dts?
+drivers/net/ethernet/marvell/octeontx2/af/rvu.c: In function 'rvu_mbox_handler_ATTACH_RESOURCES':
+drivers/net/ethernet/marvell/octeontx2/af/rvu.c:1054:7: warning:
+ variable 'is_pf' set but not used [-Wunused-but-set-variable]
+
+drivers/net/ethernet/marvell/octeontx2/af/rvu.c:1053:6: warning:
+ variable 'devnum' set but not used [-Wunused-but-set-variable]
+
+It never used since introduction in commit
+746ea74241fa ("octeontx2-af: Add RVU block LF provisioning support")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/rvu.c | 25 +++----------------------
+ 1 file changed, 3 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+index c06cca9..60b3623 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+@@ -914,18 +914,9 @@ static int rvu_detach_rsrcs(struct rvu *rvu, struct rsrc_detach *detach,
+ 			    u16 pcifunc)
+ {
+ 	struct rvu_hwinfo *hw = rvu->hw;
+-	bool is_pf, detach_all = true;
++	bool detach_all = true;
+ 	struct rvu_block *block;
+-	int devnum, blkid;
+-
+-	/* Check if this is for a RVU PF or VF */
+-	if (pcifunc & RVU_PFVF_FUNC_MASK) {
+-		is_pf = false;
+-		devnum = rvu_get_hwvf(rvu, pcifunc);
+-	} else {
+-		is_pf = true;
+-		devnum = rvu_get_pf(pcifunc);
+-	}
++	int blkid;
+ 
+ 	spin_lock(&rvu->rsrc_lock);
+ 
+@@ -1114,22 +1105,12 @@ static int rvu_mbox_handler_ATTACH_RESOURCES(struct rvu *rvu,
+ 					     struct msg_rsp *rsp)
+ {
+ 	u16 pcifunc = attach->hdr.pcifunc;
+-	int devnum, err;
+-	bool is_pf;
++	int err;
+ 
+ 	/* If first request, detach all existing attached resources */
+ 	if (!attach->modify)
+ 		rvu_detach_rsrcs(rvu, NULL, pcifunc);
+ 
+-	/* Check if this is for a RVU PF or VF */
+-	if (pcifunc & RVU_PFVF_FUNC_MASK) {
+-		is_pf = false;
+-		devnum = rvu_get_hwvf(rvu, pcifunc);
+-	} else {
+-		is_pf = true;
+-		devnum = rvu_get_pf(pcifunc);
+-	}
+-
+ 	spin_lock(&rvu->rsrc_lock);
+ 
+ 	/* Check if the request can be accommodated */
+
