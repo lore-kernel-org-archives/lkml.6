@@ -6,68 +6,68 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F40ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BFDECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86EE52064A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:20:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86EE52064A
+	by mail.kernel.org (Postfix) with ESMTP id 7EBD52064A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:20:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EBD52064A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=skynet.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbeJSQZS (ORCPT
+        id S1727520AbeJSQZs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 12:25:18 -0400
-Received: from mailrelay101.isp.belgacom.be ([195.238.20.128]:36171 "EHLO
+        Fri, 19 Oct 2018 12:25:48 -0400
+Received: from mailrelay101.isp.belgacom.be ([195.238.20.128]:36165 "EHLO
         mailrelay101.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727398AbeJSQZP (ORCPT
+        by vger.kernel.org with ESMTP id S1727296AbeJSQZK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 12:25:15 -0400
+        Fri, 19 Oct 2018 12:25:10 -0400
 X-Belgacom-Dynamic: yes
-IronPort-PHdr: =?us-ascii?q?9a23=3Al4kUqRMQOWJFIkaXAD0l6mtUPXoX/o7sNwtQ0K?=
- =?us-ascii?q?IMzox0I/X4rarrMEGX3/hxlliBBdydt6obzbKO+4nbGkU4qa6bt34DdJEeHz?=
- =?us-ascii?q?Qksu4x2zIaPcieFEfgJ+TrZSFpVO5LVVti4m3peRMNQJW2aFLduGC94iAPER?=
- =?us-ascii?q?vjKwV1Ov71GonPhMiryuy+4ZLebxlKiTanfb9+MAi9oBnMuMURnYZsMLs6xA?=
- =?us-ascii?q?HTontPdeRWxGdoKkyWkh3h+Mq+/4Nt/jpJtf45+MFOTav1f6IjTbxFFzsmKH?=
- =?us-ascii?q?w65NfqtRbYUwSC4GYXX3gMnRpJBwjF6wz6Xov0vyDnuOdxxDWWMMvrRr0yRD?=
- =?us-ascii?q?+s7bpkSAXwhSkHKTA37W/ZhM93gq1ZrhKsvABzz5LObY2JLvdyYr/RcNUHTm?=
- =?us-ascii?q?RBRMZRUClBD5u8YYQVFOUBPPxXr4/grFUOtxuxGxSjC/31yj9JmnD23rAx3u?=
- =?us-ascii?q?MvEQ7cxwMgEckDsG/XrNT1MqcdT/y1wLPTwjrddv5b3yr25ovQch05ovyBX6?=
- =?us-ascii?q?h8fMvQxEU1FQ7Iik+cpZHmMj6b0OkGrnKV4PB6Ve21jm4qswRxoj+yycgyko?=
- =?us-ascii?q?TJnYcVykzc9SV+3YY1OcW0SE5lbt6gF5tdryWaN4xqTcw4R2FouCE6yqYauZ?=
- =?us-ascii?q?KheCgKz4goyATba/OadIiI5wjsVOeXITtghXJlfqywhwqq/EWjyODwTMi53V?=
- =?us-ascii?q?dQoidHltTArG0B2h/d58SfT/ty5Eah2TKB1wDJ7eFEJFg5laTBJJE6zL49jY?=
- =?us-ascii?q?ETsUfDHy/whkr2kLWaeV469eSw8eTofq3mpoOAN49zkgzxKKcumtS6AekjNg?=
- =?us-ascii?q?gOXm6b+fmz1bH68035R6hKjvsrnabDrJDaJMMbpqijDw9SyIYj5A61Dy2639?=
- =?us-ascii?q?QAgXkHMFVFdQqFj4fzO1HBOur4DfShjFS3izpk2+vGMqf9DZXIM3jPiqnucq?=
- =?us-ascii?q?tg60RE0go80chf545ICrEGOP/8Rkjxu8HCARIiLwO02PzrB8l41oMDQ26AHL?=
- =?us-ascii?q?KWML7Ku1+S+u0vO/WMZJMSuDvlL/gl5vjujWI2mFMEc6mpxoYYZ26mHvt4J0?=
- =?us-ascii?q?WUemTsgtgfHmcQpAY+T/LliEeEUTFNY3a+RaU85is0CIi+F4fMWpitgKCd3C?=
- =?us-ascii?q?e8BpBWYmFGClaREXbnbomEWOkDaDiUIsB/ljwJTqahS4A/2hG0rgP6yKRoLv?=
- =?us-ascii?q?DS+iIGsZLvzt915/fclRsq7zx7E9yd032RT2Fzhm4ISSU507txoUFm0VeD0q?=
- =?us-ascii?q?h5g/pGGtxP/f9GSRk1ZtbgyLlzCMj3cgbAeMqZDVihX9OqCC0wSdR3xMUBMG?=
- =?us-ascii?q?hnHND3oBnJ3iOsS5EPmrCGHp0/8eqI0XH7Ke5myGfA2bVnhVRwEZgHDnGvmq?=
- =?us-ascii?q?Mqr1ubPIXOiUjMz6s=3D?=
+IronPort-PHdr: =?us-ascii?q?9a23=3AVNSS8RVy3n3tBeXVVEq3LzixWWjV8LGtZVwlr6?=
+ =?us-ascii?q?E/grcLSJyIuqrYbR2Et8tkgFKBZ4jH8fUM07OQ7/i/HzRYqb+681k6OKRWUB?=
+ =?us-ascii?q?EEjchE1ycBO+WiTXPBEfjxciYhF95DXlI2t1uyMExSBdqsLwaK+i764jEdAA?=
+ =?us-ascii?q?jwOhRoLerpBIHSk9631+ev8JHPfglEnjWwba9wIRmssQndqtQdjJd/JKo21h?=
+ =?us-ascii?q?bHuGZDdf5MxWNvK1KTnhL86dm18ZV+7SleuO8v+tBZX6nicKs2UbJXDDI9M2?=
+ =?us-ascii?q?Ao/8LrrgXMTRGO5nQHTGoblAdDDhXf4xH7WpfxtTb6tvZ41SKHM8D6Uaw4VD?=
+ =?us-ascii?q?K/5KptVRTmijoINyQh/W/XlMJ+kaxVrhGmqRN9zY7Ze52ZOOZkc6/BZ94WWX?=
+ =?us-ascii?q?ZNU8BMXCJBGIO8aI4PAvIBM+lCtIb9pkEBrR2jDgesHuPg1CJHiWHs3a07z+?=
+ =?us-ascii?q?shEhzN0QsuH90Uq3vUos74NLwRUeG1yqnH0ynDY+lN1jjj8YXFdA0qr/KUXb?=
+ =?us-ascii?q?9ocsfcy1MjGgLEg1mKq4HoOymZ2vkOvmWV6edrSPihhHQ9qw5rpzii3sIsio?=
+ =?us-ascii?q?7UiY0L0l3E7iB5wJotJd2/VU57fcaoEJtOuCGeMIt7WsciQ2Z0tykgzr0GuZ?=
+ =?us-ascii?q?m7fDMWyJg9wx7fbOCIfJKM4h3+U+aRJC13hHNjeL6nhhay91avyvHkW8S30l?=
+ =?us-ascii?q?tGtCtIn9jWun0P0xHf8NWLR/hz80u53DaAzQHT6uVKIUAukqrbLoYswrAqmZ?=
+ =?us-ascii?q?UIv0TOBTT2mEb2ja+QaEok5vKk5P/5bbn+vJ+TK5d0ih3iMqQpgsGwG+c4Mh?=
+ =?us-ascii?q?ALX2WA/eS81bvj/VD2QblTgP02lbTZsJbHKssBuq65AghV0oA55xa4FTem38?=
+ =?us-ascii?q?wSnWMbI1JdZBKHk4/pNknMIP/iDfewmU6skDR1yPDdJbDuHo7NImLfn7fkYL?=
+ =?us-ascii?q?Zx8VBTxxcuzdpH/ZJbFqkBIO7vWk/2rNHXEhg5PBGuzOv8FNp9zZkSVn6KAq?=
+ =?us-ascii?q?+EKq/dr0KH5v83KemWeIAVoCr9K+Qi5/P2iX85mFkdfbSm3JcOZnC4BelpLF?=
+ =?us-ascii?q?uHYXXyhtcMCnkKvgUgQ+zwklGCUiBcZ2y0X60i4jE3EoWmDZ3MRoq1mryOwD?=
+ =?us-ascii?q?+7HoFKZmBBEl2MFXbod4OZW/YDcS6SIdFukiYCVbe/T48szg+utADkxLp9NO?=
+ =?us-ascii?q?bU+TMXtYjl1Ndr4+3fjxYy9SZ7D86FyWGCU3l0nn8URz8xxK1/r1ZyxUyN0a?=
+ =?us-ascii?q?VjmPxYFtxS5/VXXQcmL5LT1PJ1WJjOXVfIfc+MYFKnRMi2RD82U9Q9ysMPZE?=
+ =?us-ascii?q?A7HM+t3T7Z2C//LbYflrWNTLIu/67RxXn6JI4pxX/M2oE6jEggT9cJP2Dw1f?=
+ =?us-ascii?q?03zBTaG4OcyxbRrK2tb6lJhCM=3D?=
 X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AQAACMkslb/7dPQldjGwEBAQEDAQE?=
- =?us-ascii?q?BBwMBAQGBUQYBAQELAYEIfIFTEiiMDV+NfgGIUIkdhGyBejgBhDoEAgKFAyI?=
- =?us-ascii?q?0DQ0BAwEBAgEBAgFsKII2IoJiBlYjEFE5HhmDIYF1EagNg32GJ4cshDqBQT+?=
- =?us-ascii?q?BEYRdhACFDQKeQQmGIYpLAhWQKSyXaTiBVU0gGIMngiUBF44cPTCBAwE9AYo?=
- =?us-ascii?q?yAQE?=
-X-IPAS-Result: =?us-ascii?q?A2AQAACMkslb/7dPQldjGwEBAQEDAQEBBwMBAQGBUQYBA?=
- =?us-ascii?q?QELAYEIfIFTEiiMDV+NfgGIUIkdhGyBejgBhDoEAgKFAyI0DQ0BAwEBAgEBA?=
- =?us-ascii?q?gFsKII2IoJiBlYjEFE5HhmDIYF1EagNg32GJ4cshDqBQT+BEYRdhACFDQKeQ?=
- =?us-ascii?q?QmGIYpLAhWQKSyXaTiBVU0gGIMngiUBF44cPTCBAwE9AYoyAQE?=
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AZAACMkslb/7dPQldjGwEBAQEDAQE?=
+ =?us-ascii?q?BBwMBAQGBUgUBAQELAYEIfIFTEiiMbI1+AYhQjgmBejgBhDoEAgKFAyI1DA0?=
+ =?us-ascii?q?BAwEBAgEBAgFsKII2IoJiBicvIxBROR4ZgyGBdRGnWjODfYYnhyyEOoFBP4E?=
+ =?us-ascii?q?RiF2FDQKeQQmGIYpLAhWBQI5pLJdrAjSBVU0gGIMngiYXjhw9MIEDAT0BijI?=
+ =?us-ascii?q?BAQ?=
+X-IPAS-Result: =?us-ascii?q?A2AZAACMkslb/7dPQldjGwEBAQEDAQEBBwMBAQGBUgUBA?=
+ =?us-ascii?q?QELAYEIfIFTEiiMbI1+AYhQjgmBejgBhDoEAgKFAyI1DA0BAwEBAgEBAgFsK?=
+ =?us-ascii?q?II2IoJiBicvIxBROR4ZgyGBdRGnWjODfYYnhyyEOoFBP4ERiF2FDQKeQQmGI?=
+ =?us-ascii?q?YpLAhWBQI5pLJdrAjSBVU0gGIMngiYXjhw9MIEDAT0BijIBAQ?=
 Received: from 183.79-66-87.adsl-dyn.isp.belgacom.be (HELO localhost.localdomain) ([87.66.79.183])
-  by relay.skynet.be with ESMTP; 19 Oct 2018 10:20:13 +0200
+  by relay.skynet.be with ESMTP; 19 Oct 2018 10:20:07 +0200
 From:   Fabian Frederick <fabf@skynet.be>
 To:     akpm@linux-foundation.org
 Cc:     jaharkes@cs.cmu.edu, coda@cs.cmu.edu,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         fabf@skynet.be
-Subject: [PATCH 6/7 linux-next] coda: remove sb test in coda_fid_to_inode()
-Date:   Fri, 19 Oct 2018 10:19:32 +0200
-Message-Id: <1539937173-26260-7-git-send-email-fabf@skynet.be>
+Subject: [PATCH 2/7 linux-next] coda: destroy mutex in put_super()
+Date:   Fri, 19 Oct 2018 10:19:28 +0200
+Message-Id: <1539937173-26260-3-git-send-email-fabf@skynet.be>
 X-Mailer: git-send-email 2.4.11
 In-Reply-To: <1539937173-26260-1-git-send-email-fabf@skynet.be>
 References: <1539937173-26260-1-git-send-email-fabf@skynet.be>
@@ -76,30 +76,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-coda_fid_to_inode() is only called by coda_downcall() where
-sb is already being tested.
+we can safely destroy vc_mutex at the end of umount process.
 
 Signed-off-by: Fabian Frederick <fabf@skynet.be>
 ---
- fs/coda/cnode.c | 5 -----
- 1 file changed, 5 deletions(-)
+ fs/coda/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/coda/cnode.c b/fs/coda/cnode.c
-index 845b5a6..c42d340 100644
---- a/fs/coda/cnode.c
-+++ b/fs/coda/cnode.c
-@@ -137,11 +137,6 @@ struct inode *coda_fid_to_inode(struct CodaFid *fid, struct super_block *sb)
- 	struct inode *inode;
- 	unsigned long hash = coda_f2i(fid);
+diff --git a/fs/coda/inode.c b/fs/coda/inode.c
+index dd819c1..69bb64d 100644
+--- a/fs/coda/inode.c
++++ b/fs/coda/inode.c
+@@ -244,6 +244,7 @@ static void coda_put_super(struct super_block *sb)
+ 	vcp->vc_sb = NULL;
+ 	sb->s_fs_info = NULL;
+ 	mutex_unlock(&vcp->vc_mutex);
++	mutex_destroy(&vcp->vc_mutex);
  
--	if ( !sb ) {
--		pr_warn("%s: no sb!\n", __func__);
--		return NULL;
--	}
--
- 	inode = ilookup5(sb, hash, coda_test_inode, fid);
- 	if ( !inode )
- 		return NULL;
+ 	pr_info("Bye bye.\n");
+ }
 -- 
 2.4.11
 
