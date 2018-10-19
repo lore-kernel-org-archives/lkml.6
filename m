@@ -2,104 +2,88 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0415AECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73703ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C544521470
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:30:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C544521470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BFB621479
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:43:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kotYoO85"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BFB621479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbeJSPfq (ORCPT
+        id S1727017AbeJSPs0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 11:35:46 -0400
-Received: from mga01.intel.com ([192.55.52.88]:1924 "EHLO mga01.intel.com"
+        Fri, 19 Oct 2018 11:48:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726340AbeJSPfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 11:35:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 00:30:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,399,1534834800"; 
-   d="scan'208";a="242572382"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by orsmga004.jf.intel.com with ESMTP; 19 Oct 2018 00:30:54 -0700
-Received: from hasmsx107.ger.corp.intel.com (10.184.198.27) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Fri, 19 Oct 2018 00:30:54 -0700
-Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
- hasmsx107.ger.corp.intel.com ([169.254.2.223]) with mapi id 14.03.0319.002;
- Fri, 19 Oct 2018 10:30:51 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>,
-        "nayna@linux.ibm.com" <nayna@linux.ibm.com>
-CC:     "nayna@linux.vnet.ibm.com" <nayna@linux.vnet.ibm.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: tpm_i2c_nuvoton: use correct command duration for
- TPM 2.x
-Thread-Topic: [PATCH] tpm: tpm_i2c_nuvoton: use correct command duration for
- TPM 2.x
-Thread-Index: AQHUZ2btLmkTCCBG+k+DpgFokEiphqUl+QmA
-Date:   Fri, 19 Oct 2018 07:30:50 +0000
-Message-ID: <1539933995.19334.9.camel@intel.com>
-References: <20181017163223.25141-1-tomas.winkler@intel.com>
-         <6e12d4b6-cb84-3be5-8a62-6868be43d43d@linux.ibm.com>
-In-Reply-To: <6e12d4b6-cb84-3be5-8a62-6868be43d43d@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.12.91.48]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <87AC378C383C2C49A85DEC6491EE7FF0@intel.com>
-Content-Transfer-Encoding: base64
+        id S1726340AbeJSPsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 11:48:25 -0400
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A93EF21480;
+        Fri, 19 Oct 2018 07:43:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539935012;
+        bh=5Ikn6AowIbZkyZD53B/fwsXIGp9LUJG9oNN3UCbuYTc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=kotYoO85DMD55zi7mqX/G2d/rbeaQVQI9z8R+Pvux0RlCqIH8xHw3GUv1mxJ8Rr30
+         2XZlKhWv8zvjLzU/6kh7rc+F67hOA8DtCWy7x3qqAQWVEWnq2BQgk0xzFVqHz/+I8v
+         6rTgFeB5+s5YKo/5hpErU+z04ZLSKFGzqgcrY3UA=
+Received: by mail-lf1-f52.google.com with SMTP id x24-v6so8767724lfe.5;
+        Fri, 19 Oct 2018 00:43:31 -0700 (PDT)
+X-Gm-Message-State: ABuFfoiML+xK7J2AuMAFAeHFp20qIkTr4HSDqmXoQ+vHjWIK1EnqWl1g
+        bK9FC2XC8MfwijreHo3w1MBws4G/L0SsaeKgIE4=
+X-Google-Smtp-Source: ACcGV60LVVVEecbcRnEPXlABDUD3lvw8tQeuJaagznT8Ev4Yx1ghwvFVqubVWAx/6Y+l81rBefq/R+xwOnDwJ2o5g1Y=
+X-Received: by 2002:a19:aa8b:: with SMTP id t133-v6mr2239901lfe.92.1539935009741;
+ Fri, 19 Oct 2018 00:43:29 -0700 (PDT)
 MIME-Version: 1.0
+References: <CGME20181018095717eucas1p2c89f6e71642e6db62676e1af5514529f@eucas1p2.samsung.com>
+ <20181018095708.1527-1-m.szyprowski@samsung.com> <20181018095708.1527-4-m.szyprowski@samsung.com>
+In-Reply-To: <20181018095708.1527-4-m.szyprowski@samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 19 Oct 2018 09:43:18 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPc=eNjk+9F3TE5S_Ci2ztuSXGJxdahgWOGamz9rGJO0xg@mail.gmail.com>
+Message-ID: <CAJKOXPc=eNjk+9F3TE5S_Ci2ztuSXGJxdahgWOGamz9rGJO0xg@mail.gmail.com>
+Subject: Re: [PATCH v4 3/6] clocksource: exynos_mct: Refactor resources allocation
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        will.deacon@arm.com, catalin.marinas@arm.com, marc.zyngier@arm.com,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+        mark.rutland@arm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDE4LTEwLTE5IGF0IDEwOjE0ICswNTMwLCBOYXluYSBKYWluIHdyb3RlOg0KPiAN
-Cj4gT24gMTAvMTcvMjAxOCAxMDowMiBQTSwgVG9tYXMgV2lua2xlciB3cm90ZToNCj4gPiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9jaGFyL3RwbS90cG1faTJjX251dm90b24uYyBiL2RyaXZlcnMvY2hh
-ci90cG0vdHBtX2kyY19udXZvdG9uLmMNCj4gPiBpbmRleCBjYWE4NmIxOWM3NmQuLmY3NGY0NTFi
-YWY2YSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2NoYXIvdHBtL3RwbV9pMmNfbnV2b3Rvbi5j
-DQo+ID4gKysrIGIvZHJpdmVycy9jaGFyL3RwbS90cG1faTJjX251dm90b24uYw0KPiA+IEBAIC0z
-NjksNiArMzY5LDcgQEAgc3RhdGljIGludCBpMmNfbnV2b3Rvbl9zZW5kKHN0cnVjdCB0cG1fY2hp
-cCAqY2hpcCwgdTggKmJ1Ziwgc2l6ZV90IGxlbikNCj4gPiAgIAlzdHJ1Y3QgZGV2aWNlICpkZXYg
-PSBjaGlwLT5kZXYucGFyZW50Ow0KPiA+ICAgCXN0cnVjdCBpMmNfY2xpZW50ICpjbGllbnQgPSB0
-b19pMmNfY2xpZW50KGRldik7DQo+ID4gICAJdTMyIG9yZGluYWw7DQo+ID4gKwl1bnNpZ25lZCBs
-b25nIGR1cmF0aW9uOw0KPiA+ICAgCXNpemVfdCBjb3VudCA9IDA7DQo+ID4gICAJaW50IGJ1cnN0
-X2NvdW50LCBieXRlczJ3cml0ZSwgcmV0cmllcywgcmMgPSAtRUlPOw0KPiA+IA0KPiA+IEBAIC00
-NTUsMTAgKzQ1NiwxMiBAQCBzdGF0aWMgaW50IGkyY19udXZvdG9uX3NlbmQoc3RydWN0IHRwbV9j
-aGlwICpjaGlwLCB1OCAqYnVmLCBzaXplX3QgbGVuKQ0KPiA+ICAgCQlyZXR1cm4gcmM7DQo+ID4g
-ICAJfQ0KPiA+ICAgCW9yZGluYWwgPSBiZTMyX3RvX2NwdSgqKChfX2JlMzIgKikgKGJ1ZiArIDYp
-KSk7DQo+ID4gLQlyYyA9IGkyY19udXZvdG9uX3dhaXRfZm9yX2RhdGFfYXZhaWwoY2hpcCwNCj4g
-PiAtCQkJCQkgICAgIHRwbV9jYWxjX29yZGluYWxfZHVyYXRpb24oY2hpcCwNCj4gPiAtCQkJCQkJ
-CQkgICAgICAgb3JkaW5hbCksDQo+ID4gLQkJCQkJICAgICAmcHJpdi0+cmVhZF9xdWV1ZSk7DQo+
-ID4gKwlpZiAoY2hpcC0+ZmxhZ3MgJiBUUE1fQ0hJUF9GTEFHX1RQTTIpDQo+ID4gKwkJZHVyYXRp
-b24gPSB0cG0yX2NhbGNfb3JkaW5hbF9kdXJhdGlvbihjaGlwLCBvcmRpbmFsKTsNCj4gPiArCWVs
-c2UNCj4gPiArCQlkdXJhdGlvbiA9IHRwbV9jYWxjX29yZGluYWxfZHVyYXRpb24oY2hpcCwgb3Jk
-aW5hbCk7DQo+ID4gKw0KPiA+ICsJcmMgPSBpMmNfbnV2b3Rvbl93YWl0X2Zvcl9kYXRhX2F2YWls
-KGNoaXAsIGR1cmF0aW9uLCAmcHJpdi0+cmVhZF9xdWV1ZSk7DQo+ID4gICAJaWYgKHJjKSB7DQo+
-ID4gICAJCWRldl9lcnIoZGV2LCAiJXMoKSB0aW1lb3V0IGNvbW1hbmQgZHVyYXRpb25cbiIsIF9f
-ZnVuY19fKTsNCj4gPiAgIAkJaTJjX251dm90b25fcmVhZHkoY2hpcCk7DQo+IA0KPiBJIG9ubHkg
-aGF2ZSBOdXZvdG9uIFRQTSAyLjAsIHRlc3RlZCBmb3IgdGhhdC4NCj4gDQo+IFJldmlld2VkLWJ5
-OiBOYXluYSBKYWluIDxuYXluYUBsaW51eC5pYm0uY29tPg0KPiBUZXN0ZWQtYnk6IE5heW5hIEph
-aW4gPG5heW5hQGxpbnV4LmlibS5jb20+IChGb3IgVFBNIDIuMCkNCg0KVGhhdCdzIHdoYXQgd2Ug
-bmVlZGVkIGFzIFRQTSAxLjIgc2hvdWxkIGJlIHVuY2hhbmdlZC4NClJlYWxseSBhcHByZWNpYXRl
-IHRoZSBxdWljayByZXNwb25zZS4gSSB3aWxsIHJlYmFzZSB0aGUgc2VyaWVzIG9uIHRvIG9mDQp0
-aGlzIHBhdGNoLiANCg0KVGhhbmtzDQpUb21hcw0K
+On Thu, 18 Oct 2018 at 11:57, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> Move interrupts allocation from exynos4_timer_resources() into separate
+> function together with the interrupt number parsing code from
+> mct_init_dt(), so the code for managing interrupts is kept together.
+> While touching exynos4_timer_resources() function, move of_iomap() to it.
+> No functional changes.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  drivers/clocksource/exynos_mct.c | 50 +++++++++++++++++++-------------
+>  1 file changed, 30 insertions(+), 20 deletions(-)
+
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
