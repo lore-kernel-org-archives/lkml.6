@@ -2,128 +2,157 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40843ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67643ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBF6C2148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:12:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 121D421470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 13:14:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFC1Wury"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBF6C2148E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aWygRHnt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 121D421470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727430AbeJSVSH (ORCPT
+        id S1727378AbeJSVUl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 17:18:07 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37321 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727215AbeJSVSH (ORCPT
+        Fri, 19 Oct 2018 17:20:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37878 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727017AbeJSVUk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 17:18:07 -0400
-Received: by mail-qt1-f195.google.com with SMTP id d14-v6so38151850qto.4;
-        Fri, 19 Oct 2018 06:12:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IIBE9mDhd3lrnK8Cwm5e9ABSQ72L1zpw3IkzJjDEJF8=;
-        b=QFC1WuryauHnVMG0dzbu0AhpoBjV/u4IXgdx2OdMm/kTauyyFpga2THYvkUTYTEWRg
-         DFOL5O75IZgLTpqmoF38zqGDxfFAHXIWLsgCsVf+zKenqg2P7tb1hMu5b/uXBJ2emNMn
-         whJBqziJocDuPUbtWpRNnKzlyVobied1D/WnIMiwdq+GisqqlhW8cIt/hypeNEpASipD
-         p/P33gW5dU+tGQOJE7u0IFFv81ykIbrMoJvR/GZXbY2maSDp0YBAinMj3F/ml9OoIrSt
-         QYOnyiwrmu8YFOqM9DDiCr9oNy8pRogxXjwtPwojYFtBPR/yML2XVfZsNadrvkuTcS9p
-         wy3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IIBE9mDhd3lrnK8Cwm5e9ABSQ72L1zpw3IkzJjDEJF8=;
-        b=qixddFhuAiThYcILIKtx02KCNf571gXHO+YKq+jtTDLin2fkhg0xrvMcuAzQ2H48TD
-         R39QMa6W9zXzgQHJekvkGO4Swh362uv/XBQrgwEkzUJxOVuaF8l6ffEyuDHtIIytm3wz
-         9KPG4ESx/5Knb5jQDA5+ECOqcsmbHVLhZsC/7aObLx1RQx3ZSLoggHqm3BH7lCeynClz
-         ztiR2yCXngKNlD8gRw9VfgYJ2k1L3nLBy/4vy83jIUKeE9d3c6beLXkr087H08mi2F48
-         Mo709xx3/MuD56wikF8aVgJL9onmFTrWsgQYgks/sCXEa7dSkKU8QLP8XeJ7c5xRm39t
-         UYhw==
-X-Gm-Message-State: ABuFfoi+qlyTixhz2A8lMBOrhYyXPudfyJkmtM5PmID2cVMALwaUQszX
-        yVRtywNzjwrgAJWLAv4pxwgYtKt+MvGS7FVPwys=
-X-Google-Smtp-Source: ACcGV61HDdldJipHCkbMyECHm+sOZYNopzsS7KHwwdlL0yFGLLmXh1y8gkImfuYLPN+n9Ax/DPT8sRGnigssj+4lKfk=
-X-Received: by 2002:a0c:aa06:: with SMTP id d6-v6mr34293812qvb.26.1539954721789;
- Fri, 19 Oct 2018 06:12:01 -0700 (PDT)
+        Fri, 19 Oct 2018 17:20:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=f0mS9vA2ZdzRHix5CzYQhdZZWlCbtc4+gB0pxQ4uYv0=; b=aWygRHntyRxumVms7gx2uU26U
+        /66zFa5khIAPIWj13zE+A0CGpbbH9fDhDc9a5PgQHtSmL9GvLEeZuTvcHoxNpCuK5/0POhZPQOyRz
+        N2k3mdGNwHWsVEwq8NWYQa+uOPtUeOzN0Wz+7NvaGHkTvAgp+sMGmpAa5qK7OhYOA5okCgSrp5N+D
+        vf+dHyvT3rUaxmtuhV/OnBW4wzaz62SAackqHa7txBgR1dlKJNzyJMuos2dlvH8E1xcQ8VzS74V+d
+        IQ5dZtPgBq31EBQsHzHHr0vRwyExFaLp4ezWLfwrv1YypVhpXWNR3ZfdjE2sO9+Pw2PQ1YFx6qXb8
+        jfN9w2hVA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gDUbd-00008Y-Fg; Fri, 19 Oct 2018 13:14:21 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id EBBE520298568; Fri, 19 Oct 2018 15:14:18 +0200 (CEST)
+Date:   Fri, 19 Oct 2018 15:14:18 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     luca abeni <luca.abeni@santannapisa.it>
+Cc:     Juri Lelli <juri.lelli@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Juri Lelli <juri.lelli@gmail.com>,
+        syzbot <syzbot+385468161961cee80c31@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        nstange@suse.de, syzkaller-bugs@googlegroups.com, henrik@austad.us,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: INFO: rcu detected stall in do_idle
+Message-ID: <20181019131418.GI3121@hirez.programming.kicks-ass.net>
+References: <000000000000a4ee200578172fde@google.com>
+ <alpine.DEB.2.21.1810161516430.7787@nanos.tec.linutronix.de>
+ <20181016140322.GB3121@hirez.programming.kicks-ass.net>
+ <20181016144045.GF9130@localhost.localdomain>
+ <alpine.DEB.2.21.1810161643540.7787@nanos.tec.linutronix.de>
+ <20181016153608.GH9130@localhost.localdomain>
+ <20181018082838.GA21611@localhost.localdomain>
+ <20181018094850.GW3121@hirez.programming.kicks-ass.net>
+ <20181018123332.6f33f715@luca64>
 MIME-Version: 1.0
-References: <20181010172300.317643-1-lkundrak@v3.sk> <20181010172300.317643-8-lkundrak@v3.sk>
-In-Reply-To: <20181010172300.317643-8-lkundrak@v3.sk>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 19 Oct 2018 16:11:50 +0300
-Message-ID: <CAHp75Ve7v0xL-qd5Ri82W1z7jku_Mbxg531J_261-EW0dxsouQ@mail.gmail.com>
-Subject: Re: [PATCH 07/15] Platform: OLPC: Avoid a warning if the EC didn't
- register yet
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        quozl@laptop.org, Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        devel@driverdev.osuosl.org, Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181018123332.6f33f715@luca64>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 8:23 PM Lubomir Rintel <lkundrak@v3.sk> wrote:
->
-> Just return ENODEV, so that whoever attempted to use the EC call can
-> defer their work.
->
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
->  drivers/platform/olpc/olpc-ec.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/platform/olpc/olpc-ec.c b/drivers/platform/olpc/olpc-ec.c
-> index 35a21c66cd0d..342f5bb7f7a8 100644
-> --- a/drivers/platform/olpc/olpc-ec.c
-> +++ b/drivers/platform/olpc/olpc-ec.c
-> @@ -116,8 +116,11 @@ int olpc_ec_cmd(u8 cmd, u8 *inbuf, size_t inlen, u8 *outbuf, size_t outlen)
->         struct olpc_ec_priv *ec = ec_priv;
->         struct ec_cmd_desc desc;
->
-> -       /* Ensure a driver and ec hook have been registered */
-> -       if (WARN_ON(!ec_driver || !ec_driver->ec_cmd))
-> +       /* Driver not yet registered. */
-> +       if (!ec_driver)
-> +               return -ENODEV;
+On Thu, Oct 18, 2018 at 12:33:32PM +0200, luca abeni wrote:
+> Hi Peter,
+> 
+> On Thu, 18 Oct 2018 11:48:50 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> [...]
+> > > So, I tend to think that we might want to play safe and put some
+> > > higher minimum value for dl_runtime (it's currently at 1ULL <<
+> > > DL_SCALE). Guess the problem is to pick a reasonable value, though.
+> > > Maybe link it someway to HZ? Then we might add a sysctl (or
+> > > similar) thing with which knowledgeable users can do whatever they
+> > > think their platform/config can support?  
+> > 
+> > Yes, a HZ related limit sounds like something we'd want. But if we're
+> > going to do a minimum sysctl, we should also consider adding a
+> > maximum, if you set a massive period/deadline, you can, even with a
+> > relatively low u, incur significant delays.
+> 
+> I agree with this.
+> 
+> 
+> > And do we want to put the limit on runtime or on period ?
+> 
+> I think we should have a minimum allowed runtime, a maximum allowed
+> runtime, a minimum allowed period and a (per-user? per-control
+> group?) maximum allowed utilization.
 
-Why -ENODEV is preferred over -EPROBE_DEFER?
+I was talking about a global !root max-u, but yes the cgroup max-u makes
+definite sense as well.
 
-> +
-> +       if (WARN_ON(!ec_driver->ec_cmd))
->                 return -ENODEV;
->
->         if (!ec)
-> --
-> 2.19.0
->
+> I suspect having a maximum period is useless, if we already enforce a
+> maximum runtime.
 
+Probably; yes. The asymmetry is unfortunate of course.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> > That is, something like:
+> > 
+> >   TICK_NSEC/2 < period < 10*TICK_NSEC
+> 
+> As written above I would not enforce a maximum period.
+
+I'm confused: 'period < 10*TICK_NSEC' reads like a max to me.
+
+(irrespective of the argument on wether the max should be HZ related;
+and I think you and Juri made good argument for it not to be)
+
+> > and/or
+> > 
+> >   TICK_NSEC/2 < runtime < 10*TICK_NSEC
+> 
+> I think (but I might be wrong) that "TICK_NSEC/2" is too large... I
+> would divide the tick for a larger number (how many time do we want to
+> allow the loop to run?)
+
+It depends on how strict we want to enforce the no-interference rule.
+The smaller we make this, the less accurate we enforce, the worse the
+interference between tasks.
+
+Note that we're only talking about a default; and HZ=100 is daft in any
+case.
+
+> And I think the maximum runtime should not be TICK-dependent... It is
+> the maximum amount of time for which we allow the dealdine task to
+> starve non-deadline tasks, so it should be an absolute time, not
+> something HZ-dependent... No?
+
+Agreed.
+
+> > Hmm, for HZ=1000 that ends up with a max period of 10ms, that's far
+> > too low, 24Hz needs ~41ms. We can of course also limit the runtime by
+> > capping u for users (as we should anyway).
+> 
+> Regarding capping u for users: some time ago, with Juri we discussed
+> the idea of having per-cgroup limits on the deadline utilization... I
+> think this is a good idea (and if the userspace creates a cgroup per
+> user, this results in per-user capping - but it is more flexible in
+> general)
+
+Agreed, that makes sense.
