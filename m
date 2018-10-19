@@ -2,145 +2,113 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B9BECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF858ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:57:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5410C2086E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:46:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 488E32145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:57:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="jG524Guf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5410C2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="tcZHWPlk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 488E32145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728058AbeJTBxX (ORCPT
+        id S1727879AbeJTCEm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 21:53:23 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:50981 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727817AbeJTBxX (ORCPT
+        Fri, 19 Oct 2018 22:04:42 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44547 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727738AbeJTCEm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 21:53:23 -0400
-Received: by mail-it1-f194.google.com with SMTP id k206-v6so5244919ite.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 10:46:17 -0700 (PDT)
+        Fri, 19 Oct 2018 22:04:42 -0400
+Received: by mail-lf1-f65.google.com with SMTP id m18-v6so25886620lfl.11
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 10:57:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=joelfernandes.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=IO1973WRgfLLNX1toZfekCZsGx6Fuh6uNEskmFyMtSY=;
-        b=jG524GuflIHnWUI/34mATY28ajyjM9EOJDzsGi73wuT5GF0r14M8/XNNMjryITF0QZ
-         nYjWHPPTD1ehXUfioEh5tFuj62F+rqvTZ6n3D/h1jwQZ3o14z1xzVLLPGThfISuSgBDh
-         +LeERrn8RV7L3MzRCsJTL5vnqmTHCs3F+TL98=
+        bh=URFdpKmR7MBDOg1F2ktj6/bvR16V6cHwaXYS8cjdJ9g=;
+        b=tcZHWPlkmY2dWEEGj+fNVwRLJfThsAX1mwdfqLbUe6a9ToC15YXoM6sUgQGXNlDeDC
+         SlaSQJEP+uqWMlWdmxHrNe11H9u+KLDHfyLCnvzMA1bYcV7Er4cyuOFvTMkvJMC+E7c7
+         nqHets4YqJExT56C4z2BbluR5uJdpDfJ8xxrg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=IO1973WRgfLLNX1toZfekCZsGx6Fuh6uNEskmFyMtSY=;
-        b=cWdulKC5os+ik65/vZBfWiL82Zvy9lfUkcpIg2NC1nNvAYXpSPuXLjicHFl8mYNoSW
-         TS3vUVKZpRK40fgDegoW9S1mlA1/hezt0JoGGs9Z1749ujBPaFeJD9g9jLtsQCiu7dG5
-         EqHadz8NjWE16ACq4uEnka0pwCflVWxJS/0cDlMHggPsNUS3cyfa1gUfoSlF9thU+8A1
-         Ap6mf5/uPrYhwoQo3NXO4Eubfb7mymHlmV+E9kFDtlTMjCWQKocW4N/s6OL3NJMi6fY4
-         6BxUepIewRMi9Z8zwEstAwLcjdh8AzJtOEszPmbtq+cT8KT7GYmvQV1fMDbqDWKvQgW0
-         xPmg==
-X-Gm-Message-State: ABuFfoh59SfeGJaHOApCEY+tLMlXsPv+rHu3fbxJEEoad/mijAQlf3dM
-        GCyIJgd63XkO2HL3EgU3cdB+HDgEpWjGR36jMCV5hw==
-X-Google-Smtp-Source: ACcGV61GQOZUfh6LkIihSaWUF91ITxU6vIFGvGlge3UbkScPS+igA5HhZa1KnM3TG+uOfYV8ECWyHx6Q4Kv1iEQ77r4=
-X-Received: by 2002:a24:75d6:: with SMTP id y205-v6mr3981082itc.1.1539971177009;
- Fri, 19 Oct 2018 10:46:17 -0700 (PDT)
+        bh=URFdpKmR7MBDOg1F2ktj6/bvR16V6cHwaXYS8cjdJ9g=;
+        b=Wrx5Lv2fbfexFes2ORRyy8peEM2Kr3AJ/zbA1kR35ZBV2mbDUX6+kIRSOXqiCNfeq7
+         +v6Qw9cCo6U9vs6jlv4UALDo2TG3gKCOTxeY4Tkris7W6X5hcqetNn0ZwgG2GvGx4ZkA
+         rf2F4RIJzMLZ1u0yUcc8nKFao94HCziL7dfCLigrqG8Cq43r4uuf7p1eHSAqw+g0bjII
+         Wd0HjiIw+nzlkqUUn/1MdE0msDQCHKKD4kxla/GLmS0YZ3tkUIe5tuYWfg95RHE7CLJ4
+         BkyFvFAHTKmqP6pVgvwET4Br0RU5SF8RBc5gWdz8Tx8X5tBacfb5cqE2gDimB46o6zjQ
+         Woog==
+X-Gm-Message-State: ABuFfoisd8WgIYyF+sYOTcgV4Jm766XvfYIDRNBWriCVOhdlmds6NTzS
+        o0uJ1noCeF7wif+3kWbmE2Xa3uDqSEExnY06C0R/6Q==
+X-Google-Smtp-Source: ACcGV601wTjwMig9IJYjE9wtCjqHlsDfxvHZZHPQz86Z7B/C3x+Guqd+c35ktaJCOVpXRk9vOBkYZOWKzHqISL2xhjc=
+X-Received: by 2002:a19:639b:: with SMTP id v27mr2759168lfi.95.1539971852486;
+ Fri, 19 Oct 2018 10:57:32 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a6b:bf41:0:0:0:0:0 with HTTP; Fri, 19 Oct 2018 10:46:16
+Received: by 2002:a2e:8e91:0:0:0:0:0 with HTTP; Fri, 19 Oct 2018 10:57:31
  -0700 (PDT)
-X-Originating-IP: [212.96.48.140]
-In-Reply-To: <2ca365ec330cf918188e8c47b26e741073382d9d.camel@primarydata.com>
-References: <20181019122049.27121-1-mszeredi@redhat.com> <20181019122049.27121-5-mszeredi@redhat.com>
- <2ca365ec330cf918188e8c47b26e741073382d9d.camel@primarydata.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 19 Oct 2018 19:46:16 +0200
-Message-ID: <CAJfpegtq1+vZ+uXwzFs20GeSPCR9UbtqD5-fOn8ynoJUJYx25g@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] nfs: don't clear STATX_ATIME from result_mask
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "mszeredi@redhat.com" <mszeredi@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "amir73il@gmail.com" <amir73il@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "adilger@dilger.ca" <adilger@dilger.ca>,
-        "mtk.manpages@gmail.com" <mtk.manpages@gmail.com>,
-        "fw@deneb.enyo.de" <fw@deneb.enyo.de>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>
+In-Reply-To: <42922.1539970322@turing-police.cc.vt.edu>
+References: <20181018065908.254389-1-joel@joelfernandes.org> <42922.1539970322@turing-police.cc.vt.edu>
+From:   Joel Fernandes <joel@joelfernandes.org>
+Date:   Fri, 19 Oct 2018 10:57:31 -0700
+Message-ID: <CAEXW_YTS2n2tOpXs3eVQZhYu7tmM_at0ZBA-04qYkHw4UE80nw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to memfd
+To:     valdis.kletnieks@vt.edu
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>,
+        John Reck <jreck@google.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Colascione <dancol@google.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kselftest <linux-kselftest@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, marcandre.lureau@redhat.com,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 5:52 PM, Trond Myklebust
-<trondmy@hammerspace.com> wrote:
-> On Fri, 2018-10-19 at 14:20 +0200, Miklos Szeredi wrote:
->> As per statx(2) man page only clear out flags that are unsupported by
->> the
->> fs or have an unrepresentable value.  Atime is supported by NFS as
->> long as
->> it's supported on the server.
->>
->> So the STATX_ATIME flag should not be cleared in the result_mask if
->> the
->> operation was requested on a MNT_NOATIME or MNT_NODIRATIME mount.
->>
->> This patch doesn't change the revalidation algorithm in any way, just
->> the
->> clearing of flags in stat->result_mask.
->>
->> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
->> Fixes: 9ccee940bd5b ("Support statx() mask and query flags
->> parameters")
->> Cc: Trond Myklebust <trond.myklebust@primarydata.com>
->> ---
->>  fs/nfs/inode.c | 5 +----
->>  1 file changed, 1 insertion(+), 4 deletions(-)
->>
->> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
->> index b65aee481d13..34bb3e591709 100644
->> --- a/fs/nfs/inode.c
->> +++ b/fs/nfs/inode.c
->> @@ -811,7 +811,7 @@ int nfs_getattr(const struct path *path, struct
->> kstat *stat,
->>       if (!(request_mask &
->> (STATX_MODE|STATX_NLINK|STATX_ATIME|STATX_CTIME|
->>                                       STATX_MTIME|STATX_UID|STATX_GID
->> |
->>                                       STATX_SIZE|STATX_BLOCKS)))
->> -             goto out_no_revalidate;
->> +             goto out_no_update;
->>
->>       /* Check whether the cached attributes are stale */
->>       do_update |= force_sync || nfs_attribute_cache_expired(inode);
->> @@ -833,9 +833,6 @@ int nfs_getattr(const struct path *path, struct
->> kstat *stat,
->>                       goto out;
->>       } else
->>               nfs_readdirplus_parent_cache_hit(path->dentry);
->> -out_no_revalidate:
->> -     /* Only return attributes that were revalidated. */
->> -     stat->result_mask &= request_mask;
->>  out_no_update:
->>       generic_fillattr(inode, stat);
->>       stat->ino = nfs_compat_user_ino64(NFS_FILEID(inode));
+On Fri, Oct 19, 2018 at 10:32 AM,  <valdis.kletnieks@vt.edu> wrote:
+> On Wed, 17 Oct 2018 23:59:07 -0700, "Joel Fernandes (Google)" said:
+>> This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
+>> To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE seal
+>> which prevents any future mmap and write syscalls from succeeding while
+>> keeping the existing mmap active. The following program shows the seal
+>> working in action:
 >
-> NACK.
+> What is supposed to happen if some other process has an already existing R/W
+> mmap of the region?  (For that matter, the test program doesn't seem to
+> actually test that the existing mmap region remains writable?)
 >
-> When we don't revalidate the attribute, then the content of the field
-> contains junk values. The above code is very intentional.
 
-How is it then that only STATX_ATIME is cleared and not the other fields?
+Why would it not remain writable? We don't change anything in the
+mapping that prevents it from being writable, in the patch.
 
-Note: junk != stale.  The statx definition doesn't talk about the
-fields being up-to-date, except for AT_STATX_FORCE_SYNC, so stale
-attributes are okay, and do not warrant clearing the result_mask.
+We do test that existing writable mmaps can continue to exist after
+the seal is set, in a way, because we test that setting of the seal
+succeeds.
 
-Thanks,
-Miklos
+I could test that processor stores can continue to happen my doing a
+memset into the existing map, but I feel that is like testing 2+2 = 4,
+in a way ;-) Do you really think its worth testing? If you do, then I
+could add a test for that.
+
+- Joel
