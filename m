@@ -2,104 +2,126 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E17ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83133ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:40:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1599205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:40:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46C09205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:40:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WJKPQP7z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1599205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="VyndSkYU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C09205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbeJSTpy (ORCPT
+        id S1727382AbeJSTp4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 15:45:54 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:37232 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbeJSTpy (ORCPT
+        Fri, 19 Oct 2018 15:45:56 -0400
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:36138 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727014AbeJSTpz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 15:45:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eA6QITRghzqA59wlagXhUriGbJdvtkuWgn7JL2XOxUE=; b=WJKPQP7ztppitf237SqKhk/49
-        B/78PTKXGgGDZstbtIJtNbWF/NC3duKdt+Z7Wt7uSh6/hLqgsb+mDAgHcAfYh5G54z0EqQUTNKcQj
-        SYiOgBAro6cKhatxhP+zw+P88ZV1ViwJ+EuWS9NRm8dMymeloJOJ+GDq4sriFusjlCvxhabFTN97t
-        XPQd9R+sH83dT/ZiRkEiQqCBQy4yx5L1JpdalFZBFqHO+drJWKtaR5yhJm+GE/XYlWMub0C+PD5wc
-        nt/OPGUWu9FuoqRiP0ozRLT5/52G0OMJnVzhpSMh5tzwMt7L0Bm/b6w/YxET/RmyYETdhbhZe9SJq
-        meLtjJdNA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gDT84-0004Xo-O9; Fri, 19 Oct 2018 11:39:45 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 57D3E2029856B; Fri, 19 Oct 2018 13:39:42 +0200 (CEST)
-Date:   Fri, 19 Oct 2018 13:39:42 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     luca abeni <luca.abeni@santannapisa.it>
-Cc:     Juri Lelli <juri.lelli@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juri Lelli <juri.lelli@gmail.com>,
-        syzbot <syzbot+385468161961cee80c31@syzkaller.appspotmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        nstange@suse.de, syzkaller-bugs@googlegroups.com, henrik@austad.us,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: INFO: rcu detected stall in do_idle
-Message-ID: <20181019113942.GH3121@hirez.programming.kicks-ass.net>
-References: <000000000000a4ee200578172fde@google.com>
- <alpine.DEB.2.21.1810161516430.7787@nanos.tec.linutronix.de>
- <20181016140322.GB3121@hirez.programming.kicks-ass.net>
- <20181016144045.GF9130@localhost.localdomain>
- <alpine.DEB.2.21.1810161643540.7787@nanos.tec.linutronix.de>
- <20181016153608.GH9130@localhost.localdomain>
- <20181018082838.GA21611@localhost.localdomain>
- <20181018122331.50ed3212@luca64>
- <20181018104713.GC21611@localhost.localdomain>
- <20181018130811.61337932@luca64>
+        Fri, 19 Oct 2018 15:45:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1539949213; x=1571485213;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=xkqo3xOkUHi5c+96JlZ6DBBUnio1mGFzS0Gdk+TPLKQ=;
+  b=VyndSkYU/GmxGC4mbI0g5TFwCtkqgxseDGxnwIMMvYFnX8Xi5R+kLxqg
+   za5mySvnvabhS++or4XKmzQAuM0WMG0ocPHaRIhiPFvgwpCdEAVZoHWvT
+   igo4137sCbB32/lkrS+OgzY44blreOzrtNANpxljavWxGHesVc1to/Vve
+   Q=;
+X-IronPort-AV: E=Sophos;i="5.54,399,1534809600"; 
+   d="scan'208";a="764999898"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2b-4e24fd92.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 19 Oct 2018 11:40:10 +0000
+Received: from u7588a65da6b65f.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
+        by email-inbound-relay-2b-4e24fd92.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9JBe6I2074201
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
+        Fri, 19 Oct 2018 11:40:08 GMT
+Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w9JBe3me001875;
+        Fri, 19 Oct 2018 13:40:04 +0200
+Subject: Re: [RFC 00/60] Coscheduling for Linux
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Rik van Riel <riel@surriel.com>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>
+References: <20180907214047.26914-1-jschoenh@amazon.de>
+ <20181017020933.GC24723@lerouge>
+From:   =?UTF-8?Q?Jan_H=2e_Sch=c3=b6nherr?= <jschoenh@amazon.de>
+Openpgp: preference=signencrypt
+Message-ID: <a177875f-2072-ab55-b079-f2142d9b776e@amazon.de>
+Date:   Fri, 19 Oct 2018 13:40:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181018130811.61337932@luca64>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181017020933.GC24723@lerouge>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 01:08:11PM +0200, luca abeni wrote:
-> Ok, I see the issue now: the problem is that the "while (dl_se->runtime
-> <= 0)" loop is executed at replenishment time, but the deadline should
-> be postponed at enforcement time.
+On 17/10/2018 04.09, Frederic Weisbecker wrote:
+> On Fri, Sep 07, 2018 at 11:39:47PM +0200, Jan H. Schönherr wrote:
+>> C) How does it work?
+>> --------------------
+[...]
+>> For each task-group, the user can select at which level it should be
+>> scheduled. If you set "cpu.scheduled" to "1", coscheduling will typically
+>> happen at core-level on systems with SMT. That is, if one SMT sibling
+>> executes a task from this task group, the other sibling will do so, too. If
+>> no task is available, the SMT sibling will be idle. With "cpu.scheduled"
+>> set to "2" this is extended to the next level, which is typically a whole
+>> socket on many systems. And so on.  If you feel, that this does not provide
+>> enough flexibility, you can specify "cosched_split_domains" on the kernel
+>> command line to create more fine-grained scheduling domains for your
+>> system.
 > 
-> I mean: in update_curr_dl() we do:
-> 	dl_se->runtime -= scaled_delta_exec;
-> 	if (dl_runtime_exceeded(dl_se) || dl_se->dl_yielded) {
-> 		...
-> 		enqueue replenishment timer at dl_next_period(dl_se)
-> But dl_next_period() is based on a "wrong" deadline!
-> 
-> 
-> I think that inserting a
->         while (dl_se->runtime <= -pi_se->dl_runtime) {
->                 dl_se->deadline += pi_se->dl_period;
->                 dl_se->runtime += pi_se->dl_runtime;
->         }
-> immediately after "dl_se->runtime -= scaled_delta_exec;" would fix the
-> problem, no?
+> Have you considered using cpuset to specify the set of CPUs inside which
+> you want to coschedule task groups in? Perhaps that would be more flexible
+> and intuitive to control than this cpu.scheduled value.
 
-That certainly makes sense to me. The only remaining issue would then be
-placing a limit on the amount of times we can take that loop; which, as
-you propose in a later email; can be done separately as a limit on
-runtime.
+Yes, I did consider cpusets. Though, there are two dimensions to it:
+a) at what fraction of the system tasks shall be coscheduled, and
+b) where these tasks shall execute within the system.
+
+cpusets would be the obvious answer to the "where". However, in the current
+form they are too inflexible with too much overhead. Suppose, you want to
+coschedule two tasks on SMT siblings of a core. You would be able to
+restrict the tasks to a specific core with a cpuset. But then, it is bound
+to that core, and the load balancer cannot move the group of two tasks to a
+different core.
+
+Now, it would be possible to "invent" relocatable cpusets to address that
+issue ("I want affinity restricted to a core, I don't care which"), but
+then, the current way how cpuset affinity is enforced doesn't scale for
+making use of it from within the balancer. (The upcoming load balancing
+portion of the coscheduler currently uses a file similar to cpu.scheduled
+to restrict affinity to a load-balancer-controlled subset of the system.)
+
+
+Using cpusets as the mean to describe which parts of the system are to be
+coscheduled *may* be possible. But if so, it's a long way out. The current
+implementation uses scheduling domains for this, because (a) most
+coscheduling use cases require an alignment to the topology, and (b) it
+integrates really nicely with the load balancer.
+
+AFAIK, there is already some interaction between cpusets and scheduling
+domains. But it is supposed to be rather static and as soon as you have
+overlapping cpusets, you end up with the default scheduling domains.
+If we were able to make the scheduling domains more dynamic than they are
+today, we might be able to couple that to cpusets (or some similar
+interface to *define* scheduling domains).
+
+Regards
+Jan
+
