@@ -2,124 +2,154 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDB2ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BF4ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B478A21479
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:02:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B478A21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 2904A21470
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 10:18:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2904A21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbeJSSHZ (ORCPT
+        id S1727189AbeJSSXc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 14:07:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50630 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726664AbeJSSHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 14:07:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EBED2AF53;
-        Fri, 19 Oct 2018 10:01:59 +0000 (UTC)
-Subject: Re: [PATCH] idle/x86: remove the call to boot_init_stack_canary()
- from cpu_startup_entry()
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org
-References: <f1b058d6a73cfb68b36dc755df5aaa7a064875b1.1539935852.git.christophe.leroy@c-s.fr>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <b9727c41-8278-7b83-e5e1-61268dc768d5@suse.com>
-Date:   Fri, 19 Oct 2018 12:01:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <f1b058d6a73cfb68b36dc755df5aaa7a064875b1.1539935852.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+        Fri, 19 Oct 2018 14:23:32 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58240 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726609AbeJSSXc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 14:23:32 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9JADpqi146718
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 06:18:05 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2n7bub40vt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 06:18:05 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Fri, 19 Oct 2018 06:18:04 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 19 Oct 2018 06:18:02 -0400
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9JAI1ko32047104
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 19 Oct 2018 10:18:01 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 037BDAE066;
+        Fri, 19 Oct 2018 10:18:01 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DDA40AE064;
+        Fri, 19 Oct 2018 10:18:00 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.47.158.153])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 19 Oct 2018 10:18:00 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.ibm.com>
+To:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, jejb@linux.ibm.com,
+        Alexander.Levin@microsoft.com, jsnitsel@redhat.com,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH] docs: Extend trusted keys documentation for TPM 2.0
+Date:   Fri, 19 Oct 2018 06:17:58 -0400
+X-Mailer: git-send-email 2.17.2
+X-TM-AS-GCONF: 00
+x-cbid: 18101910-0040-0000-0000-0000048339E8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009899; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01104879; UDB=6.00572019; IPR=6.00884930;
+ MB=3.00023821; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-19 10:18:03
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101910-0041-0000-0000-0000088B5176
+Message-Id: <20181019101758.1569-1-stefanb@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-18_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810190094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/10/2018 11:29, Christophe Leroy wrote:
-> commit d7880812b359 ("idle: Add the stack canary init to
-> cpu_startup_entry()") added the call to boot_init_stack_canary()
-> in cpu_startup_entry() in an #ifdef CONFIG_X86 statement, with
-> the intention to remove that #ifdef later.
-> 
-> While implementing stack protector for powerpc, it has been
-> observed that calling boot_init_stack_canary() is also needed
-> for powerpc which uses per task (TLS) stack canary like the X86.
-> 
-> However, calling boot_init_stack_canary() would break arches
-> using global stack canary (ARM, SH, MIPS and XTENSA).
-> 
-> Instead of adding modifying the #ifdef in a
-> implemented the call to boot_init_stack_canary() in the function
-> calling cpu_startup_entry()
+Extend the documentation for trusted keys with documentation for how to
+set up a key for a TPM 2.0 so it can be used with a TPM 2.0 as well.
 
-I can't parse this sentence.
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ .../security/keys/trusted-encrypted.rst       | 31 ++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
 
-> 
-> On x86, we have two functions calling cpu_startup_entry():
-> - start_secondary()
-> - cpu_bringup_and_idle()
-> 
-> start_secondary() already calls boot_init_stack_canary().
-> 
-> This patch adds the call to boot_init_stack_canary() in
-> cpu_bringup_and_idle() and removes it from cpu_startup_entry()
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
+index 3bb24e09a332..6ec6bb2ac497 100644
+--- a/Documentation/security/keys/trusted-encrypted.rst
++++ b/Documentation/security/keys/trusted-encrypted.rst
+@@ -18,10 +18,33 @@ integrity verifications match.  A loaded Trusted Key can be updated with new
+ when the kernel and initramfs are updated.  The same key can have many saved
+ blobs under different PCR values, so multiple boots are easily supported.
+ 
++TPM 1.2
++-------
++
+ By default, trusted keys are sealed under the SRK, which has the default
+ authorization value (20 zeros).  This can be set at takeownership time with the
+ trouser's utility: "tpm_takeownership -u -z".
+ 
++TPM 2.0
++-------
++
++The user must first create a storage key and make it persistent, so the key is
++available after reboot. This can be done using the following commands.
++
++With the IBM TSS 2 stack::
++
++  #> tsscreateprimary -hi o -st
++  Handle 80000000
++  #> tssevictcontrol -hi o -ho 80000000 -hp 81000001
++
++Or with the Intel TSS 2 stack::
++
++  #> tpm2_createprimary --hierarchy o -G rsa2048 -o key.ctxt
++  [...]
++  handle: 0x800000FF
++  #> tpm2_evictcontrol -c key.ctxt -p 0x81000001
++  persistentHandle: 0x81000001
++
+ Usage::
+ 
+     keyctl add trusted name "new keylen [options]" ring
+@@ -30,7 +53,9 @@ Usage::
+     keyctl print keyid
+ 
+     options:
+-       keyhandle=    ascii hex value of sealing key default 0x40000000 (SRK)
++       keyhandle=    ascii hex value of sealing key
++                       TPM 1.2: default 0x40000000 (SRK)
++                       TPM 2.0: no default; must be passed every time
+        keyauth=	     ascii hex auth for sealing key default 0x00...i
+                      (40 ascii zeros)
+        blobauth=     ascii hex auth for sealed data default 0x00...
+@@ -84,6 +109,10 @@ Examples of trusted and encrypted key usage:
+ 
+ Create and save a trusted key named "kmk" of length 32 bytes::
+ 
++Note: When using a TPM 2.0 with a persistent key with handle 0x81000001,
++append 'keyhandle=0x81000001' to statements between quotes, such as
++"new 32 keyhandle=0x81000001".
++
+     $ keyctl add trusted kmk "new 32" @u
+     440502848
+ 
+-- 
+2.17.2
 
-With the commit message made understandable you can add my
-
-Reviewed-by: Juergen Gross <jgross@suse.com>
-
-
-Juergen
