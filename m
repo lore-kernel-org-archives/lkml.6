@@ -2,99 +2,128 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD9EECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 22:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19CFAECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 22:30:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3B4920843
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 22:29:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFAAD20843
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 22:30:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="R5fYi+jh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3B4920843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="O3ck/LdX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFAAD20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbeJTGhH (ORCPT
+        id S1727004AbeJTGh7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 02:37:07 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:41052 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726403AbeJTGhH (ORCPT
+        Sat, 20 Oct 2018 02:37:59 -0400
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:59018 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726321AbeJTGh7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 02:37:07 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9JMSjUf173939;
-        Fri, 19 Oct 2018 22:28:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=ShMaIsTXErDUBnEjJ+7Lm1TY3ym2vE15QhVw0KNx4L8=;
- b=R5fYi+jhHDpuBvcHntZ5vN+sp78uBXrDIYEVKBcPf5dpqAoyg1kcMy6bws08bmyGy+/b
- kheryEDmiC/LbCZfjiwgF0qnyvgnQ1xtKTKbsglUW6HYgIHDrYTmZjycH3a1FYPxeYKP
- 6ZXH+HHZn0KrWJJQ245PYtpYcCzT5zbHqVSTmIA1lzgmuKdlBZ6CCM5vl0sM3ac0BZAj
- NzGWzpITy5odrg07lNvcT2jKiILoPJKXfEV+coV3Rg4xnMherwTliIs2RJUNN9QvYbjn
- 0qLFrBbryPVaFJHINaYXTdoePoGsg18fbrU9ny06uOHD2mH9apcBojDFV44wn98P8xeB uw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2n39brx8gp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Oct 2018 22:28:45 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9JMSfwa030786
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Oct 2018 22:28:42 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9JMSfUZ015845;
-        Fri, 19 Oct 2018 22:28:41 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 19 Oct 2018 15:28:40 -0700
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     John Garry <john.garry@huawei.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Xiang Chen <chenxiang66@hisilicon.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] scsi: hisi_sas: Fix NULL pointer dereference
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20181018165939.GA26491@embeddedor.com>
-Date:   Fri, 19 Oct 2018 18:28:38 -0400
-In-Reply-To: <20181018165939.GA26491@embeddedor.com> (Gustavo A. R. Silva's
-        message of "Thu, 18 Oct 2018 18:59:39 +0200")
-Message-ID: <yq1efclinah.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9051 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=605
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810190200
+        Sat, 20 Oct 2018 02:37:59 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id C2AF95B7
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 22:29:59 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id zBCdz86ay1Ix for <linux-kernel@vger.kernel.org>;
+        Fri, 19 Oct 2018 17:29:59 -0500 (CDT)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 96F3F51F
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 17:29:59 -0500 (CDT)
+Received: by mail-io1-f69.google.com with SMTP id c5-v6so32279309ioa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 15:29:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=iwvFF46/7+gW82As8qzTKaOAJqB0Pe9GkSWO9/Fnfow=;
+        b=O3ck/LdXidoDW4O+gYfKmoTbn385UsyeIAQNI5Nc8QHAiGI5WkOIYjaArR6/iyZp5S
+         V7Y0rzJmliPAVfg5CCpVAVFgd3jS7xFdcGgrne0O+ikEx4GUp7YS2lHdkElg9CP47b1k
+         UvD1tDOtPlD4V063FT2ZCphERCVxs/QQE9MZRQnzRh4GFMkZFKCF8F3dkZjFB7NSezvL
+         J+vxGXtJcLRQo6NOOF+r/ZB+7Z/Ew14jp6Y7tcePrJ9ekLOBlGMGkJIpcy/9CFXh86kZ
+         uJoppB2ePYWsrWIG75NeiVSaKUYdRpoR33c5JI6YlRBjmaXYefPE4LYAhNlBTtt9RmYp
+         TitA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=iwvFF46/7+gW82As8qzTKaOAJqB0Pe9GkSWO9/Fnfow=;
+        b=egZoTNSU8DTIMPxsn2zebjKe40mC5kbdNy/EJwGpjh2GPKwjCm5W0JR58cQt0mF0hL
+         Kjw9KKYcmctZcBbLBvRfZ3NpuBP4HBC+SFmIB5ISufbMr0J1BTJYARifFEhx7eIzBVrg
+         ZC9p7E0dLFxZ7aqZQIjmHuNwfv341XURkdznReQ4jhYV06+FsRDzFemhUE+bMs0dTICy
+         SU7k1rB2wh95c9QrTFKMReJFZNCxaa36fimNjdWxxHEcfinxOWZoJ6FMyhuQkaNqj5TX
+         QxCouRFIWLTz204st8sj2q5kMcWJ6gYKCho0YnuhMe3UpY9CEuALmtNmpwguGh933zkz
+         mNxA==
+X-Gm-Message-State: ABuFfoil6vltO/N9WOpnlNC1NF4k4XYSqPKIj5ahlCtzvut7m09J/DDQ
+        450uGOUcOcQXuSaixSAFj7Gupfd3OOs1SXHLQb3bXaIfbIU5xt3f182Xb9VA2gQV2EmmDwdP5dt
+        pR46KJkxMNWQe+9JLU/kU21cJeKbE
+X-Received: by 2002:a24:d2c4:: with SMTP id z187-v6mr4273009itf.9.1539988199282;
+        Fri, 19 Oct 2018 15:29:59 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV62umbrEOzOhP5mW/xuHTEyVeDLtbAvibY0BHOOys8tKZLe0yThAamSlwHbSmnqA5ANMbhgaWQ==
+X-Received: by 2002:a24:d2c4:: with SMTP id z187-v6mr4273002itf.9.1539988199102;
+        Fri, 19 Oct 2018 15:29:59 -0700 (PDT)
+Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
+        by smtp.gmail.com with ESMTPSA id 82-v6sm1691384ita.17.2018.10.19.15.29.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 19 Oct 2018 15:29:58 -0700 (PDT)
+From:   Wenwen Wang <wang6495@umn.edu>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        netdev@vger.kernel.org (open list:BPF (Safe dynamic programs and tools)),
+        linux-kernel@vger.kernel.org (open list:BPF (Safe dynamic programs and
+        tools))
+Subject: [PATCH] bpf: btf: Fix a missing-check bug
+Date:   Fri, 19 Oct 2018 17:29:51 -0500
+Message-Id: <1539988191-13973-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In btf_parse(), the header of the user-space btf data 'btf_data' is firstly
+parsed and verified through btf_parse_hdr(). In btf_parse_hdr(), the header
+is copied from user-space 'btf_data' to kernel-space 'btf->hdr' and then
+verified. If no error happens during the verification process, the whole
+data of 'btf_data', including the header, is then copied to 'data' in
+btf_parse(). It is obvious that the header is copied twice here. More
+importantly, no check is enforced after the second copy to make sure the
+headers obtained in these two copies are same. Given that 'btf_data'
+resides in the user space, a malicious user can race to modify the header
+between these two copies. By doing so, the user can inject inconsistent
+data, which can cause undefined behavior of the kernel and introduce
+potential security risk.
 
-Gustavo,
+To avoid the above issue, this patch rewrites the header after the second
+copy, using 'btf->hdr', which is obtained in the first copy.
 
-> There is a NULL pointer dereference in case *slot* happens to
-> be NULL at lines 1053 and 1878:
->
-> struct hisi_sas_cq *cq =
-> 	&hisi_hba->cq[slot->dlvry_queue];
->
-> Notice that *slot* is being NULL checked at lines 1057 and 1881:
-> if (slot), which implies it may be NULL.
->
-> Fix this by placing the declaration and definition of variable cq,
-> which contains the pointer dereference slot->dlvry_queue, after
-> slot has been properly NULL checked.
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+---
+ kernel/bpf/btf.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Applied to 4.20/scsi-queue, thanks!
-
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 138f030..2a85f91 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -2202,6 +2202,9 @@ static struct btf *btf_parse(void __user *btf_data, u32 btf_data_size,
+ 		goto errout;
+ 	}
+ 
++	memcpy(data, &btf->hdr,
++		min_t(u32, btf->hdr.hdr_len, sizeof(btf->hdr)));
++
+ 	err = btf_parse_str_sec(env);
+ 	if (err)
+ 		goto errout;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.7.4
+
