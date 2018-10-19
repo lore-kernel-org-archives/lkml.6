@@ -3,74 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F94BECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 14:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF464ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE2EE2064A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 14:58:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE2EE2064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 7783D2083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:01:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7783D2083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbeJSXEo (ORCPT
+        id S1727630AbeJSXHf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 19:04:44 -0400
-Received: from muru.com ([72.249.23.125]:52392 "EHLO muru.com"
+        Fri, 19 Oct 2018 19:07:35 -0400
+Received: from mga17.intel.com ([192.55.52.151]:8316 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726664AbeJSXEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 19:04:44 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id E5A2F80BF;
-        Fri, 19 Oct 2018 14:58:13 +0000 (UTC)
-Date:   Fri, 19 Oct 2018 07:58:12 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
-Subject: Re: [PATCH v3 2/9] dt-bindings: ti-lmu: Remove LM3697
-Message-ID: <20181019145812.GC43338@atomide.com>
-References: <20181012162619.GA28573@bogus>
- <20181012180312.GB5565@amd>
- <60cc9238-aba2-aa6a-64a4-2b5e20835549@gmail.com>
- <CAL_Jsq+Yspr_iNP1eYanvtmiuMf-xNEZ0suDH3tQayV=V5r5=g@mail.gmail.com>
- <73647af4-0258-49a9-d9b6-eeef7e7813dc@gmail.com>
- <5c7f03cc-4d45-6010-523d-46721c218731@ti.com>
- <20181015214512.GA2001@amd>
- <aa401333-9650-c925-2085-6e6d17b576bd@ti.com>
- <20181018221048.GA6364@amd>
- <b3d390c8-46bf-2c94-fad5-ec85b1cca2fe@ti.com>
+        id S1726664AbeJSXHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 19:07:34 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 08:01:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,400,1534834800"; 
+   d="scan'208";a="100889079"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga001.jf.intel.com with ESMTP; 19 Oct 2018 08:01:04 -0700
+Date:   Fri, 19 Oct 2018 08:58:20 -0600
+From:   Keith Busch <keith.busch@intel.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Jon Derrick <jonathan.derrick@intel.com>,
+        Dongdong Liu <liudongdong3@huawei.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Lukas Wunner <lukas@wunner.de>, Christoph Hellwig <hch@lst.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] PCI/AER: Enable error reporting for all ports
+Message-ID: <20181019145820.GB23571@localhost.localdomain>
+References: <153989603841.78375.436243401553964151.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <20181018230312.GB23301@localhost.localdomain>
+ <20181019011135.GP5906@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b3d390c8-46bf-2c94-fad5-ec85b1cca2fe@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181019011135.GP5906@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Dan Murphy <dmurphy@ti.com> [181019 11:42]:
-> On 10/18/2018 05:10 PM, Pavel Machek wrote:
+On Thu, Oct 18, 2018 at 08:11:35PM -0500, Bjorn Helgaas wrote:
+> On Thu, Oct 18, 2018 at 05:03:13PM -0600, Keith Busch wrote:
+> > On Thu, Oct 18, 2018 at 03:53:58PM -0500, Bjorn Helgaas wrote:
+> > > Change the AER service driver so it binds to *all* PCIe Ports,
+> > > including Switch Upstream and Downstream Ports.  Enable AER error
+> > > reporting for all these Ports, but not for any children.
 > > 
-> > Now... this is what I've suggested before. If you don't agree, you may
-> > want to contact Tony Lindgren, IIRC he works for TI, too, and might be
-> > willing to help.
->
-> I will ping Tony just to close the loop.  I will be posting v4 today after making the changes.
-> I was hoping to have some code review prior to posting v4 but have not received any comments so
-> v4 will just be a patch rearrangement.
+> > I'm looking at this again and think enabling/disabling error
+> > reporting for ports is the responsibility of the port driver, not
+> > the AER service.
+> 
+> That's an interesting idea.  Can you expand on this a little more?
+> Why is it the responsibility of the port driver?
+> 
+> Do you think pci_enable_pcie_error_reporting() shouldn't be part of
+> the AER service because it updates the Device Control register, which
+> is in the PCIe Capability, not the AER Capability?
+> 
+> What about pci_aer_clear_device_status(), which clears Device Status,
+> which is also in the PCIe Capability?
 
-I guess not much to ping here though as I know little about these
-chips :) As long as Rob is happy with the binding changes I'll be
-happy too.
+I was comparing how other end device driver's enable this, and they all call
+pci_enable_pcie_error_reporting() somewhere along their pci_driver->probe
+path. With that in mind, are ports special compared to end devices for this
+particular feature?
+ 
+> > The following should do the same as this patch, but without making
+> > AER driver handle non-root ports.  The report enabling/disabling
+> > functions are already stubbed for '!CONFIG_PCIE_AER' and have checks
+> > for aer_cap and firmware first.
+> 
+> If we thought we should enable error reporting *always*, regardless of
+> whether the AER service is enabled, this would make perfect sense to
+> me, and I might suggest doing it in an even more generic place like
+> pci_configure_device() or pci_init_capabilities().
 
-Regards,
+There are unfortunately still pci_driver instances that don't implement
+the err_handler callbacks, and may cause problems if we enable error
+reporting in the device when its driver isn't capable of reacting to them.
 
-Tony
+If it wasn't for that, I think it would make more sense to move this
+responsibility from drivers to the pci core.
+
+> But that doesn't seem like where you're headed.  It seems like you
+> still only want error reporting enabled when CONFIG_PCIEAR=y.  If
+> that's the case, it seems like doing it in portdrv only obfuscates the
+> connection with AER.  When CONFIG_PCIEAER is unset, the portdrv code
+> *looks* like it's doing something but it's really not because of the
+> #ifdef magic.
+
+Right, but that's no different than every other Linux pci_driver. The
+component that provides the pci_driver.err_handler should be responsible
+for requesting to enable device error reporting, and that's provided by
+the port driver, not AER.
