@@ -5,98 +5,112 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7467ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3764ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31B292083E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:50:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31B292083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=santannapisa.it
+	by mail.kernel.org (Postfix) with ESMTP id 972022083E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:50:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 972022083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbeJTE55 (ORCPT
+        id S1727555AbeJTE6F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 00:57:57 -0400
-Received: from mail.santannapisa.it ([193.205.80.98]:50412 "EHLO
-        mail.santannapisa.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbeJTE55 (ORCPT
+        Sat, 20 Oct 2018 00:58:05 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:40216 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726321AbeJTE6E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 00:57:57 -0400
-Received: from [151.40.1.127] (account l.abeni@santannapisa.it HELO nowhere)
-  by santannapisa.it (CommuniGate Pro SMTP 6.1.11)
-  with ESMTPSA id 133834824; Fri, 19 Oct 2018 22:50:12 +0200
-Date:   Fri, 19 Oct 2018 22:50:05 +0200
-From:   luca abeni <luca.abeni@santannapisa.it>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Juri Lelli <juri.lelli@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juri Lelli <juri.lelli@gmail.com>,
-        syzbot <syzbot+385468161961cee80c31@syzkaller.appspotmail.com>,
-        Borislav Petkov <bp@alien8.de>,
+        Sat, 20 Oct 2018 00:58:04 -0400
+Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gDbic-00065n-4e; Fri, 19 Oct 2018 22:50:02 +0200
+Date:   Fri, 19 Oct 2018 22:50:01 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     John Stultz <john.stultz@linaro.org>
+cc:     Christopher Hall <christopher.s.hall@intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        nstange@suse.de, syzkaller-bugs@googlegroups.com, henrik@austad.us,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: INFO: rcu detected stall in do_idle
-Message-ID: <20181019225005.61707c64@nowhere>
-In-Reply-To: <20181019113942.GH3121@hirez.programming.kicks-ass.net>
-References: <000000000000a4ee200578172fde@google.com>
-        <alpine.DEB.2.21.1810161516430.7787@nanos.tec.linutronix.de>
-        <20181016140322.GB3121@hirez.programming.kicks-ass.net>
-        <20181016144045.GF9130@localhost.localdomain>
-        <alpine.DEB.2.21.1810161643540.7787@nanos.tec.linutronix.de>
-        <20181016153608.GH9130@localhost.localdomain>
-        <20181018082838.GA21611@localhost.localdomain>
-        <20181018122331.50ed3212@luca64>
-        <20181018104713.GC21611@localhost.localdomain>
-        <20181018130811.61337932@luca64>
-        <20181019113942.GH3121@hirez.programming.kicks-ass.net>
-Organization: Scuola Superiore S.Anna
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        jesus.sanchez-palencia@intel.com, gavin.hindman@intel.com,
+        liam.r.girdwood@intel.com, Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: TSC to Mono-raw Drift
+In-Reply-To: <CALAqxLVrPH-SFacys6pWBvL79OBwiAMUOL55oy3S7C+7pNffHA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1810192244150.1651@nanos.tec.linutronix.de>
+References: <20181015160945.5993-1-christopher.s.hall@intel.com> <alpine.DEB.2.21.1810191720590.6075@nanos.tec.linutronix.de> <alpine.DEB.2.21.1810191955250.1651@nanos.tec.linutronix.de> <CALAqxLWHdZn9RCcYbYicKXeu3QiCuVna27mWBQPbFvaj9gm-fw@mail.gmail.com>
+ <alpine.DEB.2.21.1810192050250.1651@nanos.tec.linutronix.de> <CALAqxLVrPH-SFacys6pWBvL79OBwiAMUOL55oy3S7C+7pNffHA@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 19 Oct 2018 13:39:42 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+John,
 
-> On Thu, Oct 18, 2018 at 01:08:11PM +0200, luca abeni wrote:
-> > Ok, I see the issue now: the problem is that the "while
-> > (dl_se->runtime <= 0)" loop is executed at replenishment time, but
-> > the deadline should be postponed at enforcement time.
-> > 
-> > I mean: in update_curr_dl() we do:
-> > 	dl_se->runtime -= scaled_delta_exec;
-> > 	if (dl_runtime_exceeded(dl_se) || dl_se->dl_yielded) {
-> > 		...
-> > 		enqueue replenishment timer at dl_next_period(dl_se)
-> > But dl_next_period() is based on a "wrong" deadline!
-> > 
-> > 
-> > I think that inserting a
-> >         while (dl_se->runtime <= -pi_se->dl_runtime) {
-> >                 dl_se->deadline += pi_se->dl_period;
-> >                 dl_se->runtime += pi_se->dl_runtime;
-> >         }
-> > immediately after "dl_se->runtime -= scaled_delta_exec;" would fix
-> > the problem, no?  
+On Fri, 19 Oct 2018, John Stultz wrote:
+> On Fri, Oct 19, 2018 at 11:57 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > I don't think you need complex oscillation for that. The error is constant
+> > and small enough that it is a fractional nanoseconds thing with an interval
+> > <= 1s. So you can just add that in a regular interval. Due to it being
+> > small you can't observe time jumping I think.
 > 
-> That certainly makes sense to me.
+> Well, from the examples the trouble is we seem to be a bit fast,
+> rather then slow.
+> So we'll have to reduce mult by one, and rework the calculations, but
+> maybe something like this (correcting the raw_interval value) would
+> work.
 
-Good; I'll try to work on this idea in the weekend.
+Shouldn't be rocket science. It's a one off calculation of adjustment value
+and maybe the period at which the correction happens.
 
+> But this also sort of breaks, fundamental argument that the raw clock
+> is a simple mult/shift transformation of the underlying clocksource
+> counter. Its not the accuracy of the clock but the consistency that
+> was key.
+> 
+> The counter argument is that the raw clock is abstracting the
+> underlying hardware so folks who would have used the TSC directly can
+> now use the raw clock and have a generic abstracted hardware-counter
+> interface. So userland shouldn't really be worried about the
+> occasional injections made since they shouldn't be trying to
+> re-generate the abstraction from the hardware themselves.  <--
+> Remember this point as we move to the next comment:)
+> 
+> > The end-result is 'correct' as much correct it is in relation to real
+> > nanoseconds. :)
+> >
+> >> I guess I'd want to understand more of the use here and the need to
+> >> tie the raw clock back to the hardware counter it abstracts.
+> >
+> > The problem there is ART which is distributed to PCIe devices and ART time
+> > stamps are exposed in various ways. ART has a fixed ratio vs. TSC so there
+> > is a reasonable expectation that MONOTONIC_RAW is accurate.
+> 
+> Which is maybe sort of my issue here. The raw clock provided a
+> abstraction away from the hardware for generic usage, but then its
+> being re-used with other un-abstracted hardware references. So unless
+> they use the same method of transformation, there will be problems (of
+> varying degree).
 
-			Thanks,
-				Luca
+OTOH. If people use the CPUID provided frequency information and the TSC
+from userspace then they get different results which is contrary to the
+goal of providing them an abstracted way of doing it.
 
-> The only remaining issue would then
-> be placing a limit on the amount of times we can take that loop;
-> which, as you propose in a later email; can be done separately as a
-> limit on runtime.
+> We might be able to reduce the degree in this case, but I worry the
+> extra complexity may only cause problems for others.
 
+Is it really that complex to add a fixed correction value periodically?
+
+I don't think so and it should just work for any clocksource which is
+exposed this way. Famous last words .....
+
+Thanks,
+
+	tglx
