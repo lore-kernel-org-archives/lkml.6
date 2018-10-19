@@ -2,183 +2,146 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 223DEECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:35:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA67ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:36:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A2BD205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:35:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A2BD205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 38DAE21486
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 11:36:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38DAE21486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727348AbeJSTk7 (ORCPT
+        id S1727431AbeJSTlo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 15:40:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35722 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727039AbeJSTk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 15:40:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B2A97AC6C;
-        Fri, 19 Oct 2018 11:35:13 +0000 (UTC)
-Subject: Re: [RFC PATCH v2 0/8] lru_lock scalability and SMP list functions
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Cc:     aaron.lu@intel.com, ak@linux.intel.com, akpm@linux-foundation.org,
-        dave.dice@oracle.com, dave.hansen@linux.intel.com,
-        hannes@cmpxchg.org, levyossi@icloud.com,
-        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
-        mhocko@kernel.org, Pavel.Tatashin@microsoft.com,
-        steven.sistare@oracle.com, tim.c.chen@intel.com,
-        vdavydov.dev@gmail.com, ying.huang@intel.com
-References: <20180911004240.4758-1-daniel.m.jordan@oracle.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <2705c814-a6b8-0b14-7ea8-790325833d95@suse.cz>
-Date:   Fri, 19 Oct 2018 13:35:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 19 Oct 2018 15:41:44 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50846 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726678AbeJSTln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 15:41:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B023180D;
+        Fri, 19 Oct 2018 04:36:02 -0700 (PDT)
+Received: from mbp (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8268E3F71D;
+        Fri, 19 Oct 2018 04:35:59 -0700 (PDT)
+Date:   Fri, 19 Oct 2018 12:35:56 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Kristina Martsenko <kristina.martsenko@arm.com>
+Cc:     Ramana Radhakrishnan <ramana.radhakrishnan@foss.arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        Andrew Jones <drjones@redhat.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Marc Zyngier <Marc.Zyngier@arm.com>,
+        Adam Wallis <awallis@codeaurora.org>,
+        Suzuki Poulose <Suzuki.Poulose@arm.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Christoffer Dall <Christoffer.Dall@arm.com>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        Amit Kachhap <Amit.Kachhap@arm.com>,
+        Dave P Martin <Dave.Martin@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v5 11/17] arm64: docs: document pointer authentication
+Message-ID: <20181019113556.ljbdmjo5pdw7muvz@mbp>
+References: <20181005084754.20950-1-kristina.martsenko@arm.com>
+ <20181005084754.20950-12-kristina.martsenko@arm.com>
+ <9acb0cd2-66b0-1c41-b1a8-7c70608e9a9b@foss.arm.com>
+ <7b0de19b-45b9-f4df-25d1-c7e80fab49dc@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180911004240.4758-1-daniel.m.jordan@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7b0de19b-45b9-f4df-25d1-c7e80fab49dc@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/11/18 2:42 AM, Daniel Jordan wrote:
-> Hi,
+On Tue, Oct 16, 2018 at 05:14:39PM +0100, Kristina Martsenko wrote:
+> On 05/10/2018 10:04, Ramana Radhakrishnan wrote:
+> > On 05/10/2018 09:47, Kristina Martsenko wrote:
+> >> +Virtualization
+> >> +--------------
+> >> +
+> >> +Pointer authentication is not currently supported in KVM guests. KVM
+> >> +will mask the feature bits from ID_AA64ISAR1_EL1, and attempted use of
+> >> +the feature will result in an UNDEFINED exception being injected into
+> >> +the guest.
+> > 
+> > However applications using instructions from the hint space will
+> > continue to work albeit without any protection (as they would just be
+> > nops) ?
 > 
-> This is a work-in-progress of what I presented at LSF/MM this year[0] to
-> greatly reduce contention on lru_lock, allowing it to scale on large systems.
-> 
-> This is completely different from the lru_lock series posted last January[1].
-> 
-> I'm hoping for feedback on the overall design and general direction as I do
-> more real-world performance testing and polish the code.  Is this a workable
-> approach?
-> 
->                                         Thanks,
->                                           Daniel
-> 
-> ---
-> 
-> Summary:  lru_lock can be one of the hottest locks in the kernel on big
-> systems.  It guards too much state, so introduce new SMP-safe list functions to
-> allow multiple threads to operate on the LRUs at once.  The SMP list functions
-> are provided in a standalone API that can be used in other parts of the kernel.
-> When lru_lock and zone->lock are both fixed, the kernel can do up to 73.8% more
-> page faults per second on a 44-core machine.
-> 
-> ---
-> 
-> On large systems, lru_lock can become heavily contended in memory-intensive
-> workloads such as decision support, applications that manage their memory
-> manually by allocating and freeing pages directly from the kernel, and
-> workloads with short-lived processes that force many munmap and exit
-> operations.  lru_lock also inhibits scalability in many of the MM paths that
-> could be parallelized, such as freeing pages during exit/munmap and inode
-> eviction.
+> Mostly, yes. If the guest leaves SCTLR_EL1.EnIA unset (and
+> EnIB/EnDA/EnDB), then PAC* and AUT* instructions in the HINT space will
+> execute as NOPs. If the guest sets EnIA, then PAC*/AUT* instructions
+> will trap and KVM will inject an "Unknown reason" exception into the
+> guest (which will cause a Linux guest to send a SIGILL to the application).
 
-Interesting, I would have expected isolate_lru_pages() to be the main
-culprit, as the comment says:
+I think that part is fine. If KVM (a fairly recent version with CPUID
+sanitisation) does not enable ptr auth, the CPUID should not advertise
+this feature either so the guest kernel should not enable it. For the
+above instructions in the HINT space, they will just be NOPs. If the
+guest kernel enables the feature regardless of the CPUID information, it
+deserves to get an "Unknown reason" exception.
 
- * For pagecache intensive workloads, this function is the hottest
- * spot in the kernel (apart from copy_*_user functions).
+> In the latter case we could instead pretend the instruction was a NOP
+> and not inject an exception, but trapping twice per every function would
+> probably be terrible for performance. The guest shouldn't be setting
+> EnIA anyway if ID_AA64ISAR1_EL1 reports that pointer authentication is
+> not present (because KVM has hidden it).
 
-It also says "Some of the functions that shrink the lists perform better
-by taking out a batch of pages and working on them outside the LRU
-lock." Makes me wonder why isolate_lru_pages() also doesn't cut the list
-first instead of doing per-page list_move() (and perhaps also prefetch
-batch of struct pages outside the lock first? Could be doable with some
-care hopefully).
+I don't think we should. The SCTLR_EL1 bits are RES0 unless you know
+that the feature is present via CPUID.
 
-> The problem is that lru_lock is too big of a hammer.  It guards all the LRUs in
-> a pgdat's lruvec, needlessly serializing add-to-front, add-to-tail, and delete
-> operations that are done on disjoint parts of an LRU, or even completely
-> different LRUs.
+> The other special case is the XPACLRI instruction, which is also in the
+> HINT space. Currently it will trap and KVM will inject an exception into
+> the guest. We should probably change this to NOP instead, as that's what
+> applications will expect. Unfortunately there is no EnIA-like control to
+> make it NOP.
+
+Very good catch. Basically if EL2 doesn't know about ptr auth (older
+distro), EL1 may or may not know but leaves SCTLR_EL1 disabled (based on
+CPUID), the default HCR_EL2 is to trap (I'm ignoring EL3 as that's like
+to have ptr auth enabled, being built for the specific HW). So a user
+app considering XPACLRI a NOP (or inoffensive) will get a SIGILL
+(injected by the guest kernel following the injection of "Unknown
+reason" exception by KVM).
+
+Ramana, is XPACLRI commonly generated by gcc and expects it to be a NOP?
+Could we restrict it to only being used at run-time if the corresponding
+HWCAP is set? This means redefining this instruction as no longer in the
+NOP space.
+
+> One option is for KVM to pretend the instruction was a NOP and return to
+> the guest. But if XPACLRI gets executed frequently, then the constant
+> trapping might hurt performance. I don't know how frequently it might
+> get used, as I don't know of any applications currently using it. From
+> what I understand, it may be used by userspace stack unwinders.
 > 
-> This RFC series, developed in collaboration with Yossi Lev and Dave Dice,
-> offers a two-part solution to this problem.
-> 
-> First, three new list functions are introduced to allow multiple threads to
-> operate on the same linked list simultaneously under certain conditions, which
-> are spelled out in more detail in code comments and changelogs.  The functions
-> are smp_list_del, smp_list_splice, and smp_list_add, and do the same things as
-> their non-SMP-safe counterparts.  These primitives may be used elsewhere in the
-> kernel as the need arises; for example, in the page allocator free lists to
-> scale zone->lock[2], or in file system LRUs[3].
-> 
-> Second, lru_lock is converted from a spinlock to a rwlock.  The idea is to
-> repurpose rwlock as a two-mode lock, where callers take the lock in shared
-> (i.e. read) mode for code using the SMP list functions, and exclusive (i.e.
-> write) mode for existing code that expects exclusive access to the LRUs.
-> Multiple threads are allowed in under the read lock, of course, and they use
-> the SMP list functions to synchronize amongst themselves.
-> 
-> The rwlock is scaffolding to facilitate the transition from big-hammer lru_lock
-> as it exists today to just using the list locking primitives and getting rid of
-> lru_lock entirely.  Such an approach allows incremental conversion of lru_lock
-> writers until everything uses the SMP list functions and takes the lock in
-> shared mode, at which point lru_lock can just go away.
+> (Also worth noting - as far as I can tell there is no easy way for KVM
+> to know which pointer authentication instruction caused the trap, so we
+> may have to do something unusual like use "at s12e1r" to read guest
+> memory and check for XPACLRI.)
 
-Yeah I guess that will need more care, e.g. I think smp_list_del() can
-break any thread doing just a read-only traversal as it can end up with
-an entry that's been deleted and its next/prev poisoned. It's a bit
-counterintuitive that "read lock" is now enough for selected modify
-operations, while read-only traversal would need a write lock.
+Indeed, it's not an easy fix. As discussed (in the office), we can't
+even guarantee that the guest stage 1 translation is stable and points
+to the actual XPACLRI instruction.
 
-> This RFC series is incomplete.  More, and more realistic, performance
-> numbers are needed; for now, I show only will-it-scale/page_fault1.
-> Also, there are extensions I'd like to make to the locking scheme to
-> handle certain lru_lock paths--in particular, those where multiple
-> threads may delete the same node from an LRU.  The SMP list functions
-> now handle only removal of _adjacent_ nodes from an LRU.  Finally, the
-> diffstat should become more supportive after I remove some of the code
-> duplication in patch 6 by converting the rest of the per-CPU pagevec
-> code in mm/swap.c to use the SMP list functions.
+> The other option is to turn off trapping entirely. However then on a
+> big.LITTLE system with mismatched pointer authentication support
+> instructions will work intermittently on some CPUs but not others.
+
+That's another case but let's assume we never see such configurations ;).
+
+-- 
+Catalin
