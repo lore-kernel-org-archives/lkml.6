@@ -2,117 +2,133 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E887BECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BEEECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88B2521476
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:44:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A20420869
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:46:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ar3sWj6g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88B2521476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WuWMGrna"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A20420869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbeJTEw0 (ORCPT
+        id S1727410AbeJTExw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 00:52:26 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36394 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbeJTEwZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 00:52:25 -0400
-Received: by mail-wm1-f67.google.com with SMTP id a8-v6so4834957wmf.1;
-        Fri, 19 Oct 2018 13:44:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=k76P0C2bLRpzEIz57oKno9Hjh3eaOlbm7T5lpBJ3gZU=;
-        b=ar3sWj6g5w8LE7sYO80GEp7BlpZCqMIWCmY4m3JdyLn3DfKjfcPyXU0w4KlezSzlv0
-         2/pc6HGGUaNGVFUjTUajdlwW82HMcr8MfynqdVVeKCWJdf9yQ41mGvb1R802kB8819Rj
-         RiBtkjyR88dzGhMa/pLLGsLU/dOEz6a9f7T9aE6hnM5CiyrpZvLoADUqjE02L8VdvPHh
-         MIC151Ra+Zae6Xm+w3C78uOTkAE9P0F6XeFurmC1GoCx3olR20Vc1LliZbo26fn4fohc
-         7DXy8ViZLJU4yG62KZgXMq191SBzRA7NMqOorff4uT4EGyRBvtLe6RnduL7RqXMRd/+H
-         0JLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=k76P0C2bLRpzEIz57oKno9Hjh3eaOlbm7T5lpBJ3gZU=;
-        b=OQC7yY0UlUCVaM1w8GQPIg2YjsWGwaHteUxbObTvGnp+E+Vj3CuIhCrCC4tT7+Gbiw
-         5c6bsNnRjo4pPw8gS8zNX3KuIWoQS/OC8q20bAtYseLJmtuemAEyP0sO2PM1Dgh7smJ1
-         rXb76lijvjekod0Ptsixy5UzcTlgP4EQqc3qoH2PbRIjvXPbV5CENHjVkvNobDp2Kz9P
-         1+eiZ1xhEwxghKL7HeJRwrqwsrmeF2DprNrjMx3YVEikCivXHR2aTbV6aE3WnLJRj6LZ
-         37tDrMNYXR0OoVnjoHyJIfTp1NcLt8LJy/a7aG1llSUClh77SWGb5vinlLK2TaeBO7gf
-         wjWA==
-X-Gm-Message-State: ABuFfoh4pnkXQQH3Wyp4xSIxfk7sAzasUnoyfG3l61K78bqVuYLmzTGO
-        ESJKje9/wAG2PaNtCTwKibE=
-X-Google-Smtp-Source: ACcGV60qNzOc0ztbAOmg5pQWXydhbcf/WPtXkKOswLpE+0HL9Sy5riBbkfYzs/Py/Vv0EFLNLiBeCg==
-X-Received: by 2002:a1c:1c0c:: with SMTP id c12-v6mr6081957wmc.18.1539981882543;
-        Fri, 19 Oct 2018 13:44:42 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id z7-v6sm28261961wrg.52.2018.10.19.13.44.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Oct 2018 13:44:41 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH v2] rtc: s35390a: Change buf's type to u8 in s35390a_init
-Date:   Fri, 19 Oct 2018 13:43:45 -0700
-Message-Id: <20181019204344.28080-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181018214207.4223-1-natechancellor@gmail.com>
-References: <20181018214207.4223-1-natechancellor@gmail.com>
+        Sat, 20 Oct 2018 00:53:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53990 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726157AbeJTExw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 00:53:52 -0400
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C79621476;
+        Fri, 19 Oct 2018 20:46:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539981969;
+        bh=KtDel/ZHHd/BUBoAB/LL1/KWAd74w36v51PrmtIIIkQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WuWMGrnamerbaMAFKKjF3L3lr7D8zYx2dPs/2wGFeFiJYGnGTjLA1WOZGvUDVDNUo
+         JPawMAhj8HLSBakxdn+u9v69VV7Q8N/bloz+On5928sNtzTcbOl18dqWzRWH0DQ8RT
+         F1rQgY4WRDZnfO6w12R/OZSpVVe0V4SSWYI1XTgs=
+Received: by mail-qt1-f171.google.com with SMTP id j46-v6so39853483qtc.9;
+        Fri, 19 Oct 2018 13:46:09 -0700 (PDT)
+X-Gm-Message-State: ABuFfogpk2ijc2GljJQvpEX62ZvqpGWcWRxEd89SOZJDEOOKlRSo3Q/I
+        WX0lSWjJzlkb/CyJguVzBoPznYEZVtWYdeNJ8g==
+X-Google-Smtp-Source: ACcGV63TcOLG9K6e2N45hwpngnZqwcDEdM85U4M6pmMhrdKiUOfyhqlKL2qMID1pi37TOo9/Z/5XJXfkWIVxZsfsiRU=
+X-Received: by 2002:ac8:2d33:: with SMTP id n48-v6mr33372959qta.38.1539981968661;
+ Fri, 19 Oct 2018 13:46:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181019184827.12351-1-paul.walmsley@sifive.com> <20181019184827.12351-2-paul.walmsley@sifive.com>
+In-Reply-To: <20181019184827.12351-2-paul.walmsley@sifive.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 19 Oct 2018 15:45:57 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJBSqaxnETdJg1Mdp+H2ay+WKT0JaxLe6D4Fwo_99qUkw@mail.gmail.com>
+Message-ID: <CAL_JsqJBSqaxnETdJg1Mdp+H2ay+WKT0JaxLe6D4Fwo_99qUkw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: serial: add documentation for the
+ SiFive UART driver
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul@pwsan.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+On Fri, Oct 19, 2018 at 1:48 PM Paul Walmsley <paul.walmsley@sifive.com> wrote:
+>
+> Add DT binding documentation for the Linux driver for the SiFive
+> asynchronous serial IP block.  Nothing too exotic.
+>
+> Cc: linux-serial@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Palmer Dabbelt <palmer@sifive.com>
+> Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> Signed-off-by: Paul Walmsley <paul@pwsan.com>
+> ---
+>  .../bindings/serial/sifive-serial.txt         | 21 +++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/serial/sifive-serial.txt
+>
+> diff --git a/Documentation/devicetree/bindings/serial/sifive-serial.txt b/Documentation/devicetree/bindings/serial/sifive-serial.txt
+> new file mode 100644
+> index 000000000000..8982338512f5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/serial/sifive-serial.txt
+> @@ -0,0 +1,21 @@
+> +SiFive asynchronous serial interface (UART)
+> +
+> +Required properties:
+> +
+> +- compatible: should be "sifive,fu540-c000-uart0" or "sifive,uart0"
 
-drivers/rtc/rtc-s35390a.c:124:27: warning: implicit conversion from
-'int' to 'char' changes value from 192 to -64 [-Wconstant-conversion]
-        buf = S35390A_FLAG_RESET | S35390A_FLAG_24H;
-            ~ ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
-1 warning generated.
+I assume once again, the last '0' is a version? As I mentioned for the
+intc and now the pwm block bindings, if you are going to do version
+numbers please document the versioning scheme. Palmer mentioned the
+compatible string is part of the IP block repository? Where does the
+number come from? What's the next version? Major vs. minor versions?
+ECO fixes? Is the version s/w readable? How do you ensure it gets
+updated? All that should be addressed.
 
-Update buf to be an unsigned 8-bit integer, which matches the buf member
-in struct i2c_msg.
+Otherwise, don't do version numbers because we have no visibility to
+what they mean.
 
-https://github.com/ClangBuiltLinux/linux/issues/145
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
+> +- reg: address and length of the register space
+> +- interrupt-parent: should contain a phandle pointing to the SoC interrupt
+> +    controller device node that the UART interrupts are connected to
 
-v1 -> v2:
+Don't need to document interrupt-parent here.
 
-* Use u8 instead of unsigned char, as it's clearer that this is an
-  integer value and it's shorter.
-
- drivers/rtc/rtc-s35390a.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/rtc/rtc-s35390a.c b/drivers/rtc/rtc-s35390a.c
-index 77feb603cd4c..3c64dbb08109 100644
---- a/drivers/rtc/rtc-s35390a.c
-+++ b/drivers/rtc/rtc-s35390a.c
-@@ -108,7 +108,7 @@ static int s35390a_get_reg(struct s35390a *s35390a, int reg, char *buf, int len)
- 
- static int s35390a_init(struct s35390a *s35390a)
- {
--	char buf;
-+	u8 buf;
- 	int ret;
- 	unsigned initcount = 0;
- 
--- 
-2.19.1
-
+> +- interrupts: Should contain the UART interrupt identifier
+> +- clocks: Should contain a clock identifier for the UART's parent clock
+> +
+> +
+> +Example:
+> +
+> +uart0: serial@10010000 {
+> +       compatible = "sifive,uart0";
+> +       interrupt-parent = <&plic0>;
+> +       interrupts = <80>;
+> +       reg = <0x0 0x10010000 0x0 0x1000>;
+> +       clocks = <&prci PRCI_CLK_TLCLK>;
+> +};
+> --
+> 2.19.1
+>
