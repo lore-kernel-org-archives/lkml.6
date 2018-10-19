@@ -2,98 +2,115 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD47ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E76F9C67863
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E297F20C0E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:51:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E297F20C0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 692522145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 00:54:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 692522145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeJSIyj (ORCPT
+        id S1726864AbeJSI5x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 04:54:39 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:43836 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbeJSIyi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 04:54:38 -0400
-Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 0BFCA140DB56D;
-        Thu, 18 Oct 2018 17:50:59 -0700 (PDT)
-Date:   Thu, 18 Oct 2018 17:50:58 -0700 (PDT)
-Message-Id: <20181018.175058.827953425036498775.davem@davemloft.net>
-To:     natechancellor@gmail.com
-Cc:     isdn@linux-pingi.de, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com
-Subject: Re: [PATCH v2] isdn: hfc_{pci,sx}: Avoid empty body if statements
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181019004251.GA28878@flashbox>
-References: <20181019002117.GA10161@flashbox>
-        <20181018.172310.35380794084221855.davem@davemloft.net>
-        <20181019004251.GA28878@flashbox>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 18 Oct 2018 17:50:59 -0700 (PDT)
+        Fri, 19 Oct 2018 04:57:53 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39027 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726534AbeJSI5x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 04:57:53 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 0793D5AB79F7C;
+        Fri, 19 Oct 2018 08:54:10 +0800 (CST)
+Received: from [127.0.0.1] (10.74.219.194) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.399.0; Fri, 19 Oct 2018
+ 08:54:05 +0800
+Subject: Re: [PATCH v2] scsi: hisi_sas: Fix NULL pointer dereference
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        John Garry <john.garry@huawei.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+References: <20181018165939.GA26491@embeddedor.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From:   "chenxiang (M)" <chenxiang66@hisilicon.com>
+Message-ID: <8bf37d22-8416-2b0b-1049-9c93b73ffc4d@hisilicon.com>
+Date:   Fri, 19 Oct 2018 08:54:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
+MIME-Version: 1.0
+In-Reply-To: <20181018165939.GA26491@embeddedor.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.74.219.194]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
-Date: Thu, 18 Oct 2018 17:42:51 -0700
+在 2018/10/19 0:59, Gustavo A. R. Silva 写道:
+> There is a NULL pointer dereference in case *slot* happens to
+> be NULL at lines 1053 and 1878:
+>
+> struct hisi_sas_cq *cq =
+> 	&hisi_hba->cq[slot->dlvry_queue];
+>
+> Notice that *slot* is being NULL checked at lines 1057 and 1881:
+> if (slot), which implies it may be NULL.
+>
+> Fix this by placing the declaration and definition of variable cq,
+> which contains the pointer dereference slot->dlvry_queue, after
+> slot has been properly NULL checked.
+>
+> Addresses-Coverity-ID: 1474515 ("Dereference before null check")
+> Addresses-Coverity-ID: 1474520 ("Dereference before null check")
+> Fixes: 584f53fe5f52 ("scsi: hisi_sas: Fix the race between IO completion and timeout for SMP/internal IO")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-> On Thu, Oct 18, 2018 at 05:23:10PM -0700, David Miller wrote:
->> From: Nathan Chancellor <natechancellor@gmail.com>
->> Date: Thu, 18 Oct 2018 17:21:17 -0700
->> 
->> > Thanks for the review, I went ahead and compiled with the following diff
->> > on top of v2 and got no warnings from Clang, GCC, or sparse, does this
->> > seem satisfactory for v3?
->> 
->> Well, one thing I notice.
->> 
-> 
->> > @@ -86,7 +86,7 @@ release_io_hfcpci(struct IsdnCardState *cs)
->> >         pci_free_consistent(cs->hw.hfcpci.dev, 0x8000,
->> >                             cs->hw.hfcpci.fifos, cs->hw.hfcpci.dma);
->> >         cs->hw.hfcpci.fifos = NULL;
->> > -       iounmap((void *)cs->hw.hfcpci.pci_io);
->> > +       iounmap(cs->hw.hfcpci.pci_io);
->> >  }
->> 
->> Driver uses iounmap().
->> 
->> > @@ -1692,7 +1692,7 @@ setup_hfcpci(struct IsdnCard *card)
->> >                 printk(KERN_WARNING "HFC-PCI: No IRQ for PCI card found\n");
->> >                 return (0);
->> >         }
->> > -       cs->hw.hfcpci.pci_io = (char *)(unsigned long)dev_hfcpci->resource[1].start;
->> > +       cs->hw.hfcpci.pci_io = (void __iomem *)(unsigned long)dev_hfcpci->resource[1].start;
->> >         printk(KERN_INFO "HiSax: HFC-PCI card manufacturer: %s card name: %s\n", id_list[i].vendor_name, id_list[i].card_name);
->> 
->> But does not use iomap().  You won't need any cast here if it did use
->> iomap() properly.
->> 
->> Thanks.
-> 
-> So this?
+Reviewed-by: Xiang Chen <chenxiang66@hisilicon.com>
+Thanks!
 
-That's definitely a lot better, yes!
+> ---
+> Changes in v2:
+>   - Fix another instance of the same issue at line 1053.
+>   - Update commit log.
+>
+>   drivers/scsi/hisi_sas/hisi_sas_main.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+> index 2e5eaf1..b3f01d5 100644
+> --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
+> +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+> @@ -1050,11 +1050,11 @@ static int hisi_sas_exec_internal_tmf_task(struct domain_device *device,
+>   		if ((task->task_state_flags & SAS_TASK_STATE_ABORTED)) {
+>   			if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
+>   				struct hisi_sas_slot *slot = task->lldd_task;
+> -				struct hisi_sas_cq *cq =
+> -					&hisi_hba->cq[slot->dlvry_queue];
+>   
+>   				dev_err(dev, "abort tmf: TMF task timeout and not done\n");
+>   				if (slot) {
+> +					struct hisi_sas_cq *cq =
+> +					       &hisi_hba->cq[slot->dlvry_queue];
+>   					/*
+>   					 * flush tasklet to avoid free'ing task
+>   					 * before using task in IO completion
+> @@ -1875,10 +1875,10 @@ hisi_sas_internal_task_abort(struct hisi_hba *hisi_hba,
+>   	if ((task->task_state_flags & SAS_TASK_STATE_ABORTED)) {
+>   		if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
+>   			struct hisi_sas_slot *slot = task->lldd_task;
+> -			struct hisi_sas_cq *cq =
+> -				&hisi_hba->cq[slot->dlvry_queue];
+>   
+>   			if (slot) {
+> +				struct hisi_sas_cq *cq =
+> +					&hisi_hba->cq[slot->dlvry_queue];
+>   				/*
+>   				 * flush tasklet to avoid free'ing task
+>   				 * before using task in IO completion
 
-I wonder what exactly it is checking there though.  I guess it wants to see if the
-resource->start value is zero and bail with an error it so.
 
-Anyways, this code has been like this for ages and what you are proposing is
-definitely a significant improvement.
-
-Thanks.
