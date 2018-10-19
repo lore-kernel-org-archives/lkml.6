@@ -2,57 +2,59 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DEFECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F8DBECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C52720838
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:17:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 162F921479
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 16:18:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GozLqqNv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C52720838
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GZQ5q2DT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 162F921479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727880AbeJTAYo (ORCPT
+        id S1727950AbeJTAYr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 20:24:44 -0400
-Received: from mail-wm1-f45.google.com ([209.85.128.45]:40205 "EHLO
-        mail-wm1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727219AbeJTAYo (ORCPT
+        Fri, 19 Oct 2018 20:24:47 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36561 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727219AbeJTAYr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 20:24:44 -0400
-Received: by mail-wm1-f45.google.com with SMTP id z204-v6so4234309wmc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 09:17:56 -0700 (PDT)
+        Fri, 19 Oct 2018 20:24:47 -0400
+Received: by mail-wr1-f66.google.com with SMTP id y16so38051015wrw.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 09:17:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=NhdG7YCb6qRIRdvFuCcHZhGJGJjotp0H8yUCWfxRlJI=;
-        b=GozLqqNv/9z1uK/CnkBbtTNO+IlSH5Sn4vJKaHwi7XZ87iAdZbKokpM1MiwM+BqLDO
-         QTpQ+Ymb9hLQQXQTuBdfG3tAuOfplbjZL73sQmNZXYmvbU7aRQ//6vxUh0UPL0lQrE5N
-         yPz7RkoZCxzn80hCylbWpmXkbbQsKceRTVCpI=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=oaEkGQ1rlKwLiDv3FIuCYJt+L7qQIIrOC89EmKYAq9Y=;
+        b=GZQ5q2DThJ5fdRiJF2HZI0py1F1ckPXm2jh1Qzq/+9D6NIARXVPgCo6Sj5gTgG2HI6
+         LRDTQN9GxDGGVz9TGVvvncUkE/RcpnuaJI7gU0uapyu4wbmTkUPoOGWadtDkXC1rcb5x
+         QejpBcmyzL4sYVtXIz78xMYr7S/mWlafpNiSc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=NhdG7YCb6qRIRdvFuCcHZhGJGJjotp0H8yUCWfxRlJI=;
-        b=BI+oSdKyueKduvXSZv/PulUztMP67mFNju0iy7yh2OeqqeTKCZfH/IDORL1LVLhrzD
-         C8tM/qslG9l+ONEeyh5UaiMUDayiMhzGNpM1GpI9Z9sxrgqMlaFVSIXzOCgXE8L1BA16
-         8CEiOb5Krv8RqgM3nrxhsRP1jc7rI+wkHTs6qQIJ7lA3Z1URUMjmXJVVkEssVqGP1lr/
-         kYpEa+r+N4uTujnb5y3sojETueJwOVIs9TEZOuHyJtJfzL0Ziv+eKtcBkILiWZiDUEBn
-         30sRQuZBDGacm2wAr4vGJB15iyKxpMnRSHeDnfGwKESDF8npxEMqCbDe4nmvRoYE2qQG
-         Wefg==
-X-Gm-Message-State: ABuFfojN0Dsf2CBVHRzs7j+aOJk6gD1/FC5RfuYoIOHdzhD7MPROWgMx
-        sOQWRmyj6VdvqHiYDnWTUTdY8K+nwwQ=
-X-Google-Smtp-Source: ACcGV61ycZaxSCtfUJm0rY+ttmxRAvt7fY8t6I1EVj9aS5VcMO7HgvurzeEhLQu4VJ5lXuyE5jNZzA==
-X-Received: by 2002:a1c:e102:: with SMTP id y2-v6mr5396190wmg.141.1539965875535;
-        Fri, 19 Oct 2018 09:17:55 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=oaEkGQ1rlKwLiDv3FIuCYJt+L7qQIIrOC89EmKYAq9Y=;
+        b=hj+9m5svljupT6F78AioWJT9SjSJaIWeUBzkdN+vusLHI1Kd5EN0L8t3L4iQyL0JNl
+         Txbnb72P7S/oJUMC4m/XEC0ob4My/oZDqTu/rSnL01twCy3zBnpEAxnigSNFYs6+5jht
+         Ls5LNvUcewCirjQIDOV34EmJXK7VlqFVFtZfXAEGdwtAgq8GoI+7aCdYZ311Kqx7dsPL
+         q/OlJZN97GZWVxJEw52AEbEcqG5aPyDvrBYOCnwyKddCpbiyPt1aEVlt2pcA+xxkWeDN
+         qtvIA+7kelp5Es7q3RciNzrkMTJEGhD3yQ8VBpPL6xtaDgpsm/vD9clI1m3uCfFgmW/K
+         +rIg==
+X-Gm-Message-State: AGRZ1gJzq8djHh2vE4GdzChA+mZZVchWRCvGJ2DoW9ZBOrBKse+3gPGS
+        ycHqKH0MvHj8ONFMvSP68ZACtg==
+X-Google-Smtp-Source: AJdET5e/aNbL1M/cqywvaWjVsr+I/vc7SxwZY8TV3NPz1YFR9+z4mFk+UIw/VFxwmHsAwtsbCHCJXQ==
+X-Received: by 2002:adf:b612:: with SMTP id f18-v6mr1215668wre.120.1539965878528;
+        Fri, 19 Oct 2018 09:17:58 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:e0a:f:6020:9024:3180:921a:1e27])
-        by smtp.gmail.com with ESMTPSA id n11-v6sm17009460wrx.17.2018.10.19.09.17.54
+        by smtp.gmail.com with ESMTPSA id n11-v6sm17009460wrx.17.2018.10.19.09.17.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 19 Oct 2018 09:17:54 -0700 (PDT)
+        Fri, 19 Oct 2018 09:17:57 -0700 (PDT)
 From:   Vincent Guittot <vincent.guittot@linaro.org>
 To:     peterz@infradead.org, mingo@kernel.org,
         linux-kernel@vger.kernel.org
@@ -60,39 +62,83 @@ Cc:     rjw@rjwysocki.net, dietmar.eggemann@arm.com,
         Morten.Rasmussen@arm.com, patrick.bellasi@arm.com, pjt@google.com,
         bsegall@google.com, thara.gopinath@linaro.org,
         Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH v4 0/2]  sched/fair: update scale invariance of PELT
-Date:   Fri, 19 Oct 2018 18:17:49 +0200
-Message-Id: <1539965871-22410-1-git-send-email-vincent.guittot@linaro.org>
+Subject: [PATCH 1/2] sched/fair: move rq_of helper function
+Date:   Fri, 19 Oct 2018 18:17:50 +0200
+Message-Id: <1539965871-22410-2-git-send-email-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1539965871-22410-1-git-send-email-vincent.guittot@linaro.org>
+References: <1539965871-22410-1-git-send-email-vincent.guittot@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This 4th version of the scale invariance patchset adds an important change
-compare to previous ones. It still scales the time to reflect the
-amount of work that has been done during the elapsed running time but this is
-now done at rq level instead of per entity and rt/dl/cfs_rq. The main
-advantage is that it is done once per clock update and we don't need to
-maintain per sched_avg's stolen_idle_time anymore. This also ensure that
-all the pelt signal will be always synced for a rq.
+Move rq_of() helper function so it can be used in pelt.c
 
-The 1st patch makes available rq_of() helper function for pelt.c file and
-the 2nd patch implements the new scaling algorithm
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+---
+ kernel/sched/fair.c  | 13 -------------
+ kernel/sched/sched.h | 16 ++++++++++++++++
+ 2 files changed, 16 insertions(+), 13 deletions(-)
 
-Vincent Guittot (2):
-  sched/fair: move rq_of helper function
-  sched/fair: update scale invariance of PELT
-
- kernel/sched/core.c     |  2 +-
- kernel/sched/deadline.c |  6 ++--
- kernel/sched/fair.c     | 29 +++++-----------
- kernel/sched/pelt.c     | 88 ++++++++++++++++++++++++++++++++++++++++++++-----
- kernel/sched/pelt.h     | 27 +++++++++++++++
- kernel/sched/rt.c       |  6 ++--
- kernel/sched/sched.h    | 18 ++++++++++
- 7 files changed, 139 insertions(+), 37 deletions(-)
-
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 6bd142d..0969ce3 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -248,13 +248,6 @@ const struct sched_class fair_sched_class;
+  */
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+-
+-/* cpu runqueue to which this cfs_rq is attached */
+-static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
+-{
+-	return cfs_rq->rq;
+-}
+-
+ static inline struct task_struct *task_of(struct sched_entity *se)
+ {
+ 	SCHED_WARN_ON(!entity_is_task(se));
+@@ -411,12 +404,6 @@ static inline struct task_struct *task_of(struct sched_entity *se)
+ 	return container_of(se, struct task_struct, se);
+ }
+ 
+-static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
+-{
+-	return container_of(cfs_rq, struct rq, cfs);
+-}
+-
+-
+ #define for_each_sched_entity(se) \
+ 		for (; se; se = NULL)
+ 
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 3a4ef8f..3990818 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -566,6 +566,22 @@ struct cfs_rq {
+ #endif /* CONFIG_FAIR_GROUP_SCHED */
+ };
+ 
++#ifdef CONFIG_FAIR_GROUP_SCHED
++
++/* cpu runqueue to which this cfs_rq is attached */
++static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
++{
++	return cfs_rq->rq;
++}
++
++#else	/* !CONFIG_FAIR_GROUP_SCHED */
++
++static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
++{
++	return container_of(cfs_rq, struct rq, cfs);
++}
++#endif
++
+ static inline int rt_bandwidth_enabled(void)
+ {
+ 	return sysctl_sched_rt_runtime >= 0;
 -- 
 2.7.4
 
