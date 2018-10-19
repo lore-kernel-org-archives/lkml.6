@@ -2,99 +2,102 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BFDECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E5CCECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EBD52064A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:20:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EBD52064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=skynet.be
+	by mail.kernel.org (Postfix) with ESMTP id B038B21479
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 08:22:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AQShdXAg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B038B21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbeJSQZs (ORCPT
+        id S1727232AbeJSQ1Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 12:25:48 -0400
-Received: from mailrelay101.isp.belgacom.be ([195.238.20.128]:36165 "EHLO
-        mailrelay101.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727296AbeJSQZK (ORCPT
+        Fri, 19 Oct 2018 12:27:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34400 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726790AbeJSQ1Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 12:25:10 -0400
-X-Belgacom-Dynamic: yes
-IronPort-PHdr: =?us-ascii?q?9a23=3AVNSS8RVy3n3tBeXVVEq3LzixWWjV8LGtZVwlr6?=
- =?us-ascii?q?E/grcLSJyIuqrYbR2Et8tkgFKBZ4jH8fUM07OQ7/i/HzRYqb+681k6OKRWUB?=
- =?us-ascii?q?EEjchE1ycBO+WiTXPBEfjxciYhF95DXlI2t1uyMExSBdqsLwaK+i764jEdAA?=
- =?us-ascii?q?jwOhRoLerpBIHSk9631+ev8JHPfglEnjWwba9wIRmssQndqtQdjJd/JKo21h?=
- =?us-ascii?q?bHuGZDdf5MxWNvK1KTnhL86dm18ZV+7SleuO8v+tBZX6nicKs2UbJXDDI9M2?=
- =?us-ascii?q?Ao/8LrrgXMTRGO5nQHTGoblAdDDhXf4xH7WpfxtTb6tvZ41SKHM8D6Uaw4VD?=
- =?us-ascii?q?K/5KptVRTmijoINyQh/W/XlMJ+kaxVrhGmqRN9zY7Ze52ZOOZkc6/BZ94WWX?=
- =?us-ascii?q?ZNU8BMXCJBGIO8aI4PAvIBM+lCtIb9pkEBrR2jDgesHuPg1CJHiWHs3a07z+?=
- =?us-ascii?q?shEhzN0QsuH90Uq3vUos74NLwRUeG1yqnH0ynDY+lN1jjj8YXFdA0qr/KUXb?=
- =?us-ascii?q?9ocsfcy1MjGgLEg1mKq4HoOymZ2vkOvmWV6edrSPihhHQ9qw5rpzii3sIsio?=
- =?us-ascii?q?7UiY0L0l3E7iB5wJotJd2/VU57fcaoEJtOuCGeMIt7WsciQ2Z0tykgzr0GuZ?=
- =?us-ascii?q?m7fDMWyJg9wx7fbOCIfJKM4h3+U+aRJC13hHNjeL6nhhay91avyvHkW8S30l?=
- =?us-ascii?q?tGtCtIn9jWun0P0xHf8NWLR/hz80u53DaAzQHT6uVKIUAukqrbLoYswrAqmZ?=
- =?us-ascii?q?UIv0TOBTT2mEb2ja+QaEok5vKk5P/5bbn+vJ+TK5d0ih3iMqQpgsGwG+c4Mh?=
- =?us-ascii?q?ALX2WA/eS81bvj/VD2QblTgP02lbTZsJbHKssBuq65AghV0oA55xa4FTem38?=
- =?us-ascii?q?wSnWMbI1JdZBKHk4/pNknMIP/iDfewmU6skDR1yPDdJbDuHo7NImLfn7fkYL?=
- =?us-ascii?q?Zx8VBTxxcuzdpH/ZJbFqkBIO7vWk/2rNHXEhg5PBGuzOv8FNp9zZkSVn6KAq?=
- =?us-ascii?q?+EKq/dr0KH5v83KemWeIAVoCr9K+Qi5/P2iX85mFkdfbSm3JcOZnC4BelpLF?=
- =?us-ascii?q?uHYXXyhtcMCnkKvgUgQ+zwklGCUiBcZ2y0X60i4jE3EoWmDZ3MRoq1mryOwD?=
- =?us-ascii?q?+7HoFKZmBBEl2MFXbod4OZW/YDcS6SIdFukiYCVbe/T48szg+utADkxLp9NO?=
- =?us-ascii?q?bU+TMXtYjl1Ndr4+3fjxYy9SZ7D86FyWGCU3l0nn8URz8xxK1/r1ZyxUyN0a?=
- =?us-ascii?q?VjmPxYFtxS5/VXXQcmL5LT1PJ1WJjOXVfIfc+MYFKnRMi2RD82U9Q9ysMPZE?=
- =?us-ascii?q?A7HM+t3T7Z2C//LbYflrWNTLIu/67RxXn6JI4pxX/M2oE6jEggT9cJP2Dw1f?=
- =?us-ascii?q?03zBTaG4OcyxbRrK2tb6lJhCM=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AZAACMkslb/7dPQldjGwEBAQEDAQE?=
- =?us-ascii?q?BBwMBAQGBUgUBAQELAYEIfIFTEiiMbI1+AYhQjgmBejgBhDoEAgKFAyI1DA0?=
- =?us-ascii?q?BAwEBAgEBAgFsKII2IoJiBicvIxBROR4ZgyGBdRGnWjODfYYnhyyEOoFBP4E?=
- =?us-ascii?q?RiF2FDQKeQQmGIYpLAhWBQI5pLJdrAjSBVU0gGIMngiYXjhw9MIEDAT0BijI?=
- =?us-ascii?q?BAQ?=
-X-IPAS-Result: =?us-ascii?q?A2AZAACMkslb/7dPQldjGwEBAQEDAQEBBwMBAQGBUgUBA?=
- =?us-ascii?q?QELAYEIfIFTEiiMbI1+AYhQjgmBejgBhDoEAgKFAyI1DA0BAwEBAgEBAgFsK?=
- =?us-ascii?q?II2IoJiBicvIxBROR4ZgyGBdRGnWjODfYYnhyyEOoFBP4ERiF2FDQKeQQmGI?=
- =?us-ascii?q?YpLAhWBQI5pLJdrAjSBVU0gGIMngiYXjhw9MIEDAT0BijIBAQ?=
-Received: from 183.79-66-87.adsl-dyn.isp.belgacom.be (HELO localhost.localdomain) ([87.66.79.183])
-  by relay.skynet.be with ESMTP; 19 Oct 2018 10:20:07 +0200
-From:   Fabian Frederick <fabf@skynet.be>
-To:     akpm@linux-foundation.org
-Cc:     jaharkes@cs.cmu.edu, coda@cs.cmu.edu,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        fabf@skynet.be
-Subject: [PATCH 2/7 linux-next] coda: destroy mutex in put_super()
-Date:   Fri, 19 Oct 2018 10:19:28 +0200
-Message-Id: <1539937173-26260-3-git-send-email-fabf@skynet.be>
-X-Mailer: git-send-email 2.4.11
-In-Reply-To: <1539937173-26260-1-git-send-email-fabf@skynet.be>
-References: <1539937173-26260-1-git-send-email-fabf@skynet.be>
+        Fri, 19 Oct 2018 12:27:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9AvHN4WfO/HcdEky1Ll3eXeISmMbyq+jQYgIjB7CBQs=; b=AQShdXAgid2sp/IhTrwu3IM3i
+        I7Kv4JnYUb9qvvhQ41WNq7fAxpW4C7lYuPevs9NNy82TgsWB04/XhGzhd5yQZBuAOOXAnf+KfvYft
+        xA7Mc3juDtY00QEM1AuJlySotwkeORyRb6eWWhUwAQ/iN2IPxbNSyz6jYVOSmA8qGvX9sBtrIcoks
+        1sYWsVLaX8ibmeOhJrWNAzsyCjRMWAbDe79n9VesTlA+6qxnlboLyxd5HmXEMmn/t3L5fK7HOR3Rj
+        dGBiSw9rIVPm94INl3PkVMm2nzdfhdKn+iEkr5FJL3rZkKTuo/MXZWEYwr9e2rgLpVCHs8EiCGI1C
+        8FBIY5N9w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gDQ2m-0006AH-10; Fri, 19 Oct 2018 08:22:04 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 89C692029856B; Fri, 19 Oct 2018 10:22:02 +0200 (CEST)
+Date:   Fri, 19 Oct 2018 10:22:02 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>, daniel@iogearbox.net,
+        guro@fb.com
+Subject: Re: [RFC PATCH 1/5] x86: introduce preemption disable prefix
+Message-ID: <20181019082202.GB3121@hirez.programming.kicks-ass.net>
+References: <20181018005420.82993-1-namit@vmware.com>
+ <20181018005420.82993-2-namit@vmware.com>
+ <D247AB7C-2890-49CE-B102-163E5B368FC2@amacapital.net>
+ <07255D2B-0243-4254-B62A-37050C44207E@vmware.com>
+ <CALCETrXEG8OrMpB3VBS9RF41O_MwtPmXBazkdSGE0ohZmXDcBw@mail.gmail.com>
+ <925F22EA-F8CB-4194-B96B-378409ED7918@vmware.com>
+ <2626124E-7344-42F3-AD07-0BB34D62A9EE@amacapital.net>
+ <6F1FD9DA-5E86-42A2-8EAF-05F5D70FE2EF@vmware.com>
+ <CALCETrWjeqMs7Z6auStk9VGT9vAn+U5REGE+=TBv1Yh4kmOF3w@mail.gmail.com>
+ <20181019050051.bs2kk4sagu7hpwxx@ast-mbp.dhcp.thefacebook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181019050051.bs2kk4sagu7hpwxx@ast-mbp.dhcp.thefacebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-we can safely destroy vc_mutex at the end of umount process.
+On Thu, Oct 18, 2018 at 10:00:53PM -0700, Alexei Starovoitov wrote:
+> > 
+> > >
+> > > Another example is __BPF_PROG_RUN_ARRAY(), which also uses
+> > > preempt_enable_no_resched().
+> > 
+> > Alexei, I think this code is just wrong.
+> 
+> why 'just wrong' ?
 
-Signed-off-by: Fabian Frederick <fabf@skynet.be>
----
- fs/coda/inode.c | 1 +
- 1 file changed, 1 insertion(+)
+Because you lost a preemption point, this is a no-no.
 
-diff --git a/fs/coda/inode.c b/fs/coda/inode.c
-index dd819c1..69bb64d 100644
---- a/fs/coda/inode.c
-+++ b/fs/coda/inode.c
-@@ -244,6 +244,7 @@ static void coda_put_super(struct super_block *sb)
- 	vcp->vc_sb = NULL;
- 	sb->s_fs_info = NULL;
- 	mutex_unlock(&vcp->vc_mutex);
-+	mutex_destroy(&vcp->vc_mutex);
- 
- 	pr_info("Bye bye.\n");
- }
--- 
-2.4.11
+> 
+> > Do you know why it uses
+> > preempt_enable_no_resched()?
+> 
+> dont recall precisely.
+> we could be preemptable at the point where macro is called.
+> I think the goal of no_resched was to avoid adding scheduling points
+> where they didn't exist before just because a prog ran for few nsec.
+> May be Daniel or Roman remember.
 
+No, you did the exact opposite, where there previously was a preemption,
+you just ate it. The band saw didn't get stopped in time, you loose your
+hand etc..
