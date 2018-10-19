@@ -2,153 +2,154 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55818ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB20AECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:07:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14F0721486
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:07:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9C4820843
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:07:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i/PliEip"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14F0721486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cy+uNphZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9C4820843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbeJTHPj (ORCPT
+        id S1726881AbeJTHPu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 03:15:39 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42479 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726313AbeJTHPj (ORCPT
+        Sat, 20 Oct 2018 03:15:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45372 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726313AbeJTHPu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 03:15:39 -0400
-Received: by mail-io1-f67.google.com with SMTP id n18-v6so23940767ioa.9
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 16:07:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=V6NTIQparOMPx9sx9IqYeTGacmCxgEWqBM1eJiLj60c=;
-        b=i/PliEip8BaRyJonZCHOuZ8EGqoXw7PP8wmv4tcNnOyQvMJF+xtW9y7QdvT/KSDN08
-         kpvW6Vqu84oroqSQzdMdDGBaW3I98WOBLaiB4LeR8YzPf26jUpkG8T5oatnsf5o8c4zV
-         j0tpujAkgnI2fpx1LFEDhpQczzYeP3wfC4tPU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=V6NTIQparOMPx9sx9IqYeTGacmCxgEWqBM1eJiLj60c=;
-        b=ISEsxUnoB+zjBIxajKRnPClmBG3HBvHcOXwMg61weEtTA8S421Y5XHz3dWDSnXPyUy
-         EBvRBqrSuQ0TH/6vyMWlU2LzgMEFk8OI/oOGcNUbJnTZS0URPW/QNWkidljtaMLmtnxe
-         VuPi7fcPIIGgsieLeJe3O0WsxjyKi7ae92c/A0ckDU2dfGjVjJXHigh6VG7Q53R0KSWl
-         a/2qkmt7ladJ1fa3PkYgBUjFjr63CgnNR5YZT/BoMrdxdfInTHzM5xQIi4f5oEosij5b
-         OEUOGIhieOcGeDyTj1ckGrjOhhnPi0q3m9g8uOUeDkaQsFrTuiihp0phAzS71iwqhauK
-         L9iA==
-X-Gm-Message-State: AGRZ1gLQxm346BLRdIkgzJzM6OTDBTLOBKtRvdkp2dmEmJH95RGw9Kvo
-        UIp89Qz0V0ImYSIjYWZfE3Ed6cPcQHszHxQGdrj1hw==
-X-Google-Smtp-Source: AJdET5cIjgL8IGj7k+o0I1ZkoTaS3lpFEUz3B8vjfR1GQHLy53yejX5PdMpNLGqi7QTnz9TFtyzmaTF2DHoAYB1HMTE=
-X-Received: by 2002:a6b:ac45:: with SMTP id v66-v6mr4530142ioe.66.1539990453084;
- Fri, 19 Oct 2018 16:07:33 -0700 (PDT)
+        Sat, 20 Oct 2018 03:15:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=XvCEkyluSs7jGXv7Lo56mq9keFZ/azWA2mq/i3R/8mY=; b=Cy+uNphZ1C4zjPmU87pSTWeAK
+        H7ZTKyRsqu4WhkOJ30pugCBS7831mV3QM1cmb8CnINhb7qvLgMeD2yV8tNUO+m1xs009MQ635I6zw
+        BHpzpatRi09XE9PvgBUSV4STjTdd1pVLWlUYC9S5qovA4oXCe5M5N8KcQCuG6xUeIPe9WHClUFvRx
+        G2uZbq+Hlwo9/jMjsSWZYUXbjfUS0zAIOunCuQxQSGTxQMGTAJEuezNigYFEu7BtwwYPOMTcTX+0z
+        WN403RmxgULlzIRyhNBOuCkSqcypZCk8c4j/2vtOGhe+dN5UqIvrFfCnx7Mb4HfkFa0vw4qrThww8
+        /CVF0k3gg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gDdrr-00010O-Iz; Fri, 19 Oct 2018 23:07:43 +0000
+Subject: Re: [PATCH] docs: Extend trusted keys documentation for TPM 2.0
+To:     Stefan Berger <stefanb@linux.ibm.com>, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, jejb@linux.ibm.com,
+        Alexander.Levin@microsoft.com, jsnitsel@redhat.com,
+        jmorris@namei.org, linux-kernel@vger.kernel.org
+References: <20181019101758.1569-1-stefanb@linux.ibm.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a55a53a8-1308-aff3-afb8-6cbe0ffa1bee@infradead.org>
+Date:   Fri, 19 Oct 2018 16:07:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20180831212007.247186-1-dbasehore@chromium.org>
-In-Reply-To: <20180831212007.247186-1-dbasehore@chromium.org>
-From:   "dbasehore ." <dbasehore@chromium.org>
-Date:   Fri, 19 Oct 2018 16:07:21 -0700
-Message-ID: <CAGAzgsqayRfva3om-3juAhE+VDuY0hV6q-DuyiJ-QU=szPSaew@mail.gmail.com>
-Subject: Re: [PATCH] clk: fix clk_calc_subtree compute duplications
-To:     sboyd@kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181019101758.1569-1-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 2:20 PM Derek Basehore <dbasehore@chromium.org> wrote:
->
-> clk_calc_subtree was called at every step up the clk tree in
-> clk_calc_new_rates. Since it recursively calls itself for its
-> children, this means it would be called once on each clk for each
-> step above the top clk is.
->
-> This is fixed by adding a non-recursive function called at every
-> step in clk_calc_new_rates that fills in new_rate, new_parent, etc.
-> Since the clks not called directly for clk_calc_new_rates can only
-> change their rate, we only set new_rate in clk_calc_subtree.
-> clk_calc_subtree is also only called on the top clk after it's found
-> via clk_calc_new_rates to remove the duplicate recursive calls.
->
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+Hi,
+Feel free to ignore my comments.  I don't know anything about TPM.
+
+On 10/19/18 3:17 AM, Stefan Berger wrote:
+> Extend the documentation for trusted keys with documentation for how to
+> set up a key for a TPM 2.0 so it can be used with a TPM 2.0 as well.
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 > ---
->  drivers/clk/clk.c | 20 ++++++++++++--------
->  1 file changed, 12 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index d31055ae6ec6..52032fb1a8a2 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1609,11 +1609,18 @@ static int __clk_speculate_rates(struct clk_core *core,
->         return ret;
->  }
->
-> -static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
-> -                            struct clk_core *new_parent, u8 p_index)
-> +static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate)
->  {
->         struct clk_core *child;
->
-> +       core->new_rate = new_rate;
-> +       hlist_for_each_entry(child, &core->children, child_node)
-> +               clk_calc_subtree(child, clk_recalc(child, new_rate));
-> +}
+>  .../security/keys/trusted-encrypted.rst       | 31 ++++++++++++++++++-
+>  1 file changed, 30 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
+> index 3bb24e09a332..6ec6bb2ac497 100644
+> --- a/Documentation/security/keys/trusted-encrypted.rst
+> +++ b/Documentation/security/keys/trusted-encrypted.rst
+> @@ -18,10 +18,33 @@ integrity verifications match.  A loaded Trusted Key can be updated with new
+>  when the kernel and initramfs are updated.  The same key can have many saved
+>  blobs under different PCR values, so multiple boots are easily supported.
+>  
+> +TPM 1.2
+> +-------
 > +
-> +static void clk_set_change(struct clk_core *core, unsigned long new_rate,
-> +                          struct clk_core *new_parent, u8 p_index)
-> +{
->         core->new_rate = new_rate;
->         core->new_parent = new_parent;
->         core->new_parent_index = p_index;
-> @@ -1621,11 +1628,6 @@ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
->         core->new_child = NULL;
->         if (new_parent && new_parent != core->parent)
->                 new_parent->new_child = core;
-> -
-> -       hlist_for_each_entry(child, &core->children, child_node) {
-> -               child->new_rate = clk_recalc(child, new_rate);
-> -               clk_calc_subtree(child, child->new_rate, NULL, 0);
-> -       }
->  }
->
->  /*
-> @@ -1709,7 +1711,7 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
->                 top = clk_calc_new_rates(parent, best_parent_rate);
->
->  out:
-> -       clk_calc_subtree(core, new_rate, parent, p_index);
-> +       clk_set_change(core, new_rate, parent, p_index);
->
->         return top;
->  }
-> @@ -1910,6 +1912,8 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->         if (ret)
->                 return ret;
->
-> +       clk_calc_subtree(top, top->new_rate);
+>  By default, trusted keys are sealed under the SRK, which has the default
+>  authorization value (20 zeros).  This can be set at takeownership time with the
+>  trouser's utility: "tpm_takeownership -u -z".
+
+It appears to be TrouSerS or maybe just trousers (no ').
+
+BTW, is this still the current location for it or has it moved elsewhere?
+http://trousers.sourceforge.net/
+
+
+>  
+> +TPM 2.0
+> +-------
 > +
+> +The user must first create a storage key and make it persistent, so the key is
+> +available after reboot. This can be done using the following commands.
+> +
+> +With the IBM TSS 2 stack::
+> +
+> +  #> tsscreateprimary -hi o -st
+> +  Handle 80000000
+> +  #> tssevictcontrol -hi o -ho 80000000 -hp 81000001
+> +
+> +Or with the Intel TSS 2 stack::
+> +
+> +  #> tpm2_createprimary --hierarchy o -G rsa2048 -o key.ctxt
+> +  [...]
+> +  handle: 0x800000FF
 
-Oops. This is wrong.  Calling here will overwrite new rate settings
-such as when determine_rate/round_rate return something different than
-clk_recalc(core, parent_rate). I'm working on a larger patch series
-where this will be fixed.
+Is that handle value important?  It doesn't seem to be used later...
 
->         /* notify that we are about to change rates */
->         fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
->         if (fail_clk) {
-> --
-> 2.19.0.rc1.350.ge57e33dbd1-goog
->
+> +  #> tpm2_evictcontrol -c key.ctxt -p 0x81000001
+> +  persistentHandle: 0x81000001
+> +
+>  Usage::
+>  
+>      keyctl add trusted name "new keylen [options]" ring
+> @@ -30,7 +53,9 @@ Usage::
+>      keyctl print keyid
+>  
+>      options:
+> -       keyhandle=    ascii hex value of sealing key default 0x40000000 (SRK)
+> +       keyhandle=    ascii hex value of sealing key
+
+s/ascii/ASCII/g
+
+> +                       TPM 1.2: default 0x40000000 (SRK)
+> +                       TPM 2.0: no default; must be passed every time
+>         keyauth=	     ascii hex auth for sealing key default 0x00...i
+>                       (40 ascii zeros)
+>         blobauth=     ascii hex auth for sealed data default 0x00...
+> @@ -84,6 +109,10 @@ Examples of trusted and encrypted key usage:
+>  
+>  Create and save a trusted key named "kmk" of length 32 bytes::
+>  
+> +Note: When using a TPM 2.0 with a persistent key with handle 0x81000001,
+> +append 'keyhandle=0x81000001' to statements between quotes, such as
+> +"new 32 keyhandle=0x81000001".
+> +
+>      $ keyctl add trusted kmk "new 32" @u
+>      440502848
+>  
+> 
+
+ta.
+-- 
+~Randy
