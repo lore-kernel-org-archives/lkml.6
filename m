@@ -2,148 +2,94 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4471FECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B552ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF9452086E
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:16:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MYk4Eni7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF9452086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D51D02086E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 06:18:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D51D02086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbeJSOVQ (ORCPT
+        id S1726976AbeJSOXZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 10:21:16 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36174 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726542AbeJSOVQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 10:21:16 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y16so36106941wrw.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Oct 2018 23:16:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Aimow2ProajN7DU8WTDTFboPJh+9P3zQemmuxA1ErfY=;
-        b=MYk4Eni7XtJGBKx8yrweCgmZHVSynSrudZRlajO8Zp421GmSzy6S+u8LCS0djUevyo
-         H/waYQHsi2ghOXWR/yom5Lqr+PzDd5yDYkydFRPEUBp8XB8KN8wfvSf1b2HJZjZfVwX+
-         GNN4DNIGD2Y07DWedUot2pONb+VIp9AP+swjE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Aimow2ProajN7DU8WTDTFboPJh+9P3zQemmuxA1ErfY=;
-        b=hG444rLJKmyTN6cB7lHplJKHvtgatRIFD3ahC0xbEHZCBVx4kB9qHpYPPrXMBOoa/3
-         pxSBoAY7tC9PMRAUCK4kXK6/EGeORuPft60HWBNQ27Sp/lsGa1bheZdNcGeIbfY8oaz0
-         O73MK3GUxQWGAiy8aETcgojBPB9K2ESmeSg3sY0w01oJU0JGIsrE7RXxHjskqIF/D/pC
-         s6lfq3TdXqcSgOYjLNYrDm9ahAJnJAWr7rUQwIOtlEptdszPOKty2y0+JUtI0Xm2Q7fH
-         RCA7mo8gYGYAsOIb/Wpx17/LuGIqz3h7EMjVXIcaQVAHTRqsRDngpiPYDXNC1J9vHBFf
-         rW7w==
-X-Gm-Message-State: ABuFfoiRD4hCIkvkH3SY0rksJS/gkZXMTBHWsD0fDQxFmSXFfccHXHQP
-        ibXjUdEHQ52wfDUffdcsomQovw==
-X-Google-Smtp-Source: ACcGV61lxMHT10YO1rSFN0gERXaGS+QxKS8fpfTz0FZFKvC3Krby02ZmNDGilLVJjWPW1gURXwFE8Q==
-X-Received: by 2002:adf:ed06:: with SMTP id a6-v6mr30027178wro.262.1539929798017;
-        Thu, 18 Oct 2018 23:16:38 -0700 (PDT)
-Received: from dell ([2.27.167.33])
-        by smtp.gmail.com with ESMTPSA id c24-v6sm35838285wre.44.2018.10.18.23.16.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 18 Oct 2018 23:16:37 -0700 (PDT)
-Date:   Fri, 19 Oct 2018 07:16:35 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Thor Thayer <thor.thayer@linux.intel.com>
-Cc:     peppe.cavallaro@st.com, dinguyen@kernel.org, linux@armlinux.org.uk,
-        alexandre.torgue@st.com, joabreu@synopsys.com, davem@davemloft.net,
-        mchehab+samsung@kernel.org, catalin.marinas@arm.com,
-        akpm@linux-foundation.org, arnd@arndb.de, aisheng.dong@nxp.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/4] Add SOCFPGA System Manager
-Message-ID: <20181019061635.GH4939@dell>
-References: <1537826946-18942-1-git-send-email-thor.thayer@linux.intel.com>
- <021aaa02-1138-e538-3d02-ff639541d0f3@linux.intel.com>
- <a095071e-bd46-e440-fc01-7e2bbaf5964a@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a095071e-bd46-e440-fc01-7e2bbaf5964a@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Fri, 19 Oct 2018 10:23:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46532 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726542AbeJSOXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 10:23:25 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B7DD332FA1;
+        Fri, 19 Oct 2018 06:18:48 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-238.ams2.redhat.com [10.36.116.238])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5D4BF4DA7C;
+        Fri, 19 Oct 2018 06:18:48 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 9129BA8585; Fri, 19 Oct 2018 08:18:47 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 2/6] drm/virtio: use virtio_gpu_object->hw_res_handle in virtio_gpufb_create()
+Date:   Fri, 19 Oct 2018 08:18:43 +0200
+Message-Id: <20181019061847.18958-3-kraxel@redhat.com>
+In-Reply-To: <20181019061847.18958-1-kraxel@redhat.com>
+References: <20181019061847.18958-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 19 Oct 2018 06:18:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 17 Oct 2018, Thor Thayer wrote:
+Drop pointless resid variable in virtio_gpufb_create(), just use
+the hw_res_handle field in virtio_gpu_object directly.
 
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ drivers/gpu/drm/virtio/virtgpu_fb.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> On 10/10/2018 09:42 AM, Thor Thayer wrote:
-> > Hi
-> > On 09/24/2018 05:09 PM, thor.thayer@linux.intel.com wrote:
-> > > From: Thor Thayer <thor.thayer@linux.intel.com>
-> > > 
-> > > Add MFD driver for ARM64 SOCFPGA System Manager to steer
-> > > System Manager calls appropriately.
-> > > The SOCFPGA System Manager includes registers from several
-> > > SOC peripherals.
-> > > 
-> > > On ARM32, syscon handles this aggregated register grouping.
-> > > Redirect System Manager calls to syscon for ARM32 SOCFPGA
-> > > systems.
-> > > 
-> > > The ARM64 System Manager can only be accessed from priority
-> > > level EL3 so this new MFD driver handles the calls to EL3.
-> > > 
-> > > Thor Thayer (4):
-> > >    mfd: altera-sysmgr: Add SOCFPGA System Manager abstraction
-> > >    ARM: socfpga_defconfig: Enable CONFIG_MTD_ALTERA_SYSMGR
-> > >    arm64: defconfig: Enable CONFIG_MTD_ALTERA_SYSMGR
-> > >    net: stmmac: socfpga: Convert to shared System Manager driver
-> > > 
-> > >   MAINTAINERS                                        |   6 +
-> > >   arch/arm/configs/socfpga_defconfig                 |   1 +
-> > >   arch/arm64/configs/defconfig                       |   1 +
-> > >   drivers/mfd/Kconfig                                |   9 +
-> > >   drivers/mfd/Makefile                               |   1 +
-> > >   drivers/mfd/altera-sysmgr.c                        | 310
-> > > +++++++++++++++++++++
-> > >   .../net/ethernet/stmicro/stmmac/dwmac-socfpga.c    |   4 +-
-> > >   include/linux/mfd/altera-sysmgr.h                  | 113 ++++++++
-> > >   8 files changed, 444 insertions(+), 1 deletion(-)
-> > >   create mode 100644 drivers/mfd/altera-sysmgr.c
-> > >   create mode 100644 include/linux/mfd/altera-sysmgr.h
-> > > 
-> > Gentle ping.
-> 
-> Gentle ping again...
-> 
-> Any comments on this patch series?
-
-"Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
-Sending content free pings just adds to the mail volume (if they are
-seen at all) and if something has gone wrong you'll have to resend the
-patches anyway so resending with any comments addressed is generally a
-much better approach."
-
-In this case, the we are too late in the series to have these
-applied.  Maintainers are generally preparing their submissions for
-the merge-window.  The MFD component of this set is marked as "To
-Review" and I will get around to it when time is more abundant.
-
+diff --git a/drivers/gpu/drm/virtio/virtgpu_fb.c b/drivers/gpu/drm/virtio/virtgpu_fb.c
+index d39f4f3350..800960bdd9 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_fb.c
++++ b/drivers/gpu/drm/virtio/virtgpu_fb.c
+@@ -214,7 +214,7 @@ static int virtio_gpufb_create(struct drm_fb_helper *helper,
+ 	struct drm_framebuffer *fb;
+ 	struct drm_mode_fb_cmd2 mode_cmd = {};
+ 	struct virtio_gpu_object *obj;
+-	uint32_t resid, format, size;
++	uint32_t format, size;
+ 	int ret;
+ 
+ 	mode_cmd.width = sizes->surface_width;
+@@ -231,8 +231,8 @@ static int virtio_gpufb_create(struct drm_fb_helper *helper,
+ 	if (IS_ERR(obj))
+ 		return PTR_ERR(obj);
+ 
+-	virtio_gpu_resource_id_get(vgdev, &resid);
+-	virtio_gpu_cmd_create_resource(vgdev, obj, resid, format,
++	virtio_gpu_resource_id_get(vgdev, &obj->hw_res_handle);
++	virtio_gpu_cmd_create_resource(vgdev, obj, obj->hw_res_handle, format,
+ 				       mode_cmd.width, mode_cmd.height);
+ 
+ 	ret = virtio_gpu_object_kmap(obj);
+@@ -242,7 +242,7 @@ static int virtio_gpufb_create(struct drm_fb_helper *helper,
+ 	}
+ 
+ 	/* attach the object to the resource */
+-	ret = virtio_gpu_object_attach(vgdev, obj, resid, NULL);
++	ret = virtio_gpu_object_attach(vgdev, obj, obj->hw_res_handle, NULL);
+ 	if (ret)
+ 		goto err_obj_attach;
+ 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.9.3
+
