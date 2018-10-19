@@ -5,49 +5,49 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F404ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDCBECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E44DC21486
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:46:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E44DC21486
+	by mail.kernel.org (Postfix) with ESMTP id A2B8620869
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 20:48:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2B8620869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbeJTEyE (ORCPT
+        id S1726875AbeJTEzn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 00:54:04 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:54323 "EHLO
+        Sat, 20 Oct 2018 00:55:43 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:36516 "EHLO
         mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbeJTEyE (ORCPT
+        with ESMTP id S1726321AbeJTEzm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 00:54:04 -0400
+        Sat, 20 Oct 2018 00:55:42 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 82E2623356;
-        Fri, 19 Oct 2018 20:46:22 +0000 (UTC)
+        by mailout.easymail.ca (Postfix) with ESMTP id 380E5C1B9F;
+        Fri, 19 Oct 2018 20:48:00 +0000 (UTC)
 Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id f1KBOZHXLuuL; Fri, 19 Oct 2018 20:46:22 +0000 (UTC)
+        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Vqde7CjVemYi; Fri, 19 Oct 2018 20:48:00 +0000 (UTC)
 Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id 3249F2332C;
-        Fri, 19 Oct 2018 20:46:08 +0000 (UTC)
-Subject: Re: [PATCH 4.9 00/35] 4.9.135-stable review
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 42C0ABF41B;
+        Fri, 19 Oct 2018 20:47:47 +0000 (UTC)
+Subject: Re: [PATCH 4.4 00/48] 4.4.162-stable review
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
         linux@roeck-us.net, patches@kernelci.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <20181018175422.506152522@linuxfoundation.org>
+        stable@vger.kernel.org
+References: <20181018175427.133690306@linuxfoundation.org>
 From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <7b9ef197-3302-a0fa-6070-6c6876b22e78@kernel.org>
-Date:   Fri, 19 Oct 2018 14:46:08 -0600
+Message-ID: <b09279ec-4f74-1129-6aea-4569b1780f64@kernel.org>
+Date:   Fri, 19 Oct 2018 14:47:47 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181018175422.506152522@linuxfoundation.org>
+In-Reply-To: <20181018175427.133690306@linuxfoundation.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -57,18 +57,18 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 10/18/2018 11:54 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.135 release.
-> There are 35 patches in this series, all will be posted as a response
+> This is the start of the stable review cycle for the 4.4.162 release.
+> There are 48 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
-> Responses should be made by Sat Oct 20 17:54:00 UTC 2018.
+> Responses should be made by Sat Oct 20 17:54:03 UTC 2018.
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.135-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.162-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -80,3 +80,4 @@ Compiled and booted on my test system. No dmesg regressions.
 
 thanks,
 -- Shuah
+
