@@ -2,98 +2,115 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E4AECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17318ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78C642087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:30:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="j+WIqOOS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78C642087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	by mail.kernel.org (Postfix) with ESMTP id CC9F62148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 17:32:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC9F62148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbeJTBhS (ORCPT
+        id S1727828AbeJTBjN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 21:37:18 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:38328 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727188AbeJTBhS (ORCPT
+        Fri, 19 Oct 2018 21:39:13 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:40100 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727338AbeJTBjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 21:37:18 -0400
-Received: by mail-it1-f195.google.com with SMTP id i76-v6so5382213ita.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 10:30:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=u96BddKAYiZe8VzrG4NtO6GUS8HvDnOgQ7yqKU2D5j4=;
-        b=j+WIqOOSPUDuLiHYe+4popSx+VeoOIQ0GQw5zY7BewhbCnScj4iHAJQP54yfm8LAgs
-         i7ctR5k28+ctx8x38imBZVUXwm4G9EMBZT/m0ErvuCSS+wlgC++/q9/OZaGX6Y9DRRtB
-         94KaUb2Aw3a++s7B/c3tTmLlcjtSzzon1yaMY=
+        Fri, 19 Oct 2018 21:39:12 -0400
+Received: from mr2.cc.vt.edu (mail.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w9JHWAAi019507
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 13:32:10 -0400
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w9JHW5c1013198
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 13:32:10 -0400
+Received: by mail-qt1-f198.google.com with SMTP id 4-v6so36483423qtt.22
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 10:32:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=u96BddKAYiZe8VzrG4NtO6GUS8HvDnOgQ7yqKU2D5j4=;
-        b=VWH5fQQAQRCICrfflommpIMp6FuoeYawOmviJXuIqMth3v1Y05f46aiClPAR1Ca87W
-         29OHfX5JHSgsslIRvGCW/I+LYM57O373uHSNG36bSOnvTzjhn2GRGz1Usjo35PZ2kqCA
-         UIBkzuxD8kjYsSSKWkZR262ZyTVX+eHt3cUlh7JG2ZAaKUkv5yvSddRUL+PQxF2cFrsG
-         fIGeRdtce8AydVCOlo1uxzvN39+ctUbv5jl0D88W3PgCs4gNYyYM/7ntjCq7WCm+gKC3
-         M0XePV7DD03YAUYAFSwQCRC9e35zuMz0m9FfyvLjUEdPWwrnHjSxQlTSrpQxPz6/XPx+
-         xyvQ==
-X-Gm-Message-State: ABuFfoi24yEGq5CvYi2cy9u6u97vzXd+3IBZQvEWvrAKJFA2YDcTd3z/
-        APNXu7Cv7m8gMNUV7NXE8F6KYZttb0ASGnf9UXll3w==
-X-Google-Smtp-Source: ACcGV62xSY1CPwiPdGS6Dkgrj55gQEyJ77jPenxL577P5ing63vq9ajb9HXFgHWXx+BR1YfUm2pXNmMveM0p6uETs18=
-X-Received: by 2002:a24:75d6:: with SMTP id y205-v6mr3942181itc.1.1539970215970;
- Fri, 19 Oct 2018 10:30:15 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:bf41:0:0:0:0:0 with HTTP; Fri, 19 Oct 2018 10:30:15
- -0700 (PDT)
-X-Originating-IP: [212.96.48.140]
-In-Reply-To: <17323.1539964061@warthog.procyon.org.uk>
-References: <20181019122049.27121-1-mszeredi@redhat.com> <20181019122049.27121-2-mszeredi@redhat.com>
- <16382.1539963322@warthog.procyon.org.uk> <CAJfpegviiy=9fru3zButbqLnhshH85srH3qyZO2zf-_RPqSs=g@mail.gmail.com>
- <17323.1539964061@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 19 Oct 2018 19:30:15 +0200
-Message-ID: <CAJfpegut_rcnssaaN2duCJruJOAJ+tzDsA0uUSEiNwS-QddArQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] uapi: deprecate STATX_ALL
-To:     David Howells <dhowells@redhat.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Florian Weimer <fw@deneb.enyo.de>,
-        Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=lXbgz/gQPPzbY8TXj/WsWvtvGmHbTPTrxs/knma1r+s=;
+        b=CoUw2zNy6cKbiR6l/gY8fmYMqecGVFanrWfD1/fj+77vaS3bDwGLd+qm7vNN8DRQuR
+         qzoZOHZISZ+8IqQoXKs2TF7Zi4qddpK1GL5qVvTCC5ww98CvHPVQy5yAnPw0ZhMT7fPj
+         XSl8AXkRCN1eD+mLeOXhLrp+trnvzLFzX4Dkcho5xv2UBmCEYZ3tNHsSQRGhKNJgJF7t
+         OnHH/pf2ebfsurxAkpT3IimeJzOZEhYF6bBZUCC27mPryGPau7/ApWT1+WYv7E20WP2K
+         QyHEy6S0yvrRnmgcagC66RFNF8xsnUxP/Td1rE1R22/I2ASJkYDw6P0beoqBRgOIwyXj
+         Os/w==
+X-Gm-Message-State: ABuFfojOJ3GwA1dl/bvHkL5ExLZzsE65u2MFCjYVQUAOB6o62Zm2PtH0
+        jnlSgdiLUInglHSj72IitVXDxp+g6KQy+EvA2PjGiWTeVLEErYlkJmzQKCCyGO5zeAnaX/y4PV7
+        5qDzxoj2NtmVg4HAPDLZDClTwDdvEgzd4Rno=
+X-Received: by 2002:a0c:967b:: with SMTP id 56mr35271023qvy.62.1539970325077;
+        Fri, 19 Oct 2018 10:32:05 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV63jMuiZvgZ9MCTus6pooGo920BAICiYyrpf37xWxL+IDlvWExknslR9Z2awnIY+hWt73iyVfA==
+X-Received: by 2002:a0c:967b:: with SMTP id 56mr35270984qvy.62.1539970324777;
+        Fri, 19 Oct 2018 10:32:04 -0700 (PDT)
+Received: from turing-police.cc.vt.edu (turing-police.cc.ipv6.vt.edu. [2001:468:c80:2103:f21f:afff:fe0c:8ada])
+        by smtp.gmail.com with ESMTPSA id w39-v6sm17659595qtc.84.2018.10.19.10.32.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 19 Oct 2018 10:32:03 -0700 (PDT)
+From:   valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        jreck@google.com, john.stultz@linaro.org, tkjos@google.com,
+        gregkh@linuxfoundation.org, hch@infradead.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>, dancol@google.com,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-mm@kvack.org, marcandre.lureau@redhat.com,
+        Mike Kravetz <mike.kravetz@oracle.com>, minchan@kernel.org,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to memfd
+In-Reply-To: <20181018065908.254389-1-joel@joelfernandes.org>
+References: <20181018065908.254389-1-joel@joelfernandes.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1539970322_3102P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 19 Oct 2018 13:32:02 -0400
+Message-ID: <42922.1539970322@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 5:47 PM, David Howells <dhowells@redhat.com> wrote:
-> Miklos Szeredi <miklos@szeredi.hu> wrote:
->
->> What is misleading about this?
->
-> The manpage says:
->
->            STATX_ALL           [All currently available fields]
+--==_Exmh_1539970322_3102P
+Content-Type: text/plain; charset=us-ascii
 
-Ah, the manpage needs to be fixed, obviously.
+On Wed, 17 Oct 2018 23:59:07 -0700, "Joel Fernandes (Google)" said:
+> This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
+> To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE seal
+> which prevents any future mmap and write syscalls from succeeding while
+> keeping the existing mmap active. The following program shows the seal
+> working in action:
 
->
->> If you feel confused by this comment, then maybe I should just drop that part.
->
-> I think that would be better.  Don't try to give it a definition.
+What is supposed to happen if some other process has an already existing R/W
+mmap of the region?  (For that matter, the test program doesn't seem to
+actually test that the existing mmap region remains writable?)
 
-Okay.
 
-Thanks,
-Miklos
+--==_Exmh_1539970322_3102P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
+
+iQEVAwUBW8oVEo0DS38y7CIcAQLWJQf8DQ1cQowO3bfaWQWZBNXxbcCeCMPYgp1w
+3XFonoT+hSpd45gHazrRRXmfR3BJ0wb9wZHsE0CCCpmuXlNnH2WOmKB7/ly/5lb8
+RQhT8ahp8/OzRpRnfDlLQEIbAY/5kT4XGRf1wjVBnonPYY8aXjSj44dyBIaPh8XZ
+GJLYEL6++rWifApraHDHgBbMQCEn7HMXnvoHtIcV3/ihRj+bo7H74Cr8S7e6dPCP
+sLtruVLu00SYYHkTI6l0rSAZiMiYJnVyuk3bju4jTMqX7KayRCmzS9X+65F5jb/M
+qJhZ/DLjV/n3/DqK9u2z5tOsiN4scyW1ThQpK+tjXj0SC+9a0VoAoQ==
+=fFpS
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1539970322_3102P--
