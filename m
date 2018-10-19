@@ -2,154 +2,132 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB20AECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D25EECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9C4820843
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:07:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3FE321486
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 23:12:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cy+uNphZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9C4820843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CE0GNSme"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3FE321486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbeJTHPu (ORCPT
+        id S1726758AbeJTHUU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 03:15:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45372 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726313AbeJTHPu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 03:15:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=XvCEkyluSs7jGXv7Lo56mq9keFZ/azWA2mq/i3R/8mY=; b=Cy+uNphZ1C4zjPmU87pSTWeAK
-        H7ZTKyRsqu4WhkOJ30pugCBS7831mV3QM1cmb8CnINhb7qvLgMeD2yV8tNUO+m1xs009MQ635I6zw
-        BHpzpatRi09XE9PvgBUSV4STjTdd1pVLWlUYC9S5qovA4oXCe5M5N8KcQCuG6xUeIPe9WHClUFvRx
-        G2uZbq+Hlwo9/jMjsSWZYUXbjfUS0zAIOunCuQxQSGTxQMGTAJEuezNigYFEu7BtwwYPOMTcTX+0z
-        WN403RmxgULlzIRyhNBOuCkSqcypZCk8c4j/2vtOGhe+dN5UqIvrFfCnx7Mb4HfkFa0vw4qrThww8
-        /CVF0k3gg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gDdrr-00010O-Iz; Fri, 19 Oct 2018 23:07:43 +0000
-Subject: Re: [PATCH] docs: Extend trusted keys documentation for TPM 2.0
-To:     Stefan Berger <stefanb@linux.ibm.com>, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, jejb@linux.ibm.com,
-        Alexander.Levin@microsoft.com, jsnitsel@redhat.com,
-        jmorris@namei.org, linux-kernel@vger.kernel.org
-References: <20181019101758.1569-1-stefanb@linux.ibm.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a55a53a8-1308-aff3-afb8-6cbe0ffa1bee@infradead.org>
-Date:   Fri, 19 Oct 2018 16:07:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 20 Oct 2018 03:20:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33112 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726313AbeJTHUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 03:20:19 -0400
+Received: from localhost (unknown [104.132.1.80])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5722A2098A;
+        Fri, 19 Oct 2018 23:12:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539990733;
+        bh=ewrgquPRzYvGDCPzyPdiJDETsx27Z22pQlDIH30xTMU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CE0GNSme0bg6ohEVd6mKwSvDiKk2y+HrG4K0PQGQEx1bIuET8bEMyvyssigfMa2Ju
+         WGjipbySO30e6X0PdekSlrVH/kGt6OTyr1UUcQ9CWjcGjpUkca02HdsNbUwtMnluVf
+         qsOV+2t1BtZ9lu2eqpSGm3PcITj4fG3PfFpJ0NW4=
+Date:   Fri, 19 Oct 2018 16:12:12 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, chao@kernel.org
+Subject: Re: [PATCH] f2fs: fix to account IO correctly
+Message-ID: <20181019231212.GB11541@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20181017094954.67547-1-yuchao0@huawei.com>
+ <20181018190612.GD50556@jaegeuk-macbookpro.roam.corp.google.com>
+ <9e586616-5cfa-5515-008c-e7bba1e3c4a1@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20181019101758.1569-1-stefanb@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9e586616-5cfa-5515-008c-e7bba1e3c4a1@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-Feel free to ignore my comments.  I don't know anything about TPM.
-
-On 10/19/18 3:17 AM, Stefan Berger wrote:
-> Extend the documentation for trusted keys with documentation for how to
-> set up a key for a TPM 2.0 so it can be used with a TPM 2.0 as well.
+On 10/19, Chao Yu wrote:
+> On 2018/10/19 3:06, Jaegeuk Kim wrote:
+> > 
+> > On 10/17, Chao Yu wrote:
+> >> Below race can cause reversed reference on F2FS_RD_DATA, there is
+> >> the same issue in f2fs_submit_page_bio(), fix them by relocate
+> >> __submit_bio() and inc_page_count.
+> >>
+> >> Thread A			Thread B
+> >> - f2fs_write_begin
+> >>  - f2fs_submit_page_read
+> >>  - __submit_bio
+> >> 				- f2fs_read_end_io
+> >> 				 - __read_end_io
+> >> 				 - dec_page_count(, F2FS_RD_DATA)
+> >>  - inc_page_count(, F2FS_RD_DATA)
+> > 
+> > Let me integrate the change into the original patch and test a bit.
 > 
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  .../security/keys/trusted-encrypted.rst       | 31 ++++++++++++++++++-
->  1 file changed, 30 insertions(+), 1 deletion(-)
+> IMO, it will be better to split this change into two, we can fix the
+> location of inc_page_count(, F2FS_RD_DATA) directly in your patch,
+> meanwhile we can add one more patch to fix the same issue in
+> f2fs_submit_page_bio(), in where the problem exists for long time, it needs
+> to send fixing patch to stable kernel mailing list.
+
+How about this?
+
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=3cca724d115fc1590c46585e264a391da06c345a
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=8e3eed6f80c9c4cfe875f995b38dde590e444dc6
+
 > 
-> diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-> index 3bb24e09a332..6ec6bb2ac497 100644
-> --- a/Documentation/security/keys/trusted-encrypted.rst
-> +++ b/Documentation/security/keys/trusted-encrypted.rst
-> @@ -18,10 +18,33 @@ integrity verifications match.  A loaded Trusted Key can be updated with new
->  when the kernel and initramfs are updated.  The same key can have many saved
->  blobs under different PCR values, so multiple boots are easily supported.
->  
-> +TPM 1.2
-> +-------
-> +
->  By default, trusted keys are sealed under the SRK, which has the default
->  authorization value (20 zeros).  This can be set at takeownership time with the
->  trouser's utility: "tpm_takeownership -u -z".
-
-It appears to be TrouSerS or maybe just trousers (no ').
-
-BTW, is this still the current location for it or has it moved elsewhere?
-http://trousers.sourceforge.net/
-
-
->  
-> +TPM 2.0
-> +-------
-> +
-> +The user must first create a storage key and make it persistent, so the key is
-> +available after reboot. This can be done using the following commands.
-> +
-> +With the IBM TSS 2 stack::
-> +
-> +  #> tsscreateprimary -hi o -st
-> +  Handle 80000000
-> +  #> tssevictcontrol -hi o -ho 80000000 -hp 81000001
-> +
-> +Or with the Intel TSS 2 stack::
-> +
-> +  #> tpm2_createprimary --hierarchy o -G rsa2048 -o key.ctxt
-> +  [...]
-> +  handle: 0x800000FF
-
-Is that handle value important?  It doesn't seem to be used later...
-
-> +  #> tpm2_evictcontrol -c key.ctxt -p 0x81000001
-> +  persistentHandle: 0x81000001
-> +
->  Usage::
->  
->      keyctl add trusted name "new keylen [options]" ring
-> @@ -30,7 +53,9 @@ Usage::
->      keyctl print keyid
->  
->      options:
-> -       keyhandle=    ascii hex value of sealing key default 0x40000000 (SRK)
-> +       keyhandle=    ascii hex value of sealing key
-
-s/ascii/ASCII/g
-
-> +                       TPM 1.2: default 0x40000000 (SRK)
-> +                       TPM 2.0: no default; must be passed every time
->         keyauth=	     ascii hex auth for sealing key default 0x00...i
->                       (40 ascii zeros)
->         blobauth=     ascii hex auth for sealed data default 0x00...
-> @@ -84,6 +109,10 @@ Examples of trusted and encrypted key usage:
->  
->  Create and save a trusted key named "kmk" of length 32 bytes::
->  
-> +Note: When using a TPM 2.0 with a persistent key with handle 0x81000001,
-> +append 'keyhandle=0x81000001' to statements between quotes, such as
-> +"new 32 keyhandle=0x81000001".
-> +
->      $ keyctl add trusted kmk "new 32" @u
->      440502848
->  
+> Thanks,
 > 
-
-ta.
--- 
-~Randy
+> > 
+> > Thanks,
+> > 
+> >>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >>  fs/f2fs/data.c | 6 +++---
+> >>  1 file changed, 3 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> >> index c03bd0c2ed22..8b9240762156 100644
+> >> --- a/fs/f2fs/data.c
+> >> +++ b/fs/f2fs/data.c
+> >> @@ -480,10 +480,10 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+> >>  	}
+> >>  	bio_set_op_attrs(bio, fio->op, fio->op_flags);
+> >>  
+> >> -	__submit_bio(fio->sbi, bio, fio->type);
+> >> -
+> >>  	inc_page_count(fio->sbi, is_read_io(fio->op) ?
+> >>  			__read_io_type(page): WB_DATA_TYPE(fio->page));
+> >> +
+> >> +	__submit_bio(fio->sbi, bio, fio->type);
+> >>  	return 0;
+> >>  }
+> >>  
+> >> @@ -612,8 +612,8 @@ static int f2fs_submit_page_read(struct inode *inode, struct page *page,
+> >>  		return -EFAULT;
+> >>  	}
+> >>  	ClearPageError(page);
+> >> -	__submit_bio(F2FS_I_SB(inode), bio, DATA);
+> >>  	inc_page_count(F2FS_I_SB(inode), F2FS_RD_DATA);
+> >> +	__submit_bio(F2FS_I_SB(inode), bio, DATA);
+> >>  	return 0;
+> >>  }
+> >>  
+> >> -- 
+> >> 2.18.0.rc1
+> > 
+> > .
+> > 
