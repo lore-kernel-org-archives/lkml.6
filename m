@@ -3,43 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01097ECDE43
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D36BECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 997E520645
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:50:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 997E520645
+	by mail.kernel.org (Postfix) with ESMTP id DACBB20645
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:50:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DACBB20645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbeJSRzf (ORCPT
+        id S1727410AbeJSRzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 13:55:35 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:60374 "EHLO
+        Fri, 19 Oct 2018 13:55:36 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:60376 "EHLO
         mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726903AbeJSRzf (ORCPT
+        by vger.kernel.org with ESMTP id S1726867AbeJSRzf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 19 Oct 2018 13:55:35 -0400
 Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9J9nq6q018797;
+        by mx0b-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9J9nq6p018797;
         Fri, 19 Oct 2018 04:50:05 -0500
 Authentication-Results: ppops.net;
         spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2n3es40mhc-1;
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2n3es40mhb-1;
         Fri, 19 Oct 2018 04:50:05 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id 1A6BD611C8B8;
-        Fri, 19 Oct 2018 04:52:56 -0500 (CDT)
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id AE8FA611C8A7;
+        Fri, 19 Oct 2018 04:52:23 -0500 (CDT)
 Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
  (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Fri, 19 Oct 2018
  10:50:03 +0100
 Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w9J9o3p1015276; Fri,
- 19 Oct 2018 10:50:04 +0100
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w9J9o3ow015276; Fri,
+ 19 Oct 2018 10:50:03 +0100
 From:   Charles Keepax <ckeepax@opensource.cirrus.com>
 To:     <lee.jones@linaro.org>, <mturquette@baylibre.com>,
         <sboyd@kernel.org>, <broonie@kernel.org>,
@@ -48,12 +48,10 @@ CC:     <mark.rutland@arm.com>, <lgirdwood@gmail.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <patches@opensource.cirrus.com>, <linux-clk@vger.kernel.org>,
         <linux-gpio@vger.kernel.org>
-Subject: [PATCH v3 4/5] regulator: lochnagar: Add support for the Cirrus Logic Lochnagar
-Date:   Fri, 19 Oct 2018 10:50:02 +0100
-Message-ID: <20181019095003.26046-4-ckeepax@opensource.cirrus.com>
+Subject: [PATCH v3 1/5] mfd: lochnagar: Add initial binding documentation
+Date:   Fri, 19 Oct 2018 10:49:59 +0100
+Message-ID: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
-References: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
@@ -73,66 +71,273 @@ connection of various application processor systems to provide a
 full evaluation platform. This driver supports the board
 controller chip on the Lochnagar board.
 
-The Lochnagar board provides power supplies for the attached
-CODEC/Amp device. Currently this driver supports the microphone
-supplies and the digital core voltage for the attached
-device. There are some additional supplies that will be
-added in time but these supplies are sufficient for most
-systems/use-cases.
-
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
 
-No changes since v2.
+Changes since v2:
+ - Used vendor prefix on aif-master and aif-slave
+ - Used -gpios instead of -gpio in example DT
+ - Used - rather than _ on node names in example DT
+ - Removed some clocks from the clock DT binding doc since they are
+   now being registered purely through DT as fixed clocks
 
 Thanks,
 Charles
 
- drivers/regulator/Kconfig               |   7 +
- drivers/regulator/Makefile              |   1 +
- drivers/regulator/lochnagar-regulator.c | 255 ++++++++++++++++++++++++++++++++
- 3 files changed, 263 insertions(+)
- create mode 100644 drivers/regulator/lochnagar-regulator.c
+ .../devicetree/bindings/mfd/cirrus,lochnagar.txt   | 230 +++++++++++++++++++++
+ include/dt-bindings/clk/lochnagar.h                |  26 +++
+ include/dt-bindings/pinctrl/lochnagar.h            | 132 ++++++++++++
+ 3 files changed, 388 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/cirrus,lochnagar.txt
+ create mode 100644 include/dt-bindings/clk/lochnagar.h
+ create mode 100644 include/dt-bindings/pinctrl/lochnagar.h
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 329cdd33ed624..3eda02afdcdeb 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -356,6 +356,13 @@ config REGULATOR_LM363X
- 	  One boost output voltage is configurable and always on.
- 	  Other LDOs are used for the display module.
- 
-+config REGULATOR_LOCHNAGAR
-+	tristate "Cirrus Logic Lochnagar regulator driver"
-+	depends on MFD_LOCHNAGAR
-+	help
-+	  This enables regulator support on the Cirrus Logic Lochnagar audio
-+	  development board.
-+
- config REGULATOR_LP3971
- 	tristate "National Semiconductors LP3971 PMIC regulator driver"
- 	depends on I2C
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index 801d9a34a2037..0c715fa77bd62 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -46,6 +46,7 @@ obj-$(CONFIG_REGULATOR_HI655X) += hi655x-regulator.o
- obj-$(CONFIG_REGULATOR_ISL6271A) += isl6271a-regulator.o
- obj-$(CONFIG_REGULATOR_ISL9305) += isl9305.o
- obj-$(CONFIG_REGULATOR_LM363X) += lm363x-regulator.o
-+obj-$(CONFIG_REGULATOR_LOCHNAGAR) += lochnagar-regulator.o
- obj-$(CONFIG_REGULATOR_LP3971) += lp3971.o
- obj-$(CONFIG_REGULATOR_LP3972) += lp3972.o
- obj-$(CONFIG_REGULATOR_LP872X) += lp872x.o
-diff --git a/drivers/regulator/lochnagar-regulator.c b/drivers/regulator/lochnagar-regulator.c
+diff --git a/Documentation/devicetree/bindings/mfd/cirrus,lochnagar.txt b/Documentation/devicetree/bindings/mfd/cirrus,lochnagar.txt
 new file mode 100644
-index 0000000000000..54d791d204080
+index 0000000000000..4bed850aa7101
 --- /dev/null
-+++ b/drivers/regulator/lochnagar-regulator.c
-@@ -0,0 +1,255 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/Documentation/devicetree/bindings/mfd/cirrus,lochnagar.txt
+@@ -0,0 +1,230 @@
++Cirrus Logic Lochnagar Audio Development Board
++
++Lochnagar is an evaluation and development board for Cirrus Logic
++Smart CODEC and Amp devices. It allows the connection of most Cirrus
++Logic devices on mini-cards, as well as allowing connection of
++various application processor systems to provide a full evaluation
++platform.  Audio system topology, clocking and power can all be
++controlled through the Lochnagar, allowing the device under test
++to be used in a variety of possible use cases.
++
++Also see these documents for generic binding information:
++  [1] GPIO : ../gpio/gpio.txt
++  [2] Pinctrl: ../pinctrl/pinctrl-bindings.txt
++  [3] Clock : ../clock/clock-bindings.txt
++  [4] Regulator: ../regulator/regulator.txt
++
++And these for relevant defines:
++  [5] include/dt-bindings/pinctrl/lochnagar.h
++  [6] include/dt-bindings/clock/lochnagar.h
++
++Required properties:
++
++  - compatible : One of the following strings:
++                 "cirrus,lochnagar1"
++                 "cirrus,lochnagar2"
++
++  - reg : I2C slave address
++
++  - gpio-controller : Indicates this device is a GPIO controller.
++  - #gpio-cells : Must be 2. The first cell is the pin number, see
++    [5] for available pins and the second cell is used to specify
++    optional parameters, see [1].
++  - gpio-ranges : Range of pins managed by the GPIO controller, see
++    [1]. Both the GPIO and Pinctrl base should be set to zero and the
++    count to the appropriate of the LOCHNAGARx_PIN_NUM_GPIOS define,
++    see [5].
++
++  - reset-gpios : Reset line to the Lochnagar, see [1].
++
++  - #clock-cells : Must be 1. The first cell indicates the clock
++    number, see [6] for available clocks and [3].
++
++  - pinctrl-names : A pinctrl state named "default" must be defined.
++  - pinctrl-0 : A phandle to the default pinctrl state.
++
++  - SYSVDD-supply: Primary power supply for the Lochnagar.
++
++Optional properties:
++
++  - present-gpios : Host present line, indicating the presence of a
++    host system, see [1]. This can be omitted if the present line is
++    tied in hardware.
++
++  - clocks : Must contain an entry for each clock in clock-names.
++  - clock-names : May contain entries for each of the following
++    clocks:
++     - ln-cdc-clkout : Output clock from CODEC card.
++     - ln-dsp-clkout : Output clock from DSP card.
++     - ln-gf-mclk1,ln-gf-mclk2,ln-gf-mclk3,ln-gf-mclk4 : Optional
++       input audio clocks from host system.
++     - ln-psia1-mclk, ln-psia2-mclk : Optional input audio clocks from
++       external connector.
++     - ln-spdif-clkout : Optional input audio clock from SPDIF.
++     - ln-adat-clkout : Optional input audio clock from ADAT.
++
++  - assigned-clocks : A list of Lochnagar clocks to be reparented, see
++    [6] for available clocks.
++  - assigned-clock-parents : Parents to be assigned to the clocks
++    listed in "assigned-clocks".
++
++  - MICBIAS1-supply, MICBIAS2-supply: Regulator supplies for the
++    MICxVDD outputs, supplying the digital microphones, normally
++    supplied from the attached CODEC.
++
++Required sub-nodes:
++
++The pin configurations are defined as a child of the pinctrl states
++node, see [2]. Each sub-node can have the following properties:
++  - groups : A list of groups to select (either this or "pins" must be
++    specified), available groups:
++      codec-aif1, codec-aif2, codec-aif3, dsp-aif1, dsp-aif2, psia1,
++      psia2, gf-aif1, gf-aif2, gf-aif3, gf-aif4, spdif-aif, usb-aif1,
++      usb-aif2, adat-aif, soundcard-aif
++  - pins : A list of pin names to select (either this or "groups" must
++    be specified), available pins:
++      fgpa-gpio1, fgpa-gpio2, fgpa-gpio3, fgpa-gpio4, fgpa-gpio5,
++      fgpa-gpio6, codec-gpio1, codec-gpio2, codec-gpio3, codec-gpio4,
++      codec-gpio5, codec-gpio6, codec-gpio7, codec-gpio8, dsp-gpio1,
++      dsp-gpio2, dsp-gpio3, dsp-gpio4, dsp-gpio5, dsp-gpio6, gf-gpio2,
++      gf-gpio3, gf-gpio7, codec-aif1-bclk, codec-aif1-rxdat,
++      codec-aif1-lrclk, codec-aif1-txdat, codec-aif2-bclk,
++      codec-aif2-rxdat, codec-aif2-lrclk, codec-aif2-txdat,
++      codec-aif3-bclk, codec-aif3-rxdat, codec-aif3-lrclk,
++      codec-aif3-txdat, dsp-aif1-bclk, dsp-aif1-rxdat, dsp-aif1-lrclk,
++      dsp-aif1-txdat, dsp-aif2-bclk, dsp-aif2-rxdat,
++      dsp-aif2-lrclk, dsp-aif2-txdat, psia1-bclk, psia1-rxdat,
++      psia1-lrclk, psia1-txdat, psia2-bclk, psia2-rxdat, psia2-lrclk,
++      psia2-txdat, gf-aif3-bclk, gf-aif3-rxdat, gf-aif3-lrclk,
++      gf-aif3-txdat, gf-aif4-bclk, gf-aif4-rxdat, gf-aif4-lrclk,
++      gf-aif4-txdat, gf-aif1-bclk, gf-aif1-rxdat, gf-aif1-lrclk,
++      gf-aif1-txdat, gf-aif2-bclk, gf-aif2-rxdat, gf-aif2-lrclk,
++      gf-aif2-txdat, dsp-uart1-rx, dsp-uart1-tx, dsp-uart2-rx,
++      dsp-uart2-tx, gf-uart2-rx, gf-uart2-tx, usb-uart-rx,
++      codec-pdmclk1, codec-pdmdat1, codec-pdmclk2, codec-pdmdat2,
++      codec-dmicclk1, codec-dmicdat1, codec-dmicclk2, codec-dmicdat2,
++      codec-dmicclk3, codec-dmicdat3, codec-dmicclk4, codec-dmicdat4,
++      dsp-dmicclk1, dsp-dmicdat1, dsp-dmicclk2, dsp-dmicdat2, i2c2-scl,
++      i2c2-sda, i2c3-scl, i2c3-sda, i2c4-scl, i2c4-sda, dsp-standby,
++      codec-mclk1, codec-mclk2, dsp-clkin, psia1-mclk, psia2-mclk,
++      gf-gpio1, gf-gpio5, dsp-gpio20, led1, led2
++  - function : The mux function to select, available functions:
++      aif, fgpa-gpio1, fgpa-gpio2, fgpa-gpio3, fgpa-gpio4, fgpa-gpio5,
++      fgpa-gpio6, codec-gpio1, codec-gpio2, codec-gpio3, codec-gpio4,
++      codec-gpio5, codec-gpio6, codec-gpio7, codec-gpio8, dsp-gpio1,
++      dsp-gpio2, dsp-gpio3, dsp-gpio4, dsp-gpio5, dsp-gpio6, gf-gpio2,
++      gf-gpio3, gf-gpio7, gf-gpio1, gf-gpio5, dsp-gpio20, codec-clkout,
++      dsp-clkout, pmic-32k, spdif-clkout, clk-12m288, clk-11m2986,
++      clk-24m576, clk-22m5792, xmos-mclk, gf-clkout1, gf-mclk1,
++      gf-mclk3, gf-mclk2, gf-clkout2, codec-mclk1, codec-mclk2,
++      dsp-clkin, psia1-mclk, psia2-mclk, spdif-mclk, codec-irq,
++      codec-reset, dsp-reset, dsp-irq, dsp-standby, codec-pdmclk1,
++      codec-pdmdat1, codec-pdmclk2, codec-pdmdat2, codec-dmicclk1,
++      codec-dmicdat1, codec-dmicclk2, codec-dmicdat2, codec-dmicclk3,
++      codec-dmicdat3, codec-dmicclk4, codec-dmicdat4, dsp-dmicclk1,
++      dsp-dmicdat1, dsp-dmicclk2, dsp-dmicdat2, dsp-uart1-rx,
++      dsp-uart1-tx, dsp-uart2-rx, dsp-uart2-tx, gf-uart2-rx,
++      gf-uart2-tx, usb-uart-rx, usb-uart-tx, i2c2-scl, i2c2-sda,
++      i2c3-scl, i2c3-sda, i2c4-scl, i2c4-sda, gpio, spdif-aif, psia1,
++      psia1-bclk, psia1-lrclk, psia1-rxdat, psia1-txdat, psia2,
++      psia2-bclk, psia2-lrclk, psia2-rxdat, psia2-txdat, codec-aif1,
++      codec-aif1-bclk, codec-aif1-lrclk, codec-aif1-rxdat,
++      codec-aif1-txdat, codec-aif2, codec-aif2-bclk, codec-aif2-lrclk,
++      codec-aif2-rxdat, codec-aif2-txdat, codec-aif3, codec-aif3-bclk,
++      codec-aif3-lrclk, codec-aif3-rxdat, codec-aif3-txdat, dsp-aif1,
++      dsp-aif1-bclk, dsp-aif1-lrclk, dsp-aif1-rxdat, dsp-aif1-txdat,
++      dsp-aif2, dsp-aif2-bclk, dsp-aif2-lrclk, dsp-aif2-rxdat,
++      dsp-aif2-txdat, gf-aif3, gf-aif3-bclk, gf-aif3-lrclk,
++      gf-aif3-rxdat, gf-aif3-txdat, gf-aif4, gf-aif4-bclk,
++      gf-aif4-lrclk, gf-aif4-rxdat, gf-aif4-txdat, gf-aif1,
++      gf-aif1-bclk, gf-aif1-lrclk, gf-aif1-rxdat, gf-aif1-txdat,
++      gf-aif2, gf-aif2-bclk, gf-aif2-lrclk, gf-aif2-rxdat,
++      gf-aif2-txdat, usb-aif1, usb-aif2, adat-aif, soundcard-aif,
++
++  - aif-master : Specifies that an AIF group will be used as a master
++    interface (either this or aif-slave is required if a group is
++    being muxed to an AIF)
++  - aif-slave : Specifies that an AIF group will be used as a slave
++    interface (either this or aif-master is required if a group is
++    being muxed to an AIF)
++
++Optional sub-nodes:
++
++  - VDDCORE : Initialisation data for the VDDCORE regulator, which
++    supplies the CODECs digital core if it has no build regulator for that
++    purpose.
++
++  - MICVDD : Initialisation data for the MICVDD regulator, which
++    supplies the CODECs MICVDD.
++  - MIC1VDD, MIC2VDD : Initialisation data for the MICxVDD supplies.
++      Optional Properties:
++      - cirrus,micbias-input : A property selecting which of the CODEC
++        minicard micbias outputs should be used, valid values are 1 - 4.
++
++  - VDD1V8 : Recommended fixed regulator for the VDD1V8 regulator, which supplies the
++    CODECs analog and 1.8V digital supplies.
++      Required Properties:
++      - compatible : Should be set to "regulator-fixed"
++      - regulator-min-microvolt : Should be set to 1.8V
++      - regulator-max-microvolt : Should be set to 1.8V
++      - regulator-boot-on
++      - regulator-always-on
++      - vin-supply : Should be set to same supply as SYSVDD
++
++Example:
++lochnagar: lochnagar@22 {
++	compatible = "cirrus,lochnagar2";
++	reg = <0x22>;
++
++	gpio-controller;
++	#gpio-cells = <2>;
++	gpio-ranges = <&lochnagar 0 0 110>;
++
++	reset-gpios = <&gpio0 55 0>;
++	present-gpios = <&gpio0 60 0>;
++
++	#clock-cells = <1>;
++
++	clocks = <&clk-audio>;
++	clock-names = "ln-gf-mclk2";
++
++	assigned-clocks = <&lochnagar LOCHNAGAR_CDC_MCLK1>,
++			  <&lochnagar LOCHNAGAR_CDC_MCLK2>;
++	assigned-clock-parents = <&clk-audio>,
++				 <&lochnagar LOCHNAGAR_PMIC_32K>;
++
++	SYSVDD-supply = <&wallvdd>;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&pin-settings>;
++
++	pin-settings: pin-settings {
++		ap-aif {
++			aif-slave;
++			groups = "gf-aif1";
++			function = "codec-aif3";
++		};
++		codec-aif {
++			aif-master;
++			groups = "codec-aif3";
++			function = "gf-aif1";
++		};
++	};
++
++	lochnagar-micvdd: MICVDD {
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
++	lochnagar-vdd1v8: VDD1V8 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "VDD1V8";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-boot-on;
++		regulator-always-on;
++
++		vin-supply = <&wallvdd>;
++	};
++};
+diff --git a/include/dt-bindings/clk/lochnagar.h b/include/dt-bindings/clk/lochnagar.h
+new file mode 100644
+index 0000000000000..8fa20551ff171
+--- /dev/null
++++ b/include/dt-bindings/clk/lochnagar.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * Lochnagar regulator driver
++ * Device Tree defines for Lochnagar clocking
 + *
 + * Copyright (c) 2017-2018 Cirrus Logic, Inc. and
 + *                         Cirrus Logic International Semiconductor Ltd.
@@ -140,251 +345,160 @@ index 0000000000000..54d791d204080
 + * Author: Charles Keepax <ckeepax@opensource.cirrus.com>
 + */
 +
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/driver.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/of_regulator.h>
++#ifndef DT_BINDINGS_CLK_LOCHNAGAR_H
++#define DT_BINDINGS_CLK_LOCHNAGAR_H
 +
-+#include <linux/mfd/lochnagar.h>
++#define LOCHNAGAR_CDC_MCLK1		0
++#define LOCHNAGAR_CDC_MCLK2		1
++#define LOCHNAGAR_DSP_CLKIN		2
++#define LOCHNAGAR_GF_CLKOUT1		3
++#define LOCHNAGAR_GF_CLKOUT2		4
++#define LOCHNAGAR_PSIA1_MCLK		5
++#define LOCHNAGAR_PSIA2_MCLK		6
++#define LOCHNAGAR_SPDIF_MCLK		7
++#define LOCHNAGAR_ADAT_MCLK		8
++#define LOCHNAGAR_SOUNDCARD_MCLK	9
++#define LOCHNAGAR_SPDIF_CLKOUT		10
 +
-+static const struct regulator_ops lochnagar_micvdd_ops = {
-+	.enable = regulator_enable_regmap,
-+	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
++#endif
+diff --git a/include/dt-bindings/pinctrl/lochnagar.h b/include/dt-bindings/pinctrl/lochnagar.h
+new file mode 100644
+index 0000000000000..644760bf5725b
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/lochnagar.h
+@@ -0,0 +1,132 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Device Tree defines for Lochnagar pinctrl
++ *
++ * Copyright (c) 2018 Cirrus Logic, Inc. and
++ *                    Cirrus Logic International Semiconductor Ltd.
++ *
++ * Author: Charles Keepax <ckeepax@opensource.cirrus.com>
++ */
 +
-+	.list_voltage = regulator_list_voltage_linear_range,
-+	.map_voltage = regulator_map_voltage_linear_range,
++#ifndef DT_BINDINGS_PINCTRL_LOCHNAGAR_H
++#define DT_BINDINGS_PINCTRL_LOCHNAGAR_H
 +
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel = regulator_set_voltage_sel_regmap,
-+};
++#define LOCHNAGAR1_PIN_CDC_RESET		0
++#define LOCHNAGAR1_PIN_DSP_RESET		1
++#define LOCHNAGAR1_PIN_CDC_CIF1MODE		2
++#define LOCHNAGAR1_PIN_NUM_GPIOS		3
 +
-+static const struct regulator_linear_range lochnagar_micvdd_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(1000000, 0,    0xC, 50000),
-+	REGULATOR_LINEAR_RANGE(1700000, 0xD, 0x1F, 100000),
-+};
++#define LOCHNAGAR2_PIN_CDC_RESET		0
++#define LOCHNAGAR2_PIN_DSP_RESET		1
++#define LOCHNAGAR2_PIN_CDC_CIF1MODE		2
++#define LOCHNAGAR2_PIN_CDC_LDOENA		3
++#define LOCHNAGAR2_PIN_SPDIF_HWMODE		4
++#define LOCHNAGAR2_PIN_SPDIF_RESET		5
++#define LOCHNAGAR2_PIN_FPGA_GPIO1		6
++#define LOCHNAGAR2_PIN_FPGA_GPIO2		7
++#define LOCHNAGAR2_PIN_FPGA_GPIO3		8
++#define LOCHNAGAR2_PIN_FPGA_GPIO4		9
++#define LOCHNAGAR2_PIN_FPGA_GPIO5		10
++#define LOCHNAGAR2_PIN_FPGA_GPIO6		11
++#define LOCHNAGAR2_PIN_CDC_GPIO1		12
++#define LOCHNAGAR2_PIN_CDC_GPIO2		13
++#define LOCHNAGAR2_PIN_CDC_GPIO3		14
++#define LOCHNAGAR2_PIN_CDC_GPIO4		15
++#define LOCHNAGAR2_PIN_CDC_GPIO5		16
++#define LOCHNAGAR2_PIN_CDC_GPIO6		17
++#define LOCHNAGAR2_PIN_CDC_GPIO7		18
++#define LOCHNAGAR2_PIN_CDC_GPIO8		19
++#define LOCHNAGAR2_PIN_DSP_GPIO1		20
++#define LOCHNAGAR2_PIN_DSP_GPIO2		21
++#define LOCHNAGAR2_PIN_DSP_GPIO3		22
++#define LOCHNAGAR2_PIN_DSP_GPIO4		23
++#define LOCHNAGAR2_PIN_DSP_GPIO5		24
++#define LOCHNAGAR2_PIN_DSP_GPIO6		25
++#define LOCHNAGAR2_PIN_GF_GPIO2			26
++#define LOCHNAGAR2_PIN_GF_GPIO3			27
++#define LOCHNAGAR2_PIN_GF_GPIO7			28
++#define LOCHNAGAR2_PIN_CDC_AIF1_BCLK		29
++#define LOCHNAGAR2_PIN_CDC_AIF1_RXDAT		30
++#define LOCHNAGAR2_PIN_CDC_AIF1_LRCLK		31
++#define LOCHNAGAR2_PIN_CDC_AIF1_TXDAT		32
++#define LOCHNAGAR2_PIN_CDC_AIF2_BCLK		33
++#define LOCHNAGAR2_PIN_CDC_AIF2_RXDAT		34
++#define LOCHNAGAR2_PIN_CDC_AIF2_LRCLK		35
++#define LOCHNAGAR2_PIN_CDC_AIF2_TXDAT		36
++#define LOCHNAGAR2_PIN_CDC_AIF3_BCLK		37
++#define LOCHNAGAR2_PIN_CDC_AIF3_RXDAT		38
++#define LOCHNAGAR2_PIN_CDC_AIF3_LRCLK		39
++#define LOCHNAGAR2_PIN_CDC_AIF3_TXDAT		40
++#define LOCHNAGAR2_PIN_DSP_AIF1_BCLK		41
++#define LOCHNAGAR2_PIN_DSP_AIF1_RXDAT		42
++#define LOCHNAGAR2_PIN_DSP_AIF1_LRCLK		43
++#define LOCHNAGAR2_PIN_DSP_AIF1_TXDAT		44
++#define LOCHNAGAR2_PIN_DSP_AIF2_BCLK		45
++#define LOCHNAGAR2_PIN_DSP_AIF2_RXDAT		46
++#define LOCHNAGAR2_PIN_DSP_AIF2_LRCLK		47
++#define LOCHNAGAR2_PIN_DSP_AIF2_TXDAT		48
++#define LOCHNAGAR2_PIN_PSIA1_BCLK		49
++#define LOCHNAGAR2_PIN_PSIA1_RXDAT		50
++#define LOCHNAGAR2_PIN_PSIA1_LRCLK		51
++#define LOCHNAGAR2_PIN_PSIA1_TXDAT		52
++#define LOCHNAGAR2_PIN_PSIA2_BCLK		53
++#define LOCHNAGAR2_PIN_PSIA2_RXDAT		54
++#define LOCHNAGAR2_PIN_PSIA2_LRCLK		55
++#define LOCHNAGAR2_PIN_PSIA2_TXDAT		56
++#define LOCHNAGAR2_PIN_GF_AIF3_BCLK		57
++#define LOCHNAGAR2_PIN_GF_AIF3_RXDAT		58
++#define LOCHNAGAR2_PIN_GF_AIF3_LRCLK		59
++#define LOCHNAGAR2_PIN_GF_AIF3_TXDAT		60
++#define LOCHNAGAR2_PIN_GF_AIF4_BCLK		61
++#define LOCHNAGAR2_PIN_GF_AIF4_RXDAT		62
++#define LOCHNAGAR2_PIN_GF_AIF4_LRCLK		63
++#define LOCHNAGAR2_PIN_GF_AIF4_TXDAT		64
++#define LOCHNAGAR2_PIN_GF_AIF1_BCLK		65
++#define LOCHNAGAR2_PIN_GF_AIF1_RXDAT		66
++#define LOCHNAGAR2_PIN_GF_AIF1_LRCLK		67
++#define LOCHNAGAR2_PIN_GF_AIF1_TXDAT		68
++#define LOCHNAGAR2_PIN_GF_AIF2_BCLK		69
++#define LOCHNAGAR2_PIN_GF_AIF2_RXDAT		70
++#define LOCHNAGAR2_PIN_GF_AIF2_LRCLK		71
++#define LOCHNAGAR2_PIN_GF_AIF2_TXDAT		72
++#define LOCHNAGAR2_PIN_DSP_UART1_RX		73
++#define LOCHNAGAR2_PIN_DSP_UART1_TX		74
++#define LOCHNAGAR2_PIN_DSP_UART2_RX		75
++#define LOCHNAGAR2_PIN_DSP_UART2_TX		76
++#define LOCHNAGAR2_PIN_GF_UART2_RX		77
++#define LOCHNAGAR2_PIN_GF_UART2_TX		78
++#define LOCHNAGAR2_PIN_USB_UART_RX		79
++#define LOCHNAGAR2_PIN_CDC_PDMCLK1		80
++#define LOCHNAGAR2_PIN_CDC_PDMDAT1		81
++#define LOCHNAGAR2_PIN_CDC_PDMCLK2		82
++#define LOCHNAGAR2_PIN_CDC_PDMDAT2		83
++#define LOCHNAGAR2_PIN_CDC_DMICCLK1		84
++#define LOCHNAGAR2_PIN_CDC_DMICDAT1		85
++#define LOCHNAGAR2_PIN_CDC_DMICCLK2		86
++#define LOCHNAGAR2_PIN_CDC_DMICDAT2		87
++#define LOCHNAGAR2_PIN_CDC_DMICCLK3		88
++#define LOCHNAGAR2_PIN_CDC_DMICDAT3		89
++#define LOCHNAGAR2_PIN_CDC_DMICCLK4		90
++#define LOCHNAGAR2_PIN_CDC_DMICDAT4		91
++#define LOCHNAGAR2_PIN_DSP_DMICCLK1		92
++#define LOCHNAGAR2_PIN_DSP_DMICDAT1		93
++#define LOCHNAGAR2_PIN_DSP_DMICCLK2		94
++#define LOCHNAGAR2_PIN_DSP_DMICDAT2		95
++#define LOCHNAGAR2_PIN_I2C2_SCL			96
++#define LOCHNAGAR2_PIN_I2C2_SDA			97
++#define LOCHNAGAR2_PIN_I2C3_SCL			98
++#define LOCHNAGAR2_PIN_I2C3_SDA			99
++#define LOCHNAGAR2_PIN_I2C4_SCL			100
++#define LOCHNAGAR2_PIN_I2C4_SDA			101
++#define LOCHNAGAR2_PIN_DSP_STANDBY		102
++#define LOCHNAGAR2_PIN_CDC_MCLK1		103
++#define LOCHNAGAR2_PIN_CDC_MCLK2		104
++#define LOCHNAGAR2_PIN_DSP_CLKIN		105
++#define LOCHNAGAR2_PIN_PSIA1_MCLK		106
++#define LOCHNAGAR2_PIN_PSIA2_MCLK		107
++#define LOCHNAGAR2_PIN_GF_GPIO1			108
++#define LOCHNAGAR2_PIN_GF_GPIO5			109
++#define LOCHNAGAR2_PIN_DSP_GPIO20		110
++#define LOCHNAGAR2_PIN_NUM_GPIOS		111
 +
-+static int lochnagar_micbias_enable(struct regulator_dev *rdev)
-+{
-+	struct lochnagar *lochnagar = rdev_get_drvdata(rdev);
-+	int ret;
-+
-+	mutex_lock(&lochnagar->analogue_config_lock);
-+
-+	ret = regulator_enable_regmap(rdev);
-+	if (ret < 0)
-+		goto err;
-+
-+	ret = lochnagar_update_config(lochnagar);
-+
-+err:
-+	mutex_unlock(&lochnagar->analogue_config_lock);
-+
-+	return ret;
-+}
-+
-+static int lochnagar_micbias_disable(struct regulator_dev *rdev)
-+{
-+	struct lochnagar *lochnagar = rdev_get_drvdata(rdev);
-+	int ret;
-+
-+	mutex_lock(&lochnagar->analogue_config_lock);
-+
-+	ret = regulator_disable_regmap(rdev);
-+	if (ret < 0)
-+		goto err;
-+
-+	ret = lochnagar_update_config(lochnagar);
-+
-+err:
-+	mutex_unlock(&lochnagar->analogue_config_lock);
-+
-+	return ret;
-+}
-+
-+static const struct regulator_ops lochnagar_micbias_ops = {
-+	.enable = lochnagar_micbias_enable,
-+	.disable = lochnagar_micbias_disable,
-+	.is_enabled = regulator_is_enabled_regmap,
-+};
-+
-+static const struct regulator_ops lochnagar_vddcore_ops = {
-+	.enable = regulator_enable_regmap,
-+	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+
-+	.list_voltage = regulator_list_voltage_linear_range,
-+	.map_voltage = regulator_map_voltage_linear_range,
-+
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel = regulator_set_voltage_sel_regmap,
-+};
-+
-+static const struct regulator_linear_range lochnagar_vddcore_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(600000, 0x8, 0x41, 12500),
-+};
-+
-+enum lochnagar_regulators {
-+	LOCHNAGAR_MICVDD,
-+	LOCHNAGAR_MIC1VDD,
-+	LOCHNAGAR_MIC2VDD,
-+	LOCHNAGAR_VDDCORE,
-+};
-+
-+static int lochnagar_micbias_of_parse(struct device_node *np,
-+				      const struct regulator_desc *desc,
-+				      struct regulator_config *config)
-+{
-+	struct lochnagar *lochnagar = config->driver_data;
-+	int shift = (desc->id - LOCHNAGAR_MIC1VDD) *
-+		    LOCHNAGAR2_P2_MICBIAS_SRC_SHIFT;
-+	int mask = LOCHNAGAR2_P1_MICBIAS_SRC_MASK << shift;
-+	unsigned int val;
-+	int ret;
-+
-+	ret = of_property_read_u32(np, "cirrus,micbias-input", &val);
-+	if (ret >= 0) {
-+		mutex_lock(&lochnagar->analogue_config_lock);
-+		ret = regmap_update_bits(lochnagar->regmap,
-+					 LOCHNAGAR2_ANALOGUE_PATH_CTRL2,
-+					 mask, val << shift);
-+		mutex_unlock(&lochnagar->analogue_config_lock);
-+		if (ret < 0) {
-+			dev_err(lochnagar->dev,
-+				"Failed to update micbias source: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct regulator_desc lochnagar_regulators[] = {
-+	[LOCHNAGAR_MICVDD] = {
-+		.name = "MICVDD",
-+		.supply_name = "SYSVDD",
-+		.type = REGULATOR_VOLTAGE,
-+		.n_voltages = 32,
-+		.ops = &lochnagar_micvdd_ops,
-+
-+		.id = LOCHNAGAR_MICVDD,
-+		.of_match = of_match_ptr("MICVDD"),
-+
-+		.enable_reg = LOCHNAGAR2_MICVDD_CTRL1,
-+		.enable_mask = LOCHNAGAR2_MICVDD_REG_ENA_MASK,
-+		.vsel_reg = LOCHNAGAR2_MICVDD_CTRL2,
-+		.vsel_mask = LOCHNAGAR2_MICVDD_VSEL_MASK,
-+
-+		.linear_ranges = lochnagar_micvdd_ranges,
-+		.n_linear_ranges = ARRAY_SIZE(lochnagar_micvdd_ranges),
-+
-+		.enable_time = 3000,
-+		.ramp_delay = 1000,
-+
-+		.owner = THIS_MODULE,
-+	},
-+	[LOCHNAGAR_MIC1VDD] = {
-+		.name = "MIC1VDD",
-+		.supply_name = "MICBIAS1",
-+		.type = REGULATOR_VOLTAGE,
-+		.ops = &lochnagar_micbias_ops,
-+
-+		.id = LOCHNAGAR_MIC1VDD,
-+		.of_match = of_match_ptr("MIC1VDD"),
-+		.of_parse_cb = lochnagar_micbias_of_parse,
-+
-+		.enable_reg = LOCHNAGAR2_ANALOGUE_PATH_CTRL2,
-+		.enable_mask = LOCHNAGAR2_P1_INPUT_BIAS_ENA_MASK,
-+
-+		.owner = THIS_MODULE,
-+	},
-+	[LOCHNAGAR_MIC2VDD] = {
-+		.name = "MIC2VDD",
-+		.supply_name = "MICBIAS2",
-+		.type = REGULATOR_VOLTAGE,
-+		.ops = &lochnagar_micbias_ops,
-+
-+		.id = LOCHNAGAR_MIC2VDD,
-+		.of_match = of_match_ptr("MIC2VDD"),
-+		.of_parse_cb = lochnagar_micbias_of_parse,
-+
-+		.enable_reg = LOCHNAGAR2_ANALOGUE_PATH_CTRL2,
-+		.enable_mask = LOCHNAGAR2_P2_INPUT_BIAS_ENA_MASK,
-+
-+		.owner = THIS_MODULE,
-+	},
-+	[LOCHNAGAR_VDDCORE] = {
-+		.name = "VDDCORE",
-+		.supply_name = "SYSVDD",
-+		.type = REGULATOR_VOLTAGE,
-+		.n_voltages = 57,
-+		.ops = &lochnagar_vddcore_ops,
-+
-+		.id = LOCHNAGAR_VDDCORE,
-+		.of_match = of_match_ptr("VDDCORE"),
-+
-+		.enable_reg = LOCHNAGAR2_VDDCORE_CDC_CTRL1,
-+		.enable_mask = LOCHNAGAR2_VDDCORE_CDC_REG_ENA_MASK,
-+		.vsel_reg = LOCHNAGAR2_VDDCORE_CDC_CTRL2,
-+		.vsel_mask = LOCHNAGAR2_VDDCORE_CDC_VSEL_MASK,
-+
-+		.linear_ranges = lochnagar_vddcore_ranges,
-+		.n_linear_ranges = ARRAY_SIZE(lochnagar_vddcore_ranges),
-+
-+		.enable_time = 3000,
-+		.ramp_delay = 1000,
-+
-+		.owner = THIS_MODULE,
-+	},
-+};
-+
-+static int lochnagar_regulator_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct lochnagar *lochnagar = dev_get_drvdata(dev->parent);
-+	struct regulator_config config = { };
-+	struct regulator_dev *rdev;
-+	int ret, i;
-+
-+	config.dev = lochnagar->dev;
-+	config.regmap = lochnagar->regmap;
-+	config.driver_data = lochnagar;
-+
-+	for (i = 0; i < ARRAY_SIZE(lochnagar_regulators); i++) {
-+		const struct regulator_desc *desc = &lochnagar_regulators[i];
-+
-+		rdev = devm_regulator_register(dev, desc, &config);
-+		if (IS_ERR(rdev)) {
-+			ret = PTR_ERR(rdev);
-+			dev_err(dev, "Failed to register %s regulator: %d\n",
-+				desc->name, ret);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static struct platform_driver lochnagar_regulator_driver = {
-+	.driver = {
-+		.name = "lochnagar-regulator",
-+	},
-+
-+	.probe = lochnagar_regulator_probe,
-+};
-+module_platform_driver(lochnagar_regulator_driver);
-+
-+MODULE_AUTHOR("Charles Keepax <ckeepax@opensource.cirrus.com>");
-+MODULE_DESCRIPTION("Regulator driver for Cirrus Logic Lochnagar Board");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:lochnagar-regulator");
++#endif
 -- 
 2.11.0
 
