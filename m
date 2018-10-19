@@ -2,134 +2,84 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F33ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB917ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9992C20869
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:59:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9992C20869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=oregano.at
+	by mail.kernel.org (Postfix) with ESMTP id B28B521479
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 15:59:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B28B521479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727793AbeJTAFw convert rfc822-to-8bit (ORCPT
+        id S1727744AbeJTAGe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 20:05:52 -0400
-Received: from mx01.busymouse24.de ([83.246.107.19]:53149 "EHLO
-        mx01.busymouse24.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727010AbeJTAFw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 20:05:52 -0400
-X-Greylist: delayed 365 seconds by postgrey-1.27 at vger.kernel.org; Fri, 19 Oct 2018 20:05:50 EDT
-Received: from maskedhost [127.0.0.1] by mx01.busymouse24.de stage1 with esmtps 
-        (Exim MailCleaner) 
-        id 1gDX5D-0008k6-Ny  
-        from <puhm@oregano.at>; Fri, 19 Oct 2018 17:53:03 +0200
-Received: from SRV188.busymouse24.de (192.168.100.188) by
- SRV177.busymouse24.de (192.168.100.177) with Microsoft SMTP Server (TLS) id
- 15.0.1263.5; Fri, 19 Oct 2018 17:53:03 +0200
-Received: from SRV177.busymouse24.de (192.168.100.177) by
- SRV188.busymouse24.de (192.168.100.188) with Microsoft SMTP Server (TLS) id
- 15.0.1263.5; Fri, 19 Oct 2018 17:53:02 +0200
-Received: from SRV177.busymouse24.de ([fe80::f87a:2c8c:90ef:d29a]) by
- SRV177.busymouse24.de ([fe80::f87a:2c8c:90ef:d29a%14]) with mapi id
- 15.00.1263.000; Fri, 19 Oct 2018 17:53:02 +0200
-From:   Andreas Puhm <puhm@oregano.at>
-To:     Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
-CC:     "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [Bug] altera_cvp registers a PCI device (Altera/Intel FPGA) without
- verifying that it supports CVP
-Thread-Topic: [Bug] altera_cvp registers a PCI device (Altera/Intel FPGA)
- without verifying that it supports CVP
-Thread-Index: AdRnw6sLsfLCE4NLQri3QW4UMzXDuw==
-Date:   Fri, 19 Oct 2018 15:53:02 +0000
-Message-ID: <2c6313a3f7c04b70b8a06a50934fe27a@SRV177.busymouse24.de>
-Accept-Language: de-AT, de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [83.246.107.135]
-x-exclaimer-md-config: 1802f3fe-bc94-4301-9dc2-d59a74e6de3a
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Fri, 19 Oct 2018 20:06:34 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35418 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727181AbeJTAGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 20:06:33 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4C27688307;
+        Fri, 19 Oct 2018 15:59:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 580835D783;
+        Fri, 19 Oct 2018 15:59:49 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20181019143932.6697-1-mszeredi@redhat.com>
+References: <20181019143932.6697-1-mszeredi@redhat.com>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v2 6/5] statx: add STATX_RESULT_MASK flag
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <18141.1539964788.1@warthog.procyon.org.uk>
+Date:   Fri, 19 Oct 2018 16:59:48 +0100
+Message-ID: <18142.1539964788@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 19 Oct 2018 15:59:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Miklos Szeredi <mszeredi@redhat.com> wrote:
 
-I hope the following information is descriptive enough.
-If this is no the case, I will provide further details.
+> FUSE needs this, because it uses legacy inode initialization, that doesn't
+> return a result_mask, so needs a refresh when caller asks for it with
+> statx().
 
---------------------------------------------------------------------
-Full description:
-The altera_cvp probe function only checks, 
-if the Altera/Intel PCI device configuration space contains a vendor specific entry (VSEC Capability Header 0x000b) at offset 0x200.
- But the probe function does not verify, if the PCI device (and further the FPGA), 
-for which it has been called, actually supports the Configure-via-Protocol feature.
+Can't you just make it up in fuse?  Presumably, fuse doesn't support any of
+the non-basic statx fields either?
 
-The PCI device (FPGA) can explicitly disable the Configur-via-Protocol (CvP) feature by setting the CVP_EN bit, index 20 of CVP_STATUS register, to '0'. 
-As the altera_cvp probe function does not check this it registers the device in any way. 
-At this point, the altera_cvp module cannot be used to program this device via CvP. 
-In addition no other module can use the device, as it is still registered by altera_cvp.
+> It might make sense later to promote this to a proper statx mask flag and
+> return it in stx_mask to userspace.
 
-Keywords: altera_cvp module, PCI, Configure-via-Protocol
+That sounds kind of recursive - a bit in stx_mask would be saying whether or
+not stx_mask can be used.
 
-Kernel version: problem occured with v4.15, should occur from 4.14+
+Besides, what would it mean if that bit says you can't use stx_mask?  None of
+the stx_* fields are valid?
 
-Instructions to reproduce: 
-Proper hardware is necessary to reproduce this, i.e., FPGA with instantiated Altera/Intel PCIe IP Core with disabled CvP feature.
+> +#define STATX_RESULT_MASK STATX__RESERVED
 
-Workaround:
-It is possible to circumvent this problem by manually unloading or blacklisting the altera_cvp module.
+Please don't use that bit.
 
-Suggested Patch:
-This patch was successfully build and tested for 4.15 and 4.18
 
-Subject: [PATCH] register device only, if it supports CvP operation
+Sorry, this patch doesn't make sense.  Just set result_mask to
+STATX_BASIC_STATS in fuse_fill_attr().
 
-This patch is based on: git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tag/?h=v4.18
-
-Signed-off-by: Andreas Puhm <puhm@oregano.at>
----
- drivers/fpga/altera-cvp.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 7fa793672a7a..838abcfca0fb 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -403,6 +403,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- 	struct altera_cvp_conf *conf;
- 	struct fpga_manager *mgr;
- 	u16 cmd, val;
-+	u32 val32;
- 	int ret;
- 
- 	/*
-@@ -416,6 +417,14 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- 		return -ENODEV;
- 	}
- 
-+	pci_read_config_dword(pdev, VSE_CVP_STATUS, &val32);
-+	if (!(val32 & VSE_CVP_STATUS_CVP_EN)) {
-+		dev_err(&pdev->dev,
-+			"CVP is disabled for this device: CVP_STATUS Reg 0x%x\n",
-+			val32);
-+		return -ENODEV;
-+	}
-+
- 	conf = devm_kzalloc(&pdev->dev, sizeof(*conf), GFP_KERNEL);
- 	if (!conf)
- 		return -ENOMEM;
---
-
-With best regards,
-Andreas Puhm <puhm@oregano.at>
+David
