@@ -2,201 +2,404 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21FC3ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83389ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:45:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE07421479
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:44:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 347D321476
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 09:45:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="lDDDld77"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE07421479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="mehLK1Em"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 347D321476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbeJSRuQ (ORCPT
+        id S1727338AbeJSRvK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 13:50:16 -0400
-Received: from mail-bl2nam02on0057.outbound.protection.outlook.com ([104.47.38.57]:45568
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        Fri, 19 Oct 2018 13:51:10 -0400
+Received: from mail-eopbgr50062.outbound.protection.outlook.com ([40.107.5.62]:42256
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726609AbeJSRuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 13:50:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+        id S1726903AbeJSRvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 13:51:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zjGAUZyE5LIT+sKfRJy76a2KPzpDskCCFMmwAlINGxE=;
- b=lDDDld77+Ycrbseyp147p1BTQE0DeeUVnwzx9ROCNieGSUP1a4NJ+GQUdBVW4qbWf73etsQAcnMTyHX0L8qePGrF8W/6wiLxWvgDozc0Jy7kVA2UztaFrqjNx1+FHGFT+KaCuX0VfbODrgDGB6P3yktfXY+MKooRkllDfm5XReQ=
-Received: from MWHPR02MB2623.namprd02.prod.outlook.com (10.168.206.9) by
- MWHPR02MB2271.namprd02.prod.outlook.com (10.168.243.141) with Microsoft SMTP
+ bh=Et5/mtTtSljg45gNnDoDZRx5x5K9v09nKbsXQODg8TI=;
+ b=mehLK1EmRW48GMRCWVctoD2CW+v5qwCaIr9GL8YMMx/SaaYUnBN6CHT7VJY/exbXTRGdXxtUGxI7bjojk9eL4JtP0ZsW1tzjog9pC3+IzBC4JAw6GSl/4FUup0VUU1t6NMvGSulNdcpH72uQd24IGjittBPawLdgXgc5q4JjtQA=
+Received: from DB7PR04MB4618.eurprd04.prod.outlook.com (52.135.138.152) by
+ DB7PR04MB4092.eurprd04.prod.outlook.com (52.135.130.33) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.26; Fri, 19 Oct 2018 09:44:53 +0000
-Received: from MWHPR02MB2623.namprd02.prod.outlook.com
- ([fe80::60b4:7078:5a80:52c7]) by MWHPR02MB2623.namprd02.prod.outlook.com
- ([fe80::60b4:7078:5a80:52c7%5]) with mapi id 15.20.1228.035; Fri, 19 Oct 2018
- 09:44:42 +0000
-From:   Naga Sureshkumar Relli <nagasure@xilinx.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        Michal Simek <michals@xilinx.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+ 15.20.1250.20; Fri, 19 Oct 2018 09:45:44 +0000
+Received: from DB7PR04MB4618.eurprd04.prod.outlook.com
+ ([fe80::4bb:9505:f351:cad2]) by DB7PR04MB4618.eurprd04.prod.outlook.com
+ ([fe80::4bb:9505:f351:cad2%4]) with mapi id 15.20.1228.035; Fri, 19 Oct 2018
+ 09:45:44 +0000
+From:   Joakim Zhang <qiangqing.zhang@nxp.com>
+To:     "wg@grandegger.com" <wg@grandegger.com>,
+        "mkl@pengutronix.de" <mkl@pengutronix.de>,
+        "davem@davemloft.net" <davem@davemloft.net>
+CC:     "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nagasuresh12@gmail.com" <nagasuresh12@gmail.com>
-Subject: RE: [LINUX PATCH v11 3/3] mtd: rawnand: arasan: Add support for
- Arasan NAND Flash Controller
-Thread-Topic: [LINUX PATCH v11 3/3] mtd: rawnand: arasan: Add support for
- Arasan NAND Flash Controller
-Thread-Index: AQHUVMpHbGhmDQn4EkyBZ4iql6zzXqUN988AgBh98oA=
-Date:   Fri, 19 Oct 2018 09:44:41 +0000
-Message-ID: <MWHPR02MB26235FB2ECB9073CFC38594DAFF90@MWHPR02MB2623.namprd02.prod.outlook.com>
-References: <1537878031-22253-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
-        <1537878031-22253-4-git-send-email-naga.sureshkumar.relli@xilinx.com>
- <20181003213844.14d4095e@bbrezillon>
-In-Reply-To: <20181003213844.14d4095e@bbrezillon>
+        dl-linux-imx <linux-imx@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>
+Subject: [PATCH] can: flexcan: Implement CAN Runtime PM
+Thread-Topic: [PATCH] can: flexcan: Implement CAN Runtime PM
+Thread-Index: AQHUZ5CBGViPzGvSBkmCEccitD7z+w==
+Date:   Fri, 19 Oct 2018 09:45:44 +0000
+Message-ID: <20181019094326.28185-1-qiangqing.zhang@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
 X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.17.1
+x-clientproxiedby: SG2PR04CA0146.apcprd04.prod.outlook.com
+ (2603:1096:3:16::30) To DB7PR04MB4618.eurprd04.prod.outlook.com
+ (2603:10a6:5:36::24)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=nagasure@xilinx.com; 
-x-originating-ip: [149.199.50.133]
+ smtp.mailfrom=qiangqing.zhang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [92.121.68.129]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR02MB2271;6:KpwbJOE7+95s7uFVlBaQpI3keKkD+yqC4dC/lflU/1IrdWpHaYDsRsrtc2N22YfRau/7jQPceVtmMh38QqZ0g+2hS7qVxfQVRjf/YRoApV7BRwA4YhQ/H241/+ywpNu4kmrjvn5N3TSbgadZrK1DED++RtEp7E/upFgWRGHaCeMJHw5jQkTztsV7fDN6JJyjoWySWgiE3h8reEN6PFywNykYsCBLoJRgnY+GvTCrfUzng4/NKeNhS8lkrlZj0hm+wbOmOjiEmUSdsu8yYKjQdwI6/BRR/XNsw0O/edi9d05pXztsryKlNFY8K8xfX8qc08B9ZH0aTI4H2q8etkyp3zSSk/hWd4JnAunaGcwDkQ7EzTTvR5IaXdSHZNtV7rdEtvUIM3fx86mahRJIxKbJYY66Ey4pE63HjJDXf1dcXaJDXvC+EZfX7CwJWwlr+4um17ax3/9LAzl73mG1v+dP5w==;5:kHvR1uzjtkWMHxloEyPTly16elhhbN5Kz+azaaUSbC89uPN+fmJWfwmIeV1H4StgrwqtO/JBVfXn78ffYMsC12eCaBHtlRMJi9g6m14iDHHgfh5ZFUQdgTyQ7cCGd90C2vl11gighCWohYXCnR+V8vjoSycISLYzbx4qT4zQu1w=;7:vNdvD1YGYnU3Jflz9PgNLgdzS/qrtNH4MYQd/TrQuYmQT7f9H8goPd7RJLtKgK20bp2VKWg//BFJBabqqMofrAlThnRXNwyNiTd7JHjiATRgGlKUqO4EbdwYF8miuXPALMU6gVv+nzIX+3gvRGkMlth3DQmEIWbL+J/ZcNIWRG+RQlKxXzY+u+4+2xpIk+iDhmWYVAIoSHuBcRpWCO5XJoslvBg/oVFpPOwovyHDZjbKYfFgxZu6h/O2vLrqx6AC
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(346002)(136003)(366004)(376002)(189003)(199004)(13464003)(256004)(66066001)(106356001)(8936002)(39060400002)(2906002)(7736002)(105586002)(68736007)(9686003)(55016002)(6246003)(305945005)(102836004)(26005)(5250100002)(86362001)(14444005)(7696005)(53546011)(71190400001)(6506007)(217873002)(316002)(99286004)(76176011)(5660300001)(54906003)(2900100001)(476003)(81166006)(486006)(6436002)(8676002)(33656002)(74316002)(81156014)(229853002)(3846002)(97736004)(186003)(25786009)(446003)(4326008)(53936002)(478600001)(14454004)(6116002)(6916009)(71200400001)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB2271;H:MWHPR02MB2623.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: ea772a7d-731c-4894-8adb-08d635a77ebb
+x-microsoft-exchange-diagnostics: 1;DB7PR04MB4092;6:4cffjAAQaU63cX1wDXPXL9YIExgQZg5ilHJan5QtDrUDtnh3pNQESStKUc59hvUiZzdLsnmsIykWpDQuH9OjjkLm9EjaHUBQMG9DdXSUgMf4h85P6YOl471IV6SITTkOjRykSbFMczbqJbhWNm9kTy0BeQYVnlaPhxM6FKg3yrlQcUxsQe/NlRT73gD+zV/tlHL7jLWXR3s0qglT7aybQTwuNRpqcmgMM2tioan4U0tXu+BqWLiFZ/79ztgJ0TaJ03Py1l8nI8YgKcmJvDsTwTscHzRJr3tNDU44nhyDvAg7CxmaFqMEKazJO43jIu0Qk5/v3kdrkMVrtZR+IagQ2L7CuuBK713ngeXCSFUTJEVvh9My7XyOMgP70+6qq3xBhfDFM9h+yd5jcDynwxnioGly1GQoKWd3fjfcJoRVTEMXa56rh6CuMBowZyPHuOEMKg0OuLdnqpYH/dIrQXAycg==;5:Y6lWAySwIGnfmrlqT2eCt9i30UHkHYjgLVqlbNg+gaGgA7kUFiQc0ohdmiqnrBSMX1qrlajs8peQeJnM+4Nb+vh1j/4L4sw5Mr0pWPPBDTjPvdCU+SnWkjxXgHhkCDfTpsQjkP3GTjHrkpybAl2cJbm8/uSbYV7H5ZM87Qassq0=;7:bTLr0rJIazfAK9T1uWF69hn/z5vsM09/Chcw2NhpDaLOWzWaV/rHOW+n6aR5ys7cNk7AXXQ0ZYZjCXTYi2Tr7Vo5xNdhbee0qwilcMgwMzUaKtociYq3hEX3/fvLA69iQKlM4DzEiXkZhgKUtcH/fuDZj9HLOF1eVedjIst/e6MBMrkUUIGkRB2FiP94dpONgKEXgTWH9swwHduOd035kAXYsUsUBsg9bz7CNtr7vNBxZpn3l5djz2U4A7eVaFFk
+x-ms-office365-filtering-correlation-id: e294f96d-cc42-4bd8-4223-08d635a7a37d
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB2271;
-x-ms-traffictypediagnostic: MWHPR02MB2271:
-x-microsoft-antispam-prvs: <MWHPR02MB2271223657FF8C2CED2F98C0AFF90@MWHPR02MB2271.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(85827821059158)(258649278758335)(9452136761055)(192813158149592);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4092;
+x-ms-traffictypediagnostic: DB7PR04MB4092:
+x-microsoft-antispam-prvs: <DB7PR04MB409231BDFEEAC6207C1DC1B3E6F90@DB7PR04MB4092.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(269456686620040)(185117386973197);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231355)(944501410)(52105095)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:MWHPR02MB2271;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB2271;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DB7PR04MB4092;BCL:0;PCL:0;RULEID:;SRVR:DB7PR04MB4092;
 x-forefront-prvs: 0830866D19
-received-spf: None (protection.outlook.com: xilinx.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(396003)(366004)(39860400002)(189003)(199004)(23433003)(81166006)(105586002)(81156014)(26005)(102836004)(54906003)(2616005)(316002)(66066001)(4326008)(110136005)(8676002)(6436002)(3846002)(52116002)(8936002)(186003)(6116002)(1076002)(68736007)(386003)(6486002)(50226002)(2900100001)(53936002)(25786009)(6506007)(99286004)(6512007)(5250100002)(5024004)(86362001)(14444005)(1857600001)(305945005)(478600001)(486006)(71200400001)(2906002)(71190400001)(2201001)(7736002)(2501003)(36756003)(256004)(14454004)(5660300001)(476003)(106356001)(97736004)(334744003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4092;H:DB7PR04MB4618.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: ok2zPWa1HRO2xvHBmDfRpYX8heTjXLP2JxvqiiUlrME1LN20ekCED5UzOZkZPadQjxEevmTTxapGnC2sced5wHRI3gP5sCoZern12qvjSkctB/J74pTU0CQK3PoAhW2d4wSpCFjd3+bMqDoilkxMoEQaPLebEG+ajy96W+HTgq0IAuF8AKV5ZCblNjyBt8N/ojlD/WqSSU+dl3kgLIgrI1t8X6tsaRRDebLIwUT49VW8mg1XdxdRPa8zfv13+ULcsyTDvMo+e4PIWCtiMbbxhAZ7utWEdsa9L/vlOT1VOHLmbf7ThHL8neB5z9uXlNhDRnk5YuC+VQKzCG9axLcxXD8DpBZ2/p7ue0/gwdYTQUk=
+x-microsoft-antispam-message-info: e8p36HZyUgVgtlFWi7NjxI3lIFUbvv2OlEwK6oS+RyaZexw7g7J9l5QfExP57ez2n+VhkJLYdq8CWuP8MFQEy4SPfhplOAendGNWORIJQKcUzkEYClrjvThjASfpT8A24t9vS/lIp5n6dA6R9CC59vrEpNMyUOjk6PQFaX4jhHGDwdnyVnb7gU5bLGTIsQ5TRb1FPFF3bGglcSqOfL3LEq1rvGGH5jvmBkQKB0Qgnz8rk/EbsxEQC2zrWsplc7gy7pBRvQd51Vsr6aIE/LNt595pqcen/yGhYbAedpELplvbuqDJ2q0BCs9loOrRTZwEF8WPRb8s8zUxD9T4y5570H/0OOnHq5vuxEXOUHStg58=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea772a7d-731c-4894-8adb-08d635a77ebb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Oct 2018 09:44:41.7471
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e294f96d-cc42-4bd8-4223-08d635a7a37d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Oct 2018 09:45:44.6805
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB2271
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4092
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+From: Dong Aisheng <aisheng.dong@nxp.com>
 
-Sorry for the late reply.
-I am busy with some other work.
+Flexcan will be disabled during suspend if no wakeup function required
+and enabled after resume accordingly. During this period, we could
+explicitly disable clocks.
 
-> -----Original Message-----
-> From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
-> Sent: Thursday, October 4, 2018 1:09 AM
-> To: Naga Sureshkumar Relli <nagasure@xilinx.com>
-> Cc: miquel.raynal@bootlin.com; richard@nod.at; dwmw2@infradead.org;
-> computersforpeace@gmail.com; marek.vasut@gmail.com; Michal Simek
-> <michals@xilinx.com>; linux-mtd@lists.infradead.org; linux-kernel@vger.ke=
-rnel.org;
-> nagasuresh12@gmail.com
-> Subject: Re: [LINUX PATCH v11 3/3] mtd: rawnand: arasan: Add support for =
-Arasan
-> NAND Flash Controller
->=20
-> Hi Naga,
->=20
-> On Tue, 25 Sep 2018 17:50:31 +0530
-> Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com> wrote:
->=20
-> > +static int anfc_read_param_get_feature_sp_read_type_exec(struct nand_c=
-hip *chip,
-> > +							 const struct nand_subop
-> > +							 *subop)
-> > +{
-> > +	const struct nand_op_instr *instr;
-> > +	struct anfc_nand_controller *nfc =3D to_anfc(chip->controller);
-> > +	unsigned int op_id, len;
-> > +	struct anfc_op nfc_op =3D {};
-> > +	struct mtd_info *mtd =3D nand_to_mtd(chip);
-> > +	struct anfc_nand_chip *achip =3D to_anfc_nand(chip);
-> > +	u32 dma_mode, addrcycles, write_size;
-> > +
-> > +	anfc_parse_instructions(chip, subop, &nfc_op);
-> > +	instr =3D nfc_op.data_instr;
-> > +	op_id =3D nfc_op.data_instr_idx;
-> > +
-> > +	if (nfc_op.cmds[0] =3D=3D NAND_CMD_PARAM) {
-> > +		nfc->prog =3D PROG_RDPARAM;
-> > +		dma_mode =3D 0;
-> > +		addrcycles =3D 1;
-> > +		write_size =3D 0;
-> > +	}
-> > +	if (nfc_op.cmds[0] =3D=3D NAND_CMD_GET_FEATURES) {
-> > +		nfc->prog =3D PROG_GET_FEATURE;
-> > +		dma_mode =3D 0;
-> > +		addrcycles =3D 1;
-> > +		write_size =3D 0;
-> > +	}
-> > +	if (nfc_op.cmds[0] =3D=3D NAND_CMD_READ0) {
-> > +		nfc->prog =3D PROG_PGRD;
-> > +		addrcycles =3D achip->raddr_cycles + achip->caddr_cycles;
-> > +		write_size =3D mtd->writesize;
-> > +		dma_mode =3D 1;
-> > +	}
-> > +
->=20
-> Sorry, but I still don't understand why nfc->prog is different. Did you t=
-ry using
-> PROG_PGRD for all these ops? I mean, the sequence is the same, and you ke=
-ep passing the
-> opcode and the number of address cycles to the engine using other reg fie=
-lds.
-Yes, I tried it now with PROG_PGRD and I don't see any issues.
-I will update the same in next version of patch.
-Thanks for your suggestion.
+Implement Runtime PM which will:
+1) Keep device in suspend state (clocks disabled) if it's not openned
+2) Make Power Domain framework be able to shutdown the corresponding power
+domain of this device.
 
->=20
-> Also, you're not using the addrcycles info provided by the the address in=
-struction and instead
-> deduce it based on the opcode, which is wrong.
-> To make it clearer, I'd like to avoid those nfc_op.cmds[0] =3D=3D NAND_OP=
-CODE tests,
-> because it's exactly the kind of things we were trying to get rid off by =
-introducing the -
-> >exec_op() interface.
-Ok. I understand, I will remove hardcoding the commands in the driver.
-And I will change the driver to read addrcycles info from address instructi=
-on.
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
+---
+ drivers/net/can/flexcan.c | 125 +++++++++++++++++++++++++-------------
+ 1 file changed, 82 insertions(+), 43 deletions(-)
 
-Thanks,
-Naga Sureshkumar Relli
->=20
-> > +	anfc_prepare_cmd(nfc, nfc_op.cmds[0], 0, dma_mode, write_size,
-> > +			 addrcycles);
-> > +	anfc_setpagecoladdr(nfc, nfc_op.row, nfc_op.col);
-> > +
-> > +	if (!nfc_op.data_instr)
-> > +		return 0;
-> > +
-> > +	len =3D nand_subop_get_data_len(subop, op_id);
-> > +	anfc_rw_pio_op(mtd, nfc->buf, roundup(len, 4), 1, nfc->prog, 1, 0);
-> > +	memcpy(instr->ctx.data.buf.in,  nfc->buf, len);
-> > +
-> > +	return 0;
-> > +}
+diff --git a/drivers/net/can/flexcan.c b/drivers/net/can/flexcan.c
+index 8e972ef08637..3813f6708201 100644
+--- a/drivers/net/can/flexcan.c
++++ b/drivers/net/can/flexcan.c
+@@ -23,6 +23,7 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/regulator/consumer.h>
+=20
+ #define DRV_NAME			"flexcan"
+@@ -266,6 +267,7 @@ struct flexcan_priv {
+ 	u32 reg_imask1_default;
+ 	u32 reg_imask2_default;
+=20
++	struct device *dev;
+ 	struct clk *clk_ipg;
+ 	struct clk *clk_per;
+ 	const struct flexcan_devtype_data *devtype_data;
+@@ -369,6 +371,27 @@ static inline void flexcan_error_irq_disable(const str=
+uct flexcan_priv *priv)
+ 	priv->write(reg_ctrl, &regs->ctrl);
+ }
+=20
++static int flexcan_clks_enable(const struct flexcan_priv *priv)
++{
++	int err;
++
++	err =3D clk_prepare_enable(priv->clk_ipg);
++	if (err)
++		return err;
++
++	err =3D clk_prepare_enable(priv->clk_per);
++	if (err)
++		clk_disable_unprepare(priv->clk_ipg);
++
++	return err;
++}
++
++static void flexcan_clks_disable(const struct flexcan_priv *priv)
++{
++	clk_disable_unprepare(priv->clk_ipg);
++	clk_disable_unprepare(priv->clk_per);
++}
++
+ static inline int flexcan_transceiver_enable(const struct flexcan_priv *pr=
+iv)
+ {
+ 	if (!priv->reg_xceiver)
+@@ -495,19 +518,11 @@ static int flexcan_get_berr_counter(const struct net_=
+device *dev,
+ 	const struct flexcan_priv *priv =3D netdev_priv(dev);
+ 	int err;
+=20
+-	err =3D clk_prepare_enable(priv->clk_ipg);
+-	if (err)
+-		return err;
+-
+-	err =3D clk_prepare_enable(priv->clk_per);
+-	if (err)
+-		goto out_disable_ipg;
++	pm_runtime_get_sync(priv->dev);
+=20
+ 	err =3D __flexcan_get_berr_counter(dev, bec);
+=20
+-	clk_disable_unprepare(priv->clk_per);
+- out_disable_ipg:
+-	clk_disable_unprepare(priv->clk_ipg);
++	pm_runtime_put(priv->dev);
+=20
+ 	return err;
+ }
+@@ -1096,17 +1111,13 @@ static int flexcan_open(struct net_device *dev)
+ 	struct flexcan_priv *priv =3D netdev_priv(dev);
+ 	int err;
+=20
+-	err =3D clk_prepare_enable(priv->clk_ipg);
++	err =3D pm_runtime_get_sync(priv->dev);
+ 	if (err)
+ 		return err;
+=20
+-	err =3D clk_prepare_enable(priv->clk_per);
+-	if (err)
+-		goto out_disable_ipg;
+-
+ 	err =3D open_candev(dev);
+ 	if (err)
+-		goto out_disable_per;
++		goto out_pm_runtime;
+=20
+ 	err =3D request_irq(dev->irq, flexcan_irq, IRQF_SHARED, dev->name, dev);
+ 	if (err)
+@@ -1128,10 +1139,8 @@ static int flexcan_open(struct net_device *dev)
+ 	free_irq(dev->irq, dev);
+  out_close:
+ 	close_candev(dev);
+- out_disable_per:
+-	clk_disable_unprepare(priv->clk_per);
+- out_disable_ipg:
+-	clk_disable_unprepare(priv->clk_ipg);
++ out_pm_runtime:
++	pm_runtime_put(priv->dev);
+=20
+ 	return err;
+ }
+@@ -1145,11 +1154,11 @@ static int flexcan_close(struct net_device *dev)
+ 	flexcan_chip_stop(dev);
+=20
+ 	free_irq(dev->irq, dev);
+-	clk_disable_unprepare(priv->clk_per);
+-	clk_disable_unprepare(priv->clk_ipg);
+=20
+ 	close_candev(dev);
+=20
++	pm_runtime_put(priv->dev);
++
+ 	can_led_event(dev, CAN_LED_EVENT_STOP);
+=20
+ 	return 0;
+@@ -1188,18 +1197,10 @@ static int register_flexcandev(struct net_device *d=
+ev)
+ 	struct flexcan_regs __iomem *regs =3D priv->regs;
+ 	u32 reg, err;
+=20
+-	err =3D clk_prepare_enable(priv->clk_ipg);
+-	if (err)
+-		return err;
+-
+-	err =3D clk_prepare_enable(priv->clk_per);
+-	if (err)
+-		goto out_disable_ipg;
+-
+ 	/* select "bus clock", chip must be disabled */
+ 	err =3D flexcan_chip_disable(priv);
+ 	if (err)
+-		goto out_disable_per;
++		return err;
+ 	reg =3D priv->read(&regs->ctrl);
+ 	reg |=3D FLEXCAN_CTRL_CLK_SRC;
+ 	priv->write(reg, &regs->ctrl);
+@@ -1228,13 +1229,8 @@ static int register_flexcandev(struct net_device *de=
+v)
+=20
+ 	err =3D register_candev(dev);
+=20
+-	/* disable core and turn off clocks */
+  out_chip_disable:
+ 	flexcan_chip_disable(priv);
+- out_disable_per:
+-	clk_disable_unprepare(priv->clk_per);
+- out_disable_ipg:
+-	clk_disable_unprepare(priv->clk_ipg);
+=20
+ 	return err;
+ }
+@@ -1342,6 +1338,7 @@ static int flexcan_probe(struct platform_device *pdev=
+)
+ 		priv->write =3D flexcan_write_le;
+ 	}
+=20
++	priv->dev =3D &pdev->dev;
+ 	priv->can.clock.freq =3D clock_freq;
+ 	priv->can.bittiming_const =3D &flexcan_bittiming_const;
+ 	priv->can.do_set_mode =3D flexcan_set_mode;
+@@ -1388,22 +1385,35 @@ static int flexcan_probe(struct platform_device *pd=
+ev)
+ 	if (err)
+ 		goto failed_offload;
+=20
++	pm_runtime_enable(&pdev->dev);
++	err =3D pm_runtime_get_sync(&pdev->dev);
++	if (err < 0) {
++		dev_err(&pdev->dev, "pm_runtime_get failed(%d)\n", err);
++		goto failed_rpm_disable;
++	}
++
+ 	err =3D register_flexcandev(dev);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "registering netdev failed\n");
+-		goto failed_register;
++		goto failed_rpm_put;
+ 	}
+=20
+ 	devm_can_led_init(dev);
+=20
++	pm_runtime_put(&pdev->dev);
++
+ 	dev_info(&pdev->dev, "device registered (reg_base=3D%p, irq=3D%d)\n",
+ 		 priv->regs, dev->irq);
+=20
+ 	return 0;
+=20
++ failed_rpm_put:
++	pm_runtime_put(&pdev->dev);
++ failed_rpm_disable:
++	pm_runtime_disable(&pdev->dev);
+  failed_offload:
+- failed_register:
+ 	free_candev(dev);
++
+ 	return err;
+ }
+=20
+@@ -1413,6 +1423,7 @@ static int flexcan_remove(struct platform_device *pde=
+v)
+ 	struct flexcan_priv *priv =3D netdev_priv(dev);
+=20
+ 	unregister_flexcandev(dev);
++	pm_runtime_disable(&pdev->dev);
+ 	can_rx_offload_del(&priv->offload);
+ 	free_candev(dev);
+=20
+@@ -1423,38 +1434,66 @@ static int __maybe_unused flexcan_suspend(struct de=
+vice *device)
+ {
+ 	struct net_device *dev =3D dev_get_drvdata(device);
+ 	struct flexcan_priv *priv =3D netdev_priv(dev);
+-	int err;
++	int err =3D 0;
+=20
+ 	if (netif_running(dev)) {
+ 		err =3D flexcan_chip_disable(priv);
+ 		if (err)
+ 			return err;
++		err =3D pm_runtime_force_suspend(device);
++
+ 		netif_stop_queue(dev);
+ 		netif_device_detach(dev);
+ 	}
+ 	priv->can.state =3D CAN_STATE_SLEEPING;
+=20
+-	return 0;
++	return err;
+ }
+=20
+ static int __maybe_unused flexcan_resume(struct device *device)
+ {
+ 	struct net_device *dev =3D dev_get_drvdata(device);
+ 	struct flexcan_priv *priv =3D netdev_priv(dev);
+-	int err;
++	int err =3D 0;
+=20
+ 	priv->can.state =3D CAN_STATE_ERROR_ACTIVE;
+ 	if (netif_running(dev)) {
+ 		netif_device_attach(dev);
+ 		netif_start_queue(dev);
+-		err =3D flexcan_chip_enable(priv);
++
++		err =3D pm_runtime_force_resume(device);
+ 		if (err)
+ 			return err;
++		err =3D flexcan_chip_enable(priv);
+ 	}
++	return err;
++}
++
++static int __maybe_unused flexcan_runtime_suspend(struct device *device)
++{
++	struct net_device *dev =3D dev_get_drvdata(device);
++	struct flexcan_priv *priv =3D netdev_priv(dev);
++
++	flexcan_clks_disable(priv);
++
+ 	return 0;
+ }
+=20
+-static SIMPLE_DEV_PM_OPS(flexcan_pm_ops, flexcan_suspend, flexcan_resume);
++static int __maybe_unused flexcan_runtime_resume(struct device *device)
++{
++	struct net_device *dev =3D dev_get_drvdata(device);
++	struct flexcan_priv *priv =3D netdev_priv(dev);
++
++	flexcan_clks_enable(priv);
++
++	return 0;
++}
++
++static const struct dev_pm_ops flexcan_pm_ops =3D {
++	SET_SYSTEM_SLEEP_PM_OPS(flexcan_suspend, flexcan_resume)
++	SET_RUNTIME_PM_OPS(flexcan_runtime_suspend, flexcan_runtime_resume,
++						NULL)
++};
+=20
+ static struct platform_driver flexcan_driver =3D {
+ 	.driver =3D {
+--=20
+2.17.1
+
