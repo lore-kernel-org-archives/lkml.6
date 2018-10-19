@@ -2,85 +2,80 @@ Return-Path: <SRS0=xTli=M7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A374BECDE3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2876ECDE43
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:14:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 653F620869
-	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:12:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 653F620869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8BF3A21476
+	for <linux-kernel@archiver.kernel.org>; Fri, 19 Oct 2018 07:14:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yUozdZkm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BF3A21476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbeJSPRY (ORCPT
+        id S1727014AbeJSPTT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 19 Oct 2018 11:17:24 -0400
-Received: from mga14.intel.com ([192.55.52.115]:65429 "EHLO mga14.intel.com"
+        Fri, 19 Oct 2018 11:19:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726584AbeJSPRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Oct 2018 11:17:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 00:12:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,399,1534834800"; 
-   d="scan'208";a="83865265"
-Received: from shao2-debian.sh.intel.com (HELO [10.239.13.6]) ([10.239.13.6])
-  by orsmga006.jf.intel.com with ESMTP; 19 Oct 2018 00:12:34 -0700
-Subject: Re: [LKP] [mm/memory.c] 6558038e45: general_protection_fault:#[##]
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
-References: <20181017013600.GA16117@shao2-debian>
- <20181017152621.7e716f4906f81c52c67d59c3@linux-foundation.org>
-From:   Rong Chen <rong.a.chen@intel.com>
-Message-ID: <35a54261-965e-dc03-ef8e-3a44faa8846e@intel.com>
-Date:   Fri, 19 Oct 2018 15:12:54 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        id S1726584AbeJSPTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Oct 2018 11:19:19 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82D8C20869;
+        Fri, 19 Oct 2018 07:14:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539933271;
+        bh=xBNTmPUTp+0YPUTy6t9LRnxB8eqMJOpOFJFFLPxk/1c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yUozdZkmdEoKAGnq+lm+PohBh0VfFRR4tl4b7GEs/9hBpXPI4HvgBwMSwDDzd+Lir
+         AdZm5hE0VWWwcF3URvAOot4C0FOsSUauGkEAGiNP0NJfuwo/Z3cyXvhp8m8FDXzBTQ
+         LS7kyzfdX/az1pjohPNZbc5hRJnswNHIGfc2a7ms=
+Date:   Fri, 19 Oct 2018 09:14:28 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Dave Airlie <airlied@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [git pull] drm fixes for 4.19 final
+Message-ID: <20181019071428.GB28551@kroah.com>
+References: <CAPM=9txsa9pSu0QaL3rWfSViRBkY3GB2Hm8=_SDp_TTiwsP_pQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181017152621.7e716f4906f81c52c67d59c3@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPM=9txsa9pSu0QaL3rWfSViRBkY3GB2Hm8=_SDp_TTiwsP_pQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 19, 2018 at 02:59:11PM +1000, Dave Airlie wrote:
+> Hi Greg,
+> 
+> Just a last set of misc core fixes for final.
+> 
+> 4 fixes, one use after free, one fb integration fix, one EDID fix, and
+> one laptop panel quirk,
+> 
+> Thanks,
+> Dave.
+> 
+> drm-fixes-2018-10-19:
+> drm: one set of misc fixes for final release
+> The following changes since commit 35a7f35ad1b150ddf59a41dcac7b2fa32982be0e:
+> 
+>   Linux 4.19-rc8 (2018-10-15 07:20:24 +0200)
+> 
+> are available in the Git repository at:
+> 
+>   git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-10-19
 
+Now merged, thanks.
 
-On 10/18/2018 06:26 AM, Andrew Morton wrote:
-> On Wed, 17 Oct 2018 09:36:00 +0800 kernel test robot <rong.a.chen@intel.com> wrote:
->
->> FYI, we noticed the following commit (built with gcc-6):
->>
->> commit: 6558038e4540a22ee4f99a5def74791189102bc0 ("mm/memory.c: recheck page table entry with page table lock held")
->> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
->>
->> in testcase: trinity
->> with following parameters:
->>
->> 	runtime: 300s
->>
->> test-description: Trinity is a linux system call fuzz tester.
->> test-url: http://codemonkey.org.uk/projects/trinity/
->>
->>
->> on test machine: qemu-system-x86_64 -enable-kvm -cpu qemu64,+ssse3 -smp 4 -m 4G
->>
->> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> mm-recheck-page-table-entry-with-page-table-lock-held-fix.patch ("mm:
-> fix the crash observed with syzkaller run") will most likely fix this.
-> Was it applied during this testing?
-
-It wasn't applied during this testing.
-
-Best Regards,
-Rong Chen
+greg k-h
