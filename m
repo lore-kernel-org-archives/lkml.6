@@ -2,103 +2,188 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2483AC67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 16:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F9DC67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 16:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C99AA2159B
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 16:30:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QdOMWNVw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99AA2159B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 17F662157C
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 16:32:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17F662157C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727671AbeJUAlE (ORCPT
+        id S1727673AbeJUAnF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 20:41:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727512AbeJUAlD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 20:41:03 -0400
-Received: from localhost (unknown [109.144.218.90])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C52132157C;
-        Sat, 20 Oct 2018 16:30:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540053003;
-        bh=TkGO0Mth4UDODXhjIxtBr+f3eVKSFjCVTp0Etv/SWE4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QdOMWNVwrAKm3B0w5sGCPFWhVS7BDw/79j4x5N5TxAkFtS8nXG/JFqNWStxdZVFm/
-         cuNCbDKAzdlUk5UyrD0sAJnOyBLSS0bhvmdBjxV60OpsVDvOoe9+tXTNLqoQ0dXXKO
-         PQGInrPdtqjwa4C3nMW2FL9H9+0vjUjorBp2JM1c=
-Date:   Sat, 20 Oct 2018 22:00:00 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Eric Long <eric.long@spreadtrum.com>,
-        Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/7] Add some fixes and new feature for SPRD DMA
-Message-ID: <20181020163000.GD2894@vkoul-mobl>
-References: <cover.1538199697.git.baolin.wang@linaro.org>
- <CAMz4kuKFtbLMmNEbQ0oVgW87HPRwJuwFJH9cXVymz=6jH7xzOA@mail.gmail.com>
+        Sat, 20 Oct 2018 20:43:05 -0400
+Received: from mail-it1-f198.google.com ([209.85.166.198]:43783 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727543AbeJUAnE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 20:43:04 -0400
+Received: by mail-it1-f198.google.com with SMTP id w137-v6so7389956itc.8
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 09:32:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=HEy+It0tLXkVH4Tm+ODZuTlfqoxtNNos/ZPqHPfcT34=;
+        b=jn1WQSbu8+0BtWTv5qCNPdvPYJPJ4AYluZOd9VCLm4JSNWlMBNKCRQK9LA0HEWqqPi
+         O3y+6OUi2kD0KWnUyW3+0KrsafYXz1PJT4ZOMECBoI1RxBEvnXC/jx9YyfRvwfdOH132
+         Sg3szEymi9ku2RJSBNdRvsucS68/sMCQSWMOsuLP3dVf4T8kOM/Q8bFJoTJAB0cuDShv
+         7KMfOgWzka6B+lDdVu9bGzl5vKJLDcxn368i6ABPZipXq9nlnzeBjfoGywRmPiObpea6
+         YS6Zwq48YYVX2SGlaVe5h1Fn6S5rOywDeLVXMD4gIuagFupCkFUc5wN8SNEbVIVw0T9j
+         923w==
+X-Gm-Message-State: ABuFfohz5kqG0jNROb/nNqM9dw+BNEogzgJSWhNr5Eq44hPAfsjgLSe2
+        tzNWZEd19V9jXGzd850n20XF4FkAUjIz8db6EZ1HAwPlbmYA
+X-Google-Smtp-Source: ACcGV60GCeHs3tjW2anWO8ryO44n7y8KNdbNHGnVk1KJHQ5wtfqLs14MlDRVeDiB/JLDDSEBfdgq2N62hhSsAuPY3AQM3dcbW5wA
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMz4kuKFtbLMmNEbQ0oVgW87HPRwJuwFJH9cXVymz=6jH7xzOA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Received: by 2002:a02:3b58:: with SMTP id i24-v6mr32631628jaf.25.1540053123759;
+ Sat, 20 Oct 2018 09:32:03 -0700 (PDT)
+Date:   Sat, 20 Oct 2018 09:32:03 -0700
+In-Reply-To: <000000000000140c370577db5ece@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006089ec0578ab8f08@google.com>
+Subject: Re: KASAN: use-after-free Read in debugfs_remove (3)
+From:   syzbot <syzbot+903b72a010ad6b7a40f2@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, gregkh@linuxfoundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rafael@kernel.org, rostedt@goodmis.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-10-18, 17:29, Baolin Wang wrote:
-> Hi Vinod,
-> 
-> On 29 September 2018 at 13:48, Baolin Wang <baolin.wang@linaro.org> wrote:
-> > This patchset removes the direction usage from struct dma_slave_config,
-> > and add one new field to save the direction. It also fixes some issues
-> > for link-list transfer. Moreover this patchset adds new 2-stage transfer
-> > support for our DMA.
-> 
-> Do you have any comments for this patchset? Thanks a lot.
+syzbot has found a reproducer for the following crash on:
 
-Sorry bit busy with things and ELC, I should be able to review this
-after monday..
+HEAD commit:    270b77a0f30e Merge tag 'drm-fixes-2018-10-20-1' of git://a..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1678d019400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b3f55cb3dfcc6c33
+dashboard link: https://syzkaller.appspot.com/bug?extid=903b72a010ad6b7a40f2
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1248e21d400000
 
-> 
-> >
-> > Baolin Wang (1):
-> >   dmaengine: sprd: Remove direction usage from struct dma_slave_config
-> >
-> > Eric Long (6):
-> >   dmaengine: sprd: Get transfer residue depending on the transfer
-> >     direction
-> >   dmaengine: sprd: Fix the last link-list configuration
-> >   dmaengine: sprd: Set cur_desc as NULL when free or terminate one dma
-> >     channel
-> >   dmaengine: sprd: Support DMA link-list cyclic callback
-> >   dmaengine: sprd: Support DMA 2-stage transfer mode
-> >   dmaengine: sprd: Add me as one of the module authors
-> >
-> >  drivers/dma/sprd-dma.c       |  152 +++++++++++++++++++++++++++++++++++++-----
-> >  include/linux/dma/sprd-dma.h |   62 ++++++++++++++++-
-> >  2 files changed, 194 insertions(+), 20 deletions(-)
-> >
-> > --
-> > 1.7.9.5
-> >
-> 
-> 
-> 
-> -- 
-> Baolin Wang
-> Best Regards
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+903b72a010ad6b7a40f2@syzkaller.appspotmail.com
 
--- 
-~Vinod
+overlayfs: missing 'lowerdir'
+overlayfs: missing 'lowerdir'
+overlayfs: missing 'lowerdir'
+overlayfs: missing 'lowerdir'
+==================================================================
+BUG: KASAN: use-after-free in debugfs_remove+0x10b/0x130  
+fs/debugfs/inode.c:682
+Read of size 8 at addr ffff8801c3d48a60 by task kworker/1:3/5820
+
+CPU: 1 PID: 5820 Comm: kworker/1:3 Not tainted 4.19.0-rc8+ #72
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events __blk_release_queue
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  debugfs_remove+0x10b/0x130 fs/debugfs/inode.c:682
+  blk_trace_free+0x35/0x130 kernel/trace/blktrace.c:312
+  blk_trace_cleanup kernel/trace/blktrace.c:339 [inline]
+  __blk_trace_remove+0x7a/0xa0 kernel/trace/blktrace.c:352
+  blk_trace_shutdown+0x63/0x80 kernel/trace/blktrace.c:752
+  __blk_release_queue+0x22d/0x500 block/blk-sysfs.c:852
+  process_one_work+0xc90/0x1b90 kernel/workqueue.c:2153
+  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+kobject: 'mq' (00000000f4ee6bf8): kobject_uevent_env: filter function  
+caused the event to drop!
+kobject: '0' (000000001977fe41): kobject_add_internal: parent: 'mq',  
+set: '<NULL>'
+  kthread+0x35a/0x420 kernel/kthread.c:246
+kobject: 'cpu0' (00000000e409d4ee): kobject_add_internal: parent: '0',  
+set: '<NULL>'
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+
+kobject: 'cpu1' (000000004ffe025c): kobject_add_internal: parent: '0',  
+set: '<NULL>'
+Allocated by task 11189:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+kobject: 'queue' (00000000c1b3424e): kobject_uevent_env
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+  kmem_cache_alloc+0x12e/0x730 mm/slab.c:3554
+  __d_alloc+0xc8/0xcc0 fs/dcache.c:1614
+  d_alloc+0x96/0x380 fs/dcache.c:1698
+  d_alloc_parallel+0x15a/0x1f40 fs/dcache.c:2441
+  __lookup_slow+0x1e6/0x540 fs/namei.c:1654
+kobject: 'queue' (00000000c1b3424e): kobject_uevent_env: filter function  
+caused the event to drop!
+  lookup_one_len+0x1d8/0x220 fs/namei.c:2543
+  start_creating+0xc6/0x200 fs/debugfs/inode.c:308
+  __debugfs_create_file+0x63/0x400 fs/debugfs/inode.c:347
+  debugfs_create_file+0x57/0x70 fs/debugfs/inode.c:399
+  do_blk_trace_setup+0x454/0xda0 kernel/trace/blktrace.c:528
+  __blk_trace_setup+0xd5/0x180 kernel/trace/blktrace.c:577
+  blk_trace_ioctl+0x17a/0x2f0 kernel/trace/blktrace.c:716
+  blkdev_ioctl+0x8bc/0x2010 block/ioctl.c:587
+  block_ioctl+0xee/0x130 fs/block_dev.c:1883
+kobject: 'iosched' (000000001a1643a8): kobject_add_internal:  
+parent: 'queue', set: '<NULL>'
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:501 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+  __do_sys_ioctl fs/ioctl.c:709 [inline]
+  __se_sys_ioctl fs/ioctl.c:707 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+kobject: 'iosched' (000000001a1643a8): kobject_uevent_env
+
+Freed by task 5443:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kmem_cache_free+0x83/0x290 mm/slab.c:3756
+  __d_free+0x20/0x30 fs/dcache.c:257
+  __rcu_reclaim kernel/rcu/rcu.h:236 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2576 [inline]
+  invoke_rcu_callbacks kernel/rcu/tree.c:2880 [inline]
+  __rcu_process_callbacks kernel/rcu/tree.c:2847 [inline]
+  rcu_process_callbacks+0xf23/0x2670 kernel/rcu/tree.c:2864
+kobject: 'iosched' (000000001a1643a8): kobject_uevent_env: filter function  
+caused the event to drop!
+  __do_softirq+0x30b/0xad8 kernel/softirq.c:292
+
+The buggy address belongs to the object at ffff8801c3d48a20
+  which belongs to the cache dentry of size 288
+The buggy address is located 64 bytes inside of
+  288-byte region [ffff8801c3d48a20, ffff8801c3d48b40)
+The buggy address belongs to the page:
+page:ffffea00070f5200 count:1 mapcount:0 mapping:ffff8801da978c40  
+index:0xffff8801c3d488c0
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea000726ebc8 ffffea00071b0988 ffff8801da978c40
+kobject: 'integrity' (000000000b36b365): kobject_add_internal:  
+parent: 'loop0', set: '<NULL>'
+raw: ffff8801c3d488c0 ffff8801c3d48080 000000010000000a 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801c3d48900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801c3d48980: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+> ffff8801c3d48a00: fc fc fc fc fb fb fb fb fb fb fb fb fb fb fb fb
+                                                        ^
+  ffff8801c3d48a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+kobject: 'integrity' (000000000b36b365): kobject_uevent_env
+  ffff8801c3d48b00: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+==================================================================
+
