@@ -6,76 +6,141 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F9DECDE43
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 01:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C81ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 01:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85FE0214C4
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 01:12:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85FE0214C4
+	by mail.kernel.org (Postfix) with ESMTP id 1210E214C4
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 01:12:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1210E214C4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbeJTJUr (ORCPT
+        id S1727670AbeJTJUy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 05:20:47 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58982 "EHLO mx1.redhat.com"
+        Sat, 20 Oct 2018 05:20:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37580 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726663AbeJTJUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 05:20:46 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        id S1726663AbeJTJUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 05:20:53 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 884963091796;
-        Sat, 20 Oct 2018 01:12:14 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 602E04620D;
+        Sat, 20 Oct 2018 01:12:21 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A8F365B0AA;
-        Sat, 20 Oct 2018 01:12:12 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 80C0E1057047;
+        Sat, 20 Oct 2018 01:12:20 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 13/24] afs: Commit the status on a new file/dir/symlink
+Subject: [PATCH 14/24] afs: Remove callback details from afs_callback_break
+ struct
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Date:   Sat, 20 Oct 2018 02:12:11 +0100
-Message-ID: <153999793194.866.8490964681509380614.stgit@warthog.procyon.org.uk>
+Date:   Sat, 20 Oct 2018 02:12:19 +0100
+Message-ID: <153999793977.866.12544346332502038724.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153999783767.866.7957078562330181644.stgit@warthog.procyon.org.uk>
 References: <153999783767.866.7957078562330181644.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Sat, 20 Oct 2018 01:12:14 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Sat, 20 Oct 2018 01:12:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Call the function to commit the status on a new file, dir or symlink so
-that the access rights for the caller's key are cached for that object.
-
-Without this, the next access to the file will cause a FetchStatus
-operation to be emitted to retrieve the access rights.
+Remove unnecessary details of a broken callback, such as version, expiry
+and type, from the afs_callback_break struct as they're not actually used
+and make the list take more memory.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/afs/dir.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/afs/afs.h       |    2 +-
+ fs/afs/callback.c  |    8 ++------
+ fs/afs/cmservice.c |   17 +++++------------
+ 3 files changed, 8 insertions(+), 19 deletions(-)
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 024b7cf7441c..8936731c59ff 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -1089,6 +1089,7 @@ static void afs_vnode_new_inode(struct afs_fs_cursor *fc,
+diff --git a/fs/afs/afs.h b/fs/afs/afs.h
+index c23b31b742fa..fb9bcb8758ea 100644
+--- a/fs/afs/afs.h
++++ b/fs/afs/afs.h
+@@ -75,7 +75,7 @@ struct afs_callback {
  
- 	vnode = AFS_FS_I(inode);
- 	set_bit(AFS_VNODE_NEW_CONTENT, &vnode->flags);
-+	afs_vnode_commit_status(fc, vnode, 0);
- 	d_add(new_dentry, inode);
- }
+ struct afs_callback_break {
+ 	struct afs_fid		fid;		/* File identifier */
+-	struct afs_callback	cb;		/* Callback details */
++	//struct afs_callback	cb;		/* Callback details */
+ };
  
+ #define AFSCBMAX 50	/* maximum callbacks transferred per bulk op */
+diff --git a/fs/afs/callback.c b/fs/afs/callback.c
+index 8698198ad427..df9bfee698ad 100644
+--- a/fs/afs/callback.c
++++ b/fs/afs/callback.c
+@@ -310,14 +310,10 @@ void afs_break_callbacks(struct afs_server *server, size_t count,
+ 	/* TODO: Sort the callback break list by volume ID */
+ 
+ 	for (; count > 0; callbacks++, count--) {
+-		_debug("- Fid { vl=%08llx n=%llu u=%u }  CB { v=%u x=%u t=%u }",
++		_debug("- Fid { vl=%08llx n=%llu u=%u }",
+ 		       callbacks->fid.vid,
+ 		       callbacks->fid.vnode,
+-		       callbacks->fid.unique,
+-		       callbacks->cb.version,
+-		       callbacks->cb.expiry,
+-		       callbacks->cb.type
+-		       );
++		       callbacks->fid.unique);
+ 		afs_break_one_callback(server, &callbacks->fid);
+ 	}
+ 
+diff --git a/fs/afs/cmservice.c b/fs/afs/cmservice.c
+index 186f621f8722..fc0010d800a0 100644
+--- a/fs/afs/cmservice.c
++++ b/fs/afs/cmservice.c
+@@ -218,7 +218,6 @@ static int afs_deliver_cb_callback(struct afs_call *call)
+ 			cb->fid.vid	= ntohl(*bp++);
+ 			cb->fid.vnode	= ntohl(*bp++);
+ 			cb->fid.unique	= ntohl(*bp++);
+-			cb->cb.type	= AFSCM_CB_UNTYPED;
+ 		}
+ 
+ 		afs_extract_to_tmp(call);
+@@ -236,24 +235,18 @@ static int afs_deliver_cb_callback(struct afs_call *call)
+ 		if (call->count2 != call->count && call->count2 != 0)
+ 			return afs_protocol_error(call, -EBADMSG,
+ 						  afs_eproto_cb_count);
+-		afs_extract_to_buf(call, call->count2 * 3 * 4);
++		call->_iter = &call->iter;
++		iov_iter_discard(&call->iter, READ, call->count2 * 3 * 4);
+ 		call->unmarshall++;
+ 
+ 	case 4:
+-		_debug("extract CB array");
++		_debug("extract discard %zu/%u",
++		       iov_iter_count(&call->iter), call->count2 * 3 * 4);
++
+ 		ret = afs_extract_data(call, false);
+ 		if (ret < 0)
+ 			return ret;
+ 
+-		_debug("unmarshall CB array");
+-		cb = call->request;
+-		bp = call->buffer;
+-		for (loop = call->count2; loop > 0; loop--, cb++) {
+-			cb->cb.version	= ntohl(*bp++);
+-			cb->cb.expiry	= ntohl(*bp++);
+-			cb->cb.type	= ntohl(*bp++);
+-		}
+-
+ 		call->unmarshall++;
+ 	case 5:
+ 		break;
 
