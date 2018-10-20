@@ -2,146 +2,129 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC01C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 15:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B2CCC67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 15:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BC262154D
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 15:40:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B23F21534
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 15:51:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="agzrra2/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BC262154D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="defTfOWD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B23F21534
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbeJTXuu (ORCPT
+        id S1727579AbeJUACp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 19:50:50 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:39197 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727584AbeJTXuu (ORCPT
+        Sat, 20 Oct 2018 20:02:45 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46661 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727397AbeJUACp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 19:50:50 -0400
-Received: by mail-yb1-f196.google.com with SMTP id j193-v6so3199033ybj.6
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 08:39:58 -0700 (PDT)
+        Sat, 20 Oct 2018 20:02:45 -0400
+Received: by mail-wr1-f68.google.com with SMTP id i4-v6so1668559wrr.13;
+        Sat, 20 Oct 2018 08:51:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NjudrxXxvqsbj/szpVbkWeHhVtdGnETmnnagOvEJsJU=;
-        b=agzrra2/ye1/bw8BbvAfXXkZtAc96bONszTLu7U7PfcKTa2KB+3buqsrOYdNI/ogZM
-         OrsJje80YG3UNuQ/0RZLq68apkHeJQ0L7Omv7T/ebc7Y30HVIDs+szVJtszhGme15LNR
-         A7H38HAKLsGVzVeOS+rdtG31+LbH621KwLsbI=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rDWf/YK3a5fNwa8sjUoNTG/STScEUW/gOMZ8cBb03QY=;
+        b=defTfOWDZTJIe6rmJ8p9JP5DpFVToFbTIfFE1sYxfNu0gKfHFdH5jFhNW9KIc65Wyo
+         +5uAE7HiznjD4Li1zXg7TAAgjX1gOu5lhaATUgNzZlVERuArxWvYOgcX0izRkGeTT+0c
+         CbUm7d8yKplP2mh9l0LDRwofVZguh6z++cSlPGVFo+yQxOJhsUBtTWAVh5SePfF949s3
+         ZXo4YB1vqUGGRoDm967y8xF6RU9FMlJuesk2A+ROolj8SknbRb/30h0LzAlP7eHs5T1Z
+         m03t4ItB2B/s91wX3qGI7r6K+4tu2myFc/5bgepssPSEJbcS53osj/iv/h0tEmmr8e80
+         LWGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NjudrxXxvqsbj/szpVbkWeHhVtdGnETmnnagOvEJsJU=;
-        b=DZLe7pd5LFqmi3vzzzTuW1qTz/EyGnp3DJd1w8azyIIy5odGmQyq2G64mej7ulx38B
-         h+NOeZuB66r6oZA2XoAvbGpkCiLiHUaUNRO66zlzXdWke5rXdxxhx0SoWEB5fGZpEGBC
-         LPv5lFT9tOQuyHJq+tk/bteDhfp3dEICCZoyvn9keGiJYa0h+o3CzP47C3hiRK8b31lC
-         tvIGuK0nlpLTNY3P/2UQuB5Uhstn8uGguWietvypmoiNfm/xu0ZPPgI+VwPZIiGb56q4
-         ozRRYF5SGTZNriqsClWueFWwHESBT8HlfOzDXQP79ub62GTG15G/GuhwF8Rg/gOhJCxU
-         wKGQ==
-X-Gm-Message-State: ABuFfogJanmgxmVJoIdArKtnSACvjbO4yWZMgTxM3HkLBFMzZldCr7xq
-        tdFIm/sEfTuFlHHuRzKBziI+ZgrKuTM=
-X-Google-Smtp-Source: ACcGV62xJp//JRUSuZ9Z87XJvb1n35qSiOeZz39KMtulvnOsacGA/lde3PFj4nrIaX3fxKazxV0w6w==
-X-Received: by 2002:a25:b083:: with SMTP id f3-v6mr5129249ybj.293.1540049997164;
-        Sat, 20 Oct 2018 08:39:57 -0700 (PDT)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id q1-v6sm7157877ywa.92.2018.10.20.08.39.54
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rDWf/YK3a5fNwa8sjUoNTG/STScEUW/gOMZ8cBb03QY=;
+        b=jIRnL3crLYK66CB47dI93AOGDzwt9Qwp6AyYpFX0XmfHMVKVIyg+FOsfKcM3bGBmLU
+         f/hmmB1gTkV6zOX+MyON4za5/9M/xPP/vds92VvY0mNTCTKm7NNHoIAn1dUc7uD3bzuE
+         ajdju/YLGVceeiriqLTaxCM0V4inhGtHa/+IH5jKOgwGA7yF5phVwEsSrQS8lnkZ8BY3
+         VtFW5nOl/XSDRYATqvvMU5EGLPzFvVaXGDVJcBlV/z+rfgL4eYM1Awr31ICHdiUXPzmd
+         +1me6xTgBlKxtHqiKJrtQ+WHXQA9ulcR3x8oyUdGduf7W1HSdGGhylFvHTwobNXUOEvR
+         Ddnw==
+X-Gm-Message-State: ABuFfogxf8ovDSqV8gMLoNU/czNVpwUvesDBnsNA6qRN3RK8Y3Z9yGMf
+        /zL9Eh4nrGwM/YSbGBKP6FDoX3K8+pU=
+X-Google-Smtp-Source: ACcGV62k0uyedoHd+8nYbSELGzklZZADUQNGl2vXaDZNyQt/IwLnLTTjOj2eN3lO/r9N5Mpm3sGIOA==
+X-Received: by 2002:adf:b6a0:: with SMTP id j32-v6mr35868968wre.55.1540050709683;
+        Sat, 20 Oct 2018 08:51:49 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8bd4:3f00:c570:5259:d176:b6d7? (p200300EA8BD43F00C5705259D176B6D7.dip0.t-ipconnect.de. [2003:ea:8bd4:3f00:c570:5259:d176:b6d7])
+        by smtp.googlemail.com with ESMTPSA id e196-v6sm14236198wmf.43.2018.10.20.08.51.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 20 Oct 2018 08:39:55 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id k132-v6so3319029ybc.2
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 08:39:54 -0700 (PDT)
-X-Received: by 2002:a25:24c6:: with SMTP id k189-v6mr15981307ybk.373.1540049994583;
- Sat, 20 Oct 2018 08:39:54 -0700 (PDT)
+        Sat, 20 Oct 2018 08:51:49 -0700 (PDT)
+Subject: Re: [PATCH] net: ethernet: fec: Add missing SPEED_
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        LABBE Corentin <clabbe@baylibre.com>, davem@davemloft.net,
+        fugang.duan@nxp.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+References: <1539875100-11121-1-git-send-email-clabbe@baylibre.com>
+ <2621cbc9-47ed-ce2a-b7ee-262f17dc138f@gmail.com> <20181018184715.GA31736@Red>
+ <d1461619-1344-e581-4eef-35cf8bbb5336@gmail.com> <20181018191612.GB31736@Red>
+ <5cb0731b-83c5-5ed5-d022-98f8627d1737@gmail.com> <20181018195909.GA11317@Red>
+ <1b784f69-3ec2-feb2-81e1-9a335cf477c3@gmail.com>
+ <f1933c0a-d124-a7ac-afab-2fa8f88907ab@gmail.com>
+ <20181020153922.GC1596@lunn.ch>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <c8f4f203-b2b6-81ba-2c79-85501a640948@gmail.com>
+Date:   Sat, 20 Oct 2018 17:51:42 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
- <9696282.0ldyWdpzWo@avalon> <CAAFQd5Bb2v0iU6GAwOKtc-4kv1V+P_4Co7=OUYg77wfmKQQ=kA@mail.gmail.com>
-In-Reply-To: <CAAFQd5Bb2v0iU6GAwOKtc-4kv1V+P_4Co7=OUYg77wfmKQQ=kA@mail.gmail.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Sun, 21 Oct 2018 00:39:42 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5CdjZKEeZmowMKVLVKhiWPxEK2f7H+xNhhXAPn7O-S33g@mail.gmail.com>
-Message-ID: <CAAFQd5CdjZKEeZmowMKVLVKhiWPxEK2f7H+xNhhXAPn7O-S33g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181020153922.GC1596@lunn.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 7:03 PM Tomasz Figa <tfiga@chromium.org> wrote:
->
-> Hi Laurent,
->
-> On Wed, Oct 17, 2018 at 10:34 PM Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
-> >
-> > Hi Tomasz,
-> >
-> > Thank you for the patch.
->
-> Thanks for your comments! Please see my replies inline.
->
-> >
-> > On Tuesday, 24 July 2018 17:06:20 EEST Tomasz Figa wrote:
-[snip]
-> > > The driver must also set
-> > > +     ``V4L2_BUF_FLAG_LAST`` in :c:type:`v4l2_buffer` ``flags`` field on the
-> > > +     buffer on the ``CAPTURE`` queue containing the last frame (if any)
-> > > +     produced as a result of processing the ``OUTPUT`` buffers queued
-> > > +     before ``V4L2_DEC_CMD_STOP``. If no more frames are left to be
-> > > +     returned at the point of handling ``V4L2_DEC_CMD_STOP``, the driver
-> > > +     must return an empty buffer (with :c:type:`v4l2_buffer`
-> > > +     ``bytesused`` = 0) as the last buffer with ``V4L2_BUF_FLAG_LAST`` set
-> > > +     instead. Any attempts to dequeue more buffers beyond the buffer marked
-> > > +     with ``V4L2_BUF_FLAG_LAST`` will result in a -EPIPE error from
-> > > +     :c:func:`VIDIOC_DQBUF`.
-> > > +
-> > > +   * If the ``CAPTURE`` queue is NOT streaming, no action is necessary for
-> > > +     ``CAPTURE`` queue and the driver must send a ``V4L2_EVENT_EOS``
-> > > +     immediately after all ``OUTPUT`` buffers in question have been
-> > > +     processed.
-> >
-> > What is the use case for this ? Can't we just return an error if decoder isn't
-> > streaming ?
-> >
->
-> Actually this is wrong. We want the queued OUTPUT buffers to be
-> processed and decoded, so if the CAPTURE queue is not yet set up
-> (initialization sequence not completed yet), handling the
-> initialization sequence first will be needed as a part of the drain
-> sequence. I've updated the document with that.
+On 20.10.2018 17:39, Andrew Lunn wrote:
+>>>> I have patched by adding:
+>>>> phy_remove_link_mode(phy_dev, ETHTOOL_LINK_MODE_Asym_Pause_BIT);
+>>
+>> Instead of programmatically removing the feature bit it should be
+>> possible to do this in the PHY driver configuration. See also
+>> this part of phy_probe().
+>>
+>> 	if (phydrv->features & (SUPPORTED_Pause | SUPPORTED_Asym_Pause)) {
+>> 		phydev->supported &= ~(SUPPORTED_Pause | SUPPORTED_Asym_Pause);
+>> 		phydev->supported |= phydrv->features &
+>> 				     (SUPPORTED_Pause | SUPPORTED_Asym_Pause);
+>> 	} else {
+>> 		phydev->supported |= SUPPORTED_Pause | SUPPORTED_Asym_Pause;
+>> 	}
+> 
+> Sorry for the late reply. Been on vacation.
+> 
+> I need to check the datasheet, but it seems like the KSZ9021 does not
+> support asym pause. Using the above code is the correct way to solve
+> this problem. Look at the bcm63xx.c:bcm63xx_config_init() which does
+> this.
+> 
+I dare to dispute here ;) Above code snippet from phy_probe() will
+(try to) set also SUPPORTED_Asym_Pause, because phydrv->features
+doesn't include any of the two pause flags.
+The statement in bcm63xx_config_init you refer to seems to be a
+no-op to me therefore.
 
-I might want to take this back. The client could just drive the
-initialization to completion on its own and start the drain sequence
-after that. Let me think if it makes anything easier. For reference, I
-don't see any compatibility constraint here, since the existing user
-space already works like that.
+I'd say the correct way is to change the PHY config like this:
+.features	= PHY_BASIC_FEATURES | SUPPORTED_Pause;
+It's exactly the use case the code snippet above covers.
 
-Best regards,
-Tomasz
+I think the bcm63xx driver would need to be changed.
+
+> I will cook up a patch.
+> 
+>   Andrew
+> 
+
