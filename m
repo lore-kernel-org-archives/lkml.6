@@ -2,1188 +2,187 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F89ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 16:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C782CC67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 17:20:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 643C521582
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 16:57:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 643C521582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6BA5E2157C
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 17:20:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cAs7IsTB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA5E2157C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbeJUBIJ (ORCPT
+        id S1727584AbeJUBbN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 21:08:09 -0400
-Received: from mail-it1-f199.google.com ([209.85.166.199]:43347 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727590AbeJUBII (ORCPT
+        Sat, 20 Oct 2018 21:31:13 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:54979 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726779AbeJUBbN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 21:08:08 -0400
-Received: by mail-it1-f199.google.com with SMTP id w137-v6so7439609itc.8
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 09:57:03 -0700 (PDT)
+        Sat, 20 Oct 2018 21:31:13 -0400
+Received: by mail-it1-f196.google.com with SMTP id l191-v6so7676363ita.4
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 10:20:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=VZpahs2I0uHzvO9G0wpyOJ99KVKfUU4v1SJEQTM8x1E=;
+        b=cAs7IsTBkExOaHxu1RuEUi6vwNsZowP/4q7OWRtpZwCJDssZhrXpDpL5lTpfw6LRXG
+         comsRYA7lX+FNWeHERZY1es/mLqABNGuwftZ0b+Suh7WVRtNObOPCfF1w7UlLeFvB0MY
+         EEvr7TIK/B/OuDrmFvIelqaJNsZbLEOkyqvn0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=VVPYag9curU1k6n5E5X9HDf2jmfos7gGBlMl4ujz+0U=;
-        b=e+g+SBtCDfE8mpt1Eorl1cR8iyHYWjWcTDbpIeIPjpSo2dF8acRWkZrlQcy9YAe3CG
-         KKbAAPZMx9+hDxigFxsp60G2We0MfwJCLKBeSgwuLzG7k2T4JkQ+fdx1gkOkxpNunEOk
-         DqXfUPQqCWVWwduP/Ne1dnPKUjIhUjdQLiJMLIFrKcvXeTexZxWYfIDcYV0mOMBvDUCh
-         4OqaOu0inlRFfcEn+B41hTUpJBmNC/A+6MGXET0kywXr0nTsHE5JNs7BoAzhdE7H1bce
-         HrzAmt1EBes6qFnjMilU75O4ECFZRZaVNayto86MxM4LxEIif6Df+kFTaVMnlOKIS+lv
-         de4A==
-X-Gm-Message-State: ABuFfoiliBEOpu0308ZRCnNlbkENICGnTwRpu57qU8U31U3GOqCg8UaY
-        cujwqz3DQwoC2ppaSP4Q1E5sepfSot2KSJUKqJuxCzH+w8uu
-X-Google-Smtp-Source: ACcGV61l3g7sJiqa4Hhj2smTnGysDeIG20wem+E8HdvnsFMPJ8OFBSbrFtw1/ipUJFFGFHAinJ1qTj1X07nSYp2hvS7TNC9o6+3h
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=VZpahs2I0uHzvO9G0wpyOJ99KVKfUU4v1SJEQTM8x1E=;
+        b=oRu+HvqzDRc+2UFhjDzWQquTTGJfdPXZjr0cZN4iiQiaXLPvSxaW6Ze1pY+aKONsfS
+         NvlkDIkCUi6oJidjWNGSchll6TC0iM5KVQt5nqiI5WPZpbUcS430AJaRbgTCaXF4fVL4
+         axFticHTd9+NmGIVZBDFfqA2fpN7yi66AVneaZNl+dvQWLQslUpFqH4QgSrUXwcMImFL
+         SzV78gCHCG7XCBfVfFucJNwxe6UIllyxm5yO9ZNp9/q5lG0pvY5MzMXNq22cTr7h8JKE
+         ydcy4i20pRIUV/jBkxq3G0L+iiWU6k+iv2AvvoS7z25eSRKQa7tS8gvbOvKnaTqxswHY
+         dSVg==
+X-Gm-Message-State: ABuFfoi0wIJn+IKZWm8yH4dLF5TkigdK2KtfBejhW8k5lOk0cCXP4wqt
+        XOBUIyrekDTWV20cM01OhYq/a82uSJYrQA9JO0Li/A==
+X-Google-Smtp-Source: ACcGV61F/T2IpwJYXcxRiXIyE3hLm5uB53+7Hqj3OX1sTjKViPpeNedJ6Hn8Tu2GsktstEKhVZlzcox0kvxWrfhw1So=
+X-Received: by 2002:a02:4f02:: with SMTP id c2-v6mr8150820jab.2.1540056004694;
+ Sat, 20 Oct 2018 10:20:04 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a24:5495:: with SMTP id t143-v6mr7008991ita.34.1540054623166;
- Sat, 20 Oct 2018 09:57:03 -0700 (PDT)
-Date:   Sat, 20 Oct 2018 09:57:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bfd4270578abe88b@google.com>
-Subject: possible deadlock in flush_workqueue (2)
-From:   syzbot <syzbot+a50c7541a4a55cd49b02@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Sat, 20 Oct 2018 10:20:03
+ -0700 (PDT)
+In-Reply-To: <20181019204723.3903-1-rick.p.edgecombe@intel.com>
+References: <20181019204723.3903-1-rick.p.edgecombe@intel.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Sat, 20 Oct 2018 19:20:03 +0200
+Message-ID: <CAKv+Gu_AgPv2o4=U0-7pnpgtSufEobnta8oKhhGfCdCxM82B5Q@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 0/3] Rlimit for module space
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kees Cook <keescook@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jessica Yu <jeyu@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mips <linux-mips@linux-mips.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Jann Horn <jannh@google.com>, kristen@linux.intel.com,
+        Dave Hansen <dave.hansen@intel.com>, arjan@linux.intel.com,
+        deneen.t.dock@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Rick,
 
-syzbot found the following crash on:
+On 19 October 2018 at 22:47, Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
+> If BPF JIT is on, there is no effective limit to prevent filling the entire
+> module space with JITed e/BPF filters.
 
-HEAD commit:    91b15613ce7f Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10114109400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b3f55cb3dfcc6c33
-dashboard link: https://syzkaller.appspot.com/bug?extid=a50c7541a4a55cd49b02
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=159c1de9400000
+Why do BPF filters use the module space, and does this reason apply to
+all architectures?
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a50c7541a4a55cd49b02@syzkaller.appspotmail.com
+On arm64, we already support loading plain modules far away from the
+core kernel (i.e. out of range for ordinary relative jump/calll
+instructions), and so I'd expect BPF to be able to deal with this
+already as well. So for arm64, I wonder why an ordinary vmalloc_exec()
+wouldn't be more appropriate.
 
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
-
-======================================================
-WARNING: possible circular locking dependency detected
-4.19.0-rc8+ #291 Not tainted
-------------------------------------------------------
-syz-executor1/6832 is trying to acquire lock:
-000000007d4a82f2 ((wq_completion)"dio/%s"sb->s_id){+.+.}, at:  
-flush_workqueue+0x2db/0x1e10 kernel/workqueue.c:2652
-
-but task is already holding lock:
-00000000e2da6d71 (&sb->s_type->i_mutex_key#10){+.+.}, at: inode_trylock  
-include/linux/fs.h:758 [inline]
-00000000e2da6d71 (&sb->s_type->i_mutex_key#10){+.+.}, at:  
-ext4_file_write_iter+0x2a1/0x1420 fs/ext4/file.c:232
-
-which lock already depends on the new lock.
+So before refactoring the module alloc/free routines to accommodate
+BPF, I'd like to take one step back and assess whether it wouldn't be
+more appropriate to have a separate bpf_alloc/free API, which could be
+totally separate from module alloc/free if the arch permits it.
 
 
-the existing dependency chain (in reverse order) is:
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-
--> #2 (&sb->s_type->i_mutex_key#10){+.+.}:
-        down_write+0x8a/0x130 kernel/locking/rwsem.c:70
-        inode_lock include/linux/fs.h:738 [inline]
-        __generic_file_fsync+0xb5/0x200 fs/libfs.c:981
-        ext4_sync_file+0xa4f/0x1510 fs/ext4/fsync.c:120
-        vfs_fsync_range+0x140/0x220 fs/sync.c:197
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-        generic_write_sync include/linux/fs.h:2732 [inline]
-        dio_complete+0x75c/0x9e0 fs/direct-io.c:329
-        dio_aio_complete_work+0x20/0x30 fs/direct-io.c:341
-        process_one_work+0xc90/0x1b90 kernel/workqueue.c:2153
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-        worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-        kthread+0x35a/0x420 kernel/kthread.c:246
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
-
--> #1 ((work_completion)(&dio->complete_work)){+.+.}:
-        process_one_work+0xc0a/0x1b90 kernel/workqueue.c:2129
-        worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-        kthread+0x35a/0x420 kernel/kthread.c:246
-        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
-
--> #0 ((wq_completion)"dio/%s"sb->s_id){+.+.}:
-        lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3900
-        flush_workqueue+0x30a/0x1e10 kernel/workqueue.c:2655
-        drain_workqueue+0x2a9/0x640 kernel/workqueue.c:2820
-        destroy_workqueue+0xc6/0x9c0 kernel/workqueue.c:4155
-        sb_init_dio_done_wq+0x74/0x90 fs/direct-io.c:634
-        do_blockdev_direct_IO+0x12ea/0x9d70 fs/direct-io.c:1283
-        __blockdev_direct_IO+0x9d/0xc6 fs/direct-io.c:1417
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-        ext4_direct_IO_write fs/ext4/inode.c:3743 [inline]
-        ext4_direct_IO+0xae8/0x2230 fs/ext4/inode.c:3870
-        generic_file_direct_write+0x275/0x4b0 mm/filemap.c:3042
-        __generic_file_write_iter+0x2ff/0x630 mm/filemap.c:3221
-        ext4_file_write_iter+0x390/0x1420 fs/ext4/file.c:266
-        call_write_iter include/linux/fs.h:1808 [inline]
-        aio_write+0x3b1/0x610 fs/aio.c:1561
-        io_submit_one+0xaa1/0xf80 fs/aio.c:1835
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-        __do_sys_io_submit fs/aio.c:1916 [inline]
-        __se_sys_io_submit fs/aio.c:1887 [inline]
-        __x64_sys_io_submit+0x1b7/0x580 fs/aio.c:1887
-        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-   (wq_completion)"dio/%s"sb->s_id -->  
-(work_completion)(&dio->complete_work) --> &sb->s_type->i_mutex_key#10
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&sb->s_type->i_mutex_key#10);
-                                lock((work_completion)(&dio->complete_work));
-                                lock(&sb->s_type->i_mutex_key#10);
-   lock((wq_completion)"dio/%s"sb->s_id);
-
-  *** DEADLOCK ***
-
-1 lock held by syz-executor1/6832:
-  #0: 00000000e2da6d71 (&sb->s_type->i_mutex_key#10){+.+.}, at:  
-inode_trylock include/linux/fs.h:758 [inline]
-  #0: 00000000e2da6d71 (&sb->s_type->i_mutex_key#10){+.+.}, at:  
-ext4_file_write_iter+0x2a1/0x1420 fs/ext4/file.c:232
-
-stack backtrace:
-CPU: 1 PID: 6832 Comm: syz-executor1 Not tainted 4.19.0-rc8+ #291
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
-  print_circular_bug.isra.33.cold.54+0x1bd/0x27d  
-kernel/locking/lockdep.c:1221
-  check_prev_add kernel/locking/lockdep.c:1861 [inline]
-  check_prevs_add kernel/locking/lockdep.c:1974 [inline]
-  validate_chain kernel/locking/lockdep.c:2415 [inline]
-  __lock_acquire+0x33e4/0x4ec0 kernel/locking/lockdep.c:3411
-  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3900
-  flush_workqueue+0x30a/0x1e10 kernel/workqueue.c:2655
-  drain_workqueue+0x2a9/0x640 kernel/workqueue.c:2820
-  destroy_workqueue+0xc6/0x9c0 kernel/workqueue.c:4155
-  sb_init_dio_done_wq+0x74/0x90 fs/direct-io.c:634
-  do_blockdev_direct_IO+0x12ea/0x9d70 fs/direct-io.c:1283
-  __blockdev_direct_IO+0x9d/0xc6 fs/direct-io.c:1417
-  ext4_direct_IO_write fs/ext4/inode.c:3743 [inline]
-  ext4_direct_IO+0xae8/0x2230 fs/ext4/inode.c:3870
-  generic_file_direct_write+0x275/0x4b0 mm/filemap.c:3042
-  __generic_file_write_iter+0x2ff/0x630 mm/filemap.c:3221
-  ext4_file_write_iter+0x390/0x1420 fs/ext4/file.c:266
-  call_write_iter include/linux/fs.h:1808 [inline]
-  aio_write+0x3b1/0x610 fs/aio.c:1561
-  io_submit_one+0xaa1/0xf80 fs/aio.c:1835
-  __do_sys_io_submit fs/aio.c:1916 [inline]
-  __se_sys_io_submit fs/aio.c:1887 [inline]
-  __x64_sys_io_submit+0x1b7/0x580 fs/aio.c:1887
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457569
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f7d19a51c78 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
-RDX: 0000000020000540 RSI: 0000000000000008 RDI: 00007f7d19a31000
-RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f7d19a526d4
-R13: 00000000004be72d R14: 00000000004ce380 R15: 00000000ffffffff
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-syz-executor3 (6993) used greatest stack depth: 14648 bytes left
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-Page cache invalidation failure on direct I/O.  Possible data corruption  
-due to collision with buffered I/O!
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-File: /root/syzkaller-testdir701396558/syzkaller.CThVT5/11/bus PID: 14  
-Comm: kworker/0:1
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-Page cache invalidation failure on direct I/O.  Possible data corruption  
-due to collision with buffered I/O!
-File: /root/syzkaller-testdir446226321/syzkaller.6kf3D2/23/bus PID: 14  
-Comm: kworker/0:1
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-syz-executor5 (7484) used greatest stack depth: 12280 bytes left
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-Page cache invalidation failure on direct I/O.  Possible data corruption  
-due to collision with buffered I/O!
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-File: /root/syzkaller-testdir749472085/syzkaller.cOi3p9/41/bus PID: 5692  
-Comm: kworker/0:4
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-Page cache invalidation failure on direct I/O.  Possible data corruption  
-due to collision with buffered I/O!
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-File: /root/syzkaller-testdir625100220/syzkaller.kNEfa4/64/bus PID: 7011  
-Comm: kworker/0:5
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
-kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop1' (0000000020356063): kobject_uevent_env
-kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
-kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
-kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'loop3' (00000000037f642c): kobject_uevent_env
-kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (00000000373a5938): kobject_uevent_env
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> For classic BPF filters attached with
+> setsockopt SO_ATTACH_FILTER, there is no memlock rlimit check to limit the
+> number of insertions like there is for the bpf syscall.
+>
+> This patch adds a per user rlimit for module space, as well as a system wide
+> limit for BPF JIT. In a previously reviewed patchset, Jann Horn pointed out the
+> problem that in some cases a user can get access to 65536 UIDs, so the effective
+> limit cannot be set low enough to stop an attacker and be useful for the general
+> case. A discussed alternative solution was a system wide limit for BPF JIT
+> filters. This much more simply resolves the problem of exhaustion and
+> de-randomizing in the case of non-CONFIG_BPF_JIT_ALWAYS_ON. If
+> CONFIG_BPF_JIT_ALWAYS_ON is on however, BPF insertions will fail if another user
+> exhausts the BPF JIT limit. In this case a per user limit is still needed. If
+> the subuid facility is disabled for normal users, this should still be ok
+> because the higher limit will not be able to be worked around that way.
+>
+> The new BPF JIT limit can be set like this:
+> echo 5000000 > /proc/sys/net/core/bpf_jit_limit
+>
+> So I *think* this patchset should resolve that issue except for the
+> configuration of CONFIG_BPF_JIT_ALWAYS_ON and subuid allowed for normal users.
+> Better module space KASLR is another way to resolve the de-randomizing issue,
+> and so then you would just be left with the BPF DOS in that configuration.
+>
+> Jann also pointed out how, with purposely fragmenting the module space, you
+> could make the effective module space blockage area much larger. This is also
+> somewhat un-resolved. The impact would depend on how big of a space you are
+> trying to allocate. The limit has been lowered on x86_64 so that at least
+> typical sized BPF filters cannot be blocked.
+>
+> If anyone with more experience with subuid/user namespaces has any suggestions
+> I'd be glad to hear. On an Ubuntu machine it didn't seem like a un-privileged
+> user could do this. I am going to keep working on this and see if I can find a
+> better solution.
+>
+> Changes since v2:
+>  - System wide BPF JIT limit (discussion with Jann Horn)
+>  - Holding reference to user correctly (Jann)
+>  - Having arch versions of modulde_alloc (Dave Hansen, Jessica Yu)
+>  - Shrinking of default limits, to help prevent the limit being worked around
+>    with fragmentation (Jann)
+>
+> Changes since v1:
+>  - Plug in for non-x86
+>  - Arch specific default values
+>
+>
+> Rick Edgecombe (3):
+>   modules: Create arch versions of module alloc/free
+>   modules: Create rlimit for module space
+>   bpf: Add system wide BPF JIT limit
+>
+>  arch/arm/kernel/module.c                |   2 +-
+>  arch/arm64/kernel/module.c              |   2 +-
+>  arch/mips/kernel/module.c               |   2 +-
+>  arch/nds32/kernel/module.c              |   2 +-
+>  arch/nios2/kernel/module.c              |   4 +-
+>  arch/parisc/kernel/module.c             |   2 +-
+>  arch/s390/kernel/module.c               |   2 +-
+>  arch/sparc/kernel/module.c              |   2 +-
+>  arch/unicore32/kernel/module.c          |   2 +-
+>  arch/x86/include/asm/pgtable_32_types.h |   3 +
+>  arch/x86/include/asm/pgtable_64_types.h |   2 +
+>  arch/x86/kernel/module.c                |   2 +-
+>  fs/proc/base.c                          |   1 +
+>  include/asm-generic/resource.h          |   8 ++
+>  include/linux/bpf.h                     |   7 ++
+>  include/linux/filter.h                  |   1 +
+>  include/linux/sched/user.h              |   4 +
+>  include/uapi/asm-generic/resource.h     |   3 +-
+>  kernel/bpf/core.c                       |  22 +++-
+>  kernel/bpf/inode.c                      |  16 +++
+>  kernel/module.c                         | 152 +++++++++++++++++++++++-
+>  net/core/sysctl_net_core.c              |   7 ++
+>  22 files changed, 233 insertions(+), 15 deletions(-)
+>
+> --
+> 2.17.1
+>
