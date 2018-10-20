@@ -2,255 +2,148 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07747C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 06:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5192BC67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 06:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A7AE20843
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 06:02:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D22F6214C3
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 06:32:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20150623.gappssmtp.com header.i=@dilger-ca.20150623.gappssmtp.com header.b="qdRNiDQN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A7AE20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="f8oILOYn";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CRrcUNmE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D22F6214C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbeJTOLp (ORCPT
+        id S1727043AbeJTOmR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 10:11:45 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:53095 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbeJTOLo (ORCPT
+        Sat, 20 Oct 2018 10:42:17 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51886 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726261AbeJTOmR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 10:11:44 -0400
-Received: by mail-it1-f194.google.com with SMTP id 134-v6so6687203itz.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 23:02:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=NqTI4bEWi8W3l4KL22rcYQ1rTFJxXCggF41vE27d5Ec=;
-        b=qdRNiDQN7JF/MFGWH1AEapdrUPMwgkqj4QotY0FxRJaiaruRI9ymCwPuru0vBfhJpd
-         2gDLnmXpwcToP1Io0i1yLsTRbCVc3zS6rE/+y64GIqLVlRHJmHAFOgTUY5PvGEil4Fg3
-         bvnSFliP6448R/47HRMDAAxdG5Q0LaLblW8M2CefdgQfaK9oe+b424N5aPXZ7tT7c5EQ
-         DHfTDMZDMp/vYc7DGyGgRwiqzVtRhh5H2gdfYacJVZqfgHkbjlFyHrWioRufgOWFl/u/
-         hwEXg7w5b6jFxCEO5uR9UCyRWP6TYZFwDfreEWPP93BU9P1GdNo5+7jm6exONn5ihYX3
-         vjOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=NqTI4bEWi8W3l4KL22rcYQ1rTFJxXCggF41vE27d5Ec=;
-        b=B1ssyKqctgCCllDjvk9+wvR8cTrQ5/ldERxrfMsffbgN5Ht6sXTCoaf6VjGcW6FJ9m
-         8cmyqZSzWkq0INO4Syvnrc5UwmoV/EgN3oACUUwAp5pNeeMCSA2E4LD9TWAn/M6r8e/s
-         Hd8m2HwYz437z2esDFowfcEz3Cl7YGV+MWqUh62PL+cZQjnF8LYOQq09wRZEesL1qzXG
-         OfVn6Uts0un/O29kMhpg5Dh+xM5b7nHztuKSDQRWXpoXEsuymZxgxiQPKbhsOZ2JInrU
-         mh5rUtH2JZYLB7VOC+WBk7NQJoTM0ylDhgynpzyK7BGI0AAziXK/vJ8j28HyWtuq0FNl
-         Ow7w==
-X-Gm-Message-State: ABuFfoj1/ThZiirGP6ouPb2HeUIP4RM+N9vcxD6NQAp0nBiai1CGwEDz
-        Sh9WTncltXQ/AluyzFU9//Dl5PlWlKcgNw==
-X-Google-Smtp-Source: ACcGV61Yzd/DTml3XlFHxxL35sy6XUiZhzewNQwNVLQn9iAnQ7inkFMJdpEoNxFL1bvimUln60VHWA==
-X-Received: by 2002:a02:b04b:: with SMTP id q11-v6mr3091963jah.88.1540015347396;
-        Fri, 19 Oct 2018 23:02:27 -0700 (PDT)
-Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id n7-v6sm2401542itb.22.2018.10.19.23.02.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Oct 2018 23:02:26 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <97D532AE-731F-4B44-9F2A-37A2EE48EABF@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_F324B551-A205-4C38-82F3-BDF1F1F8388F";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: in_compat_syscall() returns from kernel thread for X86_32.
-Date:   Sat, 20 Oct 2018 00:02:23 -0600
-In-Reply-To: <CALCETrWH342Y7jKHsYdT=_3fuyDkWhvQLK9z4PTs9jzbfoCVwg@mail.gmail.com>
-Cc:     NeilBrown <neilb@suse.com>, Ted Ts'o <tytso@mit.edu>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-tip-commits@vger.kernel.org,
-        James Simmons <jsimmons@infradead.org>
-To:     Andy Lutomirski <luto@kernel.org>
-References: <1460987025-30360-1-git-send-email-dsafonov@virtuozzo.com>
- <tip-abfb9498ee1327f534df92a7ecaea81a85913bae@git.kernel.org>
- <87h8hkc9fd.fsf@notabene.neil.brown.name>
- <CALCETrXB8PE4Ue0BeD0wUS9psLLjpv_pt+nj=SEaj+Nb_dZzUA@mail.gmail.com>
- <871s8ndg6a.fsf@notabene.neil.brown.name>
- <CALCETrWH342Y7jKHsYdT=_3fuyDkWhvQLK9z4PTs9jzbfoCVwg@mail.gmail.com>
-X-Mailer: Apple Mail (2.3273)
+        Sat, 20 Oct 2018 10:42:17 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D89F860316; Sat, 20 Oct 2018 06:32:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540017175;
+        bh=KauYKAH5U7JGHNSWSnaT7rUGqKCw1oKiZpllrN3zkAU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=f8oILOYnbfRDjOohJmhk9Qmswj8N/WnQIdzyPcDBKZ9X0LQrjwxiAw/wljYjV1Y/i
+         5ip0iQnxM6QBs1IYo9UrkDIBjQJSDpj7bV1FepnSHd5GSbtlLMyyCp5Fxj5wyb85K1
+         71Srs9BnU8ETCONDkTPK5wJwEH0QZbPSj/CnBUS0=
+Received: from [192.168.43.47] (unknown [223.227.22.91])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1580460316;
+        Sat, 20 Oct 2018 06:32:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540017174;
+        bh=KauYKAH5U7JGHNSWSnaT7rUGqKCw1oKiZpllrN3zkAU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=CRrcUNmE9fBLTF5clpSGtC76xyzSSSQZh3pyfcAqvGpMkwhZMgDBcb/6svlPiwGz3
+         2dx7iAx0A/OhPn0dlwNzuMjdx9Yn0CK5ztAQijkSAJ175TPdwxFNHEU4tsgtlK9GVW
+         39a+K2fYY9tEbaH5Fio2a/Be3LNK7djUYN0ve6/w=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1580460316
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCH 0/6] Tracing register accesses with pstore and dynamic
+ debug
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Colin Cross <ccross@android.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Jim Cromie <jim.cromie@gmail.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Prasad Sodagudi <psodagud@codeaurora.org>,
+        tsoni@codeaurora.org, Bryan Huntsman <bryanh@codeaurora.org>,
+        Tingwei Zhang <tingwei@codeaurora.org>, tkjos@google.com
+References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
+ <20181020052535.GA155509@joelaf.mtv.corp.google.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <1d3ddbe3-d3ac-aa3e-fc9e-36739ddd0c91@codeaurora.org>
+Date:   Sat, 20 Oct 2018 12:02:37 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181020052535.GA155509@joelaf.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/20/2018 10:55 AM, Joel Fernandes wrote:
+> On Sun, Sep 09, 2018 at 01:57:01AM +0530, Sai Prakash Ranjan wrote:
+>> Hi,
+>>
+>> This patch series adds Event tracing support to pstore and is continuation
+>> to the RFC patch introduced to add a new tracing facility for register
+>> accesses called Register Trace Buffer(RTB). Since we decided to not introduce
+>> a separate framework to trace register accesses and use existing framework
+>> like tracepoints, I have moved from RFC. Details of the RFC in link below:
+>>
+>> Link: https://lore.kernel.org/lkml/cover.1535119710.git.saiprakash.ranjan@codeaurora.org/
+>>
+>> MSR tracing example given by Steven was helpful in using tracepoints for
+>> register accesses instead of using separate trace. But just having these
+>> IO traces would not help much unless we could have them in some persistent
+>> ram buffer for debugging unclocked access or some kind of bus hang or an
+>> unexpected reset caused by some buggy driver which happens a lot during
+>> initial development stages. By analyzing the last few entries of this buffer,
+>> we could identify the register access which is causing the issue.
+> 
+> Hi Sai,
+> 
+> I wanted to see if I could make some time to get your patches working. We are
+> hitting usecases that need something like this as well. Basically devices
+> hanging and then the ramdump does not tell us much, so in this case pstore
+> events can be really helpful. This usecase came up last year as well.
+> 
+> Anyway while I was going through your patches, I cleaned up some pstore code
+> as well and I have 3 more patches on top of yours for this clean up. I prefer
+> we submit the patches together and sync our work together so that there is
+> least conflict.
+> 
+> Here's my latest tree:
+> https://github.com/joelagnel/linux-kernel/commits/pstore-events
+> (note that I have only build tested the patches since I just wrote them and
+> its quite late in the night here ;-))
+> 
 
---Apple-Mail=_F324B551-A205-4C38-82F3-BDF1F1F8388F
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+Hi Joel,
 
-On Oct 18, 2018, at 11:26 AM, Andy Lutomirski <luto@kernel.org> wrote:
->=20
-> On Wed, Oct 17, 2018 at 9:36 PM NeilBrown <neilb@suse.com> wrote:
->>=20
->> On Wed, Oct 17 2018, Andy Lutomirski wrote:
->>=20
->>> On Wed, Oct 17, 2018 at 6:48 PM NeilBrown <neilb@suse.com> wrote:
->>>>=20
->>>>=20
->>>> Was: Re: [tip:x86/asm] x86/entry: Rename is_{ia32,x32}_task() to =
-in_{ia32,x32}_syscall()
->>>> On Tue, Apr 19 2016, tip-bot for Dmitry Safonov wrote:
->>>>=20
->>>>> Commit-ID:  abfb9498ee1327f534df92a7ecaea81a85913bae
->>>>> Gitweb:     =
-http://git.kernel.org/tip/abfb9498ee1327f534df92a7ecaea81a85913bae
->>>>> Author:     Dmitry Safonov <dsafonov@virtuozzo.com>
->>>>> AuthorDate: Mon, 18 Apr 2016 16:43:43 +0300
->>>>> Committer:  Ingo Molnar <mingo@kernel.org>
->>>>> CommitDate: Tue, 19 Apr 2016 10:44:52 +0200
->>>>>=20
->>>>> x86/entry: Rename is_{ia32,x32}_task() to in_{ia32,x32}_syscall()
->>>>>=20
->>>> ...
->>>>> @@ -318,7 +318,7 @@ static inline bool is_x32_task(void)
->>>>>=20
->>>>> static inline bool in_compat_syscall(void)
->>>>> {
->>>>> -     return is_ia32_task() || is_x32_task();
->>>>> +     return in_ia32_syscall() || in_x32_syscall();
->>>>> }
->>>>=20
->>>> Hi,
->>>> I'm reply to this patch largely to make sure I get the right people
->>>> .....
->>>>=20
->>>> This test is always true when CONFIG_X86_32 is set, as that forces
->>>> in_ia32_syscall() to true.
->>>> However we might not be in a syscall at all - we might be running a
->>>> kernel thread which is always in 64 mode.
->>>> Every other implementation of in_compat_syscall() that I found is
->>>> dependant on a thread flag or syscall register flag, and so returns
->>>> "false" in a kernel thread.
->>>>=20
->>>> Might something like this be appropriate?
->>>>=20
->>>> diff --git a/arch/x86/include/asm/thread_info.h =
-b/arch/x86/include/asm/thread_info.h
->>>> index 2ff2a30a264f..c265b40a78f2 100644
->>>> --- a/arch/x86/include/asm/thread_info.h
->>>> +++ b/arch/x86/include/asm/thread_info.h
->>>> @@ -219,7 +219,7 @@ static inline int =
-arch_within_stack_frames(const void * const stack,
->>>> #ifndef __ASSEMBLY__
->>>>=20
->>>> #ifdef CONFIG_X86_32
->>>> -#define in_ia32_syscall() true
->>>> +#define in_ia32_syscall() (!(current->flags & PF_KTHREAD))
->>>> #else
->>>> #define in_ia32_syscall() (IS_ENABLED(CONFIG_IA32_EMULATION) && \
->>>>                           current_thread_info()->status & =
-TS_COMPAT)
->>>>=20
->>>> This came up in the (no out-of-tree) lustre filesystem where some =
-code
->>>> needs to assume 32-bit mode in X86_32 syscalls, and 64-bit mode in =
-kernel
->>>> threads.
->>>>=20
->>>=20
->>> I could get on board with:
->>>=20
->>> ({WARN_ON_ONCE(current->flags & PF_KTHREAD); true})
->>>=20
->>> The point of these accessors is to be used *in a syscall*.
->>>=20
->>> What on Earth is Lustre doing that makes it have this problem?
->>=20
->> Lustre uses it in the ->getattr method to make sure ->ino, ->dev and
->> ->rdev are appropriately sized.  This isn't very different from the
->> usage in ext4 to ensure the seek offset for directories is suitable.
->>=20
->> These interfaces can be used both from systemcalls and from kernel
->> threads, such as via nfsd.
->>=20
->> I don't *know* if nfsd is the particular kthread that causes problems
->> for lustre.  All I know is that ->getattr returns 32bit squashed =
-inode
->> numbers in kthread context where 64 bit numbers would be expected.
->>=20
->=20
-> Well, that looks like Lustre is copying an ext4 bug.
->=20
-> Hi ext4 people-
->=20
-> ext4's is_32bit_api() function is bogus.  You can't use
-> in_compat_syscall() unless you know you're in a syscall
->=20
-> The buggy code was introduced in:
->=20
-> commit d1f5273e9adb40724a85272f248f210dc4ce919a
-> Author: Fan Yong <yong.fan@whamcloud.com>
-> Date:   Sun Mar 18 22:44:40 2012 -0400
->=20
->    ext4: return 32/64-bit dir name hash according to usage type
->=20
-> I don't know what the right solution is.  Al, is it legit at all for
-> fops->llseek to care about the caller's bitness?  If what ext4 is
-> doing is legit, then ISTM the VFS needs to gain a new API to tell
-> ->llseek what to do.  But I'm wondering why FMODE_64BITHASH by itself
-> isn't sufficient,
->=20
-> I'm quite tempted to add a warning to the x86 arch code to try to
-> catch this type of bug.  Fortunately, a bit of grepping suggests that
-> ext4 is the only filesystem with this problem.
+Thanks for looking into this. Sure, I will be happy to sync up with you 
+on this. I can test your additional patches on top of my pstore patches. 
+BTW, I'm still stuck at copying binary record into pstore and then 
+extract it during read time. Seems like I'm missing something.
 
-We need to know whether the readdir cookie returned to userspace
-should be a 32-bit cookie or a 64-bit cookie.  Trying to return
-a 64-bit value will result in -EOVERFLOW for a 32-bit application,
-but is preferable (if possible) because it reduces the chance of
-hash collisions causing readdir to have problems.
+Thanks,
+Sai
 
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_F324B551-A205-4C38-82F3-BDF1F1F8388F
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlvKxO8ACgkQcqXauRfM
-H+BLSxAAnuQIr99B79jSl1Lt8gkdjGEmJ29j+CKNWNIMqwUGmkCCxrB1gKAAEL3a
-1TzdTJLjSG8uz4HOKLkWxdXXqRgCZgofOTdA/xjhGFxWNlojFb6SIzlMglEb9tuQ
-3i+MhFRn2jgLiyg8+D2+hw8RGgpcp9ILZdiyHeKgmidWTox5RBkGaIQaCroEEhYC
-5AWkOFDQVvh7Ql7g9RzR6+nw1Zo/YLAYoZAxre8x/ya8dE0WX4oce5oOMDOWfFZL
-ZJF20wWgkYrhHcAr0ehb5yCRlgiZiQeuIZDr8SgpI4eGE54GQi7UH0EuFn4cB8mG
-aiShYX1Ie2KdGFYQaVE3qZ/2Gi66OI89RUy183LB1m0X56LVRa5ft0LSGRxvPxUl
-wSwxvIxwjUM5sn344c100miNIiZiG3i/RnmntBPwkjSYcGdxWM+W47Y7IimtAAIx
-dkbVUHL5El4SQdol3bRacmxjwwv6zbdh25KhOMgXmv3aoo3oVV+VIxKAj3HzdENu
-nAMePqm7EbiEJMd6z+QTVNim9wAHsvc22nGqX2eJbNlm7fFgWaKQIUbbjgulHdX1
-Fi3P082P1IB5By2ZVIT4hGcciwskMoaRdJuBJY0AVHj/jnoZi1eq0Tmv7GIkpeRZ
-ujp9pDIs9eYPoQri/wtziYObyY3Kdmu2dlH1ZWToHX3pndY4oQo=
-=iidt
------END PGP SIGNATURE-----
-
---Apple-Mail=_F324B551-A205-4C38-82F3-BDF1F1F8388F--
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
