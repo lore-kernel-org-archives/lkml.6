@@ -2,325 +2,84 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 409F6ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 15:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEC2C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 15:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9F9D20892
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 15:06:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4C9E20892
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 15:37:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X+/M/DOV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F9D20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GrnwCr6y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4C9E20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbeJTXQu (ORCPT
+        id S1727573AbeJTXsi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 19:16:50 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:40270 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727413AbeJTXQu (ORCPT
+        Sat, 20 Oct 2018 19:48:38 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51854 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727449AbeJTXsi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 19:16:50 -0400
-Received: by mail-it1-f196.google.com with SMTP id i191-v6so7751317iti.5
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 08:06:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=4cJ0QGVcUl7FlA6BHAFoor3rThdjpds9PRcS3eptaYA=;
-        b=X+/M/DOVSJQgfzYpUSGbVJcRQCApCARCd4Ju9O0CTKOrn8kOWr2ihsaGWKVJjFHigA
-         hC3ayWOrLUEwfWFKqQIp54uQfBxc/oPbagKqxZ3UsSqaYwfahOaKuuyIXkBr0gKeLn0c
-         B4W1xov4DLGsSNglNMxADrRkj0xPBG0BHFuPU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=4cJ0QGVcUl7FlA6BHAFoor3rThdjpds9PRcS3eptaYA=;
-        b=icjjspxtVlpXXYn5okSprV/COvzD/QX2zBmERISkXjT/jviAKAxrO2M4ZVRIlBfxqx
-         jlvn9sCGo42U7Jz+8H5UpxyMwjJaQ7h57KTQv45pluc2tgBPnkXYmBCzOc+KuBYwaI+7
-         7sr/JGV7A8EttBCbzxvifgp89AZvTCczemNNaeBCLtnS93WDu4D0PgGlVE+qJiGmR+IM
-         llDHcuze6UKuYufEPqclOd7yiry/KIUDalkQ1IuureqFvVn5A/2K0POMUg7BC1sYtI/k
-         GxWTujdpN5ggWd5p17ljfF096hNy3fJr/hWetpVOHtZ+7OVy6ErtCe0bYKlT4Q9Cz2O2
-         T1lA==
-X-Gm-Message-State: ABuFfojNhi65HThmct8feSq/pkqp9k+KNoroPQxOa/aiA6MjFUyQGZTn
-        4UFt+oEMKQDhLqGa3EaE86gB0Cj6NoSFomjG9szL+X2eSVc=
-X-Google-Smtp-Source: ACcGV62Jz5+IKkR7V/ReTiv6BQodyhmkW0bESrDdtoNZ8FpPsaduhLGAVDG5TUBgnXjYdXAk14vDVyjQj73whFwE2z4=
-X-Received: by 2002:a05:660c:383:: with SMTP id x3mr5247607itj.121.1540047961502;
- Sat, 20 Oct 2018 08:06:01 -0700 (PDT)
+        Sat, 20 Oct 2018 19:48:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:Cc:References:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=nerEbAYZT83BGSvPddg60RBR7iK7AxVfczTmYf/1hfg=; b=GrnwCr6y1EBxYgeTusZ937bAUA
+        hCdJaiI6XxIAdijHwz5+9LXnM8RCbcnsG4ViHrHcouQIJhQ0ffyZBUe1G+8l+lAbUXJDwYOoPsv4C
+        JexSJar7NNYG29fKIyrouyEmOqnvN4LbGa4P4Inb+37yrtxwUF2Bb1rHMMHxknwumHcmjMqUkCJDr
+        nGYzBx6R2vjOLwEeGL4Q85hKA9yOpozdSCtWqk44iAHxeuBK/Y70j2OIxVYk9ExAr1Q80ZzQWGX3Y
+        7I8uGI3fZ7NKlqHmkvVV1FBWZOqkffz3ykpuHdE9SxDVpIO16VmfTUiQM5SQPMYIx6ep68rhzXXw1
+        L4jRM77Q==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gDtJi-0006MT-20; Sat, 20 Oct 2018 15:37:30 +0000
+Subject: Re: Memory management issue in 4.18.15
+To:     Spock <dairinin@gmail.com>, linux-kernel@vger.kernel.org,
+        Linux MM <linux-mm@kvack.org>
+References: <CADa=ObrwYaoNFn0x06mvv5W1F9oVccT5qjGM8qFBGNPoNuMUNw@mail.gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, Rik van Riel <riel@surriel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a655c898-0701-f10d-bbf3-8a0090544560@infradead.org>
+Date:   Sat, 20 Oct 2018 08:37:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Sat, 20 Oct 2018 08:06:00
- -0700 (PDT)
-In-Reply-To: <20181020053834.GC876@sol.localdomain>
-References: <20181015175424.97147-1-ebiggers@kernel.org> <20181015175424.97147-10-ebiggers@kernel.org>
- <CAKv+Gu-5WM19g5HguDheAADbigKNxokDCFMekkt4OYdEEa8Avw@mail.gmail.com> <20181020053834.GC876@sol.localdomain>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Sat, 20 Oct 2018 23:06:00 +0800
-Message-ID: <CAKv+Gu-A_EhMBXq_nqzBzpgN36foo6hA3Ba3=j+WVM-jph=mrw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 09/12] crypto: nhpoly1305 - add NHPoly1305 support
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Paul Crowley <paulcrowley@google.com>,
-        Greg Kaiser <gkaiser@google.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Samuel Neves <samuel.c.p.neves@gmail.com>,
-        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CADa=ObrwYaoNFn0x06mvv5W1F9oVccT5qjGM8qFBGNPoNuMUNw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20 October 2018 at 13:38, Eric Biggers <ebiggers@kernel.org> wrote:
-> Hi Ard,
->
-> On Sat, Oct 20, 2018 at 12:00:31PM +0800, Ard Biesheuvel wrote:
->> On 16 October 2018 at 01:54, Eric Biggers <ebiggers@kernel.org> wrote:
->> > From: Eric Biggers <ebiggers@google.com>
->> >
->> > Add a generic implementation of NHPoly1305, an =CE=B5-almost-=E2=88=86=
--universal hash
->> > function used in the Adiantum encryption mode.
->> >
->> > CONFIG_NHPOLY1305 is not selectable by itself since there won't be any
->> > real reason to enable it without also enabling Adiantum support.
->> >
->> > Signed-off-by: Eric Biggers <ebiggers@google.com>
->> > ---
->> >  crypto/Kconfig              |    5 +
->> >  crypto/Makefile             |    1 +
->> >  crypto/nhpoly1305.c         |  288 ++++++++
->> >  crypto/testmgr.c            |    6 +
->> >  crypto/testmgr.h            | 1240 ++++++++++++++++++++++++++++++++++=
--
->> >  include/crypto/nhpoly1305.h |   74 +++
->> >  6 files changed, 1610 insertions(+), 4 deletions(-)
->> >  create mode 100644 crypto/nhpoly1305.c
->> >  create mode 100644 include/crypto/nhpoly1305.h
->> >
->> > diff --git a/crypto/Kconfig b/crypto/Kconfig
->> > index 4fa0a4a0e8615..431beca903623 100644
->> > --- a/crypto/Kconfig
->> > +++ b/crypto/Kconfig
->> > @@ -493,6 +493,11 @@ config CRYPTO_KEYWRAP
->> >           Support for key wrapping (NIST SP800-38F / RFC3394) without
->> >           padding.
->> >
->> > +config CRYPTO_NHPOLY1305
->> > +       tristate
->> > +       select CRYPTO_HASH
->> > +       select CRYPTO_POLY1305
->> > +
->> >  comment "Hash modes"
->> >
->> >  config CRYPTO_CMAC
->> > diff --git a/crypto/Makefile b/crypto/Makefile
->> > index 7e673f7c71107..87b86f221a2a2 100644
->> > --- a/crypto/Makefile
->> > +++ b/crypto/Makefile
->> > @@ -84,6 +84,7 @@ obj-$(CONFIG_CRYPTO_LRW) +=3D lrw.o
->> >  obj-$(CONFIG_CRYPTO_XTS) +=3D xts.o
->> >  obj-$(CONFIG_CRYPTO_CTR) +=3D ctr.o
->> >  obj-$(CONFIG_CRYPTO_KEYWRAP) +=3D keywrap.o
->> > +obj-$(CONFIG_CRYPTO_NHPOLY1305) +=3D nhpoly1305.o
->> >  obj-$(CONFIG_CRYPTO_GCM) +=3D gcm.o
->> >  obj-$(CONFIG_CRYPTO_CCM) +=3D ccm.o
->> >  obj-$(CONFIG_CRYPTO_CHACHA20POLY1305) +=3D chacha20poly1305.o
->> > diff --git a/crypto/nhpoly1305.c b/crypto/nhpoly1305.c
->> > new file mode 100644
->> > index 0000000000000..087ad7680dd62
->> > --- /dev/null
->> > +++ b/crypto/nhpoly1305.c
->> > @@ -0,0 +1,288 @@
->> > +// SPDX-License-Identifier: GPL-2.0
->> > +/*
->> > + * NHPoly1305 - =CE=B5-almost-=E2=88=86-universal hash function for A=
-diantum
->> > + *
->> > + * Copyright 2018 Google LLC
->> > + */
->> > +
->> > +/*
->> > + * "NHPoly1305" is the main component of Adiantum hashing.
->> > + * Specifically, it is the calculation
->> > + *
->> > + *     H_M =E2=86=90 Poly1305_{K_M}(NH_{K_N}(pad_{128}(M)))
->> > + *
->> > + * from the procedure in section A.5 of the Adiantum paper [1].  It i=
-s an
->> > + * =CE=B5-almost-=E2=88=86-universal (=CE=B5A=E2=88=86U) hash functio=
-n for equal-length inputs over
->> > + * Z/(2^{128}Z), where the "=E2=88=86" operation is addition.  It has=
-hes 1024-byte
->> > + * chunks of the input with the NH hash function [2], reducing the in=
-put length
->> > + * by 32x.  The resulting NH digests are evaluated as a polynomial in
->> > + * GF(2^{130}-5), like in the Poly1305 MAC [3].  Note that the polyno=
-mial
->> > + * evaluation by itself would suffice to achieve the =CE=B5A=E2=88=86=
-U property; NH is used
->> > + * for performance since it's over twice as fast as Poly1305.
->> > + *
->> > + * This is *not* a cryptographic hash function; do not use it as such=
-!
->> > + *
->> > + * [1] Adiantum: length-preserving encryption for entry-level process=
-ors
->> > + *     (https://eprint.iacr.org/2018/720.pdf)
->> > + * [2] UMAC: Fast and Secure Message Authentication
->> > + *     (https://fastcrypto.org/umac/umac_proc.pdf)
->> > + * [3] The Poly1305-AES message-authentication code
->> > + *     (https://cr.yp.to/mac/poly1305-20050329.pdf)
->> > + */
->> > +
->> > +#include <asm/unaligned.h>
->> > +#include <crypto/algapi.h>
->> > +#include <crypto/internal/hash.h>
->> > +#include <crypto/nhpoly1305.h>
->> > +#include <linux/crypto.h>
->> > +#include <linux/kernel.h>
->> > +#include <linux/module.h>
->> > +
->> > +#define NH_STRIDE(K0, K1, K2, K3)                              \
->> > +({                                                             \
->> > +       m_A =3D get_unaligned_le32(src); src +=3D 4;                \
->> > +       m_B =3D get_unaligned_le32(src); src +=3D 4;                \
->> > +       m_C =3D get_unaligned_le32(src); src +=3D 4;                \
->> > +       m_D =3D get_unaligned_le32(src); src +=3D 4;                \
->> > +       K3##_A =3D *key++;                                        \
->> > +       K3##_B =3D *key++;                                        \
->> > +       K3##_C =3D *key++;                                        \
->> > +       K3##_D =3D *key++;                                        \
->> > +       sum0 +=3D (u64)(u32)(m_A + K0##_A) * (u32)(m_C + K0##_C); \
->> > +       sum1 +=3D (u64)(u32)(m_A + K1##_A) * (u32)(m_C + K1##_C); \
->> > +       sum2 +=3D (u64)(u32)(m_A + K2##_A) * (u32)(m_C + K2##_C); \
->> > +       sum3 +=3D (u64)(u32)(m_A + K3##_A) * (u32)(m_C + K3##_C); \
->> > +       sum0 +=3D (u64)(u32)(m_B + K0##_B) * (u32)(m_D + K0##_D); \
->> > +       sum1 +=3D (u64)(u32)(m_B + K1##_B) * (u32)(m_D + K1##_D); \
->> > +       sum2 +=3D (u64)(u32)(m_B + K2##_B) * (u32)(m_D + K2##_D); \
->> > +       sum3 +=3D (u64)(u32)(m_B + K3##_B) * (u32)(m_D + K3##_D); \
->> > +})
->> > +
->> > +static void nh_generic(const u32 *key, const u8 *src, size_t srclen,
->> > +                      __le64 hash[NH_NUM_PASSES])
->> > +{
->> > +       u64 sum0 =3D 0, sum1 =3D 0, sum2 =3D 0, sum3 =3D 0;
->> > +       u32 k0_A =3D *key++;
->> > +       u32 k0_B =3D *key++;
->> > +       u32 k0_C =3D *key++;
->> > +       u32 k0_D =3D *key++;
->> > +       u32 k1_A =3D *key++;
->> > +       u32 k1_B =3D *key++;
->> > +       u32 k1_C =3D *key++;
->> > +       u32 k1_D =3D *key++;
->> > +       u32 k2_A =3D *key++;
->> > +       u32 k2_B =3D *key++;
->> > +       u32 k2_C =3D *key++;
->> > +       u32 k2_D =3D *key++;
->> > +       u32 k3_A, k3_B, k3_C, k3_D;
->> > +       u32 m_A, m_B, m_C, m_D;
->> > +       size_t n =3D srclen / NH_MESSAGE_UNIT;
->> > +
->> > +       BUILD_BUG_ON(NH_PAIR_STRIDE !=3D 2);
->> > +       BUILD_BUG_ON(NH_NUM_PASSES !=3D 4);
->> > +
->> > +       while (n >=3D 4) {
->> > +               NH_STRIDE(k0, k1, k2, k3);
->> > +               NH_STRIDE(k1, k2, k3, k0);
->> > +               NH_STRIDE(k2, k3, k0, k1);
->> > +               NH_STRIDE(k3, k0, k1, k2);
->> > +               n -=3D 4;
->> > +       }
->> > +       if (n) {
->> > +               NH_STRIDE(k0, k1, k2, k3);
->> > +               if (--n) {
->> > +                       NH_STRIDE(k1, k2, k3, k0);
->> > +                       if (--n)
->> > +                               NH_STRIDE(k2, k3, k0, k1);
->> > +               }
->> > +       }
->> > +
->>
->> This all looks a bit clunky to me, with the macro, the *key++s in the
->> initializers and these conditionals.
->>
->> Was it written in this particular way to get GCC to optimize it in the
->> right way?
->
-> This does get compiled into something much faster than a naive version, w=
-hich
-> you can find commented out at
-> https://github.com/google/adiantum/blob/master/benchmark/src/nh.c#L14.
->
-> Though, I admit that I haven't put a ton of effort into this C implementa=
-tion of
-> NH yet.  Right now it's actually somewhat of a translation of the NEON ve=
-rsion.
-> I'll do some experiments and see if it can be made into something less ug=
-ly
-> without losing performance.
->
+[add linux-mm mailing list + people]
 
-No that's fine but please document it.
 
->>
->> > +       hash[0] =3D cpu_to_le64(sum0);
->> > +       hash[1] =3D cpu_to_le64(sum1);
->> > +       hash[2] =3D cpu_to_le64(sum2);
->> > +       hash[3] =3D cpu_to_le64(sum3);
->> > +}
->> > +
->> > +/* Pass the next NH hash value through Poly1305 */
->> > +static void process_nh_hash_value(struct nhpoly1305_state *state,
->> > +                                 const struct nhpoly1305_key *key)
->> > +{
->> > +       BUILD_BUG_ON(NH_HASH_BYTES % POLY1305_BLOCK_SIZE !=3D 0);
->> > +
->> > +       poly1305_core_blocks(&state->poly_state, &key->poly_key, state=
-->nh_hash,
->> > +                            NH_HASH_BYTES / POLY1305_BLOCK_SIZE);
->> > +}
->> > +
->> > +/*
->> > + * Feed the next portion of the source data, as a whole number of 16-=
-byte
->> > + * "NH message units", through NH and Poly1305.  Each NH hash is take=
-n over
->> > + * 1024 bytes, except possibly the final one which is taken over a mu=
-ltiple of
->> > + * 16 bytes up to 1024.  Also, in the case where data is passed in mi=
-saligned
->> > + * chunks, we combine partial hashes; the end result is the same eith=
-er way.
->> > + */
->> > +static void nhpoly1305_units(struct nhpoly1305_state *state,
->> > +                            const struct nhpoly1305_key *key,
->> > +                            const u8 *src, unsigned int srclen, nh_t =
-nh_fn)
->>
->> Since indirect calls are going out of style: can we get rid of the
->> function pointer? Or is the compiler already inferring that it always
->> refers to nh_generic()?
->>
->
-> At least for now I want to use the same crypto_nhpoly1305_*_helper() func=
-tions
-> for all nhpoly1305 implementations, and that requires that 'nh' be a func=
-tion
-> pointer.  The helpers could be placed in a header and inlined which would=
- turn
-> 'nh' into a direct call, but it seemed to be too much code to inline, and
-> normally 'nh' is only invoked once per 1024 bytes anyway.
->
+On 10/20/18 4:41 AM, Spock wrote:
+> Hello,
+> 
+> I have a workload, which creates lots of cache pages. Before 4.18.15,
+> the behavior was very stable: pagecache is constantly growing until it
+> consumes all the free memory, and then kswapd is balancing it around
+> low watermark. After 4.18.15, once in a while khugepaged is waking up
+> and reclaims almost all the pages from pagecache, so there is always
+> around 2G of 8G unused. THP is enabled only for madvise case and are
+> not used.
+> 
+> The exact change that leads to current behavior is
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-4.18.y&id=62aad93f09c1952ede86405894df1b22012fd5ab
+> 
 
-OK.
+
+-- 
+~Randy
