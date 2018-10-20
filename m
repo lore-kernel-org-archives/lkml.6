@@ -2,68 +2,138 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2F5C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 07:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53093C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 07:12:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B05AF214C2
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 07:08:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0636521502
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 07:12:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGT6t/pQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B05AF214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqHoyO2y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0636521502
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbeJTPRu (ORCPT
+        id S1727222AbeJTPVf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 11:17:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38804 "EHLO mail.kernel.org"
+        Sat, 20 Oct 2018 11:21:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726642AbeJTPRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 11:17:49 -0400
-Received: from localhost (10.193.71.37.rev.sfr.net [37.71.193.10])
+        id S1726261AbeJTPVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 11:21:35 -0400
+Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net [67.185.97.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 082DC214C2;
-        Sat, 20 Oct 2018 07:08:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9524214C2;
+        Sat, 20 Oct 2018 07:12:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540019304;
-        bh=JfqbBcb7y82nRsUSioj3QZ9srPJV31DyqNpz8osnmm8=;
+        s=default; t=1540019529;
+        bh=6QEVP0UNrpi1IGgWXLHl0ecpFifzWcvBx9F4Ec4+sJs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AGT6t/pQRl92baeuiejIRoG3EnZqxvqhv+cLk0cYfC9oCbCoGOwxx/bx5sAB6F5Pk
-         VTJxpQI7PJrRpiq7q/w+7lmOdjYXZVV547OAuZ29mYQvxEgjm3yrAFiPADIX3xPtNn
-         eT+7lSssr/cjApJa2EOElqoGAEJiSUMioSai0isw=
-Date:   Sat, 20 Oct 2018 09:08:22 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [git pull] Input updates for v4.19-rc8
-Message-ID: <20181020070822.GD15318@kroah.com>
-References: <20181019174508.GA47209@dtor-ws>
+        b=QqHoyO2y/06N0r3NeX47CZx2ry4mmRafFXj3YoXvUkjmgH0fZCMWtq6ZeYitV55Ys
+         Tu6grHTwq+Hu6vMC7w10e3qWk85WOUsbVYQVe4IodykPRNUlF8f39naUjUvfQjMAOP
+         gDucMvRl9VbnryILerEmoU7hLUoNTE+pH7NueKyE=
+Date:   Sat, 20 Oct 2018 00:12:07 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
+Subject: Re: [RFC PATCH v2 11/12] crypto: adiantum - add Adiantum support
+Message-ID: <20181020071206.GE876@sol.localdomain>
+References: <20181015175424.97147-1-ebiggers@kernel.org>
+ <20181015175424.97147-12-ebiggers@kernel.org>
+ <CAKv+Gu9wrOOk-LGPYmxgLbv86uXzMeHN6th3mMEDT3Vg893HWw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181019174508.GA47209@dtor-ws>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKv+Gu9wrOOk-LGPYmxgLbv86uXzMeHN6th3mMEDT3Vg893HWw@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 10:45:08AM -0700, Dmitry Torokhov wrote:
-> Hi Greg,
-> 
-> Please pull from:
-> 
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
-> 
-> to receive updates for the input subsystem. Just an addition to elan
-> touchpad driver ACPI table.
+Hi Ard,
 
-Now merged, thanks.
+On Sat, Oct 20, 2018 at 12:17:58PM +0800, Ard Biesheuvel wrote:
+> On 16 October 2018 at 01:54, Eric Biggers <ebiggers@kernel.org> wrote:
+> > From: Eric Biggers <ebiggers@google.com>
+> >
+> > Add support for the Adiantum encryption mode.  Adiantum was designed by
+> > Paul Crowley and is specified by our paper:
+> >
+> >     Adiantum: length-preserving encryption for entry-level processors
+> >     (https://eprint.iacr.org/2018/720.pdf)
+> >
+> > See our paper for full details; this patch only provides an overview.
+> >
+> > Adiantum is a tweakable, length-preserving encryption mode designed for
+> > fast and secure disk encryption, especially on CPUs without dedicated
+> > crypto instructions.  Adiantum encrypts each sector using the XChaCha12
+> > stream cipher, two passes of an ε-almost-∆-universal (εA∆U) hash
+> > function, and an invocation of the AES-256 block cipher on a single
+> > 16-byte block.  On CPUs without AES instructions, Adiantum is much
+> > faster than AES-XTS; for example, on ARM Cortex-A7, on 4096-byte sectors
+> > Adiantum encryption is about 4 times faster than AES-256-XTS encryption,
+> > and decryption about 5 times faster.
+> >
+> > Adiantum is a specialization of the more general HBSH construction.  Our
+> > earlier proposal, HPolyC, was also a HBSH specialization, but it used a
+> > different εA∆U hash function, one based on Poly1305 only.  Adiantum's
+> > εA∆U hash function, which is based primarily on the "NH" hash function
+> > like that used in UMAC (RFC4418), is about twice as fast as HPolyC's;
+> > consequently, Adiantum is about 20% faster than HPolyC.
+> >
+> > This speed comes with no loss of security: Adiantum is provably just as
+> > secure as HPolyC, in fact slightly *more* secure.  Like HPolyC,
+> > Adiantum's security is reducible to that of XChaCha12 and AES-256,
+> > subject to a security bound.  XChaCha12 itself has a security reduction
+> > to ChaCha12.  Therefore, one need not "trust" Adiantum; one need only
+> > trust ChaCha12 and AES-256.  Note that the εA∆U hash function is only
+> > used for its proven combinatorical properties so cannot be "broken".
+> >
+> 
+> So what happens if the part of the input covered by the block cipher
+> is identical between different generations of the same disk block
+> (whose sector count is used as the 'outer' IV). How are we not in the
+> same boat as before when using stream ciphers for disk encryption?
+> 
 
-greg k-h
+This is the point of the hash step.  The value encrypted with the block cipher
+to produce the intermediate value C_M (used as the stream cipher nonce) is
+H(T, P_L) + P_R.  (T is the tweak a.k.a the IV, P_L is the plaintext except the
+last 16 bytes, P_R is the last 16 bytes.)  A collision in this value occurs iff:
+
+	H(T1, P1_L) + P1_R = H(T2, P2_L) + P2_R
+i.e.
+	H(T1, P1_L) - H(T2, P2_L) = P2_R - P1_R
+	
+If (T1, P1_L) = (T2, P2_L) then P1_R != P2_R so the equation has no solutions
+(since we don't consider queries where the whole input is the same; those
+unavoidably produce the same ciphertext).  Otherwise (T1, P1_L) != (T2, P2_L),
+and since the hash function H is ε-almost-∆-universal over integers mod 2^128,
+the equation is true for at most a very small proportion 'ε' of hash keys.
+But, the hash key is chosen at random and is unknown to the attacker.
+
+The same applies in the other direction, for chosen ciphertext attacks.
+
+Basically, it's very difficult for an attacker to cause the intermediate value
+C_M to be reused, and the outputs will appear random until they do.
+
+Of course, all this is explained much more precisely and comprehensively in our
+paper.  See section 5, "Security reduction".
+
+- Eric
