@@ -2,75 +2,79 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE54C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 10:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 579E7C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 10:12:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8764B2150F
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 10:12:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F69E2150F
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 10:12:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ChUUulNA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8764B2150F
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="UQ/ifgKT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F69E2150F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbeJTSWA (ORCPT
+        id S1727439AbeJTSWN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 14:22:00 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33407 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727178AbeJTSWA (ORCPT
+        Sat, 20 Oct 2018 14:22:13 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45626 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727393AbeJTSWN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 14:22:00 -0400
-Received: by mail-wr1-f66.google.com with SMTP id u1-v6so4065510wrn.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 03:12:05 -0700 (PDT)
+        Sat, 20 Oct 2018 14:22:13 -0400
+Received: by mail-wr1-f68.google.com with SMTP id f17-v6so8107126wrs.12
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 03:12:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WeinUrQ7ysF/m1cR0ZveHabHJtWalvfdrlRj+hVPwbo=;
-        b=ChUUulNA3u9H3v37Z4/3MyliL/YP7RfUWNE+gEQoaB8dklJ/5KeOcYzaiFhxi24mmc
-         sNven5kjfrrzyZq9Eug+G8IbjjGN40dFpjTYcjlK5zqe1KK7mATJDwJ/BZZPNdzPigNs
-         +apQimZZ/3foYoLMejGhzIYJIDDu4SuozjvWZdFHbi9J53aBCobB8FLr8SzWvkG+Vvdx
-         4oJZskMcddBnY21RCi1HVqOyoC2PxWebWN9RKNvZFUdNcvn/pcleo+aJ3i9v12ieGgHo
-         A3VIg7M9NeAflW2sQPoSkfAbAXu2kfBqcSx99sLZLhOJPx1xfewdkiTFghiLyffXYQrq
-         h/XA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=wASbXyBYFMcRIkQoK4CDFHurMQnCI3R8vyfKJiCMxpo=;
+        b=UQ/ifgKTmwDizP/mPww3MG4vreiMpQ8AIMKtieTEAr/e5NNsOKHszM+NRRM5OWqRsR
+         qd7ENY4cc1KqZyzybNUHmPRaqI6hA4icH9yhk/XO/ZBZfrz6kYQx9AeN67iH+tBwv+FU
+         V0RC56nui14BWbtNn9eSkTrSwa54zWoy1tp6eRuJzqVI59aqjD/I6MaLS8bPm9LHklNb
+         skVlnVaiuJ1Oprg0CLRSONC3L12mEW3lgYXtpwuxPX+grGwr2ieMHUVwhx2wbVa9g+Ao
+         vDpf340Npqsz22uc4wCjnpaa2VXxa05BQcbbC5DP5C0sUQg5fjAOPqw/un60bBBRGGwc
+         h83g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WeinUrQ7ysF/m1cR0ZveHabHJtWalvfdrlRj+hVPwbo=;
-        b=t20IBqv6LhZ1jHm1fL0SPVXK4XZ9A82DgJ3Ler8ZEb1c21K/AgJpPHwAEBT0GaFvAM
-         5EgWh4vxV/Qkz+K1A30HrcAeeypigw7sawgjchVHm7fD61zMChEnpAPhxg5+QKQx3Ucd
-         SM9mVq4R0kt4yvZqkREs8tGJqxOP7bCJyelmYq1FqdklzssOGBjfQmzq0B2mV1IyVVcr
-         S5UirLac8/X4pqn2/Kn+U6VKuHkd0+m/KRYUI5lm3hShu8DrkOjxGGguleOXRTjse2aX
-         uRK6jg+yBlCS5plXRLuR9xj5DAiCmBS78PpYuuqSkm2G8CQKkVCZZH0FYy72sNkbnNZu
-         Y64w==
-X-Gm-Message-State: ABuFfogIOWaQ8/8GFXEwy8WvH9rdVdp1HyMGd7fg6SPbzPl5XBugFm5k
-        HL21S28YVtskr5PrhOCM09gveQ==
-X-Google-Smtp-Source: ACcGV60KOuq/Qj141/dOvDHTj+LCEpiuxs4vuPEOXktbHfZ3Au80Z3W9XvLMd14seGyfYDmMdl/1CQ==
-X-Received: by 2002:adf:91e4:: with SMTP id 91-v6mr38551871wri.97.1540030324620;
-        Sat, 20 Oct 2018 03:12:04 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=wASbXyBYFMcRIkQoK4CDFHurMQnCI3R8vyfKJiCMxpo=;
+        b=E7lI662cN+sxJlCuhpaVsT32frCsJ+C5BeFXd9qeWddUfgd2UFlZO9J82KJY6pyerU
+         aJwasqOR/O3amCC2IWD9ZNpNb8REo+7QvXx33DwWkxL2fQ9TciicYBLPEdMVs8yH9c5L
+         H+WqzGbKzRiuU0U6CdYEijOqFpuSn2JLWn0nCa5+gATChAlQ0NSlZeZmY7ZdIqjgjsXx
+         ULSSriF2i+UBw7QUTG1vVmQ499m1/uLhdxXNR59dZNTfnRINNMLMH6K4Wxqp7U4DXUwS
+         rftqBk/Z75g52D+tHFy6MOu8NbCX/Wh3dzDFdZZsbTZzEvSXu9zmtbWdspqLQf4UWoGo
+         0tbA==
+X-Gm-Message-State: ABuFfohuF+qP80VjiIr33kwL8QfHdC+O70M0HTQyxwP7KGR6ohz2vLYk
+        HQmUUzUDmetj15/u3ELUY+AEwQ==
+X-Google-Smtp-Source: ACcGV61ZRzN6qFa7EQQvAdvDjUdCAOdb5iqDYDLhqLEJ6Z8ehDOvwiwg5DMGbTi4qEM7MxgN/YkMEg==
+X-Received: by 2002:a05:6000:1284:: with SMTP id f4mr16331584wrx.140.1540030337812;
+        Sat, 20 Oct 2018 03:12:17 -0700 (PDT)
 Received: from viisi.sifive.com ([37.152.39.96])
-        by smtp.gmail.com with ESMTPSA id 2-v6sm23773438wro.96.2018.10.20.03.12.02
+        by smtp.gmail.com with ESMTPSA id 2-v6sm23773438wro.96.2018.10.20.03.12.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 20 Oct 2018 03:12:03 -0700 (PDT)
+        Sat, 20 Oct 2018 03:12:17 -0700 (PDT)
 From:   Paul Walmsley <paul.walmsley@sifive.com>
 To:     linux-serial@vger.kernel.org
 Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Palmer Dabbelt <palmer@sifive.com>,
-        Wesley Terpstra <wesley@sifive.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v3 0/2] tty: serial: add DT bindings and serial driver for the SiFive FU540 UART
-Date:   Sat, 20 Oct 2018 03:10:44 -0700
-Message-Id: <20181020101045.15991-1-paul.walmsley@sifive.com>
+        Paul Walmsley <paul@pwsan.com>
+Subject: [PATCH v3 1/2] dt-bindings: serial: add documentation for the SiFive UART driver
+Date:   Sat, 20 Oct 2018 03:10:46 -0700
+Message-Id: <20181020101045.15991-2-paul.walmsley@sifive.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181020101045.15991-1-paul.walmsley@sifive.com>
+References: <20181020101045.15991-1-paul.walmsley@sifive.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,44 +82,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds a serial driver, with console support, for the
-UART IP block present on the SiFive FU540 SoC.  The programming
-model is straightforward, but unique.
+Add DT binding documentation for the Linux driver for the SiFive
+asynchronous serial IP block.
 
-Boot-tested on a SiFive FU540 HiFive-U board (with appropriate patches
-to the DT data).
-
-The patches in this series can also be found at:
-
-https://github.com/sifive/riscv-linux/tree/dev/paulw/serial-v4.19-rc7
-
-This third version updates the DT binding documentation per discussion
-with Rob Herring and fixes one additional issue identified by the 0-day
-build system related to MODULE_DEVICE_TABLE.
-
-Paul Walmsley (2):
-  dt-bindings: serial: add documentation for the SiFive UART driver
-  tty: serial: add driver for the SiFive UART
-
- .../bindings/serial/sifive-serial.txt         |   33 +
- drivers/tty/serial/Kconfig                    |   24 +
- drivers/tty/serial/Makefile                   |    1 +
- drivers/tty/serial/sifive.c                   | 1067 +++++++++++++++++
- include/uapi/linux/serial_core.h              |    3 +
- 5 files changed, 1128 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/serial/sifive-serial.txt
- create mode 100644 drivers/tty/serial/sifive.c
-
-
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Palmer Dabbelt <palmer@sifive.com>
-Cc: Wesley Terpstra <wesley@sifive.com>
 Cc: linux-serial@vger.kernel.org
+Cc: devicetree@vger.kernel.org
 Cc: linux-riscv@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>
+Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Signed-off-by: Paul Walmsley <paul@pwsan.com>
+---
+v3: update description and example for compatible strings, per
+    discussion with Rob Herring.
 
+ .../bindings/serial/sifive-serial.txt         | 33 +++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/serial/sifive-serial.txt
+
+diff --git a/Documentation/devicetree/bindings/serial/sifive-serial.txt b/Documentation/devicetree/bindings/serial/sifive-serial.txt
+new file mode 100644
+index 000000000000..a426b18ba049
+--- /dev/null
++++ b/Documentation/devicetree/bindings/serial/sifive-serial.txt
+@@ -0,0 +1,33 @@
++SiFive asynchronous serial interface (UART)
++
++Required properties:
++
++- compatible: should be something similar to
++	      "sifive,<chip>-uart<version>" for the UART as integrated
++	      on a particular chip, and "sifive,uart<version>" for the
++	      general UART IP block programming model.	Supported
++	      compatible strings as of the date of this writing are:
++	      "sifive,fu540-c000-uart0" for the SiFive UART v0 as
++	      integrated onto the SiFive FU540 chip, or "sifive,uart0"
++	      for the SiFive UART v0 IP block with no chip integration
++	      tweaks (if any)
++- reg: address and length of the register space
++- interrupts: Should contain the UART interrupt identifier
++- clocks: Should contain a clock identifier for the UART's parent clock
++
++
++UART RTL that corresponds to the IP block version numbers can be found
++here:
++
++https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/uart
++
++
++Example:
++
++uart0: serial@10010000 {
++	compatible = "sifive,fu540-c000-uart0", "sifive,uart0";
++	interrupt-parent = <&plic0>;
++	interrupts = <80>;
++	reg = <0x0 0x10010000 0x0 0x1000>;
++	clocks = <&prci PRCI_CLK_TLCLK>;
++};
 -- 
 2.19.1
 
