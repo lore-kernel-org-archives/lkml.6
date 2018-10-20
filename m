@@ -2,112 +2,364 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F82C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 04:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC66ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 04:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C08C121470
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 04:05:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C08C121470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 3B1302098A
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 04:13:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EGxMsLWM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B1302098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbeJTMOu (ORCPT
+        id S1726864AbeJTMV6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 08:14:50 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:53420 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbeJTMOu (ORCPT
+        Sat, 20 Oct 2018 08:21:58 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37580 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726261AbeJTMV5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 08:14:50 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5111E1262C507;
-        Fri, 19 Oct 2018 21:05:51 -0700 (PDT)
-Date:   Fri, 19 Oct 2018 21:05:49 -0700 (PDT)
-Message-Id: <20181019.210549.1285253275146712779.davem@davemloft.net>
-To:     acme@kernel.org
-CC:     linux-kernel@vger.kernel.org
-Subject: perf overlapping maps...
-From:   David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 19 Oct 2018 21:05:51 -0700 (PDT)
+        Sat, 20 Oct 2018 08:21:57 -0400
+Received: by mail-io1-f66.google.com with SMTP id m16-v6so24196515ioj.4
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 21:12:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=FSfK+ADJ82CRqXqJSKgIpSn2T96eGt+BNLVqt6VHu+0=;
+        b=EGxMsLWMmI41CKHJrk5q4PzB0YqbYvCRl9j8ThCJtRVy0fFI5ysAjTECiJhhV0i11e
+         Us92ZCihJG4K5ii8bXoJWYtA8APYY8mPTYtPjpGIKyjRjq2sfCFUKZb1mascGA4CD610
+         6Xjgus4BirW6dDPhdbyCpRJD0LVxQUnaWwtPg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FSfK+ADJ82CRqXqJSKgIpSn2T96eGt+BNLVqt6VHu+0=;
+        b=kAu4NQUlHNvGM5u1RHpaYrB0jZUFKJWJhhH1nR+TucZ779K7XHl16miEc5lpSjDiqx
+         wAitTCl/JwpLU+PnV1LXOoVDf4eW8tpPCYG6B8aF4YIaL+c+J0rJDK809pl5dOb8tGy2
+         gwPZEwmnNSDalQU3y3FXegkiXGESoR+cz9W0L7kz53Fw9YoFM0UmExoinNjdwRZQGwxF
+         GFhmdunuKz2nkHLvHCb/P5wyCWN36qEP/kMZu+NF5dP3oIhLHFtM4R6KnwiO6AYrqTsL
+         AwLOVaeBBFCWo7lp1KKOEn7crHReoy3GGeWrrG+jbAuc7dnR6WmUNPoy403v54mAMF9c
+         qEJw==
+X-Gm-Message-State: AGRZ1gJeRlWJ+q3mEhCYywKKbc57ELCH8FgN4d2YyZZP4GLPqLOBlvdD
+        CgA1w400EDyQQ7GHvHcdw2clSwLNpMd3/RXwzQjh1w==
+X-Google-Smtp-Source: AJdET5ehv+Is77aV6mSW/JSg5LU+VsgcxN6X80sZer91MLyT/qD2AAchBMEHEs2U9cKfVu2DoSG+5wfTkOb/DkasKHc=
+X-Received: by 2002:a6b:3787:: with SMTP id e129-v6mr4595820ioa.60.1540008777036;
+ Fri, 19 Oct 2018 21:12:57 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Fri, 19 Oct 2018 21:12:56
+ -0700 (PDT)
+In-Reply-To: <20181015175424.97147-11-ebiggers@kernel.org>
+References: <20181015175424.97147-1-ebiggers@kernel.org> <20181015175424.97147-11-ebiggers@kernel.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Sat, 20 Oct 2018 12:12:56 +0800
+Message-ID: <CAKv+Gu_HCecGeqFTf-Ys+GiWr98JO_ydZ1cAsMbKM88ZKG=Sog@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 10/12] crypto: arm/nhpoly1305 - add
+ NEON-accelerated NHPoly1305
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 16 October 2018 at 01:54, Eric Biggers <ebiggers@kernel.org> wrote:
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Add an ARM NEON implementation of NHPoly1305, an =CE=B5-almost-=E2=88=86-=
+universal
+> hash function used in the Adiantum encryption mode.  For now, only the
+> NH portion is actually NEON-accelerated; the Poly1305 part is less
+> performance-critical so is just implemented in C.
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  arch/arm/crypto/Kconfig                |   5 ++
+>  arch/arm/crypto/Makefile               |   2 +
+>  arch/arm/crypto/nh-neon-core.S         | 116 +++++++++++++++++++++++++
+>  arch/arm/crypto/nhpoly1305-neon-glue.c |  78 +++++++++++++++++
+>  4 files changed, 201 insertions(+)
+>  create mode 100644 arch/arm/crypto/nh-neon-core.S
+>  create mode 100644 arch/arm/crypto/nhpoly1305-neon-glue.c
+>
+> diff --git a/arch/arm/crypto/Kconfig b/arch/arm/crypto/Kconfig
+> index cc932d9bba561..458562a34aabe 100644
+> --- a/arch/arm/crypto/Kconfig
+> +++ b/arch/arm/crypto/Kconfig
+> @@ -122,4 +122,9 @@ config CRYPTO_CHACHA20_NEON
+>         select CRYPTO_BLKCIPHER
+>         select CRYPTO_CHACHA20
+>
+> +config CRYPTO_NHPOLY1305_NEON
+> +       tristate "NEON accelerated NHPoly1305 hash function (for Adiantum=
+)"
+> +       depends on KERNEL_MODE_NEON
+> +       select CRYPTO_NHPOLY1305
+> +
+>  endif
+> diff --git a/arch/arm/crypto/Makefile b/arch/arm/crypto/Makefile
+> index 005482ff95047..b65d6bfab8e6b 100644
+> --- a/arch/arm/crypto/Makefile
+> +++ b/arch/arm/crypto/Makefile
+> @@ -10,6 +10,7 @@ obj-$(CONFIG_CRYPTO_SHA1_ARM_NEON) +=3D sha1-arm-neon.o
+>  obj-$(CONFIG_CRYPTO_SHA256_ARM) +=3D sha256-arm.o
+>  obj-$(CONFIG_CRYPTO_SHA512_ARM) +=3D sha512-arm.o
+>  obj-$(CONFIG_CRYPTO_CHACHA20_NEON) +=3D chacha-neon.o
+> +obj-$(CONFIG_CRYPTO_NHPOLY1305_NEON) +=3D nhpoly1305-neon.o
+>
+>  ce-obj-$(CONFIG_CRYPTO_AES_ARM_CE) +=3D aes-arm-ce.o
+>  ce-obj-$(CONFIG_CRYPTO_SHA1_ARM_CE) +=3D sha1-arm-ce.o
+> @@ -53,6 +54,7 @@ ghash-arm-ce-y        :=3D ghash-ce-core.o ghash-ce-glu=
+e.o
+>  crct10dif-arm-ce-y     :=3D crct10dif-ce-core.o crct10dif-ce-glue.o
+>  crc32-arm-ce-y:=3D crc32-ce-core.o crc32-ce-glue.o
+>  chacha-neon-y :=3D chacha-neon-core.o chacha-neon-glue.o
+> +nhpoly1305-neon-y :=3D nh-neon-core.o nhpoly1305-neon-glue.o
+>
+>  ifdef REGENERATE_ARM_CRYPTO
+>  quiet_cmd_perl =3D PERL    $@
+> diff --git a/arch/arm/crypto/nh-neon-core.S b/arch/arm/crypto/nh-neon-cor=
+e.S
+> new file mode 100644
+> index 0000000000000..434d80ab531c2
+> --- /dev/null
+> +++ b/arch/arm/crypto/nh-neon-core.S
+> @@ -0,0 +1,116 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * NH - =CE=B5-almost-universal hash function, NEON accelerated version
+> + *
+> + * Copyright 2018 Google LLC
+> + *
+> + * Author: Eric Biggers <ebiggers@google.com>
+> + */
+> +
+> +#include <linux/linkage.h>
+> +
+> +       .text
+> +       .fpu            neon
+> +
+> +       KEY             .req    r0
+> +       MESSAGE         .req    r1
+> +       MESSAGE_LEN     .req    r2
+> +       HASH            .req    r3
+> +
+> +       PASS0_SUMS      .req    q0
+> +       PASS0_SUM_A     .req    d0
+> +       PASS0_SUM_B     .req    d1
+> +       PASS1_SUMS      .req    q1
+> +       PASS1_SUM_A     .req    d2
+> +       PASS1_SUM_B     .req    d3
+> +       PASS2_SUMS      .req    q2
+> +       PASS2_SUM_A     .req    d4
+> +       PASS2_SUM_B     .req    d5
+> +       PASS3_SUMS      .req    q3
+> +       PASS3_SUM_A     .req    d6
+> +       PASS3_SUM_B     .req    d7
+> +       K0              .req    q4
+> +       K1              .req    q5
+> +       K2              .req    q6
+> +       K3              .req    q7
+> +       T0              .req    q8
+> +       T0_L            .req    d16
+> +       T0_H            .req    d17
+> +       T1              .req    q9
+> +       T1_L            .req    d18
+> +       T1_H            .req    d19
+> +       T2              .req    q10
+> +       T2_L            .req    d20
+> +       T2_H            .req    d21
+> +       T3              .req    q11
+> +       T3_L            .req    d22
+> +       T3_H            .req    d23
+> +
+> +.macro _nh_stride      k0, k1, k2, k3
+> +
+> +       // Load next message stride
+> +       vld1.8          {T3}, [MESSAGE]!
+> +
+> +       // Load next key stride
+> +       vld1.32         {\k3}, [KEY]!
+> +
+> +       // Add message words to key words
+> +       vadd.u32        T0, T3, \k0
+> +       vadd.u32        T1, T3, \k1
+> +       vadd.u32        T2, T3, \k2
+> +       vadd.u32        T3, T3, \k3
+> +
+> +       // Multiply 32x32 =3D> 64 and accumulate
+> +       vmlal.u32       PASS0_SUMS, T0_L, T0_H
+> +       vmlal.u32       PASS1_SUMS, T1_L, T1_H
+> +       vmlal.u32       PASS2_SUMS, T2_L, T2_H
+> +       vmlal.u32       PASS3_SUMS, T3_L, T3_H
+> +.endm
+> +
 
-Symbols aren't exactly right all the time on sparc and even the owner
-of a sample is set to "unknown" from time to time so I turned on some
-debugging to investigate.
+Since we seem to have some spare NEON registers: would it help to have
+a double round version of this macro?
 
-One thing that stands out is that we get overlapping maps all the
-time.
+> +/*
+> + * void nh_neon(const u32 *key, const u8 *message, size_t message_len,
+> + *             u8 hash[NH_HASH_BYTES])
+> + *
+> + * It's guaranteed that message_len % 16 =3D=3D 0.
+> + */
+> +ENTRY(nh_neon)
+> +
+> +       vld1.32         {K0,K1}, [KEY]!
+> +         vmov.u64      PASS0_SUMS, #0
+> +         vmov.u64      PASS1_SUMS, #0
+> +       vld1.32         {K2}, [KEY]!
+> +         vmov.u64      PASS2_SUMS, #0
+> +         vmov.u64      PASS3_SUMS, #0
+> +
+> +       subs            MESSAGE_LEN, MESSAGE_LEN, #64
+> +       blt             .Lloop4_done
+> +.Lloop4:
+> +       _nh_stride      K0, K1, K2, K3
+> +       _nh_stride      K1, K2, K3, K0
+> +       _nh_stride      K2, K3, K0, K1
+> +       _nh_stride      K3, K0, K1, K2
+> +       subs            MESSAGE_LEN, MESSAGE_LEN, #64
+> +       bge             .Lloop4
+> +
+> +.Lloop4_done:
+> +       ands            MESSAGE_LEN, MESSAGE_LEN, #63
+> +       beq             .Ldone
+> +       _nh_stride      K0, K1, K2, K3
+> +
+> +       subs            MESSAGE_LEN, MESSAGE_LEN, #16
+> +       beq             .Ldone
+> +       _nh_stride      K1, K2, K3, K0
+> +
+> +       subs            MESSAGE_LEN, MESSAGE_LEN, #16
+> +       beq             .Ldone
+> +       _nh_stride      K2, K3, K0, K1
+> +
+> +.Ldone:
+> +       // Sum the accumulators for each pass, then store the sums to 'ha=
+sh'
+> +       vadd.u64        T0_L, PASS0_SUM_A, PASS0_SUM_B
+> +       vadd.u64        T0_H, PASS1_SUM_A, PASS1_SUM_B
+> +       vadd.u64        T1_L, PASS2_SUM_A, PASS2_SUM_B
+> +       vadd.u64        T1_H, PASS3_SUM_A, PASS3_SUM_B
+> +       vst1.8          {T0-T1}, [HASH]
+> +       bx              lr
+> +ENDPROC(nh_neon)
+> diff --git a/arch/arm/crypto/nhpoly1305-neon-glue.c b/arch/arm/crypto/nhp=
+oly1305-neon-glue.c
+> new file mode 100644
+> index 0000000000000..df48a00f4c50f
+> --- /dev/null
+> +++ b/arch/arm/crypto/nhpoly1305-neon-glue.c
+> @@ -0,0 +1,78 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * NHPoly1305 - =CE=B5-almost-=E2=88=86-universal hash function for Adia=
+ntum
+> + * (NEON accelerated version)
+> + *
+> + * Copyright 2018 Google LLC
+> + */
+> +
+> +#include <asm/neon.h>
+> +#include <asm/simd.h>
+> +#include <crypto/internal/hash.h>
+> +#include <crypto/nhpoly1305.h>
+> +#include <linux/module.h>
+> +
+> +asmlinkage void nh_neon(const u32 *key, const u8 *message, size_t messag=
+e_len,
+> +                       u8 hash[NH_HASH_BYTES]);
+> +
+> +static void _nh_neon(const u32 *key, const u8 *message, size_t message_l=
+en,
+> +                    __le64 hash[NH_NUM_PASSES])
+> +{
+> +       nh_neon(key, message, message_len, (u8 *)hash);
+> +}
+> +
 
-So I tried to narrow down how this happens.  Here is one case, we get
-a new thread fork event for emacs-gtk before the MMAP events so we go:
+Why do we need this function?
 
-thread__fork(thread, parent, timestamp)
-{
- ...
- thread__clone_map_groups(thread, parent)
- {
-   ...
-   map_groups__clone(thread, parent->mg)
+> +static int nhpoly1305_neon_update(struct shash_desc *desc,
+> +                                 const u8 *src, unsigned int srclen)
+> +{
+> +       if (srclen < 64 || !may_use_simd())
+> +               return crypto_nhpoly1305_update(desc, src, srclen);
+> +
+> +       do {
+> +               unsigned int n =3D min_t(unsigned int, srclen, PAGE_SIZE)=
+;
+> +
+> +               kernel_neon_begin();
+> +               crypto_nhpoly1305_update_helper(desc, src, n, _nh_neon);
+> +               kernel_neon_end();
+> +               src +=3D n;
+> +               srclen -=3D n;
+> +       } while (srclen);
+> +       return 0;
+> +}
+> +
+> +static struct shash_alg nhpoly1305_alg =3D {
+> +       .digestsize     =3D POLY1305_DIGEST_SIZE,
+> +       .init           =3D crypto_nhpoly1305_init,
+> +       .update         =3D nhpoly1305_neon_update,
+> +       .final          =3D crypto_nhpoly1305_final,
+> +       .setkey         =3D crypto_nhpoly1305_setkey,
+> +       .descsize       =3D sizeof(struct nhpoly1305_state),
+> +       .base           =3D {
+> +               .cra_name               =3D "nhpoly1305",
+> +               .cra_driver_name        =3D "nhpoly1305-neon",
+> +               .cra_priority           =3D 200,
+> +               .cra_ctxsize            =3D sizeof(struct nhpoly1305_key)=
+,
+> +               .cra_module             =3D THIS_MODULE,
+> +       },
 
-Dumping this map_groups__clone() operation I see:
+Can we use .base.xxx please?
 
-map_groups__clone: parent 0x10000425420 --> 0x10000418fb0
-map_groups__clone: new [0000010000000000:0000010000110000] /bin/bash
-map_groups__clone: new [0000010000212000:000001000021e000] /bin/bash
-map_groups__clone: new [000001000021e000:00000100002a0000] /tmp/perf-1309.map
-map_groups__clone: new [fff0000100000000:fff0000100024000] /lib/sparc64-linux-gnu/ld-2.27.so
-map_groups__clone: new [fff0000100124000:fff0000100126000] /lib/sparc64-linux-gnu/ld-2.27.so
-map_groups__clone: new [fff0000100128000:fff0000100152000] /lib/sparc64-linux-gnu/libtinfo.so.6.1
-map_groups__clone: new [fff0000100254000:fff0000100256000] /lib/sparc64-linux-gnu/libtinfo.so.6.1
-map_groups__clone: new [fff0000100258000:fff000010025c000] /lib/sparc64-linux-gnu/libdl-2.27.so
-map_groups__clone: new [fff000010035c000:fff000010035e000] /lib/sparc64-linux-gnu/libdl-2.27.so
-map_groups__clone: new [fff000010046a000:fff000010046c000] [vdso]
-map_groups__clone: new [fff000010046c000:fff00001005cc000] /lib/sparc64-linux-gnu/libc-2.27.so
-map_groups__clone: new [fff00001006d0000:fff00001006d4000] /lib/sparc64-linux-gnu/libc-2.27.so
-map_groups__clone: new [fff00001006d4000:fff00001006d6000] /tmp/perf-1309.map
-map_groups__clone: new [fff0000100874000:fff000010087e000] /lib/sparc64-linux-gnu/libnss_files-2.27.so
-map_groups__clone: new [fff000010097e000:fff0000100980000] /lib/sparc64-linux-gnu/libnss_files-2.27.so
-map_groups__clone: new [fff0000100980000:fff0000100986000] /tmp/perf-1309.map
-
-It's inheriting maps for the parent bash shell that invoked emacs-gtk, which
-makes no sense at all.
-
-We proceed to process the MMAP events which have the proper mappings
-for emacs-gtk, and eventually we happen to hit a mapping that overlaps
-with one of the address ranges of the parent bash shell.
-
-For the stuff that doesn't overlap, we have bogus parent bash shell
-process mappings left in the emacs-gtk thread map group.
-
-The above trace is simply from "./perf record 2>x.log", nothing fancy.
-
-What we are doing above can't be right.
-
-Yes, when processing real perf events from the kernel for a fork
-event, we should do that inheritance stuff.  But if we are
-synthesizing the fork to build threads and maps for already running
-processes, we absolutely should not perform the map groups clone.
-
-One solution I've come up with is:
-
-1) When synthesizing a fork event, set PERF_RECORD_MISC_COMM_EXEC in
-   header->misc.
-
-2) Use this to elide the map groups clone in
-   thread__clone_map_groups().
-
-Comments?
+> +};
+> +
+> +static int __init nhpoly1305_mod_init(void)
+> +{
+> +       if (!(elf_hwcap & HWCAP_NEON))
+> +               return -ENODEV;
+> +
+> +       return crypto_register_shash(&nhpoly1305_alg);
+> +}
+> +
+> +static void __exit nhpoly1305_mod_exit(void)
+> +{
+> +       crypto_unregister_shash(&nhpoly1305_alg);
+> +}
+> +
+> +module_init(nhpoly1305_mod_init);
+> +module_exit(nhpoly1305_mod_exit);
+> +
+> +MODULE_DESCRIPTION("NHPoly1305 =CE=B5-almost-=E2=88=86-universal hash fu=
+nction (NEON-accelerated)");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_AUTHOR("Eric Biggers <ebiggers@google.com>");
+> +MODULE_ALIAS_CRYPTO("nhpoly1305");
+> +MODULE_ALIAS_CRYPTO("nhpoly1305-neon");
+> --
+> 2.19.1.331.ge82ca0e54c-goog
+>
