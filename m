@@ -2,484 +2,164 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F022C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 17:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB14C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 17:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C322821533
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 17:39:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C322821533
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 04E8421533
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 17:41:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="KacXSMJJ";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="iWqXlPH5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04E8421533
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727643AbeJUBuZ (ORCPT
+        id S1727655AbeJUBxH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 21:50:25 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45340 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727512AbeJUBuZ (ORCPT
+        Sat, 20 Oct 2018 21:53:07 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:50056 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726779AbeJUBxG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 21:50:25 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9KHY1aV106581
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 13:39:13 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n80c6x1b4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 13:39:13 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Sat, 20 Oct 2018 18:39:11 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 20 Oct 2018 18:39:08 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9KHd7kW917780
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 20 Oct 2018 17:39:08 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 491CF10EE5A;
-        Sat, 20 Oct 2018 14:18:08 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 09798113870;
-        Sat, 20 Oct 2018 13:39:23 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.206.22])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Sat, 20 Oct 2018 13:39:22 +0000 (GMT)
-Date:   Sat, 20 Oct 2018 16:39:21 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Michal Hocko <mhocko@kernel.org>,
-        linux-alpha <linux-alpha@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND PATCH v2] alpha: switch to NO_BOOTMEM
-References: <1535952894-10967-1-git-send-email-rppt@linux.vnet.ibm.com>
- <20181018185834.a3925ae72b9d7bbf43b1b8a3@linux-foundation.org>
+        Sat, 20 Oct 2018 21:53:06 -0400
+Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
+        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9KHb812013794;
+        Sat, 20 Oct 2018 10:41:26 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=NC/Sle73F/uSpTU5RYs8zLXYKHlYoXj1XCge4eDFVAM=;
+ b=KacXSMJJd9yhLn+5nLHkDxcBbs0WX2P3Ewd22zfhit5VISogC/yqtmKy9ZbgUh934jWT
+ hTvo0KdoBY/QtmmUgZB7n3gde1MtrrCXR0KwIVq2BXCMfZRvkVO/19PKdRMZxI7WNWm/
+ jkJ1mVQM57cwf9CUjyUtzekA5uzXc6k6EK8= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0b-00082601.pphosted.com with ESMTP id 2n80690wxw-12
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Sat, 20 Oct 2018 10:41:26 -0700
+Received: from prn-hub03.TheFacebook.com (2620:10d:c081:35::127) by
+ prn-hub03.TheFacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Sat, 20 Oct 2018 10:41:04 -0700
+Received: from PRN-CHUB02.TheFacebook.com (2620:10d:c081:35::11) by
+ prn-hub03.TheFacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
+ (version=TLS1_0, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3
+ via Frontend Transport; Sat, 20 Oct 2018 10:41:04 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.12) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Sat, 20 Oct 2018 10:41:03 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NC/Sle73F/uSpTU5RYs8zLXYKHlYoXj1XCge4eDFVAM=;
+ b=iWqXlPH5+gHPD00Rx4jySgENTTD8QaY4PxalP5+zsh+mrYOd76bFCw4wEF5qoVvtTc88fyGg8ph7WUh5e8oylaEUe59sK3aOO1jIy3RadCo2Z+xZaJev7/jD79yyCMopIckZS89HD32N/Ex8Al9LBbqYohY09VhnHrWswMQIae0=
+Received: from BY2PR15MB0167.namprd15.prod.outlook.com (10.163.64.141) by
+ BY2PR15MB0439.namprd15.prod.outlook.com (10.163.110.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1250.29; Sat, 20 Oct 2018 17:41:01 +0000
+Received: from BY2PR15MB0167.namprd15.prod.outlook.com
+ ([fe80::8e8:753:f746:ed14]) by BY2PR15MB0167.namprd15.prod.outlook.com
+ ([fe80::8e8:753:f746:ed14%2]) with mapi id 15.20.1250.028; Sat, 20 Oct 2018
+ 17:41:01 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+CC:     Spock <dairinin@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Rik van Riel <riel@surriel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: Re: Memory management issue in 4.18.15
+Thread-Topic: Memory management issue in 4.18.15
+Thread-Index: AQHUaIrbHk+DbEcbikCQiNZLx8ZaF6UoZwYA
+Date:   Sat, 20 Oct 2018 17:41:00 +0000
+Message-ID: <20181020174053.GA6149@castle.DHCP.thefacebook.com>
+References: <CADa=ObrwYaoNFn0x06mvv5W1F9oVccT5qjGM8qFBGNPoNuMUNw@mail.gmail.com>
+ <a655c898-0701-f10d-bbf3-8a0090544560@infradead.org>
+In-Reply-To: <a655c898-0701-f10d-bbf3-8a0090544560@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR03CA0042.namprd03.prod.outlook.com
+ (2603:10b6:301:3b::31) To BY2PR15MB0167.namprd15.prod.outlook.com
+ (2a01:111:e400:58e0::13)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:180::1:9137]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2PR15MB0439;20:AodMd79GolS4NRhABYhe6SHIglCWT7WkPMYYAA+0mfVSRGcslsWTFcyK04PYmH6tYTSi/+/ITRokZmJj/Thuz+5qP+SlvziL9sPGmamibSatSjMGbD4DQ/zyhV8Cy1dTzxq/K6Vum5tPadZ5kXWSPjMduj3BOqWKi3Bf13Yxj1A=
+x-ms-office365-filtering-correlation-id: 3782331a-091b-4249-6c90-08d636b3330b
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR15MB0439;
+x-ms-traffictypediagnostic: BY2PR15MB0439:
+x-microsoft-antispam-prvs: <BY2PR15MB0439F552D87FC9973F1AF696BEFA0@BY2PR15MB0439.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(84791874153150);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(11241501184)(944501410)(52105095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BY2PR15MB0439;BCL:0;PCL:0;RULEID:;SRVR:BY2PR15MB0439;
+x-forefront-prvs: 0831C25939
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(396003)(39860400002)(376002)(346002)(189003)(199004)(97736004)(5250100002)(2906002)(6116002)(486006)(446003)(46003)(6486002)(6436002)(9686003)(6512007)(476003)(11346002)(6306002)(53936002)(6246003)(256004)(305945005)(102836004)(7736002)(86362001)(186003)(1076002)(54906003)(53546011)(6506007)(386003)(8936002)(33896004)(76176011)(14454004)(39060400002)(105586002)(966005)(316002)(229853002)(71200400001)(71190400001)(52116002)(106356001)(4326008)(81156014)(99286004)(81166006)(33656002)(68736007)(8676002)(478600001)(2900100001)(6916009)(5660300001)(25786009)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR15MB0439;H:BY2PR15MB0167.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: PItT8F1ZM5ZG45OtANJn4YBMDwgWYQ5sR4qcJN5GTYYItkGC6j8Dx1roDXh9ZXygLg0HRBTGY1iUxgW2NdGcC4D2bu8kbCqqBqiAndDXjQ9fCJU4kf6iBZYLpoz7FSqpmhd1MQy8mwsjto0KO3TEHK48MgNktREKlKYtzc2+mVQT4P0yiqmUMVJsbMK2uiZwU3Pif/niANNxxBABi2vKeK42+1VZLvI8zdcrosP6LdjGBNFY3L8WvYZxk+IdnpJBtfGv2p6WZJINPxocAtmwf3277avJ/6Yx1cQSp3LjFUWLjxQj6M8aegRDvBjnBweN0cQwxh3UICzM1R/wiTBwjlZ/g2/+I72ZDnSPBSwgD14=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <124A14B832841745B95D28394CA443FC@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181018185834.a3925ae72b9d7bbf43b1b8a3@linux-foundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18102017-4275-0000-0000-000002D072B6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18102017-4276-0000-0000-000037DB808E
-Message-Id: <20181020133920.GA19631@rapoport-lnx>
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3782331a-091b-4249-6c90-08d636b3330b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Oct 2018 17:41:00.9343
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR15MB0439
+X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-20_08:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=52 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810200165
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 06:58:34PM -0700, Andrew Morton wrote:
-> No reviews or acks for this one yet?
+On Sat, Oct 20, 2018 at 08:37:28AM -0700, Randy Dunlap wrote:
+> [add linux-mm mailing list + people]
+>=20
+>=20
+> On 10/20/18 4:41 AM, Spock wrote:
+> > Hello,
+> >=20
+> > I have a workload, which creates lots of cache pages. Before 4.18.15,
+> > the behavior was very stable: pagecache is constantly growing until it
+> > consumes all the free memory, and then kswapd is balancing it around
+> > low watermark. After 4.18.15, once in a while khugepaged is waking up
+> > and reclaims almost all the pages from pagecache, so there is always
+> > around 2G of 8G unused. THP is enabled only for madvise case and are
+> > not used.
+> >=20
+> > The exact change that leads to current behavior is
+> > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit=
+/?h=3Dlinux-4.18.y&id=3D62aad93f09c1952ede86405894df1b22012fd5ab
+> >=20
 
-Nope :(
- 
-> From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> Subject: alpha: switch to NO_BOOTMEM
-> 
-> Replace bootmem allocator with memblock and enable use of NO_BOOTMEM like
-> on most other architectures.
-> 
-> Alpha gets the description of the physical memory from the firmware as an
-> array of memory clusters.  Each cluster that is not reserved by the
-> firmware is added to memblock.memory.
-> 
-> Once the memblock.memory is set up, we reserve the kernel and initrd pages
-> with memblock reserve.
-> 
-> Since we don't need the bootmem bitmap anymore, the code that finds an
-> appropriate place is removed.
-> 
-> The conversion does not take care of NUMA support which is marked broken
-> for more than 10 years now.
-> 
-> Link: http://lkml.kernel.org/r/1535952894-10967-1-git-send-email-rppt@linux.vnet.ibm.com
-> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> Cc: Richard Henderson <rth@twiddle.net>
-> Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
-> 
-> 
-> --- a/arch/alpha/Kconfig~alpha-switch-to-no_bootmem
-> +++ a/arch/alpha/Kconfig
-> @@ -31,6 +31,8 @@ config ALPHA
->  	select ODD_RT_SIGACTION
->  	select OLD_SIGSUSPEND
->  	select CPU_NO_EFFICIENT_FFS if !ALPHA_EV67
-> +	select HAVE_MEMBLOCK
-> +	select NO_BOOTMEM
->  	help
->  	  The Alpha is a 64-bit general-purpose processor designed and
->  	  marketed by the Digital Equipment Corporation of blessed memory,
-> --- a/arch/alpha/kernel/core_irongate.c~alpha-switch-to-no_bootmem
-> +++ a/arch/alpha/kernel/core_irongate.c
-> @@ -21,6 +21,7 @@
->  #include <linux/init.h>
->  #include <linux/initrd.h>
->  #include <linux/bootmem.h>
-> +#include <linux/memblock.h>
-> 
->  #include <asm/ptrace.h>
->  #include <asm/cacheflush.h>
-> @@ -241,8 +242,7 @@ albacore_init_arch(void)
->  				       size / 1024);
->  		}
->  #endif
-> -		reserve_bootmem_node(NODE_DATA(0), pci_mem, memtop -
-> -				pci_mem, BOOTMEM_DEFAULT);
-> +		memblock_reserve(pci_mem, memtop - pci_mem);
->  		printk("irongate_init_arch: temporarily reserving "
->  			"region %08lx-%08lx for PCI\n", pci_mem, memtop - 1);
->  	}
-> --- a/arch/alpha/kernel/setup.c~alpha-switch-to-no_bootmem
-> +++ a/arch/alpha/kernel/setup.c
-> @@ -30,6 +30,7 @@
->  #include <linux/ioport.h>
->  #include <linux/platform_device.h>
->  #include <linux/bootmem.h>
-> +#include <linux/memblock.h>
->  #include <linux/pci.h>
->  #include <linux/seq_file.h>
->  #include <linux/root_dev.h>
-> @@ -312,9 +313,7 @@ setup_memory(void *kernel_end)
->  {
->  	struct memclust_struct * cluster;
->  	struct memdesc_struct * memdesc;
-> -	unsigned long start_kernel_pfn, end_kernel_pfn;
-> -	unsigned long bootmap_size, bootmap_pages, bootmap_start;
-> -	unsigned long start, end;
-> +	unsigned long kernel_size;
->  	unsigned long i;
-> 
->  	/* Find free clusters, and init and free the bootmem accordingly.  */
-> @@ -322,6 +321,8 @@ setup_memory(void *kernel_end)
->  	  (hwrpb->mddt_offset + (unsigned long) hwrpb);
-> 
->  	for_each_mem_cluster(memdesc, cluster, i) {
-> +		unsigned long end;
-> +
->  		printk("memcluster %lu, usage %01lx, start %8lu, end %8lu\n",
->  		       i, cluster->usage, cluster->start_pfn,
->  		       cluster->start_pfn + cluster->numpages);
-> @@ -335,6 +336,9 @@ setup_memory(void *kernel_end)
->  		end = cluster->start_pfn + cluster->numpages;
->  		if (end > max_low_pfn)
->  			max_low_pfn = end;
-> +
-> +		memblock_add(PFN_PHYS(cluster->start_pfn),
-> +			     cluster->numpages << PAGE_SHIFT);
->  	}
-> 
->  	/*
-> @@ -363,87 +367,9 @@ setup_memory(void *kernel_end)
->  		max_low_pfn = mem_size_limit;
->  	}
-> 
-> -	/* Find the bounds of kernel memory.  */
-> -	start_kernel_pfn = PFN_DOWN(KERNEL_START_PHYS);
-> -	end_kernel_pfn = PFN_UP(virt_to_phys(kernel_end));
-> -	bootmap_start = -1;
-> -
-> - try_again:
-> -	if (max_low_pfn <= end_kernel_pfn)
-> -		panic("not enough memory to boot");
-> -
-> -	/* We need to know how many physically contiguous pages
-> -	   we'll need for the bootmap.  */
-> -	bootmap_pages = bootmem_bootmap_pages(max_low_pfn);
-> -
-> -	/* Now find a good region where to allocate the bootmap.  */
-> -	for_each_mem_cluster(memdesc, cluster, i) {
-> -		if (cluster->usage & 3)
-> -			continue;
-> -
-> -		start = cluster->start_pfn;
-> -		end = start + cluster->numpages;
-> -		if (start >= max_low_pfn)
-> -			continue;
-> -		if (end > max_low_pfn)
-> -			end = max_low_pfn;
-> -		if (start < start_kernel_pfn) {
-> -			if (end > end_kernel_pfn
-> -			    && end - end_kernel_pfn >= bootmap_pages) {
-> -				bootmap_start = end_kernel_pfn;
-> -				break;
-> -			} else if (end > start_kernel_pfn)
-> -				end = start_kernel_pfn;
-> -		} else if (start < end_kernel_pfn)
-> -			start = end_kernel_pfn;
-> -		if (end - start >= bootmap_pages) {
-> -			bootmap_start = start;
-> -			break;
-> -		}
-> -	}
-> -
-> -	if (bootmap_start == ~0UL) {
-> -		max_low_pfn >>= 1;
-> -		goto try_again;
-> -	}
-> -
-> -	/* Allocate the bootmap and mark the whole MM as reserved.  */
-> -	bootmap_size = init_bootmem(bootmap_start, max_low_pfn);
-> -
-> -	/* Mark the free regions.  */
-> -	for_each_mem_cluster(memdesc, cluster, i) {
-> -		if (cluster->usage & 3)
-> -			continue;
-> -
-> -		start = cluster->start_pfn;
-> -		end = cluster->start_pfn + cluster->numpages;
-> -		if (start >= max_low_pfn)
-> -			continue;
-> -		if (end > max_low_pfn)
-> -			end = max_low_pfn;
-> -		if (start < start_kernel_pfn) {
-> -			if (end > end_kernel_pfn) {
-> -				free_bootmem(PFN_PHYS(start),
-> -					     (PFN_PHYS(start_kernel_pfn)
-> -					      - PFN_PHYS(start)));
-> -				printk("freeing pages %ld:%ld\n",
-> -				       start, start_kernel_pfn);
-> -				start = end_kernel_pfn;
-> -			} else if (end > start_kernel_pfn)
-> -				end = start_kernel_pfn;
-> -		} else if (start < end_kernel_pfn)
-> -			start = end_kernel_pfn;
-> -		if (start >= end)
-> -			continue;
-> -
-> -		free_bootmem(PFN_PHYS(start), PFN_PHYS(end) - PFN_PHYS(start));
-> -		printk("freeing pages %ld:%ld\n", start, end);
-> -	}
-> -
-> -	/* Reserve the bootmap memory.  */
-> -	reserve_bootmem(PFN_PHYS(bootmap_start), bootmap_size,
-> -			BOOTMEM_DEFAULT);
-> -	printk("reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
-> +	/* Reserve the kernel memory. */
-> +	kernel_size = virt_to_phys(kernel_end) - KERNEL_START_PHYS;
-> +	memblock_reserve(KERNEL_START_PHYS, kernel_size);
-> 
->  #ifdef CONFIG_BLK_DEV_INITRD
->  	initrd_start = INITRD_START;
-> @@ -459,8 +385,8 @@ setup_memory(void *kernel_end)
->  				       initrd_end,
->  				       phys_to_virt(PFN_PHYS(max_low_pfn)));
->  		} else {
-> -			reserve_bootmem(virt_to_phys((void *)initrd_start),
-> -					INITRD_SIZE, BOOTMEM_DEFAULT);
-> +			memblock_reserve(virt_to_phys((void *)initrd_start),
-> +					INITRD_SIZE);
->  		}
->  	}
->  #endif /* CONFIG_BLK_DEV_INITRD */
-> --- a/arch/alpha/mm/numa.c~alpha-switch-to-no_bootmem
-> +++ a/arch/alpha/mm/numa.c
-> @@ -11,6 +11,7 @@
->  #include <linux/kernel.h>
->  #include <linux/mm.h>
->  #include <linux/bootmem.h>
-> +#include <linux/memblock.h>
->  #include <linux/swap.h>
->  #include <linux/initrd.h>
->  #include <linux/pfn.h>
-> @@ -59,12 +60,10 @@ setup_memory_node(int nid, void *kernel_
->  	struct memclust_struct * cluster;
->  	struct memdesc_struct * memdesc;
->  	unsigned long start_kernel_pfn, end_kernel_pfn;
-> -	unsigned long bootmap_size, bootmap_pages, bootmap_start;
->  	unsigned long start, end;
->  	unsigned long node_pfn_start, node_pfn_end;
->  	unsigned long node_min_pfn, node_max_pfn;
->  	int i;
-> -	unsigned long node_datasz = PFN_UP(sizeof(pg_data_t));
->  	int show_init = 0;
-> 
->  	/* Find the bounds of current node */
-> @@ -134,24 +133,14 @@ setup_memory_node(int nid, void *kernel_
->  	/* Cute trick to make sure our local node data is on local memory */
->  	node_data[nid] = (pg_data_t *)(__va(node_min_pfn << PAGE_SHIFT));
->  #endif
-> -	/* Quasi-mark the pg_data_t as in-use */
-> -	node_min_pfn += node_datasz;
-> -	if (node_min_pfn >= node_max_pfn) {
-> -		printk(" not enough mem to reserve NODE_DATA");
-> -		return;
-> -	}
-> -	NODE_DATA(nid)->bdata = &bootmem_node_data[nid];
-> -
->  	printk(" Detected node memory:   start %8lu, end %8lu\n",
->  	       node_min_pfn, node_max_pfn);
-> 
->  	DBGDCONT(" DISCONTIG: node_data[%d]   is at 0x%p\n", nid, NODE_DATA(nid));
-> -	DBGDCONT(" DISCONTIG: NODE_DATA(%d)->bdata is at 0x%p\n", nid, NODE_DATA(nid)->bdata);
-> 
->  	/* Find the bounds of kernel memory.  */
->  	start_kernel_pfn = PFN_DOWN(KERNEL_START_PHYS);
->  	end_kernel_pfn = PFN_UP(virt_to_phys(kernel_end));
-> -	bootmap_start = -1;
-> 
->  	if (!nid && (node_max_pfn < end_kernel_pfn || node_min_pfn > start_kernel_pfn))
->  		panic("kernel loaded out of ram");
-> @@ -161,89 +150,11 @@ setup_memory_node(int nid, void *kernel_
->  	   has much larger alignment than 8Mb, so it's safe. */
->  	node_min_pfn &= ~((1UL << (MAX_ORDER-1))-1);
-> 
-> -	/* We need to know how many physically contiguous pages
-> -	   we'll need for the bootmap.  */
-> -	bootmap_pages = bootmem_bootmap_pages(node_max_pfn-node_min_pfn);
-> -
-> -	/* Now find a good region where to allocate the bootmap.  */
-> -	for_each_mem_cluster(memdesc, cluster, i) {
-> -		if (cluster->usage & 3)
-> -			continue;
-> -
-> -		start = cluster->start_pfn;
-> -		end = start + cluster->numpages;
-> -
-> -		if (start >= node_max_pfn || end <= node_min_pfn)
-> -			continue;
-> -
-> -		if (end > node_max_pfn)
-> -			end = node_max_pfn;
-> -		if (start < node_min_pfn)
-> -			start = node_min_pfn;
-> -
-> -		if (start < start_kernel_pfn) {
-> -			if (end > end_kernel_pfn
-> -			    && end - end_kernel_pfn >= bootmap_pages) {
-> -				bootmap_start = end_kernel_pfn;
-> -				break;
-> -			} else if (end > start_kernel_pfn)
-> -				end = start_kernel_pfn;
-> -		} else if (start < end_kernel_pfn)
-> -			start = end_kernel_pfn;
-> -		if (end - start >= bootmap_pages) {
-> -			bootmap_start = start;
-> -			break;
-> -		}
-> -	}
-> -
-> -	if (bootmap_start == -1)
-> -		panic("couldn't find a contiguous place for the bootmap");
-> -
-> -	/* Allocate the bootmap and mark the whole MM as reserved.  */
-> -	bootmap_size = init_bootmem_node(NODE_DATA(nid), bootmap_start,
-> -					 node_min_pfn, node_max_pfn);
-> -	DBGDCONT(" bootmap_start %lu, bootmap_size %lu, bootmap_pages %lu\n",
-> -		 bootmap_start, bootmap_size, bootmap_pages);
-> -
-> -	/* Mark the free regions.  */
-> -	for_each_mem_cluster(memdesc, cluster, i) {
-> -		if (cluster->usage & 3)
-> -			continue;
-> -
-> -		start = cluster->start_pfn;
-> -		end = cluster->start_pfn + cluster->numpages;
-> -
-> -		if (start >= node_max_pfn || end <= node_min_pfn)
-> -			continue;
-> +	memblock_add(PFN_PHYS(node_min_pfn),
-> +		     (node_max_pfn - node_min_pfn) << PAGE_SHIFT);
-> 
-> -		if (end > node_max_pfn)
-> -			end = node_max_pfn;
-> -		if (start < node_min_pfn)
-> -			start = node_min_pfn;
-> -
-> -		if (start < start_kernel_pfn) {
-> -			if (end > end_kernel_pfn) {
-> -				free_bootmem_node(NODE_DATA(nid), PFN_PHYS(start),
-> -					     (PFN_PHYS(start_kernel_pfn)
-> -					      - PFN_PHYS(start)));
-> -				printk(" freeing pages %ld:%ld\n",
-> -				       start, start_kernel_pfn);
-> -				start = end_kernel_pfn;
-> -			} else if (end > start_kernel_pfn)
-> -				end = start_kernel_pfn;
-> -		} else if (start < end_kernel_pfn)
-> -			start = end_kernel_pfn;
-> -		if (start >= end)
-> -			continue;
-> -
-> -		free_bootmem_node(NODE_DATA(nid), PFN_PHYS(start), PFN_PHYS(end) - PFN_PHYS(start));
-> -		printk(" freeing pages %ld:%ld\n", start, end);
-> -	}
-> -
-> -	/* Reserve the bootmap memory.  */
-> -	reserve_bootmem_node(NODE_DATA(nid), PFN_PHYS(bootmap_start),
-> -			bootmap_size, BOOTMEM_DEFAULT);
-> -	printk(" reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
-> +	NODE_DATA(nid)->node_start_pfn = node_min_pfn;
-> +	NODE_DATA(nid)->node_present_pages = node_max_pfn - node_min_pfn;
-> 
->  	node_set_online(nid);
->  }
-> @@ -251,6 +162,7 @@ setup_memory_node(int nid, void *kernel_
->  void __init
->  setup_memory(void *kernel_end)
->  {
-> +	unsigned long kernel_size;
->  	int nid;
-> 
->  	show_mem_layout();
-> @@ -262,6 +174,9 @@ setup_memory(void *kernel_end)
->  	for (nid = 0; nid < MAX_NUMNODES; nid++)
->  		setup_memory_node(nid, kernel_end);
-> 
-> +	kernel_size = virt_to_phys(kernel_end) - KERNEL_START_PHYS;
-> +	memblock_reserve(KERNEL_START_PHYS, kernel_size);
-> +
->  #ifdef CONFIG_BLK_DEV_INITRD
->  	initrd_start = INITRD_START;
->  	if (initrd_start) {
-> @@ -279,9 +194,8 @@ setup_memory(void *kernel_end)
->  				       phys_to_virt(PFN_PHYS(max_low_pfn)));
->  		} else {
->  			nid = kvaddr_to_nid(initrd_start);
-> -			reserve_bootmem_node(NODE_DATA(nid),
-> -					     virt_to_phys((void *)initrd_start),
-> -					     INITRD_SIZE, BOOTMEM_DEFAULT);
-> +			memblock_reserve(virt_to_phys((void *)initrd_start),
-> +					 INITRD_SIZE);
->  		}
->  	}
->  #endif /* CONFIG_BLK_DEV_INITRD */
-> @@ -303,9 +217,8 @@ void __init paging_init(void)
->  	dma_local_pfn = virt_to_phys((char *)MAX_DMA_ADDRESS) >> PAGE_SHIFT;
-> 
->  	for_each_online_node(nid) {
-> -		bootmem_data_t *bdata = &bootmem_node_data[nid];
-> -		unsigned long start_pfn = bdata->node_min_pfn;
-> -		unsigned long end_pfn = bdata->node_low_pfn;
-> +		unsigned long start_pfn = NODE_DATA(nid)->node_start_pfn;
-> +		unsigned long end_pfn = start_pfn + NODE_DATA(nid)->node_present_pages;
-> 
->  		if (dma_local_pfn >= end_pfn - start_pfn)
->  			zones_size[ZONE_DMA] = end_pfn - start_pfn;
-> _
-> 
+Hello!
 
--- 
-Sincerely yours,
-Mike.
+Can you, please, describe your workload in more details?
+Do you use memory cgroups? How many of them? What's the ratio between slabs
+and pagecache in the affected cgroup? Is the pagecache mmapped by some proc=
+ess?
+Is the majority of the pagecache created by few cached files or the number
+of files is big?
 
+This is definitely a strange effect. The change shouldn't affect pagecache
+reclaim directly, so the only possibility I see is that because we started
+applying some minimal pressure on slabs, we also started reclaim some inter=
+nal
+fs structures under background memory pressure, which leads to a more aggre=
+ssive
+pagecache reclaim.
+
+Thanks!
