@@ -2,99 +2,134 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DA0C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 13:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF47C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 14:10:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 544C921531
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 13:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B99CE21534
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 14:10:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bpuxgzAr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 544C921531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="R4wcpoAY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B99CE21534
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbeJTWI3 (ORCPT
+        id S1727447AbeJTWVX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 18:08:29 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:50770 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727343AbeJTWI3 (ORCPT
+        Sat, 20 Oct 2018 18:21:23 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:32847 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727321AbeJTWVX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 18:08:29 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9KDs40q195987;
-        Sat, 20 Oct 2018 13:57:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=50IKw/Hhogwq9S/6fB91SMx9jTvj0OjthHRSj8EhAzA=;
- b=bpuxgzArr611xldRvSHVMLIZjfgdW1uHt95zbrAzf8CZbxE5HEJ9YcAVR2X4UOrYgUU9
- 6hlS2pLl/pJVt6IUTqE0MulNvWr+MqIf66cenGG+wQjXDHSyY7TktcWF48KbpGqKhP8q
- 48co9j/OgUZgoXB7lro60XICVbZ0mry5pVjvs1deqlzlOdTA03WGnDK/zolAyL8MktN7
- UqzEKzina+T3yzlYMxHovWTQEli2dgwQKl4EkyQKprlKMaSBxI2PrAGSyiPYvB2nmOi1
- w85ivtTFE+5bfOcC4pUvB7o80uaj3n7hijy5XPP4gXngQNp232gOFEYxPQabYZ1p2X8a 3A== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2n7vapgw4d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 20 Oct 2018 13:57:52 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9KDvltq019815
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 20 Oct 2018 13:57:47 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9KDvk2Z016373;
-        Sat, 20 Oct 2018 13:57:47 GMT
-Received: from [10.191.20.190] (/10.191.20.190)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 20 Oct 2018 06:57:46 -0700
-Subject: Re: [PATCH] block: don't check position contiguity for DISCARD in
- attempt_merge
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1539941093-32058-1-git-send-email-jianchao.w.wang@oracle.com>
- <yq15zxyj5ep.fsf@oracle.com>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <09103f89-35af-e4e5-fd7c-e3f48e6fda75@oracle.com>
-Date:   Sat, 20 Oct 2018 21:57:44 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 20 Oct 2018 18:21:23 -0400
+Received: by mail-io1-f65.google.com with SMTP id l25-v6so24619198ioj.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 07:10:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=o0j3uvj8K8qMDytKl8zVEjglg8T8MozK9PVtZPejaRk=;
+        b=R4wcpoAYKA07Ny4Gzm7hVDC6VGYBpW/kh4uKwVh1/zwIoD1F4LknfjKCytm5p1HDnH
+         S82FikszuVX/+vKC7o+KRgFJJKlRdanNar0SqIaYVEwGqXodIgDyRnOb5M2BH6Qg8OfX
+         LMUxzLIk9KuwyAPPfW97Bwm2WTesXsdR8P+bQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=o0j3uvj8K8qMDytKl8zVEjglg8T8MozK9PVtZPejaRk=;
+        b=L7DvHHQs2aGh5b2mYsW5sl5TUUl1BWX/AjDkKotUxBFbCewmdu5DqJHA5YWCQuvwuG
+         JcnC9uSaUZIitJMhdAi4/y5KcES5GXG5G/pUW+qUT5hMf95Av1w3N3MEDib8Y/+S9Wah
+         8aciJcuM9cj58hJljDYDrQw5/+l4xpsSfz9+GOmgPUEjP7QOgshtcMCmxsea6iSRc0vQ
+         l8jitPCGU2LmHT4dL842v/ojC1zR/aBfulwz5P84M82vfCv/VweXwLWEFt9y7+6dolgg
+         NgYVGVcU5LTQ/EujLc/XNFwqb9re7lGTk6L/uqauMpQ0w3ClUwu3Sw0YWbhtA3fIwCeO
+         mMNg==
+X-Gm-Message-State: AGRZ1gIVRhvvMjLf+koDEDCkF/I5PhGEuAYradCuFp0ftKi9cJ3OBL16
+        qc0WUqr1UmEvY3K+QR/janE2TJfXKa+3aDfIOZ1JNw==
+X-Google-Smtp-Source: AJdET5fZI8qcT0OAZI20At0ZpyHIJnkogXFESosFYymcved/Q4u4KtfMydXo9D2vGjIavz4ZvWp1nbmn4u/A5vJ4K5M=
+X-Received: by 2002:a6b:3787:: with SMTP id e129-v6mr5376703ioa.60.1540044645941;
+ Sat, 20 Oct 2018 07:10:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <yq15zxyj5ep.fsf@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9051 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810200131
+Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Sat, 20 Oct 2018 07:10:45
+ -0700 (PDT)
+In-Reply-To: <alpine.LSU.2.21.1810191714540.4692@pobox.suse.cz>
+References: <20181001140910.086E768BC7@newverein.lst.de> <20181001141652.5478C68BE1@newverein.lst.de>
+ <alpine.LSU.2.21.1810171051560.21847@pobox.suse.cz> <20181018125820.iw54zbirq74ulknj@linux-8ccs>
+ <CAKv+Gu_yNBN+Rpw98MAZaxzSjm20qMYD7+fiJ1fBHoUeDr9fBA@mail.gmail.com> <alpine.LSU.2.21.1810191714540.4692@pobox.suse.cz>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Sat, 20 Oct 2018 22:10:45 +0800
+Message-ID: <CAKv+Gu8Vg9-CwvU-u9gNGmtB7gTapuCPHjU5v7FWnPsVy6vptA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] arm64: implement live patching
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     Jessica Yu <jeyu@kernel.org>, Torsten Duwe <duwe@lst.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        live-patching@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin
+On 19 October 2018 at 23:21, Miroslav Benes <mbenes@suse.cz> wrote:
+>
+>> >> Ad relocations. I checked that everything in struct mod_arch_specific
+>> >> stays after the module is load. Both core and init get SHF_ALLOC set
+>> >> (mod->arch.core.plt->sh_flags in module_frob_arch_sections(). It is
+>> >> important because apply_relocate_add() may use those sections
+>> >> through module_emit_plt_entry() call.
+>> >
+>> >
+>> > Yes, it looks like the needed .plt sections will remain in module
+>> > memory. However, I think I found a slight issue... :/
+>> >
+>> > In module_frob_arch_sections(), mod->arch.core.plt is set to an offset
+>> > within info->sechdrs:
+>> >
+>> >             if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt"))
+>> >                     mod->arch.core.plt = sechdrs + i;
+>> >
+>> > sechdrs is from info->sechdrs, which is freed at the end of
+>> > load_module() via free_copy(). So although the relevant plt section(s)
+>> > are in module memory, mod->arch.core.plt will point to invalid memory
+>> > after info is freed. In other words, the section (.plt) *is* in memory
+>> > but the section header (struct elf64_shdr) containing section metadata
+>> > like sh_addr, sh_size etc., is not.
+>> >
+>>
+>> Just for my understanding: this only matters for live patching, right?
+>
+> Yes. Live patching can do deferred relocations. When a module is loaded
+> and livepatched, the relevant symbols in the patching module are resolved.
+> We call apply_relocate_add(), which is arch-specific, and we must be sure
+> that everything used by apply_relocate_add() is preserved in the patching
+> module after it is loaded.
+>
 
-On 10/19/18 11:57 PM, Martin K. Petersen wrote:
-> 
-> Jianchao,
-> 
->> Discard command supports multiple ranges of blocks, so needn't
->> checking position contiguity when merging. Let's do the same thing
->> in attempt_merge as the blk_try_merge.
-> 
-> Discards need to be contiguous unless queue->limits.max_discard_segments
-> is bigger than 1. So if you remove this I think you need to add a
-> contiguity check in req_attempt_discard_merge().
-> 
-Yes.
+So I suppose this could get interesting in cases where modules are far
+away from the kernel (i.e., more than -/+ 128 MB). Fortunately, the
+modules themselves are always placed in a 128 MB window, but this
+window could be out of reach for branches into the kernel proper. If
+we find ourselves in the situation where we need to patch calls into
+the kernel proper to point into this module, this may get interesting,
+since the PLT entries *must* be allocated along with the module that
+contains the branch instruction, or the PLT entry itself may be out of
+range, defeating the purpose.
 
-I will send the V2 version next.
 
-Thanks
-Jianchao
+>> The original PLT support was implemented to support loading modules
+>> outside of the -/+ 128 MB range of an arm64 relative branch/jump
+>> instruction, and was later enhanced [for the same reason] to support
+>> emitting a trampoline for the ftrace entrypoint.
+>
+> Regards,
+> Miroslav
