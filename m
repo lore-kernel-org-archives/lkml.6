@@ -7,133 +7,403 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB62ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 02:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDE2ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 02:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44A58214C2
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 02:04:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4C24214C4
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 02:29:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="o4kdY6xv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44A58214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="feEch0lO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4C24214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726982AbeJTKNA (ORCPT
+        id S1726903AbeJTKij (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 06:13:00 -0400
-Received: from mail-eopbgr30074.outbound.protection.outlook.com ([40.107.3.74]:48544
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726502AbeJTKM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 06:12:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pMYO7ViwVw2q8HJ1TTd41Tijn7mljlEFPS3wyZSuiEU=;
- b=o4kdY6xvKSGejcDN7gbQmBua3gERtGlTCYcuOKT9GfMnbBniNgw85XyALoNZKsdtDgdtzLVc/z00ip//8YRJuQIgR2doEfZjYwLopYgSxFA/+HZsfYR3pRSIY+NDWV2zfcKoX8VhC3+UPbc041VUQwSg4NqABygHc9qrYf+KPeE=
-Received: from DB7PR04MB4618.eurprd04.prod.outlook.com (52.135.138.152) by
- DB7PR04MB4154.eurprd04.prod.outlook.com (52.135.130.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1250.20; Sat, 20 Oct 2018 02:03:34 +0000
-Received: from DB7PR04MB4618.eurprd04.prod.outlook.com
- ([fe80::4bb:9505:f351:cad2]) by DB7PR04MB4618.eurprd04.prod.outlook.com
- ([fe80::4bb:9505:f351:cad2%4]) with mapi id 15.20.1228.035; Sat, 20 Oct 2018
- 02:03:34 +0000
-From:   Joakim Zhang <qiangqing.zhang@nxp.com>
-To:     Fabio Estevam <festevam@gmail.com>
-CC:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH] ARM: dts: imx6sx-sdb: Add flexcan support
-Thread-Topic: [PATCH] ARM: dts: imx6sx-sdb: Add flexcan support
-Thread-Index: AQHUZ5AX9bFhc2fvBEqua6kfXbFzXaUmheaAgADbR4A=
-Date:   Sat, 20 Oct 2018 02:03:34 +0000
-Message-ID: <DB7PR04MB46185B34429D52D0D5F7465CE6FA0@DB7PR04MB4618.eurprd04.prod.outlook.com>
-References: <20181019094031.22492-1-qiangqing.zhang@nxp.com>
- <CAOMZO5AqZrYmc474NjvG1nF94ZNvgHyv7Q3R+QxrLmSN6EhYDw@mail.gmail.com>
-In-Reply-To: <CAOMZO5AqZrYmc474NjvG1nF94ZNvgHyv7Q3R+QxrLmSN6EhYDw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=qiangqing.zhang@nxp.com; 
-x-originating-ip: [222.93.77.221]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB7PR04MB4154;6:XfdLS0T8QlUyFVMGkmtDY3JH8SYbcfQTFHsKKuQIG57X+Mz2BIfmA+nkvO7ZLFfiWpmpK4eKU67CoWZlKs+rROcDhOdgtb6JXo8qBLjStHYstti8q/kFGvndl1929HdNMjqgW2xm6IY19H003DN3UzdkeLLglGH71ECdr42vliVTL5MtN9RY5jOJEsR+ISxQ2Yi6cU5nFp6q/mBkuTLB6/epOvYcfhJHGqksvZceJeEToInhOmwZS0I67uYWRDrl/QEpqvfP/G6KXSxO+0tTbs8LExMjv2Vw4ZhgM5dmVngjSypiWGgXMjdxBfMpP5f/dZlf1sxxRQ/V2V6YWFoftPAMtq3sA/+GEp/5E+2wTXbu1PSOIccULq4ssoAhVfSCwzwzTyK7oTORXQvysWuz7CqitmNV51X2dMZehvFcgYw1BDkz1+9QrjP/jrEsn2peEUAqKNLnD0QwPxxex5NG/A==;5:klVARNs/ehYYd3idYiMJKtPTsVi+oRto1fage/gUDVSQrbX+nu2kmNLVpgo63o6ZVf9qoix7tJbnMr5gSMI+ypvzg6Y1TOwOuct8PGU29sQaChRtkAltcGvZSlvmvmHsx3XeGzONOYJItyXwLoX4h1+lU4OpfD2vlhGF6Z9W4Yg=;7:QrNC6cdPZQgTJUAfPYVYs2venlr1om+dhCD9t9ZRW+X11ZOIxnplWudclvh1O4Kr7YykL7L87gKJzgt/X1baosipLQW9dVfbftHX6POYx5RHmJ3X9yqsK8Kh9hiQKNRUQWgduNyIo9td2FMHmj0H83roIwswA0LcxiBqZFGGxUcpOYAquFtjLwq2Xrd75MIvSOv/TLJW/PsuZ8cRpmy3ZxWkTIAp6MH+2n/t7F1+oaerktEHUnQHAIcLMj+U8GVw
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 9dc273b0-6377-4266-a99c-08d636303dfd
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4154;
-x-ms-traffictypediagnostic: DB7PR04MB4154:
-x-microsoft-antispam-prvs: <DB7PR04MB4154085D3E9C10F7E6EA470EE6FA0@DB7PR04MB4154.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(85827821059158)(185117386973197)(180628864354917)(9452136761055)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DB7PR04MB4154;BCL:0;PCL:0;RULEID:;SRVR:DB7PR04MB4154;
-x-forefront-prvs: 0831C25939
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(366004)(376002)(39860400002)(136003)(199004)(189003)(13464003)(81156014)(446003)(81166006)(66066001)(102836004)(8676002)(486006)(476003)(11346002)(186003)(26005)(6116002)(3846002)(8936002)(6916009)(5250100002)(2900100001)(53936002)(6246003)(5660300001)(86362001)(1411001)(478600001)(68736007)(2906002)(256004)(74316002)(305945005)(55016002)(229853002)(7696005)(14454004)(76176011)(9686003)(7736002)(99286004)(39060400002)(25786009)(97736004)(33656002)(316002)(106356001)(6436002)(71190400001)(71200400001)(53546011)(6506007)(105586002)(4326008)(54906003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4154;H:DB7PR04MB4618.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 79+PnnHGtrMiTim8rBg/8vTD/Jw+Q/tawOTG8A9rCM2fcKhPgHNySf7Rd7NkQy+4wmAMP0l2JvTApYiwNS6DRQe79ItADbzrSVNFt0fb7q3WTZGAyNxtuNC/uO2pl5oqyuGFnDD/0xe6SfZHli8TlKEZEgQmJJiyZg3MX6RV+PwSOsIeVz6wqUVXdn6L5vGYenKSyqYXnztzHSrDjbhABbN62+wXTu9DY46zpo2ewq2XYkYoS85pWVUZnWpMZdzWlB3/vu9C5yDRUnCVQ//37ERy0zZ91SJvNHsPnw35rfnGje5MiwjpApdZyUY0HfLFjnnzaRHe1Q5+qExIjC2tzAC+mgH7FHPNcGYUoPimfUs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Sat, 20 Oct 2018 06:38:39 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:35633 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726601AbeJTKij (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 06:38:39 -0400
+Received: by mail-it1-f193.google.com with SMTP id p64-v6so6696643itp.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 19:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=i38GJYdCXacWqMuBUDgtH6Y/MQDaOipYTR80RO/edhg=;
+        b=feEch0lOdmJKEUBzDciSC9UpNeGv2/Y28umgdgXAVnt+kkoDoEzX8JLAQuf29QvMsW
+         rnt9wdqQU/LAN6QNBetxxdNOq3m1i8SODFR8B+hEGhygogLzURa2jJMAgc+sXA1NU1TB
+         VZ0bT4txAtCJATHKixGZh05VjDKCCndYBRFLo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=i38GJYdCXacWqMuBUDgtH6Y/MQDaOipYTR80RO/edhg=;
+        b=rprfHVkR3vAcIZksGo3l70osMAQC3LRdx+FHvWfSggcY3xAR37l9CENKMFmPCA4y0G
+         hHgnhThjJUh61NRl7eRjv4SED/q+ZL4L83YIQkdiJNMu7VSTkOWgtajc1RU/IBRVoXwM
+         yMKuqw1nuCpzYg343P//wkvxpnpjBC3VmiT4y2W32gzZHyZOXnVM7GOiajabf/ZEedi0
+         M+IeSZZPLVJi59DvKYoeFyS2Wf0lrllbX+7OmjUO8WS34z78OOj0Of+mSsRLV5y8Rk32
+         bIwAar9/IVxgJUxIiwSoUCmbJ5T3D9HIGwEvBA8HF9XYSI56FQSAlmHLsdNFypNnkfKk
+         v2jA==
+X-Gm-Message-State: ABuFfoid3HScjMysrqg3xGizY+1zs26n8hIF6r3dgs5FwQLrhNBKSQSm
+        hWREhRgHGlRhTf3SAmAOgV2RDXN0TGkuH8IF1OrGXQ==
+X-Google-Smtp-Source: ACcGV62IT08kpwwHwk2R72CSEoFVhBKv0Y0dBMQQyjuoIBV4O2S7wk70akOD8ceJ8QvVsBTWKiw8x1hpsa6GzF5z1mI=
+X-Received: by 2002:a02:5147:: with SMTP id s68-v6mr26439793jaa.62.1540002592994;
+ Fri, 19 Oct 2018 19:29:52 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9dc273b0-6377-4266-a99c-08d636303dfd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Oct 2018 02:03:34.4687
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4154
+Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Fri, 19 Oct 2018 19:29:52
+ -0700 (PDT)
+In-Reply-To: <20181015175424.97147-6-ebiggers@kernel.org>
+References: <20181015175424.97147-1-ebiggers@kernel.org> <20181015175424.97147-6-ebiggers@kernel.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Sat, 20 Oct 2018 10:29:52 +0800
+Message-ID: <CAKv+Gu88h8VEVbm-t1QBvNzCxfntivGwgRBb=z5mM-8JfCAY1Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 05/12] crypto: arm/chacha20 - add XChaCha20 support
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Paul Crowley <paulcrowley@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogRmFiaW8gRXN0ZXZhbSBbbWFpbHRv
-OmZlc3RldmFtQGdtYWlsLmNvbV0gDQpTZW50OiAyMDE45bm0MTDmnIgxOeaXpSAyMDo1Mg0KVG86
-IEpvYWtpbSBaaGFuZyA8cWlhbmdxaW5nLnpoYW5nQG54cC5jb20+DQpDYzogU2hhd24gR3VvIDxz
-aGF3bmd1b0BrZXJuZWwub3JnPjsgU2FzY2hhIEhhdWVyIDxzLmhhdWVyQHBlbmd1dHJvbml4LmRl
-PjsgU2FzY2hhIEhhdWVyIDxrZXJuZWxAcGVuZ3V0cm9uaXguZGU+OyBGYWJpbyBFc3RldmFtIDxm
-YWJpby5lc3RldmFtQG54cC5jb20+OyBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAuY29tPjsg
-Um9iIEhlcnJpbmcgPHJvYmgrZHRAa2VybmVsLm9yZz47IE1hcmsgUnV0bGFuZCA8bWFyay5ydXRs
-YW5kQGFybS5jb20+OyBBLnMuIERvbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPjsgb3BlbiBsaXN0
-Ok9QRU4gRklSTVdBUkUgQU5EIEZMQVRURU5FRCBERVZJQ0UgVFJFRSBCSU5ESU5HUyA8ZGV2aWNl
-dHJlZUB2Z2VyLmtlcm5lbC5vcmc+OyBsaW51eC1rZXJuZWwgPGxpbnV4LWtlcm5lbEB2Z2VyLmtl
-cm5lbC5vcmc+OyBtb2RlcmF0ZWQgbGlzdDpBUk0vRlJFRVNDQUxFIElNWCAvIE1YQyBBUk0gQVJD
-SElURUNUVVJFIDxsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc+DQpTdWJqZWN0
-OiBSZTogW1BBVENIXSBBUk06IGR0czogaW14NnN4LXNkYjogQWRkIGZsZXhjYW4gc3VwcG9ydA0K
-DQpIaSBKb2FraW0sDQoNCk9uIEZyaSwgT2N0IDE5LCAyMDE4IGF0IDY6NDMgQU0gSm9ha2ltIFpo
-YW5nIDxxaWFuZ3FpbmcuemhhbmdAbnhwLmNvbT4gd3JvdGU6DQo+DQo+IEZyb206IERvbmcgQWlz
-aGVuZyA8YWlzaGVuZy5kb25nQG54cC5jb20+DQo+DQo+IENBTiB0cmFuc2NlaXZlciBpcyBkaWZm
-ZXJlbnQgb24gUmV2QSBhbmQgUmV2QiBib2FyZC4NCj4gSXQncyBhY3RpdmUgaGlnaCBvbiBSZXZB
-IHdoaWxlIGFjdGl2ZSBsb3cgb24gUmV2IEIuDQo+DQo+IFNpZ25lZC1vZmYtYnk6IERvbmcgQWlz
-aGVuZyA8YWlzaGVuZy5kb25nQG54cC5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IEpvYWtpbSBaaGFu
-ZyA8cWlhbmdxaW5nLnpoYW5nQG54cC5jb20+DQo+IC0tLQ0KPiAgYXJjaC9hcm0vYm9vdC9kdHMv
-aW14NnN4LXNkYi5kdHMgIHwgIDUgKysrKyAgDQo+IGFyY2gvYXJtL2Jvb3QvZHRzL2lteDZzeC1z
-ZGIuZHRzaSB8IDQyICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gIDIgZmlsZXMg
-Y2hhbmdlZCwgNDcgaW5zZXJ0aW9ucygrKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9v
-dC9kdHMvaW14NnN4LXNkYi5kdHMgDQo+IGIvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnN4LXNkYi5k
-dHMNCj4gaW5kZXggNmRkOWJlYmZlMDI3Li4wOTJiOGRlMTQyYTggMTAwNjQ0DQo+IC0tLSBhL2Fy
-Y2gvYXJtL2Jvb3QvZHRzL2lteDZzeC1zZGIuZHRzDQo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRz
-L2lteDZzeC1zZGIuZHRzDQo+IEBAIC0xMCw2ICsxMCwxMSBAQA0KPg0KPiAgLyB7DQo+ICAgICAg
-ICAgbW9kZWwgPSAiRnJlZXNjYWxlIGkuTVg2IFNvbG9YIFNEQiBSZXZCIEJvYXJkIjsNCj4gKw0K
-PiArICAgICAgIC8qIFRyYW5zY2VpdmVyIEVOL1NUQlkgaXMgYWN0aXZlIGxvdyBvbiBSZXZCIGJv
-YXJkICovDQo+ICsgICAgICAgcmVnX2Nhbl9zdGJ5OiByZWd1bGF0b3ItY2FuLXN0Ynkgew0KPiAr
-ICAgICAgICAgICAgICAgZ3BpbyA9IDwmZ3BpbzQgMjcgR1BJT19BQ1RJVkVfTE9XPjsNCg0KRG9u
-J3Qgd2UgbmVlZCBhICBncGlvID0gPCZncGlvNCAyNyBHUElPX0FDVElWRV9ISUdIPjsgYW5kIGFs
-c28gYSAiZW5hYmxlLWFjdGl2ZS1oaWdoIiBlbnRyaWVzIGluIHRoZSBpbXg2c3gtc2RiLXJldmEu
-ZHRzPw0KDQpZZXMsIHlvdSBhcmUgcmlnaHQuIEkgd2lsbCBhZGQgdGhlIGVudHJ5IGluIHRoZSBp
-bXg2c3gtc2RiLXJldmEuZHRzLiBUaGFua3MgYSBsb3QhIA0KDQpCUnMsDQpKYW9raW0gWmhhbmcN
-Cg0K
+On 16 October 2018 at 01:54, Eric Biggers <ebiggers@kernel.org> wrote:
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Add an XChaCha20 implementation that is hooked up to the ARM NEON
+> implementation of ChaCha20.  This is needed for use in the Adiantum
+> encryption mode; see the generic code patch,
+> "crypto: chacha20-generic - add XChaCha20 support", for more details.
+>
+> We also update the NEON code to support HChaCha20 on one block, so we
+> can use that in XChaCha20 rather than calling the generic HChaCha20.
+> This required factoring the permutation out into its own macro.
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  arch/arm/crypto/Kconfig              |   2 +-
+>  arch/arm/crypto/chacha20-neon-core.S |  68 ++++++++++------
+>  arch/arm/crypto/chacha20-neon-glue.c | 111 ++++++++++++++++++++-------
+>  3 files changed, 130 insertions(+), 51 deletions(-)
+>
+> diff --git a/arch/arm/crypto/Kconfig b/arch/arm/crypto/Kconfig
+> index ef0c7feea6e29..0aa1471f27d2e 100644
+> --- a/arch/arm/crypto/Kconfig
+> +++ b/arch/arm/crypto/Kconfig
+> @@ -117,7 +117,7 @@ config CRYPTO_CRC32_ARM_CE
+>         select CRYPTO_HASH
+>
+>  config CRYPTO_CHACHA20_NEON
+> -       tristate "NEON accelerated ChaCha20 symmetric cipher"
+> +       tristate "NEON accelerated ChaCha20 stream cipher algorithms"
+>         depends on KERNEL_MODE_NEON
+>         select CRYPTO_BLKCIPHER
+>         select CRYPTO_CHACHA20
+> diff --git a/arch/arm/crypto/chacha20-neon-core.S b/arch/arm/crypto/chacha20-neon-core.S
+> index 50e7b98968189..db59f1fbc728b 100644
+> --- a/arch/arm/crypto/chacha20-neon-core.S
+> +++ b/arch/arm/crypto/chacha20-neon-core.S
+> @@ -52,33 +52,22 @@
+>         .fpu            neon
+>         .align          5
+>
+> -ENTRY(chacha20_block_xor_neon)
+> -       // r0: Input state matrix, s
+> -       // r1: 1 data block output, o
+> -       // r2: 1 data block input, i
+> -
+> -       //
+> -       // This function encrypts one ChaCha20 block by loading the state matrix
+> -       // in four NEON registers. It performs matrix operation on four words in
+> -       // parallel, but requireds shuffling to rearrange the words after each
+> -       // round.
+> -       //
+> -
+> -       // x0..3 = s0..3
+> -       add             ip, r0, #0x20
+> -       vld1.32         {q0-q1}, [r0]
+> -       vld1.32         {q2-q3}, [ip]
+> -
+> -       vmov            q8, q0
+> -       vmov            q9, q1
+> -       vmov            q10, q2
+> -       vmov            q11, q3
+> +/*
+> + * _chacha20_permute - permute one block
+> + *
+> + * Permute one 64-byte block where the state matrix is stored in the four NEON
+> + * registers q0-q3.  It performs matrix operation on four words in parallel, but
+
+operations [since you're touching this anyway]
+
+> + * requires shuffling to rearrange the words after each round.
+> + *
+> + * Clobbers: r3, q4-q5
+> + */
+> +.macro _chacha20_permute
+>
+
+As you know, I'd prefer the GAS directives to be indented and their
+arguments to be aligned with the right hand sides of the ordinary
+instructions. However, this entire file may end up getting replaced
+once we move to your scalar version combined with AndyP's NEON
+version, at which point it may no longer matter. [Does that code
+support the alternative xchacha constructions btw?]
+
+>         adr             ip, .Lrol8_table
+>         mov             r3, #10
+>         vld1.8          {d10}, [ip, :64]
+>
+> -.Ldoubleround:
+> +.Ldoubleround_\@:
+>         // x0 += x1, x3 = rotl32(x3 ^ x0, 16)
+>         vadd.i32        q0, q0, q1
+>         veor            q3, q3, q0
+> @@ -140,7 +129,25 @@ ENTRY(chacha20_block_xor_neon)
+>         vext.8          q3, q3, q3, #4
+>
+>         subs            r3, r3, #1
+> -       bne             .Ldoubleround
+> +       bne             .Ldoubleround_\@
+> +.endm
+> +
+
+Since your macro does not take any parameters: could we change this to
+a subroutine?
+
+> +ENTRY(chacha20_block_xor_neon)
+> +       // r0: Input state matrix, s
+> +       // r1: 1 data block output, o
+> +       // r2: 1 data block input, i
+> +
+> +       // x0..3 = s0..3
+> +       add             ip, r0, #0x20
+> +       vld1.32         {q0-q1}, [r0]
+> +       vld1.32         {q2-q3}, [ip]
+> +
+> +       vmov            q8, q0
+> +       vmov            q9, q1
+> +       vmov            q10, q2
+> +       vmov            q11, q3
+> +
+> +       _chacha20_permute
+>
+>         add             ip, r2, #0x20
+>         vld1.8          {q4-q5}, [r2]
+> @@ -169,6 +176,21 @@ ENTRY(chacha20_block_xor_neon)
+>         bx              lr
+>  ENDPROC(chacha20_block_xor_neon)
+>
+> +ENTRY(hchacha20_block_neon)
+> +       // r0: Input state matrix, s
+> +       // r1: output (8 32-bit words)
+> +
+> +       vld1.32         {q0-q1}, [r0]!
+> +       vld1.32         {q2-q3}, [r0]
+> +
+> +       _chacha20_permute
+> +
+> +       vst1.32         {q0}, [r1]!
+> +       vst1.32         {q3}, [r1]
+> +
+> +       bx              lr
+> +ENDPROC(hchacha20_block_neon)
+> +
+>         .align          4
+>  .Lctrinc:      .word   0, 1, 2, 3
+>  .Lrol8_table:  .byte   3, 0, 1, 2, 7, 4, 5, 6
+> diff --git a/arch/arm/crypto/chacha20-neon-glue.c b/arch/arm/crypto/chacha20-neon-glue.c
+> index 7386eb1c1889d..becc7990b1d39 100644
+> --- a/arch/arm/crypto/chacha20-neon-glue.c
+> +++ b/arch/arm/crypto/chacha20-neon-glue.c
+> @@ -1,5 +1,5 @@
+>  /*
+> - * ChaCha20 256-bit cipher algorithm, RFC7539, ARM NEON functions
+> + * ChaCha20 (RFC7539) and XChaCha20 stream ciphers, NEON accelerated
+>   *
+>   * Copyright (C) 2016 Linaro, Ltd. <ard.biesheuvel@linaro.org>
+>   *
+> @@ -30,6 +30,7 @@
+>
+>  asmlinkage void chacha20_block_xor_neon(u32 *state, u8 *dst, const u8 *src);
+>  asmlinkage void chacha20_4block_xor_neon(u32 *state, u8 *dst, const u8 *src);
+> +asmlinkage void hchacha20_block_neon(const u32 *state, u32 *out);
+>
+>  static void chacha20_doneon(u32 *state, u8 *dst, const u8 *src,
+>                             unsigned int bytes)
+> @@ -57,22 +58,17 @@ static void chacha20_doneon(u32 *state, u8 *dst, const u8 *src,
+>         }
+>  }
+>
+> -static int chacha20_neon(struct skcipher_request *req)
+> +static int chacha20_neon_stream_xor(struct skcipher_request *req,
+> +                                   struct chacha_ctx *ctx, u8 *iv)
+>  {
+> -       struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+> -       struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
+>         struct skcipher_walk walk;
+>         u32 state[16];
+>         int err;
+>
+> -       if (req->cryptlen <= CHACHA_BLOCK_SIZE || !may_use_simd())
+> -               return crypto_chacha_crypt(req);
+> -
+>         err = skcipher_walk_virt(&walk, req, true);
+>
+
+I am slightly unhappy that we are still using atomic==true here, and
+perform the entire scatterwalk with preemption disabled. Could we
+please try and fix that as well (as a separate patch)? Thanks.
+
+> -       crypto_chacha_init(state, ctx, walk.iv);
+> +       crypto_chacha_init(state, ctx, iv);
+>
+> -       kernel_neon_begin();
+>         while (walk.nbytes > 0) {
+>                 unsigned int nbytes = walk.nbytes;
+>
+> @@ -83,27 +79,85 @@ static int chacha20_neon(struct skcipher_request *req)
+>                                 nbytes);
+>                 err = skcipher_walk_done(&walk, walk.nbytes - nbytes);
+>         }
+> +
+> +       return err;
+> +}
+> +
+> +static int chacha20_neon(struct skcipher_request *req)
+> +{
+> +       struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+> +       struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
+> +       int err;
+> +
+> +       if (req->cryptlen <= CHACHA_BLOCK_SIZE || !may_use_simd())
+> +               return crypto_chacha_crypt(req);
+> +
+> +       kernel_neon_begin();
+> +       err = chacha20_neon_stream_xor(req, ctx, req->iv);
+> +       kernel_neon_end();
+> +       return err;
+> +}
+> +
+> +static int xchacha20_neon(struct skcipher_request *req)
+> +{
+> +       struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+> +       struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
+> +       struct chacha_ctx subctx;
+> +       u32 state[16];
+> +       u8 real_iv[16];
+> +       int err;
+> +
+> +       if (req->cryptlen <= CHACHA_BLOCK_SIZE || !may_use_simd())
+> +               return crypto_xchacha_crypt(req);
+> +
+> +       crypto_chacha_init(state, ctx, req->iv);
+> +
+> +       kernel_neon_begin();
+> +
+> +       hchacha20_block_neon(state, subctx.key);
+> +       memcpy(&real_iv[0], req->iv + 24, 8);
+> +       memcpy(&real_iv[8], req->iv + 16, 8);
+> +       err = chacha20_neon_stream_xor(req, &subctx, real_iv);
+> +
+>         kernel_neon_end();
+>
+>         return err;
+>  }
+>
+> -static struct skcipher_alg alg = {
+> -       .base.cra_name          = "chacha20",
+> -       .base.cra_driver_name   = "chacha20-neon",
+> -       .base.cra_priority      = 300,
+> -       .base.cra_blocksize     = 1,
+> -       .base.cra_ctxsize       = sizeof(struct chacha_ctx),
+> -       .base.cra_module        = THIS_MODULE,
+> -
+> -       .min_keysize            = CHACHA_KEY_SIZE,
+> -       .max_keysize            = CHACHA_KEY_SIZE,
+> -       .ivsize                 = CHACHA_IV_SIZE,
+> -       .chunksize              = CHACHA_BLOCK_SIZE,
+> -       .walksize               = 4 * CHACHA_BLOCK_SIZE,
+> -       .setkey                 = crypto_chacha20_setkey,
+> -       .encrypt                = chacha20_neon,
+> -       .decrypt                = chacha20_neon,
+> +static struct skcipher_alg algs[] = {
+> +       {
+> +               .base.cra_name          = "chacha20",
+> +               .base.cra_driver_name   = "chacha20-neon",
+> +               .base.cra_priority      = 300,
+> +               .base.cra_blocksize     = 1,
+> +               .base.cra_ctxsize       = sizeof(struct chacha_ctx),
+> +               .base.cra_module        = THIS_MODULE,
+> +
+> +               .min_keysize            = CHACHA_KEY_SIZE,
+> +               .max_keysize            = CHACHA_KEY_SIZE,
+> +               .ivsize                 = CHACHA_IV_SIZE,
+> +               .chunksize              = CHACHA_BLOCK_SIZE,
+> +               .walksize               = 4 * CHACHA_BLOCK_SIZE,
+> +               .setkey                 = crypto_chacha20_setkey,
+> +               .encrypt                = chacha20_neon,
+> +               .decrypt                = chacha20_neon,
+> +       }, {
+> +               .base.cra_name          = "xchacha20",
+> +               .base.cra_driver_name   = "xchacha20-neon",
+> +               .base.cra_priority      = 300,
+> +               .base.cra_blocksize     = 1,
+> +               .base.cra_ctxsize       = sizeof(struct chacha_ctx),
+> +               .base.cra_module        = THIS_MODULE,
+> +
+> +               .min_keysize            = CHACHA_KEY_SIZE,
+> +               .max_keysize            = CHACHA_KEY_SIZE,
+> +               .ivsize                 = XCHACHA_IV_SIZE,
+> +               .chunksize              = CHACHA_BLOCK_SIZE,
+> +               .walksize               = 4 * CHACHA_BLOCK_SIZE,
+> +               .setkey                 = crypto_chacha20_setkey,
+> +               .encrypt                = xchacha20_neon,
+> +               .decrypt                = xchacha20_neon,
+> +       }
+>  };
+>
+>  static int __init chacha20_simd_mod_init(void)
+> @@ -111,12 +165,12 @@ static int __init chacha20_simd_mod_init(void)
+>         if (!(elf_hwcap & HWCAP_NEON))
+>                 return -ENODEV;
+>
+> -       return crypto_register_skcipher(&alg);
+> +       return crypto_register_skciphers(algs, ARRAY_SIZE(algs));
+>  }
+>
+>  static void __exit chacha20_simd_mod_fini(void)
+>  {
+> -       crypto_unregister_skcipher(&alg);
+> +       crypto_unregister_skciphers(algs, ARRAY_SIZE(algs));
+>  }
+>
+>  module_init(chacha20_simd_mod_init);
+> @@ -125,3 +179,6 @@ module_exit(chacha20_simd_mod_fini);
+>  MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_ALIAS_CRYPTO("chacha20");
+> +MODULE_ALIAS_CRYPTO("chacha20-neon");
+> +MODULE_ALIAS_CRYPTO("xchacha20");
+> +MODULE_ALIAS_CRYPTO("xchacha20-neon");
+> --
+> 2.19.1.331.ge82ca0e54c-goog
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
