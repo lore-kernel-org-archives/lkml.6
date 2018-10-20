@@ -2,131 +2,120 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EEBCC67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 09:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE29C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 09:27:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 008E42150F
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 09:00:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 008E42150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E0C992150C
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 09:27:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bhdkmBPW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C992150C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbeJTRJu (ORCPT
+        id S1727373AbeJTRhV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 13:09:50 -0400
-Received: from mga03.intel.com ([134.134.136.65]:27767 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727178AbeJTRJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 13:09:49 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2018 02:00:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,403,1534834800"; 
-   d="scan'208";a="96889587"
-Received: from aaronlu.sh.intel.com (HELO intel.com) ([10.239.159.44])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Oct 2018 02:00:03 -0700
-Date:   Sat, 20 Oct 2018 17:00:02 +0800
-From:   Aaron Lu <aaron.lu@intel.com>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     Mel Gorman <mgorman@techsingularity.net>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>
-Subject: Re: [RFC v4 PATCH 2/5] mm/__free_one_page: skip merge for order-0
- page unless compaction failed
-Message-ID: <20181020090002.GA13858@intel.com>
-References: <20181017063330.15384-1-aaron.lu@intel.com>
- <20181017063330.15384-3-aaron.lu@intel.com>
- <20181017104427.GJ5819@techsingularity.net>
- <20181017131059.GA9167@intel.com>
- <20181017135807.GL5819@techsingularity.net>
- <20181017145904.GC9167@intel.com>
- <20181018111632.GM5819@techsingularity.net>
- <20181019055703.GA2401@intel.com>
- <20181019085435.GR5819@techsingularity.net>
- <20181019150053.iaubsdtcsi64mqb7@ca-dmjordan1.us.oracle.com>
+        Sat, 20 Oct 2018 13:37:21 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46306 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727270AbeJTRhV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 13:37:21 -0400
+Received: by mail-lf1-f67.google.com with SMTP id p143-v6so15905052lfp.13;
+        Sat, 20 Oct 2018 02:27:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Qu/t0CJCIfwyDrIzO0mMGnEbopBsDAXlovlsCl39rdQ=;
+        b=bhdkmBPW92+tMmYAou19kqwLQmE3EWyRKau3/ddCWcAkZvKZs8tDzUGrDWxONTqFan
+         s7gPg6ByPDgoqf1ldBUVoANHenZIw9lVVeoRcUpDh1+ivH7uM8mlGr1Z19TnIT4diMt/
+         0PbLU2r4ha9/u6OkDy9gCEWwyQGU+QwrNRmcA3wLvxTm6oAmpSu3/LpchlZxOiONcwU/
+         sdI8txy1CpPWTi9pgSeUl7IpFzkws6CiBE0QWK5yu9pVxodofJ8wAJMu4RyFf7HLsA1t
+         kpuUik9IPeK8is8FlqDKYuRWj1D+8rMOYRnIYae/IRWx1wubZzbJnOadUzuZsGQW2sb0
+         ZZ6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=Qu/t0CJCIfwyDrIzO0mMGnEbopBsDAXlovlsCl39rdQ=;
+        b=N2QvQf7XOswUx+EzSezD27g9B5PiNgdl65wzXoj7X0QitcnBMe3z+uOsn7gJJr2AVL
+         f1A09TfYdAV9ILTOM4Ai0yhRQNnXOLhjWjr8SaxgFjX/m4qy4ViJqBRf0i5tLT13QRBo
+         quIrxqmRo3qmgmh6vCQ8lQfrMfnCBIjvqFcXJ8AEBUMLUeVZL3e8xsHfZ+5bv3Sjbyi1
+         p8HAG+4k1r+9RsGYcMDnC51L/iDnsCKI9jECSSgMgJWFQGykPHZEWqcMpVvzhZrJN2Fs
+         /aVZDxIUqTmJEz2TuxmfzpMcTycDFJIVl90hjKRtky+JUS0RDXNIR/e0b4lHuaF/moA5
+         5+QA==
+X-Gm-Message-State: ABuFfogA7CNUgtiDvG9zXHoVROu52H6/PUp3YctfB8P+whCu6gLVE1vD
+        IkNX9rUQ0CbAs77LgYaDzQqVcIfS
+X-Google-Smtp-Source: ACcGV60q7mPzd0SciCCtu7D1RbaOXeBb81Lm/8yjNffP8NREDZ7o2KEddSBe7RzLc/cJwNA2sOHunw==
+X-Received: by 2002:a19:a302:: with SMTP id m2mr62042lfe.108.1540027652845;
+        Sat, 20 Oct 2018 02:27:32 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id z19-v6sm5668317ljk.20.2018.10.20.02.27.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 20 Oct 2018 02:27:31 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gDnXh-0002gW-Ov; Sat, 20 Oct 2018 11:27:33 +0200
+Date:   Sat, 20 Oct 2018 11:27:33 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Lars Poeschel <poeschel@lemonage.de>
+Cc:     Marcel Holtmann <marcel@holtmann.org>, devicetree@vger.kernel.org,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:NFC SUBSYSTEM" <linux-wireless@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] nfc: pn533: add UART phy driver
+Message-ID: <20181020092733.GV3383@localhost>
+References: <20181018144251.30028-1-poeschel@lemonage.de>
+ <6CB47B97-F58D-4162-98C1-8C8C88CE2914@holtmann.org>
+ <20181019085728.GA26696@lem-wkst-02.lemonage>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181019150053.iaubsdtcsi64mqb7@ca-dmjordan1.us.oracle.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181019085728.GA26696@lem-wkst-02.lemonage>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 08:00:53AM -0700, Daniel Jordan wrote:
-> On Fri, Oct 19, 2018 at 09:54:35AM +0100, Mel Gorman wrote:
-> > On Fri, Oct 19, 2018 at 01:57:03PM +0800, Aaron Lu wrote:
-> > > > 
-> > > > I don't think this is the right way of thinking about it because it's
-> > > > possible to have the system split in such a way so that the migration
-> > > > scanner only encounters unmovable pages before it meets the free scanner
-> > > > where unmerged buddies were in the higher portion of the address space.
-> > > 
-> > > Yes it is possible unmerged pages are in the higher portion.
-> > > 
-> > > My understanding is, when the two scanners meet, all unmerged pages will
-> > > be either used by the free scanner as migrate targets or sent to merge
-> > > by the migration scanner.
-> > > 
-> > 
-> > It's not guaranteed if the lower portion of the address space consisted
-> > entirely of pages that cannot migrate (because they are unmovable or because
-> > migration failed due to pins). It's actually a fundamental limitation
-> > of compaction that it can miss migration and compaction opportunities
-> > due to how the scanners are implemented. It was designed that way to
-> > avoid pageblocks being migrated unnecessarily back and forth but the
-> > downside is missed opportunities.
-> > 
-> > > > You either need to keep unmerged buddies on a separate list or search
-> > > > the order-0 free list for merge candidates prior to compaction.
-> > > > 
-> > > > > > It's needed to form them efficiently but excessive reclaim or writing 3
-> > > > > > to drop_caches can also do it. Be careful of tying lazy buddy too
-> > > > > > closely to compaction.
-> > > > > 
-> > > > > That's the current design of this patchset, do you see any immediate
-> > > > > problem of this? Is it that you are worried about high-order allocation
-> > > > > success rate using this design?
-> > > > 
-> > > > I've pointed out what I see are the design flaws but yes, in general, I'm
-> > > > worried about the high order allocation success rate using this design,
-> > > > the reliance on compaction and the fact that the primary motivation is
-> > > > when THP is disabled.
-> > > 
-> > > When THP is in use, zone lock contention is pretty much nowhere :-)
-> > > 
-> > > I'll see what I can get with 'address space range' lock first and will
-> > > come back to 'lazy buddy' if it doesn't work out.
-> 
-> With the address space range idea, wouldn't the zone free_area require changes
-> too?  I can't see how locking by address range could synchronize it as it
-> exists now otherwise, with per order/mt list heads.
-> 
-> One idea is to further subdivide the free area according to how the locking
-> works and find some reasonable way to handle having to search for pages of a
-> given order/mt in multiple places.
+On Fri, Oct 19, 2018 at 10:57:28AM +0200, Lars Poeschel wrote:
+> On Thu, Oct 18, 2018 at 05:00:28PM +0200, Marcel Holtmann wrote:
 
-I plan to create one free_are per 'address space range'. The challenge
-will be how to quickly locate a free_area that has the required free
-page on allocation path. Other details like how big the address space
-range should be etc. will need to be explored with testing.
+> > > --- a/drivers/nfc/pn533/Kconfig
+> > > +++ b/drivers/nfc/pn533/Kconfig
+> > > @@ -25,3 +25,13 @@ config NFC_PN533_I2C
+> > > 
+> > > 	  If you choose to build a module, it'll be called pn533_i2c.
+> > > 	  Say N if unsure.
+> > > +
+> > > +config NFC_PN532_UART
+> > > +	tristate "NFC PN532 device support (UART)”
+> > 
+> > you are missing the "depends on SERIAL_DEV_BUS” here.
+> 
+> Yes, absolutely right. I missed that. I will post a follow-up.
+> 
+> BTW a question:
+> Only enabling SERIAL_DEV_BUS did not suffice for me. I also had to
+> enable SERIAL_DEV_CTRL_TTYPORT, otherwise the probe of the driver was
+> not called. This seems a bit odd to me. This option seems unrelated, but
+> without it, it did not work.
+> 
+> Should I better depend on SERIAL_DEV_CTRL_TTYPORT then ?
 
-I think this approach is worth a try because it wouldn't cause
-fragmentation.
+No, SERIAL_DEV_BUS is the correct (build-time) dependency.
+
+In principle, your driver will work with any serdev-controller
+implementation even if we currently only have one of those in the kernel
+(and SERIAL_DEV_CTRL_TTYPORT therefore default to Y whenever
+SERIAL_DEV_BUS is selected).
+
+Johan
