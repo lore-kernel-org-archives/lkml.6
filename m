@@ -2,132 +2,98 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D21C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 05:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1A3C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 05:25:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F3DE2150B
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 05:22:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9fWthk1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F3DE2150B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B5B4521470
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 05:25:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5B4521470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbeJTNb3 (ORCPT
+        id S1727017AbeJTNeW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 09:31:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33890 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726261AbeJTNb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 09:31:29 -0400
-Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net [67.185.97.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C3CC21470;
-        Sat, 20 Oct 2018 05:22:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540012937;
-        bh=WixgDl4BGmZqzJbcrG9/N6ODb7AoJJt002idaFzIYr0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=s9fWthk1FNNuBNkc76ttHOfFqABpp2j7znJ2qYhjEag7dvM3kqItY3bk4eYOfMyuz
-         tnQOpx4UAH3uuXBJJ8vKoa8CJ6/M4CD0w1uYwNp3dB/kGGWhrHeCnUOgXK7gt7CRMz
-         hhYI4wh3SCoa5MOHchY5lb8MeCiYIWafNcJ8MR8g=
-Date:   Fri, 19 Oct 2018 22:22:16 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Paul Crowley <paulcrowley@google.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Greg Kaiser <gkaiser@google.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Samuel Neves <samuel.c.p.neves@gmail.com>,
-        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
-Subject: Re: [RFC PATCH v2 00/12] crypto: Adiantum support
-Message-ID: <20181020052215.GA876@sol.localdomain>
-References: <20181015175424.97147-1-ebiggers@kernel.org>
- <CAHmME9p1aiqWZ4+viaLscO8+qmixdVhMA1MAtMAFEHPG36DcPg@mail.gmail.com>
- <CA+_SqcDszvqfH7qvEyi8QW2RqkA1kpV6L7VWxhtw5Ogzeovhbg@mail.gmail.com>
- <CAKv+Gu9be0LDSzkinzwJ50LN+g7Omdjh5Z7xUmpoQc+oCzxZ_Q@mail.gmail.com>
+        Sat, 20 Oct 2018 09:34:22 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:46278 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726312AbeJTNeW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 09:34:22 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gDjl3-0006jD-Nu; Sat, 20 Oct 2018 05:25:05 +0000
+Date:   Sat, 20 Oct 2018 06:25:05 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Alan Jenkins <alan.christopher.jenkins@gmail.com>,
+        torvalds@linux-foundation.org, ebiederm@xmission.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mszeredi@redhat.com
+Subject: Re: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE
+ [ver #12]
+Message-ID: <20181020052505.GK32577@ZenIV.linux.org.uk>
+References: <97872123-70be-2833-ea7a-a463ce204b53@gmail.com>
+ <862e36a2-2a6f-4e26-3228-8cab4b4cf230@gmail.com>
+ <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
+ <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk>
+ <de050902-f3d0-b2db-2627-983a36c87b3c@gmail.com>
+ <6518.1539956277@warthog.procyon.org.uk>
+ <29902.1539988579@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKv+Gu9be0LDSzkinzwJ50LN+g7Omdjh5Z7xUmpoQc+oCzxZ_Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <29902.1539988579@warthog.procyon.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ard,
-
-On Sat, Oct 20, 2018 at 11:24:05AM +0800, Ard Biesheuvel wrote:
-> On 20 October 2018 at 02:19, Paul Crowley <paulcrowley@google.com> wrote:
-> > On Fri, 19 Oct 2018 at 08:58, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> >> Before merging this into the kernel, do you want to wait until you've
-> >> received some public review from academia?
-> >
-> > I would prefer not to wait. Unlike a new primitive whose strength can
-> > only be known through attempts at cryptanalysis, Adiantum is a
-> > construction based on
-> > well-understood and trusted primitives; it is secure if the proof
-> > accompanying it is correct. Given that (outside competitions or
-> > standardization efforts) no-one ever issues public statements that
-> > they think algorithms or proofs are good, what I'm expecting from
-> > academia is silence :) The most we could hope for would be getting the
-> > paper accepted at a conference, and we're pursuing that but there's a
-> > good chance that won't happen simply because it's not very novel. It
-> > basically takes existing ideas and applies them using a stream cipher
-> > instead of a block cipher, and a faster hashing mode; it's also a
-> > small update from HPolyC. I've had some private feedback that the
-> > proof seems correct, and that's all I'm expecting to get.
+On Fri, Oct 19, 2018 at 11:36:19PM +0100, David Howells wrote:
+> Alan Jenkins <alan.christopher.jenkins@gmail.com> wrote:
 > 
-> Hi Paul, Eric,
+> > # open_tree_clone 3</mnt 3 sh
+> > # cd /proc/self/fd/3
+> > # mount --move . /mnt
+> > [   41.747831] mnt_flags=1020 umount=0
+> > # cd /
+> > # umount /mnt
+> > umount: /mnt: target is busy
+> > 
+> > ^ a newly introduced bug? I do not remember having this problem before.
 > 
-> The Adiantum paper claims
+> The reason EBUSY is returned is because propagate_mount_busy() is called by
+> do_umount() with refcnt == 2, but mnt_count == 3:
 > 
-> "On an ARM Cortex-A7 processor, Adiantum decrypts 4096-byte messages
-> at 11 cycles per byte, five times faster than AES-256-XTS, with a
-> constant-time implementation."
+>           umount-3577  M=f8898a34 u=3 0x555 sp=__x64_sys_umount+0x12/0x15
 > 
-> which is surprising to me. The bit slicing NEON AES core runs at ~14
-> cycle per byte on a Cortex-A15 (when encrypting), so 55 cycles per
-> byte on A7 sounds rather high. Is it really that bad?
-
-Yes, it's really that slow, maybe because the NEON unit on Cortex-A7 isn't very
-good.  Our figures are shown in the performance table in section 4.  Note that
-the abstract is talking about AES-256-XTS.  AES-128-XTS is ~27% faster.  You can
-also reproduce our performance results using our userspace benchmark program
-from https://github.com/google/adiantum/tree/master/benchmark.  It uses a copy
-of aes-neonbs-core.S from the kernel source tree.
-
+> the trace line being added here:
 > 
-> Also, the paper mentions that the second hash pass and the stream
-> cipher en/decryption pass could be executed in parallel, while your
-> implementation performs three distinct passes. Do you have any
-> estimates on the potential performance gain of implementing that? In
-> my experience (which is mostly A53 rather than A7 based, mind you),
-> removing memory accesses can help tremendously to speed up the
-> execution on low end cores.
+> 		if (!propagate_mount_busy(mnt, 2)) {
+> 			if (!list_empty(&mnt->mnt_list))
+> 				umount_tree(mnt, UMOUNT_PROPAGATE|UMOUNT_SYNC);
+> 			retval = 0;
+> 		} else {
+> 			trace_mnt_count(mnt, mnt->mnt_id,
+> 					atomic_read(&mnt->mnt_count),
+> 					0x555, __builtin_return_address(0));
+> 		}
+> 
+> The busy evaluation is a result of this check:
+> 
+> 	if (!list_empty(&mnt->mnt_mounts) || do_refcount_check(mnt, refcnt))
+> 
+> in propagate_mount_busy().
+> 
+> 
+> The problem apparently being that mnt_count counts both refs from mountings
+> and refs from other sources, such as file descriptors or pathwalk.
 
-As a quick hack, on Cortex-A7 I timed "NH" without loading the message words.
-It became about 10% faster.  My NEON-accelerated NH is already only about 1.3
-cpb, so that means in theory not having to reload the message words would save
-~0.13 cpb...  But Adiantum as a whole is ~11 cpb, so that suggests the
-improvement would be only a bit over 1%.
+As it bloody well should.  Once the tree has been attached, that open_ctree()
+descriptor is refering to vfsmount of /mnt (what else could it be?)
 
-Maybe it could actually be better (for example, not having to map the pages
-again could save a lot), but in practice considering the increased complexity as
-well as that probably there wouldn't actually be enough registers to do
-everything efficiently, it seemed it would cause far too much trouble to bother
-yet (at least for the Linux kernel implementation; a two-pass implementation
-could still be useful elsewhere, of course).
-
-- Eric
+IOW, it *is* genuinely busy.  The livelock on umount -l you've mentioned is
+a different story - that's definitely a bug, but this -EBUSY is correct.
