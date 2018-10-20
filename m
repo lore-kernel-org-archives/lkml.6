@@ -2,129 +2,139 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D5CC67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 20:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F00BC67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 21:04:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3311216C4
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 20:58:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="oiE0idkr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3311216C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
+	by mail.kernel.org (Postfix) with ESMTP id E8158216C4
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 21:04:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8158216C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbeJUFJt (ORCPT
+        id S1726941AbeJUFQE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 01:09:49 -0400
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:45666 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbeJUFJt (ORCPT
+        Sun, 21 Oct 2018 01:16:04 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57042 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726162AbeJUFQE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 01:09:49 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 5EF3195E
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 20:58:04 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p6.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id aIdMwZRR16CW for <linux-kernel@vger.kernel.org>;
-        Sat, 20 Oct 2018 15:58:04 -0500 (CDT)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 364E395D
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 15:58:04 -0500 (CDT)
-Received: by mail-io1-f72.google.com with SMTP id l21-v6so20247668ioc.21
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 13:58:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=xQ+GmITu1UBL82c2OOxEU+5GVCJZBz0JV2g6rO5syUA=;
-        b=oiE0idkrrH0BXuKiZmb+YqGCFvkz2wiHpgZZ3nRA4kOBt01DNULhTYmMuAVbUbJwQB
-         wyWW3IipLINQrvx9PuH9a9uFc+8m2JDN7pAblKU3/ARXHUVHsnCAcbRTDkJeahR9fxbn
-         FSmo1ngnGwoEy7iETgDOfxvmCHYnlyD1Yzbs9AP5Ozji2LwFb05aUzl1cB8DWGQMMCkY
-         8Ic6wRx3QrlFjzanktChsTJAnqz5oMl9XulYYg94lNf4IeXIq7dtt4lrMcRY4ZJkTLxg
-         5Jty3EAM0OoIeFcfvhbrVtoOatqbLawECLel+dKRMQLMUi3hZGYhC5mwFj9QWe0/3owb
-         AaUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xQ+GmITu1UBL82c2OOxEU+5GVCJZBz0JV2g6rO5syUA=;
-        b=Wj5FEpEM8p32vHaBKAtVybh3S0z/k7HR+VurmDVB56BF62cn5A0wrJitf8huqTU1MQ
-         rDtOtEbteFPhlWtToKp0DriOKr9SLKQ1+tk2oB75ystCRMazc8mFJvldG+Gn2R958VCL
-         EMVuOZKxCpldmQf/wQTeKJXLwgBo4DZJkRZXTrlnCh8fj/QKDsIrZgkXS8V2u3WSGiNk
-         rB31KGn1mRvkPHklf8GZEQjxAE1pB3Tw3TPgjC/t2RWnJ06W6f61dPfcfBJKZgQ9QUxE
-         g0acnqkAMI7qyPasKzc+7Fg5lOPKl6NLv5tlfhr71YbBA9xojOckcdN+T0VAtB4aK5H4
-         qQyw==
-X-Gm-Message-State: ABuFfoitakK12ElWrxptlPWtkDbzeSAVVGdzK53CYwdauoZQFikvhzJN
-        gVLQnoo9FyRRnKPUCGbgJ3nKuI8GNxdq1pOV/rPGSgay9dLF73UdWQJLNUVxWJk+fUpe2d0NPg4
-        CCgkOfD2eoUu6Ggvt882xPda0l8dc
-X-Received: by 2002:a24:5214:: with SMTP id d20-v6mr6389630itb.24.1540069083683;
-        Sat, 20 Oct 2018 13:58:03 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV62McDdBEbGsQGQDfxxccpNobEH5ISnvA8IDkIlyt102VMXir3bxYvMKN/JaS2QaVgIDUx9ecw==
-X-Received: by 2002:a24:5214:: with SMTP id d20-v6mr6389618itb.24.1540069083499;
-        Sat, 20 Oct 2018 13:58:03 -0700 (PDT)
-Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
-        by smtp.gmail.com with ESMTPSA id l142-v6sm4101910itl.23.2018.10.20.13.58.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 20 Oct 2018 13:58:02 -0700 (PDT)
-From:   Wenwen Wang <wang6495@umn.edu>
-To:     Wenwen Wang <wang6495@umn.edu>
-Cc:     Kangjie Lu <kjlu@umn.edu>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>, Ken Wang <Ken.Wang@amd.com>,
-        amd-gfx@lists.freedesktop.org (open list:RADEON and AMDGPU DRM DRIVERS),
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/amdgpu: fix a missing-check bug
-Date:   Sat, 20 Oct 2018 15:57:54 -0500
-Message-Id: <1540069075-18358-1-git-send-email-wang6495@umn.edu>
-X-Mailer: git-send-email 2.7.4
+        Sun, 21 Oct 2018 01:16:04 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9KL3smI006615
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 17:04:19 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n80f12hx5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 17:04:18 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Sat, 20 Oct 2018 17:04:17 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 20 Oct 2018 17:04:14 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9KL4Dks32833762
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 20 Oct 2018 21:04:13 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 222A6B205F;
+        Sat, 20 Oct 2018 21:04:13 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 09E6FB2070;
+        Sat, 20 Oct 2018 21:04:13 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.226.122])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sat, 20 Oct 2018 21:04:12 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 8ED2416C3598; Sat, 20 Oct 2018 14:04:13 -0700 (PDT)
+Date:   Sat, 20 Oct 2018 14:04:13 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        davidtgoldblatt@gmail.com, andrea.parri@amarulasolutions.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com, dlustig@nvidia.com
+Subject: Re: Interrupts, smp_load_acquire(), smp_store_release(), etc.
+Reply-To: paulmck@linux.ibm.com
+References: <20181020161049.GA13756@linux.ibm.com>
+ <Pine.LNX.4.44L0.1810201612530.28059-100000@netrider.rowland.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1810201612530.28059-100000@netrider.rowland.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18102021-2213-0000-0000-00000306F18E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009909; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01105575; UDB=6.00572436; IPR=6.00885625;
+ MB=3.00023841; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-20 21:04:17
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18102021-2214-0000-0000-00005BF7403B
+Message-Id: <20181020210413.GB2674@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-20_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=647 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810200196
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In amdgpu_read_bios_from_rom(), the header of the VBIOS is firstly copied
-to 'header' from an IO memory region through
-amdgpu_asic_read_bios_from_rom(). Then the header is checked to see whether
-it is a valid header. If yes, the whole VBIOS, including the header, is
-then copied to 'adev->bios'. The problem here is that no check is enforced
-on the header after the second copy. Given that the device also has the
-permission to access the IO memory region, it is possible for a malicious
-device controlled by an attacker to modify the header between these two
-copies. By doing so, the attacker can supply compromised VBIOS, which can
-cause undefined behavior of the kernel and introduce potential security
-issues.
+On Sat, Oct 20, 2018 at 04:18:37PM -0400, Alan Stern wrote:
+> On Sat, 20 Oct 2018, Paul E. McKenney wrote:
+> 
+> > The second (informal) litmus test has a more interesting Linux-kernel
+> > counterpart:
+> > 
+> > 	void t1_interrupt(void)
+> > 	{
+> > 		r0 = READ_ONCE(y);
+> > 		smp_store_release(&x, 1);
+> > 	}
+> > 
+> > 	void t1(void)
+> > 	{
+> > 		smp_store_release(&y, 1);
+> > 	}
+> > 
+> > 	void t2(void)
+> > 	{
+> > 		r1 = smp_load_acquire(&x);
+> > 		r2 = smp_load_acquire(&y);
+> > 	}
+> > 
+> > On store-reordering architectures that implement smp_store_release()
+> > as a memory-barrier instruction followed by a store, the interrupt could
+> > arrive betweentimes in t1(), so that there would be no ordering between
+> > t1_interrupt()'s store to x and t1()'s store to y.  This could (again,
+> > in paranoid theory) result in the outcome r0==0 && r1==0 && r2==1.
+> 
+> This is disconcerting only if we assume that t1_interrupt() has to be
+> executed by the same CPU as t1().  If the interrupt could be fielded by
+> a different CPU then the paranoid outcome is perfectly understandable,
+> even in an SC context.
+> 
+> So the question really should be limited to situations where a handler 
+> is forced to execute in the context of a particular thread.  While 
+> POSIX does allow such restrictions for user programs, I'm not aware of 
+> any similar mechanism in the kernel.
 
-This patch rewrites the header in 'adev->bios' using the header acquired in
-the first copy.
+Good point, and I was in fact assuming that t1() and t1_interrupt()
+were executing on the same CPU.
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_bios.c | 2 ++
- 1 file changed, 2 insertions(+)
+This sort of thing happens naturally in the kernel when both t1()
+and t1_interrupt() are accessing per-CPU variables.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_bios.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_bios.c
-index a5df80d..ac701f4 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_bios.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_bios.c
-@@ -181,6 +181,8 @@ static bool amdgpu_read_bios_from_rom(struct amdgpu_device *adev)
- 	/* read complete BIOS */
- 	amdgpu_asic_read_bios_from_rom(adev, adev->bios, len);
- 
-+	memcpy(adev->bios, header, AMD_VBIOS_SIGNATURE_END);
-+
- 	if (!check_atom_bios(adev->bios, len)) {
- 		kfree(adev->bios);
- 		return false;
--- 
-2.7.4
+							Thanx, Paul
 
