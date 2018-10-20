@@ -2,121 +2,148 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DBD9C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 19:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F43C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 19:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 425DB21532
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 19:26:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C10B121655
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 19:48:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMG8BTV8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 425DB21532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="DTuoUL2J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C10B121655
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbeJUDhj (ORCPT
+        id S1727765AbeJUD7a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 23:37:39 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33051 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726507AbeJUDhj (ORCPT
+        Sat, 20 Oct 2018 23:59:30 -0400
+Received: from mta-p7.oit.umn.edu ([134.84.196.207]:54338 "EHLO
+        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727050AbeJUD73 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 23:37:39 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u1-v6so4937683wrn.0;
-        Sat, 20 Oct 2018 12:26:11 -0700 (PDT)
+        Sat, 20 Oct 2018 23:59:29 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p7.oit.umn.edu (Postfix) with ESMTP id A8C38B74
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 19:47:57 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p7.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id wU3ShUuVsI_j for <linux-kernel@vger.kernel.org>;
+        Sat, 20 Oct 2018 14:47:57 -0500 (CDT)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id 73B6DB73
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 14:47:57 -0500 (CDT)
+Received: by mail-io1-f72.google.com with SMTP id n10-v6so23006136iog.5
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 12:47:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6X2S5HlseArU112GwqmFAe1k1Fd2wenyhiTZGp/h4cg=;
-        b=GMG8BTV8hvOIY2pukF4RrF3rLieHaOW6l7Hs97fTJNSHuS2U5DduUXWfMuM8PSOrkr
-         5R0Arj76IZDSIzeA7Svrsf2hGX66zgkUX5TqdfLv+TYp9GSRYSsaYhcNq1le8WIwouHE
-         /Ut8IDTxc8EwVfpFGaTAfd4oIeLaXQ/LXlJRX3ADcZjtRydNeAmdJzIw6Mqry464Dwku
-         Bt7UBJKwWXjb58xOQRhIbjz4u0a0jw2ZjwB2aW5Eoj0/gm9u0HTeVnxlwINWRLAG7OC2
-         Zd60xpF1MCE7o4mnqGQnxcMPsDTHqygDCddt61Rsw9jLEGwu05RtUzyum/pE1ZuDvfE0
-         nrqw==
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=4OD00mFOgXS33l3L33RU+jk5Bk+72Krd0v5DrofElt0=;
+        b=DTuoUL2JMX3BFVigadGPw+ukEcJ0rSYDuOOqIfA4JjEwTUDS4+kS4RYUeUfoEzXssN
+         Zy3E/ZMPpRK79Cqzi+W8+IqndwFF9MkpmKivhgEqBWt6MG2FgcEXB9++hdLO/Bxlw6u6
+         mj+0SofxAbPtb+WAAQXWrN/URyY7yqZyiVum2HG20gHUW6HupMFsO2TMWfwp7bnblnqv
+         9lMsphfu/9UGOHM3Y8Tk+aOkhYtu+BatjVvcxDoaSbDUk9fECdefE2ysk5ZcZ4xAL91y
+         h68M8LIDBuFEI3FPp2k/Zv52Az5tInACRnCGpDheMuuPFXk+YROeuE+fKCQGVFUtySaC
+         823w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6X2S5HlseArU112GwqmFAe1k1Fd2wenyhiTZGp/h4cg=;
-        b=Ocax7Xw/lfbTM2R8fNRCm/T6+eZ18SDKY+liA7Of3IBbaNch5jI6amlLxNSTKd1NQ7
-         bJjWB/2G2XgowYMdqyz6gIVZD84CRtVYCy2aUfY1RFyrO1jymiZZPgyWuvuELaxlIHeC
-         TBSZta0+EzjSnFVyFeAHcs83RNf8Ss+/+D+WlhDUZr1oIXsbVscvyx3ED3h8yqCT6lGc
-         jnMKlRDyo9mLD4VczPCeMvvtr2J5IOZnfeXwFBWlosR7WrQzCLwqn8pADUsh8NzvpORy
-         J+COL0pTfuVZWNriOC/+3pSjqE0DAfukCyEA08c3n48gqY/RWp5ibxxWeLILGs+1m9yx
-         Kp8g==
-X-Gm-Message-State: ABuFfojmUPJapY1lpE7bJjDYVWIkPj8ydfusv3dOCBSE7/iIb7sfgRVw
-        zbiQni9Hb5vuPzNHAi4EWVv8YckIrCg=
-X-Google-Smtp-Source: ACcGV608AtK/tFaTubeZBTAoOGFK7BXIvArwI/eJ+t02vbGOF05UfQWYBNPS/A8/VWtKSXUay1dl5Q==
-X-Received: by 2002:adf:9e09:: with SMTP id u9-v6mr37909595wre.51.1540063570101;
-        Sat, 20 Oct 2018 12:26:10 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8bd4:3f00:3970:25a3:55ad:948? (p200300EA8BD43F00397025A355AD0948.dip0.t-ipconnect.de. [2003:ea:8bd4:3f00:3970:25a3:55ad:948])
-        by smtp.googlemail.com with ESMTPSA id c8-v6sm37064668wrb.6.2018.10.20.12.26.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 20 Oct 2018 12:26:09 -0700 (PDT)
-Subject: Re: [PATCH] net: ethernet: fec: Add missing SPEED_
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        LABBE Corentin <clabbe@baylibre.com>, davem@davemloft.net,
-        fugang.duan@nxp.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <2621cbc9-47ed-ce2a-b7ee-262f17dc138f@gmail.com>
- <20181018184715.GA31736@Red> <d1461619-1344-e581-4eef-35cf8bbb5336@gmail.com>
- <20181018191612.GB31736@Red> <5cb0731b-83c5-5ed5-d022-98f8627d1737@gmail.com>
- <20181018195909.GA11317@Red> <1b784f69-3ec2-feb2-81e1-9a335cf477c3@gmail.com>
- <f1933c0a-d124-a7ac-afab-2fa8f88907ab@gmail.com>
- <20181020153922.GC1596@lunn.ch>
- <c8f4f203-b2b6-81ba-2c79-85501a640948@gmail.com>
- <20181020185947.GA6615@lunn.ch>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <1153d0a5-1c23-1e14-7ebd-459886af957a@gmail.com>
-Date:   Sat, 20 Oct 2018 21:26:03 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181020185947.GA6615@lunn.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4OD00mFOgXS33l3L33RU+jk5Bk+72Krd0v5DrofElt0=;
+        b=DRPFeRMCbBM2t1Nv7BbyygeztMQr/RBsBA14aS8SETHBeekFOwtlCKsRFUEdUopPZo
+         LFoldNISvHrzC7/3OmfnfIfJ0XYYk2BYWQX4dqXX6sCp6pg1mf46VQjwGjK9wMwKvBDS
+         naCVjEtsPrfjHrRMgNi+uB+/8vEiPtm8iSH5OqTBHHlDpDiyBLE4YLu/vcO5RHmZ3ODD
+         9C7227ic/GdvwkqNqeJH0Qz9EarytuTZ5YWCMuU9PTXNZXpUUExQZHA1LH+C5bB8aG+6
+         A+VbELFgckEH0pWdQxKJMu6eGZ4nZsNDoqRMcbFdgrX46a/yizTAPEnpl7J4d9Rn0/7d
+         5dkg==
+X-Gm-Message-State: AGRZ1gJNIdIrwlhf/TsYiDbkD9HNuWVQm82At3Z3iApFVPhgs4jx39kj
+        47TkXE3SQ49rMpjH5KBXJHyZDy7/eeHl+AoeoQ5D/IM75PkO/5YzszJ2LU4/Ts9sNog+QWRceRS
+        J3jIKLoiqqRFycOSSRnYrzchsrRpm
+X-Received: by 2002:a6b:8f49:: with SMTP id r70-v6mr3081341iod.212.1540064877121;
+        Sat, 20 Oct 2018 12:47:57 -0700 (PDT)
+X-Google-Smtp-Source: AJdET5dUVXzN5pOTWuMKpb9P4ESPnFWjYKQ25ReaY2YkeZk24G/ps5ZTAvL7PPj0GtqoenXKnOFH2Q==
+X-Received: by 2002:a6b:8f49:: with SMTP id r70-v6mr3081332iod.212.1540064876905;
+        Sat, 20 Oct 2018 12:47:56 -0700 (PDT)
+Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
+        by smtp.gmail.com with ESMTPSA id r20-v6sm9271841ioj.17.2018.10.20.12.47.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 20 Oct 2018 12:47:55 -0700 (PDT)
+From:   Wenwen Wang <wang6495@umn.edu>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] thunderbolt: fix a missing-check bug
+Date:   Sat, 20 Oct 2018 14:47:49 -0500
+Message-Id: <1540064869-17849-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.10.2018 20:59, Andrew Lunn wrote:
->> I dare to dispute here ;) Above code snippet from phy_probe() will
->> (try to) set also SUPPORTED_Asym_Pause, because phydrv->features
->> doesn't include any of the two pause flags.
->> The statement in bcm63xx_config_init you refer to seems to be a
->> no-op to me therefore.
->>
->> I'd say the correct way is to change the PHY config like this:
->> .features	= PHY_BASIC_FEATURES | SUPPORTED_Pause;
->> It's exactly the use case the code snippet above covers.
-> 
-> Yes, you are correct.
-> 
-> But it is no longer possible to just do PHY_BASIC_FEATURES |
-> SUPPORTED_Pause because .features is no loner a u32 but a linux
-> bitmap.
-> 
-Ahh, missed that.
+In ring_work(), the first while loop is used to collect all completed
+frames from the ring buffer. In each iteration of this loop, the flag of
+the frame, i.e., 'ring->descriptors[ring->tail].flags' is firstly check to
+see whether the frame is completed. If yes, the descriptor of the frame,
+including the flag, is then copied. It is worth noting that the descriptor
+is actually in a DMA region, which is allocated through
+dma_alloc_coherent() in tb_ring_alloc(). Given that the device can also
+access the DMA region, a malicious device controlled by an attacker can
+race to modify the flag of the frame after the check but before the copy.
+By doing so, the attacker can bypass the check and supply uncompleted
+frame, which can cause undefined behavior of the kernel and introduce
+potential security risk.
 
-> We need to keep the same idea, allow the PHY driver to indicate it
-> supports a subset of Pause, and if not, enable pause by default.
-> 
-Could the PHY driver define its own bitmap instead of pointing to
-one of the predefined ones?
+This patch firstly copies the flag into a local variable 'desc_flags' and
+then performs the check and copy using 'desc_flags'. Through this way, the
+above issue can be avoided.
 
-> Maybe the easiest way is to move this chunk of code to after the probe
-> function is called.
-> 
-> 	 Andrew
-> 
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+---
+ drivers/thunderbolt/nhi.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/thunderbolt/nhi.c b/drivers/thunderbolt/nhi.c
+index 5cd6bdf..22bd6cf 100644
+--- a/drivers/thunderbolt/nhi.c
++++ b/drivers/thunderbolt/nhi.c
+@@ -215,6 +215,7 @@ static void ring_work(struct work_struct *work)
+ 	struct ring_frame *frame;
+ 	bool canceled = false;
+ 	unsigned long flags;
++	enum ring_desc_flags desc_flags;
+ 	LIST_HEAD(done);
+ 
+ 	spin_lock_irqsave(&ring->lock, flags);
+@@ -228,8 +229,8 @@ static void ring_work(struct work_struct *work)
+ 	}
+ 
+ 	while (!ring_empty(ring)) {
+-		if (!(ring->descriptors[ring->tail].flags
+-				& RING_DESC_COMPLETED))
++		desc_flags = ring->descriptors[ring->tail].flags;
++		if (!(desc_flags & RING_DESC_COMPLETED))
+ 			break;
+ 		frame = list_first_entry(&ring->in_flight, typeof(*frame),
+ 					 list);
+@@ -238,7 +239,7 @@ static void ring_work(struct work_struct *work)
+ 			frame->size = ring->descriptors[ring->tail].length;
+ 			frame->eof = ring->descriptors[ring->tail].eof;
+ 			frame->sof = ring->descriptors[ring->tail].sof;
+-			frame->flags = ring->descriptors[ring->tail].flags;
++			frame->flags = desc_flags;
+ 		}
+ 		ring->tail = (ring->tail + 1) % ring->size;
+ 	}
+-- 
+2.7.4
 
