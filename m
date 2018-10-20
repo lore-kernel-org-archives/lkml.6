@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C38DC67863
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F89ECDE44
 	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 16:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29FB021550
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 16:57:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29FB021550
+	by mail.kernel.org (Postfix) with ESMTP id 643C521582
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 16:57:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 643C521582
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbeJUBII (ORCPT
+        id S1727698AbeJUBIJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 21:08:08 -0400
-Received: from mail-it1-f199.google.com ([209.85.166.199]:39192 "EHLO
+        Sat, 20 Oct 2018 21:08:09 -0400
+Received: from mail-it1-f199.google.com ([209.85.166.199]:43347 "EHLO
         mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727488AbeJUBII (ORCPT
+        with ESMTP id S1727590AbeJUBII (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 20 Oct 2018 21:08:08 -0400
-Received: by mail-it1-f199.google.com with SMTP id h62-v6so7463907itb.4
+Received: by mail-it1-f199.google.com with SMTP id w137-v6so7439609itc.8
         for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 09:57:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=ojpH9oMfYQ4iiiHMHw50s0UkoIVrfgWzsgjz6vlIsnA=;
-        b=dZeF1QxQtHtgGzo8OLqR/aBU5U/gv94AAPtYkwhVlE6p8YOeHBtprctqiqqb8f7tJr
-         i2tL7YIjC4+ZvttljEyYmcCuUBinjpj+/F5F3/bnBp+ocDWIMVMHVZ9aiReLaeyc6njc
-         cQE8WJG7juMksFwVDzBjURqRaWctVA1l1Ictd1ciwl5SIxbXJ/MA5BEUpM1VPDYtcf/2
-         Mhq3OcdgMEttSGI9BDPDzkvsqWYBlCRiSzRxlxGvz2XONSDU+OujErX06efYykrrmSxl
-         FMG2JNGEFIoZsjZbYfvLKpkdn09DWuBVITuT3jAQW8hdh4+cYiwfcbJEZmQRgj2cjtv8
-         wL8Q==
-X-Gm-Message-State: AGRZ1gJ9eeE2D5hmFIyaDPbf8nNx+i+QX5LLGJr0cW/gNWNfAW72+jgg
-        6dIEEJ+LWPZ8emno9f4malXrMPzQhEUZ9ZbVq4h5btEXh49n
-X-Google-Smtp-Source: AJdET5cLoqFhJSoZmGorPqzTKccY+mg7jWwCHuV63D6x2i6S6OKn4Np+vQgkeDfy5EtJUBCeaJ0TkwgFQrIioq75JniCDSAzycRp
+        bh=VVPYag9curU1k6n5E5X9HDf2jmfos7gGBlMl4ujz+0U=;
+        b=e+g+SBtCDfE8mpt1Eorl1cR8iyHYWjWcTDbpIeIPjpSo2dF8acRWkZrlQcy9YAe3CG
+         KKbAAPZMx9+hDxigFxsp60G2We0MfwJCLKBeSgwuLzG7k2T4JkQ+fdx1gkOkxpNunEOk
+         DqXfUPQqCWVWwduP/Ne1dnPKUjIhUjdQLiJMLIFrKcvXeTexZxWYfIDcYV0mOMBvDUCh
+         4OqaOu0inlRFfcEn+B41hTUpJBmNC/A+6MGXET0kywXr0nTsHE5JNs7BoAzhdE7H1bce
+         HrzAmt1EBes6qFnjMilU75O4ECFZRZaVNayto86MxM4LxEIif6Df+kFTaVMnlOKIS+lv
+         de4A==
+X-Gm-Message-State: ABuFfoiliBEOpu0308ZRCnNlbkENICGnTwRpu57qU8U31U3GOqCg8UaY
+        cujwqz3DQwoC2ppaSP4Q1E5sepfSot2KSJUKqJuxCzH+w8uu
+X-Google-Smtp-Source: ACcGV61l3g7sJiqa4Hhj2smTnGysDeIG20wem+E8HdvnsFMPJ8OFBSbrFtw1/ipUJFFGFHAinJ1qTj1X07nSYp2hvS7TNC9o6+3h
 MIME-Version: 1.0
-X-Received: by 2002:a6b:3946:: with SMTP id g67-v6mr7054794ioa.20.1540054622928;
- Sat, 20 Oct 2018 09:57:02 -0700 (PDT)
-Date:   Sat, 20 Oct 2018 09:57:02 -0700
+X-Received: by 2002:a24:5495:: with SMTP id t143-v6mr7008991ita.34.1540054623166;
+ Sat, 20 Oct 2018 09:57:03 -0700 (PDT)
+Date:   Sat, 20 Oct 2018 09:57:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bc23740578abe82c@google.com>
-Subject: KASAN: use-after-free Read in kvm_put_kvm
-From:   syzbot <syzbot+f87f60bb6f13f39b54e3@syzkaller.appspotmail.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com,
-        syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000bfd4270578abe88b@google.com>
+Subject: possible deadlock in flush_workqueue (2)
+From:   syzbot <syzbot+a50c7541a4a55cd49b02@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,129 +60,1121 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    8c60c36d0b8c Add linux-next specific files for 20181019
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12d808b5400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8b6d7c4c81535e89
-dashboard link: https://syzkaller.appspot.com/bug?extid=f87f60bb6f13f39b54e3
+HEAD commit:    91b15613ce7f Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10114109400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b3f55cb3dfcc6c33
+dashboard link: https://syzkaller.appspot.com/bug?extid=a50c7541a4a55cd49b02
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17cf2f5e400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1036dcce400000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=159c1de9400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f87f60bb6f13f39b54e3@syzkaller.appspotmail.com
+Reported-by: syzbot+a50c7541a4a55cd49b02@syzkaller.appspotmail.com
 
-L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and  
-https://www.kernel.org/doc/html/latest/admin-guide/l1tf.html for details.
-==================================================================
-BUG: KASAN: use-after-free in kvm_iodevice_destructor  
-include/kvm/iodev.h:72 [inline]
-BUG: KASAN: use-after-free in kvm_io_bus_destroy  
-arch/x86/kvm/../../../virt/kvm/kvm_main.c:3401 [inline]
-BUG: KASAN: use-after-free in kvm_destroy_vm  
-arch/x86/kvm/../../../virt/kvm/kvm_main.c:740 [inline]
-BUG: KASAN: use-after-free in kvm_put_kvm+0xd7c/0xff0  
-arch/x86/kvm/../../../virt/kvm/kvm_main.c:770
-Read of size 8 at addr ffff8801cd479910 by task syz-executor822/5583
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
 
-CPU: 0 PID: 5583 Comm: syz-executor822 Not tainted  
-4.19.0-rc8-next-20181019+ #98
+======================================================
+WARNING: possible circular locking dependency detected
+4.19.0-rc8+ #291 Not tainted
+------------------------------------------------------
+syz-executor1/6832 is trying to acquire lock:
+000000007d4a82f2 ((wq_completion)"dio/%s"sb->s_id){+.+.}, at:  
+flush_workqueue+0x2db/0x1e10 kernel/workqueue.c:2652
+
+but task is already holding lock:
+00000000e2da6d71 (&sb->s_type->i_mutex_key#10){+.+.}, at: inode_trylock  
+include/linux/fs.h:758 [inline]
+00000000e2da6d71 (&sb->s_type->i_mutex_key#10){+.+.}, at:  
+ext4_file_write_iter+0x2a1/0x1420 fs/ext4/file.c:232
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+
+-> #2 (&sb->s_type->i_mutex_key#10){+.+.}:
+        down_write+0x8a/0x130 kernel/locking/rwsem.c:70
+        inode_lock include/linux/fs.h:738 [inline]
+        __generic_file_fsync+0xb5/0x200 fs/libfs.c:981
+        ext4_sync_file+0xa4f/0x1510 fs/ext4/fsync.c:120
+        vfs_fsync_range+0x140/0x220 fs/sync.c:197
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+        generic_write_sync include/linux/fs.h:2732 [inline]
+        dio_complete+0x75c/0x9e0 fs/direct-io.c:329
+        dio_aio_complete_work+0x20/0x30 fs/direct-io.c:341
+        process_one_work+0xc90/0x1b90 kernel/workqueue.c:2153
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+        worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+        kthread+0x35a/0x420 kernel/kthread.c:246
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+
+-> #1 ((work_completion)(&dio->complete_work)){+.+.}:
+        process_one_work+0xc0a/0x1b90 kernel/workqueue.c:2129
+        worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+        kthread+0x35a/0x420 kernel/kthread.c:246
+        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+
+-> #0 ((wq_completion)"dio/%s"sb->s_id){+.+.}:
+        lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3900
+        flush_workqueue+0x30a/0x1e10 kernel/workqueue.c:2655
+        drain_workqueue+0x2a9/0x640 kernel/workqueue.c:2820
+        destroy_workqueue+0xc6/0x9c0 kernel/workqueue.c:4155
+        sb_init_dio_done_wq+0x74/0x90 fs/direct-io.c:634
+        do_blockdev_direct_IO+0x12ea/0x9d70 fs/direct-io.c:1283
+        __blockdev_direct_IO+0x9d/0xc6 fs/direct-io.c:1417
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+        ext4_direct_IO_write fs/ext4/inode.c:3743 [inline]
+        ext4_direct_IO+0xae8/0x2230 fs/ext4/inode.c:3870
+        generic_file_direct_write+0x275/0x4b0 mm/filemap.c:3042
+        __generic_file_write_iter+0x2ff/0x630 mm/filemap.c:3221
+        ext4_file_write_iter+0x390/0x1420 fs/ext4/file.c:266
+        call_write_iter include/linux/fs.h:1808 [inline]
+        aio_write+0x3b1/0x610 fs/aio.c:1561
+        io_submit_one+0xaa1/0xf80 fs/aio.c:1835
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+        __do_sys_io_submit fs/aio.c:1916 [inline]
+        __se_sys_io_submit fs/aio.c:1887 [inline]
+        __x64_sys_io_submit+0x1b7/0x580 fs/aio.c:1887
+        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+Chain exists of:
+   (wq_completion)"dio/%s"sb->s_id -->  
+(work_completion)(&dio->complete_work) --> &sb->s_type->i_mutex_key#10
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&sb->s_type->i_mutex_key#10);
+                                lock((work_completion)(&dio->complete_work));
+                                lock(&sb->s_type->i_mutex_key#10);
+   lock((wq_completion)"dio/%s"sb->s_id);
+
+  *** DEADLOCK ***
+
+1 lock held by syz-executor1/6832:
+  #0: 00000000e2da6d71 (&sb->s_type->i_mutex_key#10){+.+.}, at:  
+inode_trylock include/linux/fs.h:758 [inline]
+  #0: 00000000e2da6d71 (&sb->s_type->i_mutex_key#10){+.+.}, at:  
+ext4_file_write_iter+0x2a1/0x1420 fs/ext4/file.c:232
+
+stack backtrace:
+CPU: 1 PID: 6832 Comm: syz-executor1 Not tainted 4.19.0-rc8+ #291
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  kvm_iodevice_destructor include/kvm/iodev.h:72 [inline]
-  kvm_io_bus_destroy arch/x86/kvm/../../../virt/kvm/kvm_main.c:3401 [inline]
-  kvm_destroy_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:740 [inline]
-  kvm_put_kvm+0xd7c/0xff0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:770
-  kvm_vm_release+0x42/0x50 arch/x86/kvm/../../../virt/kvm/kvm_main.c:781
-  __fput+0x3bc/0xa70 fs/file_table.c:279
-  ____fput+0x15/0x20 fs/file_table.c:312
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x1ad1/0x26d0 kernel/exit.c:867
-  do_group_exit+0x177/0x440 kernel/exit.c:970
-  __do_sys_exit_group kernel/exit.c:981 [inline]
-  __se_sys_exit_group kernel/exit.c:979 [inline]
-  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:979
+  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+  print_circular_bug.isra.33.cold.54+0x1bd/0x27d  
+kernel/locking/lockdep.c:1221
+  check_prev_add kernel/locking/lockdep.c:1861 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1974 [inline]
+  validate_chain kernel/locking/lockdep.c:2415 [inline]
+  __lock_acquire+0x33e4/0x4ec0 kernel/locking/lockdep.c:3411
+  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3900
+  flush_workqueue+0x30a/0x1e10 kernel/workqueue.c:2655
+  drain_workqueue+0x2a9/0x640 kernel/workqueue.c:2820
+  destroy_workqueue+0xc6/0x9c0 kernel/workqueue.c:4155
+  sb_init_dio_done_wq+0x74/0x90 fs/direct-io.c:634
+  do_blockdev_direct_IO+0x12ea/0x9d70 fs/direct-io.c:1283
+  __blockdev_direct_IO+0x9d/0xc6 fs/direct-io.c:1417
+  ext4_direct_IO_write fs/ext4/inode.c:3743 [inline]
+  ext4_direct_IO+0xae8/0x2230 fs/ext4/inode.c:3870
+  generic_file_direct_write+0x275/0x4b0 mm/filemap.c:3042
+  __generic_file_write_iter+0x2ff/0x630 mm/filemap.c:3221
+  ext4_file_write_iter+0x390/0x1420 fs/ext4/file.c:266
+  call_write_iter include/linux/fs.h:1808 [inline]
+  aio_write+0x3b1/0x610 fs/aio.c:1561
+  io_submit_one+0xaa1/0xf80 fs/aio.c:1835
+  __do_sys_io_submit fs/aio.c:1916 [inline]
+  __se_sys_io_submit fs/aio.c:1887 [inline]
+  __x64_sys_io_submit+0x1b7/0x580 fs/aio.c:1887
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43ecf8
-Code: Bad RIP value.
-RSP: 002b:00007ffdc564f908 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043ecf8
-RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00000000004be5a8 R08: 00000000000000e7 R09: ffffffffffffffd0
-R10: 00000000004002c8 R11: 0000000000000246 R12: 0000000000000001
-R13: 00000000006d0180 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 5583:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
-  kmalloc include/linux/slab.h:546 [inline]
-  kzalloc include/linux/slab.h:741 [inline]
-  kvm_vm_ioctl_register_coalesced_mmio+0xe8/0x4f0  
-arch/x86/kvm/../../../virt/kvm/coalesced_mmio.c:147
-  kvm_vm_ioctl+0x594/0x1d60 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3014
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:501 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-  __do_sys_ioctl fs/ioctl.c:709 [inline]
-  __se_sys_ioctl fs/ioctl.c:707 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 5583:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3817
-  coalesced_mmio_destructor+0x1ad/0x2a0  
-arch/x86/kvm/../../../virt/kvm/coalesced_mmio.c:99
-  kvm_iodevice_destructor include/kvm/iodev.h:73 [inline]
-  kvm_vm_ioctl_unregister_coalesced_mmio+0x263/0x330  
-arch/x86/kvm/../../../virt/kvm/coalesced_mmio.c:184
-  kvm_vm_ioctl+0x6bc/0x1d60 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3023
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:501 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-  __do_sys_ioctl fs/ioctl.c:709 [inline]
-  __se_sys_ioctl fs/ioctl.c:707 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801cd479900
-  which belongs to the cache kmalloc-64 of size 64
-The buggy address is located 16 bytes inside of
-  64-byte region [ffff8801cd479900, ffff8801cd479940)
-The buggy address belongs to the page:
-page:ffffea0007351e40 count:1 mapcount:0 mapping:ffff8801da800340 index:0x0
-flags: 0x2fffc0000000200(slab)
-raw: 02fffc0000000200 ffffea000736b488 ffffea000736d808 ffff8801da800340
-raw: 0000000000000000 ffff8801cd479000 0000000100000020 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801cd479800: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
-  ffff8801cd479880: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
-> ffff8801cd479900: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-                          ^
-  ffff8801cd479980: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
-  ffff8801cd479a00: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
-==================================================================
+RIP: 0033:0x457569
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f7d19a51c78 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
+RDX: 0000000020000540 RSI: 0000000000000008 RDI: 00007f7d19a31000
+RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f7d19a526d4
+R13: 00000000004be72d R14: 00000000004ce380 R15: 00000000ffffffff
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+syz-executor3 (6993) used greatest stack depth: 14648 bytes left
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+Page cache invalidation failure on direct I/O.  Possible data corruption  
+due to collision with buffered I/O!
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+File: /root/syzkaller-testdir701396558/syzkaller.CThVT5/11/bus PID: 14  
+Comm: kworker/0:1
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+Page cache invalidation failure on direct I/O.  Possible data corruption  
+due to collision with buffered I/O!
+File: /root/syzkaller-testdir446226321/syzkaller.6kf3D2/23/bus PID: 14  
+Comm: kworker/0:1
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+syz-executor5 (7484) used greatest stack depth: 12280 bytes left
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+Page cache invalidation failure on direct I/O.  Possible data corruption  
+due to collision with buffered I/O!
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+File: /root/syzkaller-testdir749472085/syzkaller.cOi3p9/41/bus PID: 5692  
+Comm: kworker/0:4
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+Page cache invalidation failure on direct I/O.  Possible data corruption  
+due to collision with buffered I/O!
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+File: /root/syzkaller-testdir625100220/syzkaller.kNEfa4/64/bus PID: 7011  
+Comm: kworker/0:5
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
+kobject: 'loop5' (00000000373a5938): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000d7ab4dab): kobject_uevent_env
+kobject: 'loop4' (00000000d7ab4dab): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop1' (0000000020356063): kobject_uevent_env
+kobject: 'loop1' (0000000020356063): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a99f8b0a): kobject_uevent_env
+kobject: 'loop2' (00000000a99f8b0a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop0' (0000000088c9da71): kobject_uevent_env
+kobject: 'loop0' (0000000088c9da71): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (00000000037f642c): kobject_uevent_env
+kobject: 'loop3' (00000000037f642c): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (00000000373a5938): kobject_uevent_env
 
 
 ---
