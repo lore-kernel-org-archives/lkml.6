@@ -2,84 +2,146 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEC2C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 15:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC01C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 15:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4C9E20892
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 15:37:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BC262154D
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 15:40:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GrnwCr6y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4C9E20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="agzrra2/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BC262154D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbeJTXsi (ORCPT
+        id S1727620AbeJTXuu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 19:48:38 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:51854 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727449AbeJTXsi (ORCPT
+        Sat, 20 Oct 2018 19:50:50 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:39197 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727584AbeJTXuu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 19:48:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:Cc:References:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=nerEbAYZT83BGSvPddg60RBR7iK7AxVfczTmYf/1hfg=; b=GrnwCr6y1EBxYgeTusZ937bAUA
-        hCdJaiI6XxIAdijHwz5+9LXnM8RCbcnsG4ViHrHcouQIJhQ0ffyZBUe1G+8l+lAbUXJDwYOoPsv4C
-        JexSJar7NNYG29fKIyrouyEmOqnvN4LbGa4P4Inb+37yrtxwUF2Bb1rHMMHxknwumHcmjMqUkCJDr
-        nGYzBx6R2vjOLwEeGL4Q85hKA9yOpozdSCtWqk44iAHxeuBK/Y70j2OIxVYk9ExAr1Q80ZzQWGX3Y
-        7I8uGI3fZ7NKlqHmkvVV1FBWZOqkffz3ykpuHdE9SxDVpIO16VmfTUiQM5SQPMYIx6ep68rhzXXw1
-        L4jRM77Q==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gDtJi-0006MT-20; Sat, 20 Oct 2018 15:37:30 +0000
-Subject: Re: Memory management issue in 4.18.15
-To:     Spock <dairinin@gmail.com>, linux-kernel@vger.kernel.org,
-        Linux MM <linux-mm@kvack.org>
-References: <CADa=ObrwYaoNFn0x06mvv5W1F9oVccT5qjGM8qFBGNPoNuMUNw@mail.gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Rik van Riel <riel@surriel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a655c898-0701-f10d-bbf3-8a0090544560@infradead.org>
-Date:   Sat, 20 Oct 2018 08:37:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 20 Oct 2018 19:50:50 -0400
+Received: by mail-yb1-f196.google.com with SMTP id j193-v6so3199033ybj.6
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 08:39:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NjudrxXxvqsbj/szpVbkWeHhVtdGnETmnnagOvEJsJU=;
+        b=agzrra2/ye1/bw8BbvAfXXkZtAc96bONszTLu7U7PfcKTa2KB+3buqsrOYdNI/ogZM
+         OrsJje80YG3UNuQ/0RZLq68apkHeJQ0L7Omv7T/ebc7Y30HVIDs+szVJtszhGme15LNR
+         A7H38HAKLsGVzVeOS+rdtG31+LbH621KwLsbI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NjudrxXxvqsbj/szpVbkWeHhVtdGnETmnnagOvEJsJU=;
+        b=DZLe7pd5LFqmi3vzzzTuW1qTz/EyGnp3DJd1w8azyIIy5odGmQyq2G64mej7ulx38B
+         h+NOeZuB66r6oZA2XoAvbGpkCiLiHUaUNRO66zlzXdWke5rXdxxhx0SoWEB5fGZpEGBC
+         LPv5lFT9tOQuyHJq+tk/bteDhfp3dEICCZoyvn9keGiJYa0h+o3CzP47C3hiRK8b31lC
+         tvIGuK0nlpLTNY3P/2UQuB5Uhstn8uGguWietvypmoiNfm/xu0ZPPgI+VwPZIiGb56q4
+         ozRRYF5SGTZNriqsClWueFWwHESBT8HlfOzDXQP79ub62GTG15G/GuhwF8Rg/gOhJCxU
+         wKGQ==
+X-Gm-Message-State: ABuFfogJanmgxmVJoIdArKtnSACvjbO4yWZMgTxM3HkLBFMzZldCr7xq
+        tdFIm/sEfTuFlHHuRzKBziI+ZgrKuTM=
+X-Google-Smtp-Source: ACcGV62xJp//JRUSuZ9Z87XJvb1n35qSiOeZz39KMtulvnOsacGA/lde3PFj4nrIaX3fxKazxV0w6w==
+X-Received: by 2002:a25:b083:: with SMTP id f3-v6mr5129249ybj.293.1540049997164;
+        Sat, 20 Oct 2018 08:39:57 -0700 (PDT)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id q1-v6sm7157877ywa.92.2018.10.20.08.39.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 20 Oct 2018 08:39:55 -0700 (PDT)
+Received: by mail-yb1-f175.google.com with SMTP id k132-v6so3319029ybc.2
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 08:39:54 -0700 (PDT)
+X-Received: by 2002:a25:24c6:: with SMTP id k189-v6mr15981307ybk.373.1540049994583;
+ Sat, 20 Oct 2018 08:39:54 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CADa=ObrwYaoNFn0x06mvv5W1F9oVccT5qjGM8qFBGNPoNuMUNw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
+ <9696282.0ldyWdpzWo@avalon> <CAAFQd5Bb2v0iU6GAwOKtc-4kv1V+P_4Co7=OUYg77wfmKQQ=kA@mail.gmail.com>
+In-Reply-To: <CAAFQd5Bb2v0iU6GAwOKtc-4kv1V+P_4Co7=OUYg77wfmKQQ=kA@mail.gmail.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Sun, 21 Oct 2018 00:39:42 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5CdjZKEeZmowMKVLVKhiWPxEK2f7H+xNhhXAPn7O-S33g@mail.gmail.com>
+Message-ID: <CAAFQd5CdjZKEeZmowMKVLVKhiWPxEK2f7H+xNhhXAPn7O-S33g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[add linux-mm mailing list + people]
+On Thu, Oct 18, 2018 at 7:03 PM Tomasz Figa <tfiga@chromium.org> wrote:
+>
+> Hi Laurent,
+>
+> On Wed, Oct 17, 2018 at 10:34 PM Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> >
+> > Hi Tomasz,
+> >
+> > Thank you for the patch.
+>
+> Thanks for your comments! Please see my replies inline.
+>
+> >
+> > On Tuesday, 24 July 2018 17:06:20 EEST Tomasz Figa wrote:
+[snip]
+> > > The driver must also set
+> > > +     ``V4L2_BUF_FLAG_LAST`` in :c:type:`v4l2_buffer` ``flags`` field on the
+> > > +     buffer on the ``CAPTURE`` queue containing the last frame (if any)
+> > > +     produced as a result of processing the ``OUTPUT`` buffers queued
+> > > +     before ``V4L2_DEC_CMD_STOP``. If no more frames are left to be
+> > > +     returned at the point of handling ``V4L2_DEC_CMD_STOP``, the driver
+> > > +     must return an empty buffer (with :c:type:`v4l2_buffer`
+> > > +     ``bytesused`` = 0) as the last buffer with ``V4L2_BUF_FLAG_LAST`` set
+> > > +     instead. Any attempts to dequeue more buffers beyond the buffer marked
+> > > +     with ``V4L2_BUF_FLAG_LAST`` will result in a -EPIPE error from
+> > > +     :c:func:`VIDIOC_DQBUF`.
+> > > +
+> > > +   * If the ``CAPTURE`` queue is NOT streaming, no action is necessary for
+> > > +     ``CAPTURE`` queue and the driver must send a ``V4L2_EVENT_EOS``
+> > > +     immediately after all ``OUTPUT`` buffers in question have been
+> > > +     processed.
+> >
+> > What is the use case for this ? Can't we just return an error if decoder isn't
+> > streaming ?
+> >
+>
+> Actually this is wrong. We want the queued OUTPUT buffers to be
+> processed and decoded, so if the CAPTURE queue is not yet set up
+> (initialization sequence not completed yet), handling the
+> initialization sequence first will be needed as a part of the drain
+> sequence. I've updated the document with that.
 
+I might want to take this back. The client could just drive the
+initialization to completion on its own and start the drain sequence
+after that. Let me think if it makes anything easier. For reference, I
+don't see any compatibility constraint here, since the existing user
+space already works like that.
 
-On 10/20/18 4:41 AM, Spock wrote:
-> Hello,
-> 
-> I have a workload, which creates lots of cache pages. Before 4.18.15,
-> the behavior was very stable: pagecache is constantly growing until it
-> consumes all the free memory, and then kswapd is balancing it around
-> low watermark. After 4.18.15, once in a while khugepaged is waking up
-> and reclaims almost all the pages from pagecache, so there is always
-> around 2G of 8G unused. THP is enabled only for madvise case and are
-> not used.
-> 
-> The exact change that leads to current behavior is
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-4.18.y&id=62aad93f09c1952ede86405894df1b22012fd5ab
-> 
-
-
--- 
-~Randy
+Best regards,
+Tomasz
