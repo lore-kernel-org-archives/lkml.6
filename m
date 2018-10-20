@@ -2,79 +2,92 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB05ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 06:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6CBC67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 06:58:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34B52214C3
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 06:42:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIPoyYny"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34B52214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id E810121486
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 06:58:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E810121486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbeJTOvq (ORCPT
+        id S1727043AbeJTPG1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 10:51:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726955AbeJTOvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 10:51:46 -0400
-Received: from localhost (10.193.71.37.rev.sfr.net [37.71.193.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6329E2087A;
-        Sat, 20 Oct 2018 06:42:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540017744;
-        bh=CvnySaw9/RhjkzZP6jYLuCdotzp1sDzi9oDpt1qUx3E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SIPoyYnyQ35ltQQaw4YU/rHKL4V1Gls3qy+rk87t/4zZW4cS86QDJjDqbigxeP270
-         e/osTUEzwHYx6zOemb+6Qf/vb77exAVfPiHXZEWFGseqqYnYmEqSl/J7oDQ5IocZ/I
-         vcEFnUqJmVy/LpNF5ZLAHJJ+EzCY+tQAIULDuNiw=
-Date:   Sat, 20 Oct 2018 08:42:22 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.18 00/53] 4.18.16-stable review
-Message-ID: <20181020064222.GC15318@kroah.com>
-References: <20181018175416.561567978@linuxfoundation.org>
- <20181019155029.GC2992@roeck-us.net>
+        Sat, 20 Oct 2018 11:06:27 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40293 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbeJTPG1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 11:06:27 -0400
+Received: from [111.196.56.27] (helo=localhost.localdomain)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <aaron.ma@canonical.com>)
+        id 1gDlBx-000313-A9; Sat, 20 Oct 2018 06:56:57 +0000
+Subject: Re: [PATCH 2/2] vgaarb: Keep adding VGA device in queue
+From:   Aaron Ma <aaron.ma@canonical.com>
+To:     Dave Airlie <airlied@linux.ie>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, airlied@redhat.com,
+        sean@poorly.run, seanpaul@chromium.org
+Cc:     Alex Deucher <alexdeucher@gmail.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        maarten.lankhorst@linux.intel.com
+References: <1535739600-8842-1-git-send-email-aaron.ma@canonical.com>
+ <1535739600-8842-2-git-send-email-aaron.ma@canonical.com>
+ <CADnq5_P=_Kxg8y48NRQZjKzPi-yaAwKRQhpQ6qEav2rZijHucw@mail.gmail.com>
+ <e4797ed7-920b-5d19-c1f4-212d53cf98cb@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=aaron.ma@canonical.com; prefer-encrypt=mutual; keydata=
+ xsBNBFffeLkBCACi4eE4dPsgWN6B9UDOVcAvb5QgU/hRG6yS0I1lGKQv4KA+bke0c5g8clbO
+ 9gIlIl2bityfA9NzBsDik4Iei3AxMbFyxv9keMwcOFQBIOZF0P3f05qjxftF8P+yp9QTV4hp
+ BkFzsXzWRgXN3r8hU8wqZybepF4B1C83sm2kQ5A5N0AUGbZli9i2G+/VscG9sWfLy8T7f4YW
+ MjmlijCjoV6k29vsmTWQPZ7EApNpvR5BnZQPmQWzkkr0lNXlsKcyLgefQtlwg6drK4fe4wz0
+ ouBIHJEiXE1LWK1hUzkCUASra4WRwKk1Mv/NLLE/aJRqEvF2ukt3uVuM77RWfl7/H/v5ABEB
+ AAHNIUFhcm9uIE1hIDxhYXJvbi5tYUBjYW5vbmljYWwuY29tPsLAdwQTAQgAIQUCV994uQIb
+ AwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDNxCzQfVU6ntJ9B/9aVy0+RkLqF9QpLmw+
+ LAf1m3Fd+4ZarPTerqDqkLla3ekYhbrEtlI1mYuB5f+gtrIjmcW27gacHdslKB9YwaL8B4ZB
+ GJKhcrntLg4YPzYUnXZkHHTv1hMw7fBYw82cBT+EbG0Djh6Po6Ihqyr3auHhfFcp1PZH4Mtq
+ 6hN5KaDZzF/go+tRF5e4bn61Nhdue7mrhFSlfkzLG2ehHWmRV+S91ksH81YDFnazK0sRINBx
+ V1S8ts3WJ2f1AbgmnDlbK3c/AfI5YxnIHn/x2ZdXj1P/wn7DgZHmpMy5DMuk0gN34NLUPLA/
+ cHeKoBAF8emugljiKecKBpMTLe8FrVOxbkrazsBNBFffeLkBCACweKP3Wx+gK81+rOUpuQ00
+ sCyKzdtMuXXJ7oL4GzYHbLfJq+F+UHpQbytVGTn3R5+Y61v41g2zTYZooaC+Hs1+ixf+buG2
+ +2LZjPSELWPNzH9lsKNlCcEvu1XhyyHkBDbnFFHWlUlql3nSXMo//dOTG/XGKaEaZUxjCLUC
+ 8ehLc16DJDvdXsPwWhHrCH/4k92F6qQ14QigBMsl75jDTDJMEYgRYEBT1D/bwxdIeoN1BfIG
+ mYgf059RrWax4SMiJtVDSUuDOpdwoEcZ0FWesRfbFrM+k/XKiIbjMZSvLunA4FIsOdWYOob4
+ Hh0rsm1G+fBLYtT+bE26OWpQ/lSn4TdhABEBAAHCwF8EGAEIAAkFAlffeLkCGwwACgkQzcQs
+ 0H1VOp6p5Af/ap5EVuP1AhFdPD3pXLNrUUt72W3cuAOjXyss43qFC2YRjGfktrizsDjQU46g
+ VKoD6EW9XUPgvYM+k8BJEoXDLhHWnCnMKlbHP3OImxzLRhF4kdlnLicz1zKRcessQatRpJgG
+ NIiD+eFyh0CZcWBO1BB5rWikjO/idicHao2stFdaBmIeXvhT9Xp6XNFEmzOmfHps+kKpWshY
+ 9LDAU0ERBNsW4bekOCa/QxfqcbZYRjrVQvya0EhrPhq0bBpzkIL/7QSBMcdv6IajTlHnLARF
+ nAIofCEKeEl7+ksiRapL5Nykcbt4dldE3sQWxIybC94SZ4inENKw6I8RNpigWm0R5w==
+Message-ID: <b58c0d18-b56e-3dc7-a896-5adfbf5f7e36@canonical.com>
+Date:   Sat, 20 Oct 2018 14:56:36 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181019155029.GC2992@roeck-us.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <e4797ed7-920b-5d19-c1f4-212d53cf98cb@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 08:50:29AM -0700, Guenter Roeck wrote:
-> On Thu, Oct 18, 2018 at 07:53:53PM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.18.16 release.
-> > There are 53 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> 
-> For v4.18.15-54-g5a51f0f:
-> 
-> Build results:
-> 	total: 136 pass: 136 fail: 0
-> Qemu test results:
-> 	total: 321 pass: 321 fail: 0
-> 
-> Details are available at https://kerneltests.org/builders/.
+Hi David:
 
-Great, thanks for testing all of these and letting me know.
+get_maintainer.pl still got your old e-mail.
 
-greg k-h
+Add airlied@redhat.com.
+
+Loop Sean too.
+
+Please review and apply these 2 patches.
+
+Thanks,
+Aaron
