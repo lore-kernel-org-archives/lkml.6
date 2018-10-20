@@ -2,98 +2,96 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4784C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 08:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25454C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 08:38:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 756D521476
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 08:31:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 756D521476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id CDAFC2150C
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 08:38:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDAFC2150C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbeJTQl1 (ORCPT
+        id S1727341AbeJTQrt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 12:41:27 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:55596 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726516AbeJTQl1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 12:41:27 -0400
-Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3712812DE57FB;
-        Sat, 20 Oct 2018 01:31:49 -0700 (PDT)
-Date:   Sat, 20 Oct 2018 01:31:38 -0700 (PDT)
-Message-Id: <20181020.013138.902940115880074117.davem@davemloft.net>
-To:     acme@kernel.org
-CC:     linux-kernel@vger.kernel.org
-Subject: perf handling of unknown symbols...
-From:   David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 20 Oct 2018 01:31:49 -0700 (PDT)
+        Sat, 20 Oct 2018 12:47:49 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:49670 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727270AbeJTQrt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 12:47:49 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id BIrXYzGXXK2E; Sat, 20 Oct 2018 10:37:51 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BDE4000329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bde:4000:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D4C561EC0266;
+        Sat, 20 Oct 2018 10:37:50 +0200 (CEST)
+Date:   Sat, 20 Oct 2018 10:37:42 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Andi Kleen <andi@firstfloor.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v1] x86/microcode: Handle negative microcode revisions
+Message-ID: <20181020083742.GA28301@zn.tnic>
+References: <20181020001137.31461-1-andi@firstfloor.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181020001137.31461-1-andi@firstfloor.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 19, 2018 at 05:11:37PM -0700, Andi Kleen wrote:
+> From: Andi Kleen <ak@linux.intel.com>
+> 
+> The Intel ucode revision space is unsigned. Inside Intel there are special
 
-I was able to, I think, track down why I get unknown symbols with perf
-top.
+s/ucode/microcode/g
 
-It happens for processes that start up while perf is running.
+> microcodes that have the highest bit set, and they are considered to have
 
-It's due to races if a process changes it's address space really
-quickly while perf is processing all of the events.
+s/microcodes/microcode revisions/g
 
-If we are probing procfs and/or sysfs or something like that to gather
-information before a process exec'd or fork'd, but after it has done
-so, the dso lookups and stuff are going to fail.
+> a higher revision than any microcodes that don't have this bit set.
+> 
+> The function comparing the microcodes in the Linux driver compares
+> u32 with int, which ends up being signed extended to long on 64bit
+> systems. This results in these highest bit set microcodes not loading
+> because their revision appears negative and smaller than the
+> existing microcode.
+> 
+> Change the comparison to unsigned. With that the loading works
+> as expected.
+> 
+> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> ---
+>  arch/x86/kernel/cpu/microcode/intel.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+> index 16936a24795c..e95cebdd5993 100644
+> --- a/arch/x86/kernel/cpu/microcode/intel.c
+> +++ b/arch/x86/kernel/cpu/microcode/intel.c
+> @@ -93,7 +93,7 @@ static int find_matching_signature(void *mc, unsigned int csig, int cpf)
+>  /*
+>   * Returns 1 if update has been found, 0 otherwise.
+>   */
+> -static int has_newer_microcode(void *mc, unsigned int csig, int cpf, int new_rev)
+> +static int has_newer_microcode(void *mc, unsigned int csig, int cpf, unsigned new_rev)
 
-So we end up with an unresolvable dso, and an al.sym which is NULL and
-then we hit this check in perf_event__process_sample() of
-builtin-top.c:
+I'm gonna let you run checkpatch yourself to find out what the problem
+here is.
 
-	if (al.sym == NULL || !al.sym->idle) {
+-- 
+Regards/Gruss,
+    Boris.
 
-Before 2011 and commit:
-
-commit ab81f3fd350c510730adb1ca40ef55c2b2952121
-Author: Arnaldo Carvalho de Melo <acme@redhat.com>
-Date:   Wed Oct 5 19:16:15 2011 -0300
-
-    perf top: Reuse the 'report' hist_entry/hists classes
-
-the test was just:
-
-	if (!al.sym->ignore) {
-
-and the commit message even mentions:
-
-    This actually fixes several problems we had in the old 'perf top':
-    
-    1. Unresolved symbols not show, limitation that came from the old
-       "KernelTop" codebase, to solve it we would need to do changes
-       that would make sym_entry have most of the hist_entry fields.
- ...
-
-The problem with still processing samples without a resolved symbol is
-that these histogram entries created will "poison" that memory area.
-
-We end up with all of these histogram entries, one for every single PC
-ever sampled in these temporarily unresolvable areas.  So all future
-samples match up, and accumulate, into those unresolved entries.
-
-They never get collapsed back into a histogram entry which covers the
-eventually resolved symbol's range.
-
-If symbol resolution is in fact racy as I describe above, then we
-should handle unresolved symbols better.  Especially the case where an
-initially unresolved area becomes resolved.
+Good mailing practices for 400: avoid top-posting and trim the reply.
