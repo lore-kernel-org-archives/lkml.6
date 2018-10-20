@@ -3,67 +3,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A644DC67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 17:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFC7C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 17:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78B7421533
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 17:47:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78B7421533
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jjacky.com
+	by mail.kernel.org (Postfix) with ESMTP id E0EC920869
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 17:50:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0EC920869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbeJUB6U (ORCPT
+        id S1727712AbeJUCBm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 21:58:20 -0400
-Received: from mail.jjacky.com ([23.29.69.116]:57419 "EHLO mail.jjacky.com"
+        Sat, 20 Oct 2018 22:01:42 -0400
+Received: from mail.ispras.ru ([83.149.199.45]:37722 "EHLO mail.ispras.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727735AbeJUB6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 21:58:20 -0400
-X-Greylist: delayed 392 seconds by postgrey-1.27 at vger.kernel.org; Sat, 20 Oct 2018 21:58:16 EDT
-Received: by mail.jjacky.com (OpenSMTPD) with ESMTP id 1deeddaa;
-        Sat, 20 Oct 2018 17:40:26 +0000 (UTC)
-From:   Olivier Brunel <jjk@jjacky.com>
-To:     Network Development <netdev@vger.kernel.org>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        "David S . Miller" <davem@davemloft.net>,
-        Olivier Brunel <jjk@jjacky.com>
-Subject: [PATCH 2/2] net: bpfilter: Set user mode helper's command line
-Date:   Sat, 20 Oct 2018 19:39:57 +0200
-Message-Id: <20181020173957.31239-3-jjk@jjacky.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181020173957.31239-1-jjk@jjacky.com>
-References: <20180826180816.04ef7d16@jjacky.com> <20180827183122.0b4ac65e@jjacky.com> <20180828033500.g3siwst5h2ckewwb@ast-mbp> <20180905175243.78a6ba81@jjacky.com> <CAADnVQ+xFfwV67BRXD0epoTwKz54W3mcYHXVWBd1iWb94p+zpg@mail.gmail.com>
- <20181020173957.31239-1-jjk@jjacky.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727447AbeJUCBm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 22:01:42 -0400
+Received: from localhost.localdomain (unknown [85.140.182.12])
+        by mail.ispras.ru (Postfix) with ESMTPSA id 940D55400A8;
+        Sat, 20 Oct 2018 20:50:27 +0300 (MSK)
+From:   Alexey Khoroshilov <khoroshilov@ispras.ru>
+To:     Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org
+Subject: [PATCH] media: mtk-vcodec: Release device nodes in mtk_vcodec_init_enc_pm()
+Date:   Sat, 20 Oct 2018 20:50:19 +0300
+Message-Id: <1540057819-5075-1-git-send-email-khoroshilov@ispras.ru>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Olivier Brunel <jjk@jjacky.com>
----
- net/bpfilter/bpfilter_kern.c | 1 +
- 1 file changed, 1 insertion(+)
+of_parse_phandle() returns the device node with refcount incremented.
+There are two nodes that are used temporary in mtk_vcodec_init_enc_pm(),
+but their refcounts are not decremented.
 
-diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
-index 94e88f510..7acfc8308 100644
---- a/net/bpfilter/bpfilter_kern.c
-+++ b/net/bpfilter/bpfilter_kern.c
-@@ -92,6 +92,7 @@ static int __init load_umh(void)
- 	int err;
+The patch adds one of_node_put() and fixes returning error codes.
+
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+---
+ drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
+index 3e73e9db781f..7c025045ea90 100644
+--- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
++++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
+@@ -41,25 +41,27 @@ int mtk_vcodec_init_enc_pm(struct mtk_vcodec_dev *mtkdev)
+ 	node = of_parse_phandle(dev->of_node, "mediatek,larb", 0);
+ 	if (!node) {
+ 		mtk_v4l2_err("no mediatek,larb found");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 	pdev = of_find_device_by_node(node);
++	of_node_put(node);
+ 	if (!pdev) {
+ 		mtk_v4l2_err("no mediatek,larb device found");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 	pm->larbvenc = &pdev->dev;
  
- 	/* fork usermode process */
-+	info.cmdline = "bpfilter_umh";
- 	err = fork_usermode_blob(&bpfilter_umh_start,
- 				 &bpfilter_umh_end - &bpfilter_umh_start,
- 				 &info);
+ 	node = of_parse_phandle(dev->of_node, "mediatek,larb", 1);
+ 	if (!node) {
+ 		mtk_v4l2_err("no mediatek,larb found");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 
+ 	pdev = of_find_device_by_node(node);
++	of_node_put(node);
+ 	if (!pdev) {
+ 		mtk_v4l2_err("no mediatek,larb device found");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 
+ 	pm->larbvenclt = &pdev->dev;
 -- 
-2.19.0
+2.7.4
 
