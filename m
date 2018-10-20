@@ -2,83 +2,103 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2351C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 18:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E1BC67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 19:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43A2F2157C
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 18:59:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4b3uWapK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43A2F2157C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id B5E822157C
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 19:02:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5E822157C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727682AbeJUDLQ (ORCPT
+        id S1727683AbeJUDNd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 23:11:16 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:39025 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727413AbeJUDLQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 23:11:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=8kmkDCoZmqYKf4VyVB0zMdxW6hEP3IDpzvcuJ/13TBY=;
-        b=4b3uWapKh+0J4NhEPRkxIfNZCJ2j0HVfp3Lf0gTXZv4Pwhh28q1ODAMKedsGSbYoExpeEzSDyF/Gmaq7G5VQ5Yx8dMm8ZXOdnPAzClfdJStLk7m3o2y5SM6+V2EcfrrGu6nppiRhaNGRdxHrZ8T3JAX7Wrlkclxm+hHrBc5118Q=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gDwTT-0003LH-A2; Sat, 20 Oct 2018 20:59:47 +0200
-Date:   Sat, 20 Oct 2018 20:59:47 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        LABBE Corentin <clabbe@baylibre.com>, davem@davemloft.net,
-        fugang.duan@nxp.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: fec: Add missing SPEED_
-Message-ID: <20181020185947.GA6615@lunn.ch>
-References: <2621cbc9-47ed-ce2a-b7ee-262f17dc138f@gmail.com>
- <20181018184715.GA31736@Red>
- <d1461619-1344-e581-4eef-35cf8bbb5336@gmail.com>
- <20181018191612.GB31736@Red>
- <5cb0731b-83c5-5ed5-d022-98f8627d1737@gmail.com>
- <20181018195909.GA11317@Red>
- <1b784f69-3ec2-feb2-81e1-9a335cf477c3@gmail.com>
- <f1933c0a-d124-a7ac-afab-2fa8f88907ab@gmail.com>
- <20181020153922.GC1596@lunn.ch>
- <c8f4f203-b2b6-81ba-2c79-85501a640948@gmail.com>
+        Sat, 20 Oct 2018 23:13:33 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:40470 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727413AbeJUDNc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 23:13:32 -0400
+Received: by mail-vs1-f65.google.com with SMTP id y195so11508717vsc.7
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 12:02:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OLSZUhNWirZLLpU4cR5N+Iph7vNvX9GowAKsi8+qEbI=;
+        b=twUrNlDFF7/kACTceBcxA14eUX7J7XlfcvyxJqx6OtUq6epsK5w/DIo90gEwQKBenJ
+         CsSKsgTdGOIDd0NsbyzavpsFmxaOzGaoIvxWUKheMf9c3UINalyOcQSHKXlWOjWGhVQd
+         z4MQb149ot+4TTBr2DVbrfGADQdpIg8SfTYzUbUYQ7EsV7MbgK4eedfJJLPqsrXW/ZcI
+         c+M0xFFpSmdom5fGTxeCBXYooxvlt3X09w6Bq0HZwygUnkSVJwBz+0ER18CoGWJjxoFU
+         IPu9xk8rGzbhWzXIwmjZtk8rVE7C9/345Gb4mHT60tY37B/VPVlJWxTE1MY3BOLRDE7Y
+         3tZg==
+X-Gm-Message-State: ABuFfohefJQKnvSOJz1M2GegLpxK/6yl+mf8mNLgFTVEw5ucIo3ez98N
+        T5dD7gUB1Hj+fSZ5PoYHHSOHJYD/M9qoLezv/6I=
+X-Google-Smtp-Source: ACcGV60jif4M/kJ9B45I8UuI3Wy0vozay2RLRk4JchsIW8CF5epXuTFga+VQAhcZ+Aw3dWZ55w69CdZkUmSFMlqEgp8=
+X-Received: by 2002:a67:f3cc:: with SMTP id j12mr14354774vsn.96.1540062129024;
+ Sat, 20 Oct 2018 12:02:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c8f4f203-b2b6-81ba-2c79-85501a640948@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20181020134908.GA32218@kroah.com> <20181020135058.GF32218@kroah.com>
+In-Reply-To: <20181020135058.GF32218@kroah.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sat, 20 Oct 2018 21:01:57 +0200
+Message-ID: <CAMuHMdUR_7GgFL0wqh9AdEq=HWmxPB=HzarEgY5TeLo67+S1LA@mail.gmail.com>
+Subject: Re: [PATCH 5/7] Code of Conduct Interpretation: Put in the proper URL
+ for the committee
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ksummit-discuss@lists.linuxfoundation.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Olof Johansson <olof@lixom.net>, Chris Mason <clm@fb.com>,
+        mishi@linux.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I dare to dispute here ;) Above code snippet from phy_probe() will
-> (try to) set also SUPPORTED_Asym_Pause, because phydrv->features
-> doesn't include any of the two pause flags.
-> The statement in bcm63xx_config_init you refer to seems to be a
-> no-op to me therefore.
-> 
-> I'd say the correct way is to change the PHY config like this:
-> .features	= PHY_BASIC_FEATURES | SUPPORTED_Pause;
-> It's exactly the use case the code snippet above covers.
+Hi Greg,
 
-Yes, you are correct.
+On Sat, Oct 20, 2018 at 3:53 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> There was a blank <URL> reference for how to find the Code of Conduct
+> Committee.  Fix that up by pointing it to the correct kernel.org website
+> page location.
+>
+> Acked-by: Chris Mason <clm@fb.com>
+> Acked-by: Olof Johansson <olof@lixom.net>
+> Acked-by: Theodore Ts'o <tytso@mit.edu>
+> Acked-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-But it is no longer possible to just do PHY_BASIC_FEATURES |
-SUPPORTED_Pause because .features is no loner a u32 but a linux
-bitmap.
+Thanks for your patch!
 
-We need to keep the same idea, allow the PHY driver to indicate it
-supports a subset of Pause, and if not, enable pause by default.
+> --- a/Documentation/process/code-of-conduct-interpretation.rst
+> +++ b/Documentation/process/code-of-conduct-interpretation.rst
+> @@ -123,8 +123,9 @@ Enforcement
+>
+>  The address listed in the Code of Conduct goes to the Code of Conduct
+>  Committee.  The exact members receiving these emails at any given time
+> -are listed at <URL>.  Members can not access reports made before they
+> -joined or after they have left the committee.
+> +are listed at https://kernel.org/code-of-conduct.html.  Members can not
+> +access reports made before they joined or after they have left the
+> +committee.
 
-Maybe the easiest way is to move this chunk of code to after the probe
-function is called.
+This seems to be the wrong URL? It just points to the CoC, not to the TAB
+members.
 
-	 Andrew
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
