@@ -2,149 +2,112 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AFF8C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 04:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F82C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 04:05:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C314A21470
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 04:04:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C314A21470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C08C121470
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 04:05:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C08C121470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbeJTMNP (ORCPT
+        id S1726999AbeJTMOu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 08:13:15 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:33485 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbeJTMNO (ORCPT
+        Sat, 20 Oct 2018 08:14:50 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:53420 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726176AbeJTMOu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 08:13:14 -0400
-Received: by mail-qt1-f194.google.com with SMTP id q40-v6so40700745qte.0;
-        Fri, 19 Oct 2018 21:04:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JOqe8DV/lyxO6EOK7R9RWl/4ZUWIgIsOcW9wNDNPKuk=;
-        b=Gfb/iozNr7COR0LC4wEOOs6jEbJYQIgVJLDtt2RGCfT3dOv4cJhpRg3THQDscqh/HH
-         4ZouNTtja3pxgJzhBHShlYgY3EuM/luZhZ3ybqnysuzdkD/ih7ph93uYpMBe8+wSv3/M
-         sqpo+YtJJ0BcP1VNbzf1tt13fxf749DAVyea2FSPsh0btE80jrB4KGUCFbuYUtrMhvGY
-         AJpfdLkUgggHtAZNsrneQWxEwNIQn4bAOycd+n+ViLwCXrYEhsXQULx7/U9Lb4RUwFlO
-         /r1vQMejdp21G/LFE9Mxc1zYMIYKKvpuY1O1v9JlHQjIPBHkCsJxjANGBgC/tP5LOuq0
-         UprA==
-X-Gm-Message-State: ABuFfohyJNc8XGJOxWwuBJ9ESkXWkwiwsWSE+zJQDjVvPZ2JfwQAplyJ
-        JBqnKFWs4+hO3UtvdM7WFJE=
-X-Google-Smtp-Source: ACcGV60mHyyI63LvpJKnXbXm1cLBNhIgTrL3EeUG9O6YLV+bU6H1i1+qi1hpYCPhufyqNFhT5vByyw==
-X-Received: by 2002:ac8:27c5:: with SMTP id x5-v6mr34816570qtx.61.1540008255735;
-        Fri, 19 Oct 2018 21:04:15 -0700 (PDT)
-Received: from dennisz-mbp ([2620:10d:c091:180::1:fa1e])
-        by smtp.gmail.com with ESMTPSA id m68-v6sm4339062qkm.90.2018.10.19.21.04.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Oct 2018 21:04:14 -0700 (PDT)
-Date:   Sat, 20 Oct 2018 00:04:11 -0400
-From:   Dennis Zhou <dennis@kernel.org>
-To:     valdis.kletnieks@vt.edu
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [BUG] ext4/block null pointer crashes in linux-next
-Message-ID: <20181020040411.GA41962@dennisz-mbp>
-References: <13987.1539646128@turing-police.cc.vt.edu>
- <20181016160203.GA88193@dennisz-mbp.dhcp.thefacebook.com>
- <20181016182513.GA9886@dennisz-mbp.dhcp.thefacebook.com>
- <13448.1539791255@turing-police.cc.vt.edu>
- <20181017212029.GA85639@dennisz-mbp.dhcp.thefacebook.com>
- <14614.1539964356@turing-police.cc.vt.edu>
- <20181019222100.GA20900@dennisz-mbp.dhcp.thefacebook.com>
- <19715.1540003639@turing-police.cc.vt.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19715.1540003639@turing-police.cc.vt.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sat, 20 Oct 2018 08:14:50 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5111E1262C507;
+        Fri, 19 Oct 2018 21:05:51 -0700 (PDT)
+Date:   Fri, 19 Oct 2018 21:05:49 -0700 (PDT)
+Message-Id: <20181019.210549.1285253275146712779.davem@davemloft.net>
+To:     acme@kernel.org
+CC:     linux-kernel@vger.kernel.org
+Subject: perf overlapping maps...
+From:   David Miller <davem@davemloft.net>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 19 Oct 2018 21:05:51 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 10:47:19PM -0400, valdis.kletnieks@vt.edu wrote:
-> On Fri, 19 Oct 2018 18:21:00 -0400, Dennis Zhou said:
-> 
-> > Do you by chance run any encryption or anything on top of your hard
-> > drive or ssd?
-> 
-> ext4 on an LVM LV that's part of a PV that's inside a cryptLUKS partition on a hard drive..
-> 
-> So lots of nested levels there.
-> 
 
-Awesome, that explains why I wasn't able to easily reproduce the bug!
+Symbols aren't exactly right all the time on sparc and even the owner
+of a sample is set to "unknown" from time to time so I turned on some
+debugging to investigate.
 
-> > I thought of another issue that may explain what's going on. It has to
-> > do with how a bio can go through make_request() several times. However,
-> > I do association on the first entry, but subsequent requests may go to
-> > separate queues. Therefore association and the blk_get_rl() returns the
-> > wrong request_list. It may be that a particular blkg doesn't have a
-> > fully initialized request_list.
-> 
-> > Thanks for being patient with me. Would you be able to try the following
-> > on Jens' for-4.20/block branch? His tree is available here:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git
-> 
-> No problem.  I've managed to trip over issues that took a *lot* longer to resolve
-> (I think back around 2.5.47 or so, the PCMCIA slot in my Dell Latitude kept finding
-> different ways to explode the kernel for close to 8-9 months...)
-> 
-> I checked, and linux-next was all of 1 commit behind jens' for-4.20 tree, so
-> I applied it to that (I had a linux-next tree that works, but I'm a git idiot so
-> figuring out how to graft that tree on was going to take a while...)
-> 
+One thing that stands out is that we get overlapping maps all the
+time.
 
-That's great it worked this time, but in the future it may be worth
-taking the time to switch trees. As for-next carries a lot of stuff that
-has limited testing, it is nice to help limit the footprint of possible
-adverse interactions and to for sure determine it exists solely say
-within Jens' for-4.20/block tree.
+So I tried to narrow down how this happens.  Here is one case, we get
+a new thread fork event for emacs-gtk before the MMAP events so we go:
 
-For future reference, something like the following works as a way to
-keep multiple remotes in the same repo.
+thread__fork(thread, parent, timestamp)
+{
+ ...
+ thread__clone_map_groups(thread, parent)
+ {
+   ...
+   map_groups__clone(thread, parent->mg)
 
-git remote add block https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git
-git fetch
-git checkout -b for-4.20/block -t block/for-4.20/block
+Dumping this map_groups__clone() operation I see:
 
-This checks out the for-4.20/block branch from the remote block as a
-local branch called for-4.20/block.
+map_groups__clone: parent 0x10000425420 --> 0x10000418fb0
+map_groups__clone: new [0000010000000000:0000010000110000] /bin/bash
+map_groups__clone: new [0000010000212000:000001000021e000] /bin/bash
+map_groups__clone: new [000001000021e000:00000100002a0000] /tmp/perf-1309.map
+map_groups__clone: new [fff0000100000000:fff0000100024000] /lib/sparc64-linux-gnu/ld-2.27.so
+map_groups__clone: new [fff0000100124000:fff0000100126000] /lib/sparc64-linux-gnu/ld-2.27.so
+map_groups__clone: new [fff0000100128000:fff0000100152000] /lib/sparc64-linux-gnu/libtinfo.so.6.1
+map_groups__clone: new [fff0000100254000:fff0000100256000] /lib/sparc64-linux-gnu/libtinfo.so.6.1
+map_groups__clone: new [fff0000100258000:fff000010025c000] /lib/sparc64-linux-gnu/libdl-2.27.so
+map_groups__clone: new [fff000010035c000:fff000010035e000] /lib/sparc64-linux-gnu/libdl-2.27.so
+map_groups__clone: new [fff000010046a000:fff000010046c000] [vdso]
+map_groups__clone: new [fff000010046c000:fff00001005cc000] /lib/sparc64-linux-gnu/libc-2.27.so
+map_groups__clone: new [fff00001006d0000:fff00001006d4000] /lib/sparc64-linux-gnu/libc-2.27.so
+map_groups__clone: new [fff00001006d4000:fff00001006d6000] /tmp/perf-1309.map
+map_groups__clone: new [fff0000100874000:fff000010087e000] /lib/sparc64-linux-gnu/libnss_files-2.27.so
+map_groups__clone: new [fff000010097e000:fff0000100980000] /lib/sparc64-linux-gnu/libnss_files-2.27.so
+map_groups__clone: new [fff0000100980000:fff0000100986000] /tmp/perf-1309.map
 
-> Result:
-> 
-> Script started on 2018-10-19 22:29:32-04:00
-> [root@turing-police x86_64]# uname -a
-> Linux turing-police.cc.vt.edu 4.19.0-rc8-next-20181019-dirty #641 SMP PREEMPT Fri Oct 19 21:18:19 EDT 2018 x86_64 x86_64 x86_64 GNU/Linux
-> [root@turing-police x86_64]# rpm -Uvh --force dracut-049-4.git20181010.fc30.x86_64.rpm
-> Verifying...                          ################################# [100%]
-> warning: Unable to get systemd shutdown inhibition lock: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
-> Preparing...                          ################################# [100%]
-> Updating / installing...
->    1:dracut-049-4.git20181010.fc30    ################################# [100%]
-> [root@turing-police x86_64]# exit
-> exit
-> 
-> Script done on 2018-10-19 22:29:59-04:00
-> 
-> System stable, RPM works, dnf works, some good-sized compiles worked.
-> 
-> Looks like it's time to commit that, and add these:
-> 
-> Reported-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-> Tested-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-> 
-> :)
+It's inheriting maps for the parent bash shell that invoked emacs-gtk, which
+makes no sense at all.
 
-Fantastic! Thanks for working with me and reporting the issue on
-for-next. I'll run the series with the above tomorrow to Jens.
+We proceed to process the MMAP events which have the proper mappings
+for emacs-gtk, and eventually we happen to hit a mapping that overlaps
+with one of the address ranges of the parent bash shell.
 
-Thanks,
-Dennis
+For the stuff that doesn't overlap, we have bogus parent bash shell
+process mappings left in the emacs-gtk thread map group.
+
+The above trace is simply from "./perf record 2>x.log", nothing fancy.
+
+What we are doing above can't be right.
+
+Yes, when processing real perf events from the kernel for a fork
+event, we should do that inheritance stuff.  But if we are
+synthesizing the fork to build threads and maps for already running
+processes, we absolutely should not perform the map groups clone.
+
+One solution I've come up with is:
+
+1) When synthesizing a fork event, set PERF_RECORD_MISC_COMM_EXEC in
+   header->misc.
+
+2) Use this to elide the map groups clone in
+   thread__clone_map_groups().
+
+Comments?
