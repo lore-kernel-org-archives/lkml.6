@@ -2,73 +2,75 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D061C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 13:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4591C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 13:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F1D221528
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 13:19:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6849721528
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 13:19:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="gloKypAW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F1D221528
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="BvQXiACK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6849721528
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbeJTV3z (ORCPT
+        id S1727470AbeJTVaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 17:29:55 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40690 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727321AbeJTV3z (ORCPT
+        Sat, 20 Oct 2018 17:30:03 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55511 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727324AbeJTVaD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 17:29:55 -0400
-Received: by mail-wm1-f67.google.com with SMTP id z204-v6so6099777wmc.5
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 06:19:27 -0700 (PDT)
+        Sat, 20 Oct 2018 17:30:03 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 206-v6so6041040wmb.5
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 06:19:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ip2zVKfon4Vayu2LyUug3Z+GLvQNpozzy8b48n6dtxQ=;
-        b=gloKypAWMmT8H2ZuMtjp/ZgKeg21n3GM/2UnTqsIP4+6q4N81/l4XcrIfFy1YJXnmu
-         l/VRqnayLWuezWQ0mNLf7TG+YXtKwNihAOrqACqryUT1g1IqhKIGcsTEPoVgJGEKgPGB
-         pmpW/EEs8nt7lX+oxcpzhH4ZfJ0mWB7IfHjWuE9nxKD4EMYJ/KWquMuwXw5rr+lB6H+D
-         4Da5Ur5IYWMOmmIzH9rwRql7oaw+kqLO0Jecc8TJMNAvVOBHZonleAMT+ccZydW5GLT8
-         3NsTnTv2OSztK+QwBJu1AzggNjOD2P6MBQbCeuuODv8L20BNlRVSBu856OxTVJZstx5I
-         BZng==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=JqW2dAfOg5skWv5p1vqVw3dNi9fYAQLpnM3B2eT1m/o=;
+        b=BvQXiACKtTLcPlOhx+vCXMlE2eMp60RLlg73CtEPPLOiHBiOnbiNhlxo91X0xmQz4u
+         hcuSGfBB85FnEiPtI9RZiKcNLsmSjXJBsmmlxH+3sw9ruELZFO8TX6aErilov44OOU0j
+         E6Vr7LiodY41b8vfmh606aSY+9J1SZS0PNCmONRFz3BCAFLlN2tSK9AAu7IrnsmL6yf+
+         KmTm1Ow8p6oaIyYd+nsYhBTHP+wLMUlUNzAdQ82ADG78Nqvxkhdma7XdGmOZMvo5sZYo
+         3tVGg1V9B03lGuL37y9rA1kEXiDOHvlbZESAbXgm6ileJ2AOo6v8rgKvUnypebPmIxog
+         mB6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ip2zVKfon4Vayu2LyUug3Z+GLvQNpozzy8b48n6dtxQ=;
-        b=uJoZzs//BuH9a4nKKl2OsJRs0G02l+FB/lNUYit3wyiXbnDT1YHB+M+rSIjOMyLlD+
-         zscubZoKrsvBfqAKxxSu48Y7wfNKjnwWLhky2WYWN+PzeP1I5RVenaNR7avDg/O4Jn1E
-         Nf8bgMQLik1SPNsskbd0++FvieXBXjILZDJvleM1klPgntdeWWci6qeg95oAm0i855Xa
-         Avx463nyO8I5J+A/oO0mTAorrmlcHxXMEY8OTbe7GwdJnoPzEaFZ5XUj+1zmYb1k4Gj3
-         Qpko+7jYzZSqwdh4SpMR+7QX4JF7EkHmyEup7t8rAQbPDOPA7C4N51k5s1/bI5yHq4dS
-         uKow==
-X-Gm-Message-State: ABuFfogEMxgiR4m2t1jFnLxBdSBG/2O/p7h35U4cvWyJat/aeInusvBD
-        FqLoTbrMWWReBw8SsnjS46nSjaBStgNevA==
-X-Google-Smtp-Source: ACcGV63A7nZvUw3I+oca4CWdzLP4qpzD0atIBwBp5bwKtBOOdcVpL8xxDGD9+cpOPd6vYMpbjL2YFA==
-X-Received: by 2002:a1c:845:: with SMTP id 66-v6mr9449278wmi.61.1540041566619;
-        Sat, 20 Oct 2018 06:19:26 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=JqW2dAfOg5skWv5p1vqVw3dNi9fYAQLpnM3B2eT1m/o=;
+        b=ZP9WZnCNQHaua6OYEojsWBmUGCfZdXvHNTRGcys+UebAd4CrXG0JdnGNa4hDJsmudv
+         iE3F+I3se538Qa6JTyus+euZH1YcBshDJNDD+DeGnJRHsNYiZomiebxkfd8so8Q9KpmO
+         9E0aDddVPnup9BNRE6tUFXrY0XU+y/ocy+c7lneggjH5oqyZJsEa6hX5yRDLES+HCKsL
+         ALEfIllL4MAXhP3epNCYYJHo2/55T1OtOgvkJ1WUQvNMAN8IetV4A3qgy5+aqWxElAlR
+         MIWKxoRQt/hS6eyaA7m2kDkE+6YOS9srntD7xcnvwo2QEjd78XJUBVO4xLE7VE+dryjC
+         /T9Q==
+X-Gm-Message-State: ABuFfogmIC9CcW7sdHkRQu+OOmzkQVrFivWlhfqXT0KkMJZlSbvJIpqt
+        lBJPqebOaLauhnzwalQONIkDqmvsrIy29Q==
+X-Google-Smtp-Source: ACcGV63zJnDHi5+vtTGjdEmKbtceP9Cn3+gHPO8AP88MRpCbosH0WXtW+eyAwyQGBa61vuGRXaJkBg==
+X-Received: by 2002:a1c:8a94:: with SMTP id m142-v6mr8772410wmd.80.1540041574740;
+        Sat, 20 Oct 2018 06:19:34 -0700 (PDT)
 Received: from viisi.sifive.com ([37.152.39.96])
-        by smtp.gmail.com with ESMTPSA id 5-v6sm11394568wra.48.2018.10.20.06.19.24
+        by smtp.gmail.com with ESMTPSA id 5-v6sm11394568wra.48.2018.10.20.06.19.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 20 Oct 2018 06:19:25 -0700 (PDT)
+        Sat, 20 Oct 2018 06:19:34 -0700 (PDT)
 From:   Paul Walmsley <paul.walmsley@sifive.com>
 To:     linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
 Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Jim Wilson <jimw@sifive.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: [PATCH 0/2] modpost: skip section mismatch warnings on ELF local symbols by default
-Date:   Sat, 20 Oct 2018 06:19:10 -0700
-Message-Id: <20181020131911.22443-1-paul.walmsley@sifive.com>
+        Michal Marek <michal.lkml@markovi.net>,
+        Jim Wilson <jimw@sifive.com>, Paul Walmsley <paul@pwsan.com>
+Subject: [PATCH 1/2] modpost: add switch to skip symbol exclusions likely to generate false positives
+Date:   Sat, 20 Oct 2018 06:19:12 -0700
+Message-Id: <20181020131911.22443-2-paul.walmsley@sifive.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181020131911.22443-1-paul.walmsley@sifive.com>
+References: <20181020131911.22443-1-paul.walmsley@sifive.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,48 +78,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-modpost: skip section mismatch warnings on ELF local symbols by default
+modpost uses symbol name whitelist patterns to determine whether
+symbols should be excluded from section mismatch tests.  Since ELF
+local symbols, empty symbol names, and ARM toolchain "magic" symbols
+have autogenerated symbol names, they can trigger false positive
+warnings for section mismatches, and are thus excluded from the
+modpost section mismatch scan.  However, it seems useful to have the
+option to include these autogenerated symbols in some section mismatch
+scans, as an indicator that a patch set could require more attention
+during review.  To that end, this patch adds a '-P' flag to modpost
+that disables the filters that exclude autogenerated and empty symbol
+names.
 
-modpost, by default, reports section mismatch warnings on ELF local
-symbols.  This caused false positive warnings to be reported for a
-local symbol name that would otherwise be elided by matching against a
-name pattern.  This was observed using a RISC-V toolchain that generates
-section anchors.
-
-To avoid this noise in the common case, this patch series disables
-section mismatch warnings on ELF local symbols by default.  It also
-adds a modpost command line switch to re-enable these warnings, since
-I wasn't able to convince myself that section mismatch warnings on ELF
-local symbols were completely useless; just mostly useless :-)
-
-I'm neither a modpost nor an ELF expert, so careful review of this
-series is appreciated.
-
-This modpost series can also be found at:
-
-https://github.com/sifive/riscv-linux/tree/dev/paulw/modpost-elf-local-symbols-v4.19-rc7
-
-The series was tested on a RISC-V build of the SiFive UART serial
-driver, at:
-
-https://github.com/sifive/riscv-linux/tree/dev/paulw/serial-v4.19-rc7
-
-Paul Walmsley (2):
-  modpost: add switch to skip symbol exclusions likely to generate false
-    positives
-  modpost: skip ELF local symbols by default during section mismatch
-    check
-
- scripts/mod/modpost.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
-
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Jim Wilson <jimw@sifive.com>
 Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Jim Wilson <jimw@sifive.com>
 Cc: linux-kbuild@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Signed-off-by: Paul Walmsley <paul@pwsan.com>
+---
+ scripts/mod/modpost.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 0d998c54564d..38fc1bd47926 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -39,6 +39,8 @@ static int sec_mismatch_verbose = 1;
+ static int sec_mismatch_fatal = 0;
+ /* ignore missing files */
+ static int ignore_missing_files;
++/* accept checks which are more likely to generate false positives if set to 1 */
++static int accept_falsepos_risk;
+ 
+ enum export {
+ 	export_plain,      export_unused,     export_gpl,
+@@ -1292,7 +1294,7 @@ static Elf_Sym *find_elf_symbol2(struct elf_info *elf, Elf_Addr addr,
+ 		symsec = sec_name(elf, get_secindex(elf, sym));
+ 		if (strcmp(symsec, sec) != 0)
+ 			continue;
+-		if (!is_valid_name(elf, sym))
++		if (!accept_falsepos_risk && !is_valid_name(elf, sym))
+ 			continue;
+ 		if (sym->st_value <= addr) {
+ 			if ((addr - sym->st_value) < distance) {
+@@ -2416,7 +2418,7 @@ int main(int argc, char **argv)
+ 	struct ext_sym_list *extsym_iter;
+ 	struct ext_sym_list *extsym_start = NULL;
+ 
+-	while ((opt = getopt(argc, argv, "i:I:e:mnsST:o:awM:K:E")) != -1) {
++	while ((opt = getopt(argc, argv, "i:I:e:mnPsST:o:awM:K:E")) != -1) {
+ 		switch (opt) {
+ 		case 'i':
+ 			kernel_read = optarg;
+@@ -2442,6 +2444,9 @@ int main(int argc, char **argv)
+ 		case 'o':
+ 			dump_write = optarg;
+ 			break;
++		case 'P':
++			accept_falsepos_risk = 1;
++			break;
+ 		case 'a':
+ 			all_versions = 1;
+ 			break;
 -- 
 2.19.1
 
