@@ -2,184 +2,430 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C0CAECDE3D
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 10:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C47C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 10:57:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6A4B21528
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 10:26:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CipwXlLD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6A4B21528
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C31EB2150F
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 10:57:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C31EB2150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbeJTSgW (ORCPT
+        id S1727506AbeJTTHN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 14:36:22 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45676 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726817AbeJTSgW (ORCPT
+        Sat, 20 Oct 2018 15:07:13 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:13549 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727178AbeJTTHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 14:36:22 -0400
-Received: by mail-wr1-f68.google.com with SMTP id f17-v6so8129594wrs.12;
-        Sat, 20 Oct 2018 03:26:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pNop1Tr0WKAujPscibmXQNdNSPhna5AwVbmlfr0Gyy0=;
-        b=CipwXlLDshKOgowzke0v/Li6ezQQuNJDr0NRuzSQvxDjr1t9dy+9v76/qVttuLPlNy
-         AoMi6OKbnBSGIXgHgPpXcvpNeo2whehAOoL6Izyj+McHJl3GoMXno5tdfXYYbsrrRuZQ
-         /ZD1xUt+RMSBOiSux7Ishubj2spKlH/00FN8X/BjB9h8yY6ZTV900ffvsg6EbRwdcjo8
-         e32oK+DXOuMd+32Nf+K3Tw+dA5dlmFL/3gQh/TD8YTEfRu2To9lDM/l4CzvKoq9OW+nK
-         HniSXGb/E3u51zlZ0c/8qOH/8YX+dZSUYuKOpuPuJbi2dS+CsX1s3YMD5zoKNMgiQWCy
-         p33A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=pNop1Tr0WKAujPscibmXQNdNSPhna5AwVbmlfr0Gyy0=;
-        b=cQPUbUZpqMz+WZLcs0jc/7VyWwkc1/i82Qas76oBmPM79egApCfa0I03x3sX6UUA5F
-         uzJQ4KLwUw8LRYorOpLPwnrDMIg8h54KMJifLbNB2PnYUYbSR17c0PVoehils0+pdxE+
-         HR+WluAh1H1p35MBNEdTquGMh36yaYm9uRLhk1tQ699z1rVtH86r8JCKyCwwpJRsGqu3
-         66cigPw7RKllvRaVXgW2X+qB2QmCM5aDdazxZBFy8m/af0yQU78/Bkgehnt/WATCftLK
-         mLkmAzYDrMNhUhO8GIVyoBwe9OeO8lhCNcI0Ly45+k1mikv3pO5Fv31VwfqxVTdtTY5S
-         aqpA==
-X-Gm-Message-State: AGRZ1gLkko524S2DBcsBwpPPSWzCJfW8tYr289I6CyCWnKYRi3YlGWgc
-        Vq2EBNXdeB1XtpuLjTkm9fLYNI6dMeA=
-X-Google-Smtp-Source: AJdET5dyoZdop3JPKQE9+LquIdFNV4AAFUNTXFEu2aqeI5yLPfMwcSqldtPzlrs6vIDraZ+Yrw2RUw==
-X-Received: by 2002:adf:db43:: with SMTP id f3-v6mr1753892wrj.246.1540031182732;
-        Sat, 20 Oct 2018 03:26:22 -0700 (PDT)
-Received: from [192.168.8.100] (89-24-40-28.nat.epc.tmcz.cz. [89.24.40.28])
-        by smtp.gmail.com with ESMTPSA id 191-v6sm2379346wmk.30.2018.10.20.03.26.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 20 Oct 2018 03:26:22 -0700 (PDT)
-Subject: Re: [RFC PATCH v2 00/12] crypto: Adiantum support
-To:     Eric Biggers <ebiggers@kernel.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Paul Crowley <paulcrowley@google.com>,
-        Greg Kaiser <gkaiser@google.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Samuel Neves <samuel.c.p.neves@gmail.com>,
-        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
-References: <20181015175424.97147-1-ebiggers@kernel.org>
- <CAHmME9p1aiqWZ4+viaLscO8+qmixdVhMA1MAtMAFEHPG36DcPg@mail.gmail.com>
- <20181019190411.GB246441@gmail.com>
-From:   Milan Broz <gmazyland@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gmazyland@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- vzRmJp4=
-Message-ID: <1f65ce09-93b3-f43e-49d5-9d9d6c0bb9e0@gmail.com>
-Date:   Sat, 20 Oct 2018 12:26:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
- Thunderbird/31.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181019190411.GB246441@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sat, 20 Oct 2018 15:07:13 -0400
+Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9KAv7P6056598;
+        Sat, 20 Oct 2018 19:57:07 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp);
+ Sat, 20 Oct 2018 19:57:07 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp)
+Received: from ccsecurity.localdomain (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9KAv2qJ056499
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 20 Oct 2018 19:57:07 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, guro@fb.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        rientjes@google.com, yang.s@alibaba-inc.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] mm,oom: Use timeout based back off.
+Date:   Sat, 20 Oct 2018 19:57:01 +0900
+Message-Id: <1540033021-3258-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/10/2018 21:04, Eric Biggers wrote:
-> Hi Jason,
-> 
-> On Fri, Oct 19, 2018 at 05:58:35PM +0200, Jason A. Donenfeld wrote:
->> Hello Eric,
->>
->>> As before, some of these patches conflict with the new "Zinc" crypto
->>> library.  But I don't know when Zinc will be merged, so for now I've
->>> continued to base this patchset on the current 'cryptodev'.
->>
->> I'd appreciate it if you waited to merge this until you can rebase it
->> on top of Zinc. In fact, if you already want to build it on top of
->> Zinc, I'm happy to work with you on that in a shared repo or similar.
->> We can also hash out the details of that in person in Vancouver in a
->> few weeks. I think pushing this in before will create undesirable
->> churn for both of us.
->>
-> 
-> I won't be at Plumbers, sorry!  For if/when it's needed, I'll start a version of
-> this based on Zinc.  The basic requirements are that we need (1) xchacha12 and
-> xchacha20 available as 'skciphers' in the crypto API, and (2) the poly1305_core
-> functions (see patch 08/12).  In principle, these can be implemented in Zinc.
-> The Adiantum template and all the NHPoly1305 stuff will be the same either way.
-> (Unless you'll want one or both of those moved to Zinc too.  To be honest, even
-> after your explanations I still don't have a clear idea of what is supposed to
-> go in Zinc and what isn't...)
-> 
-> However, for now I'm hesitant to completely abandon the current approach and bet
-> the farm on Zinc.  Zinc has a large scope and various controversies that haven't
-> yet been fully resolved to everyone's satisfaction, including unclear licenses
-> on some of the essential assembly files.  It's not appropriate to grind kernel
-> crypto development to grind a halt while everyone waits for Zinc.
-> 
-> So if Zinc is ready, then it makes sense for it to go first;
-> otherwise, it doesn't.  It's not yet clear which is the case.
+This patch changes the OOM killer to wait for either
 
-Does it mean, that if Adiantum is based on Zinc, it can be no longer used
-for FDE (dm-crypt)? IOW only file-based encryption is possible?
+  (A) __mmput() of the OOM victim's mm completes
 
-Adiantum (as in your current git branches on kernel.org) can be used for dm-crypt
-without any changes (yes, I played with it :) and with some easy tricks directly
-through cryptsetup/LUKS as well.
+or
 
-I think we should have this as an alternative to length-preserving wide-block
-cipher modes for FDE.
+  (B) the OOM reaper gives up waiting for (A) because memory pages
+      used by the OOM victim's mm did not decrease for one second
 
-Milan
+in order to mitigate at least three problems
+
+  (1) an OOM victim needlessly selects next OOM victim if the OOM-killed
+      processes are using clone(CLONE_VM) without CLONE_THREAD because
+      task_will_free_mem(current) in out_of_memory() returns false when
+      MMF_OOM_SKIP was set before remaining OOM-killed processes reach
+      out_of_memory().
+
+  (2) an memcg OOM event needlessly selects next OOM victim because we
+      are assuming that the OOM reaper can reclaim majority of the OOM
+      victim's mm, but sometimes we need to wait for completion of
+      free_pgtables() in exit_mmap() in order to reclaim enough memory.
+
+  (3) an memcg OOM event from a multithreaded process by an unprivileged
+      user can needlessly trigger flooding of "Out of memory and no
+      killable processes..." and dump_header() messages because
+      task_will_free_mem(current) in out_of_memory() returns false when
+      MMF_OOM_SKIP was set before remaining OOM-killed threads reach
+      out_of_memory().
+
+all caused by setting MMF_OOM_SKIP too early.
+
+Michal has proposed an attempt to handover setting of MMF_OOM_SKIP to
+the OOM victim's exit path [1] in order to handle (2), but there was no
+feedback (except me) and nobody knows whether it is really safe and is
+worth constrain future changes. Not only that attempt can mitigate only
+portion of exit_mmap() (rather than until the OOM victim thread becomes
+invisible from the OOM killer), that attempt does not help at all for (1)
+and (3) because __mmput() cannot be called.
+
+I have proposed many patches which mitigate (1) and (3) without using
+timeout based approach, but Michal is rejecting them and wants to address
+the root cause that MMF_OOM_SKIP is set too early. And nobody (including
+Michal) has time to make the OOM reaper reclaim more memory (including
+mlock()ed and shared memory, and mmap_sem contention) before setting
+MMF_OOM_SKIP. We are deadlocked there.
+
+Michal has been refusing timeout based approach, but I don't think this
+is something we have to be frayed around the edge about possibility of
+overlooking races/bugs just because Michal does not want to use timeout.
+I believe that timeout based back off is the only approach we can use
+for now.
+
+[1] https://marc.info/?i=20180910125513.311-1-mhocko@kernel.org
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ include/linux/oom.h |   2 +-
+ kernel/fork.c       |  13 ++++++
+ mm/mmap.c           |  44 +++++++-----------
+ mm/oom_kill.c       | 126 ++++++++++++++++++++++++----------------------------
+ 4 files changed, 87 insertions(+), 98 deletions(-)
+
+diff --git a/include/linux/oom.h b/include/linux/oom.h
+index 69864a5..cb7300d 100644
+--- a/include/linux/oom.h
++++ b/include/linux/oom.h
+@@ -95,7 +95,7 @@ static inline vm_fault_t check_stable_address_space(struct mm_struct *mm)
+ 	return 0;
+ }
+ 
+-bool __oom_reap_task_mm(struct mm_struct *mm);
++void oom_reap_mm(struct mm_struct *mm);
+ 
+ extern unsigned long oom_badness(struct task_struct *p,
+ 		struct mem_cgroup *memcg, const nodemask_t *nodemask,
+diff --git a/kernel/fork.c b/kernel/fork.c
+index f0b5847..1270873 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -992,7 +992,18 @@ struct mm_struct *mm_alloc(void)
+ 
+ static inline void __mmput(struct mm_struct *mm)
+ {
++	const bool oom = mm_is_oom_victim(mm);
++
+ 	VM_BUG_ON(atomic_read(&mm->mm_users));
++	if (IS_ENABLED(CONFIG_MMU) && oom) {
++		/* Try what the OOM reaper kernel thread can afford. */
++		down_read(&mm->mmap_sem);
++		oom_reap_mm(mm);
++		up_read(&mm->mmap_sem);
++		/* Shut out the OOM reaper kernel thread. */
++		down_write(&mm->mmap_sem);
++		up_write(&mm->mmap_sem);
++	}
+ 
+ 	uprobe_clear_state(mm);
+ 	exit_aio(mm);
+@@ -1008,6 +1019,8 @@ static inline void __mmput(struct mm_struct *mm)
+ 	}
+ 	if (mm->binfmt)
+ 		module_put(mm->binfmt->module);
++	if (oom)
++		set_bit(MMF_OOM_SKIP, &mm->flags);
+ 	mmdrop(mm);
+ }
+ 
+diff --git a/mm/mmap.c b/mm/mmap.c
+index f7cd9cb..5f1908b 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -3042,41 +3042,29 @@ void exit_mmap(struct mm_struct *mm)
+ 	struct mmu_gather tlb;
+ 	struct vm_area_struct *vma;
+ 	unsigned long nr_accounted = 0;
++	const bool oom = mm_is_oom_victim(mm);
+ 
+ 	/* mm's last user has gone, and its about to be pulled down */
+ 	mmu_notifier_release(mm);
+-
+-	if (unlikely(mm_is_oom_victim(mm))) {
+-		/*
+-		 * Manually reap the mm to free as much memory as possible.
+-		 * Then, as the oom reaper does, set MMF_OOM_SKIP to disregard
+-		 * this mm from further consideration.  Taking mm->mmap_sem for
+-		 * write after setting MMF_OOM_SKIP will guarantee that the oom
+-		 * reaper will not run on this mm again after mmap_sem is
+-		 * dropped.
+-		 *
+-		 * Nothing can be holding mm->mmap_sem here and the above call
+-		 * to mmu_notifier_release(mm) ensures mmu notifier callbacks in
+-		 * __oom_reap_task_mm() will not block.
+-		 *
+-		 * This needs to be done before calling munlock_vma_pages_all(),
+-		 * which clears VM_LOCKED, otherwise the oom reaper cannot
+-		 * reliably test it.
+-		 */
+-		(void)__oom_reap_task_mm(mm);
+-
+-		set_bit(MMF_OOM_SKIP, &mm->flags);
+-		down_write(&mm->mmap_sem);
+-		up_write(&mm->mmap_sem);
+-	}
++	/*
++	 * The OOM reaper kernel thread was already shut out at __mmput().
++	 * Retry what the OOM reaper kernel thread can afford, for all MMU
++	 * notifiers are now gone. Since nothing can be holding mm->mmap_sem,
++	 * there is no need to hold mmap_sem here.
++	 */
++	if (oom)
++		oom_reap_mm(mm);
+ 
+ 	if (mm->locked_vm) {
+-		vma = mm->mmap;
+-		while (vma) {
++		for (vma = mm->mmap; vma; vma = vma->vm_next)
+ 			if (vma->vm_flags & VM_LOCKED)
+ 				munlock_vma_pages_all(vma);
+-			vma = vma->vm_next;
+-		}
++		/*
++		 * Retry what the OOM reaper kernel thread can afford, for
++		 * all mlocked vmas are now unlocked.
++		 */
++		if (oom)
++			oom_reap_mm(mm);
+ 	}
+ 
+ 	arch_exit_mmap(mm);
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index f10aa53..b2e381b 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -189,6 +189,16 @@ static bool is_dump_unreclaim_slabs(void)
+ 	return (global_node_page_state(NR_SLAB_UNRECLAIMABLE) > nr_lru);
+ }
+ 
++/*
++ * Rough memory consumption of the given mm which should be theoretically freed
++ * when the mm is removed.
++ */
++static unsigned long oom_badness_pages(struct mm_struct *mm)
++{
++	return get_mm_rss(mm) + get_mm_counter(mm, MM_SWAPENTS) +
++		mm_pgtables_bytes(mm) / PAGE_SIZE;
++}
++
+ /**
+  * oom_badness - heuristic function to determine which candidate task to kill
+  * @p: task struct of which task we should calculate
+@@ -230,8 +240,7 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
+ 	 * The baseline for the badness score is the proportion of RAM that each
+ 	 * task's rss, pagetable and swap space use.
+ 	 */
+-	points = get_mm_rss(p->mm) + get_mm_counter(p->mm, MM_SWAPENTS) +
+-		mm_pgtables_bytes(p->mm) / PAGE_SIZE;
++	points = oom_badness_pages(p->mm);
+ 	task_unlock(p);
+ 
+ 	/* Normalize to oom_score_adj units */
+@@ -488,10 +497,9 @@ bool process_shares_mm(struct task_struct *p, struct mm_struct *mm)
+ static struct task_struct *oom_reaper_list;
+ static DEFINE_SPINLOCK(oom_reaper_lock);
+ 
+-bool __oom_reap_task_mm(struct mm_struct *mm)
++void oom_reap_mm(struct mm_struct *mm)
+ {
+ 	struct vm_area_struct *vma;
+-	bool ret = true;
+ 
+ 	/*
+ 	 * Tell all users of get_user/copy_from_user etc... that the content
+@@ -501,7 +509,7 @@ bool __oom_reap_task_mm(struct mm_struct *mm)
+ 	 */
+ 	set_bit(MMF_UNSTABLE, &mm->flags);
+ 
+-	for (vma = mm->mmap ; vma; vma = vma->vm_next) {
++	for (vma = mm->mmap; vma; vma = vma->vm_next) {
+ 		if (!can_madv_dontneed_vma(vma))
+ 			continue;
+ 
+@@ -523,7 +531,6 @@ bool __oom_reap_task_mm(struct mm_struct *mm)
+ 			tlb_gather_mmu(&tlb, mm, start, end);
+ 			if (mmu_notifier_invalidate_range_start_nonblock(mm, start, end)) {
+ 				tlb_finish_mmu(&tlb, start, end);
+-				ret = false;
+ 				continue;
+ 			}
+ 			unmap_page_range(&tlb, vma, start, end, NULL);
+@@ -531,54 +538,29 @@ bool __oom_reap_task_mm(struct mm_struct *mm)
+ 			tlb_finish_mmu(&tlb, start, end);
+ 		}
+ 	}
+-
+-	return ret;
+ }
+ 
+-/*
+- * Reaps the address space of the give task.
+- *
+- * Returns true on success and false if none or part of the address space
+- * has been reclaimed and the caller should retry later.
+- */
+-static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
++/* Reaps the address space of the give task. */
++static void __oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ {
+-	bool ret = true;
+-
+-	if (!down_read_trylock(&mm->mmap_sem)) {
+-		trace_skip_task_reaping(tsk->pid);
+-		return false;
+-	}
+-
+ 	/*
+-	 * MMF_OOM_SKIP is set by exit_mmap when the OOM reaper can't
+-	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
+-	 * under mmap_sem for reading because it serializes against the
+-	 * down_write();up_write() cycle in exit_mmap().
++	 * Reaping operation needs mmap_sem held for read. Also, the check for
++	 * mm_users must run under mmap_sem for reading because it serializes
++	 * against the down_write()/up_write() cycle in __mmput().
+ 	 */
+-	if (test_bit(MMF_OOM_SKIP, &mm->flags)) {
+-		trace_skip_task_reaping(tsk->pid);
+-		goto out_unlock;
++	if (!down_read_trylock(&mm->mmap_sem)) {
++		/* Do nothing if already in __mmput(). */
++		if (atomic_read(&mm->mm_users))
++			trace_skip_task_reaping(tsk->pid);
++		return;
++	}
++	/* Do nothing if already in __mmput(). */
++	if (atomic_read(&mm->mm_users)) {
++		trace_start_task_reaping(tsk->pid);
++		oom_reap_mm(mm);
++		trace_finish_task_reaping(tsk->pid);
+ 	}
+-
+-	trace_start_task_reaping(tsk->pid);
+-
+-	/* failed to reap part of the address space. Try again later */
+-	ret = __oom_reap_task_mm(mm);
+-	if (!ret)
+-		goto out_finish;
+-
+-	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+-			task_pid_nr(tsk), tsk->comm,
+-			K(get_mm_counter(mm, MM_ANONPAGES)),
+-			K(get_mm_counter(mm, MM_FILEPAGES)),
+-			K(get_mm_counter(mm, MM_SHMEMPAGES)));
+-out_finish:
+-	trace_finish_task_reaping(tsk->pid);
+-out_unlock:
+ 	up_read(&mm->mmap_sem);
+-
+-	return ret;
+ }
+ 
+ #define MAX_OOM_REAP_RETRIES 10
+@@ -586,29 +568,32 @@ static void oom_reap_task(struct task_struct *tsk)
+ {
+ 	int attempts = 0;
+ 	struct mm_struct *mm = tsk->signal->oom_mm;
++	unsigned long last_oom_pages = oom_badness_pages(mm);
++	unsigned long pages;
+ 
+-	/* Retry the down_read_trylock(mmap_sem) a few times */
+-	while (attempts++ < MAX_OOM_REAP_RETRIES && !oom_reap_task_mm(tsk, mm))
++	while (!test_bit(MMF_OOM_SKIP, &mm->flags)) {
++		__oom_reap_task_mm(tsk, mm);
+ 		schedule_timeout_idle(HZ/10);
+-
+-	if (attempts <= MAX_OOM_REAP_RETRIES ||
+-	    test_bit(MMF_OOM_SKIP, &mm->flags))
+-		goto done;
+-
+-	pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
+-		task_pid_nr(tsk), tsk->comm);
+-	debug_show_all_locks();
+-
+-done:
++		pages = oom_badness_pages(mm);
++		if (last_oom_pages > pages) {
++			last_oom_pages = pages;
++			attempts = 0;
++			continue;
++		}
++		if (attempts++ <= MAX_OOM_REAP_RETRIES)
++			continue;
++		/* Hide this mm from OOM killer if stalled for too long. */
++		pr_info("oom_reaper: gave up process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
++			task_pid_nr(tsk), tsk->comm,
++			K(get_mm_counter(mm, MM_ANONPAGES)),
++			K(get_mm_counter(mm, MM_FILEPAGES)),
++			K(get_mm_counter(mm, MM_SHMEMPAGES)));
++		debug_show_all_locks();
++		set_bit(MMF_OOM_SKIP, &mm->flags);
++		break;
++	}
+ 	tsk->oom_reaper_list = NULL;
+-
+-	/*
+-	 * Hide this mm from OOM killer because it has been either reaped or
+-	 * somebody can't call up_write(mmap_sem).
+-	 */
+-	set_bit(MMF_OOM_SKIP, &mm->flags);
+-
+-	/* Drop a reference taken by wake_oom_reaper */
++	/* Drop a reference taken by wake_oom_reaper(). */
+ 	put_task_struct(tsk);
+ }
+ 
+@@ -634,9 +619,12 @@ static int oom_reaper(void *unused)
+ 
+ static void wake_oom_reaper(struct task_struct *tsk)
+ {
+-	/* tsk is already queued? */
+-	if (tsk == oom_reaper_list || tsk->oom_reaper_list)
++	struct mm_struct *mm = tsk->signal->oom_mm;
++
++	/* There is no point with processing same mm twice. */
++	if (test_bit(MMF_UNSTABLE, &mm->flags))
+ 		return;
++	set_bit(MMF_UNSTABLE, &mm->flags);
+ 
+ 	get_task_struct(tsk);
+ 
+-- 
+1.8.3.1
+
