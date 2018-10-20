@@ -7,57 +7,56 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D682DECDE44
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 22:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D1BC67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 22:23:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C0252174A
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 22:22:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0507B21712
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 22:23:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="iDgYcj/N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C0252174A
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="sUc0Pw6Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0507B21712
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbeJUGey (ORCPT
+        id S1727266AbeJUGe5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 02:34:54 -0400
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:49228 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727010AbeJUGex (ORCPT
+        Sun, 21 Oct 2018 02:34:57 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:57222 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727181AbeJUGe5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 02:34:53 -0400
+        Sun, 21 Oct 2018 02:34:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1540074174; x=1571610174;
+  t=1540074179; x=1571610179;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=flonjFCGOLn0zOW5pISWCF/H9UYRV+aVRKitwTiaW5M=;
-  b=iDgYcj/NLmmPXZxtEkk4pUaSeLdM4pTtpUq5u6WOt78CL8r1lQrY9EYv
-   eQfRPYzOE9Ku3g1UtbhF0e+GD9YbnU9vYpO+gOXdBJ1e5XHyUqEE6rYjv
-   h3VNjFrrUzRJlrkDTMVLo3+OTMalt+lmr2x3JEsrUU54BwZqTIgI9wTTZ
-   8=;
+  bh=b2UCLkcestSSZnmzxTugG6IV0wJHc0puXHS0gd/nKNw=;
+  b=sUc0Pw6YxtctcVT8BCPU0UkAfv0tLzvgmziuDXLRM2ILoJuGd4YnY9+T
+   1cWDxKkTNzUpPf/MtmffT6dzmJ2io7Joc7vCdQVNQJ/6oGbwRnW3KUzT3
+   qp3Q6852183eN9U8eIYCcsfJNb35THJXw8JfrkfYAoGnCncpc3tRpW2I8
+   o=;
 X-IronPort-AV: E=Sophos;i="5.54,405,1534809600"; 
-   d="scan'208";a="765266627"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Oct 2018 22:22:52 +0000
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
-        by email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9KMMmHc051471
+   d="scan'208";a="637420949"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1e-17c49630.us-east-1.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Oct 2018 22:22:58 +0000
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (iad7-ws-svc-lb50-vlan3.amazon.com [10.0.93.214])
+        by email-inbound-relay-1e-17c49630.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w9KMMp4o080382
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 20 Oct 2018 22:22:49 GMT
+        Sat, 20 Oct 2018 22:22:53 GMT
 Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w9KMMlNY031603;
-        Sun, 21 Oct 2018 00:22:47 +0200
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w9KMMoil031615;
+        Sun, 21 Oct 2018 00:22:50 +0200
 Received: (from karahmed@localhost)
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id w9KMMkl4031602;
-        Sun, 21 Oct 2018 00:22:46 +0200
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id w9KMMopc031614;
+        Sun, 21 Oct 2018 00:22:50 +0200
 From:   KarimAllah Ahmed <karahmed@amazon.de>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         pbonzini@redhat.com, rkrcmar@redhat.com
-Cc:     Filippo Sironi <sironi@amazon.de>,
-        KarimAllah Ahmed <karahmed@amazon.de>
-Subject: [PATCH v3 04/13] X86/KVM: Handle PFNs outside of kernel reach when touching GPTEs
-Date:   Sun, 21 Oct 2018 00:22:16 +0200
-Message-Id: <1540074145-31285-5-git-send-email-karahmed@amazon.de>
+Cc:     KarimAllah Ahmed <karahmed@amazon.de>
+Subject: [PATCH v3 07/13] KVM/nVMX: Use kvm_vcpu_map when mapping the virtual APIC page
+Date:   Sun, 21 Oct 2018 00:22:19 +0200
+Message-Id: <1540074145-31285-8-git-send-email-karahmed@amazon.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1540074145-31285-1-git-send-email-karahmed@amazon.de>
 References: <1540074145-31285-1-git-send-email-karahmed@amazon.de>
@@ -66,75 +65,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filippo Sironi <sironi@amazon.de>
+Use kvm_vcpu_map when mapping the virtual APIC page since using
+kvm_vcpu_gpa_to_page() and kmap() will only work for guest memory that has
+a "struct page".
 
-cmpxchg_gpte() calls get_user_pages_fast() to retrieve the number of
-pages and the respective struct page to map in the kernel virtual
-address space.
-This doesn't work if get_user_pages_fast() is invoked with a userspace
-virtual address that's backed by PFNs outside of kernel reach (e.g., when
-limiting the kernel memory with mem= in the command line and using
-/dev/mem to map memory).
+One additional semantic change is that the virtual host mapping lifecycle
+has changed a bit. It now has the same lifetime of the pinning of the
+virtual APIC page on the host side.
 
-If get_user_pages_fast() fails, look up the VMA that back the userspace
-virtual address, compute the PFN and the physical address, and map it in
-the kernel virtual address space with memremap().
-
-Signed-off-by: Filippo Sironi <sironi@amazon.de>
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 ---
- arch/x86/kvm/paging_tmpl.h | 38 +++++++++++++++++++++++++++++---------
- 1 file changed, 29 insertions(+), 9 deletions(-)
+v1 -> v2:
+- Do not change the lifecycle of the mapping (pbonzini)
+- Use pfn_to_hpa instead of gfn_to_gpa
+---
+ arch/x86/kvm/vmx.c | 34 +++++++++++-----------------------
+ 1 file changed, 11 insertions(+), 23 deletions(-)
 
-diff --git a/arch/x86/kvm/paging_tmpl.h b/arch/x86/kvm/paging_tmpl.h
-index 14ffd97..8f7bc8f 100644
---- a/arch/x86/kvm/paging_tmpl.h
-+++ b/arch/x86/kvm/paging_tmpl.h
-@@ -141,15 +141,35 @@ static int FNAME(cmpxchg_gpte)(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 5b15ca2..83a5e95 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -845,9 +845,8 @@ struct nested_vmx {
+ 	 * pointers, so we must keep them pinned while L2 runs.
+ 	 */
+ 	struct page *apic_access_page;
+-	struct page *virtual_apic_page;
++	struct kvm_host_map virtual_apic_map;
+ 	struct page *pi_desc_page;
+-
+ 	struct kvm_host_map msr_bitmap_map;
+ 
+ 	struct pi_desc *pi_desc;
+@@ -6152,11 +6151,12 @@ static void vmx_complete_nested_posted_interrupt(struct kvm_vcpu *vcpu)
+ 
+ 	max_irr = find_last_bit((unsigned long *)vmx->nested.pi_desc->pir, 256);
+ 	if (max_irr != 256) {
+-		vapic_page = kmap(vmx->nested.virtual_apic_page);
++		vapic_page = vmx->nested.virtual_apic_map.hva;
++		if (!vapic_page)
++			return;
++
+ 		__kvm_apic_update_irr(vmx->nested.pi_desc->pir,
+ 			vapic_page, &max_irr);
+-		kunmap(vmx->nested.virtual_apic_page);
+-
+ 		status = vmcs_read16(GUEST_INTR_STATUS);
+ 		if ((u8)max_irr > ((u8)status & 0xff)) {
+ 			status &= ~0xff;
+@@ -8468,10 +8468,7 @@ static void free_nested(struct vcpu_vmx *vmx)
+ 		kvm_release_page_dirty(vmx->nested.apic_access_page);
+ 		vmx->nested.apic_access_page = NULL;
+ 	}
+-	if (vmx->nested.virtual_apic_page) {
+-		kvm_release_page_dirty(vmx->nested.virtual_apic_page);
+-		vmx->nested.virtual_apic_page = NULL;
+-	}
++	kvm_vcpu_unmap(&vmx->nested.virtual_apic_map);
+ 	if (vmx->nested.pi_desc_page) {
+ 		kunmap(vmx->nested.pi_desc_page);
+ 		kvm_release_page_dirty(vmx->nested.pi_desc_page);
+@@ -11394,6 +11391,7 @@ static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu)
+ {
+ 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	struct kvm_host_map *map;
  	struct page *page;
+ 	u64 hpa;
  
- 	npages = get_user_pages_fast((unsigned long)ptep_user, 1, 1, &page);
--	/* Check if the user is doing something meaningless. */
--	if (unlikely(npages != 1))
--		return -EFAULT;
--
--	table = kmap_atomic(page);
--	ret = CMPXCHG(&table[index], orig_pte, new_pte);
--	kunmap_atomic(table);
--
--	kvm_release_page_dirty(page);
-+	if (likely(npages == 1)) {
-+		table = kmap_atomic(page);
-+		ret = CMPXCHG(&table[index], orig_pte, new_pte);
-+		kunmap_atomic(table);
-+
-+		kvm_release_page_dirty(page);
-+	} else {
-+		struct vm_area_struct *vma;
-+		unsigned long vaddr = (unsigned long)ptep_user & PAGE_MASK;
-+		unsigned long pfn;
-+		unsigned long paddr;
-+
-+		down_read(&current->mm->mmap_sem);
-+		vma = find_vma_intersection(current->mm, vaddr, vaddr + PAGE_SIZE);
-+		if (!vma || !(vma->vm_flags & VM_PFNMAP)) {
-+			up_read(&current->mm->mmap_sem);
-+			return -EFAULT;
-+		}
-+		pfn = ((vaddr - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
-+		paddr = pfn << PAGE_SHIFT;
-+		table = memremap(paddr, PAGE_SIZE, MEMREMAP_WB);
-+		if (!table) {
-+			up_read(&current->mm->mmap_sem);
-+			return -EFAULT;
-+		}
-+		ret = CMPXCHG(&table[index], orig_pte, new_pte);
-+		memunmap(table);
-+		up_read(&current->mm->mmap_sem);
-+	}
+@@ -11426,11 +11424,7 @@ static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu)
+ 	}
  
- 	return (ret != orig_pte);
- }
+ 	if (nested_cpu_has(vmcs12, CPU_BASED_TPR_SHADOW)) {
+-		if (vmx->nested.virtual_apic_page) { /* shouldn't happen */
+-			kvm_release_page_dirty(vmx->nested.virtual_apic_page);
+-			vmx->nested.virtual_apic_page = NULL;
+-		}
+-		page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->virtual_apic_page_addr);
++		map = &vmx->nested.virtual_apic_map;
+ 
+ 		/*
+ 		 * If translation failed, VM entry will fail because
+@@ -11445,11 +11439,8 @@ static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu)
+ 		 * control.  But such a configuration is useless, so
+ 		 * let's keep the code simple.
+ 		 */
+-		if (!is_error_page(page)) {
+-			vmx->nested.virtual_apic_page = page;
+-			hpa = page_to_phys(vmx->nested.virtual_apic_page);
+-			vmcs_write64(VIRTUAL_APIC_PAGE_ADDR, hpa);
+-		}
++		if (!kvm_vcpu_map(vcpu, gpa_to_gfn(vmcs12->virtual_apic_page_addr), map))
++			vmcs_write64(VIRTUAL_APIC_PAGE_ADDR, pfn_to_hpa(map->pfn));
+ 	}
+ 
+ 	if (nested_cpu_has_posted_intr(vmcs12)) {
+@@ -13353,10 +13344,7 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
+ 		kvm_release_page_dirty(vmx->nested.apic_access_page);
+ 		vmx->nested.apic_access_page = NULL;
+ 	}
+-	if (vmx->nested.virtual_apic_page) {
+-		kvm_release_page_dirty(vmx->nested.virtual_apic_page);
+-		vmx->nested.virtual_apic_page = NULL;
+-	}
++	kvm_vcpu_unmap(&vmx->nested.virtual_apic_map);
+ 	if (vmx->nested.pi_desc_page) {
+ 		kunmap(vmx->nested.pi_desc_page);
+ 		kvm_release_page_dirty(vmx->nested.pi_desc_page);
 -- 
 2.7.4
 
