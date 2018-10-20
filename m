@@ -2,84 +2,153 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FROM_WORDY,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05441C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 20:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B288BC67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 20:14:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7F1E215E6
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 20:13:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A1C2215E6
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 20:14:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="tJ13y1Mi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7F1E215E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="dqC12tvI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A1C2215E6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726544AbeJUEX5 (ORCPT
+        id S1726618AbeJUEZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 00:23:57 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:39050 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725198AbeJUEX5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 00:23:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=zwE7XsP3qjD5nT3EGIDHGWbVEUmgMzK8gYWW0A9ThJE=;
-        b=tJ13y1Mijmp2P1la1G5qr1jvoefomorpeh8j0OJvFF5UA563oPm9LEVqNOcrwgOlnIPw5ysfbbM0z0sMs0owxdJnWvVWTY3yV9+6H0g8lnsXbk3cpg5MXhrE/grKqywiqwGm7T/aZJGVBLYWtl0HR42iZ3kDEDBdNs5ziwtOMOI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gDxbd-0003aJ-3d; Sat, 20 Oct 2018 22:12:17 +0200
-Date:   Sat, 20 Oct 2018 22:12:17 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        LABBE Corentin <clabbe@baylibre.com>, davem@davemloft.net,
-        fugang.duan@nxp.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: fec: Add missing SPEED_
-Message-ID: <20181020201217.GB6615@lunn.ch>
-References: <d1461619-1344-e581-4eef-35cf8bbb5336@gmail.com>
- <20181018191612.GB31736@Red>
- <5cb0731b-83c5-5ed5-d022-98f8627d1737@gmail.com>
- <20181018195909.GA11317@Red>
- <1b784f69-3ec2-feb2-81e1-9a335cf477c3@gmail.com>
- <f1933c0a-d124-a7ac-afab-2fa8f88907ab@gmail.com>
- <20181020153922.GC1596@lunn.ch>
- <c8f4f203-b2b6-81ba-2c79-85501a640948@gmail.com>
- <20181020185947.GA6615@lunn.ch>
- <1153d0a5-1c23-1e14-7ebd-459886af957a@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1153d0a5-1c23-1e14-7ebd-459886af957a@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sun, 21 Oct 2018 00:25:31 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:39194 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725198AbeJUEZb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Oct 2018 00:25:31 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id B226A8EE0CC;
+        Sat, 20 Oct 2018 13:13:55 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id WqsKjMjoiDG4; Sat, 20 Oct 2018 13:13:55 -0700 (PDT)
+Received: from [192.168.11.218] (ip-64-134-136-40.public.wayport.net [64.134.136.40])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 27FBB8EE0C8;
+        Sat, 20 Oct 2018 13:13:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1540066435;
+        bh=NF2aOwufa/CnAzAihQJ5eA9DhnZGOlxGL7HJvaonR7g=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=dqC12tvIHMGa9k+5ivZrl2MqC2DABTT0cXklaF/9BcnL1Fe3Du1eXHJCoIc2Wgvzx
+         evxucMFWC3F900KbzYt10XYbm5aj3qO+iyoK+oIgG1gx9xurEGaZ6rHds0WXuhIqoG
+         FwSDrfbOWb/bhZpHOphrb4+u2y7mpsa+fS/SQmaE=
+Message-ID: <1540066434.3464.21.camel@HansenPartnership.com>
+Subject: Re: [Ksummit-discuss] [PATCH 6/7] Code of Conduct: Change the
+ contact email address
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     ksummit-discuss@lists.linuxfoundation.org,
+        Mishi Choudhary <mishi@linux.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Sat, 20 Oct 2018 13:13:54 -0700
+In-Reply-To: <20181020192845.48b8b860@alans-desktop>
+References: <20181020134908.GA32218@kroah.com>
+         <20181020135118.GG32218@kroah.com> <20181020192845.48b8b860@alans-desktop>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Yes, you are correct.
-> > 
-> > But it is no longer possible to just do PHY_BASIC_FEATURES |
-> > SUPPORTED_Pause because .features is no loner a u32 but a linux
-> > bitmap.
-> > 
-> Ahh, missed that.
+On Sat, 2018-10-20 at 19:28 +0100, Alan Cox wrote:
+> > +to the circumstances. The Code of Conduct Committee is obligated
+> > to
+> > +maintain confidentiality with regard to the reporter of an
+> > incident.
+> > +Further details of specific enforcement policies may be posted
+> > +separately.
+> 
+> Unfortunately by ignoring the other suggestions on this you've left
+> this bit broken.
+> 
+> The committee can't keep most stuff confidential so it's misleading
+> and wrong to imply they can. Data protection law, reporting laws in
+> some countries and the like mean that anyone expecting an incident to
+> remain confidential from the person it was reported against is living
+> in dreamland and are going to get a nasty shock.
+> 
+> At the very least it should say '(except where required by law)'.
 
-Yes, easy to miss, since it is still work in progress. The next
-patchset completes the migration, making phydev->advertise and
-phydev->supported bitmaps.
+I've got a solution for this: the patches I've been curating also
+modify the section so the merger will look like what I have below.
 
-> > We need to keep the same idea, allow the PHY driver to indicate it
-> > supports a subset of Pause, and if not, enable pause by default.
-> > 
-> Could the PHY driver define its own bitmap instead of pointing to
-> one of the predefined ones?
+The intent of the series I'm curating was only the beginning to show
+desire to change in 4.19 but to correct the obvious defect before we
+started the debate, so after suitable discussion, this one can be
+the final set.
 
-I'm actually just adding a few more pre-defined ones. I suspect they
-will get used by more than one driver. These changed have uncovered a
-few bugs with pause, and i would not be surprised to find there are
-more still to be found.
+> There is a separate issue that serious things should always go to law
+> enforcement - you are setting up a policy akin to the one that got
+> the catholic church and many others in trouble.
+> 
+> You should also reserving the right to report serious incidents
+> directly to law enforcement. Unless of course you want to be forced
+> to sit on multiple reports of physical abuse from different people
+> about someone - unable to tell them about each others report, unable
+> to prove anything, and in twenty years time having to explain to the
+> media why nothing was done.
 
-     Andrew
+I think we should debate that.  Most legal systems provide significant
+deference to victims wishing for confidentiality and we should both
+respect that and remember that an automatic crime report is a
+significant deterrent  to vulnerable people in a lot of places.
+
+James
+
+---
+
+diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/process/code-of-conduct.rst
+index eec768471a4d..8913851dab89 100644
+--- a/Documentation/process/code-of-conduct.rst
++++ b/Documentation/process/code-of-conduct.rst
+@@ -59,19 +59,27 @@ address, posting via an official social media account, or acting as an appointed
+ representative at an online or offline event. Representation of a project may be
+ further defined and clarified by project maintainers.
+ 
+-Reporting
+-=========
++Enforcement
++===========
+ 
+ Instances of abusive, harassing, or otherwise unacceptable behavior may be
+-reported by contacting the Technical Advisory Board (TAB) at
+-<tab@lists.linux-foundation.org>. All complaints will be reviewed and
+-investigated and will result in a response that is deemed necessary and
+-appropriate to the circumstances. The TAB is obligated to maintain
+-confidentiality with regard to the reporter of an incident (except where
+-required by law).
++reported by contacting the Code of Conduct Committee at
++<conduct@kernel.org>. All complaints will be reviewed and investigated
++and will result in a response that is deemed necessary and appropriate
++to the circumstances. The Code of Conduct Committee is obligated to
++maintain confidentiality with regard to the reporter of an incident
++(except where required by law). Further details of specific enforcement
++policies may be posted separately.
++
+ 
+ Attribution
+ ===========
+ 
+ This Code of Conduct is adapted from the Contributor Covenant, version 1.4,
+ available at https://www.contributor-covenant.org/version/1/4/code-of-conduct.html
++
++Interpretation
++==============
++
++See the :ref:`code_of_conduct_interpretation` document for how the Linux
++kernel community will be interpreting this document.
