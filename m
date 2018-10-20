@@ -2,120 +2,129 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21971C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 20:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D5CC67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 20:58:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1B79216FC
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 20:32:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3311216C4
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 20:58:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FzFPjWtJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1B79216FC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="oiE0idkr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3311216C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbeJUEoZ (ORCPT
+        id S1726872AbeJUFJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 00:44:25 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:39061 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725767AbeJUEoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 00:44:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=BxLea/evN+XC098VCgL7By3veNZat0HjlnOT/U0p37w=;
-        b=FzFPjWtJdEMlQC8lGgcKPNSG45wVGHdO6ElfqAoaUGFlGSRORWf7qbvrIMp44duBZK81Owo0r5YA9lbxT7UJ+5eGqaYmkI6F1eI7S3BeMVv7JdQoABRPd9dUtkxDvuU0/0I5zVgfUmgZiPs7n2oPQ+WJ21u8uYxzbaXItGY5AhM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gDxvN-0003g3-3V; Sat, 20 Oct 2018 22:32:41 +0200
-Date:   Sat, 20 Oct 2018 22:32:41 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     LABBE Corentin <clabbe@baylibre.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>, davem@davemloft.net,
-        fugang.duan@nxp.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: fec: Add missing SPEED_
-Message-ID: <20181020203241.GC6615@lunn.ch>
-References: <1539875100-11121-1-git-send-email-clabbe@baylibre.com>
- <2621cbc9-47ed-ce2a-b7ee-262f17dc138f@gmail.com>
- <20181018184715.GA31736@Red>
- <d1461619-1344-e581-4eef-35cf8bbb5336@gmail.com>
- <20181018191612.GB31736@Red>
- <5cb0731b-83c5-5ed5-d022-98f8627d1737@gmail.com>
- <20181018195909.GA11317@Red>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181018195909.GA11317@Red>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sun, 21 Oct 2018 01:09:49 -0400
+Received: from mta-p6.oit.umn.edu ([134.84.196.206]:45666 "EHLO
+        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbeJUFJt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Oct 2018 01:09:49 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 5EF3195E
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 20:58:04 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p6.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id aIdMwZRR16CW for <linux-kernel@vger.kernel.org>;
+        Sat, 20 Oct 2018 15:58:04 -0500 (CDT)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 364E395D
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 15:58:04 -0500 (CDT)
+Received: by mail-io1-f72.google.com with SMTP id l21-v6so20247668ioc.21
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 13:58:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=xQ+GmITu1UBL82c2OOxEU+5GVCJZBz0JV2g6rO5syUA=;
+        b=oiE0idkrrH0BXuKiZmb+YqGCFvkz2wiHpgZZ3nRA4kOBt01DNULhTYmMuAVbUbJwQB
+         wyWW3IipLINQrvx9PuH9a9uFc+8m2JDN7pAblKU3/ARXHUVHsnCAcbRTDkJeahR9fxbn
+         FSmo1ngnGwoEy7iETgDOfxvmCHYnlyD1Yzbs9AP5Ozji2LwFb05aUzl1cB8DWGQMMCkY
+         8Ic6wRx3QrlFjzanktChsTJAnqz5oMl9XulYYg94lNf4IeXIq7dtt4lrMcRY4ZJkTLxg
+         5Jty3EAM0OoIeFcfvhbrVtoOatqbLawECLel+dKRMQLMUi3hZGYhC5mwFj9QWe0/3owb
+         AaUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xQ+GmITu1UBL82c2OOxEU+5GVCJZBz0JV2g6rO5syUA=;
+        b=Wj5FEpEM8p32vHaBKAtVybh3S0z/k7HR+VurmDVB56BF62cn5A0wrJitf8huqTU1MQ
+         rDtOtEbteFPhlWtToKp0DriOKr9SLKQ1+tk2oB75ystCRMazc8mFJvldG+Gn2R958VCL
+         EMVuOZKxCpldmQf/wQTeKJXLwgBo4DZJkRZXTrlnCh8fj/QKDsIrZgkXS8V2u3WSGiNk
+         rB31KGn1mRvkPHklf8GZEQjxAE1pB3Tw3TPgjC/t2RWnJ06W6f61dPfcfBJKZgQ9QUxE
+         g0acnqkAMI7qyPasKzc+7Fg5lOPKl6NLv5tlfhr71YbBA9xojOckcdN+T0VAtB4aK5H4
+         qQyw==
+X-Gm-Message-State: ABuFfoitakK12ElWrxptlPWtkDbzeSAVVGdzK53CYwdauoZQFikvhzJN
+        gVLQnoo9FyRRnKPUCGbgJ3nKuI8GNxdq1pOV/rPGSgay9dLF73UdWQJLNUVxWJk+fUpe2d0NPg4
+        CCgkOfD2eoUu6Ggvt882xPda0l8dc
+X-Received: by 2002:a24:5214:: with SMTP id d20-v6mr6389630itb.24.1540069083683;
+        Sat, 20 Oct 2018 13:58:03 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV62McDdBEbGsQGQDfxxccpNobEH5ISnvA8IDkIlyt102VMXir3bxYvMKN/JaS2QaVgIDUx9ecw==
+X-Received: by 2002:a24:5214:: with SMTP id d20-v6mr6389618itb.24.1540069083499;
+        Sat, 20 Oct 2018 13:58:03 -0700 (PDT)
+Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
+        by smtp.gmail.com with ESMTPSA id l142-v6sm4101910itl.23.2018.10.20.13.58.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 20 Oct 2018 13:58:02 -0700 (PDT)
+From:   Wenwen Wang <wang6495@umn.edu>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>, Ken Wang <Ken.Wang@amd.com>,
+        amd-gfx@lists.freedesktop.org (open list:RADEON and AMDGPU DRM DRIVERS),
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/amdgpu: fix a missing-check bug
+Date:   Sat, 20 Oct 2018 15:57:54 -0500
+Message-Id: <1540069075-18358-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 09:59:09PM +0200, LABBE Corentin wrote:
-> On Thu, Oct 18, 2018 at 12:38:32PM -0700, Florian Fainelli wrote:
-> > On 10/18/2018 12:16 PM, LABBE Corentin wrote:
-> > > On Thu, Oct 18, 2018 at 11:55:49AM -0700, Florian Fainelli wrote:
-> > >> On 10/18/2018 11:47 AM, LABBE Corentin wrote:
-> > >>> On Thu, Oct 18, 2018 at 11:39:24AM -0700, Florian Fainelli wrote:
-> > >>>> On 10/18/2018 08:05 AM, Corentin Labbe wrote:
-> > >>>>> Since commit 58056c1e1b0e ("net: ethernet: Use phy_set_max_speed() to limit advertised speed"), the fec driver is unable to get any link.
-> > >>>>> This is due to missing SPEED_.
-> > >>>>
-> > >>>> But SPEED_1000 is defined in include/uapi/linux/ethtool.h as 1000, so
-> > >>>> surely this would amount to the same code paths being taken or am I
-> > >>>> missing something here?
-> > >>>
-> > >>> The bisect session pointed your patch, reverting it fix the issue.
-> > >>> BUT since the fix seemed trivial I sent the patch without more test then compile it.
-> > >>> Sorry, I have just found some minutes ago that it didnt fix the issue.
-> > >>>
-> > >>> But your patch is still the cause for sure.
-> > >>>
-> > >>
-> > >> What you are writing is really lowering the confidence level, first
-> > >> Andrew is the author of that patch, and second "just compiling" and
-> > >> pretending this fixes a problem when it does not is not quite what I
-> > >> would expect.
-> > >>
-> > >> I don't have a problem helping you find the solution or the right fix
-> > >> though, even if it is not my patch, but please get the author and actual
-> > >> problem right so we can move forward in confidence, thanks!
-> > > 
-> > > Sorry again, I wanted to acknoledge my error but I did it too fast and late.
-> > > And sorry to have confound you with Andrew.
-> > 
-> > No worries, here to help, let us know what your bisection points to. THanks
-> 
-> I have added printing of phydev->supported
-> My working kernel (on top of 58056c1e1b0e + revert patch) got:
-> [    5.550838] fec_enet_mii_probe 2ff (gbit features)
-> [    5.555848] fec_enet_mii_probe 2ef (without 1000baseT_Half)
-> [    5.561620] fec_enet_mii_probe 22ef final (after pause)
-> [    5.566914] Micrel KSZ9021 Gigabit PHY 2188000.ethernet-1:06: attached PHY driver [Micrel KSZ9021 Gigabit PHY] (mii_bus:phy_addr=2188000.ethernet-1:06, irq=POLL)
+In amdgpu_read_bios_from_rom(), the header of the VBIOS is firstly copied
+to 'header' from an IO memory region through
+amdgpu_asic_read_bios_from_rom(). Then the header is checked to see whether
+it is a valid header. If yes, the whole VBIOS, including the header, is
+then copied to 'adev->bios'. The problem here is that no check is enforced
+on the header after the second copy. Given that the device also has the
+permission to access the IO memory region, it is possible for a malicious
+device controlled by an attacker to modify the header between these two
+copies. By doing so, the attacker can supply compromised VBIOS, which can
+cause undefined behavior of the kernel and introduce potential security
+issues.
 
-I just looked at the datasheet for the KSZ9021. It supports Pause and
-ASym Pause. So i would expect these bits to be set. However, the FEC
-MAC is unable to support Asym pause, it only supports Pause. So it is
-the MAC drivers responsibility to clear Asym Pause.
+This patch rewrites the header in 'adev->bios' using the header acquired in
+the first copy.
 
-        /* mask with MAC supported features */
-	if (fep->quirks & FEC_QUIRK_HAS_GBIT) {
-                phy_set_max_speed(phy_dev, 1000);
-                phy_remove_link_mode(phy_dev,
-                                     ETHTOOL_LINK_MODE_1000baseT_Half_BIT);
-#if !defined(CONFIG_M5272)
-	phy_support_sym_pause(phy_dev);
-#endif
-        }
-        else
-                phy_set_max_speed(phy_dev, 100);
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_bios.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I think we just need to take this #if !defined out, so always
-indicating that sym_pause is supported. And we want
-phy_support_sym_pause() to clear the asym_pause bit, if set.
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_bios.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_bios.c
+index a5df80d..ac701f4 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_bios.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_bios.c
+@@ -181,6 +181,8 @@ static bool amdgpu_read_bios_from_rom(struct amdgpu_device *adev)
+ 	/* read complete BIOS */
+ 	amdgpu_asic_read_bios_from_rom(adev, adev->bios, len);
+ 
++	memcpy(adev->bios, header, AMD_VBIOS_SIGNATURE_END);
++
+ 	if (!check_atom_bios(adev->bios, len)) {
+ 		kfree(adev->bios);
+ 		return false;
+-- 
+2.7.4
 
-	Andrew
