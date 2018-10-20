@@ -2,311 +2,144 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1470BECDE3D
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 00:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2571CECDE43
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 00:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4D062098A
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 00:11:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="A0H9MVVv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4D062098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id DFE742098A
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 00:12:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFE742098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbeJTIUM (ORCPT
+        id S1727152AbeJTIU5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 04:20:12 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37995 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726816AbeJTIUM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 04:20:12 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f8-v6so16416200pgq.5
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Oct 2018 17:11:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mUeLsqR7WYh9rtrMYSVtWjR7oizq3xnkzwGwPdHYma4=;
-        b=A0H9MVVvfq0mU3EL6NAnjn0faxb9i8qawrfDfcMfc9MWB8e0+KEvRcSBGpnoHevla3
-         jwDF+WIAHr/L4dbOKjNyDU5AFZCio3p/jN6ySgnB09idvg+4OOTZqxW8K0Ert+CuhXR0
-         1/d3QeRz9Vy9JyYQiJHgC249n8aBu596iY3mU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mUeLsqR7WYh9rtrMYSVtWjR7oizq3xnkzwGwPdHYma4=;
-        b=S06e3eQFCxeiPqIDy31vJAYctCg1Eidisf/PXM1XBG95f+9aRY577nHlic8kjR31Sq
-         ZS9xVyKpfXQ0QoDEzXc8do+xTN3hICUWOtKHd+PWt5OWsb1LeTXI15eXsIaQwVGkw4xO
-         8V3bwvxZCZxdBIrvlWz96VPZJEsGxbfz4mqfLHjE+0Z4syZp6mdWtH6o+EK5j2MDLA9r
-         0JBrZ54jy4FAtbvmnD7or12HgtpmykMfWE9pg4qCv2SMtymJgLcnNp/CYUmm+kXkKQ8d
-         M8cruTORiApnm8itWQdomKRcZmMNxcDkYPBLdqR2IWx10bOjeYIe92050bejYRPm48Rs
-         r90A==
-X-Gm-Message-State: ABuFfoj5p+zA+OhjuicyCuICwcUXy7zPEurTppepJ+Az4t7cP0iiUIup
-        iUTNL0XCC90Jf2YBKM+N1iA5xw==
-X-Google-Smtp-Source: ACcGV63rHL8WnytMRdmvRwVI9qqov00i93E0qXJ3asbvhWcDLgB8SdzVSqEcVwA7mHBnB7P172vTkQ==
-X-Received: by 2002:a63:1711:: with SMTP id x17-v6mr33705072pgl.364.1539994309219;
-        Fri, 19 Oct 2018 17:11:49 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id x13-v6sm39801490pge.13.2018.10.19.17.11.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 19 Oct 2018 17:11:46 -0700 (PDT)
-Date:   Fri, 19 Oct 2018 17:11:45 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
-Subject: Re: [RFC PATCH 0/2] improve vmalloc allocation
-Message-ID: <20181020001145.GA243578@joelaf.mtv.corp.google.com>
-References: <20181019173538.590-1-urezki@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181019173538.590-1-urezki@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sat, 20 Oct 2018 04:20:57 -0400
+Received: from mga06.intel.com ([134.134.136.31]:18823 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727067AbeJTIU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 04:20:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 17:12:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,401,1534834800"; 
+   d="scan'208";a="82652154"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by orsmga007.jf.intel.com with ESMTP; 19 Oct 2018 17:12:34 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id B71C1300FC1; Fri, 19 Oct 2018 17:12:34 -0700 (PDT)
+From:   Andi Kleen <andi@firstfloor.org>
+To:     x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org, eranian@google.com,
+        kan.liang@intel.com, Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH v3 1/2] x86/cpufeature: Add facility to match microcode revisions
+Date:   Fri, 19 Oct 2018 17:12:29 -0700
+Message-Id: <20181020001230.31555-1-andi@firstfloor.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 07:35:36PM +0200, Uladzislau Rezki (Sony) wrote:
-> Objective
-> ---------
-> Initiative of improving vmalloc allocator comes from getting many issues
-> related to allocation time, i.e. sometimes it is terribly slow. As a result
-> many workloads which are sensitive for long (more than 1 millisecond) preemption
-> off scenario are affected by that slowness(test cases like UI or audio, etc.).
-> 
-> The problem is that, currently an allocation of the new VA area is done over
-> busy list iteration until a suitable hole is found between two busy areas.
-> Therefore each new allocation causes the list being grown. Due to long list
-> and different permissive parameters an allocation can take a long time on
-> embedded devices(milliseconds).
+From: Andi Kleen <ak@linux.intel.com>
 
-I am not super familiar with the vmap allocation code, it has been some
-years. But I have 2 comments:
+For bug workarounds or checks it is useful to check for specific
+microcode revisionss. Add a new table format to check for steppings
+with min microcode revisions.
 
-(1) It seems the issue you are reporting is the walking of the list in
-alloc_vmap_area().
+This does not change the existing x86_cpu_id because it's an ABI
+shared with modutils, and also has quite different requirements,
+as in no wildcards, but everything has to be matched exactly.
 
-Can we not solve this by just simplifying the following code?
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+---
+v2:
+Remove all CPU match, only check boot cpu
+Move INTEL_MIN_UCODE macro to header.
+Minor cleanups.
+Remove max ucode and driver data
+v3:
+Rename function
+Update comments.
+Document mixed stepping caveats.
+Use u8 for model
+Remove vendor 0 check.
+Change return check
+---
+ arch/x86/include/asm/cpu_device_id.h | 29 ++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/match.c          | 19 ++++++++++++++++++
+ 2 files changed, 48 insertions(+)
 
-	/* from the starting point, walk areas until a suitable hole is found
-	 */
-	while (addr + size > first->va_start && addr + size <= vend) {
-		if (addr + cached_hole_size < first->va_start)
-			cached_hole_size = first->va_start - addr;
-		addr = ALIGN(first->va_end, align);
-		if (addr + size < addr)
-			goto overflow;
+diff --git a/arch/x86/include/asm/cpu_device_id.h b/arch/x86/include/asm/cpu_device_id.h
+index baeba0567126..97d645910ec2 100644
+--- a/arch/x86/include/asm/cpu_device_id.h
++++ b/arch/x86/include/asm/cpu_device_id.h
+@@ -11,4 +11,33 @@
+ 
+ extern const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match);
+ 
++/*
++ * Match specific microcode revisions.
++ *
++ * vendor/family/model/stepping must be all set.
++ *
++ * only checks against the boot cpu.  When mixed-stepping configs are
++ * valid for a CPU model, add a quirk for every valid stepping and
++ * do the fine-tuning in the quirk handler.
++ */
++
++struct x86_ucode_id {
++	u8  vendor;
++	u8  family;
++	u8  model;
++	u8  stepping;
++	u32 min_ucode;
++};
++
++#define INTEL_MIN_UCODE(mod, step, rev) {			\
++	.vendor = X86_VENDOR_INTEL,				\
++	.family = 6,						\
++	.model = mod,						\
++	.stepping = step,					\
++	.min_ucode = rev,					\
++}
++
++extern const struct x86_ucode_id *
++x86_match_microcode(const struct x86_ucode_id *match);
++
+ #endif
+diff --git a/arch/x86/kernel/cpu/match.c b/arch/x86/kernel/cpu/match.c
+index 3fed38812eea..d44c8cfd7b29 100644
+--- a/arch/x86/kernel/cpu/match.c
++++ b/arch/x86/kernel/cpu/match.c
+@@ -48,3 +48,22 @@ const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match)
+ 	return NULL;
+ }
+ EXPORT_SYMBOL(x86_match_cpu);
++
++const struct x86_ucode_id *x86_match_microcode(const struct x86_ucode_id *match)
++{
++	struct cpuinfo_x86 *c = &boot_cpu_data;
++	const struct x86_ucode_id *m;
++
++	for (m = match; m->family | m->model; m++) {
++		if (c->x86_vendor != m->vendor)
++			continue;
++		if (c->x86 != m->family)
++			continue;
++		if (c->x86_model != m->model)
++			continue;
++		if (c->x86_stepping != m->stepping)
++			continue;
++		return c->microcode >= m->min_ucode ? m : NULL;
++	}
++	return NULL;
++}
+-- 
+2.17.1
 
-		if (list_is_last(&first->list, &vmap_area_list))
-			goto found;
-
-		first = list_next_entry(first, list);
-	}
-
-Instead of going through the vmap_area_list, can we not just binary search
-the existing address-sorted vmap_area_root rbtree to find a hole? If yes,
-that would bring down the linear search overhead. If not, why not?
-
-(2) I am curious, do you have any measurements of how much time
-alloc_vmap_area() is taking? You mentioned it takes milliseconds but I was
-wondering if you had more finer grained function profiling measurements. And
-also any data on how big are the lists at the time you see this issue.
-
-Good to see an effort on improving this, thanks!
-
- - Joel
-
-
-> Description
-> -----------
-> This approach keeps track of free blocks and allocation is done over free list
-> iteration instead. During initialization phase the vmalloc memory layout is
-> organized into one free area(can be more) building free double linked list
-> within VMALLOC_START-VMALLOC_END range.
-> 
-> Proposed algorithm uses red-black tree that keeps blocks sorted by their offsets
-> in pair with linked list keeping the free space in order of increasing addresses.
-> 
-> Allocation. It uses a first-fit policy. To allocate a new block a search is done
-> over free list areas until a first suitable block is large enough to encompass
-> the requested size. If the block is bigger than requested size - it is split.
-> 
-> A free block can be split by three different ways. Their names are FL_FIT_TYPE,
-> LE_FIT_TYPE/RE_FIT_TYPE and NE_FIT_TYPE, i.e. they correspond to how requested
-> size and alignment fit to a free block.
-> 
-> FL_FIT_TYPE - in this case a free block is just removed from the free list/tree
-> because it fully fits. Comparing with current design there is an extra work with
-> rb-tree updating.
-> 
-> LE_FIT_TYPE/RE_FIT_TYPE - left/right edges fit. In this case what we do is
-> just cutting a free block. It is as fast as a current design. Most of the vmalloc
-> allocations just end up with this case, because the edge is always aligned to 1.
-> 
-> NE_FIT_TYPE - Is much less common case. Basically it happens when requested size
-> and alignment does not fit left nor right edges, i.e. it is between them. In this
-> case during splitting we have to build a remaining left free area and place it
-> back to the free list/tree.
-> 
-> Comparing with current design there are two extra steps. First one is we have to
-> allocate a new vmap_area structure. Second one we have to insert that remaining 
-> free block to the address sorted list/tree.
-> 
-> In order to optimize a first case there is a cache with free_vmap objects. Instead
-> of allocating from slab we just take an object from the cache and reuse it.
-> 
-> Second one is pretty optimized. Since we know a start point in the tree we do not
-> do a search from the top. Instead a traversal begins from a rb-tree node we split.
-> 
-> De-allocation. Red-black tree allows efficiently find a spot in the tree whereas
-> a linked list allows fast access to neighbors, thus a fast merge of de-allocated
-> memory chunks with existing free blocks creating large coalesced areas. It means
-> comparing with current design there is an extra step we have to done when a block
-> is freed.
-> 
-> In order to optimize a merge logic a free vmap area is not inserted straight
-> away into free structures. Instead we find a place in the rbtree where a free
-> block potentially can be inserted. Its parent node and left or right direction.
-> Knowing that, we can identify future next/prev list nodes, thus at this point
-> it becomes possible to check if a block can be merged. If not, just link it.
-> 
-> Test environment
-> ----------------
-> I have used two systems to test. One is i5-3320M CPU @ 2.60GHz and another
-> is HiKey960(arm64) board. i5-3320M runs on 4.18 kernel, whereas Hikey960
-> uses 4.15 linaro kernel.
-> 
-> i5-3320M:
-> set performance governor
-> echo 0 > /proc/sys/kernel/nmi_watchdog
-> echo -1 > /proc/sys/kernel/perf_event_paranoid
-> echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo
-> 
-> Stability and stress tests
-> --------------------------
-> As for stress testing of the new approach, i wrote a small patch with
-> different test cases and allocations methods to make a pressure on
-> vmalloc subsystem. In short, it runs different kind of allocation
-> tests simultaneously on each online CPU with different run-time(few days).
-> 
-> A test-suite patch you can find here, it is based on 4.18 kernel.
-> ftp://vps418301.ovh.net/incoming/0001-mm-vmalloc-stress-test-suite-v4.18.patch
-> 
-> Below are some issues i run into during stability check phase(default kernel).
-> 
-> 1) This Kernel BUG can be triggered by align_shift_alloc_test() stress test.
-> See it in test-suite patch:
-> 
-> <snip>
-> [66970.279289] kernel BUG at mm/vmalloc.c:512!
-> [66970.279363] invalid opcode: 0000 [#1] PREEMPT SMP PTI
-> [66970.279411] CPU: 1 PID: 652 Comm: insmod Tainted: G           O      4.18.0+ #741
-> [66970.279463] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> [66970.279525] RIP: 0010:alloc_vmap_area+0x358/0x370
-> <snip>
-> 
-> Patched version does not suffer from that BUG().
-> 
-> 2) This one has been introduced by commit 763b218ddfaf. Which introduced some
-> preemption points into __purge_vmap_area_lazy(). Under heavy simultaneous
-> allocations/releases number of lazy pages can easily go beyond millions
-> hitting out_of_memory -> panic or making operations like: allocation, lookup,
-> unmap, remove, etc. much slower.
-> 
-> It is fixed by second commit in this series. Please see more description in
-> the commit message of the patch.
-> 
-> 3) This one is related to PCPU allocator(see pcpu_alloc_test()). In that
-> stress test case i see that SUnreclaim(/proc/meminfo) parameter gets increased,
-> i.e. there is a memory leek somewhere in percpu allocator. It sounds like
-> a memory that is allocated by pcpu_get_vm_areas() sometimes is not freed.
-> Resulting in memory leaking or "Kernel panic":
-> 
-> ---[ end Kernel panic - not syncing: Out of memory and no killable processes...
-> 
-> There is no fix for that.
-> 
-> Performance test results
-> ------------------------
-> I run 5 different tests to compare the performance between the new approach
-> and current one. Since there are three different type of allocations i wanted
-> to compare them with default version, apart of those there are two extra.
-> One allocates in long busy list condition. Another one does random number
-> of pages allocation(will not post here to keep it short).
-> 
-> - reboot the system;
-> - do three iteration of full run. One run is 5 tests;
-> - calculate average of three run(microseconds).
-> 
-> i5-3320M:
-> le_fit_alloc_test                b_fit_alloc_test
-> 1218459 vs 1146597 diff 5%       972322 vs 1008655 diff -3.74%
-> 1219721 vs 1145212 diff 6%      1013817 vs  994195 diff  1.94%
-> 1226255 vs 1142134 diff 6%      1002057 vs  993364 diff  0.87%
-> 1239828 vs 1144809 diff 7%       985092 vs  977549 diff  0.77%
-> 1232131 vs 1144775 diff 7%      1031320 vs  999952 diff  3.04%
-> 
-> ne_fit_alloc_test                long_busy_list_alloc_test
-> 2056336 vs 2043121 diff 0.64%    55866315 vs 15037680 diff 73%
-> 2043136 vs 2041888 diff 0.06%    57601435 vs 14809454 diff 74%
-> 2042384 vs 2040181 diff 0.11%    52612371 vs 14550292 diff 72%
-> 2041287 vs 2038905 diff 0.12%    48894648 vs 14769538 diff 69%
-> 2039014 vs 2038632 diff 0.02%    55718063 vs 14727350 diff 73%
-> 
-> Hikey960:
-> le_fit_alloc_test                b_fit_alloc_test
-> 2382168 vs 2115617 diff 11.19%   2864080 vs 2081309 diff 27.33%
-> 2772909 vs 2114988 diff 23.73%   2968612 vs 2062716 diff 30.52%
-> 2772579 vs 2113069 diff 23.79%   2748495 vs 2106658 diff 23.35%
-> 2770596 vs 2111823 diff 23.78%   2966023 vs 2071139 diff 30.17%
-> 2759768 vs 2111868 diff 23.48%   2765568 vs 2125216 diff 23.15%
-> 
-> ne_fit_alloc_test                long_busy_list_alloc_test
-> 4353846 vs 4241838 diff  2.57    239789754 vs 33364305 diff 86%
-> 4133506 vs 4241615 diff -2.62    778283461 vs 34551548 diff 95%
-> 4134769 vs 4240714 diff -2.56    210244212 vs 33467529 diff 84%
-> 4132224 vs 4242281 diff -2.66    429232377 vs 33307173 diff 92%
-> 4410969 vs 4240864 diff  3.86    527560967 vs 33661115 diff 93%
-> 
-> Almost all results are better. Full data and the test module you can find here:
-> 
-> ftp://vps418301.ovh.net/incoming/vmalloc_test_module.tar.bz2
-> ftp://vps418301.ovh.net/incoming/HiKey960_test_result.txt
-> ftp://vps418301.ovh.net/incoming/i5-3320M_test_result.txt
-> 
-> Conclusion
-> ----------
-> According to provided results and my subjective opinion, it is worth to organize
-> and maintain a free list and do an allocation based on it.
-> 
-> Appreciate for any valuable comments and sorry for the long description :)
-> 
-> Best Regards,
-> Uladzislau Rezki
-> 
-> Uladzislau Rezki (Sony) (2):
->   mm/vmalloc: keep track of free blocks for allocation
->   mm: add priority threshold to __purge_vmap_area_lazy()
-> 
->  include/linux/vmalloc.h |   2 +-
->  mm/vmalloc.c            | 850 ++++++++++++++++++++++++++++++++++++++----------
->  2 files changed, 676 insertions(+), 176 deletions(-)
-> 
-> -- 
-> 2.11.0
-> 
