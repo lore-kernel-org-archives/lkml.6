@@ -2,168 +2,94 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 391D8C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 07:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C78C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 07:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D946520869
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 07:50:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23588214C2
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 07:54:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PFsUVkJg";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="N17ZaNvz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D946520869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ahPoliL/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23588214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbeJTQAN (ORCPT
+        id S1727232AbeJTQDn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 12:00:13 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59074 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbeJTQAM (ORCPT
+        Sat, 20 Oct 2018 12:03:43 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:33488 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726516AbeJTQDm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 12:00:12 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 074E76086B; Sat, 20 Oct 2018 07:50:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540021841;
-        bh=y/xi5mbJcIbx5q3iSyfa6FLfxbWRfOscOFbMXeMp0Wc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PFsUVkJgr5vbXZIVAoOi8pemnZJvwHBGFuZvuDghoIk2jj7jnwXJHKZ31sLJY+jTf
-         W6meNFzQntuyTsdkX0rVd0ITplcvMdX2w9+jfr5p5LmxrXbZDBlJlwsrVR77MMO5Jo
-         rK7ayYy5zxI/NackFyIzM+tlBgR4l96BMVkIIrHw=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 184DF60227;
-        Sat, 20 Oct 2018 07:50:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540021840;
-        bh=y/xi5mbJcIbx5q3iSyfa6FLfxbWRfOscOFbMXeMp0Wc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=N17ZaNvzUWuoJaLJHEjb/7dMCBd6gu2Qajh07Hgk1RPiTCapuxXmvxrLFdMTNGIIH
-         hmncL+c9SJFscX5TisAuGvoohpmJ55Y9fO7zEFKdGjfJnxWxsSx6m4QJu3PBmmRaLZ
-         F4w7teDtk76M1Wz0oqH0kNGJ3CYaw7vBzJ3FgBeQ=
+        Sat, 20 Oct 2018 12:03:42 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9K7ri5X023864;
+        Sat, 20 Oct 2018 02:53:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1540022024;
+        bh=YKh40aMTxBP51Wa6pTNfJxX2D4M9iL0nr5RPlS+qyfI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ahPoliL/K6/PZRq/TPCjGWNQknCA44PNF5DZXGZdERbroN8s9yKpk9AVoeTy25G0p
+         dtVBEALT+uBzyysioa4Dmx1D+fkU9EIK4fmfUnkrvnuyoxr6ujsmYKyaGJt8YxPU5y
+         mztaknkr8DC88MR665S+gzsFHr/JpcJNNuU7SRKs=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9K7riRx017065;
+        Sat, 20 Oct 2018 02:53:44 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Sat, 20
+ Oct 2018 02:53:44 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Sat, 20 Oct 2018 02:53:44 -0500
+Received: from [172.22.218.57] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9K7reBD017098;
+        Sat, 20 Oct 2018 02:53:41 -0500
+Subject: Re: [PATCH v2 0/2] i2c-omap: Enable i2c-omap driver for AM654 SoCs
+To:     Rob Herring <robh+dt@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+CC:     Sekhar Nori <nsekhar@ti.com>, Nishanth Menon <nm@ti.com>,
+        Peter Rosin <peda@axentia.se>, <linux-i2c@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20180928052557.21663-1-vigneshr@ti.com>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <09a6b1d4-f8f4-ea90-f361-bd3a92088430@ti.com>
+Date:   Sat, 20 Oct 2018 13:23:40 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20180928052557.21663-1-vigneshr@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Sat, 20 Oct 2018 13:20:40 +0530
-From:   mgottam@codeaurora.org
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     hverkuil@xs4all.nl, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
-        vgarodia@codeaurora.org
-Subject: Re: [PATCH] media: venus: queue initial buffers
-In-Reply-To: <7960b369-3bb3-529b-c06c-26ea4de821c8@linaro.org>
-References: <1539071426-1282-1-git-send-email-mgottam@codeaurora.org>
- <7960b369-3bb3-529b-c06c-26ea4de821c8@linaro.org>
-Message-ID: <7ab8c5ef795b774ad684e5b941e0d346@codeaurora.org>
-X-Sender: mgottam@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-09 20:47, Stanimir Varbanov wrote:
-> Hi Malathi,
-> 
-> On 10/09/2018 10:50 AM, Malathi Gottam wrote:
->> Buffers can be queued to driver before the planes are
->> set to start streaming. Queue those buffers to firmware
->> once start streaming is called on both the planes.
-> 
-> yes and this is done in venus_helper_m2m_device_run mem2mem operation
-> when streamon on both queues is called, thus below function just
-> duplicates .device_run.
-> 
-> Do you fix an issue with that patch?
-> 
->> 
->> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
->> ---
->>  drivers/media/platform/qcom/venus/helpers.c | 22 
->> ++++++++++++++++++++++
->>  drivers/media/platform/qcom/venus/helpers.h |  1 +
->>  drivers/media/platform/qcom/venus/venc.c    |  5 +++++
->>  3 files changed, 28 insertions(+)
->> 
->> diff --git a/drivers/media/platform/qcom/venus/helpers.c 
->> b/drivers/media/platform/qcom/venus/helpers.c
->> index e436385..2679adb 100644
->> --- a/drivers/media/platform/qcom/venus/helpers.c
->> +++ b/drivers/media/platform/qcom/venus/helpers.c
->> @@ -1041,6 +1041,28 @@ void venus_helper_vb2_stop_streaming(struct 
->> vb2_queue *q)
->>  }
->>  EXPORT_SYMBOL_GPL(venus_helper_vb2_stop_streaming);
->> 
->> +int venus_helper_queue_initial_bufs(struct venus_inst *inst)
->> +{
->> +	struct v4l2_m2m_ctx *m2m_ctx = inst->m2m_ctx;
->> +	struct v4l2_m2m_buffer *buf, *n;
->> +	int ret;
->> +
->> +	v4l2_m2m_for_each_dst_buf_safe(m2m_ctx, buf, n)	{
->> +		ret = session_process_buf(inst, &buf->vb);
->> +		if (ret)
->> +			return_buf_error(inst, &buf->vb);
->> +	}
->> +
->> +	v4l2_m2m_for_each_src_buf_safe(m2m_ctx, buf, n) {
->> +		ret = session_process_buf(inst, &buf->vb);
->> +		if (ret)
->> +			return_buf_error(inst, &buf->vb);
->> +	}
->> +
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL(venus_helper_queue_initial_bufs);
->> +
->>  int venus_helper_vb2_start_streaming(struct venus_inst *inst)
->>  {
->>  	struct venus_core *core = inst->core;
->> diff --git a/drivers/media/platform/qcom/venus/helpers.h 
->> b/drivers/media/platform/qcom/venus/helpers.h
->> index 2475f284..f4d76ab 100644
->> --- a/drivers/media/platform/qcom/venus/helpers.h
->> +++ b/drivers/media/platform/qcom/venus/helpers.h
->> @@ -31,6 +31,7 @@ void venus_helper_buffers_done(struct venus_inst 
->> *inst,
->>  int venus_helper_vb2_start_streaming(struct venus_inst *inst);
->>  void venus_helper_m2m_device_run(void *priv);
->>  void venus_helper_m2m_job_abort(void *priv);
->> +int venus_helper_queue_initial_bufs(struct venus_inst *inst);
->>  int venus_helper_get_bufreq(struct venus_inst *inst, u32 type,
->>  			    struct hfi_buffer_requirements *req);
->>  u32 venus_helper_get_framesz_raw(u32 hfi_fmt, u32 width, u32 height);
->> diff --git a/drivers/media/platform/qcom/venus/venc.c 
->> b/drivers/media/platform/qcom/venus/venc.c
->> index ce85962..ef11495 100644
->> --- a/drivers/media/platform/qcom/venus/venc.c
->> +++ b/drivers/media/platform/qcom/venus/venc.c
->> @@ -989,6 +989,11 @@ static int venc_start_streaming(struct vb2_queue 
->> *q, unsigned int count)
->>  	if (ret)
->>  		goto deinit_sess;
->> 
->> +	ret = venus_helper_queue_initial_bufs(inst);
->> +	if (ret)
->> +		goto deinit_sess;
->> +	}
->> +
->>  	mutex_unlock(&inst->lock);
->> 
->>  	return 0;
->> 
-Hi Stan,
 
-As I considered playback sequence as well, this function 
-"venus_helper_m2m_device_run" was muted as a part of it. So I had to 
-explicitly implement this function for encoder.
 
-For now, we can omit this patch. Once the playback sequence gets merged 
-into upstream, we can re-look into this.
+On 28-Sep-18 10:55 AM, Vignesh R wrote:
+> Couple of patches to enable i2c-omap driver to be used with TI's new
+> AM654 platforms.
+> 
+> 
+> Vignesh R (2):
+>   dt-bindings: i2c-omap: Add new compatible for AM654 SoCs
+>   i2c: busses: Kconfig: Enable I2C_OMAP for ARCH_K3
+> 
+>  Documentation/devicetree/bindings/i2c/i2c-omap.txt | 8 ++++++--
+>  drivers/i2c/busses/Kconfig                         | 2 +-
+>  2 files changed, 7 insertions(+), 3 deletions(-)
+> 
+
+Gentle ping...
+
+Regards
+Vignesh
