@@ -2,667 +2,334 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C293C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 08:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C70D5C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 08:54:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DE6A21486
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 08:53:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67CEC2150F
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 08:54:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KcNS4ucH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DE6A21486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="To5e+L/O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67CEC2150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbeJTRC4 (ORCPT
+        id S1727388AbeJTREM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 13:02:56 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:41270 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbeJTRCz (ORCPT
+        Sat, 20 Oct 2018 13:04:12 -0400
+Received: from mail-wr1-f42.google.com ([209.85.221.42]:46051 "EHLO
+        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727278AbeJTREM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 13:02:55 -0400
-Received: by mail-yb1-f194.google.com with SMTP id e16-v6so14211726ybk.8
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 01:53:13 -0700 (PDT)
+        Sat, 20 Oct 2018 13:04:12 -0400
+Received: by mail-wr1-f42.google.com with SMTP id f17-v6so7977369wrs.12
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 01:54:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=YIyKF4tkWCs7nPi88Qs3eOAFZGzAVHPb0pDW5qfGOAU=;
-        b=KcNS4ucHr4M0hdM45GVnBOlPDx7LPDI9Y5Kv0AtC1165VEZnltWDwjOT5rZWBEngF9
-         IkBhWWlfxp2HWppg8uO3hAcSqwyNP2HIcvT2rOPNqqEa7sumAhMH2L34g5QbLu7inIhN
-         QgV7RW/zfhCKDDOofaZ/nfgO60X7+izzVo5oI=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=yIAm/j9PhmJvuNbiQsXwnMICu1ByUdYYQ3hH15oyggE=;
+        b=To5e+L/OhU+qeX9dtgUGGqtJJJ2xeGjS3re/mF7DZlYHkOAgVSwShXuNSeK+2X8CVi
+         QVHe7z8GUOElOdtN8aZugn3KG2sFoq5RPdv9ucCT+wrA/kusg2kQfRbsCDLVGpo32lE6
+         nZ4C4zOYrPQGHmg872x3cva9NOypmuAggpwYY+TP30j4E/BRldvucJrN1qYTIy0HAJSD
+         GFI0HWzciPPQDD92t9ci0cIxoSouU438pQ3J1IZysNP4IChn28abJAI8H6eF7ZAzygL5
+         nC1QtJK96ZJQTtx84pa8dYiFeg/6eNXzb0/VvKfZXKcx5NU0A7Ph9HDWiNvXHpvKSUdb
+         pN1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=YIyKF4tkWCs7nPi88Qs3eOAFZGzAVHPb0pDW5qfGOAU=;
-        b=E92RQTFe7CXaLjLgN6bnk0uoqFcnlRc48UOzLAjDmJ6dswcAVdxwYqsJx2FXQEeWeW
-         Ihe9dpSiTFym4zbgRiohNXVQJzmvIlduKqjmmqHRPI/BORQyQSRauKCP9uY1nqO18z+D
-         26O4nxmw87Os2nF2u2k/GXKGWgIpRHhXFblfAEwbjo329FAaqHnJ3JbVe/G7riVCTQys
-         0P4ExM4eUPIlNn2x4h9keyNAeuTgcH99p1rsnU0ah+3xwVp0ZglRAvGOpcVEUJlIosRf
-         /EBG6Yus0cR3h/FqVBEZI8f6vq1BED/1nynYnhloeMnXhEBY+hx25Z0YQlICf32haRDH
-         KpAQ==
-X-Gm-Message-State: ABuFfogDUuV9WX+UWMDv9ykDFDaYilcfygQnXffcsiWYT1vMruKguqA/
-        IyXkmxCfCrWaJs6akPm4YhRkVWlL5hc=
-X-Google-Smtp-Source: ACcGV628oEeWJ/4tQUUEyS9Ad8o4D+bVVH3LdO1pWKmbjIzsCrR2ksFuIdnAFFBrv6U4gzSfxK9ZeQ==
-X-Received: by 2002:a25:f453:: with SMTP id p19-v6mr24629890ybe.153.1540025592859;
-        Sat, 20 Oct 2018 01:53:12 -0700 (PDT)
-Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
-        by smtp.gmail.com with ESMTPSA id w6-v6sm6963087ywl.30.2018.10.20.01.53.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 20 Oct 2018 01:53:11 -0700 (PDT)
-Received: by mail-yw1-f48.google.com with SMTP id l79-v6so14114784ywc.7
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 01:53:10 -0700 (PDT)
-X-Received: by 2002:a81:6ed5:: with SMTP id j204-v6mr24074345ywc.92.1540025590375;
- Sat, 20 Oct 2018 01:53:10 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=yIAm/j9PhmJvuNbiQsXwnMICu1ByUdYYQ3hH15oyggE=;
+        b=pRdR+2qOTjD5OeEeZU+JFJlpbfXp3uT1TjG+KYwV8NYNJU32p1YUe2FLA0nuOU3rVm
+         ExUkqq62NwXABMrwXE/R4QAh2nw0J37NFTYwuNHD2bk7FwPkciLyLtyw+HYltzFpPGV7
+         u0vU9w04UfvGGWaGpe50M8uRNjpKVMWx3T8DtVBmaWXaxq7kbsl4bVYtSdoN0RRYHiNW
+         lI/AKiv8lUadsjjiywP9E3n2YRSVFb52GMjxYpEAO0Ju5xvAOQcdGirpAihAmemV0xnx
+         rO/V+vL2adNgneWYFrYM8NBB8eTrPpr03GsH9sdsvUrn59h2XulH7VE97d37AGxiIsJO
+         25sw==
+X-Gm-Message-State: ABuFfohuiPE7uKBfbUBvINf1p7W1reasA5UwtiZPJJOqePcEQGVcevH3
+        Rgm2vLBTG+v4pbBfy1y2nfs=
+X-Google-Smtp-Source: ACcGV6320/enTpUgNy+EuRsJ/dhiELmIlHlWvZK1vyCoC8wiaMYQY/MZJrB71zjI91diW0HyAjMDLw==
+X-Received: by 2002:a5d:4d4b:: with SMTP id a11-v6mr39084324wru.40.1540025668382;
+        Sat, 20 Oct 2018 01:54:28 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id r2-v6sm14967079wrq.1.2018.10.20.01.54.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 20 Oct 2018 01:54:27 -0700 (PDT)
+Date:   Sat, 20 Oct 2018 10:54:25 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] x86 fixes
+Message-ID: <20181020085425.GA29087@gmail.com>
 MIME-Version: 1.0
-References: <20180724140621.59624-1-tfiga@chromium.org> <9696282.0ldyWdpzWo@avalon>
- <CAAFQd5Bb2v0iU6GAwOKtc-4kv1V+P_4Co7=OUYg77wfmKQQ=kA@mail.gmail.com> <4766921.vZCsLckqXW@avalon>
-In-Reply-To: <4766921.vZCsLckqXW@avalon>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Sat, 20 Oct 2018 17:52:57 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5BnfZdbBpDq5qGwLQrWOzae-kd57JTv1ieokCs8H5K1MQ@mail.gmail.com>
-Message-ID: <CAAFQd5BnfZdbBpDq5qGwLQrWOzae-kd57JTv1ieokCs8H5K1MQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 8:22 PM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Tomasz,
->
-> I've stripped out all the parts on which I have no specific comment or ju=
-st
-> agree with your proposal. Please see below for a few additional remarks.
->
-> On Thursday, 18 October 2018 13:03:33 EEST Tomasz Figa wrote:
-> > On Wed, Oct 17, 2018 at 10:34 PM Laurent Pinchart wrote:
-> > > On Tuesday, 24 July 2018 17:06:20 EEST Tomasz Figa wrote:
-> > >> Due to complexity of the video decoding process, the V4L2 drivers of
-> > >> stateful decoder hardware require specific sequences of V4L2 API cal=
-ls
-> > >> to be followed. These include capability enumeration, initialization=
-,
-> > >> decoding, seek, pause, dynamic resolution change, drain and end of
-> > >> stream.
-> > >>
-> > >> Specifics of the above have been discussed during Media Workshops at
-> > >> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
-> > >> Conference Europe 2014 in D=C3=BCsseldorf. The de facto Codec API th=
-at
-> > >> originated at those events was later implemented by the drivers we
-> > >> already have merged in mainline, such as s5p-mfc or coda.
-> > >>
-> > >> The only thing missing was the real specification included as a part=
- of
-> > >> Linux Media documentation. Fix it now and document the decoder part =
-of
-> > >> the Codec API.
-> > >>
-> > >> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> > >> ---
-> > >>
-> > >>  Documentation/media/uapi/v4l/dev-decoder.rst | 872 ++++++++++++++++=
-+++
-> > >>  Documentation/media/uapi/v4l/devices.rst     |   1 +
-> > >>  Documentation/media/uapi/v4l/v4l2.rst        |  10 +-
-> > >>  3 files changed, 882 insertions(+), 1 deletion(-)
-> > >>  create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
-> > >>
-> > >> diff --git a/Documentation/media/uapi/v4l/dev-decoder.rst
-> > >> b/Documentation/media/uapi/v4l/dev-decoder.rst new file mode 100644
-> > >> index 000000000000..f55d34d2f860
-> > >> --- /dev/null
-> > >> +++ b/Documentation/media/uapi/v4l/dev-decoder.rst
-> > >> @@ -0,0 +1,872 @@
->
-> [snip]
->
-> > >> +4.  Allocate source (bitstream) buffers via :c:func:`VIDIOC_REQBUFS=
-` on
-> > >> +    ``OUTPUT``.
-> > >> +
-> > >> +    * **Required fields:**
-> > >> +
-> > >> +      ``count``
-> > >> +          requested number of buffers to allocate; greater than zer=
-o
-> > >> +
-> > >> +      ``type``
-> > >> +          a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-> > >> +
-> > >> +      ``memory``
-> > >> +          follows standard semantics
-> > >> +
-> > >> +      ``sizeimage``
-> > >> +          follows standard semantics; the client is free to choose =
-any
-> > >> +          suitable size, however, it may be subject to change by th=
-e
-> > >> +          driver
-> > >> +
-> > >> +    * **Return fields:**
-> > >> +
-> > >> +      ``count``
-> > >> +          actual number of buffers allocated
-> > >> +
-> > >> +    * The driver must adjust count to minimum of required number of
-> > >> +      ``OUTPUT`` buffers for given format and count passed.
-> > >
-> > > Isn't it the maximum, not the minimum ?
-> >
-> > It's actually neither. All we can generally say here is that the
-> > number will be adjusted and the client must note it.
->
-> I expect it to be clamp(requested count, driver minimum, driver maximum).=
- I'm
-> not sure it's worth capturing this in the document though, but we could s=
-ay
->
-> "The driver must clam count to the minimum and maximum number of required
-> ``OUTPUT`` buffers for the given format ."
->
+Greg,
 
-I'd leave the details to the documentation of VIDIOC_REQBUFS, if
-needed. This document focuses on the decoder UAPI and with this note I
-want to ensure that the applications don't assume that exactly the
-requested number of buffers is always allocated.
+Please pull the latest x86-urgent-for-linus git tree from:
 
-How about making it even simpler:
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
 
-The actual number of allocated buffers may differ from the ``count``
-given. The client must check the updated value of ``count`` after the
-call returns.
+   # HEAD: 485734f3fc77c1eb77ffe138c027b9a4bf0178f3 x86/swiotlb: Enable swiotlb for > 4GiG RAM on 32-bit kernels
 
-> > >> The client must
-> > >> +      check this value after the ioctl returns to get the number of
-> > >> +      buffers allocated.
-> > >> +
-> > >> +    .. note::
-> > >> +
-> > >> +       To allocate more than minimum number of buffers (for pipelin=
-e
-> > >> +       depth), use G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT``) to
-> > >> +       get minimum number of buffers required by the driver/format,
-> > >> +       and pass the obtained value plus the number of additional
-> > >> +       buffers needed in count to :c:func:`VIDIOC_REQBUFS`.
-> > >> +
-> > >> +5.  Start streaming on ``OUTPUT`` queue via :c:func:`VIDIOC_STREAMO=
-N`.
-> > >> +
-> > >> +6.  This step only applies to coded formats that contain resolution
-> > >> +    information in the stream. Continue queuing/dequeuing bitstream
-> > >> +    buffers to/from the ``OUTPUT`` queue via :c:func:`VIDIOC_QBUF` =
-and
-> > >> +    :c:func:`VIDIOC_DQBUF`. The driver must keep processing and
-> > >> returning
-> > >> +    each buffer to the client until required metadata to configure =
-the
-> > >> +    ``CAPTURE`` queue are found. This is indicated by the driver
-> > >> sending
-> > >> +    a ``V4L2_EVENT_SOURCE_CHANGE`` event with
-> > >> +    ``V4L2_EVENT_SRC_CH_RESOLUTION`` source change type. There is n=
-o
-> > >> +    requirement to pass enough data for this to occur in the first
-> > >> buffer
-> > >> +    and the driver must be able to process any number.
-> > >> +
-> > >> +    * If data in a buffer that triggers the event is required to de=
-code
-> > >> +      the first frame, the driver must not return it to the client,
-> > >> +      but must retain it for further decoding.
-> > >> +
-> > >> +    * If the client set width and height of ``OUTPUT`` format to 0,
-> > >> calling
-> > >> +      :c:func:`VIDIOC_G_FMT` on the ``CAPTURE`` queue will return
-> > >> -EPERM,
-> > >> +      until the driver configures ``CAPTURE`` format according to s=
-tream
-> > >> +      metadata.
-> > >
-> > > That's a pretty harsh handling for this condition. What's the rationa=
-le
-> > > for returning -EPERM instead of for instance succeeding with width an=
-d
-> > > height set to 0 ?
-> >
-> > I don't like it, but the error condition must stay for compatibility
-> > reasons as that's what current drivers implement and applications
-> > expect. (Technically current drivers would return -EINVAL, but we
-> > concluded that existing applications don't care about the exact value,
-> > so we can change it to make more sense.)
->
-> Fair enough :-/ A bit of a shame though. Should we try to use an error co=
-de
-> that would have less chance of being confused with an actual permission
-> problem ? -EILSEQ could be an option for "illegal sequence" of operations=
-, but
-> better options could exist.
->
+It's 4 misc fixes, 3 build warning fixes and 3 comment fixes.
 
-In Request API we concluded that -EACCES is the right code to return
-for G_EXT_CTRLS on a request that has not finished yet. The case here
-is similar - the capture queue is not yet set up. What do you think?
+In hindsight I'd have left out the 3 comment fixes to make the pull 
+request look less scary at such a late point in the cycle. :-/
 
-> > >> +    * If the client subscribes to ``V4L2_EVENT_SOURCE_CHANGE`` even=
-ts
-> > >> and
-> > >> +      the event is signaled, the decoding process will not continue
-> > >> until
-> > >> +      it is acknowledged by either (re-)starting streaming on
-> > >> ``CAPTURE``,
-> > >> +      or via :c:func:`VIDIOC_DECODER_CMD` with ``V4L2_DEC_CMD_START=
-``
-> > >> +      command.
-> > >> +
-> > >> +    .. note::
-> > >> +
-> > >> +       No decoded frames are produced during this phase.
-> > >> +
->
-> [snip]
->
-> > >> +8.  Call :c:func:`VIDIOC_G_FMT` for ``CAPTURE`` queue to get format=
- for
-> > >> the +    destination buffers parsed/decoded from the bitstream.
-> > >> +
-> > >> +    * **Required fields:**
-> > >> +
-> > >> +      ``type``
-> > >> +          a ``V4L2_BUF_TYPE_*`` enum appropriate for ``CAPTURE``
-> > >> +
-> > >> +    * **Return fields:**
-> > >> +
-> > >> +      ``width``, ``height``
-> > >> +          frame buffer resolution for the decoded frames
-> > >> +
-> > >> +      ``pixelformat``
-> > >> +          pixel format for decoded frames
-> > >> +
-> > >> +      ``num_planes`` (for _MPLANE ``type`` only)
-> > >> +          number of planes for pixelformat
-> > >> +
-> > >> +      ``sizeimage``, ``bytesperline``
-> > >> +          as per standard semantics; matching frame buffer format
-> > >> +
-> > >> +    .. note::
-> > >> +
-> > >> +       The value of ``pixelformat`` may be any pixel format support=
-ed
-> > >> and
-> > >> +       must be supported for current stream, based on the informati=
-on
-> > >> +       parsed from the stream and hardware capabilities. It is
-> > >> suggested
-> > >> +       that driver chooses the preferred/optimal format for given
-> > >
-> > > In compliance with RFC 2119, how about using "Drivers should choose"
-> > > instead of "It is suggested that driver chooses" ?
-> >
-> > The whole paragraph became:
-> >
-> >        The value of ``pixelformat`` may be any pixel format supported b=
-y the
-> > decoder for the current stream. It is expected that the decoder chooses=
- a
-> > preferred/optimal format for the default configuration. For example, a =
-YUV
-> > format may be preferred over an RGB format, if additional conversion st=
-ep
-> > would be required.
->
-> How about using "should" instead of "it is expected that" ?
->
+ Thanks,
 
-Done.
+	Ingo
 
-> [snip]
->
-> > >> +10.  *[optional]* Choose a different ``CAPTURE`` format than sugges=
-ted
-> > >> via
-> > >> +     :c:func:`VIDIOC_S_FMT` on ``CAPTURE`` queue. It is possible fo=
-r
-> > >> the
-> > >> +     client to choose a different format than selected/suggested by=
- the
-> > >
-> > > And here, "A client may choose" ?
-> > >
-> > >> +     driver in :c:func:`VIDIOC_G_FMT`.
-> > >> +
-> > >> +     * **Required fields:**
-> > >> +
-> > >> +       ``type``
-> > >> +           a ``V4L2_BUF_TYPE_*`` enum appropriate for ``CAPTURE``
-> > >> +
-> > >> +       ``pixelformat``
-> > >> +           a raw pixel format
-> > >> +
-> > >> +     .. note::
-> > >> +
-> > >> +        Calling :c:func:`VIDIOC_ENUM_FMT` to discover currently
-> > >> available
-> > >> +        formats after receiving ``V4L2_EVENT_SOURCE_CHANGE`` is use=
-ful
-> > >> to
-> > >> +        find out a set of allowed formats for given configuration, =
-but
-> > >> not
-> > >> +        required, if the client can accept the defaults.
-> > >
-> > > s/required/required,/
-> >
-> > That would become "[...]but not required,, if the client[...]". Is
-> > that your suggestion? ;)
->
-> Oops, the other way around of course :-)
+------------------>
+Andy Lutomirski (1):
+      x86/entry/64: Further improve paranoid_entry comments
 
-Done.
+Christoph Hellwig (1):
+      x86/swiotlb: Enable swiotlb for > 4GiG RAM on 32-bit kernels
 
->
-> [snip]
->
-> > >> +3. Start queuing buffers to ``OUTPUT`` queue containing stream data
-> > >> after
-> > >> +   the seek until a suitable resume point is found.
-> > >> +
-> > >> +   .. note::
-> > >> +
-> > >> +      There is no requirement to begin queuing stream starting exac=
-tly
-> > >> from
-> > >
-> > > s/stream/buffers/ ?
-> >
-> > Perhaps "stream data"? The buffers don't have a resume point, the strea=
-m
-> > does.
->
-> Maybe "coded data" ?
->
+Dave Hansen (1):
+      x86/entry: Add some paranoid entry/exit CR3 handling comments
 
-Done.
+Jan Kiszka (1):
+      x86/entry/32: Clear the CS high bits
 
-> > >> +      a resume point (e.g. SPS or a keyframe). The driver must hand=
-le
-> > >> any
-> > >> +      data queued and must keep processing the queued buffers until=
- it
-> > >> +      finds a suitable resume point. While looking for a resume poi=
-nt,
-> > >> the
-> > >> +      driver processes ``OUTPUT`` buffers and returns them to the
-> > >> client
-> > >> +      without producing any decoded frames.
-> > >> +
-> > >> +      For hardware known to be mishandling seeks to a non-resume po=
-int,
-> > >> +      e.g. by returning corrupted decoded frames, the driver must b=
-e
-> > >> able
-> > >> +      to handle such seeks without a crash or any fatal decode erro=
-r.
-> > >
-> > > This should be true for any hardware, there should never be any crash=
- or
-> > > fatal decode error. I'd write it as
-> > >
-> > > Some hardware is known to mishandle seeks to a non-resume point. Such=
- an
-> > > operation may result in an unspecified number of corrupted decoded fr=
-ames
-> > > being made available on ``CAPTURE``. Drivers must ensure that no fata=
-l
-> > > decoding errors or crashes occur, and implement any necessary handlin=
-g and
-> > > work-arounds for hardware issues related to seek operations.
-> >
-> > Done.
->
-> [snip]
->
-> > >> +2.  After all buffers containing decoded frames from before the
-> > >> resolution
-> > >> +    change point are ready to be dequeued on the ``CAPTURE`` queue,=
- the
-> > >> +    driver sends a ``V4L2_EVENT_SOURCE_CHANGE`` event for source ch=
-ange
-> > >> +    type ``V4L2_EVENT_SRC_CH_RESOLUTION``.
-> > >> +
-> > >> +    * The last buffer from before the change must be marked with
-> > >> +      :c:type:`v4l2_buffer` ``flags`` flag ``V4L2_BUF_FLAG_LAST`` a=
-s in
-> > >> the +      drain sequence. The last buffer might be empty (with
-> > >> +      :c:type:`v4l2_buffer` ``bytesused`` =3D 0) and must be ignore=
-d by
-> > >> the
-> > >> +      client, since it does not contain any decoded frame.
-> > >> +
-> > >> +    * Any client query issued after the driver queues the event mus=
-t
-> > >> return
-> > >> +      values applying to the stream after the resolution change,
-> > >> including
-> > >> +      queue formats, selection rectangles and controls.
-> > >> +
-> > >> +    * If the client subscribes to ``V4L2_EVENT_SOURCE_CHANGE`` even=
-ts
-> > >> and
-> > >> +      the event is signaled, the decoding process will not continue
-> > >> until
-> > >> +      it is acknowledged by either (re-)starting streaming on
-> > >> ``CAPTURE``,
-> > >> +      or via :c:func:`VIDIOC_DECODER_CMD` with ``V4L2_DEC_CMD_START=
-``
-> > >> +      command.
-> > >
-> > > This usage of V4L2_DEC_CMD_START isn't aligned with the documentation=
- of
-> > > the command. I'm not opposed to this, but I think the use cases of
-> > > decoder commands for codecs should be explained in the VIDIOC_DECODER=
-_CMD
-> > > documentation. What bothers me in particular is usage of
-> > > V4L2_DEC_CMD_START to restart the decoder, while no V4L2_DEC_CMD_STOP=
- has
-> > > been issued. Should we add a section that details the decoder state
-> > > machine with the implicit and explicit ways in which it is started an=
-d
-> > > stopped ?
-> >
-> > Yes, we should probably extend the VIDIOC_DECODER_CMD documentation.
-> >
-> > As for diagrams, they would indeed be nice to have, but maybe we could
-> > add them in a follow up patch?
->
-> That's another way to say it won't happen, right ? ;-)
+Nathan Chancellor (2):
+      x86/time: Correct the attribute on jiffies' definition
+      x86/boot: Add -Wno-pointer-sign to KBUILD_CFLAGS
 
-I'd prefer to focus on the basic description first, since for the last
-6 years we haven't had any documentation at all. I hope we can later
-have more contributors follow up with patches to make it easier to
-read, e.g. add nice diagrams.
+Peter Zijlstra (2):
+      x86/tsc: Force inlining of cyc2ns bits
+      x86/percpu: Fix this_cpu_read()
 
-Anyway, I'll try to add a simple state machine diagram in dot, but
-would appreciate if we could postpone any not critical improvements.
+Sebastian Andrzej Siewior (2):
+      x86/fpu: Remove second definition of fpu in __fpu__restore_sig()
+      x86/fpu: Fix i486 + no387 boot crash by only saving FPU registers on context switch if there is an FPU
 
-> I'm OK with that, but I
-> think we should still clarify that the source change generates an implici=
-t
-> V4L2_DEC_CMD_STOP.
->
 
-Good idea, thanks.
+ arch/x86/boot/compressed/Makefile   |  1 +
+ arch/x86/entry/entry_32.S           | 13 +++++++------
+ arch/x86/entry/entry_64.S           | 13 +++++++++++++
+ arch/x86/include/asm/fpu/internal.h |  2 +-
+ arch/x86/include/asm/percpu.h       |  8 ++++----
+ arch/x86/kernel/fpu/signal.c        |  1 -
+ arch/x86/kernel/pci-swiotlb.c       |  2 --
+ arch/x86/kernel/time.c              |  2 +-
+ arch/x86/kernel/tsc.c               |  6 +++---
+ 9 files changed, 30 insertions(+), 18 deletions(-)
 
-> > > I would also reference step 7 here.
-> > >
-> > >> +    .. note::
-> > >> +
-> > >> +       Any attempts to dequeue more buffers beyond the buffer marke=
-d
-> > >> +       with ``V4L2_BUF_FLAG_LAST`` will result in a -EPIPE error fr=
-om
-> > >> +       :c:func:`VIDIOC_DQBUF`.
-> > >> +
-> > >> +3.  The client calls :c:func:`VIDIOC_G_FMT` for ``CAPTURE`` to get =
-the
-> > >> new
-> > >> +    format information. This is identical to calling
-> > >> :c:func:`VIDIOC_G_FMT` +    after ``V4L2_EVENT_SRC_CH_RESOLUTION`` i=
-n
-> > >> the initialization sequence +    and should be handled similarly.
-> > >
-> > > As the source resolution change event is mentioned in multiple places=
-, how
-> > > about extracting the related ioctls sequence to a specific section, a=
-nd
-> > > referencing it where needed (at least from the initialization sequenc=
-e and
-> > > here) ?
-> >
-> > I made the text here refer to the Initialization sequence.
->
-> Wouldn't it be clearer if those steps were extracted to a standalone sequ=
-ence
-> referenced from both locations ?
->
-
-It might be possible to extract the operations on the CAPTURE queue
-into a "Capture setup" sequence. Let me check that.
-
-> > >> +    .. note::
-> > >> +
-> > >> +       It is allowed for the driver not to support the same pixel
-> > >> format as
-> > >
-> > > "Drivers may not support ..."
-> > >
-> > >> +       previously used (before the resolution change) for the new
-> > >> +       resolution. The driver must select a default supported pixel
-> > >> format,
-> > >> +       return it, if queried using :c:func:`VIDIOC_G_FMT`, and the
-> > >> client
-> > >> +       must take note of it.
-> > >> +
-> > >> +4.  The client acquires visible resolution as in initialization
-> > >> sequence.
-> > >> +
-> > >> +5.  *[optional]* The client is allowed to enumerate available forma=
-ts
-> > >> and
-> > >
-> > > s/is allowed to/may/
-> > >
-> > >> +    select a different one than currently chosen (returned via
-> > >> +    :c:func:`VIDIOC_G_FMT)`. This is identical to a corresponding s=
-tep
-> > >> in
-> > >> +    the initialization sequence.
-> > >> +
-> > >> +6.  *[optional]* The client acquires minimum number of buffers as i=
-n
-> > >> +    initialization sequence.
-> > >> +
-> > >> +7.  If all the following conditions are met, the client may resume =
-the
-> > >> +    decoding instantly, by using :c:func:`VIDIOC_DECODER_CMD` with
-> > >> +    ``V4L2_DEC_CMD_START`` command, as in case of resuming after th=
-e
-> > >> drain
-> > >> +    sequence:
-> > >> +
-> > >> +    * ``sizeimage`` of new format is less than or equal to the size=
- of
-> > >> +      currently allocated buffers,
-> > >> +
-> > >> +    * the number of buffers currently allocated is greater than or
-> > >> equal to
-> > >> +      the minimum number of buffers acquired in step 6.
-> > >> +
-> > >> +    In such case, the remaining steps do not apply.
-> > >> +
-> > >> +    However, if the client intends to change the buffer set, to low=
-er
-> > >> +    memory usage or for any other reasons, it may be achieved by
-> > >> following
-> > >> +    the steps below.
-> > >> +
-> > >> +8.  After dequeuing all remaining buffers from the ``CAPTURE`` queu=
-e,
-> > >
-> > > This is optional, isn't it ?
-> >
-> > I wouldn't call it optional, since it depends on what the client does
-> > and what the decoder supports. That's why the point above just states
-> > that the remaining steps do not apply.
->
-> I meant isn't the "After dequeuing all remaining buffers from the CAPTURE
-> queue" part optional ? As far as I understand, the client may decide not =
-to
-> dequeue them.
->
-
-A STREAMOFF would discard the already decoded but not yet dequeued
-frames. While it's technically fine, it doesn't make sense, because it
-would lead to a frame drop. Therefore, I'd rather keep it required,
-for simplicity.
-
-> > Also added a note:
-> >
-> >        To fulfill those requirements, the client may attempt to use
-> >        :c:func:`VIDIOC_CREATE_BUFS` to add more buffers. However, due t=
-o
-> >        hardware limitations, the decoder may not support adding buffers=
- at
-> >        this point and the client must be able to handle a failure using=
- the
-> >        steps below.
->
-> I wonder if there could be a way to work around those limitations on the
-> driver side. At the beginning of step 7, the decoder is effectively stopp=
-ed.
-> If the hardware doesn't support adding new buffers on the fly, can't the
-> driver support the VIDIOC_CREATE_BUFS + V4L2_DEC_CMD_START sequence the s=
-ame
-> way it would support the VIDIOC_STREAMOFF + VIDIOC_REQBUFS(0) +
-> VIDIOC_REQBUFS(n) + VIDIOC_STREAMON ?
->
-
-I guess that would work. I would only allow it for the case where
-existing buffers are already big enough and just more buffers are
-needed. Otherwise it would lead to some weird cases, such as some old
-buffers already in the CAPTURE queue, blocking the decode of further
-frames. (While it could be handled by the driver returning them with
-an error state, it would only complicate the interface.)
-
-Best regards,
-Tomasz
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index 28764dacf018..466f66c8a7f8 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -37,6 +37,7 @@ KBUILD_CFLAGS += $(call cc-option,-ffreestanding)
+ KBUILD_CFLAGS += $(call cc-option,-fno-stack-protector)
+ KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+ KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
++KBUILD_CFLAGS += -Wno-pointer-sign
+ 
+ KBUILD_AFLAGS  := $(KBUILD_CFLAGS) -D__ASSEMBLY__
+ GCOV_PROFILE := n
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 2767c625a52c..fbbf1ba57ec6 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -389,6 +389,13 @@
+ 	 * that register for the time this macro runs
+ 	 */
+ 
++	/*
++	 * The high bits of the CS dword (__csh) are used for
++	 * CS_FROM_ENTRY_STACK and CS_FROM_USER_CR3. Clear them in case
++	 * hardware didn't do this for us.
++	 */
++	andl	$(0x0000ffff), PT_CS(%esp)
++
+ 	/* Are we on the entry stack? Bail out if not! */
+ 	movl	PER_CPU_VAR(cpu_entry_area), %ecx
+ 	addl	$CPU_ENTRY_AREA_entry_stack + SIZEOF_entry_stack, %ecx
+@@ -407,12 +414,6 @@
+ 	/* Load top of task-stack into %edi */
+ 	movl	TSS_entry2task_stack(%edi), %edi
+ 
+-	/*
+-	 * Clear unused upper bits of the dword containing the word-sized CS
+-	 * slot in pt_regs in case hardware didn't clear it for us.
+-	 */
+-	andl	$(0x0000ffff), PT_CS(%esp)
+-
+ 	/* Special case - entry from kernel mode via entry stack */
+ #ifdef CONFIG_VM86
+ 	movl	PT_EFLAGS(%esp), %ecx		# mix EFLAGS and CS
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 957dfb693ecc..f95dcb209fdf 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1187,6 +1187,16 @@ ENTRY(paranoid_entry)
+ 	xorl	%ebx, %ebx
+ 
+ 1:
++	/*
++	 * Always stash CR3 in %r14.  This value will be restored,
++	 * verbatim, at exit.  Needed if paranoid_entry interrupted
++	 * another entry that already switched to the user CR3 value
++	 * but has not yet returned to userspace.
++	 *
++	 * This is also why CS (stashed in the "iret frame" by the
++	 * hardware at entry) can not be used: this may be a return
++	 * to kernel code, but with a user CR3 value.
++	 */
+ 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
+ 
+ 	ret
+@@ -1211,11 +1221,13 @@ ENTRY(paranoid_exit)
+ 	testl	%ebx, %ebx			/* swapgs needed? */
+ 	jnz	.Lparanoid_exit_no_swapgs
+ 	TRACE_IRQS_IRETQ
++	/* Always restore stashed CR3 value (see paranoid_entry) */
+ 	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
+ 	SWAPGS_UNSAFE_STACK
+ 	jmp	.Lparanoid_exit_restore
+ .Lparanoid_exit_no_swapgs:
+ 	TRACE_IRQS_IRETQ_DEBUG
++	/* Always restore stashed CR3 value (see paranoid_entry) */
+ 	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
+ .Lparanoid_exit_restore:
+ 	jmp restore_regs_and_return_to_kernel
+@@ -1626,6 +1638,7 @@ end_repeat_nmi:
+ 	movq	$-1, %rsi
+ 	call	do_nmi
+ 
++	/* Always restore stashed CR3 value (see paranoid_entry) */
+ 	RESTORE_CR3 scratch_reg=%r15 save_reg=%r14
+ 
+ 	testl	%ebx, %ebx			/* swapgs needed? */
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index a38bf5a1e37a..69dcdf195b61 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -528,7 +528,7 @@ static inline void fpregs_activate(struct fpu *fpu)
+ static inline void
+ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
+ {
+-	if (old_fpu->initialized) {
++	if (static_cpu_has(X86_FEATURE_FPU) && old_fpu->initialized) {
+ 		if (!copy_fpregs_to_fpstate(old_fpu))
+ 			old_fpu->last_cpu = -1;
+ 		else
+diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
+index e9202a0de8f0..1a19d11cfbbd 100644
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -185,22 +185,22 @@ do {									\
+ 	typeof(var) pfo_ret__;				\
+ 	switch (sizeof(var)) {				\
+ 	case 1:						\
+-		asm(op "b "__percpu_arg(1)",%0"		\
++		asm volatile(op "b "__percpu_arg(1)",%0"\
+ 		    : "=q" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
+ 	case 2:						\
+-		asm(op "w "__percpu_arg(1)",%0"		\
++		asm volatile(op "w "__percpu_arg(1)",%0"\
+ 		    : "=r" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
+ 	case 4:						\
+-		asm(op "l "__percpu_arg(1)",%0"		\
++		asm volatile(op "l "__percpu_arg(1)",%0"\
+ 		    : "=r" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
+ 	case 8:						\
+-		asm(op "q "__percpu_arg(1)",%0"		\
++		asm volatile(op "q "__percpu_arg(1)",%0"\
+ 		    : "=r" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 23f1691670b6..61a949d84dfa 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -314,7 +314,6 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 		 * thread's fpu state, reconstruct fxstate from the fsave
+ 		 * header. Validate and sanitize the copied state.
+ 		 */
+-		struct fpu *fpu = &tsk->thread.fpu;
+ 		struct user_i387_ia32_struct env;
+ 		int err = 0;
+ 
+diff --git a/arch/x86/kernel/pci-swiotlb.c b/arch/x86/kernel/pci-swiotlb.c
+index 661583662430..71c0b01d93b1 100644
+--- a/arch/x86/kernel/pci-swiotlb.c
++++ b/arch/x86/kernel/pci-swiotlb.c
+@@ -42,10 +42,8 @@ IOMMU_INIT_FINISH(pci_swiotlb_detect_override,
+ int __init pci_swiotlb_detect_4gb(void)
+ {
+ 	/* don't initialize swiotlb if iommu=off (no_iommu=1) */
+-#ifdef CONFIG_X86_64
+ 	if (!no_iommu && max_possible_pfn > MAX_DMA32_PFN)
+ 		swiotlb = 1;
+-#endif
+ 
+ 	/*
+ 	 * If SME is active then swiotlb will be set to 1 so that bounce
+diff --git a/arch/x86/kernel/time.c b/arch/x86/kernel/time.c
+index be01328eb755..fddaefc51fb6 100644
+--- a/arch/x86/kernel/time.c
++++ b/arch/x86/kernel/time.c
+@@ -25,7 +25,7 @@
+ #include <asm/time.h>
+ 
+ #ifdef CONFIG_X86_64
+-__visible volatile unsigned long jiffies __cacheline_aligned = INITIAL_JIFFIES;
++__visible volatile unsigned long jiffies __cacheline_aligned_in_smp = INITIAL_JIFFIES;
+ #endif
+ 
+ unsigned long profile_pc(struct pt_regs *regs)
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index b52bd2b6cdb4..6d5dc5dabfd7 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -58,7 +58,7 @@ struct cyc2ns {
+ 
+ static DEFINE_PER_CPU_ALIGNED(struct cyc2ns, cyc2ns);
+ 
+-void cyc2ns_read_begin(struct cyc2ns_data *data)
++void __always_inline cyc2ns_read_begin(struct cyc2ns_data *data)
+ {
+ 	int seq, idx;
+ 
+@@ -75,7 +75,7 @@ void cyc2ns_read_begin(struct cyc2ns_data *data)
+ 	} while (unlikely(seq != this_cpu_read(cyc2ns.seq.sequence)));
+ }
+ 
+-void cyc2ns_read_end(void)
++void __always_inline cyc2ns_read_end(void)
+ {
+ 	preempt_enable_notrace();
+ }
+@@ -104,7 +104,7 @@ void cyc2ns_read_end(void)
+  *                      -johnstul@us.ibm.com "math is hard, lets go shopping!"
+  */
+ 
+-static inline unsigned long long cycles_2_ns(unsigned long long cyc)
++static __always_inline unsigned long long cycles_2_ns(unsigned long long cyc)
+ {
+ 	struct cyc2ns_data data;
+ 	unsigned long long ns;
