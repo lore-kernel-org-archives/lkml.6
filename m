@@ -2,172 +2,143 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6C6C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 10:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E5EC67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 10:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 740352150F
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 10:21:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 740352150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1443921521
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 10:24:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ITPue7gH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1443921521
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbeJTSbA (ORCPT
+        id S1727421AbeJTSeg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 14:31:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55504 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726817AbeJTSa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 14:30:59 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4C48B308FB90;
-        Sat, 20 Oct 2018 10:21:03 +0000 (UTC)
-Received: from shalem.localdomain.com (ovpn-116-58.ams2.redhat.com [10.36.116.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 262326B483;
-        Sat, 20 Oct 2018 10:21:01 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86: touchscreen_dmi: Add min-x and min-y settings for various models
-Date:   Sat, 20 Oct 2018 12:21:00 +0200
-Message-Id: <20181020102100.14111-1-hdegoede@redhat.com>
+        Sat, 20 Oct 2018 14:34:36 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:34147 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727178AbeJTSef (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 14:34:35 -0400
+Received: by mail-yb1-f195.google.com with SMTP id 184-v6so14270387ybg.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 03:24:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zhpX4f9IquPfi/JWkvSofHU1xjzBa5f9b6VXogAlsFc=;
+        b=ITPue7gHkoAIPd0Cn7ZHw08lqxLFNA4WaZYgGr9J6J20h88eAPIBllyPyqoBOS3a6E
+         eSFe5ovZiJMaUobdKx4v8DPwIH+Ls1BYp7PcaOOoxqB95kIoW0VfrX8fSycwVMWTy11+
+         KFg8iVsgAeLiHFKPi0Nsi5Q1eaiUlBBPgn/vI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zhpX4f9IquPfi/JWkvSofHU1xjzBa5f9b6VXogAlsFc=;
+        b=E59MVU/RFW3z/8fqFHXoVWsPHH0A193TXKtBz+0kR9JupqzeDk1kxtPeuDjtKUko7l
+         7MDYCAjTQrKgm65hXvB6ByjAC9k2a+tsqH6JlxnLiGud6bkWVZUTHCI6u2jRODoiIu1T
+         6Ol/T8rxMdsaZAl3oKCyGrFRXTez+W1Gip9GVS6qDx+XJvZ1DKWuOR1OzmAO+s3FzyCp
+         EHoGt6bdynmkPw3wa0440PbemKgNjGSU/Xg8gzVmyNRSWeRNBF/X/cFaqoOD2Mj2FyMc
+         aMsppyE9l8Jv5lq6hlM4zqp9L9jo8YtmTrNsqZTXVCiMGtEkoDJcB2B0dXPhLg/obEWM
+         b6jw==
+X-Gm-Message-State: ABuFfohGKrVwse6A1ej256b6K1qU0pRdn8zRFYTm75mfFvnJur2q2toX
+        omjvgkumqkYzvLyvnavwMfYXw0sfQo4=
+X-Google-Smtp-Source: ACcGV62cS9CUZK7pWU2PaMWjOktaFkdaLiro4a+WjP0BegIjoZzOgGrAT0O4R4MZjkAgavDf8upuBw==
+X-Received: by 2002:a5b:acd:: with SMTP id a13-v6mr14677226ybr.421.1540031077712;
+        Sat, 20 Oct 2018 03:24:37 -0700 (PDT)
+Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
+        by smtp.gmail.com with ESMTPSA id 132-v6sm6271712ywt.2.2018.10.20.03.24.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 20 Oct 2018 03:24:35 -0700 (PDT)
+Received: by mail-yw1-f52.google.com with SMTP id a197-v6so14155364ywh.9
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 03:24:34 -0700 (PDT)
+X-Received: by 2002:a81:3d8d:: with SMTP id k135-v6mr25966997ywa.415.1540031074207;
+ Sat, 20 Oct 2018 03:24:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Sat, 20 Oct 2018 10:21:03 +0000 (UTC)
+References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
+ <9696282.0ldyWdpzWo@avalon> <CAAFQd5Bb2v0iU6GAwOKtc-4kv1V+P_4Co7=OUYg77wfmKQQ=kA@mail.gmail.com>
+In-Reply-To: <CAAFQd5Bb2v0iU6GAwOKtc-4kv1V+P_4Co7=OUYg77wfmKQQ=kA@mail.gmail.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Sat, 20 Oct 2018 19:24:20 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5D=Lj2XzUMK1LpOXbK3nTdNCFKRkfj3yfpV9mguDkcvdw@mail.gmail.com>
+Message-ID: <CAAFQd5D=Lj2XzUMK1LpOXbK3nTdNCFKRkfj3yfpV9mguDkcvdw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add min-x and min-y settings now that we've support for this and for some
-models also update the width/height settings with slighly more accurate
-values.
+On Thu, Oct 18, 2018 at 7:03 PM Tomasz Figa <tfiga@chromium.org> wrote:
+>
+> Hi Laurent,
+>
+> On Wed, Oct 17, 2018 at 10:34 PM Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> >
+> > Hi Tomasz,
+> >
+> > Thank you for the patch.
+>
+> Thanks for your comments! Please see my replies inline.
+>
+> >
+> > On Tuesday, 24 July 2018 17:06:20 EEST Tomasz Figa wrote:
+[snip]
+> > > +4. At this point, decoding is paused and the driver will accept, but not
+> > > +   process any newly queued ``OUTPUT`` buffers until the client issues
+> > > +   ``V4L2_DEC_CMD_START`` or restarts streaming on any queue.
+> > > +
+> > > +* Once the drain sequence is initiated, the client needs to drive it to
+> > > +  completion, as described by the above steps, unless it aborts the process
+> > > +  by issuing :c:func:`VIDIOC_STREAMOFF` on ``OUTPUT`` queue.  The client
+> > > +  is not allowed to issue ``V4L2_DEC_CMD_START`` or ``V4L2_DEC_CMD_STOP``
+> > > +  again while the drain sequence is in progress and they will fail with
+> > > +  -EBUSY error code if attempted.
+> >
+> > While this seems OK to me, I think drivers will need help to implement all the
+> > corner cases correctly without race conditions.
+>
+> We went through the possible list of corner cases and concluded that
+> there is no use in handling them, especially considering how much they
+> would complicate both the userspace and the drivers. Not even
+> mentioning some hardware, like s5p-mfc, which actually has a dedicated
+> flush operation, that needs to complete before the decoder can switch
+> back to normal mode.
 
-This fixes touches along the edges registering at the wrong coordinates.
+Actually I misread your comment.
 
-While at it also set max-fingers to 10 in a couple of cases where the
-touchpad can handle 10 fingers (rather then the default 5) and that was
-missing.
+Agreed that the decoder commands are a bit tricky to implement
+properly. That's one of the reasons I decided to make the return
+-EBUSY while an existing drain is in progress.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/platform/x86/touchscreen_dmi.c | 33 +++++++++++++++++++-------
- 1 file changed, 25 insertions(+), 8 deletions(-)
+Do you have any particular simplification in mind that could avoid
+some corner cases?
 
-diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
-index f852009e0e30..3a65a37f8ac8 100644
---- a/drivers/platform/x86/touchscreen_dmi.c
-+++ b/drivers/platform/x86/touchscreen_dmi.c
-@@ -51,10 +51,13 @@ static const struct ts_dmi_data chuwi_hi8_data = {
- };
- 
- static const struct property_entry chuwi_hi8_pro_props[] = {
-+	PROPERTY_ENTRY_U32("touchscreen-min-x", 6),
-+	PROPERTY_ENTRY_U32("touchscreen-min-y", 3),
- 	PROPERTY_ENTRY_U32("touchscreen-size-x", 1728),
- 	PROPERTY_ENTRY_U32("touchscreen-size-y", 1148),
- 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
- 	PROPERTY_ENTRY_STRING("firmware-name", "gsl3680-chuwi-hi8-pro.fw"),
-+	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
- 	PROPERTY_ENTRY_BOOL("silead,home-button"),
- 	PROPERTY_ENTRY_BOOL("efi-embedded-firmware"),
- 	{ }
-@@ -75,6 +78,8 @@ static const struct ts_dmi_data chuwi_hi8_pro_data = {
- };
- 
- static const struct property_entry chuwi_vi8_props[] = {
-+	PROPERTY_ENTRY_U32("touchscreen-min-x", 4),
-+	PROPERTY_ENTRY_U32("touchscreen-min-y", 6),
- 	PROPERTY_ENTRY_U32("touchscreen-size-x", 1724),
- 	PROPERTY_ENTRY_U32("touchscreen-size-y", 1140),
- 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
-@@ -121,9 +126,9 @@ static const struct ts_dmi_data chuwi_vi10_data = {
- 
- static const struct property_entry connect_tablet9_props[] = {
- 	PROPERTY_ENTRY_U32("touchscreen-min-x", 9),
--	PROPERTY_ENTRY_U32("touchscreen-min-y", 8),
-+	PROPERTY_ENTRY_U32("touchscreen-min-y", 10),
- 	PROPERTY_ENTRY_U32("touchscreen-size-x", 1664),
--	PROPERTY_ENTRY_U32("touchscreen-size-y", 878),
-+	PROPERTY_ENTRY_U32("touchscreen-size-y", 880),
- 	PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
- 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
- 	PROPERTY_ENTRY_STRING("firmware-name", "gsl1680-connect-tablet9.fw"),
-@@ -137,8 +142,10 @@ static const struct ts_dmi_data connect_tablet9_data = {
- };
- 
- static const struct property_entry cube_iwork8_air_props[] = {
--	PROPERTY_ENTRY_U32("touchscreen-size-x", 1660),
--	PROPERTY_ENTRY_U32("touchscreen-size-y", 900),
-+	PROPERTY_ENTRY_U32("touchscreen-min-x", 1),
-+	PROPERTY_ENTRY_U32("touchscreen-min-y", 3),
-+	PROPERTY_ENTRY_U32("touchscreen-size-x", 1664),
-+	PROPERTY_ENTRY_U32("touchscreen-size-y", 896),
- 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
- 	PROPERTY_ENTRY_STRING("firmware-name", "gsl3670-cube-iwork8-air.fw"),
- 	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
-@@ -222,11 +229,14 @@ static const struct ts_dmi_data gp_electronic_t701_data = {
- };
- 
- static const struct property_entry itworks_tw891_props[] = {
-+	PROPERTY_ENTRY_U32("touchscreen-min-x", 1),
-+	PROPERTY_ENTRY_U32("touchscreen-min-y", 5),
- 	PROPERTY_ENTRY_U32("touchscreen-size-x", 1600),
--	PROPERTY_ENTRY_U32("touchscreen-size-y", 890),
-+	PROPERTY_ENTRY_U32("touchscreen-size-y", 896),
- 	PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
- 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
- 	PROPERTY_ENTRY_STRING("firmware-name", "gsl3670-itworks-tw891.fw"),
-+	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
- 	{ }
- };
- 
-@@ -250,8 +260,10 @@ static const struct ts_dmi_data jumper_ezpad_6_pro_data = {
- };
- 
- static const struct property_entry jumper_ezpad_mini3_props[] = {
-+	PROPERTY_ENTRY_U32("touchscreen-min-x", 23),
-+	PROPERTY_ENTRY_U32("touchscreen-min-y", 16),
- 	PROPERTY_ENTRY_U32("touchscreen-size-x", 1700),
--	PROPERTY_ENTRY_U32("touchscreen-size-y", 1150),
-+	PROPERTY_ENTRY_U32("touchscreen-size-y", 1138),
- 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
- 	PROPERTY_ENTRY_STRING("firmware-name", "gsl3676-jumper-ezpad-mini3.fw"),
- 	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
-@@ -403,11 +415,14 @@ static const struct ts_dmi_data pov_mobii_wintab_p800w_v20_data = {
- };
- 
- static const struct property_entry pov_mobii_wintab_p800w_v21_props[] = {
--	PROPERTY_ENTRY_U32("touchscreen-size-x", 1800),
--	PROPERTY_ENTRY_U32("touchscreen-size-y", 1150),
-+	PROPERTY_ENTRY_U32("touchscreen-min-x", 1),
-+	PROPERTY_ENTRY_U32("touchscreen-min-y", 8),
-+	PROPERTY_ENTRY_U32("touchscreen-size-x", 1794),
-+	PROPERTY_ENTRY_U32("touchscreen-size-y", 1148),
- 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
- 	PROPERTY_ENTRY_STRING("firmware-name",
- 			      "gsl3692-pov-mobii-wintab-p800w.fw"),
-+	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
- 	PROPERTY_ENTRY_BOOL("silead,home-button"),
- 	{ }
- };
-@@ -494,6 +509,8 @@ static const struct ts_dmi_data trekstor_surftab_twin_10_1_data = {
- };
- 
- static const struct property_entry trekstor_surftab_wintron70_props[] = {
-+	PROPERTY_ENTRY_U32("touchscreen-min-x", 12),
-+	PROPERTY_ENTRY_U32("touchscreen-min-y", 8),
- 	PROPERTY_ENTRY_U32("touchscreen-size-x", 884),
- 	PROPERTY_ENTRY_U32("touchscreen-size-y", 632),
- 	PROPERTY_ENTRY_STRING("firmware-name",
--- 
-2.19.0
-
+Best regards,
+Tomasz
