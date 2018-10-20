@@ -2,140 +2,104 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E87B8C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 14:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E45C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 14:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 953FD21546
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 14:27:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TbAw+hrV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 953FD21546
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 5BD3521557
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 14:39:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BD3521557
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727583AbeJTWih (ORCPT
+        id S1727514AbeJTWtk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 18:38:37 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:35272 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727373AbeJTWig (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 18:38:36 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9KENrg3163460;
-        Sat, 20 Oct 2018 14:27:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=dP7tKOQOVr2JK6GxTllAKeQzR7f0x1sxzeLDI1E8Wt4=;
- b=TbAw+hrVxEKe3+37oIKf4ALgjG8uF7alqBhsw6dJEYTAhhSzu7Hd6UQ/ntxkB2YlbQbS
- G8RatSoQ9Kfs2xw9zB3R0R67QtfeHJZj8+ZH2KnBnlBC6umHZ5KywWs39IOjbbdWShCK
- ZVYCK5vGDADIVvl/scc8Yai8MtIWobVBs8LEWn4X36deR90N+LWAz0gL0PUkcnxspW/d
- mwTDh8b8t6Bw2Kir5ycXBCX4JBJ1GEKe1nvlVb7RzUZ8XJsQOoA8ZC3Ug30ssdt8hbDQ
- jH84j6qrMaBhITVgFgxpOXkyTeMiBSJ678eqILZaaF5wWe0u/ascFfwYz7FNlTUZWi6H tA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2n7w0q8vh9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 20 Oct 2018 14:27:51 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9KERpua003368
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 20 Oct 2018 14:27:51 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9KERoSb003749;
-        Sat, 20 Oct 2018 14:27:50 GMT
-Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 20 Oct 2018 07:27:27 -0700
-From:   Jianchao Wang <jianchao.w.wang@oracle.com>
-To:     axboe@kernel.dk
-Cc:     martin.petersen@oracle.com, tom.leiming@gmail.com, hch@lst.de,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2] block: fix the DISCARD request merge
-Date:   Sat, 20 Oct 2018 22:29:37 +0800
-Message-Id: <1540045777-10290-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9051 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=998
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810200135
+        Sat, 20 Oct 2018 18:49:40 -0400
+Received: from mga07.intel.com ([134.134.136.100]:59804 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727353AbeJTWtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 18:49:40 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2018 07:38:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,404,1534834800"; 
+   d="scan'208";a="96937606"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by fmsmga002.fm.intel.com with ESMTP; 20 Oct 2018 07:38:58 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id DD53C300FE1; Sat, 20 Oct 2018 07:38:57 -0700 (PDT)
+Date:   Sat, 20 Oct 2018 07:38:57 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Andi Kleen <andi@firstfloor.org>, peterz@infradead.org,
+        x86@kernel.org, eranian@google.com, kan.liang@intel.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] x86/cpufeature: Add facility to match microcode
+ revisions
+Message-ID: <20181020143857.GC27951@tassilo.jf.intel.com>
+References: <20181010162608.23899-1-andi@firstfloor.org>
+ <alpine.DEB.2.21.1810171151010.6000@nanos.tec.linutronix.de>
+ <20181019234743.GA27951@tassilo.jf.intel.com>
+ <alpine.DEB.2.21.1810201017070.1651@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1810201017070.1651@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two cases when handle DISCARD merge
- - max_discard_segments == 1
-   bios need to be contiguous
- - max_discard_segments > 1
-   Only nvme right now. It takes every bio as a range and different
-   range needn't to be contiguous.
+On Sat, Oct 20, 2018 at 10:19:37AM +0200, Thomas Gleixner wrote:
+> On Fri, 19 Oct 2018, Andi Kleen wrote:
+> 
+> > > > +	u32 min_ucode;
+> > > > +};
+> > > > +
+> > > > +const struct x86_ucode_id *x86_match_ucode(const struct x86_ucode_id *match)
+> > > 
+> > > What's the point of returning the struct pointer? Shouldn't it be enough to
+> > > make it return bool? Also the function name really should reflect that this
+> > > checks whether the minimal required microcode revision is active.
+> > 
+> > This allows the user to find the table entry to tie something to it
+> > (e.g. use the index to match some other table)
+> > 
+> > Same pattern as pci discovery etc. use.
+> > 
+> > Given the current caller doesn't need it, but we still follow standard
+> > conventions.
+> 
+> There is no point to return the pointer because it's not a compound
+> structure. If you want to provide the possibility to use the index then
+> return the index and an error code if it does not match.
 
-But now, attempt_merge screws this up. It always consider contiguity
-for DISCARD for the case max_discard_segments > 1 and cannot merge
-contiguous DISCARD for the case max_discard_segments == 1, because
-rq_attempt_discard_merge always returns false in this case.
-This patch fixes both of the two cases above.
+It will be useful with the driver_data pointer, which you short sightedly
+forced me to remove, and likely will need to be readded at some point
+anyways if this gets more widely used. At least with the pointer not
+all callers will need to be changed then. 
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
----
+Also it's symmetric with how the PCI and USB and the existing x86 match
+discovery interfaces work.
 
-V2:
-  - Add max_discard_segments > 1 checking in attempt_merge
-  - Change patch title and comment
-  - Add more comment in attempt_merge
+> > > VENDOR_INTEL = 0, so this check is obscure to begin with. Either you chose
+> > > a explicit condition to put at the end of the table, e.g. vendor = U8_MAX
+> > > or you hand in the array size to the function.
+> > 
+> > That would both be awkward. It's the same as match_cpu, and 0 terminators
+> > are standard practice in practical all similar code. I removed
+> > the or with the family.
+> 
+> That's debatable because it's more easy to miss the terminator than getting
+> the ARRAY_SIZE() argument wrong. But it doesn't matter much.
 
- block/blk-merge.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+Ok then please apply it. 
 
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index 42a4674..8f22374 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -734,8 +734,15 @@ static struct request *attempt_merge(struct request_queue *q,
- 	/*
- 	 * not contiguous
- 	 */
--	if (blk_rq_pos(req) + blk_rq_sectors(req) != blk_rq_pos(next))
--		return NULL;
-+	if (blk_rq_pos(req) + blk_rq_sectors(req) != blk_rq_pos(next)) {
-+		/*
-+		 * When max_discard_segments is bigger than 1 (only nvme right
-+		 * now), needn't consider the contiguity.
-+		 */
-+		if (!(req_op(req) == REQ_OP_DISCARD &&
-+		      queue_max_discard_segments(q) > 1))
-+			return NULL;
-+	}
- 
- 	if (rq_data_dir(req) != rq_data_dir(next)
- 	    || req->rq_disk != next->rq_disk
-@@ -757,10 +764,17 @@ static struct request *attempt_merge(struct request_queue *q,
- 	 * If we are allowed to merge, then append bio list
- 	 * from next to rq and release next. merge_requests_fn
- 	 * will have updated segment counts, update sector
--	 * counts here. Handle DISCARDs separately, as they
--	 * have separate settings.
-+	 * counts here.
-+	 * Two cases of Handling DISCARD:
-+	 *  - max_discard_segments == 1
-+	 *    The bios need to be contiguous.
-+	 *  - max_discard_segments > 1
-+	 *    Only nvme right now. It takes every bio as a
-+	 *    range and send them to controller together. The ranges
-+	 *    needn't to be contiguous.
- 	 */
--	if (req_op(req) == REQ_OP_DISCARD) {
-+	if (req_op(req) == REQ_OP_DISCARD &&
-+	    queue_max_discard_segments(q) > 1) {
- 		if (!req_attempt_discard_merge(q, req, next))
- 			return NULL;
- 	} else if (!ll_merge_requests_fn(q, req, next))
--- 
-2.7.4
+-Andi
 
