@@ -2,118 +2,114 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C981EECDE3D
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 22:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE92FC67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 23:01:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B2AA2172F
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 22:49:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B2AA2172F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6E4A0215EC
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 23:01:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="JZqPfWLU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E4A0215EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbeJUHBt convert rfc822-to-8bit (ORCPT
+        id S1726806AbeJUHNb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 03:01:49 -0400
-Received: from mga09.intel.com ([134.134.136.24]:58913 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726554AbeJUHBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 03:01:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Oct 2018 15:49:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,405,1534834800"; 
-   d="scan'208";a="93669074"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by orsmga003.jf.intel.com with ESMTP; 20 Oct 2018 15:49:44 -0700
-Received: from fmsmsx124.amr.corp.intel.com (10.18.125.39) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Sat, 20 Oct 2018 15:49:44 -0700
-Received: from hasmsx107.ger.corp.intel.com (10.184.198.27) by
- fmsmsx124.amr.corp.intel.com (10.18.125.39) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Sat, 20 Oct 2018 15:49:44 -0700
-Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
- hasmsx107.ger.corp.intel.com ([169.254.2.223]) with mapi id 14.03.0319.002;
- Sun, 21 Oct 2018 01:49:41 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH] tpm: tpm_try_transmit() refactor error flow.
-Thread-Topic: [PATCH] tpm: tpm_try_transmit() refactor error flow.
-Thread-Index: AQHUZneRpMm4aXcqcE6txCcRpwrMbKUkg60wgAKFoACAAbSoMA==
-Date:   Sat, 20 Oct 2018 22:49:40 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9F85F5@hasmsx109.ger.corp.intel.com>
-References: <20181016133716.17842-1-tomas.winkler@intel.com>
- <alpine.DEB.2.21.1810180309430.5022@jsakkine-mobl1>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9F5512@hasmsx109.ger.corp.intel.com>
- <alpine.DEB.2.21.1810200230200.9963@jsakkine-mobl1>
-In-Reply-To: <alpine.DEB.2.21.1810200230200.9963@jsakkine-mobl1>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNjYwYjJhYjQtN2NlYi00YWUxLWFmYWItNDc0MzE4YzUyYjg3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiQ29EV3pPM2Nld3V2aWJcL21mV1RsMnJ5QkQ3NGt3OENlRGRxMmp6VW5ubXpVZUtRdFNtbWVPcUhuanpqaGxKZ2EifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.249.90.242]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Sun, 21 Oct 2018 03:13:31 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:42041 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbeJUHNb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Oct 2018 03:13:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1540076485; x=1571612485;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=FblQFH6Uuq+bJdWQpbVJQoaI0uvcY8iH03BW2m8+cpM=;
+  b=JZqPfWLUp/lRAvjF/dpbivQC08akCVfg6jgwTLBgxwFsfxgcvm/MgR/v
+   z+0pf4Y4QkZl4aNDqHZNUZvp0csnC2eyhAZXyGnYy59BMbE4ZaMqHRTwA
+   GEX/mBuL6qnyFurdk+rr6p1EOb348J1JfBMTEu52r8Edyv1STWdRa96En
+   g=;
+X-IronPort-AV: E=Sophos;i="5.54,405,1534809600"; 
+   d="scan'208";a="364201545"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-8cc5d68b.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Oct 2018 22:50:44 +0000
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (pdx2-ws-svc-lb17-vlan2.amazon.com [10.247.140.66])
+        by email-inbound-relay-2b-8cc5d68b.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9KMocO7103074
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 20 Oct 2018 22:50:40 GMT
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w9KMobwt021408;
+        Sun, 21 Oct 2018 00:50:37 +0200
+Received: (from karahmed@localhost)
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id w9KMoZdA021405;
+        Sun, 21 Oct 2018 00:50:35 +0200
+From:   KarimAllah Ahmed <karahmed@amazon.de>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     KarimAllah Ahmed <karahmed@amazon.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH v2] KVM/nVMX: Do not validate that posted_intr_desc_addr is page aligned
+Date:   Sun, 21 Oct 2018 00:50:27 +0200
+Message-Id: <1540075827-21270-1-git-send-email-karahmed@amazon.de>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1540071779-20848-1-git-send-email-karahmed@amazon.de>
+References: <1540071779-20848-1-git-send-email-karahmed@amazon.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> On Thu, 18 Oct 2018, Winkler, Tomas wrote:
-> >> -----Original Message-----
-> >> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
-> >> Sent: Thursday, October 18, 2018 03:15
-> >> To: Winkler, Tomas <tomas.winkler@intel.com>
-> >> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>; Jason
-> >> Gunthorpe <jgg@ziepe.ca>; Nayna Jain <nayna@linux.vnet.ibm.com>;
-> >> Usyskin, Alexander <alexander.usyskin@intel.com>; Struk, Tadeusz
-> >> <tadeusz.struk@intel.com>; linux-integrity@vger.kernel.org;
-> >> linux-security- module@vger.kernel.org; linux-kernel@vger.kernel.org;
-> >> stable@vger.kernel.org
-> >> Subject: Re: [PATCH] tpm: tpm_try_transmit() refactor error flow.
-> >>
-> >> On Tue, 16 Oct 2018, Tomas Winkler wrote:
-> >>> First, rename out_no_locality to out_locality for bailing out on
-> >>> both
-> >>> tpm_cmd_ready() and tpm_request_locality() failure.
-> >>
-> >> This is unnecessary change and technically it is not a rename: the
-> >> commit message text and the code change do not match. Rename is just
-> >> a rename (i.e. change a variable name foo to bar).
-> >
-> > I'm renaming the label because it doesn't match the code flow anymore,
-> > I can change the commit message, but you please review the code.
-> > Tomas
-> 
-> The flow change is unnecessary and does not really have anything to do with
-> the bug fix. 
+The spec only requires the posted interrupt descriptor address to be
+64-bytes aligned (i.e. bits[0:5] == 0). Using page_address_valid also
+forces the address to be page aligned.
 
-What I see in the original code is that when 
-tpm_cmd_ready()  fails it's jumps to 'out' label and trying to do tpm_go_idle()
-but instead it should just undoing the locality, so both cmd_read and go idle had a wrong 
-jump. I see both should  be fixed.
+Only validate that the address does not cross the maximum physical address
+without enforcing a page alignment.
 
-Earlier version was better than this and would have been fine
-> when taking account the remark from Jason.
+v1 -> v2:
+- Add a missing parenthesis (dropped while merging!)
+
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Fixes: 6de84e581c0 ("nVMX x86: check posted-interrupt descriptor addresss on vmentry of L2")
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+---
+ arch/x86/kvm/vmx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 38f1a16..bb0fcdb 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -11667,7 +11667,7 @@ static int nested_vmx_check_apicv_controls(struct kvm_vcpu *vcpu,
+ 	    !nested_exit_intr_ack_set(vcpu) ||
+ 	    (vmcs12->posted_intr_nv & 0xff00) ||
+ 	    (vmcs12->posted_intr_desc_addr & 0x3f) ||
+-	    (!page_address_valid(vcpu, vmcs12->posted_intr_desc_addr))))
++	    (vmcs12->posted_intr_desc_addr >> cpuid_maxphyaddr(vcpu))))
+ 		return -EINVAL;
+ 
+ 	/* tpr shadow is needed by all apicv features. */
+-- 
+2.7.4
 
