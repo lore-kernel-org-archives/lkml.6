@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF89ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 13:52:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA40ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 13:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84B92204FD
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 13:52:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06A1021531
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 13:52:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HYsY8kB7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84B92204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGir46BY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06A1021531
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbeJTWCh (ORCPT
+        id S1727729AbeJTWCf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 18:02:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59892 "EHLO mail.kernel.org"
+        Sat, 20 Oct 2018 18:02:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727364AbeJTWCg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 18:02:36 -0400
+        id S1727364AbeJTWCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 18:02:34 -0400
 Received: from localhost (10.193.71.37.rev.sfr.net [37.71.193.10])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3AC42152F;
-        Sat, 20 Oct 2018 13:52:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AD8421530;
+        Sat, 20 Oct 2018 13:52:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540043523;
-        bh=G5dvQ5ToyfK+0a6scxCB3REUxkxrOwh/U7I3XktBiC4=;
+        s=default; t=1540043520;
+        bh=afu4MZ/C5g5tu+kpemQoAwiHudy7NvlJ0Tl8QX8WW0s=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HYsY8kB7bttqTYDCmUFqWSYDh/FJ93eVGmP8dS2/OKhFNi1WFDW6RHjOF7M2AGoYw
-         BSBb0fUXPztw1gn90etRGA3qX36tpVc6fSefPBq+VDnRsgJhGGOL/+NtkzSyRu8roF
-         0hTkZGzlwjMFAysbBJ4PcxnPQaNFilOSj09/yDl0=
-Date:   Sat, 20 Oct 2018 15:50:43 +0200
+        b=uGir46BYF/6kOqPCmm3+KokDxHwNLPxWOV0yJ88Au3kXKC/QuNdW9O4BcxHxtz+9u
+         VyBLNpSvN5sysOlf8mijq3QNAAPFE67wNUyOsKCb0cXNGdsN0C0tL5o2HnQGGvQzbB
+         17xW0LAzM5uE2l7aMzujBJgTa8GInxw5ullHMjTE=
+Date:   Sat, 20 Oct 2018 15:50:21 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel <linux-kernel@vger.kernel.org>
 Cc:     ksummit-discuss@lists.linuxfoundation.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Olof Johansson <olof@lixom.net>, Chris Mason <clm@fb.com>,
         Mishi Choudhary <mishi@linux.com>
-Subject: [PATCH 4/7] Code of Conduct: Provide links between the two documents
-Message-ID: <20181020135043.GE32218@kroah.com>
+Subject: [PATCH 3/7] Code of Conduct Interpretation: Properly reference the
+ TAB correctly
+Message-ID: <20181020135021.GD32218@kroah.com>
 References: <20181020134908.GA32218@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -57,54 +58,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create a link between the Code of Conduct and the Code of Conduct
-Interpretation so that people can see that they are related.
+We use the term "TAB" before defining it later in the document.  Fix
+that up by defining it at the first location.
 
+Reported-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Acked-by: Chris Mason <clm@fb.com>
 Acked-by: Olof Johansson <olof@lixom.net>
 Acked-by: Theodore Ts'o <tytso@mit.edu>
 Acked-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/process/code-of-conduct-interpretation.rst | 4 +++-
- Documentation/process/code-of-conduct.rst                | 8 ++++++++
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ .../process/code-of-conduct-interpretation.rst   | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/Documentation/process/code-of-conduct-interpretation.rst b/Documentation/process/code-of-conduct-interpretation.rst
-index ecf84cd29735..4d4e2cc94b5e 100644
+index b14441711f7b..ecf84cd29735 100644
 --- a/Documentation/process/code-of-conduct-interpretation.rst
 +++ b/Documentation/process/code-of-conduct-interpretation.rst
-@@ -1,7 +1,9 @@
-+.. _code_of_conduct_interpretation:
-+
- Linux Kernel Contributor Covenant Code of Conduct Interpretation
- ================================================================
+@@ -45,11 +45,11 @@ regarding conduct issues.
  
--The Contributor Covenant Code of Conduct is a general document meant to
-+The :ref:`code_of_conduct` is a general document meant to
- provide a set of rules for almost any open source community.  Every
- open-source community is unique and the Linux kernel is no exception.
- Because of this, this document describes how we in the Linux kernel
-diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/process/code-of-conduct.rst
-index a2641c19cf26..3046664c929e 100644
---- a/Documentation/process/code-of-conduct.rst
-+++ b/Documentation/process/code-of-conduct.rst
-@@ -1,3 +1,5 @@
-+.. _code_of_conduct:
-+
- Contributor Covenant Code of Conduct
- ++++++++++++++++++++++++++++++++++++
+ Maintainers should be willing to help when problems occur, and work with
+ others in the community when needed.  Do not be afraid to reach out to
+-the TAB or other maintainers if you're uncertain how to handle
+-situations that come up.  It will not be considered a violation report
+-unless you want it to be.  If you are uncertain about approaching the
+-TAB or any other maintainers, please reach out to our conflict mediator,
+-Mishi Choudhary <mishi@linux.com>.
++the Technical Advisory Board (TAB) or other maintainers if you're
++uncertain how to handle situations that come up.  It will not be
++considered a violation report unless you want it to be.  If you are
++uncertain about approaching the TAB or any other maintainers, please
++reach out to our conflict mediator, Mishi Choudhary <mishi@linux.com>.
  
-@@ -75,3 +77,9 @@ Attribution
+ In the end, "be kind to each other" is really what the end goal is for
+ everybody.  We know everyone is human and we all fail at times, but the
+@@ -125,9 +125,9 @@ are listed at <URL>.  Members can not access reports made before they
+ joined or after they have left the committee.
  
- This Code of Conduct is adapted from the Contributor Covenant, version 1.4,
- available at https://www.contributor-covenant.org/version/1/4/code-of-conduct.html
-+
-+Interpretation
-+==============
-+
-+See the :ref:`code_of_conduct_interpretation` document for how the Linux
-+kernel community will be interpreting this document.
+ The initial Code of Conduct Committee consists of volunteer members of
+-the Technical Advisory Board (TAB), as well as a professional mediator
+-acting as a neutral third party.  The first task of the committee is to
+-establish documented processes, which will be made public.
++the TAB, as well as a professional mediator acting as a neutral third
++party.  The first task of the committee is to establish documented
++processes, which will be made public.
+ 
+ Any member of the committee, including the mediator, can be contacted
+ directly if a reporter does not wish to include the full committee in a
 -- 
 2.19.1
 
