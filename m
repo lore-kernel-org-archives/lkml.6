@@ -2,113 +2,109 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 108F7C67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 21:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 198FCC67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 21:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE5A521712
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 21:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C215F21712
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 21:43:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="BvF9D/Wh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE5A521712
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="DKst/rCb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C215F21712
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726782AbeJUFwQ (ORCPT
+        id S1726895AbeJUFzQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 01:52:16 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40296 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeJUFwQ (ORCPT
+        Sun, 21 Oct 2018 01:55:16 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:32690 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbeJUFzP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 01:52:16 -0400
-Received: by mail-pg1-f196.google.com with SMTP id o14-v6so1560937pgv.7
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 14:40:25 -0700 (PDT)
+        Sun, 21 Oct 2018 01:55:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pfUELqGAO8tyN+6luWoipK/YwX6LKz5afJWhLWbYcIg=;
-        b=BvF9D/WhAwCF2st9Orth5F4rXLJnwgAikIUe70RprUBmmoLALwnN1GMw1b1c767hoO
-         ru+OVmPghxYipwmY4WUl2r3b2w66UP70t9U1cUlqtvyXtT8M90ANjlzq1TT1jLBDoTQ2
-         N3oarcI9nug1p6g9elP/IMTjhCn9WA2Nbt0JBjFM3ccew/6raYNXX4DKaHhXIQDeAFkU
-         0394JjMfL6jFCK2XHJXM6Zrni96UXlBAxlpLTdNjKW0EPf2c3+SnMO1fofjP8iMe/Wpg
-         /mDhHAjEmSQPHBrrkLkjIUzflJGwW7TNyWq3awPWkjgCc8YqXxAdbuQxIOVbao6MSMWO
-         jnfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pfUELqGAO8tyN+6luWoipK/YwX6LKz5afJWhLWbYcIg=;
-        b=IOFNeKuBmvTtq2thtjEd/8fVx0ygoV/B/plq6lF1v5SW2X7KhRK6ndz31jLUViTzy8
-         rKHQmb64268fFBvnw19uB2+U/oME9dCBXzV+y9wrLFlUqYJWTVF9B9WEwQTtBGzjTMzc
-         BvHVBgVvN67RB4KN/naV0OXtcH2B2COpcaDZJLo3aRTCSec5l1tS1NrrzGmaaA5znOyt
-         mQi31fT8BbscnvWcKwHB+oTURAwmno8E3j9mt4obMQquuDlikJiy3yO0HqZRSmm9njNV
-         6FMQPBKlxvSBy31pAr6jnTqG5Db6MnvDblko4AaIciIGQlNy1W1eRzOzEt0y1Rnu6wEx
-         GpoQ==
-X-Gm-Message-State: ABuFfogDSso7t/n3iGFu2DfoliGO3Aih6y3R5+coj7xOWMTREj+tLC3s
-        pzMsMAGKL810nqyCaC6r2OkHKGkF1Fk=
-X-Google-Smtp-Source: ACcGV62tjhZaYpNSRyDePqCR1uHvrcZD5EU3fyt9ZFNUCL5mFTmAifLuGRQ/sDY5PvXa2ouOdSiQJQ==
-X-Received: by 2002:a63:9304:: with SMTP id b4-v6mr36491101pge.36.1540071624392;
-        Sat, 20 Oct 2018 14:40:24 -0700 (PDT)
-Received: from [192.168.89.171] (50-207-252-210-static.hfc.comcastbusiness.net. [50.207.252.210])
-        by smtp.gmail.com with ESMTPSA id v83-v6sm51265542pfa.103.2018.10.20.14.40.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 20 Oct 2018 14:40:22 -0700 (PDT)
-Subject: Re: [PATCH 0/2] block: fixes for always associate blkg
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     Tejun Heo <tj@kernel.org>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>, kernel-team@fb.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181020185612.51587-1-dennis@kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <bcc8829d-e7ba-1f4b-e4eb-32deed97ffa8@kernel.dk>
-Date:   Sat, 20 Oct 2018 15:40:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1540071804; x=1571607804;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=P3Ov81paqvgXeOGyNLGKFGh4w5OqwZCWl1tXxqMtFts=;
+  b=DKst/rCbaKljSxVOdquA0dYXWEbSUxGICfofjnByYEY6y/nZrJnvKzI/
+   c9Zuv3SQzCTqy+7p/Z5nZggECvyFlaqhkeyPwYmdcT8JTZ62atacJU0O6
+   TwRZLQ6gfTvNBvETvEdIZnB/dWr+jdwiDbNOOisr/PDNtFK8ZzlKcMBHG
+   E=;
+X-IronPort-AV: E=Sophos;i="5.54,405,1534809600"; 
+   d="scan'208";a="760178612"
+Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-1d-9ec21598.us-east-1.amazon.com) ([10.47.22.34])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Oct 2018 21:43:20 +0000
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (iad7-ws-svc-lb50-vlan3.amazon.com [10.0.93.214])
+        by email-inbound-relay-1d-9ec21598.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w9KLhBIJ091275
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 20 Oct 2018 21:43:13 GMT
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w9KLhALS021071;
+        Sat, 20 Oct 2018 23:43:10 +0200
+Received: (from karahmed@localhost)
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id w9KLh9i4021069;
+        Sat, 20 Oct 2018 23:43:09 +0200
+From:   KarimAllah Ahmed <karahmed@amazon.de>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     KarimAllah Ahmed <karahmed@amazon.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH] KVM/nVMX: Do not validate that posted_intr_desc_addr is page aligned
+Date:   Sat, 20 Oct 2018 23:42:59 +0200
+Message-Id: <1540071779-20848-1-git-send-email-karahmed@amazon.de>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20181020185612.51587-1-dennis@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/20/18 12:56 PM, Dennis Zhou wrote:
-> Hi everyone,
-> 
-> It was reported in [1] that blk_get_rl() cleanup patch was causing a
-> null pointer dereference. After some back and forth debugging with
-> Valdis, it turns out I wasn't properly handling association with
-> recursive calls to make_request().
-> 
-> Another issue was identified with the blk_get_rl() update as it is
-> possible under certain circumstances that a blkg cannot be allocated
-> when called in blk_get_rl(). This could result in the blkcg_root being
-> returned. However, the blkcg_root is a special case where all blkgs
-> share the request_queue's request_list.
-> 
-> The original series can be found at [2].
-> 
-> [1] https://lore.kernel.org/lkml/13987.1539646128@turing-police.cc.vt.edu/
-> [2] https://lore.kernel.org/lkml/20180911184137.35897-1-dennisszhou@gmail.com/
-> 
-> This patchset contains the following 2 patches:
->   0001-blkcg-fix-edge-case-for-blk_get_rl-under-memory-pres.patch
->   0002-blkcg-reassociate-bios-when-make_request-is-called-r.patch
-> 
-> 0001 addresses an edge case where a blkg cannot be created and can
-> possibly return a blkg associated with the blkcg_root. 0002 fixes the
-> stale association when make_request() is called recursively.
+The spec only requires the posted interrupt descriptor address to be
+64-bytes aligned (i.e. bits[0:5] == 0). Using page_address_valid also
+forces the address to be page aligned.
 
-Thanks Dennis, applied.
+Only validate that the address does not cross the maximum physical address
+without enforcing a page alignment.
 
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Fixes: 6de84e581c0 ("nVMX x86: check posted-interrupt descriptor addresss on vmentry of L2")
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+---
+ arch/x86/kvm/vmx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 30bf860..47962f2 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -11668,7 +11668,7 @@ static int nested_vmx_check_apicv_controls(struct kvm_vcpu *vcpu,
+ 	    !nested_exit_intr_ack_set(vcpu) ||
+ 	    (vmcs12->posted_intr_nv & 0xff00) ||
+ 	    (vmcs12->posted_intr_desc_addr & 0x3f) ||
+-	    (!page_address_valid(vcpu, vmcs12->posted_intr_desc_addr))))
++	    (vmcs12->posted_intr_desc_addr >> cpuid_maxphyaddr(vcpu)))
+ 		return -EINVAL;
+ 
+ 	/* tpr shadow is needed by all apicv features. */
 -- 
-Jens Axboe
+2.7.4
 
