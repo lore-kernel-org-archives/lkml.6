@@ -2,29 +2,29 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6BFECDE3D
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 17:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF11C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 17:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5390D2156D
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 17:47:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5390D2156D
+	by mail.kernel.org (Postfix) with ESMTP id 4142021533
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 17:47:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4142021533
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jjacky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbeJUB6R (ORCPT
+        id S1727791AbeJUB6V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 21:58:17 -0400
+        Sat, 20 Oct 2018 21:58:21 -0400
 Received: from mail.jjacky.com ([23.29.69.116]:57419 "EHLO mail.jjacky.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727343AbeJUB6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 21:58:16 -0400
+        id S1727343AbeJUB6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 21:58:19 -0400
 X-Greylist: delayed 392 seconds by postgrey-1.27 at vger.kernel.org; Sat, 20 Oct 2018 21:58:16 EDT
-Received: by mail.jjacky.com (OpenSMTPD) with ESMTP id a8b5acfe;
-        Sat, 20 Oct 2018 17:40:23 +0000 (UTC)
+Received: by mail.jjacky.com (OpenSMTPD) with ESMTP id e9a5ce3c;
+        Sat, 20 Oct 2018 17:40:24 +0000 (UTC)
 From:   Olivier Brunel <jjk@jjacky.com>
 To:     Network Development <netdev@vger.kernel.org>
 Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
@@ -33,12 +33,13 @@ Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
         linux-kernel@vger.kernel.org,
         "David S . Miller" <davem@davemloft.net>,
         Olivier Brunel <jjk@jjacky.com>
-Subject: [PATCH 0/2] Re: bpfilter causes a leftover kernel process
-Date:   Sat, 20 Oct 2018 19:39:55 +0200
-Message-Id: <20181020173957.31239-1-jjk@jjacky.com>
+Subject: [PATCH 1/2] umh: Add command line to user mode helpers
+Date:   Sat, 20 Oct 2018 19:39:56 +0200
+Message-Id: <20181020173957.31239-2-jjk@jjacky.com>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <CAADnVQ+xFfwV67BRXD0epoTwKz54W3mcYHXVWBd1iWb94p+zpg@mail.gmail.com>
+In-Reply-To: <20181020173957.31239-1-jjk@jjacky.com>
 References: <20180826180816.04ef7d16@jjacky.com> <20180827183122.0b4ac65e@jjacky.com> <20180828033500.g3siwst5h2ckewwb@ast-mbp> <20180905175243.78a6ba81@jjacky.com> <CAADnVQ+xFfwV67BRXD0epoTwKz54W3mcYHXVWBd1iWb94p+zpg@mail.gmail.com>
+ <20181020173957.31239-1-jjk@jjacky.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,41 +47,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 16 Oct 2018 16:38:56 +0000
-Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+User mode helpers were spawned without a command line, and because
+an empty command line is used by many tools to identify processes as
+kernel threads, this could cause some issues.
 
-> On Wed, Sep 5, 2018 at 5:05 PM Olivier Brunel <jjk@jjacky.com> wrote:
-> >
-> > You'll see in the end that systemd complains that it can't
-> > unmount /oldroot (EBUSY), aka the root fs; and that's because of the
-> > bpfilter helper, which wasn't killed because it's seen as a kernel
-> > thread due to its empty command line and therefore not signaled.  
-> 
-> thanks for tracking it down.
-> can somebody send a patch to give bpfilter non-empty cmdline?
-> I think that would be a better fix than tweaking all pid1s.
+Notably during killing spree on shutdown, since such helper would then
+be skipped (i.e. not killed) which would result in the process remaining
+alive, and thus preventing unmouting of the rootfs (as experienced with
+the bpfilter umh).
 
-So I'm not a kernel dev and this would be my first atttempt at a kernel patch,
-but I did have a look and came up with the following patch(es) to fix this.
-Hopefully I did things right.
+Fixes: 449325b52b7a ("umh: introduce fork_usermode_blob() helper")
+Signed-off-by: Olivier Brunel <jjk@jjacky.com>
+---
+ include/linux/umh.h |  1 +
+ kernel/umh.c        | 16 ++++++++++++++--
+ 2 files changed, 15 insertions(+), 2 deletions(-)
 
-It adds a default command line ("usermodehelper") to such processes, so any &
-all such helpers will be seen as user process and not kernel threads, but
-there's also the possibility to specify a command line to use, here
-"bpfilter_umh"
-
-Cheers,
-
-
-Olivier Brunel (2):
-  umh: Add command line to user mode helpers
-  net: bpfilter: Set user mode helper's command line
-
- include/linux/umh.h          |  1 +
- kernel/umh.c                 | 16 ++++++++++++++--
- net/bpfilter/bpfilter_kern.c |  1 +
- 3 files changed, 16 insertions(+), 2 deletions(-)
-
+diff --git a/include/linux/umh.h b/include/linux/umh.h
+index 5c812acbb..235f51b62 100644
+--- a/include/linux/umh.h
++++ b/include/linux/umh.h
+@@ -44,6 +44,7 @@ struct subprocess_info *call_usermodehelper_setup_file(struct file *file,
+ 			  int (*init)(struct subprocess_info *info, struct cred *new),
+ 			  void (*cleanup)(struct subprocess_info *), void *data);
+ struct umh_info {
++	const char *cmdline;
+ 	struct file *pipe_to_umh;
+ 	struct file *pipe_from_umh;
+ 	pid_t pid;
+diff --git a/kernel/umh.c b/kernel/umh.c
+index c44985894..0baa672e0 100644
+--- a/kernel/umh.c
++++ b/kernel/umh.c
+@@ -405,11 +405,19 @@ struct subprocess_info *call_usermodehelper_setup_file(struct file *file,
+ 		void (*cleanup)(struct subprocess_info *info), void *data)
+ {
+ 	struct subprocess_info *sub_info;
++	struct umh_info *info = data;
++	const char *cmdline = (info->cmdline) ? info->cmdline : "usermodehelper";
+ 
+ 	sub_info = kzalloc(sizeof(struct subprocess_info), GFP_KERNEL);
+ 	if (!sub_info)
+ 		return NULL;
+ 
++	sub_info->argv = argv_split(GFP_KERNEL, cmdline, NULL);
++	if (!sub_info->argv) {
++		kfree(sub_info);
++		return NULL;
++	}
++
+ 	INIT_WORK(&sub_info->work, call_usermodehelper_exec_work);
+ 	sub_info->path = "none";
+ 	sub_info->file = file;
+@@ -458,10 +466,11 @@ static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
+ 	return 0;
+ }
+ 
+-static void umh_save_pid(struct subprocess_info *info)
++static void umh_clean_and_save_pid(struct subprocess_info *info)
+ {
+ 	struct umh_info *umh_info = info->data;
+ 
++	argv_free(info->argv);
+ 	umh_info->pid = info->pid;
+ }
+ 
+@@ -471,6 +480,9 @@ static void umh_save_pid(struct subprocess_info *info)
+  * @len: length of the blob
+  * @info: information about usermode process (shouldn't be NULL)
+  *
++ * If info->cmdline is set it will be used as command line for the
++ * user process, else "usermodehelper" is used.
++ *
+  * Returns either negative error or zero which indicates success
+  * in executing a blob of bytes as a usermode process. In such
+  * case 'struct umh_info *info' is populated with two pipes
+@@ -500,7 +512,7 @@ int fork_usermode_blob(void *data, size_t len, struct umh_info *info)
+ 
+ 	err = -ENOMEM;
+ 	sub_info = call_usermodehelper_setup_file(file, umh_pipe_setup,
+-						  umh_save_pid, info);
++						  umh_clean_and_save_pid, info);
+ 	if (!sub_info)
+ 		goto out;
+ 
 -- 
 2.19.0
 
