@@ -2,129 +2,336 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD26ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 14:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1EEFC67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 15:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 966B421557
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 14:42:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 959E921566
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 15:00:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hJ6bTmnY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 966B421557
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ff/qLj9p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 959E921566
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbeJTWxC (ORCPT
+        id S1727518AbeJTXKx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 18:53:02 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:37865 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727353AbeJTWxC (ORCPT
+        Sat, 20 Oct 2018 19:10:53 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:51403 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727413AbeJTXKx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 18:53:02 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 63-v6so33285237ljs.4;
-        Sat, 20 Oct 2018 07:42:18 -0700 (PDT)
+        Sat, 20 Oct 2018 19:10:53 -0400
+Received: by mail-it1-f195.google.com with SMTP id 74-v6so7467309itw.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 08:00:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zkSoupYwxfhc0zIBArMqGSzHK+gPEYJShdJnvqhYqXw=;
-        b=hJ6bTmnYi2WblTqhJDlYbup76+3mDz6+G/UOYmz4M64Bi69Ndn/ZlylxCbBal/NjIa
-         kcVJXNFX3dREq4U1jXDpnv5HDy2tVw9zuR3+AtiMppe389O2fzi3Ofi9aknPoQ1XhKY8
-         qc/dLgjvcgYvv9nO3LECP4vPFjK5JNpONM/Lx11duF9MTwow100tfpFr/REXLgXn4H/Q
-         aKnBMN7nfsaxGX8Scs/I0ctjRVzN8FQIyLkf/zg4ZVbHpj3br7pLWlsuwEszcv1Lzk2W
-         7qxNT4FN7QnCSoHG5tPYcqfIFbEBDrms0FFllzUDPC22ftfxG/HtDFa9jebv6kH3bPvm
-         v2RQ==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DPV3GfcDQeGLJmx80Ehi4cTMV5YxhaOHhrX/OYXb34w=;
+        b=ff/qLj9p0coDG4/4+SaWaGcTTgJviD/v5F668DAQXYGa1H1CKHfJnpR3EDgP/xQ3sc
+         BoLrS+NPM4RQpmTSD0HSCkYrIYRkJP4piUQU0cW/Ul2JFcEufcnOdv1w3QQuInqOAr78
+         Bq0YA8VRZ+Pq8XRlooXXRp0P51KqEVn0obIy0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zkSoupYwxfhc0zIBArMqGSzHK+gPEYJShdJnvqhYqXw=;
-        b=lqFaJ9uuxgFgMXzMMnRhiS1VihAZqOaEJnxq3ETjl+o6MYoA/E6lOvffZ0VVkuSNQE
-         noFmTf4onD4WbsDWObhmsJSDd2nccCo/YmA2nzAwJLVPER3plhQ5+Yb2HUeV2kqJhTud
-         n6zrHk9ttaFoxd8Lk94Eblgy3YUDkPjHH9losa6567XDRcTpVe7Dj/RRSFxQRcvuU0x8
-         ya29nlsQQPmfA9WMEIq+RKg8GEf6ZQ42ToH1BXDWTQbgIF7RoK5ru2swmi65SacC8wDE
-         LD87GKMFyd1ueDDLFu/Smhh2YovXRFH0SnzMX06DExhDg8IfbncPRBrtdqvivgKNwfNd
-         U4RQ==
-X-Gm-Message-State: ABuFfoimUXoU3/p3tL506rBp0VbewY0NsFE8DqsNdbBYcaVac2g9TP7N
-        H4a+UhRlNbPSzk9b2JYTS0Y8KMz4H1pBHfke2VE=
-X-Google-Smtp-Source: ACcGV62i+jO4Y0+JJgvuk42Ns/drweVv/O7u0uGhH/3MgZXumB/VPxdDbIfZQKB7v7fE5rZoOttzn1AXY1xmR8Z3HvQ=
-X-Received: by 2002:a2e:8684:: with SMTP id l4-v6mr27170498lji.52.1540046537867;
- Sat, 20 Oct 2018 07:42:17 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DPV3GfcDQeGLJmx80Ehi4cTMV5YxhaOHhrX/OYXb34w=;
+        b=nbzNEOiRiqLzCwa+dyk1WFo7bYdleSirMGvssduWKyT60R/e2a1FLhWiVNWoqndOyg
+         TKy3kQ/3vEEoksKK8rk2fmbDqhZbnawD96aIDvgHWSenAGM2vhEDupTqHuW9qdW96jdj
+         Y3vgkejCE98JdYGh5n2XjBJKVv5z2KcqFncMmG58xwZbtqj/Jt4VVEkIGtcHB7gF9XT9
+         KV9EMByR+jspXWgvASPEO3ERRlU1zLhAGSkywwTa8FSS2qslJ9eftI4qhn1g3bjRoyAa
+         Qc7N9WIXNYYD8ZvCOWBtRuVUWnxJ4seJ/qa7sr+OuALEuGBRoGK7ECdEmsM+kDzkkbSx
+         hbYg==
+X-Gm-Message-State: ABuFfog+VM/Vii+FxlLA1w3oMSeuEfgZcPSzy79vWr4DZp8ft8u0dmql
+        UvbuSj0hjkZ3ajfqutNsgkqfXC1fEcacm6pd6H9K5g==
+X-Google-Smtp-Source: ACcGV60yvaXnYw72C/1dz4jBaFK+qGXgw4rLE0vGuKPg/NkZfwza5Vs0bqvzgqsgLNF6CIgNs6PpHQi8xQ31MKZk3FA=
+X-Received: by 2002:a05:660c:383:: with SMTP id x3mr5235345itj.121.1540047605417;
+ Sat, 20 Oct 2018 08:00:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181017031241.669-1-kys@linuxonhyperv.com> <20181017031406.773-1-kys@linuxonhyperv.com>
- <20181017031406.773-3-kys@linuxonhyperv.com> <20181017050705.GE22447@kroah.com>
- <20181017062255.oiu44y4zuuwilan3@mwanda>
-In-Reply-To: <20181017062255.oiu44y4zuuwilan3@mwanda>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Sat, 20 Oct 2018 16:42:07 +0200
-Message-ID: <CANiq72kQwhOFC5=vaNZW9qpmohot3ATRJVnn95A8eJ2w2xCNMQ@mail.gmail.com>
-Subject: Re: [PATCH 3/5] Drivers: hv: kvp: Fix the recent regression caused by
- incorrect clean-up
-To:     Dan <dan.carpenter@oracle.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, kys@microsoft.com,
-        olaf@aepfle.de, sthemmin@microsoft.com, jasowang@redhat.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stable@vger.kernel.org, Michael.H.Kelley@microsoft.com,
-        Robo Bot <apw@canonical.com>, devel@linuxdriverproject.org,
-        vkuznets@redhat.com, haiyangz@microsoft.com
+Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Sat, 20 Oct 2018 08:00:04
+ -0700 (PDT)
+In-Reply-To: <20181020055136.GD876@sol.localdomain>
+References: <20181015175424.97147-1-ebiggers@kernel.org> <20181015175424.97147-11-ebiggers@kernel.org>
+ <CAKv+Gu_HCecGeqFTf-Ys+GiWr98JO_ydZ1cAsMbKM88ZKG=Sog@mail.gmail.com> <20181020055136.GD876@sol.localdomain>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Sat, 20 Oct 2018 23:00:04 +0800
+Message-ID: <CAKv+Gu8rrdEDSpRMTXk7vAwO23z7Z_ZR1vhxL-gCejUbc_+hKg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 10/12] crypto: arm/nhpoly1305 - add
+ NEON-accelerated NHPoly1305
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+On Wed, Oct 17, 2018 at 8:25 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On 20 October 2018 at 13:51, Eric Biggers <ebiggers@kernel.org> wrote:
+> On Sat, Oct 20, 2018 at 12:12:56PM +0800, Ard Biesheuvel wrote:
+>> On 16 October 2018 at 01:54, Eric Biggers <ebiggers@kernel.org> wrote:
+>> > From: Eric Biggers <ebiggers@google.com>
+>> >
+>> > Add an ARM NEON implementation of NHPoly1305, an =CE=B5-almost-=E2=88=
+=86-universal
+>> > hash function used in the Adiantum encryption mode.  For now, only the
+>> > NH portion is actually NEON-accelerated; the Poly1305 part is less
+>> > performance-critical so is just implemented in C.
+>> >
+>> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+>> > ---
+>> >  arch/arm/crypto/Kconfig                |   5 ++
+>> >  arch/arm/crypto/Makefile               |   2 +
+>> >  arch/arm/crypto/nh-neon-core.S         | 116 ++++++++++++++++++++++++=
++
+>> >  arch/arm/crypto/nhpoly1305-neon-glue.c |  78 +++++++++++++++++
+>> >  4 files changed, 201 insertions(+)
+>> >  create mode 100644 arch/arm/crypto/nh-neon-core.S
+>> >  create mode 100644 arch/arm/crypto/nhpoly1305-neon-glue.c
+>> >
+>> > diff --git a/arch/arm/crypto/Kconfig b/arch/arm/crypto/Kconfig
+>> > index cc932d9bba561..458562a34aabe 100644
+>> > --- a/arch/arm/crypto/Kconfig
+>> > +++ b/arch/arm/crypto/Kconfig
+>> > @@ -122,4 +122,9 @@ config CRYPTO_CHACHA20_NEON
+>> >         select CRYPTO_BLKCIPHER
+>> >         select CRYPTO_CHACHA20
+>> >
+>> > +config CRYPTO_NHPOLY1305_NEON
+>> > +       tristate "NEON accelerated NHPoly1305 hash function (for Adian=
+tum)"
+>> > +       depends on KERNEL_MODE_NEON
+>> > +       select CRYPTO_NHPOLY1305
+>> > +
+>> >  endif
+>> > diff --git a/arch/arm/crypto/Makefile b/arch/arm/crypto/Makefile
+>> > index 005482ff95047..b65d6bfab8e6b 100644
+>> > --- a/arch/arm/crypto/Makefile
+>> > +++ b/arch/arm/crypto/Makefile
+>> > @@ -10,6 +10,7 @@ obj-$(CONFIG_CRYPTO_SHA1_ARM_NEON) +=3D sha1-arm-neo=
+n.o
+>> >  obj-$(CONFIG_CRYPTO_SHA256_ARM) +=3D sha256-arm.o
+>> >  obj-$(CONFIG_CRYPTO_SHA512_ARM) +=3D sha512-arm.o
+>> >  obj-$(CONFIG_CRYPTO_CHACHA20_NEON) +=3D chacha-neon.o
+>> > +obj-$(CONFIG_CRYPTO_NHPOLY1305_NEON) +=3D nhpoly1305-neon.o
+>> >
+>> >  ce-obj-$(CONFIG_CRYPTO_AES_ARM_CE) +=3D aes-arm-ce.o
+>> >  ce-obj-$(CONFIG_CRYPTO_SHA1_ARM_CE) +=3D sha1-arm-ce.o
+>> > @@ -53,6 +54,7 @@ ghash-arm-ce-y        :=3D ghash-ce-core.o ghash-ce-=
+glue.o
+>> >  crct10dif-arm-ce-y     :=3D crct10dif-ce-core.o crct10dif-ce-glue.o
+>> >  crc32-arm-ce-y:=3D crc32-ce-core.o crc32-ce-glue.o
+>> >  chacha-neon-y :=3D chacha-neon-core.o chacha-neon-glue.o
+>> > +nhpoly1305-neon-y :=3D nh-neon-core.o nhpoly1305-neon-glue.o
+>> >
+>> >  ifdef REGENERATE_ARM_CRYPTO
+>> >  quiet_cmd_perl =3D PERL    $@
+>> > diff --git a/arch/arm/crypto/nh-neon-core.S b/arch/arm/crypto/nh-neon-=
+core.S
+>> > new file mode 100644
+>> > index 0000000000000..434d80ab531c2
+>> > --- /dev/null
+>> > +++ b/arch/arm/crypto/nh-neon-core.S
+>> > @@ -0,0 +1,116 @@
+>> > +/* SPDX-License-Identifier: GPL-2.0 */
+>> > +/*
+>> > + * NH - =CE=B5-almost-universal hash function, NEON accelerated versi=
+on
+>> > + *
+>> > + * Copyright 2018 Google LLC
+>> > + *
+>> > + * Author: Eric Biggers <ebiggers@google.com>
+>> > + */
+>> > +
+>> > +#include <linux/linkage.h>
+>> > +
+>> > +       .text
+>> > +       .fpu            neon
+>> > +
+>> > +       KEY             .req    r0
+>> > +       MESSAGE         .req    r1
+>> > +       MESSAGE_LEN     .req    r2
+>> > +       HASH            .req    r3
+>> > +
+>> > +       PASS0_SUMS      .req    q0
+>> > +       PASS0_SUM_A     .req    d0
+>> > +       PASS0_SUM_B     .req    d1
+>> > +       PASS1_SUMS      .req    q1
+>> > +       PASS1_SUM_A     .req    d2
+>> > +       PASS1_SUM_B     .req    d3
+>> > +       PASS2_SUMS      .req    q2
+>> > +       PASS2_SUM_A     .req    d4
+>> > +       PASS2_SUM_B     .req    d5
+>> > +       PASS3_SUMS      .req    q3
+>> > +       PASS3_SUM_A     .req    d6
+>> > +       PASS3_SUM_B     .req    d7
+>> > +       K0              .req    q4
+>> > +       K1              .req    q5
+>> > +       K2              .req    q6
+>> > +       K3              .req    q7
+>> > +       T0              .req    q8
+>> > +       T0_L            .req    d16
+>> > +       T0_H            .req    d17
+>> > +       T1              .req    q9
+>> > +       T1_L            .req    d18
+>> > +       T1_H            .req    d19
+>> > +       T2              .req    q10
+>> > +       T2_L            .req    d20
+>> > +       T2_H            .req    d21
+>> > +       T3              .req    q11
+>> > +       T3_L            .req    d22
+>> > +       T3_H            .req    d23
+>> > +
+>> > +.macro _nh_stride      k0, k1, k2, k3
+>> > +
+>> > +       // Load next message stride
+>> > +       vld1.8          {T3}, [MESSAGE]!
+>> > +
+>> > +       // Load next key stride
+>> > +       vld1.32         {\k3}, [KEY]!
+>> > +
+>> > +       // Add message words to key words
+>> > +       vadd.u32        T0, T3, \k0
+>> > +       vadd.u32        T1, T3, \k1
+>> > +       vadd.u32        T2, T3, \k2
+>> > +       vadd.u32        T3, T3, \k3
+>> > +
+>> > +       // Multiply 32x32 =3D> 64 and accumulate
+>> > +       vmlal.u32       PASS0_SUMS, T0_L, T0_H
+>> > +       vmlal.u32       PASS1_SUMS, T1_L, T1_H
+>> > +       vmlal.u32       PASS2_SUMS, T2_L, T2_H
+>> > +       vmlal.u32       PASS3_SUMS, T3_L, T3_H
+>> > +.endm
+>> > +
+>>
+>> Since we seem to have some spare NEON registers: would it help to have
+>> a double round version of this macro?
+>>
 >
-> It's not common at all.  It should be wrapped in a macro and put into
-> compiler.h.
+> It helps a little bit, but not much.  The loads are the only part that ca=
+n be
+> optimized further.  I think I'd rather have the shorter + simpler version=
+,
+> unless the loads can be optimized significantly more on other processors.
 >
-> But I hope it does become adopted.  It's better than randomly grepping
-> for non-standard comments.
+> Also, originally I had it loading the key and message for the next stride=
+ while
+> doing the current one, but that didn't seem worthwhile either.
+>
 
-Using an attribute is indeed better whenever possible. In C++17 it is
-an standard attribute and there have been proposals to include some of
-them for C as well since 2016 at least, e.g. the latest for
-fallthrough at:
+Fair enough.
 
-  http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2268.pdf
+>> > +/*
+>> > + * void nh_neon(const u32 *key, const u8 *message, size_t message_len=
+,
+>> > + *             u8 hash[NH_HASH_BYTES])
+>> > + *
+>> > + * It's guaranteed that message_len % 16 =3D=3D 0.
+>> > + */
+>> > +ENTRY(nh_neon)
+>> > +
+>> > +       vld1.32         {K0,K1}, [KEY]!
+>> > +         vmov.u64      PASS0_SUMS, #0
+>> > +         vmov.u64      PASS1_SUMS, #0
+>> > +       vld1.32         {K2}, [KEY]!
+>> > +         vmov.u64      PASS2_SUMS, #0
+>> > +         vmov.u64      PASS3_SUMS, #0
+>> > +
+>> > +       subs            MESSAGE_LEN, MESSAGE_LEN, #64
+>> > +       blt             .Lloop4_done
+>> > +.Lloop4:
+>> > +       _nh_stride      K0, K1, K2, K3
+>> > +       _nh_stride      K1, K2, K3, K0
+>> > +       _nh_stride      K2, K3, K0, K1
+>> > +       _nh_stride      K3, K0, K1, K2
+>> > +       subs            MESSAGE_LEN, MESSAGE_LEN, #64
+>> > +       bge             .Lloop4
+>> > +
+>> > +.Lloop4_done:
+>> > +       ands            MESSAGE_LEN, MESSAGE_LEN, #63
+>> > +       beq             .Ldone
+>> > +       _nh_stride      K0, K1, K2, K3
+>> > +
+>> > +       subs            MESSAGE_LEN, MESSAGE_LEN, #16
+>> > +       beq             .Ldone
+>> > +       _nh_stride      K1, K2, K3, K0
+>> > +
+>> > +       subs            MESSAGE_LEN, MESSAGE_LEN, #16
+>> > +       beq             .Ldone
+>> > +       _nh_stride      K2, K3, K0, K1
+>> > +
+>> > +.Ldone:
+>> > +       // Sum the accumulators for each pass, then store the sums to =
+'hash'
+>> > +       vadd.u64        T0_L, PASS0_SUM_A, PASS0_SUM_B
+>> > +       vadd.u64        T0_H, PASS1_SUM_A, PASS1_SUM_B
+>> > +       vadd.u64        T1_L, PASS2_SUM_A, PASS2_SUM_B
+>> > +       vadd.u64        T1_H, PASS3_SUM_A, PASS3_SUM_B
+>> > +       vst1.8          {T0-T1}, [HASH]
+>> > +       bx              lr
+>> > +ENDPROC(nh_neon)
+>> > diff --git a/arch/arm/crypto/nhpoly1305-neon-glue.c b/arch/arm/crypto/=
+nhpoly1305-neon-glue.c
+>> > new file mode 100644
+>> > index 0000000000000..df48a00f4c50f
+>> > --- /dev/null
+>> > +++ b/arch/arm/crypto/nhpoly1305-neon-glue.c
+>> > @@ -0,0 +1,78 @@
+>> > +// SPDX-License-Identifier: GPL-2.0
+>> > +/*
+>> > + * NHPoly1305 - =CE=B5-almost-=E2=88=86-universal hash function for A=
+diantum
+>> > + * (NEON accelerated version)
+>> > + *
+>> > + * Copyright 2018 Google LLC
+>> > + */
+>> > +
+>> > +#include <asm/neon.h>
+>> > +#include <asm/simd.h>
+>> > +#include <crypto/internal/hash.h>
+>> > +#include <crypto/nhpoly1305.h>
+>> > +#include <linux/module.h>
+>> > +
+>> > +asmlinkage void nh_neon(const u32 *key, const u8 *message, size_t mes=
+sage_len,
+>> > +                       u8 hash[NH_HASH_BYTES]);
+>> > +
+>> > +static void _nh_neon(const u32 *key, const u8 *message, size_t messag=
+e_len,
+>> > +                    __le64 hash[NH_NUM_PASSES])
+>> > +{
+>> > +       nh_neon(key, message, message_len, (u8 *)hash);
+>> > +}
+>> > +
+>>
+>> Why do we need this function?
+>>
+>
+> For now it's not needed so I should probably just remove it, but it seems=
+ likely
+> that indirect calls to assembly functions in the kernel will be going awa=
+y in
+> order to add support for CFI (control flow integrity).  The android-4.9 a=
+nd
+> android-4.14 kernels support CFI on arm64, so you might notice that some =
+of the
+> arm64 crypto code had to be patched for this reason.
+>
 
-I have taken a quick look into supporting it (typing it here to save
-it on the mailing list :-), and we have:
-
-  * gcc >= 7.1 supports -Wimplicit-fallthrough with
-__attribute__((fallthrough)), the comment syntax and the C++
-[[fallthrough]] syntax.
-  * gcc < 7.1 complains about empty declarations (it does not know
-about attributes for null statements) and also
--Wdeclaration-after-statement.
-  * clang 7 supports -Wimplicit-fallthrough (not enabled in
--Wall/extra/pedantic like gcc, though) but *only* in C++ mode and with
-the C++ syntax [[fallthrough]]. In other words, in C mode, no syntax
-works and no diagnostics are emitted. It complains about
-Wmissing-declarations. [IMO they should allow the __attribute__ syntax
-for fallthrough (and enable it on C mode) to be compatible with gcc.
-Maybe they are simply waiting for the C2x attributes... :-)]
-  * icc 19 does not know about -Wimplicit-fallthrough at all (but
-seems to allow [[fallthrough]] on C++17 mode to comply with the
-standard).
-
-Therefore, the only improvement we could do right now is starting to
-use the attribute for gcc > 7.1, and a comment for everybody else.
-However, even if that was worth the trouble of changing the 2500+
-instances of fall through markings that we have, comments are replaced
-before the preprocessor stage, so we would need some (probably
-non-portable) macro magic.
-
-So, I would say, let's revisit this again in a few years. Possibly,
-when we move the minimum version to gcc 7.1, clang and icc may both
-support the fallthrough warning in C mode; so that we can always use
-the __attribute__((fallthrough)) unconditionally under a __fallthrough
-#define.
-
-Cheers,
-Miguel
+I didn't actually look at those kernel trees so I hadn't noticed yet.
+In any case, I'd suggest that we just keep this wrapper then, but
+please add a comment describing why it's there.
