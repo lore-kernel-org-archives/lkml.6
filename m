@@ -3,55 +3,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F9DC67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 16:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C38DC67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 16:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17F662157C
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 16:32:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17F662157C
+	by mail.kernel.org (Postfix) with ESMTP id 29FB021550
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 16:57:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29FB021550
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbeJUAnF (ORCPT
+        id S1727652AbeJUBII (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 20:43:05 -0400
-Received: from mail-it1-f198.google.com ([209.85.166.198]:43783 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727543AbeJUAnE (ORCPT
+        Sat, 20 Oct 2018 21:08:08 -0400
+Received: from mail-it1-f199.google.com ([209.85.166.199]:39192 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727488AbeJUBII (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 20:43:04 -0400
-Received: by mail-it1-f198.google.com with SMTP id w137-v6so7389956itc.8
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 09:32:04 -0700 (PDT)
+        Sat, 20 Oct 2018 21:08:08 -0400
+Received: by mail-it1-f199.google.com with SMTP id h62-v6so7463907itb.4
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 09:57:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=HEy+It0tLXkVH4Tm+ODZuTlfqoxtNNos/ZPqHPfcT34=;
-        b=jn1WQSbu8+0BtWTv5qCNPdvPYJPJ4AYluZOd9VCLm4JSNWlMBNKCRQK9LA0HEWqqPi
-         O3y+6OUi2kD0KWnUyW3+0KrsafYXz1PJT4ZOMECBoI1RxBEvnXC/jx9YyfRvwfdOH132
-         Sg3szEymi9ku2RJSBNdRvsucS68/sMCQSWMOsuLP3dVf4T8kOM/Q8bFJoTJAB0cuDShv
-         7KMfOgWzka6B+lDdVu9bGzl5vKJLDcxn368i6ABPZipXq9nlnzeBjfoGywRmPiObpea6
-         YS6Zwq48YYVX2SGlaVe5h1Fn6S5rOywDeLVXMD4gIuagFupCkFUc5wN8SNEbVIVw0T9j
-         923w==
-X-Gm-Message-State: ABuFfohz5kqG0jNROb/nNqM9dw+BNEogzgJSWhNr5Eq44hPAfsjgLSe2
-        tzNWZEd19V9jXGzd850n20XF4FkAUjIz8db6EZ1HAwPlbmYA
-X-Google-Smtp-Source: ACcGV60GCeHs3tjW2anWO8ryO44n7y8KNdbNHGnVk1KJHQ5wtfqLs14MlDRVeDiB/JLDDSEBfdgq2N62hhSsAuPY3AQM3dcbW5wA
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ojpH9oMfYQ4iiiHMHw50s0UkoIVrfgWzsgjz6vlIsnA=;
+        b=dZeF1QxQtHtgGzo8OLqR/aBU5U/gv94AAPtYkwhVlE6p8YOeHBtprctqiqqb8f7tJr
+         i2tL7YIjC4+ZvttljEyYmcCuUBinjpj+/F5F3/bnBp+ocDWIMVMHVZ9aiReLaeyc6njc
+         cQE8WJG7juMksFwVDzBjURqRaWctVA1l1Ictd1ciwl5SIxbXJ/MA5BEUpM1VPDYtcf/2
+         Mhq3OcdgMEttSGI9BDPDzkvsqWYBlCRiSzRxlxGvz2XONSDU+OujErX06efYykrrmSxl
+         FMG2JNGEFIoZsjZbYfvLKpkdn09DWuBVITuT3jAQW8hdh4+cYiwfcbJEZmQRgj2cjtv8
+         wL8Q==
+X-Gm-Message-State: AGRZ1gJ9eeE2D5hmFIyaDPbf8nNx+i+QX5LLGJr0cW/gNWNfAW72+jgg
+        6dIEEJ+LWPZ8emno9f4malXrMPzQhEUZ9ZbVq4h5btEXh49n
+X-Google-Smtp-Source: AJdET5cLoqFhJSoZmGorPqzTKccY+mg7jWwCHuV63D6x2i6S6OKn4Np+vQgkeDfy5EtJUBCeaJ0TkwgFQrIioq75JniCDSAzycRp
 MIME-Version: 1.0
-X-Received: by 2002:a02:3b58:: with SMTP id i24-v6mr32631628jaf.25.1540053123759;
- Sat, 20 Oct 2018 09:32:03 -0700 (PDT)
-Date:   Sat, 20 Oct 2018 09:32:03 -0700
-In-Reply-To: <000000000000140c370577db5ece@google.com>
+X-Received: by 2002:a6b:3946:: with SMTP id g67-v6mr7054794ioa.20.1540054622928;
+ Sat, 20 Oct 2018 09:57:02 -0700 (PDT)
+Date:   Sat, 20 Oct 2018 09:57:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006089ec0578ab8f08@google.com>
-Subject: Re: KASAN: use-after-free Read in debugfs_remove (3)
-From:   syzbot <syzbot+903b72a010ad6b7a40f2@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, gregkh@linuxfoundation.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rafael@kernel.org, rostedt@goodmis.org,
+Message-ID: <000000000000bc23740578abe82c@google.com>
+Subject: KASAN: use-after-free Read in kvm_put_kvm
+From:   syzbot <syzbot+f87f60bb6f13f39b54e3@syzkaller.appspotmail.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com,
         syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,82 +56,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+Hello,
 
-HEAD commit:    270b77a0f30e Merge tag 'drm-fixes-2018-10-20-1' of git://a..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1678d019400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b3f55cb3dfcc6c33
-dashboard link: https://syzkaller.appspot.com/bug?extid=903b72a010ad6b7a40f2
+syzbot found the following crash on:
+
+HEAD commit:    8c60c36d0b8c Add linux-next specific files for 20181019
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12d808b5400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8b6d7c4c81535e89
+dashboard link: https://syzkaller.appspot.com/bug?extid=f87f60bb6f13f39b54e3
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1248e21d400000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17cf2f5e400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1036dcce400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+903b72a010ad6b7a40f2@syzkaller.appspotmail.com
+Reported-by: syzbot+f87f60bb6f13f39b54e3@syzkaller.appspotmail.com
 
-overlayfs: missing 'lowerdir'
-overlayfs: missing 'lowerdir'
-overlayfs: missing 'lowerdir'
-overlayfs: missing 'lowerdir'
+L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and  
+https://www.kernel.org/doc/html/latest/admin-guide/l1tf.html for details.
 ==================================================================
-BUG: KASAN: use-after-free in debugfs_remove+0x10b/0x130  
-fs/debugfs/inode.c:682
-Read of size 8 at addr ffff8801c3d48a60 by task kworker/1:3/5820
+BUG: KASAN: use-after-free in kvm_iodevice_destructor  
+include/kvm/iodev.h:72 [inline]
+BUG: KASAN: use-after-free in kvm_io_bus_destroy  
+arch/x86/kvm/../../../virt/kvm/kvm_main.c:3401 [inline]
+BUG: KASAN: use-after-free in kvm_destroy_vm  
+arch/x86/kvm/../../../virt/kvm/kvm_main.c:740 [inline]
+BUG: KASAN: use-after-free in kvm_put_kvm+0xd7c/0xff0  
+arch/x86/kvm/../../../virt/kvm/kvm_main.c:770
+Read of size 8 at addr ffff8801cd479910 by task syz-executor822/5583
 
-CPU: 1 PID: 5820 Comm: kworker/1:3 Not tainted 4.19.0-rc8+ #72
+CPU: 0 PID: 5583 Comm: syz-executor822 Not tainted  
+4.19.0-rc8-next-20181019+ #98
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: events __blk_release_queue
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
-  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
   kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
   __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  debugfs_remove+0x10b/0x130 fs/debugfs/inode.c:682
-  blk_trace_free+0x35/0x130 kernel/trace/blktrace.c:312
-  blk_trace_cleanup kernel/trace/blktrace.c:339 [inline]
-  __blk_trace_remove+0x7a/0xa0 kernel/trace/blktrace.c:352
-  blk_trace_shutdown+0x63/0x80 kernel/trace/blktrace.c:752
-  __blk_release_queue+0x22d/0x500 block/blk-sysfs.c:852
-  process_one_work+0xc90/0x1b90 kernel/workqueue.c:2153
-  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-kobject: 'mq' (00000000f4ee6bf8): kobject_uevent_env: filter function  
-caused the event to drop!
-kobject: '0' (000000001977fe41): kobject_add_internal: parent: 'mq',  
-set: '<NULL>'
-  kthread+0x35a/0x420 kernel/kthread.c:246
-kobject: 'cpu0' (00000000e409d4ee): kobject_add_internal: parent: '0',  
-set: '<NULL>'
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+  kvm_iodevice_destructor include/kvm/iodev.h:72 [inline]
+  kvm_io_bus_destroy arch/x86/kvm/../../../virt/kvm/kvm_main.c:3401 [inline]
+  kvm_destroy_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:740 [inline]
+  kvm_put_kvm+0xd7c/0xff0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:770
+  kvm_vm_release+0x42/0x50 arch/x86/kvm/../../../virt/kvm/kvm_main.c:781
+  __fput+0x3bc/0xa70 fs/file_table.c:279
+  ____fput+0x15/0x20 fs/file_table.c:312
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1ad1/0x26d0 kernel/exit.c:867
+  do_group_exit+0x177/0x440 kernel/exit.c:970
+  __do_sys_exit_group kernel/exit.c:981 [inline]
+  __se_sys_exit_group kernel/exit.c:979 [inline]
+  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:979
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x43ecf8
+Code: Bad RIP value.
+RSP: 002b:00007ffdc564f908 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043ecf8
+RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+RBP: 00000000004be5a8 R08: 00000000000000e7 R09: ffffffffffffffd0
+R10: 00000000004002c8 R11: 0000000000000246 R12: 0000000000000001
+R13: 00000000006d0180 R14: 0000000000000000 R15: 0000000000000000
 
-kobject: 'cpu1' (000000004ffe025c): kobject_add_internal: parent: '0',  
-set: '<NULL>'
-Allocated by task 11189:
+Allocated by task 5583:
   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
   set_track mm/kasan/kasan.c:460 [inline]
   kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-kobject: 'queue' (00000000c1b3424e): kobject_uevent_env
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x730 mm/slab.c:3554
-  __d_alloc+0xc8/0xcc0 fs/dcache.c:1614
-  d_alloc+0x96/0x380 fs/dcache.c:1698
-  d_alloc_parallel+0x15a/0x1f40 fs/dcache.c:2441
-  __lookup_slow+0x1e6/0x540 fs/namei.c:1654
-kobject: 'queue' (00000000c1b3424e): kobject_uevent_env: filter function  
-caused the event to drop!
-  lookup_one_len+0x1d8/0x220 fs/namei.c:2543
-  start_creating+0xc6/0x200 fs/debugfs/inode.c:308
-  __debugfs_create_file+0x63/0x400 fs/debugfs/inode.c:347
-  debugfs_create_file+0x57/0x70 fs/debugfs/inode.c:399
-  do_blk_trace_setup+0x454/0xda0 kernel/trace/blktrace.c:528
-  __blk_trace_setup+0xd5/0x180 kernel/trace/blktrace.c:577
-  blk_trace_ioctl+0x17a/0x2f0 kernel/trace/blktrace.c:716
-  blkdev_ioctl+0x8bc/0x2010 block/ioctl.c:587
-  block_ioctl+0xee/0x130 fs/block_dev.c:1883
-kobject: 'iosched' (000000001a1643a8): kobject_add_internal:  
-parent: 'queue', set: '<NULL>'
+  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
+  kmalloc include/linux/slab.h:546 [inline]
+  kzalloc include/linux/slab.h:741 [inline]
+  kvm_vm_ioctl_register_coalesced_mmio+0xe8/0x4f0  
+arch/x86/kvm/../../../virt/kvm/coalesced_mmio.c:147
+  kvm_vm_ioctl+0x594/0x1d60 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3014
   vfs_ioctl fs/ioctl.c:46 [inline]
   file_ioctl fs/ioctl.c:501 [inline]
   do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
@@ -144,46 +140,58 @@ parent: 'queue', set: '<NULL>'
   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-kobject: 'iosched' (000000001a1643a8): kobject_uevent_env
 
-Freed by task 5443:
+Freed by task 5583:
   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
   set_track mm/kasan/kasan.c:460 [inline]
   __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
   kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
   __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x83/0x290 mm/slab.c:3756
-  __d_free+0x20/0x30 fs/dcache.c:257
-  __rcu_reclaim kernel/rcu/rcu.h:236 [inline]
-  rcu_do_batch kernel/rcu/tree.c:2576 [inline]
-  invoke_rcu_callbacks kernel/rcu/tree.c:2880 [inline]
-  __rcu_process_callbacks kernel/rcu/tree.c:2847 [inline]
-  rcu_process_callbacks+0xf23/0x2670 kernel/rcu/tree.c:2864
-kobject: 'iosched' (000000001a1643a8): kobject_uevent_env: filter function  
-caused the event to drop!
-  __do_softirq+0x30b/0xad8 kernel/softirq.c:292
+  kfree+0xcf/0x230 mm/slab.c:3817
+  coalesced_mmio_destructor+0x1ad/0x2a0  
+arch/x86/kvm/../../../virt/kvm/coalesced_mmio.c:99
+  kvm_iodevice_destructor include/kvm/iodev.h:73 [inline]
+  kvm_vm_ioctl_unregister_coalesced_mmio+0x263/0x330  
+arch/x86/kvm/../../../virt/kvm/coalesced_mmio.c:184
+  kvm_vm_ioctl+0x6bc/0x1d60 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3023
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:501 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+  __do_sys_ioctl fs/ioctl.c:709 [inline]
+  __se_sys_ioctl fs/ioctl.c:707 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-The buggy address belongs to the object at ffff8801c3d48a20
-  which belongs to the cache dentry of size 288
-The buggy address is located 64 bytes inside of
-  288-byte region [ffff8801c3d48a20, ffff8801c3d48b40)
+The buggy address belongs to the object at ffff8801cd479900
+  which belongs to the cache kmalloc-64 of size 64
+The buggy address is located 16 bytes inside of
+  64-byte region [ffff8801cd479900, ffff8801cd479940)
 The buggy address belongs to the page:
-page:ffffea00070f5200 count:1 mapcount:0 mapping:ffff8801da978c40  
-index:0xffff8801c3d488c0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea000726ebc8 ffffea00071b0988 ffff8801da978c40
-kobject: 'integrity' (000000000b36b365): kobject_add_internal:  
-parent: 'loop0', set: '<NULL>'
-raw: ffff8801c3d488c0 ffff8801c3d48080 000000010000000a 0000000000000000
+page:ffffea0007351e40 count:1 mapcount:0 mapping:ffff8801da800340 index:0x0
+flags: 0x2fffc0000000200(slab)
+raw: 02fffc0000000200 ffffea000736b488 ffffea000736d808 ffff8801da800340
+raw: 0000000000000000 ffff8801cd479000 0000000100000020 0000000000000000
 page dumped because: kasan: bad access detected
 
 Memory state around the buggy address:
-  ffff8801c3d48900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801c3d48980: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-> ffff8801c3d48a00: fc fc fc fc fb fb fb fb fb fb fb fb fb fb fb fb
-                                                        ^
-  ffff8801c3d48a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-kobject: 'integrity' (000000000b36b365): kobject_uevent_env
-  ffff8801c3d48b00: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+  ffff8801cd479800: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
+  ffff8801cd479880: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
+> ffff8801cd479900: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+                          ^
+  ffff8801cd479980: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+  ffff8801cd479a00: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
 ==================================================================
 
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
