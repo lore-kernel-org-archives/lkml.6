@@ -2,125 +2,189 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC69AC67863
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 13:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7CDEECDE3D
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 13:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83B212152D
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 13:51:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63B652152F
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 13:51:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aKbtbw1O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83B212152D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cUfSHsFr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63B652152F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727670AbeJTWC1 (ORCPT
+        id S1727693AbeJTWCa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 20 Oct 2018 18:02:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59610 "EHLO mail.kernel.org"
+        Sat, 20 Oct 2018 18:02:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727364AbeJTWC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Oct 2018 18:02:27 -0400
+        id S1727364AbeJTWC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Oct 2018 18:02:29 -0400
 Received: from localhost (10.193.71.37.rev.sfr.net [37.71.193.10])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 440CE204FD;
-        Sat, 20 Oct 2018 13:51:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D659214C3;
+        Sat, 20 Oct 2018 13:51:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540043513;
-        bh=cB6RChXrrUVpMXseZFC47GeJNWHKAwASqdbtibCvBxQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=aKbtbw1OygNAsdqw4ps0nU6qY8QrWTN10OIirMrHPsWuk0rBSJR0AfiSJ4JIouJCr
-         ZY1UnO5fH+Nmkets6Qw9EWQ67sc/5l6obIrFaxlHvn1QTVJkU3PV2HASpqgHTXgHZY
-         AfzFs6707PqYlJteF5anoyajvg+WfU2ZjuHjFcBE=
-Date:   Sat, 20 Oct 2018 15:49:08 +0200
+        s=default; t=1540043516;
+        bh=c66SbdJE2DGgHUPROthSQlNoEQXhg0tTvTvyMmUWTXg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cUfSHsFrfL82xX2ygU7oKkknXukvuf3jlQaE5JF6PVb+QxAfDCo7tlJHp5D2wUNel
+         VQQXTUX+BGGrH9n3JXHftJrZoe0wHAZKysx3JqZWGt3y4xAZpu5pKGrOAedh9ix1u4
+         HtT1XBzXcuCKE8F8EToPgcokYcXlpMOTi1boIulQ=
+Date:   Sat, 20 Oct 2018 15:49:32 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel <linux-kernel@vger.kernel.org>
 Cc:     ksummit-discuss@lists.linuxfoundation.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Olof Johansson <olof@lixom.net>, Chris Mason <clm@fb.com>,
         Mishi Choudhary <mishi@linux.com>
-Subject: [PATCH 0/7] Code of Conduct: Fix some wording, and add an
- interpretation document
-Message-ID: <20181020134908.GA32218@kroah.com>
+Subject: [PATCH 1/7] Code of conduct: Fix wording around maintainers
+ enforcing the code of conduct
+Message-ID: <20181020134932.GB32218@kroah.com>
+References: <20181020134908.GA32218@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181020134908.GA32218@kroah.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+From: Chris Mason <clm@fb.com>
 
-As everyone knows by now, we added a new Code of Conduct to the kernel
-tree a few weeks ago.
+As it was originally worded, this paragraph requires maintainers to
+enforce the code of conduct, or face potential repercussions.  It sends
+the wrong message, when really we just want maintainers to be part of
+the solution and not violate the code of conduct themselves.
 
-When we did this, it raised a number of questions as to how this would
-affect the kernel community.  To help address these issues, I, and a few
-other kernel developers including the TAB, have come up with the
-following patch series to be added to the tree to both modify the
-existing Code of Conduct to remove a confusing paragraph as well as to
-add a new document to help explain how the Code of Conduct is to be
-interpreted by our community.
+Removing it doesn't limit our ability to enforce the code of conduct,
+and we can still encourage maintainers to help maintain high standards
+for the level of discourse in their subsystem.
 
-I originally sent the first two patches in this series to a lot of
-kernel developers privately, to get their review and comments and see if
-they wanted to ack them.  This is the traditional way we have always
-done for policy documents or other "contentious" issues like the GPLv3
-statement or the "closed kernel modules are bad" statement.  Due to the
-very unexpected way that the original Code of Conduct file was added to
-the tree, a number of developers asked if this series could also be
-posted publicly before they were merged, and so, here they are.
+Signed-off-by: Chris Mason <clm@fb.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Acked-by: Amir Goldstein <amir73il@gmail.com>
+Acked-by: Andrew Morton <akpm@linux-foundation.org>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Acked-by: Borislav Petkov <bp@kernel.org>
+Acked-by: Christian Lütke-Stetzkamp <christian@lkamp.de>
+Acked-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Dave Airlie <airlied@redhat.com>
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Acked-by: David Ahern <dsa@cumulusnetworks.com>
+Acked-by: David Sterba <kdave@kernel.org>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Acked-by: Eric Dumazet <eric.dumazet@gmail.com>
+Acked-by: Felipe Balbi <balbi@kernel.org>
+Acked-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Acked-by: Florian Westphal <fw@strlen.de>
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Hans Verkuil <hverkuil@xs4all.nl>
+Acked-by: Hans de Goede <j.w.r.degoede@gmail.com>
+Acked-by: Harry Wentland <harry.wentland@amd.com>
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Acked-by: James Smart <james.smart@broadcom.com>
+Acked-by: James Smart <jsmart2021@gmail.com>
+Acked-by: Jan Kara <jack@ucw.cz>
+Acked-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Acked-by: Jens Axboe <axboe@kernel.dk>
+Acked-by: Jessica Yu <jeyu@kernel.org>
+Acked-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Acked-by: Jiri Kosina <jikos@kernel.org>
+Acked-by: Jiri Olsa <jolsa@redhat.com>
+Acked-by: Joerg Roedel <joro@8bytes.org>
+Acked-by: Johan Hovold <johan@kernel.org>
+Acked-by: Johannes Thumshirn <jth@kernel.org>
+Acked-by: Jonathan Corbet <corbet@lwn.net>
+Acked-by: Julia Lawall <julia.lawall@lip6.fr>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Lina Iyer <ilina@codeaurora.org>
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Mark Brown <broonie@kernel.org>
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Matias Bjørling <mb@lightnvm.io>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Acked-by: Nikolay Borisov <n.borisov.lkml@gmail.com>
+Acked-by: Oded Gabbay <oded.gabbay@gmail.com>
+Acked-by: Olof Johansson <olof@lixom.net>
+Acked-by: Palmer Dabbelt <palmer@dabbelt.com>
+Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+Acked-by: Richard Weinberger <richard@nod.at>
+Acked-by: Rik van Riel <riel@surriel.com>
+Acked-by: Rob Clark <robdclark@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Acked-by: Sebastian Reichel <sre@kernel.org>
+Acked-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Acked-by: Shawn Guo <shawnguo@kernel.org>
+Acked-by: Shuah Khan <shuah@kernel.org>
+Acked-by: Simon Horman <horms@verge.net.au>
+Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Acked-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Takashi Iwai <tiwai@kernel.org>
+Acked-by: Tejun Heo <tj@kernel.org>
+Acked-by: Theodore Ts'o <tytso@mit.edu>
+Acked-by: Thierry Reding <thierry.reding@gmail.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Tim Bird <tim.bird@sony.com>
+Acked-by: Todd Poynor <toddpoynor@google.com>
+Acked-by: Wei Yongjun <weiyongjun1@huawei.com>
+Acked-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Reviewed-by: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Documentation/process/code-of-conduct.rst | 4 ----
+ 1 file changed, 4 deletions(-)
 
-This patch series adds this new document to the kernel tree, as well as
-removes a paragraph from the existing Code of Conduct that was
-bothersome to many maintainers.  It also does a bit of housekeeping
-around these documents to get the documentation links correct as well as
-fix up the email address and other links and add a MAINTAINER entry for
-the files.
-
-Also I would like to publicly thank Mishi Choudhary for being willing to
-serve as a mediator for Code of Conduct issues.  She has a long history
-of working in many open source communities, many much more contentious
-than ours.  For more information about her, please see her wikipedia
-entry:
-	https://en.wikipedia.org/wiki/Mishi_Choudhary
-or take the chance to talk with her at the Plumbers conference in a few
-weeks, as she will be attending that along with almost everyone on the
-TAB as well as many kernel developers and maintainers, myself included.
-
-thanks,
-
-greg k-h
-
-
-
-Chris Mason (1):
-  Code of conduct: Fix wording around maintainers enforcing the code of
-    conduct
-
-Greg Kroah-Hartman (6):
-  Code of Conduct Interpretation: Add document explaining how the Code
-    of Conduct is to be interpreted
-  Code of Conduct Interpretation: Properly reference the TAB correctly
-  Code of Conduct: Provide links between the two documents
-  Code of Conduct Interpretation: Put in the proper URL for the
-    committee
-  Code of Conduct: Change the contact email address
-  MAINTAINERS: Add an entry for the code of conduct
-
- .../code-of-conduct-interpretation.rst        | 156 ++++++++++++++++++
- Documentation/process/code-of-conduct.rst     |  25 +--
- Documentation/process/index.rst               |   1 +
- MAINTAINERS                                   |   6 +
- 4 files changed, 178 insertions(+), 10 deletions(-)
- create mode 100644 Documentation/process/code-of-conduct-interpretation.rst
-
+diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/process/code-of-conduct.rst
+index ab7c24b5478c..a2641c19cf26 100644
+--- a/Documentation/process/code-of-conduct.rst
++++ b/Documentation/process/code-of-conduct.rst
+@@ -70,10 +70,6 @@ appropriate to the circumstances. The TAB is obligated to maintain
+ confidentiality with regard to the reporter of an incident.  Further details of
+ specific enforcement policies may be posted separately.
+ 
+-Maintainers who do not follow or enforce the Code of Conduct in good faith may
+-face temporary or permanent repercussions as determined by other members of the
+-project’s leadership.
+-
+ Attribution
+ ===========
+ 
 -- 
 2.19.1
 
