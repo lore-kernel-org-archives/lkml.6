@@ -2,306 +2,135 @@ Return-Path: <SRS0=g0DB=NA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B00ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 22:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C42C9C67863
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 22:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CE9F21746
-	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 22:23:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 896E221755
+	for <linux-kernel@archiver.kernel.org>; Sat, 20 Oct 2018 22:23:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="M+dmKVHZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CE9F21746
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vF5/2nGR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 896E221755
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727844AbeJUGfZ (ORCPT
+        id S1727590AbeJUGfE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 02:35:25 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:51999 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727821AbeJUGfZ (ORCPT
+        Sun, 21 Oct 2018 02:35:04 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36517 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727423AbeJUGfD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 02:35:25 -0400
+        Sun, 21 Oct 2018 02:35:03 -0400
+Received: by mail-wr1-f66.google.com with SMTP id y16so40966100wrw.3;
+        Sat, 20 Oct 2018 15:23:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1540074207; x=1571610207;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=73TTG0YMaW/U/X2yCJ2mHRKj31PrbWZhh8+H1ro5LN0=;
-  b=M+dmKVHZa4vQpPc92qmO8RSlZFSMwCGrS13WaMScE+YuHiMC98LMIsg+
-   1WEf6rQ/7L6UGP63RwlDAF+Zd/0W/1wacAbCIKxGngsQ2VXT+ETguX3gG
-   oCP7JbehjolbzzQxQBkLqYdWe40FyVsMkP6XIMTrIX+TfOGpdFctipQCu
-   I=;
-X-IronPort-AV: E=Sophos;i="5.54,405,1534809600"; 
-   d="scan'208";a="700848207"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2b-c300ac87.us-west-2.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Oct 2018 22:23:07 +0000
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
-        by email-inbound-relay-2b-c300ac87.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9KMMw5Z059623
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 20 Oct 2018 22:22:59 GMT
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w9KMMv5K031669;
-        Sun, 21 Oct 2018 00:22:57 +0200
-Received: (from karahmed@localhost)
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id w9KMMuIc031662;
-        Sun, 21 Oct 2018 00:22:57 +0200
-From:   KarimAllah Ahmed <karahmed@amazon.de>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com
-Cc:     KarimAllah Ahmed <karahmed@amazon.de>
-Subject: [PATCH v3 12/13] KVM/nSVM: Use the new mapping API for mapping guest memory
-Date:   Sun, 21 Oct 2018 00:22:24 +0200
-Message-Id: <1540074145-31285-13-git-send-email-karahmed@amazon.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1540074145-31285-1-git-send-email-karahmed@amazon.de>
-References: <1540074145-31285-1-git-send-email-karahmed@amazon.de>
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:in-reply-to:references;
+        bh=RWiArh2hS1wXwjmyYMZMynOTmVpcrRnX76eAIdAErZY=;
+        b=vF5/2nGRqtg9hFjMHUDP+4xIMhquOx7Wc2ig3FVa9eyWLXeakvyv+cPWGdI0uadhdk
+         8BQfoDmD+TFkDcK/kSGMFuMT5zhm6eMi1lQOnDQ7T/Gm6O5YIUekInLJPgws6caokH57
+         1QN4zJE28Zkuu+WTKyodRvvXuHoK+QmpbeazlyjCGYPdrTOqf0icMlUBGeM7PGaXJTdF
+         oU4qNj3xSTpJR3CSmacC5IQHKiXy+NyQjPD9N5MDkxFeEIqOQ9Xlm+OgHA4qpy3tPXC5
+         lDph7LztAL423jsXzQQChok6xPZF2GUdbP5Z/JVQS5/kL6YpaE8WVn4JW+Rpe+gjyWkt
+         Fzlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references;
+        bh=RWiArh2hS1wXwjmyYMZMynOTmVpcrRnX76eAIdAErZY=;
+        b=fycpf3F/b7PSncGCvHVZVxX5fPPS5QbzhJRW2AToTz/4VSvBHu26Nx9E+8NK/Nlcl9
+         z1+MaSjJfe9rM0OZOddYuqRxJNhqLlhjFKAiCVsLWAQynKssJ5v65/s1tZmG07XuBIHv
+         nSh8jtxXofrTnVhiF1C7MH0hT5092xomxSEBZ9AVl0sQaxNOYW3mdr5gGjOsMt5vOmFY
+         iFwPrs12Ihb+YBj4goRKAFe0tiVCBDQOkYNwziNTZ9YN1kJ/4VYcTB0zizpJ1kxHawlJ
+         km55/LisJ4MVq9cuU6iJKLPy3MTXLIQG9CFAyspTbCii+tNCOT2dUdeLg0CBUsRU6Icp
+         L6pQ==
+X-Gm-Message-State: ABuFfogg4odR9SFm//roywbdT0+O8Yj0hwuXcjCHkAKnUv6dHzPZeZjV
+        cr37OYXqTT1iBllGa+osqyU=
+X-Google-Smtp-Source: ACcGV62sPgDQQ34lHfcuH5vxjYVwB/noaqbyNO3NCB237JXYctPyZePbBRuDnsTV6cJKmuNeW6tKgw==
+X-Received: by 2002:adf:a201:: with SMTP id p1-v6mr39365860wra.89.1540074183681;
+        Sat, 20 Oct 2018 15:23:03 -0700 (PDT)
+Received: from localhost.localdomain ([156.213.155.51])
+        by smtp.gmail.com with ESMTPSA id o81-v6sm5013746wmo.38.2018.10.20.15.23.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 20 Oct 2018 15:23:03 -0700 (PDT)
+From:   Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ahmedsoliman0x666@gmail.com, Ovich00@gmail.com,
+        kernel-hardening@lists.openwall.com, nigel.edwards@hpe.com,
+        Boris Lukashev <blukashev@sempervictus.com>,
+        Hossam Hassan <7ossam9063@gmail.com>,
+        Ahmed Lotfy <A7med.lotfey@gmail.com>
+Subject: [PATCH V4 1/5] KVM: X86: Memory ROE documentation
+Date:   Sun, 21 Oct 2018 00:21:23 +0200
+Message-Id: <20181020222127.6368-2-ahmedsoliman0x666@gmail.com>
+X-Mailer: git-send-email 2.18.1
+In-Reply-To: <20181020222127.6368-1-ahmedsoliman0x666@gmail.com>
+References: <20181020222127.6368-1-ahmedsoliman0x666@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new mapping API for mapping guest memory to avoid depending on
-"struct page".
+Following up with my previous threads on KVM assisted Anti rootkit
+protections.
+The current version doesn't address the attacks involving pages
+remapping. It is still design in progress, nevertheless, it will be in
+my later patch sets.
 
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com>
 ---
- arch/x86/kvm/svm.c | 97 +++++++++++++++++++++++++++---------------------------
- 1 file changed, 49 insertions(+), 48 deletions(-)
+ Documentation/virtual/kvm/hypercalls.txt | 31 ++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index d96092b..911d853 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -3036,32 +3036,6 @@ static inline bool nested_svm_nmi(struct vcpu_svm *svm)
- 	return false;
- }
+diff --git a/Documentation/virtual/kvm/hypercalls.txt b/Documentation/virtual/kvm/hypercalls.txt
+index da24c138c8d1..8af64d826f03 100644
+--- a/Documentation/virtual/kvm/hypercalls.txt
++++ b/Documentation/virtual/kvm/hypercalls.txt
+@@ -141,3 +141,34 @@ a0 corresponds to the APIC ID in the third argument (a2), bit 1
+ corresponds to the APIC ID a2+1, and so on.
  
--static void *nested_svm_map(struct vcpu_svm *svm, u64 gpa, struct page **_page)
--{
--	struct page *page;
--
--	might_sleep();
--
--	page = kvm_vcpu_gfn_to_page(&svm->vcpu, gpa >> PAGE_SHIFT);
--	if (is_error_page(page))
--		goto error;
--
--	*_page = page;
--
--	return kmap(page);
--
--error:
--	kvm_inject_gp(&svm->vcpu, 0);
--
--	return NULL;
--}
--
--static void nested_svm_unmap(struct page *page)
--{
--	kunmap(page);
--	kvm_release_page_dirty(page);
--}
--
- static int nested_svm_intercept_ioio(struct vcpu_svm *svm)
- {
- 	unsigned port, size, iopm_len;
-@@ -3262,10 +3236,11 @@ static inline void copy_vmcb_control_area(struct vmcb *dst_vmcb, struct vmcb *fr
- 
- static int nested_svm_vmexit(struct vcpu_svm *svm)
- {
-+	int rc;
- 	struct vmcb *nested_vmcb;
- 	struct vmcb *hsave = svm->nested.hsave;
- 	struct vmcb *vmcb = svm->vmcb;
--	struct page *page;
-+	struct kvm_host_map map;
- 
- 	trace_kvm_nested_vmexit_inject(vmcb->control.exit_code,
- 				       vmcb->control.exit_info_1,
-@@ -3274,9 +3249,14 @@ static int nested_svm_vmexit(struct vcpu_svm *svm)
- 				       vmcb->control.exit_int_info_err,
- 				       KVM_ISA_SVM);
- 
--	nested_vmcb = nested_svm_map(svm, svm->nested.vmcb, &page);
--	if (!nested_vmcb)
-+	rc = kvm_vcpu_map(&svm->vcpu, gfn_to_gpa(svm->nested.vmcb), &map);
-+	if (rc) {
-+		if (rc == -EINVAL)
-+			kvm_inject_gp(&svm->vcpu, 0);
- 		return 1;
-+	}
+ Returns the number of CPUs to which the IPIs were delivered successfully.
 +
-+	nested_vmcb = map.hva;
- 
- 	/* Exit Guest-Mode */
- 	leave_guest_mode(&svm->vcpu);
-@@ -3375,7 +3355,7 @@ static int nested_svm_vmexit(struct vcpu_svm *svm)
- 
- 	mark_all_dirty(svm->vmcb);
- 
--	nested_svm_unmap(page);
-+	kvm_vcpu_unmap(&map);
- 
- 	nested_svm_uninit_mmu_context(&svm->vcpu);
- 	kvm_mmu_reset_context(&svm->vcpu);
-@@ -3433,7 +3413,7 @@ static bool nested_vmcb_checks(struct vmcb *vmcb)
- }
- 
- static void enter_svm_guest_mode(struct vcpu_svm *svm, u64 vmcb_gpa,
--				 struct vmcb *nested_vmcb, struct page *page)
-+				 struct vmcb *nested_vmcb, struct kvm_host_map *map)
- {
- 	if (kvm_get_rflags(&svm->vcpu) & X86_EFLAGS_IF)
- 		svm->vcpu.arch.hflags |= HF_HIF_MASK;
-@@ -3513,7 +3493,7 @@ static void enter_svm_guest_mode(struct vcpu_svm *svm, u64 vmcb_gpa,
- 	svm->vmcb->control.event_inj = nested_vmcb->control.event_inj;
- 	svm->vmcb->control.event_inj_err = nested_vmcb->control.event_inj_err;
- 
--	nested_svm_unmap(page);
-+	kvm_vcpu_unmap(map);
- 
- 	/* Enter Guest-Mode */
- 	enter_guest_mode(&svm->vcpu);
-@@ -3533,17 +3513,23 @@ static void enter_svm_guest_mode(struct vcpu_svm *svm, u64 vmcb_gpa,
- 
- static bool nested_svm_vmrun(struct vcpu_svm *svm)
- {
-+	int rc;
- 	struct vmcb *nested_vmcb;
- 	struct vmcb *hsave = svm->nested.hsave;
- 	struct vmcb *vmcb = svm->vmcb;
--	struct page *page;
-+	struct kvm_host_map map;
- 	u64 vmcb_gpa;
- 
- 	vmcb_gpa = svm->vmcb->save.rax;
- 
--	nested_vmcb = nested_svm_map(svm, svm->vmcb->save.rax, &page);
--	if (!nested_vmcb)
-+	rc = kvm_vcpu_map(&svm->vcpu, gfn_to_gpa(vmcb_gpa), &map);
-+	if (rc) {
-+		if (rc == -EINVAL)
-+			kvm_inject_gp(&svm->vcpu, 0);
- 		return false;
-+	}
++7. KVM_HC_ROE
++----------------
++Architecture: x86
++Status: active
++Purpose: Hypercall used to apply Read-Only Enforcement to guest memory and
++registers
++Usage 1:
++     a0: ROE_VERSION
 +
-+	nested_vmcb = map.hva;
- 
- 	if (!nested_vmcb_checks(nested_vmcb)) {
- 		nested_vmcb->control.exit_code    = SVM_EXIT_ERR;
-@@ -3551,7 +3537,7 @@ static bool nested_svm_vmrun(struct vcpu_svm *svm)
- 		nested_vmcb->control.exit_info_1  = 0;
- 		nested_vmcb->control.exit_info_2  = 0;
- 
--		nested_svm_unmap(page);
-+		kvm_vcpu_unmap(&map);
- 
- 		return false;
- 	}
-@@ -3595,7 +3581,7 @@ static bool nested_svm_vmrun(struct vcpu_svm *svm)
- 
- 	copy_vmcb_control_area(hsave, vmcb);
- 
--	enter_svm_guest_mode(svm, vmcb_gpa, nested_vmcb, page);
-+	enter_svm_guest_mode(svm, vmcb_gpa, nested_vmcb, &map);
- 
- 	return true;
- }
-@@ -3619,21 +3605,26 @@ static void nested_svm_vmloadsave(struct vmcb *from_vmcb, struct vmcb *to_vmcb)
- static int vmload_interception(struct vcpu_svm *svm)
- {
- 	struct vmcb *nested_vmcb;
--	struct page *page;
-+	struct kvm_host_map map;
- 	int ret;
- 
- 	if (nested_svm_check_permissions(svm))
- 		return 1;
- 
--	nested_vmcb = nested_svm_map(svm, svm->vmcb->save.rax, &page);
--	if (!nested_vmcb)
-+	ret = kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(svm->vmcb->save.rax), &map);
-+	if (ret) {
-+		if (ret == -EINVAL)
-+			kvm_inject_gp(&svm->vcpu, 0);
- 		return 1;
-+	}
++Returns non-signed number that represents the current version of ROE
++implementation current version.
 +
-+	nested_vmcb = map.hva;
- 
- 	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	ret = kvm_skip_emulated_instruction(&svm->vcpu);
- 
- 	nested_svm_vmloadsave(nested_vmcb, svm->vmcb);
--	nested_svm_unmap(page);
-+	kvm_vcpu_unmap(&map);
- 
- 	return ret;
- }
-@@ -3641,21 +3632,26 @@ static int vmload_interception(struct vcpu_svm *svm)
- static int vmsave_interception(struct vcpu_svm *svm)
- {
- 	struct vmcb *nested_vmcb;
--	struct page *page;
-+	struct kvm_host_map map;
- 	int ret;
- 
- 	if (nested_svm_check_permissions(svm))
- 		return 1;
- 
--	nested_vmcb = nested_svm_map(svm, svm->vmcb->save.rax, &page);
--	if (!nested_vmcb)
-+	ret = kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(svm->vmcb->save.rax), &map);
-+	if (ret) {
-+		if (ret == -EINVAL)
-+			kvm_inject_gp(&svm->vcpu, 0);
- 		return 1;
-+	}
++Usage 2:
 +
-+	nested_vmcb = map.hva;
- 
- 	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	ret = kvm_skip_emulated_instruction(&svm->vcpu);
- 
- 	nested_svm_vmloadsave(svm->vmcb, nested_vmcb);
--	nested_svm_unmap(page);
-+	kvm_vcpu_unmap(&map);
- 
- 	return ret;
- }
-@@ -6173,7 +6169,7 @@ static int svm_pre_leave_smm(struct kvm_vcpu *vcpu, u64 smbase)
- {
- 	struct vcpu_svm *svm = to_svm(vcpu);
- 	struct vmcb *nested_vmcb;
--	struct page *page;
-+	struct kvm_host_map map;
- 	struct {
- 		u64 guest;
- 		u64 vmcb;
-@@ -6187,11 +6183,16 @@ static int svm_pre_leave_smm(struct kvm_vcpu *vcpu, u64 smbase)
- 
- 	if (svm_state_save.guest) {
- 		vcpu->arch.hflags &= ~HF_SMM_MASK;
--		nested_vmcb = nested_svm_map(svm, svm_state_save.vmcb, &page);
-+		if (kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(svm_state_save.vmcb), &map) == -EINVAL)
-+			kvm_inject_gp(&svm->vcpu, 0);
++     a0: ROE_MPROTECT	(requires version >= 1)
++     a1: Start address aligned to page boundary.
++     a2: Number of pages to be protected.
 +
-+		nested_vmcb = map.hva;
++This configuration lets a guest kernel have part of its read/write memory
++converted into read-only.  This action is irreversible.
++Upon successful run, the number of pages protected is returned.
 +
- 		if (nested_vmcb)
--			enter_svm_guest_mode(svm, svm_state_save.vmcb, nested_vmcb, page);
-+			enter_svm_guest_mode(svm, svm_state_save.vmcb, nested_vmcb, &map);
- 		else
- 			ret = 1;
++Error codes:
++	-KVM_ENOSYS: system call being triggered from ring 3 or it is not
++	implemented.
++	-EINVAL: error based on given parameters.
 +
- 		vcpu->arch.hflags |= HF_SMM_MASK;
- 	}
- 	return ret;
++Notes: KVM_HC_ROE can not be triggered from guest Ring 3 (user mode). The
++reason is that user mode malicious software can make use of it to enforce read
++only protection on an arbitrary memory page thus crashing the kernel.
 -- 
-2.7.4
+2.18.1
 
