@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA194ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F2BECDE46
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:58:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E8E62083A
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:58:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 183552083E
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:58:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yr0LVjLQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E8E62083A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cA8sG5GR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 183552083E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728448AbeJVFNx (ORCPT
+        id S1728505AbeJVFNy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 01:13:53 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41536 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728337AbeJVFNv (ORCPT
+        Mon, 22 Oct 2018 01:13:54 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41486 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727256AbeJVFNx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 01:13:51 -0400
-Received: by mail-lj1-f196.google.com with SMTP id u21-v6so35084164lja.8;
-        Sun, 21 Oct 2018 13:58:11 -0700 (PDT)
+        Mon, 22 Oct 2018 01:13:53 -0400
+Received: by mail-lf1-f65.google.com with SMTP id q39-v6so28782390lfi.8;
+        Sun, 21 Oct 2018 13:58:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zvXilCKoG7Om0U54BXuHpSWpsgo6GxzP/ylvX2mhmdo=;
-        b=Yr0LVjLQISIRtWyrIZMlk0S+pteqPJKNyNmXQaZnCZtPPBPSAGkIFSZODTMQ3yIPG3
-         v76ioNFDxLOHB5d/5i8VacG6UvbhoqpWGSUrqV6kxCA/w0wX2mHg54cdKHT22KlP27cg
-         ScOAqcnzg0YhLVTtlxqbhZslwQ7j9NB1c0ADCg89ytpb2xjoTptHgcaAC5Hc3lhw+Eve
-         Ljip9RIszy8vSPwMTpUkfN0YY7jEfVHzY+X92nJXwLCzK6Ra1Mp8wssoJT+fNAhgBkUJ
-         CHLdO2StVqKpsxIPQsMkpnr8u/qQFtwCfyRBO3YWR4C5M6NMFQq+iZbC3hCvUirvHfWO
-         dPKw==
+        bh=lD5gQWDai5qk2fHLTBuMFPsuyYW/QrRx1ZMqTJ219kA=;
+        b=cA8sG5GRUrZLF4q5mqmNpb4lNS6GSSWcwEzUikW3pY5rVnowbn8xJ5r3VH4aVvcGc4
+         eo+YQEJ9fOF01UZd0XVJmc0Ur6TT5GSHeXesHnN2voyhDSY1jcg0FkPXkWOphsY9BUF5
+         DKzFFofkBApc9SW2B0tikDBITiZOuovK1r4SxJne93fnkIbSRb1sdMM6bV8wqFpQIxbD
+         U2vzVRwGhnt4NIOycjdWbcykJEfMqmmgWmlGuIpaWeWaXcPgyaQpRHLcu99/+N9a7/4o
+         vwTcO+si4PJAGd49la491S1PER4zqlSYA3B0Do2hGolQ5nSHuXjLxiOsVb1Z3RwpY3kf
+         dMgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zvXilCKoG7Om0U54BXuHpSWpsgo6GxzP/ylvX2mhmdo=;
-        b=ENKn8oBWQVbv2xgmg06P5w3Iu2zZBg3q8rksu6VSOSTq4KZ+YcZJmDKIO4iPtJvlpf
-         5lUlruu86R6PDxdWuj2DDCUo6EuBmCy1jKrq6XJLrIgB7DRBq6AWB3PnU7ju8WMKYmDi
-         MMScU1fnkAuwwmSYeX4KSbQkPIWiX7Ubq1XMeRfsSo0/n55doeHjaxKwitDeKAlvovEx
-         Iy1seK4GmoOIkFFBVGfhW1KddoEiSXyOWEiBAVsAHSBHE7RqIWMQEqdsQ/yAlS9YbnIV
-         jWNrfxV0RM9iM+rsf/ttNMNGPa1WMoC9VU+DDnSX/1gGz40Iwln0+xI63umQHXegJOEn
-         PlUQ==
-X-Gm-Message-State: AGRZ1gJYNHHNSHXdTUTQ8D1pwuQ2qDCT8p+KZGjux8Jm6cF64ayLIH9p
-        HjLvvO9ad2KJGdTodVzt1nM=
-X-Google-Smtp-Source: AJdET5esKiGu8kBPREV6pfoUjej/APKwYyQM0eZVtLN9MJtzFEgSkmpdA9tsvphUESMEIWG8Dk54cA==
-X-Received: by 2002:a2e:908b:: with SMTP id l11-v6mr9303228ljg.25.1540155490399;
-        Sun, 21 Oct 2018 13:58:10 -0700 (PDT)
+        bh=lD5gQWDai5qk2fHLTBuMFPsuyYW/QrRx1ZMqTJ219kA=;
+        b=cSSCq8D+knP+l0kzI4r2P/eZEOxdiS4BuEXv76tp4cf6NYQhmsf7fVxx83ZyTu/oBN
+         t8/lcBmnovSQI4ZO7an+lL5v6oSG/QCzHyz57iKEg/LGRYRPvN0nSZgl8CsD4tYo301D
+         FA7qgJcOkuCZtdo5s60xvM/IfkevNWUrVcihnKFPs1VKRhaiRKXo7mAeXnv/vXoQWCkj
+         uSDjE98w6cymzELIs5ThDy61wmezr01zth3FWWD6wxyIRzywi1GlzmadDGi4dl3+2asR
+         3eWcdukJcnNHxw53ATVpP6NJWfNYtP3JejNU0TQYGh1PXogcPMMS2AHU0L0Y3n8B14gY
+         P/FQ==
+X-Gm-Message-State: ABuFfoiJHD+ojrCskjaOsQ/g7M5hcZocsmekMwBV/61DE4EN5gfGWOUt
+        JF30Us/7AWrjXzXqR47A/gI=
+X-Google-Smtp-Source: ACcGV60sUQzYL79YaCR1qHIltNtJAWU7+yPYcI8cL/GqLatXhsjUxJ+cAUTJ8Taesl1ciA9G84a/cQ==
+X-Received: by 2002:a19:6719:: with SMTP id b25mr5618971lfc.38.1540155493600;
+        Sun, 21 Oct 2018 13:58:13 -0700 (PDT)
 Received: from localhost.localdomain (109-252-91-118.nat.spd-mgts.ru. [109.252.91.118])
-        by smtp.gmail.com with ESMTPSA id p63-v6sm6515919lfg.46.2018.10.21.13.58.09
+        by smtp.gmail.com with ESMTPSA id p63-v6sm6515919lfg.46.2018.10.21.13.58.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 21 Oct 2018 13:58:09 -0700 (PDT)
+        Sun, 21 Oct 2018 13:58:13 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Viresh Kumar <viresh.kumar@linaro.org>,
@@ -69,9 +69,9 @@ To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v2 06/17] ARM: dts: tegra20: Add CPU Operating Performance Points
-Date:   Sun, 21 Oct 2018 23:54:50 +0300
-Message-Id: <20181021205501.23943-7-digetx@gmail.com>
+Subject: [RFC PATCH v2 09/17] ARM: dts: tegra20: harmony: Setup voltage regulators for DVFS
+Date:   Sun, 21 Oct 2018 23:54:53 +0300
+Message-Id: <20181021205501.23943-10-digetx@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181021205501.23943-1-digetx@gmail.com>
 References: <20181021205501.23943-1-digetx@gmail.com>
@@ -82,317 +82,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add CPU's Operating Performance Points to the device tree, they are used
-by the CPUFreq driver and allow to setup thermal throttling for the boards
-by linking the cooling device (CPU) with thermal sensors via thermal-zones
-description.
+Set min/max regulators voltage and add CPU node that hooks up CPU with
+voltage regulators.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra20.dtsi | 277 +++++++++++++++++++++++++++++++++
- 1 file changed, 277 insertions(+)
+ arch/arm/boot/dts/tegra20-harmony.dts | 31 +++++++++++++++++++--------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 185cd074eeff..51ffb5d2b974 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -859,6 +859,271 @@
- 		status = "disabled";
- 	};
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index 1d96d92b72a7..9d720743fd4e 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -339,17 +339,19 @@
+ 					regulator-always-on;
+ 				};
  
-+	cpu0_opp_table: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
+-				sm0 {
++				core_vdd_reg: sm0 {
+ 					regulator-name = "vdd_sm0,vdd_core";
+-					regulator-min-microvolt = <1200000>;
+-					regulator-max-microvolt = <1200000>;
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1300000>;
++					regulator-coupled-with = <&rtc_vdd_reg>;
++					regulator-coupled-max-spread = <150000>;
+ 					regulator-always-on;
+ 				};
+ 
+-				sm1 {
++				cpu_vdd_reg: sm1 {
+ 					regulator-name = "vdd_sm1,vdd_cpu";
+-					regulator-min-microvolt = <1000000>;
+-					regulator-max-microvolt = <1000000>;
++					regulator-min-microvolt = <750000>;
++					regulator-max-microvolt = <1125000>;
+ 					regulator-always-on;
+ 				};
+ 
+@@ -373,10 +375,13 @@
+ 					regulator-always-on;
+ 				};
+ 
+-				ldo2 {
++				rtc_vdd_reg: ldo2 {
+ 					regulator-name = "vdd_ldo2,vdd_rtc";
+-					regulator-min-microvolt = <1200000>;
+-					regulator-max-microvolt = <1200000>;
++					regulator-min-microvolt = <950000>;
++					regulator-max-microvolt = <1300000>;
++					regulator-coupled-with = <&core_vdd_reg>;
++					regulator-coupled-max-spread = <150000>;
++					regulator-always-on;
+ 				};
+ 
+ 				ldo3 {
+@@ -779,4 +784,12 @@
+ 			 <&tegra_car TEGRA20_CLK_CDEV1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
 +
-+		opp@216000000_750 {
-+			clock-latency-ns = <2000>;
-+			opp-microvolt = <750000 750000 1125000>;
-+			opp-supported-hw = <0xFF 0xFFFF>;
-+			opp-hz = /bits/ 64 <216000000>;
-+			opp-suspend;
-+		};
-+
-+		opp@314000000_750 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <750000 750000 1125000>;
-+			opp-supported-hw = <0x03 0x0001>;
-+			opp-hz = /bits/ 64 <314000000>;
-+		};
-+
-+		opp@380000000_750 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <750000 750000 1125000>;
-+			opp-supported-hw = <0x01 0x0002>;
-+			opp-hz = /bits/ 64 <380000000>;
-+		};
-+
-+		opp@389000000_750 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <750000 750000 1125000>;
-+			opp-supported-hw = <0x02 0x0002>;
-+			opp-hz = /bits/ 64 <389000000>;
-+		};
-+
-+		opp@456000000_825 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <825000 825000 1125000>;
-+			opp-supported-hw = <0x03 0x0001>;
-+			opp-hz = /bits/ 64 <456000000>;
-+		};
-+
-+		opp@494000000_750 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <750000 750000 1125000>;
-+			opp-supported-hw = <0x04 0x0001>;
-+			opp-hz = /bits/ 64 <494000000>;
-+		};
-+
-+		opp@503000000_800 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <800000 800000 1125000>;
-+			opp-supported-hw = <0x03 0x0002>;
-+			opp-hz = /bits/ 64 <503000000>;
-+		};
-+
-+		opp@598000000_750 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <750000 750000 1125000>;
-+			opp-supported-hw = <0x04 0x0002>;
-+			opp-hz = /bits/ 64 <598000000>;
-+		};
-+
-+		opp@608000000_900 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <900000 900000 1125000>;
-+			opp-supported-hw = <0x01 0x0001>;
-+			opp-hz = /bits/ 64 <608000000>;
-+		};
-+
-+		opp@618000000_900 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <900000 900000 1125000>;
-+			opp-supported-hw = <0x02 0x0001>;
-+			opp-hz = /bits/ 64 <618000000>;
-+		};
-+
-+		opp@655000000_850 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <850000 850000 1125000>;
-+			opp-supported-hw = <0x03 0x0002>;
-+			opp-hz = /bits/ 64 <655000000>;
-+		};
-+
-+		opp@675000000_825 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <825000 825000 1125000>;
-+			opp-supported-hw = <0x04 0x0001>;
-+			opp-hz = /bits/ 64 <675000000>;
-+		};
-+
-+		opp@730000000_750 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <750000 750000 1125000>;
-+			opp-supported-hw = <0x08 0x0003>;
-+			opp-hz = /bits/ 64 <730000000>;
-+		};
-+
-+		opp@750000000_800 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <800000 800000 1125000>;
-+			opp-supported-hw = <0x04 0x0002>;
-+			opp-hz = /bits/ 64 <750000000>;
-+		};
-+
-+		opp@760000000_775 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <775000 775000 1125000>;
-+			opp-supported-hw = <0x08 0x0003>;
-+			opp-hz = /bits/ 64 <760000000>;
-+		};
-+
-+		opp@760000000_875 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <875000 875000 1125000>;
-+			opp-supported-hw = <0x02 0x0002>;
-+			opp-hz = /bits/ 64 <760000000>;
-+		};
-+
-+		opp@760000000_975 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <975000 975000 1125000>;
-+			opp-supported-hw = <0x01 0x0001>;
-+			opp-hz = /bits/ 64 <760000000>;
-+		};
-+
-+		opp@770000000_975 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <975000 975000 1125000>;
-+			opp-supported-hw = <0x02 0x0001>;
-+			opp-hz = /bits/ 64 <770000000>;
-+		};
-+
-+		opp@798000000_900 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <900000 900000 1125000>;
-+			opp-supported-hw = <0x03 0x0002>;
-+			opp-hz = /bits/ 64 <798000000>;
-+		};
-+
-+		opp@817000000_875 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <875000 875000 1125000>;
-+			opp-supported-hw = <0x04 0x0001>;
-+			opp-hz = /bits/ 64 <817000000>;
-+		};
-+
-+		opp@817000000_1000 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <1000000 1000000 1125000>;
-+			opp-supported-hw = <0x01 0x0001>;
-+			opp-hz = /bits/ 64 <817000000>;
-+		};
-+
-+		opp@827000000_1000 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <1000000 1000000 1125000>;
-+			opp-supported-hw = <0x02 0x0001>;
-+			opp-hz = /bits/ 64 <827000000>;
-+		};
-+
-+		opp@845000000_800 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <800000 800000 1125000>;
-+			opp-supported-hw = <0x08 0x0003>;
-+			opp-hz = /bits/ 64 <845000000>;
-+		};
-+
-+		opp@893000000_850 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <850000 850000 1125000>;
-+			opp-supported-hw = <0x04 0x0002>;
-+			opp-hz = /bits/ 64 <893000000>;
-+		};
-+
-+		opp@902000000_950 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <950000 950000 1125000>;
-+			opp-supported-hw = <0x01 0x0002>;
-+			opp-hz = /bits/ 64 <902000000>;
-+		};
-+
-+		opp@912000000_1050 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <1050000 1050000 1125000>;
-+			opp-supported-hw = <0x01 0x0001>;
-+			opp-hz = /bits/ 64 <912000000>;
-+		};
-+
-+		opp@922000000_925 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <925000 925000 1125000>;
-+			opp-supported-hw = <0x04 0x0001>;
-+			opp-hz = /bits/ 64 <922000000>;
-+		};
-+
-+		opp@922000000_1050 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <1050000 1050000 1125000>;
-+			opp-supported-hw = <0x02 0x0001>;
-+			opp-hz = /bits/ 64 <922000000>;
-+		};
-+
-+		opp@940000000_850 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <850000 850000 1125000>;
-+			opp-supported-hw = <0x08 0x0003>;
-+			opp-hz = /bits/ 64 <940000000>;
-+		};
-+
-+		opp@950000000_950 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <950000 950000 1125000>;
-+			opp-supported-hw = <0x02 0x0002>;
-+			opp-hz = /bits/ 64 <950000000>;
-+		};
-+
-+		opp@960000000_1000 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <1000000 1000000 1125000>;
-+			opp-supported-hw = <0x01 0x0002>;
-+			opp-hz = /bits/ 64 <960000000>;
-+		};
-+
-+		opp@1000000000_875 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <875000 875000 1125000>;
-+			opp-supported-hw = <0x08 0x0003>;
-+			opp-hz = /bits/ 64 <1000000000>;
-+		};
-+
-+		opp@1000000000_900 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <900000 900000 1125000>;
-+			opp-supported-hw = <0x04 0x0002>;
-+			opp-hz = /bits/ 64 <1000000000>;
-+		};
-+
-+		opp@1000000000_975 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <975000 975000 1125000>;
-+			opp-supported-hw = <0x04 0x0001>;
-+			opp-hz = /bits/ 64 <1000000000>;
-+		};
-+
-+		opp@1000000000_1000 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <1000000 1000000 1125000>;
-+			opp-supported-hw = <0x02 0x0002>;
-+			opp-hz = /bits/ 64 <1000000000>;
-+		};
-+
-+		opp@1000000000_1025 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <1025000 1025000 1125000>;
-+			opp-supported-hw = <0x01 0x0002>;
-+			opp-hz = /bits/ 64 <1000000000>;
-+		};
-+
-+		opp@1000000000_1100 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <1100000 1100000 1125000>;
-+			opp-supported-hw = <0x03 0x0001>;
-+			opp-hz = /bits/ 64 <1000000000>;
++	cpus {
++		cpu0: cpu@0 {
++			cpu-supply = <&cpu_vdd_reg>;
++			core-supply = <&core_vdd_reg>;
++			rtc-supply = <&rtc_vdd_reg>;
 +		};
 +	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -867,12 +1132,24 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0>;
-+			clocks = <&tegra_car TEGRA20_CLK_PLL_X>,
-+				 <&tegra_car TEGRA20_CLK_PLL_P>,
-+				 <&tegra_car TEGRA20_CLK_CCLK>;
-+			clock-names = "pll_x", "intermediate", "cclk";
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <1>;
-+			clocks = <&tegra_car TEGRA20_CLK_PLL_X>,
-+				 <&tegra_car TEGRA20_CLK_PLL_P>,
-+				 <&tegra_car TEGRA20_CLK_CCLK>;
-+			clock-names = "pll_x", "intermediate", "cclk";
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>;
- 		};
- 	};
- 
+ };
 -- 
 2.19.0
 
