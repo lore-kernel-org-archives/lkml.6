@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0AA5ECDE45
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20123ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 710C620652
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 710C620652
+	by mail.kernel.org (Postfix) with ESMTP id D45F620652
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D45F620652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728323AbeJVEPq (ORCPT
+        id S1728336AbeJVEPq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 22 Oct 2018 00:15:46 -0400
-Received: from sauhun.de ([88.99.104.3]:45688 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:45698 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728295AbeJVEPp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727432AbeJVEPp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 22 Oct 2018 00:15:45 -0400
 Received: from localhost (unknown [90.200.225.72])
-        by pokefinder.org (Postfix) with ESMTPSA id C6E8B2E35D9;
-        Sun, 21 Oct 2018 22:00:17 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id DA2882E35D8;
+        Sun, 21 Oct 2018 22:00:16 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
@@ -32,9 +32,9 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Rob Clark <robdclark@gmail.com>,
         David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
         dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH 4/6] gpu: drm: msm: dsi: dsi_host: simplify getting .driver_data
-Date:   Sun, 21 Oct 2018 22:00:09 +0200
-Message-Id: <20181021200012.1583-5-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 3/6] gpu: drm: msm: disp: mdp5: mdp5_kms: simplify getting .driver_data
+Date:   Sun, 21 Oct 2018 22:00:08 +0200
+Message-Id: <20181021200012.1583-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
 References: <20181021200012.1583-1-wsa+renesas@sang-engineering.com>
@@ -53,32 +53,32 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy.
 
- drivers/gpu/drm/msm/dsi/dsi_host.c | 6 ++----
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-index 9c6c523eacdc..0df8c7da84bd 100644
---- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-@@ -485,8 +485,7 @@ static void dsi_bus_clk_disable(struct msm_dsi_host *msm_host)
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+index bddd625ab91b..100f166c1ac2 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+@@ -1063,8 +1063,7 @@ static int mdp5_dev_remove(struct platform_device *pdev)
  
- int msm_dsi_runtime_suspend(struct device *dev)
+ static __maybe_unused int mdp5_runtime_suspend(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct msm_dsi *msm_dsi = platform_get_drvdata(pdev);
-+	struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
- 	struct mipi_dsi_host *host = msm_dsi->host;
- 	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+-	struct mdp5_kms *mdp5_kms = platform_get_drvdata(pdev);
++	struct mdp5_kms *mdp5_kms = dev_get_drvdata(dev);
  
-@@ -500,8 +499,7 @@ int msm_dsi_runtime_suspend(struct device *dev)
+ 	DBG("");
  
- int msm_dsi_runtime_resume(struct device *dev)
+@@ -1073,8 +1072,7 @@ static __maybe_unused int mdp5_runtime_suspend(struct device *dev)
+ 
+ static __maybe_unused int mdp5_runtime_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct msm_dsi *msm_dsi = platform_get_drvdata(pdev);
-+	struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
- 	struct mipi_dsi_host *host = msm_dsi->host;
- 	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+-	struct mdp5_kms *mdp5_kms = platform_get_drvdata(pdev);
++	struct mdp5_kms *mdp5_kms = dev_get_drvdata(dev);
+ 
+ 	DBG("");
  
 -- 
 2.19.0
