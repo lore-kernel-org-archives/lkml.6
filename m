@@ -2,98 +2,136 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD47CECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 07:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1B5ECDE3D
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 07:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5836C20838
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 07:18:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BCEGXGdk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5836C20838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 24CA9204FD
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 07:30:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24CA9204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbeJUPbq (ORCPT
+        id S1727208AbeJUPnt convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 11:31:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60172 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726975AbeJUPbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 11:31:45 -0400
-Received: from localhost (10.193.71.37.rev.sfr.net [37.71.193.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4350F20838;
-        Sun, 21 Oct 2018 07:18:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540106303;
-        bh=mSAHYn/zHAAWWTdLaXYO7JWGwlsVyHZyiRQnIUb7hmg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BCEGXGdk3vvBzl1V6mHSsWack0hARUFI7M9QG4g4B1qXy9vdu8c1XQk42LCNABfhA
-         pMfZ9acXd8HdIT2YSQN+pRb2my7R8OSHCzSD3JYf1NryhHWQO5ctwxx6KKwS8MFNUJ
-         lOAwl9BzsbayySJITD4HYzsJrV1cIcjCaSoRhRBw=
-Date:   Sun, 21 Oct 2018 09:18:21 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     ksummit-discuss@lists.linuxfoundation.org, mishi@linux.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [Ksummit-discuss] [PATCH 5/7] Code of Conduct Interpretation:
- Put in the proper URL for the committee
-Message-ID: <20181021071821.GD11176@kroah.com>
-References: <20181020134908.GA32218@kroah.com>
- <20181020135058.GF32218@kroah.com>
- <CAMuHMdUR_7GgFL0wqh9AdEq=HWmxPB=HzarEgY5TeLo67+S1LA@mail.gmail.com>
+        Sun, 21 Oct 2018 11:43:49 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47564 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727086AbeJUPnt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Oct 2018 11:43:49 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9L7TKsE043542
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 03:30:24 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2n8htxd95r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 03:30:23 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Sun, 21 Oct 2018 08:30:22 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 21 Oct 2018 08:30:20 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9L7UJco22675498
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 21 Oct 2018 07:30:19 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B1DEAE057;
+        Sun, 21 Oct 2018 07:30:19 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DAA15AE04D;
+        Sun, 21 Oct 2018 07:30:18 +0000 (GMT)
+Received: from [9.148.206.95] (unknown [9.148.206.95])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 21 Oct 2018 07:30:18 +0000 (GMT)
+Date:   Sun, 21 Oct 2018 10:30:16 +0300
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20181019081729.klvckcytnhheaian@master>
+References: <1538067825-24835-1-git-send-email-rppt@linux.vnet.ibm.com> <20181019081729.klvckcytnhheaian@master>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUR_7GgFL0wqh9AdEq=HWmxPB=HzarEgY5TeLo67+S1LA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH] memblock: remove stale #else and the code it protects
+To:     Wei Yang <richard.weiyang@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+From:   Mike Rapoport <rppt@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18102107-0016-0000-0000-000002164C98
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18102107-0017-0000-0000-0000326DFED1
+Message-Id: <6EEAA7EC-75B7-4899-A562-35A58FC037E6@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-20_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=978 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810210071
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 20, 2018 at 09:01:57PM +0200, Geert Uytterhoeven wrote:
-> Hi Greg,
-> 
-> On Sat, Oct 20, 2018 at 3:53 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > There was a blank <URL> reference for how to find the Code of Conduct
-> > Committee.  Fix that up by pointing it to the correct kernel.org website
-> > page location.
-> >
-> > Acked-by: Chris Mason <clm@fb.com>
-> > Acked-by: Olof Johansson <olof@lixom.net>
-> > Acked-by: Theodore Ts'o <tytso@mit.edu>
-> > Acked-by: Thomas Gleixner <tglx@linutronix.de>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> Thanks for your patch!
-> 
-> > --- a/Documentation/process/code-of-conduct-interpretation.rst
-> > +++ b/Documentation/process/code-of-conduct-interpretation.rst
-> > @@ -123,8 +123,9 @@ Enforcement
-> >
-> >  The address listed in the Code of Conduct goes to the Code of Conduct
-> >  Committee.  The exact members receiving these emails at any given time
-> > -are listed at <URL>.  Members can not access reports made before they
-> > -joined or after they have left the committee.
-> > +are listed at https://kernel.org/code-of-conduct.html.  Members can not
-> > +access reports made before they joined or after they have left the
-> > +committee.
-> 
-> This seems to be the wrong URL? It just points to the CoC, not to the TAB
-> members.
 
-The information at that web page will be updatd "soon" with the
-information about the committee.  Please give us a few more days for
-this, as we are all traveling at the moment...
 
-thanks,
+On October 19, 2018 11:17:30 AM GMT+03:00, Wei Yang <richard.weiyang@gmail.com> wrote:
+>Which tree it applies?
 
-greg k-h
+To mmotm of the end of September.
+
+>On Thu, Sep 27, 2018 at 08:03:45PM +0300, Mike Rapoport wrote:
+>>During removal of HAVE_MEMBLOCK definition, the #else clause of the
+>>
+>>	#ifdef CONFIG_HAVE_MEMBLOCK
+>>		...
+>>	#else
+>>		...
+>>	#endif
+>>
+>>conditional was not removed.
+>>
+>>Remove it now.
+>>
+>>Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+>>Reported-by: Alexander Duyck <alexander.duyck@gmail.com>
+>>Cc: Michal Hocko <mhocko@suse.com>
+>>---
+>> include/linux/memblock.h | 5 -----
+>> 1 file changed, 5 deletions(-)
+>>
+>>diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+>>index d3bc270..d4d0e01 100644
+>>--- a/include/linux/memblock.h
+>>+++ b/include/linux/memblock.h
+>>@@ -597,11 +597,6 @@ static inline void early_memtest(phys_addr_t
+>start, phys_addr_t end)
+>> {
+>> }
+>> #endif
+>>-#else
+>>-static inline phys_addr_t memblock_alloc(phys_addr_t size,
+>phys_addr_t align)
+>>-{
+>>-	return 0;
+>>-}
+>> 
+>> #endif /* __KERNEL__ */
+>> 
+>>-- 
+>>2.7.4
+
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
+
