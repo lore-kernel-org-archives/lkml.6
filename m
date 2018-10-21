@@ -2,41 +2,38 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1951AECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 286D0ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFB9820843
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFB9820843
+	by mail.kernel.org (Postfix) with ESMTP id EC36820843
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC36820843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728637AbeJVEQQ (ORCPT
+        id S1728654AbeJVEQS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 00:16:16 -0400
-Received: from sauhun.de ([88.99.104.3]:45890 "EHLO pokefinder.org"
+        Mon, 22 Oct 2018 00:16:18 -0400
+Received: from sauhun.de ([88.99.104.3]:45898 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727226AbeJVEQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:16:15 -0400
+        id S1727226AbeJVEQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 00:16:17 -0400
 Received: from localhost (unknown [90.200.225.72])
-        by pokefinder.org (Postfix) with ESMTPSA id 2C0C42E35C1;
-        Sun, 21 Oct 2018 22:00:47 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id 4EAA02E35C1;
+        Sun, 21 Oct 2018 22:00:49 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 1/1] slimbus: qcom-ctrl: simplify getting .driver_data
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+Subject: [PATCH 0/3] spi: simplify getting .driver_data
 Date:   Sun, 21 Oct 2018 22:00:44 +0200
-Message-Id: <20181021200045.2053-2-wsa+renesas@sang-engineering.com>
+Message-Id: <20181021200048.2114-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181021200045.2053-1-wsa+renesas@sang-engineering.com>
-References: <20181021200045.2053-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -44,41 +41,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+I got tired of fixing this in Renesas drivers manually, so I took the big
+hammer. Remove this cumbersome code pattern which got copy-pasted too much
+already:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
++	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
 
-Build tested only. buildbot is happy.
+A branch, tested by buildbot, can be found here:
 
- drivers/slimbus/qcom-ctrl.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
 
-diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
-index db1f5135846a..ad3e2e23f56e 100644
---- a/drivers/slimbus/qcom-ctrl.c
-+++ b/drivers/slimbus/qcom-ctrl.c
-@@ -654,8 +654,7 @@ static int qcom_slim_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM
- static int qcom_slim_runtime_suspend(struct device *device)
- {
--	struct platform_device *pdev = to_platform_device(device);
--	struct qcom_slim_ctrl *ctrl = platform_get_drvdata(pdev);
-+	struct qcom_slim_ctrl *ctrl = dev_get_drvdata(device);
- 	int ret;
- 
- 	dev_dbg(device, "pm_runtime: suspending...\n");
-@@ -672,8 +671,7 @@ static int qcom_slim_runtime_suspend(struct device *device)
- 
- static int qcom_slim_runtime_resume(struct device *device)
- {
--	struct platform_device *pdev = to_platform_device(device);
--	struct qcom_slim_ctrl *ctrl = platform_get_drvdata(pdev);
-+	struct qcom_slim_ctrl *ctrl = dev_get_drvdata(device);
- 	int ret = 0;
- 
- 	dev_dbg(device, "pm_runtime: resuming...\n");
+I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
+it and did not find one occasion where it could be simplified like this. Not
+much of a surprise because driver_data is usually set in probe() functions
+which access struct platform_device in many other ways.
+
+I am open for other comments, suggestions, too, of course.
+
+Here is the cocci-script I created:
+
+@@
+struct device* d;
+identifier pdev;
+expression *ptr;
+@@
+(
+-	struct platform_device *pdev = to_platform_device(d);
+|
+-	struct platform_device *pdev;
+	...
+-	pdev = to_platform_device(d);
+)
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+	ptr =
+-	platform_get_drvdata(pdev)
++	dev_get_drvdata(d)
+
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+Kind regards,
+
+   Wolfram
+
+
+Wolfram Sang (3):
+  spi: spi-rspi: simplify getting .driver_data
+  spi: spi-sh-msiof: simplify getting .driver_data
+  spi: spi-zynqmp-gqspi: simplify getting .driver_data
+
+ drivers/spi/spi-rspi.c         | 6 ++----
+ drivers/spi/spi-sh-msiof.c     | 6 ++----
+ drivers/spi/spi-zynqmp-gqspi.c | 6 ++----
+ 3 files changed, 6 insertions(+), 12 deletions(-)
+
 -- 
 2.19.0
 
