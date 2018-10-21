@@ -2,93 +2,83 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70261ECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 12:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A01E0ECDE45
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 12:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B86B20843
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 12:26:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w8BDZ7km"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B86B20843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 651C620843
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 12:26:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 651C620843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbeJUUlC (ORCPT
+        id S1727698AbeJUUlE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 16:41:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45320 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727379AbeJUUlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 16:41:02 -0400
-Received: from archlinux (unknown [176.12.107.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DD2220869;
-        Sun, 21 Oct 2018 12:26:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540124813;
-        bh=Blsc+pBmCjQJO4FsimaXEyBe7lE3eHnIemORN55XpdU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=w8BDZ7kmJ+HETXYXnUGQjNhdioJXlZ1M/rx5fA/4OWmjRxH+focKCZjVuCBJ/018Z
-         X/yOlQR4Cxd/HHduwVn7y+U9y8pJ2UDNE1Zr+WCvkYizgQjbek2wCPx++etQZgpiZY
-         dMrAH8L/CSST3mIgfs5Ic/6UPBecZgVVmny/Axzs=
-Date:   Sun, 21 Oct 2018 13:26:34 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        "Herton R. Krzesinski" <herton@redhat.com>,
-        linux-iio@vger.kernel.org
-Subject: Re: [PATCH 09/10] tools iio: Override CFLAGS assignments
-Message-ID: <20181021132616.34e3bc95@archlinux>
-In-Reply-To: <20181016150614.21260-10-jolsa@kernel.org>
-References: <20181016150614.21260-1-jolsa@kernel.org>
-        <20181016150614.21260-10-jolsa@kernel.org>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Sun, 21 Oct 2018 16:41:04 -0400
+Received: from smtprelay0108.hostedemail.com ([216.40.44.108]:40966 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727379AbeJUUlE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Oct 2018 16:41:04 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 75965180AA4EE;
+        Sun, 21 Oct 2018 12:26:54 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: hat63_76641599ed25d
+X-Filterd-Recvd-Size: 1973
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf19.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 21 Oct 2018 12:26:53 +0000 (UTC)
+Message-ID: <5f8063e4163361d64069d0fbecc7f723b503a4b8.camel@perches.com>
+Subject: Re: [PATCH 3/3] staging: rtl8188eu: rename variable isCCKrate -
+ style
+From:   Joe Perches <joe@perches.com>
+To:     Michael Straube <straube.linux@gmail.com>,
+        gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Date:   Sun, 21 Oct 2018 05:26:52 -0700
+In-Reply-To: <20181020110819.1576-3-straube.linux@gmail.com>
+References: <20181020110819.1576-1-straube.linux@gmail.com>
+         <20181020110819.1576-3-straube.linux@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 16 Oct 2018 17:06:14 +0200
-Jiri Olsa <jolsa@kernel.org> wrote:
-
-> So user could specify outside CFLAGS values.
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to poke at them.
-
-Thanks
-
-Jonathan
-
-> 
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Hartmut Knaack <knaack.h@gmx.de>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  tools/iio/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/iio/Makefile b/tools/iio/Makefile
-> index 332ed2f6c2c2..e22378dba244 100644
-> --- a/tools/iio/Makefile
-> +++ b/tools/iio/Makefile
-> @@ -12,7 +12,7 @@ endif
->  # (this improves performance and avoids hard-to-debug behaviour);
->  MAKEFLAGS += -r
+On Sat, 2018-10-20 at 13:08 +0200, Michael Straube wrote:
+> Rename the variable isCCKrate to avoid CamelCase.
+> isCCKrate -> is_cck_rate
+[]
+> diff --git a/drivers/staging/rtl8188eu/hal/odm_hwconfig.c b/drivers/staging/rtl8188eu/hal/odm_hwconfig.c
+[]
+> @@ -71,19 +71,20 @@ static void odm_RxPhyStatus92CSeries_Parsing(struct odm_dm_struct *dm_odm,
+>  	s8 rx_pwr[4], rx_pwr_all = 0;
+>  	u8 EVM, PWDB_ALL = 0, PWDB_ALL_BT;
+>  	u8 RSSI, total_rssi = 0;
+> -	u8 isCCKrate = 0;
+> +	u8 is_cck_rate = 0;
+>  	u8 rf_rx_num = 0;
+>  	u8 cck_highpwr = 0;
+>  	u8 LNA_idx, VGA_idx;
 >  
-> -CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
-> +override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
+>  	struct phy_status_rpt *pPhyStaRpt = (struct phy_status_rpt *)pPhyStatus;
 >  
->  ALL_TARGETS := iio_event_monitor lsiio iio_generic_buffer
->  ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
+> -	isCCKrate = ((pPktinfo->Rate >= DESC92C_RATE1M) && (pPktinfo->Rate <= DESC92C_RATE11M)) ? true : false;
+> +	is_cck_rate = ((pPktinfo->Rate >= DESC92C_RATE1M) &&
+> +		       (pPktinfo->Rate <= DESC92C_RATE11M)) ? true : false;
+
+It would be sensible to convert is_cck_rate from u8 to bool at the
+same
+time and remove the ternary ? true : false too.
+
+As well, perhaps remove its apparently unnecessary initialization.
+
 
