@@ -2,63 +2,74 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 533A9ECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 23:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB61ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 23:32:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01D1820836
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 23:16:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zG53iF3c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01D1820836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id 400202083E
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 23:32:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 400202083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728226AbeJVHcj (ORCPT
+        id S1728181AbeJVHsK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 03:32:39 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:39845 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbeJVHcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 03:32:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=EdXasaiAE43qkVFePCraJFHSsgI0Z8m/5O6tPn1d41c=;
-        b=zG53iF3chYW67E7XH+Yeb++/JGuiYmxk4QWunA7ab2EapY/tnUIM+6K21G0I0qqxXrBmt69YNNiIshsm4x+cnnW9dbm+O3/T+k+cYiXV+NFlpVAy93kL3frkPYT5pRFYpOIEx3u4xxr+8DUeFE6ji/1w+IsZLhF8FxAQs+B2cpc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gEMxX-00044w-TY; Mon, 22 Oct 2018 01:16:35 +0200
-Date:   Mon, 22 Oct 2018 01:16:35 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: Re: [PATCH 1/9] net: dsa: bcm_sf2: simplify getting .driver_data
-Message-ID: <20181021231635.GE12539@lunn.ch>
-References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
- <20181021200021.1693-2-wsa+renesas@sang-engineering.com>
+        Mon, 22 Oct 2018 03:48:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39740 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727278AbeJVHsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 03:48:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0B396AF40;
+        Sun, 21 Oct 2018 23:32:06 +0000 (UTC)
+Date:   Mon, 22 Oct 2018 01:32:04 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>
+cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v5 1/2] x86/speculation: apply IBPB more strictly to
+ avoid cross-process data leak
+In-Reply-To: <20181021193827.GB26042@amd>
+Message-ID: <nycvar.YFH.7.76.1810220130390.23511@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1809101119280.15880@cbobk.fhfr.pm> <nycvar.YFH.7.76.1809101123020.15880@cbobk.fhfr.pm> <20181021193827.GB26042@amd>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181021200021.1693-2-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 21, 2018 at 10:00:12PM +0200, Wolfram Sang wrote:
-> We should get 'driver_data' from 'struct device' directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Sun, 21 Oct 2018, Pavel Machek wrote:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Imagine JIT running evil code (flash, javascript). JIT will prevent evil 
+> code from doing ptrace() (or maybe there is syscall filter in effect or 
+> something like that), but if evil code can poison branch buffers and do 
+> timings, security problem stays.
 
-    Andrew
+JITs sort of remove the traditional unix security domain boundary between 
+mutually (un)trusted code (processess and threads), that's a more general 
+problem, yes.
+
+> Do we need prctl(I_DONT_RUN_EVIL_CODE)?
+
+That's basically the level of fine-graining Tim's followup patchset 
+(that's currently being discussed) is eventually going to achieve.
+
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
 
