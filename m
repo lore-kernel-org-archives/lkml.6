@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B665ECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE86ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 186A920652
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:02:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 186A920652
+	by mail.kernel.org (Postfix) with ESMTP id 2B4A02083A
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:02:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B4A02083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728685AbeJVEQU (ORCPT
+        id S1728669AbeJVEQT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 00:16:20 -0400
-Received: from sauhun.de ([88.99.104.3]:45926 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727226AbeJVEQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 22 Oct 2018 00:16:19 -0400
+Received: from sauhun.de ([88.99.104.3]:45906 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728302AbeJVEQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 00:16:18 -0400
 Received: from localhost (unknown [90.200.225.72])
-        by pokefinder.org (Postfix) with ESMTPSA id 176B82E35C4;
-        Sun, 21 Oct 2018 22:00:52 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id 39A392E35DD;
+        Sun, 21 Oct 2018 22:00:50 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/3] spi: spi-zynqmp-gqspi: simplify getting .driver_data
-Date:   Sun, 21 Oct 2018 22:00:47 +0200
-Message-Id: <20181021200048.2114-4-wsa+renesas@sang-engineering.com>
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Subject: [PATCH 1/3] spi: spi-rspi: simplify getting .driver_data
+Date:   Sun, 21 Oct 2018 22:00:45 +0200
+Message-Id: <20181021200048.2114-2-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181021200048.2114-1-wsa+renesas@sang-engineering.com>
 References: <20181021200048.2114-1-wsa+renesas@sang-engineering.com>
@@ -53,33 +51,32 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy.
 
- drivers/spi/spi-zynqmp-gqspi.c | 6 ++----
+ drivers/spi/spi-rspi.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
-index cc4d31033494..9f83e1b17aa1 100644
---- a/drivers/spi/spi-zynqmp-gqspi.c
-+++ b/drivers/spi/spi-zynqmp-gqspi.c
-@@ -960,8 +960,7 @@ static int __maybe_unused zynqmp_qspi_resume(struct device *dev)
-  */
- static int __maybe_unused zynqmp_runtime_suspend(struct device *dev)
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index 55f8e55327b3..a4ef641b5227 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -1347,16 +1347,14 @@ MODULE_DEVICE_TABLE(platform, spi_driver_ids);
+ #ifdef CONFIG_PM_SLEEP
+ static int rspi_suspend(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
- 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
+-	struct rspi_data *rspi = platform_get_drvdata(pdev);
++	struct rspi_data *rspi = dev_get_drvdata(dev);
  
- 	clk_disable(xqspi->refclk);
-@@ -980,8 +979,7 @@ static int __maybe_unused zynqmp_runtime_suspend(struct device *dev)
-  */
- static int __maybe_unused zynqmp_runtime_resume(struct device *dev)
+ 	return spi_master_suspend(rspi->master);
+ }
+ 
+ static int rspi_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
- 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
- 	int ret;
+-	struct rspi_data *rspi = platform_get_drvdata(pdev);
++	struct rspi_data *rspi = dev_get_drvdata(dev);
  
+ 	return spi_master_resume(rspi->master);
+ }
 -- 
 2.19.0
 
