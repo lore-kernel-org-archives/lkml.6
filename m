@@ -2,145 +2,112 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A13ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 21:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6079DECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 21:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8A6320836
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 21:20:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8A6320836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+	by mail.kernel.org (Postfix) with ESMTP id 0F32820658
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 21:33:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aiPpYayd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F32820658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbeJVFgF (ORCPT
+        id S1728194AbeJVFtL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 01:36:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53744 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727009AbeJVFgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 01:36:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "To"
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 892EBAC11;
-        Sun, 21 Oct 2018 21:20:22 +0000 (UTC)
-From:   NeilBrown <neil@brown.name>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 22 Oct 2018 08:20:11 +1100
-Cc:     ksummit-discuss@lists.linuxfoundation.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Olof Johansson <olof@lixom.net>, Chris Mason <clm@fb.com>,
-        Mishi Choudhary <mishi@linux.com>
-Subject: Call to Action Re: [PATCH 0/7] Code of Conduct: Fix some wording, and add an interpretation document
-In-Reply-To: <20181020134908.GA32218@kroah.com>
-References: <20181020134908.GA32218@kroah.com>
-Message-ID: <87y3ar80ac.fsf@notabene.neil.brown.name>
+        Mon, 22 Oct 2018 01:49:11 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:39461 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbeJVFtK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 01:49:10 -0400
+Received: by mail-lf1-f68.google.com with SMTP id p11-v6so2409331lfc.6;
+        Sun, 21 Oct 2018 14:33:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hNNIQlOdkfVuGGYNuZ47Sl2snITvmmMNJxTWFyvrz2w=;
+        b=aiPpYayd95RhQPY/f48i1OlEaCgTQHghpoG6/QeEwMG1qe33yWKU3KJbarIfQ83GzV
+         T5AZuVyF+T6bElgMvAX8Pm275Rw1e3nMv78w3TRQy0t5dlH1yyrCBMkwHGw4JUt33BEp
+         mQizFUX6FApu33Q+MbvSv81fLtM6Eq5xYmptMn+xt9wIvCcCPbr4/P+n1xz4oRivtzSK
+         6QBdp8fN9FyU6n5/LGwPRvozYft2uN6gxTxQXN4TA5X4FolbdlLi+DNVapiN1DdS8yEE
+         APzbcNl32ebRtTx16qDR67rjM2xOsmOqWiqBK6Q6r4MeYIAbi/J0RfsytX8OGnXDNkjw
+         l+mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hNNIQlOdkfVuGGYNuZ47Sl2snITvmmMNJxTWFyvrz2w=;
+        b=FSRUwZMTjVzzdEZRWMB9nhQJ30Q8xj8ltV0DEmUwfVK7bBkJj6Z7k1+BI4HaeEWcqD
+         u+Fv5OaGIwknENvN7NCpkuvb3z7D+/4Kh2Fot+jkP6g7/paXbuIe0OPdmGpy0Ne3Tlt5
+         8VFUhlT0AnHuAGiZTb1ujuR5K9vrYwA8Zda/MfcWkgq+yM3hd62/Are7/vTUfXgBjolv
+         lDPUIPjigx1h6LW0bsdARLsNBS/TwwSkHVKGsxO4hKSclEumvXaMzKpLby/H2lt/4PFf
+         +BhsCvjGslOcg1Ck+sPd9T388onazHNkwdfIe5fzA/pgniAY9dosDLXnVuwKymiBQjbi
+         Wz4Q==
+X-Gm-Message-State: ABuFfohhdUZCnbQdfRS4Er3eZ1dtK9f3ycUlQXDYkI/IRWPGPJKVWY/i
+        xHg4xappBv4WB5b+SgfaSlzkpSIx
+X-Google-Smtp-Source: ACcGV63pKwVyX9WOgQQQ1nweWDVQ+BYqN0htxw1lCqqSPlJp04WiHEeeeIhxpn7eweacb9MOZ0rbHg==
+X-Received: by 2002:a19:1b14:: with SMTP id b20-v6mr7771354lfb.12.1540157604863;
+        Sun, 21 Oct 2018 14:33:24 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-91-118.nat.spd-mgts.ru. [109.252.91.118])
+        by smtp.googlemail.com with ESMTPSA id h87-v6sm6696241lji.9.2018.10.21.14.33.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 21 Oct 2018 14:33:24 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 02/17] soc/tegra: fuse: Export tegra_get_chip_id()
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181021205501.23943-1-digetx@gmail.com>
+ <20181021205501.23943-3-digetx@gmail.com>
+Message-ID: <23d8d451-ec25-d557-660b-bdce90fcefb0@gmail.com>
+Date:   Mon, 22 Oct 2018 00:33:23 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <20181021205501.23943-3-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On 10/21/18 11:54 PM, Dmitry Osipenko wrote:
+> This function is used by tegra20-cpufreq driver which can be built as a
+> kernel module.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/soc/tegra/fuse/tegra-apbmisc.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
+> index e5a4d8f98b10..c94dccf3eb30 100644
+> --- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
+> +++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
+> @@ -51,6 +51,7 @@ u8 tegra_get_chip_id(void)
+>  {
+>  	return (tegra_read_chipid() >> 8) & 0xff;
+>  }
+> +EXPORT_SYMBOL_GPL(tegra_get_chip_id);
+>  
+>  u32 tegra_read_straps(void)
+>  {
+> 
 
-On Sat, Oct 20 2018, Greg Kroah-Hartman wrote:
-
-> Hi all,
->
-> As everyone knows by now, we added a new Code of Conduct to the kernel
-> tree a few weeks ago.
-
-I wanted to stay detached from all this, but as remaining (publicly)
-silent might be seen (publicly) as acquiescing, I hereby declare that:
-   I reject, as illegitimate, this Code and the process by
-   which it is being "developed".
-
-It is clear from the surrounding discussions that this is well outside our
-core competencies.  It will be flawed, it isn't what we need.
-
-I call on any other community members who reject this process to say so,
-not to remain silent.
-#Iobject
-
-We don't need a "Code of Conduct" nearly as much as we need "Leadership
-in conduct".  Without the leadership, any code looks like a joke.
-
-I call on Linus Torvalds to follow up on his confession (which I think
-is momentous and worth celebrating - Hurray!!!) with repentance - a clear
-demonstration of change of mind.
-  Linus: I know your intentions are good and am confident that, now that
-  you see the problem, you will be able to effect a solution.  If you
-  are not so confident, please be aware that there are many in the
-  community who can see clearly where you were blind, and are willing to
-  help guide and coach.  Please reach out to someone you trust, and ask.
-
-I call on the community to respond to this confession and repentance
-from Linus with forgiveness and restoration.
-
-I have no direct hurts to report and little to forgive, so my
-forgiveness can only be worth little.  However, for what it is worth:
-  I offer to Linus, and to any who are seeking to improve their
-  behaviour, my forgiveness for any past hurts, whether direct or
-  indirect.  I hold no grudge, and wish to continue working together as
-  the need and opportunity arises.
-
-  #Iforgive
-
-I call on the community to effect whatever reparation is possible to
-those who have been hurt. Sometimes an apology is all that is possible,
-sometimes it is all that is needed.  If you are ever in a position to do
-more, please consider doing so.
-
-  On behalf of my community, I apologise to all those who have been hurt
-  by us, for the lack of respect and care which should have been shown.
-  Where I have hurt you, whether through action or inaction, I
-  unreservedly apologise.
-
-  #Iapologise  (or #Iapologize :-)
-
-I call on you, Greg:
- - to abandon this divisive attempt to impose a "Code of Conduct"
- - to revert 8a104f8b5867c68
- - to return to your core competence of building a great team around
-   a great kernel
-
- #Isupportreversion
-
-I call on the community to consider what *does* need to be said, about
-conduct, to people outside the community and who have recently joined.
-What is the document that you would have liked to have read as you were
-starting out?  It is all too long ago for me to remember clearly, and so
-much has changed.
-
-Thanks,
-NeilBrown
-#Iobject #Iforgive #Iapologise #Isupportreversion
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvM7YwACgkQOeye3VZi
-gbkjDw//cyr6vp+JO+xqqQ/nMglaPJQ5EHrKqC74trz5zPzqJlWIihauFB58+rI5
-s3FS0pRz54A979Z/sO4I6Q78zEM+WkZdkBehj/a+z/ofst89A0CvZplJGSbYk9MD
-OuTyhC54sUcW4j1Fx+f2t4plbj0XhWLIGzBpQUI28mMQccqLu1OvVIHci+dD5XMV
-rQwg9zS1z1qMHZGXmGBOqjAK5rtBk17Xov9ypig4Gnc5RTgZgOdzmqIM8kLeoal1
-T1qUzEqKWT4IGNDNEuYlngQi2CMyBH5qrvRVxqpjlQxBU2fggxE7YnnVzjm9FoY0
-g84ywIXzM1aydOkmZz+hJglO9iMgwysNk03uIyESe82FIr7zrj8qplqvHrP3ye0X
-px6tIkkBgFc7H4eJQIMzV5Mef3D5JDwmNxlnapwvK1Hr34/whCbSoPl9ZS5TymfM
-0U19Xd93fwlkaLeMU7BomuSJtOX1skZp6RoTXDmJvbHZHBrV+wfruQrHRjOPWn70
-dxvM2/fddAUTnxOk4Q7mpwFH85KPeLEryoG4YZLmwedW2jQXuASAnO+zwg+vr9mD
-CkQSjzdAZb1d4S6kq1B7l9UH2XiJaflqpys/AohKR5ZgIJkngeMQATMzsoy4SrBP
-ZuSeLhWBT9MLIDfF2iv+IJVLkx4i1CuYjZKfM5rRf22Hq8E3xdY=
-=qQ/u
------END PGP SIGNATURE-----
---=-=-=--
+A quick note.. I just recalled about existence of the of_machine_is_compatible() which will be more appropriate to use in the driver, hence this patch won't be needed.
