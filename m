@@ -2,112 +2,145 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3049DECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 21:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A13ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 21:20:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D582020836
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 21:19:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D582020836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C8A6320836
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 21:20:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8A6320836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbeJVFfg (ORCPT
+        id S1728156AbeJVFgF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 01:35:36 -0400
-Received: from mga06.intel.com ([134.134.136.31]:54845 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727009AbeJVFfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 01:35:36 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2018 14:19:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,409,1534834800"; 
-   d="scan'208";a="90138190"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by FMSMGA003.fm.intel.com with ESMTP; 21 Oct 2018 14:19:52 -0700
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gEL8Z-00030J-Q3; Mon, 22 Oct 2018 00:19:51 +0300
-Date:   Mon, 22 Oct 2018 00:19:51 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 1/5] pinctrl: intel: pinctrl-baytrail: simplify getting
- .driver_data
-Message-ID: <20181021211951.GM10650@smile.fi.intel.com>
-References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
- <20181021200032.1833-2-wsa+renesas@sang-engineering.com>
+        Mon, 22 Oct 2018 01:36:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53744 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727009AbeJVFgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 01:36:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "To"
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 892EBAC11;
+        Sun, 21 Oct 2018 21:20:22 +0000 (UTC)
+From:   NeilBrown <neil@brown.name>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 22 Oct 2018 08:20:11 +1100
+Cc:     ksummit-discuss@lists.linuxfoundation.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Olof Johansson <olof@lixom.net>, Chris Mason <clm@fb.com>,
+        Mishi Choudhary <mishi@linux.com>
+Subject: Call to Action Re: [PATCH 0/7] Code of Conduct: Fix some wording, and add an interpretation document
+In-Reply-To: <20181020134908.GA32218@kroah.com>
+References: <20181020134908.GA32218@kroah.com>
+Message-ID: <87y3ar80ac.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181021200032.1833-2-wsa+renesas@sang-engineering.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 21, 2018 at 10:00:27PM +0200, Wolfram Sang wrote:
-> We should get 'driver_data' from 'struct device' directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
+On Sat, Oct 20 2018, Greg Kroah-Hartman wrote:
 
-I see only 3 out of 5 patches.
+> Hi all,
+>
+> As everyone knows by now, we added a new Code of Conduct to the kernel
+> tree a few weeks ago.
 
-Since we are about to establish a separate tree as well as an additional record
-in MAINTAINERS data base for Intel pinctrl driver, I ask you to resend only
-Intel related stuff in a separate series.
+I wanted to stay detached from all this, but as remaining (publicly)
+silent might be seen (publicly) as acquiescing, I hereby declare that:
+   I reject, as illegitimate, this Code and the process by
+   which it is being "developed".
 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Build tested only. buildbot is happy.
-> 
->  drivers/pinctrl/intel/pinctrl-baytrail.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> index 6d1a43c0c251..a1c2548123a1 100644
-> --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-> +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> @@ -1838,8 +1838,7 @@ static int byt_pinctrl_probe(struct platform_device *pdev)
->  #ifdef CONFIG_PM_SLEEP
->  static int byt_gpio_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct byt_gpio *vg = platform_get_drvdata(pdev);
-> +	struct byt_gpio *vg = dev_get_drvdata(dev);
->  	int i;
->  
->  	for (i = 0; i < vg->soc_data->npins; i++) {
-> @@ -1867,8 +1866,7 @@ static int byt_gpio_suspend(struct device *dev)
->  
->  static int byt_gpio_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct byt_gpio *vg = platform_get_drvdata(pdev);
-> +	struct byt_gpio *vg = dev_get_drvdata(dev);
->  	int i;
->  
->  	for (i = 0; i < vg->soc_data->npins; i++) {
-> -- 
-> 2.19.0
-> 
+It is clear from the surrounding discussions that this is well outside our
+core competencies.  It will be flawed, it isn't what we need.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I call on any other community members who reject this process to say so,
+not to remain silent.
+#Iobject
 
+We don't need a "Code of Conduct" nearly as much as we need "Leadership
+in conduct".  Without the leadership, any code looks like a joke.
 
+I call on Linus Torvalds to follow up on his confession (which I think
+is momentous and worth celebrating - Hurray!!!) with repentance - a clear
+demonstration of change of mind.
+  Linus: I know your intentions are good and am confident that, now that
+  you see the problem, you will be able to effect a solution.  If you
+  are not so confident, please be aware that there are many in the
+  community who can see clearly where you were blind, and are willing to
+  help guide and coach.  Please reach out to someone you trust, and ask.
+
+I call on the community to respond to this confession and repentance
+from Linus with forgiveness and restoration.
+
+I have no direct hurts to report and little to forgive, so my
+forgiveness can only be worth little.  However, for what it is worth:
+  I offer to Linus, and to any who are seeking to improve their
+  behaviour, my forgiveness for any past hurts, whether direct or
+  indirect.  I hold no grudge, and wish to continue working together as
+  the need and opportunity arises.
+
+  #Iforgive
+
+I call on the community to effect whatever reparation is possible to
+those who have been hurt. Sometimes an apology is all that is possible,
+sometimes it is all that is needed.  If you are ever in a position to do
+more, please consider doing so.
+
+  On behalf of my community, I apologise to all those who have been hurt
+  by us, for the lack of respect and care which should have been shown.
+  Where I have hurt you, whether through action or inaction, I
+  unreservedly apologise.
+
+  #Iapologise  (or #Iapologize :-)
+
+I call on you, Greg:
+ - to abandon this divisive attempt to impose a "Code of Conduct"
+ - to revert 8a104f8b5867c68
+ - to return to your core competence of building a great team around
+   a great kernel
+
+ #Isupportreversion
+
+I call on the community to consider what *does* need to be said, about
+conduct, to people outside the community and who have recently joined.
+What is the document that you would have liked to have read as you were
+starting out?  It is all too long ago for me to remember clearly, and so
+much has changed.
+
+Thanks,
+NeilBrown
+#Iobject #Iforgive #Iapologise #Isupportreversion
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvM7YwACgkQOeye3VZi
+gbkjDw//cyr6vp+JO+xqqQ/nMglaPJQ5EHrKqC74trz5zPzqJlWIihauFB58+rI5
+s3FS0pRz54A979Z/sO4I6Q78zEM+WkZdkBehj/a+z/ofst89A0CvZplJGSbYk9MD
+OuTyhC54sUcW4j1Fx+f2t4plbj0XhWLIGzBpQUI28mMQccqLu1OvVIHci+dD5XMV
+rQwg9zS1z1qMHZGXmGBOqjAK5rtBk17Xov9ypig4Gnc5RTgZgOdzmqIM8kLeoal1
+T1qUzEqKWT4IGNDNEuYlngQi2CMyBH5qrvRVxqpjlQxBU2fggxE7YnnVzjm9FoY0
+g84ywIXzM1aydOkmZz+hJglO9iMgwysNk03uIyESe82FIr7zrj8qplqvHrP3ye0X
+px6tIkkBgFc7H4eJQIMzV5Mef3D5JDwmNxlnapwvK1Hr34/whCbSoPl9ZS5TymfM
+0U19Xd93fwlkaLeMU7BomuSJtOX1skZp6RoTXDmJvbHZHBrV+wfruQrHRjOPWn70
+dxvM2/fddAUTnxOk4Q7mpwFH85KPeLEryoG4YZLmwedW2jQXuASAnO+zwg+vr9mD
+CkQSjzdAZb1d4S6kq1B7l9UH2XiJaflqpys/AohKR5ZgIJkngeMQATMzsoy4SrBP
+ZuSeLhWBT9MLIDfF2iv+IJVLkx4i1CuYjZKfM5rRf22Hq8E3xdY=
+=qQ/u
+-----END PGP SIGNATURE-----
+--=-=-=--
