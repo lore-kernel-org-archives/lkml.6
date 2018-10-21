@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 445BEECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E52BECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1968E20652
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:04:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1968E20652
+	by mail.kernel.org (Postfix) with ESMTP id E0F0A2083A
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:04:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0F0A2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728722AbeJVETb (ORCPT
+        id S1728651AbeJVETw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 00:19:31 -0400
-Received: from sauhun.de ([88.99.104.3]:45764 "EHLO pokefinder.org"
+        Mon, 22 Oct 2018 00:19:52 -0400
+Received: from sauhun.de ([88.99.104.3]:45752 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728370AbeJVEP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:56 -0400
+        id S1728310AbeJVEPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 00:15:52 -0400
 Received: from localhost (unknown [90.200.225.72])
-        by pokefinder.org (Postfix) with ESMTPSA id 67E3E2E35DC;
-        Sun, 21 Oct 2018 22:00:28 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id A85AA2E35C4;
+        Sun, 21 Oct 2018 22:00:24 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH 6/9] net: ethernet: ti: cpsw: simplify getting .driver_data
-Date:   Sun, 21 Oct 2018 22:00:17 +0200
-Message-Id: <20181021200021.1693-7-wsa+renesas@sang-engineering.com>
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: [PATCH 2/9] net: dsa: qca8k: simplify getting .driver_data
+Date:   Sun, 21 Oct 2018 22:00:13 +0200
+Message-Id: <20181021200021.1693-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
 References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
@@ -53,33 +54,33 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy.
 
- drivers/net/ethernet/ti/cpsw.c | 6 ++----
+ drivers/net/dsa/qca8k.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 16dcbf36f8cc..4753ae7178fb 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -3658,8 +3658,7 @@ static int cpsw_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int cpsw_suspend(struct device *dev)
+diff --git a/drivers/net/dsa/qca8k.c b/drivers/net/dsa/qca8k.c
+index cdcde7f8e0b2..7e97e620bd44 100644
+--- a/drivers/net/dsa/qca8k.c
++++ b/drivers/net/dsa/qca8k.c
+@@ -955,8 +955,7 @@ qca8k_set_pm(struct qca8k_priv *priv, int enable)
+ 
+ static int qca8k_suspend(struct device *dev)
  {
--	struct platform_device	*pdev = to_platform_device(dev);
--	struct net_device	*ndev = platform_get_drvdata(pdev);
-+	struct net_device	*ndev = dev_get_drvdata(dev);
- 	struct cpsw_common	*cpsw = ndev_to_cpsw(ndev);
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct qca8k_priv *priv = platform_get_drvdata(pdev);
++	struct qca8k_priv *priv = dev_get_drvdata(dev);
  
- 	if (cpsw->data.dual_emac) {
-@@ -3682,8 +3681,7 @@ static int cpsw_suspend(struct device *dev)
+ 	qca8k_set_pm(priv, 0);
  
- static int cpsw_resume(struct device *dev)
+@@ -965,8 +964,7 @@ static int qca8k_suspend(struct device *dev)
+ 
+ static int qca8k_resume(struct device *dev)
  {
--	struct platform_device	*pdev = to_platform_device(dev);
--	struct net_device	*ndev = platform_get_drvdata(pdev);
-+	struct net_device	*ndev = dev_get_drvdata(dev);
- 	struct cpsw_common	*cpsw = ndev_to_cpsw(ndev);
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct qca8k_priv *priv = platform_get_drvdata(pdev);
++	struct qca8k_priv *priv = dev_get_drvdata(dev);
  
- 	/* Select default pin state */
+ 	qca8k_set_pm(priv, 1);
+ 
 -- 
 2.19.0
 
