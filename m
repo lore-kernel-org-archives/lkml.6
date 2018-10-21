@@ -2,106 +2,112 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ECE6ECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3049DECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 21:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EB7C2083A
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:59:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9YSg6ca"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EB7C2083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D582020836
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 21:19:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D582020836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728810AbeJVFP3 (ORCPT
+        id S1728024AbeJVFfg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 01:15:29 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:47038 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728194AbeJVFNp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 01:13:45 -0400
-Received: by mail-lj1-f195.google.com with SMTP id x3-v6so35083412lji.13;
-        Sun, 21 Oct 2018 13:58:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=44oqZ+/ierfmo+WnNgcOmoD3+bTEhxntht5wx9v7/wQ=;
-        b=h9YSg6caMoRrfFgwFvXBEf4ntIdLWOof+X4/5J1Nhdp1ONnyrQL1/flUG/axx1V2NU
-         gDCW/uNNGPh9cb8r9Hu6oiKDtUBF9H1Z8VNWAKYjEiyoGuxfYlWS1oYE+NNgnX6HWXo/
-         4qzI6aWbMKR9sL5dOUybiBDJrTYaDvSPyc3QhaMCwfbXf2KXk6tYP8zcJdwZrVLE8O3d
-         qTLKnmNTPDPb1XB8czWWa/6hysP9n3xq8Gj4AephCfT5ZNjyEyH0dA7mifOwwJzWmR70
-         IkFjhgl3Ugy0tywsCfAWhSg3ANxZgAd845yi0+3m+d6lCVcaIjbPU7jX7zQUMyS4ejzs
-         /MGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=44oqZ+/ierfmo+WnNgcOmoD3+bTEhxntht5wx9v7/wQ=;
-        b=hLk1dIpUKz1Jd5PQU3tXJ74pLWQ68eehZhyyCB1ivb/K+ZCSxiXSd0IdtQ3HpeaC4a
-         t1Iojc0vTFJqzoJEnZ2bxKchEwjTqyG3rkV2KjRgJGilKz/MPIq2Nims3fTBUIBN039j
-         819/ZUQWMHVyTtCHis0OzUJt13HH/fK2Xd9+MnuvlpE7Nfg/27hnO9uncL6Gxvq7iXC8
-         9YDqpPtm0AdJKIEeMvYpVK34vYc/UGl95wu9EsQnMriR7yNnt/cMnNvmp4q59ehoeGGW
-         rTVSyK805Sv/WgBuMIjOlLmHOjbRiC0OtD59d/FoKjdzPmJJK7N3B4Z5XNDfQPlYEJnj
-         ZzjQ==
-X-Gm-Message-State: ABuFfohucKtxY8rCYZDqsMI+O6J+9GK9ebxVhvSRBC3FvL9givJijbtG
-        2r0kXQIAgLScX0oN1rlqnDk=
-X-Google-Smtp-Source: AJdET5fvlhz47jSPgay3gUnpOReV5eU/kOtYRlmANeI5QqRQs/pd31szTpnkuz/uzYXsaij2yILVZw==
-X-Received: by 2002:a2e:4794:: with SMTP id u142-v6mr3914213lja.8.1540155486000;
-        Sun, 21 Oct 2018 13:58:06 -0700 (PDT)
-Received: from localhost.localdomain (109-252-91-118.nat.spd-mgts.ru. [109.252.91.118])
-        by smtp.gmail.com with ESMTPSA id p63-v6sm6515919lfg.46.2018.10.21.13.58.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 21 Oct 2018 13:58:05 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v2 02/17] soc/tegra: fuse: Export tegra_get_chip_id()
-Date:   Sun, 21 Oct 2018 23:54:46 +0300
-Message-Id: <20181021205501.23943-3-digetx@gmail.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181021205501.23943-1-digetx@gmail.com>
-References: <20181021205501.23943-1-digetx@gmail.com>
+        Mon, 22 Oct 2018 01:35:36 -0400
+Received: from mga06.intel.com ([134.134.136.31]:54845 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727009AbeJVFfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 01:35:36 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2018 14:19:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,409,1534834800"; 
+   d="scan'208";a="90138190"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by FMSMGA003.fm.intel.com with ESMTP; 21 Oct 2018 14:19:52 -0700
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gEL8Z-00030J-Q3; Mon, 22 Oct 2018 00:19:51 +0300
+Date:   Mon, 22 Oct 2018 00:19:51 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 1/5] pinctrl: intel: pinctrl-baytrail: simplify getting
+ .driver_data
+Message-ID: <20181021211951.GM10650@smile.fi.intel.com>
+References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
+ <20181021200032.1833-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181021200032.1833-2-wsa+renesas@sang-engineering.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This function is used by tegra20-cpufreq driver which can be built as a
-kernel module.
+On Sun, Oct 21, 2018 at 10:00:27PM +0200, Wolfram Sang wrote:
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks!
 
-diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-index e5a4d8f98b10..c94dccf3eb30 100644
---- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
-+++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-@@ -51,6 +51,7 @@ u8 tegra_get_chip_id(void)
- {
- 	return (tegra_read_chipid() >> 8) & 0xff;
- }
-+EXPORT_SYMBOL_GPL(tegra_get_chip_id);
- 
- u32 tegra_read_straps(void)
- {
+I see only 3 out of 5 patches.
+
+Since we are about to establish a separate tree as well as an additional record
+in MAINTAINERS data base for Intel pinctrl driver, I ask you to resend only
+Intel related stuff in a separate series.
+
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Build tested only. buildbot is happy.
+> 
+>  drivers/pinctrl/intel/pinctrl-baytrail.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+> index 6d1a43c0c251..a1c2548123a1 100644
+> --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
+> +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+> @@ -1838,8 +1838,7 @@ static int byt_pinctrl_probe(struct platform_device *pdev)
+>  #ifdef CONFIG_PM_SLEEP
+>  static int byt_gpio_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct byt_gpio *vg = platform_get_drvdata(pdev);
+> +	struct byt_gpio *vg = dev_get_drvdata(dev);
+>  	int i;
+>  
+>  	for (i = 0; i < vg->soc_data->npins; i++) {
+> @@ -1867,8 +1866,7 @@ static int byt_gpio_suspend(struct device *dev)
+>  
+>  static int byt_gpio_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct byt_gpio *vg = platform_get_drvdata(pdev);
+> +	struct byt_gpio *vg = dev_get_drvdata(dev);
+>  	int i;
+>  
+>  	for (i = 0; i < vg->soc_data->npins; i++) {
+> -- 
+> 2.19.0
+> 
+
 -- 
-2.19.0
+With Best Regards,
+Andy Shevchenko
+
 
