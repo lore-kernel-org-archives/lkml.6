@@ -3,37 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 549E9ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF34ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A88A2083E
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A88A2083E
+	by mail.kernel.org (Postfix) with ESMTP id 04243205F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04243205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728164AbeJVEPh (ORCPT
+        id S1728211AbeJVEPi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 00:15:37 -0400
-Received: from sauhun.de ([88.99.104.3]:45636 "EHLO pokefinder.org"
+        Mon, 22 Oct 2018 00:15:38 -0400
+Received: from sauhun.de ([88.99.104.3]:45650 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727432AbeJVEPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:36 -0400
+        id S1727225AbeJVEPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 00:15:38 -0400
 Received: from localhost (unknown [90.200.225.72])
-        by pokefinder.org (Postfix) with ESMTPSA id 922022E35D6;
-        Sun, 21 Oct 2018 22:00:08 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id 81EEB2E35C5;
+        Sun, 21 Oct 2018 22:00:09 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH 3/6] gpio: gpio-mxc: simplify getting .driver_data
-Date:   Sun, 21 Oct 2018 21:59:58 +0200
-Message-Id: <20181021200002.1472-4-wsa+renesas@sang-engineering.com>
+        linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH 4/6] gpio: gpio-omap: simplify getting .driver_data
+Date:   Sun, 21 Oct 2018 21:59:59 +0200
+Message-Id: <20181021200002.1472-5-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
 References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
@@ -52,33 +55,53 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy.
 
- drivers/gpio/gpio-mxc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/gpio/gpio-omap.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 995cf0b9e0b1..5c69516e90b1 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -552,8 +552,7 @@ static void mxc_gpio_restore_regs(struct mxc_gpio_port *port)
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 9887c3db6e16..6ed621a00561 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -984,8 +984,7 @@ omap4_gpio_disable_level_quirk(struct gpio_bank *bank)
  
- static int __maybe_unused mxc_gpio_noirq_suspend(struct device *dev)
+ static int omap_mpuio_suspend_noirq(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct mxc_gpio_port *port = platform_get_drvdata(pdev);
-+	struct mxc_gpio_port *port = dev_get_drvdata(dev);
+-	struct gpio_bank	*bank = platform_get_drvdata(pdev);
++	struct gpio_bank	*bank = dev_get_drvdata(dev);
+ 	void __iomem		*mask_reg = bank->base +
+ 					OMAP_MPUIO_GPIO_MASKIT / bank->stride;
+ 	unsigned long		flags;
+@@ -999,8 +998,7 @@ static int omap_mpuio_suspend_noirq(struct device *dev)
  
- 	mxc_gpio_save_regs(port);
- 	clk_disable_unprepare(port->clk);
-@@ -563,8 +562,7 @@ static int __maybe_unused mxc_gpio_noirq_suspend(struct device *dev)
- 
- static int __maybe_unused mxc_gpio_noirq_resume(struct device *dev)
+ static int omap_mpuio_resume_noirq(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct mxc_gpio_port *port = platform_get_drvdata(pdev);
-+	struct mxc_gpio_port *port = dev_get_drvdata(dev);
- 	int ret;
+-	struct gpio_bank	*bank = platform_get_drvdata(pdev);
++	struct gpio_bank	*bank = dev_get_drvdata(dev);
+ 	void __iomem		*mask_reg = bank->base +
+ 					OMAP_MPUIO_GPIO_MASKIT / bank->stride;
+ 	unsigned long		flags;
+@@ -1688,8 +1686,7 @@ static void omap_gpio_restore_context(struct gpio_bank *bank)
  
- 	ret = clk_prepare_enable(port->clk);
+ static int __maybe_unused omap_gpio_runtime_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct gpio_bank *bank = platform_get_drvdata(pdev);
++	struct gpio_bank *bank = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 	int error = 0;
+ 
+@@ -1709,8 +1706,7 @@ static int __maybe_unused omap_gpio_runtime_suspend(struct device *dev)
+ 
+ static int __maybe_unused omap_gpio_runtime_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct gpio_bank *bank = platform_get_drvdata(pdev);
++	struct gpio_bank *bank = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 	int error = 0;
+ 
 -- 
 2.19.0
 
