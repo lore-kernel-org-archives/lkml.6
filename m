@@ -2,197 +2,102 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C48ECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 10:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA4EECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 10:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38B5420838
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 10:21:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38B5420838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 3020A2083E
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 10:40:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3020A2083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbeJUSfD (ORCPT
+        id S1727621AbeJUSyB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 14:35:03 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:41175 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726842AbeJUSfC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 14:35:02 -0400
-Received: from tmo-101-14.customers.d1-online.com ([80.187.101.14] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gEAqn-0003hN-DV; Sun, 21 Oct 2018 12:20:49 +0200
-Date:   Sun, 21 Oct 2018 12:20:47 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andi Kleen <ak@linux.intel.com>
-cc:     Andi Kleen <andi@firstfloor.org>, peterz@infradead.org,
-        x86@kernel.org, eranian@google.com, kan.liang@intel.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] x86/cpufeature: Add facility to match microcode
- revisions
-In-Reply-To: <20181020143857.GC27951@tassilo.jf.intel.com>
-Message-ID: <alpine.DEB.2.21.1810210954440.1651@nanos.tec.linutronix.de>
-References: <20181010162608.23899-1-andi@firstfloor.org> <alpine.DEB.2.21.1810171151010.6000@nanos.tec.linutronix.de> <20181019234743.GA27951@tassilo.jf.intel.com> <alpine.DEB.2.21.1810201017070.1651@nanos.tec.linutronix.de>
- <20181020143857.GC27951@tassilo.jf.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 21 Oct 2018 14:54:01 -0400
+Received: from sauhun.de ([88.99.104.3]:42570 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726842AbeJUSyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Oct 2018 14:54:01 -0400
+Received: from localhost (p54B33A92.dip0.t-ipconnect.de [84.179.58.146])
+        by pokefinder.org (Postfix) with ESMTPSA id 894592E35C1;
+        Sun, 21 Oct 2018 12:40:06 +0200 (CEST)
+Date:   Sun, 21 Oct 2018 12:40:06 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PULL REQUEST] i2c for 4.19
+Message-ID: <20181021104002.GA2921@kunai>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andi,
 
-On Sat, 20 Oct 2018, Andi Kleen wrote:
-> On Sat, Oct 20, 2018 at 10:19:37AM +0200, Thomas Gleixner wrote:
-> > On Fri, 19 Oct 2018, Andi Kleen wrote:
-> > There is no point to return the pointer because it's not a compound
-> > structure. If you want to provide the possibility to use the index then
-> > return the index and an error code if it does not match.
-> 
-> It will be useful with the driver_data pointer, which you short sightedly
-> forced me to remove, and likely will need to be readded at some point
-> anyways if this gets more widely used.
+--zYM0uCDKw75PZbzx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-It's good and established practice not to add functionality on a 'might be
-used' basis. If you'd provide at least one or two patches which demonstrate
-how that is useful then that would be convincing.
+Greg,
 
->  At least with the pointer not all callers will need to be changed then.
-
-It doesn't need to be changed at all, when done correctly.
-
-So lets walk through that again:
-
-1) x86_match_microcode() is a misnomer because it's not as the name
-   suggests a match function. It compares whether the micro code revision
-   is greater or equal the minimal required micro code revision for the
-   current CPU.
-   
-2) None of the existing implementations needs a pointer return value,
-   neither does your use case at hand.
-
-3) If this should be extended to a generic cpu id matching facility, then
-   it can be very well designed so. See below.
-
-Step 1:
-
-struct x86_cpu_check {
-	u8	vendor;
-	u8	family;
-	u8	model;
-	u8	stepping;
-};
-
-struct x86_cpu_check *x86_match_cpu(struct x86_cpu_check *table)
-{
-	// Find matching vendor, family, model, stepping entry
-	... {
-		return entry;
-	}
-	return NULL;
-}
-
-Genuine CPU match function, which can be extended by extending the data
-structure.
-
-Step 2:
-
-struct x86_cpu_check {
-	u8	vendor;
-	u8	family;
-	u8	model;
-	u8	stepping;
-	u32	microcode_rev;
-};
-
-bool x86_cpu_has_min_microcode(struct x86_cpu_check *table)
-{
-	struct x86_cpu_check *res = x86_match_cpu(table);
-
-	if (!res)
-		return false;
-	return res->microcode_revision >= boot_cpu_data.microcode;
-}
-
-Step 3:
-
-struct x86_cpu_check {
-	u8	vendor;
-	u8	family;
-	u8	model;
-	u8	stepping;
-	union {
-		u32	microcode_rev;
-		void	*driver_data;
-	}
-};
-
-Can be used with x86_match_cpu() for all non microcode based matching.
-
-So if you really need something which checks the microcode and provides the
-pointer, then it's easy enough to do:
-
-Step 4:
-
-struct x86_cpu_check {
-	u8	vendor;
-	u8	family;
-	u8	model;
-	u8	stepping;
-	u32	microcode_rev;
-	void	*driver_data;
-};
-
-struct x86_cpu_check *x86_check_min_microcode(struct x86_cpu_check *table)
-{
-	struct x86_cpu_check *res = x86_match_cpu(table);
-
-	if (!res || res->microcode_rev < boot_cpu_data.microcode)
-		return NULL;
-	return res;
-}
-
-static inline bool x86_cpu_has_min_microcode(struct x86_cpu_check *table)
-{
-	return !!x86_check_min_microcode(table);
-}
-
-None of these steps requires to change a call site or a table.
-
-But probably I'm too short sighted and missing something crucial. Looking
-forward for enlightment.
-
-> Also it's symmetric with how the PCI and USB and the existing x86 match
-> discovery interfaces work.
-
-And the point is? That we need to keep everything as we've done it 20 years
-ago?
-
-> > > > VENDOR_INTEL = 0, so this check is obscure to begin with. Either you chose
-> > > > a explicit condition to put at the end of the table, e.g. vendor = U8_MAX
-> > > > or you hand in the array size to the function.
-> > > 
-> > > That would both be awkward. It's the same as match_cpu, and 0 terminators
-> > > are standard practice in practical all similar code. I removed
-> > > the or with the family.
-> > 
-> > That's debatable because it's more easy to miss the terminator than getting
-> > the ARRAY_SIZE() argument wrong. But it doesn't matter much.
-> 
-> Ok then please apply it. 
-
-Sure, once this argument is settled and all review comments are addressed.
+please pull another driver bugfix and MAINTAINERS addition from I2C.
 
 Thanks,
 
-	tglx
+   Wolfram
+
+
+The following changes since commit 35a7f35ad1b150ddf59a41dcac7b2fa32982be0e:
+
+  Linux 4.19-rc8 (2018-10-15 07:20:24 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
+
+for you to fetch changes up to 31d86033a0749a0463ea654130b2de5c163154f1:
+
+  i2c: rcar: cleanup DMA for all kinds of failure (2018-10-20 15:25:59 +0200)
+
+----------------------------------------------------------------
+Kamal Dasu (1):
+      MAINTAINERS: Add entry for Broadcom STB I2C controller
+
+Wolfram Sang (1):
+      i2c: rcar: cleanup DMA for all kinds of failure
+
+ MAINTAINERS                   | 8 ++++++++
+ drivers/i2c/busses/i2c-rcar.c | 6 +++++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+--zYM0uCDKw75PZbzx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvMV30ACgkQFA3kzBSg
+KbbFJw//e/o64XaEp1T+pNh4khVEAtQmh98yb+/Sph8xVPqFKZnOd0MxKnc6SZUt
+gXJUKroRnqclp+0dCeeeVDVOKHlgVkbv1lECBOG/jaNIdpdxahQm8UHvLWDl2N4h
+z7G2oB1urzA9i7ziDIGEVZLoTLmhQCk+4s8/Vc1EHj5hRzkwFaTC/9X245+LCtnv
+7n8RAKDnP7VQN/ThMoMU/7qRlq3aFlZP9s6315qmvF4qnXyDRTc+RdRecI4Xfs6C
+qnKL1mMuAwHCdk3IsTcL1kopbyIXMJM2a12sOWpioc/BD7qS8z4iZD5XAYm2rrza
+0iMhIYGgZGtvgBt9DX876BgvAq4FwVa+FoXCVC4+Rbh11EwkCnC6YBtXhMfffacB
+uNIwKbdd3bfoYXeZOzfsE27E+l0GBetOzq/XsJJ+M/UZP38yILMrHQihL/PEd8Bp
+nxDnj6hkkmY+dPbmJyD3U8KdWIAD0incZ8cxXAvw5zeDQQPz0kg5Nr0Nr1Z/tjl+
+fxqhkwOMcnuHsBsL885aVE+nXle4JdVdC5Yp7BO8cbeKI5yg+3wdEVbunXeobhrT
+SF8cdHdEnMmPtNwBvbu+j5YFs/9VZrvtXyGyLO/43ceyWtwk9GPFwrNfDH6XiwPN
+YGfJgePR6EtXpK4VikoFfGizCuZPa4l3eI8AbBrU+920hdkTg9s=
+=8ka2
+-----END PGP SIGNATURE-----
+
+--zYM0uCDKw75PZbzx--
