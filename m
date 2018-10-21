@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B493ECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E13ABECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:59:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 127B02082C
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:58:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99C2C2082C
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:59:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X4gKYmYS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 127B02082C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJ6J03W7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99C2C2082C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728575AbeJVFN5 (ORCPT
+        id S1728805AbeJVFOp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 01:13:57 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41538 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727256AbeJVFN4 (ORCPT
+        Mon, 22 Oct 2018 01:14:45 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35677 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728398AbeJVFNy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 01:13:56 -0400
-Received: by mail-lj1-f195.google.com with SMTP id u21-v6so35084253lja.8;
-        Sun, 21 Oct 2018 13:58:17 -0700 (PDT)
+        Mon, 22 Oct 2018 01:13:54 -0400
+Received: by mail-lj1-f193.google.com with SMTP id o14-v6so35129790ljj.2;
+        Sun, 21 Oct 2018 13:58:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=CudL+sqy6LcsG39kWf5I1sBXk5eo3KjjAKTeKlnP6Sc=;
-        b=X4gKYmYSYAxTORwqZ5El88V8xslhxEKeGFTGQ+rZBeg/+7R4+kB21IWGzAhxGZgNHl
-         aI9kp/jGNL+3w4UkK462JcBwOaL8pdXCr7n3BHHhOXFIu9x8SvM2HnDVLUOKs62sYGN2
-         j11OO4sf5t2pjBCrvA4OfQaxsrFMqR/CGlUhWrpb1Vvz2IAnDfy4wuyJZVqT4p1U1D/D
-         l4Go0Y2ZBavpSVZr+fbrbRR7v/TWa5kq6uMc/xgGjHc6drusn7n7rnv2XybUxowLpWIW
-         rE0Oppnj5eqI4ahmIqZUp8knzw5fIQEea6CSUS9oj1QHL5smRl25D9xmfrJghrGAgwuS
-         MhIg==
+        bh=fmGkAu4XHZNOq56DlvZJAZH2wGLRNDClSYlgkU+I3vs=;
+        b=cJ6J03W7VcdH2AT2dD3h7QavYUFpBTwp35ZL9Ech6FWutxSCh/sWNi/KyFubYGVQ7y
+         YIzSxDAK/e8a08f+ECQkwyMHUpkZMV+UsJSm5Cvg0/yqrJhIzoC+tNr35WfqjvpbxAOc
+         L88rSIBdqwzNun7IhUvBLLzm5h1fIY0+5/kh1qPYGw7Lh1a/KPtykQhDTk63l/huonx9
+         N7ldTMyTljBWjMC5SphoaKSJH9q0It/V5RuTmokR9ItXWOApjGMJHUZFAa80c231yb/K
+         6btp9w4wxxGJXcvh7v+YgHHByq6tC1drjJXgq1/DnDZmsqUCbjEqiVFBGkancQ7tVf1w
+         x7rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CudL+sqy6LcsG39kWf5I1sBXk5eo3KjjAKTeKlnP6Sc=;
-        b=EsXO6CNydWZFlxCljsHnX2/5jmoq0VWfTb8jrDimfnmnE8D41785t2tXvIjsQ7m0zv
-         2tmcWKTztNc6Xl919lWzomu6pHD3QK3piLQCHBA4PEPm3yFpDMdHtn7UtDAchC8sL9dD
-         9akeh5JIR1CnYRBcXfsHpThTEprfzY9e6VJJ22I34+Pr2E/O6vzj2k6Ybs8RWn52gLAy
-         6ApvKbWJafL27rypZMH1kRNvwPdiLu5n8Zt8kTx0ZC6eK6PTwvBlTHHCWpV84JhtHXKi
-         9fe7l9jB0BjDgf5HejU8V40PXDybuoZrjKopiBWPXlShtFHXmz4zuJvm0YFpHk1M19UA
-         z/zQ==
-X-Gm-Message-State: ABuFfoiCGU9cklM1fdOKqfQTsJ99lCf4mk+mLPBO2drRVfUPfXHBA5jA
-        p/GWy0C0920+1T2/0V8axTc=
-X-Google-Smtp-Source: ACcGV63tanBERBQyhVICl2eVygFKIOtkfovUzOqqiHlYUrty3Lzib1wDT3m6jYUy0amSTm0Z0Gbpyw==
-X-Received: by 2002:a2e:7017:: with SMTP id l23-v6mr22937686ljc.160.1540155496742;
-        Sun, 21 Oct 2018 13:58:16 -0700 (PDT)
+        bh=fmGkAu4XHZNOq56DlvZJAZH2wGLRNDClSYlgkU+I3vs=;
+        b=EDM2xKpXoheDv3gW9ZKqs0zyZR7bBicRaidxYrrKGh6AAlGEog42axKxtQPa7p+pRb
+         owvxwk1FpxheQWc7rP2XWnNl5gKSuLHjAVN2MxjQC5NSzRafn0Wv54zVm7/sQYstug2D
+         IzCcZ+/ARP5m4IalDb1YHLFivQo+4X9MK2bn3dk55I/IYj6QOUWIsbI+5E9T/Akiyl+1
+         YPK/Tu87CY79d4dnmJyq6+7LyxkJbXpbQVxx3Gi0CgZXTvZESM75Yxr1ZSWWb2rsnFIG
+         G3adawNEwPzQnpudYR+hERXMCtvArS/rbG9RuxKYdM5Pr8HSGIQwEG7KC08L8SVIUhsW
+         casw==
+X-Gm-Message-State: AGRZ1gKWDkl7aTqGotGOIK5guVJC07Jmpeh39iSzMg7VRMGD0CnvwcwH
+        S0VdFalnjhb91//yi7xyMC4=
+X-Google-Smtp-Source: ACcGV639oMkaHMpChbwibtF+UeUvYVZGh5z5uDQsjzfp4+Sj9QWMCSI9KBi1RR/k+b3pOYyey/jsHg==
+X-Received: by 2002:a2e:1642:: with SMTP id 2-v6mr9360327ljw.56.1540155494568;
+        Sun, 21 Oct 2018 13:58:14 -0700 (PDT)
 Received: from localhost.localdomain (109-252-91-118.nat.spd-mgts.ru. [109.252.91.118])
-        by smtp.gmail.com with ESMTPSA id p63-v6sm6515919lfg.46.2018.10.21.13.58.15
+        by smtp.gmail.com with ESMTPSA id p63-v6sm6515919lfg.46.2018.10.21.13.58.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 21 Oct 2018 13:58:16 -0700 (PDT)
+        Sun, 21 Oct 2018 13:58:14 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Viresh Kumar <viresh.kumar@linaro.org>,
@@ -69,9 +69,9 @@ To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v2 12/17] ARM: dts: tegra20: tamonten: Setup voltage regulators for DVFS
-Date:   Sun, 21 Oct 2018 23:54:56 +0300
-Message-Id: <20181021205501.23943-13-digetx@gmail.com>
+Subject: [RFC PATCH v2 10/17] ARM: dts: tegra20: paz00: Setup voltage regulators for DVFS
+Date:   Sun, 21 Oct 2018 23:54:54 +0300
+Message-Id: <20181021205501.23943-11-digetx@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181021205501.23943-1-digetx@gmail.com>
 References: <20181021205501.23943-1-digetx@gmail.com>
@@ -87,20 +87,20 @@ voltage regulators.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra20-tamonten.dtsi | 31 ++++++++++++++++++-------
+ arch/arm/boot/dts/tegra20-paz00.dts | 31 ++++++++++++++++++++---------
  1 file changed, 22 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-index 20137fc578b1..e9db60f4c317 100644
---- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-+++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-@@ -357,17 +357,19 @@
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 8861e0976e37..51a09ae99f3a 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -337,17 +337,19 @@
  					regulator-always-on;
  				};
  
 -				sm0 {
 +				core_vdd_reg: sm0 {
- 					regulator-name = "vdd_sys_sm0,vdd_core";
+ 					regulator-name = "+1.2vs_sm0,vdd_core";
 -					regulator-min-microvolt = <1200000>;
 -					regulator-max-microvolt = <1200000>;
 +					regulator-min-microvolt = <1000000>;
@@ -112,7 +112,7 @@ index 20137fc578b1..e9db60f4c317 100644
  
 -				sm1 {
 +				cpu_vdd_reg: sm1 {
- 					regulator-name = "vdd_sys_sm1,vdd_cpu";
+ 					regulator-name = "+1.0vs_sm1,vdd_cpu";
 -					regulator-min-microvolt = <1000000>;
 -					regulator-max-microvolt = <1000000>;
 +					regulator-min-microvolt = <750000>;
@@ -120,13 +120,13 @@ index 20137fc578b1..e9db60f4c317 100644
  					regulator-always-on;
  				};
  
-@@ -391,10 +393,13 @@
+@@ -367,10 +369,13 @@
  					regulator-always-on;
  				};
  
 -				ldo2 {
 +				rtc_vdd_reg: ldo2 {
- 					regulator-name = "vdd_ldo2,vdd_rtc";
+ 					regulator-name = "+1.2vs_ldo2,vdd_rtc";
 -					regulator-min-microvolt = <1200000>;
 -					regulator-max-microvolt = <1200000>;
 +					regulator-min-microvolt = <950000>;
@@ -137,9 +137,9 @@ index 20137fc578b1..e9db60f4c317 100644
  				};
  
  				ldo3 {
-@@ -531,4 +536,12 @@
- 			enable-active-high;
- 		};
+@@ -603,4 +608,12 @@
+ 			 <&tegra_car TEGRA20_CLK_CDEV1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
  	};
 +
 +	cpus {
