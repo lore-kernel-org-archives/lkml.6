@@ -2,91 +2,98 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EE5ECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 07:13:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD47CECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 07:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D532620838
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 07:13:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D532620838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 5836C20838
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 07:18:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BCEGXGdk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5836C20838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbeJUP0f (ORCPT
+        id S1727181AbeJUPbq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 11:26:35 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:55997 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726975AbeJUP0e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 11:26:34 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9L7Clhh019858;
-        Sun, 21 Oct 2018 16:12:47 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Sun, 21 Oct 2018 16:12:47 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9L7CkAi019839
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sun, 21 Oct 2018 16:12:47 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: KASAN: use-after-free Read in task_is_descendant
-To:     serge@hallyn.com, Oleg Nesterov <oleg@redhat.com>
-References: <0000000000004904df0578b7d3da@google.com>
-Cc:     syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
-        jmorris@namei.org, keescook@chromium.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <bf1a083c-0d09-07fb-6ad2-4bf30ac49cd8@I-love.SAKURA.ne.jp>
-Date:   Sun, 21 Oct 2018 16:12:43 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 21 Oct 2018 11:31:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60172 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726975AbeJUPbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Oct 2018 11:31:45 -0400
+Received: from localhost (10.193.71.37.rev.sfr.net [37.71.193.10])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4350F20838;
+        Sun, 21 Oct 2018 07:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540106303;
+        bh=mSAHYn/zHAAWWTdLaXYO7JWGwlsVyHZyiRQnIUb7hmg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BCEGXGdk3vvBzl1V6mHSsWack0hARUFI7M9QG4g4B1qXy9vdu8c1XQk42LCNABfhA
+         pMfZ9acXd8HdIT2YSQN+pRb2my7R8OSHCzSD3JYf1NryhHWQO5ctwxx6KKwS8MFNUJ
+         lOAwl9BzsbayySJITD4HYzsJrV1cIcjCaSoRhRBw=
+Date:   Sun, 21 Oct 2018 09:18:21 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     ksummit-discuss@lists.linuxfoundation.org, mishi@linux.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [Ksummit-discuss] [PATCH 5/7] Code of Conduct Interpretation:
+ Put in the proper URL for the committee
+Message-ID: <20181021071821.GD11176@kroah.com>
+References: <20181020134908.GA32218@kroah.com>
+ <20181020135058.GF32218@kroah.com>
+ <CAMuHMdUR_7GgFL0wqh9AdEq=HWmxPB=HzarEgY5TeLo67+S1LA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <0000000000004904df0578b7d3da@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUR_7GgFL0wqh9AdEq=HWmxPB=HzarEgY5TeLo67+S1LA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/21 16:10, syzbot wrote:
-> BUG: KASAN: use-after-free in __read_once_size include/linux/compiler.h:188 [inline]
-> BUG: KASAN: use-after-free in task_is_descendant.part.2+0x610/0x670 security/yama/yama_lsm.c:295
-> Read of size 8 at addr ffff8801c4666b20 by task syz-executor3/12722
+On Sat, Oct 20, 2018 at 09:01:57PM +0200, Geert Uytterhoeven wrote:
+> Hi Greg,
 > 
-> CPU: 1 PID: 12722 Comm: syz-executor3 Not tainted 4.19.0-rc8+ #70
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
->  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->  __read_once_size include/linux/compiler.h:188 [inline]
->  task_is_descendant.part.2+0x610/0x670 security/yama/yama_lsm.c:295
+> On Sat, Oct 20, 2018 at 3:53 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > There was a blank <URL> reference for how to find the Code of Conduct
+> > Committee.  Fix that up by pointing it to the correct kernel.org website
+> > page location.
+> >
+> > Acked-by: Chris Mason <clm@fb.com>
+> > Acked-by: Olof Johansson <olof@lixom.net>
+> > Acked-by: Theodore Ts'o <tytso@mit.edu>
+> > Acked-by: Thomas Gleixner <tglx@linutronix.de>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> Thanks for your patch!
+> 
+> > --- a/Documentation/process/code-of-conduct-interpretation.rst
+> > +++ b/Documentation/process/code-of-conduct-interpretation.rst
+> > @@ -123,8 +123,9 @@ Enforcement
+> >
+> >  The address listed in the Code of Conduct goes to the Code of Conduct
+> >  Committee.  The exact members receiving these emails at any given time
+> > -are listed at <URL>.  Members can not access reports made before they
+> > -joined or after they have left the committee.
+> > +are listed at https://kernel.org/code-of-conduct.html.  Members can not
+> > +access reports made before they joined or after they have left the
+> > +committee.
+> 
+> This seems to be the wrong URL? It just points to the CoC, not to the TAB
+> members.
 
-Do we need to hold
+The information at that web page will be updatd "soon" with the
+information about the committee.  Please give us a few more days for
+this, as we are all traveling at the moment...
 
-  write_lock_irq(&tasklist_lock);
+thanks,
 
-rather than
-
-  rcu_read_lock();
-
-when accessing
-
-  "struct task_struct"->real_parent
-
-?
+greg k-h
