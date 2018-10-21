@@ -2,47 +2,38 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E80ECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BCEECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 351302083C
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 351302083C
+	by mail.kernel.org (Postfix) with ESMTP id 6A6742083C
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A6742083C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728493AbeJVEQA (ORCPT
+        id S1728512AbeJVEQD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 00:16:00 -0400
-Received: from sauhun.de ([88.99.104.3]:45764 "EHLO pokefinder.org"
+        Mon, 22 Oct 2018 00:16:03 -0400
+Received: from sauhun.de ([88.99.104.3]:45812 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728391AbeJVEP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:59 -0400
+        id S1728391AbeJVEQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 00:16:02 -0400
 Received: from localhost (unknown [90.200.225.72])
-        by pokefinder.org (Postfix) with ESMTPSA id 43A152E35DD;
-        Sun, 21 Oct 2018 22:00:31 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id D09FD2E35DC;
+        Sun, 21 Oct 2018 22:00:33 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 9/9] net: phy: mdio-mux-bcm-iproc: simplify getting .driver_data
-Date:   Sun, 21 Oct 2018 22:00:20 +0200
-Message-Id: <20181021200021.1693-10-wsa+renesas@sang-engineering.com>
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Subject: [PATCH 0/5] pinctrl: simplify getting .driver_data
+Date:   Sun, 21 Oct 2018 22:00:26 +0200
+Message-Id: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
-References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -50,41 +41,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+I got tired of fixing this in Renesas drivers manually, so I took the big
+hammer. Remove this cumbersome code pattern which got copy-pasted too much
+already:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-Build tested only. buildbot is happy.
-
- drivers/net/phy/mdio-mux-bcm-iproc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/phy/mdio-mux-bcm-iproc.c b/drivers/net/phy/mdio-mux-bcm-iproc.c
-index c017486e9b86..696bdf1e4576 100644
---- a/drivers/net/phy/mdio-mux-bcm-iproc.c
-+++ b/drivers/net/phy/mdio-mux-bcm-iproc.c
-@@ -289,8 +289,7 @@ static int mdio_mux_iproc_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int mdio_mux_iproc_suspend(struct device *dev)
- {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct iproc_mdiomux_desc *md = platform_get_drvdata(pdev);
-+	struct iproc_mdiomux_desc *md = dev_get_drvdata(dev);
- 
- 	clk_disable_unprepare(md->core_clk);
- 
-@@ -299,8 +298,7 @@ static int mdio_mux_iproc_suspend(struct device *dev)
- 
- static int mdio_mux_iproc_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct iproc_mdiomux_desc *md = platform_get_drvdata(pdev);
-+	struct iproc_mdiomux_desc *md = dev_get_drvdata(dev);
- 
- 	clk_prepare_enable(md->core_clk);
- 	mdio_mux_iproc_config(md);
+-	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
++	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
+
+A branch, tested by buildbot, can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
+
+I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
+it and did not find one occasion where it could be simplified like this. Not
+much of a surprise because driver_data is usually set in probe() functions
+which access struct platform_device in many other ways.
+
+I am open for other comments, suggestions, too, of course.
+
+Here is the cocci-script I created:
+
+@@
+struct device* d;
+identifier pdev;
+expression *ptr;
+@@
+(
+-	struct platform_device *pdev = to_platform_device(d);
+|
+-	struct platform_device *pdev;
+	...
+-	pdev = to_platform_device(d);
+)
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+	ptr =
+-	platform_get_drvdata(pdev)
++	dev_get_drvdata(d)
+
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+Kind regards,
+
+   Wolfram
+
+
+Wolfram Sang (5):
+  pinctrl: intel: pinctrl-baytrail: simplify getting .driver_data
+  pinctrl: intel: pinctrl-cherryview: simplify getting .driver_data
+  pinctrl: intel: pinctrl-intel: simplify getting .driver_data
+  pinctrl: pinctrl-amd: simplify getting .driver_data
+  pinctrl: pinctrl-at91-pio4: simplify getting .driver_data
+
+ drivers/pinctrl/intel/pinctrl-baytrail.c   | 6 ++----
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 6 ++----
+ drivers/pinctrl/intel/pinctrl-intel.c      | 6 ++----
+ drivers/pinctrl/pinctrl-amd.c              | 6 ++----
+ drivers/pinctrl/pinctrl-at91-pio4.c        | 6 ++----
+ 5 files changed, 10 insertions(+), 20 deletions(-)
+
 -- 
 2.19.0
 
