@@ -2,124 +2,157 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EADFCECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 03:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9735FECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 03:47:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FAAB20645
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 03:21:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 412D420C0E
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 03:47:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Doy2PZp4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FAAB20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dZMR4DVQ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FnDmPAoZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 412D420C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbeJULeS (ORCPT
+        id S1727033AbeJUMAD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 07:34:18 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52590 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbeJULeS (ORCPT
+        Sun, 21 Oct 2018 08:00:03 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40394 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbeJUMAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 07:34:18 -0400
-Received: by mail-it1-f196.google.com with SMTP id 134-v6so8430739itz.2;
-        Sat, 20 Oct 2018 20:21:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=jzyKYx4AFihvqSKCOrGgDtZOZ5a6rH32a5Afi+e39ic=;
-        b=Doy2PZp4y7SSYSF+UKFOZvDWLbmdopwhwb2YxgaZ1FVLCrQlcXx2/dOOqXZQ7939El
-         HOwVjVchylZPdwq38l8WQnMAZKZ7D9nfg7V92tBQ2x0uH57YVvV+JKZxXE1KuCkpnNuT
-         WiZxFQV/B2mEaMln9kiIWBbjVSatICld8LLXptxiAL0tfdOM2X6X3Kovz/B7Xt6nxgem
-         baCLBNE9xKbUx7ok0r2hkWmIc8P/oT2hHGuomYECbL3/ssiMjs8w25kPPc8TEbrjionz
-         9hCEuyao3DKyTmmQOwqLxE3jseK9U+8lr25lSv/9Bm5+U30bCOodrJM3oxVHccKGCjeY
-         cSrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=jzyKYx4AFihvqSKCOrGgDtZOZ5a6rH32a5Afi+e39ic=;
-        b=lsG/7CsOmt0pHTthUPSgve9rcZzbVl3hA7R/XxeBK9wUDMC3sbomkSdtTe7elYdN5g
-         H6gJDomcuLvy1iVLT3hlMvzRfLmiT5f+Tj0A37ZZSauamJRk3bF1EFXfHKH2GvmHhTZ7
-         3zz0hTXNtmrRVULrrC1g6nRCKJKES+Oqtau5SV6S452nT/B+906WFgaX1XFsILHT2xJZ
-         5HZGD7k831VVMBCPIySkLlZYZnbl7wYnyJri+0ealVhJCcBZIXbNf7FXbrrjbjJz+IIc
-         HiBVLvpxcL6MbVodovpGJmLXipk7DVkmofr5LteHf3EZrh8dzUwVKAUC0nYBeZDKi01l
-         78sA==
-X-Gm-Message-State: ABuFfogffjXPd91EjhcBFi0qHOc8f2S7k2i73QDZASNpfK3K2BZ/1Nvb
-        J9BKZu1wVpu6qgglzFmEGjY=
-X-Google-Smtp-Source: ACcGV63EMDn7oUH073ffk6V0dWMxsX8BM1cu5ItVb0aoOIQC6pv4McOto/yTxNXGqhV0SDejUAnFIw==
-X-Received: by 2002:a02:9609:: with SMTP id c9-v6mr165174jai.118.1540092093284;
-        Sat, 20 Oct 2018 20:21:33 -0700 (PDT)
-Received: from nexus5x-flo.lan (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
-        by smtp.gmail.com with ESMTPSA id 72-v6sm803188iou.87.2018.10.20.20.21.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 20 Oct 2018 20:21:32 -0700 (PDT)
-Date:   Sat, 20 Oct 2018 20:21:19 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <1540051091-16604-1-git-send-email-wang6495@umn.edu>
-References: <1540051091-16604-1-git-send-email-wang6495@umn.edu>
+        Sun, 21 Oct 2018 08:00:03 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9922F60C5F; Sun, 21 Oct 2018 03:47:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540093634;
+        bh=ocNIjszvFWIN2lWlqnf/jRPlaWGWadnOyCrIfhXSMVI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=dZMR4DVQuOKJ65d4HcQppTfTn0AVSXmM9yqsw5GtIrG/jYmFmDrScvIOnDgrXhsfB
+         cZL3aqEe7ykV2CNJeQKiPGnmTtl9fneYBcyPhBqAHaNTi/6gKq4+A5WY+nTeD89OIa
+         BxTD2PgHBKFsKVjX/zmbiGwJTDaZTMEx+/G7b5XI=
+Received: from [192.168.43.47] (unknown [223.227.22.91])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D21C46044E;
+        Sun, 21 Oct 2018 03:47:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540093632;
+        bh=ocNIjszvFWIN2lWlqnf/jRPlaWGWadnOyCrIfhXSMVI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FnDmPAoZrXLFnFvxrH5B3tU3i18dQ5R9cTVWl1cVhwkVKPbqeBemiDzZYSZ9o/BbB
+         QvXvTAlcxz6rbFAlfX+WVtnTp01jCuJpP4MBGanex296gEToEBMXBz7H4O06m8fAIw
+         qL5JTxwAhnkzXqH4fioUgpuMMuSlkzrcJsX2VxUA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D21C46044E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCH 0/6] Tracing register accesses with pstore and dynamic
+ debug
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Colin Cross <ccross@android.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Jim Cromie <jim.cromie@gmail.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Prasad Sodagudi <psodagud@codeaurora.org>,
+        tsoni@codeaurora.org, Bryan Huntsman <bryanh@codeaurora.org>,
+        Tingwei Zhang <tingwei@codeaurora.org>, tkjos@google.com
+References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
+ <20181020052535.GA155509@joelaf.mtv.corp.google.com>
+ <1d3ddbe3-d3ac-aa3e-fc9e-36739ddd0c91@codeaurora.org>
+ <20181020162719.GA49955@joelaf.mtv.corp.google.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <15ec736d-bd54-5519-4b99-47dd161bc556@codeaurora.org>
+Date:   Sun, 21 Oct 2018 09:16:59 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] net: socket: fix a missing-check bug
-To:     Wenwen Wang <wang6495@umn.edu>
-CC:     Kangjie Lu <kjlu@umn.edu>, "David S. Miller" <davem@davemloft.net>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <F93F08E0-9D18-4C1A-8214-8AEAC829B317@gmail.com>
+In-Reply-To: <20181020162719.GA49955@joelaf.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wenwen,
+On 10/20/2018 9:57 PM, Joel Fernandes wrote:
+> On Sat, Oct 20, 2018 at 12:02:37PM +0530, Sai Prakash Ranjan wrote:
+>> On 10/20/2018 10:55 AM, Joel Fernandes wrote:
+>>> On Sun, Sep 09, 2018 at 01:57:01AM +0530, Sai Prakash Ranjan wrote:
+>>>> Hi,
+>>>>
+>>>> This patch series adds Event tracing support to pstore and is continuation
+>>>> to the RFC patch introduced to add a new tracing facility for register
+>>>> accesses called Register Trace Buffer(RTB). Since we decided to not introduce
+>>>> a separate framework to trace register accesses and use existing framework
+>>>> like tracepoints, I have moved from RFC. Details of the RFC in link below:
+>>>>
+>>>> Link: https://lore.kernel.org/lkml/cover.1535119710.git.saiprakash.ranjan@codeaurora.org/
+>>>>
+>>>> MSR tracing example given by Steven was helpful in using tracepoints for
+>>>> register accesses instead of using separate trace. But just having these
+>>>> IO traces would not help much unless we could have them in some persistent
+>>>> ram buffer for debugging unclocked access or some kind of bus hang or an
+>>>> unexpected reset caused by some buggy driver which happens a lot during
+>>>> initial development stages. By analyzing the last few entries of this buffer,
+>>>> we could identify the register access which is causing the issue.
+>>>
+>>> Hi Sai,
+>>>
+>>> I wanted to see if I could make some time to get your patches working. We are
+>>> hitting usecases that need something like this as well. Basically devices
+>>> hanging and then the ramdump does not tell us much, so in this case pstore
+>>> events can be really helpful. This usecase came up last year as well.
+>>>
+>>> Anyway while I was going through your patches, I cleaned up some pstore code
+>>> as well and I have 3 more patches on top of yours for this clean up. I prefer
+>>> we submit the patches together and sync our work together so that there is
+>>> least conflict.
+>>>
+>>> Here's my latest tree:
+>>> https://github.com/joelagnel/linux-kernel/commits/pstore-events
+>>> (note that I have only build tested the patches since I just wrote them and
+>>> its quite late in the night here ;-))
+>>>
+>>
+>> Hi Joel,
+>>
+>> Thanks for looking into this. Sure, I will be happy to sync up with you on
+> 
+> Thanks. And added a fourth patch in the tree too.
+> 
+>> this. I can test your additional patches on top of my pstore patches. BTW,
+>> I'm still stuck at copying binary record into pstore and then extract it
+>> during read time. Seems like I'm missing something.
+> 
+> Sure, push your latest somewhere and let me know. I'll try to get you unstuck.
+> 
 
-On October 20, 2018 8:58:10 AM PDT, Wenwen Wang <wang6495@umn=2Eedu> wrote=
-:
->In ethtool_ioctl(), the ioctl command is firstly obtained from the
->user-space buffer 'compat_rxnfc' through get_user() and saved to
->'ethcmd'=2E
->Then, 'ethcmd' is checked to see whether it is necessary to pre-process
->the
->ethool structure, because the structure ethtool_rxnfc is defined with
->padding, as mentioned in the comment=2E If yes, a user-space buffer
->'rxnfc'
->is allocated through compat_alloc_user_space() and then the data in the
->original buffer 'compat_rxnfc' is copied to 'rxnfc' through
->copy_in_user(),
->including the ioctl command=2E It is worth noting that after this copy,
->there
->is no check enforced on the copied ioctl command=2E That means it is
->possible
->that 'rxnfc->cmd' is different from 'ethcmd', because a malicious user
->can
->race to modify the ioctl command in 'compat_rxnfc' between these two
->copies=2E Eventually, the ioctl command in 'rxnfc' will be used in
->dev_ethtool()=2E This can cause undefined behavior of the kernel and
->introduce potential security risk=2E
->
->This patch avoids the above issue by rewriting 'rxnfc->cmd' using
->'ethcmd'
->after copy_in_user()=2E
->
->Signed-off-by: Wenwen Wang <wang6495@umn=2Eedu>
+Thanks Joel, I will push my changes and let you know in some time.
 
-Assuming these issues are found with some kind of automated analysis, can =
-you also add in your work flow to provide a Fixes: tag such that this could=
- be backported to stable kernels?
-
-If this is found by a tool is this something that is open source and someh=
-ow available? I would also make it clear that these issues are typically na=
-med time TOCTOU which might be clearer for people who review those patches=
-=2E
-
-Thanks!
---=20
-Florian
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
