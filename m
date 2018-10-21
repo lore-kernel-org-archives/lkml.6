@@ -2,300 +2,68 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D48FAECDE3D
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 09:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E9AECDE3D
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 09:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88CB720838
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 09:23:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="A2rv99uo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88CB720838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 657B720838
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 09:26:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 657B720838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mok.nu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbeJURh0 (ORCPT
+        id S1727497AbeJURkD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 13:37:26 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:38436 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726975AbeJURhZ (ORCPT
+        Sun, 21 Oct 2018 13:40:03 -0400
+Received: from proxy05.fsdata.se ([89.221.252.250]:10553 "EHLO
+        mail-gw01.fsdata.se" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727308AbeJURkD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 13:37:25 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2D5DBC8;
-        Sun, 21 Oct 2018 11:23:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1540113823;
-        bh=5Up9iLxonHVidu6TfiNgajeHPKhboH9cUSkbNBxDoXM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A2rv99uoLvrSkCcB7O2Hxk+Tjj2Drm7hxLW+e9QeojeKL/UxMi6wk7hS1IvcWvZBv
-         UsuDde0MzH+gUBU8GliyheIe1F+2uYIXhDLifdqyDrNuzvrOVAnv4SmDacZUFwRsam
-         WZtuiuIYrDJ2zA1tRg6JjUw6Gv2hwBBfpRetZqKY=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        Tiffany Lin =?utf-8?B?KOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen =?utf-8?B?KOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video decoder interface
-Date:   Sun, 21 Oct 2018 12:23:43 +0300
-Message-ID: <2340231.s4xOQAu5Wh@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <CAAFQd5BnfZdbBpDq5qGwLQrWOzae-kd57JTv1ieokCs8H5K1MQ@mail.gmail.com>
-References: <20180724140621.59624-1-tfiga@chromium.org> <4766921.vZCsLckqXW@avalon> <CAAFQd5BnfZdbBpDq5qGwLQrWOzae-kd57JTv1ieokCs8H5K1MQ@mail.gmail.com>
+        Sun, 21 Oct 2018 13:40:03 -0400
+Received: from localhost (213.112.98.19) by DAG01.HMC.local (192.168.46.11)
+ with Microsoft SMTP Server (TLS) id 15.0.1263.5; Sun, 21 Oct 2018 11:26:17
+ +0200
+From:   Mattias Jacobsson <2pi@mok.nu>
+To:     <gregkh@linuxfoundation.org>
+CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <2pi@mok.nu>
+Subject: [PATCH] USB: misc: appledisplay: add 20" Apple Cinema Display
+Date:   Sun, 21 Oct 2018 11:25:37 +0200
+Message-ID: <20181021092537.8592-1-2pi@mok.nu>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [213.112.98.19]
+X-ClientProxiedBy: PROXY02.HMC.local (192.168.46.52) To DAG01.HMC.local
+ (192.168.46.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
+Add another Apple Cinema Display to the list of supported displays
 
-On Saturday, 20 October 2018 11:52:57 EEST Tomasz Figa wrote:
-> On Thu, Oct 18, 2018 at 8:22 PM Laurent Pinchart wrote:
-> > On Thursday, 18 October 2018 13:03:33 EEST Tomasz Figa wrote:
-> >> On Wed, Oct 17, 2018 at 10:34 PM Laurent Pinchart wrote:
-> >>> On Tuesday, 24 July 2018 17:06:20 EEST Tomasz Figa wrote:
-> >>>> Due to complexity of the video decoding process, the V4L2 drivers of
-> >>>> stateful decoder hardware require specific sequences of V4L2 API
-> >>>> calls to be followed. These include capability enumeration,
-> >>>> initialization, decoding, seek, pause, dynamic resolution change, dr=
-ain
-> >>>> and end of stream.
-> >>>>=20
-> >>>> Specifics of the above have been discussed during Media Workshops at
-> >>>> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
-> >>>> Conference Europe 2014 in D=FCsseldorf. The de facto Codec API that
-> >>>> originated at those events was later implemented by the drivers we
-> >>>> already have merged in mainline, such as s5p-mfc or coda.
-> >>>>=20
-> >>>> The only thing missing was the real specification included as a part
-> >>>> of Linux Media documentation. Fix it now and document the decoder pa=
-rt
-> >>>> of the Codec API.
-> >>>>=20
-> >>>> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> >>>> ---
-> >>>>=20
-> >>>>  Documentation/media/uapi/v4l/dev-decoder.rst | 872 ++++++++++++++++=
-+++
-> >>>>  Documentation/media/uapi/v4l/devices.rst     |   1 +
-> >>>>  Documentation/media/uapi/v4l/v4l2.rst        |  10 +-
-> >>>>  3 files changed, 882 insertions(+), 1 deletion(-)
-> >>>>  create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
-> >>>>=20
-> >>>> diff --git a/Documentation/media/uapi/v4l/dev-decoder.rst
-> >>>> b/Documentation/media/uapi/v4l/dev-decoder.rst new file mode 100644
-> >>>> index 000000000000..f55d34d2f860
-> >>>> --- /dev/null
-> >>>> +++ b/Documentation/media/uapi/v4l/dev-decoder.rst
-> >>>> @@ -0,0 +1,872 @@
-> >=20
-> > [snip]
-> >=20
-> >>>> +4.  Allocate source (bitstream) buffers via :c:func:`VIDIOC_REQBUFS`
-> >>>> on
-> >>>> +    ``OUTPUT``.
-> >>>> +
-> >>>> +    * **Required fields:**
-> >>>> +
-> >>>> +      ``count``
-> >>>> +          requested number of buffers to allocate; greater than zero
-> >>>> +
-> >>>> +      ``type``
-> >>>> +          a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-> >>>> +
-> >>>> +      ``memory``
-> >>>> +          follows standard semantics
-> >>>> +
-> >>>> +      ``sizeimage``
-> >>>> +          follows standard semantics; the client is free to choose
-> >>>> any
-> >>>> +          suitable size, however, it may be subject to change by the
-> >>>> +          driver
-> >>>> +
-> >>>> +    * **Return fields:**
-> >>>> +
-> >>>> +      ``count``
-> >>>> +          actual number of buffers allocated
-> >>>> +
-> >>>> +    * The driver must adjust count to minimum of required number of
-> >>>> +      ``OUTPUT`` buffers for given format and count passed.
-> >>>=20
-> >>> Isn't it the maximum, not the minimum ?
-> >>=20
-> >> It's actually neither. All we can generally say here is that the
-> >> number will be adjusted and the client must note it.
-> >=20
-> > I expect it to be clamp(requested count, driver minimum, driver maximum=
-).
-> > I'm not sure it's worth capturing this in the document though, but we
-> > could say
-> >=20
-> > "The driver must clam count to the minimum and maximum number of requir=
-ed
-> > ``OUTPUT`` buffers for the given format ."
->=20
-> I'd leave the details to the documentation of VIDIOC_REQBUFS, if
-> needed. This document focuses on the decoder UAPI and with this note I
-> want to ensure that the applications don't assume that exactly the
-> requested number of buffers is always allocated.
->=20
-> How about making it even simpler:
->=20
-> The actual number of allocated buffers may differ from the ``count``
-> given. The client must check the updated value of ``count`` after the
-> call returns.
+Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
+---
+ drivers/usb/misc/appledisplay.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-That works for me. You may want to see "... given, as specified in the=20
-VIDIOC_REQBUFS documentation.".
-
-> >>>> The client must
-> >>>> +      check this value after the ioctl returns to get the number of
-> >>>> +      buffers allocated.
-> >>>> +
-> >>>> +    .. note::
-> >>>> +
-> >>>> +       To allocate more than minimum number of buffers (for pipeline
-> >>>> +       depth), use G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT``) to
-> >>>> +       get minimum number of buffers required by the driver/format,
-> >>>> +       and pass the obtained value plus the number of additional
-> >>>> +       buffers needed in count to :c:func:`VIDIOC_REQBUFS`.
-> >>>> +
-> >>>> +5.  Start streaming on ``OUTPUT`` queue via
-> >>>> :c:func:`VIDIOC_STREAMON`.
-> >>>> +
-> >>>> +6.  This step only applies to coded formats that contain resolution
-> >>>> +    information in the stream. Continue queuing/dequeuing bitstream
-> >>>> +    buffers to/from the ``OUTPUT`` queue via :c:func:`VIDIOC_QBUF`
-> >>>> and
-> >>>> +    :c:func:`VIDIOC_DQBUF`. The driver must keep processing and
-> >>>> returning
-> >>>> +    each buffer to the client until required metadata to configure
-> >>>> the
-> >>>> +    ``CAPTURE`` queue are found. This is indicated by the driver
-> >>>> sending
-> >>>> +    a ``V4L2_EVENT_SOURCE_CHANGE`` event with
-> >>>> +    ``V4L2_EVENT_SRC_CH_RESOLUTION`` source change type. There is no
-> >>>> +    requirement to pass enough data for this to occur in the first
-> >>>> buffer
-> >>>> +    and the driver must be able to process any number.
-> >>>> +
-> >>>> +    * If data in a buffer that triggers the event is required to
-> >>>> decode
-> >>>> +      the first frame, the driver must not return it to the client,
-> >>>> +      but must retain it for further decoding.
-> >>>> +
-> >>>> +    * If the client set width and height of ``OUTPUT`` format to 0,
-> >>>> calling
-> >>>> +      :c:func:`VIDIOC_G_FMT` on the ``CAPTURE`` queue will return
-> >>>> -EPERM,
-> >>>> +      until the driver configures ``CAPTURE`` format according to
-> >>>> stream
-> >>>> +      metadata.
-> >>>=20
-> >>> That's a pretty harsh handling for this condition. What's the
-> >>> rationale for returning -EPERM instead of for instance succeeding with
-> >>> width and height set to 0 ?
-> >>=20
-> >> I don't like it, but the error condition must stay for compatibility
-> >> reasons as that's what current drivers implement and applications
-> >> expect. (Technically current drivers would return -EINVAL, but we
-> >> concluded that existing applications don't care about the exact value,
-> >> so we can change it to make more sense.)
-> >=20
-> > Fair enough :-/ A bit of a shame though. Should we try to use an error
-> > code that would have less chance of being confused with an actual
-> > permission problem ? -EILSEQ could be an option for "illegal sequence" =
-of
-> > operations, but better options could exist.
->=20
-> In Request API we concluded that -EACCES is the right code to return
-> for G_EXT_CTRLS on a request that has not finished yet. The case here
-> is similar - the capture queue is not yet set up. What do you think?
-
-Good question. -EPERM is documented as "Operation not permitted", while -
-EACCES is documented as "Permission denied". The former appears to be=20
-understood as "This isn't a good idea, I can't let you do that", and the=20
-latter as "You don't have sufficient privileges, if you retry with the corr=
-ect=20
-privileges this will succeed". Neither are a perfect match, but -EACCES mig=
-ht=20
-be better if you replace getting privileges by performing the required setu=
-p.
-
-> >>>> +    * If the client subscribes to ``V4L2_EVENT_SOURCE_CHANGE``
-> >>>> events and
-> >>>> +      the event is signaled, the decoding process will not continue
-> >>>> until
-> >>>> +      it is acknowledged by either (re-)starting streaming on
-> >>>> ``CAPTURE``,
-> >>>> +      or via :c:func:`VIDIOC_DECODER_CMD` with
-> >>>> ``V4L2_DEC_CMD_START``
-> >>>> +      command.
-> >>>> +
-> >>>> +    .. note::
-> >>>> +
-> >>>> +       No decoded frames are produced during this phase.
-> >>>> +
-
-[snip]
-
-> >> Also added a note:
-> >>        To fulfill those requirements, the client may attempt to use
-> >>        :c:func:`VIDIOC_CREATE_BUFS` to add more buffers. However, due =
-to
-> >>        hardware limitations, the decoder may not support adding buffers
-> >>        at this point and the client must be able to handle a failure
-> >>        using the steps below.
-> >=20
-> > I wonder if there could be a way to work around those limitations on the
-> > driver side. At the beginning of step 7, the decoder is effectively
-> > stopped. If the hardware doesn't support adding new buffers on the fly,
-> > can't the driver support the VIDIOC_CREATE_BUFS + V4L2_DEC_CMD_START
-> > sequence the same way it would support the VIDIOC_STREAMOFF +
-> > VIDIOC_REQBUFS(0) +
-> > VIDIOC_REQBUFS(n) + VIDIOC_STREAMON ?
->=20
-> I guess that would work. I would only allow it for the case where
-> existing buffers are already big enough and just more buffers are
-> needed. Otherwise it would lead to some weird cases, such as some old
-> buffers already in the CAPTURE queue, blocking the decode of further
-> frames. (While it could be handled by the driver returning them with
-> an error state, it would only complicate the interface.)
-
-Good point. I wonder if this could be handled in the framework. If it can't=
-,=20
-or with non trivial support code on the driver side, then I would agree wit=
-h=20
-you. Otherwise, handling the workaround in the framework would ensure=20
-consistent behaviour across drivers with minimal cost, and simplify the=20
-userspace API, so I think it would be a good thing.
-
-=2D-=20
-Regards,
-
-Laurent Pinchart
-
-
+diff --git a/drivers/usb/misc/appledisplay.c b/drivers/usb/misc/appledisplay.c
+index bd539f3058bc..85b48c6ddc7e 100644
+--- a/drivers/usb/misc/appledisplay.c
++++ b/drivers/usb/misc/appledisplay.c
+@@ -50,6 +50,7 @@ static const struct usb_device_id appledisplay_table[] = {
+ 	{ APPLEDISPLAY_DEVICE(0x9219) },
+ 	{ APPLEDISPLAY_DEVICE(0x921c) },
+ 	{ APPLEDISPLAY_DEVICE(0x921d) },
++	{ APPLEDISPLAY_DEVICE(0x9222) },
+ 	{ APPLEDISPLAY_DEVICE(0x9236) },
+ 
+ 	/* Terminating entry */
+-- 
+2.19.1
 
