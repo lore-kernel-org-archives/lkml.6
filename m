@@ -2,100 +2,85 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 759F8C67863
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 00:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EEF6C67863
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 00:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 379A4215EC
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 00:15:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 379A4215EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=opengridcomputing.com
+	by mail.kernel.org (Postfix) with ESMTP id 0113920838
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 00:40:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0113920838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbeJUI1g convert rfc822-to-8bit (ORCPT
+        id S1726931AbeJUIwu convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 04:27:36 -0400
-Received: from linode.aoot.com ([69.164.194.13]:42582 "EHLO linode.aoot.com"
+        Sun, 21 Oct 2018 04:52:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54418 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726624AbeJUI1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 04:27:36 -0400
-Received: from stevoacer (47-221-137-213.gtwncmta03.res.dyn.suddenlink.net [47.221.137.213])
-        by linode.aoot.com (Postfix) with ESMTP id CECB6821C;
-        Sat, 20 Oct 2018 19:15:18 -0500 (CDT)
-From:   "Steve Wise" <swise@opengridcomputing.com>
-To:     "'Wenwen Wang'" <wang6495@umn.edu>
-Cc:     "'Kangjie Lu'" <kjlu@umn.edu>, <swise@chelsio.com>,
-        <dledford@redhat.com>, <jgg@ziepe.ca>,
-        <linux-rdma@vger.kernel.org>,
-        "'open list'" <linux-kernel@vger.kernel.org>
-References: <1540072741-18856-1-git-send-email-wang6495@umn.edu> <038301d468ca$9d30ca90$d7925fb0$@opengridcomputing.com> <CAAa=b7fPLM-kF+VyZhhj2tzhzuFNnXpv=gPVJ2mCcfQyToew0Q@mail.gmail.com>
-In-Reply-To: <CAAa=b7fPLM-kF+VyZhhj2tzhzuFNnXpv=gPVJ2mCcfQyToew0Q@mail.gmail.com>
-Subject: RE: [PATCH] iw_cxgb4: fix a missing-check bug
-Date:   Sat, 20 Oct 2018 19:15:17 -0500
-Message-ID: <000401d468d3$259c3790$70d4a6b0$@opengridcomputing.com>
+        id S1726758AbeJUIwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Oct 2018 04:52:50 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4FA1E8667B;
+        Sun, 21 Oct 2018 00:40:29 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AE4A1780D9;
+        Sun, 21 Oct 2018 00:40:27 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <209e8c35-d26e-0a29-84d7-b8b1d0ecbebc@gmail.com>
+References: <209e8c35-d26e-0a29-84d7-b8b1d0ecbebc@gmail.com> <97872123-70be-2833-ea7a-a463ce204b53@gmail.com> <862e36a2-2a6f-4e26-3228-8cab4b4cf230@gmail.com> <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk> <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk> <de050902-f3d0-b2db-2627-983a36c87b3c@gmail.com> <6518.1539956277@warthog.procyon.org.uk> <29902.1539988579@warthog.procyon.org.uk>
+To:     Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org, ebiederm@xmission.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mszeredi@redhat.com
+Subject: Re: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE [ver #12]
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <16586.1540082426.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHGM3QZHxRys26vq/PiwJXt1dGVDQG9X7blAxkWL/alHotKoA==
-Content-Language: en-us
+Date:   Sun, 21 Oct 2018 01:40:26 +0100
+Message-ID: <16587.1540082426@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Sun, 21 Oct 2018 00:40:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Alan Jenkins <alan.christopher.jenkins@gmail.com> wrote:
 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 4dfe7e23b7ee..e8d61d5f581d 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -1763,7 +1763,7 @@ void dissolve_on_fput(struct vfsmount *mnt)
+>  {
+>  	namespace_lock();
+>  	lock_mount_hash();
+> -	if (!real_mount(mnt)->mnt_ns) {
+> +	if (!real_mount(mnt)->mnt_ns && !(mnt->mnt_flags & MNT_UMOUNT)) {
+>  		mntget(mnt);
+>  		umount_tree(real_mount(mnt), UMOUNT_CONNECTED);
+>  	}
+> @@ -2469,7 +2469,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+>  	if (old->mnt_ns && !attached)
+>  		goto out1;
+>  
+> -	if (old->mnt.mnt_flags & MNT_LOCKED)
+> +	if (old->mnt.mnt_flags & (MNT_LOCKED | MNT_UMOUNT))
+>  		goto out1;
+>  
+>  	if (old_path->dentry != old_path->mnt->mnt_root)
 
-> -----Original Message-----
-> From: Wenwen Wang <wang6495@umn.edu>
-> Sent: Saturday, October 20, 2018 6:56 PM
-> To: swise@opengridcomputing.com
-> Cc: Kangjie Lu <kjlu@umn.edu>; swise@chelsio.com; dledford@redhat.com;
-> jgg@ziepe.ca; linux-rdma@vger.kernel.org; open list <linux-
-> kernel@vger.kernel.org>; Wenwen Wang <wang6495@umn.edu>
-> Subject: Re: [PATCH] iw_cxgb4: fix a missing-check bug
-> 
-> On Sat, Oct 20, 2018 at 6:41 PM Steve Wise
-> <swise@opengridcomputing.com> wrote:
-> >
-> > Hey Wenwen,
-> >
-> > > Subject: [PATCH] iw_cxgb4: fix a missing-check bug
-> > >
-> > > In c4iw_flush_hw_cq, the next CQE is acquired through
-> t4_next_hw_cqe(). In
-> > > t4_next_hw_cqe(), the CQE, i.e., 'cq->queue[cq->cidx]', is checked to see
-> > > whether it is valid through t4_valid_cqe(). If it is valid, the address of
-> > > the CQE is then saved to 'hw_cqe'. Later on, the CQE is copied to the
-> > local
-> > > memory in create_read_req_cqe(). The problem here is that the CQE is
-> > > actually in a DMA region allocated by dma_alloc_coherent() in
-> create_cq().
-> > > Given that the device also has the permission to access the DMA region, a
-> > > malicious device controlled by an attacker can modify the CQE in the DMA
-> > > region after the check in t4_next_hw_cqe() but before the copy in
-> > > create_read_req_cqe(). By doing so, the attacker can supply invalid CQE,
-> > > which can cause undefined behavior of the kernel and introduce
-> potential
-> > > security risks.
-> > >
-> >
-> > If the dma device is malicious, couldn't it just dma some incorrect CQE but
-> > still valid in the first place?  I don't think this patch actually solves
-> > the issue, and it forces a copy of a 64B CQE in a critical data io path.
-> 
-> Thanks for your response! If the malicious dma device just dma some
-> incorrect CQE, it will not be able to pass the verification in
-> t4_valid_cqe().
-> 
+I've already got one of these; I'll fold in the other also.
 
-As long as the gen bit is correct, the CQE is considered valid.  You cannot protect against a malicious dma device.  Or at least not with the current driver/device contract.
-
-Steve.
-
-
-
-
+David
