@@ -2,103 +2,149 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF6DECDE3D
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 09:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55756ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 09:07:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E77C20843
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 09:02:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E77C20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A4512083E
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 09:07:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wK1hPfff"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A4512083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbeJURPu (ORCPT
+        id S1727350AbeJURUh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 13:15:50 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46349 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726980AbeJURPt (ORCPT
+        Sun, 21 Oct 2018 13:20:37 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33784 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726975AbeJURUg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 13:15:49 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9L90wTT2013092
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sun, 21 Oct 2018 02:00:59 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9L90tGk2013078;
-        Sun, 21 Oct 2018 02:00:55 -0700
-Date:   Sun, 21 Oct 2018 02:00:55 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-162041425193602b15774c61740ad8e7dc157df3@git.kernel.org>
-Cc:     mingo@kernel.org, peterz@infradead.org,
-        torvalds@linux-foundation.org, luto@kernel.org, jannh@google.com,
-        dave.hansen@linux.intel.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, ebiederm@xmission.com,
-        sean.j.christopherson@intel.com
-Reply-To: tglx@linutronix.de, jannh@google.com,
-          dave.hansen@linux.intel.com, peterz@infradead.org,
-          torvalds@linux-foundation.org, luto@kernel.org, mingo@kernel.org,
-          ebiederm@xmission.com, sean.j.christopherson@intel.com,
-          hpa@zytor.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20181019140842.12F929FA@viggo.jf.intel.com>
-References: <20181019140842.12F929FA@viggo.jf.intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm: Kill stray kernel fault handling comment
-Git-Commit-ID: 162041425193602b15774c61740ad8e7dc157df3
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sun, 21 Oct 2018 13:20:36 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4E096C8;
+        Sun, 21 Oct 2018 11:06:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1540112816;
+        bh=L7MRU3FqJucR4Jou/kjiNLMcj0a27Xkiz4VA72ofHzU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=wK1hPfff/iDnKRV1BHfXcOXPLiEckzIrX8uM0oh9lcyvp7nAn4DF0ah1NzOd60trA
+         PwERMdswXlv8GEvEr5xMFmdym5oUNQIt/ELvRqD5HodiVr7BgO+R2nsHcleuME0GXr
+         ApN3Z2xV/QKz7s5JL1DfSAmnnNCo4f4WMwr6AFm4=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Sandeep Panda <spanda@codeaurora.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        linux-arm-msm@vger.kernel.org, jsanka@codeaurora.org,
+        ryandcase@chromium.org, Andrzej Hajda <a.hajda@samsung.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 1/2] dt-bindings: drm/bridge: sn65dsi86: Add panel-hpd-delay
+Date:   Sun, 21 Oct 2018 12:06:56 +0300
+Message-ID: <7337055.Mnli2TfP4b@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20181019201940.138179-1-dianders@chromium.org>
+References: <20181019201940.138179-1-dianders@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  162041425193602b15774c61740ad8e7dc157df3
-Gitweb:     https://git.kernel.org/tip/162041425193602b15774c61740ad8e7dc157df3
-Author:     Dave Hansen <dave.hansen@linux.intel.com>
-AuthorDate: Fri, 19 Oct 2018 07:08:42 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sun, 21 Oct 2018 10:58:10 +0200
+Hi Douglas,
 
-x86/mm: Kill stray kernel fault handling comment
+Thank you for the patch.
 
-I originally had matching user and kernel comments, but the kernel
-one got improved.  Some errant conflict resolution kicked the commment
-somewhere wrong.  Kill it.
+On Friday, 19 October 2018 23:19:39 EEST Douglas Anderson wrote:
+> The timing diagram of some eDP panels says that you're supposed to
+> wait for HPD to be asserted before the aux channel is operational.
+> 
+> In some cases, however, it's better to just hardcode the max delay
+> instead of trying to use HPD.  Why?
+> 
+> The sn65dsi86 datasheet says that it only reports the debounced
+> HPD signal to software.  It will tell software about HPD assertion
+> as quickly as 100 ms after it's asserted, but sometimes it might
+> take 400 ms because it's timed with a very inaccurate ring
+> oscillator.  In practice it was measured at 200 ms on at least
+> one system.
+> 
+> On a particular panel, HPD was asserted 84 ms after power was given.
+> This same panel specified that HPD would always be asserted within
+> 200 ms of applying power.  Thus on this panel with the measured
+> 84 ms to assert HPD + the 200 ms measured debounce we'd wait 284 ms
+> which is 84 ms longer than just hardcoding the sleep.
+> 
+> Let's allow boards to explicitly choose the hardcoded delay by adding
+> a device tree attribute for it.  A few notes:
+> a) This delay can't easily be in the panel bindings because the delay
+>    wouldn't actually be needed if the same panel were hooked somewhere
+>    else (someplace with more sane HPD behavior).
 
-Reported-by: Eric W. Biederman <ebiederm@xmission.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: aa37c51b94 ("x86/mm: Break out user address space handling")
-Link: http://lkml.kernel.org/r/20181019140842.12F929FA@viggo.jf.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/fault.c | 1 -
- 1 file changed, 1 deletion(-)
+The delay shouldn't be handled in the panel driver, but I think it's still a 
+property of the panel, and should thus be specified in the panel DT node. The 
+panel driver should parse it from DT (or, if the panel driver knows about the 
+specific panel model, just hardcode it), and then report it to the bridge 
+driver which can then decide, based on its knowledge if the bridge internal 
+HPD processing delays, to just wait for a fixed delay or use regular HPD 
+handling.
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index a16652982f98..bd047438d23d 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -963,7 +963,6 @@ bad_area_access_error(struct pt_regs *regs, unsigned long error_code,
- 		__bad_area(regs, error_code, address, vma, SEGV_ACCERR);
- }
- 
--/* Handle faults in the kernel portion of the address space */
- static void
- do_sigbus(struct pt_regs *regs, unsigned long error_code, unsigned long address,
- 	  u32 *pkey, unsigned int fault)
+> b) The nice thing about being able to set this delay is that it's also
+>    useful on boards where HPD wasn't hooked up at all (for whatever
+>    reason).
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> 
+>  .../bindings/display/bridge/ti,sn65dsi86.txt          | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git
+> a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.txt
+> b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.txt index
+> 0a3fbb53a16e..1a1ca0f7a1d8 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.txt
+> +++ b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.txt
+> @@ -33,6 +33,15 @@ Optional properties:
+> 
+>  - suspend-gpios: specification for GPIO1 pin on bridge (active low)
+> 
+> +- ti,panel-hpd-delay-ms: Assume that HPD from the panel will be asserted
+> within
+> +			 this many milliseconds after giving power to the panel.
+> +			 With this number we can ignore the HPD signal from
+> +			 the panel and just hardcode a delay.  This is useful
+> +			 to do because the bridge chip only provides the
+> +			 debounced HPD signal to software and the timing of the
+> +			 debounce is very inaccurate so it's often faster to
+> +			 hardcode the max from the panel spec.
+> +
+>  Required nodes:
+>  This device has two video ports. Their connections are modelled using the
+>  OF graph bindings specified in Documentation/devicetree/bindings/graph.txt.
+> @@ -62,6 +71,8 @@ edp-bridge@2d {
+>  	clock-names = "refclk";
+>  	clocks = <&input_refclk>;
+> 
+> +	ti,panel-hpd-delay-ms = <200>;
+> +
+>  	ports {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+
