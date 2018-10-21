@@ -2,129 +2,224 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB00ECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 14:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC81ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 14:39:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FFF720869
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 14:17:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6AjJ7+c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FFF720869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 367B820843
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 14:39:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367B820843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sunsite.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbeJUWbi (ORCPT
+        id S1727832AbeJUWxy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 18:31:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48316 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727266AbeJUWbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 18:31:37 -0400
-Received: from archlinux (unknown [176.12.107.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46DE520836;
-        Sun, 21 Oct 2018 14:17:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540131427;
-        bh=VdAnSpBAuSVaklLV76A2wfF5dJjRzjPM8aZlesEKyhA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=B6AjJ7+ckHzTKoCStwjTkglyXc/YBvkj5nEiCB6iIGC5b4kUOmD5G1vP5ZyNcPqOy
-         nksk8jywVHjx6JKOWF/75Ud/4yyPzJom0khDjiOjfjtfdWUY4aU9K6Gw+QJbnYJPDI
-         aQpZZ3yQX7CUJ0q6/7P/8L2K6oOrPCYMyELVpwhQ=
-Date:   Sun, 21 Oct 2018 15:17:01 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Rob Herring <robh@kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v5 1/2] dt-bindings: iio: vadc: Update example to
- include unit address for node 'usb-id-nopull'
-Message-ID: <20181021151701.7b9daa41@archlinux>
-In-Reply-To: <20181018194010.GV22824@google.com>
-References: <20181004001432.21218-1-mka@chromium.org>
-        <20181004001432.21218-2-mka@chromium.org>
-        <20181005204743.GA17135@bogus>
-        <20181012171523.GQ22824@google.com>
-        <20181018194010.GV22824@google.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 21 Oct 2018 18:53:54 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43544 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727266AbeJUWxy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Oct 2018 18:53:54 -0400
+Received: by mail-lf1-f67.google.com with SMTP id p34-v6so28420026lfg.10;
+        Sun, 21 Oct 2018 07:39:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=plgtVOh6mlQqij48pa91e53Tg92qvHACqua4eBtVyVQ=;
+        b=ZVqpyEVSCJA0uoeh3iAlEd++ODAIOeEkB8lOpEcAX9NJAWOVMBF7edzjEm9yETkKpg
+         Ajuw+P4Sib+WXgv90rY1q4uiC4XRjjma+Sywc9ZrQo+v0G0/qfG/dNpDYosfdxT1ps5n
+         E9b9kxggmu/pwGF3RVXG5GrEsR+UWwjTNItl0ZgjOvsGn/5aw2fkibhubsXXPhftjRHN
+         1B4HN25OxSrfaW8lgw0jfHSajC0o4lm8rYpkDWb4AOPrFZ2SXKMAfAzZW+AKOA5JSnGO
+         T4WPHiuFrR0ukmKFVpFCk0Jqrq5eFwv4v3Nzqjr10GqGpHE6Y2CLu7kxZnh6QhwGkqtF
+         u0zw==
+X-Gm-Message-State: ABuFfoi6X1WWcOsPAE1d/jxBev5LcPgquqgzunuzfMt5/xctkE2t33Ww
+        XuIc9Dk0U3U6AOrMSDo4ijlekGxqCmo+GDa9HVFR0uIYn5U=
+X-Google-Smtp-Source: ACcGV60O3yu9IQ4hmlgz7rvFeRU37OJ/qR0TR6gLRBJXasRpVdWIGnpxKjY9DSUejEjEimRcjkBM2OO9Y3kId1vw6eA=
+X-Received: by 2002:a19:9d8d:: with SMTP id g135-v6mr7614204lfe.3.1540132758439;
+ Sun, 21 Oct 2018 07:39:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20180625161303.7991-1-federico.vaga@cern.ch> <20180625161303.7991-4-federico.vaga@cern.ch>
+In-Reply-To: <20180625161303.7991-4-federico.vaga@cern.ch>
+From:   Peter Korsgaard <jacmet@sunsite.dk>
+Date:   Sun, 21 Oct 2018 16:39:07 +0200
+Message-ID: <CACXmViZK=4dXYN-399=U6UDJDv4NuTQ2LHEfgh8UbeUJLJp_QQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] i2c:ocores: add polling interface
+To:     Federico Vaga <federico.vaga@cern.ch>
+Cc:     linux-i2c <linux-i2c@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 18 Oct 2018 12:40:10 -0700
-Matthias Kaehlcke <mka@chromium.org> wrote:
+On Mon, Jun 25, 2018 at 6:14 PM Federico Vaga <federico.vaga@cern.ch> wrote:
+>
+> This driver assumes that an interrupt line is always available for
+> the I2C master. This is not always the case and this patch adds support
+> for a polling version based on workqueue.
 
-> On Fri, Oct 12, 2018 at 10:15:23AM -0700, Matthias Kaehlcke wrote:
-> > On Fri, Oct 05, 2018 at 03:47:43PM -0500, Rob Herring wrote:  
-> > > On Wed, Oct 03, 2018 at 05:14:31PM -0700, Matthias Kaehlcke wrote:  
-> > > > The node has a reg property, therefore its name should include a unit
-> > > > address.
-> > > > 
-> > > > Also change the name from 'usb_id_nopull' to 'usb-id-nopull' to follow
-> > > > DT conventions.  
-> > > 
-> > > This is ADC channels? If so, then DT convention would really be 
-> > > "adc@...".   
-> > 
-> > Is it really? A grep for 'adc@' in arch/${ARCH}/boot/dts yields
-> > mostly ADC controller not channel nodes.
-> > 
-> > I'm totally fine with changing the name to 'adc@...' if that's the
-> > preference/convention, just want to reconfirm since the actual use is
-> > a bit ambiguous.  
-> 
-> Could we please reach a conclusion on this?
-> 
-> Summarizing the options on the table so far are:
-> 
-> 1. usb-id-nopull@VADC_LR_MUX10_USB_ID
-> 2. usb-id-nopull@57
-> 3. adc@VADC_LR_MUX10_USB_ID
-> 4. adc@57
-> 
-> My personal preference goes to something <node name>@<define>
-> since the unit address doesn't just resolve to an ADC channel number
-> but also includes configuation information. A literal like '57'
-> conveys less information than the define, it's easier to introduce
-> errors and these errors are harder to spot.
+It probably makes sense to make it the switch between irq/irqless mode
+dynamic to support the upcoming master_xfer_irqless logic.
 
-I agree that to my mind this is the most sensible option.
+> Signed-off-by: Federico Vaga <federico.vaga@cern.ch>
+> ---
+>  drivers/i2c/busses/i2c-ocores.c | 94 ++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 79 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
+> index 274d6eb22a2c..0dad1a512ef5 100644
+> --- a/drivers/i2c/busses/i2c-ocores.c
+> +++ b/drivers/i2c/busses/i2c-ocores.c
+> @@ -13,6 +13,7 @@
+>   */
+>
+>  #include <linux/clk.h>
+> +#include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> @@ -26,14 +27,19 @@
+>  #include <linux/io.h>
+>  #include <linux/log2.h>
+>  #include <linux/spinlock.h>
+> +#include <linux/workqueue.h>
+> +
+> +#define OCORES_FLAG_POLL BIT(0)
+>
+>  struct ocores_i2c {
+>         void __iomem *base;
+>         u32 reg_shift;
+>         u32 reg_io_width;
+> +       unsigned long flags;
+>         wait_queue_head_t wait;
+>         struct i2c_adapter adap;
+>         struct i2c_msg *msg;
+> +       struct work_struct xfer_work;
+>         int pos;
+>         int nmsgs;
+>         int state; /* see STATE_ */
+> @@ -166,8 +172,9 @@ static void ocores_process(struct ocores_i2c *i2c, u8 stat)
+>                         oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_STOP);
+>                         return;
+>                 }
+> -       } else
+> +       } else {
+>                 msg->buf[i2c->pos++] = oc_getreg(i2c, OCI2C_DATA);
+> +       }
 
-> 
-> If 'adc@...' really was the convention (or should be) I'd be clearly
-> in favor of following it. As mentioned above, in practice the use of
-> the 'adc@...' node name seems to be more prevalent for ADC controllers
-> than channels, so I'm more inclined towards 'usb-id-nopull@...' or
-> similar.
-> 
-> All that said, these are just my preferences for the reasons outlined
-> above, if DT maintainers really want it to be 'adc@57' or some
-> variation of that, I'm fine with that too. Please let me know and we
-> can move forward with this trivial series.
+This looks unrelated to $SUBJECT.
 
-Rob, what's your view on this?
+>
+>         /* end of msg? */
+>         if (i2c->pos == msg->len) {
+> @@ -232,6 +239,50 @@ static irqreturn_t ocores_isr(int irq, void *dev_id)
+>         return IRQ_HANDLED;
+>  }
+>
+> +
+> +/**
+> + * It waits until is possible to process some data
 
-Thanks,
+Please don't use "It waits ..", but rather "wait until ..". Same for
+the other function comments.
 
-Jonathan
-> 
-> Thanks
-> 
-> Matthias
 
+> + * @i2c: ocores I2C device instance
+> + *
+> + * This is used when the device is in polling mode (interrupts disabled).
+> + * It sleeps for the time necessary to send 8bits (one transfer over
+> + * the I2C bus), then it permanently ping the ip-core until is possible
+> + * to process data. The idea is that we sleep for most of the time at the
+> + * beginning because we are sure that the ip-core is not ready yet.
+> + */
+> +static void ocores_poll_wait(struct ocores_i2c *i2c)
+> +{
+> +       int sleep_min = (8/i2c->bus_clock_khz) * 1000; /* us for 8bits */
+> +       u8 loop_on;
+> +
+> +       usleep_range(sleep_min, sleep_min + 10);
+
+Where does this 10 come from?
+
+> +       if (i2c->state == STATE_DONE || i2c->state == STATE_ERROR)
+> +               loop_on = OCI2C_STAT_BUSY;
+> +       else
+> +               loop_on = OCI2C_STAT_TIP;
+> +       while (oc_getreg(i2c, OCI2C_STATUS) & loop_on)
+> +               ;
+
+How would an I2C transmission timeout be handled here?
+
+> +}
+> +
+> +
+> +/**
+> + * It implements the polling logic
+> + * @work: work instance descriptor
+> + *
+> + * Here we try to re-use as much as possible from the IRQ logic
+> + */
+> +static void ocores_work(struct work_struct *work)
+> +{
+> +       struct ocores_i2c *i2c = container_of(work,
+> +                                             struct ocores_i2c, xfer_work);
+> +       irqreturn_t ret;
+> +
+> +       do {
+> +               ocores_poll_wait(i2c);
+> +               ret = ocores_isr(-1, i2c);
+> +       } while (ret != IRQ_NONE);
+
+Might as well drop the negation, E.G. while (ret == IRQ_HANDLED);
+
+> +}
+> +
+>  static int ocores_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+>  {
+>         struct ocores_i2c *i2c = i2c_get_adapdata(adap);
+> @@ -245,6 +296,9 @@ static int ocores_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+>         oc_setreg(i2c, OCI2C_DATA, i2c_8bit_addr_from_msg(i2c->msg));
+>         oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_START);
+>
+> +       if (i2c->flags & OCORES_FLAG_POLL)
+> +               schedule_work(&i2c->xfer_work);
+> +
+>         if (wait_event_timeout(i2c->wait, (i2c->state == STATE_ERROR) ||
+>                                (i2c->state == STATE_DONE), HZ)) {
+>                 return (i2c->state == STATE_DONE) ? num : -EIO;
+> @@ -264,7 +318,8 @@ static int ocores_init(struct device *dev, struct ocores_i2c *i2c)
+>         u8 ctrl = oc_getreg(i2c, OCI2C_CONTROL);
+>
+>         /* make sure the device is disabled */
+> -       oc_setreg(i2c, OCI2C_CONTROL, ctrl & ~(OCI2C_CTRL_EN|OCI2C_CTRL_IEN));
+> +       ctrl &= ~(OCI2C_CTRL_EN|OCI2C_CTRL_IEN);
+> +       oc_setreg(i2c, OCI2C_CONTROL, ctrl);
+
+This looks unrelated to $SUBJECT
+
+>
+>         prescale = (i2c->ip_clock_khz / (5 * i2c->bus_clock_khz)) - 1;
+>         prescale = clamp(prescale, 0, 0xffff);
+> @@ -277,12 +332,16 @@ static int ocores_init(struct device *dev, struct ocores_i2c *i2c)
+>                 return -EINVAL;
+>         }
+>
+> +
+
+Here as well.
+
+> @@ -538,6 +600,8 @@ static int ocores_i2c_remove(struct platform_device *pdev)
+>  {
+>         struct ocores_i2c *i2c = platform_get_drvdata(pdev);
+>
+> +       flush_scheduled_work();
+> +
+
+Why not cancel_work_sync(&i2c->xfer_work)?
+
+-- 
+Bye, Peter Korsgaard
