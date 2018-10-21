@@ -2,85 +2,121 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EEF6C67863
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 00:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A79C67863
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 01:14:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0113920838
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 00:40:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0113920838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 853EF2174B
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 01:14:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853EF2174B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=au1.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbeJUIwu convert rfc822-to-8bit (ORCPT
+        id S1726975AbeJUJXj convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 04:52:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54418 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726758AbeJUIwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 04:52:50 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Sun, 21 Oct 2018 05:23:39 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42800 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726758AbeJUJXj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Oct 2018 05:23:39 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9L197nT147091
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 21:11:12 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n808e87rt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Oct 2018 21:11:12 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <andrew.donnellan@au1.ibm.com>;
+        Sun, 21 Oct 2018 02:11:10 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 21 Oct 2018 02:11:08 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9L1B7nf5964204
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 21 Oct 2018 01:11:07 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A47FC11C054;
+        Sun, 21 Oct 2018 01:11:07 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5351E11C04C;
+        Sun, 21 Oct 2018 01:11:07 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 21 Oct 2018 01:11:07 +0000 (GMT)
+Received: from [9.102.49.12] (unknown [9.102.49.12])
+        (using TLSv1.2 with cipher AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4FA1E8667B;
-        Sun, 21 Oct 2018 00:40:29 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AE4A1780D9;
-        Sun, 21 Oct 2018 00:40:27 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <209e8c35-d26e-0a29-84d7-b8b1d0ecbebc@gmail.com>
-References: <209e8c35-d26e-0a29-84d7-b8b1d0ecbebc@gmail.com> <97872123-70be-2833-ea7a-a463ce204b53@gmail.com> <862e36a2-2a6f-4e26-3228-8cab4b4cf230@gmail.com> <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk> <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk> <de050902-f3d0-b2db-2627-983a36c87b3c@gmail.com> <6518.1539956277@warthog.procyon.org.uk> <29902.1539988579@warthog.procyon.org.uk>
-To:     Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        torvalds@linux-foundation.org, ebiederm@xmission.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mszeredi@redhat.com
-Subject: Re: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE [ver #12]
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <16586.1540082426.1@warthog.procyon.org.uk>
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 0C18CA0146;
+        Sun, 21 Oct 2018 12:11:05 +1100 (AEDT)
+From:   Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Subject: [ANNOUNCE] Call for Papers - linux.conf.au Kernel Miniconf,
+ Christchurch NZ, 21-25 Jan 2019
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     lwn@lwn.net
+Date:   Sun, 21 Oct 2018 12:10:53 +1100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+Content-Language: en-AU
+X-TM-AS-GCONF: 00
+x-cbid: 18102101-0016-0000-0000-0000021631C5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18102101-0017-0000-0000-0000326DE2C1
+Message-Id: <4e8f907e-ce44-191e-8ded-29ba9ab1cd08@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8BIT
-Date:   Sun, 21 Oct 2018 01:40:26 +0100
-Message-ID: <16587.1540082426@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Sun, 21 Oct 2018 00:40:29 +0000 (UTC)
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-20_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=998 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810210010
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alan Jenkins <alan.christopher.jenkins@gmail.com> wrote:
+The linux.conf.au Kernel Miniconf is happening once again, this time in 
+Christchurch on 22 Jan 2019.
 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 4dfe7e23b7ee..e8d61d5f581d 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -1763,7 +1763,7 @@ void dissolve_on_fput(struct vfsmount *mnt)
->  {
->  	namespace_lock();
->  	lock_mount_hash();
-> -	if (!real_mount(mnt)->mnt_ns) {
-> +	if (!real_mount(mnt)->mnt_ns && !(mnt->mnt_flags & MNT_UMOUNT)) {
->  		mntget(mnt);
->  		umount_tree(real_mount(mnt), UMOUNT_CONNECTED);
->  	}
-> @@ -2469,7 +2469,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
->  	if (old->mnt_ns && !attached)
->  		goto out1;
->  
-> -	if (old->mnt.mnt_flags & MNT_LOCKED)
-> +	if (old->mnt.mnt_flags & (MNT_LOCKED | MNT_UMOUNT))
->  		goto out1;
->  
->  	if (old_path->dentry != old_path->mnt->mnt_root)
+*** Submissions close on 2018-12-16, 23:59 AoE, with early submissions 
+(before 2018-11-16, 23:59 AoE) given priority. ***
 
-I've already got one of these; I'll fold in the other also.
+*** Submission details: http://lca-kernel.ozlabs.org/2019-cfp.html ***
 
-David
+The Kernel Miniconf is a 1 day stream alongside the main LCA conference 
+to talk about kernel stuff.
+
+We invite submissions on anything related to kernel and low-level 
+systems programming. We welcome submissions from developers of all 
+levels of experience in the kernel community, covering a broad range of 
+topics.
+
+Past Kernel Miniconfs have included technical talks on topics such as 
+memory management, RCU, scheduling and filesystems, as well as talks on 
+Linux kernel community topics such as licensing and Linux kernel 
+development process.
+
+We strongly encourage both first-time and seasoned speakers from all 
+backgrounds, ages, genders, nationalities, ethnicities, religions and 
+abilities. Like the main LCA conference itself, we respect and encourage 
+diversity at our miniconf.
+
+Speakers will need to purchase an LCA ticket to attend.
+
+See http://lca-kernel.ozlabs.org/2019-cfp.html for full details and the 
+submission form.
+
+-- 
+Andrew Donnellan              OzLabs, ADL Canberra
+andrew.donnellan@au1.ibm.com  IBM Australia Limited
+
