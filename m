@@ -2,100 +2,62 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E42ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 21:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0A7ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 22:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 218422083C
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 21:59:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1Yj1CNqS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 218422083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 70B9F20836
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 22:21:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70B9F20836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbeJVGOt (ORCPT
+        id S1727226AbeJVGbi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 02:14:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57956 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725882AbeJVGOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 02:14:49 -0400
-Received: from ziggy.de (unknown [81.145.148.99])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FE3020658;
-        Sun, 21 Oct 2018 21:58:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540159142;
-        bh=G65U0qMMy1th6Ak+fLLQrGtTvMoK7/ZItsWEtDUXTZ4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=1Yj1CNqSst9Dkso8Xg2t5WVWN4NbD6L6vGhJ1tla5wykXwNGDImCWvURdtcJpcffU
-         W+kXbFTnVKEb0QVAXAcBjNf4NaNXDFx9Q5U4+j1NcgOMW8X0Zn0dy5Z2IocFmi2Fr5
-         ObZU+5IiTyHrBYE6lEzTWG17TMSE5Ku00VZrZhf0=
-From:   matthias.bgg@kernel.org
-To:     rui.zhang@intel.com, edubezval@gmail.com,
-        daniel.lezcano@linaro.org, f.fainelli@gmail.com, rjui@broadcom.com,
-        sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-        eric@anholt.net, stefan.wahren@i2se.com
-Cc:     geert+renesas@glider.be, pmladek@suse.com, matthias.bgg@gmail.com,
-        linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Matthias Brugger <mbrugger@suse.com>
-Subject: [PATCH] thermal: bcm2835: enable hwmon explicitly
-Date:   Sun, 21 Oct 2018 23:58:48 +0200
-Message-Id: <20181021215848.5827-1-matthias.bgg@kernel.org>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 22 Oct 2018 02:31:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60406 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725882AbeJVGbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 02:31:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B7000AEA6;
+        Sun, 21 Oct 2018 22:15:47 +0000 (UTC)
+Date:   Mon, 22 Oct 2018 00:15:46 +0200
+Message-ID: <s5hy3arrlnx.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Connor McAdams" <conmanx360@gmail.com>
+Cc:     <alsa-devel@alsa-project.org>,
+        "Alastair Bridgewater" <alastair.bridgewater@gmail.com>,
+        "Jaroslav Kysela" <perex@perex.cz>,
+        "Takashi Sakamoto" <o-takashi@sakamocchi.jp>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ALSA: hda/ca0132 - Actually fix microphone issue
+In-Reply-To: <1540144385-27454-1-git-send-email-conmanx360@gmail.com>
+References: <1540144385-27454-1-git-send-email-conmanx360@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthias Brugger <mbrugger@suse.com>
+On Sun, 21 Oct 2018 19:53:03 +0200,
+Connor McAdams wrote:
+> 
+> This patch fixes the microphone issue for all cards. The previous fix
+> worked on the ZxR, but not on the AE-5 or Z. This patch has been tested
+> to work for all cards.
+> 
+> Signed-off-by: Connor McAdams <conmanx360@gmail.com>
 
-By defaul of-based thermal driver do not enable hwmon.
-This patch does this explicitly, so that the temperature can be read
-through the common hwmon sysfs.
+Thanks, that's a good news.  Merged now.
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
----
- drivers/thermal/broadcom/bcm2835_thermal.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
-index 23ad4f9f2143..24b006a95142 100644
---- a/drivers/thermal/broadcom/bcm2835_thermal.c
-+++ b/drivers/thermal/broadcom/bcm2835_thermal.c
-@@ -27,6 +27,8 @@
- #include <linux/platform_device.h>
- #include <linux/thermal.h>
- 
-+#include "../thermal_hwmon.h"
-+
- #define BCM2835_TS_TSENSCTL			0x00
- #define BCM2835_TS_TSENSSTAT			0x04
- 
-@@ -275,6 +277,15 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, tz);
- 
-+	/*
-+	 * Thermal_zone doesn't enable hwmon as default,
-+	 * enable it here
-+	 */
-+	tz->tzp->no_hwmon = false;
-+	err = thermal_add_hwmon_sysfs(tz);
-+	if (err)
-+		goto err_tz;
-+
- 	bcm2835_thermal_debugfs(pdev);
- 
- 	return 0;
--- 
-2.19.1
-
+Takashi
