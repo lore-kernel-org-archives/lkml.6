@@ -2,116 +2,93 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C548BECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 15:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56352ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 15:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8628A20869
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 15:09:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 003FC2083E
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 15:12:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUbHmq9K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8628A20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="blJuIZyh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 003FC2083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727969AbeJUXXu (ORCPT
+        id S1727803AbeJUX0l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 19:23:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36328 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727465AbeJUXXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 19:23:50 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6876D2083E;
-        Sun, 21 Oct 2018 15:09:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540134551;
-        bh=llz1jP8X+5W5o3JkEU+Sfm03mHjCguE/sSf24pJljVQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HUbHmq9KIi857a+bgnRK4j3GCGmEEOJqpPDNyJhe6fNJHW7N2HK+TqRxnMAsccQNd
-         /kqUTdvs0H/rTNOzlKbbjsQZWbWY0LXYtUuabYQTsi/Z+Pd7qMjiGcFcDJ+xQdPf9a
-         MwRynS4Z9gLttcKv16Wttm1vBiT1NoIqfdqngfMs=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>, Shuah Khan <shuah@kernel.org>
-Cc:     Rajvi Jingar <rajvi.jingar@intel.com>,
-        Tom Zanussi <zanussi@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH 2/2] selftests/ftrace: Fix synthetic event test to delete event correctly
-Date:   Mon, 22 Oct 2018 00:08:48 +0900
-Message-Id: <154013452832.25576.2305459545429386517.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <154013446976.25576.14780785912268176178.stgit@devbox>
-References: <154013446976.25576.14780785912268176178.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        Sun, 21 Oct 2018 19:26:41 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45235 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727465AbeJUX0l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Oct 2018 19:26:41 -0400
+Received: by mail-lf1-f65.google.com with SMTP id c24-v6so1993227lfi.12;
+        Sun, 21 Oct 2018 08:12:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=a3mWDxSSALVKP5O+CR+5JyQnxlv2NJ6m5gV3D8Nf2MI=;
+        b=blJuIZyhaL+3YCmZ0AcP+i9Tx9uGLFjHilafz4yJzhR+L+ZUTtg55NU1NADvcQuwiB
+         KIn8qs54WcTCY/Rl+IynMpgPpwdDq1zOX0I5nouqTPCvxNT1F/vLlTYTEgRX+ahZUAiG
+         QFYbnFtDbFrzL9Cl55PwKDG3DF0dEoJLOOnBjBI28fi0Xts3ExNERdAGxxj20sZxeKAc
+         lZts3igqBNqHnUgygmAOR4X/ZcZGWb/ldcMh79+wAxzercGqe6ML84+qpZODWcFHYJ3V
+         SJDWTYh41kCS0YetlBsNIZMuY5cN8bOHrdfl5s3J7ZJDdALWNTRp1XmRHauEKMvX9sz4
+         XwiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a3mWDxSSALVKP5O+CR+5JyQnxlv2NJ6m5gV3D8Nf2MI=;
+        b=bwkAnJFa5IlrH+loHYzxo5cTTfAu2dS2Is5wLeOkPfJyAfdmBW89Fnef7dkI8wJVqz
+         Nzg231KxzXzp2WkfWRmEnuZJxPWmGXaVmbTyHEwdf040vXvc0CIn8jKFyp4EZBQz63/X
+         A/hd6bvrolV1i1RYmz/tw+Xcq655i3csQqDhcXArEh9kdQQsocSmQykTHFAQIrLBS8Ga
+         O9c8K66+zOKwnHzHt56aUaaUn7ABNzH/qycsa3XBzwYzUr3dLdkUiy5EBxG3JvvvOqxj
+         Mp2vuBLW+reJ9U9T/H/sKpinAhUjX00a/ainjjlqmM376r49GqrO2jsbDWCmquEJQymt
+         /mBA==
+X-Gm-Message-State: ABuFfoicXhSwG0b0iV3tPSuISUaHA8XiZxeOVBe4Wmmc/x37IOGvRvD9
+        q4RuNb9RmXv8VaTngb/bVuZQEmrdhAufmBRcd4Q=
+X-Google-Smtp-Source: ACcGV61aFGSQFxu382vS4FnVfu5pJ6kpoETLc8LT033AS2xAzhQypTVxyxNyrEwjaTsQC+6L0cPVNmryp/Xb/VwD6VY=
+X-Received: by 2002:a19:f813:: with SMTP id a19mr7161657lff.67.1540134721308;
+ Sun, 21 Oct 2018 08:12:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20181017021708.GA22211@beast>
+In-Reply-To: <20181017021708.GA22211@beast>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Sun, 21 Oct 2018 17:11:50 +0200
+Message-ID: <CANiq72mh_3DsSWfTrUrz=XmBCNDFPFQGwxzzXD26h_-aGWxyiw@mail.gmail.com>
+Subject: Re: [PATCH] docs: Introduce deprecated APIs list
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the synthetic event test case to remove event correctly.
-If redirecting command to synthetic_event file without append
-mode, it cleans up all existing events and execute (parse) the
-command. This means "delete event" always fails to find the
-target event.
+On Wed, Oct 17, 2018 at 4:20 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> As discussed in the "API replacement/deprecation" thread[1], this
+> makes an effort to document what things shouldn't get (re)added to the
+> kernel, by introducing Documentation/process/deprecated.rst. It also
+> adds the overflow kerndoc to ReST output, and tweaks the struct_size()
+> documentation to parse correctly.
 
-Since previous synthetic event has a bug which doesn't return
--ENOENT even if it fails to find the deleting event, this test
-passed. But fixing that bug, this test fails because this test
-itself has a bug.
+If you remember, please CC me as well, since I would like to be
+involved in this as well, given that  it touches the compiler
+attributes :-)
 
-This fixes that bug by trying to delete event right after
-adding an event, and use append mode redirection ('>>') instead
-of normal redirection ('>').
+Also, I will send a patch (for the deprecated.rst file, adding a
+section about fallthrough comments) later on.
 
-Fixes: f06eec4d0f2c ('selftests: ftrace: Add inter-event hist triggers testcases')
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: stable@vger.kernel.org
-Cc: Rajvi Jingar <rajvi.jingar@intel.com>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- .../trigger-synthetic-event-createremove.tc        |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Thanks for adding the file!
 
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc
-index cef11377dcbd..c604438df13b 100644
---- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc
-@@ -35,18 +35,18 @@ fi
- 
- reset_trigger
- 
--echo "Test create synthetic event with an error"
--echo 'wakeup_latency  u64 lat pid_t pid char' > synthetic_events > /dev/null
-+echo "Test remove synthetic event"
-+echo '!wakeup_latency  u64 lat pid_t pid char comm[16]' >> synthetic_events
- if [ -d events/synthetic/wakeup_latency ]; then
--    fail "Created wakeup_latency synthetic event with an invalid format"
-+    fail "Failed to delete wakeup_latency synthetic event"
- fi
- 
- reset_trigger
- 
--echo "Test remove synthetic event"
--echo '!wakeup_latency  u64 lat pid_t pid char comm[16]' > synthetic_events
-+echo "Test create synthetic event with an error"
-+echo 'wakeup_latency  u64 lat pid_t pid char' > synthetic_events > /dev/null
- if [ -d events/synthetic/wakeup_latency ]; then
--    fail "Failed to delete wakeup_latency synthetic event"
-+    fail "Created wakeup_latency synthetic event with an invalid format"
- fi
- 
- do_reset
-
+Cheers,
+Miguel
