@@ -2,138 +2,190 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95260ECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 19:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0026ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 19:27:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 620DD2083A
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 19:14:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 634C020658
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 19:27:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="hxJVvxUD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 620DD2083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YAXo3pXG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 634C020658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbeJVDaH (ORCPT
+        id S1728144AbeJVDm2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 23:30:07 -0400
-Received: from mail.kdab.com ([176.9.126.58]:7871 "EHLO mail.kdab.com"
+        Sun, 21 Oct 2018 23:42:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727156AbeJVDaG (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 23:30:06 -0400
-Authentication-Results: mail.kdab.com (amavisd-new); dkim=pass (1024-bit key)
- reason="pass (just generated,
- assumed good)" header.d=kdab.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
- content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:date:subject:subject:from:from; s=dkim; t=
- 1540149285; x=1541013286; bh=P70s8qO8BSSmjUfKWWRycg2v2KxyieYQlXg
- Mw5G13ug=; b=hxJVvxUDImO4eWwp77ma8CGyfodMU+ZUC8lAevtLS4mXL3jvALs
- zw9VJQG86tQQddSELtVTEGbnlLcdRIdOZNeOdBdpcaDar2t1ICbES07JA1BeP7q7
- 9KUmyjDELdRWTOY/QVbH/Xn2UdP0JCPE5lgZ4FHlSQnOowjsAZieN4kE=
-X-Virus-Scanned: amavisd-new at kdab.com
-From:   Milian Wolff <milian.wolff@kdab.com>
-To:     acme@kernel.org, jolsa@kernel.org
-Cc:     Linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Milian Wolff <milian.wolff@kdab.com>
-Subject: [PATCH 2/2] perf script: flush output stream after events in verbose
- mode
-Date:   Sun, 21 Oct 2018 21:14:24 +0200
-Message-Id: <20181021191424.16183-2-milian.wolff@kdab.com>
-In-Reply-To: <20181021191424.16183-1-milian.wolff@kdab.com>
-References: <20181021191424.16183-1-milian.wolff@kdab.com>
+        id S1728082AbeJVDm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Oct 2018 23:42:28 -0400
+Received: from earth.universe (unknown [62.214.5.194])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F4A32083A;
+        Sun, 21 Oct 2018 19:27:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540150027;
+        bh=sv/Y108eq/xLiUeAJj6VVEDfsF9PV00K2pQI0ixBsek=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YAXo3pXGqBOTAUGgUXzgXUNo2Dz2mU+N48ygT0KnH+77ED+q6VeHEeo/w2MfdWhkp
+         3aNvYRcSbdqO1AnvPjnQXtsErlBsQt+icAnPNnEjfvWsMlhokicRAy5MZCaeThHvjn
+         puZPYP2CDAJOavzIpVCD1v/Tl4qRdkZ8mChqXl5g=
+Received: by earth.universe (Postfix, from userid 1000)
+        id AEF9A3C0997; Sun, 21 Oct 2018 18:27:29 +0200 (CEST)
+Date:   Sun, 21 Oct 2018 18:27:29 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yuanjiang.yu@unisoc.com, broonie@kernel.org, ctatlor97@gmail.com,
+        linus.walleij@linaro.org
+Subject: Re: [PATCH v5 5/6] dt-bindings: power: Add Spreadtrum SC27XX fuel
+ gauge unit documentation
+Message-ID: <20181021162729.a6wf2x5a54vtkqha@earth.universe>
+References: <e7c061535f2dcca54d6498405fdd5ed7098b19f9.1539915051.git.baolin.wang@linaro.org>
+ <14b947c6195133ed93cf0302b1575c033c4ccf04.1539915051.git.baolin.wang@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bjcucz36wvptpzwu"
+Content-Disposition: inline
+In-Reply-To: <14b947c6195133ed93cf0302b1575c033c4ccf04.1539915051.git.baolin.wang@linaro.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the perf script output is written to a terminal stream,
-the normal output of `perf script` would get buffered, but its
-debug output would be written directly. This made it quite hard
-to figure out where a given debug output is coming from. We can
-improve on this by flushing the output buffer after processing an
-event. To see the value, compare the following output for a
-`perf script -v` run:
 
-Before this patch:
-```
-unwind: reg 16, val 7faf7dfdc000
-unwind: reg 7, val 7ffc80811e30
-unwind: find_proc_info dso /usr/lib/ld-2.28.so
-unwind: reg 6, val 0
-unwind: _start:ip =3D 0x7faf7dfdc000 (0x2000)
-unwind: reg 16, val 7faf7dfdc000
-unwind: reg 7, val 7ffc80811e30
-unwind: find_proc_info dso /usr/lib/ld-2.28.so
-unwind: reg 6, val 0
-unwind: _start:ip =3D 0x7faf7dfdc000 (0x2000)
-unwind: reg 16, val 7faf7dfdc000
-unwind: reg 7, val 7ffc80811e30
-unwind: find_proc_info dso /usr/lib/ld-2.28.so
-unwind: reg 6, val 0
-unwind: _start:ip =3D 0x7faf7dfdc000 (0x2000)
-unwind: reg 16, val 7faf7dfdc000
-unwind: reg 7, val 7ffc80811e30
-... lots and lots of verbose debug output
-cpp-inlining 24617 90229.122036534:          1 cycles:uppp:
-            7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
+--bjcucz36wvptpzwu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-cpp-inlining 24617 90229.122043974:          1 cycles:uppp:
-            7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
-...
-```
+Hi,
 
-After this patch:
-```
-...
-unwind: reg 16, val 7faf7dfdc000
-unwind: reg 7, val 7ffc80811e30
-unwind: find_proc_info dso /usr/lib/ld-2.28.so
-unwind: reg 6, val 0
-unwind: _start:ip =3D 0x7faf7dfdc000 (0x2000)
-cpp-inlining 24617 90229.122036534:          1 cycles:uppp:
-            7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
+On Fri, Oct 19, 2018 at 06:53:14PM +0800, Baolin Wang wrote:
+> This patch adds the binding documentation for Spreadtrum SC27XX series PM=
+ICs
+> fuel gauge unit device, which is used to calculate the battery capacity.
+>=20
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
 
-unwind: reg 16, val 7faf7dfdc000
-unwind: reg 7, val 7ffc80811e30
-unwind: find_proc_info dso /usr/lib/ld-2.28.so
-unwind: reg 6, val 0
-unwind: _start:ip =3D 0x7faf7dfdc000 (0x2000)
-cpp-inlining 24617 90229.122043974:          1 cycles:uppp:
-            7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
-...
-```
+Looks good to me.
 
-This new output format makes it much easier to use perf script
-output for debugging purposes, e.g. to investigate broken dwarf
-unwinding.
+-- Sebastian
 
-Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
----
- tools/perf/builtin-script.c | 3 +++
- 1 file changed, 3 insertions(+)
+> Changes from v4:
+>  - None.
+>=20
+> Changes from v3:
+>  - Add reviewed tag from Rob.
+>=20
+> Changes from v2:
+>  - Add reviewed tag from Linus.
+>=20
+> Changes from v1:
+>  - Renamed GPIO property.
+>  - Use standand battery properties instead of 'sprd,inner-resist' and
+>  'sprd,ocv-cap-table'.
+>  - Remove battery node's description.
+> ---
+>  .../devicetree/bindings/power/supply/sc27xx-fg.txt |   52 ++++++++++++++=
+++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/supply/sc27xx=
+-fg.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/power/supply/sc27xx-fg.txt=
+ b/Documentation/devicetree/bindings/power/supply/sc27xx-fg.txt
+> new file mode 100644
+> index 0000000..98a2400
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/supply/sc27xx-fg.txt
+> @@ -0,0 +1,52 @@
+> +Spreadtrum SC27XX PMICs Fuel Gauge Unit Power Supply Bindings
+> +
+> +Required properties:
+> +- compatible: Should be one of the following:
+> +  "sprd,sc2720-fgu",
+> +  "sprd,sc2721-fgu",
+> +  "sprd,sc2723-fgu",
+> +  "sprd,sc2730-fgu",
+> +  "sprd,sc2731-fgu".
+> +- reg: The address offset of fuel gauge unit.
+> +- battery-detect-gpios: GPIO for battery detection.
+> +- io-channels: Specify the IIO ADC channel to get temperature.
+> +- io-channel-names: Should be "bat-temp".
+> +- monitored-battery: Phandle of battery characteristics devicetree node.
+> +  See Documentation/devicetree/bindings/power/supply/battery.txt
+> +
+> +Example:
+> +
+> +	bat: battery {
+> +		compatible =3D "simple-battery";
+> +		charge-full-design-microamp-hours =3D <1900000>;
+> +		constant-charge-voltage-max-microvolt =3D <4350000>;
+> +		ocv-capacity-celsius =3D <20>;
+> +		ocv-capacity-table-0 =3D <4185000 100>, <4113000 95>, <4066000 90>,
+> +					<4022000 85>, <3983000 80>, <3949000 75>,
+> +					<3917000 70>, <3889000 65>, <3864000 60>,
+> +					<3835000 55>, <3805000 50>, <3787000 45>,
+> +					<3777000 40>, <3773000 35>, <3770000 30>,
+> +					<3765000 25>, <3752000 20>, <3724000 15>,
+> +					<3680000 10>, <3605000 5>, <3400000 0>;
+> +		......
+> +	};
+> +
+> +	sc2731_pmic: pmic@0 {
+> +		compatible =3D "sprd,sc2731";
+> +		reg =3D <0>;
+> +		spi-max-frequency =3D <26000000>;
+> +		interrupts =3D <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-controller;
+> +		#interrupt-cells =3D <2>;
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +
+> +		fgu@a00 {
+> +			compatible =3D "sprd,sc2731-fgu";
+> +			reg =3D <0xa00>;
+> +			battery-detect-gpios =3D <&pmic_eic 9 GPIO_ACTIVE_HIGH>;
+> +			io-channels =3D <&pmic_adc 5>;
+> +			io-channel-names =3D "bat-temp";
+> +			monitored-battery =3D <&bat>;
+> +		};
+> +	};
+> --=20
+> 1.7.9.5
+>=20
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index bd468b90801b..ca09b7d2adb7 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1737,6 +1737,9 @@ static void process_event(struct perf_script *scrip=
-t,
-=20
- 	if (PRINT_FIELD(METRIC))
- 		perf_sample__fprint_metric(script, thread, evsel, sample, fp);
-+
-+	if (verbose)
-+		fflush(fp);
- }
-=20
- static struct scripting_ops	*scripting_ops;
---=20
-2.19.1
+--bjcucz36wvptpzwu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlvMqPEACgkQ2O7X88g7
++poe1xAAjmr4C6QHN0bfOsVqTEesbiF5VMwxknBbssBOO/+gE4deNLdKdcaPnVuD
+7pm2JXHd1dnb445SMo3a7DXtVObI9fSB+oSeBlhlgfXLfGwcQwrj9aNxIVDUu2wl
+1PqLkqwZG72TMJPDHbhW+0w0grruEN0/wytnPgZzz7JKAVLg3sQsv0uzai8RceDU
+huHt9XBRancR7fPWrCNwCk0fTIC0vT80QCEapLUWeGVG0SKUVyAxiOCFFtg0jpJL
+N8YlI3Ax3upTY1q1LSBtETy8wNravokVSQsOB4d3+DEz+Zxdm7Yh3WKYe3gRGw4u
+2GGUEgbPgvi1O24baFx4J4c805hV8X2sENfFh+fVw0CUfMJrG8VTDHCo2OJZl5Yq
+unmtt7mXrSabqTmR/cyoKW1nrs12hriP3YCVgjm8GABnug1x+Zih32AqlUl+DesX
+wdxzZ810USb8FmZnRw3QPwpBQBzaY/M7XLDC9iEtGn9vviHJv7xCSxxyUBmnL6uM
+1mffLu2G2OPzRWkl7wRoeI/vQ1n6/XYZjaDuFiNDOHqiqzzi9YK4vs/KB/ec4SGm
+/ehEym4/rGKnuhUpao2STbeGbjeynhd96XcVZSSGXTzscpoDLbM9srocPXDT+g/6
+bqoIGbHFNW61MpEODdlo1coe8NMFsaogyagprhPWA+uU7K4b+Z0=
+=6j8X
+-----END PGP SIGNATURE-----
+
+--bjcucz36wvptpzwu--
