@@ -7,72 +7,56 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DATE_IN_PAST_12_24,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0E2C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 11:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB11C7112C
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 11:33:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 564A42088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 11:33:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55E852064E
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 11:33:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V4oUKpQ5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 564A42088F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qpNIOUTW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E852064E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728923AbeJVTvm (ORCPT
+        id S1728975AbeJVTvs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 15:51:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54478 "EHLO mail.kernel.org"
+        Mon, 22 Oct 2018 15:51:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728894AbeJVTvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 15:51:41 -0400
+        id S1728896AbeJVTvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 15:51:42 -0400
 Received: from earth.universe (unknown [185.7.230.215])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F3F320895;
+        by mail.kernel.org (Postfix) with ESMTPSA id 166C92064E;
         Mon, 22 Oct 2018 11:33:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1540208010;
-        bh=EwOozlxLtjCXkhUBDLya0rKQTCPT6FWumsALANLZzmY=;
+        bh=bAeKMDn00VrxgDmsxjY8ZY9c9Q705qdvnZ4xV+57qxs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V4oUKpQ5cjtT0MitzKJPkfpUb3/j+hDEDrq3n6IxgsiP0kbhAoW+cqXJ6/m5wFbXf
-         eA1HjFGs+Qw99FtHY5uzTe4s/ekU3n6CFisOjErR7SW4Do46FVgu6RiS/l/9aoOWEI
-         wwuK8RNxyih9qmOUcIvcJynKBmdiIQmJju4jGdn4=
+        b=qpNIOUTWNsTMl6+UI30YeYkfB10RZuJBZJ8AG2iNWDtfAzBcao3Ns5MD45iWDTSsw
+         U7W5yuO41R9aTy5qBD2w33PGsQGiW9GvgVqgGb1NQ22fpz+Q+DN2Jm1QQL4v1SwK3f
+         A//A9tUFIKUW0jD0lKQeLdeAkzjmPTqalqW0l4Io=
 Received: by earth.universe (Postfix, from userid 1000)
-        id 2A43C3C098F; Sun, 21 Oct 2018 23:27:37 +0200 (CEST)
-Date:   Sun, 21 Oct 2018 23:27:37 +0200
+        id 733283C099A; Mon, 22 Oct 2018 00:17:51 +0200 (CEST)
+Date:   Mon, 22 Oct 2018 00:17:51 +0200
 From:   Sebastian Reichel <sre@kernel.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Lubomir Rintel <lkundrak@v3.sk>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        quozl@laptop.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        devel@driverdev.osuosl.org, Linux PM <linux-pm@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 01/15] power: supply: olpc_battery: correct the
- temperature units
-Message-ID: <20181021212737.v546ychvlnkxxvrp@earth.universe>
-References: <20181010172300.317643-1-lkundrak@v3.sk>
- <20181010172300.317643-2-lkundrak@v3.sk>
- <CAHp75VenECSZWR3RVh=t35Os93t-MzEH_YzPgT=qQWL-SwjgFQ@mail.gmail.com>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     andy.gross@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        david.brown@linaro.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        jonathan@marek.ca
+Subject: Re: [PATCH RFC 2/5] power: supply: bq24190_charger: add support for
+ bq24192 variant
+Message-ID: <20181021221751.kaq3tib5mpppoepf@earth.universe>
+References: <20181001053005.18906-1-masneyb@onstation.org>
+ <20181001053005.18906-3-masneyb@onstation.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="a3qwmqvb2q2d7nto"
+        protocol="application/pgp-signature"; boundary="2p6wpipfwogpkpsq"
 Content-Disposition: inline
-In-Reply-To: <CAHp75VenECSZWR3RVh=t35Os93t-MzEH_YzPgT=qQWL-SwjgFQ@mail.gmail.com>
+In-Reply-To: <20181001053005.18906-3-masneyb@onstation.org>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -80,113 +64,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---a3qwmqvb2q2d7nto
-Content-Type: text/plain; charset=iso-8859-1
+--2p6wpipfwogpkpsq
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Fri, Oct 19, 2018 at 04:00:32PM +0300, Andy Shevchenko wrote:
-> On Wed, Oct 10, 2018 at 8:23 PM Lubomir Rintel <lkundrak@v3.sk> wrote:
-> >
-> > According to [1] and [2], the temperature values are in tenths of degree
-> > Celsius. Exposing the Celsius value makes the battery appear on fire:
-> >
-> >   $ upower -i /org/freedesktop/UPower/devices/battery_olpc_battery
-> >   ...
-> >       temperature:         236.9 degrees C
-> >
-> > Tested on OLPC XO-1 and OLPC XO-1.75 laptops.
+On Mon, Oct 01, 2018 at 01:30:02AM -0400, Brian Masney wrote:
+> From: Jonathan Marek <jonathan@marek.ca>
 >=20
-> It's interesting that the very author of that code is not included in
-> so-o long Cc list :)
-> Cc: David.
+> This patch adds support for the bq24192 variant to bq24190_charger.
 >=20
-> David, do you remember if and how you had tested temperature report of
-> the battery on OLPC? I guess this kind of error would be appear immediate=
-ly.
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+>  drivers/power/supply/bq24190_charger.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/power/supply/bq24190_charger.c b/drivers/power/suppl=
+y/bq24190_charger.c
+> index b58df04d03b3..e3836145286d 100644
+> --- a/drivers/power/supply/bq24190_charger.c
+> +++ b/drivers/power/supply/bq24190_charger.c
+> @@ -1638,7 +1638,8 @@ static int bq24190_hw_init(struct bq24190_dev_info =
+*bdi)
+>  		return ret;
+> =20
+>  	if (v !=3D BQ24190_REG_VPRS_PN_24190 &&
+> -	    v !=3D BQ24190_REG_VPRS_PN_24192I) {
+> +		v !=3D BQ24190_REG_VPRS_PN_24192 &&
+> +		v !=3D BQ24190_REG_VPRS_PN_24192I) {
+>  		dev_err(bdi->dev, "Error unknown model: 0x%02x\n", v);
+>  		return -ENODEV;
+>  	}
 
-It depends on the way of testing. It's not so obvious when you just
-do a `cat /sys/class/power_supply/.../temperature`, since you just
-get the raw integer.
+This becomes too ugly. Do it like this instead:
 
-> OTOH it might be that power framework had changed requirements (which
-> would be noticeable change).
-
-As far as I know, power-supply has always used 1/10 =B0C. People tend
-to get units wrong all the time though (i.e. mV instead of uV). I'm
-not surprised, that this sneaked into the kernel.
-
-> If the latter is true, this patch misses Fixes tag. Actually in any
-> case it misses it.
-
-Yes, this should probably have Fixes: fb972873a767 ("[BATTERY] One Laptop
-Per Child power/battery driver").
+switch(v) {
+case BQ24190_REG_VPRS_PN_24190:
+case BQ24190_REG_VPRS_PN_24192:
+case BQ24190_REG_VPRS_PN_24192I:
+    break;
+default:
+    dev_err(bdi->dev, "Error unknown model: 0x%02x\n", v);
+    return -ENODEV;
+}
 
 -- Sebastian
 
-> > [1] include/linux/power_supply.h
-> > [2] Documentation/power/power_supply_class.txt
-> >
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > ---
-> >  drivers/power/supply/olpc_battery.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/power/supply/olpc_battery.c b/drivers/power/supply=
-/olpc_battery.c
-> > index 6da79ae14860..5a97e42a3547 100644
-> > --- a/drivers/power/supply/olpc_battery.c
-> > +++ b/drivers/power/supply/olpc_battery.c
-> > @@ -428,14 +428,14 @@ static int olpc_bat_get_property(struct power_sup=
-ply *psy,
-> >                 if (ret)
-> >                         return ret;
-> >
-> > -               val->intval =3D (s16)be16_to_cpu(ec_word) * 100 / 256;
-> > +               val->intval =3D (s16)be16_to_cpu(ec_word) * 10 / 256;
-> >                 break;
-> >         case POWER_SUPPLY_PROP_TEMP_AMBIENT:
-> >                 ret =3D olpc_ec_cmd(EC_AMB_TEMP, NULL, 0, (void *)&ec_w=
-ord, 2);
-> >                 if (ret)
-> >                         return ret;
-> >
-> > -               val->intval =3D (int)be16_to_cpu(ec_word) * 100 / 256;
-> > +               val->intval =3D (int)be16_to_cpu(ec_word) * 10 / 256;
-> >                 break;
-> >         case POWER_SUPPLY_PROP_CHARGE_COUNTER:
-> >                 ret =3D olpc_ec_cmd(EC_BAT_ACR, NULL, 0, (void *)&ec_wo=
-rd, 2);
-> > --
-> > 2.19.0
-> >
->=20
->=20
+> @@ -1931,6 +1932,7 @@ static const struct dev_pm_ops bq24190_pm_ops =3D {
+> =20
+>  static const struct i2c_device_id bq24190_i2c_ids[] =3D {
+>  	{ "bq24190" },
+> +	{ "bq24192" },
+>  	{ "bq24192i" },
+>  	{ },
+>  };
+> @@ -1939,6 +1941,7 @@ MODULE_DEVICE_TABLE(i2c, bq24190_i2c_ids);
+>  #ifdef CONFIG_OF
+>  static const struct of_device_id bq24190_of_match[] =3D {
+>  	{ .compatible =3D "ti,bq24190", },
+> +	{ .compatible =3D "ti,bq24192", },
+>  	{ .compatible =3D "ti,bq24192i", },
+>  	{ },
+>  };
 > --=20
-> With Best Regards,
-> Andy Shevchenko
+> 2.17.1
+>=20
 
---a3qwmqvb2q2d7nto
+--2p6wpipfwogpkpsq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlvM70YACgkQ2O7X88g7
-+pqmfg/+JkX1Lw0K3PAD9UrZW1Yplr9O68D98XVu9TPSb1cJu1whYaXFPvNEYhIQ
-yjG6I1tIKgf17VinnZAcm+uvrAnhzIKYebyPOhY35ao3XxWZri4fmQ5r8jicsD/0
-BIe5TqZz28RwdQA6qpXLU1SKtSLfwD/5VlLHQQaSwhD5s8KArMnNU1VGYApzjqe3
-53SbAjyzyepvXhEbAfLQiKnxMcH92asZuYGjx1js+nMF85rBMQ4AdQKFwPm7ltOy
-C6LGh5mMdS5JkmOxPEekNwbdsX7LDcvVtQ7YFaZXlORT/OmJncYkoCOBt4klzM75
-zj96dzoXwLUwbNZQYlxsfjyWwwrzMtMNYdvuygERH88JKlpm3jL+7KnAgivE4JoS
-CuwcVQKHlThf3qZ6qCxaZyMAVsGP5qA8sRKh0G/MJtRe3quP9vQSrbFmRQi8XSf7
-yQWrYwJl86mt1po7xINqr3+7AOLqw3FKexdMATLXFDzu6FGJDQHhc8MnxamfVT0r
-VkmwM88lqeI/jkZTV0wwFmYK/xVjN3/o8usjOofp9vsoDYl4VpbHfncw2veNP5ch
-FdXBpCqRvZO1ysE/7VgnX3QNJ5CViqa8n14eWxCArh1j+fb6Bx5UXrYLgt2zKFho
-foxb3JrVPR+VY0UIF+4BLwLuPcCO47Zbq9DOjfjimmEqEfBNyPE=
-=e80x
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlvM+w8ACgkQ2O7X88g7
++prsNg/9FJgQAeBDQbYwXzFtY/TvKxhxPMjaU8JAKO+DjMWSX/12y7pH/uTPmqOy
+wvLQFWF/cLQbb32tvW78PxPkinKX9vcPnxBg9pCE6bsdTQEJk3vvje+fp6kzUYwx
+E8oIPJj7bH3F4G0THc0Ii0Dn4yyYLrQJj0EqvEoXDHn+njiF6Lb9qaRLQaLxOqTp
+eCfvsLdfVFRjM00KrqC3kC6Pb8DcidVBJAYf34uE91D2/rq49T2L9SPlapTIX+ZL
+JISsDI7Kd3yGFBae6nXMXVti6twThBW3cyNJ05soaobohu+dCfqojyKfkURvEuIH
+Wwl4+MNnMSDehUQ8oANzODKwnSVaR7jhajSztMn75xpok4GWdEj9QKW+DCWlVrvY
+L/Ve6IwW3rE+zo0ZzN91q3wi5zjWIauiZVJhah0k6kyFL9n/9g4q6WgkN93tkKNq
+sd61IYqB7VN4AUXnLCQU7LCwF+OnLdCOAH0l2HOrZBsUyOvnjHYlDP05Fi4i7hht
+qqnDKiBxJkuSz/p34AFSulhYRZjbGtgE2ybjocob7kJ/+/Eh4WgZhlJdkwoG+UjG
+SxHiU6FDyRlP3h/9Z5iN6qwEmtSI/4kNZN+COIU/R9qfgfa3qd4iWDG/zpgauUHn
+pQH5JGf/ohiNzw0K+9hKBrYsVDrT9Ps0PJYiMdiysnZtEHJmBRo=
+=NAaG
 -----END PGP SIGNATURE-----
 
---a3qwmqvb2q2d7nto--
+--2p6wpipfwogpkpsq--
