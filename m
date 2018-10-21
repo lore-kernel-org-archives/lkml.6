@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 232CBECDE45
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 18:31:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B80FECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 18:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE1E12083A
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 18:31:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0793320838
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 18:31:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MsPlYbZ/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE1E12083A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSh5zPk6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0793320838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728225AbeJVCrC (ORCPT
+        id S1728247AbeJVCrI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 22:47:02 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36041 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727794AbeJVCrC (ORCPT
+        Sun, 21 Oct 2018 22:47:08 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34115 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727794AbeJVCrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 22:47:02 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f18-v6so17974224pgv.3;
-        Sun, 21 Oct 2018 11:31:49 -0700 (PDT)
+        Sun, 21 Oct 2018 22:47:08 -0400
+Received: by mail-pf1-f195.google.com with SMTP id f78-v6so13008776pfe.1;
+        Sun, 21 Oct 2018 11:31:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=43RkB7tCNCYCKZ7WhLMuDOHdDa1VpkXWnfifk+cmylI=;
-        b=MsPlYbZ/0XCygAYUdeW/bpv+EBEmdw9Q3x6W6qH0mXRSbomIiINfjyQZN2/4R98IuI
-         VA6G5uKgRXgJhbA1/adD33E7/vg378VglzBWXT3FMtrp7RUKw0sWmccyOHpo0Ufgt9fF
-         l/P1UPxsdMNMoC8vpdsnVOKfnU796lkIF5wW/sEP/Be1QDKK4B1yHI1cE433UKURNX59
-         KhgNkplINY6ieKDRkJ91/F243RkzzgPChBsGm/H6JL5ORAfFaPiQkic70cUl7/VUui/I
-         EttL85I0AINYz2gK5Txtb65PQtG47YaOouWfDbv7Kj7TdyyZfkNi7qNK6oRSEciPl3aw
-         sENA==
+        bh=0Q3FXmWXbh9XFqApAZQyqrxqWr281d5SwSAZZmUR3n4=;
+        b=aSh5zPk6tUpaXXm97AcOskbUJmTUp2HQ2zvl+rCEhCZv9eD90O9/07+cHaBZX+gTji
+         I8Gwe+6athOTzHyG8nvfbJSCBomDgVua/HNCmVvy7M7W/SogmGyaivoAI3rIeUrDW2mQ
+         QB/jrmmJuQ69ESsu7KD2m0UTtsDczycw1Xbs5arvYacxqvYWqdgQX3gKGetTW8J88mv6
+         KyOtbLtUhZKr+5UiWlG/2BJRSZgfyNRSyRGDZgytncOl9fefpjUjfuJBzWDJOHTj/OkU
+         gcQgZR+hSDBrBhU68EowZcdQC7CfPdruEZYUuIJ90nitiKdIvkZpNIPhUXjLEEJGiqc9
+         MMww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=43RkB7tCNCYCKZ7WhLMuDOHdDa1VpkXWnfifk+cmylI=;
-        b=nJ0hby7LUsaw2Y+uOF47DzJHX4Rg6rbnJGJYGwm7pIzwuoHa4H8Quby00vhU5uXjHX
-         ivSqtDakMNI9OH11htTivgWkCv6DoBOc+XMWsrNiuW+u6vgvWU885Zb1jeJcIkolWZPy
-         OD1lTd2PdogzVfH6kXksWeHvdyQBPFJykzDMRj7EuisTYAWeNehQomH2JNjFr5/RZ9U3
-         jhAArnxSeOpTR8Y9g2PL1xrE1cIVuDp2uPSWx8L2TicitNvEI3i+wY7IY3t6vNgW73Xx
-         MjURjVRpeqOyDXGRPKXFllk8174oNpYBpDoApm5OwgnJuFlXt1wirnoKHawp5psye0hS
-         tucQ==
-X-Gm-Message-State: ABuFfojTxZ9jqfwC23KTxU/e54Kouq7hKwQjJ6fQAe/kxFtXDNNUz96q
-        UKcaxBShFGTrCl9bsPBG5oM=
-X-Google-Smtp-Source: ACcGV62YOyG5p1mRHvT0sTUnRyGawdDBYKqV/srie1LTl+8ssDeIBXxkdoxDHXyaVlAzVPSyxtaZ2g==
-X-Received: by 2002:a63:fa4e:: with SMTP id g14-v6mr40245033pgk.18.1540146709566;
-        Sun, 21 Oct 2018 11:31:49 -0700 (PDT)
+        bh=0Q3FXmWXbh9XFqApAZQyqrxqWr281d5SwSAZZmUR3n4=;
+        b=RklZcn/g3D7kgEbHMhMI1Mpe8X9zIX0uToB1gkaphzl31DwoGmgCapuIkk5KXL+Kh/
+         JvDUev6FC7trwVpkDfKWgpG870yE/5248woZHSptuoBsoYeGVyYFThzQcYZwii5iydDO
+         YwckiLqdwv8EfhevHnfinVhiDRI7yGnJPmnm4REFDhkmndmGzVIxjet3N6zUTw3x3xuE
+         FJM9GdQpnv6ZRtHwV7HlZ2ri3PS3W8f7EPzeqFyvxSgp3MfxJzpS7oRNjL9zJkTRESO7
+         Ka5OXUUJPU4AqsigGLO+v9llmkBOqhukBwqxXEQ5XxDPcvfE1A6TykwAv5K7+3rdqCB8
+         oWkw==
+X-Gm-Message-State: ABuFfoidcp20FiFTA3TPZzkRuIfbkNQuTJJ3ij0HzTQ+nzGz1LW3Zd+T
+        rUmrR6yG55vTmz0CQHmaDlI=
+X-Google-Smtp-Source: ACcGV62cM7SqwfbdiLkmnMHRGKMSIWC2XPGv7yGTwOoKBrUD8vgcVlRZ5g0Yh6BQJgzaV/vr5lTa5w==
+X-Received: by 2002:a65:4783:: with SMTP id e3-v6mr39399331pgs.12.1540146715700;
+        Sun, 21 Oct 2018 11:31:55 -0700 (PDT)
 Received: from localhost.localdomain ([109.252.91.118])
-        by smtp.gmail.com with ESMTPSA id v5-v6sm45467047pfd.64.2018.10.21.11.31.43
+        by smtp.gmail.com with ESMTPSA id v5-v6sm45467047pfd.64.2018.10.21.11.31.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 21 Oct 2018 11:31:49 -0700 (PDT)
+        Sun, 21 Oct 2018 11:31:55 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -66,9 +66,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Prashant Gaikwad <pgaikwad@nvidia.com>
 Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/8] dt: bindings: tegra20-emc: Document clock property
-Date:   Sun, 21 Oct 2018 21:30:46 +0300
-Message-Id: <20181021183052.32023-3-digetx@gmail.com>
+Subject: [PATCH v6 3/8] dt: bindings: Move tegra20-emc binding to memory-controllers directory
+Date:   Sun, 21 Oct 2018 21:30:47 +0300
+Message-Id: <20181021183052.32023-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181021183052.32023-1-digetx@gmail.com>
 References: <20181021183052.32023-1-digetx@gmail.com>
@@ -79,35 +79,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Embedded memory controller has a corresponding clock, document the clock
-property.
+Move tegra20-emc binding to the memory-controllers directory for
+consistency with the other Tegra memory bindings.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
- 1 file changed, 2 insertions(+)
+ .../{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt      | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (100%)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-index a6fe401d0d48..add95367640b 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-@@ -11,6 +11,7 @@ Properties:
-   set of tables can be present and said tables will be used
-   irrespective of ram-code configuration.
- - interrupts : Should contain EMC General interrupt.
-+- clocks : Should contain EMC clock.
- 
- Child device nodes describe the memory settings for different configurations and clock rates.
- 
-@@ -22,6 +23,7 @@ Example:
- 		compatible = "nvidia,tegra20-emc";
- 		reg = <0x7000f4000 0x200>;
- 		interrupts = <0 78 0x04>;
-+		clocks = <&tegra_car TEGRA20_CLK_EMC>;
- 	}
- 
- 
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
+similarity index 100%
+rename from Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
+rename to Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
 -- 
 2.19.0
 
