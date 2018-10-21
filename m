@@ -3,40 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39262ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EA2ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A43A20652
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:01:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A43A20652
+	by mail.kernel.org (Postfix) with ESMTP id 86A5020652
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:01:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86A5020652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728864AbeJVERB (ORCPT
+        id S1728876AbeJVERH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 00:17:01 -0400
+        Mon, 22 Oct 2018 00:17:07 -0400
 Received: from sauhun.de ([88.99.104.3]:45990 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728762AbeJVEQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:16:30 -0400
+        id S1728747AbeJVEQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 00:16:27 -0400
 Received: from localhost (unknown [90.200.225.72])
-        by pokefinder.org (Postfix) with ESMTPSA id EC7642E35DF;
-        Sun, 21 Oct 2018 22:01:01 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id 1C9CE2E35E0;
+        Sun, 21 Oct 2018 22:00:59 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
-Subject: [PATCH 1/1] tty: serial: qcom_geni_serial: simplify getting .driver_data
-Date:   Sun, 21 Oct 2018 22:00:59 +0200
-Message-Id: <20181021200059.2294-2-wsa+renesas@sang-engineering.com>
+        Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Subject: [PATCH 5/5] thermal: zx2967_thermal: simplify getting .driver_data
+Date:   Sun, 21 Oct 2018 22:00:52 +0200
+Message-Id: <20181021200053.2194-6-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181021200059.2294-1-wsa+renesas@sang-engineering.com>
-References: <20181021200059.2294-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
+References: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,33 +55,33 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy.
 
- drivers/tty/serial/qcom_geni_serial.c | 6 ++----
+ drivers/thermal/zx2967_thermal.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index d3b5261ee80a..4c9dbfe96c1a 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -162,8 +162,7 @@ static struct qcom_geni_serial_port qcom_geni_uart_ports[GENI_UART_PORTS] = {
- static ssize_t loopback_show(struct device *dev,
- 				struct device_attribute *attr, char *buf)
+diff --git a/drivers/thermal/zx2967_thermal.c b/drivers/thermal/zx2967_thermal.c
+index 6acce0bce7c0..145ebf371598 100644
+--- a/drivers/thermal/zx2967_thermal.c
++++ b/drivers/thermal/zx2967_thermal.c
+@@ -207,8 +207,7 @@ MODULE_DEVICE_TABLE(of, zx2967_thermal_id_table);
+ #ifdef CONFIG_PM_SLEEP
+ static int zx2967_thermal_suspend(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct qcom_geni_serial_port *port = platform_get_drvdata(pdev);
-+	struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
+-	struct zx2967_thermal_priv *priv = platform_get_drvdata(pdev);
++	struct zx2967_thermal_priv *priv = dev_get_drvdata(dev);
  
- 	return snprintf(buf, sizeof(u32), "%d\n", port->loopback);
- }
-@@ -172,8 +171,7 @@ static ssize_t loopback_store(struct device *dev,
- 				struct device_attribute *attr, const char *buf,
- 				size_t size)
+ 	if (priv && priv->clk_topcrm)
+ 		clk_disable_unprepare(priv->clk_topcrm);
+@@ -221,8 +220,7 @@ static int zx2967_thermal_suspend(struct device *dev)
+ 
+ static int zx2967_thermal_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct qcom_geni_serial_port *port = platform_get_drvdata(pdev);
-+	struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
- 	u32 loopback;
+-	struct zx2967_thermal_priv *priv = platform_get_drvdata(pdev);
++	struct zx2967_thermal_priv *priv = dev_get_drvdata(dev);
+ 	int error;
  
- 	if (kstrtoint(buf, 0, &loopback) || loopback > MAX_LOOPBACK_CFG) {
+ 	error = clk_prepare_enable(priv->clk_topcrm);
 -- 
 2.19.0
 
