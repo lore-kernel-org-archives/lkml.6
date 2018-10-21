@@ -2,164 +2,194 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6667ECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 04:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2009CECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 04:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 814EC205F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 04:16:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1FF320869
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 04:59:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J5mXPkeR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 814EC205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZLOgo8UI";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jBBbS2Vu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1FF320869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbeJUM3A (ORCPT
+        id S1727110AbeJUNMf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 08:29:00 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42852 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbeJUM3A (ORCPT
+        Sun, 21 Oct 2018 09:12:35 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59652 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726895AbeJUNMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 08:29:00 -0400
-Received: by mail-lj1-f195.google.com with SMTP id y71-v6so34021894lje.9;
-        Sat, 20 Oct 2018 21:16:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7MNQfSkJBOmbT03Ak/vQRrAaCyw3Ier5klZZhm8tj9k=;
-        b=J5mXPkeRqXBn5h6Ur59TpNPpn5YLfLNX+1MUVCdq4dKueBcmA5tOEsMdLQflFfYQNY
-         iamg/9tp1BzwoA3Psxjzp2g6ybGCOEQBg+3haZiQADidpFr+lmSBB1S8SyEk9KzNStlR
-         Nvkf05l5VL52/DHJDm2D0r71PO4+V5ADxe+VGP0htqV8c4+lv0qX69jRfinVyEM0MQp0
-         3Ekf+zAsQ76/7MXsXAbTMp0La8ScNrYHfGsRA5CaV4QLEjboRwCtk05w+9tGURMxFJZL
-         YeZ0PVEb4GWBcMEdOBDH+Vtaa2pr9CDEM+KKD++1fvL6h0JFRQ7o3HIV5UE5WsZ9k6yY
-         e2vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7MNQfSkJBOmbT03Ak/vQRrAaCyw3Ier5klZZhm8tj9k=;
-        b=eyyQ76M/y/LzjrRFJYScl7WjVn2vjU+Yy+sLMuxuIjKljZo+P+qde4xkzOMPhAHPgJ
-         3afRVpMQHokhpQiy4pkXlv+0ijV4aciTyWauZpmCuv+82fjas90MCEKCK62vXBClBFNz
-         /Zj4pz9ZoiT/Ly7bEvdeheNgBt3OH+TnVDbvMkU2oDWcC9yYmLITdAeQqucUdtkgObPf
-         wHvD3UowLQlu5zZq5MJb0E616KZencsHib6mPcpFGbbYLYor0qCfcAPRrtt0LpXwskTR
-         6G0WRYW03RauD+5LZwpmZ8pQDrOgcGAaypB/2NYoQlkKMJG8cVBArSVqY1cI0n8wsqnX
-         MC0w==
-X-Gm-Message-State: AGRZ1gLfGqBThen/cbcxHP6ITEGXsJ86Xy5H4YgFtqJW2QfhbUSdUCgt
-        gSvHBUZPSD8roHdxh4vmmUdnwbwnjPjKyZF0Qus=
-X-Google-Smtp-Source: AJdET5fhHrmlOd8ko604QVQfRRBHPabshg/FC2e0GQ/GxxMwq1DLXli7eydXlF2NRylgC1AKcs/ZE6BTN1MRHuReqxo=
-X-Received: by 2002:a2e:c52:: with SMTP id o18-v6mr1969356ljd.94.1540095365480;
- Sat, 20 Oct 2018 21:16:05 -0700 (PDT)
+        Sun, 21 Oct 2018 09:12:35 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E459B60C1B; Sun, 21 Oct 2018 04:59:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540097973;
+        bh=ov1MMhPy5NbWb10AaaVYkL/Ob5SQoAGhu6LDuUBKjRU=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=ZLOgo8UIFsO2oMpv7n/F4PPjmm+h3WdLz0GGImZc6GMbB1t8tzfUD7I+H29lGOiwB
+         ftoXJJYysUowK9KC3I0rUcxgIfAMonNlycu6gTFvtNXaeaM38YsKj8+FHgsQPAr5Z1
+         SeJOk0tvjN94Esdiy+oWZe3KMvcz1loaq1s9MC4A=
+Received: from [192.168.43.47] (unknown [223.227.22.91])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8865C60159;
+        Sun, 21 Oct 2018 04:59:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540097972;
+        bh=ov1MMhPy5NbWb10AaaVYkL/Ob5SQoAGhu6LDuUBKjRU=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=jBBbS2VuX5SJaFDkq/5qru+/TEhmeYuKRD6gIGrlJuDZT6mxX5z3DRLV3dmrxea5J
+         xxGOZbIEoaaZqv6NgkffOr35mRBAFCKmu9PB6Aut2zkxuf3vgkk3S6Esd/uZ7cpRM1
+         kShqqZ31sB/fCPbW5V9ofCrCe3ODFeFBh0fgiUs8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8865C60159
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCH 0/6] Tracing register accesses with pstore and dynamic
+ debug
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Prasad Sodagudi <psodagud@codeaurora.org>,
+        Ingo Molnar <mingo@kernel.org>, tsoni@codeaurora.org,
+        Anton Vorontsov <anton@enomsg.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Laura Abbott <labbott@redhat.com>, devicetree@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tingwei Zhang <tingwei@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Tony Luck <tony.luck@intel.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Jim Cromie <jim.cromie@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Bryan Huntsman <bryanh@codeaurora.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Colin Cross <ccross@android.com>,
+        Joe Perches <joe@perches.com>, tkjos@google.com
+References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
+ <20181020052535.GA155509@joelaf.mtv.corp.google.com>
+ <1d3ddbe3-d3ac-aa3e-fc9e-36739ddd0c91@codeaurora.org>
+ <20181020162719.GA49955@joelaf.mtv.corp.google.com>
+ <15ec736d-bd54-5519-4b99-47dd161bc556@codeaurora.org>
+Message-ID: <92075d3d-1ea9-d746-384a-1b61ceefcb70@codeaurora.org>
+Date:   Sun, 21 Oct 2018 10:29:17 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181017031241.669-1-kys@linuxonhyperv.com> <20181017031406.773-1-kys@linuxonhyperv.com>
- <20181017031406.773-3-kys@linuxonhyperv.com> <20181017050705.GE22447@kroah.com>
- <20181017062255.oiu44y4zuuwilan3@mwanda> <CANiq72kQwhOFC5=vaNZW9qpmohot3ATRJVnn95A8eJ2w2xCNMQ@mail.gmail.com>
- <20181020192207.a6mne4npklprlyym@mwanda>
-In-Reply-To: <20181020192207.a6mne4npklprlyym@mwanda>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Sun, 21 Oct 2018 06:15:53 +0200
-Message-ID: <CANiq72kX5yVC88W1Y8aTLvsZ4OS-bg9iLvuvo95dkocn2bCGeg@mail.gmail.com>
-Subject: Re: [PATCH 3/5] Drivers: hv: kvp: Fix the recent regression caused by
- incorrect clean-up
-To:     Dan <dan.carpenter@oracle.com>
-Cc:     olaf@aepfle.de, sthemmin@microsoft.com,
-        Greg KH <gregkh@linuxfoundation.org>, jasowang@redhat.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stable@vger.kernel.org, Michael.H.Kelley@microsoft.com,
-        Robo Bot <apw@canonical.com>, devel@linuxdriverproject.org,
-        vkuznets@redhat.com, haiyangz@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <15ec736d-bd54-5519-4b99-47dd161bc556@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
+On 10/21/2018 9:16 AM, Sai Prakash Ranjan wrote:
+> On 10/20/2018 9:57 PM, Joel Fernandes wrote:
+>> On Sat, Oct 20, 2018 at 12:02:37PM +0530, Sai Prakash Ranjan wrote:
+>>> On 10/20/2018 10:55 AM, Joel Fernandes wrote:
+>>>> On Sun, Sep 09, 2018 at 01:57:01AM +0530, Sai Prakash Ranjan wrote:
+>>>>> Hi,
+>>>>>
+>>>>> This patch series adds Event tracing support to pstore and is 
+>>>>> continuation
+>>>>> to the RFC patch introduced to add a new tracing facility for register
+>>>>> accesses called Register Trace Buffer(RTB). Since we decided to not 
+>>>>> introduce
+>>>>> a separate framework to trace register accesses and use existing 
+>>>>> framework
+>>>>> like tracepoints, I have moved from RFC. Details of the RFC in link 
+>>>>> below:
+>>>>>
+>>>>> Link: 
+>>>>> https://lore.kernel.org/lkml/cover.1535119710.git.saiprakash.ranjan@codeaurora.org/ 
+>>>>>
+>>>>>
+>>>>> MSR tracing example given by Steven was helpful in using 
+>>>>> tracepoints for
+>>>>> register accesses instead of using separate trace. But just having 
+>>>>> these
+>>>>> IO traces would not help much unless we could have them in some 
+>>>>> persistent
+>>>>> ram buffer for debugging unclocked access or some kind of bus hang 
+>>>>> or an
+>>>>> unexpected reset caused by some buggy driver which happens a lot 
+>>>>> during
+>>>>> initial development stages. By analyzing the last few entries of 
+>>>>> this buffer,
+>>>>> we could identify the register access which is causing the issue.
+>>>>
+>>>> Hi Sai,
+>>>>
+>>>> I wanted to see if I could make some time to get your patches 
+>>>> working. We are
+>>>> hitting usecases that need something like this as well. Basically 
+>>>> devices
+>>>> hanging and then the ramdump does not tell us much, so in this case 
+>>>> pstore
+>>>> events can be really helpful. This usecase came up last year as well.
+>>>>
+>>>> Anyway while I was going through your patches, I cleaned up some 
+>>>> pstore code
+>>>> as well and I have 3 more patches on top of yours for this clean up. 
+>>>> I prefer
+>>>> we submit the patches together and sync our work together so that 
+>>>> there is
+>>>> least conflict.
+>>>>
+>>>> Here's my latest tree:
+>>>> https://github.com/joelagnel/linux-kernel/commits/pstore-events
+>>>> (note that I have only build tested the patches since I just wrote 
+>>>> them and
+>>>> its quite late in the night here ;-))
+>>>>
+>>>
+>>> Hi Joel,
+>>>
+>>> Thanks for looking into this. Sure, I will be happy to sync up with 
+>>> you on
+>>
+>> Thanks. And added a fourth patch in the tree too.
+>>
+>>> this. I can test your additional patches on top of my pstore patches. 
+>>> BTW,
+>>> I'm still stuck at copying binary record into pstore and then extract it
+>>> during read time. Seems like I'm missing something.
+>>
+>> Sure, push your latest somewhere and let me know. I'll try to get you 
+>> unstuck.
+>>
+> 
+> Thanks Joel, I will push my changes and let you know in some time.
+> 
 
-On Sat, Oct 20, 2018 at 9:22 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> On Sat, Oct 20, 2018 at 04:42:07PM +0200, Miguel Ojeda wrote:
-> > Using an attribute is indeed better whenever possible. In C++17 it is
-> > an standard attribute and there have been proposals to include some of
-> > them for C as well since 2016 at least, e.g. the latest for
-> > fallthrough at:
-> >
-> >   http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2268.pdf
-> >
-> > I have taken a quick look into supporting it (typing it here to save
-> > it on the mailing list :-), and we have:
-> >
-> >   * gcc >= 7.1 supports -Wimplicit-fallthrough with
-> > __attribute__((fallthrough)), the comment syntax and the C++
-> > [[fallthrough]] syntax.
-> >   * gcc < 7.1 complains about empty declarations (it does not know
-> > about attributes for null statements) and also
-> > -Wdeclaration-after-statement.
->
-> I'm not sure I understand about empty decalarations.  The idea is that
-> we would do:
+Hi Joel,
 
-That paragraph tried to explain that gcc < 7.1 did not know about
-__attribute__((fallthrough)); i.e. that everything was introduced in
-gcc 7.1.
+Here's my tree:
+https://github.com/saiprakash-ranjan/linux/commits/pstore-events
 
-Anyway, the conclusion was a neuron misfiring of mine -- in my mind I
-was thinking clang supported the comment syntax (when I clearly wrote
-that it didn't). Never mind --- thanks for pointing it out!
+I have one patch extra on top of your patches. Nothing much on binary 
+record storage in this patch, only removed kmalloc in pstore event call 
+to avoid loop.
 
->
->         case 3:
->                 frob();
->                 __fall_through();
->         case 4:
->                 frob();
->
-> #if GCC > 7.1
-> #define __fall_through() __attribute__((fallthrough))
-> #else
-> #define __fall_through()
-> #endif
-
-Yes, of course, that is what we do for other attributes -- actually in
--next we have pending a better way for checking, using
-__has_attribute:
-
-  #if __has_attribute(fallthrough)
-  #define __fallthrough __attribute__((fallthrough))
-  #else
-  #define __fallthrough
-  #endif
-
->
-> So long as GCC and static analysis tools understand about the attribute
-> that's enought to catch the bugs. No one cares what clang and icc do.
-
-Not so sure about that -- there are quite some people looking forward
-to building Linux with clang, even if only to have another compiler to
-check for warnings and to use the clang/llvm-related tools (and to
-write new ones).
-
-> We would just disable the fall through warnings on those until they are
-> updated to support the fallthrough attribute.
-
-You mean if they start supporting the warning but not the attribute? I
-don't think that would be likely (i.e. if clang enables the warning on
-C mode, they will have to introduce a way to suppress it; which should
-be the attribute (at least), since they typically like to be
-compatible with gcc and since they already support it in C++ >= 11),
-but everything is possible.
-
->
-> We wouldn't update all the fall through comments until later, but going
-> forward people could use the __fall_through() macro if they want.
-
-Agreed. I will introduce it in the compiler-attributes tree -- should
-be there for -rc1 if no one complains. CC'ing all of you in the patch.
-
-Cheers,
-Miguel
+Thanks,
+Sai
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
