@@ -2,103 +2,95 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BE8ECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 09:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA019ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 09:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5152420843
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 09:44:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5152420843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	by mail.kernel.org (Postfix) with ESMTP id 3A92120645
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 09:55:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A92120645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbeJURzW (ORCPT
+        id S1727573AbeJUSJP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 13:55:22 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:31008 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727388AbeJURzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 13:55:22 -0400
-Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 79E2E4B84D;
-        Sun, 21 Oct 2018 11:41:38 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id Dec6Eflflgx6; Sun, 21 Oct 2018 11:41:37 +0200 (CEST)
-Date:   Sun, 21 Oct 2018 20:41:33 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Robert Richter <rric@kernel.org>,
-        Brendan Gregg <bgregg@netflix.com>
-Cc:     linux-kernel@vger.kernel.org, oprofile-list@lists.sf.net
-Subject: Re: [RFC] Merging ftrace_stack, perf_callchain, oprofile->backtrace
- and stack_trace
-Message-ID: <20181021094133.nvqhs73khwx2xe4a@ryuk>
-References: <20181021093106.mhjpb2rnx6kstjki@ryuk>
+        Sun, 21 Oct 2018 14:09:15 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13679 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726980AbeJUSJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Oct 2018 14:09:15 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 639B7233212B3;
+        Sun, 21 Oct 2018 17:55:24 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.408.0; Sun, 21 Oct 2018 17:55:18 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
+        <David1.Zhou@amd.com>, <airlied@linux.ie>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] drm/radeon/kms: remove set but not used variable 'pll'
+Date:   Sun, 21 Oct 2018 10:05:59 +0000
+Message-ID: <1540116359-164086-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ustoeia7qk475mn7"
-Content-Disposition: inline
-In-Reply-To: <20181021093106.mhjpb2rnx6kstjki@ryuk>
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
---ustoeia7qk475mn7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+drivers/gpu/drm/radeon/radeon_legacy_tv.c: In function 'radeon_legacy_tv_init_restarts':
+drivers/gpu/drm/radeon/radeon_legacy_tv.c:435:21: warning:
+ variable 'pll' set but not used [-Wunused-but-set-variable]
+  struct radeon_pll *pll;
+  
+It never used since introduction in commit
+4ce001abafaf ("drm/radeon/kms: add initial radeon tv-out support.")
+Also remove related variables 'dev, rdev, radeon_crtc'
 
-On 2018-10-21, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> However, in working on this patch, I've noticed that there appear to be
-> several different implementations of "get the stack trace from this
-> pt_regs" which all appear quite similar. Namely:
->=20
->   * struct ftrace_stack;
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/radeon/radeon_legacy_tv.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-Sorry, I made a mistake here. ftrace_stack *does* use stack_trace under
-the hood, and so it can be easily modified to use the saved kretprobe
-stack. The only issue is with perf_callchain_entry (which affects
-bpf_get_stack).
+diff --git a/drivers/gpu/drm/radeon/radeon_legacy_tv.c b/drivers/gpu/drm/radeon/radeon_legacy_tv.c
+index 4278272..3dae2c4 100644
+--- a/drivers/gpu/drm/radeon/radeon_legacy_tv.c
++++ b/drivers/gpu/drm/radeon/radeon_legacy_tv.c
+@@ -421,24 +421,14 @@ static void radeon_legacy_write_tv_restarts(struct radeon_encoder *radeon_encode
+ 
+ static bool radeon_legacy_tv_init_restarts(struct drm_encoder *encoder)
+ {
+-	struct drm_device *dev = encoder->dev;
+-	struct radeon_device *rdev = dev->dev_private;
+ 	struct radeon_encoder *radeon_encoder = to_radeon_encoder(encoder);
+ 	struct radeon_encoder_tv_dac *tv_dac = radeon_encoder->enc_priv;
+-	struct radeon_crtc *radeon_crtc;
+ 	int restart;
+ 	unsigned int h_total, v_total, f_total;
+ 	int v_offset, h_offset;
+ 	u16 p1, p2, h_inc;
+ 	bool h_changed;
+ 	const struct radeon_tv_mode_constants *const_ptr;
+-	struct radeon_pll *pll;
+-
+-	radeon_crtc = to_radeon_crtc(radeon_encoder->base.crtc);
+-	if (radeon_crtc->crtc_id == 1)
+-		pll = &rdev->clock.p2pll;
+-	else
+-		pll = &rdev->clock.p1pll;
+ 
+ 	const_ptr = radeon_legacy_tv_get_std_mode(radeon_encoder, NULL);
+ 	if (!const_ptr)
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---ustoeia7qk475mn7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlvMSc0ACgkQnhiqJn3b
-jbTuphAAkiKfKR9J5ssmyXI+RCDaxUD/54cJIy8sN2E45o2FnQZ7MOzLS8dNk4OK
-ZNsYcOM8/TkA/rsrDfFqdqk6dfzFRbRwu3kAxDqDwmGVEmMWaRUZ/tpvijpEXYYI
-KJ+U1hT8rd6yRL+QaGqswi0PylEMm8yo/PnGGyb7cVj8Exc7GKeg2dast5DE3kTE
-X82Az5h5SHDHGrE/o59WW7vhpHETeDdf1Qb7acVPa5X+4S/nE/ss5mvlBWiSa9Xx
-Sw/32ZCwKpflcXsM+KLrj7nGuJXA9T2pir5Q60dwihwjFMzOx+AR4+zGF9Co/AB8
-jcr8aYHNuUnbDrzh1ZHeKLFXzwoq4kMQq7YmkIq6JDuj3f+X8qpLY0BLnnO2PMmd
-DyRkGDQja7EWGQP2yUfBZYILe1HkE8EH0LF0bpWcS38DcpXTjG8hGxMPqgxVIiBa
-0ejPKwT3yJNON9ngg7ja5XebDLC5Y8IXFNm2lcq1miglJSt8zC1MZCCgBw/Mx6y8
-cO9joIIoUlKc+2pRWRJ5tVeYu4jM3G7S+PRg5Voh/yxs1+InlMw7QskuSZwBg9lM
-ivtySt6Uih43/JfYd0NP4ICYUPVcc4/CBugGbXu+rqHXRJZli8zaVpRAXn6T/r+A
-rgO8FclHNE9aDd8dACHXxUaoZ8yKweaKQfAVeSWbu/Hg8EbyJzs=
-=+R3e
------END PGP SIGNATURE-----
-
---ustoeia7qk475mn7--
