@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DATE_IN_PAST_03_06,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26186ECDE46
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 19:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D0F8ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 19:27:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBE3720658
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 19:27:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F3FC2083A
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 19:27:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RupHv7gw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBE3720658
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iu1nb9X9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F3FC2083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728234AbeJVDmb (ORCPT
+        id S1728181AbeJVDm3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 23:42:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33476 "EHLO mail.kernel.org"
+        Sun, 21 Oct 2018 23:42:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728069AbeJVDmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 23:42:31 -0400
+        id S1727156AbeJVDm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Oct 2018 23:42:29 -0400
 Received: from earth.universe (unknown [62.214.5.194])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9F092089E;
-        Sun, 21 Oct 2018 19:27:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 888DC20658;
+        Sun, 21 Oct 2018 19:27:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540150030;
-        bh=7wsgEIPkHlIv/PgD+L5011mFTOj7cQKQh95mWCO+uqY=;
+        s=default; t=1540150027;
+        bh=DQantDa2DRZvntC4/uobEQGOw15PK0GejlSTBcPH4Gc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RupHv7gwgOD7tw2dOgt7r/EsHXJruAadBu+FKBmsMr6579jXZqcWAD5fnyS/IODAG
-         lDSA1ctJrcivu5snGaWquEenfx+I/KDj7vdkdFInfWKidKi1rnpXBTpfv41HW8yLRs
-         fuIUrnXUoNw7bE5lhztnDfzVpqw3pnwtAy3VROys=
+        b=iu1nb9X9/PKL/puEjYO+snZnNqlI9/KgtYPxSv4Wc3rNXS7MIfDqt3P1wDwTMgDOg
+         2rl5eOy13cv1vMr2gITe3UiIhIBv2wLBMFQzhO1iy52vE8x2UzMgzVz6V/UH/eMUjo
+         dW0//QIzDhLrGN8li+oLVxoCbYpa/iDNV0DwYziI=
 Received: by earth.universe (Postfix, from userid 1000)
-        id 828F03C098D; Sun, 21 Oct 2018 18:22:10 +0200 (CEST)
-Date:   Sun, 21 Oct 2018 18:22:10 +0200
+        id D3F603C098F; Sun, 21 Oct 2018 18:24:30 +0200 (CEST)
+Date:   Sun, 21 Oct 2018 18:24:30 +0200
 From:   Sebastian Reichel <sre@kernel.org>
 To:     Baolin Wang <baolin.wang@linaro.org>
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         yuanjiang.yu@unisoc.com, broonie@kernel.org, ctatlor97@gmail.com,
         linus.walleij@linaro.org
-Subject: Re: [PATCH v5 2/6] power: supply: core: Add one field to present the
- battery internal resistance
-Message-ID: <20181021162210.jq3bzgxnw4xucbvm@earth.universe>
+Subject: Re: [PATCH v5 3/6] dt-bindings: power: Introduce properties to
+ present the battery OCV capacity table
+Message-ID: <20181021162430.qfz2teauewdy5jva@earth.universe>
 References: <e7c061535f2dcca54d6498405fdd5ed7098b19f9.1539915051.git.baolin.wang@linaro.org>
- <b70d55f008cfbbb79abf27018261d8a6f16e9673.1539915051.git.baolin.wang@linaro.org>
+ <3a0c6487c9503cf64432f630e65790cc5c3f70ab.1539915051.git.baolin.wang@linaro.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zadvt6bl3wgb755k"
+        protocol="application/pgp-signature"; boundary="lgjqzksp5zzrqfpo"
 Content-Disposition: inline
-In-Reply-To: <b70d55f008cfbbb79abf27018261d8a6f16e9673.1539915051.git.baolin.wang@linaro.org>
+In-Reply-To: <3a0c6487c9503cf64432f630e65790cc5c3f70ab.1539915051.git.baolin.wang@linaro.org>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -63,18 +63,21 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---zadvt6bl3wgb755k
+--lgjqzksp5zzrqfpo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Fri, Oct 19, 2018 at 06:53:11PM +0800, Baolin Wang wrote:
-> Add one field for 'struct power_supply_battery_info' to present the batte=
-ry
-> factory internal resistance.
+On Fri, Oct 19, 2018 at 06:53:12PM +0800, Baolin Wang wrote:
+> Some battery driver will use the open circuit voltage (OCV) value to look
+> up the corresponding battery capacity percent in one certain degree Celsi=
+us.
+> Thus this patch provides some battery properties to present the OCV table
+> temperatures and OCV capacity table values.
 >=20
+> Suggested-by: Sebastian Reichel <sre@kernel.org>
 > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
@@ -84,76 +87,91 @@ Looks good to me.
 -- Sebastian
 
 > Changes from v4:
->  - None.
+>  - Improve the description of ocv-capacity-table-n to make the order clea=
+r.
 >=20
 > Changes from v3:
->  - New patch in v3, which splits code into one separate patch.
->  - Add Linusw reviewed tag.
-> ---
->  drivers/power/supply/power_supply_core.c |    3 +++
->  include/linux/power_supply.h             |    1 +
->  2 files changed, 4 insertions(+)
+>  - Split binding into one separate patch.
+>  - Rename ocv-capacity-table-temperatures to ocv-capacity-celsius.
+>  - Add some words to specify the OCV's unit.
 >=20
-> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/sup=
-ply/power_supply_core.c
-> index e853618..307e0995 100644
-> --- a/drivers/power/supply/power_supply_core.c
-> +++ b/drivers/power/supply/power_supply_core.c
-> @@ -579,6 +579,7 @@ int power_supply_get_battery_info(struct power_supply=
- *psy,
->  	info->charge_term_current_ua         =3D -EINVAL;
->  	info->constant_charge_current_max_ua =3D -EINVAL;
->  	info->constant_charge_voltage_max_uv =3D -EINVAL;
-> +	info->factory_internal_resistance_uohm  =3D -EINVAL;
+> Changes from v2:
+>  - Use type __be32 to calculate the table length.
+>  - Update error messages.
+>  - Add some helper functions.
+>=20
+> Changes from v1:
+>  - New patch in v2.
+> ---
+>  .../devicetree/bindings/power/supply/battery.txt   |   15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/power/supply/battery.txt b=
+/Documentation/devicetree/bindings/power/supply/battery.txt
+> index 938d027..89871ab 100644
+> --- a/Documentation/devicetree/bindings/power/supply/battery.txt
+> +++ b/Documentation/devicetree/bindings/power/supply/battery.txt
+> @@ -23,6 +23,17 @@ Optional Properties:
+>   - constant-charge-current-max-microamp: maximum constant input current
+>   - constant-charge-voltage-max-microvolt: maximum constant input voltage
+>   - factory-internal-resistance-micro-ohms: battery factory internal resi=
+stance
+> + - ocv-capacity-table-0: An array providing the open circuit voltage (OC=
+V)
+> +   of the battery and corresponding battery capacity percent, which is u=
+sed
+> +   to look up battery capacity according to current OCV value. And the o=
+pen
+> +   circuit voltage unit is microvolt.
+> + - ocv-capacity-table-1: Same as ocv-capacity-table-0
+> + ......
+> + - ocv-capacity-table-n: Same as ocv-capacity-table-0
+> + - ocv-capacity-celsius: An array containing the temperature in degree C=
+elsius,
+> +   for each of the battery capacity lookup table. The first temperature =
+value
+> +   specifies the OCV table 0, and the second temperature value specifies=
+ the
+> +   OCV table 1, and so on.
 > =20
->  	if (!psy->of_node) {
->  		dev_warn(&psy->dev, "%s currently only supports devicetree\n",
-> @@ -616,6 +617,8 @@ int power_supply_get_battery_info(struct power_supply=
- *psy,
->  			     &info->constant_charge_current_max_ua);
->  	of_property_read_u32(battery_np, "constant_charge_voltage_max_microvolt=
-",
->  			     &info->constant_charge_voltage_max_uv);
-> +	of_property_read_u32(battery_np, "factory-internal-resistance-micro-ohm=
-s",
-> +			     &info->factory_internal_resistance_uohm);
+>  Battery properties are named, where possible, for the corresponding
+>  elements in enum power_supply_property, defined in
+> @@ -44,6 +55,10 @@ Example:
+>  		constant-charge-current-max-microamp =3D <900000>;
+>  		constant-charge-voltage-max-microvolt =3D <4200000>;
+>  		factory-internal-resistance-micro-ohms =3D <250000>;
+> +		ocv-capacity-celsius =3D <(-10) 0 10>;
+> +		ocv-capacity-table-0 =3D <4185000 100>, <4113000 95>, <4066000 90>, ..=
+=2E;
+> +		ocv-capacity-table-1 =3D <4200000 100>, <4185000 95>, <4113000 90>, ..=
+=2E;
+> +		ocv-capacity-table-2 =3D <4250000 100>, <4200000 95>, <4185000 90>, ..=
+=2E;
+>  	};
 > =20
->  	return 0;
->  }
-> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-> index f807691..d089566 100644
-> --- a/include/linux/power_supply.h
-> +++ b/include/linux/power_supply.h
-> @@ -326,6 +326,7 @@ struct power_supply_battery_info {
->  	int charge_term_current_ua;	    /* microAmps */
->  	int constant_charge_current_max_ua; /* microAmps */
->  	int constant_charge_voltage_max_uv; /* microVolts */
-> +	int factory_internal_resistance_uohm;   /* microOhms */
->  };
-> =20
->  extern struct atomic_notifier_head power_supply_notifier;
+>  	charger: charger@11 {
 > --=20
 > 1.7.9.5
 >=20
 
---zadvt6bl3wgb755k
+--lgjqzksp5zzrqfpo
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlvMp7IACgkQ2O7X88g7
-+poqng/9Ft61j2F8QNqbZ3meLD0Sw0omW44rldkmL4u2AnZwLAIBBDV5xu2uENOI
-tdsqC/AB0+eb0Er6d/MwmPr7jnWFq0UqU/Vr+fL+Ia2F45z5cTWEkrewu+xNJR5l
-rOtKl57zX4He5A/Ach2ugyJQEACKJ+WIEpxyfEXb4yWLPwIJQIrlZo69G/RB/WmB
-Wq+kYvGH8uYMiQH7kY0c9yl2xTFM4Ar8aD2kGJR2xQV9P5ft7pX2oQD7OuWTKgA6
-i2tTAjrOPUz4eIkV9lLSJrNDtQZwphJLjS/VFOU0ACp+JXq9j1Rzv/VCe2XmPtK2
-SyzjxA2FKEel9vGVw4tX4ElXriu8QkpIcn8DLz78lxCzHFiilubhCX96L8WC15A4
-jAIUmnflDnnTCpK/sOo8WJRw4fj8fEjWQN/LLQmhJJqSgfmmlAyWvbHWKtIS9ZCL
-6wBUALl6Rr9nT3SP70pxOzIH2wX53tPRckYUfGqjg8b8vhsb+JOCxRSx9eQ/JsrE
-pdWWK4u7oFBgYp6yeC/gp0ONOaLfuvXuNNx1Vk+SfAUuwikyIPLLvDx3PbOFENL+
-J2A1d5X0bLjla+dKVNiXg9w1oqY7zpAop/Q6K8wPMnweiCufkRRcINaZ3EWP/TpW
-7MOWjFSE6N4VE8GPX5bOjaEnE+MnCv4TIvHRryJ2WvepIMoBbMA=
-=GikG
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlvMqD4ACgkQ2O7X88g7
++po+qA//YPKLr1a2+dJGER6QU5BNbQLcQW98aYF04eTnq5R+sGX9+zCgH/uvQVJ7
+BS98J+pMSi/Bpq3AHIrfPnTrjdROGk9BG3RjdRqSd8eFLgEI9i9yUEXnwdY/RxCH
+WTXai4lBLeN7vvcTRu6s2FYIzA1m84B/BzEU4Dy5KjLVIKqQzUSZSB6WDW7P6DSF
+YOa/9Vh7bjKfijaCnmJk4SQM8rFyxFzAiWHnfe+sbNv/jLEU6LK5D0rbJnD5Cr2M
+oIn0JY6m/BfydAanAvlsD9hG7lhRsciePXtGw9XP5EVBuMgb2VSMJZmp0Qs51UhR
+oO6P2io2tJpyi9RxO1yHFGCm0+k+J7h6Wwy+IW/MSDtT6m4PSmfKQwmHKGA5g5dz
+AlOUNfsSy/GbNmmpnM7M+lEGZNNgo2ue6neCRaJ7V6NhpuptwW6gE0OOUT9zg94x
+9Hya3Of0HTdiIBFchfFyUbxI7zTBlsiqLU93jOMe/Ggsh4AO8kZDhTCfa0BvHSAx
+Ixt+34Yl6lpP1PT5exMPVFk7YkgjOR2K44YnsDe4cKB5FGIEQw7zoCIiD1yydbmJ
+BvGDnp62TAI/LKrVbUy5JeM9kb/6g2Gnn8o0nMUWJbsePL07GatWThvkOJOnxTqZ
+ZDAOW/y5/J6/mTzw9ik1Jig/8iHd6KPp0MVUVHTlUWJe0/f9wZo=
+=Rlqe
 -----END PGP SIGNATURE-----
 
---zadvt6bl3wgb755k--
+--lgjqzksp5zzrqfpo--
