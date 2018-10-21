@@ -6,35 +6,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A68ECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E80ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26D2D20652
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26D2D20652
+	by mail.kernel.org (Postfix) with ESMTP id 351302083C
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 20:00:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 351302083C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728474AbeJVEP6 (ORCPT
+        id S1728493AbeJVEQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 00:15:58 -0400
-Received: from sauhun.de ([88.99.104.3]:45790 "EHLO pokefinder.org"
+        Mon, 22 Oct 2018 00:16:00 -0400
+Received: from sauhun.de ([88.99.104.3]:45764 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728421AbeJVEP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 00:15:57 -0400
+        id S1728391AbeJVEP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 00:15:59 -0400
 Received: from localhost (unknown [90.200.225.72])
-        by pokefinder.org (Postfix) with ESMTPSA id 5A5C22E35DF;
-        Sun, 21 Oct 2018 22:00:29 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id 43A152E35DD;
+        Sun, 21 Oct 2018 22:00:31 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH 7/9] net: ethernet: ti: davinci_emac: simplify getting .driver_data
-Date:   Sun, 21 Oct 2018 22:00:18 +0200
-Message-Id: <20181021200021.1693-8-wsa+renesas@sang-engineering.com>
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 9/9] net: phy: mdio-mux-bcm-iproc: simplify getting .driver_data
+Date:   Sun, 21 Oct 2018 22:00:20 +0200
+Message-Id: <20181021200021.1693-10-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
 References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
@@ -53,33 +58,33 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy.
 
- drivers/net/ethernet/ti/davinci_emac.c | 6 ++----
+ drivers/net/phy/mdio-mux-bcm-iproc.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
-index f270beebb428..9153db120352 100644
---- a/drivers/net/ethernet/ti/davinci_emac.c
-+++ b/drivers/net/ethernet/ti/davinci_emac.c
-@@ -2002,8 +2002,7 @@ static int davinci_emac_remove(struct platform_device *pdev)
- 
- static int davinci_emac_suspend(struct device *dev)
+diff --git a/drivers/net/phy/mdio-mux-bcm-iproc.c b/drivers/net/phy/mdio-mux-bcm-iproc.c
+index c017486e9b86..696bdf1e4576 100644
+--- a/drivers/net/phy/mdio-mux-bcm-iproc.c
++++ b/drivers/net/phy/mdio-mux-bcm-iproc.c
+@@ -289,8 +289,7 @@ static int mdio_mux_iproc_remove(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int mdio_mux_iproc_suspend(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct net_device *ndev = platform_get_drvdata(pdev);
-+	struct net_device *ndev = dev_get_drvdata(dev);
+-	struct iproc_mdiomux_desc *md = platform_get_drvdata(pdev);
++	struct iproc_mdiomux_desc *md = dev_get_drvdata(dev);
  
- 	if (netif_running(ndev))
- 		emac_dev_stop(ndev);
-@@ -2013,8 +2012,7 @@ static int davinci_emac_suspend(struct device *dev)
+ 	clk_disable_unprepare(md->core_clk);
  
- static int davinci_emac_resume(struct device *dev)
+@@ -299,8 +298,7 @@ static int mdio_mux_iproc_suspend(struct device *dev)
+ 
+ static int mdio_mux_iproc_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct net_device *ndev = platform_get_drvdata(pdev);
-+	struct net_device *ndev = dev_get_drvdata(dev);
+-	struct iproc_mdiomux_desc *md = platform_get_drvdata(pdev);
++	struct iproc_mdiomux_desc *md = dev_get_drvdata(dev);
  
- 	if (netif_running(ndev))
- 		emac_dev_open(ndev);
+ 	clk_prepare_enable(md->core_clk);
+ 	mdio_mux_iproc_config(md);
 -- 
 2.19.0
 
