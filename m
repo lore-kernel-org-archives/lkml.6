@@ -5,61 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB02ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 18:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 232CBECDE45
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 18:31:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89F1D20838
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 18:31:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE1E12083A
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 18:31:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LaHoBLau"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89F1D20838
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MsPlYbZ/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE1E12083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbeJVCq4 (ORCPT
+        id S1728225AbeJVCrC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 22:46:56 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40252 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727794AbeJVCqz (ORCPT
+        Sun, 21 Oct 2018 22:47:02 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36041 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727794AbeJVCrC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 22:46:55 -0400
-Received: by mail-pg1-f194.google.com with SMTP id o14-v6so2243013pgv.7;
-        Sun, 21 Oct 2018 11:31:43 -0700 (PDT)
+        Sun, 21 Oct 2018 22:47:02 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f18-v6so17974224pgv.3;
+        Sun, 21 Oct 2018 11:31:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=35rNHoeo4VYeNYoLdpst+BGGcOblA3dvN0XNHdaurVk=;
-        b=LaHoBLaubLA8ZBDwbBp8LLUfttMiVKhvS148L5vH3bgHEkt0Bh50GsvQ3HLQMZJ/R8
-         Qi83Qn3bUn/UD/O7oET672l8ak8I2JJPmBl7T4Alm1CopXy26q+Etpm/REMG6f63nPpQ
-         bvU7SBDt2eCuVLWEaX2DmfERxhPKz//9G4RghUZwgwS7ClvKbBALiuteoMaCVBlEY9wy
-         qExVBgx7OGn1xP8s+yml3pkhShMqA0Q5lRY/9w6QjaOEsG4Z+YDQMt4iolum5Sd7Iwod
-         UmxCyl6g115gyaNNTl/cVMxqPadxNotfYUHH5BAjRPjHPUZ2Q7kolG49/+QNiJomTms8
-         bZVQ==
+        bh=43RkB7tCNCYCKZ7WhLMuDOHdDa1VpkXWnfifk+cmylI=;
+        b=MsPlYbZ/0XCygAYUdeW/bpv+EBEmdw9Q3x6W6qH0mXRSbomIiINfjyQZN2/4R98IuI
+         VA6G5uKgRXgJhbA1/adD33E7/vg378VglzBWXT3FMtrp7RUKw0sWmccyOHpo0Ufgt9fF
+         l/P1UPxsdMNMoC8vpdsnVOKfnU796lkIF5wW/sEP/Be1QDKK4B1yHI1cE433UKURNX59
+         KhgNkplINY6ieKDRkJ91/F243RkzzgPChBsGm/H6JL5ORAfFaPiQkic70cUl7/VUui/I
+         EttL85I0AINYz2gK5Txtb65PQtG47YaOouWfDbv7Kj7TdyyZfkNi7qNK6oRSEciPl3aw
+         sENA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=35rNHoeo4VYeNYoLdpst+BGGcOblA3dvN0XNHdaurVk=;
-        b=F/jEL4AFfdO6zPpVtw1TyWETgf0G08hM1YriZTW6MB3ocmjWoCzPN+GAIeOGJFM6fW
-         UF/fBflRDYVYxayqR+CYSo7fUpCHy7Mb0twIvynH67WMMElB4Wt5J+oZMcYcRCkckxCn
-         Vdy34B6LCJIyijC6vO7V09X8pKtt+xSUFTD4JUKDgIGV8OhXSaYvC9TwJRupqypwM92b
-         hi6CyigWoyIxbZ6g58yHH4aIhSL2akJ6Tek0cttB7ZIhvZkJsY3doUsMnBRSml5wWPgU
-         WvXUx6wWHNWqqWrGg6eETbDTNf3ikYEEK99cwdoDk9rrGTJ8NmjBeOg9gI5rKa9VSqft
-         ZDuA==
-X-Gm-Message-State: ABuFfojl1ZCxNjeM7iWTlNamtD62I1rrhmrmYjd7ZLduq3JGWrR6qQEc
-        QhGumm9T9dxII18eFazS8rk=
-X-Google-Smtp-Source: ACcGV62HMDVtNARBcws5TXKZu2bcIOnVwEvZWyl7lCdftt3wqZPJdzBL3aEO1n3MPHWlPDBUZL/UpQ==
-X-Received: by 2002:a63:d502:: with SMTP id c2-v6mr40309929pgg.324.1540146703381;
-        Sun, 21 Oct 2018 11:31:43 -0700 (PDT)
+        bh=43RkB7tCNCYCKZ7WhLMuDOHdDa1VpkXWnfifk+cmylI=;
+        b=nJ0hby7LUsaw2Y+uOF47DzJHX4Rg6rbnJGJYGwm7pIzwuoHa4H8Quby00vhU5uXjHX
+         ivSqtDakMNI9OH11htTivgWkCv6DoBOc+XMWsrNiuW+u6vgvWU885Zb1jeJcIkolWZPy
+         OD1lTd2PdogzVfH6kXksWeHvdyQBPFJykzDMRj7EuisTYAWeNehQomH2JNjFr5/RZ9U3
+         jhAArnxSeOpTR8Y9g2PL1xrE1cIVuDp2uPSWx8L2TicitNvEI3i+wY7IY3t6vNgW73Xx
+         MjURjVRpeqOyDXGRPKXFllk8174oNpYBpDoApm5OwgnJuFlXt1wirnoKHawp5psye0hS
+         tucQ==
+X-Gm-Message-State: ABuFfojTxZ9jqfwC23KTxU/e54Kouq7hKwQjJ6fQAe/kxFtXDNNUz96q
+        UKcaxBShFGTrCl9bsPBG5oM=
+X-Google-Smtp-Source: ACcGV62YOyG5p1mRHvT0sTUnRyGawdDBYKqV/srie1LTl+8ssDeIBXxkdoxDHXyaVlAzVPSyxtaZ2g==
+X-Received: by 2002:a63:fa4e:: with SMTP id g14-v6mr40245033pgk.18.1540146709566;
+        Sun, 21 Oct 2018 11:31:49 -0700 (PDT)
 Received: from localhost.localdomain ([109.252.91.118])
-        by smtp.gmail.com with ESMTPSA id v5-v6sm45467047pfd.64.2018.10.21.11.31.37
+        by smtp.gmail.com with ESMTPSA id v5-v6sm45467047pfd.64.2018.10.21.11.31.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 21 Oct 2018 11:31:42 -0700 (PDT)
+        Sun, 21 Oct 2018 11:31:49 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -67,9 +66,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Prashant Gaikwad <pgaikwad@nvidia.com>
 Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 1/8] dt: bindings: tegra20-emc: Document interrupt property
-Date:   Sun, 21 Oct 2018 21:30:45 +0300
-Message-Id: <20181021183052.32023-2-digetx@gmail.com>
+Subject: [PATCH v6 2/8] dt: bindings: tegra20-emc: Document clock property
+Date:   Sun, 21 Oct 2018 21:30:46 +0300
+Message-Id: <20181021183052.32023-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181021183052.32023-1-digetx@gmail.com>
 References: <20181021183052.32023-1-digetx@gmail.com>
@@ -80,33 +79,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-EMC has a dedicated interrupt that is used to notify about completion of
-HW operations. Document the interrupt property.
+Embedded memory controller has a corresponding clock, document the clock
+property.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
  .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-index 4c33b29dc660..a6fe401d0d48 100644
+index a6fe401d0d48..add95367640b 100644
 --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
 +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-@@ -10,6 +10,7 @@ Properties:
-   and chosen using the ramcode board selector. If omitted, only one
+@@ -11,6 +11,7 @@ Properties:
    set of tables can be present and said tables will be used
    irrespective of ram-code configuration.
-+- interrupts : Should contain EMC General interrupt.
+ - interrupts : Should contain EMC General interrupt.
++- clocks : Should contain EMC clock.
  
  Child device nodes describe the memory settings for different configurations and clock rates.
  
-@@ -20,6 +21,7 @@ Example:
- 		#size-cells = < 0 >;
+@@ -22,6 +23,7 @@ Example:
  		compatible = "nvidia,tegra20-emc";
  		reg = <0x7000f4000 0x200>;
-+		interrupts = <0 78 0x04>;
+ 		interrupts = <0 78 0x04>;
++		clocks = <&tegra_car TEGRA20_CLK_EMC>;
  	}
  
  
