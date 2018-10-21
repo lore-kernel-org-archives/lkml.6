@@ -2,105 +2,87 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F30ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 18:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF87ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 18:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09C1E20838
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 18:11:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09C1E20838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 1847620838
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 18:21:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xp7AV3n1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1847620838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728133AbeJVC0y (ORCPT
+        id S1728156AbeJVCgm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 22:26:54 -0400
-Received: from smtprelay0047.hostedemail.com ([216.40.44.47]:33289 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727832AbeJVC0y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 22:26:54 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 46B84180A68A9;
-        Sun, 21 Oct 2018 18:11:44 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: quilt34_488cdc69ee618
-X-Filterd-Recvd-Size: 3121
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Sun, 21 Oct 2018 18:11:38 +0000 (UTC)
-Message-ID: <f46baa5bb0e3373c89d09b6e0d15170902e5f55c.camel@perches.com>
-Subject: Re: [PATCH 2/2] Compiler Attributes: auxdisplay: panel: use
- __fallthrough
-From:   Joe Perches <joe@perches.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Olof Johansson <olof@lxom.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
-        Martin Sebor <msebor@gmail.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
-Date:   Sun, 21 Oct 2018 11:11:36 -0700
-In-Reply-To: <20181021171414.22674-3-miguel.ojeda.sandonis@gmail.com>
-References: <20181021171414.22674-1-miguel.ojeda.sandonis@gmail.com>
-         <20181021171414.22674-3-miguel.ojeda.sandonis@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 21 Oct 2018 22:36:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54416 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728069AbeJVCgl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Oct 2018 22:36:41 -0400
+Received: from localhost (unknown [167.98.65.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9968820838;
+        Sun, 21 Oct 2018 18:21:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540146091;
+        bh=A3dDb7NU2G3EyIjT10wSiSaUc/XS8EbIWyI24+7X+hE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Xp7AV3n1TDCCP8SJtfLRQ7fW8dWZtfVh69yUm9hun/7ID3+DsspQFA2vT8d0GbjtV
+         ByqeKLrSlhJsk2ixfcWUtkoi5wYOlm0bvnJQBBB/+KvZfJZ2HHvzK0nuOlupN1sf/x
+         x5Xytl9bDyR9QhA8+PTc1AugWmAHW1ZPyLyP472U=
+Date:   Sun, 21 Oct 2018 19:21:28 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Aaron Ma <aaron.ma@canonical.com>
+Cc:     mathias.nyman@intel.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] usb: xhci: fix timeout for transition from RExit to
+ U0
+Message-ID: <20181021182128.GA6485@kroah.com>
+References: <1540141725-13047-1-git-send-email-aaron.ma@canonical.com>
+ <1540141725-13047-2-git-send-email-aaron.ma@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1540141725-13047-2-git-send-email-aaron.ma@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-10-21 at 19:14 +0200, Miguel Ojeda wrote:
-> Let gcc know these cases are meant to fall through to the next label
-> by annotating them with the new __fallthrough statement attribute;
-> and remove the comment since it conveys the same information
-> (which was also parsed by gcc to suppress the warning).
+On Mon, Oct 22, 2018 at 01:08:45AM +0800, Aaron Ma wrote:
+> This definition is used by msecs_to_jiffies in milliseconds.
+> According to the comments, max rexit timeout should be 20ms.
+> Align with the comments to properly calculate the delay.
+> 
+> Verified on Sunrise Point-LP and Cannon Lake.
+> 
+> Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+> ---
+>  drivers/usb/host/xhci.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+> index 6230a578324c..30225c53be1c 100644
+> --- a/drivers/usb/host/xhci.h
+> +++ b/drivers/usb/host/xhci.h
+> @@ -1678,7 +1678,7 @@ struct xhci_bus_state {
+>   * It can take up to 20 ms to transition from RExit to U0 on the
+>   * Intel Lynx Point LP xHCI host.
+>   */
+> -#define	XHCI_MAX_REXIT_TIMEOUT	(20 * 1000)
+> +#define	XHCI_MAX_REXIT_TIMEOUT	20
 
-Instead of many individual conversion patches,
-perhaps a script to do all the conversions at once.
+Can we put the units in the #define itself so that this will be more
+obvious in the future?  Like XHCI_MAX_REXIT_TIMEOUT_MS?
 
-Maybe:
+thanks,
 
-pattern='(?:\/\*\s*fall(?:\s*|\s*\-\s*)thr(?:u|ough)\s*\*\/|\/\/\s*fall\s*thr(?:u|ough)\s*$)'
-git grep -P -i --name-only "$pattern" -- '*.[ch]' |
-    xargs perl -p -i -e "s/$pattern/__fallthrough;/gi"
-
-
+greg k-h
