@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B97CECDE43
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 16:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D75ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 16:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2F5A2083C
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 16:42:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2F5A2083C
+	by mail.kernel.org (Postfix) with ESMTP id C78C92083C
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 16:58:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C78C92083C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbeJVA4x (ORCPT
+        id S1728094AbeJVBNB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 20:56:53 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:42320 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727763AbeJVA4w (ORCPT
+        Sun, 21 Oct 2018 21:13:01 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:53442 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727714AbeJVBNB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 20:56:52 -0400
+        Sun, 21 Oct 2018 21:13:01 -0400
 Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1gEGne-0005Dx-44; Sun, 21 Oct 2018 10:41:58 -0600
+        id 1gEH3E-0007mK-G8; Sun, 21 Oct 2018 10:58:04 -0600
 Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
         by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1gEGnc-0005XD-SD; Sun, 21 Oct 2018 10:41:57 -0600
+        id 1gEH3D-0007yc-OM; Sun, 21 Oct 2018 10:58:04 -0600
 From:   ebiederm@xmission.com (Eric W. Biederman)
 To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, linux-api@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mszeredi@redhat.com
+Cc:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mszeredi@redhat.com
 References: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
-        <153754741974.17872.9547912893344172802.stgit@warthog.procyon.org.uk>
-Date:   Sun, 21 Oct 2018 11:41:36 -0500
-In-Reply-To: <153754741974.17872.9547912893344172802.stgit@warthog.procyon.org.uk>
-        (David Howells's message of "Fri, 21 Sep 2018 17:30:19 +0100")
-Message-ID: <87bm7n5k1r.fsf@xmission.com>
+        <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk>
+Date:   Sun, 21 Oct 2018 11:57:43 -0500
+In-Reply-To: <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk>
+        (David Howells's message of "Fri, 21 Sep 2018 17:30:34 +0100")
+Message-ID: <877eib5jaw.fsf@xmission.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1gEGnc-0005XD-SD;;;mid=<87bm7n5k1r.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/2+iJel1JY/K7cWCvQs9KaK18Aj2OK3Wo=
+X-XM-SPF: eid=1gEH3D-0007yc-OM;;;mid=<877eib5jaw.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18bVWAcQuXvszOJa770FuI2IuHkInykmwg=
 X-SA-Exim-Connect-IP: 67.3.154.154
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH 01/34] vfs: syscall: Add open_tree(2) to reference or clone a mount [ver #12]
+Subject: Re: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE [ver #12]
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,391 +63,135 @@ David Howells <dhowells@redhat.com> writes:
 
 > From: Al Viro <viro@zeniv.linux.org.uk>
 >
-> open_tree(dfd, pathname, flags)
+> Allow a detached tree created by open_tree(..., OPEN_TREE_CLONE) to be
+> attached by move_mount(2).
 >
-> Returns an O_PATH-opened file descriptor or an error.
-> dfd and pathname specify the location to open, in usual
-> fashion (see e.g. fstatat(2)).  flags should be an OR of
-> some of the following:
-> 	* AT_PATH_EMPTY, AT_NO_AUTOMOUNT, AT_SYMLINK_NOFOLLOW -
-> same meanings as usual
-> 	* OPEN_TREE_CLOEXEC - make the resulting descriptor
-> close-on-exec
-> 	* OPEN_TREE_CLONE or OPEN_TREE_CLONE | AT_RECURSIVE -
-> instead of opening the location in question, create a detached
-> mount tree matching the subtree rooted at location specified by
-> dfd/pathname.  With AT_RECURSIVE the entire subtree is cloned,
-> without it - only the part within in the mount containing the
-> location in question.  In other words, the same as mount --rbind
-> or mount --bind would've taken.  The detached tree will be
-> dissolved on the final close of obtained file.  Creation of such
-> detached trees requires the same capabilities as doing mount --bind.
+> If by the time of final fput() of OPEN_TREE_CLONE-opened file its tree is
+> not detached anymore, it won't be dissolved.  move_mount(2) is adjusted
+> to handle detached source.
+>
+> That gives us equivalents of mount --bind and mount --rbind.
 
+In light of recent conversations about double umount_tree.
 
-What happens when mounts propgate to such a detached mount tree?
+Do we want to simply limit ourselves to attaching file->f_path of
+a FMODE_NEED_UMOUNT file descriptor and clearing FMODE_NEED_UMOUNT
+when it is attached?
 
-It looks to me like the test in propagate_one for setting
-CL_UNPRIVILEGED will trigger a NULL pointer dereference:
+Either that or perhaps move the logic into mntput on when to perform the
+umount_tree?
 
-AKA:
-	/* Notice when we are propagating across user namespaces */
-	if (m->mnt_ns->user_ns != user_ns)
-		type |= CL_UNPRIVILEGED;
+Otherwise I believe we start running into surprising situations:
 
-Since we don't know which mount namespace if any this subtree is going
-into the test should become:
+This works:
+	ofd = open_tree(...);
+	dup_fd = openat(ofd, "", O_PATH);
+	mount_move(dup_fd, ...);
+	close(ofd);
+	close(dup_fd);
 
-	if (!m->mnt_ns || (m->mnt_ns->user_ns != user_ns))
-		type |= CL_UNPRIVILEGED;
+This should fail:
+	ofd = open_tree(...);
+	dup_fd = openat(ofd, "", O_PATH);
+	close(ofd);
+	mount_move(dup_fd, ...);
+	close(dup_fd);
 
-If the tree is never attached anywhere it won't hurt as we don't allow
-mounts or umounts on the detached subtree.  We don't have enough
-information to know about the namespace we copied from if it would cause
-CL_UNPRIVILEGED to be set on any given propagation.  Similarly we don't
-have any information at all about the mount namespace this tree may
-possibily be copied to.
-
-Eric
+Allowing any file descriptor that points to mnt_ns == NULL without
+MNT_UMOUNT set seems like it is adding flexibility for no reason.
 
 
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: linux-api@vger.kernel.org
 > ---
 >
->  arch/x86/entry/syscalls/syscall_32.tbl |    1 
->  arch/x86/entry/syscalls/syscall_64.tbl |    1 
->  fs/file_table.c                        |    9 +-
->  fs/internal.h                          |    1 
->  fs/namespace.c                         |  132 +++++++++++++++++++++++++++-----
->  include/linux/fs.h                     |    7 +-
->  include/linux/syscalls.h               |    1 
->  include/uapi/linux/fcntl.h             |    2 
->  include/uapi/linux/mount.h             |   10 ++
->  9 files changed, 137 insertions(+), 27 deletions(-)
->  create mode 100644 include/uapi/linux/mount.h
+>  fs/namespace.c |   26 ++++++++++++++++++++------
+>  1 file changed, 20 insertions(+), 6 deletions(-)
 >
-> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-> index 3cf7b533b3d1..ea1b413afd47 100644
-> --- a/arch/x86/entry/syscalls/syscall_32.tbl
-> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
-> @@ -398,3 +398,4 @@
->  384	i386	arch_prctl		sys_arch_prctl			__ia32_compat_sys_arch_prctl
->  385	i386	io_pgetevents		sys_io_pgetevents		__ia32_compat_sys_io_pgetevents
->  386	i386	rseq			sys_rseq			__ia32_sys_rseq
-> +387	i386	open_tree		sys_open_tree			__ia32_sys_open_tree
-> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-> index f0b1709a5ffb..0545bed581dc 100644
-> --- a/arch/x86/entry/syscalls/syscall_64.tbl
-> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-> @@ -343,6 +343,7 @@
->  332	common	statx			__x64_sys_statx
->  333	common	io_pgetevents		__x64_sys_io_pgetevents
->  334	common	rseq			__x64_sys_rseq
-> +335	common	open_tree		__x64_sys_open_tree
->  
->  #
->  # x32-specific system call numbers start at 512 to avoid cache impact
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index e49af4caf15d..e03c8d121c6c 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -255,6 +255,7 @@ static void __fput(struct file *file)
->  	struct dentry *dentry = file->f_path.dentry;
->  	struct vfsmount *mnt = file->f_path.mnt;
->  	struct inode *inode = file->f_inode;
-> +	fmode_t mode = file->f_mode;
->  
->  	if (unlikely(!(file->f_mode & FMODE_OPENED)))
->  		goto out;
-> @@ -277,18 +278,20 @@ static void __fput(struct file *file)
->  	if (file->f_op->release)
->  		file->f_op->release(inode, file);
->  	if (unlikely(S_ISCHR(inode->i_mode) && inode->i_cdev != NULL &&
-> -		     !(file->f_mode & FMODE_PATH))) {
-> +		     !(mode & FMODE_PATH))) {
->  		cdev_put(inode->i_cdev);
->  	}
->  	fops_put(file->f_op);
->  	put_pid(file->f_owner.pid);
-> -	if ((file->f_mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ)
-> +	if ((mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ)
->  		i_readcount_dec(inode);
-> -	if (file->f_mode & FMODE_WRITER) {
-> +	if (mode & FMODE_WRITER) {
->  		put_write_access(inode);
->  		__mnt_drop_write(mnt);
->  	}
->  	dput(dentry);
-> +	if (unlikely(mode & FMODE_NEED_UNMOUNT))
-> +		dissolve_on_fput(mnt);
->  	mntput(mnt);
->  out:
->  	file_free(file);
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 364c20b5ea2d..17029b30e196 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -85,6 +85,7 @@ extern int __mnt_want_write_file(struct file *);
->  extern void __mnt_drop_write(struct vfsmount *);
->  extern void __mnt_drop_write_file(struct file *);
->  
-> +extern void dissolve_on_fput(struct vfsmount *);
->  /*
->   * fs_struct.c
->   */
 > diff --git a/fs/namespace.c b/fs/namespace.c
-> index 8a7e1a7d1d06..ded1a970ec40 100644
+> index dd38141b1723..caf5c55ef555 100644
 > --- a/fs/namespace.c
 > +++ b/fs/namespace.c
-> @@ -20,12 +20,14 @@
->  #include <linux/init.h>		/* init_rootfs */
->  #include <linux/fs_struct.h>	/* get_fs_root et.al. */
->  #include <linux/fsnotify.h>	/* fsnotify_vfsmount_delete */
-> +#include <linux/file.h>
->  #include <linux/uaccess.h>
->  #include <linux/proc_ns.h>
->  #include <linux/magic.h>
->  #include <linux/bootmem.h>
->  #include <linux/task_work.h>
->  #include <linux/sched/task.h>
-> +#include <uapi/linux/mount.h>
->  
->  #include "pnode.h"
->  #include "internal.h"
-> @@ -1779,6 +1781,16 @@ struct vfsmount *collect_mounts(const struct path *path)
->  	return &tree->mnt;
->  }
->  
-> +void dissolve_on_fput(struct vfsmount *mnt)
-> +{
-> +	namespace_lock();
-> +	lock_mount_hash();
-> +	mntget(mnt);
-> +	umount_tree(real_mount(mnt), UMOUNT_CONNECTED);
-> +	unlock_mount_hash();
-> +	namespace_unlock();
-> +}
-> +
->  void drop_collected_mounts(struct vfsmount *mnt)
+> @@ -1785,8 +1785,10 @@ void dissolve_on_fput(struct vfsmount *mnt)
 >  {
 >  	namespace_lock();
-> @@ -2138,6 +2150,30 @@ static bool has_locked_children(struct mount *mnt, struct dentry *dentry)
->  	return false;
+>  	lock_mount_hash();
+> -	mntget(mnt);
+> -	umount_tree(real_mount(mnt), UMOUNT_CONNECTED);
+> +	if (!real_mount(mnt)->mnt_ns) {
+> +		mntget(mnt);
+> +		umount_tree(real_mount(mnt), UMOUNT_CONNECTED);
+> +	}
+
+^^^^^^ This change should be unnecessary.
+
+>  	unlock_mount_hash();
+>  	namespace_unlock();
 >  }
->  
-> +static struct mount *__do_loopback(struct path *old_path, int recurse)
-> +{
-> +	struct mount *mnt = ERR_PTR(-EINVAL), *old = real_mount(old_path->mnt);
-> +
-> +	if (IS_MNT_UNBINDABLE(old))
-> +		return mnt;
-> +
-> +	if (!check_mnt(old) && old_path->dentry->d_op != &ns_dentry_operations)
-> +		return mnt;
-> +
-> +	if (!recurse && has_locked_children(old, old_path->dentry))
-> +		return mnt;
-> +
-> +	if (recurse)
-> +		mnt = copy_tree(old, old_path->dentry, CL_COPY_MNT_NS_FILE);
-> +	else
-> +		mnt = clone_mnt(old, old_path->dentry, 0);
-> +
-> +	if (!IS_ERR(mnt))
-> +		mnt->mnt.mnt_flags &= ~MNT_LOCKED;
-> +
-> +	return mnt;
-> +}
-> +
->  /*
->   * do loopback mount.
->   */
-> @@ -2145,7 +2181,7 @@ static int do_loopback(struct path *path, const char *old_name,
->  				int recurse)
->  {
->  	struct path old_path;
-> -	struct mount *mnt = NULL, *old, *parent;
-> +	struct mount *mnt = NULL, *parent;
+> @@ -2393,6 +2395,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+>  	struct mount *old;
 >  	struct mountpoint *mp;
 >  	int err;
->  	if (!old_name || !*old_name)
-> @@ -2159,38 +2195,21 @@ static int do_loopback(struct path *path, const char *old_name,
->  		goto out;
+> +	bool attached;
 >  
->  	mp = lock_mount(path);
-> -	err = PTR_ERR(mp);
-> -	if (IS_ERR(mp))
-> +	if (IS_ERR(mp)) {
-> +		err = PTR_ERR(mp);
->  		goto out;
-> +	}
+>  	mp = lock_mount(new_path);
+>  	err = PTR_ERR(mp);
+> @@ -2403,10 +2406,19 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+>  	p = real_mount(new_path->mnt);
 >  
-> -	old = real_mount(old_path.mnt);
->  	parent = real_mount(path->mnt);
-> -
-> -	err = -EINVAL;
-> -	if (IS_MNT_UNBINDABLE(old))
-> -		goto out2;
-> -
->  	if (!check_mnt(parent))
->  		goto out2;
+>  	err = -EINVAL;
+> -	if (!check_mnt(p) || !check_mnt(old))
+> +	/* The mountpoint must be in our namespace. */
+> +	if (!check_mnt(p))
+> +		goto out1;
+> +	/* The thing moved should be either ours or completely unattached. */
+> +	if (old->mnt_ns && !check_mnt(old))
+>  		goto out1;
+
+^^^^^^^^^^^^^^^^^^^^^^^
+
+!old->mnt_ns  should only be allowed when it comes from a file
+ descriptor with FMODE_NEED_UMOUNT.
+
+
+> -	if (!mnt_has_parent(old))
+> +	attached = mnt_has_parent(old);
+> +	/*
+> +	 * We need to allow open_tree(OPEN_TREE_CLONE) followed by
+> +	 * move_mount(), but mustn't allow "/" to be moved.
+> +	 */
+> +	if (old->mnt_ns && !attached)
+>  		goto out1;
 >  
-> -	if (!check_mnt(old) && old_path.dentry->d_op != &ns_dentry_operations)
-> -		goto out2;
-> -
-> -	if (!recurse && has_locked_children(old, old_path.dentry))
-> -		goto out2;
-> -
-> -	if (recurse)
-> -		mnt = copy_tree(old, old_path.dentry, CL_COPY_MNT_NS_FILE);
-> -	else
-> -		mnt = clone_mnt(old, old_path.dentry, 0);
-> -
-> +	mnt = __do_loopback(&old_path, recurse);
->  	if (IS_ERR(mnt)) {
->  		err = PTR_ERR(mnt);
->  		goto out2;
->  	}
+>  	if (old->mnt.mnt_flags & MNT_LOCKED)
+> @@ -2421,7 +2433,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+>  	/*
+>  	 * Don't move a mount residing in a shared parent.
+>  	 */
+> -	if (IS_MNT_SHARED(old->mnt_parent))
+> +	if (attached && IS_MNT_SHARED(old->mnt_parent))
+>  		goto out1;
+>  	/*
+>  	 * Don't move a mount tree containing unbindable mounts to a destination
+> @@ -2435,7 +2447,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+>  			goto out1;
 >  
-> -	mnt->mnt.mnt_flags &= ~MNT_LOCKED;
-> -
->  	err = graft_tree(mnt, parent, mp);
->  	if (err) {
->  		lock_mount_hash();
-> @@ -2204,6 +2223,75 @@ static int do_loopback(struct path *path, const char *old_name,
->  	return err;
->  }
->  
-> +SYSCALL_DEFINE3(open_tree, int, dfd, const char *, filename, unsigned, flags)
-> +{
-> +	struct file *file;
-> +	struct path path;
-> +	int lookup_flags = LOOKUP_AUTOMOUNT | LOOKUP_FOLLOW;
-> +	bool detached = flags & OPEN_TREE_CLONE;
-> +	int error;
-> +	int fd;
-> +
-> +	BUILD_BUG_ON(OPEN_TREE_CLOEXEC != O_CLOEXEC);
-> +
-> +	if (flags & ~(AT_EMPTY_PATH | AT_NO_AUTOMOUNT | AT_RECURSIVE |
-> +		      AT_SYMLINK_NOFOLLOW | OPEN_TREE_CLONE |
-> +		      OPEN_TREE_CLOEXEC))
-> +		return -EINVAL;
-> +
-> +	if ((flags & (AT_RECURSIVE | OPEN_TREE_CLONE)) == AT_RECURSIVE)
-> +		return -EINVAL;
-> +
-> +	if (flags & AT_NO_AUTOMOUNT)
-> +		lookup_flags &= ~LOOKUP_AUTOMOUNT;
-> +	if (flags & AT_SYMLINK_NOFOLLOW)
-> +		lookup_flags &= ~LOOKUP_FOLLOW;
-> +	if (flags & AT_EMPTY_PATH)
-> +		lookup_flags |= LOOKUP_EMPTY;
-> +
-> +	if (detached && !may_mount())
-> +		return -EPERM;
-> +
-> +	fd = get_unused_fd_flags(flags & O_CLOEXEC);
-> +	if (fd < 0)
-> +		return fd;
-> +
-> +	error = user_path_at(dfd, filename, lookup_flags, &path);
-> +	if (error)
-> +		goto out;
-> +
-> +	if (detached) {
-> +		struct mount *mnt = __do_loopback(&path, flags & AT_RECURSIVE);
-> +		if (IS_ERR(mnt)) {
-> +			error = PTR_ERR(mnt);
-> +			goto out2;
-> +		}
-> +		mntput(path.mnt);
-> +		path.mnt = &mnt->mnt;
-> +	}
-> +
-> +	file = dentry_open(&path, O_PATH, current_cred());
-> +	if (IS_ERR(file)) {
-> +		error = PTR_ERR(file);
-> +		goto out3;
-> +	}
-> +
-> +	if (detached)
-> +		file->f_mode |= FMODE_NEED_UNMOUNT;
-> +	path_put(&path);
-> +	fd_install(fd, file);
-> +	return fd;
-> +
-> +out3:
-> +	if (detached)
-> +		dissolve_on_fput(path.mnt);
-> +out2:
-> +	path_put(&path);
-> +out:
-> +	put_unused_fd(fd);
-> +	return error;
-> +}
-> +
->  static int change_mount_flags(struct vfsmount *mnt, int ms_flags)
->  {
->  	int error = 0;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 4323b8fe353d..6dc32507762f 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -157,10 +157,13 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
->  #define FMODE_NONOTIFY		((__force fmode_t)0x4000000)
->  
->  /* File is capable of returning -EAGAIN if I/O will block */
-> -#define FMODE_NOWAIT	((__force fmode_t)0x8000000)
-> +#define FMODE_NOWAIT		((__force fmode_t)0x8000000)
-> +
-> +/* File represents mount that needs unmounting */
-> +#define FMODE_NEED_UNMOUNT	((__force fmode_t)0x10000000)
->  
->  /* File does not contribute to nr_files count */
-> -#define FMODE_NOACCOUNT	((__force fmode_t)0x20000000)
-> +#define FMODE_NOACCOUNT		((__force fmode_t)0x20000000)
+>  	err = attach_recursive_mnt(old, real_mount(new_path->mnt), mp,
+> -				   &parent_path);
+> +				   attached ? &parent_path : NULL);
+>  	if (err)
+>  		goto out1;
+
+^^^^^^^^^^^^^^^^^^^
+Somewhere around here we should have code that clears FMODE_NEED_UMOUNT.
+
+
+> @@ -3121,6 +3133,8 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
 >  
 >  /*
->   * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index 2ff814c92f7f..6978f3c76d41 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -906,6 +906,7 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
->  			  unsigned mask, struct statx __user *buffer);
->  asmlinkage long sys_rseq(struct rseq __user *rseq, uint32_t rseq_len,
->  			 int flags, uint32_t sig);
-> +asmlinkage long sys_open_tree(int dfd, const char __user *path, unsigned flags);
->  
->  /*
->   * Architecture-specific system calls
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index 6448cdd9a350..594b85f7cb86 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -90,5 +90,7 @@
->  #define AT_STATX_FORCE_SYNC	0x2000	/* - Force the attributes to be sync'd with the server */
->  #define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the server */
->  
-> +#define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
-> +
->  
->  #endif /* _UAPI_LINUX_FCNTL_H */
-> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-> new file mode 100644
-> index 000000000000..e8db2911adca
-> --- /dev/null
-> +++ b/include/uapi/linux/mount.h
-> @@ -0,0 +1,10 @@
-> +#ifndef _UAPI_LINUX_MOUNT_H
-> +#define _UAPI_LINUX_MOUNT_H
-> +
-> +/*
-> + * open_tree() flags.
-> + */
-> +#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
-> +#define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
-> +
-> +#endif /* _UAPI_LINUX_MOUNT_H */
+>   * Move a mount from one place to another.
+> + * In combination with open_tree(OPEN_TREE_CLONE [| AT_RECURSIVE]) it can be
+> + * used to copy a mount subtree.
+>   *
+>   * Note the flags value is a combination of MOVE_MOUNT_* flags.
+>   */
