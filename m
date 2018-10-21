@@ -2,136 +2,193 @@ Return-Path: <SRS0=f4JY=NB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1B5ECDE3D
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 07:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 794F8ECDE43
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 07:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24CA9204FD
-	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 07:30:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24CA9204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A87F2083E
+	for <linux-kernel@archiver.kernel.org>; Sun, 21 Oct 2018 07:40:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="hI0WptF9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A87F2083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbeJUPnt convert rfc822-to-8bit (ORCPT
+        id S1727231AbeJUPxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 21 Oct 2018 11:43:49 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47564 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727086AbeJUPnt (ORCPT
+        Sun, 21 Oct 2018 11:53:42 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:38871 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726975AbeJUPxm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Oct 2018 11:43:49 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9L7TKsE043542
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 03:30:24 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2n8htxd95r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 03:30:23 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Sun, 21 Oct 2018 08:30:22 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 21 Oct 2018 08:30:20 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9L7UJco22675498
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 21 Oct 2018 07:30:19 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B1DEAE057;
-        Sun, 21 Oct 2018 07:30:19 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DAA15AE04D;
-        Sun, 21 Oct 2018 07:30:18 +0000 (GMT)
-Received: from [9.148.206.95] (unknown [9.148.206.95])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 21 Oct 2018 07:30:18 +0000 (GMT)
-Date:   Sun, 21 Oct 2018 10:30:16 +0300
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20181019081729.klvckcytnhheaian@master>
-References: <1538067825-24835-1-git-send-email-rppt@linux.vnet.ibm.com> <20181019081729.klvckcytnhheaian@master>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH] memblock: remove stale #else and the code it protects
-To:     Wei Yang <richard.weiyang@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-From:   Mike Rapoport <rppt@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18102107-0016-0000-0000-000002164C98
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18102107-0017-0000-0000-0000326DFED1
-Message-Id: <6EEAA7EC-75B7-4899-A562-35A58FC037E6@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-20_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=978 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810210071
+        Sun, 21 Oct 2018 11:53:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1540107616; x=1571643616;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=NbPYBZZwHSC0fjyFOoR2WXd4OmEz2IM2MoWueuX/Qe0=;
+  b=hI0WptF9Jx1Mk11ehRIGLFV8eKuah4OM8ycoOer8quLymB3dP+rZfBOS
+   N/Ees/EQay1ZvsOvpmxCaAEgvUgUB9rO3fEe2A+k32jcEwvJcEkTykr6r
+   /I0q08s+EgPohgjXDFhkeoymArL0D1S4JVUzBE5M8EGADVo+Y+/AcpvJV
+   Q=;
+X-IronPort-AV: E=Sophos;i="5.54,407,1534809600"; 
+   d="scan'208";a="369623746"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-1171e197.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 21 Oct 2018 07:40:14 +0000
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (pdx2-ws-svc-lb17-vlan2.amazon.com [10.247.140.66])
+        by email-inbound-relay-2b-1171e197.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9L7eAIN099364
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sun, 21 Oct 2018 07:40:11 GMT
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w9L7e8U4006220;
+        Sun, 21 Oct 2018 09:40:08 +0200
+Received: (from karahmed@localhost)
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id w9L7e8Z0006218;
+        Sun, 21 Oct 2018 09:40:08 +0200
+From:   KarimAllah Ahmed <karahmed@amazon.de>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        rkrcmar@redhat.com, pbonzini@redhat.com
+Cc:     KarimAllah Ahmed <karahmed@amazon.de>
+Subject: [RESEND PATCH v3 07/13] KVM/nVMX: Use kvm_vcpu_map when mapping the virtual APIC page
+Date:   Sun, 21 Oct 2018 09:39:57 +0200
+Message-Id: <1540107597-6038-1-git-send-email-karahmed@amazon.de>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1540074145-31285-8-git-send-email-karahmed@amazon.de>
+References: <1540074145-31285-8-git-send-email-karahmed@amazon.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use kvm_vcpu_map when mapping the virtual APIC page since using
+kvm_vcpu_gpa_to_page() and kmap() will only work for guest memory that has
+a "struct page".
 
+One additional semantic change is that the virtual host mapping lifecycle
+has changed a bit. It now has the same lifetime of the pinning of the
+virtual APIC page on the host side.
 
-On October 19, 2018 11:17:30 AM GMT+03:00, Wei Yang <richard.weiyang@gmail.com> wrote:
->Which tree it applies?
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+---
+v1 -> v2:
+- Do not change the lifecycle of the mapping (pbonzini)
+- Use pfn_to_hpa instead of gfn_to_gpa
+---
+ arch/x86/kvm/vmx.c | 39 +++++++++++++--------------------------
+ 1 file changed, 13 insertions(+), 26 deletions(-)
 
-To mmotm of the end of September.
-
->On Thu, Sep 27, 2018 at 08:03:45PM +0300, Mike Rapoport wrote:
->>During removal of HAVE_MEMBLOCK definition, the #else clause of the
->>
->>	#ifdef CONFIG_HAVE_MEMBLOCK
->>		...
->>	#else
->>		...
->>	#endif
->>
->>conditional was not removed.
->>
->>Remove it now.
->>
->>Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
->>Reported-by: Alexander Duyck <alexander.duyck@gmail.com>
->>Cc: Michal Hocko <mhocko@suse.com>
->>---
->> include/linux/memblock.h | 5 -----
->> 1 file changed, 5 deletions(-)
->>
->>diff --git a/include/linux/memblock.h b/include/linux/memblock.h
->>index d3bc270..d4d0e01 100644
->>--- a/include/linux/memblock.h
->>+++ b/include/linux/memblock.h
->>@@ -597,11 +597,6 @@ static inline void early_memtest(phys_addr_t
->start, phys_addr_t end)
->> {
->> }
->> #endif
->>-#else
->>-static inline phys_addr_t memblock_alloc(phys_addr_t size,
->phys_addr_t align)
->>-{
->>-	return 0;
->>-}
->> 
->> #endif /* __KERNEL__ */
->> 
->>-- 
->>2.7.4
-
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 5b15ca2..9683923 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -845,9 +845,8 @@ struct nested_vmx {
+ 	 * pointers, so we must keep them pinned while L2 runs.
+ 	 */
+ 	struct page *apic_access_page;
+-	struct page *virtual_apic_page;
++	struct kvm_host_map virtual_apic_map;
+ 	struct page *pi_desc_page;
+-
+ 	struct kvm_host_map msr_bitmap_map;
+ 
+ 	struct pi_desc *pi_desc;
+@@ -6152,11 +6151,12 @@ static void vmx_complete_nested_posted_interrupt(struct kvm_vcpu *vcpu)
+ 
+ 	max_irr = find_last_bit((unsigned long *)vmx->nested.pi_desc->pir, 256);
+ 	if (max_irr != 256) {
+-		vapic_page = kmap(vmx->nested.virtual_apic_page);
++		vapic_page = vmx->nested.virtual_apic_map.hva;
++		if (!vapic_page)
++			return;
++
+ 		__kvm_apic_update_irr(vmx->nested.pi_desc->pir,
+ 			vapic_page, &max_irr);
+-		kunmap(vmx->nested.virtual_apic_page);
+-
+ 		status = vmcs_read16(GUEST_INTR_STATUS);
+ 		if ((u8)max_irr > ((u8)status & 0xff)) {
+ 			status &= ~0xff;
+@@ -6182,14 +6182,13 @@ static bool vmx_guest_apic_has_interrupt(struct kvm_vcpu *vcpu)
+ 
+ 	if (WARN_ON_ONCE(!is_guest_mode(vcpu)) ||
+ 		!nested_cpu_has_vid(get_vmcs12(vcpu)) ||
+-		WARN_ON_ONCE(!vmx->nested.virtual_apic_page))
++		WARN_ON_ONCE(!vmx->nested.virtual_apic_map.gfn))
+ 		return false;
+ 
+ 	rvi = vmx_get_rvi();
+ 
+-	vapic_page = kmap(vmx->nested.virtual_apic_page);
++	vapic_page = vmx->nested.virtual_apic_map.hva;
+ 	vppr = *((u32 *)(vapic_page + APIC_PROCPRI));
+-	kunmap(vmx->nested.virtual_apic_page);
+ 
+ 	return ((rvi & 0xf0) > (vppr & 0xf0));
+ }
+@@ -8468,10 +8467,7 @@ static void free_nested(struct vcpu_vmx *vmx)
+ 		kvm_release_page_dirty(vmx->nested.apic_access_page);
+ 		vmx->nested.apic_access_page = NULL;
+ 	}
+-	if (vmx->nested.virtual_apic_page) {
+-		kvm_release_page_dirty(vmx->nested.virtual_apic_page);
+-		vmx->nested.virtual_apic_page = NULL;
+-	}
++	kvm_vcpu_unmap(&vmx->nested.virtual_apic_map);
+ 	if (vmx->nested.pi_desc_page) {
+ 		kunmap(vmx->nested.pi_desc_page);
+ 		kvm_release_page_dirty(vmx->nested.pi_desc_page);
+@@ -11394,6 +11390,7 @@ static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu)
+ {
+ 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	struct kvm_host_map *map;
+ 	struct page *page;
+ 	u64 hpa;
+ 
+@@ -11426,11 +11423,7 @@ static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu)
+ 	}
+ 
+ 	if (nested_cpu_has(vmcs12, CPU_BASED_TPR_SHADOW)) {
+-		if (vmx->nested.virtual_apic_page) { /* shouldn't happen */
+-			kvm_release_page_dirty(vmx->nested.virtual_apic_page);
+-			vmx->nested.virtual_apic_page = NULL;
+-		}
+-		page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->virtual_apic_page_addr);
++		map = &vmx->nested.virtual_apic_map;
+ 
+ 		/*
+ 		 * If translation failed, VM entry will fail because
+@@ -11445,11 +11438,8 @@ static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu)
+ 		 * control.  But such a configuration is useless, so
+ 		 * let's keep the code simple.
+ 		 */
+-		if (!is_error_page(page)) {
+-			vmx->nested.virtual_apic_page = page;
+-			hpa = page_to_phys(vmx->nested.virtual_apic_page);
+-			vmcs_write64(VIRTUAL_APIC_PAGE_ADDR, hpa);
+-		}
++		if (!kvm_vcpu_map(vcpu, gpa_to_gfn(vmcs12->virtual_apic_page_addr), map))
++			vmcs_write64(VIRTUAL_APIC_PAGE_ADDR, pfn_to_hpa(map->pfn));
+ 	}
+ 
+ 	if (nested_cpu_has_posted_intr(vmcs12)) {
+@@ -13353,10 +13343,7 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
+ 		kvm_release_page_dirty(vmx->nested.apic_access_page);
+ 		vmx->nested.apic_access_page = NULL;
+ 	}
+-	if (vmx->nested.virtual_apic_page) {
+-		kvm_release_page_dirty(vmx->nested.virtual_apic_page);
+-		vmx->nested.virtual_apic_page = NULL;
+-	}
++	kvm_vcpu_unmap(&vmx->nested.virtual_apic_map);
+ 	if (vmx->nested.pi_desc_page) {
+ 		kunmap(vmx->nested.pi_desc_page);
+ 		kvm_release_page_dirty(vmx->nested.pi_desc_page);
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+2.7.4
 
