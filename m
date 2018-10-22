@@ -2,151 +2,103 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1853BC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA2FC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D293120652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:50:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B51020665
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:52:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="p01wlrs5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D293120652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="kUox0kFr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B51020665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729571AbeJWGKl (ORCPT
+        id S1729584AbeJWGM6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 02:10:41 -0400
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:26758 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727089AbeJWGKl (ORCPT
+        Tue, 23 Oct 2018 02:12:58 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39019 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727089AbeJWGM5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 02:10:41 -0400
+        Tue, 23 Oct 2018 02:12:57 -0400
+Received: by mail-wr1-f67.google.com with SMTP id s18-v6so4795793wrw.6
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 14:52:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1540245020; x=1571781020;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:mime-version:
-   content-transfer-encoding;
-  bh=fBXX0Q/N6bm8B7lrLJhAYJs7M5zUM0RH9TEntjAWVFo=;
-  b=p01wlrs5/M2uM9AgLIA3F5FtdmTERU0kTxlmSAQTAETFX+Oki/nhcxDU
-   22aykuxMSsiw4ptqIYOVLDZ70RPuIizQv30iKLDaJlhQvsTXgaqRHc4Gt
-   eNc6/YSeddIxPPBwbrLRIALaKgSv/XqxL+TFdVXrrh2EXZaNfM+isnhcj
-   k=;
-X-IronPort-AV: E=Sophos;i="5.54,413,1534809600"; 
-   d="scan'208";a="637847988"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2a-c5104f52.us-west-2.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 22 Oct 2018 21:50:03 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan2.pdx.amazon.com [10.236.137.194])
-        by email-inbound-relay-2a-c5104f52.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9MLnu87116753
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Mon, 22 Oct 2018 21:49:59 GMT
-Received: from EX13D01EUB002.ant.amazon.com (10.43.166.113) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 22 Oct 2018 21:49:58 +0000
-Received: from EX13D01EUB003.ant.amazon.com (10.43.166.248) by
- EX13D01EUB002.ant.amazon.com (10.43.166.113) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 22 Oct 2018 21:49:57 +0000
-Received: from EX13D01EUB003.ant.amazon.com ([10.43.166.248]) by
- EX13D01EUB003.ant.amazon.com ([10.43.166.248]) with mapi id 15.00.1367.000;
- Mon, 22 Oct 2018 21:49:57 +0000
-From:   "Raslan, KarimAllah" <karahmed@amazon.de>
-To:     "jmattson@google.com" <jmattson@google.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>
-Subject: Re: [PATCH v3 06/13] KVM/nVMX: Use kvm_vcpu_map when mapping the L1
- MSR bitmap
-Thread-Topic: [PATCH v3 06/13] KVM/nVMX: Use kvm_vcpu_map when mapping the L1
- MSR bitmap
-Thread-Index: AQHUaMNyREW7svwJSkSPcXRGv29TZ6UrzsKAgAACDgA=
-Date:   Mon, 22 Oct 2018 21:49:56 +0000
-Message-ID: <1540244996.11839.46.camel@amazon.de>
-References: <1540074145-31285-1-git-send-email-karahmed@amazon.de>
-         <1540074145-31285-7-git-send-email-karahmed@amazon.de>
-         <CALMp9eRh2syfY9KjaH9h=AA1dwRnKb+S-NXEB3Hn+tjQoSrBXg@mail.gmail.com>
-In-Reply-To: <CALMp9eRh2syfY9KjaH9h=AA1dwRnKb+S-NXEB3Hn+tjQoSrBXg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.166.129]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E5664AC4BD06864593F1277D468018B1@amazon.com>
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=8wLxXY2mrlQ5rAqDdzXl6+UReIzHAvwgZVFqBrQ+C5U=;
+        b=kUox0kFr6YZyvRu0ktxADAuYAFQ0yh3mExZpgHeLQYADXJxT6tcuGUiqERecq1a4sj
+         RAcIEhjHiTNuePfxJnhTu0eZUWGd/AUxKL7IlsOlwWlvb337Ve0jxprusqUyHfo5jjVv
+         FKtKzaW/zDYtzo993BRcKVesxvF2l/gDI36ylJqRPHWX5KGKKRvsY9D7CHRgZPyxrTDv
+         wUfiQ9Pyc4C6ye3jlqF3aZQ3kIRqdOIeteG286qGXzTcA1cl5K9VIDtosOlthfY94G2j
+         2mSe9kS7wp2Ro9I2p1HO6MdjFDQayM5Qd7Embq17rn6BYKOXdDNjU2zDxGz4kBc9KZCj
+         hYcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8wLxXY2mrlQ5rAqDdzXl6+UReIzHAvwgZVFqBrQ+C5U=;
+        b=V/ynmObLwP1e7/0itkel2r3Qu/asMYiLF+A71mzpmCvCVXpvWSlsaH6dDkexzo5wdC
+         jrEPMyPDyDkJ3HS8Ss/jcJSWMZMeypA5z+wcnyRKola0ICbntoC9fcc6bXb/RuKgzd2l
+         8i+TqU1o8+MxdIHgdsxxcnY8fWPbaT8Y7YkrXKK2EdxUE1nPfEq+SscEyY1LwQ7Nm4ZS
+         zrfVUvUUDmpozS7Yx8ligBPsPLWvwpIQU/40wI4cafaHD9iw4/XlfBWvELTqecsmX9dM
+         rcFsgFPmxCt7tvznEPGEV3dAyydUv6+nRGCJFL5VPYjaucxnKOn7wXu9c7bOYWEEW7vy
+         G+gA==
+X-Gm-Message-State: AGRZ1gJ18cf82uNsyDs4LURASyYxNobPB9z8Jv2r7eNVSTA8WQIh/+h+
+        xSc2YHV6H2LqjL87SRU6KX+wYQ==
+X-Google-Smtp-Source: AJdET5f3j+dUY0OlNieVhZkDOoRcbSvaS90tEKu9aoyNp8iCh1/vGqUO8LbiA9LY1PyVXKhI9ayfKQ==
+X-Received: by 2002:adf:a285:: with SMTP id s5-v6mr4258265wra.100.1540245156163;
+        Mon, 22 Oct 2018 14:52:36 -0700 (PDT)
+Received: from [10.111.198.69] ([109.144.211.86])
+        by smtp.gmail.com with ESMTPSA id 77-v6sm25453095wmv.6.2018.10.22.14.52.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Oct 2018 14:52:35 -0700 (PDT)
+Subject: Re: [GIT PULL] (xen) stable/for-jens-4.20
+To:     Konrad Rzeszutek Wilk <konrad@darnok.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xen.org
+References: <20181022193132.GB20677@dhcp-10-175-29-12.vpn.oracle.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <9c5cb854-12fd-159c-12b5-afbefc4bd131@kernel.dk>
+Date:   Mon, 22 Oct 2018 15:52:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
+In-Reply-To: <20181022193132.GB20677@dhcp-10-175-29-12.vpn.oracle.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE4LTEwLTIyIGF0IDE0OjQyIC0wNzAwLCBKaW0gTWF0dHNvbiB3cm90ZToNCj4g
-T24gU2F0LCBPY3QgMjAsIDIwMTggYXQgMzoyMiBQTSwgS2FyaW1BbGxhaCBBaG1lZCA8a2FyYWht
-ZWRAYW1hem9uLmRlPiB3cm90ZToNCj4gPiANCj4gPiBVc2Uga3ZtX3ZjcHVfbWFwIHdoZW4gbWFw
-cGluZyB0aGUgTDEgTVNSIGJpdG1hcCBzaW5jZSB1c2luZw0KPiA+IGt2bV92Y3B1X2dwYV90b19w
-YWdlKCkgYW5kIGttYXAoKSB3aWxsIG9ubHkgd29yayBmb3IgZ3Vlc3QgbWVtb3J5IHRoYXQgaGFz
-DQo+ID4gYSAic3RydWN0IHBhZ2UiLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IEthcmltQWxs
-YWggQWhtZWQgPGthcmFobWVkQGFtYXpvbi5kZT4NCj4gPiAtLS0NCj4gPiB2MSAtPiB2MjoNCj4g
-PiAtIERvIG5vdCBjaGFuZ2UgdGhlIGxpZmVjeWNsZSBvZiB0aGUgbWFwcGluZyAocGJvbnppbmkp
-DQo+ID4gLS0tDQo+ID4gIGFyY2gveDg2L2t2bS92bXguYyB8IDE0ICsrKysrKysrLS0tLS0tDQo+
-ID4gIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pDQo+ID4g
-DQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2t2bS92bXguYyBiL2FyY2gveDg2L2t2bS92bXgu
-Yw0KPiA+IGluZGV4IGQ4NTc0MDEuLjViMTVjYTIgMTAwNjQ0DQo+ID4gLS0tIGEvYXJjaC94ODYv
-a3ZtL3ZteC5jDQo+ID4gKysrIGIvYXJjaC94ODYva3ZtL3ZteC5jDQo+ID4gQEAgLTg0Nyw2ICs4
-NDcsOSBAQCBzdHJ1Y3QgbmVzdGVkX3ZteCB7DQo+ID4gICAgICAgICBzdHJ1Y3QgcGFnZSAqYXBp
-Y19hY2Nlc3NfcGFnZTsNCj4gPiAgICAgICAgIHN0cnVjdCBwYWdlICp2aXJ0dWFsX2FwaWNfcGFn
-ZTsNCj4gPiAgICAgICAgIHN0cnVjdCBwYWdlICpwaV9kZXNjX3BhZ2U7DQo+ID4gKw0KPiA+ICsg
-ICAgICAgc3RydWN0IGt2bV9ob3N0X21hcCBtc3JfYml0bWFwX21hcDsNCj4gPiArDQo+ID4gICAg
-ICAgICBzdHJ1Y3QgcGlfZGVzYyAqcGlfZGVzYzsNCj4gPiAgICAgICAgIGJvb2wgcGlfcGVuZGlu
-ZzsNCj4gPiAgICAgICAgIHUxNiBwb3N0ZWRfaW50cl9udjsNCj4gPiBAQCAtMTE1NDYsOSArMTE1
-NDksMTAgQEAgc3RhdGljIGlubGluZSBib29sIG5lc3RlZF92bXhfcHJlcGFyZV9tc3JfYml0bWFw
-KHN0cnVjdCBrdm1fdmNwdSAqdmNwdSwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgc3RydWN0IHZtY3MxMiAqdm1jczEyKQ0KPiA+ICB7DQo+ID4g
-ICAgICAgICBpbnQgbXNyOw0KPiA+IC0gICAgICAgc3RydWN0IHBhZ2UgKnBhZ2U7DQo+ID4gICAg
-ICAgICB1bnNpZ25lZCBsb25nICptc3JfYml0bWFwX2wxOw0KPiA+ICAgICAgICAgdW5zaWduZWQg
-bG9uZyAqbXNyX2JpdG1hcF9sMCA9IHRvX3ZteCh2Y3B1KS0+bmVzdGVkLnZtY3MwMi5tc3JfYml0
-bWFwOw0KPiA+ICsgICAgICAgc3RydWN0IGt2bV9ob3N0X21hcCAqbWFwID0gJnRvX3ZteCh2Y3B1
-KS0+bmVzdGVkLm1zcl9iaXRtYXBfbWFwOw0KPiA+ICsNCj4gPiAgICAgICAgIC8qDQo+ID4gICAg
-ICAgICAgKiBwcmVkX2NtZCAmIHNwZWNfY3RybCBhcmUgdHJ5aW5nIHRvIHZlcmlmeSB0d28gdGhp
-bmdzOg0KPiA+ICAgICAgICAgICoNCj4gPiBAQCAtMTE1NzQsMTEgKzExNTc4LDEwIEBAIHN0YXRp
-YyBpbmxpbmUgYm9vbCBuZXN0ZWRfdm14X3ByZXBhcmVfbXNyX2JpdG1hcChzdHJ1Y3Qga3ZtX3Zj
-cHUgKnZjcHUsDQo+ID4gICAgICAgICAgICAgIXByZWRfY21kICYmICFzcGVjX2N0cmwpDQo+ID4g
-ICAgICAgICAgICAgICAgIHJldHVybiBmYWxzZTsNCj4gPiANCj4gPiAtICAgICAgIHBhZ2UgPSBr
-dm1fdmNwdV9ncGFfdG9fcGFnZSh2Y3B1LCB2bWNzMTItPm1zcl9iaXRtYXApOw0KPiA+IC0gICAg
-ICAgaWYgKGlzX2Vycm9yX3BhZ2UocGFnZSkpDQo+ID4gKyAgICAgICBpZiAoa3ZtX3ZjcHVfbWFw
-KHZjcHUsIGdwYV90b19nZm4odm1jczEyLT5tc3JfYml0bWFwKSwgbWFwKSkNCj4gDQo+IElzbid0
-IHRoaXMgdGhlIHNvcnQgb2YgaGlnaCBmcmVxdWVuY3kgb3BlcmF0aW9uIHRoYXQgc2hvdWxkIG5v
-dCB1c2UgdGhlIG5ldyBBUEk/DQoNCldpdGggdGhlIGN1cnJlbnQgaW1wbGVtZW50YXRpb24gb2Yg
-dGhlIEFQSSwgeWVzLiBUaGUgcGVyZm9ybWFuY2Ugd2lsbCBiZcKgDQpob3JyaWJsZS4gVGhpcyBk
-b2VzIG5vdCBhZmZlY3QgdGhlIGN1cnJlbnQgdXNlcnMgdGhvdWdoIChpLmUuIHdoZW4gZ3Vlc3Qg
-bWVtb3J5wqANCmlzIGJhY2tlZCBieSAic3RydWN0IHBhZ2UiKS4NCg0KSSBoYXZlIGEgZmV3IHBh
-dGNoZXMgdGhhdCBpbXBsZW1lbnRzIGEgcGZuX2NhY2hlIG9uIHRvcCBvZiB0aGlzIGFzIHN1Z2dl
-c3RlZCBiecKgDQpQYW9sby4gVGhpcyB3b3VsZCBhbGxvdyB0aGlzIEFQSSB0byBiZSB1c2VkIGZv
-ciB0aGlzIHR5cGUgb2YgaGlnaC1mcmVxdWVuY3nCoA0KbWFwcGluZ3MuDQoNCkZvciBleGFtcGxl
-IHdpdGggdGhpcyBwZm5fY2FjaGUsIGJvb3RpbmcgYW4gVWJ1bnR1IHdhcyAxMHggZmFzdGVyIChm
-cm9tIH4gMsKgDQptaW51dGVzIHRvIDEzIHNlY29uZHMpLg0KDQo+IA0KPiA+IA0KPiA+ICAgICAg
-ICAgICAgICAgICByZXR1cm4gZmFsc2U7DQo+ID4gDQo+ID4gLSAgICAgICBtc3JfYml0bWFwX2wx
-ID0gKHVuc2lnbmVkIGxvbmcgKilrbWFwKHBhZ2UpOw0KPiA+ICsgICAgICAgbXNyX2JpdG1hcF9s
-MSA9ICh1bnNpZ25lZCBsb25nICopbWFwLT5odmE7DQo+ID4gICAgICAgICBpZiAobmVzdGVkX2Nw
-dV9oYXNfYXBpY19yZWdfdmlydCh2bWNzMTIpKSB7DQo+ID4gICAgICAgICAgICAgICAgIC8qDQo+
-ID4gICAgICAgICAgICAgICAgICAqIEwwIG5lZWQgbm90IGludGVyY2VwdCByZWFkcyBmb3IgTVNS
-cyBiZXR3ZWVuIDB4ODAwIGFuZCAweDhmZiwgaXQNCj4gPiBAQCAtMTE2MjYsOCArMTE2MjksNyBA
-QCBzdGF0aWMgaW5saW5lIGJvb2wgbmVzdGVkX3ZteF9wcmVwYXJlX21zcl9iaXRtYXAoc3RydWN0
-IGt2bV92Y3B1ICp2Y3B1LA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICBNU1JfSUEzMl9QUkVEX0NNRCwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgTVNSX1RZUEVfVyk7DQo+ID4gDQo+ID4gLSAgICAgICBrdW5tYXAocGFnZSk7
-DQo+ID4gLSAgICAgICBrdm1fcmVsZWFzZV9wYWdlX2NsZWFuKHBhZ2UpOw0KPiA+ICsgICAgICAg
-a3ZtX3ZjcHVfdW5tYXAoJnRvX3ZteCh2Y3B1KS0+bmVzdGVkLm1zcl9iaXRtYXBfbWFwKTsNCj4g
-PiANCj4gPiAgICAgICAgIHJldHVybiB0cnVlOw0KPiA+ICB9DQo+ID4gLS0NCj4gPiAyLjcuNA0K
-PiA+IA0KPiANCkFtYXpvbiBEZXZlbG9wbWVudCBDZW50ZXIgR2VybWFueSBHbWJICkJlcmxpbiAt
-IERyZXNkZW4gLSBBYWNoZW4KbWFpbiBvZmZpY2U6IEtyYXVzZW5zdHIuIDM4LCAxMDExNyBCZXJs
-aW4KR2VzY2hhZWZ0c2Z1ZWhyZXI6IERyLiBSYWxmIEhlcmJyaWNoLCBDaHJpc3RpYW4gU2NobGFl
-Z2VyClVzdC1JRDogREUyODkyMzc4NzkKRWluZ2V0cmFnZW4gYW0gQW10c2dlcmljaHQgQ2hhcmxv
-dHRlbmJ1cmcgSFJCIDE0OTE3MyBCCg==
+On 10/22/18 1:31 PM, Konrad Rzeszutek Wilk wrote:
+> 
+> Hi Jens,
+> 
+> Please git pull the following branch:
+> 
+> git pull git://git.kernel.org/pub/scm/linux/kernel/git/konrad/xen.git stable/for-jens-4.20
+> 
+> which has exactly one tiny patch fixing an NULL pointer issue (also has stable tree CCed).
+> 
+> Thank you!
+> 
+> drivers/block/xen-blkfront.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> Vasilis Liaskovitis (2):
+>       xen/blkfront: avoid NULL blkfront_info dereference on device removal
+
+Pulled, thanks.
+
+-- 
+Jens Axboe
 
