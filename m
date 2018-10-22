@@ -4,45 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12039C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4AEEC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4380A20651
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:37:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4380A20651
+	by mail.kernel.org (Postfix) with ESMTP id F20F420651
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:37:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F20F420651
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728956AbeJWE5q (ORCPT
+        id S1729010AbeJWE5y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 00:57:46 -0400
-Received: from gateway34.websitewelcome.com ([192.185.149.101]:15354 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727701AbeJWE5q (ORCPT
+        Tue, 23 Oct 2018 00:57:54 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.78]:49001 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727701AbeJWE5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 00:57:46 -0400
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 7D2DB1DD69
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 15:37:43 -0500 (CDT)
+        Tue, 23 Oct 2018 00:57:53 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id DAE83B8E9
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 15:37:50 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id EgxBgqVfYaSeyEgxHgA1Tj; Mon, 22 Oct 2018 15:37:43 -0500
+        id EgxIgYZMUBcCXEgxPgnfdo; Mon, 22 Oct 2018 15:37:50 -0500
 X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:50950 helo=embeddedor)
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:50954 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gEgxA-0020lB-C5; Mon, 22 Oct 2018 15:37:32 -0500
-Date:   Mon, 22 Oct 2018 22:37:31 +0200
+        id 1gEgxH-0020rP-M2; Mon, 22 Oct 2018 15:37:39 -0500
+Date:   Mon, 22 Oct 2018 22:37:38 +0200
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     QCA ath9k Development <ath9k-devel@qca.qualcomm.com>
 Cc:     Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 01/20] ath6kl: Mark expected switch fall-through
-Message-ID: <7932c27ae4e53aceacb7a0a1ae26db91432e5014.1540239684.git.gustavo@embeddedor.com>
+Subject: [PATCH 02/20] ath9k: ar5008_phy: mark expected switch fall-through
+Message-ID: <1727f5c9f0bb87651831d267e35af5aa1ed1f98b.1540239684.git.gustavo@embeddedor.com>
 References: <cover.1540239684.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -57,13 +57,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 86.245.173.13
 X-Source-L: No
-X-Exim-ID: 1gEgxA-0020lB-C5
+X-Exim-ID: 1gEgxH-0020rP-M2
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:50950
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:50954
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 22
+X-Email-Count: 28
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,24 +74,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
-Addresses-Coverity-ID: 201383 ("Missing break in switch")
+Addresses-Coverity-ID: 1056532 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/wireless/ath/ath6kl/main.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/ath/ath9k/ar5008_phy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath6kl/main.c b/drivers/net/wireless/ath/ath6kl/main.c
-index cb59016..5e7ea83 100644
---- a/drivers/net/wireless/ath/ath6kl/main.c
-+++ b/drivers/net/wireless/ath/ath6kl/main.c
-@@ -389,6 +389,7 @@ void ath6kl_connect_ap_mode_bss(struct ath6kl_vif *vif, u16 channel)
- 		if (!ik->valid || ik->key_type != WAPI_CRYPT)
+diff --git a/drivers/net/wireless/ath/ath9k/ar5008_phy.c b/drivers/net/wireless/ath/ath9k/ar5008_phy.c
+index 11d6f975..dae9540 100644
+--- a/drivers/net/wireless/ath/ath9k/ar5008_phy.c
++++ b/drivers/net/wireless/ath/ath9k/ar5008_phy.c
+@@ -586,7 +586,7 @@ static void ar5008_hw_init_chain_masks(struct ath_hw *ah)
+ 			REG_WRITE(ah, AR_PHY_CAL_CHAINMASK, 0x7);
  			break;
- 		/* for WAPI, we need to set the delayed group key, continue: */
+ 		}
+-		/* else: fall through */
 +		/* fall through */
- 	case WPA_PSK_AUTH:
- 	case WPA2_PSK_AUTH:
- 	case (WPA_PSK_AUTH | WPA2_PSK_AUTH):
+ 	case 0x1:
+ 	case 0x2:
+ 	case 0x7:
 -- 
 2.7.4
 
