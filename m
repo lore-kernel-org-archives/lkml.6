@@ -2,146 +2,194 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F7F9C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF9EC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CBAE20651
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:24:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCE12207E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:25:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P5/KMGNw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CBAE20651
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cf2pnyuz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCE12207E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729492AbeJWFoN (ORCPT
+        id S1729505AbeJWFpR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 01:44:13 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46250 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727025AbeJWFoN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 01:44:13 -0400
-Received: by mail-lj1-f195.google.com with SMTP id x3-v6so38363137lji.13;
-        Mon, 22 Oct 2018 14:23:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CxbGsIEBKJXLFMJMwsrH4depnZVFzjL0UEhUtSqhCgc=;
-        b=P5/KMGNw65Q35bdeFHk1TQv/9QBlY6zVMz/YsUU5nkht3Ajw2TjBSVC+tOAYxsaahq
-         /Zz0/clKS1bRgZGq1LmLA98Z4VTFIaUBuctAkpkCCBlo5kHYz+3qKrQtjI3sh8t+Qp4J
-         Rd7Cve20wKgYW1mNAiSbXhOWDIwfSto+tc4tgON7IP2HDk/1Bal2TqAQOPaVRh7n7iXJ
-         oPadhEGKIjvJ8S7JTFrmyhy8j1b1oxcI45NUbg2GfPDa2pPpWCDOh91138LUFXLYuzvV
-         kKfdxJQ73WIsuZC8J4rcnfP9OzOY9aIIofH3rPXQ0xEYVyNFh/7/SH6Y7NrpNf16WEUY
-         cV/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CxbGsIEBKJXLFMJMwsrH4depnZVFzjL0UEhUtSqhCgc=;
-        b=DpZoPqadcSxYvO5eEys45owPDaQ2HvfwBI3QCFBS+xGkawIm5E4FVUgZIUoG+AeErY
-         UBUzVT7TOfNjeJcmfF8R/udNW6D+U8gMO4MSoK9+EelOFSrlRrCRseuCEl2AdIYxb3QY
-         GJL5hlBF6CakM+mpgYCYwmLJPWRKGrnumV3zea8QIa8RmKvvpOiIUlEDjrLqGRvXGQP7
-         zy7DWZzh9GNmyre/OWhKP4xvHoKM/P6neZvsV6AGR9O1FCmC2oONfASEvNXsyUSznt2O
-         yEvDhofizoxe20CuGxtniRwMzoQZuD95eIfGOxTN10CJAskgRZJbfWY9FYARIt5wCEXk
-         fW3A==
-X-Gm-Message-State: ABuFfoi8hX/GH2dELVaDEuLE8Vl0ReWl369EcAQrMso6N5JRLYEt50R1
-        JDL1HjM6olbgZnJ6bjDElfR1USrNz/mCnMWij4E=
-X-Google-Smtp-Source: ACcGV62GwZBnvhASoZye/JJlSPTuVHnBNfWeevRAXwu7h6CbjLNAm2N0sCfW7qVJaLjC/5bIrUTl5T+1ddKwJx8shNg=
-X-Received: by 2002:a2e:6e08:: with SMTP id j8-v6mr33346152ljc.61.1540243437212;
- Mon, 22 Oct 2018 14:23:57 -0700 (PDT)
+        Tue, 23 Oct 2018 01:45:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54926 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729177AbeJWFpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 01:45:17 -0400
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD332207E0;
+        Mon, 22 Oct 2018 21:25:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540243502;
+        bh=J5KXlHq0ykYvkTpQd8RTxRXAiMeYwd3ZqmH5ZY+miK0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=cf2pnyuzb+xrXm3jkd1u8Jn0zLr3yFoUC/NeceMvBCN5tA6pBmB/PlTaFkoPb7wd+
+         +spGXYI/E6rgXQmTTCFjzv/93o4Vwu11Fz30oMYXIMIRZTeFncBenJkZ2PkuRqot/d
+         dqtHOKzIc+dg9qqdNQmQxTGqfUhXvKk3kENvOm8s=
+Received: by mail-ed1-f51.google.com with SMTP id w19-v6so39362389eds.1;
+        Mon, 22 Oct 2018 14:25:01 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gLvW4fl6zQdysZnVJ49KKNJP5MhTwM9XOThWAO8YNbzCrwzrs59
+        RXLQriFy8Ye5QwUHY3fwPwVBPugHdNRytByiSUg=
+X-Google-Smtp-Source: AJdET5caEsiwVSlUwSAjryIBOEYgWxo1ZnaopgHGUj+bbgMyGw/96+OjLlidoRf+uZtC0CtEhvWeSMBKdJ/6W/dcGuU=
+X-Received: by 2002:a50:cd4b:: with SMTP id d11-v6mr4278153edj.60.1540243499796;
+ Mon, 22 Oct 2018 14:24:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181021171414.22674-1-miguel.ojeda.sandonis@gmail.com>
- <20181021182926.GB6683@kroah.com> <CANiq72kOE0a4M0oCmmiWO9xTFJsybEirwUyb_ZTXpJJhc7O_TA@mail.gmail.com>
- <CAKwvOdn9hOcF01eOmwfnrH_ciFZ4fPaspSzMPiY68o3B0En-VQ@mail.gmail.com>
-In-Reply-To: <CAKwvOdn9hOcF01eOmwfnrH_ciFZ4fPaspSzMPiY68o3B0En-VQ@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Mon, 22 Oct 2018 23:23:45 +0200
-Message-ID: <CANiq72ktOU91ghnT4eRPvBzO-xq3_Kq-RCyCB1_VSf2b+17YXw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Compiler Attributes: __fallthrough
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
+References: <1539902796-8382-1-git-send-email-frowand.list@gmail.com>
+In-Reply-To: <1539902796-8382-1-git-send-email-frowand.list@gmail.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Mon, 22 Oct 2018 16:24:23 -0500
+X-Gmail-Original-Message-ID: <CANk1AXSLZLn6XjC=nv3+pK_NQc_VL5MxWfOW9mLCgv_eFYvPPw@mail.gmail.com>
+Message-ID: <CANk1AXSLZLn6XjC=nv3+pK_NQc_VL5MxWfOW9mLCgv_eFYvPPw@mail.gmail.com>
+Subject: Re: [PATCH v5 00/18] of: overlay: validation checks, subsequent fixes
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Moritz Fischer <mdf@kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        Dan <dan.carpenter@oracle.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Olof Johansson <olof@lxom.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        David Miller <davem@davemloft.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
-        Martin Sebor <msebor@gmail.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Jonathan Corbet <corbet@lwn.net>, "Ted Ts'o" <tytso@mit.edu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 6:54 PM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
+On Thu, Oct 18, 2018 at 5:48 PM <frowand.list@gmail.com> wrote:
 >
-> On Mon, Oct 22, 2018 at 2:48 AM Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
-> >
-> > On Sun, Oct 21, 2018 at 8:29 PM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > Will this work with all of the static tools that are currently looking
-> > > for the comment instead?  I know coverity handles that, what about
-> > > others?
-> >
-> > I will also contact the different tools about this.
+> From: Frank Rowand <frank.rowand@sony.com>
 >
-> Let's contact the authors of these tools if they don't parse the
-> attribute.  I prefer to have the attributes rather than specifically
-> formatted comments.
+> Add checks to (1) overlay apply process and (2) memory freeing
+> triggered by overlay release.  The checks are intended to detect
+> possible memory leaks and invalid overlays.
 
-Sorry, not sure what you mean -- isn't that what I said? Greg was
-asking whether tools would support the attribute equally well compared
-to the comment parsing; not the comments.
+I've tested v5, nothing new to report.
+
+Alan
 
 >
-> I do think this may be tricky to provide backwards support for though;
-> Miguel, do you have info on which versions of GCC support comments vs
-> attribute?
-
-It is in the commit message:
-
-    """
-    In C mode, GCC supports the __fallthrough__ attribute since 7.1,
-    the same time the warning and the comment parsing were introduced.
-    """
-
-Cheers,
-Miguel
+> The checks revealed bugs in existing code.  Fixed the bugs.
+>
+> While fixing bugs, noted other issues, which are fixed in
+> separate patches.
+>
+> *****  Powerpc folks: I was not able to test the patches that
+> *****  directly impact Powerpc systems that use dynamic
+> *****  devicetree.  Please review that code carefully and
+> *****  test.  The specific patches are: 03/16, 04/16, 07/16
+>
+> FPGA folks:
+>
+>   I made the validation checks that should result in an
+>   invalid live devicetree report "ERROR" and cause the overlay apply
+>   to fail.
+>
+>   I made the memory leak validation tests report "WARNING" and allow
+>   the overlay apply to complete successfully.  Please let me know
+>   if you encounter the warnings.  There are at least two paths
+>   forward to deal with the cases that trigger the warning: (1) change
+>   the warning to an error and fail the overlay apply, or (2) find a
+>   way to detect the potential memory leaks and free the memory
+>   appropriately.
+>
+> ALL people:
+>
+>   The validations do _not_ address another major concern I have with
+>   releasing overlays, which is use after free errors.
+>
+> Changes since v4:
+>   - 01/18: make error message format consistent, error first, path last
+>   - 09/18: create of_prop_val_eq() and change open code to use it
+>   - 09/18: remove extra blank lines
+>
+> Changes since v3:
+>   - 01/18: Add expected value of refcount for destroy cset entry error.  Also
+>     explain the cause of the error.
+>
+>   - 09/18: for errors of an overlay changing the value of #size-cells or
+>     #address-cells, return -EINVAL so that overlay apply will fail
+>   - 09/18: for errors of an overlay changing the value of #size-cells or
+>     #address-cells, make the message more direct.
+>     Old message:
+>       OF: overlay: ERROR: overlay and/or live tree #size-cells invalid in node /soc/base_fpga_region
+>     New message:
+>       OF: overlay: ERROR: changing value of /soc/base_fpga_region/#size-cells not allowed
+>
+>   - 13/18: Update patch comment header to state that this patch modifies the
+>     previous patch to not return immediately on fragment error and
+>     explain this is not a performance issue.
+>   - 13/18: remove redundant "overlay" from two error messages.  "OF: overlay:"
+>     is already present in pr_fmt()
+>
+> Changes since v2:
+>
+>   - 13/18: Use continue to reduce indentation in find_dup_cset_node_entry()
+>     and find_dup_cset_prop()
+>
+> Changes since v1:
+>
+>   - move patch 16/16 to 17/18
+>   - move patch 15/16 to 18/18
+>   - new patch 15/18
+>   - new patch 16/18
+>
+>   - 05/18: add_changeset_node() header comment: incorrect comment for @target
+>
+>   - 18/18: add same fix for of_parse_phandle_with_args()
+>   - 18/18: add same fix for of_parse_phandle_with_args_map()
+>
+>
+> *** BLURB HERE ***
+>
+> Frank Rowand (18):
+>   of: overlay: add tests to validate kfrees from overlay removal
+>   of: overlay: add missing of_node_put() after add new node to changeset
+>   of: overlay: add missing of_node_get() in __of_attach_node_sysfs
+>   powerpc/pseries: add of_node_put() in dlpar_detach_node()
+>   of: overlay: use prop add changeset entry for property in new nodes
+>   of: overlay: do not duplicate properties from overlay for new nodes
+>   of: dynamic: change type of of_{at,de}tach_node() to void
+>   of: overlay: reorder fields in struct fragment
+>   of: overlay: validate overlay properties #address-cells and
+>     #size-cells
+>   of: overlay: make all pr_debug() and pr_err() messages unique
+>   of: overlay: test case of two fragments adding same node
+>   of: overlay: check prevents multiple fragments add or delete same node
+>   of: overlay: check prevents multiple fragments touching same property
+>   of: unittest: remove unused of_unittest_apply_overlay() argument
+>   of: overlay: set node fields from properties when add new overlay node
+>   of: unittest: allow base devicetree to have symbol metadata
+>   of: unittest: find overlays[] entry by name instead of index
+>   of: unittest: initialize args before calling of_*parse_*()
+>
+>  arch/powerpc/platforms/pseries/dlpar.c             |  15 +-
+>  arch/powerpc/platforms/pseries/reconfig.c          |   6 +-
+>  drivers/of/dynamic.c                               |  68 +++--
+>  drivers/of/kobj.c                                  |   4 +-
+>  drivers/of/overlay.c                               | 292 ++++++++++++++++-----
+>  drivers/of/unittest-data/Makefile                  |   2 +
+>  .../of/unittest-data/overlay_bad_add_dup_node.dts  |  28 ++
+>  .../of/unittest-data/overlay_bad_add_dup_prop.dts  |  24 ++
+>  drivers/of/unittest-data/overlay_base.dts          |   1 +
+>  drivers/of/unittest.c                              |  96 +++++--
+>  include/linux/of.h                                 |  25 +-
+>  11 files changed, 439 insertions(+), 122 deletions(-)
+>  create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_node.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_prop.dts
+>
+> --
+> Frank Rowand <frank.rowand@sony.com>
+>
