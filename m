@@ -7,47 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB02DECDE46
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA0FECDE49
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64BEE20853
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E86892088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="loVxdehW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64BEE20853
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kHfzBRkp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E86892088F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728893AbeJVSiB (ORCPT
+        id S1728954AbeJVSiJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:38:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48906 "EHLO mail.kernel.org"
+        Mon, 22 Oct 2018 14:38:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728144AbeJVSiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:38:00 -0400
+        id S1728448AbeJVSiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:38:08 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9BFC20853;
-        Mon, 22 Oct 2018 10:20:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A1E720890;
+        Mon, 22 Oct 2018 10:20:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540203604;
-        bh=key7R7mfhs0Nb7TnCMfJPXXuX7/OOMdvAw3NshCiPyU=;
+        s=default; t=1540203613;
+        bh=NRimIiSNjP5AwnX94Z59lY2o2MkPlkwBMk2vgEdCQlY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=loVxdehWBDMl5b1OlUKIk3PZpqlCB1nYLuCxZ40vNzjhaOuiHLnGvqvnstJLZl65T
-         p47sP4cnoy36f28ZP3/1rCh4VSv9RwwhzO2A3u+FdZtXLcDOPYsyDBRVLhjtsBHhIZ
-         T2l5lbYUdVBVEOmMnyuUeBLSTz4Ggh5oD7JA84nY=
+        b=kHfzBRkp2jIUEI0gsaZNbdqD5jjwOcE18OsLhQkkdXIp3c+h7wHNwytXmWWKt8QyZ
+         DOx1WhWERFUiZQ5JyZvZe/KJUl4RUkPGDKl+goxq0DVho5NYxXe1KBLdTjXJMPu5Pg
+         qFfD5xs1qHHHoa/g5ocTVlAFwZl+9PIzs7nQfXa4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+Cc:     Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 19/27] gpio: Assign gpio_irq_chip::parents to non-stack pointer
-Date:   Mon, 22 Oct 2018 06:19:16 -0400
-Message-Id: <20181022101924.40531-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 24/27] vmlinux.lds.h: Fix incomplete .text.exit discards
+Date:   Mon, 22 Oct 2018 06:19:21 -0400
+Message-Id: <20181022101924.40531-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181022101924.40531-1-sashal@kernel.org>
 References: <20181022101924.40531-1-sashal@kernel.org>
@@ -56,125 +53,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <swboyd@chromium.org>
+From: Peter Oberparleiter <oberpar@linux.ibm.com>
 
-[ Upstream commit 3e779a2e7f909015f21428b66834127496110b6d ]
+[ Upstream commit 8dcf86caa1e3daf4a6ccf38e97f4f752b411f829 ]
 
-gpiochip_set_cascaded_irqchip() is passed 'parent_irq' as an argument
-and then the address of that argument is assigned to the gpio chips
-gpio_irq_chip 'parents' pointer shortly thereafter. This can't ever
-work, because we've just assigned some stack address to a pointer that
-we plan to dereference later in gpiochip_irq_map(). I ran into this
-issue with the KASAN report below when gpiochip_irq_map() tried to setup
-the parent irq with a total junk pointer for the 'parents' array.
+Enabling CONFIG_GCOV_PROFILE_ALL=y causes linker errors on ARM:
 
-BUG: KASAN: stack-out-of-bounds in gpiochip_irq_map+0x228/0x248
-Read of size 4 at addr ffffffc0dde472e0 by task swapper/0/1
+  `.text.exit' referenced in section `.ARM.exidx.text.exit':
+  defined in discarded section `.text.exit'
 
-CPU: 7 PID: 1 Comm: swapper/0 Not tainted 4.14.72 #34
-Call trace:
-[<ffffff9008093638>] dump_backtrace+0x0/0x718
-[<ffffff9008093da4>] show_stack+0x20/0x2c
-[<ffffff90096b9224>] __dump_stack+0x20/0x28
-[<ffffff90096b91c8>] dump_stack+0x80/0xbc
-[<ffffff900845a350>] print_address_description+0x70/0x238
-[<ffffff900845a8e4>] kasan_report+0x1cc/0x260
-[<ffffff900845aa14>] __asan_report_load4_noabort+0x2c/0x38
-[<ffffff900897e098>] gpiochip_irq_map+0x228/0x248
-[<ffffff900820cc08>] irq_domain_associate+0x114/0x2ec
-[<ffffff900820d13c>] irq_create_mapping+0x120/0x234
-[<ffffff900820da78>] irq_create_fwspec_mapping+0x4c8/0x88c
-[<ffffff900820e2d8>] irq_create_of_mapping+0x180/0x210
-[<ffffff900917114c>] of_irq_get+0x138/0x198
-[<ffffff9008dc70ac>] spi_drv_probe+0x94/0x178
-[<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
-[<ffffff9008ca6538>] __device_attach_driver+0x148/0x20c
-[<ffffff9008ca14cc>] bus_for_each_drv+0x120/0x188
-[<ffffff9008ca570c>] __device_attach+0x19c/0x2dc
-[<ffffff9008ca586c>] device_initial_probe+0x20/0x2c
-[<ffffff9008ca18bc>] bus_probe_device+0x80/0x154
-[<ffffff9008c9b9b4>] device_add+0x9b8/0xbdc
-[<ffffff9008dc7640>] spi_add_device+0x1b8/0x380
-[<ffffff9008dcbaf0>] spi_register_controller+0x111c/0x1378
-[<ffffff9008dd6b10>] spi_geni_probe+0x4dc/0x6f8
-[<ffffff9008cab058>] platform_drv_probe+0xdc/0x130
-[<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
-[<ffffff9008ca59cc>] __driver_attach+0x100/0x194
-[<ffffff9008ca0ea8>] bus_for_each_dev+0x104/0x16c
-[<ffffff9008ca58c0>] driver_attach+0x48/0x54
-[<ffffff9008ca1edc>] bus_add_driver+0x274/0x498
-[<ffffff9008ca8448>] driver_register+0x1ac/0x230
-[<ffffff9008caaf6c>] __platform_driver_register+0xcc/0xdc
-[<ffffff9009c4b33c>] spi_geni_driver_init+0x1c/0x24
-[<ffffff9008084cb8>] do_one_initcall+0x240/0x3dc
-[<ffffff9009c017d0>] kernel_init_freeable+0x378/0x468
-[<ffffff90096e8240>] kernel_init+0x14/0x110
-[<ffffff9008086fcc>] ret_from_fork+0x10/0x18
+  `.text.exit' referenced in section `.fini_array.00100':
+  defined in discarded section `.text.exit'
 
-The buggy address belongs to the page:
-page:ffffffbf037791c0 count:0 mapcount:0 mapping:          (null) index:0x0
-flags: 0x4000000000000000()
-raw: 4000000000000000 0000000000000000 0000000000000000 00000000ffffffff
-raw: ffffffbf037791e0 ffffffbf037791e0 0000000000000000 0000000000000000
-page dumped because: kasan: bad access detected
+And related errors on NDS32:
 
-Memory state around the buggy address:
- ffffffc0dde47180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffffffc0dde47200: f1 f1 f1 f1 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f2 f2
->ffffffc0dde47280: f2 f2 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3
-                                                       ^
- ffffffc0dde47300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffffffc0dde47380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  `.text.exit' referenced in section `.dtors.65435':
+  defined in discarded section `.text.exit'
 
-Let's leave around one unsigned int in the gpio_irq_chip struct for the
-single parent irq case and repoint the 'parents' array at it. This way
-code is left mostly intact to setup parents and we waste an extra few
-bytes per structure of which there should be only a handful in a system.
+The gcov compiler flags cause certain compiler versions to generate
+additional destructor-related sections that are not yet handled by the
+linker script, resulting in references between discarded and
+non-discarded sections.
 
-Cc: Evan Green <evgreen@chromium.org>
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-Fixes: e0d897289813 ("gpio: Implement tighter IRQ chip integration")
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Since destructors are not used in the Linux kernel, fix this by
+discarding these additional sections.
+
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Tested-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Reported-by: Greentime Hu <green.hu@gmail.com>
+Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Peter Oberparleiter <oberpar@linux.ibm.com>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpiolib.c      | 3 ++-
- include/linux/gpio/driver.h | 7 +++++++
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ arch/arm/kernel/vmlinux.lds.h     | 2 ++
+ include/asm-generic/vmlinux.lds.h | 4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 06dce16e22bb..70f0dedca59f 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1675,7 +1675,8 @@ static void gpiochip_set_cascaded_irqchip(struct gpio_chip *gpiochip,
- 		irq_set_chained_handler_and_data(parent_irq, parent_handler,
- 						 gpiochip);
+diff --git a/arch/arm/kernel/vmlinux.lds.h b/arch/arm/kernel/vmlinux.lds.h
+index ae5fdff18406..8247bc15addc 100644
+--- a/arch/arm/kernel/vmlinux.lds.h
++++ b/arch/arm/kernel/vmlinux.lds.h
+@@ -49,6 +49,8 @@
+ #define ARM_DISCARD							\
+ 		*(.ARM.exidx.exit.text)					\
+ 		*(.ARM.extab.exit.text)					\
++		*(.ARM.exidx.text.exit)					\
++		*(.ARM.extab.text.exit)					\
+ 		ARM_CPU_DISCARD(*(.ARM.exidx.cpuexit.text))		\
+ 		ARM_CPU_DISCARD(*(.ARM.extab.cpuexit.text))		\
+ 		ARM_EXIT_DISCARD(EXIT_TEXT)				\
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index e373e2e10f6a..a11f86014352 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -617,8 +617,8 @@
  
--		gpiochip->irq.parents = &parent_irq;
-+		gpiochip->irq.parent_irq = parent_irq;
-+		gpiochip->irq.parents = &gpiochip->irq.parent_irq;
- 		gpiochip->irq.num_parents = 1;
- 	}
+ #define EXIT_DATA							\
+ 	*(.exit.data .exit.data.*)					\
+-	*(.fini_array)							\
+-	*(.dtors)							\
++	*(.fini_array .fini_array.*)					\
++	*(.dtors .dtors.*)						\
+ 	MEM_DISCARD(exit.data*)						\
+ 	MEM_DISCARD(exit.rodata*)
  
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 5382b5183b7e..82a953ec5ef0 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -94,6 +94,13 @@ struct gpio_irq_chip {
- 	 */
- 	unsigned int num_parents;
- 
-+	/**
-+	 * @parent_irq:
-+	 *
-+	 * For use by gpiochip_set_cascaded_irqchip()
-+	 */
-+	unsigned int parent_irq;
-+
- 	/**
- 	 * @parents:
- 	 *
 -- 
 2.17.1
 
