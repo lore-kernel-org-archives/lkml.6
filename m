@@ -2,162 +2,260 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8FC5C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:36:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D4EC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5684E20645
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:36:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC82220645
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:36:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="p85zWE8O";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="QAPi5B+q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5684E20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SHL6Rv/P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC82220645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728817AbeJWBzs (ORCPT
+        id S1728862AbeJWB4B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 21:55:48 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:45916 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728628AbeJWBzs (ORCPT
+        Mon, 22 Oct 2018 21:56:01 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36425 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728826AbeJWB4A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 21:55:48 -0400
-Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
-        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9MHYsmc011500;
-        Mon, 22 Oct 2018 10:36:05 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=WUOIFklUIvTAL2Afk9cPJ8hrqdwrtaRsjN6acajM+P8=;
- b=p85zWE8Ouhj9NZxZj8O2VvjvaJabGnKg+w3V9tTC+pzB0LxHS+qCd13Gms3MOmnnKE7/
- ZWwZ/D8uIFCuX7sH33JMiv+FU6xr73NBky5Sdtm67docD/YZ0fBQ6pJePGQ5br9VTBpS
- Aa/kKARJxZHzxDFfv9xyq7EbYoAQb4m/IJo= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0b-00082601.pphosted.com with ESMTP id 2n9fshrwta-10
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 22 Oct 2018 10:36:05 -0700
-Received: from prn-hub06.TheFacebook.com (2620:10d:c081:35::130) by
- prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Mon, 22 Oct 2018 10:36:00 -0700
-Received: from PRN-CHUB06.TheFacebook.com (2620:10d:c081:35::15) by
- prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
- (version=TLS1_0, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3
- via Frontend Transport; Mon, 22 Oct 2018 10:36:00 -0700
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.16) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Mon, 22 Oct 2018 10:36:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WUOIFklUIvTAL2Afk9cPJ8hrqdwrtaRsjN6acajM+P8=;
- b=QAPi5B+qpjIAHY6gg7j7TMEIxDi2A9uLsdL0FN6D9ryvVt+WZKSgfewA61hRLbsLESiqtSxlJu7BASfqzfiYc2gj7bLm3QZrqUUTCxjbSwnqfxYm+uAVU4MbzD1wVvJ6JcNXbktjMlU0VWUp4RrXaZ+CX97K4Sf8YV51fp9YTqw=
-Received: from BY2PR15MB0167.namprd15.prod.outlook.com (10.163.64.141) by
- BY2PR15MB0262.namprd15.prod.outlook.com (10.163.64.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1250.20; Mon, 22 Oct 2018 17:35:57 +0000
-Received: from BY2PR15MB0167.namprd15.prod.outlook.com
- ([fe80::8e8:753:f746:ed14]) by BY2PR15MB0167.namprd15.prod.outlook.com
- ([fe80::8e8:753:f746:ed14%2]) with mapi id 15.20.1250.028; Mon, 22 Oct 2018
- 17:35:57 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     Spock <dairinin@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Johannes Weiner" <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: Memory management issue in 4.18.15
-Thread-Topic: Memory management issue in 4.18.15
-Thread-Index: AQHUaeHkHk+DbEcbikCQiNZLx8ZaF6Urh5iA
-Date:   Mon, 22 Oct 2018 17:35:57 +0000
-Message-ID: <20181022173550.GA9592@tower.DHCP.thefacebook.com>
-References: <CADa=ObrwYaoNFn0x06mvv5W1F9oVccT5qjGM8qFBGNPoNuMUNw@mail.gmail.com>
- <20181022083322.GE32333@dhcp22.suse.cz>
-In-Reply-To: <20181022083322.GE32333@dhcp22.suse.cz>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR22CA0057.namprd22.prod.outlook.com
- (2603:10b6:300:12a::19) To BY2PR15MB0167.namprd15.prod.outlook.com
- (2a01:111:e400:58e0::13)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::4:c82f]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY2PR15MB0262;20:NQj/MbdRkxC2/5xYqka/cT1065Es+uTRllx0bSORvyVvCnK1TqWQsU3Ct/4gIIFIh1QDLx8B78pf+fIHsx8LJaDVIsIXPcVBtbwwoJraCbs0obI0f6CxwsmUiEfs8C8dsrhRfoGr2DQyato30mut68oxX149yv2MhEPj+OJ7bCo=
-x-ms-office365-filtering-correlation-id: e0e8f5cb-70c8-46c3-7018-08d63844d309
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BY2PR15MB0262;
-x-ms-traffictypediagnostic: BY2PR15MB0262:
-x-microsoft-antispam-prvs: <BY2PR15MB02620EFBBEE568FD0ABCD1CFBEF40@BY2PR15MB0262.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231355)(11241501184)(944501410)(52105095)(10201501046)(93006095)(93001095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BY2PR15MB0262;BCL:0;PCL:0;RULEID:;SRVR:BY2PR15MB0262;
-x-forefront-prvs: 08331F819E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(376002)(396003)(136003)(366004)(346002)(199004)(189003)(46003)(76176011)(5024004)(4326008)(11346002)(2900100001)(7736002)(386003)(256004)(486006)(25786009)(39060400002)(1076002)(446003)(33656002)(476003)(6116002)(71190400001)(81156014)(71200400001)(8676002)(9686003)(14454004)(2906002)(81166006)(6512007)(6436002)(97736004)(53936002)(478600001)(6486002)(186003)(5250100002)(6246003)(105586002)(86362001)(229853002)(106356001)(33896004)(68736007)(8936002)(305945005)(5660300001)(52116002)(6916009)(7416002)(99286004)(102836004)(6506007)(54906003)(316002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR15MB0262;H:BY2PR15MB0167.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 1XEZFkTzSf5herXtsPYet3qievwCdapSds/xSF4EZf38/Pb03H0lQ6Dlrl9NfSVf0PuFvxZyiMrFrq9qAETF1HBrLNjYxe0hnqCdsKfo6ZW0bOKQldcxIuuSaceZd7DbIAHQuvcEwJPWAujtYUFRFwx4GE9ezEJDRTkJm2bPCcB0M229eVXUHrl1C/KCGy6boI7rQSQ6rmtdFYfQ6Ms+oZ1pP6GfmxS/ljZxbW05rTYcN9Gy05ClnLeH+ulKszvbx0CkmjDu1K95qQjIN3LUlrNapQDEoP1nxSSTm1QpnFfFS0Up/1q4639TzQbLEsJjX/Au1MTqGbn+w2U1XhBIWCmlNlcL9mi8Z7llScbWb38=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <F1A88CC12485E84292DE324AD647ABEF@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 22 Oct 2018 21:56:00 -0400
+Received: by mail-pf1-f194.google.com with SMTP id l81-v6so20268158pfg.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 10:36:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sFstTX7X0zaXGUYtrxG8obho4TSJKsK3S4jKTMtCpY4=;
+        b=SHL6Rv/Pe38jS8Tt3nhYFbMUAznCvIcj180Zi5z+rZempqHqmYh88Eg8ct2tPBriFn
+         bGqvHQp45PzFjXlw+PvlZ43EyIQMUiYGgPTbZ7JyqXSxuO5Vn3AUq55nIVCM+rZsd0SW
+         T3ruH/PnYbzaRQ+t3CN2/Q2qzLM1YL7LYwcsRS0McE1itpkT2EAfqR1iQVqJfD1TWH9R
+         4UvgIRQ+L0Knazgx2+zO66uFWzLzESplLDy3963ixDfuhSFoVAwT3OyN6CqZJpaqPhWT
+         siXeWvQpI6XOyBoonqMFBtpftp1af684FbA+f4JkJiNSTjDEtDYSUFeRWBkBlqsnYM7W
+         YmrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sFstTX7X0zaXGUYtrxG8obho4TSJKsK3S4jKTMtCpY4=;
+        b=OAyt0vTjTrHK9a81kh2GuZKCwhAAkt/bSVdPGJ+gkeyNu6FIyBDToVcAWxja55bn3w
+         m4AvZ60rQ8qXYQZjSFGJ0GAlbY0tCNO3Ls7/mas9pR3DOiwaVsoKpu6UOXlUHY7ZaB1N
+         LUYEgvbszZdwX8n1suvvI9XvIG8G53OxIONe9FYmo0m5AeX4j0VCiz/ilRgHzXOlnQq6
+         EdRftArL9BcfqnvHN65R5v8b0D+rtZY3qBjcAmD8GSgHAS+8h1LLC87QepnVmDexWlXs
+         LYllm++B4fW1SsxX8j6ZFXXNNvHR/EmG0jBdTB3YB3ZYbpm1ETsJR/EKEkEuU1EdhcZW
+         3i/Q==
+X-Gm-Message-State: AGRZ1gKxxLJi0smVUIOUMJzlur88F61VSJSPLmSwW5gP8arPuDwTAslA
+        HfCSQA9v7K3ZFeU9u7rJoMfTJHsHaZ2VOFa2f5FiOg==
+X-Google-Smtp-Source: AJdET5dbc8wG65Sctr/d5jVoncsfxU2CDGKebxJxLKLcYyLtyMPzvsyLMlgXSH0Ih4zPFPtzivmqlzP3bY9G9S1qL3I=
+X-Received: by 2002:a63:f306:: with SMTP id l6-v6mr10909116pgh.255.1540229793262;
+ Mon, 22 Oct 2018 10:36:33 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0e8f5cb-70c8-46c3-7018-08d63844d309
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2018 17:35:57.4828
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR15MB0262
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-22_11:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+References: <20181021171414.22674-1-miguel.ojeda.sandonis@gmail.com> <20181021171414.22674-2-miguel.ojeda.sandonis@gmail.com>
+In-Reply-To: <20181021171414.22674-2-miguel.ojeda.sandonis@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 22 Oct 2018 10:36:21 -0700
+Message-ID: <CAKwvOdmPj_mm+9t1i=yLhvO0FAe6Kd7ezjOoTnp1fzcoikPHpw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] Compiler Attributes: add support for __fallthrough
+ (gcc >= 7.1)
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, dan.carpenter@oracle.com,
+        adilger.kernel@dilger.ca,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>, rostedt@goodmis.org,
+        mchehab+samsung@kernel.org, olof@lxom.net,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        sandipan@linux.vnet.ibm.com,
+        Andrey Konovalov <andreyknvl@google.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        paul.burton@mips.com, David Rientjes <rientjes@google.com>,
+        Willy Tarreau <w@1wt.eu>, msebor@gmail.com, sparse@chrisli.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>, joe@perches.com,
+        Arnd Bergmann <arnd@arndb.de>, asmadeus@codewreck.org,
+        Stefan Agner <stefan@agner.ch>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-sparse@vger.kernel.org,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 10:33:22AM +0200, Michal Hocko wrote:
-> Cc som more people.
->=20
-> I am wondering why 172b06c32b94 ("mm: slowly shrink slabs with a
-> relatively small number of objects") has been backported to the stable
-> tree when not marked that way. Put that aside it seems likely that the
-> upstream kernel will have the same issue I suspect. Roman, could you
-> have a look please?
+On Sun, Oct 21, 2018 at 10:14 AM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> From the GCC manual:
+>
+>   fallthrough
+>
+>     The fallthrough attribute with a null statement serves as a
+>     fallthrough statement. It hints to the compiler that a statement
+>     that falls through to another case label, or user-defined label
+>     in a switch statement is intentional and thus the -Wimplicit-fallthrough
+>     warning must not trigger. The fallthrough attribute may appear
+>     at most once in each attribute list, and may not be mixed with
+>     other attributes. It can only be used in a switch statement
+>     (the compiler will issue an error otherwise), after a preceding
+>     statement and before a logically succeeding case label,
+>     or user-defined label.
+>
+>   https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html
+>
+> Currently, most of the kernel uses fallthrough comments to silence
+> the -Wimplicit-fallthrough warnings (enabled by -Wextra, in W=1).
+> However, C++17 standarized an "statement attribute" (the first
 
-So, the problem is probably caused by the unused inode eviction code:
-inode_lru_isolate() invalidates all pages belonging to an unreferenced
-clean inode at once, even if the goal was to scan (and potentially free)
-just one inode (or any other slab object).
+s/standarized/standardized/
 
-Spock's workload, as described, has few large files in the pagecache,
-so it becomes noticeable. A small pressure applied on inode cache
-surprisingly results in cleaning up significant percentage of the memory.
+> of its kind) to deal with this: [[fallthrough]] is meant to be
+> a new control keyword in the form of an extension.
 
-It happened before my change too, but was probably less noticeable, because
-usually required higher memory pressure to happen. So, too aggressive recla=
-im
-was less unexpected.
+I think we can leave the details about the [[]] notation out. IIUC,
+it's only applicable to C++.
 
-How to fix this?
+>
+> In C mode, GCC supports the __fallthrough__ attribute since 7.1,
+> the same time the warning and the comment parsing were introduced.
+>
+> While comment parsing is a good idea to deal with old codebases
+> that used such a comment as documentation for humans, the best
+> solution is to use the attribute:
+>
+>   * It is a "real" part of the AST (=> better for tooling).
 
-It seems to me, that we shouldn't try invalidating pagecache pages from
-the inode reclaim path at all (maybe except inodes with only few pages).
-If an inode has a lot of attached pagecache, let it be evicted "naturally",
-through file LRU lists.
-But I need to perform some real-life testing on how this will work.
++1
 
-Thanks!
+>
+>   * It does not follow arbitrary rules for parsing (e.g. regexps
+>     for the comment parsing).
+
++2
+
+>
+>   * It may even become standarized in C as well: there are ongoing
+
+s/standarized/standardized/
+
+>     proposals to import some C++ standard attributes into
+>     the C standard, e.g. for fallthrough:
+>
+>       http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2268.pdf
+>
+> On top of that, it is also a better solution for the kernel, because:
+>
+>   * We can actually use a #define for it like for the rest of
+>     attributes/extensions, which is not possible with a comment,
+>     so that its naming/usage is consistent across the entire kernel.
+
++3
+
+>
+>   * Whenever the migration from the comments to the attribute
+>     is complete, we may increase the level of the GCC warning up to 5,
+>     i.e. comments will not longer be considered for warning
+>     surpression:  only the attribute must be used. This would enforce
+
+s/surpression/suppression/
+
+>     consistency by leveraging the compiler directly (instead of
+>     enforcing it with other tools).
+>
+>   * Further into the future, we can consider moving the warning
+>     up to W=0 or even making it an error.
+>
+> It is worth noting that clang >= 3.2 supports the warning and
+> the attribute, but only in C++ mode (and it is not enabled by
+> -Wall/-Wextra/-Wpedantic like in gcc). Hopefully, they will also
+> support it for C as well.
+
+https://bugs.llvm.org/show_bug.cgi?id=39382
+
+>
+> Further, icc >= 18 does not seem to know anything about the warning;
+> except that it accepts (i.e. ignores) [[fallthrough]] in C++17 mode
+> (to be conformant, probably).
+>
+> Link: https://lore.kernel.org/lkml/20181017062255.oiu44y4zuuwilan3@mwanda/
+> Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+> ---
+>  include/linux/compiler_attributes.h | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>
+> diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
+> index 6b28c1b7310c..9e2153f85462 100644
+> --- a/include/linux/compiler_attributes.h
+> +++ b/include/linux/compiler_attributes.h
+> @@ -32,6 +32,7 @@
+>  # define __GCC4_has_attribute___assume_aligned__      (__GNUC_MINOR__ >= 9)
+>  # define __GCC4_has_attribute___designated_init__     0
+>  # define __GCC4_has_attribute___externally_visible__  1
+> +# define __GCC4_has_attribute___fallthrough__         0
+>  # define __GCC4_has_attribute___noclone__             1
+>  # define __GCC4_has_attribute___optimize__            1
+>  # define __GCC4_has_attribute___nonstring__           0
+> @@ -133,6 +134,23 @@
+>  # define __visible
+>  #endif
+>
+> +/*
+> + * Currently, most of the kernel uses fallthrough comments to silence
+> + * the -Wimplicit-fallthrough warnings (enabled by -Wextra, in W=1).
+> + * For new instances, please use this attribute instead.
+> + *
+> + * Optional: only supported since gcc >= 7.1
+> + * Optional: not supported by clang
+> + * Optional: not supported by icc
+> + *
+> + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html#index-fallthrough-statement-attribute
+> + */
+> +#if __has_attribute(__fallthrough__)
+> +# define __fallthrough                  __attribute__((__fallthrough__))
+> +#else
+> +# define __fallthrough
+
+While this is in the correct format as the other attributes in this
+file, I think this particular attribute is a special case, because of
+the variety of fallbacks and differing support for them.  I'd like to
+see in the commit message maybe a list of tools we'd like to support
+and links to the feature requests/bug reports for them.  I acknowledge
+it's more work to file bugs, but it's being a good open source
+citizen, IMO.
+
+I'm also curious which is the first version of GCC to support the
+comment format?
+
+> +#endif
+> +
+>  /*
+>   *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-format-function-attribute
+>   * clang: https://clang.llvm.org/docs/AttributeReference.html#format
+> --
+> 2.17.1
+>
+
+
+-- 
+Thanks,
+~Nick Desaulniers
