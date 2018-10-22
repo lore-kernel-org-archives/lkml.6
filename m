@@ -2,83 +2,172 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 407C3C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D4EC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:32:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FBEF20674
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:31:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FBEF20674
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D9C120663
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:32:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D9C120663
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729519AbeJWFv6 (ORCPT
+        id S1729535AbeJWFwh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 01:51:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59598 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728580AbeJWFv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 01:51:58 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 71FA4308ED5F;
-        Mon, 22 Oct 2018 21:31:42 +0000 (UTC)
-Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B408B5D9CC;
-        Mon, 22 Oct 2018 21:31:39 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH] Documentation/proc.txt: Add 2 missing fields for /proc/<pid>/status
-Date:   Mon, 22 Oct 2018 17:31:30 -0400
-Message-Id: <1540243890-27970-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 22 Oct 2018 21:31:42 +0000 (UTC)
+        Tue, 23 Oct 2018 01:52:37 -0400
+Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:36758 "EHLO
+        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728580AbeJWFwh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 01:52:37 -0400
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail07.adl2.internode.on.net with ESMTP; 23 Oct 2018 08:01:36 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gEhnR-0003KM-DM; Tue, 23 Oct 2018 08:31:33 +1100
+Date:   Tue, 23 Oct 2018 08:31:33 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     kernel-team@fb.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, tj@kernel.org,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, riel@fb.com, linux-mm@kvack.org
+Subject: Re: [PATCH 7/7] btrfs: drop mmap_sem in mkwrite for btrfs
+Message-ID: <20181022213133.GB6311@dastard>
+References: <20181018202318.9131-1-josef@toxicpanda.com>
+ <20181018202318.9131-8-josef@toxicpanda.com>
+ <20181019034847.GM18822@dastard>
+ <20181022175652.ase7u23uzizqtlao@destiny>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181022175652.ase7u23uzizqtlao@destiny>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It was found that two of the fields in the /proc/<pid>/status file were
-missing - CapAmb & Speculation_Store_Bypass. They are now added to the
-proc.txt documentation file.
+On Mon, Oct 22, 2018 at 01:56:54PM -0400, Josef Bacik wrote:
+> On Fri, Oct 19, 2018 at 02:48:47PM +1100, Dave Chinner wrote:
+> > On Thu, Oct 18, 2018 at 04:23:18PM -0400, Josef Bacik wrote:
+> > > ->page_mkwrite is extremely expensive in btrfs.  We have to reserve
+> > > space, which can take 6 lifetimes, and we could possibly have to wait on
+> > > writeback on the page, another several lifetimes.  To avoid this simply
+> > > drop the mmap_sem if we didn't have the cached page and do all of our
+> > > work and return the appropriate retry error.  If we have the cached page
+> > > we know we did all the right things to set this page up and we can just
+> > > carry on.
+> > > 
+> > > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> > > ---
+> > >  fs/btrfs/inode.c   | 41 +++++++++++++++++++++++++++++++++++++++--
+> > >  include/linux/mm.h | 14 ++++++++++++++
+> > >  mm/filemap.c       |  3 ++-
+> > >  3 files changed, 55 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> > > index 3ea5339603cf..6b723d29bc0c 100644
+> > > --- a/fs/btrfs/inode.c
+> > > +++ b/fs/btrfs/inode.c
+> > > @@ -8809,7 +8809,9 @@ static void btrfs_invalidatepage(struct page *page, unsigned int offset,
+> > >  vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
+> > >  {
+> > >  	struct page *page = vmf->page;
+> > > -	struct inode *inode = file_inode(vmf->vma->vm_file);
+> > > +	struct file *file = vmf->vma->vm_file, *fpin;
+> > > +	struct mm_struct *mm = vmf->vma->vm_mm;
+> > > +	struct inode *inode = file_inode(file);
+> > >  	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+> > >  	struct extent_io_tree *io_tree = &BTRFS_I(inode)->io_tree;
+> > >  	struct btrfs_ordered_extent *ordered;
+> > > @@ -8828,6 +8830,29 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
+> > >  
+> > >  	reserved_space = PAGE_SIZE;
+> > >  
+> > > +	/*
+> > > +	 * We have our cached page from a previous mkwrite, check it to make
+> > > +	 * sure it's still dirty and our file size matches when we ran mkwrite
+> > > +	 * the last time.  If everything is OK then return VM_FAULT_LOCKED,
+> > > +	 * otherwise do the mkwrite again.
+> > > +	 */
+> > > +	if (vmf->flags & FAULT_FLAG_USED_CACHED) {
+> > > +		lock_page(page);
+> > > +		if (vmf->cached_size == i_size_read(inode) &&
+> > > +		    PageDirty(page))
+> > > +			return VM_FAULT_LOCKED;
+> > > +		unlock_page(page);
+> > > +	}
+> > 
+> > What does the file size have to do with whether we can use the
+> > initialised page or not? The file can be extended by other
+> > data operations (like write()) while a page fault is in progress,
+> > so I'm not sure how or why this check makes any sense.
+> > 
+> > I also don't see anything btrfs specific here, so....
+> > 
+> 
+> First thanks for the review, I've gone through and addressed everything you
+> mentioned, however this one is subtle.
+> 
+> The problem is the vmf->vma->vm_file access.  Once we drop the mmap_sem we can
+> no longer safely go into vmf->vma, so I'd have to fix all the page_mkwrite()'s
+> to not touch vma, and add a vmf->fpin instead to mess with.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- Documentation/filesystems/proc.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Adding a vmf->file pointer seems pretty easy - making /everything/
+use it instead of just special casing page_mkwrite also seems like
+it would be a good idea - set it up in your new init function and
+it's done. Pinning and unpinning could be done unconditionally, too
+- that doesn't look expensive - and it would pull a lot of the
+complexity out of the patchset for the cases where unlocking the
+mmap_sem is done....
 
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index 22b4b00..36a9e62 100644
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -214,7 +214,7 @@ asynchronous manner and the value may not be very precise. To see a precise
- snapshot of a moment, you can see /proc/<pid>/smaps file and scan page table.
- It's slow but very precise.
- 
--Table 1-2: Contents of the status files (as of 4.8)
-+Table 1-2: Contents of the status files (as of 4.18)
- ..............................................................................
-  Field                       Content
-  Name                        filename of the executable
-@@ -267,8 +267,10 @@ Table 1-2: Contents of the status files (as of 4.8)
-  CapPrm                      bitmap of permitted capabilities
-  CapEff                      bitmap of effective capabilities
-  CapBnd                      bitmap of capabilities bounding set
-+ CapAmb                      bitmap of ambient capabilities
-  NoNewPrivs                  no_new_privs, like prctl(PR_GET_NO_NEW_PRIV, ...)
-  Seccomp                     seccomp mode, like prctl(PR_GET_SECCOMP, ...)
-+ Speculation_Store_Bypass    speculative store bypass mitigation status
-  Cpus_allowed                mask of CPUs on which this process may run
-  Cpus_allowed_list           Same as previous, but in "list format"
-  Mems_allowed                mask of memory nodes allowed to this process
+> Plus I didn't want
+> to miss some subtlety in other fs's page_mkwrite()'s and inavertedly break them.
+> If I break btrfs I can fix it, I'm not as good with xfs.
+
+Sure, but if you make it a generic helper then you don't have to
+worry about that. i.e.
+
+generic_page_mkwrite_nommapsem(vmf, page_mkwrite_cb)
+{
+	/* use cached page if valid */
+
+	/* unlock mmap_sem */
+
+	/* do filesystem page_mkwrite callback */
+	ret = page_mkwrite_cb(vmf);
+
+	/* handle page caching */
+
+	/* return retry fault indicator */
+}
+
+and that allows all filesystems to easily opt in to dropping the
+mmap_sem and you don't have to worry about it too much. It means
+filesystems with dax fault paths (like XFS) can convert the non-dax
+paths that call immediately, and worry about the more tricky stuff
+later...
+
+> vmf->fpin and vmf->mm, and then fix up all the mkwrite()'s to use that instead
+
+Ignoring DAX (because I haven't checked), what filesystem
+page_mkwrite implementation requires access to the mm_struct? They
+should all just be doing file operations on a page, not anything to
+do with the way the page is mapped into the task memory....
+
+> of vmf->vma.  I think that's the only things we care about so it wouldn't be
+> hard.  Does that sound reasonable to you?
+
+I think a little bit of tweaking, and it will be easy to for
+everyone to opt in to this behaviour....
+
+Cheers,
+
+Dave.
 -- 
-1.8.3.1
-
+Dave Chinner
+david@fromorbit.com
