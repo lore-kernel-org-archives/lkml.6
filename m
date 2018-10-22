@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9283C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01960C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC26220672
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:47:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC26220672
+	by mail.kernel.org (Postfix) with ESMTP id 347EB20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:47:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 347EB20663
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729203AbeJWFHC (ORCPT
+        id S1729214AbeJWFHh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 01:07:02 -0400
-Received: from gateway20.websitewelcome.com ([192.185.54.2]:40029 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727963AbeJWFHB (ORCPT
+        Tue, 23 Oct 2018 01:07:37 -0400
+Received: from gateway31.websitewelcome.com ([192.185.144.80]:34937 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728830AbeJWFHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 01:07:01 -0400
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id BE882400D8279
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 15:46:56 -0500 (CDT)
+        Tue, 23 Oct 2018 01:07:37 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 122135DF8B
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 15:47:32 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id Eh69gqnaHaSeyEh6DgAJKU; Mon, 22 Oct 2018 15:46:56 -0500
+        id Eh6hgPoQ8kBj6Eh6mgT67u; Mon, 22 Oct 2018 15:47:31 -0500
 X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:51076 helo=embeddedor)
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:51080 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gEh68-00260f-TW; Mon, 22 Oct 2018 15:46:49 -0500
-Date:   Mon, 22 Oct 2018 22:46:47 +0200
+        id 1gEh6g-0026Lm-QE; Mon, 22 Oct 2018 15:47:22 -0500
+Date:   Mon, 22 Oct 2018 22:47:20 +0200
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Stanislaw Gruszka <sgruszka@redhat.com>,
-        Helmut Schaa <helmut.schaa@googlemail.com>
-Cc:     Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     linux-wireless@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 17/20] rt2x00: rt61pci: mark expected switch fall-through
-Message-ID: <5de893f78cdff8d4946852e8e41348e3129fda00.1540239684.git.gustavo@embeddedor.com>
+Subject: [PATCH 18/20] ray_cs: mark expected switch fall-throughs
+Message-ID: <43adc31cc3bb8879273c9859c8e4ccba8c02e304.1540239684.git.gustavo@embeddedor.com>
 References: <cover.1540239684.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -58,13 +57,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 86.245.173.13
 X-Source-L: No
-X-Exim-ID: 1gEh68-00260f-TW
+X-Exim-ID: 1gEh6g-0026Lm-QE
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:51076
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:51080
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 124
+X-Email-Count: 129
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,24 +74,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
+Addresses-Coverity-ID: 114948 ("Missing break in switch")
+Addresses-Coverity-ID: 114949 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/wireless/ralink/rt2x00/rt61pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ray_cs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/wireless/ralink/rt2x00/rt61pci.c b/drivers/net/wireless/ralink/rt2x00/rt61pci.c
-index cb0e119..4c5de8f 100644
---- a/drivers/net/wireless/ralink/rt2x00/rt61pci.c
-+++ b/drivers/net/wireless/ralink/rt2x00/rt61pci.c
-@@ -2226,7 +2226,7 @@ static void rt61pci_txdone(struct rt2x00_dev *rt2x00dev)
- 			break;
- 		case 6: /* Failure, excessive retries */
- 			__set_bit(TXDONE_EXCESSIVE_RETRY, &txdesc.flags);
--			/* Don't break, this is a failed frame! */
-+			/* Fall through - this is a failed frame! */
- 		default: /* Failure */
- 			__set_bit(TXDONE_FAILURE, &txdesc.flags);
- 		}
+diff --git a/drivers/net/wireless/ray_cs.c b/drivers/net/wireless/ray_cs.c
+index 08c607c..33ad875 100644
+--- a/drivers/net/wireless/ray_cs.c
++++ b/drivers/net/wireless/ray_cs.c
+@@ -889,8 +889,10 @@ static int ray_hw_xmit(unsigned char *data, int len, struct net_device *dev,
+ 	switch (ccsindex = get_free_tx_ccs(local)) {
+ 	case ECCSBUSY:
+ 		pr_debug("ray_hw_xmit tx_ccs table busy\n");
++		/* fall through */
+ 	case ECCSFULL:
+ 		pr_debug("ray_hw_xmit No free tx ccs\n");
++		/* fall through */
+ 	case ECARDGONE:
+ 		netif_stop_queue(dev);
+ 		return XMIT_NO_CCS;
 -- 
 2.7.4
 
