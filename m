@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C606C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D0EC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7CA320652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:18:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7CA320652
+	by mail.kernel.org (Postfix) with ESMTP id BFED320665
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:18:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFED320665
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbeJWEie (ORCPT
+        id S1728695AbeJWEih (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 00:38:34 -0400
-Received: from mga18.intel.com ([134.134.136.126]:36318 "EHLO mga18.intel.com"
+        Tue, 23 Oct 2018 00:38:37 -0400
+Received: from mga04.intel.com ([192.55.52.120]:43389 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725788AbeJWEie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 00:38:34 -0400
+        id S1725788AbeJWEif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 00:38:35 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2018 13:18:35 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2018 13:18:37 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,413,1534834800"; 
-   d="scan'208";a="83549665"
+   d="scan'208";a="83268375"
 Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
-  by orsmga008.jf.intel.com with ESMTP; 22 Oct 2018 13:18:35 -0700
-Subject: [PATCH 0/9] Allow persistent memory to be used like normal RAM
+  by orsmga007.jf.intel.com with ESMTP; 22 Oct 2018 13:18:37 -0700
+Subject: [PATCH 1/9] mm/resource: return real error codes from walk failures
 To:     linux-kernel@vger.kernel.org
 Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         dan.j.williams@intel.com, dave.jiang@intel.com, zwisler@kernel.org,
@@ -40,62 +40,33 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         linux-nvdimm@lists.01.org, linux-mm@kvack.org,
         ying.huang@intel.com, fengguang.wu@intel.com
 From:   Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Mon, 22 Oct 2018 13:13:17 -0700
-Message-Id: <20181022201317.8558C1D8@viggo.jf.intel.com>
+Date:   Mon, 22 Oct 2018 13:13:19 -0700
+References: <20181022201317.8558C1D8@viggo.jf.intel.com>
+In-Reply-To: <20181022201317.8558C1D8@viggo.jf.intel.com>
+Message-Id: <20181022201319.471D7B85@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Persistent memory is cool.  But, currently, you have to rewrite
-your applications to use it.  Wouldn't it be cool if you could
-just have it show up in your system like normal RAM and get to
-it like a slow blob of memory?  Well... have I got the patch
-series for you!
 
-This series adds a new "driver" to which pmem devices can be
-attached.  Once attached, the memory "owned" by the device is
-hot-added to the kernel and managed like any other memory.  On
-systems with an HMAT (a new ACPI table), each socket (roughly)
-will have a separate NUMA node for its persistent memory so
-this newly-added memory can be selected by its unique NUMA
-node.
+walk_system_ram_range() can return an error code either becuase *it*
+failed, or because the 'func' that it calls returned an error.  The
+memory hotplug does the following:
 
-This is highly RFC, and I really want the feedback from the
-nvdimm/pmem folks about whether this is a viable long-term
-perversion of their code and device mode.  It's insufficiently
-documented and probably not bisectable either.
+        ret = walk_system_ram_range(..., func);
+        if (ret)
+		return ret;
 
-Todo:
-1. The device re-binding hacks are ham-fisted at best.  We
-   need a better way of doing this, especially so the kmem
-   driver does not get in the way of normal pmem devices.
-2. When the device has no proper node, we default it to
-   NUMA node 0.  Is that OK?
-3. We muck with the 'struct resource' code quite a bit. It
-   definitely needs a once-over from folks more familiar
-   with it than I.
-4. Is there a better way to do this than starting with a
-   copy of pmem.c?
+and 'ret' makes it out to userspace, eventually.  The problem is,
+walk_system_ram_range() failues that result from *it* failing (as
+opposed to 'func') return -1.  That leads to a very odd -EPERM (-1)
+return code out to userspace.
 
-Here's how I set up a system to test this thing:
+Make walk_system_ram_range() return -EINVAL for internal failures to
+keep userspace less confused.
 
-1. Boot qemu with lots of memory: "-m 4096", for instance
-2. Reserve 512MB of physical memory.  Reserving a spot a 2GB
-   physical seems to work: memmap=512M!0x0000000080000000
-   This will end up looking like a pmem device at boot.
-3. When booted, convert fsdax device to "device dax":
-	ndctl create-namespace -fe namespace0.0 -m dax
-4. In the background, the kmem driver will probably bind to the
-   new device.
-5. Now, online the new memory sections.  Perhaps:
-
-grep ^MemTotal /proc/meminfo
-for f in `grep -vl online /sys/devices/system/memory/*/state`; do
-	echo $f: `cat $f`
-	echo online > $f
-	grep ^MemTotal /proc/meminfo
-done
+This return code is compatible with all the callers that I audited.
 
 Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Dave Jiang <dave.jiang@intel.com>
@@ -109,3 +80,32 @@ Cc: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org
 Cc: Huang Ying <ying.huang@intel.com>
 Cc: Fengguang Wu <fengguang.wu@intel.com>
+
+
+---
+
+ b/kernel/resource.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -puN kernel/resource.c~memory-hotplug-walk_system_ram_range-returns-neg-1 kernel/resource.c
+--- a/kernel/resource.c~memory-hotplug-walk_system_ram_range-returns-neg-1	2018-10-22 13:12:21.000930395 -0700
++++ b/kernel/resource.c	2018-10-22 13:12:21.003930395 -0700
+@@ -375,7 +375,7 @@ static int __walk_iomem_res_desc(resourc
+ 				 int (*func)(struct resource *, void *))
+ {
+ 	struct resource res;
+-	int ret = -1;
++	int ret = -EINVAL;
+ 
+ 	while (start < end &&
+ 	       !find_next_iomem_res(start, end, flags, desc, first_lvl, &res)) {
+@@ -453,7 +453,7 @@ int walk_system_ram_range(unsigned long
+ 	unsigned long flags;
+ 	struct resource res;
+ 	unsigned long pfn, end_pfn;
+-	int ret = -1;
++	int ret = -EINVAL;
+ 
+ 	start = (u64) start_pfn << PAGE_SHIFT;
+ 	end = ((u64)(start_pfn + nr_pages) << PAGE_SHIFT) - 1;
+_
