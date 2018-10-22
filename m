@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59896C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A38CC7112C
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C228820665
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:18:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C228820665
+	by mail.kernel.org (Postfix) with ESMTP id ED04220652
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:18:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED04220652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728907AbeJWEim (ORCPT
+        id S1728941AbeJWEin (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 00:38:42 -0400
-Received: from mga05.intel.com ([192.55.52.43]:13946 "EHLO mga05.intel.com"
+        Tue, 23 Oct 2018 00:38:43 -0400
+Received: from mga11.intel.com ([192.55.52.93]:17885 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725788AbeJWEik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 00:38:40 -0400
+        id S1725788AbeJWEim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 00:38:42 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2018 13:18:42 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2018 13:18:44 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,413,1534834800"; 
-   d="scan'208";a="80737009"
+   d="scan'208";a="90396632"
 Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
-  by fmsmga008.fm.intel.com with ESMTP; 22 Oct 2018 13:18:41 -0700
-Subject: [PATCH 4/9] dax/kmem: allow PMEM devices to bind to KMEM driver
+  by FMSMGA003.fm.intel.com with ESMTP; 22 Oct 2018 13:18:42 -0700
+Subject: [PATCH 5/9] dax/kmem: add more nd dax kmem infrastructure
 To:     linux-kernel@vger.kernel.org
 Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         dan.j.williams@intel.com, dave.jiang@intel.com, zwisler@kernel.org,
@@ -40,27 +40,18 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         linux-nvdimm@lists.01.org, linux-mm@kvack.org,
         ying.huang@intel.com, fengguang.wu@intel.com
 From:   Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Mon, 22 Oct 2018 13:13:24 -0700
+Date:   Mon, 22 Oct 2018 13:13:26 -0700
 References: <20181022201317.8558C1D8@viggo.jf.intel.com>
 In-Reply-To: <20181022201317.8558C1D8@viggo.jf.intel.com>
-Message-Id: <20181022201324.EBB64302@viggo.jf.intel.com>
+Message-Id: <20181022201326.5E3F2752@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Currently, a persistent memory device's mode must be coordinated
-with the driver to which it needs to bind.  To change it from the
-fsdax to the device-dax driver, you first change the mode of the
-device itself.
-
-Instead of adding a new device mode, allow the PMEM mode to also
-bind to the KMEM driver.
-
-As I write this, I'm realizing that it might have just been
-better to add a new device mode, rather than hijacking the PMEM
-eode.  If this is the case, please speak up, NVDIMM folks.  :)
+Each DAX mode has a set of wrappers and helpers.  Add them
+for the kmem mode.
 
 Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Dave Jiang <dave.jiang@intel.com>
@@ -77,36 +68,92 @@ Cc: Fengguang Wu <fengguang.wu@intel.com>
 
 ---
 
- b/drivers/nvdimm/bus.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ b/drivers/nvdimm/bus.c      |    2 ++
+ b/drivers/nvdimm/dax_devs.c |   35 +++++++++++++++++++++++++++++++++++
+ b/drivers/nvdimm/nd.h       |    6 ++++++
+ 3 files changed, 43 insertions(+)
 
-diff -puN drivers/nvdimm/bus.c~dax-kmem-try-again-2018-3-bus-match-override drivers/nvdimm/bus.c
---- a/drivers/nvdimm/bus.c~dax-kmem-try-again-2018-3-bus-match-override	2018-10-22 13:12:22.522930391 -0700
-+++ b/drivers/nvdimm/bus.c	2018-10-22 13:12:22.525930391 -0700
-@@ -464,11 +464,24 @@ static struct nd_device_driver nd_bus_dr
- static int nvdimm_bus_match(struct device *dev, struct device_driver *drv)
- {
- 	struct nd_device_driver *nd_drv = to_nd_device_driver(drv);
-+	bool match;
+diff -puN drivers/nvdimm/bus.c~dax-kmem-try-again-2018-4-bus-dev-type-kmem drivers/nvdimm/bus.c
+--- a/drivers/nvdimm/bus.c~dax-kmem-try-again-2018-4-bus-dev-type-kmem	2018-10-22 13:12:23.024930389 -0700
++++ b/drivers/nvdimm/bus.c	2018-10-22 13:12:23.031930389 -0700
+@@ -46,6 +46,8 @@ static int to_nd_device_type(struct devi
+ 		return ND_DEVICE_REGION_BLK;
+ 	else if (is_nd_dax(dev))
+ 		return ND_DEVICE_DAX_PMEM;
++	else if (is_nd_dax_kmem(dev))
++		return ND_DEVICE_DAX_KMEM;
+ 	else if (is_nd_region(dev->parent))
+ 		return nd_region_to_nstype(to_nd_region(dev->parent));
  
- 	if (is_nvdimm_bus(dev) && nd_drv == &nd_bus_driver)
- 		return true;
- 
--	return !!test_bit(to_nd_device_type(dev), &nd_drv->type);
-+	match = !!test_bit(to_nd_device_type(dev), &nd_drv->type);
-+
-+	/*
-+	 * We allow PMEM devices to be bound to the KMEM driver.
-+	 * Force a match if we detect a PMEM device type but
-+	 * a KMEM device driver.
-+	 */
-+	if (!match &&
-+	    (to_nd_device_type(dev) == ND_DEVICE_DAX_PMEM) &&
-+	    (nd_drv->type == ND_DRIVER_DAX_KMEM))
-+		match = true;
-+
-+	return match;
+diff -puN drivers/nvdimm/dax_devs.c~dax-kmem-try-again-2018-4-bus-dev-type-kmem drivers/nvdimm/dax_devs.c
+--- a/drivers/nvdimm/dax_devs.c~dax-kmem-try-again-2018-4-bus-dev-type-kmem	2018-10-22 13:12:23.026930389 -0700
++++ b/drivers/nvdimm/dax_devs.c	2018-10-22 13:12:23.031930389 -0700
+@@ -51,6 +51,41 @@ struct nd_dax *to_nd_dax(struct device *
  }
+ EXPORT_SYMBOL(to_nd_dax);
  
- static ASYNC_DOMAIN_EXCLUSIVE(nd_async_domain);
++/* nd_dax_kmem */
++static void nd_dax_kmem_release(struct device *dev)
++{
++	struct nd_region *nd_region = to_nd_region(dev->parent);
++	struct nd_dax_kmem *nd_dax_kmem = to_nd_dax_kmem(dev);
++	struct nd_pfn *nd_pfn = &nd_dax_kmem->nd_pfn;
++
++	dev_dbg(dev, "trace\n");
++	nd_detach_ndns(dev, &nd_pfn->ndns);
++	ida_simple_remove(&nd_region->dax_ida, nd_pfn->id);
++	kfree(nd_pfn->uuid);
++	kfree(nd_dax_kmem);
++}
++
++static struct device_type nd_dax_kmem_device_type = {
++	.name = "nd_dax_kmem",
++	.release = nd_dax_kmem_release,
++};
++
++bool is_nd_dax_kmem(struct device *dev)
++{
++	return dev ? dev->type == &nd_dax_kmem_device_type : false;
++}
++EXPORT_SYMBOL(is_nd_dax_kmem);
++
++struct nd_dax_kmem *to_nd_dax_kmem(struct device *dev)
++{
++	struct nd_dax_kmem *nd_dax_kmem = container_of(dev, struct nd_dax_kmem, nd_pfn.dev);
++
++	WARN_ON(!is_nd_dax_kmem(dev));
++	return nd_dax_kmem;
++}
++EXPORT_SYMBOL(to_nd_dax_kmem);
++/* end nd_dax_kmem */
++
+ static const struct attribute_group *nd_dax_attribute_groups[] = {
+ 	&nd_pfn_attribute_group,
+ 	&nd_device_attribute_group,
+diff -puN drivers/nvdimm/nd.h~dax-kmem-try-again-2018-4-bus-dev-type-kmem drivers/nvdimm/nd.h
+--- a/drivers/nvdimm/nd.h~dax-kmem-try-again-2018-4-bus-dev-type-kmem	2018-10-22 13:12:23.027930389 -0700
++++ b/drivers/nvdimm/nd.h	2018-10-22 13:12:23.031930389 -0700
+@@ -215,6 +215,10 @@ struct nd_dax {
+ 	struct nd_pfn nd_pfn;
+ };
+ 
++struct nd_dax_kmem {
++	struct nd_pfn nd_pfn;
++};
++
+ enum nd_async_mode {
+ 	ND_SYNC,
+ 	ND_ASYNC,
+@@ -318,9 +322,11 @@ static inline int nd_pfn_validate(struct
+ #endif
+ 
+ struct nd_dax *to_nd_dax(struct device *dev);
++struct nd_dax_kmem *to_nd_dax_kmem(struct device *dev);
+ #if IS_ENABLED(CONFIG_NVDIMM_DAX)
+ int nd_dax_probe(struct device *dev, struct nd_namespace_common *ndns);
+ bool is_nd_dax(struct device *dev);
++bool is_nd_dax_kmem(struct device *dev);
+ struct device *nd_dax_create(struct nd_region *nd_region);
+ #else
+ static inline int nd_dax_probe(struct device *dev,
 _
