@@ -2,93 +2,181 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE31C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 07:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24971C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 07:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EF3120658
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 07:58:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EF3120658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C14F020658
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 07:58:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C14F020658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbeJVQP3 (ORCPT
+        id S1727689AbeJVQQR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 12:15:29 -0400
-Received: from mga12.intel.com ([192.55.52.136]:31935 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727479AbeJVQP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 12:15:29 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2018 00:58:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,411,1534834800"; 
-   d="scan'208";a="101308790"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 22 Oct 2018 00:58:01 -0700
-Received: by lahna (sSMTP sendmail emulation); Mon, 22 Oct 2018 10:58:00 +0300
-Date:   Mon, 22 Oct 2018 10:58:00 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Wenwen Wang <wang6495@umn.edu>
-Cc:     Kangjie Lu <kjlu@umn.edu>, andreas.noever@gmail.com,
-        michael.jamet@intel.com, YehezkelShB@gmail.com,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] thunderbolt: Fix a missing-check bug
-Message-ID: <20181022075800.GJ2302@lahna.fi.intel.com>
-References: <1539784829-1159-1-git-send-email-wang6495@umn.edu>
- <20181018091319.GT2302@lahna.fi.intel.com>
- <CAAa=b7f-Q2ySZt2vqa1L2GyTA1FrT7+7_ui-eSLEYgN6iXSTFQ@mail.gmail.com>
+        Mon, 22 Oct 2018 12:16:17 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:29641 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727479AbeJVQQR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 12:16:17 -0400
+Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9M7wo4f016895;
+        Mon, 22 Oct 2018 16:58:50 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
+ Mon, 22 Oct 2018 16:58:50 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9M7woOQ016891;
+        Mon, 22 Oct 2018 16:58:50 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: (from i-love@localhost)
+        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id w9M7wojE016890;
+        Mon, 22 Oct 2018 16:58:50 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Message-Id: <201810220758.w9M7wojE016890@www262.sakura.ne.jp>
+X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
+Subject: Re: [RFC PATCH 1/2] mm, oom: marks all killed tasks as oom victims
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAa=b7f-Q2ySZt2vqa1L2GyTA1FrT7+7_ui-eSLEYgN6iXSTFQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Date:   Mon, 22 Oct 2018 16:58:50 +0900
+References: <20181022071323.9550-1-mhocko@kernel.org> <20181022071323.9550-2-mhocko@kernel.org>
+In-Reply-To: <20181022071323.9550-2-mhocko@kernel.org>
+Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 04:25:01PM -0500, Wenwen Wang wrote:
-> Hi Mika,
+Michal Hocko wrote:
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -898,6 +898,7 @@ static void __oom_kill_process(struct task_struct *victim)
+>  		if (unlikely(p->flags & PF_KTHREAD))
+>  			continue;
+>  		do_send_sig_info(SIGKILL, SEND_SIG_FORCED, p, PIDTYPE_TGID);
+> +		mark_oom_victim(p);
+>  	}
+>  	rcu_read_unlock();
+>  
+> -- 
 
-Hi,
+Wrong. Either
 
-> Thanks for your response. The current version of the code assumes that
-> the Thunderbolt controller behaves as expected, e.g., the host
-> controller should not touch the data after it is marked ready.
-> However, it is not impossible that the controller is exploited by an
-> attacker through a security vulnerability, even though it is soldered
-> on the motherboard. In that case, the controller may behave in an
-> unexpected way and this bug will offer more opportunities for the
-> attacker.
+---
+ mm/oom_kill.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-That would require the attacker to dissassemble the laptop case or
-similar in case of desktop system. That's already something we cannot
-protect against.
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index f10aa53..99b36ff 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -879,6 +879,8 @@ static void __oom_kill_process(struct task_struct *victim)
+ 	 */
+ 	rcu_read_lock();
+ 	for_each_process(p) {
++		struct task_struct *t;
++
+ 		if (!process_shares_mm(p, mm))
+ 			continue;
+ 		if (same_thread_group(p, victim))
+@@ -898,6 +900,11 @@ static void __oom_kill_process(struct task_struct *victim)
+ 		if (unlikely(p->flags & PF_KTHREAD))
+ 			continue;
+ 		do_send_sig_info(SIGKILL, SEND_SIG_FORCED, p, PIDTYPE_TGID);
++		t = find_lock_task_mm(p);
++		if (!t)
++			continue;
++		mark_oom_victim(t);
++		task_unlock(t);
+ 	}
+ 	rcu_read_unlock();
+ 
+-- 
+1.8.3.1
 
-Furthermore this would apply to all DMA capable devices such as the xHCI
-controller typically part of the Thunderbolt host router or every single
-network card but I have not seen fixes like this on network side
-(probably because there is really no need).
+or
 
-If the attacker could somehow say, replace the firmware on the
-Thunderbolt host router then I suppose they could just go and overwrite
-the extra protection you did in this patch (or probably do something
-worse since they can access all the system memory).
+---
+ mm/oom_kill.c | 32 +++++++++++++++++++-------------
+ 1 file changed, 19 insertions(+), 13 deletions(-)
 
-So all in all I don't think this is something we would need to deal
-with.
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index f10aa53..7fa9b7c 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -854,13 +854,6 @@ static void __oom_kill_process(struct task_struct *victim)
+ 	count_vm_event(OOM_KILL);
+ 	memcg_memory_event_mm(mm, MEMCG_OOM_KILL);
+ 
+-	/*
+-	 * We should send SIGKILL before granting access to memory reserves
+-	 * in order to prevent the OOM victim from depleting the memory
+-	 * reserves from the user space under its control.
+-	 */
+-	do_send_sig_info(SIGKILL, SEND_SIG_FORCED, victim, PIDTYPE_TGID);
+-	mark_oom_victim(victim);
+ 	pr_err("Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+ 		task_pid_nr(victim), victim->comm, K(victim->mm->total_vm),
+ 		K(get_mm_counter(victim->mm, MM_ANONPAGES)),
+@@ -879,11 +872,23 @@ static void __oom_kill_process(struct task_struct *victim)
+ 	 */
+ 	rcu_read_lock();
+ 	for_each_process(p) {
+-		if (!process_shares_mm(p, mm))
++		struct task_struct *t;
++
++		/*
++		 * No use_mm() user needs to read from the userspace so we are
++		 * ok to reap it.
++		 */
++		if (unlikely(p->flags & PF_KTHREAD))
++			continue;
++		t = find_lock_task_mm(p);
++		if (!t)
+ 			continue;
+-		if (same_thread_group(p, victim))
++		if (likely(t->mm != mm)) {
++			task_unlock(t);
+ 			continue;
++		}
+ 		if (is_global_init(p)) {
++			task_unlock(t);
+ 			can_oom_reap = false;
+ 			set_bit(MMF_OOM_SKIP, &mm->flags);
+ 			pr_info("oom killer %d (%s) has mm pinned by %d (%s)\n",
+@@ -892,12 +897,13 @@ static void __oom_kill_process(struct task_struct *victim)
+ 			continue;
+ 		}
+ 		/*
+-		 * No use_mm() user needs to read from the userspace so we are
+-		 * ok to reap it.
++		 * We should send SIGKILL before granting access to memory
++		 * reserves in order to prevent the OOM victim from depleting
++		 * the memory reserves from the user space under its control.
+ 		 */
+-		if (unlikely(p->flags & PF_KTHREAD))
+-			continue;
+ 		do_send_sig_info(SIGKILL, SEND_SIG_FORCED, p, PIDTYPE_TGID);
++		mark_oom_victim(t);
++		task_unlock(t);
+ 	}
+ 	rcu_read_unlock();
+ 
+-- 
+1.8.3.1
 
-Situation is totally different if you manage to connecte external
-devices that can do DMA (which is pretty much what Thunderbolt for
-example allows) but for those we already have security of some sort
-implemented.
-
-Thanks!
+will be needed.
