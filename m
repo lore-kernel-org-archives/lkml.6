@@ -2,116 +2,96 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C1C1C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 010DAC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:17:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF3F520779
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:15:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF3F520779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id AA31F2083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:17:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="Mmv15kBq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA31F2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728244AbeJVRdg (ORCPT
+        id S1728262AbeJVRem (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 13:33:36 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44073 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727218AbeJVRdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 13:33:36 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6DCFC208C7; Mon, 22 Oct 2018 11:15:53 +0200 (CEST)
-Received: from bbrezillon (aaubervilliers-681-1-25-52.w90-88.abo.wanadoo.fr [90.88.145.52])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0D7442079D;
-        Mon, 22 Oct 2018 11:15:43 +0200 (CEST)
-Date:   Mon, 22 Oct 2018 11:15:43 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     Tudor Ambarus <tudor.ambarus@microchip.com>,
-        "richard@nod.at" <richard@nod.at>, Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "cyrille.pitchen@microchip.com" <cyrille.pitchen@microchip.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "Cristian.Birsan@microchip.com" <Cristian.Birsan@microchip.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP
- SPI NOR flash memories
-Message-ID: <20181022111543.2a607efc@bbrezillon>
-In-Reply-To: <VI1PR04MB1038BD6103DD8BD6B6DEC2B899F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-References: <20180911154007.17195-1-tudor.ambarus@microchip.com>
-        <20180911154007.17195-2-tudor.ambarus@microchip.com>
-        <VI1PR04MB103888BC18F3C5AD0C02DEF699FE0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <31a8f6a9-1459-443a-6ef8-2b2c17769ae4@microchip.com>
-        <de0f7245-2557-12be-a306-67b08e55ae7b@wedev4u.fr>
-        <VI1PR04MB1038AB25EABDC8507984ADC799FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181017090724.12f2cd79@bbrezillon>
-        <20181017091045.124e0266@bbrezillon>
-        <20181017092941.3658bd9a@bbrezillon>
-        <VI1PR04MB1038EFA1E83AD78EBE84ECC499FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181017115237.07310b74@bbrezillon>
-        <VI1PR04MB1038BD6103DD8BD6B6DEC2B899F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 22 Oct 2018 13:34:42 -0400
+Received: from mail-qt1-f181.google.com ([209.85.160.181]:43893 "EHLO
+        mail-qt1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727584AbeJVRel (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 13:34:41 -0400
+Received: by mail-qt1-f181.google.com with SMTP id q41-v6so45382861qtq.10
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 02:17:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=J8hKjGL9XnVpHdgJh2lZBsuf0iZHIAAdkctiupTtcM0=;
+        b=Mmv15kBqJB6K0IKzn027xvDs1elCxbhM9rfAP/qprdpykjT4p4K5gAMhXE4k7o3APc
+         CvYkR20u5NtBbUoQQDofZD2j4ry4+FNGH3dDELtz516BsHuUWxy/rj/z4diJUpAqon2F
+         gE9u9Y5JtKD5H8+FXXzij1XfyJPc2yUxzFRl8vltpEV5wA74psvsBMw5EKUWX2AudtVh
+         a8KJVDYTvfmyvGZvK5Qw+aMvSDSsGxmrHUY00xn6FB1eAxh3kMryylGaSJSuO1c8PBkj
+         hQzxS8eh5TfV6iB6/httUIvatQxvTgRO5SHjza8rm7apqimzjPV8/zpyEVPkdVRu6yHv
+         5ZEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=J8hKjGL9XnVpHdgJh2lZBsuf0iZHIAAdkctiupTtcM0=;
+        b=VVk/p8w3TB8PqVMbZoWgW27tMEUjSewVFgiaGh/ZzBsRX9ExrWm435E6x4urXcC8YA
+         jUO/XpyWqjsdwlxwdeoGsv37+AlkPakTyIBRfnhtVuyL4wX1rSBroh155GAqjjUONqgD
+         r35FQSjvApjQ/9nbsTzrzzIbklBUBma8E8rVcSr7SLTZZ8Pz9bI2c63VaGlFZVx/qn+V
+         Vm9u1c3iPd4aKDJ3MyJ43/HzkDKbkUHiWHz+0vkgywAD3WCpmC8JNpr2204+vVWvIDw3
+         jQAM1DVwT7U9AO+fMCXZAVXhboxJwRNMoywhSUlEreHOkDbloH9Zs6iil1c4beL0FXKV
+         F+Kw==
+X-Gm-Message-State: ABuFfohNpC4Z4f1psfVJuYID4LABGyjMrKWg6zZTaRr6yjQvCbRbKChd
+        aOLjAXYe5wRy/XBwNXUHTcWdrqZ0r40=
+X-Google-Smtp-Source: ACcGV61KLkquq85jOjkDmxDvoaJZXvYExXYiS/6o941J/lHVE+dByIixyKDsN6nnKz4uEy0KkAHEDg==
+X-Received: by 2002:a0c:b5ed:: with SMTP id o45-v6mr28996215qvf.12.1540199820348;
+        Mon, 22 Oct 2018 02:17:00 -0700 (PDT)
+Received: from [172.20.10.3] (mobile-166-172-59-201.mycingular.net. [166.172.59.201])
+        by smtp.gmail.com with ESMTPSA id 5-v6sm5327437qtz.8.2018.10.22.02.16.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Oct 2018 02:16:59 -0700 (PDT)
+Subject: Re: [PATCH] skd: fix unchecked return values
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181019184417.GA21154@embeddedor.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <bf4ab819-0116-e0cc-5186-441415609483@kernel.dk>
+Date:   Mon, 22 Oct 2018 03:16:53 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181019184417.GA21154@embeddedor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 22 Oct 2018 06:04:13 +0000
-Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
-
-
-> -       /* Find the matching configuration map */
-> -       while (SMPT_MAP_ID(smpt[i]) != map_id) {
-> -               if (smpt[i] & SMPT_DESC_END)
-> -                       goto out;
-> +       if (map_id_is_valid)
-> +               pr_info("%s:%i map_id=%d\n", __func__, __LINE__, map_id);
-> +       else
-> +               pr_info("%s:%i NO map_id\n", __func__, __LINE__);
-> +
-> +       for (nmaps = 0; nmaps< smpt_len; nmaps++) {
-
-Why did you change this for loop?
-
-> +               if(!(smpt[nmaps] & SMPT_DESC_TYPE_MAP))
-> +                       continue;
-> +
-> +               if(!map_id_is_valid) {
-> +                       if (nmaps) {
-
-With your change in the for () block, this test is no longer valid...
-
-Please keep the original patch and patch the if () condition as
-suggested.
-
-> +                               ret = NULL;
-> +                               break;
-> +                       }
-> +
-> +                       ret = smpt+nmaps;
-> +               } else if (map_id == SMPT_MAP_ID(smpt[nmaps])) {
-> +                       ret = smpt+nmaps;
-> +                       break;
-> +               }
-> +
->                 /* increment the table index to the next map */
-> -               i += SMPT_MAP_REGION_COUNT(smpt[i]) + 1;
-> +               nmaps += SMPT_MAP_REGION_COUNT(smpt[nmaps]) + 1;
->         }
+On 10/19/18 12:44 PM, Gustavo A. R. Silva wrote:
+> Check return values of dma_set_mask_and_coherent().
 > 
-> -       ret = smpt + i;
->         /* fall through */
->  out:
->         nor->addr_width = addr_width;
+> Otherwise, if dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+> fails, the following piece of code will be executed even when the call
+> to dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32)); returns 0:
+> 
+> dev_err(&pdev->dev, "DMA mask error %d\n", rc);
+> goto err_out_regions;
+
+Applied, thanks.
+
+-- 
+Jens Axboe
+
