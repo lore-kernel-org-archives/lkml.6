@@ -2,133 +2,130 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 245BAC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E2EC7112C
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8770920651
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:02:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dd6m2yT6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8770920651
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7279020651
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:02:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7279020651
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=web.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728691AbeJWBVa (ORCPT
+        id S1728712AbeJWBVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 21:21:30 -0400
-Received: from mail-pf1-f169.google.com ([209.85.210.169]:41775 "EHLO
-        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728428AbeJWBV3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 21:21:29 -0400
-Received: by mail-pf1-f169.google.com with SMTP id m77-v6so20217220pfi.8;
-        Mon, 22 Oct 2018 10:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=te/fAtFJqxT4kgQZy97dsa96SHplR2a1763Zo8c4Y9s=;
-        b=dd6m2yT6S6y7hgxTDfFlEd3NfVrddEKH7uajiWE9LVOqhj85V8O1nSkfWsGTfLSlaf
-         dF9wsSmrzCO6Efwz4qczAEJvIq+/5lQ79Fq0tfGl82CvpvHHUTkdO9djauGx2whYBOoJ
-         nPYpvzc5sIZk52Opvpob4/EqNs/RfRWCVc4j7ylhSAKY6nKbwREXGTi3Zc4JSWvI5VIS
-         TT9TEzTkk/Yc0kmfFcH9gDSmX04KzlxklSzwPuSnaX9LD5r+kEQVz9b9GNk7NAakVMU1
-         +kZXxHnWCb4RBAxeizDsxUDa3l7ARSTakLQBddUW2b9Mmozzie8/AP3TogzYfRoDtyWX
-         rB9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=te/fAtFJqxT4kgQZy97dsa96SHplR2a1763Zo8c4Y9s=;
-        b=C1QWIK0dgzPijnuHIhkuz4Du7nrb+UuqSf7DsOgqaRXaD+faa0bOsVsBGPfdYAjslr
-         qLtSN6cYDKyPay3PQViLeY+G5H1jk1zO8GyL/RHizhqy3ewSrww88sypxUNnHeyS+v7O
-         KvUrD2LStmaKfk2mpdgj5kskaU0kOs81PX9sBQzdX6q120U1VcEYvBYguDGyzWlVU4BG
-         90MRz4cfbgptNMUih4sUdv3n/bjEaFYQvMIcK2UaYaPykZqdi4f6QgK2IgR/0uYuFOI4
-         6iEEgdBR8aDLMDa0yc2v5DJxToj4s+x41I0Vvz5I4JOUJKvWDlrB0BoXgkjHRncUXnAM
-         d6lA==
-X-Gm-Message-State: ABuFfogIKi67+/FPAGG6MgOzULRWXjBDFI4PU0lcTbxxLfRVTmTcma/G
-        9eZPQ6osqevejmv2TLCu2cI=
-X-Google-Smtp-Source: ACcGV62rJF4z5SP02BbM4hmF/QRB8Dq0ASfWTIYrbX79Ep2W3A/s/lI7tRHogWLv8hYo+qllfNGk/A==
-X-Received: by 2002:a65:668a:: with SMTP id b10-v6mr17964353pgw.55.1540227730976;
-        Mon, 22 Oct 2018 10:02:10 -0700 (PDT)
-Received: from [10.67.49.28] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id j25-v6sm37213317pff.116.2018.10.22.10.02.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Oct 2018 10:02:10 -0700 (PDT)
-Subject: Re: [PATCH 9/9] net: phy: mdio-mux-bcm-iproc: simplify getting
- .driver_data
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
- <20181021200021.1693-10-wsa+renesas@sang-engineering.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <886a1e4b-214a-8fa0-f11e-11804f4a611f@gmail.com>
-Date:   Mon, 22 Oct 2018 10:02:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 22 Oct 2018 21:21:41 -0400
+Received: from mout.web.de ([212.227.15.14]:37763 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728169AbeJWBVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 21:21:41 -0400
+Received: from [192.168.43.108] ([89.15.236.156]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MIvFp-1gCiqo30LB-002ZC3; Mon, 22
+ Oct 2018 19:02:11 +0200
+Received: from [192.168.43.108] ([89.15.236.156]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MIvFp-1gCiqo30LB-002ZC3; Mon, 22
+ Oct 2018 19:02:11 +0200
+Subject: Re: [PATCH] rtc: ds1307: fix ds1339 wakealarm support
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     stable@vger.kernel.org, Andrea Greco <a.greco@4sigma.it>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181022123812.5782-1-smoch@web.de>
+ <20181022135757.GQ17341@piout.net>
+ <3a6041a9-6fef-c113-5962-caa0a24aca49@web.de>
+ <20181022155224.GS17341@piout.net>
+From:   Soeren Moch <smoch@web.de>
+Message-ID: <b231d7ef-cc42-16d9-756f-cab61d41b04a@web.de>
+Date:   Mon, 22 Oct 2018 19:02:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181021200021.1693-10-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181022155224.GS17341@piout.net>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-Provags-ID: V03:K1:Ip1OQuQS9NFZpAn11jI+zLP6RetjSL7JUlb6RmPh3z+unD/TrBQ
+ vbi5dwUYUo8507J0zmMM/uORs/ZxRA1JdqGLj+GhoPxnWNlasipCKC9It+BON/A4o86mlwL
+ XQdOXBSOxtKrU+ZVbeJc4tR8Vn5soZ8H+xQ9nFqRSrumEth6juGp7GuBO5KR4J9Vb++QOIp
+ svSLdacljb2JcwXgub1aQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:M1eBmQlM8+g=:sr/tNT71vwfMfisyAgSgzQ
+ cukIgo5lNaPyf11rmVT4uaCjn/zQxR1GMyOH8mzqcK9gA/6BVqoBrw4AVRD+p6KpwXAzGuw4C
+ ntUHtExZ+WMJKTwNaYexltXmv7kQ/KQ9qHLMY7ssUeAsl3hlYsz5ySeb6AH54dvscd1Qqdyyl
+ G0F3j5bLZN4KCvDYe52gE0vdxKyA2mdRtukPYLGRFK5XSim5b8jXdTdJK+PBnxgWSZWWqOnhn
+ ad05c4QpVJylcdYkEV1r0Q5kENSjM9CIN8pjzgB+Cx/2ugmpGprkgBALWNdczzTkv1/HqZHGd
+ b88PLXyuXtCgWdIGgroMOBdSjZTj3QPQm0Eekm8fqChH4EzaQPLUeJnC06kPu9sGwuUarlLZI
+ GyLL6yYnYQoQhddcsupFh5656iJAZ2axuvTZSBlvBCB17jqhdqnoN1BXBH0rpFgnUwahaUPbB
+ +B31tPqHZaBcbUcHUlC11gtWWKK4sA4DuaAwrQanff9Ven3tq/i3HiqT1ZzSekd0V7b55OpY1
+ aWWxD7g6BNW93Byr+mMe5v0mO0YYC/2usz1bgy2D6wlsPsXCjvs44HthIc//or0Yh6fxr3tIA
+ tVFjYHKd4DDByBDAL+xA88wlwObM5lRllhz63vnt8T60Ea1rY19azGEMUv2SOorhS7KN8DvT9
+ 5C1VMiKMLzAsTWKCqgFVicsfBoWdvnIEwLCjwnaJAv0BkDashRrGfdqKIgzuNCNs7zaTrCE5y
+ 6o8H+2OVX6qnntTiwOsObd6wo0nIekYapFwpxgw+6dO4mus1qQAbeWHGYkpckHDTCllNrXjZN
+ pOCql2tENr5K8zE1PSGJlt3xPLQfvWH5/W52KBty+/doFuv/eI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/21/18 1:00 PM, Wolfram Sang wrote:
-> We should get 'driver_data' from 'struct device' directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+
+Am 22.10.2018 um 17:52 schrieb Alexandre Belloni:
+> On 22/10/2018 16:18:13+0200, Soeren Moch wrote:
+>> Hi,
+>>
+>> Am 22.10.2018 um 15:57 schrieb Alexandre Belloni:
+>>> Hello,
+>>>
+>>> On 22/10/2018 14:38:12+0200, Soeren Moch wrote:
+>>>> Commit 51ed73eb998a1c79a2b0e9bed68f75a8a2c93b9b ("rtc: ds1340: Add support
+>>>> for trickle charger.") breaks ds1339 wakealarm support by limiting
+>>>> accessible registers. Fix this.
+>>>>
+>>>> Fixes: 51ed73eb998a ("rtc: ds1340: Add support for trickle charger.")
+>>>> Cc: stable@vger.kernel.org
+>>>> Signed-off-by: Soeren Moch <smoch@web.de>
+>>>> --
+>>>> Cc: Andrea Greco <a.greco@4sigma.it>
+>>>> Cc: Alessandro Zummo <a.zummo@towertech.it>
+>>>> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+>>>> Cc: linux-rtc@vger.kernel.org
+>>>> Cc: linux-kernel@vger.kernel.org
+>>>> ---
+>>>>  drivers/rtc/rtc-ds1307.c | 1 -
+>>>>  1 file changed, 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+>>>> index 4b2b4627daeb..71396b62dc52 100644
+>>>> --- a/drivers/rtc/rtc-ds1307.c
+>>>> +++ b/drivers/rtc/rtc-ds1307.c
+>>>> @@ -1384,7 +1384,6 @@ static void ds1307_clks_register(struct ds1307 *ds1307)
+>>>>  static const struct regmap_config regmap_config = {
+>>>>  	.reg_bits = 8,
+>>>>  	.val_bits = 8,
+>>>> -	.max_register = 0x9,
+>>> I would prefer having a different regmap_config for chips that have more
+>>> registers. I guess you could put a pointer to a regmap_config in chip_desc.
+>>>
+>> What looks strange to me, the original patch (according to its
+>> description) enabled trickle charger functionality for a single chip.
+>> This is something totally different than limiting the register space for
+>> all chips that are supported by this driver. So this seems to be an
+>> accident to me. And this causes an regression for ds1339, which was
+>> supported for years.
+>>
+>> Are there any advantages for limiting the address space of i2c devices?
+> I would think it was done as a facility to debug the feature because
+> when max_register is set, regmap will allow you to dump the register
+> space.
+>
+>> If we really need this, can we apply this partial revert as regression
+>> fix (also for stable) and implement the address space limitation separately?
+>>
+> Fine, I'm applying this patch right now.
+>
+OK, thank you,
+Soeren
+
