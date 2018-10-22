@@ -3,152 +3,208 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA5FC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 22:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D983C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 22:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0DDE20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 22:24:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7740020652
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 22:25:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mendozajonas.com header.i=@mendozajonas.com header.b="l6pK1ZCL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yBbHd3K6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0DDE20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mendozajonas.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NrsKd4sw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7740020652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729179AbeJWGoy (ORCPT
+        id S1729201AbeJWGpy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 02:44:54 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:54513 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728737AbeJWGoy (ORCPT
+        Tue, 23 Oct 2018 02:45:54 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:38719 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728737AbeJWGpy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 02:44:54 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id BA28021E59;
-        Mon, 22 Oct 2018 18:24:27 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 22 Oct 2018 18:24:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        mendozajonas.com; h=message-id:subject:from:to:cc:date
-        :in-reply-to:references:content-type:mime-version
-        :content-transfer-encoding; s=fm1; bh=/STV6m5lml6u66OR2D+3PM54GN
-        hw26kp2x3ETmhX0Zk=; b=l6pK1ZCLM8iTgVW0I3ZvmPxoit8m2Czag7/DuzJFjn
-        wOqSsUcPSNLzHyhtEaWEpMxMKrMg6+S+UK98Ej3mXJ6fP1wUHrB5W0I2/RE7aA0j
-        Sick7+7aIRwD3O11mRqM6ArZSn3Pp3ExTUgW3MMcsb+SRnIuzQyn+R30BGyP8KzT
-        FeVn3JIysIpKfp7R3/BKMJXr+Jd524rrGIBnfmQbfakI+IGuxjDD0ncZLYjsIjGk
-        PF9Nv+ADchUU5fgSKG/oqG6+/GuNXAR4n4TuaykmrxDgH0cOoR97NirbrP4iArVU
-        oZHWNHWF7LVFwoJGHsyvpI+/YZPbJtIKttbROnHxB84g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=/STV6m5lml6u66OR2D+3PM54GNhw26kp2x3ETmhX0
-        Zk=; b=yBbHd3K67R9DKUrJUjIDmM6PW/hoqLZUrZjoSAgcdIDQTa1uwRcjCubls
-        XahpcG25mojx4jfsfkPRBDP03AjaiEPqrQmAg5ZSmBdxj1w/tgiJ6ZF5YST3koi0
-        UZGfIHIhc0QQYcWNOEaiWGGy5+nNTEPjGDWj5bFq205RnaEyHrRzc3BKJKLN9Kus
-        k2saajFpEs6vLmhXQvtK8p7hz1p+afIN3yuXJ8b1M0rwaWatKgShceyBvgNSDjHn
-        pPcV4JZcAzt1igFDONyE1nMcKfMZ+CfNbgLAcAHnbQxS2eCyTYO2fJn02r97Ehdr
-        MQs6amzhCb3/+3yz5CSvTCZXT/Hww==
-X-ME-Sender: <xms:G07OWw3LZ3u31O_lEcGgrHWO003szExC75I9PIpBGujNUI8EVz9qqw>
-X-ME-Proxy: <xmx:G07OWy4j_zX95XyPgwUBm2QU3hd5Sdd35LKpAG6L36UUiCEKg3UJ8g>
-    <xmx:G07OWyw10qQcriQSUZzks82dba9m31I2JaLLGDFqOYZexB3Yav_C6A>
-    <xmx:G07OW5y-6NgwzdmK-gbM0up-KUY8psro845S-FaPqXunSr5t61IOYA>
-    <xmx:G07OW6x6yvtsOMSuJsw5erqcYr99lzU00TyodSxO7hTSWrBaIOvcQQ>
-    <xmx:G07OWzaAEpPzuGqT27FYZPvBH1OEPXRdjlDOj8u1Dc4eDbXAvR7Acw>
-    <xmx:G07OW6zkasV6wa-CV_b3mAJr649GPw9QhmEVJV7ULKzyxz4kligxtw>
-Received: from v4 (unknown [121.99.135.216])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 7F3B8102EE;
-        Mon, 22 Oct 2018 18:24:25 -0400 (EDT)
-Message-ID: <06fb083313b8547f0c0951a5d5baa1cc3f6c8d6d.camel@mendozajonas.com>
-Subject: Re: [PATCH net-next 0/6] net/ncsi: Allow enabling multiple packages
- & channels
-From:   Samuel Mendoza-Jonas <sam@mendozajonas.com>
-To:     Justin.Lee1@Dell.com, davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        openbmc@lists.ozlabs.org
-Date:   Tue, 23 Oct 2018 09:24:22 +1100
-In-Reply-To: <79ee8c9befaa40e781bfeba4ba25d396@AUSX13MPS302.AMER.DELL.COM>
-References: <20181018035917.19413-1-sam@mendozajonas.com>
-         <20181018.155647.1045018243241594303.davem@davemloft.net>
-         <79ee8c9befaa40e781bfeba4ba25d396@AUSX13MPS302.AMER.DELL.COM>
+        Tue, 23 Oct 2018 02:45:54 -0400
+Received: by mail-it1-f193.google.com with SMTP id i76-v6so14648597ita.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 15:25:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=MRolh3nCcZxRyeru8QeQLX/oNifBU+Ja/laSMq/Ni8M=;
+        b=NrsKd4swWWozs+V39V6HgVB+4jV5ErYuTBKXvJ/X3Xxc3eRIB3y5WwBvotOB3tEaD1
+         5hwVihTOdbMc+tWWyFhWEmYqWkELEvhduoOrojuliljgWEd1ZCNikkK0lj4QI5tGyejn
+         erUB5zxb5M9buU/gllHj4cgjN7B38YSRawxfI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=MRolh3nCcZxRyeru8QeQLX/oNifBU+Ja/laSMq/Ni8M=;
+        b=dmvRrPUNG7wskGZcjjVF9tkilTXwvtOgJFMk39flgIYNOCTY5BDo9F//tDexJChYlA
+         S9zZ9XWuY59agquZfsfrrHfVaO+F7b0lC+qkMbE/Q4VJ3t2QmqGuhSuZSy2jDfMW8hLZ
+         SO5n/hLPfCBkdcATZeFY26Mbv7LdMmC2o4bEdwz4GApYT1ytT8y1Ibz6fXtrM6LFeFuG
+         5Xx+XsjojZzTQoy9n+hm6QveA4VS7gRfT2LaWNCJjwcKumaP0y3w4topsUqcOFN+kFlc
+         Tl9XJOw8wk0R2NCER5lolh4JijpR6+YQqsY+DpL0YavhX1gnz0Rf07Jukgl27g1jrfei
+         nuVw==
+X-Gm-Message-State: ABuFfohLeN3/3UO2w4bozBz1kSj9smpyl4ZpTYtlNy0DMm2QB3ks31QY
+        ohmjWS8VL8N3lJ5KWDHzbF6zlL836wJLZa6+FDvMJw==
+X-Google-Smtp-Source: ACcGV60ViIeOTi5Lk+yvgj117r2VYWktKNH8PY7TbGXc6nB49d2dQbWr7HCc/eAPUbF0Pt+iHnFCfM3epTA8U8/zIiA=
+X-Received: by 2002:a02:69cf:: with SMTP id e198-v6mr6645282jac.130.1540247128091;
+ Mon, 22 Oct 2018 15:25:28 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Mon, 22 Oct 2018 15:25:27
+ -0700 (PDT)
+In-Reply-To: <20181022184236.GA59695@gmail.com>
+References: <20181015175424.97147-1-ebiggers@kernel.org> <20181015175424.97147-10-ebiggers@kernel.org>
+ <CAKv+Gu-5WM19g5HguDheAADbigKNxokDCFMekkt4OYdEEa8Avw@mail.gmail.com>
+ <20181020053834.GC876@sol.localdomain> <CAKv+Gu-A_EhMBXq_nqzBzpgN36foo6hA3Ba3=j+WVM-jph=mrw@mail.gmail.com>
+ <20181022184236.GA59695@gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 22 Oct 2018 19:25:27 -0300
+Message-ID: <CAKv+Gu_vXmfNQT8j=G_Zz5C3-zDPPEQ2ne6ZZQw8mD0rifO8qA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 09/12] crypto: nhpoly1305 - add NHPoly1305 support
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-10-19 at 21:38 +0000, Justin.Lee1@Dell.com wrote:
-> Hi Sam,
-> 
-> When I run the testing (enable multi-package (package 0 and 1) and 
-> multi-channel (channel 0 and 1 on both packages)), I see there are two channels
-> with TX enable.
-> 
-> When I unplug/plug network cable, it seems the behavior is to keep one TX per
-> package, is it the behavior you expect? All channels are behind the same eth2,
-> I would expect there is only one active TX.
-> 
-> I create the below file to expose driver's status. RX and TX are printing 
-> from the follow variables.
-> nc->modes[NCSI_MODE_ENABLE].enable,
-> nc->modes[NCSI_MODE_TX_ENABLE].enable,
-> 
-> cat /sys/kernel/debug/ncsi_protocol/ncsi_device_status;
-> IFIDX IFNAME NAME   PID CID RX TX MP MC WP WC PS RU CR NQ
-> =========================================================
->   2   eth2   ncsi0  000 000 1  1  1  1  1  1  1  1  1  0 
->   2   eth2   ncsi1  000 001 1  0  1  1  1  1  1  1  1  0 
->   2   eth2   ncsi2  001 000 1  1  1  1  1  1  1  1  1  0 
->   2   eth2   ncsi3  001 001 1  0  1  1  1  1  1  1  1  0 
-> =========================================================
-> M:  Multi-mode      P:  Package ID
-> W:  Whitelist       C:  Channel ID
-> PS: Poll Status
-> RU: Running
-> CR: Carrier OK
-> NQ: Queue Stopped
+On 22 October 2018 at 15:42, Eric Biggers <ebiggers@kernel.org> wrote:
+> On Sat, Oct 20, 2018 at 11:06:00PM +0800, Ard Biesheuvel wrote:
+>> >> > +
+>> >> > +#define NH_STRIDE(K0, K1, K2, K3)                              \
+>> >> > +({                                                             \
+>> >> > +       m_A = get_unaligned_le32(src); src += 4;                \
+>> >> > +       m_B = get_unaligned_le32(src); src += 4;                \
+>> >> > +       m_C = get_unaligned_le32(src); src += 4;                \
+>> >> > +       m_D = get_unaligned_le32(src); src += 4;                \
+>> >> > +       K3##_A = *key++;                                        \
+>> >> > +       K3##_B = *key++;                                        \
+>> >> > +       K3##_C = *key++;                                        \
+>> >> > +       K3##_D = *key++;                                        \
+>> >> > +       sum0 += (u64)(u32)(m_A + K0##_A) * (u32)(m_C + K0##_C); \
+>> >> > +       sum1 += (u64)(u32)(m_A + K1##_A) * (u32)(m_C + K1##_C); \
+>> >> > +       sum2 += (u64)(u32)(m_A + K2##_A) * (u32)(m_C + K2##_C); \
+>> >> > +       sum3 += (u64)(u32)(m_A + K3##_A) * (u32)(m_C + K3##_C); \
+>> >> > +       sum0 += (u64)(u32)(m_B + K0##_B) * (u32)(m_D + K0##_D); \
+>> >> > +       sum1 += (u64)(u32)(m_B + K1##_B) * (u32)(m_D + K1##_D); \
+>> >> > +       sum2 += (u64)(u32)(m_B + K2##_B) * (u32)(m_D + K2##_D); \
+>> >> > +       sum3 += (u64)(u32)(m_B + K3##_B) * (u32)(m_D + K3##_D); \
+>> >> > +})
+>> >> > +
+>> >> > +static void nh_generic(const u32 *key, const u8 *src, size_t srclen,
+>> >> > +                      __le64 hash[NH_NUM_PASSES])
+>> >> > +{
+>> >> > +       u64 sum0 = 0, sum1 = 0, sum2 = 0, sum3 = 0;
+>> >> > +       u32 k0_A = *key++;
+>> >> > +       u32 k0_B = *key++;
+>> >> > +       u32 k0_C = *key++;
+>> >> > +       u32 k0_D = *key++;
+>> >> > +       u32 k1_A = *key++;
+>> >> > +       u32 k1_B = *key++;
+>> >> > +       u32 k1_C = *key++;
+>> >> > +       u32 k1_D = *key++;
+>> >> > +       u32 k2_A = *key++;
+>> >> > +       u32 k2_B = *key++;
+>> >> > +       u32 k2_C = *key++;
+>> >> > +       u32 k2_D = *key++;
+>> >> > +       u32 k3_A, k3_B, k3_C, k3_D;
+>> >> > +       u32 m_A, m_B, m_C, m_D;
+>> >> > +       size_t n = srclen / NH_MESSAGE_UNIT;
+>> >> > +
+>> >> > +       BUILD_BUG_ON(NH_PAIR_STRIDE != 2);
+>> >> > +       BUILD_BUG_ON(NH_NUM_PASSES != 4);
+>> >> > +
+>> >> > +       while (n >= 4) {
+>> >> > +               NH_STRIDE(k0, k1, k2, k3);
+>> >> > +               NH_STRIDE(k1, k2, k3, k0);
+>> >> > +               NH_STRIDE(k2, k3, k0, k1);
+>> >> > +               NH_STRIDE(k3, k0, k1, k2);
+>> >> > +               n -= 4;
+>> >> > +       }
+>> >> > +       if (n) {
+>> >> > +               NH_STRIDE(k0, k1, k2, k3);
+>> >> > +               if (--n) {
+>> >> > +                       NH_STRIDE(k1, k2, k3, k0);
+>> >> > +                       if (--n)
+>> >> > +                               NH_STRIDE(k2, k3, k0, k1);
+>> >> > +               }
+>> >> > +       }
+>> >> > +
+>> >>
+>> >> This all looks a bit clunky to me, with the macro, the *key++s in the
+>> >> initializers and these conditionals.
+>> >>
+>> >> Was it written in this particular way to get GCC to optimize it in the
+>> >> right way?
+>> >
+>> > This does get compiled into something much faster than a naive version, which
+>> > you can find commented out at
+>> > https://github.com/google/adiantum/blob/master/benchmark/src/nh.c#L14.
+>> >
+>> > Though, I admit that I haven't put a ton of effort into this C implementation of
+>> > NH yet.  Right now it's actually somewhat of a translation of the NEON version.
+>> > I'll do some experiments and see if it can be made into something less ugly
+>> > without losing performance.
+>> >
+>>
+>> No that's fine but please document it.
+>>
+>
+> Hmm, I'm actually leaning towards the following instead.  Unrolling multiple
+> strides to try to reduce loads of the keys doesn't seem worthwhile in the C
+> implementation; for one, it bloats the code size a lot
+> (412 => 2332 bytes on arm32).
+>
+> static void nh_generic(const u32 *key, const u8 *message, size_t message_len,
+>                        __le64 hash[NH_NUM_PASSES])
+> {
+>         u64 sums[4] = { 0, 0, 0, 0 };
+>
+>         BUILD_BUG_ON(NH_PAIR_STRIDE != 2);
+>         BUILD_BUG_ON(NH_NUM_PASSES != 4);
+>
+>         while (message_len) {
+>                 u32 m0 = get_unaligned_le32(message + 0);
+>                 u32 m1 = get_unaligned_le32(message + 4);
+>                 u32 m2 = get_unaligned_le32(message + 8);
+>                 u32 m3 = get_unaligned_le32(message + 12);
+>
+>                 sums[0] += (u64)(u32)(m0 + key[ 0]) * (u32)(m2 + key[ 2]);
+>                 sums[1] += (u64)(u32)(m0 + key[ 4]) * (u32)(m2 + key[ 6]);
+>                 sums[2] += (u64)(u32)(m0 + key[ 8]) * (u32)(m2 + key[10]);
+>                 sums[3] += (u64)(u32)(m0 + key[12]) * (u32)(m2 + key[14]);
+>                 sums[0] += (u64)(u32)(m1 + key[ 1]) * (u32)(m3 + key[ 3]);
+>                 sums[1] += (u64)(u32)(m1 + key[ 5]) * (u32)(m3 + key[ 7]);
+>                 sums[2] += (u64)(u32)(m1 + key[ 9]) * (u32)(m3 + key[11]);
+>                 sums[3] += (u64)(u32)(m1 + key[13]) * (u32)(m3 + key[15]);
 
-Hi Justin,
+Are these (u32) casts really necessary? All the addends are u32 types,
+so I'd expect each (x + y) subexpression to have a u32 type already as
+well. Or am I missing something?
 
-Thanks for testing; this is probably an oversight in
-ncsi_channel_is_tx(), where channels from a package other than the
-current one could be ignored when checking for the current channel's link
-status. I'll update this to be more robust.
+>                 key += NH_MESSAGE_UNIT / sizeof(key[0]);
+>                 message += NH_MESSAGE_UNIT;
+>                 message_len -= NH_MESSAGE_UNIT;
+>         }
+>
+>         hash[0] = cpu_to_le64(sums[0]);
+>         hash[1] = cpu_to_le64(sums[1]);
+>         hash[2] = cpu_to_le64(sums[2]);
+>         hash[3] = cpu_to_le64(sums[3]);
+> }
 
-Sam
-
-> 
-> Thanks,
-> Justin
-> 
-> 
-> From: Samuel Mendoza-Jonas <sam@mendozajonas.com>
-> Date: Thu, 18 Oct 2018 14:59:11 +1100
-> 
-> > This series extends the NCSI driver to configure multiple packages
-> > and/or channels simultaneously. Since the RFC series this includes a few
-> > extra changes to fix areas in the driver that either made this harder or
-> > were roadblocks due to deviations from the NCSI specification.
-> > 
-> > Patches 1 & 2 fix two issues where the driver made assumptions about the
-> > capabilities of the NCSI topology.
-> > Patches 3 & 4 change some internal semantics slightly to make multi-mode
-> > easier.
-> > Patch 5 introduces a cleaner way of reconfiguring the NCSI configuration
-> > and keeping track of channel states.
-> > Patch 6 implements the main multi-package/multi-channel configuration,
-> > configured via the Netlink interface.
-> > 
-> > Readers who have an interesting NCSI setup - especially multi-package
-> > with HWA - please test! I think I've covered all permutations but I
-> > don't have infinite hardware to test on.
-> 
-> 
-
-
+In any case, this looks much better to me, so if the performance is
+satisfactory, let's use this version.
