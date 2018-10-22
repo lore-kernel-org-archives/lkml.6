@@ -6,247 +6,207 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1942BC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04AF4C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:08:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BBF020779
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DAB220779
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:08:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="M6sWnLNI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BBF020779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ydOoFDOI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DAB220779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mailbox.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728126AbeJVRZH (ORCPT
+        id S1728146AbeJVRZk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 13:25:07 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36024 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbeJVRZG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 13:25:06 -0400
-Received: by mail-lj1-f193.google.com with SMTP id p89-v6so36251322ljb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 02:07:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KsAYClRTjHHNGID0OANRrb9Zz5NVk9HHEmczdzIV6Do=;
-        b=M6sWnLNIaH/o6lfIcNq7ob26+q21rXxcteW7oC+GTv3uENkgURfyyINAPzhpIbaMfA
-         gT4pc/gBhlmR0YwZV2FaTQMpsh6rKnSF1dJx597MmlbfhfGnjtLWraWIu/eI6FMgBRCx
-         2ejN3riCL3Q5BZ2WwJ1JbDVR2vniu+FoBg5Pg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KsAYClRTjHHNGID0OANRrb9Zz5NVk9HHEmczdzIV6Do=;
-        b=mT4sVBOB6LbDCWTZ/GV+wkYHZp+WHuQeOy9yYVCUSJe6v8GyDpfQq31dMzCqESUcIx
-         cMvnrUeYFOQMicryla1gbRrrexgAUy1YJZ8w37xQHSchYjtxg19MqBjlQMENr+7t9Sw0
-         awPqaVk5zX89Iic/SrdoG4uCUFrz8SrbIMS/bcwRr4j8O81NRgCIe0gIHe9vGhcsfR1B
-         1+zrP6NQDUqvJbsi10U/3Hw0krT7zNWsB5XlsGrwQIINe2r0BQEFTW5DttVMXrtUuATd
-         q+MaTfsJt1dDjfS/OEHSW8S6LHT+7lWzw1o0QAJItphAFWJELPbY+VZyxNohEd2Hd/eo
-         JGxw==
-X-Gm-Message-State: ABuFfojDaJhdqJyHz0qWkYiF1208TZO/XpEchVMCr/kBuRnF1yYf377k
-        c43r/VXVW+n9CcZMMy85yNzTFsrNzeRIuXbLyTWJeg==
-X-Google-Smtp-Source: AJdET5dpTy3NyIt4DhPStv7rJlq4/2v0nS97u2MWUa6xRj/ISzvHXKItZ0biIi3JdlAL8KP0V1lxNmkkLPZzhOl8urA=
-X-Received: by 2002:a2e:2997:: with SMTP id p23-v6mr10412182ljp.12.1540199246260;
- Mon, 22 Oct 2018 02:07:26 -0700 (PDT)
+        Mon, 22 Oct 2018 13:25:40 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:63020 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727218AbeJVRZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 13:25:40 -0400
+Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id 509534BB45;
+        Mon, 22 Oct 2018 11:08:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
+        content-type:content-type:content-transfer-encoding:mime-version
+        :references:in-reply-to:message-id:date:date:subject:subject
+        :from:from:received; s=mail20150812; t=1540199278; bh=6uTVjvcF5l
+        +mpohXDlqqFOwMfZmIIuwkqsPbKLUfw9w=; b=ydOoFDOIHikAi6hqRH+CS1A2GG
+        euSUTmPBydo+10fMDPx2aKM7PtI2L2VRrkQwEnHcF6lReCj1uMSrl5UaeoO20u18
+        /MVTZWDWh3xwz/l6+EJfMevsK5do/v/x36BXd0SZJAbrrzHxD92YHS+CM4b5GcfR
+        xSoIZR4Ebvv4P6HAn5v4wA6o4SIdinvFsRxRIf9Vw15xyuOkEaLNHG9Y93kz7pPX
+        EVDI0TIxQHXipi2O5I319uwAe9+LdSWHsDBrBgkmtsv+FStPfkhDZpA6hFv0kRQ0
+        agFA0KYU+rz5w8zppGCClW+EWtDXaiKIRtNkf3KglyWDz5jobrY3cFXppRbg==
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id a7l2VbH4JtZt; Mon, 22 Oct 2018 11:07:58 +0200 (CEST)
+From:   Rainer Fiebig <jrf@mailbox.org>
+To:     NeilBrown <neil@brown.name>
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        ksummit-discuss@lists.linuxfoundation.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Olof Johansson <olof@lixom.net>, Chris Mason <clm@fb.com>,
+        Mishi Choudhary <mishi@linux.com>
+Subject: Re: Call to Action Re: [PATCH 0/7] Code of Conduct: Fix some wording, and add an interpretation document
+Date:   Mon, 22 Oct 2018 11:09:26 +0200
+Message-ID: <1922559.38OmgndT9b@siriux>
+In-Reply-To: <87y3ar80ac.fsf@notabene.neil.brown.name>
+References: <20181020134908.GA32218@kroah.com> <87y3ar80ac.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-References: <20180421085009.28773-1-javier@emutex.com> <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1539969334-24577-4-git-send-email-dan@emutex.com>
-In-Reply-To: <1539969334-24577-4-git-send-email-dan@emutex.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 22 Oct 2018 11:07:13 +0200
-Message-ID: <CACRpkdaLTFFDbW9VY3DmaJ4R5ceXFJK0W_dSi7jbqi3Bz4FXkg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
-To:     "Dan O'Donovan" <dan@emutex.com>, Eric Anholt <eric@anholt.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-leds@vger.kernel.org, carlos.iglesias@emutex.com,
-        Javier Arteaga <javier@emutex.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 7:16 PM Dan O'Donovan <dan@emutex.com> wrote:
+Am Montag, 22. Oktober 2018, 08:20:11 schrieb NeilBrown:
+> On Sat, Oct 20 2018, Greg Kroah-Hartman wrote:
+> > Hi all,
+> >=20
+> > As everyone knows by now, we added a new Code of Conduct to the ker=
+nel
+> > tree a few weeks ago.
+>=20
+> I wanted to stay detached from all this, but as remaining (publicly)
 
-> From: Javier Arteaga <javier@emutex.com>
->
-> The UP2 board features a Raspberry Pi compatible pin header (HAT) and a
-> board-specific expansion connector (EXHAT).
+And I didn't expect myself to ever post in this matter again, as I had
+already given up and relegated it to the "waste of precious lifetime"=20=
 
-Which makes me want to have Eric Anholt's review on this patch
-so as to secure basic interoperability with that header.
+category. But your initiative and courage deserve support and so:
 
-> Both expose assorted
-> functions from either the SoC (such as GPIO, I2C, SPI, UART...) or other
-> on-board devices (ADC, FPGA IP blocks...).
++1.
 
-OK
-Look at how RPi define names for their GPIO lines in the
-DTS file:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/bcm2835-rpi-b.dts
+> I call on the community to consider what *does* need to be said, abou=
+t
+> conduct, to people outside the community and who have recently joined=
+.
+> What is the document that you would have liked to have read as you we=
+re
+> starting out?  It is all too long ago for me to remember clearly, and=
+ so
+> much has changed.
 
-Please follow this pattern with your patch.
+On the day the patch came out, I started working on a modified version,=
+=20
+a CoC that I could have lived with. I guess this was my way of dealing=20=
 
-As you probably do not have device tree or anything similar
-for ACPI to name the lines (correct me if I'm wrong)
-you can use the .names array in struct gpio_chip for
-hardcoding the proper line names.
+with this unfortunate affair.=20
 
-lsgpio should give the same line names as it does on
-the corresponding RPi header IMO.
+So please find below what I would have submitted for discussion.
 
-> +config PINCTRL_UPBOARD
-> +       tristate "UP Squared pinctrl and GPIO driver"
-> +       depends on ACPI
-> +       depends on MFD_UPBOARD
-> +       select PINMUX
+Thanks and regards!
 
-select GPIOLIB
+Rainer Fiebig
 
-as you're using it.
 
-> +static int upboard_get_functions_count(struct pinctrl_dev *pctldev)
-> +{
-> +       return 0;
-> +}
-> +
-> +static int upboard_get_function_groups(struct pinctrl_dev *pctldev,
-> +                                      unsigned int selector,
-> +                                      const char * const **groups,
-> +                                      unsigned int *num_groups)
-> +{
-> +       *groups = NULL;
-> +       *num_groups = 0;
-> +       return 0;
-> +}
-> +
-> +static const char *upboard_get_function_name(struct pinctrl_dev *pctldev,
-> +                                            unsigned int selector)
-> +{
-> +       return NULL;
-> +}
-> +
-> +static int upboard_set_mux(struct pinctrl_dev *pctldev, unsigned int function,
-> +                          unsigned int group)
-> +{
-> +       return 0;
-> +}
+Disclosure
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+My contribution to the Linux kernel is admittedly negligible: I run rc-=
 
-This just looks weird.
+kernels, have reported a few problems, helped to fix them and fixed one=
+=20
+myself. To the extent of the time and effort this took me, I dare to gi=
+ve=20
+my opinion in this matter.=20
 
-There seems to be code to disable pins and turn them into
-GPIOs in upboard_gpio_request_enable() but no way to
-switch them back to the original function, is that how it works?
+---
 
-I guess it is fine if that is how it's supposed to be used. But
-won't some grumpy users come around and complain about
-this one day?
 
-We can fix it when it happens though.
+Code of Conduct
++++++++++++++++
 
-> +static int upboard_gpio_request(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +       struct upboard_pinctrl *pctrl =
-> +               container_of(gc, struct upboard_pinctrl, chip);
-> +       struct gpio_desc *desc;
-> +       int ret;
-> +
-> +       ret = pinctrl_gpio_request(gc->base + offset);
-> +       if (ret)
-> +               return ret;
-> +
-> +       desc = devm_gpiod_get_index(gc->parent, "external", offset, GPIOD_ASIS);
-> +       if (IS_ERR(desc))
-> +               return PTR_ERR(desc);
+The goal of the Linux kernel development process is to maintain and adv=
+ance
+the most robust operating system kernel ever.
 
-No please don't do this. The consumers should request
-the gpio, not the driver.
+Needless to say, views on how to achieve this will differ at times.
 
-> +static void upboard_gpio_free(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +       struct upboard_pinctrl *pctrl =
-> +               container_of(gc, struct upboard_pinctrl, chip);
-> +
-> +       if (offset + 1 > pctrl->nsoc_gpios || !pctrl->soc_gpios[offset])
-> +               return;
-> +
-> +       devm_gpiod_put(gc->parent, pctrl->soc_gpios[offset]);
+In order to keep arguments civilized and to ensure an open, positive=20=
 
-Dito.
+and constructive environment, we have setup guidelines=20
+that participants are expected to comply with:
 
-> +static int upboard_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +       struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc, offset);
-> +
-> +       if (IS_ERR(desc))
-> +               return PTR_ERR(desc);
-> +
-> +       return gpiod_get_direction(desc);
-> +}
+No bias
+=3D=3D=3D=3D=3D=3D=3D
 
-This is just confusing me even more...
+Nobody must be discriminated or favored due to personal traits like
+- for example - age, gender or ethnicity. They are irrelevant.
+What counts is whether the contribution is in line with a/m goal.
+Any such contribution will be carefully reviewed.
 
-If you need pinctrl_gpio_get_direction() then it should be
-added to the API in <linux/pinctrl/consumer.h>.
+Be excellent to each other
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
 
-> +static int upboard_gpio_direction_output(struct gpio_chip *gc,
-> +                                        unsigned int offset, int value)
-> +{
-> +       struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc, offset);
-> +       int ret;
-> +
-> +       if (IS_ERR(desc))
-> +               return PTR_ERR(desc);
-> +
-> +       ret = pinctrl_gpio_direction_output(gc->base + offset);
-> +       if (ret)
-> +               return ret;
-> +
-> +       return gpiod_direction_output(desc, value);
+Don't do to others what you don't want others to do to you.
+Straightforward talk is fine. But dissent can be communicated in a=20
+non-destructive manner. And keep in mind that at times it may be *you*=20=
 
-No this looks confusing too.
+who is dead wrong.
 
-> +static int upboard_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +       struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc, offset);
-> +
-> +       if (IS_ERR(desc))
-> +               return PTR_ERR(desc);
-> +
-> +       return gpiod_get_value(desc);
+Examples of encouraged behavior:
 
-I don't get this masking one GPIO chip behind another GPIO chip.
-It looks really weird.
+* Being respectful of differing viewpoints
+* Criticizing constructively, i. e. showing ways for improvement
+* Accepting constructive criticism
+* Focusing on what is best for our goal and the community
 
-What we usually have is a GPIO chip in front of a pin controller
-utilizing
-extern int pinctrl_gpio_request(unsigned gpio);
-extern void pinctrl_gpio_free(unsigned gpio);
-extern int pinctrl_gpio_direction_input(unsigned gpio);
-extern int pinctrl_gpio_direction_output(unsigned gpio);
-extern int pinctrl_gpio_set_config(unsigned gpio, unsigned long config);
+Examples of unacceptable behavior:
 
-these things for the GPIO chip to talk to the pin control
-back-end.
+* Comments intended to insult, depreciate or defame a person
+* Public or private harassment
+* Unwelcome sexual attention or advances
+* Fabricating incriminations by quoting out of context
+* Publishing others=E2=80=99 private information, such as a physical or=
+ electronic
+  address, without explicit permission
+* Promoting political agendas
+* Trolling
 
-This driver seems to use a GPIO chip in front of a
-GPIO chip and a pin controller too (or something like
-that) and that makes me very uneasy.
+Responsibilities
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-I need a clear picture of the internal architectur of
-the GPIO parts of this driver, why the GPIO accessors
-are calling back into the GPIO layer etc. It looks very
-unorthodox to me, and I get very confused.
+All participants are responsible for complying with this Code of Conduc=
+t.
 
-Yours.
-Linus Walleij
+Maintainers are responsible for clarifying the standards of acceptable=20=
+
+behavior and are expected to take appropriate and fair corrective actio=
+n in=20
+response to any instances of obviously unacceptable behavior.
+
+Maintainers have the right to ban temporarily or permanently any contri=
+butor=20
+who's behavior is not aligned to this Code of Conduct.
+
+Arbitration
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Anyone who feels abused, harassed or affected by otherwise unacceptable=
+=20
+behavior may report this to the Technical Advisory Board (TAB)=20
+at <tab@lists.linux-foundation.org>.=20
+
+All complaints will be reviewed and investigated and will result in a r=
+esponse=20
+that is deemed necessary and appropriate to the circumstances.=20
+
+The TAB is obligated to maintain confidentiality with regard to the rep=
+orter=20
+of an incident.
+
+Further details of specific arbitration policies may be posted separate=
+ly.
+
+Attribution
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Some elements of this Code of Conduct are derived from the Contributor=20=
+
+Covenant, version 1.4, available at https://www.contributor-covenant.or=
+g/version/1/4/code-of-conduct.html
