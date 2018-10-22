@@ -4,47 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20654C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3462C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBA0520652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:22:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B94CD20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:22:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FvHn1vp6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBA0520652
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8YAQfy8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B94CD20652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729321AbeJVSj7 (ORCPT
+        id S1729264AbeJVSjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:39:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50688 "EHLO mail.kernel.org"
+        Mon, 22 Oct 2018 14:39:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728580AbeJVSjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:39:46 -0400
+        id S1728300AbeJVSjj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:39:39 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7D872087D;
-        Mon, 22 Oct 2018 10:21:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69F7D2088F;
+        Mon, 22 Oct 2018 10:21:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540203711;
-        bh=CywVZ0/IfAN3ifVrh9eC4W6GP5Eputec3I7LLukn79s=;
+        s=default; t=1540203704;
+        bh=oHtvCnO5jYWTa5t3fEx/PrxOW1HE33JPP7mCRb45+zw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FvHn1vp6Zs6blKlVfY8LItpqI8lYjXC1e7/ypqyNa6mVjaYvsl22lQ90pn+0bUhDu
-         IQghw39baWjldNyfcbLvpWE4wxufx9Cxh3/7q3YKP8md+nXshZqwzEzvMjRZhH+BUR
-         RbQy+KmUnLO+Gv+tAaVoTcie0xBBdNdXuSdGk3/s=
+        b=p8YAQfy8gaxPCHx+JohOv3dKg7jndkTEvBI0Qp/ZvbbErtWBNRem1gKk9u1SUzpXT
+         S1j1H7Cv3Js/q5Se8rN7xrSaAKn2rf3EBfgsn32IpAUozTkwV184gexRqHkkKZQkk/
+         lnhanQG0hAfM3swRvPZm7memvir2T23xY0aGu+4E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 8/9] libertas: call into generic suspend code before turning off power
-Date:   Mon, 22 Oct 2018 06:21:32 -0400
-Message-Id: <20181022102133.41222-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 4/9] Input: uinput - add a schedule point in uinput_inject_events()
+Date:   Mon, 22 Oct 2018 06:21:28 -0400
+Message-Id: <20181022102133.41222-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181022102133.41222-1-sashal@kernel.org>
 References: <20181022102133.41222-1-sashal@kernel.org>
@@ -53,40 +51,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Mack <daniel@zonque.org>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-[ Upstream commit 4f666675cdff0b986195413215eb062b7da6586f ]
+[ Upstream commit cecf10704899467a787975e3d94a1f0129b9688e ]
 
-When powering down a SDIO connected card during suspend, make sure to call
-into the generic lbs_suspend() function before pulling the plug. This will
-make sure the card is successfully deregistered from the system to avoid
-communication to the card starving out.
+Large writes to uinput interface may cause rcu stalls. Let's add
+cond_resched() to the loop to avoid this.
 
-Fixes: 7444a8092906 ("libertas: fix suspend and resume for SDIO connected cards")
-Signed-off-by: Daniel Mack <daniel@zonque.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Acked-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/marvell/libertas/if_sdio.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/input/misc/uinput.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/marvell/libertas/if_sdio.c b/drivers/net/wireless/marvell/libertas/if_sdio.c
-index a0ae8d8763bb..06a57c708992 100644
---- a/drivers/net/wireless/marvell/libertas/if_sdio.c
-+++ b/drivers/net/wireless/marvell/libertas/if_sdio.c
-@@ -1368,6 +1368,10 @@ static int if_sdio_suspend(struct device *dev)
- 	if (priv->wol_criteria == EHS_REMOVE_WAKEUP) {
- 		dev_info(dev, "Suspend without wake params -- powering down card\n");
- 		if (priv->fw_ready) {
-+			ret = lbs_suspend(priv);
-+			if (ret)
-+				return ret;
-+
- 			priv->power_up_on_resume = true;
- 			if_sdio_power_off(card);
- 		}
+diff --git a/drivers/input/misc/uinput.c b/drivers/input/misc/uinput.c
+index 022be0e22eba..d015fd7151c1 100644
+--- a/drivers/input/misc/uinput.c
++++ b/drivers/input/misc/uinput.c
+@@ -540,6 +540,7 @@ static ssize_t uinput_inject_events(struct uinput_device *udev,
+ 
+ 		input_event(udev->dev, ev.type, ev.code, ev.value);
+ 		bytes += input_event_size();
++		cond_resched();
+ 	}
+ 
+ 	return bytes;
 -- 
 2.17.1
 
