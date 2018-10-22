@@ -2,129 +2,204 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 938EAC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF01C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:06:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FE2220651
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:02:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2878320651
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:06:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQd6s/W9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FE2220651
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XI4jJ68z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2878320651
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728726AbeJWBWH (ORCPT
+        id S1728583AbeJWBZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 21:22:07 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38747 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbeJWBWH (ORCPT
+        Mon, 22 Oct 2018 21:25:17 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37294 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbeJWBZR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 21:22:07 -0400
-Received: by mail-pf1-f196.google.com with SMTP id f29-v6so20225179pff.5;
-        Mon, 22 Oct 2018 10:02:48 -0700 (PDT)
+        Mon, 22 Oct 2018 21:25:17 -0400
+Received: by mail-wm1-f68.google.com with SMTP id f22-v6so3293478wmc.2;
+        Mon, 22 Oct 2018 10:05:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mbfS97ueMh/U3Uc84irH8w2tyfm3vAFNCKyGURRujkI=;
-        b=CQd6s/W978y7rX/gbBfjV5SaJXoTv2FTXbUGfRY/UCI+kU6MI7uDxGgIntkx5V6lx4
-         EcNjtoO9FtvVoAdzawfzkiJDWyZOaZKg8hXBdgfOtOMlYxKkrEY1mSXCgbHxwPpZEya9
-         5aAMePIA397cnxeKcLQPv8krZ0I+8kmY/vG6UenYsGrDPvIUQBVgetCSMcUkDCU6z/0c
-         5v+pnRJkBESI0gTMq7aJ95FChbcWZfuY+qTy7OVLAnCaRVZ1wA9Y7VdlwBi5YJHoRSuN
-         GYLPFAi3iZ157s0s2cFDSVqGULzaTlwuuBFtYrZ/mdGaeX4qYILcO5SkcQEkusgjapqp
-         tIqQ==
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gG6S4sQ8Jw5x72V+IttHc73vsPFxoJWp4Oug5JclafU=;
+        b=XI4jJ68zftlVCVlYkc2wYUBZVx8E7q/jHmIEpNiThvpQWpauS6tzBvITsjcALYR96m
+         W7LxSG9J2Zt4+Bomah/GhG5GTHv/PRxppNeNjkk3LZkMGdl1dYeIctl59wwX6QxQXymO
+         lUjjZ4GAQwhEdfIb4LqhTv7fxtqOmNEqjU9pvI3y5c4RR9e5KviLMjwCXxk9vzQtYZ0z
+         vsy10RuYrOtfsxrXbuv1nQIrl7H5akXs8nq59Us+GgAYcmXFznWDpVq/+0RwcDVxeLRc
+         YDWDD6s5JIPpKLXo80fyAEz06knLFca+e60qk+vrNdSRq5rck1XvCtbWOSkX7ZEybjM6
+         94gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mbfS97ueMh/U3Uc84irH8w2tyfm3vAFNCKyGURRujkI=;
-        b=DXSpEA5ziMNLfrqMLSvDZF/kE+FogsY5ArgaOvHP0xOZx5uJRwBqggWzlK+3tImXP6
-         z8yVZ6s6URCgfAx/xDvYgl6goe+KmMKTZv0AhdyLljpokzFxXvmd0H9OY4WyTAZ9b+zf
-         7LTMCEALBEktgJlb2YFzPSXvOTQA0O8eyk9MkUwhjzPWqqsqAo9Ff8r0tM57IlvFWATm
-         wnLp2BmtLLvRoJ2Fh+jgoKVxoCJ4aJG9v9cnFcC1+HpSfuYqBt3pFzW7Lccpb+mBgSfC
-         vMwJtSRJJhKdjcqDauqeA+e79ld5t4Qo0VuZLFUBUqvtb+EHpJ/ypAlbF/MyybBLYIs3
-         p5tQ==
-X-Gm-Message-State: ABuFfohm7oe+St9+43SOQVWRFE1vjX4TrqqejL6raU4rcIjPeoXWRV7D
-        2kVF6U2MQthSQgoWOY24GqXHN69A7qg=
-X-Google-Smtp-Source: ACcGV635iwThS+q6mLtvCt57JDEAGzgnlnJLh3XFkBZLfTWE6fKR5atSj9q62/UE17xh3gG+vLhQEg==
-X-Received: by 2002:a62:1f9d:: with SMTP id l29-v6mr45544391pfj.121.1540227768203;
-        Mon, 22 Oct 2018 10:02:48 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id n7-v6sm32235549pgv.63.2018.10.22.10.02.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Oct 2018 10:02:47 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 10:02:44 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.18 08/27] Input: evdev - add a schedule point
- in evdev_write()
-Message-ID: <20181022170244.GB27929@dtor-ws>
-References: <20181022101924.40531-1-sashal@kernel.org>
- <20181022101924.40531-8-sashal@kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=gG6S4sQ8Jw5x72V+IttHc73vsPFxoJWp4Oug5JclafU=;
+        b=SvX6ozbtRqDibSNvgqv2v5R+xfPUnpRq3AqOczzfkUDY1CH3Od7t7vDysgymNnJ8ku
+         5DSbqgO2Cnbiiy3hCbs/OW48CHBLwbJyhvdsaNckzP2qJUHJYRCL4hzqni40WyIx4Ea7
+         AcVah+iykqmJHQ4bqMgjaGMdFzjOMmiEIRUzjoZ8cJwyAET0mxBNYphwGaBG+hCpiebk
+         14D/kRP+eh3Y1ZPNZfuQTtyZ9/rRLHzTItadONm4jX8TCogWIXB301vYLswTiNBbShgP
+         Gh4QHRMvFRjEKEqqrgt7cE8C94sBYf6sm/KSXOpuLegn8rHHeLaWLCebCcL87MUgIPiY
+         sgJw==
+X-Gm-Message-State: AGRZ1gJJEgHYxAvBv+68BCdwB0crU1ufQkqXAQaYO4RJxiiBkVTluKAF
+        O2rBVraxw17yHpx1YW2rIi5Dtva3
+X-Google-Smtp-Source: ACcGV61l9vBJm+cTgQZFNfwPbPM7yfn2PZTJ2aI0WGlm7UhXzjkvMi7XFkuE9uePBN/OwKuzsfHx9Q==
+X-Received: by 2002:a1c:7508:: with SMTP id o8-v6mr17100214wmc.76.1540227954855;
+        Mon, 22 Oct 2018 10:05:54 -0700 (PDT)
+Received: from [10.67.49.28] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id u10-v6sm28195593wrt.59.2018.10.22.10.05.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Oct 2018 10:05:53 -0700 (PDT)
+Subject: Re: [PATCH 0/9] net: simplify getting .driver_data
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
+References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <7a2fdd94-a883-da02-845e-f6dd8dcfb969@gmail.com>
+Date:   Mon, 22 Oct 2018 10:05:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181022101924.40531-8-sashal@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sasha,
-
-On Mon, Oct 22, 2018 at 06:19:05AM -0400, Sasha Levin wrote:
-> From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+On 10/21/18 1:00 PM, Wolfram Sang wrote:
+> I got tired of fixing this in Renesas drivers manually, so I took the big
+> hammer. Remove this cumbersome code pattern which got copy-pasted too much
+> already:
 > 
-> [ Upstream commit 36d2582ff235b4e01ad64a734c877a52dc762d9c ]
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
+> +	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
 > 
-> Large writes to evdev interface may cause rcu stalls. Let's add
-> cond_resched() to the loop to avoid this.
+> A branch, tested by buildbot, can be found here:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
+> 
+> I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
+> it and did not find one occasion where it could be simplified like this. Not
+> much of a surprise because driver_data is usually set in probe() functions
+> which access struct platform_device in many other ways.
+> 
+> I am open for other comments, suggestions, too, of course.
 
-This is not needed in stable:
+Would it make sense to annotate platform_get_drvdata() with __deprecated
+or something like that to prevent further uses by driver authors?
 
-- the interfaces are not accessible for unprivileged users so there is
-  no DOS concerns
-- the issue can only happen on non-preemptible kernels
-- the issue only showed up with synthetic test and not real life use
-  cases
-- this is not a regression
-
-The same goes to similar patches to mousedev, joydev and uinput that you
-autoselected.
-
-Thanks.
+Do you mind submitting the cocci-script to the maintainers of the
+coccinelle scripts that way it can be included and run by automated
+tools? Thanks!
 
 > 
-> Reviewed-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/input/evdev.c | 1 +
->  1 file changed, 1 insertion(+)
+> Here is the cocci-script I created:
 > 
-> diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
-> index c81c79d01d93..718d5622267d 100644
-> --- a/drivers/input/evdev.c
-> +++ b/drivers/input/evdev.c
-> @@ -564,6 +564,7 @@ static ssize_t evdev_write(struct file *file, const char __user *buffer,
->  
->  		input_inject_event(&evdev->handle,
->  				   event.type, event.code, event.value);
-> +		cond_resched();
->  	}
->  
->   out:
-> -- 
-> 2.17.1
+> @@
+> struct device* d;
+> identifier pdev;
+> expression *ptr;
+> @@
+> (
+> -	struct platform_device *pdev = to_platform_device(d);
+> |
+> -	struct platform_device *pdev;
+> 	...
+> -	pdev = to_platform_device(d);
+> )
+> 	<... when != pdev
+> -	&pdev->dev
+> +	d
+> 	...>
 > 
+> 	ptr =
+> -	platform_get_drvdata(pdev)
+> +	dev_get_drvdata(d)
+> 
+> 	<... when != pdev
+> -	&pdev->dev
+> +	d
+> 	...>
+> 
+> Kind regards,
+> 
+>    Wolfram
+> 
+> 
+> Wolfram Sang (9):
+>   net: dsa: bcm_sf2: simplify getting .driver_data
+>   net: dsa: qca8k: simplify getting .driver_data
+>   net: ethernet: cadence: macb_main: simplify getting .driver_data
+>   net: ethernet: davicom: dm9000: simplify getting .driver_data
+>   net: ethernet: smsc: smc91x: simplify getting .driver_data
+>   net: ethernet: ti: cpsw: simplify getting .driver_data
+>   net: ethernet: ti: davinci_emac: simplify getting .driver_data
+>   net: ethernet: wiznet: w5300: simplify getting .driver_data
+>   net: phy: mdio-mux-bcm-iproc: simplify getting .driver_data
+> 
+>  drivers/net/dsa/bcm_sf2.c                | 6 ++----
+>  drivers/net/dsa/qca8k.c                  | 6 ++----
+>  drivers/net/ethernet/cadence/macb_main.c | 6 ++----
+>  drivers/net/ethernet/davicom/dm9000.c    | 6 ++----
+>  drivers/net/ethernet/smsc/smc91x.c       | 3 +--
+>  drivers/net/ethernet/ti/cpsw.c           | 6 ++----
+>  drivers/net/ethernet/ti/davinci_emac.c   | 6 ++----
+>  drivers/net/ethernet/wiznet/w5300.c      | 6 ++----
+>  drivers/net/phy/mdio-mux-bcm-iproc.c     | 6 ++----
+>  9 files changed, 17 insertions(+), 34 deletions(-)
+> 
+
 
 -- 
-Dmitry
+Florian
