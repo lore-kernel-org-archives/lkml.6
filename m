@@ -2,136 +2,389 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A4BFC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E505AC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:13:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCF5D2064E
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:12:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84C5F2064E
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:13:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gvdR2squ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCF5D2064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IvtFWYg1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84C5F2064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbeJVUac (ORCPT
+        id S1728646AbeJVUcL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 16:30:32 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35314 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727554AbeJVUac (ORCPT
+        Mon, 22 Oct 2018 16:32:11 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43106 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbeJVUcK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 16:30:32 -0400
-Received: by mail-lj1-f193.google.com with SMTP id o14-v6so36750555ljj.2;
-        Mon, 22 Oct 2018 05:12:11 -0700 (PDT)
+        Mon, 22 Oct 2018 16:32:10 -0400
+Received: by mail-lf1-f66.google.com with SMTP id p34-v6so30163792lfg.10
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 05:13:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tWqSH/JLsi4Wzzp51efFVTIU8xkaytvDycXSRB9X1hY=;
-        b=gvdR2squxeT8SgFSBjXKazXM5vspvnC9vV9tDxz2RlQrZIb3r6enD57A2DjFGZgT7c
-         tej0+VuZDa26heJVwpPoSocrv3MZmX62aObhrF5HnyU4Odt4ZF4ZzB0AdjGHecK5OY6H
-         mRJWHiNmdeBglcxySoqdtOTN/8TArh143Fan9rUlLJs7XIPEEzCKYRbpV/KxXKay2BT8
-         1z+6PnNTkTT3mI+d278wO9EfIpRsDKi5XZPt443nzXkRCBirfGRUNzQ6BGiVAQCwVPEW
-         ZYc+QcUzGM24N4c5TwQ1HNFBPu5Ld5il+TRv4gbC+JwWdXLeFsvB2JsPkN3KxEB7o0N0
-         LTnQ==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9zPz0VPAo12TNbzFcR4NLa+1XxTA5R74RtAuWEc2CZU=;
+        b=IvtFWYg1ohdh4O7kzRYXsw9HzV3mozythe6OYQ9XECW176KkX4rAcb7nSXnzYnwdtY
+         W8v4h7fJLSyN/KT/Xhwn78hq3Xw8Gb3XKCFflWuVjau5tNhpntEtWNMmeBnO4yfADW+z
+         g3HwjNdJ3yIAJb7R/SlJ0SLCG1gxJVyU+4gcY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=tWqSH/JLsi4Wzzp51efFVTIU8xkaytvDycXSRB9X1hY=;
-        b=W7IUlGKBrGTqYIGcmRNaZiTAGdnRAl3btid8kvpqcauaJD9MR6ODJzqnk3DPFKyR4/
-         EZVapBhKyuJeDqxJ55O6AihbZpAo9vm3NONApgf7m+R1Q20QUYcHCSaQiLIoYR1Z0bvY
-         iukJ/Gwondc1vZrTsyK4MusHAKpyq0SysPoX5AafmXC8G1uXTFtnGjwDr8iOfdybojjU
-         R2WRp0jgrsQwRluatYDe71598CZxqgNdZTNa1ktJz44/XoUIBmQZ9AG8tU5OCwhKqyQd
-         u2y/S1WmrF7/08uz/MMlHqwXpZ1sKzUO3Yk5wwnYmDaY1IORX4FkGUicfQchJAFyruRE
-         i9Rw==
-X-Gm-Message-State: AGRZ1gKXHHrxxE4on61pyfImr+21qkRyO3QmpQ9TEzKKcGhBPADaQXpF
-        ofE8Ig0AUbtQT5TjE8jshOUEi3gt
-X-Google-Smtp-Source: AJdET5dhYOM337hK9MsQjvywYHlzLjXq2Jb6NYxFUHznEiSgfH0pQ5fwXw6JSZasmfHmFqWw/ESDGw==
-X-Received: by 2002:a2e:48d:: with SMTP id a13-v6mr10912641ljf.27.1540210330613;
-        Mon, 22 Oct 2018 05:12:10 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-91-118.nat.spd-mgts.ru. [109.252.91.118])
-        by smtp.googlemail.com with ESMTPSA id h25-v6sm1285045ljh.12.2018.10.22.05.12.09
+        bh=9zPz0VPAo12TNbzFcR4NLa+1XxTA5R74RtAuWEc2CZU=;
+        b=i0ZLfYuqGSwymKkjHgVxO55BTLTAUX7zmJslvKDLaACZIttknqjHJiKOjjmt//B5vr
+         dbWTEeXbesxR9YadUXaHKJ9gnsSsXeSp4nOgfE3e5TK9ZpRun3Ry3CuBgOECt/wXr/EL
+         Fn8dbtnv4K3381W3hYAlHaRC+7OxnxpYDFPRiMGUIJg35jUQBMrJTul83iNv7hYhKFrV
+         uNNtNkvV7MYnmir/Hg2YbZpU5UDZ7GbgG6cBIttW5Sg/41S1KnJ0uSdxClHulJ9PiOuY
+         N+bj/nhdHQEXEDsMViDr+BP4/kSGLzDmn1BBuEWSdPRfzxx3oHIMn/rQgYTivDAm2Zan
+         bEdQ==
+X-Gm-Message-State: ABuFfojpVE/PW1VWVyULTRn+Ppy5FKrWQEi7ieR2N7CuZH+k/DQh+nzT
+        aXP6jl430xSp+lNikUp1vkwaew==
+X-Google-Smtp-Source: ACcGV61eBpI/I0ywWP9p9E22hjETmv3gGwlHMwZ7bpXprNk1ET4mmCS2Kg2TfjJSXuyCPrJuZOBEaQ==
+X-Received: by 2002:a19:1019:: with SMTP id f25mr7546284lfi.54.1540210428761;
+        Mon, 22 Oct 2018 05:13:48 -0700 (PDT)
+Received: from uffe-XPS-13-9360.ideon.se ([85.235.10.227])
+        by smtp.gmail.com with ESMTPSA id t5-v6sm6604427lfg.90.2018.10.22.05.13.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Oct 2018 05:12:10 -0700 (PDT)
-Subject: Re: [RFC PATCH v2 01/17] OPP: Allow to request stub voltage
- regulators
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181021205501.23943-1-digetx@gmail.com>
- <20181021205501.23943-2-digetx@gmail.com>
- <20181022053636.ag62j3rj3vovbz53@vireshk-i7>
- <e4027793-9436-413d-2a7b-34cf519218c3@gmail.com>
- <20181022113224.b5fiebgy2aap66nd@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <29f893be-feed-c4c5-8468-51f7228dd468@gmail.com>
-Date:   Mon, 22 Oct 2018 15:12:08 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 22 Oct 2018 05:13:47 -0700 (PDT)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Linus <torvalds@linux-foundation.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [GIT PULL] MMC updates for v4.20
+Date:   Mon, 22 Oct 2018 14:13:46 +0200
+Message-Id: <20181022121346.3508-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20181022113224.b5fiebgy2aap66nd@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/22/18 2:32 PM, Viresh Kumar wrote:
-> On 22-10-18, 14:29, Dmitry Osipenko wrote:
->> On 10/22/18 8:36 AM, Viresh Kumar wrote:
->>> On 21-10-18, 23:54, Dmitry Osipenko wrote:
->>>> Voltage regulators may be not available on some variations of HW, allow to
->>>> request stub voltage regulators by OPP core in a such case to reduce code
->>>> churning within drivers.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  drivers/cpufreq/cpufreq-dt.c | 2 +-
->>>>  drivers/cpufreq/ti-cpufreq.c | 3 ++-
->>>>  drivers/opp/core.c           | 9 +++++++--
->>>>  include/linux/pm_opp.h       | 4 ++--
->>>>  4 files changed, 12 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
->>>> index e58bfcb1169e..6ebca472ec76 100644
->>>> --- a/drivers/cpufreq/cpufreq-dt.c
->>>> +++ b/drivers/cpufreq/cpufreq-dt.c
->>>> @@ -196,7 +196,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
->>>>  	 */
->>>>  	name = find_supply_name(cpu_dev);
->>>>  	if (name) {
->>>> -		opp_table = dev_pm_opp_set_regulators(cpu_dev, &name, 1);
->>>> +		opp_table = dev_pm_opp_set_regulators(cpu_dev, &name, 1, false);
->>>>  		if (IS_ERR(opp_table)) {
->>>>  			ret = PTR_ERR(opp_table);
->>>>  			dev_err(cpu_dev, "Failed to set regulator for cpu%d: %d\n",
->>>
->>> Have you actually tested this stuff ? The cpufreq-dt driver will
->>> probably fail to probe if the CPU node has a "-supply" property, but
->>> no regulator matching that.
->>>
->>
->> Please notice that this patch doesn't change the original behaviour
->> and I suppose that failing in a case of missing regulator is the
->> expected behaviour for cpufreq-dt. Hence can't see any problem here.
-> 
-> So why have this patch then ?
+Hi Greg,
 
-Because there is one Tegra20 board (tegra20-trimslice) that doesn't declare necessary regulators, but we want to have CPU frequency scaling. I couldn't find board schematics and so don't know if CPU / CORE voltages are fixed on Trim-Slice or it is just preferable not to have DVFS for that board, it is an outlet-powered device [0]. Hence tegra20-cpufreq driver will request a dummy regulators when appropriate. 
+Here's a PR with the MMC updates for v4.20. Details about the highlights are as
+usual found in the signed tag.
 
-[0] http://www.compulab.co.il/utilite-computer/web/trim-slice
+Please pull this in!
+
+Kind regards
+Ulf Hansson
+
+
+The following changes since commit 4f666675cdff0b986195413215eb062b7da6586f:
+
+  libertas: call into generic suspend code before turning off power (2018-10-10 14:01:50 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.20
+
+for you to fetch changes up to fd82cc3020a024fc97fbc0a5242c26d06bb5e203:
+
+  mmc: mediatek: drop too much code of tuning method (2018-10-15 15:00:29 +0200)
+
+----------------------------------------------------------------
+MMC core:
+ - Introduce a host helper function to share re-tuning progress
+
+MMC host:
+ - sdhci: Add support for v4 host mode
+ - sdhci-of-arasan: Add Support for AM654 MMC and PHY
+ - sdhci-sprd: Add support for Spreadtrum's host controller
+ - sdhci-tegra: Add support for HS400 enhanced strobe
+ - sdhci-tegra: Enable UHS/HS200 modes for Tegra186/210
+ - sdhci-tegra: Add support for HS400 delay line calibration
+ - sdhci-tegra: Add support for pad calibration
+ - sdhci-of-dwcmshc: Address 128MB DMA boundary limitation
+ - sdhci-of-esdhc: Add support for tuning erratum A008171
+ - sdhci-iproc: Add ACPI support
+ - mediatek: Add support for MT8183
+ - mediatek: Improve the support for tuning
+ - mediatek: Add bus clock control for MT2712
+ - jz4740: Add support for the JZ4725B
+ - mmci: Add support for the stm32 sdmmc variant
+ - mmci: Add support for an optional reset control
+ - mmci: Add some new variant specific properties/callbacks
+ - mmci: Re-structure DMA code to prepare for new variants
+ - renesas_sdhi: Add support for r8a77470, r8a7744 and r8a774a1
+ - renesas_sdhi_internal_dmac: Whitelist r8a77970 and r8a774a1
+ - tmio/uniphier-sd: Add new UniPhier SD/eMMC controller driver
+ - tmio/renesas_sdhi: Deal properly with SCC detection during re-tune
+ - tmio/renesas_sdhi: Refactor/consolidate clock management
+ - omap_hsmmc: Drop cover detection and some unused platform data
+ - dw_mmc-exynos: Enable tuning for more speed modes
+ - sunxi: Clarify the new timing mode and enable it for the A64 controller
+ - various: Convert to slot GPIO descriptors
+
+----------------------------------------------------------------
+Aapo Vienamo (26):
+      mmc: sdhci: Export sdhci_request()
+      dt-bindings: mmc: tegra: Add pad voltage control properties
+      dt-bindings: Add Tegra SDHCI pad pdpu offset bindings
+      dt-bindings: mmc: Add Tegra SDHCI sampling trimmer values
+      mmc: tegra: Reconfigure pad voltages during voltage switching
+      mmc: tegra: Poll for calibration completion
+      mmc: tegra: Set calibration pad voltage reference
+      mmc: tegra: Power on the calibration pad
+      mmc: tegra: Disable card clock during pad calibration
+      mmc: tegra: Program pad autocal offsets from dt
+      mmc: tegra: Perform pad calibration after voltage switch
+      mmc: tegra: Enable pad calibration on Tegra210 and Tegra186
+      mmc: tegra: Add a workaround for tap value change glitch
+      mmc: tegra: Parse default trim and tap from dt
+      mmc: tegra: Configure default tap values
+      mmc: tegra: Configure default trim value on reset
+      mmc: tegra: Use standard SDHCI tuning on Tegra210 and Tegra186
+      mmc: tegra: Remove tegra_sdhci_writew() from tegra210_sdhci_ops
+      mmc: tegra: Disable card clock during tuning cmd on Tegra210
+      mmc: tegra: Enable UHS and HS200 modes for Tegra210
+      mmc: tegra: Enable UHS and HS200 modes for Tegra186
+      dt-bindings: mmc: Add DQS trim value to Tegra SDHCI
+      mmc: tegra: Parse and program DQS trim value
+      mmc: tegra: Implement HS400 enhanced strobe
+      mmc: tegra: Implement HS400 delay line calibration
+      mmc: tegra: Implement periodic pad calibration
+
+Adrian Hunter (1):
+      mmc: sdhci-pltfm: Convert DT properties to generic device properties
+
+Anand Moon (1):
+      mmc: dw_mmc-exynos: Add tuning for sdr and ddr timing for USH-I mode
+
+Biju Das (2):
+      dt-bindings: mmc: renesas_sdhi: Add r8a7744 support
+      dt-bindings: mmc: sh_mmcif: Document r8a7744 DT bindings
+
+Chaotian Jing (8):
+      mmc: dt-bindings: add "bus-clk" for MT2712
+      mmc: mediatek: add bus_clk control
+      mmc: dt-bindings: add support for MT8183 SoC
+      mmc: mediatek: fill the actual clock for mmc debugfs
+      mmc: mediatek: fix cannot receive new request when msdc_cmd_is_ready fail
+      mmc: mediatek: tune CMD/DATA together
+      mmc: mediatek: add MT8183 MMC driver support
+      mmc: mediatek: drop too much code of tuning method
+
+Chen-Yu Tsai (2):
+      mmc: sunxi: Clarify new timing mode usage and implementation
+      mmc: sunxi: Use new timing mode for A64 eMMC controller
+
+Chunyan Zhang (9):
+      mmc: sdhci: Add version V4 definition
+      mmc: sdhci: Add sd host v4 mode
+      mmc: sdhci: Change SDMA address register for v4 mode
+      mmc: sdhci: Add ADMA2 64-bit addressing support for V4 mode
+      mmc: sdhci: Add 32-bit block count support for v4 mode
+      mmc: sdhci: Add Auto CMD Auto Select support
+      mmc: sdhci: SDMA may use Auto-CMD23 in v4 mode
+      dt-bindings: sdhci-sprd: Add bindings for the sdhci-sprd controller
+      mmc: sdhci-sprd: Add Spreadtrum's initial host controller
+
+Fabrizio Castro (4):
+      mmc: renesas_sdhi_internal_dmac: Whitelist r8a774a1
+      mmc: renesas_sdhi: Add r8a774a1 support
+      dt-bindings: mmc: renesas_sdhi: Add r8a77470 support
+      mmc: renesas_sdhi: Add r8a77470 SDHI1 support
+
+Faiz Abbas (3):
+      dt-bindings: mmc: sdhci-of-arasan: Add new compatible for AM654 MMC PHY
+      mmc: sdhci-of-arasan: Add a single data structure to incorporate pdata and soc_ctl_map
+      mmc: sdhci-of-arasan: Add Support for AM654 MMC and PHY
+
+Gustavo A. R. Silva (2):
+      mmc: tifm_sd: Mark expected switch fall-through
+      mmc: meson-mx-sdio: mark expected switch fall-through
+
+Igor Opaniuk (1):
+      mmc: dw_mmc: hi3798cv200: add MMC_CAP_CMD23 cap
+
+Jisheng Zhang (4):
+      mmc: sdhci: add adma_table_cnt member to struct sdhci_host
+      mmc: sdhci: introduce adma_write_desc() hook to struct sdhci_ops
+      mmc: sdhci-of-dwcmshc: solve 128MB DMA boundary limitation
+      mmc: sdhci: fix __sdhci_adma_write_desc
+
+Linus Walleij (6):
+      mmc: mmci: Drop support for pdata GPIO numbers
+      mmc: sdhci: spear: Use the slot GPIO descriptor
+      mmc: sdhci: pxav3: Delete GPIO handling
+      mmc: sdhci: sirf: Use the slot GPIO descriptor
+      mmc: omap_hsmmc: Kill off cover detection
+      mmc: omap_hsmmc: Delete platform data GPIO CD and WP
+
+Lubomir Rintel (1):
+      mmc: core: Allow building PWRSEQ_SD8787 with LIBERTAS_SDIO
+
+Ludovic Barre (26):
+      mmc: mmci: internalize dma map/unmap into mmci dma functions
+      mmc: mmci: internalize dma_inprogress into mmci dma functions
+      mmc: mmci: Change struct members from bool to u8
+      mmc: mmci: create common mmci_dma_setup/release
+      mmc: mmci: introduce dma_priv pointer to mmci_host
+      mmc: mmci: merge prepare data functions
+      mmc: mmci: add prepare/unprepare_data callbacks
+      mmc: mmci: add get_next_data callback
+      mmc: mmci: add dma_start callback
+      mmc: mmci: add dma_finalize callback
+      mmc: mmci: add dma_error callback
+      mmc: mmci: add validate_data callback
+      mmc: mmci: add set_clk/pwrreg callbacks
+      mmc: mmci: add datactrl block size variant property
+      mmc: mmci: expand startbiterr to irqmask and error check
+      mmc: mmci: add variant properties to define cpsm & cmdresp bits
+      mmc: mmci: add variant property to define dpsm bit
+      mmc: mmci: add variant property to define irq pio mask
+      mmc: mmci: add variant property to write datactrl before command
+      mmc: mmci: add variant property to not read datacnt
+      dt-bindings: mmci: add optional reset property
+      mmc: mmci: add optional reset property
+      mmc: mmci: add clock divider for stm32 sdmmc
+      mmc: mmci: add stm32 sdmmc registers
+      dt-bindings: mmci: add stm32 sdmmc variant
+      mmc: mmci: add stm32 sdmmc variant
+
+Masaharu Hayakawa (2):
+      mmc: renesas_sdhi: skip SCC error check when retuning
+      mmc: tmio: Fix SCC error detection
+
+Masahiro Yamada (11):
+      mmc: tmio: replace tmio_mmc_clk_stop() calls with tmio_mmc_set_clock()
+      mmc: tmio: move tmio_mmc_set_clock() to platform hook
+      dt-bindings: mmc: add DT binding for UniPhier SD/eMMC controller
+      mmc: uniphier-sd: add UniPhier SD/eMMC controller driver
+      mmc: renesas_sdhi: merge clk_{start,stop} functions to set_clock
+      mmc: tmio: refactor CLK_CTL bit calculation
+      mmc: tmio: move MFD variant reset to a platform hook
+      mmc: tmio: remove TMIO_MMC_HAVE_HIGH_REG flag
+      mmc: tmio: simplify the DMA mode test
+      mmc: uniphier-sd: fix DMA disabling
+      mmc: uniphier-sd: avoid using broken DMA RX channel
+
+Michal Simek (1):
+      mmc: sdhci-of-arasan: Do now show error message in case of deffered probe
+
+Niklas Söderlund (2):
+      mmc: core: add helper to see if a host is doing a retune
+      mmc: renesas_sdhi_internal_dmac: set scatter/gather max segment size
+
+Paul Cercueil (2):
+      mmc: jz4740: Drop dependency on MACH_JZ4740/80
+      mmc: jz4740: Add support for the JZ4725B
+
+Rob Herring (1):
+      mmc: Convert to using %pOFn instead of device_node.name
+
+Sergei Shtylyov (3):
+      mmc: renesas_sdhi_internal_dmac: Fix a few typos
+      mmc: renesas_sdhi_internal_dmac: add R8A77970 to whitelist
+      dt-bindings: mmc: tmio_mmc: document Renesas R8A77970 bindings
+
+Srinath Mannam (1):
+      mmc: sdhci-iproc: Add ACPI support
+
+Ulf Hansson (2):
+      Merge branch 'fixes' into next
+      Merge branch 'fixes' into next
+
+Wang Dongsheng (2):
+      sdhci: acpi: add free_slot callback
+      sdhci: acpi: add qcom sdhci host reset quirk fix
+
+Wolfram Sang (3):
+      mmc: use SPDX identifier for Renesas drivers
+      mmc: tmio: more concise clk calculation
+      mmc: tmio: remove now unused variable
+
+Yinbo Zhu (2):
+      mmc: sdhci: add tuning error codes
+      mmc: sdhci-of-esdhc: add erratum A008171 support
+
+Yu Zhao (1):
+      mmc: sdhci-pci-o2micro: Add quirk for O2 Micro dev 0x8620 rev 0x01
+
+YueHaibing (1):
+      mmc: tegra: fix inconsistent IS_ERR and PTR_ERR
+
+jun qian (1):
+      mmc: mxcmmc: replace spin_lock_irqsave with spin_lock in ISR
+
+ .../devicetree/bindings/mmc/arasan,sdhci.txt       |   1 +
+ Documentation/devicetree/bindings/mmc/jz4740.txt   |   1 +
+ Documentation/devicetree/bindings/mmc/mmci.txt     |  11 +
+ Documentation/devicetree/bindings/mmc/mtk-sd.txt   |   2 +
+ .../bindings/mmc/nvidia,tegra20-sdhci.txt          |  72 +++
+ .../devicetree/bindings/mmc/renesas,mmcif.txt      |   4 +-
+ .../devicetree/bindings/mmc/sdhci-sprd.txt         |  41 ++
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  10 +-
+ .../devicetree/bindings/mmc/uniphier-sd.txt        |  55 ++
+ MAINTAINERS                                        |   1 +
+ arch/arm/mach-integrator/integrator_cp.c           |   2 -
+ arch/arm/mach-omap2/hsmmc.h                        |   2 -
+ arch/arm/mach-omap2/pdata-quirks.c                 |   2 -
+ arch/arm/mach-versatile/versatile_dt.c             |   4 -
+ drivers/mmc/core/Kconfig                           |   2 +-
+ drivers/mmc/host/Kconfig                           |  40 +-
+ drivers/mmc/host/Makefile                          |   3 +
+ drivers/mmc/host/dw_mmc-exynos.c                   |  11 +
+ drivers/mmc/host/dw_mmc-hi3798cv200.c              |   8 +
+ drivers/mmc/host/jz4740_mmc.c                      |   5 +-
+ drivers/mmc/host/meson-mx-sdio.c                   |   2 +-
+ drivers/mmc/host/mmci.c                            | 698 ++++++++++++++-------
+ drivers/mmc/host/mmci.h                            | 174 +++--
+ drivers/mmc/host/mmci_qcom_dml.c                   |  17 +-
+ drivers/mmc/host/mmci_stm32_sdmmc.c                | 282 +++++++++
+ drivers/mmc/host/mtk-sd.c                          | 298 +++++++--
+ drivers/mmc/host/mxcmmc.c                          |   5 +-
+ drivers/mmc/host/omap_hsmmc.c                      | 171 +----
+ drivers/mmc/host/renesas_sdhi.h                    |   5 +-
+ drivers/mmc/host/renesas_sdhi_core.c               |  66 +-
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c      |  30 +-
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c           |  15 +-
+ drivers/mmc/host/sdhci-acpi.c                      |  68 ++
+ drivers/mmc/host/sdhci-esdhc.h                     |   1 +
+ drivers/mmc/host/sdhci-iproc.c                     |  59 +-
+ drivers/mmc/host/sdhci-of-arasan.c                 |  96 ++-
+ drivers/mmc/host/sdhci-of-dwcmshc.c                |  39 ++
+ drivers/mmc/host/sdhci-of-esdhc.c                  |  44 +-
+ drivers/mmc/host/sdhci-pci-o2micro.c               |   3 +
+ drivers/mmc/host/sdhci-pltfm.c                     |  68 +-
+ drivers/mmc/host/sdhci-pltfm.h                     |   7 +-
+ drivers/mmc/host/sdhci-pxav3.c                     |  14 -
+ drivers/mmc/host/sdhci-sirf.c                      |  28 +-
+ drivers/mmc/host/sdhci-spear.c                     |  33 +-
+ drivers/mmc/host/sdhci-sprd.c                      | 498 +++++++++++++++
+ drivers/mmc/host/sdhci-tegra.c                     | 675 ++++++++++++++++++--
+ drivers/mmc/host/sdhci-xenon-phy.c                 |   4 +-
+ drivers/mmc/host/sdhci.c                           | 289 ++++++---
+ drivers/mmc/host/sdhci.h                           |  37 +-
+ drivers/mmc/host/sh_mmcif.c                        |   7 +-
+ drivers/mmc/host/sunxi-mmc.c                       |  24 +-
+ drivers/mmc/host/tifm_sd.c                         |   3 +-
+ drivers/mmc/host/tmio_mmc.c                        |  80 ++-
+ drivers/mmc/host/tmio_mmc.h                        |  16 +-
+ drivers/mmc/host/tmio_mmc_core.c                   | 129 +---
+ drivers/mmc/host/uniphier-sd.c                     | 698 +++++++++++++++++++++
+ drivers/mmc/host/usdhi6rol0.c                      |   5 +-
+ include/linux/amba/mmci.h                          |  11 +-
+ include/linux/mfd/tmio.h                           |   7 -
+ include/linux/mmc/host.h                           |   5 +
+ include/linux/platform_data/hsmmc-omap.h           |   3 -
+ include/linux/platform_data/pxa_sdhci.h            |   4 -
+ 62 files changed, 4047 insertions(+), 948 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
+ create mode 100644 Documentation/devicetree/bindings/mmc/uniphier-sd.txt
+ create mode 100644 drivers/mmc/host/mmci_stm32_sdmmc.c
+ create mode 100644 drivers/mmc/host/sdhci-sprd.c
+ create mode 100644 drivers/mmc/host/uniphier-sd.c
