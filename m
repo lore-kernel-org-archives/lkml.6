@@ -2,123 +2,202 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 777C3C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 862A8C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE6F320663
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:39:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE6F320663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dominikbrodowski.net
+	by mail.kernel.org (Postfix) with ESMTP id 1B5A620645
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:49:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hZybMC2L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B5A620645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbeJVW6K (ORCPT
+        id S1728389AbeJVXIE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 18:58:10 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:35118 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727742AbeJVW6K (ORCPT
+        Mon, 22 Oct 2018 19:08:04 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42021 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727857AbeJVXIE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 18:58:10 -0400
-Received: from light.dominikbrodowski.net (isilmar.linta [10.0.0.1])
-        by isilmar-4.linta.de (Postfix) with ESMTPS id DBE9920092F;
-        Mon, 22 Oct 2018 14:39:18 +0000 (UTC)
-Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
-        id 9566D210EF; Mon, 22 Oct 2018 16:39:15 +0200 (CEST)
-Date:   Mon, 22 Oct 2018 16:39:15 +0200
-From:   Dominik Brodowski <linux@dominikbrodowski.net>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-        gregkh@linuxfoundation.org
-Subject: [GIT PULL] pcmcia odd fixes for v4.20-rc1
-Message-ID: <20181022143915.GA387@light.dominikbrodowski.net>
+        Mon, 22 Oct 2018 19:08:04 -0400
+Received: by mail-pl1-f194.google.com with SMTP id c8-v6so19165364plo.9
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 07:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+1KZXHHhqgavw6jNVFM3//RcnjVG71f4baEma6XtfFs=;
+        b=hZybMC2LMgJucbEzD0FSUvnym7PMzsVnvjzB+1Q9B+lafUFxNV2t09ZdG0g8MqN5LD
+         4vbPBY60EQa80BLnwD6cjqMSmX6SVfnHe6Kqb4xKutFDiCRMi2LS6AqUpkdrdqxOjCaL
+         B90OQoNFLvMJOLtmi3ClN/uN1kV8GmiM+37is=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+1KZXHHhqgavw6jNVFM3//RcnjVG71f4baEma6XtfFs=;
+        b=Ev1uTNlICK/ybIil0d7cVuqllcadb2/6Ta7qnjak5Ab1ogPiIkxpuI9fn8eIIUW2ll
+         K8kBZlIpw51taw2b12TLBQA98Y2jaM9TMO45VfNUMVnFLqO0G/0djlSUH2CocWmx2WrL
+         GJkXPtHFCgW/bDUAEE5J3Qgt3SV2FvtYWVBQNvgF4HDLf9O0nxWSChvEaqwl0gF52p0M
+         +JkUZKuS5teNwA2MwhETpN9AM2vt3l/UmxhMpKyypeCMHcp1iddv7hrgtzWeOS/DweM6
+         3MNeSh6DIg3XNI2OBPXxdtUJEZDWcTVYEsYwgYBZeuix4YhcDTumhnu6CCjLqLryOE9l
+         nHKQ==
+X-Gm-Message-State: ABuFfohVc/VoYOfDKAXvmlsSqQQ47419BXBTePogJM3PaBcQVoEQnxud
+        pJzPLa8X7k+WRmLFRrzBIAEtlw==
+X-Google-Smtp-Source: ACcGV632jqkTDMZt4EF5PYWHIc/821qp3JU8sLVc3VLvwZxVR/bWl7bco929OsctcHJPuH2VFO8npg==
+X-Received: by 2002:a17:902:1c3:: with SMTP id b61-v6mr32102828plb.65.1540219752537;
+        Mon, 22 Oct 2018 07:49:12 -0700 (PDT)
+Received: from tfiga.tok.corp.google.com ([2401:fa00:4:4:5b21:5966:1198:d1e9])
+        by smtp.gmail.com with ESMTPSA id s80-v6sm42245429pfa.114.2018.10.22.07.49.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Oct 2018 07:49:11 -0700 (PDT)
+From:   Tomasz Figa <tfiga@chromium.org>
+To:     linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        =?UTF-8?q?Pawe=C5=82=20O=C5=9Bciak?= <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Kamil Debski <kamil@wypas.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jeongtae Park <jtp.park@samsung.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Nicolas Dufresne <nicolas@ndufresne.ca>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Maxime Jourdan <maxi.jourdan@wanadoo.fr>,
+        Tomasz Figa <tfiga@chromium.org>
+Subject: [PATCH v2 0/2] Document memory-to-memory video codec interfaces
+Date:   Mon, 22 Oct 2018 23:48:58 +0900
+Message-Id: <20181022144901.113852-1-tfiga@chromium.org>
+X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+It's been a while, but here is the v2 of the stateful mem2mem codec
+interfaces documentation. Sorry for taking so long time to respin.
 
---PEIAKu/WMn1b1Hv9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This series attempts to add the documentation of what was discussed
+during Media Workshops at LinuxCon Europe 2012 in Barcelona and then
+later Embedded Linux Conference Europe 2014 in Düsseldorf and then
+eventually written down by Pawel Osciak and tweaked a bit by Chrome OS
+video team (but mostly in a cosmetic way or making the document more
+precise), during the several years of Chrome OS using the APIs in
+production.
 
-Linus,
+Note that most, if not all, of the API is already implemented in
+existing mainline drivers, such as s5p-mfc or mtk-vcodec. Intention of
+this series is just to formalize what we already have.
 
-please pull the following changes since commit
-17b57b1883c1285f3d0dc2266e8f79286a7bef38:
+Thanks everyone for the huge amount of useful comments for the RFC and
+v1. Much of the credits should go to Pawel Osciak too, for writing most
+of the original text of the initial RFC.
 
-  Linux 4.19-rc6 (2018-09-30 07:15:35 -0700)
+Changes since v1:
+(https://lore.kernel.org/patchwork/project/lkml/list/?series=360520)
+Decoder:
+ - Removed a note about querying all combinations of OUTPUT and CAPTURE
+   frame sizes, since it would conflict with scaling/composiion support
+   to be added later.
+ - Removed the source change event after setting non-zero width and
+   height on OUTPUT queue, since the change happens as a direct result
+   of a client action.
+ - Moved all the setup steps for CAPTURE queue out of Initialization
+   and Dynamic resolution change into a common sequence called Capture
+   setup, since they were mostly duplicate of each other.
+ - Described steps to allocate buffers for higher resolution than the
+   stream to prepare for future resolution changes.
+ - Described a way to skip the initial header parsing and speculatively
+   configure the CAPTURE queue (for gstreamer/ffmpeg compatibility).
+ - Reordered CAPTURE setup steps so that all the driver queries are done
+   first and only then a reconfiguration may be attempted or skipped.
+ - Described VIDIOC_CREATE_BUFS as another way of allocating buffers.
+ - Made the decoder signal the source change event as soon as the change
+   is detected, to reduce pipeline stalls in case of buffers already
+   good to continue decoding.
+ - Stressed out the fact that a source change may happen even without a
+   change in the coded resolution.
+ - Described querying pixel aspect ratio using VIDIOC_CROPCAP.
+ - Extended documentation of VIDIOC_DECODER_CMD and VIDIOC_G/S/TRY_FMT
+   to more precisely describe the behavior of mem2mem decoders.
+ - Clarified that 0 width and height are allowed for OUTPUT side of
+   mem2mem decoders in the documentation of the v4l2_pix_fmt struct.
 
-which are available in the Git repository at:
+Encoder:
+ - Removed width and height from CAPTURE (coded) format, since the coded
+   resolution of the stream is an internal detail of the encoded stream.
+ - Made the VIDIOC_S_FMT on OUTPUT mandatory, since the default format
+   normally does not make sense (even if technically valid).
+ - Changed the V4L2_SEL_TGT_CROP_BOUNDS and V4L2_SEL_TGT_CROP_DEFAULT
+   selection targets to be equal to the full source frame to simplify
+   internal handling in drivers for simple hardware.
+ - Changed the V4L2_SEL_TGT_COMPOSE_DEFAULT selection target to be equal
+   to |crop width|x|crop height|@(0,0) to simplify internal handling in
+   drivers for simple hardware.
+ - Removed V4L2_SEL_TGT_COMPOSE_PADDED, since the encoder does not write
+   to the raw buffers.
+ - Extended documentation of VIDIOC_ENCODER_CMD to more precisely
+   describe the behavior of mem2mem encoders.
+ - Clarified that 0 width and height are allowed for CAPTURE side of
+   mem2mem encoders in the documentation of the v4l2_pix_fmt struct.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux.git pcmcia-next
+General:
+ - Clarified that the Drain sequence valid only if both queues are
+   streaming and stopping any of the queues would abort it, since there
+   is nothing to drain, if OUTPUT is stopped and there is no way to
+   signal the completion if CAPTURE is stopped.
+ - Clarified that VIDIOC_STREAMON on any of the queues would resume the
+   codec from stopped state, to be consistent with the documentation of
+   VIDIOC_ENCODER/DECODER_CMD.
+ - Documented the relation between timestamps of OUTPUT and CAPTURE
+   buffers and how special cases of non-1:1 relation are handled.
+ - Added missing sizeimage to bitstream format operations and removed
+   the mistaken mentions from descriptions of respective REQBUFS calls.
+ - Removed the Pause sections, since there is no notion of pause for
+   mem2mem devices.
+ - Added state machine diagrams.
+ - Merged both glossaries into one in the decoder document and a
+   reference to it in the encoder document.
+ - Added missing terms to the glossary.
+ - Added "Stateful" to the interface names.
+ - Reworded the text to be more userspace-centric.
+ - A number of other readability improvements suggested in review comments.
 
-up to 95691e3eddc41da2d1cd3cca51fecdfb46bd85bc:
+For changes since RFC see the v1:
+https://lore.kernel.org/patchwork/project/lkml/list/?series=360520
 
-  pcmcia: Implement CLKRUN protocol disabling for Ricoh bridges (2018-10-01 12:17:03 +0200)
+Tomasz Figa (2):
+  media: docs-rst: Document memory-to-memory video decoder interface
+  media: docs-rst: Document memory-to-memory video encoder interface
 
-These are just a few odd fixes and improvements to the PCMCIA core
-and to a few PCMCIA device drivers.
+ Documentation/media/uapi/v4l/dev-decoder.rst  | 1082 +++++++++++++++++
+ Documentation/media/uapi/v4l/dev-encoder.rst  |  579 +++++++++
+ Documentation/media/uapi/v4l/devices.rst      |    2 +
+ Documentation/media/uapi/v4l/pixfmt-v4l2.rst  |   10 +
+ Documentation/media/uapi/v4l/v4l2.rst         |   12 +-
+ .../media/uapi/v4l/vidioc-decoder-cmd.rst     |   40 +-
+ .../media/uapi/v4l/vidioc-encoder-cmd.rst     |   38 +-
+ Documentation/media/uapi/v4l/vidioc-g-fmt.rst |   14 +
+ 8 files changed, 1747 insertions(+), 30 deletions(-)
+ create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
+ create mode 100644 Documentation/media/uapi/v4l/dev-encoder.rst
 
-Thanks,
-	Dominik
+-- 
+2.19.1.568.g152ad8e336-goog
 
-----------------------------------------------------------------
-Colin Ian King (1):
-      pcmcia: remove KERN_INFO level from debug message
-
-Jia-Ju Bai (2):
-      char: pcmcia: cm4000_cs: Replace mdelay with usleep_range in set_protocol
-      pcmcia: pcmcia_resource: Replace mdelay() with msleep()
-
-Maciej S. Szmigiero (1):
-      pcmcia: Implement CLKRUN protocol disabling for Ricoh bridges
-
-Vaishali Thakkar (1):
-      pcmcia: Use module_pcmcia_driver for scsi drivers
-
-Zhouyang Jia (1):
-      pcmcia: add error handling for pcmcia_enable_device in qlogic_stub
-
- drivers/char/pcmcia/cm4000_cs.c    |  4 ++--
- drivers/char/pcmcia/cm4040_cs.c    |  2 +-
- drivers/pcmcia/pcmcia_resource.c   |  4 ++--
- drivers/pcmcia/ricoh.h             | 35 +++++++++++++++++++++++++++++++++++
- drivers/pcmcia/yenta_socket.c      |  3 ++-
- drivers/scsi/pcmcia/aha152x_stub.c | 14 +-------------
- drivers/scsi/pcmcia/nsp_cs.c       | 15 +--------------
- drivers/scsi/pcmcia/nsp_cs.h       |  4 ----
- drivers/scsi/pcmcia/qlogic_stub.c  | 19 ++++++-------------
- drivers/scsi/pcmcia/sym53c500_cs.c | 16 +---------------
- 10 files changed, 51 insertions(+), 65 deletions(-)
-
---PEIAKu/WMn1b1Hv9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEmgXaWKgmjrvkPhLCmpdgiUyNow0FAlvN4RAACgkQmpdgiUyN
-ow1t+RAApMvwnU7uwIFlYDrCiBXZECN5RsBgR0QQPkG7Qc812hE7/oxHWt2VZceJ
-JMkrYv/flk9ntXrIvdbOxHuc/iOyEweMXP445J8QUOQXr79Fi6Ju3fMOkYxQ1cK8
-e71lKB/m1v4Uf1qKsVoNZ9Kd6QHlcy6iBt3csyRjb8QE8+uGZA0AmKr9bqDT6zDB
-0Wg3Pj3l+EQnn58c0zaHtgBwGNrC9wfcSid1WIqV4Wv3wHEjKLtNpin6JcUy1Pdy
-Sz6APA828ErpN6lxJ3LP2jo5lJBAqRLP12s3ZHoliYPr/r6TqTP39jF9hOu8cNWW
-OWawMEALCo21JFl0S0EZVw+VyNVaB0sFZpDmzTNHP3fWfPien/ovUoTdWVy2fl4R
-z/HiMBDI4hpt5HV44kGj6oFHjdcHY0eyEhCpL54bjJWbuttBKhrALgnft2k9jtDs
-Cq+eF422VAUwAp2CVFQBWVT39ERxsgFea1naRLdzp/pnirrCHnzTZZk5alMzRu/2
-wHNPTGM5sN+07kretSLVDdlqJFIC/IchXppv3lib65SpqLvz64ot3sNuVOrChpY0
-bp4VVfP+qAdO//Fnf6d7+FevFgS5xDbDNNjxmB/W+xoQIKYY/R6oM/hj0+s0KJ77
-jVvtWpv2r/okshMSck3kil+ggkxnjmLdri67EKaOi6dPF1lvot0=
-=Q7jH
------END PGP SIGNATURE-----
-
---PEIAKu/WMn1b1Hv9--
