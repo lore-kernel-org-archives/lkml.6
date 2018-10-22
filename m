@@ -2,159 +2,154 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A803BC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:56:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 618FFC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8677E205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:57:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="0AiVyJMl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8677E205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+	by mail.kernel.org (Postfix) with ESMTP id 31B11205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:58:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31B11205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728930AbeJWCQ2 (ORCPT
+        id S1729062AbeJWCSQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 22:16:28 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36403 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728876AbeJWCQ2 (ORCPT
+        Mon, 22 Oct 2018 22:18:16 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:33870 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728815AbeJWCSQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 22:16:28 -0400
-Received: by mail-qt1-f194.google.com with SMTP id u34-v6so47354588qth.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 10:56:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=my5wh6X5Z2sj/VWBRX7uC0ClqBKdVPmhq2qlgotFP0U=;
-        b=0AiVyJMlWD2ykObNuH0HBjsZhep/bkFPv9/FWWz8mtuDFhtkqPOWAdpZD5pjUnyQ1I
-         /zLuH2UQS2KSMAH6YTbZaNtQnV0ffkEAGsLFnjfQSVk6KGrIOfbSnKsw31mXbxuhdh+2
-         A+lMVxVjANuTYyF2Jo1TBwzCovT64sYO/WXSOB/sxCRc60t8Hak5vCdLrSmq1yo8IlZ2
-         hybMy+NwIQXXYHcQKPyZy4CJkxQdRqbQ7DOfd4PWNU4hRnCo28V4lftCmupIq5ok/lzP
-         I18ApYV/U8HaFyYx3Srq4KJ9et7x50O9bxYJwdO2EmIFhSOUWSAr2JB0RYiylhpGEhvU
-         +ICA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=my5wh6X5Z2sj/VWBRX7uC0ClqBKdVPmhq2qlgotFP0U=;
-        b=nWrKRV86pawupkucOr3pCIZFz/VQadPzIdPOT0Mdp/xmpvY2N1zrhN7YgdWPNQwHRE
-         TPhPDjWorLPdMp26l3wbqtxcG5GvDdUOCTkXTalnTHAvlZEfRu5lAWqXHWIzqC5nLlx7
-         5U35aw4fdccPzUbvZ2gR1ybc25kVcx2dbqq+7baFXzCcfTvKgr/UK2EUdoBO9r5Oah/e
-         LXdS7FVhiLtxsTdj/gKxBG30Ap3YE6/P6hbAabHYmp4KrmMuttzh+GSu2xHfv8HUElk0
-         14YqmOUVSXKLXMoW35OXr6Wac6X6QwMl5F8DOYyhadXGoiqGnLNZT1VCt28rwcqq20cw
-         eUvA==
-X-Gm-Message-State: AGRZ1gIEoPu18+zggOEoNTALp+EpvskOPoPyY/BVEqZ6Urjyryjr5wDi
-        lX2jG9OWp+w3Jh8FXSBYWp8neA==
-X-Google-Smtp-Source: AJdET5c5EJ+ZK6wu5+7Swvfd47mtgSadeYdDzEHUwmbsoz6W86X7IspSq6Nl3AS2Ts/Csx0GjwmJjw==
-X-Received: by 2002:a0c:f7c8:: with SMTP id f8mr6000977qvo.154.1540231016322;
-        Mon, 22 Oct 2018 10:56:56 -0700 (PDT)
-Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id 70-v6sm7352212qkf.35.2018.10.22.10.56.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Oct 2018 10:56:55 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 13:56:54 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
-        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, tj@kernel.org,
-        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, riel@fb.com, linux-mm@kvack.org
-Subject: Re: [PATCH 7/7] btrfs: drop mmap_sem in mkwrite for btrfs
-Message-ID: <20181022175652.ase7u23uzizqtlao@destiny>
-References: <20181018202318.9131-1-josef@toxicpanda.com>
- <20181018202318.9131-8-josef@toxicpanda.com>
- <20181019034847.GM18822@dastard>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181019034847.GM18822@dastard>
-User-Agent: NeoMutt/20180716
+        Mon, 22 Oct 2018 22:18:16 -0400
+Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 848E51466B51B;
+        Mon, 22 Oct 2018 10:58:44 -0700 (PDT)
+Date:   Mon, 22 Oct 2018 10:58:42 -0700 (PDT)
+Message-Id: <20181022.105842.1364583912952511294.davem@davemloft.net>
+To:     jolsa@redhat.com
+Cc:     dzickus@redhat.com, acme@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: perf overlapping maps...
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181022161613.GF2945@krava>
+References: <20181019.214401.2045294780943844999.davem@davemloft.net>
+        <20181022140738.jvutwmstgm2f65et@redhat.com>
+        <20181022161613.GF2945@krava>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 22 Oct 2018 10:58:44 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 02:48:47PM +1100, Dave Chinner wrote:
-> On Thu, Oct 18, 2018 at 04:23:18PM -0400, Josef Bacik wrote:
-> > ->page_mkwrite is extremely expensive in btrfs.  We have to reserve
-> > space, which can take 6 lifetimes, and we could possibly have to wait on
-> > writeback on the page, another several lifetimes.  To avoid this simply
-> > drop the mmap_sem if we didn't have the cached page and do all of our
-> > work and return the appropriate retry error.  If we have the cached page
-> > we know we did all the right things to set this page up and we can just
-> > carry on.
-> > 
-> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> > ---
-> >  fs/btrfs/inode.c   | 41 +++++++++++++++++++++++++++++++++++++++--
-> >  include/linux/mm.h | 14 ++++++++++++++
-> >  mm/filemap.c       |  3 ++-
-> >  3 files changed, 55 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> > index 3ea5339603cf..6b723d29bc0c 100644
-> > --- a/fs/btrfs/inode.c
-> > +++ b/fs/btrfs/inode.c
-> > @@ -8809,7 +8809,9 @@ static void btrfs_invalidatepage(struct page *page, unsigned int offset,
-> >  vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
-> >  {
-> >  	struct page *page = vmf->page;
-> > -	struct inode *inode = file_inode(vmf->vma->vm_file);
-> > +	struct file *file = vmf->vma->vm_file, *fpin;
-> > +	struct mm_struct *mm = vmf->vma->vm_mm;
-> > +	struct inode *inode = file_inode(file);
-> >  	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
-> >  	struct extent_io_tree *io_tree = &BTRFS_I(inode)->io_tree;
-> >  	struct btrfs_ordered_extent *ordered;
-> > @@ -8828,6 +8830,29 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
-> >  
-> >  	reserved_space = PAGE_SIZE;
-> >  
-> > +	/*
-> > +	 * We have our cached page from a previous mkwrite, check it to make
-> > +	 * sure it's still dirty and our file size matches when we ran mkwrite
-> > +	 * the last time.  If everything is OK then return VM_FAULT_LOCKED,
-> > +	 * otherwise do the mkwrite again.
-> > +	 */
-> > +	if (vmf->flags & FAULT_FLAG_USED_CACHED) {
-> > +		lock_page(page);
-> > +		if (vmf->cached_size == i_size_read(inode) &&
-> > +		    PageDirty(page))
-> > +			return VM_FAULT_LOCKED;
-> > +		unlock_page(page);
-> > +	}
-> 
-> What does the file size have to do with whether we can use the
-> initialised page or not? The file can be extended by other
-> data operations (like write()) while a page fault is in progress,
-> so I'm not sure how or why this check makes any sense.
-> 
-> I also don't see anything btrfs specific here, so....
-> 
+From: Jiri Olsa <jolsa@redhat.com>
+Date: Mon, 22 Oct 2018 18:16:13 +0200
 
-First thanks for the review, I've gone through and addressed everything you
-mentioned, however this one is subtle.
+> I think the fix might actualy speed things up,
+> but yes, there could be other report regressions
 
-The problem is the vmf->vma->vm_file access.  Once we drop the mmap_sem we can
-no longer safely go into vmf->vma, so I'd have to fix all the page_mkwrite()'s
-to not touch vma, and add a vmf->fpin instead to mess with. Plus I didn't want
-to miss some subtlety in other fs's page_mkwrite()'s and inavertedly break them.
-If I break btrfs I can fix it, I'm not as good with xfs.
+I was about to say the same thing, it could actually speed things up.
+In the best case, less work is done (clone avoided, and overlapping
+maps don't have to be handled).  In the worst case, nothing changes.
 
-If you want this in the generic layer and not in the fs I can go back and add a
-vmf->fpin and vmf->mm, and then fix up all the mkwrite()'s to use that instead
-of vmf->vma.  I think that's the only things we care about so it wouldn't be
-hard.  Does that sound reasonable to you?
+Here is what I've been using, to give you an idea.  There may be some
+file offset fuzz in these patches.
 
-Also the size thing was just a paranoid way to make sure everything had stayed
-exactly the same, but you're right, I'll just keep it consistent with all of our
-other "is this page ok" checks.  Thanks,
-
-Josef
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index 0cd42150f712..e5a442313f9d 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -308,6 +308,7 @@ static int perf_event__synthesize_fork(struct perf_tool *tool,
+ 	event->fork.pid  = tgid;
+ 	event->fork.tid  = pid;
+ 	event->fork.header.type = PERF_RECORD_FORK;
++	event->fork.header.misc = PERF_RECORD_MISC_COMM_EXEC;
+ 
+ 	event->fork.header.size = (sizeof(event->fork) + machine->id_hdr_size);
+ 
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 111ae858cbcb..dc06f1fc2ed5 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -1708,5 +1720,6 @@ int machine__process_fork_event(struct machine *machine, union perf_event *event
+ 	struct thread *parent = machine__findnew_thread(machine,
+ 							event->fork.ppid,
+ 							event->fork.ptid);
++	int do_maps_clone = 1;
+ 	int err = 0;
+ 
+@@ -1737,8 +1754,11 @@ int machine__process_fork_event(struct machine *machine, union perf_event *event
+ 	thread = machine__findnew_thread(machine, event->fork.pid,
+ 					 event->fork.tid);
+ 
++	if (event->fork.header.misc & PERF_RECORD_MISC_COMM_EXEC)
++		do_maps_clone = 0;
++
+ 	if (thread == NULL || parent == NULL ||
+-	    thread__fork(thread, parent, sample->time) < 0) {
++	    thread__fork(thread, parent, sample->time, do_maps_clone) < 0) {
+ 		dump_printf("problem processing PERF_RECORD_FORK, skipping event.\n");
+ 		err = -1;
+ 	}
+diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
+index 2048d393ece6..7f2858edf221 100644
+--- a/tools/perf/util/thread.c
++++ b/tools/perf/util/thread.c
+@@ -330,7 +330,8 @@ static int thread__prepare_access(struct thread *thread)
+ }
+ 
+ static int thread__clone_map_groups(struct thread *thread,
+-				    struct thread *parent)
++				    struct thread *parent,
++				    int do_maps_clone)
+ {
+ 	/* This is new thread, we share map groups for process. */
+ 	if (thread->pid_ == parent->pid_)
+@@ -341,15 +342,14 @@ static int thread__clone_map_groups(struct thread *thread,
+ 			 thread->pid_, thread->tid, parent->pid_, parent->tid);
+ 		return 0;
+ 	}
+-
+ 	/* But this one is new process, copy maps. */
+-	if (map_groups__clone(thread, parent->mg) < 0)
++	if (do_maps_clone &&
++	    map_groups__clone(thread, parent->mg) < 0)
+ 		return -ENOMEM;
+-
+ 	return 0;
+ }
+ 
+-int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp)
++int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp, int do_maps_clone)
+ {
+ 	if (parent->comm_set) {
+ 		const char *comm = thread__comm_str(parent);
+@@ -362,7 +362,7 @@ int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp)
+ 	}
+ 
+ 	thread->ppid = parent->tid;
+-	return thread__clone_map_groups(thread, parent);
++	return thread__clone_map_groups(thread, parent, do_maps_clone);
+ }
+ 
+ void thread__find_cpumode_addr_location(struct thread *thread, u64 addr,
+diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
+index 07606aa6998d..8e4ca1ede01f 100644
+--- a/tools/perf/util/thread.h
++++ b/tools/perf/util/thread.h
+@@ -87,7 +87,7 @@ struct comm *thread__comm(const struct thread *thread);
+ struct comm *thread__exec_comm(const struct thread *thread);
+ const char *thread__comm_str(const struct thread *thread);
+ int thread__insert_map(struct thread *thread, struct map *map);
+-int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp);
++int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp, int do_maps_clone);
+ size_t thread__fprintf(struct thread *thread, FILE *fp);
+ 
+ struct thread *thread__main_thread(struct machine *machine, struct thread *thread);
