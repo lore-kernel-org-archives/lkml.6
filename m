@@ -2,244 +2,145 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C73D1C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D388C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:10:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8296120658
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:09:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5555C20853
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:10:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="VKXdzszu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8296120658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHm5LSoV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5555C20853
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbeJVS1Y (ORCPT
+        id S1728474AbeJVS1v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:27:24 -0400
-Received: from mail.kdab.com ([176.9.126.58]:60187 "EHLO mail.kdab.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727554AbeJVS1X (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:27:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
- content-type:content-type:mime-version:references:in-reply-to
- :organization:message-id:date:date:subject:subject:from:from; s=
- dkim; t=1540202966; x=1541066967; bh=XK+0f2NthNGHWAL093QGqGT71nX
- ea1FsUufq2tPozew=; b=VKXdzszuQBTE2mU0fvzo9aTBMCIxt09l7cC2MAgq5sP
- oA7wwxV+rw6c6VzqR3KxgBlfG4QeFPdFvggIlrG0euClFCPNz9VCikPH1ReJR0ig
- H5s1P39szlFOSI7D+xVZ61DwejO3LJ2ywsDHt9uRKsjVYLCwlO4DRVNhLYoelTE8
- =
-X-Virus-Scanned: amavisd-new at kdab.com
-From:   Milian Wolff <milian.wolff@kdab.com>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, Linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 2/2] perf script: flush output stream after events in
- verbose mode
-Date:   Mon, 22 Oct 2018 12:09:22 +0200
-Message-ID: <4444017.LnbBPIbh24@agathebauer>
-Organization: KDAB
-In-Reply-To: <20181022094317.GG2452@krava>
-References: <20181021191424.16183-1-milian.wolff@kdab.com>
- <20181021191424.16183-2-milian.wolff@kdab.com> <20181022094317.GG2452@krava>
+        Mon, 22 Oct 2018 14:27:51 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40831 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727045AbeJVS1u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:27:50 -0400
+Received: by mail-pf1-f193.google.com with SMTP id g21-v6so12656899pfi.7;
+        Mon, 22 Oct 2018 03:09:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QM4Yu+1p2haCXP5W9H76haVjc7F3evCtWrd2v/xitOw=;
+        b=CHm5LSoVjAZjGaGgMuBuNh4+3ZpPpDoZQbdQjesuP7zkg519prfK7r9IOpGbaMM0h8
+         oB0Qu7rxHy6XEccKfV6D3sAlLvHqCDlDB42aRDlPBcXLCb76QPyNtq+Rp5JbYDwfhAmG
+         ioV3DTSTy/eyTTj82EJa83Vl3rXU4ogjqdEzrfZeP5wR2q7PbT31NrpZ4+gBRgZsvUMQ
+         qo09zwztoKi/N7xrvk6wtd1krCUnLA7SRB+zx98oPshqInmqdnoKMcTjyggj5mpd9hIA
+         ac2ox4xC12j/c+cK98YZRwXvb2y3qLfHNY7yvO7YEJ/daof5Cn3e2dlJjoFmZdteMRzm
+         NGFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QM4Yu+1p2haCXP5W9H76haVjc7F3evCtWrd2v/xitOw=;
+        b=mV1m/jm/1EYQ7+eno7HELe7+FuPuAd3cBd/HzYLP4CtfiuGYqL2RJhA25EMSLlN013
+         CBiVhYfzA/zoKJSjSUqiFgtxAm22FG4GvvhfCnMlFgFNpbN7XhSVvfTpD24Yo2lJbTrJ
+         j2IEjimX3sTTrKrRq2hrS4ulOGXRkTykVOH/DfRJBWFwJD2XRDf2jC9ocbPxZJj06MTQ
+         lzvNvXgC0Z+DL8Bwid5+u09qsx7Xnd4psQ8MiC8YTiVPokssegviIo8Ivk6zE3G7ksXJ
+         eiw29xVsyGQHCb1xFL6MckuxbvOaQAB0xV+azlnzgdxvQz0H5x343N2Y09uoLaJjftlR
+         FJrg==
+X-Gm-Message-State: ABuFfogtu59Y+UpC2ftOIxwHzNmcK1sPc+Gy5sZHe+e0hhqCMdELgLIX
+        LWw2yZxqOf2Q3P7ko6evejY=
+X-Google-Smtp-Source: ACcGV61A6EmDBf+Y4gjVCzE5LmzhPk6LP3+flUTZETHNJP9DYrK8jQSVKrp8aVf1ZnPpT1Vxo4htaQ==
+X-Received: by 2002:a62:de05:: with SMTP id h5-v6mr45339377pfg.258.1540202997589;
+        Mon, 22 Oct 2018 03:09:57 -0700 (PDT)
+Received: from localhost ([39.7.58.252])
+        by smtp.gmail.com with ESMTPSA id j25-v6sm36021730pff.116.2018.10.22.03.09.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 22 Oct 2018 03:09:55 -0700 (PDT)
+Date:   Mon, 22 Oct 2018 19:09:52 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Daniel Wang <wonderfly@google.com>
+Cc:     sergey.senozhatsky.work@gmail.com, Petr Mladek <pmladek@suse.com>,
+        rostedt@goodmis.org, stable@vger.kernel.org,
+        Alexander.Levin@microsoft.com, akpm@linux-foundation.org,
+        byungchul.park@lge.com, dave.hansen@intel.com, hannes@cmpxchg.org,
+        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mel Gorman <mgorman@suse.de>, mhocko@kernel.org, pavel@ucw.cz,
+        penguin-kernel@i-love.sakura.ne.jp, peterz@infradead.org,
+        tj@kernel.org, torvalds@linux-foundation.org, vbabka@suse.cz,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Peter Feiner <pfeiner@google.com>
+Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
+ owner and waiter logic to load balance console writes"
+Message-ID: <20181022100952.GA1147@jagdpanzerIV>
+References: <CAJmjG2-RrG5XKeW1-+rN3C=F6bZ-L3=YKhCiQ_muENDTzm_Ofg@mail.gmail.com>
+ <20181002212327.7aab0b79@vmware.local.home>
+ <20181003091400.rgdjpjeaoinnrysx@pathway.suse.cz>
+ <CAJmjG2_4JFA=qL-d2Pb9umUEcPt9h13w-g40JQMbdKsZTRSZww@mail.gmail.com>
+ <20181003133704.43a58cf5@gandalf.local.home>
+ <CAJmjG291w2ZPRiAevSzxGNcuR6vTuqyk6z4SG3xRsbaQh5U3zQ@mail.gmail.com>
+ <20181004074442.GA12879@jagdpanzerIV>
+ <20181004083609.kcziz2ynwi2w7lcm@pathway.suse.cz>
+ <20181004085515.GC12879@jagdpanzerIV>
+ <CAJmjG2-e6f6p=pE5uDECMc=W=81SYyGCmoabrC1ePXwL5DFdSw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3629398.2PHXbrJRRo";
- micalg="sha256"; protocol="application/pkcs7-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJmjG2-e6f6p=pE5uDECMc=W=81SYyGCmoabrC1ePXwL5DFdSw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart3629398.2PHXbrJRRo
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-
-On Montag, 22. Oktober 2018 11:43:17 CEST Jiri Olsa wrote:
-> On Sun, Oct 21, 2018 at 09:14:24PM +0200, Milian Wolff wrote:
-> > When the perf script output is written to a terminal stream,
-> > the normal output of `perf script` would get buffered, but its
-> > debug output would be written directly. This made it quite hard
-> > to figure out where a given debug output is coming from. We can
-> > improve on this by flushing the output buffer after processing an
-> > event. To see the value, compare the following output for a
-> > `perf script -v` run:
-> > 
-> > Before this patch:
-> > ```
-> > unwind: reg 16, val 7faf7dfdc000
-> > unwind: reg 7, val 7ffc80811e30
-> > unwind: find_proc_info dso /usr/lib/ld-2.28.so
-> > unwind: reg 6, val 0
-> > unwind: _start:ip = 0x7faf7dfdc000 (0x2000)
-> > unwind: reg 16, val 7faf7dfdc000
-> > unwind: reg 7, val 7ffc80811e30
-> > unwind: find_proc_info dso /usr/lib/ld-2.28.so
-> > unwind: reg 6, val 0
-> > unwind: _start:ip = 0x7faf7dfdc000 (0x2000)
-> > unwind: reg 16, val 7faf7dfdc000
-> > unwind: reg 7, val 7ffc80811e30
-> > unwind: find_proc_info dso /usr/lib/ld-2.28.so
-> > unwind: reg 6, val 0
-> > unwind: _start:ip = 0x7faf7dfdc000 (0x2000)
-> > unwind: reg 16, val 7faf7dfdc000
-> > unwind: reg 7, val 7ffc80811e30
-> > ... lots and lots of verbose debug output
-> > 
-> > cpp-inlining 24617 90229.122036534:          1 cycles:uppp:
-> >             7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
-> > 
-> > cpp-inlining 24617 90229.122043974:          1 cycles:uppp:
-> >             7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
-> > 
-> > ...
-> > ```
-> > 
-> > After this patch:
-> > ```
-> > ...
-> > unwind: reg 16, val 7faf7dfdc000
-> > unwind: reg 7, val 7ffc80811e30
-> > unwind: find_proc_info dso /usr/lib/ld-2.28.so
-> > unwind: reg 6, val 0
-> > unwind: _start:ip = 0x7faf7dfdc000 (0x2000)
-> > 
-> > cpp-inlining 24617 90229.122036534:          1 cycles:uppp:
-> >             7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
-> > 
-> > unwind: reg 16, val 7faf7dfdc000
-> > unwind: reg 7, val 7ffc80811e30
-> > unwind: find_proc_info dso /usr/lib/ld-2.28.so
-> > unwind: reg 6, val 0
-> > unwind: _start:ip = 0x7faf7dfdc000 (0x2000)
-> > 
-> > cpp-inlining 24617 90229.122043974:          1 cycles:uppp:
-> >             7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
-> > 
-> > ...
-> > ```
-> > 
-> > This new output format makes it much easier to use perf script
-> > output for debugging purposes, e.g. to investigate broken dwarf
-> > unwinding.
+On (10/21/18 11:09), Daniel Wang wrote:
 > 
-> yep, I plan to check on this ;-)
-> 
-> > Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
-> > Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> > ---
-> > 
-> >  tools/perf/builtin-script.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> > index bd468b90801b..ca09b7d2adb7 100644
-> > --- a/tools/perf/builtin-script.c
-> > +++ b/tools/perf/builtin-script.c
-> > @@ -1737,6 +1737,9 @@ static void process_event(struct perf_script
-> > *script,
-> > 
-> >  	if (PRINT_FIELD(METRIC))
-> >  	
-> >  		perf_sample__fprint_metric(script, thread, evsel, sample, fp);
-> > 
-> > +
-> > +	if (verbose)
-> > +		fflush(fp);
-> 
-> should we call fflush(NULL) to dump all the streams?
-> 
-> the verbose goes to stderr and fp seems to be stdout byt default
+> Just got back from vacation. Thanks for the continued discussion. Just so
+> I understand the current state. Looks like we've got a pretty good explanation
+> of what's going on (though not completely sure), and backporting Steven's
+> patches is still the way to go?
 
-stderr isn't buffered, so we don't need to flush it. So personally, I don't 
-see a need to dump all streams - fp should be enough? Can you maybe explain 
-where it would be required to flush more buffers?
+Up to -stable maintainers.
 
-Thanks
+Note, with or without Steven's patch, the non-reentrable consoles are
+still non-reentrable, so the deadlock is still there:
 
--- 
-Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
-KDAB (Deutschland) GmbH, a KDAB Group company
-Tel: +49-30-521325470
-KDAB - The Qt, C++ and OpenGL Experts
---nextPart3629398.2PHXbrJRRo
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDEIw
-ggXmMIIDzqADAgECAhBqm+E4O/8ra58B1dm4p1JWMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9u
-IEF1dGhvcml0eTAeFw0xMzAxMTAwMDAwMDBaFw0yODAxMDkyMzU5NTlaMIGXMQswCQYDVQQGEwJH
-QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQK
-ExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGlj
-YXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
-AL6znlesKHZ1QBbHOAOY08YYdiFQ8yV5C0y1oNF9Olg+nKcxLqf2NHbZhGra0D00SOTq9bus3/mx
-gUsg/Wh/eXQ0pnp8tZ8XZWAnlyKMpjL+qUByRjXCA6RQyDMqVaVUkbIr5SU0RDX/kSsKwer3H1pT
-/HUrBN0X8sKtPTdGX8XAWt/VdMLBrZBlgvnkCos+KQWWCo63OTTqRvaq8aWccm+KOMjTcE6s2mj6
-RkalweyDI7X+7U5lNo6jzC8RTXtVV4/Vwdax720YpMPJQaDaElmOupyTf1Qib+cpukNJnQmwygjD
-8m046DQkLnpXNCAGjuJy1F5NATksUsbfJAr7FLUCAwEAAaOCATwwggE4MB8GA1UdIwQYMBaAFLuv
-fgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSCr2yM+MX+lmF86B89K3FIXsSLwDAOBgNVHQ8B
-Af8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADARBgNVHSAECjAIMAYGBFUdIAAwTAYDVR0fBEUw
-QzBBoD+gPYY7aHR0cDovL2NybC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2VydGlmaWNhdGlvbkF1
-dGhvcml0eS5jcmwwcQYIKwYBBQUHAQEEZTBjMDsGCCsGAQUFBzAChi9odHRwOi8vY3J0LmNvbW9k
-b2NhLmNvbS9DT01PRE9SU0FBZGRUcnVzdENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3Au
-Y29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQB4XLKBKDRPPO5fVs6fl1bsj6JrF/bz9kkI
-BtTYLzXN30D+03Hj6OxCDBEaIeNmsBhrJmuubvyE7HtoSmR809AgcYboW+rcTNZ/8u/Hv+GTrNI/
-AhqX2/kiQNxmgUPt/eJPs92Qclj0HnVyy9TnSvGkSDU7I5Px+TbO+88G4zipA2psZaWeEykgzClZ
-lPz1FjTCkk77ZXp5cQYYexE6zeeN4/0OqqoAloFrjAF4o50YJafX8mnahjp3I2Y2mkjhk0xQfhNq
-bzlLWPoT3m7j7U26u7zg6swjOq8hITYc3/np5tM5aVyu6t99p17bTbY7+1RTWBviN9YJzK8HxzOb
-XYWBf/L+VGOYNsQDTxAk0Hbvb1j6KjUhg7fO294F29QIhhmiNOr84JHoy+fNLpfvYc/Q9EtFOI5I
-SYgOxLk3nD/whbUe9rmEQXLp8MB933Ij474gwwCPUpwv9mj2PMnXoc7mbrS22XUSeTwxCTP9bcmU
-dp4jmIoWfhQm7X9w/Zgddg+JZ/YnIHOwsGsaTUgj7fIvxqith7DoJC91WJ8Lce3CVJqb1XWeKIJ8
-4F7YLXZN0oa7TktYgDdmQVxYkZo1c5noaDKH9Oq9cbm/vOYRUM1cWcef20Wkyk5S/GFyyPJwG0fR
-1nRas3DqAf4cXxMiEKcff7PNa4M3RGTqH0pWR8p6EjCCBlQwggU8oAMCAQICEAf6KCF9+1doL2oE
-OTPysLwwDQYJKoZIhvcNAQELBQAwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1h
-bmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0w
-OwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWls
-IENBMB4XDTE3MDUyMzAwMDAwMFoXDTIwMDUyMjIzNTk1OVowggFZMQswCQYDVQQGEwJTRTEPMA0G
-A1UEERMGNjgzIDMxMRIwEAYDVQQIEwlWYWVybWxhbmQxEDAOBgNVBAcTB0hhZ2ZvcnMxGDAWBgNV
-BAkTD05vcnJpbmdzIHZhZWcgMjEPMA0GA1UEEhMGQm94IDMwMSYwJAYDVQQKDB1LbGFyw6RsdmRh
-bGVucyBEYXRha29uc3VsdCBBQjEdMBsGA1UECxMUQSBLREFCIEdyb3VwIENvbXBhbnkxQzBBBgNV
-BAsMOklzc3VlZCB0aHJvdWdoIEtsYXLDpGx2ZGFsZW5zIERhdGFrb25zdWx0IEFCIEUtUEtJIE1h
-bmFnZXIxHzAdBgNVBAsTFkNvcnBvcmF0ZSBTZWN1cmUgRW1haWwxFTATBgNVBAMTDE1pbGlhbiBX
-b2xmZjEkMCIGCSqGSIb3DQEJARYVbWlsaWFuLndvbGZmQGtkYWIuY29tMIIBIjANBgkqhkiG9w0B
-AQEFAAOCAQ8AMIIBCgKCAQEAxrzfNBVvRbiAknuTBXuQnNm9sLIFLo0vbPB6kswk78A3tA++Zn5c
-lQUHhGlQq1cdYxagnUpqwvG3Sod15mPSOLkAPf/mabLN7p+lFbRaUP+97ZkTZtvb4BCC3osIEFI4
-G393OSFWqc2qmIPE/SwSASbAA20Fcaa2M6P1lhOk/ttUh2jIurTPF0wUycIA7lBddrOgaOA8e2m6
-iLTNHtlrfRbBaUX91D5ebY+UWmIjXSQ9+CtutMzBkwnF0rZKririvOkklg9VzEGNQVHrQfDF2s/U
-pOtmtuVSwElauGT/KALyCFuIrYC1pmaKH8S1xODJqiRaf6jH8E+KQzKjyM/ErwIDAQABo4IB1TCC
-AdEwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8AwHQYDVR0OBBYEFN+m99RtIuA1bSdw
-6b1brOX7X3AJMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUF
-BwMEBggrBgEFBQcDAjBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEDBTArMCkGCCsGAQUFBwIBFh1o
-dHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBLhklodHRwOi8vY3Js
-LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWls
-Q0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0dHA6Ly9jcnQuY29tb2RvY2Eu
-Y29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcnQwJAYI
-KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAgBgNVHREEGTAXgRVtaWxpYW4ud29s
-ZmZAa2RhYi5jb20wDQYJKoZIhvcNAQELBQADggEBABf47LSJADqH+ow9INv3QM1NC/qq2bjxGvsZ
-68iD11VEUAFlsYfsVTgQqUirwPVTYenXtwVBELHZyywsui1JxL7HKQetLQegDDP/RyfjReVaWxhy
-3OpuItsgLVbru9QVgPifnoBFPtfZcwjeJDmeSbLT8oj4Rd0KYBOIve7WKvsfNPsNwfbLwY2zILkE
-LjxZcVi2AwZHDyab+dzL/3YcLuJj1lSawBGn7ilpcdZydlv4aye51pD/MemLIYLcylt+ImrmjnTV
-y+QlAHRF3s5FE8yAr+W1MBD/1bKZCSgFt8VQoAlz3hiQh8QqZp4Zl8WuVL4+mP/mT6VDEWgq/0Bo
-cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
-c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
-BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
-EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMDIyMTAwOTIyWjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQgOvoeynrwaK5JrAGRMTM8sMQol2kr
-39GEJZcrbWw8eOEwDQYJKoZIhvcNAQEBBQAEggEASecpXDlLTvQsvKPhER3ElSWHpuyEDn1cm0yJ
-7ISdaoryu8tKy7DIyT7zb7iKfUS3gFD3HQ5PWqeKDNIU0CbpkwysZZTCE+TbqxQGTi5qhDRh/cQF
-GWK0K208vlJctth3uTCKS1npANBvaWzjQf0FuukBUwtKlV4Tq/cvo1e5CXIVvXuXwPye4AC6Wr6u
-L6B/smdhKjjToGdh6bWtgX4GvXwOJIHkVaag9h2VSOBANdGaxXdxOu4HzTUbKQxmzUQ9yOC6XkYh
-cFQ8HWQRvchfQeT8N98dRQ1y2ZvYjHV9AWrQwQCO0IsEDqEVParfgW5yk2SyUNRpVgI+7Wtm8s/G
-5QAAAAAAAA==
+	spin_lock_irqsave(&port->lock, flags)
+	 <NMI>
+	  panic()
+	   console_flush_on_panic()
+	    spin_lock_irqsave(&port->lock, flags)		// deadlock
 
 
---nextPart3629398.2PHXbrJRRo--
+// And I wouldn't mind to have more reviews/testing on [1].
 
 
+Another deadlock scenario could be the following one:
+
+	printk()
+	 console_trylock()
+	  down_trylock()
+	   raw_spin_lock_irqsave(&sem->lock, flags)
+	    <NMI>
+	     panic()
+	      console_flush_on_panic()
+	       console_trylock()
+	        raw_spin_lock_irqsave(&sem->lock, flags)	// deadlock
+
+There are no patches addressing this one at the moment. And it's
+unclear if you are hitting this scenario.
+
+
+> I see that Sergey had sent an RFC series for similar things. Are those
+> trying to solve the deadlock problem in a different way?
+
+Umm, I wouldn't call it "another way". It turns non-reentrant serial
+consoles to re-entrable ones. Did you test patch [1] from that series
+on you environment, by the way?
+
+[1] lkml.kernel.org/r/20181016050428.17966-2-sergey.senozhatsky@gmail.com
+
+	-ss
