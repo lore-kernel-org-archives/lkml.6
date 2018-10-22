@@ -2,156 +2,125 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F9BAECDE43
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:35:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D0EECDE43
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB4742083E
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:35:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AT6ysxuB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB4742083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 958362083E
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:36:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 958362083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbeJVJvj (ORCPT
+        id S1727061AbeJVJxK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 05:51:39 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45584 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbeJVJvj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 05:51:39 -0400
-Received: by mail-ed1-f68.google.com with SMTP id t10-v6so3590568eds.12
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 18:35:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2STM3QACkcoRYLYc6fyQbtAZ2peEJasfGTy1/bhwUO4=;
-        b=AT6ysxuBoX4f1P1KMN5+SYXzfju75m9+kIPcd8xfcngYDlKs/s1I2lRqb8RDcp+bmD
-         Owceb2z4CLC3O7wtowboN2+vS07lmlOoD8xWXCs3AYKoH4JUAIN9gVGFyBTN4Gp9DQ3p
-         NzDsEs+o2X791U0N6ise0TW29YcHOMhUwWk0K/zR1MlgjNdFhQOYUGGJKn/sgEHX+VXh
-         6KUXLC0/AuCZqe+TehmWhGS/B19z4U75GIWo7lDeKUDYd8DKgN5sxHtHAK9QMtD2bIbm
-         1Wjf0E5VhTEzj/oOZk0y7DhxWNdmMujAuWJG7GxtRayuWXHmDcOVk17Wf5nN/UbULjle
-         zI0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2STM3QACkcoRYLYc6fyQbtAZ2peEJasfGTy1/bhwUO4=;
-        b=I5+DNGzy9PU/A3mX7YvpLqKXo4EijSG8yx9SKxMaEQ4V8qmsPRQNFrBd4JDEnogVAO
-         6DOSTARUDNEtLtjJgdYYLUlcdyoBIOwdSGWSz32/Utbj4SB7Th5eSmrP/icau6CciCpe
-         Wf7emA17Ad8LQTYSds16onXKhbyek91eK6YIqLMa4RwCc0E3lkOXkHQx4h8Vy/2OREvO
-         9VtHDPWiYmyBKikL3egkDXXaJdsBejhH8MkzA2kXeZeIu9FqbFjvVllykVySUZE8rM/R
-         zI7lJT0H5YpcFWXaJv3P8MIypY5XqrAAcNoUzqgR7hFvAjc5DubXpIvQPiIBlAhTCxiT
-         d1/Q==
-X-Gm-Message-State: ABuFfoi1lzJhLapGjbj0hNebj45BXSvlwhqARpXybLefUVGVFGk8EB7z
-        QYB+Gc3xs1N+3STsmYRpqSo=
-X-Google-Smtp-Source: AJdET5c9qdzBH7OX2CBeh97QYjzf2qzdjoutaMAiZr7JRvukQ4Kv6tt33LoZvUugOhfpyLvinA3Tsw==
-X-Received: by 2002:a17:906:c2c6:: with SMTP id ch6-v6mr1969921ejb.9.1540172116830;
-        Sun, 21 Oct 2018 18:35:16 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id gt25-v6sm6445070ejb.33.2018.10.21.18.35.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 21 Oct 2018 18:35:15 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 01:35:15 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Wei Yang <richard.weiyang@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] memblock: remove stale #else and the code it protects
-Message-ID: <20181022013515.frvzqvccrrp3qiw4@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <1538067825-24835-1-git-send-email-rppt@linux.vnet.ibm.com>
- <20181019081729.klvckcytnhheaian@master>
- <6EEAA7EC-75B7-4899-A562-35A58FC037E6@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6EEAA7EC-75B7-4899-A562-35A58FC037E6@linux.ibm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Mon, 22 Oct 2018 05:53:10 -0400
+Received: from mga09.intel.com ([134.134.136.24]:63581 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725884AbeJVJxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 05:53:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2018 18:36:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,410,1534834800"; 
+   d="scan'208";a="97296416"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
+  by fmsmga002.fm.intel.com with ESMTP; 21 Oct 2018 18:36:48 -0700
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Cc:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 0/2] Unmap efi boot services code/data regions after boot.
+Date:   Sun, 21 Oct 2018 18:35:43 -0700
+Message-Id: <1540172145-17134-1-git-send-email-sai.praneeth.prakhya@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 21, 2018 at 10:30:16AM +0300, Mike Rapoport wrote:
->
->
->On October 19, 2018 11:17:30 AM GMT+03:00, Wei Yang <richard.weiyang@gmail.com> wrote:
->>Which tree it applies?
->
->To mmotm of the end of September.
->
+CC'ing x86 folks because this patch touches x86/mm which I am no expert of.
 
-I may lost some background of this change.
+[Copied from Patch 1]
+Ideally, after kernel assumes control of the platform firmware shouldn't
+access EFI Boot Services Code/Data regions. But, it's noticed that this
+is not so true in many x86 platforms. Hence, during boot, kernel
+reserves efi boot services code/data regions [1] and maps [2] them to
+efi_pgd so that call to set_virtual_address_map() doesn't fail. After
+returning from set_virtual_address_map(), kernel frees the reserved
+regions [3] but they still remain mapped.
 
-The file I am looking at is
-https://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git/tree/include/linux/memblock.h
-which has CONFIG_HAVE_MEMBLOCK in line 5.
+This means that any code that's running in efi_pgd address space (e.g:
+any efi runtime service) would still be able to access efi boot services
+code/data regions but the contents of these regions would have long been
+over written by someone else as they are freed by efi_free_boot_services().
+So, it's important to unmap these regions. After unmapping boot services
+code/data regions, any illegal access by buggy firmware to these regions
+would result in page fault which will be handled by efi specific fault
+handler.
 
->>On Thu, Sep 27, 2018 at 08:03:45PM +0300, Mike Rapoport wrote:
->>>During removal of HAVE_MEMBLOCK definition, the #else clause of the
->>>
->>>	#ifdef CONFIG_HAVE_MEMBLOCK
->>>		...
->>>	#else
->>>		...
->>>	#endif
->>>
->>>conditional was not removed.
->>>
->>>Remove it now.
->>>
->>>Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
->>>Reported-by: Alexander Duyck <alexander.duyck@gmail.com>
->>>Cc: Michal Hocko <mhocko@suse.com>
->>>---
->>> include/linux/memblock.h | 5 -----
->>> 1 file changed, 5 deletions(-)
->>>
->>>diff --git a/include/linux/memblock.h b/include/linux/memblock.h
->>>index d3bc270..d4d0e01 100644
->>>--- a/include/linux/memblock.h
->>>+++ b/include/linux/memblock.h
->>>@@ -597,11 +597,6 @@ static inline void early_memtest(phys_addr_t
->>start, phys_addr_t end)
->>> {
->>> }
->>> #endif
->>>-#else
->>>-static inline phys_addr_t memblock_alloc(phys_addr_t size,
->>phys_addr_t align)
->>>-{
->>>-	return 0;
->>>-}
->>> 
+[1] Please see efi_reserve_boot_services()
+[2] Please see efi_map_region() -> __map_region()
+[3] Please see efi_free_boot_services()
 
-And in that file, here is memblock_reserved_memory_within.
+Testing the patch set:
+----------------------
+1. Download buggy firmware (which accesses boot regions even after kernel has
+booted) from here [1].
+2. Without the patch set, you shouldn't see any kernel warning/error
+messages (i.e. kernel allows accesses to efi boot services code/data
+regions even after call to set_virtual_address_map()).
+3. With the patch set, you should see a kernel warning about buggy
+firmware, efi_rts_wq beeing freezed and disabling runtime services forever.
 
-I guess this is not the version you are trying to fix.
+Please note that this patch will change kernel's existing behavior for
+some efi runtime services but I think it's OK because kernel should have
+never allowed those accesses in the first place.
 
-BTW, if you could put the commit SHA which removes the
-CONFIG_HAVE_MEMBLOCK, it would be easier for others to catch up.
+Also please note that this patch set needs lot of real time trashing as
+I just tested it out with OVMF.
 
->>> #endif /* __KERNEL__ */
->>> 
->>>-- 
->>>2.7.4
->
->-- 
->Sent from my Android device with K-9 Mail. Please excuse my brevity.
+Note:
+-----
+Patch set based on "next" branch in efi tree.
+
+[1] https://drive.google.com/drive/folders/1VozKTms92ifyVHAT0ZDQe55ZYL1UE5wt
+
+Sai Praneeth (2):
+  x86/efi: Unmap efi boot services code/data regions from efi_pgd
+  x86/efi: Move efi_<reserve/free>_boot_services() to arch/x86
+
+ arch/x86/include/asm/efi.h           |  2 ++
+ arch/x86/include/asm/pgtable_types.h |  2 ++
+ arch/x86/mm/pageattr.c               | 21 +++++++++++++++++++++
+ arch/x86/platform/efi/efi.c          |  2 ++
+ arch/x86/platform/efi/quirks.c       | 26 ++++++++++++++++++++++++++
+ include/linux/efi.h                  |  3 ---
+ init/main.c                          |  4 ----
+ 7 files changed, 53 insertions(+), 7 deletions(-)
+
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
 -- 
-Wei Yang
-Help you, Help me
+2.7.4
+
