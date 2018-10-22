@@ -2,104 +2,104 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD845C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77918C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0382E20651
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:54:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0382E20651
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 994B720651
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:56:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 994B720651
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728236AbeJVWNO (ORCPT
+        id S1728176AbeJVWP3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 18:13:14 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50362 "EHLO mx1.redhat.com"
+        Mon, 22 Oct 2018 18:15:29 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51475 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727587AbeJVWNN (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 18:13:13 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E2DC95F74A;
-        Mon, 22 Oct 2018 13:54:32 +0000 (UTC)
-Received: from krava (unknown [10.43.17.150])
-        by smtp.corp.redhat.com (Postfix) with SMTP id B62BE608F3;
-        Mon, 22 Oct 2018 13:54:31 +0000 (UTC)
-Date:   Mon, 22 Oct 2018 15:54:30 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Milian Wolff <milian.wolff@kdab.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, Linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 2/2] perf script: flush output stream after events in
- verbose mode
-Message-ID: <20181022135430.GA2945@krava>
-References: <20181021191424.16183-1-milian.wolff@kdab.com>
- <4444017.LnbBPIbh24@agathebauer>
- <20181022101618.GH2452@krava>
- <1755624.MxyOU8z0WO@agathebauer>
+        id S1727146AbeJVWP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 18:15:29 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A872520DFC; Mon, 22 Oct 2018 15:56:45 +0200 (CEST)
+Received: from bbrezillon (aaubervilliers-681-1-25-52.w90-88.abo.wanadoo.fr [90.88.145.52])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 59E4F20DE6;
+        Mon, 22 Oct 2018 15:56:35 +0200 (CEST)
+Date:   Mon, 22 Oct 2018 15:56:35 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>
+Cc:     "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Vineet Gupta <vineet.gupta1@synopsys.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "richard@nod.at" <richard@nod.at>
+Subject: Re: [PATCH v2 0/2] MTD: spi-nor: add support for sst26wf016,
+ sst26wf032
+Message-ID: <20181022155635.2175a595@bbrezillon>
+In-Reply-To: <1540216028.19916.6.camel@synopsys.com>
+References: <20180910114628.19156-1-Eugeniy.Paltsev@synopsys.com>
+        <1540216028.19916.6.camel@synopsys.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1755624.MxyOU8z0WO@agathebauer>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 22 Oct 2018 13:54:33 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 12:38:57PM +0200, Milian Wolff wrote:
++Tudor
 
-SNIP
+Hi Eugeniy,
 
-> > > > > diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> > > > > index bd468b90801b..ca09b7d2adb7 100644
-> > > > > --- a/tools/perf/builtin-script.c
-> > > > > +++ b/tools/perf/builtin-script.c
-> > > > > @@ -1737,6 +1737,9 @@ static void process_event(struct perf_script
-> > > > > *script,
-> > > > > 
-> > > > >  	if (PRINT_FIELD(METRIC))
-> > > > >  	
-> > > > >  		perf_sample__fprint_metric(script, thread, evsel, 
-> sample, fp);
-> > > > > 
-> > > > > +
-> > > > > +	if (verbose)
-> > > > > +		fflush(fp);
-> > > > 
-> > > > should we call fflush(NULL) to dump all the streams?
-> > > > 
-> > > > the verbose goes to stderr and fp seems to be stdout byt default
-> > > 
-> > > stderr isn't buffered, so we don't need to flush it. So personally, I
-> > > don't
-> > > see a need to dump all streams - fp should be enough? Can you maybe
-> > > explain
-> > > where it would be required to flush more buffers?
+On Mon, 22 Oct 2018 13:47:09 +0000
+Eugeniy Paltsev <eugeniy.paltsev@synopsys.com> wrote:
+
+> Hi!
+> 
+> Maybe you have any comments or remarks about this patch?And if you don't could you please apply it. Thanks!
+
+Sorry, it's already too late for 4.20, and I won't apply patches to the
+spi-nor/next branch before 4.20-rc1 is out.
+
+Tudor, Marek, can I have a Reviewed-by/Acked-by on this patchset?
+
+Thanks,
+
+Boris
+
+> 
+> On Mon, 2018-09-10 at 14:46 +0300, Eugeniy Paltsev wrote:
+> > Add support for the SST sst26wf016 and sst26wf032 flash IC:
 > > 
-> > hum, did not know stderr wasn't buffer
-> >
-> > I think there's perf script feature to store the events data to
-> > separate files per each event.. but I guess we don't need to
-> > flush them.. we just need to have stdout and stderr in sync IIUC
-> 
-> Exactly, and that's achieved with this patch form what I see :) Or should we 
-> maybe instead call 
-> 
-> setbuf(fp, NULL);
-> 
-> in verbose mode?
+> > sst26wf*** flash series block protection implementation differs from other
+> > SST series, so we add implementation for sst26wf*** lock/unlock/is_locked
+> > functions.
+> > 
+> > Add sst26wf016 and sst26wf032 flash IC info to spi_flash_ids list.
+> > 
+> > NOTE:
+> > these patches is basically following mine u-boot commits port:
+> > http://git.denx.de/?p=u-boot.git;a=commitdiff;h=3d4fed87a5fa3ffedf64ff2811cd95c5ac4503ac
+> > http://git.denx.de/?p=u-boot.git;a=commitdiff;h=a19e97157c3721ef9c4b15c68c1773467a3b4a98
+> > 
+> > Changes v1->v2:
+> >  * Check return value of {read | write}_reg callbacks.
+> > 
+> > Eugeniy Paltsev (2):
+> >   mtd: spi-nor: Add support of sst26wf* flash ICs protection ops
+> >   mtd: spi-nor: add support for sst26wf016, sst26wf032
+> > 
+> >  drivers/mtd/spi-nor/spi-nor.c | 179 ++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/mtd/spi-nor.h   |   4 +
+> >  2 files changed, 183 insertions(+)
+> >   
 
-I think your solution is ok
-
-Acked-by: Jiri Olsa <jolsa@redhat.com>
-
-thanks,
-jirka
