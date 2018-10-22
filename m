@@ -2,138 +2,87 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE57C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F930C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 076C120652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:04:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IcDprEXH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IcDprEXH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 076C120652
+	by mail.kernel.org (Postfix) with ESMTP id 2AAA620853
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:06:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AAA620853
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728923AbeJVUWn (ORCPT
+        id S1728647AbeJVUYY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 16:22:43 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37020 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727787AbeJVUWm (ORCPT
+        Mon, 22 Oct 2018 16:24:24 -0400
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:62590 "EHLO
+        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727787AbeJVUYY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 16:22:42 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B380C6050D; Mon, 22 Oct 2018 12:04:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540209865;
-        bh=jPA4y+GnEDaAxA5o0/d55VuHVENgGGSvdO4aifNciaE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IcDprEXHb1BVUMs8Dh0fBFWkva+VQyLafjbRDOYXIBQq84kq4AR8vRq4HUtuYCYxb
-         21dWJ23TByIXCw8TnZyEpjevymf3Kl2mjWj5j3IiIEcfp26N9LntGqHSiSbsMwqKZj
-         Bc/azRuVodHjji9aZuTEL+C31IQdta+QPjkcElso=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 41057601CF;
-        Mon, 22 Oct 2018 12:04:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540209865;
-        bh=jPA4y+GnEDaAxA5o0/d55VuHVENgGGSvdO4aifNciaE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IcDprEXHb1BVUMs8Dh0fBFWkva+VQyLafjbRDOYXIBQq84kq4AR8vRq4HUtuYCYxb
-         21dWJ23TByIXCw8TnZyEpjevymf3Kl2mjWj5j3IiIEcfp26N9LntGqHSiSbsMwqKZj
-         Bc/azRuVodHjji9aZuTEL+C31IQdta+QPjkcElso=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 22 Oct 2018 17:34:25 +0530
-From:   mgottam@codeaurora.org
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     hverkuil@xs4all.nl, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mon, 22 Oct 2018 16:24:24 -0400
+X-IronPort-AV: E=Sophos;i="5.54,412,1534789800"; 
+   d="scan'208";a="214746"
+Received: from ironmsg04-blr.qualcomm.com ([10.86.208.133])
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 22 Oct 2018 17:35:17 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,9053"; a="1911363"
+Received: from mgottam-linux.qualcomm.com ([10.204.66.66])
+  by ironmsg04-blr.qualcomm.com with ESMTP; 22 Oct 2018 17:35:16 +0530
+Received: by mgottam-linux.qualcomm.com (Postfix, from userid 2305155)
+        id 7FFED3043; Mon, 22 Oct 2018 17:35:15 +0530 (IST)
+From:   Malathi Gottam <mgottam@codeaurora.org>
+To:     stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
-        vgarodia@codeaurora.org
-Subject: Re: [PATCH] media: venus: handle peak bitrate set property
-In-Reply-To: <274a112a-604c-82b4-130a-c3718abcf141@linaro.org>
-References: <1539071483-1371-1-git-send-email-mgottam@codeaurora.org>
- <274a112a-604c-82b4-130a-c3718abcf141@linaro.org>
-Message-ID: <1c2db4af132609460b1cf6cf0c25a024@codeaurora.org>
-X-Sender: mgottam@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        vgarodia@codeaurora.org, mgottam@codeaurora.org
+Subject: [PATCH v2] media: venus: handle peak bitrate set property
+Date:   Mon, 22 Oct 2018 17:35:12 +0530
+Message-Id: <1540209912-24834-1-git-send-email-mgottam@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-09 20:29, Stanimir Varbanov wrote:
-> Hi Malathi,
-> 
-> Thanks for the patch!
-> 
-> On 10/09/2018 10:51 AM, Malathi Gottam wrote:
->> Max bitrate property is not supported for venus version 4xx.
->> Add a version check for the same.
-> 
-> I'd like to avoid version checks in this layer of the driver. Could 
-> just
-> black-list this property in pkt_session_set_property_4xx? Hint, see
-> HFI_PROPERTY_CONFIG_VENC_MAX_BITRATE in the same function.
-> 
->> 
->> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
->> ---
->>  drivers/media/platform/qcom/venus/venc.c | 22 ++++++++++++----------
->>  1 file changed, 12 insertions(+), 10 deletions(-)
->> 
->> diff --git a/drivers/media/platform/qcom/venus/venc.c 
->> b/drivers/media/platform/qcom/venus/venc.c
->> index ef11495..3f50cd0 100644
->> --- a/drivers/media/platform/qcom/venus/venc.c
->> +++ b/drivers/media/platform/qcom/venus/venc.c
->> @@ -757,18 +757,20 @@ static int venc_set_properties(struct venus_inst 
->> *inst)
->>  	if (ret)
->>  		return ret;
->> 
->> -	if (!ctr->bitrate_peak)
->> -		bitrate *= 2;
->> -	else
->> -		bitrate = ctr->bitrate_peak;
->> +	if (!IS_V4(inst->core)) {
->> +		if (!ctr->bitrate_peak)
->> +			bitrate *= 2;
->> +		else
->> +			bitrate = ctr->bitrate_peak;
->> 
->> -	ptype = HFI_PROPERTY_CONFIG_VENC_MAX_BITRATE;
->> -	brate.bitrate = bitrate;
->> -	brate.layer_id = 0;
->> +		ptype = HFI_PROPERTY_CONFIG_VENC_MAX_BITRATE;
->> +		brate.bitrate = bitrate;
->> +		brate.layer_id = 0;
->> 
->> -	ret = hfi_session_set_property(inst, ptype, &brate);
->> -	if (ret)
->> -		return ret;
->> +		ret = hfi_session_set_property(inst, ptype, &brate);
->> +		if (ret)
->> +			return ret;
->> +	}
->> 
->>  	if (inst->fmt_cap->pixfmt == V4L2_PIX_FMT_H264) {
->>  		profile = venc_v4l2_to_hfi(V4L2_CID_MPEG_VIDEO_H264_PROFILE,
->> 
-Hi Stan,
+Max bitrate property is not supported for venus version 4xx.
+Return unsupported from packetization layer. Handle it in 
+hfi_venus layer to exit gracefully to venc layer.
 
-Though this property is bypassed in the function 
-"pkt_session_set_property_4xx", it is set to firmware in hfi_venus 
-layer.
+Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+---
+ drivers/media/platform/qcom/venus/hfi_cmds.c  | 2 +-
+ drivers/media/platform/qcom/venus/hfi_venus.c | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-So we can return -ENOTSUPP from packet layer. If hfi_venus layer 
-receives error as ENOTSUPP, treat it as normal and return 0 to venc 
-layer.
+diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.c b/drivers/media/platform/qcom/venus/hfi_cmds.c
+index e8389d8..87a4414 100644
+--- a/drivers/media/platform/qcom/venus/hfi_cmds.c
++++ b/drivers/media/platform/qcom/venus/hfi_cmds.c
+@@ -1215,7 +1215,7 @@ static int pkt_session_set_property_1x(struct hfi_session_set_property_pkt *pkt,
+ 	}
+ 	case HFI_PROPERTY_CONFIG_VENC_MAX_BITRATE:
+ 		/* not implemented on Venus 4xx */
+-		break;
++		return -ENOTSUPP;
+ 	default:
+ 		return pkt_session_set_property_3xx(pkt, cookie, ptype, pdata);
+ 	}
+diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+index 1240855..9d086b9 100644
+--- a/drivers/media/platform/qcom/venus/hfi_venus.c
++++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+@@ -1355,6 +1355,8 @@ static int venus_session_set_property(struct venus_inst *inst, u32 ptype,
+ 	pkt = (struct hfi_session_set_property_pkt *)packet;
+ 
+ 	ret = pkt_session_set_property(pkt, inst, ptype, pdata);
++	if (ret == -ENOTSUPP)
++		return 0;
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+1.9.1
 
-I will post the updated patch, with this implementation.
