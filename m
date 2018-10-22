@@ -2,93 +2,116 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C8D1C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 07:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF307C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 07:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30B4B20658
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 07:14:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4E8520658
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 07:15:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RngxAUWG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30B4B20658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=as-electronics.de header.i=@as-electronics.de header.b="VK0eIs9S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4E8520658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=exceet.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727692AbeJVPcO (ORCPT
+        id S1727714AbeJVPcW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 11:32:14 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:42026 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727479AbeJVPcN (ORCPT
+        Mon, 22 Oct 2018 11:32:22 -0400
+Received: from mo4-p05-ob.smtp.rzone.de ([81.169.146.181]:33351 "EHLO
+        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727521AbeJVPcW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 11:32:13 -0400
-Received: by mail-lf1-f67.google.com with SMTP id s10-v6so29471162lfc.9
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 00:14:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=dx4KkhvP9GSjmDvZtms1pkxoGnhlR+9a6nvpw+UaXO0=;
-        b=RngxAUWGzWTbRTevtu9tnQoRIbJliQgLBUFicTpbFj8GwZtCay9+PajvOnBdiSugof
-         9aD2BB1OgPEUrzoYHNS2nf4ffxFVCz5TKj5nnlYT20auMuclmq6VbehO8SAH8YhDWCDu
-         AH82EBJUtsYll19VBk9zhhzFncWy8JjtUwxgI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=dx4KkhvP9GSjmDvZtms1pkxoGnhlR+9a6nvpw+UaXO0=;
-        b=uAzkA8D4IRrrvLoFblYS5yhq5qJlv3gdSi8du/Jp/Yr/sac75eEWa1SMdB8FPWb4uR
-         d/i/TAZJLg8DrLFPhihHFyoHO98V8tUtLAA5x9vTQl13ElGooAHYRYTNW5aeIBqWB1P4
-         /3rjnXShjyhteem5hdk4LyzuLR5M7ilxRn8gP/ZVNL2kAnB0HQ0cUWsFyWwKWqWzdQS5
-         cfodSfrQSz2sqBuaafXbyuIASU6yt9gEBjwci7p6zyIP8WmnAuIGCH+CI8+XFnEhlZ7j
-         R+pEx3NhltsyuoFBw39Tyf8GQPj3JbuxjxDW0Zmf4TMAHI3AE72t1vFYf85b36UyDxVT
-         jb5Q==
-X-Gm-Message-State: ABuFfoid/4z3wxDtB01ouORpNSF+fJfWuxNkMvtPT6NutXOGnIY9URye
-        ZlCpb7taz4djODSjckaCuC8E7fhvsmTQ53D1E/y5tA==
-X-Google-Smtp-Source: ACcGV60OFnpekkGugiBLH8Swe/gIdXQhm/hVj17MFgQeIIS9AS2Y6h9sdzyIIFnu0/OiDopPDXP9D+tUX0ECS1MKH2o=
-X-Received: by 2002:a19:2203:: with SMTP id i3mr7999985lfi.2.1540192495177;
- Mon, 22 Oct 2018 00:14:55 -0700 (PDT)
+        Mon, 22 Oct 2018 11:32:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1540192501;
+        s=strato-dkim-0002; d=as-electronics.de;
+        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=N082TBwdItqOjWCvJaTKJOyv8lwH8iRH9kctVLZxqjg=;
+        b=VK0eIs9S2lO2NNP90rmprLoQixIoO6xIhqHwvEM2w9soKHNHcdkmg301yOKgZhZNFr
+        5SugyUEuty6KH8yb2c86ZGMYvM3/oCrDRm1vXD9WUMfycaopWsHpso/e7744+sdy0Tv2
+        7hjcaB6jNBY7OdiuqQ165iVOtjqh5Gs5U9oDR9L8pI+97u4q+uExJyoV9l4UljJVYZHP
+        7CV2V0vbWCg4dBD+im69l2ejVlI22/jPBC+wX0qmnMZ4lO9Wl0ast3aLGMJgXIvbqvMw
+        C+lo6tYnXqwsx+yHQd8nOap3vv2oLpMtdwQ1YlsN6fU4z1fHjhBjjPk9h0BR52dIzn9F
+        2epA==
+X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx2zAOrX/r2ZbrrxoyMly7vtKoBCSu4zR9/f0shzjGSYbJY5KbsbrlTGd0CtJA="
+X-RZG-CLASS-ID: mo05
+Received: from [IPv6:2003:a:e7a:6200:246c:2a8b:f45a:a33d]
+        by smtp.strato.de (RZmta 44.3 AUTH)
+        with ESMTPSA id j097e4u9M7EkQXQ
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 22 Oct 2018 09:14:46 +0200 (CEST)
+Subject: Re: SMSC9730 Autosuspend/Resume Questions
+To:     Nisar.Sayed@microchip.com, steve.glendinning@shawell.net,
+        UNGLinuxDriver@microchip.com, davem@davemloft.net,
+        netdev@vger.kernel.org
+Cc:     oneukum@suse.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <69e14429-a4d9-dd5c-5e70-c22086490cc0@exceet.de>
+ <CE371C1263339941885964188A0225FA44571A@CHN-SV-EXMX03.mchp-main.com>
+From:   Frieder Schrempf <frieder.schrempf@exceet.de>
+Message-ID: <ceb49899-3e01-94a1-1555-11e6e6aa5b5a@exceet.de>
+Date:   Mon, 22 Oct 2018 09:14:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Received: by 2002:a2e:95d7:0:0:0:0:0 with HTTP; Mon, 22 Oct 2018 00:14:54
- -0700 (PDT)
-In-Reply-To: <20181020163000.GD2894@vkoul-mobl>
-References: <cover.1538199697.git.baolin.wang@linaro.org> <CAMz4kuKFtbLMmNEbQ0oVgW87HPRwJuwFJH9cXVymz=6jH7xzOA@mail.gmail.com>
- <20181020163000.GD2894@vkoul-mobl>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Mon, 22 Oct 2018 15:14:54 +0800
-Message-ID: <CAMz4kuLgOzt1q+Aj1e1Xk07a95RC0iqzDyPeMDqgSgaGw8VgGQ@mail.gmail.com>
-Subject: Re: [PATCH 0/7] Add some fixes and new feature for SPRD DMA
-To:     Vinod <vkoul@kernel.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Eric Long <eric.long@spreadtrum.com>,
-        Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CE371C1263339941885964188A0225FA44571A@CHN-SV-EXMX03.mchp-main.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21 October 2018 at 00:30, Vinod <vkoul@kernel.org> wrote:
-> On 18-10-18, 17:29, Baolin Wang wrote:
->> Hi Vinod,
->>
->> On 29 September 2018 at 13:48, Baolin Wang <baolin.wang@linaro.org> wrote:
->> > This patchset removes the direction usage from struct dma_slave_config,
->> > and add one new field to save the direction. It also fixes some issues
->> > for link-list transfer. Moreover this patchset adds new 2-stage transfer
->> > support for our DMA.
->>
->> Do you have any comments for this patchset? Thanks a lot.
->
-> Sorry bit busy with things and ELC, I should be able to review this
-> after monday..
+Hi Nisar,
 
-Thanks a lot. :)
+On 22.10.18 09:03, Nisar.Sayed@microchip.com wrote:
+> Hi Frieder,
+> 
+>> Hi,
+>>
+>> I recently tested a board with SMSC9730 connected via USB HSIC to an
+>> i.MX6S SOC. I used these patches on top of v4.14-rc8 for the USB HSIC
+>> support: [1].
+>>
+>> When I turned on autosuspend, the smsc95xx stopped in the middle of the
+>> suspending routine and /sys/bus/usb/devices/usb3/3-
+>> 1/power/runtime_status reported "suspending"
+>> forever.
+>>
+>> With some debug logs I found out, that the last line of code that was
+>> executed is [2], after that I didn't get any further messages.
+>>
+>> Then I applied the following diff and the suspend/resume started to work
+>> reliably:
+>>
+>> @@ -1382,10 +1385,11 @@ static int smsc95xx_link_ok_nopm(struct usbnet
+>> *dev)
+>>           ret = smsc95xx_mdio_read_nopm(dev->net, mii->phy_id, MII_BMSR);
+>>           if (ret < 0)
+>>                   return ret;
+>> -
+>> +       /*
+>>           ret = smsc95xx_mdio_read_nopm(dev->net, mii->phy_id, MII_BMSR);
+>>           if (ret < 0)
+>>                   return ret;
+>> +       */
+>>
+>>           return !!(ret & BMSR_LSTATUS);
+>>    }
+>>
+>> So it seems like the dummy read, that is commented with "first, a dummy
+>> read, needed to latch some MII phys" causes problems in my setup. Do you
+>> have an idea what could be the reason? Is this a proper fix?
+>>
+>   
+> Link status bit is latch low register and needs to be read twice. You may get wrong Link status with this fix.
 
--- 
-Baolin Wang
-Best Regards
+Ok, thanks for the information. I guess I'll have to do some more 
+debugging to find out why the second read fails in my case.
+
+Frieder
