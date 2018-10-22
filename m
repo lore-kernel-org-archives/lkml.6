@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76013C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01989C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:21:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CD2020898
+	by mail.kernel.org (Postfix) with ESMTP id AF5912089C
 	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:21:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gi3TM7n4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CD2020898
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNcG7UYH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF5912089C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729188AbeJVSi4 (ORCPT
+        id S1729201AbeJVSi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:38:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49918 "EHLO mail.kernel.org"
+        Mon, 22 Oct 2018 14:38:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728591AbeJVSiz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:38:55 -0400
+        id S1728591AbeJVSi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:38:56 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D939320658;
-        Mon, 22 Oct 2018 10:20:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DAD820898;
+        Mon, 22 Oct 2018 10:21:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540203660;
-        bh=ijc9cGwWEDGCIbbD7BBNddoPmpS7yhEs4dNYaSz/TQs=;
+        s=default; t=1540203661;
+        bh=PZCxc54Ekwn47R3wE8Ph4gO8s3Jm5T/OHkLcyDxu7WQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gi3TM7n4OTR84vR6l5OffP74dIAfUe5N4D6vNfMIgrqGAN9taCAZJpybma+L9sHLK
-         aW4q0JFjwfqhPHhMwnCUrKnrD3RZ+wDMgn9B6LhHrm5NFqTCF4Q9hasoMBJedgNCEt
-         4M5xL+A6XzcPjqpO+DSdZ8XOfWMM/5AwzCinV/WI=
+        b=sNcG7UYH/koG2UetQNBTzK7VApkle8b8CsSDYooddp93GDH47M3uipkeYrneRqtu3
+         SndFFCW7GkrLteCJJ9XzMFekLEtrsLHJkEWTE33BUYNXTs1wjyStal8z8tDC0eKR+7
+         hUWz0/2vwovvLudV2GYFjjWKHO/O1LttFC8OnfZQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+Cc:     Paolo Abeni <pabeni@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 13/15] libertas: call into generic suspend code before turning off power
-Date:   Mon, 22 Oct 2018 06:20:24 -0400
-Message-Id: <20181022102026.40869-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 14/15] selftests: rtnetlink.sh explicitly requires bash.
+Date:   Mon, 22 Oct 2018 06:20:25 -0400
+Message-Id: <20181022102026.40869-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181022102026.40869-1-sashal@kernel.org>
 References: <20181022102026.40869-1-sashal@kernel.org>
@@ -53,40 +53,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Mack <daniel@zonque.org>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit 4f666675cdff0b986195413215eb062b7da6586f ]
+[ Upstream commit 3c718e677c2b35b449992adc36ecce883c467e98 ]
 
-When powering down a SDIO connected card during suspend, make sure to call
-into the generic lbs_suspend() function before pulling the plug. This will
-make sure the card is successfully deregistered from the system to avoid
-communication to the card starving out.
+the script rtnetlink.sh requires a bash-only features (sleep with sub-second
+precision). This may cause random test failure if the default shell is not
+bash.
+Address the above explicitly requiring bash as the script interpreter.
 
-Fixes: 7444a8092906 ("libertas: fix suspend and resume for SDIO connected cards")
-Signed-off-by: Daniel Mack <daniel@zonque.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Acked-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 33b01b7b4f19 ("selftests: add rtnetlink test script")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/marvell/libertas/if_sdio.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ tools/testing/selftests/net/rtnetlink.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/marvell/libertas/if_sdio.c b/drivers/net/wireless/marvell/libertas/if_sdio.c
-index 43743c26c071..39bf85d0ade0 100644
---- a/drivers/net/wireless/marvell/libertas/if_sdio.c
-+++ b/drivers/net/wireless/marvell/libertas/if_sdio.c
-@@ -1317,6 +1317,10 @@ static int if_sdio_suspend(struct device *dev)
- 	if (priv->wol_criteria == EHS_REMOVE_WAKEUP) {
- 		dev_info(dev, "Suspend without wake params -- powering down card\n");
- 		if (priv->fw_ready) {
-+			ret = lbs_suspend(priv);
-+			if (ret)
-+				return ret;
-+
- 			priv->power_up_on_resume = true;
- 			if_sdio_power_off(card);
- 		}
+diff --git a/tools/testing/selftests/net/rtnetlink.sh b/tools/testing/selftests/net/rtnetlink.sh
+index 57b5ff576240..891130daac7c 100755
+--- a/tools/testing/selftests/net/rtnetlink.sh
++++ b/tools/testing/selftests/net/rtnetlink.sh
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ #
+ # This test is for checking rtnetlink callpaths, and get as much coverage as possible.
+ #
 -- 
 2.17.1
 
