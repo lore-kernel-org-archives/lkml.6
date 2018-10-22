@@ -2,264 +2,188 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA47C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F39CC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:39:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EC6A20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:35:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C0C820853
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:39:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="AgNz90UN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EC6A20652
+	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="Pkz6zlSd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C0C820853
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728561AbeJVSxn (ORCPT
+        id S1728581AbeJVS5D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:53:43 -0400
-Received: from mail.kdab.com ([176.9.126.58]:6546 "EHLO mail.kdab.com"
+        Mon, 22 Oct 2018 14:57:03 -0400
+Received: from mail.kdab.com ([176.9.126.58]:7788 "EHLO mail.kdab.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728144AbeJVSxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:53:43 -0400
+        id S1728442AbeJVS5D (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:57:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
  content-type:content-type:mime-version:references:in-reply-to
  :organization:message-id:date:date:subject:subject:from:from; s=
- dkim; t=1540204540; x=1541068541; bh=R96mj7StMcX1LLgJIMDJrvSscg4
- 6MR3HClnWBXY7lMQ=; b=AgNz90UN5h0eNiJ63XA2foBbkwPIwJapq9Vu3w/83ks
- xtPBqeYp0d4rOBWuwCpR1A0Rd2kzPwcrtEhJ0c7x6iuTPeOHQV7KhXnEpYmBf+yu
- Ujo25Ab6NAvTzorI6dSBWAHCEAvZTgRQUoAyqaBId4OJTbQ0FvscH/zgsCf4TzC4
+ dkim; t=1540204738; x=1541068739; bh=AwOxzojX3NgSc1VFeI7VzQ1aMKi
+ LcrsYE3HU/8yyyEE=; b=Pkz6zlSdw4lZqAi84k6xvkqpuKVAkWY1X+gL/mehJT4
+ icekfajdxCa3s7o1qtITMQn2e1XJIYmmszi3lTtKodk75Eh62OThiD90CSGOxI2f
+ Jz2Rk0oG8lp7I8f+19e+vJYbQelBDa5mvSc21m/pn6fCTwlOjR0XUMgEJyE10sbo
  =
 X-Virus-Scanned: amavisd-new at kdab.com
 From:   Milian Wolff <milian.wolff@kdab.com>
-To:     Milian Wolff <mail@milianw.de>
-Cc:     linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        namhyung@kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho <acme@kernel.org>
-Subject: Re: Broken dwarf unwinding - wrong stack pointer register value?
-Date:   Mon, 22 Oct 2018 12:35:39 +0200
-Message-ID: <3129539.p6j0Z5hDSJ@agathebauer>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, Linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 2/2] perf script: flush output stream after events in
+ verbose mode
+Date:   Mon, 22 Oct 2018 12:38:57 +0200
+Message-ID: <1755624.MxyOU8z0WO@agathebauer>
 Organization: KDAB
-In-Reply-To: <2335309.gnWok9HYb4@agathebauer>
-References: <2335309.gnWok9HYb4@agathebauer>
+In-Reply-To: <20181022101618.GH2452@krava>
+References: <20181021191424.16183-1-milian.wolff@kdab.com>
+ <4444017.LnbBPIbh24@agathebauer> <20181022101618.GH2452@krava>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2427097.tVUJAJuc8D";
+Content-Type: multipart/signed; boundary="nextPart2852350.Qm4K0Tgxqp";
  micalg="sha256"; protocol="application/pkcs7-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart2427097.tVUJAJuc8D
+--nextPart2852350.Qm4K0Tgxqp
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 
-On Sonntag, 21. Oktober 2018 00:39:51 CEST Milian Wolff wrote:
-> Hey all,
+On Montag, 22. Oktober 2018 12:16:18 CEST Jiri Olsa wrote:
+> On Mon, Oct 22, 2018 at 12:09:22PM +0200, Milian Wolff wrote:
+> > On Montag, 22. Oktober 2018 11:43:17 CEST Jiri Olsa wrote:
+> > > On Sun, Oct 21, 2018 at 09:14:24PM +0200, Milian Wolff wrote:
+> > > > When the perf script output is written to a terminal stream,
+> > > > the normal output of `perf script` would get buffered, but its
+> > > > debug output would be written directly. This made it quite hard
+> > > > to figure out where a given debug output is coming from. We can
+> > > > improve on this by flushing the output buffer after processing an
+> > > > event. To see the value, compare the following output for a
+> > > > `perf script -v` run:
+> > > > 
+> > > > Before this patch:
+> > > > ```
+> > > > unwind: reg 16, val 7faf7dfdc000
+> > > > unwind: reg 7, val 7ffc80811e30
+> > > > unwind: find_proc_info dso /usr/lib/ld-2.28.so
+> > > > unwind: reg 6, val 0
+> > > > unwind: _start:ip = 0x7faf7dfdc000 (0x2000)
+> > > > unwind: reg 16, val 7faf7dfdc000
+> > > > unwind: reg 7, val 7ffc80811e30
+> > > > unwind: find_proc_info dso /usr/lib/ld-2.28.so
+> > > > unwind: reg 6, val 0
+> > > > unwind: _start:ip = 0x7faf7dfdc000 (0x2000)
+> > > > unwind: reg 16, val 7faf7dfdc000
+> > > > unwind: reg 7, val 7ffc80811e30
+> > > > unwind: find_proc_info dso /usr/lib/ld-2.28.so
+> > > > unwind: reg 6, val 0
+> > > > unwind: _start:ip = 0x7faf7dfdc000 (0x2000)
+> > > > unwind: reg 16, val 7faf7dfdc000
+> > > > unwind: reg 7, val 7ffc80811e30
+> > > > ... lots and lots of verbose debug output
+> > > > 
+> > > > cpp-inlining 24617 90229.122036534:          1 cycles:uppp:
+> > > >             7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
+> > > > 
+> > > > cpp-inlining 24617 90229.122043974:          1 cycles:uppp:
+> > > >             7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
+> > > > 
+> > > > ...
+> > > > ```
+> > > > 
+> > > > After this patch:
+> > > > ```
+> > > > ...
+> > > > unwind: reg 16, val 7faf7dfdc000
+> > > > unwind: reg 7, val 7ffc80811e30
+> > > > unwind: find_proc_info dso /usr/lib/ld-2.28.so
+> > > > unwind: reg 6, val 0
+> > > > unwind: _start:ip = 0x7faf7dfdc000 (0x2000)
+> > > > 
+> > > > cpp-inlining 24617 90229.122036534:          1 cycles:uppp:
+> > > >             7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
+> > > > 
+> > > > unwind: reg 16, val 7faf7dfdc000
+> > > > unwind: reg 7, val 7ffc80811e30
+> > > > unwind: find_proc_info dso /usr/lib/ld-2.28.so
+> > > > unwind: reg 6, val 0
+> > > > unwind: _start:ip = 0x7faf7dfdc000 (0x2000)
+> > > > 
+> > > > cpp-inlining 24617 90229.122043974:          1 cycles:uppp:
+> > > >             7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
+> > > > 
+> > > > ...
+> > > > ```
+> > > > 
+> > > > This new output format makes it much easier to use perf script
+> > > > output for debugging purposes, e.g. to investigate broken dwarf
+> > > > unwinding.
+> > > 
+> > > yep, I plan to check on this ;-)
+> > > 
+> > > > Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
+> > > > Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> > > > ---
+> > > > 
+> > > >  tools/perf/builtin-script.c | 3 +++
+> > > >  1 file changed, 3 insertions(+)
+> > > > 
+> > > > diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> > > > index bd468b90801b..ca09b7d2adb7 100644
+> > > > --- a/tools/perf/builtin-script.c
+> > > > +++ b/tools/perf/builtin-script.c
+> > > > @@ -1737,6 +1737,9 @@ static void process_event(struct perf_script
+> > > > *script,
+> > > > 
+> > > >  	if (PRINT_FIELD(METRIC))
+> > > >  	
+> > > >  		perf_sample__fprint_metric(script, thread, evsel, 
+sample, fp);
+> > > > 
+> > > > +
+> > > > +	if (verbose)
+> > > > +		fflush(fp);
+> > > 
+> > > should we call fflush(NULL) to dump all the streams?
+> > > 
+> > > the verbose goes to stderr and fp seems to be stdout byt default
+> > 
+> > stderr isn't buffered, so we don't need to flush it. So personally, I
+> > don't
+> > see a need to dump all streams - fp should be enough? Can you maybe
+> > explain
+> > where it would be required to flush more buffers?
 > 
-> I'm on the quest to figure out why perf regularly fails to unwind (some)
-> samples. I am seeing very strange behavior, where an apparently wrong stack
-> pointer value is read from the register - see below for more information and
-> the end of this (long) mail for my open questions. Any help would be
-> greatly appreciated.
-> 
-> I am currently using this trivial C++ code to reproduce the issue:
-> 
-> ```
-> #include <cmath>
-> #include <complex>
-> #include <iostream>
-> #include <random>
-> 
-> using namespace std;
-> 
-> int main()
-> {
->     uniform_real_distribution<double> uniform(-1E5, 1E5);
->     default_random_engine engine;
->     double s = 0;
->     for (int i = 0; i < 10000000; ++i) {
->         s += norm(complex<double>(uniform(engine), uniform(engine)));
->     }
->     cout << s << '\n';
->     return 0;
-> }
-> ```
-> 
-> I compile it with `g++ -O2 -g` and then record it with `perf record --call-
-> graph dwarf`. Using perf script, I then see e.g.:
-> 
-> ```
-> $ perf script -v --no-inline --time 90229.12668,90229.127158 --ns
-> ...
-> # first frame (working unwinding from __hypot_finite):
-> unwind: reg 16, val 7faf7dca2696
-> unwind: reg 7, val 7ffc80811ca0
-> unwind: find_proc_info dso /usr/lib/libm-2.28.so
-> unwind: access_mem addr 0x7ffc80811ce8 val 7faf7dc88af9, offset 72
-> unwind: find_proc_info dso /usr/lib/libm-2.28.so
-> unwind: access_mem addr 0x7ffc80811d08 val 56382b0fc129, offset 104
-> unwind: find_proc_info dso
-> /home/milian/projects/kdab/rnd/hotspot/build/tests/
-> test-clients/cpp-inlining/cpp-inlining
-> unwind: access_mem addr 0x7ffc80811d58 val 7faf7dabf223, offset 184
-> unwind: find_proc_info dso /usr/lib/libc-2.28.so
-> unwind: access_mem addr 0x7ffc80811e18 val 56382b0fc1ee, offset 376
-> unwind: find_proc_info dso
-> /home/milian/projects/kdab/rnd/hotspot/build/tests/
-> test-clients/cpp-inlining/cpp-inlining
-> unwind: __hypot_finite:ip = 0x7faf7dca2696 (0x29696)
-> unwind: hypotf32x:ip = 0x7faf7dc88af8 (0xfaf8)
-> unwind: main:ip = 0x56382b0fc128 (0x1128)
-> unwind: __libc_start_main:ip = 0x7faf7dabf222 (0x24222)
-> unwind: _start:ip = 0x56382b0fc1ed (0x11ed)
-> # second frame (unrelated)
-> unwind: reg 16, val 56382b0fc114
-> unwind: reg 7, val 7ffc80811d10
-> unwind: find_proc_info dso
-> /home/milian/projects/kdab/rnd/hotspot/build/tests/
-> test-clients/cpp-inlining/cpp-inlining
-> unwind: access_mem addr 0x7ffc80811d58 val 7faf7dabf223, offset 72
-> unwind: access_mem addr 0x7ffc80811e18 val 56382b0fc1ee, offset 264
-> unwind: main:ip = 0x56382b0fc114 (0x1114)
-> unwind: __libc_start_main:ip = 0x7faf7dabf222 (0x24222)
-> unwind: _start:ip = 0x56382b0fc1ed (0x11ed)
-> # third frame (broken unwinding from __hypot_finite)
-> unwind: reg 16, val 7faf7dca2688
-> unwind: reg 7, val 7ffc80811ca0
-> unwind: find_proc_info dso /usr/lib/libm-2.28.so
-> unwind: access_mem addr 0x7ffc80811cc0 val 0, offset 32
-> unwind: __hypot_finite:ip = 0x7faf7dca2688 (0x29688)
-> unwind: '':ip = 0xffffffffffffffff (0x0)
-> cpp-inlining 24617 90229.126685606:     711026 cycles:uppp:
-> 	    7faf7dca2696 __hypot_finite+0x36 (/usr/lib/libm-2.28.so)
-> 	    7faf7dc88af8 hypotf32x+0x18 (/usr/lib/libm-2.28.so)
-> 	    56382b0fc128 main+0x88 (/home/milian/projects/kdab/rnd/hotspot/
-> build/tests/test-clients/cpp-inlining/cpp-inlining)
-> 	    7faf7dabf222 __libc_start_main+0xf2 (/usr/lib/libc-2.28.so)
-> 	    56382b0fc1ed _start+0x2d (/home/milian/projects/kdab/rnd/hotspot/
-> build/tests/test-clients/cpp-inlining/cpp-inlining)
-> 
-> cpp-inlining 24617 90229.126921551:     714657 cycles:uppp:
-> 	    56382b0fc114 main+0x74 (/home/milian/projects/kdab/rnd/hotspot/
-> build/tests/test-clients/cpp-inlining/cpp-inlining)
-> 	    7faf7dabf222 __libc_start_main+0xf2 (/usr/lib/libc-2.28.so)
-> 	    56382b0fc1ed _start+0x2d (/home/milian/projects/kdab/rnd/hotspot/
-> build/tests/test-clients/cpp-inlining/cpp-inlining)
-> 
-> cpp-inlining 24617 90229.127157818:     719976 cycles:uppp:
-> 	    7faf7dca2688 __hypot_finite+0x28 (/usr/lib/libm-2.28.so)
-> 	ffffffffffffffff [unknown] ([unknown])
-> ...
-> ```
-> 
-> Now I'm trying to figure out why one __hypot_finite sample works but the
-> other one breaks for no apparent reason.
+> hum, did not know stderr wasn't buffer
+>
+> I think there's perf script feature to store the events data to
+> separate files per each event.. but I guess we don't need to
+> flush them.. we just need to have stdout and stderr in sync IIUC
 
-I've now collected some more background information, which is quite helpful I 
-believe for the analysis of this issue:
+Exactly, and that's achieved with this patch form what I see :) Or should we 
+maybe instead call 
 
-Note how the broken sample has the IP pointing at __hypot_finite+0x28:
+setbuf(fp, NULL);
 
-unwind: __hypot_finite:ip = 0x7faf7dca2688 (0x29688)
+in verbose mode?
 
-When we run my reproducer code in GDB, we can see that obtaining a backtrace 
-from that address works just fine there:
+Thanks
 
-```
-$ gdb ./cpp-inlining
-GNU gdb (GDB) 8.2
-Copyright (C) 2018 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.
-Type "show copying" and "show warranty" for details.
-This GDB was configured as "x86_64-pc-linux-gnu".
-Type "show configuration" for configuration details.
-For bug reporting instructions, please see:
-<http://www.gnu.org/software/gdb/bugs/>.
-Find the GDB manual and other documentation resources online at:
-    <http://www.gnu.org/software/gdb/documentation/>.
-
-For help, type "help".
-Type "apropos word" to search for commands related to "word"...
-Reading symbols from ./cpp-inlining...done.
-(gdb) break main
-Breakpoint 1 at 0x10a0: file /home/milian/projects/kdab/rnd/hotspot/tests/
-test-clients/cpp-inlining/main.cpp, line 34.
-(gdb) run
-Starting program: /home/milian/projects/kdab/rnd/hotspot/build/tests/test-
-clients/cpp-inlining/cpp-inlining 
-
-Breakpoint 1, main () at /home/milian/projects/kdab/rnd/hotspot/tests/test-
-clients/cpp-inlining/main.cpp:34
-34      {
-(gdb) disassemble __hypot_finite 
-Dump of assembler code for function __hypot_finite:
-   0x00007ffff7c96660 <+0>:     endbr64 
-   0x00007ffff7c96664 <+4>:     push   %r13
-   0x00007ffff7c96666 <+6>:     push   %r12
-   0x00007ffff7c96668 <+8>:     push   %rbp
-   0x00007ffff7c96669 <+9>:     movq   %xmm1,%rbp
-   0x00007ffff7c9666e <+14>:    push   %rbx
-   0x00007ffff7c9666f <+15>:    movq   %xmm0,%rbx
-   0x00007ffff7c96674 <+20>:    shr    $0x20,%rbp
-   0x00007ffff7c96678 <+24>:    shr    $0x20,%rbx
-   0x00007ffff7c9667c <+28>:    and    $0x7fffffff,%ebp
-   0x00007ffff7c96682 <+34>:    and    $0x7fffffff,%ebx
-   0x00007ffff7c96688 <+40>:    sub    $0x28,%rsp
-   0x00007ffff7c9668c <+44>:    cmp    %ebp,%ebx
-   0x00007ffff7c9668e <+46>:    jge    0x7ffff7c966a2 <__hypot_finite+66>
-   0x00007ffff7c96690 <+48>:    mov    %ebx,%eax
-   0x00007ffff7c96692 <+50>:    movapd %xmm0,%xmm2
-   0x00007ffff7c96696 <+54>:    movapd %xmm1,%xmm0
-   0x00007ffff7c9669a <+58>:    mov    %ebp,%ebx
-   0x00007ffff7c9669c <+60>:    movapd %xmm2,%xmm1
-   0x00007ffff7c966a0 <+64>:    mov    %eax,%ebp
-   0x00007ffff7c966a2 <+66>:    movq   %xmm0,%r13
-   0x00007ffff7c966a7 <+71>:    mov    %rbx,%rax
-   0x00007ffff7c966aa <+74>:    movq   %xmm1,%r12
---Type <RET> for more, q to quit, c to continue without paging--q
-Quit
-(gdb) break *0x00007ffff7c96688
-Breakpoint 2 at 0x7ffff7c96688
-(gdb) cont
-Continuing.
-
-Breakpoint 2, 0x00007ffff7c96688 in __hypot_finite () from /usr/lib/libm.so.6
-(gdb) bt
-#0  0x00007ffff7c96688 in __hypot_finite () from /usr/lib/libm.so.6
-#1  0x00007ffff7c7caf9 in hypotf64 () from /usr/lib/libm.so.6
-#2  0x0000555555555129 in std::__complex_abs (__z=<optimized out>) at /usr/
-include/c++/8.2.1/complex:1362
-#3  std::abs<double> (__z=...) at /usr/include/c++/8.2.1/complex:618
-#4  std::_Norm_helper<true>::_S_do_it<double> (__z=...) at /usr/include/c++/
-8.2.1/complex:675
-#5  std::norm<double> (__z=...) at /usr/include/c++/8.2.1/complex:685
-#6  main () at /home/milian/projects/kdab/rnd/hotspot/tests/test-clients/cpp-
-inlining/main.cpp:39
-```
-
-But note how __hypot_finite+0x28 actually points at an instruction that 
-modifies the stack pointer by 40, just like I did manually to "fix" unwinding 
-for this sample (see my initial email):
-
-   0x00007ffff7c96688 <+40>:    sub    $0x28,%rsp
-
-So we are still in the function prologue, and can't properly unwind from there 
-apparently! Any suggestions on how this should be handled? Can we figure out 
-the size of the function prologue somehow and manually fix the stack pointer 
-then?
-
-Cheers
 -- 
 Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
 KDAB (Deutschland) GmbH, a KDAB Group company
 Tel: +49-30-521325470
 KDAB - The Qt, C++ and OpenGL Experts
---nextPart2427097.tVUJAJuc8D
+--nextPart2852350.Qm4K0Tgxqp
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Disposition: attachment; filename="smime.p7s"
 Content-Transfer-Encoding: base64
@@ -324,16 +248,16 @@ cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
 c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
 BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
 EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMDIyMTAzNTM5WjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQguG6cD4bYe6hIa/JjVZVZnD3Zjd1q
-kxtLgtWC//rXaf4wDQYJKoZIhvcNAQEBBQAEggEAlRwV/g7jt4YVwqwUdZj5zpvEHdAoyApIkSUL
-kIZJGvwq75+1iiXk/ktJbXIqEFsX+wKx9/vjLZrplZz9gwaQa6mtXCNGLUPbXZnxjvAn01bZsJp2
-VVgiaHxWhBL8K6Ycdw2w19Msfk4ydgvfstCCcPq8tlX1d6shMGK8wPyzJSwfbLCyzsB05BcyxGZG
-7kKfrm48J3Qe74zHT3Pem4WfvSSOgHHH7G/F4kponCkdGOlabroGj/jOOge9W6pZnlu+XvDFz4Hy
-0L/pOb40XCaai2VVRGaf2SQvYcBPm5WFvJVQJ5n2DnmsC33WveKwrSXzr5aAc/k5W+ffQvgM1FrH
-ygAAAAAAAA==
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMDIyMTAzODU3WjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQg68h2ugnkIWGQeW+Ar+shC1JUtoV/
+2/m5U/Z3ZFIbz2MwDQYJKoZIhvcNAQEBBQAEggEAVL2qmNDSqR4gK6tfdtamoTRvEZM/RiVAFW/6
+iHVGwkW9b+VuXH+O+Uyj0OaC8jbIje4RC7NyhIYsFCfaIK6ys7mf3Fy/UfMiW4y9WEg979gmlW0j
+sxsQUeU7SrSHJTDqcxbDqVPjefXYgnD6CWI0PhTVLTQtmH1DCAS+fA4Llj+LvQn7XE9KBI4pYiDC
+W1tAAmQHTcgO51BtFrkdACRqk3zrlT8yUAOIWIyjnZfn4HEOfvkSsnEh8trl3c2FH74Oy621XONZ
+h4JkDQ16BwErXMHcuhtzNq51eHCWvV/P42ubxf0WujoKx9qPSh2yT+5RU+5VevfXIKwaZujaiTsn
+OQAAAAAAAA==
 
 
---nextPart2427097.tVUJAJuc8D--
+--nextPart2852350.Qm4K0Tgxqp--
 
 
