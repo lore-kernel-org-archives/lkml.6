@@ -2,139 +2,108 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A631CC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A18FEC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:21:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EEA920663
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:18:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30DFF205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:21:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pToAUWGJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EEA920663
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZBkVLBwE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30DFF205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728790AbeJWBhT (ORCPT
+        id S1728699AbeJWBlB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 21:37:19 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38092 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728623AbeJWBhT (ORCPT
+        Mon, 22 Oct 2018 21:41:01 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42201 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728629AbeJWBlA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 21:37:19 -0400
-Received: by mail-pl1-f196.google.com with SMTP id p7-v6so435366plk.5
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 10:17:56 -0700 (PDT)
+        Mon, 22 Oct 2018 21:41:00 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f8-v6so6340164wro.9
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 10:21:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=oA7xr5QeyWJpzokAhtSgAZl5pfjfuog8CUj3NpYcIkc=;
-        b=pToAUWGJxfD4G2VB3Ervq0Msf+5dcWN7zvEuegKdnTlgHJ6Qb5lIIqMf+tXcv3ld2u
-         z2IqNhpTlOpPtqgJwA1Sc2LqFliQGIDNdBy4/YEwO+GChHT4cffCgZCainXaRHmLxwW7
-         BuSRHuw/EFb71uQVQsUJeERaWGiSRsQzVBAGza763li/0MygUMaVdk3VVOFJLqxCG6Ma
-         5eZIldSOi2/Ar3BQz+8z3MAj4WcnYeGi252NgWIV3i/iakLxgJUCPFY5s/VyvZhzI1Z+
-         qPoioPtnB9k/M6UpmBheLZ5yUvcuDLUuxYTvw2cxkRmiBFenH8/7GZHJRkC+zm0+79bQ
-         4sDA==
+        bh=v0kxlVNP/eQiUbzjfgGFdxCTXDzlqKmKDPqXfqoOJr4=;
+        b=ZBkVLBwErLxXqvNdiuJngBoEr8fuNhY1PitnjzI2SbWXkN+naB1xlzeQClRjssAd6o
+         IOqHb5KcWdeRsUCuntvLpO19A+EtscnfU1mbFkht20HVGskfgfqkccfMePoZhUeD0Dc9
+         NTr9/gaUdvfewVyAea29MGjoInlzODdcRcGIQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=oA7xr5QeyWJpzokAhtSgAZl5pfjfuog8CUj3NpYcIkc=;
-        b=Q8g5nyYCzWxVNac0pbzZecpC17e4TRPX2zlRY0ioFSiQCv3B5KmS6F+YZ/CoXehxd9
-         rEopXqzFHXujV3DdTfDh9mGVR0sI6zmF/KAXTnkezZ3ssmdYj3yBRi3gE2TJZTptbBcx
-         ZstkFW+NhgSymmBYXycsczfa2xWCcTGUGLvgZAfWi2VmHckgwULyNzOMJc3blAPkAjos
-         XH+muUO40yBLeFf/BRUj5stccVR4a4k85F3AaSTwdFFewmQMyTzdpnd1mhmf8ZqIOI+z
-         e2nu22fcOuOdvgREjCRQ1jpsx5i75/wR8KzIcTQs8OQ1HPKo3XsVidjBL5zdjXuHckBF
-         pIhA==
-X-Gm-Message-State: AGRZ1gLVlJWHwclHLNT7zu3puqkEHr75IJWeSacGdWgtAkv7GPeP0USq
-        OY8dYAMP7Il985aRfaHIBR3E6K28d3nVr3hNHh7v1g==
-X-Google-Smtp-Source: AJdET5dzW23d7hR6omCsRZMOYe51E5ruiFFKQlqciLo2n7llX+F9ctIRc9CJ5Qz68T4o0wZZpW6SdnWrA8XKegdf12A=
-X-Received: by 2002:a17:902:b412:: with SMTP id x18-v6mr11189744plr.13.1540228676261;
- Mon, 22 Oct 2018 10:17:56 -0700 (PDT)
+        bh=v0kxlVNP/eQiUbzjfgGFdxCTXDzlqKmKDPqXfqoOJr4=;
+        b=LSJGbPapzlOvt3zvZhMVwwZc+tfrx3ALB3eRhbO18ifAYYY9u5AwFVbvc9dntud9PW
+         /a1DdLzdZ+1aKRKtyy75FQkSZCxNZw/BVKaNWnYAHFDkMBOiiij3Vvp8CVcTLMWQqGYL
+         9ecQ8Vqk3khnReyj5eFT8DYgjjClWcz4ERqHfALqgxZZJY2WpmjkrqbyF6orZ/xUFqLJ
+         h7i0WVHVjqrhNMr701KKRYMxxfnaGOUSzAFVWctYgaq1Wvevs7Kb6YXASCff9ERbJ0+Y
+         mo0y7sTIyWfFEkGVqY7gUQ12sALzjttSAKRFmR3O/sv7/WAv4HRv9zaiNJYo/KGaXGu9
+         ILFQ==
+X-Gm-Message-State: ABuFfohaBqAV2aPQnFRlatrq6OYn4VkqbNGRUtp1NCM4PWY1eESbw8Iq
+        Fy7qqPqcd4TEchy8en80ykrCB5Y0gnYt9C2UAeTMmA==
+X-Google-Smtp-Source: ACcGV61xK7EBtH3Ky1VUbckS6sVvW68OjPPpu4TE6P5Qvuge6RQwSzg0/dPnJlxk4OcSCdfEI9iHhABMJoR4b9umzGQ=
+X-Received: by 2002:adf:ba06:: with SMTP id o6-v6mr21097597wrg.249.1540228896313;
+ Mon, 22 Oct 2018 10:21:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181021171414.22674-1-miguel.ojeda.sandonis@gmail.com>
- <20181021171414.22674-2-miguel.ojeda.sandonis@gmail.com> <20181021222712.GI1617@thunk.org>
- <CANiq72mXV6WTyHXNZJDTfFOpPrXD0zD6cB30bGOuKO44AvRiog@mail.gmail.com>
- <CAGXu5jKb-0H+smRAW6ngQKDZ-PbTThhMwhmu34iB8vjTa-4H8Q@mail.gmail.com>
- <CANiq72n4+HDXPqr7xySSGx49g8vEcXaxO7a-By9cSg7YSxOS_A@mail.gmail.com> <CANiq72kNnrhi8OPbF7P+Rw4SGYu=JuvhDKtzGtG2J5AOoC1-Dw@mail.gmail.com>
-In-Reply-To: <CANiq72kNnrhi8OPbF7P+Rw4SGYu=JuvhDKtzGtG2J5AOoC1-Dw@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 22 Oct 2018 10:17:44 -0700
-Message-ID: <CAKwvOdn1TOzZYg_i0zB0rU+K3jaQQ8XmWnLXz01NCG9V+8PxHw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] Compiler Attributes: add support for __fallthrough
- (gcc >= 7.1)
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Kees Cook <keescook@chromium.org>, gustavo@embeddedor.com,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, dan.carpenter@oracle.com,
-        adilger.kernel@dilger.ca,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>, rostedt@goodmis.org,
-        mchehab+samsung@kernel.org, olof@lxom.net,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        sandipan@linux.vnet.ibm.com,
-        Andrey Konovalov <andreyknvl@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        paul.burton@mips.com, David Rientjes <rientjes@google.com>,
-        Willy Tarreau <w@1wt.eu>, msebor@gmail.com, sparse@chrisli.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>, joe@perches.com,
-        Arnd Bergmann <arnd@arndb.de>, asmadeus@codewreck.org,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-sparse@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Received: by 2002:a1c:b485:0:0:0:0:0 with HTTP; Mon, 22 Oct 2018 10:21:35
+ -0700 (PDT)
+In-Reply-To: <CALAqxLX0Q3Yo-75CDdG4g7i5G=i5OPi01ApYyJO6wTn4CSCkPA@mail.gmail.com>
+References: <1538434698-1042-1-git-send-email-john.stultz@linaro.org>
+ <yq17eiiwobx.fsf@oracle.com> <CALAqxLXYTZZ12haKHGwnTBqPgkv_JF8=fiiJrD9OWRFdcXf0Sw@mail.gmail.com>
+ <CALAqxLX0Q3Yo-75CDdG4g7i5G=i5OPi01ApYyJO6wTn4CSCkPA@mail.gmail.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Mon, 22 Oct 2018 10:21:35 -0700
+Message-ID: <CALAqxLWv1v+JiLjwJpQ_rFkwM4d86YRr1WeMLjg4=Wvwpd5MGw@mail.gmail.com>
+Subject: Re: [RESEND][PATCH] scsi: ufs: Fix hynix ufs bug with quirk on hi36xx SoC
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>, Wei Li <liwei213@huawei.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        linux-scsi@vger.kernel.org, Dmitry Shmidt <dimitrysh@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 2:43 AM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Mon, Oct 22, 2018 at 11:41 AM Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
-> >
-> >   * clang does *not* support the attribute in C.
->
-> ...nor the warning at all, by the way (which is why this is OK).
->
-> Cheers,
-> Miguel
+On Tue, Oct 16, 2018 at 4:50 PM, John Stultz <john.stultz@linaro.org> wrote:
+> On Tue, Oct 16, 2018 at 3:48 PM, John Stultz <john.stultz@linaro.org> wrote:
+>> On Mon, Oct 15, 2018 at 8:41 PM, Martin K. Petersen
+>> <martin.petersen@oracle.com> wrote:
+>>>
+>>> John,
+>>>
+>>>> Hynix ufs has deviations on hi36xx platform which will result in ufs
+>>>> bursts transfer failures.
+>>>
+>>> Is this specific to the particular implementation on hi36xx or all SK
+>>> Hynix implementations?
+>>
+>> I'd have to defer to Wei Li on that question.
 
-Oh? We're going through and annotating all of Android's C++ source
-right now with it.
-https://clang.llvm.org/docs/DiagnosticsReference.html#wimplicit-fallthrough
+So I followed up with Wei Li and it seems its something specific to
+hi36xx that the specific hynix chip brings out, which most other chips
+don't seem to trigger.
 
-Though it looks like the attribute syntax I like from GCC is not yet
-supported in Clang.
-https://bugs.llvm.org/show_bug.cgi?id=37135
-https://github.com/ClangBuiltLinux/linux/issues/235
-I'll take a look at adding support.
 
-So Kees sent me this embarrassing example:
-https://godbolt.org/z/gV_c9_
-(try changing the language from C++ to C; it works)!  That's embarrassing!
-https://bugs.llvm.org/show_bug.cgi?id=39382
-https://github.com/ClangBuiltLinux/linux/issues/236
-Will get these both fixed up.
--- 
-Thanks,
-~Nick Desaulniers
+> Just to short-cut things a bit, as this is probably an obvious
+> followup: if it is hi36xx specific, how would you suggest a such a
+> targeted quirk be added?  I'm not sure I see how to get to the
+> ufs_dev_desc from the ufs-hisi.c code.
+
+So yea, I've already reworked the quirk to be specific to the one
+model of hynix chip, but I'm still a bit confused on best practices
+for handling these quirks on the controller side. If there's a pointer
+to similar controller side quirks that are device specific, I'd be
+glad to rework the patch in that fashion. Otherwise I'll just try to
+figure out how to get to the ufs_dev_desc from ufs-hisi.c
+
+thanks
+-john
