@@ -2,389 +2,369 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E505AC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08498C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84C5F2064E
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:13:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9751520658
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:23:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IvtFWYg1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84C5F2064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="H0UxLfqW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9751520658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728646AbeJVUcL (ORCPT
+        id S1728318AbeJVUla (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 16:32:11 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43106 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbeJVUcK (ORCPT
+        Mon, 22 Oct 2018 16:41:30 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53348 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727194AbeJVUl3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 16:32:10 -0400
-Received: by mail-lf1-f66.google.com with SMTP id p34-v6so30163792lfg.10
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 05:13:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9zPz0VPAo12TNbzFcR4NLa+1XxTA5R74RtAuWEc2CZU=;
-        b=IvtFWYg1ohdh4O7kzRYXsw9HzV3mozythe6OYQ9XECW176KkX4rAcb7nSXnzYnwdtY
-         W8v4h7fJLSyN/KT/Xhwn78hq3Xw8Gb3XKCFflWuVjau5tNhpntEtWNMmeBnO4yfADW+z
-         g3HwjNdJ3yIAJb7R/SlJ0SLCG1gxJVyU+4gcY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9zPz0VPAo12TNbzFcR4NLa+1XxTA5R74RtAuWEc2CZU=;
-        b=i0ZLfYuqGSwymKkjHgVxO55BTLTAUX7zmJslvKDLaACZIttknqjHJiKOjjmt//B5vr
-         dbWTEeXbesxR9YadUXaHKJ9gnsSsXeSp4nOgfE3e5TK9ZpRun3Ry3CuBgOECt/wXr/EL
-         Fn8dbtnv4K3381W3hYAlHaRC+7OxnxpYDFPRiMGUIJg35jUQBMrJTul83iNv7hYhKFrV
-         uNNtNkvV7MYnmir/Hg2YbZpU5UDZ7GbgG6cBIttW5Sg/41S1KnJ0uSdxClHulJ9PiOuY
-         N+bj/nhdHQEXEDsMViDr+BP4/kSGLzDmn1BBuEWSdPRfzxx3oHIMn/rQgYTivDAm2Zan
-         bEdQ==
-X-Gm-Message-State: ABuFfojpVE/PW1VWVyULTRn+Ppy5FKrWQEi7ieR2N7CuZH+k/DQh+nzT
-        aXP6jl430xSp+lNikUp1vkwaew==
-X-Google-Smtp-Source: ACcGV61eBpI/I0ywWP9p9E22hjETmv3gGwlHMwZ7bpXprNk1ET4mmCS2Kg2TfjJSXuyCPrJuZOBEaQ==
-X-Received: by 2002:a19:1019:: with SMTP id f25mr7546284lfi.54.1540210428761;
-        Mon, 22 Oct 2018 05:13:48 -0700 (PDT)
-Received: from uffe-XPS-13-9360.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id t5-v6sm6604427lfg.90.2018.10.22.05.13.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Oct 2018 05:13:47 -0700 (PDT)
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus <torvalds@linux-foundation.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC updates for v4.20
-Date:   Mon, 22 Oct 2018 14:13:46 +0200
-Message-Id: <20181022121346.3508-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Mon, 22 Oct 2018 16:41:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+QVH748DYYVBcomGccWJHDwAsEC2687UTNdQuwQasYs=; b=H0UxLfqW9P1n6WaKF73dv2JTK
+        ZaXMF3vUKoeCqRxbujhJaSsZHxRUXlDLkUNpaoDJiXj96brG0b8ZeNq+JgL6OgfObqOV/MfwldivV
+        viKNpZESdNDYtD4g8QEJGtCMdXbMrju3a5AmKZZbHGDPOJ7AalVO5UzM6t6x6AUILbjLg=;
+Received: from [167.98.65.38] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gEZEg-0006AN-26; Mon, 22 Oct 2018 12:23:06 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 7256F440078; Mon, 22 Oct 2018 14:23:05 +0200 (CEST)
+Date:   Mon, 22 Oct 2018 13:23:05 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] SPI updates for the next release
+Message-ID: <20181022122305.GD2103@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="UfEAyuTBtIjiZzX6"
+Content-Disposition: inline
+X-Cookie: Piece of cake!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
 
-Here's a PR with the MMC updates for v4.20. Details about the highlights are as
-usual found in the signed tag.
+--UfEAyuTBtIjiZzX6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please pull this in!
+The following changes since commit 35a7f35ad1b150ddf59a41dcac7b2fa32982be0e:
 
-Kind regards
-Ulf Hansson
-
-
-The following changes since commit 4f666675cdff0b986195413215eb062b7da6586f:
-
-  libertas: call into generic suspend code before turning off power (2018-10-10 14:01:50 +0200)
+  Linux 4.19-rc8 (2018-10-15 07:20:24 +0200)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.20
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-=
+v5.0
 
-for you to fetch changes up to fd82cc3020a024fc97fbc0a5242c26d06bb5e203:
+for you to fetch changes up to 7b9734dbc5b042bb8d8d930797f346b280057c4e:
 
-  mmc: mediatek: drop too much code of tuning method (2018-10-15 15:00:29 +0200)
-
-----------------------------------------------------------------
-MMC core:
- - Introduce a host helper function to share re-tuning progress
-
-MMC host:
- - sdhci: Add support for v4 host mode
- - sdhci-of-arasan: Add Support for AM654 MMC and PHY
- - sdhci-sprd: Add support for Spreadtrum's host controller
- - sdhci-tegra: Add support for HS400 enhanced strobe
- - sdhci-tegra: Enable UHS/HS200 modes for Tegra186/210
- - sdhci-tegra: Add support for HS400 delay line calibration
- - sdhci-tegra: Add support for pad calibration
- - sdhci-of-dwcmshc: Address 128MB DMA boundary limitation
- - sdhci-of-esdhc: Add support for tuning erratum A008171
- - sdhci-iproc: Add ACPI support
- - mediatek: Add support for MT8183
- - mediatek: Improve the support for tuning
- - mediatek: Add bus clock control for MT2712
- - jz4740: Add support for the JZ4725B
- - mmci: Add support for the stm32 sdmmc variant
- - mmci: Add support for an optional reset control
- - mmci: Add some new variant specific properties/callbacks
- - mmci: Re-structure DMA code to prepare for new variants
- - renesas_sdhi: Add support for r8a77470, r8a7744 and r8a774a1
- - renesas_sdhi_internal_dmac: Whitelist r8a77970 and r8a774a1
- - tmio/uniphier-sd: Add new UniPhier SD/eMMC controller driver
- - tmio/renesas_sdhi: Deal properly with SCC detection during re-tune
- - tmio/renesas_sdhi: Refactor/consolidate clock management
- - omap_hsmmc: Drop cover detection and some unused platform data
- - dw_mmc-exynos: Enable tuning for more speed modes
- - sunxi: Clarify the new timing mode and enable it for the A64 controller
- - various: Convert to slot GPIO descriptors
+  Merge remote-tracking branch 'spi/topic/of' into spi-next (2018-10-21 17:=
+00:17 +0100)
 
 ----------------------------------------------------------------
-Aapo Vienamo (26):
-      mmc: sdhci: Export sdhci_request()
-      dt-bindings: mmc: tegra: Add pad voltage control properties
-      dt-bindings: Add Tegra SDHCI pad pdpu offset bindings
-      dt-bindings: mmc: Add Tegra SDHCI sampling trimmer values
-      mmc: tegra: Reconfigure pad voltages during voltage switching
-      mmc: tegra: Poll for calibration completion
-      mmc: tegra: Set calibration pad voltage reference
-      mmc: tegra: Power on the calibration pad
-      mmc: tegra: Disable card clock during pad calibration
-      mmc: tegra: Program pad autocal offsets from dt
-      mmc: tegra: Perform pad calibration after voltage switch
-      mmc: tegra: Enable pad calibration on Tegra210 and Tegra186
-      mmc: tegra: Add a workaround for tap value change glitch
-      mmc: tegra: Parse default trim and tap from dt
-      mmc: tegra: Configure default tap values
-      mmc: tegra: Configure default trim value on reset
-      mmc: tegra: Use standard SDHCI tuning on Tegra210 and Tegra186
-      mmc: tegra: Remove tegra_sdhci_writew() from tegra210_sdhci_ops
-      mmc: tegra: Disable card clock during tuning cmd on Tegra210
-      mmc: tegra: Enable UHS and HS200 modes for Tegra210
-      mmc: tegra: Enable UHS and HS200 modes for Tegra186
-      dt-bindings: mmc: Add DQS trim value to Tegra SDHCI
-      mmc: tegra: Parse and program DQS trim value
-      mmc: tegra: Implement HS400 enhanced strobe
-      mmc: tegra: Implement HS400 delay line calibration
-      mmc: tegra: Implement periodic pad calibration
+spi: SPI updates for v5.0
 
-Adrian Hunter (1):
-      mmc: sdhci-pltfm: Convert DT properties to generic device properties
+One new core feature here, a small collection of new drivers and a bunch
+of small improvements in existing drivers.
 
-Anand Moon (1):
-      mmc: dw_mmc-exynos: Add tuning for sdr and ddr timing for USH-I mode
+ - A new CS_WORD flag for transfers where the chip select is toggled at
+   every word, with both a generic implementation and the ability for
+   controllers to do this automatically (including a DaVinci one).
+ - New drivers for Mediatek MT2712, Qualcomm GENI and QSPI, Spreadtrum
+   SPI and ST STM32 QSPI plus new IDs for several existing ones.
+
+----------------------------------------------------------------
+A.s. Dong (1):
+      spi: lpspi: add imx8qxp compatible string
+
+Alexandre Belloni (2):
+      spi: dw-mmio: add MSCC Jaguar2 support
+      spi: dw-mmio: avoid hardcoded field mask
+
+Alexey Khoroshilov (2):
+      spi: pic32: remove unnecessary of_node_get()
+      spi: pic32-sqi: remove unnecessary of_node_get()
+
+Arnd Bergmann (1):
+      spi: sprd: don't mark remove function as __exit
+
+Axel Lin (1):
+      spi: rb4xx: Use SPI_BPW_MASK to set bits_per_word_mask
+
+Baolin Wang (1):
+      spi: Introduce one new field to set word delay
 
 Biju Das (2):
-      dt-bindings: mmc: renesas_sdhi: Add r8a7744 support
-      dt-bindings: mmc: sh_mmcif: Document r8a7744 DT bindings
+      dt-bindings: spi: rspi: Add r8a7744 to the compatible list
+      dt-bindings: spi: sh-msiof: Add r8a7744 support
 
-Chaotian Jing (8):
-      mmc: dt-bindings: add "bus-clk" for MT2712
-      mmc: mediatek: add bus_clk control
-      mmc: dt-bindings: add support for MT8183 SoC
-      mmc: mediatek: fill the actual clock for mmc debugfs
-      mmc: mediatek: fix cannot receive new request when msdc_cmd_is_ready fail
-      mmc: mediatek: tune CMD/DATA together
-      mmc: mediatek: add MT8183 MMC driver support
-      mmc: mediatek: drop too much code of tuning method
+Boris Brezillon (1):
+      spi: spi-mem: Add extra sanity checks on the op param
 
-Chen-Yu Tsai (2):
-      mmc: sunxi: Clarify new timing mode usage and implementation
-      mmc: sunxi: Use new timing mode for A64 eMMC controller
+Chris Brandt (1):
+      dt-bindings: spi: rspi: Add R7S9210 support
 
-Chunyan Zhang (9):
-      mmc: sdhci: Add version V4 definition
-      mmc: sdhci: Add sd host v4 mode
-      mmc: sdhci: Change SDMA address register for v4 mode
-      mmc: sdhci: Add ADMA2 64-bit addressing support for V4 mode
-      mmc: sdhci: Add 32-bit block count support for v4 mode
-      mmc: sdhci: Add Auto CMD Auto Select support
-      mmc: sdhci: SDMA may use Auto-CMD23 in v4 mode
-      dt-bindings: sdhci-sprd: Add bindings for the sdhci-sprd controller
-      mmc: sdhci-sprd: Add Spreadtrum's initial host controller
+Christoph Hellwig (1):
+      spi: pic32-sqi: don't pass GFP_DMA32 to dma_alloc_coherent
 
-Fabrizio Castro (4):
-      mmc: renesas_sdhi_internal_dmac: Whitelist r8a774a1
-      mmc: renesas_sdhi: Add r8a774a1 support
-      dt-bindings: mmc: renesas_sdhi: Add r8a77470 support
-      mmc: renesas_sdhi: Add r8a77470 SDHI1 support
+Chuanhua Han (1):
+      spi: spi-mem: Adjust op len based on message/transfer size limitations
 
-Faiz Abbas (3):
-      dt-bindings: mmc: sdhci-of-arasan: Add new compatible for AM654 MMC PHY
-      mmc: sdhci-of-arasan: Add a single data structure to incorporate pdata and soc_ctl_map
-      mmc: sdhci-of-arasan: Add Support for AM654 MMC and PHY
+David Lechner (5):
+      spi: add new SPI_CS_WORD flag
+      spi: add software implementation for SPI_CS_WORD
+      spi: spi-davinci: Add support for SPI_CS_WORD
+      spi: always use software fallback for SPI_CS_WORD when using cs_gio
+      spi: spi-davinci: Don't error when SPI_CS_WORD and cs_gpio
+
+Dilip Kota (2):
+      dt-bindings: soc: qcom: Remove SPI controller maximum frequency bindi=
+ng
+      spi: soc: qcom: GENI SE SPI controller device tree binding
+
+Douglas Anderson (2):
+      soc: qcom: geni: Don't ignore clk_round_rate() errors in geni_se_clk_=
+tbl_get()
+      soc: qcom: geni: geni_se_clk_freq_match() should always accept multip=
+les
+
+Emil Renner Berthing (4):
+      spi: rockchip: remove unneeded dma_caps
+      spi: rockchip: mark use_dma as bool
+      spi: rockchip: directly use direction constants
+      spi: rockchip: simplify spi enable logic
+
+Fabrizio Castro (1):
+      spi: sh-msiof: Add r8a774a1 support
+
+Florian Fainelli (2):
+      MAINTAINERS: Add entry for Broadcom SPI controller
+      spi: Allow building SPI_BCM63XX_HSSPI on ARM-based SoCs
+
+Geert Uytterhoeven (4):
+      spi: sh-msiof: Document R-Car E3 support
+      spi: spidev_test: Improve decoded text part of hex dump
+      spi: Do not print a message if spi_controller_{suspend,resume}() fails
+      spi: spi-mem: Fix inverted logic in op sanity check
+
+Girish Mahadevan (3):
+      spi: Qualcomm Quad SPI(QSPI) documentation
+      spi: Introduce new driver for Qualcomm QuadSPI controller
+      spi: spi-geni-qcom: Add SPI driver support for GENI based QUP
 
 Gustavo A. R. Silva (2):
-      mmc: tifm_sd: Mark expected switch fall-through
-      mmc: meson-mx-sdio: mark expected switch fall-through
+      spi: slave: Fix missing break in switch
+      spi: pxa2xx: Rewrite switch code block in interrupt_transfer
 
-Igor Opaniuk (1):
-      mmc: dw_mmc: hi3798cv200: add MMC_CAP_CMD23 cap
+Hieu Tran Dang (1):
+      spi: fsl-lpspi: Prevent FIFO under/overrun by default
 
-Jisheng Zhang (4):
-      mmc: sdhci: add adma_table_cnt member to struct sdhci_host
-      mmc: sdhci: introduce adma_write_desc() hook to struct sdhci_ops
-      mmc: sdhci-of-dwcmshc: solve 128MB DMA boundary limitation
-      mmc: sdhci: fix __sdhci_adma_write_desc
+Huibin Hong (2):
+      spi: rockchip: initialize dma_slave_config properly
+      spi: rockchip: adjust dma watermark and burstlen
 
-Linus Walleij (6):
-      mmc: mmci: Drop support for pdata GPIO numbers
-      mmc: sdhci: spear: Use the slot GPIO descriptor
-      mmc: sdhci: pxav3: Delete GPIO handling
-      mmc: sdhci: sirf: Use the slot GPIO descriptor
-      mmc: omap_hsmmc: Kill off cover detection
-      mmc: omap_hsmmc: Delete platform data GPIO CD and WP
+Jonas Gorski (1):
+      spi/bcm63xx-hsspi: keep pll clk enabled
 
-Lubomir Rintel (1):
-      mmc: core: Allow building PWRSEQ_SD8787 with LIBERTAS_SDIO
+Kosta Zertsekel (1):
+      spi: orion: cosmetics - alias long direct_access variables
 
-Ludovic Barre (26):
-      mmc: mmci: internalize dma map/unmap into mmci dma functions
-      mmc: mmci: internalize dma_inprogress into mmci dma functions
-      mmc: mmci: Change struct members from bool to u8
-      mmc: mmci: create common mmci_dma_setup/release
-      mmc: mmci: introduce dma_priv pointer to mmci_host
-      mmc: mmci: merge prepare data functions
-      mmc: mmci: add prepare/unprepare_data callbacks
-      mmc: mmci: add get_next_data callback
-      mmc: mmci: add dma_start callback
-      mmc: mmci: add dma_finalize callback
-      mmc: mmci: add dma_error callback
-      mmc: mmci: add validate_data callback
-      mmc: mmci: add set_clk/pwrreg callbacks
-      mmc: mmci: add datactrl block size variant property
-      mmc: mmci: expand startbiterr to irqmask and error check
-      mmc: mmci: add variant properties to define cpsm & cmdresp bits
-      mmc: mmci: add variant property to define dpsm bit
-      mmc: mmci: add variant property to define irq pio mask
-      mmc: mmci: add variant property to write datactrl before command
-      mmc: mmci: add variant property to not read datacnt
-      dt-bindings: mmci: add optional reset property
-      mmc: mmci: add optional reset property
-      mmc: mmci: add clock divider for stm32 sdmmc
-      mmc: mmci: add stm32 sdmmc registers
-      dt-bindings: mmci: add stm32 sdmmc variant
-      mmc: mmci: add stm32 sdmmc variant
+Lanqing Liu (2):
+      spi: Add Spreadtrum SPI controller documentation
+      spi: sprd: Add SPI driver for Spreadtrum SC9860
 
-Masaharu Hayakawa (2):
-      mmc: renesas_sdhi: skip SCC error check when retuning
-      mmc: tmio: Fix SCC error detection
+Leilk Liu (2):
+      spi: mediatek: add bindings for Mediatek MT2712 soc platform
+      spi: mediatek: add spi slave for Mediatek MT2712
 
-Masahiro Yamada (11):
-      mmc: tmio: replace tmio_mmc_clk_stop() calls with tmio_mmc_set_clock()
-      mmc: tmio: move tmio_mmc_set_clock() to platform hook
-      dt-bindings: mmc: add DT binding for UniPhier SD/eMMC controller
-      mmc: uniphier-sd: add UniPhier SD/eMMC controller driver
-      mmc: renesas_sdhi: merge clk_{start,stop} functions to set_clock
-      mmc: tmio: refactor CLK_CTL bit calculation
-      mmc: tmio: move MFD variant reset to a platform hook
-      mmc: tmio: remove TMIO_MMC_HAVE_HIGH_REG flag
-      mmc: tmio: simplify the DMA mode test
-      mmc: uniphier-sd: fix DMA disabling
-      mmc: uniphier-sd: avoid using broken DMA RX channel
+Linus Walleij (2):
+      spi: gpio: No MISO does not imply no RX
+      spi: davinci: Remove chip select GPIO pdata
 
-Michal Simek (1):
-      mmc: sdhci-of-arasan: Do now show error message in case of deffered probe
+Lubomir Rintel (5):
+      spi: pxa2xx: Remove the shutdown callback
+      spi: pxa2xx: Use an enum for type
+      spi: pxa2xx: Add devicetree support
+      spi/spi-pxa2xx: add PXA2xx SSP SPI Controller
+      PCI: Provide pci_match_id() with CONFIG_PCI=3Dn
 
-Niklas Söderlund (2):
-      mmc: core: add helper to see if a host is doing a retune
-      mmc: renesas_sdhi_internal_dmac: set scatter/gather max segment size
+Ludovic Barre (2):
+      dt-bindings: spi: add stm32 qspi controller
+      spi: spi-mem: add stm32 qspi controller
 
-Paul Cercueil (2):
-      mmc: jz4740: Drop dependency on MACH_JZ4740/80
-      mmc: jz4740: Add support for the JZ4725B
+Lukasz Majewski (1):
+      spidev: Enable the Liebherr's BK4 board to work with spidev driver
 
-Rob Herring (1):
-      mmc: Convert to using %pOFn instead of device_node.name
+Marco Felsch (2):
+      spi: switch to SPDX license identifier
+      spi: make OF helper available for others
 
-Sergei Shtylyov (3):
-      mmc: renesas_sdhi_internal_dmac: Fix a few typos
-      mmc: renesas_sdhi_internal_dmac: add R8A77970 to whitelist
-      dt-bindings: mmc: tmio_mmc: document Renesas R8A77970 bindings
+Mark Brown (5):
+      Merge tag 'spi-cs-word' into spi-4.20
+      Merge tag 'qcom-geni-immutable-for-mark-brown' of git://git.kernel.or=
+g/.../agross/linux into spi-4.20
+      Merge branch 'spi-4.19' into spi-linus
+      Merge branch 'spi-4.20' into spi-next
+      Merge remote-tracking branch 'spi/topic/of' into spi-next
 
-Srinath Mannam (1):
-      mmc: sdhci-iproc: Add ACPI support
+Nathan Chancellor (2):
+      spi: pic32: Use proper enum in dmaengine_prep_slave_rg
+      spi: spi-ep93xx: Use dma_data_direction for ep93xx_spi_dma_{finish,pr=
+epare}
 
-Ulf Hansson (2):
-      Merge branch 'fixes' into next
-      Merge branch 'fixes' into next
+Peter Shih (1):
+      spi: mediatek: Don't modify spi_transfer when transfer.
 
-Wang Dongsheng (2):
-      sdhci: acpi: add free_slot callback
-      sdhci: acpi: add qcom sdhci host reset quirk fix
+Phil Elwell (1):
+      spi: Make GPIO CSs honour the SPI_NO_CS flag
 
-Wolfram Sang (3):
-      mmc: use SPDX identifier for Renesas drivers
-      mmc: tmio: more concise clk calculation
-      mmc: tmio: remove now unused variable
+Rafa=C5=82 Mi=C5=82ecki (2):
+      spi: bcm-qspi: fix calculation of address length
+      spi: bcm-qspi: switch back to reading flash using smaller chunks
 
-Yinbo Zhu (2):
-      mmc: sdhci: add tuning error codes
-      mmc: sdhci-of-esdhc: add erratum A008171 support
+Robin Gong (3):
+      spi: imx: move wml setting to later than setup_transfer
+      spi: imx: correct wml as the last sg length
+      spi: imx: use PIO mode if size is small
 
-Yu Zhao (1):
-      mmc: sdhci-pci-o2micro: Add quirk for O2 Micro dev 0x8620 rev 0x01
+Sergei Shtylyov (2):
+      spi: sh-msiof: fix deferred probing
+      spi: sh-msiof: document R8A779{7|8}0 bindings
 
-YueHaibing (1):
-      mmc: tegra: fix inconsistent IS_ERR and PTR_ERR
+Simon Goldschmidt (1):
+      spi: dw: support 4-16 bits per word
 
-jun qian (1):
-      mmc: mxcmmc: replace spin_lock_irqsave with spin_lock in ISR
+Stephen Boyd (1):
+      soc: qcom: geni: Make version macros simpler
 
- .../devicetree/bindings/mmc/arasan,sdhci.txt       |   1 +
- Documentation/devicetree/bindings/mmc/jz4740.txt   |   1 +
- Documentation/devicetree/bindings/mmc/mmci.txt     |  11 +
- Documentation/devicetree/bindings/mmc/mtk-sd.txt   |   2 +
- .../bindings/mmc/nvidia,tegra20-sdhci.txt          |  72 +++
- .../devicetree/bindings/mmc/renesas,mmcif.txt      |   4 +-
- .../devicetree/bindings/mmc/sdhci-sprd.txt         |  41 ++
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  10 +-
- .../devicetree/bindings/mmc/uniphier-sd.txt        |  55 ++
- MAINTAINERS                                        |   1 +
- arch/arm/mach-integrator/integrator_cp.c           |   2 -
- arch/arm/mach-omap2/hsmmc.h                        |   2 -
- arch/arm/mach-omap2/pdata-quirks.c                 |   2 -
- arch/arm/mach-versatile/versatile_dt.c             |   4 -
- drivers/mmc/core/Kconfig                           |   2 +-
- drivers/mmc/host/Kconfig                           |  40 +-
- drivers/mmc/host/Makefile                          |   3 +
- drivers/mmc/host/dw_mmc-exynos.c                   |  11 +
- drivers/mmc/host/dw_mmc-hi3798cv200.c              |   8 +
- drivers/mmc/host/jz4740_mmc.c                      |   5 +-
- drivers/mmc/host/meson-mx-sdio.c                   |   2 +-
- drivers/mmc/host/mmci.c                            | 698 ++++++++++++++-------
- drivers/mmc/host/mmci.h                            | 174 +++--
- drivers/mmc/host/mmci_qcom_dml.c                   |  17 +-
- drivers/mmc/host/mmci_stm32_sdmmc.c                | 282 +++++++++
- drivers/mmc/host/mtk-sd.c                          | 298 +++++++--
- drivers/mmc/host/mxcmmc.c                          |   5 +-
- drivers/mmc/host/omap_hsmmc.c                      | 171 +----
- drivers/mmc/host/renesas_sdhi.h                    |   5 +-
- drivers/mmc/host/renesas_sdhi_core.c               |  66 +-
- drivers/mmc/host/renesas_sdhi_internal_dmac.c      |  30 +-
- drivers/mmc/host/renesas_sdhi_sys_dmac.c           |  15 +-
- drivers/mmc/host/sdhci-acpi.c                      |  68 ++
- drivers/mmc/host/sdhci-esdhc.h                     |   1 +
- drivers/mmc/host/sdhci-iproc.c                     |  59 +-
- drivers/mmc/host/sdhci-of-arasan.c                 |  96 ++-
- drivers/mmc/host/sdhci-of-dwcmshc.c                |  39 ++
- drivers/mmc/host/sdhci-of-esdhc.c                  |  44 +-
- drivers/mmc/host/sdhci-pci-o2micro.c               |   3 +
- drivers/mmc/host/sdhci-pltfm.c                     |  68 +-
- drivers/mmc/host/sdhci-pltfm.h                     |   7 +-
- drivers/mmc/host/sdhci-pxav3.c                     |  14 -
- drivers/mmc/host/sdhci-sirf.c                      |  28 +-
- drivers/mmc/host/sdhci-spear.c                     |  33 +-
- drivers/mmc/host/sdhci-sprd.c                      | 498 +++++++++++++++
- drivers/mmc/host/sdhci-tegra.c                     | 675 ++++++++++++++++++--
- drivers/mmc/host/sdhci-xenon-phy.c                 |   4 +-
- drivers/mmc/host/sdhci.c                           | 289 ++++++---
- drivers/mmc/host/sdhci.h                           |  37 +-
- drivers/mmc/host/sh_mmcif.c                        |   7 +-
- drivers/mmc/host/sunxi-mmc.c                       |  24 +-
- drivers/mmc/host/tifm_sd.c                         |   3 +-
- drivers/mmc/host/tmio_mmc.c                        |  80 ++-
- drivers/mmc/host/tmio_mmc.h                        |  16 +-
- drivers/mmc/host/tmio_mmc_core.c                   | 129 +---
- drivers/mmc/host/uniphier-sd.c                     | 698 +++++++++++++++++++++
- drivers/mmc/host/usdhi6rol0.c                      |   5 +-
- include/linux/amba/mmci.h                          |  11 +-
- include/linux/mfd/tmio.h                           |   7 -
- include/linux/mmc/host.h                           |   5 +
- include/linux/platform_data/hsmmc-omap.h           |   3 -
- include/linux/platform_data/pxa_sdhci.h            |   4 -
- 62 files changed, 4047 insertions(+), 948 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
- create mode 100644 Documentation/devicetree/bindings/mmc/uniphier-sd.txt
- create mode 100644 drivers/mmc/host/mmci_stm32_sdmmc.c
- create mode 100644 drivers/mmc/host/sdhci-sprd.c
- create mode 100644 drivers/mmc/host/uniphier-sd.c
+Talel Shenhar (2):
+      spi: dw: add compatible for Amazon's Alpine spi controller
+      dw: spi: add support for Amazon's Alpine spi controller
+
+Trent Piepho (2):
+      spi: Add driver_override SPI device attribute
+      spi: spidev: Fix OF tree warning logic
+
+Ulrich Hecht (1):
+      spi: sh-msiof: Document R-Car D3 support
+
+Vignesh R (3):
+      spi: omap2-mcspi: Switch to readl_poll_timeout()
+      spi: omap2-mcspi: Set FIFO DMA trigger level to word length
+      spi: omap2-mcspi: Add slave mode support
+
+Wolfram Sang (1):
+      spi: use SPDX identifier for Renesas drivers
+
+YueHaibing (4):
+      spi: davinci: remove set but not used variable 'pdata'
+      spi: spi-gpio: Remove set but not used variable 'pdata'
+      spi: pl022: Remove set but not used variable 'chip'
+      spi: davinci: remove set but not used variable 'pdata'
+
+ .../devicetree/bindings/soc/qcom/qcom,geni-se.txt  |  29 +-
+ .../devicetree/bindings/spi/qcom,spi-geni-qcom.txt |  39 ++
+ .../devicetree/bindings/spi/qcom,spi-qcom-qspi.txt |  36 +
+ Documentation/devicetree/bindings/spi/sh-msiof.txt |   8 +-
+ .../devicetree/bindings/spi/snps,dw-apb-ssi.txt    |   2 +-
+ .../devicetree/bindings/spi/spi-fsl-lpspi.txt      |   1 +
+ .../devicetree/bindings/spi/spi-pxa2xx.txt         |  24 +
+ Documentation/devicetree/bindings/spi/spi-rspi.txt |   4 +-
+ .../devicetree/bindings/spi/spi-slave-mt27xx.txt   |  32 +
+ Documentation/devicetree/bindings/spi/spi-sprd.txt |  26 +
+ .../devicetree/bindings/spi/spi-stm32-qspi.txt     |  44 ++
+ MAINTAINERS                                        |   9 +
+ drivers/soc/qcom/qcom-geni-se.c                    |  41 +-
+ drivers/spi/Kconfig                                |  45 +-
+ drivers/spi/Makefile                               |   5 +
+ drivers/spi/spi-atmel.c                            |  10 +-
+ drivers/spi/spi-bcm-qspi.c                         |   4 +-
+ drivers/spi/spi-bcm63xx-hsspi.c                    |  20 +-
+ drivers/spi/spi-davinci.c                          |  19 +-
+ drivers/spi/spi-dw-mmio.c                          |  38 +-
+ drivers/spi/spi-dw.c                               |  28 +-
+ drivers/spi/spi-dw.h                               |   2 +
+ drivers/spi/spi-ep93xx.c                           |  36 +-
+ drivers/spi/spi-fsl-espi.c                         |   4 +-
+ drivers/spi/spi-fsl-lpspi.c                        |   2 +-
+ drivers/spi/spi-geni-qcom.c                        | 703 +++++++++++++++++=
+++
+ drivers/spi/spi-gpio.c                             |  12 +-
+ drivers/spi/spi-imx.c                              |  53 +-
+ drivers/spi/spi-mem.c                              |  69 +-
+ drivers/spi/spi-mt65xx.c                           |  37 +-
+ drivers/spi/spi-omap2-mcspi.c                      | 177 +++--
+ drivers/spi/spi-orion.c                            |  22 +-
+ drivers/spi/spi-pic32-sqi.c                        |   4 +-
+ drivers/spi/spi-pic32.c                            |   6 +-
+ drivers/spi/spi-pl022.c                            |  10 +-
+ drivers/spi/spi-pxa2xx.c                           | 100 +--
+ drivers/spi/spi-qcom-qspi.c                        | 581 ++++++++++++++++
+ drivers/spi/spi-rb4xx.c                            |   2 +-
+ drivers/spi/spi-rockchip.c                         |  62 +-
+ drivers/spi/spi-rspi.c                             |  10 +-
+ drivers/spi/spi-sh-hspi.c                          |  12 +-
+ drivers/spi/spi-sh-msiof.c                         |  10 +-
+ drivers/spi/spi-sh.c                               |  12 +-
+ drivers/spi/spi-slave-mt27xx.c                     | 554 +++++++++++++++
+ drivers/spi/spi-slave-system-control.c             |   1 +
+ drivers/spi/spi-sprd.c                             | 745 +++++++++++++++++=
+++++
+ drivers/spi/spi-stm32-qspi.c                       | 512 ++++++++++++++
+ drivers/spi/spi.c                                  | 106 ++-
+ drivers/spi/spidev.c                               |   9 +-
+ include/linux/pci.h                                |   4 +
+ include/linux/platform_data/spi-davinci.h          |   4 -
+ include/linux/pxa2xx_ssp.h                         |   3 +-
+ include/linux/qcom-geni-se.h                       |  13 +-
+ include/linux/spi/spi.h                            |  36 +-
+ tools/spi/spidev_test.c                            |   6 +-
+ 55 files changed, 3979 insertions(+), 404 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/spi/qcom,spi-geni-qco=
+m.txt
+ create mode 100644 Documentation/devicetree/bindings/spi/qcom,spi-qcom-qsp=
+i.txt
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-pxa2xx.txt
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-slave-mt27xx.=
+txt
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-sprd.txt
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-stm32-qspi.txt
+ create mode 100644 drivers/spi/spi-geni-qcom.c
+ create mode 100644 drivers/spi/spi-qcom-qspi.c
+ create mode 100644 drivers/spi/spi-slave-mt27xx.c
+ create mode 100644 drivers/spi/spi-sprd.c
+ create mode 100644 drivers/spi/spi-stm32-qspi.c
+
+--UfEAyuTBtIjiZzX6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvNwSgACgkQJNaLcl1U
+h9Buzgf7B/o/5vI0NUxnxTuz7v7VhheZdUYfnCEpBs20F0MsQ9z7rfplaD5WQdlx
+IPY+pMxxq3gK1cS6GtdFC7Vntge7hI5HTNiiHl8x25EY3WQ0BA0CL0bnXvNIlZm3
+HeFHHbHNce5vkyczDJlstrGc3JwcqnlvsRHH2gcLDOJqaWnBhVu0rU3IT0y8eo3e
+uJup/quprzhTXbuuyrLZ4cxYjqc4/hMDvqcjmSZzO6PDaLF88TaENxtMBAfAywYd
+KyK0bDNXXIPgcwJwRT5GNxQ37yo7rjMnhFiDThN7t3qdwDTIrgzNJ1jH3iu+c16W
+d9vvy1YmPjd+DDrF6WSixXIAw0Ec+A==
+=pbtj
+-----END PGP SIGNATURE-----
+
+--UfEAyuTBtIjiZzX6--
