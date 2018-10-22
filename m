@@ -2,189 +2,188 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB9AECDE43
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 04:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3079DC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 05:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B0E920644
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 04:58:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="egge+2o7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B0E920644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D82B920644
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 05:04:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D82B920644
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbeJVNPH (ORCPT
+        id S1727302AbeJVNVa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 09:15:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39482 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727189AbeJVNPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 09:15:07 -0400
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C92920876
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 04:58:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540184293;
-        bh=RI1m9vbYU1zUfYDNofTqiR/y+ppsJEYcpGkfT/LNAG4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=egge+2o78K3NIzFUyx6qQnMn9K/o6gsa/+4AvKZKdek1fN2qgzchq5mepWYWaxugM
-         ZFR78OnLVaWNPI0QSyjqhEbOuy4QHFkgKET68V8h9a23sNl5ROZPoHNIfS3wzehRnx
-         AN4epnA+zruBdAmQDTWoYK5ifZcoJSnIeWuhy2YM=
-Received: by mail-wm1-f44.google.com with SMTP id y144-v6so8819552wmd.4
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 21:58:13 -0700 (PDT)
-X-Gm-Message-State: ABuFfojf8BOdvKq0DcGTmU14EvYBzo2Icm/74oMlPLiC63f5CeP8E1ty
-        0N5HganxdSaN3C8T0LYQQnFrwlApAmKpoGJcznOj+A==
-X-Google-Smtp-Source: ACcGV63QUxYSxoGLrDD3p0281GHMC9UddZgzGt3IsqXJXGqJApPNf45dqVW6QxJJlIMlhVaiAujpvIsr6WsM9HE7zDo=
-X-Received: by 2002:a1c:f312:: with SMTP id q18-v6mr14038577wmq.14.1540184291941;
- Sun, 21 Oct 2018 21:58:11 -0700 (PDT)
+        Mon, 22 Oct 2018 09:21:30 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49235 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbeJVNVa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 09:21:30 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9M53omf2444299
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sun, 21 Oct 2018 22:03:50 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9M53nVG2444296;
+        Sun, 21 Oct 2018 22:03:49 -0700
+Date:   Sun, 21 Oct 2018 22:03:49 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Christophe Leroy <tipbot@zytor.com>
+Message-ID: <tip-977e4be5eb714c48a67afc26a6c477f24130a1f2@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, jgross@suse.com,
+        boris.ostrovsky@oracle.com, mingo@kernel.org, peterz@infradead.org,
+        christophe.leroy@c-s.fr, tglx@linutronix.de,
+        torvalds@linux-foundation.org, hpa@zytor.com, bp@alien8.de
+Reply-To: tglx@linutronix.de, torvalds@linux-foundation.org, bp@alien8.de,
+          hpa@zytor.com, linux-kernel@vger.kernel.org, jgross@suse.com,
+          boris.ostrovsky@oracle.com, peterz@infradead.org,
+          christophe.leroy@c-s.fr, mingo@kernel.org
+In-Reply-To: <20181020072649.5B59310483E@pc16082vm.idsi0.si.c-s.fr>
+References: <20181020072649.5B59310483E@pc16082vm.idsi0.si.c-s.fr>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/stackprotector: Remove the call to
+ boot_init_stack_canary() from cpu_startup_entry()
+Git-Commit-ID: 977e4be5eb714c48a67afc26a6c477f24130a1f2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <1540172145-17134-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1540172145-17134-2-git-send-email-sai.praneeth.prakhya@intel.com> <20181022015738.GB24095@gmail.com>
-In-Reply-To: <20181022015738.GB24095@gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 21 Oct 2018 21:58:00 -0700
-X-Gmail-Original-Message-ID: <CALCETrW=M8u=F6USUk3t_sucGnU-8K6sLYOq6BGK1JhPdgjzdw@mail.gmail.com>
-Message-ID: <CALCETrW=M8u=F6USUk3t_sucGnU-8K6sLYOq6BGK1JhPdgjzdw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] x86/efi: Unmap efi boot services code/data regions
- from efi_pgd
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 21, 2018 at 6:57 PM Ingo Molnar <mingo@kernel.org> wrote:
->
->
-> * Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com> wrote:
->
-> > Ideally, after kernel assumes control of the platform firmware shouldn't
-> > access EFI Boot Services Code/Data regions. But, it's noticed that this
-> > is not so true in many x86 platforms. Hence, during boot, kernel
-> > reserves efi boot services code/data regions [1] and maps [2] them to
-> > efi_pgd so that call to set_virtual_address_map() doesn't fail. After
-> > returning from set_virtual_address_map(), kernel frees the reserved
-> > regions [3] but they still remain mapped.
-> >
-> > This means that any code that's running in efi_pgd address space (e.g:
-> > any efi runtime service) would still be able to access efi boot services
-> > code/data regions but the contents of these regions would have long been
-> > over written by someone else as they are freed by efi_free_boot_services().
-> > So, it's important to unmap these regions. After unmapping boot services
-> > code/data regions, any illegal access by buggy firmware to these regions
-> > would result in page fault which will be handled by efi specific fault
-> > handler.
-> >
-> > [1] Please see efi_reserve_boot_services()
-> > [2] Please see efi_map_region() -> __map_region()
-> > [3] Please see efi_free_boot_services()
-> >
-> > Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: Ingo Molnar <mingo@kernel.org>
-> > Cc: Andy Lutomirski <luto@kernel.org>
-> > Cc: Dave Hansen <dave.hansen@intel.com>
-> > Cc: Bhupesh Sharma <bhsharma@redhat.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > ---
-> >  arch/x86/include/asm/pgtable_types.h |  2 ++
-> >  arch/x86/mm/pageattr.c               | 21 +++++++++++++++++++++
-> >  arch/x86/platform/efi/quirks.c       | 26 ++++++++++++++++++++++++++
-> >  3 files changed, 49 insertions(+)
-> >
-> > diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-> > index b64acb08a62b..796476f11151 100644
-> > --- a/arch/x86/include/asm/pgtable_types.h
-> > +++ b/arch/x86/include/asm/pgtable_types.h
-> > @@ -566,6 +566,8 @@ extern pmd_t *lookup_pmd_address(unsigned long address);
-> >  extern phys_addr_t slow_virt_to_phys(void *__address);
-> >  extern int kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
-> >                                  unsigned numpages, unsigned long page_flags);
-> > +extern int kernel_unmap_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
-> > +                                  unsigned long numpages);
-> >  #endif       /* !__ASSEMBLY__ */
-> >
-> >  #endif /* _ASM_X86_PGTABLE_DEFS_H */
-> > diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-> > index 51a5a69ecac9..b88ed8e91790 100644
-> > --- a/arch/x86/mm/pageattr.c
-> > +++ b/arch/x86/mm/pageattr.c
-> > @@ -2147,6 +2147,27 @@ int kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
-> >       return retval;
-> >  }
-> >
-> > +int kernel_unmap_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
-> > +                           unsigned long numpages)
-> > +{
-> > +     int retval;
-> > +
-> > +     struct cpa_data cpa = {
-> > +             .vaddr = &address,
-> > +             .pfn = pfn,
-> > +             .pgd = pgd,
-> > +             .numpages = numpages,
-> > +             .mask_set = __pgprot(0),
-> > +             .mask_clr = __pgprot(_PAGE_PRESENT | _PAGE_RW),
-> > +             .flags = 0,
-> > +     };
-> > +
-> > +     retval = __change_page_attr_set_clr(&cpa, 0);
-> > +     __flush_tlb_all();
-> > +
-> > +     return retval;
-> > +}
->
-> That's certainly a creative use of __change_page_attr_set_clr() by EFI
-> used for mapping in pages so far (kernel_map_pages_in_pgd()), and now
-> used for unmapping as well. Doesn't look wrong, just a bit weird as part
-> of CPA.
->
-> Could you please write the initializer in an easier to read fashion:
->
->         struct cpa_data cpa = {
->                 .vaddr          = &address,
->                 .pfn            = pfn,
->                 .pgd            = pgd,
->                 .numpages       = numpages,
->                 .mask_set       = __pgprot(0),
->                 .mask_clr       = __pgprot(_PAGE_PRESENT | _PAGE_RW),
->                 .flags          = 0,
->         };
->
-> ?
->
-> The one bit that is odd is the cpa->pfn field - for unmapped pages that's
-> totally uninteresting and I'm wondering whether setting it to 0 wouldn't
-> be better.
->
-> Does the CPU _ever_ look look at the PFN if the page is !_PAGE_PRESENT,
-> for example speculatively? If yes then what is the recommended value for
-> the pfn - zero perhaps?
->
+Commit-ID:  977e4be5eb714c48a67afc26a6c477f24130a1f2
+Gitweb:     https://git.kernel.org/tip/977e4be5eb714c48a67afc26a6c477f24130a1f2
+Author:     Christophe Leroy <christophe.leroy@c-s.fr>
+AuthorDate: Sat, 20 Oct 2018 09:26:49 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 22 Oct 2018 04:07:24 +0200
 
-This is L1TF, right?  Isn't all ones the recommended value?
+x86/stackprotector: Remove the call to boot_init_stack_canary() from cpu_startup_entry()
 
-I would love to see EFI start treating its mm just like any other mm
-at some point, though.  That is, it should not modify any mappings in
-the kernel range, and it could use the regular mm modification APIs
-for the user range.  But maybe this is a pipe dream.
+The following commit:
+
+  d7880812b359 ("idle: Add the stack canary init to cpu_startup_entry()")
+
+... added an x86 specific boot_init_stack_canary() call to the generic
+cpu_startup_entry() as a temporary hack, with the intention to remove
+the #ifdef CONFIG_X86 later.
+
+More than 5 years later let's finally realize that plan! :-)
+
+While implementing stack protector support for PowerPC, we found
+that calling boot_init_stack_canary() is also needed for PowerPC
+which uses per task (TLS) stack canary like the X86.
+
+However, calling boot_init_stack_canary() would break architectures
+using a global stack canary (ARM, SH, MIPS and XTENSA).
+
+Instead of modifying the #ifdef CONFIG_X86 to an even messier:
+
+   #if defined(CONFIG_X86) || defined(CONFIG_PPC)
+
+PowerPC implemented the call to boot_init_stack_canary() in the function
+calling cpu_startup_entry().
+
+Let's try the same cleanup on the x86 side as well.
+
+On x86 we have two functions calling cpu_startup_entry():
+
+ - start_secondary()
+ - cpu_bringup_and_idle()
+
+start_secondary() already calls boot_init_stack_canary(), so
+it's good, and this patch adds the call to boot_init_stack_canary()
+in cpu_bringup_and_idle().
+
+I.e. now x86 catches up to the rest of the world and the ugly init
+sequence in init/main.c can be removed from cpu_startup_entry().
+
+As a final benefit we can also remove the <linux/stackprotector.h>
+dependency from <linux/sched.h>.
+
+[ mingo: Improved the changelog a bit, added language explaining x86 borkage and sched.h change. ]
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: xen-devel@lists.xenproject.org
+Link: http://lkml.kernel.org/r/20181020072649.5B59310483E@pc16082vm.idsi0.si.c-s.fr
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/xen/smp_pv.c |  2 ++
+ kernel/sched/idle.c   | 15 ---------------
+ kernel/sched/sched.h  |  1 -
+ 3 files changed, 2 insertions(+), 16 deletions(-)
+
+diff --git a/arch/x86/xen/smp_pv.c b/arch/x86/xen/smp_pv.c
+index e3b18ad49889..145506f9fdbe 100644
+--- a/arch/x86/xen/smp_pv.c
++++ b/arch/x86/xen/smp_pv.c
+@@ -22,6 +22,7 @@
+ #include <linux/tick.h>
+ #include <linux/nmi.h>
+ #include <linux/cpuhotplug.h>
++#include <linux/stackprotector.h>
+ 
+ #include <asm/paravirt.h>
+ #include <asm/desc.h>
+@@ -88,6 +89,7 @@ static void cpu_bringup(void)
+ asmlinkage __visible void cpu_bringup_and_idle(void)
+ {
+ 	cpu_bringup();
++	boot_init_stack_canary();
+ 	cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
+ }
+ 
+diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+index 16f84142f2f4..f5516bae0c1b 100644
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -347,21 +347,6 @@ EXPORT_SYMBOL_GPL(play_idle);
+ 
+ void cpu_startup_entry(enum cpuhp_state state)
+ {
+-	/*
+-	 * This #ifdef needs to die, but it's too late in the cycle to
+-	 * make this generic (ARM and SH have never invoked the canary
+-	 * init for the non boot CPUs!). Will be fixed in 3.11
+-	 */
+-#ifdef CONFIG_X86
+-	/*
+-	 * If we're the non-boot CPU, nothing set the stack canary up
+-	 * for us. The boot CPU already has it initialized but no harm
+-	 * in doing it again. This is a good place for updating it, as
+-	 * we wont ever return from this function (so the invalid
+-	 * canaries already on the stack wont ever trigger).
+-	 */
+-	boot_init_stack_canary();
+-#endif
+ 	arch_cpu_idle_prepare();
+ 	cpuhp_online_idle(state);
+ 	while (1)
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 4a2e8cae63c4..5b00a816a4b3 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -56,7 +56,6 @@
+ #include <linux/profile.h>
+ #include <linux/rcupdate_wait.h>
+ #include <linux/security.h>
+-#include <linux/stackprotector.h>
+ #include <linux/stop_machine.h>
+ #include <linux/suspend.h>
+ #include <linux/swait.h>
