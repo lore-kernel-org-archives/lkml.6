@@ -2,147 +2,165 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF4FC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEADCC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:49:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2338E20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:49:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1273820663
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:49:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="ceMuSlzk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2338E20663
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RvH9u8uJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1273820663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729315AbeJWFJD (ORCPT
+        id S1729324AbeJWFJK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 01:09:03 -0400
-Received: from rcdn-iport-6.cisco.com ([173.37.86.77]:46312 "EHLO
-        rcdn-iport-6.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729266AbeJWFJD (ORCPT
+        Tue, 23 Oct 2018 01:09:10 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34230 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729267AbeJWFIv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 01:09:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=2392; q=dns/txt; s=iport;
-  t=1540241337; x=1541450937;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=bAsNdtHY2ntetBwx/RM7c+A12Dt9nNe9LNo8DpKC6M8=;
-  b=ceMuSlzkUP5/dAWiQo9rTyUdYa/EgHX3YYLSCj0DjFx/12lSeum8OEU2
-   PuUOgUZo0RaEg1oxyz0OwoHhGOx9U2xIoEOHMGFPrqlPO+11a7ifEBpZ2
-   baWS/8DZ2fx8Uh3fJjDkLxnN9no8L+8vLvSVl1eN+FcLT8q6s3BVNkomB
-   g=;
-X-IronPort-AV: E=Sophos;i="5.54,413,1534809600"; 
-   d="scan'208";a="470247364"
-Received: from alln-core-5.cisco.com ([173.36.13.138])
-  by rcdn-iport-6.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2018 20:48:57 +0000
-Received: from [10.154.208.149] ([10.154.208.149])
-        by alln-core-5.cisco.com (8.15.2/8.15.2) with ESMTP id w9MKmpGO018921;
-        Mon, 22 Oct 2018 20:48:52 GMT
-Subject: Re: [PATCH] kernel/signal: Signal-based pre-coredump notification
-To:     Jann Horn <jannh@google.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>, deller@gmx.de,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        christian@brauner.io, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Dave.Martin@arm.com,
-        mchehab+samsung@kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        guro@fb.com, Marcos Souza <marcos.souza.org@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, linux@dominikbrodowski.net,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        yang.shi@linux.alibaba.com, Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Victor Kamensky <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, sstrogin@cisco.com,
-        Enke Chen <enkechen@cisco.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
- <CAG48ez2ZPhnxudqgU7nC2ORvLnS0Ja-qhLSE5WAY361jst7XNw@mail.gmail.com>
- <c5a09a04-b4f2-876b-af83-30f7e527497e@cisco.com>
- <CAG48ez2ZD=dovBApR07wi_DzYjJvEyO-Pm35eLv9AyXv1tcAFQ@mail.gmail.com>
- <2631f765-8d7a-45ea-6aa4-d8a9bb00d56f@cisco.com>
- <CAG48ez27=w0oWFTYUeFc72-0DL0tf=NOzGCeZgtxFOePPPE5cA@mail.gmail.com>
-From:   Enke Chen <enkechen@cisco.com>
-Message-ID: <14503a22-403e-3e39-cfd5-0b7a2f299986@cisco.com>
-Date:   Mon, 22 Oct 2018 13:48:51 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Tue, 23 Oct 2018 01:08:51 -0400
+Received: by mail-pf1-f195.google.com with SMTP id f78-v6so14731755pfe.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 13:48:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=z9Cvmd97hzPoKYeufhgQkK5oC81R8IRAXT0JDJr89KA=;
+        b=RvH9u8uJARk1S44xEIRKxALSbovNo5XFmOshZSI9Jz2ni7dsraioZ2FNQzBoCJoMq2
+         6MQCQiPmdRdzzAE3TXUqC9crY0TMaMxn/Sk50s30OYpCsbKc7Acjy41y20E1OGcYch6t
+         94ub8/cDcN2D5pKDVCOhgdpK0d++dUwQVSvu4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=z9Cvmd97hzPoKYeufhgQkK5oC81R8IRAXT0JDJr89KA=;
+        b=a5sKFKO5gCG3WQhv6sNYquOHNMJOX51bqb8XQWUnUBIEAmwNE5tmkhZ3OJyu2gHodQ
+         lyj10PQt8YSZcZsLOruNQbTzT0KkZnA0PneCM0zjpX3qJz2IvZ21EKuspBNO3OprkkpD
+         jZZBhm+CZQ5zypH1sq+2JPJ/lNvOhnjz8lFlAbiMs11P2Fy6gxAiBUAuGZPu3uQwWtRB
+         1Nv+jMDpYsXcqsb8an3wvFXMXMScwbPmUUOnNOoEC2DDtviaHPM2WD5nDl9NQKwa7v57
+         wjFIJAulM8AAuIxkMxuoiNCxce8TN4ysX0c+qliH5ukW3u81GsKTfe6PudQkM9w+BM1j
+         wo+w==
+X-Gm-Message-State: ABuFfojcW/fdX5aNlqzCcZU06YxC0YUugqOkHSvcGRS/z93YCYWJLUIV
+        x2g11RYrf/O0PwBAjEDFkMC2/w==
+X-Google-Smtp-Source: ACcGV63rM84RHpSTX0awUvLQG8+SWYLJHFlF22qPDkaehSFieAHM/Mhx/O39fzpq3a4lNqfU8O6f1A==
+X-Received: by 2002:a62:120b:: with SMTP id a11-v6mr46934708pfj.165.1540241325796;
+        Mon, 22 Oct 2018 13:48:45 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id y144-v6sm47483001pfb.81.2018.10.22.13.48.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Oct 2018 13:48:45 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Sean Paul <seanpaul@chromium.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sandeep Panda <spanda@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        jsanka@codeaurora.org, ryandcase@chromium.org,
+        Douglas Anderson <dianders@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 5/6] drm/panel: simple: Innolux TV123WAM is actually P120ZDG-BF1
+Date:   Mon, 22 Oct 2018 13:46:38 -0700
+Message-Id: <20181022204639.8558-5-dianders@chromium.org>
+X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
+In-Reply-To: <20181022204639.8558-1-dianders@chromium.org>
+References: <20181022204639.8558-1-dianders@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez27=w0oWFTYUeFc72-0DL0tf=NOzGCeZgtxFOePPPE5cA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.154.208.149, [10.154.208.149]
-X-Outbound-Node: alln-core-5.cisco.com
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jann,
+As far as I can tell the panel that was added in commit da50bd4258db
+("drm/panel: simple: Add Innolux TV123WAM panel driver support")
+wasn't actually an Innolux TV123WAM but was actually an Innolux
+P120ZDG-BF1.
 
-Thanks for the feedback. I will post a revised patch shortly.
+As far as I can tell the Innolux TV123WAM isn't a real panel and but
+it's a mosh between the TI TV123WAM and the Innolux P120ZDG-BF1.
+Let's unmosh.
 
-On the related topic of "pdeath_signal", there are several inconsistencies
-by preserving the flag across execve(2). The flag is cleared under several
-conditions in different places. I will start a separate thread to see if
-it can still be cleaned up.
+Here's my evidence:
 
-     PR_SET_PDEATHSIG (since Linux 2.1.57)
-              Set the parent death signal of the calling process to arg2
-              (either a signal value in the range 1..maxsig, or 0 to clear).
-              This is the signal that the calling process will get when its
-              parent dies.  This value is cleared for the child of a fork(2)
-              and (since Linux 2.4.36 / 2.6.23) when executing a set-user-ID
-              or set-group-ID binary, or a binary that has associated
-              capabilities (see capabilities(7)).  This value is preserved
-              across execve(2).
+* Searching for TV123WAM on the Internet turns up a TI panel.  While
+  it's possible that an Innolux panel has the same model number as the
+  TI Panel, it seems a little doubtful.  Looking up the datasheet from
+  the TI Panel shows that it's 1920 x 1280 and 259.2 mm x 172.8 mm.
 
--- Enke
+* As far as I know, the patch adding the Innolux Panel was supposed to
+  be for the board that's sitting in front of me as I type this
+  (support for that board is not yet upstream).  On the back of that
+  panel I see Innolux P120ZDZ-EZ1 rev B1.
 
-On 10/22/18 8:40 AM, Jann Horn wrote:
-> On Sat, Oct 20, 2018 at 1:01 AM Enke Chen <enkechen@cisco.com> wrote:
->> Regarding the security considerations, it seems simpler and more secure to
->> just clear the "pre-coredump signal" cross execve(2), and let the new program
->> decide for itself.  What do you think?
-> 
-> I don't have a problem with these semantics.
-> 
-> I could imagine someone being unhappy about the theoretical race
-> window if they want to perform an in-place reexecution of a running
-> service, but I don't know whether anyone actually cares about that.
-> 
->> Changes to prctl(2):
->>
->> DESCRIPTION
->>
->>        PR_SET_PREDUMP_SIG (since Linux 4.20.x)
->>               This allows the calling process to receive a signal (arg2,
->>               if nonzero) from a child process prior to the coredump of
->>               the child process. arg2 must be SIGUSR1, or SIGUSR2, or
->>               SIGCHLD, or 0 (for clear).
->>
->>               When SIGCHLD is specified, the signal code is set to
->>               CLD_PREDUMP in such an SIGCHLD signal.
->>
->>               The value of the pre-coredump signal is cleared across
->>               execve(2), or for the child of a fork(2).
->>
->>        PR_GET_PREDUMP_SIG (since Linux 4.20.x)
->>               Return the current value of the pre-coredump signal for the
->>               calling process, in the location pointed to by (int *) arg2.
+* Someone pointed me at a datasheet that's supposed to be for the
+  panel in front of me (sorry, I can't share the datasheet).  That
+  datasheet has the string "p120zdg-bf1"
+
+* If I search for "P120ZDG-BF1" on the Internet I get hits for panels
+  that are 2160x1440.  They don't have datasheets, but the fact that
+  the resolution matches is a good sign.
+
+In any case, let's update the name and also the physical size to match
+the correct panel.
+
+Fixes: da50bd4258db ("drm/panel: simple: Add Innolux TV123WAM panel driver support")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Cc: Sandeep Panda <spanda@codeaurora.org>
+---
+
+ drivers/gpu/drm/panel/panel-simple.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 937e97490c30..7ee1abc5d81b 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -1370,7 +1370,7 @@ static const struct panel_desc innolux_n156bge_l21 = {
+ 	},
+ };
+ 
+-static const struct drm_display_mode innolux_tv123wam_mode = {
++static const struct drm_display_mode innolux_p120zdg_bf1_mode = {
+ 	.clock = 206016,
+ 	.hdisplay = 2160,
+ 	.hsync_start = 2160 + 48,
+@@ -1384,13 +1384,13 @@ static const struct drm_display_mode innolux_tv123wam_mode = {
+ 	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
+ };
+ 
+-static const struct panel_desc innolux_tv123wam = {
+-	.modes = &innolux_tv123wam_mode,
++static const struct panel_desc innolux_p120zdg_bf1 = {
++	.modes = &innolux_p120zdg_bf1_mode,
+ 	.num_modes = 1,
+ 	.bpc = 8,
+ 	.size = {
+-		.width = 259,
+-		.height = 173,
++		.width = 254,
++		.height = 169,
+ 	},
+ 	.delay = {
+ 		.prepare = 200,
+@@ -2454,8 +2454,8 @@ static const struct of_device_id platform_of_match[] = {
+ 		.compatible = "innolux,n156bge-l21",
+ 		.data = &innolux_n156bge_l21,
+ 	}, {
+-		.compatible = "innolux,tv123wam",
+-		.data = &innolux_tv123wam,
++		.compatible = "innolux,p120zdg-bf1",
++		.data = &innolux_p120zdg_bf1,
+ 	}, {
+ 		.compatible = "innolux,zj070na-01p",
+ 		.data = &innolux_zj070na_01p,
+-- 
+2.19.1.568.g152ad8e336-goog
+
