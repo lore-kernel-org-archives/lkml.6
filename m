@@ -2,108 +2,117 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC8FC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A54C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FC9420652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:25:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FC9420652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 333A120881
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:25:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7lDnkbI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 333A120881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728874AbeJVSnZ (ORCPT
+        id S1728944AbeJVSnl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:43:25 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46226 "EHLO mail.bootlin.com"
+        Mon, 22 Oct 2018 14:43:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728604AbeJVSnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:43:24 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B440020DB5; Mon, 22 Oct 2018 12:25:26 +0200 (CEST)
-Received: from bbrezillon (aaubervilliers-681-1-25-52.w90-88.abo.wanadoo.fr [90.88.145.52])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 52AFA207A3;
-        Mon, 22 Oct 2018 12:25:16 +0200 (CEST)
-Date:   Mon, 22 Oct 2018 12:25:16 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     Tudor Ambarus <tudor.ambarus@microchip.com>,
-        "richard@nod.at" <richard@nod.at>, Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "cyrille.pitchen@microchip.com" <cyrille.pitchen@microchip.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "Cristian.Birsan@microchip.com" <Cristian.Birsan@microchip.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP
- SPI NOR flash memories
-Message-ID: <20181022122516.24ff2dae@bbrezillon>
-In-Reply-To: <VI1PR04MB10383A3C1381532DF0C18F8699F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-References: <20180911154007.17195-1-tudor.ambarus@microchip.com>
-        <20180911154007.17195-2-tudor.ambarus@microchip.com>
-        <VI1PR04MB103888BC18F3C5AD0C02DEF699FE0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <31a8f6a9-1459-443a-6ef8-2b2c17769ae4@microchip.com>
-        <de0f7245-2557-12be-a306-67b08e55ae7b@wedev4u.fr>
-        <VI1PR04MB1038AB25EABDC8507984ADC799FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181017090724.12f2cd79@bbrezillon>
-        <20181017091045.124e0266@bbrezillon>
-        <20181017092941.3658bd9a@bbrezillon>
-        <VI1PR04MB1038EFA1E83AD78EBE84ECC499FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181017115237.07310b74@bbrezillon>
-        <VI1PR04MB1038BD6103DD8BD6B6DEC2B899F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022111543.2a607efc@bbrezillon>
-        <VI1PR04MB1038EF892921194D1BFDE6FC99F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022121044.24039f40@bbrezillon>
-        <VI1PR04MB10383A3C1381532DF0C18F8699F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728747AbeJVShn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:37:43 -0400
+Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64FA72087D;
+        Mon, 22 Oct 2018 10:19:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540203588;
+        bh=WsP4ASvE6cdM5WB4YHTxJiuz8QGrUDZl/Bg9LwHDkck=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=e7lDnkbIFkAsG3bWxRu79lDhrGDAGWLcGJBBP7YOpWYT3A5kDmAWVGxUCbK7ePyQy
+         eGn8oXNxrxaXFyXv0X9DjKx5bnRD7nVK19yVZdPuNpQiSI8E7BcV8hrhRhdP2PuzGE
+         Q9nOGe4Bs40VbM9yd1791I/3uxnbWZwAiATwKhnM=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     David Howells <dhowells@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 11/27] rxrpc: Carry call state out of locked section in rxrpc_rotate_tx_window()
+Date:   Mon, 22 Oct 2018 06:19:08 -0400
+Message-Id: <20181022101924.40531-11-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181022101924.40531-1-sashal@kernel.org>
+References: <20181022101924.40531-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 22 Oct 2018 10:17:58 +0000
-Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+From: David Howells <dhowells@redhat.com>
 
-> It works,
+[ Upstream commit dfe995224693798e554ab4770f6d8a096afc60cd ]
 
-Not really.
+Carry the call state out of the locked section in rxrpc_rotate_tx_window()
+rather than sampling it afterwards.  This is only used to select tracepoint
+data, but could have changed by the time we do the tracepoint.
 
-> [    1.628162] m25p80 spi0.0: found s25fl512s, expected m25p80                                                                   
-> [    1.633854] Start [addr_width:00000000, read_dumy:08, read_opcode:00000000]                                                   
-> [    1.640811] spi_nor_get_map_in_use:2882 smpt[0]=08ff65fc                                                                      
-> [    1.646117] spi_nor_get_map_in_use:2882 smpt[1]=00000004                                                                      
-> [    1.651421] spi_nor_get_map_in_use:2882 smpt[2]=04ff65fc                                                                      
-> [    1.656724] spi_nor_get_map_in_use:2882 smpt[3]=00000002                                                                      
-> [    1.662028] spi_nor_get_map_in_use:2882 smpt[4]=02ff65fd                                                                      
-> [    1.667331] spi_nor_get_map_in_use:2882 smpt[5]=00000004                                                                      
-> [    1.672635] spi_nor_get_map_in_use:2882 smpt[6]=ff0201fe                                                                      
-> [    1.677937] spi_nor_get_map_in_use:2882 smpt[7]=00007ff1                                                                      
-> [    1.683240] spi_nor_get_map_in_use:2882 smpt[8]=00037ff4                                                                      
-> [    1.688542] spi_nor_get_map_in_use:2882 smpt[9]=03fbfff4                                                                      
-> [    1.693845] spi_nor_get_map_in_use:2882 smpt[10]=ff0203fe                                                                     
-> [    1.699234] spi_nor_get_map_in_use:2882 smpt[11]=03fbfff4                                                                     
-> [    1.704625] spi_nor_get_map_in_use:2882 smpt[12]=00037ff4                                                                     
-> [    1.710014] spi_nor_get_map_in_use:2882 smpt[13]=00007ff1                                                                     
-> [    1.715403] spi_nor_get_map_in_use:2882 smpt[14]=ff0005ff                                                                     
-> [    1.720791] spi_nor_get_map_in_use:2882 smpt[15]=03fffff4                                                                     
-> [    1.726180] smpt[0]=[addr_width:00000000, read_dumy:08, read_opcode:00000065]
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/rxrpc/input.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-There's still a problem here: you should see this trace 3 times since
-we have 3 command descriptors. And of course, the addr_width and
-read_dummy are wrong.
-
-> [    1.733320] spi_nor_get_map_in_use:2912 map_id=0 smpt_len:16 i=:3                                                             
-> [    1.739406] End [addr_width:00000000, read_dumy:08, read_opcode:00000065]                                                     
-> [    1.746204] m25p80 spi0.0: s25fl512s (65536 Kbytes)                        
+diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
+index 5e180a3c2d01..fe1cf206d12a 100644
+--- a/net/rxrpc/input.c
++++ b/net/rxrpc/input.c
+@@ -278,23 +278,26 @@ static bool rxrpc_rotate_tx_window(struct rxrpc_call *call, rxrpc_seq_t to,
+ static bool rxrpc_end_tx_phase(struct rxrpc_call *call, bool reply_begun,
+ 			       const char *abort_why)
+ {
++	unsigned int state;
+ 
+ 	ASSERT(test_bit(RXRPC_CALL_TX_LAST, &call->flags));
+ 
+ 	write_lock(&call->state_lock);
+ 
+-	switch (call->state) {
++	state = call->state;
++	switch (state) {
+ 	case RXRPC_CALL_CLIENT_SEND_REQUEST:
+ 	case RXRPC_CALL_CLIENT_AWAIT_REPLY:
+ 		if (reply_begun)
+-			call->state = RXRPC_CALL_CLIENT_RECV_REPLY;
++			call->state = state = RXRPC_CALL_CLIENT_RECV_REPLY;
+ 		else
+-			call->state = RXRPC_CALL_CLIENT_AWAIT_REPLY;
++			call->state = state = RXRPC_CALL_CLIENT_AWAIT_REPLY;
+ 		break;
+ 
+ 	case RXRPC_CALL_SERVER_AWAIT_ACK:
+ 		__rxrpc_call_completed(call);
+ 		rxrpc_notify_socket(call);
++		state = call->state;
+ 		break;
+ 
+ 	default:
+@@ -302,11 +305,10 @@ static bool rxrpc_end_tx_phase(struct rxrpc_call *call, bool reply_begun,
+ 	}
+ 
+ 	write_unlock(&call->state_lock);
+-	if (call->state == RXRPC_CALL_CLIENT_AWAIT_REPLY) {
++	if (state == RXRPC_CALL_CLIENT_AWAIT_REPLY)
+ 		trace_rxrpc_transmit(call, rxrpc_transmit_await_reply);
+-	} else {
++	else
+ 		trace_rxrpc_transmit(call, rxrpc_transmit_end);
+-	}
+ 	_leave(" = ok");
+ 	return true;
+ 
+-- 
+2.17.1
 
