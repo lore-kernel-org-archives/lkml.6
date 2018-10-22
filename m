@@ -4,48 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68499C7112C
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C68B1C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:22:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D5A020652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:22:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C9EE20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:22:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kpeu2bnM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D5A020652
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNecHD1S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C9EE20652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729379AbeJVSkl (ORCPT
+        id S1729350AbeJVSkj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:40:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51296 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728469AbeJVSkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 22 Oct 2018 14:40:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51230 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728248AbeJVSki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:40:38 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9CC721476;
-        Mon, 22 Oct 2018 10:22:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DE2C20652;
+        Mon, 22 Oct 2018 10:22:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540203764;
-        bh=RbafKzELV7HJBmsS1aII+L83uyQe3yZRgzSoqwcGEO8=;
+        s=default; t=1540203762;
+        bh=BA9yzita2oPSbZQXN5JfO+Bb0OEoIjdGg+IGbs2sl20=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kpeu2bnMyQwN0gqhbi/WQZ7RX+U+2xfv6qqUessEH6em9CpyaIVvdPeELE/ulyfB1
-         SBiER+Ied0H0UQYFWPqjCDXVulIaZyAAa7++ADrCaf/a+D7Mqxsri//JNW+HENwHvd
-         WgnLD/JZktKsCpWRhiZKHVseD02Ai4tpoDeblQIM=
+        b=rNecHD1SYu0qgk3LLOyH5V5UBbeDYRY+IJ5yQ2M/idOBslpINF2CHOPOQvL6mpDJX
+         Pd8oAgBdhYhNpg9eUJyfwz315O8R6p2NvzbQo/tNaSQkEak54H66dwoMrPOhWqO1MN
+         f9eKWO8VMpjA54JtdR4KaJUcboIx8ZAS7aq5rpAI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Khazhismel Kumykov <khazhy@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 5/5] fs/fat/fatent.c: add cond_resched() to fat_count_free_clusters()
-Date:   Mon, 22 Oct 2018 06:22:32 -0400
-Message-Id: <20181022102232.41527-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 4/5] Input: uinput - add a schedule point in uinput_inject_events()
+Date:   Mon, 22 Oct 2018 06:22:31 -0400
+Message-Id: <20181022102232.41527-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181022102232.41527-1-sashal@kernel.org>
 References: <20181022102232.41527-1-sashal@kernel.org>
@@ -54,36 +51,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Khazhismel Kumykov <khazhy@google.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-[ Upstream commit ac081c3be3fae6d0cc3e1862507fca3862d30b67 ]
+[ Upstream commit cecf10704899467a787975e3d94a1f0129b9688e ]
 
-On non-preempt kernels this loop can take a long time (more than 50 ticks)
-processing through entries.
+Large writes to uinput interface may cause rcu stalls. Let's add
+cond_resched() to the loop to avoid this.
 
-Link: http://lkml.kernel.org/r/20181010172623.57033-1-khazhy@google.com
-Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
-Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fat/fatent.c | 1 +
+ drivers/input/misc/uinput.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
-index a70e37c47a78..e3fc477728b3 100644
---- a/fs/fat/fatent.c
-+++ b/fs/fat/fatent.c
-@@ -681,6 +681,7 @@ int fat_count_free_clusters(struct super_block *sb)
- 			if (ops->ent_get(&fatent) == FAT_ENT_FREE)
- 				free++;
- 		} while (fat_ent_next(sbi, &fatent));
+diff --git a/drivers/input/misc/uinput.c b/drivers/input/misc/uinput.c
+index 2bb4c8633d3b..459f3ce78235 100644
+--- a/drivers/input/misc/uinput.c
++++ b/drivers/input/misc/uinput.c
+@@ -454,6 +454,7 @@ static ssize_t uinput_inject_events(struct uinput_device *udev,
+ 
+ 		input_event(udev->dev, ev.type, ev.code, ev.value);
+ 		bytes += input_event_size();
 +		cond_resched();
  	}
- 	sbi->free_clusters = free;
- 	sbi->free_clus_valid = 1;
+ 
+ 	return bytes;
 -- 
 2.17.1
 
