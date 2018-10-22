@@ -2,135 +2,108 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3AF2C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E161CC7112C
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDC9B205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:48:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDC9B205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 26D40205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:52:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26D40205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbeJWAH0 (ORCPT
+        id S1728392AbeJWALm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 20:07:26 -0400
-Received: from smtprelay0215.hostedemail.com ([216.40.44.215]:46205 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727590AbeJWAHZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 20:07:25 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 8891F180A8126;
-        Mon, 22 Oct 2018 15:48:18 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: house85_2a8d16fda765e
-X-Filterd-Recvd-Size: 4498
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 22 Oct 2018 15:48:12 +0000 (UTC)
-Message-ID: <93bda268c5f55571b47c7f283c027454bbcb8469.camel@perches.com>
-Subject: Re: [PATCH 2/2] Compiler Attributes: auxdisplay: panel: use
- __fallthrough
-From:   Joe Perches <joe@perches.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Dan <dan.carpenter@oracle.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Olof Johansson <olof@lxom.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        David Miller <davem@davemloft.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
-        Martin Sebor <msebor@gmail.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Jonathan Corbet <corbet@lwn.net>, Ted Ts'o <tytso@mit.edu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
-Date:   Mon, 22 Oct 2018 08:48:11 -0700
-In-Reply-To: <CANiq72=Eo-c7M1g1gmE0kXNpxe4vkOBT54n9gMB9UBSEfzTMAw@mail.gmail.com>
-References: <20181021171414.22674-1-miguel.ojeda.sandonis@gmail.com>
-         <20181021171414.22674-3-miguel.ojeda.sandonis@gmail.com>
-         <f46baa5bb0e3373c89d09b6e0d15170902e5f55c.camel@perches.com>
-         <CANiq72=Eo-c7M1g1gmE0kXNpxe4vkOBT54n9gMB9UBSEfzTMAw@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 22 Oct 2018 20:11:42 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54009 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728109AbeJWALm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 20:11:42 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 80CA220DE6; Mon, 22 Oct 2018 17:52:35 +0200 (CEST)
+Received: from localhost (unknown [185.7.230.214])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3FBCA208B5;
+        Mon, 22 Oct 2018 17:52:25 +0200 (CEST)
+Date:   Mon, 22 Oct 2018 17:52:24 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Soeren Moch <smoch@web.de>
+Cc:     stable@vger.kernel.org, Andrea Greco <a.greco@4sigma.it>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: ds1307: fix ds1339 wakealarm support
+Message-ID: <20181022155224.GS17341@piout.net>
+References: <20181022123812.5782-1-smoch@web.de>
+ <20181022135757.GQ17341@piout.net>
+ <3a6041a9-6fef-c113-5962-caa0a24aca49@web.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3a6041a9-6fef-c113-5962-caa0a24aca49@web.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-22 at 11:51 +0200, Miguel Ojeda wrote:
-> On Sun, Oct 21, 2018 at 8:11 PM Joe Perches <joe@perches.com> wrote:
-> > On Sun, 2018-10-21 at 19:14 +0200, Miguel Ojeda wrote:
-> > > Let gcc know these cases are meant to fall through to the next label
-> > > by annotating them with the new __fallthrough statement attribute;
-> > > and remove the comment since it conveys the same information
-> > > (which was also parsed by gcc to suppress the warning).
-> > 
-> > Instead of many individual conversion patches,
-> > perhaps a script to do all the conversions at once.
+On 22/10/2018 16:18:13+0200, Soeren Moch wrote:
+> Hi,
 > 
-> Note that this was only an example of the attribute (some people asked
-> for an example when introducing another one, so I preemptively did it
-> for this one).
+> Am 22.10.2018 um 15:57 schrieb Alexandre Belloni:
+> > Hello,
+> >
+> > On 22/10/2018 14:38:12+0200, Soeren Moch wrote:
+> >> Commit 51ed73eb998a1c79a2b0e9bed68f75a8a2c93b9b ("rtc: ds1340: Add support
+> >> for trickle charger.") breaks ds1339 wakealarm support by limiting
+> >> accessible registers. Fix this.
+> >>
+> >> Fixes: 51ed73eb998a ("rtc: ds1340: Add support for trickle charger.")
+> >> Cc: stable@vger.kernel.org
+> >> Signed-off-by: Soeren Moch <smoch@web.de>
+> >> --
+> >> Cc: Andrea Greco <a.greco@4sigma.it>
+> >> Cc: Alessandro Zummo <a.zummo@towertech.it>
+> >> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> >> Cc: linux-rtc@vger.kernel.org
+> >> Cc: linux-kernel@vger.kernel.org
+> >> ---
+> >>  drivers/rtc/rtc-ds1307.c | 1 -
+> >>  1 file changed, 1 deletion(-)
+> >>
+> >> diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+> >> index 4b2b4627daeb..71396b62dc52 100644
+> >> --- a/drivers/rtc/rtc-ds1307.c
+> >> +++ b/drivers/rtc/rtc-ds1307.c
+> >> @@ -1384,7 +1384,6 @@ static void ds1307_clks_register(struct ds1307 *ds1307)
+> >>  static const struct regmap_config regmap_config = {
+> >>  	.reg_bits = 8,
+> >>  	.val_bits = 8,
+> >> -	.max_register = 0x9,
+> > I would prefer having a different regmap_config for chips that have more
+> > registers. I guess you could put a pointer to a regmap_config in chip_desc.
+> >
+> What looks strange to me, the original patch (according to its
+> description) enabled trickle charger functionality for a single chip.
+> This is something totally different than limiting the register space for
+> all chips that are supported by this driver. So this seems to be an
+> accident to me. And this causes an regression for ds1339, which was
+> supported for years.
 > 
-> Doing the conversion (and how :-) I left it for afterwards, if people
-> agree with the attribute.
+> Are there any advantages for limiting the address space of i2c devices?
+
+I would think it was done as a facility to debug the feature because
+when max_register is set, regmap will allow you to dump the register
+space.
+
+> If we really need this, can we apply this partial revert as regression
+> fix (also for stable) and implement the address space limitation separately?
 > 
-> > Maybe:
-> > 
-> > pattern='(?:\/\*\s*fall(?:\s*|\s*\-\s*)thr(?:u|ough)\s*\*\/|\/\/\s*fall\s*thr(?:u|ough)\s*$)'
-> > git grep -P -i --name-only "$pattern" -- '*.[ch]' |
-> >     xargs perl -p -i -e "s/$pattern/__fallthrough;/gi"
-> 
-> By the way, I checked first if coccinelle could match input comments,
-> but it doesn't, according to Julia. I am also thinking whether a
-> compiler plugin could easily do this, but I don't have my hopes high
-> given these are comments...
-> 
-> Also, regardless of how it is done, the patches need to be sent
-> individually to maintainers, no?
 
-Not really no.  For instance the spdx license treewide change.
-commit b24413180f5600bcb3bb70fbed5cf186b60864bd
+Fine, I'm applying this patch right now.
 
-> I have a vague memory that big &
-> automated conversions were a bit frozen upon in the kernel. Greg...?
-
-There really needs to be some method to do treewide
-conversions without involving multiple maintainers.
-
-It'd be a good topic for a maintainer summit one day.
-
-
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
