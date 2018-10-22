@@ -2,127 +2,145 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D91C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2ED2C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:04:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1E6F20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:02:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E6F20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CDC1A20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:04:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h+Z0mgtr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDC1A20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729262AbeJWFWz (ORCPT
+        id S1729358AbeJWFYp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 01:22:55 -0400
-Received: from mga06.intel.com ([134.134.136.31]:19031 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726885AbeJWFWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 01:22:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2018 14:02:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,413,1534834800"; 
-   d="scan'208";a="274652641"
-Received: from tthayer-hp-z620.an.intel.com (HELO [10.122.105.146]) ([10.122.105.146])
-  by fmsmga006.fm.intel.com with ESMTP; 22 Oct 2018 14:02:44 -0700
-Reply-To: thor.thayer@linux.intel.com
-Subject: Re: [PATCH 2/2] net: stmmac: Set OWN bit for jumbo frames
-To:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com, davem@davemloft.net, dinguyen@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1540229352-26010-1-git-send-email-thor.thayer@linux.intel.com>
- <1540229352-26010-2-git-send-email-thor.thayer@linux.intel.com>
-From:   Thor Thayer <thor.thayer@linux.intel.com>
-Message-ID: <4a4a3e09-da21-0bd5-969a-c3ea56f32552@linux.intel.com>
-Date:   Mon, 22 Oct 2018 16:05:15 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 23 Oct 2018 01:24:45 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39691 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726753AbeJWFYo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 01:24:44 -0400
+Received: by mail-pl1-f195.google.com with SMTP id e67-v6so10648595plb.6
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 14:04:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=VxVobE3NQmk/XRCiEd61zc12lCEehkI+kcfIKBa8aM4=;
+        b=h+Z0mgtrCxQankC+/kJ9PNS7eIQ/RD5Rtt7FPmHvpLW8NkWtKcRMbH8ucIQWvTwPtJ
+         oAmIw/vBOy+PQTmR17A42HXg46FwTc7xsX2VM6A6DAlduLqWaxwfOsOxMXAlK8Fz3dWk
+         VeiGFGv91jKTG76CDqXGmO0z72HmFk7Xa976gN2zM1oRZM8EfPdS8jt37WI2/lvDA/US
+         UrHl19JeKvGGf1CzsBNKqn12/95Xcrm6RdqikI/RSA50zCAVIUG0sMXrMYyU2yNILxlW
+         g8dU+LwMEiT5ffCVJLkMpgI2EXAr9uTmBfHsgbffsN5VMtGSX8awsz7ohO36oImAVIrl
+         nw5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=VxVobE3NQmk/XRCiEd61zc12lCEehkI+kcfIKBa8aM4=;
+        b=UJaC0p/DBOyGsCMRUJzid4czBQt6VuF51nSZ6siuKZzG0qtf61qpnGp/O+gQtdjDXN
+         v54IsRfISO7lkVL400O0E4gvJvfqPVhsL5/m9aWm8Txd+q2l8IkUnhzkk3Lb9de9ZBpQ
+         p88/PmoomwdIdOoqj5L+27rbyV15g8oKUIXOjkjQiFmsYKOJ/5LM11BWYPXcfdWd035a
+         XnZmItnv5GkjRa/m8lWGml6VAswPQMRrkhfSzAxBCS8w0HCjh33OJdToPj5lfiqqp8Tl
+         o9uyz83KoQhfr27YbP0fPirA5smyydpTqtH4VsBpfsI4BQOcZGL0dSKr1AgEo8pnMAHV
+         0EVQ==
+X-Gm-Message-State: AGRZ1gIBUdyRPy9AgyhejrA6oB0HXE/e6q3wAElfD/PP3a/MkX421JBO
+        D3DOfLGN3d/pQo7+wGROYal8aA==
+X-Google-Smtp-Source: AJdET5c8e9RmdRNLCL7Dt91OVmCdIDdREggO6+tGx0j648qjiQaN3lq1CPR7eOPYczfHxS7RqXCS/Q==
+X-Received: by 2002:a17:902:6184:: with SMTP id u4-v6mr4635595plj.291.1540242274844;
+        Mon, 22 Oct 2018 14:04:34 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id k132-v6sm2631400pga.28.2018.10.22.14.04.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 22 Oct 2018 14:04:33 -0700 (PDT)
+Date:   Mon, 22 Oct 2018 14:04:32 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Mel Gorman <mgorman@suse.de>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Argangeli <andrea@kernel.org>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: thp:  relax __GFP_THISNODE for MADV_HUGEPAGE
+ mappings
+In-Reply-To: <20181016074606.GH6931@suse.de>
+Message-ID: <alpine.DEB.2.21.1810221355050.120157@chino.kir.corp.google.com>
+References: <20181005232155.GA2298@redhat.com> <alpine.DEB.2.21.1810081303060.221006@chino.kir.corp.google.com> <20181009094825.GC6931@suse.de> <20181009122745.GN8528@dhcp22.suse.cz> <20181009130034.GD6931@suse.de> <20181009142510.GU8528@dhcp22.suse.cz>
+ <20181009230352.GE9307@redhat.com> <alpine.DEB.2.21.1810101410530.53455@chino.kir.corp.google.com> <alpine.DEB.2.21.1810151525460.247641@chino.kir.corp.google.com> <20181015154459.e870c30df5c41966ffb4aed8@linux-foundation.org>
+ <20181016074606.GH6931@suse.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <1540229352-26010-2-git-send-email-thor.thayer@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/22/2018 12:29 PM, thor.thayer@linux.intel.com wrote:
-> From: Thor Thayer <thor.thayer@linux.intel.com>
+On Tue, 16 Oct 2018, Mel Gorman wrote:
+
+> I consider this to be an unfortunate outcome. On the one hand, we have a
+> problem that three people can trivially reproduce with known test cases
+> and a patch shown to resolve the problem. Two of those three people work
+> on distributions that are exposed to a large number of users. On the
+> other, we have a problem that requires the system to be in a specific
+> state and an unknown workload that suffers badly from the remote access
+> penalties with a patch that has review concerns and has not been proven
+> to resolve the trivial cases.
+
+The specific state is that remote memory is fragmented as well, this is 
+not atypical.  Removing __GFP_THISNODE to avoid thrashing a zone will only 
+be beneficial when you can allocate remotely instead.  When you cannot 
+allocate remotely instead, you've made the problem much worse for 
+something that should be __GFP_NORETRY in the first place (and was for 
+years) and should never thrash.
+
+I'm not interested in patches that require remote nodes to have an 
+abundance of free or unfragmented memory to avoid regressing.
+
+> In the case of distributions, the first
+> patch addresses concerns with a common workload where on the other hand
+> we have an internal workload of a single company that is affected --
+> which indirectly affects many users admittedly but only one entity directly.
 > 
-> Ping with Jumbo packet does not reply and get a watchdog timeout
-> 
-> [   46.059616] ------------[ cut here ]------------
-> [   46.064268] NETDEV WATCHDOG: eth0 (socfpga-dwmac): transmit queue 0 timed out
-> [   46.071471] WARNING: CPU: 1 PID: 0 at net/sched/sch_generic.c:461 dev_watchdog+0x2cc/0x2d8
-> [   46.079708] Modules linked in:
-> [   46.082761] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.18.0-00115-gc262be665854-dirty #264
-> [   46.091082] Hardware name: SoCFPGA Stratix 10 SoCDK (DT)
-> [   46.096377] pstate: 20000005 (nzCv daif -PAN -UAO)
-> [   46.101152] pc : dev_watchdog+0x2cc/0x2d8
-> [   46.105149] lr : dev_watchdog+0x2cc/0x2d8
-> [   46.109144] sp : ffff00000800bd80
-> [   46.112447] x29: ffff00000800bd80 x28: ffff80007a9b4940
-> [   46.117744] x27: 00000000ffffffff x26: ffff80007aa183b0
-> [   46.123040] x25: 0000000000000001 x24: 0000000000000140
-> [   46.128336] x23: ffff80007aa1839c x22: ffff80007aa17fb0
-> [   46.133632] x21: ffff80007aa18000 x20: ffff0000091a7000
-> [   46.138927] x19: 0000000000000000 x18: ffffffffffffffff
-> [   46.144223] x17: 0000000000000000 x16: 0000000000000000
-> [   46.149519] x15: ffff0000091a96c8 x14: 07740775076f0720
-> [   46.154814] x13: 07640765076d0769 x12: 0774072007300720
-> [   46.160110] x11: 0765077507650775 x10: 0771072007740769
-> [   46.165406] x9 : 076d0773076e0761 x8 : 077207740720073a
-> [   46.170702] x7 : 072907630761076d x6 : ffff80007ff9a0c0
-> [   46.175997] x5 : ffff80007ff9a0c0 x4 : 0000000000000002
-> [   46.181293] x3 : 0000000000000000 x2 : ffff0000091ac180
-> [   46.186589] x1 : e6a742ebe628e800 x0 : 0000000000000000
-> [   46.191885] Call trace:
-> [   46.194326]  dev_watchdog+0x2cc/0x2d8
-> [   46.197980]  call_timer_fn+0x20/0x78
-> [   46.201544]  expire_timers+0xa4/0xb0
-> [   46.205108]  run_timer_softirq+0xe4/0x198
-> [   46.209107]  __do_softirq+0x114/0x210
-> [   46.212760]  irq_exit+0xd0/0xd8
-> [   46.215895]  __handle_domain_irq+0x60/0xb0
-> [   46.219977]  gic_handle_irq+0x58/0xa8
-> [   46.223628]  el1_irq+0xb0/0x128
-> [   46.226761]  arch_cpu_idle+0x10/0x18
-> [   46.230326]  do_idle+0x1d4/0x288
-> [   46.233544]  cpu_startup_entry+0x24/0x28
-> [   46.237457]  secondary_start_kernel+0x17c/0x1c0
-> [   46.241971] ---[ end trace 57048cd1372cd828 ]---
-> 
-> Inspection of queue showed Jumbo packets were not sent out.
-> The ring Jumbo packet function needs to set the OWN bit so
-> the packet is sent.
-> 
-> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-> ---
->   drivers/net/ethernet/stmicro/stmmac/ring_mode.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/ring_mode.c b/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
-> index a7ffc73fffe8..c5fd9483bd96 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
-> @@ -91,7 +91,7 @@ static int jumbo_frm(void *p, struct sk_buff *skb, int csum)
->   		tx_q->tx_skbuff_dma[entry].is_jumbo = true;
->   		desc->des3 = cpu_to_le32(des2 + BUF_SIZE_4KiB);
->   		stmmac_prepare_tx_desc(priv, desc, 1, nopaged_len, csum,
-> -				STMMAC_RING_MODE, 0, true, skb->len);
-> +				STMMAC_RING_MODE, 1, true, skb->len);
->   	}
->   
->   	tx_q->cur_tx = entry;
-> 
-I'm seeing a similar problem with packets > 8K. I'll send out a rev2 
-with that fix shortly.
+
+The alternative, which is my patch, hasn't been tested or shown why it 
+cannot work.  We continue to talk about order >= pageblock_order vs
+__GFP_COMPACTONLY.
+
+I'd like to know, specifically:
+
+ - what measurable affect my patch has that is better solved with removing
+   __GFP_THISNODE on systems where remote memory is also fragmented?
+
+ - what platforms benefit from remote access to hugepages vs accessing
+   local small pages (I've asked this maybe 4 or 5 times now)?
+
+ - how is reclaiming (and possibly thrashing) memory helpful if compaction
+   fails to free an entire pageblock due to slab fragmentation due to low
+   on memory conditions and the page allocator preference to return node-
+   local memory?
+
+ - how is reclaiming (and possibly thrashing) memory helpful if compaction
+   cannot access the memory reclaimed because the freeing scanner has 
+   already passed by it, or the migration scanner has passed by it, since
+   this reclaim is not targeted to pages it can find?
+
+ - what metrics can be introduced to the page allocator so that we can
+   determine that reclaiming (and possibly thrashing) memory will result 
+   in a hugepage being allocated?
+
+Until we have answers, especially for the last, there is no reason why thp 
+allocations should not be __GFP_NORETRY including for MADV_HUGEPAGE 
+regions.  The implementation of memory compaction simply cannot guarantee 
+that the cost is worthwhile.
