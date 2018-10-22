@@ -2,252 +2,127 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18AECC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5CBC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22DCB20645
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:11:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22DCB20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 72732205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:23:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YJkcWHQn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72732205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728371AbeJWHbo (ORCPT
+        id S1726606AbeJWHoO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 03:31:44 -0400
-Received: from www62.your-server.de ([213.133.104.62]:44032 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbeJWHbo (ORCPT
+        Tue, 23 Oct 2018 03:44:14 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:51582 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbeJWHoO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 03:31:44 -0400
-Received: from [62.203.87.61] (helo=localhost)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1gEjLn-0006lD-5d; Tue, 23 Oct 2018 01:11:07 +0200
-From:   Daniel Borkmann <daniel@iogearbox.net>
-To:     ast@kernel.org
-Cc:     rick.p.edgecombe@intel.com, eric.dumazet@gmail.com,
-        jannh@google.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: [PATCH bpf] bpf: add bpf_jit_limit knob to restrict unpriv allocations
-Date:   Tue, 23 Oct 2018 01:11:04 +0200
-Message-Id: <20181022231104.3443-1-daniel@iogearbox.net>
-X-Mailer: git-send-email 2.9.5
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.2/25061/Mon Oct 22 23:06:35 2018)
+        Tue, 23 Oct 2018 03:44:14 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9MNJ1NM140817;
+        Mon, 22 Oct 2018 23:23:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=kPEyeQSdPHe012wqN1z3jF4uJcp4DFzXBU8UWvUmZ1c=;
+ b=YJkcWHQnPOrT8VYWoWJESxy50GhyTKMvLvc6OtYOTek6M3dNnVTtnOdI/SE+42vdEWdA
+ iPJZ76NrjOagB1Oampck5HWu/M55DUfHxwpwc3APdH1pV6YEV9uLEZHeEqo88FmA2i1i
+ A7Sc4u4V1wm3XNXYlH8aS/ys1IQyaG7RaI4tC9RolIwogw+qZ+EVMKQTeJUqCx/wMtgC
+ gFPnrjqzCzqZ36JQkxWnPyjHXgmXnfgKFXiuQnKPcwhoc/S3pJjClc/qIkujTtVBmh0u
+ KT8ennR1bGVCZLmynKRL2ktnZtXc8uroGcuJCKKDDJ5A4SkGeitp07VBur6o4JQeqjOv Ag== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2n7w0qhpaa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Oct 2018 23:23:11 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9MNN5BR006632
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Oct 2018 23:23:05 GMT
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9MNN40X025000;
+        Mon, 22 Oct 2018 23:23:04 GMT
+Received: from dhcp-10-132-91-181.usdhcp.oraclecorp.com (/10.132.91.181)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 22 Oct 2018 16:23:04 -0700
+Subject: Re: [PATCH v2] KVM/nVMX: Do not validate that posted_intr_desc_addr
+ is page aligned
+To:     KarimAllah Ahmed <karahmed@amazon.de>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+References: <1540071779-20848-1-git-send-email-karahmed@amazon.de>
+ <1540075827-21270-1-git-send-email-karahmed@amazon.de>
+From:   Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Message-ID: <57f63d5b-903c-4b28-da79-151528dc7316@oracle.com>
+Date:   Mon, 22 Oct 2018 16:23:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
+MIME-Version: 1.0
+In-Reply-To: <1540075827-21270-1-git-send-email-karahmed@amazon.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9054 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810220196
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rick reported that the BPF JIT could potentially fill the entire module
-space with BPF programs from unprivileged users which would prevent later
-attempts to load normal kernel modules or privileged BPF programs, for
-example. If JIT was enabled but unsuccessful to generate the image, then
-before commit 290af86629b2 ("bpf: introduce BPF_JIT_ALWAYS_ON config")
-we would always fall back to the BPF interpreter. Nowadays in the case
-where the CONFIG_BPF_JIT_ALWAYS_ON could be set, then the load will abort
-with a failure since the BPF interpreter was compiled out.
 
-Add a global limit and enforce it for unprivileged users such that in case
-of BPF interpreter compiled out we fail once the limit has been reached
-or we fall back to BPF interpreter earlier w/o using module mem if latter
-was compiled in. In a next step, fair share among unprivileged users can
-be resolved in particular for the case where we would fail hard once limit
-is reached.
 
-Fixes: 290af86629b2 ("bpf: introduce BPF_JIT_ALWAYS_ON config")
-Fixes: 0a14842f5a3c ("net: filter: Just In Time compiler for x86-64")
-Co-Developed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
----
- Hi Rick, I've reworked the original patch into something much simpler
- which is only focussing on the actual main issue we want to resolve right
- now as a first step to make some forward progress, that is, limiting usage
- on the JIT for unprivileged users. Tested the below on x86 and arm64.
- (Trimmed down massive Cc list as well a bit and Cc'ed people related to
- commits referenced and netdev where BPF patches are usually discussed.)
- Thanks a lot!
+On 10/20/2018 03:50 PM, KarimAllah Ahmed wrote:
+> The spec only requires the posted interrupt descriptor address to be
+> 64-bytes aligned (i.e. bits[0:5] == 0). Using page_address_valid also
+> forces the address to be page aligned.
+>
+> Only validate that the address does not cross the maximum physical address
+> without enforcing a page alignment.
+>
+> v1 -> v2:
+> - Add a missing parenthesis (dropped while merging!)
+>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: x86@kernel.org
+> Cc: kvm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Fixes: 6de84e581c0 ("nVMX x86: check posted-interrupt descriptor addresss on vmentry of L2")
+> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+> ---
+>   arch/x86/kvm/vmx.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index 38f1a16..bb0fcdb 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -11667,7 +11667,7 @@ static int nested_vmx_check_apicv_controls(struct kvm_vcpu *vcpu,
+>   	    !nested_exit_intr_ack_set(vcpu) ||
+>   	    (vmcs12->posted_intr_nv & 0xff00) ||
+>   	    (vmcs12->posted_intr_desc_addr & 0x3f) ||
+> -	    (!page_address_valid(vcpu, vmcs12->posted_intr_desc_addr))))
+> +	    (vmcs12->posted_intr_desc_addr >> cpuid_maxphyaddr(vcpu))))
+>   		return -EINVAL;
+>   
+>   	/* tpr shadow is needed by all apicv features. */
 
- Documentation/sysctl/net.txt |  8 ++++++++
- include/linux/filter.h       |  1 +
- kernel/bpf/core.c            | 49 +++++++++++++++++++++++++++++++++++++++++---
- net/core/sysctl_net_core.c   | 10 +++++++--
- 4 files changed, 63 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/sysctl/net.txt b/Documentation/sysctl/net.txt
-index 9ecde51..2793d4e 100644
---- a/Documentation/sysctl/net.txt
-+++ b/Documentation/sysctl/net.txt
-@@ -92,6 +92,14 @@ Values :
- 	0 - disable JIT kallsyms export (default value)
- 	1 - enable JIT kallsyms export for privileged users only
- 
-+bpf_jit_limit
-+-------------
-+
-+This enforces a global limit for memory allocations to the BPF JIT
-+compiler in order to reject unprivileged JIT requests once it has
-+been surpassed. bpf_jit_limit contains the value of the global limit
-+in bytes.
-+
- dev_weight
- --------------
- 
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index 91b4c93..de629b7 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -854,6 +854,7 @@ bpf_run_sk_reuseport(struct sock_reuseport *reuse, struct sock *sk,
- extern int bpf_jit_enable;
- extern int bpf_jit_harden;
- extern int bpf_jit_kallsyms;
-+extern int bpf_jit_limit;
- 
- typedef void (*bpf_jit_fill_hole_t)(void *area, unsigned int size);
- 
-diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 7c7eeea..6377225 100644
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -365,10 +365,13 @@ void bpf_prog_kallsyms_del_all(struct bpf_prog *fp)
- }
- 
- #ifdef CONFIG_BPF_JIT
-+# define BPF_JIT_LIMIT_DEFAULT	(PAGE_SIZE * 40000)
-+
- /* All BPF JIT sysctl knobs here. */
- int bpf_jit_enable   __read_mostly = IS_BUILTIN(CONFIG_BPF_JIT_ALWAYS_ON);
- int bpf_jit_harden   __read_mostly;
- int bpf_jit_kallsyms __read_mostly;
-+int bpf_jit_limit    __read_mostly = BPF_JIT_LIMIT_DEFAULT;
- 
- static __always_inline void
- bpf_get_prog_addr_region(const struct bpf_prog *prog,
-@@ -577,27 +580,64 @@ int bpf_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
- 	return ret;
- }
- 
-+static atomic_long_t bpf_jit_current;
-+
-+#if defined(MODULES_VADDR)
-+static int __init bpf_jit_charge_init(void)
-+{
-+	/* Only used as heuristic here to derive limit. */
-+	bpf_jit_limit = min_t(u64, round_up((MODULES_END - MODULES_VADDR) >> 2,
-+					    PAGE_SIZE), INT_MAX);
-+	return 0;
-+}
-+pure_initcall(bpf_jit_charge_init);
-+#endif
-+
-+static int bpf_jit_charge_modmem(u32 pages)
-+{
-+	if (atomic_long_add_return(pages, &bpf_jit_current) >
-+	    (bpf_jit_limit >> PAGE_SHIFT)) {
-+		if (!capable(CAP_SYS_ADMIN)) {
-+			atomic_long_sub(pages, &bpf_jit_current);
-+			return -EPERM;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void bpf_jit_uncharge_modmem(u32 pages)
-+{
-+	atomic_long_sub(pages, &bpf_jit_current);
-+}
-+
- struct bpf_binary_header *
- bpf_jit_binary_alloc(unsigned int proglen, u8 **image_ptr,
- 		     unsigned int alignment,
- 		     bpf_jit_fill_hole_t bpf_fill_ill_insns)
- {
- 	struct bpf_binary_header *hdr;
--	unsigned int size, hole, start;
-+	u32 size, hole, start, pages;
- 
- 	/* Most of BPF filters are really small, but if some of them
- 	 * fill a page, allow at least 128 extra bytes to insert a
- 	 * random section of illegal instructions.
- 	 */
- 	size = round_up(proglen + sizeof(*hdr) + 128, PAGE_SIZE);
-+	pages = size / PAGE_SIZE;
-+
-+	if (bpf_jit_charge_modmem(pages))
-+		return NULL;
- 	hdr = module_alloc(size);
--	if (hdr == NULL)
-+	if (!hdr) {
-+		bpf_jit_uncharge_modmem(pages);
- 		return NULL;
-+	}
- 
- 	/* Fill space with illegal/arch-dep instructions. */
- 	bpf_fill_ill_insns(hdr, size);
- 
--	hdr->pages = size / PAGE_SIZE;
-+	hdr->pages = pages;
- 	hole = min_t(unsigned int, size - (proglen + sizeof(*hdr)),
- 		     PAGE_SIZE - sizeof(*hdr));
- 	start = (get_random_int() % hole) & ~(alignment - 1);
-@@ -610,7 +650,10 @@ bpf_jit_binary_alloc(unsigned int proglen, u8 **image_ptr,
- 
- void bpf_jit_binary_free(struct bpf_binary_header *hdr)
- {
-+	u32 pages = hdr->pages;
-+
- 	module_memfree(hdr);
-+	bpf_jit_uncharge_modmem(pages);
- }
- 
- /* This symbol is only overridden by archs that have different
-diff --git a/net/core/sysctl_net_core.c b/net/core/sysctl_net_core.c
-index b1a2c5e..37b4667 100644
---- a/net/core/sysctl_net_core.c
-+++ b/net/core/sysctl_net_core.c
-@@ -279,7 +279,6 @@ static int proc_dointvec_minmax_bpf_enable(struct ctl_table *table, int write,
- 	return ret;
- }
- 
--# ifdef CONFIG_HAVE_EBPF_JIT
- static int
- proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
- 				    void __user *buffer, size_t *lenp,
-@@ -290,7 +289,6 @@ proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
- 
- 	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
- }
--# endif
- #endif
- 
- static struct ctl_table net_core_table[] = {
-@@ -397,6 +395,14 @@ static struct ctl_table net_core_table[] = {
- 		.extra2		= &one,
- 	},
- # endif
-+	{
-+		.procname	= "bpf_jit_limit",
-+		.data		= &bpf_jit_limit,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0600,
-+		.proc_handler	= proc_dointvec_minmax_bpf_restricted,
-+		.extra1		= &one,
-+	},
- #endif
- 	{
- 		.procname	= "netdev_tstamp_prequeue",
--- 
-2.9.5
-
+Reviewed-by: Krish Sadhuhan <krish.sadhukhan@oracle.com>
