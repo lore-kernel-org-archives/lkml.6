@@ -2,101 +2,186 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29BEEECDE43
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:51:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 205C0ECDE43
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C99A82083C
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:51:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IsMp7tEl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99A82083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B9FA820652
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:53:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9FA820652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbeJVKGw (ORCPT
+        id S1727159AbeJVKJg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 06:06:52 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39976 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbeJVKGw (ORCPT
+        Mon, 22 Oct 2018 06:09:36 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:49436 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725922AbeJVKJg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 06:06:52 -0400
-Received: by mail-qt1-f195.google.com with SMTP id z9-v6so4318312qto.7
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 18:50:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RADwbBNRTe5nQdyxUbMQyAOYg5sXdVTP711OddUnSq8=;
-        b=IsMp7tElk1DbLJ8hYhbEfDI4suxn74KNdLHISYHOj9Y3h198HDFdvcNIHh0T8tGMv3
-         vRx+4ZFAG50QhNm0wsVz73cmW29JCxYbNm0u5chZGIsWqFR8bKVi+6xfNCOKk3Liee2h
-         qubpzjSY5k9R1Dt45iscjplUHEEdttekaGBQMTPUFz36ofTAliI1ipy5Nj1guFkHvZK1
-         oeL6Dk+SzyoNCcBk6ecLBT5FGtLGQ/KWauCi/vBHOvQx/PWqAIK5zIDkaMPb6mcoOz04
-         UIONaxBybiIT4Fvg53kY5eLx3+Oy8qjWg41o9O0hnxmCJhlo3ZfJD2eg1er8df0R/YIO
-         UdSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RADwbBNRTe5nQdyxUbMQyAOYg5sXdVTP711OddUnSq8=;
-        b=s+3OQ/JOMzpEaxsDKB2RU3AFbSBMKRQEuJOKm0eckZ7VuYpFqKPXOsFAdI2glyy8vL
-         v8TVqyB/ZoNQeFVCwMiK5TkGskWRQ0a4oFrZmeSLyQF+Hjv6aKKWZzR2qtBU2L2dhhnm
-         iyQkz4Tux/PXkBEPHMdOKthW3QwrU5PGOI1898jYTYbCB/MVF0WUgsR6/droXJq2/R3V
-         HfvVY3l3HTtPLjMngBrs0spIolWYDfkxAieA7fRiHgsayDpmE58rql2XiM2SdBvPiS7U
-         Mfc8Mu5L2nwJjB588ZNR1urKxQe7MtMUU4shTr7ttSgrkzcaTNuisOfdcWNrf7h4vCNH
-         bhhw==
-X-Gm-Message-State: ABuFfohW3nstXE0al0PsBh7Pc6rPRJA96C083ZPBmIz/B6I31d4PALHu
-        tVIaw62E9ZrBKiUDt8p826xuI47SmI5dcSD5M5Q=
-X-Google-Smtp-Source: ACcGV60WIW7XPNKF2b/q8ycSoapXhtTBzUTK1MKHczPwkMz2TTiOGQo6b0WEvg9nelec55PL2g2EzdwjjltMfQbRs7Q=
-X-Received: by 2002:a0c:fc04:: with SMTP id z4mr43934952qvo.157.1540173028125;
- Sun, 21 Oct 2018 18:50:28 -0700 (PDT)
+        Mon, 22 Oct 2018 06:09:36 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07452554|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03310;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.D5d.IXV_1540173178;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D5d.IXV_1540173178)
+          by smtp.aliyun-inc.com(10.147.44.118);
+          Mon, 22 Oct 2018 09:52:59 +0800
+Date:   Mon, 22 Oct 2018 09:52:58 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     akpm@linux-foundation.org, arnd@arndb.de,
+        daniel.lezcano@linaro.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, hch@infradead.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh@kernel.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, c-sky_gcc_upstream@c-sky.com,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: Re: [PATCH V9 11/21] csky: Atomic operations
+Message-ID: <20181022015258.GA3649@guoren-Inspiron-7460>
+References: <cover.1539655731.git.ren_guo@c-sky.com>
+ <efb6c9bb87f68c6f579ef497096086413effa5c2.1539655732.git.ren_guo@c-sky.com>
+ <20181021205508.GJ4931@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
-References: <CAMkWEXP4Mm5x9rdrKn9xRNVm7vxqoL62ftxb+UcJFAiJ+U9X3A@mail.gmail.com>
- <CAPM=9txnZaeUgYEauJF5eSidEsGS9DmT6M4O-PcTPtCFXL8adA@mail.gmail.com> <CAMkWEXN3v41hg70vjzygbJPK9==xZSBdeDPkSQNs85Sm4HFucQ@mail.gmail.com>
-In-Reply-To: <CAMkWEXN3v41hg70vjzygbJPK9==xZSBdeDPkSQNs85Sm4HFucQ@mail.gmail.com>
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Mon, 22 Oct 2018 11:50:16 +1000
-Message-ID: <CAPM=9txOFw60VZZQYJnOg+BCXLoN8cUd+Ri_B8Bt4Lg0sYBH4A@mail.gmail.com>
-Subject: Re:
-To:     mtirado418@gmail.com
-Cc:     Dave Airlie <Airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        "Deucher, Alexander" <alexander.deucher@amd.com>,
-        "Koenig, Christian" <christian.koenig@amd.com>,
-        zhoucm1 <David1.zhou@amd.com>, Hongbo.He@amd.com,
-        Sean Paul <seanpaul@chromium.org>,
-        Gustavo Padovan <Gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181021205508.GJ4931@worktop.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 22 Oct 2018 at 10:49, Michael Tirado <mtirado418@gmail.com> wrote:
->
-> On Mon, Oct 22, 2018 at 12:26 AM Dave Airlie <airlied@gmail.com> wrote:
-> >
-> > This shouldn't be necessary, did someone misbackport the mmap changes without:
-> >
-> > drm: set FMODE_UNSIGNED_OFFSET for drm files
-> >
-> > Dave.
->
-> The latest kernel I have had to patch was a 4.18-rc6.  I'll try with a
-> newer 4.19 and let you know if it decides to work.  If not I'll
-> prepare a test case for demonstration on qemu-system-i386.
+Thx Peter, 
 
-If you have custom userspace software, make sure it's using
-AC_SYS_LARGEFILE or whatever the equivalant is in your build system.
+Your review has been a great help.
 
-64-bit file offsets are important.
+On Sun, Oct 21, 2018 at 10:55:08PM +0200, Peter Zijlstra wrote:
+> On Tue, Oct 16, 2018 at 10:58:30AM +0800, Guo Ren wrote:
+> > +	smp_mb();
+> > +	lock->tickets.owner++;
+> 
+> 	WRITE_ONCE(lock->tickets.owner, lock->tickets.owner + 1);
+Yes, approve! I should use WRITE_ONCE/READ_ONCE as necessary.
 
-Dave.
+> > +/*
+> > + * Test-and-set spin-locking.
+> > + */
+> 
+> I'm still not entirely sure why you want to have two spinlock
+> implementations; to me that is just extra maintenance overhead.
+Test and set (spinlock & rwlock) is easier for debug :P, and I don't
+know the details of queue-rwlock (maybe I should learn it).
+
+From education's view, we could teach students both of them in
+arch/csky :)
+
+Anyway, I just want to keep both of them.
+
+Thx
+
+> > +	asm volatile (
+> > +		"	movi		%0, 0    \n"
+> > +		"	stw		%0, (%1) \n"
+> > +		: "=&r" (tmp)
+> > +		: "r"(p)
+> > +		: "cc");
+> 
+> 	WRITE_ONCE(lock->lock, 0);
+> ?
+Cool ... I like WRITE_ONCE style. 
+
+> > +
+> > +#define arch_spin_is_locked(x)	(READ_ONCE((x)->lock) != 0)
+> > +
+> > +/*
+> > + * read lock/unlock/trylock
+> > + */
+> 
+> Idem, why do you want a second rwlock_t implementation?
+The same as above of spinlock.
+
+> > +	asm volatile (
+> > +		"1:	ldex.w		%0, (%1) \n"
+> > +		"	movi		%0, 0    \n"
+> > +		"	stex.w		%0, (%1) \n"
+> > +		"	bez		%0, 1b   \n"
+> > +		: "=&r" (tmp)
+> > +		: "r"(p)
+> > +		: "cc");
+> 
+> Isn't that:
+> 
+> 	WRITE_ONCE(lock->lock, 0);
+Yes, no need ldex/stex and you've mentioned in spinlock before :P
+
+> > diff --git a/arch/csky/kernel/atomic.S b/arch/csky/kernel/atomic.S
+> > new file mode 100644
+> > index 0000000..d2357c8
+> > --- /dev/null
+> > +++ b/arch/csky/kernel/atomic.S
+> > @@ -0,0 +1,87 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
+> > +
+> > +#include <linux/linkage.h>
+> > +#include <abi/entry.h>
+> > +
+> > +.text
+> > +
+> > +/*
+> > + * int csky_cmpxchg(int oldval, int newval, int *ptr)
+> > + *
+> > + * If *ptr != oldval && return 1,
+> > + * else *ptr = newval return 0.
+> > + */
+> > +#ifdef CONFIG_CPU_HAS_LDSTEX
+> > +ENTRY(csky_cmpxchg)
+> > +	USPTOKSP
+> > +	mfcr	a3, epc
+> > +	INCTRAP	a3
+> > +
+> > +	subi    sp, 8
+> > +	stw     a3, (sp, 0)
+> > +	mfcr    a3, epsr
+> > +	stw     a3, (sp, 4)
+> > + 
+> > +	psrset	ee
+> > +1:
+> > +	ldex	a3, (a2)
+> > +	cmpne	a0, a3
+> > +	bt16	2f
+> > +	mov	a3, a1
+> > +	stex	a3, (a2)
+> > +	bez	a3, 1b
+> > +2:
+> > +	sync.is
+> > +	mvc	a0
+> > +	ldw	a3, (sp, 0)
+> > +	mtcr	a3, epc
+> > +	ldw     a3, (sp, 4)
+> > +	mtcr	a3, epsr
+> > +	addi	sp, 8
+> > +	KSPTOUSP
+> > +	rte
+> > +END(csky_cmpxchg)
+> 
+> I don't understand why you have this; if the CPU has ll/sc, why do you
+> need syscall support?
+I've really considered your advice before, but from abi view 610/807/810
+all have csky_cmpxchg trap and we want to make them the same. Some apps
+use the trap directly and not use libc api. Maybe we could delete the
+trap in future version of kernel.
+
+> 
+> In any case, nothing terminally broken; so I suppose that's good enough
+> for starters. I just really don't understand some decisions (like having
+> two lock implementations and having that cmpxchg syscall when you have
+> hardware ll/sc).
+> 
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Thx peter and the two questions which I've clarified in above.
+
+Best Regards
+ Guo Ren
