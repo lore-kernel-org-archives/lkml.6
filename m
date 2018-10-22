@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82085ECDE4A
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95693ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4785620658
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4876920658
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFV/m8G7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4785620658
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q86V/Pei"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4876920658
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728970AbeJVSiK (ORCPT
+        id S1729001AbeJVSiN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:38:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49124 "EHLO mail.kernel.org"
+        Mon, 22 Oct 2018 14:38:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728448AbeJVSiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:38:09 -0400
+        id S1728448AbeJVSiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:38:13 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6A7920658;
-        Mon, 22 Oct 2018 10:20:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0208C20890;
+        Mon, 22 Oct 2018 10:20:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540203615;
-        bh=BeOc7Id3Cwp4UavRVWXTqpMUHWZWKI7BPuvM3Z15WzQ=;
+        s=default; t=1540203618;
+        bh=DJk5CrMb3MIKDfHMPdGlfNFmCej7gV2y9a8Ns8bmHqU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rFV/m8G7kwVzW7uD86p3dYxt/Or2v1fwALG3ix1qHY36xPAq8C673sbrFQU0KZMHp
-         WTrUYZ5oIrpsgGUIfvbRtC2rkmAFj8de+EUH2is7zklMqJs29Mn6uT0ROeBQiNHU5g
-         WxsyKIKPRMSeFH3E+cRQNL+2+F47ChVweROITrX4=
+        b=q86V/PeimF4pohKLRm0PilcY9q7vpjPhkdEffHTks/U0HyL+i1S4rEvYn5A9MgTHK
+         DmfI8DQz7U8OLPKW5r3Oop85oudB5FizUIrcRMW1Wzb0C68AMoI8GP/XRA/3aIr8uV
+         4Ic8RYcD1DwxhcG1TXsiGr8XMgZc+FmxZOrobdos=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
+Cc:     Khazhismel Kumykov <khazhy@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 25/27] vmlinux.lds.h: Fix linker warnings about orphan .LPBX sections
-Date:   Mon, 22 Oct 2018 06:19:22 -0400
-Message-Id: <20181022101924.40531-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 27/27] fs/fat/fatent.c: add cond_resched() to fat_count_free_clusters()
+Date:   Mon, 22 Oct 2018 06:19:24 -0400
+Message-Id: <20181022101924.40531-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181022101924.40531-1-sashal@kernel.org>
 References: <20181022101924.40531-1-sashal@kernel.org>
@@ -53,54 +54,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Oberparleiter <oberpar@linux.ibm.com>
+From: Khazhismel Kumykov <khazhy@google.com>
 
-[ Upstream commit 52c8ee5bad8f33d02c567f6609f43d69303fc48d ]
+[ Upstream commit ac081c3be3fae6d0cc3e1862507fca3862d30b67 ]
 
-Enabling both CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y and
-CONFIG_GCOV_PROFILE_ALL=y results in linker warnings:
+On non-preempt kernels this loop can take a long time (more than 50 ticks)
+processing through entries.
 
-  warning: orphan section `.data..LPBX1' being placed in
-  section `.data..LPBX1'.
-
-LD_DEAD_CODE_DATA_ELIMINATION adds compiler flag -fdata-sections. This
-option causes GCC to create separate data sections for data objects,
-including those generated by GCC internally for gcov profiling. The
-names of these objects start with a dot (.LPBX0, .LPBX1), resulting in
-section names starting with 'data..'.
-
-As section names starting with 'data..' are used for specific purposes
-in the Linux kernel, the linker script does not automatically include
-them in the output data section, resulting in the "orphan section"
-linker warnings.
-
-Fix this by specifically including sections named "data..LPBX*" in the
-data section.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Tested-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Peter Oberparleiter <oberpar@linux.ibm.com>
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Link: http://lkml.kernel.org/r/20181010172623.57033-1-khazhy@google.com
+Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/asm-generic/vmlinux.lds.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fat/fatent.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index a11f86014352..83b930988e21 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -70,7 +70,7 @@
-  */
- #ifdef CONFIG_LD_DEAD_CODE_DATA_ELIMINATION
- #define TEXT_MAIN .text .text.[0-9a-zA-Z_]*
--#define DATA_MAIN .data .data.[0-9a-zA-Z_]*
-+#define DATA_MAIN .data .data.[0-9a-zA-Z_]* .data..LPBX*
- #define SDATA_MAIN .sdata .sdata.[0-9a-zA-Z_]*
- #define RODATA_MAIN .rodata .rodata.[0-9a-zA-Z_]*
- #define BSS_MAIN .bss .bss.[0-9a-zA-Z_]*
+diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
+index 3aef8630a4b9..95d2c716e0da 100644
+--- a/fs/fat/fatent.c
++++ b/fs/fat/fatent.c
+@@ -681,6 +681,7 @@ int fat_count_free_clusters(struct super_block *sb)
+ 			if (ops->ent_get(&fatent) == FAT_ENT_FREE)
+ 				free++;
+ 		} while (fat_ent_next(sbi, &fatent));
++		cond_resched();
+ 	}
+ 	sbi->free_clusters = free;
+ 	sbi->free_clus_valid = 1;
 -- 
 2.17.1
 
