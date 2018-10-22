@@ -4,45 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F24ECDE47
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE40CC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:21:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8C920853
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:21:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8355920898
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:21:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MI/58QSm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8C920853
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2aQWaN4A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8355920898
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729286AbeJVSjo (ORCPT
+        id S1729299AbeJVSjq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:39:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50616 "EHLO mail.kernel.org"
+        Mon, 22 Oct 2018 14:39:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729246AbeJVSjm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:39:42 -0400
+        id S1729287AbeJVSjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:39:45 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B9742087D;
-        Mon, 22 Oct 2018 10:21:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B8DB20853;
+        Mon, 22 Oct 2018 10:21:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540203707;
-        bh=zpkhgtrraYpvW6xJa3yobM4YrndWYVBvp7uwbxy8cKE=;
+        s=default; t=1540203709;
+        bh=hfbeKRKpabubDMopwc59uYTNe5JbQCit0+8kdwpNQow=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MI/58QSmQtaUE00y2ETAxYvaoYtU+Rsr/+476A46GGyG3ZuR2ebIXGzFCKJh7fEey
-         yPwfJ37O7fkMru8XBgAXEHpcV0FO9J7TvgHzbVJO0ax1bcHFL53agy9tS91txe9qvC
-         zI6VDdDjye4jP5CvgrcoBd9LhKHM/JpxoEFMvB0g=
+        b=2aQWaN4AIsPdJnIdgZFgMewxG1WBO8gWXuSRISJ9jxY5SpVqJB4ZRTPraugIVeBKT
+         PbAOERD1I51QgOB60wcrwWyJJEYF7iSyH8zy0wSFJJagn7XqYbPhdHIqw+Jm0ZlIxh
+         UQq5KulTvD5hQkFMq3RD3/Vcb+uh4dMp/OG4J1QY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
+Cc:     Arthur Kiyanovski <akiyano@amazon.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 6/9] rxrpc: Only take the rwind and mtu values from latest ACK
-Date:   Mon, 22 Oct 2018 06:21:30 -0400
-Message-Id: <20181022102133.41222-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 7/9] net: ena: fix NULL dereference due to untimely napi initialization
+Date:   Mon, 22 Oct 2018 06:21:31 -0400
+Message-Id: <20181022102133.41222-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181022102133.41222-1-sashal@kernel.org>
 References: <20181022102133.41222-1-sashal@kernel.org>
@@ -51,58 +53,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Arthur Kiyanovski <akiyano@amazon.com>
 
-[ Upstream commit 298bc15b2079c324e82d0a6fda39c3d762af7282 ]
+[ Upstream commit 78a55d05def95144ca5fa9a64c49b2a0636a9866 ]
 
-Move the out-of-order and duplicate ACK packet check to before the call to
-rxrpc_input_ackinfo() so that the receive window size and MTU size are only
-checked in the latest ACK packet and don't regress.
+napi poll functions should be initialized before running request_irq(),
+to handle a rare condition where there is a pending interrupt, causing
+the ISR to fire immediately while the poll function wasn't set yet,
+causing a NULL dereference.
 
-Fixes: 248f219cb8bc ("rxrpc: Rewrite the data and ack handling code")
-Signed-off-by: David Howells <dhowells@redhat.com>
+Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
+Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/rxrpc/input.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/amazon/ena/ena_netdev.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index 7bfde4737cb3..a4380e182e6c 100644
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -808,6 +808,16 @@ static void rxrpc_input_ack(struct rxrpc_call *call, struct sk_buff *skb,
- 				  rxrpc_propose_ack_respond_to_ack);
- 	}
+diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+index 1d92e034febc..0c298878bf46 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@ -1482,8 +1482,6 @@ static int ena_up_complete(struct ena_adapter *adapter)
+ 	if (rc)
+ 		return rc;
  
-+	/* Discard any out-of-order or duplicate ACKs. */
-+	if (before_eq(sp->hdr.serial, call->acks_latest)) {
-+		_debug("discard ACK %d <= %d",
-+		       sp->hdr.serial, call->acks_latest);
-+		return;
-+	}
-+	call->acks_latest_ts = skb->tstamp;
-+	call->acks_latest = sp->hdr.serial;
-+
-+	/* Parse rwind and mtu sizes if provided. */
- 	ioffset = offset + nr_acks + 3;
- 	if (skb->len >= ioffset + sizeof(buf.info)) {
- 		if (skb_copy_bits(skb, ioffset, &buf.info, sizeof(buf.info)) < 0)
-@@ -829,15 +839,6 @@ static void rxrpc_input_ack(struct rxrpc_call *call, struct sk_buff *skb,
- 		return;
- 	}
- 
--	/* Discard any out-of-order or duplicate ACKs. */
--	if (before_eq(sp->hdr.serial, call->acks_latest)) {
--		_debug("discard ACK %d <= %d",
--		       sp->hdr.serial, call->acks_latest);
--		return;
--	}
--	call->acks_latest_ts = skb->tstamp;
--	call->acks_latest = sp->hdr.serial;
+-	ena_init_napi(adapter);
 -
- 	if (before(hard_ack, call->tx_hard_ack) ||
- 	    after(hard_ack, call->tx_top))
- 		return rxrpc_proto_abort("AKW", call, 0);
+ 	ena_change_mtu(adapter->netdev, adapter->netdev->mtu);
+ 
+ 	ena_refill_all_rx_bufs(adapter);
+@@ -1643,6 +1641,13 @@ static int ena_up(struct ena_adapter *adapter)
+ 
+ 	ena_setup_io_intr(adapter);
+ 
++	/* napi poll functions should be initialized before running
++	 * request_irq(), to handle a rare condition where there is a pending
++	 * interrupt, causing the ISR to fire immediately while the poll
++	 * function wasn't set yet, causing a null dereference
++	 */
++	ena_init_napi(adapter);
++
+ 	rc = ena_request_io_irq(adapter);
+ 	if (rc)
+ 		goto err_req_irq;
 -- 
 2.17.1
 
