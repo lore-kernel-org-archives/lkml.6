@@ -2,131 +2,341 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E59BC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E395C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:21:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 366EF20658
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:17:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 366EF20658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0FA8B20658
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:21:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FA8B20658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728620AbeJVVfp (ORCPT
+        id S1728630AbeJVVjc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 17:35:45 -0400
-Received: from foss.arm.com ([217.140.101.70]:46662 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727210AbeJVVfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 17:35:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 028C480D;
-        Mon, 22 Oct 2018 06:17:12 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 558573F627;
-        Mon, 22 Oct 2018 06:17:08 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 14:17:05 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Nick Hu <nickhu@andestech.com>
-Cc:     Greentime Ying-Han =?utf-8?B?SHUo6IOh6Iux5ryiKQ==?= 
-        <greentime@andestech.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "deanbo422@gmail.com" <deanbo422@gmail.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "alexander.shishkin@linux.intel.com" 
-        <alexander.shishkin@linux.intel.com>,
-        "jolsa@redhat.com" <jolsa@redhat.com>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-        "geert@linux-m68k.org" <geert@linux-m68k.org>,
-        Zong Zong-Xian =?utf-8?B?TGko5p2O5a6X5oayKQ==?= 
-        <zong@andestech.com>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "green.hu@gmail.com" <green.hu@gmail.com>
-Subject: Re: [PATCH 5/5] nds32: Add document for NDS32 PMU.
-Message-ID: <20181022131705.vqou7dinw47fkez4@lakrids.cambridge.arm.com>
-References: <cover.1539745993.git.nickhu@andestech.com>
- <c0a80d2db642b1d9547ff412d91baa9927b68aac.1539745993.git.nickhu@andestech.com>
- <20181018143132.vhhc6qpz4sooljlj@lakrids.cambridge.arm.com>
- <20181022102308.GD24110@andestech.com>
+        Mon, 22 Oct 2018 17:39:32 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:63355 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727774AbeJVVjc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 17:39:32 -0400
+Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9MDKifI079298;
+        Mon, 22 Oct 2018 22:20:44 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
+ Mon, 22 Oct 2018 22:20:44 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9MDKcdg079162
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 22 Oct 2018 22:20:43 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [RFC PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181022071323.9550-1-mhocko@kernel.org>
+ <20181022071323.9550-3-mhocko@kernel.org>
+ <f9a8079f-55b0-301e-9b3d-a5250bd7d277@i-love.sakura.ne.jp>
+ <20181022120308.GB18839@dhcp22.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <0a84d3de-f342-c183-579b-d672c116ba25@i-love.sakura.ne.jp>
+Date:   Mon, 22 Oct 2018 22:20:36 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181022102308.GD24110@andestech.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181022120308.GB18839@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 06:23:08PM +0800, Nick Hu wrote:
-> Hi Mark,
+On 2018/10/22 21:03, Michal Hocko wrote:
+> On Mon 22-10-18 20:45:17, Tetsuo Handa wrote:
+>> On 2018/10/22 16:13, Michal Hocko wrote:
+>>> From: Michal Hocko <mhocko@suse.com>
+>>>
+>>> Tetsuo has reported [1] that a single process group memcg might easily
+>>> swamp the log with no-eligible oom victim reports due to race between
+>>> the memcg charge and oom_reaper
+>>>
+>>> Thread 1		Thread2				oom_reaper
+>>> try_charge		try_charge
+>>> 			  mem_cgroup_out_of_memory
+>>> 			    mutex_lock(oom_lock)
+>>>   mem_cgroup_out_of_memory
+>>>     mutex_lock(oom_lock)
+>>> 			      out_of_memory
+>>> 			        select_bad_process
+>>> 				oom_kill_process(current)
+>>> 				  wake_oom_reaper
+>>> 							  oom_reap_task
+>>> 							  MMF_OOM_SKIP->victim
+>>> 			    mutex_unlock(oom_lock)
+>>>     out_of_memory
+>>>       select_bad_process # no task
+>>>
+>>> If Thread1 didn't race it would bail out from try_charge and force the
+>>> charge. We can achieve the same by checking tsk_is_oom_victim inside
+>>> the oom_lock and therefore close the race.
+>>>
+>>> [1] http://lkml.kernel.org/r/bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp
+>>> Signed-off-by: Michal Hocko <mhocko@suse.com>
+>>> ---
+>>>  mm/memcontrol.c | 14 +++++++++++++-
+>>>  1 file changed, 13 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>>> index e79cb59552d9..a9dfed29967b 100644
+>>> --- a/mm/memcontrol.c
+>>> +++ b/mm/memcontrol.c
+>>> @@ -1380,10 +1380,22 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>>>  		.gfp_mask = gfp_mask,
+>>>  		.order = order,
+>>>  	};
+>>> -	bool ret;
+>>> +	bool ret = true;
+>>>  
+>>>  	mutex_lock(&oom_lock);
+>>> +
+>>> +	/*
+>>> +	 * multi-threaded tasks might race with oom_reaper and gain
+>>> +	 * MMF_OOM_SKIP before reaching out_of_memory which can lead
+>>> +	 * to out_of_memory failure if the task is the last one in
+>>> +	 * memcg which would be a false possitive failure reported
+>>> +	 */
+>>> +	if (tsk_is_oom_victim(current))
+>>> +		goto unlock;
+>>> +
+>>
+>> This is not wrong but is strange. We can use mutex_lock_killable(&oom_lock)
+>> so that any killed threads no longer wait for oom_lock.
 > 
-> On Thu, Oct 18, 2018 at 10:31:32PM +0800, Mark Rutland wrote:
-> > On Thu, Oct 18, 2018 at 04:43:17PM +0800, Nickhu wrote:
-> > > The document for how to add NDS32 PMU
-> > > in devicetree.
-> > > 
-> > > Signed-off-by: Nickhu <nickhu@andestech.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/nds32/pmu.txt | 17 +++++++++++++++++
-> > >  1 file changed, 17 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/nds32/pmu.txt
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/nds32/pmu.txt b/Documentation/devicetree/bindings/nds32/pmu.txt
-> > > new file mode 100644
-> > > index 000000000000..02762b850e59
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/nds32/pmu.txt
-> > > @@ -0,0 +1,17 @@
-> > > +* NDS32 Performance Monitor Units
-> > > +
-> > > +NDS32 core have a PMU for counting cpu and cache events like cache misses.
-> > > +The NDS32 PMU representation in the device tree should be done as under:
-> > > +
-> > > +Required properties:
-> > > +
-> > > +- compatilbe :
-> > > +	"andestech,atcpmu"
-> > 
-> > Which CPUs have this PMU?
-> > 
-> > I expected more specific strings, e.g. "andestech,n13-pmu" and/or
-> > "andestech,andestech,nds32v3-pmu".
-> >
-> In nds32 V3, all of our CPU have PMU.
-> So I will change the string to andestech,nds32v3-pmu.
+> tsk_is_oom_victim is stronger because it doesn't depend on
+> fatal_signal_pending which might be cleared throughout the exit process.
 
-That sounds good to me; thanks.
+I mean:
 
-> > > +- interrupts : The interrupt number for NDS32 PMU is 13.
-> > > +
-> > > +Example:
-> > > +pmu{
-> > > +	compatible = "andestech,atcpmu";
-> > > +	interrupts = <13>;
-> > > +}
-> > 
-> > The driver tried to find multiple interrupts. Is there only a single
-> > interrupt in all cases?
-> > 
-> There is only overflow interrupt for performance couner in nds32 V3.
-> I will modified the driver and prepare another patch.
+ mm/memcontrol.c |   3 +-
+ mm/oom_kill.c   | 111 +++++---------------------------------------------------
+ 2 files changed, 12 insertions(+), 102 deletions(-)
 
-Ok.
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index e79cb59..2c1e1ac 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1382,7 +1382,8 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	};
+ 	bool ret;
+ 
+-	mutex_lock(&oom_lock);
++	if (mutex_lock_killable(&oom_lock))
++		return true;
+ 	ret = out_of_memory(&oc);
+ 	mutex_unlock(&oom_lock);
+ 	return ret;
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index f10aa53..22fd6b3 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -755,81 +755,6 @@ bool oom_killer_disable(signed long timeout)
+ 	return true;
+ }
+ 
+-static inline bool __task_will_free_mem(struct task_struct *task)
+-{
+-	struct signal_struct *sig = task->signal;
+-
+-	/*
+-	 * A coredumping process may sleep for an extended period in exit_mm(),
+-	 * so the oom killer cannot assume that the process will promptly exit
+-	 * and release memory.
+-	 */
+-	if (sig->flags & SIGNAL_GROUP_COREDUMP)
+-		return false;
+-
+-	if (sig->flags & SIGNAL_GROUP_EXIT)
+-		return true;
+-
+-	if (thread_group_empty(task) && (task->flags & PF_EXITING))
+-		return true;
+-
+-	return false;
+-}
+-
+-/*
+- * Checks whether the given task is dying or exiting and likely to
+- * release its address space. This means that all threads and processes
+- * sharing the same mm have to be killed or exiting.
+- * Caller has to make sure that task->mm is stable (hold task_lock or
+- * it operates on the current).
+- */
+-static bool task_will_free_mem(struct task_struct *task)
+-{
+-	struct mm_struct *mm = task->mm;
+-	struct task_struct *p;
+-	bool ret = true;
+-
+-	/*
+-	 * Skip tasks without mm because it might have passed its exit_mm and
+-	 * exit_oom_victim. oom_reaper could have rescued that but do not rely
+-	 * on that for now. We can consider find_lock_task_mm in future.
+-	 */
+-	if (!mm)
+-		return false;
+-
+-	if (!__task_will_free_mem(task))
+-		return false;
+-
+-	/*
+-	 * This task has already been drained by the oom reaper so there are
+-	 * only small chances it will free some more
+-	 */
+-	if (test_bit(MMF_OOM_SKIP, &mm->flags))
+-		return false;
+-
+-	if (atomic_read(&mm->mm_users) <= 1)
+-		return true;
+-
+-	/*
+-	 * Make sure that all tasks which share the mm with the given tasks
+-	 * are dying as well to make sure that a) nobody pins its mm and
+-	 * b) the task is also reapable by the oom reaper.
+-	 */
+-	rcu_read_lock();
+-	for_each_process(p) {
+-		if (!process_shares_mm(p, mm))
+-			continue;
+-		if (same_thread_group(task, p))
+-			continue;
+-		ret = __task_will_free_mem(p);
+-		if (!ret)
+-			break;
+-	}
+-	rcu_read_unlock();
+-
+-	return ret;
+-}
+-
+ static void __oom_kill_process(struct task_struct *victim)
+ {
+ 	struct task_struct *p;
+@@ -879,6 +804,8 @@ static void __oom_kill_process(struct task_struct *victim)
+ 	 */
+ 	rcu_read_lock();
+ 	for_each_process(p) {
++		struct task_struct *t;
++
+ 		if (!process_shares_mm(p, mm))
+ 			continue;
+ 		if (same_thread_group(p, victim))
+@@ -898,6 +825,11 @@ static void __oom_kill_process(struct task_struct *victim)
+ 		if (unlikely(p->flags & PF_KTHREAD))
+ 			continue;
+ 		do_send_sig_info(SIGKILL, SEND_SIG_FORCED, p, PIDTYPE_TGID);
++		t = find_lock_task_mm(p);
++		if (!t)
++			continue;
++		mark_oom_victim(t);
++		task_unlock(t);
+ 	}
+ 	rcu_read_unlock();
+ 
+@@ -934,21 +866,6 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+ 	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
+ 					      DEFAULT_RATELIMIT_BURST);
+ 
+-	/*
+-	 * If the task is already exiting, don't alarm the sysadmin or kill
+-	 * its children or threads, just give it access to memory reserves
+-	 * so it can die quickly
+-	 */
+-	task_lock(p);
+-	if (task_will_free_mem(p)) {
+-		mark_oom_victim(p);
+-		wake_oom_reaper(p);
+-		task_unlock(p);
+-		put_task_struct(p);
+-		return;
+-	}
+-	task_unlock(p);
+-
+ 	if (__ratelimit(&oom_rs))
+ 		dump_header(oc, p);
+ 
+@@ -1055,6 +972,9 @@ bool out_of_memory(struct oom_control *oc)
+ 	unsigned long freed = 0;
+ 	enum oom_constraint constraint = CONSTRAINT_NONE;
+ 
++	if (tsk_is_oom_victim(current) && !(oc->gfp_mask & __GFP_NOFAIL))
++		return true;
++
+ 	if (oom_killer_disabled)
+ 		return false;
+ 
+@@ -1066,17 +986,6 @@ bool out_of_memory(struct oom_control *oc)
+ 	}
+ 
+ 	/*
+-	 * If current has a pending SIGKILL or is exiting, then automatically
+-	 * select it.  The goal is to allow it to allocate so that it may
+-	 * quickly exit and free its memory.
+-	 */
+-	if (task_will_free_mem(current)) {
+-		mark_oom_victim(current);
+-		wake_oom_reaper(current);
+-		return true;
+-	}
+-
+-	/*
+ 	 * The OOM killer does not compensate for IO-less reclaim.
+ 	 * pagefault_out_of_memory lost its gfp context so we have to
+ 	 * make sure exclude 0 mask - all other users should have at least
+-- 
+1.8.3.1
 
-Thanks,
-Mark.
+> 
+>> Also, closing this race for only memcg OOM path is strange. Global OOM path
+>> (which are CLONE_VM without CLONE_THREAD) is still suffering this race
+>> (though frequency is lower than memcg OOM due to use of mutex_trylock()). Either
+>> checking before calling out_of_memory() or checking task_will_free_mem(current)
+>> inside out_of_memory() will close this race for both paths.
+> 
+> The global case is much more complicated because we know that memcg
+> might bypass the charge so we do not have to care about the potential
+> endless loop like in page allocator path.
+
+We know that the page allocator path does not do endless loop unless
+__GFP_NOFAIL.
+ 
+>                                           Moreover I am not even sure
+> the race is all that interesting in the global case. I have never heard
+> about a pre-mature panic due to no killable task.
+
+I don't think this race results in
+
+  panic("System is deadlocked on memory\n");
+
+. But I think a few unnecessary OOM killing is possible (especially when
+above patch which "eliminates the shortcuts which call mark_oom_victim()
+on only one thread group" is not applied).
+
+>                                                   The racing oom task
+> would have to be the last eligible process in the system and that is
+> quite unlikely. We can think about a more involved solution for that if
+> we ever hear about this to be a real problem.
+> 
+> So a simple memcg specific fix sounds like a reasonable way forward.
+> 
+
