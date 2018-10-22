@@ -2,83 +2,63 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D579AC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C524C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 930AB2087D
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:53:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16AD120658
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:55:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BzTFoqEa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930AB2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RfiMQ8D/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16AD120658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728740AbeJVTLV (ORCPT
+        id S1728747AbeJVTN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 15:11:21 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:39660 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728101AbeJVTLV (ORCPT
+        Mon, 22 Oct 2018 15:13:28 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:44922 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728300AbeJVTN2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 15:11:21 -0400
-Received: by mail-yb1-f196.google.com with SMTP id j193-v6so4693724ybj.6
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 03:53:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=sZ270nSjaKfi68ZW9Vo6MWbGRIFX4jrmR7nP2GqKqhI=;
-        b=BzTFoqEaw+Wgv0mNgso4rduZZHV5EdrzpDWkaQIk05vvJqfiVgev98BnzOVUu/L1rg
-         Vr21M5evhiq19twdE68VvO/KfKH4ITW4EggQoWEbbWeLAFSkreK7GK44wlWvmCD6ZPet
-         DrU7pz5ghKHukaTKrTJs4B8BXMt33AyCfSsGE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=sZ270nSjaKfi68ZW9Vo6MWbGRIFX4jrmR7nP2GqKqhI=;
-        b=iB3514YLxclDdhCm5P0U44yNwO7GCN28SfEbF0v3pNWBfypJxFHn17JWfdKv4eVzTs
-         6TnKOW8buJ86MCcDrUiXfBMHNtXdQWWYG33m9bar3ZRlOAjEblj7SyAQMaNMS0O0KVUl
-         Lk5z+Q+JlvLi6T6PwmPINGDfG9fFZUJNhrOqU84feAdntwauwSDv1/txEhmz/7XkawLn
-         hBJTu7rZshfO5K4ct3zNuOf/RGLwbc1GYpz1ljaXQ87aYABAnlCxpP4TsGwSsZhrDBXQ
-         fZjPV7uu4vSXJkx9ltgWvJFEbZkL4T5cOD4Kxdd7xlY+60JAvpEW9mgm7N2A+Y4p4kQr
-         4Kxw==
-X-Gm-Message-State: ABuFfoiVqXk+5/Gq9MesbVQrCyVhQywMFV8bKkBm9EIzlQUzNjSI+OHW
-        Pb4aOIyybqipVcaMKYVwkhqq2IhEqkQ=
-X-Google-Smtp-Source: ACcGV61xJYo+vF7MXPjYHQcr1TmHD7nQyTNncM+acg01ohCno8REV6E+wF1VFcMGKp4Fvi7eZ06H+g==
-X-Received: by 2002:a25:2d53:: with SMTP id s19-v6mr18804960ybe.471.1540205596530;
-        Mon, 22 Oct 2018 03:53:16 -0700 (PDT)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id c128-v6sm12345560ywb.68.2018.10.22.03.53.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Oct 2018 03:53:14 -0700 (PDT)
-Received: by mail-yb1-f171.google.com with SMTP id 131-v6so1185613ybe.12
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 03:53:14 -0700 (PDT)
-X-Received: by 2002:a25:8091:: with SMTP id n17-v6mr31941229ybk.209.1540205593804;
- Mon, 22 Oct 2018 03:53:13 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Mon, 22 Oct 2018 03:53:12
- -0700 (PDT)
-In-Reply-To: <CANiq72n4+HDXPqr7xySSGx49g8vEcXaxO7a-By9cSg7YSxOS_A@mail.gmail.com>
-References: <20181021171414.22674-1-miguel.ojeda.sandonis@gmail.com>
- <20181021171414.22674-2-miguel.ojeda.sandonis@gmail.com> <20181021222712.GI1617@thunk.org>
- <CANiq72mXV6WTyHXNZJDTfFOpPrXD0zD6cB30bGOuKO44AvRiog@mail.gmail.com>
- <CAGXu5jKb-0H+smRAW6ngQKDZ-PbTThhMwhmu34iB8vjTa-4H8Q@mail.gmail.com> <CANiq72n4+HDXPqr7xySSGx49g8vEcXaxO7a-By9cSg7YSxOS_A@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 22 Oct 2018 03:53:12 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLzfuEnWpJFL1Caq94nKbPps-QTaYGpge2CfZWj1Zzf9g@mail.gmail.com>
-Message-ID: <CAGXu5jLzfuEnWpJFL1Caq94nKbPps-QTaYGpge2CfZWj1Zzf9g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] Compiler Attributes: add support for __fallthrough
- (gcc >= 7.1)
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "Ted Ts'o" <tytso@mit.edu>, Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Dan <dan.carpenter@oracle.com>,
+        Mon, 22 Oct 2018 15:13:28 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9MArm3R074557;
+        Mon, 22 Oct 2018 10:53:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=tJQgWvv3kc95Cth1illPOAYEoFCCA9gBK0FjrV4hSdM=;
+ b=RfiMQ8D/LDEJzou/oidSmaJftRaLX+Y2ehCCMTKwy2t/0nvbzn33+ZrYpwE5mScowzNQ
+ JlROGk4ysIbFbD0bOFbS/AEP6AcyY9fFbqJdY+dBU24zsEHXS8e6bBIWJoBls1aYmPJg
+ Doy9RX2axztYh52cdbeQG4s/D0Lsms3v9285P00vai0M5Od57cH2MAy6b06Uouvk6FYS
+ k3FmmKMwKo8qsRa822hIkDPMNZMOsNREopvoGtYkaXV0zRBq9eZ8F3VaHjMaMprMNuSS
+ SW8grxjdNa04xfLzUyCCMbhCUJAwun78Pj3KRSgbMYcrZKQ34gk3UXQ0V2585gKBuqCE 2Q== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2n7w0qdmq3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Oct 2018 10:53:48 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9MArkEW019373
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Oct 2018 10:53:46 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9MArhuD025937;
+        Mon, 22 Oct 2018 10:53:43 GMT
+Received: from mwanda (/129.205.6.86)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 22 Oct 2018 03:53:41 -0700
+Date:   Mon, 22 Oct 2018 13:53:14 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Bernd Petrovitsch <bernd@petrovitsch.priv.at>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
         Andreas Dilger <adilger.kernel@dilger.ca>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Michal Marek <michal.lkml@markovi.net>,
@@ -86,8 +66,9 @@ Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Olof Johansson <olof@lxom.net>,
         Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        David Miller <davem@davemloft.net>,
+        "David S . Miller" <davem@davemloft.net>,
         Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Kees Cook <keescook@chromium.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         Paul Lawrence <paullawrence@google.com>,
@@ -110,40 +91,53 @@ Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Sparse Mailing-list <linux-sparse@vger.kernel.org>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-doc@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH 1/2] Compiler Attributes: add support for __fallthrough
+ (gcc >= 7.1)
+Message-ID: <20181022105314.j6djkrpwbnokhai5@mwanda>
+References: <20181021171414.22674-1-miguel.ojeda.sandonis@gmail.com>
+ <20181021171414.22674-2-miguel.ojeda.sandonis@gmail.com>
+ <20181021222712.GI1617@thunk.org>
+ <8fb78062-b6d4-6f2d-d943-44bec6b95ff0@petrovitsch.priv.at>
+ <20181022102743.nua5fgbscyeymzal@mwanda>
+ <1474d995-1b5a-2efb-f077-33eb4a5d9e31@petrovitsch.priv.at>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1474d995-1b5a-2efb-f077-33eb4a5d9e31@petrovitsch.priv.at>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9053 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810220097
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 2:41 AM, Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
-> On Mon, Oct 22, 2018 at 11:36 AM Kees Cook <keescook@chromium.org> wrote:
->>
->> We need to make sure the static analyzers are happy with either
->> method. Additionally, when was -Wimplicit-fallthrough added to GCC? If
->> it was added _before_ the attribute, we need to continue using the
->> comment style otherwise we lose coverage even with gcc itself.
->> Additionally, does Clang support this attribute (it supports
->> -Wimplicit-fallthrough).
->
-> Please take a look at the rationale (also more details at the linked thread):
->
->   * gcc 7.1 added -Wimplicit-fallthrough at the same time as the
-> attribute and the comment parsing.
+On Mon, Oct 22, 2018 at 12:45:03PM +0200, Bernd Petrovitsch wrote:
+> It's more like
+> ----  snip  ----
+> 	case 3:
+> 		frob();
+> 		__fall_through;
+> 		/* no break - fall through */
+> 	case 4:
+> ----  snip  ----
+> as "eclipse" doesn't accept anything else.
+> 
+> And yes, it's far from "beautiful" but I hadn't time to dig into
+> eclipses innards to fix that.
+> 
 
-Ah, perfect. I missed this. :)
+Doing both is super ugly.  Let's just do comments until Eclipse gets
+updated.
 
->   * clang does *not* support the attribute in C.
+I had wanted to move to the attribute because that would simplify things
+in Smatch but it's not a huge deal to delay for another year.
 
-Well that's not good. :)
+regards,
+dan carpenter
 
--Kees
-
--- 
-Kees Cook
-Pixel Security
