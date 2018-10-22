@@ -2,321 +2,262 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D20AC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B49C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D29B20645
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:10:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47C1520672
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:10:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IuL98/sy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D29B20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IwVRZsyf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47C1520672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728481AbeJVX2j (ORCPT
+        id S1728631AbeJVX3J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 19:28:39 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:58536 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728280AbeJVX2g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 19:28:36 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9MF4HsB151125;
-        Mon, 22 Oct 2018 15:09:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=bieIWvbDOVTgJZqn2FMpD1LM637uSPgdDTNpV+3syoU=;
- b=IuL98/sy0kh8uaeTzFWkPdtjzdrF14ENceXCqoVOw+59Dt8UCsCmmD8wLhWBh8NMxDY8
- VJoMvNZ/9kJKRNl91vF2tTkrp7sjBvytX+AMb70xA5UYq6VvrpaLJjSIDLxlWZJHTvO8
- iWmA6cF8d2qstC4y3G2+IAcFXpImsy/xDhMSIljf4BFEYaCD6QTHOUGXJN7ZiTPRKRWF
- 7HMGk9bRUrb0cBR8FtVlZhA47dyXNrGzgdg0OAQpt5bl5aL4Nf7RRLpQ7nZhnMp/M+lk
- OqqY7ZOVaSjokY7IKeoITEeeEHNcpvhXIMLGGYVDHi9ljgEKBkamXOv5sy3O/Uuw5d7W gg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2n7usty8fd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Oct 2018 15:09:06 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9MF96wb008773
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Oct 2018 15:09:06 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9MF95Qw020718;
-        Mon, 22 Oct 2018 15:09:05 GMT
-Received: from ca-dev63.us.oracle.com (/10.211.8.221)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 22 Oct 2018 08:09:05 -0700
-From:   Steve Sistare <steven.sistare@oracle.com>
-To:     mingo@redhat.com, peterz@infradead.org
-Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
-        rohit.k.jain@oracle.com, daniel.m.jordan@oracle.com,
-        pavel.tatashin@microsoft.com, matt@codeblueprint.co.uk,
-        umgwanakikbuti@gmail.com, riel@redhat.com, jbacik@fb.com,
-        juri.lelli@redhat.com, steven.sistare@oracle.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 00/10] steal tasks to improve CPU utilization
-Date:   Mon, 22 Oct 2018 07:59:31 -0700
-Message-Id: <1540220381-424433-1-git-send-email-steven.sistare@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9053 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810220129
+        Mon, 22 Oct 2018 19:29:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42936 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728276AbeJVX3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 19:29:08 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A19182064C;
+        Mon, 22 Oct 2018 15:10:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540221012;
+        bh=FT/bKhyeONuNg+92s9aMKwja6meYzS1n9dc6d6iiSw0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IwVRZsyff8ubWFCqHcOjX12xCP/GEtnJt0PnlIFJuzisPJ/3YkoTqKqmX7BBZqCHg
+         Mmi7YLR/rRXMyxeqwpPdAdIEIS2QBP8/neUP3NyAaYyd8XUIUNGfW8/WLwaQVzRBuq
+         nJ3c9mwN7UaZsFLJ98td9S0wodilb5L7IrYVnTX4=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 9E91E142C5E; Mon, 22 Oct 2018 12:10:09 -0300 (-03)
+Date:   Mon, 22 Oct 2018 12:10:09 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Nick Hu <nickhu@andestech.com>
+Cc:     Greentime Ying-Han =?utf-8?B?SHUo6IOh6Iux5ryiKQ==?= 
+        <greentime@andestech.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "deanbo422@gmail.com" <deanbo422@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "green.hu@gmail.com" <green.hu@gmail.com>
+Subject: Re: [PATCH 1/1] Perf: Compile failed when compile with libelf.
+Message-ID: <20181022151009.GK3849@kernel.org>
+References: <cover.1539654517.git.nickhu@andestech.com>
+ <36763ffb49ecc0342669ca4029a4592670f6249a.1539654517.git.nickhu@andestech.com>
+ <20181018145610.GH3849@kernel.org>
+ <20181022025742.GA23616@andestech.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181022025742.GA23616@andestech.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a CPU has no more CFS tasks to run, and idle_balance() fails to
-find a task, then attempt to steal a task from an overloaded CPU in the
-same LLC. Maintain and use a bitmap of overloaded CPUs to efficiently
-identify candidates.  To minimize search time, steal the first migratable
-task that is found when the bitmap is traversed.  For fairness, search
-for migratable tasks on an overloaded CPU in order of next to run.
+Em Mon, Oct 22, 2018 at 10:57:43AM +0800, Nick Hu escreveu:
+> Hi Arnaldo,
+> 
+> On Thu, Oct 18, 2018 at 10:56:10PM +0800, Arnaldo Carvalho de Melo wrote:
+> > Em Thu, Oct 18, 2018 at 04:36:46PM +0800, Nickhu escreveu:
+> > > The error message:
+> > > =====================================================================
+> > > util/symbol-elf.c:46:12: error: static declaration of 'elf_getphdrnum'
+> > > follows non-static declaration
+> > > static int elf_getphdrnum(Elf *elf, size_t *dst)
+> > >             ^~~~~~~~~~~~~~
+> > > In file included from util/symbol.h:20,
+> > >                  from util/symbol-elf.c:9:
+> > > /local/nickhu/build-system-3/toolchain/nds32le-linux-glibc-v3-upstream/
+> > > nds32le-linux/sysroot/usr/include/libelf.h:266:12: note: previous declaration
+> > > of 'elf_getphdrnum' was here
+> > > extern int elf_getphdrnum (Elf *__elf, size_t *__dst);
+> > >             ^~~~~~~~~~~~~~
+> > > util/symbol-elf.c:62:12: error: static declaration of 'elf_getshdrstrndx'
+> > > follows non-static declaration
+> > > static int elf_getshdrstrndx(Elf *elf __maybe_unused, size_t *dst __maybe
+> > > _unused)
+> > >             ^~~~~~~~~~~~~~~~~
+> > > In file included from util/symbol.h:20,
+> > >                  from util/symbol-elf.c:9:
+> > > /local/nickhu/build-system-3/toolchain/nds32le-linux-glibc-v3-upstream/
+> > > nds32le-linux/sysroot/usr/include/libelf.h:316:12: note: previous declaration
+> > > of 'elf_getshdrstrndx' was here
+> > > extern int elf_getshdrstrndx (Elf *__elf, size_t *__dst);
+> > > =====================================================================
+> > > 
+> > > Fix it.
+> > 
+> > Humm, I think the fix lies elsewhere.
+> > 
+> > If you find that function in a header, then its probably because you
+> > _have_ it in your system, right? In that case
+> > HAVE_ELF_GETPHDRNUM_SUPPORT should be defined and that elf_getphdrnum()
+> > fallback implementation should not be compiled.
+> > 
+> > So looking at where HAVE_ELF_GETPHDRNUM_SUPPORT is defined, in
+> > tools/build/feature, more specifically here:
+> > 
+> > [acme@jouet perf]$ cat tools/build/feature/test-libelf-getphdrnum.c 
+> > // SPDX-License-Identifier: GPL-2.0
+> > #include <libelf.h>
+> > 
+> > int main(void)
+> > {
+> > 	size_t dst;
+> > 
+> > 	return elf_getphdrnum(0, &dst);
+> > }
+> > [acme@jouet perf]$ 
+> > 
+> > [acme@jouet perf]$ find tools/ -type f | xargs grep HAVE_ELF_GETPHDRNUM_SUPPORT
+> > tools/perf/Makefile.config:    CFLAGS += -DHAVE_ELF_GETPHDRNUM_SUPPORT
+> > tools/perf/util/symbol-elf.c:#ifndef HAVE_ELF_GETPHDRNUM_SUPPORT
+> > [acme@jouet perf]$ 
+> > 
+> > Can you take a look at:
+> > 
+> > [acme@jouet perf]$ ls -la /tmp/build/perf/feature/test-libelf-getphdrnum.*
+> > -rwxrwxr-x. 1 acme acme 8240 Oct 17 09:20 /tmp/build/perf/feature/test-libelf-getphdrnum.bin
+> > -rw-rw-r--. 1 acme acme 1373 Oct 17 09:20 /tmp/build/perf/feature/test-libelf-getphdrnum.d
+> > -rw-rw-r--. 1 acme acme    0 Oct 17 09:20 /tmp/build/perf/feature/test-libelf-getphdrnum.make.output
+> > [acme@jouet perf]$ 
+> > 
+> > So in my case, using this libelf:
+> > 
+> > [acme@jouet perf]$ rpm -qf /usr/include/libelf.h 
+> > elfutils-libelf-devel-0.173-1.fc28.x86_64
+> > [acme@jouet perf]$
+> > 
+> > the .make.output file is empty, the build was successful, without
+> > warnings, that binary was generated:
+> > 
+> > [acme@jouet perf]$ ls -la /tmp/build/perf/feature/test-libelf-getphdrnum.bin
+> > -rwxrwxr-x. 1 acme acme 8240 Oct 17 09:20 /tmp/build/perf/feature/test-libelf-getphdrnum.bin
+> > [acme@jouet perf]$ ldd /tmp/build/perf/feature/test-libelf-getphdrnum.bin
+> > 	linux-vdso.so.1 (0x00007ffdf93ea000)
+> > 	libelf.so.1 => /lib64/libelf.so.1 (0x00007efc3f2d7000)
+> > 	libc.so.6 => /lib64/libc.so.6 (0x00007efc3ef21000)
+> > 	libz.so.1 => /lib64/libz.so.1 (0x00007efc3ed0a000)
+> > 	/lib64/ld-linux-x86-64.so.2 (0x00007efc3f4ef000)
+> > [acme@jouet perf]$ nm /tmp/build/perf/feature/test-libelf-getphdrnum.bin | grep getphdrnum
+> >                  U elf_getphdrnum@@ELFUTILS_1.6
+> > [acme@jouet perf]$
+> > 
+> > And here are the headers used:
+> > 
+> > [acme@jouet perf]$ cat /tmp/build/perf/feature/test-libelf-getphdrnum.d 
+> > /tmp/build/perf/feature/test-libelf-getphdrnum.bin: \
+> >  test-libelf-getphdrnum.c /usr/include/stdc-predef.h \
+> >  /usr/include/libelf.h \
+> >  /usr/lib/gcc/x86_64-redhat-linux/7/include/stdint.h \
+> >  /usr/include/stdint.h /usr/include/bits/libc-header-start.h \
+> >  /usr/include/features.h /usr/include/sys/cdefs.h \
+> >  /usr/include/bits/wordsize.h /usr/include/bits/long-double.h \
+> >  /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
+> >  /usr/include/bits/types.h /usr/include/bits/typesizes.h \
+> >  /usr/include/bits/wchar.h /usr/include/bits/stdint-intn.h \
+> >  /usr/include/bits/stdint-uintn.h /usr/include/sys/types.h \
+> >  /usr/include/bits/types/clock_t.h /usr/include/bits/types/clockid_t.h \
+> >  /usr/include/bits/types/time_t.h /usr/include/bits/types/timer_t.h \
+> >  /usr/lib/gcc/x86_64-redhat-linux/7/include/stddef.h \
+> >  /usr/include/endian.h /usr/include/bits/endian.h \
+> >  /usr/include/bits/byteswap.h /usr/include/bits/byteswap-16.h \
+> >  /usr/include/bits/uintn-identity.h /usr/include/sys/select.h \
+> >  /usr/include/bits/select.h /usr/include/bits/types/sigset_t.h \
+> >  /usr/include/bits/types/__sigset_t.h \
+> >  /usr/include/bits/types/struct_timeval.h \
+> >  /usr/include/bits/types/struct_timespec.h /usr/include/sys/sysmacros.h \
+> >  /usr/include/bits/sysmacros.h /usr/include/bits/pthreadtypes.h \
+> >  /usr/include/bits/thread-shared-types.h \
+> >  /usr/include/bits/pthreadtypes-arch.h /usr/include/elf.h
+> > [acme@jouet perf]$
+> > 
+> > So, taking this into account, I think the feature test is using a
+> > different include path than the tool, which may be a real bug in the
+> > feature detection, how is the command line that led to this?
+> > 
+> > One other way to see that the feature test is not detecting that
+> > library, use VF=1 after a clean and check if this line is present:
+> > 
+> > ...             libelf-getphdrnum: [ OFF ]
+> > 
+> > [acme@jouet perf]$ rm -rf /tmp/build/perf/ ; mkdir -p /tmp/build/perf 
+> > [acme@jouet perf]$ time make VF=1 -C tools/perf O=/tmp/build/perf
+> > make: Entering directory '/home/acme/git/perf/tools/perf'
+> >   BUILD:   Doing 'make -j4' parallel build
+> >   HOSTCC   /tmp/build/perf/fixdep.o
+> >   HOSTLD   /tmp/build/perf/fixdep-in.o
+> >   LINK     /tmp/build/perf/fixdep
+> > Warning: Kernel ABI header at 'tools/include/uapi/linux/mman.h' differs from latest version at 'include/uapi/linux/mman.h'
+> > diff -u tools/include/uapi/linux/mman.h include/uapi/linux/mman.h
+> > 
+> > Auto-detecting system features:
+> > ...                         dwarf: [ on  ]
+> > ...            dwarf_getlocations: [ on  ]
+> > ...                         glibc: [ on  ]
+> > ...                          gtk2: [ on  ]
+> > ...                      libaudit: [ on  ]
+> > ...                        libbfd: [ on  ]
+> > ...                        libelf: [ on  ]
+> > ...                       libnuma: [ on  ]
+> > ...        numa_num_possible_cpus: [ on  ]
+> > ...                       libperl: [ on  ]
+> > ...                     libpython: [ on  ]
+> > ...                      libslang: [ on  ]
+> > ...                     libcrypto: [ on  ]
+> > ...                     libunwind: [ on  ]
+> > ...            libdw-dwarf-unwind: [ on  ]
+> > ...                          zlib: [ on  ]
+> > ...                          lzma: [ on  ]
+> > ...                     get_cpuid: [ on  ]
+> > ...                           bpf: [ on  ]
+> > ...                     backtrace: [ on  ]
+> > ...                fortify-source: [ on  ]
+> > ...         sync-compare-and-swap: [ on  ]
+> > ...                  gtk2-infobar: [ on  ]
+> > ...             libelf-getphdrnum: [ on  ]
+> > ...           libelf-gelf_getnote: [ on  ]
+> > ...          libelf-getshdrstrndx: [ on  ]
+> > ...                   libelf-mmap: [ on  ]
+> > ...             libpython-version: [ on  ]
+> > ...                 libunwind-x86: [ OFF ]
+> > ...              libunwind-x86_64: [ on  ]
+> > ...                 libunwind-arm: [ OFF ]
+> > ...             libunwind-aarch64: [ OFF ]
+> > ...   pthread-attr-setaffinity-np: [ on  ]
+> > ...               pthread-barrier: [ on  ]
+> > ...                  reallocarray: [ on  ]
+> > ...            stackprotector-all: [ on  ]
+> > ...                       timerfd: [ on  ]
+> > ...                  sched_getcpu: [ on  ]
+> > ...                           sdt: [ on  ]
+> > ...                         setns: [ on  ]
+> > ...                    libopencsd: [ OFF ]
+> 
+> Thank your for the quick reply. Your advices are very helpful to me.
+> Unfortunately, I can't reproduce the problem now. When I try to
+> reproduce the problem, it just compiled success. I guess maybe I have
+> something not clean cause the problem then.
+> 
+> I will drop my patch, thanks! 
 
-This simple stealing yields a higher CPU utilization than idle_balance()
-alone, because the search is cheap, so it may be called every time the CPU
-is about to go idle.  idle_balance() does more work because it searches
-widely for the busiest queue, so to limit its CPU consumption, it declines
-to search if the system is too busy.  Simple stealing does not offload the
-globally busiest queue, but it is much better than running nothing at all.
+Ok!
 
-The bitmap of overloaded CPUs is a new type of sparse bitmap, designed to
-reduce cache contention vs the usual bitmap when many threads concurrently
-set, clear, and visit elements.
-
-Patch 1 defines the sparsemask type and its operations.
-
-Patches 2, 3, and 4 implement the bitmap of overloaded CPUs.
-
-Patches 5 and 6 refactor existing code for a cleaner merge of later
-  patches.
-
-Patches 7 and 8 implement task stealing using the overloaded CPUs bitmap.
-
-Patch 9 disables stealing on systems with more than 2 NUMA nodes for the
-time being because of performance regressions that are not due to stealing
-per-se.  See the patch description for details.
-
-Patch 10 adds schedstats for comparing the new behavior to the old, and
-  provided as a convenience for developers only, not for integration.
-
-The patch series is based on kernel 4.19.0-rc7.  It compiles, boots, and
-runs with/without each of CONFIG_SCHED_SMT, CONFIG_SMP, CONFIG_SCHED_DEBUG,
-and CONFIG_PREEMPT.  It runs without error with CONFIG_DEBUG_PREEMPT +
-CONFIG_SLUB_DEBUG + CONFIG_DEBUG_PAGEALLOC + CONFIG_DEBUG_MUTEXES +
-CONFIG_DEBUG_SPINLOCK + CONFIG_DEBUG_ATOMIC_SLEEP.  CPU hot plug and CPU
-bandwidth control were tested.
-
-Stealing imprroves utilization with only a modest CPU overhead in scheduler
-code.  In the following experiment, hackbench is run with varying numbers
-of groups (40 tasks per group), and the delta in /proc/schedstat is shown
-for each run, averaged per CPU, augmented with these non-standard stats:
-
-  %find - percent of time spent in old and new functions that search for
-    idle CPUs and tasks to steal and set the overloaded CPUs bitmap.
-
-  steal - number of times a task is stolen from another CPU.
-
-X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
-Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-hackbench <grps> process 100000
-sched_wakeup_granularity_ns=15000000
-
-  baseline
-  grps  time  %busy  slice   sched   idle     wake %find  steal
-  1    8.084  75.02   0.10  105476  46291    59183  0.31      0
-  2   13.892  85.33   0.10  190225  70958   119264  0.45      0
-  3   19.668  89.04   0.10  263896  87047   176850  0.49      0
-  4   25.279  91.28   0.10  322171  94691   227474  0.51      0
-  8   47.832  94.86   0.09  630636 144141   486322  0.56      0
-
-  new
-  grps  time  %busy  slice   sched   idle     wake %find  steal  %speedup
-  1    5.938  96.80   0.24   31255   7190    24061  0.63   7433  36.1
-  2   11.491  99.23   0.16   74097   4578    69512  0.84  19463  20.9
-  3   16.987  99.66   0.15  115824   1985   113826  0.77  24707  15.8
-  4   22.504  99.80   0.14  167188   2385   164786  0.75  29353  12.3
-  8   44.441  99.86   0.11  389153   1616   387401  0.67  38190   7.6
-
-Elapsed time improves by 8 to 36%, and CPU busy utilization is up
-by 5 to 22% hitting 99% for 2 or more groups (80 or more tasks).
-The cost is at most 0.4% more find time.
-
-Additional performance results follow.  A negative "speedup" is a
-regression.  Note: for all hackbench runs, sched_wakeup_granularity_ns
-is set to 15 msec.  Otherwise, preemptions increase at higher loads and
-distort the comparison between baseline and new.
-
------------------- 1 Socket Results ------------------
-
-X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
-Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-Average of 10 runs of: hackbench <groups> process 100000
-
-            --- base --    --- new ---
-  groups    time %stdev    time %stdev  %speedup
-       1   8.008    0.1   5.905    0.2      35.6
-       2  13.814    0.2  11.438    0.1      20.7
-       3  19.488    0.2  16.919    0.1      15.1
-       4  25.059    0.1  22.409    0.1      11.8
-       8  47.478    0.1  44.221    0.1       7.3
-
-X6-2: 1 socket * 22 cores * 2 hyperthreads = 44 CPUs
-Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
-Average of 10 runs of: hackbench <groups> process 100000
-
-            --- base --    --- new ---
-  groups    time %stdev    time %stdev  %speedup
-       1   4.586    0.8   4.596    0.6      -0.3
-       2   7.693    0.2   5.775    1.3      33.2
-       3  10.442    0.3   8.288    0.3      25.9
-       4  13.087    0.2  11.057    0.1      18.3
-       8  24.145    0.2  22.076    0.3       9.3
-      16  43.779    0.1  41.741    0.2       4.8
-
-KVM 4-cpu
-Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
-tbench, average of 11 runs.
-
-  clients    %speedup
-        1        16.2
-        2        11.7
-        4         9.9
-        8        12.8
-       16        13.7
-
-KVM 2-cpu
-Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
-
-  Benchmark                     %speedup
-  specjbb2015_critical_jops          5.7
-  mysql_sysb1.0.14_mutex_2          40.6
-  mysql_sysb1.0.14_oltp_2            3.9
-
------------------- 2 Socket Results ------------------
-
-X6-2: 2 sockets * 10 cores * 2 hyperthreads = 40 CPUs
-Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-Average of 10 runs of: hackbench <groups> process 100000
-
-            --- base --    --- new ---
-  groups    time %stdev    time %stdev  %speedup
-       1   7.945    0.2   7.219    8.7      10.0
-       2   8.444    0.4   6.689    1.5      26.2
-       3  12.100    1.1   9.962    2.0      21.4
-       4  15.001    0.4  13.109    1.1      14.4
-       8  27.960    0.2  26.127    0.3       7.0
-
-X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
-Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
-Average of 10 runs of: hackbench <groups> process 100000
-
-            --- base --    --- new ---
-  groups    time %stdev    time %stdev  %speedup
-       1   5.826    5.4   5.840    5.0      -0.3
-       2   5.041    5.3   6.171   23.4     -18.4
-       3   6.839    2.1   6.324    3.8       8.1
-       4   8.177    0.6   7.318    3.6      11.7
-       8  14.429    0.7  13.966    1.3       3.3
-      16  26.401    0.3  25.149    1.5       4.9
-
-
-X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
-Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
-Oracle database OLTP, logging disabled, NVRAM storage
-
-  Customers   Users   %speedup
-    1200000      40       -1.2
-    2400000      80        2.7
-    3600000     120        8.9
-    4800000     160        4.4
-    6000000     200        3.0
-
-X6-2: 2 sockets * 14 cores * 2 hyperthreads = 56 CPUs
-Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
-Results from the Oracle "Performance PIT".
-
-  Benchmark                                           %speedup
-
-  mysql_sysb1.0.14_fileio_56_rndrd                        19.6
-  mysql_sysb1.0.14_fileio_56_seqrd                        12.1
-  mysql_sysb1.0.14_fileio_56_rndwr                         0.4
-  mysql_sysb1.0.14_fileio_56_seqrewr                      -0.3
-
-  pgsql_sysb1.0.14_fileio_56_rndrd                        19.5
-  pgsql_sysb1.0.14_fileio_56_seqrd                         8.6
-  pgsql_sysb1.0.14_fileio_56_rndwr                         1.0
-  pgsql_sysb1.0.14_fileio_56_seqrewr                       0.5
-
-  opatch_time_ASM_12.2.0.1.0_HP2M                          7.5
-  select-1_users-warm_asmm_ASM_12.2.0.1.0_HP2M             5.1
-  select-1_users_asmm_ASM_12.2.0.1.0_HP2M                  4.4
-  swingbenchv3_asmm_soebench_ASM_12.2.0.1.0_HP2M           5.8
-
-  lm3_memlat_L2                                            4.8
-  lm3_memlat_L1                                            0.0
-
-  ub_gcc_56CPUs-56copies_Pipe-based_Context_Switching     60.1
-  ub_gcc_56CPUs-56copies_Shell_Scripts_1_concurrent        5.2
-  ub_gcc_56CPUs-56copies_Shell_Scripts_8_concurrent       -3.0
-  ub_gcc_56CPUs-56copies_File_Copy_1024_bufsize_2000_maxblocks 2.4
-
-X5-2: 2 sockets * 18 cores * 2 hyperthreads = 72 CPUs
-Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
-
-  NAS_OMP
-  bench class   ncpu    %improved(Mops)
-  dc    B       72      1.3
-  is    C       72      0.9
-  is    D       72      0.7
-
-  sysbench mysql, average of 24 runs
-          --- base ---     --- new ---
-  nthr   events  %stdev   events  %stdev %speedup
-     1    331.0    0.25    331.0    0.24     -0.1
-     2    661.3    0.22    661.8    0.22      0.0
-     4   1297.0    0.88   1300.5    0.82      0.2
-     8   2420.8    0.04   2420.5    0.04     -0.1
-    16   4826.3    0.07   4825.4    0.05     -0.1
-    32   8815.3    0.27   8830.2    0.18      0.1
-    64  12823.0    0.24  12823.6    0.26      0.0
-
---------------------------------------------------------------
-
-Steve Sistare (10):
-  sched: Provide sparsemask, a reduced contention bitmap
-  sched/topology: Provide hooks to allocate data shared per LLC
-  sched/topology: Provide cfs_overload_cpus bitmap
-  sched/fair: Dynamically update cfs_overload_cpus
-  sched/fair: Hoist idle_stamp up from idle_balance
-  sched/fair: Generalize the detach_task interface
-  sched/fair: Provide can_migrate_task_llc
-  sched/fair: Steal work from an overloaded CPU when CPU goes idle
-  sched/fair: disable stealing if too many NUMA nodes
-  sched/fair: Provide idle search schedstats
-
- include/linux/sched/topology.h |   1 +
- include/linux/sparsemask.h     | 260 +++++++++++++++++++++++++++++++
- kernel/sched/core.c            |  30 +++-
- kernel/sched/fair.c            | 338 +++++++++++++++++++++++++++++++++++++----
- kernel/sched/features.h        |   6 +
- kernel/sched/sched.h           |  13 +-
- kernel/sched/stats.c           |  11 +-
- kernel/sched/stats.h           |  13 ++
- kernel/sched/topology.c        | 117 +++++++++++++-
- lib/Makefile                   |   2 +-
- lib/sparsemask.c               | 142 +++++++++++++++++
- 11 files changed, 898 insertions(+), 35 deletions(-)
- create mode 100644 include/linux/sparsemask.h
- create mode 100644 lib/sparsemask.c
-
--- 
-1.8.3.1
-
+- Arnaldo
