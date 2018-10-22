@@ -2,97 +2,112 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D2AC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E96C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B025A20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:33:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PjpbT//D";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mQ+BpRgf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B025A20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 716D220853
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:33:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 716D220853
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728724AbeJVSvI (ORCPT
+        id S1728657AbeJVSv0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:51:08 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48854 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728560AbeJVSvI (ORCPT
+        Mon, 22 Oct 2018 14:51:26 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46222 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728614AbeJVSv0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:51:08 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 51DE160C4C; Mon, 22 Oct 2018 10:33:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540204389;
-        bh=AHxOMvz/rwnT09iJ6eDb35LsSgvNLA11wcJbgov+mBk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PjpbT//DomAkQrUs7H938mWdeuDup27b9/ELFcNwHvYel1Wi8Tnx3RVCUEtX4FSS3
-         KF4zo1CLnjT8+XbCgTINq8EJH/A7zvggSydR0SFVRVRA16dMG7wDtwPdquh83EerUo
-         MNyiBYUV9h5hccXVhamlqa4a22fMdyufr753hnsA=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 24D1160850;
-        Mon, 22 Oct 2018 10:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540204388;
-        bh=AHxOMvz/rwnT09iJ6eDb35LsSgvNLA11wcJbgov+mBk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=mQ+BpRgfjGtSdG5H617PQAtZW3uE13y5FkQo4lBjBdbVYsCnbCKQcQVi6YF1+4a8P
-         p6KQNuI4pz8VweaQHrE6y7RpSTjFCSnjGDWnGZXK2arzkmd5lCFZt3tNq8+EgR172j
-         I86z9q5yn8cd+pNTVRpa5VuBHnbSV/EVf4jVR7hA=
+        Mon, 22 Oct 2018 14:51:26 -0400
+Received: by mail-wr1-f65.google.com with SMTP id i4-v6so5610400wrr.13
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 03:33:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+vDzutpy4i3aGDuAO9GDJV8l9Toex6uwQ2H12nSR/AU=;
+        b=J97eFLqqawvXBYpgOx1ck71z6wT6jxXWpgzNyDPt/GiasSkAoqDbKQU1W6yEgMxeMf
+         zMmKlAjIrn9AT46Fy2mxBJ5yyNKdhdXOE871xalWT0qmpwKBcaXyNyy7Z6+KE4lvoi8a
+         yUJcmy4XWbD6lFUSq+ekfMABLpTS3amBbX29M1dLUO6NUTvreS2IlpBeSWTb99zhqchY
+         gtNFgk5buY7A5zclDQ/GyWX20Ui7cGxayfSntvIgNznZssC1de7FqIT9OD9/Zq23poIs
+         Vu98R6k5YCXwZf6hfJ1TdFBeis8DLw6k+YBfqrZESG2CUC/BJEM885zVoas0qnqyXtgP
+         9A7w==
+X-Gm-Message-State: ABuFfojqby5nY+P73BO4J4TzZjhyTubBcFYCKmIiYafQbO5daxpslKPX
+        FAAob6hpo28q5HyXFqyPjSzW/w==
+X-Google-Smtp-Source: ACcGV602Bo9NF4lzIWYtolUbjcHpu7BCV8zypmv+aCFw2uXeidkfY9Yq4KBB1hB3R4PK14CSUhZEPQ==
+X-Received: by 2002:adf:a352:: with SMTP id d18-v6mr45322201wrb.31.1540204406038;
+        Mon, 22 Oct 2018 03:33:26 -0700 (PDT)
+Received: from localhost ([185.7.230.215])
+        by smtp.gmail.com with ESMTPSA id a1-v6sm28297167wrt.79.2018.10.22.03.33.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 22 Oct 2018 03:33:25 -0700 (PDT)
+Date:   Mon, 22 Oct 2018 03:33:24 -0700
+From:   Moritz Fischer <mdf@kernel.org>
+To:     Andreas Puhm <puhm@oregano.at>
+Cc:     Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
+        "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [Bug] altera_cvp registers a PCI device (Altera/Intel FPGA)
+ without verifying that it supports CVP
+Message-ID: <20181022103324.GA6888@archbook>
+References: <2c6313a3f7c04b70b8a06a50934fe27a@SRV177.busymouse24.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 22 Oct 2018 16:03:08 +0530
-From:   Arun KS <arunks@codeaurora.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        dan.j.williams@intel.com, iamjoonsoo.kim@lge.com,
-        gregkh@linuxfoundation.org, osalvador@suse.de, malat@debian.org,
-        kirill.shutemov@linux.intel.com, jrdr.linux@gmail.com,
-        yasu.isimatu@gmail.com, mgorman@techsingularity.net,
-        aaron.lu@intel.com, devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        xen-devel@lists.xenproject.org, vatsa@codeaurora.org,
-        vinmenon@codeaurora.org, getarunks@gmail.com
-Subject: Re: [PATCH v5 1/2] memory_hotplug: Free pages as higher order
-In-Reply-To: <20181019080755.GK18839@dhcp22.suse.cz>
-References: <1538727006-5727-1-git-send-email-arunks@codeaurora.org>
- <72215e75-6c7e-0aef-c06e-e3aba47cf806@suse.cz>
- <efb65160af41d0e18cb2dcb30c2fb86a@codeaurora.org>
- <20181010173334.GL5873@dhcp22.suse.cz>
- <a2d576a5fc82cdf54fc89409686e58f5@codeaurora.org>
- <20181011075503.GQ5873@dhcp22.suse.cz>
- <20181018191825.fcad6e28f32a3686f201acdf@linux-foundation.org>
- <20181019080755.GK18839@dhcp22.suse.cz>
-Message-ID: <c6289fada694462ed708174f9a1f3b6c@codeaurora.org>
-X-Sender: arunks@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2c6313a3f7c04b70b8a06a50934fe27a@SRV177.busymouse24.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-19 13:37, Michal Hocko wrote:
-> On Thu 18-10-18 19:18:25, Andrew Morton wrote:
-> [...]
->> So this patch needs more work, yes?
+Hi Andreas,
+
+On Fri, Oct 19, 2018 at 03:53:02PM +0000, Andreas Puhm wrote:
+> Hello,
 > 
-> Yes, I've talked to Arun (he is offline until next week) offlist and he
-> will play with this some more.
+> I hope the following information is descriptive enough.
+> If this is no the case, I will provide further details.
+> 
+> --------------------------------------------------------------------
+> Full description:
+> The altera_cvp probe function only checks, 
+> if the Altera/Intel PCI device configuration space contains a vendor specific entry (VSEC Capability Header 0x000b) at offset 0x200.
+>  But the probe function does not verify, if the PCI device (and further the FPGA), 
+> for which it has been called, actually supports the Configure-via-Protocol feature.
+> 
+> The PCI device (FPGA) can explicitly disable the Configur-via-Protocol (CvP) feature by setting the CVP_EN bit, index 20 of CVP_STATUS register, to '0'. 
+> As the altera_cvp probe function does not check this it registers the device in any way. 
+> At this point, the altera_cvp module cannot be used to program this device via CvP. 
+> In addition no other module can use the device, as it is still registered by altera_cvp.
+> 
+> Keywords: altera_cvp module, PCI, Configure-via-Protocol
+> 
+> Kernel version: problem occured with v4.15, should occur from 4.14+
+> 
+> Instructions to reproduce: 
+> Proper hardware is necessary to reproduce this, i.e., FPGA with instantiated Altera/Intel PCIe IP Core with disabled CvP feature.
+> 
+> Workaround:
+> It is possible to circumvent this problem by manually unloading or blacklisting the altera_cvp module.
+> 
+> Suggested Patch:
+> This patch was successfully build and tested for 4.15 and 4.18
+> 
+> Subject: [PATCH] register device only, if it supports CvP operation
 
-Converted totalhigh_pages, totalram_pages and zone->managed_page to 
-atomic and tested hot add. Latency is not effected with this change.
-Will send out a separate patch on top of this one.
+Could you make this: 'fpga: altera_cvp: Conditionalize registration' or
+something along those lines?
+> 
+> This patch is based on: git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tag/?h=v4.18
 
-Regards,
-Arun
+Put some of the extensive description you made above in the git commit
+message, please, such that future us will know why the change was made
+:)
+
+Thanks for your patch,
+
+Moritz
