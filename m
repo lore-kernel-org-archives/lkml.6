@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E367C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A90C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:48:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A90F120665
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6565920663
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:48:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QRZOiBzr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A90F120665
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GDsqbdyp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6565920663
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729281AbeJWFIv (ORCPT
+        id S1729298AbeJWFIz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 01:08:51 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44734 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729264AbeJWFIu (ORCPT
+        Tue, 23 Oct 2018 01:08:55 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46443 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729266AbeJWFIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 01:08:50 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r9-v6so20490092pff.11
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 13:48:44 -0700 (PDT)
+        Tue, 23 Oct 2018 01:08:53 -0400
+Received: by mail-pg1-f193.google.com with SMTP id r190-v6so7945128pgr.13
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 13:48:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Quh8Ehy3LAjXO4rhXxhAHCZ0PkZ/kepKtIrAkWUBMF0=;
-        b=QRZOiBzrM7YvGBsgis2lJCR9vBdMpezgSwJLA5pbMeg0e1Pw4X34eXRiBYjPYNvZPA
-         V0PZFBwgnds71G9vFxIWWO622SsHDkuyEe8UfpwTbJPr301MAkgm3akZz7yxKHow0avt
-         07tuZZ/cRPGCsfAh+y6nEj8ztRr+h+sGZAZ5k=
+        bh=4a7sqGi0woSvMngHSP5nAGi8IS8dbPL7pezY6AoAXTg=;
+        b=GDsqbdypuvyVQp6CFQr7rsmI70RmOerzUKasq0mh4Q/KZkcBCezShgB/voc1wward7
+         zbSxdCwKi+id3XIYxcNe6d9gpcU+Q+DK+fMBkMk8ErJDjMmOXo/f5S+T5YDEJhGv4uNL
+         he58a0yriSm3AG7lRDuyEUSNG76piArj+a6ag=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Quh8Ehy3LAjXO4rhXxhAHCZ0PkZ/kepKtIrAkWUBMF0=;
-        b=sPR0JuZ2USj3wF9PminQR2RazFm3DcN/aK5vCCx0OaCbb5rhZLlx+8veTM2ALMoO0n
-         rnFzJyOtUCMKrnGOeg0dZtcqoqNfeppHXq2y45M7fHq7JgUH0xraLQPgNPTJ51zcSV4P
-         0JsLl6pmvuqa6IQ3EO6HwY8g/U9oICGTQxu3RTZKkEWSCCtUjm2tf8UgW3yI6ZzpUUFC
-         ZUjNktvHYVi7lqHWZ+ZqwRVrMZyAeuKEFhKVAb2hQjT3Y1cX+hXS0V8Poi+6nri+45sQ
-         Yg5Mzlltj15ZGkNc//FuCJO7/E8NzG0XhVTpE33q93wTGuLIWANzXYWBOkxP0JKQ+yJM
-         59Bw==
-X-Gm-Message-State: ABuFfogeSfxApcKMHBlb2jVsYtRdXHSjdqFRELNsJZfJwNMvdvYO1BAr
-        gNHTEqBg522OOCo1rYafAx3yGQ==
-X-Google-Smtp-Source: ACcGV62V0Lfv2CSDMxSTb9MJl42Yv8g+FnglM4BRrf+D6ymn6AhTYtOByBvx/cQnFathr0gc2NsOuA==
-X-Received: by 2002:a62:5f05:: with SMTP id t5-v6mr46971100pfb.223.1540241324446;
-        Mon, 22 Oct 2018 13:48:44 -0700 (PDT)
+        bh=4a7sqGi0woSvMngHSP5nAGi8IS8dbPL7pezY6AoAXTg=;
+        b=syCo+744nZcjsjduGUt/gxs/liW5GCEh0V0k1QbLXk//CZpd25hK8oH6eCBvSpsUM1
+         AFmuSNIKXYxSpCHtosf3WYmQTXqIiguC5g2wYU4jMOkSKEmaXbSFDs4fKIgsz5/zCYJR
+         bwhDT2IDxmYSTC+oyzYpFg8VyOkTnH1GSsPHxT3w1WuhhRGTpG2A/oq8juXwqKQLflKt
+         0i7gtxIBD9U/8ODO6VhV7Buj1M0XrN6HAruNhCTqKQr1EmvOdEedjvj0IjwNFB+Fnns0
+         IHlgs0/0EF0GrtNeL0HbMVlzKDpTnmRe8tXIuj3jt2MuWhS+5rTs205CU3X9WLUTavmJ
+         FuuQ==
+X-Gm-Message-State: ABuFfojZzcu5ntEbZizxtmqTh7NJow2SFEJVvygAsvE17JnmMUeSSXqN
+        ExuObpDuKFyYz5HvhKbXMK1Zuw==
+X-Google-Smtp-Source: ACcGV63MOz9xU64vSNdyCgJbX6qtYuydqvMy5srNCOVlvnR69Hh2QkvlSodWDoIL+fK4TivAbENJAg==
+X-Received: by 2002:a63:9f0a:: with SMTP id g10-v6mr42240926pge.232.1540241327219;
+        Mon, 22 Oct 2018 13:48:47 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id y144-v6sm47483001pfb.81.2018.10.22.13.48.42
+        by smtp.gmail.com with ESMTPSA id y144-v6sm47483001pfb.81.2018.10.22.13.48.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Oct 2018 13:48:43 -0700 (PDT)
+        Mon, 22 Oct 2018 13:48:46 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Sean Paul <seanpaul@chromium.org>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -64,14 +64,13 @@ Cc:     linux-arm-msm@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         jsanka@codeaurora.org, ryandcase@chromium.org,
         Douglas Anderson <dianders@chromium.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
         David Airlie <airlied@linux.ie>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Subject: [PATCH 4/6] drm/bridge: ti-sn65dsi86: Remove the mystery delay
-Date:   Mon, 22 Oct 2018 13:46:37 -0700
-Message-Id: <20181022204639.8558-4-dianders@chromium.org>
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 6/6] dt-bindings: drm/panel: simple: Innolux TV123WAM is actually P120ZDG-BF1
+Date:   Mon, 22 Oct 2018 13:46:39 -0700
+Message-Id: <20181022204639.8558-6-dianders@chromium.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
 In-Reply-To: <20181022204639.8558-1-dianders@chromium.org>
 References: <20181022204639.8558-1-dianders@chromium.org>
@@ -82,110 +81,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's solve the mystery of commit bf1178c98930 ("drm/bridge:
-ti-sn65dsi86: Add mystery delay to enable()").  Specifically the
-reason we needed that mystery delay is that we weren't paying
-attention to HPD.
+As far as I can tell the bindings that were added in commit
+9c04400f7ea6 ("dt-bindings: drm/panel: Document Innolux TV123WAM panel
+bindings") weren't actually for Innolux TV123WAM but were actually for
+Innolux P120ZDG-BF1.
 
-Looking at the datasheet for the same panel that was tested for the
-original commit, I see there's a timing "t3" that times from power on
-to the aux channel being operational.  This time is specced as 0 - 200
-ms.  The datasheet says that the aux channel is operational at exactly
-the same time that HPD is asserted.
+As far as I can tell the Innolux TV123WAM isn't a real panel and but
+it's a mosh between the TI TV123WAM and the Innolux P120ZDG-BF1.
+Let's unmosh.
 
-Scoping the signals on this board showed that HPD was asserted 84 ms
-after power was asserted.  That very closely matches the magic 70 ms
-delay that we had.  ...and actually, in my testing the 70 ms wasn't
-quite enough of a delay and some percentage of the time the display
-didn't come up until I bumped it to 100 ms (presumably 84 ms would
-have worked too).
+Here's my evidence:
 
-To solve this, we tried to hook up the HPD signal in the bridge.
-...but in doing so we found that that the bridge didn't report that
-HPD was asserted until ~280 ms after we powered it (!).  This is
-explained by looking at the sn65dsi86 datasheet section "8.4.5.1 HPD
-(Hot Plug/Unplug Detection)".  Reading there we see that the bridge
-isn't even intended to report HPD until 100 ms after it's asserted.
-...but that would have left us at 184 ms.  The extra 100 ms
-(presumably) comes from this part in the datasheet:
+* Searching for TV123WAM on the Internet turns up a TI panel.  While
+  it's possible that an Innolux panel has the same model number as the
+  TI Panel, it seems a little doubtful.  Looking up the datasheet from
+  the TI Panel shows that it's 1920 x 1280 and 259.2 mm x 172.8 mm.
 
-> The HPD state machine operates off an internal ring oscillator. The
-> ring oscillator frequency will vary [ ... ]. The min/max range in
-> the HPD State Diagram refers to the possible times based off
-> variation in the ring oscillator frequency.
+* As far as I know, the patch adding the Innolux Panel was supposed to
+  be for the board that's sitting in front of me as I type this
+  (support for that board is not yet upstream).  On the back of that
+  panel I see Innolux P120ZDZ-EZ1 rev B1.
 
-Given that the 280 ms we'll end up delaying if we hook up HPD is
-_slower_ than the 200 ms we could just hardcode, for now we'll solve
-the problem by just hardcoding a 200 ms delay in the panel driver
-using the patch in this series ("drm/panel: simple: Support panels
-with HPD where HPD isn't connected").
+* Someone pointed me at a datasheet that's supposed to be for the
+  panel in front of me (sorry, I can't share the datasheet).  That
+  datasheet has the string "p120zdg-bf1"
 
-If we later find a panel that needs to use this bridge where we need
-HPD then we'll have to come up with some new code to handle it.  Given
-the silly debouncing in the bridge chip, though, it seems unlikely.
+* If I search for "P120ZDG-BF1" on the Internet I get hits for panels
+  that are 2160x1440.  They don't have datasheets, but the fact that
+  the resolution matches is a good sign.
 
-One last note is that I tried to solve this through another way: In
-ti_sn_bridge_enable() I tried to use various combinations of
-dp_dpcd_writeb() and dp_dpcd_readb() to detect when the aux channel
-was up.  In theory that would let me detect _exactly_ when I could
-continue and do link training.  Unfortunately even if I did an aux
-transfer w/out waiting I couldn't see any errors.  Possibly I could
-keep looping over link training until it came back with success, but
-that seemed a little overly hacky to me.
+While we doing the rename, also mention that no-hpd can be used with
+this panel.  See the previous patch in this series ("drm/panel:
+simple: Add "no-hpd" delay for Innolux TV123WAM").
 
+Fixes: 9c04400f7ea6 ("dt-bindings: drm/panel: Document Innolux TV123WAM panel bindings")
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Cc: Sandeep Panda <spanda@codeaurora.org>
 ---
 
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 29 +++++++++++++++------------
- 1 file changed, 16 insertions(+), 13 deletions(-)
+ .../{innolux,tv123wam.txt => innolux,p120zdg-bf1.txt}     | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+ rename Documentation/devicetree/bindings/display/panel/{innolux,tv123wam.txt => innolux,p120zdg-bf1.txt} (70%)
 
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-index f8a931cf3665..680566d97adc 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-@@ -458,18 +458,6 @@ static void ti_sn_bridge_enable(struct drm_bridge *bridge)
- 	unsigned int val;
- 	int ret;
+diff --git a/Documentation/devicetree/bindings/display/panel/innolux,tv123wam.txt b/Documentation/devicetree/bindings/display/panel/innolux,p120zdg-bf1.txt
+similarity index 70%
+rename from Documentation/devicetree/bindings/display/panel/innolux,tv123wam.txt
+rename to Documentation/devicetree/bindings/display/panel/innolux,p120zdg-bf1.txt
+index a9b35265fa13..513f03466aba 100644
+--- a/Documentation/devicetree/bindings/display/panel/innolux,tv123wam.txt
++++ b/Documentation/devicetree/bindings/display/panel/innolux,p120zdg-bf1.txt
+@@ -1,20 +1,22 @@
+-Innolux TV123WAM 12.3 inch eDP 2K display panel
++Innolux P120ZDG-BF1 12.02 inch eDP 2K display panel
  
--	/*
--	 * FIXME:
--	 * This 70ms was found necessary by experimentation. If it's not
--	 * present, link training fails. It seems like it can go anywhere from
--	 * pre_enable() up to semi-auto link training initiation below.
--	 *
--	 * Neither the datasheet for the bridge nor the panel tested mention a
--	 * delay of this magnitude in the timing requirements. So for now, add
--	 * the mystery delay until someone figures out a better fix.
--	 */
--	msleep(70);
--
- 	/* DSI_A lane config */
- 	val = CHA_DSI_LANES(4 - pdata->dsi->lanes);
- 	regmap_update_bits(pdata->regmap, SN_DSI_LANES_REG,
-@@ -536,7 +524,22 @@ static void ti_sn_bridge_pre_enable(struct drm_bridge *bridge)
- 	/* configure bridge ref_clk */
- 	ti_sn_bridge_set_refclk_freq(pdata);
+ This binding is compatible with the simple-panel binding, which is specified
+ in simple-panel.txt in this directory.
  
--	/* in case drm_panel is connected then HPD is not supported */
-+	/*
-+	 * HPD on this bridge chip is a bit useless.  This is an eDP bridge
-+	 * so the HPD is an internal signal that's only there to signal that
-+	 * the panel is done powering up.  ...but the bridge chip debounces
-+	 * this signal by between 100 ms and 400 ms (depending on process,
-+	 * voltage, and temperate--I measured it at about 200 ms).  One
-+	 * particular panel asserted HPD 84 ms after it was powered on meaning
-+	 * that we saw HPD 284 ms after power on.  ...but the same panel said
-+	 * that instead of looking at HPD you could just hardcode a delay of
-+	 * 200 ms.  We'll assume that the panel driver will have the hardcoded
-+	 * delay in its prepare and always disable HPD.
-+	 *
-+	 * If HPD somehow makes sense on some future panel we'll have to
-+	 * change this to be conditional on someone specifying that HPD should
-+	 * be used.
-+	 */
- 	regmap_update_bits(pdata->regmap, SN_HPD_DISABLE_REG, HPD_DISABLE,
- 			   HPD_DISABLE);
+ Required properties:
+-- compatible: should be "innolux,tv123wam"
++- compatible: should be "innolux,p120zdg-bf1"
+ - power-supply: regulator to provide the supply voltage
  
+ Optional properties:
+ - enable-gpios: GPIO pin to enable or disable the panel
+ - backlight: phandle of the backlight device attached to the panel
++- no-hpd: If HPD isn't hooked up; add this property.
+ 
+ Example:
+ 	panel_edp: panel-edp {
+-		compatible = "innolux,tv123wam";
++		compatible = "innolux,p120zdg-bf1";
+ 		enable-gpios = <&msmgpio 31 GPIO_ACTIVE_LOW>;
+ 		power-supply = <&pm8916_l2>;
+ 		backlight = <&backlight>;
++		no-hpd;
+ 	};
 -- 
 2.19.1.568.g152ad8e336-goog
 
