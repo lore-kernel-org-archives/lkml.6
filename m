@@ -2,39 +2,69 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC0CC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 757AAC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:49:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8164320652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:48:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8164320652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=petrovitsch.priv.at
+	by mail.kernel.org (Postfix) with ESMTP id 2C51320652
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:49:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uRigdheq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C51320652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbeJVSGA (ORCPT
+        id S1728489AbeJVSGq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:06:00 -0400
-Received: from esgaroth.petrovitsch.at ([78.47.184.11]:3296 "EHLO
-        esgaroth.tuxoid.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728336AbeJVSGA (ORCPT
+        Mon, 22 Oct 2018 14:06:46 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43816 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728336AbeJVSGq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:06:00 -0400
-Received: from thorin.petrovitsch.priv.at (80-110-99-3.cgn.dynamic.surfer.at [80.110.99.3])
-        (authenticated bits=0)
-        by esgaroth.tuxoid.at (8.15.2/8.15.2) with ESMTPSA id w9M9g6ie022922
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=NO);
-        Mon, 22 Oct 2018 11:42:16 +0200
-Subject: Re: [PATCH 1/2] Compiler Attributes: add support for __fallthrough
- (gcc >= 7.1)
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
+        Mon, 22 Oct 2018 14:06:46 -0400
+Received: by mail-lj1-f195.google.com with SMTP id r8-v6so36337731ljc.10;
+        Mon, 22 Oct 2018 02:48:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vXPI9oSyvoETFCtLgak03DHCOXgXMDfGGptay8CR9fs=;
+        b=uRigdheqnC1vWPG45Te3/dwRBSgJC3jdIqZVkFLsL1UoDVPS76ZVU+ZkIRkE1MQA6L
+         EcjiHwJeyo+7QrGMzyNQ9F1nU6Xfb7F7Hlnq0UbWfAfZqPIm1dMDxhQKoP0LL9Ph5XQm
+         xUU/lW9ivUwPl/8fjQqmR/Ey38I0EBhv/FTbyC4no0SiuqF5r8cTLJUZoFBmeFXomUPd
+         O4jyjr/lHXfDI7/oqNPL6vkODxCCAdb85MTQPrvcpLpSYRrT0UBJcc/VbAeTB6ZQG11X
+         0vxcgjyGmV6Y0a/NqIR15HtY36h044W2bFW6HKlpHVDiTJsrANxUfNMW79zQ07kqJ09P
+         dwDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vXPI9oSyvoETFCtLgak03DHCOXgXMDfGGptay8CR9fs=;
+        b=XWIXjmzsviMN28iBkqbzuunQQd6d3fO06rXptCWmBxsj2s4OB6y2KOcPLxon3bQSNO
+         dyVr4gHTkE5+5bEk9Eq3VgIDkIrfvXkRZD5DN16fD3jB0yT4RVi0mcOxCN9mHaCxGXFb
+         JhTdWQxfsjjuirzW0aKU4Al700r7XDrMrhhnMtlD7JOne8TMU7GadGITtoNC2MEf7RCU
+         AogoVv6uUDqsd0CT2Y0xzCVU/H8iGVR3Vw2Yz49hkxNscoA2JGC/2B/PGOiIuJ99V2H7
+         ptmXhySc+fGYJMCpRZFkWoTjnMPzftXIVEE9iqo1yXYdkUmuYZmWiu6GA++QKDNXu4rl
+         9Hyg==
+X-Gm-Message-State: AGRZ1gKRRjNthHZmKjQd9YDJo1Xlxbrz0TtUyUWR0JHfdntBoF3aAR77
+        MjzQADQ4xiVKSPwXxDhUnF2EYiNsuOFf4jIBbmQ=
+X-Google-Smtp-Source: AJdET5fUYIBdmuS1nVF6+Mn09qklTjyJYipFHnVrBvRDbTsF3+aBN15GBfEXRuWoaiQY3CgNXXu+rtHEHZ/NZ1jIMkI=
+X-Received: by 2002:a2e:501c:: with SMTP id e28-v6mr10745717ljb.45.1540201736218;
+ Mon, 22 Oct 2018 02:48:56 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181021171414.22674-1-miguel.ojeda.sandonis@gmail.com> <20181021182926.GB6683@kroah.com>
+In-Reply-To: <20181021182926.GB6683@kroah.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Mon, 22 Oct 2018 11:48:44 +0200
+Message-ID: <CANiq72kOE0a4M0oCmmiWO9xTFJsybEirwUyb_ZTXpJJhc7O_TA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Compiler Attributes: __fallthrough
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Dan <dan.carpenter@oracle.com>,
         Andreas Dilger <adilger.kernel@dilger.ca>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Michal Marek <michal.lkml@markovi.net>,
@@ -42,7 +72,7 @@ To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Olof Johansson <olof@lxom.net>,
         Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
+        David Miller <davem@davemloft.net>,
         Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Kees Cook <keescook@chromium.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -57,7 +87,7 @@ To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
         David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
         Martin Sebor <msebor@gmail.com>,
         Christopher Li <sparse@chrisli.org>,
-        Jonathan Corbet <corbet@lwn.net>,
+        Jonathan Corbet <corbet@lwn.net>, "Ted Ts'o" <tytso@mit.edu>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
@@ -67,61 +97,37 @@ To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
         linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
-References: <20181021171414.22674-1-miguel.ojeda.sandonis@gmail.com>
- <20181021171414.22674-2-miguel.ojeda.sandonis@gmail.com>
- <20181021222712.GI1617@thunk.org>
-From:   Bernd Petrovitsch <bernd@petrovitsch.priv.at>
-Message-ID: <8fb78062-b6d4-6f2d-d943-44bec6b95ff0@petrovitsch.priv.at>
-Date:   Mon, 22 Oct 2018 11:41:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181021222712.GI1617@thunk.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-DCC-debian-Metrics: esgaroth.tuxoid.at 1169; Body=43 Fuz1=43 Fuz2=43
-X-Virus-Scanned: clamav-milter 0.97 at esgaroth.tuxoid.at
-X-Virus-Status: Clean
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/10/2018 00:27, Theodore Y. Ts'o wrote:
-> On Sun, Oct 21, 2018 at 07:14:13PM +0200, Miguel Ojeda wrote:
->> From the GCC manual:
->>
->>   fallthrough
->>
->>     The fallthrough attribute with a null statement serves as a
->>     fallthrough statement. It hints to the compiler that a statement
->>     that falls through to another case label, or user-defined label
->>     in a switch statement is intentional and thus the -Wimplicit-fallthrough
->>     warning must not trigger. The fallthrough attribute may appear
->>     at most once in each attribute list, and may not be mixed with
->>     other attributes. It can only be used in a switch statement
->>     (the compiler will issue an error otherwise), after a preceding
->>     statement and before a logically succeeding case label,
->>     or user-defined label.
->>
->>   https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html
-> 
-> Do we know if coverity understands the fallthrough attribute?  One of
-> the reasons why I started using /* fallthrough */ is because it kept
-> Coverity happy.
+On Sun, Oct 21, 2018 at 8:29 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Sun, Oct 21, 2018 at 07:14:12PM +0200, Miguel Ojeda wrote:
+> > These are two patches are meant to go on top of the rest of the compiler
+> > attributes series on:
+> >
+> >   https://github.com/ojeda/linux/tree/compiler-attributes
+> >
+> > which will be sent to Greg for the next merge window.
+> >
+> > Please review them and let me know! (specially if someone is against
+> > __fallthrough for some reason :-).
+>
+> Will this work with all of the static tools that are currently looking
+> for the comment instead?  I know coverity handles that, what about
+> others?
 
-FWIW, current "eclipse" has the same "problem".
+Thank you Greg, good question. I will try to keep all the information
+we can get about the tools in the commit message.
 
-> If the conversion from /* fallthrough */ to the __fallthrough__
-> attribute means that we start gethting a lot of Coverity warnings,
+I will also contact the different tools about this.
 
-We could keep both.
-
-MfG,
-	Bernd
--- 
-Bernd Petrovitsch                  Email : bernd@petrovitsch.priv.at
-                     LUGA : http://www.luga.at
+Cheers,
+Miguel
