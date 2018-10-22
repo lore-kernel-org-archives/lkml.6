@@ -2,146 +2,292 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NORMAL_HTTP_TO_IP,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC2FC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B169BC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8562220779
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:52:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5892020779
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:52:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHvLiAKw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8562220779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z3qpYtog"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5892020779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728533AbeJVSKC (ORCPT
+        id S1728546AbeJVSKq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:10:02 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41331 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728468AbeJVSKB (ORCPT
+        Mon, 22 Oct 2018 14:10:46 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47810 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728363AbeJVSKp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:10:01 -0400
-Received: by mail-lj1-f193.google.com with SMTP id u21-v6so36334494lja.8;
-        Mon, 22 Oct 2018 02:52:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ozISLo3xAi9TSU5L7p7SKN5+d47Xsy+1ctEHN8dJBWk=;
-        b=fHvLiAKway712yQlSAlR/phPbI0sBqLJ1r5NThC+Snj91UrsM/uuzcbSkL0O6xoxNu
-         SNc1rAwajjmjWPCU3mToGljfwOzCYNgoD1tPkg7F7Kv9aLHbw671AGLO5ozfChqpfTcH
-         3LEhWVHGw2crLAVcBFYAuI58v/VrpL9xxPTA4qRMYMfpqI/aS06L+kU1EXqQxMxb7DQb
-         RHkLFIO7mc6Sdf4iYSwkaD5EdridUsOY1dRi7tk7l7D/Wffn8ZSz71bwPBbsxz6ICpxE
-         s99ofowUWeHxP2EPdsq3lDPtkhPhUIL+6CFpt/4KYBhDQS4kxn0lATpdJa/uul1HO/5I
-         sZ5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ozISLo3xAi9TSU5L7p7SKN5+d47Xsy+1ctEHN8dJBWk=;
-        b=EI6saGjdvhrP7haEhUeGkCsVDSer7vKKcgC2oUEfGMbIjG1xSWgDC2MGjg070IRizr
-         xbahJ1n3KLLoCq4ujr9D/FuGAiobwNhgPhDYNronZnRvNTzShr5qsJ3aivQ7YehFfSNW
-         athFDpiFS16V841clJ9x2eb8bJZ/Bgvt5edQVAA8259dzOZEwBZlZ3vKsoxnNHWyUxAp
-         s5HCEgJjtrcXz2lt5ORAWsfzY0i1VpFZJjsBv/HnKKw6ZIhxkiBjtvFR7rVplE9pRyAe
-         r11GanQTa2xMtTGpFA9upuS5KQAzA3UR86wWjjAPbtnebFZq2mAQB2dG+/srjMzK7zKq
-         6IyQ==
-X-Gm-Message-State: ABuFfojsBRdDUp7S2egx+fvNsSdXtT52Qk3cNCkAx/pQpTjQIlAVduR4
-        r8SwAhaAyJKzTHT0ZVawbNPtlgIJWvJVPnyLwrA=
-X-Google-Smtp-Source: AJdET5dSofrrtfZt2GwnlLDQOUZJbGFiD0o1r0By8H6HhInbXEa8/2npupJnE8IbaymFRE8UeIYlK43epsx7o43H2dY=
-X-Received: by 2002:a2e:240b:: with SMTP id k11-v6mr7325701ljk.139.1540201930509;
- Mon, 22 Oct 2018 02:52:10 -0700 (PDT)
+        Mon, 22 Oct 2018 14:10:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=o+fx/IzrVv4/MSnow+vLZxgAkW8RHCt/H6nshqKLA+o=; b=Z3qpYtogj0gTp5u2hCCEwWgsG
+        vClsWhFXC04fr2cwckUenSAyT4u2ArSylgJyYhbqBJqralZYglnWMXUa2NjlVsR6VlIK/9FeGvt/B
+        DG3EpaF7XhLARV03gwDBN6NTxT/rYbTHYYzH2pNcLe6Y2FWYo/znYmbtjUD6a68SnOagu2KFpAgF2
+        w5rbgY78RGAK5u8J+FN8qvxAy4dCZvghpKtg4AcaDiJJYsqu35m3MuWqrmvYX/MEv0XsLTLHFB4Im
+        qyIUcgz2iRXMizYDfxR+tPjIEjc+UztdfSvpc9rJcK6fWPGngHXBAf07PDuLmWOxwfeelrS5Adhrd
+        ysEM1mabQ==;
+Received: from [109.144.218.6] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gEWtJ-0006DD-LW; Mon, 22 Oct 2018 09:52:54 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     jejb@parisc-linux.org, deller@gmx.de
+Cc:     linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] parisc: remove the dead ccio-rm-dma driver
+Date:   Mon, 22 Oct 2018 10:52:51 +0100
+Message-Id: <20181022095251.5699-1-hch@lst.de>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181021171414.22674-1-miguel.ojeda.sandonis@gmail.com>
- <20181021171414.22674-3-miguel.ojeda.sandonis@gmail.com> <f46baa5bb0e3373c89d09b6e0d15170902e5f55c.camel@perches.com>
-In-Reply-To: <f46baa5bb0e3373c89d09b6e0d15170902e5f55c.camel@perches.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Mon, 22 Oct 2018 11:51:59 +0200
-Message-ID: <CANiq72=Eo-c7M1g1gmE0kXNpxe4vkOBT54n9gMB9UBSEfzTMAw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] Compiler Attributes: auxdisplay: panel: use __fallthrough
-To:     Joe Perches <joe@perches.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Dan <dan.carpenter@oracle.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Olof Johansson <olof@lxom.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        David Miller <davem@davemloft.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
-        Martin Sebor <msebor@gmail.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Jonathan Corbet <corbet@lwn.net>, "Ted Ts'o" <tytso@mit.edu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 21, 2018 at 8:11 PM Joe Perches <joe@perches.com> wrote:
->
-> On Sun, 2018-10-21 at 19:14 +0200, Miguel Ojeda wrote:
-> > Let gcc know these cases are meant to fall through to the next label
-> > by annotating them with the new __fallthrough statement attribute;
-> > and remove the comment since it conveys the same information
-> > (which was also parsed by gcc to suppress the warning).
->
-> Instead of many individual conversion patches,
-> perhaps a script to do all the conversions at once.
+This driver has never been wired up due to the life of the Linux
+git tree, and has severely bitrotted.
 
-Note that this was only an example of the attribute (some people asked
-for an example when introducing another one, so I preemptively did it
-for this one).
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/parisc/Makefile      |   3 -
+ drivers/parisc/ccio-rm-dma.c | 202 -----------------------------------
+ 2 files changed, 205 deletions(-)
+ delete mode 100644 drivers/parisc/ccio-rm-dma.c
 
-Doing the conversion (and how :-) I left it for afterwards, if people
-agree with the attribute.
+diff --git a/drivers/parisc/Makefile b/drivers/parisc/Makefile
+index 3cd5e6cb8478..99fa6a89e0b9 100644
+--- a/drivers/parisc/Makefile
++++ b/drivers/parisc/Makefile
+@@ -8,9 +8,6 @@
+ obj-$(CONFIG_IOSAPIC)		+= iosapic.o
+ obj-$(CONFIG_IOMMU_SBA)		+= sba_iommu.o
+ obj-$(CONFIG_PCI_LBA)		+= lba_pci.o
+-
+-# Only use one of them: ccio-rm-dma is for PCX-W systems *only*
+-# obj-$(CONFIG_IOMMU_CCIO)	+= ccio-rm-dma.o
+ obj-$(CONFIG_IOMMU_CCIO)	+= ccio-dma.o
+ 
+ obj-$(CONFIG_GSC)		+= gsc.o
+diff --git a/drivers/parisc/ccio-rm-dma.c b/drivers/parisc/ccio-rm-dma.c
+deleted file mode 100644
+index df7932af48b7..000000000000
+--- a/drivers/parisc/ccio-rm-dma.c
++++ /dev/null
+@@ -1,202 +0,0 @@
+-/*
+- * ccio-rm-dma.c:
+- *	DMA management routines for first generation cache-coherent machines.
+- *	"Real Mode" operation refers to U2/Uturn chip operation. The chip
+- *      can perform coherency checks w/o using the I/O MMU. That's all we
+- *      need until support for more than 4GB phys mem is needed.
+- * 
+- *	This is the trivial case - basically what x86 does.
+- *
+- *	Drawbacks of using Real Mode are:
+- *	o outbound DMA is slower since one isn't using the prefetching
+- *	  U2 can do for outbound DMA.
+- *	o Ability to do scatter/gather in HW is also lost.
+- *      o only known to work with PCX-W processor. (eg C360)
+- *        (PCX-U/U+ are not coherent with U2 in real mode.)
+- *
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- *
+- * Original version/author:
+- *      CVSROOT=:pserver:anonymous@198.186.203.37:/cvsroot/linux-parisc
+- *      cvs -z3 co linux/arch/parisc/kernel/dma-rm.c
+- *
+- *	(C) Copyright 2000 Philipp Rumpf <prumpf@tux.org>
+- *
+- *
+- * Adopted for The Puffin Group's parisc-linux port by Grant Grundler.
+- *	(C) Copyright 2000 Grant Grundler <grundler@puffin.external.hp.com>
+- *	
+- */
+-
+-#include <linux/types.h>
+-#include <linux/init.h>
+-#include <linux/mm.h>
+-#include <linux/string.h>
+-#include <linux/pci.h>
+-#include <linux/gfp.h>
+-
+-#include <linux/uaccess.h>
+-
+-#include <asm/io.h>
+-#include <asm/hardware.h>
+-#include <asm/page.h>
+-
+-/* Only chose "ccio" since that's what HP-UX calls it....
+-** Make it easier for folks to migrate from one to the other :^)
+-*/
+-#define MODULE_NAME "ccio"
+-
+-#define U2_IOA_RUNWAY 0x580
+-#define U2_BC_GSC     0x501
+-#define UTURN_IOA_RUNWAY 0x581
+-#define UTURN_BC_GSC     0x502
+-
+-#define IS_U2(id) ( \
+-    (((id)->hw_type == HPHW_IOA) && ((id)->hversion == U2_IOA_RUNWAY)) || \
+-    (((id)->hw_type == HPHW_BCPORT) && ((id)->hversion == U2_BC_GSC))  \
+-)
+-
+-#define IS_UTURN(id) ( \
+-    (((id)->hw_type == HPHW_IOA) && ((id)->hversion == UTURN_IOA_RUNWAY)) || \
+-    (((id)->hw_type == HPHW_BCPORT) && ((id)->hversion == UTURN_BC_GSC))  \
+-)
+-
+-static int ccio_dma_supported( struct pci_dev *dev, u64 mask)
+-{
+-	if (dev == NULL) {
+-		printk(KERN_ERR MODULE_NAME ": EISA/ISA/et al not supported\n");
+-		BUG();
+-		return(0);
+-	}
+-
+-	/* only support 32-bit devices (ie PCI/GSC) */
+-	return((int) (mask >= 0xffffffffUL));
+-}
+-
+-
+-static void *ccio_alloc_consistent(struct pci_dev *dev, size_t size,
+-				 dma_addr_t *handle)
+-{
+-	void *ret;
+-	
+-	ret = (void *)__get_free_pages(GFP_ATOMIC, get_order(size));
+-
+-	if (ret != NULL) {
+-		memset(ret, 0, size);
+-		*handle = virt_to_phys(ret);
+-	}
+-	return ret;
+-}
+-	
+-static void ccio_free_consistent(struct pci_dev *dev, size_t size,
+-			       void *vaddr, dma_addr_t handle)
+-{
+-	free_pages((unsigned long)vaddr, get_order(size));
+-}
+-
+-static dma_addr_t ccio_map_single(struct pci_dev *dev, void *ptr, size_t size,
+-			  int direction)
+-{
+-	return virt_to_phys(ptr);
+-}
+-
+-static void ccio_unmap_single(struct pci_dev *dev, dma_addr_t dma_addr,
+-			    size_t size, int direction)
+-{
+-	/* Nothing to do */
+-}
+-
+-
+-static int ccio_map_sg(struct pci_dev *dev, struct scatterlist *sglist, int nents, int direction)
+-{
+-	int tmp = nents;
+-
+-        /* KISS: map each buffer separately. */
+-	while (nents) {
+-		sg_dma_address(sglist) = ccio_map_single(dev, sglist->address, sglist->length, direction);
+-		sg_dma_len(sglist) = sglist->length;
+-		nents--;
+-		sglist++;
+-	}
+-
+-	return tmp;
+-}
+-
+-
+-static void ccio_unmap_sg(struct pci_dev *dev, struct scatterlist *sglist, int nents, int direction)
+-{
+-#if 0
+-	while (nents) {
+-		ccio_unmap_single(dev, sg_dma_address(sglist), sg_dma_len(sglist), direction);
+-		nents--;
+-		sglist++;
+-	}
+-	return;
+-#else
+-	/* Do nothing (copied from current ccio_unmap_single()  :^) */
+-#endif
+-}
+-
+-
+-static struct pci_dma_ops ccio_ops = {
+-	ccio_dma_supported,
+-	ccio_alloc_consistent,
+-	ccio_free_consistent,
+-	ccio_map_single,
+-	ccio_unmap_single,
+-	ccio_map_sg,
+-	ccio_unmap_sg,
+-	NULL,                   /* dma_sync_single_for_cpu : NOP for U2 */
+-	NULL,                   /* dma_sync_single_for_device : NOP for U2 */
+-	NULL,                   /* dma_sync_sg_for_cpu     : ditto */
+-	NULL,                   /* dma_sync_sg_for_device     : ditto */
+-};
+-
+-
+-/*
+-** Determine if u2 should claim this chip (return 0) or not (return 1).
+-** If so, initialize the chip and tell other partners in crime they
+-** have work to do.
+-*/
+-static int __init
+-ccio_probe(struct parisc_device *dev)
+-{
+-	printk(KERN_INFO "%s found %s at 0x%lx\n", MODULE_NAME,
+-			dev->id.hversion == U2_BC_GSC ? "U2" : "UTurn",
+-			dev->hpa.start);
+-
+-/*
+-** FIXME - should check U2 registers to verify it's really running
+-** in "Real Mode".
+-*/
+-
+-#if 0
+-/* will need this for "Virtual Mode" operation */
+-	ccio_hw_init(ccio_dev);
+-	ccio_common_init(ccio_dev);
+-#endif
+-	hppa_dma_ops = &ccio_ops;
+-	return 0;
+-}
+-
+-static const struct parisc_device_id ccio_tbl[] __initconst = {
+-	{ HPHW_BCPORT, HVERSION_REV_ANY_ID, U2_BC_GSC, 0xc },
+-	{ HPHW_BCPORT, HVERSION_REV_ANY_ID, UTURN_BC_GSC, 0xc },
+-	{ 0, }
+-};
+-
+-static struct parisc_driver ccio_driver __refdata = {
+-	.name =		"U2/Uturn",
+-	.id_table =	ccio_tbl,
+-	.probe =	ccio_probe,
+-};
+-
+-void __init ccio_init(void)
+-{
+-	register_parisc_driver(&ccio_driver);
+-}
+-- 
+2.19.1
 
->
-> Maybe:
->
-> pattern='(?:\/\*\s*fall(?:\s*|\s*\-\s*)thr(?:u|ough)\s*\*\/|\/\/\s*fall\s*thr(?:u|ough)\s*$)'
-> git grep -P -i --name-only "$pattern" -- '*.[ch]' |
->     xargs perl -p -i -e "s/$pattern/__fallthrough;/gi"
-
-
-By the way, I checked first if coccinelle could match input comments,
-but it doesn't, according to Julia. I am also thinking whether a
-compiler plugin could easily do this, but I don't have my hopes high
-given these are comments...
-
-Also, regardless of how it is done, the patches need to be sent
-individually to maintainers, no? I have a vague memory that big &
-automated conversions were a bit frozen upon in the kernel. Greg...?
-
-Cheers,
-Miguel
