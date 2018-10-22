@@ -3,114 +3,137 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00439C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 16:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A812C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 16:16:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39A1D2064C
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 16:14:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39A1D2064C
+	by mail.kernel.org (Postfix) with ESMTP id C4DC12064C
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 16:16:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4DC12064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728566AbeJWAdw (ORCPT
+        id S1728576AbeJWAfY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 20:33:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55060 "EHLO mx1.redhat.com"
+        Mon, 22 Oct 2018 20:35:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39793 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728489AbeJWAdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 20:33:52 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1727218AbeJWAfY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 20:35:24 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8C7763082A2B;
-        Mon, 22 Oct 2018 16:14:43 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id E36771057056;
-        Mon, 22 Oct 2018 16:14:40 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Mon, 22 Oct 2018 18:14:43 +0200 (CEST)
-Date:   Mon, 22 Oct 2018 18:14:40 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
-Subject: Re: [PATCH RFC kenrel/rcu] Eliminate BUG_ON() for sync.c
-Message-ID: <20181022161439.GA8640@redhat.com>
-References: <20181022145241.GA7488@linux.ibm.com>
- <20181022152406.GA7257@redhat.com>
- <20181022155644.GG4170@linux.ibm.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 3FD2B3082A26;
+        Mon, 22 Oct 2018 16:16:15 +0000 (UTC)
+Received: from krava (unknown [10.43.17.150])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 2F99D70111;
+        Mon, 22 Oct 2018 16:16:14 +0000 (UTC)
+Date:   Mon, 22 Oct 2018 18:16:13 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Don Zickus <dzickus@redhat.com>
+Cc:     David Miller <davem@davemloft.net>, acme@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: perf overlapping maps...
+Message-ID: <20181022161613.GF2945@krava>
+References: <20181019.210549.1285253275146712779.davem@davemloft.net>
+ <20181019.214401.2045294780943844999.davem@davemloft.net>
+ <20181022140738.jvutwmstgm2f65et@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181022155644.GG4170@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 22 Oct 2018 16:14:44 +0000 (UTC)
+In-Reply-To: <20181022140738.jvutwmstgm2f65et@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 22 Oct 2018 16:16:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/22, Paul E. McKenney wrote:
->
-> > > @@ -125,12 +125,12 @@ void rcu_sync_enter(struct rcu_sync *rsp)
-> > >  		rsp->gp_state = GP_PENDING;
-> > >  	spin_unlock_irq(&rsp->rss_lock);
-> > >
-> > > -	BUG_ON(need_wait && need_sync);
-> > > -
-> > >  	if (need_sync) {
-> > >  		gp_ops[rsp->gp_type].sync();
-> > >  		rsp->gp_state = GP_PASSED;
-> > >  		wake_up_all(&rsp->gp_wait);
-> > > +		if (WARN_ON_ONCE(need_wait))
-> > > +			wait_event(rsp->gp_wait, rsp->gp_state == GP_PASSED);
-> >
-> > This wait_event(gp_state == GP_PASSED) is pointless, note that this branch
-> > does gp_state = GP_PASSED 2 lines above.
->
-> OK, I have removed this one.
->
-> > And if we add WARN_ON_ONCE(need_wait), then we should probably also add
-> > WARN_ON_ONCE(need_sync) into the next "if (need_wait)" branch just for
-> > symmetry.
->
-> But in that case, the earlier "if" prevents "need_sync" from ever getting
-> there, unless I lost the thread here.
+On Mon, Oct 22, 2018 at 10:07:38AM -0400, Don Zickus wrote:
+> (adding Jiri)
+> 
+> On Fri, Oct 19, 2018 at 09:44:01PM -0700, David Miller wrote:
+> > From: David Miller <davem@davemloft.net>
+> > Date: Fri, 19 Oct 2018 21:05:49 -0700 (PDT)
+> > 
+> > > One solution I've come up with is:
+> > > 
+> > > 1) When synthesizing a fork event, set PERF_RECORD_MISC_COMM_EXEC in
+> > >    header->misc.
+> > > 
+> > > 2) Use this to elide the map groups clone in
+> > >    thread__clone_map_groups().
+> > 
+> > Looking into code history, I notice:
+> > 
+> > commit 363b785f3805a2632eb09a8b430842461c21a640
+> > Author: Don Zickus <dzickus@redhat.com>
+> > Date:   Fri Mar 14 10:43:44 2014 -0400
+> > 
+> >     perf tools: Speed up thread map generation
+> > 
+> > and the subsequent:
+> > 
+> > commit 4aa5f4f7bb8bc41cba15bcd0d80c4fb085027d6b
+> > Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > Date:   Fri Feb 27 19:52:10 2015 -0300
+> > 
+> >     perf tools: Fix FORK after COMM when synthesizing records for pre-existing threads
+> > 
+> > If Don wanted to have the map cloning to happen for processes without
+> > CLONE_VM, I'm not sure that's right.
+> > 
+> > For real threads, we just take a reference to the map group from
+> > the parent.
+> > 
+> > Don, a quick summary.  If we synthesize a fork event, let's say for an
+> > emacs process.  perf will clone the map groups of the parent bash
+> > shell which invoked emacs.  Via:
+> > 
+> > thread__fork(thread, parent, timestamp)
+> > {
+> >  ...
+> >  thread__clone_map_groups(thread, parent)
+> >  {
+> >    ...
+> >    map_groups__clone(thread, parent->mg)
+> > 
+> > Which is completely bogus.  It brings all of the bash process maps
+> > into the emacs thread map group.  Then we process the emacs mmap2
+> > events, which overlap the bash process maps already cloned into the
+> > emacs map group.  And this make all kinds of erroneous things happen.
+> > 
+> > I'm suggesting to elide the map groups clone in this situation where
+> > we are synthesizing the fork.
 
-Yes, you are right, we would also need to remove "else",
+right, this seems correct.. we should only clone parent maps
+for kernel fork event, not when we synthesize.. I'll check
+the solution you proposed and try to come with a patch
 
-> Should I remove the others?
+> 
+> Hi David,
+> 
+> Honestly, I remember very little of this change other than we ran specjbb
+> which created thousands of threads and we wanted a better way to handle that
+> situation (waiting 15 minutes seemed wrong).
+> 
+> Jiri Olsa is probably more knowledgable about this then I am these days and
+> can work with Joe to re-do the test to verify any suggested changes does not
+> break our intended use case.
+> 
+> Thinking about it more, I am wondering if we did this because we ran the
+> test and it takes about 20 minutes to 'warm up' then we attached perf to the
+> test.  This implies we had to handle the situation where 10K threads already
+> existed hence our optimization.  But I can be wrong.
+> 
+> Your suggestion is probably right and I am sure we can reproduce the
+> scenario to verify things didn't regress.
 
-Up to you, I am fine either way.
+I think the fix might actualy speed things up,
+but yes, there could be other report regressions
 
-IOW, feel free to remove this BUG_ON's altogether, or turn them all into
-WARN_ON_ONCE's, whatever you like more.
-
-> > ----------------------------------------------------------------------------
-> > Damn.
-> >
-> > This suddenly reminds me that I rewrote this code completely, and you even
-> > reviewed the new implementation and (iirc) acked it!
-> >
-> > However, I failed to force myself to rewrite the comments, and that is why
-> > I didn't send the "official" patch :/
-> >
-> > May be some time...
->
-> Could you please point me at the last email thread?  Yes, I should be
-> able to find it, but I would probably get the wrong one.  :-/
-
-probably this one,
-
-	[PATCH] rcu_sync: simplify the state machine, introduce __rcu_sync_enter()
-	https://lkml.org/lkml/2016/7/16/150
-
-but I am not sure, will recheck tomorrow.
-
-Oleg.	
-
+thanks,
+jirka
