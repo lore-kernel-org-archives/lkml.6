@@ -2,118 +2,95 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 448BDC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF44C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A0E320645
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:31:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A0E320645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id DDCB620645
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:31:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R0hp0BDM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDCB620645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728809AbeJWBu1 (ORCPT
+        id S1728846AbeJWBvS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 21:50:27 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:51219 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728439AbeJWBu1 (ORCPT
+        Mon, 22 Oct 2018 21:51:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51760 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728628AbeJWBvS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 21:50:27 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gEe2b-0005fF-SJ; Mon, 22 Oct 2018 11:30:57 -0600
-Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gEe2M-0003aC-Dd; Mon, 22 Oct 2018 11:30:57 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        davidtgoldblatt@gmail.com, andrea.parri@amarulasolutions.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com, dlustig@nvidia.com
-References: <20181020161049.GA13756@linux.ibm.com>
-        <Pine.LNX.4.44L0.1810201612530.28059-100000@netrider.rowland.org>
-        <20181020210413.GB2674@linux.ibm.com>
-Date:   Mon, 22 Oct 2018 12:30:20 -0500
-In-Reply-To: <20181020210413.GB2674@linux.ibm.com> (Paul E. McKenney's message
-        of "Sat, 20 Oct 2018 14:04:13 -0700")
-Message-ID: <87ftwx3n4j.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Mon, 22 Oct 2018 21:51:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=URkB75rJsVa2bCEpG8luURFvng73Q4+LU2k9AWbtWNY=; b=R0hp0BDMm/Llo0bD77eq5RWjB
+        P8HbnUinZj7wgAeCUU0rbhTQaEeEZsaPsH3aswqrX4LuIHF0bH6VNDPTe47AcqX+NSaBsouqfuJ+t
+        pB5m+fE2Yq//JuCV2c67eeKc2q6CHIp05kfqwZzSBZP1ND9L0SnW0CwhGHSMDbIdqOSm0ZPnzRFj+
+        c5idhfyganuuW6fzw3chE4efkUMe4lw6EF7s5SdAh18fFH8EqtuIocEj3nq+ZnafQn+QQobO161We
+        KwhNIOGpAzzq1wt9Dez1LflaMg1X7cHyGaqvU3SfqKkNg6mAG2fd/9A43aLO3HqOl9xKmpXXb3COB
+        ElMInPmqA==;
+Received: from [167.98.65.38] (helo=worktop)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gEe3O-0001xC-My; Mon, 22 Oct 2018 17:31:46 +0000
+Received: by worktop (Postfix, from userid 1000)
+        id 78DFC6E08C3; Mon, 22 Oct 2018 19:31:44 +0200 (CEST)
+Date:   Mon, 22 Oct 2018 19:31:44 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Juergen Gross <jgross@suse.com>, Yi Sun <yi.y.sun@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+        chao.p.peng@intel.com, chao.gao@intel.com,
+        isaku.yamahata@intel.com, michael.h.kelley@microsoft.com,
+        tianyu.lan@microsoft.com, "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v1 2/2] x86/hyperv: make HvNotifyLongSpinWait hypercall
+Message-ID: <20181022173144.GB3109@worktop.c.hoisthospitality.com>
+References: <1539954835-34035-1-git-send-email-yi.y.sun@linux.intel.com>
+ <1539954835-34035-3-git-send-email-yi.y.sun@linux.intel.com>
+ <bab010e9-a122-95f1-d8cc-790e56c72716@suse.com>
+ <20181022015342.GK11769@yi.y.sun>
+ <2e0d62cb-b706-a5b4-65f7-982a913fb32b@suse.com>
+ <ba75b994-c1a6-6e91-6499-b9af90636fcf@redhat.com>
+ <20181022171516.GH3117@worktop.programming.kicks-ass.net>
+ <6d8095c0-af95-5967-3ca5-2ceeb74233ea@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gEe2M-0003aC-Dd;;;mid=<87ftwx3n4j.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+IdbSmVJfAU5zgVjTwwlwhZq9+18E93b0=
-X-SA-Exim-Connect-IP: 67.3.154.154
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: Interrupts, smp_load_acquire(), smp_store_release(), etc.
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6d8095c0-af95-5967-3ca5-2ceeb74233ea@redhat.com>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Paul E. McKenney" <paulmck@linux.ibm.com> writes:
+On Mon, Oct 22, 2018 at 01:27:27PM -0400, Waiman Long wrote:
 
-> On Sat, Oct 20, 2018 at 04:18:37PM -0400, Alan Stern wrote:
->> On Sat, 20 Oct 2018, Paul E. McKenney wrote:
->> 
->> > The second (informal) litmus test has a more interesting Linux-kernel
->> > counterpart:
->> > 
->> > 	void t1_interrupt(void)
->> > 	{
->> > 		r0 = READ_ONCE(y);
->> > 		smp_store_release(&x, 1);
->> > 	}
->> > 
->> > 	void t1(void)
->> > 	{
->> > 		smp_store_release(&y, 1);
->> > 	}
->> > 
->> > 	void t2(void)
->> > 	{
->> > 		r1 = smp_load_acquire(&x);
->> > 		r2 = smp_load_acquire(&y);
->> > 	}
->> > 
->> > On store-reordering architectures that implement smp_store_release()
->> > as a memory-barrier instruction followed by a store, the interrupt could
->> > arrive betweentimes in t1(), so that there would be no ordering between
->> > t1_interrupt()'s store to x and t1()'s store to y.  This could (again,
->> > in paranoid theory) result in the outcome r0==0 && r1==0 && r2==1.
->> 
->> This is disconcerting only if we assume that t1_interrupt() has to be
->> executed by the same CPU as t1().  If the interrupt could be fielded by
->> a different CPU then the paranoid outcome is perfectly understandable,
->> even in an SC context.
->> 
->> So the question really should be limited to situations where a handler 
->> is forced to execute in the context of a particular thread.  While 
->> POSIX does allow such restrictions for user programs, I'm not aware of 
->> any similar mechanism in the kernel.
+> >> I agree with Juergen on that. I would suggest rename the
+> >> vcpu_is_preempted hook into a more generic vcpu_stop_spinning, perhaps,
+> >> so different hypervisors can act on the information accordingly. Adding
+> >> an extra parameter is fine.
+> > No; no extra parameters. vcpu_is_preempted() is a simple and intuitive
+> > interface. Why would we want to make it complicated?
+> 
+> Hyperv seems to do it in a somewhat different way by looking at the spin
+> counter and decide if it should continue. I don't know why they do that
+> and what advantage it has.
+> 
+> The current patch is definitely not OK. A revised patch that makes use
+> of an existing paravirt hook will be more acceptable. Again, I would
+> like to see some performance figure and why they do it this way to see
+> if it is worthwhile to change the existing interface.
 
-> Good point, and I was in fact assuming that t1() and t1_interrupt()
-> were executing on the same CPU.
->
-> This sort of thing happens naturally in the kernel when both t1()
-> and t1_interrupt() are accessing per-CPU variables.
-
-Interrupts have a cpumask of the cpus they may be dlievered on.
-
-I believe networking does in fact have places where percpu actions
-happen as well as interrupts pinned to a single cpu.  And yes I agree
-percpu variables mean that you do not need to pin an interrupt to a
-single cpu to cause this to happen.
-
-Eric
+Note that there are vcpu_is_preempted() users that are not in a
+spin-loop.
