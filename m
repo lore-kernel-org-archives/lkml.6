@@ -7,44 +7,47 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A506ECDE48
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB02DECDE46
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B99F20853
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64BEE20853
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+5Hrj6H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B99F20853
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="loVxdehW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64BEE20853
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728939AbeJVSiH (ORCPT
+        id S1728893AbeJVSiB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:38:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48996 "EHLO mail.kernel.org"
+        Mon, 22 Oct 2018 14:38:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728894AbeJVSiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:38:03 -0400
+        id S1728144AbeJVSiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:38:00 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7601E2087D;
-        Mon, 22 Oct 2018 10:20:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9BFC20853;
+        Mon, 22 Oct 2018 10:20:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540203608;
-        bh=/MkjsjLve/+jDxDd5DHiw7PWzvvVX+gi9JLaqARn1oQ=;
+        s=default; t=1540203604;
+        bh=key7R7mfhs0Nb7TnCMfJPXXuX7/OOMdvAw3NshCiPyU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W+5Hrj6HXAuKjZHVeCi6/l3DyqGbngE1nYnHbkAcZkD2YEoiOzO1+mmcd90tfYSVM
-         V5bFaCmwRG/KndsjsW8tNuhTXcfDi/t0ltDsfMBhsibanVH6+B2h/y6CIiiVvqZk2A
-         qCmUwdcumKV7S/c+RHHh9o4hAjlwfmKamLThpV0s=
+        b=loVxdehWBDMl5b1OlUKIk3PZpqlCB1nYLuCxZ40vNzjhaOuiHLnGvqvnstJLZl65T
+         p47sP4cnoy36f28ZP3/1rCh4VSv9RwwhzO2A3u+FdZtXLcDOPYsyDBRVLhjtsBHhIZ
+         T2l5lbYUdVBVEOmMnyuUeBLSTz4Ggh5oD7JA84nY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ka-Cheong Poon <ka-cheong.poon@oracle.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 21/27] rds: RDS (tcp) hangs on sendto() to unresponding address
-Date:   Mon, 22 Oct 2018 06:19:18 -0400
-Message-Id: <20181022101924.40531-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 19/27] gpio: Assign gpio_irq_chip::parents to non-stack pointer
+Date:   Mon, 22 Oct 2018 06:19:16 -0400
+Message-Id: <20181022101924.40531-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181022101924.40531-1-sashal@kernel.org>
 References: <20181022101924.40531-1-sashal@kernel.org>
@@ -53,64 +56,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ka-Cheong Poon <ka-cheong.poon@oracle.com>
+From: Stephen Boyd <swboyd@chromium.org>
 
-[ Upstream commit 9a4890bd6d6325a1c88564a20ab310b2d56f6094 ]
+[ Upstream commit 3e779a2e7f909015f21428b66834127496110b6d ]
 
-In rds_send_mprds_hash(), if the calculated hash value is non-zero and
-the MPRDS connections are not yet up, it will wait.  But it should not
-wait if the send is non-blocking.  In this case, it should just use the
-base c_path for sending the message.
+gpiochip_set_cascaded_irqchip() is passed 'parent_irq' as an argument
+and then the address of that argument is assigned to the gpio chips
+gpio_irq_chip 'parents' pointer shortly thereafter. This can't ever
+work, because we've just assigned some stack address to a pointer that
+we plan to dereference later in gpiochip_irq_map(). I ran into this
+issue with the KASAN report below when gpiochip_irq_map() tried to setup
+the parent irq with a total junk pointer for the 'parents' array.
 
-Signed-off-by: Ka-Cheong Poon <ka-cheong.poon@oracle.com>
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+BUG: KASAN: stack-out-of-bounds in gpiochip_irq_map+0x228/0x248
+Read of size 4 at addr ffffffc0dde472e0 by task swapper/0/1
+
+CPU: 7 PID: 1 Comm: swapper/0 Not tainted 4.14.72 #34
+Call trace:
+[<ffffff9008093638>] dump_backtrace+0x0/0x718
+[<ffffff9008093da4>] show_stack+0x20/0x2c
+[<ffffff90096b9224>] __dump_stack+0x20/0x28
+[<ffffff90096b91c8>] dump_stack+0x80/0xbc
+[<ffffff900845a350>] print_address_description+0x70/0x238
+[<ffffff900845a8e4>] kasan_report+0x1cc/0x260
+[<ffffff900845aa14>] __asan_report_load4_noabort+0x2c/0x38
+[<ffffff900897e098>] gpiochip_irq_map+0x228/0x248
+[<ffffff900820cc08>] irq_domain_associate+0x114/0x2ec
+[<ffffff900820d13c>] irq_create_mapping+0x120/0x234
+[<ffffff900820da78>] irq_create_fwspec_mapping+0x4c8/0x88c
+[<ffffff900820e2d8>] irq_create_of_mapping+0x180/0x210
+[<ffffff900917114c>] of_irq_get+0x138/0x198
+[<ffffff9008dc70ac>] spi_drv_probe+0x94/0x178
+[<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
+[<ffffff9008ca6538>] __device_attach_driver+0x148/0x20c
+[<ffffff9008ca14cc>] bus_for_each_drv+0x120/0x188
+[<ffffff9008ca570c>] __device_attach+0x19c/0x2dc
+[<ffffff9008ca586c>] device_initial_probe+0x20/0x2c
+[<ffffff9008ca18bc>] bus_probe_device+0x80/0x154
+[<ffffff9008c9b9b4>] device_add+0x9b8/0xbdc
+[<ffffff9008dc7640>] spi_add_device+0x1b8/0x380
+[<ffffff9008dcbaf0>] spi_register_controller+0x111c/0x1378
+[<ffffff9008dd6b10>] spi_geni_probe+0x4dc/0x6f8
+[<ffffff9008cab058>] platform_drv_probe+0xdc/0x130
+[<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
+[<ffffff9008ca59cc>] __driver_attach+0x100/0x194
+[<ffffff9008ca0ea8>] bus_for_each_dev+0x104/0x16c
+[<ffffff9008ca58c0>] driver_attach+0x48/0x54
+[<ffffff9008ca1edc>] bus_add_driver+0x274/0x498
+[<ffffff9008ca8448>] driver_register+0x1ac/0x230
+[<ffffff9008caaf6c>] __platform_driver_register+0xcc/0xdc
+[<ffffff9009c4b33c>] spi_geni_driver_init+0x1c/0x24
+[<ffffff9008084cb8>] do_one_initcall+0x240/0x3dc
+[<ffffff9009c017d0>] kernel_init_freeable+0x378/0x468
+[<ffffff90096e8240>] kernel_init+0x14/0x110
+[<ffffff9008086fcc>] ret_from_fork+0x10/0x18
+
+The buggy address belongs to the page:
+page:ffffffbf037791c0 count:0 mapcount:0 mapping:          (null) index:0x0
+flags: 0x4000000000000000()
+raw: 4000000000000000 0000000000000000 0000000000000000 00000000ffffffff
+raw: ffffffbf037791e0 ffffffbf037791e0 0000000000000000 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffffffc0dde47180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffffc0dde47200: f1 f1 f1 f1 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f2 f2
+>ffffffc0dde47280: f2 f2 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3
+                                                       ^
+ ffffffc0dde47300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffffc0dde47380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+Let's leave around one unsigned int in the gpio_irq_chip struct for the
+single parent irq case and repoint the 'parents' array at it. This way
+code is left mostly intact to setup parents and we waste an extra few
+bytes per structure of which there should be only a handful in a system.
+
+Cc: Evan Green <evgreen@chromium.org>
+Cc: Thierry Reding <treding@nvidia.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Fixes: e0d897289813 ("gpio: Implement tighter IRQ chip integration")
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/rds/send.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib.c      | 3 ++-
+ include/linux/gpio/driver.h | 7 +++++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/net/rds/send.c b/net/rds/send.c
-index 59f17a2335f4..0e54ca0f4e9e 100644
---- a/net/rds/send.c
-+++ b/net/rds/send.c
-@@ -1006,7 +1006,8 @@ static int rds_cmsg_send(struct rds_sock *rs, struct rds_message *rm,
- 	return ret;
- }
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 06dce16e22bb..70f0dedca59f 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1675,7 +1675,8 @@ static void gpiochip_set_cascaded_irqchip(struct gpio_chip *gpiochip,
+ 		irq_set_chained_handler_and_data(parent_irq, parent_handler,
+ 						 gpiochip);
  
--static int rds_send_mprds_hash(struct rds_sock *rs, struct rds_connection *conn)
-+static int rds_send_mprds_hash(struct rds_sock *rs,
-+			       struct rds_connection *conn, int nonblock)
- {
- 	int hash;
- 
-@@ -1022,10 +1023,16 @@ static int rds_send_mprds_hash(struct rds_sock *rs, struct rds_connection *conn)
- 		 * used.  But if we are interrupted, we have to use the zero
- 		 * c_path in case the connection ends up being non-MP capable.
- 		 */
--		if (conn->c_npaths == 0)
-+		if (conn->c_npaths == 0) {
-+			/* Cannot wait for the connection be made, so just use
-+			 * the base c_path.
-+			 */
-+			if (nonblock)
-+				return 0;
- 			if (wait_event_interruptible(conn->c_hs_waitq,
- 						     conn->c_npaths != 0))
- 				hash = 0;
-+		}
- 		if (conn->c_npaths == 1)
- 			hash = 0;
- 	}
-@@ -1170,7 +1177,7 @@ int rds_sendmsg(struct socket *sock, struct msghdr *msg, size_t payload_len)
+-		gpiochip->irq.parents = &parent_irq;
++		gpiochip->irq.parent_irq = parent_irq;
++		gpiochip->irq.parents = &gpiochip->irq.parent_irq;
+ 		gpiochip->irq.num_parents = 1;
  	}
  
- 	if (conn->c_trans->t_mp_capable)
--		cpath = &conn->c_path[rds_send_mprds_hash(rs, conn)];
-+		cpath = &conn->c_path[rds_send_mprds_hash(rs, conn, nonblock)];
- 	else
- 		cpath = &conn->c_path[0];
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 5382b5183b7e..82a953ec5ef0 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -94,6 +94,13 @@ struct gpio_irq_chip {
+ 	 */
+ 	unsigned int num_parents;
  
++	/**
++	 * @parent_irq:
++	 *
++	 * For use by gpiochip_set_cascaded_irqchip()
++	 */
++	unsigned int parent_irq;
++
+ 	/**
+ 	 * @parents:
+ 	 *
 -- 
 2.17.1
 
