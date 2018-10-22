@@ -2,114 +2,94 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F131FC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 08:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92608C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 08:04:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C190320658
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 08:02:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C190320658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 4934D20658
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 08:04:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4934D20658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbeJVQTa (ORCPT
+        id S1727763AbeJVQWT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 12:19:30 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42739 "EHLO mail.bootlin.com"
+        Mon, 22 Oct 2018 12:22:19 -0400
+Received: from mga18.intel.com ([134.134.136.126]:46107 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727523AbeJVQTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 12:19:30 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 97C16207A3; Mon, 22 Oct 2018 10:02:02 +0200 (CEST)
-Received: from bbrezillon (aaubervilliers-681-1-25-52.w90-88.abo.wanadoo.fr [90.88.145.52])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 37AB220711;
-        Mon, 22 Oct 2018 10:01:52 +0200 (CEST)
-Date:   Mon, 22 Oct 2018 10:01:52 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "cyrille.pitchen@microchip.com" <cyrille.pitchen@microchip.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "Cristian.Birsan@microchip.com" <Cristian.Birsan@microchip.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP
- SPI NOR flash memories
-Message-ID: <20181022100152.05da1b6c@bbrezillon>
-In-Reply-To: <VI1PR04MB1038BD6103DD8BD6B6DEC2B899F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-References: <20180911154007.17195-1-tudor.ambarus@microchip.com>
-        <20180911154007.17195-2-tudor.ambarus@microchip.com>
-        <VI1PR04MB103888BC18F3C5AD0C02DEF699FE0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <31a8f6a9-1459-443a-6ef8-2b2c17769ae4@microchip.com>
-        <de0f7245-2557-12be-a306-67b08e55ae7b@wedev4u.fr>
-        <VI1PR04MB1038AB25EABDC8507984ADC799FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181017090724.12f2cd79@bbrezillon>
-        <20181017091045.124e0266@bbrezillon>
-        <20181017092941.3658bd9a@bbrezillon>
-        <VI1PR04MB1038EFA1E83AD78EBE84ECC499FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181017115237.07310b74@bbrezillon>
-        <VI1PR04MB1038BD6103DD8BD6B6DEC2B899F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727523AbeJVQWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 12:22:19 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2018 01:04:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,411,1534834800"; 
+   d="scan'208";a="267697003"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by orsmga005.jf.intel.com with SMTP; 22 Oct 2018 01:04:50 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 22 Oct 2018 11:04:49 +0300
+Date:   Mon, 22 Oct 2018 11:04:49 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] thunderbolt: Fix a missing-check bug
+Message-ID: <20181022080449.GK2302@lahna.fi.intel.com>
+References: <1540058151-17116-1-git-send-email-wang6495@umn.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1540058151-17116-1-git-send-email-wang6495@umn.edu>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 22 Oct 2018 06:04:13 +0000
-Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+Hi,
 
-> -static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt)
-> +static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt, u32 smpt_len)
->  {
->         const u32 *ret = NULL;
-> -       u32 i, addr;
-> +       u32 i, addr, nmaps;
->         int err;
->         u8 addr_width, read_opcode, read_dummy;
->         u8 read_data_mask, data_byte, map_id;
-> +       bool map_id_is_valid = false;
+On Sat, Oct 20, 2018 at 12:55:51PM -0500, Wenwen Wang wrote:
+> In tb_ctl_rx_callback(), the checksum of the received control packet is
+> calculated on 'pkg->buffer' through tb_crc() and saved to 'crc32', Then,
+> 'crc32' is compared with the received checksum to confirm the integrity of
+> the received packet. If the checksum does not match, the packet will be
+> dropped. In the following execution, 'pkg->buffer' will be copied through
+> req->copy() and processed if there is an active request and the packet is
+> what is expected.
 > 
->         addr_width = nor->addr_width;
->         read_dummy = nor->read_dummy;
->         read_opcode = nor->read_opcode;
+> The problem here is that the above checking process is performed directly
+> on the buffer 'pkg->buffer', which is actually a DMA region. Given that the
+> DMA region can also be accessed directly by a device at any time, it is
+> possible that a malicious device controlled by an attacker can race to
+> modify the content in 'pkg->buffer' after the checksum checking but before
+> req->copy(). By doing so, the attacker can inject malicious data, which can
+> cause undefined behavior of the kernel and introduce potential security
+> risk.
 > 
-> +       for (i = 0; i<smpt_len; i++)
-> +               pr_info("%s:%i smpt[%d]=%08x\n", __func__, __LINE__, i, smpt[i]);
-> +
->         map_id = 0;
-> -       i = 0;
->         /* Determine if there are any optional Detection Command Descriptors */
-> -       while (!(smpt[i] & SMPT_DESC_TYPE_MAP)) {
-> +       for (i = 0; i< smpt_len; i++) {
-> +               if (!(smpt[i] & SMPT_DESC_TYPE_MAP))
-> +                       break;
-> +
->                 read_data_mask = SMPT_CMD_READ_DATA(smpt[i]);
->                 nor->addr_width = spi_nor_smpt_addr_width(nor, smpt[i]);
->                 nor->read_dummy = spi_nor_smpt_read_dummy(nor, smpt[i]);
+> This patch allocates a new buffer 'buf' to hold the data in 'pkg->buffer'.
+> By performing the checking and copying on 'buf', rather than 'pkg->buffer',
+> the above issue can be avoided.
 
-Could you also print the ->addr_width, ->read_dummy and ->read_opcode
-here?
+Here same comment applies than to the previous one - this is something
+that requires the attacker to have physical access to the system and
+requires him to either replace the firmware or the hardware itself with
+a malicious one and in that case protection like this here does not
+actually help because they can just overwrite it directly.
 
-> @@ -2894,18 +2900,35 @@ static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt)
->                  * Configuration that is currently in use.
->                  */
->                 map_id = map_id << 1 | !!(data_byte & read_data_mask);
-> +               map_id_is_valid = true;
->                 i = i + 2;
->         }
+BTW, just in case you send multiple patches to other subsystems as well
+it is good to have $subject contain summary of the fix in a way that one
+can distinguish between them. For example you sent 4 patches with all
+having:
 
+  thunderbolt: Fix a missing-check bug
+
+in the $subject. So for example I originally thought that you sent the
+same patch several times :)
