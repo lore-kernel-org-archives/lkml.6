@@ -3,46 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C12ABC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CFB9C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAE9320663
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:42:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAE9320663
+	by mail.kernel.org (Postfix) with ESMTP id 4762C20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:43:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4762C20663
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729106AbeJWFCq (ORCPT
+        id S1729115AbeJWFDC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 01:02:46 -0400
-Received: from gateway22.websitewelcome.com ([192.185.47.100]:48904 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727557AbeJWFCq (ORCPT
+        Tue, 23 Oct 2018 01:03:02 -0400
+Received: from gateway30.websitewelcome.com ([192.185.147.85]:35398 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727535AbeJWFDB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 01:02:46 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 17B9D1BCB9
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 15:42:42 -0500 (CDT)
+        Tue, 23 Oct 2018 01:03:01 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id E4D151D7B3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 15:42:57 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id Eh20gYjaXBcCXEh25gnpk9; Mon, 22 Oct 2018 15:42:41 -0500
+        id Eh2HgqgLVaSeyEh2LgAC65; Mon, 22 Oct 2018 15:42:57 -0500
 X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:51008 helo=embeddedor)
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:51010 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gEh1z-0023aZ-Sl; Mon, 22 Oct 2018 15:42:32 -0500
-Date:   Mon, 22 Oct 2018 22:42:29 +0200
+        id 1gEh2G-0023mf-MF; Mon, 22 Oct 2018 15:42:49 -0500
+Date:   Mon, 22 Oct 2018 22:42:47 +0200
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     "Luis R. Rodriguez" <mcgrof@gmail.com>
 Cc:     Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 10/20] prism54: isl_38xx: Mark expected switch fall-through
-Message-ID: <d40a482ceb15f96f99f45ca3fd10bea5a6bf2e60.1540239684.git.gustavo@embeddedor.com>
+Subject: [PATCH 11/20] prism54: isl_ioctl: mark expected switch fall-through
+Message-ID: <1729fd9ef5e253135252792fe7ac7470b3bfe05b.1540239684.git.gustavo@embeddedor.com>
 References: <cover.1540239684.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -57,13 +57,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 86.245.173.13
 X-Source-L: No
-X-Exim-ID: 1gEh1z-0023aZ-Sl
+X-Exim-ID: 1gEh2G-0023mf-MF
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:51008
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:51010
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 75
+X-Email-Count: 81
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,24 +74,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
-Addresses-Coverity-ID: 114944 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/wireless/intersil/prism54/isl_38xx.c | 1 +
+ drivers/net/wireless/intersil/prism54/isl_ioctl.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/intersil/prism54/isl_38xx.c b/drivers/net/wireless/intersil/prism54/isl_38xx.c
-index ce9d4db..b0eb58a 100644
---- a/drivers/net/wireless/intersil/prism54/isl_38xx.c
-+++ b/drivers/net/wireless/intersil/prism54/isl_38xx.c
-@@ -235,6 +235,7 @@ isl38xx_in_queue(isl38xx_control_block *cb, int queue)
- 		/* send queues */
- 	case ISL38XX_CB_TX_MGMTQ:
- 		BUG_ON(delta > ISL38XX_CB_MGMT_QSIZE);
+diff --git a/drivers/net/wireless/intersil/prism54/isl_ioctl.c b/drivers/net/wireless/intersil/prism54/isl_ioctl.c
+index 334717b0..3ccf2a4 100644
+--- a/drivers/net/wireless/intersil/prism54/isl_ioctl.c
++++ b/drivers/net/wireless/intersil/prism54/isl_ioctl.c
+@@ -1691,6 +1691,7 @@ static int prism54_get_encodeext(struct net_device *ndev,
+ 	case DOT11_AUTH_BOTH:
+ 	case DOT11_AUTH_SK:
+ 		wrqu->encoding.flags |= IW_ENCODE_RESTRICTED;
 +		/* fall through */
- 
- 	case ISL38XX_CB_TX_DATA_LQ:
- 	case ISL38XX_CB_TX_DATA_HQ:
+ 	case DOT11_AUTH_OS:
+ 	default:
+ 		wrqu->encoding.flags |= IW_ENCODE_OPEN;
 -- 
 2.7.4
 
