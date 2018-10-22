@@ -2,242 +2,156 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8D2C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:35:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0589C7112C
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A5AD205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:35:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2C5820651
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:44:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BIEmjcqK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A5AD205F4
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mBzyYu1H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2C5820651
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbeJWH4Q (ORCPT
+        id S1726720AbeJWIE6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 03:56:16 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:45932 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbeJWH4Q (ORCPT
+        Tue, 23 Oct 2018 04:04:58 -0400
+Received: from mail-oi1-f201.google.com ([209.85.167.201]:42120 "EHLO
+        mail-oi1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbeJWIE6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 03:56:16 -0400
-Received: by mail-yw1-f68.google.com with SMTP id i185-v6so3018214ywa.12
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 16:35:36 -0700 (PDT)
+        Tue, 23 Oct 2018 04:04:58 -0400
+Received: by mail-oi1-f201.google.com with SMTP id o6-v6so30111133oib.9
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 16:44:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=jWNsEhGTVNZADfIpa9vpBr1MhvmkhQxt6lUoK5SXwpw=;
-        b=BIEmjcqKjeJeT7J7o4As0c1Y0i4lIYb2hEMji/xb6kiFg+t3YK9j4wHojg/3O8A68V
-         0fIPT8Ql0yz4eFQLKXRhsdeFK6/kVCpEA9Ocvk5lNU90wLXLxA9Jd4zJwiP7AZBBJXTt
-         uCKMVdi/n/5QRZB2xbZqQmS8Cr/ktJmQlnQ74T/79k0YGFERerPk37es9niipxLg1aqw
-         c1POWNgBPrc1j+/w/zdGlamYtPcbL5OlYRPB6vpfz2HQ50M1QjNBjalOdPx6ixL9pbd/
-         eA1zwjqc3A9EE26v+LjvmTwE68uPNqJ/jD+8PO06AkTKUo5q/EmEQnc//F1hspBembQU
-         XMEg==
+        bh=AVaE6qqCM7P1pf2cFcPqWk4W3pnXUdpSoKA8uQ0SjZ4=;
+        b=mBzyYu1HdbYE9z8r5x4PGuQhDtMqe4IrmxEbiZGjR45uneCPsqf07yKK18YzpzXCCT
+         EsRM0VAhjtUeutUbpYgWJVrShoR+yyt2zU552O3ks7MPiojNA/P5YMXQTvREcGgf8NUi
+         KfPv5KbgFoTdnPVQks3lRzxuovXxtyu8hYxB4Yz22M9lQ7dZ6k7S7aAPMhzXvQ9DX9sw
+         F5AzTn0gRPOGytm2GlCs24SVbH6u3E3sDCQw1avqon1jeulFHKWhXACLX9eCz37pTvbb
+         +W0lnRoywsqrDBzHmZnPQ0zsqLcdnXLNJhQvkylb6qgtvr+2Jw2hPKlgIKN9cmU9dKwP
+         ah7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jWNsEhGTVNZADfIpa9vpBr1MhvmkhQxt6lUoK5SXwpw=;
-        b=uX4upCSNm5p9DF6/HmTBlhPwyQHefnUoPao+KKxOACvwTBecftZ+xC5ny7CAeGw+m4
-         r3TX1g1huHG+MTMh2WslgLONsvveuJgNih2ayghoK3cFcTGQgYDkKeZZpftjxONWDZsO
-         ErO54IqL87TDnPUhWddvRi0FO8JtRcnKPOu4yYpxJ/zU7rL2jOIDPVUS0P6/EeTMABgJ
-         ae1G805DBzoCeebbKlT7qCVEVV63++hBuW7oYfQBHoPaeN4r+gbCw3i/I7EQZ7YX1wJF
-         Sr9jqHyIQ0gefX7FUo8eTG2I/n4GJxu3V0IzCDJ6bODksfbcHveEke7Y4mNdzCcz8CtG
-         3l+w==
-X-Gm-Message-State: ABuFfohbg40Bs3OvEWPSGr/4XJ/Moa9mJEFoV0xHMBDHFqPxvRALs6lW
-        6yG9v7zKJB1hKC0HQSnt9JnN+oL3jEC5DW3ZMw5qeA==
-X-Google-Smtp-Source: ACcGV62JY/O/SHArxLO34uHjn8CcHZhJfEPqVYN1SJtUKhvXSXSn4yRWEyb0D2RVg3o2b2qT9IzdLSBbp5/rgI7uitQ=
-X-Received: by 2002:a81:3c15:: with SMTP id j21-v6mr5157405ywa.119.1540251335270;
- Mon, 22 Oct 2018 16:35:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
- <20181018215101.169847-1-rajatja@google.com> <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
-In-Reply-To: <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
-From:   Rajat Jain <rajatja@google.com>
-Date:   Mon, 22 Oct 2018 16:34:55 -0700
-Message-ID: <CACK8Z6HOsUcPFyf-GguxPxh_Zdj6gCXP=FpGw-vQXJfnM=cquw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-pci: Try "cd" for card-detect lookup before
- using NULL
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     "Hunter, Adrian" <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rajat Jain <rajatxjain@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=AVaE6qqCM7P1pf2cFcPqWk4W3pnXUdpSoKA8uQ0SjZ4=;
+        b=nDWWRVT8XdQOuVUDcraTZDMEtc2YRTRH8hCNqEl8OH1wNELoFivUAa8izMoZWttlaa
+         mA8Xy+yJgrXzj+lAFuFxc4IaCkaqwEOgCsrr096M2vu2AwRo/JtEPslwekpCwSN78om3
+         gkM0y1FpbOH48QCheUSzKXIZZqVbPLd1zdnK2dYMu74fooYfLu9kZI43PvCWIe173/Mq
+         YPoFIss0Z8jbSjiveTxtoQ9mDWpcEOudEi1iURloFXYDllvODlBHZxDErnhZKR77xUZH
+         xVCrNGcbc9/Mrls5dX9d1wJQIZ2sDAvnEq9GP5bWttQqQNozz0agVaZGDoe5uWqM7zx6
+         NMgw==
+X-Gm-Message-State: ABuFfoiWs+oZ5fEFW1JSgk6GT4cNDh5cRisa4qTy1pXzXGlwNiok1HHx
+        YJHldJEJ2kSNuafsuse5XK+ids71qpk31HGI3l8=
+X-Google-Smtp-Source: ACcGV62tz4jpL504gq8yGC58f+ICh5t7A1p5mMqKqhrqA/y65g9HBDMq5/8RNd+EHBgG74quCce1vqIdtPoXX8VTHP4=
+X-Received: by 2002:a9d:2351:: with SMTP id k17mr38895235otd.34.1540251855357;
+ Mon, 22 Oct 2018 16:44:15 -0700 (PDT)
+Date:   Mon, 22 Oct 2018 16:43:57 -0700
+In-Reply-To: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com>
+Message-Id: <20181022234357.82217-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+References: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com>
+X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
+Subject: [PATCH v2] [PATCH] KEYS: trusted: fix -Wvarags warning
+From:   ndesaulniers@google.com
+To:     dhowells@redhat.com, jejb@linux.vnet.ibm.com
+Cc:     natechancellor@gmail.com, David.Laight@aculab.com,
+        denkenz@gmail.com, Nick Desaulniers <ndesaulniers@google.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+Fixes the warning reported by Clang:
+security/keys/trusted.c:146:17: warning: passing an object that
+undergoes default
+      argument promotion to 'va_start' has undefined behavior [-Wvarargs]
+        va_start(argp, h3);
+                       ^
+security/keys/trusted.c:126:37: note: parameter of type 'unsigned
+char' is declared here
+unsigned char *h2, unsigned char h3, ...)
+                               ^
+Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
+standards explicitly call this out as undefined behavior:
 
-Thanks for your review.
+The parameter parmN is the identifier of the rightmost parameter in
+the variable parameter list in the function definition (the one just
+before the ...). If the parameter parmN is declared with ... or with a
+type that is not compatible with the type that results after
+application of the default argument promotions, the behavior is
+undefined.
 
-On Fri, Oct 19, 2018 at 2:13 AM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Fri, Oct 19, 2018 at 12:53 AM Rajat Jain <rajatja@google.com> wrote:
-> >
-> > Problem:
-> >
-> > The card detect IRQ does not work with modern BIOS (that want
-> > to use DSD to provide the card detect GPIO to the driver).
-> >
-> > Details:
-> >
->
-> > (Discussion: https://lkml.org/lkml/2018/9/25/1113)
->
-> We have a Link tag for such references.
->
-> > The mmc core provides the mmc_gpiod_request_cd() API to let host drivers
-> > request the gpio descriptor for the "card detect" (or carrier detect?) pin.
->
-> card detect is a right term.
->
-> > This pin is specified in the ACPI for the SDHC device:
-> >
-> >  * Either as a resource using _CRS. This is a method used by legacy BIOS.
-> >    (The driver needs to tell which resource index).
-> >
-> >  * Or as a named property ("cd-gpio") in DSD (which may internally point
->
-> cd-gpios (gpio suffix is a legacy).
->
-> >    to an entry in _CRS). This way, the driver can lookup using a string.
-> >    This is what modern BIOS prefer to use.
-> >
-> > This API finally results in a call to the following code:
-> >
-> > struct gpio_desc *acpi_find_gpio(..., const char *con_id,...)
-> > {
-> > ...
-> >    /* Lookup gpio (using "<con_id>-gpio") in the _DSD */
-> > ...
-> >    if (!acpi_can_fallback_to_crs(adev, con_id))
-> >           return ERR_PTR(-ENOENT);
-> > ...
-> >    /* Falling back to _CRS is allowed, Lookup gpio in the _CRS */
-> > ...
-> > }
-> >
-> > Note that this means that if the ACPI has _DSD properties, the kernel
-> > will never use _CRS for the lookup (Because acpi_can_fallback_to_crs()
-> > will always be false for any device hat has _DSD entries).
-> >
-> > The SDHCI driver is thus currently broken on a modern BIOS
->
-> > (even if
-> > BIOS provides both _CRS and DSD entries, either of which could be used for
->
-> _DSD
->
-> > a successful lookup).
->
-> This is incorrect. _DSD for GPIOs without any accompanying _CRS
-> doesn't make any sense.
->
-> > Ironically, none of these will be used for the
-> > lookup currently because:
-> >
-> > * Since the con_id is NULL, acpi_find_gpio() does not find a matching
-> >   entry in DSDT. (The DSDT entry has the property name = "cd-gpio")
->
-> cd-gpios
->
-> >
-> > * Because ACPI contains DSDT entries, thus acpi_can_fallback_to_crs()
-> >   returns false (because device properties have been populated from
-> >   DSD), thus the _CRS is never used for the lookup.
->
-> _DSD
->
-> >
-> > Fix:
-> >
-> > Try "cd" for lookup in the _DSD before falling back to using NULL so
-> > as to try looking up in the _CRS.
-> >
-> > I've tested this patch successfully with both Legacy BIOS (that
-> > provide only _CRS method) as well as modern BIOS (that provide both
-> > _CRS and DSD). Also the use of "cd" also appears to be farly consistent
->
-> _DSD
-> fairly
+Link: https://github.com/ClangBuiltLinux/linux/issues/41
+Link: https://www.eskimo.com/~scs/cclass/int/sx11c.html
+Suggested-by: David Laight <David.Laight@aculab.com>
+Suggested-by: Denis Kenzior <denkenz@gmail.com>
+Suggested-by: James Bottomley <jejb@linux.vnet.ibm.com>
+Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+---
+v1 -> v2:
+* Don't reorder args, just use default function promotion type
+of unsigned int.
+* Add !! boolean cast as per Denis in
+https://lkml.org/lkml/2018/10/12/838.
+* Tested with gcc-8 and clang-8.
 
-I can fix the commit log to take care of all your review comments.
+ include/keys/trusted.h  | 2 +-
+ security/keys/trusted.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
->
-> > across other users of this API (other MMC host controller drivers).
->
-> >         if (slot->cd_idx >= 0) {
-> > -               ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
-> > +               ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
-> >                                            slot->cd_override_level, 0, NULL);
->
-> Yes.
->
-> > +               if (ret && ret != -EPROBE_DEFER)
-> > +                       ret = mmc_gpiod_request_cd(host->mmc, NULL,
-> > +                                                  slot->cd_idx,
-> > +                                                  slot->cd_override_level,
-> > +                                                  0, NULL);
->
-> And no. Instead of this part you need to provide an ACPI GPIO mapping table.
+diff --git a/include/keys/trusted.h b/include/keys/trusted.h
+index adbcb6817826..0071298b9b28 100644
+--- a/include/keys/trusted.h
++++ b/include/keys/trusted.h
+@@ -38,7 +38,7 @@ enum {
+ 
+ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+ 			unsigned int keylen, unsigned char *h1,
+-			unsigned char *h2, unsigned char h3, ...);
++			unsigned char *h2, unsigned int h3, ...);
+ int TSS_checkhmac1(unsigned char *buffer,
+ 			  const uint32_t command,
+ 			  const unsigned char *ononce,
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index ff6789365a12..335ce6d1cf6b 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -123,7 +123,7 @@ static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
+  */
+ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+ 			unsigned int keylen, unsigned char *h1,
+-			unsigned char *h2, unsigned char h3, ...)
++			unsigned char *h2, unsigned int h3, ...)
+ {
+ 	unsigned char paramdigest[SHA1_DIGEST_SIZE];
+ 	struct sdesc *sdesc;
+@@ -139,7 +139,7 @@ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+ 		return PTR_ERR(sdesc);
+ 	}
+ 
+-	c = h3;
++	c = !!h3;
+ 	ret = crypto_shash_init(&sdesc->shash);
+ 	if (ret < 0)
+ 		goto out;
+-- 
+2.19.1.568.g152ad8e336-goog
 
-Sure, I am willing to do so, and I tried earlier too. However, certain
-doubts arose in my mind when I tried that and I posted my questions
-earlier (https://lkml.org/lkml/2018/9/28/507) but couldn't elicit any
-response. Unfortunately I still do not have answers. My primary
-questions are:
-
-1) - It seems that 1 SDHCI device may support multiple slots (looking
-at the code). It is not clear to me if they could share card detect
-interrupts, or should have separate ones? Also, the driver may not
-really know? So should I add 1 or two pins using the
-devm_acpi_dev_add_driver_gpios(). Is some one familiar with SDHC
-driver can answer these questions, it shall be great.
-
-2) I'm not really sure what should I set "active_low" to? Isn't this
-something that should be specified by platform / ACPI too, and driver
-should just be able to say say choose whatever the ACPI says?
-
-struct acpi_gpio_params {
-        unsigned int crs_entry_index;
-        unsigned int line_index;
-        bool active_low;
-};
-
-Since I do not understand the above two issues, and thus I chose the
-safest path and not disturb the current code so as not to cause any
-regressions.
-
-Please let me know, and I'm happy to re-spin my patch.
-
-Thanks,
-
-Rajat
-
->
-> See examples, like
-> net/rfkill/rfkill-gpio.c
->
-> (look for acpi_rfkill_default_gpios)
->
-> >                 if (ret == -EPROBE_DEFER)
-> >                         goto remove;
->
-> --
-> With Best Regards,
-> Andy Shevchenko
