@@ -2,84 +2,103 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 957CAC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D11C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:17:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C6E6205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:17:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32D3120663
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:17:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oh4K+y1K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C6E6205F4
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dx8sTZEG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32D3120663
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727877AbeJWBgh (ORCPT
+        id S1728727AbeJWBhB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 21:36:37 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33102 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbeJWBgh (ORCPT
+        Mon, 22 Oct 2018 21:37:01 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:33425 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728649AbeJWBhB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 21:36:37 -0400
-Received: by mail-oi1-f195.google.com with SMTP id a203-v6so32896061oib.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 10:17:15 -0700 (PDT)
+        Mon, 22 Oct 2018 21:37:01 -0400
+Received: by mail-it1-f194.google.com with SMTP id h6-v6so10310716ith.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 10:17:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kFIWSwlcatuK7qVAXayXThw+ohAJ50Y01Za95waL/78=;
-        b=oh4K+y1KKj6YyJmAB29kgwyrt/IGKLgNs/zdSNEDl4C0o8NAzsziU6TFtDn1mueC1l
-         lbWUmO5RJbI2xNhRhn1Pq79TTdvnZkwYoMnQPMyjjTVVt1qK5cORItpnX0BQlHZcf6qF
-         KJ6A25DTmRsZUbEg5cX6o7fRUUqPLEeHM65lUgyfL6Fv3hAzuEHaGnrEYDn13xYS2NOx
-         a0N7+dLPeHQLXGPs/F6GQ7u3h5BKxeOb0eYHsq730cRIKjQbRQqfaa6g81A8i9GfAWDa
-         HHl6rmqmt5EkdZIxp44Mtp+aSiTN9pQvCZtb6o2OePh6wev93AiYyFApXmmBdxQrkFX1
-         8bIA==
+        bh=bkVUa1+/MOC7iuiS+1j+AH2HYD9X3AuCffRP/Nwy2Fo=;
+        b=dx8sTZEGIRKm+BTzwFM+f6woS1a4+OEKFgHjIgwUvzHFRosfoEDj4TgYXQBPBCYskj
+         mQbltjbwl7VoAcPKYVyqKmfZmYNqZH4oZO/ohpT3GpkJ5RABR7QuGK+3PsqnNME8Rg3D
+         81MAeegGE/BrmsniA1gvQoejbp/izimKjjIwE+mowYj/jayWO4AK4nuqNERncuDBxXIs
+         i7ZJCTMh1EgXF/5scvPgKFctxv8ZhXwbH8G1teqgwNRa48K29D8DZUneeSvkfnNaJ9IN
+         zbsxituU2a5BMtG032CZgtf10YHPewH7dCiRDN2SamebwSS22wPTHanlyP19DN3wMdQi
+         dFEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kFIWSwlcatuK7qVAXayXThw+ohAJ50Y01Za95waL/78=;
-        b=ajftlML2t4hwHADIbCJBlTrm1wcsjk1UgMSB1qTtCMspjBolDzyl6r9/kAGil0osDo
-         LILyHvo0v/4PxqU1qJQm/uvbj1O47eaU9DdFxOXAoLtYAN2YVvgkeqNX039vz2RK2Ki4
-         Y1tCdwkQxkFlLlzMSZU53kVjFjA9koG/pBQPjQak+PJojZE9OXphCMKDGY/2xMhuwK10
-         XygiAg5s7fcZiJHLhuh8Fcad68REgZtJr5WJoDjJQHcxTmQ8FlMVTlJNX6JYR/FsCIGr
-         U4w0yD0InSISKY/dGmjGuxYe2g1bGByZAFhRGj3gH0SVxhQ87M1AreLXHDicgG4+MBG9
-         fDBw==
-X-Gm-Message-State: ABuFfohwwmgA0Jyw6z+5ll/QU4NrLHH7c+K/ctGk690VWJFd6EplC+w/
-        JMhKf6jsaNY+NPAkCyNV8nWZL8/9ugPJ8SigNfobQg==
-X-Google-Smtp-Source: ACcGV61gtjplMmes948jvbCVlCZfSTnIW/IhOPkUrThuWnldyXFsDGNxlXbA6uUX4YdSJ7hgroi0J1PRBwWm2B6MshY=
-X-Received: by 2002:aca:60c5:: with SMTP id u188-v6mr25453180oib.4.1540228634577;
- Mon, 22 Oct 2018 10:17:14 -0700 (PDT)
+        bh=bkVUa1+/MOC7iuiS+1j+AH2HYD9X3AuCffRP/Nwy2Fo=;
+        b=qOQWxlScwe/89h9VVTsinSITnBXn/njMa7NNw/xbYFm+snPbznDG1gpqGGZrufFRLu
+         VFBMzeYwRI1u/khAmSlx2EDggKjWS0PSNDTMm/O9jpAZsRHiVIej8RPy9JtnC2NNC7Zw
+         YJeQpz4Ya94CYSyVMajfqgThjgpQQha00YJMxqgPIUYwpNvgo0kBGHO7dK1ZeuygHRRP
+         CscJ1CsaenrrHHC4LGW/jODh7HoPN8s54siDBMVVxxkhjlK2VnINTKE3RJvYzN5vC/c6
+         FmiHhBKmi3YTJ4X8AgeyN4gSliCdUYbvKBmnrleimq2TRorKl7x0If+RBes/TDoWVBWW
+         WX8w==
+X-Gm-Message-State: ABuFfojXE+fI7qBZLov+bkwR4mf67Se5A2Gu8YNDs3CgYbOevWXk19mF
+        gccI+JXyvKjINc5pPmOdwM14JkH6d45tN5EhZVjUmg==
+X-Google-Smtp-Source: ACcGV62QSQJGXfWFrnd+Uk5Ss5JhCgKaEQeVRVkOUFkR7JliPTNl7TgcOSFyYcXOC8BbklG5BXxueHUMdM9wcE+ytqE=
+X-Received: by 2002:a05:660c:383:: with SMTP id x3mr9261447itj.121.1540228658018;
+ Mon, 22 Oct 2018 10:17:38 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ac9:2ac9:0:0:0:0:0 with HTTP; Mon, 22 Oct 2018 10:17:13
- -0700 (PDT)
-In-Reply-To: <1540074145-31285-2-git-send-email-karahmed@amazon.de>
-References: <1540074145-31285-1-git-send-email-karahmed@amazon.de> <1540074145-31285-2-git-send-email-karahmed@amazon.de>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Mon, 22 Oct 2018 10:17:13 -0700
-Message-ID: <CALMp9eRBQQoB6d9j8EECQk-vp9j6M7d2d9BYrJuijHUj2-w75A@mail.gmail.com>
-Subject: Re: [PATCH v3 01/13] X86/nVMX: handle_vmon: Read 4 bytes from guest memory
-To:     KarimAllah Ahmed <karahmed@amazon.de>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <20181015175424.97147-1-ebiggers@kernel.org> <CAHmME9p1aiqWZ4+viaLscO8+qmixdVhMA1MAtMAFEHPG36DcPg@mail.gmail.com>
+ <20181019190411.GB246441@gmail.com> <20181021222341.GA742@sol.localdomain> <CAHmME9oEQVTJ0xB+dpi8MKxohRfdogqnV+bN63EWTaoS5dE6Pw@mail.gmail.com>
+In-Reply-To: <CAHmME9oEQVTJ0xB+dpi8MKxohRfdogqnV+bN63EWTaoS5dE6Pw@mail.gmail.com>
+From:   Paul Crowley <paulcrowley@google.com>
+Date:   Mon, 22 Oct 2018 10:17:26 -0700
+Message-ID: <CA+_SqcCBRgJVneAKbxTr0kY1gF9skbxME=ZdKbQLztDca_ri+Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 00/12] crypto: Adiantum support
+To:     Jason@zx2c4.com
+Cc:     ebiggers@kernel.org, linux-crypto@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        samuel.c.p.neves@gmail.com, tomer.ashur@esat.kuleuven.be
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 20, 2018 at 3:22 PM, KarimAllah Ahmed <karahmed@amazon.de> wrote:
-> Read the data directly from guest memory instead of the map->read->unmap
-> sequence. This also avoids using kvm_vcpu_gpa_to_page() and kmap() which
-> assumes that there is a "struct page" for guest memory.
+On Sun, 21 Oct 2018 at 15:52, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> > [1] Originally we were going to define Adiantum's hash function to be
+> >     Poly1305(message_length || tweak_length || tweak || NH(message)), which
+> >     would have made it desirable to export the Poly1305 state before NH, so that
+> >     it could be imported for the second hash step to avoid redundantly hashing
+> >     the message length and tweak.  But later we changed it to
+> >     Poly1305(message_length || tweak) + Poly1305(NH(message)).
 >
-> Suggested-by: Jim Mattson <jmattson@google.com>
-> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Reviewed-by: Jim Mattson <jmattson@google.com>
+> Out of curiosity, why this change?
+
+With the old system, Eric ended up implementing a function which took
+"message_length || tweak_length || tweak || message" as input and
+*parsed out* the lengths in the first 16 bytes to know when to start
+applying NH. That struck me as not nice at all, and we worked together
+to design something that fitted more naturally into the way that
+crypto is done in the kernel.
+
+With this change, the part that can be kept in common between the two
+hashing stages is cleanly separated from the part that will be
+different, and the Poly1305(NH(message)) construction is a relatively
+clean thing by itself to be part of the Linux kernel, though by itself
+it is only epsilon-almost-delta-universal over equal-length inputs so
+it has to be combined with something else to handle varying-length
+inputs. This is not too dissimilar from the caveats around GHASH which
+is also part of the kernel.
