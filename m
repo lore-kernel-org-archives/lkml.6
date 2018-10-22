@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24ACDC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 240C0C7112C
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88C5420652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:18:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88C5420652
+	by mail.kernel.org (Postfix) with ESMTP id 8DCED20665
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:18:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DCED20665
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728970AbeJWEip (ORCPT
+        id S1728993AbeJWEiq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 00:38:45 -0400
-Received: from mga07.intel.com ([134.134.136.100]:37690 "EHLO mga07.intel.com"
+        Tue, 23 Oct 2018 00:38:46 -0400
+Received: from mga06.intel.com ([134.134.136.31]:15663 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725788AbeJWEio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 00:38:44 -0400
+        id S1725788AbeJWEiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 00:38:46 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2018 13:18:45 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2018 13:18:47 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,413,1534834800"; 
-   d="scan'208";a="99739367"
+   d="scan'208";a="273527112"
 Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
-  by fmsmga004.fm.intel.com with ESMTP; 22 Oct 2018 13:18:45 -0700
-Subject: [PATCH 6/9] mm/memory-hotplug: allow memory resources to be children
+  by fmsmga005.fm.intel.com with ESMTP; 22 Oct 2018 13:18:47 -0700
+Subject: [PATCH 7/9] dax/kmem: actually perform memory hotplug
 To:     linux-kernel@vger.kernel.org
 Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         dan.j.williams@intel.com, dave.jiang@intel.com, zwisler@kernel.org,
@@ -40,65 +40,19 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         linux-nvdimm@lists.01.org, linux-mm@kvack.org,
         ying.huang@intel.com, fengguang.wu@intel.com
 From:   Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Mon, 22 Oct 2018 13:13:27 -0700
+Date:   Mon, 22 Oct 2018 13:13:29 -0700
 References: <20181022201317.8558C1D8@viggo.jf.intel.com>
 In-Reply-To: <20181022201317.8558C1D8@viggo.jf.intel.com>
-Message-Id: <20181022201327.F1642450@viggo.jf.intel.com>
+Message-Id: <20181022201329.518577A4@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-The mm/resource.c code is used to manage the physical address
-space.  We can view the current resource configuration in
-/proc/iomem.  An example of this is at the bottom of this
-description.
-
-The nvdimm subsystem "owns" the physical address resources which
-map to persistent memory and has resources inserted for them as
-"Persistent Memory".  We want to use this persistent memory, but
-as volatile memory, just like RAM.  The best way to do this is
-to leave the existing resource in place, but add a "System RAM"
-resource underneath it. This clearly communicates the ownership
-relationship of this memory.
-
-The request_resource_conflict() API only deals with the
-top-level resources.  Replace it with __request_region() which
-will search for !IORESOURCE_BUSY areas lower in the resource
-tree than the top level.
-
-We also rework the old error message a bit since we do not get
-the conflicting entry back: only an indication that we *had* a
-conflict.
-
-We *could* also simply truncate the existing top-level
-"Persistent Memory" resource and take over the released address
-space.  But, this means that if we ever decide to hot-unplug the
-"RAM" and give it back, we need to recreate the original setup,
-which may mean going back to the BIOS tables.
-
-This should have no real effect on the existing collision
-detection because the areas that truly conflict should be marked
-IORESOURCE_BUSY.
-
-00000000-00000fff : Reserved
-00001000-0009fbff : System RAM
-0009fc00-0009ffff : Reserved
-000a0000-000bffff : PCI Bus 0000:00
-000c0000-000c97ff : Video ROM
-000c9800-000ca5ff : Adapter ROM
-000f0000-000fffff : Reserved
-  000f0000-000fffff : System ROM
-00100000-9fffffff : System RAM
-  01000000-01e071d0 : Kernel code
-  01e071d1-027dfdff : Kernel data
-  02dc6000-0305dfff : Kernel bss
-a0000000-afffffff : Persistent Memory (legacy)
-  a0000000-a7ffffff : System RAM
-b0000000-bffdffff : System RAM
-bffe0000-bfffffff : Reserved
-c0000000-febfffff : PCI Bus 0000:00
+This is the meat of this whole series.  When the "kmem" device's
+probe function is called and we know we have a good persistent
+memory device, hotplug the memory back into the main kernel.
 
 Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Dave Jiang <dave.jiang@intel.com>
@@ -115,49 +69,67 @@ Cc: Fengguang Wu <fengguang.wu@intel.com>
 
 ---
 
- b/mm/memory_hotplug.c |   31 ++++++++++++++-----------------
- 1 file changed, 14 insertions(+), 17 deletions(-)
+ b/drivers/dax/kmem.c |   28 +++++++++++++++++++++++++---
+ 1 file changed, 25 insertions(+), 3 deletions(-)
 
-diff -puN mm/memory_hotplug.c~mm-memory-hotplug-allow-memory-resource-to-be-child mm/memory_hotplug.c
---- a/mm/memory_hotplug.c~mm-memory-hotplug-allow-memory-resource-to-be-child	2018-10-22 13:12:23.570930388 -0700
-+++ b/mm/memory_hotplug.c	2018-10-22 13:12:23.573930388 -0700
-@@ -99,24 +99,21 @@ void mem_hotplug_done(void)
- /* add this memory to iomem resource */
- static struct resource *register_memory_resource(u64 start, u64 size)
+diff -puN drivers/dax/kmem.c~dax-kmem-hotplug drivers/dax/kmem.c
+--- a/drivers/dax/kmem.c~dax-kmem-hotplug	2018-10-22 13:12:24.069930387 -0700
++++ b/drivers/dax/kmem.c	2018-10-22 13:12:24.072930387 -0700
+@@ -55,10 +55,12 @@ static void dax_kmem_percpu_kill(void *d
+ static int dax_kmem_probe(struct device *dev)
  {
--	struct resource *res, *conflict;
--	res = kzalloc(sizeof(struct resource), GFP_KERNEL);
--	if (!res)
--		return ERR_PTR(-ENOMEM);
-+	struct resource *res;
-+	unsigned long flags =  IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
-+	char resource_name[] = "System RAM";
+ 	void *addr;
++	int numa_node;
+ 	struct resource res;
+ 	int rc, id, region_id;
+ 	struct nd_pfn_sb *pfn_sb;
+ 	struct dev_dax *dev_dax;
++	struct resource *new_res;
+ 	struct dax_kmem *dax_kmem;
+ 	struct nd_namespace_io *nsio;
+ 	struct dax_region *dax_region;
+@@ -86,13 +88,30 @@ static int dax_kmem_probe(struct device
  
--	res->name = "System RAM";
--	res->start = start;
--	res->end = start + size - 1;
--	res->flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
--	conflict =  request_resource_conflict(&iomem_resource, res);
--	if (conflict) {
--		if (conflict->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY) {
--			pr_debug("Device unaddressable memory block "
--				 "memory hotplug at %#010llx !\n",
--				 (unsigned long long)start);
--		}
--		pr_debug("System RAM resource %pR cannot be added\n", res);
--		kfree(res);
-+	/*
-+	 * Request ownership of the new memory range.  This might be
-+	 * a child of an existing resource that was present but
-+	 * not marked as busy.
-+	 */
-+	res = __request_region(&iomem_resource, start, size,
-+			       resource_name, flags);
-+
-+	if (!res) {
-+		pr_debug("Unable to reserve System RAM region: %016llx->%016llx\n",
-+				start, start + size);
- 		return ERR_PTR(-EEXIST);
+ 	pfn_sb = nd_pfn->pfn_sb;
+ 
+-	if (!devm_request_mem_region(dev, nsio->res.start,
+-				resource_size(&nsio->res),
+-				dev_name(&ndns->dev))) {
++	new_res = devm_request_mem_region(dev, nsio->res.start,
++					  resource_size(&nsio->res),
++					  "System RAM (pmem)");
++	if (!new_res) {
+ 		dev_warn(dev, "could not reserve region %pR\n", &nsio->res);
+ 		return -EBUSY;
  	}
- 	return res;
+ 
++	/*
++	 * Set flags appropriate for System RAM.  Leave ..._BUSY clear
++	 * so that add_memory() can add a child resource.
++	 */
++	new_res->flags = IORESOURCE_SYSTEM_RAM;
++
++	numa_node = dev_to_node(dev);
++	if (numa_node < 0) {
++		pr_warn_once("bad numa_node: %d, forcing to 0\n", numa_node);
++		numa_node = 0;
++	}
++
++	rc = add_memory(numa_node, nsio->res.start, resource_size(&nsio->res));
++	if (rc)
++		return rc;
++
+ 	dax_kmem->dev = dev;
+ 	init_completion(&dax_kmem->cmp);
+ 	rc = percpu_ref_init(&dax_kmem->ref, dax_kmem_percpu_release, 0,
+@@ -106,6 +125,9 @@ static int dax_kmem_probe(struct device
+ 		return rc;
+ 
+ 	dax_kmem->pgmap.ref = &dax_kmem->ref;
++
++	dax_kmem->pgmap.res.name = "name_kmem_override2";
++
+ 	addr = devm_memremap_pages(dev, &dax_kmem->pgmap);
+ 	if (IS_ERR(addr))
+ 		return PTR_ERR(addr);
 _
