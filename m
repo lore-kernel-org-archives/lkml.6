@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5750FC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F93C7112C
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EBBE2087D
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:19:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1F2620853
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:19:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GgYjVHOw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EBBE2087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DjtuC6m6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1F2620853
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbeJVSha (ORCPT
+        id S1728683AbeJVShe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:37:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48114 "EHLO mail.kernel.org"
+        Mon, 22 Oct 2018 14:37:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728144AbeJVSha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:37:30 -0400
+        id S1728144AbeJVShb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:37:31 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F135920881;
-        Mon, 22 Oct 2018 10:19:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4A6F2087D;
+        Mon, 22 Oct 2018 10:19:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540203575;
-        bh=LeUvGKhhM1YdziZPPkuTEsGZckdJeormlkKPNV+vZCk=;
+        s=default; t=1540203576;
+        bh=I1GRFTrhgmOg0l7ozCWVPJalyQmHkusLNoUS/tFCpr0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GgYjVHOwWrNjhi1RqoxYPDmPES9l+mk3WzoYrDKgNUWunonlLPf1JSxvgUpU/6CLx
-         PQcqU8KpjhR7mbznfUMGxopTNvZqhTeRg5NS1wgy5dOWW/3+jWt0ZXUFRa4u4CVS4I
-         hMWz6fnk+0sAGr84qmt2ZJsEUYooIIZpEKWJ6VZU=
+        b=DjtuC6m6r3gz608XofZsPi90qaocWSRo1CvFOtVEJRJgfWT60k3Mfzbmd2GcZEDjy
+         x3nRLRnH8R70vkxMDYlMXNaZjS9Sf7Wrr3PiG9zvq+miho+iyBwr5WSKslAKYywcXM
+         WzIgNKbWpkLLjU+0Oe/zEg92yViViPTvIP3L27Bo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Milian Wolff <milian.wolff@kdab.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+Cc:     Daniel Drake <drake@endlessm.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 03/27] perf report: Don't try to map ip to invalid map
-Date:   Mon, 22 Oct 2018 06:19:00 -0400
-Message-Id: <20181022101924.40531-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 04/27] Input: i8042 - enable keyboard wakeups by default when s2idle is used
+Date:   Mon, 22 Oct 2018 06:19:01 -0400
+Message-Id: <20181022101924.40531-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181022101924.40531-1-sashal@kernel.org>
 References: <20181022101924.40531-1-sashal@kernel.org>
@@ -55,59 +53,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Milian Wolff <milian.wolff@kdab.com>
+From: Daniel Drake <drake@endlessm.com>
 
-[ Upstream commit ff4ce2885af8f9e8e99864d78dbeb4673f089c76 ]
+[ Upstream commit 684bec1092b6991ff2a7751e8a763898576eb5c2 ]
 
-Fixes a crash when the report encounters an address that could not be
-associated with an mmaped region:
+Previously, on typical consumer laptops, pressing a key on the keyboard
+when the system is in suspend would cause it to wake up (default or
+unconditional behaviour). This happens because the EC generates a SCI
+interrupt in this scenario.
 
-  #0  0x00005555557bdc4a in callchain_srcline (ip=<error reading variable: Cannot access memory at address 0x38>, sym=0x0, map=0x0) at util/machine.c:2329
-  #1  unwind_entry (entry=entry@entry=0x7fffffff9180, arg=arg@entry=0x7ffff5642498) at util/machine.c:2329
-  #2  0x00005555558370af in entry (arg=0x7ffff5642498, cb=0x5555557bdb50 <unwind_entry>, thread=<optimized out>, ip=18446744073709551615) at util/unwind-libunwind-local.c:586
-  #3  get_entries (ui=ui@entry=0x7fffffff9620, cb=0x5555557bdb50 <unwind_entry>, arg=0x7ffff5642498, max_stack=<optimized out>) at util/unwind-libunwind-local.c:703
-  #4  0x0000555555837192 in _unwind__get_entries (cb=<optimized out>, arg=<optimized out>, thread=<optimized out>, data=<optimized out>, max_stack=<optimized out>) at util/unwind-libunwind-local.c:725
-  #5  0x00005555557c310f in thread__resolve_callchain_unwind (max_stack=127, sample=0x7fffffff9830, evsel=0x555555c7b3b0, cursor=0x7ffff5642498, thread=0x555555c7f6f0) at util/machine.c:2351
-  #6  thread__resolve_callchain (thread=0x555555c7f6f0, cursor=0x7ffff5642498, evsel=0x555555c7b3b0, sample=0x7fffffff9830, parent=0x7fffffff97b8, root_al=0x7fffffff9750, max_stack=127) at util/machine.c:2378
-  #7  0x00005555557ba4ee in sample__resolve_callchain (sample=<optimized out>, cursor=<optimized out>, parent=parent@entry=0x7fffffff97b8, evsel=<optimized out>, al=al@entry=0x7fffffff9750,
-      max_stack=<optimized out>) at util/callchain.c:1085
+That is no longer true on modern laptops based on Intel WhiskeyLake,
+including Acer Swift SF314-55G, Asus UX333FA, Asus UX433FN and Asus
+UX533FD. We confirmed with Asus EC engineers that the "Modern Standby"
+design has been modified so that the EC no longer generates a SCI
+in this case; the keyboard controller itself should be used for wakeup.
 
-Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
-Tested-by: Sandipan Das <sandipan@linux.ibm.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 2a9d5050dc84 ("perf script: Show correct offsets for DWARF-based unwinding")
-Link: http://lkml.kernel.org/r/20180926135207.30263-1-milian.wolff@kdab.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+In order to retain the standard behaviour of being able to use the
+keyboard to wake up the system, enable serio wakeups by default on
+platforms that are using s2idle.
+
+Link: https://lkml.kernel.org/r/CAB4CAwfQ0mPMqCLp95TVjw4J0r5zKPWkSvvkK4cpZUGE--w8bQ@mail.gmail.com
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/machine.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/input/serio/i8042.c | 29 ++++++++++++++++++++---------
+ include/linux/suspend.h     |  2 ++
+ kernel/power/suspend.c      |  6 ++++++
+ 3 files changed, 28 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 22dbb6612b41..d49744dc46d7 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2272,7 +2272,7 @@ static int unwind_entry(struct unwind_entry *entry, void *arg)
+diff --git a/drivers/input/serio/i8042.c b/drivers/input/serio/i8042.c
+index 824f4c1c1f31..6462f1798fbb 100644
+--- a/drivers/input/serio/i8042.c
++++ b/drivers/input/serio/i8042.c
+@@ -1392,15 +1392,26 @@ static void __init i8042_register_ports(void)
+ 	for (i = 0; i < I8042_NUM_PORTS; i++) {
+ 		struct serio *serio = i8042_ports[i].serio;
+ 
+-		if (serio) {
+-			printk(KERN_INFO "serio: %s at %#lx,%#lx irq %d\n",
+-				serio->name,
+-				(unsigned long) I8042_DATA_REG,
+-				(unsigned long) I8042_COMMAND_REG,
+-				i8042_ports[i].irq);
+-			serio_register_port(serio);
+-			device_set_wakeup_capable(&serio->dev, true);
+-		}
++		if (!serio)
++			continue;
++
++		printk(KERN_INFO "serio: %s at %#lx,%#lx irq %d\n",
++			serio->name,
++			(unsigned long) I8042_DATA_REG,
++			(unsigned long) I8042_COMMAND_REG,
++			i8042_ports[i].irq);
++		serio_register_port(serio);
++		device_set_wakeup_capable(&serio->dev, true);
++
++		/*
++		 * On platforms using suspend-to-idle, allow the keyboard to
++		 * wake up the system from sleep by enabling keyboard wakeups
++		 * by default.  This is consistent with keyboard wakeup
++		 * behavior on many platforms using suspend-to-RAM (ACPI S3)
++		 * by default.
++		 */
++		if (pm_suspend_via_s2idle() && i == I8042_KBD_PORT_NO)
++			device_set_wakeup_enable(&serio->dev, true);
+ 	}
+ }
+ 
+diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+index 440b62f7502e..206b735f383f 100644
+--- a/include/linux/suspend.h
++++ b/include/linux/suspend.h
+@@ -251,6 +251,7 @@ static inline bool idle_should_enter_s2idle(void)
+ 	return unlikely(s2idle_state == S2IDLE_STATE_ENTER);
+ }
+ 
++extern bool pm_suspend_via_s2idle(void);
+ extern void __init pm_states_init(void);
+ extern void s2idle_set_ops(const struct platform_s2idle_ops *ops);
+ extern void s2idle_wake(void);
+@@ -282,6 +283,7 @@ static inline void pm_set_suspend_via_firmware(void) {}
+ static inline void pm_set_resume_via_firmware(void) {}
+ static inline bool pm_suspend_via_firmware(void) { return false; }
+ static inline bool pm_resume_via_firmware(void) { return false; }
++static inline bool pm_suspend_via_s2idle(void) { return false; }
+ 
+ static inline void suspend_set_ops(const struct platform_suspend_ops *ops) {}
+ static inline int pm_suspend(suspend_state_t state) { return -ENOSYS; }
+diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+index 87331565e505..3eeafaff190a 100644
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -63,6 +63,12 @@ static DECLARE_SWAIT_QUEUE_HEAD(s2idle_wait_head);
+ enum s2idle_states __read_mostly s2idle_state;
+ static DEFINE_RAW_SPINLOCK(s2idle_lock);
+ 
++bool pm_suspend_via_s2idle(void)
++{
++	return mem_sleep_current == PM_SUSPEND_TO_IDLE;
++}
++EXPORT_SYMBOL_GPL(pm_suspend_via_s2idle);
++
+ void s2idle_set_ops(const struct platform_s2idle_ops *ops)
  {
- 	struct callchain_cursor *cursor = arg;
- 	const char *srcline = NULL;
--	u64 addr;
-+	u64 addr = entry->ip;
- 
- 	if (symbol_conf.hide_unresolved && entry->sym == NULL)
- 		return 0;
-@@ -2284,7 +2284,8 @@ static int unwind_entry(struct unwind_entry *entry, void *arg)
- 	 * Convert entry->ip from a virtual address to an offset in
- 	 * its corresponding binary.
- 	 */
--	addr = map__map_ip(entry->map, entry->ip);
-+	if (entry->map)
-+		addr = map__map_ip(entry->map, entry->ip);
- 
- 	srcline = callchain_srcline(entry->map, entry->sym, addr);
- 	return callchain_cursor_append(cursor, entry->ip,
+ 	lock_system_sleep();
 -- 
 2.17.1
 
