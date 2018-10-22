@@ -3,57 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2B3C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74475C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 424772083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:36:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 424772083A
+	by mail.kernel.org (Postfix) with ESMTP id 445D920652
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:37:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 445D920652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728320AbeJVRyB (ORCPT
+        id S1728327AbeJVRy4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 13:54:01 -0400
-Received: from ozlabs.org ([203.11.71.1]:32773 "EHLO ozlabs.org"
+        Mon, 22 Oct 2018 13:54:56 -0400
+Received: from ozlabs.org ([203.11.71.1]:35841 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727519AbeJVRyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 13:54:01 -0400
+        id S1727519AbeJVRy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 13:54:56 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 42drxV6k8jz9sDF; Mon, 22 Oct 2018 20:36:14 +1100 (AEDT)
+        id 42dryZ1yBNz9sDC; Mon, 22 Oct 2018 20:37:10 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 6beb3381b12793726783a5e9428250743659c6cf
-In-Reply-To: <c562b688661c64c0b58bfa689c60a6ed38fd82a8.1535358405.git.christophe.leroy@c-s.fr>
+X-powerpc-patch-commit: fb978ca207743badfe7efd9eebe68bcbb4969f79
+In-Reply-To: <872199441fd43b05fc1c7d049098ef7c0e83f4c5.1537262646.git.christophe.leroy@c-s.fr>
 To:     Christophe Leroy <christophe.leroy@c-s.fr>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
 Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: powerpc/sysdev/ipic: check primary_ipic NULL pointer before using it
-Message-Id: <42drxV6k8jz9sDF@ozlabs.org>
-Date:   Mon, 22 Oct 2018 20:36:13 +1100 (AEDT)
+Subject: Re: powerpc/kgdb: add kgdb_arch_set/remove_breakpoint()
+Message-Id: <42dryZ1yBNz9sDC@ozlabs.org>
+Date:   Mon, 22 Oct 2018 20:37:09 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-08-27 at 08:27:27 UTC, Christophe Leroy wrote:
-> ipic_get_mcp_status() is used by targets implementing NMI
-> watchdog in target specific machine check handler in order
-> to known whether a machine check results from a watchdog
-> NMI reset.
+On Tue, 2018-09-18 at 09:26:03 UTC, Christophe Leroy wrote:
+> Generic implementation fails to remove breakpoints after init
+> when CONFIG_STRICT_KERNEL_RWX is selected:
 > 
-> In case of very early machine check, primary_ipic pointer
-> might not have been set yet, so ipic_get_mcp_status() needs
-> to check it for nullity before using it.
+> [   13.251285] KGDB: BP remove failed: c001c338
+> [   13.259587] kgdbts: ERROR PUT: end of test buffer on 'do_fork_test' line 8 expected OK got $E14#aa
+> [   13.268969] KGDB: re-enter exception: ALL breakpoints killed
+> [   13.275099] CPU: 0 PID: 1 Comm: init Not tainted 4.18.0-g82bbb913ffd8 #860
+> [   13.282836] Call Trace:
+> [   13.285313] [c60e1ba0] [c0080ef0] kgdb_handle_exception+0x6f4/0x720 (unreliable)
+> [   13.292618] [c60e1c30] [c000e97c] kgdb_handle_breakpoint+0x3c/0x98
+> [   13.298709] [c60e1c40] [c000af54] program_check_exception+0x104/0x700
+> [   13.305083] [c60e1c60] [c000e45c] ret_from_except_full+0x0/0x4
+> [   13.310845] [c60e1d20] [c02a22ac] run_simple_test+0x2b4/0x2d4
+> [   13.316532] [c60e1d30] [c0081698] put_packet+0xb8/0x158
+> [   13.321694] [c60e1d60] [c00820b4] gdb_serial_stub+0x230/0xc4c
+> [   13.327374] [c60e1dc0] [c0080af8] kgdb_handle_exception+0x2fc/0x720
+> [   13.333573] [c60e1e50] [c000e928] kgdb_singlestep+0xb4/0xcc
+> [   13.339068] [c60e1e70] [c000ae1c] single_step_exception+0x90/0xac
+> [   13.345100] [c60e1e80] [c000e45c] ret_from_except_full+0x0/0x4
+> [   13.350865] [c60e1f40] [c000e11c] ret_from_syscall+0x0/0x38
+> [   13.356346] Kernel panic - not syncing: Recursive entry to debugger
 > 
+> This patch creates powerpc specific version of
+> kgdb_arch_set_breakpoint() and kgdb_arch_remove_breakpoint()
+> using patch_instruction()
+> 
+> Fixes: 1e0fc9d1eb2b ("powerpc/Kconfig: Enable STRICT_KERNEL_RWX for some configs")
 > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/6beb3381b12793726783a5e9428250
+https://git.kernel.org/powerpc/c/fb978ca207743badfe7efd9eebe68b
 
 cheers
