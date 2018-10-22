@@ -3,46 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFD2C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39385C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07BF720651
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:38:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07BF720651
+	by mail.kernel.org (Postfix) with ESMTP id 62C9020651
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:39:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62C9020651
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729044AbeJWE6U (ORCPT
+        id S1728903AbeJWE7c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 00:58:20 -0400
-Received: from gateway22.websitewelcome.com ([192.185.47.100]:38341 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727701AbeJWE6T (ORCPT
+        Tue, 23 Oct 2018 00:59:32 -0400
+Received: from gateway30.websitewelcome.com ([192.185.147.85]:12150 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726082AbeJWE7c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 00:58:19 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 068B4193FB
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 15:38:14 -0500 (CDT)
+        Tue, 23 Oct 2018 00:59:32 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 39ECD1DC4B
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 15:39:29 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id Egxqga0kt7jE8Egxqg0JKJ; Mon, 22 Oct 2018 15:38:14 -0500
+        id EgysgYd8UBcCXEgyygnjLb; Mon, 22 Oct 2018 15:39:28 -0500
 X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:50960 helo=embeddedor)
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:50976 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gEgxp-00219B-R7; Mon, 22 Oct 2018 15:38:14 -0500
-Date:   Mon, 22 Oct 2018 22:38:11 +0200
+        id 1gEgyr-0021f2-O3; Mon, 22 Oct 2018 15:39:18 -0500
+Date:   Mon, 22 Oct 2018 22:39:15 +0200
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     QCA ath9k Development <ath9k-devel@qca.qualcomm.com>
 Cc:     Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 03/20] ath9k: ar9002_phy: mark expected switch fall-throughs
-Message-ID: <850bb193ac6a1b94e87fd6b0c805c73ae16c5f53.1540239684.git.gustavo@embeddedor.com>
+Subject: [PATCH 04/20] ath9k: hw: mark expected switch fall-through
+Message-ID: <b26c762ab874efe592998227cb0585b6a5f7d4fa.1540239684.git.gustavo@embeddedor.com>
 References: <cover.1540239684.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -57,13 +57,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 86.245.173.13
 X-Source-L: No
-X-Exim-ID: 1gEgxp-00219B-R7
+X-Exim-ID: 1gEgyr-0021f2-O3
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:50960
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:50976
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 34
+X-Email-Count: 40
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,22 +77,21 @@ where we are expecting to fall through.
 Addresses-Coverity-ID: 1056532 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/wireless/ath/ath9k/ar9002_phy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath9k/hw.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/ath/ath9k/ar9002_phy.c b/drivers/net/wireless/ath/ath9k/ar9002_phy.c
-index 7132918..6f32b8d 100644
---- a/drivers/net/wireless/ath/ath9k/ar9002_phy.c
-+++ b/drivers/net/wireless/ath/ath9k/ar9002_phy.c
-@@ -119,7 +119,7 @@ static int ar9002_hw_set_channel(struct ath_hw *ah, struct ath9k_channel *chan)
- 				aModeRefSel = 2;
- 			if (aModeRefSel)
- 				break;
--			/* else: fall through */
-+			/* fall through */
- 		case 1:
- 		default:
- 			aModeRefSel = 0;
+diff --git a/drivers/net/wireless/ath/ath9k/hw.c b/drivers/net/wireless/ath/ath9k/hw.c
+index bb319f2..8581d91 100644
+--- a/drivers/net/wireless/ath/ath9k/hw.c
++++ b/drivers/net/wireless/ath/ath9k/hw.c
+@@ -2279,6 +2279,7 @@ void ath9k_hw_beaconinit(struct ath_hw *ah, u32 next_beacon, u32 beacon_period)
+ 	case NL80211_IFTYPE_ADHOC:
+ 		REG_SET_BIT(ah, AR_TXCFG,
+ 			    AR_TXCFG_ADHOC_BEACON_ATIM_TX_POLICY);
++		/* fall through */
+ 	case NL80211_IFTYPE_MESH_POINT:
+ 	case NL80211_IFTYPE_AP:
+ 		REG_WRITE(ah, AR_NEXT_TBTT_TIMER, next_beacon);
 -- 
 2.7.4
 
