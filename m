@@ -6,141 +6,140 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DCBC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 842D3C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3112220853
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:09:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3112220853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 221A420853
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:15:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 221A420853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=oregano.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728333AbeJVV1y (ORCPT
+        id S1728359AbeJVVeK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 17:27:54 -0400
-Received: from mga14.intel.com ([192.55.52.115]:1089 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727657AbeJVV1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 17:27:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2018 06:09:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,412,1534834800"; 
-   d="scan'208";a="101585319"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
-  by orsmga001.jf.intel.com with ESMTP; 22 Oct 2018 06:09:20 -0700
-Subject: Re: [PATCH 1/2] usb: xhci: fix uninitialized completion when USB3
- port got wrong status
-To:     Aaron Ma <aaron.ma@canonical.com>, mathias.nyman@intel.com,
-        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1540141725-13047-1-git-send-email-aaron.ma@canonical.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <57b1da55-3213-8053-7002-f8798d6e1a10@linux.intel.com>
-Date:   Mon, 22 Oct 2018 16:12:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 22 Oct 2018 17:34:10 -0400
+Received: from mx01.busymouse24.de ([83.246.107.19]:47628 "EHLO
+        mx01.busymouse24.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727669AbeJVVeK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 17:34:10 -0400
+Received: from maskedhost [127.0.0.1] by mx01.busymouse24.de stage1 with esmtps 
+        (Exim MailCleaner) 
+        id 1gEa3U-000944-F1  
+        from <puhm@oregano.at>; Mon, 22 Oct 2018 15:15:36 +0200
+Received: from SRV188.busymouse24.de (192.168.100.188) by
+ SRV177.busymouse24.de (192.168.100.177) with Microsoft SMTP Server (TLS) id
+ 15.0.1263.5; Mon, 22 Oct 2018 15:15:35 +0200
+Received: from SRV177.busymouse24.de (192.168.100.177) by
+ SRV188.busymouse24.de (192.168.100.188) with Microsoft SMTP Server (TLS) id
+ 15.0.1263.5; Mon, 22 Oct 2018 15:15:35 +0200
+Received: from SRV177.busymouse24.de ([fe80::f87a:2c8c:90ef:d29a]) by
+ SRV177.busymouse24.de ([fe80::f87a:2c8c:90ef:d29a%14]) with mapi id
+ 15.00.1263.000; Mon, 22 Oct 2018 15:15:35 +0200
+From:   Andreas Puhm <puhm@oregano.at>
+To:     Moritz Fischer <mdf@kernel.org>
+CC:     Alan Tull <atull@kernel.org>,
+        "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] fpga: altera_cvp: restrict registration to CvP enabled
+ devices
+Thread-Topic: [PATCH] fpga: altera_cvp: restrict registration to CvP enabled
+ devices
+Thread-Index: AdRqCJx8+DqNmFX1QmK8kME9tbGkZQ==
+Date:   Mon, 22 Oct 2018 13:15:34 +0000
+Message-ID: <78c44ad0b2344a4490ffd300cf0df746@SRV177.busymouse24.de>
+Accept-Language: de-AT, de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [83.246.107.135]
+x-exclaimer-md-config: 1802f3fe-bc94-4301-9dc2-d59a74e6de3a
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <1540141725-13047-1-git-send-email-aaron.ma@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.10.2018 20:08, Aaron Ma wrote:
-> Realtek USB3.0 Card Reader [0bda:0328] reports wrong port status on
-> Cannon lake PCH USB3.1 xHCI [8086:a36d] after resume from S3,
-> after clear port reset it works fine.
-> 
-> Since this device is registered on USB3 roothub at boot,
-> when port status reports not superspeed, xhci_get_port_status will call
-> an uninitialized completion in bus_state[0].
-> Kernel will hang because of NULL pointer.
-> 
-> Restrict the USB2 resume status check in USB2 roothub to fix hang issue.
-> No harm to initialize USB3 bus_state[0] in case it is called.
-> 
-> Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-> ---
->   drivers/usb/host/xhci-hub.c  | 2 +-
->   drivers/usb/host/xhci-mem.c  | 1 +
->   drivers/usb/host/xhci-ring.c | 2 +-
->   3 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
-> index 7e2a531ba321..d30ca6ceffc9 100644
-> --- a/drivers/usb/host/xhci-hub.c
-> +++ b/drivers/usb/host/xhci-hub.c
-> @@ -876,7 +876,7 @@ static u32 xhci_get_port_status(struct usb_hcd *hcd,
->   			status |= USB_PORT_STAT_SUSPEND;
->   	}
->   	if ((raw_port_status & PORT_PLS_MASK) == XDEV_RESUME &&
-> -		!DEV_SUPERSPEED_ANY(raw_port_status)) {
-> +		!DEV_SUPERSPEED_ANY(raw_port_status) && 1 == hcd_index(hcd)) {
->   		if ((raw_port_status & PORT_RESET) ||
->   				!(raw_port_status & PORT_PE))
->   			return 0xffffffff;
+Hi Moritz,
 
-Nice catch.
+Thank you, for your fast response!
+Below you can find the updated patch.
 
-Maybe use "hcd->speed < HCD_USB3" instead of "1 == hcd_index(hcd)"
-It's easier to understand.
+--------------------------------------------------------------------
+Full description:
+The altera_cvp probe function only checks, 
+if the Altera/Intel PCI device configuration space contains a vendor specific entry (VSEC Capability Header 0x000b) at offset 0x200.
+ But the probe function does not verify, if the PCI device (and further the FPGA), 
+for which it has been called, actually supports the Configure-via-Protocol feature.
 
-Turns out this isn't an issue with your Realtek device, it just happens to trigger
-a driver issue.
+The PCI device (FPGA) can explicitly disable the Configur-via-Protocol (CvP) feature by setting the CVP_EN bit, index 20 of CVP_STATUS register, to '0'. 
+As the altera_cvp probe function does not check this it registers the device in any way. 
+At this point, the altera_cvp module cannot be used to program this device via CvP. 
+In addition no other module can use the device, as it is still registered by altera_cvp.
 
-The original !DEV_SUPERSPEED_ANY() check was not suitable here.
-It checks the port-speed field of portsc register (bits 13:10), which are only valid for USB3
-ports if all link training is done and port reached its "enabled" state.
-Otherwise it will return 0, and USB3 ports may be mistaken for USB2 ports.
+Keywords: altera_cvp module, PCI, Configure-via-Protocol
 
-Just to make sure, Does your device stay as a USB 3 device, it's never
-enumerated as USB2, right?
+Kernel version: problem occured with v4.15, should occur from 4.14+
 
-I'm in the middle of refactoring the get_port_status(), it should solve this
-as well, but we need your solution stable releases.
+Instructions to reproduce: 
+Proper hardware is necessary to reproduce this, i.e., FPGA with instantiated Altera/Intel PCIe IP Core with disabled CvP feature.
 
-Any chance you to check if the refactored code works with the Realtek device?
-I just created a "get_port_status_refactor" branch for it:
+Workaround:
+It is possible to circumvent this problem by manually unloading or blacklisting the altera_cvp module.
+--------------------------------------------------------------------
+Suggested Patch:
+This patch was successfully build and tested for 4.15 and 4.18
 
-git://git.kernel.org/pub/scm/linux/kernel/git/mnyman/xhci.git get_port_status_refactor
+The patch is based on: git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tag/?h=v4.18
 
-> diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-> index b1f27aa38b10..dd2ad50c5289 100644
-> --- a/drivers/usb/host/xhci-mem.c
-> +++ b/drivers/usb/host/xhci-mem.c
-> @@ -2539,6 +2539,7 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
->   		xhci->bus_state[0].resume_done[i] = 0;
->   		xhci->bus_state[1].resume_done[i] = 0;
->   		/* Only the USB 2.0 completions will ever be used. */
-> +		init_completion(&xhci->bus_state[0].rexit_done[i]);
->   		init_completion(&xhci->bus_state[1].rexit_done[i]);
->   	}
+Subject: [PATCH] fpga: altera_cvp: restrict registration to CvP enabled devices
 
-I don't think we should init the completion unnecessary for USB3 ports.
+The altera-cvp probe function now verifies, that the PCI device supports
+the CvP feature, before it registers the device.
+This is done by reading the CVP_EN bit,
+Bit 20 of the CVP_STATUS register (@ PCI Config Address 0x21C).
 
->   
-> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-> index f0a99aa0ac58..894d4625b8b9 100644
-> --- a/drivers/usb/host/xhci-ring.c
-> +++ b/drivers/usb/host/xhci-ring.c
-> @@ -1634,7 +1634,7 @@ static void handle_port_status(struct xhci_hcd *xhci,
->   	 * RExit to a disconnect state).  If so, let the the driver know it's
->   	 * out of the RExit state.
->   	 */
-> -	if (!DEV_SUPERSPEED_ANY(portsc) &&
-> +	if (!DEV_SUPERSPEED_ANY(portsc) && 1 == hcd_index(hcd) &&
->   			test_and_clear_bit(hcd_portnum,
->   				&bus_state->rexit_ports)) {
->   		complete(&bus_state->rexit_done[hcd_portnum]);
-> 
+If this bit is '1' (CvP enabled), altera-cvp will register the device
+for further interaction.
+If this bit is '0' (CvP disabled), altera-cvp will not register the device.
 
-Same here, prefer hcd->speed < HCD_USB3
+Signed-off-by: Andreas Puhm <puhm@oregano.at>
+---
+ drivers/fpga/altera-cvp.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Thanks
-Mathias
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index 7fa793672a7a..838abcfca0fb 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -403,6 +403,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ 	struct altera_cvp_conf *conf;
+ 	struct fpga_manager *mgr;
+ 	u16 cmd, val;
++	u32 val32;
+ 	int ret;
+ 
+ 	/*
+@@ -416,6 +417,14 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ 		return -ENODEV;
+ 	}
+ 
++	pci_read_config_dword(pdev, VSE_CVP_STATUS, &val32);
++	if (!(val32 & VSE_CVP_STATUS_CVP_EN)) {
++		dev_err(&pdev->dev,
++			"CVP is disabled for this device: CVP_STATUS Reg 0x%x\n",
++			val32);
++		return -ENODEV;
++	}
++
+ 	conf = devm_kzalloc(&pdev->dev, sizeof(*conf), GFP_KERNEL);
+ 	if (!conf)
+ 		return -ENOMEM;
+--
+
+
+With best regards,
+Andreas Puhm <puhm@oregano.at>
