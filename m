@@ -2,205 +2,174 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22328C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9ACFC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:55:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D61020651
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:49:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="aWvu7mLN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D61020651
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id F378620663
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:55:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F378620663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbeJWIJy (ORCPT
+        id S1726742AbeJWIQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 04:09:54 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33708 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbeJWIJx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 04:09:53 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 78-v6so18321488pfq.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 16:49:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XDtkWfJX6UOD3pDo61X4U4dXHBPp3rHlTaGgivs5jOQ=;
-        b=aWvu7mLNfAVBbY1hY/XceAAANDRgy+a3Y+d4pv8GNPenyXA4/s4UQxx3vPRbpkG4dw
-         IiJPhfR3ctTUU6iO3cC2Jtp3OMfilRD0l3t1H7zO8C2i6ibWDo7vhzlQTJ/56auDYfLW
-         sCdLLKL1j8wn7iHHg9AW7WD3WqzlPIVhPvWtI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XDtkWfJX6UOD3pDo61X4U4dXHBPp3rHlTaGgivs5jOQ=;
-        b=CulPVtbK/xkM7ypUJaU0wLub/ouL3/x3ldrAyDuRvCFL2lXwKn9A2dTzx9MxtuUaFO
-         8EMdFe/Zu8Lm71ctSohdV8Wgl7DDtrR0wbzIRlSqsTrTrq2WYGtPeM6zO4qa+z5P1+Ch
-         0eYbsqkO1zNFRA5WKrNsSIPEcFSkWsmxgk3PUcZqmfO3WtCffRMUsWp8z+KFEGL3Gbm9
-         LDCGb8L19fFjY+F1K0DgB+hlQDVkFnRL4TN3XNf//FngkWma9BLNzitk8CXY4mxLwkAQ
-         /dwYBk8L5g6tb2OlsqjBZHKyTh33+Jx8/FkIgoCPf62YpKukz+jGXnvRKtX+djuqzID2
-         fbTw==
-X-Gm-Message-State: ABuFfoiwVkus+hZXAgg1qUxS+bIZ7KpyHzoKfaYt/as7KvlgEkxVGfoL
-        BdaKiKXxfPzw8DNpp17nm0XGVLPjI6s=
-X-Google-Smtp-Source: ACcGV63KrfnEiVV0JOHMpv7SptBdQPmgooR6Ma0+0/BrzGV6sMdrMGQMbTWBJItf1STMX90HREo3Kw==
-X-Received: by 2002:a62:4301:: with SMTP id q1-v6mr46658364pfa.163.1540252148829;
-        Mon, 22 Oct 2018 16:49:08 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id r76-v6sm42460515pgr.11.2018.10.22.16.49.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Oct 2018 16:49:07 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 16:49:06 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     john.stultz@linaro.org, tkjos@google.com,
-        gregkh@linuxfoundation.org, hch@infradead.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>, dancol@google.com,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-mm@kvack.org, marcandre.lureau@redhat.com,
-        Mike Kravetz <mike.kravetz@oracle.com>, minchan@kernel.org,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v3 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to memfd
-Message-ID: <20181022234906.GA22110@joelaf.mtv.corp.google.com>
-References: <20181018065908.254389-1-joel@joelfernandes.org>
+        Tue, 23 Oct 2018 04:16:06 -0400
+Received: from mga18.intel.com ([134.134.136.126]:52130 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725799AbeJWIQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 04:16:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2018 16:55:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,414,1534834800"; 
+   d="scan'208";a="84740857"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
+  by orsmga006.jf.intel.com with ESMTP; 22 Oct 2018 16:55:21 -0700
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+References: <cover.1539798901.git.tim.c.chen@linux.intel.com>
+ <6c8538c428d6335efae926c1e6a6fd26a3f9a1b8.1539798901.git.tim.c.chen@linux.intel.com>
+ <alpine.DEB.2.21.1810181522230.1647@nanos.tec.linutronix.de>
+ <c8bb3ea2-d060-5cad-1544-ae5ff5f8fd3b@linux.intel.com>
+ <alpine.DEB.2.21.1810192100130.1651@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1810192158570.1651@nanos.tec.linutronix.de>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+Subject: Re: [Patch v3 07/13] x86/process Add arch_set_dumpable
+Message-ID: <c28c5bc5-fd36-bfba-efd3-7b0e1424db90@linux.intel.com>
+Date:   Mon, 22 Oct 2018 16:55:20 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181018065908.254389-1-joel@joelfernandes.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <alpine.DEB.2.21.1810192158570.1651@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 11:59:07PM -0700, Joel Fernandes (Google) wrote:
-> Android uses ashmem for sharing memory regions. We are looking forward
-> to migrating all usecases of ashmem to memfd so that we can possibly
-> remove the ashmem driver in the future from staging while also
-> benefiting from using memfd and contributing to it. Note staging drivers
-> are also not ABI and generally can be removed at anytime.
+On 10/19/2018 01:16 PM, Thomas Gleixner wrote:
+> On Fri, 19 Oct 2018, Thomas Gleixner wrote:
+>> On Thu, 18 Oct 2018, Tim Chen wrote:
+>>> On 10/18/2018 06:28 AM, Thomas Gleixner wrote:
+>>>>
+>>>> So now the obvious question. set_dumpable() operates on tsk->mm. i.e. it's
+>>>> a process wide operation. But arch_set_dumpable() operates on the task
+>>>> itself. What about the other tasks of that process?
+>>>
+>>> I missed this part.
+>>>
+>>> Fixing this is tricky as I don't see an easy way to
+>>> reverse map mm back to all tasks that use the same mm
+>>> to update their STIBP flags.
+>>
+>> task is known and handed in to the function. So why do you want to reverse
+>> map mm?
+>>
+>> for_each_thread(task, ...) is what you want. The only thing to verify is
+>> whether you can lock the tasks sighand lock there. And then it's enough to
+>> set/clear the TIF bit and let it take effect at the next context switch.
 > 
-> One of the main usecases Android has is the ability to create a region
-> and mmap it as writeable, then add protection against making any
-> "future" writes while keeping the existing already mmap'ed
-> writeable-region active.  This allows us to implement a usecase where
-> receivers of the shared memory buffer can get a read-only view, while
-> the sender continues to write to the buffer.
-> See CursorWindow documentation in Android for more details:
-> https://developer.android.com/reference/android/database/CursorWindow
-> 
-> This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
-> To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE seal
-> which prevents any future mmap and write syscalls from succeeding while
-> keeping the existing mmap active. The following program shows the seal
-> working in action:
-> 
->  #include <stdio.h>
->  #include <errno.h>
->  #include <sys/mman.h>
->  #include <linux/memfd.h>
->  #include <linux/fcntl.h>
->  #include <asm/unistd.h>
->  #include <unistd.h>
->  #define F_SEAL_FUTURE_WRITE 0x0010
->  #define REGION_SIZE (5 * 1024 * 1024)
-> 
-> int memfd_create_region(const char *name, size_t size)
-> {
->     int ret;
->     int fd = syscall(__NR_memfd_create, name, MFD_ALLOW_SEALING);
->     if (fd < 0) return fd;
->     ret = ftruncate(fd, size);
->     if (ret < 0) { close(fd); return ret; }
->     return fd;
-> }
-> 
-> int main() {
->     int ret, fd;
->     void *addr, *addr2, *addr3, *addr1;
->     ret = memfd_create_region("test_region", REGION_SIZE);
->     printf("ret=%d\n", ret);
->     fd = ret;
-> 
->     // Create map
->     addr = mmap(0, REGION_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
->     if (addr == MAP_FAILED)
-> 	    printf("map 0 failed\n");
->     else
-> 	    printf("map 0 passed\n");
-> 
->     if ((ret = write(fd, "test", 4)) != 4)
-> 	    printf("write failed even though no future-write seal "
-> 		   "(ret=%d errno =%d)\n", ret, errno);
->     else
-> 	    printf("write passed\n");
-> 
->     addr1 = mmap(0, REGION_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
->     if (addr1 == MAP_FAILED)
-> 	    perror("map 1 prot-write failed even though no seal\n");
->     else
-> 	    printf("map 1 prot-write passed as expected\n");
-> 
->     ret = fcntl(fd, F_ADD_SEALS, F_SEAL_FUTURE_WRITE |
-> 				 F_SEAL_GROW |
-> 				 F_SEAL_SHRINK);
->     if (ret == -1)
-> 	    printf("fcntl failed, errno: %d\n", errno);
->     else
-> 	    printf("future-write seal now active\n");
-> 
->     if ((ret = write(fd, "test", 4)) != 4)
-> 	    printf("write failed as expected due to future-write seal\n");
->     else
-> 	    printf("write passed (unexpected)\n");
-> 
->     addr2 = mmap(0, REGION_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
->     if (addr2 == MAP_FAILED)
-> 	    perror("map 2 prot-write failed as expected due to seal\n");
->     else
-> 	    printf("map 2 passed\n");
-> 
->     addr3 = mmap(0, REGION_SIZE, PROT_READ, MAP_SHARED, fd, 0);
->     if (addr3 == MAP_FAILED)
-> 	    perror("map 3 failed\n");
->     else
-> 	    printf("map 3 prot-read passed as expected\n");
-> }
-> 
-> The output of running this program is as follows:
-> ret=3
-> map 0 passed
-> write passed
-> map 1 prot-write passed as expected
-> future-write seal now active
-> write failed as expected due to future-write seal
-> map 2 prot-write failed as expected due to seal
-> : Permission denied
-> map 3 prot-read passed as expected
-> 
-> Cc: jreck@google.com
-> Cc: john.stultz@linaro.org
-> Cc: tkjos@google.com
-> Cc: gregkh@linuxfoundation.org
-> Cc: hch@infradead.org
-> Reviewed-by: John Stultz <john.stultz@linaro.org>
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> Though there is another issue with mm shared between processes,
+> i.e. CLONE_VM without CLONE_THREAD where set_dumpabe() affects both
+> processes, but for_each_thread() only seing the threads which belong to the
+> thread group of 'task'.
 
-Apologies for the follow-up. Now that merge window has opened, just checking
-if this patch (which IMO has been beaten to death) can make it for 4.20?  Its
-pretty much completed and is well tested at this point (tests are in 2/2).
-Then I can move onto other memfd enhancements I'm planning.
+One complication is threads currently running on some remote CPU
+when we change flag.  Normally we will call spec_ctrl_update_current to make
+sure the CPU's current SPEC CTRL MSR stays consistent with TIF flag changes.
 
-thanks,
+But for the remote CPUs, if we don't the update their SPEC CTRL MSRs, their
+SPEC CTRL MSR will get out of step with the TIF flag state.  It can last for a
+long time till we have a TIF flag change during context switches to cause SEPC CTRL MSR
+update.
 
- - Joel
+One thing I could do is to add a TIF flag to force update the SPEC_CTRL MSR on
+next context switch.  Is that okay?  Or should I put such flag elsewhere?
+
+Tim
+
+
+> 
+> I can understand your idea of clumping this on dumpable(), but at some
+> point we really have to draw a line and just stop adding more and more
+> expensive stuff to context switch.
+> 
+> Thanks,
+> 
+> 	tglx
+> 
 
