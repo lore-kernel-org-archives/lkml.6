@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B73FC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C697FC7112C
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 620F92087D
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ACC520890
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5IMZEq7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 620F92087D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEoyFlRr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ACC520890
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729039AbeJVSig (ORCPT
+        id S1729067AbeJVSij (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:38:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49398 "EHLO mail.kernel.org"
+        Mon, 22 Oct 2018 14:38:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729012AbeJVSif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:38:35 -0400
+        id S1729012AbeJVSih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:38:37 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1DD32087D;
-        Mon, 22 Oct 2018 10:20:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 892552088F;
+        Mon, 22 Oct 2018 10:20:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540203640;
-        bh=raDPIphocoz2yKOAb9guDGowwllkuXJFA9maSIajmdo=;
+        s=default; t=1540203641;
+        bh=O8PfIDnG1p3AuR1XVjj1sfwEUFsntlViQaA+LbPTRTA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k5IMZEq7JU6Rk2f7R2E7HG4a8pj/9l325hZ0XxKYzuW3pQFFZpgiJWeoII7JZJKd6
-         lHG+ciXiBizECPi7rndMSHIjmoZk/Zr9b4NBC1/FwHpG5gVa7c4bvb4N+Faisiy681
-         J4MJB/1F4uOGLSsnGgSYR86nXkVanZeX4SnsILWo=
+        b=kEoyFlRrfpNMTyAM1ayVkTDEAump+9l0/JOLv17zeuIh3UbFD19rPbe8HhhDfhOyz
+         u+VfQrhmt/rgHGyeVh5mmg0lUcEZCSQ3opJA/FiEscXKfdSLsT4HhHuXYPhKFQhmf6
+         2Pf7GBs6HqTK6BxEPWf8jDw29EwJKuScc5b+KIL8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+Cc:     Daniel Drake <drake@endlessm.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 02/15] s390/hibernate: fix error handling when suspend cpu != resume cpu
-Date:   Mon, 22 Oct 2018 06:20:13 -0400
-Message-Id: <20181022102026.40869-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 03/15] Input: i8042 - enable keyboard wakeups by default when s2idle is used
+Date:   Mon, 22 Oct 2018 06:20:14 -0400
+Message-Id: <20181022102026.40869-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181022102026.40869-1-sashal@kernel.org>
 References: <20181022102026.40869-1-sashal@kernel.org>
@@ -52,118 +53,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+From: Daniel Drake <drake@endlessm.com>
 
-[ Upstream commit 55a5542a546238354d1f209f794414168cf8c71d ]
+[ Upstream commit 684bec1092b6991ff2a7751e8a763898576eb5c2 ]
 
-The resume code checks if the resume cpu is the same as the suspend cpu.
-If not, and if it is also not possible to switch to the suspend cpu, an
-error message should be printed and the resume process should be stopped
-by loading a disabled wait psw.
+Previously, on typical consumer laptops, pressing a key on the keyboard
+when the system is in suspend would cause it to wake up (default or
+unconditional behaviour). This happens because the EC generates a SCI
+interrupt in this scenario.
 
-The current logic is broken in multiple ways, the message is never printed,
-and the disabled wait psw never loaded because the kernel panics before that:
-- sam31 and SIGP_SET_ARCHITECTURE to ESA mode is wrong, this will break
-  on the first 64bit instruction in sclp_early_printk().
-- The init stack should be used, but the stack pointer is not set up correctly
-  (missing aghi %r15,-STACK_FRAME_OVERHEAD).
-- __sclp_early_printk() checks the sclp_init_state. If it is not
-  sclp_init_state_uninitialized, it simply returns w/o printing anything.
-  In the resumed kernel however, sclp_init_state will never be uninitialized.
+That is no longer true on modern laptops based on Intel WhiskeyLake,
+including Acer Swift SF314-55G, Asus UX333FA, Asus UX433FN and Asus
+UX533FD. We confirmed with Asus EC engineers that the "Modern Standby"
+design has been modified so that the EC no longer generates a SCI
+in this case; the keyboard controller itself should be used for wakeup.
 
-This patch fixes those issues by removing the sam31/ESA logic, adding a
-correct init stack pointer, and also introducing sclp_early_printk_force()
-to allow using sclp_early_printk() even when sclp_init_state is not
-uninitialized.
+In order to retain the standard behaviour of being able to use the
+keyboard to wake up the system, enable serio wakeups by default on
+platforms that are using s2idle.
 
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: https://lkml.kernel.org/r/CAB4CAwfQ0mPMqCLp95TVjw4J0r5zKPWkSvvkK4cpZUGE--w8bQ@mail.gmail.com
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/include/asm/sclp.h        |  3 ++-
- arch/s390/kernel/early_printk.c     |  2 +-
- arch/s390/kernel/swsusp.S           |  8 +++-----
- drivers/s390/char/sclp_early_core.c | 11 ++++++++---
- 4 files changed, 14 insertions(+), 10 deletions(-)
+ drivers/input/serio/i8042.c | 29 ++++++++++++++++++++---------
+ include/linux/suspend.h     |  2 ++
+ kernel/power/suspend.c      |  6 ++++++
+ 3 files changed, 28 insertions(+), 9 deletions(-)
 
-diff --git a/arch/s390/include/asm/sclp.h b/arch/s390/include/asm/sclp.h
-index d3c1a8a2e3ad..d90a84770ce5 100644
---- a/arch/s390/include/asm/sclp.h
-+++ b/arch/s390/include/asm/sclp.h
-@@ -107,7 +107,8 @@ int sclp_early_get_core_info(struct sclp_core_info *info);
- void sclp_early_get_ipl_info(struct sclp_ipl_info *info);
- void sclp_early_detect(void);
- void sclp_early_printk(const char *s);
--void __sclp_early_printk(const char *s, unsigned int len);
-+void sclp_early_printk_force(const char *s);
-+void __sclp_early_printk(const char *s, unsigned int len, unsigned int force);
+diff --git a/drivers/input/serio/i8042.c b/drivers/input/serio/i8042.c
+index 824f4c1c1f31..6462f1798fbb 100644
+--- a/drivers/input/serio/i8042.c
++++ b/drivers/input/serio/i8042.c
+@@ -1392,15 +1392,26 @@ static void __init i8042_register_ports(void)
+ 	for (i = 0; i < I8042_NUM_PORTS; i++) {
+ 		struct serio *serio = i8042_ports[i].serio;
  
- int _sclp_get_core_info(struct sclp_core_info *info);
- int sclp_core_configure(u8 core);
-diff --git a/arch/s390/kernel/early_printk.c b/arch/s390/kernel/early_printk.c
-index 9431784d7796..40c1dfec944e 100644
---- a/arch/s390/kernel/early_printk.c
-+++ b/arch/s390/kernel/early_printk.c
-@@ -10,7 +10,7 @@
- 
- static void sclp_early_write(struct console *con, const char *s, unsigned int len)
- {
--	__sclp_early_printk(s, len);
-+	__sclp_early_printk(s, len, 0);
- }
- 
- static struct console sclp_early_console = {
-diff --git a/arch/s390/kernel/swsusp.S b/arch/s390/kernel/swsusp.S
-index a049a7b9d6e8..c1a080b11ae9 100644
---- a/arch/s390/kernel/swsusp.S
-+++ b/arch/s390/kernel/swsusp.S
-@@ -198,12 +198,10 @@ pgm_check_entry:
- 
- 	/* Suspend CPU not available -> panic */
- 	larl	%r15,init_thread_union
--	ahi	%r15,1<<(PAGE_SHIFT+THREAD_SIZE_ORDER)
-+	aghi	%r15,1<<(PAGE_SHIFT+THREAD_SIZE_ORDER)
-+	aghi	%r15,-STACK_FRAME_OVERHEAD
- 	larl	%r2,.Lpanic_string
--	lghi	%r1,0
--	sam31
--	sigp	%r1,%r0,SIGP_SET_ARCHITECTURE
--	brasl	%r14,sclp_early_printk
-+	brasl	%r14,sclp_early_printk_force
- 	larl	%r3,.Ldisabled_wait_31
- 	lpsw	0(%r3)
- 4:
-diff --git a/drivers/s390/char/sclp_early_core.c b/drivers/s390/char/sclp_early_core.c
-index edeb2597b0b8..4daf797a6423 100644
---- a/drivers/s390/char/sclp_early_core.c
-+++ b/drivers/s390/char/sclp_early_core.c
-@@ -188,11 +188,11 @@ static int sclp_early_setup(int disable, int *have_linemode, int *have_vt220)
-  * Output one or more lines of text on the SCLP console (VT220 and /
-  * or line-mode).
-  */
--void __sclp_early_printk(const char *str, unsigned int len)
-+void __sclp_early_printk(const char *str, unsigned int len, unsigned int force)
- {
- 	int have_linemode, have_vt220;
- 
--	if (sclp_init_state != sclp_init_state_uninitialized)
-+	if (!force && sclp_init_state != sclp_init_state_uninitialized)
- 		return;
- 	if (sclp_early_setup(0, &have_linemode, &have_vt220) != 0)
- 		return;
-@@ -205,5 +205,10 @@ void __sclp_early_printk(const char *str, unsigned int len)
- 
- void sclp_early_printk(const char *str)
- {
--	__sclp_early_printk(str, strlen(str));
-+	__sclp_early_printk(str, strlen(str), 0);
-+}
+-		if (serio) {
+-			printk(KERN_INFO "serio: %s at %#lx,%#lx irq %d\n",
+-				serio->name,
+-				(unsigned long) I8042_DATA_REG,
+-				(unsigned long) I8042_COMMAND_REG,
+-				i8042_ports[i].irq);
+-			serio_register_port(serio);
+-			device_set_wakeup_capable(&serio->dev, true);
+-		}
++		if (!serio)
++			continue;
 +
-+void sclp_early_printk_force(const char *str)
-+{
-+	__sclp_early_printk(str, strlen(str), 1);
++		printk(KERN_INFO "serio: %s at %#lx,%#lx irq %d\n",
++			serio->name,
++			(unsigned long) I8042_DATA_REG,
++			(unsigned long) I8042_COMMAND_REG,
++			i8042_ports[i].irq);
++		serio_register_port(serio);
++		device_set_wakeup_capable(&serio->dev, true);
++
++		/*
++		 * On platforms using suspend-to-idle, allow the keyboard to
++		 * wake up the system from sleep by enabling keyboard wakeups
++		 * by default.  This is consistent with keyboard wakeup
++		 * behavior on many platforms using suspend-to-RAM (ACPI S3)
++		 * by default.
++		 */
++		if (pm_suspend_via_s2idle() && i == I8042_KBD_PORT_NO)
++			device_set_wakeup_enable(&serio->dev, true);
+ 	}
  }
+ 
+diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+index 8544357d92d0..950b56d255ac 100644
+--- a/include/linux/suspend.h
++++ b/include/linux/suspend.h
+@@ -251,6 +251,7 @@ static inline bool idle_should_enter_s2idle(void)
+ 	return unlikely(s2idle_state == S2IDLE_STATE_ENTER);
+ }
+ 
++extern bool pm_suspend_via_s2idle(void);
+ extern void __init pm_states_init(void);
+ extern void s2idle_set_ops(const struct platform_s2idle_ops *ops);
+ extern void s2idle_wake(void);
+@@ -282,6 +283,7 @@ static inline void pm_set_suspend_via_firmware(void) {}
+ static inline void pm_set_resume_via_firmware(void) {}
+ static inline bool pm_suspend_via_firmware(void) { return false; }
+ static inline bool pm_resume_via_firmware(void) { return false; }
++static inline bool pm_suspend_via_s2idle(void) { return false; }
+ 
+ static inline void suspend_set_ops(const struct platform_suspend_ops *ops) {}
+ static inline int pm_suspend(suspend_state_t state) { return -ENOSYS; }
+diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+index c0bc2c89697a..405e80219fe4 100644
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -62,6 +62,12 @@ static DECLARE_WAIT_QUEUE_HEAD(s2idle_wait_head);
+ enum s2idle_states __read_mostly s2idle_state;
+ static DEFINE_RAW_SPINLOCK(s2idle_lock);
+ 
++bool pm_suspend_via_s2idle(void)
++{
++	return mem_sleep_current == PM_SUSPEND_TO_IDLE;
++}
++EXPORT_SYMBOL_GPL(pm_suspend_via_s2idle);
++
+ void s2idle_set_ops(const struct platform_s2idle_ops *ops)
+ {
+ 	lock_system_sleep();
 -- 
 2.17.1
 
