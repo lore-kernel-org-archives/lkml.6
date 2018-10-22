@@ -2,106 +2,121 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A158C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 886D6C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:07:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 990BC20645
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:02:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80F0E20645
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:07:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VILLMoR5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 990BC20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lZ1Kh0GK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80F0E20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729072AbeJWDWk (ORCPT
+        id S1728879AbeJWD1l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 23:22:40 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46065 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729051AbeJWDWj (ORCPT
+        Mon, 22 Oct 2018 23:27:41 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:52634 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728289AbeJWD1k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 23:22:39 -0400
-Received: by mail-lf1-f68.google.com with SMTP id c24-v6so4812758lfi.12
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 12:02:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z5ID5WKJrfkdcLoERsjoZ/K2q9uEi3Aqy1CFjN9gDnY=;
-        b=VILLMoR5dLCZn0OD+k+qFlafxEeeadNXbLIAoH4q4q+PLbT4VTbNHJTc3SC71u9int
-         mKOJejeeG6MYiScv0Pw1MQiHloiCfHQevZ8yCYFLiloxv5ZOUw/5a/xUMBdyixtv5GgO
-         sWk0BJ1fyqyFVj/IAq9clSA7byfBpqszz9Z9M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=z5ID5WKJrfkdcLoERsjoZ/K2q9uEi3Aqy1CFjN9gDnY=;
-        b=NDuY8MQXYTYm4hgfwtapAP3Em2OfJvTGZ58VqGJGiCE7oEc6Rmm/qZq36hbFX0vj+h
-         mD0elR7ursDb5xzDJiBiLrym0g2CVxJ5Yz1QXWYiyB3MUAwBv2MSLp/1+Q9OSq+nH0rK
-         jGqKKrN+u2fIN0dn5StYIAaNM7iA4mEGWqEngmq2OQi5LycKy+6A/hjl5QL/lezDu+PT
-         5fxuRLFrwY/JCxRfAUmisL5NCg7o/5+dlJjoEqeCDn/1ge+CuVCa970yojaQE7eQ0PPB
-         n2snFDA/p5OzYjco0VGS5O+pmV2F8mohl4G+C7E+X/VbEAmKTJdEb+IMjM6BSaUxn/iv
-         rx5w==
-X-Gm-Message-State: ABuFfogzqo3KDr/R0IhkaToZJrlN41jbpUDApo4CcRPpKKKI/Qw+XSC3
-        aXDrqcK3ueintD6SqiIsDHttPw==
-X-Google-Smtp-Source: ACcGV60FraSentNbNWLV5NFVmszbKEohnBejUtVUbrwFmDD8ScQa132adJCh8QOmw14ooPwHfeClGg==
-X-Received: by 2002:a19:9e54:: with SMTP id h81-v6mr9683112lfe.155.1540234974456;
-        Mon, 22 Oct 2018 12:02:54 -0700 (PDT)
-Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id c16-v6sm789815lfj.43.2018.10.22.12.02.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Oct 2018 12:02:53 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 22:02:51 +0300
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     davem@davemloft.net, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: ethernet: ti: cpsw: unsync mcast entries
- while switch promisc mode
-Message-ID: <20181022190249.GA4892@khorivan>
-Mail-Followup-To: Grygorii Strashko <grygorii.strashko@ti.com>,
-        davem@davemloft.net, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181019202541.10278-1-ivan.khoronzhuk@linaro.org>
- <6ac434fa-858b-8395-91e7-442cf18b33f0@ti.com>
+        Mon, 22 Oct 2018 23:27:40 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9MIx1HI120483;
+        Mon, 22 Oct 2018 19:07:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=R+F/FRKXna6YizA6zF3XuP2H/v28iQv34CkOuurfgY0=;
+ b=lZ1Kh0GK+61eIr6ZpqZO0B3AQQSAKIzCcYXUlJn0xRiXT9zGtUtOfpaV9EMtZjIHya5D
+ PA5GCjAc2lQvyS/np1t+oLVVoFRQ/XxYxIiLja7DXwOx1NH/fxJj6ZA5Uv80fM0cUpQy
+ 9jDp3ngoc5s9W4BRIv9rYU1xTwR1orq1BJGWdTKeoRYaftwTAuHeYbp8NSwTwsSBmDI1
+ EBOhDIjEFlCUz0sB22Uq/3N32+2auTXdEngKufViT0iC5IKAd+xrIqdKfc1XPpntyVpN
+ v0wLdXX8GjzlrUeWhbPIhucJqJh3dIuaXR3MvaxPDB4Y6zJzuEvsxBT+Wmw4Aq2rsnHP +w== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2n7w0qghet-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Oct 2018 19:07:29 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9MJ7S5d005483
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Oct 2018 19:07:28 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9MJ7R1H031149;
+        Mon, 22 Oct 2018 19:07:27 GMT
+Received: from [10.39.206.107] (/10.39.206.107)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 22 Oct 2018 12:07:27 -0700
+Subject: Re: [PATCH 00/10] steal tasks to improve CPU utilization
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@redhat.com, subhra.mazumdar@oracle.com,
+        dhaval.giani@oracle.com, daniel.m.jordan@oracle.com,
+        pavel.tatashin@microsoft.com, matt@codeblueprint.co.uk,
+        umgwanakikbuti@gmail.com, riel@redhat.com, jbacik@fb.com,
+        juri.lelli@redhat.com, linux-kernel@vger.kernel.org
+References: <1540220381-424433-1-git-send-email-steven.sistare@oracle.com>
+ <20181022170421.GF3117@worktop.programming.kicks-ass.net>
+From:   Steven Sistare <steven.sistare@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <8e38ce84-ec1a-aef7-4784-462ef754f62a@oracle.com>
+Date:   Mon, 22 Oct 2018 15:07:10 -0400
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <6ac434fa-858b-8395-91e7-442cf18b33f0@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181022170421.GF3117@worktop.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9054 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=681
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810220162
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 01:26:35PM -0500, Grygorii Strashko wrote:
->
->
->On 10/19/18 3:25 PM, Ivan Khoronzhuk wrote:
->>After flushing all mcast entries from the table, the ones contained in
->>mc list of ndev are not restored when promisc mode is toggled off,
->>because they are considered as synched with ALE, thus, in order to
->>restore them after promisc mode - reset syncing info. This fix
->>touches only switch mode devices, including single port boards
->>like Beagle Bone.
+On 10/22/2018 1:04 PM, Peter Zijlstra wrote:
+> On Mon, Oct 22, 2018 at 07:59:31AM -0700, Steve Sistare wrote:
+>> When a CPU has no more CFS tasks to run, and idle_balance() fails to
+>> find a task, then attempt to steal a task from an overloaded CPU in the
+>> same LLC. Maintain and use a bitmap of overloaded CPUs to efficiently
+>> identify candidates.  To minimize search time, steal the first migratable
+>> task that is found when the bitmap is traversed.  For fairness, search
+>> for migratable tasks on an overloaded CPU in order of next to run.
 >>
->>Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
->>---
->
->
->So, this is follow up fix for
->176b23 net: ethernet: ti: cpsw: fix lost of mcast packets while rx_mode update
->because I can't reproduce it otherwise.
->
->Could you update description and re-send pls.?
+>> This simple stealing yields a higher CPU utilization than idle_balance()
+>> alone, because the search is cheap, so it may be called every time the CPU
+>> is about to go idle.  idle_balance() does more work because it searches
+>> widely for the busiest queue, so to limit its CPU consumption, it declines
+>> to search if the system is too busy.  Simple stealing does not offload the
+>> globally busiest queue, but it is much better than running nothing at all.
+> 
+> Why I don't dislike the idea; I feel it is unfortunate to have two
+> different mechanisms to do effectively the same thing.
+> 
+> Can't we improve idle_balance() instead of building this parallel
+> functionality?
 
-Done.
+We could delete idle_balance() and use stealing exclusively for handling
+new idle.  For each sd level, stealing would look for an overloaded CPU
+in the overloaded bitmap(s) that overlap that level.  I played with that
+a little but it is not ready for prime time, and I did not want to hold
+the patch series for it.  Also, I would like folks to get some production
+experience with stealing on a variety of architectures before considering
+a radical step like replacing idle_balance().
 
--- 
-Regards,
-Ivan Khoronzhuk
+We could merge the stealing code into the idle_balance() code to get a
+union of the two, but IMO that would be less readable.
+
+We could remove the core and socket levels from idle_balance() and let
+stealing handle those levels.  I think that makes sense after stealing
+performance is validated on more architectures, but we would still have
+two different mechanisms.
+
+- Steve
