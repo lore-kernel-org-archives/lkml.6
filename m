@@ -2,114 +2,117 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D39C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 22:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E38C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 22:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57DCA20645
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 22:46:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79CC420663
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 22:59:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="Sz/9pNab"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57DCA20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C7Hbh02a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79CC420663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729301AbeJWHGk (ORCPT
+        id S1728895AbeJWHUQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 03:06:40 -0400
-Received: from imap.thunk.org ([74.207.234.97]:46902 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729238AbeJWHGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 03:06:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=BZ71YwHmVCdTGSDAI9Z53mZLPYsgH0FoLXN4uPG39zo=; b=Sz/9pNabCN7MfFwARx/Vkl5aHU
-        OeInX4tOsvKTm7MXbzul0c567jau8xK00DG50/Jsf15isr+7ZiNM4jYUYAPwoFRpsDeOh2eSecmnU
-        0Dt9s4Tobj8nKCaLSGaO+cuTJRwkDlKZQPD1fbr6GVSg6I9HzCyFKfcK2j7qDJeHFRWw=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gEixa-0000RD-HH; Mon, 22 Oct 2018 22:46:06 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 690C77A2F4E; Mon, 22 Oct 2018 18:46:04 -0400 (EDT)
-Date:   Mon, 22 Oct 2018 18:46:04 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     NeilBrown <neil@brown.name>
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        Mishi Choudhary <mishi@linux.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        ksummit-discuss@lists.linuxfoundation.org
-Subject: Re: [Ksummit-discuss] Call to Action Re: [PATCH 0/7] Code of
- Conduct: Fix some wording, and add an interpretation document
-Message-ID: <20181022224604.GM1617@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        NeilBrown <neil@brown.name>, Josh Triplett <josh@joshtriplett.org>,
-        Mishi Choudhary <mishi@linux.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        ksummit-discuss@lists.linuxfoundation.org
-References: <20181020134908.GA32218@kroah.com>
- <87y3ar80ac.fsf@notabene.neil.brown.name>
- <20181021222608.GA24845@localhost>
- <875zxt919d.fsf@notabene.neil.brown.name>
+        Tue, 23 Oct 2018 03:20:16 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39987 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725997AbeJWHUQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 03:20:16 -0400
+Received: by mail-pl1-f195.google.com with SMTP id 1-v6so19742877plv.7;
+        Mon, 22 Oct 2018 15:59:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Xtk8aK9t64ZAizNN0rmyL8tThoipYFirypGHiQ5izPs=;
+        b=C7Hbh02aE/kG4TbPwq+BZ+qy8aQCtTKGiLR4V4IHhBpM9HIV0+3ZU17F3Hep+74FyX
+         NIWCA0c3wYMkKKrcx4ZA32X5XT+XctUUu5+W337Lf5w+KTMsxMfqv6gBFx1mOMZofg7m
+         MWgF3/dMM9IOwiRZyOcGDUbYj8yqYvtLMlLzcM12LdLxjolGEU7oO5qZJMRK9vzpyytm
+         kKffhpBksIn/7B0oCYGVhSG+Q7hbMbe3KEiD3rhdznfoucbd9jKqux5CE+NAcQnhdHzm
+         pvs2KgTXRCdcLsAp5R3ntUn2NvAELAMIs2xDFyuZjtT59bOTcJEhocXtc3y5L5Qg6QXw
+         eHfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Xtk8aK9t64ZAizNN0rmyL8tThoipYFirypGHiQ5izPs=;
+        b=bSK/D3BY/lt+7kCZw9iF0NVEhFO/byrb1Vf+EmYpnnuYY9pbhqwTszUBBi2t5ufdVv
+         lHpQJCQ7wYtXlNQr7PZvSVOlTtWXxvFb37RoEpLhSo3O4WIVxzKDqppn2YY6ODQKV42X
+         XZlxj7Sj7pl0YGytuZZTgOnO9sP+Btbr39xApWe7tfpxNe/MHgBnhiqYoPYqo1RkpBUV
+         1ux1DeiGhjUVYjoi/mb0c3xl08LxSHC7ZZ6kyy7nR1b8pAx0jsFAIzQrw85nmBqMJlMy
+         A3EEt+SmaMON9/TiX8s7rguMtvsGpIZGc8ctvqRAQcxSZ/l2zRfBGOA7QHJGQf8ksYHv
+         pOtw==
+X-Gm-Message-State: ABuFfoh3NnOGDeoIgrJC3Z2HZsJo30AFDOXIq7XkhBYn0TzzsXyirTFp
+        A46P9tvco68/8qx9Mwluno1rIUmZ
+X-Google-Smtp-Source: ACcGV62fg9Qlw0VPBeevq04JIbJ01WSSjrVpxBtdOD0mRT6umsk2Q7SUsg/bMOulYcZ8WBBxsoowEw==
+X-Received: by 2002:a17:902:4103:: with SMTP id e3-v6mr46028012pld.236.1540249183403;
+        Mon, 22 Oct 2018 15:59:43 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-91-118.nat.spd-mgts.ru. [109.252.91.118])
+        by smtp.googlemail.com with ESMTPSA id p1-v6sm47967179pfj.72.2018.10.22.15.59.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Oct 2018 15:59:42 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 09/17] ARM: dts: tegra20: harmony: Setup voltage
+ regulators for DVFS
+To:     Stephen Warren <swarren@wwwdotorg.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181021205501.23943-1-digetx@gmail.com>
+ <20181021205501.23943-10-digetx@gmail.com>
+ <a1b4cd27-858c-de53-8ae2-b1aee689475f@wwwdotorg.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <5f3b5213-0901-be42-4f8d-2e68551f100c@gmail.com>
+Date:   Tue, 23 Oct 2018 01:59:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <875zxt919d.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <a1b4cd27-858c-de53-8ae2-b1aee689475f@wwwdotorg.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Neil,
-
-I disagree with your framing, and thus your analysis, and thus your
-proposed solution.
-
-On Tue, Oct 23, 2018 at 07:26:06AM +1100, NeilBrown wrote:
-> If, for example, Linus or Andrew said "if you cannot work with any given
-> maintainer, I will consider your patch directly, but you need to point
-> to where you tried, and why you failed - or to where the promise is
-> inadequate".
+On 10/22/18 6:33 PM, Stephen Warren wrote:
+> On 10/21/18 2:54 PM, Dmitry Osipenko wrote:
+>> Set min/max regulators voltage and add CPU node that hooks up CPU with
+>> voltage regulators.
 > 
-> Currently if a maintainer is rude to you, there is no where else that
-> you can go and *that* is why it hurts.  It isn't the abuse so much as
-> the powerlessness associated with it.  If you can (metaphorically) say
-> to that maintainer "I don't care about your toilet mouth, you've just
-> given me the right to take my petition to caesar" - then the emotional
-> response will be quite different to pain.
+>> diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+> 
+>> -                sm0 {
+>> +                core_vdd_reg: sm0 {
+>>                       regulator-name = "vdd_sm0,vdd_core";
+>> -                    regulator-min-microvolt = <1200000>;
+>> -                    regulator-max-microvolt = <1200000>;
+>> +                    regulator-min-microvolt = <1000000>;
+>> +                    regulator-max-microvolt = <1300000>;
+>> +                    regulator-coupled-with = <&rtc_vdd_reg>;
+>> +                    regulator-coupled-max-spread = <150000>;
+>>                       regulator-always-on;
+>>                   };
+> 
+> How do you know for sure that these increased ranges are safe (high end) and stable (low end) for this particular board? IIRC the safe/legal range depends on the chip SKU, and to be honest I have no idea which SKU is present on Harmony... For public boards like Colibri I imagine there's enough information out there to tell what will work, but maybe not our internal boards like Harmony, unless you checked our ancient downstream kernels?
 
-No.  That's just not how things work.  Patches don't get rejected
-because maintainers are being rude.  Patches don't get accepted
-because they are not of a sufficiently high technical quality.  And if
-you spam a maintainer with bad quality patches, and they tell you what
-you should do to make them better, and you actively ignore requests
-about how to write better code[1], it is perfectly acceptable for
-maintainers to decide to ignore said bad patch committer.  Putting bad
-patch commiters on a blacklist is not a CoC violation.
+Yes, the ranges could be inaccurate in these DT patches. But it shouldn't matter much because only OPP's that match actual HW SKU will be used for DVFS. Though certainly it will be nice if we could specify exactly correct ranges.
 
-[1] And no, this is not a hypothetical example.  This particular
-kernel newcomer continually spammed maintainers with patches that
-wouldn't even compile, and were clearly never tested.  And when the
-newcomer started giving bad advice to users reporting bugs, he
-ultimately got banned from LKML...
+Looks like downstream doesn't specify safe ranges for any of the boards and it is relying on the SKU-VOLTAGE DVFS table values only. 
 
-After all, we all want to make the kernel to be better.  So if someone
-submits good quality code, Maintainers are going to want that code to
-improve their subsystem.  Thinking that people want to go off on power
-trips by rejecting perfectly sound code is a complete misdiagnosis of
-the problem.
-
-						- Ted
+For now there are quite few obstacles that need to be resolved in order to get a properly working system-wide DVFS, but things are getting a bit closer. Thank you very much for your input!
