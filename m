@@ -2,110 +2,96 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC9DC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E7CC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAC7820665
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:39:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC07520651
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:39:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iOH0msCm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAC7820665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="stcnd2w4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC07520651
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbeJWE7i (ORCPT
+        id S1729059AbeJWE7o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 00:59:38 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:59126 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbeJWE7i (ORCPT
+        Tue, 23 Oct 2018 00:59:44 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:40016 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726082AbeJWE7n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 00:59:38 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9MKYExV053497;
-        Mon, 22 Oct 2018 20:39:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=XHyNwLF3WfJn2+I4lLilabah77XmtUREkOx8TPwzgt8=;
- b=iOH0msCmciwQni/yrzeU8uC5NcfxgFSTcHlkg723A+Ip5kK7z+fhUJ7e/f2UDKUEaNgu
- Q08EeQrggYl5U2Zn6gpM7eZgwbivFgAnP0qSxOps4yOvUYhsU1h7kCBK0vfq7jHia0yD
- RTgS7BaF0IC2s3D04pqj1e1JKws6bURCalsAkVwtQ3hXwvJ92PZiSNLUX4zYwX35gKhK
- q52sYp7TP6jJKzbDoby2XdIsxO8Fa+/Sh89yQ1UwsPlciR2C5OIsEjfLyL068vHRVbII
- JQQmEOhVjIrsL74a3ETm4mqvpEZ7p67DbGd/889BE6uu1pcDiKkDRiVT2mj7u6s2nTPi Pw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2n7usu13kg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Oct 2018 20:39:05 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9MKd5d5020189
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Oct 2018 20:39:05 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9MKd4KN012901;
-        Mon, 22 Oct 2018 20:39:04 GMT
-Received: from [10.209.243.127] (/10.209.243.127)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 22 Oct 2018 13:39:03 -0700
-Subject: Re: [PATCH v2 00/10] Add support for TISCI irqchip drivers
-To:     Lokesh Vutla <lokeshvutla@ti.com>, Nishanth Menon <nm@ti.com>,
-        Rob Herring <robh+dt@kernel.org>, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com
-Cc:     Santosh Shilimkar <ssantosh@kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-References: <20181018154017.7112-1-lokeshvutla@ti.com>
-From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <942981b8-7536-2b6b-ad49-dc59671cbda6@oracle.com>
-Date:   Mon, 22 Oct 2018 13:39:02 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 23 Oct 2018 00:59:43 -0400
+Received: by mail-qk1-f193.google.com with SMTP id x11-v6so9011906qkl.7;
+        Mon, 22 Oct 2018 13:39:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=qbDsNgB6glJd+kthiGz/4cYxN9r2W50JYnnQIt0J3wU=;
+        b=stcnd2w4K/+BQghbgYXrh/ine8Xl/fs6JEGe2Kr2RgJD3ztWAeGOOT3vEAH1/CvcME
+         tacoVXTAtPQ40zJxPlFjMfbNe1gD+iI3vTm/jaW2ujSOVdqVOlf/awKyuAISJI/i7snf
+         WVgrTrarIEGyc2Cqkb1zI4DvjwdFOBo0+CVhbYyVNdBTwwiO7lLxtMAp6fKd+NxiXj8A
+         xNJPz0VJwr64yHk7nyBvETETk1lWIGtp/YwLAI7KGj+NwgSAO1zNLyEA950C8CFsQZ2s
+         tNbSqelr3+0rfV/VXJkrn1GzYT+UFGzc190EsNtCYETIyaoyhT5k4IYPPfXngKh7uiwB
+         TPvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=qbDsNgB6glJd+kthiGz/4cYxN9r2W50JYnnQIt0J3wU=;
+        b=Y9pI86RZ6Cs4wdRKybLZnZot5hpai1H0GTzJrKjNAbr4aVd0TLs9UFNOtKVfhs9c+9
+         5GALQaDJgcI1MYvaejj91JkSVVhZ0Kq58I/k9n+ge3nXhPms2vXdNkadPyD9PSOamHI5
+         gv7vnkIjSizBUM0njMGY6NlUrdlOQMH7Ncm4JNyWzsmx7j/u35wUN0cO08LQQrYtpc6l
+         NT+zQq3/LEk3DglgGL92xAZCaZMNdx1xzs/dgtoY6J9WfMjcSyrg1n/QAIQdRTOnUa1p
+         I2L8f2cOj5kzRUXe1cc13R37mi7iy7EoeBy1caYmlzUqnJAGYiFr9O9DwzondnOl4BK2
+         H7wA==
+X-Gm-Message-State: ABuFfogpMYZAm27WJ+MK+MFN/HTI9DHeBOBOz+/H1rNjKxgbAdmh2QYm
+        hn/vRYh97RjWvZtGUthm+qM=
+X-Google-Smtp-Source: ACcGV61sys11EYSSjzK+nMRF2ku3dE1GmOtQBGR01mUlqQxTRQIFoMJCzGCpGyJt+7z2TRifIV+zOQ==
+X-Received: by 2002:a37:5288:: with SMTP id g130-v6mr46004357qkb.124.1540240779603;
+        Mon, 22 Oct 2018 13:39:39 -0700 (PDT)
+Received: from smtp.gmail.com ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id n190-v6sm21463469qkb.29.2018.10.22.13.39.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Oct 2018 13:39:38 -0700 (PDT)
+Date:   Mon, 22 Oct 2018 17:39:34 -0300
+From:   Victor Colombo <victorcolombo@gmail.com>
+To:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: [PATCH 0/2] staging: iio: ad5933: Remove unnecessary spaces
+Message-ID: <20181022203934.6t525whwpp7rv47k@smtp.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181018154017.7112-1-lokeshvutla@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9054 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=752
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810220175
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/18/2018 8:40 AM, Lokesh Vutla wrote:
-> TISCI abstracts the handling of IRQ routes where interrupt sources
-> are not directly connected to host interrupt controller. This series
-> adds support for:
-> - TISCI commands needed for IRQ configuration
-> - Interrupt Router(INTR) and Interrupt Aggregator(INTA) drivers
-> 
-> More information on TISCI IRQ management can be found here[1].
-> Complete TISCI resource management information can be found here[2].
-> AM65x SoC related TISCI information can be found here[3].
-> INTR and INTA related information can be found in TRM[4].
-> 
-I didn't read the specs but from what you described in
-INTA and INTR bindings, does the flow of IRQs like below ?
+This patch fixes the checkpatch.pl warnings:
 
-Device IRQ(e.g USB) -->INTR-->INTA--->HOST IRQ controller(GIC)
+WARNING: Blank lines aren't necessary before a close brace '}'
+WARNING: No space is necessary after a cast
 
-The confusing part is aggregator and can multiplex as well
-as grouping but seems like its event grouping or multiplexing
-than actual device IRQ grouping or multi-plexsing.
+Victor Colombo (2):
+  staging: iio: ad5933: Remove unnecessary space on casting
+  staging: iio: ad5933: Remove unnecessary blank line
 
-What am I missing ?
+ drivers/staging/iio/impedance-analyzer/ad5933.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Regards,S
-antosh
+-- 
+2.19.1
+
