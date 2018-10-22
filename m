@@ -2,206 +2,162 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B045C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 08:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E2E4C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 08:10:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E1A1205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 08:07:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EB882083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 08:10:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PxhmVXt1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E1A1205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EYWWMnoh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EB882083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbeJVQZK (ORCPT
+        id S1727877AbeJVQ1o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 12:25:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56024 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727634AbeJVQZJ (ORCPT
+        Mon, 22 Oct 2018 12:27:44 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:45506 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727348AbeJVQ1n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 12:25:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=XZwlipywSvSqiUraBSlNOp437bMvWe5EhHYBhoHuxuU=; b=PxhmVXt1ubJzGjUwz1aVY3hRe3
-        X4b9Md+ILekqUnUDI955Z0ZZdVFVmX7wX7A/W5lUVDi81Gtj3LWoQqekoRwsD31zHr5U794UxKYJe
-        rKBiQEMbl/BzMCLEKqpBpJmBUbpJHED6GboSn0mFFhx/BQcGLD5/dfCoon5oL47Zp5uK/yBBOhFnE
-        h9BRirMGhdYh/C2HZR7w3ksR9j6HoWH3nQx+tVZMf7KKDXUk+qU/zSiVLac4QOBoLTyHc+e6TCnyO
-        rXEhU1f7jCjv14tA6361wJrFu5j86/dUWr879rW71luRoevmk+F2H2NnBzLzIDz83ZpX/thc1ZAPw
-        3ixyUAYg==;
-Received: from [109.144.216.89] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gEVFQ-00057r-5Q; Mon, 22 Oct 2018 08:07:36 +0000
-Date:   Mon, 22 Oct 2018 10:07:33 +0200
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] first round of dma mapping updates for 4.20
-Message-ID: <20181022080733.GA1960@infradead.org>
+        Mon, 22 Oct 2018 12:27:43 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9M8AAoa023122;
+        Mon, 22 Oct 2018 03:10:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1540195810;
+        bh=QFBZ1vwLwKJK8YI/2D8b0CJEYACFJ2eppJuzOQ4EtYY=;
+        h=From:To:CC:Subject:Date;
+        b=EYWWMnohRNQF1tVzPf3eUEREe97Dfbz1jQ9w9CJmFEkYHIlS91pHIxzSZ3yFTmsTy
+         yKSzcJfbpg4AZcGx4qhfElawgPrUm0RZXjrpojKEDR5MGJ89CRNFX4Qdkgbp0oWncz
+         9l7MaihI9m4a246nw7b4kflfFBv2pz5nwjeQiqr4=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9M8AA46005660;
+        Mon, 22 Oct 2018 03:10:10 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 22
+ Oct 2018 03:10:07 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 22 Oct 2018 03:10:07 -0500
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9M8A4o7022959;
+        Mon, 22 Oct 2018 03:10:05 -0500
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <lee.jones@linaro.org>, <jingoohan1@gmail.com>,
+        <daniel.thompson@linaro.org>
+CC:     <dri-devel@lists.freedesktop.org>, <linux-fbdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] backlight: gpio-backlight: Correct initial power state handling
+Date:   Mon, 22 Oct 2018 11:11:09 +0300
+Message-ID: <20181022081109.21456-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus, below is the first round of dma-mapping updates for 4.20.
+The default-on property - or the def_value via legacy pdata) should be
+handled as:
+if it is 1, the backlight must be enabled (kept enabled)
+if it is 0, the backlight must be disabled (kept disabled)
 
-There will be a second PR as some big changes were only applied just
-before the end of the merge window, and I want to give them a few
-more days in linux-next.
+This only works for the case when default-on is set. If it is not set then
+the brightness of the backlight is set to 0. Now if the backlight is
+enabled by external driver (graphics) the backlight will stay disabled since
+the brightness is configured as 0. The backlight will not turn on.
 
-Note that "dma-mapping: add the missing ARCH_HAS_SYNC_DMA_FOR_CPU_ALL
-declaration" was applied here and later cherry picked into 4.19, so it
-will show up as a duplicate commit.  That also causes an easy to solve
-merge conflict in kernel/dma/Kconfig (just make sure there are no
-duplicate symbols).
+In order to minimize screen flickering during device boot:
 
-There also are some Kconfig conflicts in linux-next for the architecture
-Kconfig files, but those are only due to non-related symbols close to
-each other, and trivial to resolve.
+The initial brightness should be set to 1.
 
-The following changes since commit d7b686ebf704e3d91925a535a0905ba6be23757c:
+If booted in non DT mode or no phandle link to the backlight node:
+follow the def_value/default-on to select UNBLANK or POWERDOWN
 
-  Merge branch 'i2c/for-current' of git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux (2018-09-07 17:30:40 -0700)
+If in DT boot we have phandle link then leave the GPIO in a state which the
+bootloader left it and let the user of the backlight to configure it
+further.
 
-are available in the Git repository at:
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+---
+Hi,
 
-  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-4.20
+Changes since v1:
+- Implement similiar initial power state handling as pwm backlight have
 
-for you to fetch changes up to b9fd04262a8abc366f40a9e97598e94591352c26:
+Regards,
+Peter
 
-  dma-direct: respect DMA_ATTR_NO_WARN (2018-10-09 15:08:46 +0200)
+ drivers/video/backlight/gpio_backlight.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
-----------------------------------------------------------------
-First batch of dma-mapping changes for 4.20:
+diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
+index e470da95d806..51c49f03ed83 100644
+--- a/drivers/video/backlight/gpio_backlight.c
++++ b/drivers/video/backlight/gpio_backlight.c
+@@ -62,13 +62,11 @@ static int gpio_backlight_probe_dt(struct platform_device *pdev,
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+-	enum gpiod_flags flags;
+ 	int ret;
+ 
+ 	gbl->def_value = of_property_read_bool(np, "default-on");
+-	flags = gbl->def_value ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
+ 
+-	gbl->gpiod = devm_gpiod_get(dev, NULL, flags);
++	gbl->gpiod = devm_gpiod_get(dev, NULL, GPIOD_ASIS);
+ 	if (IS_ERR(gbl->gpiod)) {
+ 		ret = PTR_ERR(gbl->gpiod);
+ 
+@@ -82,6 +80,22 @@ static int gpio_backlight_probe_dt(struct platform_device *pdev,
+ 	return 0;
+ }
+ 
++static int gpio_backlight_initial_power_state(struct gpio_backlight *gbl)
++{
++	struct device_node *node = gbl->dev->of_node;
++
++	/* Not booted with device tree or no phandle link to the node */
++	if (!node || !node->phandle)
++		return gbl->def_value ? FB_BLANK_UNBLANK : FB_BLANK_POWERDOWN;
++
++	/* if the enable GPIO is disabled, do not enable the backlight */
++	if (gpiod_get_value_cansleep(gbl->gpiod) == 0)
++		return FB_BLANK_POWERDOWN;
++
++	return FB_BLANK_UNBLANK;
++}
++
++
+ static int gpio_backlight_probe(struct platform_device *pdev)
+ {
+ 	struct gpio_backlight_platform_data *pdata =
+@@ -142,7 +156,9 @@ static int gpio_backlight_probe(struct platform_device *pdev)
+ 		return PTR_ERR(bl);
+ 	}
+ 
+-	bl->props.brightness = gbl->def_value;
++	bl->props.power = gpio_backlight_initial_power_state(gbl);
++	bl->props.brightness = 1;
++
+ 	backlight_update_status(bl);
+ 
+ 	platform_set_drvdata(pdev, bl);
+-- 
+Peter
 
- - mostly more consolidation of the direct mapping code, including
-   converting over hexagon, and merging the coherent and non-coherent
-   code into a single dma_map_ops instance (me)
- - cleanups for the dma_configure/dma_unconfigure callchains (me)
- - better handling of dma_masks in odd setups (me, Alexander Duyck)
- - better debugging of passing vmalloc address to the DMA API
-   (Stephen Boyd)
- - CMA command line parsing fix (He Zhe)
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
-----------------------------------------------------------------
-Alexander Duyck (1):
-      dma-direct: fix return value of dma_direct_supported
-
-Christoph Hellwig (24):
-      hexagon: remove the sync_single_for_cpu DMA operation
-      hexagon: implement the sync_sg_for_device DMA operation
-      hexagon: use generic dma_noncoherent_ops
-      arm-nommu: don't define arch_teardown_dma_ops
-      dma-mapping: remove dma_configure
-      dma-mapping: remove dma_deconfigure
-      dma-mapping: clear dev->dma_ops in arch_teardown_dma_ops
-      dma-mapping: add the missing ARCH_HAS_SYNC_DMA_FOR_CPU_ALL declaration
-      MIPS: don't select DMA_MAYBE_COHERENT from DMA_PERDEV_COHERENT
-      dma-mapping: move the dma_coherent flag to struct device
-      dma-mapping: merge direct and noncoherent ops
-      dma-mapping: consolidate the dma mmap implementations
-      dma-mapping: support non-coherent devices in dma_common_get_sgtable
-      Revert "dma-mapping: clear dev->dma_ops in arch_teardown_dma_ops"
-      unicore32: remove swiotlb support
-      dma-mapping: make the get_required_mask method available unconditionally
-      dma-direct: add an explicit dma_direct_get_required_mask
-      dma-direct: refine dma_direct_alloc zone selection
-      dma-direct: implement complete bus_dma_mask handling
-      dma-direct: always allow dma mask <= physiscal memory size
-      dma-mapping: move dma_default_get_required_mask under ifdef
-      dma-direct: document the zone selection logic
-      dma-mapping: translate __GFP_NOFAIL to DMA_ATTR_NO_WARN
-      dma-direct: respect DMA_ATTR_NO_WARN
-
-He Zhe (1):
-      dma-mapping: fix panic caused by passing empty cma command line argument
-
-Stephen Boyd (1):
-      dma-debug: Check for drivers mapping invalid addresses in dma_map_single()
-
- arch/arc/Kconfig                         |   4 +-
- arch/arc/mm/dma.c                        |  41 ++----
- arch/arm/include/asm/dma-mapping.h       |   2 +
- arch/arm/mm/dma-mapping-nommu.c          |  11 +-
- arch/c6x/Kconfig                         |   2 +-
- arch/hexagon/Kconfig                     |   2 +
- arch/hexagon/include/asm/Kbuild          |   1 +
- arch/hexagon/include/asm/dma-mapping.h   |  40 ------
- arch/hexagon/kernel/dma.c                | 143 ++------------------
- arch/ia64/include/asm/dma-mapping.h      |   2 -
- arch/ia64/include/asm/machvec.h          |   7 -
- arch/ia64/include/asm/machvec_init.h     |   1 -
- arch/ia64/include/asm/machvec_sn2.h      |   2 -
- arch/ia64/pci/pci.c                      |  26 ----
- arch/ia64/sn/pci/pci_dma.c               |   4 +-
- arch/m68k/Kconfig                        |   2 +-
- arch/microblaze/Kconfig                  |   4 +-
- arch/microblaze/include/asm/pgtable.h    |   2 -
- arch/microblaze/kernel/dma.c             |  22 ---
- arch/microblaze/mm/consistent.c          |   3 +-
- arch/mips/Kconfig                        |   7 +-
- arch/mips/include/asm/Kbuild             |   1 +
- arch/mips/include/asm/device.h           |  19 ---
- arch/mips/include/asm/dma-coherence.h    |   6 +
- arch/mips/include/asm/dma-mapping.h      |   4 +-
- arch/mips/jazz/jazzdma.c                 |   7 +-
- arch/mips/kernel/setup.c                 |   2 +-
- arch/mips/mm/c-r4k.c                     |  17 ++-
- arch/mips/mm/dma-noncoherent.c           |  79 +++--------
- arch/nds32/Kconfig                       |   2 +-
- arch/nios2/Kconfig                       |   2 +-
- arch/openrisc/Kconfig                    |   2 +-
- arch/parisc/Kconfig                      |   2 +-
- arch/parisc/kernel/setup.c               |   2 +-
- arch/sh/Kconfig                          |   3 +-
- arch/sparc/Kconfig                       |   2 +-
- arch/sparc/include/asm/dma-mapping.h     |   4 +-
- arch/unicore32/Kconfig                   |   2 +-
- arch/unicore32/include/asm/Kbuild        |   1 +
- arch/unicore32/include/asm/dma-mapping.h |  22 ---
- arch/unicore32/mm/init.c                 |   3 -
- arch/x86/kernel/amd_gart_64.c            |   6 +-
- arch/xtensa/Kconfig                      |   2 +-
- drivers/acpi/arm64/iort.c                |   2 +-
- drivers/acpi/scan.c                      |  10 --
- drivers/base/dd.c                        |  12 +-
- drivers/base/platform.c                  |  11 +-
- drivers/of/device.c                      |  12 --
- drivers/pci/controller/vmd.c             |   4 -
- drivers/xen/swiotlb-xen.c                |   4 +-
- include/acpi/acpi_bus.h                  |   1 -
- include/asm-generic/dma-mapping.h        |   9 --
- include/linux/acpi.h                     |   2 -
- include/linux/device.h                   |   7 +
- include/linux/dma-debug.h                |   8 ++
- include/linux/dma-direct.h               |   8 +-
- include/linux/dma-mapping.h              |  42 +++---
- include/linux/dma-noncoherent.h          |  27 +++-
- include/linux/of_device.h                |   3 -
- kernel/dma/Kconfig                       |  19 +--
- kernel/dma/Makefile                      |   1 -
- kernel/dma/contiguous.c                  |   6 +-
- kernel/dma/debug.c                       |  16 +++
- kernel/dma/direct.c                      | 222 +++++++++++++++++++++++++------
- kernel/dma/mapping.c                     |  71 +++++-----
- kernel/dma/noncoherent.c                 | 106 ---------------
- 66 files changed, 423 insertions(+), 698 deletions(-)
- delete mode 100644 arch/hexagon/include/asm/dma-mapping.h
- delete mode 100644 arch/mips/include/asm/device.h
- delete mode 100644 arch/unicore32/include/asm/dma-mapping.h
- delete mode 100644 kernel/dma/noncoherent.c
