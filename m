@@ -4,46 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F26BC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:19:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5750FC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4673C20658
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:19:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EBBE2087D
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:19:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0Z/WdbXm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4673C20658
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GgYjVHOw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EBBE2087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728651AbeJVSh3 (ORCPT
+        id S1728667AbeJVSha (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:37:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48068 "EHLO mail.kernel.org"
+        Mon, 22 Oct 2018 14:37:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728144AbeJVSh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:37:28 -0400
+        id S1728144AbeJVSha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:37:30 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 752C520853;
-        Mon, 22 Oct 2018 10:19:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F135920881;
+        Mon, 22 Oct 2018 10:19:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540203573;
-        bh=QFyENdRFVycnBoYnFvuX1bAd+My0zR1fy73V2XoC5EY=;
+        s=default; t=1540203575;
+        bh=LeUvGKhhM1YdziZPPkuTEsGZckdJeormlkKPNV+vZCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0Z/WdbXmV8w2IThaEBNYUoMmX4KXOl311+BEnW/zadvv0ja2t9hR5faOiE24aAJqe
-         R26t8LyF+IfttURuyc9d3S2rFhlcuC2L+7MEPqSg5mXft18ygn/SMXVvul+jq76C+T
-         PmRmDeTYAu6p+3uveWAV95rZ6pTeOPYPUJ81j3lU=
+        b=GgYjVHOwWrNjhi1RqoxYPDmPES9l+mk3WzoYrDKgNUWunonlLPf1JSxvgUpU/6CLx
+         PQcqU8KpjhR7mbznfUMGxopTNvZqhTeRg5NS1wgy5dOWW/3+jWt0ZXUFRa4u4CVS4I
+         hMWz6fnk+0sAGr84qmt2ZJsEUYooIIZpEKWJ6VZU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+Cc:     Milian Wolff <milian.wolff@kdab.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 02/27] s390/hibernate: fix error handling when suspend cpu != resume cpu
-Date:   Mon, 22 Oct 2018 06:18:59 -0400
-Message-Id: <20181022101924.40531-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 03/27] perf report: Don't try to map ip to invalid map
+Date:   Mon, 22 Oct 2018 06:19:00 -0400
+Message-Id: <20181022101924.40531-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181022101924.40531-1-sashal@kernel.org>
 References: <20181022101924.40531-1-sashal@kernel.org>
@@ -52,118 +55,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+From: Milian Wolff <milian.wolff@kdab.com>
 
-[ Upstream commit 55a5542a546238354d1f209f794414168cf8c71d ]
+[ Upstream commit ff4ce2885af8f9e8e99864d78dbeb4673f089c76 ]
 
-The resume code checks if the resume cpu is the same as the suspend cpu.
-If not, and if it is also not possible to switch to the suspend cpu, an
-error message should be printed and the resume process should be stopped
-by loading a disabled wait psw.
+Fixes a crash when the report encounters an address that could not be
+associated with an mmaped region:
 
-The current logic is broken in multiple ways, the message is never printed,
-and the disabled wait psw never loaded because the kernel panics before that:
-- sam31 and SIGP_SET_ARCHITECTURE to ESA mode is wrong, this will break
-  on the first 64bit instruction in sclp_early_printk().
-- The init stack should be used, but the stack pointer is not set up correctly
-  (missing aghi %r15,-STACK_FRAME_OVERHEAD).
-- __sclp_early_printk() checks the sclp_init_state. If it is not
-  sclp_init_state_uninitialized, it simply returns w/o printing anything.
-  In the resumed kernel however, sclp_init_state will never be uninitialized.
+  #0  0x00005555557bdc4a in callchain_srcline (ip=<error reading variable: Cannot access memory at address 0x38>, sym=0x0, map=0x0) at util/machine.c:2329
+  #1  unwind_entry (entry=entry@entry=0x7fffffff9180, arg=arg@entry=0x7ffff5642498) at util/machine.c:2329
+  #2  0x00005555558370af in entry (arg=0x7ffff5642498, cb=0x5555557bdb50 <unwind_entry>, thread=<optimized out>, ip=18446744073709551615) at util/unwind-libunwind-local.c:586
+  #3  get_entries (ui=ui@entry=0x7fffffff9620, cb=0x5555557bdb50 <unwind_entry>, arg=0x7ffff5642498, max_stack=<optimized out>) at util/unwind-libunwind-local.c:703
+  #4  0x0000555555837192 in _unwind__get_entries (cb=<optimized out>, arg=<optimized out>, thread=<optimized out>, data=<optimized out>, max_stack=<optimized out>) at util/unwind-libunwind-local.c:725
+  #5  0x00005555557c310f in thread__resolve_callchain_unwind (max_stack=127, sample=0x7fffffff9830, evsel=0x555555c7b3b0, cursor=0x7ffff5642498, thread=0x555555c7f6f0) at util/machine.c:2351
+  #6  thread__resolve_callchain (thread=0x555555c7f6f0, cursor=0x7ffff5642498, evsel=0x555555c7b3b0, sample=0x7fffffff9830, parent=0x7fffffff97b8, root_al=0x7fffffff9750, max_stack=127) at util/machine.c:2378
+  #7  0x00005555557ba4ee in sample__resolve_callchain (sample=<optimized out>, cursor=<optimized out>, parent=parent@entry=0x7fffffff97b8, evsel=<optimized out>, al=al@entry=0x7fffffff9750,
+      max_stack=<optimized out>) at util/callchain.c:1085
 
-This patch fixes those issues by removing the sam31/ESA logic, adding a
-correct init stack pointer, and also introducing sclp_early_printk_force()
-to allow using sclp_early_printk() even when sclp_init_state is not
-uninitialized.
-
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
+Tested-by: Sandipan Das <sandipan@linux.ibm.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: 2a9d5050dc84 ("perf script: Show correct offsets for DWARF-based unwinding")
+Link: http://lkml.kernel.org/r/20180926135207.30263-1-milian.wolff@kdab.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/include/asm/sclp.h        |  3 ++-
- arch/s390/kernel/early_printk.c     |  2 +-
- arch/s390/kernel/swsusp.S           |  8 +++-----
- drivers/s390/char/sclp_early_core.c | 11 ++++++++---
- 4 files changed, 14 insertions(+), 10 deletions(-)
+ tools/perf/util/machine.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/include/asm/sclp.h b/arch/s390/include/asm/sclp.h
-index 3cae9168f63c..e44a8d7959f5 100644
---- a/arch/s390/include/asm/sclp.h
-+++ b/arch/s390/include/asm/sclp.h
-@@ -108,7 +108,8 @@ int sclp_early_get_core_info(struct sclp_core_info *info);
- void sclp_early_get_ipl_info(struct sclp_ipl_info *info);
- void sclp_early_detect(void);
- void sclp_early_printk(const char *s);
--void __sclp_early_printk(const char *s, unsigned int len);
-+void sclp_early_printk_force(const char *s);
-+void __sclp_early_printk(const char *s, unsigned int len, unsigned int force);
- 
- int _sclp_get_core_info(struct sclp_core_info *info);
- int sclp_core_configure(u8 core);
-diff --git a/arch/s390/kernel/early_printk.c b/arch/s390/kernel/early_printk.c
-index 9431784d7796..40c1dfec944e 100644
---- a/arch/s390/kernel/early_printk.c
-+++ b/arch/s390/kernel/early_printk.c
-@@ -10,7 +10,7 @@
- 
- static void sclp_early_write(struct console *con, const char *s, unsigned int len)
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 22dbb6612b41..d49744dc46d7 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -2272,7 +2272,7 @@ static int unwind_entry(struct unwind_entry *entry, void *arg)
  {
--	__sclp_early_printk(s, len);
-+	__sclp_early_printk(s, len, 0);
- }
+ 	struct callchain_cursor *cursor = arg;
+ 	const char *srcline = NULL;
+-	u64 addr;
++	u64 addr = entry->ip;
  
- static struct console sclp_early_console = {
-diff --git a/arch/s390/kernel/swsusp.S b/arch/s390/kernel/swsusp.S
-index a049a7b9d6e8..c1a080b11ae9 100644
---- a/arch/s390/kernel/swsusp.S
-+++ b/arch/s390/kernel/swsusp.S
-@@ -198,12 +198,10 @@ pgm_check_entry:
+ 	if (symbol_conf.hide_unresolved && entry->sym == NULL)
+ 		return 0;
+@@ -2284,7 +2284,8 @@ static int unwind_entry(struct unwind_entry *entry, void *arg)
+ 	 * Convert entry->ip from a virtual address to an offset in
+ 	 * its corresponding binary.
+ 	 */
+-	addr = map__map_ip(entry->map, entry->ip);
++	if (entry->map)
++		addr = map__map_ip(entry->map, entry->ip);
  
- 	/* Suspend CPU not available -> panic */
- 	larl	%r15,init_thread_union
--	ahi	%r15,1<<(PAGE_SHIFT+THREAD_SIZE_ORDER)
-+	aghi	%r15,1<<(PAGE_SHIFT+THREAD_SIZE_ORDER)
-+	aghi	%r15,-STACK_FRAME_OVERHEAD
- 	larl	%r2,.Lpanic_string
--	lghi	%r1,0
--	sam31
--	sigp	%r1,%r0,SIGP_SET_ARCHITECTURE
--	brasl	%r14,sclp_early_printk
-+	brasl	%r14,sclp_early_printk_force
- 	larl	%r3,.Ldisabled_wait_31
- 	lpsw	0(%r3)
- 4:
-diff --git a/drivers/s390/char/sclp_early_core.c b/drivers/s390/char/sclp_early_core.c
-index eceba3858cef..2f61f5579aa5 100644
---- a/drivers/s390/char/sclp_early_core.c
-+++ b/drivers/s390/char/sclp_early_core.c
-@@ -210,11 +210,11 @@ static int sclp_early_setup(int disable, int *have_linemode, int *have_vt220)
-  * Output one or more lines of text on the SCLP console (VT220 and /
-  * or line-mode).
-  */
--void __sclp_early_printk(const char *str, unsigned int len)
-+void __sclp_early_printk(const char *str, unsigned int len, unsigned int force)
- {
- 	int have_linemode, have_vt220;
- 
--	if (sclp_init_state != sclp_init_state_uninitialized)
-+	if (!force && sclp_init_state != sclp_init_state_uninitialized)
- 		return;
- 	if (sclp_early_setup(0, &have_linemode, &have_vt220) != 0)
- 		return;
-@@ -227,5 +227,10 @@ void __sclp_early_printk(const char *str, unsigned int len)
- 
- void sclp_early_printk(const char *str)
- {
--	__sclp_early_printk(str, strlen(str));
-+	__sclp_early_printk(str, strlen(str), 0);
-+}
-+
-+void sclp_early_printk_force(const char *str)
-+{
-+	__sclp_early_printk(str, strlen(str), 1);
- }
+ 	srcline = callchain_srcline(entry->map, entry->sym, addr);
+ 	return callchain_cursor_append(cursor, entry->ip,
 -- 
 2.17.1
 
