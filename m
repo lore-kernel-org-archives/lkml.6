@@ -2,114 +2,117 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D64D6ECDE43
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7FEECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D5D42083E
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:27:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PY2jfqiv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D5D42083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 95C512083E
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:34:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95C512083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbeJVJn0 (ORCPT
+        id S1726970AbeJVJut (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 05:43:26 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41267 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbeJVJn0 (ORCPT
+        Mon, 22 Oct 2018 05:50:49 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59457 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbeJVJus (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 05:43:26 -0400
-Received: by mail-qt1-f193.google.com with SMTP id l41-v6so44489889qtl.8
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 18:27:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=Kf5sxkkwPbGMilmlQpLECHP9rYySbUKgffGiyo23RFk=;
-        b=PY2jfqivIdoFLbhP+bD+RLLX/+zZG7ZUW3ELSnUE0OXEhc8dXz3uEiU5agN+wWEslt
-         LHCA1E3zxYVn6Y7eEpQ60GDks89bjOukCE6BcktDHtXLReOv6gvs5BWo21xIEEZlZ0fq
-         JPN/f6704NuvDKkXnHkuKKg0JgYagtocUV/9S97tSaN6LLTUzawpHqSHhDmR+42s2vP0
-         s5uf5MW88jhsB2jHBl0WeCFMk+TpRDg5/C9+0QqOUny/uUvMnoCk0VMVHJ5yPQaZRdbs
-         rLdndHUfQPKfyt02f5vW+3C/2AepPKRQORQKRpe4BYo7VYrsh5WTvJK+B7JCcX1Q6s2F
-         5Uyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=Kf5sxkkwPbGMilmlQpLECHP9rYySbUKgffGiyo23RFk=;
-        b=rKn0NxoE9lcuuoI6XTQnu9y87wAg8hvKDSt+jrMNynaQsQRu1iT25tS90UV/idVNZB
-         8ZMf7gS/VRTXzuaJNyvNgVvFJzcJtODdudq0Q3e4Of80NhhRi/9Qb20Puyh3r7C+i8rL
-         oXFENOhd4ufJ5F24Axel7zAqUCSamRfOkRmOkvuLoQT9S1cE/qG+f4QwJqO60YS7gx3D
-         5tUNZwAb2oVXd9YhD5hBtWjGOdUFibhdwlUdgQwCN3fQHIv6p3hMu52xE0g6/k8SmoyQ
-         XTQ1vz6RI8T1dHRW2FPbbBVwEZd4RkJC2Pf0GQhBXcM6kwT54Ha0veaoWafSASKRBb8z
-         +3mw==
-X-Gm-Message-State: ABuFfojYfITG76psg+cA70amO5p2p6i/23yvVpGj1vBBK0OoQx4PcY3m
-        uRH7sfCBSzhdUtkY0sm8Y18=
-X-Google-Smtp-Source: ACcGV60sKtzwRaq7pFHuJP+2G8Fm4Aa3S+jQ7zVZDBaONmDRpejkAATTXUvJaJJraz/KsCRnqq+Wig==
-X-Received: by 2002:a0c:8ec9:: with SMTP id y9mr34419398qvb.65.1540171625717;
-        Sun, 21 Oct 2018 18:27:05 -0700 (PDT)
-Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id z188-v6sm8103192qkz.66.2018.10.21.18.27.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 21 Oct 2018 18:27:04 -0700 (PDT)
-Date:   Sun, 21 Oct 2018 22:27:01 -0300
-From:   Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To:     Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2] MAINTAINERS: Add entry for VKMS
-Message-ID: <20181022012701.7a2rkmot2bj37xfb@smtp.gmail.com>
+        Mon, 22 Oct 2018 05:50:48 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9M1XqeH2376134
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sun, 21 Oct 2018 18:33:52 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9M1XpXk2376131;
+        Sun, 21 Oct 2018 18:33:51 -0700
+Date:   Sun, 21 Oct 2018 18:33:51 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Masami Hiramatsu <tipbot@zytor.com>
+Message-ID: <tip-2e62024c265aa69315ed02835623740030435380@git.kernel.org>
+Cc:     tglx@linutronix.de, oleg@redhat.com, torvalds@linux-foundation.org,
+        namit@vmware.com, mingo@kernel.org, alexei.starovoitov@gmail.com,
+        hpa@zytor.com, mhiramat@kernel.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, luto@kernel.org,
+        stable@vger.kernel.org, bp@alien8.de
+Reply-To: hpa@zytor.com, mingo@kernel.org, namit@vmware.com,
+          alexei.starovoitov@gmail.com, torvalds@linux-foundation.org,
+          oleg@redhat.com, tglx@linutronix.de, bp@alien8.de,
+          stable@vger.kernel.org, mhiramat@kernel.org,
+          peterz@infradead.org, luto@kernel.org,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <154002887331.7627.10194920925792947001.stgit@devbox>
+References: <154002887331.7627.10194920925792947001.stgit@devbox>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] kprobes/x86: Use preempt_enable() in
+ optimized_callback()
+Git-Commit-ID: 2e62024c265aa69315ed02835623740030435380
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add maintainers and reviewers for VKMS driver
+Commit-ID:  2e62024c265aa69315ed02835623740030435380
+Gitweb:     https://git.kernel.org/tip/2e62024c265aa69315ed02835623740030435380
+Author:     Masami Hiramatsu <mhiramat@kernel.org>
+AuthorDate: Sat, 20 Oct 2018 18:47:53 +0900
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 22 Oct 2018 03:31:01 +0200
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+kprobes/x86: Use preempt_enable() in optimized_callback()
+
+The following commit:
+
+  a19b2e3d7839 ("kprobes/x86: Remove IRQ disabling from ftrace-based/optimized kprobes”)
+
+removed local_irq_save/restore() from optimized_callback(), the handler
+might be interrupted by the rescheduling interrupt and might be
+rescheduled - so we must not use the preempt_enable_no_resched() macro.
+
+Use preempt_enable() instead, to not lose preemption events.
+
+[ mingo: Improved the changelog. ]
+
+Reported-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: <stable@vger.kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: dwmw@amazon.co.uk
+Fixes: a19b2e3d7839 ("kprobes/x86: Remove IRQ disabling from ftrace-based/optimized kprobes”)
+Link: http://lkml.kernel.org/r/154002887331.7627.10194920925792947001.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
-Changes in v2:
-  - Insert the section in alphabetical order
+ arch/x86/kernel/kprobes/opt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 39c3f6682ace..56572f0968ce 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4733,6 +4733,16 @@ S:	Odd Fixes
- F:	drivers/gpu/drm/udl/
- T:	git git://anongit.freedesktop.org/drm/drm-misc
+diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
+index eaf02f2e7300..40b16b270656 100644
+--- a/arch/x86/kernel/kprobes/opt.c
++++ b/arch/x86/kernel/kprobes/opt.c
+@@ -179,7 +179,7 @@ optimized_callback(struct optimized_kprobe *op, struct pt_regs *regs)
+ 		opt_pre_handler(&op->kp, regs);
+ 		__this_cpu_write(current_kprobe, NULL);
+ 	}
+-	preempt_enable_no_resched();
++	preempt_enable();
+ }
+ NOKPROBE_SYMBOL(optimized_callback);
  
-+DRM DRIVER FOR VIRTUAL KERNEL MODESETTING (VKMS)
-+M:	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-+R:	Haneen Mohammed <hamohammed.sa@gmail.com>
-+R:	Daniel Vetter <daniel@ffwll.ch>
-+T:	git git://anongit.freedesktop.org/drm/drm-misc
-+S:	Maintained
-+L:	dri-devel@lists.freedesktop.org
-+F:	drivers/gpu/drm/vkms/
-+F:	Documentation/gpu/vkms.rst
-+
- DRM DRIVER FOR VMWARE VIRTUAL GPU
- M:	"VMware Graphics" <linux-graphics-maintainer@vmware.com>
- M:	Sinclair Yeh <syeh@vmware.com>
--- 
-2.19.1
-
