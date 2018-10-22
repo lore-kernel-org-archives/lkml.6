@@ -7,89 +7,94 @@ X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F2BC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 18:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89540C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 18:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47AFB20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 18:30:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E32E20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 18:35:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bjtZVGDa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47AFB20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OObyGNem"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E32E20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728994AbeJWCtx (ORCPT
+        id S1729006AbeJWCyw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 22:49:53 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:35462 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbeJWCtx (ORCPT
+        Mon, 22 Oct 2018 22:54:52 -0400
+Received: from mail-lj1-f180.google.com ([209.85.208.180]:35123 "EHLO
+        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728782AbeJWCyv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 22:49:53 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9MIU76L027341;
-        Mon, 22 Oct 2018 13:30:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1540233007;
-        bh=pojReZLvJ3gxqvxTn/4AFxukLmFSEZI6akktJJ4TNGk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=bjtZVGDa4ZRYV69K5lJIuyjTULYwirPplac+Nz/VDe8ewKdBVpv2M5D/YXypJrO/i
-         cONShcoKxpNwd0RXlipwEG/nHv0G8XtJb7ZhFDGb+3DaRd0MdvVYr8oCRE8oY+ALOz
-         WbOcPcT+udO6HFpo9AcpGf4l/03VMQ3wwdK6fsv0=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9MIU732000501;
-        Mon, 22 Oct 2018 13:30:07 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 22
- Oct 2018 13:30:06 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 22 Oct 2018 13:30:06 -0500
-Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9MIU6T0027099;
-        Mon, 22 Oct 2018 13:30:06 -0500
-Subject: Re: [PATCH 4/6] gpio: gpio-omap: simplify getting .driver_data
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        <linux-kernel@vger.kernel.org>
-CC:     <linux-renesas-soc@vger.kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        <linux-omap@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
- <20181021200002.1472-5-wsa+renesas@sang-engineering.com>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <99558402-4dbb-f111-3e25-eb42c3944179@ti.com>
-Date:   Mon, 22 Oct 2018 13:30:06 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 22 Oct 2018 22:54:51 -0400
+Received: by mail-lj1-f180.google.com with SMTP id o14-v6so37966233ljj.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 11:35:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=S48vqaaCSun0FgBFKajQE4jXmLIFB5l3GFVoJ8/2+D4=;
+        b=OObyGNemhv19iNyFhO2sfmhfvC1wKnN95M76CghMD4jz3B9dKGnjadEfniebsJ8hO/
+         55ffmg67pVACFTswdb3xm/kOn7j2B1Ky7x7ktgBEvL9nrVdqw0AcPOW4necibgMqNkXU
+         rA+yRHJHUuPuKtFxF4jbxyzJG/Nbi3QnOLlJ4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=S48vqaaCSun0FgBFKajQE4jXmLIFB5l3GFVoJ8/2+D4=;
+        b=uKXw8/RE8JOmb3OiKTm0x8VCF/AA9Sh6DAWvx3jq9PDn7OtvzbtSIDxVESUg4NWT4k
+         VoJiwMhXgyXfmjoq9x1C/mbjXuia+1VEnIQUGga0Z/C3wVRu05pcbFI5PVFBeyqTB/wM
+         p75Y1dXqsPZmaZGwdbeeozCi5g00UNtZkjwebf+Y0pORKPKVQ5fD38i0kSPL90TWEq8m
+         r3DGC9LeKABYyj+nncFMA0EROPaLNkY2Pd/kFoh6wP8mH4Zb4uu57FEiYGAUAPTusg16
+         y23dKvOS9IcHOeFm3EH2Hc8nrCBQJxvarJxZLEG1BjOCXZGsvzDq6/lf6Cqjt+eS5xcn
+         Cggg==
+X-Gm-Message-State: ABuFfoi/xuBDV4A/KJ01FvSJfYsJKJ7mj1TV0SVaq9Ag3x4LmNrQTChw
+        VJXfFc7DYBiYFiNUkWWgeyi9UmwSAwM=
+X-Google-Smtp-Source: ACcGV61+WYuobpEGUXbEnwY0j+E4WJEYTc6hMWBGEt+XEyPbVkBFERQOXk2keD5ZrOxJLRhFI+chLw==
+X-Received: by 2002:a2e:8514:: with SMTP id j20-v6mr32341292lji.111.1540233311966;
+        Mon, 22 Oct 2018 11:35:11 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id n16-v6sm6980682lji.28.2018.10.22.11.35.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Oct 2018 11:35:10 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id x24-v6so15455386lfe.5
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 11:35:09 -0700 (PDT)
+X-Received: by 2002:a19:1cc3:: with SMTP id c186-v6mr9591468lfc.16.1540233308973;
+ Mon, 22 Oct 2018 11:35:08 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181021200002.1472-5-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <1539622953-4188-1-git-send-email-rplsssn@codeaurora.org>
+In-Reply-To: <1539622953-4188-1-git-send-email-rplsssn@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Mon, 22 Oct 2018 11:34:32 -0700
+X-Gmail-Original-Message-ID: <CAE=gft7piWBN+2Ud-rzCaL_v9dfpqAo7pdazBmrvxBQf-U-M-w@mail.gmail.com>
+Message-ID: <CAE=gft7piWBN+2Ud-rzCaL_v9dfpqAo7pdazBmrvxBQf-U-M-w@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: sdm845: Add PSCI cpuidle low power states
+To:     rplsssn@codeaurora.org
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org,
+        Doug Anderson <dianders@chromium.org>, mka@chromium.org,
+        Lina Iyer <ilina@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/21/18 2:59 PM, Wolfram Sang wrote:
-> We should get 'driver_data' from 'struct device' directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Mon, Oct 15, 2018 at 10:02 AM Raju P.L.S.S.S.N
+<rplsssn@codeaurora.org> wrote:
+>
+> Add device bindings for cpuidle states for cpu devices.
+>
+> Cc: <devicetree@vger.kernel.org>
+> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
 > ---
-> 
-> Build tested only. buildbot is happy.
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 62 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>
 
-Thank you
-Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
-
--- 
-regards,
--grygorii
+Reviewed-by: Evan Green <evgreen@chromium.org>
