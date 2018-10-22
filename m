@@ -2,162 +2,198 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D74BC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 04:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA00C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 04:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 013AF20644
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 04:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B45020644
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 04:58:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="Ypahs66F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 013AF20644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=pobox.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FH8uCpEp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B45020644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727375AbeJVNOK (ORCPT
+        id S1727441AbeJVNO6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 09:14:10 -0400
-Received: from pb-smtp1.pobox.com ([64.147.108.70]:62084 "EHLO
-        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727284AbeJVNOK (ORCPT
+        Mon, 22 Oct 2018 09:14:58 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:32784 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727284AbeJVNO5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 09:14:10 -0400
-Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
-        by pb-smtp1.pobox.com (Postfix) with ESMTP id D0D4511FF69;
-        Mon, 22 Oct 2018 00:57:12 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=subject:to:cc
-        :references:from:message-id:date:mime-version:in-reply-to
-        :content-type:content-transfer-encoding; s=sasl; bh=uV24y6O8Gy0s
-        IxAKccmBq6lQ838=; b=Ypahs66Fl30c9UMvUlwhFiSEqefAAHk7Bz+95O6I1nKc
-        oZyTu/Vj3e7s00fhtu7pio9ECe2pbRJn/9y/GTy5HgyNJxBi4YLEwYP+TvUrg642
-        XCMzEueC2WDYIe5wAd+bdt6QHav0YKAl/0tDPwfCtG2JvVg90Q1br+UIcbO+5b4=
-DomainKey-Signature: a=rsa-sha1; c=nofws; d=pobox.com; h=subject:to:cc
-        :references:from:message-id:date:mime-version:in-reply-to
-        :content-type:content-transfer-encoding; q=dns; s=sasl; b=MAD+vg
-        7uZKxuiwpO9JChbutfSYX4KoRb6GAtkmhfYD8i1plzOVi52JxJ6KwLvWQhYqiAgT
-        dXiUyDC/Sh48fqLVEPRYCVT/3UqPe8CMB0y8IBoPDlFZU7dYViSWWOEdy4d44KDI
-        ikCLKZVVHFkvwEQkcScuISTTKMuH77ie9UOmo=
-Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp1.pobox.com (Postfix) with ESMTP id C912311FF68;
-        Mon, 22 Oct 2018 00:57:12 -0400 (EDT)
-Received: from [192.168.1.128] (unknown [76.215.41.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by pb-smtp1.pobox.com (Postfix) with ESMTPSA id 138A011FF67;
-        Mon, 22 Oct 2018 00:57:12 -0400 (EDT)
-Subject: Re: [PATCH] jffs2: Fix use of uninitialized delayed_work, lockdep
- breakage
-To:     Hou Tao <houtao1@huawei.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        linux-mtd@lists.infradead.org
-References: <20181019083020.14335-1-daniel.santos@pobox.com>
- <d2f16a3a-7237-6c4e-5ff8-43f05bdb7e0f@huawei.com>
-From:   Daniel Santos <daniel.santos@pobox.com>
-Message-ID: <1868afe1-734f-7b44-535a-ac722b6722a4@pobox.com>
-Date:   Sun, 21 Oct 2018 23:56:45 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 22 Oct 2018 09:14:57 -0400
+Received: by mail-yw1-f66.google.com with SMTP id m127-v6so15508267ywb.0
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 21:58:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=U6hoVb/RrJtfl7XscJrZtG25e6I69cJUZR09fIkSRmc=;
+        b=FH8uCpEp4up5lmFvd51wKTyYleOc5vt4vPCmPp3hEdHS0RZjX6ObEkwxByVNLtL9mM
+         op91p1MeV4dmOpCN6wQaWXysmhj4KOP5fNWQ2VIr31QHQQTOEDCsQn0i4WzTy4lVJH4J
+         UX8FGrnPMlFz6FbmYN7FE4e9mZSlKbxzZbklQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U6hoVb/RrJtfl7XscJrZtG25e6I69cJUZR09fIkSRmc=;
+        b=G2PRkgHz8meaP47nwSYE7Afvt4y5zlciwft2caOBRtyrf5+lYOx+R72K8z/C1XpQhr
+         CeTReJ9/q+HzUVuj2CX3UnDwAsgQ8RIuYB9UDzJasmN8d6a3Dkwguecwc+J9kqdsXyym
+         KQkY5E1zApCbzbR2WPTyfeDrRfADfupGSJtBXPuQH39zy0Yi2UeRpl0JryOdAfP5uCPh
+         1xpAV9yEErZdBkRbXuycFn9DRHhUvao7qPQDA/7zOY0X4um97GhSraGQwVPE2qxl4AQD
+         +m69y2igZgXuLyuPKZ2Im1/CVg472iN7mJeUh/OsZvau1N9p2fZRl188hSP4BMJPWGHM
+         ENrg==
+X-Gm-Message-State: ABuFfoihC40bYVEXhYmkFh7JSMggyf9/2RAhwVibGYPvOZUs/ovVzlrY
+        qVPtwT449HWfcl/yy3fofAHpEUQZQiA=
+X-Google-Smtp-Source: ACcGV62JXK0N48z4xwcB4IG+b8dxg0U4UVPpbyCuC9IXWm6b5A19hRN0wuNk/5OCACeGWY681XOcZA==
+X-Received: by 2002:a81:6b42:: with SMTP id g63-v6mr3252391ywc.280.1540184283375;
+        Sun, 21 Oct 2018 21:58:03 -0700 (PDT)
+Received: from mail-yw1-f50.google.com (mail-yw1-f50.google.com. [209.85.161.50])
+        by smtp.gmail.com with ESMTPSA id n186-v6sm10189482ywn.16.2018.10.21.21.58.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 21 Oct 2018 21:58:03 -0700 (PDT)
+Received: by mail-yw1-f50.google.com with SMTP id j202-v6so15486649ywa.13
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 21:58:03 -0700 (PDT)
+X-Received: by 2002:a81:350c:: with SMTP id c12-v6mr11402839ywa.342.1540183843529;
+ Sun, 21 Oct 2018 21:50:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <d2f16a3a-7237-6c4e-5ff8-43f05bdb7e0f@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Pobox-Relay-ID: F01619FA-D5B6-11E8-9F9D-063AD72159A7-06139138!pb-smtp1.pobox.com
-Content-Transfer-Encoding: quoted-printable
+References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-3-tfiga@chromium.org>
+ <4168da98-fa01-ea2f-8162-385501e666be@xs4all.nl> <CAAFQd5BqtKFeJniNaqahi9h_zKR+rPrWUiyx004Z=MWDj7q++w@mail.gmail.com>
+ <CAAFQd5Djur9y+=UHTx9ZSx310p2ShCsBTqsEA1UHCMoawuDscA@mail.gmail.com> <7b8b56e7-1617-5de6-9fa9-a10897a8f2f1@xs4all.nl>
+In-Reply-To: <7b8b56e7-1617-5de6-9fa9-a10897a8f2f1@xs4all.nl>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Mon, 22 Oct 2018 13:50:32 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5BRxmMpH9J0tZLD7=9Be+dUggym9-5ctV4536YbHedESQ@mail.gmail.com>
+Message-ID: <CAAFQd5BRxmMpH9J0tZLD7=9Be+dUggym9-5ctV4536YbHedESQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] media: docs-rst: Document memory-to-memory video
+ encoder interface
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/21/2018 07:32 PM, Hou Tao wrote:
+On Tue, Oct 16, 2018 at 10:50 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
 >
-> On 2018/10/19 16:30, Daniel Santos wrote:
->> jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
->> is defined then a write buffer is available and has been initialized.
->> However, this does is not the case when the mtd device has no
->> out-of-band buffer:
->>
->> int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
->> {
->>         if (!c->mtd->oobsize)
->>                 return 0;
->> ...
->>
->> The resulting call to cancel_delayed_work_sync passing a uninitialized
->> (but zeroed) delayed_work struct forces lockdep to become disabled.
->>
->> [   90.050639] overlayfs: upper fs does not support tmpfile.
->> [   90.652264] INFO: trying to register non-static key.
->> [   90.662171] the code is fine but needs lockdep annotation.
->> [   90.673090] turning off the locking correctness validator.
->> [   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #=
-0
->> [   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80=
-444600 8fe364f4 805dfbe7
->> [   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00=
-000001 8e2fdc48 ffffffff
->> [   90.730020]         00000000 00000000 80d90000 00000000 00000106 00=
-000000 6465746e 312e3420
->> [   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80=
-000000 00000000 8e2c2a90
->> [   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80=
-260dc0 08052098 80680000
->> [   90.780033]         ...
->> [   90.784902] Call Trace:
->> [   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
->> [   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
->> [   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
->> [   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
->> [   90.828345] [<8003f27c>] flush_work+0x200/0x24c
->> [   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
->> [   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
->> [   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
->> [   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
->> [   90.875067] [<80014424>] syscall_common+0x34/0x58
->>
->> Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
->> ---
->>  fs/jffs2/super.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
->> index 793ad30970ff..cae4ecda3c50 100644
->> --- a/fs/jffs2/super.c
->> +++ b/fs/jffs2/super.c
->> @@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, i=
-nt wait)
->>  	struct jffs2_sb_info *c =3D JFFS2_SB_INFO(sb);
->> =20
->>  #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
->> -	cancel_delayed_work_sync(&c->wbuf_dwork);
->> +	if (jffs2_is_writebuffered(c))
->> +		cancel_delayed_work_sync(&c->wbuf_dwork);
->>  #endif
->> =20
->>  	mutex_lock(&c->alloc_sem);
->>
-> Reviewed-by: Hou Tao <houtao1@huawei.com>
+> On 10/16/18 09:36, Tomasz Figa wrote:
+> > On Tue, Aug 7, 2018 at 3:54 PM Tomasz Figa <tfiga@chromium.org> wrote:
+> >>>> +   * The driver must expose following selection targets on ``OUTPUT``:
+> >>>> +
+> >>>> +     ``V4L2_SEL_TGT_CROP_BOUNDS``
+> >>>> +         maximum crop bounds within the source buffer supported by the
+> >>>> +         encoder
+> >>>> +
+> >>>> +     ``V4L2_SEL_TGT_CROP_DEFAULT``
+> >>>> +         suggested cropping rectangle that covers the whole source picture
+> >>>> +
+> >>>> +     ``V4L2_SEL_TGT_CROP``
+> >>>> +         rectangle within the source buffer to be encoded into the
+> >>>> +         ``CAPTURE`` stream; defaults to ``V4L2_SEL_TGT_CROP_DEFAULT``
+> >>>> +
+> >>>> +     ``V4L2_SEL_TGT_COMPOSE_BOUNDS``
+> >>>> +         maximum rectangle within the coded resolution, which the cropped
+> >>>> +         source frame can be output into; always equal to (0, 0)x(width of
+> >>>> +         ``V4L2_SEL_TGT_CROP``, height of ``V4L2_SEL_TGT_CROP``), if the
+> >>>> +         hardware does not support compose/scaling
 >
-> And I am curious that why is there NAND Flash without OOB area ? So for=
- them
-> the ECC data must be saved in data area ?
+> Re-reading this I would rewrite this a bit:
 >
-> Regards,
+> if the hardware does not support composition or scaling, then this is always
+> equal to (0, 0)x(width of ``V4L2_SEL_TGT_CROP``, height of ``V4L2_SEL_TGT_CROP``).
 >
-> Tao
 
-Thank you.
+Ack.
 
-I'm not intimately familiar with these, but it's an SPI NOR chip and I'm
-pretty sure they that they don't have ECC.=C2=A0 Specifically a Winbond
-w25q128fv using drivers/mtd/devices/m25p80.c.
+> >>>> +
+> >>>> +     ``V4L2_SEL_TGT_COMPOSE_DEFAULT``
+> >>>> +         equal to ``V4L2_SEL_TGT_CROP``
+> >>>> +
+> >>>> +     ``V4L2_SEL_TGT_COMPOSE``
+> >>>> +         rectangle within the coded frame, which the cropped source frame
+> >>>> +         is to be output into; defaults to
+> >>>> +         ``V4L2_SEL_TGT_COMPOSE_DEFAULT``; read-only on hardware without
+> >>>> +         additional compose/scaling capabilities; resulting stream will
+> >>>> +         have this rectangle encoded as the visible rectangle in its
+> >>>> +         metadata
+> >>>> +
+> >>>> +     ``V4L2_SEL_TGT_COMPOSE_PADDED``
+> >>>> +         always equal to coded resolution of the stream, as selected by the
+> >>>> +         encoder based on source resolution and crop/compose rectangles
+> >>>
+> >>> Are there codec drivers that support composition? I can't remember seeing any.
+> >>>
+> >>
+> >> Hmm, I was convinced that MFC could scale and we just lacked support
+> >> in the driver, but I checked the documentation and it doesn't seem to
+> >> be able to do so. I guess we could drop the COMPOSE rectangles for
+> >> now, until we find any hardware that can do scaling or composing on
+> >> the fly.
+> >>
+> >
+> > On the other hand, having them defined already wouldn't complicate
+> > existing drivers too much either, because they would just handle all
+> > of them in the same switch case, i.e.
+> >
+> > case V4L2_SEL_TGT_COMPOSE_BOUNDS:
+> > case V4L2_SEL_TGT_COMPOSE_DEFAULT:
+> > case V4L2_SEL_TGT_COMPOSE:
+> > case V4L2_SEL_TGT_COMPOSE_PADDED:
+> >      return visible_rectangle;
+> >
+> > That would need one change, though. We would define
+> > V4L2_SEL_TGT_COMPOSE_DEFAULT to be equal to (0, 0)x(width of
+> > V4L2_SEL_TGT_CROP - 1, height of ``V4L2_SEL_TGT_CROP - 1), which
+>
+> " - 1"? Where does that come from?
+>
+> Usually rectangles are specified as widthxheight@left,top.
+>
 
-Thanks,
-Daniel
+Yeah, the notation I used was quite unfortunate. How about just making
+it fully verbose?
 
+         if the hardware does not support
+         composition or scaling, then this is always equal to the rectangle of
+         width and height matching ``V4L2_SEL_TGT_CROP`` and located at (0, 0)
 
+> > makes more sense than current definition, since it would bypass any
+> > compose/scaling by default.
+>
+> I have no problem with drivers optionally implementing these rectangles,
+> even if they don't do scaling or composition. The question is, should it
+> be required for decoders? If there is a good reason, then I'm OK with it.
 
+There is no particular reason to do it for existing drivers. I'm
+personally not a big fan of making things optional, since you never
+know when something becomes required and then you run into problems
+with user space compatibility. In this case the cost of having those
+rectangles defined is really low and they will be useful to handle
+encoders and decoders with scaling/compose ability in the future.
+
+I have no strong opinion though.
+
+Best regards,
+Tomasz
