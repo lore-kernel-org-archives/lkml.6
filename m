@@ -2,95 +2,90 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF44C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0A1CC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDCB620645
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:31:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R0hp0BDM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDCB620645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 4239020663
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:35:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4239020663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728846AbeJWBvS (ORCPT
+        id S1728780AbeJWBzE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 21:51:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51760 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728628AbeJWBvS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 21:51:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=URkB75rJsVa2bCEpG8luURFvng73Q4+LU2k9AWbtWNY=; b=R0hp0BDMm/Llo0bD77eq5RWjB
-        P8HbnUinZj7wgAeCUU0rbhTQaEeEZsaPsH3aswqrX4LuIHF0bH6VNDPTe47AcqX+NSaBsouqfuJ+t
-        pB5m+fE2Yq//JuCV2c67eeKc2q6CHIp05kfqwZzSBZP1ND9L0SnW0CwhGHSMDbIdqOSm0ZPnzRFj+
-        c5idhfyganuuW6fzw3chE4efkUMe4lw6EF7s5SdAh18fFH8EqtuIocEj3nq+ZnafQn+QQobO161We
-        KwhNIOGpAzzq1wt9Dez1LflaMg1X7cHyGaqvU3SfqKkNg6mAG2fd/9A43aLO3HqOl9xKmpXXb3COB
-        ElMInPmqA==;
-Received: from [167.98.65.38] (helo=worktop)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gEe3O-0001xC-My; Mon, 22 Oct 2018 17:31:46 +0000
-Received: by worktop (Postfix, from userid 1000)
-        id 78DFC6E08C3; Mon, 22 Oct 2018 19:31:44 +0200 (CEST)
-Date:   Mon, 22 Oct 2018 19:31:44 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Juergen Gross <jgross@suse.com>, Yi Sun <yi.y.sun@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-        chao.p.peng@intel.com, chao.gao@intel.com,
-        isaku.yamahata@intel.com, michael.h.kelley@microsoft.com,
-        tianyu.lan@microsoft.com, "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v1 2/2] x86/hyperv: make HvNotifyLongSpinWait hypercall
-Message-ID: <20181022173144.GB3109@worktop.c.hoisthospitality.com>
-References: <1539954835-34035-1-git-send-email-yi.y.sun@linux.intel.com>
- <1539954835-34035-3-git-send-email-yi.y.sun@linux.intel.com>
- <bab010e9-a122-95f1-d8cc-790e56c72716@suse.com>
- <20181022015342.GK11769@yi.y.sun>
- <2e0d62cb-b706-a5b4-65f7-982a913fb32b@suse.com>
- <ba75b994-c1a6-6e91-6499-b9af90636fcf@redhat.com>
- <20181022171516.GH3117@worktop.programming.kicks-ass.net>
- <6d8095c0-af95-5967-3ca5-2ceeb74233ea@redhat.com>
+        Mon, 22 Oct 2018 21:55:04 -0400
+Received: from mga02.intel.com ([134.134.136.20]:9708 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728628AbeJWBzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 21:55:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2018 10:35:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,413,1534834800"; 
+   d="scan'208";a="97526212"
+Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
+  by fmsmga002.fm.intel.com with ESMTP; 22 Oct 2018 10:35:37 -0700
+Received: from orsmsx114.amr.corp.intel.com ([169.254.8.194]) by
+ ORSMSX104.amr.corp.intel.com ([169.254.4.129]) with mapi id 14.03.0319.002;
+ Mon, 22 Oct 2018 10:35:36 -0700
+From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>
+CC:     linux-efi <linux-efi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Peter Zijlstra" <a.p.zijlstra@chello.nl>
+Subject: RE: [PATCH 1/2] x86/efi: Unmap efi boot services code/data regions
+ from efi_pgd
+Thread-Topic: [PATCH 1/2] x86/efi: Unmap efi boot services code/data regions
+ from efi_pgd
+Thread-Index: AQHUaae1+/df8a0vpkCawzkqjxdfr6Uq90AAgAAyZQCAAF3A8A==
+Date:   Mon, 22 Oct 2018 17:35:36 +0000
+Message-ID: <FFF73D592F13FD46B8700F0A279B802F485D5D88@ORSMSX114.amr.corp.intel.com>
+References: <1540172145-17134-1-git-send-email-sai.praneeth.prakhya@intel.com>
+ <1540172145-17134-2-git-send-email-sai.praneeth.prakhya@intel.com>
+ <20181022015738.GB24095@gmail.com>
+ <CALCETrW=M8u=F6USUk3t_sucGnU-8K6sLYOq6BGK1JhPdgjzdw@mail.gmail.com>
+In-Reply-To: <CALCETrW=M8u=F6USUk3t_sucGnU-8K6sLYOq6BGK1JhPdgjzdw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMzk4ZGUyMjEtOGVhZi00NGI3LTlmODgtNzEzNmNlNjc0ZjlhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibzdsdmw5S0F5clp4dWVadUpjOFlvZmZLeHE2RVcwczlVbGRrNnFadlBOeWtOS2hQeDJUeFQ4QzBjSDRvZThtdiJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6d8095c0-af95-5967-3ca5-2ceeb74233ea@redhat.com>
-User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 01:27:27PM -0400, Waiman Long wrote:
-
-> >> I agree with Juergen on that. I would suggest rename the
-> >> vcpu_is_preempted hook into a more generic vcpu_stop_spinning, perhaps,
-> >> so different hypervisors can act on the information accordingly. Adding
-> >> an extra parameter is fine.
-> > No; no extra parameters. vcpu_is_preempted() is a simple and intuitive
-> > interface. Why would we want to make it complicated?
-> 
-> Hyperv seems to do it in a somewhat different way by looking at the spin
-> counter and decide if it should continue. I don't know why they do that
-> and what advantage it has.
-> 
-> The current patch is definitely not OK. A revised patch that makes use
-> of an existing paravirt hook will be more acceptable. Again, I would
-> like to see some performance figure and why they do it this way to see
-> if it is worthwhile to change the existing interface.
-
-Note that there are vcpu_is_preempted() users that are not in a
-spin-loop.
+PiA+IFRoZSBvbmUgYml0IHRoYXQgaXMgb2RkIGlzIHRoZSBjcGEtPnBmbiBmaWVsZCAtIGZvciB1
+bm1hcHBlZCBwYWdlcw0KPiA+IHRoYXQncyB0b3RhbGx5IHVuaW50ZXJlc3RpbmcgYW5kIEknbSB3
+b25kZXJpbmcgd2hldGhlciBzZXR0aW5nIGl0IHRvIDANCj4gPiB3b3VsZG4ndCBiZSBiZXR0ZXIu
+DQo+ID4NCj4gPiBEb2VzIHRoZSBDUFUgX2V2ZXJfIGxvb2sgbG9vayBhdCB0aGUgUEZOIGlmIHRo
+ZSBwYWdlIGlzDQo+ID4gIV9QQUdFX1BSRVNFTlQsIGZvciBleGFtcGxlIHNwZWN1bGF0aXZlbHk/
+IElmIHllcyB0aGVuIHdoYXQgaXMgdGhlDQo+ID4gcmVjb21tZW5kZWQgdmFsdWUgZm9yIHRoZSBw
+Zm4gLSB6ZXJvIHBlcmhhcHM/DQo+ID4NCj4gDQo+IFRoaXMgaXMgTDFURiwgcmlnaHQ/ICBJc24n
+dCBhbGwgb25lcyB0aGUgcmVjb21tZW5kZWQgdmFsdWU/DQo+IA0KPiBJIHdvdWxkIGxvdmUgdG8g
+c2VlIEVGSSBzdGFydCB0cmVhdGluZyBpdHMgbW0ganVzdCBsaWtlIGFueSBvdGhlciBtbSBhdCBz
+b21lDQo+IHBvaW50LCB0aG91Z2guICBUaGF0IGlzLCBpdCBzaG91bGQgbm90IG1vZGlmeSBhbnkg
+bWFwcGluZ3MgaW4gdGhlIGtlcm5lbCByYW5nZSwNCj4gYW5kIGl0IGNvdWxkIHVzZSB0aGUgcmVn
+dWxhciBtbSBtb2RpZmljYXRpb24gQVBJcyBmb3IgdGhlIHVzZXIgcmFuZ2UuICBCdXQgbWF5YmUN
+Cj4gdGhpcyBpcyBhIHBpcGUgZHJlYW0uDQoNClNvdW5kcyBnb29kIHRvIG1lLiBJIGhhdmUgc29t
+ZSBtb3JlIGZpeGVzIGZvciBFRkkgY29kZSBhbmQgYXMgc29vbiBhcyB0aGV5IGFyZSBkb25lLCAN
+Ckkgd2lsbCBzdGFydCBsb29raW5nIGludG8gdGhpcy4NCg0KUmVnYXJkcywNClNhaQ0K
