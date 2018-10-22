@@ -2,196 +2,127 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F205C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54CD8C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9416120651
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:00:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9416120651
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cs.rutgers.edu
+	by mail.kernel.org (Postfix) with ESMTP id AB4C220664
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:01:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g17fV/JW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB4C220664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728340AbeJVWTi (ORCPT
+        id S1728374AbeJVWUC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 18:19:38 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:37322 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727210AbeJVWTi (ORCPT
+        Mon, 22 Oct 2018 18:20:02 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41611 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727210AbeJVWUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 18:19:38 -0400
-Received: by mail-qt1-f196.google.com with SMTP id d14-v6so46340671qto.4
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 07:00:54 -0700 (PDT)
+        Mon, 22 Oct 2018 18:20:02 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q39-v6so30445848lfi.8
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 07:01:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UhkGHSoVnp7RarPQBnZ0k0r3I18r5NVenEUHB5tvd98=;
+        b=g17fV/JWRCv7GSRokczJfa1xMGvqzwjdTS3ypcnyyFfrNu+f701B7Jk3HDtOAW686n
+         NDeKmOxjJq4RPviibap+gSyMVmQZifn5zJpgh3Bp7Xdl80VkddV9Q0XYvFuIsQgT0ur9
+         NVNQhCJuXJNaYNLJOcRURzTlJZgS+eNFwXAkSID7+jrE5O7ddKLjf5SgOn2S+ngQkw6g
+         br7jn/vW9ryey07fpIFyve5f8FHWjaUUuTfZYewHbvPQPFikbi8D9dia5yo35bDDJXug
+         hzkFFKL1GlhZdGhSgW3jHVRZtQvGnW3ZXPE53noKrvdeVeMkDRxp5r6Uj6ZyCxy1FDdg
+         SHpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version;
-        bh=xHPE4r+qQxUF5TkiYxM+yetJFOtWbf0kF2HTD33pvp0=;
-        b=uVnlx6lSvjlHAauEQIHjCo054oiLGSK9fFtP32bShplihGmvQhE9Q8nTdjp5QllW2I
-         V4KD3gzHszGUSP+SFbaPpwqhzC+WWjat76kjgKJPNyzz0j7+/cojcPZVrGlMkwMIg6MH
-         dVsHMnH4c5yqm4jGv1d/mXg0HEaxtbgu6Qnn23B8opHNmk9kVQWX8D2Ot3dQ4MfR6IKU
-         bsgQwCxWP8zPwX7lIqb0dD2dv+qBGYVrBcIFlEU4ZzB50boxI2L2nj7UcAEdd3xVRfNe
-         kfcQYdexZYMO1LEiu2USaWCxtvmDCjP9DrlILZoSwThCEUJm2j0jXTaJUsdNb+MbHWLZ
-         FPFw==
-X-Gm-Message-State: ABuFfogqZnh2Op3zw9oDMtR4H2f4dnSF97t1VMyIDavYgfMSJ3KeeFkt
-        KBjzvVwRHXa5LX1wN8bnPPZxjIGK8Es=
-X-Google-Smtp-Source: ACcGV63eHzCpDWvVUDf7LFIFTcNbeRwegHG0xe1v/6p93O+1KPpKNSM0AdjiJ0zDjQp/KwRWBIuXoA==
-X-Received: by 2002:a0c:d646:: with SMTP id e6-v6mr42538662qvj.209.1540216854173;
-        Mon, 22 Oct 2018 07:00:54 -0700 (PDT)
-Received: from [172.25.136.172] (pool-128-6-37-151.nat.rutgers.edu. [128.6.37.151])
-        by smtp.gmail.com with ESMTPSA id a4-v6sm20007398qkb.62.2018.10.22.07.00.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Oct 2018 07:00:52 -0700 (PDT)
-From:   "Zi Yan" <zi.yan@cs.rutgers.edu>
-To:     "Andrea Arcangeli" <aarcange@redhat.com>
-Cc:     "Anshuman Khandual" <anshuman.khandual@arm.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kirill.shutemov@linux.intel.com, akpm@linux-foundation.org,
-        mhocko@suse.com, will.deacon@arm.com,
-        "Naoya Horiguchi" <n-horiguchi@ah.jp.nec.com>
-Subject: Re: [PATCH] mm/thp: Correctly differentiate between mapped THP and
- PMD migration entry
-Date:   Mon, 22 Oct 2018 10:00:53 -0400
-X-Mailer: MailMate (1.12r5528)
-Message-ID: <781B64F4-99AA-4771-B1E7-5B71896D4006@cs.rutgers.edu>
-In-Reply-To: <20181017020930.GN30832@redhat.com>
-References: <1539057538-27446-1-git-send-email-anshuman.khandual@arm.com>
- <7E8E6B14-D5C4-4A30-840D-A7AB046517FB@cs.rutgers.edu>
- <84509db4-13ce-fd53-e924-cc4288d493f7@arm.com>
- <1968F276-5D96-426B-823F-38F6A51FB465@cs.rutgers.edu>
- <5e0e772c-7eef-e75c-2921-e80d4fbe8324@arm.com>
- <2398C491-E1DA-4B3C-B60A-377A09A02F1A@cs.rutgers.edu>
- <20181017020930.GN30832@redhat.com>
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UhkGHSoVnp7RarPQBnZ0k0r3I18r5NVenEUHB5tvd98=;
+        b=rDeiM8fkjSXmzpi8Egxo/UXiMfRB9BQ5r5x4xPkjkdHUQPfE1nZ0kRNC58YxPMBcd3
+         mdN0HDKtmhEZKYpVu/RnZRd9hk1UvPJE5Lew01rzRwSGtlyCzqXC/q+6TJf5HVPGA364
+         IeyWkJJD+IXqvhYxyAMebv+QxfEZFNnSScHQ1M7rPDVIAZmVX8GppQyYt7YkhNpCi6Vm
+         /c0hFSp6aAGBYWEoFW0GTqPDamare3UO7lYj1BEluwTnG1NPm7FB/NP1qmMeHX4qJWiR
+         epFk4rFdsDHdgoKJAOX4mj1cN+QlFUqn5sb1Mnz5EQZ1EfEdQWq3/f1lUoLzjhpIx3EF
+         0V/A==
+X-Gm-Message-State: ABuFfog9RN3n+kHV+a72MkATuG93tMYU7hd9SvavCCtvQvtyY+dMwrGD
+        ozqmlX7RzrZRizynMwzYDKM=
+X-Google-Smtp-Source: ACcGV60zWkvaYMOBhNig+z0WzwAA/4QitkcI42Yn6ie2SToFzyz1bUvdlikaBvB3v5qmXIziyh406g==
+X-Received: by 2002:a19:2a4b:: with SMTP id f72mr7620122lfl.139.1540216877570;
+        Mon, 22 Oct 2018 07:01:17 -0700 (PDT)
+Received: from pc636 ([37.139.158.167])
+        by smtp.gmail.com with ESMTPSA id h21-v6sm1958498lfh.38.2018.10.22.07.01.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 22 Oct 2018 07:01:16 -0700 (PDT)
+From:   Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date:   Mon, 22 Oct 2018 16:01:08 +0200
+To:     Roman Gushchin <guro@fb.com>
+Cc:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
+Subject: Re: [RFC PATCH 0/2] improve vmalloc allocation
+Message-ID: <20181022140108.jwahqbudbn4xiw43@pc636>
+References: <20181019173538.590-1-urezki@gmail.com>
+ <20181019224432.GA616@tower.DHCP.thefacebook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed;
- boundary="=_MailMate_D856A4E0-C8A9-4444-BE45-64A95EE50944_=";
- micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181019224432.GA616@tower.DHCP.thefacebook.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 3156 and 4880).
+On Fri, Oct 19, 2018 at 10:44:39PM +0000, Roman Gushchin wrote:
+> On Fri, Oct 19, 2018 at 07:35:36PM +0200, Uladzislau Rezki (Sony) wrote:
+> > Objective
+> > ---------
+> > Initiative of improving vmalloc allocator comes from getting many issues
+> > related to allocation time, i.e. sometimes it is terribly slow. As a result
+> > many workloads which are sensitive for long (more than 1 millisecond) preemption
+> > off scenario are affected by that slowness(test cases like UI or audio, etc.).
+> > 
+> > The problem is that, currently an allocation of the new VA area is done over
+> > busy list iteration until a suitable hole is found between two busy areas.
+> > Therefore each new allocation causes the list being grown. Due to long list
+> > and different permissive parameters an allocation can take a long time on
+> > embedded devices(milliseconds).
+> ...
+> > 3) This one is related to PCPU allocator(see pcpu_alloc_test()). In that
+> > stress test case i see that SUnreclaim(/proc/meminfo) parameter gets increased,
+> > i.e. there is a memory leek somewhere in percpu allocator. It sounds like
+> > a memory that is allocated by pcpu_get_vm_areas() sometimes is not freed.
+> > Resulting in memory leaking or "Kernel panic":
+> > 
+> 
+> Can you, please, try the following patch:
+> 6685b357363b ("percpu: stop leaking bitmap metadata blocks") ?
+>
+I have tested that patch. It fixes the leak for sure. Thank you for a
+good point.
 
---=_MailMate_D856A4E0-C8A9-4444-BE45-64A95EE50944_=
-Content-Type: text/plain; charset=utf-8; markup=markdown
-Content-Transfer-Encoding: quoted-printable
-
-Hi Andrea,
-
-On 16 Oct 2018, at 22:09, Andrea Arcangeli wrote:
-
-> Hello Zi,
->
-> On Sun, Oct 14, 2018 at 08:53:55PM -0400, Zi Yan wrote:
->> Hi Andrea, what is the purpose/benefit of making x86=E2=80=99s pmd_pre=
-sent() returns true
->> for a THP under splitting? Does it cause problems when ARM64=E2=80=99s=
- pmd_present()
->> returns false in the same situation?
->
-> !pmd_present means it's a migration entry or swap entry and doesn't
-> point to RAM. It means if you do pmd_to_page(*pmd) it will return you
-> an undefined result.
->
-> During splitting the physical page is still very well pointed by the
-> pmd as long as pmd_trans_huge returns true and you hold the
-> pmd_lock.
->
-> pmd_trans_huge must be true at all times for a transhuge pmd that
-> points to a hugepage, or all VM fast paths won't serialize with the
-> pmd_lock, that is the only reason why, and it's a very good reason
-> because it avoids to take the pmd_lock when walking over non transhuge
-> pmds (i.e. when there are no THP allocated).
->
-> Now if we've to keep _PAGE_PSE set and return true in pmd_trans_huge
-> at all times, why would you want to make pmd_present return false? How
-> could it help if pmd_trans_huge returns true, but pmd_present returns
-> false despite pmd_to_page works fine and the pmd is really still
-> pointing to the page?
->
-> When userland faults on such pmd !pmd_present it will make the page
-> fault take a swap or migration path, but that's the wrong path if the
-> pmd points to RAM.
->
-> What we need to do during split is an invalidate of the huge TLB.
-> There's no pmd_trans_splitting anymore, so we only clear the present
-> bit in the PTE despite pmd_present still returns true (just like
-> PROT_NONE, nothing new in this respect). pmd_present never meant the
-> real present bit in the pte was set, it just means the pmd points to
-> RAM. It means it doesn't point to swap or migration entry and you can
-> do pmd_to_page and it works fine.
->
-> We need to invalidate the TLB by clearing the present bit and by
-> flushing the TLB before overwriting the transhuge pmd with the regular
-> pte (i.e. to make it non huge). That is actually required by an errata
-> (l1 cache aliasing of the same mapping through two different TLB of
-> two different sizes broke some old CPU and triggered machine checks).
-> It's not something fundamentally necessary from a common code point of
-> view. It's more risky from an hardware (not software) standpoint and
-> before you can get rid of the pmd you need to do a TLB flush anyway to
-> be sure CPUs stops using it, so better clear the present bit before
-> doing the real costly thing (the tlb flush with IPIs). Clearing the
-> present bit during the TLB flush is a cost that gets lost in the noise.=
-
->
-> The clear of the real present bit during pmd (virtual) splitting is
-> done with pmdp_invalidate, that is created specifically to keeps
-> pmd_trans_huge=3Dtrue, pmd_present=3Dtrue despite the present bit is no=
-t
-> set. So you could imagine _PAGE_PSE as the real present bit.
->
-> Before the physical split was deferred and decoupled from the virtual
-> memory pmd split, pmd_trans_splitting allowed to wait the split to
-> finish and to keep all gup_fast at bay during it (while the page was
-> still mapped readable and writable in userland by other CPUs). Now the
-> physical split is deferred so you just split the pmd locally and only
-> a physical split invoked on the page (not the virtual split invoked on
-> the pmd with split_huge_pmd) has to keep gup at bay, and it does so by
-> freezing the refcount so all gup_fast fail with the
-> page_cache_get_speculative during the freeze. This removed the need of
-> the pmd_splitting flag in gup_fast (when pmd_splitting was set gup
-> fast had to go through the non-fast gup), but it means that now a
-> hugepage cannot be physically splitted if it's gup pinned. The main
-> difference is that freezing the refcount can fail, so the code must
-> learn to cope with such failure and defer it. Decoupling the physical
-> and virtual splits introduced the need of tracking the doublemap case
-> with a new PG_double_map flag too. It makes the refcounting of
-> hugepages trivial in comparison (identical to hugetlbfs in fact), but
-> it requires total_mapcount to account for all those huge and non huge
-> mappings. It primarily pays off to add THP to tmpfs where the physical
-> split may have to be deferred for pagecache reasons anyway.
-
-Thanks for your detailed explanation!
-
-Do you think it is worth documenting what you have said? At least on
-why we want pmd_present() and pmd_trans_huge() both return true when
-a THP is under splitting, so that we can avoid some confusion in the futu=
-re.
-I can send a patch to add it to Document/vm/transhuge.rst.
+> 
+> BTW, with growing number of vmalloc users (per-cpu allocator and bpf stuff are
+> big drivers), I find the patchset very interesting.
+> 
+> Thanks!
+Thank you!
 
 --
-Best Regards
-Yan Zi
-
---=_MailMate_D856A4E0-C8A9-4444-BE45-64A95EE50944_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename=signature.asc
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - https://gpgtools.org
-
-iQFKBAEBCgA0FiEEOXBxLIohamfZUwd5QYsvEZxOpswFAlvN2BUWHHppLnlhbkBj
-cy5ydXRnZXJzLmVkdQAKCRBBiy8RnE6mzKijCACXzk7Z7ghLl/WE6OAInRORCuUL
-3TrfdqnHY2Qr8qOUF5MPq9Blwe9oTXLlByAq1zUUeo+mQaHBDOZTjBSvBOgGOtYN
-w0O+uWkJwwKfp71K2FPqcOLX76he6U8M09bBIoRlstz55TMtxkm2E/s+PtR0dfxD
-fETDmJ54d5wyI+La0VB+g9c1vRBRDVgWBft7kcIhtdRBTVl/RF8QMlP/Jp2lEhZ9
-0xWpvA9htEpBU11S/2mjE04zxAQxK1+LK6S1OVsJfeVIl3twEnOdMkZp4IzhYcj4
-JtmihDCROp1d2ps2IM9hnuYXieYB0q3dzAo5O5dHPaILKKGLxmese6rRNDlU
-=qKvb
------END PGP SIGNATURE-----
-
---=_MailMate_D856A4E0-C8A9-4444-BE45-64A95EE50944_=--
+Vlad Rezki
