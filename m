@@ -2,131 +2,333 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B1E3C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB72C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:42:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33E4D20665
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:41:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33E4D20665
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id F285A205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:42:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVIH41dY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F285A205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbeJWAAt (ORCPT
+        id S1728572AbeJWABR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 20:00:49 -0400
-Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:34211 "EHLO
-        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728172AbeJWAAs (ORCPT
+        Mon, 22 Oct 2018 20:01:17 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:35426 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728172AbeJWABR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 20:00:48 -0400
-Received: from [10.101.224.151] ([185.7.230.214])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id EcKjgwuUoSskCEcKngRKVE; Mon, 22 Oct 2018 17:41:45 +0200
-Subject: Re: [PATCH v2 0/2] Document memory-to-memory video codec interfaces
-To:     Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        =?UTF-8?B?UGF3ZcWCIE/Fm2NpYWs=?= <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-References: <20181022144901.113852-1-tfiga@chromium.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <6621f3b9-a5a0-d33f-306f-d405db34da2c@xs4all.nl>
-Date:   Mon, 22 Oct 2018 16:41:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 22 Oct 2018 20:01:17 -0400
+Received: by mail-qt1-f195.google.com with SMTP id a10-v6so2457287qtp.2;
+        Mon, 22 Oct 2018 08:42:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3Xh2jBIBQ6YGWASv8vs/8jHIZdZ+yJuxsDVQtaKSto4=;
+        b=nVIH41dYaqn1h06c6VlZJFF2HpHWGy7F/59p0zb4AQHhd5i+nhGxsPRkxLMR1jUQ+Y
+         3Eflrw7B7axUQBHoQl0TsylzQrgD2kxb7q2kjrO5WVj1N+shkTipysk698fAdk6GZcei
+         QjM2y2lJ5pFLAzRnY82SnPbLNiT/Zr1T9b131SEjBUKG2/RUwBmHytfe18HiwKWe+LLA
+         DRNCJPejw1QC3EgSrQCq5WT+5zzmWOPj2WPLA1GbkgVhfovKxCLQRkb7JpG2S/w3tpVz
+         idIqEoRgmpacZtVj/1/3gCVHSMZMdgXP3zibOzo/VSkXHlkgqY2qzigR5jWPP5se7y3Y
+         rBvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3Xh2jBIBQ6YGWASv8vs/8jHIZdZ+yJuxsDVQtaKSto4=;
+        b=Zrz1s5EKNaEGuIuVszsgDQ8RqOYnDK3rfMZJZpMTSIgdUs3avObE43nzt8/0L5MP2b
+         d6IOZw+/meQYuAV3CQes41twbpxYc676AeRJdymZtLsHdIFqChvz/TpZ6rX4nNhfLnGq
+         XW9YxshvLGoAnJBU0+z9p0MPHO5c/mCCvvaIN9/F0FzTzpGEOY93HtuBUdRO51im9gp3
+         Pke5lUkIBDe6VmnguX6pXs+QYxGIPNgQ8C5sjkwyj14evr4qr+xtZhYeGCOVRvwKUgQp
+         VgjtSfgfR7MjpacosUqDW248FCshTVPe05IF5EBih3keyVnefexNr6xUWNM4z5S54x++
+         6oqw==
+X-Gm-Message-State: ABuFfohfTuApmlmC7JGCPlGxxWa5bvTVjN7hte/I1v772HngYEKF78Re
+        Lztj25WgnUDoTId76b1H0Q==
+X-Google-Smtp-Source: ACcGV60or9G+2ky7cuVTkmfbXudPghrBkq52GEp02p86DimYrL/6o8p26qohhuda9AdjsYAfgmd/oA==
+X-Received: by 2002:aed:2166:: with SMTP id 93-v6mr45770240qtc.24.1540222933590;
+        Mon, 22 Oct 2018 08:42:13 -0700 (PDT)
+Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id p127-v6sm21234893qkd.70.2018.10.22.08.42.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 22 Oct 2018 08:42:12 -0700 (PDT)
+Date:   Mon, 22 Oct 2018 11:42:05 -0400
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Baoquan He <bhe@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
+        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
+        rjw@rjwysocki.net, lenb@kernel.org, ard.biesheuvel@linaro.org,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
+ in immovable memory
+Message-ID: <20181022154204.kagmdb55jtoez4ca@gabell>
+References: <20181011055154.GB6667@localhost.localdomain>
+ <20181013201958.zfzv5ahhe3xz7bwi@gabell>
+ <20181013203429.GE31650@zn.tnic>
+ <20181013214550.ag5qzokhkrkwnzsy@gabell>
+ <20181013220541.GI31650@zn.tnic>
+ <20181015005035.z3xym6nx43hogdge@gabell>
+ <20181016151353.punyk7exekut2543@gabell>
+ <20181016191113.GI5212@zn.tnic>
+ <20181016195429.tovdgqq77gz3eek2@gabell>
+ <20181016195902.GK5212@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <20181022144901.113852-1-tfiga@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfOWJpmC70DmdV61HPzqO1bMfsTX7BtsIQc0LflB+Xv2HFkNAG7K+XkBF/m1H/NzSzvJS+c6YBXkVhzmvfPj2eMCYccrldCgByYkGi4/dsUWPlnVwh6Pn
- 7qxx2ibOAli4KpK03yc/ESM3rxxEC31J20WisVUCHdKLbjl5COlJ94/HsR0uFq7Wxe4lSlGCTrZl4p4kxMRRcbkxTXmgU3Be4dTwpC94+jIKOZ87von4YDJj
- NqtMKsuPw0Q8wmvQimu1981jPPYnEjAO4Y0N8gilN8A6K7i97OYsLwaO+HSlCbgb9yVlOH4Jehz+4/r9f83YMJOy53ZiRO4YjTmYGIicgpd/+x6XoBQuK2US
- h2xaa+KtaJovZHduwu8mKe9LJRreOhoKZB7zMA+3qhwav27v0jN3mK94XPea6/EukMLIVgYNrR/rNR5hxaaCKpSznc+uSpH0SSljGG9tUu/cctdvt9DsuDVQ
- VXkAACAMxWlSqHGz6nz+wASvM0ARvuQmru+vE62aqlo0SCf5oAJqkayluuUQhKSEsKGvLUNNHd5BEvsnK/xvWjJKcAnbGwUvQo3YVfYLwdgu8Mkehludiszw
- qovM378BDZj8qjza34ZLi+G9rkA6kdGeRveG7OOwWUN4Aot0nJwD89nNcEfZTh/oTR/SWTKFBmPbkUroL1q/b8gDIzfBVESzZP9UqS0CL7c73hJavOVio4ub
- jgglTxP1fFoCmyTaSDZbLEBP8ssyrf520D8ysKT1LylVatki35Ha++/5jV85FZjDCcGES2qNa/+kkkAXD+UQabyoczvLgrM+uTs2uuKfKMcCfVB0fmSYjQYV
- /KsoYzD0V8euXKos6DctwY2AadsqJhHAFd+zlopkCaaYs+M+AHcBQ3D9HmFFuY3aWtef8SqqHST9JC0E8I4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181016195902.GK5212@zn.tnic>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz, Alexandre,
+Hi Boris,
 
-Thank you for all your work! Much appreciated.
+On Tue, Oct 16, 2018 at 09:59:02PM +0200, Borislav Petkov wrote:
+> On Tue, Oct 16, 2018 at 03:54:30PM -0400, Masayoshi Mizuma wrote:
+> > Ah, sorry, I misunderstood your suggetion...
+> > In parse_setup_data(), the data is picked up from boot_params,
+> 
+> Yes, this is the pointer to the setup_data linked list head. See
+> 
+> Documentation/ABI/testing/sysfs-kernel-boot_params
+> Documentation/x86/boot.txt
+> 
+> for more information and basically grep the tree for examples.
 
-I've applied both the stateful and stateless patches on top of the request_api branch
-and made the final result available here:
+I'm trying to store the SRAT info and pass it to kernel_randomize_memory(),
+looks like add_e820ext()/parse_setup_data().
 
-https://hverkuil.home.xs4all.nl/request-api/
+Is the approach useful only EFI environment? I'm not sure how I
+allocate memory to store the data in legacy bios environment...
+On EFI, I can use efi_call_early(allocate_pool, EFI_LOADER_DATA, ...).
 
-Tomasz, I got two warnings when building the doc tree, the patch below fixes it.
+Am I missing something? I would appreciate if you could help my
+understanding.
 
-Regards,
+Following patch is a prototype for EFI enviromnent.
+---
+ arch/x86/boot/compressed/acpitb.c     | 23 ++++++++++-
+ arch/x86/boot/compressed/eboot.c      | 36 +++++++++++++++++
+ arch/x86/include/uapi/asm/bootparam.h |  1 +
+ arch/x86/mm/kaslr.c                   | 58 ++++++++++++++++++++++++++-
+ 4 files changed, 116 insertions(+), 2 deletions(-)
 
-	Hans
+diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
+index d119663..b79560c 100644
+--- a/arch/x86/boot/compressed/acpitb.c
++++ b/arch/x86/boot/compressed/acpitb.c
+@@ -309,6 +309,20 @@ static struct acpi_table_header *get_acpi_srat_table(void)
+ 	return NULL;
+ }
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
++static void store_possible_addr(unsigned long long possible)
++{
++	struct setup_data *data;
++
++	data = (struct setup_data *)(unsigned long)boot_params->hdr.setup_data;
++	while (data) {
++		if (data->type == SETUP_KASLR) {
++			*(unsigned long long *)data->data = possible;
++			return;
++		}
++		data = (struct setup_data *)(unsigned long)data->next;
++	}
++}
++
+ /*
+  * According to ACPI table, filter the immvoable memory regions
+  * and store them in immovable_mem[].
+@@ -319,6 +333,7 @@ void get_immovable_mem(void)
+ 	struct acpi_subtable_header *table;
+ 	struct acpi_srat_mem_affinity *ma;
+ 	unsigned long table_end;
++	unsigned long long possible_addr, max_possible_addr = 0;
+ 	int i = 0;
 
-diff --git a/Documentation/media/uapi/v4l/dev-decoder.rst b/Documentation/media/uapi/v4l/dev-decoder.rst
-index 09c7a6621b8e..5522453ac39f 100644
---- a/Documentation/media/uapi/v4l/dev-decoder.rst
-+++ b/Documentation/media/uapi/v4l/dev-decoder.rst
-@@ -972,11 +972,11 @@ sequence was started.
+ 	if (!cmdline_find_option_bool("movable_node") ||
+@@ -338,7 +353,12 @@ void get_immovable_mem(void)
+ 		       sizeof(struct acpi_subtable_header) < table_end) {
+ 		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
+ 			ma = (struct acpi_srat_mem_affinity *)table;
+-			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
++
++			if (ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) {
++				possible_addr = ma->base_address + ma->length;
++				if (possible_addr > max_possible_addr)
++					max_possible_addr = possible_addr;
++			} else {
+ 				immovable_mem[i].start = ma->base_address;
+ 				immovable_mem[i].size = ma->length;
+ 				i++;
+@@ -351,4 +371,5 @@ void get_immovable_mem(void)
+ 			((unsigned long)table + table->length);
+ 	}
+ 	num_immovable_mem = i;
++	store_possible_addr(max_possible_addr);
+ }
+diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
+index 1458b17..9b95fba 100644
+--- a/arch/x86/boot/compressed/eboot.c
++++ b/arch/x86/boot/compressed/eboot.c
+@@ -192,6 +192,40 @@ static void setup_efi_pci(struct boot_params *params)
+ 	efi_call_early(free_pool, pci_handle);
+ }
 
-    .. warning::
++#ifdef CONFIG_RANDOMIZE_MEMORY
++static void setup_kaslr(struct boot_params *params)
++{
++	struct setup_data *kaslr_data = NULL;
++	struct setup_data *data;
++	unsigned long size;
++	efi_status_t status;
++
++	size = sizeof(struct setup_data) + sizeof(unsigned long long);
++
++	status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
++			size, (void **)&kaslr_data);
++	if (status != EFI_SUCCESS) {
++		efi_printk(sys_table, "Failed to allocate memory for 'kaslr_data'\n");
++		return;
++	}
++
++	kaslr_data->type = SETUP_KASLR;
++	kaslr_data->next = 0;
++	kaslr_data->len = size;
++
++	data = (struct setup_data *)(unsigned long)params->hdr.setup_data;
++	if (data)
++		data->next = (unsigned long)kaslr_data;
++	else {
++		while (data->next)
++			data = (struct setup_data *)(unsigned long)data->next;
++		data->next = (unsigned long)kaslr_data;
++	}
++}
++#else
++static void setup_kaslr(struct boot_params *params) {}
++#endif
++
+ static void retrieve_apple_device_properties(struct boot_params *boot_params)
+ {
+ 	efi_guid_t guid = APPLE_PROPERTIES_PROTOCOL_GUID;
+@@ -770,6 +804,8 @@ efi_main(struct efi_config *c, struct boot_params *boot_params)
 
--   The sentence can be only initiated if both ``OUTPUT`` and ``CAPTURE`` queues
--   are streaming. For compatibility reasons, the call to
--   :c:func:`VIDIOC_DECODER_CMD` will not fail even if any of the queues is not
--   streaming, but at the same time it will not initiate the `Drain` sequence
--   and so the steps described below would not be applicable.
-+      The sentence can be only initiated if both ``OUTPUT`` and ``CAPTURE`` queues
-+      are streaming. For compatibility reasons, the call to
-+      :c:func:`VIDIOC_DECODER_CMD` will not fail even if any of the queues is not
-+      streaming, but at the same time it will not initiate the `Drain` sequence
-+      and so the steps described below would not be applicable.
+ 	setup_efi_pci(boot_params);
 
- 2. Any ``OUTPUT`` buffers queued by the client before the
-    :c:func:`VIDIOC_DECODER_CMD` was issued will be processed and decoded as
-diff --git a/Documentation/media/uapi/v4l/dev-encoder.rst b/Documentation/media/uapi/v4l/dev-encoder.rst
-index 41139e5e48eb..7f49a7149067 100644
---- a/Documentation/media/uapi/v4l/dev-encoder.rst
-+++ b/Documentation/media/uapi/v4l/dev-encoder.rst
-@@ -448,11 +448,11 @@ sequence was started.
++	setup_kaslr(boot_params);
++
+ 	setup_quirks(boot_params);
 
-    .. warning::
+ 	status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
+diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
+index a06cbf0..0a44d83 100644
+--- a/arch/x86/include/uapi/asm/bootparam.h
++++ b/arch/x86/include/uapi/asm/bootparam.h
+@@ -10,6 +10,7 @@
+ #define SETUP_EFI			4
+ #define SETUP_APPLE_PROPERTIES		5
+ #define SETUP_JAILHOUSE			6
++#define SETUP_KASLR			7
 
--   The sentence can be only initiated if both ``OUTPUT`` and ``CAPTURE`` queues
--   are streaming. For compatibility reasons, the call to
--   :c:func:`VIDIOC_ENCODER_CMD` will not fail even if any of the queues is not
--   streaming, but at the same time it will not initiate the `Drain` sequence
--   and so the steps described below would not be applicable.
-+      The sentence can be only initiated if both ``OUTPUT`` and ``CAPTURE`` queues
-+      are streaming. For compatibility reasons, the call to
-+      :c:func:`VIDIOC_ENCODER_CMD` will not fail even if any of the queues is not
-+      streaming, but at the same time it will not initiate the `Drain` sequence
-+      and so the steps described below would not be applicable.
+ /* ram_size flags */
+ #define RAMDISK_IMAGE_START_MASK	0x07FF
+diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+index 61db77b..6f91cf4 100644
+--- a/arch/x86/mm/kaslr.c
++++ b/arch/x86/mm/kaslr.c
+@@ -28,6 +28,7 @@
+ #include <asm/pgtable.h>
+ #include <asm/setup.h>
+ #include <asm/kaslr.h>
++#include <linux/io.h>
 
- 2. Any ``OUTPUT`` buffers queued by the client before the
-    :c:func:`VIDIOC_ENCODER_CMD` was issued will be processed and encoded as
+ #include "mm_internal.h"
+
+@@ -69,6 +70,61 @@ static inline bool kaslr_memory_enabled(void)
+ 	return kaslr_enabled() && !IS_ENABLED(CONFIG_KASAN);
+ }
+
++#ifdef CONFIG_MEMORY_HOTPLUG
++static unsigned long long __init get_max_possible_addr(void)
++{
++	struct setup_data *data;
++	u64 pa_data;
++	unsigned long long max = 0;
++
++	pa_data = boot_params.hdr.setup_data;
++	while (pa_data) {
++		data = early_memremap(pa_data, sizeof(*data));
++		if (!data)
++			return 0;
++
++		if (data->type == SETUP_KASLR) {
++			max = *(unsigned long long *)data->data;
++			early_memunmap(data, sizeof(*data));
++			return max;
++		}
++		pa_data = data->next;
++		early_memunmap(data, sizeof(*data));
++	}
++
++	return max;
++}
++
++static unsigned int __init kaslr_padding(void)
++{
++	unsigned long long max_possible_addr;
++	unsigned long long max_possible_phys, max_actual_phys, threshold;
++	unsigned int rand_mem_physical_padding =
++				CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
++
++	max_possible_addr = get_max_possible_addr();
++	if (!max_possible_addr)
++		goto out;
++
++	max_actual_phys = roundup(PFN_PHYS(max_pfn), 1ULL << TB_SHIFT);
++	max_possible_phys = roundup(max_possible_addr,
++					1ULL << TB_SHIFT);
++	threshold = max_actual_phys +
++		((unsigned long long)rand_mem_physical_padding << TB_SHIFT);
++
++	if (max_possible_phys > threshold)
++		rand_mem_physical_padding =
++			(max_possible_phys - max_actual_phys) >> TB_SHIFT;
++out:
++	return rand_mem_physical_padding;
++}
++#else
++static unsigned int __init kaslr_padding(void)
++{
++	return CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
++}
++#endif
++
+ /* Initialize base and padding for each memory region randomized with KASLR */
+ void __init kernel_randomize_memory(void)
+ {
+@@ -102,7 +158,7 @@ void __init kernel_randomize_memory(void)
+ 	 */
+ 	BUG_ON(kaslr_regions[0].base != &page_offset_base);
+ 	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
+-		CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
++		kaslr_padding();
+
+ 	/* Adapt phyiscal memory region size based on available memory */
+ 	if (memory_tb < kaslr_regions[0].size_tb)
+--
+
+Thanks!
+Masa
