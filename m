@@ -2,138 +2,90 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C63C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F689C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:54:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A9AF20664
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:54:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A9AF20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F8D820664
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:54:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F8D820664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728196AbeJVXNN (ORCPT
+        id S1728256AbeJVXNm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 19:13:13 -0400
-Received: from gateway23.websitewelcome.com ([192.185.49.124]:35702 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727554AbeJVXNN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 19:13:13 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id EEBF9139C6
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 09:54:18 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id EbabgD7cvkBj6EbaqgGRpR; Mon, 22 Oct 2018 09:54:18 -0500
-X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:41662 helo=[192.168.1.41])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gEbab-003HIJ-4k; Mon, 22 Oct 2018 09:53:53 -0500
-To:     Jes Sorensen <jes.sorensen@gmail.com>, linux-kernel@vger.kernel.org
-Cc:     Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-References: <cover.1540208577.git.gustavo@embeddedor.com>
- <a1b9b68a-ca94-f02f-4a87-bbd46782c41c@gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH 0/2] Mark expected switch fall-throughs and fix missing
- break
-Message-ID: <8189d36d-1e12-c16d-4cb7-9aeefea3a6ff@embeddedor.com>
-Date:   Mon, 22 Oct 2018 16:53:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 22 Oct 2018 19:13:42 -0400
+Received: from verein.lst.de ([213.95.11.211]:36907 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727702AbeJVXNm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 19:13:42 -0400
+Received: by newverein.lst.de (Postfix, from userid 2005)
+        id 3ADE168BDF; Mon, 22 Oct 2018 16:54:48 +0200 (CEST)
+Date:   Mon, 22 Oct 2018 16:54:48 +0200
+From:   Torsten Duwe <duwe@lst.de>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] arm64: implement live patching
+Message-ID: <20181022145448.GA22918@lst.de>
+References: <20181001140910.086E768BC7@newverein.lst.de> <20181001141652.5478C68BE1@newverein.lst.de> <alpine.LSU.2.21.1810171051560.21847@pobox.suse.cz> <20181018125820.iw54zbirq74ulknj@linux-8ccs> <CAKv+Gu_yNBN+Rpw98MAZaxzSjm20qMYD7+fiJ1fBHoUeDr9fBA@mail.gmail.com> <alpine.LSU.2.21.1810191714540.4692@pobox.suse.cz> <CAKv+Gu8Vg9-CwvU-u9gNGmtB7gTapuCPHjU5v7FWnPsVy6vptA@mail.gmail.com> <alpine.LSU.2.21.1810221452070.13146@pobox.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <a1b9b68a-ca94-f02f-4a87-bbd46782c41c@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 86.245.173.13
-X-Source-L: No
-X-Exim-ID: 1gEbab-003HIJ-4k
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:41662
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1810221452070.13146@pobox.suse.cz>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 10/22/18 4:36 PM, Jes Sorensen wrote:
-> On 10/22/18 7:49 AM, Gustavo A. R. Silva wrote:
->> In preparation to enabling -Wimplicit-fallthrough, this patchset aims
->> to mark multiple switch cases where we are expecting to fall through.
->>
->> Also, the second patch in this series fixes a missing break in switch.
+On Mon, Oct 22, 2018 at 02:53:10PM +0200, Miroslav Benes wrote:
+> On Sat, 20 Oct 2018, Ard Biesheuvel wrote:
+> > So I suppose this could get interesting in cases where modules are far
+> > away from the kernel (i.e., more than -/+ 128 MB). Fortunately, the
+> > modules themselves are always placed in a 128 MB window, but this
+> > window could be out of reach for branches into the kernel proper. If
+> > we find ourselves in the situation where we need to patch calls into
+> > the kernel proper to point into this module, this may get interesting,
+> > since the PLT entries *must* be allocated along with the module that
+> > contains the branch instruction, or the PLT entry itself may be out of
+> > range, defeating the purpose.
 > 
-> Enabling that sounds like a great way to inflict pain and suffering.
-> 
+> Hm... Torsten, didn't you have to solve something similar in powerpc case? 
 
-Not really. The -Wimplicit-fallthrough will be enabled until after all the
-current warnings have been addressed.
+At address ranges: that was the TOC pointer issue, that is an array of
+addresses and other 64-bit constants with a reference to it kept in a register,
+whose value is local to any module. PPC64 needs 5 instructions to load a 64-bit
+value immediate, arm has the ldr_l macro. So in short: no. We were discussing a
+few nasty tricks to reconstruct the TOC value from the code addresses, but
+ended up with a solution that is clean in that respect.
 
-There are 600 of these issues left. So, hopefully I will complete this task
-during the next development cycle.
+At PLTs: ppc64 uses, IIRC, a regular trampoline slot to get to all called
+functions, including ftrace and friends. So for e.g. live patch kernels
+the total number, as predetermined, is only incremented by 2. Only the
+trampoline _code_ for ftrace was modified.
+I assume with "branches" you mean "branch with link" a.k.a a subroutine call?
+All references to external symbols are allocated a PLT entry, right?
 
-Thanks
---
-Gustavo
+ftrace / live patching calls are alway intercepted at the called function.
+                                       ===========--------======---------
+The interceptor then uses a special trampoline to go to ftrace_caller, which
+does the rest.
+
+Am I missing something?
+
+	Torsten
+
