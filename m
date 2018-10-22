@@ -2,819 +2,133 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F56C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48895C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:50:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F04120672
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:49:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GnvXMdJz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F04120672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id DA65020645
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:50:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA65020645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbeJVXIQ (ORCPT
+        id S1728545AbeJVXJG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 19:08:16 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36456 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727669AbeJVXIQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 19:08:16 -0400
-Received: by mail-pf1-f193.google.com with SMTP id l81-v6so20039169pfg.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 07:49:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=IKgGDAQT5X0XpYX5GPp6bAAZi76WJz+pi1buh+qC6lo=;
-        b=GnvXMdJzOTOeH6LGbyCD4/9IEndvNsfD3TOV/xOJR2tRXBjGMssL8X4cFBctfLrqtI
-         3yiJAuwaoUy8JPBC54sY1G+/HvDbDrzifKGDY4bvjrCH/f6fQ7P0y13jTJXsfzpZmSqb
-         zxfvy9LHgFgi60+RwT9pHgwxDwkk2H8k4WMpI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=IKgGDAQT5X0XpYX5GPp6bAAZi76WJz+pi1buh+qC6lo=;
-        b=IBA7QLQuUP7ItPpk7qT3VZWi8P8dqn5opnbIXlFiYYeal5hFrg0CSvBK2npGNSrw1k
-         cnQN+tsMPDiRjHRYX7IQ82RpeEtNDNrA2kD98iJkRz2DGiK8/kkIXLq4JXc1eGOaw9em
-         AfgowfqjtQtEvbrvZdrqqzgJkdJeapE4lsyVz1KLNUzdYsKvPqCsUCEOxIabKlup6NAb
-         T1zbxnABtyfI2fKhhfH1/Etv6rOJ5cj0U52eRKSy6PXhnoKqQbCi26RLf1xuI6zTAaLx
-         uOoBFbWhxSikSjNZAnGP1Yi93Cwlll4jU/HLMzjzA+IJ89IUsLbOqGEFDS8ZVM0iTvp3
-         rMpQ==
-X-Gm-Message-State: ABuFfogI6xwyqYlJTmn/GUsmAL0s/dHJMOSmy8ZryHNFZ2phlsD7AWVX
-        e4s3+dgPvVAfpgtvA7a2kUB8sA==
-X-Google-Smtp-Source: ACcGV61g/CVIdZJ6DdQlGXsL4d4BeRmflKzc6NtCtCY3Dj94YG6p7xJ2eSG6LmUxwlvHkEJjvGL//w==
-X-Received: by 2002:a62:4301:: with SMTP id q1-v6mr45074198pfa.163.1540219762902;
-        Mon, 22 Oct 2018 07:49:22 -0700 (PDT)
-Received: from tfiga.tok.corp.google.com ([2401:fa00:4:4:5b21:5966:1198:d1e9])
-        by smtp.gmail.com with ESMTPSA id s80-v6sm42245429pfa.114.2018.10.22.07.49.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Oct 2018 07:49:21 -0700 (PDT)
-From:   Tomasz Figa <tfiga@chromium.org>
-To:     linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        =?UTF-8?q?Pawe=C5=82=20O=C5=9Bciak?= <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Maxime Jourdan <maxi.jourdan@wanadoo.fr>,
-        Tomasz Figa <tfiga@chromium.org>
-Subject: [PATCH v2 2/2] media: docs-rst: Document memory-to-memory video encoder interface
-Date:   Mon, 22 Oct 2018 23:49:00 +0900
-Message-Id: <20181022144901.113852-3-tfiga@chromium.org>
-X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
-In-Reply-To: <20181022144901.113852-1-tfiga@chromium.org>
-References: <20181022144901.113852-1-tfiga@chromium.org>
+        Mon, 22 Oct 2018 19:09:06 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52072 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727218AbeJVXJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 19:09:05 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 999F33001A49;
+        Mon, 22 Oct 2018 14:50:13 +0000 (UTC)
+Received: from krava (unknown [10.43.17.150])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 0043561B82;
+        Mon, 22 Oct 2018 14:50:07 +0000 (UTC)
+Date:   Mon, 22 Oct 2018 16:50:07 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Len Brown <len.brown@intel.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Renninger <trenn@suse.com>,
+        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        "Herton R. Krzesinski" <herton@redhat.com>
+Subject: [PATCH 10/10] tools gpio: Override CFLAGS assignments
+Message-ID: <20181022145007.GD2945@krava>
+References: <20181016150614.21260-1-jolsa@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181016150614.21260-1-jolsa@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 22 Oct 2018 14:50:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Due to complexity of the video encoding process, the V4L2 drivers of
-stateful encoder hardware require specific sequences of V4L2 API calls
-to be followed. These include capability enumeration, initialization,
-encoding, encode parameters change, drain and reset.
+On Tue, Oct 16, 2018 at 05:06:05PM +0200, Jiri Olsa wrote:
+> hi,
+> while hardening some of the tools rpm, we noticed we
+> can't pass build flags to some of them. 
+> 
+> Sending separate tools fixes for what we found. It's
+> mostly override for CFLAGS and adding LDFLAGS to the
+> build commands.
+> 
+> thanks,
+> jirka
+> 
+> 
+> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Cc: Hartmut Knaack <knaack.h@gmx.de>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Len Brown <len.brown@intel.com>
+> Cc: Markus Mayer <mmayer@broadcom.com>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: Signed-off-by: Len Brown <len.brown@intel.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Thomas Renninger <trenn@suse.com>
+> Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> ---
+> Jiri Olsa (10):
+>       tools lib traceevent: Use LDFLAGS in the build commands
+>       tools perf: Pass build flags to traceevent build
+>       tools cpupower debug: Allow to use outside build flags
+>       tools cpupower: Override CFLAGS assignments
+>       tools power x86_energy_perf_policy: Override CFLAGS assignments and add LDFLAGS to build command
+>       tools thermal tmon: Override CFLAGS assignments
+>       tools thermal tmon: Use -O3 instead of -O1 if available
+>       tools power turbostat: Override CFLAGS assignments and add LDFLAGS to build command
+>       tools iio: Override CFLAGS assignments
+>       tools gpio: Override CFLAGS assignments
 
-Specifics of the above have been discussed during Media Workshops at
-LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
-Conference Europe 2014 in Düsseldorf. The de facto Codec API that
-originated at those events was later implemented by the drivers we already
-have merged in mainline, such as s5p-mfc or coda.
+the last one did not get post for some reason,
+attaching it now
 
-The only thing missing was the real specification included as a part of
-Linux Media documentation. Fix it now and document the encoder part of
-the Codec API.
+jirka
 
-Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+
 ---
- Documentation/media/uapi/v4l/dev-encoder.rst  | 579 ++++++++++++++++++
- Documentation/media/uapi/v4l/devices.rst      |   1 +
- Documentation/media/uapi/v4l/pixfmt-v4l2.rst  |   5 +
- Documentation/media/uapi/v4l/v4l2.rst         |   2 +
- .../media/uapi/v4l/vidioc-encoder-cmd.rst     |  38 +-
- 5 files changed, 610 insertions(+), 15 deletions(-)
- create mode 100644 Documentation/media/uapi/v4l/dev-encoder.rst
+So user could specify outside CFLAGS values.
 
-diff --git a/Documentation/media/uapi/v4l/dev-encoder.rst b/Documentation/media/uapi/v4l/dev-encoder.rst
-new file mode 100644
-index 000000000000..41139e5e48eb
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/dev-encoder.rst
-@@ -0,0 +1,579 @@
-+.. -*- coding: utf-8; mode: rst -*-
-+
-+.. _encoder:
-+
-+*************************************************
-+Memory-to-memory Stateful Video Encoder Interface
-+*************************************************
-+
-+A stateful video encoder takes raw video frames in display order and encodes
-+them into a bitstream. It generates complete chunks of the bitstream, including
-+all metadata, headers, etc. The resulting bitstream does not require any
-+further post-processing by the client.
-+
-+Performing software stream processing, header generation etc. in the driver
-+in order to support this interface is strongly discouraged. In case such
-+operations are needed, use of the Stateless Video Encoder Interface (in
-+development) is strongly advised.
-+
-+Conventions and notation used in this document
-+==============================================
-+
-+1. The general V4L2 API rules apply if not specified in this document
-+   otherwise.
-+
-+2. The meaning of words "must", "may", "should", etc. is as per RFC
-+   2119.
-+
-+3. All steps not marked "optional" are required.
-+
-+4. :c:func:`VIDIOC_G_EXT_CTRLS`, :c:func:`VIDIOC_S_EXT_CTRLS` may be used
-+   interchangeably with :c:func:`VIDIOC_G_CTRL`, :c:func:`VIDIOC_S_CTRL`,
-+   unless specified otherwise.
-+
-+5. Single-plane API (see spec) and applicable structures may be used
-+   interchangeably with Multi-plane API, unless specified otherwise,
-+   depending on encoder capabilities and following the general V4L2
-+   guidelines.
-+
-+6. i = [a..b]: sequence of integers from a to b, inclusive, i.e. i =
-+   [0..2]: i = 0, 1, 2.
-+
-+7. Given an ``OUTPUT`` buffer A, A' represents a buffer on the ``CAPTURE``
-+   queue containing data (encoded frame/stream) that resulted from processing
-+   buffer A.
-+
-+Glossary
-+========
-+
-+Refer to :ref:`decoder-glossary`.
-+
-+State machine
-+=============
-+
-+.. kernel-render:: DOT
-+   :alt: DOT digraph of encoder state machine
-+   :caption: Encoder state machine
-+
-+   digraph encoder_state_machine {
-+       node [shape = doublecircle, label="Encoding"] Encoding;
-+
-+       node [shape = circle, label="Initialization"] Initialization;
-+       node [shape = circle, label="Stopped"] Stopped;
-+       node [shape = circle, label="Drain"] Drain;
-+       node [shape = circle, label="Reset"] Reset;
-+
-+       node [shape = point]; qi
-+       qi -> Initialization [ label = "open()" ];
-+
-+       Initialization -> Encoding [ label = "Both queues streaming" ];
-+
-+       Encoding -> Drain [ label = "V4L2_DEC_CMD_STOP" ];
-+       Encoding -> Reset [ label = "VIDIOC_STREAMOFF(CAPTURE)" ];
-+       Encoding -> Stopped [ label = "VIDIOC_STREAMOFF(OUTPUT)" ];
-+       Encoding -> Encoding;
-+
-+       Drain -> Stopped [ label = "All CAPTURE\nbuffers dequeued\nor\nVIDIOC_STREAMOFF(CAPTURE)" ];
-+       Drain -> Reset [ label = "VIDIOC_STREAMOFF(CAPTURE)" ];
-+
-+       Reset -> Encoding [ label = "VIDIOC_STREAMON(CAPTURE)" ];
-+       Reset -> Initialization [ label = "VIDIOC_REQBUFS(OUTPUT, 0)" ];
-+
-+       Stopped -> Encoding [ label = "V4L2_DEC_CMD_START\nor\nVIDIOC_STREAMON(OUTPUT)" ];
-+       Stopped -> Reset [ label = "VIDIOC_STREAMOFF(CAPTURE)" ];
-+   }
-+
-+Querying capabilities
-+=====================
-+
-+1. To enumerate the set of coded formats supported by the encoder, the
-+   client may call :c:func:`VIDIOC_ENUM_FMT` on ``CAPTURE``.
-+
-+   * The full set of supported formats will be returned, regardless of the
-+     format set on ``OUTPUT``.
-+
-+2. To enumerate the set of supported raw formats, the client may call
-+   :c:func:`VIDIOC_ENUM_FMT` on ``OUTPUT``.
-+
-+   * Only the formats supported for the format currently active on ``CAPTURE``
-+     will be returned.
-+
-+   * In order to enumerate raw formats supported by a given coded format,
-+     the client must first set that coded format on ``CAPTURE`` and then
-+     enumerate the formats on ``OUTPUT``.
-+
-+3. The client may use :c:func:`VIDIOC_ENUM_FRAMESIZES` to detect supported
-+   resolutions for a given format, passing desired pixel format in
-+   :c:type:`v4l2_frmsizeenum` ``pixel_format``.
-+
-+   * Values returned by :c:func:`VIDIOC_ENUM_FRAMESIZES` for a coded pixel
-+     format will include all possible coded resolutions supported by the
-+     encoder for given coded pixel format.
-+
-+   * Values returned by :c:func:`VIDIOC_ENUM_FRAMESIZES` for a raw pixel format
-+     will include all possible frame buffer resolutions supported by the
-+     encoder for given raw pixel format and coded format currently set on
-+     ``CAPTURE``.
-+
-+4. Supported profiles and levels for given format, if applicable, may be
-+   queried using their respective controls via :c:func:`VIDIOC_QUERYCTRL`.
-+
-+5. Any additional encoder capabilities may be discovered by querying
-+   their respective controls.
-+
-+Initialization
-+==============
-+
-+1. **Optional.** Enumerate supported formats and resolutions. See
-+   `Querying capabilities` above.
-+
-+2. Set a coded format on the ``CAPTURE`` queue via :c:func:`VIDIOC_S_FMT`
-+
-+   * **Required fields:**
-+
-+     ``type``
-+         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``CAPTURE``
-+
-+     ``pixelformat``
-+         the coded format to be produced
-+
-+     ``sizeimage``
-+         desired size of ``CAPTURE`` buffers; the encoder may adjust it to
-+         match hardware requirements
-+
-+     other fields
-+         follow standard semantics
-+
-+   * **Return fields:**
-+
-+     ``sizeimage``
-+         adjusted size of ``CAPTURE`` buffers
-+
-+   .. warning::
-+
-+      Changing the ``CAPTURE`` format may change the currently set ``OUTPUT``
-+      format. The encoder will derive a new ``OUTPUT`` format from the
-+      ``CAPTURE`` format being set, including resolution, colorimetry
-+      parameters, etc. If the client needs a specific ``OUTPUT`` format, it
-+      must adjust it afterwards.
-+
-+3. **Optional.** Enumerate supported ``OUTPUT`` formats (raw formats for
-+   source) for the selected coded format via :c:func:`VIDIOC_ENUM_FMT`.
-+
-+   * **Required fields:**
-+
-+     ``type``
-+         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-+
-+     other fields
-+         follow standard semantics
-+
-+   * **Return fields:**
-+
-+     ``pixelformat``
-+         raw format supported for the coded format currently selected on
-+         the ``OUTPUT`` queue.
-+
-+     other fields
-+         follow standard semantics
-+
-+4. Set the raw source format on the ``OUTPUT`` queue via
-+   :c:func:`VIDIOC_S_FMT`.
-+
-+   * **Required fields:**
-+
-+     ``type``
-+         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-+
-+     ``pixelformat``
-+         raw format of the source
-+
-+     ``width``, ``height``
-+         source resolution
-+
-+     other fields
-+         follow standard semantics
-+
-+   * **Return fields:**
-+
-+     ``width``, ``height``
-+         may be adjusted by encoder to match alignment requirements, as
-+         required by the currently selected formats
-+
-+     other fields
-+         follow standard semantics
-+
-+   * Setting the source resolution will reset the selection rectangles to their
-+     default values, based on the new resolution, as described in the step 5
-+     below.
-+
-+5. **Optional.** Set the visible resolution for the stream metadata via
-+   :c:func:`VIDIOC_S_SELECTION` on the ``OUTPUT`` queue.
-+
-+   * **Required fields:**
-+
-+     ``type``
-+         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-+
-+     ``target``
-+         set to ``V4L2_SEL_TGT_CROP``
-+
-+     ``r.left``, ``r.top``, ``r.width``, ``r.height``
-+         visible rectangle; this must fit within the `V4L2_SEL_TGT_CROP_BOUNDS`
-+         rectangle and may be subject to adjustment to match codec and
-+         hardware constraints
-+
-+   * **Return fields:**
-+
-+     ``r.left``, ``r.top``, ``r.width``, ``r.height``
-+         visible rectangle adjusted by the encoder
-+
-+   * The following selection targets are supported on ``OUTPUT``:
-+
-+     ``V4L2_SEL_TGT_CROP_BOUNDS``
-+         equal to the full source frame, matching the active ``OUTPUT``
-+         format
-+
-+     ``V4L2_SEL_TGT_CROP_DEFAULT``
-+         equal to ``V4L2_SEL_TGT_CROP_BOUNDS``
-+
-+     ``V4L2_SEL_TGT_CROP``
-+         rectangle within the source buffer to be encoded into the
-+         ``CAPTURE`` stream; defaults to ``V4L2_SEL_TGT_CROP_DEFAULT``
-+
-+     ``V4L2_SEL_TGT_COMPOSE_BOUNDS``
-+         maximum rectangle within the coded resolution, which the cropped
-+         source frame can be output into; if the hardware does not support
-+         composition or scaling, then this is always equal to the rectangle of
-+         width and height matching ``V4L2_SEL_TGT_CROP`` and located at (0, 0)
-+
-+     ``V4L2_SEL_TGT_COMPOSE_DEFAULT``
-+         equal to a rectangle of width and height matching
-+         ``V4L2_SEL_TGT_CROP`` and located at (0, 0)
-+
-+     ``V4L2_SEL_TGT_COMPOSE``
-+         rectangle within the coded frame, which the cropped source frame
-+         is to be output into; defaults to
-+         ``V4L2_SEL_TGT_COMPOSE_DEFAULT``; read-only on hardware without
-+         additional compose/scaling capabilities; resulting stream will
-+         have this rectangle encoded as the visible rectangle in its
-+         metadata
-+
-+   .. warning::
-+
-+      The encoder may adjust the crop/compose rectangles to the nearest
-+      supported ones to meet codec and hardware requirements. The client needs
-+      to check the adjusted rectangle returned by :c:func:`VIDIOC_S_SELECTION`.
-+
-+6. Allocate buffers for both ``OUTPUT`` and ``CAPTURE`` via
-+   :c:func:`VIDIOC_REQBUFS`. This may be performed in any order.
-+
-+   * **Required fields:**
-+
-+     ``count``
-+         requested number of buffers to allocate; greater than zero
-+
-+     ``type``
-+         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT`` or
-+         ``CAPTURE``
-+
-+     other fields
-+         follow standard semantics
-+
-+   * **Return fields:**
-+
-+     ``count``
-+          actual number of buffers allocated
-+
-+   .. warning::
-+
-+      The actual number of allocated buffers may differ from the ``count``
-+      given. The client must check the updated value of ``count`` after the
-+      call returns.
-+
-+   .. note::
-+
-+      To allocate more than the minimum number of buffers (for pipeline depth),
-+      the client may query the ``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT`` or
-+      ``V4L2_CID_MIN_BUFFERS_FOR_CAPTURE`` control respectively, to get the
-+      minimum number of buffers required by the encoder/format, and pass the
-+      obtained value plus the number of additional buffers needed in the
-+      ``count`` field to :c:func:`VIDIOC_REQBUFS`.
-+
-+   Alternatively, :c:func:`VIDIOC_CREATE_BUFS` can be used to have more
-+   control over buffer allocation.
-+
-+   * **Required fields:**
-+
-+     ``count``
-+         requested number of buffers to allocate; greater than zero
-+
-+     ``type``
-+         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-+
-+     other fields
-+         follow standard semantics
-+
-+   * **Return fields:**
-+
-+     ``count``
-+         adjusted to the number of allocated buffers
-+
-+7. Begin streaming on both ``OUTPUT`` and ``CAPTURE`` queues via
-+   :c:func:`VIDIOC_STREAMON`. This may be performed in any order. The actual
-+   encoding process starts when both queues start streaming.
-+
-+.. note::
-+
-+   If the client stops the ``CAPTURE`` queue during the encode process and then
-+   restarts it again, the encoder will begin generating a stream independent
-+   from the stream generated before the stop. The exact constraints depend
-+   on the coded format, but may include the following implications:
-+
-+   * encoded frames produced after the restart must not reference any
-+     frames produced before the stop, e.g. no long term references for
-+     H.264,
-+
-+   * any headers that must be included in a standalone stream must be
-+     produced again, e.g. SPS and PPS for H.264.
-+
-+Encoding
-+========
-+
-+This state is reached after the `Initialization` sequence finishes succesfully.
-+In this state, client queues and dequeues buffers to both queues via
-+:c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_DQBUF`, following the standard
-+semantics.
-+
-+The contents of encoded ``CAPTURE`` buffers depend on the active coded pixel
-+format and may be affected by codec-specific extended controls, as stated
-+in the documentation of each format.
-+
-+Both queues operate independently, following standard behavior of V4L2 buffer
-+queues and memory-to-memory devices. In addition, the order of encoded frames
-+dequeued from the ``CAPTURE`` queue may differ from the order of queuing raw
-+frames to the ``OUTPUT`` queue, due to properties of the selected coded format,
-+e.g. frame reordering.
-+
-+The client must not assume any direct relationship between ``CAPTURE`` and
-+``OUTPUT`` buffers and any specific timing of buffers becoming
-+available to dequeue. Specifically,
-+
-+* a buffer queued to ``OUTPUT`` may result in more than 1 buffer produced on
-+  ``CAPTURE`` (if returning an encoded frame allowed the encoder to return a
-+  frame that preceded it in display, but succeeded it in the decode order),
-+
-+* a buffer queued to ``OUTPUT`` may result in a buffer being produced on
-+  ``CAPTURE`` later into encode process, and/or after processing further
-+  ``OUTPUT`` buffers, or be returned out of order, e.g. if display
-+  reordering is used,
-+
-+* buffers may become available on the ``CAPTURE`` queue without additional
-+  buffers queued to ``OUTPUT`` (e.g. during drain or ``EOS``), because of the
-+  ``OUTPUT`` buffers queued in the past whose decoding results are only
-+  available at later time, due to specifics of the decoding process,
-+
-+* buffers queued to ``OUTPUT`` may not become available to dequeue instantly
-+  after being encoded into a corresponding ``CATPURE`` buffer, e.g. if the
-+  encoder needs to use the frame as a reference for encoding further frames.
-+
-+.. note::
-+
-+   To allow matching encoded ``CAPTURE`` buffers with ``OUTPUT`` buffers they
-+   originated from, the client can set the ``timestamp`` field of the
-+   :c:type:`v4l2_buffer` struct when queuing an ``OUTPUT`` buffer. The
-+   ``CAPTURE`` buffer(s), which resulted from encoding that ``OUTPUT`` buffer
-+   will have their ``timestamp`` field set to the same value when dequeued.
-+
-+   In addition to the straighforward case of one ``OUTPUT`` buffer producing
-+   one ``CAPTURE`` buffer, the following cases are defined:
-+
-+   * one ``OUTPUT`` buffer generates multiple ``CAPTURE`` buffers: the same
-+     ``OUTPUT`` timestamp will be copied to multiple ``CAPTURE`` buffers,
-+
-+   * the encoding order differs from the presentation order (i.e. the
-+     ``CAPTURE`` buffers are out-of-order compared to the ``OUTPUT`` buffers):
-+     ``CAPTURE`` timestamps will not retain the order of ``OUTPUT`` timestamps
-+     and thus monotonicity of the timestamps cannot be guaranteed.
-+
-+.. note::
-+
-+   To let the client distinguish between frame types (keyframes, intermediate
-+   frames; the exact list of types depends on the coded format), the
-+   ``CAPTURE`` buffers will have corresponding flag bits set in their
-+   :c:type:`v4l2_buffer` struct when dequeued. See the documentation of
-+   :c:type:`v4l2_buffer` and each coded pixel format for exact list of flags
-+   and their meanings.
-+
-+Encoding parameter changes
-+==========================
-+
-+The client is allowed to use :c:func:`VIDIOC_S_CTRL` to change encoder
-+parameters at any time. The availability of parameters is encoder-specific
-+and the client must query the encoder to find the set of available controls.
-+
-+The ability to change each parameter during encoding is encoder-specific, as per
-+the standard semantics of the V4L2 control interface. The client may attempt
-+setting a control of its interest during encoding and if the operation fails
-+with the -EBUSY error code, the ``CAPTURE`` queue needs to be stopped for the
-+configuration change to be allowed (following the `Drain` sequence will be
-+needed to avoid losing the already queued/encoded frames).
-+
-+The timing of parameter updates is encoder-specific, as per the standard
-+semantics of the V4L2 control interface. If the client needs to apply the
-+parameters exactly at specific frame, using the Request API should be
-+considered, if supported by the encoder.
-+
-+Drain
-+=====
-+
-+To ensure that all the queued ``OUTPUT`` buffers have been processed and the
-+related ``CAPTURE`` buffers output to the client, the client must follow the
-+drain sequence described below. After the drain sequence ends, the client has
-+received all encoded frames for all ``OUTPUT`` buffers queued before the
-+sequence was started.
-+
-+1. Begin the drain sequence by issuing :c:func:`VIDIOC_ENCODER_CMD`.
-+
-+   * **Required fields:**
-+
-+     ``cmd``
-+         set to ``V4L2_ENC_CMD_STOP``
-+
-+     ``flags``
-+         set to 0
-+
-+     ``pts``
-+         set to 0
-+
-+   .. warning::
-+
-+   The sentence can be only initiated if both ``OUTPUT`` and ``CAPTURE`` queues
-+   are streaming. For compatibility reasons, the call to
-+   :c:func:`VIDIOC_ENCODER_CMD` will not fail even if any of the queues is not
-+   streaming, but at the same time it will not initiate the `Drain` sequence
-+   and so the steps described below would not be applicable.
-+
-+2. Any ``OUTPUT`` buffers queued by the client before the
-+   :c:func:`VIDIOC_ENCODER_CMD` was issued will be processed and encoded as
-+   normal. The client must continue to handle both queues independently,
-+   similarly to normal encode operation. This includes,
-+
-+   * queuing and dequeuing ``CAPTURE`` buffers, until a buffer marked with the
-+     ``V4L2_BUF_FLAG_LAST`` flag is dequeued,
-+
-+     .. warning::
-+
-+        The last buffer may be empty (with :c:type:`v4l2_buffer`
-+        ``bytesused`` = 0) and in such case it must be ignored by the client,
-+        as it does not contain an encoded frame.
-+
-+     .. note::
-+
-+        Any attempt to dequeue more buffers beyond the buffer marked with
-+        ``V4L2_BUF_FLAG_LAST`` will result in a -EPIPE error from
-+        :c:func:`VIDIOC_DQBUF`.
-+
-+   * dequeuing processed ``OUTPUT`` buffers, until all the buffers queued
-+     before the ``V4L2_ENC_CMD_STOP`` command are dequeued,
-+
-+   * dequeuing the ``V4L2_EVENT_EOS`` event, if the client subscribes to it.
-+
-+   .. note::
-+
-+      For backwards compatibility, the encoder will signal a ``V4L2_EVENT_EOS``
-+      event when the last the last frame has been decoded and all frames are
-+      ready to be dequeued. It is a deprecated behavior and the client must not
-+      rely on it. The ``V4L2_BUF_FLAG_LAST`` buffer flag should be used
-+      instead.
-+
-+3. Once all ``OUTPUT`` buffers queued before the ``V4L2_ENC_CMD_STOP`` call and
-+   the last ``CAPTURE`` buffer are dequeued, the encoder is stopped and it will
-+   accept, but not process any newly queued ``OUTPUT`` buffers until the client
-+   issues any of the following operations:
-+
-+   * ``V4L2_ENC_CMD_START`` - the encoder will resume operation normally,
-+
-+   * a pair of :c:func:`VIDIOC_STREAMOFF` and :c:func:`VIDIOC_STREAMON` on the
-+     ``CAPTURE`` queue - the encoder will be reset (see the `Reset` sequence)
-+     and then resume encoding,
-+
-+   * a pair of :c:func:`VIDIOC_STREAMOFF` and :c:func:`VIDIOC_STREAMON` on the
-+     ``OUTPUT`` queue - the encoder will resume operation normally, however any
-+     source frames queued to the ``OUTPUT`` queue between ``V4L2_ENC_CMD_STOP``
-+     and :c:func:`VIDIOC_STREAMOFF` will be discarded.
-+
-+.. note::
-+
-+   Once the drain sequence is initiated, the client needs to drive it to
-+   completion, as described by the steps above, unless it aborts the process by
-+   issuing :c:func:`VIDIOC_STREAMOFF` on any of the ``OUTPUT`` or ``CAPTURE``
-+   queues.  The client is not allowed to issue ``V4L2_ENC_CMD_START`` or
-+   ``V4L2_ENC_CMD_STOP`` again while the drain sequence is in progress and they
-+   will fail with -EBUSY error code if attempted.
-+
-+   Although mandatory, the availability of encoder commands may be queried
-+   using :c:func:`VIDIOC_TRY_ENCODER_CMD`.
-+
-+Reset
-+=====
-+
-+The client may want to request the encoder to reinitialize the encoding, so
-+that the following stream data becomes independent from the stream data
-+generated before. Depending on the coded format, that may imply that,
-+
-+* encoded frames produced after the restart must not reference any frames
-+  produced before the stop, e.g. no long term references for H.264,
-+
-+* any headers that must be included in a standalone stream must be produced
-+  again, e.g. SPS and PPS for H.264.
-+
-+This can be achieved by performing the reset sequence.
-+
-+1. Perform the `Drain` sequence to ensure all the in-flight encoding finishes
-+   and respective buffers are dequeued.
-+
-+2. Stop streaming on the ``CAPTURE`` queue via :c:func:`VIDIOC_STREAMOFF`. This
-+   will return all currently queued ``CAPTURE`` buffers to the client, without
-+   valid frame data.
-+
-+3. Start streaming on the ``CAPTURE`` queue via :c:func:`VIDIOC_STREAMON` and
-+   continue with regular encoding sequence. The encoded frames produced into
-+   ``CAPTURE`` buffers from now on will contain a standalone stream that can be
-+   decoded without the need for frames encoded before the reset sequence,
-+   starting at the first ``OUTPUT`` buffer queued after issuing the
-+   `V4L2_ENC_CMD_STOP` of the `Drain` sequence.
-+
-+This sequence may be also used to change encoding parameters for encoders
-+without the ability to change the parameters on the fly.
-+
-+Commit points
-+=============
-+
-+Setting formats and allocating buffers triggers changes in the behavior of the
-+encoder.
-+
-+1. Setting the format on the ``CAPTURE`` queue may change the set of formats
-+   supported/advertised on the ``OUTPUT`` queue. In particular, it also means
-+   that the ``OUTPUT`` format may be reset and the client must not rely on the
-+   previously set format being preserved.
-+
-+2. Enumerating formats on the ``OUTPUT`` queue always returns only formats
-+   supported for the current ``CAPTURE`` format.
-+
-+3. Setting the format on the ``OUTPUT`` queue does not change the list of
-+   formats available on the ``CAPTURE`` queue. An attempt to set the ``OUTPUT``
-+   format that is not supported for the currently selected ``CAPTURE`` format
-+   will result in the encoder adjusting the requested ``OUTPUT`` format to a
-+   supported one.
-+
-+4. Enumerating formats on the ``CAPTURE`` queue always returns the full set of
-+   supported coded formats, irrespectively of the current ``OUTPUT`` format.
-+
-+5. While buffers are allocated on the ``CAPTURE`` queue, the client must not
-+   change the format on the queue. Drivers will return the -EBUSY error code
-+   for any such format change attempt.
-+
-+To summarize, setting formats and allocation must always start with the
-+``CAPTURE`` queue and the ``CAPTURE`` queue is the master that governs the
-+set of supported formats for the ``OUTPUT`` queue.
-diff --git a/Documentation/media/uapi/v4l/devices.rst b/Documentation/media/uapi/v4l/devices.rst
-index 12d43fe711cf..1822c66c2154 100644
---- a/Documentation/media/uapi/v4l/devices.rst
-+++ b/Documentation/media/uapi/v4l/devices.rst
-@@ -16,6 +16,7 @@ Interfaces
-     dev-osd
-     dev-codec
-     dev-decoder
-+    dev-encoder
-     dev-effect
-     dev-raw-vbi
-     dev-sliced-vbi
-diff --git a/Documentation/media/uapi/v4l/pixfmt-v4l2.rst b/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
-index ca5f2270a829..085089cd9577 100644
---- a/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
-+++ b/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
-@@ -37,6 +37,11 @@ Single-planar format structure
- 	inside the stream, when fed to a stateful mem2mem decoder, the fields
- 	may be zero to rely on the decoder to detect the right values. For more
- 	details see :ref:`decoder` and format descriptions.
-+
-+	For compressed formats on the CAPTURE side of a stateful mem2mem
-+	encoder, the fields must be zero, since the coded size is expected to
-+	be calculated internally by the encoder itself, based on the OUTPUT
-+	side. For more details see :ref:`encoder` and format descriptions.
-     * - __u32
-       - ``pixelformat``
-       - The pixel format or type of compression, set by the application.
-diff --git a/Documentation/media/uapi/v4l/v4l2.rst b/Documentation/media/uapi/v4l/v4l2.rst
-index 65dc096199ad..2ef6693b9499 100644
---- a/Documentation/media/uapi/v4l/v4l2.rst
-+++ b/Documentation/media/uapi/v4l/v4l2.rst
-@@ -56,6 +56,7 @@ Authors, in alphabetical order:
- - Figa, Tomasz <tfiga@chromium.org>
+Cc: Jonathan Cameron <jic23@kernel.org>
+Cc: Hartmut Knaack <knaack.h@gmx.de>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/gpio/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/gpio/Makefile b/tools/gpio/Makefile
+index 240eda014b37..6ecdd1067826 100644
+--- a/tools/gpio/Makefile
++++ b/tools/gpio/Makefile
+@@ -12,7 +12,7 @@ endif
+ # (this improves performance and avoids hard-to-debug behaviour);
+ MAKEFLAGS += -r
  
-   - Documented the memory-to-memory decoder interface.
-+  - Documented the memory-to-memory encoder interface.
+-CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
++override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
  
- - H Schimek, Michael <mschimek@gmx.at>
- 
-@@ -68,6 +69,7 @@ Authors, in alphabetical order:
- - Osciak, Pawel <posciak@chromium.org>
- 
-   - Documented the memory-to-memory decoder interface.
-+  - Documented the memory-to-memory encoder interface.
- 
- - Osciak, Pawel <pawel@osciak.com>
- 
-diff --git a/Documentation/media/uapi/v4l/vidioc-encoder-cmd.rst b/Documentation/media/uapi/v4l/vidioc-encoder-cmd.rst
-index 5ae8c933b1b9..d571c53e761a 100644
---- a/Documentation/media/uapi/v4l/vidioc-encoder-cmd.rst
-+++ b/Documentation/media/uapi/v4l/vidioc-encoder-cmd.rst
-@@ -50,19 +50,23 @@ currently only used by the STOP command and contains one bit: If the
- until the end of the current *Group Of Pictures*, otherwise it will stop
- immediately.
- 
--A :ref:`read() <func-read>` or :ref:`VIDIOC_STREAMON <VIDIOC_STREAMON>`
--call sends an implicit START command to the encoder if it has not been
--started yet. After a STOP command, :ref:`read() <func-read>` calls will read
-+After a STOP command, :ref:`read() <func-read>` calls will read
- the remaining data buffered by the driver. When the buffer is empty,
- :ref:`read() <func-read>` will return zero and the next :ref:`read() <func-read>`
- call will restart the encoder.
- 
-+A :ref:`read() <func-read>` or :ref:`VIDIOC_STREAMON <VIDIOC_STREAMON>`
-+call sends an implicit START command to the encoder if it has not been
-+started yet. Applies to both queues of mem2mem encoders.
-+
- A :ref:`close() <func-close>` or :ref:`VIDIOC_STREAMOFF <VIDIOC_STREAMON>`
- call of a streaming file descriptor sends an implicit immediate STOP to
--the encoder, and all buffered data is discarded.
-+the encoder, and all buffered data is discarded. Applies to both queues of
-+mem2mem encoders.
- 
- These ioctls are optional, not all drivers may support them. They were
--introduced in Linux 2.6.21.
-+introduced in Linux 2.6.21. They are, however, mandatory for stateful mem2mem
-+encoders (as further documented in :ref:`encoder`).
- 
- 
- .. tabularcolumns:: |p{4.4cm}|p{4.4cm}|p{8.7cm}|
-@@ -107,16 +111,20 @@ introduced in Linux 2.6.21.
-       - Stop the encoder. When the ``V4L2_ENC_CMD_STOP_AT_GOP_END`` flag
- 	is set, encoding will continue until the end of the current *Group
- 	Of Pictures*, otherwise encoding will stop immediately. When the
--	encoder is already stopped, this command does nothing. mem2mem
--	encoders will send a ``V4L2_EVENT_EOS`` event when the last frame
--	has been encoded and all frames are ready to be dequeued and will
--	set the ``V4L2_BUF_FLAG_LAST`` buffer flag on the last buffer of
--	the capture queue to indicate there will be no new buffers
--	produced to dequeue. This buffer may be empty, indicated by the
--	driver setting the ``bytesused`` field to 0. Once the
--	``V4L2_BUF_FLAG_LAST`` flag was set, the
--	:ref:`VIDIOC_DQBUF <VIDIOC_QBUF>` ioctl will not block anymore,
--	but return an ``EPIPE`` error code.
-+	encoder is already stopped, this command does nothing.
-+
-+	A stateful mem2mem encoder will proceed with encoding the source
-+	buffers pending before the command is issued and then stop producing
-+	new frames. It will send a ``V4L2_EVENT_EOS`` event when the last frame
-+	has been encoded and all frames are ready to be dequeued and will set
-+	the ``V4L2_BUF_FLAG_LAST`` buffer flag on the last buffer of the
-+	capture queue to indicate there will be no new buffers produced to
-+	dequeue. This buffer may be empty, indicated by the driver setting the
-+	``bytesused`` field to 0. Once the buffer with the
-+	``V4L2_BUF_FLAG_LAST`` flag set was dequeued, the :ref:`VIDIOC_DQBUF
-+	<VIDIOC_QBUF>` ioctl will not block anymore, but return an ``EPIPE``
-+	error code. No flags or other arguments are accepted in case of mem2mem
-+	encoders.  See :ref:`encoder` for more details.
-     * - ``V4L2_ENC_CMD_PAUSE``
-       - 2
-       - Pause the encoder. When the encoder has not been started yet, the
+ ALL_TARGETS := lsgpio gpio-hammer gpio-event-mon
+ ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
 -- 
-2.19.1.568.g152ad8e336-goog
+2.17.2
 
