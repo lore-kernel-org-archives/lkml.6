@@ -2,127 +2,242 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5CBC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8D2C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:35:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72732205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:23:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A5AD205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:35:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YJkcWHQn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72732205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BIEmjcqK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A5AD205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbeJWHoO (ORCPT
+        id S1726797AbeJWH4Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 03:44:14 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:51582 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbeJWHoO (ORCPT
+        Tue, 23 Oct 2018 03:56:16 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:45932 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbeJWH4Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 03:44:14 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9MNJ1NM140817;
-        Mon, 22 Oct 2018 23:23:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=kPEyeQSdPHe012wqN1z3jF4uJcp4DFzXBU8UWvUmZ1c=;
- b=YJkcWHQnPOrT8VYWoWJESxy50GhyTKMvLvc6OtYOTek6M3dNnVTtnOdI/SE+42vdEWdA
- iPJZ76NrjOagB1Oampck5HWu/M55DUfHxwpwc3APdH1pV6YEV9uLEZHeEqo88FmA2i1i
- A7Sc4u4V1wm3XNXYlH8aS/ys1IQyaG7RaI4tC9RolIwogw+qZ+EVMKQTeJUqCx/wMtgC
- gFPnrjqzCzqZ36JQkxWnPyjHXgmXnfgKFXiuQnKPcwhoc/S3pJjClc/qIkujTtVBmh0u
- KT8ennR1bGVCZLmynKRL2ktnZtXc8uroGcuJCKKDDJ5A4SkGeitp07VBur6o4JQeqjOv Ag== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2n7w0qhpaa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Oct 2018 23:23:11 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9MNN5BR006632
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Oct 2018 23:23:05 GMT
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9MNN40X025000;
-        Mon, 22 Oct 2018 23:23:04 GMT
-Received: from dhcp-10-132-91-181.usdhcp.oraclecorp.com (/10.132.91.181)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 22 Oct 2018 16:23:04 -0700
-Subject: Re: [PATCH v2] KVM/nVMX: Do not validate that posted_intr_desc_addr
- is page aligned
-To:     KarimAllah Ahmed <karahmed@amazon.de>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-References: <1540071779-20848-1-git-send-email-karahmed@amazon.de>
- <1540075827-21270-1-git-send-email-karahmed@amazon.de>
-From:   Krish Sadhukhan <krish.sadhukhan@oracle.com>
-Message-ID: <57f63d5b-903c-4b28-da79-151528dc7316@oracle.com>
-Date:   Mon, 22 Oct 2018 16:23:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Tue, 23 Oct 2018 03:56:16 -0400
+Received: by mail-yw1-f68.google.com with SMTP id i185-v6so3018214ywa.12
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 16:35:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jWNsEhGTVNZADfIpa9vpBr1MhvmkhQxt6lUoK5SXwpw=;
+        b=BIEmjcqKjeJeT7J7o4As0c1Y0i4lIYb2hEMji/xb6kiFg+t3YK9j4wHojg/3O8A68V
+         0fIPT8Ql0yz4eFQLKXRhsdeFK6/kVCpEA9Ocvk5lNU90wLXLxA9Jd4zJwiP7AZBBJXTt
+         uCKMVdi/n/5QRZB2xbZqQmS8Cr/ktJmQlnQ74T/79k0YGFERerPk37es9niipxLg1aqw
+         c1POWNgBPrc1j+/w/zdGlamYtPcbL5OlYRPB6vpfz2HQ50M1QjNBjalOdPx6ixL9pbd/
+         eA1zwjqc3A9EE26v+LjvmTwE68uPNqJ/jD+8PO06AkTKUo5q/EmEQnc//F1hspBembQU
+         XMEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jWNsEhGTVNZADfIpa9vpBr1MhvmkhQxt6lUoK5SXwpw=;
+        b=uX4upCSNm5p9DF6/HmTBlhPwyQHefnUoPao+KKxOACvwTBecftZ+xC5ny7CAeGw+m4
+         r3TX1g1huHG+MTMh2WslgLONsvveuJgNih2ayghoK3cFcTGQgYDkKeZZpftjxONWDZsO
+         ErO54IqL87TDnPUhWddvRi0FO8JtRcnKPOu4yYpxJ/zU7rL2jOIDPVUS0P6/EeTMABgJ
+         ae1G805DBzoCeebbKlT7qCVEVV63++hBuW7oYfQBHoPaeN4r+gbCw3i/I7EQZ7YX1wJF
+         Sr9jqHyIQ0gefX7FUo8eTG2I/n4GJxu3V0IzCDJ6bODksfbcHveEke7Y4mNdzCcz8CtG
+         3l+w==
+X-Gm-Message-State: ABuFfohbg40Bs3OvEWPSGr/4XJ/Moa9mJEFoV0xHMBDHFqPxvRALs6lW
+        6yG9v7zKJB1hKC0HQSnt9JnN+oL3jEC5DW3ZMw5qeA==
+X-Google-Smtp-Source: ACcGV62JY/O/SHArxLO34uHjn8CcHZhJfEPqVYN1SJtUKhvXSXSn4yRWEyb0D2RVg3o2b2qT9IzdLSBbp5/rgI7uitQ=
+X-Received: by 2002:a81:3c15:: with SMTP id j21-v6mr5157405ywa.119.1540251335270;
+ Mon, 22 Oct 2018 16:35:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1540075827-21270-1-git-send-email-karahmed@amazon.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9054 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810220196
+References: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
+ <20181018215101.169847-1-rajatja@google.com> <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
+In-Reply-To: <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
+From:   Rajat Jain <rajatja@google.com>
+Date:   Mon, 22 Oct 2018 16:34:55 -0700
+Message-ID: <CACK8Z6HOsUcPFyf-GguxPxh_Zdj6gCXP=FpGw-vQXJfnM=cquw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-pci: Try "cd" for card-detect lookup before
+ using NULL
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     "Hunter, Adrian" <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rajat Jain <rajatxjain@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Andy,
 
+Thanks for your review.
 
-On 10/20/2018 03:50 PM, KarimAllah Ahmed wrote:
-> The spec only requires the posted interrupt descriptor address to be
-> 64-bytes aligned (i.e. bits[0:5] == 0). Using page_address_valid also
-> forces the address to be page aligned.
+On Fri, Oct 19, 2018 at 2:13 AM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
 >
-> Only validate that the address does not cross the maximum physical address
-> without enforcing a page alignment.
+> On Fri, Oct 19, 2018 at 12:53 AM Rajat Jain <rajatja@google.com> wrote:
+> >
+> > Problem:
+> >
+> > The card detect IRQ does not work with modern BIOS (that want
+> > to use DSD to provide the card detect GPIO to the driver).
+> >
+> > Details:
+> >
 >
-> v1 -> v2:
-> - Add a missing parenthesis (dropped while merging!)
+> > (Discussion: https://lkml.org/lkml/2018/9/25/1113)
 >
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> Cc: x86@kernel.org
-> Cc: kvm@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Fixes: 6de84e581c0 ("nVMX x86: check posted-interrupt descriptor addresss on vmentry of L2")
-> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-> ---
->   arch/x86/kvm/vmx.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> We have a Link tag for such references.
 >
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 38f1a16..bb0fcdb 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -11667,7 +11667,7 @@ static int nested_vmx_check_apicv_controls(struct kvm_vcpu *vcpu,
->   	    !nested_exit_intr_ack_set(vcpu) ||
->   	    (vmcs12->posted_intr_nv & 0xff00) ||
->   	    (vmcs12->posted_intr_desc_addr & 0x3f) ||
-> -	    (!page_address_valid(vcpu, vmcs12->posted_intr_desc_addr))))
-> +	    (vmcs12->posted_intr_desc_addr >> cpuid_maxphyaddr(vcpu))))
->   		return -EINVAL;
->   
->   	/* tpr shadow is needed by all apicv features. */
+> > The mmc core provides the mmc_gpiod_request_cd() API to let host drivers
+> > request the gpio descriptor for the "card detect" (or carrier detect?) pin.
+>
+> card detect is a right term.
+>
+> > This pin is specified in the ACPI for the SDHC device:
+> >
+> >  * Either as a resource using _CRS. This is a method used by legacy BIOS.
+> >    (The driver needs to tell which resource index).
+> >
+> >  * Or as a named property ("cd-gpio") in DSD (which may internally point
+>
+> cd-gpios (gpio suffix is a legacy).
+>
+> >    to an entry in _CRS). This way, the driver can lookup using a string.
+> >    This is what modern BIOS prefer to use.
+> >
+> > This API finally results in a call to the following code:
+> >
+> > struct gpio_desc *acpi_find_gpio(..., const char *con_id,...)
+> > {
+> > ...
+> >    /* Lookup gpio (using "<con_id>-gpio") in the _DSD */
+> > ...
+> >    if (!acpi_can_fallback_to_crs(adev, con_id))
+> >           return ERR_PTR(-ENOENT);
+> > ...
+> >    /* Falling back to _CRS is allowed, Lookup gpio in the _CRS */
+> > ...
+> > }
+> >
+> > Note that this means that if the ACPI has _DSD properties, the kernel
+> > will never use _CRS for the lookup (Because acpi_can_fallback_to_crs()
+> > will always be false for any device hat has _DSD entries).
+> >
+> > The SDHCI driver is thus currently broken on a modern BIOS
+>
+> > (even if
+> > BIOS provides both _CRS and DSD entries, either of which could be used for
+>
+> _DSD
+>
+> > a successful lookup).
+>
+> This is incorrect. _DSD for GPIOs without any accompanying _CRS
+> doesn't make any sense.
+>
+> > Ironically, none of these will be used for the
+> > lookup currently because:
+> >
+> > * Since the con_id is NULL, acpi_find_gpio() does not find a matching
+> >   entry in DSDT. (The DSDT entry has the property name = "cd-gpio")
+>
+> cd-gpios
+>
+> >
+> > * Because ACPI contains DSDT entries, thus acpi_can_fallback_to_crs()
+> >   returns false (because device properties have been populated from
+> >   DSD), thus the _CRS is never used for the lookup.
+>
+> _DSD
+>
+> >
+> > Fix:
+> >
+> > Try "cd" for lookup in the _DSD before falling back to using NULL so
+> > as to try looking up in the _CRS.
+> >
+> > I've tested this patch successfully with both Legacy BIOS (that
+> > provide only _CRS method) as well as modern BIOS (that provide both
+> > _CRS and DSD). Also the use of "cd" also appears to be farly consistent
+>
+> _DSD
+> fairly
 
-Reviewed-by: Krish Sadhuhan <krish.sadhukhan@oracle.com>
+I can fix the commit log to take care of all your review comments.
+
+>
+> > across other users of this API (other MMC host controller drivers).
+>
+> >         if (slot->cd_idx >= 0) {
+> > -               ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
+> > +               ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
+> >                                            slot->cd_override_level, 0, NULL);
+>
+> Yes.
+>
+> > +               if (ret && ret != -EPROBE_DEFER)
+> > +                       ret = mmc_gpiod_request_cd(host->mmc, NULL,
+> > +                                                  slot->cd_idx,
+> > +                                                  slot->cd_override_level,
+> > +                                                  0, NULL);
+>
+> And no. Instead of this part you need to provide an ACPI GPIO mapping table.
+
+Sure, I am willing to do so, and I tried earlier too. However, certain
+doubts arose in my mind when I tried that and I posted my questions
+earlier (https://lkml.org/lkml/2018/9/28/507) but couldn't elicit any
+response. Unfortunately I still do not have answers. My primary
+questions are:
+
+1) - It seems that 1 SDHCI device may support multiple slots (looking
+at the code). It is not clear to me if they could share card detect
+interrupts, or should have separate ones? Also, the driver may not
+really know? So should I add 1 or two pins using the
+devm_acpi_dev_add_driver_gpios(). Is some one familiar with SDHC
+driver can answer these questions, it shall be great.
+
+2) I'm not really sure what should I set "active_low" to? Isn't this
+something that should be specified by platform / ACPI too, and driver
+should just be able to say say choose whatever the ACPI says?
+
+struct acpi_gpio_params {
+        unsigned int crs_entry_index;
+        unsigned int line_index;
+        bool active_low;
+};
+
+Since I do not understand the above two issues, and thus I chose the
+safest path and not disturb the current code so as not to cause any
+regressions.
+
+Please let me know, and I'm happy to re-spin my patch.
+
+Thanks,
+
+Rajat
+
+>
+> See examples, like
+> net/rfkill/rfkill-gpio.c
+>
+> (look for acpi_rfkill_default_gpios)
+>
+> >                 if (ret == -EPROBE_DEFER)
+> >                         goto remove;
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
