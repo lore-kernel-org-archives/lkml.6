@@ -2,172 +2,150 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D4EC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F61BC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D9C120663
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:32:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D9C120663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 825E520674
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:32:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bee3765Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 825E520674
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729535AbeJWFwh (ORCPT
+        id S1729547AbeJWFxL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 01:52:37 -0400
-Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:36758 "EHLO
-        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728580AbeJWFwh (ORCPT
+        Tue, 23 Oct 2018 01:53:11 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44827 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728303AbeJWFxK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 01:52:37 -0400
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail07.adl2.internode.on.net with ESMTP; 23 Oct 2018 08:01:36 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gEhnR-0003KM-DM; Tue, 23 Oct 2018 08:31:33 +1100
-Date:   Tue, 23 Oct 2018 08:31:33 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     kernel-team@fb.com, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, tj@kernel.org,
-        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, riel@fb.com, linux-mm@kvack.org
-Subject: Re: [PATCH 7/7] btrfs: drop mmap_sem in mkwrite for btrfs
-Message-ID: <20181022213133.GB6311@dastard>
-References: <20181018202318.9131-1-josef@toxicpanda.com>
- <20181018202318.9131-8-josef@toxicpanda.com>
- <20181019034847.GM18822@dastard>
- <20181022175652.ase7u23uzizqtlao@destiny>
+        Tue, 23 Oct 2018 01:53:10 -0400
+Received: by mail-oi1-f196.google.com with SMTP id u74-v6so33488245oia.11
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 14:32:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=cds5zw2071i/hH6b+s9eTBNdfqHThkCE6lw/l4JIBD4=;
+        b=Bee3765ZxHVcjtm4g2h2JjASJHhIyIgT4+3k3EhsejAQQ65Gz2Gn66JupVgyOY9oQv
+         RPgVdVxOYFbUYVE+1U1BINiuI7NFNS11a/v4TY7yzpX+xrnbbe2escMyP58Qu4gFcJLt
+         9foU9jYZA5vM/IceTA9nCfgJvBIgymW0yz0vWhE+v+owzL/w1DxpFT+3xvdAlb6KegXB
+         alSpoPO3lMw26A9Fb13J+ZxfCFFfmM247aBwEwvVhxJOSMrIhS17D8C6IqY3HsjaD97T
+         hnqr4U5iHyCxdrpKMX5foNBIHDh4zw4XffTp53wxUyBKYPGYoNC0QTdWOGZ8Z9fUAynb
+         Hvqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=cds5zw2071i/hH6b+s9eTBNdfqHThkCE6lw/l4JIBD4=;
+        b=X1td/MKv/PflydPkfGOa5yL1LorEw1sDVGzEpdp2KabHXuGjcoZlg4lBr0M9Xj7BxP
+         qcwPjQpQErbRat8hm61P8xHdWKzX1iRSzc1v37L2rasujN6clBI8n1SihwutqWzbsk6q
+         svxR0JTmoYPxbzmYxL7UHGvZI1adm128ijVlISV9qjhfQpBETP22781QPWDml67kKcMk
+         pJrBfNVrxaQXhd88zAINkztobtt5GHR56NQycT8i/5P96xlL89P46F/4D5k/SjgxSdKm
+         VULGlM1KHT/looUMTEuVzQB7l+2ltW+0RVWwIQhISVv7aybDZ2PzKVEqMxZ2FueLSlfG
+         u2yQ==
+X-Gm-Message-State: ABuFfoh2nBBFyl5npIfwzwBcpuPkM3McxppuP2owLvTbafQ3H3ndEJz6
+        6JQMCcVQJALONYP0tPDcUTUQswNSNCr+o8q5XW20Mw==
+X-Google-Smtp-Source: ACcGV61FQEHmUgmcwy2PfNplMy9OYC8bxO5fmmbiPId5TBm0teeTxIiT7B8JyUgzVORKu1gXITKvktPjmGbr/KOc2v8=
+X-Received: by 2002:aca:60c5:: with SMTP id u188-v6mr25900811oib.4.1540243973336;
+ Mon, 22 Oct 2018 14:32:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181022175652.ase7u23uzizqtlao@destiny>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: by 2002:ac9:2ac9:0:0:0:0:0 with HTTP; Mon, 22 Oct 2018 14:32:52
+ -0700 (PDT)
+In-Reply-To: <1540074145-31285-3-git-send-email-karahmed@amazon.de>
+References: <1540074145-31285-1-git-send-email-karahmed@amazon.de> <1540074145-31285-3-git-send-email-karahmed@amazon.de>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Mon, 22 Oct 2018 14:32:52 -0700
+Message-ID: <CALMp9eQfMOjwS2R-9d_9m8z2+XKdvg2FaL65q83DR-RhxLkf3g@mail.gmail.com>
+Subject: Re: [PATCH v3 02/13] X86/nVMX: handle_vmptrld: Copy the VMCS12
+ directly from guest memory
+To:     KarimAllah Ahmed <karahmed@amazon.de>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 01:56:54PM -0400, Josef Bacik wrote:
-> On Fri, Oct 19, 2018 at 02:48:47PM +1100, Dave Chinner wrote:
-> > On Thu, Oct 18, 2018 at 04:23:18PM -0400, Josef Bacik wrote:
-> > > ->page_mkwrite is extremely expensive in btrfs.  We have to reserve
-> > > space, which can take 6 lifetimes, and we could possibly have to wait on
-> > > writeback on the page, another several lifetimes.  To avoid this simply
-> > > drop the mmap_sem if we didn't have the cached page and do all of our
-> > > work and return the appropriate retry error.  If we have the cached page
-> > > we know we did all the right things to set this page up and we can just
-> > > carry on.
-> > > 
-> > > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> > > ---
-> > >  fs/btrfs/inode.c   | 41 +++++++++++++++++++++++++++++++++++++++--
-> > >  include/linux/mm.h | 14 ++++++++++++++
-> > >  mm/filemap.c       |  3 ++-
-> > >  3 files changed, 55 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> > > index 3ea5339603cf..6b723d29bc0c 100644
-> > > --- a/fs/btrfs/inode.c
-> > > +++ b/fs/btrfs/inode.c
-> > > @@ -8809,7 +8809,9 @@ static void btrfs_invalidatepage(struct page *page, unsigned int offset,
-> > >  vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
-> > >  {
-> > >  	struct page *page = vmf->page;
-> > > -	struct inode *inode = file_inode(vmf->vma->vm_file);
-> > > +	struct file *file = vmf->vma->vm_file, *fpin;
-> > > +	struct mm_struct *mm = vmf->vma->vm_mm;
-> > > +	struct inode *inode = file_inode(file);
-> > >  	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
-> > >  	struct extent_io_tree *io_tree = &BTRFS_I(inode)->io_tree;
-> > >  	struct btrfs_ordered_extent *ordered;
-> > > @@ -8828,6 +8830,29 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
-> > >  
-> > >  	reserved_space = PAGE_SIZE;
-> > >  
-> > > +	/*
-> > > +	 * We have our cached page from a previous mkwrite, check it to make
-> > > +	 * sure it's still dirty and our file size matches when we ran mkwrite
-> > > +	 * the last time.  If everything is OK then return VM_FAULT_LOCKED,
-> > > +	 * otherwise do the mkwrite again.
-> > > +	 */
-> > > +	if (vmf->flags & FAULT_FLAG_USED_CACHED) {
-> > > +		lock_page(page);
-> > > +		if (vmf->cached_size == i_size_read(inode) &&
-> > > +		    PageDirty(page))
-> > > +			return VM_FAULT_LOCKED;
-> > > +		unlock_page(page);
-> > > +	}
-> > 
-> > What does the file size have to do with whether we can use the
-> > initialised page or not? The file can be extended by other
-> > data operations (like write()) while a page fault is in progress,
-> > so I'm not sure how or why this check makes any sense.
-> > 
-> > I also don't see anything btrfs specific here, so....
-> > 
-> 
-> First thanks for the review, I've gone through and addressed everything you
-> mentioned, however this one is subtle.
-> 
-> The problem is the vmf->vma->vm_file access.  Once we drop the mmap_sem we can
-> no longer safely go into vmf->vma, so I'd have to fix all the page_mkwrite()'s
-> to not touch vma, and add a vmf->fpin instead to mess with.
+On Sat, Oct 20, 2018 at 3:22 PM, KarimAllah Ahmed <karahmed@amazon.de> wrote:
+> Copy the VMCS12 directly from guest memory instead of the map->copy->unmap
+> sequence. This also avoids using kvm_vcpu_gpa_to_page() and kmap() which
+> assumes that there is a "struct page" for guest memory.
+>
+> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+> ---
+> v1 -> v2:
+> - Massage commit message a bit.
+> ---
+>  arch/x86/kvm/vmx.c | 23 +++++++++--------------
+>  1 file changed, 9 insertions(+), 14 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index 358759a..bc45347 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -8879,33 +8879,28 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+>         }
+>
+>         if (vmx->nested.current_vmptr != vmptr) {
+> -               struct vmcs12 *new_vmcs12;
+> -               struct page *page;
+> -               page = kvm_vcpu_gpa_to_page(vcpu, vmptr);
+> -               if (is_error_page(page)) {
+> +               struct vmcs12 *new_vmcs12 = (struct vmcs12 *)__get_free_page(GFP_KERNEL);
+> +
+> +               if (!new_vmcs12 ||
+> +                   kvm_read_guest(vcpu->kvm, vmptr, new_vmcs12,
+> +                                  sizeof(*new_vmcs12))) {
+> +                       free_page((unsigned long)new_vmcs12);
+>                         nested_vmx_failInvalid(vcpu);
 
-Adding a vmf->file pointer seems pretty easy - making /everything/
-use it instead of just special casing page_mkwrite also seems like
-it would be a good idea - set it up in your new init function and
-it's done. Pinning and unpinning could be done unconditionally, too
-- that doesn't look expensive - and it would pull a lot of the
-complexity out of the patchset for the cases where unlocking the
-mmap_sem is done....
+I believe that this failure, like the one below, should be:
 
-> Plus I didn't want
-> to miss some subtlety in other fs's page_mkwrite()'s and inavertedly break them.
-> If I break btrfs I can fix it, I'm not as good with xfs.
+nested_vmx_failValid(vcpu, VMXERR_VMPTRLD_INCORRECT_VMCS_REVISION_ID);
 
-Sure, but if you make it a generic helper then you don't have to
-worry about that. i.e.
+First, if there is a valid current VMCS, then nested_vmx_failInvalid
+is incorrect. Second, if there is no backing memory, then by PCI bus
+error semantics, we should read all 1's, which isn't the correct VMCS
+revision ID.
 
-generic_page_mkwrite_nommapsem(vmf, page_mkwrite_cb)
-{
-	/* use cached page if valid */
-
-	/* unlock mmap_sem */
-
-	/* do filesystem page_mkwrite callback */
-	ret = page_mkwrite_cb(vmf);
-
-	/* handle page caching */
-
-	/* return retry fault indicator */
-}
-
-and that allows all filesystems to easily opt in to dropping the
-mmap_sem and you don't have to worry about it too much. It means
-filesystems with dax fault paths (like XFS) can convert the non-dax
-paths that call immediately, and worry about the more tricky stuff
-later...
-
-> vmf->fpin and vmf->mm, and then fix up all the mkwrite()'s to use that instead
-
-Ignoring DAX (because I haven't checked), what filesystem
-page_mkwrite implementation requires access to the mm_struct? They
-should all just be doing file operations on a page, not anything to
-do with the way the page is mapped into the task memory....
-
-> of vmf->vma.  I think that's the only things we care about so it wouldn't be
-> hard.  Does that sound reasonable to you?
-
-I think a little bit of tweaking, and it will be easy to for
-everyone to opt in to this behaviour....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+>                         return kvm_skip_emulated_instruction(vcpu);
+>                 }
+> -               new_vmcs12 = kmap(page);
+> +
+>                 if (new_vmcs12->hdr.revision_id != VMCS12_REVISION ||
+>                     (new_vmcs12->hdr.shadow_vmcs &&
+>                      !nested_cpu_has_vmx_shadow_vmcs(vcpu))) {
+> -                       kunmap(page);
+> -                       kvm_release_page_clean(page);
+> +                       free_page((unsigned long)new_vmcs12);
+>                         nested_vmx_failValid(vcpu,
+>                                 VMXERR_VMPTRLD_INCORRECT_VMCS_REVISION_ID);
+>                         return kvm_skip_emulated_instruction(vcpu);
+>                 }
+>
+>                 nested_release_vmcs12(vmx);
+> -               /*
+> -                * Load VMCS12 from guest memory since it is not already
+> -                * cached.
+> -                */
+>                 memcpy(vmx->nested.cached_vmcs12, new_vmcs12, VMCS12_SIZE);
+> -               kunmap(page);
+> -               kvm_release_page_clean(page);
+> -
+> +               free_page((unsigned long)new_vmcs12);
+>                 set_current_vmptr(vmx, vmptr);
+>         }
+>
+> --
+> 2.7.4
+>
