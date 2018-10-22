@@ -2,130 +2,93 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6E5ECDE43
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 07:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C8D1C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 07:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CCAA20658
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 07:13:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CCAA20658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 30B4B20658
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 07:14:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RngxAUWG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30B4B20658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbeJVPbB (ORCPT
+        id S1727692AbeJVPcO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 11:31:01 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43530 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbeJVPbB (ORCPT
+        Mon, 22 Oct 2018 11:32:14 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42026 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727479AbeJVPcN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 11:31:01 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q1-v6so2130176pfh.10
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 00:13:44 -0700 (PDT)
+        Mon, 22 Oct 2018 11:32:13 -0400
+Received: by mail-lf1-f67.google.com with SMTP id s10-v6so29471162lfc.9
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 00:14:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=dx4KkhvP9GSjmDvZtms1pkxoGnhlR+9a6nvpw+UaXO0=;
+        b=RngxAUWGzWTbRTevtu9tnQoRIbJliQgLBUFicTpbFj8GwZtCay9+PajvOnBdiSugof
+         9aD2BB1OgPEUrzoYHNS2nf4ffxFVCz5TKj5nnlYT20auMuclmq6VbehO8SAH8YhDWCDu
+         AH82EBJUtsYll19VBk9zhhzFncWy8JjtUwxgI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FBCBxQHOTmvZgHJl60t6jyJTwJfcDyQfW3eSyeZ8neA=;
-        b=UDQPK+zWTtGMk5+nYP+8JJChs23KFf539SRaWit0rpo/6pF692hx4pylh8JI7TEF70
-         /9gpiqp4Q/xOQCiN0i5c4Gq7xVF6ABEXxfIBeFGnl3ros/443MrEtGiRJyMDhyUNRQdW
-         /Loll1WpdSl8yjR3vnO4Ogjh3slV0uIy4WVQdkHJj0Lm5ykFPBPB+rPHIklACFVQrL9H
-         /L5ojzFwpANPyyzCLQs1B61RSNSJGygqRlorCEfwgfIZN0wr+PfKvNDrB/SKj/X8F2Er
-         sNq6Rl2lQp32v7aThHW0jBAqJlMSem+NGdVW1UErRKpGO5FlNENddeFh9BdQzuk1ibtT
-         309g==
-X-Gm-Message-State: ABuFfogKxTgIC1cnwjsR2IlDnKifFsTm0MGvNIy0TtXMfApXqCTT3jOI
-        Q41qhA+FusQSg6L1Ah2ud3M=
-X-Google-Smtp-Source: ACcGV6064Z1dWqa7QMCXfgEb9cpfEDaa6ZH2gbgOOmik96tlPssDIV7b2W3tmlzucX76u01TUKPNKw==
-X-Received: by 2002:a62:569d:: with SMTP id h29-v6mr16163789pfj.42.1540192424428;
-        Mon, 22 Oct 2018 00:13:44 -0700 (PDT)
-Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id c79-v6sm38097542pfc.92.2018.10.22.00.13.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Oct 2018 00:13:43 -0700 (PDT)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     <linux-mm@kvack.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [RFC PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
-Date:   Mon, 22 Oct 2018 09:13:23 +0200
-Message-Id: <20181022071323.9550-3-mhocko@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181022071323.9550-1-mhocko@kernel.org>
-References: <20181022071323.9550-1-mhocko@kernel.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=dx4KkhvP9GSjmDvZtms1pkxoGnhlR+9a6nvpw+UaXO0=;
+        b=uAzkA8D4IRrrvLoFblYS5yhq5qJlv3gdSi8du/Jp/Yr/sac75eEWa1SMdB8FPWb4uR
+         d/i/TAZJLg8DrLFPhihHFyoHO98V8tUtLAA5x9vTQl13ElGooAHYRYTNW5aeIBqWB1P4
+         /3rjnXShjyhteem5hdk4LyzuLR5M7ilxRn8gP/ZVNL2kAnB0HQ0cUWsFyWwKWqWzdQS5
+         cfodSfrQSz2sqBuaafXbyuIASU6yt9gEBjwci7p6zyIP8WmnAuIGCH+CI8+XFnEhlZ7j
+         R+pEx3NhltsyuoFBw39Tyf8GQPj3JbuxjxDW0Zmf4TMAHI3AE72t1vFYf85b36UyDxVT
+         jb5Q==
+X-Gm-Message-State: ABuFfoid/4z3wxDtB01ouORpNSF+fJfWuxNkMvtPT6NutXOGnIY9URye
+        ZlCpb7taz4djODSjckaCuC8E7fhvsmTQ53D1E/y5tA==
+X-Google-Smtp-Source: ACcGV60OFnpekkGugiBLH8Swe/gIdXQhm/hVj17MFgQeIIS9AS2Y6h9sdzyIIFnu0/OiDopPDXP9D+tUX0ECS1MKH2o=
+X-Received: by 2002:a19:2203:: with SMTP id i3mr7999985lfi.2.1540192495177;
+ Mon, 22 Oct 2018 00:14:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a2e:95d7:0:0:0:0:0 with HTTP; Mon, 22 Oct 2018 00:14:54
+ -0700 (PDT)
+In-Reply-To: <20181020163000.GD2894@vkoul-mobl>
+References: <cover.1538199697.git.baolin.wang@linaro.org> <CAMz4kuKFtbLMmNEbQ0oVgW87HPRwJuwFJH9cXVymz=6jH7xzOA@mail.gmail.com>
+ <20181020163000.GD2894@vkoul-mobl>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Mon, 22 Oct 2018 15:14:54 +0800
+Message-ID: <CAMz4kuLgOzt1q+Aj1e1Xk07a95RC0iqzDyPeMDqgSgaGw8VgGQ@mail.gmail.com>
+Subject: Re: [PATCH 0/7] Add some fixes and new feature for SPRD DMA
+To:     Vinod <vkoul@kernel.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Eric Long <eric.long@spreadtrum.com>,
+        Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+On 21 October 2018 at 00:30, Vinod <vkoul@kernel.org> wrote:
+> On 18-10-18, 17:29, Baolin Wang wrote:
+>> Hi Vinod,
+>>
+>> On 29 September 2018 at 13:48, Baolin Wang <baolin.wang@linaro.org> wrote:
+>> > This patchset removes the direction usage from struct dma_slave_config,
+>> > and add one new field to save the direction. It also fixes some issues
+>> > for link-list transfer. Moreover this patchset adds new 2-stage transfer
+>> > support for our DMA.
+>>
+>> Do you have any comments for this patchset? Thanks a lot.
+>
+> Sorry bit busy with things and ELC, I should be able to review this
+> after monday..
 
-Tetsuo has reported [1] that a single process group memcg might easily
-swamp the log with no-eligible oom victim reports due to race between
-the memcg charge and oom_reaper
+Thanks a lot. :)
 
-Thread 1		Thread2				oom_reaper
-try_charge		try_charge
-			  mem_cgroup_out_of_memory
-			    mutex_lock(oom_lock)
-  mem_cgroup_out_of_memory
-    mutex_lock(oom_lock)
-			      out_of_memory
-			        select_bad_process
-				oom_kill_process(current)
-				  wake_oom_reaper
-							  oom_reap_task
-							  MMF_OOM_SKIP->victim
-			    mutex_unlock(oom_lock)
-    out_of_memory
-      select_bad_process # no task
-
-If Thread1 didn't race it would bail out from try_charge and force the
-charge. We can achieve the same by checking tsk_is_oom_victim inside
-the oom_lock and therefore close the race.
-
-[1] http://lkml.kernel.org/r/bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- mm/memcontrol.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e79cb59552d9..a9dfed29967b 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1380,10 +1380,22 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 		.gfp_mask = gfp_mask,
- 		.order = order,
- 	};
--	bool ret;
-+	bool ret = true;
- 
- 	mutex_lock(&oom_lock);
-+
-+	/*
-+	 * multi-threaded tasks might race with oom_reaper and gain
-+	 * MMF_OOM_SKIP before reaching out_of_memory which can lead
-+	 * to out_of_memory failure if the task is the last one in
-+	 * memcg which would be a false possitive failure reported
-+	 */
-+	if (tsk_is_oom_victim(current))
-+		goto unlock;
-+
- 	ret = out_of_memory(&oc);
-+
-+unlock:
- 	mutex_unlock(&oom_lock);
- 	return ret;
- }
 -- 
-2.19.1
-
+Baolin Wang
+Best Regards
