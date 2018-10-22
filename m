@@ -2,157 +2,121 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF34C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE90C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1348D20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:56:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1348D20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9AB5120652
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:58:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Duz2xaOp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AB5120652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728489AbeJWAP4 (ORCPT
+        id S1728544AbeJWAR3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 20:15:56 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55818 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728201AbeJWAP4 (ORCPT
+        Mon, 22 Oct 2018 20:17:29 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:33086 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727787AbeJWAR3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 20:15:56 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9MFntrG094063
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 11:56:49 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n9ete981h-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 11:56:48 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 22 Oct 2018 11:56:47 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 22 Oct 2018 11:56:45 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9MFui4T19005566
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 22 Oct 2018 15:56:44 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A6C91B205F;
-        Mon, 22 Oct 2018 15:56:44 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 85BF7B2065;
-        Mon, 22 Oct 2018 15:56:44 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.169.161])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 22 Oct 2018 15:56:44 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 35EF316C3006; Mon, 22 Oct 2018 08:56:44 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 08:56:44 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
-Subject: Re: [PATCH RFC kenrel/rcu] Eliminate BUG_ON() for sync.c
-Reply-To: paulmck@linux.ibm.com
-References: <20181022145241.GA7488@linux.ibm.com>
- <20181022152406.GA7257@redhat.com>
+        Mon, 22 Oct 2018 20:17:29 -0400
+Received: by mail-ua1-f67.google.com with SMTP id j13so10151452ual.0;
+        Mon, 22 Oct 2018 08:58:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VnilPm5zaKWAf/CuXZT44JPcxCOnx3YMykk4czPJfR4=;
+        b=Duz2xaOp43vKg8j/Sb1ECD+DAK+9PDJzBnaAbESs1JzvKMxw1ZIbcvu/rG77qIg5+E
+         PCLbreDbPKHS/Wz6TzYBBFGZ+HkO6MM3x1KqGBjBKcKZ30tJyjATHinu/UR9TJxU3Ncu
+         atriK+T+4tTNyICuzwWJdsth2yQb3q2ZT4TcmRf2OMzuC9ZYT+0oHRo1MACW5OIFIQrp
+         i85gqJjvXO51cfcCy709eMvUCBK45CNBLno/QHkcIoPFrc0caV46k305rNFWTkOg7kjE
+         SjIooqd28oo7ljm3ZMKZJiYkk5vg5qIXlFe9JJIL8pZVbcyq4ioDSUrvCYMKE5jGj1o8
+         LvCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VnilPm5zaKWAf/CuXZT44JPcxCOnx3YMykk4czPJfR4=;
+        b=qpa6+/IsU/A5TRZf5HG2N13GHAA2jB+0LmzgYfzX6c5cw/zTS8Carnw5j03//EEleB
+         +2HZJQZAx9N0oCXTImeymcgobatTPwxXgoaFvYLklGqhI22e1ep8lh5Ur2Ey/BEMCF31
+         3t//b/A9CsmcPlR8WIN9Qp/oYNoBcCHiFQ6hrt2/zQ20jE5/k0TpoRWqCXlANPTy2Orb
+         F8lOqQtG/h/B/w2Bf0NSnK0hLf+gYShsqqt2dwDqk/JC0oWHZF3rngVSz5cyP0bYH/pf
+         wree7qT0fzvQsYHf6iLK98F20bGslnMt3SRygm5+/EragcL0SpeydL1bUaKC6l8ZzlXd
+         ioeQ==
+X-Gm-Message-State: ABuFfohhWDJXtuLBpiVjiSYPkbQq4q9nxYCy2lWysIgbhf4z9kh41P6T
+        k/A77cTNZweGnYIHba+fQNZX+rdh3Ir/Iy6hp74=
+X-Google-Smtp-Source: ACcGV62U2Zk7nQR+8QhVX4RnhPDyu8UdSL1ym3mMC+a9q22RxC0u3pPn42F17g0cyYxqVKFr9Y8IXh4JuXit4zxMQlw=
+X-Received: by 2002:ab0:3003:: with SMTP id f3mr20953820ual.80.1540223902463;
+ Mon, 22 Oct 2018 08:58:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181022152406.GA7257@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18102215-0068-0000-0000-000003517A1C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009916; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01106394; UDB=6.00572948; IPR=6.00886479;
- MB=3.00023859; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-22 15:56:47
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18102215-0069-0000-0000-000046292BFA
-Message-Id: <20181022155644.GG4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-22_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810220136
+References: <1539988191-13973-1-git-send-email-wang6495@umn.edu>
+In-Reply-To: <1539988191-13973-1-git-send-email-wang6495@umn.edu>
+From:   Y Song <ys114321@gmail.com>
+Date:   Mon, 22 Oct 2018 08:57:46 -0700
+Message-ID: <CAH3MdRV2qLj_3KHFYmCKYHMx2wZk_4mQrdvRJe+znXr3Astm8g@mail.gmail.com>
+Subject: Re: [PATCH] bpf: btf: Fix a missing-check bug
+To:     wang6495@umn.edu
+Cc:     kjlu@umn.edu, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 05:24:07PM +0200, Oleg Nesterov wrote:
-> On 10/22, Paul E. McKenney wrote:
-> >
-> > The sync.c file has a number of calls to BUG_ON(), which panics the
-> > kernel, which is not a good
-> 
-> Agreed.
-> 
-> I added these BUG_ON's for documentation when I was prototyping this code,
-> perhaps we can simply remove them.
+On Fri, Oct 19, 2018 at 3:30 PM Wenwen Wang <wang6495@umn.edu> wrote:
+>
+> In btf_parse(), the header of the user-space btf data 'btf_data' is firstly
+> parsed and verified through btf_parse_hdr(). In btf_parse_hdr(), the header
+> is copied from user-space 'btf_data' to kernel-space 'btf->hdr' and then
+> verified. If no error happens during the verification process, the whole
+> data of 'btf_data', including the header, is then copied to 'data' in
+> btf_parse(). It is obvious that the header is copied twice here. More
+> importantly, no check is enforced after the second copy to make sure the
+> headers obtained in these two copies are same. Given that 'btf_data'
+> resides in the user space, a malicious user can race to modify the header
+> between these two copies. By doing so, the user can inject inconsistent
+> data, which can cause undefined behavior of the kernel and introduce
+> potential security risk.
+>
+> To avoid the above issue, this patch rewrites the header after the second
+> copy, using 'btf->hdr', which is obtained in the first copy.
+>
+> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> ---
+>  kernel/bpf/btf.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> index 138f030..2a85f91 100644
+> --- a/kernel/bpf/btf.c
+> +++ b/kernel/bpf/btf.c
+> @@ -2202,6 +2202,9 @@ static struct btf *btf_parse(void __user *btf_data, u32 btf_data_size,
+>                 goto errout;
+>         }
+>
+> +       memcpy(data, &btf->hdr,
+> +               min_t(u32, btf->hdr.hdr_len, sizeof(btf->hdr)));
 
-I do like this approach.  ;-)
+Could you restructure the code to memcpy the header followed by copying
+the rest of btf_data with copy_from_user? This way, each byte is only
+copied once.
+Could you add some comments right before memcpy so later people will know
+why we implement this way?
 
-> > @@ -125,12 +125,12 @@ void rcu_sync_enter(struct rcu_sync *rsp)
-> >  		rsp->gp_state = GP_PENDING;
-> >  	spin_unlock_irq(&rsp->rss_lock);
-> >  
-> > -	BUG_ON(need_wait && need_sync);
-> > -
-> >  	if (need_sync) {
-> >  		gp_ops[rsp->gp_type].sync();
-> >  		rsp->gp_state = GP_PASSED;
-> >  		wake_up_all(&rsp->gp_wait);
-> > +		if (WARN_ON_ONCE(need_wait))
-> > +			wait_event(rsp->gp_wait, rsp->gp_state == GP_PASSED);
-> 
-> This wait_event(gp_state == GP_PASSED) is pointless, note that this branch
-> does gp_state = GP_PASSED 2 lines above.
-
-OK, I have removed this one.
-
-> And if we add WARN_ON_ONCE(need_wait), then we should probably also add
-> WARN_ON_ONCE(need_sync) into the next "if (need_wait)" branch just for
-> symmetry.
-
-But in that case, the earlier "if" prevents "need_sync" from ever getting
-there, unless I lost the thread here.
-
-> So I'd suggest to either turn that BUG_ON(need_wait && need_sync) above
-> into WARN_ON_ONCE(wait && sync) or simply remove it.
-
-I chose WARN_ON_ONCE() for this one.
-
-> Again, the only purpose of this BUG_ON() is to explain to the reader that
-> it is not (must not be) possible that, say, gp_state == GP_IDLE while
-> gp_count != 0.
-
-Good point!
-
-Should I remove the others?
-
-> ----------------------------------------------------------------------------
-> Damn.
-> 
-> This suddenly reminds me that I rewrote this code completely, and you even
-> reviewed the new implementation and (iirc) acked it!
-> 
-> However, I failed to force myself to rewrite the comments, and that is why
-> I didn't send the "official" patch :/
-> 
-> May be some time...
-
-Could you please point me at the last email thread?  Yes, I should be
-able to find it, but I would probably get the wrong one.  :-/
-
-							Thanx, Paul
-
+> +
+>         err = btf_parse_str_sec(env);
+>         if (err)
+>                 goto errout;
+> --
+> 2.7.4
+>
