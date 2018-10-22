@@ -2,137 +2,166 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E13F2C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B0DC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0D3E20672
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:43:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="BPCn1eup"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0D3E20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by mail.kernel.org (Postfix) with ESMTP id E8FED2064C
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:44:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8FED2064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726457AbeJWEDY (ORCPT
+        id S1726826AbeJWEEH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 00:03:24 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:38040 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbeJWEDY (ORCPT
+        Tue, 23 Oct 2018 00:04:07 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54021 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbeJWEEH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 00:03:24 -0400
-Received: by mail-it1-f193.google.com with SMTP id i76-v6so14107174ita.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 12:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ng8XJRjDLo4T9LQsxwyGWYLTrEX5ScPLIw/PST11mFo=;
-        b=BPCn1eupFN9NutuXdmEI1Td77GX1f/wLwQ3a8A2M2Zh4/pNW7X6tjh5xSX7/QiOAMO
-         GWHNWSLMNjHO9RsQ02YFThuwhFJy9k5fel5JdeHx7ut+bjWfkpKKHrxlK+IjyGwsvXvX
-         HUIgxx3LOvs+HwB8dbJgluRJPgdOYPrTqLstOy/MWodciWAoPQU1kEdYruFoHyFBNoEF
-         olGZkib2KSN8p7MV4oCv5NjRw7Izx1bGA9/j8Q56zTYlS5EVP3PUCJt+dOm7JbeYyEIs
-         BFIrsl4Z9uhzda8lhxYVQXfdXPtoTS8+CtDqFqPwawVjcG49m7JOH0v87Y3XL+lY3S+W
-         1VgQ==
+        Tue, 23 Oct 2018 00:04:07 -0400
+Received: from mail-qt1-f198.google.com ([209.85.160.198])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <gpiccoli@canonical.com>)
+        id 1gEg7Z-0005hu-GZ
+        for linux-kernel@vger.kernel.org; Mon, 22 Oct 2018 19:44:13 +0000
+Received: by mail-qt1-f198.google.com with SMTP id z26-v6so50011341qtz.4
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 12:44:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ng8XJRjDLo4T9LQsxwyGWYLTrEX5ScPLIw/PST11mFo=;
-        b=BEuRrf61wSFWs6YrA8AxiRS6vQOP3dzsV13t2/AHcwOUcmkm5dRDUP1RhC2KRvC5Vr
-         7azhkNak7K10wcww1JXiDsT6gxNQvpsB96zQM3BILKID6qzWBEtbu5kG7modrx/M8VgG
-         pCwW4tm62j/tirJmO54TUp/PvhFIcfmQZV5uda51FrSNCJwnEc9zWnpy2hwcAsIdHO+Y
-         p452qfseOAjyoAVfc5EukAdGOFK9FM08N0TR0s6/qXSd16edcqkZ8veb/lrEu2KsODWD
-         bXcAGvh97FWO4n6CHblpYQLR/ymu8Bq6W9nFUs86D0b9PFnpBpTl1rDGguhmV7/N5ycZ
-         uleA==
-X-Gm-Message-State: ABuFfojuJphj+bv32opyDTQxxxsvygQ6B3hCjeir4VgK0TQBJxh3cYG2
-        MJuHRLASvzqVW+1lHyKIVeDPYQ==
-X-Google-Smtp-Source: AJdET5cHVRdSz2/8Vg+VGCdFD+Ef5mVtuyvMLNjaWri407Z/VyDqf8gWBkHIjxmCW+GInf8JF9Pc/A==
-X-Received: by 2002:a24:8e41:: with SMTP id h62-v6mr1015709ite.126.1540237412079;
-        Mon, 22 Oct 2018 12:43:32 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id d124-v6sm11084751iof.57.2018.10.22.12.43.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Oct 2018 12:43:30 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gEg6r-0002Uo-OO; Mon, 22 Oct 2018 13:43:29 -0600
-Date:   Mon, 22 Oct 2018 13:43:29 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
-        john.hubbard@gmail.com, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ralph Campbell <rcampbell@nvidia.com>
-Subject: Re: [PATCH v4 2/3] mm: introduce put_user_page*(), placeholder
- versions
-Message-ID: <20181022194329.GG30059@ziepe.ca>
-References: <20181008211623.30796-1-jhubbard@nvidia.com>
- <20181008211623.30796-3-jhubbard@nvidia.com>
- <20181008171442.d3b3a1ea07d56c26d813a11e@linux-foundation.org>
- <5198a797-fa34-c859-ff9d-568834a85a83@nvidia.com>
- <20181010164541.ec4bf53f5a9e4ba6e5b52a21@linux-foundation.org>
- <20181011084929.GB8418@quack2.suse.cz>
- <20181011132013.GA5968@ziepe.ca>
- <97e89e08-5b94-240a-56e9-ece2b91f6dbc@nvidia.com>
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=eUyIlQGhTyvcafDt/dNn2m1jS+3rFpyqLdPQF4hAjOQ=;
+        b=CLlo2OCh2iALPxw8L66IND23gNO0lxJhLLjLhBNsIwqj2tkHORIWnNie7wLj+oqBwn
+         POz4Z0CxyQg5/8mMhOdZqcvQqOeBYvuqNRaTttoGVM9xIV2Id5XEtC6wm6kVFmShHmtU
+         7RDg9U1Qr0cNqGOyztG7F1HgY+RyVMa8uwz9pgD5ao52H4PYCYkp2VLbggDCIz6ews8v
+         npxlXVrqoW2qKJUAxq3OUmDecMOARMSJnQWhyk7kZ/mCS/+NSeH6E8lcEec1gHwY5jMs
+         YDxFUV0SnkyOB4ie/2lhTQ/d0Intk14surUEmPkjV6BEX12OOKIL4L/yGL1gX/3QDZT+
+         u+Rg==
+X-Gm-Message-State: ABuFfogU3Ficl5lhhcWEWHQ1s37TyjgOt1KzMxP2Mj0KU1bXcvolITJZ
+        YWGvZp7hh+4rWFkN76n/JkLZPT2tUFvbVVe+GoSUxZevyg39NGncta8H9AcnAuXU/TDKCE4irWg
+        AmM66ECh8QL01J4A2L26ymdYLfZRzdIr12xQ/Il0erg==
+X-Received: by 2002:aed:31c6:: with SMTP id 64-v6mr3583815qth.247.1540237452661;
+        Mon, 22 Oct 2018 12:44:12 -0700 (PDT)
+X-Google-Smtp-Source: AJdET5dSBZCETYQYFgm8Wg8VFA6LxzOyYH/MlaGZvJlmmEA7/rzQ/rdkRXSZ9uYl40ig27Z77UvTqw==
+X-Received: by 2002:aed:31c6:: with SMTP id 64-v6mr3583786qth.247.1540237452498;
+        Mon, 22 Oct 2018 12:44:12 -0700 (PDT)
+Received: from [192.168.1.109] ([191.8.5.68])
+        by smtp.gmail.com with ESMTPSA id x34-v6sm23935484qth.86.2018.10.22.12.44.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Oct 2018 12:44:11 -0700 (PDT)
+Subject: Re: [PATCH 3/3] x86/quirks: Add parameter to clear MSIs early on boot
+To:     Sinan Kaya <okaya@kernel.org>, linux-pci@vger.kernel.org,
+        kexec@lists.infradead.org, x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org, bhelgaas@google.com,
+        dyoung@redhat.com, bhe@redhat.com, vgoyal@redhat.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        andi@firstfloor.org, lukas@wunner.de, billy.olsen@canonical.com,
+        cascardo@canonical.com, ddstreet@canonical.com,
+        fabiomirmar@canonical.com, gavin.guo@canonical.com,
+        jay.vosburgh@canonical.com, kernel@gpiccoli.net, mfo@canonical.com,
+        shan.gavin@linux.alibaba.com
+References: <20181018183721.27467-1-gpiccoli@canonical.com>
+ <20181018183721.27467-3-gpiccoli@canonical.com>
+ <6fd4e2d2-c0ac-b26d-9a14-0379b4421679@kernel.org>
+ <12d6175b-7f09-872a-61c4-700e905579c7@canonical.com>
+ <50d84d48-eebf-ed91-8148-be727f76883f@kernel.org>
+From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gpiccoli@canonical.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpVBxcBCADPNKmu2iNKLepiv8+Ssx7+fVR8lrL7cvakMNFPXsXk+f0Bgq9NazNKWJIn
+ Qxpa1iEWTZcLS8ikjatHMECJJqWlt2YcjU5MGbH1mZh+bT3RxrJRhxONz5e5YILyNp7jX+Vh
+ 30rhj3J0vdrlIhPS8/bAt5tvTb3ceWEic9mWZMsosPavsKVcLIO6iZFlzXVu2WJ9cov8eQM/
+ irIgzvmFEcRyiQ4K+XUhuA0ccGwgvoJv4/GWVPJFHfMX9+dat0Ev8HQEbN/mko/bUS4Wprdv
+ 7HR5tP9efSLucnsVzay0O6niZ61e5c97oUa9bdqHyApkCnGgKCpg7OZqLMM9Y3EcdMIJABEB
+ AAHNLUd1aWxoZXJtZSBHLiBQaWNjb2xpIDxncGljY29saUBjYW5vbmljYWwuY29tPsLAdwQT
+ AQgAIQUCWmClvQIbAwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDOR5EF9K/7Gza3B/9d
+ 5yczvEwvlh6ksYq+juyuElLvNwMFuyMPsvMfP38UslU8S3lf+ETukN1S8XVdeq9yscwtsRW/
+ 4YoUwHinJGRovqy8gFlm3SAtjfdqysgJqUJwBmOtcsHkmvFXJmPPGVoH9rMCUr9s6VDPox8f
+ q2W5M7XE9YpsfchS/0fMn+DenhQpV3W6pbLtuDvH/81GKrhxO8whSEkByZbbc+mqRhUSTdN3
+ iMpRL0sULKPVYbVMbQEAnfJJ1LDkPqlTikAgt3peP7AaSpGs1e3pFzSEEW1VD2jIUmmDku0D
+ LmTHRl4t9KpbU/H2/OPZkrm7809QovJGRAxjLLPcYOAP7DUeltvezsBNBFpVBxcBCADbxD6J
+ aNw/KgiSsbx5Sv8nNqO1ObTjhDR1wJw+02Bar9DGuFvx5/qs3ArSZkl8qX0X9Vhptk8rYnkn
+ pfcrtPBYLoux8zmrGPA5vRgK2ItvSc0WN31YR/6nqnMfeC4CumFa/yLl26uzHJa5RYYQ47jg
+ kZPehpc7IqEQ5IKy6cCKjgAkuvM1rDP1kWQ9noVhTUFr2SYVTT/WBHqUWorjhu57/OREo+Tl
+ nxI1KrnmW0DbF52tYoHLt85dK10HQrV35OEFXuz0QPSNrYJT0CZHpUprkUxrupDgkM+2F5LI
+ bIcaIQ4uDMWRyHpDbczQtmTke0x41AeIND3GUc+PQ4hWGp9XABEBAAHCwF8EGAEIAAkFAlpV
+ BxcCGwwACgkQzkeRBfSv+xv1wwgAj39/45O3eHN5pK0XMyiRF4ihH9p1+8JVfBoSQw7AJ6oU
+ 1Hoa+sZnlag/l2GTjC8dfEGNoZd3aRxqfkTrpu2TcfT6jIAsxGjnu+fUCoRNZzmjvRziw3T8
+ egSPz+GbNXrTXB8g/nc9mqHPPprOiVHDSK8aGoBqkQAPZDjUtRwVx112wtaQwArT2+bDbb/Y
+ Yh6gTrYoRYHo6FuQl5YsHop/fmTahpTx11IMjuh6IJQ+lvdpdfYJ6hmAZ9kiVszDF6pGFVkY
+ kHWtnE2Aa5qkxnA2HoFpqFifNWn5TyvJFpyqwVhVI8XYtXyVHub/WbXLWQwSJA4OHmqU8gDl
+ X18zwLgdiQ==
+Message-ID: <92dc24c9-0963-e894-66fe-ad74bdbc0ac3@canonical.com>
+Date:   Mon, 22 Oct 2018 16:44:04 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <97e89e08-5b94-240a-56e9-ece2b91f6dbc@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <50d84d48-eebf-ed91-8148-be727f76883f@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 06:23:24PM -0700, John Hubbard wrote:
-> On 10/11/18 6:20 AM, Jason Gunthorpe wrote:
-> > On Thu, Oct 11, 2018 at 10:49:29AM +0200, Jan Kara wrote:
-> > 
-> >>> This is a real worry.  If someone uses a mistaken put_page() then how
-> >>> will that bug manifest at runtime?  Under what set of circumstances
-> >>> will the kernel trigger the bug?
-> >>
-> >> At runtime such bug will manifest as a page that can never be evicted from
-> >> memory. We could warn in put_page() if page reference count drops below
-> >> bare minimum for given user pin count which would be able to catch some
-> >> issues but it won't be 100% reliable. So at this point I'm more leaning
-> >> towards making get_user_pages() return a different type than just
-> >> struct page * to make it much harder for refcount to go wrong...
-> > 
-> > At least for the infiniband code being used as an example here we take
-> > the struct page from get_user_pages, then stick it in a sgl, and at
-> > put_page time we get the page back out of the sgl via sg_page()
-> > 
-> > So type safety will not help this case... I wonder how many other
-> > users are similar? I think this is a pretty reasonable flow for DMA
-> > with user pages.
-> > 
+On 18/10/2018 17:30, Sinan Kaya wrote:
 > 
-> That is true. The infiniband code, fortunately, never mixes the two page
-> types into the same pool (or sg list), so it's actually an easier example
-> than some other subsystems. But, yes, type safety doesn't help there. I can 
-> take a moment to look around at the other areas, to quantify how much a type
-> safety change might help.
+> AFAIK, all shutdown (not remove) routines are called before launching
+> the next
+> kernel even in crash scenario. It is not safe to start the new kernel while
+> hardware is doing a DMA to the system memory and triggering interrupts.
 
-Are most (all?) of the places working with SGLs?
+Hi Sinan,
 
-Maybe we could just have a 'get_user_pages_to_sgl' and 'put_pages_sgl'
-sort of interface that handled all this instead of trying to make
-something that is struct page based?
+I agree with you, it's definitely not safe to start a new kernel with
+in-flight DMA transactions, but in the crash scenario I think the
+rationale was that running kernel is broken so it's even more unreliable
+to try gracefully shutdown the devices than hope-for-the-best and start
+the kdump kernel right away heheh
 
-It seems easier to get an extra bit for user/!user in the SGL
-datastructure?
+Fact is that the shutdown handlers are not called in the crash scenario.
+They come from device_shutdown(), the code paths are as follow:
 
-Jason
+Regular kexec flow:
+
+syscall_reboot()
+  kernel_kexec()
+    kernel_restart_prepare()
+	  device_shutdown()
+	machine_kexec()
+	
+Although if CONFIG_KEXEC_JUMP is set, it doesn't call device_shutdown()
+either.
+
+
+Crash kexec flow:
+  __crash_kexec()
+      machine_kexec()
+
+There are some entry points to __crash_kexec(), like panic() or die() in
+x86, for example.
+To validate this, one can load a kernel with "initcall_debug" parameter,
+and performs a kexec - if the shutdown handlers are called, there's a
+dev_info() call that shows a message per device.
+
+
+> Shutdown routine in PCI core used to disable MSI/MSI-x on behalf of all
+> endpoints but it was later decided that this is the responsibility of the
+> endpoint driver.
+> 
+
+This may be a good idea, using the pci layer to disable MSIs in the
+quiesce path of the broken kernel. I'll follow-up this discussion in
+Bjorn's reply.
+
+Thanks,
+
+
+Guilherme
