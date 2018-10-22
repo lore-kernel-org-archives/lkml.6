@@ -3,340 +3,189 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E395C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF85C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FA8B20658
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:21:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FA8B20658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id DA56E20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:23:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA56E20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728630AbeJVVjc (ORCPT
+        id S1728649AbeJVVmC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 17:39:32 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:63355 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727774AbeJVVjc (ORCPT
+        Mon, 22 Oct 2018 17:42:02 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46204 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727587AbeJVVmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 17:39:32 -0400
-Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9MDKifI079298;
-        Mon, 22 Oct 2018 22:20:44 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
- Mon, 22 Oct 2018 22:20:44 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9MDKcdg079162
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 22 Oct 2018 22:20:43 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181022071323.9550-1-mhocko@kernel.org>
- <20181022071323.9550-3-mhocko@kernel.org>
- <f9a8079f-55b0-301e-9b3d-a5250bd7d277@i-love.sakura.ne.jp>
- <20181022120308.GB18839@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <0a84d3de-f342-c183-579b-d672c116ba25@i-love.sakura.ne.jp>
-Date:   Mon, 22 Oct 2018 22:20:36 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 22 Oct 2018 17:42:01 -0400
+Received: from [111.196.56.27] (helo=localhost.localdomain)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <aaron.ma@canonical.com>)
+        id 1gEaB2-0000vv-0F; Mon, 22 Oct 2018 13:23:24 +0000
+Subject: Re: [PATCH 1/2] usb: xhci: fix uninitialized completion when USB3
+ port got wrong status
+To:     Mathias Nyman <mathias.nyman@linux.intel.com>,
+        mathias.nyman@intel.com, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1540141725-13047-1-git-send-email-aaron.ma@canonical.com>
+ <57b1da55-3213-8053-7002-f8798d6e1a10@linux.intel.com>
+From:   Aaron Ma <aaron.ma@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=aaron.ma@canonical.com; prefer-encrypt=mutual; keydata=
+ xsBNBFffeLkBCACi4eE4dPsgWN6B9UDOVcAvb5QgU/hRG6yS0I1lGKQv4KA+bke0c5g8clbO
+ 9gIlIl2bityfA9NzBsDik4Iei3AxMbFyxv9keMwcOFQBIOZF0P3f05qjxftF8P+yp9QTV4hp
+ BkFzsXzWRgXN3r8hU8wqZybepF4B1C83sm2kQ5A5N0AUGbZli9i2G+/VscG9sWfLy8T7f4YW
+ MjmlijCjoV6k29vsmTWQPZ7EApNpvR5BnZQPmQWzkkr0lNXlsKcyLgefQtlwg6drK4fe4wz0
+ ouBIHJEiXE1LWK1hUzkCUASra4WRwKk1Mv/NLLE/aJRqEvF2ukt3uVuM77RWfl7/H/v5ABEB
+ AAHNIUFhcm9uIE1hIDxhYXJvbi5tYUBjYW5vbmljYWwuY29tPsLAdwQTAQgAIQUCV994uQIb
+ AwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDNxCzQfVU6ntJ9B/9aVy0+RkLqF9QpLmw+
+ LAf1m3Fd+4ZarPTerqDqkLla3ekYhbrEtlI1mYuB5f+gtrIjmcW27gacHdslKB9YwaL8B4ZB
+ GJKhcrntLg4YPzYUnXZkHHTv1hMw7fBYw82cBT+EbG0Djh6Po6Ihqyr3auHhfFcp1PZH4Mtq
+ 6hN5KaDZzF/go+tRF5e4bn61Nhdue7mrhFSlfkzLG2ehHWmRV+S91ksH81YDFnazK0sRINBx
+ V1S8ts3WJ2f1AbgmnDlbK3c/AfI5YxnIHn/x2ZdXj1P/wn7DgZHmpMy5DMuk0gN34NLUPLA/
+ cHeKoBAF8emugljiKecKBpMTLe8FrVOxbkrazsBNBFffeLkBCACweKP3Wx+gK81+rOUpuQ00
+ sCyKzdtMuXXJ7oL4GzYHbLfJq+F+UHpQbytVGTn3R5+Y61v41g2zTYZooaC+Hs1+ixf+buG2
+ +2LZjPSELWPNzH9lsKNlCcEvu1XhyyHkBDbnFFHWlUlql3nSXMo//dOTG/XGKaEaZUxjCLUC
+ 8ehLc16DJDvdXsPwWhHrCH/4k92F6qQ14QigBMsl75jDTDJMEYgRYEBT1D/bwxdIeoN1BfIG
+ mYgf059RrWax4SMiJtVDSUuDOpdwoEcZ0FWesRfbFrM+k/XKiIbjMZSvLunA4FIsOdWYOob4
+ Hh0rsm1G+fBLYtT+bE26OWpQ/lSn4TdhABEBAAHCwF8EGAEIAAkFAlffeLkCGwwACgkQzcQs
+ 0H1VOp6p5Af/ap5EVuP1AhFdPD3pXLNrUUt72W3cuAOjXyss43qFC2YRjGfktrizsDjQU46g
+ VKoD6EW9XUPgvYM+k8BJEoXDLhHWnCnMKlbHP3OImxzLRhF4kdlnLicz1zKRcessQatRpJgG
+ NIiD+eFyh0CZcWBO1BB5rWikjO/idicHao2stFdaBmIeXvhT9Xp6XNFEmzOmfHps+kKpWshY
+ 9LDAU0ERBNsW4bekOCa/QxfqcbZYRjrVQvya0EhrPhq0bBpzkIL/7QSBMcdv6IajTlHnLARF
+ nAIofCEKeEl7+ksiRapL5Nykcbt4dldE3sQWxIybC94SZ4inENKw6I8RNpigWm0R5w==
+Message-ID: <ebcc7c9e-7e5b-bda5-2f4a-05084de39eb7@canonical.com>
+Date:   Mon, 22 Oct 2018 21:23:13 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181022120308.GB18839@dhcp22.suse.cz>
+In-Reply-To: <57b1da55-3213-8053-7002-f8798d6e1a10@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/22 21:03, Michal Hocko wrote:
-> On Mon 22-10-18 20:45:17, Tetsuo Handa wrote:
->> On 2018/10/22 16:13, Michal Hocko wrote:
->>> From: Michal Hocko <mhocko@suse.com>
->>>
->>> Tetsuo has reported [1] that a single process group memcg might easily
->>> swamp the log with no-eligible oom victim reports due to race between
->>> the memcg charge and oom_reaper
->>>
->>> Thread 1		Thread2				oom_reaper
->>> try_charge		try_charge
->>> 			  mem_cgroup_out_of_memory
->>> 			    mutex_lock(oom_lock)
->>>   mem_cgroup_out_of_memory
->>>     mutex_lock(oom_lock)
->>> 			      out_of_memory
->>> 			        select_bad_process
->>> 				oom_kill_process(current)
->>> 				  wake_oom_reaper
->>> 							  oom_reap_task
->>> 							  MMF_OOM_SKIP->victim
->>> 			    mutex_unlock(oom_lock)
->>>     out_of_memory
->>>       select_bad_process # no task
->>>
->>> If Thread1 didn't race it would bail out from try_charge and force the
->>> charge. We can achieve the same by checking tsk_is_oom_victim inside
->>> the oom_lock and therefore close the race.
->>>
->>> [1] http://lkml.kernel.org/r/bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp
->>> Signed-off-by: Michal Hocko <mhocko@suse.com>
->>> ---
->>>  mm/memcontrol.c | 14 +++++++++++++-
->>>  1 file changed, 13 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->>> index e79cb59552d9..a9dfed29967b 100644
->>> --- a/mm/memcontrol.c
->>> +++ b/mm/memcontrol.c
->>> @@ -1380,10 +1380,22 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
->>>  		.gfp_mask = gfp_mask,
->>>  		.order = order,
->>>  	};
->>> -	bool ret;
->>> +	bool ret = true;
->>>  
->>>  	mutex_lock(&oom_lock);
->>> +
->>> +	/*
->>> +	 * multi-threaded tasks might race with oom_reaper and gain
->>> +	 * MMF_OOM_SKIP before reaching out_of_memory which can lead
->>> +	 * to out_of_memory failure if the task is the last one in
->>> +	 * memcg which would be a false possitive failure reported
->>> +	 */
->>> +	if (tsk_is_oom_victim(current))
->>> +		goto unlock;
->>> +
+
+
+On 10/22/18 9:12 PM, Mathias Nyman wrote:
+> On 21.10.2018 20:08, Aaron Ma wrote:
+>> Realtek USB3.0 Card Reader [0bda:0328] reports wrong port status on
+>> Cannon lake PCH USB3.1 xHCI [8086:a36d] after resume from S3,
+>> after clear port reset it works fine.
 >>
->> This is not wrong but is strange. We can use mutex_lock_killable(&oom_lock)
->> so that any killed threads no longer wait for oom_lock.
+>> Since this device is registered on USB3 roothub at boot,
+>> when port status reports not superspeed, xhci_get_port_status will call
+>> an uninitialized completion in bus_state[0].
+>> Kernel will hang because of NULL pointer.
+>>
+>> Restrict the USB2 resume status check in USB2 roothub to fix hang issue.
+>> No harm to initialize USB3 bus_state[0] in case it is called.
+>>
+>> Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+>> ---
+>>   drivers/usb/host/xhci-hub.c  | 2 +-
+>>   drivers/usb/host/xhci-mem.c  | 1 +
+>>   drivers/usb/host/xhci-ring.c | 2 +-
+>>   3 files changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
+>> index 7e2a531ba321..d30ca6ceffc9 100644
+>> --- a/drivers/usb/host/xhci-hub.c
+>> +++ b/drivers/usb/host/xhci-hub.c
+>> @@ -876,7 +876,7 @@ static u32 xhci_get_port_status(struct usb_hcd *hcd,
+>>               status |= USB_PORT_STAT_SUSPEND;
+>>       }
+>>       if ((raw_port_status & PORT_PLS_MASK) == XDEV_RESUME &&
+>> -        !DEV_SUPERSPEED_ANY(raw_port_status)) {
+>> +        !DEV_SUPERSPEED_ANY(raw_port_status) && 1 == hcd_index(hcd)) {
+>>           if ((raw_port_status & PORT_RESET) ||
+>>                   !(raw_port_status & PORT_PE))
+>>               return 0xffffffff;
 > 
-> tsk_is_oom_victim is stronger because it doesn't depend on
-> fatal_signal_pending which might be cleared throughout the exit process.
+> Nice catch.
+> 
+> Maybe use "hcd->speed < HCD_USB3" instead of "1 == hcd_index(hcd)"
+> It's easier to understand.
+> 
+> Turns out this isn't an issue with your Realtek device, it just happens
+> to trigger
+> a driver issue.
+> 
+> The original !DEV_SUPERSPEED_ANY() check was not suitable here.
+> It checks the port-speed field of portsc register (bits 13:10), which
+> are only valid for USB3
+> ports if all link training is done and port reached its "enabled" state.
+> Otherwise it will return 0, and USB3 ports may be mistaken for USB2 ports.
+> 
+> Just to make sure, Does your device stay as a USB 3 device, it's never
+> enumerated as USB2, right?
+> 
+> I'm in the middle of refactoring the get_port_status(), it should solve
+> this
+> as well, but we need your solution stable releases.
+> 
+> Any chance you to check if the refactored code works with the Realtek
+> device?
+> I just created a "get_port_status_refactor" branch for it:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/mnyman/xhci.git
+> get_port_status_refactor
 
-I mean:
-
- mm/memcontrol.c |   3 +-
- mm/oom_kill.c   | 111 +++++---------------------------------------------------
- 2 files changed, 12 insertions(+), 102 deletions(-)
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e79cb59..2c1e1ac 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1382,7 +1382,8 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	};
- 	bool ret;
- 
--	mutex_lock(&oom_lock);
-+	if (mutex_lock_killable(&oom_lock))
-+		return true;
- 	ret = out_of_memory(&oc);
- 	mutex_unlock(&oom_lock);
- 	return ret;
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index f10aa53..22fd6b3 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -755,81 +755,6 @@ bool oom_killer_disable(signed long timeout)
- 	return true;
- }
- 
--static inline bool __task_will_free_mem(struct task_struct *task)
--{
--	struct signal_struct *sig = task->signal;
--
--	/*
--	 * A coredumping process may sleep for an extended period in exit_mm(),
--	 * so the oom killer cannot assume that the process will promptly exit
--	 * and release memory.
--	 */
--	if (sig->flags & SIGNAL_GROUP_COREDUMP)
--		return false;
--
--	if (sig->flags & SIGNAL_GROUP_EXIT)
--		return true;
--
--	if (thread_group_empty(task) && (task->flags & PF_EXITING))
--		return true;
--
--	return false;
--}
--
--/*
-- * Checks whether the given task is dying or exiting and likely to
-- * release its address space. This means that all threads and processes
-- * sharing the same mm have to be killed or exiting.
-- * Caller has to make sure that task->mm is stable (hold task_lock or
-- * it operates on the current).
-- */
--static bool task_will_free_mem(struct task_struct *task)
--{
--	struct mm_struct *mm = task->mm;
--	struct task_struct *p;
--	bool ret = true;
--
--	/*
--	 * Skip tasks without mm because it might have passed its exit_mm and
--	 * exit_oom_victim. oom_reaper could have rescued that but do not rely
--	 * on that for now. We can consider find_lock_task_mm in future.
--	 */
--	if (!mm)
--		return false;
--
--	if (!__task_will_free_mem(task))
--		return false;
--
--	/*
--	 * This task has already been drained by the oom reaper so there are
--	 * only small chances it will free some more
--	 */
--	if (test_bit(MMF_OOM_SKIP, &mm->flags))
--		return false;
--
--	if (atomic_read(&mm->mm_users) <= 1)
--		return true;
--
--	/*
--	 * Make sure that all tasks which share the mm with the given tasks
--	 * are dying as well to make sure that a) nobody pins its mm and
--	 * b) the task is also reapable by the oom reaper.
--	 */
--	rcu_read_lock();
--	for_each_process(p) {
--		if (!process_shares_mm(p, mm))
--			continue;
--		if (same_thread_group(task, p))
--			continue;
--		ret = __task_will_free_mem(p);
--		if (!ret)
--			break;
--	}
--	rcu_read_unlock();
--
--	return ret;
--}
--
- static void __oom_kill_process(struct task_struct *victim)
- {
- 	struct task_struct *p;
-@@ -879,6 +804,8 @@ static void __oom_kill_process(struct task_struct *victim)
- 	 */
- 	rcu_read_lock();
- 	for_each_process(p) {
-+		struct task_struct *t;
-+
- 		if (!process_shares_mm(p, mm))
- 			continue;
- 		if (same_thread_group(p, victim))
-@@ -898,6 +825,11 @@ static void __oom_kill_process(struct task_struct *victim)
- 		if (unlikely(p->flags & PF_KTHREAD))
- 			continue;
- 		do_send_sig_info(SIGKILL, SEND_SIG_FORCED, p, PIDTYPE_TGID);
-+		t = find_lock_task_mm(p);
-+		if (!t)
-+			continue;
-+		mark_oom_victim(t);
-+		task_unlock(t);
- 	}
- 	rcu_read_unlock();
- 
-@@ -934,21 +866,6 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
- 					      DEFAULT_RATELIMIT_BURST);
- 
--	/*
--	 * If the task is already exiting, don't alarm the sysadmin or kill
--	 * its children or threads, just give it access to memory reserves
--	 * so it can die quickly
--	 */
--	task_lock(p);
--	if (task_will_free_mem(p)) {
--		mark_oom_victim(p);
--		wake_oom_reaper(p);
--		task_unlock(p);
--		put_task_struct(p);
--		return;
--	}
--	task_unlock(p);
--
- 	if (__ratelimit(&oom_rs))
- 		dump_header(oc, p);
- 
-@@ -1055,6 +972,9 @@ bool out_of_memory(struct oom_control *oc)
- 	unsigned long freed = 0;
- 	enum oom_constraint constraint = CONSTRAINT_NONE;
- 
-+	if (tsk_is_oom_victim(current) && !(oc->gfp_mask & __GFP_NOFAIL))
-+		return true;
-+
- 	if (oom_killer_disabled)
- 		return false;
- 
-@@ -1066,17 +986,6 @@ bool out_of_memory(struct oom_control *oc)
- 	}
- 
- 	/*
--	 * If current has a pending SIGKILL or is exiting, then automatically
--	 * select it.  The goal is to allow it to allocate so that it may
--	 * quickly exit and free its memory.
--	 */
--	if (task_will_free_mem(current)) {
--		mark_oom_victim(current);
--		wake_oom_reaper(current);
--		return true;
--	}
--
--	/*
- 	 * The OOM killer does not compensate for IO-less reclaim.
- 	 * pagefault_out_of_memory lost its gfp context so we have to
- 	 * make sure exclude 0 mask - all other users should have at least
--- 
-1.8.3.1
+Let me try your branch, please wait a moment.
 
 > 
->> Also, closing this race for only memcg OOM path is strange. Global OOM path
->> (which are CLONE_VM without CLONE_THREAD) is still suffering this race
->> (though frequency is lower than memcg OOM due to use of mutex_trylock()). Either
->> checking before calling out_of_memory() or checking task_will_free_mem(current)
->> inside out_of_memory() will close this race for both paths.
+>> diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+>> index b1f27aa38b10..dd2ad50c5289 100644
+>> --- a/drivers/usb/host/xhci-mem.c
+>> +++ b/drivers/usb/host/xhci-mem.c
+>> @@ -2539,6 +2539,7 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t
+>> flags)
+>>           xhci->bus_state[0].resume_done[i] = 0;
+>>           xhci->bus_state[1].resume_done[i] = 0;
+>>           /* Only the USB 2.0 completions will ever be used. */
+>> +        init_completion(&xhci->bus_state[0].rexit_done[i]);
+>>           init_completion(&xhci->bus_state[1].rexit_done[i]);
+>>       }
 > 
-> The global case is much more complicated because we know that memcg
-> might bypass the charge so we do not have to care about the potential
-> endless loop like in page allocator path.
-
-We know that the page allocator path does not do endless loop unless
-__GFP_NOFAIL.
- 
->                                           Moreover I am not even sure
-> the race is all that interesting in the global case. I have never heard
-> about a pre-mature panic due to no killable task.
-
-I don't think this race results in
-
-  panic("System is deadlocked on memory\n");
-
-. But I think a few unnecessary OOM killing is possible (especially when
-above patch which "eliminates the shortcuts which call mark_oom_victim()
-on only one thread group" is not applied).
-
->                                                   The racing oom task
-> would have to be the last eligible process in the system and that is
-> quite unlikely. We can think about a more involved solution for that if
-> we ever hear about this to be a real problem.
+> I don't think we should init the completion unnecessary for USB3 ports.
 > 
-> So a simple memcg specific fix sounds like a reasonable way forward.
+>>   diff --git a/drivers/usb/host/xhci-ring.c
+>> b/drivers/usb/host/xhci-ring.c
+>> index f0a99aa0ac58..894d4625b8b9 100644
+>> --- a/drivers/usb/host/xhci-ring.c
+>> +++ b/drivers/usb/host/xhci-ring.c
+>> @@ -1634,7 +1634,7 @@ static void handle_port_status(struct xhci_hcd
+>> *xhci,
+>>        * RExit to a disconnect state).  If so, let the the driver know
+>> it's
+>>        * out of the RExit state.
+>>        */
+>> -    if (!DEV_SUPERSPEED_ANY(portsc) &&
+>> +    if (!DEV_SUPERSPEED_ANY(portsc) && 1 == hcd_index(hcd) &&
+>>               test_and_clear_bit(hcd_portnum,
+>>                   &bus_state->rexit_ports)) {
+>>           complete(&bus_state->rexit_done[hcd_portnum]);
+>>
 > 
+> Same here, prefer hcd->speed < HCD_USB3
 
+Yes, I thought about this, bus_state[1/0] are defined to USB 2/3, so I
+used "1 == hcd_index(hcd)".
+
+Anyway, I will send V2 as your suggestion.
+
+Thanks,
+Aaron
+
+> 
+> Thanks
+> Mathias
