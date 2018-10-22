@@ -2,145 +2,213 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D388C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 510EDC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:10:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5555C20853
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:10:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHm5LSoV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5555C20853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0264120658
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:10:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0264120658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728474AbeJVS1v (ORCPT
+        id S1728506AbeJVS2t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:27:51 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40831 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727045AbeJVS1u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:27:50 -0400
-Received: by mail-pf1-f193.google.com with SMTP id g21-v6so12656899pfi.7;
-        Mon, 22 Oct 2018 03:09:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QM4Yu+1p2haCXP5W9H76haVjc7F3evCtWrd2v/xitOw=;
-        b=CHm5LSoVjAZjGaGgMuBuNh4+3ZpPpDoZQbdQjesuP7zkg519prfK7r9IOpGbaMM0h8
-         oB0Qu7rxHy6XEccKfV6D3sAlLvHqCDlDB42aRDlPBcXLCb76QPyNtq+Rp5JbYDwfhAmG
-         ioV3DTSTy/eyTTj82EJa83Vl3rXU4ogjqdEzrfZeP5wR2q7PbT31NrpZ4+gBRgZsvUMQ
-         qo09zwztoKi/N7xrvk6wtd1krCUnLA7SRB+zx98oPshqInmqdnoKMcTjyggj5mpd9hIA
-         ac2ox4xC12j/c+cK98YZRwXvb2y3qLfHNY7yvO7YEJ/daof5Cn3e2dlJjoFmZdteMRzm
-         NGFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QM4Yu+1p2haCXP5W9H76haVjc7F3evCtWrd2v/xitOw=;
-        b=mV1m/jm/1EYQ7+eno7HELe7+FuPuAd3cBd/HzYLP4CtfiuGYqL2RJhA25EMSLlN013
-         CBiVhYfzA/zoKJSjSUqiFgtxAm22FG4GvvhfCnMlFgFNpbN7XhSVvfTpD24Yo2lJbTrJ
-         j2IEjimX3sTTrKrRq2hrS4ulOGXRkTykVOH/DfRJBWFwJD2XRDf2jC9ocbPxZJj06MTQ
-         lzvNvXgC0Z+DL8Bwid5+u09qsx7Xnd4psQ8MiC8YTiVPokssegviIo8Ivk6zE3G7ksXJ
-         eiw29xVsyGQHCb1xFL6MckuxbvOaQAB0xV+azlnzgdxvQz0H5x343N2Y09uoLaJjftlR
-         FJrg==
-X-Gm-Message-State: ABuFfogtu59Y+UpC2ftOIxwHzNmcK1sPc+Gy5sZHe+e0hhqCMdELgLIX
-        LWw2yZxqOf2Q3P7ko6evejY=
-X-Google-Smtp-Source: ACcGV61A6EmDBf+Y4gjVCzE5LmzhPk6LP3+flUTZETHNJP9DYrK8jQSVKrp8aVf1ZnPpT1Vxo4htaQ==
-X-Received: by 2002:a62:de05:: with SMTP id h5-v6mr45339377pfg.258.1540202997589;
-        Mon, 22 Oct 2018 03:09:57 -0700 (PDT)
-Received: from localhost ([39.7.58.252])
-        by smtp.gmail.com with ESMTPSA id j25-v6sm36021730pff.116.2018.10.22.03.09.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Oct 2018 03:09:55 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 19:09:52 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Daniel Wang <wonderfly@google.com>
-Cc:     sergey.senozhatsky.work@gmail.com, Petr Mladek <pmladek@suse.com>,
-        rostedt@goodmis.org, stable@vger.kernel.org,
-        Alexander.Levin@microsoft.com, akpm@linux-foundation.org,
-        byungchul.park@lge.com, dave.hansen@intel.com, hannes@cmpxchg.org,
-        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mel Gorman <mgorman@suse.de>, mhocko@kernel.org, pavel@ucw.cz,
-        penguin-kernel@i-love.sakura.ne.jp, peterz@infradead.org,
-        tj@kernel.org, torvalds@linux-foundation.org, vbabka@suse.cz,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Peter Feiner <pfeiner@google.com>
-Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
- owner and waiter logic to load balance console writes"
-Message-ID: <20181022100952.GA1147@jagdpanzerIV>
-References: <CAJmjG2-RrG5XKeW1-+rN3C=F6bZ-L3=YKhCiQ_muENDTzm_Ofg@mail.gmail.com>
- <20181002212327.7aab0b79@vmware.local.home>
- <20181003091400.rgdjpjeaoinnrysx@pathway.suse.cz>
- <CAJmjG2_4JFA=qL-d2Pb9umUEcPt9h13w-g40JQMbdKsZTRSZww@mail.gmail.com>
- <20181003133704.43a58cf5@gandalf.local.home>
- <CAJmjG291w2ZPRiAevSzxGNcuR6vTuqyk6z4SG3xRsbaQh5U3zQ@mail.gmail.com>
- <20181004074442.GA12879@jagdpanzerIV>
- <20181004083609.kcziz2ynwi2w7lcm@pathway.suse.cz>
- <20181004085515.GC12879@jagdpanzerIV>
- <CAJmjG2-e6f6p=pE5uDECMc=W=81SYyGCmoabrC1ePXwL5DFdSw@mail.gmail.com>
+        Mon, 22 Oct 2018 14:28:49 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45485 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727045AbeJVS2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:28:49 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 962C920890; Mon, 22 Oct 2018 12:10:54 +0200 (CEST)
+Received: from bbrezillon (aaubervilliers-681-1-25-52.w90-88.abo.wanadoo.fr [90.88.145.52])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3037E2072D;
+        Mon, 22 Oct 2018 12:10:44 +0200 (CEST)
+Date:   Mon, 22 Oct 2018 12:10:44 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Cc:     Tudor Ambarus <tudor.ambarus@microchip.com>,
+        "richard@nod.at" <richard@nod.at>, Mark Brown <broonie@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "cyrille.pitchen@microchip.com" <cyrille.pitchen@microchip.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "Cristian.Birsan@microchip.com" <Cristian.Birsan@microchip.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP
+ SPI NOR flash memories
+Message-ID: <20181022121044.24039f40@bbrezillon>
+In-Reply-To: <VI1PR04MB1038EF892921194D1BFDE6FC99F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
+References: <20180911154007.17195-1-tudor.ambarus@microchip.com>
+        <20180911154007.17195-2-tudor.ambarus@microchip.com>
+        <VI1PR04MB103888BC18F3C5AD0C02DEF699FE0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+        <31a8f6a9-1459-443a-6ef8-2b2c17769ae4@microchip.com>
+        <de0f7245-2557-12be-a306-67b08e55ae7b@wedev4u.fr>
+        <VI1PR04MB1038AB25EABDC8507984ADC799FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+        <20181017090724.12f2cd79@bbrezillon>
+        <20181017091045.124e0266@bbrezillon>
+        <20181017092941.3658bd9a@bbrezillon>
+        <VI1PR04MB1038EFA1E83AD78EBE84ECC499FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+        <20181017115237.07310b74@bbrezillon>
+        <VI1PR04MB1038BD6103DD8BD6B6DEC2B899F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
+        <20181022111543.2a607efc@bbrezillon>
+        <VI1PR04MB1038EF892921194D1BFDE6FC99F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJmjG2-e6f6p=pE5uDECMc=W=81SYyGCmoabrC1ePXwL5DFdSw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (10/21/18 11:09), Daniel Wang wrote:
+On Mon, 22 Oct 2018 10:03:55 +0000
+Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+
+> Hi,
 > 
-> Just got back from vacation. Thanks for the continued discussion. Just so
-> I understand the current state. Looks like we've got a pretty good explanation
-> of what's going on (though not completely sure), and backporting Steven's
-> patches is still the way to go?
+> 
+> > -----Original Message-----
+> > From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
+> > Sent: Monday, October 22, 2018 2:46 PM
+> > To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+> > Cc: Tudor Ambarus <tudor.ambarus@microchip.com>; richard@nod.at; Mark
+> > Brown <broonie@kernel.org>; linux-kernel@vger.kernel.org;
+> > nicolas.ferre@microchip.com; marek.vasut@gmail.com;
+> > cyrille.pitchen@microchip.com; linux-mtd@lists.infradead.org;
+> > Cristian.Birsan@microchip.com; Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>;
+> > computersforpeace@gmail.com; dwmw2@infradead.org; linux-arm-
+> > kernel@lists.infradead.org
+> > Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP SPI
+> > NOR flash memories
+> > 
+> > On Mon, 22 Oct 2018 06:04:13 +0000
+> > Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+> > 
+> >   
+> With below patch, it gets stuck in for loop of "+       for (nmaps = 0; i< smpt_len; nmaps++) {".
+> 
+> [    1.624684] m25p80 spi0.0: found s25fl512s, expected m25p80
+> [    1.630377] Start [addr_width:00000000, read_dumy:08, read_opcode:00000000]
+> [    1.637335] spi_nor_get_map_in_use:2882 smpt[0]=08ff65fc
+> [    1.642641] spi_nor_get_map_in_use:2882 smpt[1]=00000004
+> [    1.647945] spi_nor_get_map_in_use:2882 smpt[2]=04ff65fc
+> [    1.653248] spi_nor_get_map_in_use:2882 smpt[3]=00000002
+> [    1.658551] spi_nor_get_map_in_use:2882 smpt[4]=02ff65fd
+> [    1.663855] spi_nor_get_map_in_use:2882 smpt[5]=00000004
+> [    1.669158] spi_nor_get_map_in_use:2882 smpt[6]=ff0201fe
+> [    1.674461] spi_nor_get_map_in_use:2882 smpt[7]=00007ff1
+> [    1.679766] spi_nor_get_map_in_use:2882 smpt[8]=00037ff4
+> [    1.685070] spi_nor_get_map_in_use:2882 smpt[9]=03fbfff4
+> [    1.690375] spi_nor_get_map_in_use:2882 smpt[10]=ff0203fe
+> [    1.695768] spi_nor_get_map_in_use:2882 smpt[11]=03fbfff4
+> [    1.701158] spi_nor_get_map_in_use:2882 smpt[12]=00037ff4
+> [    1.706550] spi_nor_get_map_in_use:2882 smpt[13]=00007ff1
+> [    1.711940] spi_nor_get_map_in_use:2882 smpt[14]=ff0005ff
+> [    1.717330] spi_nor_get_map_in_use:2882 smpt[15]=03fffff4
+> [    1.722720] smpt[0]=[addr_width:00000000, read_dumy:08, read_opcode:00000065]
+> [    1.729861] spi_nor_get_map_in_use:2912 map_id=1
+> 
+> 
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -2863,26 +2863,36 @@ static u8 spi_nor_smpt_read_dummy(const struct spi_nor *nor, const u32 settings)
+>   * @nor:       pointer to a 'struct spi_nor'
+>   * @smpt:      pointer to the sector map parameter table
+>   */
+> -static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt)
+> +static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt, u32 smpt_len)
+>  {
+>         const u32 *ret = NULL;
+> -       u32 i, addr;
+> +       u32 i, addr, nmaps;
+>         int err;
+>         u8 addr_width, read_opcode, read_dummy;
+>         u8 read_data_mask, data_byte, map_id;
+> +       bool map_id_is_valid = false;
+> 
+>         addr_width = nor->addr_width;
+>         read_dummy = nor->read_dummy;
+>         read_opcode = nor->read_opcode;
+> 
+> +       pr_info("Start [addr_width:%08x, read_dumy:%0x8, read_opcode:%08x]\n", nor->addr_width, nor->read_dummy, nor->read_opcode);
+> +
+> +       for (i = 0; i<smpt_len; i++)
+> +               pr_info("%s:%i smpt[%d]=%08x\n", __func__, __LINE__, i, smpt[i]);
+> +
+>         map_id = 0;
+> -       i = 0;
+>         /* Determine if there are any optional Detection Command Descriptors */
+> -       while (!(smpt[i] & SMPT_DESC_TYPE_MAP)) {
+> +       for (i = 0; i< smpt_len; i++) {
+> +               if ((smpt[i] & SMPT_DESC_TYPE_MAP))
+> +                       break;
+> +
+>                 read_data_mask = SMPT_CMD_READ_DATA(smpt[i]);
+>                 nor->addr_width = spi_nor_smpt_addr_width(nor, smpt[i]);
+>                 nor->read_dummy = spi_nor_smpt_read_dummy(nor, smpt[i]);
+>                 nor->read_opcode = SMPT_CMD_OPCODE(smpt[i]);
+> +               pr_info("smpt[%d]=[addr_width:%08x, read_dumy:%0x8, read_opcode:%08x]\n", i, nor->addr_width, nor->read_dummy, nor->read_opcode);
+> +
+>                 addr = smpt[i + 1];
+> 
+>                 err = spi_nor_read_raw(nor, addr, 1, &data_byte);
+> @@ -2894,18 +2904,36 @@ static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt)
+>                  * Configuration that is currently in use.
+>                  */
+>                 map_id = map_id << 1 | !!(data_byte & read_data_mask);
+> +               map_id_is_valid = true;
+>                 i = i + 2;
+>         }
+> 
+> -       /* Find the matching configuration map */
+> -       while (SMPT_MAP_ID(smpt[i]) != map_id) {
+> -               if (smpt[i] & SMPT_DESC_END)
+> -                       goto out;
+> +       if (map_id_is_valid)
+> +               pr_info("%s:%i map_id=%d\n", __func__, __LINE__, map_id);
+> +       else
+> +               pr_info("%s:%i NO map_id\n", __func__, __LINE__);
+> +
+> +       for (nmaps = 0; i< smpt_len; nmaps++) {
+> +               if((smpt[i] & SMPT_DESC_TYPE_MAP))
+> +                       continue;
 
-Up to -stable maintainers.
+Try to Replace the above if block by:
 
-Note, with or without Steven's patch, the non-reentrable consoles are
-still non-reentrable, so the deadlock is still there:
+		if (!(smpt[i] & SMPT_DESC_TYPE_MAP)) {
+			i += 2;
+			continue;
+		}
 
-	spin_lock_irqsave(&port->lock, flags)
-	 <NMI>
-	  panic()
-	   console_flush_on_panic()
-	    spin_lock_irqsave(&port->lock, flags)		// deadlock
+> +
+> +               if(!map_id_is_valid) {
+> +                       if (nmaps) {
+> +                               ret = NULL;
+> +                               break;
+> +                       }
+> +
+> +                       ret = smpt+i;
+> +               } else if (map_id == SMPT_MAP_ID(smpt[i])) {
+> +                       ret = smpt+i;
+> +                       break;
+> +               }
+> +
+>                 /* increment the table index to the next map */
+>                 i += SMPT_MAP_REGION_COUNT(smpt[i]) + 1;
+>         }
+> 
+> -       ret = smpt + i;
+> +       pr_info("End [addr_width:%08x, read_dumy:%0x8, read_opcode:%08x]\n", nor->addr_width, nor->read_dummy, nor->read_opcode);
+>         /* fall through */
+>  out:
+>         nor->addr_width = addr_width;
 
-
-// And I wouldn't mind to have more reviews/testing on [1].
-
-
-Another deadlock scenario could be the following one:
-
-	printk()
-	 console_trylock()
-	  down_trylock()
-	   raw_spin_lock_irqsave(&sem->lock, flags)
-	    <NMI>
-	     panic()
-	      console_flush_on_panic()
-	       console_trylock()
-	        raw_spin_lock_irqsave(&sem->lock, flags)	// deadlock
-
-There are no patches addressing this one at the moment. And it's
-unclear if you are hitting this scenario.
-
-
-> I see that Sergey had sent an RFC series for similar things. Are those
-> trying to solve the deadlock problem in a different way?
-
-Umm, I wouldn't call it "another way". It turns non-reentrant serial
-consoles to re-entrable ones. Did you test patch [1] from that series
-on you environment, by the way?
-
-[1] lkml.kernel.org/r/20181016050428.17966-2-sergey.senozhatsky@gmail.com
-
-	-ss
