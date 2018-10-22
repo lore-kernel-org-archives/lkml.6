@@ -2,143 +2,137 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 581E8C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72154C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0016B23D65
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:40:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QNV+Rb8m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0016B23D65
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3EF93207DE
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:43:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EF93207DE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbeJVV6j (ORCPT
+        id S1727943AbeJVWB6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 17:58:39 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:39184 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727210AbeJVV6j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 17:58:39 -0400
-Received: by mail-lf1-f65.google.com with SMTP id p11-v6so3979338lfc.6;
-        Mon, 22 Oct 2018 06:39:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C8sQfTUcLqE8TApD3u96Q2vEEW2OfQeFAA+2Uyiw28k=;
-        b=QNV+Rb8mbd8RR9TR0kmkIsA4awKsTC6rLUIYmb8YNk9PiJtpkWrSFlPGV93GEvQR/b
-         MOe4yx++K+9FYqaoG9IiWD5jYohQJeNrZjBzHx4ys/ToJrd4xQ4VT6eSqKhpggV9RLl1
-         mGalG7Ty0J8qJEriXY0WptLIhSU6iSrpFCwdLmHgPmD8q9EXaDh9j5ap//NPjkd80BZc
-         krQ541rKPQTtEkus5EGm6bZWbbXgjSrr1N8gQ4i5W8r1slGavX+kXEaCPelnwOw/ofwZ
-         7RQdX1srDOGiA8K+gf8H5YQhc73cyVDswNflrQhhpobEx+wDMqgOp5XZLllDEnqjDmgp
-         ofeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C8sQfTUcLqE8TApD3u96Q2vEEW2OfQeFAA+2Uyiw28k=;
-        b=aqxoMdP03JKQJ1oQuLwF3JjfIjZptYMXHv+MKO1BKWNMdBQLx/fs7z4lOmGGM4sqoj
-         UV92krHFzwhQ/sMSvTW3kXkbmVadtur1SYI9OQidwhWFMx1GeSn0S01sCQaLtibemq7B
-         IJ3XS1HbPYe50TvN1aiHi82zEoQ/cvIAd5cmVm0XKJkK/r9uUZ7DYC9JQxoJc7i/MxzW
-         c8sYtlS+Z11z3GORpmC2K76uS8orE9tCoh49ugaGBx8prNuwte3SilnjazX7nkvg+xuG
-         vxC65ESNcK+5dCcSDerjYWT/DDB8oaGjH1owOdMuHH3l964SSDHwowqV8K901h4LaWBo
-         HK4g==
-X-Gm-Message-State: ABuFfohMumVnMZ13yggc56KQTRtCq2H6aPBbWfqAYWbnPbx3AtjtJb8C
-        luHHuVnMD+Y8Svb6kevAUwtC0BWsHze2vmUzPSI=
-X-Google-Smtp-Source: ACcGV62YuzbWOrVcbB77xv1qRltSvNdQ0hyhvNFXhF+NpIqYY0RsAr5673XN9NRVmXRiPfuJa5ilwyBpz0U4Xh5VEa0=
-X-Received: by 2002:a19:11c2:: with SMTP id 63mr9060920lfr.131.1540215598557;
- Mon, 22 Oct 2018 06:39:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181021171414.22674-1-miguel.ojeda.sandonis@gmail.com>
- <20181021171414.22674-2-miguel.ojeda.sandonis@gmail.com> <20181021222712.GI1617@thunk.org>
- <CANiq72mXV6WTyHXNZJDTfFOpPrXD0zD6cB30bGOuKO44AvRiog@mail.gmail.com>
- <CAGXu5jKb-0H+smRAW6ngQKDZ-PbTThhMwhmu34iB8vjTa-4H8Q@mail.gmail.com>
- <CANiq72n4+HDXPqr7xySSGx49g8vEcXaxO7a-By9cSg7YSxOS_A@mail.gmail.com>
- <CAGXu5jLzfuEnWpJFL1Caq94nKbPps-QTaYGpge2CfZWj1Zzf9g@mail.gmail.com> <CANiq72kpCoVwCzMUVYB_km+9xr41gBZLo_K203e_t4_QZ9-r1Q@mail.gmail.com>
-In-Reply-To: <CANiq72kpCoVwCzMUVYB_km+9xr41gBZLo_K203e_t4_QZ9-r1Q@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Mon, 22 Oct 2018 15:39:47 +0200
-Message-ID: <CANiq72k_uBxjzguG8YBmSaV5XUYoOsuHk+UHFdgCarr4--uGDA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] Compiler Attributes: add support for __fallthrough
- (gcc >= 7.1)
-To:     Kees Cook <keescook@chromium.org>
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "Ted Ts'o" <tytso@mit.edu>, Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Dan <dan.carpenter@oracle.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Olof Johansson <olof@lxom.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        David Miller <davem@davemloft.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
-        Martin Sebor <msebor@gmail.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
+        Mon, 22 Oct 2018 18:01:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49290 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727210AbeJVWB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 18:01:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 36EFAAFE2;
+        Mon, 22 Oct 2018 13:43:17 +0000 (UTC)
+Date:   Mon, 22 Oct 2018 15:43:15 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
+Message-ID: <20181022134315.GF18839@dhcp22.suse.cz>
+References: <20181022071323.9550-1-mhocko@kernel.org>
+ <20181022071323.9550-3-mhocko@kernel.org>
+ <f9a8079f-55b0-301e-9b3d-a5250bd7d277@i-love.sakura.ne.jp>
+ <20181022120308.GB18839@dhcp22.suse.cz>
+ <0a84d3de-f342-c183-579b-d672c116ba25@i-love.sakura.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a84d3de-f342-c183-579b-d672c116ba25@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 1:24 PM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Mon, Oct 22, 2018 at 12:53 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Mon, Oct 22, 2018 at 2:41 AM, Miguel Ojeda
-> > <miguel.ojeda.sandonis@gmail.com> wrote:
-> >
-> > >   * clang does *not* support the attribute in C.
-> >
-> > Well that's not good. :)
->
-> I will see with clang if they plan to add it.
->
+On Mon 22-10-18 22:20:36, Tetsuo Handa wrote:
+> On 2018/10/22 21:03, Michal Hocko wrote:
+> > On Mon 22-10-18 20:45:17, Tetsuo Handa wrote:
+> >> On 2018/10/22 16:13, Michal Hocko wrote:
+> >>> From: Michal Hocko <mhocko@suse.com>
+> >>>
+> >>> Tetsuo has reported [1] that a single process group memcg might easily
+> >>> swamp the log with no-eligible oom victim reports due to race between
+> >>> the memcg charge and oom_reaper
+> >>>
+> >>> Thread 1		Thread2				oom_reaper
+> >>> try_charge		try_charge
+> >>> 			  mem_cgroup_out_of_memory
+> >>> 			    mutex_lock(oom_lock)
+> >>>   mem_cgroup_out_of_memory
+> >>>     mutex_lock(oom_lock)
+> >>> 			      out_of_memory
+> >>> 			        select_bad_process
+> >>> 				oom_kill_process(current)
+> >>> 				  wake_oom_reaper
+> >>> 							  oom_reap_task
+> >>> 							  MMF_OOM_SKIP->victim
+> >>> 			    mutex_unlock(oom_lock)
+> >>>     out_of_memory
+> >>>       select_bad_process # no task
+> >>>
+> >>> If Thread1 didn't race it would bail out from try_charge and force the
+> >>> charge. We can achieve the same by checking tsk_is_oom_victim inside
+> >>> the oom_lock and therefore close the race.
+> >>>
+> >>> [1] http://lkml.kernel.org/r/bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp
+> >>> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> >>> ---
+> >>>  mm/memcontrol.c | 14 +++++++++++++-
+> >>>  1 file changed, 13 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> >>> index e79cb59552d9..a9dfed29967b 100644
+> >>> --- a/mm/memcontrol.c
+> >>> +++ b/mm/memcontrol.c
+> >>> @@ -1380,10 +1380,22 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
+> >>>  		.gfp_mask = gfp_mask,
+> >>>  		.order = order,
+> >>>  	};
+> >>> -	bool ret;
+> >>> +	bool ret = true;
+> >>>  
+> >>>  	mutex_lock(&oom_lock);
+> >>> +
+> >>> +	/*
+> >>> +	 * multi-threaded tasks might race with oom_reaper and gain
+> >>> +	 * MMF_OOM_SKIP before reaching out_of_memory which can lead
+> >>> +	 * to out_of_memory failure if the task is the last one in
+> >>> +	 * memcg which would be a false possitive failure reported
+> >>> +	 */
+> >>> +	if (tsk_is_oom_victim(current))
+> >>> +		goto unlock;
+> >>> +
+> >>
+> >> This is not wrong but is strange. We can use mutex_lock_killable(&oom_lock)
+> >> so that any killed threads no longer wait for oom_lock.
+> > 
+> > tsk_is_oom_victim is stronger because it doesn't depend on
+> > fatal_signal_pending which might be cleared throughout the exit process.
+> 
+> I mean:
+> 
+>  mm/memcontrol.c |   3 +-
+>  mm/oom_kill.c   | 111 +++++---------------------------------------------------
+>  2 files changed, 12 insertions(+), 102 deletions(-)
 
-So I have looked in the clang sources and I have seen that clang is
-already preparing for C2x: since clang >= 6 we can actually enable the
-C++-like attributes with "-fdouble-square-bracket-attributes" in C
-mode, which in turn makes the warning work in C mode and can be
-suppressed with [[fallthrough]]. This would give us the warning also
-in clang, which would be a win vs. the comments. Nick?
+This is much larger change than I feel comfortable with to plug this
+specific issue. A simple and easy to understand fix which doesn't add
+maintenance burden should be preferred in general.
 
-However, I don't see a way to enable [[fallthrough]] in C mode for gcc
->= 7.1 -- from a quick look, the C parser does not know about [[]]
-attributes, so I don't think we can use [[fallthrough]] for both
-compilers (yet).
+The code reduction looks attractive but considering it is based on
+removing one of the heuristics to prevent OOM reports in some case it
+should be done on its own with a careful and throughout justification.
+E.g. how often is the heuristic really helpful.
 
-Cheers,
-Miguel
+In principle I do not oppose to remove the shortcut after all due
+diligence is done because this particular one had given us quite a lot
+headaches in the past.
+-- 
+Michal Hocko
+SUSE Labs
