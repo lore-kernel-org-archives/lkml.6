@@ -2,161 +2,179 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9E9C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FCAC7112C
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:35:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 068FB207E5
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:32:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EI2qS340"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 068FB207E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id B06CE20651
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:35:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B06CE20651
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728848AbeJWEw2 (ORCPT
+        id S1728885AbeJWEzW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 00:52:28 -0400
-Received: from mail-qk1-f202.google.com ([209.85.222.202]:36984 "EHLO
-        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbeJWEw1 (ORCPT
+        Tue, 23 Oct 2018 00:55:22 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54871 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728200AbeJWEzW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 00:52:27 -0400
-Received: by mail-qk1-f202.google.com with SMTP id z10-v6so6248908qkl.4
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 13:32:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=qBkcULrk24lGYqTEeJPSqpxDS/GL/T8SH7WD8YBNpus=;
-        b=EI2qS340NBQET5Mg5nPhP4aVB2ya2DI6ZnTdAQBQRROnGzihSXYVl9NGcOp51g+w1Q
-         16wCHIv1TtcHHFUzffZP0mrcMsomH02bIUPQM4cd4IWH1/EpoyQPCUNYybTQLt9UOtBk
-         WFjhk6o50sbI43ObRR9uS/krPjeQNKJjIV3lAztiDMZYTFP0ofxj/gkG9dy5bZpxdTDT
-         x7BjhrlJpAakuVwUHNXQBkSl2LmRgSrtHnbSg9As62BFNsc9CFbhRq/BIRNKSWKLjpL3
-         9EwiWk+WKYQVAAuTvbyCt+UTiwAyEsewQ58XZo1+VoYAvVauyHu4uByEqWR6vIpYE2KW
-         BX4g==
+        Tue, 23 Oct 2018 00:55:22 -0400
+Received: from mail-qt1-f200.google.com ([209.85.160.200])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <gpiccoli@canonical.com>)
+        id 1gEguz-0000eU-ER
+        for linux-kernel@vger.kernel.org; Mon, 22 Oct 2018 20:35:17 +0000
+Received: by mail-qt1-f200.google.com with SMTP id p36-v6so14340098qta.10
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 13:35:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=qBkcULrk24lGYqTEeJPSqpxDS/GL/T8SH7WD8YBNpus=;
-        b=lgJCRqkIizXxTkuoxD4+6LPE4Up0wnYs7akLyaFAEEPHEVTjWtxmUOuKOV05YT9g1m
-         8hAiaV4GyhQhdwJFtmLx2vGeEXzSWdc/VEqiWoLmA93yHV3VUAFXnbI3howwaWWqdvNw
-         8vEAgqRJEUuokcypheVav9hwYPXqFwyfBBXU5jUmNYShTh8dzNJa85bFtUa+x8n8GrTA
-         CqJKjEQDaDiQjeObarqlAynXp74zBeMVUwLLG8AtV3bdun4qcecRoA9sRwBHI1Ab1ySv
-         qtKPYlFgc3mHkUf9xuoTxqTQZRvF/dIME6mmvm9zHds4LOOU/1DHD8/NTDwKf/7koOpa
-         5tJw==
-X-Gm-Message-State: ABuFfojNizev+xphW+bixmaITtSbxy2P6mCnZaxRa6IfKMrLRAy9NBbk
-        00wlPscuJvdRN/IoUVOB6c3Ct08A1SNjenO7iSRep6uYMggmKR1qvt2V97vTtvMV/T63QI/+Z6W
-        G8UmGuDZ6JJWBKh0H4zj66omgL4xW9YXX4HUaX1u0X91V4VljEQVeA3udpd20+xhj4Gt3e03O
-X-Google-Smtp-Source: ACcGV61oElCFzWpPPkjREg2GM1wmlI1Gbr81pf8+hAHR1llM3hQRmpJ9y8EnQ6g/yPd7uYRlDqzL4DDYdNLx
-X-Received: by 2002:ac8:6993:: with SMTP id o19-v6mr11319241qtq.35.1540240345255;
- Mon, 22 Oct 2018 13:32:25 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 14:32:18 -0600
-In-Reply-To: <20181022203218.7007-1-zwisler@google.com>
-Message-Id: <20181022203218.7007-2-zwisler@google.com>
-Mime-Version: 1.0
-References: <20181022203218.7007-1-zwisler@google.com>
-X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
-Subject: [PATCH 2/2] gsmi: Log event for critical thermal thresholds
-From:   Ross Zwisler <zwisler@google.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Duncan Laurie <dlaurie@chromium.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
-        Ross Zwisler <zwisler@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=njm/2+k+jEm9TR+BsqHPmCGy6hpvgwIP/tX25dj+aqI=;
+        b=himMziVSefOfeTSDgJBjUVjnIxRYjoXZoCeAv9kUReUsu+uMZHhXPvGLZkaBfhNe0k
+         PaupRpg+56ZTFaQxTFzDGP/sNj5D6r4G+8y0YFzw2F1suXwx5A0+yM1PiWysop0W7yuB
+         V4WMSsXYPU39sgI3vJ5qronAekxRz+iXcsRDRPTJBp8Hg6ZDiydgP6XtHVbg3BRLqmyc
+         LPrSogSnn9Bh8wc3jVPOoXDoTRAuK90Vwxdo7qwExWm2ZFlCUoubnpTG5tpcvKzD8JdM
+         vGu/LwxKvvCd9G11NtefDyUhfl9OLMC6mmlXnQS/ZBE6LmSAkN+icP7RR8sx9Wl+r2zF
+         jPqA==
+X-Gm-Message-State: ABuFfojj0zuYBmSZ2yFHxjpdP8NSOKoMV3CLx4I0nzcyrPBPJd1IbZ6v
+        8ZCcDUYITUIn8idePGGwyobza+ub8Knvn7rlCYJbIwzD65KQ1XC6x1gUfKQiqTT7KGkvy2oesUP
+        y2B/s9q6pA4p3ms99dgrAF/jbTogrXGBUcHXP9MSERQ==
+X-Received: by 2002:a37:f42:: with SMTP id z63-v6mr41535274qkg.132.1540240516601;
+        Mon, 22 Oct 2018 13:35:16 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV60JV7hwPSNQWIMclog+tTFkwAIBMPPdTYh44l+JpWt+TsDLSwBtla0c6qXWecWh7KuMWOZJmA==
+X-Received: by 2002:a37:f42:: with SMTP id z63-v6mr41535241qkg.132.1540240516297;
+        Mon, 22 Oct 2018 13:35:16 -0700 (PDT)
+Received: from [192.168.1.109] ([191.8.5.68])
+        by smtp.gmail.com with ESMTPSA id s17-v6sm26293856qtj.31.2018.10.22.13.35.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Oct 2018 13:35:15 -0700 (PDT)
+Subject: Re: [PATCH 1/3] x86/quirks: Scan all busses for early PCI quirks
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, kexec@lists.infradead.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org, bhelgaas@google.com,
+        dyoung@redhat.com, bhe@redhat.com, vgoyal@redhat.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        andi@firstfloor.org, lukas@wunner.de, billy.olsen@canonical.com,
+        cascardo@canonical.com, ddstreet@canonical.com,
+        fabiomirmar@canonical.com, gavin.guo@canonical.com,
+        jay.vosburgh@canonical.com, kernel@gpiccoli.net, mfo@canonical.com,
+        shan.gavin@linux.alibaba.com, gpiccoli@canonical.com
+References: <20181018183721.27467-1-gpiccoli@canonical.com>
+ <20181018221538.GN5906@bhelgaas-glaptop.roam.corp.google.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gpiccoli@canonical.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpVBxcBCADPNKmu2iNKLepiv8+Ssx7+fVR8lrL7cvakMNFPXsXk+f0Bgq9NazNKWJIn
+ Qxpa1iEWTZcLS8ikjatHMECJJqWlt2YcjU5MGbH1mZh+bT3RxrJRhxONz5e5YILyNp7jX+Vh
+ 30rhj3J0vdrlIhPS8/bAt5tvTb3ceWEic9mWZMsosPavsKVcLIO6iZFlzXVu2WJ9cov8eQM/
+ irIgzvmFEcRyiQ4K+XUhuA0ccGwgvoJv4/GWVPJFHfMX9+dat0Ev8HQEbN/mko/bUS4Wprdv
+ 7HR5tP9efSLucnsVzay0O6niZ61e5c97oUa9bdqHyApkCnGgKCpg7OZqLMM9Y3EcdMIJABEB
+ AAHNLUd1aWxoZXJtZSBHLiBQaWNjb2xpIDxncGljY29saUBjYW5vbmljYWwuY29tPsLAdwQT
+ AQgAIQUCWmClvQIbAwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDOR5EF9K/7Gza3B/9d
+ 5yczvEwvlh6ksYq+juyuElLvNwMFuyMPsvMfP38UslU8S3lf+ETukN1S8XVdeq9yscwtsRW/
+ 4YoUwHinJGRovqy8gFlm3SAtjfdqysgJqUJwBmOtcsHkmvFXJmPPGVoH9rMCUr9s6VDPox8f
+ q2W5M7XE9YpsfchS/0fMn+DenhQpV3W6pbLtuDvH/81GKrhxO8whSEkByZbbc+mqRhUSTdN3
+ iMpRL0sULKPVYbVMbQEAnfJJ1LDkPqlTikAgt3peP7AaSpGs1e3pFzSEEW1VD2jIUmmDku0D
+ LmTHRl4t9KpbU/H2/OPZkrm7809QovJGRAxjLLPcYOAP7DUeltvezsBNBFpVBxcBCADbxD6J
+ aNw/KgiSsbx5Sv8nNqO1ObTjhDR1wJw+02Bar9DGuFvx5/qs3ArSZkl8qX0X9Vhptk8rYnkn
+ pfcrtPBYLoux8zmrGPA5vRgK2ItvSc0WN31YR/6nqnMfeC4CumFa/yLl26uzHJa5RYYQ47jg
+ kZPehpc7IqEQ5IKy6cCKjgAkuvM1rDP1kWQ9noVhTUFr2SYVTT/WBHqUWorjhu57/OREo+Tl
+ nxI1KrnmW0DbF52tYoHLt85dK10HQrV35OEFXuz0QPSNrYJT0CZHpUprkUxrupDgkM+2F5LI
+ bIcaIQ4uDMWRyHpDbczQtmTke0x41AeIND3GUc+PQ4hWGp9XABEBAAHCwF8EGAEIAAkFAlpV
+ BxcCGwwACgkQzkeRBfSv+xv1wwgAj39/45O3eHN5pK0XMyiRF4ihH9p1+8JVfBoSQw7AJ6oU
+ 1Hoa+sZnlag/l2GTjC8dfEGNoZd3aRxqfkTrpu2TcfT6jIAsxGjnu+fUCoRNZzmjvRziw3T8
+ egSPz+GbNXrTXB8g/nc9mqHPPprOiVHDSK8aGoBqkQAPZDjUtRwVx112wtaQwArT2+bDbb/Y
+ Yh6gTrYoRYHo6FuQl5YsHop/fmTahpTx11IMjuh6IJQ+lvdpdfYJ6hmAZ9kiVszDF6pGFVkY
+ kHWtnE2Aa5qkxnA2HoFpqFifNWn5TyvJFpyqwVhVI8XYtXyVHub/WbXLWQwSJA4OHmqU8gDl
+ X18zwLgdiQ==
+Message-ID: <d4e10c8d-aa39-7577-fbc8-0430ac44ba54@canonical.com>
+Date:   Mon, 22 Oct 2018 17:35:06 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181018221538.GN5906@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Duncan Laurie <dlaurie@chromium.org>
+On 18/10/2018 19:15, Bjorn Helgaas wrote:
+> On Thu, Oct 18, 2018 at 03:37:19PM -0300, Guilherme G. Piccoli wrote:
+> [...] 
 
-This registers a notifier for the new thermal notifier
-introduced in a previous commit and logs a kernel shutdown
-event when the notifier is called for crossing the
-THERMAL_TRIP_CRITICAL threshold.
+> I don't want to expand the early quirk infrastructure unless there is
+> absolutely no other way to solve this.  The early quirk stuff is
+> x86-specific, and it's not obvious that this problem is x86-only.
+> 
+> This patch scans buses 0-255, but still only in domain 0, so it won't
+> help with even more complicated systems that use other domains.
+> 
+> I'm not an IRQ expert, but it seems wrong to me that we are enabling
+> this interrupt before we're ready for it.  The MSI should target an
+> IOAPIC.  Can't that IOAPIC entry be masked until later?  I guess the
+> kdump kernel doesn't know what MSI address the device might be using.
+> 
+> Could the IRQ core be more tolerant of this somehow, e.g., if it
+> notices incoming interrupts with no handler, could it disable the
+> IOAPIC entry and fall back to polling periodically until a handler is
+> added?
 
-To test:
-1) Modify critical shutdown threshold in the BIOS
-2) Generate a load on the system to increase temperature
-3) Wait until system powers off
-4) Power back on and read the event log:
+Hi Bjorn, thanks for your quick reply.
+I understand your point, but I think this is inherently an architecture
+problem. No matter what solution we decide for, it'll need to be applied
+in early boot time, like before the PCI layer gets initialized.
 
-4 | 2012-07-18 10:47:02 | Kernel Event | Critical Thermal Threshold
-5 | 2012-07-18 10:47:06 | Kernel Event | Clean Shutdown
-6 | 2012-07-18 10:47:06 | ACPI Enter | S5
+So, I think a first step would be to split the solution "timing" in 2
+possibilities:
 
-Signed-off-by: Duncan Laurie <dlaurie@chromium.org>
-Reviewed-by: Vincent Palatin <vpalatin@chromium.org>
-Reviewed-by: Olof Johansson <olofj@chromium.org>
-[ rez: updated changelog for upstream ]
-Signed-off-by: Ross Zwisler <zwisler@google.com>
----
- drivers/firmware/google/gsmi.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+a) We could try to disable MSIs or whatever approach we take in the
+quiesce path of crash_kexec(), before the bootstrap of the kdump kernel.
+The pro is we could use PCI handlers to do it generically. The con is
+it'd touch that delicate shutdown path, from a broken kernel, and this
+is unreliable. Also, I've noticed changes in those crash paths
+usually gain huge amount of criticism by community, seems nobody wants
+to change a bit of this code, if not utterly necessary.
 
-diff --git a/drivers/firmware/google/gsmi.c b/drivers/firmware/google/gsmi.c
-index c8f169bf2e27d..ee0c611b83e99 100644
---- a/drivers/firmware/google/gsmi.c
-+++ b/drivers/firmware/google/gsmi.c
-@@ -29,6 +29,7 @@
- #include <linux/efi.h>
- #include <linux/module.h>
- #include <linux/ucs2_string.h>
-+#include <linux/thermal.h>
- 
- #define GSMI_SHUTDOWN_CLEAN	0	/* Clean Shutdown */
- /* TODO(mikew@google.com): Tie in HARDLOCKUP_DETECTOR with NMIWDT */
-@@ -40,6 +41,7 @@
- #define GSMI_SHUTDOWN_SOFTWDT	6	/* Software Watchdog */
- #define GSMI_SHUTDOWN_MBE	7	/* Uncorrected ECC */
- #define GSMI_SHUTDOWN_TRIPLE	8	/* Triple Fault */
-+#define GSMI_SHUTDOWN_THERMAL	9	/* Critical Thermal Threshold */
- 
- #define DRIVER_VERSION		"1.0"
- #define GSMI_GUID_SIZE		16
-@@ -670,6 +672,18 @@ static struct notifier_block gsmi_panic_notifier = {
- 	.notifier_call = gsmi_panic_callback,
- };
- 
-+static int gsmi_thermal_callback(struct notifier_block *nb,
-+				 unsigned long reason, void *arg)
-+{
-+	if (reason == THERMAL_TRIP_CRITICAL)
-+		gsmi_shutdown_reason(GSMI_SHUTDOWN_THERMAL);
-+	return NOTIFY_DONE;
-+}
-+
-+static struct notifier_block gsmi_thermal_notifier = {
-+	.notifier_call = gsmi_thermal_callback
-+};
-+
- /*
-  * This hash function was blatantly copied from include/linux/hash.h.
-  * It is used by this driver to obfuscate a board name that requires a
-@@ -892,6 +906,7 @@ static __init int gsmi_init(void)
- 		goto out_remove_sysfs_files;
- 	}
- 
-+	register_thermal_notifier(&gsmi_thermal_notifier);
- 	register_reboot_notifier(&gsmi_reboot_notifier);
- 	register_die_notifier(&gsmi_die_notifier);
- 	atomic_notifier_chain_register(&panic_notifier_list,
-@@ -918,6 +933,7 @@ static __init int gsmi_init(void)
- 
- static void __exit gsmi_exit(void)
- {
-+	unregister_thermal_notifier(&gsmi_thermal_notifier);
- 	unregister_reboot_notifier(&gsmi_reboot_notifier);
- 	unregister_die_notifier(&gsmi_die_notifier);
- 	atomic_notifier_chain_unregister(&panic_notifier_list,
--- 
-2.19.1.568.g152ad8e336-goog
+b) Continue using an early boot approach. IMO, this would be per-arch by
+nature.
+Currently, powerpc for example does not suffer this issue due to their
+arch code performing a FW-aided PCI fundamental reset in the devices[0].
+On the other hand, x86 has no generic fundamental reset infrastructure
+to my knowledge (we tried some alternatives, like a Bridge reset[1] that
+didn't work, or zeroing the the command register, which worked), but if
+we go with the IOAPIC way of handling this (which we tried a bit and
+failed too), it'll be even more arch-dependent, since IOAPIC is x86 concept.
 
+
+After discussing here internally, an alternative way for this MSI
+approach work without requiring the change in the early PCI
+infrastructure is to check if we're in kdump kernel and perform manually
+the full scan in that case, instead of changing the generic case as
+proposed here. This would still be x86-only, but again, it's difficult
+if not impossible to fix all archs using the same code here.
+
+Finally, about multi-domain PCI topologies, I've never saw it on x86, I
+wasn't aware that such things existed in x86 - but if required we can
+quickly extend the logic to contemplate it too.
+
+Thanks again, looking forward for you suggestions.
+Cheers,
+
+
+Guilherme
+
+[0]
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/powerpc/platforms/powernv/pci-ioda.c#n3992
+
+[1] Based in https://patchwork.kernel.org/patch/2562841, adapted to work
+in early boot time.
