@@ -2,153 +2,158 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF4AC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2988FC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10BFF20658
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:13:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD60B20853
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:14:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PiS/zCYh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10BFF20658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Tme7WzVB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD60B20853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728522AbeJVSbZ (ORCPT
+        id S1728557AbeJVScF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:31:25 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:44294 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727045AbeJVSbZ (ORCPT
+        Mon, 22 Oct 2018 14:32:05 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34490 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727045AbeJVScF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:31:25 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9MA8Wv2085343;
-        Mon, 22 Oct 2018 10:13:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=Ja2u3ezTd0ZE8K2VbeQu3n7Zb41Kv++55ivRBkC0/zI=;
- b=PiS/zCYh6LpiVHeH5jbgyXgYIln/6TwvZcVI9l3u2W4rO6eyvseOq2dLCjI65lCOvBAw
- +uTjw6XumzHSm1WbIxjFbxtmfpXLXpCNV6MpWFzp2ofCVfSzx+2bPChLvHD5IBq++EM2
- fu5Szi4CdK3lbckciFIJfMB70WU0i+LlS+6QaLPvKnWaOgwRlYYW5UXx5hNpuIMD6lUq
- L247ky8oZhaOp6m76PASFpKl3CJ1JMmpp83hjXBRR0BhZ+dBlv0XpJecuRO7IT78vrAW
- udtxJhF9LNwJo8LQV4G3Ge6rUhcYzfu2h+PwBwW3rBCkEY6rqwICDg7aTYTZeLU8dbjb XQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2n7ustwjvt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Oct 2018 10:13:27 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9MADLrt010361
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Oct 2018 10:13:21 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9MADLub002601;
-        Mon, 22 Oct 2018 10:13:21 GMT
-Received: from [10.182.70.180] (/10.182.70.180)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 22 Oct 2018 03:13:21 -0700
-Subject: Re: [PATCH V2] block: fix the DISCARD request merge
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     axboe@kernel.dk, martin.petersen@oracle.com, tom.leiming@gmail.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1540045777-10290-1-git-send-email-jianchao.w.wang@oracle.com>
- <20181022090058.GF18755@lst.de>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <ebc24279-1a26-1560-a810-4e51545e7a91@oracle.com>
-Date:   Mon, 22 Oct 2018 18:13:20 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 22 Oct 2018 14:32:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1C0NOwfij2YrVl/JqT0FEB6Wd6YnN8jhsAJQwyzSHaA=; b=Tme7WzVBpSarp+jf7HxwpQciJ
+        qNlh1v5xI2x7T3Z8GIbd9rVfRCphV654YKzw1KcW+B8Q4RJXllGAM/+7H81nbRuKwBDERpgrRAU4W
+        3WV5Aab4FZ6RZAVmg2rf2bnlxetC8Zo59YCLs98OD9Y2SMhNMzFrllUkXF/S+CMwJy5e6q2GZ+/KU
+        LnB/S6uhJmruR2W/Ln7M06VSQv18djKcV6KaoVpv3ZAMawN7Hqb6dsyTjdmNEN9zoTHJhKOlwcHSv
+        4B1HLaqmuF2CyKd5LJJW/HVj3FQG45i/46Me8TbFQ51ZxS+RnQ7JuJLTNBhA3qKSb/PN9egbl9AiT
+        7PMe9DPaw==;
+Received: from [167.98.65.38] (helo=worktop)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gEXDi-0003kn-DS; Mon, 22 Oct 2018 10:13:58 +0000
+Received: by worktop (Postfix, from userid 1000)
+        id 4733D6E082E; Mon, 22 Oct 2018 12:08:30 +0200 (CEST)
+Date:   Mon, 22 Oct 2018 12:08:30 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        tipbuild@zytor.com, Ingo Molnar <mingo@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [tip:locking/core 6/10] arch/x86/include/asm/rmwcc.h:23:17:
+ error: jump into statement expression
+Message-ID: <20181022100830.GK4931@worktop.programming.kicks-ass.net>
+References: <201810201105.YsnXEXTU%fengguang.wu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181022090058.GF18755@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9053 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810220091
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201810201105.YsnXEXTU%fengguang.wu@intel.com>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/22/18 5:00 PM, Christoph Hellwig wrote:
-> On Sat, Oct 20, 2018 at 10:29:37PM +0800, Jianchao Wang wrote:
->> There are two cases when handle DISCARD merge
->>  - max_discard_segments == 1
->>    bios need to be contiguous
->>  - max_discard_segments > 1
->>    Only nvme right now. It takes every bio as a range and different
->>    range needn't to be contiguous.
->>
->> But now, attempt_merge screws this up. It always consider contiguity
->> for DISCARD for the case max_discard_segments > 1 and cannot merge
->> contiguous DISCARD for the case max_discard_segments == 1, because
->> rq_attempt_discard_merge always returns false in this case.
->> This patch fixes both of the two cases above.
->>
->> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
->> ---
->>
->> V2:
->>   - Add max_discard_segments > 1 checking in attempt_merge
->>   - Change patch title and comment
->>   - Add more comment in attempt_merge
->>
->>  block/blk-merge.c | 24 +++++++++++++++++++-----
->>  1 file changed, 19 insertions(+), 5 deletions(-)
->>
->> diff --git a/block/blk-merge.c b/block/blk-merge.c
->> index 42a4674..8f22374 100644
->> --- a/block/blk-merge.c
->> +++ b/block/blk-merge.c
->> @@ -734,8 +734,15 @@ static struct request *attempt_merge(struct request_queue *q,
->>  	/*
->>  	 * not contiguous
->>  	 */
->> -	if (blk_rq_pos(req) + blk_rq_sectors(req) != blk_rq_pos(next))
->> -		return NULL;
->> +	if (blk_rq_pos(req) + blk_rq_sectors(req) != blk_rq_pos(next)) {
->> +		/*
->> +		 * When max_discard_segments is bigger than 1 (only nvme right
->> +		 * now), needn't consider the contiguity.
->> +		 */
->> +		if (!(req_op(req) == REQ_OP_DISCARD &&
->> +		      queue_max_discard_segments(q) > 1))
->> +			return NULL;
+On Sat, Oct 20, 2018 at 11:05:11AM +0800, kbuild test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
+> head:   01a14bda11add9dcd4a59200f13834d634559935
+> commit: 7aa54be2976550f17c11a1c3e3630002dea39303 [6/10] locking/qspinlock, x86: Provide liveness guarantee
+> config: x86_64-randconfig-u0-10201040 (attached as .config)
+> compiler: gcc-5 (Debian 5.5.0-3) 5.4.1 20171010
+> reproduce:
+>         git checkout 7aa54be2976550f17c11a1c3e3630002dea39303
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
 > 
-> Why not:
+> All errors (new ones prefixed by >>):
 > 
-> 		if (req_op(req) != REQ_OP_DISCARD ||
-> 		    queue_max_discard_segments(q) == 1)> 
-> which would be a lot more obvious?
+>    In file included from arch/x86/include/asm/atomic.h:5:0,
+>                     from include/linux/atomic.h:7,
+>                     from include/linux/crypto.h:20,
+>                     from arch/x86/kernel/asm-offsets.c:9:
+>    arch/x86/include/asm/qspinlock.h: In function 'queued_fetch_set_pending_acquire':
+> >> arch/x86/include/asm/rmwcc.h:23:17: error: jump into statement expression
+>        : clobbers : cc_label);    \
+>                     ^
+>    include/linux/compiler.h:58:42: note: in definition of macro '__trace_if'
+>      if (__builtin_constant_p(!!(cond)) ? !!(cond) :   \
+>                                              ^
 
-OK, I will change it
+ARGH; so, this:
 
-> 
->> +	 * counts here.
->> +	 * Two cases of Handling DISCARD:
->> +	 *  - max_discard_segments == 1
->> +	 *    The bios need to be contiguous.
->> +	 *  - max_discard_segments > 1
->> +	 *    Only nvme right now. It takes every bio as a
->> +	 *    range and send them to controller together. The ranges
->> +	 *    needn't to be contiguous.
-> 
-> The formatting looks odd.  Also I don't think we should mention the
-> users here, as others might grow (virtio is in the pipe, SCSI could
-> be supported easily if someone did the work).
-> 
+#define __GEN_RMWcc(fullop, _var, cc, clobbers, ...)			\
+({									\
+	bool c = false;							\
+	asm_volatile_goto (fullop "; j" #cc " %l[cc_label]"		\
+			: : [var] "m" (_var), ## __VA_ARGS__		\
+			: clobbers : cc_label);				\
+	if (0) {							\
+cc_label:	c = true;						\
+	}								\
+	c;								\
+})
 
-Yes, I will change the format and discard the users here.
+static __always_inline u32 queued_fetch_set_pending_acquire(struct qspinlock *lock)
+{
+	u32 val = 0;
 
-Thanks
-Jianchao
+	if (GEN_BINARY_RMWcc(LOCK_PREFIX "btsl", lock->val.counter, c,
+			     "I", _Q_PENDING_OFFSET))
+		val |= _Q_PENDING_VAL;
+
+	val |= atomic_read(&lock->val) & ~_Q_PENDING_MASK;
+
+	return val;
+}
+
+fails to compile when combined with this:
+
+#define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
+#define __trace_if(cond) \
+	if (__builtin_constant_p(!!(cond)) ? !!(cond) :			\
+	({								\
+		int ______r;						\
+		static struct ftrace_branch_data			\
+			__attribute__((__aligned__(4)))			\
+			__attribute__((section("_ftrace_branch")))	\
+			______f = {					\
+				.func = __func__,			\
+				.file = __FILE__,			\
+				.line = __LINE__,			\
+			};						\
+		______r = !!(cond);					\
+		______f.miss_hit[______r]++;				\
+		______r;						\
+	}))
+
+Because that moves the __GEN_RMWcc into a statement expression and GCC
+apparently doesn't like labels inside statement expressions.
+
+If we avoid if() and rewrite queued_fetch_set_pending_acquire() like so:
+
+static __always_inline u32 queued_fetch_set_pending_acquire(struct qspinlock *lock)
+{
+	bool pending;
+	u32 val;
+
+	pending = GEN_BINARY_RMWcc(LOCK_PREFIX "btsl", lock->val.counter, c,
+				   "I", _Q_PENDING_OFFSET);
+
+	val = pending * _Q_PENDING_VAL;
+	val |= atomic_read(&lock->val) & ~_Q_PENDING_MASK;
+
+	return val;
+}
+
+then it compiles again; but urgh.
+
+Anybody see a better solution?
