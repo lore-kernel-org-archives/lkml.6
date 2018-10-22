@@ -2,152 +2,378 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLACK autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E451C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EF5C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32B8D20658
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:17:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD02420658
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:18:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="C/CUT0tf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32B8D20658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="EDD9d15G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD02420658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728593AbeJVSfp (ORCPT
+        id S1728607AbeJVSf6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:35:45 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:39219 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728309AbeJVSfo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:35:44 -0400
-X-IronPort-AV: E=Sophos;i="5.54,411,1534834800"; 
-   d="scan'208";a="22818543"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 22 Oct 2018 03:17:50 -0700
-Received: from NAM01-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.49) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Mon, 22 Oct 2018 03:17:49 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
+        Mon, 22 Oct 2018 14:35:58 -0400
+Received: from mail-ve1eur01on0064.outbound.protection.outlook.com ([104.47.1.64]:56460
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728309AbeJVSf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:35:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aIlLhVv6TK/hfk0z3NXM4T/pBFPOXGFHqCaex+rVz2Q=;
- b=C/CUT0tfBB0Oo1M7ozOMSxY1sTjNgANs7HGhMWG0sAnYGyjMfMzjPMjt2gldLaW2fgnola4eTKYk03tK0qMwEg/PPP5rt4N8KduJH9PkJQvnfwTGV/hPnYsCnVPuq+CIGpvx9Pw4eczQDW02B2PqQKECGKVDMJgc7CDCrX7mwEY=
-Received: from BN6PR1101MB2243.namprd11.prod.outlook.com (10.174.113.19) by
- BN6PR1101MB2339.namprd11.prod.outlook.com (10.173.200.17) with Microsoft SMTP
+ bh=8PY1BfkJUbHNLULRV+Dt1J/o/cyIp/vnfqSlGpROKFQ=;
+ b=EDD9d15G+3krdDefTg4isRo3/QYluzqef48kFb2SCchnL1OHKWkRDZwKXCQYojNpmV1FjJHv1kc8t9UnfomVfWfYecpeFig/t2xE7bthJgj6wbkOPWuSfTlBDWcJjPN8jQeIQ1Ox03idijvOWFMlOt+W1du+bJuMslMuNhS0cJQ=
+Received: from VI1PR04MB1038.eurprd04.prod.outlook.com (10.161.109.144) by
+ VI1PR04MB5216.eurprd04.prod.outlook.com (20.177.51.205) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1250.30; Mon, 22 Oct 2018 10:17:47 +0000
-Received: from BN6PR1101MB2243.namprd11.prod.outlook.com
- ([fe80::c873:c197:d9d6:3bf6]) by BN6PR1101MB2243.namprd11.prod.outlook.com
- ([fe80::c873:c197:d9d6:3bf6%6]) with mapi id 15.20.1250.028; Mon, 22 Oct 2018
- 10:17:47 +0000
-From:   <Andrei.Stefanescu@microchip.com>
-To:     <wsa@the-dreams.de>, <Ludovic.Desroches@microchip.com>,
-        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>
-CC:     <Cristian.Birsan@microchip.com>, <linux-i2c@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <Andrei.Stefanescu@microchip.com>
-Subject: [PATCH] i2c: at91: switched to resume/suspend callbacks.
-Thread-Topic: [PATCH] i2c: at91: switched to resume/suspend callbacks.
-Thread-Index: AQHUafB6HlYWaEsRyEeCWmEZo34VTQ==
-Date:   Mon, 22 Oct 2018 10:17:47 +0000
-Message-ID: <1540203006-805-1-git-send-email-andrei.stefanescu@microchip.com>
+ 15.20.1250.30; Mon, 22 Oct 2018 10:17:58 +0000
+Received: from VI1PR04MB1038.eurprd04.prod.outlook.com
+ ([fe80::d887:3c96:479a:4123]) by VI1PR04MB1038.eurprd04.prod.outlook.com
+ ([fe80::d887:3c96:479a:4123%3]) with mapi id 15.20.1228.032; Mon, 22 Oct 2018
+ 10:17:58 +0000
+From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     Tudor Ambarus <tudor.ambarus@microchip.com>,
+        "richard@nod.at" <richard@nod.at>, Mark Brown <broonie@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "cyrille.pitchen@microchip.com" <cyrille.pitchen@microchip.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "Cristian.Birsan@microchip.com" <Cristian.Birsan@microchip.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP SPI
+ NOR flash memories
+Thread-Topic: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP SPI
+ NOR flash memories
+Thread-Index: AQHUSeYwGQ074lVuqESxUXlBIHGe8qUh1lUwgABb2gCAABY6gIAAnHVQgABXcQCAAADvgIAABUuAgAACP9CAACWwgIAHmPMggAA4ZoCAAAyv0IAAArAAgAABtyA=
+Date:   Mon, 22 Oct 2018 10:17:58 +0000
+Message-ID: <VI1PR04MB10383A3C1381532DF0C18F8699F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
+References: <20180911154007.17195-1-tudor.ambarus@microchip.com>
+        <20180911154007.17195-2-tudor.ambarus@microchip.com>
+        <VI1PR04MB103888BC18F3C5AD0C02DEF699FE0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+        <31a8f6a9-1459-443a-6ef8-2b2c17769ae4@microchip.com>
+        <de0f7245-2557-12be-a306-67b08e55ae7b@wedev4u.fr>
+        <VI1PR04MB1038AB25EABDC8507984ADC799FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+        <20181017090724.12f2cd79@bbrezillon>    <20181017091045.124e0266@bbrezillon>
+        <20181017092941.3658bd9a@bbrezillon>
+        <VI1PR04MB1038EFA1E83AD78EBE84ECC499FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+        <20181017115237.07310b74@bbrezillon>
+        <VI1PR04MB1038BD6103DD8BD6B6DEC2B899F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
+        <20181022111543.2a607efc@bbrezillon>
+        <VI1PR04MB1038EF892921194D1BFDE6FC99F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
+ <20181022121044.24039f40@bbrezillon>
+In-Reply-To: <20181022121044.24039f40@bbrezillon>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR08CA0159.eurprd08.prod.outlook.com
- (2603:10a6:800:d1::13) To BN6PR1101MB2243.namprd11.prod.outlook.com
- (2603:10b6:405:52::19)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Andrei.Stefanescu@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
+ smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
+x-originating-ip: [14.142.187.166]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2339;6:AeJiZWy7L+DSj3jWGrXjjreVnkWSeQC5LEg0l4v8nueZzjW+cOqCAMZQZfK6M5XjKS2lrWvw6ViqjWeZsZj6PDzbc3x1mdWbU558ci92b8QIS9fEHyEIZDhGj92957PoDu/sI8upCfNaib3bsYU0oSu6yD+qqN7tuvmWLupQBfGel/yPN9DgdZRJBZ+ASVMryjyK7rKILrv++svcSevaH0bdYCQe70NEEckovTwn3oeqG+VYw5s7lTyu4VektuK4Ga0mfZySOyVfY8TWoY42gLSH0dNiW7i7+tijBRRB9ZxU2QJXk1Jd28A0YpRcdf5oNAlbz4MW6ly6HgnTYlM+bIbemKFbI6b1Ju1vQnAZLiHAMgQV58n4Iz2qvr/x2mY3I54JKrRMhTYCvmaKP1Mca+6Wktv/h3aT14v+n6YuMV6upWt6zdZn1A9mpbF0OXhO0dYdzu4Hk3hj+r5C1Pwjog==;5:aznVkGYigResbVE+E6M8MJRGHXCzao61906slpl7q7Dioxz+bKeyhJF947m9vjnYEU2hpxaOu8g2vKnaYG97p4AUwqybscg+5wWDjMNzmSnlpqckQpMefLADKrJhWYzbh88/vaIjf9/OaVm2JpOnVWyRt7kT4G7M5XJtCmaSh4M=;7:Yt0+HlDkYoC7AhayoIMRZDO2M85Xs/c5GvLCjMxl+tx0vljl+yq7KBiav2URB4vyDnqh+5EbqiAPaPzEwz+s+7bKAqW6xwly3H9Y2aabdHNJzh0q646ACDJHcC9s1sP5IIdj/UrFq+183IDV0p3LBWgqRzP1gfff8nOl2GO6+bn3jofweTxvtbIdZTr5Y1Tt3ldwNV0jedDfG2PEZ+6YsTXBIlkfAxdtOgTH2e2ilQivXKoFDhhUYKjOKECDNw4l
-x-ms-office365-filtering-correlation-id: a95f97f0-fee3-4597-330f-08d638079cea
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR1101MB2339;
-x-ms-traffictypediagnostic: BN6PR1101MB2339:
-x-microsoft-antispam-prvs: <BN6PR1101MB2339FE37058039881AF6900DEDF40@BN6PR1101MB2339.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB5216;6:pesIM91rftT5Z4EMwUeH3i9hXKtJZksQ0Kk1bBgNllb2leg3gVZvjOgJNHV04FR3w8dE8+cvTJXXIB8y92ksMwOK7mlLP1vVGLBASswX/9PXE/T5u9erTBQjrxrtMp6GTDUjXzjJOpxSnFVnIXpXAHInqoTmC9++D+x56LvxhTjL3fVNf+yw0pt5b4x1364Kpbxl6VzwYIyX3HQHzjyXZj/sKdtSsWrd1upeuO+pR/z36F8lCHJLoXQnpu9k0CkED2esEq+RfBWZr/s4aAOxFkKgvfLdK1XXP8MT68pwMtlRWyVoj8VVXHgK06lmteUYqZldUS5KChk8e5/TWN0HrJYE4/q6yOBArFMd6QUU8oo88m+6Dt0WaeI8hq52Ma4piQP7bYdf4spLeAtaguuh+dZpxgfT9WwM/yQ52nM2jaajoIM1tBjg6bfb+7tQtUHZmhMiz3yesx/5Vb6GF7iwfw==;5:lwzCXdEQ09itIugC9WjmSwk8ldSlgxsPj/8+Dve/pQNnaRuRL7YbzIuV/dwwo/UxI/lOanZGpQqwzWIg6EiPsBbMy1s62T41wQgTdJRKYiZm0uEpEQO+z0SIAdjO3jCYsuTpeUcwjOW3UrwkOGkl4PdMG7eues5wrw+qZxifbGs=;7:/YzfGXxWDLvOiJjlAisOa7DQ9OtzLoFlUJxDxudwa4nGb/eci+LjBmh7y4AELP8kEfWw2sEO7BIEXNSxvepdLFcm/tAyrcKyzNQ6BRyz90BjZvCymCZq+IKUVRSHslDHD86Z3CmGJ+1Vk+tdLmkZG3nzRSemc0FKFxv0xTK3H0l9U8WNG46NOwqi9pj6MOGIlRDGWtdZ3o9+6suxbIhGSJEG5R0kwAIybWT2Dsi+uEbwai/SxVLmtBfQq5qi8vBz
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 317ac973-5b56-403a-0788-08d63807a3f6
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5216;
+x-ms-traffictypediagnostic: VI1PR04MB5216:
+x-microsoft-antispam-prvs: <VI1PR04MB521634DBEA23F1C2A90BED3A99F40@VI1PR04MB5216.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(258649278758335)(788757137089)(185117386973197);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BN6PR1101MB2339;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2339;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB5216;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5216;
 x-forefront-prvs: 08331F819E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(396003)(366004)(39860400002)(189003)(199004)(53936002)(110136005)(71190400001)(15650500001)(86362001)(2906002)(6512007)(6486002)(6436002)(3846002)(71200400001)(6116002)(66066001)(105586002)(106356001)(7736002)(81156014)(8676002)(8936002)(81166006)(68736007)(25786009)(386003)(4326008)(478600001)(2616005)(107886003)(2501003)(52116002)(5660300001)(305945005)(6506007)(102836004)(476003)(5250100002)(14454004)(99286004)(36756003)(486006)(316002)(2900100001)(186003)(1857600001)(97736004)(72206003)(26005)(256004)(14444005)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR1101MB2339;H:BN6PR1101MB2243.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(39860400002)(136003)(366004)(13464003)(199004)(189003)(53936002)(66066001)(11346002)(446003)(6246003)(6916009)(2900100001)(476003)(39060400002)(25786009)(4326008)(55016002)(217873002)(486006)(97736004)(256004)(53546011)(55236004)(102836004)(6506007)(5250100002)(186003)(26005)(9686003)(99286004)(6436002)(76176011)(14454004)(7696005)(71200400001)(71190400001)(5660300001)(54906003)(3846002)(7416002)(6116002)(78486010)(105586002)(106356001)(86362001)(68736007)(81166006)(81156014)(316002)(93886005)(8676002)(229853002)(2906002)(478600001)(305945005)(74316002)(7736002)(8936002)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5216;H:VI1PR04MB1038.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: mVVuIYQAHRwYflQ55DdCn1YUU0pXitqOsu5nHKCYgGAEJGU0Q1jCTOdOoFFyJkAmx22Cjloq+iT+RHrr8MxhQT+X5y6TiDTLO61OYTQHGsYxuD2xl1t66q0PUaWC7Fqg9ohsFKs5rvPA/pQzIwwVVwWDIrpFTHwBK4Ib2wKMkLeSX2nRrhyfyuOiZZ7KIHzNu/7PCdB/Zvhs63aGQIjvwJ/bQDzpsP1mVCFuca99ZXNVB3SGWiJUsEeGOXX/VUYrBmTkgsxCWpg8fn1llc8ak6+Wttlix77DuopaiMOx1GVlcvrhh8hLLQzIgV9Jx6WHHlmPAKZdUNV5eTEJAHM2XRrsGP5Yy1DZZak8nFFbQmc=
+x-microsoft-antispam-message-info: wOO5hEntUQLJEGxJpqDlYLVMm5/NR+y1UXbjpxBN/3gbS3Xi3UKmzzDR0NiB+6cTsGWKRFwIZMr3r2W5wS4/Ks414RQ99MxJBIK7FrdgdWlNZ8NRdMCelzhJxtcQkkQqZ/GgLndVJ7wFteIaKoffnum2vdtLYAb0x9lKsw9JO2+a9z6PkuH2WCGP9M5GNxEjtlyEKfl6FO0aSGB3Av+mNG3Ixk8qUUQGcAzQ5tq1RzlRoYdovndaxTdx3nhzqM9Enhr00thhk1R/fX3ZLlyHkIEMHZTbe5e5t36bSOfnfhBtNW2mfoSHcO6ZJv8k1wapn20alFYqwiK625tmcH+CcZnbnkndljGKS89uTml/xwc=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: a95f97f0-fee3-4597-330f-08d638079cea
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2018 10:17:47.6149
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 317ac973-5b56-403a-0788-08d63807a3f6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2018 10:17:58.3948
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2339
-X-OriginatorOrg: microchip.com
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5216
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the previous version of the driver resume/suspend_noirq callbacks
-were used. Because of this, when resuming from suspend-to-ram,
-an I2C (belonging to a FLEXCOM) would resume before FLEXCOM.
-The first read on the I2C bus would then result in a timeout.
+Hi,
 
-This patch switches to resume/suspend callbacks which are=20
-called after FLEXCOM resumes. FLEXCOM, SPI and USART drivers use
-resume/suspend callbacks.
+> -----Original Message-----
+> From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
+> Sent: Monday, October 22, 2018 3:41 PM
+> To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+> Cc: Tudor Ambarus <tudor.ambarus@microchip.com>; richard@nod.at; Mark
+> Brown <broonie@kernel.org>; linux-kernel@vger.kernel.org;
+> nicolas.ferre@microchip.com; marek.vasut@gmail.com;
+> cyrille.pitchen@microchip.com; linux-mtd@lists.infradead.org;
+> Cristian.Birsan@microchip.com; Cyrille Pitchen <cyrille.pitchen@wedev4u.f=
+r>;
+> computersforpeace@gmail.com; dwmw2@infradead.org; linux-arm-
+> kernel@lists.infradead.org
+> Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP=
+ SPI
+> NOR flash memories
+>=20
+> On Mon, 22 Oct 2018 10:03:55 +0000
+> Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+>=20
+> > Hi,
+> >
+> >
+> > > -----Original Message-----
+> > > From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
+> > > Sent: Monday, October 22, 2018 2:46 PM
+> > > To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+> > > Cc: Tudor Ambarus <tudor.ambarus@microchip.com>; richard@nod.at;
+> > > Mark Brown <broonie@kernel.org>; linux-kernel@vger.kernel.org;
+> > > nicolas.ferre@microchip.com; marek.vasut@gmail.com;
+> > > cyrille.pitchen@microchip.com; linux-mtd@lists.infradead.org;
+> > > Cristian.Birsan@microchip.com; Cyrille Pitchen
+> > > <cyrille.pitchen@wedev4u.fr>; computersforpeace@gmail.com;
+> > > dwmw2@infradead.org; linux-arm- kernel@lists.infradead.org
+> > > Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform
+> > > SFDP SPI NOR flash memories
+> > >
+> > > On Mon, 22 Oct 2018 06:04:13 +0000
+> > > Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+> > >
+> > >
+> > With below patch, it gets stuck in for loop of "+       for (nmaps =3D =
+0; i< smpt_len;
+> nmaps++) {".
+> >
+> > [    1.624684] m25p80 spi0.0: found s25fl512s, expected m25p80
+> > [    1.630377] Start [addr_width:00000000, read_dumy:08,
+> read_opcode:00000000]
+> > [    1.637335] spi_nor_get_map_in_use:2882 smpt[0]=3D08ff65fc
+> > [    1.642641] spi_nor_get_map_in_use:2882 smpt[1]=3D00000004
+> > [    1.647945] spi_nor_get_map_in_use:2882 smpt[2]=3D04ff65fc
+> > [    1.653248] spi_nor_get_map_in_use:2882 smpt[3]=3D00000002
+> > [    1.658551] spi_nor_get_map_in_use:2882 smpt[4]=3D02ff65fd
+> > [    1.663855] spi_nor_get_map_in_use:2882 smpt[5]=3D00000004
+> > [    1.669158] spi_nor_get_map_in_use:2882 smpt[6]=3Dff0201fe
+> > [    1.674461] spi_nor_get_map_in_use:2882 smpt[7]=3D00007ff1
+> > [    1.679766] spi_nor_get_map_in_use:2882 smpt[8]=3D00037ff4
+> > [    1.685070] spi_nor_get_map_in_use:2882 smpt[9]=3D03fbfff4
+> > [    1.690375] spi_nor_get_map_in_use:2882 smpt[10]=3Dff0203fe
+> > [    1.695768] spi_nor_get_map_in_use:2882 smpt[11]=3D03fbfff4
+> > [    1.701158] spi_nor_get_map_in_use:2882 smpt[12]=3D00037ff4
+> > [    1.706550] spi_nor_get_map_in_use:2882 smpt[13]=3D00007ff1
+> > [    1.711940] spi_nor_get_map_in_use:2882 smpt[14]=3Dff0005ff
+> > [    1.717330] spi_nor_get_map_in_use:2882 smpt[15]=3D03fffff4
+> > [    1.722720] smpt[0]=3D[addr_width:00000000, read_dumy:08,
+> read_opcode:00000065]
+> > [    1.729861] spi_nor_get_map_in_use:2912 map_id=3D1
+> >
+> >
+> > --- a/drivers/mtd/spi-nor/spi-nor.c
+> > +++ b/drivers/mtd/spi-nor/spi-nor.c
+> > @@ -2863,26 +2863,36 @@ static u8 spi_nor_smpt_read_dummy(const struct
+> spi_nor *nor, const u32 settings)
+> >   * @nor:       pointer to a 'struct spi_nor'
+> >   * @smpt:      pointer to the sector map parameter table
+> >   */
+> > -static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const
+> > u32 *smpt)
+> > +static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const
+> > +u32 *smpt, u32 smpt_len)
+> >  {
+> >         const u32 *ret =3D NULL;
+> > -       u32 i, addr;
+> > +       u32 i, addr, nmaps;
+> >         int err;
+> >         u8 addr_width, read_opcode, read_dummy;
+> >         u8 read_data_mask, data_byte, map_id;
+> > +       bool map_id_is_valid =3D false;
+> >
+> >         addr_width =3D nor->addr_width;
+> >         read_dummy =3D nor->read_dummy;
+> >         read_opcode =3D nor->read_opcode;
+> >
+> > +       pr_info("Start [addr_width:%08x, read_dumy:%0x8,
+> > + read_opcode:%08x]\n", nor->addr_width, nor->read_dummy,
+> > + nor->read_opcode);
+> > +
+> > +       for (i =3D 0; i<smpt_len; i++)
+> > +               pr_info("%s:%i smpt[%d]=3D%08x\n", __func__, __LINE__,
+> > + i, smpt[i]);
+> > +
+> >         map_id =3D 0;
+> > -       i =3D 0;
+> >         /* Determine if there are any optional Detection Command Descri=
+ptors */
+> > -       while (!(smpt[i] & SMPT_DESC_TYPE_MAP)) {
+> > +       for (i =3D 0; i< smpt_len; i++) {
+> > +               if ((smpt[i] & SMPT_DESC_TYPE_MAP))
+> > +                       break;
+> > +
+> >                 read_data_mask =3D SMPT_CMD_READ_DATA(smpt[i]);
+> >                 nor->addr_width =3D spi_nor_smpt_addr_width(nor, smpt[i=
+]);
+> >                 nor->read_dummy =3D spi_nor_smpt_read_dummy(nor, smpt[i=
+]);
+> >                 nor->read_opcode =3D SMPT_CMD_OPCODE(smpt[i]);
+> > +               pr_info("smpt[%d]=3D[addr_width:%08x, read_dumy:%0x8,
+> > + read_opcode:%08x]\n", i, nor->addr_width, nor->read_dummy,
+> > + nor->read_opcode);
+> > +
+> >                 addr =3D smpt[i + 1];
+> >
+> >                 err =3D spi_nor_read_raw(nor, addr, 1, &data_byte); @@
+> > -2894,18 +2904,36 @@ static const u32 *spi_nor_get_map_in_use(struct
+> spi_nor *nor, const u32 *smpt)
+> >                  * Configuration that is currently in use.
+> >                  */
+> >                 map_id =3D map_id << 1 | !!(data_byte & read_data_mask)=
+;
+> > +               map_id_is_valid =3D true;
+> >                 i =3D i + 2;
+> >         }
+> >
+> > -       /* Find the matching configuration map */
+> > -       while (SMPT_MAP_ID(smpt[i]) !=3D map_id) {
+> > -               if (smpt[i] & SMPT_DESC_END)
+> > -                       goto out;
+> > +       if (map_id_is_valid)
+> > +               pr_info("%s:%i map_id=3D%d\n", __func__, __LINE__, map_=
+id);
+> > +       else
+> > +               pr_info("%s:%i NO map_id\n", __func__, __LINE__);
+> > +
+> > +       for (nmaps =3D 0; i< smpt_len; nmaps++) {
+> > +               if((smpt[i] & SMPT_DESC_TYPE_MAP))
+> > +                       continue;
+>=20
+> Try to Replace the above if block by:
+>=20
+> 		if (!(smpt[i] & SMPT_DESC_TYPE_MAP)) {
+> 			i +=3D 2;
+> 			continue;
+> 		}
+>=20
 
-Signed-off-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
----
- drivers/i2c/busses/i2c-at91.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+It works,
+[    1.628162] m25p80 spi0.0: found s25fl512s, expected m25p80             =
+                                                     =20
+[    1.633854] Start [addr_width:00000000, read_dumy:08, read_opcode:000000=
+00]                                                  =20
+[    1.640811] spi_nor_get_map_in_use:2882 smpt[0]=3D08ff65fc              =
+                                                       =20
+[    1.646117] spi_nor_get_map_in_use:2882 smpt[1]=3D00000004              =
+                                                       =20
+[    1.651421] spi_nor_get_map_in_use:2882 smpt[2]=3D04ff65fc              =
+                                                       =20
+[    1.656724] spi_nor_get_map_in_use:2882 smpt[3]=3D00000002              =
+                                                       =20
+[    1.662028] spi_nor_get_map_in_use:2882 smpt[4]=3D02ff65fd              =
+                                                       =20
+[    1.667331] spi_nor_get_map_in_use:2882 smpt[5]=3D00000004              =
+                                                       =20
+[    1.672635] spi_nor_get_map_in_use:2882 smpt[6]=3Dff0201fe              =
+                                                       =20
+[    1.677937] spi_nor_get_map_in_use:2882 smpt[7]=3D00007ff1              =
+                                                       =20
+[    1.683240] spi_nor_get_map_in_use:2882 smpt[8]=3D00037ff4              =
+                                                       =20
+[    1.688542] spi_nor_get_map_in_use:2882 smpt[9]=3D03fbfff4              =
+                                                       =20
+[    1.693845] spi_nor_get_map_in_use:2882 smpt[10]=3Dff0203fe             =
+                                                       =20
+[    1.699234] spi_nor_get_map_in_use:2882 smpt[11]=3D03fbfff4             =
+                                                       =20
+[    1.704625] spi_nor_get_map_in_use:2882 smpt[12]=3D00037ff4             =
+                                                       =20
+[    1.710014] spi_nor_get_map_in_use:2882 smpt[13]=3D00007ff1             =
+                                                       =20
+[    1.715403] spi_nor_get_map_in_use:2882 smpt[14]=3Dff0005ff             =
+                                                       =20
+[    1.720791] spi_nor_get_map_in_use:2882 smpt[15]=3D03fffff4             =
+                                                       =20
+[    1.726180] smpt[0]=3D[addr_width:00000000, read_dumy:08, read_opcode:00=
+000065]                                                =20
+[    1.733320] spi_nor_get_map_in_use:2912 map_id=3D0 smpt_len:16 i=3D:3   =
+                                                         =20
+[    1.739406] End [addr_width:00000000, read_dumy:08, read_opcode:00000065=
+]                                                    =20
+[    1.746204] m25p80 spi0.0: s25fl512s (65536 Kbytes)                     =
+  =20
 
-diff --git a/drivers/i2c/busses/i2c-at91.c b/drivers/i2c/busses/i2c-at91.c
-index bfd1fdf..81f7b94 100644
---- a/drivers/i2c/busses/i2c-at91.c
-+++ b/drivers/i2c/busses/i2c-at91.c
-@@ -1174,7 +1174,7 @@ static int at91_twi_runtime_resume(struct device *dev=
-)
- 	return clk_prepare_enable(twi_dev->clk);
- }
-=20
--static int at91_twi_suspend_noirq(struct device *dev)
-+static int at91_twi_suspend(struct device *dev)
- {
- 	if (!pm_runtime_status_suspended(dev))
- 		at91_twi_runtime_suspend(dev);
-@@ -1182,7 +1182,7 @@ static int at91_twi_suspend_noirq(struct device *dev)
- 	return 0;
- }
-=20
--static int at91_twi_resume_noirq(struct device *dev)
-+static int at91_twi_resume(struct device *dev)
- {
- 	struct at91_twi_dev *twi_dev =3D dev_get_drvdata(dev);
- 	int ret;
-@@ -1202,8 +1202,8 @@ static int at91_twi_resume_noirq(struct device *dev)
- }
-=20
- static const struct dev_pm_ops at91_twi_pm =3D {
--	.suspend_noirq	=3D at91_twi_suspend_noirq,
--	.resume_noirq	=3D at91_twi_resume_noirq,
-+	.suspend	=3D at91_twi_suspend,
-+	.resume		=3D at91_twi_resume,
- 	.runtime_suspend	=3D at91_twi_runtime_suspend,
- 	.runtime_resume		=3D at91_twi_runtime_resume,
- };
---=20
-2.7.4
+-       /* Find the matching configuration map */
+-       while (SMPT_MAP_ID(smpt[i]) !=3D map_id) {
+-               if (smpt[i] & SMPT_DESC_END)
+-                       goto out;
++       if (map_id_is_valid)
++               pr_info("%s:%i map_id=3D%d smpt_len:%d i=3D:%d\n", __func__=
+, __LINE__, map_id, smpt_len, i);
++       else
++               pr_info("%s:%i NO map_id\n", __func__, __LINE__);
++
++       for (nmaps =3D 0; i< smpt_len; nmaps++) {
++               if(!(smpt[i] & SMPT_DESC_TYPE_MAP)) {
++                       i +=3D 2;
++                       continue;
++               }
++
++               if(!map_id_is_valid) {
++                       if (nmaps) {
++                               ret =3D NULL;
++                               break;
++                       }
++
++                       ret =3D smpt+i;
++               } else if (map_id =3D=3D SMPT_MAP_ID(smpt[i])) {
++                       ret =3D smpt+i;
++                       break;
++               }
++
+                /* increment the table index to the next map */
+                i +=3D SMPT_MAP_REGION_COUNT(smpt[i]) + 1;
+        }
+
+-       ret =3D smpt + i;
++       pr_info("End [addr_width:%08x, read_dumy:%0x8, read_opcode:%08x]\n"=
+, nor->addr_width, nor->read_dummy, nor->read_opcode);
+
+> > +
+> > +               if(!map_id_is_valid) {
+> > +                       if (nmaps) {
+> > +                               ret =3D NULL;
+> > +                               break;
+> > +                       }
+> > +
+> > +                       ret =3D smpt+i;
+> > +               } else if (map_id =3D=3D SMPT_MAP_ID(smpt[i])) {
+> > +                       ret =3D smpt+i;
+> > +                       break;
+> > +               }
+> > +
+> >                 /* increment the table index to the next map */
+> >                 i +=3D SMPT_MAP_REGION_COUNT(smpt[i]) + 1;
+> >         }
+> >
+> > -       ret =3D smpt + i;
+> > +       pr_info("End [addr_width:%08x, read_dumy:%0x8,
+> > + read_opcode:%08x]\n", nor->addr_width, nor->read_dummy,
+> > + nor->read_opcode);
+> >         /* fall through */
+> >  out:
+> >         nor->addr_width =3D addr_width;
 
