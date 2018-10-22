@@ -3,123 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5999BC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28D6EC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04F142064E
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:02:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D311A2064E
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:03:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="jfwprwTb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04F142064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="n1wuq0k+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D311A2064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbeJVVVV (ORCPT
+        id S1728580AbeJVVWZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 17:21:21 -0400
-Received: from mta-p3.oit.umn.edu ([134.84.196.203]:53440 "EHLO
-        mta-p3.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727210AbeJVVVV (ORCPT
+        Mon, 22 Oct 2018 17:22:25 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:9766 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727210AbeJVVWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 17:21:21 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mta-p3.oit.umn.edu (Postfix) with ESMTP id A23CC644
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 13:02:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=umn.edu; h=
-        content-type:content-type:subject:subject:message-id:date:date
-        :from:from:in-reply-to:references:mime-version:received:received
-        :received; s=20160920; t=1540213370; x=1542027771; bh=DWAEIcheN3
-        rq0e/58ySpgwnvyP2sMDGJRgJc97oMJc4=; b=jfwprwTb6F5aXgqmgJSVU7z1UD
-        KQaGaTgmyeEHXnkKTdvjaaU156k0gsxYsWZv6FGimU7PK6pOm/dm0fg9xayxJSW/
-        vYOgq160HRrQmC1eOG2YcYwO4TVCbZRc+YQy44kqJ4Z0PWS5EztB3+l59aQ/30zi
-        KxDMMKIv5XIOpAu+s99Aqgsf2ytEf0gSHNa/ji2I8phu5xAfJvbwxLWP6FQHhAOw
-        bWFnX3fSvOh65XhOueo291x+x8PkU4oJDIHO82tJaD1ll6JJjQVENpiM+HRwcf6D
-        HL4ijJ83bHHohILY196FhClO+CbSQQMJyUZlqqLINF6wnmnA5gv8p0r9hlzw==
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p3.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p3.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 4ZJK30G6sHl8 for <linux-kernel@vger.kernel.org>;
-        Mon, 22 Oct 2018 08:02:50 -0500 (CDT)
-Received: from mail-it1-f173.google.com (mail-it1-f173.google.com [209.85.166.173])
-        (using TLSv1 with cipher AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: wang6495)
-        by mta-p3.oit.umn.edu (Postfix) with ESMTPSA id 789795F5
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 08:02:50 -0500 (CDT)
-Received: by mail-it1-f173.google.com with SMTP id c23-v6so11704736itd.5
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 06:02:50 -0700 (PDT)
-X-Gm-Message-State: ABuFfojsjE+6eACboM5PwdB65Rf1XUagcLHhf+H07BqlcF2TzJb0TV7Y
-        Zv+DV/CMj5arEHo8oqeAT40RycTyk72M7TtvOOY=
-X-Google-Smtp-Source: ACcGV62q0KjlyIiuUYrzsTkvDA3hAqlTQ3E+3xIlXmnL+TxTn29GEiOdIiUPuAtHa0e8usBaWWGHmWNpxJmumW/E93E=
-X-Received: by 2002:a02:98d3:: with SMTP id c19-v6mr1501157jak.47.1540213370165;
- Mon, 22 Oct 2018 06:02:50 -0700 (PDT)
+        Mon, 22 Oct 2018 17:22:24 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bcdcab10000>; Mon, 22 Oct 2018 06:03:45 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 22 Oct 2018 06:03:54 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 22 Oct 2018 06:03:54 -0700
+Received: from [10.26.11.135] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 22 Oct
+ 2018 13:03:52 +0000
+Subject: Re: [PATCH 4.14 00/41] 4.14.78-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20181018175416.718399607@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <d70c9d02-d184-c9e0-0492-f40eebeada3e@nvidia.com>
+Date:   Mon, 22 Oct 2018 14:03:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1540058151-17116-1-git-send-email-wang6495@umn.edu> <20181022080449.GK2302@lahna.fi.intel.com>
-In-Reply-To: <20181022080449.GK2302@lahna.fi.intel.com>
-From:   Wenwen Wang <wang6495@umn.edu>
-Date:   Mon, 22 Oct 2018 08:02:14 -0500
-X-Gmail-Original-Message-ID: <CAAa=b7d9tV17gOa-kGR6soKHqF4UvZdBrFmV2ga4e=ra6xDrNg@mail.gmail.com>
-Message-ID: <CAAa=b7d9tV17gOa-kGR6soKHqF4UvZdBrFmV2ga4e=ra6xDrNg@mail.gmail.com>
-Subject: Re: [PATCH] thunderbolt: Fix a missing-check bug
-To:     mika.westerberg@linux.intel.com
-Cc:     Kangjie Lu <kjlu@umn.edu>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        michael.jamet@intel.com, Yehezkel Bernat <YehezkelShB@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Wenwen Wang <wang6495@umn.edu>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181018175416.718399607@linuxfoundation.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1540213425; bh=7LXS/m3kmmh/fu6FczMO4+erczr60EnK5MMteH9wEGE=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=n1wuq0k+EQ5K+Eg8I6mzeANiDKwRfoGlcVUSnCEpG4jyDTD9LSeTtAfsA7PokL/fG
+         cNf5ap0MCNvAIzXgUyAgbjanDu5t16lVoG36zqnAfPdZ90l8nd1yWbXZFa6qPmQ2FQ
+         tTybcDNUky11OYV6G25vcFcwTfcU9XO571J/b0AtNCXf1Fw0/Z3lKLujIt73tzVN1L
+         xNcwC7GnJYaUAH5UvgfKpdjwECljDNags3Cn++mcs2yMZl7h/wHXCGm2MBfFUrZvyP
+         3fyHP1v+81JDHciNrnjWwqrMWEdMFpFldG+MKOgKCtHAfR6awLLoJTwwlD9n0O9qxa
+         RVzt0KXFlMoZw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 3:04 AM Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
->
-> Hi,
->
-> On Sat, Oct 20, 2018 at 12:55:51PM -0500, Wenwen Wang wrote:
-> > In tb_ctl_rx_callback(), the checksum of the received control packet is
-> > calculated on 'pkg->buffer' through tb_crc() and saved to 'crc32', Then,
-> > 'crc32' is compared with the received checksum to confirm the integrity of
-> > the received packet. If the checksum does not match, the packet will be
-> > dropped. In the following execution, 'pkg->buffer' will be copied through
-> > req->copy() and processed if there is an active request and the packet is
-> > what is expected.
-> >
-> > The problem here is that the above checking process is performed directly
-> > on the buffer 'pkg->buffer', which is actually a DMA region. Given that the
-> > DMA region can also be accessed directly by a device at any time, it is
-> > possible that a malicious device controlled by an attacker can race to
-> > modify the content in 'pkg->buffer' after the checksum checking but before
-> > req->copy(). By doing so, the attacker can inject malicious data, which can
-> > cause undefined behavior of the kernel and introduce potential security
-> > risk.
-> >
-> > This patch allocates a new buffer 'buf' to hold the data in 'pkg->buffer'.
-> > By performing the checking and copying on 'buf', rather than 'pkg->buffer',
-> > the above issue can be avoided.
->
-> Here same comment applies than to the previous one - this is something
-> that requires the attacker to have physical access to the system and
-> requires him to either replace the firmware or the hardware itself with
-> a malicious one and in that case protection like this here does not
-> actually help because they can just overwrite it directly.
->
-> BTW, just in case you send multiple patches to other subsystems as well
-> it is good to have $subject contain summary of the fix in a way that one
-> can distinguish between them. For example you sent 4 patches with all
-> having:
->
->   thunderbolt: Fix a missing-check bug
->
-> in the $subject. So for example I originally thought that you sent the
-> same patch several times :)
 
-Thanks for your suggestion, Mika. That is good to distinguish between
-different patches :)
+On 18/10/2018 18:54, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.78 release.
+> There are 41 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Oct 20 17:53:55 UTC 2018.
+> Anything received after that time might be too late.
+Sorry its late, but FWIW all tests passing for Tegra ...
 
-Wenwen
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
+
+Linux version:	4.14.78-rc1-g901b7ab
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
