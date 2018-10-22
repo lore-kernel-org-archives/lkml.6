@@ -8,66 +8,66 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68023C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F352BC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CA3F20853
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:09:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9C9A2064E
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:09:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTdgY5jv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CA3F20853
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cpnqgo/N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9C9A2064E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728971AbeJVU15 (ORCPT
+        id S1728999AbeJVU2O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 16:27:57 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33722 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727194AbeJVU15 (ORCPT
+        Mon, 22 Oct 2018 16:28:14 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44622 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727194AbeJVU2N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 16:27:57 -0400
-Received: by mail-pl1-f193.google.com with SMTP id x6-v6so2148408pln.0;
-        Mon, 22 Oct 2018 05:09:39 -0700 (PDT)
+        Mon, 22 Oct 2018 16:28:13 -0400
+Received: by mail-pf1-f194.google.com with SMTP id r9-v6so19807587pff.11;
+        Mon, 22 Oct 2018 05:09:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3RCSYodw650g5KDTGikhMzg5U2Hs5MAyqNWdf8/qnF8=;
-        b=dTdgY5jvOP4W53MqbwotkYeOV1yzDsQ/iRXqTrM0tBY+JjTWF4KTyHTu8g/mSG5Klp
-         7lAK7jH3pwouFKIny7wd0s+6xOO4xvpIYQRrWq9KOrD+eDLKzhc3m71hXJ0s01eGCu8G
-         KSQdgMfR8smij1bc198Kwc+qwBrB4KeWZCzEBshaAMXNEJ6algvl5IwxqfoiXa0io3Fe
-         7HCM3eObIG0L6DbiJ+lff0F/jHhgObMNtTSvEcZoYE30mc/n+B/sT3rNzIeZYSX9RV0k
-         3zK37aU+t520rwS3OiaoeriqBbqkxp9mIrr2bO/xNBbJil04WZEUlpyd8OHxL/4MNx6u
-         Gstw==
+        bh=GNkLkzZthpVuejMWcaYNvPopA/s2Vk8gtDQxxhr97GI=;
+        b=Cpnqgo/NCz2VZb9uaocLkw3+yQAOgRLKaaUnVWLle5K4pRQqqaPDJUaN4ZBc8I4QCJ
+         TiFwe1vmbvLpTDDMowxY+koZa7xc891V2rY/pCXzAdEmVINPUUxp0mq1uAFHd3ySyOCC
+         9bOer/7RmAOGE63/UG71XGoM4jzeVz8aR07zhky2D2gzJYWfLIX3lN0MmJpCrmuCYPQN
+         IymbNnUj6Sz7c3zXxpX4WHn/f7ericl1T834ntCaf+NgCIopQewnfBtGuAatoc1SLGaW
+         Zc+br9dqsm/ZyNaf+zei1DmAzRfqjnfj9PBJswEZiBCZBlchqzl0shiGwhYhwQ3CdaGB
+         Ebxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3RCSYodw650g5KDTGikhMzg5U2Hs5MAyqNWdf8/qnF8=;
-        b=NLkBStS3zgyYE864rq9tiJrKWe7yeLcirg0BM73RjrwsHcW7Nyxm6h8xn4LfWNrxMM
-         SLtuZm6TvMpYFDhv16a+D2xB+5nMPFkMJnYatpi06JWpmJAArSKqGZ6jtDNBIZSFNldr
-         wxw9hrsE2N/BFF4HroV3TB6P6onZZxkw/Fp7UYAvDfisFhpBtw0MqmRnEkaom0owz5Lz
-         bDhk6hxcHOFcM8EXowpgTa77Y9Bbarf9xGyW4OZf41b37VlVwQWXDeoLuvl+IBN46ITA
-         DWfotJgBQo3f4g2qOGSdCqWe0YG4KyoaULuZSqvOWLLOcmedhIiDnC2jEzUp826KleWD
-         o+KA==
-X-Gm-Message-State: ABuFfogZIPMM9fWDkfGFlu94gJXlckWjSXYl4t81UfD3wIy9O3GPA3o6
-        chseo2W8i5yRUxAaWH4+7Dc=
-X-Google-Smtp-Source: ACcGV60XKKZdHSvo5LPoK4/vTIc4eNWPCsXMqGQq9ioa1NPK71y1g9DnG41ksHFvkE6NHJsdlp4urQ==
-X-Received: by 2002:a17:902:4e25:: with SMTP id f34-v6mr36420968ple.43.1540210179227;
-        Mon, 22 Oct 2018 05:09:39 -0700 (PDT)
+        bh=GNkLkzZthpVuejMWcaYNvPopA/s2Vk8gtDQxxhr97GI=;
+        b=WiBL4H2TvUjQDqqGNjAE60nKnwtOERmDaVzKNmGMz/yXHpNWLSReXWpnq5JRLJ/EtL
+         Tm6bDFHaoRjcmJ2pEY2IQ08hS5WZ6OoAjg/rz0fFASZEWoh4vrmsaQl7F2OzPNyftN18
+         OEtlfGDa+ycl45U7kgcHWmKNIT34AmCAw5RLz2A3GyKgPUOrKb5eDEDDNjxujU4FTza1
+         Pga+SnHAkC1yZa8yzDTHSHsEodk1B9z++hucOGz595DMEVH8EEl0USeCp2QcWilDjb9A
+         pStPNGBg+Dj3yin0duMDZ9pNk3OJowiXjkQuWsT8JCCbJJNmHzLgDdQP0rJiZIL2USbm
+         zszg==
+X-Gm-Message-State: ABuFfogY9snsR/y5YGc7yMjVXzPOpOIjvct+CsFyhySI3Qputpj7OzhB
+        M1dCh0ghKG7buXAIBHg+JwM=
+X-Google-Smtp-Source: ACcGV62byiUcK7b5zbgivGfgvZFjKltWkt667AG9xQ6xqJqUx3PXqHV7Lp6VvVkpikSu2LvgI22sRQ==
+X-Received: by 2002:a65:6249:: with SMTP id q9-v6mr42437631pgv.392.1540210195530;
+        Mon, 22 Oct 2018 05:09:55 -0700 (PDT)
 Received: from localhost.localdomain ([2001:268:c0a5:1904:c698:f9ce:cdd:454c])
-        by smtp.gmail.com with ESMTPSA id u69-v6sm61250728pfk.68.2018.10.22.05.09.36
+        by smtp.gmail.com with ESMTPSA id w33-v6sm11572326pgl.29.2018.10.22.05.09.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Oct 2018 05:09:38 -0700 (PDT)
+        Mon, 22 Oct 2018 05:09:55 -0700 (PDT)
 From:   William Breathitt Gray <vilhelm.gray@gmail.com>
 To:     linus.walleij@linaro.org
 Cc:     linux@rasmusvillemoes.dk, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 4/6] gpio: ws16c48: Mask read inputs for get_multiple
-Date:   Mon, 22 Oct 2018 21:09:49 +0900
-Message-Id: <304924e41af041f873abb5c3fe4701d0a870219b.1540209293.git.vilhelm.gray@gmail.com>
+Subject: [PATCH 5/6] gpio: pci-idio-16: Mask read inputs for get_multiple
+Date:   Mon, 22 Oct 2018 21:10:06 +0900
+Message-Id: <4e02f26b801f271e80b7738a851b52ab7ffde649.1540209293.git.vilhelm.gray@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.1540209293.git.vilhelm.gray@gmail.com>
 References: <cover.1540209293.git.vilhelm.gray@gmail.com>
@@ -84,15 +84,15 @@ only requested input states are returned in the bits array.
 Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/gpio/gpio-ws16c48.c | 2 +-
+ drivers/gpio/gpio-pci-idio-16.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
-index c7028eb0b8e1..5cf3697bfb15 100644
---- a/drivers/gpio/gpio-ws16c48.c
-+++ b/drivers/gpio/gpio-ws16c48.c
-@@ -169,7 +169,7 @@ static int ws16c48_gpio_get_multiple(struct gpio_chip *chip,
- 		port_state = inb(ws16c48gpio->base + i);
+diff --git a/drivers/gpio/gpio-pci-idio-16.c b/drivers/gpio/gpio-pci-idio-16.c
+index 25d16b2af1c3..6b7349783223 100644
+--- a/drivers/gpio/gpio-pci-idio-16.c
++++ b/drivers/gpio/gpio-pci-idio-16.c
+@@ -146,7 +146,7 @@ static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
+ 		port_state = ioread8(ports[i]);
  
  		/* store acquired bits at respective bits array offset */
 -		bits[word_index] |= port_state << word_offset;
