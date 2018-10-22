@@ -2,154 +2,95 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 618FFC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E636AC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 18:01:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31B11205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:58:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31B11205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id C5362205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 18:01:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5362205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729062AbeJWCSQ (ORCPT
+        id S1728580AbeJWCVW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 22:18:16 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:33870 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728815AbeJWCSQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 22:18:16 -0400
-Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 848E51466B51B;
-        Mon, 22 Oct 2018 10:58:44 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 10:58:42 -0700 (PDT)
-Message-Id: <20181022.105842.1364583912952511294.davem@davemloft.net>
-To:     jolsa@redhat.com
-Cc:     dzickus@redhat.com, acme@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: perf overlapping maps...
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181022161613.GF2945@krava>
-References: <20181019.214401.2045294780943844999.davem@davemloft.net>
-        <20181022140738.jvutwmstgm2f65et@redhat.com>
-        <20181022161613.GF2945@krava>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Mon, 22 Oct 2018 22:21:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37572 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727463AbeJWCVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 22:21:22 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B3308CA1DA;
+        Mon, 22 Oct 2018 18:01:49 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1AB2C194AA;
+        Mon, 22 Oct 2018 18:01:48 +0000 (UTC)
+Subject: Re: [PATCH v1 2/2] x86/hyperv: make HvNotifyLongSpinWait hypercall
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Juergen Gross <jgross@suse.com>, Yi Sun <yi.y.sun@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+        chao.p.peng@intel.com, chao.gao@intel.com,
+        isaku.yamahata@intel.com, michael.h.kelley@microsoft.com,
+        tianyu.lan@microsoft.com, "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <1539954835-34035-1-git-send-email-yi.y.sun@linux.intel.com>
+ <1539954835-34035-3-git-send-email-yi.y.sun@linux.intel.com>
+ <bab010e9-a122-95f1-d8cc-790e56c72716@suse.com>
+ <20181022015342.GK11769@yi.y.sun>
+ <2e0d62cb-b706-a5b4-65f7-982a913fb32b@suse.com>
+ <ba75b994-c1a6-6e91-6499-b9af90636fcf@redhat.com>
+ <20181022171516.GH3117@worktop.programming.kicks-ass.net>
+ <6d8095c0-af95-5967-3ca5-2ceeb74233ea@redhat.com>
+ <20181022173144.GB3109@worktop.c.hoisthospitality.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <0f36b234-fa4e-d52f-735c-078ddeab6720@redhat.com>
+Date:   Mon, 22 Oct 2018 14:01:47 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20181022173144.GB3109@worktop.c.hoisthospitality.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 22 Oct 2018 10:58:44 -0700 (PDT)
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 22 Oct 2018 18:01:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@redhat.com>
-Date: Mon, 22 Oct 2018 18:16:13 +0200
+On 10/22/2018 01:31 PM, Peter Zijlstra wrote:
+> On Mon, Oct 22, 2018 at 01:27:27PM -0400, Waiman Long wrote:
+>
+>>>> I agree with Juergen on that. I would suggest rename the
+>>>> vcpu_is_preempted hook into a more generic vcpu_stop_spinning, perhaps,
+>>>> so different hypervisors can act on the information accordingly. Adding
+>>>> an extra parameter is fine.
+>>> No; no extra parameters. vcpu_is_preempted() is a simple and intuitive
+>>> interface. Why would we want to make it complicated?
+>> Hyperv seems to do it in a somewhat different way by looking at the spin
+>> counter and decide if it should continue. I don't know why they do that
+>> and what advantage it has.
+>>
+>> The current patch is definitely not OK. A revised patch that makes use
+>> of an existing paravirt hook will be more acceptable. Again, I would
+>> like to see some performance figure and why they do it this way to see
+>> if it is worthwhile to change the existing interface.
+> Note that there are vcpu_is_preempted() users that are not in a
+> spin-loop.
 
-> I think the fix might actualy speed things up,
-> but yes, there could be other report regressions
+You are right. I forgot about that. In that case, someone has to prove
+that using an alternative way to stop spinning really has a performance
+advantage compared to what we already have today.
 
-I was about to say the same thing, it could actually speed things up.
-In the best case, less work is done (clone avoided, and overlapping
-maps don't have to be handled).  In the worst case, nothing changes.
+Cheers,
+Longman
 
-Here is what I've been using, to give you an idea.  There may be some
-file offset fuzz in these patches.
-
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index 0cd42150f712..e5a442313f9d 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -308,6 +308,7 @@ static int perf_event__synthesize_fork(struct perf_tool *tool,
- 	event->fork.pid  = tgid;
- 	event->fork.tid  = pid;
- 	event->fork.header.type = PERF_RECORD_FORK;
-+	event->fork.header.misc = PERF_RECORD_MISC_COMM_EXEC;
- 
- 	event->fork.header.size = (sizeof(event->fork) + machine->id_hdr_size);
- 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 111ae858cbcb..dc06f1fc2ed5 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1708,5 +1720,6 @@ int machine__process_fork_event(struct machine *machine, union perf_event *event
- 	struct thread *parent = machine__findnew_thread(machine,
- 							event->fork.ppid,
- 							event->fork.ptid);
-+	int do_maps_clone = 1;
- 	int err = 0;
- 
-@@ -1737,8 +1754,11 @@ int machine__process_fork_event(struct machine *machine, union perf_event *event
- 	thread = machine__findnew_thread(machine, event->fork.pid,
- 					 event->fork.tid);
- 
-+	if (event->fork.header.misc & PERF_RECORD_MISC_COMM_EXEC)
-+		do_maps_clone = 0;
-+
- 	if (thread == NULL || parent == NULL ||
--	    thread__fork(thread, parent, sample->time) < 0) {
-+	    thread__fork(thread, parent, sample->time, do_maps_clone) < 0) {
- 		dump_printf("problem processing PERF_RECORD_FORK, skipping event.\n");
- 		err = -1;
- 	}
-diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-index 2048d393ece6..7f2858edf221 100644
---- a/tools/perf/util/thread.c
-+++ b/tools/perf/util/thread.c
-@@ -330,7 +330,8 @@ static int thread__prepare_access(struct thread *thread)
- }
- 
- static int thread__clone_map_groups(struct thread *thread,
--				    struct thread *parent)
-+				    struct thread *parent,
-+				    int do_maps_clone)
- {
- 	/* This is new thread, we share map groups for process. */
- 	if (thread->pid_ == parent->pid_)
-@@ -341,15 +342,14 @@ static int thread__clone_map_groups(struct thread *thread,
- 			 thread->pid_, thread->tid, parent->pid_, parent->tid);
- 		return 0;
- 	}
--
- 	/* But this one is new process, copy maps. */
--	if (map_groups__clone(thread, parent->mg) < 0)
-+	if (do_maps_clone &&
-+	    map_groups__clone(thread, parent->mg) < 0)
- 		return -ENOMEM;
--
- 	return 0;
- }
- 
--int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp)
-+int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp, int do_maps_clone)
- {
- 	if (parent->comm_set) {
- 		const char *comm = thread__comm_str(parent);
-@@ -362,7 +362,7 @@ int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp)
- 	}
- 
- 	thread->ppid = parent->tid;
--	return thread__clone_map_groups(thread, parent);
-+	return thread__clone_map_groups(thread, parent, do_maps_clone);
- }
- 
- void thread__find_cpumode_addr_location(struct thread *thread, u64 addr,
-diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-index 07606aa6998d..8e4ca1ede01f 100644
---- a/tools/perf/util/thread.h
-+++ b/tools/perf/util/thread.h
-@@ -87,7 +87,7 @@ struct comm *thread__comm(const struct thread *thread);
- struct comm *thread__exec_comm(const struct thread *thread);
- const char *thread__comm_str(const struct thread *thread);
- int thread__insert_map(struct thread *thread, struct map *map);
--int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp);
-+int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp, int do_maps_clone);
- size_t thread__fprintf(struct thread *thread, FILE *fp);
- 
- struct thread *thread__main_thread(struct machine *machine, struct thread *thread);
