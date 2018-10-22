@@ -2,189 +2,192 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1100C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 11:43:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65EA0C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 11:43:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86A4C20658
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 11:43:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86A4C20658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1724A20658
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 11:43:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Wfm/UrE/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1724A20658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728761AbeJVUBu (ORCPT
+        id S1728849AbeJVUCB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 16:01:50 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:48324 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728546AbeJVUBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 16:01:50 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id AF79720890; Mon, 22 Oct 2018 13:43:34 +0200 (CEST)
-Received: from bbrezillon (aaubervilliers-681-1-25-52.w90-88.abo.wanadoo.fr [90.88.145.52])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4082920799;
-        Mon, 22 Oct 2018 13:43:24 +0200 (CEST)
-Date:   Mon, 22 Oct 2018 13:43:24 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     "Cristian.Birsan@microchip.com" <Cristian.Birsan@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        "richard@nod.at" <richard@nod.at>, Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "cyrille.pitchen@microchip.com" <cyrille.pitchen@microchip.com>,
+        Mon, 22 Oct 2018 16:02:01 -0400
+Received: from mail-db5eur01on0046.outbound.protection.outlook.com ([104.47.2.46]:1655
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728428AbeJVUCA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 16:02:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EszMfh6JYSb0VK2sBWhSK7J551nJ/yc7m/urVwuWSbI=;
+ b=Wfm/UrE/UwN1ovLFgCsY/528XvbA1bwZa8L3Mi/BNoLcHDvSviq073KG7NsvSts+icmD5W5926tg/biOrQIujf1VHo+A9bHjykRfn3K8SVcL+0qk9yW/B+URViZDA5qQZytgkzT9YmGyl7cGC+WU21oZ68v+qJzTQtUBPnBqb94=
+Received: from VI1PR04MB1038.eurprd04.prod.outlook.com (10.161.109.144) by
+ VI1PR04MB4974.eurprd04.prod.outlook.com (20.177.49.215) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1250.30; Mon, 22 Oct 2018 11:43:41 +0000
+Received: from VI1PR04MB1038.eurprd04.prod.outlook.com
+ ([fe80::d887:3c96:479a:4123]) by VI1PR04MB1038.eurprd04.prod.outlook.com
+ ([fe80::d887:3c96:479a:4123%3]) with mapi id 15.20.1228.032; Mon, 22 Oct 2018
+ 11:43:40 +0000
+From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
         "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
+CC:     "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP
- SPI NOR flash memories
-Message-ID: <20181022134324.2c1bd248@bbrezillon>
-In-Reply-To: <VI1PR04MB1038C9C889185F2A700220F299F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-References: <20180911154007.17195-1-tudor.ambarus@microchip.com>
-        <31a8f6a9-1459-443a-6ef8-2b2c17769ae4@microchip.com>
-        <de0f7245-2557-12be-a306-67b08e55ae7b@wedev4u.fr>
-        <VI1PR04MB1038AB25EABDC8507984ADC799FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181017090724.12f2cd79@bbrezillon>
-        <20181017091045.124e0266@bbrezillon>
-        <20181017092941.3658bd9a@bbrezillon>
-        <VI1PR04MB1038EFA1E83AD78EBE84ECC499FF0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181017115237.07310b74@bbrezillon>
-        <VI1PR04MB1038BD6103DD8BD6B6DEC2B899F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022111543.2a607efc@bbrezillon>
-        <VI1PR04MB1038EF892921194D1BFDE6FC99F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022122659.0675942e@bbrezillon>
-        <VI1PR04MB1038E92FFAB03E07048FD8B499F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022124627.2c6c3b93@bbrezillon>
-        <20181022125259.42df83ea@bbrezillon>
-        <VI1PR04MB1038C9C889185F2A700220F299F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        <linux-arm-kernel@lists.infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v4 0/5] spi: spi-mem: Add driver for NXP FlexSPI
+ controller
+Thread-Topic: [PATCH v4 0/5] spi: spi-mem: Add driver for NXP FlexSPI
+ controller
+Thread-Index: AQHUYVGd5DVkmoaJwk6a/YXF+Itp3qUrNb6g
+Date:   Mon, 22 Oct 2018 11:43:40 +0000
+Message-ID: <VI1PR04MB1038034CFABEE936C6892D7D99F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
+References: <1539255519-1408-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+In-Reply-To: <1539255519-1408-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
+x-originating-ip: [14.142.187.166]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB4974;6:ws6FibhbMwSIHhnXwc066j4NM5HsPLi5c+HWG/ez26SDb3re3EV3XI0XgQ62lsGguciYZj9UxjCNYc84+eW6htL8I8uWWQhQcVqxdfX9f2fqYn6393xinpPJrNLsoYHYeSUrMmW877uiXyfe+0ZevipoUqBFimJP0urCRKaQoaWvSL8uggPO2hSr9b3a6EAlfpR+gVKqviMrfysLyRaoEY33pxZyM8euRPLiETrKN/yGyci9S7xIii9s11EcHls5HihWgS2EVhAg4x9fL+DGmLs5EeNcZZhxpYFMmiH1Ze1yTgw6Mm2ftfeVUKTn6Do3JFB1GIsKv9FFN4/ZSLxc1DSWo7tOOARv5LXAVkp5FmPBYC+FYyIT5ygPymNUWn9BGLtnr49MUQEpK1UNd+HVfowJI5yktB7F8RyeyuwiL/Ls/GtHJKFtsk6RKy5JSc6Xhnoe8HLmwhQN9oCYZI1ezw==;5:AT4R5Tljrb+HiQuCHrfvZcsdCFWWtQqoGXzQeJfMX1mXbqRbA4T6sBqHf3Pwpl6pWAQj0n7IQUxWrMdjb7KbWJVZsoOJ+c0Tgj4/0elrZ+Hj06dwGJNOkpY4Dm+hbnlLspChwxzESN9YJoSWrTPceLgggp2OoWqEGFfD0Kin5xU=;7:gP2TRDnVG+uujJ85Y7UwLzLOo8JJb+Vxp2i4z0EacNniumoJ6FiM473H+SXWFnPgP/uNWl5ksHPjwqH3UrmTfMlxiLBlT4MMUSDepkEfGDumDNxB4mqrgCWd3ADznte65LP9TpXo3UOG27t2We4r/KJ8nHzLtsrmOhmb66ittNeAX3oG04px4AOdAqlruU+otC5BXwtI+p/sJ4ulKc12hCIvU2c9o9hyXNRM8NSVv4ZGwxUNU22Anga4/u6xdENO
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: efb08add-33b9-42d4-8fbb-08d638139d0d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4974;
+x-ms-traffictypediagnostic: VI1PR04MB4974:
+x-microsoft-antispam-prvs: <VI1PR04MB49744F2488587BB6F25829F799F40@VI1PR04MB4974.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197)(258649278758335)(85827821059158)(9452136761055)(180628864354917)(264314650089876);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231355)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB4974;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4974;
+x-forefront-prvs: 08331F819E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(346002)(39860400002)(376002)(189003)(199004)(13464003)(4326008)(99286004)(110136005)(6306002)(6506007)(53546011)(3846002)(2900100001)(476003)(2906002)(11346002)(66066001)(55236004)(102836004)(446003)(105586002)(55016002)(106356001)(8936002)(6436002)(486006)(25786009)(54906003)(26005)(39060400002)(76176011)(81166006)(256004)(186003)(81156014)(53936002)(7736002)(6246003)(86362001)(14454004)(229853002)(8676002)(74316002)(68736007)(316002)(966005)(33656002)(2201001)(305945005)(7696005)(71200400001)(71190400001)(478600001)(2501003)(9686003)(5660300001)(5250100002)(7416002)(97736004)(6116002)(78486010);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4974;H:VI1PR04MB1038.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: lNkNDIjHCPl58VttcEEfJgchP2M4zwLLsO1i2nrFCOJCLI8PgNlEeWh6i+6n1lhPueTTAjbxKhjVzpp96t0kmL8AjCHfYGEqZDu/3UkdSkL26isvNQ39r1zpZd+2Z5l3/T6vDBJBRFFIEHale97zkiwvXBOdbpk00okmSlDvJGHYtIeCqMKE1bY1xPpY03xN7S6abHEHH9O44um83RBBFmLwO7PkQJ8ALuQ3/DSTAO3dyrzKhZWe0ZD98e15pgMXPIxKwVZk4LkN/Nrg8FxX3RCMoIFKUiSkWPAzBUAEG6cez8RjPRejY+0PUqjVs1vfsPy59DyJnEU+w7ne81GTGeRtQ2DBpyc7lMItEYOFZk0=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: efb08add-33b9-42d4-8fbb-08d638139d0d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2018 11:43:40.7848
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4974
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 22 Oct 2018 11:03:09 +0000
-Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
++ Mark Brown
 
-> Hi,
-> 
-> > -----Original Message-----
-> > From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
-> > Sent: Monday, October 22, 2018 4:23 PM
-> > To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>;
-> > Cristian.Birsan@microchip.com
-> > Cc: Tudor Ambarus <tudor.ambarus@microchip.com>; richard@nod.at; Mark
-> > Brown <broonie@kernel.org>; linux-kernel@vger.kernel.org;
-> > nicolas.ferre@microchip.com; marek.vasut@gmail.com;
-> > cyrille.pitchen@microchip.com; linux-mtd@lists.infradead.org; Cyrille Pitchen
-> > <cyrille.pitchen@wedev4u.fr>; computersforpeace@gmail.com;
-> > dwmw2@infradead.org; linux-arm-kernel@lists.infradead.org
-> > Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP SPI
-> > NOR flash memories
-> > 
-> > On Mon, 22 Oct 2018 12:46:27 +0200
-> > Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> >   
-> > > On Mon, 22 Oct 2018 10:39:48 +0000
-> > > Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
-> > >  
-> > > >
-> > > > [    1.632190] Start [addr_width:00000000, read_dumy:08,  
-> > read_opcode:00000000]  
-> > > > [    1.639148] spi_nor_get_map_in_use:2882 smpt[0]=08ff65fc
-> > > > [    1.644451] spi_nor_get_map_in_use:2882 smpt[1]=00000004
-> > > > [    1.649755] spi_nor_get_map_in_use:2882 smpt[2]=04ff65fc
-> > > > [    1.655057] spi_nor_get_map_in_use:2882 smpt[3]=00000002
-> > > > [    1.660360] spi_nor_get_map_in_use:2882 smpt[4]=02ff65fd
-> > > > [    1.665662] spi_nor_get_map_in_use:2882 smpt[5]=00000004
-> > > > [    1.670965] spi_nor_get_map_in_use:2882 smpt[6]=ff0201fe
-> > > > [    1.676267] spi_nor_get_map_in_use:2882 smpt[7]=00007ff1
-> > > > [    1.681571] spi_nor_get_map_in_use:2882 smpt[8]=00037ff4
-> > > > [    1.686874] spi_nor_get_map_in_use:2882 smpt[9]=03fbfff4
-> > > > [    1.692176] spi_nor_get_map_in_use:2882 smpt[10]=ff0203fe
-> > > > [    1.697566] spi_nor_get_map_in_use:2882 smpt[11]=03fbfff4
-> > > > [    1.702954] spi_nor_get_map_in_use:2882 smpt[12]=00037ff4
-> > > > [    1.708343] spi_nor_get_map_in_use:2882 smpt[13]=00007ff1
-> > > > [    1.713732] spi_nor_get_map_in_use:2882 smpt[14]=ff0005ff
-> > > > [    1.719120] spi_nor_get_map_in_use:2882 smpt[15]=03fffff4
-> > > > [    1.724509] smpt[0]=[addr_width:00000000, read_dumy:08,  
-> > read_opcode:00000065]  
-> > > > [    1.731650] smpt[1]=[addr_width:00000000, read_dumy:08,  
-> > read_opcode:00000000]  
-> > > > [    1.738791] smpt[2]=[addr_width:00000000, read_dumy:08,  
-> > read_opcode:00000065]  
-> > >
-> > > You still don't print read_dummy correctly: %0x8 -> %08x.
-> > >
-> > > Can you add
-> > >
-> > > 	if (!nor->addr_width)
-> > > 		nor->addr_width = 3;
-> > >
-> > > After the
-> > >
-> > > 	nor->addr_width = spi_nor_smpt_addr_width(nor, smpt[i]);
-> > >
-> > > line.  
-> > 
-> > And you should also try to force ->read_dummy to 8, because according to the
-> > spec, the default read_latency is 8 for this chip. With that in place, you should
-> > get an map_id of 1, 3 or 5.
-> >   
-> 
-> Below is the log output.
-> I have forced the read_dummy as 8 and addr_width is programmed as 3.
-> 
-> [    1.625176] m25p80 spi0.0: found s25fl512s, expected m25p80                                                                   
-> [    1.630875] Start [addr_width:00000000, read_dumy:00000000, read_opcode:00000000]                                             
-> [    1.638352] spi_nor_get_map_in_use:2882 smpt[0]=08ff65fc                                                                      
-> [    1.643658] spi_nor_get_map_in_use:2882 smpt[1]=00000004                                                                      
-> [    1.648963] spi_nor_get_map_in_use:2882 smpt[2]=04ff65fc                                                                      
-> [    1.654266] spi_nor_get_map_in_use:2882 smpt[3]=00000002                                                                      
-> [    1.659569] spi_nor_get_map_in_use:2882 smpt[4]=02ff65fd                                                                      
-> [    1.664872] spi_nor_get_map_in_use:2882 smpt[5]=00000004                                                                      
-> [    1.670175] spi_nor_get_map_in_use:2882 smpt[6]=ff0201fe                                                                      
-> [    1.675477] spi_nor_get_map_in_use:2882 smpt[7]=00007ff1                                                                      
-> [    1.680782] spi_nor_get_map_in_use:2882 smpt[8]=00037ff4                                                                      
-> [    1.686084] spi_nor_get_map_in_use:2882 smpt[9]=03fbfff4                                                                      
-> [    1.691391] spi_nor_get_map_in_use:2882 smpt[10]=ff0203fe                                                                     
-> [    1.696782] spi_nor_get_map_in_use:2882 smpt[11]=03fbfff4                                                                     
-> [    1.702171] spi_nor_get_map_in_use:2882 smpt[12]=00037ff4                                                                     
-> [    1.707561] spi_nor_get_map_in_use:2882 smpt[13]=00007ff1                                                                     
-> [    1.712951] spi_nor_get_map_in_use:2882 smpt[14]=ff0005ff                                                                     
-> [    1.718340] spi_nor_get_map_in_use:2882 smpt[15]=03fffff4                                                                     
-> [    1.723731] smpt[0]=[addr_width:00000003, read_dumy:00000008, read_opcode:00000065]                                           
-> [    1.731393] smpt[1]=[addr_width:00000003, read_dumy:00000008, read_opcode:00000000]
+Complete patch series[1]
+[1] https://patchwork.ozlabs.org/project/linux-mtd/list/?series=3D70210
 
-You still have a problem with the for() loop increment. i should be 2
-here, not 1. Did you change the i++ by i += 2?
- 
-> [    1.739056] smpt[2]=[addr_width:00000003, read_dumy:00000008, read_opcode:00000065]                                           
-> [    1.746721] spi_nor_get_map_in_use:2914 map_id=0 smpt_len:16 i=:3                                                             
-> [    1.752807] End [addr_width:00000003, read_dumy:00000008, read_opcode:00000065]                                               
-> [    1.760125] m25p80 spi0.0: s25fl512s (65536 Kbytes)  
-> 
->                 read_data_mask = SMPT_CMD_READ_DATA(smpt[i]);
->                 nor->addr_width = spi_nor_smpt_addr_width(nor, smpt[i]);
->                 if (!nor->addr_width)
->                         nor->addr_width = 3;
-> 
->                 nor->read_dummy = 8; 
->                 nor->read_opcode = SMPT_CMD_OPCODE(smpt[i]);
->                 pr_info("smpt[%d]=[addr_width:%08x, read_dumy:%08x, read_opcode:%08x]\n", i, nor->addr_width, nor->read_dummy, nor->read_opcode);
-> 
->                 addr = smpt[i + 1];
-> 
->                 err = spi_nor_read_raw(nor, addr, 1, &data_byte);
+--
+Regards,
+Yogesh Gaur
 
-Can you print addr and data_byte here?
+> -----Original Message-----
+> From: Yogesh Narayan Gaur [mailto:yogeshnarayan.gaur@nxp.com]
+> Sent: Thursday, October 11, 2018 4:30 PM
+> To: linux-mtd@lists.infradead.org; boris.brezillon@bootlin.com;
+> marek.vasut@gmail.com; linux-spi@vger.kernel.org;
+> devicetree@vger.kernel.org
+> Cc: robh@kernel.org; mark.rutland@arm.com; shawnguo@kernel.org; linux-
+> arm-kernel@lists.infradead.org; computersforpeace@gmail.com;
+> frieder.schrempf@exceet.de; linux-kernel@vger.kernel.org; Yogesh Narayan
+> Gaur <yogeshnarayan.gaur@nxp.com>
+> Subject: [PATCH v4 0/5] spi: spi-mem: Add driver for NXP FlexSPI controll=
+er
+>=20
+> - Add driver for NXP FlexSPI host controller
+>=20
+>  FlexSPI is a flexsible SPI host controller [1], Chapter 30 page 1475,  w=
+hich
+> supports two SPI channels and up to 4 external devices.
+>  Each channel supports Single/Dual/Quad/Octal mode data transfer (1/2/4/8
+> bidirectional data lines)  i.e. FlexSPI acts as an interface to external =
+devices,
+> maximum 4, each with up to 8  bidirectional data lines.
+>=20
+> - Tested this driver with mtd_debug(Erase/Write/Read) utility and JFFS2
+> filesystem mounting and booting on NXP LX2160ARDB[2] and LX2160AQDS
+> targets.
+>  LX2160ARDB is having two NOR slave device connected on single bus A  i.e=
+. A0
+> and A1 (CS0 and CS1).
+>  LX2160AQDS is having two NOR slave device connected on separate buses  o=
+ne
+> flash on A0 and second on B1 i.e. (CS0 and CS3).
+>  Verified this driver on following SPI NOR flashes:
+>    Micron, mt35xu512aba[3], [Read - 1 bit mode]
+>    Cypress, s25fl512s, [Read - 1/2/4 bit mode]
+>=20
+> [1] https://www.nxp.com/docs/en/reference-manual/IMXRT1050RM.pdf
+> [2] https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=3D=
+26689
+> [3] https://patchwork.ozlabs.org/project/linux-mtd/list/?series=3D70179
+>=20
+> Yogesh Gaur (5):
+>   spi: spi-mem: Add driver for NXP FlexSPI controller
+>   dt-bindings: spi: add binding file for NXP FlexSPI controller
+>   arm64: dts: lx2160a: add FlexSPI node property
+>   arm64: defconfig: enable NXP FlexSPI driver
+>   MAINTAINERS: add maintainers for the NXP FlexSPI driver
+>=20
+> Changes for v4:
+> - Incorporated review comments for
+>   patch 'spi: spi-mem: Add driver for NXP FlexSPI controller'.
+> - Incorporated binding file review comments.
+> Changes for v3:
+> - Incorporated review comments for
+>   patch 'spi: spi-mem: Add driver for NXP FlexSPI controller'.
+> Changes for v2:
+> - Incorporated Boris review comments and drop below patches as per the
+> comments.
+>  - Patch 'spi: add slave device size in spi_device struct'
+>  - Patch 'spi: add flags for octal I/O data transfer'
+> - Incorporated DTS and Binding file review comments of Shawn Guo and Rob
+> Herring.
+>=20
+>  .../devicetree/bindings/spi/spi-nxp-fspi.txt       |   39 +
+>  MAINTAINERS                                        |    6 +
+>  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts  |   22 +
+>  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi     |   12 +
+>  arch/arm64/configs/defconfig                       |    1 +
+>  drivers/spi/Kconfig                                |   10 +
+>  drivers/spi/Makefile                               |    1 +
+>  drivers/spi/spi-nxp-fspi.c                         | 1158 ++++++++++++++=
+++++++
+>  8 files changed, 1249 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/spi/spi-nxp-fspi.tx=
+t
+>  create mode 100644 drivers/spi/spi-nxp-fspi.c
+>=20
+> --
+> 2.7.4
+
