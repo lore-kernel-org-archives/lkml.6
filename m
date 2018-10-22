@@ -2,89 +2,146 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CE4C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 663C2C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E25B320651
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:07:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fRFc8ol+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E25B320651
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E741B20651
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:10:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E741B20651
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728703AbeJWB0V (ORCPT
+        id S1728653AbeJWB3W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 21:26:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43280 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbeJWB0U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 21:26:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FLOYoI1bRK7fDiusil94FHLHwhbNvTUERdR8vXQql2A=; b=fRFc8ol+zNyfvFTsDXZ4bkfEV
-        vGL+udtlogmJS1ZmScGuSQL1S9yA3HtSQP6vDeOclCRxOralc1jLX7no3i0nit/+BvDDvCMeHFsMv
-        2uRo02f05ehmiuj1kPmHOoepirnlLGqIzTv9UnS3Za4ANl97lWiKYxyWwNRvJbdczpekOZUcj1Sr7
-        AtAKXzuJz6mU2H8PK3tWShzfzLglOXav0hXSxy40AfNOVbOQMJHBqBm8P9VpC42Hs6Ai/e1arYvmw
-        B2Hx1qvcbmY9MHQVtATfJ8ilL6IkFPjZglp4llKRnihu+WhYlQSC0P2VUspjViNAfZNQ19mo9+W3z
-        FC1Mv4Vbg==;
-Received: from [167.98.65.38] (helo=worktop)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gEdfK-00014R-K9; Mon, 22 Oct 2018 17:06:54 +0000
-Received: by worktop (Postfix, from userid 1000)
-        id 55AE86E082E; Mon, 22 Oct 2018 18:56:31 +0200 (CEST)
-Date:   Mon, 22 Oct 2018 18:56:31 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steve Sistare <steven.sistare@oracle.com>
-Cc:     mingo@redhat.com, subhra.mazumdar@oracle.com,
-        dhaval.giani@oracle.com, rohit.k.jain@oracle.com,
-        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
-        matt@codeblueprint.co.uk, umgwanakikbuti@gmail.com,
-        riel@redhat.com, jbacik@fb.com, juri.lelli@redhat.com,
-        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 04/10] sched/fair: Dynamically update cfs_overload_cpus
-Message-ID: <20181022165631.GE3117@worktop.programming.kicks-ass.net>
-References: <1540220381-424433-1-git-send-email-steven.sistare@oracle.com>
- <1540220381-424433-5-git-send-email-steven.sistare@oracle.com>
+        Mon, 22 Oct 2018 21:29:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55846 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728481AbeJWB3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 21:29:22 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 026B33082A26;
+        Mon, 22 Oct 2018 17:10:02 +0000 (UTC)
+Received: from redhat.com (ovpn-125-63.rdu2.redhat.com [10.10.125.63])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 48AE317F90;
+        Mon, 22 Oct 2018 17:10:01 +0000 (UTC)
+Date:   Mon, 22 Oct 2018 13:10:00 -0400
+From:   Don Zickus <dzickus@redhat.com>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     David Miller <davem@davemloft.net>, acme@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: perf overlapping maps...
+Message-ID: <20181022171000.67rndl6br4fot7dm@redhat.com>
+References: <20181019.210549.1285253275146712779.davem@davemloft.net>
+ <20181019.214401.2045294780943844999.davem@davemloft.net>
+ <20181022140738.jvutwmstgm2f65et@redhat.com>
+ <20181022161613.GF2945@krava>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1540220381-424433-5-git-send-email-steven.sistare@oracle.com>
-User-Agent: Mutt/1.5.22.1 (2013-10-16)
+In-Reply-To: <20181022161613.GF2945@krava>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 22 Oct 2018 17:10:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 07:59:35AM -0700, Steve Sistare wrote:
-> An overloaded CPU has more than 1 runnable task.  When a CFS task wakes
-> on a CPU, if h_nr_running transitions from 1 to more, then set the CPU in
-> the cfs_overload_cpus bitmap.  When a CFS task sleeps, if h_nr_running
-> transitions from 2 to less, then clear the CPU in cfs_overload_cpus.
+On Mon, Oct 22, 2018 at 06:16:13PM +0200, Jiri Olsa wrote:
+> On Mon, Oct 22, 2018 at 10:07:38AM -0400, Don Zickus wrote:
+> > (adding Jiri)
+> > 
+> > On Fri, Oct 19, 2018 at 09:44:01PM -0700, David Miller wrote:
+> > > From: David Miller <davem@davemloft.net>
+> > > Date: Fri, 19 Oct 2018 21:05:49 -0700 (PDT)
+> > > 
+> > > > One solution I've come up with is:
+> > > > 
+> > > > 1) When synthesizing a fork event, set PERF_RECORD_MISC_COMM_EXEC in
+> > > >    header->misc.
+> > > > 
+> > > > 2) Use this to elide the map groups clone in
+> > > >    thread__clone_map_groups().
+> > > 
+> > > Looking into code history, I notice:
+> > > 
+> > > commit 363b785f3805a2632eb09a8b430842461c21a640
+> > > Author: Don Zickus <dzickus@redhat.com>
+> > > Date:   Fri Mar 14 10:43:44 2014 -0400
+> > > 
+> > >     perf tools: Speed up thread map generation
+> > > 
+> > > and the subsequent:
+> > > 
+> > > commit 4aa5f4f7bb8bc41cba15bcd0d80c4fb085027d6b
+> > > Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > > Date:   Fri Feb 27 19:52:10 2015 -0300
+> > > 
+> > >     perf tools: Fix FORK after COMM when synthesizing records for pre-existing threads
+> > > 
+> > > If Don wanted to have the map cloning to happen for processes without
+> > > CLONE_VM, I'm not sure that's right.
+> > > 
+> > > For real threads, we just take a reference to the map group from
+> > > the parent.
+> > > 
+> > > Don, a quick summary.  If we synthesize a fork event, let's say for an
+> > > emacs process.  perf will clone the map groups of the parent bash
+> > > shell which invoked emacs.  Via:
+> > > 
+> > > thread__fork(thread, parent, timestamp)
+> > > {
+> > >  ...
+> > >  thread__clone_map_groups(thread, parent)
+> > >  {
+> > >    ...
+> > >    map_groups__clone(thread, parent->mg)
+> > > 
+> > > Which is completely bogus.  It brings all of the bash process maps
+> > > into the emacs thread map group.  Then we process the emacs mmap2
+> > > events, which overlap the bash process maps already cloned into the
+> > > emacs map group.  And this make all kinds of erroneous things happen.
+> > > 
+> > > I'm suggesting to elide the map groups clone in this situation where
+> > > we are synthesizing the fork.
+> 
+> right, this seems correct.. we should only clone parent maps
+> for kernel fork event, not when we synthesize.. I'll check
+> the solution you proposed and try to come with a patch
 
-> @@ -5111,8 +5147,12 @@ static inline void hrtick_update(struct rq *rq)
->  		update_cfs_group(se);
->  	}
->  
-> -	if (!se)
-> +	if (!se) {
->  		add_nr_running(rq, 1);
-> +		if (prev_nr == 1)
-> +			overload_set(rq);
-> +
-> +	}
+Thanks Jiri for helping me out on this!
 
-This is very similar to what RT already has, except they also track if
-the tasks in question is in fact migratable (p->nr_cpus_allowed > 1).
+Cheers,
+Don
 
-And similarly, it might make sense to use the sparse mask thing over
-there.
+> 
+> > 
+> > Hi David,
+> > 
+> > Honestly, I remember very little of this change other than we ran specjbb
+> > which created thousands of threads and we wanted a better way to handle that
+> > situation (waiting 15 minutes seemed wrong).
+> > 
+> > Jiri Olsa is probably more knowledgable about this then I am these days and
+> > can work with Joe to re-do the test to verify any suggested changes does not
+> > break our intended use case.
+> > 
+> > Thinking about it more, I am wondering if we did this because we ran the
+> > test and it takes about 20 minutes to 'warm up' then we attached perf to the
+> > test.  This implies we had to handle the situation where 10K threads already
+> > existed hence our optimization.  But I can be wrong.
+> > 
+> > Your suggestion is probably right and I am sure we can reproduce the
+> > scenario to verify things didn't regress.
+> 
+> I think the fix might actualy speed things up,
+> but yes, there could be other report regressions
+> 
+> thanks,
+> jirka
