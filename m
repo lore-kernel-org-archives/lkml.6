@@ -2,205 +2,252 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 816F5C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18AECC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:11:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76DB020663
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:06:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76DB020663
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 22DCB20645
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 23:11:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22DCB20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728808AbeJWH0i (ORCPT
+        id S1728371AbeJWHbo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 03:26:38 -0400
-Received: from mga06.intel.com ([134.134.136.31]:27571 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725997AbeJWH0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 03:26:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2018 16:06:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,413,1534834800"; 
-   d="scan'208";a="80092642"
-Received: from orsmsx103.amr.corp.intel.com ([10.22.225.130])
-  by fmsmga007.fm.intel.com with ESMTP; 22 Oct 2018 16:06:02 -0700
-Received: from orsmsx157.amr.corp.intel.com (10.22.240.23) by
- ORSMSX103.amr.corp.intel.com (10.22.225.130) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 22 Oct 2018 16:06:02 -0700
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.23]) by
- ORSMSX157.amr.corp.intel.com ([169.254.9.138]) with mapi id 14.03.0319.002;
- Mon, 22 Oct 2018 16:06:01 -0700
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "jeyu@kernel.org" <jeyu@kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "arjan@linux.intel.com" <arjan@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>
-Subject: Re: [PATCH RFC v3 0/3] Rlimit for module space
-Thread-Topic: [PATCH RFC v3 0/3] Rlimit for module space
-Thread-Index: AQHUZ+1spfnb1SbseUKeGPVLPr4WMaUo18SAgAOF3YA=
-Date:   Mon, 22 Oct 2018 23:06:00 +0000
-Message-ID: <6b1017c450d163539d2b974657baaaf697f0a138.camel@intel.com>
-References: <20181019204723.3903-1-rick.p.edgecombe@intel.com>
-         <CAKv+Gu_AgPv2o4=U0-7pnpgtSufEobnta8oKhhGfCdCxM82B5Q@mail.gmail.com>
-In-Reply-To: <CAKv+Gu_AgPv2o4=U0-7pnpgtSufEobnta8oKhhGfCdCxM82B5Q@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.168]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1AB12749F9958F4E89403DA7611AC278@intel.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Tue, 23 Oct 2018 03:31:44 -0400
+Received: from www62.your-server.de ([213.133.104.62]:44032 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725997AbeJWHbo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 03:31:44 -0400
+Received: from [62.203.87.61] (helo=localhost)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gEjLn-0006lD-5d; Tue, 23 Oct 2018 01:11:07 +0200
+From:   Daniel Borkmann <daniel@iogearbox.net>
+To:     ast@kernel.org
+Cc:     rick.p.edgecombe@intel.com, eric.dumazet@gmail.com,
+        jannh@google.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: [PATCH bpf] bpf: add bpf_jit_limit knob to restrict unpriv allocations
+Date:   Tue, 23 Oct 2018 01:11:04 +0200
+Message-Id: <20181022231104.3443-1-daniel@iogearbox.net>
+X-Mailer: git-send-email 2.9.5
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25061/Mon Oct 22 23:06:35 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gU2F0LCAyMDE4LTEwLTIwIGF0IDE5OjIwICswMjAwLCBBcmQgQmllc2hldXZlbCB3cm90ZToN
-Cj4gSGkgUmljaywNCj4gDQo+IE9uIDE5IE9jdG9iZXIgMjAxOCBhdCAyMjo0NywgUmljayBFZGdl
-Y29tYmUgPHJpY2sucC5lZGdlY29tYmVAaW50ZWwuY29tPg0KPiB3cm90ZToNCj4gPiBJZiBCUEYg
-SklUIGlzIG9uLCB0aGVyZSBpcyBubyBlZmZlY3RpdmUgbGltaXQgdG8gcHJldmVudCBmaWxsaW5n
-IHRoZSBlbnRpcmUNCj4gPiBtb2R1bGUgc3BhY2Ugd2l0aCBKSVRlZCBlL0JQRiBmaWx0ZXJzLg0K
-PiANCj4gV2h5IGRvIEJQRiBmaWx0ZXJzIHVzZSB0aGUgbW9kdWxlIHNwYWNlLCBhbmQgZG9lcyB0
-aGlzIHJlYXNvbiBhcHBseSB0bw0KPiBhbGwgYXJjaGl0ZWN0dXJlcz8NCj4gDQo+IE9uIGFybTY0
-LCB3ZSBhbHJlYWR5IHN1cHBvcnQgbG9hZGluZyBwbGFpbiBtb2R1bGVzIGZhciBhd2F5IGZyb20g
-dGhlDQo+IGNvcmUga2VybmVsIChpLmUuIG91dCBvZiByYW5nZSBmb3Igb3JkaW5hcnkgcmVsYXRp
-dmUganVtcC9jYWxsbA0KPiBpbnN0cnVjdGlvbnMpLCBhbmQgc28gSSdkIGV4cGVjdCBCUEYgdG8g
-YmUgYWJsZSB0byBkZWFsIHdpdGggdGhpcw0KPiBhbHJlYWR5IGFzIHdlbGwuIFNvIGZvciBhcm02
-NCwgSSB3b25kZXIgd2h5IGFuIG9yZGluYXJ5IHZtYWxsb2NfZXhlYygpDQo+IHdvdWxkbid0IGJl
-IG1vcmUgYXBwcm9wcmlhdGUuDQpBRkFJSywgaXQncyBsaWtlIHlvdSBzYWlkIGFib3V0IHJlbGF0
-aXZlIGluc3RydWN0aW9uIGxpbWl0cywgYnV0IGFsc28gYmVjYXVzZQ0Kc29tZSBwcmVkaWN0b3Jz
-IGRvbid0IHByZWRpY3QgcGFzdCBhIGNlcnRhaW4gZGlzdGFuY2UuIFNvIHBlcmZvcm1hbmNlIGFz
-IHdlbGwuDQpOb3Qgc3VyZSB0aGUgcmVhc29ucyBmb3IgZWFjaCBhcmNoLCBvciBpZiB0aGV5IGFs
-bCBhcHBseSBmb3IgQlBGIEpJVC4gVGhlcmUgc2VlbQ0KdG8gYmUgOCBieSBteSBjb3VudCwgdGhh
-dCBoYXZlIGEgZGVkaWNhdGVkIG1vZHVsZSBzcGFjZSBmb3Igc29tZSByZWFzb24uDQoNCj4gU28g
-YmVmb3JlIHJlZmFjdG9yaW5nIHRoZSBtb2R1bGUgYWxsb2MvZnJlZSByb3V0aW5lcyB0byBhY2Nv
-bW1vZGF0ZQ0KPiBCUEYsIEknZCBsaWtlIHRvIHRha2Ugb25lIHN0ZXAgYmFjayBhbmQgYXNzZXNz
-IHdoZXRoZXIgaXQgd291bGRuJ3QgYmUNCj4gbW9yZSBhcHByb3ByaWF0ZSB0byBoYXZlIGEgc2Vw
-YXJhdGUgYnBmX2FsbG9jL2ZyZWUgQVBJLCB3aGljaCBjb3VsZCBiZQ0KPiB0b3RhbGx5IHNlcGFy
-YXRlIGZyb20gbW9kdWxlIGFsbG9jL2ZyZWUgaWYgdGhlIGFyY2ggcGVybWl0cyBpdC4NCj4gDQpJ
-IGFtIG5vdCBhIEJQRiBKSVQgZXhwZXJ0IHVuZm9ydHVuYXRlbHksIGhvcGVmdWxseSBzb21lb25l
-IG1vcmUgYXV0aG9yaXRhdGl2ZQ0Kd2lsbCBjaGltZSBpbi4gSSBvbmx5IHJhbiBpbnRvIHRoaXMg
-YmVjYXVzZSBJIHdhcyB0cnlpbmcgdG8gaW5jcmVhc2UNCnJhbmRvbWl6YXRpb24gZm9yIHRoZSBt
-b2R1bGUgc3BhY2UgYW5kIHdhbnRlZCB0byBmaW5kIG91dCBob3cgbWFueSBhbGxvY2F0aW9ucw0K
-bmVlZGVkIHRvIGJlIHN1cHBvcnRlZC4NCg0KSSdkIGd1ZXNzIHRob3VnaCwgdGhhdCBCUEYgSklU
-IGlzIGp1c3QgYXNzdW1pbmcgdGhhdCB0aGVyZSB3aWxsIGJlIHNvbWUgYXJjaA0Kc3BlY2lmaWMg
-Y29uc3RyYWludHMgYWJvdXQgd2hlcmUgdGV4dCBjYW4gYmUgcGxhY2VkIG9wdGltYWxseSBhbmQg
-dGhleSB3b3VsZA0KYWxyZWFkeSBiZSB0YWtlbiBpbnRvIGFjY291bnQgaW4gdGhlIG1vZHVsZSBz
-cGFjZSBhbGxvY2F0b3IuDQoNCklmIHRoZXJlIGFyZSBubyBjb25zdHJhaW50cyBmb3Igc29tZSBh
-cmNoLCBJJ2Qgd29uZGVyIHdoeSBub3QganVzdCB1cGRhdGUgaXRzDQptb2R1bGVfYWxsb2MgdG8g
-dXNlIHRoZSB3aG9sZSBzcGFjZSBhdmFpbGFibGUuIFdoYXQgZXhhY3RseSBhcmUgdGhlIGNvbnN0
-cmFpbnRzDQpmb3IgYXJtNjQgZm9yIG5vcm1hbCBtb2R1bGVzPw0KDQpJdCBzZWVtcyBmaW5lIHRv
-IG1lIGZvciBhcmNoaXRlY3R1cmVzIHRvIGhhdmUgdGhlIG9wdGlvbiBvZiBzb2x2aW5nIHRoaXMg
-YQ0KZGlmZmVyZW50IHdheS4gSWYgcG90ZW50aWFsbHkgdGhlIHJsaW1pdCBlbmRzIHVwIGJlaW5n
-IHRoZSBiZXN0IHNvbHV0aW9uIGZvcg0Kc29tZSBhcmNoaXRlY3R1cmVzIHRob3VnaCwgZG8geW91
-IHRoaW5rIHRoaXMgcmVmYWN0b3IgKHByZXR0eSBjbG9zZSB0byBqdXN0IGENCm5hbWUgY2hhbmdl
-KSBpcyB0aGF0IGludHJ1c2l2ZT8NCg0KSSBndWVzcyBpdCBjb3VsZCBiZSBqdXN0IGEgQlBGIEpJ
-VCBwZXIgdXNlciBsaW1pdCBhbmQgbm90IHRvdWNoIG1vZHVsZSBzcGFjZSwNCmJ1dCBJIHRob3Vn
-aHQgdGhlIG1vZHVsZSBzcGFjZSBsaW1pdCB3YXMgYSBtb3JlIGdlbmVyYWwgc29sdXRpb24gYXMg
-dGhhdCBpcyB0aGUNCmFjdHVhbCBsaW1pdGVkIHJlc291cmNlLg0KDQo+ID4gRm9yIGNsYXNzaWMg
-QlBGIGZpbHRlcnMgYXR0YWNoZWQgd2l0aA0KPiA+IHNldHNvY2tvcHQgU09fQVRUQUNIX0ZJTFRF
-UiwgdGhlcmUgaXMgbm8gbWVtbG9jayBybGltaXQgY2hlY2sgdG8gbGltaXQgdGhlDQo+ID4gbnVt
-YmVyIG9mIGluc2VydGlvbnMgbGlrZSB0aGVyZSBpcyBmb3IgdGhlIGJwZiBzeXNjYWxsLg0KPiA+
-IA0KPiA+IFRoaXMgcGF0Y2ggYWRkcyBhIHBlciB1c2VyIHJsaW1pdCBmb3IgbW9kdWxlIHNwYWNl
-LCBhcyB3ZWxsIGFzIGEgc3lzdGVtIHdpZGUNCj4gPiBsaW1pdCBmb3IgQlBGIEpJVC4gSW4gYSBw
-cmV2aW91c2x5IHJldmlld2VkIHBhdGNoc2V0LCBKYW5uIEhvcm4gcG9pbnRlZCBvdXQNCj4gPiB0
-aGUNCj4gPiBwcm9ibGVtIHRoYXQgaW4gc29tZSBjYXNlcyBhIHVzZXIgY2FuIGdldCBhY2Nlc3Mg
-dG8gNjU1MzYgVUlEcywgc28gdGhlDQo+ID4gZWZmZWN0aXZlDQo+ID4gbGltaXQgY2Fubm90IGJl
-IHNldCBsb3cgZW5vdWdoIHRvIHN0b3AgYW4gYXR0YWNrZXIgYW5kIGJlIHVzZWZ1bCBmb3IgdGhl
-DQo+ID4gZ2VuZXJhbA0KPiA+IGNhc2UuIEEgZGlzY3Vzc2VkIGFsdGVybmF0aXZlIHNvbHV0aW9u
-IHdhcyBhIHN5c3RlbSB3aWRlIGxpbWl0IGZvciBCUEYgSklUDQo+ID4gZmlsdGVycy4gVGhpcyBt
-dWNoIG1vcmUgc2ltcGx5IHJlc29sdmVzIHRoZSBwcm9ibGVtIG9mIGV4aGF1c3Rpb24gYW5kDQo+
-ID4gZGUtcmFuZG9taXppbmcgaW4gdGhlIGNhc2Ugb2Ygbm9uLUNPTkZJR19CUEZfSklUX0FMV0FZ
-U19PTi4gSWYNCj4gPiBDT05GSUdfQlBGX0pJVF9BTFdBWVNfT04gaXMgb24gaG93ZXZlciwgQlBG
-IGluc2VydGlvbnMgd2lsbCBmYWlsIGlmIGFub3RoZXINCj4gPiB1c2VyDQo+ID4gZXhoYXVzdHMg
-dGhlIEJQRiBKSVQgbGltaXQuIEluIHRoaXMgY2FzZSBhIHBlciB1c2VyIGxpbWl0IGlzIHN0aWxs
-IG5lZWRlZC4NCj4gPiBJZg0KPiA+IHRoZSBzdWJ1aWQgZmFjaWxpdHkgaXMgZGlzYWJsZWQgZm9y
-IG5vcm1hbCB1c2VycywgdGhpcyBzaG91bGQgc3RpbGwgYmUgb2sNCj4gPiBiZWNhdXNlIHRoZSBo
-aWdoZXIgbGltaXQgd2lsbCBub3QgYmUgYWJsZSB0byBiZSB3b3JrZWQgYXJvVGhleSBtaWdodCB1
-bmQNCj4gPiB0aGF0IHdheS4NCj4gPiANCj4gPiBUaGUgbmV3IEJQRiBKSVQgbGltaXQgY2FuIGJl
-IHNldCBsaWtlIHRoaXM6DQo+ID4gZWNobyA1MDAwMDAwID4gL3Byb2Mvc3lzL25ldC9jb3JlL2Jw
-Zl9qaXRfbGltaXQNCj4gPiANCj4gPiBTbyBJICp0aGluayogdGhpcyBwYXRjaHNldCBzaG91bGQg
-cmVzb2x2ZSB0aGF0IGlzc3VlIGV4Y2VwdCBmb3IgdGhlDQo+ID4gY29uZmlndXJhdGlvbiBvZiBD
-T05GSUdfQlBGX0pJVF9BTFdBWVNfT04gYW5kIHN1YnVpZCBhbGxvd2VkIGZvciBub3JtYWwNCj4g
-PiB1c2Vycy4NCj4gPiBCZXR0ZXIgbW9kdWxlIHNwYWNlIEtBU0xSIGlzIGFub3RoZXIgd2F5IHRv
-IHJlc29sdmUgdGhlIGRlLXJhbmRvbWl6aW5nDQo+ID4gaXNzdWUsDQo+ID4gYW5kIHNvIHRoZW4g
-eW91IHdvdWxkIGp1c3QgYmUgbGVmdCB3aXRoIHRoZSBCUEYgRE9TIGluIHRoYXQgY29uZmlndXJh
-dGlvbi4NCj4gPiANCj4gPiBKYW5uIGFsc28gcG9pbnRlZCBvdXQgaG93LCB3aXRoIHB1cnBvc2Vs
-eSBmcmFnbWVudGluZyB0aGUgbW9kdWxlIHNwYWNlLCB5b3UNCj4gPiBjb3VsZCBtYWtlIHRoZSBl
-ZmZlY3RpdmUgbW9kdWxlIHNwYWNlIGJsb2NrYWdlIGFyZWEgbXVjaCBsYXJnZXIuIFRoaXMgaXMN
-Cj4gPiBhbHNvDQo+ID4gc29tZXdoYXQgdW4tcmVzb2x2ZWQuIFRoZSBpbXBhY3Qgd291bGQgZGVw
-ZW5kIG9uIGhvdyBiaWcgb2YgYSBzcGFjZSB5b3UgYXJlDQo+ID4gdHJ5aW5nIHRvIGFsbG9jYXRl
-LiBUaGUgbGltaXQgaGFzIGJlZW4gbG93ZXJlZCBvbiB4ODZfNjQgc28gdGhhdCBhdCBsZWFzdA0K
-PiA+IHR5cGljYWwgc2l6ZWQgQlBGIGZpbHRlcnMgY2Fubm90IGJlIGJsb2NrZWQuDQo+ID4gDQo+
-ID4gSWYgYW55b25lIHdpdGggbW9yZSBleHBlcmllbmNlIHdpdGggc3VidWlkL3VzZXIgbmFtZXNw
-YWNlcyBoYXMgYW55DQo+ID4gc3VnZ2VzdGlvbnMNCj4gPiBJJ2QgYmUgZ2xhZCB0byBoZWFyLiBP
-biBhbiBVYnVudHUgbWFjaGluZSBpdCBkaWRuJ3Qgc2VlbSBsaWtlIGEgdW4tDQo+ID4gcHJpdmls
-ZWdlZA0KPiA+IHVzZXIgY291bGQgZG8gdGhpcy4gSSBhbSBnb2luZyB0byBrZWVwIHdvcmtpbmcg
-b24gdGhpcyBhbmQgc2VlIGlmIEkgY2FuIGZpbmQNCj4gPiBhDQo+ID4gYmV0dGVyIHNvbHV0aW9u
-Lg0KPiA+IA0KPiA+IENoYW5nZXMgc2luY2UgdjI6DQo+ID4gIC0gU3lzdGVtIHdpZGUgQlBGIEpJ
-VCBsaW1pdCAoZGlzY3Vzc2lvbiB3aXRoIEphbm4gSG9ybikNCj4gPiAgLSBIb2xkaW5nIHJlZmVy
-ZW5jZSB0byB1c2VyIGNvcnJlY3RseSAoSmFubikNCj4gPiAgLSBIYXZpbmcgYXJjaCB2ZXJzaW9u
-cyBvZiBtb2R1bGRlX2FsbG9jIChEYXZlIEhhbnNlbiwgSmVzc2ljYSBZdSkNCj4gPiAgLSBTaHJp
-bmtpbmcgb2YgZGVmYXVsdCBsaW1pdHMsIHRvIGhlbHAgcHJldmVudCB0aGUgbGltaXQgYmVpbmcg
-d29ya2VkDQo+ID4gYXJvdW5kDQo+ID4gICAgd2l0aCBmcmFnbWVudGF0aW9uIChKYW5uKQ0KPiA+
-IA0KPiA+IENoYW5nZXMgc2luY2UgdjE6DQo+ID4gIC0gUGx1ZyBpbiBmb3Igbm9uLXg4Ng0KPiA+
-ICAtIEFyY2ggc3BlY2lmaWMgZGVmYXVsdCB2YWx1ZXMNCj4gPiANCj4gPiANCj4gPiBSaWNrIEVk
-Z2Vjb21iZSAoMyk6DQo+ID4gICBtb2R1bGVzOiBDcmVhdGUgYXJjaCB2ZXJzaW9ucyBvZiBtb2R1
-bGUgYWxsb2MvZnJlZQ0KPiA+ICAgbW9kdWxlczogQ3JlYXRlIHJsaW1pdCBmb3IgbW9kdWxlIHNw
-YWNlDQo+ID4gICBicGY6IEFkZCBzeXN0ZW0gd2lkZSBCUEYgSklUIGxpbWl0DQo+ID4gDQo+ID4g
-IGFyY2gvYXJtL2tlcm5lbC9tb2R1bGUuYyAgICAgICAgICAgICAgICB8ICAgMiArLQ0KPiA+ICBh
-cmNoL2FybTY0L2tlcm5lbC9tb2R1bGUuYyAgICAgICAgICAgICAgfCAgIDIgKy0NCj4gPiAgYXJj
-aC9taXBzL2tlcm5lbC9tb2R1bGUuYyAgICAgICAgICAgICAgIHwgICAyICstDQo+ID4gIGFyY2gv
-bmRzMzIva2VybmVsL21vZHVsZS5jICAgICAgICAgICAgICB8ICAgMiArLQ0KPiA+ICBhcmNoL25p
-b3MyL2tlcm5lbC9tb2R1bGUuYyAgICAgICAgICAgICAgfCAgIDQgKy0NCj4gPiAgYXJjaC9wYXJp
-c2Mva2VybmVsL21vZHVsZS5jICAgICAgICAgICAgIHwgICAyICstDQo+ID4gIGFyY2gvczM5MC9r
-ZXJuZWwvbW9kdWxlLmMgICAgICAgICAgICAgICB8ICAgMiArLQ0KPiA+ICBhcmNoL3NwYXJjL2tl
-cm5lbC9tb2R1bGUuYyAgICAgICAgICAgICAgfCAgIDIgKy0NCj4gPiAgYXJjaC91bmljb3JlMzIv
-a2VybmVsL21vZHVsZS5jICAgICAgICAgIHwgICAyICstDQo+ID4gIGFyY2gveDg2L2luY2x1ZGUv
-YXNtL3BndGFibGVfMzJfdHlwZXMuaCB8ICAgMyArDQo+ID4gIGFyY2gveDg2L2luY2x1ZGUvYXNt
-L3BndGFibGVfNjRfdHlwZXMuaCB8ICAgMiArDQo+ID4gIGFyY2gveDg2L2tlcm5lbC9tb2R1bGUu
-YyAgICAgICAgICAgICAgICB8ICAgMiArLQ0KPiA+ICBmcy9wcm9jL2Jhc2UuYyAgICAgICAgICAg
-ICAgICAgICAgICAgICAgfCAgIDEgKw0KPiA+ICBpbmNsdWRlL2FzbS1nZW5lcmljL3Jlc291cmNl
-LmggICAgICAgICAgfCAgIDggKysNCj4gPiAgaW5jbHVkZS9saW51eC9icGYuaCAgICAgICAgICAg
-ICAgICAgICAgIHwgICA3ICsrDQo+ID4gIGluY2x1ZGUvbGludXgvZmlsdGVyLmggICAgICAgICAg
-ICAgICAgICB8ICAgMSArDQo+ID4gIGluY2x1ZGUvbGludXgvc2NoZWQvdXNlci5oICAgICAgICAg
-ICAgICB8ICAgNCArDQo+ID4gIGluY2x1ZGUvdWFwaS9hc20tZ2VuZXJpYy9yZXNvdXJjZS5oICAg
-ICB8ICAgMyArLQ0KPiA+ICBrZXJuZWwvYnBmL2NvcmUuYyAgICAgICAgICAgICAgICAgICAgICAg
-fCAgMjIgKysrLQ0KPiA+ICBrZXJuZWwvYnBmL2lub2RlLmMgICAgICAgICAgICAgICAgICAgICAg
-fCAgMTYgKysrDQo+ID4gIGtlcm5lbC9tb2R1bGUuYyAgICAgICAgICAgICAgICAgICAgICAgICB8
-IDE1MiArKysrKysrKysrKysrKysrKysrKysrKy0NCj4gPiAgbmV0L2NvcmUvc3lzY3RsX25ldF9j
-b3JlLmMgICAgICAgICAgICAgIHwgICA3ICsrDQo+ID4gIDIyIGZpbGVzIGNoYW5nZWQsIDIzMyBp
-bnNlcnRpb25zKCspLCAxNSBkZWxldGlvbnMoLSkNCj4gPiANCj4gPiAtLQ0KPiA+IDIuMTcuMQ0K
-PiA+IA0KYnJhbmNoaW5nIHByZWRpY3RvcnMgbWF5IG5vdCBiZSBhYmxlIHRvIHByZWRpY3QgcGFz
-dCBhIGNlcnRhaW4gZGlzdGFuY2UuIFNvDQpwZXJmb3JtYW5jZSBhcyB3ZWxsLg0K
+Rick reported that the BPF JIT could potentially fill the entire module
+space with BPF programs from unprivileged users which would prevent later
+attempts to load normal kernel modules or privileged BPF programs, for
+example. If JIT was enabled but unsuccessful to generate the image, then
+before commit 290af86629b2 ("bpf: introduce BPF_JIT_ALWAYS_ON config")
+we would always fall back to the BPF interpreter. Nowadays in the case
+where the CONFIG_BPF_JIT_ALWAYS_ON could be set, then the load will abort
+with a failure since the BPF interpreter was compiled out.
+
+Add a global limit and enforce it for unprivileged users such that in case
+of BPF interpreter compiled out we fail once the limit has been reached
+or we fall back to BPF interpreter earlier w/o using module mem if latter
+was compiled in. In a next step, fair share among unprivileged users can
+be resolved in particular for the case where we would fail hard once limit
+is reached.
+
+Fixes: 290af86629b2 ("bpf: introduce BPF_JIT_ALWAYS_ON config")
+Fixes: 0a14842f5a3c ("net: filter: Just In Time compiler for x86-64")
+Co-Developed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+---
+ Hi Rick, I've reworked the original patch into something much simpler
+ which is only focussing on the actual main issue we want to resolve right
+ now as a first step to make some forward progress, that is, limiting usage
+ on the JIT for unprivileged users. Tested the below on x86 and arm64.
+ (Trimmed down massive Cc list as well a bit and Cc'ed people related to
+ commits referenced and netdev where BPF patches are usually discussed.)
+ Thanks a lot!
+
+ Documentation/sysctl/net.txt |  8 ++++++++
+ include/linux/filter.h       |  1 +
+ kernel/bpf/core.c            | 49 +++++++++++++++++++++++++++++++++++++++++---
+ net/core/sysctl_net_core.c   | 10 +++++++--
+ 4 files changed, 63 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/sysctl/net.txt b/Documentation/sysctl/net.txt
+index 9ecde51..2793d4e 100644
+--- a/Documentation/sysctl/net.txt
++++ b/Documentation/sysctl/net.txt
+@@ -92,6 +92,14 @@ Values :
+ 	0 - disable JIT kallsyms export (default value)
+ 	1 - enable JIT kallsyms export for privileged users only
+ 
++bpf_jit_limit
++-------------
++
++This enforces a global limit for memory allocations to the BPF JIT
++compiler in order to reject unprivileged JIT requests once it has
++been surpassed. bpf_jit_limit contains the value of the global limit
++in bytes.
++
+ dev_weight
+ --------------
+ 
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index 91b4c93..de629b7 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -854,6 +854,7 @@ bpf_run_sk_reuseport(struct sock_reuseport *reuse, struct sock *sk,
+ extern int bpf_jit_enable;
+ extern int bpf_jit_harden;
+ extern int bpf_jit_kallsyms;
++extern int bpf_jit_limit;
+ 
+ typedef void (*bpf_jit_fill_hole_t)(void *area, unsigned int size);
+ 
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index 7c7eeea..6377225 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -365,10 +365,13 @@ void bpf_prog_kallsyms_del_all(struct bpf_prog *fp)
+ }
+ 
+ #ifdef CONFIG_BPF_JIT
++# define BPF_JIT_LIMIT_DEFAULT	(PAGE_SIZE * 40000)
++
+ /* All BPF JIT sysctl knobs here. */
+ int bpf_jit_enable   __read_mostly = IS_BUILTIN(CONFIG_BPF_JIT_ALWAYS_ON);
+ int bpf_jit_harden   __read_mostly;
+ int bpf_jit_kallsyms __read_mostly;
++int bpf_jit_limit    __read_mostly = BPF_JIT_LIMIT_DEFAULT;
+ 
+ static __always_inline void
+ bpf_get_prog_addr_region(const struct bpf_prog *prog,
+@@ -577,27 +580,64 @@ int bpf_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
+ 	return ret;
+ }
+ 
++static atomic_long_t bpf_jit_current;
++
++#if defined(MODULES_VADDR)
++static int __init bpf_jit_charge_init(void)
++{
++	/* Only used as heuristic here to derive limit. */
++	bpf_jit_limit = min_t(u64, round_up((MODULES_END - MODULES_VADDR) >> 2,
++					    PAGE_SIZE), INT_MAX);
++	return 0;
++}
++pure_initcall(bpf_jit_charge_init);
++#endif
++
++static int bpf_jit_charge_modmem(u32 pages)
++{
++	if (atomic_long_add_return(pages, &bpf_jit_current) >
++	    (bpf_jit_limit >> PAGE_SHIFT)) {
++		if (!capable(CAP_SYS_ADMIN)) {
++			atomic_long_sub(pages, &bpf_jit_current);
++			return -EPERM;
++		}
++	}
++
++	return 0;
++}
++
++static void bpf_jit_uncharge_modmem(u32 pages)
++{
++	atomic_long_sub(pages, &bpf_jit_current);
++}
++
+ struct bpf_binary_header *
+ bpf_jit_binary_alloc(unsigned int proglen, u8 **image_ptr,
+ 		     unsigned int alignment,
+ 		     bpf_jit_fill_hole_t bpf_fill_ill_insns)
+ {
+ 	struct bpf_binary_header *hdr;
+-	unsigned int size, hole, start;
++	u32 size, hole, start, pages;
+ 
+ 	/* Most of BPF filters are really small, but if some of them
+ 	 * fill a page, allow at least 128 extra bytes to insert a
+ 	 * random section of illegal instructions.
+ 	 */
+ 	size = round_up(proglen + sizeof(*hdr) + 128, PAGE_SIZE);
++	pages = size / PAGE_SIZE;
++
++	if (bpf_jit_charge_modmem(pages))
++		return NULL;
+ 	hdr = module_alloc(size);
+-	if (hdr == NULL)
++	if (!hdr) {
++		bpf_jit_uncharge_modmem(pages);
+ 		return NULL;
++	}
+ 
+ 	/* Fill space with illegal/arch-dep instructions. */
+ 	bpf_fill_ill_insns(hdr, size);
+ 
+-	hdr->pages = size / PAGE_SIZE;
++	hdr->pages = pages;
+ 	hole = min_t(unsigned int, size - (proglen + sizeof(*hdr)),
+ 		     PAGE_SIZE - sizeof(*hdr));
+ 	start = (get_random_int() % hole) & ~(alignment - 1);
+@@ -610,7 +650,10 @@ bpf_jit_binary_alloc(unsigned int proglen, u8 **image_ptr,
+ 
+ void bpf_jit_binary_free(struct bpf_binary_header *hdr)
+ {
++	u32 pages = hdr->pages;
++
+ 	module_memfree(hdr);
++	bpf_jit_uncharge_modmem(pages);
+ }
+ 
+ /* This symbol is only overridden by archs that have different
+diff --git a/net/core/sysctl_net_core.c b/net/core/sysctl_net_core.c
+index b1a2c5e..37b4667 100644
+--- a/net/core/sysctl_net_core.c
++++ b/net/core/sysctl_net_core.c
+@@ -279,7 +279,6 @@ static int proc_dointvec_minmax_bpf_enable(struct ctl_table *table, int write,
+ 	return ret;
+ }
+ 
+-# ifdef CONFIG_HAVE_EBPF_JIT
+ static int
+ proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
+ 				    void __user *buffer, size_t *lenp,
+@@ -290,7 +289,6 @@ proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
+ 
+ 	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+ }
+-# endif
+ #endif
+ 
+ static struct ctl_table net_core_table[] = {
+@@ -397,6 +395,14 @@ static struct ctl_table net_core_table[] = {
+ 		.extra2		= &one,
+ 	},
+ # endif
++	{
++		.procname	= "bpf_jit_limit",
++		.data		= &bpf_jit_limit,
++		.maxlen		= sizeof(int),
++		.mode		= 0600,
++		.proc_handler	= proc_dointvec_minmax_bpf_restricted,
++		.extra1		= &one,
++	},
+ #endif
+ 	{
+ 		.procname	= "netdev_tstamp_prequeue",
+-- 
+2.9.5
+
