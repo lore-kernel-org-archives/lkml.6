@@ -2,158 +2,372 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B12EBC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 06:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF22C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 06:26:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 586F220644
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 06:22:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46BD520644
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 06:26:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CapiZL2X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 586F220644
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G9E1p1jA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46BD520644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbeJVOjq (ORCPT
+        id S1727533AbeJVOnh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 10:39:46 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:34219 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727227AbeJVOjq (ORCPT
+        Mon, 22 Oct 2018 10:43:37 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:39944 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727348AbeJVOng (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 10:39:46 -0400
-Received: by mail-yb1-f195.google.com with SMTP id n140-v6so837051yba.1
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 23:22:38 -0700 (PDT)
+        Mon, 22 Oct 2018 10:43:36 -0400
+Received: by mail-yw1-f66.google.com with SMTP id l79-v6so15557427ywc.7
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 23:26:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OstAVuDEpivPIV9hXGb9UqRs+TZke7Mfv4BadOxYPt8=;
-        b=CapiZL2XAl9qIDcmMXBVZiXDy3smIHECHkTkrYiFUtYCTbn1rFM3ykTSvLxnGezNMl
-         /Y37RdLZL0gLjeMfXvZEZmIBs4eqYRsP48NRws5YFzQFKCpd8sH6GuoqarQ5OV0NPw7x
-         egjfxqD0ViSG1uvw9WXH5k05N5mQeBC9OySkI=
+         :cc:content-transfer-encoding;
+        bh=vG4flJMkRRq86P5QsPgTd8oNXN00HYfxkGjOZaQ2rRk=;
+        b=G9E1p1jAKV3Ynoopc3My0TDA7WVTC3JLI2wYfcL4A0qhPNsJ2dmMJCK9qZ6fhTTt6s
+         zL6/jS850Pbsn9zcppoaA3Km4H7jcMcZwrrMkdKjdrR107CCCsJHyn+mGdt7Ta7/xiAT
+         mxPPCO6owE93rMOmGjb/eTMHRfSV87hMpEMEc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OstAVuDEpivPIV9hXGb9UqRs+TZke7Mfv4BadOxYPt8=;
-        b=aUup9Y7J89l8DLNuX0wMf63UA+QIBOA0ww1rEHjrdn8Sbn8WzyH7RI4B4g0bw/lPZr
-         QelNMZ6/3S6RRgfX6RSJmMOBE1YsSwRl/BNmCM+d6ityYCocxmfHXAyoX928ncGUBqdZ
-         FGmEEI0u2/WQ5whq1GVRyw1AiHgE6Y5Y2D8qrIBWKHbNN1APZPMKIwFZIc71tfF3iXuY
-         mh7Rj3JNWb7jjUNyPTeyBpyRh9GW/dGsuXlbxunp2Qm6PKGtiLLrkAEGGihPgD1GP5OF
-         ybZONwYJP2spxkNtAruKmDekHz/GI7KPki7cerGuEu8zrLGOXe8PT7BWE7wEj+ZpOjhG
-         fKzg==
-X-Gm-Message-State: ABuFfog9WZgzk3+z1lmOctsh8L/BrsLw/71pKw1+J0fUyQcXVuvoFBXb
-        Setg/0TAL+sCWzx+BzYXF+qpL+p/NkE=
-X-Google-Smtp-Source: ACcGV60J8nP07gfsEEkrCoHNCuW2biq6KocNvY4yCtWsuVQQjh6Uapr8ayYJ/f/xiVqRPNNVSAplhQ==
-X-Received: by 2002:a25:be85:: with SMTP id i5-v6mr32409735ybk.138.1540189357808;
-        Sun, 21 Oct 2018 23:22:37 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id k2-v6sm8671977ywh.52.2018.10.21.23.22.36
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vG4flJMkRRq86P5QsPgTd8oNXN00HYfxkGjOZaQ2rRk=;
+        b=DytF338JaFjut7cMbhgX6OyevSauDhkR5N5ZEwneenJWtR2ChnIXYVBJEXNlccuvB0
+         yETXdrar6UVJd0K56dgTs8NELkU0WK2Q20pf+kaJvuY3J61QxOQ42rSu/tOBAsoQb0QC
+         lxvsc4rJR3eK+oWHWpD9DkAHPGkBUlyEGekJ2i/U2LLUHj8ex0W+QFRT4gqPA16eNgiD
+         ImhTFn8YZp9eKinuKs6fZAxooMeZBfSbK6Ml0B0c87QdmnlHmJ/wWe0EQeXLRTz9n8bt
+         oKoD7WJBgXc1OSwSr0LY8mj3Skqei2CkDQxkouZyp7T394lwaQ/Tv5+LOs8iep653WqB
+         3pJw==
+X-Gm-Message-State: ABuFfojp/+tozISuBxdKvUFz+lkpz6yIbSKkMjzcZ99xEbiwBVZLC3n6
+        VGw0bhj84NUSRXhWDRKDFKyn+xan3dk=
+X-Google-Smtp-Source: ACcGV62lTWMc3lNWH8GxZarZlVBfZnJcKDsxuGgedrBl8l2Lo1dcOMCh5TQq3CWtOrMlq2URjHQ+MQ==
+X-Received: by 2002:a0d:ce42:: with SMTP id q63-v6mr401205ywd.369.1540189587404;
+        Sun, 21 Oct 2018 23:26:27 -0700 (PDT)
+Received: from mail-yw1-f54.google.com (mail-yw1-f54.google.com. [209.85.161.54])
+        by smtp.gmail.com with ESMTPSA id u131-v6sm662118ywa.32.2018.10.21.23.26.27
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 21 Oct 2018 23:22:36 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id x5-v6so15685932ybl.11
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 23:22:36 -0700 (PDT)
-X-Received: by 2002:a25:103:: with SMTP id 3-v6mr18577930ybb.114.1540189356338;
- Sun, 21 Oct 2018 23:22:36 -0700 (PDT)
+        Sun, 21 Oct 2018 23:26:27 -0700 (PDT)
+Received: by mail-yw1-f54.google.com with SMTP id a197-v6so15549439ywh.9
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 23:26:27 -0700 (PDT)
+X-Received: by 2002:a81:8144:: with SMTP id r65-v6mr30217179ywf.403.1540189159314;
+ Sun, 21 Oct 2018 23:19:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181019080928.208446-1-acourbot@chromium.org>
- <9375d854-2be5-4f69-2516-a3349fa5b50d@xs4all.nl> <CAPBb6MVt4WEEd+83UTPJcqUHZ6ss=TDU5C_kbTQhGqT0fWcYPQ@mail.gmail.com>
-In-Reply-To: <CAPBb6MVt4WEEd+83UTPJcqUHZ6ss=TDU5C_kbTQhGqT0fWcYPQ@mail.gmail.com>
+References: <20180724140621.59624-1-tfiga@chromium.org> <4766921.vZCsLckqXW@avalon>
+ <CAAFQd5BnfZdbBpDq5qGwLQrWOzae-kd57JTv1ieokCs8H5K1MQ@mail.gmail.com> <2340231.s4xOQAu5Wh@avalon>
+In-Reply-To: <2340231.s4xOQAu5Wh@avalon>
 From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Mon, 22 Oct 2018 15:22:25 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5B2i+kpP7rpvCGuAGRV13Crxk61Xk23XBoR_CEZte3ARg@mail.gmail.com>
-Message-ID: <CAAFQd5B2i+kpP7rpvCGuAGRV13Crxk61Xk23XBoR_CEZte3ARg@mail.gmail.com>
-Subject: Re: [RFC PATCH v3] media: docs-rst: Document m2m stateless video
+Date:   Mon, 22 Oct 2018 15:19:07 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5Aoezyq6ZcUh7XV8dEJFqj7N+pTsGBke-fWKTKJ_sYCyg@mail.gmail.com>
+Message-ID: <CAAFQd5Aoezyq6ZcUh7XV8dEJFqj7N+pTsGBke-fWKTKJ_sYCyg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
  decoder interface
-To:     Alexandre Courbot <acourbot@chromium.org>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
         Pawel Osciak <posciak@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 3:05 PM Alexandre Courbot <acourbot@chromium.org> wrote:
+On Sun, Oct 21, 2018 at 6:23 PM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
 >
-> On Fri, Oct 19, 2018 at 5:44 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> Hi Tomasz,
+>
+> On Saturday, 20 October 2018 11:52:57 EEST Tomasz Figa wrote:
+> > On Thu, Oct 18, 2018 at 8:22 PM Laurent Pinchart wrote:
+> > > On Thursday, 18 October 2018 13:03:33 EEST Tomasz Figa wrote:
+> > >> On Wed, Oct 17, 2018 at 10:34 PM Laurent Pinchart wrote:
+> > >>> On Tuesday, 24 July 2018 17:06:20 EEST Tomasz Figa wrote:
+> > >>>> Due to complexity of the video decoding process, the V4L2 drivers =
+of
+> > >>>> stateful decoder hardware require specific sequences of V4L2 API
+> > >>>> calls to be followed. These include capability enumeration,
+> > >>>> initialization, decoding, seek, pause, dynamic resolution change, =
+drain
+> > >>>> and end of stream.
+> > >>>>
+> > >>>> Specifics of the above have been discussed during Media Workshops =
+at
+> > >>>> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
+> > >>>> Conference Europe 2014 in D=C3=BCsseldorf. The de facto Codec API =
+that
+> > >>>> originated at those events was later implemented by the drivers we
+> > >>>> already have merged in mainline, such as s5p-mfc or coda.
+> > >>>>
+> > >>>> The only thing missing was the real specification included as a pa=
+rt
+> > >>>> of Linux Media documentation. Fix it now and document the decoder =
+part
+> > >>>> of the Codec API.
+> > >>>>
+> > >>>> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+> > >>>> ---
+> > >>>>
+> > >>>>  Documentation/media/uapi/v4l/dev-decoder.rst | 872 ++++++++++++++=
++++++
+> > >>>>  Documentation/media/uapi/v4l/devices.rst     |   1 +
+> > >>>>  Documentation/media/uapi/v4l/v4l2.rst        |  10 +-
+> > >>>>  3 files changed, 882 insertions(+), 1 deletion(-)
+> > >>>>  create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
+> > >>>>
+> > >>>> diff --git a/Documentation/media/uapi/v4l/dev-decoder.rst
+> > >>>> b/Documentation/media/uapi/v4l/dev-decoder.rst new file mode 10064=
+4
+> > >>>> index 000000000000..f55d34d2f860
+> > >>>> --- /dev/null
+> > >>>> +++ b/Documentation/media/uapi/v4l/dev-decoder.rst
+> > >>>> @@ -0,0 +1,872 @@
+> > >
+> > > [snip]
+> > >
+> > >>>> +4.  Allocate source (bitstream) buffers via :c:func:`VIDIOC_REQBU=
+FS`
+> > >>>> on
+> > >>>> +    ``OUTPUT``.
+> > >>>> +
+> > >>>> +    * **Required fields:**
+> > >>>> +
+> > >>>> +      ``count``
+> > >>>> +          requested number of buffers to allocate; greater than z=
+ero
+> > >>>> +
+> > >>>> +      ``type``
+> > >>>> +          a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
+> > >>>> +
+> > >>>> +      ``memory``
+> > >>>> +          follows standard semantics
+> > >>>> +
+> > >>>> +      ``sizeimage``
+> > >>>> +          follows standard semantics; the client is free to choos=
+e
+> > >>>> any
+> > >>>> +          suitable size, however, it may be subject to change by =
+the
+> > >>>> +          driver
+> > >>>> +
+> > >>>> +    * **Return fields:**
+> > >>>> +
+> > >>>> +      ``count``
+> > >>>> +          actual number of buffers allocated
+> > >>>> +
+> > >>>> +    * The driver must adjust count to minimum of required number =
+of
+> > >>>> +      ``OUTPUT`` buffers for given format and count passed.
+> > >>>
+> > >>> Isn't it the maximum, not the minimum ?
+> > >>
+> > >> It's actually neither. All we can generally say here is that the
+> > >> number will be adjusted and the client must note it.
+> > >
+> > > I expect it to be clamp(requested count, driver minimum, driver maxim=
+um).
+> > > I'm not sure it's worth capturing this in the document though, but we
+> > > could say
+> > >
+> > > "The driver must clam count to the minimum and maximum number of requ=
+ired
+> > > ``OUTPUT`` buffers for the given format ."
 > >
-> > On 10/19/18 10:09, Alexandre Courbot wrote:
-> > > Thanks everyone for the feedback on v2! I have not replied to all the
-> > > individual emails but hope this v3 will address some of the problems
-> > > raised and become a continuation point for the topics still in
-> > > discussion (probably during the ELCE Media Summit).
-> > >
-> > > This patch documents the protocol that user-space should follow when
-> > > communicating with stateless video decoders. It is based on the
-> > > following references:
-> > >
-> > > * The current protocol used by Chromium (converted from config store to
-> > >   request API)
-> > >
-> > > * The submitted Cedrus VPU driver
-> > >
-> > > As such, some things may not be entirely consistent with the current
-> > > state of drivers, so it would be great if all stakeholders could point
-> > > out these inconsistencies. :)
-> > >
-> > > This patch is supposed to be applied on top of the Request API V18 as
-> > > well as the memory-to-memory video decoder interface series by Tomasz
-> > > Figa.
-> > >
-> > > Changes since v2:
-> > >
-> > > * Specify that the frame header controls should be set prior to
-> > >   enumerating the CAPTURE queue, instead of the profile which as Paul
-> > >   and Tomasz pointed out is not enough to know which raw formats will be
-> > >   usable.
-> > > * Change V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAM to
-> > >   V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAMS.
-> > > * Various rewording and rephrasing
-> > >
-> > > Two points being currently discussed have not been changed in this
-> > > revision due to lack of better idea. Of course this is open to change:
-> > >
-> > > * The restriction of having to send full frames for each input buffer is
-> > >   kept as-is. As Hans pointed, we currently have a hard limit of 32
-> > >   buffers per queue, and it may be non-trivial to lift. Also some codecs
-> > >   (at least Venus AFAIK) do have this restriction in hardware, so unless
-> > >   we want to do some buffer-rearranging in-kernel, it is probably better
-> > >   to keep the default behavior as-is. Finally, relaxing the rule should
-> > >   be easy enough if we add one extra control to query whether the
-> > >   hardware can work with slice units, as opposed to frame units.
+> > I'd leave the details to the documentation of VIDIOC_REQBUFS, if
+> > needed. This document focuses on the decoder UAPI and with this note I
+> > want to ensure that the applications don't assume that exactly the
+> > requested number of buffers is always allocated.
 > >
-> > Makes sense, as long as the restriction can be lifted in the future.
+> > How about making it even simpler:
+> >
+> > The actual number of allocated buffers may differ from the ``count``
+> > given. The client must check the updated value of ``count`` after the
+> > call returns.
 >
-> Lifting this limitation once we support more than 32 buffers should
-> not be an issue. Just add a new capability control and process things
-> in slice units. Right now we have hardware that can only work with
-> whole frames (venus)
-
-Note that venus is a stateful hardware and the restriction might just
-come from the firmware.
-
-> but I suspect that some slice-only hardware must
-> exist, so it may actually become a necessity at some point (lest
-> drivers do some splitting themselves).
+> That works for me. You may want to see "... given, as specified in the
+> VIDIOC_REQBUFS documentation.".
 >
 
-The drivers could do it trivially, because the UAPI will include the
-array of slices, with offsets and sizes. It would just run the same
-OUTPUT buffer multiple time, once for each slice.
+The "Conventions[...]" section mentions that
 
-The primary use case I personally see for splitting slices into
-multiple buffers would be lowering the latency, as Hans mentioned
-earlier and we should be able to do it easily later.
+1. The general V4L2 API rules apply if not specified in this document
+   otherwise.
+
+so I think I'll skip this additional explanation.
+
+> > >>>> The client must
+> > >>>> +      check this value after the ioctl returns to get the number =
+of
+> > >>>> +      buffers allocated.
+> > >>>> +
+> > >>>> +    .. note::
+> > >>>> +
+> > >>>> +       To allocate more than minimum number of buffers (for pipel=
+ine
+> > >>>> +       depth), use G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT``) to
+> > >>>> +       get minimum number of buffers required by the driver/forma=
+t,
+> > >>>> +       and pass the obtained value plus the number of additional
+> > >>>> +       buffers needed in count to :c:func:`VIDIOC_REQBUFS`.
+> > >>>> +
+> > >>>> +5.  Start streaming on ``OUTPUT`` queue via
+> > >>>> :c:func:`VIDIOC_STREAMON`.
+> > >>>> +
+> > >>>> +6.  This step only applies to coded formats that contain resoluti=
+on
+> > >>>> +    information in the stream. Continue queuing/dequeuing bitstre=
+am
+> > >>>> +    buffers to/from the ``OUTPUT`` queue via :c:func:`VIDIOC_QBUF=
+`
+> > >>>> and
+> > >>>> +    :c:func:`VIDIOC_DQBUF`. The driver must keep processing and
+> > >>>> returning
+> > >>>> +    each buffer to the client until required metadata to configur=
+e
+> > >>>> the
+> > >>>> +    ``CAPTURE`` queue are found. This is indicated by the driver
+> > >>>> sending
+> > >>>> +    a ``V4L2_EVENT_SOURCE_CHANGE`` event with
+> > >>>> +    ``V4L2_EVENT_SRC_CH_RESOLUTION`` source change type. There is=
+ no
+> > >>>> +    requirement to pass enough data for this to occur in the firs=
+t
+> > >>>> buffer
+> > >>>> +    and the driver must be able to process any number.
+> > >>>> +
+> > >>>> +    * If data in a buffer that triggers the event is required to
+> > >>>> decode
+> > >>>> +      the first frame, the driver must not return it to the clien=
+t,
+> > >>>> +      but must retain it for further decoding.
+> > >>>> +
+> > >>>> +    * If the client set width and height of ``OUTPUT`` format to =
+0,
+> > >>>> calling
+> > >>>> +      :c:func:`VIDIOC_G_FMT` on the ``CAPTURE`` queue will return
+> > >>>> -EPERM,
+> > >>>> +      until the driver configures ``CAPTURE`` format according to
+> > >>>> stream
+> > >>>> +      metadata.
+> > >>>
+> > >>> That's a pretty harsh handling for this condition. What's the
+> > >>> rationale for returning -EPERM instead of for instance succeeding w=
+ith
+> > >>> width and height set to 0 ?
+> > >>
+> > >> I don't like it, but the error condition must stay for compatibility
+> > >> reasons as that's what current drivers implement and applications
+> > >> expect. (Technically current drivers would return -EINVAL, but we
+> > >> concluded that existing applications don't care about the exact valu=
+e,
+> > >> so we can change it to make more sense.)
+> > >
+> > > Fair enough :-/ A bit of a shame though. Should we try to use an erro=
+r
+> > > code that would have less chance of being confused with an actual
+> > > permission problem ? -EILSEQ could be an option for "illegal sequence=
+" of
+> > > operations, but better options could exist.
+> >
+> > In Request API we concluded that -EACCES is the right code to return
+> > for G_EXT_CTRLS on a request that has not finished yet. The case here
+> > is similar - the capture queue is not yet set up. What do you think?
+>
+> Good question. -EPERM is documented as "Operation not permitted", while -
+> EACCES is documented as "Permission denied". The former appears to be
+> understood as "This isn't a good idea, I can't let you do that", and the
+> latter as "You don't have sufficient privileges, if you retry with the co=
+rrect
+> privileges this will succeed". Neither are a perfect match, but -EACCES m=
+ight
+> be better if you replace getting privileges by performing the required se=
+tup.
+>
+
+AFAIR that was also the rationale behind it for the Request API.
+
+> > >>>> +    * If the client subscribes to ``V4L2_EVENT_SOURCE_CHANGE``
+> > >>>> events and
+> > >>>> +      the event is signaled, the decoding process will not contin=
+ue
+> > >>>> until
+> > >>>> +      it is acknowledged by either (re-)starting streaming on
+> > >>>> ``CAPTURE``,
+> > >>>> +      or via :c:func:`VIDIOC_DECODER_CMD` with
+> > >>>> ``V4L2_DEC_CMD_START``
+> > >>>> +      command.
+> > >>>> +
+> > >>>> +    .. note::
+> > >>>> +
+> > >>>> +       No decoded frames are produced during this phase.
+> > >>>> +
+>
+> [snip]
+>
+> > >> Also added a note:
+> > >>        To fulfill those requirements, the client may attempt to use
+> > >>        :c:func:`VIDIOC_CREATE_BUFS` to add more buffers. However, du=
+e to
+> > >>        hardware limitations, the decoder may not support adding buff=
+ers
+> > >>        at this point and the client must be able to handle a failure
+> > >>        using the steps below.
+> > >
+> > > I wonder if there could be a way to work around those limitations on =
+the
+> > > driver side. At the beginning of step 7, the decoder is effectively
+> > > stopped. If the hardware doesn't support adding new buffers on the fl=
+y,
+> > > can't the driver support the VIDIOC_CREATE_BUFS + V4L2_DEC_CMD_START
+> > > sequence the same way it would support the VIDIOC_STREAMOFF +
+> > > VIDIOC_REQBUFS(0) +
+> > > VIDIOC_REQBUFS(n) + VIDIOC_STREAMON ?
+> >
+> > I guess that would work. I would only allow it for the case where
+> > existing buffers are already big enough and just more buffers are
+> > needed. Otherwise it would lead to some weird cases, such as some old
+> > buffers already in the CAPTURE queue, blocking the decode of further
+> > frames. (While it could be handled by the driver returning them with
+> > an error state, it would only complicate the interface.)
+>
+> Good point. I wonder if this could be handled in the framework. If it can=
+'t,
+> or with non trivial support code on the driver side, then I would agree w=
+ith
+> you. Otherwise, handling the workaround in the framework would ensure
+> consistent behaviour across drivers with minimal cost, and simplify the
+> userspace API, so I think it would be a good thing.
+
+I think it should be possible to handle in the framework, but right
+now we don't have a framework for codecs and it would definitely be a
+non-trivial piece of code.
+
+I'd stick to the restricted behavior for now, since it's easy to lift
+the restrictions in the future, but if we make it mandatory, the
+userspace could start relying on it.
 
 Best regards,
 Tomasz
