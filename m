@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1104C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9264BC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:22:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7801A208AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58A6C20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:22:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmrN7dWv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7801A208AE
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sl11+u1U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58A6C20652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728904AbeJVSkf (ORCPT
+        id S1729334AbeJVSkg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:40:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51164 "EHLO mail.kernel.org"
+        Mon, 22 Oct 2018 14:40:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728469AbeJVSke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:40:34 -0400
+        id S1728451AbeJVSkg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:40:36 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC7BD20898;
-        Mon, 22 Oct 2018 10:22:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 863B92089C;
+        Mon, 22 Oct 2018 10:22:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540203759;
-        bh=3FHGt6W2v/tllxLFwIZ/CkwwOULmCIGoTU+gKDzkDj0=;
+        s=default; t=1540203760;
+        bh=8dK+HEkO2ALIcbeT6P1RpXgwZLSUPu0rlW4ohI2rEho=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rmrN7dWvm7yK9pMS7XCg57AcFAGArwAkToDVV+Q7W+H7CWKKbp2qIPFvmbdjcDSTK
-         170UhNn3IA4XrUwU6I89pFqGPHfk5mpjY1S06Be/cAuoAsznUBBMg3C7VGS+2Rl5RA
-         xyIxSd0MVueFZ12g4PgAT0XoCHqRj+HhC6uYZrag=
+        b=Sl11+u1UVwhU30z3j/UTxzpIr72b2XUDjKdKrUtw8aaWrWUlr4WD+i410eGVxXbdS
+         TfEdGxcjCXHBVwK60J2jIREpKSD5iDR70KTVnvXRy6nPjkZ4iaOah3BWmP36aEMVGH
+         CM8AanrijOjrV/R+9YP9fDE1a3KnZH14l55wTCrU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Eric Dumazet <edumazet@google.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 2/5] Input: mousedev - add a schedule point in mousedev_write()
-Date:   Mon, 22 Oct 2018 06:22:29 -0400
-Message-Id: <20181022102232.41527-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 3/5] Input: evdev - add a schedule point in evdev_write()
+Date:   Mon, 22 Oct 2018 06:22:30 -0400
+Message-Id: <20181022102232.41527-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181022102232.41527-1-sashal@kernel.org>
 References: <20181022102232.41527-1-sashal@kernel.org>
@@ -52,37 +51,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-[ Upstream commit f74c371fe72a4f820d287db8067683fb533e4ede ]
+[ Upstream commit 36d2582ff235b4e01ad64a734c877a52dc762d9c ]
 
-syzbot was able to trigger rcu stalls by calling write()
-with large number of bytes.
+Large writes to evdev interface may cause rcu stalls. Let's add
+cond_resched() to the loop to avoid this.
 
-Add a cond_resched() in the loop to avoid this.
-
-Link: https://lkml.org/lkml/2018/8/23/1106
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot+9436b02171ac0894d33e@syzkaller.appspotmail.com
 Reviewed-by: Paul E. McKenney <paulmck@linux.ibm.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/mousedev.c | 1 +
+ drivers/input/evdev.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/input/mousedev.c b/drivers/input/mousedev.c
-index 30328e57fdda..b63eec7972e6 100644
---- a/drivers/input/mousedev.c
-+++ b/drivers/input/mousedev.c
-@@ -707,6 +707,7 @@ static ssize_t mousedev_write(struct file *file, const char __user *buffer,
- 		mousedev_generate_response(client, c);
+diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
+index e9ae3d500a55..0bf5ad9cc492 100644
+--- a/drivers/input/evdev.c
++++ b/drivers/input/evdev.c
+@@ -558,6 +558,7 @@ static ssize_t evdev_write(struct file *file, const char __user *buffer,
  
- 		spin_unlock_irq(&client->packet_lock);
+ 		input_inject_event(&evdev->handle,
+ 				   event.type, event.code, event.value);
 +		cond_resched();
  	}
  
- 	kill_fasync(&client->fasync, SIGIO, POLL_IN);
+  out:
 -- 
 2.17.1
 
