@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B81C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:21:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20654C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:22:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CDEA20898
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:21:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBA0520652
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:22:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6oLKbOS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CDEA20898
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FvHn1vp6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBA0520652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729308AbeJVSju (ORCPT
+        id S1729321AbeJVSj7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:39:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50726 "EHLO mail.kernel.org"
+        Mon, 22 Oct 2018 14:39:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728478AbeJVSjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:39:48 -0400
+        id S1728580AbeJVSjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:39:46 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FC962088F;
-        Mon, 22 Oct 2018 10:21:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7D872087D;
+        Mon, 22 Oct 2018 10:21:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540203713;
-        bh=W0fa1ue9ACs5GJ1KJitjHZaIqdSrILSqr/HQZNR11Gk=;
+        s=default; t=1540203711;
+        bh=CywVZ0/IfAN3ifVrh9eC4W6GP5Eputec3I7LLukn79s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R6oLKbOS7Ci72W1ovuMNDR4Gl7GRmC4102Uuo8fGACQOfA0ObTxhKXS5qthaR+prE
-         Ig/n2qyKuV/uz4RRTjm3hKKpTMR/GlGCEhzk1fx7KIqN3m+PNXpLqWWnJVqlqvoeVk
-         yKNDk2nuvpXWwWpMpUXNGnsShMiyeUF9c1Cz3yFI=
+        b=FvHn1vp6Zs6blKlVfY8LItpqI8lYjXC1e7/ypqyNa6mVjaYvsl22lQ90pn+0bUhDu
+         IQghw39baWjldNyfcbLvpWE4wxufx9Cxh3/7q3YKP8md+nXshZqwzEzvMjRZhH+BUR
+         RbQy+KmUnLO+Gv+tAaVoTcie0xBBdNdXuSdGk3/s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Khazhismel Kumykov <khazhy@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 9/9] fs/fat/fatent.c: add cond_resched() to fat_count_free_clusters()
-Date:   Mon, 22 Oct 2018 06:21:33 -0400
-Message-Id: <20181022102133.41222-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 8/9] libertas: call into generic suspend code before turning off power
+Date:   Mon, 22 Oct 2018 06:21:32 -0400
+Message-Id: <20181022102133.41222-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181022102133.41222-1-sashal@kernel.org>
 References: <20181022102133.41222-1-sashal@kernel.org>
@@ -54,36 +53,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Khazhismel Kumykov <khazhy@google.com>
+From: Daniel Mack <daniel@zonque.org>
 
-[ Upstream commit ac081c3be3fae6d0cc3e1862507fca3862d30b67 ]
+[ Upstream commit 4f666675cdff0b986195413215eb062b7da6586f ]
 
-On non-preempt kernels this loop can take a long time (more than 50 ticks)
-processing through entries.
+When powering down a SDIO connected card during suspend, make sure to call
+into the generic lbs_suspend() function before pulling the plug. This will
+make sure the card is successfully deregistered from the system to avoid
+communication to the card starving out.
 
-Link: http://lkml.kernel.org/r/20181010172623.57033-1-khazhy@google.com
-Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
-Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 7444a8092906 ("libertas: fix suspend and resume for SDIO connected cards")
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fat/fatent.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/marvell/libertas/if_sdio.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
-index 3b7644e43796..a9cad9b60790 100644
---- a/fs/fat/fatent.c
-+++ b/fs/fat/fatent.c
-@@ -681,6 +681,7 @@ int fat_count_free_clusters(struct super_block *sb)
- 			if (ops->ent_get(&fatent) == FAT_ENT_FREE)
- 				free++;
- 		} while (fat_ent_next(sbi, &fatent));
-+		cond_resched();
- 	}
- 	sbi->free_clusters = free;
- 	sbi->free_clus_valid = 1;
+diff --git a/drivers/net/wireless/marvell/libertas/if_sdio.c b/drivers/net/wireless/marvell/libertas/if_sdio.c
+index a0ae8d8763bb..06a57c708992 100644
+--- a/drivers/net/wireless/marvell/libertas/if_sdio.c
++++ b/drivers/net/wireless/marvell/libertas/if_sdio.c
+@@ -1368,6 +1368,10 @@ static int if_sdio_suspend(struct device *dev)
+ 	if (priv->wol_criteria == EHS_REMOVE_WAKEUP) {
+ 		dev_info(dev, "Suspend without wake params -- powering down card\n");
+ 		if (priv->fw_ready) {
++			ret = lbs_suspend(priv);
++			if (ret)
++				return ret;
++
+ 			priv->power_up_on_resume = true;
+ 			if_sdio_power_off(card);
+ 		}
 -- 
 2.17.1
 
