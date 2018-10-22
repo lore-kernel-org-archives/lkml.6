@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEADCC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61437C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1273820663
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:49:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8736320665
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:49:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RvH9u8uJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1273820663
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WvWxRfdm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8736320665
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729324AbeJWFJK (ORCPT
+        id S1729338AbeJWFJS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 01:09:10 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34230 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729267AbeJWFIv (ORCPT
+        Tue, 23 Oct 2018 01:09:18 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44685 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729232AbeJWFIs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 01:08:51 -0400
-Received: by mail-pf1-f195.google.com with SMTP id f78-v6so14731755pfe.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 13:48:46 -0700 (PDT)
+        Tue, 23 Oct 2018 01:08:48 -0400
+Received: by mail-pg1-f196.google.com with SMTP id w3-v6so4022093pgs.11
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 13:48:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=z9Cvmd97hzPoKYeufhgQkK5oC81R8IRAXT0JDJr89KA=;
-        b=RvH9u8uJARk1S44xEIRKxALSbovNo5XFmOshZSI9Jz2ni7dsraioZ2FNQzBoCJoMq2
-         6MQCQiPmdRdzzAE3TXUqC9crY0TMaMxn/Sk50s30OYpCsbKc7Acjy41y20E1OGcYch6t
-         94ub8/cDcN2D5pKDVCOhgdpK0d++dUwQVSvu4=
+        bh=VBL7kzRm+AuhpncrtwVUlUGI2jFAGP9j8c7KtXaIcaE=;
+        b=WvWxRfdmXjkkJEie+3AqQVb0SqhLpcxb6Gt/u6TEsYEg1K9lb/EICA1Jv09ZoxzYAd
+         k6fCOad9/7zf0AfKZaMgTwmKQRmV5laACtdN7L3GNKUSuZ0uz0+jTgw650O/W6eAp231
+         POLXtaGYqWcS4wxkhvV3N8WF5AifY71zD+zTY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=z9Cvmd97hzPoKYeufhgQkK5oC81R8IRAXT0JDJr89KA=;
-        b=a5sKFKO5gCG3WQhv6sNYquOHNMJOX51bqb8XQWUnUBIEAmwNE5tmkhZ3OJyu2gHodQ
-         lyj10PQt8YSZcZsLOruNQbTzT0KkZnA0PneCM0zjpX3qJz2IvZ21EKuspBNO3OprkkpD
-         jZZBhm+CZQ5zypH1sq+2JPJ/lNvOhnjz8lFlAbiMs11P2Fy6gxAiBUAuGZPu3uQwWtRB
-         1Nv+jMDpYsXcqsb8an3wvFXMXMScwbPmUUOnNOoEC2DDtviaHPM2WD5nDl9NQKwa7v57
-         wjFIJAulM8AAuIxkMxuoiNCxce8TN4ysX0c+qliH5ukW3u81GsKTfe6PudQkM9w+BM1j
-         wo+w==
-X-Gm-Message-State: ABuFfojcW/fdX5aNlqzCcZU06YxC0YUugqOkHSvcGRS/z93YCYWJLUIV
-        x2g11RYrf/O0PwBAjEDFkMC2/w==
-X-Google-Smtp-Source: ACcGV63rM84RHpSTX0awUvLQG8+SWYLJHFlF22qPDkaehSFieAHM/Mhx/O39fzpq3a4lNqfU8O6f1A==
-X-Received: by 2002:a62:120b:: with SMTP id a11-v6mr46934708pfj.165.1540241325796;
-        Mon, 22 Oct 2018 13:48:45 -0700 (PDT)
+        bh=VBL7kzRm+AuhpncrtwVUlUGI2jFAGP9j8c7KtXaIcaE=;
+        b=lcl7eKpBylZI2SOsU0fVd+sOvGXfyWbiayi7iEuXK6pDVmEwTCWGOtf+P8gIVFRiug
+         sz8MeQ6msgGa2zdphGHi0EPnbkxgBjuZDsWHkXM2q6RumaS+blzM8p1YOmqAbX4z+4oZ
+         dBvQToxrYEW2p2BcRBLCp+GDqT7llE/vbVbwfRVlGI8N1WZ3zzSVkdnslkoQMZuqJgAG
+         DbLUFDYeJMYrWdCgsp7ctE9OOGrMqI4PC9FaAALvLqC5aafrcRuBxFQV19Vy0Vrchtan
+         8EKcs0Mrl3/QSsmHLnh9lpueDy7HUIIQ3nGoxZZ4zA9pTDIvJyd01gTYSRt983lxwX35
+         4IeQ==
+X-Gm-Message-State: ABuFfogHjvczdkpfFLwVMJnzdn2mNUKoBLdc9f7UOuztelg5QpfoyPQx
+        U6oXbjWSfAbLo+k4EKeGDySDXQ==
+X-Google-Smtp-Source: ACcGV63YMycIoSi70RRH3/rYbV0oT9IDSrQ1DcBsrtc4nxcveSax6GMLdak4HCfvGACQDSF1ADW7GQ==
+X-Received: by 2002:a62:75c7:: with SMTP id q190-v6mr47491226pfc.137.1540241322852;
+        Mon, 22 Oct 2018 13:48:42 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id y144-v6sm47483001pfb.81.2018.10.22.13.48.44
+        by smtp.gmail.com with ESMTPSA id y144-v6sm47483001pfb.81.2018.10.22.13.48.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Oct 2018 13:48:45 -0700 (PDT)
+        Mon, 22 Oct 2018 13:48:42 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Sean Paul <seanpaul@chromium.org>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -66,9 +66,9 @@ Cc:     linux-arm-msm@vger.kernel.org,
         Douglas Anderson <dianders@chromium.org>,
         David Airlie <airlied@linux.ie>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] drm/panel: simple: Innolux TV123WAM is actually P120ZDG-BF1
-Date:   Mon, 22 Oct 2018 13:46:38 -0700
-Message-Id: <20181022204639.8558-5-dianders@chromium.org>
+Subject: [PATCH 3/6] drm/panel: simple: Add "no-hpd" delay for Innolux TV123WAM
+Date:   Mon, 22 Oct 2018 13:46:36 -0700
+Message-Id: <20181022204639.8558-3-dianders@chromium.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
 In-Reply-To: <20181022204639.8558-1-dianders@chromium.org>
 References: <20181022204639.8558-1-dianders@chromium.org>
@@ -79,88 +79,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As far as I can tell the panel that was added in commit da50bd4258db
-("drm/panel: simple: Add Innolux TV123WAM panel driver support")
-wasn't actually an Innolux TV123WAM but was actually an Innolux
-P120ZDG-BF1.
+If the HPD signal isn't hooked up to this panel we need a 200 ms
+delay.  In the datasheet this is shown as the maximum time that HPD
+will take to be asserted after power is given to the panel.
 
-As far as I can tell the Innolux TV123WAM isn't a real panel and but
-it's a mosh between the TI TV123WAM and the Innolux P120ZDG-BF1.
-Let's unmosh.
-
-Here's my evidence:
-
-* Searching for TV123WAM on the Internet turns up a TI panel.  While
-  it's possible that an Innolux panel has the same model number as the
-  TI Panel, it seems a little doubtful.  Looking up the datasheet from
-  the TI Panel shows that it's 1920 x 1280 and 259.2 mm x 172.8 mm.
-
-* As far as I know, the patch adding the Innolux Panel was supposed to
-  be for the board that's sitting in front of me as I type this
-  (support for that board is not yet upstream).  On the back of that
-  panel I see Innolux P120ZDZ-EZ1 rev B1.
-
-* Someone pointed me at a datasheet that's supposed to be for the
-  panel in front of me (sorry, I can't share the datasheet).  That
-  datasheet has the string "p120zdg-bf1"
-
-* If I search for "P120ZDG-BF1" on the Internet I get hits for panels
-  that are 2160x1440.  They don't have datasheets, but the fact that
-  the resolution matches is a good sign.
-
-In any case, let's update the name and also the physical size to match
-the correct panel.
-
-Fixes: da50bd4258db ("drm/panel: simple: Add Innolux TV123WAM panel driver support")
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Cc: Sandeep Panda <spanda@codeaurora.org>
 ---
 
- drivers/gpu/drm/panel/panel-simple.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/panel/panel-simple.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 937e97490c30..7ee1abc5d81b 100644
+index 38c646fb55fd..937e97490c30 100644
 --- a/drivers/gpu/drm/panel/panel-simple.c
 +++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -1370,7 +1370,7 @@ static const struct panel_desc innolux_n156bge_l21 = {
- 	},
- };
- 
--static const struct drm_display_mode innolux_tv123wam_mode = {
-+static const struct drm_display_mode innolux_p120zdg_bf1_mode = {
- 	.clock = 206016,
- 	.hdisplay = 2160,
- 	.hsync_start = 2160 + 48,
-@@ -1384,13 +1384,13 @@ static const struct drm_display_mode innolux_tv123wam_mode = {
- 	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
- };
- 
--static const struct panel_desc innolux_tv123wam = {
--	.modes = &innolux_tv123wam_mode,
-+static const struct panel_desc innolux_p120zdg_bf1 = {
-+	.modes = &innolux_p120zdg_bf1_mode,
- 	.num_modes = 1,
- 	.bpc = 8,
- 	.size = {
--		.width = 259,
--		.height = 173,
-+		.width = 254,
-+		.height = 169,
+@@ -1393,6 +1393,8 @@ static const struct panel_desc innolux_tv123wam = {
+ 		.height = 173,
  	},
  	.delay = {
- 		.prepare = 200,
-@@ -2454,8 +2454,8 @@ static const struct of_device_id platform_of_match[] = {
- 		.compatible = "innolux,n156bge-l21",
- 		.data = &innolux_n156bge_l21,
- 	}, {
--		.compatible = "innolux,tv123wam",
--		.data = &innolux_tv123wam,
-+		.compatible = "innolux,p120zdg-bf1",
-+		.data = &innolux_p120zdg_bf1,
- 	}, {
- 		.compatible = "innolux,zj070na-01p",
- 		.data = &innolux_zj070na_01p,
++		.prepare = 200,
++		.prepare_delay_only_if_no_hpd = true,
+ 		.unprepare = 500,
+ 	},
+ };
 -- 
 2.19.1.568.g152ad8e336-goog
 
