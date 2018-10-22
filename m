@@ -2,155 +2,103 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A54C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 600B4C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B13892064E
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:07:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BAC62087D
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:08:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="XNb/hX5N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B13892064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZjYX/up5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BAC62087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728758AbeJVUZw (ORCPT
+        id S1728789AbeJVU0c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 16:25:52 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55482 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727194AbeJVUZw (ORCPT
+        Mon, 22 Oct 2018 16:26:32 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:40740 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727194AbeJVU0b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 16:25:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9fGStvygYgdHhQavVB16dJWsedPBKWvpA+LZW+VrQxI=; b=XNb/hX5NH/ilIyT3kI45byUdQ
-        StZfSn6frP5z1Cj3ZJzyt2YCcAhxInBZt9U2eIYEoF8XfKf6Qqtr2xaMRUkVr2miELzc3WAfhi9gd
-        1CwN+dPzCPrFcH3Y0MeQY+aefHAWB9kVu0r0TyXDsKWi/8EpJNYT0UEYXFksdaSxt3iB4=;
-Received: from [167.98.65.38] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gEYzc-00069a-NL; Mon, 22 Oct 2018 12:07:32 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 544C2440078; Mon, 22 Oct 2018 14:07:32 +0200 (CEST)
-Date:   Mon, 22 Oct 2018 13:07:32 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [GIT PULL] regmap updates for the next release
-Message-ID: <20181022120732.GC2103@sirena.org.uk>
+        Mon, 22 Oct 2018 16:26:31 -0400
+Received: by mail-pl1-f196.google.com with SMTP id 1-v6so18985502plv.7;
+        Mon, 22 Oct 2018 05:08:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qGnQnh9pSjdWkaRcOQSlf8jt8zh/2L9nHuzvcwoIkUM=;
+        b=ZjYX/up5UxOSZXaGEp+lSJ044zru4guyIkuB/ob1BoGSoUJym/wJDjPxjS52C9sMZl
+         M/dnDwVsmjeTHd1ThwQK0ry0EvHFQ6ij/FZEKCUE7sSffeynpnZ72WW3HvX9cH9lLCDY
+         X1tjifWeLPPXTYIjYyaZ69hsa1v3KufR17rR7hm7sZDQBk/Ovy6vJ7O4ndwWEv43fFlY
+         5MFKGi15syhjzF7SYW6HZJpcm50HAr4NM6hlu4tpZ/zaZHklkZvpSurZryt/KqAn5PRk
+         Eyyo8guMPqDNwPAFnZOFFVTciCpkpf1o4/G57u4ncm3P/F90viD5H6zWFGd0bitWdOjj
+         Oyug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qGnQnh9pSjdWkaRcOQSlf8jt8zh/2L9nHuzvcwoIkUM=;
+        b=XFDrvdprExeHQ9JHsPuSjnKSYgB4FrOuKeM1dwD9OGbJWMBfqHoHhI7q9ISxLsw653
+         6mfEDfgq1sCgEcgmUi+e5AKigjgbusRlsqju5rvVB7frSTLgADW60PdhH+57NawdIGoZ
+         ebHSb65nLKccDcDVFZmqQ5jXp5vEdLhfE0rFnR2rXQE9qEBXPpT15oj3KqP7TcEoI+A0
+         fjFFTEvuMaE5+E0QcZHRn9BpX9U6Q/UnGhyuzQlpUGIR5eOjEo/NJeIoBM5jwwCCWg0V
+         v3jDeqzr1/53iNJFUBSmaDakWKrsL8QI8VOX00J7GeElh7Mz1LGB4BUGbWXw4xCIwrJt
+         eGYA==
+X-Gm-Message-State: ABuFfoi/lccf30qsfbUulctbxScg/so1ITQvTRneWMjQ1tqbwj4B64QX
+        XYmB410TjWfngrBZMJziGiIbjxzJ
+X-Google-Smtp-Source: ACcGV61Rbxo8U53fww//LKYE/lFPVINvybSIMA8fjQUbm7NbG2QnpJbDCuyf93bCsPAOw5sFCUyLqA==
+X-Received: by 2002:a17:902:e201:: with SMTP id ce1-v6mr43114482plb.47.1540210093937;
+        Mon, 22 Oct 2018 05:08:13 -0700 (PDT)
+Received: from localhost.localdomain ([2001:268:c0a5:1904:c698:f9ce:cdd:454c])
+        by smtp.gmail.com with ESMTPSA id m19-v6sm10553986pgv.93.2018.10.22.05.08.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Oct 2018 05:08:11 -0700 (PDT)
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     linus.walleij@linaro.org
+Cc:     linux@rasmusvillemoes.dk, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH 0/6] Mask read inputs for get_multiple callbacks
+Date:   Mon, 22 Oct 2018 21:08:07 +0900
+Message-Id: <cover.1540209293.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="V88s5gaDVPzZ0KCq"
-Content-Disposition: inline
-X-Cookie: Piece of cake!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The implementation for several drivers' get_multiple callbacks return
+additional input states that were not requested by the mask passed in.
+Although the current caller in the kernel does not care, it would be
+prudent to ensure the behavior of the get_multiple implementations is to
+return exactly the requested input states and not more. This patchset
+ensures such behavior by applying a final mask on the read inputs before
+setting the bits array.
 
---V88s5gaDVPzZ0KCq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+William Breathitt Gray (6):
+  gpio: 104-dio-48e: Mask read inputs for get_multiple
+  gpio: 104-idi-48e: Mask the read inputs for get_multiple
+  gpio: gpio-mm: Mask read inputs for get_multiple
+  gpio: ws16c48: Mask read inputs for get_multiple
+  gpio: pci-idio-16: Mask read inputs for get_multiple
+  gpio: pcie-idio-24: Mask read inputs for get_multiple
 
-The following changes since commit 35a7f35ad1b150ddf59a41dcac7b2fa32982be0e:
+ drivers/gpio/gpio-104-dio-48e.c  | 2 +-
+ drivers/gpio/gpio-104-idi-48.c   | 2 +-
+ drivers/gpio/gpio-gpio-mm.c      | 2 +-
+ drivers/gpio/gpio-pci-idio-16.c  | 2 +-
+ drivers/gpio/gpio-pcie-idio-24.c | 2 +-
+ drivers/gpio/gpio-ws16c48.c      | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-  Linux 4.19-rc8 (2018-10-15 07:20:24 +0200)
+-- 
+2.19.1
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-v5.0
-
-for you to fetch changes up to ae2399c48c023ef8a6e0d260950420296252b3e9:
-
-  Merge remote-tracking branches 'regmap/topic/noinc' and 'regmap/topic/single-rw' into regmap-next (2018-10-21 12:07:26 +0100)
-
-----------------------------------------------------------------
-regmap: Updates for v5.0
-
-A small update with a couple of new APIs that are useful for some small
-sets of devices:
-
- - Split up the single_rw flagging to map read and write separately as
-   some devices support bulk operations for only read or only write.
- - Add a write version of the noinc API.
- - Clean up the code for LOG_DEVICE a bit.
-
-----------------------------------------------------------------
-Ben Dooks (1):
-      regmap: use less #ifdef for LOG_DEVICE
-
-Ben Whitten (1):
-      regmap: Add regmap_noinc_write API
-
-David Frey (2):
-      regmap: fix comment for regmap.use_single_write
-      regmap: split up regmap_config.use_single_rw
-
-Mark Brown (2):
-      Merge branch 'regmap-4.20' into regmap-next
-      Merge remote-tracking branches 'regmap/topic/noinc' and 'regmap/topic/single-rw' into regmap-next
-
- drivers/base/regmap/internal.h           |  5 +-
- drivers/base/regmap/regmap.c             | 99 +++++++++++++++++++++++++++++---
- drivers/edac/altera_edac.c               |  3 +-
- drivers/hwmon/lm75.c                     |  3 +-
- drivers/hwmon/lm95245.c                  |  3 +-
- drivers/hwmon/tmp102.c                   |  3 +-
- drivers/hwmon/tmp108.c                   |  3 +-
- drivers/iio/light/apds9960.c             |  3 +-
- drivers/iio/light/max44000.c             | 23 ++++----
- drivers/iio/temperature/mlx90632.c       |  3 +-
- drivers/input/touchscreen/tsc200x-core.c |  3 +-
- drivers/mfd/altera-a10sr.c               |  3 +-
- drivers/mfd/da9052-spi.c                 |  3 +-
- drivers/mfd/mc13xxx-spi.c                |  3 +-
- drivers/mfd/twl6040.c                    |  3 +-
- drivers/regulator/ltc3589.c              |  3 +-
- drivers/regulator/ltc3676.c              |  3 +-
- include/linux/regmap.h                   | 31 ++++++++--
- sound/hda/hdac_regmap.c                  |  3 +-
- sound/soc/codecs/cs35l33.c               |  3 +-
- sound/soc/codecs/cs35l35.c               |  3 +-
- sound/soc/codecs/cs43130.c               |  4 +-
- sound/soc/codecs/es8328.c                |  3 +-
- sound/soc/codecs/rt1305.c                |  3 +-
- sound/soc/codecs/rt5514.c                |  3 +-
- sound/soc/codecs/rt5616.c                |  3 +-
- sound/soc/codecs/rt5640.c                |  3 +-
- sound/soc/codecs/rt5645.c                |  9 ++-
- sound/soc/codecs/rt5651.c                |  3 +-
- sound/soc/codecs/rt5660.c                |  3 +-
- sound/soc/codecs/rt5663.c                |  9 ++-
- sound/soc/codecs/rt5665.c                |  3 +-
- sound/soc/codecs/rt5668.c                |  3 +-
- sound/soc/codecs/rt5670.c                |  3 +-
- sound/soc/codecs/rt5682.c                |  3 +-
- 35 files changed, 205 insertions(+), 59 deletions(-)
-
---V88s5gaDVPzZ0KCq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvNvYMACgkQJNaLcl1U
-h9BRngf+JnpVsNrolWhkwHfZcd1481IU1ynTjdGJRTbSuuCnm44cs7PrAI23sZ5Z
-DIrH5W8XDxhGe4Ptwo6ggXavt+LVRDCT/639hO0UHWaoBgCBkdJfR+KAQmyvhk04
-zxWvSGW03e+mJVH05WPesaRGC3ilexhw/Nr6Cr2R1inL8zH5wmEiH1RRYwugwl2D
-waXn5aM17JrAi0DzRZUHd8FafIHKQq+Fh9FPU7ADOUaqgt4KcPPRPthWQgMHNpxI
-TPf6WGbGLrwpK5yQXuHWEE35vjiRYitsaDQZULLZp8eAMnWQIlCbyYttHYR+F/UQ
-XMKqpJN8QSFNtvhPJzcKVSctHOYxoA==
-=/sGf
------END PGP SIGNATURE-----
-
---V88s5gaDVPzZ0KCq--
