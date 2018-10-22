@@ -2,115 +2,102 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73329C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 18:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEF4C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 18:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A45320651
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 18:50:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4384C20651
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 18:52:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qy66hKJc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A45320651
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KUquArPM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4384C20651
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729038AbeJWDKe (ORCPT
+        id S1729047AbeJWDLy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 23:10:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58194 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727748AbeJWDKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 23:10:33 -0400
-Received: from jouet.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38BDD20651;
-        Mon, 22 Oct 2018 18:50:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540234253;
-        bh=qSECageZ+KK6cQDkXwfV8CoMC1lo4iAsaP2aozRDN08=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Qy66hKJc29RWj4s+HXenhcMcDpuPmkgCgdnKAC+EVLkv/x68ZaLAYql0wRyf943tJ
-         ktpIR/7WvbAdziGW0XfBucqRkq0VUC2WrCdZ5Hh7qKjW7SXXHQCDgOOfrSB3LRDxDm
-         ugIYb+ydnzK2CG4kkT4QDUUsvveuERv6f/+l7jOo=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 38167142C5E; Mon, 22 Oct 2018 15:50:49 -0300 (-03)
-Date:   Mon, 22 Oct 2018 15:50:49 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 17/19] perf scripts python: exported-sql-viewer.py: Add
- All branches report
-Message-ID: <20181022185049.GO3849@kernel.org>
-References: <20181001062853.28285-1-adrian.hunter@intel.com>
- <20181001062853.28285-18-adrian.hunter@intel.com>
- <20181022185012.GN3849@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181022185012.GN3849@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Mon, 22 Oct 2018 23:11:54 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40444 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728335AbeJWDLy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 23:11:54 -0400
+Received: by mail-lf1-f65.google.com with SMTP id n3-v6so4389937lfe.7
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 11:52:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=eA8Rg59dDQxH06VYFGu93+Pi57FUmhMP1ESgTyENeQo=;
+        b=KUquArPMYpNiss6HPj1hWxBYtlUv8jdH18zIu1S/bXjyQ1ZMn0UfMjO3YzqWHT1NoW
+         FmPriiRAfZOsPg6EMl9FNA4rYj/+3IbjcfIwile8pjIzluVZl8ow/vvn2WKZJn2eWXlL
+         BP2kSTEUNi0F8GXrtHyffuNYFlct+KwUbpd5o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=eA8Rg59dDQxH06VYFGu93+Pi57FUmhMP1ESgTyENeQo=;
+        b=K9LBPFH179DGEqcYrSgoq3GtytwTiwo4S7Y6jiigYH1Rx0/BLA9XRxEvCtYrGRn47n
+         GsYCfNQ2RMB6sAV/u3BJyF2fXuMiB6j4FdC1d/5qYuwIujvEMVHHTwWK+5X3/JuO2x43
+         lYB10gy6BjflCIBpWqjw5h/QarFJ9ywhvcCJx0RKqP13IxlvsIyWFsvjAEZiw0dNPPcw
+         quX3kI+bqDh3Afk0Nme8OQSx8aWRTTxe9dxtGxZ8dhhwchkdF75vZ5wO1r/q91oVugs/
+         feOTEyAyuNFx3vVMUMEPJma1Pl6qp7AKjE3fVPp4VSqe9GZ7JNbpAMuc5GTIvs3rG91B
+         fgxw==
+X-Gm-Message-State: ABuFfohpRkRRzycfgIya6s/W7OmfkP0OxxekUQwbpgH/GyQZfiTIz8IC
+        ysGqSWYOERWe3geTPdZlK3It9w==
+X-Google-Smtp-Source: ACcGV61ZlXrOG6WmwEQYikK+gXc+24D3hnVMe547uL5CAZBpnxCwaGN1+HSmBbx9C03yQya8ZvzFxA==
+X-Received: by 2002:a19:945b:: with SMTP id w88mr9978835lfd.15.1540234330907;
+        Mon, 22 Oct 2018 11:52:10 -0700 (PDT)
+Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id n5-v6sm1431377lje.91.2018.10.22.11.52.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Oct 2018 11:52:09 -0700 (PDT)
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     grygorii.strashko@ti.com, davem@davemloft.net
+Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH v2 net-next] net: ethernet: ti: cpsw: unsync mcast entries while switch promisc mode
+Date:   Mon, 22 Oct 2018 21:51:36 +0300
+Message-Id: <20181022185136.8215-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Oct 22, 2018 at 03:50:12PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Mon, Oct 01, 2018 at 09:28:51AM +0300, Adrian Hunter escreveu:
-> > Add a report to display branches in a similar fashion to perf script. The
-> > main purpose of this report is to display disassembly, however, presently,
-> > the only supported disassembler is Intel XED, and additionally the object
-> > code must be present in perf build ID cache.
-> > 
-> > To use Intel XED, libxed.so must be present. To build and install
-> > libxed.so:
-> > 	git clone https://github.com/intelxed/mbuild.git mbuild
-> > 	git clone https://github.com/intelxed/xed
-> > 	cd xed
-> > 	./mfile.py --share
-> > 	sudo ./mfile.py --prefix=/usr/local install
-> > 	sudo ldconfig
-> 
-> The above set of instructions went further than when I tried following
-> Andi's instructions for testing the xed support in 'perf script', so I
-> tried to test this following committer notes I had added to:
-> 
->   4b715d24f4f1 perf tools: Add example call-graph script
-> 
-> But now I'm getting this, what am I missing? I suggest you catch this
-> exception and provide hints about what is missing :-)
-> 
-> - Arnaldo
-> 
-> [acme@jouet perf]$ perf script -i ~acme/perf.data.intel_pt -s ~/libexec/perf-core/scripts/python/export-to-postgresql.py pt_example branches calls
-> 2018-10-22 15:46:29.964938 Creating database...
-> QSqlDatabase: QPSQL driver not loaded
-> QSqlDatabase: available drivers: QSQLITE
-> QSqlDatabase: an instance of QCoreApplication is required for loading driver plugins
-> QSqlQuery::exec: database not open
-> Traceback (most recent call last):
->   File "/home/acme/libexec/perf-core/scripts/python/export-to-postgresql.py", line 283, in <module>
->     do_query(query, 'CREATE DATABASE ' + dbname)
->   File "/home/acme/libexec/perf-core/scripts/python/export-to-postgresql.py", line 274, in do_query
->     raise Exception("Query failed: " + q.lastError().text())
-> Exception: Query failed: Driver not loaded Driver not loaded
-> Error running python script /home/acme/libexec/perf-core/scripts/python/export-to-postgresql.py
-> [acme@jouet perf]$
-> 
-> [root@jouet perf]# rpm -qa | grep -i sqlite
-> sqlite-debuginfo-3.14.2-1.fc25.x86_64
-> sqlite2-2.8.17-20.fc26.x86_64
-> sqlite-3.20.1-3.fc27.x86_64
-> sqlite-libs-3.20.1-3.fc27.x86_64
-> [root@jouet perf]#
+After flushing all mcast entries from the table, the ones contained in
+mc list of ndev are not restored when promisc mode is toggled off,
+because they are considered as synched with ALE, thus, in order to
+restore them after promisc mode - reset syncing info. This fix
+touches only switch mode devices, including single port boards
+like Beagle Bone.
 
-Installed:
+Fixes: commit 5da1948969bc
+("net: ethernet: ti: cpsw: fix lost of mcast packets while rx_mode update")
 
-python-sqlite3dbm-0.1.4-10.fc27.noarch
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+---
 
-didn't help
+Based on net-next/master
+
+ drivers/net/ethernet/ti/cpsw.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
+index 226be2a56c1f..f7753b240ced 100644
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -640,6 +640,7 @@ static void cpsw_set_promiscious(struct net_device *ndev, bool enable)
+ 
+ 			/* Clear all mcast from ALE */
+ 			cpsw_ale_flush_multicast(ale, ALE_ALL_PORTS, -1);
++			__dev_mc_unsync(ndev, NULL);
+ 
+ 			/* Flood All Unicast Packets to Host port */
+ 			cpsw_ale_control_set(ale, 0, ALE_P0_UNI_FLOOD, 1);
+-- 
+2.17.1
+
