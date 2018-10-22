@@ -2,166 +2,146 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B0DC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72516C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:50:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8FED2064C
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:44:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8FED2064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 38EB82064C
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:50:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pBKoWVeF";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LL3LMzz7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38EB82064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbeJWEEH (ORCPT
+        id S1727535AbeJWEKa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 00:04:07 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54021 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725764AbeJWEEH (ORCPT
+        Tue, 23 Oct 2018 00:10:30 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35480 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726939AbeJWEKa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 00:04:07 -0400
-Received: from mail-qt1-f198.google.com ([209.85.160.198])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <gpiccoli@canonical.com>)
-        id 1gEg7Z-0005hu-GZ
-        for linux-kernel@vger.kernel.org; Mon, 22 Oct 2018 19:44:13 +0000
-Received: by mail-qt1-f198.google.com with SMTP id z26-v6so50011341qtz.4
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 12:44:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=eUyIlQGhTyvcafDt/dNn2m1jS+3rFpyqLdPQF4hAjOQ=;
-        b=CLlo2OCh2iALPxw8L66IND23gNO0lxJhLLjLhBNsIwqj2tkHORIWnNie7wLj+oqBwn
-         POz4Z0CxyQg5/8mMhOdZqcvQqOeBYvuqNRaTttoGVM9xIV2Id5XEtC6wm6kVFmShHmtU
-         7RDg9U1Qr0cNqGOyztG7F1HgY+RyVMa8uwz9pgD5ao52H4PYCYkp2VLbggDCIz6ews8v
-         npxlXVrqoW2qKJUAxq3OUmDecMOARMSJnQWhyk7kZ/mCS/+NSeH6E8lcEec1gHwY5jMs
-         YDxFUV0SnkyOB4ie/2lhTQ/d0Intk14surUEmPkjV6BEX12OOKIL4L/yGL1gX/3QDZT+
-         u+Rg==
-X-Gm-Message-State: ABuFfogU3Ficl5lhhcWEWHQ1s37TyjgOt1KzMxP2Mj0KU1bXcvolITJZ
-        YWGvZp7hh+4rWFkN76n/JkLZPT2tUFvbVVe+GoSUxZevyg39NGncta8H9AcnAuXU/TDKCE4irWg
-        AmM66ECh8QL01J4A2L26ymdYLfZRzdIr12xQ/Il0erg==
-X-Received: by 2002:aed:31c6:: with SMTP id 64-v6mr3583815qth.247.1540237452661;
-        Mon, 22 Oct 2018 12:44:12 -0700 (PDT)
-X-Google-Smtp-Source: AJdET5dSBZCETYQYFgm8Wg8VFA6LxzOyYH/MlaGZvJlmmEA7/rzQ/rdkRXSZ9uYl40ig27Z77UvTqw==
-X-Received: by 2002:aed:31c6:: with SMTP id 64-v6mr3583786qth.247.1540237452498;
-        Mon, 22 Oct 2018 12:44:12 -0700 (PDT)
-Received: from [192.168.1.109] ([191.8.5.68])
-        by smtp.gmail.com with ESMTPSA id x34-v6sm23935484qth.86.2018.10.22.12.44.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Oct 2018 12:44:11 -0700 (PDT)
-Subject: Re: [PATCH 3/3] x86/quirks: Add parameter to clear MSIs early on boot
-To:     Sinan Kaya <okaya@kernel.org>, linux-pci@vger.kernel.org,
-        kexec@lists.infradead.org, x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, bhelgaas@google.com,
-        dyoung@redhat.com, bhe@redhat.com, vgoyal@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        andi@firstfloor.org, lukas@wunner.de, billy.olsen@canonical.com,
-        cascardo@canonical.com, ddstreet@canonical.com,
-        fabiomirmar@canonical.com, gavin.guo@canonical.com,
-        jay.vosburgh@canonical.com, kernel@gpiccoli.net, mfo@canonical.com,
-        shan.gavin@linux.alibaba.com
-References: <20181018183721.27467-1-gpiccoli@canonical.com>
- <20181018183721.27467-3-gpiccoli@canonical.com>
- <6fd4e2d2-c0ac-b26d-9a14-0379b4421679@kernel.org>
- <12d6175b-7f09-872a-61c4-700e905579c7@canonical.com>
- <50d84d48-eebf-ed91-8148-be727f76883f@kernel.org>
-From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gpiccoli@canonical.com; prefer-encrypt=mutual; keydata=
- xsBNBFpVBxcBCADPNKmu2iNKLepiv8+Ssx7+fVR8lrL7cvakMNFPXsXk+f0Bgq9NazNKWJIn
- Qxpa1iEWTZcLS8ikjatHMECJJqWlt2YcjU5MGbH1mZh+bT3RxrJRhxONz5e5YILyNp7jX+Vh
- 30rhj3J0vdrlIhPS8/bAt5tvTb3ceWEic9mWZMsosPavsKVcLIO6iZFlzXVu2WJ9cov8eQM/
- irIgzvmFEcRyiQ4K+XUhuA0ccGwgvoJv4/GWVPJFHfMX9+dat0Ev8HQEbN/mko/bUS4Wprdv
- 7HR5tP9efSLucnsVzay0O6niZ61e5c97oUa9bdqHyApkCnGgKCpg7OZqLMM9Y3EcdMIJABEB
- AAHNLUd1aWxoZXJtZSBHLiBQaWNjb2xpIDxncGljY29saUBjYW5vbmljYWwuY29tPsLAdwQT
- AQgAIQUCWmClvQIbAwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDOR5EF9K/7Gza3B/9d
- 5yczvEwvlh6ksYq+juyuElLvNwMFuyMPsvMfP38UslU8S3lf+ETukN1S8XVdeq9yscwtsRW/
- 4YoUwHinJGRovqy8gFlm3SAtjfdqysgJqUJwBmOtcsHkmvFXJmPPGVoH9rMCUr9s6VDPox8f
- q2W5M7XE9YpsfchS/0fMn+DenhQpV3W6pbLtuDvH/81GKrhxO8whSEkByZbbc+mqRhUSTdN3
- iMpRL0sULKPVYbVMbQEAnfJJ1LDkPqlTikAgt3peP7AaSpGs1e3pFzSEEW1VD2jIUmmDku0D
- LmTHRl4t9KpbU/H2/OPZkrm7809QovJGRAxjLLPcYOAP7DUeltvezsBNBFpVBxcBCADbxD6J
- aNw/KgiSsbx5Sv8nNqO1ObTjhDR1wJw+02Bar9DGuFvx5/qs3ArSZkl8qX0X9Vhptk8rYnkn
- pfcrtPBYLoux8zmrGPA5vRgK2ItvSc0WN31YR/6nqnMfeC4CumFa/yLl26uzHJa5RYYQ47jg
- kZPehpc7IqEQ5IKy6cCKjgAkuvM1rDP1kWQ9noVhTUFr2SYVTT/WBHqUWorjhu57/OREo+Tl
- nxI1KrnmW0DbF52tYoHLt85dK10HQrV35OEFXuz0QPSNrYJT0CZHpUprkUxrupDgkM+2F5LI
- bIcaIQ4uDMWRyHpDbczQtmTke0x41AeIND3GUc+PQ4hWGp9XABEBAAHCwF8EGAEIAAkFAlpV
- BxcCGwwACgkQzkeRBfSv+xv1wwgAj39/45O3eHN5pK0XMyiRF4ihH9p1+8JVfBoSQw7AJ6oU
- 1Hoa+sZnlag/l2GTjC8dfEGNoZd3aRxqfkTrpu2TcfT6jIAsxGjnu+fUCoRNZzmjvRziw3T8
- egSPz+GbNXrTXB8g/nc9mqHPPprOiVHDSK8aGoBqkQAPZDjUtRwVx112wtaQwArT2+bDbb/Y
- Yh6gTrYoRYHo6FuQl5YsHop/fmTahpTx11IMjuh6IJQ+lvdpdfYJ6hmAZ9kiVszDF6pGFVkY
- kHWtnE2Aa5qkxnA2HoFpqFifNWn5TyvJFpyqwVhVI8XYtXyVHub/WbXLWQwSJA4OHmqU8gDl
- X18zwLgdiQ==
-Message-ID: <92dc24c9-0963-e894-66fe-ad74bdbc0ac3@canonical.com>
-Date:   Mon, 22 Oct 2018 16:44:04 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 23 Oct 2018 00:10:30 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 65FA060850; Mon, 22 Oct 2018 19:50:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540237836;
+        bh=GfrQWsS77ByP+meqT5aWc/b79f8W/ctfKRGmuu4s+vI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pBKoWVeFLP+lxTVGYKom/uC75dMlZisWmAvoxOXXlEJSAAitQmFss2oekFQRkuKvw
+         eS0YeTZFNk4uLJdmaf+SGE4XcH+S4FdDSMGyqJASbwoNjYyYnVLNE+gnUs89OZsTlJ
+         CHQKDqfMo9KTb+PLtNRmCl0er/3KLIraE9Wahoj8=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 311306079C;
+        Mon, 22 Oct 2018 19:50:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540237835;
+        bh=GfrQWsS77ByP+meqT5aWc/b79f8W/ctfKRGmuu4s+vI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LL3LMzz7K+zQxm00qIBgZcYJJewGdBrsLSnbBZjjdihrRchw2S7dbZ6bc9xsQzUE3
+         Dg6dASHAF58lMyj/7qY9IrZ1iOPpHOQspWG6M6HbMw6nu7YpJMfNXC/ntHZj5DlzqM
+         uhdmUvJZeedjXrVOohaS2WM8CDnv66AvetGvbF20=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 311306079C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Mon, 22 Oct 2018 13:50:34 -0600
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, rjw@rjwysocki.net, ulf.hansson@linaro.org,
+        khilman@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, rnayak@codeaurora.org,
+        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, evgreen@chromium.org, dianders@chromium.org,
+        mka@chromium.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH RFC v1 7/8] drivers: qcom: cpu_pd: Handle cpu hotplug in
+ the domain
+Message-ID: <20181022195034.GD17444@codeaurora.org>
+References: <20181011160053.GA2371@codeaurora.org>
+ <20181011161927.GC28583@e107155-lin>
+ <20181011165822.GB2371@codeaurora.org>
+ <20181011173733.GA26447@e107155-lin>
+ <20181011210609.GD2371@codeaurora.org>
+ <20181012150429.GH3401@e107155-lin>
+ <20181012160427.GG2371@codeaurora.org>
+ <20181012170040.GA21057@e107155-lin>
+ <20181012171910.GI2371@codeaurora.org>
+ <20181012172500.GA23170@e107155-lin>
 MIME-Version: 1.0
-In-Reply-To: <50d84d48-eebf-ed91-8148-be727f76883f@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20181012172500.GA23170@e107155-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/10/2018 17:30, Sinan Kaya wrote:
-> 
-> AFAIK, all shutdown (not remove) routines are called before launching
-> the next
-> kernel even in crash scenario. It is not safe to start the new kernel while
-> hardware is doing a DMA to the system memory and triggering interrupts.
+On Fri, Oct 12 2018 at 11:25 -0600, Sudeep Holla wrote:
+>On Fri, Oct 12, 2018 at 11:19:10AM -0600, Lina Iyer wrote:
+>> On Fri, Oct 12 2018 at 11:01 -0600, Sudeep Holla wrote:
+>> > On Fri, Oct 12, 2018 at 10:04:27AM -0600, Lina Iyer wrote:
+>> > > On Fri, Oct 12 2018 at 09:04 -0600, Sudeep Holla wrote:
+>> >
+>> > [...]
+>> >
+>> > Yes all these are fine but with multiple power-domains/cluster, it's
+>> > hard to determine the first CPU. You may be able to identify it within
+>> > the power domain but not system wide. So this doesn't scale with large
+>> > systems(e.g. 4 - 8 clusters with 16 CPUs).
+>> >
+>> We would probably not worry too much about power savings in a msec
+>> scale, if we have that big a system. The driver is a platform specific
+>> driver, primarily intended for a mobile class CPU and usage. In fact, we
+>> haven't done this for QC's server class CPUs.
+>>
+>
+>OK, along as there's no attempt to make it generic and keep it platform
+>specific, I am not that bothered.
+>
+>> > > > I think we are mixing the system sleep states with CPU idle here.
+>> > > > If it's system sleeps states, the we need to deal it in some system ops
+>> > > > when it's the last CPU in the system and not the cluster/power domain.
+>> > > >
+>> > > I think the confusion for you is system sleep vs suspend. System sleep
+>> > > here (probably more of a QC terminology), refers to powering down the
+>> > > entire SoC for very small durations, while not actually suspended. The
+>> > > drivers are unaware that this is happening. No hotplug happens and the
+>> > > interrupts are not migrated during system sleep. When all the CPUs go
+>> > > into cpuidle, the system sleep state is activated and the resource
+>> > > requirements are lowered. The resources are brought back to their
+>> > > previous active values before we exit cpuidle on any CPU. The drivers
+>> > > have no idea that this happened. We have been doing this on QCOM SoCs
+>> > > for a decade, so this is not something new for this SoC. Every QCOM SoC
+>> > > has been doing this, albeit differently because of their architecture.
+>> > > The newer ones do most of these transitions in hardware as opposed to an
+>> > > remote CPU. But this is the first time, we are upstreaming this :)
+>> > >
+>> >
+>> > Indeed, I know mobile platforms do such optimisations and I agree it may
+>> > save power. As I mentioned above it doesn't scale well with large systems
+>> > and also even with single power domains having multiple idle states where
+>> > only one state can do this system level idle but not all. As I mentioned
+>> > in the other email to Ulf, it's had to generalise this even with DT.
+>> > So it's better to have this dealt transparently in the firmware.
+>> >
+>> Good, then we are on agreement here.
+>
+It was brought to my attention that there may be some misunderstanding
+here. I still believe we need to do this for small systems like the
+mobile platforms and the solution may not scale well to servers. We
+don't plan to extend the solution to anything other than the mobile SoC.
 
-Hi Sinan,
-
-I agree with you, it's definitely not safe to start a new kernel with
-in-flight DMA transactions, but in the crash scenario I think the
-rationale was that running kernel is broken so it's even more unreliable
-to try gracefully shutdown the devices than hope-for-the-best and start
-the kdump kernel right away heheh
-
-Fact is that the shutdown handlers are not called in the crash scenario.
-They come from device_shutdown(), the code paths are as follow:
-
-Regular kexec flow:
-
-syscall_reboot()
-  kernel_kexec()
-    kernel_restart_prepare()
-	  device_shutdown()
-	machine_kexec()
-	
-Although if CONFIG_KEXEC_JUMP is set, it doesn't call device_shutdown()
-either.
-
-
-Crash kexec flow:
-  __crash_kexec()
-      machine_kexec()
-
-There are some entry points to __crash_kexec(), like panic() or die() in
-x86, for example.
-To validate this, one can load a kernel with "initcall_debug" parameter,
-and performs a kexec - if the shutdown handlers are called, there's a
-dev_info() call that shows a message per device.
-
-
-> Shutdown routine in PCI core used to disable MSI/MSI-x on behalf of all
-> endpoints but it was later decided that this is the responsibility of the
-> endpoint driver.
-> 
-
-This may be a good idea, using the pci layer to disable MSIs in the
-quiesce path of the broken kernel. I'll follow-up this discussion in
-Bjorn's reply.
-
+>No worries.
+>
 Thanks,
+Lina
 
-
-Guilherme
