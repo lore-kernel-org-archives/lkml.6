@@ -2,104 +2,127 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02312C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB2FC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:07:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EC7920651
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:04:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EC7920651
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 89C9720651
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:07:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89C9720651
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728425AbeJVWW4 (ORCPT
+        id S1728366AbeJVW0X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 18:22:56 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43942 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728338AbeJVWW4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 18:22:56 -0400
-Received: by mail-wr1-f68.google.com with SMTP id t10-v6so3541894wrn.10
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 07:04:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zjNfqDaBC077P5P8cnDiFJdiNgu1IySfoOWLOnkto9k=;
-        b=oRmUXcwYMkHzEOOOKTTp1uoZq/NtHQ1WJIrqDhnSo3wVpB71ErG5deh+e6cjfPrhVM
-         Nsp66+GVkYO4skRjIqwLu36pKkcHc9V9N+pS+5hDAj6bKganhhPR0uVwLQG7c049y+xX
-         L+z3O2kXz69JejEATqDLpWD3iKuAJUnXuceFU4ALq0nKRttUxTAJASVq+wj5Tyt9moi9
-         gH17HsN92pzumluNdRLDPEk6HkCwVOoGH378X+LwsQadYdfGlTGAC9D/eva5gGFy8uem
-         XxzpyGfDgiB2wL6AiAvcB/REhAsstgQNOJh5ZAv7AmGK+N/Wq98gC2eFQ8CLHJakH6xt
-         XB1g==
-X-Gm-Message-State: AGRZ1gLZyDnufIzTHd4+3Typ6AHsJF6g8JbxlJHoPUvx7P1Lt1Qq3U9d
-        PrxlhxI9kOBQSRk/HPgI4ACwmvEzxMO8Rw==
-X-Google-Smtp-Source: AJdET5fkv/WB4ZVFJlnsG/AH2ArRmgb732NX0yNgy2jqeCHSWE3WN+qkAmP1xvWaYows44Tsrrck0w==
-X-Received: by 2002:a5d:640b:: with SMTP id z11-v6mr5513978wru.64.1540217051951;
-        Mon, 22 Oct 2018 07:04:11 -0700 (PDT)
-Received: from localhost ([185.7.230.215])
-        by smtp.gmail.com with ESMTPSA id u10-v6sm27488200wrt.59.2018.10.22.07.04.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Oct 2018 07:04:10 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 15:04:09 +0100
-From:   Moritz Fischer <mdf@kernel.org>
-To:     Andreas Puhm <puhm@oregano.at>
-Cc:     Moritz Fischer <mdf@kernel.org>, Alan Tull <atull@kernel.org>,
-        "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] fpga: altera_cvp: restrict registration to CvP enabled
- devices
-Message-ID: <20181022140409.GA1883@archbook>
-References: <78c44ad0b2344a4490ffd300cf0df746@SRV177.busymouse24.de>
+        Mon, 22 Oct 2018 18:26:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46000 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727210AbeJVW0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 18:26:23 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AED6A307D84F;
+        Mon, 22 Oct 2018 14:07:39 +0000 (UTC)
+Received: from redhat.com (dhcp-17-21.bos.redhat.com [10.18.17.21])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 2C8AB1057048;
+        Mon, 22 Oct 2018 14:07:39 +0000 (UTC)
+Date:   Mon, 22 Oct 2018 10:07:38 -0400
+From:   Don Zickus <dzickus@redhat.com>
+To:     David Miller <davem@davemloft.net>, jolsa@redhat.com
+Cc:     acme@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: perf overlapping maps...
+Message-ID: <20181022140738.jvutwmstgm2f65et@redhat.com>
+References: <20181019.210549.1285253275146712779.davem@davemloft.net>
+ <20181019.214401.2045294780943844999.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <78c44ad0b2344a4490ffd300cf0df746@SRV177.busymouse24.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181019.214401.2045294780943844999.davem@davemloft.net>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Mon, 22 Oct 2018 14:07:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
+(adding Jiri)
 
-On Mon, Oct 22, 2018 at 01:15:34PM +0000, Andreas Puhm wrote:
-
-Can you please send your patch using git-send-email?
-
-[..]
-
-> Subject: [PATCH] fpga: altera_cvp: restrict registration to CvP enabled devices
-
-How about:
-
-fpga: altera-cvp: Fix registration for CvP incapable devices
-
-The probe function needs to verify the CvP enable bit in order to
-properly determine if FPGA Manager functionality can be safely
-enabled.
-
+On Fri, Oct 19, 2018 at 09:44:01PM -0700, David Miller wrote:
+> From: David Miller <davem@davemloft.net>
+> Date: Fri, 19 Oct 2018 21:05:49 -0700 (PDT)
 > 
-> The altera-cvp probe function now verifies, that the PCI device supports
-> the CvP feature, before it registers the device.
-> This is done by reading the CVP_EN bit,
-> Bit 20 of the CVP_STATUS register (@ PCI Config Address 0x21C).
+> > One solution I've come up with is:
+> > 
+> > 1) When synthesizing a fork event, set PERF_RECORD_MISC_COMM_EXEC in
+> >    header->misc.
+> > 
+> > 2) Use this to elide the map groups clone in
+> >    thread__clone_map_groups().
 > 
-> If this bit is '1' (CvP enabled), altera-cvp will register the device
-> for further interaction.
-> If this bit is '0' (CvP disabled), altera-cvp will not register the device.
+> Looking into code history, I notice:
 > 
+> commit 363b785f3805a2632eb09a8b430842461c21a640
+> Author: Don Zickus <dzickus@redhat.com>
+> Date:   Fri Mar 14 10:43:44 2014 -0400
+> 
+>     perf tools: Speed up thread map generation
+> 
+> and the subsequent:
+> 
+> commit 4aa5f4f7bb8bc41cba15bcd0d80c4fb085027d6b
+> Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Date:   Fri Feb 27 19:52:10 2015 -0300
+> 
+>     perf tools: Fix FORK after COMM when synthesizing records for pre-existing threads
+> 
+> If Don wanted to have the map cloning to happen for processes without
+> CLONE_VM, I'm not sure that's right.
+> 
+> For real threads, we just take a reference to the map group from
+> the parent.
+> 
+> Don, a quick summary.  If we synthesize a fork event, let's say for an
+> emacs process.  perf will clone the map groups of the parent bash
+> shell which invoked emacs.  Via:
+> 
+> thread__fork(thread, parent, timestamp)
+> {
+>  ...
+>  thread__clone_map_groups(thread, parent)
+>  {
+>    ...
+>    map_groups__clone(thread, parent->mg)
+> 
+> Which is completely bogus.  It brings all of the bash process maps
+> into the emacs thread map group.  Then we process the emacs mmap2
+> events, which overlap the bash process maps already cloned into the
+> emacs map group.  And this make all kinds of erroneous things happen.
+> 
+> I'm suggesting to elide the map groups clone in this situation where
+> we are synthesizing the fork.
 
-Could you add a Fixes <hash> ("Message") tag here, I believe we had this
-issue since the very beginning, i.e
+Hi David,
 
-Fixes 34d1dc17ce97 ("fpga manager: Add Altera CvP driver")
+Honestly, I remember very little of this change other than we ran specjbb
+which created thousands of threads and we wanted a better way to handle that
+situation (waiting 15 minutes seemed wrong).
 
-Something like ^^^^
+Jiri Olsa is probably more knowledgable about this then I am these days and
+can work with Joe to re-do the test to verify any suggested changes does not
+break our intended use case.
 
-Thanks,
+Thinking about it more, I am wondering if we did this because we ran the
+test and it takes about 20 minutes to 'warm up' then we attached perf to the
+test.  This implies we had to handle the situation where 10K threads already
+existed hence our optimization.  But I can be wrong.
 
-Moritz
+Your suggestion is probably right and I am sure we can reproduce the
+scenario to verify things didn't regress.
+
+Cheers,
+Don
