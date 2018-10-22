@@ -2,203 +2,96 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C053ECDE43
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D1EECDE43
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:40:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2FBD2083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:38:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2FBD2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id DA9D42083C
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:40:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA9D42083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728491AbeJVR42 (ORCPT
+        id S1728382AbeJVR6W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 13:56:28 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:58661 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728452AbeJVR42 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 13:56:28 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="46549139"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 22 Oct 2018 17:38:37 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 104924B71100;
-        Mon, 22 Oct 2018 17:38:36 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 22 Oct 2018 17:38:39 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <hpa@zytor.com>, <keescook@chromium.org>, <bhe@redhat.com>,
-        <msys.mizuma@gmail.com>
-CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
-        <fanc.fnst@cn.fujitsu.com>
-Subject: [PATCH v10 7/7] x86/boot/KASLR: Limit kaslr to choosing the immovable memory
-Date:   Mon, 22 Oct 2018 17:37:20 +0800
-Message-ID: <20181022093720.21426-8-fanc.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20181022093720.21426-1-fanc.fnst@cn.fujitsu.com>
-References: <20181022093720.21426-1-fanc.fnst@cn.fujitsu.com>
+        Mon, 22 Oct 2018 13:58:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56560 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728062AbeJVR6W (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 13:58:22 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 97684CD4A8;
+        Mon, 22 Oct 2018 09:40:36 +0000 (UTC)
+Received: from krava (unknown [10.43.17.150])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 64DAD61B8D;
+        Mon, 22 Oct 2018 09:40:34 +0000 (UTC)
+Date:   Mon, 22 Oct 2018 11:40:33 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Milian Wolff <milian.wolff@kdab.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, Linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 1/2] perf script: allow extended console debug output
+Message-ID: <20181022094033.GF2452@krava>
+References: <20181021191424.16183-1-milian.wolff@kdab.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 104924B71100.A662F
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181021191424.16183-1-milian.wolff@kdab.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 22 Oct 2018 09:40:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_MEMORY_HOTREMOVE enabled, walk through the SRAT memory
-tables and store those immovable memory regions so that KASLR can get
-where to choose for randomization.
+On Sun, Oct 21, 2018 at 09:14:23PM +0200, Milian Wolff wrote:
+> The script tool isn't using a browser, yet use_browser
+> wasn't set explicitly to zero. This in turn lead to confusing
+> output such as:
+> 
+> ```
+> $ perf script -vvv ...
+> ...
+> overlapping maps in /home/milian/foobar (disable tui for more info)
+> ...
+> ```
+> 
+> Explicitly set use_browser to 0 now, which gives us the extended
+> debug information now in perf script as expected.
+> 
+> Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
 
-If the amount of immovable memory regions is not zero, which
-means the immovable memory regions existing. Calculate the intersection
-between memory regions from e820/efi memory table and immovable memory
-regions.
+Acked-by: Jiri Olsa <jolsa@redhat.com>
 
-Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
----
- arch/x86/boot/compressed/kaslr.c | 77 +++++++++++++++++++++++++++-----
- 1 file changed, 66 insertions(+), 11 deletions(-)
+thanks,
+jirka
 
-diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-index b251572e77af..174d2114045e 100644
---- a/arch/x86/boot/compressed/kaslr.c
-+++ b/arch/x86/boot/compressed/kaslr.c
-@@ -97,6 +97,11 @@ static bool memmap_too_large;
- /* Store memory limit specified by "mem=nn[KMG]" or "memmap=nn[KMG]" */
- static unsigned long long mem_limit = ULLONG_MAX;
- 
-+#ifdef CONFIG_MEMORY_HOTREMOVE
-+/* Store the immovable memory regions */
-+extern struct mem_vector immovable_mem[MAX_NUMNODES*2];
-+#endif
-+
- 
- enum mem_avoid_index {
- 	MEM_AVOID_ZO_RANGE = 0,
-@@ -413,6 +418,11 @@ static void mem_avoid_init(unsigned long input, unsigned long input_size,
- 	/* Mark the memmap regions we need to avoid */
- 	handle_mem_options();
- 
-+#ifdef CONFIG_MEMORY_HOTREMOVE
-+	/* Mark the immovable regions we need to choose */
-+	get_immovable_mem();
-+#endif
-+
- #ifdef CONFIG_X86_VERBOSE_BOOTUP
- 	/* Make sure video RAM can be used. */
- 	add_identity_map(0, PMD_SIZE);
-@@ -568,9 +578,9 @@ static unsigned long slots_fetch_random(void)
- 	return 0;
- }
- 
--static void process_mem_region(struct mem_vector *entry,
--			       unsigned long minimum,
--			       unsigned long image_size)
-+static void slots_count(struct mem_vector *entry,
-+			unsigned long minimum,
-+			unsigned long image_size)
- {
- 	struct mem_vector region, overlap;
- 	unsigned long start_orig, end;
-@@ -646,6 +656,57 @@ static void process_mem_region(struct mem_vector *entry,
- 	}
- }
- 
-+static bool process_mem_region(struct mem_vector *region,
-+			       unsigned long long minimum,
-+			       unsigned long long image_size)
-+{
-+	int i;
-+	/*
-+	 * If no immovable memory found, or MEMORY_HOTREMOVE disabled,
-+	 * walk all the regions, so use region directely.
-+	 */
-+	if (num_immovable_mem == 0) {
-+		slots_count(region, minimum, image_size);
-+
-+		if (slot_area_index == MAX_SLOT_AREA) {
-+			debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
-+			return 1;
-+		}
-+		return 0;
-+	}
-+
-+#ifdef CONFIG_MEMORY_HOTREMOVE
-+	/*
-+	 * If immovable memory found, filter the intersection between
-+	 * immovable memory and region to slots_count.
-+	 * Otherwise, go on old code.
-+	 */
-+	for (i = 0; i < num_immovable_mem; i++) {
-+		struct mem_vector entry;
-+		unsigned long long start, end, entry_end, region_end;
-+
-+		if (!mem_overlaps(region, &immovable_mem[i]))
-+			continue;
-+
-+		start = immovable_mem[i].start;
-+		end = start + immovable_mem[i].size;
-+		region_end = region->start + region->size;
-+
-+		entry.start = clamp(region->start, start, end);
-+		entry_end = clamp(region_end, start, end);
-+		entry.size = entry_end - entry.start;
-+
-+		slots_count(&entry, minimum, image_size);
-+
-+		if (slot_area_index == MAX_SLOT_AREA) {
-+			debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
-+			return 1;
-+		}
-+	}
-+	return 0;
-+#endif
-+}
-+
- #ifdef CONFIG_EFI
- /*
-  * Returns true if mirror region found (and must have been processed
-@@ -711,11 +772,8 @@ process_efi_entries(unsigned long minimum, unsigned long image_size)
- 
- 		region.start = md->phys_addr;
- 		region.size = md->num_pages << EFI_PAGE_SHIFT;
--		process_mem_region(&region, minimum, image_size);
--		if (slot_area_index == MAX_SLOT_AREA) {
--			debug_putstr("Aborted EFI scan (slot_areas full)!\n");
-+		if (process_mem_region(&region, minimum, image_size))
- 			break;
--		}
- 	}
- 	return true;
- }
-@@ -742,11 +800,8 @@ static void process_e820_entries(unsigned long minimum,
- 			continue;
- 		region.start = entry->addr;
- 		region.size = entry->size;
--		process_mem_region(&region, minimum, image_size);
--		if (slot_area_index == MAX_SLOT_AREA) {
--			debug_putstr("Aborted e820 scan (slot_areas full)!\n");
-+		if (process_mem_region(&region, minimum, image_size))
- 			break;
--		}
- 	}
- }
- 
--- 
-2.17.2
-
-
-
+> ---
+>  tools/perf/builtin-script.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> index 4da5e32b9e03..bd468b90801b 100644
+> --- a/tools/perf/builtin-script.c
+> +++ b/tools/perf/builtin-script.c
+> @@ -3417,8 +3417,10 @@ int cmd_script(int argc, const char **argv)
+>  		exit(-1);
+>  	}
+>  
+> -	if (!script_name)
+> +	if (!script_name) {
+>  		setup_pager();
+> +		use_browser = 0;
+> +	}
+>  
+>  	session = perf_session__new(&data, false, &script.tool);
+>  	if (session == NULL)
+> -- 
+> 2.19.1
