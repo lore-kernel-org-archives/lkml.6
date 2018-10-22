@@ -2,284 +2,101 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B148ECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 02:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A77E4ECDE43
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 02:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF19420869
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 02:07:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF19420869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4FB1220838
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 02:37:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uab4DWuf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FB1220838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbeJVKYE (ORCPT
+        id S1727325AbeJVKyI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 06:24:04 -0400
-Received: from mga04.intel.com ([192.55.52.120]:30097 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725884AbeJVKYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 06:24:03 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2018 19:07:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,410,1534834800"; 
-   d="scan'208";a="83039507"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga007.jf.intel.com with ESMTP; 21 Oct 2018 19:07:35 -0700
-Received: from tiger-server (unknown [10.239.48.128])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id CDB6C58046A;
-        Sun, 21 Oct 2018 19:07:31 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 16:47:00 +0800
-From:   Yi Zhang <yi.z.zhang@linux.intel.com>
-To:     Barret Rhoden <brho@google.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        KVM list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Zhang, Yu C" <yu.c.zhang@intel.com>,
-        Pankaj Gupta <pagupta@redhat.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, Linux MM <linux-mm@kvack.org>,
-        rkrcmar@redhat.com,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Subject: Re: [PATCH V5 4/4] kvm: add a check if pfn is from NVDIMM pmem.
-Message-ID: <20181022084659.GA84523@tiger-server>
-Mail-Followup-To: Barret Rhoden <brho@google.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        KVM list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Zhang, Yu C" <yu.c.zhang@intel.com>,
-        Pankaj Gupta <pagupta@redhat.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, Linux MM <linux-mm@kvack.org>,
-        rkrcmar@redhat.com,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-References: <4e8c2e0facd46cfaf4ab79e19c9115958ab6f218.1536342881.git.yi.z.zhang@linux.intel.com>
- <CAPcyv4ifg2BZMTNfu6mg0xxtPWs3BVgkfEj51v1CQ6jp2S70fw@mail.gmail.com>
- <fefbd66e-623d-b6a5-7202-5309dd4f5b32@redhat.com>
- <20180920224953.GA53363@tiger-server>
- <CAPcyv4g6OS=_uSjJenn5WVmpx7zCRCbzJaBr_m0Bq=qyEyVagg@mail.gmail.com>
- <20180921224739.GA33892@tiger-server>
- <c8ad8ed7-ca8c-4dd7-819b-8d9c856fbe04@redhat.com>
- <CAPcyv4j9K-wkq8oK-8_twWViKhyGSHD7cOE5UoRN-09xKXPq7A@mail.gmail.com>
- <159bb198-a4a1-0fee-bf57-24c3c28788bd@redhat.com>
- <20181019123348.04ee7dd8@gnomeregan.cam.corp.google.com>
+        Mon, 22 Oct 2018 06:54:08 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39259 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbeJVKyI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 06:54:08 -0400
+Received: by mail-pg1-f193.google.com with SMTP id r9-v6so18299877pgv.6;
+        Sun, 21 Oct 2018 19:37:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MwQK2MU94bA4feWCY+ngFTuKVnx2DkuV61peOqPB8HI=;
+        b=Uab4DWuf+bdSGg0dKmZvLOX4p+BC7rf9ETDnPdYl/HWVsZ/0rEuHy2rm64MU8AgGoh
+         Wyw8Rgr9fT9idD73a8JXNrmmxRiTpIfpYEGbFsbdk/h9wglpcAVKNNctpiSx3QKL6/AW
+         JEkTwmhFeuwQa8IfDbs9ZBqK/P5PVlWVF856BULLu/qyMJPnpISeRx60Av8dFHJZ3Brs
+         DJwRugBMr+rfkikMTl6J1zjIdB75WBoK5a0g2M3zXiB62PrXMyZlVRymb7BFXOybyBmG
+         sxc7xjsjYIhkRhKxn3j/jRGfqX7gMdZ+C1YYVumBaSNgrFwdxp7gbPGPSGztwaZDU/11
+         fk3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MwQK2MU94bA4feWCY+ngFTuKVnx2DkuV61peOqPB8HI=;
+        b=X8myEVqpfns7Y2NSFfyzIBhZCAe2aotqPEwwfQIEiqyjsWD7R4oz8p/InZwesysGyT
+         w8YLJwI44Vya4ML7a8gF5L1kUiqY2zMOPjjLZivBoy2SmOPPGJZcscKvibVImmNm37UD
+         vvO5GXozQXq/RucWaoJw5WMJGP2SlyzoEkacNPGMbstVMtSTnrS6Nj68R6ii2nKQ5TDM
+         aIgOdcRaa/gLciH3AmC3SSQakxKJ44ZkWDOvumBQnZwkTvxoSLipgWuGEWhDF9WPnwgc
+         TVZ5SzuYQjdraAe4zzHYTbc8eHoWE1mVC0vHhkzF1cbjC0IYgbaVxKDT4itUGMLsgi5K
+         wysA==
+X-Gm-Message-State: ABuFfojTQk3jA7+nWoEZZq2MaSBzo4PdgONvPntNngTQk6YMQsSDdnxM
+        JfyH/lLGv1JcY5rvZyewVvw=
+X-Google-Smtp-Source: ACcGV61TCwHH0k8z8CxjJ1Xu0tCjLDRgkSQWNF3qna4e6lMJsJ2GOBdh2cAahVXBwW32bCCB95BFew==
+X-Received: by 2002:a63:d556:: with SMTP id v22-v6mr39519561pgi.357.1540175856147;
+        Sun, 21 Oct 2018 19:37:36 -0700 (PDT)
+Received: from localhost ([39.7.58.252])
+        by smtp.gmail.com with ESMTPSA id d124-v6sm34166829pfa.163.2018.10.21.19.37.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 21 Oct 2018 19:37:34 -0700 (PDT)
+Date:   Mon, 22 Oct 2018 11:37:31 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Calvin Owens <calvinowens@fb.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH 1/3] printk: Introduce per-console loglevel setting
+Message-ID: <20181022023731.GA508@jagdpanzerIV>
+References: <08c1dc1a96afd6b6aecc5ff3c7c0e62c36670893.1506644730.git.calvinowens@fb.com>
+ <20181019000403.GB877@jagdpanzerIV>
+ <20181019220314.GA8164@Haydn>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="cWoXeonUoKmBZSoM"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181019123348.04ee7dd8@gnomeregan.cam.corp.google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181019220314.GA8164@Haydn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---cWoXeonUoKmBZSoM
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-On 2018-10-19 at 12:33:48 -0400, Barret Rhoden wrote:
-> On 2018-09-21 at 21:29 David Hildenbrand <david@redhat.com> wrote:
-> > On 21/09/2018 20:17, Dan Williams wrote:
-> > > On Fri, Sep 21, 2018 at 7:24 AM David Hildenbrand <david@redhat.com> wrote:
-> > > [..]  
-> > >>> Remove the PageReserved flag sounds more reasonable.
-> > >>> And Could we still have a flag to identify it is a device private memory, or
-> > >>> where these pages coming from?  
-> > >>
-> > >> We could use a page type for that or what you proposed. (as I said, we
-> > >> might have to change hibernation code to skip the pages once we drop the
-> > >> reserved flag).  
-> > > 
-> > > I think it would be reasonable to reject all ZONE_DEVICE pages in
-> > > saveable_page().
-> > >   
-> > 
-> > Indeed, that sounds like the easiest solution - guess that answer was
-> > too easy for me to figure out :) .
-> > 
+On (10/19/18 22:03), Calvin Owens wrote:
+> Hi Sergey,
 > 
-> Just to follow-up, is the plan to clear PageReserved for nvdimm pages
-> instead of the approach taken in this patch set?  Or should we special
-> case nvdimm/dax pages in kvm_is_reserved_pfn()?
-Yes, we are going to remove the PageReserved flag for nvdimm pages.
-Added Alex, attached the patch-set.
-> 
-> Thanks,
-> 
-> Barret
-> 
-> 
-> 
+> It's in-progress, I'm sorry it hasn't happened sooner.
 
---cWoXeonUoKmBZSoM
-Content-Type: message/rfc822
-Content-Disposition: inline
+Great!
 
-Return-Path: <alexander.h.duyck@linux.intel.com>
-X-Original-To: yi.z.zhang@linux.intel.com
-Delivered-To: yi.z.zhang@linux.intel.com
-Received: from orsmga001.jf.intel.com (orsmga001.jf.intel.com [10.7.209.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id DEBC8580430;
-	Wed, 17 Oct 2018 16:54:31 -0700 (PDT)
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="scan'208";a="100366643"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.154])
-  by orsmga001.jf.intel.com with ESMTP; 17 Oct 2018 16:54:31 -0700
-Subject: [mm PATCH v4 5/6] mm: Add reserved flag setting to set_page_links
-From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To: linux-mm@kvack.org, akpm@linux-foundation.org
-Cc: pavel.tatashin@microsoft.com, mhocko@suse.com, dave.jiang@intel.com,
- alexander.h.duyck@linux.intel.com, linux-kernel@vger.kernel.org,
- willy@infradead.org, davem@davemloft.net, yi.z.zhang@linux.intel.com,
- khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com, vbabka@suse.cz,
- sparclinux@vger.kernel.org, dan.j.williams@intel.com,
- ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net, mingo@kernel.org,
- kirill.shutemov@linux.intel.com
-Date: Wed, 17 Oct 2018 16:54:31 -0700
-Message-ID: <20181017235431.17213.11512.stgit@localhost.localdomain>
-In-Reply-To: <20181017235043.17213.92459.stgit@localhost.localdomain>
-References: <20181017235043.17213.92459.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+> By embedding the kobject in the console struct, we end up needing to refactor
+> the console drivers to use the kobject refcount instead of simply calling
+> kfree(), which is what I'm working on. It ends up being tedious but not
+> particularly complicated, my goal is to have this up soon :)
 
-This patch modifies the set_page_links function to include the setting of
-the reserved flag via a simple AND and OR operation. The motivation for
-this is the fact that the existing __set_bit call still seems to have
-effects on performance as replacing the call with the AND and OR can reduce
-initialization time.
+OK :)
 
-Looking over the assembly code before and after the change the main
-difference between the two is that the reserved bit is stored in a value
-that is generated outside of the main initialization loop and is then
-written with the other flags field values in one write to the page->flags
-value. Previously the generated value was written and then then a btsq
-instruction was issued.
-
-On my x86_64 test system with 3TB of persistent memory per node I saw the
-persistent memory initialization time on average drop from 23.49s to
-19.12s per node.
-
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
----
- include/linux/mm.h |    9 ++++++++-
- mm/page_alloc.c    |   29 +++++++++++++++++++----------
- 2 files changed, 27 insertions(+), 11 deletions(-)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 6e2c9631af05..14d06d7d2986 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1171,11 +1171,18 @@ static inline void set_page_node(struct page *page, unsigned long node)
- 	page->flags |= (node & NODES_MASK) << NODES_PGSHIFT;
- }
- 
-+static inline void set_page_reserved(struct page *page, bool reserved)
-+{
-+	page->flags &= ~(1ul << PG_reserved);
-+	page->flags |= (unsigned long)(!!reserved) << PG_reserved;
-+}
-+
- static inline void set_page_links(struct page *page, enum zone_type zone,
--	unsigned long node, unsigned long pfn)
-+	unsigned long node, unsigned long pfn, bool reserved)
- {
- 	set_page_zone(page, zone);
- 	set_page_node(page, node);
-+	set_page_reserved(page, reserved);
- #ifdef SECTION_IN_PAGE_FLAGS
- 	set_page_section(page, pfn_to_section_nr(pfn));
- #endif
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index a0b81e0bef03..e7fee7a5f8a3 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1179,7 +1179,7 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
- 				unsigned long zone, int nid)
- {
- 	mm_zero_struct_page(page);
--	set_page_links(page, zone, nid, pfn);
-+	set_page_links(page, zone, nid, pfn, false);
- 	init_page_count(page);
- 	page_mapcount_reset(page);
- 	page_cpupid_reset_last(page);
-@@ -1195,7 +1195,8 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
- static void __meminit __init_pageblock(unsigned long start_pfn,
- 				       unsigned long nr_pages,
- 				       unsigned long zone, int nid,
--				       struct dev_pagemap *pgmap)
-+				       struct dev_pagemap *pgmap,
-+				       bool is_reserved)
- {
- 	unsigned long nr_pgmask = pageblock_nr_pages - 1;
- 	struct page *start_page = pfn_to_page(start_pfn);
-@@ -1231,19 +1232,16 @@ static void __meminit __init_pageblock(unsigned long start_pfn,
- 		 * call because of the fact that the pfn number is used to
- 		 * get the section_nr and this function should not be
- 		 * spanning more than a single section.
-+		 *
-+		 * We can use a non-atomic operation for setting the
-+		 * PG_reserved flag as we are still initializing the pages.
- 		 */
--		set_page_links(page, zone, nid, start_pfn);
-+		set_page_links(page, zone, nid, start_pfn, is_reserved);
- 		init_page_count(page);
- 		page_mapcount_reset(page);
- 		page_cpupid_reset_last(page);
- 
- 		/*
--		 * We can use the non-atomic __set_bit operation for setting
--		 * the flag as we are still initializing the pages.
--		 */
--		__SetPageReserved(page);
--
--		/*
- 		 * ZONE_DEVICE pages union ->lru with a ->pgmap back
- 		 * pointer and hmm_data.  It is a bug if a ZONE_DEVICE
- 		 * page is ever freed or placed on a driver-private list.
-@@ -5612,7 +5610,18 @@ static void __meminit __memmap_init_hotplug(unsigned long size, int nid,
- 		pfn = max(ALIGN_DOWN(pfn - 1, pageblock_nr_pages), start_pfn);
- 		stride -= pfn;
- 
--		__init_pageblock(pfn, stride, zone, nid, pgmap);
-+		/*
-+		 * The last argument of __init_pageblock is a boolean
-+		 * value indicating if the page will be marked as reserved.
-+		 *
-+		 * Mark page reserved as it will need to wait for onlining
-+		 * phase for it to be fully associated with a zone.
-+		 *
-+		 * Under certain circumstances ZONE_DEVICE pages may not
-+		 * need to be marked as reserved, however there is still
-+		 * code that is depending on this being set for now.
-+		 */
-+		__init_pageblock(pfn, stride, zone, nid, pgmap, true);
- 
- 		cond_resched();
- 	}
-
-
---cWoXeonUoKmBZSoM--
+	-ss
