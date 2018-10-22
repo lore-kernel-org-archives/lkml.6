@@ -4,45 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76276C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3BAC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:44:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A833F20665
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:43:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A833F20665
+	by mail.kernel.org (Postfix) with ESMTP id 2F62320663
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 20:44:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F62320663
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729129AbeJWFDV (ORCPT
+        id S1729132AbeJWFEO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 01:03:21 -0400
-Received: from gateway33.websitewelcome.com ([192.185.146.78]:41340 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728418AbeJWFDV (ORCPT
+        Tue, 23 Oct 2018 01:04:14 -0400
+Received: from gateway34.websitewelcome.com ([192.185.149.101]:28329 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727179AbeJWFEN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 01:03:21 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id BA8C53F30B
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 15:43:16 -0500 (CDT)
+        Tue, 23 Oct 2018 01:04:13 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id 6DC13A55AF
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 15:44:08 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id Eh2ZgYkfMBcCXEh2egnqpO; Mon, 22 Oct 2018 15:43:16 -0500
+        id Eh3OgPifNkBj6Eh3TgT0Nh; Mon, 22 Oct 2018 15:44:08 -0500
 X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:51018 helo=embeddedor)
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:51026 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gEh2Y-0023xx-Td; Mon, 22 Oct 2018 15:43:07 -0500
-Date:   Mon, 22 Oct 2018 22:43:05 +0200
+        id 1gEh3N-0024NJ-9Y; Mon, 22 Oct 2018 15:43:57 -0500
+Date:   Mon, 22 Oct 2018 22:43:55 +0200
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "Luis R. Rodriguez" <mcgrof@gmail.com>
+To:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        Xinming Hu <huxinming820@gmail.com>
 Cc:     Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 12/20] prism54: islpci_dev: mark expected switch fall-through
-Message-ID: <d8c3acfd0b661d18792ea34c7de974d33e4ecdac.1540239684.git.gustavo@embeddedor.com>
+Subject: [PATCH 13/20] mwifiex: Mark expected switch fall-through
+Message-ID: <b82fcffdf7dbf10b37154696b99173815734d404.1540239684.git.gustavo@embeddedor.com>
 References: <cover.1540239684.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -57,13 +60,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 86.245.173.13
 X-Source-L: No
-X-Exim-ID: 1gEh2Y-0023xx-Td
+X-Exim-ID: 1gEh3N-0024NJ-9Y
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:51018
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:51026
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 87
+X-Email-Count: 96
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,24 +77,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
-Addresses-Coverity-ID: 114947 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/wireless/intersil/prism54/islpci_dev.c | 1 +
+ drivers/net/wireless/marvell/mwifiex/ie.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/intersil/prism54/islpci_dev.c b/drivers/net/wireless/intersil/prism54/islpci_dev.c
-index 325176d..ad6d3a5 100644
---- a/drivers/net/wireless/intersil/prism54/islpci_dev.c
-+++ b/drivers/net/wireless/intersil/prism54/islpci_dev.c
-@@ -932,6 +932,7 @@ islpci_set_state(islpci_private *priv, islpci_state_t new_state)
- 	switch (new_state) {
- 	case PRV_STATE_OFF:
- 		priv->state_off++;
-+		/* fall through */
- 	default:
- 		priv->state = new_state;
- 		break;
+diff --git a/drivers/net/wireless/marvell/mwifiex/ie.c b/drivers/net/wireless/marvell/mwifiex/ie.c
+index 75cbd60..6845eb5 100644
+--- a/drivers/net/wireless/marvell/mwifiex/ie.c
++++ b/drivers/net/wireless/marvell/mwifiex/ie.c
+@@ -363,6 +363,7 @@ static int mwifiex_uap_parse_tail_ies(struct mwifiex_private *priv,
+ 						    (const u8 *)hdr,
+ 						    hdr->len + sizeof(struct ieee_types_header)))
+ 				break;
++			/* fall through */
+ 		default:
+ 			memcpy(gen_ie->ie_buffer + ie_len, hdr,
+ 			       hdr->len + sizeof(struct ieee_types_header));
 -- 
 2.7.4
 
