@@ -2,156 +2,138 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7488DC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C63C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1E4F20645
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:52:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1E4F20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A9AF20664
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 14:54:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A9AF20664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbeJVXLm (ORCPT
+        id S1728196AbeJVXNN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 19:11:42 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35414 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727554AbeJVXLm (ORCPT
+        Mon, 22 Oct 2018 19:13:13 -0400
+Received: from gateway23.websitewelcome.com ([192.185.49.124]:35702 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727554AbeJVXNN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 19:11:42 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9MEn91w055722
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 10:52:48 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n9ghkrjb2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 10:52:48 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 22 Oct 2018 10:52:47 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 22 Oct 2018 10:52:43 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9MEqgGx27197648
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 22 Oct 2018 14:52:42 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 15D9FB2066;
-        Mon, 22 Oct 2018 14:52:42 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E62F0B205F;
-        Mon, 22 Oct 2018 14:52:41 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.169.161])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 22 Oct 2018 14:52:41 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 8C63216C35F5; Mon, 22 Oct 2018 07:52:41 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 07:52:41 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     oleg@redhat.com, peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com
-Subject: [PATCH RFC kenrel/rcu] Eliminate BUG_ON() for sync.c
-Reply-To: paulmck@linux.ibm.com
+        Mon, 22 Oct 2018 19:13:13 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id EEBF9139C6
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 09:54:18 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id EbabgD7cvkBj6EbaqgGRpR; Mon, 22 Oct 2018 09:54:18 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:41662 helo=[192.168.1.41])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gEbab-003HIJ-4k; Mon, 22 Oct 2018 09:53:53 -0500
+To:     Jes Sorensen <jes.sorensen@gmail.com>, linux-kernel@vger.kernel.org
+Cc:     Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+References: <cover.1540208577.git.gustavo@embeddedor.com>
+ <a1b9b68a-ca94-f02f-4a87-bbd46782c41c@gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH 0/2] Mark expected switch fall-throughs and fix missing
+ break
+Message-ID: <8189d36d-1e12-c16d-4cb7-9aeefea3a6ff@embeddedor.com>
+Date:   Mon, 22 Oct 2018 16:53:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18102214-0072-0000-0000-000003B9D3F0
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009916; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01106373; UDB=6.00572935; IPR=6.00886457;
- MB=3.00023857; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-22 14:52:45
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18102214-0073-0000-0000-000049D7F1A0
-Message-Id: <20181022145241.GA7488@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-22_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=772 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810220127
+In-Reply-To: <a1b9b68a-ca94-f02f-4a87-bbd46782c41c@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gEbab-003HIJ-4k
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:41662
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sync.c file has a number of calls to BUG_ON(), which panics the
-kernel, which is not a good strategy for devices (like embedded) that
-don't have a way to capture console output.  This commit therefore
-changes these BUG_ON() calls to WARN_ON_ONCE(), but does so quite naively.
 
-Improved changes welcome.  ;-)
+On 10/22/18 4:36 PM, Jes Sorensen wrote:
+> On 10/22/18 7:49 AM, Gustavo A. R. Silva wrote:
+>> In preparation to enabling -Wimplicit-fallthrough, this patchset aims
+>> to mark multiple switch cases where we are expecting to fall through.
+>>
+>> Also, the second patch in this series fixes a missing break in switch.
+> 
+> Enabling that sounds like a great way to inflict pain and suffering.
+> 
 
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Not really. The -Wimplicit-fallthrough will be enabled until after all the
+current warnings have been addressed.
 
-diff --git a/kernel/rcu/sync.c b/kernel/rcu/sync.c
-index 3f943efcf61c..28ac78ba0656 100644
---- a/kernel/rcu/sync.c
-+++ b/kernel/rcu/sync.c
-@@ -125,12 +125,12 @@ void rcu_sync_enter(struct rcu_sync *rsp)
- 		rsp->gp_state = GP_PENDING;
- 	spin_unlock_irq(&rsp->rss_lock);
- 
--	BUG_ON(need_wait && need_sync);
--
- 	if (need_sync) {
- 		gp_ops[rsp->gp_type].sync();
- 		rsp->gp_state = GP_PASSED;
- 		wake_up_all(&rsp->gp_wait);
-+		if (WARN_ON_ONCE(need_wait))
-+			wait_event(rsp->gp_wait, rsp->gp_state == GP_PASSED);
- 	} else if (need_wait) {
- 		wait_event(rsp->gp_wait, rsp->gp_state == GP_PASSED);
- 	} else {
-@@ -139,7 +139,7 @@ void rcu_sync_enter(struct rcu_sync *rsp)
- 		 * Nobody has yet been allowed the 'fast' path and thus we can
- 		 * avoid doing any sync(). The callback will get 'dropped'.
- 		 */
--		BUG_ON(rsp->gp_state != GP_PASSED);
-+		WARN_ON_ONCE(rsp->gp_state != GP_PASSED);
- 	}
- }
- 
-@@ -166,8 +166,8 @@ static void rcu_sync_func(struct rcu_head *rhp)
- 	struct rcu_sync *rsp = container_of(rhp, struct rcu_sync, cb_head);
- 	unsigned long flags;
- 
--	BUG_ON(rsp->gp_state != GP_PASSED);
--	BUG_ON(rsp->cb_state == CB_IDLE);
-+	WARN_ON_ONCE(rsp->gp_state != GP_PASSED);
-+	WARN_ON_ONCE(rsp->cb_state == CB_IDLE);
- 
- 	spin_lock_irqsave(&rsp->rss_lock, flags);
- 	if (rsp->gp_count) {
-@@ -225,7 +225,7 @@ void rcu_sync_dtor(struct rcu_sync *rsp)
- {
- 	int cb_state;
- 
--	BUG_ON(rsp->gp_count);
-+	WARN_ON_ONCE(rsp->gp_count);
- 
- 	spin_lock_irq(&rsp->rss_lock);
- 	if (rsp->cb_state == CB_REPLAY)
-@@ -235,6 +235,6 @@ void rcu_sync_dtor(struct rcu_sync *rsp)
- 
- 	if (cb_state != CB_IDLE) {
- 		gp_ops[rsp->gp_type].wait();
--		BUG_ON(rsp->cb_state != CB_IDLE);
-+		WARN_ON_ONCE(rsp->cb_state != CB_IDLE);
- 	}
- }
+There are 600 of these issues left. So, hopefully I will complete this task
+during the next development cycle.
 
+Thanks
+--
+Gustavo
