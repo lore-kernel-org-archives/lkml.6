@@ -2,118 +2,148 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CDAC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 11:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA38C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 11:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33B5920853
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 11:50:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33B5920853
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 4CFD420658
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 11:50:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CFD420658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbeJVUIZ (ORCPT
+        id S1728792AbeJVUIn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 16:08:25 -0400
-Received: from gateway23.websitewelcome.com ([192.185.50.119]:43246 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728243AbeJVUIZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 16:08:25 -0400
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 047AE9641
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 06:50:11 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id EYiogRDrGSjJAEYiogvffc; Mon, 22 Oct 2018 06:50:11 -0500
-X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:41624 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gEYio-001GKv-82; Mon, 22 Oct 2018 06:50:10 -0500
-Date:   Mon, 22 Oct 2018 13:50:08 +0200
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jes Sorensen <Jes.Sorensen@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 1/2] rtl8xxxu: Mark expected switch fall-throughs
-Message-ID: <08817d137b32d5d091eacc6fee0a3eca68d49d94.1540208577.git.gustavo@embeddedor.com>
-References: <cover.1540208577.git.gustavo@embeddedor.com>
+        Mon, 22 Oct 2018 16:08:43 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:48627 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728278AbeJVUIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 16:08:42 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 679C9208C7; Mon, 22 Oct 2018 13:50:26 +0200 (CEST)
+Received: from bbrezillon (aaubervilliers-681-1-25-52.w90-88.abo.wanadoo.fr [90.88.145.52])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E48142079D;
+        Mon, 22 Oct 2018 13:50:15 +0200 (CEST)
+Date:   Mon, 22 Oct 2018 13:50:15 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Cc:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 0/5] spi: spi-mem: Add driver for NXP FlexSPI
+ controller
+Message-ID: <20181022135015.1b13cdbd@bbrezillon>
+In-Reply-To: <VI1PR04MB1038034CFABEE936C6892D7D99F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
+References: <1539255519-1408-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+        <VI1PR04MB1038034CFABEE936C6892D7D99F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1540208577.git.gustavo@embeddedor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 86.245.173.13
-X-Source-L: No
-X-Exim-ID: 1gEYio-001GKv-82
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:41624
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Mon, 22 Oct 2018 11:43:40 +0000
+Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
 
-Addresses-Coverity-ID: 1357355 ("Missing break in switch")
-Addresses-Coverity-ID: 1357378 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> + Mark Brown
+> 
+> Complete patch series[1]
+> [1] https://patchwork.ozlabs.org/project/linux-mtd/list/?series=70210
 
-diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-index 56040b1..c6b0686 100644
---- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-+++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-@@ -1153,6 +1153,7 @@ void rtl8xxxu_gen1_config_channel(struct ieee80211_hw *hw)
- 	switch (hw->conf.chandef.width) {
- 	case NL80211_CHAN_WIDTH_20_NOHT:
- 		ht = false;
-+		/* fall through */
- 	case NL80211_CHAN_WIDTH_20:
- 		opmode |= BW_OPMODE_20MHZ;
- 		rtl8xxxu_write8(priv, REG_BW_OPMODE, opmode);
-@@ -1280,6 +1281,7 @@ void rtl8xxxu_gen2_config_channel(struct ieee80211_hw *hw)
- 	switch (hw->conf.chandef.width) {
- 	case NL80211_CHAN_WIDTH_20_NOHT:
- 		ht = false;
-+		/* fall through */
- 	case NL80211_CHAN_WIDTH_20:
- 		rf_mode_bw |= WMAC_TRXPTCL_CTL_BW_20;
- 		subchannel = 0;
-@@ -1748,9 +1750,11 @@ static int rtl8xxxu_identify_chip(struct rtl8xxxu_priv *priv)
- 		case 3:
- 			priv->ep_tx_low_queue = 1;
- 			priv->ep_tx_count++;
-+			/* fall through */
- 		case 2:
- 			priv->ep_tx_normal_queue = 1;
- 			priv->ep_tx_count++;
-+			/* fall through */
- 		case 1:
- 			priv->ep_tx_high_queue = 1;
- 			priv->ep_tx_count++;
--- 
-2.7.4
+Please resend the patch series with a "PATCH RESEND v4" prefix and
+explain why you resend it in the cover letter.
+
+> 
+> --
+> Regards,
+> Yogesh Gaur
+> 
+> > -----Original Message-----
+> > From: Yogesh Narayan Gaur [mailto:yogeshnarayan.gaur@nxp.com]
+> > Sent: Thursday, October 11, 2018 4:30 PM
+> > To: linux-mtd@lists.infradead.org; boris.brezillon@bootlin.com;
+> > marek.vasut@gmail.com; linux-spi@vger.kernel.org;
+> > devicetree@vger.kernel.org
+> > Cc: robh@kernel.org; mark.rutland@arm.com; shawnguo@kernel.org; linux-
+> > arm-kernel@lists.infradead.org; computersforpeace@gmail.com;
+> > frieder.schrempf@exceet.de; linux-kernel@vger.kernel.org; Yogesh Narayan
+> > Gaur <yogeshnarayan.gaur@nxp.com>
+> > Subject: [PATCH v4 0/5] spi: spi-mem: Add driver for NXP FlexSPI controller
+> > 
+> > - Add driver for NXP FlexSPI host controller
+> > 
+> >  FlexSPI is a flexsible SPI host controller [1], Chapter 30 page 1475,  which
+> > supports two SPI channels and up to 4 external devices.
+> >  Each channel supports Single/Dual/Quad/Octal mode data transfer (1/2/4/8
+> > bidirectional data lines)  i.e. FlexSPI acts as an interface to external devices,
+> > maximum 4, each with up to 8  bidirectional data lines.
+> > 
+> > - Tested this driver with mtd_debug(Erase/Write/Read) utility and JFFS2
+> > filesystem mounting and booting on NXP LX2160ARDB[2] and LX2160AQDS
+> > targets.
+> >  LX2160ARDB is having two NOR slave device connected on single bus A  i.e. A0
+> > and A1 (CS0 and CS1).
+> >  LX2160AQDS is having two NOR slave device connected on separate buses  one
+> > flash on A0 and second on B1 i.e. (CS0 and CS3).
+> >  Verified this driver on following SPI NOR flashes:
+> >    Micron, mt35xu512aba[3], [Read - 1 bit mode]
+> >    Cypress, s25fl512s, [Read - 1/2/4 bit mode]
+> > 
+> > [1] https://www.nxp.com/docs/en/reference-manual/IMXRT1050RM.pdf
+> > [2] https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=26689
+> > [3] https://patchwork.ozlabs.org/project/linux-mtd/list/?series=70179
+> > 
+> > Yogesh Gaur (5):
+> >   spi: spi-mem: Add driver for NXP FlexSPI controller
+> >   dt-bindings: spi: add binding file for NXP FlexSPI controller
+> >   arm64: dts: lx2160a: add FlexSPI node property
+> >   arm64: defconfig: enable NXP FlexSPI driver
+> >   MAINTAINERS: add maintainers for the NXP FlexSPI driver
+> > 
+> > Changes for v4:
+> > - Incorporated review comments for
+> >   patch 'spi: spi-mem: Add driver for NXP FlexSPI controller'.
+> > - Incorporated binding file review comments.
+> > Changes for v3:
+> > - Incorporated review comments for
+> >   patch 'spi: spi-mem: Add driver for NXP FlexSPI controller'.
+> > Changes for v2:
+> > - Incorporated Boris review comments and drop below patches as per the
+> > comments.
+> >  - Patch 'spi: add slave device size in spi_device struct'
+> >  - Patch 'spi: add flags for octal I/O data transfer'
+> > - Incorporated DTS and Binding file review comments of Shawn Guo and Rob
+> > Herring.
+> > 
+> >  .../devicetree/bindings/spi/spi-nxp-fspi.txt       |   39 +
+> >  MAINTAINERS                                        |    6 +
+> >  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts  |   22 +
+> >  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi     |   12 +
+> >  arch/arm64/configs/defconfig                       |    1 +
+> >  drivers/spi/Kconfig                                |   10 +
+> >  drivers/spi/Makefile                               |    1 +
+> >  drivers/spi/spi-nxp-fspi.c                         | 1158 ++++++++++++++++++++
+> >  8 files changed, 1249 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/spi/spi-nxp-fspi.txt
+> >  create mode 100644 drivers/spi/spi-nxp-fspi.c
+> > 
+> > --
+> > 2.7.4  
+> 
 
