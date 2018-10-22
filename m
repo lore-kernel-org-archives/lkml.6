@@ -2,137 +2,136 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D03B0C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A6EC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0BD120663
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:26:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0BD120663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A23C2064C
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:30:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N72DjFrK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A23C2064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbeJVXpW (ORCPT
+        id S1728428AbeJVXtM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 19:45:22 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:40016 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727590AbeJVXpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 19:45:21 -0400
-Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 799ACA11BA;
-        Mon, 22 Oct 2018 17:26:20 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id 64oQSpoWh24N; Mon, 22 Oct 2018 17:26:16 +0200 (CEST)
-Date:   Tue, 23 Oct 2018 02:26:12 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Robert Richter <rric@kernel.org>,
-        Brendan Gregg <bgregg@netflix.com>,
-        linux-kernel@vger.kernel.org, oprofile-list@lists.sf.net
-Subject: Re: [RFC] Merging ftrace_stack, perf_callchain, oprofile->backtrace
- and stack_trace
-Message-ID: <20181022152612.ex5hkipgm5uzjrt5@ryuk>
-References: <20181021093106.mhjpb2rnx6kstjki@ryuk>
- <20181021201358.GF4931@worktop.programming.kicks-ass.net>
+        Mon, 22 Oct 2018 19:49:12 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46831 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728319AbeJVXtL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 19:49:11 -0400
+Received: by mail-lf1-f67.google.com with SMTP id o2-v6so1832650lfl.13
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 08:30:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=emwnZeCNqDDjL/Nk2ikIdZiZGc/ye4j/fvhFOuYMaco=;
+        b=N72DjFrKwV6tbOhH4e15D+KmExRZWEfCqdv6l8opj8DiEsvue5TVQ2M6nHYtgJAMb2
+         Bn5+5XFYjFm4qw59lepbTzvj7DaPt1bCVB+kgnImMZs6aEBqs575SJetAgMdB+D7P34S
+         otQmE6mh/OR02L6bGhnPNvmfxNhzEdtdSbMjc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=emwnZeCNqDDjL/Nk2ikIdZiZGc/ye4j/fvhFOuYMaco=;
+        b=uNNStjDq4Bwsjm1yu/pcUD1g6DsGu6qyfcRoqohgLrYoq1FkMuaVkaWuFJxabiUkMV
+         EqNgc8HxKdNfdqNeJq3gZ6LK6OYW5IQR6HG+xm7GiJyI5FzUkRXeWcXTU4blkqz8jOA9
+         Bg9JiS9fcB/PwEil85TFymhFQTxagaZgqzvRdOOyVyjHAckzyI6Pkfb5Mf0mURAkQTIt
+         KrSqq5L+fQcBe1FzcKHzSAPUSwJsi7kGl14zU+hM8Ht4JMJbDB14QoPK96nmATOXlu3/
+         DF/62UC8IeqofqmyostYlkhmeQ7sblvkLUbCeJoBax4jA5Kwy718qLTXWO4oAoKc2TX+
+         Ng+Q==
+X-Gm-Message-State: ABuFfohCIQsMDQlnef9EnZ6MqRop8ABrA2oQh1mFjkYjMe5+4BzAxbdN
+        xKD5AW57TMJDd0NVrptiRyZxAQ==
+X-Google-Smtp-Source: ACcGV60hWQXVQa/gUiVl+8fzcTeY50+Bb7IcRFneAdAEpIdPGj+FJXP7tBFvW6IRPQ/KKieXoHi/Wg==
+X-Received: by 2002:a19:750e:: with SMTP id y14-v6mr5437951lfe.43.1540222208969;
+        Mon, 22 Oct 2018 08:30:08 -0700 (PDT)
+Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
+        by smtp.gmail.com with ESMTPSA id q24-v6sm653336lff.65.2018.10.22.08.30.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 22 Oct 2018 08:30:08 -0700 (PDT)
+Date:   Mon, 22 Oct 2018 17:30:05 +0200
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Sricharan R <sricharan@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Craig <ctatlor97@gmail.com>,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux@arm.linux.org.uk,
+        linux@armlinux.org.uk, mark.rutland@arm.com,
+        mturquette@baylibre.com, rjw@rjwysocki.net, robh@kernel.org,
+        sboyd@codeaurora.org, sudeep.holla@arm.com,
+        thierry.escande@linaro.org, viresh.kumar@linaro.org
+Subject: Re: [PATCH V12 00/14] Krait clocks + Krait CPUfreq
+Message-ID: <20181022153005.GA23950@centauri.lan>
+References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+ <2ae96741-94c0-ba4c-fc19-05d33179683c@codeaurora.org>
+ <d682580d-5070-0271-197f-29d988172937@codeaurora.org>
+ <D8FC68C0-2572-4A86-81D9-D0099D314A45@gmail.com>
+ <F5A89365-C613-4FE2-AD32-DC0AC6DF380B@gmail.com>
+ <fb81b8d5-3d24-b413-8d59-33cb70e46f8b@codeaurora.org>
+ <153979105280.5275.841088095583550635@swboyd.mtv.corp.google.com>
+ <153980741313.5275.10376918222904341760@swboyd.mtv.corp.google.com>
+ <c5f492c0-19a2-db8f-a114-d3cfe17ae6c6@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="w7kf34kg5qgdazn6"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181021201358.GF4931@worktop.programming.kicks-ass.net>
+In-Reply-To: <c5f492c0-19a2-db8f-a114-d3cfe17ae6c6@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 22, 2018 at 09:39:03AM +0530, Sricharan R wrote:
+> Hi Stephen,
+> 
+> On 10/18/2018 1:46 AM, Stephen Boyd wrote:
+> > Quoting Stephen Boyd (2018-10-17 08:44:12)
+> >> Quoting Sricharan R (2018-09-20 06:03:31)
+> >>>
+> >>>
+> >>> On 9/20/2018 1:54 AM, Craig wrote:
+> >>>> Yup, this patch seems to have fixed the higher frequencies from the quick test I did.
+> >>>>
+> >>>       Thanks !!. Can i take that as 
+> >>>           Tested-by: Craig Tatlor <ctatlor97@gmail.com>  ?
+> >>>
+> >>
+> >> Is this patch series going to be resent?
+> >>
+> > 
+> > Nevermind. Looking at it I think I can apply all the clk ones and we're
+> > good to go. If you can send a followup patch series to change the
+> > registration and provider APIs to be clk_hw instead of clk based I would
+> > appreciate it.
+> > 
+> 
+> Sorry for the late response. Was away.
+> Only pending thing was separating out the binding documentation for the cpu-freq
+> driver and fixing the text in documentation.  That means, yes its fine to merge
+> the clk ones as you said. I will resend that. Also, will send a follow up series for clk_hw to
+> clk change as you mentioned separately.
 
---w7kf34kg5qgdazn6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Sricharan,
 
-On 2018-10-21, Peter Zijlstra <peterz@infradead.org> wrote:
-> > Hi all,
-> >=20
-> > I'm currently working on a patchset to make kretprobes produce
-> > reasonable stack traces[1], and it appears this is a generic problem
-> > across the entire kernel -- you can see the same kretprobe_trampoline()
-> > issue when using ftrace just as much as bpf_trace.
-> >=20
-> > However, in working on this patch, I've noticed that there appear to be
-> > several different implementations of "get the stack trace from this
-> > pt_regs" which all appear quite similar. Namely:
-> >=20
-> >   * struct ftrace_stack;
-> >   * struct perf_callchain_entry; [**]
-> >   * struct stack_trace;
->=20
-> the perf thing also does userspace stack, where the others do not afaik.
+Great to see that the clk parts has been marged to clk-next!
 
-Ah right, I forgot about that. Though I wonder whether there would be a
-strong argument against extending 'struct stack_trace' to contain the
-ustack so we could use it then.
+Are you also planning on sending out a new version of the cpufreq driver
+consolidation parts?
 
-> And for the kernel part it already uses the regular kernel unwinder.
-> I'm not sure what you're proposing.
+I'm planning on extending your consilidated cpufreq driver with support
+for msm8916 (Cortex-A53), where I plan to read PVS/speedbin, in order to
+set opp_supported_hw(), and also register with cpufreq (since Viresh/Ulf
+suggested that we shouldn't register with cpufreq in the CPR power-domain
+driver).
 
-They do use the kernel unwinder, but they are both implemented
-per-architecture and use different structures to store and represent the
-stack trace (even though at the end of the day they are just an array of
-longs).
 
-oprofile for instance (appears to) reimplement the following code
-per-architecture:
-
-  struct stack_trace trace;
-  save_stack_trace(&trace);
-  print_stack_trace(&trace, 0);
-
-The same applies for perf_callchain_entry which is all implemented
-per-architecture even though get_perf_callchain_kernel() could just
-re-use save_stack_trace_regs().
-
-But after looking at this a bit more, I think I'll write a patch which
-does this the "silly" way and then I'll see whether maintainers prefer
-it to be refactored.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---w7kf34kg5qgdazn6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlvN7BMACgkQnhiqJn3b
-jbSM7g//QbG1AvVQCwBpkR4KFSyFIN80VeTSTmbSgRm0zJutZmEL2Swd2RIMi5i1
-f/Ymd3SDbE3T91MLFNum1zb6rMB0sPNkbZez87WUI9ow8KIn8Q1Kb61Pp30sjJMG
-7grfIV93cG3pNhY9Cuq10AnOUvEgIIxmqOMlx+5qJppGcrvSAZ4HsB+cgHh8kgp1
-WNJe0PcfpUxFqetT2qdJESyPwTROdxG6mBXfM46LpYthbW0DNCU5XXaUzx3IPNAa
-wax+8ll1+UAdrpWTXmdKyN9RgYQFVwm9M9vwVfFNK7Wf7yJQXgAjqJDRXW0EuYAa
-G3fhKg9DkYsbnESxoG/XM6XWkTTIGj1qXSC49ieOhzv5Bi4JxIW2+PUjSddG5iBB
-QB9bJx32bWK5CScSUVb8SV9ZFxUX9N0LcOSRRAR6r4d3h9cLUythi2XcnRYPiUea
-vYb46751qiiqZjBTX+cTia/vUACevoFhIb5xEtKlHaCE4SlBhialOH2tmTOfpcgr
-faJe4SRliSA0mR8JK6H9/wBFuV3BsS24FaNepjvB3DW3PCzvxCNUNSI8bpJ9I5fY
-WgMqfp3BNJYg9sz8jpEIzgHDl9q2bxkat67j3qvr2smSgz22FM26LT/kBr40tvrQ
-HU9fGTu53y7uR+FyR81ZuWniTrONZ7ErkG2D+tYMXPDknodpOqQ=
-=YvRk
------END PGP SIGNATURE-----
-
---w7kf34kg5qgdazn6--
+Kind regards,
+Niklas
