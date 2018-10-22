@@ -2,131 +2,100 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1795CC004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4997AC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:03:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B446F20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:03:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B446F20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E3B0A20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:03:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="kN56Gi4O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3B0A20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728405AbeJVUVa (ORCPT
+        id S1728490AbeJVUV6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 16:21:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34114 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728186AbeJVUV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 16:21:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 90BEAAFB6;
-        Mon, 22 Oct 2018 12:03:11 +0000 (UTC)
-Date:   Mon, 22 Oct 2018 14:03:08 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
-Message-ID: <20181022120308.GB18839@dhcp22.suse.cz>
-References: <20181022071323.9550-1-mhocko@kernel.org>
- <20181022071323.9550-3-mhocko@kernel.org>
- <f9a8079f-55b0-301e-9b3d-a5250bd7d277@i-love.sakura.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f9a8079f-55b0-301e-9b3d-a5250bd7d277@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 22 Oct 2018 16:21:58 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36840 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727787AbeJVUV5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 16:21:57 -0400
+Received: by mail-pg1-f194.google.com with SMTP id l6-v6so206157pgp.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 05:03:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=dWqYib6c7YCfkEeuiyUid02W5JbWuq8jXJrrJ2nv3tM=;
+        b=kN56Gi4O7/FFa2Xc//BlTk+VZ0+ZxduRW9DN3Dd53WYr/HYBuvZ4EEavfu3eSh1or3
+         vc1yIfpRosWXeT6rDEJwKWOcCXREstmPIHvN+A1eVBbik0fHkwqxx7KFXJbte3Bm6A7m
+         3ikyCJcR6/yhpbX2a0/b9DQofhzvjSDb/7AuLxXk9tUCLunlnwoWdAqtrm5nEaIMU1sZ
+         7Pnhehag+gPyq2f/E6D/ReMQ5H0FuhHFoL7FjKzfYjpBSfLFLZp5edp+0+rn3uR2WY9O
+         +ZwluxBDBXvmTYkjb6OqSA1B54nFMV9gb7nD29phNvaY4XfV3SEp3jnWv9J+sIZDnUf6
+         Lqaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dWqYib6c7YCfkEeuiyUid02W5JbWuq8jXJrrJ2nv3tM=;
+        b=fsNE9vG7/gD+Ww/1ark/jTw76uTYbibUSKMU+bbljjRnY3X9UVEzugrqCF07JAGQnp
+         S/t3IFsW0UWP7WNMaee3TXr1zEOhf9zPy+Gl/9I8BoT345Az+oVCdXSHRrdEXJPyGlql
+         oqh3N5Xa0ejUdYlnF2z4qHjYVrNf0WSFM8xPy+mKta9HX9k+tp5Seb50aWPIiPCbv/m4
+         On8PSQBx0Luu3D4Q3BTRpuTPe7DejDRIw5axro40gM+VmIYYstoxh2lsGCMI6FNR9zr1
+         /9Oo8+YXvmGcGoNkxhC6bL7albiMIx+kl3B3Lm4XGX0EE+6TDvpiYK/PgCdaFdpnFp8+
+         B5fg==
+X-Gm-Message-State: ABuFfog6dbcYBmw8ovXMntheNQi1YZEb3r5JNog86s4Nk5uLqecQBuU3
+        idngeFceyKPVCV1t1YgnU+T0gQ==
+X-Google-Smtp-Source: ACcGV63LjxoASoVU0N9GOjkHm3GIxpYGE+VrCNf3317VMFiXHXpyw88po3hVN1ovB/orTf4wqrA9aQ==
+X-Received: by 2002:a63:584f:: with SMTP id i15-v6mr42745920pgm.178.1540209820537;
+        Mon, 22 Oct 2018 05:03:40 -0700 (PDT)
+Received: from anup-ubuntu64.dlink.router ([106.51.30.16])
+        by smtp.googlemail.com with ESMTPSA id n79-v6sm55443405pfk.19.2018.10.22.05.03.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Oct 2018 05:03:39 -0700 (PDT)
+From:   Anup Patel <anup@brainfault.org>
+To:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Anup Patel <anup@brainfault.org>
+Subject: [PATCH 0/4] IRQ affinity support in PLIC driver
+Date:   Mon, 22 Oct 2018 17:15:13 +0530
+Message-Id: <20181022114517.22748-1-anup@brainfault.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 22-10-18 20:45:17, Tetsuo Handa wrote:
-> On 2018/10/22 16:13, Michal Hocko wrote:
-> > From: Michal Hocko <mhocko@suse.com>
-> > 
-> > Tetsuo has reported [1] that a single process group memcg might easily
-> > swamp the log with no-eligible oom victim reports due to race between
-> > the memcg charge and oom_reaper
-> > 
-> > Thread 1		Thread2				oom_reaper
-> > try_charge		try_charge
-> > 			  mem_cgroup_out_of_memory
-> > 			    mutex_lock(oom_lock)
-> >   mem_cgroup_out_of_memory
-> >     mutex_lock(oom_lock)
-> > 			      out_of_memory
-> > 			        select_bad_process
-> > 				oom_kill_process(current)
-> > 				  wake_oom_reaper
-> > 							  oom_reap_task
-> > 							  MMF_OOM_SKIP->victim
-> > 			    mutex_unlock(oom_lock)
-> >     out_of_memory
-> >       select_bad_process # no task
-> > 
-> > If Thread1 didn't race it would bail out from try_charge and force the
-> > charge. We can achieve the same by checking tsk_is_oom_victim inside
-> > the oom_lock and therefore close the race.
-> > 
-> > [1] http://lkml.kernel.org/r/bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > ---
-> >  mm/memcontrol.c | 14 +++++++++++++-
-> >  1 file changed, 13 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index e79cb59552d9..a9dfed29967b 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -1380,10 +1380,22 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
-> >  		.gfp_mask = gfp_mask,
-> >  		.order = order,
-> >  	};
-> > -	bool ret;
-> > +	bool ret = true;
-> >  
-> >  	mutex_lock(&oom_lock);
-> > +
-> > +	/*
-> > +	 * multi-threaded tasks might race with oom_reaper and gain
-> > +	 * MMF_OOM_SKIP before reaching out_of_memory which can lead
-> > +	 * to out_of_memory failure if the task is the last one in
-> > +	 * memcg which would be a false possitive failure reported
-> > +	 */
-> > +	if (tsk_is_oom_victim(current))
-> > +		goto unlock;
-> > +
-> 
-> This is not wrong but is strange. We can use mutex_lock_killable(&oom_lock)
-> so that any killed threads no longer wait for oom_lock.
+This patchset primarily adds IRQ affinity support in PLIC driver and
+other improvements.
 
-tsk_is_oom_victim is stronger because it doesn't depend on
-fatal_signal_pending which might be cleared throughout the exit process.
+The patchset gives mechanism for explicitly routing external interrupts to
+particular CPUs using smp_affinity attribute of each Linux IRQs. Also, we
+can now use IRQ balancer from kernel-space or user-space.
 
-> Also, closing this race for only memcg OOM path is strange. Global OOM path
-> (which are CLONE_VM without CLONE_THREAD) is still suffering this race
-> (though frequency is lower than memcg OOM due to use of mutex_trylock()). Either
-> checking before calling out_of_memory() or checking task_will_free_mem(current)
-> inside out_of_memory() will close this race for both paths.
+The patchset is tested on QEMU virt machine. It is based on Linux-4.19-rc2
+and can be found at riscv_plic_irq_affinity_v1 branch of:
+https://github.com/avpatel/linux.git
 
-The global case is much more complicated because we know that memcg
-might bypass the charge so we do not have to care about the potential
-endless loop like in page allocator path. Moreover I am not even sure
-the race is all that interesting in the global case. I have never heard
-about a pre-mature panic due to no killable task. The racing oom task
-would have to be the last eligible process in the system and that is
-quite unlikely. We can think about a more involved solution for that if
-we ever hear about this to be a real problem.
+Anup Patel (4):
+  irqchip: sifive-plic: Pre-compute context hart base and enable base
+  irqchip: sifive-plic: More flexible plic_irq_toggle()
+  irqchip: sifive-plic: Differentiate between PLIC handler and context
+  irqchip: sifive-plic: Implement irq_set_affinity() for SMP host
 
-So a simple memcg specific fix sounds like a reasonable way forward.
+ drivers/irqchip/irq-sifive-plic.c | 164 ++++++++++++++++++------------
+ 1 file changed, 99 insertions(+), 65 deletions(-)
+
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
+
