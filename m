@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E681C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFCFCC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:10:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB24320645
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:10:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F7AC20645
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:10:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Y71J/XsX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB24320645
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DnL62sEb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F7AC20645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728442AbeJVX2j (ORCPT
+        id S1728364AbeJVX2j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 22 Oct 2018 19:28:39 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:58556 "EHLO
+Received: from userp2130.oracle.com ([156.151.31.86]:58570 "EHLO
         userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728287AbeJVX2h (ORCPT
+        with ESMTP id S1728289AbeJVX2h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 22 Oct 2018 19:28:37 -0400
 Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9MF4YuG151290;
-        Mon, 22 Oct 2018 15:09:07 GMT
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9MF4YuI151290;
+        Mon, 22 Oct 2018 15:09:14 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=9DvNYd3YImdHLPyrRPXieetOWzWbhe28DdbVY1T1Cus=;
- b=Y71J/XsXG0lP1PTQuATrUD4CMRBgzmHidC06DWoIvdhPBSAHScpMq3QuFixatkH8CLCf
- 7Xwfoab3yqa483Mq99h1GmM4iwDbZOZmU2oM8CeoMApqwVi/mdB5bTL1fgdaejF1FYJm
- Tmi+QexgoIUvu25Fz+mUQaG0VkbcgMLeV5tf7DsS1yr36+8rV2CzQq/6u4OKu8QQ+7wT
- Y74NSOxBBbQfPAzWOnakY2059rsf6Bx/GFTLSwyHwp3wpoP61cKVFyos70T6p8I1hx+a
- +C8OljgmOfMkIHOEruOJluxyJQwKoqvBo+YyjNFRt13S0IXyZs9Uzs5HNv7kJPhfwH7B qA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2n7usty8fg-1
+ bh=WprJOzlJBPWGc258cQJnYTco77PZ7HYOi4XDj4rVY3Y=;
+ b=DnL62sEbKZh2hc+noFvdAPE/LvUofOyYdzCtwRrBNUufe1heil287hqpJHu1OScxuaBD
+ +ItWYE2cA/MNV8nWVOKNd3vChxKGB5iVZkHBUpvwjkhMn4U9rkEF1TvO3Cc6MJoh0ttG
+ MAjaCTKtGCXHXiqovJB6+WZCNwAUwCdPJY8CdHFNBzafLTjGWCUNjO1tVYG4JdY4d05O
+ 9p04ccyK7M7MiCw45+cZ90cHJerPTgTG0hdFjfBQ2lAgNdj1ICoXWU/pmHCSyTnzTM1p
+ YnrtD49TLNdysDYMDOZTLYrVRPuaIJug/HpN8G91D/yvFUwnX14CRP+DwcSaL1AisoRb CQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2n7usty8gr-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Oct 2018 15:09:07 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9MF962q019980
+        Mon, 22 Oct 2018 15:09:14 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9MF98mu004997
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Oct 2018 15:09:06 GMT
+        Mon, 22 Oct 2018 15:09:08 GMT
 Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9MF96rc020726;
-        Mon, 22 Oct 2018 15:09:06 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9MF97pY029265;
+        Mon, 22 Oct 2018 15:09:07 GMT
 Received: from ca-dev63.us.oracle.com (/10.211.8.221)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 22 Oct 2018 08:09:05 -0700
+        with ESMTP ; Mon, 22 Oct 2018 08:09:07 -0700
 From:   Steve Sistare <steven.sistare@oracle.com>
 To:     mingo@redhat.com, peterz@infradead.org
 Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
@@ -59,9 +59,9 @@ Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
         umgwanakikbuti@gmail.com, riel@redhat.com, jbacik@fb.com,
         juri.lelli@redhat.com, steven.sistare@oracle.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 01/10] sched: Provide sparsemask, a reduced contention bitmap
-Date:   Mon, 22 Oct 2018 07:59:32 -0700
-Message-Id: <1540220381-424433-2-git-send-email-steven.sistare@oracle.com>
+Subject: [PATCH 03/10] sched/topology: Provide cfs_overload_cpus bitmap
+Date:   Mon, 22 Oct 2018 07:59:34 -0700
+Message-Id: <1540220381-424433-4-git-send-email-steven.sistare@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1540220381-424433-1-git-send-email-steven.sistare@oracle.com>
 References: <1540220381-424433-1-git-send-email-steven.sistare@oracle.com>
@@ -75,451 +75,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide struct sparsemask and functions to manipulate it.  A sparsemask is
-a sparse bitmap.  It reduces cache contention vs the usual bitmap when many
-threads concurrently set, clear, and visit elements, by reducing the number
-of significant bits per cacheline.  For each 64 byte chunk of the mask,
-only the first K bits of the first word are used, and the remaining bits
-are ignored, where K is a creation time parameter.  Thus a sparsemask that
-can represent a set of N elements is approximately (N/K * 64) bytes in
-size.
+Define and initialize a sparse bitmap of overloaded CPUs, per
+last-level-cache scheduling domain, for use by the CFS scheduling class.
+Save a pointer to cfs_overload_cpus in the rq for efficient access.
 
 Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
 ---
- include/linux/sparsemask.h | 260 +++++++++++++++++++++++++++++++++++++++++++++
- lib/Makefile               |   2 +-
- lib/sparsemask.c           | 142 +++++++++++++++++++++++++
- 3 files changed, 403 insertions(+), 1 deletion(-)
- create mode 100644 include/linux/sparsemask.h
- create mode 100644 lib/sparsemask.c
+ include/linux/sched/topology.h |  1 +
+ kernel/sched/sched.h           |  2 ++
+ kernel/sched/topology.c        | 21 +++++++++++++++++++--
+ 3 files changed, 22 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/sparsemask.h b/include/linux/sparsemask.h
-new file mode 100644
-index 0000000..d36a3be
---- /dev/null
-+++ b/include/linux/sparsemask.h
-@@ -0,0 +1,260 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * sparsemask.h - sparse bitmap operations
-+ *
-+ * Copyright (c) 2018 Oracle Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __LINUX_SPARSEMASK_H
-+#define __LINUX_SPARSEMASK_H
-+
-+#include <linux/kernel.h>
-+#include <linux/bitmap.h>
-+#include <linux/bug.h>
-+
-+/*
-+ * A sparsemask is a sparse bitmap.  It reduces cache contention vs the usual
-+ * bitmap when many threads concurrently set, clear, and visit elements.  For
-+ * each 64 byte chunk of the mask, only the first K bits of the first word are
-+ * used, and the remaining bits are ignored, where K is a creation time
-+ * parameter.  Thus a sparsemask that can represent a set of N elements is
-+ * approximately (N/K * 64) bytes in size.
-+ *
-+ * Clients pass and receive element numbers in the public API, and the
-+ * implementation translates them to bit numbers to perform the bitmap
-+ * operations.
-+ *
-+ * This file is partially derived from cpumask.h, and the public sparsemask
-+ * operations are drop-in replacements for cpumask operations. However,
-+ * sparsemask has no dependency on CPU definitions and can be used to
-+ * represent any kind of elements.
-+ */
-+
-+struct sparsemask {
-+	short nelems;		/* current number of elements */
-+	short density;		/* store 2^density elements per chunk */
-+	unsigned long bits[0];	/* embedded array of chunks */
-+};
-+
-+/* The maximum value for density, which implicitly defines the chunk size */
-+
-+#define _SMASK_DENSITY_MAX	6
-+
-+#define SMASK_DENSITY_TO_BYTES(density)		(1U << (density))
-+#define SMASK_DENSITY_TO_ELEMS(density)		(1U << (density))
-+
-+/* The number of elements/bits/bytes/longs in a chunk */
-+
-+#define SMASK_ELEMS(mask)	SMASK_DENSITY_TO_ELEMS((mask)->density)
-+#define SMASK_BYTES		SMASK_DENSITY_TO_BYTES(_SMASK_DENSITY_MAX)
-+#define SMASK_BITS		(SMASK_BYTES * BITS_PER_BYTE)
-+#define SMASK_LONGS		(SMASK_BYTES / sizeof(long))
-+
-+/*
-+ * Translate element index @elem to a bit/byte/long index.
-+ * @density: the density of a chunk.
-+ */
-+
-+#define _SMASK_ELEM_TO_BIT(elem, density)			\
-+	((elem) / SMASK_DENSITY_TO_ELEMS(density) * SMASK_BITS +\
-+	 (elem) % SMASK_DENSITY_TO_ELEMS(density))
-+
-+#define _SMASK_ELEM_TO_BYTE(elem, density)	\
-+	(_SMASK_ELEM_TO_BIT(elem, density) / BITS_PER_BYTE)
-+
-+#define _SMASK_ELEM_TO_LONG(elem, density)	\
-+	(_SMASK_ELEM_TO_BYTE(elem, density) / sizeof(long))
-+
-+/* Translate @bit/@byte/@long index to an element index */
-+
-+#define _SMASK_BIT_TO_ELEM(bit, density)			\
-+	((bit) / SMASK_BITS * SMASK_DENSITY_TO_ELEMS(density) +	\
-+	 (bit) % SMASK_BITS)
-+
-+#define _SMASK_BYTE_TO_ELEM(byte, density)	\
-+	_SMASK_BIT_TO_ELEM((byte) * BITS_PER_BYTE, density)
-+
-+#define _SMASK_LONG_TO_ELEM(index, density)	\
-+	_SMASK_BYTE_TO_ELEM((index) * sizeof(long), density)
-+
-+/* Same translations as above, but taking sparsemask @m instead of density */
-+
-+#define SMASK_ELEM_TO_BYTE(elem, m)	_SMASK_ELEM_TO_BYTE(elem, (m)->density)
-+#define SMASK_ELEM_TO_BIT(elem, m)	_SMASK_ELEM_TO_BIT(elem, (m)->density)
-+#define SMASK_ELEM_TO_LONG(elem, m)	_SMASK_ELEM_TO_LONG(elem, (m)->density)
-+#define SMASK_BYTE_TO_ELEM(byte, m)	_SMASK_BYTE_TO_ELEM(byte, (m)->density)
-+#define SMASK_BIT_TO_ELEM(bit, m)	_SMASK_BIT_TO_ELEM(bit, (m)->density)
-+#define SMASK_LONG_TO_ELEM(index, m)	_SMASK_LONG_TO_ELEM(index, (m)->density)
-+
-+/*
-+ * Verify the @elem argument to sparsemask functions, and return its bit.
-+ */
-+static inline int
-+sparsemask_check(int elem, const struct sparsemask *mask)
-+{
-+	WARN_ON_ONCE(elem >= mask->nelems);
-+	return SMASK_ELEM_TO_BIT(elem, mask);
-+}
-+
-+int sparsemask_next(int n, const struct sparsemask *srcp);
-+int sparsemask_next_wrap(int n, const struct sparsemask *mask,
-+			 int start, bool wrap);
-+
-+/****************** The public API ********************/
-+
-+/*
-+ * for_each_sparse - iterate over every element in a mask
-+ * @elem: the (optionally unsigned) integer iterator
-+ * @mask: the sparsemask
-+ *
-+ * After the loop, @elem is >= @mask->nelems.
-+ */
-+#define for_each_sparse(elem, mask)			\
-+	for ((elem) = -1;				\
-+	     (elem) = sparsemask_next((elem), (mask)),	\
-+	     (elem) < (mask)->nelems;)
-+
-+/*
-+ * for_each_sparse_wrap - iterate over every element in a mask, starting at a
-+ *   specified location.
-+ * @elem: the (optionally unsigned) integer iterator
-+ * @mask: the sparsemask
-+ * @start: the start location
-+ *
-+ * The implementation does not assume any bit in @mask is set(including @start).
-+ * After the loop, @elem is >= @mask->nelems.
-+ */
-+#define for_each_sparse_wrap(elem, mask, start)				       \
-+	for ((elem) = sparsemask_next_wrap((start)-1, (mask), (start), false); \
-+	     (elem) < (mask)->nelems;					       \
-+	     (elem) = sparsemask_next_wrap((elem), (mask), (start), true))
-+
-+/*
-+ * sparsemask_set_elem - set an element in a sparsemask
-+ * @elem: element number (< @dstp->nelems)
-+ * @dstp: the sparsemask
-+ */
-+static inline void sparsemask_set_elem(int elem, struct sparsemask *dstp)
-+{
-+	set_bit(sparsemask_check(elem, dstp), dstp->bits);
-+}
-+
-+static inline void __sparsemask_set_elem(int elem, struct sparsemask *dstp)
-+{
-+	__set_bit(sparsemask_check(elem, dstp), dstp->bits);
-+}
-+
-+/*
-+ * sparsemask_clear_elem - clear an element in a sparsemask
-+ * @elem: element number (< @dstp->nelems)
-+ * @dstp: the sparsemask
-+ */
-+static inline void sparsemask_clear_elem(int elem, struct sparsemask *dstp)
-+{
-+	clear_bit(sparsemask_check(elem, dstp), dstp->bits);
-+}
-+
-+static inline void __sparsemask_clear_elem(int elem, struct sparsemask *dstp)
-+{
-+	__clear_bit(sparsemask_check(elem, dstp), dstp->bits);
-+}
-+
-+/*
-+ * sparsemask_test_elem - test for an element in a sparsemask
-+ * @elem: element number (< @mask->nelems)
-+ * @mask: the sparsemask
-+ *
-+ * Returns 1 if @elem is set in @mask, else returns 0
-+ */
-+static inline int sparsemask_test_elem(int elem, const struct sparsemask *mask)
-+{
-+	return test_bit(sparsemask_check(elem, mask), mask->bits);
-+}
-+
-+/*
-+ * sparsemask_test_and_set_elem - atomically test and set an element
-+ * @elem: element number (< @mask->nelems)
-+ * @mask: the sparsemask
-+ *
-+ * Returns 1 if @elem is set in old bitmap of @mask, else returns 0
-+ */
-+static inline int
-+sparsemask_test_and_set_elem(int elem, struct sparsemask *mask)
-+{
-+	return test_and_set_bit(sparsemask_check(elem, mask), mask->bits);
-+}
-+
-+/*
-+ * sparsemask_test_and_clear_elem - atomically test and clear an element
-+ * @elem: element number (< @mask->nelems)
-+ * @mask: the sparsemask
-+ *
-+ * Returns 1 if @elem is set in old bitmap of @mask, else returns 0
-+ */
-+static inline int
-+sparsemask_test_and_clear_elem(int elem, struct sparsemask *mask)
-+{
-+	return test_and_clear_bit(sparsemask_check(elem, mask), mask->bits);
-+}
-+
-+/*
-+ * sparsemask_weight - return count of bits in @mask (<= @mask->nelems)
-+ * @mask: the sparsemask
-+ */
-+unsigned int sparsemask_weight(const struct sparsemask *srcp);
-+
-+/*
-+ * Suggested and max value for the density parameter
-+ */
-+#define SPARSEMASK_DENSITY_DEFAULT	3
-+#define SMASK_DENSITY_MAX		_SMASK_DENSITY_MAX
-+
-+/*
-+ * Allocate and initialize a sparsemask and return it in @maskp.
-+ * @nelems - maximum number of elements.
-+ * @density - store 2^density elements per 64-byte chunk.
-+ *	      values from 0 to SMASK_DENSITY_MAX inclusive.
-+ * @flags - kmalloc allocation flags
-+ * @node - numa node
-+ *
-+ * Return true on success, like the cpumask functions.
-+ */
-+
-+bool alloc_sparsemask(struct sparsemask **maskp, int nelems,
-+		      int density, gfp_t flags);
-+
-+bool zalloc_sparsemask(struct sparsemask **maskp, int nelems,
-+		       int density, gfp_t flags);
-+
-+bool alloc_sparsemask_node(struct sparsemask **maskp, int nelems,
-+			   int density, gfp_t flags, int node);
-+
-+bool zalloc_sparsemask_node(struct sparsemask **maskp, int nelems,
-+			    int density, gfp_t flags, int node);
-+
-+/*
-+ * Free a sparsemask allocated by any of the above
-+ */
-+void free_sparsemask(struct sparsemask *mask);
-+
-+/*
-+ * Return bytes to allocate for a sparsemask, for custom allocators
-+ */
-+size_t sparsemask_size(int nelems, int density);
-+
-+/*
-+ * Initialize an allocated sparsemask, for custom allocators
-+ */
-+void sparsemask_init(struct sparsemask *mask, int nelems, int density);
-+
-+#endif /* __LINUX_SPARSEMASK_H */
-diff --git a/lib/Makefile b/lib/Makefile
-index ca3f7eb..77c168e 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -28,7 +28,7 @@ lib-y := ctype.o string.o vsprintf.o cmdline.o \
+diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+index 2634774..8bac15d 100644
+--- a/include/linux/sched/topology.h
++++ b/include/linux/sched/topology.h
+@@ -72,6 +72,7 @@ struct sched_domain_shared {
+ 	atomic_t	ref;
+ 	atomic_t	nr_busy_cpus;
+ 	int		has_idle_cores;
++	struct sparsemask *cfs_overload_cpus;
+ };
  
- lib-$(CONFIG_PRINTK) += dump_stack.o
- lib-$(CONFIG_MMU) += ioremap.o
--lib-$(CONFIG_SMP) += cpumask.o
-+lib-$(CONFIG_SMP) += cpumask.o sparsemask.o
+ struct sched_domain {
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 455fa33..aadfe68 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -81,6 +81,7 @@
  
- lib-y	+= kobject.o klist.o
- obj-y	+= lockref.o
-diff --git a/lib/sparsemask.c b/lib/sparsemask.c
-new file mode 100644
-index 0000000..d51cf50
---- /dev/null
-+++ b/lib/sparsemask.c
-@@ -0,0 +1,142 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * sparsemask.c - sparse bitmap operations
-+ *
-+ * Copyright (c) 2018 Oracle Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/slab.h>
-+#include <linux/kernel.h>
+ struct rq;
+ struct cpuidle_state;
++struct sparsemask;
+ 
+ /* task_struct::on_rq states: */
+ #define TASK_ON_RQ_QUEUED	1
+@@ -805,6 +806,7 @@ struct rq {
+ 	struct cfs_rq		cfs;
+ 	struct rt_rq		rt;
+ 	struct dl_rq		dl;
++	struct sparsemask	*cfs_overload_cpus;
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 	/* list of leaf cfs_rq on this CPU: */
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index a2363f6..f18c416 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -3,6 +3,7 @@
+  * Scheduler topology setup/handling methods
+  */
+ #include "sched.h"
 +#include <linux/sparsemask.h>
+ 
+ DEFINE_MUTEX(sched_domains_mutex);
+ 
+@@ -440,6 +441,7 @@ static void update_top_cache_domain(int cpu)
+ static void
+ cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
+ {
++	struct sparsemask *cfs_overload_cpus;
+ 	struct rq *rq = cpu_rq(cpu);
+ 	struct sched_domain *tmp;
+ 
+@@ -481,6 +483,10 @@ static void update_top_cache_domain(int cpu)
+ 	dirty_sched_domain_sysctl(cpu);
+ 	destroy_sched_domains(tmp);
+ 
++	sd = highest_flag_domain(cpu, SD_SHARE_PKG_RESOURCES);
++	cfs_overload_cpus = (sd ? sd->shared->cfs_overload_cpus : NULL);
++	rcu_assign_pointer(rq->cfs_overload_cpus, cfs_overload_cpus);
 +
-+/*
-+ * Return the next one bit in @mask after @start, not including @start.
-+ */
-+int sparsemask_next(int start, const struct sparsemask *mask)
-+{
-+	const unsigned long *addr = mask->bits;
-+	unsigned long nelems = mask->nelems;
-+	unsigned long tmp, nbits;
+ 	update_top_cache_domain(cpu);
+ }
+ 
+@@ -1611,9 +1617,19 @@ static void __sdt_free(const struct cpumask *cpu_map)
+ 	}
+ }
+ 
++#define ZALLOC_MASK(maskp, nelems, node)				  \
++	(!*(maskp) && !zalloc_sparsemask_node(maskp, nelems,		  \
++					      SPARSEMASK_DENSITY_DEFAULT, \
++					      GFP_KERNEL, node))	  \
 +
-+	/* -1 is a legal arg here. */
-+	if (start != -1)
-+		sparsemask_check(start, mask);
-+	start++;
+ static int sd_llc_alloc(struct sched_domain *sd)
+ {
+-	/* Allocate sd->shared data here. Empty for now. */
++	struct sched_domain_shared *sds = sd->shared;
++	struct cpumask *span = sched_domain_span(sd);
++	int nid = cpu_to_node(cpumask_first(span));
 +
-+	if (unlikely(start >= nelems))
-+		return nelems;
-+
-+	start = SMASK_ELEM_TO_BIT(start, mask);
-+	nbits = SMASK_ELEM_TO_BIT(nelems, mask);
-+	tmp = addr[start / BITS_PER_LONG];
-+
-+	/* Handle 1st word. */
-+	tmp &= BITMAP_FIRST_WORD_MASK(start);
-+	start = round_down(start, BITS_PER_LONG);
-+
-+	while (!tmp) {
-+		start += SMASK_BITS;
-+		if (start >= nbits)
-+			return nelems;
-+		tmp = addr[start / BITS_PER_LONG];
-+	}
-+
-+	return min(SMASK_BIT_TO_ELEM(start, mask) + __ffs(tmp), nelems);
-+}
-+
-+int
-+sparsemask_next_wrap(int n, const struct sparsemask *mask, int start, bool wrap)
-+{
-+	int next;
-+
-+again:
-+	next = sparsemask_next(n, mask);
-+
-+	if (wrap && n < start && next >= start) {
-+		return mask->nelems;
-+
-+	} else if (next >= mask->nelems) {
-+		wrap = true;
-+		n = -1;
-+		goto again;
-+	}
-+
-+	return next;
-+}
-+
-+unsigned int sparsemask_weight(const struct sparsemask *mask)
-+{
-+	int weight = 0;
-+	const unsigned long *addr = mask->bits;
-+	int nlongs = SMASK_ELEM_TO_LONG(mask->nelems, mask);
-+	int i, extra, shift;
-+
-+	for (i = 0; i < nlongs; i += SMASK_LONGS) {
-+		if (addr[i])
-+			weight += hweight_long(addr[i]);
-+	}
-+	extra = mask->nelems - SMASK_LONG_TO_ELEM(i, mask);
-+	if (extra > 0) {
-+		shift = BITS_PER_LONG - extra;
-+		weight += hweight_long((addr[i] << shift) >> shift);
-+	}
-+	return weight;
-+}
-+
-+size_t sparsemask_size(int nelems, int density)
-+{
-+	nelems = round_up(nelems, SMASK_DENSITY_TO_ELEMS(density));
-+	return sizeof(struct sparsemask) + _SMASK_ELEM_TO_BYTE(nelems, density);
-+}
-+
-+void sparsemask_init(struct sparsemask *mask, int nelems, int density)
-+{
-+	WARN_ON(density < 0 || density > SMASK_DENSITY_MAX);
-+	mask->nelems = nelems;
-+	mask->density = density;
-+}
-+
-+bool alloc_sparsemask_node(struct sparsemask **mask, int nelems, int density,
-+			   gfp_t flags, int node)
-+{
-+	*mask = kmalloc_node(sparsemask_size(nelems, density), flags, node);
-+	if (*mask)
-+		sparsemask_init(*mask, nelems, density);
-+	return !!*mask;
-+}
-+
-+bool zalloc_sparsemask_node(struct sparsemask **mask, int nelems, int density,
-+			    gfp_t flags, int node)
-+{
-+	flags |= __GFP_ZERO;
-+	return alloc_sparsemask_node(mask, nelems, density, flags, node);
-+}
-+
-+bool alloc_sparsemask(struct sparsemask **mask, int nelems, int density,
-+		      gfp_t flags)
-+{
-+	return alloc_sparsemask_node(mask, nelems, density, flags,
-+				     NUMA_NO_NODE);
-+}
-+
-+bool zalloc_sparsemask(struct sparsemask **mask, int nelems, int density,
-+		       gfp_t flags)
-+{
-+	flags |= __GFP_ZERO;
-+	return alloc_sparsemask(mask, nelems, density, flags);
-+}
-+
-+void free_sparsemask(struct sparsemask *mask)
-+{
-+	kfree(mask);
-+}
++	if (ZALLOC_MASK(&sds->cfs_overload_cpus, nr_cpu_ids, nid))
++		return 1;
+ 
+ 	return 0;
+ }
+@@ -1625,7 +1641,8 @@ static void sd_llc_free(struct sched_domain *sd)
+ 	if (!sds)
+ 		return;
+ 
+-	/* Free data here. Empty for now. */
++	free_sparsemask(sds->cfs_overload_cpus);
++	sds->cfs_overload_cpus = NULL;
+ }
+ 
+ static int sd_llc_alloc_all(const struct cpumask *cpu_map, struct s_data *d)
 -- 
 1.8.3.1
 
