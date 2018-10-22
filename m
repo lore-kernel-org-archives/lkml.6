@@ -2,146 +2,242 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 663C2C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C58FEC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:11:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E741B20651
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:10:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E741B20651
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B1FA20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:11:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B1FA20663
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbeJWB3W (ORCPT
+        id S1728663AbeJWBa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 21:29:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55846 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728481AbeJWB3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 21:29:22 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 026B33082A26;
-        Mon, 22 Oct 2018 17:10:02 +0000 (UTC)
-Received: from redhat.com (ovpn-125-63.rdu2.redhat.com [10.10.125.63])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 48AE317F90;
-        Mon, 22 Oct 2018 17:10:01 +0000 (UTC)
-Date:   Mon, 22 Oct 2018 13:10:00 -0400
-From:   Don Zickus <dzickus@redhat.com>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     David Miller <davem@davemloft.net>, acme@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: perf overlapping maps...
-Message-ID: <20181022171000.67rndl6br4fot7dm@redhat.com>
-References: <20181019.210549.1285253275146712779.davem@davemloft.net>
- <20181019.214401.2045294780943844999.davem@davemloft.net>
- <20181022140738.jvutwmstgm2f65et@redhat.com>
- <20181022161613.GF2945@krava>
+        Mon, 22 Oct 2018 21:30:28 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48744 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727218AbeJWBa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 21:30:28 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A835F80D;
+        Mon, 22 Oct 2018 10:11:07 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 69C983F5D3;
+        Mon, 22 Oct 2018 10:11:06 -0700 (PDT)
+Subject: Re: [PATCH 09/10] swiotlb: add support for non-coherent DMA
+To:     Christoph Hellwig <hch@lst.de>, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <20181008080246.20543-1-hch@lst.de>
+ <20181008080246.20543-10-hch@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <9ea28547-dd1a-b4bd-2e91-f71e70417e7d@arm.com>
+Date:   Mon, 22 Oct 2018 18:11:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181022161613.GF2945@krava>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 22 Oct 2018 17:10:02 +0000 (UTC)
+In-Reply-To: <20181008080246.20543-10-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 06:16:13PM +0200, Jiri Olsa wrote:
-> On Mon, Oct 22, 2018 at 10:07:38AM -0400, Don Zickus wrote:
-> > (adding Jiri)
-> > 
-> > On Fri, Oct 19, 2018 at 09:44:01PM -0700, David Miller wrote:
-> > > From: David Miller <davem@davemloft.net>
-> > > Date: Fri, 19 Oct 2018 21:05:49 -0700 (PDT)
-> > > 
-> > > > One solution I've come up with is:
-> > > > 
-> > > > 1) When synthesizing a fork event, set PERF_RECORD_MISC_COMM_EXEC in
-> > > >    header->misc.
-> > > > 
-> > > > 2) Use this to elide the map groups clone in
-> > > >    thread__clone_map_groups().
-> > > 
-> > > Looking into code history, I notice:
-> > > 
-> > > commit 363b785f3805a2632eb09a8b430842461c21a640
-> > > Author: Don Zickus <dzickus@redhat.com>
-> > > Date:   Fri Mar 14 10:43:44 2014 -0400
-> > > 
-> > >     perf tools: Speed up thread map generation
-> > > 
-> > > and the subsequent:
-> > > 
-> > > commit 4aa5f4f7bb8bc41cba15bcd0d80c4fb085027d6b
-> > > Author: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > > Date:   Fri Feb 27 19:52:10 2015 -0300
-> > > 
-> > >     perf tools: Fix FORK after COMM when synthesizing records for pre-existing threads
-> > > 
-> > > If Don wanted to have the map cloning to happen for processes without
-> > > CLONE_VM, I'm not sure that's right.
-> > > 
-> > > For real threads, we just take a reference to the map group from
-> > > the parent.
-> > > 
-> > > Don, a quick summary.  If we synthesize a fork event, let's say for an
-> > > emacs process.  perf will clone the map groups of the parent bash
-> > > shell which invoked emacs.  Via:
-> > > 
-> > > thread__fork(thread, parent, timestamp)
-> > > {
-> > >  ...
-> > >  thread__clone_map_groups(thread, parent)
-> > >  {
-> > >    ...
-> > >    map_groups__clone(thread, parent->mg)
-> > > 
-> > > Which is completely bogus.  It brings all of the bash process maps
-> > > into the emacs thread map group.  Then we process the emacs mmap2
-> > > events, which overlap the bash process maps already cloned into the
-> > > emacs map group.  And this make all kinds of erroneous things happen.
-> > > 
-> > > I'm suggesting to elide the map groups clone in this situation where
-> > > we are synthesizing the fork.
+On 08/10/2018 09:02, Christoph Hellwig wrote:
+> Handle architectures that are not cache coherent directly in the main
+> swiotlb code by calling arch_sync_dma_for_{device,cpu} in all the right
+> places from the various dma_map/unmap/sync methods when the device is
+> non-coherent.
 > 
-> right, this seems correct.. we should only clone parent maps
-> for kernel fork event, not when we synthesize.. I'll check
-> the solution you proposed and try to come with a patch
+> Because swiotlb now uses dma_direct_alloc for the coherent allocation
+> that side is already taken care of by the dma-direct code calling into
+> arch_dma_{alloc,free} for devices that are non-coherent.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   kernel/dma/swiotlb.c | 23 +++++++++++++++++------
+>   1 file changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+> index 475a41eff3dc..52885b274368 100644
+> --- a/kernel/dma/swiotlb.c
+> +++ b/kernel/dma/swiotlb.c
+> @@ -21,6 +21,7 @@
+>   
+>   #include <linux/cache.h>
+>   #include <linux/dma-direct.h>
+> +#include <linux/dma-noncoherent.h>
+>   #include <linux/mm.h>
+>   #include <linux/export.h>
+>   #include <linux/spinlock.h>
+> @@ -677,6 +678,10 @@ dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
+>   		dma_addr = swiotlb_bounce_page(dev, &phys, size, dir, attrs);
+>   	}
+>   
+> +	if (!dev_is_dma_coherent(dev) &&
+> +	    (attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
 
-Thanks Jiri for helping me out on this!
+Nit: other parts of the file are already using the "!(...)" style rather 
+than "(...) == 0".
 
-Cheers,
-Don
+> +		arch_sync_dma_for_device(dev, phys, size, dir);
+> +
+>   	return dma_addr;
+>   }
+>   
+> @@ -696,6 +701,10 @@ void swiotlb_unmap_page(struct device *hwdev, dma_addr_t dev_addr,
+>   
+>   	BUG_ON(dir == DMA_NONE);
+>   
+> +	if (!dev_is_dma_coherent(hwdev) &&
+> +	    (attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
+> +		arch_sync_dma_for_cpu(hwdev, paddr, size, dir);
+> +
+>   	if (is_swiotlb_buffer(paddr)) {
+>   		swiotlb_tbl_unmap_single(hwdev, paddr, size, dir, attrs);
+>   		return;
+> @@ -732,15 +741,17 @@ swiotlb_sync_single(struct device *hwdev, dma_addr_t dev_addr,
+>   
+>   	BUG_ON(dir == DMA_NONE);
+>   
+> -	if (is_swiotlb_buffer(paddr)) {
+> +	if (!dev_is_dma_coherent(hwdev) && target == SYNC_FOR_CPU)
+> +		arch_sync_dma_for_cpu(hwdev, paddr, size, dir);
+> +
+> +	if (is_swiotlb_buffer(paddr))
+>   		swiotlb_tbl_sync_single(hwdev, paddr, size, dir, target);
+> -		return;
+> -	}
+>   
+> -	if (dir != DMA_FROM_DEVICE)
+> -		return;
+> +	if (!dev_is_dma_coherent(hwdev) && target == SYNC_FOR_DEVICE)
+> +		arch_sync_dma_for_device(hwdev, paddr, size, dir);
+>   
+> -	dma_mark_clean(phys_to_virt(paddr), size);
+> +	if (!is_swiotlb_buffer(paddr) && dir == DMA_FROM_DEVICE)
+> +		dma_mark_clean(phys_to_virt(paddr), size);
+>   }
 
-> 
-> > 
-> > Hi David,
-> > 
-> > Honestly, I remember very little of this change other than we ran specjbb
-> > which created thousands of threads and we wanted a better way to handle that
-> > situation (waiting 15 minutes seemed wrong).
-> > 
-> > Jiri Olsa is probably more knowledgable about this then I am these days and
-> > can work with Joe to re-do the test to verify any suggested changes does not
-> > break our intended use case.
-> > 
-> > Thinking about it more, I am wondering if we did this because we ran the
-> > test and it takes about 20 minutes to 'warm up' then we attached perf to the
-> > test.  This implies we had to handle the situation where 10K threads already
-> > existed hence our optimization.  But I can be wrong.
-> > 
-> > Your suggestion is probably right and I am sure we can reproduce the
-> > scenario to verify things didn't regress.
-> 
-> I think the fix might actualy speed things up,
-> but yes, there could be other report regressions
-> 
-> thanks,
-> jirka
+All these "if"s end up pretty hard to follow at first glance :(
+
+I had a quick play at moving the cache maintenance here out into the 
+callers, which comes out arguably looking perhaps a little cleaner (only 
++1 source line overall, and actually reduces text size by 32 bytes for 
+my build), but sadly I can't really see any way of doing the equivalent 
+for map/unmap short of duplicating the whole 3-line arch_sync_*() block, 
+which just makes for a different readability problem. As you mentioned 
+on patch #7, I guess this really is just one of those things which has 
+no nice solution, so cosmetics aside,
+
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+
+FWIW, below is my "cleanup" attempt (diff on top of the 
+swiotlb-noncoherent.3 branch).
+
+Robin.
+
+----->8-----
+diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+index 52885b274368..43ee29969fdd 100644
+--- a/kernel/dma/swiotlb.c
++++ b/kernel/dma/swiotlb.c
+@@ -741,23 +741,24 @@ swiotlb_sync_single(struct device *hwdev, 
+dma_addr_t dev_addr,
+
+  	BUG_ON(dir == DMA_NONE);
+
+-	if (!dev_is_dma_coherent(hwdev) && target == SYNC_FOR_CPU)
+-		arch_sync_dma_for_cpu(hwdev, paddr, size, dir);
+-
+-	if (is_swiotlb_buffer(paddr))
++	if (is_swiotlb_buffer(paddr)) {
+  		swiotlb_tbl_sync_single(hwdev, paddr, size, dir, target);
++		return;
++	}
+
+-	if (!dev_is_dma_coherent(hwdev) && target == SYNC_FOR_DEVICE)
+-		arch_sync_dma_for_device(hwdev, paddr, size, dir);
++	if (dir != DMA_FROM_DEVICE)
++		return;
+
+-	if (!is_swiotlb_buffer(paddr) && dir == DMA_FROM_DEVICE)
+-		dma_mark_clean(phys_to_virt(paddr), size);
++	dma_mark_clean(phys_to_virt(paddr), size);
+  }
+
+  void
+  swiotlb_sync_single_for_cpu(struct device *hwdev, dma_addr_t dev_addr,
+  			    size_t size, enum dma_data_direction dir)
+  {
++	if (!dev_is_dma_coherent(hwdev))
++		arch_sync_dma_for_cpu(hwdev, dma_to_phys(hwdev, dev_addr),
++				      size, dir);
+  	swiotlb_sync_single(hwdev, dev_addr, size, dir, SYNC_FOR_CPU);
+  }
+
+@@ -766,6 +767,9 @@ swiotlb_sync_single_for_device(struct device *hwdev, 
+dma_addr_t dev_addr,
+  			       size_t size, enum dma_data_direction dir)
+  {
+  	swiotlb_sync_single(hwdev, dev_addr, size, dir, SYNC_FOR_DEVICE);
++	if (!dev_is_dma_coherent(hwdev))
++		arch_sync_dma_for_device(hwdev, dma_to_phys(hwdev, dev_addr),
++					 size, dir);
+  }
+
+  /*
+@@ -828,31 +832,28 @@ swiotlb_unmap_sg_attrs(struct device *hwdev, 
+struct scatterlist *sgl,
+   * The same as swiotlb_sync_single_* but for a scatter-gather list, 
+same rules
+   * and usage.
+   */
+-static void
+-swiotlb_sync_sg(struct device *hwdev, struct scatterlist *sgl,
+-		int nelems, enum dma_data_direction dir,
+-		enum dma_sync_target target)
++void
++swiotlb_sync_sg_for_cpu(struct device *hwdev, struct scatterlist *sgl,
++			int nelems, enum dma_data_direction dir)
+  {
+  	struct scatterlist *sg;
+  	int i;
+
+  	for_each_sg(sgl, sg, nelems, i)
+-		swiotlb_sync_single(hwdev, sg->dma_address,
+-				    sg_dma_len(sg), dir, target);
++		swiotlb_sync_single_for_cpu(hwdev, sg->dma_address,
++					    sg_dma_len(sg), dir);
+  }
+
+  void
+-swiotlb_sync_sg_for_cpu(struct device *hwdev, struct scatterlist *sg,
+-			int nelems, enum dma_data_direction dir)
+-{
+-	swiotlb_sync_sg(hwdev, sg, nelems, dir, SYNC_FOR_CPU);
+-}
+-
+-void
+-swiotlb_sync_sg_for_device(struct device *hwdev, struct scatterlist *sg,
++swiotlb_sync_sg_for_device(struct device *hwdev, struct scatterlist *sgl,
+  			   int nelems, enum dma_data_direction dir)
+  {
+-	swiotlb_sync_sg(hwdev, sg, nelems, dir, SYNC_FOR_DEVICE);
++	struct scatterlist *sg;
++	int i;
++
++	for_each_sg(sgl, sg, nelems, i)
++		swiotlb_sync_single_for_device(hwdev, sg->dma_address,
++					       sg_dma_len(sg), dir);
+  }
+
+  /*
