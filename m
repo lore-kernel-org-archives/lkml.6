@@ -2,133 +2,111 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 130DDC67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 05:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7EA8C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 05:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E66720644
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 05:45:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8453E20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 05:51:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ds+Hs+p+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E66720644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eKUgI+5Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8453E20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbeJVOCz (ORCPT
+        id S1727512AbeJVOI6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 10:02:55 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43898 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727387AbeJVOCz (ORCPT
+        Mon, 22 Oct 2018 10:08:58 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:35367 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbeJVOI6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 10:02:55 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d8-v6so7268634pgv.10
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 22:45:54 -0700 (PDT)
+        Mon, 22 Oct 2018 10:08:58 -0400
+Received: by mail-ot1-f68.google.com with SMTP id 14so34827079oth.2
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 22:51:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QVmYwbsNG5bCOYhvkC1BJKsz0sRqPZ2yAfHeiZiCAWA=;
-        b=Ds+Hs+p+tgFYM8FYjT83+zRuGzhte9kn4uUjRlmoezqhxD7ubqbu1VnAPg1F9fuak0
-         iiO11HUQ41Vc1hGDuUL2YekD/mtCOkyI6JVukCqTWD0eiuvYzSu5V7u897xDYWOqnYF0
-         72Orb0vy2KydoTnNtRDssFba2np6bzbzm4IYs=
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Nqz9QZKNlZNwwu6JfebYKHe8/J0Dec7REuwIbBJwNbI=;
+        b=eKUgI+5QgKp7x/H2o67gSNgKwkBKFRiT9FmhiElNcS9ESJQYX7e4bjSMeqVJB7gXNp
+         KezUxz3ddE0NlW+LD8tO8y5y4huh8se2pVLpfve/oznQKSPn9EcEl9Bj0fJFJf44fviN
+         GqxO/IjPpPHz4jZZLN824G0zz+kSc/omdUe50=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QVmYwbsNG5bCOYhvkC1BJKsz0sRqPZ2yAfHeiZiCAWA=;
-        b=WHnXEk1ZgfGn/lyMEYsz3dde1ujc0ILPktfSzj6cBupbmIVQgEMlMmB/dRQUIOjqKs
-         deOAFsthWFW4mfGFpW4Giy0s9MuaIYjj89F2chTwCiZTY+MVaHQUKHqoG37mKcBexGP5
-         RozfndS5joEswxa351EX43rcyQFszh6YX7RsxdIC0UKPSrQ+ZKMubBRMPcf0qCGgg//C
-         agQqIW4yr6CCEy1XPyDF3t4Kbj34l/pG60i1FVNxjpnyi+EYEtpAsdRAO+wvsrDj+BTi
-         sgc0DxpOt+2MxEOqhW6I44Fi64PyVTQSEF5TtuY5zgWdW4m7nquF2WBh7+7+8ZuM+HfZ
-         NHNA==
-X-Gm-Message-State: AGRZ1gK54os7Bi3Zm/EHD6yVdMR8hCd36yee7Yb5AWv0uPS1jb5hrcVO
-        2AvKCqOEy25LmtB+iLCSHprpEw==
-X-Google-Smtp-Source: AJdET5eT7ESMRJfOgN3cjvq5vTV+n2kGntuN0jPHfgryltHI6AKWAZ/7rbhQXoB7IjUgZSsOPgQ/sg==
-X-Received: by 2002:a63:61c8:: with SMTP id v191mr2985993pgb.242.1540187153819;
-        Sun, 21 Oct 2018 22:45:53 -0700 (PDT)
-Received: from localhost ([122.172.217.9])
-        by smtp.gmail.com with ESMTPSA id 5-v6sm40325358pgt.83.2018.10.21.22.45.52
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Nqz9QZKNlZNwwu6JfebYKHe8/J0Dec7REuwIbBJwNbI=;
+        b=L+D/6BZre/45Jl7cFXq3Ac9qUxCtSVLXgjvJjpJpFpmwLuPxJoZn42V+SlM6t72frD
+         9fgV0mD0BEk3l7t086cWP+3qK2GmaU8dxQf6Z1b5Afj59XVoRZ4ZvaZjObWPO/yxl1Wy
+         5bx7YmzbtHXlzIPeeioEHrPAdVq7zTXb9rKzLOcNa88VhRElekRPi8M96FMcQAR8pv8h
+         Fi9hX/bSF4Hu7F8CWaZsuk6kNYsPoN8b3loq7zwgsB9Fuc3XDG1d4NZKvAzTtaLTJhmb
+         BNZcSxvVPb7PnCn7PeC55Yp6NYSghyA5Yu8Qa7G8Yk0L15vvlKcXJ0roavtjRkNXCxfG
+         Fr0g==
+X-Gm-Message-State: ABuFfohobqmBoYtQoUjNIiTEa6oJrFTASJMrVc/BmvAwaYuFCDqe5Slx
+        TqNzuKiw+tBeb9+lkegOhzO3v0cjnYV5a+e/
+X-Google-Smtp-Source: ACcGV61iS/2gkKkOz8MsRpvQZw8mPHFZINvcJF2569aNyRptVDI0okTIwNIRy2fHrU8vTQ0MebQX1Q==
+X-Received: by 2002:a9d:522d:: with SMTP id e45mr28930168oth.91.1540187516328;
+        Sun, 21 Oct 2018 22:51:56 -0700 (PDT)
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com. [209.85.167.179])
+        by smtp.gmail.com with ESMTPSA id u21sm11817585ota.81.2018.10.21.22.51.55
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 21 Oct 2018 22:45:52 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 11:15:50 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     sboyd@kernel.org, andy.gross@linaro.org, ulf.hansson@linaro.org,
-        collinsd@codeaurora.org, mka@chromium.org, robh@kernel.org,
-        rnayak@codeaurora.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] dt-bindings: opp: Extend qcom-opp bindings with
- properties needed for CPR
-Message-ID: <20181022054550.zlreptvlqn4z2jtq@vireshk-i7>
-References: <20180627045234.27403-3-rnayak@codeaurora.org>
- <20181015124749.27276-1-niklas.cassel@linaro.org>
+        Sun, 21 Oct 2018 22:51:56 -0700 (PDT)
+Received: by mail-oi1-f179.google.com with SMTP id e17-v6so31216418oig.12
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 22:51:55 -0700 (PDT)
+X-Received: by 2002:a54:4390:: with SMTP id u16-v6mr24069433oiv.186.1540187514727;
+ Sun, 21 Oct 2018 22:51:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181015124749.27276-1-niklas.cassel@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+References: <1539782303-4091-1-git-send-email-vgarodia@codeaurora.org>
+In-Reply-To: <1539782303-4091-1-git-send-email-vgarodia@codeaurora.org>
+From:   Alexandre Courbot <acourbot@chromium.org>
+Date:   Mon, 22 Oct 2018 14:51:43 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MWxUNyJEkAUATa7BiXgU1JefoxFseXuaLb+_XsLish8Pw@mail.gmail.com>
+Message-ID: <CAPBb6MWxUNyJEkAUATa7BiXgU1JefoxFseXuaLb+_XsLish8Pw@mail.gmail.com>
+Subject: Re: [PATCH v12 0/5] Venus updates - PIL
+To:     vgarodia@codeaurora.org
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15-10-18, 14:47, Niklas Cassel wrote:
-> Extend qcom-opp bindings with properties needed for Core Power Reduction
-> (CPR).
-> 
-> CPR is included in a great variety of Qualcomm SoC, e.g. msm8916 and
-> msm8996, and was first introduced in msm8974.
-> 
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> ---
-> Hello Rob, Rajendra,
-> 
-> Sorry for not replying sooner.
-> Since Rob wanted the binding to be complete before merging,
-> this is my proposal to extend the OPP binding with properties
-> needed to support CPR (both for msm8916 and msm8996).
-> I've discussed the proposal with Viresh, and this proposal
-> seems better than what I previously suggested here:
-> https://lore.kernel.org/lkml/20181005204424.GA29500@centauri.lan/
-> 
->  .../devicetree/bindings/opp/qcom-opp.txt      | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/opp/qcom-opp.txt b/Documentation/devicetree/bindings/opp/qcom-opp.txt
-> index db4d970c7ec7..3ab5dd84de86 100644
-> --- a/Documentation/devicetree/bindings/opp/qcom-opp.txt
-> +++ b/Documentation/devicetree/bindings/opp/qcom-opp.txt
-> @@ -23,3 +23,22 @@ Required properties:
->  representing a corner/level that's communicated with a remote microprocessor
->  (usually called the RPM) which then translates it into a certain voltage on
->  a voltage rail.
-> +
-> +Optional properties:
-> +- opp-hz: Frequency in Hz, expressed as a 64-bit big-endian integer. Even
-> +  though a power domain doesn't need a opp-hz, there can be devices in the
-> +  power domain that need to know the highest supported frequency for each
-> +  corner/level (e.g. CPR), in order to properly initialize the hardware.
-> +
-> +- qcom,fuse-level: A positive value representing the fuse corner/level
-> +  associated with this OPP node. Sometimes several corners/levels shares
-> +  a certain fuse corner/level. A fuse corner/level contains e.g. ref uV,
-> +  min uV, and max uV.
-> +
-> +- qcom,fuse-level-<name>: Named qcom,fuse-level property. This is exactly
-> +  similar to the above qcom,fuse-level property, but allows multiple
-> +  fuse corners/levels to be provided for the same OPP. At runtime, the
-> +  platform can pick a <name> and matching qcom,fuse-level-<name> property
-> +  will be enabled for all OPPs. If the platform doesn't pick a specific
-> +  <name> or the <name> doesn't match with any qcom,fuse-level-<name>
-> +  properties, then qcom,fuse-level property shall be used, if present.
+Hi Vikash,
 
-LGTM.
+On Wed, Oct 17, 2018 at 10:18 PM Vikash Garodia <vgarodia@codeaurora.org> wrote:
+>
+> This version of the series
+> * updates the tz flag to unsigned
+>
+> Stanimir Varbanov (1):
+>   venus: firmware: register separate platform_device for firmware loader
+>
+> Vikash Garodia (4):
+>   venus: firmware: add routine to reset ARM9
+>   venus: firmware: move load firmware in a separate function
+>   venus: firmware: add no TZ boot and shutdown routine
+>   dt-bindings: media: Document bindings for venus firmware device
+>
+>  .../devicetree/bindings/media/qcom,venus.txt       |  14 +-
+>  drivers/media/platform/qcom/venus/core.c           |  24 ++-
+>  drivers/media/platform/qcom/venus/core.h           |   6 +
+>  drivers/media/platform/qcom/venus/firmware.c       | 235 +++++++++++++++++++--
+>  drivers/media/platform/qcom/venus/firmware.h       |  17 +-
+>  drivers/media/platform/qcom/venus/hfi_venus.c      |  13 +-
+>  drivers/media/platform/qcom/venus/hfi_venus_io.h   |   8 +
+>  7 files changed, 274 insertions(+), 43 deletions(-)
 
--- 
-viresh
+The series:
+
+Reviewed-by: Alexandre Courbot <acourbot@chromium.org>
+Tested-by: Alexandre Courbot <acourbot@chromium.org>
