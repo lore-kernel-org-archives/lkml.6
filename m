@@ -2,67 +2,88 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 983ABECDE43
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F7BECDE43
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:13:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F9142087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:12:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FzTvFw9+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F9142087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 77A202083E
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:13:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77A202083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbeJVJ2k (ORCPT
+        id S1726999AbeJVJ3h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 05:28:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51968 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725723AbeJVJ2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 05:28:40 -0400
-Received: from tiger (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31FC82083E;
-        Mon, 22 Oct 2018 01:12:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540170742;
-        bh=Wzx181HzwZNznNZZ5g863Cye5ytWBlK/UdVQJdkeOc8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FzTvFw9+UhMXS6TL3oEgnBPZG7ljNS1W5xrNto6UlE3W9FlFUVmslcO4unliicxOz
-         mnRsULv40vnFhTmexpz0x1uExlh6+tIpe3iWNZ093axPruaDRr/838m+JEeC2S125r
-         A+zZ3J2n9O6oCikO7F1swQWf8vMlf33sHkHg7WZ8=
-Date:   Mon, 22 Oct 2018 09:12:05 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Jun Nie <jun.nie@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 5/5] thermal: zx2967_thermal: simplify getting
- .driver_data
-Message-ID: <20181022011203.GA13039@tiger>
-References: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
- <20181021200053.2194-6-wsa+renesas@sang-engineering.com>
+        Mon, 22 Oct 2018 05:29:37 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38008 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725723AbeJVJ3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 05:29:37 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 0C819BB397488;
+        Mon, 22 Oct 2018 09:13:16 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 22 Oct 2018 09:13:10 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>, <stable@vger.kernel.org>
+Subject: [PATCH v2] f2fs: fix to account IO correctly
+Date:   Mon, 22 Oct 2018 09:12:51 +0800
+Message-ID: <20181022011251.70020-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181021200053.2194-6-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 21, 2018 at 10:00:52PM +0200, Wolfram Sang wrote:
-> We should get 'driver_data' from 'struct device' directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Below race can cause reversed reference on dirty count, fix it by
+relocating __submit_bio() and inc_page_count().
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+Thread A				Thread B
+- f2fs_inplace_write_data
+ - f2fs_submit_page_bio
+  - __submit_bio
+					- f2fs_write_end_io
+					 - dec_page_count
+  - inc_page_count
+
+Cc: <stable@vger.kernel.org>
+Fixes: d1b3e72d5490 ("f2fs: submit bio of in-place-update pages")
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2:
+- split into two parts, fix previous bug in this part, merge another
+part into other related patch.
+ fs/f2fs/data.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 9ef6f1f01eda..83b1983094bd 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -462,10 +462,10 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	}
+ 	bio_set_op_attrs(bio, fio->op, fio->op_flags);
+ 
+-	__submit_bio(fio->sbi, bio, fio->type);
+-
+ 	if (!is_read_io(fio->op))
+ 		inc_page_count(fio->sbi, WB_DATA_TYPE(fio->page));
++
++	__submit_bio(fio->sbi, bio, fio->type);
+ 	return 0;
+ }
+ 
+-- 
+2.18.0.rc1
+
