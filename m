@@ -2,116 +2,121 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 896C9C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 05:36:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4FE7C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 05:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35BDE2083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 05:36:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j11NOVAA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35BDE2083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6BE6920644
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 05:40:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BE6920644
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbeJVNxk (ORCPT
+        id S1727458AbeJVN46 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 09:53:40 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46404 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727388AbeJVNxk (ORCPT
+        Mon, 22 Oct 2018 09:56:58 -0400
+Received: from song.cn.fujitsu.com ([218.97.8.244]:47479 "EHLO
+        song.cn.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbeJVN46 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 09:53:40 -0400
-Received: by mail-pg1-f194.google.com with SMTP id r190-v6so6853765pgr.13
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 22:36:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7Qi2tehAH9db0RX2ZFZ7EVrRNPifGdb6V7nyOEmMy9o=;
-        b=j11NOVAABIGpEUhIX8U1o1QeDg50cKBJdsvrnGKuaeJ9Cnphyg0yJ4kZI/t//XPGk0
-         2MGhO0oDcpC0FuypifgWbPQyfmNYfFj+RiTdHupR6Tgxc2licpVkiEfMrX+tVhcD6fzw
-         jT69vuM7xwN1eT2+awSOaaO7Z0GcVexKVoSso=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7Qi2tehAH9db0RX2ZFZ7EVrRNPifGdb6V7nyOEmMy9o=;
-        b=X+AFzpvHcBXcLBzVO6t1ZTCmiuM8Ppi0uSlcKZJl5X1t68KEgBU1rlMDYOZ2s9X5km
-         ut0lUVkcmo/xNgwAINLSXcQITSNQCXGfTB3NVoLDSVambUjEB/Nc8rYWUxvQ/bgXnoKE
-         MdIBYDPWzCJSbzv7JL2mg5ISUeBriKtsrW6NukNCNpeesft8GTwgoMqM0uA7Bfhdma/S
-         O3mtXt21p9WCTarOQKSmGpsSWstL4XHxuDlCxKsycIIzgthMWp1ab4SpiVT1Rb8jxr2H
-         YADl5ehLdzjWt3UGVV8P44TXWNsRJykSrxLXPlu2uT7H3KWXGnT+Np3Rd4brR1Y4WW8D
-         sMXg==
-X-Gm-Message-State: ABuFfoh6DJbwmHwU4IDGiNO2J8Wt77bW/d40h93v7dJwXWc6cgyL/Blo
-        HUu/IjmHnUO38Q7VbBnfG1sg8Q==
-X-Google-Smtp-Source: ACcGV63RGXvuE/aPew/lGdOJAIAYN/d3A0K94IXQf9f+dvoVA1mja1EAToDNwGBw5nyoNyQhQcf9ug==
-X-Received: by 2002:a62:d085:: with SMTP id p127-v6mr18413773pfg.202.1540186600261;
-        Sun, 21 Oct 2018 22:36:40 -0700 (PDT)
-Received: from localhost ([122.172.217.9])
-        by smtp.gmail.com with ESMTPSA id k132-v6sm179281pga.28.2018.10.21.22.36.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 21 Oct 2018 22:36:39 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 11:06:36 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 01/17] OPP: Allow to request stub voltage
- regulators
-Message-ID: <20181022053636.ag62j3rj3vovbz53@vireshk-i7>
-References: <20181021205501.23943-1-digetx@gmail.com>
- <20181021205501.23943-2-digetx@gmail.com>
+        Mon, 22 Oct 2018 09:56:58 -0400
+X-Greylist: delayed 603 seconds by postgrey-1.27 at vger.kernel.org; Mon, 22 Oct 2018 09:56:56 EDT
+X-IronPort-AV: E=Sophos;i="5.43,385,1503331200"; 
+   d="scan'208";a="2367050"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.250.3])
+  by song.cn.fujitsu.com with ESMTP; 22 Oct 2018 13:29:54 +0800
+Received: from G08CNEXCHSHAD02.g08.fujitsu.local (unknown [10.167.250.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id 7CA1042FBD72;
+        Mon, 22 Oct 2018 13:29:51 +0800 (CST)
+Received: from G08CNEXMBSHAD01.g08.fujitsu.local ([10.167.250.81]) by
+ G08CNEXCHSHAD02.g08.fujitsu.local ([10.167.250.83]) with mapi id
+ 14.03.0415.000; Mon, 22 Oct 2018 13:29:49 +0800
+From:   "Fan, Chao" <fanc.fnst@cn.fujitsu.com>
+To:     Baoquan He <bhe@redhat.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "msys.mizuma@gmail.com" <msys.mizuma@gmail.com>,
+        "Indoh, Takao" <indou.takao@fujitsu.com>,
+        "Cao, Jin" <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v9 6/8] x86/boot: Dig out SRAT table from RSDP and find
+ immovable memory
+Thread-Topic: [PATCH v9 6/8] x86/boot: Dig out SRAT table from RSDP and find
+ immovable memory
+Thread-Index: AQHUZgMmVjXsvEJPgEGJx1tjPNYmy6Uoey4AgAIK/AA=
+Date:   Mon, 22 Oct 2018 05:29:51 +0000
+Message-ID: <B74D54765E346E448CD6C7B7B0334C258D95543F@G08CNEXMBSHAD01.g08.fujitsu.local>
+References: <20181017102012.872-1-fanc.fnst@cn.fujitsu.com>
+ <20181017102012.872-7-fanc.fnst@cn.fujitsu.com>
+ <20181021023458.GJ1885@192.168.1.4>
+In-Reply-To: <20181021023458.GJ1885@192.168.1.4>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.167.226.155]
+Content-Type: text/plain; charset="gb2312"
+Content-ID: <D7C9B52C65D415418BC53C79C15F89DE@fujitsu.local>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181021205501.23943-2-digetx@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+X-yoursite-MailScanner-ID: 7CA1042FBD72.A885D
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-10-18, 23:54, Dmitry Osipenko wrote:
-> Voltage regulators may be not available on some variations of HW, allow to
-> request stub voltage regulators by OPP core in a such case to reduce code
-> churning within drivers.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/cpufreq/cpufreq-dt.c | 2 +-
->  drivers/cpufreq/ti-cpufreq.c | 3 ++-
->  drivers/opp/core.c           | 9 +++++++--
->  include/linux/pm_opp.h       | 4 ++--
->  4 files changed, 12 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-> index e58bfcb1169e..6ebca472ec76 100644
-> --- a/drivers/cpufreq/cpufreq-dt.c
-> +++ b/drivers/cpufreq/cpufreq-dt.c
-> @@ -196,7 +196,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
->  	 */
->  	name = find_supply_name(cpu_dev);
->  	if (name) {
-> -		opp_table = dev_pm_opp_set_regulators(cpu_dev, &name, 1);
-> +		opp_table = dev_pm_opp_set_regulators(cpu_dev, &name, 1, false);
->  		if (IS_ERR(opp_table)) {
->  			ret = PTR_ERR(opp_table);
->  			dev_err(cpu_dev, "Failed to set regulator for cpu%d: %d\n",
-
-Have you actually tested this stuff ? The cpufreq-dt driver will
-probably fail to probe if the CPU node has a "-supply" property, but
-no regulator matching that.
-
--- 
-viresh
+T24gU3VuLCBPY3QgMjEsIDIwMTggYXQgMTA6MzQ6NThBTSArMDgwMCwgQmFv
+cXVhbiBIZSB3cm90ZToNCj5PbiAxMC8xNy8xOCBhdCAwNjoyMHBtLCBDaGFv
+IEZhbiB3cm90ZToNCj4+ICsJaWYgKCFjbWRsaW5lX2ZpbmRfb3B0aW9uX2Jv
+b2woIm1vdmFibGVfbm9kZSIpIHx8DQo+PiArCSAgICBjbWRsaW5lX2ZpbmRf
+b3B0aW9uX2FyZygiYWNwaSIsICJvZmYiLCAzKSkNCj4+ICsJCXJldHVybjsN
+Cj4+ICsNCj4+ICsJdGFibGVfaGVhZGVyID0gZ2V0X2FjcGlfc3JhdF90YWJs
+ZSgpOw0KPj4gKwlpZiAoIXRhYmxlX2hlYWRlcikNCj4+ICsJCXJldHVybjsN
+Cj4+ICsNCj4+ICsJdGFibGVfZW5kID0gKHVuc2lnbmVkIGxvbmcpdGFibGVf
+aGVhZGVyICsgdGFibGVfaGVhZGVyLT5sZW5ndGg7DQo+PiArDQo+PiArCXRh
+YmxlID0gKHN0cnVjdCBhY3BpX3N1YnRhYmxlX2hlYWRlciAqKQ0KPj4gKwkJ
+KCh1bnNpZ25lZCBsb25nKXRhYmxlX2hlYWRlciArIHNpemVvZihzdHJ1Y3Qg
+YWNwaV90YWJsZV9zcmF0KSk7DQo+PiArDQo+PiArCXdoaWxlICgoKHVuc2ln
+bmVkIGxvbmcpdGFibGUpICsNCj4+ICsJCSAgICAgICBzaXplb2Yoc3RydWN0
+IGFjcGlfc3VidGFibGVfaGVhZGVyKSA8IHRhYmxlX2VuZCkgew0KPj4gKwkJ
+aWYgKHRhYmxlLT50eXBlID09IEFDUElfU1JBVF9UWVBFX01FTU9SWV9BRkZJ
+TklUWSkgew0KPj4gKwkJCW1hID0gKHN0cnVjdCBhY3BpX3NyYXRfbWVtX2Fm
+ZmluaXR5ICopdGFibGU7DQo+PiArCQkJaWYgKCEobWEtPmZsYWdzICYgQUNQ
+SV9TUkFUX01FTV9IT1RfUExVR0dBQkxFKSkgew0KPj4gKwkJCQlpbW1vdmFi
+bGVfbWVtW2ldLnN0YXJ0ID0gbWEtPmJhc2VfYWRkcmVzczsNCj4+ICsJCQkJ
+aW1tb3ZhYmxlX21lbVtpXS5zaXplID0gbWEtPmxlbmd0aDsNCj4+ICsJCQkJ
+aSsrOw0KPj4gKwkJCX0NCj4+ICsNCj4+ICsJCQlpZiAoaSA+PSBNQVhfTlVN
+Tk9ERVMqMikNCj4JCU5vIHdhcm5pbmcgbWVzc2FnZSBwcmludGVkIGluIHRo
+aXMgY2FzZT8NCg0KSSB3aWxsIGFkZC4gQlRXLCB3aGF0IG1lc3NhZ2UgaXMg
+YXBwcm9wcmlhdGU/DQpJIGNhbid0IGZpZ3VyZSBvdXQgaW4gd2hhdCBjb25k
+aXRpb24sIGkgPj0gTUFYX05VTU5PREVTKjIuDQoNClRoYW5rcywNCkNoYW8g
+RmFuDQoNCj4+ICsJCQkJYnJlYWs7DQo+PiArCQl9DQo+PiArCQl0YWJsZSA9
+IChzdHJ1Y3QgYWNwaV9zdWJ0YWJsZV9oZWFkZXIgKikNCj4+ICsJCQkoKHVu
+c2lnbmVkIGxvbmcpdGFibGUgKyB0YWJsZS0+bGVuZ3RoKTsNCj4+ICsJfQ0K
+Pj4gKwludW1faW1tb3ZhYmxlX21lbSA9IGk7DQo+PiArfQ0KPj4gZGlmZiAt
+LWdpdCBhL2FyY2gveDg2L2Jvb3QvY29tcHJlc3NlZC9taXNjLmggYi9hcmNo
+L3g4Ni9ib290L2NvbXByZXNzZWQvbWlzYy5oDQo+PiBpbmRleCA0MDM3ODQw
+OGQ5ODAuLjcwYzQwM2UxNDQ0YyAxMDA2NDQNCj4+IC0tLSBhL2FyY2gveDg2
+L2Jvb3QvY29tcHJlc3NlZC9taXNjLmgNCj4+ICsrKyBiL2FyY2gveDg2L2Jv
+b3QvY29tcHJlc3NlZC9taXNjLmgNCj4+IEBAIC0xMjEsMyArMTIxLDEzIEBA
+IHN0YXRpYyBpbmxpbmUgdm9pZCBjb25zb2xlX2luaXQodm9pZCkNCj4+ICB2
+b2lkIHNldF9zZXZfZW5jcnlwdGlvbl9tYXNrKHZvaWQpOw0KPj4gIA0KPj4g
+ICNlbmRpZg0KPj4gKw0KPj4gKy8qIGFjcGl0Yi5jICovDQo+PiArI2lmZGVm
+IENPTkZJR19SQU5ET01JWkVfQkFTRQ0KPj4gK2ludCBudW1faW1tb3ZhYmxl
+X21lbTsNCj4+ICsjaWZkZWYgQ09ORklHX01FTU9SWV9IT1RSRU1PVkUNCj4+
+ICsvKiBTdG9yZSB0aGUgYW1vdW50IG9mIGltbW92YWJsZSBtZW1vcnkgcmVn
+aW9ucyAqLw0KPj4gKyNkZWZpbmUgQUNQSV9NQVhfVEFCTEVTICAgICAgICAg
+ICAgICAgIDEyOA0KPj4gK3ZvaWQgZ2V0X2ltbW92YWJsZV9tZW0odm9pZCk7
+DQo+PiArI2VuZGlmDQo+PiArI2VuZGlmDQo+PiAtLSANCj4+IDIuMTcuMg0K
+Pj4gDQo+PiANCj4+IA0KPg0KPg0KCgo=
