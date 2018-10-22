@@ -2,131 +2,251 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4488C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1942BC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ABCC20779
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:06:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ABCC20779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BBF020779
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:07:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="M6sWnLNI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BBF020779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbeJVRXy (ORCPT
+        id S1728126AbeJVRZH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 13:23:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47714 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727565AbeJVRXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 13:23:54 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 69E9B3082A33;
-        Mon, 22 Oct 2018 09:06:16 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-33.pek2.redhat.com [10.72.8.33])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 49F1827BC9;
-        Mon, 22 Oct 2018 09:06:07 +0000 (UTC)
-Date:   Mon, 22 Oct 2018 17:06:02 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc:     axboe@kernel.dk, martin.petersen@oracle.com, tom.leiming@gmail.com,
-        hch@lst.de, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] block: fix the DISCARD request merge
-Message-ID: <20181022090601.GA21171@ming.t460p>
-References: <1540045777-10290-1-git-send-email-jianchao.w.wang@oracle.com>
+        Mon, 22 Oct 2018 13:25:07 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36024 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbeJVRZG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 13:25:06 -0400
+Received: by mail-lj1-f193.google.com with SMTP id p89-v6so36251322ljb.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 02:07:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KsAYClRTjHHNGID0OANRrb9Zz5NVk9HHEmczdzIV6Do=;
+        b=M6sWnLNIaH/o6lfIcNq7ob26+q21rXxcteW7oC+GTv3uENkgURfyyINAPzhpIbaMfA
+         gT4pc/gBhlmR0YwZV2FaTQMpsh6rKnSF1dJx597MmlbfhfGnjtLWraWIu/eI6FMgBRCx
+         2ejN3riCL3Q5BZ2WwJ1JbDVR2vniu+FoBg5Pg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KsAYClRTjHHNGID0OANRrb9Zz5NVk9HHEmczdzIV6Do=;
+        b=mT4sVBOB6LbDCWTZ/GV+wkYHZp+WHuQeOy9yYVCUSJe6v8GyDpfQq31dMzCqESUcIx
+         cMvnrUeYFOQMicryla1gbRrrexgAUy1YJZ8w37xQHSchYjtxg19MqBjlQMENr+7t9Sw0
+         awPqaVk5zX89Iic/SrdoG4uCUFrz8SrbIMS/bcwRr4j8O81NRgCIe0gIHe9vGhcsfR1B
+         1+zrP6NQDUqvJbsi10U/3Hw0krT7zNWsB5XlsGrwQIINe2r0BQEFTW5DttVMXrtUuATd
+         q+MaTfsJt1dDjfS/OEHSW8S6LHT+7lWzw1o0QAJItphAFWJELPbY+VZyxNohEd2Hd/eo
+         JGxw==
+X-Gm-Message-State: ABuFfojDaJhdqJyHz0qWkYiF1208TZO/XpEchVMCr/kBuRnF1yYf377k
+        c43r/VXVW+n9CcZMMy85yNzTFsrNzeRIuXbLyTWJeg==
+X-Google-Smtp-Source: AJdET5dpTy3NyIt4DhPStv7rJlq4/2v0nS97u2MWUa6xRj/ISzvHXKItZ0biIi3JdlAL8KP0V1lxNmkkLPZzhOl8urA=
+X-Received: by 2002:a2e:2997:: with SMTP id p23-v6mr10412182ljp.12.1540199246260;
+ Mon, 22 Oct 2018 02:07:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540045777-10290-1-git-send-email-jianchao.w.wang@oracle.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 22 Oct 2018 09:06:16 +0000 (UTC)
+References: <20180421085009.28773-1-javier@emutex.com> <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1539969334-24577-4-git-send-email-dan@emutex.com>
+In-Reply-To: <1539969334-24577-4-git-send-email-dan@emutex.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 22 Oct 2018 11:07:13 +0200
+Message-ID: <CACRpkdaLTFFDbW9VY3DmaJ4R5ceXFJK0W_dSi7jbqi3Bz4FXkg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
+To:     "Dan O'Donovan" <dan@emutex.com>, Eric Anholt <eric@anholt.net>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-leds@vger.kernel.org, carlos.iglesias@emutex.com,
+        Javier Arteaga <javier@emutex.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 20, 2018 at 10:29:37PM +0800, Jianchao Wang wrote:
-> There are two cases when handle DISCARD merge
->  - max_discard_segments == 1
->    bios need to be contiguous
->  - max_discard_segments > 1
->    Only nvme right now. It takes every bio as a range and different
->    range needn't to be contiguous.
-> 
-> But now, attempt_merge screws this up. It always consider contiguity
-> for DISCARD for the case max_discard_segments > 1 and cannot merge
-> contiguous DISCARD for the case max_discard_segments == 1, because
-> rq_attempt_discard_merge always returns false in this case.
-> This patch fixes both of the two cases above.
-> 
-> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-> ---
-> 
-> V2:
->   - Add max_discard_segments > 1 checking in attempt_merge
->   - Change patch title and comment
->   - Add more comment in attempt_merge
-> 
->  block/blk-merge.c | 24 +++++++++++++++++++-----
->  1 file changed, 19 insertions(+), 5 deletions(-)
-> 
-> diff --git a/block/blk-merge.c b/block/blk-merge.c
-> index 42a4674..8f22374 100644
-> --- a/block/blk-merge.c
-> +++ b/block/blk-merge.c
-> @@ -734,8 +734,15 @@ static struct request *attempt_merge(struct request_queue *q,
->  	/*
->  	 * not contiguous
->  	 */
-> -	if (blk_rq_pos(req) + blk_rq_sectors(req) != blk_rq_pos(next))
-> -		return NULL;
-> +	if (blk_rq_pos(req) + blk_rq_sectors(req) != blk_rq_pos(next)) {
-> +		/*
-> +		 * When max_discard_segments is bigger than 1 (only nvme right
-> +		 * now), needn't consider the contiguity.
-> +		 */
-> +		if (!(req_op(req) == REQ_OP_DISCARD &&
-> +		      queue_max_discard_segments(q) > 1))
-> +			return NULL;
-> +	}
->  
->  	if (rq_data_dir(req) != rq_data_dir(next)
->  	    || req->rq_disk != next->rq_disk
-> @@ -757,10 +764,17 @@ static struct request *attempt_merge(struct request_queue *q,
->  	 * If we are allowed to merge, then append bio list
->  	 * from next to rq and release next. merge_requests_fn
->  	 * will have updated segment counts, update sector
-> -	 * counts here. Handle DISCARDs separately, as they
-> -	 * have separate settings.
-> +	 * counts here.
-> +	 * Two cases of Handling DISCARD:
-> +	 *  - max_discard_segments == 1
-> +	 *    The bios need to be contiguous.
-> +	 *  - max_discard_segments > 1
-> +	 *    Only nvme right now. It takes every bio as a
-> +	 *    range and send them to controller together. The ranges
-> +	 *    needn't to be contiguous.
->  	 */
-> -	if (req_op(req) == REQ_OP_DISCARD) {
-> +	if (req_op(req) == REQ_OP_DISCARD &&
-> +	    queue_max_discard_segments(q) > 1) {
->  		if (!req_attempt_discard_merge(q, req, next))
->  			return NULL;
+On Fri, Oct 19, 2018 at 7:16 PM Dan O'Donovan <dan@emutex.com> wrote:
 
-Looks fine,
+> From: Javier Arteaga <javier@emutex.com>
+>
+> The UP2 board features a Raspberry Pi compatible pin header (HAT) and a
+> board-specific expansion connector (EXHAT).
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Which makes me want to have Eric Anholt's review on this patch
+so as to secure basic interoperability with that header.
 
-The above may be changed to 'if (blk_try_merge(req) == ELEVATOR_DISCARD_MERGE)'
-or sort of in future, which may has document benefit at least, since
-ELEVATOR_DISCARD_MERGE means multi-segment discard merge.
+> Both expose assorted
+> functions from either the SoC (such as GPIO, I2C, SPI, UART...) or other
+> on-board devices (ADC, FPGA IP blocks...).
 
+OK
+Look at how RPi define names for their GPIO lines in the
+DTS file:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/bcm2835-rpi-b.dts
 
-Thanks,
-Ming
+Please follow this pattern with your patch.
+
+As you probably do not have device tree or anything similar
+for ACPI to name the lines (correct me if I'm wrong)
+you can use the .names array in struct gpio_chip for
+hardcoding the proper line names.
+
+lsgpio should give the same line names as it does on
+the corresponding RPi header IMO.
+
+> +config PINCTRL_UPBOARD
+> +       tristate "UP Squared pinctrl and GPIO driver"
+> +       depends on ACPI
+> +       depends on MFD_UPBOARD
+> +       select PINMUX
+
+select GPIOLIB
+
+as you're using it.
+
+> +static int upboard_get_functions_count(struct pinctrl_dev *pctldev)
+> +{
+> +       return 0;
+> +}
+> +
+> +static int upboard_get_function_groups(struct pinctrl_dev *pctldev,
+> +                                      unsigned int selector,
+> +                                      const char * const **groups,
+> +                                      unsigned int *num_groups)
+> +{
+> +       *groups = NULL;
+> +       *num_groups = 0;
+> +       return 0;
+> +}
+> +
+> +static const char *upboard_get_function_name(struct pinctrl_dev *pctldev,
+> +                                            unsigned int selector)
+> +{
+> +       return NULL;
+> +}
+> +
+> +static int upboard_set_mux(struct pinctrl_dev *pctldev, unsigned int function,
+> +                          unsigned int group)
+> +{
+> +       return 0;
+> +}
+
+This just looks weird.
+
+There seems to be code to disable pins and turn them into
+GPIOs in upboard_gpio_request_enable() but no way to
+switch them back to the original function, is that how it works?
+
+I guess it is fine if that is how it's supposed to be used. But
+won't some grumpy users come around and complain about
+this one day?
+
+We can fix it when it happens though.
+
+> +static int upboard_gpio_request(struct gpio_chip *gc, unsigned int offset)
+> +{
+> +       struct upboard_pinctrl *pctrl =
+> +               container_of(gc, struct upboard_pinctrl, chip);
+> +       struct gpio_desc *desc;
+> +       int ret;
+> +
+> +       ret = pinctrl_gpio_request(gc->base + offset);
+> +       if (ret)
+> +               return ret;
+> +
+> +       desc = devm_gpiod_get_index(gc->parent, "external", offset, GPIOD_ASIS);
+> +       if (IS_ERR(desc))
+> +               return PTR_ERR(desc);
+
+No please don't do this. The consumers should request
+the gpio, not the driver.
+
+> +static void upboard_gpio_free(struct gpio_chip *gc, unsigned int offset)
+> +{
+> +       struct upboard_pinctrl *pctrl =
+> +               container_of(gc, struct upboard_pinctrl, chip);
+> +
+> +       if (offset + 1 > pctrl->nsoc_gpios || !pctrl->soc_gpios[offset])
+> +               return;
+> +
+> +       devm_gpiod_put(gc->parent, pctrl->soc_gpios[offset]);
+
+Dito.
+
+> +static int upboard_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
+> +{
+> +       struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc, offset);
+> +
+> +       if (IS_ERR(desc))
+> +               return PTR_ERR(desc);
+> +
+> +       return gpiod_get_direction(desc);
+> +}
+
+This is just confusing me even more...
+
+If you need pinctrl_gpio_get_direction() then it should be
+added to the API in <linux/pinctrl/consumer.h>.
+
+> +static int upboard_gpio_direction_output(struct gpio_chip *gc,
+> +                                        unsigned int offset, int value)
+> +{
+> +       struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc, offset);
+> +       int ret;
+> +
+> +       if (IS_ERR(desc))
+> +               return PTR_ERR(desc);
+> +
+> +       ret = pinctrl_gpio_direction_output(gc->base + offset);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return gpiod_direction_output(desc, value);
+
+No this looks confusing too.
+
+> +static int upboard_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
+> +{
+> +       struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc, offset);
+> +
+> +       if (IS_ERR(desc))
+> +               return PTR_ERR(desc);
+> +
+> +       return gpiod_get_value(desc);
+
+I don't get this masking one GPIO chip behind another GPIO chip.
+It looks really weird.
+
+What we usually have is a GPIO chip in front of a pin controller
+utilizing
+extern int pinctrl_gpio_request(unsigned gpio);
+extern void pinctrl_gpio_free(unsigned gpio);
+extern int pinctrl_gpio_direction_input(unsigned gpio);
+extern int pinctrl_gpio_direction_output(unsigned gpio);
+extern int pinctrl_gpio_set_config(unsigned gpio, unsigned long config);
+
+these things for the GPIO chip to talk to the pin control
+back-end.
+
+This driver seems to use a GPIO chip in front of a
+GPIO chip and a pin controller too (or something like
+that) and that makes me very uneasy.
+
+I need a clear picture of the internal architectur of
+the GPIO parts of this driver, why the GPIO accessors
+are calling back into the GPIO layer etc. It looks very
+unorthodox to me, and I get very confused.
+
+Yours.
+Linus Walleij
