@@ -2,121 +2,124 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 886D6C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ECE8C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80F0E20645
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:07:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lZ1Kh0GK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80F0E20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 05AF620645
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 19:08:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05AF620645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=eircom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728879AbeJWD1l (ORCPT
+        id S1728920AbeJWD2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 23:27:41 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:52634 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728289AbeJWD1k (ORCPT
+        Mon, 22 Oct 2018 23:28:03 -0400
+Received: from vie01a-dmta-pe05-2.mx.upcmail.net ([84.116.36.12]:47246 "EHLO
+        vie01a-dmta-pe05-2.mx.upcmail.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728082AbeJWD2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 23:27:40 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9MIx1HI120483;
-        Mon, 22 Oct 2018 19:07:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=R+F/FRKXna6YizA6zF3XuP2H/v28iQv34CkOuurfgY0=;
- b=lZ1Kh0GK+61eIr6ZpqZO0B3AQQSAKIzCcYXUlJn0xRiXT9zGtUtOfpaV9EMtZjIHya5D
- PA5GCjAc2lQvyS/np1t+oLVVoFRQ/XxYxIiLja7DXwOx1NH/fxJj6ZA5Uv80fM0cUpQy
- 9jDp3ngoc5s9W4BRIv9rYU1xTwR1orq1BJGWdTKeoRYaftwTAuHeYbp8NSwTwsSBmDI1
- EBOhDIjEFlCUz0sB22Uq/3N32+2auTXdEngKufViT0iC5IKAd+xrIqdKfc1XPpntyVpN
- v0wLdXX8GjzlrUeWhbPIhucJqJh3dIuaXR3MvaxPDB4Y6zJzuEvsxBT+Wmw4Aq2rsnHP +w== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2n7w0qghet-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Oct 2018 19:07:29 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9MJ7S5d005483
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Oct 2018 19:07:28 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9MJ7R1H031149;
-        Mon, 22 Oct 2018 19:07:27 GMT
-Received: from [10.39.206.107] (/10.39.206.107)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 22 Oct 2018 12:07:27 -0700
-Subject: Re: [PATCH 00/10] steal tasks to improve CPU utilization
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, subhra.mazumdar@oracle.com,
-        dhaval.giani@oracle.com, daniel.m.jordan@oracle.com,
-        pavel.tatashin@microsoft.com, matt@codeblueprint.co.uk,
-        umgwanakikbuti@gmail.com, riel@redhat.com, jbacik@fb.com,
-        juri.lelli@redhat.com, linux-kernel@vger.kernel.org
-References: <1540220381-424433-1-git-send-email-steven.sistare@oracle.com>
- <20181022170421.GF3117@worktop.programming.kicks-ass.net>
-From:   Steven Sistare <steven.sistare@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <8e38ce84-ec1a-aef7-4784-462ef754f62a@oracle.com>
-Date:   Mon, 22 Oct 2018 15:07:10 -0400
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 22 Oct 2018 23:28:03 -0400
+Received: from [172.31.216.235] (helo=vie01a-pemc-psmtp-pe12.mail.upcmail.net)
+        by vie01a-dmta-pe05.mx.upcmail.net with esmtp (Exim 4.88)
+        (envelope-from <mikebrady@eircom.net>)
+        id 1gEfYl-0008IP-LB
+        for linux-kernel@vger.kernel.org; Mon, 22 Oct 2018 21:08:15 +0200
+Received: from helix.aillwee.com ([37.228.204.209])
+        by vie01a-pemc-psmtp-pe12.mail.upcmail.net with ESMTP
+        id EfYkgbHWckosQEfYkgxBem; Mon, 22 Oct 2018 21:08:15 +0200
+X-Env-Mailfrom: mikebrady@eircom.net
+X-Env-Rcptto: linux-kernel@vger.kernel.org
+X-SourceIP: 37.228.204.209
+X-CNFS-Analysis: v=2.3 cv=NNQEBHyg c=1 sm=1 tr=0
+ a=/+iDkf0alGTUGXENEoGzTg==:117 a=/+iDkf0alGTUGXENEoGzTg==:17
+ a=kj9zAlcOel0A:10 a=smKx5t2vBNcA:10 a=NEAV23lmAAAA:8 a=8qEL3EHZ_qRsqNYWS68A:9
+ a=CjuIK1q_8ugA:10
+Received: from ubuntu (unknown [77.75.241.10])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by helix.aillwee.com (Postfix) with ESMTPSA id 3FB214E607;
+        Mon, 22 Oct 2018 20:08:13 +0100 (IST)
+Date:   Mon, 22 Oct 2018 20:08:05 +0100
+From:   Mike Brady <mikebrady@eircom.net>
+To:     Kirill Marinushkin <k.marinushkin@gmail.com>
+Cc:     eric@anholt.net, stefan.wahren@i2se.com,
+        gregkh@linuxfoundation.org, f.fainelli@gmail.com, tiwai@suse.de,
+        nishka.dasgupta_ug18@ashoka.edu.in, julia.lawall@lip6.fr,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: bcm2835-audio: interpolate audio delay
+Message-ID: <20181022190805.GA4551@ubuntu>
+References: <20181018105715.GA6660@ubuntu>
+ <22867d63-12f1-31f7-acb6-ce9a58fcbe71@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181022170421.GF3117@worktop.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9054 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=681
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810220162
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22867d63-12f1-31f7-acb6-ce9a58fcbe71@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-CMAE-Envelope: MS4wfJJZWw9FAjzl+7NGOTcdt3LE6/9qqDY2xjzKNK8mS3wGYwPwixiLqfT0cDP/O8fGNIH5ol6jlaFnluY8p0x5Xp/ZcajVMotGq5p9bRjcjO0kb35cWUmG
+ Vro0+dBtoO87coSuW2bJAKfw6tKiSR7CktuCwezToIDUf8kskb6cS/7OVlveaJf9zvZ6LUfMejuQ1C96OzM8qdgD8jmFMWUKDuCxskYjQw8DsQZGus17W9qM
+ Dm/g3B/2CyupXkaV9LGC2ZiXMku/NdT3mgNa+6gfNWbW5nEmYNH0SFs07TP9UHdR9gAzJiyal83TNXT4nnlSU/2FIiU1HKELF+ns3rEFePHd49h3XcgwEy5r
+ rXRMlL/7SYCI4BSbF0NQ5XWipksMhgeqIPhicAwhW+DbWAzyJXFJ4ZH56aL/nSrXfCt08xlSPt7Q8jo24eJNm8W00IPp+w4AFRaEb1QruesfOky0Lji/3hIf
+ t73H+kGTE/AruHk3Ipfbr3oVINC5Pnraio5XKsWzS+eC8W0rsAKDA8vFfl3wp2+IuxOeYe1el6i9OfBoqHrdHMJizYrx2GrtMwcfCwJdwf80t0R3AFlihgnB
+ WOMn3YtzHefC7LW+8Gajdb/A
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/22/2018 1:04 PM, Peter Zijlstra wrote:
-> On Mon, Oct 22, 2018 at 07:59:31AM -0700, Steve Sistare wrote:
->> When a CPU has no more CFS tasks to run, and idle_balance() fails to
->> find a task, then attempt to steal a task from an overloaded CPU in the
->> same LLC. Maintain and use a bitmap of overloaded CPUs to efficiently
->> identify candidates.  To minimize search time, steal the first migratable
->> task that is found when the bitmap is traversed.  For fairness, search
->> for migratable tasks on an overloaded CPU in order of next to run.
->>
->> This simple stealing yields a higher CPU utilization than idle_balance()
->> alone, because the search is cheap, so it may be called every time the CPU
->> is about to go idle.  idle_balance() does more work because it searches
->> widely for the busiest queue, so to limit its CPU consumption, it declines
->> to search if the system is too busy.  Simple stealing does not offload the
->> globally busiest queue, but it is much better than running nothing at all.
+Hi Kirill.
+
+The problem that this patch seeks to resolve is that when userland asks for the
+delay -- the time to hear -- the driver responds with a figure that is only updated
+when a GPU interrupt occurs, now approximately every 10 milliseconds.
+
+As far as I am aware, there is no way to get a more up-to-date delay number on request,
+hence the present patch to interpolate based on the time of the last update, the time of
+the request and the nominal frame rate.
+
+It does have the drawback of relying on the accuracy of the CPU clock and on the
+nominal rate but on reasonable assumptions, it will not be in error over
+the approximately 10 ms interval.
+
+As you'll probably know, this is the built-in DAC in the full-sized Raspberry Pi devices and
+is widely used. As a developer of Shairport Sync, I have noticed that the "slop" in
+delay on the Pi's built-in DAC is very large by comparison with other DACs. FYI, there is
+a discussion of the effects of a downstream equivalent of this suggested patch at:
+https://github.com/raspberrypi/firmware/issues/1026#issuecomment-415746016.
+
+Best wishes
+Mike
+
+On Thu, Oct 18, 2018 at 09:48:36PM +0200, Kirill Marinushkin wrote:
+> Hello Mike,
 > 
-> Why I don't dislike the idea; I feel it is unfortunate to have two
-> different mechanisms to do effectively the same thing.
+> On 10/18/18 12:57, Mike Brady wrote:
+> > +	ktime_t now = ktime_get();
+> > +
+> > +	/* Give userspace better delay reporting by interpolating between GPU
+> > +	 * notifications, assuming audio speed is close enough to the clock
+> > +	 * used for ktime
+> > +	 */
+> > +
+> > +	if ((ktime_to_ns(alsa_stream->interpolate_start)) &&
+> > +	    (ktime_compare(alsa_stream->interpolate_start, now) < 0)) {
+> > +		u64 interval =
+> > +			(ktime_to_ns(ktime_sub(now,
+> > +				alsa_stream->interpolate_start)));
+> > +		u64 frames_output_in_interval =
+> > +			div_u64((interval * runtime->rate), 1000000000);
+> > +		snd_pcm_sframes_t frames_output_in_interval_sized =
+> > +			-frames_output_in_interval;
+> > +		runtime->delay = frames_output_in_interval_sized;
+> > +	}
 > 
-> Can't we improve idle_balance() instead of building this parallel
-> functionality?
-
-We could delete idle_balance() and use stealing exclusively for handling
-new idle.  For each sd level, stealing would look for an overloaded CPU
-in the overloaded bitmap(s) that overlap that level.  I played with that
-a little but it is not ready for prime time, and I did not want to hold
-the patch series for it.  Also, I would like folks to get some production
-experience with stealing on a variety of architectures before considering
-a radical step like replacing idle_balance().
-
-We could merge the stealing code into the idle_balance() code to get a
-union of the two, but IMO that would be less readable.
-
-We could remove the core and socket levels from idle_balance() and let
-stealing handle those levels.  I think that makes sense after stealing
-performance is validated on more architectures, but we would still have
-two different mechanisms.
-
-- Steve
+> This doesn't look like a good solution for me. More like a workaround. What is
+> the root cause of the delay?
+> 
+> Best Regards,
+> Kirill
