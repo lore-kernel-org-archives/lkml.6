@@ -2,257 +2,202 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED346ECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC6BECDE43
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 02:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98AE720652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 01:57:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 812B920838
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 02:02:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OPILk+G/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98AE720652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZkAL+r5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 812B920838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbeJVKOJ (ORCPT
+        id S1727284AbeJVKSu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 06:14:09 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39952 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726182AbeJVKOJ (ORCPT
+        Mon, 22 Oct 2018 06:18:50 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:50417 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbeJVKSu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 06:14:09 -0400
-Received: by mail-wr1-f68.google.com with SMTP id d2-v6so43099100wro.7;
-        Sun, 21 Oct 2018 18:57:42 -0700 (PDT)
+        Mon, 22 Oct 2018 06:18:50 -0400
+Received: by mail-it1-f196.google.com with SMTP id k206-v6so10184560ite.0
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 19:02:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ojTOEs+8njVQiQ7CsF/ABi4pQ6MudcxosewOh9vmRws=;
-        b=OPILk+G/BXMB3+HTxQUyX996cESwSWlnOR4XkQ7aNVF/sCDe2ymuPezXuZycdH6wX3
-         uMkkYHw9VdaXIraMri54/GfaGgS66PBq9s/jr7S2r5bM8EDKiEDShQQO+CzxX0HxZc52
-         ulZ51GTgyGHPC+X+Af4Gacei/D2gAwFlIlBC15oyFEEa+8UHv9T/9UPvHdptQV16xmYw
-         hawMIp0ah8Ww6zurgpQCNX1pvQNDVG/8ry87e46f4R4dpSvB64+N1YS9i8r+CE4n0MwQ
-         nVRkil2npySgT4e2K6ZRhkOPo6W6GVGFMCUdQ33meLeDyI4rZjkyeiQkCoYK7gFbm/L/
-         xzfA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=IwNGrrT++4eJfYUjWoh6KhjlV8getvSOspyyIT20AiM=;
+        b=ZZkAL+r5SDQan41lS/v0TEnOO4wwst5Vjg/qKakUBagrnROd5iHGZQP8xwKzC95dgl
+         EX/2HEMbAfC9zJRI2eyF0KFap3l5X+lU2V+hMhdAivCE44cieDGj0ahzIuRfOQwL12n5
+         2kzaYDUqohzIzTOMDWvPat68ncg0g2EuehqqcXqOe18w9yTDH+R+1U7DI0Ha997G1c9k
+         qbPO6x6FYbk3TftRkPp/0U36oxuUlMRL/dHR17uwPP3rUcZnSXQdd238zdtwddnAMT0+
+         7Nuf83Rd/1hj8Do3vKnzRTa/9N6y3iPlNp350BKQHuh/CIT/IrmhSHEmI0UJhCIvXlN2
+         h4kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ojTOEs+8njVQiQ7CsF/ABi4pQ6MudcxosewOh9vmRws=;
-        b=SmgQurxBhCVFUmW90GJRhthWVr5cKh9j1vV5edYRlUl0HxD6/mdb+tQLegnZre1uSC
-         G+KAIC7PbJx4FRYiv14vdtU73NGpb7wF2gcSaB0FL6I/ZrnYKMTrwkzd6EY0pAkjXN3h
-         BPRhcAN+6KE8rOkdtRCVm2gF1+OOvSJVRk5nH+7EQ8AAtiKymcg9LscBvdhVOYKNi7xM
-         QsJEFt+i+8EGM3qpD8MDB1XEpGJpO0NyRMoh2r19EuX3QlpDOH6mUN4Kp++ZYf0qU0vn
-         hpW8W+lAKBu8yi16r34NgifmalJTV+l1Q9HcHXBScMiQdKAwQhE5RtnOaudPRM2cXlFo
-         AmsQ==
-X-Gm-Message-State: ABuFfoicUbVK52JxAbv0L6pqy9AvBqvACuC6tCyXtxvDYa2VJfFrElfE
-        BQGW6Q/IwxuLqSzKcAjtxJw=
-X-Google-Smtp-Source: ACcGV63SNbJUW6HVfqJTwkITrWZrbiMsWXJ9FdwrdezuJFfW5+EEoSTSwHFMwe10j2V3OE0D3rVPiQ==
-X-Received: by 2002:adf:92a6:: with SMTP id 35-v6mr45523536wrn.137.1540173461640;
-        Sun, 21 Oct 2018 18:57:41 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id h82-v6sm7816133wmf.14.2018.10.21.18.57.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 21 Oct 2018 18:57:40 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 03:57:38 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH 1/2] x86/efi: Unmap efi boot services code/data regions
- from efi_pgd
-Message-ID: <20181022015738.GB24095@gmail.com>
-References: <1540172145-17134-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1540172145-17134-2-git-send-email-sai.praneeth.prakhya@intel.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=IwNGrrT++4eJfYUjWoh6KhjlV8getvSOspyyIT20AiM=;
+        b=iw1rLoNLmm2FBLfOJ3ggArIJTHio5rYwKHZ+/8/z+yYxQ53UZ2uSOwdspEtTLsnMv5
+         z7nnOhxvx2WhQM0fD6LDqnnDcYlHPHWZfkMsm38fKhaeal2QAk3tdFcJwsdpafec8KiJ
+         SzXNMvgmzhACN//GVDlfU/pVVx5gSNcVMwhPJdQbUoeuGj+IUq4twMa7aE1tOqhEkJ1x
+         wyNvhw4BrBndNGyRSoGHvVSh4ND8LlIAHgO1Wv3UHRzZWHGWCLhbf/FV38fMkr5xcNW1
+         d0nkZT6CfTb0oWhfNPldFkVquY8404o3bzTt2ewM+SzFADcCB8dekJouZD2lvGBKld/b
+         22eg==
+X-Gm-Message-State: ABuFfojdEnW9qLI66NSqFKV63F9qsmU8VHUd4hOsZ1jugL8IRvDitPVC
+        pdvsGImFo32/5O9rUvMAZaHIAauNbnWPagKJqPY=
+X-Google-Smtp-Source: ACcGV61z6YvMLId9DxvdAB2JQriwAdqM6v7g3VDzyFCicrClEdCBnY3JRPafh7GHrF5xb2JsEnHugJs7kUikYA+1b9w=
+X-Received: by 2002:a02:a914:: with SMTP id n20-v6mr8817383jam.90.1540173742971;
+ Sun, 21 Oct 2018 19:02:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540172145-17134-2-git-send-email-sai.praneeth.prakhya@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <CAHyWSemw6LYChaEZinFTFvA=kfJKqvWMfadVq5a=+j9TcCrewg@mail.gmail.com>
+ <20181017221330.146765e4@vmware.local.home>
+In-Reply-To: <20181017221330.146765e4@vmware.local.home>
+From:   Phy Bio <wisedd@gmail.com>
+Date:   Mon, 22 Oct 2018 10:03:02 +0800
+Message-ID: <CAHyWSe=LfZqNgg107dDASxsxgSp-JxTJnfHSHha3=wSn9bD+yg@mail.gmail.com>
+Subject: Re: rcu: Kernel stack is corrupted in: perf_trace_rcu_dyntick
+To:     rostedt@goodmis.org
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com> wrote:
-
-> Ideally, after kernel assumes control of the platform firmware shouldn't
-> access EFI Boot Services Code/Data regions. But, it's noticed that this
-> is not so true in many x86 platforms. Hence, during boot, kernel
-> reserves efi boot services code/data regions [1] and maps [2] them to
-> efi_pgd so that call to set_virtual_address_map() doesn't fail. After
-> returning from set_virtual_address_map(), kernel frees the reserved
-> regions [3] but they still remain mapped.
-> 
-> This means that any code that's running in efi_pgd address space (e.g:
-> any efi runtime service) would still be able to access efi boot services
-> code/data regions but the contents of these regions would have long been
-> over written by someone else as they are freed by efi_free_boot_services().
-> So, it's important to unmap these regions. After unmapping boot services
-> code/data regions, any illegal access by buggy firmware to these regions
-> would result in page fault which will be handled by efi specific fault
-> handler.
-> 
-> [1] Please see efi_reserve_boot_services()
-> [2] Please see efi_map_region() -> __map_region()
-> [3] Please see efi_free_boot_services()
-> 
-> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Bhupesh Sharma <bhsharma@redhat.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->  arch/x86/include/asm/pgtable_types.h |  2 ++
->  arch/x86/mm/pageattr.c               | 21 +++++++++++++++++++++
->  arch/x86/platform/efi/quirks.c       | 26 ++++++++++++++++++++++++++
->  3 files changed, 49 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-> index b64acb08a62b..796476f11151 100644
-> --- a/arch/x86/include/asm/pgtable_types.h
-> +++ b/arch/x86/include/asm/pgtable_types.h
-> @@ -566,6 +566,8 @@ extern pmd_t *lookup_pmd_address(unsigned long address);
->  extern phys_addr_t slow_virt_to_phys(void *__address);
->  extern int kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
->  				   unsigned numpages, unsigned long page_flags);
-> +extern int kernel_unmap_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
-> +				     unsigned long numpages);
->  #endif	/* !__ASSEMBLY__ */
->  
->  #endif /* _ASM_X86_PGTABLE_DEFS_H */
-> diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-> index 51a5a69ecac9..b88ed8e91790 100644
-> --- a/arch/x86/mm/pageattr.c
-> +++ b/arch/x86/mm/pageattr.c
-> @@ -2147,6 +2147,27 @@ int kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
->  	return retval;
->  }
->  
-> +int kernel_unmap_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
-> +			      unsigned long numpages)
-> +{
-> +	int retval;
-> +
-> +	struct cpa_data cpa = {
-> +		.vaddr = &address,
-> +		.pfn = pfn,
-> +		.pgd = pgd,
-> +		.numpages = numpages,
-> +		.mask_set = __pgprot(0),
-> +		.mask_clr = __pgprot(_PAGE_PRESENT | _PAGE_RW),
-> +		.flags = 0,
-> +	};
-> +
-> +	retval = __change_page_attr_set_clr(&cpa, 0);
-> +	__flush_tlb_all();
-> +
-> +	return retval;
-> +}
-
-That's certainly a creative use of __change_page_attr_set_clr() by EFI 
-used for mapping in pages so far (kernel_map_pages_in_pgd()), and now 
-used for unmapping as well. Doesn't look wrong, just a bit weird as part 
-of CPA.
-
-Could you please write the initializer in an easier to read fashion:
-
-	struct cpa_data cpa = {
-		.vaddr		= &address,
-		.pfn		= pfn,
-		.pgd		= pgd,
-		.numpages	= numpages,
-		.mask_set	= __pgprot(0),
-		.mask_clr	= __pgprot(_PAGE_PRESENT | _PAGE_RW),
-		.flags		= 0,
-	};
-
-?
-
-The one bit that is odd is the cpa->pfn field - for unmapped pages that's 
-totally uninteresting and I'm wondering whether setting it to 0 wouldn't 
-be better.
-
-Does the CPU _ever_ look look at the PFN if the page is !_PAGE_PRESENT, 
-for example speculatively? If yes then what is the recommended value for 
-the pfn - zero perhaps?
-
-Also note that if for whatever reason the PFN range of the EFI boot area 
-gets hot-unplugged, we'd have outright invalid PFNs - although this is 
-probably very unlikely from a platform perspective.
-
-> +/*
-> + * Apart from having VA mappings for efi boot services code/data regions,
-> + * (duplicate) 1:1 mappings were also created as a catch for buggy firmware. So,
-> + * unmap both 1:1 and VA mappings.
-> + */
-
-Speling nits:
-
-- please capitalize 'EFI' consistently.
-- s/catch/quirk ?
-
-BTW., are the 1:1 'boot mappings' a buggy firmware quirk, or something 
-required by the EFI spec? (or both? ;-)
-
-> +static void __init efi_unmap_pages(efi_memory_desc_t *md)
-> +{
-> +	pgd_t *pgd = efi_mm.pgd;
-> +	u64 pfn = md->phys_addr >> PAGE_SHIFT;
-
-Note that this md->phys_addr isn't really meaningful once it gets 
-unmapped.
-
-> +
-> +	if (kernel_unmap_pages_in_pgd(pgd, pfn, md->phys_addr, md->num_pages))
-> +		pr_err("Failed to unmap 1:1 mapping: PA 0x%llx -> VA 0x%llx!\n",
-> +		       md->phys_addr, md->virt_addr);
-> +
-> +	if (kernel_unmap_pages_in_pgd(pgd, pfn, md->virt_addr, md->num_pages))
-> +		pr_err("Failed to unmap VA mapping: PA 0x%llx -> VA 0x%llx!\n",
-> +		       md->phys_addr, md->virt_addr);
-
-Please keep pr_err()'s in a single line. (and ignore checkpatch.)
-
-> +}
-> +
->  void __init efi_free_boot_services(void)
->  {
->  	phys_addr_t new_phys, new_size;
-> @@ -415,6 +434,13 @@ void __init efi_free_boot_services(void)
->  		}
->  
->  		free_bootmem_late(start, size);
-> +
-> +		/*
-> +		 * Before calling set_virtual_address_map(), boot services
-> +		 * code/data regions were mapped as a catch for buggy firmware.
-> +		 * Unmap them from efi_pgd as they have already been freed.
-> +		 */
-> +		efi_unmap_pages(md);
-
-Ditto.
-
-BTW., the ordering here is wrong: we should unmap any virtual aliases 
-from pagetables _before_ we free the underlying memory. The ordering is 
-probably harmless in this case but overall a good practice.
-
-Thanks,
-
-	Ingo
+This PoC generated by syzkaller needs ROOT permission to run.
+Steven Rostedt <rostedt@goodmis.org> =E4=BA=8E2018=E5=B9=B410=E6=9C=8818=E6=
+=97=A5=E5=91=A8=E5=9B=9B =E4=B8=8A=E5=8D=8810:13=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Sat, 29 Sep 2018 17:22:13 +0800
+> =E7=8E=8B=E6=99=93=E4=B8=9C <wisedd@gmail.com> wrote:
+>
+> > Hi there,
+> >
+> > We would like to report a kernel stack corrupted problem we identified
+> > in the perf_trace_rcu_dyntick function of tracing events subsystem.
+> > And the problem was founded by syzkaller.  We has tested the PoC on
+> > the lasted master branch of kernel(4.19.0-rc5+).
+> >
+> > The crash log generated with KASAN enabled:
+> >
+> > root@pc:~# ./perf_trace_rcu_dyntick
+> > [  582.069938] Kernel panic - not syncing: stack-protector: Kernel
+> > stack is corrupted in: perf_trace_rcu_dyntick+0x355/0x4f0
+> > [  582.069938]
+> > [  582.071341] CPU: 6 PID: 3417 Comm: perf_trace_rcu_ Not tainted 4.19.=
+0-rc5+ #1
+> > [  582.072134] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> > BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+> > [  582.073103] Call Trace:
+> > [  582.073364]  <IRQ>
+> > [  582.073614]  dump_stack+0x8c/0xce
+> > [  582.074039]  panic+0x1cb/0x3aa
+> > [  582.074427]  ? refcount_error_report+0x296/0x296
+> > [  582.075003]  ? timerqueue_del+0x71/0x130
+> > [  582.075553]  ? perf_trace_rcu_dyntick+0x355/0x4f0
+> > [  582.076063]  ? __stack_chk_fail+0x6/0x20
+> > [  582.076763]  ? perf_trace_rcu_dyntick+0x355/0x4f0
+> > [  582.077369]  __stack_chk_fail+0x1f/0x20
+> > [  582.077877]  perf_trace_rcu_dyntick+0x355/0x4f0
+> > [  582.078442]  ? rcu_gp_is_expedited+0xa0/0xa0
+> > [  582.078993]  ? rcu_gp_is_expedited+0xa0/0xa0
+> > [  582.079525]  ? check_preempt_curr+0x1c2/0x2a0
+> > [  582.080059]  ? sched_clock_cpu+0x18/0x160
+> > [  582.080551]  rcu_nmi_enter+0x1f0/0x2f0
+> > [  582.081036]  ? rcu_gp_is_expedited+0xa0/0xa0
+> > [  582.081507]  irq_enter+0xf/0x80
+> > [  582.081914]  smp_apic_timer_interrupt+0x1b/0x2d0
+> > [  582.082480]  apic_timer_interrupt+0xf/0x20
+> > [  582.082984]  </IRQ>
+> > [  582.083219] RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x50
+> > [  582.087816] Code: e8 35 0b 20 00 48 8b 14 24 e9 fe fe ff ff 48 89
+> > df e8 24 0b 20 00 e9 d9 fe ff ff 4c 89 e7 e8 17 0b 20 00 e9 ab fe ff
+> > ff 90 90 <65> 48 8b 04 25 40 dd 01 00 65 8b 15 70 03 8f 63 81 e2 00 01
+> > 1f 00
+> > [  582.090289] RSP: 0018:ffff8800651bf9e0 EFLAGS: 00000206 ORIG_RAX:
+> > ffffffffffffff13
+> > [  582.091238] RAX: 0000000000000000 RBX: ffffffff9eed12a5 RCX: fffffff=
+f9c6ca1b6
+> > [  582.092873] RDX: 0000000000000005 RSI: ffffffff9ee31d71 RDI: fffffff=
+f9eed12a4
+> > [  582.093934] RBP: 0000000000000078 R08: ffffed000d38dfb2 R09: ffffed0=
+00d38dfb1
+> > [  582.095102] R10: 000000007350a3ba R11: ffff880069c6fd8f R12: ffff880=
+0651bfa6e
+> > [  582.096444] R13: 0000000000000001 R14: dffffc0000000000 R15: 0000000=
+00000006a
+> > [  582.097414]  ? kallsyms_expand_symbol.constprop.11+0x176/0x250
+> > [  582.098518]  kallsyms_expand_symbol.constprop.11+0x12e/0x250
+> > [  582.099707]  kallsyms_lookup_name+0xbe/0x1d0
+> > [  582.100369]  ? kallsyms_on_each_symbol+0x210/0x210
+> > [  582.101436]  ? snprintf+0xbd/0xf0
+> > [  582.102029]  ? vsprintf+0x30/0x30
+> > [  582.102805]  ? kasan_kmalloc+0xa9/0xd0
+> > [  582.103489]  ? alloc_trace_kprobe+0x6c0/0x930
+> > [  582.104073]  kprobe_on_func_entry+0x57/0xb0
+> > [  582.105421]  register_kretprobe+0x89/0xc10
+> > [  582.105930]  ? set_print_fmt+0x32/0xa0
+> > [  582.106376]  __register_trace_kprobe.part.10+0x14e/0x2e0
+> > [  582.106980]  create_local_trace_kprobe+0x29c/0x3f0
+> > [  582.107487]  perf_kprobe_init+0x15f/0x210
+> > [  582.107912]  perf_kprobe_event_init+0xc4/0x140
+>
+> I added Peter to the Cc, because he maintains perf.
+>
+> I have no idea what's going on here with kretprobes? Non-root can have
+> kretprobes added to the kernel?
+>
+> -- Steve
+>
+>
+> > [  582.108377]  perf_try_init_event+0xcb/0x290
+> > [  582.108817]  perf_event_alloc+0x1476/0x2020
+> > [  582.109264]  ? find_get_context.isra.106+0x690/0x690
+> > [  582.109922]  ? __alloc_fd+0x1a3/0x4e0
+> > [  582.120002]  __do_sys_perf_event_open+0x222/0x1f40
+> > [  582.123049]  ? avc_has_perm_noaudit+0x340/0x340
+> > [  582.131226]  ? perf_event_set_output+0x5f0/0x5f0
+> > [  582.134395]  ? handle_mm_fault+0x103/0x350
+> > [  582.138102]  ? ksys_ioctl+0x61/0x90
+> > [  582.140234]  do_syscall_64+0x9a/0x2c0
+> > [  582.142674]  ? prepare_exit_to_usermode+0xbc/0x150
+> > [  582.146856]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > [  582.151127] RIP: 0033:0x446159
+> > [  582.152816] Code: e8 ac e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00
+> > 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
+> > 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 5b 08 fc ff c3 66 2e 0f 1f 84 00 00
+> > 00 00
+> > [  582.167257] RSP: 002b:00007fffc2b023d8 EFLAGS: 00000246 ORIG_RAX:
+> > 000000000000012a
+> > [  582.171375] RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000=
+000446159
+> > [  582.175760] RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 0000000=
+020000180
+> > [  582.176487] RBP: 00007fffc2b025b0 R08: 0000000000000000 R09: 0000000=
+000000000
+> > [  582.177189] R10: 00000000ffffffff R11: 0000000000000246 R12: 0000000=
+000406e40
+> > [  582.177898] R13: 0000000000406ed0 R14: 0000000000000000 R15: 0000000=
+000000000
+> > [  583.353322] Shutting down cpus with NMI
+> > [  583.354285] Kernel Offset: 0x1b400000 from 0xffffffff81000000
+> > (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+> > [  583.356743] Rebooting in 86400 seconds..
+> >
+> >
+> > This bug could be easily reproduced by running the PoC(generated by
+> > syzkaller, and transformed to C Source code).
+> >
+> > For any further information, please feel free to contact us at
+> > wisedd@gmail.com. We would be more than happy to provide other
+> > information of this problem.
+>
