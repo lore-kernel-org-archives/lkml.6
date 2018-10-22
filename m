@@ -2,112 +2,122 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E96C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E406C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 716D220853
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:33:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 716D220853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4E6C920658
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:33:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E6C920658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=digi.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbeJVSv0 (ORCPT
+        id S1728678AbeJVSvb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:51:26 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46222 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728614AbeJVSv0 (ORCPT
+        Mon, 22 Oct 2018 14:51:31 -0400
+Received: from mail1.bemta24.messagelabs.com ([67.219.250.211]:14093 "EHLO
+        mail1.bemta24.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728614AbeJVSva (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:51:26 -0400
-Received: by mail-wr1-f65.google.com with SMTP id i4-v6so5610400wrr.13
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 03:33:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+vDzutpy4i3aGDuAO9GDJV8l9Toex6uwQ2H12nSR/AU=;
-        b=J97eFLqqawvXBYpgOx1ck71z6wT6jxXWpgzNyDPt/GiasSkAoqDbKQU1W6yEgMxeMf
-         zMmKlAjIrn9AT46Fy2mxBJ5yyNKdhdXOE871xalWT0qmpwKBcaXyNyy7Z6+KE4lvoi8a
-         yUJcmy4XWbD6lFUSq+ekfMABLpTS3amBbX29M1dLUO6NUTvreS2IlpBeSWTb99zhqchY
-         gtNFgk5buY7A5zclDQ/GyWX20Ui7cGxayfSntvIgNznZssC1de7FqIT9OD9/Zq23poIs
-         Vu98R6k5YCXwZf6hfJ1TdFBeis8DLw6k+YBfqrZESG2CUC/BJEM885zVoas0qnqyXtgP
-         9A7w==
-X-Gm-Message-State: ABuFfojqby5nY+P73BO4J4TzZjhyTubBcFYCKmIiYafQbO5daxpslKPX
-        FAAob6hpo28q5HyXFqyPjSzW/w==
-X-Google-Smtp-Source: ACcGV602Bo9NF4lzIWYtolUbjcHpu7BCV8zypmv+aCFw2uXeidkfY9Yq4KBB1hB3R4PK14CSUhZEPQ==
-X-Received: by 2002:adf:a352:: with SMTP id d18-v6mr45322201wrb.31.1540204406038;
-        Mon, 22 Oct 2018 03:33:26 -0700 (PDT)
-Received: from localhost ([185.7.230.215])
-        by smtp.gmail.com with ESMTPSA id a1-v6sm28297167wrt.79.2018.10.22.03.33.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Oct 2018 03:33:25 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 03:33:24 -0700
-From:   Moritz Fischer <mdf@kernel.org>
-To:     Andreas Puhm <puhm@oregano.at>
-Cc:     Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
-        "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [Bug] altera_cvp registers a PCI device (Altera/Intel FPGA)
- without verifying that it supports CVP
-Message-ID: <20181022103324.GA6888@archbook>
-References: <2c6313a3f7c04b70b8a06a50934fe27a@SRV177.busymouse24.de>
+        Mon, 22 Oct 2018 14:51:30 -0400
+Received: from [67.219.251.53] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-4.bemta.az-c.us-west-2.aws.symcld.net id 3C/65-11344-A77ADCB5; Mon, 22 Oct 2018 10:33:30 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAKsWRWlGSWpSXmKPExsXi5LtOQLdq+dl
+  og3dLOS3mHznHarFx820Wi1VTd7JYbHp8jdWi69dKZovLu+awWSy9fpHJonXvEXaLv9s3sVi8
+  2CLuwOWxZt4aRo9NqzrZPDYvqffY+G4Hk0f/XwOPz5vkAtiiWDPzkvIrElgzHqxqZy+4z1HxY
+  F0bSwNjB3sXIxeHkMBqRol9fx4ydzFyAjlrGCWubkuESGxhlJi/5TkLSIJNQEdiyv7DYLaIgK
+  TE2pWLmEGKmAWmMEmc/raLDSQhLBAqcejrZ0YQm0VAVWJi715WEJtXwE3i1r0rYM0SAnISN89
+  1gm3jFHCXWHz/JivEZjeJ9lOP2SDqBSVOznwCVs8sICFx8MULqOuUJbasuMAIMUdBYu2B80wT
+  GAVmIWmZhaRlASPTKkaLpKLM9IyS3MTMHF1DAwNdQ0MjXUNjc11Dcwu9xCrdZL3SYt3y1OISX
+  SO9xPJiveLK3OScFL281JJNjMB4SSno3LSDccqK9EOMkhxMSqK8icano4X4kvJTKjMSizPii0
+  pzUosPMcpwcChJ8KYuOxstJFiUmp5akZaZA4xcmLQEB4+SCO9EkDRvcUFibnFmOkTqFKMxx7X
+  //6czc7Q9vT6DWYglLz8vVUqc1xSkVACkNKM0D24QLKFcYpSVEuZlZGBgEOIpSC3KzSxBlX/F
+  KM7BqCTMmwkyhSczrwRu3yugU5iATrmufgbklJJEhJRUA6N1/BZ23YyamV6tn1cwvN4yX5nVz
+  OZX39OtHEF/F3i/efEgecHjxT9EK2f+bP5Q9z3rnp/AWe/j7Ct2Xws632pjFBvZr5z9/auf+I
+  oPqQnh3SI1Af8LN01Nypm+4+PBJ9GuFT+/3Oj97nQkcI7u7Tdx5oFnz+6e17S8Vf5ydwNnltM
+  V7UfPbzoqsRRnJBpqMRcVJwIAubdTaCMDAAA=
+X-Env-Sender: Alex.Gonzalez@digi.com
+X-Msg-Ref: server-7.tower-365.messagelabs.com!1540204408!974579!2
+X-Originating-IP: [66.77.174.16]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.14.24; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 32006 invoked from network); 22 Oct 2018 10:33:30 -0000
+Received: from owa.digi.com (HELO MCL-VMS-XCH01.digi.com) (66.77.174.16)
+  by server-7.tower-365.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 22 Oct 2018 10:33:30 -0000
+Received: from MTK-SMS-XCH04.digi.com (10.10.8.198) by MCL-VMS-XCH01.digi.com
+ (10.5.8.49) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 22 Oct 2018
+ 05:33:28 -0500
+Received: from DOR-SMS-XCH01.digi.com (10.49.8.99) by MTK-SMS-XCH04.digi.com
+ (10.10.8.198) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 22 Oct
+ 2018 05:33:28 -0500
+Received: from log-linux-hp-agonzal.digi.com (10.101.2.214) by
+ dor-sms-xch01.digi.com (10.49.8.99) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Mon, 22 Oct 2018 12:33:26 +0200
+From:   Alex Gonzalez <alex.gonzalez@digi.com>
+To:     <shawnguo@kernel.org>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
+        <fabio.estevam@nxp.com>, <linux-imx@nxp.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <alex.gonzalez@digi.com>
+Subject: [PATCH 1/2] ARM: dts: ccimx6ulsbcpro: Add support for AUO G101EVN010 display
+Date:   Mon, 22 Oct 2018 12:33:18 +0200
+Message-ID: <1540204399-12982-2-git-send-email-alex.gonzalez@digi.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1540204399-12982-1-git-send-email-alex.gonzalez@digi.com>
+References: <1540204399-12982-1-git-send-email-alex.gonzalez@digi.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2c6313a3f7c04b70b8a06a50934fe27a@SRV177.busymouse24.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.101.2.214]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
+Signed-off-by: Alex Gonzalez <alex.gonzalez@digi.com>
+---
+ arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-On Fri, Oct 19, 2018 at 03:53:02PM +0000, Andreas Puhm wrote:
-> Hello,
-> 
-> I hope the following information is descriptive enough.
-> If this is no the case, I will provide further details.
-> 
-> --------------------------------------------------------------------
-> Full description:
-> The altera_cvp probe function only checks, 
-> if the Altera/Intel PCI device configuration space contains a vendor specific entry (VSEC Capability Header 0x000b) at offset 0x200.
->  But the probe function does not verify, if the PCI device (and further the FPGA), 
-> for which it has been called, actually supports the Configure-via-Protocol feature.
-> 
-> The PCI device (FPGA) can explicitly disable the Configur-via-Protocol (CvP) feature by setting the CVP_EN bit, index 20 of CVP_STATUS register, to '0'. 
-> As the altera_cvp probe function does not check this it registers the device in any way. 
-> At this point, the altera_cvp module cannot be used to program this device via CvP. 
-> In addition no other module can use the device, as it is still registered by altera_cvp.
-> 
-> Keywords: altera_cvp module, PCI, Configure-via-Protocol
-> 
-> Kernel version: problem occured with v4.15, should occur from 4.14+
-> 
-> Instructions to reproduce: 
-> Proper hardware is necessary to reproduce this, i.e., FPGA with instantiated Altera/Intel PCIe IP Core with disabled CvP feature.
-> 
-> Workaround:
-> It is possible to circumvent this problem by manually unloading or blacklisting the altera_cvp module.
-> 
-> Suggested Patch:
-> This patch was successfully build and tested for 4.15 and 4.18
-> 
-> Subject: [PATCH] register device only, if it supports CvP operation
-
-Could you make this: 'fpga: altera_cvp: Conditionalize registration' or
-something along those lines?
-> 
-> This patch is based on: git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tag/?h=v4.18
-
-Put some of the extensive description you made above in the git commit
-message, please, such that future us will know why the change was made
-:)
-
-Thanks for your patch,
-
-Moritz
+diff --git a/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts b/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts
+index 11966d12af76..ac9ae4ac77ba 100644
+--- a/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts
++++ b/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts
+@@ -111,7 +111,32 @@
+ 		     &pinctrl_lcdif_clken
+ 		     &pinctrl_lcdif_hvsync>;
+ 	lcd-supply = <&ldo4_ext>;       /* BU90T82 LVDS bridge power */
++	display = <&g101evn010>;
+ 	status = "okay";
++
++	g101evn010: display@0 {
++		bits-per-pixel = <16>;
++		bus-width = <18>;
++
++		display-timings {
++			native-mode = <&timing0>;
++			timing0: timing0 {
++				clock-frequency = <68930000>;
++				hactive = <1280>;
++				vactive = <800>;
++				hfront-porch = <120>;
++				hback-porch = <0>;
++				hsync-len = <8>;
++				vback-porch = <10>;
++				vfront-porch = <0>;
++				vsync-len = <6>;
++				hsync-active = <1>;
++				vsync-active = <1>;
++				de-active = <1>;
++				pixelclk-active = <0>;
++			};
++		};
++	};
+ };
+ 
+ &ldo4_ext {
