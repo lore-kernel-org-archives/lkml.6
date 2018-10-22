@@ -2,222 +2,244 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD19C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C73D1C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:09:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAC7220658
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:07:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8296120658
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:09:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="vx11KiBd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAC7220658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="VKXdzszu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8296120658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbeJVSZ3 (ORCPT
+        id S1728385AbeJVS1Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:25:29 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:41629 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727665AbeJVSZ3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:25:29 -0400
-Received: by mail-lf1-f67.google.com with SMTP id q39-v6so29865731lfi.8
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 03:07:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=J0Nt60z36qkmJKMW5DkNsNnMWtu5J23yBIOBws9SUK0=;
-        b=vx11KiBdGTN5RdOL6VQQp2Yc1uol3gxKT/iCIl6JKNup3cqN859dd+xptnQ244TUiu
-         Z1U7GzbK0Kpcj5XsMNMlYvl8F8jxyngrFwcESOLV5jBbXAjCNNbkz+kC7QikYGKjNtal
-         MND06BmgE0LAr2dImWWKuaj09tYYJV+QE6UwHDDupNLmWHLgc9aQ3yTLkTsYJUWkBaje
-         eHRl0iIOPYDjMKj3QS5AxjsFzyrdGa+Gtb8MvxVYPpBUHhHwOBsRt6nsuOPDa37cOSES
-         sguc3fiu+P781W4iJ04Pu59SgnBsV/il8hziXfmmDt3iqDmutQttohGi9QjtsNRt67AD
-         Re8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=J0Nt60z36qkmJKMW5DkNsNnMWtu5J23yBIOBws9SUK0=;
-        b=TCjCRle5Z1pvBkw31vaOlmEJoVwuLjGShCbIBc2gy6KNmEYn1q4Txcu+PMAssieJOx
-         6RbdYriP2QOhhR41hrBCEH/wmOdj3iPOT70xJL0GvOIqVGz0tk+CQUNm37F06GaoM+w8
-         mY7lgcQeRX4q2M0ZywGR/qtDTDaMINSSpODCROcRZ40mt/gcaY2nZaxRLTZ4UqTGasWa
-         4yXqW8+momUzBAt5IgWael1oY5cocOd3v6nA5IKVRNeV1VE2IwxMbcsK56oZz4ByTaau
-         TmwY/lRinIoECnEMDBptzR5j0pO3vsCC0Wk50jglugFZYgKN52bJj9/rhAbWgAdk6WAb
-         FNlw==
-X-Gm-Message-State: ABuFfojqLCjx/eR73Lwlmdchs2hY3S80Wn95mIuhP6vDuDwG9Jd3d8we
-        f+Rt+ndvtVJMB/b/9DD4qjA8kA==
-X-Google-Smtp-Source: ACcGV60n9Jk74TXQIK/5PMdF5l1D5cXSQ5R0loREoSUpzQ0ZAgJjpeMRKIXPT1I5kPUbh2AsRasyxg==
-X-Received: by 2002:a19:f20:: with SMTP id e32mr9271713lfi.51.1540202855187;
-        Mon, 22 Oct 2018 03:07:35 -0700 (PDT)
-Received: from localhost ([85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id m3-v6sm2421016lfc.55.2018.10.22.03.07.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Oct 2018 03:07:33 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 03:07:26 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     dsterba@suse.de
-Cc:     olof@lixom.net, linux-btrfs@vger.kernel.org, clm@fb.com,
-        linux-kernel@vger.kernel.org
-Subject: Circular lock dep in btrfs triggered by shrinker
-Message-ID: <20181022100726.5hwvc5xswg3k3a2f@localhost>
+        Mon, 22 Oct 2018 14:27:24 -0400
+Received: from mail.kdab.com ([176.9.126.58]:60187 "EHLO mail.kdab.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727554AbeJVS1X (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:27:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
+ content-type:content-type:mime-version:references:in-reply-to
+ :organization:message-id:date:date:subject:subject:from:from; s=
+ dkim; t=1540202966; x=1541066967; bh=XK+0f2NthNGHWAL093QGqGT71nX
+ ea1FsUufq2tPozew=; b=VKXdzszuQBTE2mU0fvzo9aTBMCIxt09l7cC2MAgq5sP
+ oA7wwxV+rw6c6VzqR3KxgBlfG4QeFPdFvggIlrG0euClFCPNz9VCikPH1ReJR0ig
+ H5s1P39szlFOSI7D+xVZ61DwejO3LJ2ywsDHt9uRKsjVYLCwlO4DRVNhLYoelTE8
+ =
+X-Virus-Scanned: amavisd-new at kdab.com
+From:   Milian Wolff <milian.wolff@kdab.com>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, Linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 2/2] perf script: flush output stream after events in
+ verbose mode
+Date:   Mon, 22 Oct 2018 12:09:22 +0200
+Message-ID: <4444017.LnbBPIbh24@agathebauer>
+Organization: KDAB
+In-Reply-To: <20181022094317.GG2452@krava>
+References: <20181021191424.16183-1-milian.wolff@kdab.com>
+ <20181021191424.16183-2-milian.wolff@kdab.com> <20181022094317.GG2452@krava>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: multipart/signed; boundary="nextPart3629398.2PHXbrJRRo";
+ micalg="sha256"; protocol="application/pkcs7-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+--nextPart3629398.2PHXbrJRRo
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-I hit the below circular locking dependency. Seems like the assumption made in
-712e36c5f2a7fa56 ("btrfs: use GFP_KERNEL in btrfs_alloc_inode") either isn't
-true, or has since changed?
+On Montag, 22. Oktober 2018 11:43:17 CEST Jiri Olsa wrote:
+> On Sun, Oct 21, 2018 at 09:14:24PM +0200, Milian Wolff wrote:
+> > When the perf script output is written to a terminal stream,
+> > the normal output of `perf script` would get buffered, but its
+> > debug output would be written directly. This made it quite hard
+> > to figure out where a given debug output is coming from. We can
+> > improve on this by flushing the output buffer after processing an
+> > event. To see the value, compare the following output for a
+> > `perf script -v` run:
+> > 
+> > Before this patch:
+> > ```
+> > unwind: reg 16, val 7faf7dfdc000
+> > unwind: reg 7, val 7ffc80811e30
+> > unwind: find_proc_info dso /usr/lib/ld-2.28.so
+> > unwind: reg 6, val 0
+> > unwind: _start:ip = 0x7faf7dfdc000 (0x2000)
+> > unwind: reg 16, val 7faf7dfdc000
+> > unwind: reg 7, val 7ffc80811e30
+> > unwind: find_proc_info dso /usr/lib/ld-2.28.so
+> > unwind: reg 6, val 0
+> > unwind: _start:ip = 0x7faf7dfdc000 (0x2000)
+> > unwind: reg 16, val 7faf7dfdc000
+> > unwind: reg 7, val 7ffc80811e30
+> > unwind: find_proc_info dso /usr/lib/ld-2.28.so
+> > unwind: reg 6, val 0
+> > unwind: _start:ip = 0x7faf7dfdc000 (0x2000)
+> > unwind: reg 16, val 7faf7dfdc000
+> > unwind: reg 7, val 7ffc80811e30
+> > ... lots and lots of verbose debug output
+> > 
+> > cpp-inlining 24617 90229.122036534:          1 cycles:uppp:
+> >             7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
+> > 
+> > cpp-inlining 24617 90229.122043974:          1 cycles:uppp:
+> >             7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
+> > 
+> > ...
+> > ```
+> > 
+> > After this patch:
+> > ```
+> > ...
+> > unwind: reg 16, val 7faf7dfdc000
+> > unwind: reg 7, val 7ffc80811e30
+> > unwind: find_proc_info dso /usr/lib/ld-2.28.so
+> > unwind: reg 6, val 0
+> > unwind: _start:ip = 0x7faf7dfdc000 (0x2000)
+> > 
+> > cpp-inlining 24617 90229.122036534:          1 cycles:uppp:
+> >             7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
+> > 
+> > unwind: reg 16, val 7faf7dfdc000
+> > unwind: reg 7, val 7ffc80811e30
+> > unwind: find_proc_info dso /usr/lib/ld-2.28.so
+> > unwind: reg 6, val 0
+> > unwind: _start:ip = 0x7faf7dfdc000 (0x2000)
+> > 
+> > cpp-inlining 24617 90229.122043974:          1 cycles:uppp:
+> >             7faf7dfdc000 _start+0x0 (/usr/lib/ld-2.28.so)
+> > 
+> > ...
+> > ```
+> > 
+> > This new output format makes it much easier to use perf script
+> > output for debugging purposes, e.g. to investigate broken dwarf
+> > unwinding.
+> 
+> yep, I plan to check on this ;-)
+> 
+> > Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
+> > Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> > ---
+> > 
+> >  tools/perf/builtin-script.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> > index bd468b90801b..ca09b7d2adb7 100644
+> > --- a/tools/perf/builtin-script.c
+> > +++ b/tools/perf/builtin-script.c
+> > @@ -1737,6 +1737,9 @@ static void process_event(struct perf_script
+> > *script,
+> > 
+> >  	if (PRINT_FIELD(METRIC))
+> >  	
+> >  		perf_sample__fprint_metric(script, thread, evsel, sample, fp);
+> > 
+> > +
+> > +	if (verbose)
+> > +		fflush(fp);
+> 
+> should we call fflush(NULL) to dump all the streams?
+> 
+> the verbose goes to stderr and fp seems to be stdout byt default
+
+stderr isn't buffered, so we don't need to flush it. So personally, I don't 
+see a need to dump all streams - fp should be enough? Can you maybe explain 
+where it would be required to flush more buffers?
+
+Thanks
+
+-- 
+Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
+KDAB (Deutschland) GmbH, a KDAB Group company
+Tel: +49-30-521325470
+KDAB - The Qt, C++ and OpenGL Experts
+--nextPart3629398.2PHXbrJRRo
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDEIw
+ggXmMIIDzqADAgECAhBqm+E4O/8ra58B1dm4p1JWMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9u
+IEF1dGhvcml0eTAeFw0xMzAxMTAwMDAwMDBaFw0yODAxMDkyMzU5NTlaMIGXMQswCQYDVQQGEwJH
+QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQK
+ExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGlj
+YXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+AL6znlesKHZ1QBbHOAOY08YYdiFQ8yV5C0y1oNF9Olg+nKcxLqf2NHbZhGra0D00SOTq9bus3/mx
+gUsg/Wh/eXQ0pnp8tZ8XZWAnlyKMpjL+qUByRjXCA6RQyDMqVaVUkbIr5SU0RDX/kSsKwer3H1pT
+/HUrBN0X8sKtPTdGX8XAWt/VdMLBrZBlgvnkCos+KQWWCo63OTTqRvaq8aWccm+KOMjTcE6s2mj6
+RkalweyDI7X+7U5lNo6jzC8RTXtVV4/Vwdax720YpMPJQaDaElmOupyTf1Qib+cpukNJnQmwygjD
+8m046DQkLnpXNCAGjuJy1F5NATksUsbfJAr7FLUCAwEAAaOCATwwggE4MB8GA1UdIwQYMBaAFLuv
+fgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSCr2yM+MX+lmF86B89K3FIXsSLwDAOBgNVHQ8B
+Af8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADARBgNVHSAECjAIMAYGBFUdIAAwTAYDVR0fBEUw
+QzBBoD+gPYY7aHR0cDovL2NybC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2VydGlmaWNhdGlvbkF1
+dGhvcml0eS5jcmwwcQYIKwYBBQUHAQEEZTBjMDsGCCsGAQUFBzAChi9odHRwOi8vY3J0LmNvbW9k
+b2NhLmNvbS9DT01PRE9SU0FBZGRUcnVzdENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3Au
+Y29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQB4XLKBKDRPPO5fVs6fl1bsj6JrF/bz9kkI
+BtTYLzXN30D+03Hj6OxCDBEaIeNmsBhrJmuubvyE7HtoSmR809AgcYboW+rcTNZ/8u/Hv+GTrNI/
+AhqX2/kiQNxmgUPt/eJPs92Qclj0HnVyy9TnSvGkSDU7I5Px+TbO+88G4zipA2psZaWeEykgzClZ
+lPz1FjTCkk77ZXp5cQYYexE6zeeN4/0OqqoAloFrjAF4o50YJafX8mnahjp3I2Y2mkjhk0xQfhNq
+bzlLWPoT3m7j7U26u7zg6swjOq8hITYc3/np5tM5aVyu6t99p17bTbY7+1RTWBviN9YJzK8HxzOb
+XYWBf/L+VGOYNsQDTxAk0Hbvb1j6KjUhg7fO294F29QIhhmiNOr84JHoy+fNLpfvYc/Q9EtFOI5I
+SYgOxLk3nD/whbUe9rmEQXLp8MB933Ij474gwwCPUpwv9mj2PMnXoc7mbrS22XUSeTwxCTP9bcmU
+dp4jmIoWfhQm7X9w/Zgddg+JZ/YnIHOwsGsaTUgj7fIvxqith7DoJC91WJ8Lce3CVJqb1XWeKIJ8
+4F7YLXZN0oa7TktYgDdmQVxYkZo1c5noaDKH9Oq9cbm/vOYRUM1cWcef20Wkyk5S/GFyyPJwG0fR
+1nRas3DqAf4cXxMiEKcff7PNa4M3RGTqH0pWR8p6EjCCBlQwggU8oAMCAQICEAf6KCF9+1doL2oE
+OTPysLwwDQYJKoZIhvcNAQELBQAwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1h
+bmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0w
+OwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWls
+IENBMB4XDTE3MDUyMzAwMDAwMFoXDTIwMDUyMjIzNTk1OVowggFZMQswCQYDVQQGEwJTRTEPMA0G
+A1UEERMGNjgzIDMxMRIwEAYDVQQIEwlWYWVybWxhbmQxEDAOBgNVBAcTB0hhZ2ZvcnMxGDAWBgNV
+BAkTD05vcnJpbmdzIHZhZWcgMjEPMA0GA1UEEhMGQm94IDMwMSYwJAYDVQQKDB1LbGFyw6RsdmRh
+bGVucyBEYXRha29uc3VsdCBBQjEdMBsGA1UECxMUQSBLREFCIEdyb3VwIENvbXBhbnkxQzBBBgNV
+BAsMOklzc3VlZCB0aHJvdWdoIEtsYXLDpGx2ZGFsZW5zIERhdGFrb25zdWx0IEFCIEUtUEtJIE1h
+bmFnZXIxHzAdBgNVBAsTFkNvcnBvcmF0ZSBTZWN1cmUgRW1haWwxFTATBgNVBAMTDE1pbGlhbiBX
+b2xmZjEkMCIGCSqGSIb3DQEJARYVbWlsaWFuLndvbGZmQGtkYWIuY29tMIIBIjANBgkqhkiG9w0B
+AQEFAAOCAQ8AMIIBCgKCAQEAxrzfNBVvRbiAknuTBXuQnNm9sLIFLo0vbPB6kswk78A3tA++Zn5c
+lQUHhGlQq1cdYxagnUpqwvG3Sod15mPSOLkAPf/mabLN7p+lFbRaUP+97ZkTZtvb4BCC3osIEFI4
+G393OSFWqc2qmIPE/SwSASbAA20Fcaa2M6P1lhOk/ttUh2jIurTPF0wUycIA7lBddrOgaOA8e2m6
+iLTNHtlrfRbBaUX91D5ebY+UWmIjXSQ9+CtutMzBkwnF0rZKririvOkklg9VzEGNQVHrQfDF2s/U
+pOtmtuVSwElauGT/KALyCFuIrYC1pmaKH8S1xODJqiRaf6jH8E+KQzKjyM/ErwIDAQABo4IB1TCC
+AdEwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8AwHQYDVR0OBBYEFN+m99RtIuA1bSdw
+6b1brOX7X3AJMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUF
+BwMEBggrBgEFBQcDAjBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEDBTArMCkGCCsGAQUFBwIBFh1o
+dHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBLhklodHRwOi8vY3Js
+LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWls
+Q0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0dHA6Ly9jcnQuY29tb2RvY2Eu
+Y29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcnQwJAYI
+KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAgBgNVHREEGTAXgRVtaWxpYW4ud29s
+ZmZAa2RhYi5jb20wDQYJKoZIhvcNAQELBQADggEBABf47LSJADqH+ow9INv3QM1NC/qq2bjxGvsZ
+68iD11VEUAFlsYfsVTgQqUirwPVTYenXtwVBELHZyywsui1JxL7HKQetLQegDDP/RyfjReVaWxhy
+3OpuItsgLVbru9QVgPifnoBFPtfZcwjeJDmeSbLT8oj4Rd0KYBOIve7WKvsfNPsNwfbLwY2zILkE
+LjxZcVi2AwZHDyab+dzL/3YcLuJj1lSawBGn7ilpcdZydlv4aye51pD/MemLIYLcylt+ImrmjnTV
+y+QlAHRF3s5FE8yAr+W1MBD/1bKZCSgFt8VQoAlz3hiQh8QqZp4Zl8WuVL4+mP/mT6VDEWgq/0Bo
+cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
+c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
+BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
+EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMDIyMTAwOTIyWjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQgOvoeynrwaK5JrAGRMTM8sMQol2kr
+39GEJZcrbWw8eOEwDQYJKoZIhvcNAQEBBQAEggEASecpXDlLTvQsvKPhER3ElSWHpuyEDn1cm0yJ
+7ISdaoryu8tKy7DIyT7zb7iKfUS3gFD3HQ5PWqeKDNIU0CbpkwysZZTCE+TbqxQGTi5qhDRh/cQF
+GWK0K208vlJctth3uTCKS1npANBvaWzjQf0FuukBUwtKlV4Tq/cvo1e5CXIVvXuXwPye4AC6Wr6u
+L6B/smdhKjjToGdh6bWtgX4GvXwOJIHkVaag9h2VSOBANdGaxXdxOu4HzTUbKQxmzUQ9yOC6XkYh
+cFQ8HWQRvchfQeT8N98dRQ1y2ZvYjHV9AWrQwQCO0IsEDqEVParfgW5yk2SyUNRpVgI+7Wtm8s/G
+5QAAAAAAAA==
 
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.19.0 #25 Not tainted
-------------------------------------------------------
-kswapd0/414 is trying to acquire lock:
-000000008b8f1971 (&delayed_node->mutex){+.+.}, at: __btrfs_release_delayed_node+0x35/0x1e0
-but task is already holding lock:
-00000000032f657e (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x0/0x30
-which lock already depends on the new lock.
+--nextPart3629398.2PHXbrJRRo--
 
-the existing dependency chain (in reverse order) is:
--> #3 (fs_reclaim){+.+.}:
-       kmem_cache_alloc+0x24/0x270
-       btrfs_alloc_inode+0x1f/0x260
-       alloc_inode+0x13/0x80
-       iget5_locked+0x3f/0x80
-       btrfs_iget+0x52/0x680
-       __lookup_free_space_inode+0xd9/0x110
-       lookup_free_space_inode+0x5e/0xd0
-       load_free_space_cache+0x63/0x190
-       cache_block_group+0x1b7/0x3e0
-       find_free_extent+0x747/0x12d0
-       btrfs_reserve_extent+0x96/0x170
-       btrfs_alloc_tree_block+0xf6/0x540
-       __btrfs_cow_block+0x110/0x4e0
-       btrfs_cow_block+0xd3/0x1f0
-       btrfs_search_slot+0x20d/0x9c0
-       btrfs_insert_empty_items+0x62/0xb0
-       btrfs_new_inode+0x1d3/0x6f0
-       btrfs_create+0xc9/0x1c0
-       lookup_open+0x69b/0x770
-       path_openat+0x39b/0xbb0
-       do_filp_open+0x85/0xf0
-       do_sys_open+0x11f/0x1f0
-       do_syscall_64+0x6b/0x230
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
--> #2 (&caching_ctl->mutex){+.+.}:
-       cache_block_group+0x1ac/0x3e0
-       find_free_extent+0x747/0x12d0
-       btrfs_reserve_extent+0x96/0x170
-       btrfs_alloc_tree_block+0xf6/0x540
-       __btrfs_cow_block+0x110/0x4e0
-       btrfs_cow_block+0xd3/0x1f0
-       btrfs_search_slot+0x20d/0x9c0
-       btrfs_insert_empty_items+0x62/0xb0
-       btrfs_new_inode+0x1d3/0x6f0
-       btrfs_create+0xc9/0x1c0
-       lookup_open+0x69b/0x770
-       path_openat+0x39b/0xbb0
-       do_filp_open+0x85/0xf0
-       do_sys_open+0x11f/0x1f0
-       do_syscall_64+0x6b/0x230
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #1 (&space_info->groups_sem){++++}:
-       find_free_extent+0xc95/0x12d0
-       btrfs_reserve_extent+0x96/0x170
-       btrfs_alloc_tree_block+0xf6/0x540
-       __btrfs_cow_block+0x110/0x4e0
-       btrfs_cow_block+0xd3/0x1f0
-       btrfs_search_slot+0x20d/0x9c0
-       btrfs_lookup_inode+0x25/0x90
-       __btrfs_update_delayed_inode+0x5c/0x1f0
-       btrfs_commit_inode_delayed_inode+0x111/0x120
-       btrfs_evict_inode+0x3d3/0x540
-       evict+0xbc/0x180
-       d_delete+0xb4/0xc0
-       vfs_rmdir+0x10d/0x130
-       do_rmdir+0x1f9/0x210
-       do_syscall_64+0x6b/0x230
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-               -> #0 (&delayed_node->mutex){+.+.}:
-       __mutex_lock+0x7c/0x940
-       __btrfs_release_delayed_node+0x35/0x1e0
-       btrfs_evict_inode+0x223/0x540
-       evict+0xbc/0x180
-       dispose_list+0x38/0x60
-       prune_icache_sb+0x3d/0x50
-       super_cache_scan+0x136/0x180
-       do_shrink_slab+0x13a/0x3e0
-       shrink_slab+0x20d/0x2a0
-       shrink_node+0xdb/0x450
-       kswapd+0x3d2/0x8b0
-       kthread+0xfb/0x130
-       ret_from_fork+0x24/0x30
-
-               other info that might help us debug this:
-
-Chain exists of:
-                 &delayed_node->mutex --> &caching_ctl->mutex --> fs_reclaim
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(fs_reclaim);
-                               lock(&caching_ctl->mutex);
-                               lock(fs_reclaim);
-  lock(&delayed_node->mutex);
-
-                *** DEADLOCK ***
-
-3 locks held by kswapd0/414:
- #0: 00000000032f657e (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x0/0x30
- #1: 0000000041eb3025 (shrinker_rwsem){++++}, at: shrink_slab+0x125/0x2a0
- #2: 00000000c96e13d0 (&type->s_umount_key#23){++++}, at: trylock_super+0x11/0x50
-
-               stack backtrace:
-CPU: 38 PID: 414 Comm: kswapd0 Not tainted 4.19.0 #25
-Hardware name: System manufacturer System Product Name/PRIME X399-A, BIOS 0807 08/03/2018
-Call Trace:
- dump_stack+0x5f/0x8b
- print_circular_bug.isra.35+0x198/0x1f0
- __lock_acquire+0x12d5/0x16e0
- ? __lock_acquire+0x4a6/0x16e0
- ? lock_acquire+0xb4/0x1b0
- lock_acquire+0xb4/0x1b0
- ? __btrfs_release_delayed_node+0x35/0x1e0
- ? __btrfs_release_delayed_node+0x35/0x1e0
- __mutex_lock+0x7c/0x940
- ? __btrfs_release_delayed_node+0x35/0x1e0
- ? __btrfs_release_delayed_node+0x35/0x1e0
- ? lock_acquire+0xb4/0x1b0
- ? __btrfs_release_delayed_node+0x35/0x1e0
- __btrfs_release_delayed_node+0x35/0x1e0
- btrfs_evict_inode+0x223/0x540
- evict+0xbc/0x180
- dispose_list+0x38/0x60
- prune_icache_sb+0x3d/0x50
- super_cache_scan+0x136/0x180
- do_shrink_slab+0x13a/0x3e0
- shrink_slab+0x20d/0x2a0
- shrink_node+0xdb/0x450
- kswapd+0x3d2/0x8b0
- kthread+0xfb/0x130
- ? mem_cgroup_shrink_node+0x240/0x240
- ? kthread_create_worker_on_cpu+0x40/0x40
- ret_from_fork+0x24/0x30
