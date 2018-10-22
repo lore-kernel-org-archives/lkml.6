@@ -2,190 +2,186 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A49C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 18:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF4CC67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 18:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19AD920652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 18:37:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6891B20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 18:42:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U2gFypul"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19AD920652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q+16ONPk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6891B20663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbeJWC5L (ORCPT
+        id S1729014AbeJWDCT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 22:57:11 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:40340 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728308AbeJWC5L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 22:57:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=aM/fuq/0MDzfQKIaVviCng8QeMKEDWkom4BVH+Nc010=; b=U2gFypul/524BQfbrZPxm9Nn0k
-        hp3Zh6+DccGnuQnOMraGlXIDPrRlM00KHcVjc4W687hDeIpjQS0PuNWbXDXJKhyx9D5B87v6aeSdF
-        f80vPcEKHb80v2ic7vNKP5HdCwmBaUMrknp9D40C2gE/1uvhYblh3tTQuTbvSv/9YG3vlFtRC4w4Z
-        StJ8ptUCfLAkb3UKrQv/EzOEsqLZMO5+q3Orp2bPFAwrO/6ZDB3usBkOjCQBjW0A+VqZVcGQ9P1Ji
-        cEalhkrGJrHRe5rDFDbPUejOQVTy0yJwxJCf8ot4YzL0q7M38C3v/LGP4M3BoE29bvHcRyQGlQeVu
-        OyJTxzkg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gEf50-0005sL-Ef; Mon, 22 Oct 2018 18:37:30 +0000
-Subject: Re: 4.18: early boot crash in thermal_cooling_device_destroy_sysfs
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     ACPI Devel Mailing List <linux-acpi@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-References: <c1e0c7c7-2ed9-39fd-b3e0-aebf4d5839a3@infradead.org>
-Message-ID: <4a200a32-7d7f-1248-2ecd-74600083b1c1@infradead.org>
-Date:   Mon, 22 Oct 2018 11:37:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 22 Oct 2018 23:02:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728308AbeJWDCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 23:02:19 -0400
+Received: from gmail.com (unknown [104.132.51.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 410BA20651;
+        Mon, 22 Oct 2018 18:42:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540233760;
+        bh=u86jsqey1mhXoiyi6vqySBd3ZxZS/XnUVZZf1nOrwo8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q+16ONPkO0hDOzt4jrGN4VcZbqiMOBoiFcAqy0vOqTo3NS5PalR3jsfV86nGRcCIu
+         +CvBJxWEoaCSfUT4/rppzHuA1vJK+lj1M6+30u6LGSX2Q7okNwuf3L80kMHe3EcJ9h
+         E/FPzvZwf8hqHmNUhsgoZjOoM91dritS9rBJu9Q4=
+Date:   Mon, 22 Oct 2018 11:42:37 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
+Subject: Re: [RFC PATCH v2 09/12] crypto: nhpoly1305 - add NHPoly1305 support
+Message-ID: <20181022184236.GA59695@gmail.com>
+References: <20181015175424.97147-1-ebiggers@kernel.org>
+ <20181015175424.97147-10-ebiggers@kernel.org>
+ <CAKv+Gu-5WM19g5HguDheAADbigKNxokDCFMekkt4OYdEEa8Avw@mail.gmail.com>
+ <20181020053834.GC876@sol.localdomain>
+ <CAKv+Gu-A_EhMBXq_nqzBzpgN36foo6hA3Ba3=j+WVM-jph=mrw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <c1e0c7c7-2ed9-39fd-b3e0-aebf4d5839a3@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu-A_EhMBXq_nqzBzpgN36foo6hA3Ba3=j+WVM-jph=mrw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 8/16/18 2:33 PM, Randy Dunlap wrote:
-> Hi,
+On Sat, Oct 20, 2018 at 11:06:00PM +0800, Ard Biesheuvel wrote:
+> >> > +
+> >> > +#define NH_STRIDE(K0, K1, K2, K3)                              \
+> >> > +({                                                             \
+> >> > +       m_A = get_unaligned_le32(src); src += 4;                \
+> >> > +       m_B = get_unaligned_le32(src); src += 4;                \
+> >> > +       m_C = get_unaligned_le32(src); src += 4;                \
+> >> > +       m_D = get_unaligned_le32(src); src += 4;                \
+> >> > +       K3##_A = *key++;                                        \
+> >> > +       K3##_B = *key++;                                        \
+> >> > +       K3##_C = *key++;                                        \
+> >> > +       K3##_D = *key++;                                        \
+> >> > +       sum0 += (u64)(u32)(m_A + K0##_A) * (u32)(m_C + K0##_C); \
+> >> > +       sum1 += (u64)(u32)(m_A + K1##_A) * (u32)(m_C + K1##_C); \
+> >> > +       sum2 += (u64)(u32)(m_A + K2##_A) * (u32)(m_C + K2##_C); \
+> >> > +       sum3 += (u64)(u32)(m_A + K3##_A) * (u32)(m_C + K3##_C); \
+> >> > +       sum0 += (u64)(u32)(m_B + K0##_B) * (u32)(m_D + K0##_D); \
+> >> > +       sum1 += (u64)(u32)(m_B + K1##_B) * (u32)(m_D + K1##_D); \
+> >> > +       sum2 += (u64)(u32)(m_B + K2##_B) * (u32)(m_D + K2##_D); \
+> >> > +       sum3 += (u64)(u32)(m_B + K3##_B) * (u32)(m_D + K3##_D); \
+> >> > +})
+> >> > +
+> >> > +static void nh_generic(const u32 *key, const u8 *src, size_t srclen,
+> >> > +                      __le64 hash[NH_NUM_PASSES])
+> >> > +{
+> >> > +       u64 sum0 = 0, sum1 = 0, sum2 = 0, sum3 = 0;
+> >> > +       u32 k0_A = *key++;
+> >> > +       u32 k0_B = *key++;
+> >> > +       u32 k0_C = *key++;
+> >> > +       u32 k0_D = *key++;
+> >> > +       u32 k1_A = *key++;
+> >> > +       u32 k1_B = *key++;
+> >> > +       u32 k1_C = *key++;
+> >> > +       u32 k1_D = *key++;
+> >> > +       u32 k2_A = *key++;
+> >> > +       u32 k2_B = *key++;
+> >> > +       u32 k2_C = *key++;
+> >> > +       u32 k2_D = *key++;
+> >> > +       u32 k3_A, k3_B, k3_C, k3_D;
+> >> > +       u32 m_A, m_B, m_C, m_D;
+> >> > +       size_t n = srclen / NH_MESSAGE_UNIT;
+> >> > +
+> >> > +       BUILD_BUG_ON(NH_PAIR_STRIDE != 2);
+> >> > +       BUILD_BUG_ON(NH_NUM_PASSES != 4);
+> >> > +
+> >> > +       while (n >= 4) {
+> >> > +               NH_STRIDE(k0, k1, k2, k3);
+> >> > +               NH_STRIDE(k1, k2, k3, k0);
+> >> > +               NH_STRIDE(k2, k3, k0, k1);
+> >> > +               NH_STRIDE(k3, k0, k1, k2);
+> >> > +               n -= 4;
+> >> > +       }
+> >> > +       if (n) {
+> >> > +               NH_STRIDE(k0, k1, k2, k3);
+> >> > +               if (--n) {
+> >> > +                       NH_STRIDE(k1, k2, k3, k0);
+> >> > +                       if (--n)
+> >> > +                               NH_STRIDE(k2, k3, k0, k1);
+> >> > +               }
+> >> > +       }
+> >> > +
+> >>
+> >> This all looks a bit clunky to me, with the macro, the *key++s in the
+> >> initializers and these conditionals.
+> >>
+> >> Was it written in this particular way to get GCC to optimize it in the
+> >> right way?
+> >
+> > This does get compiled into something much faster than a naive version, which
+> > you can find commented out at
+> > https://github.com/google/adiantum/blob/master/benchmark/src/nh.c#L14.
+> >
+> > Though, I admit that I haven't put a ton of effort into this C implementation of
+> > NH yet.  Right now it's actually somewhat of a translation of the NEON version.
+> > I'll do some experiments and see if it can be made into something less ugly
+> > without losing performance.
+> >
 > 
-> Sorry for the photo.  That's all I have available so far.
-> 
-> https://www.infradead.org/~rdunlap/doc/IMG_20180816_133254743_HDR.jpg
-> 
-> 
-> Does anyone recognize this?
-> 
-> This is an (older) Toshiba laptop.  The kernel .config is mostly an
-> allmodconfig with some DEBUG options disabled and other options enabled
-> so that it can boot without using an initramfs.  (and with COMPILE_TEST
-> disabled :)
-> 
-> 
-> The full kernel .config file is attached.
-> 
-> Thanks,
+> No that's fine but please document it.
 > 
 
-This is a result of CONFIG_DEBUG_TEST_DRIVER_REMOVE=y.
-[switch from 64-bit to 32-bit machine]
+Hmm, I'm actually leaning towards the following instead.  Unrolling multiple
+strides to try to reduce loads of the keys doesn't seem worthwhile in the C
+implementation; for one, it bloats the code size a lot
+(412 => 2332 bytes on arm32).
 
+static void nh_generic(const u32 *key, const u8 *message, size_t message_len,
+		       __le64 hash[NH_NUM_PASSES])
+{
+	u64 sums[4] = { 0, 0, 0, 0 };
 
-When using CONFIG_DEBUG_VM=y, it BUGs at:
-[    5.553603] ------------[ cut here ]------------
-[    5.553733] kernel BUG at arch/x86/mm/physaddr.c:75!
-[    5.557788] invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
-[    5.558738] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc7 #4
-[    5.558738] Hardware name: Dell Inc. Inspiron 1318                   /0C236D, BIOS A04 01/15/2009
-[    5.558738] EIP: __phys_addr+0x40/0x90
-[    5.558738] Code: 00 40 75 2e 8b 15 00 57 23 d5 85 d2 74 12 89 d9 c1 e9 0c 39 ca 72 5b e8 2e ca ff ff 39 d8 75 4a 89 d8 5b 5d c3 8d 74 26 00 90 <0f> 0b 8d b6 00 00 00 00 8b 0d 80 56 23 d5 8d 91 00 00 80 00 39 d0
-[    5.558738] EAX: 6b6b6b6b EBX: 6b6b6b6b ECX: 00140011 EDX: 00000000
-[    5.558738] ESI: f4890000 EDI: d4a58d60 EBP: f40c1e0c ESP: f40c1e08
-[    5.558738] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00210a97
-[    5.558738] CR0: 80050033 CR2: 00000000 CR3: 14cad000 CR4: 000406d0
-[    5.558738] Call Trace:
-[    5.558738]  kfree+0x1f/0x160
-[    5.558738]  thermal_cooling_device_destroy_sysfs+0x11/0x20
-[    5.558738]  thermal_cooling_device_unregister+0x168/0x180
-[    5.558738]  acpi_pss_perf_exit.isra.4+0x32/0x50
-[    5.558738]  acpi_processor_stop+0x4d/0x60
-[    5.558738]  really_probe+0xa3/0x3e0
-[    5.558738]  driver_probe_device+0x5b/0x120
-[    5.558738]  __driver_attach+0xd9/0x100
-[    5.558738]  ? driver_probe_device+0x120/0x120
-[    5.558738]  bus_for_each_dev+0x56/0x90
-[    5.558738]  driver_attach+0x14/0x20
-[    5.558738]  ? driver_probe_device+0x120/0x120
-[    5.558738]  bus_add_driver+0x117/0x210
-[    5.558738]  driver_register+0x61/0xb0
-[    5.558738]  acpi_processor_driver_init+0x19/0x88
-[    5.558738]  ? acpi_pci_slot_init+0xf/0xf
-[    5.558738]  do_one_initcall+0x3e/0x15a
-[    5.558738]  ? do_early_param+0x75/0x75
-[    5.558738]  kernel_init_freeable+0x170/0x1f3
-[    5.558738]  ? rest_init+0xcd/0xcd
-[    5.558738]  kernel_init+0x8/0xdb
-[    5.558738]  ret_from_fork+0x2e/0x38
-[    5.558738] Modules linked in:
-[    5.625269] _warn_unseeded_randomness: 1 callbacks suppressed
-[    5.625272] random: get_random_bytes called from init_oops_id+0x3a/0x40 with crng_init=0
-[    5.629758] ---[ end trace 65b17bf4d18e7692 ]---
-[    5.631573] EIP: __phys_addr+0x40/0x90
-[    5.633242] Code: 00 40 75 2e 8b 15 00 57 23 d5 85 d2 74 12 89 d9 c1 e9 0c 39 ca 72 5b e8 2e ca ff ff 39 d8 75 4a 89 d8 5b 5d c3 8d 74 26 00 90 <0f> 0b 8d b6 00 00 00 00 8b 0d 80 56 23 d5 8d 91 00 00 80 00 39 d0
-[    5.638618] EAX: 6b6b6b6b EBX: 6b6b6b6b ECX: 00140011 EDX: 00000000
-[    5.640703] ESI: f4890000 EDI: d4a58d60 EBP: f40c1e0c ESP: d4cb13dc
-[    5.642801] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00210a97
-[    5.645053] CR0: 80050033 CR2: 00000000 CR3: 14cad000 CR4: 000406d0
-[    5.647179] Kernel panic - not syncing: Fatal exception
-[    5.648172] Kernel Offset: 0x13000000 from 0xc1000000 (relocation range: 0xc0000000-0xf77fdfff)
-[    5.648172] ---[ end Kernel panic - not syncing: Fatal exception ]---
+	BUILD_BUG_ON(NH_PAIR_STRIDE != 2);
+	BUILD_BUG_ON(NH_NUM_PASSES != 4);
 
+	while (message_len) {
+		u32 m0 = get_unaligned_le32(message + 0);
+		u32 m1 = get_unaligned_le32(message + 4);
+		u32 m2 = get_unaligned_le32(message + 8);
+		u32 m3 = get_unaligned_le32(message + 12);
 
-When not using CONFIG_DEBUG_VM, it BUGs in kfree:
-[    5.497864] ------------[ cut here ]------------
-[    5.498215] kernel BUG at mm/slub.c:3901!
-[    5.501739] invalid opcode: 0000 [#1] PREEMPT SMP
-[    5.502720] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc7 #3
-[    5.502720] Hardware name: Dell Inc. Inspiron 1318                   /0C236D, BIOS A04 01/15/2009
-[    5.502720] EIP: kfree+0x117/0x150
-[    5.502720] Code: 74 21 8b 06 31 d2 f6 c4 80 74 04 0f b6 56 31 89 f0 e8 7d e0 fa ff e9 7b ff ff ff 8d b4 26 00 00 00 00 90 8b 46 04 a8 01 75 d8 <0f> 0b 8d b4 26 00 00 00 00 8b 75 f0 ff 75 ec 89 d9 89 f8 6a 01 53
-[    5.502720] EAX: 00000100 EBX: 6b6b6b6b ECX: 00140011 EDX: 00000000
-[    5.502720] ESI: f67dac70 EDI: ccc4aca0 EBP: f4083e28 ESP: f4083e10
-[    5.502720] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00210246
-[    5.502720] CR0: 80050033 CR2: ffd14000 CR3: 0ce94000 CR4: 000406d0
-[    5.502720] Call Trace:
-[    5.502720]  thermal_cooling_device_destroy_sysfs+0x11/0x20
-[    5.502720]  thermal_cooling_device_unregister+0x168/0x180
-[    5.502720]  acpi_pss_perf_exit.isra.4+0x32/0x50
-[    5.502720]  acpi_processor_stop+0x4d/0x60
-[    5.502720]  really_probe+0xa3/0x3e0
-[    5.502720]  driver_probe_device+0x5b/0x120
-[    5.502720]  __driver_attach+0xd9/0x100
-[    5.502720]  ? driver_probe_device+0x120/0x120
-[    5.502720]  bus_for_each_dev+0x56/0x90
-[    5.502720]  driver_attach+0x14/0x20
-[    5.502720]  ? driver_probe_device+0x120/0x120
-[    5.502720]  bus_add_driver+0x117/0x210
-[    5.502720]  driver_register+0x61/0xb0
-[    5.502720]  acpi_processor_driver_init+0x19/0x88
-[    5.502720]  ? acpi_pci_slot_init+0xf/0xf
-[    5.502720]  do_one_initcall+0x3e/0x15a
-[    5.502720]  ? do_early_param+0x75/0x75
-[    5.502720]  kernel_init_freeable+0x170/0x1f3
-[    5.502720]  ? rest_init+0xcd/0xcd
-[    5.502720]  kernel_init+0x8/0xdb
-[    5.502720]  ret_from_fork+0x2e/0x38
-[    5.502720] Modules linked in:
-[    5.567678] _warn_unseeded_randomness: 1 callbacks suppressed
-[    5.567682] random: get_random_bytes called from init_oops_id+0x3a/0x40 with crng_init=0
-[    5.572237] ---[ end trace 1b6e88c03e412db2 ]---
-[    5.574099] EIP: kfree+0x117/0x150
-[    5.575673] Code: 74 21 8b 06 31 d2 f6 c4 80 74 04 0f b6 56 31 89 f0 e8 7d e0 fa ff e9 7b ff ff ff 8d b4 26 00 00 00 00 90 8b 46 04 a8 01 75 d8 <0f> 0b 8d b4 26 00 00 00 00 8b 75 f0 ff 75 ec 89 d9 89 f8 6a 01 53
-[    5.581124] EAX: 00000100 EBX: 6b6b6b6b ECX: 00140011 EDX: 00000000
-[    5.583243] ESI: f67dac70 EDI: ccc4aca0 EBP: f4083e28 ESP: cce983dc
-[    5.585347] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00210246
-[    5.587600] CR0: 80050033 CR2: ffd14000 CR3: 0ce94000 CR4: 000406d0
-[    5.589747] Kernel panic - not syncing: Fatal exception
-[    5.590740] Kernel Offset: 0xb200000 from 0xc1000000 (relocation range: 0xc0000000-0xf77fdfff)
-[    5.590740] ---[ end Kernel panic - not syncing: Fatal exception ]---
+		sums[0] += (u64)(u32)(m0 + key[ 0]) * (u32)(m2 + key[ 2]);
+		sums[1] += (u64)(u32)(m0 + key[ 4]) * (u32)(m2 + key[ 6]);
+		sums[2] += (u64)(u32)(m0 + key[ 8]) * (u32)(m2 + key[10]);
+		sums[3] += (u64)(u32)(m0 + key[12]) * (u32)(m2 + key[14]);
+		sums[0] += (u64)(u32)(m1 + key[ 1]) * (u32)(m3 + key[ 3]);
+		sums[1] += (u64)(u32)(m1 + key[ 5]) * (u32)(m3 + key[ 7]);
+		sums[2] += (u64)(u32)(m1 + key[ 9]) * (u32)(m3 + key[11]);
+		sums[3] += (u64)(u32)(m1 + key[13]) * (u32)(m3 + key[15]);
+		key += NH_MESSAGE_UNIT / sizeof(key[0]);
+		message += NH_MESSAGE_UNIT;
+		message_len -= NH_MESSAGE_UNIT;
+	}
 
-
-
--- 
-~Randy
+	hash[0] = cpu_to_le64(sums[0]);
+	hash[1] = cpu_to_le64(sums[1]);
+	hash[2] = cpu_to_le64(sums[2]);
+	hash[3] = cpu_to_le64(sums[3]);
+}
