@@ -2,86 +2,135 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2F0C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3AF2C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54D63205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:43:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54D63205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wwwdotorg.org
+	by mail.kernel.org (Postfix) with ESMTP id BDC9B205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 15:48:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDC9B205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbeJWACS (ORCPT
+        id S1728315AbeJWAH0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 20:02:18 -0400
-Received: from avon.wwwdotorg.org ([104.237.132.123]:50602 "EHLO
-        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727590AbeJWACS (ORCPT
+        Mon, 22 Oct 2018 20:07:26 -0400
+Received: from smtprelay0215.hostedemail.com ([216.40.44.215]:46205 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727590AbeJWAHZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 20:02:18 -0400
-X-Greylist: delayed 591 seconds by postgrey-1.27 at vger.kernel.org; Mon, 22 Oct 2018 20:02:18 EDT
-Received: from [10.20.204.51] (unknown [216.228.112.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by avon.wwwdotorg.org (Postfix) with ESMTPSA id 989871C01F5;
-        Mon, 22 Oct 2018 09:33:25 -0600 (MDT)
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.100.1 at avon.wwwdotorg.org
-Subject: Re: [RFC PATCH v2 09/17] ARM: dts: tegra20: harmony: Setup voltage
- regulators for DVFS
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181021205501.23943-1-digetx@gmail.com>
- <20181021205501.23943-10-digetx@gmail.com>
-From:   Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <a1b4cd27-858c-de53-8ae2-b1aee689475f@wwwdotorg.org>
-Date:   Mon, 22 Oct 2018 09:33:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181021205501.23943-10-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Mon, 22 Oct 2018 20:07:25 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 8891F180A8126;
+        Mon, 22 Oct 2018 15:48:18 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: house85_2a8d16fda765e
+X-Filterd-Recvd-Size: 4498
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 22 Oct 2018 15:48:12 +0000 (UTC)
+Message-ID: <93bda268c5f55571b47c7f283c027454bbcb8469.camel@perches.com>
+Subject: Re: [PATCH 2/2] Compiler Attributes: auxdisplay: panel: use
+ __fallthrough
+From:   Joe Perches <joe@perches.com>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dan <dan.carpenter@oracle.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Olof Johansson <olof@lxom.net>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        David Miller <davem@davemloft.net>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Paul Burton <paul.burton@mips.com>,
+        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
+        Martin Sebor <msebor@gmail.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Jonathan Corbet <corbet@lwn.net>, Ted Ts'o <tytso@mit.edu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
+Date:   Mon, 22 Oct 2018 08:48:11 -0700
+In-Reply-To: <CANiq72=Eo-c7M1g1gmE0kXNpxe4vkOBT54n9gMB9UBSEfzTMAw@mail.gmail.com>
+References: <20181021171414.22674-1-miguel.ojeda.sandonis@gmail.com>
+         <20181021171414.22674-3-miguel.ojeda.sandonis@gmail.com>
+         <f46baa5bb0e3373c89d09b6e0d15170902e5f55c.camel@perches.com>
+         <CANiq72=Eo-c7M1g1gmE0kXNpxe4vkOBT54n9gMB9UBSEfzTMAw@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/21/18 2:54 PM, Dmitry Osipenko wrote:
-> Set min/max regulators voltage and add CPU node that hooks up CPU with
-> voltage regulators.
+On Mon, 2018-10-22 at 11:51 +0200, Miguel Ojeda wrote:
+> On Sun, Oct 21, 2018 at 8:11 PM Joe Perches <joe@perches.com> wrote:
+> > On Sun, 2018-10-21 at 19:14 +0200, Miguel Ojeda wrote:
+> > > Let gcc know these cases are meant to fall through to the next label
+> > > by annotating them with the new __fallthrough statement attribute;
+> > > and remove the comment since it conveys the same information
+> > > (which was also parsed by gcc to suppress the warning).
+> > 
+> > Instead of many individual conversion patches,
+> > perhaps a script to do all the conversions at once.
+> 
+> Note that this was only an example of the attribute (some people asked
+> for an example when introducing another one, so I preemptively did it
+> for this one).
+> 
+> Doing the conversion (and how :-) I left it for afterwards, if people
+> agree with the attribute.
+> 
+> > Maybe:
+> > 
+> > pattern='(?:\/\*\s*fall(?:\s*|\s*\-\s*)thr(?:u|ough)\s*\*\/|\/\/\s*fall\s*thr(?:u|ough)\s*$)'
+> > git grep -P -i --name-only "$pattern" -- '*.[ch]' |
+> >     xargs perl -p -i -e "s/$pattern/__fallthrough;/gi"
+> 
+> By the way, I checked first if coccinelle could match input comments,
+> but it doesn't, according to Julia. I am also thinking whether a
+> compiler plugin could easily do this, but I don't have my hopes high
+> given these are comments...
+> 
+> Also, regardless of how it is done, the patches need to be sent
+> individually to maintainers, no?
 
-> diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+Not really no.  For instance the spdx license treewide change.
+commit b24413180f5600bcb3bb70fbed5cf186b60864bd
 
-> -				sm0 {
-> +				core_vdd_reg: sm0 {
->   					regulator-name = "vdd_sm0,vdd_core";
-> -					regulator-min-microvolt = <1200000>;
-> -					regulator-max-microvolt = <1200000>;
-> +					regulator-min-microvolt = <1000000>;
-> +					regulator-max-microvolt = <1300000>;
-> +					regulator-coupled-with = <&rtc_vdd_reg>;
-> +					regulator-coupled-max-spread = <150000>;
->   					regulator-always-on;
->   				};
+> I have a vague memory that big &
+> automated conversions were a bit frozen upon in the kernel. Greg...?
 
-How do you know for sure that these increased ranges are safe (high end) 
-and stable (low end) for this particular board? IIRC the safe/legal 
-range depends on the chip SKU, and to be honest I have no idea which SKU 
-is present on Harmony... For public boards like Colibri I imagine 
-there's enough information out there to tell what will work, but maybe 
-not our internal boards like Harmony, unless you checked our ancient 
-downstream kernels?
+There really needs to be some method to do treewide
+conversions without involving multiple maintainers.
+
+It'd be a good topic for a maintainer summit one day.
+
+
