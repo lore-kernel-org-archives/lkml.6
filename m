@@ -2,102 +2,77 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E29E7C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 08:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD74C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 08:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9497C205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 08:14:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VZmb3ri+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9497C205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 38593205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 08:17:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38593205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbeJVQcU (ORCPT
+        id S1727988AbeJVQev (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 12:32:20 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:43468 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727634AbeJVQcU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 12:32:20 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9M8EDmW013353;
-        Mon, 22 Oct 2018 03:14:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1540196053;
-        bh=6toUm9sVuR5/fbZ5FMP5fsg3n7mUeRRquVSOLSJRxm0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=VZmb3ri+5aV5Xi2Y/M2JRcynq0f89rzh6NI/tXUCh/iRJFvW08V0essupyRnUtgwq
-         kw8W74AXXu3jHWICNTUcbviY+Hu9G5CLD9OJksOkldNzbieuIWE50jjPyQwn6GYaOZ
-         rXup7OBNvE8sLwWGORM45E3ugQikVsWf3wTIpVv4=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9M8EClv013349;
-        Mon, 22 Oct 2018 03:14:12 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 22
- Oct 2018 03:14:10 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 22 Oct 2018 03:14:10 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9M8E76d003763;
-        Mon, 22 Oct 2018 03:14:08 -0500
-Subject: Re: omap4: support for manually updated display
-To:     Tony Lindgren <tony@atomide.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC:     Pavel Machek <pavel@ucw.cz>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        <linux-omap@vger.kernel.org>, <nekit1000@gmail.com>,
-        <mpartap@gmx.net>, <merlijn@wizzup.org>
-References: <20180830090456.GA17277@amd>
- <797c13fa-7a5b-a809-7dd0-14b01a3046be@ti.com> <3205865.8O8aibZXye@avalon>
- <20180910174453.GV5662@atomide.com> <20181018221549.GB6364@amd>
- <20181019164450.GD43338@atomide.com>
- <20181019225827.s76wapp3cxrmp5af@earth.universe>
- <20181020003812.GE43338@atomide.com>
-From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <6ebd84ad-3428-c2f5-da8b-e5b1c54ea5e2@ti.com>
-Date:   Mon, 22 Oct 2018 11:14:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 22 Oct 2018 12:34:51 -0400
+Received: from mga07.intel.com ([134.134.136.100]:50379 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727634AbeJVQev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 12:34:51 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2018 01:17:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,411,1534834800"; 
+   d="scan'208";a="80579121"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga008.fm.intel.com with SMTP; 22 Oct 2018 01:17:17 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 22 Oct 2018 11:17:18 +0300
+Date:   Mon, 22 Oct 2018 11:17:18 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 1/5] pinctrl: intel: pinctrl-baytrail: simplify getting
+ .driver_data
+Message-ID: <20181022081718.GQ2302@lahna.fi.intel.com>
+References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
+ <20181021200032.1833-2-wsa+renesas@sang-engineering.com>
+ <20181021211951.GM10650@smile.fi.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181020003812.GE43338@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181021211951.GM10650@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/10/18 03:38, Tony Lindgren wrote:
-> * Sebastian Reichel <sre@kernel.org> [181019 15:58]:
->> I uploaded my current status here. It's not based on the newest
->> -next, but contains the interesting patches from Laurent. Also
->> the last few patches are not yet cleaned up, sorry for the mess.
+On Mon, Oct 22, 2018 at 12:19:51AM +0300, Andy Shevchenko wrote:
+> On Sun, Oct 21, 2018 at 10:00:27PM +0200, Wolfram Sang wrote:
+> > We should get 'driver_data' from 'struct device' directly. Going via
+> > platform_device is an unneeded step back and forth.
+> > 
 > 
-> Way to go, thanks :) Here's a quick fix for issues with loading
-> and unloading modules, seems like this should be fixed somewhere
-> else though?
+> Thanks!
+> 
+> I see only 3 out of 5 patches.
+> 
+> Since we are about to establish a separate tree as well as an additional record
+> in MAINTAINERS data base for Intel pinctrl driver, I ask you to resend only
+> Intel related stuff in a separate series.
 
-I didn't get that far on drm-next with pandaboard. When loading modules, dsi_probe crashes. It is missing runtime_get(). But after adding runtime_get call, it fails and I see:
+Well, it is easy enough to apply to our tree even if part of larger
+series :) So no need to resend anything IMHO.
 
-[   44.671081] omap_hwmod: dss_dsi2: _wait_target_ready failed: -16
-[   44.677459] omapdss_dsi 58005000.encoder: use pm_runtime_put_sync_suspend() in driver?
+Looks good to me,
 
-Why is dsi2 busy (and what does it even mean)...
-
- Tomi
-
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
