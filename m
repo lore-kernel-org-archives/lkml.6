@@ -7,68 +7,73 @@ X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4566C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 245BAC004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5465B20651
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:02:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8770920651
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 17:02:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VhkmHoyU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5465B20651
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dd6m2yT6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8770920651
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbeJWBVT (ORCPT
+        id S1728691AbeJWBVa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 21:21:19 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36953 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728428AbeJWBVT (ORCPT
+        Mon, 22 Oct 2018 21:21:30 -0400
+Received: from mail-pf1-f169.google.com ([209.85.210.169]:41775 "EHLO
+        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728428AbeJWBV3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 21:21:19 -0400
-Received: by mail-pg1-f193.google.com with SMTP id c10-v6so19306373pgq.4;
-        Mon, 22 Oct 2018 10:02:00 -0700 (PDT)
+        Mon, 22 Oct 2018 21:21:29 -0400
+Received: by mail-pf1-f169.google.com with SMTP id m77-v6so20217220pfi.8;
+        Mon, 22 Oct 2018 10:02:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
         bh=te/fAtFJqxT4kgQZy97dsa96SHplR2a1763Zo8c4Y9s=;
-        b=VhkmHoyUGDvQQ1m+scFAmNeR7x7HKfS8WCmzcOxI4whTsPjDO76ctKXcboaiy9j03O
-         iB1A3/Kktfl6vlM9daLsanZrSVHc/LH4oMMqZ6BC4moxpGQGwXUhzNvQyo5SX9RK3Zxe
-         XD08TkDoD5TtFroczH/a7x3ie9rURIEZz5xSh5RKIegnMcILPUMx40ropqcqpxwk6X41
-         eO5YQRRTscdFuqc0zFKzhFWluNyHBuMXLVDzHot/cl6c5SGoa7L7PZTbRkUWnE5HaBGr
-         eaiEBIZAi0rbI6ECJZsz4Eh1wKjIVeLVk8u2dB2cCFUsPm9tC5sE5OWHutD+xDJ16IgF
-         DyIQ==
+        b=dd6m2yT6S6y7hgxTDfFlEd3NfVrddEKH7uajiWE9LVOqhj85V8O1nSkfWsGTfLSlaf
+         dF9wsSmrzCO6Efwz4qczAEJvIq+/5lQ79Fq0tfGl82CvpvHHUTkdO9djauGx2whYBOoJ
+         nPYpvzc5sIZk52Opvpob4/EqNs/RfRWCVc4j7ylhSAKY6nKbwREXGTi3Zc4JSWvI5VIS
+         TT9TEzTkk/Yc0kmfFcH9gDSmX04KzlxklSzwPuSnaX9LD5r+kEQVz9b9GNk7NAakVMU1
+         +kZXxHnWCb4RBAxeizDsxUDa3l7ARSTakLQBddUW2b9Mmozzie8/AP3TogzYfRoDtyWX
+         rB9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
         bh=te/fAtFJqxT4kgQZy97dsa96SHplR2a1763Zo8c4Y9s=;
-        b=V+Fv6xpDzT1Ribcr40waJQd3rWbkIs1o7fzVtX7B+xQZ1Xn1O2Uy4SNc0Se+DbqmEH
-         0uAbix1mhbgmd+2XHW45pl3o4zO3HrAXnhQFRu1ejgR84sREj/jaQxPmyebeJZTZ298o
-         2JCh9XTCoogGwYi7KvKng4JToRW8anlg5dJcv2foCS58++syYaG261d5fjZhnPP85L+S
-         n/d4C//XT/ASgV659wvcUGWtDi9N/ibPCDyZjyV6Tv24STzK2RndkSBA+9mJQsqCA46p
-         HvPjIDULBWPr9dEvWo8KquuK7i3umhPHvT3IDbUFKkYOpzjNKRbDWH8g2zyg33xiPY+2
-         5tpA==
-X-Gm-Message-State: ABuFfoiiv3IFmjMhRqZhab2SxnVzriSBiRAajVIBFR8/85Ul4J6OfCvp
-        dOz8Fkz6zyzpS3RMgkFU12wrUpHU
-X-Google-Smtp-Source: ACcGV61xfcd7STY/KnL0u99hd8bSxs1s2guqz14KWLO5PFGeXe3VFY/Ly5ACNEYc0p9Kymdd7k+n7A==
-X-Received: by 2002:a63:f848:: with SMTP id v8-v6mr42934391pgj.82.1540227719851;
-        Mon, 22 Oct 2018 10:01:59 -0700 (PDT)
+        b=C1QWIK0dgzPijnuHIhkuz4Du7nrb+UuqSf7DsOgqaRXaD+faa0bOsVsBGPfdYAjslr
+         qLtSN6cYDKyPay3PQViLeY+G5H1jk1zO8GyL/RHizhqy3ewSrww88sypxUNnHeyS+v7O
+         KvUrD2LStmaKfk2mpdgj5kskaU0kOs81PX9sBQzdX6q120U1VcEYvBYguDGyzWlVU4BG
+         90MRz4cfbgptNMUih4sUdv3n/bjEaFYQvMIcK2UaYaPykZqdi4f6QgK2IgR/0uYuFOI4
+         6iEEgdBR8aDLMDa0yc2v5DJxToj4s+x41I0Vvz5I4JOUJKvWDlrB0BoXgkjHRncUXnAM
+         d6lA==
+X-Gm-Message-State: ABuFfogIKi67+/FPAGG6MgOzULRWXjBDFI4PU0lcTbxxLfRVTmTcma/G
+        9eZPQ6osqevejmv2TLCu2cI=
+X-Google-Smtp-Source: ACcGV62rJF4z5SP02BbM4hmF/QRB8Dq0ASfWTIYrbX79Ep2W3A/s/lI7tRHogWLv8hYo+qllfNGk/A==
+X-Received: by 2002:a65:668a:: with SMTP id b10-v6mr17964353pgw.55.1540227730976;
+        Mon, 22 Oct 2018 10:02:10 -0700 (PDT)
 Received: from [10.67.49.28] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id i2-v6sm31806911pgq.35.2018.10.22.10.01.58
+        by smtp.googlemail.com with ESMTPSA id j25-v6sm37213317pff.116.2018.10.22.10.02.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Oct 2018 10:01:58 -0700 (PDT)
-Subject: Re: [PATCH 2/9] net: dsa: qca8k: simplify getting .driver_data
+        Mon, 22 Oct 2018 10:02:10 -0700 (PDT)
+Subject: Re: [PATCH 9/9] net: phy: mdio-mux-bcm-iproc: simplify getting
+ .driver_data
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+        "David S. Miller" <davem@davemloft.net>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
 References: <20181021200021.1693-1-wsa+renesas@sang-engineering.com>
- <20181021200021.1693-3-wsa+renesas@sang-engineering.com>
+ <20181021200021.1693-10-wsa+renesas@sang-engineering.com>
 From:   Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -104,12 +109,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <912414f3-dd62-a857-f218-f768c24647d5@gmail.com>
-Date:   Mon, 22 Oct 2018 10:01:57 -0700
+Message-ID: <886a1e4b-214a-8fa0-f11e-11804f4a611f@gmail.com>
+Date:   Mon, 22 Oct 2018 10:02:08 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181021200021.1693-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200021.1693-10-wsa+renesas@sang-engineering.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
