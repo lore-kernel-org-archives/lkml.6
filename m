@@ -6,104 +6,154 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B3B0C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD744C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 273962089C
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 12:53:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 273962089C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 905252064E
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 13:00:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 905252064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728478AbeJVVLm (ORCPT
+        id S1728523AbeJVVTR convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 17:11:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41138 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727210AbeJVVLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 17:11:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C8734AFCC;
-        Mon, 22 Oct 2018 12:53:12 +0000 (UTC)
-Date:   Mon, 22 Oct 2018 14:53:10 +0200 (CEST)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-cc:     Jessica Yu <jeyu@kernel.org>, Torsten Duwe <duwe@lst.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] arm64: implement live patching
-In-Reply-To: <CAKv+Gu8Vg9-CwvU-u9gNGmtB7gTapuCPHjU5v7FWnPsVy6vptA@mail.gmail.com>
-Message-ID: <alpine.LSU.2.21.1810221452070.13146@pobox.suse.cz>
-References: <20181001140910.086E768BC7@newverein.lst.de> <20181001141652.5478C68BE1@newverein.lst.de> <alpine.LSU.2.21.1810171051560.21847@pobox.suse.cz> <20181018125820.iw54zbirq74ulknj@linux-8ccs> <CAKv+Gu_yNBN+Rpw98MAZaxzSjm20qMYD7+fiJ1fBHoUeDr9fBA@mail.gmail.com>
- <alpine.LSU.2.21.1810191714540.4692@pobox.suse.cz> <CAKv+Gu8Vg9-CwvU-u9gNGmtB7gTapuCPHjU5v7FWnPsVy6vptA@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Mon, 22 Oct 2018 17:19:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49908 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728480AbeJVVTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 17:19:17 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C9FE2CD185;
+        Mon, 22 Oct 2018 13:00:47 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A4A575C22D;
+        Mon, 22 Oct 2018 13:00:46 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20181020045608.GH32577@ZenIV.linux.org.uk>
+References: <20181020045608.GH32577@ZenIV.linux.org.uk> <153999783767.866.7957078562330181644.stgit@warthog.procyon.org.uk> <153999784492.866.12128875514532051040.stgit@warthog.procyon.org.uk>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/24] iov_iter: Separate type from direction and use accessor functions
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <10855.1540213245.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Mon, 22 Oct 2018 14:00:45 +0100
+Message-ID: <10856.1540213245@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 22 Oct 2018 13:00:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 20 Oct 2018, Ard Biesheuvel wrote:
+Al Viro <viro@ZenIV.linux.org.uk> wrote:
 
-> On 19 October 2018 at 23:21, Miroslav Benes <mbenes@suse.cz> wrote:
-> >
-> >> >> Ad relocations. I checked that everything in struct mod_arch_specific
-> >> >> stays after the module is load. Both core and init get SHF_ALLOC set
-> >> >> (mod->arch.core.plt->sh_flags in module_frob_arch_sections(). It is
-> >> >> important because apply_relocate_add() may use those sections
-> >> >> through module_emit_plt_entry() call.
-> >> >
-> >> >
-> >> > Yes, it looks like the needed .plt sections will remain in module
-> >> > memory. However, I think I found a slight issue... :/
-> >> >
-> >> > In module_frob_arch_sections(), mod->arch.core.plt is set to an offset
-> >> > within info->sechdrs:
-> >> >
-> >> >             if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt"))
-> >> >                     mod->arch.core.plt = sechdrs + i;
-> >> >
-> >> > sechdrs is from info->sechdrs, which is freed at the end of
-> >> > load_module() via free_copy(). So although the relevant plt section(s)
-> >> > are in module memory, mod->arch.core.plt will point to invalid memory
-> >> > after info is freed. In other words, the section (.plt) *is* in memory
-> >> > but the section header (struct elf64_shdr) containing section metadata
-> >> > like sh_addr, sh_size etc., is not.
-> >> >
-> >>
-> >> Just for my understanding: this only matters for live patching, right?
-> >
-> > Yes. Live patching can do deferred relocations. When a module is loaded
-> > and livepatched, the relevant symbols in the patching module are resolved.
-> > We call apply_relocate_add(), which is arch-specific, and we must be sure
-> > that everything used by apply_relocate_add() is preserved in the patching
-> > module after it is loaded.
-> >
+> One general comment: I would strongly recommend splitting the iov_iter
+> initializers change into a separate patch.
+
+Done.
+
+> >  			void *addr = kmap_atomic(page);
+> >  
+> >  			written = copy_to_iter(addr, copy, iter);
 > 
-> So I suppose this could get interesting in cases where modules are far
-> away from the kernel (i.e., more than -/+ 128 MB). Fortunately, the
-> modules themselves are always placed in a 128 MB window, but this
-> window could be out of reach for branches into the kernel proper. If
-> we find ourselves in the situation where we need to patch calls into
-> the kernel proper to point into this module, this may get interesting,
-> since the PLT entries *must* be allocated along with the module that
-> contains the branch instruction, or the PLT entry itself may be out of
-> range, defeating the purpose.
+> FWIW, I wonder if that one is actually a missing primitive getting open-coded...
 
-Hm... Torsten, didn't you have to solve something similar in powerpc case? 
+Ummm...  You mean the combination of kmap_atomic() and copy_to_iter()?  Can I
+leave these for another time?
 
-> >> The original PLT support was implemented to support loading modules
-> >> outside of the -/+ 128 MB range of an arm64 relative branch/jump
-> >> instruction, and was later enhanced [for the same reason] to support
-> >> emitting a trampoline for the ftrace entrypoint.
+> >  		memcpy(&ctx->iter, iter, sizeof(struct iov_iter));
+> >  		ctx->len = count;
+> >  		iov_iter_advance(iter, count);
+> 
+> ... and so, to much greater extent, is this.
 
+And combining memcpy() and iov_iter_advance()?
+
+> > -	dio->should_dirty = (iter->type == ITER_IOVEC);
+> > +	dio->should_dirty = iter_is_iovec(iter);
+> 
+> Nope.  This path *can* get both read and write iov_iter.  Not an equivalent
+> change.
+
+This should really have been (iter->type == (ITER_IOVEC | READ)).
+
+Fixed to:
+
+	dio->should_dirty = iter_is_iovec(iter) && iov_iter_rw(iter) == READ;
+
+> > -		if (iter->type == ITER_IOVEC)
+> > +		if (iter_is_iovec(iter))
+> >  			dio->flags |= IOMAP_DIO_DIRTY;
+> 
+> Ditto.
+
+This also should've had "| READ" in there.
+
+Fixed to:
+
+		if (iter_is_iovec(iter) && iov_iter_rw(iter) == READ)
+ 			dio->flags |= IOMAP_DIO_DIRTY;
+
+> > @@ -417,28 +417,35 @@ int iov_iter_fault_in_readable(struct iov_iter *i, size_t bytes)
+> >  	int err;
+> >  	struct iovec v;
+> >  
+> > -	if (!(i->type & (ITER_BVEC|ITER_KVEC))) {
+> > +	switch (iov_iter_type(i)) {
+> > +	case ITER_IOVEC:
+> > +	case ITER_PIPE:
+> >  		iterate_iovec(i, bytes, v, iov, skip, ({
+> >  			err = fault_in_pages_readable(v.iov_base, v.iov_len);
+> >  			if (unlikely(err))
+> >  			return err;
+> >  		0;}))
+> > +		break;
+> > +	case ITER_KVEC:
+> > +	case ITER_BVEC:
+> > +		break;
+> >  	}
+> >  	return 0;
+> >  }
+> >  EXPORT_SYMBOL(iov_iter_fault_in_readable);
+> 
+> Huh?  That makes no sense whatsoever - ITER_PIPE ones are write-only in the
+> first place, so they won't be passed to that one, but feeding ITER_PIPE to
+> iterate_iovec() is insane.  And even if they copy-from ITER_PIPES would
+> appear, why the devil would we want to fault-in anything?
+
+Note that the condition "!(i->type & (ITER_BVEC|ITER_KVEC))" is true if type
+is ITER_PIPE or ITER_IOVEC.
+
+That said, I can make it BUG if it encounters a pipe iterator.
+
+> > @@ -987,7 +1003,7 @@ void iov_iter_revert(struct iov_iter *i, size_t unroll)
+> >  		return;
+> >  	i->count += unroll;
+> > -	if (unlikely(i->type & ITER_PIPE)) {
+> > +	if (unlikely(iov_iter_is_pipe(i))) {
+> >  		struct pipe_inode_info *pipe = i->pipe;
+> ...
+> > +	case ITER_PIPE:
+> > +		BUG();
+> > +	}
+> >  }
+> >  EXPORT_SYMBOL(iov_iter_revert);
+> 
+> Wha...?
+
+It should never get to the BUG() because of the earlier if-statement.
+However, the compiler gets picky sometimes, but isn't necessarily good enough
+to see that this particular case should never occur, so to avoid getting a
+warning about missing cases I put in a BUG.  I can stick a comment on it and
+make it just break.
+
+David
