@@ -2,152 +2,145 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E11B4C67863
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C1EECDE43
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9262C20658
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:26:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGZ2cra+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9262C20658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 94EFC20658
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 09:27:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94EFC20658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbeJVRoY (ORCPT
+        id S1728276AbeJVRon (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 13:44:24 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46711 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727550AbeJVRoY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 13:44:24 -0400
-Received: by mail-lj1-f196.google.com with SMTP id x3-v6so36265419lji.13;
-        Mon, 22 Oct 2018 02:26:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=3H9axaKui5TKJllg9hWj3PLem3zLVXeS0Xjijn0TS88=;
-        b=fGZ2cra+hf6+AwhL4gEZ+VCymGmieYOZcFMC83YSKlx16RDIM1Kp6+01xlHOSVAjuO
-         b9mG/O+FEvGxc/AKWU+NazQcv8CGIw1QFhgFySh8ZcuEBfucemVsEEVqfEjOMR5bUrz+
-         RCdjkPIr+shBI2MfHKa2TfQcAmQiPhum3bFxPs6I+8yxuro22Hijm0W/qXbMxAcpVg99
-         3sZOiMxMy3hHIrwei9yYAN0sfI3m20GEAEhr/7+gbcD6guCRk4rgzZusvte8cnHOUom1
-         g3nQqAFfxMqmii02mA5rYNPLu6j/vbph1Fkt5vcxLgn1S6GI126oJVBlQqWzRzTQkhR9
-         WFEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=3H9axaKui5TKJllg9hWj3PLem3zLVXeS0Xjijn0TS88=;
-        b=TTrJtY4YPlInZU2tW34+LkFZcCI0o47OodXm5eguVhppojcDNGJ+TjMgoJh24WMYlT
-         KZQXerAvVOZVzfLhVyctbmjqbar4gOPcKT5cz8Bfh+T4fZ5S1brMd3z7zEqsWXIuVPyg
-         mT2l74fdB40VGeP18qUhb/IE1nb6lRcwkbBr9lhv59Gjpj40fb//5b/S8hoYUmZagxV3
-         JNREjAdLFdTxM7BeoYeQLTI2BL+5yhgYsPo+7Mf2iJzF1lXjixuzhzcdJws+TeF5l7wl
-         sKKQ4loMfo2OAlGpoeTL0r6lC8QUgTyFc2iZMzuil/LUPJ8emmKaGg+Qa+7f31ydJxro
-         XpXQ==
-X-Gm-Message-State: ABuFfojBvPlQU8/M9fuQmgoTPsBWkJ93vn+xT+I0YIGNhuP+TMDRLKsz
-        8ArD03OOacyZOubsXhJBHKKOwmcj83FqSDlORi0=
-X-Google-Smtp-Source: ACcGV6072dDGmwxuz1oFx3kRlmo8Crg0tiq6x0MDDDPYun7HJ6XrRxGGQJzxVco4IVg1gYwsunRhHxTp9GGn1XGBVxI=
-X-Received: by 2002:a2e:6e08:: with SMTP id j8-v6mr31545836ljc.61.1540200399659;
- Mon, 22 Oct 2018 02:26:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181021171414.22674-1-miguel.ojeda.sandonis@gmail.com>
- <20181021171414.22674-2-miguel.ojeda.sandonis@gmail.com> <20181021222712.GI1617@thunk.org>
-In-Reply-To: <20181021222712.GI1617@thunk.org>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Mon, 22 Oct 2018 11:26:28 +0200
-Message-ID: <CANiq72mXV6WTyHXNZJDTfFOpPrXD0zD6cB30bGOuKO44AvRiog@mail.gmail.com>
-Subject: Re: [PATCH 1/2] Compiler Attributes: add support for __fallthrough
- (gcc >= 7.1)
-To:     "Ted Ts'o" <tytso@mit.edu>, Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Dan <dan.carpenter@oracle.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Olof Johansson <olof@lxom.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        David Miller <davem@davemloft.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
-        Martin Sebor <msebor@gmail.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 22 Oct 2018 13:44:43 -0400
+Received: from foss.arm.com ([217.140.101.70]:43830 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727509AbeJVRon (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 13:44:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 758D9EBD;
+        Mon, 22 Oct 2018 02:27:01 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC29B3F6A8;
+        Mon, 22 Oct 2018 02:26:58 -0700 (PDT)
+Date:   Mon, 22 Oct 2018 10:26:53 +0100
+Message-ID: <86a7n6tjqa.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     sboyd@kernel.org, evgreen@chromium.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 1/1] drivers: pinctrl: qcom: add wakeup capability to GPIO
+In-Reply-To: <20181019194712.GB17444@codeaurora.org>
+References: <20181011002958.2597-1-ilina@codeaurora.org>
+        <20181011002958.2597-2-ilina@codeaurora.org>
+        <20181019153222.GA17444@codeaurora.org>
+        <ad6e314b-2d68-2a77-b77c-54cade0fe0b2@arm.com>
+        <20181019194712.GB17444@codeaurora.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 12:27 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->
-> On Sun, Oct 21, 2018 at 07:14:13PM +0200, Miguel Ojeda wrote:
-> > From the GCC manual:
-> >
-> >   fallthrough
-> >
-> >     The fallthrough attribute with a null statement serves as a
-> >     fallthrough statement. It hints to the compiler that a statement
-> >     that falls through to another case label, or user-defined label
-> >     in a switch statement is intentional and thus the -Wimplicit-fallthrough
-> >     warning must not trigger. The fallthrough attribute may appear
-> >     at most once in each attribute list, and may not be mixed with
-> >     other attributes. It can only be used in a switch statement
-> >     (the compiler will issue an error otherwise), after a preceding
-> >     statement and before a logically succeeding case label,
-> >     or user-defined label.
-> >
-> >   https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html
->
-> Do we know if coverity understands the fallthrough attribute?  One of
-> the reasons why I started using /* fallthrough */ is because it kept
-> Coverity happy.
+On Fri, 19 Oct 2018 20:47:12 +0100,
+Lina Iyer <ilina@codeaurora.org> wrote:
+> 
+> On Fri, Oct 19 2018 at 09:53 -0600, Marc Zyngier wrote:
+> > Hi Lina,
+> > 
+> > On 19/10/18 16:32, Lina Iyer wrote:
+> >> Hi folks,
+> >> 
+> >> On Wed, Oct 10 2018 at 18:30 -0600, Lina Iyer wrote:
+> 
+> [...]
+> 
+> >>> +static irqreturn_t wake_irq_gpio_handler(int irq, void *data)
+> >>> +{
+> >>> +	struct irq_data *irqd = data;
+> >>> +	struct irq_desc *desc = irq_to_desc(irqd->irq);
+> >>> +
+> >>> +	desc->handle_irq(desc);
+> >> Do we see any problem calling handle_irq()?
+> > 
+> > Good timing, I was just looking at this.
+> > 
+> :) Thanks for your time.
+> 
+> > One thing I can see is that you will end-up calling the EOI callback on
+> > the root interrupt controller (the GIC), thus writing to ICC_EOIR1_EL1.
+> > 
+> > But you've never acked this interrupt the first place by reading
+> > ICC_IAR1_EL1, and that puts you violently out of spec, according to the
+> > GICv3 spec (8.2.10), which reads:
+> > 
+> > "A write to this register must correspond to the most recent valid read
+> > by this PE from an Interrupt Acknowledge Register, and must correspond
+> > to the INTID that was read from ICC_IAR1_EL1, otherwise the system
+> > behavior is UNPREDICTABLE."
+> > 
+> > Here, you definitely risk the sanity of the CPU interface state machine.
+> > 
+> Oh, thanks Marc. Will look into it. The problem is because I call
+> handle_irq() directly for the GPIO IRQ which is not triggered but we end
+> up mask, eoi etc.
+> 
+> How about calling handle_simple_irq(), which doesn't seem to the IRQ
+> registers?
 
-If Coverity is like gcc, they should be doing both (i.e. I see the
-comment parsing as an "extra" that gcc did, but the "basic stuff" is
-the attribute -- and I would guess it is way easier for them to
-support than the comment parsing).
+The problem is that you cannot decide to use another flow handler, as
+this handler is a constraint imposed by the root interrupt
+controller. You can overload it, but you then need to make sure that
+the interrupt will *never* fire at the GIC level, ever. 
 
-But I cannot test it myself :-( Someone, please?
+Can you actually enforce this?
 
-However, if I understood Greg correctly in his reply to the cover
-letter, he replied that Coverity knows about it (?).
+Assuming you can, this could work. But then the subsequent question
+is: Why do you have the interrupt at the TLMM level at all? Overall,
+I'm a bit worried of this "now you see me, now you don't" kind of
+game behind the kernel back. Is there a way we can stop playing that
+game and stick to one single path for interrupt delivery?
 
->
-> If the conversion from /* fallthrough */ to the __fallthrough__
-> attribute means that we start gethting a lot of Coverity warnings,
-> that would be unfortunate.  OTOH, if this is getting standardized,
-> maybe we can get Coverity to understand this attribute?
+> > So stepping back a bit: At some point, you had a version that just
+> > relied on regenerating edge interrupts by writing to some register
+> > (knowing that level interrupts are safe by definition). Why isn't that
+> > the right solution? It'd avoid the above minefield by just letting the
+> > HW do its thing...
+> > 
+> There are some unnecessary complexity with the approach that we are
+> trying to avoid.
+> 
+> The TLMM may or not may not be powered off (depending on the SoC state)
+> and Linux has no control on it. The PDC will remain powered on but we
+> don't want the PDC interrupt enabled always, since we will receive to
+> interrupts (one from TLMM and one from PDC) for every event. So we have
+> to keep the PDC interrupt configured as wakeup interrupt but operate on
+> the fact that when we go into suspend or cpuidle we will have to switch
+> to enabling the PDC interrupt and disabling the GPIO IRQ and swap back
+> when we resume. This dance is harder with cpuidle (notifying the TLMM
+> driver, when all the CPUs are in idle) than suspend/resume which has
+> nice callbacks and is what we are trying to avoid but using the PDC
+> interrupt always.
 
-Indeed! That would be the best for everyone, including Coverity customers.
+It looks to me that the way this logic is split across two drivers is
+a major cause of headache. My advise is that either you have one
+single point of interrupt handling for such interrupt, or you force a
+TLMM wake-up on such an event, forcing it to handle the interrupt the
+"normal way"...
 
-Cheers,
-Miguel
+Thanks,
+
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
