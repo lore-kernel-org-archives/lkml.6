@@ -2,146 +2,90 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF31C004D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCD7C004D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C571120652
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:42:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oe3BjouC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C571120652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C33020652
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 21:47:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C33020652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729557AbeJWGCz (ORCPT
+        id S1728997AbeJWGIN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 02:02:55 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33420 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728334AbeJWGCz (ORCPT
+        Tue, 23 Oct 2018 02:08:13 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35447 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725872AbeJWGIM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 02:02:55 -0400
-Received: by mail-ot1-f66.google.com with SMTP id q50so41661514otd.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 14:42:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ib2UcmGTPXQPxuj5+v3hHcVygVb/GMm0sygsdffu/s8=;
-        b=oe3BjouCTUrtHZ2FtL9O5reLIX7f2Ql6XW2DxGbjFIDS3Osf6YdW9wgBwD3mbUBrFs
-         ym6JbKCNbCIpEiTKW9LrCydsaXJ/e39yqUfGH2+tip9Sf6rZLEt7U2sEadzzYAfgbgZg
-         idXbElkJXozNxql3FZu/9Tp6Q1pVyWOk2qH52XV28+EBI8LkvSJod78X3Qo4RyuOdlLF
-         GMbcghnfEuWH5UiJBCRmLHLCYyrzK7IungHe9GWmwP/gw+iTYNJmJK3ZPeazMzy3tsH9
-         GrFLMOLOT46ATuBMTTXW9CTeJ6KL+N7zsdmcnIaN7zoZRUbGgtm843UPgnQOcCfv2kIV
-         wrBA==
+        Tue, 23 Oct 2018 02:08:12 -0400
+Received: by mail-pf1-f193.google.com with SMTP id l17-v6so20569897pff.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 14:47:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ib2UcmGTPXQPxuj5+v3hHcVygVb/GMm0sygsdffu/s8=;
-        b=r3aWjxwMSshm2cxYcPInqpAtRH6GszJGwCK5embDgY7UXCi7bfR1aTZHVAkUc1AHYx
-         r4QT1X8vV3BsakyxIwj6WiZblsA2LHX1oBXAlFEfzjuLKYtOQcK0oHuATnhRk9ycoJQe
-         GiKP5dOd8YaAm6mcS3ZyFMU9RCXB3KEsScjw10DO2hWgqSiZTzqQTpBP/nMYa+l1M/JW
-         FQ/E+bemQ1y/FNPNoJSougaKO4dszaGpSXTpbr9GPVqQ/+AlzfVO+5SyVT03S6CFmo55
-         hhkDRXpJdJ5YzfiPQvUZOP1mgj+Z6XDW5uSBEH41dqfo8iXu/Yt2/iNnmsfhNeagvtOB
-         GHsA==
-X-Gm-Message-State: ABuFfoi44kRSLpM3VKyCnyTmZyCkKLH7ejF4rzBQHH2l9rroTHA9DoXG
-        yIeT27EdlIhUCHT8EblRCOPWnkjRUbmkZBBg9l1Lfg==
-X-Google-Smtp-Source: ACcGV6375H0TEOSM5IuM1rsnD5FsWHpbFE57v/mH73/UkWUjArQA76ld1qIqBPBR6LDXzz0zIdISZgkV88yIxsCDwoQ=
-X-Received: by 2002:a9d:da2:: with SMTP id 31mr27721571ots.246.1540244556427;
- Mon, 22 Oct 2018 14:42:36 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ac9:2ac9:0:0:0:0:0 with HTTP; Mon, 22 Oct 2018 14:42:35
- -0700 (PDT)
-In-Reply-To: <1540074145-31285-7-git-send-email-karahmed@amazon.de>
-References: <1540074145-31285-1-git-send-email-karahmed@amazon.de> <1540074145-31285-7-git-send-email-karahmed@amazon.de>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Mon, 22 Oct 2018 14:42:35 -0700
-Message-ID: <CALMp9eRh2syfY9KjaH9h=AA1dwRnKb+S-NXEB3Hn+tjQoSrBXg@mail.gmail.com>
-Subject: Re: [PATCH v3 06/13] KVM/nVMX: Use kvm_vcpu_map when mapping the L1
- MSR bitmap
-To:     KarimAllah Ahmed <karahmed@amazon.de>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=lIv6larhBHKispBblV725Bm3pwAaxUftiXw2wrKWE+E=;
+        b=ayH8p2hgC4mZmQXPKFYRwsRazVpYBqO8T7eggfQSByQuS/NOFr/KNnRdD+CqDgKT83
+         AKAsghYBiRw8QUUIpEyyMnBXCV6Z7e/Ls12e+leXdmgRpH8RwxVNlQqm5jEViEn/7x1x
+         FtNKh+m/Kr2CdJI138Z6YrWR0EAVnp4nLkli0O4iZAjjr5wqr/egzScc8FLYXNtcB2fM
+         r/2vRUrYHGpfLzuP/mkmhTVgSh0zZ+6Of7MMIBbM9ROaeUjzCGhMKCYfqFD5ijucoVz/
+         zRN5NMeISubW2J2hN8Baew1uaiPdce0ukY9K7PGHlOtt5dbv2FHCVu6CsfhE1mPC7VDB
+         Rc6w==
+X-Gm-Message-State: ABuFfog8Wigz2ln2Km4OFr2/OGdmjp59SgTbwLHyOuBUm8UgIXxBLdmU
+        3x2v5B2/0nyITGjPMUe1N8s9LPRjEi0=
+X-Google-Smtp-Source: ACcGV62dkAAFtYov+++RwrQa4vu+C0O0OYmG3L/427XeZZ2S0wnYhMZf23cnsbCAAPSKVbTZgh1B8Q==
+X-Received: by 2002:a63:d60a:: with SMTP id q10-v6mr43778098pgg.175.1540244872799;
+        Mon, 22 Oct 2018 14:47:52 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id l5-v6sm17025464pfl.28.2018.10.22.14.47.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 22 Oct 2018 14:47:51 -0700 (PDT)
+Message-ID: <1540244870.128590.39.camel@acm.org>
+Subject: Re: [PATCH] Revert "workqueue: re-add lockdep dependencies for
+ flushing"
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        Tejun Heo <tj@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "linux-nvme @ lists . infradead . org" 
+        <linux-nvme@lists.infradead.org>
+Date:   Mon, 22 Oct 2018 14:47:50 -0700
+In-Reply-To: <13901aed5074f4b1fbd259d03928efb6ab40c65a.camel@sipsolutions.net>
+References: <20181022151818.135163-1-bvanassche@acm.org>
+         <13901aed5074f4b1fbd259d03928efb6ab40c65a.camel@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 20, 2018 at 3:22 PM, KarimAllah Ahmed <karahmed@amazon.de> wrote:
-> Use kvm_vcpu_map when mapping the L1 MSR bitmap since using
-> kvm_vcpu_gpa_to_page() and kmap() will only work for guest memory that has
-> a "struct page".
->
-> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-> ---
-> v1 -> v2:
-> - Do not change the lifecycle of the mapping (pbonzini)
-> ---
->  arch/x86/kvm/vmx.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index d857401..5b15ca2 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -847,6 +847,9 @@ struct nested_vmx {
->         struct page *apic_access_page;
->         struct page *virtual_apic_page;
->         struct page *pi_desc_page;
-> +
-> +       struct kvm_host_map msr_bitmap_map;
-> +
->         struct pi_desc *pi_desc;
->         bool pi_pending;
->         u16 posted_intr_nv;
-> @@ -11546,9 +11549,10 @@ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
->                                                  struct vmcs12 *vmcs12)
->  {
->         int msr;
-> -       struct page *page;
->         unsigned long *msr_bitmap_l1;
->         unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.vmcs02.msr_bitmap;
-> +       struct kvm_host_map *map = &to_vmx(vcpu)->nested.msr_bitmap_map;
-> +
->         /*
->          * pred_cmd & spec_ctrl are trying to verify two things:
->          *
-> @@ -11574,11 +11578,10 @@ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
->             !pred_cmd && !spec_ctrl)
->                 return false;
->
-> -       page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->msr_bitmap);
-> -       if (is_error_page(page))
-> +       if (kvm_vcpu_map(vcpu, gpa_to_gfn(vmcs12->msr_bitmap), map))
+On Mon, 2018-10-22 at 22:14 +-0200, Johannes Berg wrote:
++AD4 I must also say that I'm disappointed you'd try to do things this way.
++AD4 I'd be (have been?) willing to actually help you understand the problem
++AD4 and add the annotations, but rather than answer my question (+ACI-where do I
++AD4 find the right git tree+ACIAIQ) you just send a revert patch.
 
-Isn't this the sort of high frequency operation that should not use the new API?
+Sorry that I had not yet provided that information. You should have
+received this information through another e-mail thread. See also
+http://lists.infradead.org/pipermail/linux-nvme/2018-October/020493.html.
 
->                 return false;
->
-> -       msr_bitmap_l1 = (unsigned long *)kmap(page);
-> +       msr_bitmap_l1 = (unsigned long *)map->hva;
->         if (nested_cpu_has_apic_reg_virt(vmcs12)) {
->                 /*
->                  * L0 need not intercept reads for MSRs between 0x800 and 0x8ff, it
-> @@ -11626,8 +11629,7 @@ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
->                                         MSR_IA32_PRED_CMD,
->                                         MSR_TYPE_W);
->
-> -       kunmap(page);
-> -       kvm_release_page_clean(page);
-> +       kvm_vcpu_unmap(&to_vmx(vcpu)->nested.msr_bitmap_map);
->
->         return true;
->  }
-> --
-> 2.7.4
->
++AD4 To do that, you have to understand what recursion is valid (I'm guessing
++AD4 there's some sort of layering involved), and I'm far from understanding
++AD4 anything about the code that triggered this report.
+
+I don't think there is any kind of recursion involved in the NVMe code
+that triggered the lockdep complaint. Sagi, please correct me if I got this
+wrong.
+
+Bart.
+
