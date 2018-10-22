@@ -7,159 +7,162 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C697FC7112C
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C27E4C67863
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ACC520890
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A7C620853
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 10:20:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEoyFlRr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ACC520890
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGv/sWMx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A7C620853
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729067AbeJVSij (ORCPT
+        id S1729081AbeJVSim (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:38:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49446 "EHLO mail.kernel.org"
+        Mon, 22 Oct 2018 14:38:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729012AbeJVSih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:38:37 -0400
+        id S1729012AbeJVSil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 14:38:41 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 892552088F;
-        Mon, 22 Oct 2018 10:20:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C58F2088F;
+        Mon, 22 Oct 2018 10:20:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540203641;
-        bh=O8PfIDnG1p3AuR1XVjj1sfwEUFsntlViQaA+LbPTRTA=;
+        s=default; t=1540203646;
+        bh=Ruyuma8Hui3Tki338PDGKw+GoOq2leMOhngoCXK9+zQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kEoyFlRrfpNMTyAM1ayVkTDEAump+9l0/JOLv17zeuIh3UbFD19rPbe8HhhDfhOyz
-         u+VfQrhmt/rgHGyeVh5mmg0lUcEZCSQ3opJA/FiEscXKfdSLsT4HhHuXYPhKFQhmf6
-         2Pf7GBs6HqTK6BxEPWf8jDw29EwJKuScc5b+KIL8=
+        b=YGv/sWMxjj+CGdwk94y8ciXU25GNlv6+ifyBHuCJSOHXoHG+CsHm8neBWWxZ0uvk2
+         X+wzXl9HPRwsD4zHzhB7bUjARBSwEXRawpxr3ggyhcDSieyp3UrltlN1cg8fMzDlSX
+         01Pi7hzrjyLHs7RKaQ4ucSVWqLWzCGoP45tstxHo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Daniel Drake <drake@endlessm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 03/15] Input: i8042 - enable keyboard wakeups by default when s2idle is used
-Date:   Mon, 22 Oct 2018 06:20:14 -0400
-Message-Id: <20181022102026.40869-3-sashal@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thiago Macieira <thiago.macieira@intel.com>,
+        Wang Nan <wangnan0@huawei.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 05/15] perf python: Use -Wno-redundant-decls to build with PYTHON=python3
+Date:   Mon, 22 Oct 2018 06:20:16 -0400
+Message-Id: <20181022102026.40869-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181022102026.40869-1-sashal@kernel.org>
 References: <20181022102026.40869-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Drake <drake@endlessm.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit 684bec1092b6991ff2a7751e8a763898576eb5c2 ]
+[ Upstream commit 05a2f54679861deb188750ba2a70187000b2c71f ]
 
-Previously, on typical consumer laptops, pressing a key on the keyboard
-when the system is in suspend would cause it to wake up (default or
-unconditional behaviour). This happens because the EC generates a SCI
-interrupt in this scenario.
+When building in ClearLinux using 'make PYTHON=python3' with gcc 8.2.1
+it fails with:
 
-That is no longer true on modern laptops based on Intel WhiskeyLake,
-including Acer Swift SF314-55G, Asus UX333FA, Asus UX433FN and Asus
-UX533FD. We confirmed with Asus EC engineers that the "Modern Standby"
-design has been modified so that the EC no longer generates a SCI
-in this case; the keyboard controller itself should be used for wakeup.
+    GEN      /tmp/build/perf/python/perf.so
+  In file included from /usr/include/python3.7m/Python.h:126,
+                   from /git/linux/tools/perf/util/python.c:2:
+  /usr/include/python3.7m/import.h:58:24: error: redundant redeclaration of ‘_PyImport_AddModuleObject’ [-Werror=redundant-decls]
+   PyAPI_FUNC(PyObject *) _PyImport_AddModuleObject(PyObject *, PyObject *);
+                          ^~~~~~~~~~~~~~~~~~~~~~~~~
+  /usr/include/python3.7m/import.h:47:24: note: previous declaration of ‘_PyImport_AddModuleObject’ was here
+   PyAPI_FUNC(PyObject *) _PyImport_AddModuleObject(PyObject *name,
+                          ^~~~~~~~~~~~~~~~~~~~~~~~~
+  cc1: all warnings being treated as errors
+  error: command 'gcc' failed with exit status 1
 
-In order to retain the standard behaviour of being able to use the
-keyboard to wake up the system, enable serio wakeups by default on
-platforms that are using s2idle.
+And indeed there is a redundant declaration in that Python.h file, one
+with parameter names and the other without, so just add
+-Wno-error=redundant-decls to the python setup instructions.
 
-Link: https://lkml.kernel.org/r/CAB4CAwfQ0mPMqCLp95TVjw4J0r5zKPWkSvvkK4cpZUGE--w8bQ@mail.gmail.com
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Now perf builds with gcc in ClearLinux with the following Dockerfile:
+
+  # docker.io/acmel/linux-perf-tools-build-clearlinux:latest
+  FROM docker.io/clearlinux:latest
+  MAINTAINER Arnaldo Carvalho de Melo <acme@kernel.org>
+  RUN swupd update && \
+      swupd bundle-add sysadmin-basic-dev
+  RUN mkdir -m 777 -p /git /tmp/build/perf /tmp/build/objtool /tmp/build/linux && \
+      groupadd -r perfbuilder && \
+      useradd -m -r -g perfbuilder perfbuilder && \
+      chown -R perfbuilder.perfbuilder /tmp/build/ /git/
+  USER perfbuilder
+  COPY rx_and_build.sh /
+  ENV EXTRA_MAKE_ARGS=PYTHON=python3
+  ENTRYPOINT ["/rx_and_build.sh"]
+
+Now to figure out why the build fails with clang, that is present in the
+above container as detected by the rx_and_build.sh script:
+
+  clang version 6.0.1 (tags/RELEASE_601/final)
+  Target: x86_64-unknown-linux-gnu
+  Thread model: posix
+  InstalledDir: /usr/sbin
+  make: Entering directory '/git/linux/tools/perf'
+    BUILD:   Doing 'make -j4' parallel build
+    HOSTCC   /tmp/build/perf/fixdep.o
+    HOSTLD   /tmp/build/perf/fixdep-in.o
+    LINK     /tmp/build/perf/fixdep
+
+  Auto-detecting system features:
+  ...                         dwarf: [ OFF ]
+  ...            dwarf_getlocations: [ OFF ]
+  ...                         glibc: [ OFF ]
+  ...                          gtk2: [ OFF ]
+  ...                      libaudit: [ OFF ]
+  ...                        libbfd: [ OFF ]
+  ...                        libelf: [ OFF ]
+  ...                       libnuma: [ OFF ]
+  ...        numa_num_possible_cpus: [ OFF ]
+  ...                       libperl: [ OFF ]
+  ...                     libpython: [ OFF ]
+  ...                      libslang: [ OFF ]
+  ...                     libcrypto: [ OFF ]
+  ...                     libunwind: [ OFF ]
+  ...            libdw-dwarf-unwind: [ OFF ]
+  ...                          zlib: [ OFF ]
+  ...                          lzma: [ OFF ]
+  ...                     get_cpuid: [ OFF ]
+  ...                           bpf: [ OFF ]
+
+  Makefile.config:331: *** No gnu/libc-version.h found, please install glibc-dev[el].  Stop.
+  make[1]: *** [Makefile.perf:206: sub-make] Error 2
+  make: *** [Makefile:70: all] Error 2
+  make: Leaving directory '/git/linux/tools/perf'
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thiago Macieira <thiago.macieira@intel.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-c3khb9ac86s00qxzjrueomme@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/serio/i8042.c | 29 ++++++++++++++++++++---------
- include/linux/suspend.h     |  2 ++
- kernel/power/suspend.c      |  6 ++++++
- 3 files changed, 28 insertions(+), 9 deletions(-)
+ tools/perf/util/setup.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/serio/i8042.c b/drivers/input/serio/i8042.c
-index 824f4c1c1f31..6462f1798fbb 100644
---- a/drivers/input/serio/i8042.c
-+++ b/drivers/input/serio/i8042.c
-@@ -1392,15 +1392,26 @@ static void __init i8042_register_ports(void)
- 	for (i = 0; i < I8042_NUM_PORTS; i++) {
- 		struct serio *serio = i8042_ports[i].serio;
+diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+index da4df7fd43a2..23f1bf175179 100644
+--- a/tools/perf/util/setup.py
++++ b/tools/perf/util/setup.py
+@@ -27,7 +27,7 @@ class install_lib(_install_lib):
  
--		if (serio) {
--			printk(KERN_INFO "serio: %s at %#lx,%#lx irq %d\n",
--				serio->name,
--				(unsigned long) I8042_DATA_REG,
--				(unsigned long) I8042_COMMAND_REG,
--				i8042_ports[i].irq);
--			serio_register_port(serio);
--			device_set_wakeup_capable(&serio->dev, true);
--		}
-+		if (!serio)
-+			continue;
-+
-+		printk(KERN_INFO "serio: %s at %#lx,%#lx irq %d\n",
-+			serio->name,
-+			(unsigned long) I8042_DATA_REG,
-+			(unsigned long) I8042_COMMAND_REG,
-+			i8042_ports[i].irq);
-+		serio_register_port(serio);
-+		device_set_wakeup_capable(&serio->dev, true);
-+
-+		/*
-+		 * On platforms using suspend-to-idle, allow the keyboard to
-+		 * wake up the system from sleep by enabling keyboard wakeups
-+		 * by default.  This is consistent with keyboard wakeup
-+		 * behavior on many platforms using suspend-to-RAM (ACPI S3)
-+		 * by default.
-+		 */
-+		if (pm_suspend_via_s2idle() && i == I8042_KBD_PORT_NO)
-+			device_set_wakeup_enable(&serio->dev, true);
- 	}
- }
+ cflags = getenv('CFLAGS', '').split()
+ # switch off several checks (need to be at the end of cflags list)
+-cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter' ]
++cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-redundant-decls' ]
+ if cc != "clang":
+     cflags += ['-Wno-cast-function-type' ]
  
-diff --git a/include/linux/suspend.h b/include/linux/suspend.h
-index 8544357d92d0..950b56d255ac 100644
---- a/include/linux/suspend.h
-+++ b/include/linux/suspend.h
-@@ -251,6 +251,7 @@ static inline bool idle_should_enter_s2idle(void)
- 	return unlikely(s2idle_state == S2IDLE_STATE_ENTER);
- }
- 
-+extern bool pm_suspend_via_s2idle(void);
- extern void __init pm_states_init(void);
- extern void s2idle_set_ops(const struct platform_s2idle_ops *ops);
- extern void s2idle_wake(void);
-@@ -282,6 +283,7 @@ static inline void pm_set_suspend_via_firmware(void) {}
- static inline void pm_set_resume_via_firmware(void) {}
- static inline bool pm_suspend_via_firmware(void) { return false; }
- static inline bool pm_resume_via_firmware(void) { return false; }
-+static inline bool pm_suspend_via_s2idle(void) { return false; }
- 
- static inline void suspend_set_ops(const struct platform_suspend_ops *ops) {}
- static inline int pm_suspend(suspend_state_t state) { return -ENOSYS; }
-diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-index c0bc2c89697a..405e80219fe4 100644
---- a/kernel/power/suspend.c
-+++ b/kernel/power/suspend.c
-@@ -62,6 +62,12 @@ static DECLARE_WAIT_QUEUE_HEAD(s2idle_wait_head);
- enum s2idle_states __read_mostly s2idle_state;
- static DEFINE_RAW_SPINLOCK(s2idle_lock);
- 
-+bool pm_suspend_via_s2idle(void)
-+{
-+	return mem_sleep_current == PM_SUSPEND_TO_IDLE;
-+}
-+EXPORT_SYMBOL_GPL(pm_suspend_via_s2idle);
-+
- void s2idle_set_ops(const struct platform_s2idle_ops *ops)
- {
- 	lock_system_sleep();
 -- 
 2.17.1
 
