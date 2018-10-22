@@ -2,202 +2,284 @@ Return-Path: <SRS0=9pGL=NC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC6BECDE43
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 02:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B148ECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 02:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 812B920838
-	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 02:02:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZkAL+r5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 812B920838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EF19420869
+	for <linux-kernel@archiver.kernel.org>; Mon, 22 Oct 2018 02:07:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF19420869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbeJVKSu (ORCPT
+        id S1727314AbeJVKYE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 22 Oct 2018 06:18:50 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:50417 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbeJVKSu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Oct 2018 06:18:50 -0400
-Received: by mail-it1-f196.google.com with SMTP id k206-v6so10184560ite.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Oct 2018 19:02:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=IwNGrrT++4eJfYUjWoh6KhjlV8getvSOspyyIT20AiM=;
-        b=ZZkAL+r5SDQan41lS/v0TEnOO4wwst5Vjg/qKakUBagrnROd5iHGZQP8xwKzC95dgl
-         EX/2HEMbAfC9zJRI2eyF0KFap3l5X+lU2V+hMhdAivCE44cieDGj0ahzIuRfOQwL12n5
-         2kzaYDUqohzIzTOMDWvPat68ncg0g2EuehqqcXqOe18w9yTDH+R+1U7DI0Ha997G1c9k
-         qbPO6x6FYbk3TftRkPp/0U36oxuUlMRL/dHR17uwPP3rUcZnSXQdd238zdtwddnAMT0+
-         7Nuf83Rd/1hj8Do3vKnzRTa/9N6y3iPlNp350BKQHuh/CIT/IrmhSHEmI0UJhCIvXlN2
-         h4kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=IwNGrrT++4eJfYUjWoh6KhjlV8getvSOspyyIT20AiM=;
-        b=iw1rLoNLmm2FBLfOJ3ggArIJTHio5rYwKHZ+/8/z+yYxQ53UZ2uSOwdspEtTLsnMv5
-         z7nnOhxvx2WhQM0fD6LDqnnDcYlHPHWZfkMsm38fKhaeal2QAk3tdFcJwsdpafec8KiJ
-         SzXNMvgmzhACN//GVDlfU/pVVx5gSNcVMwhPJdQbUoeuGj+IUq4twMa7aE1tOqhEkJ1x
-         wyNvhw4BrBndNGyRSoGHvVSh4ND8LlIAHgO1Wv3UHRzZWHGWCLhbf/FV38fMkr5xcNW1
-         d0nkZT6CfTb0oWhfNPldFkVquY8404o3bzTt2ewM+SzFADcCB8dekJouZD2lvGBKld/b
-         22eg==
-X-Gm-Message-State: ABuFfojdEnW9qLI66NSqFKV63F9qsmU8VHUd4hOsZ1jugL8IRvDitPVC
-        pdvsGImFo32/5O9rUvMAZaHIAauNbnWPagKJqPY=
-X-Google-Smtp-Source: ACcGV61z6YvMLId9DxvdAB2JQriwAdqM6v7g3VDzyFCicrClEdCBnY3JRPafh7GHrF5xb2JsEnHugJs7kUikYA+1b9w=
-X-Received: by 2002:a02:a914:: with SMTP id n20-v6mr8817383jam.90.1540173742971;
- Sun, 21 Oct 2018 19:02:22 -0700 (PDT)
+        Mon, 22 Oct 2018 06:24:04 -0400
+Received: from mga04.intel.com ([192.55.52.120]:30097 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725884AbeJVKYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Oct 2018 06:24:03 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Oct 2018 19:07:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,410,1534834800"; 
+   d="scan'208";a="83039507"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga007.jf.intel.com with ESMTP; 21 Oct 2018 19:07:35 -0700
+Received: from tiger-server (unknown [10.239.48.128])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by linux.intel.com (Postfix) with ESMTPS id CDB6C58046A;
+        Sun, 21 Oct 2018 19:07:31 -0700 (PDT)
+Date:   Mon, 22 Oct 2018 16:47:00 +0800
+From:   Yi Zhang <yi.z.zhang@linux.intel.com>
+To:     Barret Rhoden <brho@google.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        KVM list <kvm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Zhang, Yu C" <yu.c.zhang@intel.com>,
+        Pankaj Gupta <pagupta@redhat.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, Linux MM <linux-mm@kvack.org>,
+        rkrcmar@redhat.com,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Subject: Re: [PATCH V5 4/4] kvm: add a check if pfn is from NVDIMM pmem.
+Message-ID: <20181022084659.GA84523@tiger-server>
+Mail-Followup-To: Barret Rhoden <brho@google.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        KVM list <kvm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Zhang, Yu C" <yu.c.zhang@intel.com>,
+        Pankaj Gupta <pagupta@redhat.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, Linux MM <linux-mm@kvack.org>,
+        rkrcmar@redhat.com,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>
+References: <4e8c2e0facd46cfaf4ab79e19c9115958ab6f218.1536342881.git.yi.z.zhang@linux.intel.com>
+ <CAPcyv4ifg2BZMTNfu6mg0xxtPWs3BVgkfEj51v1CQ6jp2S70fw@mail.gmail.com>
+ <fefbd66e-623d-b6a5-7202-5309dd4f5b32@redhat.com>
+ <20180920224953.GA53363@tiger-server>
+ <CAPcyv4g6OS=_uSjJenn5WVmpx7zCRCbzJaBr_m0Bq=qyEyVagg@mail.gmail.com>
+ <20180921224739.GA33892@tiger-server>
+ <c8ad8ed7-ca8c-4dd7-819b-8d9c856fbe04@redhat.com>
+ <CAPcyv4j9K-wkq8oK-8_twWViKhyGSHD7cOE5UoRN-09xKXPq7A@mail.gmail.com>
+ <159bb198-a4a1-0fee-bf57-24c3c28788bd@redhat.com>
+ <20181019123348.04ee7dd8@gnomeregan.cam.corp.google.com>
 MIME-Version: 1.0
-References: <CAHyWSemw6LYChaEZinFTFvA=kfJKqvWMfadVq5a=+j9TcCrewg@mail.gmail.com>
- <20181017221330.146765e4@vmware.local.home>
-In-Reply-To: <20181017221330.146765e4@vmware.local.home>
-From:   Phy Bio <wisedd@gmail.com>
-Date:   Mon, 22 Oct 2018 10:03:02 +0800
-Message-ID: <CAHyWSe=LfZqNgg107dDASxsxgSp-JxTJnfHSHha3=wSn9bD+yg@mail.gmail.com>
-Subject: Re: rcu: Kernel stack is corrupted in: perf_trace_rcu_dyntick
-To:     rostedt@goodmis.org
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="cWoXeonUoKmBZSoM"
+Content-Disposition: inline
+In-Reply-To: <20181019123348.04ee7dd8@gnomeregan.cam.corp.google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This PoC generated by syzkaller needs ROOT permission to run.
-Steven Rostedt <rostedt@goodmis.org> =E4=BA=8E2018=E5=B9=B410=E6=9C=8818=E6=
-=97=A5=E5=91=A8=E5=9B=9B =E4=B8=8A=E5=8D=8810:13=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Sat, 29 Sep 2018 17:22:13 +0800
-> =E7=8E=8B=E6=99=93=E4=B8=9C <wisedd@gmail.com> wrote:
->
-> > Hi there,
-> >
-> > We would like to report a kernel stack corrupted problem we identified
-> > in the perf_trace_rcu_dyntick function of tracing events subsystem.
-> > And the problem was founded by syzkaller.  We has tested the PoC on
-> > the lasted master branch of kernel(4.19.0-rc5+).
-> >
-> > The crash log generated with KASAN enabled:
-> >
-> > root@pc:~# ./perf_trace_rcu_dyntick
-> > [  582.069938] Kernel panic - not syncing: stack-protector: Kernel
-> > stack is corrupted in: perf_trace_rcu_dyntick+0x355/0x4f0
-> > [  582.069938]
-> > [  582.071341] CPU: 6 PID: 3417 Comm: perf_trace_rcu_ Not tainted 4.19.=
-0-rc5+ #1
-> > [  582.072134] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> > BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-> > [  582.073103] Call Trace:
-> > [  582.073364]  <IRQ>
-> > [  582.073614]  dump_stack+0x8c/0xce
-> > [  582.074039]  panic+0x1cb/0x3aa
-> > [  582.074427]  ? refcount_error_report+0x296/0x296
-> > [  582.075003]  ? timerqueue_del+0x71/0x130
-> > [  582.075553]  ? perf_trace_rcu_dyntick+0x355/0x4f0
-> > [  582.076063]  ? __stack_chk_fail+0x6/0x20
-> > [  582.076763]  ? perf_trace_rcu_dyntick+0x355/0x4f0
-> > [  582.077369]  __stack_chk_fail+0x1f/0x20
-> > [  582.077877]  perf_trace_rcu_dyntick+0x355/0x4f0
-> > [  582.078442]  ? rcu_gp_is_expedited+0xa0/0xa0
-> > [  582.078993]  ? rcu_gp_is_expedited+0xa0/0xa0
-> > [  582.079525]  ? check_preempt_curr+0x1c2/0x2a0
-> > [  582.080059]  ? sched_clock_cpu+0x18/0x160
-> > [  582.080551]  rcu_nmi_enter+0x1f0/0x2f0
-> > [  582.081036]  ? rcu_gp_is_expedited+0xa0/0xa0
-> > [  582.081507]  irq_enter+0xf/0x80
-> > [  582.081914]  smp_apic_timer_interrupt+0x1b/0x2d0
-> > [  582.082480]  apic_timer_interrupt+0xf/0x20
-> > [  582.082984]  </IRQ>
-> > [  582.083219] RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x50
-> > [  582.087816] Code: e8 35 0b 20 00 48 8b 14 24 e9 fe fe ff ff 48 89
-> > df e8 24 0b 20 00 e9 d9 fe ff ff 4c 89 e7 e8 17 0b 20 00 e9 ab fe ff
-> > ff 90 90 <65> 48 8b 04 25 40 dd 01 00 65 8b 15 70 03 8f 63 81 e2 00 01
-> > 1f 00
-> > [  582.090289] RSP: 0018:ffff8800651bf9e0 EFLAGS: 00000206 ORIG_RAX:
-> > ffffffffffffff13
-> > [  582.091238] RAX: 0000000000000000 RBX: ffffffff9eed12a5 RCX: fffffff=
-f9c6ca1b6
-> > [  582.092873] RDX: 0000000000000005 RSI: ffffffff9ee31d71 RDI: fffffff=
-f9eed12a4
-> > [  582.093934] RBP: 0000000000000078 R08: ffffed000d38dfb2 R09: ffffed0=
-00d38dfb1
-> > [  582.095102] R10: 000000007350a3ba R11: ffff880069c6fd8f R12: ffff880=
-0651bfa6e
-> > [  582.096444] R13: 0000000000000001 R14: dffffc0000000000 R15: 0000000=
-00000006a
-> > [  582.097414]  ? kallsyms_expand_symbol.constprop.11+0x176/0x250
-> > [  582.098518]  kallsyms_expand_symbol.constprop.11+0x12e/0x250
-> > [  582.099707]  kallsyms_lookup_name+0xbe/0x1d0
-> > [  582.100369]  ? kallsyms_on_each_symbol+0x210/0x210
-> > [  582.101436]  ? snprintf+0xbd/0xf0
-> > [  582.102029]  ? vsprintf+0x30/0x30
-> > [  582.102805]  ? kasan_kmalloc+0xa9/0xd0
-> > [  582.103489]  ? alloc_trace_kprobe+0x6c0/0x930
-> > [  582.104073]  kprobe_on_func_entry+0x57/0xb0
-> > [  582.105421]  register_kretprobe+0x89/0xc10
-> > [  582.105930]  ? set_print_fmt+0x32/0xa0
-> > [  582.106376]  __register_trace_kprobe.part.10+0x14e/0x2e0
-> > [  582.106980]  create_local_trace_kprobe+0x29c/0x3f0
-> > [  582.107487]  perf_kprobe_init+0x15f/0x210
-> > [  582.107912]  perf_kprobe_event_init+0xc4/0x140
->
-> I added Peter to the Cc, because he maintains perf.
->
-> I have no idea what's going on here with kretprobes? Non-root can have
-> kretprobes added to the kernel?
->
-> -- Steve
->
->
-> > [  582.108377]  perf_try_init_event+0xcb/0x290
-> > [  582.108817]  perf_event_alloc+0x1476/0x2020
-> > [  582.109264]  ? find_get_context.isra.106+0x690/0x690
-> > [  582.109922]  ? __alloc_fd+0x1a3/0x4e0
-> > [  582.120002]  __do_sys_perf_event_open+0x222/0x1f40
-> > [  582.123049]  ? avc_has_perm_noaudit+0x340/0x340
-> > [  582.131226]  ? perf_event_set_output+0x5f0/0x5f0
-> > [  582.134395]  ? handle_mm_fault+0x103/0x350
-> > [  582.138102]  ? ksys_ioctl+0x61/0x90
-> > [  582.140234]  do_syscall_64+0x9a/0x2c0
-> > [  582.142674]  ? prepare_exit_to_usermode+0xbc/0x150
-> > [  582.146856]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > [  582.151127] RIP: 0033:0x446159
-> > [  582.152816] Code: e8 ac e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00
-> > 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
-> > 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 5b 08 fc ff c3 66 2e 0f 1f 84 00 00
-> > 00 00
-> > [  582.167257] RSP: 002b:00007fffc2b023d8 EFLAGS: 00000246 ORIG_RAX:
-> > 000000000000012a
-> > [  582.171375] RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000=
-000446159
-> > [  582.175760] RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 0000000=
-020000180
-> > [  582.176487] RBP: 00007fffc2b025b0 R08: 0000000000000000 R09: 0000000=
-000000000
-> > [  582.177189] R10: 00000000ffffffff R11: 0000000000000246 R12: 0000000=
-000406e40
-> > [  582.177898] R13: 0000000000406ed0 R14: 0000000000000000 R15: 0000000=
-000000000
-> > [  583.353322] Shutting down cpus with NMI
-> > [  583.354285] Kernel Offset: 0x1b400000 from 0xffffffff81000000
-> > (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-> > [  583.356743] Rebooting in 86400 seconds..
-> >
-> >
-> > This bug could be easily reproduced by running the PoC(generated by
-> > syzkaller, and transformed to C Source code).
-> >
-> > For any further information, please feel free to contact us at
-> > wisedd@gmail.com. We would be more than happy to provide other
-> > information of this problem.
->
+
+--cWoXeonUoKmBZSoM
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+On 2018-10-19 at 12:33:48 -0400, Barret Rhoden wrote:
+> On 2018-09-21 at 21:29 David Hildenbrand <david@redhat.com> wrote:
+> > On 21/09/2018 20:17, Dan Williams wrote:
+> > > On Fri, Sep 21, 2018 at 7:24 AM David Hildenbrand <david@redhat.com> wrote:
+> > > [..]  
+> > >>> Remove the PageReserved flag sounds more reasonable.
+> > >>> And Could we still have a flag to identify it is a device private memory, or
+> > >>> where these pages coming from?  
+> > >>
+> > >> We could use a page type for that or what you proposed. (as I said, we
+> > >> might have to change hibernation code to skip the pages once we drop the
+> > >> reserved flag).  
+> > > 
+> > > I think it would be reasonable to reject all ZONE_DEVICE pages in
+> > > saveable_page().
+> > >   
+> > 
+> > Indeed, that sounds like the easiest solution - guess that answer was
+> > too easy for me to figure out :) .
+> > 
+> 
+> Just to follow-up, is the plan to clear PageReserved for nvdimm pages
+> instead of the approach taken in this patch set?  Or should we special
+> case nvdimm/dax pages in kvm_is_reserved_pfn()?
+Yes, we are going to remove the PageReserved flag for nvdimm pages.
+Added Alex, attached the patch-set.
+> 
+> Thanks,
+> 
+> Barret
+> 
+> 
+> 
+
+--cWoXeonUoKmBZSoM
+Content-Type: message/rfc822
+Content-Disposition: inline
+
+Return-Path: <alexander.h.duyck@linux.intel.com>
+X-Original-To: yi.z.zhang@linux.intel.com
+Delivered-To: yi.z.zhang@linux.intel.com
+Received: from orsmga001.jf.intel.com (orsmga001.jf.intel.com [10.7.209.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id DEBC8580430;
+	Wed, 17 Oct 2018 16:54:31 -0700 (PDT)
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
+   d="scan'208";a="100366643"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.154])
+  by orsmga001.jf.intel.com with ESMTP; 17 Oct 2018 16:54:31 -0700
+Subject: [mm PATCH v4 5/6] mm: Add reserved flag setting to set_page_links
+From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To: linux-mm@kvack.org, akpm@linux-foundation.org
+Cc: pavel.tatashin@microsoft.com, mhocko@suse.com, dave.jiang@intel.com,
+ alexander.h.duyck@linux.intel.com, linux-kernel@vger.kernel.org,
+ willy@infradead.org, davem@davemloft.net, yi.z.zhang@linux.intel.com,
+ khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com, vbabka@suse.cz,
+ sparclinux@vger.kernel.org, dan.j.williams@intel.com,
+ ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net, mingo@kernel.org,
+ kirill.shutemov@linux.intel.com
+Date: Wed, 17 Oct 2018 16:54:31 -0700
+Message-ID: <20181017235431.17213.11512.stgit@localhost.localdomain>
+In-Reply-To: <20181017235043.17213.92459.stgit@localhost.localdomain>
+References: <20181017235043.17213.92459.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+This patch modifies the set_page_links function to include the setting of
+the reserved flag via a simple AND and OR operation. The motivation for
+this is the fact that the existing __set_bit call still seems to have
+effects on performance as replacing the call with the AND and OR can reduce
+initialization time.
+
+Looking over the assembly code before and after the change the main
+difference between the two is that the reserved bit is stored in a value
+that is generated outside of the main initialization loop and is then
+written with the other flags field values in one write to the page->flags
+value. Previously the generated value was written and then then a btsq
+instruction was issued.
+
+On my x86_64 test system with 3TB of persistent memory per node I saw the
+persistent memory initialization time on average drop from 23.49s to
+19.12s per node.
+
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+---
+ include/linux/mm.h |    9 ++++++++-
+ mm/page_alloc.c    |   29 +++++++++++++++++++----------
+ 2 files changed, 27 insertions(+), 11 deletions(-)
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 6e2c9631af05..14d06d7d2986 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1171,11 +1171,18 @@ static inline void set_page_node(struct page *page, unsigned long node)
+ 	page->flags |= (node & NODES_MASK) << NODES_PGSHIFT;
+ }
+ 
++static inline void set_page_reserved(struct page *page, bool reserved)
++{
++	page->flags &= ~(1ul << PG_reserved);
++	page->flags |= (unsigned long)(!!reserved) << PG_reserved;
++}
++
+ static inline void set_page_links(struct page *page, enum zone_type zone,
+-	unsigned long node, unsigned long pfn)
++	unsigned long node, unsigned long pfn, bool reserved)
+ {
+ 	set_page_zone(page, zone);
+ 	set_page_node(page, node);
++	set_page_reserved(page, reserved);
+ #ifdef SECTION_IN_PAGE_FLAGS
+ 	set_page_section(page, pfn_to_section_nr(pfn));
+ #endif
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index a0b81e0bef03..e7fee7a5f8a3 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1179,7 +1179,7 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
+ 				unsigned long zone, int nid)
+ {
+ 	mm_zero_struct_page(page);
+-	set_page_links(page, zone, nid, pfn);
++	set_page_links(page, zone, nid, pfn, false);
+ 	init_page_count(page);
+ 	page_mapcount_reset(page);
+ 	page_cpupid_reset_last(page);
+@@ -1195,7 +1195,8 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
+ static void __meminit __init_pageblock(unsigned long start_pfn,
+ 				       unsigned long nr_pages,
+ 				       unsigned long zone, int nid,
+-				       struct dev_pagemap *pgmap)
++				       struct dev_pagemap *pgmap,
++				       bool is_reserved)
+ {
+ 	unsigned long nr_pgmask = pageblock_nr_pages - 1;
+ 	struct page *start_page = pfn_to_page(start_pfn);
+@@ -1231,19 +1232,16 @@ static void __meminit __init_pageblock(unsigned long start_pfn,
+ 		 * call because of the fact that the pfn number is used to
+ 		 * get the section_nr and this function should not be
+ 		 * spanning more than a single section.
++		 *
++		 * We can use a non-atomic operation for setting the
++		 * PG_reserved flag as we are still initializing the pages.
+ 		 */
+-		set_page_links(page, zone, nid, start_pfn);
++		set_page_links(page, zone, nid, start_pfn, is_reserved);
+ 		init_page_count(page);
+ 		page_mapcount_reset(page);
+ 		page_cpupid_reset_last(page);
+ 
+ 		/*
+-		 * We can use the non-atomic __set_bit operation for setting
+-		 * the flag as we are still initializing the pages.
+-		 */
+-		__SetPageReserved(page);
+-
+-		/*
+ 		 * ZONE_DEVICE pages union ->lru with a ->pgmap back
+ 		 * pointer and hmm_data.  It is a bug if a ZONE_DEVICE
+ 		 * page is ever freed or placed on a driver-private list.
+@@ -5612,7 +5610,18 @@ static void __meminit __memmap_init_hotplug(unsigned long size, int nid,
+ 		pfn = max(ALIGN_DOWN(pfn - 1, pageblock_nr_pages), start_pfn);
+ 		stride -= pfn;
+ 
+-		__init_pageblock(pfn, stride, zone, nid, pgmap);
++		/*
++		 * The last argument of __init_pageblock is a boolean
++		 * value indicating if the page will be marked as reserved.
++		 *
++		 * Mark page reserved as it will need to wait for onlining
++		 * phase for it to be fully associated with a zone.
++		 *
++		 * Under certain circumstances ZONE_DEVICE pages may not
++		 * need to be marked as reserved, however there is still
++		 * code that is depending on this being set for now.
++		 */
++		__init_pageblock(pfn, stride, zone, nid, pgmap, true);
+ 
+ 		cond_resched();
+ 	}
+
+
+--cWoXeonUoKmBZSoM--
