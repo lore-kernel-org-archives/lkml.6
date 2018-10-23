@@ -2,185 +2,170 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60BF8C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:54:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1542DC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1178A20671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:54:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u5lXukOa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1178A20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CED4220813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:55:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CED4220813
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728577AbeJXCSu (ORCPT
+        id S1728639AbeJXCTo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 22:18:50 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37768 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbeJXCSu (ORCPT
+        Tue, 23 Oct 2018 22:19:44 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53484 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727264AbeJXCTo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 22:18:50 -0400
-Received: by mail-ed1-f65.google.com with SMTP id c15-v6so2501835eds.4;
-        Tue, 23 Oct 2018 10:54:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ErsB+6IR1SWwDDy613nt4Yc7Ycc7aus+5inqh8gqsck=;
-        b=u5lXukOaLnGp7bXuRP32tMYrK6i4QhvBpYMAZqBAdljky0+veLZ+oSqX++qF7+LhOM
-         caVxenNeQXI47a500iXhQbK60VO7Zd+B1JZj02QKYh0apdVm36Gn3OgsJd3DCIGNtAhl
-         GzU7mSsch4rDmI0GkHNqWerCVbqJwJUgt1A73PTODf3oJuVucXAeSTDqobGHd3qCI8v1
-         gniP3VU0tliiOv42wl+qh2b+RC6tQXR/CxO+5ZIEP+NgsKCpew9APlxd3adLsw4MvB/c
-         J05jph878LOql88Dgz2RnTOeGXxHMt0UPe32ajgBqfmBKpAtO3/WvlwxxBuoFqPCYNfH
-         quxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ErsB+6IR1SWwDDy613nt4Yc7Ycc7aus+5inqh8gqsck=;
-        b=RfxIqHihDgu+QUibEu8InoGtMLzsvLot78Q+BdU6ErviNJwl1n11uyIVSZulEhwRkp
-         EITg3ZTZ6EyxFrdWIt+1FsLfjS3a0YGmAkt5XrAA+Wgk6aqG8xog8hhX4aLcmFO26CuO
-         R2r9EE6MilT0cZkb2c1W2Lb+1atT8Uhx2N0nNo7G+UWn1OyyWrIJWwzhy2Dageiwvdlg
-         uzULTX9/FcjHTnoBVLzQT/nEQIGZhtWcO8ASZABGttS6G/hA9m5YbxT738lKHXsnswVy
-         Fy8721CsFefRBgwthj1Py0oey+XBuH7yLV9swSt96m3GBTUl3L3E8vnUWKOR6i1xlpsf
-         evLA==
-X-Gm-Message-State: ABuFfogS4Av3n9bNrzCwGpzm6sWRkiH+9N7VB/HGjdDtn8qZQ9paC8nP
-        rskvRb0e1TUei9UVIA0iutLvgq13aTtEGevWd5J4neKU
-X-Google-Smtp-Source: ACcGV61eWZ4U7FZPH4muV8VIajFToNcqQOXTsIIwTeqWM2OAhxuSgi1AMmrc98fmdO2ASklUBnPeHe9SlRAT4d38S70=
-X-Received: by 2002:a50:b68b:: with SMTP id d11-v6mr16883474ede.283.1540317264042;
- Tue, 23 Oct 2018 10:54:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
- <20180920145658.GE16851@w540> <CAHCN7x+U=Y=-v1UP5UYvY8WtUFRJGjmx=nawTuE=YcHdm_DYvA@mail.gmail.com>
- <c1cb34b0-b715-cf08-6f75-2842f1090c5d@mentor.com> <20181017080103.GD11703@w540>
- <CAHCN7xLx6uAmYiGh3p=piZFwE0VkfixTLqdjETibKwk2+DhMzA@mail.gmail.com>
- <CAHCN7xJKuPYg04WfRzbYWO4bGoHHnD16LBPRsK1QsiYY1bL7nA@mail.gmail.com>
- <20181022113306.GB2867@w540> <CAHCN7xJkc5RW73C0zruWBgyF7G0J3C5tLE=ZdfxTKbrUqs=-PQ@mail.gmail.com>
- <CAOMZO5ATm4BRzPEQOU+ZD6bHCP2Aqjp4raRYhuc+wNe0t4+C=w@mail.gmail.com>
- <CAHCN7x+csKEk25CF=teUv+F5_GoTe6_3Yqb5PODLn+AmCCm88w@mail.gmail.com>
- <d78877f8-2c23-2bf0-0a9c-cd98b855e95e@mentor.com> <CAHCN7xKhGAXs0jGv96CfOfLQfVubxzsdE9UjpDu+4NM6oLDGWw@mail.gmail.com>
- <bc034299-4a32-f248-d09a-0d1b5872a506@mentor.com>
-In-Reply-To: <bc034299-4a32-f248-d09a-0d1b5872a506@mentor.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Tue, 23 Oct 2018 12:54:12 -0500
-Message-ID: <CAHCN7xKVUgpyCb5k7s0PNXW-efySSwP25ZGMLdbFnohATPwKhg@mail.gmail.com>
-Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
-To:     steve_longerbeam@mentor.com
-Cc:     Fabio Estevam <festevam@gmail.com>, jacopo@jmondi.org,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        p.zabel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
-        gstreamer-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 23 Oct 2018 22:19:44 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9NHsAJu088777
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 13:55:18 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2na6xc45r7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 13:55:18 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Tue, 23 Oct 2018 18:55:17 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 23 Oct 2018 18:55:13 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9NHtCE749873064
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 23 Oct 2018 17:55:12 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B5B065204F;
+        Tue, 23 Oct 2018 17:55:12 +0000 (GMT)
+Received: from srikart450.in.ibm.com (unknown [9.102.0.129])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 9BE3A5204E;
+        Tue, 23 Oct 2018 17:55:10 +0000 (GMT)
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
+        Yi Wang <wang.yi59@zte.com.cn>, zhong.weidong@zte.com.cn,
+        Yi Liu <liu.yi24@zte.com.cn>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] sched/core: Don't mix isolcpus and housekeeping CPUs
+Date:   Tue, 23 Oct 2018 23:24:57 +0530
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18102317-0028-0000-0000-0000030C14CD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18102317-0029-0000-0000-000023C81E1F
+Message-Id: <1540317297-14545-1-git-send-email-srikar@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-23_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810230145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 12:39 PM Steve Longerbeam
-<steve_longerbeam@mentor.com> wrote:
->
->
-> On 10/23/18 10:34 AM, Adam Ford wrote:
-> > On Tue, Oct 23, 2018 at 11:36 AM Steve Longerbeam
-> > <steve_longerbeam@mentor.com> wrote:
-> >> Hi Adam,
-> >>
-> >> On 10/23/18 8:19 AM, Adam Ford wrote:
-> >>> On Mon, Oct 22, 2018 at 7:40 AM Fabio Estevam <festevam@gmail.com> wrote:
-> >>>> Hi Adam,
-> >>>>
-> >>>> On Mon, Oct 22, 2018 at 9:37 AM Adam Ford <aford173@gmail.com> wrote:
-> >>>>
-> >>>>> Thank you!  This tutorial web site is exactly what I need.  The
-> >>>>> documentation page in Linux touched on the media-ctl links, but it
-> >>>>> didn't explain the syntax or the mapping.  This graphical
-> >>>>> interpretation really helps it make more sense.
-> >>>> Is capturing working well on your i.MX6 board now?
-> >>> Fabio,
-> >>>
-> >>> Unfortunately, no.  I built the rootfs based on Jagan's instructions
-> >>> at https://openedev.amarulasolutions.com/display/ODWIKI/i.CoreM6+1.5
-> >>>
-> >>> I tried building both the 4.15-RC6 kernel, a 4.19 kernel and a 4.14 LTS kernel.
-> >>>
-> >>> Using the suggested method of generating the graphical display of the
-> >>> pipeline options, I am able to enable various pipeline options
-> >>> connecting different /dev/videoX options tot he camera.  I have tried
-> >>> both the  suggested method above as well as the instructions found in
-> >>> Documentation/media/v4l-drivers/imx.rst for their respective kernels,
-> >>> and I have tried multiple options to capture through
-> >>> ipu1_csi1_capture, ipu2_csi1_capture, and ip1_ic_prepenc capture, and
-> >>> all yield a broken pipe.
-> >>>
-> >>> libv4l2: error turning on stream: Broken pipe
-> >>> ERROR: from element /GstPipeline:pipeline0/GstV4l2Src:v4l2src0: Could
-> >>> not read from resource.
-> >>> Additional debug info:
-> >>> gstv4l2bufferpool.c(1064): gst_v4l2_buffer_pool_poll ():
-> >>> /GstPipeline:pipeline0/GstV4l2Src:v4l2src0:
-> >>> poll error 1: Broken pipe (32)
-> >>>
-> >>> I can hear the camera click when I start gstreamer and click again
-> >>> when it stops trying to stream.
-> >>>
-> >>> dmesg indicates a broken pipe as well..
-> >>>
-> >>> [ 2419.851502] ipu2_csi1: pipeline start failed with -32
-> >>>
-> >>> might you have any suggestions?
-> >>
-> >> This -EPIPE error might mean you have a mis-match of resolution, pixel
-> >> format, or field type between one of the source->sink pad links. You can
-> >> find out which pads have a mis-match by enabling dynamic debug in the
-> >> kernel function __media_pipeline_start.
-> > Following Jagan's suggestion, I tried to make sure all the resolution
-> > and pixel formats were set the same between each source and sink.
-> >
-> > media-ctl --set-v4l2 "'ov5640 2-0010':0[fmt:UYVY2X8/640x480
-> > field:none]"
-> > media-ctl --set-v4l2 "'imx6-mipi-csi2':1[fmt:UYVY2X8/640x480
-> > field:none]"
-> > media-ctl --set-v4l2 "'ipu1_csi0_mux':2[fmt:UYVY2X8/640x480
-> > field:none]"
-> > media-ctl --set-v4l2 "'ipu1_csi0':2[fmt:AYUV32/640x480 field:none]"
-> >
-> >> Also make sure you are attempting to stream from the correct /dev/videoN.
-> > I have graphically plotted the pipeline using media-ctl --print-dot
-> > and I can see the proper video is routed, but your dynamic debug
-> > suggestion yielded something:
-> >
-> >     imx-media capture-subsystem: link validation failed for 'ov5640
-> > 2-0010':0 -> 'imx6-mipi-csi2':0, error -32
->
->
-> It's what I expected, you have a format mismatch between those pads.
+Load balancer and NUMA balancer are not suppose to work on isolcpus.
 
-Is the mismatch something I am doing wrong with:
+Currently when setting sched affinity, there are no checks to see if the
+requested cpumask has CPUs from both isolcpus and housekeeping CPUs.
 
-media-ctl --set-v4l2 "'ov5640 2-0010':0[fmt:UYVY2X8/640x480 field:none]"
-media-ctl --set-v4l2 "'imx6-mipi-csi2':2[fmt:UYVY2X8/640x480 field:none]"
+If user passes a mix of isolcpus and housekeeping CPUs, then
+NUMA balancer can pick a isolcpu to schedule.
+With this change, if a combination of isolcpus and housekeeping CPUs are
+provided, then we restrict ourselves to housekeeping CPUs.
 
-or is there something else I need to do?  I just used Jagan's suggestion.
+For example: System with 32 CPUs
+$ grep -o "isolcpus=[,,1-9]*" /proc/cmdline
+isolcpus=1,5,9,13
+$ grep -i cpus_allowed /proc/$$/status
+Cpus_allowed:   ffffdddd
+Cpus_allowed_list:      0,2-4,6-8,10-12,14-31
 
-adam
->
-> Steve
->
->
-> >
-> > I am assume this means the interface between the camera and the csi2
-> > isn't working.  I am going to double check the power rails and the
-> > clocks.  i can hear it click when activated and deactivated, so
-> > something is happening.
-> >
-> > adam
-> >
-> >> Steve
-> >>
+Running "perf bench numa mem --no-data_rand_walk -p 4 -t 8 -G 0 -P 3072
+-T 0 -l 50 -c -s 1000" which  calls sched_setaffinity to all CPUs in
+system.
+
+Without patch
+------------
+$ for i in $(pgrep -f perf); do  grep -i cpus_allowed_list  /proc/$i/task/*/status ; done | head -n 10
+Cpus_allowed_list:      0,2-4,6-8,10-12,14-31
+/proc/2107/task/2107/status:Cpus_allowed_list:  0-31
+/proc/2107/task/2196/status:Cpus_allowed_list:  0-31
+/proc/2107/task/2197/status:Cpus_allowed_list:  0-31
+/proc/2107/task/2198/status:Cpus_allowed_list:  0-31
+/proc/2107/task/2199/status:Cpus_allowed_list:  0-31
+/proc/2107/task/2200/status:Cpus_allowed_list:  0-31
+/proc/2107/task/2201/status:Cpus_allowed_list:  0-31
+/proc/2107/task/2202/status:Cpus_allowed_list:  0-31
+/proc/2107/task/2203/status:Cpus_allowed_list:  0-31
+
+
+With patch
+----------
+$ for i in $(pgrep -f perf); do  grep -i cpus_allowed_list  /proc/$i/task/*/status ; done | head -n 10
+Cpus_allowed_list:      0,2-4,6-8,10-12,14-31
+/proc/18591/task/18591/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
+/proc/18591/task/18603/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
+/proc/18591/task/18604/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
+/proc/18591/task/18605/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
+/proc/18591/task/18606/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
+/proc/18591/task/18607/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
+/proc/18591/task/18608/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
+/proc/18591/task/18609/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
+/proc/18591/task/18610/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
+
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+---
+ kernel/sched/core.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index ad97f3b..fbb1f7c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4735,6 +4735,7 @@ long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
+ {
+ 	cpumask_var_t cpus_allowed, new_mask;
+ 	struct task_struct *p;
++	struct cpumask *hk_mask;
+ 	int retval;
+ 
+ 	rcu_read_lock();
+@@ -4778,6 +4779,19 @@ long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
+ 
+ 	cpuset_cpus_allowed(p, cpus_allowed);
+ 	cpumask_and(new_mask, in_mask, cpus_allowed);
++	hk_mask = housekeeping_cpumask(HK_FLAG_DOMAIN);
++
++	/*
++	 * If the cpumask provided has CPUs that are part of isolated and
++	 * housekeeping_cpumask, then restrict it to just the CPUs that
++	 * are part of the housekeeping_cpumask.
++	 */
++	if (!cpumask_subset(new_mask, hk_mask) &&
++			cpumask_intersects(new_mask, hk_mask)) {
++		pr_info("pid %d: Mix of isolcpus and non-isolcpus provided\n",
++			       p->pid);
++		cpumask_and(new_mask, new_mask, hk_mask);
++	}
+ 
+ 	/*
+ 	 * Since bandwidth control happens on root_domain basis,
+-- 
+1.8.3.1
+
