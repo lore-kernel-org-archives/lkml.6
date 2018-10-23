@@ -2,151 +2,104 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB0AC67863
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6237BC7112C
 	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 668B620813
+	by mail.kernel.org (Postfix) with ESMTP id 2D26C20665
 	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:08:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FojsbSK+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 668B620813
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=astier-eu.20150623.gappssmtp.com header.i=@astier-eu.20150623.gappssmtp.com header.b="OOZPSPSA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D26C20665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=astier.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729108AbeJWSap (ORCPT
+        id S1729094AbeJWSap (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 23 Oct 2018 14:30:45 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:32847 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729006AbeJWSap (ORCPT
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37480 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728391AbeJWSa2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 14:30:45 -0400
-Received: by mail-wr1-f65.google.com with SMTP id u1-v6so1021369wrn.0;
-        Tue, 23 Oct 2018 03:08:00 -0700 (PDT)
+        Tue, 23 Oct 2018 14:30:28 -0400
+Received: by mail-wr1-f67.google.com with SMTP id g9-v6so1007535wrq.4
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 03:07:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=26Vb9+lKFT25gT2x0m/sJ5udB8pdQWXnC33wJOF1OTk=;
-        b=FojsbSK+CR+yNq2NrhL+v8WIDudbv4p6zr2rHkBoi8eNG0e8Rb8zN/NIvVjPm27ng3
-         un0j4Ysq4F3aCwQRjd0pgG6C8xokJTGlN+Emhti8/wFzKgQ6XYswOed0ymQ8mwxxZ7+t
-         EAao0CV9D9mRTF85K9WtEDb4xPMbgozEcEcY9QTEPhAZTV7Aj3nzuVmJmo//NPYy9gaL
-         6b7vmB8PmjGBIsMV98gRhijvXsSWrqAfdwsJOxWezaNkVOcYnxCrKTQayGny2XlruwEQ
-         ZZTpQeK0bRPmX4OigWb1AST+QuiVe7rV+0HY91EZosFdTl9mhl2jhyKlVnOw0ZMfWd4T
-         AOeg==
+        d=astier-eu.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=g+t10cHmuM9MWFndnI6k5nB9kv/fzz/0OksJl35QveE=;
+        b=OOZPSPSASxpKCviqMQOl+Z+yHXUCvzHO+rlCwg9TTTNe3BQGOu1rk39OzmWBdI/6ns
+         f5NTQ6wLIQRYUr5aD2nxu8Hgv9JG5sqYwZMDjzqr5EoFOejaoBhTL1y1n7mYgq7WQZW5
+         ECibVNVhfqLOnks2MeQOOQdObRxn7BR1eKemvbVLFfLnbsQikyZHlQRwEyFdTmrOg7P7
+         YZLFfjhEWccwVqjDNUhoHOKsxEqdxBpu+QpW4ldkqO5S19DdGaSmfK7YwuDVnJUjJbL4
+         SQB7+zIXHGI6DXQ6jipWEN8snaYwymRr+C7n7FjD5Iyf+BH6a9CtIrI9QGjGjJoGR3/t
+         OqlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=26Vb9+lKFT25gT2x0m/sJ5udB8pdQWXnC33wJOF1OTk=;
-        b=EG4/3d1OXI2TmiyGcl2t2WAAIolwVrkhX7Gihc5J0IQqCZnXwQYa86hrKc4WEQm5pV
-         YoHmQszmbukEyhDSxVUUD0oZGCEwbf1Q6QV5AsvMQt6x3hORE/ct3pdLWUyULMNFxM1m
-         W8AXIAB5Owz4VsYtMPV4lThLrdCOZ/NyPxdG01wBCX5VmiaIUL3/LwjqSE2+TMXJK03j
-         f/g7AYFEZLfTl/PfzzkHSIfz+YgnhAIg+xyBTlScg6taaxfutC6Q4i0QPgFQHW0MvoXt
-         UoxD69HTBb/N9L9tCdlsonuG7pJoaD+EQLGI1ZXz17e7DSxftoj4tfSxXnY72dR41cZz
-         MHjQ==
-X-Gm-Message-State: ABuFfojUgPSWWS1bDfZhc8OxWD+q+OmwMOu9PjlGMn17Zu56Ub2qw7u9
-        eulqAacecUKQDruG7diuyTE=
-X-Google-Smtp-Source: ACcGV60C9bc7XZlXJAUDSc433KlwBX+stTiG2AAxNnyvaqxSKGYplkhOpBD+VnemUWVZxpUFVz9QxA==
-X-Received: by 2002:adf:f44b:: with SMTP id f11-v6mr48187122wrp.305.1540289279745;
-        Tue, 23 Oct 2018 03:07:59 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id 63-v6sm872510wmd.5.2018.10.23.03.07.58
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=g+t10cHmuM9MWFndnI6k5nB9kv/fzz/0OksJl35QveE=;
+        b=IqZwwxLQOXP59okLUKCbhyAj39Y1yW7BslQVJXPW9LzKXJrWu3ZGxJ/znp9HL8LJ0U
+         K2ot/xrzLBmzdXjjFJKP0Vj73UyRmKX97IWoGO1PxMK4iZfv8ajc3sCvParXr4CBHk6T
+         Sw61GASrkqRVYLTRizE5N/R9CdWWw2udtTxxoyjuoApqfVurHTYY6sqHAD44/rNAGqqR
+         jdG68LElHjJdQfd3jsETj2OZ1e4zTqfUlB/Lt7xcGEHr1LcKKGXpECYR96jyvZ8PYAgl
+         VxQSwP5I1CLfNSrWG32EiRAuRyPYT6b8rMugUF1vyfiq/xDFN5d1e8qczPr4yZd5kNTL
+         q5AQ==
+X-Gm-Message-State: AGRZ1gJgnhYukWPZhBinEwmJojBfeTNA6mL/dZ25xsinRADe5BhDiKtf
+        5XFF7+B05nG7dVt9DZ67S8fc0A==
+X-Google-Smtp-Source: AJdET5fAEFScllTLKzMwzONntdnIBXVIAhTQeuPWhriSwoFxv3o7vFWIICo4IIoHejlAa+XMsPZxzQ==
+X-Received: by 2002:adf:ea0b:: with SMTP id q11-v6mr233865wrm.5.1540289263980;
+        Tue, 23 Oct 2018 03:07:43 -0700 (PDT)
+Received: from jaya.substantiel.local ([92.103.140.194])
+        by smtp.gmail.com with ESMTPSA id i13-v6sm910930wrn.62.2018.10.23.03.07.43
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Oct 2018 03:07:59 -0700 (PDT)
-Date:   Tue, 23 Oct 2018 12:07:56 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>
-Subject: [GIT PULL] EFI changes for v4.20
-Message-ID: <20181023100756.GA10989@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 23 Oct 2018 03:07:43 -0700 (PDT)
+From:   Anisse Astier <anisse@astier.eu>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Anisse Astier <anisse@astier.eu>
+Subject: [PATCH v2 2/3] mmc: sdhci-pci: add new machine with 1.8V dmi quirk
+Date:   Tue, 23 Oct 2018 12:07:28 +0200
+Message-Id: <20181023100729.28864-3-anisse@astier.eu>
+X-Mailer: git-send-email 2.17.2
+In-Reply-To: <20181023100729.28864-1-anisse@astier.eu>
+References: <20181023100729.28864-1-anisse@astier.eu>
+In-Reply-To: <20181022134026.GB18413@jaya>
+References: <20181022134026.GB18413@jaya>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg,
+This machine also displays the same issue that is fixed by the quirk.
 
-Please pull the latest efi-core-for-linus git tree from:
+Signed-off-by: Anisse Astier <anisse@astier.eu>
+---
+ drivers/mmc/host/sdhci-pci-core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git efi-core-for-linus
-
-   # HEAD: fa70f0d2ce96a892b38fbbaa60584af536f21f97 Merge tag 'efi-next' of git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi into efi/core
-
-The main changes are:
-
- - Add support for enlisting the help of the EFI firmware to create 
-   memory reservations that persist across kexec.
-
- - Add page fault handling to the runtime services support code on x86 so
-   we can more gracefully recover from buggy EFI firmware.
-
- - Fix command line handling on x86 for the boot path that omits the stub's
-   PE/COFF entry point.
-
- - Other assorted fixes and updates.
-
- Thanks,
-
-	Ingo
-
------------------->
-Aaron Ma (1):
-      efi/x86: earlyprintk - Add 64bit efi fb address support
-
-Alistair Strachan (1):
-      efi/libstub: arm: support building with clang
-
-Ard Biesheuvel (3):
-      efi: honour memory reservations passed via a linux specific config table
-      efi/arm: libstub: add a root memreserve config table
-      efi: add API to reserve memory persistently across kexec reboot
-
-Ben Hutchings (1):
-      x86: boot: Fix EFI stub alignment
-
-Hans de Goede (1):
-      efi/x86: Call efi_parse_options() from efi_main()
-
-Ivan Hu (1):
-      efi/efi_test: add exporting ResetSystem runtime service
-
-Sai Praneeth (2):
-      efi: Make efi_rts_work accessible to efi page fault handler
-      efi/x86: Handle page faults occurring while running EFI runtime services
-
-Sebastian Andrzej Siewior (1):
-      efi/x86: drop task_lock() from efi_switch_mm()
-
-
- arch/x86/boot/compressed/eboot.c        | 10 +++++
- arch/x86/boot/tools/build.c             |  7 +++
- arch/x86/include/asm/efi.h              |  1 +
- arch/x86/mm/fault.c                     |  9 ++++
- arch/x86/platform/efi/early_printk.c    |  8 +++-
- arch/x86/platform/efi/efi_64.c          | 10 ++---
- arch/x86/platform/efi/quirks.c          | 78 +++++++++++++++++++++++++++++++++
- drivers/firmware/efi/efi.c              | 59 ++++++++++++++++++++++++-
- drivers/firmware/efi/libstub/Makefile   |  3 +-
- drivers/firmware/efi/libstub/arm-stub.c | 27 ++++++++++++
- drivers/firmware/efi/runtime-wrappers.c | 61 +++++++-------------------
- drivers/firmware/efi/test/efi_test.c    | 27 ++++++++++++
- drivers/firmware/efi/test/efi_test.h    | 10 +++++
- include/linux/efi.h                     | 51 +++++++++++++++++++++
- 14 files changed, 307 insertions(+), 54 deletions(-)
+diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+index 396413f7c854..f2c1fb339d66 100644
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -711,6 +711,12 @@ static const struct dmi_system_id board_no_1_8v[] = {
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "N75_77GU"),
+ 		},
+ 	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Ordissimo"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Agathe3"),
++		},
++	},
+ 	{ }
+ };
+ 
+-- 
+2.17.2
 
