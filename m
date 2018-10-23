@@ -2,145 +2,173 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD75C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B38BC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:48:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A642F20652
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:45:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A642F20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+	by mail.kernel.org (Postfix) with ESMTP id B41C42075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:48:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B41C42075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbeJXFK3 (ORCPT
+        id S1727750AbeJXFNl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 01:10:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49168 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725815AbeJXFK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 01:10:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 79F3DAFFB;
-        Tue, 23 Oct 2018 20:45:25 +0000 (UTC)
-From:   NeilBrown <neil@brown.name>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Date:   Wed, 24 Oct 2018 07:45:14 +1100
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ksummit-discuss@lists.linuxfoundation.org,
-        Mishi Choudhary <mishi@linux.com>
-Subject: Re: [Ksummit-discuss] Call to Action Re: [PATCH 0/7] Code of Conduct: Fix some wording, and add an interpretation document
-In-Reply-To: <20181023060059.GW32577@ZenIV.linux.org.uk>
-References: <20181020134908.GA32218@kroah.com> <87y3ar80ac.fsf@notabene.neil.brown.name> <20181021222608.GA24845@localhost> <875zxt919d.fsf@notabene.neil.brown.name> <20181023033130.GQ32577@ZenIV.linux.org.uk> <87r2gh70ij.fsf@notabene.neil.brown.name> <20181023045247.GV32577@ZenIV.linux.org.uk> <87o9bl6xlo.fsf@notabene.neil.brown.name> <20181023060059.GW32577@ZenIV.linux.org.uk>
-Message-ID: <87in1s75ph.fsf@notabene.neil.brown.name>
+        Wed, 24 Oct 2018 01:13:41 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:35360 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725266AbeJXFNl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 01:13:41 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9NKmZFE118050;
+        Tue, 23 Oct 2018 15:48:35 -0500
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9NKmZfQ121162
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 23 Oct 2018 15:48:35 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 23
+ Oct 2018 15:48:34 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 23 Oct 2018 15:48:34 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9NKmYaf008358;
+        Tue, 23 Oct 2018 15:48:34 -0500
+Subject: Re: [PATCH v4 03/17] remoteproc: add release ops in rproc_mem_entry
+ struct
+From:   Suman Anna <s-anna@ti.com>
+To:     Loic Pallardy <loic.pallardy@st.com>, <bjorn.andersson@linaro.org>,
+        <ohad@wizery.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+ <1532697292-14272-4-git-send-email-loic.pallardy@st.com>
+ <90b2b81b-a3e1-fcfc-2a14-64050637d440@ti.com>
+Message-ID: <e2a57972-e0bc-bd32-0815-435c40af656a@ti.com>
+Date:   Tue, 23 Oct 2018 15:48:34 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <90b2b81b-a3e1-fcfc-2a14-64050637d440@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On 10/23/18 11:53 AM, Suman Anna wrote:
+> On 7/27/18 8:14 AM, Loic Pallardy wrote:
+>> Memory entry could be allocated in different ways (ioremap,
+>> dma_alloc_coherent, internal RAM allocator...).
+>> This patch introduces a release ops in rproc_mem_entry structure
+>> to associate dedicated release mechanism to each memory entry descriptor
+>> in order to keep remoteproc core generic.
+>>
+>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+>> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+> Acked-by: Suman Anna <s-anna@ti.com>
+> 
+>> ---
+>>  drivers/remoteproc/remoteproc_core.c | 23 +++++++++++++++++++++--
+>>  include/linux/remoteproc.h           |  5 ++++-
+>>  2 files changed, 25 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index 8e5fe1e..24fe11f 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -600,6 +600,24 @@ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
+>>  }
+>>  
+>>  /**
+>> + * rproc_release_carveout() - release acquired carveout
+>> + * @rproc: rproc handle
+>> + * @mem: the memory entry to release
+>> + *
+>> + * This function releases specified memory entry @mem allocated via
+>> + * dma_alloc_coherent() function by @rproc.
+>> + */
+>> +static int rproc_release_carveout(struct rproc *rproc,
+>> +				  struct rproc_mem_entry *mem)
+>> +{
+>> +	struct device *dev = &rproc->dev;
+>> +
+>> +	/* clean up carveout allocations */
+>> +	dma_free_coherent(dev->parent, mem->len, mem->va, mem->dma);
+>> +	return 0;
+>> +}
+>> +
+>> +/**
+>>   * rproc_handle_carveout() - handle phys contig memory allocation requests
+>>   * @rproc: rproc handle
+>>   * @rsc: the resource entry
+>> @@ -733,6 +751,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>>  	carveout->len = rsc->len;
+>>  	carveout->dma = dma;
+>>  	carveout->da = rsc->da;
+>> +	carveout->release = rproc_release_carveout;
+>>  
+>>  	list_add_tail(&carveout->node, &rproc->carveouts);
+>>  
+>> @@ -920,8 +939,8 @@ static void rproc_resource_cleanup(struct rproc *rproc)
+>>  
+>>  	/* clean up carveout allocations */
+>>  	list_for_each_entry_safe(entry, tmp, &rproc->carveouts, node) {
+>> -		dma_free_coherent(dev->parent, entry->len, entry->va,
+>> -				  entry->dma);
+>> +		if (entry->release)
+>> +			entry->release(rproc, entry);
+>>  		list_del(&entry->node);
+>>  		kfree(entry);
+>>  	}
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index e3c5d85..bef2e83 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -305,12 +305,15 @@ struct fw_rsc_vdev {
+>>  	struct fw_rsc_vdev_vring vring[0];
+>>  } __packed;
+>>  
+>> +struct rproc;
+>> +
+>>  /**
+>>   * struct rproc_mem_entry - memory entry descriptor
+>>   * @va:	virtual address
+>>   * @dma: dma address
+>>   * @len: length, in bytes
+>>   * @da: device address
+>> + * @release: release associated memory
 
-On Tue, Oct 23 2018, Al Viro wrote:
+Missed this earlier, move this line after the @node.
 
-> On Tue, Oct 23, 2018 at 04:28:03PM +1100, NeilBrown wrote:
->
->> > If that's a clarification, I'm sorry to say that I understand you even=
- less now.
->> > What are you proposing?  Duopoly?  How do you deal with disagreements?=
-  Fork?
->> > Revert wars?
->>=20
->> We already have team-maintainership arrangements - doing the same thing
->> at the top level should not be that hard to imagine.
->>=20
->> It really about "saying" no.  I suspect all members of a team would come
->> to much the same decision about any given patch, but they might "say" it
->> differently.  One might say "anyone who wrote this should be
->> lobotomised", and the other might say "I see what you are trying to do,
->> but the approach won't work - go look at how we handle XXXX, they have a
->> similar problem".  Neither will accept the patch, and they will probably
->> both accept it after certain changes.  But when one of them is having a
->> bad day, I would like people to have the explicit opportunity to ignore
->> them and talk to the other.  Yes, they'll still get "no" twice, but they=
-'ll
->> also get something approaching sane review least once.
->
-> You still have not answered the question I've asked - what to do in case =
-of
-> real disagreements, seeing that "pass it to Linus for final decision" obv=
-iously
-> doesn't work here.  And while we are at it, what to do in case when "they"
-> _agree_ that patch is unsalvagable?  I'm quite sure that you can think of
-> examples of such...
+regards
+Suman
 
-Sorry, things easily get lost in such a wide ranging conversation.
-Handling of real disagreements is not my problem, unless I am a member
-of the maintainership team.  We have maintainership teams which appear
-to work, so they provide an existence-proof that something can be
-achieved.
+>>   * @priv: associated data
+>>   * @node: list node
+>>   */
+>> @@ -321,9 +324,9 @@ struct rproc_mem_entry {
+>>  	u32 da;
+>>  	void *priv;
+>>  	struct list_head node;
+>> +	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
+>>  };
+>>  
+>> -struct rproc;
+>>  struct firmware;
+>>  
+>>  /**
+>>
+> 
 
-Were I to have an opportunity to be part of a maintainership team, I
-would probably base any internal agreement necessary on two principles.
-1/ People on the team are reasonably competent, and aren't going to
-  commit anything that all controversial without being quite confident.
-  I would choose to trust.
-
-2/ We commit bad patches often, and when we realize, we fix them.  You
-  and I have both been on both sides of that.  We (the community)
-  even commit quite large mistakes (devfs, control-groups) and the world
-  doesn't end.  Accepting imperfection is a key part of Linus' pragmatic
-  approach, and a key part of the success of Linux.
-
-If they agree that the patch is unsalvagable, then they say so -
-politely and with reasons.  It is a right-of-review, not a
-right-of-success.
-
-
->
-> BTW, out of curiosity - when has anyone suggested lobotomies[1]?  I'd lik=
-e to see
-> details - got to be interesting...
-
-Sorry, it was a deliberately ficticious example.
-
-Thanks for showing an interest, it is more than a lot of people are
-doing.
-NeilBrown
-
->
-> [1] on kernel development lists, that is - I can think of examples in e.g.
-> NANAE circa '98 or so regarding the SGI employees responsible for sendmail
-> setup they used to ship in IRIX, but that was more of a possible explanat=
-ion
-> of the reasons rather than suggested remedy...
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvPiFsACgkQOeye3VZi
-gbn7nw/9FdMy4AjQzbWQfWmM5bonCBdC7uM/1Q/rQTu7OtqJ0JCWGxXIz8EYc+b1
-odLqfK/mv7UMGHFulcly8pClL3okIT2UMvIKZyu+u3c/+jpKkp1QS46VXV69Ia0d
-TKEVK2oIoWxvJD65ZBMVyAuldUy82EwPvPUGtJyVDXJqmz271hpMmbjue2hPNDXb
-GwkVwNIXruHRmtEnyZ42DFq8Hh7A8Wtw9Ib565WgqENeyZzbmXVEUA+CKbCgqIb0
-4n6L+rSaBKVk+nAgd4yecGiIzU3rJGbM5Hc+gawrrcmIQ/U47FDTD5yKGp/UbCNV
-kS+X/xQJbrAbHWTu09ko0fn9lIUGsluQlDU30M1KsP8chf3RbmBwqchGshIuq1ea
-jI5IxDWBMj5BTs7a08V26C4kIgJ4w6WuXKjRUqnqTytAF0t6YLPp8/BGuIiyJo13
-0xeqw44Dr4IOmsY/RC6mcISQiAfUfZRr2LeejUGvkLcHiPNu1HOnETbcz1xPRl0K
-+/BfPyEu1msrXsJicML/KKDH9L0SEOqzOcp9zToqworVK2gRSvNFNTPcO9+1o8sp
-fZsvCmnFfdhf/uwfE3PWG0L6ZH8T/OXmj2vRHZn4IHnQvnyvpcDo0nW35LObG6Zp
-Nuy0G3nDZP4VLnoOE7b6A9HVSUaHBQ9nff5MS5nsyQvPxw5pcYU=
-=FBmv
------END PGP SIGNATURE-----
---=-=-=--
