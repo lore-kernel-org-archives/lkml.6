@@ -5,60 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D12C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67ECFC67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A187420671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:37:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDAF520671
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:37:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A0/h3p8F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A187420671
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PdlteOY4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDAF520671
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729311AbeJXGCN (ORCPT
+        id S1729125AbeJXGBX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 02:02:13 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46901 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729139AbeJXGB1 (ORCPT
+        Wed, 24 Oct 2018 02:01:23 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40770 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728575AbeJXGBW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 02:01:27 -0400
-Received: by mail-lf1-f65.google.com with SMTP id o2-v6so2328336lfl.13;
-        Tue, 23 Oct 2018 14:36:12 -0700 (PDT)
+        Wed, 24 Oct 2018 02:01:22 -0400
+Received: by mail-lf1-f68.google.com with SMTP id n3-v6so2336505lfe.7;
+        Tue, 23 Oct 2018 14:36:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-        bh=6qJTNFwbH1TFDI3gbUvOjFkxUhT0SMG0kbjMlNfa96U=;
-        b=A0/h3p8FiatFWDDQDLLr5RaEKmvC2OBV5CByt0aO7U3tkHCDzbEKHcuvyKbqrM79at
-         B3DmjiNeG77aasQEPLLhdRBHG9rpmRDrnVbE6D9rhTdkzgvnT7f6dY1oLcu077JMxoik
-         oRTu7OWVsK8ogbADS7YVE4uEMP7Jx8pQXNI0XrGPOLmrSR9F9jYgv3/3p4O14ws5XB6X
-         gVath+ld78AmukgiCr7IMQoqAAGvV63hUhU06m1gmhZ1As5SPVAUMdI4bAmQmxaGVFaU
-         YKggE6rs4nc+lXTGeyf/x4UDHs0bWe/8c8zeqPEGH0Sf4MdWx3soJY8ZzG/wnD/5ZN6J
-         fWfg==
+        bh=MxJyklPQotWhYa2J56SVcBSG16bYJ6WnJInuOUKovF4=;
+        b=PdlteOY4o40QUDNjAThlAoTsVYTFd7zs3m3+vkS0xTuwkOXqjHspfcVAbQ+Eoq0IJl
+         v9yCNh2HFu+CuGbd89TL4zyyHJHsybDQ5YR4q3QnmnxG8byJu7Mnlr9H2+e2fDSqcJ20
+         poPB83K9CC9XjqrXwH9vNnu+MF/PRBAlbQhlDOtGu3zaiW8TwcRqVWjIQU8e4S2gnZoe
+         skIGMSbLBUSAnikw86eGtMDLm7ZsZV11Su0egjC0UHX9TQDCuZYZpUVrTL/8aKvmuMD1
+         jbaXi1ySxuzr6JaOyAgNi0/p7XDQifApzUZnsPpFC7qUfRxurqopGqRggnBteHuHhzIj
+         27pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to;
-        bh=6qJTNFwbH1TFDI3gbUvOjFkxUhT0SMG0kbjMlNfa96U=;
-        b=SAakgKUA2KEdKFV+oe/AD04ZQA06ucLt1HKJYjiHkxWV0G/Tof4FITDCPEfdkonvTH
-         fmzc2cDF7Penmohwu1pRwdwP4K20FvNbCFpo66w3pRx5eKoLbzbOOx7difEH3RRuZUqS
-         tN1Lar8X+QxqOF+GbMXlgiRtK4Yh51L+EzF/dvkNKLOytk2fN7ZtUGF1dkMZPiUFUOzi
-         hLAcewnCkrjuhqZ7yAqhAxRWmbsJiq/RoR0efCMaoM1yOwURLn3Arx2A7dXS5SVwa9N7
-         GTi7jIMGMwM/vd5XNgK8ad5JXgW5Nu9lrolowcGemLN8IhpkhtTC2GN6NLOBf22wh1sb
-         Am9Q==
-X-Gm-Message-State: ABuFfohVoo5xPRhL1VamfZXoaqIskA/7lYC/ek7g5fl9ie21mhYvu5HN
-        opzbBeq47VE4WwrI8eOPc9M=
-X-Google-Smtp-Source: ACcGV60oU4v9dmfm2pngODIU85Xo5lMoQ72mDmXmBqMbWj/N/dPKow1IaFhEzTDAdhPWjJt0crJx8Q==
-X-Received: by 2002:a19:2102:: with SMTP id h2-v6mr12783512lfh.119.1540330571974;
-        Tue, 23 Oct 2018 14:36:11 -0700 (PDT)
+        bh=MxJyklPQotWhYa2J56SVcBSG16bYJ6WnJInuOUKovF4=;
+        b=umSOjTNq2yMUGeRbAp4lWaN8VuQkmYpsL7f/rZ01F9lskDd/LQIaYzL+ngHAHUk8rA
+         rEu0Xi/TuwzT0bWzwTtcGqBPnttOJwDsW6iXUop33XAAqa06o2cBd8jXe2BHuk5dNiss
+         XLUIg0nUKmaiWoovWgkC1WsWEQEzOcgXZ1pUkMlu9AhLx+gfGy5FEQxDEuQXZONcLtvh
+         hh+IL+nSZ3quOjSfE93/Hd4anA9M6J7dMqgK06mSqDmF1YI+xpisKItEQ41QvXN2sZdL
+         PemcW0/CW1CUDJkF9NCE/HZIle8RDl52BQzpAQ3QsNrzMZ8ESZwJvQVE+33W41HvF8LD
+         4xVA==
+X-Gm-Message-State: AGRZ1gJPZelpU/d7+Y3IyNxgK0G/nwnfo1NI/r5qtJXhxhQXR1DE39ug
+        wKyn94v/BhoiFpJkKhr+tE0=
+X-Google-Smtp-Source: AJdET5e0SCGJjOdZZvB3VL2+kCFX64ASEyEQtsS+KMf/Fg23oC2goGdqiz7dgHvR3CIhTem3KMXl1A==
+X-Received: by 2002:a19:9cd5:: with SMTP id f204-v6mr196018lfe.41.1540330568969;
+        Tue, 23 Oct 2018 14:36:08 -0700 (PDT)
 Received: from localhost.localdomain (91-159-62-169.elisa-laajakaista.fi. [91.159.62.169])
-        by smtp.gmail.com with ESMTPSA id y127-v6sm377950lfc.13.2018.10.23.14.36.10
+        by smtp.gmail.com with ESMTPSA id y127-v6sm377950lfc.13.2018.10.23.14.36.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 14:36:11 -0700 (PDT)
+        Tue, 23 Oct 2018 14:36:08 -0700 (PDT)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -73,12 +73,14 @@ To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
 Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 10/17] prmem: documentation
-Date:   Wed, 24 Oct 2018 00:34:57 +0300
-Message-Id: <20181023213504.28905-11-igor.stoppa@huawei.com>
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 08/17] prmem: struct page: track vmap_area
+Date:   Wed, 24 Oct 2018 00:34:55 +0300
+Message-Id: <20181023213504.28905-9-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181023213504.28905-1-igor.stoppa@huawei.com>
 References: <20181023213504.28905-1-igor.stoppa@huawei.com>
@@ -88,228 +90,206 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Documentation for protected memory.
+When a page is used for virtual memory, it is often necessary to obtain
+a handler to the corresponding vmap_area, which refers to the virtually
+continuous area generated, when invoking vmalloc.
 
-Topics covered:
-* static memory allocation
-* dynamic memory allocation
-* write-rare
+The struct page has a "private" field, which can be re-used, to store a
+pointer to the parent area.
+
+Note: in practice a virtual memory area is characterized both by a
+struct vmap_area and a struct vm_struct.
+
+The reason for referring from a page to its vmap_area, rather than to
+the vm_struct, is that the vmap_area contains a struct vm_struct *vm
+field, which can be used to reach also the information stored in the
+corresponding vm_struct. This link, however, is unidirectional, and it's
+not possible to easily identify the corresponding vmap_area, given a
+reference to a vm_struct.
+
+Furthermore, the struct vmap_area contains a list head node which is
+normally used only when it's queued for free and can be put to some
+other use during normal operations.
+
+The connection between each page and its vmap_area avoids more expensive
+searches through the btree of vmap_areas.
+
+Therefore, it is possible for find_vamp_area to be again a static
+function, while the rest of the code will rely on the direct reference
+from struct page.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-CC: Jonathan Corbet <corbet@lwn.net>
-CC: Randy Dunlap <rdunlap@infradead.org>
-CC: Mike Rapoport <rppt@linux.vnet.ibm.com>
-CC: linux-doc@vger.kernel.org
+CC: Michal Hocko <mhocko@kernel.org>
+CC: Vlastimil Babka <vbabka@suse.cz>
+CC: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Pavel Tatashin <pasha.tatashin@oracle.com>
+CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
 ---
- Documentation/core-api/index.rst |   1 +
- Documentation/core-api/prmem.rst | 172 +++++++++++++++++++++++++++++++
- MAINTAINERS                      |   1 +
- 3 files changed, 174 insertions(+)
- create mode 100644 Documentation/core-api/prmem.rst
+ include/linux/mm_types.h | 25 ++++++++++++++++++-------
+ include/linux/prmem.h    | 13 ++++++++-----
+ include/linux/vmalloc.h  |  1 -
+ mm/prmem.c               |  2 +-
+ mm/test_pmalloc.c        | 12 ++++--------
+ mm/vmalloc.c             |  9 ++++++++-
+ 6 files changed, 39 insertions(+), 23 deletions(-)
 
-diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-index 26b735cefb93..1a90fa878d8d 100644
---- a/Documentation/core-api/index.rst
-+++ b/Documentation/core-api/index.rst
-@@ -31,6 +31,7 @@ Core utilities
-    gfp_mask-from-fs-io
-    timekeeping
-    boot-time-mm
-+   prmem
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 5ed8f6292a53..8403bdd12d1f 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -87,13 +87,24 @@ struct page {
+ 			/* See page-flags.h for PAGE_MAPPING_FLAGS */
+ 			struct address_space *mapping;
+ 			pgoff_t index;		/* Our offset within mapping. */
+-			/**
+-			 * @private: Mapping-private opaque data.
+-			 * Usually used for buffer_heads if PagePrivate.
+-			 * Used for swp_entry_t if PageSwapCache.
+-			 * Indicates order in the buddy system if PageBuddy.
+-			 */
+-			unsigned long private;
++			union {
++				/**
++				 * @private: Mapping-private opaque data.
++				 * Usually used for buffer_heads if
++				 * PagePrivate.
++				 * Used for swp_entry_t if PageSwapCache.
++				 * Indicates order in the buddy system if
++				 * PageBuddy.
++				 */
++				unsigned long private;
++				/**
++				 * @area: reference to the containing area
++				 * For pages that are mapped into a virtually
++				 * contiguous area, avoids performing a more
++				 * expensive lookup.
++				 */
++				struct vmap_area *area;
++			};
+ 		};
+ 		struct {	/* slab, slob and slub */
+ 			union {
+diff --git a/include/linux/prmem.h b/include/linux/prmem.h
+index 26fd48410d97..cf713fc1c8bb 100644
+--- a/include/linux/prmem.h
++++ b/include/linux/prmem.h
+@@ -54,14 +54,17 @@ static __always_inline bool __is_wr_after_init(const void *ptr, size_t size)
  
- Interfaces for kernel debugging
- ===============================
-diff --git a/Documentation/core-api/prmem.rst b/Documentation/core-api/prmem.rst
-new file mode 100644
-index 000000000000..16d7edfe327a
---- /dev/null
-+++ b/Documentation/core-api/prmem.rst
-@@ -0,0 +1,172 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. _prmem:
-+
-+Memory Protection
-+=================
-+
-+:Date: October 2018
-+:Author: Igor Stoppa <igor.stoppa@huawei.com>
-+
-+Foreword
-+--------
-+- In a typical system using some sort of RAM as execution environment,
-+  **all** memory is initially writable.
-+
-+- It must be initialized with the appropriate content, be it code or data.
-+
-+- Said content typically undergoes modifications, i.e. relocations or
-+  relocation-induced changes.
-+
-+- The present document doesn't address such transient.
-+
-+- Kernel code is protected at system level and, unlike data, it doesn't
-+  require special attention.
-+
-+Protection mechanism
-+--------------------
-+
-+- When available, the MMU can write protect memory pages that would be
-+  otherwise writable.
-+
-+- The protection has page-level granularity.
-+
-+- An attempt to overwrite a protected page will trigger an exception.
-+- **Write protected data must go exclusively to write protected pages**
-+- **Writable data must go exclusively to writable pages**
-+
-+Available protections for kernel data
-+-------------------------------------
-+
-+- **constant**
-+   Labelled as **const**, the data is never supposed to be altered.
-+   It is statically allocated - if it has any memory footprint at all.
-+   The compiler can even optimize it away, where possible, by replacing
-+   references to a **const** with its actual value.
-+
-+- **read only after init**
-+   By tagging an otherwise ordinary statically allocated variable with
-+   **__ro_after_init**, it is placed in a special segment that will
-+   become write protected, at the end of the kernel init phase.
-+   The compiler has no notion of this restriction and it will treat any
-+   write operation on such variable as legal. However, assignments that
-+   are attempted after the write protection is in place, will cause
-+   exceptions.
-+
-+- **write rare after init**
-+   This can be seen as variant of read only after init, which uses the
-+   tag **__wr_after_init**. It is also limited to statically allocated
-+   memory. It is still possible to alter this type of variables, after
-+   the kernel init phase is complete, however it can be done exclusively
-+   with special functions, instead of the assignment operator. Using the
-+   assignment operator after conclusion of the init phase will still
-+   trigger an exception. It is not possible to transition a certain
-+   variable from __wr_ater_init to a permanent read-only status, at
-+   runtime.
-+
-+- **dynamically allocated write-rare / read-only**
-+   After defining a pool, memory can be obtained through it, primarily
-+   through the **pmalloc()** allocator. The exact writability state of the
-+   memory obtained from **pmalloc()** and friends can be configured when
-+   creating the pool. At any point it is possible to transition to a less
-+   permissive write status the memory currently associated to the pool.
-+   Once memory has become read-only, it the only valid operation, beside
-+   reading, is to released it, by destroying the pool it belongs to.
-+
-+
-+Protecting dynamically allocated memory
-+---------------------------------------
-+
-+When dealing with dynamically allocated memory, three options are
-+ available for configuring its writability state:
-+
-+- **Options selected when creating a pool**
-+   When creating the pool, it is possible to choose one of the following:
-+    - **PMALLOC_MODE_RO**
-+       - Writability at allocation time: *WRITABLE*
-+       - Writability at protection time: *NONE*
-+    - **PMALLOC_MODE_WR**
-+       - Writability at allocation time: *WRITABLE*
-+       - Writability at protection time: *WRITE-RARE*
-+    - **PMALLOC_MODE_AUTO_RO**
-+       - Writability at allocation time:
-+           - the latest allocation: *WRITABLE*
-+           - every other allocation: *NONE*
-+       - Writability at protection time: *NONE*
-+    - **PMALLOC_MODE_AUTO_WR**
-+       - Writability at allocation time:
-+           - the latest allocation: *WRITABLE*
-+           - every other allocation: *WRITE-RARE*
-+       - Writability at protection time: *WRITE-RARE*
-+    - **PMALLOC_MODE_START_WR**
-+       - Writability at allocation time: *WRITE-RARE*
-+       - Writability at protection time: *WRITE-RARE*
-+
-+   **Remarks:**
-+    - The "AUTO" modes perform automatic protection of the content, whenever
-+       the current vmap_area is used up and a new one is allocated.
-+        - At that point, the vmap_area being phased out is protected.
-+        - The size of the vmap_area depends on various parameters.
-+        - It might not be possible to know for sure *when* certain data will
-+          be protected.
-+        - The functionality is provided as tradeoff between hardening and speed.
-+        - Its usefulness depends on the specific use case at hand
-+    - The "START_WR" mode is the only one which provides immediate protection, at the cost of speed.
-+
-+- **Protecting the pool**
-+   This is achieved with **pmalloc_protect_pool()**
-+    - Any vmap_area currently in the pool is write-protected according to its initial configuration.
-+    - Any residual space still available from the current vmap_area is lost, as the area is protected.
-+    - **protecting a pool after every allocation will likely be very wasteful**
-+    - Using PMALLOC_MODE_START_WR is likely a better choice.
-+
-+- **Upgrading the protection level**
-+   This is achieved with **pmalloc_make_pool_ro()**
-+    - it turns the present content of a write-rare pool into read-only
-+    - can be useful when the content of the memory has settled
-+
-+
-+Caveats
-+-------
-+- Freeing of memory is not supported. Pages will be returned to the
-+  system upon destruction of their memory pool.
-+
-+- The address range available for vmalloc (and thus for pmalloc too) is
-+  limited, on 32-bit systems. However it shouldn't be an issue, since not
-+  much data is expected to be dynamically allocated and turned into
-+  write-protected.
-+
-+- Regarding SMP systems, changing state of pages and altering mappings
-+  requires performing cross-processor synchronizations of page tables.
-+  This is an additional reason for limiting the use of write rare.
-+
-+- Not only the pmalloc memory must be protected, but also any reference to
-+  it that might become the target for an attack. The attack would replace
-+  a reference to the protected memory with a reference to some other,
-+  unprotected, memory.
-+
-+- The users of rare write must take care of ensuring the atomicity of the
-+  action, respect to the way they use the data being altered; for example,
-+  take a lock before making a copy of the value to modify (if it's
-+  relevant), then alter it, issue the call to rare write and finally
-+  release the lock. Some special scenario might be exempt from the need
-+  for locking, but in general rare-write must be treated as an operation
-+  that can incur into races.
-+
-+- pmalloc relies on virtual memory areas and will therefore use more
-+  tlb entries. It still does a better job of it, compared to invoking
-+  vmalloc for each allocation, but it is undeniably less optimized wrt to
-+  TLB use than using the physmap directly, through kmalloc or similar.
-+
-+
-+Utilization
-+-----------
-+
-+**add examples here**
-+
-+API
-+---
-+
-+.. kernel-doc:: include/linux/prmem.h
-+.. kernel-doc:: mm/prmem.c
-+.. kernel-doc:: include/linux/prmemextra.h
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ea979a5a9ec9..246b1a1cc8bb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9463,6 +9463,7 @@ F:	include/linux/prmemextra.h
- F:	mm/prmem.c
- F:	mm/test_write_rare.c
- F:	mm/test_pmalloc.c
-+F:	Documentation/core-api/prmem.rst
+ static __always_inline bool __is_wr_pool(const void *ptr, size_t size)
+ {
+-	struct vmap_area *area;
++	struct vm_struct *vm;
++	struct page *page;
  
- MEMORY MANAGEMENT
- L:	linux-mm@kvack.org
+ 	if (!is_vmalloc_addr(ptr))
+ 		return false;
+-	area = find_vmap_area((unsigned long)ptr);
+-	return area && area->vm && (area->vm->size >= size) &&
+-		((area->vm->flags & (VM_PMALLOC | VM_PMALLOC_WR)) ==
+-		 (VM_PMALLOC | VM_PMALLOC_WR));
++	page = vmalloc_to_page(ptr);
++	if (!(page && page->area && page->area->vm))
++		return false;
++	vm = page->area->vm;
++	return ((vm->size >= size) &&
++		((vm->flags & VM_PMALLOC_WR_MASK) == VM_PMALLOC_WR_MASK));
+ }
+ 
+ /**
+diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+index 4d14a3b8089e..43a444f8b1e9 100644
+--- a/include/linux/vmalloc.h
++++ b/include/linux/vmalloc.h
+@@ -143,7 +143,6 @@ extern struct vm_struct *__get_vm_area_caller(unsigned long size,
+ 					const void *caller);
+ extern struct vm_struct *remove_vm_area(const void *addr);
+ extern struct vm_struct *find_vm_area(const void *addr);
+-extern struct vmap_area *find_vmap_area(unsigned long addr);
+ 
+ extern int map_vm_area(struct vm_struct *area, pgprot_t prot,
+ 			struct page **pages);
+diff --git a/mm/prmem.c b/mm/prmem.c
+index 7dd13ea43304..96abf04909e7 100644
+--- a/mm/prmem.c
++++ b/mm/prmem.c
+@@ -150,7 +150,7 @@ static int grow(struct pmalloc_pool *pool, size_t min_size)
+ 	if (WARN(!addr, "Failed to allocate %zd bytes", PAGE_ALIGN(size)))
+ 		return -ENOMEM;
+ 
+-	new_area = find_vmap_area((uintptr_t)addr);
++	new_area = vmalloc_to_page(addr)->area;
+ 	tag_mask = VM_PMALLOC;
+ 	if (pool->mode & PMALLOC_WR)
+ 		tag_mask |= VM_PMALLOC_WR;
+diff --git a/mm/test_pmalloc.c b/mm/test_pmalloc.c
+index f9ee8fb29eea..c64872ff05ea 100644
+--- a/mm/test_pmalloc.c
++++ b/mm/test_pmalloc.c
+@@ -38,15 +38,11 @@ static bool is_address_protected(void *p)
+ 	if (unlikely(!is_vmalloc_addr(p)))
+ 		return false;
+ 	page = vmalloc_to_page(p);
+-	if (unlikely(!page))
++	if (unlikely(!(page && page->area && page->area->vm)))
+ 		return false;
+-	wmb(); /* Flush changes to the page table - is it needed? */
+-	area = find_vmap_area((uintptr_t)p);
+-	if (unlikely((!area) || (!area->vm) ||
+-		     ((area->vm->flags & VM_PMALLOC_PROTECTED_MASK) !=
+-		      VM_PMALLOC_PROTECTED_MASK)))
+-		return false;
+-	return true;
++	area = page->area;
++	return (area->vm->flags & VM_PMALLOC_PROTECTED_MASK) ==
++		VM_PMALLOC_PROTECTED_MASK;
+ }
+ 
+ static bool create_and_destroy_pool(void)
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 15850005fea5..ffef705f0523 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -742,7 +742,7 @@ static void free_unmap_vmap_area(struct vmap_area *va)
+ 	free_vmap_area_noflush(va);
+ }
+ 
+-struct vmap_area *find_vmap_area(unsigned long addr)
++static struct vmap_area *find_vmap_area(unsigned long addr)
+ {
+ 	struct vmap_area *va;
+ 
+@@ -1523,6 +1523,7 @@ static void __vunmap(const void *addr, int deallocate_pages)
+ 			struct page *page = area->pages[i];
+ 
+ 			BUG_ON(!page);
++			page->area = NULL;
+ 			__free_pages(page, 0);
+ 		}
+ 
+@@ -1731,8 +1732,10 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+ 			const void *caller)
+ {
+ 	struct vm_struct *area;
++	struct vmap_area *va;
+ 	void *addr;
+ 	unsigned long real_size = size;
++	unsigned int i;
+ 
+ 	size = PAGE_ALIGN(size);
+ 	if (!size || (size >> PAGE_SHIFT) > totalram_pages)
+@@ -1747,6 +1750,10 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+ 	if (!addr)
+ 		return NULL;
+ 
++	va = __find_vmap_area((unsigned long)addr);
++	for (i = 0; i < va->vm->nr_pages; i++)
++		va->vm->pages[i]->area = va;
++
+ 	/*
+ 	 * In this function, newly allocated vm_struct has VM_UNINITIALIZED
+ 	 * flag. It means that vm_struct is not fully initialized.
 -- 
 2.17.1
 
