@@ -2,105 +2,208 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81FA5C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3458FC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 213092075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:30:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 213092075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+	by mail.kernel.org (Postfix) with ESMTP id C8E462081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:32:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0ss6mK8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8E462081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbeJXF4H (ORCPT
+        id S1728909AbeJXF5V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 01:56:07 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41773 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726382AbeJXF4H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 01:56:07 -0400
-Received: by mail-qt1-f195.google.com with SMTP id l41-v6so3367258qtl.8
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 14:30:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PrSsFdcbepnogT/aIKfHSenBdobNsGAURFn8vZz/HbE=;
-        b=nb3OYI1ar2DUrt2NOo8cHkcnr/iXaq6lxpQ+/Ihv79N0VFv9JxMHZIbcq0+dINb9Bn
-         SEvEXFVR4OCn/sRDGkphNewE0HWsPpgi14c/NruNkTVkG/VeoPUelQEW0x3rO5KiONO5
-         OyBrQblZPx55WIjOpICT9XH8CHX9FD/XmYSgd5tDupiby65oe7Bzp2I230j+8bo5trLw
-         ocbXa9MMQDZt6B+7iL6a6fRzVvfJFdN5yiEjTuCxShpjcHvcpHFrYSU1rn2ptegY7EWl
-         K6X47iGqnNFrNqoGRnzjMnZAvayQtiM2WHLvnz4HA3PNZsm4ulPqNXLqp8JAKKAvsU90
-         mbBA==
-X-Gm-Message-State: ABuFfoihQ4cVkeDCZmkNyfpiC0ap/87VKnBxY3f/Q69yfCZQRYOnlHYn
-        0hjYDiZ3BB4B+Rqp1ZT+dyU=
-X-Google-Smtp-Source: ACcGV63rJekqIXGU9sjmimeWgh5Nd81PNUoCGwD7P8tE/Nmf+Il5uk+oUBHr9xTwK15lw83dD71nLg==
-X-Received: by 2002:ac8:38c6:: with SMTP id g6-v6mr48619106qtc.55.1540330255715;
-        Tue, 23 Oct 2018 14:30:55 -0700 (PDT)
-Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
-        by smtp.gmail.com with ESMTPSA id z188-v6sm1747173qkz.66.2018.10.23.14.30.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 14:30:54 -0700 (PDT)
-Subject: Re: [PATCH] Revert "workqueue: re-add lockdep dependencies for
- flushing"
-To:     Johannes Berg <johannes@sipsolutions.net>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Tejun Heo <tj@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "linux-nvme @ lists . infradead . org" 
-        <linux-nvme@lists.infradead.org>
-References: <20181022151818.135163-1-bvanassche@acm.org>
- <13901aed5074f4b1fbd259d03928efb6ab40c65a.camel@sipsolutions.net>
- <1540244870.128590.39.camel@acm.org>
- <63ae9bac-3587-bded-ea98-e43fb4d7240d@grimberg.me>
- <b3aae7aa8241c9828c04d2f2b58927f4ce1411b9.camel@sipsolutions.net>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <b61979ff-918b-a27e-3d3b-34e9cfc23083@grimberg.me>
-Date:   Tue, 23 Oct 2018 14:30:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <b3aae7aa8241c9828c04d2f2b58927f4ce1411b9.camel@sipsolutions.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Wed, 24 Oct 2018 01:57:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726493AbeJXF5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 01:57:21 -0400
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13FA42075D;
+        Tue, 23 Oct 2018 21:32:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540330329;
+        bh=Skrjn3QssIqMENFd9hn+S1HnPTGSTDG7Qh2beAcbPf8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=I0ss6mK8cN1ilb8HjS51ZQPKaJzTy6Jqb56Kb/0cmJbuWrvrr7vsxbyh7FDCGk799
+         oQJIBCyHZ9so/nHArgbaZrNRBMSeSmlO8D7UVGQJ/Dr1MtHtXSOGs0kDoe3KDs67O9
+         1M1W/lOjBwO/89SAxtLc6XuhwA+zrHiun+SKb5nc=
+Message-ID: <1540330327.6502.13.camel@kernel.org>
+Subject: Re: [PATCH v6 10/15] tracing: Add hist trigger snapshot() action
+ test case
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     rostedt@goodmis.org, tglx@linutronix.de, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Date:   Tue, 23 Oct 2018 16:32:07 -0500
+In-Reply-To: <20181024000342.d1e82a160a5efecdb9c0d4f5@kernel.org>
+References: <cover.1539288364.git.tom.zanussi@linux.intel.com>
+         <75db4ded21471580e5ad8d57c74fd9c8923cd90a.1539288364.git.tom.zanussi@linux.intel.com>
+         <20181024000342.d1e82a160a5efecdb9c0d4f5@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Masami,
 
+On Wed, 2018-10-24 at 00:03 +0900, Masami Hiramatsu wrote:
+> On Thu, 11 Oct 2018 16:02:07 -0500
+> Tom Zanussi <zanussi@kernel.org> wrote:
 > 
-> I also commented over there regarding this specific problem.
+> > From: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > 
+> > Add a test case verifying the basic functionality of the
+> > hist:snapshot() action.
+> > 
 > 
-> I think my wording was inaccurate perhaps. It's not so much direct
-> recursion, but a dependency chain connecting the handler_mutex class
-> back to itself. This is how lockdep finds problems, it doesn't consider
-> actual *instances* but only *classes*.
+> I think this is OK for current tracing tree, but for next kernel
+> version
+> you may need to update it (against the kselftest tree)
 > 
-> As Sagi mentioned on the other thread, in this specific instance you
-> happen to know out-of-band that this is safe, (somehow) the code ensures
-> that you can't actually recursively connect back to yourself. Perhaps
-> there's some kind of layering involved, I don't know. (*)
-> 
-> As I said over there, this type of thing can be solved with
-> mutex_lock_nested(), though it's possible that in this case it should
-> really be flush_workqueue_nested() or flush_work_nested() or so.
 
-I guess that could make this specific complaint complaint go away...
+OK.
 
-> johannes
+> > Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > ---
+> >  .../inter-event/trigger-snapshot-action-hist.tc    | 55
+> > ++++++++++++++++++++++
+> >  1 file changed, 55 insertions(+)
+> >  create mode 100644
+> > tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-
+> > snapshot-action-hist.tc
+> > 
+> > diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > event/trigger-snapshot-action-hist.tc
+> > b/tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > event/trigger-snapshot-action-hist.tc
+> > new file mode 100644
+> > index 000000000000..f427be989296
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > event/trigger-snapshot-action-hist.tc
+> > @@ -0,0 +1,55 @@
+> > +#!/bin/sh
+> > +# description: event trigger - test inter-event histogram trigger
+> > snapshot action
+> > +
+> > +do_reset() {
+> > +    reset_trigger
+> > +    echo > set_event
+> > +    echo 0 > snapshot
+> > +    clear_trace
+> > +}
+> > +
+> > +fail() { #msg
+> > +    do_reset
+> > +    echo $1
+> > +    exit_fail
+> > +}
+> > +
+> > +if [ ! -f set_event ]; then
+> > +    echo "event tracing is not supported"
+> > +    exit_unsupported
+> > +fi
+> > +
+> > +if [ ! -f snapshot ]; then
+> > +    echo "snapshot is not supported"
+> > +    exit_unsupported
+> > +fi
+> > +
+> > +grep "onchange(var)" README > /dev/null || exit_unsupported #
+> > version issue
 > 
-> (*) note that just checking "obj != self" might not be enough, depending
-> on how you pick candidates for "obj" you might recurse down another
-> level and end up back at yourself, just two levels down, and actually
-> have a dependency chain leading back to yourself.
+> grep -q will be better.
+> 
+> > +
+> > +grep "snapshot()" README > /dev/null || exit_unsupported # version
+> > issue
+> 
+> Ditto.
+> 
+> > +
+> > +reset_tracer
+> > +do_reset
+> 
+> Depends on the merge timing, but I already moved this kind of "reset 
+> before/after test" into initialize_ftrace(), so you don't need
+> do_reset()
+> here. It is required only if you reset tracer in between tests.
+> 
 
-Its not a simple check, any removal invocation is serialized under a
-dedicated workqueue and in order to be queued there, the connection need
-to first be connected which comes later (after the flush takes place).
+OK, good to know, thanks.  At this point it probably will be the next
+kernel version, so will make all the suggested changes for that
+version.
+
+> > +
+> > +echo "Test snapshot action"
+> > +
+> > +echo 1 > /sys/kernel/debug/tracing/events/sched/enable
+> > +
+> > +echo
+> > 'hist:keys=comm:newprio=prio:onchange($newprio).save(comm,prio):onc
+> > hange($newprio).snapshot() if comm=="ping"' >>
+> > /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
+> > +
+> > +ping localhost -c 3
+> > +nice -n 1 ping localhost -c 3
+> 
+> Ditto. please use $LOCALHOST if you send this to the latest tree.
+> 
+> http://lkml.kernel.org/r/153563862993.29700.6436770573173736555.stgit
+> @devbox
+> 
+
+OK, thanks for pointing that out.
+
+> > +
+> > +echo 0 > /sys/kernel/debug/tracing/events/sched/enable
+> > +
+> > +if ! grep -q "changed:" events/sched/sched_waking/hist; then
+> > +    fail "Failed to create onchange action inter-event histogram"
+> > +fi
+> > +
+> > +if ! grep -q "comm=ping" snapshot; then
+> > +    fail "Failed to create snapshot action inter-event histogram"
+> > +fi
+> > +
+> > +do_reset
+> 
+> Also you don't need this.
+> 
+> 
+> BTW, are there no "expected fail" tests? (e.g. passing wrong snapshot
+> command to trigger)
+> 
+
+Good point, will add an expected fail for snapshot and not
+onmax/onchange.
+
+Thanks,
+
+Tom
+
+> Thank you,
+> 
+> > +
+> > +exit 0
+> > -- 
+> > 2.14.1
+> > 
+> 
+> 
