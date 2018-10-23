@@ -6,164 +6,412 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3271EC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB73C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A87520652
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:13:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A87520652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id D658020652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:14:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D658020652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728465AbeJWRgH (ORCPT
+        id S1728468AbeJWRhL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 13:36:07 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:56244 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727602AbeJWRgH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 13:36:07 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 42fSNt0J4Rz1qvwS;
-        Tue, 23 Oct 2018 11:13:34 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 42fSNs6Y3Mz1qqkT;
-        Tue, 23 Oct 2018 11:13:33 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id vNXlwOShSaoy; Tue, 23 Oct 2018 11:13:31 +0200 (CEST)
-X-Auth-Info: 5pMVXgmrSD+FeSl91CSnxx9giud9uKVbvGXAH6oug1k=
-Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Tue, 23 Oct 2018 11:13:31 +0200 (CEST)
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Esben Haabendal <eha@deif.com>,
-        =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Lukasz Majewski <lukma@denx.de>
-Subject: [RESEND PATCHv2] ARM: dspi: Provide support for DSPI slave more operation (Vybryd vf610)
-Date:   Tue, 23 Oct 2018 11:13:19 +0200
-Message-Id: <20181023091319.27868-1-lukma@denx.de>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180927150709.17010-1-lukma@denx.de>
-References: <20180927150709.17010-1-lukma@denx.de>
+        Tue, 23 Oct 2018 13:37:11 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:63400 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727602AbeJWRhL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 13:37:11 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 3F3F6CFE02CF697A5977;
+        Tue, 23 Oct 2018 17:14:39 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w9N9ETU6003085;
+        Tue, 23 Oct 2018 17:14:29 +0800 (GMT-8)
+        (envelope-from peng.hao2@zte.com.cn)
+Received: from localhost.localdomain.localdomain ([10.74.120.59])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018102317144452-6239499 ;
+          Tue, 23 Oct 2018 17:14:44 +0800 
+From:   Peng Hao <peng.hao2@zte.com.cn>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, andy@infradead.org,
+        dvhart@infradead.org
+Cc:     linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        hutao@cn.fujitsu.com, Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH 1/4]  pvpanic: move pvpanic to misc as common driver
+Date:   Wed, 24 Oct 2018 01:25:34 +0800
+Message-Id: <1540315537-70007-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-10-23 17:14:44,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-10-23 17:14:25,
+        Serialize complete at 2018-10-23 17:14:25
+X-MAIL: mse01.zte.com.cn w9N9ETU6003085
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The NXP's Vybryd vf610 can work as a SPI slave device (the CS and clock
-signals are provided by master).
+move pvpanic.c from drivers/platform/x86 to drivers/misc.
+following patches will use pvpanic device in arm64.
 
-It is possible to specify a single device to work in that mode. As we do
-use DMA for transferring data, the RX channel must be prepared for
-incoming data.
-Moreover, in slave mode we just set a subset of control fields in
-configuration registers (CTAR0, PUSHR).
-
-For testing the spidev_test program has been used.
-Test script for this patch can be found here:
-https://github.com/lmajewski/tests-spi/blob/master/tests/spi/spi_tests.sh
-
-
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
 ---
-Changes for v2:
+ drivers/misc/Kconfig           |   7 +++
+ drivers/misc/Makefile          |   1 +
+ drivers/misc/pvpanic.c         | 124 +++++++++++++++++++++++++++++++++++++++++
+ drivers/platform/Kconfig       |   3 +
+ drivers/platform/Makefile      |   1 +
+ drivers/platform/x86/Kconfig   |   8 ---
+ drivers/platform/x86/Makefile  |   1 -
+ drivers/platform/x86/pvpanic.c | 124 -----------------------------------------
+ 8 files changed, 136 insertions(+), 133 deletions(-)
+ create mode 100644 drivers/misc/pvpanic.c
+ delete mode 100644 drivers/platform/x86/pvpanic.c
 
-- Remove patch which adds extra NXP specific DTS property to support slave
-mode and reuse the generic one (spi-slave)
-- Remove patch which brings back the mcr_register local copy. It is not
-needed as generic SPI slave infrastructure is used.
-- Rewrite the code to use spi_controller_is_slave() helper functions
----
- drivers/spi/spi-fsl-dspi.c | 40 ++++++++++++++++++++++++++++++----------
- 1 file changed, 30 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index 3082e72e4f6c..94b6a9690062 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -233,6 +233,9 @@ static u32 dspi_pop_tx_pushr(struct fsl_dspi *dspi)
- {
- 	u16 cmd = dspi->tx_cmd, data = dspi_pop_tx(dspi);
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 5d71300..ca55c94 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -499,6 +499,13 @@ config MISC_RTSX
+ 	tristate
+ 	default MISC_RTSX_PCI || MISC_RTSX_USB
  
-+	if (spi_controller_is_slave(dspi->master))
-+		return data;
++config PVPANIC
++	tristate "pvpanic device support"
++	help
++          This driver provides support for the pvpanic device.  pvpanic is
++          a paravirtualized device provided by QEMU; it lets a virtual machine
++          (guest) communicate panic events to the host.
 +
- 	if (dspi->len > 0)
- 		cmd |= SPI_PUSHR_CMD_CONT;
- 	return cmd << 16 | data;
-@@ -329,6 +332,11 @@ static int dspi_next_xfer_dma_submit(struct fsl_dspi *dspi)
- 	dma_async_issue_pending(dma->chan_rx);
- 	dma_async_issue_pending(dma->chan_tx);
- 
-+	if (spi_controller_is_slave(dspi->master)) {
-+		wait_for_completion_interruptible(&dspi->dma->cmd_rx_complete);
-+		return 0;
+ source "drivers/misc/c2port/Kconfig"
+ source "drivers/misc/eeprom/Kconfig"
+ source "drivers/misc/cb710/Kconfig"
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index 20be70c..39dc005 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -57,3 +57,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
+ obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
+ obj-$(CONFIG_OCXL)		+= ocxl/
+ obj-$(CONFIG_MISC_RTSX)		+= cardreader/
++obj-$(CONFIG_PVPANIC)  		+= pvpanic.o
+diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic.c
+new file mode 100644
+index 0000000..fd86dab
+--- /dev/null
++++ b/drivers/misc/pvpanic.c
+@@ -0,0 +1,124 @@
++/*
++ *  pvpanic.c - pvpanic Device Support
++ *
++ *  Copyright (C) 2013 Fujitsu.
++ *
++ *  This program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2 of the License, or
++ *  (at your option) any later version.
++ *
++ *  This program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with this program; if not, write to the Free Software
++ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/types.h>
++#include <linux/acpi.h>
++
++MODULE_AUTHOR("Hu Tao <hutao@cn.fujitsu.com>");
++MODULE_DESCRIPTION("pvpanic device driver");
++MODULE_LICENSE("GPL");
++
++static int pvpanic_add(struct acpi_device *device);
++static int pvpanic_remove(struct acpi_device *device);
++
++static const struct acpi_device_id pvpanic_device_ids[] = {
++	{ "QEMU0001", 0 },
++	{ "", 0 },
++};
++MODULE_DEVICE_TABLE(acpi, pvpanic_device_ids);
++
++#define PVPANIC_PANICKED	(1 << 0)
++
++static u16 port;
++
++static struct acpi_driver pvpanic_driver = {
++	.name =		"pvpanic",
++	.class =	"QEMU",
++	.ids =		pvpanic_device_ids,
++	.ops =		{
++				.add =		pvpanic_add,
++				.remove =	pvpanic_remove,
++			},
++	.owner =	THIS_MODULE,
++};
++
++static void
++pvpanic_send_event(unsigned int event)
++{
++	outb(event, port);
++}
++
++static int
++pvpanic_panic_notify(struct notifier_block *nb, unsigned long code,
++		     void *unused)
++{
++	pvpanic_send_event(PVPANIC_PANICKED);
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block pvpanic_panic_nb = {
++	.notifier_call = pvpanic_panic_notify,
++	.priority = 1, /* let this called before broken drm_fb_helper */
++};
++
++
++static acpi_status
++pvpanic_walk_resources(struct acpi_resource *res, void *context)
++{
++	switch (res->type) {
++	case ACPI_RESOURCE_TYPE_END_TAG:
++		return AE_OK;
++
++	case ACPI_RESOURCE_TYPE_IO:
++		port = res->data.io.minimum;
++		return AE_OK;
++
++	default:
++		return AE_ERROR;
 +	}
++}
 +
- 	time_left = wait_for_completion_timeout(&dspi->dma->cmd_tx_complete,
- 					DMA_COMPLETION_TIMEOUT);
- 	if (time_left == 0) {
-@@ -798,14 +806,18 @@ static int dspi_setup(struct spi_device *spi)
- 	ns_delay_scale(&pasc, &asc, sck_cs_delay, clkrate);
- 
- 	chip->ctar_val = SPI_CTAR_CPOL(spi->mode & SPI_CPOL ? 1 : 0)
--		| SPI_CTAR_CPHA(spi->mode & SPI_CPHA ? 1 : 0)
--		| SPI_CTAR_LSBFE(spi->mode & SPI_LSB_FIRST ? 1 : 0)
--		| SPI_CTAR_PCSSCK(pcssck)
--		| SPI_CTAR_CSSCK(cssck)
--		| SPI_CTAR_PASC(pasc)
--		| SPI_CTAR_ASC(asc)
--		| SPI_CTAR_PBR(pbr)
--		| SPI_CTAR_BR(br);
-+		| SPI_CTAR_CPHA(spi->mode & SPI_CPHA ? 1 : 0);
++static int pvpanic_add(struct acpi_device *device)
++{
++	int ret;
 +
-+	if (!spi_controller_is_slave(dspi->master)) {
-+		chip->ctar_val |= SPI_CTAR_LSBFE(spi->mode &
-+						 SPI_LSB_FIRST ? 1 : 0)
-+			| SPI_CTAR_PCSSCK(pcssck)
-+			| SPI_CTAR_CSSCK(cssck)
-+			| SPI_CTAR_PASC(pasc)
-+			| SPI_CTAR_ASC(asc)
-+			| SPI_CTAR_PBR(pbr)
-+			| SPI_CTAR_BR(br);
-+	}
- 
- 	spi_set_ctldata(spi, chip);
- 
-@@ -970,8 +982,13 @@ static const struct regmap_config dspi_xspi_regmap_config[] = {
- 
- static void dspi_init(struct fsl_dspi *dspi)
- {
--	regmap_write(dspi->regmap, SPI_MCR, SPI_MCR_MASTER | SPI_MCR_PCSIS |
--		     (dspi->devtype_data->xspi_mode ? SPI_MCR_XSPI : 0));
-+	unsigned int mcr = SPI_MCR_PCSIS |
-+		(dspi->devtype_data->xspi_mode ? SPI_MCR_XSPI : 0);
++	ret = acpi_bus_get_status(device);
++	if (ret < 0)
++		return ret;
 +
-+	if (!spi_controller_is_slave(dspi->master))
-+		mcr |= SPI_MCR_MASTER;
++	if (!device->status.enabled || !device->status.functional)
++		return -ENODEV;
 +
-+	regmap_write(dspi->regmap, SPI_MCR, mcr);
- 	regmap_write(dspi->regmap, SPI_SR, SPI_SR_CLEAR);
- 	if (dspi->devtype_data->xspi_mode)
- 		regmap_write(dspi->regmap, SPI_CTARE(0),
-@@ -1027,6 +1044,9 @@ static int dspi_probe(struct platform_device *pdev)
- 		}
- 		master->bus_num = bus_num;
++	acpi_walk_resources(device->handle, METHOD_NAME__CRS,
++			    pvpanic_walk_resources, NULL);
++
++	if (!port)
++		return -ENODEV;
++
++	atomic_notifier_chain_register(&panic_notifier_list,
++				       &pvpanic_panic_nb);
++
++	return 0;
++}
++
++static int pvpanic_remove(struct acpi_device *device)
++{
++
++	atomic_notifier_chain_unregister(&panic_notifier_list,
++					 &pvpanic_panic_nb);
++	return 0;
++}
++
++module_acpi_driver(pvpanic_driver);
+diff --git a/drivers/platform/Kconfig b/drivers/platform/Kconfig
+index d4c2e42..8b64b78 100644
+--- a/drivers/platform/Kconfig
++++ b/drivers/platform/Kconfig
+@@ -1,3 +1,6 @@
++if ARM64
++source "drivers/platform/arm/Kconfig"
++endif
+ if X86
+ source "drivers/platform/x86/Kconfig"
+ endif
+diff --git a/drivers/platform/Makefile b/drivers/platform/Makefile
+index 4b2ce58..232231c 100644
+--- a/drivers/platform/Makefile
++++ b/drivers/platform/Makefile
+@@ -3,6 +3,7 @@
+ # Makefile for linux/drivers/platform
+ #
  
-+		if (of_property_read_bool(np, "spi-slave"))
-+			master->slave = true;
-+
- 		dspi->devtype_data = of_device_get_match_data(&pdev->dev);
- 		if (!dspi->devtype_data) {
- 			dev_err(&pdev->dev, "can't get devtype_data\n");
++obj-$(CONFIG_ARM64)               += arm/
+ obj-$(CONFIG_X86)		+= x86/
+ obj-$(CONFIG_MELLANOX_PLATFORM)	+= mellanox/
+ obj-$(CONFIG_MIPS)		+= mips/
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index ef016e4..a6b412e 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1119,14 +1119,6 @@ config INTEL_SMARTCONNECT
+ 	  This driver checks to determine whether the device has Intel Smart
+ 	  Connect enabled, and if so disables it.
+ 
+-config PVPANIC
+-	tristate "pvpanic device support"
+-	depends on ACPI
+-	---help---
+-	  This driver provides support for the pvpanic device.  pvpanic is
+-	  a paravirtualized device provided by QEMU; it lets a virtual machine
+-	  (guest) communicate panic events to the host.
+-
+ config INTEL_PMC_IPC
+ 	tristate "Intel PMC IPC Driver"
+ 	depends on ACPI
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+index 2ba6cb7..a4ec299 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -75,7 +75,6 @@ obj-$(CONFIG_APPLE_GMUX)	+= apple-gmux.o
+ obj-$(CONFIG_INTEL_RST)		+= intel-rst.o
+ obj-$(CONFIG_INTEL_SMARTCONNECT)	+= intel-smartconnect.o
+ 
+-obj-$(CONFIG_PVPANIC)           += pvpanic.o
+ obj-$(CONFIG_ALIENWARE_WMI)	+= alienware-wmi.o
+ obj-$(CONFIG_INTEL_PMC_IPC)	+= intel_pmc_ipc.o
+ obj-$(CONFIG_SILEAD_DMI)	+= silead_dmi.o
+diff --git a/drivers/platform/x86/pvpanic.c b/drivers/platform/x86/pvpanic.c
+deleted file mode 100644
+index fd86dab..0000000
+--- a/drivers/platform/x86/pvpanic.c
++++ /dev/null
+@@ -1,124 +0,0 @@
+-/*
+- *  pvpanic.c - pvpanic Device Support
+- *
+- *  Copyright (C) 2013 Fujitsu.
+- *
+- *  This program is free software; you can redistribute it and/or modify
+- *  it under the terms of the GNU General Public License as published by
+- *  the Free Software Foundation; either version 2 of the License, or
+- *  (at your option) any later version.
+- *
+- *  This program is distributed in the hope that it will be useful,
+- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *  GNU General Public License for more details.
+- *
+- *  You should have received a copy of the GNU General Public License
+- *  along with this program; if not, write to the Free Software
+- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+- */
+-
+-#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+-
+-#include <linux/kernel.h>
+-#include <linux/module.h>
+-#include <linux/init.h>
+-#include <linux/types.h>
+-#include <linux/acpi.h>
+-
+-MODULE_AUTHOR("Hu Tao <hutao@cn.fujitsu.com>");
+-MODULE_DESCRIPTION("pvpanic device driver");
+-MODULE_LICENSE("GPL");
+-
+-static int pvpanic_add(struct acpi_device *device);
+-static int pvpanic_remove(struct acpi_device *device);
+-
+-static const struct acpi_device_id pvpanic_device_ids[] = {
+-	{ "QEMU0001", 0 },
+-	{ "", 0 },
+-};
+-MODULE_DEVICE_TABLE(acpi, pvpanic_device_ids);
+-
+-#define PVPANIC_PANICKED	(1 << 0)
+-
+-static u16 port;
+-
+-static struct acpi_driver pvpanic_driver = {
+-	.name =		"pvpanic",
+-	.class =	"QEMU",
+-	.ids =		pvpanic_device_ids,
+-	.ops =		{
+-				.add =		pvpanic_add,
+-				.remove =	pvpanic_remove,
+-			},
+-	.owner =	THIS_MODULE,
+-};
+-
+-static void
+-pvpanic_send_event(unsigned int event)
+-{
+-	outb(event, port);
+-}
+-
+-static int
+-pvpanic_panic_notify(struct notifier_block *nb, unsigned long code,
+-		     void *unused)
+-{
+-	pvpanic_send_event(PVPANIC_PANICKED);
+-	return NOTIFY_DONE;
+-}
+-
+-static struct notifier_block pvpanic_panic_nb = {
+-	.notifier_call = pvpanic_panic_notify,
+-	.priority = 1, /* let this called before broken drm_fb_helper */
+-};
+-
+-
+-static acpi_status
+-pvpanic_walk_resources(struct acpi_resource *res, void *context)
+-{
+-	switch (res->type) {
+-	case ACPI_RESOURCE_TYPE_END_TAG:
+-		return AE_OK;
+-
+-	case ACPI_RESOURCE_TYPE_IO:
+-		port = res->data.io.minimum;
+-		return AE_OK;
+-
+-	default:
+-		return AE_ERROR;
+-	}
+-}
+-
+-static int pvpanic_add(struct acpi_device *device)
+-{
+-	int ret;
+-
+-	ret = acpi_bus_get_status(device);
+-	if (ret < 0)
+-		return ret;
+-
+-	if (!device->status.enabled || !device->status.functional)
+-		return -ENODEV;
+-
+-	acpi_walk_resources(device->handle, METHOD_NAME__CRS,
+-			    pvpanic_walk_resources, NULL);
+-
+-	if (!port)
+-		return -ENODEV;
+-
+-	atomic_notifier_chain_register(&panic_notifier_list,
+-				       &pvpanic_panic_nb);
+-
+-	return 0;
+-}
+-
+-static int pvpanic_remove(struct acpi_device *device)
+-{
+-
+-	atomic_notifier_chain_unregister(&panic_notifier_list,
+-					 &pvpanic_panic_nb);
+-	return 0;
+-}
+-
+-module_acpi_driver(pvpanic_driver);
 -- 
-2.11.0
+1.8.3.1
 
