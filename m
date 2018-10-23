@@ -2,92 +2,119 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7B7C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0166C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9F6E20671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:23:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F6E20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id A342F20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:27:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A342F20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbeJWQpp (ORCPT
+        id S1727803AbeJWQtm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 12:45:45 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13682 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727470AbeJWQpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 12:45:45 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 3B39ED9E0AB6;
-        Tue, 23 Oct 2018 16:23:22 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Tue, 23 Oct 2018
- 16:23:20 +0800
-Message-ID: <5BCEDA77.9010505@huawei.com>
-Date:   Tue, 23 Oct 2018 16:23:19 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
-MIME-Version: 1.0
-To:     Pkshih <pkshih@realtek.com>
-CC:     "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rtlwifi: remove set but not used variable 'radiob_array_table'
- and 'radiob_arraylen'
-References: <1540273651-64688-1-git-send-email-zhongjiang@huawei.com> <1540281873.25715.2.camel@realtek.com>
-In-Reply-To: <1540281873.25715.2.camel@realtek.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+        Tue, 23 Oct 2018 12:49:42 -0400
+Received: from foss.arm.com ([217.140.101.70]:54556 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727210AbeJWQtm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 12:49:42 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D540680D;
+        Tue, 23 Oct 2018 01:27:21 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D17EE3F71D;
+        Tue, 23 Oct 2018 01:27:13 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 09:27:07 +0100
+Message-ID: <864lddt6ec.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH v2 00/10] Add support for TISCI irqchip drivers
+In-Reply-To: <050161aa-a257-9bf8-b3c9-35b13925b556@ti.com>
+References: <20181018154017.7112-1-lokeshvutla@ti.com>
+        <942981b8-7536-2b6b-ad49-dc59671cbda6@oracle.com>
+        <050161aa-a257-9bf8-b3c9-35b13925b556@ti.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/23 16:05, Pkshih wrote:
-> On Tue, 2018-10-23 at 13:47 +0800, zhong jiang wrote:
->> 'radiob_array_table' and 'radiob_arraylen' is not used after setting its
->> value.
->> It is safe to remove the unused variable.
->>
->> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->> ---
->>  drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c | 5 +----
->>  1 file changed, 1 insertion(+), 4 deletions(-)
->>
->> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c
->> b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c
->> index 5cf29f5..3f33278 100644
->> --- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c
->> +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c
->> @@ -509,13 +509,10 @@ bool rtl8723e_phy_config_rf_with_headerfile(struct
->> ieee80211_hw *hw,
->>  	int i;
->>  	bool rtstatus = true;
->>  	u32 *radioa_array_table;
->> -	u32 *radiob_array_table;
->> -	u16 radioa_arraylen, radiob_arraylen;
->> +	u16 radioa_arraylen;
->>  
->>  	radioa_arraylen = RTL8723ERADIOA_1TARRAYLENGTH;
->>  	radioa_array_table = RTL8723E_RADIOA_1TARRAY;
->> -	radiob_arraylen = RTL8723E_RADIOB_1TARRAYLENGTH;
->> -	radiob_array_table = RTL8723E_RADIOB_1TARRAY;
->>  
->>  	rtstatus = true;
->>  
-> I think 8723ae has only one antenna, so you can remove radio B array as well.
->
-Yep,  Will do.
+On Tue, 23 Oct 2018 09:17:56 +0100,
+Lokesh Vutla <lokeshvutla@ti.com> wrote:
+> 
+> Hi Santosh,
+> 
+> On Tuesday 23 October 2018 02:09 AM, Santosh Shilimkar wrote:
+> > On 10/18/2018 8:40 AM, Lokesh Vutla wrote:
+> >> TISCI abstracts the handling of IRQ routes where interrupt sources
+> >> are not directly connected to host interrupt controller. This series
+> >> adds support for:
+> >> - TISCI commands needed for IRQ configuration
+> >> - Interrupt Router(INTR) and Interrupt Aggregator(INTA) drivers
+> >> 
+> >> More information on TISCI IRQ management can be found here[1].
+> >> Complete TISCI resource management information can be found here[2].
+> >> AM65x SoC related TISCI information can be found here[3].
+> >> INTR and INTA related information can be found in TRM[4].
+> >> 
+> > I didn't read the specs but from what you described in
+> > INTA and INTR bindings, does the flow of IRQs like below ?
+> > 
+> > Device IRQ(e.g USB) -->INTR-->INTA--->HOST IRQ controller(GIC)
+> 
+> Not all devices in SoC are connected to INTA. Only the devices that
+> are capable of generating events are connected to INTA. And INTA is
+> connected to INTR.
+> 
+> So there are three ways in which IRQ can flow in AM65x SoC:
+> 1) Device directly connected to GIC
+> 	- Device IRQ --> GIC
+> 	- (Most legacy peripherals like MMC, UART falls in this case)
+> 2) Device connected to INTR.
+> 	- Device IRQ --> INTR --> GIC
+> 	- This is cases where you want to mux IRQs. Used for GPIOs and Mailboxes
+> 	- (This is somewhat similar to crossbar on DRA7 devices)
+> 3) Devices connected to INTA.
+> 	- Device Event --> INTA --> INTR --> GIC
+> 	- Used for DMA and networking devices.
+> 
+> Events are messages based on a hw protocol, sent by a master over a
+> dedicated Event transport lane. Events are highly precise that no
+> under/over flow of data transfer occurs at source/destination
+> regardless of distance and latency. So this is mostly preferred in DMA
+> and networking usecases. Now Interrupt Aggregator(IA) has the logic to
+> converts these events to Interrupts.
+
+Can we stop with these events already? What you describe here *is* an
+interrupt. The fact that you have some other dedicated infrastructure
+in your SoC is an implementation detail that doesn't concern the
+kernel at all.
+
+So this should be modelled as an interrupt, and not have its own
+special interface at all.
 
 Thanks,
-zhong jiang
 
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
