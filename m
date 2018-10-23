@@ -2,200 +2,131 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACCBC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DBBC67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:11:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2807E20652
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:10:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2807E20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9125A20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:11:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="b0UJBW3C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9125A20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728421AbeJWRdJ (ORCPT
+        id S1728438AbeJWRdi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 13:33:09 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41073 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727704AbeJWRdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 13:33:09 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2D45F208DD; Tue, 23 Oct 2018 11:10:38 +0200 (CEST)
-Received: from bbrezillon (aaubervilliers-681-1-25-52.w90-88.abo.wanadoo.fr [90.88.145.52])
-        by mail.bootlin.com (Postfix) with ESMTPSA id AC29F20736;
-        Tue, 23 Oct 2018 11:10:27 +0200 (CEST)
-Date:   Tue, 23 Oct 2018 11:10:27 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     "Cristian.Birsan@microchip.com" <Cristian.Birsan@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        "richard@nod.at" <richard@nod.at>, Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "cyrille.pitchen@microchip.com" <cyrille.pitchen@microchip.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP
- SPI NOR flash memories
-Message-ID: <20181023111027.54df8650@bbrezillon>
-In-Reply-To: <VI1PR04MB103882359E835334D19177E299F50@VI1PR04MB1038.eurprd04.prod.outlook.com>
-References: <20180911154007.17195-1-tudor.ambarus@microchip.com>
-        <20181022111543.2a607efc@bbrezillon>
-        <VI1PR04MB1038EF892921194D1BFDE6FC99F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022122659.0675942e@bbrezillon>
-        <VI1PR04MB1038E92FFAB03E07048FD8B499F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022124627.2c6c3b93@bbrezillon>
-        <20181022125259.42df83ea@bbrezillon>
-        <VI1PR04MB1038C9C889185F2A700220F299F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022134324.2c1bd248@bbrezillon>
-        <VI1PR04MB1038E072BFFD09C7C19AD2F899F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022135211.1978c25d@bbrezillon>
-        <VI1PR04MB1038B9A5A8C59E6CB0863FF599F50@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181023073946.138b287e@bbrezillon>
-        <VI1PR04MB10381C2DC4052E636BA26ADA99F50@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181023104827.77e7775b@bbrezillon>
-        <20181023110122.27f73100@bbrezillon>
-        <VI1PR04MB103882359E835334D19177E299F50@VI1PR04MB1038.eurprd04.prod.outlook.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 23 Oct 2018 13:33:38 -0400
+Received: from mail-lf1-f45.google.com ([209.85.167.45]:33021 "EHLO
+        mail-lf1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727602AbeJWRdh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 13:33:37 -0400
+Received: by mail-lf1-f45.google.com with SMTP id o21-v6so547506lfe.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 02:11:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GwbqpjyTTF9zZXsAQUHLIQWnBnPGSxCpK5StWhkCngQ=;
+        b=b0UJBW3CSXUvXnvmFcRyp1b/swtFjfGE8lVxnWgUJj026qSORyefj7lzmJmzOFO0C7
+         KTBXDXxRZSGSrYmPjEMdJLr5TVPoKTR9nEKB4B8leHTa76919I6MFF//JV3DVoGgtxs6
+         +W6eIzKX2DcK4TRDI7el1OjPjBmZLivaTEjA4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GwbqpjyTTF9zZXsAQUHLIQWnBnPGSxCpK5StWhkCngQ=;
+        b=iubcFvIIGcIlepCl7elk9mG8ilJ9EIlLFYOOk2Qmef4bu9UtUnWafOFvf+uM7UAqzZ
+         0esluUPsYxFByFVl51luFxzHfHAqHrKgSzV/IxlDpcm56Vm6wbAHxLdXIoFsNEJzNvX+
+         OSnwdpeL5Bn9ELXysIqvx6E4HMiRk8as5Bgh7MQSij2teaF1PKOndL+Fv97mgASK8n3n
+         hduKRhDynKSfaf7YFT2Etb770rYJRgg3g9WH63YDbaobclcM/zuEGPnFesg9a3efHfWO
+         HHzP57m9fYjci3H7uVgFQMaqikcz1x77V2K/y+YTf1Pz+O0HOJfDpG1rFupLzpFZAPl+
+         CFGQ==
+X-Gm-Message-State: ABuFfohOgH4CNvmYRxvDlTnA9prsYUfWIrqJEqjiSpenzEOd7Clu5mDp
+        Nr5LeE9aHFRRSG+lCPTBocqlcGm/tz43N68/
+X-Google-Smtp-Source: ACcGV63PnukolN9KBjbuT7Sd1NykxT8vMtJ+QBDgBP5XNDPIo6sfbdl8w9S3Mi763M59kLn84xOsQw==
+X-Received: by 2002:a19:c18d:: with SMTP id r135mr7134300lff.59.1540285865699;
+        Tue, 23 Oct 2018 02:11:05 -0700 (PDT)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id b25sm118283lfa.96.2018.10.23.02.11.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Oct 2018 02:11:04 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id d7-v6so542368lfi.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 02:11:04 -0700 (PDT)
+X-Received: by 2002:ac2:41d8:: with SMTP id d24-v6mr11275898lfi.138.1540285864090;
+ Tue, 23 Oct 2018 02:11:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <CAHk-=wjS6cjjP+fkZWzzrdZ_fZ1F=PrAGcBc57vKCpNyoD73Vw@mail.gmail.com>
+ <CACRpkdbi2gqqc271eMgHjD68bqf2mzw8zw+iAhYv2LFajfo-eQ@mail.gmail.com>
+In-Reply-To: <CACRpkdbi2gqqc271eMgHjD68bqf2mzw8zw+iAhYv2LFajfo-eQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 23 Oct 2018 10:10:47 +0100
+X-Gmail-Original-Message-ID: <CAHk-=wiiC65aZFrDp69vdcSALLDZNPkTL1diadxNL54tBPeAzQ@mail.gmail.com>
+Message-ID: <CAHk-=wiiC65aZFrDp69vdcSALLDZNPkTL1diadxNL54tBPeAzQ@mail.gmail.com>
+Subject: Re: Git pull ack emails..
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Mark Brown <broonie@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 23 Oct 2018 09:05:23 +0000
-Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+On Tue, Oct 23, 2018 at 9:53 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> Can't you just tool something that mails automatically after-the-fact?
 
-> Hi,
-> 
-> > -----Original Message-----
-> > From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
-> > Sent: Tuesday, October 23, 2018 2:31 PM
-> > To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-> > Cc: Cristian.Birsan@microchip.com; Tudor Ambarus
-> > <tudor.ambarus@microchip.com>; richard@nod.at; Mark Brown
-> > <broonie@kernel.org>; linux-kernel@vger.kernel.org;
-> > nicolas.ferre@microchip.com; marek.vasut@gmail.com;
-> > cyrille.pitchen@microchip.com; linux-mtd@lists.infradead.org; Cyrille Pitchen
-> > <cyrille.pitchen@wedev4u.fr>; computersforpeace@gmail.com;
-> > dwmw2@infradead.org; linux-arm-kernel@lists.infradead.org
-> > Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP SPI
-> > NOR flash memories
-> > 
-> > On Tue, 23 Oct 2018 10:48:27 +0200
-> > Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> >   
-> > > On Tue, 23 Oct 2018 08:18:35 +0000
-> > > Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
-> > >  
-> > > >
-> > > > I have added the prints in m25p80_read() and in flexspi controller prepare_lut  
-> > and read_rxfifo() func.  
-> > > > In these have added prints for data variable of struct op and data which  
-> > being read by the controller from the flash.  
-> > > >
-> > > > [    2.091467] smpt[0]=[addr_width:00000003, read_dumy:00000008,  
-> > read_opcode:00000065, data_mask:00000008]  
-> > > > [    2.099113] m25p80_read, nor[op:00000065 addr_width:00000003,  
-> > dummy:00000008, len:00000001  
-> > > > [    2.107367] m25p80_read, cmd[opcode:65 bwidth:1] aadr[val:4, nbytes:3,  
-> > bwidth:1]  
-> > > > [    2.114753] m25p80_read, dummy[nbytes:1 bwidth:1] data[bwidth:1,  
-> > nbytes:1]  
-> > > > [    2.121706] nxp_fspi_prepare_lut cmd[opcode:65 bwidth:1] aadr[val:4,  
-> > nbytes:3, bwidth:1]  
-> > > > [    2.129786] dummy[nbytes:1 bwidth:1] data[dir:0 bwidth:1, nbytes:1]
-> > > > [    2.136132] nxp-fspi 20c0000.flexspi: CMD[65] lutval[0:8180465  
-> > 1:24003008      2:0     3:0]  
-> > > > [    2.144223] nxp_fspi_read_rxfifo, ReadData op.buf[0x00]
-> > > > [    2.151004] smpt_read[1] addr[00000004], data_byte[00000000]  
-> > err:00000000  
-> > > >
-> > > >
-> > > > [    2.157782] smpt[2]=[addr_width:00000003, read_dumy:00000008,  
-> > read_opcode:00000065, data_mask:00000004]  
-> > > > [    2.165429] m25p80_read, nor[op:00000065 addr_width:00000003,  
-> > dummy:00000008, len:00000001  
-> > > > [    2.173683] m25p80_read, cmd[opcode:65 bwidth:1] aadr[val:2, nbytes:3,  
-> > bwidth:1]  
-> > > > [    2.181068] m25p80_read, dummy[nbytes:1 bwidth:1] data[bwidth:1,  
-> > nbytes:1]  
-> > > > [    2.188021] nxp_fspi_prepare_lut cmd[opcode:65 bwidth:1] aadr[val:2,  
-> > nbytes:3, bwidth:1]  
-> > > > [    2.196101] dummy[nbytes:1 bwidth:1] data[dir:0 bwidth:1, nbytes:1]
-> > > > [    2.202447] nxp-fspi 20c0000.flexspi: CMD[65] lutval[0:8180465  
-> > 1:24003008      2:0     3:0]  
-> > > > [    2.210539] nxp_fspi_read_rxfifo, ReadData op.buf[0x02]
-> > > > [    2.217319] smpt_read[3] addr[00000002], data_byte[00000002]  
-> > err:00000000  
-> > > >
-> > > >
-> > > > [    2.224098] smpt[4]=[addr_width:00000003, read_dumy:00000008,  
-> > read_opcode:00000065, data_mask:00000002]  
-> > > > [    2.231744] m25p80_read, nor[op:00000065 addr_width:00000003,  
-> > dummy:00000008, len:00000001  
-> > > > [    2.239998] m25p80_read, cmd[opcode:65 bwidth:1] aadr[val:4, nbytes:3,  
-> > bwidth:1]  
-> > > > [    2.247383] m25p80_read, dummy[nbytes:1 bwidth:1] data[bwidth:1,  
-> > nbytes:1]  
-> > > > [    2.254336] nxp_fspi_prepare_lut cmd[opcode:65 bwidth:1] aadr[val:4,  
-> > nbytes:3, bwidth:1]  
-> > > > [    2.262416] dummy[nbytes:1 bwidth:1] data[dir:0 bwidth:1, nbytes:1]
-> > > > [    2.268762] nxp-fspi 20c0000.flexspi: CMD[65] lutval[0:8180465  
-> > 1:24003008      2:0     3:0]  
-> > > > [    2.276854] nxp_fspi_read_rxfifo, ReadData op.buf[0x00]
-> > > > [    2.283634] smpt_read[5] addr[00000004], data_byte[00000000]  
-> > err:00000000  
-> > > >
-> > > >
-> > > > [    2.290412] spi_nor_get_map_in_use:2915 map_id=0 smpt_len:16 i=:6
-> > > > [    2.296496] End [addr_width:00000003, read_dumy:00000008,  
-> > read_opcode:00000065] ReturnVal:00000000  
-> > > > [    2.305444] spi_nor_parse_smpt:3065
-> > > > [    2.308924] m25p80 spi0.0: failed to parse SMPT (err = -22)
-> > > >
-> > > >  
-> > > > >
-> > > > > Next thing you can do is read the CR2NV reg (using the RDAR command)  
-> > and  
-> > > > > check the RL (Read Latency) and AL (Address Length) values.  
-> > > >
-> > > > Please let me know how to read CR2NV register.  
-> > >
-> > > Actually, RDAR is already what you use to read the map_id, and we need
-> > > to use it to read the register that contains the number of dummy
-> > > cycles and the number of address bytes to use for RDAR operations.
-> > > Looks like we have a chicken and egg situation here :-).
-> > >
-> > > Let's try something else:
-> > >
-> > > 1/ create an u8 array of 16 entries named data_bytes
-> > >
-> > > for each loop iteration (the first for loop):
-> > > 2/ set ->addr_width to 3 and ->read_dummy to 0 3/ call
-> > > spi_nor_read_raw(nor, addr, ARRAY_SIZE(data_bytes), data_bytes) 4/
-> > > dump the data_bytes buf 5/ set ->addr_width to 4 6/ call
-> > > spi_nor_read_raw(nor, addr, ARRAY_SIZE(data_bytes), data_bytes) 7/
-> > > dump the data_bytes buf
-> > >
-> > > If the SPI driver is working correctly, we should be able to figure
-> > > out the right value for ->addr_width and ->read_dummy.  
-> > 
-> > Also, can you add traces in nxp_fspi_read_rxfifo() to print the value returned by
-> > f->read(base + FSPI_RFDR + j * 4) (there are 2 of them).  
-> 
-> I have added this and printing the data content, all 4 bytes, after each f->read(base + FSPI_RFDR + j * 4);
-> This I have shown in the logs, only 1 byte i.e. as we are reading only 1 byte so I have deleted content of rest 3 bytes when sending the logs in mail.
+So a certain amount of simple/stupid automation would be possible.
+That's how the participants list in this email was generated, but the
+script I used was actually a pretty much garbage one-liner that just
+happens to work for most cases.
 
-But I do care about the remaining 3 bytes, otherwise I wouldn't ask you
-to print them. Please print the full reg content using %08x.
+It just did my usual "mergelog" (which is a bit like "git shortlog",
+it's a script to just get the summary of my merges instead of the
+general git logs) and then it used the result of that lookup to look
+up the email address by just matching committers.
+
+But it's broken to the point of almost being useless for a couple of reasons:
+
+ - my mergelog names don't necessarily match any name in the git history.
+
+   For example, Greg goes by "Greg KH" when I merge from him, because
+I'm lazy and feel like I  don't want to mis-type his name, which I've
+done too many times. But in the actual git history, he goes by the
+full "Greg Kroah-Hartman", so my stupid script would have messed him
+up.
+
+   At the other end of the spectrum, people with complex characters
+have their names copied-and-pasted from their email or the signature
+from their tag, and sometimes those then don't match either.
+
+ - some people use one email for "official" purposes (ie company email
+etc) in the git history, but actually tend to *use* another email
+(because sometimes the company email is slow and/or broken).
+
+ - it wouldn't get the usual mailing list cc's etc, and those might be
+the most important ones. It is how I saw Greg's replies, after all.
+
+So I feel that he automation model is just not good. The reply should
+go to the actual pull request, not to the git history. People who want
+just _that_ could already automate the git history thing without me
+even doing anything at all, either scripting it themselves or by using
+some filtering on the kernel commit mailing list..
+
+So I happened to use the automation model for this email thread, but I
+think it's actually the worst of all worlds.
+
+                    Linus
