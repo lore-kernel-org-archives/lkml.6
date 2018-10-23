@@ -2,109 +2,125 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9829DC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F00C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:36:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 473F9204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:36:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 473F9204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C0DE20813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:36:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PxIoJz4H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C0DE20813
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728627AbeJXDAf (ORCPT
+        id S1728709AbeJXDAu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:00:35 -0400
-Received: from mga09.intel.com ([134.134.136.24]:30599 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728099AbeJXDAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:00:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:36:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
-   d="scan'208";a="243724664"
-Received: from ray.jf.intel.com (HELO [10.7.201.18]) ([10.7.201.18])
-  by orsmga004.jf.intel.com with ESMTP; 23 Oct 2018 11:36:02 -0700
-Subject: Re: [RFC PATCH 0/5] x86: dynamic indirect call promotion
-To:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>,
-        x86@kernel.org, Borislav Petkov <bp@alien8.de>,
-        David Woodhouse <dwmw@amazon.co.uk>
-References: <20181018005420.82993-1-namit@vmware.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <7182c1db-2b23-5d69-7f4c-856a6ad43f8e@intel.com>
-Date:   Tue, 23 Oct 2018 11:36:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 23 Oct 2018 23:00:50 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:32926 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728099AbeJXDAu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:00:50 -0400
+Received: by mail-ua1-f66.google.com with SMTP id j13so903474ual.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 11:36:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gRwRnowQUdebqJquGJ2dlNqPe6oRvqB59+nwpcwBaeU=;
+        b=PxIoJz4Hdri5js2L5BmhOC17lToXCZYKBVIFVqB7uVmV6kRfeVCkmRw/EWvA7irKbB
+         zUIP3n3qbvhOrHOdLT8j4Vc4YJb6ws29ouydJno4IWDu6jxD2c6he02lhNuVdjMq0kSq
+         K8Lab7g4PJUWPWTZjGOKRoIl/osaBMJ9gJ6tI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gRwRnowQUdebqJquGJ2dlNqPe6oRvqB59+nwpcwBaeU=;
+        b=KjBdYup8a3AdR0WqMvd0SVbheoth31w9LDlgWRA2ULSaWcb9iIe88qID2eFOlSCyRm
+         Oim8CHuE3xwuzF+9Y2xT+P09+9QRDknW2BrdlFCIwbG37oWpOFo5SgYSLcEgtqCgQ6PQ
+         e/xyrF+IsuO/IBG9BlEDEEMfPBQu/p/y9fI+LeEVxD32p5iYxOPshvzlVH/5zyoHL1pr
+         pdeL52vEmD53wsIGZHHwSUUEzd2X3x2k4QEXoR+O4/pFOOsYaGEf3jXO8ZWdUdTZq4md
+         75Gs2wS6uVFz5f9SqGxxTEz9jhlmRvcF9+umW6KdBe8jvSdn+1j4xoOtu62XyhnRIFKQ
+         BagQ==
+X-Gm-Message-State: ABuFfoiTzL8tdgLfxv2EeheTH6dNiNqAwXjFm5N0OS2svUA2jg7zK2Wk
+        Y2SOuXPr/YmsESkIjgQqxKAiiEi1Q8c=
+X-Google-Smtp-Source: ACcGV603Ol4HaMIlHzIXs6sdNMIthUFBrt9Ovye9Xpb+Zq2uvm8+w0OveZjJOMWlgPxM7WehwQfEcw==
+X-Received: by 2002:ab0:5c61:: with SMTP id a33mr22064648uag.59.1540319776449;
+        Tue, 23 Oct 2018 11:36:16 -0700 (PDT)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id i10-v6sm469905vke.41.2018.10.23.11.36.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Oct 2018 11:36:15 -0700 (PDT)
+Received: by mail-vs1-f45.google.com with SMTP id l6so1508714vsj.13
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 11:36:15 -0700 (PDT)
+X-Received: by 2002:a67:b20e:: with SMTP id b14mr20587054vsf.121.1540319774697;
+ Tue, 23 Oct 2018 11:36:14 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181018005420.82993-1-namit@vmware.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1539622953-4188-1-git-send-email-rplsssn@codeaurora.org>
+In-Reply-To: <1539622953-4188-1-git-send-email-rplsssn@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 23 Oct 2018 11:36:03 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XB9diR_n1TB4+wUjVaRf0VAmCMgkSbtuOSNO5pkrQ8zg@mail.gmail.com>
+Message-ID: <CAD=FV=XB9diR_n1TB4+wUjVaRf0VAmCMgkSbtuOSNO5pkrQ8zg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: sdm845: Add PSCI cpuidle low power states
+To:     Raju P L S S S N <rplsssn@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Lina Iyer <ilina@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/18 5:54 PM, Nadav Amit wrote:
-> 		base		relpoline
-> 		----		---------
-> nginx 	22898 		25178 (+10%)
-> redis-ycsb	24523		25486 (+4%)
-> dbench	2144		2103 (+2%)
+Hi,
 
-Just out of curiosity, which indirect branches are the culprits here for
-causing the slowdowns?
+On Mon, Oct 15, 2018 at 10:02 AM Raju P.L.S.S.S.N
+<rplsssn@codeaurora.org> wrote:
+> +               idle-states {
+> +                       entry-method = "psci";
+> +
+> +                       C0_CPU_SPC: c0_spc {
+
+nit: all these nodes should have dashes instead of spaces in the node
+names (labels can still have spaces).  AKA:
+
+C0_CPU_SPC: c0-spc {
+
+
+> +                               compatible = "arm,idle-state";
+> +                               arm,psci-suspend-param = <0x40000003>;
+> +                               entry-latency-us = <350>;
+> +                               exit-latency-us = <461>;
+> +                               min-residency-us = <1890>;
+> +                               local-timer-stop;
+> +                               idle-state-name = "pc";
+
+It seems weird that the idle state with the node name "spc" has the
+name "pc" and the idle state with the node name "pc" has the name
+"rail pc".  Can this be more consistent or is there a reason why they
+need to be mismatched?
+
+Also: AAHTUFSWDKWTM (acronyms are hard to understand for someone who
+doesn't know what they mean).  If you really need to use an the
+acronyms "PC" and "SPC" please document them somewhere.  In the very
+least the commit message, but having a comment in the file is good
+too.  ...or (even better) don't use the acronym and spell out what
+you're talking about.  Please correct me if I'm wrong, but I don't
+think it's obvious what the "PC" and "SPC" idle states mean.
+
+
+-Doug
