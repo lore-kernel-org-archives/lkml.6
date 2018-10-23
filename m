@@ -4,91 +4,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19773C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:40:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5493EC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4A582075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:40:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0B7920813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:42:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Aad0blps"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4A582075D
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="fDQhMITC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0B7920813
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbeJWWES (ORCPT
+        id S1728136AbeJWWFi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 18:04:18 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34636 "EHLO
+        Tue, 23 Oct 2018 18:05:38 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37000 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbeJWWES (ORCPT
+        with ESMTP id S1726277AbeJWWFh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 18:04:18 -0400
-Received: by mail-ed1-f68.google.com with SMTP id w19-v6so1672785eds.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 06:40:45 -0700 (PDT)
+        Tue, 23 Oct 2018 18:05:37 -0400
+Received: by mail-ed1-f68.google.com with SMTP id c15-v6so1675155eds.4
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 06:42:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=HAscuA7lvAkCpbCNskj9tMuhG7sRQzglBkY/CVYtHrU=;
-        b=Aad0blpsQ34GU39pUmgIDp85ObvecvfDUohYx/oD9inUBBV/CT81eWb1PUtoFP4flM
-         JejRkyvvTQEgVQOuoUuZEIxd7JWLzxgExitqYp40iCslFmfbDEV9btqH2PvJaAD5fE0+
-         vb3txolE+q7vDSRqDwpIdU6CZ9IBR+RslH6nc=
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fP1++GP6Qvp0pjdsuFyG5LSW6guXoD+iihM0y8mWSZI=;
+        b=fDQhMITCnwbcfTP52XID1evT3XSDSFV96EEVT+usROZfY3U9F8uaouDVouHMpXD8Ut
+         9PoWPKwfR5+kUS8xv14wAzZV+5Kr150xlP9/Z5LJhKsEg56riRilwgHBW/wDb/VbI2C8
+         2ag9SgHLWwBbIZtUGZnrjW9lTaJc9ZN+gv5eI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=HAscuA7lvAkCpbCNskj9tMuhG7sRQzglBkY/CVYtHrU=;
-        b=H7dxv1qVKjQC4KkHw4imjWmzmPMBFTgoyhGd94kbKl02+bMVZzCoaCrT4i6LVFNw9Y
-         a7+PRtYZjqJFIhFBT/1B7k80sHyxC2trigZ9nymo7SWCNzJC6VzUf3s7TlokwokPaKnr
-         TDsbdzDYF8DihLuYC0oVMRHh9y2YN9KT0j7i4jcvfR7e0o2XbE5e/gmLkAxpcIU1HWHN
-         nLh8Dk19RXdXw8xB2QbbuNA6MVamzlYB7ehCedcwb90elTVy7DzPS124OFnzPVi1VzJb
-         94MCeteXMKZlsk9c1HrstZRlXQjoCDo3XT8Ps/8lDClQtUfw9BI9+lkF6mkMsLvpFXVj
-         X7sA==
-X-Gm-Message-State: ABuFfoi7GJI8xip7Ymxq80gxfQsiTeQCgsr8oQAXO6RzrsQPx5xOgIT+
-        OmEYTsuEAaKceRnMPmCNj/Z5vQ==
-X-Google-Smtp-Source: ACcGV60zo7JIf5YWZleiPL9UOX7ewoFK8BWHJZHlnVgFbvBAqpH3to9V6nXx+l8DSag+tWHX9pOaug==
-X-Received: by 2002:a17:906:8491:: with SMTP id m17-v6mr38621311ejx.120.1540302044795;
-        Tue, 23 Oct 2018 06:40:44 -0700 (PDT)
+         :in-reply-to:user-agent;
+        bh=fP1++GP6Qvp0pjdsuFyG5LSW6guXoD+iihM0y8mWSZI=;
+        b=pNDxYGlqTgqhydTSBx9qOUcUsZmCWWqZBYMDtd+3i6BWmnjpi2lZEYZAOEFfglFd0z
+         5RGtf4cIbJm6sXnewuisW1shecmhElTyobNgXX4arbnVzV3nEsDjolWXjhx7Nh2hYQ7q
+         PRgI9gHbsvMQTPH9PqIXbM1GzaiSRwNrKxH+T7gT2+v+2f031g2lbcSoVW8jWH6AqPB2
+         CU3sKGiYNx5qP9ebuuTwnxfc0/596PRbVQ6B4OTwEHhgcc682VbL75kO5toCnz3Tb2RI
+         MDwmdLxO9Fs7f0zeUGGJ6J0key9Vbd2YIJnq6SWojFvC/phMUlGUgN1wHUrlck0mo++l
+         TFmA==
+X-Gm-Message-State: ABuFfojUKJUeiDhYQTLCfHXxxjBgHrcCdfRp5z3TksMXKlay17fhdT5h
+        k9BO+/eStl74D5JxMrKGjaQExQ==
+X-Google-Smtp-Source: ACcGV61ByXP0ubcYJF0Ep302gB3gzko9og2FQuRtl3/yKBFmpfEOJAKBPpeRbiZS2fIicu+ovHl2AQ==
+X-Received: by 2002:a17:906:d81:: with SMTP id m1-v6mr940808eji.16.1540302125528;
+        Tue, 23 Oct 2018 06:42:05 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id l22-v6sm367054ejd.53.2018.10.23.06.40.43
+        by smtp.gmail.com with ESMTPSA id br14-v6sm397509ejb.17.2018.10.23.06.42.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Oct 2018 06:40:44 -0700 (PDT)
-Date:   Tue, 23 Oct 2018 15:40:41 +0200
+        Tue, 23 Oct 2018 06:42:04 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 15:42:02 +0200
 From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     noralf@tronnes.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        sean@poorly.run, airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] drm/rcar-du: Convert drm_atomic_helper_suspend/resume()
-Message-ID: <20181023134041.GO324@phenom.ffwll.local>
-Mail-Followup-To: Souptick Joarder <jrdr.linux@gmail.com>,
-        noralf@tronnes.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        sean@poorly.run, airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20180918163903.GA11172@jordon-HP-15-Notebook-PC>
- <20809880.gF2CxujBy3@avalon>
- <20181001065220.GE11082@phenom.ffwll.local>
- <26527911.hs5tlrnKDc@avalon>
- <042a6076-62e2-c029-2a09-f1123d9ac403@tronnes.org>
- <CAFqt6zZ9vZ8qDpockDyUgqxJxA-d6ajyufzBUCPzKkxv0Vnu_Q@mail.gmail.com>
- <20181011081849.GR31561@phenom.ffwll.local>
- <CAFqt6zaaEWb-vQ6BVhYg1GgsxwKX=4H661OHU3Qfbk0FD3Cz9g@mail.gmail.com>
+To:     Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
+Cc:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "marcheu@chromium.org" <marcheu@chromium.org>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "gustavo@padovan.org" <gustavo@padovan.org>,
+        "sean@poorly.run" <sean@poorly.run>
+Subject: Re: [PATCH] DRM: UDL: get rid of useless vblank initialization
+Message-ID: <20181023134202.GP324@phenom.ffwll.local>
+Mail-Followup-To: Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "marcheu@chromium.org" <marcheu@chromium.org>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+        "gustavo@padovan.org" <gustavo@padovan.org>,
+        "sean@poorly.run" <sean@poorly.run>
+References: <20180928144126.21598-1-Eugeniy.Paltsev@synopsys.com>
+ <1540292472.19916.13.camel@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFqt6zaaEWb-vQ6BVhYg1GgsxwKX=4H661OHU3Qfbk0FD3Cz9g@mail.gmail.com>
+In-Reply-To: <1540292472.19916.13.camel@synopsys.com>
 X-Operating-System: Linux phenom 4.18.0-2-amd64 
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -96,218 +99,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 01:51:35PM +0530, Souptick Joarder wrote:
-> Hi Laurent,
+On Tue, Oct 23, 2018 at 11:01:14AM +0000, Eugeniy Paltsev wrote:
+> Hi David,
 > 
-> On Thu, Oct 11, 2018 at 1:48 PM Daniel Vetter <daniel@ffwll.ch> wrote:
-> >
-> > On Mon, Oct 08, 2018 at 09:57:52PM +0530, Souptick Joarder wrote:
-> > > Hi Laurent,
-> > > On Mon, Oct 1, 2018 at 6:12 PM Noralf Trønnes <noralf@tronnes.org> wrote:
-> > > >
-> > > >
-> > > > Den 01.10.2018 13.56, skrev Laurent Pinchart:
-> > > > > Hi Daniel,
-> > > > >
-> > > > > On Monday, 1 October 2018 09:52:20 EEST Daniel Vetter wrote:
-> > > > >> On Fri, Sep 28, 2018 at 06:30:35PM +0300, Laurent Pinchart wrote:
-> > > > >>> On Friday, 28 September 2018 18:05:18 EEST Laurent Pinchart wrote:
-> > > > >>>> On Thursday, 27 September 2018 09:34:18 EEST Souptick Joarder wrote:
-> > > > >>>>> On Tue, Sep 18, 2018 at 10:05 PM Souptick Joarder wrote:
-> > > > >>>>>> convert drm_atomic_helper_suspend/resume() to use
-> > > > >>>>>> drm_mode_config_helper_suspend/resume().
-> > > > >>>>>>
-> > > > >>>>>> remove suspend_state field from the rcar_du_device
-> > > > >>>>>> structure as it is no more required.
-> > > > >>>>>>
-> > > > >>>>>> With this conversion, also drm_fbdev_cma_set_suspend_unlocked()
-> > > > >>>>>> will left with no consumer. So this function can be removed.
-> > > > >>>>>>
-> > > > >>>>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > > > >>>>> Laurent, any comment on this patch ??
-> > > > >>>> Sorry for the delay, and thanks for pinging me.
-> > > > >>>>
-> > > > >>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > > >>>>
-> > > > >>>> Should I apply this to my tree or do you plan to merge it through
-> > > > >>>> drm-misc
-> > > > >>>> as it touches drm_fb_cma_helper.c ?
-> > > > >>> I just realized that the same patch got supplied by Noralf Trønnes nearly
-> > > > >>> a
-> > > > >>> year ago, and was later superseded by
-> > > > >>> https://patchwork.freedesktop.org/patch/247861/. I think we should thus
-> > > > >>> apply Noralf's patches instead (once he sends v4 out).
-> > > > >> I don't think Noralf is still actively working on this, he's busy with the
-> > > > >> fbdev emulation stuff. Probably better if you pick up one of the existing
-> > > > >> ones, than waiting another year or so :-)
-> > > > > Isn't https://patchwork.freedesktop.org/patch/247861/ part of the fbdev
-> > > > > emulation stuff ? That patch series is from less than a month ago, so I
-> > > > > thought it was actively developed.
-> > > > >
-> > > > > Let's ask him. Noralf, any comment ? :-)
-> > > >
-> > > > I see now that I've caused some confusion here.
-> > > >
-> > > > I did some refactoring of the fbdev stuff in the CMA helper last year.
-> > > > In the last series of that work there is this patch:
-> > > >
-> > > > [v3,07/11] drm/rcar-du: Use drm_mode_config_helper_suspend/resume()
-> > > > https://patchwork.freedesktop.org/patch/192414/
-> > > >
-> > > > During Christmas I got the idea that maybe it was possible to use a dumb
-> > > > buffer to do generic fbdev emulation. That work took me 6 months before a
-> > > > solution using a general internal DRM client was hammered out. By the
-> > > > time I started to convert drivers I had forgotten about that patch.
-> > > >
-> > > > When I wrote the patch (#247861) to convert rcar to the generic fbdev, I
-> > > > just bundled up the suspend/resume change with the fbdev conversion.
-> > > > Laurent and Sam commented on that bundling, so I said that I would split
-> > > > it up in the next version.
-> > > >
-> > > > All that being said, I think that this patch should be applied and I'll
-> > > > just rebase the rcar fbdev conversion patch on top of that.
-> > > > It's the easiest for me at least :-)
-> > > >
-> > > Any conclusion on this patch ? :-)
-> >
-> > Laurent should pick it up and apply to his rcar-du tree I think. We can
-> > also stuff it into drm-misc as a fallback.
-> 
-> Can we get this patch in queue for 4.20 ?
+> Maybe you have any comments or remarks about this patch?
+> And if you don't could you please apply it. Thanks!
 
-5.1, 4.20 is already done.
+Hm I hoped Sean would pick this up. I stuffed it into drm-misc-next now,
+and Sean owes me one. Generally pinging Dave is a last resort in dri-devel
+(and doesn't work too well).
 
-But yes, I pulled this into drm-misc-next. Thanks for your patch.
+Thanks for your patch.
 -Daniel
-
 > 
-> > -Daniel
-> >
-> > >
-> > > ers/gpu/drm/drm_fb_cma_helper.c   | 18 ------------------
-> > > > >>>>>>   drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 ++-------------------
-> > > > >>>>>>   drivers/gpu/drm/rcar-du/rcar_du_drv.h |  1 -
-> > > > >>>>>>   include/drm/drm_fb_cma_helper.h       |  2 --
-> > > > >>>>>>   4 files changed, 2 insertions(+), 40 deletions(-)
-> > > > >>>>>>
-> > > > >>>>>> diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c
-> > > > >>>>>> b/drivers/gpu/drm/drm_fb_cma_helper.c index 47e0e2f..96efc88 100644
-> > > > >>>>>> --- a/drivers/gpu/drm/drm_fb_cma_helper.c
-> > > > >>>>>> +++ b/drivers/gpu/drm/drm_fb_cma_helper.c
-> > > > >>>>>> @@ -224,21 +224,3 @@ void drm_fbdev_cma_hotplug_event(struct
-> > > > >>>>>> drm_fbdev_cma *fbdev_cma)
-> > > > >>>>>>
-> > > > >>>>>>                  drm_fb_helper_hotplug_event(&fbdev_cma->fb_helper);
-> > > > >>>>>>
-> > > > >>>>>>   }
-> > > > >>>>>>   EXPORT_SYMBOL_GPL(drm_fbdev_cma_hotplug_event);
-> > > > >>>>>>
-> > > > >>>>>> -
-> > > > >>>>>> -/**
-> > > > >>>>>> - * drm_fbdev_cma_set_suspend_unlocked - wrapper around
-> > > > >>>>>> - *
-> > > > >>>>>> drm_fb_helper_set_suspend_unlocked
-> > > > >>>>>> - * @fbdev_cma: The drm_fbdev_cma struct, may be NULL
-> > > > >>>>>> - * @state: desired state, zero to resume, non-zero to suspend
-> > > > >>>>>> - *
-> > > > >>>>>> - * Calls drm_fb_helper_set_suspend, which is a wrapper around
-> > > > >>>>>> - * fb_set_suspend implemented by fbdev core.
-> > > > >>>>>> - */
-> > > > >>>>>> -void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma
-> > > > >>>>>> *fbdev_cma,
-> > > > >>>>>> -                                       bool state)
-> > > > >>>>>> -{
-> > > > >>>>>> -       if (fbdev_cma)
-> > > > >>>>>> -
-> > > > >>>>>> drm_fb_helper_set_suspend_unlocked(&fbdev_cma->fb_helper,
-> > > > >>>>>> -                                                  state);
-> > > > >>>>>> -}
-> > > > >>>>>> -EXPORT_SYMBOL(drm_fbdev_cma_set_suspend_unlocked);
-> > > > >>>>>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> > > > >>>>>> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 02aee6c..288220f 100644
-> > > > >>>>>> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> > > > >>>>>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> > > > >>>>>> @@ -357,32 +357,15 @@ static void rcar_du_lastclose(struct drm_device
-> > > > >>>>>> *dev)
-> > > > >>>>>>
-> > > > >>>>>>   static int rcar_du_pm_suspend(struct device *dev)
-> > > > >>>>>>   {
-> > > > >>>>>>
-> > > > >>>>>>          struct rcar_du_device *rcdu = dev_get_drvdata(dev);
-> > > > >>>>>>
-> > > > >>>>>> -       struct drm_atomic_state *state;
-> > > > >>>>>>
-> > > > >>>>>> -       drm_kms_helper_poll_disable(rcdu->ddev);
-> > > > >>>>>> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, true);
-> > > > >>>>>> -
-> > > > >>>>>> -       state = drm_atomic_helper_suspend(rcdu->ddev);
-> > > > >>>>>> -       if (IS_ERR(state)) {
-> > > > >>>>>> -               drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev,
-> > > > >>>>>> false);
-> > > > >>>>>> -               drm_kms_helper_poll_enable(rcdu->ddev);
-> > > > >>>>>> -               return PTR_ERR(state);
-> > > > >>>>>> -       }
-> > > > >>>>>> -
-> > > > >>>>>> -       rcdu->suspend_state = state;
-> > > > >>>>>> -
-> > > > >>>>>> -       return 0;
-> > > > >>>>>> +       return drm_mode_config_helper_suspend(rcdu->ddev);
-> > > > >>>>>>
-> > > > >>>>>>   }
-> > > > >>>>>>
-> > > > >>>>>>   static int rcar_du_pm_resume(struct device *dev)
-> > > > >>>>>>   {
-> > > > >>>>>>
-> > > > >>>>>>          struct rcar_du_device *rcdu = dev_get_drvdata(dev);
-> > > > >>>>>>
-> > > > >>>>>> -       drm_atomic_helper_resume(rcdu->ddev, rcdu->suspend_state);
-> > > > >>>>>> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
-> > > > >>>>>> -       drm_kms_helper_poll_enable(rcdu->ddev);
-> > > > >>>>>> -
-> > > > >>>>>> -       return 0;
-> > > > >>>>>> +       return drm_mode_config_helper_resume(rcdu->ddev);
-> > > > >>>>>>
-> > > > >>>>>>   }
-> > > > >>>>>>   #endif
-> > > > >>>>>>
-> > > > >>>>>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> > > > >>>>>> b/drivers/gpu/drm/rcar-du/rcar_du_drv.h index b3a25e8..ff25c8d 100644
-> > > > >>>>>> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> > > > >>>>>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> > > > >>>>>> @@ -78,7 +78,6 @@ struct rcar_du_device {
-> > > > >>>>>>
-> > > > >>>>>>          struct drm_device *ddev;
-> > > > >>>>>>          struct drm_fbdev_cma *fbdev;
-> > > > >>>>>>
-> > > > >>>>>> -       struct drm_atomic_state *suspend_state;
-> > > > >>>>>>
-> > > > >>>>>>          struct rcar_du_crtc crtcs[RCAR_DU_MAX_CRTCS];
-> > > > >>>>>>          unsigned int num_crtcs;
-> > > > >>>>>>
-> > > > >>>>>> diff --git a/include/drm/drm_fb_cma_helper.h
-> > > > >>>>>> b/include/drm/drm_fb_cma_helper.h index 4a65f0d..8dbbe1e 100644
-> > > > >>>>>> --- a/include/drm/drm_fb_cma_helper.h
-> > > > >>>>>> +++ b/include/drm/drm_fb_cma_helper.h
-> > > > >>>>>> @@ -26,8 +26,6 @@ struct drm_fbdev_cma *drm_fbdev_cma_init(struct
-> > > > >>>>>> drm_device *dev,
-> > > > >>>>>>
-> > > > >>>>>>   void drm_fbdev_cma_restore_mode(struct drm_fbdev_cma *fbdev_cma);
-> > > > >>>>>>   void drm_fbdev_cma_hotplug_event(struct drm_fbdev_cma *fbdev_cma);
-> > > > >>>>>>
-> > > > >>>>>> -void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma
-> > > > >>>>>> *fbdev_cma,
-> > > > >>>>>> -                                       bool state);
-> > > > >>>>>>
-> > > > >>>>>>   struct drm_gem_cma_object *drm_fb_cma_get_gem_obj(struct
-> > > > >>>>>>   drm_framebuffer *fb,
-> > > > >>>>>>
-> > > > >>>>>>          unsigned int plane);
-> > > >
-> >
-> > --
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > http://blog.ffwll.ch
+> On Fri, 2018-09-28 at 17:41 +0300, Eugeniy Paltsev wrote:
+> > UDL doesn't support vblank functionality so we don't need to
+> > initialize vblank here (we are able to send page flip
+> > completion events even without vblank initialization)
+> > 
+> > Moreover current drm_vblank_init call with num_crtcs > 0 causes
+> > sending DRM_EVENT_FLIP_COMPLETE event with zero timestamp every
+> > time. This breaks userspace apps (for example weston) which
+> > relies on timestamp value.
+> > 
+> > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> > ---
+> >  drivers/gpu/drm/udl/udl_main.c | 7 +------
+> >  1 file changed, 1 insertion(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/udl/udl_main.c b/drivers/gpu/drm/udl/udl_main.c
+> > index f455f095a146..1b014d92855b 100644
+> > --- a/drivers/gpu/drm/udl/udl_main.c
+> > +++ b/drivers/gpu/drm/udl/udl_main.c
+> > @@ -350,15 +350,10 @@ int udl_driver_load(struct drm_device *dev, unsigned long flags)
+> >  	if (ret)
+> >  		goto err;
+> >  
+> > -	ret = drm_vblank_init(dev, 1);
+> > -	if (ret)
+> > -		goto err_fb;
+> > -
+> >  	drm_kms_helper_poll_init(dev);
+> >  
+> >  	return 0;
+> > -err_fb:
+> > -	udl_fbdev_cleanup(dev);
+> > +
+> >  err:
+> >  	if (udl->urbs.count)
+> >  		udl_free_urb_list(dev);
+> -- 
+>  Eugeniy Paltsev
 
 -- 
 Daniel Vetter
