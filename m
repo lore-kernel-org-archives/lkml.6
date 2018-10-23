@@ -2,151 +2,109 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B73B0C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 22:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 888ACC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 22:39:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31FE620651
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 22:33:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38DF0207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 22:39:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="bOR13m+d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31FE620651
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="mWHIFQyi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38DF0207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728834AbeJXG6z (ORCPT
+        id S1728760AbeJXHE1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 02:58:55 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:33498 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726493AbeJXG6z (ORCPT
+        Wed, 24 Oct 2018 03:04:27 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:7825 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbeJXHE0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 02:58:55 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id C75A910C1B91;
-        Tue, 23 Oct 2018 15:33:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1540334013; bh=Sj3KgEgGoHRblkr7AOvfshDGF3MZN1p3tiCcb6WJZks=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=bOR13m+dNWzQx+LYx0UR+8FQEDElkNxxkKh9MFvx+tMOyzfJRyIBoWK7PHWeXJOxp
-         Ry1XvNhHt06nlhtyyZx2NRmLx5EPhC8/TCNaJnxADIOwl3LFWfSKsYD+o3v9+sA8XL
-         1lj+f0Zl+hlJqxSg+sKWVAl9hypPlDkLPQsn4ez8u+jDBT3OjDLwK3ijM6uoNSPYag
-         nbu/Xo/4MlHxX1DAo7xMdMy140GBNk33+frHldvf6R2SE+MlIftlFPtgwfd4epI8Vz
-         xbcvJFOhfgJqlYqaJ3hJoa5QI3ZjacUeahn5ksUs/tSMmCvzb/35oeRj2c9ZdR7F8H
-         dBS/2lqxOlH+w==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 3ECCE3E08;
-        Tue, 23 Oct 2018 15:33:31 -0700 (PDT)
-Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
- by US01WEHTC3.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Tue,
- 23 Oct 2018 15:33:31 -0700
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-To:     Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2] clocksource/drivers/arc_timer: Utilize generic
- sched_clock
-Thread-Topic: [PATCH v2] clocksource/drivers/arc_timer: Utilize generic
- sched_clock
-Thread-Index: AQHUZgzPejIboRhY8EuB047asCCktg==
-Date:   Tue, 23 Oct 2018 22:33:30 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B0B1A07@US01WEMBX2.internal.synopsys.com>
-References: <20181017113020.7551-1-abrodkin@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.106]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 24 Oct 2018 03:04:26 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bcfa2fd0000>; Tue, 23 Oct 2018 15:38:53 -0700
+Received: from HQMAIL103.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 23 Oct 2018 15:39:02 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 23 Oct 2018 15:39:02 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 23 Oct
+ 2018 22:39:02 +0000
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 23 Oct
+ 2018 22:39:02 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 23 Oct 2018 22:39:02 +0000
+Received: from vdumpa-ubuntu.nvidia.com (Not Verified[172.17.173.140]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5bcfa3060002>; Tue, 23 Oct 2018 15:39:02 -0700
+From:   Krishna Reddy <vdumpa@nvidia.com>
+To:     <will.deacon@arm.com>, <robin.murphy@arm.com>, <joro@8bytes.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
+        <yhsu@nvidia.com>, <snikam@nvidia.com>, <praithatha@nvidia.com>,
+        <talho@nvidia.com>, <avanbrunt@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>
+Subject: [PATCH 0/3] Add Tegra194 Dual ARM SMMU driver
+Date:   Tue, 23 Oct 2018 15:39:04 -0700
+Message-ID: <1540334347-7178-1-git-send-email-vdumpa@nvidia.com>
+X-Mailer: git-send-email 2.1.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1540334333; bh=dXkqI3kipmqmY/E4Vk6BKX5LPVnWoHTIBDi0dsrwJBo=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=mWHIFQyi+0Ug65CaPVd0pzCtMPgBPm+Wkm4PCkXvusZEESzj92cZGFXdrSfCpXZkG
+         bS6bZU2KValPNoxpAqkU1lWDequidUGTJxxdb1N5yf1WQxmSdcl6igWYScceDSDAS2
+         gzA+Rd7b7A/+3eLNz2fYofAe+Qf7P+GxLHuyEaFFVg4aSVcEh/9buW7FYhtVnRiW80
+         mBbG5o3ARSh7FYPWNC5oe5Dib+snU+tNerBbr6Uykro4+3jkt0RS7T3sO1T/hutpe+
+         V+/oSX7MFkorAgBwoZzp1IMkO6lwSczIhSEHPmDgU7au+FvWltVMCqHCDBFAtBN1jb
+         uEkfnl1vBLcyQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/2018 04:30 AM, Alexey Brodkin wrote:=0A=
-> It turned out we used to use default implementation of sched_clock()=0A=
-> from kernel/sched/clock.c which was as precise as 1/HZ, i.e.=0A=
-> by default we had 10 msec granularity of time measurement.=0A=
->=0A=
-> Now given ARC built-in timers are clocked with the same frequency as=0A=
-> CPU cores we may get much higher precision of time tracking.=0A=
->=0A=
-> Thus we switch to generic sched_clock which really reads ARC hardware=0A=
-> counters.=0A=
->=0A=
-> This is especially helpful for measuring short events.=0A=
-> That's what we used to have:=0A=
-> ------------------------------>8------------------------=0A=
-> $ perf stat /bin/sh -c /root/lmbench-master/bin/arc/hello > /dev/null=0A=
->=0A=
->  Performance counter stats for '/bin/sh -c /root/lmbench-master/bin/arc/h=
-ello':=0A=
->=0A=
->          10.000000      task-clock (msec)         #    2.832 CPUs utilize=
-d=0A=
->                  1      context-switches          #    0.100 K/sec=0A=
->                  1      cpu-migrations            #    0.100 K/sec=0A=
->                 63      page-faults               #    0.006 M/sec=0A=
->            3049480      cycles                    #    0.305 GHz=0A=
->            1091259      instructions              #    0.36  insn per cyc=
-le=0A=
->             256828      branches                  #   25.683 M/sec=0A=
->              27026      branch-misses             #   10.52% of all branc=
-hes=0A=
->=0A=
->        0.003530687 seconds time elapsed=0A=
->=0A=
->        0.000000000 seconds user=0A=
->        0.010000000 seconds sys=0A=
-> ------------------------------>8------------------------=0A=
->=0A=
-> And now we'll see:=0A=
-> ------------------------------>8------------------------=0A=
-> $ perf stat /bin/sh -c /root/lmbench-master/bin/arc/hello > /dev/null=0A=
->=0A=
->  Performance counter stats for '/bin/sh -c /root/lmbench-master/bin/arc/h=
-ello':=0A=
->=0A=
->           3.004322      task-clock (msec)         #    0.865 CPUs utilize=
-d=0A=
->                  1      context-switches          #    0.333 K/sec=0A=
->                  1      cpu-migrations            #    0.333 K/sec=0A=
->                 63      page-faults               #    0.021 M/sec=0A=
->            2986734      cycles                    #    0.994 GHz=0A=
->            1087466      instructions              #    0.36  insn per cyc=
-le=0A=
->             255209      branches                  #   84.947 M/sec=0A=
->              26002      branch-misses             #   10.19% of all branc=
-hes=0A=
->=0A=
->        0.003474829 seconds time elapsed=0A=
->=0A=
->        0.003519000 seconds user=0A=
->        0.000000000 seconds sys=0A=
-> ------------------------------>8------------------------=0A=
->=0A=
-> Note how much more meaningful is the second output - time spent for=0A=
-> execution pretty much matches number of cycles spent (we're running=0A=
-> @ 1GHz here).=0A=
->=0A=
-> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>=0A=
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>=0A=
-> Cc: Vineet Gupta <vgupta@synopsys.com>=0A=
-> Cc: Thomas Gleixner <tglx@linutronix.de>=0A=
-> ---=0A=
-=0A=
-Acked-by: Vineet Gupta <vgupta@synopsys.com>=0A=
-=0A=
-@Daniel is this going via timer tree or you want me to pick it up.=0A=
-=0A=
-Thx,=0A=
--Vineet=0A=
-=0A=
+NVIDIA's Xavier (Tegra194) SOC has three ARM SMMU(MMU-500) instances.
+Two of the SMMU instances are used to interleave IOVA accesses across them.
+The IOVA accesses from HW devices are interleaved across these two SMMU instances
+and they need to be programmed identical.
+
+The existing ARM SMMU driver can't be used in its current form for programming the
+two SMMU instances identically. But, most of the code can be shared between ARM SMMU
+driver and Tegra194 SMMU driver.
+Page fault handling and TLB sync operations need to know about specific instance
+of SMMU for correct fault handling and optimal TLB sync wait. Rest of the code doesn't
+need to know about number of SMMU instances. Based on this fact, The patch series here
+rearranges the arm-smmu.c code to allow sharing most of the ARM SMMU programming/iommu_ops
+code between ARM SMMU driver and Tegra194 SMMU driver and transparently
+handles programming of two SMMU instances.
+
+The third SMMU instance would use the existing ARM SMMU driver.
+
+Krishna Reddy (3):
+  iommu/arm-smmu: rearrange arm-smmu.c code
+  iommu/arm-smmu: Prepare fault, probe, sync functions for sharing code
+  iommu/tegra194_smmu: Add Tegra194 SMMU driver
+
+ drivers/iommu/Makefile          |    1 +
+ drivers/iommu/arm-smmu-common.c | 1971 +++++++++++++++++++++++++++++++++++
+ drivers/iommu/arm-smmu-common.h |  256 +++++
+ drivers/iommu/arm-smmu.c        | 2167 +--------------------------------------
+ drivers/iommu/tegra194-smmu.c   |  201 ++++
+ 5 files changed, 2436 insertions(+), 2160 deletions(-)
+ create mode 100644 drivers/iommu/arm-smmu-common.c
+ create mode 100644 drivers/iommu/arm-smmu-common.h
+ create mode 100644 drivers/iommu/tegra194-smmu.c
+
+-- 
+2.1.4
+
