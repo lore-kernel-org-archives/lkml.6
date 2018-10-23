@@ -2,129 +2,96 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4328C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E8EC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8855A2075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8855A2075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 89C61207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89C61207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbeJWTiL (ORCPT
+        id S1728157AbeJWTiO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 15:38:11 -0400
-Received: from mail1.windriver.com ([147.11.146.13]:35144 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbeJWTiK (ORCPT
+        Tue, 23 Oct 2018 15:38:14 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:39909 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbeJWTiO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 15:38:10 -0400
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id w9NBEhSZ012091
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Tue, 23 Oct 2018 04:14:43 -0700 (PDT)
-Received: from [128.224.162.216] (128.224.162.216) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 23 Oct
- 2018 04:14:42 -0700
-Subject: Re: [PATCH] kernel/dma: Fix panic caused by passing swiotlb to
- command line
-To:     Konrad Rzeszutek Wilk <konrad@darnok.org>
-CC:     <konrad.wilk@oracle.com>, <hch@lst.de>, <m.szyprowski@samsung.com>,
-        <robin.murphy@arm.com>, <iommu@lists.linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1537154831-447363-1-git-send-email-zhe.he@windriver.com>
- <c3536f4f-9bde-4f7f-a180-aa569d4e786d@windriver.com>
- <20181022192921.GA20677@dhcp-10-175-29-12.vpn.oracle.com>
-From:   He Zhe <zhe.he@windriver.com>
-Message-ID: <87ee40fa-7a01-4d4c-7fa3-81aafc93e14f@windriver.com>
-Date:   Tue, 23 Oct 2018 19:14:38 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181022192921.GA20677@dhcp-10-175-29-12.vpn.oracle.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [128.224.162.216]
+        Tue, 23 Oct 2018 15:38:14 -0400
+Received: by mail-ed1-f66.google.com with SMTP id e5-v6so1216970eds.6
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 04:15:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kO/0D40r2wod5v3I6jD1fuRXjPfSQhJNJigkdYeWUl0=;
+        b=f9VYlW9BCpTvU05SIY9OrzXAvBp+qw8iFgL/Sr3kUx9AJvbyIBtpIAyIcfg2BggYMO
+         veNWkhT0IbVquMWDlgJegwQI25iFBAgbnbY5/lVp/oqc8po0odj3uo2+E/bDvY+9ieL+
+         Ar2ErOtBO+T/Zljj4xSrPZuc9drMCb5712YjokWnj51vS35vDBGvUaJ1PoKAWjKsjy2w
+         HgV1Tief2RivCfI93kavqXjVoL4l1cwajnaItdF8q2bOVEtk+a24Lsp34BnVj2assSg+
+         4F3QUoAkqV0Ur8dRDCwUS/Oqe8B78b+yNzuvo5DUHFD0QG/PE4vgq9568ULhJz0203rM
+         nk9w==
+X-Gm-Message-State: AGRZ1gIErnjkew9Ekf9jTdi3SMfOeuSeCcdYEWJqQJZkbueZUTtRG35v
+        EXbpQvQqiLLwXFF3YD7Amww=
+X-Google-Smtp-Source: AJdET5ewv3ohtWeO4+dAj+oTWa/Z9k3y8f78KeG0ARFlTh8ss974vQ/tydFinM/d2kAmAcgrYLW06g==
+X-Received: by 2002:a50:a3f6:: with SMTP id t51-v6mr645211edb.238.1540293312257;
+        Tue, 23 Oct 2018 04:15:12 -0700 (PDT)
+Received: from green.intra.ispras.ru (bran.ispras.ru. [83.149.199.196])
+        by smtp.googlemail.com with ESMTPSA id l34-v6sm459177eda.54.2018.10.23.04.15.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 23 Oct 2018 04:15:11 -0700 (PDT)
+From:   efremov@linux.com
+To:     James Morris <jmorris@namei.org>
+Cc:     Denis Efremov <efremov@linux.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Kees Cook <keescook@chromium.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Catherine Zhang <cxzhang@watson.ibm.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] security: fix documentation for the socket_getpeersec_dgram hook
+Date:   Tue, 23 Oct 2018 14:14:50 +0300
+Message-Id: <20181023111450.31837-1-efremov@linux.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Denis Efremov <efremov@linux.com>
 
+The socket_getpeersec_dgram hook was changed in the commit
+"[AF_UNIX]: Kernel memory leak fix for af_unix datagram getpeersec patch"
+(dc49c1f94e34). The arguments @secdata and @seclen were changed to @sock
+and @secid. This patch updates the documentation accordingly.
 
-On 2018/10/23 03:29, Konrad Rzeszutek Wilk wrote:
-> On Sat, Sep 22, 2018 at 08:56:58PM +0800, He Zhe wrote:
->> May I have your input?
-> Alternatively would it make more sense for it to assume some default
-> value?
+Signed-off-by: Denis Efremov <efremov@linux.com>
+---
+ include/linux/lsm_hooks.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Maybe, but the original code has no default value and I have no idea
-what default value is proper here.
-
-Zhe
-
->> Thanks,
->> Zhe
->>
->> On 2018年09月17日 11:27, zhe.he@windriver.com wrote:
->>> From: He Zhe <zhe.he@windriver.com>
->>>
->>> setup_io_tlb_npages does not check input argument before passing it
->>> to isdigit. The argument would be a NULL pointer if "swiotlb", without
->>> its value, is set in command line and thus causes the following panic.
->>>
->>> PANIC: early exception 0xe3 IP 10:ffffffffbb9b8e9f error 0 cr2 0x0
->>> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-yocto-standard+ #9
->>> [    0.000000] RIP: 0010:setup_io_tlb_npages+0xf/0x95
->>> ...
->>> [    0.000000] Call Trace:
->>> [    0.000000]  do_early_param+0x57/0x8e
->>> [    0.000000]  parse_args+0x208/0x320
->>> [    0.000000]  ? rdinit_setup+0x30/0x30
->>> [    0.000000]  parse_early_options+0x29/0x2d
->>> [    0.000000]  ? rdinit_setup+0x30/0x30
->>> [    0.000000]  parse_early_param+0x36/0x4d
->>> [    0.000000]  setup_arch+0x336/0x99e
->>> [    0.000000]  start_kernel+0x6f/0x4e6
->>> [    0.000000]  x86_64_start_reservations+0x24/0x26
->>> [    0.000000]  x86_64_start_kernel+0x6f/0x72
->>> [    0.000000]  secondary_startup_64+0xa4/0xb0
->>>
->>> This patch adds a check to prevent the panic.
->>>
->>> Signed-off-by: He Zhe <zhe.he@windriver.com>
->>> Cc: stable@vger.kernel.org
->>> Cc: konrad.wilk@oracle.com
->>> Cc: hch@lst.de
->>> Cc: m.szyprowski@samsung.com
->>> Cc: robin.murphy@arm.com
->>> ---
->>>  kernel/dma/swiotlb.c | 5 +++++
->>>  1 file changed, 5 insertions(+)
->>>
->>> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
->>> index 4f8a6db..46fc34e 100644
->>> --- a/kernel/dma/swiotlb.c
->>> +++ b/kernel/dma/swiotlb.c
->>> @@ -109,6 +109,11 @@ static int late_alloc;
->>>  static int __init
->>>  setup_io_tlb_npages(char *str)
->>>  {
->>> +	if (!str) {
->>> +		pr_err("Config string not provided\n");
->>> +		return -EINVAL;
->>> +	}
->>> +
->>>  	if (isdigit(*str)) {
->>>  		io_tlb_nslabs = simple_strtoul(str, &str, 0);
->>>  		/* avoid tail segment of size < IO_TLB_SEGSIZE */
->> _______________________________________________
->> iommu mailing list
->> iommu@lists.linux-foundation.org
->> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index ae3766720264..a598e601ccb3 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -861,9 +861,9 @@
+  *	the IP_PASSSEC option via getsockopt.  It can then retrieve the
+  *	security state returned by this hook for a packet via the SCM_SECURITY
+  *	ancillary message type.
+- *	@skb is the skbuff for the packet being queried
+- *	@secdata is a pointer to a buffer in which to copy the security data
+- *	@seclen is the maximum length for @secdata
++ *	@sock contains the socket structure.
++ *	@skb is the skbuff for the packet being queried.
++ *	@secid: pointer to where to put the secid of the packet.
+  *	Return 0 on success, error on failure.
+  * @sk_alloc_security:
+  *	Allocate and attach a security structure to the sk->sk_security field,
+-- 
+2.17.2
 
