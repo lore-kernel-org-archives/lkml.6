@@ -2,115 +2,86 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E37D1C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 14:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EF9C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 14:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9354E207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 14:04:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A094820652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 14:05:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gHHWTQ13"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9354E207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBCVAAJd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A094820652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728224AbeJWW1k (ORCPT
+        id S1728267AbeJWW27 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 18:27:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60512 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727813AbeJWW1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 18:27:39 -0400
-Received: from [192.168.1.16] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 154D920652;
-        Tue, 23 Oct 2018 14:04:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540303443;
-        bh=tVZDMRJFw9GJxWje37kLniQJJM8xBVRscGLgwubCvqU=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=gHHWTQ13iwjNRgaTq3/QLyiKCSdnzMKmj9maabqv+eRCy8qiE3bYlR1WGa52dX+nG
-         B/bG2MYe2y8ojMHzq7tB7ZrYrWC0+/qNR0diQD1qkQmMGs1vMcuqfJS4UXO98oieHg
-         zH7jCdFtYQgFvSM4utCEOYvvvKENCF5IlCOfW0Uc=
-Subject: Re: [PATCH] ARM: debug: enable UART1 for socfpga Cyclone5
-To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20181009112837.2517-1-peron.clem@gmail.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e761c76d-a806-402a-b25b-04aee9329dbc@kernel.org>
-Date:   Tue, 23 Oct 2018 09:04:01 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 23 Oct 2018 18:28:59 -0400
+Received: from mail-oi1-f180.google.com ([209.85.167.180]:38572 "EHLO
+        mail-oi1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728052AbeJWW27 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 18:28:59 -0400
+Received: by mail-oi1-f180.google.com with SMTP id k19-v6so1193760oiw.5;
+        Tue, 23 Oct 2018 07:05:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=V6sdsEyHcRBKeKo5H2sWdAl869sdVWcQ3fqTDnI5IR0=;
+        b=SBCVAAJdqXZkQM98tYffk8tXy6xwsp7UsakGa2VlF/2RdIU5rEFDnxhAijNEfCS7Vq
+         QRSRxMpiRCE2/kwrNWtd7SeZuX2CuGKNttkFJG+FfYeV4SMPdUGA1/EJGMshxu3cQGLp
+         fT7t45GatZJKcsBXYIpFf+u67BI7FPemIKLnbfPswA5GiA9jANXo+ac3DbmauYP+3p82
+         sEsBQlWeDhcXq05Rob5C5nQ8edf813eCpj5DX0pCISQgpYfNrBtPmS1fIbmWa7tJ73NC
+         3/Lqtuq/cqnTJcEl1jg4W+qWMYsCDmx20Cf+LPsvb0jWNKiQ9xztKfxBtSOIYPqDAuUj
+         OZBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:to:cc:from:subject:message-id:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=V6sdsEyHcRBKeKo5H2sWdAl869sdVWcQ3fqTDnI5IR0=;
+        b=V55Mu7nNJBVua/6WtPDr34t00FuE3h/d3F7xP2n7v79dBX/j3qUJMRDhEhwm8CMMF6
+         rq4tPwlRGGd4p6YOwS9tzBsSSP0dXmgPTeZ6j7loF5wE/PLFz+/Pi1XCLCc0pMt+Zvgp
+         jNLHlZ6NUSbhj6mJEPi3/VCk/egbtfOXv1uHPuEhlsX07JpRpBX33CEEftCvwHFP3Bin
+         JTmuzWEkIo0XSjHZVFIZmR26u2v6oLMUAkZkaNrbbUzCTg85VJixaQpGDf17PMO54ovT
+         x1o0CWdA6HpmAJSttt1dl4byThAPrWbhISShPFcv1r+/6FgV+9wx6p/nDYoqtkpR32v5
+         mNuw==
+X-Gm-Message-State: ABuFfogu/QVkrhNwv+LPGLeK1IUppy23vvnZuwjSaNaPLTNvNQBmbl06
+        ci9C2zymeMENPTD571TcrCjDkype
+X-Google-Smtp-Source: ACcGV63HTpaQv5ymj2XWJL+JrTb2peq7ZkgYa78OVtF8gqUg63Isn18ttWamfIK71sqmNFqHdlCJNw==
+X-Received: by 2002:aca:548b:: with SMTP id i133-v6mr1743515oib.194.1540303522669;
+        Tue, 23 Oct 2018 07:05:22 -0700 (PDT)
+Received: from [192.168.1.107] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id t53sm438471otf.8.2018.10.23.07.05.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Oct 2018 07:05:21 -0700 (PDT)
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Is Fixes line enough?
+Message-ID: <a99840d5-7d57-ec1f-1c70-37ffa6cfd31b@lwfinger.net>
+Date:   Tue, 23 Oct 2018 09:05:20 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181009112837.2517-1-peron.clem@gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Clément,
+Greg,
 
-On 10/09/2018 06:28 AM, Clément Péron wrote:
-> Cyclone5 and Arria10 doesn't have the same memory map for UART1.
-> 
-> Split the SOCFPGA_UART1 into 2 options to allow debugging on UART1 for Cylone5.
-> 
+A question has come up on the linux-wireless ML. If a patch has a "Fixes" line, 
+is that sufficient to get it flagged as a patch in Stable, or is a "Cc: Stable" 
+line also needed?
 
-I'm not sure the need for this patch. Are there any cyclone5 based
-boards that has UART1 as the debug uart? I see that all of them are
-using UART0.
+Thanks,
 
-Dinh
-
+Larry
