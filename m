@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A317C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 713E1C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32EB42075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D24A2075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:54:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=lemmela.net header.i=@lemmela.net header.b="tL8GagX/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32EB42075D
+	dkim=pass (4096-bit key) header.d=lemmela.net header.i=@lemmela.net header.b="CQfTFwDF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D24A2075D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemmela.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728994AbeJXDSs (ORCPT
+        id S1729081AbeJXDSv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:18:48 -0400
-Received: from mail1.kuutio.org ([92.222.216.83]:45854 "EHLO mail1.kuutio.org"
+        Tue, 23 Oct 2018 23:18:51 -0400
+Received: from mail1.kuutio.org ([92.222.216.83]:45964 "EHLO mail1.kuutio.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728553AbeJXDSp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:18:45 -0400
+        id S1728906AbeJXDSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:18:49 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail1.kuutio.org (Postfix) with ESMTP id 8B2491F984;
-        Tue, 23 Oct 2018 20:54:06 +0200 (CEST)
+        by mail1.kuutio.org (Postfix) with ESMTP id 396C81F99A;
+        Tue, 23 Oct 2018 20:54:10 +0200 (CEST)
 Authentication-Results: mail1.kuutio.org (amavisd-new);
         dkim=pass (4096-bit key) reason="pass (just generated, assumed good)"
         header.d=lemmela.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lemmela.net; h=
         references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:from:from:received:received; s=dkim; t=1540320845; x=
-        1542912846; bh=k+kTbGl1n+ueOP3o5mm0IoFq297iGo/lnnK2RBhrLtY=; b=t
-        L8GagX/zVygEwXH/aNXTWCk+XnQLTyYNRMkljuhrjpcM65o/VPVCuxzzN10TpVe/
-        GEGt5n40utUkn75UPsNbDKyIpURE7c4c0gxnEgN1Ze0aFPh4i2hUSYD1e9JKB5fh
-        qhrg7ImbxS8U5pbIYM02SjCMyZxTyXeBY8LNTz2fE4tJzuX8SHBugspNxr0t+llL
-        vfhkIV1JMm0nILudk8/SBeoqvPz69kjsFVH1DbLdJzCWYRSKf+et7L7u6BiIkcvC
-        Xvz1dTCeTP0YqUUxrRuyMLLGqcqfh4c4vsaKeog6I4OwxqtPoaNrBie0+cEWBgfp
-        rW8H+QlYuDh0QVUCFgevMn0knK10yY+H2cZPxdxR6Q0q5jzHxabxQ3upLpbBI8r+
-        CCMd2PC+fzY90/8s7leEpcyqAawOL7ah2NwkEO7gaPUospWRJKYv16Ua7ganGZX3
-        TRvaRlr6e2pdOyQ+Vbk7D0jgFSBLePjBdHk/kK2GwakxaItb4VSPAcpviDAjmn+h
-        ShOMaeRna2fH5bH1Kg5a7bdPMTykaVOM+dMWRLxDaZ/kCfwldAoH+8hW+xsTl5kL
-        uVmlFPWTdKOEvBljbg3G/EJEO1NkTIyWlgv+fOtS+hYsaZJTLjpbT8eog0N649q5
-        OW+ZRuFvZ2vCNfZ33p5bjhu+OdTlH4vQzq6HzdhbTY=
+        :subject:from:from:received:received; s=dkim; t=1540320849; x=
+        1542912850; bh=16hydqWDFV4OIAB5F2BhOcjYauIKKaxTnGprPU0pMcU=; b=C
+        QfTFwDFUr1PU2MD4ghri2HxTFlZBmaEiksGb73q6JZCpdWpawNtLVViUzhVLDC1M
+        LjWnquKbwHRL4vOdH31DPnuXxPv889ZF99R+P1PsdxAMxZ701TeYfJfEsqK4QIYY
+        c7dQlxy8r2wFtd6/UFEC+Ehg76qD2XapXApzc8rVm3SdsEtniK3OfnoDx8Vm8t63
+        4mgBtcDwLrIVBkf25siB9TyI7UrwA3/v8CZv7GMjlgW2gohj02GOg1c5aQ8VkkmQ
+        oU6IaPktbCnzn1PWlnawJ7AWRKklL+ZZSHi9cfki8By3cVud9NeZk7hfoQL64IP/
+        gLscyL5/JacLT6aB3aI3lXNId5Va1PoAECdhnBZzEDPcAmLGJqNL0u3g9oMbEnNP
+        PDoZ1p2ubFEAKFuzT2KkvXPew6zSdr6y2OuMnSEWC2xMB/eoj7i2SfwqA+42cNFX
+        P2rfS4tpOIi8ruHreKyvPIpQZmUP6NWNipG/TmWbE3kzDT1x1ANScVE2HdBk6oth
+        BXRWBoKhuIR+frgrZez0CUNDMXfj6fFVDYoCr4aP1R4u5ah3Gr7RyaGzEgAgMqjt
+        7noXb5ZTwJD1oayc5LPLRFSOEuq8VSpHijPbI475Y4b85faYL9Gqv0ibqR4nrCaX
+        UaT1GeH9FL3tys9+prM/UYbdBLEN8EAKdN92IwX/1Q=
 X-Virus-Scanned: amavisd-new at kuutio.org
 Received: from mail1.kuutio.org ([127.0.0.1])
         by localhost (mail1.kuutio.org [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id OqTG2bZUFDN8; Tue, 23 Oct 2018 20:54:05 +0200 (CEST)
+        with LMTP id BC6marmYcYdG; Tue, 23 Oct 2018 20:54:09 +0200 (CEST)
 Received: from build.kuutio.org (unknown [IPv6:2001:998:13:e4::69])
-        by mail1.kuutio.org (Postfix) with ESMTPSA id F13AA1FB8C;
-        Tue, 23 Oct 2018 20:54:04 +0200 (CEST)
+        by mail1.kuutio.org (Postfix) with ESMTPSA id 515511FBA6;
+        Tue, 23 Oct 2018 20:54:08 +0200 (CEST)
 From:   Oskari Lemmela <oskari@lemmela.net>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Sebastian Reichel <sre@kernel.org>,
@@ -69,9 +69,9 @@ Cc:     Lee Jones <lee.jones@linaro.org>, Hartmut Knaack <knaack.h@gmx.de>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         linux-iio@vger.kernel.org
-Subject: [PATCH v5 03/11] dt-bindings: gpio: gpio-axp209: add AXP803 GPIO bindings
-Date:   Tue, 23 Oct 2018 21:53:22 +0300
-Message-Id: <20181023185330.10472-4-oskari@lemmela.net>
+Subject: [PATCH v5 07/11] arm64: dts: allwinner: a64: sopine-baseboard: enable power supplies
+Date:   Tue, 23 Oct 2018 21:53:26 +0300
+Message-Id: <20181023185330.10472-8-oskari@lemmela.net>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181023185330.10472-1-oskari@lemmela.net>
 References: <20181023185330.10472-1-oskari@lemmela.net>
@@ -80,34 +80,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The AXP803 GPIO is compatible with AXP813 GPIO, but add
-specific compatible for it.
+AXP803 ACIN pins are routed from SOM to the DC jack on the baseboard.
+AXP803 charger pins BATSENSE, LOADSENSE, N_BATDRV, LX_CHG, VIN_CHG
+and IPSOUT are connected via PMOS driver to SOM VBAT pins. VBAT and
+AXP803 TS pins are routed to the baseboard 3-pin battery connector.
 
 Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
 ---
- Documentation/devicetree/bindings/gpio/gpio-axp209.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ .../boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts    | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-axp209.txt b/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
-index fc42b2caa06d..5337a21d7bcf 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
-@@ -11,6 +11,7 @@ This driver employs the per-pin muxing pattern.
- Required properties:
- - compatible: Should be one of:
- 	- "x-powers,axp209-gpio"
-+	- "x-powers,axp803-gpio"
- 	- "x-powers,axp813-gpio"
- - #gpio-cells: Should be two. The first cell is the pin number and the
-   second is the GPIO flags.
-@@ -67,6 +68,7 @@ GPIO0	|	gpio_in, gpio_out, ldo, adc
- GPIO1	|	gpio_in, gpio_out, ldo, adc
- GPIO2	|	gpio_in, gpio_out
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+index c21f2331add6..335cf2263d19 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+@@ -69,6 +69,14 @@
+ 	};
+ };
  
-+axp803
- axp813
- ------
- GPIO	|	Functions
++&ac_power_supply {
++	status = "okay";
++};
++
++&battery_power_supply {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
 -- 
 2.17.1
 
