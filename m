@@ -2,205 +2,134 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 681C9C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A72C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:26:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35495204FD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:24:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35495204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 72F56204FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:26:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72F56204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728720AbeJXDs5 (ORCPT
+        id S1728691AbeJXDux (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:48:57 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:56436 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727758AbeJXDs5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:48:57 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9NJO9VH099669;
-        Tue, 23 Oct 2018 14:24:09 -0500
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9NJO94B036916
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 23 Oct 2018 14:24:09 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 23
- Oct 2018 14:24:08 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 23 Oct 2018 14:24:08 -0500
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9NJO81n002264;
-        Tue, 23 Oct 2018 14:24:08 -0500
-Subject: Re: [PATCH v4 05/17] remoteproc: add helper function to allocate and
- init rproc_mem_entry struct
-To:     Loic Pallardy <loic.pallardy@st.com>, <bjorn.andersson@linaro.org>,
-        <ohad@wizery.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>
-References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
- <1532697292-14272-6-git-send-email-loic.pallardy@st.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <12b7cb33-279d-1e6e-28b5-cddf3f43d0e9@ti.com>
-Date:   Tue, 23 Oct 2018 14:24:08 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 23 Oct 2018 23:50:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54348 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727758AbeJXDux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:50:53 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7A66688317;
+        Tue, 23 Oct 2018 19:26:08 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6B94D5DA63;
+        Tue, 23 Oct 2018 19:26:08 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 4F43E4BB74;
+        Tue, 23 Oct 2018 19:26:08 +0000 (UTC)
+Date:   Tue, 23 Oct 2018 15:26:08 -0400 (EDT)
+From:   Bob Peterson <rpeterso@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     cluster-devel <cluster-devel@redhat.com>,
+        linux-kernel@vger.kernel.org
+Message-ID: <200314933.23623823.1540322768252.JavaMail.zimbra@redhat.com>
+In-Reply-To: <1929897739.23623737.1540322729596.JavaMail.zimbra@redhat.com>
+Subject: GFS2: Pull request (merge window)
 MIME-Version: 1.0
-In-Reply-To: <1532697292-14272-6-git-send-email-loic.pallardy@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Originating-IP: [10.3.116.65, 10.4.195.24]
+Thread-Topic: GFS2: Pull request (merge window)
+Thread-Index: 75c+qw/d95wVPL2sNZrRrWbgN3LJOg==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 23 Oct 2018 19:26:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/27/18 8:14 AM, Loic Pallardy wrote:
-> This patch introduces rproc_mem_entry_init helper function to
-> simplify rproc_mem_entry structure allocation and filling by
-> client.
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Hi Linus,
 
-Reviewed-by: Suman Anna <s-anna@ti.com>
+Welcome back.
+Please consider pulling the following changes for the GFS2 file system.
 
-> ---
->  drivers/remoteproc/remoteproc_core.c | 65 +++++++++++++++++++++++++++---------
->  include/linux/remoteproc.h           |  6 ++++
->  2 files changed, 55 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index d7e3138..b76760e 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -639,7 +639,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  				 struct fw_rsc_carveout *rsc,
->  				 int offset, int avail)
->  {
-> -	struct rproc_mem_entry *carveout, *mapping;
-> +	struct rproc_mem_entry *carveout, *mapping = NULL;
->  	struct device *dev = &rproc->dev;
->  	dma_addr_t dma;
->  	void *va;
-> @@ -659,16 +659,11 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
->  		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
->  
-> -	carveout = kzalloc(sizeof(*carveout), GFP_KERNEL);
-> -	if (!carveout)
-> -		return -ENOMEM;
-> -
->  	va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
->  	if (!va) {
->  		dev_err(dev->parent,
->  			"failed to allocate dma memory: len 0x%x\n", rsc->len);
-> -		ret = -ENOMEM;
-> -		goto free_carv;
-> +		return -ENOMEM;
->  	}
->  
->  	dev_dbg(dev, "carveout va %pK, dma %pad, len 0x%x\n",
-> @@ -747,27 +742,65 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  	 */
->  	rsc->pa = (u32)rproc_va_to_pa(va);
->  
-> -	carveout->va = va;
-> -	carveout->len = rsc->len;
-> -	carveout->dma = dma;
-> -	carveout->da = rsc->da;
-> -	carveout->release = rproc_release_carveout;
-> -	strlcpy(carveout->name, rsc->name, sizeof(carveout->name));
-> +	carveout = rproc_mem_entry_init(dev, va, dma, rsc->len, rsc->da,
-> +					rproc_release_carveout, rsc->name);
-> +	if (!carveout)
-> +		goto free_carv;
->  
->  	list_add_tail(&carveout->node, &rproc->carveouts);
->  
->  	return 0;
->  
-> +free_carv:
-> +	kfree(carveout);
->  free_mapping:
->  	kfree(mapping);
->  dma_free:
->  	dma_free_coherent(dev->parent, rsc->len, va, dma);
-> -free_carv:
-> -	kfree(carveout);
->  	return ret;
->  }
->  
-> -/*
-> +/**
-> + * rproc_mem_entry_init() - allocate and initialize rproc_mem_entry struct
-> + * @dev: pointer on device struct
-> + * @va: virtual address
-> + * @dma: dma address
-> + * @len: memory carveout length
-> + * @da: device address
-> + * @release: memory carveout function
-> + * @name: carveout name
-> + *
-> + * This function allocates a rproc_mem_entry struct and fill it with parameters
-> + * provided by client.
-> + */
-> +struct rproc_mem_entry *
-> +rproc_mem_entry_init(struct device *dev,
-> +		     void *va, dma_addr_t dma, int len, u32 da,
-> +		     int (*release)(struct rproc *, struct rproc_mem_entry *),
-> +		     const char *name, ...)
-> +{
-> +	struct rproc_mem_entry *mem;
-> +	va_list args;
-> +
-> +	mem = kzalloc(sizeof(*mem), GFP_KERNEL);
-> +	if (!mem)
-> +		return mem;
-> +
-> +	mem->va = va;
-> +	mem->dma = dma;
-> +	mem->da = da;
-> +	mem->len = len;
-> +	mem->release = release;
-> +
-> +	va_start(args, name);
-> +	vsnprintf(mem->name, sizeof(mem->name), name, args);
-> +	va_end(args);
-> +
-> +	return mem;
-> +}
-> +EXPORT_SYMBOL(rproc_mem_entry_init);
-> +
-> +/**
->   * A lookup table for resource handlers. The indices are defined in
->   * enum fw_resource_type.
->   */
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 0e21098..4bc961f 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -558,6 +558,12 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->  int rproc_del(struct rproc *rproc);
->  void rproc_free(struct rproc *rproc);
->  
-> +struct rproc_mem_entry *
-> +rproc_mem_entry_init(struct device *dev,
-> +		     void *va, dma_addr_t dma, int len, u32 da,
-> +		     int (*release)(struct rproc *, struct rproc_mem_entry *),
-> +		     const char *name, ...);
-> +
->  int rproc_boot(struct rproc *rproc);
->  void rproc_shutdown(struct rproc *rproc);
->  void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
-> 
+Regards,
 
+Bob Peterson
+----------------------------------------------------------------
+The following changes since commit 050cdc6c9501abcd64720b8cc3e7941efee9547d:
+
+  Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net (2018-08-27 11:59:39 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/gfs2-4.20.fixes
+
+for you to fetch changes up to 8e31582a9ab18093c0b7708b52d7f79eed9a8688:
+
+  gfs2: Fix minor typo: couln't versus couldn't. (2018-10-19 11:34:04 -0500)
+
+----------------------------------------------------------------
+We've got 18 patches for this merge window, none of which are very major.
+
+1. Andreas Gruenbacher contributed several patches to clean up the gfs2
+   block allocator to prepare for future performance enhancements.
+2. Andy Price contributed a patch to fix a use-after-free problem.
+3. I contributed some patches that fix gfs2's broken rgrplvb mount option.
+4. I contributed some cleanup patches and error message improvements.
+5. Steve Whitehouse and Abhi Das sent a patch to enable getlabel support.
+6. Tim Smith contributed a patch to flush the glock delete workqueue at exit.
+
+----------------------------------------------------------------
+Andreas Gruenbacher (8):
+      gfs2: Always check the result of gfs2_rbm_from_block
+      gfs2: Clean up out-of-bounds check in gfs2_rbm_from_block
+      gfs2: Move rs_{sizehint, rgd_gh} fields into the inode
+      gfs2: Remove unused RGRP_RSRV_MINBYTES definition
+      gfs2: Rename bitmap.bi_{len => bytes}
+      gfs2: Fix some minor typos
+      gfs2: Fix marking bitmaps non-full
+      gfs2: Pass resource group to rgblk_free
+
+Andrew Price (1):
+      gfs2: Don't leave s_fs_info pointing to freed memory in init_sbd
+
+Bob Peterson (7):
+      gfs2: improve debug information when lvb mismatches are found
+      gfs2: Don't set GFS2_RDF_UPTODATE when the lvb is updated
+      gfs2: slow the deluge of io error messages
+      gfs2: Use fs_* functions instead of pr_* function where we can
+      gfs2: Remove unnecessary gfs2_rlist_alloc parameter
+      gfs2: write revokes should traverse sd_ail1_list in reverse
+      gfs2: Fix minor typo: couln't versus couldn't.
+
+Steve Whitehouse (1):
+      gfs2: getlabel support
+
+Tim Smith (1):
+      GFS2: Flush the GFS2 delete workqueue before stopping the kernel threads
+
+ fs/gfs2/bmap.c       |   4 +-
+ fs/gfs2/dir.c        |  28 ++++---
+ fs/gfs2/file.c       |  18 ++++-
+ fs/gfs2/glock.c      |  17 +++--
+ fs/gfs2/incore.h     |   9 +--
+ fs/gfs2/lock_dlm.c   |  10 +--
+ fs/gfs2/log.c        |  11 ++-
+ fs/gfs2/lops.c       |   2 +-
+ fs/gfs2/main.c       |   2 +
+ fs/gfs2/ops_fstype.c |   2 +-
+ fs/gfs2/quota.c      |   2 +-
+ fs/gfs2/rgrp.c       | 201 +++++++++++++++++++++++++++++----------------------
+ fs/gfs2/rgrp.h       |  11 +--
+ fs/gfs2/super.c      |   4 +-
+ fs/gfs2/trans.c      |  15 ++--
+ fs/gfs2/util.c       |  16 ++--
+ fs/gfs2/util.h       |   2 +-
+ fs/gfs2/xattr.c      |  18 +++--
+ 18 files changed, 218 insertions(+), 154 deletions(-)
