@@ -2,82 +2,124 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE745C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E15C7112C
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9729207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:29:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OAP3h7O0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9729207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EB2752080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:31:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB2752080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbeJWTwi (ORCPT
+        id S1728216AbeJWTy7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 15:52:38 -0400
-Received: from mail-qk1-f178.google.com ([209.85.222.178]:46722 "EHLO
-        mail-qk1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727873AbeJWTwi (ORCPT
+        Tue, 23 Oct 2018 15:54:59 -0400
+Received: from lucky1.263xmail.com ([211.157.147.134]:38192 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728034AbeJWTy6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 15:52:38 -0400
-Received: by mail-qk1-f178.google.com with SMTP id a193-v6so514658qkc.13;
-        Tue, 23 Oct 2018 04:29:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=GxaUldInxt8S0WOf96/f1dggEVygmb1yXVURh5ZUr7A=;
-        b=OAP3h7O060GVB81SnN62qM9o3uJ0DeOVq9JnlEkYlTw8hDX9BZCJjcEFRaiIYTH99t
-         HIOfLeQ+y7j09q4vfhzPtVpNFR/4TooErcD78R0k5z3J0KBBgFcsNkM81e10PFxt/tCl
-         NHAVPEE7kVRY8av/OntQ9pkqoFzrkJ/ne47dwVRORwSlBt487F7WQNebK8AZQBRjgrs0
-         M7h+GTAEEW+sHdCFvGVEaA20Zyqv8Or3DHyPDQWaAqLVqLeSxF/DLNg8dWbeS4afXIGP
-         zH0hiTXutB+LLWH2c8nnDtewkowP3gsLCrHliZTfvKhThq6MraVg3Tcy0ZlDgH6izd+T
-         JJaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=GxaUldInxt8S0WOf96/f1dggEVygmb1yXVURh5ZUr7A=;
-        b=qLWuz4tB7fJU+kQ/QBduzfT1SD+pPJY7g449p2n8DPGH/dOB+4cXD/dmjebNK6c+Xr
-         WnwcpYdCB/h19cNlUOTFEST0JE8h2Lbx7gi9uSQ5Hchh9HYcTKth0VGwwCzepgPKY/vz
-         Gw7EgIW8WbuiMj2rVnb7wmBjqQ9Y/ne6irYBSCAakofBUDftV7tUifFRf9vYvE525d1f
-         Qpzo5VR1cK7bHNBMg4dodpZ8LEHzJc6+zodDaRVMXAeo4+iehySGQ7Guqu3IQpgflE6+
-         2iFh0vJZEzcWa0R5jERSJpQn70/Bwf0JuKl+OJyEwZrxQj4ywpoNpOXf4oHE6bKYRROU
-         8DIA==
-X-Gm-Message-State: ABuFfojiktMZR9ecF/vIhgVRQzelMFkdaudRdBihH1IkhYRAh6fGrXjO
-        KroDJj5gLNPgaoF+hgb4ywDUIQN+JKsmXHKQWwo0gg==
-X-Google-Smtp-Source: ACcGV60XLnjISFvfHjTBH6LabiuRlkFuyZwrnaHDj9GcKCS5BuHgqgFUg2vjxji5CMvChIFgSlYz3zHUhcaZYi3qcnE=
-X-Received: by 2002:a37:9ac2:: with SMTP id c185-v6mr45678791qke.162.1540294173935;
- Tue, 23 Oct 2018 04:29:33 -0700 (PDT)
+        Tue, 23 Oct 2018 15:54:58 -0400
+Received: from tony.xie?rock-chips.com (unknown [192.168.167.73])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 5995C3EB;
+        Tue, 23 Oct 2018 19:31:44 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id D877F390;
+        Tue, 23 Oct 2018 19:31:37 +0800 (CST)
+X-IP-DOMAINF: 1
+X-RL-SENDER: tony.xie@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: tony.xie@rock-chips.com
+X-UNIQUE-TAG: <f4448ed0684834f905828da3ca93c9ab>
+X-ATTACHMENT-NUM: 0
+X-SENDER: xxx@rock-chips.com
+X-DNS-TYPE: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith ESMTP id 30768VN3LLL;
+        Tue, 23 Oct 2018 19:31:39 +0800 (CST)
+From:   Tony Xie <tony.xie@rock-chips.com>
+To:     heiko@sntech.de
+Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com, tony.xie@rock-chips.com
+Subject: [PATCH v5 0/5] support a new type of PMIC,including two chips(rk817 and rk809)
+Date:   Tue, 23 Oct 2018 19:34:22 +0800
+Message-Id: <1540294467-25813-1-git-send-email-tony.xie@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-From:   Leonid Bloch <lb.workbox@gmail.com>
-Date:   Tue, 23 Oct 2018 14:29:22 +0300
-Message-ID: <CAOwCge2F92GninYqckfrpOaTghsAUiESqpNUUpQLzvvBwOS87g@mail.gmail.com>
-Subject: Adding initramfs as an ELF section to bzImage
-To:     linux-kernel@vger.kernel.org, initramfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Most of functions and registers of the rk817 and rk808 are the same,
+so they can share allmost all codes.
 
-I am wondering if it is possible to add initramfs as an ELF section to
-the bzImage, and if so - how?
+Their specifications are as follows£º
+  1) The RK809 and RK809 consist of 5 DCDCs, 9 LDOs and have the same registers
+     for these components except dcdc5.
+  2) The dcdc5 is a boost dcdc for RK817 and is a buck for RK809.
+  3) The RK817 has one switch but The Rk809 has two.
 
-I am aware that it is possible to compile-in an initramfs or to supply
-it as an external file. Both of these options don't fit my needs. The
-first one doesn't fit because it is very difficult to manipulate after
-compilation, and the second - because I need a single file.
+Changes in V2:
+1. initialize the pm_pwroff_fn to NULL. 
+2. use EXPORT_SYMBOL_GPL to export pm_power_off_prepare.
+3. change patch 2/3/4/5 subjects. 
 
-It looks like there should be no problem to append a section to the
-bzImage for loading into memory as initramfs, but I didn't find a way
-to do it yet.
+Changes in V3£º
+1. change patch 4 subjects
+2. replace pr_ with dev_ for printing in patch 2
+3. modify switch1 and switch2 configs in patch 2
+4. explain gpio information for rk809 and rk817 in patch 4
 
-Regards,
-Leonid.
+Changes in V4:
+1. modify some codes for patch 2 and patch 5 according to comments 
+2. add reviewer mail lists for patch 3 and 4
+
+Changes in V5:
+modify some codes for patch 1 according to reveiw comments for v3.
+ 1) remove the pm_power_off_prepare() and replace with shutdown call-back from syscore
+ 2) move the macro REGMAP_IRQ_M into the regmap.h and rename it REGMAP_IRQ_LINE
+ 3) make some dev_warn() log clear
+
+Tony Xie (5):
+  mfd: rk808: Add RK817 and RK809 support
+  regulator: rk808: add RK809 and RK817 support.
+  dt-bindings: mfd: rk808: Add binding information for RK809 and RK817.
+  rtc: rk808: add RK809 and RK817 support.
+  clk: RK808: add RK809 and RK817 support.
+
+ Documentation/devicetree/bindings/mfd/rk808.txt |  44 ++
+ drivers/clk/Kconfig                             |   9 +-
+ drivers/clk/clk-rk808.c                         |  64 ++-
+ drivers/mfd/Kconfig                             |   6 +-
+ drivers/mfd/rk808.c                             | 225 +++++++-
+ drivers/regulator/Kconfig                       |   4 +-
+ drivers/regulator/rk808-regulator.c             | 657 +++++++++++++++++++++++-
+ drivers/rtc/Kconfig                             |   4 +-
+ drivers/rtc/rtc-rk808.c                         |  68 ++-
+ include/linux/mfd/rk808.h                       | 175 +++++++
+ include/linux/regmap.h                          |   6 +
+ 11 files changed, 1193 insertions(+), 69 deletions(-)
+
+-- 
+1.9.1
+
+
