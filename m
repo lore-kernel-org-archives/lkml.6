@@ -2,138 +2,270 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5011C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82901C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 609EF20665
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:50:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FEA920665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:50:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PWSrGUOb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 609EF20665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t80ChzhH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FEA920665
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728761AbeJXDPD (ORCPT
+        id S1728818AbeJXDPb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:15:03 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:43372 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728282AbeJXDPD (ORCPT
+        Tue, 23 Oct 2018 23:15:31 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38122 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728282AbeJXDPb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:15:03 -0400
-Received: by mail-yw1-f66.google.com with SMTP id j75-v6so986563ywj.10
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 11:50:26 -0700 (PDT)
+        Tue, 23 Oct 2018 23:15:31 -0400
+Received: by mail-lf1-f65.google.com with SMTP id x24-v6so1999360lfe.5;
+        Tue, 23 Oct 2018 11:50:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=MLwe1V3+WJhm5IZOKBCWNwMrf6D/NJnM+bO9U6nJ9WI=;
-        b=PWSrGUObF5SXc5Gy1kASJRkZcqkf5AaV68TJcvLo9+ZpDzbkyyQnt7RGDTsvNkUIpl
-         YXGOhnMSilor+kLqcNu0xBBwrk77xeqXIoILYfus1H/+A1kA2ZAXED3/5QYkaKeHU3hA
-         MNRhWWUFNF65xWLVx0vrJke+PykxNIFOanEZs=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ogHnNczkZeaBs2BrhCd07HgzaZjUBSu0c9t22YKR0D4=;
+        b=t80ChzhH7LvoLXaqhRHD4ND2kuP5s4zaAKqie9tbpIVGIzS/mXAGxqMN17/zGGSB5d
+         Pz3+xqxZRAmBR1/W6Bf2Yqd2X/4EKzlJ70uupNb580ZldH84MMo1HVrVXtfGJCn3BFgl
+         lM2AfBfG3BsYcFAH1qGZq/k082L8JT+tJhJ+BjBQzeM9NJkVxpN7wcbE6uCZf6byvDD4
+         tdwGMdZmpdtk0cdWbGVDKeF8bJejBD2Igqj9ak0D68joN42mT7GzzLe5fZuZM2j+n7L1
+         z5xb9bKI023JKtd8CTyMe7Pjm5GnSY/VNdKLg69ZqUpPTdwNaTNvqZ6HKYmXwzh3Or15
+         pZgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=MLwe1V3+WJhm5IZOKBCWNwMrf6D/NJnM+bO9U6nJ9WI=;
-        b=RW/8gMg7LEgxLWsAOOiHpkrua5jWGNfo7oM3MuSq473XdtqVznsydOZUgy8O0XJ42B
-         tEhEz5Ey6bynAERrFxoUBJKqVhezlJ6HIhGrG/2356nahW4sa9p9v4UJCPGjL0/Kymy1
-         iEiAiEX3uBsPNc4LyGYYaEZkUw4kfUMQRn15/ruXoUMQ/A//w7bIZo6l2hL8E4mwE9TT
-         z3Tagap5xbIAV7ZVplJN4KgqNSdhGCKTAh/z9O03S72LjK9d+pMwa66QA4D8DlA1USXE
-         Ui75OWlHXDbWY1OrIZQ62oEpjhL/uWQ15NlKcZBNOjZhax7skLKeaRIcYTIeXuQ+N++S
-         6MQQ==
-X-Gm-Message-State: ABuFfogOsNvIRAsRnPyMTfof4P+f6sixSn8DQa3QmzUWEppkrOQOQPV+
-        GgdfYz5p2RCqvXc8RyNISoxF7y91FVQ=
-X-Google-Smtp-Source: ACcGV62vccQIvfVFD0cQ43ABRG9GxZKuutN1Efxr6m7ijfja9EGO24KeDwhO3jsKWqjU63fHdrYskg==
-X-Received: by 2002:a81:7506:: with SMTP id q6-v6mr6098418ywc.51.1540320625123;
-        Tue, 23 Oct 2018 11:50:25 -0700 (PDT)
-Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com. [209.85.161.43])
-        by smtp.gmail.com with ESMTPSA id c129-v6sm473992ywe.84.2018.10.23.11.50.22
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ogHnNczkZeaBs2BrhCd07HgzaZjUBSu0c9t22YKR0D4=;
+        b=LlNzaN1kRb3nsE5AhahNtksgtyOfpIqIFVjbRMYqBHBSeDA7yYgqwk1CSZZWycTCI/
+         yDZjLhl7GkHI3sljqA90eGK3Q2225zAFSjaMNr04HZKmtPxWcuU7xpk4EXMuQx71zR7h
+         Hq2LTBYZLbJWAdrLIwn9LOh6YoTkJ6J1Ar+5Yy7k2e0Bq9nGVlGzNvAXUGcithEb/8mq
+         rHsYO3gIrHicD8ibj5ERy4AxfM52w22nD/yIe+yEb9cNykhAj/FB81X+8JHaR9+Q/fZb
+         H2ucXLCVyJasPXImr+xZxVaz+IJBQ5cQTV66oEDaDT3HfkHXQg5LYEZKM1o/jZ0I+BHN
+         3DYQ==
+X-Gm-Message-State: ABuFfoixxhbt+R8Ubc4Ef6cvqSSaepaa4BvWytPyG4A/nMPDSK23MKgo
+        2a4957Bvn21t/rrRVCZ7gsk=
+X-Google-Smtp-Source: ACcGV61EIiQC4m1tF7+IKa+tfzPMzbjG6AVHS+5MS7hiwDAmIEczLHyAYsGKp9unuxrQz3vIKLDnnA==
+X-Received: by 2002:a19:2c15:: with SMTP id s21-v6mr12823810lfs.0.1540320651941;
+        Tue, 23 Oct 2018 11:50:51 -0700 (PDT)
+Received: from [192.168.1.18] (dks61.neoplus.adsl.tpnet.pl. [83.24.22.61])
+        by smtp.gmail.com with ESMTPSA id q62-v6sm307684ljq.22.2018.10.23.11.50.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 11:50:23 -0700 (PDT)
-Received: by mail-yw1-f43.google.com with SMTP id v77-v6so992007ywc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 11:50:22 -0700 (PDT)
-X-Received: by 2002:a81:9b83:: with SMTP id s125-v6mr36333374ywg.47.1540320621970;
- Tue, 23 Oct 2018 11:50:21 -0700 (PDT)
+        Tue, 23 Oct 2018 11:50:51 -0700 (PDT)
+Subject: Re: [PATCH v2 2/3] leds: upboard: Add LED support
+To:     Dan O'Donovan <dan@emutex.com>, linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org,
+        linux-leds@vger.kernel.org,
+        Carlos Iglesias <carlos.iglesias@emutex.com>,
+        Javier Arteaga <javier@emutex.com>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1539969334-24577-3-git-send-email-dan@emutex.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <ede59ef8-7caf-413d-6858-33a1eab5f084@gmail.com>
+Date:   Tue, 23 Oct 2018 20:50:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Tue, 23 Oct 2018 11:50:21
- -0700 (PDT)
-In-Reply-To: <96e92224-aedf-5026-d6dd-b29121b4dc0d@schaufler-ca.com>
-References: <20181011001846.30964-1-keescook@chromium.org> <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
- <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
- <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
- <f68e5f4b-6360-a9e7-597f-89d1d3ca73c1@canonical.com> <32stV62RmME8Dj5jKB8Z03zPe_Et72kMo71D8SpgSOHUo6SaROc8DomMWdk5jDGpyqVd8T63NIIK2NdDw95clpF8Uj47Wca2FBFItXDRh7E=@protonmail.ch>
- <38dde301-d77e-35fd-88d4-5cdc5b570ee8@canonical.com> <_CkJnKYmEZ4ZF0JtsSYuahAd9sgnX9OtcstjXaeqb8wn5uxfimc6S4jomly7If9VqnOXqXwaiCbJ9ttS6NiqE7n6cQUlwLvfO53paLmacvU=@protonmail.ch>
- <8251564f-ba7a-1777-a606-dec472b32f35@canonical.com> <CAGXu5j+2yVZ5DQHyqvJKnSYYqRCzeMtEabBwYFOWkTcwMUWhEw@mail.gmail.com>
- <96e92224-aedf-5026-d6dd-b29121b4dc0d@schaufler-ca.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 23 Oct 2018 11:50:21 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKFqtV_NFRaXPKVgNQt3F1pwFqopDLp1ZQJDGM_Bdid6Q@mail.gmail.com>
-Message-ID: <CAGXu5jKFqtV_NFRaXPKVgNQt3F1pwFqopDLp1ZQJDGM_Bdid6Q@mail.gmail.com>
-Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        Jordan Glover <Golden_Miller83@protonmail.ch>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1539969334-24577-3-git-send-email-dan@emutex.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 9:48 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 10/12/2018 12:01 PM, Kees Cook wrote:
->> On Friday, October 12, 2018 3:19 AM, John Johansen
->> <john.johansen@canonical.com> wrote:
->>> It isn't perfect but it manages consistency across distros as best as
->>> can be achieved atm.
->> Yeah, this is why I'm okay with the current series: it provides as
->> consistent a view as possible, but leaves room for future improvements
->> (like adding "+" or "!" or "all" or whatever).
->>
->> I'm curious to see what SELinux folks think of v5, though. I *think* I
->> addressed all the concerns there, even Paul's "I want my distro
->> default to not have extreme stacking" case too.
->>
->> -Kees
->
-> Looks like I should go on vacation more often. :)
->
-> I am generally opposed to fancy specification languages.
-> I support the explicit lsm= list specification because you
-> don't have to know any context to create a boot line that
-> will work, and be as close to what you've specified as possible
-> for the kernel configuration. One need look no further than
-> the mechanisms for setting POSIX ACLs for an example of
-> how to ensure a feature isn't used.
->
-> Had we the foresight to make security= take a list of
-> modules when Yama was added we might have avoided some of
-> this brouhaha, but there was no reason to expect that stacking
-> was ever going to happen back then.
+Hi Javier,
 
-This sounds like an "Ack" for you? :) I'll harass everyone in person
-in a couple days.
+Thank you for the patch.
 
-Did you poke around at my combined series?
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=lsm/ordering-v6-blob-sharing
+I have few trivial issues below, please take a look.
 
--Kees
+On 10/19/2018 07:15 PM, Dan O'Donovan wrote:
+> From: Javier Arteaga <javier@emutex.com>
+> 
+> Allow userspace to use the on-board LEDs as "upboard:<color>:".
+> 
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> Signed-off-by: Javier Arteaga <javier@emutex.com>
+> Signed-off-by: Dan O'Donovan <dan@emutex.com>
+> ---
+>  drivers/leds/Kconfig        |  10 +++++
+>  drivers/leds/Makefile       |   1 +
+>  drivers/leds/leds-upboard.c | 104 ++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 115 insertions(+)
+>  create mode 100644 drivers/leds/leds-upboard.c
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 44097a3..0ed8857 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -756,6 +756,16 @@ config LEDS_NIC78BX
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called leds-nic78bx.
+>  
+> +config LEDS_UPBOARD
+> +	tristate "LED support for the UP Squared"
+> +	depends on LEDS_CLASS
+> +	depends on MFD_UPBOARD
+> +	help
+> +	  This option enables support for the LEDs on the UP Squared board.
+> +
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called leds-upboard.
+> +
+>  comment "LED Triggers"
+>  source "drivers/leds/trigger/Kconfig"
+>  
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 420b5d2..c85f18f 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -78,6 +78,7 @@ obj-$(CONFIG_LEDS_MT6323)		+= leds-mt6323.o
+>  obj-$(CONFIG_LEDS_LM3692X)		+= leds-lm3692x.o
+>  obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
+>  obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
+> +obj-$(CONFIG_LEDS_UPBOARD)		+= leds-upboard.o
+>  
+>  # LED SPI Drivers
+>  obj-$(CONFIG_LEDS_CR0014114)		+= leds-cr0014114.o
+> diff --git a/drivers/leds/leds-upboard.c b/drivers/leds/leds-upboard.c
+> new file mode 100644
+> index 0000000..34a6973
+> --- /dev/null
+> +++ b/drivers/leds/leds-upboard.c
+> @@ -0,0 +1,104 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// UP Board LED driver
+> +//
+> +// Copyright (c) 2018, Emutex Ltd.
+> +//
+> +// Author: Javier Arteaga <javier@emutex.com>
+> +//
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/leds.h>
+> +#include <linux/mfd/upboard.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/acpi.h>
+
+The last include should go first to keep alphabetical order.
+
+> +
+> +#define to_upboard_led(cdev) container_of(cdev, struct upboard_led, cdev)
+> +
+> +static const char * const upboard_led_names[] = {
+> +	"upboard:blue:",
+> +	"upboard:yellow:",
+> +	"upboard:green:",
+> +	"upboard:red:",
+> +};
+> +
+> +struct upboard_led {
+> +	struct regmap_field *field;
+> +	struct led_classdev cdev;
+> +};
+> +
+> +static enum led_brightness upboard_led_brightness_get(struct led_classdev *cdev)
+> +{
+> +	struct upboard_led *led = to_upboard_led(cdev);
+> +	int brightness = 0;
+> +
+> +	regmap_field_read(led->field, &brightness);
+
+Please check the return value.
+
+> +	return brightness;
+> +}
+> +
+> +static void upboard_led_brightness_set(struct led_classdev *cdev,
+> +				       enum led_brightness brightness)
+> +{
+> +	struct upboard_led *led = to_upboard_led(cdev);
+> +
+> +	regmap_field_write(led->field, brightness);
+
+Ditto.
+
+> +}
+> +
+> +static int upboard_led_probe(struct platform_device *pdev)
+> +{
+> +	unsigned int led_index = pdev->id;
+> +	struct device *dev = &pdev->dev;
+> +	struct acpi_device *adev;
+> +	struct upboard_led *led;
+> +	struct regmap *regmap;
+> +	struct reg_field conf = {
+> +		.reg = UPBOARD_REG_FUNC_EN0,
+> +		.lsb = led_index,
+> +		.msb = led_index,
+> +	};
+> +
+> +	adev = ACPI_COMPANION(dev);
+> +	if (!adev || strcmp(acpi_device_hid(adev), "AANT0F01"))
+> +		return -ENODEV;
+> +
+> +	if (led_index >= ARRAY_SIZE(upboard_led_names))
+> +		return -EINVAL;
+> +
+> +	if (!dev->parent)
+> +		return -EINVAL;
+> +
+> +	regmap = dev_get_regmap(dev->parent, NULL);
+> +	if (!regmap)
+> +		return -EINVAL;
+> +
+> +	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
+> +	if (!led)
+> +		return -ENOMEM;
+> +
+> +	led->field = devm_regmap_field_alloc(dev, regmap, conf);
+> +	if (IS_ERR(led->field))
+> +		return PTR_ERR(led->field);
+> +
+> +	led->cdev.max_brightness = 1;
+
+s/1/LED_ON/
+
+> +	led->cdev.brightness_get = upboard_led_brightness_get;
+> +	led->cdev.brightness_set = upboard_led_brightness_set;
+> +	led->cdev.name = upboard_led_names[led_index];
+> +
+> +	return devm_led_classdev_register(dev, &led->cdev);
+> +}
+> +
+> +static struct platform_driver upboard_led_driver = {
+> +	.driver = {
+> +		.name = "upboard-led",
+> +	},
+> +};
+> +
+> +module_platform_driver_probe(upboard_led_driver, upboard_led_probe);
+> +
+> +MODULE_ALIAS("platform:upboard-led");
+> +MODULE_AUTHOR("Javier Arteaga <javier@emutex.com>");
+> +MODULE_DESCRIPTION("UP Board LED driver");
+> +MODULE_LICENSE("GPL v2");
+> 
 
 -- 
-Kees Cook
-Pixel Security
+Best regards,
+Jacek Anaszewski
