@@ -2,151 +2,211 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CBFC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E268C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C7B32080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:01:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C7B32080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 00E1120671
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:01:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00E1120671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=oregano.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728442AbeJWRYC (ORCPT
+        id S1728458AbeJWRYO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 13:24:02 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40530 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727978AbeJWRYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 13:24:02 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 69951208C7; Tue, 23 Oct 2018 11:01:33 +0200 (CEST)
-Received: from bbrezillon (aaubervilliers-681-1-25-52.w90-88.abo.wanadoo.fr [90.88.145.52])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 035D920794;
-        Tue, 23 Oct 2018 11:01:22 +0200 (CEST)
-Date:   Tue, 23 Oct 2018 11:01:22 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     "Cristian.Birsan@microchip.com" <Cristian.Birsan@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        "richard@nod.at" <richard@nod.at>, Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "cyrille.pitchen@microchip.com" <cyrille.pitchen@microchip.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP
- SPI NOR flash memories
-Message-ID: <20181023110122.27f73100@bbrezillon>
-In-Reply-To: <20181023104827.77e7775b@bbrezillon>
-References: <20180911154007.17195-1-tudor.ambarus@microchip.com>
-        <20181017115237.07310b74@bbrezillon>
-        <VI1PR04MB1038BD6103DD8BD6B6DEC2B899F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022111543.2a607efc@bbrezillon>
-        <VI1PR04MB1038EF892921194D1BFDE6FC99F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022122659.0675942e@bbrezillon>
-        <VI1PR04MB1038E92FFAB03E07048FD8B499F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022124627.2c6c3b93@bbrezillon>
-        <20181022125259.42df83ea@bbrezillon>
-        <VI1PR04MB1038C9C889185F2A700220F299F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022134324.2c1bd248@bbrezillon>
-        <VI1PR04MB1038E072BFFD09C7C19AD2F899F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022135211.1978c25d@bbrezillon>
-        <VI1PR04MB1038B9A5A8C59E6CB0863FF599F50@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181023073946.138b287e@bbrezillon>
-        <VI1PR04MB10381C2DC4052E636BA26ADA99F50@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181023104827.77e7775b@bbrezillon>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 23 Oct 2018 13:24:14 -0400
+Received: from mx02.busymouse24.de ([83.246.107.20]:44812 "EHLO
+        mx02.busymouse24.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727978AbeJWRYN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 13:24:13 -0400
+Received: from maskedhost [127.0.0.1] by mx02.busymouse24.de stage1 with esmtps 
+        (Exim MailCleaner) 
+        id 1gEsZL-0004E2-Pm  
+        from <puhm@oregano.at>; Tue, 23 Oct 2018 11:01:43 +0200
+Received: from SRV188.busymouse24.de (192.168.100.188) by
+ SRV177.busymouse24.de (192.168.100.177) with Microsoft SMTP Server (TLS) id
+ 15.0.1263.5; Tue, 23 Oct 2018 11:01:41 +0200
+Received: from SRV177.busymouse24.de (192.168.100.177) by
+ SRV188.busymouse24.de (192.168.100.188) with Microsoft SMTP Server (TLS) id
+ 15.0.1263.5; Tue, 23 Oct 2018 11:01:41 +0200
+Received: from SRV177.busymouse24.de ([fe80::f87a:2c8c:90ef:d29a]) by
+ SRV177.busymouse24.de ([fe80::f87a:2c8c:90ef:d29a%14]) with mapi id
+ 15.00.1263.000; Tue, 23 Oct 2018 11:01:40 +0200
+Content-Type: multipart/mixed;
+        boundary="_000_9b53d15391054a598ec3a32cee540798SRV177busymouse24de_"
+From:   Andreas Puhm <puhm@oregano.at>
+To:     "mdf@kernel.org" <mdf@kernel.org>
+CC:     "atull@kernel.org" <atull@kernel.org>,
+        "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] fpga: altera-cvp: Fix registration for CvP incapable devices
+Thread-Topic: [PATCH] fpga: altera-cvp: Fix registration for CvP incapable
+ devices
+Thread-Index: AdRqrwHSczNMez1jQOOfVT8pKpEdMQ==
+Date:   Tue, 23 Oct 2018 09:01:39 +0000
+Message-ID: <9b53d15391054a598ec3a32cee540798@SRV177.busymouse24.de>
+Accept-Language: de-AT, de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: <9b53d15391054a598ec3a32cee540798@SRV177.busymouse24.de>
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [83.246.107.135]
+x-exclaimer-md-config: 1802f3fe-bc94-4301-9dc2-d59a74e6de3a
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 23 Oct 2018 10:48:27 +0200
-Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+--_000_9b53d15391054a598ec3a32cee540798SRV177busymouse24de_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-> On Tue, 23 Oct 2018 08:18:35 +0000
-> Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
-> 
-> > 
-> > I have added the prints in m25p80_read() and in flexspi controller prepare_lut and read_rxfifo() func.
-> > In these have added prints for data variable of struct op and data which being read by the controller from the flash.
-> > 
-> > [    2.091467] smpt[0]=[addr_width:00000003, read_dumy:00000008, read_opcode:00000065, data_mask:00000008]          
-> > [    2.099113] m25p80_read, nor[op:00000065 addr_width:00000003, dummy:00000008, len:00000001                       
-> > [    2.107367] m25p80_read, cmd[opcode:65 bwidth:1] aadr[val:4, nbytes:3, bwidth:1]                                 
-> > [    2.114753] m25p80_read, dummy[nbytes:1 bwidth:1] data[bwidth:1, nbytes:1]                                       
-> > [    2.121706] nxp_fspi_prepare_lut cmd[opcode:65 bwidth:1] aadr[val:4, nbytes:3, bwidth:1]                         
-> > [    2.129786] dummy[nbytes:1 bwidth:1] data[dir:0 bwidth:1, nbytes:1]                                              
-> > [    2.136132] nxp-fspi 20c0000.flexspi: CMD[65] lutval[0:8180465        1:24003008      2:0     3:0]               
-> > [    2.144223] nxp_fspi_read_rxfifo, ReadData op.buf[0x00]                                         
-> > [    2.151004] smpt_read[1] addr[00000004], data_byte[00000000] err:00000000   
-> > 
-> >                                                   
-> > [    2.157782] smpt[2]=[addr_width:00000003, read_dumy:00000008, read_opcode:00000065, data_mask:00000004]  
-> > [    2.165429] m25p80_read, nor[op:00000065 addr_width:00000003, dummy:00000008, len:00000001                 
-> > [    2.173683] m25p80_read, cmd[opcode:65 bwidth:1] aadr[val:2, nbytes:3, bwidth:1]                       
-> > [    2.181068] m25p80_read, dummy[nbytes:1 bwidth:1] data[bwidth:1, nbytes:1]                                     
-> > [    2.188021] nxp_fspi_prepare_lut cmd[opcode:65 bwidth:1] aadr[val:2, nbytes:3, bwidth:1]                   
-> > [    2.196101] dummy[nbytes:1 bwidth:1] data[dir:0 bwidth:1, nbytes:1]                   
-> > [    2.202447] nxp-fspi 20c0000.flexspi: CMD[65] lutval[0:8180465        1:24003008      2:0     3:0]       
-> > [    2.210539] nxp_fspi_read_rxfifo, ReadData op.buf[0x02]                            
-> > [    2.217319] smpt_read[3] addr[00000002], data_byte[00000002] err:00000000                                                     
-> > 
-> > 
-> > [    2.224098] smpt[4]=[addr_width:00000003, read_dumy:00000008, read_opcode:00000065, data_mask:00000002]                 
-> > [    2.231744] m25p80_read, nor[op:00000065 addr_width:00000003, dummy:00000008, len:00000001              
-> > [    2.239998] m25p80_read, cmd[opcode:65 bwidth:1] aadr[val:4, nbytes:3, bwidth:1]                     
-> > [    2.247383] m25p80_read, dummy[nbytes:1 bwidth:1] data[bwidth:1, nbytes:1]                     
-> > [    2.254336] nxp_fspi_prepare_lut cmd[opcode:65 bwidth:1] aadr[val:4, nbytes:3, bwidth:1]            
-> > [    2.262416] dummy[nbytes:1 bwidth:1] data[dir:0 bwidth:1, nbytes:1]                                    
-> > [    2.268762] nxp-fspi 20c0000.flexspi: CMD[65] lutval[0:8180465        1:24003008      2:0     3:0]         
-> > [    2.276854] nxp_fspi_read_rxfifo, ReadData op.buf[0x00]                                     
-> > [    2.283634] smpt_read[5] addr[00000004], data_byte[00000000] err:00000000                 
-> > 
-> > 
-> > [    2.290412] spi_nor_get_map_in_use:2915 map_id=0 smpt_len:16 i=:6                                                             
-> > [    2.296496] End [addr_width:00000003, read_dumy:00000008, read_opcode:00000065] ReturnVal:00000000                            
-> > [    2.305444] spi_nor_parse_smpt:3065                                                                                           
-> > [    2.308924] m25p80 spi0.0: failed to parse SMPT (err = -22)                                      
-> > 
-> >   
-> > > 
-> > > Next thing you can do is read the CR2NV reg (using the RDAR command) and
-> > > check the RL (Read Latency) and AL (Address Length) values.    
-> > 
-> > Please let me know how to read CR2NV register.  
-> 
-> Actually, RDAR is already what you use to read the map_id, and we need
-> to use it to read the register that contains the number of dummy cycles
-> and the number of address bytes to use for RDAR operations. Looks like
-> we have a chicken and egg situation here :-).
-> 
-> Let's try something else:
-> 
-> 1/ create an u8 array of 16 entries named data_bytes
-> 
-> for each loop iteration (the first for loop):
-> 2/ set ->addr_width to 3 and ->read_dummy to 0
-> 3/ call spi_nor_read_raw(nor, addr, ARRAY_SIZE(data_bytes), data_bytes)
-> 4/ dump the data_bytes buf
-> 5/ set ->addr_width to 4
-> 6/ call spi_nor_read_raw(nor, addr, ARRAY_SIZE(data_bytes), data_bytes)
-> 7/ dump the data_bytes buf
->    
-> If the SPI driver is working correctly, we should be able to figure out
-> the right value for ->addr_width and ->read_dummy.
+From bfc602900b016f65bc2f183aa93702101a1fdc17 Mon Sep 17 00:00:00 2001
+From: Andreas Puhm <puhm@oregano.at>
+Date: Tue, 23 Oct 2018 10:24:10 +0200
+Subject: [PATCH] fpga: altera-cvp: Fix registration for CvP incapable devic=
+es
 
-Also, can you add traces in nxp_fspi_read_rxfifo() to print the value
-returned by f->read(base + FSPI_RFDR + j * 4) (there are 2 of them).
+The probe function needs to verify the CvP enable bit in order to properly =
+determine if FPGA Manager functionality can be safely enabled.
+
+Fixes 34d1dc17ce978ae76e676d401b48fe9d004aa948 ("fpga manager: Add Altera C=
+vP driver")
+
+Signed-off-by: Andreas Puhm <puhm@oregano.at>
+---
+ drivers/fpga/altera-cvp.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index 7fa793672a7a..ece344a56075 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -403,6 +403,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ 	struct altera_cvp_conf *conf;
+ 	struct fpga_manager *mgr;
+ 	u16 cmd, val;
++	u32 regval;
+ 	int ret;
+=20
+ 	/*
+@@ -416,6 +417,14 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ 		return -ENODEV;
+ 	}
+=20
++	pci_read_config_dword(pdev, VSE_CVP_STATUS, &regval);
++	if (!(regval & VSE_CVP_STATUS_CVP_EN)) {
++		dev_err(&pdev->dev,
++			"CVP is disabled for this device: CVP_STATUS Reg 0x%x\n",
++			regval);
++		return -ENODEV;
++	}
++
+ 	conf =3D devm_kzalloc(&pdev->dev, sizeof(*conf), GFP_KERNEL);
+ 	if (!conf)
+ 		return -ENOMEM;
+--=20
+2.18.0.windows.1
+
+
+--_000_9b53d15391054a598ec3a32cee540798SRV177busymouse24de_
+Content-Disposition: attachment; filename="winmail.dat"
+Content-Transfer-Encoding: base64
+Content-Type: application/ms-tnef; name="winmail.dat"
+
+eJ8+IqM6AQaQCAAEAAAAAAABAAEAAQeQBgAIAAAA5AQAAAAAAADoAAEJgAEAIQAAADQyODZFRTBG
+QkI5M0IzNDY4NDk3RDRBMkQ2MDM3OUFBADkHAQ2ABAACAAAAAgACAAEFgAMADgAAAOIHCgAXAAkA
+AQAnAAIAPQEBIIADAA4AAADiBwoAFwAJAAEAJwACAD0BAQiABwAYAAAASVBNLk1pY3Jvc29mdCBN
+YWlsLk5vdGUAMQgBBIABAEUAAABbUEFUQ0hdIGZwZ2E6IGFsdGVyYS1jdnA6IEZpeCByZWdpc3Ry
+YXRpb24gZm9yIEN2UCBpbmNhcGFibGUgZGV2aWNlcwA9GAELgAEAIQAAADQyODZFRTBGQkI5M0Iz
+NDY4NDk3RDRBMkQ2MDM3OUFBADkHAQOQBgB4EgAAPQAAAAIBfwABAAAAOQAAADw5YjUzZDE1Mzkx
+MDU0YTU5OGVjM2EzMmNlZTU0MDc5OEBTUlYxNzcuYnVzeW1vdXNlMjQuZGU+AAAAAAsAHw4AAAAA
+AgEJEAEAAAC7BAAAtwQAAJEHAABMWkZ1AsVXDWEACmZiaWQEAABjY8BwZzEyNTIA/gND8HRleHQB
+9wKkA+MCAARjaArAc2V0MCDvB20CgwBQEU0yCoAGtAKAln0KgAjIOwliMTkOwL8JwxZyCjIWcQKA
+FWIqCbBzCfAEkGF0BbIOUANgc6JvAYAgRXgRwW4YMF0GUnYEkBe2AhByAMB0fQhQbhoxECAFwAWg
+G2RkmiADUiAQIheyXHYIkOR3awuAZDUdUwTwB0ANF3AwCnEX8mJrbWsGcwGQACAgQk1fQuBFR0lO
+fQr8AfEL8RQgRhySYhGwNjAyAjkeoGIwMTZmNhA1YmMyAEA4M2EwYTkzNyIwHpAxYeIxBXBjMTcF
+0AIgBlGscCAkUR6gOiUzIAHQaSKQXGwLgGUKgCGiOiwgQR3ACXBhBCBQdVJoHLA8cCdhQAWwZVJn
+AHBvLhiAPiYFRFUYgGUmsFQKUCwlsDP4IE9jBUAB0CMwJPAlQMgyNDoekCArIjAeoKEmBVN1YmoF
+kHQmsIBbUEFUQ0hdHHAdDnBhJrAHQBuhYS1jhHZwJrBGaXggKBE1BAB0GHFpJJEa4SBD+HZQIAuA
+HlAKsAJgGeA7AQAdYGMHkCYFJgVUaJUZ4HADYGIZ4GZ1L7DfLtMYUAmABCAYkCAaMQaQ/nkcwDGh
+L2IJ8C/zDcAFQL0LgCAFsASBMxIx0XAEkG5sM6ABABuhbSYhL5BmsSGQUEdBBdAAcGEYMP8FwDI2
+B0A0wDOgHlADoDIBMHNhZmU2ETREZC7nMLwuEQeRMzQWYCQyMIAAOTc4YWU3NmUSNjxQZDQikGI0
+OGU5UDkJkDA0I2E9ACB0KCIs8iADgTeSJrFkXRxgQS1jL1Mm8GkaMSIiKTC8U2lnGFBkLeEZMGYt
+YnkmvyfPJiNOLUSAJgU/1XMvLPIvgS1YLmMgfCA5KxB7RxZEtjEccAMQGeAZlGQ/KbBG8AuAEgAA
+IC7hcyjuK0BdDeABICBEgC5wBUD3ReBFP0ZHYku/RjcmBR2xwRAwIDdmYTcjgDyAojJQAGEuLgWQ
+ZTtgJT2ANSIgNzUqgTA271EARBhLn05vCkcRTV9TrxgKQEBLMDzAMyw2/ysQV2IkYFchH2Eu0Eaw
+C4CrS4EtY18twV8x0ygukUJ1KhFwY2lfMEEg9CpwMEEsRLZaJVkZG+G9NvAqXRIWIFuMLPJfPmVt
+WwBtCcBdt3UioBvQbQ1I8XYHQF22K3UzMn8uQmDpWMMJcB0ARLZEti8fGBBWySKgV5MkUCwxNH9Y
+L1k/Wk9bWGMRCHADoC3ARU5PREVWY0ggQO1jbCtoYkJhZF0DQVBokAp3NSEoWyMgVlNFgF9DVlBf
+U1QskNRVUymwJmHkKWEXNuH4KCEoYeRvAG4NbkNqQLwpKQMwAABUZTBBXwSQSHIoJlsiLT5bOSv+
+Im5RL5AEIA3hOcMvEzPAf3UyMFNCEG5YB/AoICUgeMAleFxcbiJ0V28uX2nPVHRrN0eXXRM9MDJt
+2F9regdACQBjc6o5IKhpemUZMChdYykpsAJHNxBfS0VSTkV+TG+HNtJwUH8TaU9qUE2cRU1dtlJx
+JgUyLiMw2C4wLgPwHcBvHjCD8AcwvBVChgAAHwBCAAEAAAAaAAAAQQBuAGQAcgBlAGEAcwAgAFAA
+dQBoAG0AAAAAAB8AZQABAAAAIAAAAHAAdQBoAG0AQABvAHIAZQBnAGEAbgBvAC4AYQB0AAAAHwBk
+AAEAAAAKAAAAUwBNAFQAUAAAAAAAAgFBAAEAAABcAAAAAAAAAIErH6S+oxAZnW4A3QEPVAIAAACA
+QQBuAGQAcgBlAGEAcwAgAFAAdQBoAG0AAABTAE0AVABQAAAAcAB1AGgAbQBAAG8AcgBlAGcAYQBu
+AG8ALgBhAHQAAAAfAAJdAQAAACAAAABwAHUAaABtAEAAbwByAGUAZwBhAG4AbwAuAGEAdAAAAB8A
+5V8BAAAABAAAACAAAAACAU4OAQAAABwAAAABBQAAAAAABRUAAADct6WQFfhjIci/KytuJQAAHwAa
+DAEAAAAaAAAAQQBuAGQAcgBlAGEAcwAgAFAAdQBoAG0AAAAAAB8AHwwBAAAAIAAAAHAAdQBoAG0A
+QABvAHIAZQBnAGEAbgBvAC4AYQB0AAAAHwAeDAEAAAAKAAAAUwBNAFQAUAAAAAAAAgEZDAEAAABc
+AAAAAAAAAIErH6S+oxAZnW4A3QEPVAIAAACAQQBuAGQAcgBlAGEAcwAgAFAAdQBoAG0AAABTAE0A
+VABQAAAAcAB1AGgAbQBAAG8AcgBlAGcAYQBuAG8ALgBhAHQAAAAfAAFdAQAAACAAAABwAHUAaABt
+AEAAbwByAGUAZwBhAG4AbwAuAGEAdAAAAAIBTQ4BAAAAHAAAAAEFAAAAAAAFFQAAANy3pZAV+GMh
+yL8rK24lAAALAEA6AQAAAB8AGgABAAAAEgAAAEkAUABNAC4ATgBvAHQAZQAAAAAAAwDxPwcEAAAL
+AEA6AQAAAAMA/T/kBAAAAgELMAEAAAAQAAAAQobuD7uTs0aEl9Si1gN5qgMAFwABAAAAQAA5AICb
+PQKvatQBQAAIMKzuugKvatQBCwApAAAAAAAfAACAhgMCAAAAAADAAAAAAAAARgEAAAAeAAAAYQBj
+AGMAZQBwAHQAbABhAG4AZwB1AGEAZwBlAAAAAAABAAAAKAAAAGQAZQAtAEEAVAAsACAAZABlAC0A
+RABFACwAIABlAG4ALQBVAFMAAAAfAPo/AQAAABoAAABBAG4AZAByAGUAYQBzACAAUAB1AGgAbQAA
+AAAAHwA3AAEAAACKAAAAWwBQAEEAVABDAEgAXQAgAGYAcABnAGEAOgAgAGEAbAB0AGUAcgBhAC0A
+YwB2AHAAOgAgAEYAaQB4ACAAcgBlAGcAaQBzAHQAcgBhAHQAaQBvAG4AIABmAG8AcgAgAEMAdgBQ
+ACAAaQBuAGMAYQBwAGEAYgBsAGUAIABkAGUAdgBpAGMAZQBzAAAAAAAfAD0AAQAAAAIAAAAAAAAA
+AwA2AAAAAAAfANk/AQAAAAACAABGAHIAbwBtACAAYgBmAGMANgAwADIAOQAwADAAYgAwADEANgBm
+ADYANQBiAGMAMgBmADEAOAAzAGEAYQA5ADMANwAwADIAMQAwADEAYQAxAGYAZABjADEANwAgAE0A
+bwBuACAAUwBlAHAAIAAxADcAIAAwADAAOgAwADAAOgAwADAAIAAyADAAMAAxAA0ACgBGAHIAbwBt
+ADoAIABBAG4AZAByAGUAYQBzACAAUAB1AGgAbQAgADwAcAB1AGgAbQBAAG8AcgBlAGcAYQBuAG8A
+LgBhAHQAPgANAAoARABhAHQAZQA6ACAAVAB1AGUALAAgADIAMwAgAE8AYwB0ACAAMgAwADEAOAAg
+ADEAMAA6ADIANAA6ADEAMAAgACsAMAAyADAAMAANAAoAUwB1AGIAagBlAGMAdAA6ACAAWwBQAEEA
+VABDAEgAXQAgAGYAcABnAGEAOgAgAGEAbAB0AGUAcgBhAC0AYwB2AHAAOgAgAEYAaQB4ACAAcgBl
+AGcAaQBzAHQAcgBhAHQAaQBvAG4AIABmAG8AcgAgAEMAdgBQACAAaQBuAGMAYQBwAGEAYgBsAGUA
+IABkAGUAdgBpAGMAZQBzAA0ACgANAAoAVABoAGUAIABwAHIAbwBiAGUAIABmAHUAbgBjAHQAaQBv
+AG4AIABuAGUAZQBkAHMAIAAAAAIBcQABAAAAFgAAAAHUaq8B0nMzTHs9Y0Djn1U/KSqRHTEAAB8A
+cAABAAAAigAAAFsAUABBAFQAQwBIAF0AIABmAHAAZwBhADoAIABhAGwAdABlAHIAYQAtAGMAdgBw
+ADoAIABGAGkAeAAgAHIAZQBnAGkAcwB0AHIAYQB0AGkAbwBuACAAZgBvAHIAIABDAHYAUAAgAGkA
+bgBjAGEAcABhAGIAbABlACAAZABlAHYAaQBjAGUAcwAAAAAAHwA1EAEAAAByAAAAPAA5AGIANQAz
+AGQAMQA1ADMAOQAxADAANQA0AGEANQA5ADgAZQBjADMAYQAzADIAYwBlAGUANQA0ADAANwA5ADgA
+QABTAFIAVgAxADcANwAuAGIAdQBzAHkAbQBvAHUAcwBlADIANAAuAGQAZQA+AAAAAAADAN4/n04A
+AEAABzDborMCr2rUAQIBCwABAAAAEAAAAEKG7g+7k7NGhJfUotYDeaoDACYAAAAAAAsABgwAAAAA
+AgEQMAEAAABGAAAAAAAAAMDNQ233xCNIhZ3/GaX4GUQHAPsFtXvN0LVAnwSTCJqiHOQAAAAAAQsA
+APsFtXvN0LVAnwSTCJqiHOQAAAAA2V8AAAAAAgETMAEAAAAQAAAAczNMez1jQOOfVT8pKpEdMR8A
++D8BAAAAGgAAAEEAbgBkAHIAZQBhAHMAIABQAHUAaABtAAAAAAAfACJAAQAAAAYAAABFAFgAAAAA
+AB8AI0ABAAAA/AAAAC8ATwA9AEIAVQBTAFkATQBPAFUAUwBFADIANAAvAE8AVQA9AEUAWABDAEgA
+QQBOAEcARQAgAEEARABNAEkATgBJAFMAVABSAEEAVABJAFYARQAgAEcAUgBPAFUAUAAgACgARgBZ
+AEQASQBCAE8ASABGADIAMwBTAFAARABMAFQAKQAvAEMATgA9AFIARQBDAEkAUABJAEUATgBUAFMA
+LwBDAE4APQBEAEYAOAA3ADkAMgA1AEQARAA5ADMANAA0ADMAMQAyADgARgA3AEMAQwA4ADIAOAAw
+ADkARAA0ADEARgA4ADQALQBQAFUASABNADAAMAAwADAAMAAAAB8AJEABAAAABgAAAEUAWAAAAAAA
+HwAlQAEAAAD8AAAALwBPAD0AQgBVAFMAWQBNAE8AVQBTAEUAMgA0AC8ATwBVAD0ARQBYAEMASABB
+AE4ARwBFACAAQQBEAE0ASQBOAEkAUwBUAFIAQQBUAEkAVgBFACAARwBSAE8AVQBQACAAKABGAFkA
+RABJAEIATwBIAEYAMgAzAFMAUABEAEwAVAApAC8AQwBOAD0AUgBFAEMASQBQAEkARQBOAFQAUwAv
+AEMATgA9AEQARgA4ADcAOQAyADUARABEADkAMwA0ADQAMwAxADIAOABGADcAQwBDADgAMgA4ADAA
+OQBEADQAMQBGADgANAAtAFAAVQBIAE0AMAAwADAAMAAwAAAAHwAwQAEAAAAaAAAAQQBuAGQAcgBl
+AGEAcwAgAFAAdQBoAG0AAAAAAB8AMUABAAAAGgAAAEEAbgBkAHIAZQBhAHMAIABQAHUAaABtAAAA
+AAAfADhAAQAAABoAAABBAG4AZAByAGUAYQBzACAAUAB1AGgAbQAAAAAAHwA5QAEAAAAaAAAAQQBu
+AGQAcgBlAGEAcwAgAFAAdQBoAG0AAAAAAAMAWUAAAAAAAwBaQAAAAAADAAlZAQAAAAsAAIAIIAYA
+AAAAAMAAAAAAAABGAAAAAIKFAAAAAAAAQAAAgAggBgAAAAAAwAAAAAAAAEYAAAAAv4UAAMDL0gGv
+atQBAwANNP0/AAAfAACAhgMCAAAAAADAAAAAAAAARgEAAAAgAAAAeAAtAG0AcwAtAGgAYQBzAC0A
+YQB0AHQAYQBjAGgAAAABAAAAAgAAAAAAAAAfAACAhgMCAAAAAADAAAAAAAAARgEAAABSAAAAeAAt
+AG0AcwAtAGUAeABjAGgAYQBuAGcAZQAtAHQAcgBhAG4AcwBwAG8AcgB0AC0AZgByAG8AbQBlAG4A
+dABpAHQAeQBoAGUAYQBkAGUAcgAAAAAAAQAAAA4AAABIAG8AcwB0AGUAZAAAAAAAHwAAgIYDAgAA
+AAAAwAAAAAAAAEYBAAAAIgAAAHgALQBvAHIAaQBnAGkAbgBhAHQAaQBuAGcALQBpAHAAAAAAAAEA
+AAAiAAAAWwA4ADMALgAyADQANgAuADEAMAA3AC4AMQAzADUAXQAAAAAAHwAAgIYDAgAAAAAAwAAA
+AAAAAEYBAAAALAAAAHgALQBlAHgAYwBsAGEAaQBtAGUAcgAtAG0AZAAtAGMAbwBuAGYAaQBnAAAA
+AQAAAEoAAAAxADgAMAAyAGYAMwBmAGUALQBiAGMAOQA0AC0ANAAzADAAMQAtADkAZABjADIALQBk
+ADUAOQBhADcANABlADYAZABlADMAYQAAAAAA148=
+
+--_000_9b53d15391054a598ec3a32cee540798SRV177busymouse24de_--
