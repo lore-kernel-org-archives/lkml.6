@@ -2,170 +2,212 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1542DC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B43C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:56:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CED4220813
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:55:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CED4220813
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F0402081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:56:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1KeK6CZ/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F0402081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728639AbeJXCTo (ORCPT
+        id S1728665AbeJXCU0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 22:19:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53484 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727264AbeJXCTo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 22:19:44 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9NHsAJu088777
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 13:55:18 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2na6xc45r7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 13:55:18 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Tue, 23 Oct 2018 18:55:17 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 23 Oct 2018 18:55:13 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9NHtCE749873064
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 23 Oct 2018 17:55:12 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B5B065204F;
-        Tue, 23 Oct 2018 17:55:12 +0000 (GMT)
-Received: from srikart450.in.ibm.com (unknown [9.102.0.129])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 9BE3A5204E;
-        Tue, 23 Oct 2018 17:55:10 +0000 (GMT)
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Yi Wang <wang.yi59@zte.com.cn>, zhong.weidong@zte.com.cn,
-        Yi Liu <liu.yi24@zte.com.cn>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] sched/core: Don't mix isolcpus and housekeeping CPUs
-Date:   Tue, 23 Oct 2018 23:24:57 +0530
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18102317-0028-0000-0000-0000030C14CD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18102317-0029-0000-0000-000023C81E1F
-Message-Id: <1540317297-14545-1-git-send-email-srikar@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-23_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810230145
+        Tue, 23 Oct 2018 22:20:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57246 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727264AbeJXCU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 22:20:26 -0400
+Received: from linux-8ccs (ip5f5adbed.dynamic.kabel-deutschland.de [95.90.219.237])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC1A220671;
+        Tue, 23 Oct 2018 17:55:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540317360;
+        bh=4koekTgFWekm4QlxCRSqWdypR4TDpZwhZLdmSfFRLqs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1KeK6CZ/ReHE2QTotz5oKGvmlQcb0mBOiqyyYDV32A0g9VRqrVBjr6x6KvpZAWF41
+         PSWrVRV77V1wFHZ0lSuWgcKowkcgNonGpNVyELsk2+iL7ndD6/E/ca4494WxqxE+T2
+         +wkuSU4hQtH7kbCCt8P8J3BujCW9idEJJX5A0yWU=
+Date:   Tue, 23 Oct 2018 19:55:54 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Torsten Duwe <duwe@lst.de>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: [PATCH] arm64/module: use mod->klp_info section header information
+Message-ID: <20181023175553.gaobskk26koft6s2@linux-8ccs>
+References: <20181001140910.086E768BC7@newverein.lst.de>
+ <20181001141652.5478C68BE1@newverein.lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20181001141652.5478C68BE1@newverein.lst.de>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.16-default x86_64
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Load balancer and NUMA balancer are not suppose to work on isolcpus.
+The arm64 module loader keeps a pointer into info->sechdrs to keep track
+of section header information for .plt section(s). A pointer to the
+relevent section header (struct elf64_shdr) in info->sechdrs is stored
+in mod->arch.{init,core}.plt. This pointer may be accessed while
+applying relocations in apply_relocate_add() for example. And unlike
+normal modules, livepatch modules can call apply_relocate_add() after
+module load. But the info struct (and therefore info->sechdrs) gets
+freed at the end of load_module() and so mod->arch.{init,core}.plt
+becomes an invalid pointer after the module is done loading.
 
-Currently when setting sched affinity, there are no checks to see if the
-requested cpumask has CPUs from both isolcpus and housekeeping CPUs.
+Luckily, livepatch modules already keep a copy of Elf section header
+information in mod->klp_info. So make sure livepatch modules on arm64
+have access to the section headers in klp_info and set
+mod->arch.{init,core}.plt to the appropriate section header in
+mod->klp_info so that they can call apply_relocate_add() even after
+module load.
 
-If user passes a mix of isolcpus and housekeeping CPUs, then
-NUMA balancer can pick a isolcpu to schedule.
-With this change, if a combination of isolcpus and housekeeping CPUs are
-provided, then we restrict ourselves to housekeeping CPUs.
-
-For example: System with 32 CPUs
-$ grep -o "isolcpus=[,,1-9]*" /proc/cmdline
-isolcpus=1,5,9,13
-$ grep -i cpus_allowed /proc/$$/status
-Cpus_allowed:   ffffdddd
-Cpus_allowed_list:      0,2-4,6-8,10-12,14-31
-
-Running "perf bench numa mem --no-data_rand_walk -p 4 -t 8 -G 0 -P 3072
--T 0 -l 50 -c -s 1000" which  calls sched_setaffinity to all CPUs in
-system.
-
-Without patch
-------------
-$ for i in $(pgrep -f perf); do  grep -i cpus_allowed_list  /proc/$i/task/*/status ; done | head -n 10
-Cpus_allowed_list:      0,2-4,6-8,10-12,14-31
-/proc/2107/task/2107/status:Cpus_allowed_list:  0-31
-/proc/2107/task/2196/status:Cpus_allowed_list:  0-31
-/proc/2107/task/2197/status:Cpus_allowed_list:  0-31
-/proc/2107/task/2198/status:Cpus_allowed_list:  0-31
-/proc/2107/task/2199/status:Cpus_allowed_list:  0-31
-/proc/2107/task/2200/status:Cpus_allowed_list:  0-31
-/proc/2107/task/2201/status:Cpus_allowed_list:  0-31
-/proc/2107/task/2202/status:Cpus_allowed_list:  0-31
-/proc/2107/task/2203/status:Cpus_allowed_list:  0-31
-
-
-With patch
-----------
-$ for i in $(pgrep -f perf); do  grep -i cpus_allowed_list  /proc/$i/task/*/status ; done | head -n 10
-Cpus_allowed_list:      0,2-4,6-8,10-12,14-31
-/proc/18591/task/18591/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
-/proc/18591/task/18603/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
-/proc/18591/task/18604/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
-/proc/18591/task/18605/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
-/proc/18591/task/18606/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
-/proc/18591/task/18607/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
-/proc/18591/task/18608/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
-/proc/18591/task/18609/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
-/proc/18591/task/18610/status:Cpus_allowed_list:        0,2-4,6-8,10-12,14-31
-
-Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
 ---
- kernel/sched/core.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index ad97f3b..fbb1f7c 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4735,6 +4735,7 @@ long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
- {
- 	cpumask_var_t cpus_allowed, new_mask;
- 	struct task_struct *p;
-+	struct cpumask *hk_mask;
- 	int retval;
+Hi!
+
+This patch may be applied on top or merged with the 3rd patch. I
+incoporated Miroslav's suggestions from the discussion. It's needed in
+order for livepatch modules on arm64 to be able to call
+apply_relocate_add() post-module-load, otherwise we could end up
+accessing invalid pointers from apply_relocate_add().
+
+ arch/arm64/include/asm/module.h |  1 +
+ arch/arm64/kernel/module-plts.c | 10 ++++++++--
+ arch/arm64/kernel/module.c      | 10 ++++++++++
+ kernel/module.c                 | 22 +++++++++++++---------
+ 4 files changed, 32 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm64/include/asm/module.h b/arch/arm64/include/asm/module.h
+index fef773c94e9d..ac9b97f9ae5e 100644
+--- a/arch/arm64/include/asm/module.h
++++ b/arch/arm64/include/asm/module.h
+@@ -25,6 +25,7 @@ struct mod_plt_sec {
+ 	struct elf64_shdr	*plt;
+ 	int			plt_num_entries;
+ 	int			plt_max_entries;
++	int			plt_shndx;
+ };
  
- 	rcu_read_lock();
-@@ -4778,6 +4779,19 @@ long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
+ struct mod_arch_specific {
+diff --git a/arch/arm64/kernel/module-plts.c b/arch/arm64/kernel/module-plts.c
+index f0690c2ca3e0..05067717dfc5 100644
+--- a/arch/arm64/kernel/module-plts.c
++++ b/arch/arm64/kernel/module-plts.c
+@@ -210,9 +210,15 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+ 	 * entries. Record the symtab address as well.
+ 	 */
+ 	for (i = 0; i < ehdr->e_shnum; i++) {
+-		if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt"))
++		if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt")) {
+ 			mod->arch.core.plt = sechdrs + i;
+-		else if (!strcmp(secstrings + sechdrs[i].sh_name, ".init.plt"))
++			/*
++			 * Keep the section index for the .plt section for
++			 * livepatching. Note that .init.plt is irrelevant to
++			 * livepatch, so only the shndx for .plt is saved.
++			 */
++			mod->arch.core.plt_shndx = i;
++		} else if (!strcmp(secstrings + sechdrs[i].sh_name, ".init.plt"))
+ 			mod->arch.init.plt = sechdrs + i;
+ 		else if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE) &&
+ 			 !strcmp(secstrings + sechdrs[i].sh_name,
+diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
+index dd23655fda3a..490e56070a7e 100644
+--- a/arch/arm64/kernel/module.c
++++ b/arch/arm64/kernel/module.c
+@@ -461,5 +461,15 @@ int module_finalize(const Elf_Ehdr *hdr,
+ #endif
+ 	}
  
- 	cpuset_cpus_allowed(p, cpus_allowed);
- 	cpumask_and(new_mask, in_mask, cpus_allowed);
-+	hk_mask = housekeeping_cpumask(HK_FLAG_DOMAIN);
-+
++#ifdef CONFIG_LIVEPATCH
 +	/*
-+	 * If the cpumask provided has CPUs that are part of isolated and
-+	 * housekeeping_cpumask, then restrict it to just the CPUs that
-+	 * are part of the housekeeping_cpumask.
++	 * For livepatching, switch to the saved section header info for .plt
++	 * stored in mod->klp_info. This is needed so that livepatch is able to
++	 * call apply_relocate_add() after patch module load.
 +	 */
-+	if (!cpumask_subset(new_mask, hk_mask) &&
-+			cpumask_intersects(new_mask, hk_mask)) {
-+		pr_info("pid %d: Mix of isolcpus and non-isolcpus provided\n",
-+			       p->pid);
-+		cpumask_and(new_mask, new_mask, hk_mask);
-+	}
++	if (is_livepatch_module(me))
++		me->arch.core.plt = me->klp_info->sechdrs + me->arch.core.plt_shndx;
++#endif
++
+ 	return 0;
+ }
+diff --git a/kernel/module.c b/kernel/module.c
+index f475f30eed8c..f3ac04cc9fc3 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -3367,6 +3367,8 @@ int __weak module_finalize(const Elf_Ehdr *hdr,
  
- 	/*
- 	 * Since bandwidth control happens on root_domain basis,
+ static int post_relocation(struct module *mod, const struct load_info *info)
+ {
++	int err;
++
+ 	/* Sort exception table now relocations are done. */
+ 	sort_extable(mod->extable, mod->extable + mod->num_exentries);
+ 
+@@ -3377,8 +3379,18 @@ static int post_relocation(struct module *mod, const struct load_info *info)
+ 	/* Setup kallsyms-specific fields. */
+ 	add_kallsyms(mod, info);
+ 
++	if (is_livepatch_module(mod)) {
++		err = copy_module_elf(mod, info);
++		if (err < 0)
++			return err;
++	}
++
+ 	/* Arch-specific module finalizing. */
+-	return module_finalize(info->hdr, info->sechdrs, mod);
++	err = module_finalize(info->hdr, info->sechdrs, mod);
++	if (err < 0)
++		free_module_elf(mod);
++
++	return err;
+ }
+ 
+ /* Is this module of this name done loading?  No locks held. */
+@@ -3770,12 +3782,6 @@ static int load_module(struct load_info *info, const char __user *uargs,
+ 	if (err < 0)
+ 		goto coming_cleanup;
+ 
+-	if (is_livepatch_module(mod)) {
+-		err = copy_module_elf(mod, info);
+-		if (err < 0)
+-			goto sysfs_cleanup;
+-	}
+-
+ 	/* Get rid of temporary copy. */
+ 	free_copy(info);
+ 
+@@ -3784,8 +3790,6 @@ static int load_module(struct load_info *info, const char __user *uargs,
+ 
+ 	return do_init_module(mod);
+ 
+- sysfs_cleanup:
+-	mod_sysfs_teardown(mod);
+  coming_cleanup:
+ 	mod->state = MODULE_STATE_GOING;
+ 	destroy_params(mod->kp, mod->num_kp);
 -- 
-1.8.3.1
+2.16.4
 
