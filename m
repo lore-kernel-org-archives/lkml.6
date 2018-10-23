@@ -7,123 +7,156 @@ X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E26AEC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C9B1C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB14A20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:28:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 247D920651
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:28:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T6rfAWHq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB14A20651
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kebMjyO6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 247D920651
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbeJXDxK (ORCPT
+        id S1728922AbeJXDxS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:53:10 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:38401 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727758AbeJXDxK (ORCPT
+        Tue, 23 Oct 2018 23:53:18 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:56812 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727758AbeJXDxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:53:10 -0400
-Received: by mail-yb1-f194.google.com with SMTP id v92-v6so1068751ybi.5
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 12:28:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Mx8zptrrAuodiF6MYRYxCurWvOr1GiSdSxtgIoqoHCE=;
-        b=T6rfAWHqZ9Sdz8F8PzKdifB0zw9P/WMuO4YDO8UozJweiEn+rAQzlfPM8AajX2r+Yz
-         VpunnynM3wUZR2kSyKauJKOx2a0grB4eAsjjvkFEbkng+edEatXNpARkTWQhhhfpOQZ0
-         SF1HVxct+ZLVjnR0dTyOLI+l2vaYVI46fPmLM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Mx8zptrrAuodiF6MYRYxCurWvOr1GiSdSxtgIoqoHCE=;
-        b=AucjP3jea/xruI7k7vUzXdVDHfQB71ji17rmDMzgognq/0RCMioI3DQuXDMRn3dwn+
-         WOuAPp2PXR7tBz5x6jHKobocuEmDdaPRqrLCzpFFVUyljMkS8QdQe+pt7nX/Tqk0T6jI
-         FIUFP04xvOPpJftygr9a/98UwTq3HA26dSapl2j1I4tHAiSL0CtV8zw/FSQjr5D9zd3A
-         AJXkhDDdILIT3VU0vE3nk5IKJ6CuaT5BFXZ1HXwiUoC+SATdnRa/h52cR8rR0psgbHDA
-         G9B3ZrdWIk16Yhcde4hiIl+KtjM2OqIBh9T8Pn0tZoCONndU0IpyHr/av3wK5TkGqJiW
-         Dn7A==
-X-Gm-Message-State: AGRZ1gJA8v2yf9jNO9tj4jQNpenzZ/35bcKaQ1g+jbqiHzQ1ogkCH2uB
-        W1egFBWRBNtCpgvn8Pnr4K9Ie4n2S7A=
-X-Google-Smtp-Source: AJdET5ekGFPbGwoabLPoMzEUHIiDTDexTwOR9JyG8WY0+OontXOrigTMylgYTfORUA4vrtWdYfjgog==
-X-Received: by 2002:a25:ac22:: with SMTP id w34-v6mr2554630ybi.34.1540322904188;
-        Tue, 23 Oct 2018 12:28:24 -0700 (PDT)
-Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com. [209.85.161.44])
-        by smtp.gmail.com with ESMTPSA id p7-v6sm1078676ywd.75.2018.10.23.12.28.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 12:28:23 -0700 (PDT)
-Received: by mail-yw1-f44.google.com with SMTP id t78-v6so1036804ywg.11
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 12:28:22 -0700 (PDT)
-X-Received: by 2002:a81:9b83:: with SMTP id s125-v6mr36464148ywg.47.1540322902344;
- Tue, 23 Oct 2018 12:28:22 -0700 (PDT)
+        Tue, 23 Oct 2018 23:53:18 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9NJSTpR100957;
+        Tue, 23 Oct 2018 14:28:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1540322909;
+        bh=xY3w9k8Znn6MngJ/lIbM5k5ANe6U431F48rPSiNzOEI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=kebMjyO6E4nXBuRps4WEUCAzkvPWkPMx/ebL1va1GNSgqXEDe/430OjhFnEhVWgVg
+         fZgeKZuQOo+3P/z4Oe599/V6Ab8DSiZnIwNhaqnop99Cl6blfFgLy1Geuhh818sbB2
+         9tgldWRrRTN897KAjKAg/Mntp7RDuxiQdbeMBlhs=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9NJSTGB071835
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 23 Oct 2018 14:28:29 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 23
+ Oct 2018 14:28:29 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 23 Oct 2018 14:28:29 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9NJST6C008175;
+        Tue, 23 Oct 2018 14:28:29 -0500
+Subject: Re: [PATCH v4 07/17] remoteproc: introduce
+ rproc_find_carveout_by_name function
+To:     Loic Pallardy <loic.pallardy@st.com>, <bjorn.andersson@linaro.org>,
+        <ohad@wizery.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+ <1532697292-14272-8-git-send-email-loic.pallardy@st.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <df17f33f-3ccb-60b6-8d71-9d5170401ba0@ti.com>
+Date:   Tue, 23 Oct 2018 14:28:29 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Tue, 23 Oct 2018 12:28:21
- -0700 (PDT)
-In-Reply-To: <20181023111255.30446-1-efremov@linux.com>
-References: <20181023111255.30446-1-efremov@linux.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 23 Oct 2018 12:28:21 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJp-FeGG37ZqVbaj+Gs6NuJac=Kcs-VAK_X4N5OOU9O=g@mail.gmail.com>
-Message-ID: <CAGXu5jJp-FeGG37ZqVbaj+Gs6NuJac=Kcs-VAK_X4N5OOU9O=g@mail.gmail.com>
-Subject: Re: [PATCH] security: fix documentation for the task_setscheduler hook
-To:     efremov@linux.com
-Cc:     KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Eric Paris <eparis@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        John Johansen <john.johansen@canonical.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1532697292-14272-8-git-send-email-loic.pallardy@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 4:12 AM,  <efremov@linux.com> wrote:
-> From: Denis Efremov <efremov@linux.com>
->
-> The task_setscheduler hook was changed in the commit
-> "security: remove unused parameter from security_task_setscheduler()"
-> (b0ae19811375). The arguments @policy, @lp were removed from the hook.
-> This patch updates the documentation accordingly.
->
-> Signed-off-by: Denis Efremov <efremov@linux.com>
+Hi Loic,
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
+On 7/27/18 8:14 AM, Loic Pallardy wrote:
+> This patch provides a new function to find a carveout according
+> to a name.
+> If match found, this function returns a pointer on the corresponding
+> carveout (rproc_mem_entry structure).
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 > ---
->  include/linux/lsm_hooks.h | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index accf6f34ac8e..ae3766720264 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -655,10 +655,8 @@
->   *     Return 0 if permission is granted.
->   * @task_setscheduler:
->   *     Check permission before setting scheduling policy and/or parameters of
-> - *     process @p based on @policy and @lp.
-> + *     process @p.
->   *     @p contains the task_struct for process.
-> - *     @policy contains the scheduling policy.
-> - *     @lp contains the scheduling parameters.
->   *     Return 0 if permission is granted.
->   * @task_getscheduler:
->   *     Check permission before obtaining scheduling information for process
-> --
-> 2.17.2
->
+>  drivers/remoteproc/remoteproc_core.c | 42 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index fe6c4e4..77b39ba 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -217,6 +217,48 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+>  }
+>  EXPORT_SYMBOL(rproc_da_to_va);
+>  
+> +/**
+> + * rproc_find_carveout_by_name() - lookup the carveout region by a name
+> + * @rproc: handle of a remote processor
+> + * @name,..: carveout name to find (standard printf format)
+> + *
+> + * Platform driver has the capability to register some pre-allacoted carveout
 
+%s/pre-allacoted/pre-allocated/
 
+> + * (physically contiguous memory regions) before rproc firmware loading and
+> + * associated resource table analysis. These regions may be dedicated memory
+> + * regions internal to the coprocessor or specified DDR region with specific
 
--- 
-Kees Cook
+I guess this is the part that perhaps was being thought of for
+representing internal memories as well for removing the da_to_va ops
+right. Question is how to handle the different alias views for the same
+address space. Anyway, that is perhaps a discussion for later given that
+the current series does not remove the ops.
+
+> + * attributes
+> + *
+> + * This function is a helper function with which we can go over the
+> + * allocated carveouts and return associated region characteristics like
+> + * coprocessor address, length or processor virtual address.
+> + *
+> + * Return: a valid pointer on carveout entry on success or NULL on failure.
+> + */
+> +struct rproc_mem_entry *
+> +rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...)
+> +{
+> +	va_list args;
+> +	char _name[32];
+> +	struct rproc_mem_entry *carveout, *mem = NULL;
+> +
+> +	if (!name)
+> +		return NULL;
+> +
+> +	va_start(args, name);
+> +	vsnprintf(_name, sizeof(_name), name, args);
+> +	va_end(args);
+> +
+> +	list_for_each_entry(carveout, &rproc->carveouts, node) {
+> +		/* Compare carveout and requested names */
+> +		if (!strcmp(carveout->name, _name)) {
+> +			mem = carveout;
+
+Bjorn had some comments on v3 about returning carveout directly here
+instead of break, avoids the mem variable. I am ok either way.
+
+regards
+Suman
+
+> +			break;
+> +		}
+> +	}
+> +
+> +	return mem;
+> +}
+> +
+>  int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
+>  {
+>  	struct rproc *rproc = rvdev->rproc;
+> 
+
