@@ -2,114 +2,131 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB5BC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 05:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF9BC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 05:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 728EF20665
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 05:23:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Bdk7vog9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 728EF20665
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 68DD520665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 05:28:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68DD520665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbeJWNpK (ORCPT
+        id S1727256AbeJWNuA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 09:45:10 -0400
-Received: from mail-ed1-f48.google.com ([209.85.208.48]:40557 "EHLO
-        mail-ed1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726764AbeJWNpK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 09:45:10 -0400
-Received: by mail-ed1-f48.google.com with SMTP id r1-v6so333086edd.7
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 22:23:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HaOFvpsM+siwY9Zk8c5ZlR4qx4ZjutIWsh3LgHYRnCg=;
-        b=Bdk7vog9U/+ylzd/INHGwqNSZCHSUWWDdFnBqMMmiq0fmmSH+FOrpef3ECO6BX7QDz
-         YWfZnkD8DR8/oLn3WtxNyEAKdhLVoQAxV1ORIRi9ACf44gjqMbQfZOkpzzP9MI4mdlrT
-         5F72zihiryq/LPuf3sKQKpLmgGrmyYbkr/OrI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=HaOFvpsM+siwY9Zk8c5ZlR4qx4ZjutIWsh3LgHYRnCg=;
-        b=Vybm3AnLISt03P6P0Bra5WL1CnH9PP8oMFlBUGlQ7/t4fXo14JncdBWENNJichn/q3
-         0cSUqa8/2n3CEVZcKrOKj9IcfAEYB4HI+53N6VkYCeLluWk2pgDGYBpRzfBK32U7e6CY
-         ZWma4nP3O/6c+VhkEEbiobPRCv0QV2IeiAu7my1ZNp/E0yYKwQGWs5STKAOVppfTdxgS
-         M0Yz3HYzSbFVflJM0WIT1TuQqdOiADXREoCIU8Q8yCQtyqHWq6cjjIgIBQaAMZedqQ3o
-         3hF1G0U2FOaNYbiHAGZwZ0fsrwjIfgvR8FKbeSyhyk/MxqLm6wEBDZxRgvB8NUVZjEg3
-         RThg==
-X-Gm-Message-State: ABuFfohnOXEkhPfxM93hEaue1LJ+qARZiAm+nBNPGBBajXjX9lb+2zti
-        ElFrcINGP+Koaa741TWx4JTP0Q==
-X-Google-Smtp-Source: ACcGV61zo/CYVhCWUpO79rta3fomcZfUXJ6V8388S4L84crN/c10Ok0lWjeN+w/ny3/fAo8nTHodFA==
-X-Received: by 2002:a17:906:1551:: with SMTP id c17-v6mr850329ejd.32.1540272203582;
-        Mon, 22 Oct 2018 22:23:23 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id d10-v6sm104617ejr.3.2018.10.22.22.23.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Oct 2018 22:23:22 -0700 (PDT)
-Date:   Tue, 23 Oct 2018 07:23:20 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Aaron Ma <aaron.ma@canonical.com>
-Cc:     Dave Airlie <airlied@linux.ie>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, airlied@redhat.com,
-        sean@poorly.run, seanpaul@chromium.org
-Subject: Re: [PATCH 2/2] vgaarb: Keep adding VGA device in queue
-Message-ID: <20181023052320.GJ324@phenom.ffwll.local>
-Mail-Followup-To: Aaron Ma <aaron.ma@canonical.com>,
-        Dave Airlie <airlied@linux.ie>,
-        Maling list - DRI developers <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, airlied@redhat.com,
-        sean@poorly.run, seanpaul@chromium.org
-References: <1535739600-8842-1-git-send-email-aaron.ma@canonical.com>
- <1535739600-8842-2-git-send-email-aaron.ma@canonical.com>
- <CADnq5_P=_Kxg8y48NRQZjKzPi-yaAwKRQhpQ6qEav2rZijHucw@mail.gmail.com>
- <e4797ed7-920b-5d19-c1f4-212d53cf98cb@canonical.com>
- <b58c0d18-b56e-3dc7-a896-5adfbf5f7e36@canonical.com>
+        Tue, 23 Oct 2018 09:50:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34966 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726764AbeJWNuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 09:50:00 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3675FAD16;
+        Tue, 23 Oct 2018 05:28:13 +0000 (UTC)
+From:   NeilBrown <neil@brown.name>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Date:   Tue, 23 Oct 2018 16:28:03 +1100
+Cc:     Josh Triplett <josh@joshtriplett.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        ksummit-discuss@lists.linuxfoundation.org,
+        Mishi Choudhary <mishi@linux.com>
+Subject: Re: [Ksummit-discuss] Call to Action Re: [PATCH 0/7] Code of Conduct: Fix some wording, and add an interpretation document
+In-Reply-To: <20181023045247.GV32577@ZenIV.linux.org.uk>
+References: <20181020134908.GA32218@kroah.com> <87y3ar80ac.fsf@notabene.neil.brown.name> <20181021222608.GA24845@localhost> <875zxt919d.fsf@notabene.neil.brown.name> <20181023033130.GQ32577@ZenIV.linux.org.uk> <87r2gh70ij.fsf@notabene.neil.brown.name> <20181023045247.GV32577@ZenIV.linux.org.uk>
+Message-ID: <87o9bl6xlo.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b58c0d18-b56e-3dc7-a896-5adfbf5f7e36@canonical.com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 20, 2018 at 02:56:36PM +0800, Aaron Ma wrote:
-> Hi David:
-> 
-> get_maintainer.pl still got your old e-mail.
-> 
-> Add airlied@redhat.com.
-> 
-> Loop Sean too.
-> 
-> Please review and apply these 2 patches.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Both pushed to drm-misc-next.
--Daniel
+On Tue, Oct 23 2018, Al Viro wrote:
 
-> 
-> Thanks,
-> Aaron
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> On Tue, Oct 23, 2018 at 03:25:08PM +1100, NeilBrown wrote:
+>
+>> >> If Linus is not true to his new-found sensitivity, we might need some=
+one
+>> >> (Greg?) to be a co-maintainer, able to accept patches when Linus has a
+>> >> relapse.  It might be good form to create this channel anyway, but I
+>> >> doubt it would be needed in practice.
+>> >>=20
+>> >> So there you have it. The "Code" is upside down.
+>> >> We need documents which:
+>> >>   - curtail the power of the strong, starting with Linus
+>> >>   - are adopted willingly by individuals, not imposed on the communit=
+y.
+>> >>   - provide alternate routes for patch-flow, so that no-one has ultim=
+ate
+>> >>     power.
+>> >
+>> > Really?  The ultimate power being to say "No" to a patch, and nobody s=
+hould
+>> > have such?  Are you fucking serious?
+>>=20
+>> I have noticed of late a tendency in all sorts of different people to
+>> hear/read a statement from someone they know, interpret it a particular
+>> way, be surprised about that interpretation, and persist with believing
+>> that interpretation anyway, rather than realizing that the most likely
+>> explanation is a communication failure, and asking for clarification.
+>>=20
+>> The "ultimate power" is the ability to say "no" to a patch, *with no
+>> opportunity for review*.  Two people together having that ultimate power
+>> is a totally different thing to one person having it alone.
+>
+> If that's a clarification, I'm sorry to say that I understand you even le=
+ss now.
+> What are you proposing?  Duopoly?  How do you deal with disagreements?  F=
+ork?
+> Revert wars?
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+We already have team-maintainership arrangements - doing the same thing
+at the top level should not be that hard to imagine.
+
+It really about "saying" no.  I suspect all members of a team would come
+to much the same decision about any given patch, but they might "say" it
+differently.  One might say "anyone who wrote this should be
+lobotomised", and the other might say "I see what you are trying to do,
+but the approach won't work - go look at how we handle XXXX, they have a
+similar problem".  Neither will accept the patch, and they will probably
+both accept it after certain changes.  But when one of them is having a
+bad day, I would like people to have the explicit opportunity to ignore
+them and talk to the other.  Yes, they'll still get "no" twice, but they'll
+also get something approaching sane review least once.
+
+Just knowing that the person you are ranting at can by-pass you would, I
+suspect, encourage a lot of people to reconsider their behavior (though
+maybe I'm optomistic there).
+
+Thanks,
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvOsWQACgkQOeye3VZi
+gbkjxhAAh+AJbCPvpt2p1qLRsAT8UTDbRT26YN0sqE4dhemBMx7Vz7+ZQKa33Oh9
+RIxeqT8s5OSTxpxV4jRd9vX+xpFKxN8LefeGA0juesyPDMZh4TGVQbGn4tvAg8NQ
+Mvl7tEzwbMqmQPBIlPyDLAi5dvN2vvKtLCwVgnc26n6ZX7+7pwomjjUhdE9JqnE3
+haNVdaYvIcLU5kac3CVqXio8IhjAmwQLlSPoM5bV+J7u95ZxkTaOomqHzrEbkxRa
+kUK24P80nIbOG5nrQgX2o5P26iePY8tGwmABE7HbQH1P+4dsD6qfWJCJIPKXG0A2
++ASsKaC+UegwTBMtghYPuldBtimPZEbDR06W9RjIOx4q1bOO+C7hXNXfMV07wCGk
+T4N3MbiNLkEBeX7TVfm98q8KVk45t2PZe86rVT2pldgdA39Sf4kYmAKzAOZ1qP+N
+djini6whfvxbUfbY6Eg5+Pu3qQ3uIcWy/MQhYocnU88XYxc8wmdIY6wM0NngksmG
+E1CYQd72Dgj42Iv23H+28dPDxkzEn9NPROoJHf9xVlyChKISOeFfrEGnRlaqz849
+sP89Wrbt0Ce1pWqLyq94eG8VGmj6kaKAK100Jedvl+Hm+InKSBECBGGtb8NsqGnh
+5uEnkXckyLXlx+7GNWRharjq82/Pjly+5L9F91DHyvhYuGujuWc=
+=NgxU
+-----END PGP SIGNATURE-----
+--=-=-=--
