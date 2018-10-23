@@ -2,97 +2,103 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F12C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1259C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:43:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D758207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:42:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D758207DD
+	by mail.kernel.org (Postfix) with ESMTP id B7E5120652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:43:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ktbxrfxx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7E5120652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728140AbeJWUFz (ORCPT
+        id S1728207AbeJWUGK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 16:05:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55714 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726277AbeJWUFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 16:05:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 01F47AF01;
-        Tue, 23 Oct 2018 11:42:46 +0000 (UTC)
-Date:   Tue, 23 Oct 2018 13:42:46 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
-Message-ID: <20181023114246.GR18839@dhcp22.suse.cz>
-References: <f9a8079f-55b0-301e-9b3d-a5250bd7d277@i-love.sakura.ne.jp>
- <20181022120308.GB18839@dhcp22.suse.cz>
- <201810230101.w9N118i3042448@www262.sakura.ne.jp>
+        Tue, 23 Oct 2018 16:06:10 -0400
+Received: from mail-wm1-f51.google.com ([209.85.128.51]:53491 "EHLO
+        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbeJWUGJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 16:06:09 -0400
+Received: by mail-wm1-f51.google.com with SMTP id y11-v6so1430141wma.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 04:43:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=BmIdwt0XcqYW6CWB0m6+C6v2JSZu1w3bXnlkYhtlGk8=;
+        b=ktbxrfxxjZnZkroaavO8gZvKd4l8tVOh0eEIbLda1Eh/T1zTrPHZeL1bGsKS4xM9fv
+         g8oG/nQ8W7XPdZ7945CGIPtuWDdGUk8ypcCqYH7u985m8PE7G55yk6rxrUkcTyTxAiZz
+         BUZeqH6VrQaOltXEGYVzbuLbopwiorqYQ2KUDv+kW7VwTsunYR0fHeVN9ICAieJwPPeR
+         3VwRRHSIi5NJbRnHotwpGLe4i85YIuhUSmIlGtiRlKuDtsjUk05QxydwZn+FcF858yHl
+         QKWLgS63tmzsxy+EoQ/c+/oHdXiedWS6jY2gPEdqjP9/7Cf/l7Crtu082jH5i2wbYJZ3
+         phkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=BmIdwt0XcqYW6CWB0m6+C6v2JSZu1w3bXnlkYhtlGk8=;
+        b=BcnuQJV9ibLVRHSp+WeCv3HJGSMC+4fQa4y4fxQRhFWMZ4TpeIKt87ZCDmqsi+AvM/
+         0TUhxzTFd5Qpi2L3lJxXfHN+LJboV8nAkFxzHa8VAa6ZgM3I6LXNQEmh30jutOb6Hw9a
+         uuBhkLqUUjwoFT8xsedhFTZB7npLZGdePXHRrv28pGXDceZwBq33odFYOOqAlOrEvq+g
+         YU8+Clsp54ZCDaWjSAIbbJq4K4lwuNdx2OpGEI8WIqCTHclDmwcwHY5salT3nW+6ECvN
+         s0K0y2+bAb+o9yne2F60tdU37UU3ucu/aoy9Y1kjV/NhXkx4EcjNWUiIAlL2t2o1HhpS
+         9HPw==
+X-Gm-Message-State: ABuFfogEoqxh0nKO0qETCUlzB/m7iYGaQeBaboGyVIFPQiXkMJ86srJa
+        wk51GmLS1wia9XOH9sn/e/1QU5E6
+X-Google-Smtp-Source: ACcGV63iTFDfyPM7JmWXnxZua4R4AwZZYcZxOEgG0GP1UwFyjrywAZGBhHz0l0/rBYrsh6oQSIlPfw==
+X-Received: by 2002:a1c:950f:: with SMTP id x15-v6mr19356181wmd.3.1540294981088;
+        Tue, 23 Oct 2018 04:43:01 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id m143-v6sm1576835wmd.29.2018.10.23.04.42.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 23 Oct 2018 04:43:00 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 13:42:58 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] x86/hyperv changes for v4.20
+Message-ID: <20181023114257.GA16909@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201810230101.w9N118i3042448@www262.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 23-10-18 10:01:08, Tetsuo Handa wrote:
-> Michal Hocko wrote:
-> > On Mon 22-10-18 20:45:17, Tetsuo Handa wrote:
-> > > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > > > index e79cb59552d9..a9dfed29967b 100644
-> > > > --- a/mm/memcontrol.c
-> > > > +++ b/mm/memcontrol.c
-> > > > @@ -1380,10 +1380,22 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
-> > > >  		.gfp_mask = gfp_mask,
-> > > >  		.order = order,
-> > > >  	};
-> > > > -	bool ret;
-> > > > +	bool ret = true;
-> > > >  
-> > > >  	mutex_lock(&oom_lock);
-> > > > +
-> > > > +	/*
-> > > > +	 * multi-threaded tasks might race with oom_reaper and gain
-> > > > +	 * MMF_OOM_SKIP before reaching out_of_memory which can lead
-> > > > +	 * to out_of_memory failure if the task is the last one in
-> > > > +	 * memcg which would be a false possitive failure reported
-> > > > +	 */
-> > > > +	if (tsk_is_oom_victim(current))
-> > > > +		goto unlock;
-> > > > +
-> > > 
-> > > This is not wrong but is strange. We can use mutex_lock_killable(&oom_lock)
-> > > so that any killed threads no longer wait for oom_lock.
-> > 
-> > tsk_is_oom_victim is stronger because it doesn't depend on
-> > fatal_signal_pending which might be cleared throughout the exit process.
-> > 
-> 
-> I still want to propose this. No need to be memcg OOM specific.
+Linus,
 
-Well, I maintain what I've said [1] about simplicity and specific fix
-for a specific issue. Especially in the tricky code like this where all
-the consequences are far more subtle than they seem to be.
+Please pull the latest x86-hyperv-for-linus git tree from:
 
-This is obviously a matter of taste but I don't see much point discussing
-this back and forth for ever. Unless there is a general agreement that
-the above is less appropriate then I am willing to consider a different
-change but I simply do not have energy to nit pick for ever.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-hyperv-for-linus
 
-[1] http://lkml.kernel.org/r/20181022134315.GF18839@dhcp22.suse.cz
--- 
-Michal Hocko
-SUSE Labs
+   # HEAD: 5140a6f471137205687428b0b8f12f7187bffd18 x86/hyperv: Remove unused include
+
+Two small changes: a boot warning removal and a minor cleanup.
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Dexuan Cui (1):
+      x86/hyperv: Suppress "PCI: Fatal: No config space access function found"
+
+YueHaibing (1):
+      x86/hyperv: Remove unused include
+
+
+ arch/x86/hyperv/hv_apic.c |  1 -
+ arch/x86/hyperv/hv_init.c | 19 +++++++++++++++++++
+ 2 files changed, 19 insertions(+), 1 deletion(-)
