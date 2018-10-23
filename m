@@ -2,130 +2,115 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6875C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E37D1C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 14:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8053920652
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:59:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9354E207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 14:04:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="H4xu4ezz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8053920652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gHHWTQ13"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9354E207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728769AbeJWWWe (ORCPT
+        id S1728224AbeJWW1k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 18:22:34 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42824 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728745AbeJWWWd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 18:22:33 -0400
-Received: by mail-ed1-f65.google.com with SMTP id b7-v6so1718532edd.9
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 06:58:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4fdDQ/ZgdUgifvv1bjt8Ufp9rym1/ed+7ZvcnC/7xxY=;
-        b=H4xu4ezzEvG6BA+8QXjVBvLwla4yFcQdd/ssRWALbOP8kslFcv9idQB+uGkS/WdlnM
-         kc7yWR5fXMQhb2zkk0GI7Gr/wmO/J7E4qLR+w1fPUpstMXyUUzQt0CBxYEgh4lwCQ/iE
-         uvEIBZzHNMfW0Ocibk2k+S7z2zAaYlxnZoUOU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=4fdDQ/ZgdUgifvv1bjt8Ufp9rym1/ed+7ZvcnC/7xxY=;
-        b=CdIHo/YdZVXsUXL1rA75wnpnbC8QlLnGj7HPSWvDSQjG4cVYbnbHaEaNuyDtckXaJA
-         TxJ7IwI06RaUhgODt/j4uXHYyvK4r8ILgL78q+RP0qelKsSsFfuBMwHgIUrZdcf3GHg3
-         Njg3L2+MkPEFz3e1MrzJJudO1Tcd47Vk8FMvKkepVSf3wWQsKQtLdo3TmAIiZmzu+qjj
-         VNao7plSG1ajp0JfkhQ9GP2UrdR4NoK6Uuzob713jZLJWQ8Rnxy+ZC1VJ51rs9sBMELn
-         wSwAckadCBfbQOxlnwpuodGJzSL+VkobCotDmJFiwLrtFdO4bx3S/i+3/JOwYJQFByGs
-         O2Cw==
-X-Gm-Message-State: ABuFfoh0t3PwYLY9CHLJevk8YbJp87EGi/+wfP4uNRI6hs/TvCu14ZiS
-        tR0ig6s1joyLTSn6xBCaTfOMOg==
-X-Google-Smtp-Source: ACcGV60MQa8xF1d7tD5uxh+DkdVv+JCAnVDXDgGtLR3P7iIUS9AlY46jN00tY3vk78U2iSpNJgBE3g==
-X-Received: by 2002:a17:906:2da9:: with SMTP id g9-v6mr37928117eji.67.1540303138116;
-        Tue, 23 Oct 2018 06:58:58 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id h3-v6sm697996ede.42.2018.10.23.06.58.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Oct 2018 06:58:57 -0700 (PDT)
-Date:   Tue, 23 Oct 2018 15:58:55 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        sean@poorly.run, airlied@linux.ie, brajeswar.linux@gmail.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        sabyasachi.linux@gmail.com
-Subject: Re: [PATCH] drm/drm_pci.c: Use dma_zalloc_coherent
-Message-ID: <20181023135855.GU324@phenom.ffwll.local>
-Mail-Followup-To: Souptick Joarder <jrdr.linux@gmail.com>,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        sean@poorly.run, airlied@linux.ie, brajeswar.linux@gmail.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        sabyasachi.linux@gmail.com
-References: <20181023040222.GA1540@jordon-HP-15-Notebook-PC>
+        Tue, 23 Oct 2018 18:27:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727813AbeJWW1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 18:27:39 -0400
+Received: from [192.168.1.16] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 154D920652;
+        Tue, 23 Oct 2018 14:04:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540303443;
+        bh=tVZDMRJFw9GJxWje37kLniQJJM8xBVRscGLgwubCvqU=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=gHHWTQ13iwjNRgaTq3/QLyiKCSdnzMKmj9maabqv+eRCy8qiE3bYlR1WGa52dX+nG
+         B/bG2MYe2y8ojMHzq7tB7ZrYrWC0+/qNR0diQD1qkQmMGs1vMcuqfJS4UXO98oieHg
+         zH7jCdFtYQgFvSM4utCEOYvvvKENCF5IlCOfW0Uc=
+Subject: Re: [PATCH] ARM: debug: enable UART1 for socfpga Cyclone5
+To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181009112837.2517-1-peron.clem@gmail.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <e761c76d-a806-402a-b25b-04aee9329dbc@kernel.org>
+Date:   Tue, 23 Oct 2018 09:04:01 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181023040222.GA1540@jordon-HP-15-Notebook-PC>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181009112837.2517-1-peron.clem@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 09:32:22AM +0530, Souptick Joarder wrote:
-> Replace dma_alloc_coherent + memset with dma_zalloc_coherent.
-> 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Hi Clément,
 
-Applied, thanks for your patch.
--Daniel
-
-> ---
->  drivers/gpu/drm/drm_pci.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+On 10/09/2018 06:28 AM, Clément Péron wrote:
+> Cyclone5 and Arria10 doesn't have the same memory map for UART1.
 > 
-> diff --git a/drivers/gpu/drm/drm_pci.c b/drivers/gpu/drm/drm_pci.c
-> index 896e42a..1427879 100644
-> --- a/drivers/gpu/drm/drm_pci.c
-> +++ b/drivers/gpu/drm/drm_pci.c
-> @@ -61,15 +61,14 @@ drm_dma_handle_t *drm_pci_alloc(struct drm_device * dev, size_t size, size_t ali
->  		return NULL;
->  
->  	dmah->size = size;
-> -	dmah->vaddr = dma_alloc_coherent(&dev->pdev->dev, size, &dmah->busaddr, GFP_KERNEL | __GFP_COMP);
-> +	dmah->vaddr = dma_zalloc_coherent(&dev->pdev->dev, size, &dmah->busaddr,
-> +						GFP_KERNEL | __GFP_COMP);
->  
->  	if (dmah->vaddr == NULL) {
->  		kfree(dmah);
->  		return NULL;
->  	}
->  
-> -	memset(dmah->vaddr, 0, size);
-> -
->  	/* XXX - Is virt_to_page() legal for consistent mem? */
->  	/* Reserve */
->  	for (addr = (unsigned long)dmah->vaddr, sz = size;
-> -- 
-> 1.9.1
+> Split the SOCFPGA_UART1 into 2 options to allow debugging on UART1 for Cylone5.
 > 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+I'm not sure the need for this patch. Are there any cyclone5 based
+boards that has UART1 as the debug uart? I see that all of them are
+using UART0.
+
+Dinh
+
