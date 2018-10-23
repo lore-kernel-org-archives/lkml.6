@@ -2,92 +2,141 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE2EC7112C
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C79C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B94C20824
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:03:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LTsY33CL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B94C20824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C8F8F20834
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:05:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8F8F20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728713AbeJXB17 (ORCPT
+        id S1728434AbeJXB3q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 21:27:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38060 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728065AbeJXB16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 21:27:58 -0400
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 181DA20665;
-        Tue, 23 Oct 2018 17:03:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540314225;
-        bh=LvDDZ0w2nfjnEh/gQrBUQbsr+G1T51Ur6P5Szasppnw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LTsY33CL20e3eO1U2Y8xnJH4DBO+Tb4/2QArv6BaIjCAJg/DXuYipuG4ezW+7Nv6w
-         k2PB0jfljLbYvAGr2af8CCwo489TT0VQywndnAqySC1ztJe2/0DLCWiOQDKcXf1EEI
-         Ka11mLyuSMsplYBf2xEcLdiSUncjEeXHlW13O7TI=
-Date:   Tue, 23 Oct 2018 12:03:43 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-Cc:     linux-pci@vger.kernel.org, kexec@lists.infradead.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org, bhelgaas@google.com,
-        dyoung@redhat.com, bhe@redhat.com, vgoyal@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        andi@firstfloor.org, lukas@wunner.de, billy.olsen@canonical.com,
-        cascardo@canonical.com, ddstreet@canonical.com,
-        fabiomirmar@canonical.com, gavin.guo@canonical.com,
-        jay.vosburgh@canonical.com, kernel@gpiccoli.net, mfo@canonical.com,
-        shan.gavin@linux.alibaba.com
-Subject: Re: [PATCH 1/3] x86/quirks: Scan all busses for early PCI quirks
-Message-ID: <20181023170343.GA4587@bhelgaas-glaptop.roam.corp.google.com>
-References: <20181018183721.27467-1-gpiccoli@canonical.com>
- <20181018221538.GN5906@bhelgaas-glaptop.roam.corp.google.com>
- <d4e10c8d-aa39-7577-fbc8-0430ac44ba54@canonical.com>
+        Tue, 23 Oct 2018 21:29:46 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:45336 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728034AbeJXB3p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 21:29:45 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9NH5Sfn069722;
+        Tue, 23 Oct 2018 12:05:28 -0500
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9NH5S2X126645
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 23 Oct 2018 12:05:28 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 23
+ Oct 2018 12:05:28 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 23 Oct 2018 12:05:28 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9NH5SWh030078;
+        Tue, 23 Oct 2018 12:05:28 -0500
+Subject: Re: [PATCH v4 06/17] remoteproc: introduce rproc_add_carveout
+ function
+To:     Loic Pallardy <loic.pallardy@st.com>, <bjorn.andersson@linaro.org>,
+        <ohad@wizery.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+ <1532697292-14272-7-git-send-email-loic.pallardy@st.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <8f6737ec-6132-25df-107c-b646310b2dce@ti.com>
+Date:   Tue, 23 Oct 2018 12:05:28 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d4e10c8d-aa39-7577-fbc8-0430ac44ba54@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1532697292-14272-7-git-send-email-loic.pallardy@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 05:35:06PM -0300, Guilherme G. Piccoli wrote:
-> On 18/10/2018 19:15, Bjorn Helgaas wrote:
-> > On Thu, Oct 18, 2018 at 03:37:19PM -0300, Guilherme G. Piccoli wrote:
-> > [...] 
-> I understand your point, but I think this is inherently an architecture
-> problem. No matter what solution we decide for, it'll need to be applied
-> in early boot time, like before the PCI layer gets initialized.
+Hi Bjorn, Loic,
 
-This is the part I want to know more about.  Apparently there's some
-event X between early_quirks() and the PCI device enumeration, and we
-must disable MSIs before X:
+On 7/27/18 8:14 AM, Loic Pallardy wrote:
+> This patch introduces a new API to allow platform driver to register
+> platform specific carveout regions.
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-  setup_arch()
-      early_quirks()                     # arch/x86/kernel/early-quirks.c
-      early_pci_clear_msi()
-  ...
-  X
-  ...
-  pci_scan_root_bus_bridge()
-    ...
-    DECLARE_PCI_FIXUP_EARLY              # drivers/pci/quirks.c
+Hmm, I do not prefer that this function be exported. It adds no value,
+and this adds an asymmetric API for remoteproc drivers to add a mem
+entry to the internal remoteproc lists, while relying on the remoteproc
+core to remove them. The carveout list maintenance is a remoteproc
+internal scheme, and so should be maintained that way. Further more, on
+the current series, all the existing calls are immediately after a
+rproc_of_resm_mem_entry_init() or a rproc_mem_entry_init() function,
+which means this could very well be folded into those individual functions.
 
-I want to know specifically what X is.  If we don't know what X is and
-all we know is "we have to disable MSIs earlier than PCI init", then
-we're likely to break things again in the future by changing the order
-of disabling MSIs and whatever X is.
+regards
+Suman
 
-Bjorn
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 16 +++++++++++++++-
+>  include/linux/remoteproc.h           |  2 ++
+>  2 files changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index b76760e..fe6c4e4 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -747,7 +747,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  	if (!carveout)
+>  		goto free_carv;
+>  
+> -	list_add_tail(&carveout->node, &rproc->carveouts);
+> +	rproc_add_carveout(rproc, carveout);
+>  
+>  	return 0;
+>  
+> @@ -761,6 +761,20 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  }
+>  
+>  /**
+> + * rproc_add_carveout() - register an allocated carveout region
+> + * @rproc: rproc handle
+> + * @mem: memory entry to register
+> + *
+> + * This function registers specified memory entry in @rproc carveouts list.
+> + * Specified carveout should have been allocated before registering.
+> + */
+> +void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
+> +{
+> +	list_add_tail(&mem->node, &rproc->carveouts);
+> +}
+> +EXPORT_SYMBOL(rproc_add_carveout);
+> +
+> +/**
+>   * rproc_mem_entry_init() - allocate and initialize rproc_mem_entry struct
+>   * @dev: pointer on device struct
+>   * @va: virtual address
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 4bc961f..55f30fc 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -558,6 +558,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  int rproc_del(struct rproc *rproc);
+>  void rproc_free(struct rproc *rproc);
+>  
+> +void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
+> +
+>  struct rproc_mem_entry *
+>  rproc_mem_entry_init(struct device *dev,
+>  		     void *va, dma_addr_t dma, int len, u32 da,
+> 
+
