@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4BCC7112C
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 664D7C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:51:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A30C820652
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FFB020652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:51:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="FJGkYYgE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A30C820652
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Imiflp8p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FFB020652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbeJXAPE (ORCPT
+        id S1728470AbeJXAPM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 20:15:04 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37884 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728423AbeJXAPE (ORCPT
+        Tue, 23 Oct 2018 20:15:12 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42715 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728336AbeJXAPL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 20:15:04 -0400
-Received: by mail-pg1-f193.google.com with SMTP id c10-v6so859257pgq.4
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 08:51:07 -0700 (PDT)
+        Tue, 23 Oct 2018 20:15:11 -0400
+Received: by mail-pf1-f193.google.com with SMTP id f26-v6so878550pfn.9
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 08:51:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1dyYdq2fGSrjONwrfY1SgFShhS+wEyBSRnppCGelZow=;
-        b=FJGkYYgEP/eg/Wr9wbD7Fpq7rUFEazM/71HFrAqr/wVVs2hBXeyKynWEANE0N8bpBb
-         jESZbeS8b406nfCpXeKdN6n0gjqx9WOvR7+fTrFJSTmV3w7TQ/LUXfVKnVpcwF+/PJZq
-         Kfrr+u3rxntZwCx3QkK9EfmSyxpK1ORX3hTGU=
+        bh=o90/LNGE9upjKhzjm4op/FMEilKM/vCgfq8hDXmKf64=;
+        b=Imiflp8pAB0VUbU3b//nP/qfOOs9pPcI2UxiPmJMGI1ZPfR+nxptAquSUYIsT5doA5
+         4S2HXsqpScsl1Nq3AbDgfUvQz63mZoRIVxzfYb6qUzBINDm3vF8tETPxifYLyoGPGgqT
+         abK0Zl2QvfHgYu7TeNXCXPBliH4IGtcEV+7t0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1dyYdq2fGSrjONwrfY1SgFShhS+wEyBSRnppCGelZow=;
-        b=JzGRFMrB388IZoRE2APOxW7pKCQ9AusgiNRyIXIMli7dLpHZIJ1Rf14X2AEzGuCtf2
-         j7Bd8Ysdiid//7+ACXvvpzEKO1NMjMG3ljbxmSiwMLw5HbVZcsYbmlReMWzHQjkqgOlG
-         WAzc1NMQ611VVrOvlZaaCWysdl9URuaxupGTm3gf+XO/G+VSVgXae55Un2sam5XDYF0P
-         3mz6DZJpCCbSOrvG6gAgmgBo260zyk9LlncPCGwduXGKz85sdphDWn2HUBxo0TuI1NiD
-         pCVzrsC7VQYWwLenDEDcbqU8/fT7VAioKq495CL1vthb3iHuLaDk0wX/ibCNnqN1+lrr
-         /Q5g==
-X-Gm-Message-State: ABuFfohQWu+Fcr9CWRX6fQq+k9QJjp3md//mS/CyXnDcxgb6E/PM1Dco
-        nSgFPrB38cgEt2wv45DrCbmg0Q==
-X-Google-Smtp-Source: ACcGV620rT4+klZBrl+72/MNbWP4Se0rx+vcw5DlyWGAQuwiKF6qJhGwL+yyA7oArbyCYbID4TVn7A==
-X-Received: by 2002:a63:1e5c:: with SMTP id p28-v6mr47910535pgm.376.1540309867407;
-        Tue, 23 Oct 2018 08:51:07 -0700 (PDT)
+        bh=o90/LNGE9upjKhzjm4op/FMEilKM/vCgfq8hDXmKf64=;
+        b=MlokISvMuaVJSCTzw95w5vzm7ui5yWOmJTobQ12ZmjB6tBXPnCgDK92NsHk+mpWf90
+         Z4H6B8h29JZxzv4hgrX4C28aDfHMUMcUogGp3MF46IX/vQJ4SX3/sel8IwumaOqDgs7Q
+         RerKJPV2ooIsmaIFA9WVT+SByIvx6dAFo7wpF4xL3uHp7Tw6Lvp4MDIkf/ym4yyPjo+Q
+         iLwOHyW7j0SPrq+lzcRvR/73iZTrAfT5LUxL7+oCgNZ42X71EuirbbUUQkYlTUa5DLRz
+         EfUtJ17oI4Wlt+PNom0kpVLnhLGHoDjZyrGjbauNx2k5XD6ENgP/YIhfkShwwWBnxADD
+         MPvA==
+X-Gm-Message-State: ABuFfog1h4KeAI4Oh5w4afN969Cq02c0felFlpfnk91ldMAoggZFwfwd
+        o4wqFGEU4KZeuaIeJq5LZnBEfw==
+X-Google-Smtp-Source: ACcGV618MFfAxH9ZOLOgjXtx3sU4kllTNV131HDzCFD6/jCITjF+8GvPpW//NyAt/wn5FCe4GTtMBw==
+X-Received: by 2002:a62:d085:: with SMTP id p127-v6mr24323446pfg.202.1540309874761;
+        Tue, 23 Oct 2018 08:51:14 -0700 (PDT)
 Received: from localhost.localdomain ([27.7.51.1])
-        by smtp.gmail.com with ESMTPSA id o75-v6sm7442829pfg.0.2018.10.23.08.51.00
+        by smtp.gmail.com with ESMTPSA id o75-v6sm7442829pfg.0.2018.10.23.08.51.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 08:51:06 -0700 (PDT)
+        Tue, 23 Oct 2018 08:51:14 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -73,9 +73,9 @@ To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 02/15] clk: sunxi-ng: Add check for minimal rate to NKM PLLs
-Date:   Tue, 23 Oct 2018 21:20:22 +0530
-Message-Id: <20181023155035.9101-3-jagan@amarulasolutions.com>
+Subject: [PATCH v2 03/15] clk: sunxi-ng: Add check for maximum rate to NKM PLLs
+Date:   Tue, 23 Oct 2018 21:20:23 +0530
+Message-Id: <20181023155035.9101-4-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181023155035.9101-1-jagan@amarulasolutions.com>
 References: <20181023155035.9101-1-jagan@amarulasolutions.com>
@@ -86,10 +86,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some NKM PLLs doesn't work well when their output clock rate is set below
-certain rate.
+Some NKM PLLs, frequency can be set above PLL working range.
 
-So, add support for minimal rate for relevant PLLs.
+Add a constraint for maximum supported rate. This way, drivers can
+specify which is maximum allowed rate for PLL.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
@@ -101,15 +101,15 @@ Changes for v2:
  2 files changed, 8 insertions(+)
 
 diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-index 841840e35e61..d17539dc88dd 100644
+index d17539dc88dd..574fd2cd2a79 100644
 --- a/drivers/clk/sunxi-ng/ccu_nkm.c
 +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-@@ -125,6 +125,13 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
- 	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate *= nkm->fixed_post_div;
+@@ -132,6 +132,13 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+ 		return rate;
+ 	}
  
-+	if (rate < nkm->min_rate) {
-+		rate = nkm->min_rate;
++	if (nkm->max_rate && rate > nkm->max_rate) {
++		rate = nkm->max_rate;
 +		if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
 +			rate /= nkm->fixed_post_div;
 +		return rate;
@@ -119,14 +119,14 @@ index 841840e35e61..d17539dc88dd 100644
  
  	rate = *parent_rate * _nkm.n * _nkm.k / _nkm.m;
 diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
-index cc6efb70a102..ff5bd00f429f 100644
+index ff5bd00f429f..c82590481188 100644
 --- a/drivers/clk/sunxi-ng/ccu_nkm.h
 +++ b/drivers/clk/sunxi-ng/ccu_nkm.h
-@@ -35,6 +35,7 @@ struct ccu_nkm {
- 	struct ccu_mux_internal	mux;
+@@ -36,6 +36,7 @@ struct ccu_nkm {
  
  	unsigned int		fixed_post_div;
-+	unsigned int		min_rate;
+ 	unsigned int		min_rate;
++	unsigned int		max_rate;
  
  	struct ccu_common	common;
  };
