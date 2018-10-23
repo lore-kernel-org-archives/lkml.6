@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED46C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D08C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D375E2075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8837E2075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V+Ztyc+D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D375E2075D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZaGL7O9Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8837E2075D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729269AbeJXGBe (ORCPT
+        id S1729284AbeJXGBi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 02:01:34 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45463 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729145AbeJXGBd (ORCPT
+        Wed, 24 Oct 2018 02:01:38 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46974 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729227AbeJXGBg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 02:01:33 -0400
-Received: by mail-lf1-f67.google.com with SMTP id c24-v6so2319178lfi.12;
-        Tue, 23 Oct 2018 14:36:18 -0700 (PDT)
+        Wed, 24 Oct 2018 02:01:36 -0400
+Received: by mail-lj1-f196.google.com with SMTP id x3-v6so2784065lji.13;
+        Tue, 23 Oct 2018 14:36:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-        bh=V7XavEgNJp0NdEehJNSe3L5RBOhoOdzq94ao4os78FM=;
-        b=V+Ztyc+Da3zJSnZ7XoW9soiweQV8sOZWklUf/FFukP7HoBrffu2le+vVMI0gB51gGp
-         NHcaEAU0xhkiJD8fpHZEsRoCAtNIXh3Exytu478Y/NOIgJb7BbCtQ+ECjibpVsjiAmLT
-         wvgtd8I1JlHIWzSA7jV7gSQdw8hObYvjCTkF7RVZmTq3estHlOBX9yD3s/jZ2yu73xe0
-         5gZS2UMboiZ8gTO/LKJoXWQb/PJWGf+Z/p3hkg0CCa7lJPA6aKDuPUMETZi3imsgoY1p
-         74c6IAc6CxPzV54We4jwXqe1qQHAWqRQTjSGRzD/jDy6dWeE+oG1yPbZ/d75sC3Ahmn1
-         N2BQ==
+        bh=9FjWk819tI8q4Of5/GPMym38mMpreAR6lAKVVURm4+E=;
+        b=ZaGL7O9QhY2jV9QlUoGEx2RYYKVeDm+Qn8Dz7gfcUqyv0drW9KAQdyhAtBl5ScwmJ4
+         nDiWn/GV5yOAQihkjSTJnjT2aokUhrXlMJohwEiUETROgzQo7qqJsHjUCafOBfQvdMxH
+         YHQR1GLLP/maXsuxnk63Cxq9HpqVTBMK2NI2bv900uXuZmBGqH51It6uGOsLJE2fWYfG
+         6pkXXBdjXQw5c81MPcYkUp/W2Fchea7WoyQOXNAdP3rX0RjytwLNxw0tBso2VK3Bnzzp
+         +nDYJl8GRYYpT918e/BGp+3Qu4x67MFTUlCnXST536vZQUhX2hfdmUDtAqW8JAyluAPO
+         vifw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to;
-        bh=V7XavEgNJp0NdEehJNSe3L5RBOhoOdzq94ao4os78FM=;
-        b=WHRk9jB3UXqzGRqiWe7pdYivDH7LMNDHwPFhNrWUNyX7MVfgWCxfuwpI82VmL9jIpU
-         antZk89Cy8HmPxE0FhJxJcNrnMn2vLtlWzW7JHbuNjjiSRXCXlIHNhinsqnFMbStLkfO
-         E5UzAPd7kcHawSE6Gs6SFxHhEMKH9V9hTXfo5NZzWH3K85dD3BpoCX1xMQezjLWhYJVY
-         SOr8ygKVguxWck+qzTmwpSpGy2IzznN7q8qMTZh5wga7h+Rd4dLp2f215MHoK23649tk
-         J/vswgt8SCTfT0xkgR/WP3cHvLNoAVT/ldHbw1zLH0zx4c90LOG1GzKVPdmy0Ftj5azL
-         AyOg==
-X-Gm-Message-State: AGRZ1gLg3Mr+WkVJL/avqj8khfqorrpbuiLO99Nx4nfYggULSdaz/T8b
-        DZwlRjR2w4zLzqO71NE6GLQ=
-X-Google-Smtp-Source: AJdET5dRYBiV0gZeJUZ5q7QId0ofD4d9/OxP3H+4pyUTa8ejUzdUlMvtXe/sY7SieoSRgeugC6aVyA==
-X-Received: by 2002:a19:d5:: with SMTP id 204mr421236lfa.116.1540330577744;
-        Tue, 23 Oct 2018 14:36:17 -0700 (PDT)
+        bh=9FjWk819tI8q4Of5/GPMym38mMpreAR6lAKVVURm4+E=;
+        b=bY01P2bAWn0trm+tChkWO6aSu01j1D7IH0E8gneMnPED1+VkmoGysCKBCa3K43+Td8
+         jibpC/qXWh7GhsUDoSCSmYZ63t7K5AKzzwJ6vE3SX0YRzN90fT0l6OBbOpU0FunQyYb1
+         2utR9mJ2TqI1udO57e6po+qIiA53DD2zGm42NQbe9Sa+tpKflULswrrF6MC2oS7IecJq
+         9MRJcS2jqk+VotYqZ5z9ek07pJ4QrHbv3cNGnlMYUO1GLpJvaglcRQqLEuvBAvP90INh
+         OCdyV9IYTHq4MyQO5NTDFbN9HJbChPdUYKpafSl8LjJpRrQhHUtNLmygnJT+aVgFS32+
+         n55w==
+X-Gm-Message-State: ABuFfoixGhCl3E9m3ySPsv68ZLR2f5wRgIMYK+zwyGRaqTz22V7J4n37
+        TYXGy9tZ+mtFi8yu0/wFv5s=
+X-Google-Smtp-Source: AJdET5fStpo5iwjElaH4GwCWOgDJjeaJxYFI38XhqKxAW7VjqnSm921zQaz+uFEKHN4MgpOPwJPDsA==
+X-Received: by 2002:a2e:9f17:: with SMTP id u23-v6mr15051827ljk.53.1540330582091;
+        Tue, 23 Oct 2018 14:36:22 -0700 (PDT)
 Received: from localhost.localdomain (91-159-62-169.elisa-laajakaista.fi. [91.159.62.169])
-        by smtp.gmail.com with ESMTPSA id y127-v6sm377950lfc.13.2018.10.23.14.36.16
+        by smtp.gmail.com with ESMTPSA id y127-v6sm377950lfc.13.2018.10.23.14.36.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 14:36:17 -0700 (PDT)
+        Tue, 23 Oct 2018 14:36:21 -0700 (PDT)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -73,20 +73,11 @@ To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
 Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Laura Abbott <labbott@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 14/17] prmem: llist, hlist, both plain and rcu
-Date:   Wed, 24 Oct 2018 00:35:01 +0300
-Message-Id: <20181023213504.28905-15-igor.stoppa@huawei.com>
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 17/17] prmem: ima: turn the measurements list write rare
+Date:   Wed, 24 Oct 2018 00:35:04 +0300
+Message-Id: <20181023213504.28905-18-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181023213504.28905-1-igor.stoppa@huawei.com>
 References: <20181023213504.28905-1-igor.stoppa@huawei.com>
@@ -96,994 +87,424 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some cases, all the data needing protection can be allocated from a pool
-in one go, as directly writable, then initialized and protected.
-The sequence is relatively short and it's acceptable to leave the entire
-data set unprotected.
+The measurement list is moved to write rare memory, including
+related data structures.
 
-In other cases, this is not possible, because the data will trickle over
-a relatively long period of time, in a non predictable way, possibly for
-the entire duration of the operations.
-
-For these cases, the safe approach is to have the memory already write
-protected, when allocated. However, this will require replacing any
-direct assignment with calls to functions that can perform write rare.
-
-Since lists are one of the most commonly used data structures in kernel,
-they are a the first candidate for receiving write rare extensions.
-
-This patch implements basic functionality for altering said lists.
+Various boilerplate linux data structures and related functions are
+replaced by their write-rare counterpart.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Kate Stewart <kstewart@linuxfoundation.org>
-CC: "David S. Miller" <davem@davemloft.net>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Philippe Ombredanne <pombredanne@nexb.com>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Josh Triplett <josh@joshtriplett.org>
-CC: Steven Rostedt <rostedt@goodmis.org>
-CC: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Lai Jiangshan <jiangshanlai@gmail.com>
+CC: Mimi Zohar <zohar@linux.vnet.ibm.com>
+CC: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+CC: James Morris <jmorris@namei.org>
+CC: "Serge E. Hallyn" <serge@hallyn.com>
+CC: linux-integrity@vger.kernel.org
 CC: linux-kernel@vger.kernel.org
 ---
- MAINTAINERS            |   1 +
- include/linux/prlist.h | 934 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 935 insertions(+)
- create mode 100644 include/linux/prlist.h
+ security/integrity/ima/ima.h              | 18 ++++++++------
+ security/integrity/ima/ima_api.c          | 29 +++++++++++++----------
+ security/integrity/ima/ima_fs.c           | 12 +++++-----
+ security/integrity/ima/ima_main.c         |  6 +++++
+ security/integrity/ima/ima_queue.c        | 28 +++++++++++++---------
+ security/integrity/ima/ima_template.c     | 14 ++++++-----
+ security/integrity/ima/ima_template_lib.c | 14 +++++++----
+ 7 files changed, 74 insertions(+), 47 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 246b1a1cc8bb..f5689c014e07 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9464,6 +9464,7 @@ F:	mm/prmem.c
- F:	mm/test_write_rare.c
- F:	mm/test_pmalloc.c
- F:	Documentation/core-api/prmem.rst
-+F:	include/linux/prlist.h
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 67db9d9454ca..5f5959753bf5 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -24,6 +24,8 @@
+ #include <linux/hash.h>
+ #include <linux/tpm.h>
+ #include <linux/audit.h>
++#include <linux/prlist.h>
++#include <linux/pratomic-long.h>
+ #include <crypto/hash_info.h>
  
- MEMORY MANAGEMENT
- L:	linux-mm@kvack.org
-diff --git a/include/linux/prlist.h b/include/linux/prlist.h
-new file mode 100644
-index 000000000000..0387c78f8be8
---- /dev/null
-+++ b/include/linux/prlist.h
-@@ -0,0 +1,934 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * prlist.h: Header for Protected Lists
-+ *
-+ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
-+ *
-+ * Code from <linux/list.h> and <linux/rculist.h>, adapted to perform
-+ * writes on write-rare data.
-+ * These functions and macros rely on data structures that allow the reuse
-+ * of what is already provided for reading the content of their non-write
-+ * rare variant.
-+ */
+ #include "../integrity.h"
+@@ -84,7 +86,7 @@ struct ima_template_field {
+ 
+ /* IMA template descriptor definition */
+ struct ima_template_desc {
+-	struct list_head list;
++	union prlist_head list;
+ 	char *name;
+ 	char *fmt;
+ 	int num_fields;
+@@ -100,11 +102,13 @@ struct ima_template_entry {
+ };
+ 
+ struct ima_queue_entry {
+-	struct hlist_node hnext;	/* place in hash collision list */
+-	struct list_head later;		/* place in ima_measurements list */
++	union prhlist_node hnext;	/* place in hash collision list */
++	union prlist_head later;	/* place in ima_measurements list */
+ 	struct ima_template_entry *entry;
+ };
+-extern struct list_head ima_measurements;	/* list of all measurements */
 +
-+#ifndef _LINUX_PRLIST_H
-+#define _LINUX_PRLIST_H
-+
-+#include <linux/list.h>
-+#include <linux/kernel.h>
++/* list of all measurements */
++extern union prlist_head ima_measurements __wr_after_init;
+ 
+ /* Some details preceding the binary serialized measurement list */
+ struct ima_kexec_hdr {
+@@ -160,9 +164,9 @@ void ima_init_template_list(void);
+ extern spinlock_t ima_queue_lock;
+ 
+ struct ima_h_table {
+-	atomic_long_t len;	/* number of stored measurements in the list */
+-	atomic_long_t violations;
+-	struct hlist_head queue[IMA_MEASURE_HTABLE_SIZE];
++	struct pratomic_long_t len;	/* # of measurements in the list */
++	struct pratomic_long_t violations;
++	union prhlist_head queue[IMA_MEASURE_HTABLE_SIZE];
+ };
+ extern struct ima_h_table ima_htable;
+ 
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index a02c5acfd403..4fc28c2478b0 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -19,9 +19,12 @@
+ #include <linux/xattr.h>
+ #include <linux/evm.h>
+ #include <linux/iversion.h>
 +#include <linux/prmemextra.h>
-+
-+/* --------------- Circular Protected Doubly Linked List --------------- */
-+union prlist_head {
-+	struct list_head list __aligned(sizeof(void *));
-+	struct {
-+		union prlist_head *next __aligned(sizeof(void *));
-+		union prlist_head *prev __aligned(sizeof(void *));
-+	} __no_randomize_layout;
-+} __aligned(sizeof(void *));
-+
-+static __always_inline
-+union prlist_head *to_prlist_head(struct list_head *list)
-+{
-+	return container_of(list, union prlist_head, list);
-+}
-+
-+#define PRLIST_HEAD_INIT(name) {	\
-+	.list = LIST_HEAD_INIT(name),	\
-+}
-+
-+#define PRLIST_HEAD(name) \
-+	union prlist_head name __wr_after_init = PRLIST_HEAD_INIT(name.list)
-+
-+static __always_inline
-+struct pmalloc_pool *prlist_create_custom_pool(size_t refill,
-+					       unsigned short align_order)
-+{
-+	return pmalloc_create_custom_pool(refill, align_order,
-+					  PMALLOC_MODE_START_WR);
-+}
-+
-+static __always_inline struct pmalloc_pool *prlist_create_pool(void)
-+{
-+	return prlist_create_custom_pool(PMALLOC_REFILL_DEFAULT,
-+					 PMALLOC_ALIGN_ORDER_DEFAULT);
-+}
-+
-+static __always_inline
-+void prlist_set_prev(union prlist_head *head,
-+		     const union prlist_head *prev)
-+{
-+	wr_ptr(&head->prev, prev);
-+}
-+
-+static __always_inline
-+void prlist_set_next(union prlist_head *head,
-+		     const union prlist_head *next)
-+{
-+	wr_ptr(&head->next, next);
-+}
-+
-+static __always_inline void INIT_PRLIST_HEAD(union prlist_head *head)
-+{
-+	prlist_set_prev(head, head);
-+	prlist_set_next(head, head);
-+}
-+
-+/*
-+ * Insert a new entry between two known consecutive entries.
-+ *
-+ * This is only for internal list manipulation where we know
-+ * the prev/next entries already!
-+ */
-+static __always_inline
-+void __prlist_add(union prlist_head *new, union prlist_head *prev,
-+		  union prlist_head *next)
-+{
-+	if (!__list_add_valid(&new->list, &prev->list, &next->list))
-+		return;
-+
-+	prlist_set_prev(next, new);
-+	prlist_set_next(new, next);
-+	prlist_set_prev(new, prev);
-+	prlist_set_next(prev, new);
-+}
-+
-+/**
-+ * prlist_add - add a new entry
-+ * @new: new entry to be added
-+ * @head: prlist head to add it after
-+ *
-+ * Insert a new entry after the specified head.
-+ * This is good for implementing stacks.
-+ */
-+static __always_inline
-+void prlist_add(union prlist_head *new, union prlist_head *head)
-+{
-+	__prlist_add(new, head, head->next);
-+}
-+
-+/**
-+ * prlist_add_tail - add a new entry
-+ * @new: new entry to be added
-+ * @head: list head to add it before
-+ *
-+ * Insert a new entry before the specified head.
-+ * This is useful for implementing queues.
-+ */
-+static __always_inline
-+void prlist_add_tail(union prlist_head *new, union prlist_head *head)
-+{
-+	__prlist_add(new, head->prev, head);
-+}
-+
-+/*
-+ * Delete a prlist entry by making the prev/next entries
-+ * point to each other.
-+ *
-+ * This is only for internal list manipulation where we know
-+ * the prev/next entries already!
-+ */
-+static __always_inline
-+void __prlist_del(union prlist_head *prev, union prlist_head *next)
-+{
-+	prlist_set_prev(next, prev);
-+	prlist_set_next(prev, next);
-+}
-+
-+/**
-+ * prlist_del - deletes entry from list.
-+ * @entry: the element to delete from the list.
-+ * Note: list_empty() on entry does not return true after this, the entry is
-+ * in an undefined state.
-+ */
-+static inline void __prlist_del_entry(union prlist_head *entry)
-+{
-+	if (!__list_del_entry_valid(&entry->list))
-+		return;
-+	__prlist_del(entry->prev, entry->next);
-+}
-+
-+static __always_inline void prlist_del(union prlist_head *entry)
-+{
-+	__prlist_del_entry(entry);
-+	prlist_set_next(entry, LIST_POISON1);
-+	prlist_set_prev(entry, LIST_POISON2);
-+}
-+
-+/**
-+ * prlist_replace - replace old entry by new one
-+ * @old : the element to be replaced
-+ * @new : the new element to insert
-+ *
-+ * If @old was empty, it will be overwritten.
-+ */
-+static __always_inline
-+void prlist_replace(union prlist_head *old, union prlist_head *new)
-+{
-+	prlist_set_next(new, old->next);
-+	prlist_set_prev(new->next, new);
-+	prlist_set_prev(new, old->prev);
-+	prlist_set_next(new->prev, new);
-+}
-+
-+static __always_inline
-+void prlist_replace_init(union prlist_head *old, union prlist_head *new)
-+{
-+	prlist_replace(old, new);
-+	INIT_PRLIST_HEAD(old);
-+}
-+
-+/**
-+ * prlist_del_init - deletes entry from list and reinitialize it.
-+ * @entry: the element to delete from the list.
-+ */
-+static __always_inline void prlist_del_init(union prlist_head *entry)
-+{
-+	__prlist_del_entry(entry);
-+	INIT_PRLIST_HEAD(entry);
-+}
-+
-+/**
-+ * prlist_move - delete from one list and add as another's head
-+ * @list: the entry to move
-+ * @head: the head that will precede our entry
-+ */
-+static __always_inline
-+void prlist_move(union prlist_head *list, union prlist_head *head)
-+{
-+	__prlist_del_entry(list);
-+	prlist_add(list, head);
-+}
-+
-+/**
-+ * prlist_move_tail - delete from one list and add as another's tail
-+ * @list: the entry to move
-+ * @head: the head that will follow our entry
-+ */
-+static __always_inline
-+void prlist_move_tail(union prlist_head *list, union prlist_head *head)
-+{
-+	__prlist_del_entry(list);
-+	prlist_add_tail(list, head);
-+}
-+
-+/**
-+ * prlist_rotate_left - rotate the list to the left
-+ * @head: the head of the list
-+ */
-+static __always_inline void prlist_rotate_left(union prlist_head *head)
-+{
-+	union prlist_head *first;
-+
-+	if (!list_empty(&head->list)) {
-+		first = head->next;
-+		prlist_move_tail(first, head);
-+	}
-+}
-+
-+static __always_inline
-+void __prlist_cut_position(union prlist_head *list, union prlist_head *head,
-+			   union prlist_head *entry)
-+{
-+	union prlist_head *new_first = entry->next;
-+
-+	prlist_set_next(list, head->next);
-+	prlist_set_prev(list->next, list);
-+	prlist_set_prev(list, entry);
-+	prlist_set_next(entry, list);
-+	prlist_set_next(head, new_first);
-+	prlist_set_prev(new_first, head);
-+}
-+
-+/**
-+ * prlist_cut_position - cut a list into two
-+ * @list: a new list to add all removed entries
-+ * @head: a list with entries
-+ * @entry: an entry within head, could be the head itself
-+ *	and if so we won't cut the list
-+ *
-+ * This helper moves the initial part of @head, up to and
-+ * including @entry, from @head to @list. You should
-+ * pass on @entry an element you know is on @head. @list
-+ * should be an empty list or a list you do not care about
-+ * losing its data.
-+ *
-+ */
-+static __always_inline
-+void prlist_cut_position(union prlist_head *list, union prlist_head *head,
-+			 union prlist_head *entry)
-+{
-+	if (list_empty(&head->list))
-+		return;
-+	if (list_is_singular(&head->list) &&
-+		(head->next != entry && head != entry))
-+		return;
-+	if (entry == head)
-+		INIT_PRLIST_HEAD(list);
-+	else
-+		__prlist_cut_position(list, head, entry);
-+}
-+
-+/**
-+ * prlist_cut_before - cut a list into two, before given entry
-+ * @list: a new list to add all removed entries
-+ * @head: a list with entries
-+ * @entry: an entry within head, could be the head itself
-+ *
-+ * This helper moves the initial part of @head, up to but
-+ * excluding @entry, from @head to @list.  You should pass
-+ * in @entry an element you know is on @head.  @list should
-+ * be an empty list or a list you do not care about losing
-+ * its data.
-+ * If @entry == @head, all entries on @head are moved to
-+ * @list.
-+ */
-+static __always_inline
-+void prlist_cut_before(union prlist_head *list, union prlist_head *head,
-+		       union prlist_head *entry)
-+{
-+	if (head->next == entry) {
-+		INIT_PRLIST_HEAD(list);
-+		return;
-+	}
-+	prlist_set_next(list, head->next);
-+	prlist_set_prev(list->next, list);
-+	prlist_set_prev(list, entry->prev);
-+	prlist_set_next(list->prev, list);
-+	prlist_set_next(head, entry);
-+	prlist_set_prev(entry, head);
-+}
-+
-+static __always_inline
-+void __prlist_splice(const union prlist_head *list, union prlist_head *prev,
-+				 union prlist_head *next)
-+{
-+	union prlist_head *first = list->next;
-+	union prlist_head *last = list->prev;
-+
-+	prlist_set_prev(first, prev);
-+	prlist_set_next(prev, first);
-+	prlist_set_next(last, next);
-+	prlist_set_prev(next, last);
-+}
-+
-+/**
-+ * prlist_splice - join two lists, this is designed for stacks
-+ * @list: the new list to add.
-+ * @head: the place to add it in the first list.
-+ */
-+static __always_inline
-+void prlist_splice(const union prlist_head *list, union prlist_head *head)
-+{
-+	if (!list_empty(&list->list))
-+		__prlist_splice(list, head, head->next);
-+}
-+
-+/**
-+ * prlist_splice_tail - join two lists, each list being a queue
-+ * @list: the new list to add.
-+ * @head: the place to add it in the first list.
-+ */
-+static __always_inline
-+void prlist_splice_tail(union prlist_head *list, union prlist_head *head)
-+{
-+	if (!list_empty(&list->list))
-+		__prlist_splice(list, head->prev, head);
-+}
-+
-+/**
-+ * prlist_splice_init - join two lists and reinitialise the emptied list.
-+ * @list: the new list to add.
-+ * @head: the place to add it in the first list.
-+ *
-+ * The list at @list is reinitialised
-+ */
-+static __always_inline
-+void prlist_splice_init(union prlist_head *list, union prlist_head *head)
-+{
-+	if (!list_empty(&list->list)) {
-+		__prlist_splice(list, head, head->next);
-+		INIT_PRLIST_HEAD(list);
-+	}
-+}
-+
-+/**
-+ * prlist_splice_tail_init - join 2 lists and reinitialise the emptied list
-+ * @list: the new list to add.
-+ * @head: the place to add it in the first list.
-+ *
-+ * Each of the lists is a queue.
-+ * The list at @list is reinitialised
-+ */
-+static __always_inline
-+void prlist_splice_tail_init(union prlist_head *list,
-+			     union prlist_head *head)
-+{
-+	if (!list_empty(&list->list)) {
-+		__prlist_splice(list, head->prev, head);
-+		INIT_PRLIST_HEAD(list);
-+	}
-+}
-+
-+/* ---- Protected Doubly Linked List with single pointer list head ---- */
-+union prhlist_head {
-+		struct hlist_head head __aligned(sizeof(void *));
-+		union prhlist_node *first __aligned(sizeof(void *));
-+} __aligned(sizeof(void *));
-+
-+union prhlist_node {
-+	struct hlist_node node __aligned(sizeof(void *))
-+			       ;
-+	struct {
-+		union prhlist_node *next __aligned(sizeof(void *));
-+		union prhlist_node **pprev __aligned(sizeof(void *));
-+	} __no_randomize_layout;
-+} __aligned(sizeof(void *));
-+
-+#define PRHLIST_HEAD_INIT	{	\
-+	.head = HLIST_HEAD_INIT,	\
-+}
-+
-+#define PRHLIST_HEAD(name) \
-+	union prhlist_head name __wr_after_init = PRHLIST_HEAD_INIT
-+
-+
-+#define is_static(object) \
-+	unlikely(wr_check_boundaries(object, sizeof(*object)))
-+
-+static __always_inline
-+struct pmalloc_pool *prhlist_create_custom_pool(size_t refill,
-+						unsigned short align_order)
-+{
-+	return pmalloc_create_custom_pool(refill, align_order,
-+					  PMALLOC_MODE_AUTO_WR);
-+}
-+
-+static __always_inline
-+struct pmalloc_pool *prhlist_create_pool(void)
-+{
-+	return prhlist_create_custom_pool(PMALLOC_REFILL_DEFAULT,
-+					  PMALLOC_ALIGN_ORDER_DEFAULT);
-+}
-+
-+static __always_inline
-+void prhlist_set_first(union prhlist_head *head, union prhlist_node *first)
-+{
-+	wr_ptr(&head->first, first);
-+}
-+
-+static __always_inline
-+void prhlist_set_next(union prhlist_node *node, union prhlist_node *next)
-+{
-+	wr_ptr(&node->next, next);
-+}
-+
-+static __always_inline
-+void prhlist_set_pprev(union prhlist_node *node, union prhlist_node **pprev)
-+{
-+	wr_ptr(&node->pprev, pprev);
-+}
-+
-+static __always_inline
-+void prhlist_set_prev(union prhlist_node *node, union prhlist_node *prev)
-+{
-+	wr_ptr(node->pprev, prev);
-+}
-+
-+static __always_inline void INIT_PRHLIST_HEAD(union prhlist_head *head)
-+{
-+	prhlist_set_first(head, NULL);
-+}
-+
-+static __always_inline void INIT_PRHLIST_NODE(union prhlist_node *node)
-+{
-+	prhlist_set_next(node, NULL);
-+	prhlist_set_pprev(node, NULL);
-+}
-+
-+static __always_inline void __prhlist_del(union prhlist_node *n)
-+{
-+	union prhlist_node *next = n->next;
-+	union prhlist_node **pprev = n->pprev;
-+
-+	wr_ptr(pprev, next);
-+	if (next)
-+		prhlist_set_pprev(next, pprev);
-+}
-+
-+static __always_inline void prhlist_del(union prhlist_node *n)
-+{
-+	__prhlist_del(n);
-+	prhlist_set_next(n, LIST_POISON1);
-+	prhlist_set_pprev(n, LIST_POISON2);
-+}
-+
-+static __always_inline void prhlist_del_init(union prhlist_node *n)
-+{
-+	if (!hlist_unhashed(&n->node)) {
-+		__prhlist_del(n);
-+		INIT_PRHLIST_NODE(n);
-+	}
-+}
-+
-+static __always_inline
-+void prhlist_add_head(union prhlist_node *n, union prhlist_head *h)
-+{
-+	union prhlist_node *first = h->first;
-+
-+	prhlist_set_next(n, first);
-+	if (first)
-+		prhlist_set_pprev(first, &n->next);
-+	prhlist_set_first(h, n);
-+	prhlist_set_pprev(n, &h->first);
-+}
-+
-+/* next must be != NULL */
-+static __always_inline
-+void prhlist_add_before(union prhlist_node *n, union prhlist_node *next)
-+{
-+	prhlist_set_pprev(n, next->pprev);
-+	prhlist_set_next(n, next);
-+	prhlist_set_pprev(next, &n->next);
-+	prhlist_set_prev(n, n);
-+}
-+
-+static __always_inline
-+void prhlist_add_behind(union prhlist_node *n, union prhlist_node *prev)
-+{
-+	prhlist_set_next(n, prev->next);
-+	prhlist_set_next(prev, n);
-+	prhlist_set_pprev(n, &prev->next);
-+	if (n->next)
-+		prhlist_set_pprev(n->next, &n->next);
-+}
-+
-+/* after that we'll appear to be on some hlist and hlist_del will work */
-+static __always_inline void prhlist_add_fake(union prhlist_node *n)
-+{
-+	prhlist_set_pprev(n, &n->next);
-+}
-+
-+/*
-+ * Move a list from one list head to another. Fixup the pprev
-+ * reference of the first entry if it exists.
-+ */
-+static __always_inline
-+void prhlist_move_list(union prhlist_head *old, union prhlist_head *new)
-+{
-+	prhlist_set_first(new, old->first);
-+	if (new->first)
-+		prhlist_set_pprev(new->first, &new->first);
-+	prhlist_set_first(old, NULL);
-+}
-+
-+/* ------------------------ RCU list and hlist ------------------------ */
-+
-+/*
-+ * INIT_LIST_HEAD_RCU - Initialize a list_head visible to RCU readers
-+ * @head: list to be initialized
-+ *
-+ * It is exactly equivalent to INIT_LIST_HEAD()
-+ */
-+static __always_inline void INIT_PRLIST_HEAD_RCU(union prlist_head *head)
-+{
-+	INIT_PRLIST_HEAD(head);
-+}
-+
-+/*
-+ * Insert a new entry between two known consecutive entries.
-+ *
-+ * This is only for internal list manipulation where we know
-+ * the prev/next entries already!
-+ */
-+static __always_inline
-+void __prlist_add_rcu(union prlist_head *new, union prlist_head *prev,
-+		      union prlist_head *next)
-+{
-+	if (!__list_add_valid(&new->list, &prev->list, &next->list))
-+		return;
-+	prlist_set_next(new, next);
-+	prlist_set_prev(new, prev);
-+	wr_rcu_assign_pointer(list_next_rcu(&prev->list), new);
-+	prlist_set_prev(next, new);
-+}
-+
-+/**
-+ * prlist_add_rcu - add a new entry to rcu-protected prlist
-+ * @new: new entry to be added
-+ * @head: prlist head to add it after
-+ *
-+ * Insert a new entry after the specified head.
-+ * This is good for implementing stacks.
-+ *
-+ * The caller must take whatever precautions are necessary
-+ * (such as holding appropriate locks) to avoid racing
-+ * with another prlist-mutation primitive, such as prlist_add_rcu()
-+ * or prlist_del_rcu(), running on this same list.
-+ * However, it is perfectly legal to run concurrently with
-+ * the _rcu list-traversal primitives, such as
-+ * list_for_each_entry_rcu().
-+ */
-+static __always_inline
-+void prlist_add_rcu(union prlist_head *new, union prlist_head *head)
-+{
-+	__prlist_add_rcu(new, head, head->next);
-+}
-+
-+/**
-+ * prlist_add_tail_rcu - add a new entry to rcu-protected prlist
-+ * @new: new entry to be added
-+ * @head: prlist head to add it before
-+ *
-+ * Insert a new entry before the specified head.
-+ * This is useful for implementing queues.
-+ *
-+ * The caller must take whatever precautions are necessary
-+ * (such as holding appropriate locks) to avoid racing
-+ * with another prlist-mutation primitive, such as prlist_add_tail_rcu()
-+ * or prlist_del_rcu(), running on this same list.
-+ * However, it is perfectly legal to run concurrently with
-+ * the _rcu list-traversal primitives, such as
-+ * list_for_each_entry_rcu().
-+ */
-+static __always_inline
-+void prlist_add_tail_rcu(union prlist_head *new, union prlist_head *head)
-+{
-+	__prlist_add_rcu(new, head->prev, head);
-+}
-+
-+/**
-+ * prlist_del_rcu - deletes entry from prlist without re-initialization
-+ * @entry: the element to delete from the prlist.
-+ *
-+ * Note: list_empty() on entry does not return true after this,
-+ * the entry is in an undefined state. It is useful for RCU based
-+ * lockfree traversal.
-+ *
-+ * In particular, it means that we can not poison the forward
-+ * pointers that may still be used for walking the list.
-+ *
-+ * The caller must take whatever precautions are necessary
-+ * (such as holding appropriate locks) to avoid racing
-+ * with another list-mutation primitive, such as prlist_del_rcu()
-+ * or prlist_add_rcu(), running on this same prlist.
-+ * However, it is perfectly legal to run concurrently with
-+ * the _rcu list-traversal primitives, such as
-+ * list_for_each_entry_rcu().
-+ *
-+ * Note that the caller is not permitted to immediately free
-+ * the newly deleted entry.  Instead, either synchronize_rcu()
-+ * or call_rcu() must be used to defer freeing until an RCU
-+ * grace period has elapsed.
-+ */
-+static __always_inline void prlist_del_rcu(union prlist_head *entry)
-+{
-+	__prlist_del_entry(entry);
-+	prlist_set_prev(entry, LIST_POISON2);
-+}
-+
-+/**
-+ * prhlist_del_init_rcu - deletes entry from hash list with re-initialization
-+ * @n: the element to delete from the hash list.
-+ *
-+ * Note: list_unhashed() on the node return true after this. It is
-+ * useful for RCU based read lockfree traversal if the writer side
-+ * must know if the list entry is still hashed or already unhashed.
-+ *
-+ * In particular, it means that we can not poison the forward pointers
-+ * that may still be used for walking the hash list and we can only
-+ * zero the pprev pointer so list_unhashed() will return true after
-+ * this.
-+ *
-+ * The caller must take whatever precautions are necessary (such as
-+ * holding appropriate locks) to avoid racing with another
-+ * list-mutation primitive, such as hlist_add_head_rcu() or
-+ * hlist_del_rcu(), running on this same list.  However, it is
-+ * perfectly legal to run concurrently with the _rcu list-traversal
-+ * primitives, such as hlist_for_each_entry_rcu().
-+ */
-+static __always_inline void prhlist_del_init_rcu(union prhlist_node *n)
-+{
-+	if (!hlist_unhashed(&n->node)) {
-+		__prhlist_del(n);
-+		prhlist_set_pprev(n, NULL);
-+	}
-+}
-+
-+/**
-+ * prlist_replace_rcu - replace old entry by new one
-+ * @old : the element to be replaced
-+ * @new : the new element to insert
-+ *
-+ * The @old entry will be replaced with the @new entry atomically.
-+ * Note: @old should not be empty.
-+ */
-+static __always_inline
-+void prlist_replace_rcu(union prlist_head *old, union prlist_head *new)
-+{
-+	prlist_set_next(new, old->next);
-+	prlist_set_prev(new, old->prev);
-+	wr_rcu_assign_pointer(list_next_rcu(&new->prev->list), new);
-+	prlist_set_prev(new->next, new);
-+	prlist_set_prev(old, LIST_POISON2);
-+}
-+
-+/**
-+ * __prlist_splice_init_rcu - join an RCU-protected list into an existing list.
-+ * @list:	the RCU-protected list to splice
-+ * @prev:	points to the last element of the existing list
-+ * @next:	points to the first element of the existing list
-+ * @sync:	function to sync: synchronize_rcu(), synchronize_sched(), ...
-+ *
-+ * The list pointed to by @prev and @next can be RCU-read traversed
-+ * concurrently with this function.
-+ *
-+ * Note that this function blocks.
-+ *
-+ * Important note: the caller must take whatever action is necessary to prevent
-+ * any other updates to the existing list.  In principle, it is possible to
-+ * modify the list as soon as sync() begins execution. If this sort of thing
-+ * becomes necessary, an alternative version based on call_rcu() could be
-+ * created.  But only if -really- needed -- there is no shortage of RCU API
-+ * members.
-+ */
-+static __always_inline
-+void __prlist_splice_init_rcu(union prlist_head *list,
-+			      union prlist_head *prev,
-+			      union prlist_head *next, void (*sync)(void))
-+{
-+	union prlist_head *first = list->next;
-+	union prlist_head *last = list->prev;
-+
-+	/*
-+	 * "first" and "last" tracking list, so initialize it.  RCU readers
-+	 * have access to this list, so we must use INIT_LIST_HEAD_RCU()
-+	 * instead of INIT_LIST_HEAD().
-+	 */
-+
-+	INIT_PRLIST_HEAD_RCU(list);
-+
-+	/*
-+	 * At this point, the list body still points to the source list.
-+	 * Wait for any readers to finish using the list before splicing
-+	 * the list body into the new list.  Any new readers will see
-+	 * an empty list.
-+	 */
-+
-+	sync();
-+
-+	/*
-+	 * Readers are finished with the source list, so perform splice.
-+	 * The order is important if the new list is global and accessible
-+	 * to concurrent RCU readers.  Note that RCU readers are not
-+	 * permitted to traverse the prev pointers without excluding
-+	 * this function.
-+	 */
-+
-+	prlist_set_next(last, next);
-+	wr_rcu_assign_pointer(list_next_rcu(&prev->list), first);
-+	prlist_set_prev(first, prev);
-+	prlist_set_prev(next, last);
-+}
-+
-+/**
-+ * prlist_splice_init_rcu - splice an RCU-protected list into an existing
-+ *                          list, designed for stacks.
-+ * @list:	the RCU-protected list to splice
-+ * @head:	the place in the existing list to splice the first list into
-+ * @sync:	function to sync: synchronize_rcu(), synchronize_sched(), ...
-+ */
-+static __always_inline
-+void prlist_splice_init_rcu(union prlist_head *list,
-+			    union prlist_head *head,
-+			    void (*sync)(void))
-+{
-+	if (!list_empty(&list->list))
-+		__prlist_splice_init_rcu(list, head, head->next, sync);
-+}
-+
-+/**
-+ * prlist_splice_tail_init_rcu - splice an RCU-protected list into an
-+ *                               existing list, designed for queues.
-+ * @list:	the RCU-protected list to splice
-+ * @head:	the place in the existing list to splice the first list into
-+ * @sync:	function to sync: synchronize_rcu(), synchronize_sched(), ...
-+ */
-+static __always_inline
-+void prlist_splice_tail_init_rcu(union prlist_head *list,
-+				 union prlist_head *head,
-+				 void (*sync)(void))
-+{
-+	if (!list_empty(&list->list))
-+		__prlist_splice_init_rcu(list, head->prev, head, sync);
-+}
-+
-+/**
-+ * prhlist_del_rcu - deletes entry from hash list without re-initialization
-+ * @n: the element to delete from the hash list.
-+ *
-+ * Note: list_unhashed() on entry does not return true after this,
-+ * the entry is in an undefined state. It is useful for RCU based
-+ * lockfree traversal.
-+ *
-+ * In particular, it means that we can not poison the forward
-+ * pointers that may still be used for walking the hash list.
-+ *
-+ * The caller must take whatever precautions are necessary
-+ * (such as holding appropriate locks) to avoid racing
-+ * with another list-mutation primitive, such as hlist_add_head_rcu()
-+ * or hlist_del_rcu(), running on this same list.
-+ * However, it is perfectly legal to run concurrently with
-+ * the _rcu list-traversal primitives, such as
-+ * hlist_for_each_entry().
-+ */
-+static __always_inline void prhlist_del_rcu(union prhlist_node *n)
-+{
-+	__prhlist_del(n);
-+	prhlist_set_pprev(n, LIST_POISON2);
-+}
-+
-+/**
-+ * prhlist_replace_rcu - replace old entry by new one
-+ * @old : the element to be replaced
-+ * @new : the new element to insert
-+ *
-+ * The @old entry will be replaced with the @new entry atomically.
-+ */
-+static __always_inline
-+void prhlist_replace_rcu(union prhlist_node *old, union prhlist_node *new)
-+{
-+	union prhlist_node *next = old->next;
-+
-+	prhlist_set_next(new, next);
-+	prhlist_set_pprev(new, old->pprev);
-+	wr_rcu_assign_pointer(*(union prhlist_node __rcu **)new->pprev, new);
-+	if (next)
-+		prhlist_set_pprev(new->next, &new->next);
-+	prhlist_set_pprev(old, LIST_POISON2);
-+}
-+
-+/**
-+ * prhlist_add_head_rcu
-+ * @n: the element to add to the hash list.
-+ * @h: the list to add to.
-+ *
-+ * Description:
-+ * Adds the specified element to the specified hlist,
-+ * while permitting racing traversals.
-+ *
-+ * The caller must take whatever precautions are necessary
-+ * (such as holding appropriate locks) to avoid racing
-+ * with another list-mutation primitive, such as hlist_add_head_rcu()
-+ * or hlist_del_rcu(), running on this same list.
-+ * However, it is perfectly legal to run concurrently with
-+ * the _rcu list-traversal primitives, such as
-+ * hlist_for_each_entry_rcu(), used to prevent memory-consistency
-+ * problems on Alpha CPUs.  Regardless of the type of CPU, the
-+ * list-traversal primitive must be guarded by rcu_read_lock().
-+ */
-+static __always_inline
-+void prhlist_add_head_rcu(union prhlist_node *n, union prhlist_head *h)
-+{
-+	union prhlist_node *first = h->first;
-+
-+	prhlist_set_next(n, first);
-+	prhlist_set_pprev(n, &h->first);
-+	wr_rcu_assign_pointer(hlist_first_rcu(&h->head), n);
-+	if (first)
-+		prhlist_set_pprev(first, &n->next);
-+}
-+
-+/**
-+ * prhlist_add_tail_rcu
-+ * @n: the element to add to the hash list.
-+ * @h: the list to add to.
-+ *
-+ * Description:
-+ * Adds the specified element to the specified hlist,
-+ * while permitting racing traversals.
-+ *
-+ * The caller must take whatever precautions are necessary
-+ * (such as holding appropriate locks) to avoid racing
-+ * with another list-mutation primitive, such as prhlist_add_head_rcu()
-+ * or prhlist_del_rcu(), running on this same list.
-+ * However, it is perfectly legal to run concurrently with
-+ * the _rcu list-traversal primitives, such as
-+ * hlist_for_each_entry_rcu(), used to prevent memory-consistency
-+ * problems on Alpha CPUs.  Regardless of the type of CPU, the
-+ * list-traversal primitive must be guarded by rcu_read_lock().
-+ */
-+static __always_inline
-+void prhlist_add_tail_rcu(union prhlist_node *n, union prhlist_head *h)
-+{
-+	union prhlist_node *i, *last = NULL;
-+
-+	/* Note: write side code, so rcu accessors are not needed. */
-+	for (i = h->first; i; i = i->next)
-+		last = i;
-+
-+	if (last) {
-+		prhlist_set_next(n, last->next);
-+		prhlist_set_pprev(n, &last->next);
-+		wr_rcu_assign_pointer(hlist_next_rcu(&last->node), n);
-+	} else {
-+		prhlist_add_head_rcu(n, h);
-+	}
-+}
-+
-+/**
-+ * prhlist_add_before_rcu
-+ * @n: the new element to add to the hash list.
-+ * @next: the existing element to add the new element before.
-+ *
-+ * Description:
-+ * Adds the specified element to the specified hlist
-+ * before the specified node while permitting racing traversals.
-+ *
-+ * The caller must take whatever precautions are necessary
-+ * (such as holding appropriate locks) to avoid racing
-+ * with another list-mutation primitive, such as prhlist_add_head_rcu()
-+ * or prhlist_del_rcu(), running on this same list.
-+ * However, it is perfectly legal to run concurrently with
-+ * the _rcu list-traversal primitives, such as
-+ * hlist_for_each_entry_rcu(), used to prevent memory-consistency
-+ * problems on Alpha CPUs.
-+ */
-+static __always_inline
-+void prhlist_add_before_rcu(union prhlist_node *n, union prhlist_node *next)
-+{
-+	prhlist_set_pprev(n, next->pprev);
-+	prhlist_set_next(n, next);
-+	wr_rcu_assign_pointer(hlist_pprev_rcu(&n->node), n);
-+	prhlist_set_pprev(next, &n->next);
-+}
-+
-+/**
-+ * prhlist_add_behind_rcu
-+ * @n: the new element to add to the hash list.
-+ * @prev: the existing element to add the new element after.
-+ *
-+ * Description:
-+ * Adds the specified element to the specified hlist
-+ * after the specified node while permitting racing traversals.
-+ *
-+ * The caller must take whatever precautions are necessary
-+ * (such as holding appropriate locks) to avoid racing
-+ * with another list-mutation primitive, such as prhlist_add_head_rcu()
-+ * or prhlist_del_rcu(), running on this same list.
-+ * However, it is perfectly legal to run concurrently with
-+ * the _rcu list-traversal primitives, such as
-+ * hlist_for_each_entry_rcu(), used to prevent memory-consistency
-+ * problems on Alpha CPUs.
-+ */
-+static __always_inline
-+void prhlist_add_behind_rcu(union prhlist_node *n, union prhlist_node *prev)
-+{
-+	prhlist_set_next(n, prev->next);
-+	prhlist_set_pprev(n, &prev->next);
-+	wr_rcu_assign_pointer(hlist_next_rcu(&prev->node), n);
-+	if (n->next)
-+		prhlist_set_pprev(n->next, &n->next);
-+}
-+#endif
++#include <linux/pratomic-long.h>
+ 
+ #include "ima.h"
+ 
++extern struct pmalloc_pool ima_pool;
+ /*
+  * ima_free_template_entry - free an existing template entry
+  */
+@@ -29,10 +32,10 @@ void ima_free_template_entry(struct ima_template_entry *entry)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < entry->template_desc->num_fields; i++)
+-		kfree(entry->template_data[i].data);
++//	for (i = 0; i < entry->template_desc->num_fields; i++)
++//		kfree(entry->template_data[i].data);
+ 
+-	kfree(entry);
++//	kfree(entry);
+ }
+ 
+ /*
+@@ -44,12 +47,13 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
+ 	struct ima_template_desc *template_desc = ima_template_desc_current();
+ 	int i, result = 0;
+ 
+-	*entry = kzalloc(sizeof(**entry) + template_desc->num_fields *
+-			 sizeof(struct ima_field_data), GFP_NOFS);
++	*entry = pzalloc(&ima_pool,
++			 sizeof(**entry) + template_desc->num_fields *
++			 sizeof(struct ima_field_data));
+ 	if (!*entry)
+ 		return -ENOMEM;
+ 
+-	(*entry)->template_desc = template_desc;
++	wr_ptr(&((*entry)->template_desc), template_desc);
+ 	for (i = 0; i < template_desc->num_fields; i++) {
+ 		struct ima_template_field *field = template_desc->fields[i];
+ 		u32 len;
+@@ -59,9 +63,10 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
+ 		if (result != 0)
+ 			goto out;
+ 
+-		len = (*entry)->template_data[i].len;
+-		(*entry)->template_data_len += sizeof(len);
+-		(*entry)->template_data_len += len;
++		len = (*entry)->template_data_len + sizeof(len) +
++			(*entry)->template_data[i].len;
++		wr_memcpy(&(*entry)->template_data_len, &len,
++			  sizeof(len));
+ 	}
+ 	return 0;
+ out:
+@@ -113,9 +118,9 @@ int ima_store_template(struct ima_template_entry *entry,
+ 					    audit_cause, result, 0);
+ 			return result;
+ 		}
+-		memcpy(entry->digest, hash.hdr.digest, hash.hdr.length);
++		wr_memcpy(entry->digest, hash.hdr.digest, hash.hdr.length);
+ 	}
+-	entry->pcr = pcr;
++	wr_int(&entry->pcr, pcr);
+ 	result = ima_add_template_entry(entry, violation, op, inode, filename);
+ 	return result;
+ }
+@@ -139,7 +144,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+ 	int result;
+ 
+ 	/* can overflow, only indicator */
+-	atomic_long_inc(&ima_htable.violations);
++	pratomic_long_inc(&ima_htable.violations);
+ 
+ 	result = ima_alloc_init_template(&event_data, &entry);
+ 	if (result < 0) {
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index ae9d5c766a3c..ab20da1161c7 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -57,7 +57,8 @@ static ssize_t ima_show_htable_violations(struct file *filp,
+ 					  char __user *buf,
+ 					  size_t count, loff_t *ppos)
+ {
+-	return ima_show_htable_value(buf, count, ppos, &ima_htable.violations);
++	return ima_show_htable_value(buf, count, ppos,
++				     &ima_htable.violations.l);
+ }
+ 
+ static const struct file_operations ima_htable_violations_ops = {
+@@ -69,8 +70,7 @@ static ssize_t ima_show_measurements_count(struct file *filp,
+ 					   char __user *buf,
+ 					   size_t count, loff_t *ppos)
+ {
+-	return ima_show_htable_value(buf, count, ppos, &ima_htable.len);
+-
++	return ima_show_htable_value(buf, count, ppos, &ima_htable.len.l);
+ }
+ 
+ static const struct file_operations ima_measurements_count_ops = {
+@@ -86,7 +86,7 @@ static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
+ 
+ 	/* we need a lock since pos could point beyond last element */
+ 	rcu_read_lock();
+-	list_for_each_entry_rcu(qe, &ima_measurements, later) {
++	list_for_each_entry_rcu(qe, &ima_measurements.list, later.list) {
+ 		if (!l--) {
+ 			rcu_read_unlock();
+ 			return qe;
+@@ -303,7 +303,7 @@ static ssize_t ima_read_policy(char *path)
+ 		size -= rc;
+ 	}
+ 
+-	vfree(data);
++//	vfree(data);
+ 	if (rc < 0)
+ 		return rc;
+ 	else if (size)
+@@ -350,7 +350,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+ 	}
+ 	mutex_unlock(&ima_write_mutex);
+ out_free:
+-	kfree(data);
++//	kfree(data);
+ out:
+ 	if (result < 0)
+ 		valid_policy = 0;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 2d31921fbda4..d52e59006781 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -29,6 +29,7 @@
+ #include <linux/ima.h>
+ #include <linux/iversion.h>
+ #include <linux/fs.h>
++#include <linux/prlist.h>
+ 
+ #include "ima.h"
+ 
+@@ -536,10 +537,15 @@ int ima_load_data(enum kernel_load_data_id id)
+ 	return 0;
+ }
+ 
++struct pmalloc_pool ima_pool;
++
++#define IMA_POOL_ALLOC_CHUNK (16 * PAGE_SIZE)
+ static int __init init_ima(void)
+ {
+ 	int error;
+ 
++	pmalloc_init_custom_pool(&ima_pool, IMA_POOL_ALLOC_CHUNK, 3,
++				 PMALLOC_MODE_START_WR);
+ 	ima_init_template_list();
+ 	hash_setup(CONFIG_IMA_DEFAULT_HASH);
+ 	error = ima_init();
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index b186819bd5aa..444c47b745d8 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -24,11 +24,14 @@
+ #include <linux/module.h>
+ #include <linux/rculist.h>
+ #include <linux/slab.h>
++#include <linux/prmemextra.h>
++#include <linux/prlist.h>
++#include <linux/pratomic-long.h>
+ #include "ima.h"
+ 
+ #define AUDIT_CAUSE_LEN_MAX 32
+ 
+-LIST_HEAD(ima_measurements);	/* list of all measurements */
++PRLIST_HEAD(ima_measurements);	/* list of all measurements */
+ #ifdef CONFIG_IMA_KEXEC
+ static unsigned long binary_runtime_size;
+ #else
+@@ -36,9 +39,9 @@ static unsigned long binary_runtime_size = ULONG_MAX;
+ #endif
+ 
+ /* key: inode (before secure-hashing a file) */
+-struct ima_h_table ima_htable = {
+-	.len = ATOMIC_LONG_INIT(0),
+-	.violations = ATOMIC_LONG_INIT(0),
++struct ima_h_table ima_htable __wr_after_init = {
++	.len = PRATOMIC_LONG_INIT(0),
++	.violations = PRATOMIC_LONG_INIT(0),
+ 	.queue[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
+ };
+ 
+@@ -58,7 +61,7 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+ 
+ 	key = ima_hash_key(digest_value);
+ 	rcu_read_lock();
+-	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext) {
++	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext.node) {
+ 		rc = memcmp(qe->entry->digest, digest_value, TPM_DIGEST_SIZE);
+ 		if ((rc == 0) && (qe->entry->pcr == pcr)) {
+ 			ret = qe;
+@@ -87,6 +90,8 @@ static int get_binary_runtime_size(struct ima_template_entry *entry)
+ 	return size;
+ }
+ 
++extern struct pmalloc_pool ima_pool;
++
+ /* ima_add_template_entry helper function:
+  * - Add template entry to the measurement list and hash table, for
+  *   all entries except those carried across kexec.
+@@ -99,20 +104,21 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
+ 	struct ima_queue_entry *qe;
+ 	unsigned int key;
+ 
+-	qe = kmalloc(sizeof(*qe), GFP_KERNEL);
++	qe = pmalloc(&ima_pool, sizeof(*qe));
+ 	if (qe == NULL) {
+ 		pr_err("OUT OF MEMORY ERROR creating queue entry\n");
+ 		return -ENOMEM;
+ 	}
+-	qe->entry = entry;
++	wr_ptr(&qe->entry, entry);
++	INIT_PRLIST_HEAD(&qe->later);
++	prlist_add_tail_rcu(&qe->later, &ima_measurements);
++
+ 
+-	INIT_LIST_HEAD(&qe->later);
+-	list_add_tail_rcu(&qe->later, &ima_measurements);
++	pratomic_long_inc(&ima_htable.len);
+ 
+-	atomic_long_inc(&ima_htable.len);
+ 	if (update_htable) {
+ 		key = ima_hash_key(entry->digest);
+-		hlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
++		prhlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
+ 	}
+ 
+ 	if (binary_runtime_size != ULONG_MAX) {
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index 30db39b23804..40ae57a17d89 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -22,14 +22,15 @@
+ enum header_fields { HDR_PCR, HDR_DIGEST, HDR_TEMPLATE_NAME,
+ 		     HDR_TEMPLATE_DATA, HDR__LAST };
+ 
+-static struct ima_template_desc builtin_templates[] = {
++static struct ima_template_desc builtin_templates[] __wr_after_init = {
+ 	{.name = IMA_TEMPLATE_IMA_NAME, .fmt = IMA_TEMPLATE_IMA_FMT},
+ 	{.name = "ima-ng", .fmt = "d-ng|n-ng"},
+ 	{.name = "ima-sig", .fmt = "d-ng|n-ng|sig"},
+ 	{.name = "", .fmt = ""},	/* placeholder for a custom format */
+ };
+ 
+-static LIST_HEAD(defined_templates);
++static PRLIST_HEAD(defined_templates);
++
+ static DEFINE_SPINLOCK(template_list);
+ 
+ static struct ima_template_field supported_fields[] = {
+@@ -114,7 +115,8 @@ static struct ima_template_desc *lookup_template_desc(const char *name)
+ 	int found = 0;
+ 
+ 	rcu_read_lock();
+-	list_for_each_entry_rcu(template_desc, &defined_templates, list) {
++	list_for_each_entry_rcu(template_desc, &defined_templates.list,
++				list.list) {
+ 		if ((strcmp(template_desc->name, name) == 0) ||
+ 		    (strcmp(template_desc->fmt, name) == 0)) {
+ 			found = 1;
+@@ -207,12 +209,12 @@ void ima_init_template_list(void)
+ {
+ 	int i;
+ 
+-	if (!list_empty(&defined_templates))
++	if (!list_empty(&defined_templates.list))
+ 		return;
+ 
+ 	spin_lock(&template_list);
+ 	for (i = 0; i < ARRAY_SIZE(builtin_templates); i++) {
+-		list_add_tail_rcu(&builtin_templates[i].list,
++		prlist_add_tail_rcu(&builtin_templates[i].list,
+ 				  &defined_templates);
+ 	}
+ 	spin_unlock(&template_list);
+@@ -266,7 +268,7 @@ static struct ima_template_desc *restore_template_fmt(char *template_name)
+ 		goto out;
+ 
+ 	spin_lock(&template_list);
+-	list_add_tail_rcu(&template_desc->list, &defined_templates);
++	prlist_add_tail_rcu(&template_desc->list, &defined_templates);
+ 	spin_unlock(&template_list);
+ out:
+ 	return template_desc;
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 43752002c222..a6d10eabf0e5 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -15,8 +15,12 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
++#include <linux/printk.h>
++#include <linux/prmemextra.h>
+ #include "ima_template_lib.h"
+ 
++extern struct pmalloc_pool ima_pool;
++
+ static bool ima_template_hash_algo_allowed(u8 algo)
+ {
+ 	if (algo == HASH_ALGO_SHA1 || algo == HASH_ALGO_MD5)
+@@ -42,11 +46,11 @@ static int ima_write_template_field_data(const void *data, const u32 datalen,
+ 	if (datafmt == DATA_FMT_STRING)
+ 		buflen = datalen + 1;
+ 
+-	buf = kzalloc(buflen, GFP_KERNEL);
++	buf = pzalloc(&ima_pool, buflen);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+-	memcpy(buf, data, datalen);
++	wr_memcpy(buf, data, datalen);
+ 
+ 	/*
+ 	 * Replace all space characters with underscore for event names and
+@@ -58,11 +62,11 @@ static int ima_write_template_field_data(const void *data, const u32 datalen,
+ 	if (datafmt == DATA_FMT_STRING) {
+ 		for (buf_ptr = buf; buf_ptr - buf < datalen; buf_ptr++)
+ 			if (*buf_ptr == ' ')
+-				*buf_ptr = '_';
++				wr_char(buf_ptr, '_');
+ 	}
+ 
+-	field_data->data = buf;
+-	field_data->len = buflen;
++	wr_ptr(&field_data->data, buf);
++	wr_memcpy(&field_data->len, &buflen, sizeof(buflen));
+ 	return 0;
+ }
+ 
 -- 
 2.17.1
 
