@@ -6,171 +6,176 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FEF8C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14780C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F18652075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:12:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F18652075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id D003820813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:12:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D003820813
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728611AbeJXCgc (ORCPT
+        id S1728696AbeJXCgp convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 22:36:32 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:41602 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbeJXCgc (ORCPT
+        Tue, 23 Oct 2018 22:36:45 -0400
+Received: from g9t1613g.houston.hpe.com ([15.241.32.99]:36835 "EHLO
+        g9t1613g.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725997AbeJXCgo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 22:36:32 -0400
-Received: from svr-orw-mbx-02.mgc.mentorg.com ([147.34.90.202])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gF19q-0006P7-9i from Steve_Longerbeam@mentor.com ; Tue, 23 Oct 2018 11:11:58 -0700
-Received: from [172.30.89.8] (147.34.91.1) by svr-orw-mbx-02.mgc.mentorg.com
- (147.34.90.202) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 23 Oct
- 2018 11:11:55 -0700
-Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
-To:     Adam Ford <aford173@gmail.com>
-CC:     Fabio Estevam <festevam@gmail.com>, <jacopo@jmondi.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        <p.zabel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
-        <gstreamer-devel@lists.freedesktop.org>,
-        <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
- <20180920145658.GE16851@w540>
- <CAHCN7x+U=Y=-v1UP5UYvY8WtUFRJGjmx=nawTuE=YcHdm_DYvA@mail.gmail.com>
- <c1cb34b0-b715-cf08-6f75-2842f1090c5d@mentor.com>
- <20181017080103.GD11703@w540>
- <CAHCN7xLx6uAmYiGh3p=piZFwE0VkfixTLqdjETibKwk2+DhMzA@mail.gmail.com>
- <CAHCN7xJKuPYg04WfRzbYWO4bGoHHnD16LBPRsK1QsiYY1bL7nA@mail.gmail.com>
- <20181022113306.GB2867@w540>
- <CAHCN7xJkc5RW73C0zruWBgyF7G0J3C5tLE=ZdfxTKbrUqs=-PQ@mail.gmail.com>
- <CAOMZO5ATm4BRzPEQOU+ZD6bHCP2Aqjp4raRYhuc+wNe0t4+C=w@mail.gmail.com>
- <CAHCN7x+csKEk25CF=teUv+F5_GoTe6_3Yqb5PODLn+AmCCm88w@mail.gmail.com>
- <d78877f8-2c23-2bf0-0a9c-cd98b855e95e@mentor.com>
- <CAHCN7xKhGAXs0jGv96CfOfLQfVubxzsdE9UjpDu+4NM6oLDGWw@mail.gmail.com>
- <bc034299-4a32-f248-d09a-0d1b5872a506@mentor.com>
- <CAHCN7xKVUgpyCb5k7s0PNXW-efySSwP25ZGMLdbFnohATPwKhg@mail.gmail.com>
-From:   Steve Longerbeam <steve_longerbeam@mentor.com>
-Message-ID: <68f892ef-92b1-17ec-525c-af50b027c637@mentor.com>
-Date:   Tue, 23 Oct 2018 11:11:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CAHCN7xKVUgpyCb5k7s0PNXW-efySSwP25ZGMLdbFnohATPwKhg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+        Tue, 23 Oct 2018 22:36:44 -0400
+Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by g9t1613g.houston.hpe.com (Postfix) with ESMTPS id 007D360387
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 18:12:15 +0000 (UTC)
+Received: from G2W6311.americas.hpqcorp.net (g2w6311.austin.hp.com [16.197.64.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by g9t5008.houston.hpe.com (Postfix) with ESMTPS id 0F8AD56;
+        Tue, 23 Oct 2018 18:12:14 +0000 (UTC)
+Received: from G9W8667.americas.hpqcorp.net (16.220.49.26) by
+ G2W6311.americas.hpqcorp.net (16.197.64.53) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 23 Oct 2018 18:12:15 +0000
+Received: from G2W6311.americas.hpqcorp.net (16.197.64.53) by
+ G9W8667.americas.hpqcorp.net (16.220.49.26) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 23 Oct 2018 18:12:14 +0000
+Received: from NAM05-BY2-obe.outbound.protection.outlook.com (15.241.52.13) by
+ G2W6311.americas.hpqcorp.net (16.197.64.53) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3 via Frontend Transport; Tue, 23 Oct 2018 18:12:14 +0000
+Received: from AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM (10.169.8.145) by
+ AT5PR8401MB1220.NAMPRD84.PROD.OUTLOOK.COM (10.169.9.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1273.18; Tue, 23 Oct 2018 18:12:11 +0000
+Received: from AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::b426:5845:8612:bde8]) by AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::b426:5845:8612:bde8%9]) with mapi id 15.20.1250.028; Tue, 23 Oct 2018
+ 18:12:11 +0000
+From:   "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
+To:     'Dan Williams' <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+CC:     Tom Lendacky <thomas.lendacky@amd.com>,
+        "Hocko, Michal" <MHocko@suse.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        "zwisler@kernel.org" <zwisler@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Fengguang Wu <fengguang.wu@intel.com>
+Subject: RE: [PATCH 0/9] Allow persistent memory to be used like normal RAM
+Thread-Topic: [PATCH 0/9] Allow persistent memory to be used like normal RAM
+Thread-Index: AQHUakRyq0s0KYewh0KpVd2TMyN44aUsBFyAgAEU+xA=
+Date:   Tue, 23 Oct 2018 18:12:11 +0000
+Message-ID: <AT5PR8401MB11694012893ED2121D7A345EABF50@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+References: <20181022201317.8558C1D8@viggo.jf.intel.com>
+ <CAPcyv4hxs-GnmwQU1wPZyg5aydCY5K09-YpSrrLpvU1v_8dbBw@mail.gmail.com>
+In-Reply-To: <CAPcyv4hxs-GnmwQU1wPZyg5aydCY5K09-YpSrrLpvU1v_8dbBw@mail.gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
- svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=elliott@hpe.com; 
+x-originating-ip: [15.211.195.7]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AT5PR8401MB1220;6:u1yTbmjXksbJFWfsgNftgydo5AbY3y/HOT5ADaanr7+LCc2RE/HEpJI1Luq/9nRWsmQ98W6JTWZBCPoGdZb+zMwDug4RzUCn/0OEbmF2FTiE0ti1ZS1uLF7LseU+KQNfb+RdbdpefLSs2OBFNg/NMjLxYUjCjdT8RBDWmEfexEfrCKFhd4t8wS0eylIjAwrAnLo8bPjT8H+WowpdYx2a0iQyevMv2S/mc4c/pJ0LrqEmiFe77B026u20z/L3AJxnVwk6Ea4Z3E8SWb04hxBUQFFy5I2Eq7QUyTf0rP/dsxYxGOyJS5lSrAW8ofEKC+LDptyUaOt5EE85VtfpJNXC4mUa8+TcH/KnvJyQzvROSgy/G/0NKmoMzMNb+N0sTPKZx9lbzcr6xRroTPIHg0OJCW/cyrTSbxeIQ5r7sj0r1WS9uNH/sm3N5ph1aJK3p9o3k4xvJVZEdxOEdOJj07MhbQ==;5:lw/VTEatNpwJPsNHW4S/gBW70r1wj0nCdvMcUllam1adYguPASE3p95cxT+adPYQsUqbsjQuYunSvAgaHD80EGtZ//w3IQr8CFFZ0Um7vpvBAIip3eqwrHNoPLQ/1s737vWba0JyVcby49oEWkXNT8CC0NIILGCBhYrt/iaCdjw=;7:lfEEnkwN8i5+4VuuHQoudAQknk7PEYRk5yQJ+AZ/3sa1/TMf5Ls2DDTGogSxvDXUAg8z3z6S0WM42hODApoOnQaJ/4bpHUuvT3LVSv/SJq8dke7PUY5pGDWfm7g/jNQPap4VmsyA3WD4kHoGHZpnOg==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 151121a2-6348-45f7-d980-08d639130dac
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB1220;
+x-ms-traffictypediagnostic: AT5PR8401MB1220:
+x-ld-processed: 105b2061-b669-4b31-92ac-24d304d195dc,ExtAddr
+x-microsoft-antispam-prvs: <AT5PR8401MB12208F67F442D8933B3232A4ABF50@AT5PR8401MB1220.NAMPRD84.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(162533806227266)(278428928389397)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AT5PR8401MB1220;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB1220;
+x-forefront-prvs: 0834BAF534
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(136003)(396003)(39860400002)(376002)(189003)(199004)(13464003)(8676002)(486006)(66066001)(11346002)(2906002)(5660300001)(476003)(478600001)(6246003)(71190400001)(71200400001)(106356001)(105586002)(14454004)(316002)(110136005)(102836004)(68736007)(8936002)(305945005)(7416002)(86362001)(53546011)(186003)(26005)(54906003)(25786009)(81156014)(256004)(5024004)(74316002)(81166006)(7736002)(76176011)(4326008)(7696005)(446003)(6506007)(229853002)(53936002)(55016002)(2900100001)(97736004)(99286004)(6436002)(33656002)(9686003)(5250100002)(6116002)(3846002);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB1220;H:AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: hpe.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: SSHQ51lU0MtNhS0wN95vgd8enrRL8yk/GKyL/6eXXDnqLS0eipfqfjgTCdHuxnkgBLyEGwlxr+04VxMCiHazUjubt9NqGCGGuj3sohqosRvpeFdDxsmYElGUZ6gHH2SCq1a/mEb9KtHH7byGexovxrYf/3jAbuDLaFRg2ms2dtYVIsbxJvjyrWjGfz4o6in6vnDBIGU3/ZxakAHNpknbZFD+4XxQp6V9T68BoaYGGI8RLY1EdNXXxMZnK2EgRsATA9sHSTmmX81fTj5rH4tu7S92WuAwPak1Nam8QGH56GwN0l/KXaTNN7cmoCwDJB8sxNOY8TzwlBnCdk7M7v5KPVjzQUt0HArZd2FIyulShpk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 151121a2-6348-45f7-d980-08d639130dac
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2018 18:12:11.4691
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB1220
+X-OriginatorOrg: hpe.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 10/23/18 10:54 AM, Adam Ford wrote:
-> On Tue, Oct 23, 2018 at 12:39 PM Steve Longerbeam
-> <steve_longerbeam@mentor.com> wrote:
->>
->> On 10/23/18 10:34 AM, Adam Ford wrote:
->>> On Tue, Oct 23, 2018 at 11:36 AM Steve Longerbeam
->>> <steve_longerbeam@mentor.com> wrote:
->>>> Hi Adam,
->>>>
->>>> On 10/23/18 8:19 AM, Adam Ford wrote:
->>>>> On Mon, Oct 22, 2018 at 7:40 AM Fabio Estevam <festevam@gmail.com> wrote:
->>>>>> Hi Adam,
->>>>>>
->>>>>> On Mon, Oct 22, 2018 at 9:37 AM Adam Ford <aford173@gmail.com> wrote:
->>>>>>
->>>>>>> Thank you!  This tutorial web site is exactly what I need.  The
->>>>>>> documentation page in Linux touched on the media-ctl links, but it
->>>>>>> didn't explain the syntax or the mapping.  This graphical
->>>>>>> interpretation really helps it make more sense.
->>>>>> Is capturing working well on your i.MX6 board now?
->>>>> Fabio,
->>>>>
->>>>> Unfortunately, no.  I built the rootfs based on Jagan's instructions
->>>>> at https://openedev.amarulasolutions.com/display/ODWIKI/i.CoreM6+1.5
->>>>>
->>>>> I tried building both the 4.15-RC6 kernel, a 4.19 kernel and a 4.14 LTS kernel.
->>>>>
->>>>> Using the suggested method of generating the graphical display of the
->>>>> pipeline options, I am able to enable various pipeline options
->>>>> connecting different /dev/videoX options tot he camera.  I have tried
->>>>> both the  suggested method above as well as the instructions found in
->>>>> Documentation/media/v4l-drivers/imx.rst for their respective kernels,
->>>>> and I have tried multiple options to capture through
->>>>> ipu1_csi1_capture, ipu2_csi1_capture, and ip1_ic_prepenc capture, and
->>>>> all yield a broken pipe.
->>>>>
->>>>> libv4l2: error turning on stream: Broken pipe
->>>>> ERROR: from element /GstPipeline:pipeline0/GstV4l2Src:v4l2src0: Could
->>>>> not read from resource.
->>>>> Additional debug info:
->>>>> gstv4l2bufferpool.c(1064): gst_v4l2_buffer_pool_poll ():
->>>>> /GstPipeline:pipeline0/GstV4l2Src:v4l2src0:
->>>>> poll error 1: Broken pipe (32)
->>>>>
->>>>> I can hear the camera click when I start gstreamer and click again
->>>>> when it stops trying to stream.
->>>>>
->>>>> dmesg indicates a broken pipe as well..
->>>>>
->>>>> [ 2419.851502] ipu2_csi1: pipeline start failed with -32
->>>>>
->>>>> might you have any suggestions?
->>>> This -EPIPE error might mean you have a mis-match of resolution, pixel
->>>> format, or field type between one of the source->sink pad links. You can
->>>> find out which pads have a mis-match by enabling dynamic debug in the
->>>> kernel function __media_pipeline_start.
->>> Following Jagan's suggestion, I tried to make sure all the resolution
->>> and pixel formats were set the same between each source and sink.
->>>
->>> media-ctl --set-v4l2 "'ov5640 2-0010':0[fmt:UYVY2X8/640x480
->>> field:none]"
->>> media-ctl --set-v4l2 "'imx6-mipi-csi2':1[fmt:UYVY2X8/640x480
->>> field:none]"
->>> media-ctl --set-v4l2 "'ipu1_csi0_mux':2[fmt:UYVY2X8/640x480
->>> field:none]"
->>> media-ctl --set-v4l2 "'ipu1_csi0':2[fmt:AYUV32/640x480 field:none]"
->>>
->>>> Also make sure you are attempting to stream from the correct /dev/videoN.
->>> I have graphically plotted the pipeline using media-ctl --print-dot
->>> and I can see the proper video is routed, but your dynamic debug
->>> suggestion yielded something:
->>>
->>>      imx-media capture-subsystem: link validation failed for 'ov5640
->>> 2-0010':0 -> 'imx6-mipi-csi2':0, error -32
->>
->> It's what I expected, you have a format mismatch between those pads.
-> Is the mismatch something I am doing wrong with:
->
-> media-ctl --set-v4l2 "'ov5640 2-0010':0[fmt:UYVY2X8/640x480 field:none]"
-> media-ctl --set-v4l2 "'imx6-mipi-csi2':2[fmt:UYVY2X8/640x480 field:none]"
->
-> or is there something else I need to do?  I just used Jagan's suggestion.
+
+> -----Original Message-----
+> From: Linux-nvdimm [mailto:linux-nvdimm-bounces@lists.01.org] On Behalf Of Dan Williams
+> Sent: Monday, October 22, 2018 8:05 PM
+> Subject: Re: [PATCH 0/9] Allow persistent memory to be used like normal RAM
+> 
+> On Mon, Oct 22, 2018 at 1:18 PM Dave Hansen <dave.hansen@linux.intel.com> wrote:
+...
+> This series adds a new "driver" to which pmem devices can be
+> attached.  Once attached, the memory "owned" by the device is
+> hot-added to the kernel and managed like any other memory.  On
+
+Would this memory be considered volatile (with the driver initializing
+it to zeros), or persistent (contents are presented unchanged,
+applications may guarantee persistence by using cache flush
+instructions, fence instructions, and writing to flush hint addresses
+per the persistent memory programming model)?
+
+> > 1. The device re-binding hacks are ham-fisted at best.  We
+> >    need a better way of doing this, especially so the kmem
+> >    driver does not get in the way of normal pmem devices.
+...
+> To me this looks like teaching the nvdimm-bus and this dax_kmem driver
+> to require explicit matching based on 'id'. The attachment scheme
+> would look like this:
+> 
+> modprobe dax_kmem
+> echo dax0.0 > /sys/bus/nd/drivers/dax_kmem/new_id
+> echo dax0.0 > /sys/bus/nd/drivers/dax_pmem/unbind
+> echo dax0.0 > /sys/bus/nd/drivers/dax_kmem/bind
+> 
+> At step1 the dax_kmem drivers will match no devices and stays out of
+> the way of dax_pmem. It learns about devices it cares about by being
+> explicitly told about them. Then unbind from the typical dax_pmem
+> driver and attach to dax_kmem to perform the one way hotplug.
+> 
+> I expect udev can automate this by setting up a rule to watch for
+> device-dax instances by UUID and call a script to do the detach /
+> reattach dance.
+
+Where would that rule be stored? Storing it on another device
+is problematic. If that rule is lost, it could confuse other
+drivers trying to grab device DAX devices for use as persistent
+memory.
+
+A new namespace mode would record the intended usage in the
+device itself, eliminating dependencies. It could join the
+other modes like:
+
+	ndctl create-namespace -m raw
+		create /dev/pmem4 block device
+	ndctl create-namespace -m sector
+		create /dev/pmem4s block device
+	ndctl create-namespace -m fsdax
+		create /dev/pmem4 block device
+	ndctl create-namespace -m devdax
+		create /dev/dax4.3 character device
+		for use as persistent memory
+	ndctl create-namespace -m mem
+		create /dev/mem4.3 character device
+		for use as volatile memory
+
+---
+Robert Elliott, HPE Persistent Memory
 
 
-Yeah, that looks correct, media-ctl _should_ automatically propagate the 
-format at 'ov5640 2-0010':0 to 'imx6-mipi-csi2':0. What version of 
-media-ctl are you using? If you have an older version of media-ctl tool 
-that doesn't propagate formats from source->sink pads, you'll have to 
-explicitly set the format at 'imx6-mipi-csi2':0, and at all the other 
-sink pads in your pipeline. Better yet, upgrade! :)
 
-Steve
-
-
->
->>> I am assume this means the interface between the camera and the csi2
->>> isn't working.  I am going to double check the power rails and the
->>> clocks.  i can hear it click when activated and deactivated, so
->>> something is happening.
->>>
->>> adam
->>>
->>>> Steve
->>>>
