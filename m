@@ -2,129 +2,160 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F7EC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 630EEC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4FD920671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:02:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="b8RamXei"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4FD920671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id 33D30207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:14:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33D30207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbeJXF1G (ORCPT
+        id S1727759AbeJXFju (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 01:27:06 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38085 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeJXF1G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 01:27:06 -0400
-Received: by mail-pl1-f195.google.com with SMTP id p7-v6so1198610plk.5
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 14:02:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=p4FMNdBUY2JIhPzCQXL/Z3eiqadkxTMsq0q0z4hPidU=;
-        b=b8RamXeiIAulFDaK/Ra11q92Q2Kqx89nKa8pCsPZ+AthXq2dYYfr/mAZZYgxQzitbW
-         IGU4rc2o/j8f84QhhaaB56ldjp98sdFUapkMnhxM1qL64ZwrCKrXui7T0EkBCyTh2SBg
-         x6zuGCqYQM41MWfdpovemA/VhaOAKYZsYlIbc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=p4FMNdBUY2JIhPzCQXL/Z3eiqadkxTMsq0q0z4hPidU=;
-        b=pPZk9Zf4BD1z55lvOptrbQFkayPS41ozpNhjIm+L4IVmS57j+UrsbleMglu4uH8c2J
-         Kg2xaGsEnzW0NwY/VuDxcMbi4jVfer6lQIbPkSbi3hUfRrDa9N7by+u7YWSDMAns+n5R
-         nE9p+bV7VNBK4t5YeA1r4E95NiQMAaHMY76s9r4e1KaXwPYW47k0Gi94hAIzdP0v33v6
-         63jNpUFKWi2I9vweAY5DQNukriXDDkOgY3jEOwMSFkjT4TWIu9e2u/yFnfdm5drAhTc9
-         q+yTPls/bzr7QAQ8ycKwNleR9n6ErvgYrGeWXu91FKmwKm5kiHPD4pHOAGpMZSVMXfbY
-         qUZg==
-X-Gm-Message-State: ABuFfojFJ3ojY0tr1cJFABqn2EMzItJ7rnd/1xJIoxQVIbvtJDmduuaZ
-        DrKmrdAMb1w+4o0CNfo8svAOL6EXkw0=
-X-Google-Smtp-Source: ACcGV62D3gldGIjcU7ddc4A/XCvT+x/BnFAS+O8FKsmdDEKf9VQ/2HP1gBraVP14Y8KznV6Wcj0K+A==
-X-Received: by 2002:a17:902:5602:: with SMTP id h2-v6mr49445624pli.220.1540328520738;
-        Tue, 23 Oct 2018 14:02:00 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id p24-v6sm8198019pgm.70.2018.10.23.14.01.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Oct 2018 14:01:59 -0700 (PDT)
-Date:   Tue, 23 Oct 2018 14:01:58 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Shuah Khan <shuah@kernel.org>, Michal Hocko <mhocko@kernel.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
-        maco@android.com
-Subject: Re: [RFC PATCH 0/2] improve vmalloc allocation
-Message-ID: <20181023210158.GA229730@joelaf.mtv.corp.google.com>
-References: <20181022125142.GD18839@dhcp22.suse.cz>
- <20181022165253.uphv3xzqivh44o3d@pc636>
- <20181023072306.GN18839@dhcp22.suse.cz>
- <dd0c3528-9c01-12bc-3400-ca88060cb7cf@kernel.org>
- <20181023152640.GD20085@bombadil.infradead.org>
- <20181023170532.GW18839@dhcp22.suse.cz>
- <98842edb-d462-96b1-311f-27c6ebfc108a@kernel.org>
- <20181023193044.GA139403@joelaf.mtv.corp.google.com>
- <024af44a-77e1-1c61-c9b2-64ffbe4f7c49@kernel.org>
- <20181023200923.GB25444@bombadil.infradead.org>
+        Wed, 24 Oct 2018 01:39:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53456 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726992AbeJXFju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 01:39:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4B7E3AE47;
+        Tue, 23 Oct 2018 21:14:41 +0000 (UTC)
+From:   NeilBrown <neil@brown.name>
+To:     t@thunk.org
+Date:   Wed, 24 Oct 2018 08:14:33 +1100
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        ksummit-discuss@lists.linuxfoundation.org,
+        Mishi Choudhary <mishi@linux.com>
+Subject: Re: [Ksummit-discuss] Call to Action Re: [PATCH 0/7] Code of Conduct: Fix some wording, and add an interpretation document
+In-Reply-To: <20181023081144.GN1617@thunk.org>
+References: <20181020134908.GA32218@kroah.com> <87y3ar80ac.fsf@notabene.neil.brown.name> <20181021222608.GA24845@localhost> <875zxt919d.fsf@notabene.neil.brown.name> <20181023033130.GQ32577@ZenIV.linux.org.uk> <87r2gh70ij.fsf@notabene.neil.brown.name> <20181023081144.GN1617@thunk.org>
+Message-ID: <87ftww74cm.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181023200923.GB25444@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 01:09:23PM -0700, Matthew Wilcox wrote:
-> On Tue, Oct 23, 2018 at 01:48:32PM -0600, Shuah Khan wrote:
-> > On 10/23/2018 01:30 PM, Joel Fernandes wrote:
-> > > On Tue, Oct 23, 2018 at 11:13:36AM -0600, Shuah Khan wrote:
-> > >> I like this proposal. I think we will open up lot of test opportunities with
-> > >> this approach.
-> > >>
-> > >> Maybe we can use this stress test as a pilot and see where it takes us.
-> > > 
-> > > I am a bit worried that such an EXPORT_SYMBOL_KSELFTEST mechanism can be abused by
-> > > out-of-tree module writers to call internal functionality.
-> > 
-> > That is  valid concern to consider before we go forward with the proposal.
-> > 
-> > We could wrap EXPORT_SYMBOL_KSELFTEST this in an existing debug option. This could
-> > be fine grained for each sub-system for its debug option. We do have a few of these
-> > now
-> 
-> This all seems far more complicated than my proposed solution.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Matthew's solution seems Ok to me where it works. A problem could be that it
-will not always work.
+On Tue, Oct 23 2018, Theodore Y. Ts'o wrote:
 
-As an example, recently I wanted to directly set the sysctl_sched_rt_runtime
-variable from the rcutorture test, just for forcing some conditions. This
-symbol is internal and inaccessible from modules. This can also be done by
-calling the internal sched_rt_handler with some parameters.  However I don't
-think including an internal source file in a test source file can achieve the
-objective of setting it since access to the internal symbol is not possible
-without exporting it somehow. This could be a "special" case too but is an
-example where the include trick may fall apart.
+> On Tue, Oct 23, 2018 at 03:25:08PM +1100, NeilBrown wrote:
+>>=20
+>> Yes, you could, and you can.  But if it was Linus who was behaving
+>> inappropriately, where did you go then?  This is why I think whatever
+>> "code" we have should be overtly a statement Linus makes about his
+>> behaviour, in the first instance.
+>
+> You're still missing the point, and the problem.  The concern was not
+> *that* a patch was rejected, it was in *how* the patch was rejected.
 
-I do think its a cool trick though ;-)
+That is not a point I am missing.  Of course it is about *how*.
+One form of rejection shows you a path forward, which might be revising
+the patch, and it might be solving your problem in a completely
+different way.
+The other form or rejection leaves you hurting and confused and not
+knowing which way to turn - so you leave.
+One way gives you power to move forward, the other denies it to you.
 
- - Joel
+> The "problem" has never been about how Linus was treating anyone other
+> than core maintainers; i.e., most of the rants that I can think of (a)
+> happened years of ago, and (b) were directed at the sort of people who
+> were in the room at the Maintainer's Summit yesterday.  Who which, by
+> the way, didn't have a complaint about Linus's recent behavior; in
+> fact, there was general agreement that Linus's behavior has been
+> getting *better* over the last few years.
 
+The fact that Linus' behaviour has improved (with which I agree) is only
+part of the story.  There is also Linus' reputation which is, I think,
+worse than his behaviour has ever been - partly because he has never
+(until recently) done anything to correct that reputation.
+
+Also, it is *not* just about how Linus treats core maintainers, as you
+seem to agree with below (despite your statements above).  To take the
+liberty of quoting from an email on a non-public list that you will have
+seen:
+
+    The unresolved bug was that Linus' conduct, and more importantly the
+    conduct of people that less artfully and less productively emulated
+    his blow ups, were getting further and further away from Linus' own
+    stated ideals on how to treat people.
+
+Linus' example is (apparently) being copied.  That makes it important, I
+think, for him to set an explicit counter-example.
+
+
+>
+> One of the more important effects of the CoC is that newcomers have a
+> fear about Linux's reputation of having extremely toxic community.
+> There is a narrative that has been constructed that because Linus
+> behaves badly to everyone; and this gives everyone "permission" to
+> behave badly.  Regardless of how true it may have been in the past, I
+> believe that it is largely obsolete today.  And so, the mere existence
+> of a CoC has caused some newcomers to say that they have "already
+> noticed a difference" --- which is IMO mostly the effect of CoC easing
+> fears, as opposed to any real change in Linux community in the past
+> four weeks.
+
+If the CoC has really eased fears, then that is clearly good news.  I
+must admit to being a little surprised.
+
+>
+> I think how it will work out in practice is that the CoC will be more
+> a commitment about what we are holding up as community norms.
+> Unfortunately, for some poeple the term "CoC" apparently acts as
+> trigger language and it brings to mind legal proceedings,
+> unaccountable court-like entities, and hammering people with
+> punishments for petty issues with no appeal or recourse.
+>
+> Perhaps this is why other communities have elected to use terms such
+> as "How to do Samba: Nicely" and "GNU Kind Communication Guidelines".
+
+And doesn't our "code", with an "interpretation" two and a half times as
+long, look clumsy beside these documents??
+
+
+> All of these are trying to solve the same issue, and so my suggestion
+> is let's just wait and see how things go.  If people continue to see
+> that the community has "changed" for the better, and other people see
+> that we're not hammering people with sanctions, but rather reminding
+> each other about the kind of community we aspire to be, it'll all be
+> good.
+>
+
+Thanks for your time,
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvPjzkACgkQOeye3VZi
+gbnf6Q//dlopsrByzbq47MmPfBRLkTugAUp9TgpWmQUw00NtWR3vWKOE6Zv696jL
+KJ1JiQcD5r19DYl9rMsIDmx7qX+O5bCXC0+7U8/KlDd95Tgya5R4Z2lqe86xMGjA
+24vJ2qHGl+0Xd+jGvchmdx5jehv5q+zgt/11CrbRObVwNQvwDeXdm3PHH7nddTIr
+5KGJBZYDXN3OUsabqlcXlDO+0JtIPLCNhMMPuTTWv6x0T2yfTtnXbXtqK25YqSYi
+aEHPusNI3/f0JCho6Qwz8IfdPpcTt2h5ZaOiWv4IuWyAlEir9Z7GTg53WKt2Ncld
+PQlTdHLtWFz07nKOgDAZrcsWO3yoKdSSX7JF4SOIUcyEBv2R+m2dt1LYW6LG5Xw7
+ptOkGTfpu9Fx3caWcG8vskvZPpD1fsCc6Qd3QaWVjSsv7SrVRcYEgQ7aJEc2AlI9
+jkgTH3sycXMvCNRBKlx6TXvk+GSdnyYhFTkrnKYyvzLU8mAKaq0zNWj72334PynQ
+4i+F2HDRcfy6/NCH94KQteNOx0T5nuXqR2IFp1n3gFVlxS3mqKHNa3Lc+uQ2NKRZ
+CYM0zOVjv3mvnUJ9pXTuletRgL3OmIWhAkmuVZcizOXx+NWo+THDdRGIiTeAG/pS
+ocDXfAPxzLvpJrM/LEF+Phh6HjKxoKO5iwyAA5Fw33K7HgIqia4=
+=QpjK
+-----END PGP SIGNATURE-----
+--=-=-=--
