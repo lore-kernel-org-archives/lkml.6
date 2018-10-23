@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 669F8C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 729D2C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3515920665
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:44:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3515920665
+	by mail.kernel.org (Postfix) with ESMTP id 450F920665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:44:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 450F920665
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728840AbeJXDH7 (ORCPT
+        id S1729026AbeJXDIx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:07:59 -0400
+        Tue, 23 Oct 2018 23:08:53 -0400
 Received: from mga05.intel.com ([192.55.52.43]:55078 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728817AbeJXDH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:07:59 -0400
+        id S1728355AbeJXDIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:08:00 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
   by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:43:25 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
-   d="scan'208";a="243726564"
+   d="scan'208";a="243726572"
 Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
-  by orsmga004.jf.intel.com with ESMTP; 23 Oct 2018 11:43:24 -0700
+  by orsmga004.jf.intel.com with ESMTP; 23 Oct 2018 11:43:25 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -42,9 +42,9 @@ Cc:     Andi Kleen <ak@linux.intel.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [v3 01/12] taint: Introduce a new taint flag (insecure)
-Date:   Tue, 23 Oct 2018 11:42:23 -0700
-Message-Id: <20181023184234.14025-2-chang.seok.bae@intel.com>
+Subject: [v3 03/12] x86/fsgsbase/64: Add intrinsics/macros for FSGSBASE instructions
+Date:   Tue, 23 Oct 2018 11:42:25 -0700
+Message-Id: <20181023184234.14025-4-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181023184234.14025-1-chang.seok.bae@intel.com>
 References: <20181023184234.14025-1-chang.seok.bae@intel.com>
@@ -55,64 +55,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For testing (or root-only) purposes, the new flag will serve to tag the
-kernel taint accurately.
+From: Andi Kleen <ak@linux.intel.com>
 
-When adding a new feature support, patches need to be incrementally
-applied and tested with temporal parameters. Currently, there is no flag
-for this usage.
+Add C intrinsics and assembler macros for the new FSBASE and GSBASE
+instructions.
 
-Suggested-by: H. Peter Anvin <hpa@zytor.com>
+Very straight forward. Used in followon patches.
+
+[ luto: Rename the variables from FS and GS to FSBASE and GSBASE and
+  make <asm/fsgsbase.h> safe to include on 32-bit kernels. ]
+
+v2: Use __always_inline
+
+[ chang: Revise the changelog. Place them in <asm/fsgsbase.h>. Replace
+  the macros with GAS-compatible ones. ]
+
+If GCC supports it, we can add -mfsgsbase to CFLAGS and use the builtins
+here for extra performance.
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 ---
- Documentation/sysctl/kernel.txt | 1 +
- include/linux/kernel.h          | 3 ++-
- kernel/panic.c                  | 1 +
- 3 files changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/fsgsbase.h | 72 +++++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
-index 37a679501ddc..d682a6551365 100644
---- a/Documentation/sysctl/kernel.txt
-+++ b/Documentation/sysctl/kernel.txt
-@@ -1017,6 +1017,7 @@ ORed together. The letters are seen in "Tainted" line of Oops reports.
-  32768 (K): The kernel has been live patched.
-  65536 (X): Auxiliary taint, defined and used by for distros.
- 131072 (T): The kernel was built with the struct randomization plugin.
-+262144 (Z): The kernel is running in a known insecure configuration.
+diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
+index eb377b6e9eed..b4d4509b786c 100644
+--- a/arch/x86/include/asm/fsgsbase.h
++++ b/arch/x86/include/asm/fsgsbase.h
+@@ -19,6 +19,44 @@ extern unsigned long x86_gsbase_read_task(struct task_struct *task);
+ extern int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
+ extern int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
  
- ==============================================================
++/* Must be protected by X86_FEATURE_FSGSBASE check. */
++
++static __always_inline unsigned long rdfsbase(void)
++{
++	unsigned long fsbase;
++
++	asm volatile(".byte 0xf3, 0x48, 0x0f, 0xae, 0xc0 # rdfsbaseq %%rax"
++			: "=a" (fsbase)
++			:: "memory");
++
++	return fsbase;
++}
++
++static __always_inline unsigned long rdgsbase(void)
++{
++	unsigned long gsbase;
++
++	asm volatile(".byte 0xf3, 0x48, 0x0f, 0xae, 0xc8 # rdgsbaseq %%rax;"
++			: "=a" (gsbase)
++			:: "memory");
++
++	return gsbase;
++}
++
++static __always_inline void wrfsbase(unsigned long fsbase)
++{
++	asm volatile(".byte 0xf3, 0x48, 0x0f, 0xae, 0xd0 # wrfsbaseq %%rax"
++			:: "a" (fsbase)
++			: "memory");
++}
++
++static __always_inline void wrgsbase(unsigned long gsbase)
++{
++	asm volatile(".byte 0xf3, 0x48, 0x0f, 0xae, 0xd8 # wrgsbaseq %%rax;"
++			:: "a" (gsbase)
++			: "memory");
++}
++
+ /* Helper functions for reading/writing FS/GS base */
  
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index d6aac75b51ba..38b2657d62d5 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -598,7 +598,8 @@ extern enum system_states {
- #define TAINT_LIVEPATCH			15
- #define TAINT_AUX			16
- #define TAINT_RANDSTRUCT		17
--#define TAINT_FLAGS_COUNT		18
-+#define TAINT_INSECURE			18
-+#define TAINT_FLAGS_COUNT		19
+ static inline unsigned long x86_fsbase_read_cpu(void)
+@@ -44,6 +82,40 @@ extern void x86_gsbase_write_cpu_inactive(unsigned long gsbase);
  
- struct taint_flag {
- 	char c_true;	/* character printed when tainted */
-diff --git a/kernel/panic.c b/kernel/panic.c
-index 8b2e002d52eb..8db2ed9ec290 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -327,6 +327,7 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
- 	[ TAINT_LIVEPATCH ]		= { 'K', ' ', true },
- 	[ TAINT_AUX ]			= { 'X', ' ', true },
- 	[ TAINT_RANDSTRUCT ]		= { 'T', ' ', true },
-+	[ TAINT_INSECURE ]		= { 'Z', ' ', false },
- };
+ #endif /* CONFIG_X86_64 */
  
- /**
++#else /* __ASSEMBLY__ */
++
++#ifdef CONFIG_X86_64
++
++#include <asm/inst.h>
++
++.macro RDGSBASE opd
++	REG_TYPE rdgsbase_opd_type \opd
++	.if rdgsbase_opd_type == REG_TYPE_R64
++	R64_NUM rdgsbase_opd \opd
++	.byte 0xf3
++	PFX_REX rdgsbase_opd 0 W = 1
++	.else
++	.error "RDGSBASE: only for 64-bit value"
++	.endif
++	.byte 0xf, 0xae
++	MODRM 0xc0 rdgsbase_opd 1
++.endm
++
++.macro WRGSBASE opd
++	REG_TYPE wrgsbase_opd_type \opd
++	.if wrgsbase_opd_type == REG_TYPE_R64
++	R64_NUM wrgsbase_opd \opd
++	.byte 0xf3
++	PFX_REX wrgsbase_opd 0 W = 1
++	.else
++	.error "WRGSBASE: only for 64-bit value"
++	.endif
++	.byte 0xf, 0xae
++	MODRM 0xd0 wrgsbase_opd 1
++.endm
++
++#endif /* CONFIG_X86_64 */
++
+ #endif /* __ASSEMBLY__ */
+ 
+ #endif /* _ASM_FSGSBASE_H */
 -- 
 2.19.1
 
