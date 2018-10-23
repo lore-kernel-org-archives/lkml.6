@@ -2,32 +2,32 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E0CC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32259C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85A972075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:02:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A972075D
+	by mail.kernel.org (Postfix) with ESMTP id 04A3F2075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:02:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04A3F2075D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbeJWVZi (ORCPT
+        id S1728087AbeJWVZr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 17:25:38 -0400
-Received: from foss.arm.com ([217.140.101.70]:58856 "EHLO foss.arm.com"
+        Tue, 23 Oct 2018 17:25:47 -0400
+Received: from foss.arm.com ([217.140.101.70]:58876 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726277AbeJWVZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 17:25:38 -0400
+        id S1728018AbeJWVZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 17:25:46 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29B6580D;
-        Tue, 23 Oct 2018 06:02:15 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC2321596;
+        Tue, 23 Oct 2018 06:02:23 -0700 (PDT)
 Received: from p8cg001049571a15.arm.com (unknown [10.163.1.17])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4E1E03F6A8;
-        Tue, 23 Oct 2018 06:02:08 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4747F3F6A8;
+        Tue, 23 Oct 2018 06:02:15 -0700 (PDT)
 From:   Anshuman Khandual <anshuman.khandual@arm.com>
 To:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
@@ -36,65 +36,111 @@ Cc:     suzuki.poulose@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
         catalin.marinas@arm.com, mhocko@kernel.org,
         akpm@linux-foundation.org, mike.kravetz@oracle.com,
         n-horiguchi@ah.jp.nec.com
-Subject: [PATCH V3 0/5] arm64/mm: Enable HugeTLB migration
-Date:   Tue, 23 Oct 2018 18:31:56 +0530
-Message-Id: <1540299721-26484-1-git-send-email-anshuman.khandual@arm.com>
+Subject: [PATCH V3 1/5] mm/hugetlb: Distinguish between migratability and movability
+Date:   Tue, 23 Oct 2018 18:31:57 +0530
+Message-Id: <1540299721-26484-2-git-send-email-anshuman.khandual@arm.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1540299721-26484-1-git-send-email-anshuman.khandual@arm.com>
+References: <1540299721-26484-1-git-send-email-anshuman.khandual@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series enables HugeTLB migration support for all supported
-huge page sizes at all levels including contiguous bit implementation.
-Following HugeTLB migration support matrix has been enabled with this
-patch series. All permutations have been tested except for the 16GB.
+During huge page allocation it's migratability is checked to determine if
+it should be placed under movable zones with GFP_HIGHUSER_MOVABLE. But the
+movability aspect of the huge page could depend on other factors than just
+migratability. Movability in itself is a distinct property which should not
+be tied with migratability alone.
 
-         CONT PTE    PMD    CONT PMD    PUD
-         --------    ---    --------    ---
-4K:         64K     2M         32M     1G
-16K:         2M    32M          1G
-64K:         2M   512M         16G
+This differentiates these two and implements an enhanced movability check
+which also considers huge page size to determine if it is feasible to be
+placed under a movable zone. At present it just checks for gigantic pages
+but going forward it can incorporate other enhanced checks.
 
-First the series adds migration support for PUD based huge pages. It
-then adds a platform specific hook to query an architecture if a
-given huge page size is supported for migration while also providing
-a default fallback option preserving the existing semantics which just
-checks for (PMD|PUD|PGDIR)_SHIFT macros. The last two patches enables
-HugeTLB migration on arm64 and subscribe to this new platform specific
-hook by defining an override.
+Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Suggested-by: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+ include/linux/hugetlb.h | 30 ++++++++++++++++++++++++++++++
+ mm/hugetlb.c            |  2 +-
+ mm/migrate.c            |  2 +-
+ 3 files changed, 32 insertions(+), 2 deletions(-)
 
-The second patch differentiates between movability and migratability
-aspects of huge pages and implements hugepage_movable_supported() which
-can then be used during allocation to decide whether to place the huge
-page in movable zone or not.
-
-Changes in V3:
-
-- Re-ordered patches 1 and 2 per Michal
-- s/Movability/Migratability/ in unmap_and_move_huge_page() per Naoya
-
-Changes in V2: (https://lkml.org/lkml/2018/10/12/190)
-
-- Added a new patch which differentiates migratability and movability
-  of huge pages and implements hugepage_movable_supported() function
-  as suggested by Michal Hocko.
-
-Anshuman Khandual (5):
-  mm/hugetlb: Distinguish between migratability and movability
-  mm/hugetlb: Enable PUD level huge page migration
-  mm/hugetlb: Enable arch specific huge page size support for migration
-  arm64/mm: Enable HugeTLB migration
-  arm64/mm: Enable HugeTLB migration for contiguous bit HugeTLB pages
-
- arch/arm64/Kconfig               |  4 ++++
- arch/arm64/include/asm/hugetlb.h |  5 +++++
- arch/arm64/mm/hugetlbpage.c      | 20 +++++++++++++++++
- include/linux/hugetlb.h          | 48 +++++++++++++++++++++++++++++++++++++---
- mm/hugetlb.c                     |  2 +-
- mm/migrate.c                     |  2 +-
- 6 files changed, 76 insertions(+), 5 deletions(-)
-
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 087fd5f4..1b858d7 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -506,6 +506,31 @@ static inline bool hugepage_migration_supported(struct hstate *h)
+ #endif
+ }
+ 
++/*
++ * Movability check is different as compared to migration check.
++ * It determines whether or not a huge page should be placed on
++ * movable zone or not. Movability of any huge page should be
++ * required only if huge page size is supported for migration.
++ * There wont be any reason for the huge page to be movable if
++ * it is not migratable to start with. Also the size of the huge
++ * page should be large enough to be placed under a movable zone
++ * and still feasible enough to be migratable. Just the presence
++ * in movable zone does not make the migration feasible.
++ *
++ * So even though large huge page sizes like the gigantic ones
++ * are migratable they should not be movable because its not
++ * feasible to migrate them from movable zone.
++ */
++static inline bool hugepage_movable_supported(struct hstate *h)
++{
++	if (!hugepage_migration_supported(h))
++		return false;
++
++	if (hstate_is_gigantic(h))
++		return false;
++	return true;
++}
++
+ static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+ 					   struct mm_struct *mm, pte_t *pte)
+ {
+@@ -602,6 +627,11 @@ static inline bool hugepage_migration_supported(struct hstate *h)
+ 	return false;
+ }
+ 
++static inline bool hugepage_movable_supported(struct hstate *h)
++{
++	return false;
++}
++
+ static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+ 					   struct mm_struct *mm, pte_t *pte)
+ {
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 5c390f5..f810cf0 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -919,7 +919,7 @@ static struct page *dequeue_huge_page_nodemask(struct hstate *h, gfp_t gfp_mask,
+ /* Movability of hugepages depends on migration support. */
+ static inline gfp_t htlb_alloc_mask(struct hstate *h)
+ {
+-	if (hugepage_migration_supported(h))
++	if (hugepage_movable_supported(h))
+ 		return GFP_HIGHUSER_MOVABLE;
+ 	else
+ 		return GFP_HIGHUSER;
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 84381b5..bfda9e4 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1272,7 +1272,7 @@ static int unmap_and_move_huge_page(new_page_t get_new_page,
+ 	struct anon_vma *anon_vma = NULL;
+ 
+ 	/*
+-	 * Movability of hugepages depends on architectures and hugepage size.
++	 * Migratability of hugepages depends on architectures and their size.
+ 	 * This check is necessary because some callers of hugepage migration
+ 	 * like soft offline and memory hotremove don't walk through page
+ 	 * tables or check whether the hugepage is pmd-based or not before
 -- 
 2.7.4
 
