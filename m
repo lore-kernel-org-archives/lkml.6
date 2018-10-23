@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1CCC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 05:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30247C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 05:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 276DE20671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 05:17:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00B7B20671
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 05:17:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="k0ulnDDC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 276DE20671
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="u9+4uClL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00B7B20671
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbeJWNi4 (ORCPT
+        id S1727583AbeJWNi6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 09:38:56 -0400
+        Tue, 23 Oct 2018 09:38:58 -0400
 Received: from mail-db5eur01on0043.outbound.protection.outlook.com ([104.47.2.43]:61492
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727118AbeJWNiz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 09:38:55 -0400
+        id S1727507AbeJWNi6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 09:38:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D8G7Cr/+6WK1GXBJbbiNXCW8FhCYb3WqUeldABEQ35M=;
- b=k0ulnDDCwRYBr30WjkHWSivCDeWNMzeTgoO0rAFeYyEP7yon4qqpOEgcEhkWngg8/FuRG2lK6fH2KjqlCXfxvKOMg0m41zEARTuMIosbrr06w29c3xLZ0fnP813R4L0DsUKp6Xc8K7dM3OE7qwb/h6a+PRcl1xCJ3s07H48FI7Y=
+ bh=w9OzGQ5MIFhSYDB3Kgz4EEmxXia+91K6OaTezQU6VBI=;
+ b=u9+4uClLmjhWt5ByifS1pLQr4fZS4IEwyInJGWN1xxFx9i+IXevutYSvThvWasMMYM24YYLVxgbHmc55oUzFs4JKe7VhHEOPFWjBv6yYkp5lmkdlcPCiziXOyH/eijU8tQ2gzmJ9hJZzVtS/aootSsQKZ0uvNelNZwpGx73DKD8=
 Received: from DB7PR04MB4618.eurprd04.prod.outlook.com (52.135.138.152) by
  DB7PR04MB4299.eurprd04.prod.outlook.com (52.135.131.141) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1250.30; Tue, 23 Oct 2018 05:17:06 +0000
+ 15.20.1250.30; Tue, 23 Oct 2018 05:17:10 +0000
 Received: from DB7PR04MB4618.eurprd04.prod.outlook.com
  ([fe80::51ba:96d4:721e:f6a9]) by DB7PR04MB4618.eurprd04.prod.outlook.com
  ([fe80::51ba:96d4:721e:f6a9%4]) with mapi id 15.20.1250.028; Tue, 23 Oct 2018
- 05:17:06 +0000
+ 05:17:10 +0000
 From:   Joakim Zhang <qiangqing.zhang@nxp.com>
 To:     "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>
 CC:     "wg@grandegger.com" <wg@grandegger.com>,
@@ -49,11 +49,13 @@ CC:     "wg@grandegger.com" <wg@grandegger.com>,
         dl-linux-imx <linux-imx@nxp.com>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
         Joakim Zhang <qiangqing.zhang@nxp.com>
-Subject: [PATCH V1 1/2] can: flexcan: Add self wakeup support
-Thread-Topic: [PATCH V1 1/2] can: flexcan: Add self wakeup support
-Thread-Index: AQHUao+kfwXwhsQel0e+OiFzJfQX6g==
-Date:   Tue, 23 Oct 2018 05:17:06 +0000
-Message-ID: <20181023051449.2116-2-qiangqing.zhang@nxp.com>
+Subject: [PATCH V1 2/2] Documentation: can: flexcan: Add stop-mode property to
+ device tree
+Thread-Topic: [PATCH V1 2/2] Documentation: can: flexcan: Add stop-mode
+ property to device tree
+Thread-Index: AQHUao+mI3l7tN6zL0KclxHnH2Attw==
+Date:   Tue, 23 Oct 2018 05:17:10 +0000
+Message-ID: <20181023051449.2116-3-qiangqing.zhang@nxp.com>
 References: <20181023051449.2116-1-qiangqing.zhang@nxp.com>
 In-Reply-To: <20181023051449.2116-1-qiangqing.zhang@nxp.com>
 Accept-Language: en-US
@@ -69,28 +71,28 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [92.121.68.129]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB7PR04MB4299;6:AzsSxLSyxzMJzD6wzqPaZE5RSIAqp0zCNEb7a0MkfseJRZzDX1ou4JD89EukeF5npAWCAbxDb6WCk3PwpIkplE9Wtd9uPnTCOpV8nfD+5RD5K7E7jC3POuxB+P0gfVp7qbW6teTuCy7JCFPB9fzDZ4fQfl87A4EAEy2v1ZzdMotzItEggTfvDOG7of3XB8/IATGjEFAoePG+vRQC93LWLfo22AcODH8KjQRzRzKml7EiRYWzXuRIypVn/48a42e53wUO4lzYAlif3sXx+De7pSJayFmLbp0gGwqJGm43v9zIKjkZBnADFMq/HfDJXFDAj7enj9Uo+d6K3/Z/RGl3MFTiIRDqkz2y2nRw7K1j5XvypZCi5NZ/gCALvrmLJCYdfpoepKVTRuvz6PdyOCjoTRCvuqGTd9o8dTipsvGf1cr5jkRPNrmI/yeMxVTDd9WanUKwg+CgkY1CLVXinsLoIw==;5:KIQXShgDG03AhlgCiJ7D1dzPeUyRCvJ2MMvH+0JlRLM6z+kDSHgcnMCrjHB4FB84lXAH6Ttp/wnPXkg/CozVA+/wfEOGA+LR7RjEYkAa+mV2R3ENr3spUbTEVfGCFw5NLawnZRr3NBDIzMfwFV/jm87lhoMXuyND83mUIEyVJzM=;7:MdDHahTXnqZm3+hK2S9dFU+eCdBxiz1Oclxk5QpMjn29C5LtJBOkzsaUxy/SujNiryEoeBXfa41t+ZcU7PoHkDyA3rmHqoXJBKi8jraf+HsJLQGyhDoJPAZZ43vrZxSEpxLPFNN9UuIxOA449ddp5b+d5rwal7cuqHfXXJtTiDCymmhE3S6hrJhzhpCoDjSVA8xlQ4fFVB49AkmNQ7yRdlMzYboPg8FhmArPDiLfNrYjn6ekkPn0UR7NwAnS5ITq
-x-ms-office365-filtering-correlation-id: 0c5e56b6-6c35-4d6a-2db7-08d638a6c685
+x-microsoft-exchange-diagnostics: 1;DB7PR04MB4299;6:AkKR+Pfufl5JQPwuv8sBXbGFrNNjrdl9oI/MUd9M6E7y1/qJtT/27BBNfc2iXUTCFIYkeQvl0sc8LUhTgj73yyd/wrNLj3Dn1+2B4ixE0pP3trntMlIIUxqR9+r47jqV/t4pycvlwwsNbu8bCSKJn+Ia59Qyk683n6I980nIGjNrOt+bx6TS1k5Aot9SQZKfDQjy+2sMEbUjlx77iy3BjkNUCK3lm/92vffx0H/uJ2I+sJZPxUX+U7eelt1eQSkTjr2UNGov+yoXopzJUh2rzSB2uEP4q8agYDq/Ql9QPYoED3rSOjQy7/e356Asvh5C9oOoDHIFOkCyOk9eH68h2T7TUN4Kewzq/qjJpCLo2If+J3nBY6T93PR/2H/Udm7DMFAb5nlxfUUo7Bhnq55JdZzUYtuSP5NfF8l7rGQK24otMWz8cTHCOlMJfXEAU9DPwjJouNakG2KhfCAiRjf1kw==;5:A0NuFcM/QYtWOCjBI6lpW8FBgNt0nBMl9HGo+0zz1BZVREy2G1RQ3cQ9JVrvbpsMBHtUy6JRTrFOQ55DeZ8kuB4fsYj+JopXmgC78+VTmkC4AC9bA9fCMWafHciKp6vqCr6zAW4rM89rch2mYfUWm284zZY94vRpXlX//MxDOtA=;7:hWON59xaL/YtuZdsQ77Ur/hMiFY9JBRj7tbJQdQzyF+NzCHgD1UHybxBIbUbUYqyWgnMMqkmLQAonAIjdDBmc4pziAwtBB6dSpVS6tyWKthpNMUDFuPf0H9NjXoMo4curwmsVwwMFARmm4HsWGPHBtsexN5w6zIo9UO2o0hp+mU1HCM3rXld32l3DaDngyPX0wzE43oTwZFtmKTPkl3+ozLJz+dzMjUNDT6rMvxMu2z55RV1EhE0DrXxHGgytRnx
+x-ms-office365-filtering-correlation-id: 2a4c85a4-a843-422f-7649-08d638a6c8d4
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4299;
 x-ms-traffictypediagnostic: DB7PR04MB4299:
-x-microsoft-antispam-prvs: <DB7PR04MB4299FEB89A6C6DCBAEE5D8D7E6F50@DB7PR04MB4299.eurprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <DB7PR04MB42994CF601ED0DD7921EE281E6F50@DB7PR04MB4299.eurprd04.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(185117386973197);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:DB7PR04MB4299;BCL:0;PCL:0;RULEID:;SRVR:DB7PR04MB4299;
 x-forefront-prvs: 0834BAF534
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(366004)(376002)(136003)(396003)(199004)(189003)(486006)(52116002)(6436002)(99286004)(5640700003)(102836004)(6486002)(476003)(26005)(6916009)(186003)(71190400001)(36756003)(106356001)(5250100002)(446003)(71200400001)(105586002)(11346002)(2616005)(76176011)(5660300001)(3846002)(305945005)(2501003)(2900100001)(7736002)(25786009)(1076002)(4326008)(14454004)(6116002)(97736004)(478600001)(316002)(68736007)(6506007)(66066001)(86362001)(386003)(5024004)(2351001)(14444005)(8676002)(81166006)(54906003)(50226002)(6512007)(53936002)(8936002)(256004)(2906002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4299;H:DB7PR04MB4618.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(366004)(376002)(136003)(396003)(199004)(189003)(486006)(52116002)(6436002)(99286004)(5640700003)(102836004)(6486002)(476003)(26005)(6916009)(186003)(71190400001)(36756003)(106356001)(5250100002)(446003)(71200400001)(105586002)(11346002)(2616005)(76176011)(5660300001)(3846002)(305945005)(2501003)(2900100001)(7736002)(25786009)(1076002)(4326008)(14454004)(6116002)(97736004)(478600001)(575784001)(316002)(68736007)(6506007)(66066001)(86362001)(386003)(2351001)(14444005)(8676002)(81166006)(54906003)(50226002)(6512007)(53936002)(8936002)(256004)(2906002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4299;H:DB7PR04MB4618.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: ZzNUDcNtLDHnkVIw7IouMwXxIiQxnS26YhjjA0ED3rAaYPrwqEDki+qIeNSwk6ApbTTC/Hs0CPEBXZvPfOwaZRmQJALVFd6exDJo53ekxpnk+gVkG23SDCUKn/NurgjZnz4uCdx9nEQvLTp3tZXJPRwydfHH4WQtroms2/fl3n+O1HK4r/Ug2utUFMrNzBeEUrsd2jK7OUWrOEOURuCURrlru00hCDG9f9ldqvdSvJCYWSvampN+uvubmDCN0xuyJCW7ZztLkELw834co3+inb5uwaQZIcA8y91pi90wONMAHEGCM3wcxwEFjf4hChv5AbNMCwkLXeT3SJvL4wr3MfrgHQ8OxCzuCyVf4uxp6Pk=
+x-microsoft-antispam-message-info: ny6EE+XPZNHiir8Q/AAAvuMMW10y27Xkr81O8oobcwv+tKkOUZpA9aBKiTrdEgwKEvPm1F5jNKTDEQxivC6CC/molqC3WdTfd31XX65/nm7dEiz6e0yYjGfgq7ho5753s5zU3doISwjYHO3QIwY8dpuubdKJ76OcSM7lh2dskrrvOlVXU9P8l4zecR6akI6/fuHcOLt0aOCEVX75TXiAHmcv2IN6PzTdKVNjbJYEsZwH8GowwUM8Pbkq3St5xrflYQeSde5WzoF3hAIoPneF845ygVnpr9HqBd7NFkVM7LtzoeQMtru+IMcpJlcMTAP35ua1kkK9yhVIzm0biwXf1R787CutxuL7ODHqcIRT5Cg=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c5e56b6-6c35-4d6a-2db7-08d638a6c685
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2018 05:17:06.8816
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a4c85a4-a843-422f-7649-08d638a6c8d4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2018 05:17:10.8660
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
@@ -102,268 +104,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dong Aisheng <aisheng.dong@nxp.com>
 
-If wakeup is enabled, enter stop mode, else enter disabled mode.
-Self wake can only work on stop mode.
-
-Starting from IMX6, the flexcan stop mode control bits is SoC specific,
-move it out of IP driver and parse it from devicetree.
+The FlexCAN controller can parse the stop-mode property to enable CAN
+self wakeup feature.
 
 Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
 ---
- drivers/net/can/flexcan.c | 141 +++++++++++++++++++++++++++++++++++---
- 1 file changed, 132 insertions(+), 9 deletions(-)
+ Documentation/devicetree/bindings/net/can/fsl-flexcan.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/net/can/flexcan.c b/drivers/net/can/flexcan.c
-index 3813f6708201..9e05d01da85f 100644
---- a/drivers/net/can/flexcan.c
-+++ b/drivers/net/can/flexcan.c
-@@ -19,12 +19,17 @@
- #include <linux/delay.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/list.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/mfd/syscon/imx6q-iomuxc-gpr.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/regmap.h>
+diff --git a/Documentation/devicetree/bindings/net/can/fsl-flexcan.txt b/Do=
+cumentation/devicetree/bindings/net/can/fsl-flexcan.txt
+index bfc0c433654f..b5ccfc9c14fb 100644
+--- a/Documentation/devicetree/bindings/net/can/fsl-flexcan.txt
++++ b/Documentation/devicetree/bindings/net/can/fsl-flexcan.txt
+@@ -24,6 +24,14 @@ Optional properties:
+               if this property is present then controller is assumed to be=
+ big
+               endian.
 =20
- #define DRV_NAME			"flexcan"
++- stop-mode: register bits of stop mode control, the format is
++			<&gpr req_gpr req_bit ack_gpr ack_bit>.
++			gpr is the phandle to general purpose register node.
++			req_gpr is the gpr register offset of CAN stop request.
++			req_bit is the bit offset of CAN stop request.
++			ack_gpr is the gpr register offset of CAN stop acknowledge.
++			ack_bit is the bit offset of CAN stop acknowledge.
++
+ Example:
 =20
-@@ -132,7 +137,8 @@
- 	(FLEXCAN_ESR_ERR_BUS | FLEXCAN_ESR_ERR_STATE)
- #define FLEXCAN_ESR_ALL_INT \
- 	(FLEXCAN_ESR_TWRN_INT | FLEXCAN_ESR_RWRN_INT | \
--	 FLEXCAN_ESR_BOFF_INT | FLEXCAN_ESR_ERR_INT)
-+	 FLEXCAN_ESR_BOFF_INT | FLEXCAN_ESR_ERR_INT | \
-+	 FLEXCAN_ESR_WAK_INT)
-=20
- /* FLEXCAN interrupt flag register (IFLAG) bits */
- /* Errata ERR005829 step7: Reserve first valid MB */
-@@ -255,6 +261,14 @@ struct flexcan_devtype_data {
- 	u32 quirks;		/* quirks needed for different IP cores */
- };
-=20
-+struct flexcan_stop_mode {
-+	struct regmap *gpr;
-+	u8 req_gpr;
-+	u8 req_bit;
-+	u8 ack_gpr;
-+	u8 ack_bit;
-+};
-+
- struct flexcan_priv {
- 	struct can_priv can;
- 	struct can_rx_offload offload;
-@@ -272,6 +286,7 @@ struct flexcan_priv {
- 	struct clk *clk_per;
- 	const struct flexcan_devtype_data *devtype_data;
- 	struct regulator *reg_xceiver;
-+	struct flexcan_stop_mode stm;
-=20
- 	/* Read and Write APIs */
- 	u32 (*read)(void __iomem *addr);
-@@ -392,6 +407,22 @@ static void flexcan_clks_disable(const struct flexcan_=
-priv *priv)
- 	clk_disable_unprepare(priv->clk_per);
- }
-=20
-+static inline void flexcan_enter_stop_mode(struct flexcan_priv *priv)
-+{
-+	/* enable stop request */
-+	if (priv->devtype_data->quirks & FLEXCAN_QUIRK_USE_OFF_TIMESTAMP)
-+		regmap_update_bits(priv->stm.gpr, priv->stm.req_gpr,
-+			1 << priv->stm.req_bit, 1 << priv->stm.req_bit);
-+}
-+
-+static inline void flexcan_exit_stop_mode(struct flexcan_priv *priv)
-+{
-+	/* remove stop request */
-+	if (priv->devtype_data->quirks & FLEXCAN_QUIRK_USE_OFF_TIMESTAMP)
-+		regmap_update_bits(priv->stm.gpr, priv->stm.req_gpr,
-+			1 << priv->stm.req_bit, 0);
-+}
-+
- static inline int flexcan_transceiver_enable(const struct flexcan_priv *pr=
-iv)
- {
- 	if (!priv->reg_xceiver)
-@@ -955,6 +986,10 @@ static int flexcan_chip_start(struct net_device *dev)
- 		reg_mcr |=3D FLEXCAN_MCR_FEN |
- 			FLEXCAN_MCR_MAXMB(priv->tx_mb_idx);
- 	}
-+
-+	/* enable self wakeup */
-+	reg_mcr |=3D FLEXCAN_MCR_WAK_MSK | FLEXCAN_MCR_SLF_WAK;
-+
- 	netdev_dbg(dev, "%s: writing mcr=3D0x%08x", __func__, reg_mcr);
- 	priv->write(reg_mcr, &regs->mcr);
-=20
-@@ -1240,6 +1275,56 @@ static void unregister_flexcandev(struct net_device =
-*dev)
- 	unregister_candev(dev);
- }
-=20
-+static int flexcan_of_parse_stop_mode(struct platform_device *pdev)
-+{
-+	struct net_device *dev =3D platform_get_drvdata(pdev);
-+	struct device_node *np =3D pdev->dev.of_node;
-+	struct device_node *node;
-+	struct flexcan_priv *priv;
-+	phandle phandle;
-+	u32 out_val[5];
-+	int ret;
-+
-+	if (!np)
-+		return -EINVAL;
-+
-+	/* stop mode property format is:
-+	 * <&gpr req_gpr req_bit ack_gpr ack_bit>.
-+	 */
-+	ret =3D of_property_read_u32_array(np, "stop-mode", out_val, 5);
-+	if (ret) {
-+		dev_dbg(&pdev->dev, "no stop-mode property\n");
-+		return ret;
-+	}
-+	phandle =3D *out_val;
-+
-+	node =3D of_find_node_by_phandle(phandle);
-+	if (!node) {
-+		dev_dbg(&pdev->dev, "could not find gpr node by phandle\n");
-+		return PTR_ERR(node);
-+	}
-+
-+	priv =3D netdev_priv(dev);
-+	priv->stm.gpr =3D syscon_node_to_regmap(node);
-+	if (IS_ERR(priv->stm.gpr)) {
-+		dev_dbg(&pdev->dev, "could not find gpr regmap\n");
-+		return PTR_ERR(priv->stm.gpr);
-+	}
-+
-+	of_node_put(node);
-+
-+	priv->stm.req_gpr =3D out_val[1];
-+	priv->stm.req_bit =3D out_val[2];
-+	priv->stm.ack_gpr =3D out_val[3];
-+	priv->stm.ack_bit =3D out_val[4];
-+
-+	dev_dbg(&pdev->dev, "gpr %s req_gpr 0x%x req_bit %u ack_gpr 0x%x ack_bit =
-%u\n",
-+			node->full_name, priv->stm.req_gpr,
-+			priv->stm.req_bit, priv->stm.ack_gpr,
-+			priv->stm.ack_bit);
-+	return 0;
-+}
-+
- static const struct of_device_id flexcan_of_match[] =3D {
- 	{ .compatible =3D "fsl,imx6q-flexcan", .data =3D &fsl_imx6q_devtype_data,=
- },
- 	{ .compatible =3D "fsl,imx28-flexcan", .data =3D &fsl_imx28_devtype_data,=
- },
-@@ -1271,6 +1356,7 @@ static int flexcan_probe(struct platform_device *pdev=
-)
- 	struct flexcan_regs __iomem *regs;
- 	int err, irq;
- 	u32 clock_freq =3D 0;
-+	int wakeup =3D 1;
-=20
- 	reg_xceiver =3D devm_regulator_get(&pdev->dev, "xceiver");
- 	if (PTR_ERR(reg_xceiver) =3D=3D -EPROBE_DEFER)
-@@ -1400,6 +1486,16 @@ static int flexcan_probe(struct platform_device *pde=
-v)
-=20
- 	devm_can_led_init(dev);
-=20
-+	if (priv->devtype_data->quirks & FLEXCAN_QUIRK_USE_OFF_TIMESTAMP) {
-+		err =3D flexcan_of_parse_stop_mode(pdev);
-+		if (err) {
-+			wakeup =3D 0;
-+			dev_dbg(&pdev->dev, "failed to parse stop-mode\n");
-+		}
-+	}
-+
-+	device_set_wakeup_capable(&pdev->dev, wakeup);
-+
- 	pm_runtime_put(&pdev->dev);
-=20
- 	dev_info(&pdev->dev, "device registered (reg_base=3D%p, irq=3D%d)\n",
-@@ -1437,10 +1533,18 @@ static int __maybe_unused flexcan_suspend(struct de=
-vice *device)
- 	int err =3D 0;
-=20
- 	if (netif_running(dev)) {
--		err =3D flexcan_chip_disable(priv);
--		if (err)
--			return err;
--		err =3D pm_runtime_force_suspend(device);
-+		/* if wakeup is enabled, enter stop mode
-+		 * else enter disabled mode.
-+		 */
-+		if (device_may_wakeup(device)) {
-+			enable_irq_wake(dev->irq);
-+			flexcan_enter_stop_mode(priv);
-+		} else {
-+			err =3D flexcan_chip_disable(priv);
-+			if (err)
-+				return err;
-+			err =3D pm_runtime_force_suspend(device);
-+		}
-=20
- 		netif_stop_queue(dev);
- 		netif_device_detach(dev);
-@@ -1461,10 +1565,12 @@ static int __maybe_unused flexcan_resume(struct dev=
-ice *device)
- 		netif_device_attach(dev);
- 		netif_start_queue(dev);
-=20
--		err =3D pm_runtime_force_resume(device);
--		if (err)
--			return err;
--		err =3D flexcan_chip_enable(priv);
-+		if (!device_may_wakeup(device)) {
-+			err =3D pm_runtime_force_resume(device);
-+			if (err)
-+				return err;
-+			err =3D flexcan_chip_enable(priv);
-+		}
- 	}
- 	return err;
- }
-@@ -1489,10 +1595,27 @@ static int __maybe_unused flexcan_runtime_resume(st=
-ruct device *device)
- 	return 0;
- }
-=20
-+static int __maybe_unused flexcan_noirq_resume(struct device *device)
-+{
-+	struct net_device *dev =3D dev_get_drvdata(device);
-+	struct flexcan_priv *priv =3D netdev_priv(dev);
-+
-+	/* exit stop mode during noirq stage avoid continuously entering
-+	 * wakeup ISR before CAN resume back.
-+	 */
-+	if (netif_running(dev) && device_may_wakeup(device)) {
-+		disable_irq_wake(dev->irq);
-+		flexcan_exit_stop_mode(priv);
-+	}
-+
-+	return 0;
-+}
-+
- static const struct dev_pm_ops flexcan_pm_ops =3D {
- 	SET_SYSTEM_SLEEP_PM_OPS(flexcan_suspend, flexcan_resume)
- 	SET_RUNTIME_PM_OPS(flexcan_runtime_suspend, flexcan_runtime_resume,
- 						NULL)
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(NULL, flexcan_noirq_resume)
- };
-=20
- static struct platform_driver flexcan_driver =3D {
+ 	can@1c000 {
 --=20
 2.17.1
 
