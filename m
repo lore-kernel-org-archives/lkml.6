@@ -2,151 +2,134 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54083C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:31:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F656C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01B4F207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:31:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E96D207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:33:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IR5wlphb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01B4F207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NsKFdJPu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E96D207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbeJWUyf (ORCPT
+        id S1728066AbeJWU5O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 16:54:35 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:45722 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbeJWUye (ORCPT
+        Tue, 23 Oct 2018 16:57:14 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46755 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbeJWU5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 16:54:34 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9NCIwgv155035;
-        Tue, 23 Oct 2018 12:31:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=90MT7XtsCbinloaz7k9574doEX2AI8a8qv8DUTuV0Vw=;
- b=IR5wlphb4R7MBsUHEHdOeqLFO4bPc5N8P5BY4bc8KeM/C9McG2F7PXjLo0JOK7ZTZZYj
- q4rnhGIDkeHHqN3SYr88PXwFCe3/KxeFgApmU2eQC2hZWES8wYEjy4yrN7h6KSxTl5gq
- rICWfsFlxNg49K+QZxxvnDlqWGkptvqz6ERaSYR9ZSlX5XAqCuhXvjmPkAX9aak1RrpY
- 8Z3t92wAyo8+jnno2YAPsQtKXwbNZMik/QxlP6dgJ4VXCvHd6M/bYHSqjUrmfnzYa374
- HIcfqzwHP2N5Pf6G5ozOnc9jecJalvZK6k5vYBmNaNY0OKB80BRuB3pTEj8BmupX8TZs zw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2n7w0qmskt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Oct 2018 12:31:03 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9NCV2iY017885
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Oct 2018 12:31:02 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9NCV1VC005424;
-        Tue, 23 Oct 2018 12:31:01 GMT
-Received: from dhcp-10-172-157-159.no.oracle.com (/10.172.157.159)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 23 Oct 2018 05:31:01 -0700
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: [v2,0/2] net: if_arp: use define instead of hard-coded value
-From:   =?utf-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>
-In-Reply-To: <20181009142724.2213012-1-Haakon.Bugge@oracle.com>
-Date:   Tue, 23 Oct 2018 14:30:57 +0200
-Cc:     Stephen Hemminger <stephen@networkplumber.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A1A93434-9496-4029-9A53-2D64D56CB846@oracle.com>
-References: <20181009142724.2213012-1-Haakon.Bugge@oracle.com>
-To:     netdev@vger.kernel.org
-X-Mailer: Apple Mail (2.3445.100.39)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9054 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=5 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=383
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810230106
+        Tue, 23 Oct 2018 16:57:14 -0400
+Received: by mail-lf1-f66.google.com with SMTP id o2-v6so974711lfl.13
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 05:33:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Im/vJP/8ibJsV2ja1RXrqoJL/BIDk7XHcC1dS5X+auQ=;
+        b=NsKFdJPuWPJD3iWIr3Bc09+MqfKBJix+AcqiTsbAaNugNQWW5Rl34NV268jEw53106
+         J1ZoZIP9hib5r4rokehA5hVpSklPbRhEMeplTNUEOnPiV3CQhwnFcIV370V6XGwL4rj0
+         gtR2nbAJ4dlR9zLk3svqWwQQ9Wdtc2FFiDd9oJJ6sfRyR7OF4kH3fjzjjMG95f+LAnPQ
+         GGvfLjrR3lDH2JuszVoomQNGosh/HoySbMtG2Dfy4t37z3RGsAilQU68lxlQ7I0KYlyS
+         /feBNqJH3nSPrXho02v+wtlOiBcGTTHWm7jZpghzuXkYkovyw5GJCdPhTjAj89SPUsKt
+         LVfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Im/vJP/8ibJsV2ja1RXrqoJL/BIDk7XHcC1dS5X+auQ=;
+        b=VNSO6/rwz7DhPxWkZ3qwexedLcO2znFDhzyuTvk7DBVKfzvSLsz9mPxUkXKGjlHxdl
+         RB8AD5RBrCZpZi9BJRuvijrjmJk0kVM+LNTQ9TS7TWos+VZWK7AFenouq7Tb+fZKz7t2
+         /sJYuOy86C+EPBu6IlwvdyLgt+rGAezUCB3PQj8yEgjfPZEEuEnnp+k6lXVAr5gLrxqt
+         D4M0jSVgt4N5E93C+uGg/L+RIHW5sz0FhCS7MV/KwCuYMCzny95Y69i870JcDoCFpoZF
+         JJda2UMmD64WVEiSed6Rkxy5YQQgNDdOg5XgSP+oWsIV4tvymVv0QQZ0nez4H1vMST7W
+         iTMg==
+X-Gm-Message-State: ABuFfoi3KpyrngiUslGPXXoa/4VK+xwYlEK77fZEg4UhrP1wnFTsTHV1
+        aEpTB8hELSj6xhrCHn5yz3+tuYM/j53Ddl3efIg=
+X-Google-Smtp-Source: ACcGV61Lkoc809vfK0d2ee3CoVAr5ArFpj0bamz+LKMkifeAXJ2sjIOTS7d0HWcmEFbJ+NafNzJKuBovPdn8YWXg/Bo=
+X-Received: by 2002:a19:d908:: with SMTP id q8mr11952946lfg.88.1540298034824;
+ Tue, 23 Oct 2018 05:33:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <CANiq72mkTP_m20vqei-cpN+ypQ_gU472qn5m68vb_4Nqj5afMQ@mail.gmail.com>
+ <CAFqt6zaFc_GenhfvsD0VPfepR-jjXypj+4CgNEuHMVq1WXV+8w@mail.gmail.com>
+ <CANiq72kVJn7985EET067Dgj+z0dwb0x2MTUnREMWKCVU6=WnJA@mail.gmail.com>
+ <CAFqt6zZ4sPjtb5BaDfwc5tZv+vMj6ao3NJZ_3quX9AH5pCMwJg@mail.gmail.com>
+ <CANiq72m9u1PL9X+dPNLxgkhvttj=4ijLyM2sFex=Kws7wswKzw@mail.gmail.com>
+ <CAFqt6zYH4Aczu8AYke8AfGuMS70SJXCMn-n8X8C_Tz03gTjn8g@mail.gmail.com>
+ <CANiq72kRAZE9SyM4EkpaBZH03Ex0Z=4Pk2iOuc2jBDKTfKjHQg@mail.gmail.com>
+ <CAFqt6zZCCPFE3sQ3u_gjiN8wwd99nwWatk9JRsiGxbCwhi91mg@mail.gmail.com>
+ <CANiq72k-e_j67==VdrayqggjAd7MAfpaJS-_0=jkmh4OWynukQ@mail.gmail.com>
+ <CAFqt6zZ2yHkVcbYtK1dxr9B3K5WVYGboavjP1ibmYei0u4zFbQ@mail.gmail.com> <20181023122435.GB20085@bombadil.infradead.org>
+In-Reply-To: <20181023122435.GB20085@bombadil.infradead.org>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Tue, 23 Oct 2018 18:03:42 +0530
+Message-ID: <CAFqt6zZp=UsSGH148=tPWLnSxC51EGdR0Vv4f5tP58MO-6OS_w@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: Introduce new function vm_insert_kmem_page
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        robin@protonic.nl, stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
+        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
+        robin.murphy@arm.com, iamjoonsoo.kim@lge.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kees Cook <keescook@chromium.org>, treding@nvidia.com,
+        Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>, aryabinin@virtuozzo.com,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>, tchibo@google.com,
+        riel@redhat.com, Minchan Kim <minchan@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Huang, Ying" <ying.huang@intel.com>, ak@linux.intel.com,
+        rppt@linux.vnet.ibm.com, linux@dominikbrodowski.net,
+        Arnd Bergmann <arnd@arndb.de>, cpandya@codeaurora.org,
+        hannes@cmpxchg.org, Joe Perches <joe@perches.com>,
+        mcgrof@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 23, 2018 at 5:54 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Tue, Oct 23, 2018 at 05:44:32PM +0530, Souptick Joarder wrote:
+> > On Sat, Oct 6, 2018 at 4:19 PM Miguel Ojeda
+> > <miguel.ojeda.sandonis@gmail.com> wrote:
+> > >
+> > > On Sat, Oct 6, 2018 at 7:11 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> > > >
+> > > > On Fri, Oct 5, 2018 at 11:39 PM Miguel Ojeda
+> > > > <miguel.ojeda.sandonis@gmail.com> wrote:
+> > > > > They are not supposed to be "steps". You did it with 70+ commits (!!)
+> > > > > over the course of several months. Why a tree wasn't created, stuff
+> > > > > developed there, and when done, submitted it for review?
+> > > >
+> > > > Because we already have a plan for entire vm_fault_t migration and
+> > > > the * instruction * was to send one patch per driver.
+> > >
+> > > The instruction?
+> >
+> > Sorry for the delayed response.
+> > Instruction from Matthew  Wilcox who is supervising the entire vm_fault_t
+> > migration work :-)
+>
+> Hang on.  That was for the initial vm_fault_t conversion in which each
+> step was clearly an improvement.  What you're looking at now is far
+> from that.
 
-
-> On 9 Oct 2018, at 16:27, H=C3=A5kon Bugge <haakon.bugge@oracle.com> =
-wrote:
->=20
-> Struct arpreq contains the name of the device. All other places in the
-> kernel, the define IFNAMSIZ is used to designate its size. But in
-> if_arp.h, a literal constant is used.
->=20
-> Fixed by explicitly including uapi/linu/if.h, where IFNAMSIZ is =
-defined.
->=20
-> The series also fixes some incorrect indents.
->=20
->=20
-> v1 -> v2:
->   * Include uapi/linux/if.h from if_arp.h
->   * Added Stephen's t-b
->=20
-> H=C3=A5kon Bugge (2):
->  net: if_arp: Fix incorrect indents
->  net: if_arp: use define instead of hard-coded value
->=20
-> include/uapi/linux/if_arp.h | 19 ++++++++++---------
-> 1 file changed, 10 insertions(+), 9 deletions(-)
-> ---
-> 2.14.3
-
-Just a friendly reminder.
-
-
-Thxs, H=C3=A5kon
-
-
->=20
->=20
-> =46rom a36b99413ea5beca1539f4faf065f33c7c19e6a5 Mon Sep 17 00:00:00 =
-2001
-> From: =3D?UTF-8?q?H=3DC3=3DA5kon=3D20Bugge?=3D =
-<Haakon.Bugge@oracle.com>
-> Date: Fri, 21 Sep 2018 11:28:36 +0200
-> Subject: [PATCH 0/2]
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=3DUTF-8
-> Content-Transfer-Encoding: 8bit
->=20
-> Struct arpreq contains the name of the device. All other places in the
-> kernel, the define IFNAMSIZ is used to designate its size. But in
-> if_arp.h, a literal constant is used.
->=20
-> As it could be good reasons to use constants instead of the defines in
-> include files under uapi, it seems to be OK to use the define here,
-> without opening a can of worms in user-land.
->=20
-> This because if_arp.h includes netdevice.h, which also uses
-> IFNAMSIZ. For the distros I have checked, this also holds true for the
-> use-land side.
->=20
-> The series also fixes some incorrect indents.
->=20
-> H=C3=A5kon Bugge (2):
->  net: if_arp: Fix incorrect indents
->  net: if_arp: use define instead of hard-coded value
->=20
-> include/uapi/linux/if_arp.h | 18 +++++++++---------
-> 1 file changed, 9 insertions(+), 9 deletions(-)
->=20
-> --
-> 2.14.3
-
+Ok. But my understanding was, the approach of vm_insert_range comes
+into discussion as part of converting vm_insert_page into vmf_insert_page
+which is still part of original vm_fault_t conversion discussion.  No ?
