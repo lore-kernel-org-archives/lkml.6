@@ -6,275 +6,554 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D761C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD6BCC67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:58:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 207FB2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:58:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 207FB2081B
+	by mail.kernel.org (Postfix) with ESMTP id 82E0420813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:58:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82E0420813
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729208AbeJXIYD (ORCPT
+        id S1726382AbeJXIYK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 04:24:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54520 "EHLO mx1.redhat.com"
+        Wed, 24 Oct 2018 04:24:10 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45426 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726685AbeJXIYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 04:24:02 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1726685AbeJXIYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 04:24:10 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 977693084295;
-        Tue, 23 Oct 2018 23:58:19 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id B5566BCD2C;
+        Tue, 23 Oct 2018 23:58:26 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 95BB3105704C;
-        Tue, 23 Oct 2018 23:58:18 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8E8E360480;
+        Tue, 23 Oct 2018 23:58:25 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 04/25] iov_iter: Add I/O discard iterator [ver #2]
+Subject: [PATCH 05/25] afs: Better tracing of protocol errors [ver #2]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Date:   Wed, 24 Oct 2018 00:58:17 +0100
-Message-ID: <154033909786.12041.143666439362405914.stgit@warthog.procyon.org.uk>
+Date:   Wed, 24 Oct 2018 00:58:24 +0100
+Message-ID: <154033910483.12041.14457540554237429341.stgit@warthog.procyon.org.uk>
 In-Reply-To: <154033906284.12041.12908874734066278152.stgit@warthog.procyon.org.uk>
 References: <154033906284.12041.12908874734066278152.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 23 Oct 2018 23:58:19 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 23 Oct 2018 23:58:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new iterator, ITER_DISCARD, that can only be used in READ mode and
-just discards any data copied to it.
-
-This is useful in a network filesystem for discarding any unwanted data
-sent by a server.
+Include the site of detection of AFS protocol errors in trace lines to
+better be able to determine what went wrong.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- include/linux/uio.h |    7 ++++++
- lib/iov_iter.c      |   55 +++++++++++++++++++++++++++++++++++++++++++++------
- 2 files changed, 55 insertions(+), 7 deletions(-)
+ fs/afs/cmservice.c         |    6 ++
+ fs/afs/fsclient.c          |  117 +++++++++++++++++++++++++++-----------------
+ fs/afs/inode.c             |    2 -
+ fs/afs/internal.h          |    2 -
+ fs/afs/rxrpc.c             |    5 +-
+ fs/afs/vlclient.c          |   30 ++++++++---
+ include/trace/events/afs.h |   54 +++++++++++++++++---
+ 7 files changed, 146 insertions(+), 70 deletions(-)
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 3d8f1acc142c..55ce99ddb912 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -26,6 +26,7 @@ enum iter_type {
- 	ITER_KVEC = 2,
- 	ITER_BVEC = 4,
- 	ITER_PIPE = 8,
-+	ITER_DISCARD = 16,
+diff --git a/fs/afs/cmservice.c b/fs/afs/cmservice.c
+index 9e51d6fe7e8f..58f79301a716 100644
+--- a/fs/afs/cmservice.c
++++ b/fs/afs/cmservice.c
+@@ -189,7 +189,8 @@ static int afs_deliver_cb_callback(struct afs_call *call)
+ 		call->count = ntohl(call->tmp);
+ 		_debug("FID count: %u", call->count);
+ 		if (call->count > AFSCBMAX)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_cb_fid_count);
+ 
+ 		call->buffer = kmalloc(array3_size(call->count, 3, 4),
+ 				       GFP_KERNEL);
+@@ -234,7 +235,8 @@ static int afs_deliver_cb_callback(struct afs_call *call)
+ 		call->count2 = ntohl(call->tmp);
+ 		_debug("CB count: %u", call->count2);
+ 		if (call->count2 != call->count && call->count2 != 0)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_cb_count);
+ 		call->offset = 0;
+ 		call->unmarshall++;
+ 
+diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
+index 50929cb91732..d9a5815945dc 100644
+--- a/fs/afs/fsclient.c
++++ b/fs/afs/fsclient.c
+@@ -233,7 +233,7 @@ static int xdr_decode_AFSFetchStatus(struct afs_call *call,
+ 
+ bad:
+ 	xdr_dump_bad(*_bp);
+-	return afs_protocol_error(call, -EBADMSG);
++	return afs_protocol_error(call, -EBADMSG, afs_eproto_bad_status);
+ }
+ 
+ /*
+@@ -399,9 +399,10 @@ static int afs_deliver_fs_fetch_status_vnode(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (afs_decode_status(call, &bp, &vnode->status, vnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	xdr_decode_AFSCallBack(call, vnode, &bp);
+ 	if (call->reply[1])
+ 		xdr_decode_AFSVolSync(&bp, call->reply[1]);
+@@ -580,9 +581,10 @@ static int afs_deliver_fs_fetch_data(struct afs_call *call)
+ 			return ret;
+ 
+ 		bp = call->buffer;
+-		if (afs_decode_status(call, &bp, &vnode->status, vnode,
+-				      &vnode->status.data_version, req) < 0)
+-			return afs_protocol_error(call, -EBADMSG);
++		ret = afs_decode_status(call, &bp, &vnode->status, vnode,
++					&vnode->status.data_version, req);
++		if (ret < 0)
++			return ret;
+ 		xdr_decode_AFSCallBack(call, vnode, &bp);
+ 		if (call->reply[1])
+ 			xdr_decode_AFSVolSync(&bp, call->reply[1]);
+@@ -733,10 +735,13 @@ static int afs_deliver_fs_create_vnode(struct afs_call *call)
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+ 	xdr_decode_AFSFid(&bp, call->reply[1]);
+-	if (afs_decode_status(call, &bp, call->reply[2], NULL, NULL, NULL) < 0 ||
+-	    afs_decode_status(call, &bp, &vnode->status, vnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, call->reply[2], NULL, NULL, NULL);
++	if (ret < 0)
++		return ret;
++	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	xdr_decode_AFSCallBack_raw(&bp, call->reply[3]);
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+@@ -839,9 +844,10 @@ static int afs_deliver_fs_remove(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (afs_decode_status(call, &bp, &vnode->status, vnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+ 	_leave(" = 0 [done]");
+@@ -929,10 +935,13 @@ static int afs_deliver_fs_link(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (afs_decode_status(call, &bp, &vnode->status, vnode, NULL, NULL) < 0 ||
+-	    afs_decode_status(call, &bp, &dvnode->status, dvnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, &vnode->status, vnode, NULL, NULL);
++	if (ret < 0)
++		return ret;
++	ret = afs_decode_status(call, &bp, &dvnode->status, dvnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+ 	_leave(" = 0 [done]");
+@@ -1016,10 +1025,13 @@ static int afs_deliver_fs_symlink(struct afs_call *call)
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+ 	xdr_decode_AFSFid(&bp, call->reply[1]);
+-	if (afs_decode_status(call, &bp, call->reply[2], NULL, NULL, NULL) ||
+-	    afs_decode_status(call, &bp, &vnode->status, vnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, call->reply[2], NULL, NULL, NULL);
++	if (ret < 0)
++		return ret;
++	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+ 	_leave(" = 0 [done]");
+@@ -1122,13 +1134,16 @@ static int afs_deliver_fs_rename(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (afs_decode_status(call, &bp, &orig_dvnode->status, orig_dvnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
+-	if (new_dvnode != orig_dvnode &&
+-	    afs_decode_status(call, &bp, &new_dvnode->status, new_dvnode,
+-			      &call->expected_version_2, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, &orig_dvnode->status, orig_dvnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
++	if (new_dvnode != orig_dvnode) {
++		ret = afs_decode_status(call, &bp, &new_dvnode->status, new_dvnode,
++					&call->expected_version_2, NULL);
++		if (ret < 0)
++			return ret;
++	}
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+ 	_leave(" = 0 [done]");
+@@ -1231,9 +1246,10 @@ static int afs_deliver_fs_store_data(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (afs_decode_status(call, &bp, &vnode->status, vnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+ 	afs_pages_written_back(vnode, call);
+@@ -1407,9 +1423,10 @@ static int afs_deliver_fs_store_status(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	if (afs_decode_status(call, &bp, &vnode->status, vnode,
+-			      &call->expected_version, NULL) < 0)
+-		return afs_protocol_error(call, -EBADMSG);
++	ret = afs_decode_status(call, &bp, &vnode->status, vnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+ 	_leave(" = 0 [done]");
+@@ -1612,7 +1629,8 @@ static int afs_deliver_fs_get_volume_status(struct afs_call *call)
+ 		call->count = ntohl(call->tmp);
+ 		_debug("volname length: %u", call->count);
+ 		if (call->count >= AFSNAMEMAX)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_volname_len);
+ 		call->offset = 0;
+ 		call->unmarshall++;
+ 
+@@ -1659,7 +1677,8 @@ static int afs_deliver_fs_get_volume_status(struct afs_call *call)
+ 		call->count = ntohl(call->tmp);
+ 		_debug("offline msg length: %u", call->count);
+ 		if (call->count >= AFSNAMEMAX)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_offline_msg_len);
+ 		call->offset = 0;
+ 		call->unmarshall++;
+ 
+@@ -1706,7 +1725,8 @@ static int afs_deliver_fs_get_volume_status(struct afs_call *call)
+ 		call->count = ntohl(call->tmp);
+ 		_debug("motd length: %u", call->count);
+ 		if (call->count >= AFSNAMEMAX)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_motd_len);
+ 		call->offset = 0;
+ 		call->unmarshall++;
+ 
+@@ -2109,8 +2129,10 @@ static int afs_deliver_fs_fetch_status(struct afs_call *call)
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	afs_decode_status(call, &bp, status, vnode,
+-			  &call->expected_version, NULL);
++	ret = afs_decode_status(call, &bp, status, vnode,
++				&call->expected_version, NULL);
++	if (ret < 0)
++		return ret;
+ 	callback[call->count].version	= ntohl(bp[0]);
+ 	callback[call->count].expiry	= ntohl(bp[1]);
+ 	callback[call->count].type	= ntohl(bp[2]);
+@@ -2206,7 +2228,8 @@ static int afs_deliver_fs_inline_bulk_status(struct afs_call *call)
+ 		tmp = ntohl(call->tmp);
+ 		_debug("status count: %u/%u", tmp, call->count2);
+ 		if (tmp != call->count2)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_ibulkst_count);
+ 
+ 		call->count = 0;
+ 		call->unmarshall++;
+@@ -2221,10 +2244,11 @@ static int afs_deliver_fs_inline_bulk_status(struct afs_call *call)
+ 
+ 		bp = call->buffer;
+ 		statuses = call->reply[1];
+-		if (afs_decode_status(call, &bp, &statuses[call->count],
+-				      call->count == 0 ? vnode : NULL,
+-				      NULL, NULL) < 0)
+-			return afs_protocol_error(call, -EBADMSG);
++		ret = afs_decode_status(call, &bp, &statuses[call->count],
++					call->count == 0 ? vnode : NULL,
++					NULL, NULL);
++		if (ret < 0)
++			return ret;
+ 
+ 		call->count++;
+ 		if (call->count < call->count2)
+@@ -2244,7 +2268,8 @@ static int afs_deliver_fs_inline_bulk_status(struct afs_call *call)
+ 		tmp = ntohl(call->tmp);
+ 		_debug("CB count: %u", tmp);
+ 		if (tmp != call->count2)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_ibulkst_cb_count);
+ 		call->count = 0;
+ 		call->unmarshall++;
+ 	more_cbs:
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 479b7fdda124..ab4e7a15c205 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -82,7 +82,7 @@ static int afs_inode_init_from_status(struct afs_vnode *vnode, struct key *key)
+ 	default:
+ 		printk("kAFS: AFS vnode with undefined type\n");
+ 		read_sequnlock_excl(&vnode->cb_lock);
+-		return afs_protocol_error(NULL, -EBADMSG);
++		return afs_protocol_error(NULL, -EBADMSG, afs_eproto_file_type);
+ 	}
+ 
+ 	inode->i_blocks		= 0;
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 72de1f157d20..73770a2a2311 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -931,7 +931,7 @@ extern void afs_flat_call_destructor(struct afs_call *);
+ extern void afs_send_empty_reply(struct afs_call *);
+ extern void afs_send_simple_reply(struct afs_call *, const void *, size_t);
+ extern int afs_extract_data(struct afs_call *, void *, size_t, bool);
+-extern int afs_protocol_error(struct afs_call *, int);
++extern int afs_protocol_error(struct afs_call *, int, enum afs_eproto_cause);
+ 
+ static inline int afs_transfer_reply(struct afs_call *call)
+ {
+diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
+index 639c16882e93..9757c2d953f1 100644
+--- a/fs/afs/rxrpc.c
++++ b/fs/afs/rxrpc.c
+@@ -939,8 +939,9 @@ int afs_extract_data(struct afs_call *call, void *buf, size_t count,
+ /*
+  * Log protocol error production.
+  */
+-noinline int afs_protocol_error(struct afs_call *call, int error)
++noinline int afs_protocol_error(struct afs_call *call, int error,
++				enum afs_eproto_cause cause)
+ {
+-	trace_afs_protocol_error(call, error, __builtin_return_address(0));
++	trace_afs_protocol_error(call, error, cause);
+ 	return error;
+ }
+diff --git a/fs/afs/vlclient.c b/fs/afs/vlclient.c
+index c3b740813fc7..d0f95c4ab05e 100644
+--- a/fs/afs/vlclient.c
++++ b/fs/afs/vlclient.c
+@@ -451,7 +451,8 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
+ 		call->count2	= ntohl(*bp); /* Type or next count */
+ 
+ 		if (call->count > YFS_MAXENDPOINTS)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_yvl_fsendpt_num);
+ 
+ 		alist = afs_alloc_addrlist(call->count, FS_SERVICE, AFS_FS_PORT);
+ 		if (!alist)
+@@ -475,7 +476,8 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
+ 			size = sizeof(__be32) * (1 + 4 + 1);
+ 			break;
+ 		default:
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_yvl_fsendpt_type);
+ 		}
+ 
+ 		size += sizeof(__be32);
+@@ -488,18 +490,21 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
+ 		switch (call->count2) {
+ 		case YFS_ENDPOINT_IPV4:
+ 			if (ntohl(bp[0]) != sizeof(__be32) * 2)
+-				return afs_protocol_error(call, -EBADMSG);
++				return afs_protocol_error(call, -EBADMSG,
++							  afs_eproto_yvl_fsendpt4_len);
+ 			afs_merge_fs_addr4(alist, bp[1], ntohl(bp[2]));
+ 			bp += 3;
+ 			break;
+ 		case YFS_ENDPOINT_IPV6:
+ 			if (ntohl(bp[0]) != sizeof(__be32) * 5)
+-				return afs_protocol_error(call, -EBADMSG);
++				return afs_protocol_error(call, -EBADMSG,
++							  afs_eproto_yvl_fsendpt6_len);
+ 			afs_merge_fs_addr6(alist, bp + 1, ntohl(bp[5]));
+ 			bp += 6;
+ 			break;
+ 		default:
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_yvl_fsendpt_type);
+ 		}
+ 
+ 		/* Got either the type of the next entry or the count of
+@@ -518,7 +523,8 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
+ 		if (!call->count)
+ 			goto end;
+ 		if (call->count > YFS_MAXENDPOINTS)
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_yvl_vlendpt_type);
+ 
+ 		call->unmarshall = 3;
+ 
+@@ -546,7 +552,8 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
+ 			size = sizeof(__be32) * (1 + 4 + 1);
+ 			break;
+ 		default:
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_yvl_vlendpt_type);
+ 		}
+ 
+ 		if (call->count > 1)
+@@ -559,16 +566,19 @@ static int afs_deliver_yfsvl_get_endpoints(struct afs_call *call)
+ 		switch (call->count2) {
+ 		case YFS_ENDPOINT_IPV4:
+ 			if (ntohl(bp[0]) != sizeof(__be32) * 2)
+-				return afs_protocol_error(call, -EBADMSG);
++				return afs_protocol_error(call, -EBADMSG,
++							  afs_eproto_yvl_vlendpt4_len);
+ 			bp += 3;
+ 			break;
+ 		case YFS_ENDPOINT_IPV6:
+ 			if (ntohl(bp[0]) != sizeof(__be32) * 5)
+-				return afs_protocol_error(call, -EBADMSG);
++				return afs_protocol_error(call, -EBADMSG,
++							  afs_eproto_yvl_vlendpt6_len);
+ 			bp += 6;
+ 			break;
+ 		default:
+-			return afs_protocol_error(call, -EBADMSG);
++			return afs_protocol_error(call, -EBADMSG,
++						  afs_eproto_yvl_vlendpt_type);
+ 		}
+ 
+ 		/* Got either the type of the next entry or the count of
+diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
+index d0a341bc4540..5c60ade2c7d8 100644
+--- a/include/trace/events/afs.h
++++ b/include/trace/events/afs.h
+@@ -84,6 +84,25 @@ enum afs_edit_dir_reason {
+ 	afs_edit_dir_for_unlink,
  };
  
- struct iov_iter {
-@@ -72,6 +73,11 @@ static inline bool iov_iter_is_pipe(const struct iov_iter *i)
- 	return iov_iter_type(i) == ITER_PIPE;
- }
- 
-+static inline bool iov_iter_is_discard(const struct iov_iter *i)
-+{
-+	return iov_iter_type(i) == ITER_DISCARD;
-+}
++enum afs_eproto_cause {
++	afs_eproto_bad_status,
++	afs_eproto_cb_count,
++	afs_eproto_cb_fid_count,
++	afs_eproto_file_type,
++	afs_eproto_ibulkst_cb_count,
++	afs_eproto_ibulkst_count,
++	afs_eproto_motd_len,
++	afs_eproto_offline_msg_len,
++	afs_eproto_volname_len,
++	afs_eproto_yvl_fsendpt4_len,
++	afs_eproto_yvl_fsendpt6_len,
++	afs_eproto_yvl_fsendpt_num,
++	afs_eproto_yvl_fsendpt_type,
++	afs_eproto_yvl_vlendpt4_len,
++	afs_eproto_yvl_vlendpt6_len,
++	afs_eproto_yvl_vlendpt_type,
++};
 +
- static inline unsigned char iov_iter_rw(const struct iov_iter *i)
- {
- 	return i->type & (READ | WRITE);
-@@ -220,6 +226,7 @@ void iov_iter_bvec(struct iov_iter *i, unsigned int direction, const struct bio_
- 			unsigned long nr_segs, size_t count);
- void iov_iter_pipe(struct iov_iter *i, unsigned int direction, struct pipe_inode_info *pipe,
- 			size_t count);
-+void iov_iter_discard(struct iov_iter *i, unsigned int direction, size_t count);
- ssize_t iov_iter_get_pages(struct iov_iter *i, struct page **pages,
- 			size_t maxsize, unsigned maxpages, size_t *start);
- ssize_t iov_iter_get_pages_alloc(struct iov_iter *i, struct page ***pages,
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index c42b928b15ef..7ebccb5c1637 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -83,6 +83,7 @@
- 			const struct kvec *kvec;		\
- 			struct kvec v;				\
- 			iterate_kvec(i, n, v, kvec, skip, (K))	\
-+		} else if (unlikely(i->type & ITER_DISCARD)) {	\
- 		} else {					\
- 			const struct iovec *iov;		\
- 			struct iovec v;				\
-@@ -114,6 +115,8 @@
- 			}					\
- 			i->nr_segs -= kvec - i->kvec;		\
- 			i->kvec = kvec;				\
-+		} else if (unlikely(i->type & ITER_DISCARD)) {	\
-+			skip += n;				\
- 		} else {					\
- 			const struct iovec *iov;		\
- 			struct iovec v;				\
-@@ -838,7 +841,9 @@ size_t copy_page_to_iter(struct page *page, size_t offset, size_t bytes,
- 		size_t wanted = copy_to_iter(kaddr + offset, bytes, i);
- 		kunmap_atomic(kaddr);
- 		return wanted;
--	} else if (likely(!iov_iter_is_pipe(i)))
-+	} else if (unlikely(iov_iter_is_discard(i)))
-+		return bytes;
-+	else if (likely(!iov_iter_is_pipe(i)))
- 		return copy_page_to_iter_iovec(page, offset, bytes, i);
- 	else
- 		return copy_page_to_iter_pipe(page, offset, bytes, i);
-@@ -850,7 +855,7 @@ size_t copy_page_from_iter(struct page *page, size_t offset, size_t bytes,
- {
- 	if (unlikely(!page_copy_sane(page, offset, bytes)))
- 		return 0;
--	if (unlikely(iov_iter_is_pipe(i))) {
-+	if (unlikely(iov_iter_is_pipe(i) || iov_iter_is_discard(i))) {
- 		WARN_ON(1);
- 		return 0;
- 	}
-@@ -910,7 +915,7 @@ size_t iov_iter_copy_from_user_atomic(struct page *page,
- 		kunmap_atomic(kaddr);
- 		return 0;
- 	}
--	if (unlikely(iov_iter_is_pipe(i))) {
-+	if (unlikely(iov_iter_is_pipe(i) || iov_iter_is_discard(i))) {
- 		kunmap_atomic(kaddr);
- 		WARN_ON(1);
- 		return 0;
-@@ -978,6 +983,10 @@ void iov_iter_advance(struct iov_iter *i, size_t size)
- 		pipe_advance(i, size);
- 		return;
- 	}
-+	if (unlikely(iov_iter_is_discard(i))) {
-+		i->count -= size;
-+		return;
-+	}
- 	iterate_and_advance(i, size, v, 0, 0, 0)
- }
- EXPORT_SYMBOL(iov_iter_advance);
-@@ -1013,6 +1022,8 @@ void iov_iter_revert(struct iov_iter *i, size_t unroll)
- 		pipe_truncate(i);
- 		return;
- 	}
-+	if (unlikely(iov_iter_is_discard(i)))
-+		return;
- 	if (unroll <= i->iov_offset) {
- 		i->iov_offset -= unroll;
- 		return;
-@@ -1055,6 +1066,8 @@ size_t iov_iter_single_seg_count(const struct iov_iter *i)
- 		return i->count;	// it is a silly place, anyway
- 	if (i->nr_segs == 1)
- 		return i->count;
-+	if (unlikely(iov_iter_is_discard(i)))
-+		return i->count;
- 	else if (iov_iter_is_bvec(i))
- 		return min(i->count, i->bvec->bv_len - i->iov_offset);
- 	else
-@@ -1103,6 +1116,24 @@ void iov_iter_pipe(struct iov_iter *i, unsigned int direction,
- }
- EXPORT_SYMBOL(iov_iter_pipe);
+ #endif /* end __AFS_DECLARE_TRACE_ENUMS_ONCE_ONLY */
  
-+/**
-+ * iov_iter_discard - Initialise an I/O iterator that discards data
-+ * @i: The iterator to initialise.
-+ * @direction: The direction of the transfer.
-+ * @count: The size of the I/O buffer in bytes.
-+ *
-+ * Set up an I/O iterator that just discards everything that's written to it.
-+ * It's only available as a READ iterator.
-+ */
-+void iov_iter_discard(struct iov_iter *i, unsigned int direction, size_t count)
-+{
-+	BUG_ON(direction != READ);
-+	i->type = ITER_DISCARD | READ;
-+	i->count = count;
-+	i->iov_offset = 0;
-+}
-+EXPORT_SYMBOL(iov_iter_discard);
+ /*
+@@ -146,6 +165,24 @@ enum afs_edit_dir_reason {
+ 	EM(afs_edit_dir_for_symlink,		"Symlnk") \
+ 	E_(afs_edit_dir_for_unlink,		"Unlink")
+ 
++#define afs_eproto_causes			\
++	EM(afs_eproto_bad_status,	"BadStatus") \
++	EM(afs_eproto_cb_count,		"CbCount") \
++	EM(afs_eproto_cb_fid_count,	"CbFidCount") \
++	EM(afs_eproto_file_type,	"FileTYpe") \
++	EM(afs_eproto_ibulkst_cb_count,	"IBS.CbCount") \
++	EM(afs_eproto_ibulkst_count,	"IBS.FidCount") \
++	EM(afs_eproto_motd_len,		"MotdLen") \
++	EM(afs_eproto_offline_msg_len,	"OfflineMsgLen") \
++	EM(afs_eproto_volname_len,	"VolNameLen") \
++	EM(afs_eproto_yvl_fsendpt4_len,	"YVL.FsEnd4Len") \
++	EM(afs_eproto_yvl_fsendpt6_len,	"YVL.FsEnd6Len") \
++	EM(afs_eproto_yvl_fsendpt_num,	"YVL.FsEndCount") \
++	EM(afs_eproto_yvl_fsendpt_type,	"YVL.FsEndType") \
++	EM(afs_eproto_yvl_vlendpt4_len,	"YVL.VlEnd4Len") \
++	EM(afs_eproto_yvl_vlendpt6_len,	"YVL.VlEnd6Len") \
++	E_(afs_eproto_yvl_vlendpt_type,	"YVL.VlEndType")
 +
- unsigned long iov_iter_alignment(const struct iov_iter *i)
- {
- 	unsigned long res = 0;
-@@ -1127,7 +1158,7 @@ unsigned long iov_iter_gap_alignment(const struct iov_iter *i)
- 	unsigned long res = 0;
- 	size_t size = i->count;
  
--	if (unlikely(iov_iter_is_pipe(i))) {
-+	if (unlikely(iov_iter_is_pipe(i) || iov_iter_is_discard(i))) {
- 		WARN_ON(1);
- 		return ~0U;
- 	}
-@@ -1197,6 +1228,9 @@ ssize_t iov_iter_get_pages(struct iov_iter *i,
+ /*
+  * Export enum symbols via userspace.
+@@ -555,24 +592,25 @@ TRACE_EVENT(afs_edit_dir,
+ 	    );
  
- 	if (unlikely(iov_iter_is_pipe(i)))
- 		return pipe_get_pages(i, pages, maxsize, maxpages, start);
-+	if (unlikely(iov_iter_is_discard(i)))
-+		return -EFAULT;
-+
- 	iterate_all_kinds(i, maxsize, v, ({
- 		unsigned long addr = (unsigned long)v.iov_base;
- 		size_t len = v.iov_len + (*start = addr & (PAGE_SIZE - 1));
-@@ -1274,6 +1308,9 @@ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
+ TRACE_EVENT(afs_protocol_error,
+-	    TP_PROTO(struct afs_call *call, int error, const void *where),
++	    TP_PROTO(struct afs_call *call, int error, enum afs_eproto_cause cause),
  
- 	if (unlikely(iov_iter_is_pipe(i)))
- 		return pipe_get_pages_alloc(i, pages, maxsize, start);
-+	if (unlikely(iov_iter_is_discard(i)))
-+		return -EFAULT;
-+
- 	iterate_all_kinds(i, maxsize, v, ({
- 		unsigned long addr = (unsigned long)v.iov_base;
- 		size_t len = v.iov_len + (*start = addr & (PAGE_SIZE - 1));
-@@ -1315,7 +1352,7 @@ size_t csum_and_copy_from_iter(void *addr, size_t bytes, __wsum *csum,
- 	__wsum sum, next;
- 	size_t off = 0;
- 	sum = *csum;
--	if (unlikely(iov_iter_is_pipe(i))) {
-+	if (unlikely(iov_iter_is_pipe(i) || iov_iter_is_discard(i))) {
- 		WARN_ON(1);
- 		return 0;
- 	}
-@@ -1357,7 +1394,7 @@ bool csum_and_copy_from_iter_full(void *addr, size_t bytes, __wsum *csum,
- 	__wsum sum, next;
- 	size_t off = 0;
- 	sum = *csum;
--	if (unlikely(iov_iter_is_pipe(i))) {
-+	if (unlikely(iov_iter_is_pipe(i) || iov_iter_is_discard(i))) {
- 		WARN_ON(1);
- 		return false;
- 	}
-@@ -1402,7 +1439,7 @@ size_t csum_and_copy_to_iter(const void *addr, size_t bytes, __wsum *csum,
- 	__wsum sum, next;
- 	size_t off = 0;
- 	sum = *csum;
--	if (unlikely(iov_iter_is_pipe(i))) {
-+	if (unlikely(iov_iter_is_pipe(i) || iov_iter_is_discard(i))) {
- 		WARN_ON(1);	/* for now */
- 		return 0;
- 	}
-@@ -1444,6 +1481,8 @@ int iov_iter_npages(const struct iov_iter *i, int maxpages)
+-	    TP_ARGS(call, error, where),
++	    TP_ARGS(call, error, cause),
  
- 	if (!size)
- 		return 0;
-+	if (unlikely(iov_iter_is_discard(i)))
-+		return 0;
+ 	    TP_STRUCT__entry(
+-		    __field(unsigned int,	call		)
+-		    __field(int,		error		)
+-		    __field(const void *,	where		)
++		    __field(unsigned int,		call		)
++		    __field(int,			error		)
++		    __field(enum afs_eproto_cause,	cause		)
+ 			     ),
  
- 	if (unlikely(iov_iter_is_pipe(i))) {
- 		struct pipe_inode_info *pipe = i->pipe;
-@@ -1487,6 +1526,8 @@ const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t flags)
- 		WARN_ON(1);
- 		return NULL;
- 	}
-+	if (unlikely(iov_iter_is_discard(new)))
-+		return NULL;
- 	if (iov_iter_is_bvec(new))
- 		return new->bvec = kmemdup(new->bvec,
- 				    new->nr_segs * sizeof(struct bio_vec),
+ 	    TP_fast_assign(
+ 		    __entry->call = call ? call->debug_id : 0;
+ 		    __entry->error = error;
+-		    __entry->where = where;
++		    __entry->cause = cause;
+ 			   ),
+ 
+-	    TP_printk("c=%08x r=%d sp=%pSR",
+-		      __entry->call, __entry->error, __entry->where)
++	    TP_printk("c=%08x r=%d %s",
++		      __entry->call, __entry->error,
++		      __print_symbolic(__entry->cause, afs_eproto_causes))
+ 	    );
+ 
+ TRACE_EVENT(afs_cm_no_server,
 
