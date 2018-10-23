@@ -2,162 +2,502 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E688FC67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FB4C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D755207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:20:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qnIKKs8B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D755207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D7BE5207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:20:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7BE5207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728785AbeJXFpb (ORCPT
+        id S1728838AbeJXFpi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 01:45:31 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36410 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725266AbeJXFpb (ORCPT
+        Wed, 24 Oct 2018 01:45:38 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:37686 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725266AbeJXFpi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 01:45:31 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a8-v6so3251476wmf.1;
-        Tue, 23 Oct 2018 14:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JIigNVTJFOwfN3Clae2fytl4qYBiZWfJp2YsI5Q7WaA=;
-        b=qnIKKs8BUj5HemOqMDtJ8Q3L4Vej7POZXGfdk2eGN3KrdkqbDdTnKEDat6ybxIA8ae
-         /CIFg2vD5ZoysG/vOffomk45IdpiT69aGv4+ehJy0vFG9Rt1dtyKCoC3BA8dx5bb5U/c
-         UHdyafo8Ql9Rowycxj5P+9y4kWobKDUHrrqGydSZL1pNE0GE7l+/CTT34E6wZNMXFOSm
-         1YAp1xA3aeBxygNR/BDI0zZOzgiHGVgmPJj7gdeNUqAlix6nOBYB983fnlvH8ukeEczr
-         TR6puseY+8+2cVRzY8F80uFdC1oI5zLH7v/Lk0tvVr9fs3/9NU/fotgCURsG1T2R6/f4
-         7KiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=JIigNVTJFOwfN3Clae2fytl4qYBiZWfJp2YsI5Q7WaA=;
-        b=BqSfix7rcPpKpU6RrA35n4TGLIcJl69MY675M2i0FBLE0i8a/F22RGHQbyyG0b4KZC
-         8W3lTp62b/Yik+cL+gJCsnwWG+M59SQ0SwUYg6Ryuon72dSmrGYkg1HXB7j6mNm23UND
-         mgpcMJNSNQ8tulslydHnW2te2TMISzIS2vDx78D7garHKs6IP4tnurRkBdqy8T1rExli
-         naiWbbSdwDRl5TIt0kzAHfeV63zIyeoRPINL0ZImCvMjP/dNZr1jFspiJDvaj3yRl88Y
-         r2Wci9a+Ehtr9Pg8BUBlJoxtniSNGGnk44f+9S8GNMaYs/2ufYVqTBITzqR1+nHiVXEo
-         DIOQ==
-X-Gm-Message-State: ABuFfoiN8ADblyGaQCPpPymwcL0zG52hK5Jrtu7H9J5qnypawdibKJFy
-        1Tu9nMMiyXG39SxuVaIzSXI=
-X-Google-Smtp-Source: ACcGV63E1DLCU58/8ZoOzoUKRyEl0mn1jSpHGAe1iRUMh1j4LdKWbkOSa3yP+VD0EX61QrTUr/sEGA==
-X-Received: by 2002:a7b:c150:: with SMTP id z16-v6mr22314954wmi.25.1540329620312;
-        Tue, 23 Oct 2018 14:20:20 -0700 (PDT)
-Received: from ziggy.stardust ([81.145.148.99])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm2613902wrw.12.2018.10.23.14.20.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 14:20:19 -0700 (PDT)
-Subject: Re: [PATCH] thermal: bcm2835: enable hwmon explicitly
-To:     Stefan Wahren <stefan.wahren@i2se.com>, matthias.bgg@kernel.org,
-        rui.zhang@intel.com, edubezval@gmail.com,
-        daniel.lezcano@linaro.org, f.fainelli@gmail.com, rjui@broadcom.com,
-        sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-        eric@anholt.net
-Cc:     geert+renesas@glider.be, pmladek@suse.com,
-        linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Matthias Brugger <mbrugger@suse.com>
-References: <20181021215848.5827-1-matthias.bgg@kernel.org>
- <459136891.184150.1540296101955@email.1und1.de>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <12ca4f71-8ba9-91dd-f5a0-0c72c91401ef@gmail.com>
-Date:   Tue, 23 Oct 2018 23:20:18 +0200
+        Wed, 24 Oct 2018 01:45:38 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9NLKPOK124531;
+        Tue, 23 Oct 2018 16:20:25 -0500
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9NLKPQP106968
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 23 Oct 2018 16:20:25 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 23
+ Oct 2018 16:20:24 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 23 Oct 2018 16:20:24 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9NLKOHb031085;
+        Tue, 23 Oct 2018 16:20:24 -0500
+Subject: Re: [PATCH v4 08/17] remoteproc: add alloc ops in rproc_mem_entry
+ struct
+To:     Loic Pallardy <loic.pallardy@st.com>, <bjorn.andersson@linaro.org>,
+        <ohad@wizery.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+ <1532697292-14272-9-git-send-email-loic.pallardy@st.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <c12a887d-8d26-5813-2fa7-8156cf84c4b4@ti.com>
+Date:   Tue, 23 Oct 2018 16:20:24 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <459136891.184150.1540296101955@email.1und1.de>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1532697292-14272-9-git-send-email-loic.pallardy@st.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefan,
+Hi Loic,
 
-On 23/10/2018 14:01, Stefan Wahren wrote:
-> Hi Matthias,
+On 7/27/18 8:14 AM, Loic Pallardy wrote:
+> Memory entry could be allocated in different ways (ioremap,
+> dma_alloc_coherent, internal RAM allocator...).
+> This patch introduces an alloc ops in rproc_mem_entry structure
+> to associate dedicated allocation mechanism to each memory entry
+> descriptor in order to do remote core agnostic from memory allocators.
 > 
->> matthias.bgg@kernel.org hat am 21. Oktober 2018 um 23:58 geschrieben:
->>
->>
->> From: Matthias Brugger <mbrugger@suse.com>
->>
->> By defaul of-based thermal driver do not enable hwmon.
->> This patch does this explicitly, so that the temperature can be read
->> through the common hwmon sysfs.
->>
->> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> The introduction of this ops allows to perform allocation of all registered
+> carveout at the same time, just before calling rproc_start().
+> It simplifies and makes uniform carveout management whatever origin.
+
+This patch is causing a kernel crash with trace entries. Please see
+further below for the cause.
+
 > 
-> Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 261 ++++++++++++++++++++++-------------
+>  include/linux/remoteproc.h           |   7 +
+>  2 files changed, 175 insertions(+), 93 deletions(-)
 > 
-> I'm just curious which board and config did you use for your tests?
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 77b39ba..2c51549 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -642,74 +642,31 @@ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
+>  }
+>  
+>  /**
+> - * rproc_release_carveout() - release acquired carveout
+> + * rproc_alloc_carveout() - allocated specified carveout
+>   * @rproc: rproc handle
+> - * @mem: the memory entry to release
+> - *
+> - * This function releases specified memory entry @mem allocated via
+> - * dma_alloc_coherent() function by @rproc.
+> - */
+> -static int rproc_release_carveout(struct rproc *rproc,
+> -				  struct rproc_mem_entry *mem)
+> -{
+> -	struct device *dev = &rproc->dev;
+> -
+> -	/* clean up carveout allocations */
+> -	dma_free_coherent(dev->parent, mem->len, mem->va, mem->dma);
+> -	return 0;
+> -}
+> -
+> -/**
+> - * rproc_handle_carveout() - handle phys contig memory allocation requests
+> - * @rproc: rproc handle
+> - * @rsc: the resource entry
+> - * @avail: size of available data (for image validation)
+> - *
+> - * This function will handle firmware requests for allocation of physically
+> - * contiguous memory regions.
+> - *
+> - * These request entries should come first in the firmware's resource table,
+> - * as other firmware entries might request placing other data objects inside
+> - * these memory regions (e.g. data/code segments, trace resource entries, ...).
+> + * @mem: the memory entry to allocate
+>   *
+> - * Allocating memory this way helps utilizing the reserved physical memory
+> - * (e.g. CMA) more efficiently, and also minimizes the number of TLB entries
+> - * needed to map it (in case @rproc is using an IOMMU). Reducing the TLB
+> - * pressure is important; it may have a substantial impact on performance.
+> + * This function allocate specified memory entry @mem using
+> + * dma_alloc_coherent() as default allocator
+>   */
+> -static int rproc_handle_carveout(struct rproc *rproc,
+> -				 struct fw_rsc_carveout *rsc,
+> -				 int offset, int avail)
+> +static int rproc_alloc_carveout(struct rproc *rproc,
+> +				struct rproc_mem_entry *mem)
+>  {
+> -	struct rproc_mem_entry *carveout, *mapping = NULL;
+> +	struct rproc_mem_entry *mapping = NULL;
+>  	struct device *dev = &rproc->dev;
+>  	dma_addr_t dma;
+>  	void *va;
+>  	int ret;
+>  
+> -	if (sizeof(*rsc) > avail) {
+> -		dev_err(dev, "carveout rsc is truncated\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	/* make sure reserved bytes are zeroes */
+> -	if (rsc->reserved) {
+> -		dev_err(dev, "carveout rsc has non zero reserved bytes\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
+> -		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
+> -
+> -	va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
+> +	va = dma_alloc_coherent(dev->parent, mem->len, &dma, GFP_KERNEL);
+>  	if (!va) {
+>  		dev_err(dev->parent,
+> -			"failed to allocate dma memory: len 0x%x\n", rsc->len);
+> +			"failed to allocate dma memory: len 0x%x\n", mem->len);
+>  		return -ENOMEM;
+>  	}
+>  
+>  	dev_dbg(dev, "carveout va %pK, dma %pad, len 0x%x\n",
+> -		va, &dma, rsc->len);
+> +		va, &dma, mem->len);
+>  
+>  	/*
+>  	 * Ok, this is non-standard.
+> @@ -729,22 +686,22 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  	 * physical address in this case.
+>  	 */
+>  
+> -	if (rsc->da != FW_RSC_ADDR_ANY && !rproc->domain) {
+> -		dev_err(dev->parent,
+> -			"Bad carveout rsc configuration\n");
+> -		ret = -ENOMEM;
+> -		goto dma_free;
+> -	}
+> +	if (mem->da != FW_RSC_ADDR_ANY) {
+> +		if (!rproc->domain) {
+> +			dev_err(dev->parent,
+> +				"Bad carveout rsc configuration\n");
+> +			ret = -ENOMEM;
+> +			goto dma_free;
+> +		}
+
+Same comment from Patch 1.
+
+>  
+> -	if (rsc->da != FW_RSC_ADDR_ANY && rproc->domain) {
+>  		mapping = kzalloc(sizeof(*mapping), GFP_KERNEL);
+>  		if (!mapping) {
+>  			ret = -ENOMEM;
+>  			goto dma_free;
+>  		}
+>  
+> -		ret = iommu_map(rproc->domain, rsc->da, dma, rsc->len,
+> -				rsc->flags);
+> +		ret = iommu_map(rproc->domain, mem->da, dma, mem->len,
+> +				mem->flags);
+>  		if (ret) {
+>  			dev_err(dev, "iommu_map failed: %d\n", ret);
+>  			goto free_mapping;
+> @@ -757,52 +714,102 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  		 * We can't trust the remote processor not to change the
+>  		 * resource table, so we must maintain this info independently.
+>  		 */
+> -		mapping->da = rsc->da;
+> -		mapping->len = rsc->len;
+> +		mapping->da = mem->da;
+> +		mapping->len = mem->len;
+>  		list_add_tail(&mapping->node, &rproc->mappings);
+>  
+>  		dev_dbg(dev, "carveout mapped 0x%x to %pad\n",
+> -			rsc->da, &dma);
+> +			mem->da, &dma);
+> +	} else {
+> +		mem->da = (u32)dma;
+
+Hmm, what was the purpose of this? So, this appears to be handling the
+missing implementation for the comment in the fw_rsc_carveout about
+FW_RSC_ADDR_ANY.
+
+>  	}
+>  
+> -	/*
+> -	 * Some remote processors might need to know the pa
+> -	 * even though they are behind an IOMMU. E.g., OMAP4's
+> -	 * remote M3 processor needs this so it can control
+> -	 * on-chip hardware accelerators that are not behind
+> -	 * the IOMMU, and therefor must know the pa.
+> -	 *
+> -	 * Generally we don't want to expose physical addresses
+> -	 * if we don't have to (remote processors are generally
+> -	 * _not_ trusted), so we might want to do this only for
+> -	 * remote processor that _must_ have this (e.g. OMAP4's
+> -	 * dual M3 subsystem).
+> -	 *
+> -	 * Non-IOMMU processors might also want to have this info.
+> -	 * In this case, the device address and the physical address
+> -	 * are the same.
+> -	 */
+> -	rsc->pa = (u32)rproc_va_to_pa(va);
+> -
+> -	carveout = rproc_mem_entry_init(dev, va, dma, rsc->len, rsc->da,
+> -					rproc_release_carveout, rsc->name);
+> -	if (!carveout)
+> -		goto free_carv;
+> -
+> -	rproc_add_carveout(rproc, carveout);
+> +	mem->dma = (u32)dma;
+
+We don't need the typecast, mem->dma is already of type dma_addr_t. Same
+comment above on the else part as well.
+
+> +	mem->va = va;
+>  
+>  	return 0;
+>  
+> -free_carv:
+> -	kfree(carveout);
+>  free_mapping:
+>  	kfree(mapping);
+>  dma_free:
+> -	dma_free_coherent(dev->parent, rsc->len, va, dma);
+> +	dma_free_coherent(dev->parent, mem->len, va, dma);
+>  	return ret;
+>  }
+>  
+>  /**
+> + * rproc_release_carveout() - release acquired carveout
+> + * @rproc: rproc handle
+> + * @mem: the memory entry to release
+> + *
+> + * This function releases specified memory entry @mem allocated via
+> + * rproc_alloc_carveout() function by @rproc.
+> + */
+> +static int rproc_release_carveout(struct rproc *rproc,
+> +				  struct rproc_mem_entry *mem)
+> +{
+> +	struct device *dev = &rproc->dev;
+> +
+> +	/* clean up carveout allocations */
+> +	dma_free_coherent(dev->parent, mem->len, mem->va, mem->dma);
+> +	return 0;
+> +}
+> +
+> +/**
+> + * rproc_handle_carveout() - handle phys contig memory allocation requests
+> + * @rproc: rproc handle
+> + * @rsc: the resource entry
+> + * @avail: size of available data (for image validation)
+> + *
+> + * This function will handle firmware requests for allocation of physically
+> + * contiguous memory regions.
+> + *
+> + * These request entries should come first in the firmware's resource table,
+> + * as other firmware entries might request placing other data objects inside
+> + * these memory regions (e.g. data/code segments, trace resource entries, ...).
+> + *
+> + * Allocating memory this way helps utilizing the reserved physical memory
+> + * (e.g. CMA) more efficiently, and also minimizes the number of TLB entries
+> + * needed to map it (in case @rproc is using an IOMMU). Reducing the TLB
+> + * pressure is important; it may have a substantial impact on performance.
+> + */
+> +static int rproc_handle_carveout(struct rproc *rproc,
+> +				 struct fw_rsc_carveout *rsc,
+> +				 int offset, int avail)
+> +{
+> +	struct rproc_mem_entry *carveout;
+> +	struct device *dev = &rproc->dev;
+> +
+> +	if (sizeof(*rsc) > avail) {
+> +		dev_err(dev, "carveout rsc is truncated\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* make sure reserved bytes are zeroes */
+> +	if (rsc->reserved) {
+> +		dev_err(dev, "carveout rsc has non zero reserved bytes\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
+> +		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
+> +
+> +	/* Register carveout in in list */
+> +	carveout = rproc_mem_entry_init(dev, 0, 0, rsc->len, rsc->da,
+> +					rproc_alloc_carveout,
+> +					rproc_release_carveout, rsc->name);
+> +	if (!carveout) {
+> +		dev_err(dev, "Can't allocate memory entry structure\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	carveout->flags = rsc->flags;
+> +	carveout->rsc_offset = offset;
+> +	rproc_add_carveout(rproc, carveout);
+
+Once we get rid of rproc_add_carveout, the list addition will mostly be
+handled in rproc_mem_entry_init itself.
+
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+>   * rproc_add_carveout() - register an allocated carveout region
+>   * @rproc: rproc handle
+>   * @mem: memory entry to register
+> @@ -832,6 +839,7 @@ void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
+>  struct rproc_mem_entry *
+>  rproc_mem_entry_init(struct device *dev,
+>  		     void *va, dma_addr_t dma, int len, u32 da,
+> +		     int (*alloc)(struct rproc *, struct rproc_mem_entry *),
+>  		     int (*release)(struct rproc *, struct rproc_mem_entry *),
+>  		     const char *name, ...)
+>  {
+> @@ -846,7 +854,9 @@ struct rproc_mem_entry *
+>  	mem->dma = dma;
+>  	mem->da = da;
+>  	mem->len = len;
+> +	mem->alloc = alloc;
+>  	mem->release = release;
+> +	mem->rsc_offset = FW_RSC_ADDR_ANY;
+>  
+>  	va_start(args, name);
+>  	vsnprintf(mem->name, sizeof(mem->name), name, args);
+> @@ -978,6 +988,63 @@ static void rproc_unprepare_subdevices(struct rproc *rproc)
+>  }
+>  
+>  /**
+> + * rproc_alloc_registered_carveouts() - allocate all carveouts registered
+> + * in the list
+> + * @rproc: the remote processor handle
+> + *
+> + * This function parses registered carveout list, performs allocation
+> + * if alloc() ops registered and updates resource table information
+> + * if rsc_offset set.
+> + *
+> + * Return: 0 on success
+> + */
+> +static int rproc_alloc_registered_carveouts(struct rproc *rproc)
+> +{
+> +	struct rproc_mem_entry *entry, *tmp;
+> +	struct fw_rsc_carveout *rsc;
+> +	struct device *dev = &rproc->dev;
+> +	int ret;
+> +
+> +	list_for_each_entry_safe(entry, tmp, &rproc->carveouts, node) {
+> +		if (entry->alloc) {
+> +			ret = entry->alloc(rproc, entry);
+> +			if (ret) {
+> +				dev_err(dev, "Unable to allocate carveout %s: %d\n",
+> +					entry->name, ret);
+> +				return -ENOMEM;
+> +			}
+> +		}
+> +
+> +		if (entry->rsc_offset != FW_RSC_ADDR_ANY) {
+> +			/* update resource table */
+> +			rsc = (void *)rproc->table_ptr + entry->rsc_offset;
+> +
+> +			/*
+> +			 * Some remote processors might need to know the pa
+> +			 * even though they are behind an IOMMU. E.g., OMAP4's
+> +			 * remote M3 processor needs this so it can control
+> +			 * on-chip hardware accelerators that are not behind
+> +			 * the IOMMU, and therefor must know the pa.
+> +			 *
+> +			 * Generally we don't want to expose physical addresses
+> +			 * if we don't have to (remote processors are generally
+> +			 * _not_ trusted), so we might want to do this only for
+> +			 * remote processor that _must_ have this (e.g. OMAP4's
+> +			 * dual M3 subsystem).
+> +			 *
+> +			 * Non-IOMMU processors might also want to have this info.
+> +			 * In this case, the device address and the physical address
+> +			 * are the same.
+> +			 */
+> +			if (entry->va)
+> +				rsc->pa = (u32)rproc_va_to_pa(entry->va);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+>   * rproc_coredump_cleanup() - clean up dump_segments list
+>   * @rproc: the remote processor handle
+>   */
+> @@ -1148,6 +1215,14 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>  		goto clean_up_resources;
+>  	}
+>  
+> +	/* Allocate carveout resources associated to rproc */
+> +	ret = rproc_alloc_registered_carveouts(rproc);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to allocate associated carveouts: %d\n",
+> +			ret);
+> +		goto clean_up_resources;
+> +	}
+
+This is causing an issue with RSC_TRACE on where the trace region on the
+remote processor is actually backed by a DDR carveout address. The
+allocations are now being done after processing the resources from the
+rproc_loading_handlers, which causes the RSC_TRACE to be configured with
+an incorrect kernel va, and accessing it through debugfs then results in
+a kernel crash.
+
+regards
+Suman
+
+> +
+>  	ret = rproc_start(rproc, fw);
+>  	if (ret)
+>  		goto clean_up_resources;
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 55f30fc..ea95b04 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -317,6 +317,9 @@ struct fw_rsc_vdev {
+>   * @priv: associated data
+>   * @name: associated memory region name (optional)
+>   * @node: list node
+> + * @rsc_offset: offset in resource table
+> + * @flags: iommu protection flags
+> + * @alloc: specific memory allocator function
+>   */
+>  struct rproc_mem_entry {
+>  	void *va;
+> @@ -326,6 +329,9 @@ struct rproc_mem_entry {
+>  	void *priv;
+>  	char name[32];
+>  	struct list_head node;
+> +	u32 rsc_offset;
+> +	u32 flags;
+> +	int (*alloc)(struct rproc *rproc, struct rproc_mem_entry *mem);
+>  	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
+>  };
+>  
+> @@ -563,6 +569,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  struct rproc_mem_entry *
+>  rproc_mem_entry_init(struct device *dev,
+>  		     void *va, dma_addr_t dma, int len, u32 da,
+> +		     int (*alloc)(struct rproc *, struct rproc_mem_entry *),
+>  		     int (*release)(struct rproc *, struct rproc_mem_entry *),
+>  		     const char *name, ...);
+>  
 > 
 
-I use the RPi3 B+. I suppose when asking about the config, you want to know if I
-also enable the RASPBERRYPI_HWMON, yes I enable that as well. Actually this
-patch is for openSUSE Leap. You can find the whole config (if you are
-interested) here:
-https://kernel.suse.com/cgit/kernel-source/tree/config/arm64/default?h=SLE15
-
-Regards,
-Matthias
