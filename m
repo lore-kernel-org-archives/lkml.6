@@ -2,109 +2,105 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6B6C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBAA9C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:10:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A29B120671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:09:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="XEAj9F9G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A29B120671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 7ACB12080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:10:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ACB12080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbeJWUcj (ORCPT
+        id S1728069AbeJWUeK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 16:32:39 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:44832 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727492AbeJWUcj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 16:32:39 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 8525C10C0FF4;
-        Tue, 23 Oct 2018 05:09:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1540296566; bh=d8aAbd6zN++3eczZmy7acLULZ4RQvQIQYDt3QoAcxNM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=XEAj9F9Gx0U2FhqcG2vlcPxIVUsuKpOOLQus7UgGEszoz56dNNgYBfkbQ6+VC6s9p
-         8pz407PRkHY0BLJcmxECcRJo/yegGLPJLOpchaKI3HKSCA86dUDGbnwE8ntrVHjSW3
-         Shd39JN27x9eSxJcIOAGBA9/W1HNP3Sv95R9HkXTQjI4V1aLkR6JqlrIvpPPWiDGUv
-         VH4y9aiUphpkK6KLli6b7ZYVZdsm2/dax1BHaVE/wQ0p8+lOwLHraJgVTlI9S9deo5
-         UL3+KuDLaAy4x0JVaKDbGoyA6awNidlB4oiWFdBF/egldtYN+QSBkkTfPsimDME5rF
-         ghxo98BdRtSuA==
-Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.38])
-        by mailhost.synopsys.com (Postfix) with ESMTP id B21543966;
-        Tue, 23 Oct 2018 05:09:23 -0700 (PDT)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <vineet.gupta1@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH] ARC: [plat-hsdk] Enable DW APB GPIO support
-Date:   Tue, 23 Oct 2018 15:09:19 +0300
-Message-Id: <20181023120919.11627-1-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.5
+        Tue, 23 Oct 2018 16:34:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59598 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727264AbeJWUeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 16:34:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 789C9AF4D;
+        Tue, 23 Oct 2018 12:10:56 +0000 (UTC)
+Date:   Tue, 23 Oct 2018 14:10:55 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     linux-mm@kvack.org,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
+Message-ID: <20181023121055.GS18839@dhcp22.suse.cz>
+References: <f9a8079f-55b0-301e-9b3d-a5250bd7d277@i-love.sakura.ne.jp>
+ <20181022120308.GB18839@dhcp22.suse.cz>
+ <201810230101.w9N118i3042448@www262.sakura.ne.jp>
+ <20181023114246.GR18839@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181023114246.GR18839@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable GPIO support on HSDK. HSDK SoC includes Synopsys
-DesignWare DW_apb_gpio IP with 24 GPIOs mapped onto port A.
+On Tue 23-10-18 13:42:46, Michal Hocko wrote:
+> On Tue 23-10-18 10:01:08, Tetsuo Handa wrote:
+> > Michal Hocko wrote:
+> > > On Mon 22-10-18 20:45:17, Tetsuo Handa wrote:
+> > > > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > > > > index e79cb59552d9..a9dfed29967b 100644
+> > > > > --- a/mm/memcontrol.c
+> > > > > +++ b/mm/memcontrol.c
+> > > > > @@ -1380,10 +1380,22 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
+> > > > >  		.gfp_mask = gfp_mask,
+> > > > >  		.order = order,
+> > > > >  	};
+> > > > > -	bool ret;
+> > > > > +	bool ret = true;
+> > > > >  
+> > > > >  	mutex_lock(&oom_lock);
+> > > > > +
+> > > > > +	/*
+> > > > > +	 * multi-threaded tasks might race with oom_reaper and gain
+> > > > > +	 * MMF_OOM_SKIP before reaching out_of_memory which can lead
+> > > > > +	 * to out_of_memory failure if the task is the last one in
+> > > > > +	 * memcg which would be a false possitive failure reported
+> > > > > +	 */
+> > > > > +	if (tsk_is_oom_victim(current))
+> > > > > +		goto unlock;
+> > > > > +
+> > > > 
+> > > > This is not wrong but is strange. We can use mutex_lock_killable(&oom_lock)
+> > > > so that any killed threads no longer wait for oom_lock.
+> > > 
+> > > tsk_is_oom_victim is stronger because it doesn't depend on
+> > > fatal_signal_pending which might be cleared throughout the exit process.
+> > > 
+> > 
+> > I still want to propose this. No need to be memcg OOM specific.
+> 
+> Well, I maintain what I've said [1] about simplicity and specific fix
+> for a specific issue. Especially in the tricky code like this where all
+> the consequences are far more subtle than they seem to be.
+> 
+> This is obviously a matter of taste but I don't see much point discussing
+> this back and forth for ever. Unless there is a general agreement that
+> the above is less appropriate then I am willing to consider a different
+> change but I simply do not have energy to nit pick for ever.
+> 
+> [1] http://lkml.kernel.org/r/20181022134315.GF18839@dhcp22.suse.cz
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
- arch/arc/boot/dts/hsdk.dts      | 15 +++++++++++++++
- arch/arc/configs/hsdk_defconfig |  3 +++
- 2 files changed, 18 insertions(+)
-
-diff --git a/arch/arc/boot/dts/hsdk.dts b/arch/arc/boot/dts/hsdk.dts
-index ef149f59929a..43f17b51ee89 100644
---- a/arch/arc/boot/dts/hsdk.dts
-+++ b/arch/arc/boot/dts/hsdk.dts
-@@ -222,6 +222,21 @@
- 			bus-width = <4>;
- 			dma-coherent;
- 		};
-+
-+		gpio: gpio@3000 {
-+			compatible = "snps,dw-apb-gpio";
-+			reg = <0x3000 0x20>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			gpio_port_a: gpio-controller@0 {
-+				compatible = "snps,dw-apb-gpio-port";
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				snps,nr-gpios = <24>;
-+				reg = <0>;
-+			};
-+		};
- 	};
- 
- 	memory@80000000 {
-diff --git a/arch/arc/configs/hsdk_defconfig b/arch/arc/configs/hsdk_defconfig
-index 1dec2b4bc5e6..eca10b8baea5 100644
---- a/arch/arc/configs/hsdk_defconfig
-+++ b/arch/arc/configs/hsdk_defconfig
-@@ -45,6 +45,9 @@ CONFIG_SERIAL_8250_CONSOLE=y
- CONFIG_SERIAL_8250_DW=y
- CONFIG_SERIAL_OF_PLATFORM=y
- # CONFIG_HW_RANDOM is not set
-+CONFIG_GPIOLIB=y
-+CONFIG_GPIO_SYSFS=y
-+CONFIG_GPIO_DWAPB=y
- # CONFIG_HWMON is not set
- CONFIG_DRM=y
- # CONFIG_DRM_FBDEV_EMULATION is not set
+In other words. Having a memcg specific fix means, well, a memcg
+maintenance burden. Like any other memcg specific oom decisions we
+already have. So are you OK with that Johannes or you would like to see
+a more generic fix which might turn out to be more complex?
 -- 
-2.14.5
-
+Michal Hocko
+SUSE Labs
