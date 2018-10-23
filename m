@@ -2,201 +2,82 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9F1C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31537C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A822020813
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:57:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A822020813
+	by mail.kernel.org (Postfix) with ESMTP id 046612081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:57:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 046612081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729120AbeJXIX2 (ORCPT
+        id S1729147AbeJXIXe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 04:23:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50114 "EHLO mx1.redhat.com"
+        Wed, 24 Oct 2018 04:23:34 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50142 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727595AbeJXIX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 04:23:28 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S1727595AbeJXIXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 04:23:34 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 27F81811A9;
-        Tue, 23 Oct 2018 23:57:45 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 17D1C81F0F;
+        Tue, 23 Oct 2018 23:57:52 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 00B9D60F80;
-        Tue, 23 Oct 2018 23:57:43 +0000 (UTC)
-Subject: [PATCH 00/25] AFS development [ver #2]
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2B2E176511;
+        Tue, 23 Oct 2018 23:57:50 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 01/25] amd-gpu: Don't undefine READ and WRITE [ver #2]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Date:   Wed, 24 Oct 2018 00:57:43 +0100
-Message-ID: <154033906284.12041.12908874734066278152.stgit@warthog.procyon.org.uk>
+Date:   Wed, 24 Oct 2018 00:57:50 +0100
+Message-ID: <154033907037.12041.8420716608719361104.stgit@warthog.procyon.org.uk>
+In-Reply-To: <154033906284.12041.12908874734066278152.stgit@warthog.procyon.org.uk>
+References: <154033906284.12041.12908874734066278152.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 23 Oct 2018 23:57:45 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 23 Oct 2018 23:57:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Remove the undefinition of READ and WRITE because these constants may be
+used elsewhere in subsequently included header files, thus breaking them.
 
-Hi Al,
+These constants don't actually appear to be used in the driver, so the
+undefinition seems pointless.
 
-Here's a set of development patches for AFS if you could pull it for the
-upcoming merge window.  Its main features are:
-
- (1) Provide wrapper functions for accessing iov iterators and provide a
-     new read discard iterator type (ITER_DISCARD).
-
- (2) Use iov iterators more directly in AFS unmarshalling routines.
-
- (3) Support for retrieving DNS information where the VL server address list
-     is partitioned by server.
-
- (4) Implement VL server rotation and improve both this and FS server
-     rotation.
-
- (5) Add support for the YFS variant of the AFS server.
-
- (6) When first attempting to use a server or a list of servers, plumb all
-     the addresses simultaneously to try and determine the best route.
-
-The patches are tagged here:
-
-	git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
-	afs-next-20181024
-
-and can also be found on the following branch:
-
-	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-next
-
-David
+Fixes: 4562236b3bc0 ("drm/amd/dc: Add dc display driver (v2)")
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
-David Howells (25):
-      amd-gpu: Don't undefine READ and WRITE
-      iov_iter: Use accessor function
-      iov_iter: Separate type from direction and use accessor functions
-      iov_iter: Add I/O discard iterator
-      afs: Better tracing of protocol errors
-      afs: Set up the iov_iter before calling afs_extract_data()
-      afs: Improve FS server rotation error handling
-      afs: Implement VL server rotation
-      afs: Fix TTL on VL server and address lists
-      afs: Handle EIO from delivery function
-      afs: Add a couple of tracepoints to log I/O errors
-      afs: Don't invoke the server to read data beyond EOF
-      afs: Increase to 64-bit volume ID and 96-bit vnode ID for YFS
-      afs: Commit the status on a new file/dir/symlink
-      afs: Remove callback details from afs_callback_break struct
-      afs: Implement the YFS cache manager service
-      afs: Fix FS.FetchStatus delivery from updating wrong vnode
-      afs: Calc callback expiry in op reply delivery
-      afs: Get the target vnode in afs_rmdir() and get a callback on it
-      afs: Expand data structure fields to support YFS
-      afs: Implement YFS support in the fs client
-      afs: Allow dumping of server cursor on operation failure
-      afs: Eliminate the address pointer from the address list cursor
-      afs: Fix callback handling
-      afs: Probe multiple fileservers simultaneously
 
+ drivers/gpu/drm/amd/display/dc/os_types.h |    2 --
+ 1 file changed, 2 deletions(-)
 
- block/bio.c                               |    2 
- drivers/block/drbd/drbd_main.c            |    2 
- drivers/block/drbd/drbd_receiver.c        |    2 
- drivers/block/loop.c                      |    9 
- drivers/block/nbd.c                       |   12 
- drivers/fsi/fsi-sbefifo.c                 |    4 
- drivers/gpu/drm/amd/display/dc/os_types.h |    2 
- drivers/isdn/mISDN/l1oip_core.c           |    3 
- drivers/misc/vmw_vmci/vmci_queue_pair.c   |    6 
- drivers/nvme/target/io-cmd-file.c         |    2 
- drivers/target/iscsi/iscsi_target_util.c  |    6 
- drivers/target/target_core_file.c         |    6 
- drivers/usb/usbip/usbip_common.c          |    2 
- drivers/xen/pvcalls-back.c                |    8 
- fs/9p/vfs_addr.c                          |    4 
- fs/9p/vfs_dir.c                           |    2 
- fs/9p/xattr.c                             |    4 
- fs/afs/Kconfig                            |   12 
- fs/afs/Makefile                           |    7 
- fs/afs/addr_list.c                        |  209 ++-
- fs/afs/afs.h                              |   50 -
- fs/afs/cache.c                            |    2 
- fs/afs/callback.c                         |   17 
- fs/afs/cell.c                             |   65 +
- fs/afs/cmservice.c                        |  287 +++-
- fs/afs/dir.c                              |   75 +
- fs/afs/dynroot.c                          |    4 
- fs/afs/file.c                             |    8 
- fs/afs/flock.c                            |   22 
- fs/afs/fs_probe.c                         |  270 ++++
- fs/afs/fsclient.c                         |  583 ++++----
- fs/afs/inode.c                            |   37 
- fs/afs/internal.h                         |  322 ++++
- fs/afs/mntpt.c                            |    5 
- fs/afs/proc.c                             |  110 +
- fs/afs/protocol_yfs.h                     |  163 ++
- fs/afs/rotate.c                           |  302 +++-
- fs/afs/rxrpc.c                            |  115 +-
- fs/afs/security.c                         |   13 
- fs/afs/server.c                           |  145 --
- fs/afs/server_list.c                      |    6 
- fs/afs/super.c                            |    5 
- fs/afs/vl_list.c                          |  340 +++++
- fs/afs/vl_probe.c                         |  273 ++++
- fs/afs/vl_rotate.c                        |  355 +++++
- fs/afs/vlclient.c                         |  195 +--
- fs/afs/volume.c                           |   56 -
- fs/afs/write.c                            |   30 
- fs/afs/xattr.c                            |    2 
- fs/afs/yfsclient.c                        | 2184 +++++++++++++++++++++++++++++
- fs/block_dev.c                            |    2 
- fs/ceph/file.c                            |    7 
- fs/cifs/connect.c                         |    4 
- fs/cifs/file.c                            |    4 
- fs/cifs/misc.c                            |    4 
- fs/cifs/smb2ops.c                         |    4 
- fs/cifs/smbdirect.c                       |   17 
- fs/cifs/transport.c                       |    8 
- fs/direct-io.c                            |    2 
- fs/dlm/lowcomms.c                         |    2 
- fs/fuse/file.c                            |    2 
- fs/iomap.c                                |    2 
- fs/nfsd/vfs.c                             |    4 
- fs/ocfs2/cluster/tcp.c                    |    2 
- fs/orangefs/inode.c                       |    2 
- fs/splice.c                               |    7 
- include/linux/uio.h                       |   65 +
- include/trace/events/afs.h                |  213 +++
- lib/iov_iter.c                            |  125 +-
- mm/filemap.c                              |    2 
- mm/page_io.c                              |    2 
- net/9p/client.c                           |    2 
- net/9p/trans_virtio.c                     |    2 
- net/bluetooth/6lowpan.c                   |    2 
- net/bluetooth/a2mp.c                      |    2 
- net/bluetooth/smp.c                       |    2 
- net/ceph/messenger.c                      |    6 
- net/netfilter/ipvs/ip_vs_sync.c           |    2 
- net/smc/smc_clc.c                         |    4 
- net/socket.c                              |    6 
- net/sunrpc/svcsock.c                      |    2 
- net/tipc/topsrv.c                         |    2 
- net/tls/tls_device.c                      |    4 
- net/tls/tls_sw.c                          |    4 
- 84 files changed, 5629 insertions(+), 1236 deletions(-)
- create mode 100644 fs/afs/fs_probe.c
- create mode 100644 fs/afs/protocol_yfs.h
- create mode 100644 fs/afs/vl_list.c
- create mode 100644 fs/afs/vl_probe.c
- create mode 100644 fs/afs/vl_rotate.c
- create mode 100644 fs/afs/yfsclient.c
+diff --git a/drivers/gpu/drm/amd/display/dc/os_types.h b/drivers/gpu/drm/amd/display/dc/os_types.h
+index a407892905af..c0d9f332baed 100644
+--- a/drivers/gpu/drm/amd/display/dc/os_types.h
++++ b/drivers/gpu/drm/amd/display/dc/os_types.h
+@@ -40,8 +40,6 @@
+ #define LITTLEENDIAN_CPU
+ #endif
+ 
+-#undef READ
+-#undef WRITE
+ #undef FRAME_SIZE
+ 
+ #define dm_output_to_console(fmt, ...) DRM_DEBUG_KMS(fmt, ##__VA_ARGS__)
 
