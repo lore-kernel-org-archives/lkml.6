@@ -2,60 +2,60 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4ECCC67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6BAC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:51:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B71A207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:51:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46B5920652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:51:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="oRPQpqnB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B71A207DD
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="SKwRUoCu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46B5920652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728541AbeJXAPa (ORCPT
+        id S1728558AbeJXAPg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 20:15:30 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37472 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728495AbeJXAP3 (ORCPT
+        Tue, 23 Oct 2018 20:15:36 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38236 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728425AbeJXAPf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 20:15:29 -0400
-Received: by mail-pl1-f196.google.com with SMTP id bh10-v6so837561plb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 08:51:33 -0700 (PDT)
+        Tue, 23 Oct 2018 20:15:35 -0400
+Received: by mail-pf1-f196.google.com with SMTP id v11-v6so889596pfn.5
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 08:51:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3eeg4cPMpf6ZO8A2CN8XTlIX+ceIdjQJrEvIG6Ts4Fw=;
-        b=oRPQpqnBjUdrfV6xGscSNy217s+6s+q1t3/C6B54OBKvGWmOVMTvue/7ZRTw14c7lA
-         64yV15lGLRrnHk1qEsa8MBe/bX2aQRgjOMAhRQ6YAUQlsTG8d0Rh3upAk60TUz0zsFUy
-         JmMHDzKKepsvrMuq4ggQOPcxHKNPgSuhdrbF0=
+        bh=NlgASVRlNX+ALqEjtYF3sm1E5YI3hOJ6Lz3xqdNlUFw=;
+        b=SKwRUoCuPWk11pAUkiNGBqeHeZLkKJh618KwzDJ01LmNIlq42ZYy9LxDrkddubq3oX
+         TykXJjlDB1+v7EXF+wDHX195vHqLDEbE5MMOBEr6FhlJKoxW95DEqF1H8dms2/6rBR6+
+         F3r9ZLjTCJ/R7HwpG4SNwurOdH4RePqcSTYiQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3eeg4cPMpf6ZO8A2CN8XTlIX+ceIdjQJrEvIG6Ts4Fw=;
-        b=SJaGeF3cEjOk8HRfDwfudQAP/2dG5GQDX1ROIaUmt0KGVcb/BI4FuedgRuwrEbMR18
-         P+HW4qTLPnAaozzXH/8hg1vTmrkuaa5bwlPyTyBT8F0rZnndEmbES8mx0tCZay9/zDqx
-         yHgLKYo7i1IWLizzbqhgksMETNAhRLZXXy5CEvzkpLu3sR7XCfGUv/NViHF1OhLciafm
-         MmRQkC9ec+eKzCYKl+tEvn5BafYTX2/bPZ/l7ggwEJHgwVDW3PoO1PBoRG9lAxVsmA9t
-         RHCHjeqZQHoSr3ht7VWWs1uNyOQUVRSD58b2h4Nwcs0u2jtUyKvO7GQn1dm+8/9v5WLI
-         J3UQ==
-X-Gm-Message-State: AGRZ1gIn5F0jA4/Tcb5Cf0Jg2Es/dAZjdZArBP249ipwMoU+Zn/qRPFV
-        HlBP2iaNSIc/tDAft5smC53hTA==
-X-Google-Smtp-Source: AJdET5ftv9r5/C4cgca0UT1ygc5rqgGsXmjPT9QBWKUbhGijsZbwSf027FciwTHWChSaUtVbZfzyOQ==
-X-Received: by 2002:a17:902:66e5:: with SMTP id e92-v6mr3353277plk.92.1540309892881;
-        Tue, 23 Oct 2018 08:51:32 -0700 (PDT)
+        bh=NlgASVRlNX+ALqEjtYF3sm1E5YI3hOJ6Lz3xqdNlUFw=;
+        b=tswkuRvXqYnv85TAXH83Gk7rINGB8G3WYlqaUg4rozp1xAGMsHMnDnD1KBBTVMKQth
+         00mcUc3xBh/BKh2FoI8bAvkjLP+blpvHiBqtNaWzup5Jn6Usucb7D9q1T/QdsHZPv1rs
+         1WdPMpMa64AJK2r5gF02rvJBcrqAYAyKegEMwsBdqpApQOBSf9wOTWwpktFE435VhuEf
+         gxqZzCHcvC2hUjqcGDrAW8vMroMh88fRh/uIKkryhVllyT8/DZWJagFnp/b50zHsmG/p
+         gg9m6zpyTijRpVCUBqhyv4MSiTVabJxB3PVoNWn62JbzAjX8BK5aqLXp/bCCc09PSBLR
+         tiZw==
+X-Gm-Message-State: AGRZ1gKkokVlJgyMcE+eAFquA3VykBLcrZwj/tMuyouWddgMbGfM9Yxj
+        z1nuRQVa0AYUL1GR54/QSgmgcw==
+X-Google-Smtp-Source: AJdET5czfKeMo4WdpKorjXN7oSgKMFLettza7vTigo3eYGZAoObGBmiWE8R1oWBnJQRj2vkFeHCspQ==
+X-Received: by 2002:a63:734e:: with SMTP id d14-v6mr9580018pgn.397.1540309898443;
+        Tue, 23 Oct 2018 08:51:38 -0700 (PDT)
 Received: from localhost.localdomain ([27.7.51.1])
-        by smtp.gmail.com with ESMTPSA id o75-v6sm7442829pfg.0.2018.10.23.08.51.27
+        by smtp.gmail.com with ESMTPSA id o75-v6sm7442829pfg.0.2018.10.23.08.51.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 08:51:32 -0700 (PDT)
+        Tue, 23 Oct 2018 08:51:37 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -73,9 +73,9 @@ To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 06/15] drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short write 2 param transfer
-Date:   Tue, 23 Oct 2018 21:20:26 +0530
-Message-Id: <20181023155035.9101-7-jagan@amarulasolutions.com>
+Subject: [PATCH v2 07/15] drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
+Date:   Tue, 23 Oct 2018 21:20:27 +0530
+Message-Id: <20181023155035.9101-8-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181023155035.9101-1-jagan@amarulasolutions.com>
 References: <20181023155035.9101-1-jagan@amarulasolutions.com>
@@ -86,32 +86,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Short transfer write support for DCS and Generic transfer types
-share similar way to process command sequence in DSI block so
-add generic write 2 param transfer type macro so-that the panels
-which are requesting similar transfer type may process properly.
+According to horizontal and vertical timings are defined
+per the diagram from include/drm/drm_modes.h
+
+Back porch = [hv]total - [hv]sync_end
+
+So, update SUN6I_DSI_BASIC_SIZE0_VBP calculation as
+mode->vtotal - mode->vsync_end
+
+Horizontal or Vertical back porch calculation in BSP code
+is simply following the Linux drm comment diagram from
+include/drm/drm_modes.h which is
+
+[hv]back porch = [hv]total - [hv]sync_end
+
+BSP code form BPI-M64-bsp is calculating as vertical back porch as
+in linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c
+
+timmings->ver_sync_time= panel_info->lcd_vspw;
+timmings->ver_back_porch= panel_info->lcd_vbp-panel_info->lcd_vspw;
+
+vbp = panel->lcd_vbp;
+vspw = panel->lcd_vspw;
+dsi_dev[sel]->dsi_basic_size0.bits.vbp = vbp-vspw;
+dsi_dev[sel]->dsi_basic_size0.bits.vbp = panel->lcd_vbp - panel->lcd_vspw;
+=>  timmings->ver_back_porch + panel_info->lcd_vspw - panel_info->lcd_vspw
+=>  timmings->ver_back_porch
+=>  mode->vtotal - mode->end
+
+Which evatually same as mode->vtotal - mode->vsync_end so update the
+same in SUN6I_DSI_BASIC_SIZE0_VBP
+
+On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA is proper
+value.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
 Changes for v2:
-- drop dev_err
-- add macro in alphabetical
+- Add detailed commit message
 
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 8e9c76febca2..fc8560607147 100644
+index fc8560607147..3a1d48bc1996 100644
 --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -871,6 +871,7 @@ static ssize_t sun6i_dsi_transfer(struct mipi_dsi_host *host,
- 	switch (msg->type) {
- 	case MIPI_DSI_DCS_SHORT_WRITE:
- 	case MIPI_DSI_DCS_SHORT_WRITE_PARAM:
-+	case MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM:
- 		ret = sun6i_dsi_dcs_write_short(dsi, msg);
- 		break;
+@@ -526,8 +526,8 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+ 	regmap_write(dsi->regs, SUN6I_DSI_BASIC_SIZE0_REG,
+ 		     SUN6I_DSI_BASIC_SIZE0_VSA(mode->vsync_end -
+ 					       mode->vsync_start) |
+-		     SUN6I_DSI_BASIC_SIZE0_VBP(mode->vsync_start -
+-					       mode->vdisplay));
++		     SUN6I_DSI_BASIC_SIZE0_VBP(mode->vtotal -
++					       mode->vsync_end));
  
+ 	regmap_write(dsi->regs, SUN6I_DSI_BASIC_SIZE1_REG,
+ 		     SUN6I_DSI_BASIC_SIZE1_VACT(mode->vdisplay) |
 -- 
 2.18.0.321.gffc6fa0e3
 
