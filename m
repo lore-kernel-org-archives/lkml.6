@@ -2,86 +2,104 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C162C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCA9C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01DEF20671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:01:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01DEF20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 270E420671
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:02:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FzxExb8G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 270E420671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728693AbeJXE0j (ORCPT
+        id S1728543AbeJXE11 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 00:26:39 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50927 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725266AbeJXE0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 00:26:38 -0400
-Received: from hanvin-mobl2.amr.corp.intel.com ([134.134.139.76])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w9NK1QrL3158719
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Tue, 23 Oct 2018 13:01:27 -0700
-Subject: Re: [PATCH RFC] x86: Don't include '-Wa,-' when building with Clang
-To:     Nick Desaulniers <ndesaulniers@google.com>, namit@vmware.com
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-References: <20181023003725.21463-1-natechancellor@gmail.com>
- <F3BBC06A-A9CB-4ABF-ADF4-6B0971FAE364@vmware.com>
- <CAKwvOdmsKbW9v9or+u-W9V7T+LrF4ODY9cgUStkjkmsbMcqJ2g@mail.gmail.com>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <96ffedd2-a19d-95de-45fd-3a83025dd48a@zytor.com>
-Date:   Tue, 23 Oct 2018 13:01:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 24 Oct 2018 00:27:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60732 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725266AbeJXE11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 00:27:27 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9567220671;
+        Tue, 23 Oct 2018 20:02:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540324953;
+        bh=GBQ+SCspG3Nehgv6hkQ2wMExedkSBtfhZ00Av79nLHM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FzxExb8Gy5B6pUu1rwz3jp0gtsO/JdnHs3ikUqIJo/b8FMTpi414f9frIC4yhygqB
+         CMm3hB8a7GNT+NlSm03l7IJIUUp7WbZjKTWvd5dGyPmnKgZJS5PfYPdxhgcKTmy4Q4
+         WCWy0gYGqj5/YPMbYZ1H7qiTf91JJ0pzAvtfRi2s=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 7F14D142C5E; Tue, 23 Oct 2018 17:02:30 -0300 (-03)
+Date:   Tue, 23 Oct 2018 17:02:30 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     "Hunter, Adrian" <adrian.hunter@intel.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 17/19] perf scripts python: exported-sql-viewer.py:
+ Add All branches report
+Message-ID: <20181023200230.GE6114@kernel.org>
+References: <20181001062853.28285-18-adrian.hunter@intel.com>
+ <20181023075949.18920-1-adrian.hunter@intel.com>
+ <20181023181218.GB6114@kernel.org>
+ <363DA0ED52042842948283D2FC38E4649C2B8A4D@IRSMSX106.ger.corp.intel.com>
+ <20181023192935.GD6114@kernel.org>
+ <363DA0ED52042842948283D2FC38E4649C2B8AA7@IRSMSX106.ger.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKwvOdmsKbW9v9or+u-W9V7T+LrF4ODY9cgUStkjkmsbMcqJ2g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <363DA0ED52042842948283D2FC38E4649C2B8AA7@IRSMSX106.ger.corp.intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/23/18 11:40, Nick Desaulniers wrote:
-> On Mon, Oct 22, 2018 at 10:11 PM Nadav Amit <namit@vmware.com> wrote:
->>
->> at 5:37 PM, Nathan Chancellor <natechancellor@gmail.com> wrote:
->>
->> Commit 77b0bf55bc67 ("kbuild/Makefile: Prepare for using macros in
->> inline assembly code to work around asm() related GCC inlining bugs")
->> added this flag to KBUILD_CFLAGS, where it works perfectly fine with
->> GCC. However, when building with Clang, all of the object files compile
->> fine but the build hangs indefinitely at init/main.o, right before the
->> linking stage. Don't include this flag when building with Clang.
->>
->> The kernel builds and boots to a shell in QEMU with both GCC and Clang
->> with this patch applied.
->>
->> Link: https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2FClangBuiltLinux%2Flinux%2Fissues%2F213&amp;data=02%7C01%7Cnamit%40vmware.com%7C871daebc2ca44947d28d08d638811fb5%7Cb39138ca3cee4b4aa4d6cd83d9dd62f0%7C1%7C0%7C636758524579997650&amp;sdata=shuxW81QRrO3TSqbgf462wgZYdLeAKeQEdGRxmnUX30%3D&amp;reserved=0
->> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
->> ---
->>
->> The reason this patch is labeled RFC is while I can verify that this
->> fixes the issue, I'm not entirely sure why the '-Wa,-' works for GCC
->> and not Clang. I looked into what the flag means and I couldn't really
->> find anything so I just assume it's taking input from stdin? The issue
->> could stem from how GCC forks gas versus how Clang does it. If this
->> isn't of concern and the maintainers are happy with this patch as is,
->> feel free to take it.
->>
+Em Tue, Oct 23, 2018 at 07:57:17PM +0000, Hunter, Adrian escreveu:
+> > -----Original Message-----
+> > From: Arnaldo Carvalho de Melo [mailto:acme@kernel.org]
+> > Sent: Tuesday, October 23, 2018 10:30 PM
+> > To: Hunter, Adrian <adrian.hunter@intel.com>
+> > Cc: Jiri Olsa <jolsa@redhat.com>; Andi Kleen <ak@linux.intel.com>; linux-
+> > kernel@vger.kernel.org
+> > Subject: Re: [PATCH V2 17/19] perf scripts python: exported-sql-viewer.py:
+> > Add All branches report
+> > 
+> > Em Tue, Oct 23, 2018 at 06:41:17PM +0000, Hunter, Adrian escreveu:
+> > > > -----Original Message-----
+> > > > From: Arnaldo Carvalho de Melo [mailto:acme@kernel.org]
+> > > > So, I followed the instructions then ended up with:
+> > > >
+> > > > [acme@seventh perf]$ find /usr/local -name "*xed*" | head
+> > > > /usr/local/lib/libxed.so /usr/local/lib/libxed.a
+> > > > /usr/local/lib/libxed-ild.so /usr/local/lib/libxed-ild.a
+> > > > /usr/local/include/xed /usr/local/include/xed/xed- syntax-enum.h
+> > > > /usr/local/include/xed/xed-attributes.h
+> > > > /usr/local/include/xed/xed-build-defines.h
+> > > > /usr/local/include/xed/xed-cpuid-rec.h
+> > > > /usr/local/include/xed/xed-flags.h
+> > > > [acme@seventh perf]$
+> > > >
+> > > > Ran ldconfig as root, etc:
+> > > >
+> > > > [acme@seventh perf]$ ldconfig -v -N | grep xed
+> 
+> What about:
+> 	ldconfig -p | grep  xed
 
-Perhaps someone could actually, you know, time the build and see how
-much -pipe actually matters, if at all?
-
-	-hpa
-
+$ ldconfig -p | grep xed
+$ echo $LD_LIBRARY_PATH 
+/usr/local/lib
+$ ls -la /usr/local/lib/libxed*so
+-r--r--r--. 1 root root  132840 Oct 23 14:52 /usr/local/lib/libxed-ild.so
+-r--r--r--. 2 root root 6842688 Oct 23 14:52 /usr/local/lib/libxed.so
+$ ldconfig -p | grep xed
+$ 
