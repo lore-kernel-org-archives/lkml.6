@@ -2,131 +2,136 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DBBC67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 758C4C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9125A20652
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:11:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="b0UJBW3C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9125A20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2427320652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:11:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2427320652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728438AbeJWRdi (ORCPT
+        id S1728455AbeJWReB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 13:33:38 -0400
-Received: from mail-lf1-f45.google.com ([209.85.167.45]:33021 "EHLO
-        mail-lf1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727602AbeJWRdh (ORCPT
+        Tue, 23 Oct 2018 13:34:01 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41844 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727602AbeJWReA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 13:33:37 -0400
-Received: by mail-lf1-f45.google.com with SMTP id o21-v6so547506lfe.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 02:11:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GwbqpjyTTF9zZXsAQUHLIQWnBnPGSxCpK5StWhkCngQ=;
-        b=b0UJBW3CSXUvXnvmFcRyp1b/swtFjfGE8lVxnWgUJj026qSORyefj7lzmJmzOFO0C7
-         KTBXDXxRZSGSrYmPjEMdJLr5TVPoKTR9nEKB4B8leHTa76919I6MFF//JV3DVoGgtxs6
-         +W6eIzKX2DcK4TRDI7el1OjPjBmZLivaTEjA4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GwbqpjyTTF9zZXsAQUHLIQWnBnPGSxCpK5StWhkCngQ=;
-        b=iubcFvIIGcIlepCl7elk9mG8ilJ9EIlLFYOOk2Qmef4bu9UtUnWafOFvf+uM7UAqzZ
-         0esluUPsYxFByFVl51luFxzHfHAqHrKgSzV/IxlDpcm56Vm6wbAHxLdXIoFsNEJzNvX+
-         OSnwdpeL5Bn9ELXysIqvx6E4HMiRk8as5Bgh7MQSij2teaF1PKOndL+Fv97mgASK8n3n
-         hduKRhDynKSfaf7YFT2Etb770rYJRgg3g9WH63YDbaobclcM/zuEGPnFesg9a3efHfWO
-         HHzP57m9fYjci3H7uVgFQMaqikcz1x77V2K/y+YTf1Pz+O0HOJfDpG1rFupLzpFZAPl+
-         CFGQ==
-X-Gm-Message-State: ABuFfohOgH4CNvmYRxvDlTnA9prsYUfWIrqJEqjiSpenzEOd7Clu5mDp
-        Nr5LeE9aHFRRSG+lCPTBocqlcGm/tz43N68/
-X-Google-Smtp-Source: ACcGV63PnukolN9KBjbuT7Sd1NykxT8vMtJ+QBDgBP5XNDPIo6sfbdl8w9S3Mi763M59kLn84xOsQw==
-X-Received: by 2002:a19:c18d:: with SMTP id r135mr7134300lff.59.1540285865699;
-        Tue, 23 Oct 2018 02:11:05 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id b25sm118283lfa.96.2018.10.23.02.11.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 02:11:04 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id d7-v6so542368lfi.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 02:11:04 -0700 (PDT)
-X-Received: by 2002:ac2:41d8:: with SMTP id d24-v6mr11275898lfi.138.1540285864090;
- Tue, 23 Oct 2018 02:11:04 -0700 (PDT)
+        Tue, 23 Oct 2018 13:34:00 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 44169806BD; Tue, 23 Oct 2018 11:11:27 +0200 (CEST)
+Date:   Tue, 23 Oct 2018 11:11:27 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     Joerg Roedel <jroedel@suse.de>, Meelis Roos <mroos@linux.ee>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel list <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org, Andrea Arcangeli <aarcange@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Not-so-old machines without PAE was Re: 32-bit PTI with THP =
+ userspace corruption
+Message-ID: <20181023091127.GA9843@amd>
+References: <alpine.LRH.2.21.1808310711380.17865@math.ut.ee>
+ <20180831070722.wnulbbmillxkw7ke@suse.de>
+ <alpine.DEB.2.21.1809081223450.1402@nanos.tec.linutronix.de>
+ <20180911114927.gikd3uf3otxn2ekq@suse.de>
+ <alpine.LRH.2.21.1809111454100.29433@math.ut.ee>
+ <20180911121128.ikwptix6e4slvpt2@suse.de>
+ <20180918140030.248afa21@alans-desktop>
+ <20181021123745.GA26042@amd>
+ <20181022075642.icowfdg3y5wcam63@suse.de>
+ <20181022194817.148796e6@alans-desktop>
 MIME-Version: 1.0
-References: <CAHk-=wjS6cjjP+fkZWzzrdZ_fZ1F=PrAGcBc57vKCpNyoD73Vw@mail.gmail.com>
- <CACRpkdbi2gqqc271eMgHjD68bqf2mzw8zw+iAhYv2LFajfo-eQ@mail.gmail.com>
-In-Reply-To: <CACRpkdbi2gqqc271eMgHjD68bqf2mzw8zw+iAhYv2LFajfo-eQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 23 Oct 2018 10:10:47 +0100
-X-Gmail-Original-Message-ID: <CAHk-=wiiC65aZFrDp69vdcSALLDZNPkTL1diadxNL54tBPeAzQ@mail.gmail.com>
-Message-ID: <CAHk-=wiiC65aZFrDp69vdcSALLDZNPkTL1diadxNL54tBPeAzQ@mail.gmail.com>
-Subject: Re: Git pull ack emails..
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Mark Brown <broonie@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
+Content-Disposition: inline
+In-Reply-To: <20181022194817.148796e6@alans-desktop>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 9:53 AM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> Can't you just tool something that mails automatically after-the-fact?
 
-So a certain amount of simple/stupid automation would be possible.
-That's how the participants list in this email was generated, but the
-script I used was actually a pretty much garbage one-liner that just
-happens to work for most cases.
+--PEIAKu/WMn1b1Hv9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It just did my usual "mergelog" (which is a bit like "git shortlog",
-it's a script to just get the summary of my merges instead of the
-general git logs) and then it used the result of that lookup to look
-up the email address by just matching committers.
+On Mon 2018-10-22 19:48:17, Alan Cox wrote:
+> On Mon, 22 Oct 2018 09:56:42 +0200
+> Joerg Roedel <jroedel@suse.de> wrote:
+>=20
+> > On Sun, Oct 21, 2018 at 02:37:45PM +0200, Pavel Machek wrote:
+> > > On Tue 2018-09-18 14:00:30, Alan Cox wrote: =20
+> > > > There are pretty much no machines that don't support PAE and are st=
+ill
+> > > > even vaguely able to boot a modern Linux kernel. The oddity is the
+> > > > Pentium-M but most distros shipped a hack to use PAE on the Pentium=
+ M
+> > > > anyway as it seems to work fine. =20
+> > >=20
+> > > I do have some AMD Geode here, in form of subnotebook. Definitely
+> > > newer then Pentium Ms, but no PAE... =20
+> >=20
+> > Are the AMD Geode chips affected by Meltdown?
+>=20
+> Geode for AMD was just a marketing name.
+>=20
+> The AMD athlon labelled as 'Geode' will behave like any other Athlon but
+> I've not seen anyone successfully implement Meltdown on the Athlon so it's
+> probably ok.=20
+>=20
+> The earlier NatSemi ones are not AFAIK vulnerable to either. The later
+> ones might do Spectre (they have branch prediction which is disabled on
+> the earlier ones) but quite possibly not enough to be attacked usefully -
+> and you can turn it off anyway if you care.
+>=20
+> And I doubt your subnotebook can usefully run modern Linux since the
+> memory limit on most Geode was about 64MB.
 
-But it's broken to the point of almost being useless for a couple of reasons:
+Well, let me see. The machine is not too useful because of dead
+battery, but I don't believe RAM would be a problem. It has 512MB or
+more, IIRC. Missing PAE is, and missing instructions are. And horrible
+keyboard and bad driver support from Linux. And... Ouch and fact that
+I use its power supply to power something else.
 
- - my mergelog names don't necessarily match any name in the git history.
+It looks similar to this:
+https://hexus.net/tech/news/laptop/13994-kohjinsha-launches-impressive-subn=
+otebook-twist/
+(but has no touchscreen).
 
-   For example, Greg goes by "Greg KH" when I merge from him, because
-I'm lazy and feel like I  don't want to mis-type his name, which I've
-done too many times. But in the actual git history, he goes by the
-full "Greg Kroah-Hartman", so my stupid script would have messed him
-up.
+Bios is "built 03/02/2007".
 
-   At the other end of the spectrum, people with complex characters
-have their names copied-and-pasted from their email or the signature
-from their tag, and sometimes those then don't match either.
+CPU is "AuthenticAMD" family 5 model 10, "Geode(TM) Integrated Processor
+by AMD PCS". 500 MHz, flags "fpu de pse tsc msr cx8 sep pge cmov
+clflush mmx mmxext 3dnowext 3dnow". 512MB RAM.
 
- - some people use one email for "official" purposes (ie company email
-etc) in the git history, but actually tend to *use* another email
-(because sometimes the company email is slow and/or broken).
+This is not a suitable compile server, but still could work as a
+subnotebook given right software...
 
- - it wouldn't get the usual mailing list cc's etc, and those might be
-the most important ones. It is how I saw Greg's replies, after all.
 
-So I feel that he automation model is just not good. The reply should
-go to the actual pull request, not to the git history. People who want
-just _that_ could already automate the git history thing without me
-even doing anything at all, either scripting it themselves or by using
-some filtering on the kernel commit mailing list..
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-So I happened to use the automation model for this email thread, but I
-think it's actually the worst of all worlds.
+--PEIAKu/WMn1b1Hv9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-                    Linus
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvO5b8ACgkQMOfwapXb+vIqlwCgruwFLlA3MLQtzHmSt4hS12oG
+MlMAoL5wASCKq9SjjCtBjlpVoz1vx2S4
+=o3Dr
+-----END PGP SIGNATURE-----
+
+--PEIAKu/WMn1b1Hv9--
