@@ -2,155 +2,71 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A4F1C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2497AC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2BB620652
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:39:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2BB620652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id EC91720652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:39:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC91720652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727830AbeJWTBy (ORCPT
+        id S1727969AbeJWTCC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 15:01:54 -0400
-Received: from foss.arm.com ([217.140.101.70]:56718 "EHLO foss.arm.com"
+        Tue, 23 Oct 2018 15:02:02 -0400
+Received: from mga12.intel.com ([192.55.52.136]:33923 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727678AbeJWTBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 15:01:54 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A23D5341;
-        Tue, 23 Oct 2018 03:39:02 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0565F3F6A8;
-        Tue, 23 Oct 2018 03:39:00 -0700 (PDT)
-Date:   Tue, 23 Oct 2018 11:38:58 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Peng Hao <peng.hao2@zte.com.cn>
-Cc:     robh+dt@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
-        andy@infradead.org, dvhart@infradead.org,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        hutao@cn.fujitsu.com
-Subject: Re: [PATCH 2/4]  pvpanic: add pvpanic support for arm64
-Message-ID: <20181023103858.v4rqg646u7roszla@lakrids.cambridge.arm.com>
-References: <1540315537-70007-1-git-send-email-peng.hao2@zte.com.cn>
- <1540315537-70007-2-git-send-email-peng.hao2@zte.com.cn>
+        id S1727678AbeJWTCC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 15:02:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 03:39:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,415,1534834800"; 
+   d="scan'208";a="273697488"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by fmsmga005.fm.intel.com with ESMTP; 23 Oct 2018 03:39:08 -0700
+Subject: Re: [PATCH v2 1/2] usb: xhci: fix uninitialized completion when USB3
+ port got wrong status
+To:     Aaron Ma <aaron.ma@canonical.com>, mathias.nyman@intel.com,
+        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1540230167-12528-1-git-send-email-aaron.ma@canonical.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <f0bc503c-f128-d427-37ce-8b609319dc13@linux.intel.com>
+Date:   Tue, 23 Oct 2018 13:42:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540315537-70007-2-git-send-email-peng.hao2@zte.com.cn>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1540230167-12528-1-git-send-email-aaron.ma@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 01:25:35AM +0800, Peng Hao wrote:
-> pvpanic device is a qemu-specific emulation device. Pvpanic
-> devices are now available for ARM64. This patch supports the APCI
-> way to get device information.
-
-
-This woule be better described as:
-
-pvpanic: add MMIO support
-
-On some architectures (e.g. arm64), it's preferable to use MMIO, since
-this can be used standalone. Add MMIO support to the pvpanic driver.
-
+On 22.10.2018 20:42, Aaron Ma wrote:
+> Realtek USB3.0 Card Reader [0bda:0328] reports wrong port status on
+> Cannon lake PCH USB3.1 xHCI [8086:a36d] after resume from S3,
+> after clear port reset it works fine.
 > 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> ---
->  drivers/misc/pvpanic.c | 22 +++++++++++++++++---
->  1 file changed, 17 insertions(+), 3 deletions(-)
+> Since this device is registered on USB3 roothub at boot,
+> when port status reports not superspeed, xhci_get_port_status will call
+> an uninitialized completion in bus_state[0].
+> Kernel will hang because of NULL pointer.
 > 
-> diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic.c
-> index fd86dab..bdcff8b 100644
-> --- a/drivers/misc/pvpanic.c
-> +++ b/drivers/misc/pvpanic.c
-> @@ -35,13 +35,16 @@
->  
->  static const struct acpi_device_id pvpanic_device_ids[] = {
->  	{ "QEMU0001", 0 },
-> +	{ "PVPANIC01", 0 },
->  	{ "", 0 },
-
-Why do we need the new ACPI ID?
-
-Can't QEMU0001 cover both the ioport and MMIO versions, given they can
-be distinguished based on the associated resources?
-
-Otherwise, this looks sane to me.
-
-Thanks,
-Mark.
-
->  };
->  MODULE_DEVICE_TABLE(acpi, pvpanic_device_ids);
->  
->  #define PVPANIC_PANICKED	(1 << 0)
->  
-> +
-> +static void __iomem *base;
->  
->  static struct acpi_driver pvpanic_driver = {
->  	.name =		"pvpanic",
-> @@ -57,7 +60,10 @@
->  static void
->  pvpanic_send_event(unsigned int event)
->  {
-> -	outb(event, port);
-> +	if (port)
-> +		outb(event, port);
-> +	else if (base)
-> +		writeb(event, base);
->  }
->  
->  static int
-> @@ -77,6 +83,8 @@
->  static acpi_status
->  pvpanic_walk_resources(struct acpi_resource *res, void *context)
->  {
-> +	struct acpi_resource_fixed_memory32 *fixmem32;
-> +
->  	switch (res->type) {
->  	case ACPI_RESOURCE_TYPE_END_TAG:
->  		return AE_OK;
-> @@ -84,7 +92,11 @@
->  	case ACPI_RESOURCE_TYPE_IO:
->  		port = res->data.io.minimum;
->  		return AE_OK;
-> -
-> +
-> +	case ACPI_RESOURCE_TYPE_FIXED_MEMORY32:
-> +		fixmem32 = &res->data.fixed_memory32;
-> +		base = ioremap(fixmem32->address, fixmem32->address_length);
-> +		return AE_OK;
->  	default:
->  		return AE_ERROR;
->  	}
-> @@ -104,7 +116,7 @@ static int pvpanic_add(struct acpi_device *device)
->  	acpi_walk_resources(device->handle, METHOD_NAME__CRS,
->  			    pvpanic_walk_resources, NULL);
->  
-> -	if (!port)
-> +	if (!port && !base)
->  		return -ENODEV;
->  
->  	atomic_notifier_chain_register(&panic_notifier_list,
-> @@ -118,6 +130,8 @@ static int pvpanic_remove(struct acpi_device *device)
->  
->  	atomic_notifier_chain_unregister(&panic_notifier_list,
->  					 &pvpanic_panic_nb);
-> +	if (base)
-> +		iounmap(base);
->  	return 0;
->  }
->  
-> -- 
-> 1.8.3.1
+> Restrict the USB2 resume status check in USB2 roothub to fix hang issue.
 > 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+
+Thanks, adding to queue, will send forward after rc1
+
+-Mathias
