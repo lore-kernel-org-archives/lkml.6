@@ -2,101 +2,133 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5713EC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B7DC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED22920671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:21:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED22920671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BF2D92075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:25:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PpOOMya4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF2D92075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbeJXBpe (ORCPT
+        id S1728429AbeJXBuL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 21:45:34 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:15749 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728034AbeJXBpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 21:45:34 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 00AD1C04F4D6;
-        Tue, 23 Oct 2018 17:21:17 +0000 (UTC)
-Received: from krava (ovpn-204-60.brq.redhat.com [10.40.204.60])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 9C20A764DB;
-        Tue, 23 Oct 2018 17:21:05 +0000 (UTC)
-Date:   Tue, 23 Oct 2018 19:21:03 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Shuah Khan <shuah@kernel.org>
-Cc:     Len Brown <len.brown@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Thomas Renninger <trenn@suse.de>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Markus Mayer <mmayer@broadcom.com>,
-        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        "Herton R. Krzesinski" <herton@redhat.com>
-Subject: Re: [PATCH 00/10] tools: Various build flags fixes
-Message-ID: <20181023172103.GB2750@krava>
-References: <20181016150614.21260-1-jolsa@kernel.org>
- <1915425.8MElBxF9G6@house>
- <afaa611b-a44d-70f8-9908-8bad14986db4@kernel.org>
- <20181022085106.GC2452@krava>
- <1ed0552d-4c37-552b-feb6-1ba17dc5dc1b@kernel.org>
- <99e2893a-bfc8-d5df-59f3-57dcaa2ce49e@kernel.org>
+        Tue, 23 Oct 2018 21:50:11 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:54986 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727437AbeJXBuL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 21:50:11 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9NHPowp060664;
+        Tue, 23 Oct 2018 12:25:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1540315550;
+        bh=Nffd3cFuEehYsajgl1B5inUx5DJ0XN0cIJg+GTOK7eM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=PpOOMya4kybTHrL7pNuDQpp5kj3OWTf6iWbNQLsdWnI39niWSp7DCBChoafpc2Rih
+         SWa0a3F/+lTNU8OlDdgBxbj9I5RbaTr/+iOcBARFuWdTgamAjeruvKBYaNyMpGFmsZ
+         JcipLMxp4HBczGrq/8PhuekQOwg7MjWQguyA7WqU=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9NHPoYQ091419
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 23 Oct 2018 12:25:50 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 23
+ Oct 2018 12:25:49 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 23 Oct 2018 12:25:49 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9NHPn22005866;
+        Tue, 23 Oct 2018 12:25:49 -0500
+Subject: Re: [PATCH v4 01/17] remoteproc: configure IOMMU only if device
+ address requested
+To:     Loic Pallardy <loic.pallardy@st.com>, <bjorn.andersson@linaro.org>,
+        <ohad@wizery.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+ <1532697292-14272-2-git-send-email-loic.pallardy@st.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <f6af2ded-dfcd-7cb9-6557-a17c40166836@ti.com>
+Date:   Tue, 23 Oct 2018 12:25:49 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <99e2893a-bfc8-d5df-59f3-57dcaa2ce49e@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 23 Oct 2018 17:21:17 +0000 (UTC)
+In-Reply-To: <1532697292-14272-2-git-send-email-loic.pallardy@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 10:53:42AM -0600, Shuah Khan wrote:
-> On 10/23/2018 09:17 AM, Shuah Khan wrote:
-> > On 10/22/2018 02:51 AM, Jiri Olsa wrote:
-> >> On Wed, Oct 17, 2018 at 09:28:16AM -0600, Shuah Khan wrote:
-> >>> On 10/17/2018 07:23 AM, Thomas Renninger wrote:
-> >>>> On Tuesday, October 16, 2018 5:06:05 PM CEST Jiri Olsa wrote:
-> >>>>> hi,
-> >>>>> while hardening some of the tools rpm, we noticed we
-> >>>>> can't pass build flags to some of them.
-> >>>>>
-> >>>>> Sending separate tools fixes for what we found. It's
-> >>>>> mostly override for CFLAGS and adding LDFLAGS to the
-> >>>>> build commands.
-> >>>>
-> >>>> Looks fine for the cpupower patches 3/10 and 4/10.
-> >>>> (Feel free to add a Reviewed-by or Acked-by for them
-> >>>> if you have to resend).
-> >>>>
-> >>>
-> >>> Thanks Thomas.
-> >>>
-> >>> Hi Jiri,
-> >>>
-> >>> Same here for cpupower patches 3/10 and 4/10. Please let me know
-> >>> if you would like me to take these through the cpupower patch flow.
-> >>
-> >> that would be great, any idea about 5/10?:
+Hi Loic,
+
+On 7/27/18 8:14 AM, Loic Pallardy wrote:
+> If there is no IOMMU associate to remote processor device,
+> remoteproc_core won't be able to satisfy device address requested
+> in firmware resource table.
+> Return an error as configuration won't be coherent.
 > 
-> 3/10 and 4/10 are now in kernel/git/shuah/linux.git cpupower branch and
-> will be included in my pull request for 4.20-rc1 or rc2 to Rafael. 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 
-cool, thanks
+This patch is breaking my Davinci platforms. It is not really required
+that you _should_ have IOMMUs when a valid DA is mentioned. Please see
+the existing description (paras 4 and 5) on the fw_rsc_carveout
+kerneldoc in remoteproc.h file.
 
-jirka
+We do have platforms where we have some internal sub-modules within the
+remote processor sub-system that provides some linear
+address-translation (most common case with 32-bit processors supporting
+64-bit addresses). Also, we have some upcoming SoCs where we have an MMU
+but is not programmable by Linux.
+
+There is one comment there, but I don't think this is actually handled
+in the current remoteproc core.
+"If @da is set to
+ * FW_RSC_ADDR_ANY, then the host will dynamically allocate it, and then
+ * overwrite @da with the dynamically allocated address."
+
+regards
+Suman
+
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 4cd1a8e..437fabf 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -657,7 +657,15 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  	 * to use the iommu-based DMA API: we expect 'dma' to contain the
+>  	 * physical address in this case.
+>  	 */
+> -	if (rproc->domain) {
+> +
+> +	if (rsc->da != FW_RSC_ADDR_ANY && !rproc->domain) {
+> +		dev_err(dev->parent,
+> +			"Bad carveout rsc configuration\n");
+> +		ret = -ENOMEM;
+> +		goto dma_free;
+> +	}
+> +
+> +	if (rsc->da != FW_RSC_ADDR_ANY && rproc->domain) {
+>  		mapping = kzalloc(sizeof(*mapping), GFP_KERNEL);
+>  		if (!mapping) {
+>  			ret = -ENOMEM;
+> 
+
