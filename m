@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0168AC7112C
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42092C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB8D620831
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07EFC2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9E4LDFE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB8D620831
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="itzYzOZK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07EFC2082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729204AbeJXGB3 (ORCPT
+        id S1729226AbeJXGBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 02:01:29 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:42467 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729145AbeJXGB2 (ORCPT
+        Wed, 24 Oct 2018 02:01:31 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42155 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728725AbeJXGB3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 02:01:28 -0400
-Received: by mail-lf1-f67.google.com with SMTP id q6-v6so1601181lfh.9;
-        Tue, 23 Oct 2018 14:36:15 -0700 (PDT)
+        Wed, 24 Oct 2018 02:01:29 -0400
+Received: by mail-lj1-f193.google.com with SMTP id l25-v6so994869lja.9;
+        Tue, 23 Oct 2018 14:36:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-        bh=Fg4OaLOHQqrefdjonA6DL8gKc44WsS6YzuIT3EPXPyc=;
-        b=C9E4LDFEqa5quLrdvuVRMmj43Vc5eOZNvcS2YZIGdDAwvs+LtTqg/8VaP6Fd6nfz00
-         6Y+Kc9Ygxx4Hsd3pPwMK8bzJDFnCw4vw2zNaOu+VZoue6LSPaLP8Pj9crYs88OlfR1q+
-         pgboQVBRzc+cTmFCLpSlyQunl71QSdH3MpNbzWIhwCKldHH79R1k1WZ0T6H66boZOdBV
-         n7mvD9IH+lRIsAMMUZZajrAW5p8MC5rRpTADj8KpIgELHPkKjU6yxSVwgCIBwszpr8xl
-         SUuArLW37lu7ZoI1jQzaAXoh/YeWiB2bfrEDO18NdKo8GXSQzCWIeSwUtgS4Hgnm59MO
-         +k8Q==
+        bh=TAyei4tGiwzaEFtWD6qceoBqlcxrR+efj6ojDl9ZulY=;
+        b=itzYzOZKVGSRr5rVXV9w3CTN+HNRtiP2lfwk2bdN5A02HCaZvCEbnax0J9Fu/juSNo
+         EcY511Ql87pqbnb0nQ0U4qlvdE/WGUUTyhGDw3ocKVdXVrH6nq1j+VVbuuQZBZ3Y2I+u
+         29hbESNI1S7hLjecHmP8IOlcVCaZa30vVsEtLe64Cw9MI0v07p2NrG9jjY3s2KBpm8lg
+         rRfTiwuxjwvwnfNey826fVQVWA/nhe5Q/2Tp+jYyyT3lcto+pe0S34JatMd3V+ebedOk
+         MjWulDt7SOtNxlaCwZMuKPaoMCvmL2XsAbZoMRLzFuGwvYBHmVQ/0nqh9XiTQOyJz+ee
+         7Qwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to;
-        bh=Fg4OaLOHQqrefdjonA6DL8gKc44WsS6YzuIT3EPXPyc=;
-        b=fNZYhQMLhjcnhuwsigi+3g6Eo9bk00oyJagjei+TAPEA+O7OLY6xICdUC53lD9OCsX
-         YUu6rU8lWdrtY6mcsTM0xYb/Y6NaM59H9AOa/8Rp2Vc0TIdyNqL8HuN/83QD2/eyVWwN
-         YMhKvGDoJ2iaU3wsdNT7qiWDh9zb0vz++8AHsVtLrbkW8nr/8TWW8LDKfY0oxExbWGLw
-         MViYXy4tcACEdPQVesTHMRpC7bR1TEprVzos/y5l6Uc5I4pVib4YNXhqnBBy1RwftIm8
-         tfsPzfBztygH9MVQu1PyNCYx7Q5uAMzwGIidy89+CXhH+OEyRVv3L9+jihL4SlfO9rFO
-         wToA==
-X-Gm-Message-State: ABuFfojln3JPvS+pl39sCz+Wsl5QCcaCAJJvUrA0UZF6Z/qu0pXvs0Ob
-        MshUSTfg+fw2/kH6hlmuddM=
-X-Google-Smtp-Source: ACcGV611Z5tTnO5/5bvrHUOX3goc1TR758Ld/VtLL2Gme2c4YdgEJiORfSTHNppuLgxH+rxf/KtJWg==
-X-Received: by 2002:ac2:5082:: with SMTP id f2-v6mr12824852lfm.47.1540330574898;
-        Tue, 23 Oct 2018 14:36:14 -0700 (PDT)
+        bh=TAyei4tGiwzaEFtWD6qceoBqlcxrR+efj6ojDl9ZulY=;
+        b=qmPncgZgYAZ7B5z9r9VkHj7sP3R+Goc+1cjWqvxT+uCPkJ8DpIope5xsWZg2OOmcV7
+         xLNIrWh1a4Dddfs9dWxkIq9b2KG9l34HKqkhDvqohX0rQQI7qiDLQ6byf9f7eIhoG5sJ
+         TDiBlviZCfsat/Mo+1pFnzmXXHQ9jV6Z1fwd4TJzLr3EoYcblY16CYxAemcZVLdf11lI
+         cqWOIXeOrp5nNUUgK8cTD4BIbzNJJbyuNurzgA/flVxkAR7PBnbqmEP+EXd+4wUpI5HI
+         e66nDUaD3LnhnQ0vAwsw1Ua4CPduAMx5Sl8P6p+0E+iBHa0PTD2l1VmYXklgkvAI3QN5
+         R23w==
+X-Gm-Message-State: AGRZ1gJEmDFFjsnpYXaDIE4V21mQYDS0pnMcky6bmnhDm+NhBs6jEjNQ
+        4E9NubASgMH+e9+XL8fltiI=
+X-Google-Smtp-Source: ACcGV62jyvAifNg0UaxHUEFim2YZjRqmlefBY1q8HSVOsnALwybksvOWnPKQYCy+l29Mj8oEFgWb/A==
+X-Received: by 2002:a2e:3810:: with SMTP id f16-v6mr13247460lja.77.1540330576357;
+        Tue, 23 Oct 2018 14:36:16 -0700 (PDT)
 Received: from localhost.localdomain (91-159-62-169.elisa-laajakaista.fi. [91.159.62.169])
-        by smtp.gmail.com with ESMTPSA id y127-v6sm377950lfc.13.2018.10.23.14.36.13
+        by smtp.gmail.com with ESMTPSA id y127-v6sm377950lfc.13.2018.10.23.14.36.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 14:36:14 -0700 (PDT)
+        Tue, 23 Oct 2018 14:36:15 -0700 (PDT)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -81,9 +81,9 @@ Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
         Lihao Liang <lianglihao@huawei.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 12/17] prmem: linked list: set alignment
-Date:   Wed, 24 Oct 2018 00:34:59 +0300
-Message-Id: <20181023213504.28905-13-igor.stoppa@huawei.com>
+Subject: [PATCH 13/17] prmem: linked list: disable layout randomization
+Date:   Wed, 24 Oct 2018 00:35:00 +0300
+Message-Id: <20181023213504.28905-14-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181023213504.28905-1-igor.stoppa@huawei.com>
 References: <20181023213504.28905-1-igor.stoppa@huawei.com>
@@ -93,14 +93,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As preparation to using write rare on the nodes of various types of
-lists, specify that the fields in the basic data structures must be
-aligned to sizeof(void *)
+Some of the data structures used in list management are composed by two
+pointers. Since the kernel is now configured by default to randomize the
+layout of data structures soleley composed by pointers, this might
+prevent correct type punning between these structures and their write
+rare counterpart.
 
-It is meant to ensure that any static allocation will not cross a page
-boundary, to allow pointers to be updated in one step.
+It shouldn't be anyway a big loss, in terms of security: with only two
+fields, there is a 50% chance of guessing correctly the layout.
+The randomization is disabled only when write rare is enabled.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+CC: Kees Cook <keescook@chromium.org>
 CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 CC: Andrew Morton <akpm@linux-foundation.org>
 CC: Masahiro Yamada <yamada.masahiro@socionext.com>
@@ -110,47 +114,28 @@ CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 CC: Lihao Liang <lianglihao@huawei.com>
 CC: linux-kernel@vger.kernel.org
 ---
- include/linux/types.h | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ include/linux/types.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/include/linux/types.h b/include/linux/types.h
-index 9834e90aa010..53609bbdcf0f 100644
+index 53609bbdcf0f..a9f6f6515fdc 100644
 --- a/include/linux/types.h
 +++ b/include/linux/types.h
-@@ -183,17 +183,29 @@ typedef struct {
- } atomic64_t;
- #endif
- 
-+#ifdef CONFIG_PRMEM
+@@ -187,12 +187,12 @@ typedef struct {
  struct list_head {
--	struct list_head *next, *prev;
--};
-+	struct list_head *next __aligned(sizeof(void *));
-+	struct list_head *prev __aligned(sizeof(void *));
-+} __aligned(sizeof(void *));
- 
--struct hlist_head {
--	struct hlist_node *first;
-+struct hlist_node {
-+	struct hlist_node *next __aligned(sizeof(void *));
-+	struct hlist_node **pprev __aligned(sizeof(void *));
-+} __aligned(sizeof(void *));
-+#else
-+struct list_head {
-+	struct list_head *next, *prev;
- };
+ 	struct list_head *next __aligned(sizeof(void *));
+ 	struct list_head *prev __aligned(sizeof(void *));
+-} __aligned(sizeof(void *));
++} __no_randomize_layout __aligned(sizeof(void *));
  
  struct hlist_node {
- 	struct hlist_node *next, **pprev;
- };
-+#endif
-+
-+struct hlist_head {
-+	struct hlist_node *first;
-+};
- 
- struct ustat {
- 	__kernel_daddr_t	f_tfree;
+ 	struct hlist_node *next __aligned(sizeof(void *));
+ 	struct hlist_node **pprev __aligned(sizeof(void *));
+-} __aligned(sizeof(void *));
++} __no_randomize_layout __aligned(sizeof(void *));
+ #else
+ struct list_head {
+ 	struct list_head *next, *prev;
 -- 
 2.17.1
 
