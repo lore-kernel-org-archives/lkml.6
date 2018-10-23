@@ -2,143 +2,168 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0092C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DAE5C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1DA8207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:20:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E428720652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:21:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="Vs5YQ6Rk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1DA8207DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a9LAydVz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E428720652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbeJWRnQ (ORCPT
+        id S1728561AbeJWRni (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 13:43:16 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:36906 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727714AbeJWRnP (ORCPT
+        Tue, 23 Oct 2018 13:43:38 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34702 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727714AbeJWRni (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 13:43:15 -0400
-X-IronPort-AV: E=Sophos;i="5.54,415,1534834800"; 
-   d="scan'208";a="22121364"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 23 Oct 2018 02:20:42 -0700
-Received: from NAM05-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.105) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 23 Oct 2018 02:20:42 -0700
+        Tue, 23 Oct 2018 13:43:38 -0400
+Received: by mail-wm1-f67.google.com with SMTP id z25-v6so11137272wmf.1;
+        Tue, 23 Oct 2018 02:21:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pcVmFypS/IM1YO4giYqYt+WG6T11QxF6t5LRH2vEWrg=;
- b=Vs5YQ6Rk3aECOmWuWjEKNyjCTZ5mAZnSTlNXs1FaYEzpTytI56lTFeeXaT/a1xQYeeoRpJUd27OxSUylp8Yp9IwsRCiE17xFCdBVLgn4Do8vBlGeoQtVRzs9/5QtZdxyOACQBqAtXisQXHC6j/rCg4eJ2M1NVNQ1ToIW2mdARYk=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
- BN6PR11MB1524.namprd11.prod.outlook.com (10.172.22.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1250.30; Tue, 23 Oct 2018 09:20:40 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::11b7:21db:803a:7cfa]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::11b7:21db:803a:7cfa%4]) with mapi id 15.20.1250.028; Tue, 23 Oct 2018
- 09:20:40 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <wsa@the-dreams.de>, <Ludovic.Desroches@microchip.com>,
-        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <linux-i2c@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <Tudor.Ambarus@microchip.com>
-Subject: [RESEND PATCH 2/2] i2c: at91: Save the bus clock frequency in adapter
-Thread-Topic: [RESEND PATCH 2/2] i2c: at91: Save the bus clock frequency in
- adapter
-Thread-Index: AQHUarGqVj1seYt2NUmS2+BhiG2LoQ==
-Date:   Tue, 23 Oct 2018 09:20:40 +0000
-Message-ID: <20181023092025.32463-3-tudor.ambarus@microchip.com>
-References: <20181023092025.32463-1-tudor.ambarus@microchip.com>
-In-Reply-To: <20181023092025.32463-1-tudor.ambarus@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CWLP265CA0181.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:401:4d::25) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:103::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [185.7.230.215]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB1524;6:yRAZeVu0ScOnBWiX96jgAA75E7KhjOy9CUaHSpMTwihBVQTyOElWnq6620R7p8W0bIBLezNZRIsLQpMB1ZzBKBR5legEOaFjKJ4nP4J/Md1r6dz88mZ+HupEBS+bCVqsgLPD/1sVvTXxQ7T05JVivE6FywRyIkYwp5MBDqT4jXdcRiSn8M70nf2sDs3hiLkSnLAC/+JJ4ChlaOxxjZyFtWt2047/XPudydz6Ga4tBoyHFPzsejkLQViO14IztzdvhaJwdUyycXn1cUNe0LZkchc8A92c3mDj8ljDL85GP+hE+KNyC2YlX0aYuED48xAPBBGU4LPATWn4jIK81+5Q6csl1q/TZcjGwvbjORdKo69i/zEKBIWPGHL7GhoHOM89BWRUD3AlTAwLGAFTIqFCcokIt69AgpUbcjyOlUr1wBxOgyHo/RCc10J3m6cFc3n68VxMfyhUlQpUGPt/SYp92g==;5:qMufFiBv/E1EUvf+iWOl1Mgd96Ny+jkcAz/uQS17/ZfnULUGMjqpY9Xe/JxWtVWdDih9B1QQNz8MMjLVQ9cpfdtjfjaVMkhoDXT2szqlKUKsQkmMQohfHEIVwS2U8I8+u2xUGzg9sG347c7LiL73Yu4zrxtrD9855TxYI1EMg1w=;7:EQXHnwDGfx+jHiZqucKDeqWcpIbKgMDiWHpqml97PUDOAVS/BJ+JQBxikKJSD91w67eOUPa99OSeYnXxQVnW6INhC9r4fqcIkD/zQa0gpfrOK73VhfOoe2FhI4oUW9JCPsB7Tj+tIIXXP+7MjPv2mCQwZT1s+UlVj80NTT6lzEQs6PqE9JdaHpwmgWdpnM1vKukXBDGCL2gGNVLwjd2KncpV46BVg8GufWZ9nkaMAGXwa5nf2LCxTFc15jc+uCX0
-x-ms-office365-filtering-correlation-id: fdfeb8bc-f91c-4a06-9bdc-08d638c8cd09
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1524;
-x-ms-traffictypediagnostic: BN6PR11MB1524:
-x-microsoft-antispam-prvs: <BN6PR11MB152433426ECAA1EA2291F8DDF0F50@BN6PR11MB1524.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB1524;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB1524;
-x-forefront-prvs: 0834BAF534
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(39860400002)(396003)(366004)(189003)(199004)(52116002)(478600001)(26005)(4326008)(316002)(14444005)(86362001)(305945005)(6486002)(6436002)(6512007)(256004)(110136005)(7736002)(72206003)(53936002)(14454004)(25786009)(107886003)(2501003)(97736004)(36756003)(105586002)(66066001)(486006)(106356001)(386003)(11346002)(2906002)(1076002)(476003)(6116002)(6506007)(76176011)(3846002)(5660300001)(446003)(2201001)(5250100002)(102836004)(2616005)(8676002)(99286004)(81166006)(2900100001)(71190400001)(71200400001)(8936002)(217873002)(81156014)(68736007)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1524;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: jpo/bUVDpgoFb0hohf8xEXxvJ9bPT+1HcooeE1ldgpfqwC6PkjbR7l4v8I90sjRdEPd6bUuHESBmCvVydKKBzxBgEKDQJ2eaoSCUKq5xzvKrGN6bPmdBwnVNjeemWISMOdxwfIvXUbbBY6OpoEofxJ19BafQqYNQ6B6gjgEEDzrhZfXN8wEIRdFDHdqEerki6hvd8OvlUx/r0zrWoy9Ced55IKRLzJPOnOlPfWWaVM4IBavds4oB1xlvtFpPV7MiYKpsJzU8YKh1tSlYkLxs/ZFLovnEMBxOOB0Obj010dbcWVxUJyPpRuu8GKgTw8cYnPZb7jLcSIugDpGHrccpsy/59UqkELNGo5x+eGekgLg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UMAgX19jbo3EHVVn/bo1SiopC9dmGxljab2M3qjxMR4=;
+        b=a9LAydVzV9FxrClb4o6/klrlZosRnnEnCB68LG7HL7QxE9LfTWSsN4aDNiPKeth6jA
+         +3LIqva8lBtzJJixSG0CFah9hUeQoWk2dxhNrfmgAI4tqzVDVsA86gDmCutsXkF9z3lD
+         PEnnLlMW5esmcpYYdbAKd+iXkL0MkVVb0cmhIEYZJymcD1SAlGttCIIosY2oao0HqtNm
+         j7XQ1cxj0gpAPniIbn1LuTtBNAAo/KxG4oKM5GGLDmN8BmW8Xr3Zy8sau2NWAJDWnjp9
+         HehQwI4kL44JbD/lmP4ESex0lIx1uC7BG/n4iDRmfJa1B6nOvaIMvpf0F1QxN1lZDRJb
+         vAew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UMAgX19jbo3EHVVn/bo1SiopC9dmGxljab2M3qjxMR4=;
+        b=N8SnpEKv1Qq+FfkT75CjxaihVkYCwpHI0GfwN0mtd6AAyQTeRPGmg8wOtAJV0uiVWd
+         VssdhOQeoYW+mz90HY4omLHgudwsivHp7bVz22BIvGvFxNPpvwMua3xoLnwHkcK8Ug2J
+         hwKQb9EKayg85pBewc7wtRu9GMx9QCgpLmS6llft18LmR6DPkasC2jJiJovHEF0CcyYr
+         cOVaA3eWAU31Zs9LbI2FarAwo/N4XL8T74qtQjj+rE1/tBAlgnPIhSLQtyyn1tp71eeu
+         spG+PlkEK2vUGwZYHVpiihWxXBmwI9I1IxbE+IM5joeE75qBgFHkJBtqLGKZAWnJcprC
+         ByGw==
+X-Gm-Message-State: ABuFfogUANGU0fRJJtLppYWMVZTnIsDyWGXdYlZgkILBSgKUynZ69dST
+        2jHsJEk6sqjsdTOBWSGeUeY=
+X-Google-Smtp-Source: ACcGV60dWb4X8pDZhNebszCvFUhiI/+81koeCb1T9iL84Z9fWR3KqUWJxnFVNdc/4kkD24bQviV88Q==
+X-Received: by 2002:a1c:dcc:: with SMTP id 195-v6mr19233727wmn.117.1540286463718;
+        Tue, 23 Oct 2018 02:21:03 -0700 (PDT)
+Received: from pi ([167.98.65.38])
+        by smtp.gmail.com with ESMTPSA id 20-v6sm1391968wml.10.2018.10.23.02.21.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Oct 2018 02:21:02 -0700 (PDT)
+X-Google-Original-Sender: <johan@kernel.org>
+Received: from johan by pi with local (Exim 4.91)
+        (envelope-from <johan@pi>)
+        id 1gEsqt-0002WI-Uk; Tue, 23 Oct 2018 11:19:51 +0200
+Date:   Tue, 23 Oct 2018 11:19:51 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Doug Berger <opendmb@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v2 0/9] of: fix compatible-child-node lookups
+Message-ID: <20181023091951.GC20058@localhost>
+References: <20180827082153.22537-1-johan@kernel.org>
+ <20180904130557.GT28861@localhost>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdfeb8bc-f91c-4a06-9bdc-08d638c8cd09
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2018 09:20:40.6890
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1524
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180904130557.GT28861@localhost>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The clock-frequency property is not mandatory for the i2c buses. If it's
-not present in the device tree, the buses __usually__ assume it's 100kHZ
-(see altera, at91, axxia, etc.). Broadcom uses a 375kHZ default
-clock-frequency, so the default clock frequency varies from bus to bus.
+Hi Rob,
 
-There are i2c clients that need to know the bus clock frequency in order to
-compute their wake token (see atecc508a i2c client).
+On Tue, Sep 04, 2018 at 03:05:57PM +0200, Johan Hovold wrote:
+> Hi all,
+> 
+> On Mon, Aug 27, 2018 at 10:21:44AM +0200, Johan Hovold wrote:
+> > Several drivers currently use of_find_compatible_node() to lookup child
+> > nodes while failing to notice that the of_find_ functions search the
+> > entire tree depth-first (from a given start node) and therefore can
+> > match unrelated nodes.
+> > 
+> > The fact that these functions also drop a reference to the node they
+> > start searching from (e.g. the parent node) is typically also
+> > overlooked, something which can lead to use-after-free bugs (e.g. after
+> > probe deferrals).
+> > 
+> > This series adds a new helper, similar to of_get_child_by_name(), 
+> > that can be used to lookup compatible child nodes, and uses the new
+> > helper to fix child-node lookups throughout the tree.
+> > 
+> > This is related to the fixes I posted about a year ago, which addressed
+> > a similar anti-pattern when looking up child nodes by name. Since it
+> > took me more than a year to get all those fixes into Linus' tree (one
+> > fix is still pending), and as these fixes depend on the new helper, I'm
+> > suggesting that these all go in through Rob's or Greg's trees.
+> > 
+> > Alternatively, the helper could go into to -rc2, and I'll be pinging
+> > submaintainers for the coming year as well. ;)
+> 
+> Rob has gotten the helper into -rc2 now:
+> 
+>         36156f9241cb of: add helper to lookup compatible child node
+> 
+> so feel free to pick these fixes up directly for 4.19-rc or -next,
+> whichever you prefer. I've been able to trigger crashes after probe
+> deferrals due to the use-after-free, but this seems unlikely to be
+> exploitable.
+> 
+> I think Rob will be picking up any patches that remain by the end of the
+> release cycle for 4.20.
 
-The clock-frequency value has to be propagated to the i2c clients, otherwis=
-e,
-if they will not find the i2c bus clock frequency in the device tree, they
-will have to make their own assumption of the clock frequency.
+So far only Ulf has picked up the mmc patch below directly, so if you
+could take the rest through your tree for -rc1 that would be great.
 
-Spare the i2c clients of making wrong assumptions of the i2c bus clock
-frequency and provide the bus clock frequency in adapter.
-
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
----
- drivers/i2c/busses/i2c-at91.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/i2c/busses/i2c-at91.c b/drivers/i2c/busses/i2c-at91.c
-index 3f3e8b3bf5ff..9aa0937817ac 100644
---- a/drivers/i2c/busses/i2c-at91.c
-+++ b/drivers/i2c/busses/i2c-at91.c
-@@ -1124,6 +1124,7 @@ static int at91_twi_probe(struct platform_device *pde=
-v)
- 	dev->adapter.quirks =3D &at91_twi_quirks;
- 	dev->adapter.dev.parent =3D dev->dev;
- 	dev->adapter.nr =3D pdev->id;
-+	dev->adapter.bus_freq_hz =3D bus_clk_rate;
- 	dev->adapter.timeout =3D AT91_I2C_TIMEOUT;
- 	dev->adapter.dev.of_node =3D pdev->dev.of_node;
-=20
---=20
-2.9.4
-
+Thanks,
+Johan
+ 
+> > Johan Hovold (9):
+> >   of: add helper to lookup compatible child node
+> >   drm/mediatek: fix OF sibling-node lookup
+> >   drm/msm: fix OF child-node lookup
+> >   mmc: meson-mx-sdio: fix OF child-node lookup
+> >   mtd: nand: atmel: fix OF child-node lookup
+> >   net: bcmgenet: fix OF child-node lookup
+> >   net: stmmac: dwmac-sun8i: fix OF child-node lookup
+> >   NFC: nfcmrvl_uart: fix OF child-node lookup
+> >   power: supply: twl4030-charger: fix OF sibling-node lookup
+> > 
+> >  drivers/gpu/drm/mediatek/mtk_hdmi.c           |  5 ++--
+> >  drivers/gpu/drm/msm/adreno/adreno_gpu.c       |  5 ++--
+> >  drivers/mmc/host/meson-mx-sdio.c              |  8 ++++--
+> >  drivers/mtd/nand/raw/atmel/nand-controller.c  | 11 +++++---
+> >  drivers/net/ethernet/broadcom/genet/bcmmii.c  |  2 +-
+> >  .../net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 12 +++++++--
+> >  drivers/nfc/nfcmrvl/uart.c                    |  5 ++--
+> >  drivers/of/base.c                             | 25 +++++++++++++++++++
+> >  drivers/power/supply/twl4030_charger.c        |  5 ++--
+> >  include/linux/of.h                            |  8 ++++++
+> >  10 files changed, 68 insertions(+), 18 deletions(-)
