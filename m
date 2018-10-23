@@ -2,129 +2,109 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 609ABC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9829DC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:36:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 125D920813
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:33:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hD5l0apg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 125D920813
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 473F9204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:36:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 473F9204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbeJXC5m (ORCPT
+        id S1728627AbeJXDAf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 22:57:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39164 "EHLO mail.kernel.org"
+        Tue, 23 Oct 2018 23:00:35 -0400
+Received: from mga09.intel.com ([134.134.136.24]:30599 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728052AbeJXC5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 22:57:42 -0400
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D346220831;
-        Tue, 23 Oct 2018 18:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540319589;
-        bh=vQwS10vd0zr83qVSpClYGcvnr7q8sZo2AZtAFLobAIU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hD5l0apgV/cDPkg1mx7SJPwR8gldcVvBXPxPY175ggH5JXnhSluvB8MS1QsqUmBJx
-         nHZuyDoRRqf3aAI+YwgHfdqsK8/4i8dTNzSQNkIjuGpg10dExNyHPGXc1dH4et3g7L
-         aZNhYPAd3h2biy4/NEvGhCCYnujyWhhbzb+GK0ZA=
-Received: by mail-qk1-f179.google.com with SMTP id x8-v6so1497523qka.4;
-        Tue, 23 Oct 2018 11:33:08 -0700 (PDT)
-X-Gm-Message-State: ABuFfogSmI8lwMG2FbRTW79zRirJUAeqopAxrpJfSN1V7GKrpfU0YyrB
-        kBmVzsT3Q3cC3FdY406o7I6COzpp6/9/Nk3E/w==
-X-Google-Smtp-Source: ACcGV60Xa43VO3ppxSb17be6/nXauN3woBR52QHRMpumo0L6hKdTIwDwVMLCvVPh5UdooZMYOsq/8iMLRQxaQyth30U=
-X-Received: by 2002:a37:ddcf:: with SMTP id u76-v6mr46675895qku.184.1540319587953;
- Tue, 23 Oct 2018 11:33:07 -0700 (PDT)
+        id S1728099AbeJXDAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:00:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:36:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
+   d="scan'208";a="243724664"
+Received: from ray.jf.intel.com (HELO [10.7.201.18]) ([10.7.201.18])
+  by orsmga004.jf.intel.com with ESMTP; 23 Oct 2018 11:36:02 -0700
+Subject: Re: [RFC PATCH 0/5] x86: dynamic indirect call promotion
+To:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>,
+        x86@kernel.org, Borislav Petkov <bp@alien8.de>,
+        David Woodhouse <dwmw@amazon.co.uk>
+References: <20181018005420.82993-1-namit@vmware.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <7182c1db-2b23-5d69-7f4c-856a6ad43f8e@intel.com>
+Date:   Tue, 23 Oct 2018 11:36:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20180827082153.22537-1-johan@kernel.org> <20180904130557.GT28861@localhost>
- <20181023091951.GC20058@localhost>
-In-Reply-To: <20181023091951.GC20058@localhost>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 23 Oct 2018 13:32:56 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+eX0Zr46UT6_+OKhfxLhc315Un5MZkHHAWhK0tt4OvzA@mail.gmail.com>
-Message-ID: <CAL_Jsq+eX0Zr46UT6_+OKhfxLhc315Un5MZkHHAWhK0tt4OvzA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] of: fix compatible-child-node lookups
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Doug Berger <opendmb@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        Giuseppe CAVALLARO <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        joabreu@synopsys.com, Samuel Ortiz <sameo@linux.intel.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181018005420.82993-1-namit@vmware.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 4:21 AM Johan Hovold <johan@kernel.org> wrote:
->
-> Hi Rob,
->
-> On Tue, Sep 04, 2018 at 03:05:57PM +0200, Johan Hovold wrote:
-> > Hi all,
-> >
-> > On Mon, Aug 27, 2018 at 10:21:44AM +0200, Johan Hovold wrote:
-> > > Several drivers currently use of_find_compatible_node() to lookup child
-> > > nodes while failing to notice that the of_find_ functions search the
-> > > entire tree depth-first (from a given start node) and therefore can
-> > > match unrelated nodes.
-> > >
-> > > The fact that these functions also drop a reference to the node they
-> > > start searching from (e.g. the parent node) is typically also
-> > > overlooked, something which can lead to use-after-free bugs (e.g. after
-> > > probe deferrals).
-> > >
-> > > This series adds a new helper, similar to of_get_child_by_name(),
-> > > that can be used to lookup compatible child nodes, and uses the new
-> > > helper to fix child-node lookups throughout the tree.
-> > >
-> > > This is related to the fixes I posted about a year ago, which addressed
-> > > a similar anti-pattern when looking up child nodes by name. Since it
-> > > took me more than a year to get all those fixes into Linus' tree (one
-> > > fix is still pending), and as these fixes depend on the new helper, I'm
-> > > suggesting that these all go in through Rob's or Greg's trees.
-> > >
-> > > Alternatively, the helper could go into to -rc2, and I'll be pinging
-> > > submaintainers for the coming year as well. ;)
-> >
-> > Rob has gotten the helper into -rc2 now:
-> >
-> >         36156f9241cb of: add helper to lookup compatible child node
-> >
-> > so feel free to pick these fixes up directly for 4.19-rc or -next,
-> > whichever you prefer. I've been able to trigger crashes after probe
-> > deferrals due to the use-after-free, but this seems unlikely to be
-> > exploitable.
-> >
-> > I think Rob will be picking up any patches that remain by the end of the
-> > release cycle for 4.20.
->
-> So far only Ulf has picked up the mmc patch below directly, so if you
-> could take the rest through your tree for -rc1 that would be great.
+On 10/17/18 5:54 PM, Nadav Amit wrote:
+> 		base		relpoline
+> 		----		---------
+> nginx 	22898 		25178 (+10%)
+> redis-ycsb	24523		25486 (+4%)
+> dbench	2144		2103 (+2%)
 
-Thanks for the reminder, though before the merge window opened would
-have been better. I've applied all but the mtd patch.
-
-Rob
+Just out of curiosity, which indirect branches are the culprits here for
+causing the slowdowns?
