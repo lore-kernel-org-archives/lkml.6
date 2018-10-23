@@ -2,170 +2,112 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCA0C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A675AC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAC0C207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:03:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CD572080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:11:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUqUl2x/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAC0C207DD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSs8SzGu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CD572080A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728417AbeJWX1e (ORCPT
+        id S1728339AbeJWXfP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 19:27:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47726 "EHLO mail.kernel.org"
+        Tue, 23 Oct 2018 19:35:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727359AbeJWX1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 19:27:33 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726277AbeJWXfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 19:35:15 -0400
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFE6620671;
-        Tue, 23 Oct 2018 15:03:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C33A2080A;
+        Tue, 23 Oct 2018 15:11:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540307025;
-        bh=zZnFTlhP/IPmPEsdqVbFn3Y1YOrRl0xfCjanMkT0MtU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=oUqUl2x/Q+RWDEwRdug9Y6orCiwuZXBkQG8wQn2fXJhT0PhGw57RwmWtG2/514yTr
-         DCfekMyTu64W4rzTKtmDkTdi7AogtBo42gJYwFWUaPBALtEGcOripqn6+j2iipsYjN
-         tRS7QwigblvJDv1dkZ0L60mXNhariot2LclFR6qs=
-Date:   Wed, 24 Oct 2018 00:03:42 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
-        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v6 10/15] tracing: Add hist trigger snapshot() action
- test case
-Message-Id: <20181024000342.d1e82a160a5efecdb9c0d4f5@kernel.org>
-In-Reply-To: <75db4ded21471580e5ad8d57c74fd9c8923cd90a.1539288364.git.tom.zanussi@linux.intel.com>
-References: <cover.1539288364.git.tom.zanussi@linux.intel.com>
-        <75db4ded21471580e5ad8d57c74fd9c8923cd90a.1539288364.git.tom.zanussi@linux.intel.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        s=default; t=1540307485;
+        bh=5THInnF/+UZEyhuPPwIWwpxnHX1plRKirGdIobQf960=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=DSs8SzGudxaybBQT86mQc+Xp8cntO2w4z2hBxcMvAJFXBjmXBXUWumUwD5e+Fby+1
+         y3NjwbyEr+zEOL9pErMtpD580+fY66K29N1PnnF0wyusRMNFaCib2pr9xeqexp/mlM
+         veLFW2v1Q+kbmRpZbooZ0xawLZSzFtBveMWFXMlA=
+Received: by mail-qt1-f182.google.com with SMTP id c16-v6so1843184qtj.13;
+        Tue, 23 Oct 2018 08:11:25 -0700 (PDT)
+X-Gm-Message-State: ABuFfohHYzZnN0TFjX6RsbT46ddJvO5UYdSGOK+/yqcxs53dtWMIJLWD
+        FWF7iyvZ3MBYVkLv4yzcKfIE4vhM7qncpkhb4A==
+X-Google-Smtp-Source: ACcGV60fXzjwz8jOpRW1aeTNgtb1V2P1rT/mzWLwUAcKjveHlJEMyVqFt4GGUzYLFKqDUoyksLvA4+E6jiT6ncaoLok=
+X-Received: by 2002:a0c:ade7:: with SMTP id x36mr34383109qvc.218.1540307479607;
+ Tue, 23 Oct 2018 08:11:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-10-jagan@amarulasolutions.com> <20181015182448.GA7134@bogus>
+ <CAGb2v64QEhy1J05L9W0_uWhmrky8wD+vg3v5wA7Yd3_U-DdpKg@mail.gmail.com>
+In-Reply-To: <CAGb2v64QEhy1J05L9W0_uWhmrky8wD+vg3v5wA7Yd3_U-DdpKg@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 23 Oct 2018 10:11:08 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJPn9hhGsk62RzLc1dPQyF2_iCSau+MvY9mD_QADybgvg@mail.gmail.com>
+Message-ID: <CAL_JsqJPn9hhGsk62RzLc1dPQyF2_iCSau+MvY9mD_QADybgvg@mail.gmail.com>
+Subject: Re: [PATCH 09/12] dt-bindings: panel: Add Bananapi S070WV20-CT16
+ MIPI-DSI panel bindings
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 11 Oct 2018 16:02:07 -0500
-Tom Zanussi <zanussi@kernel.org> wrote:
+On Mon, Oct 22, 2018 at 5:22 AM Chen-Yu Tsai <wens@csie.org> wrote:
+>
+> Hi Rob,
+>
+> On Mon, Oct 15, 2018 at 7:24 PM Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Thu, 27 Sep 2018 17:18:47 +0530, Jagan Teki wrote:
+> > > Bananapi S070WV20-CT16 is 800x480, 4-lane MIPI-DSI panel, the
+> > > same panel PCB comes with parallel RBG which is supported via
+> > > panel-simple with "bananapi,s070wv20-ct16" compatible.
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > >  .../panel/bananapi,s070wv20-ct16-dsi.txt      | 21 +++++++++++++++++++
+> > >  1 file changed, 21 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16-dsi.txt
+> > >
+> >
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+>
+> This "panel" is actually an RGB panel with a MIPI-DSI-to-RGB bridge
+> tacked on. On one particular revision of this module, one can also
+> directly use the RGB interface.
+>
+> Would it be better to model this as bridge+panel? We already have
+> a binding for the RGB version [1]. This would make it harder to
+> make a driver though, as there is no publicly available datasheet
+> for the bridge chip, so it's likely that part of the init sequence
+> would have to be hard-coded.
 
-> From: Tom Zanussi <tom.zanussi@linux.intel.com>
-> 
-> Add a test case verifying the basic functionality of the
-> hist:snapshot() action.
-> 
+Perhaps you can use the same compatible and detect based on the OF
+graph connection whether it is DSI or RGB interface? That would mean
+the RGB version doesn't use simple-panel driver, but that should be
+okay.
 
-I think this is OK for current tracing tree, but for next kernel version
-you may need to update it (against the kselftest tree)
+If there's other users of this bridge chip, then modeling the bridge
+separately would be better.
 
-> Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-> ---
->  .../inter-event/trigger-snapshot-action-hist.tc    | 55 ++++++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc
-> 
-> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc
-> new file mode 100644
-> index 000000000000..f427be989296
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc
-> @@ -0,0 +1,55 @@
-> +#!/bin/sh
-> +# description: event trigger - test inter-event histogram trigger snapshot action
-> +
-> +do_reset() {
-> +    reset_trigger
-> +    echo > set_event
-> +    echo 0 > snapshot
-> +    clear_trace
-> +}
-> +
-> +fail() { #msg
-> +    do_reset
-> +    echo $1
-> +    exit_fail
-> +}
-> +
-> +if [ ! -f set_event ]; then
-> +    echo "event tracing is not supported"
-> +    exit_unsupported
-> +fi
-> +
-> +if [ ! -f snapshot ]; then
-> +    echo "snapshot is not supported"
-> +    exit_unsupported
-> +fi
-> +
-> +grep "onchange(var)" README > /dev/null || exit_unsupported # version issue
-
-grep -q will be better.
-
-> +
-> +grep "snapshot()" README > /dev/null || exit_unsupported # version issue
-
-Ditto.
-
-> +
-> +reset_tracer
-> +do_reset
-
-Depends on the merge timing, but I already moved this kind of "reset 
-before/after test" into initialize_ftrace(), so you don't need do_reset()
-here. It is required only if you reset tracer in between tests.
-
-> +
-> +echo "Test snapshot action"
-> +
-> +echo 1 > /sys/kernel/debug/tracing/events/sched/enable
-> +
-> +echo 'hist:keys=comm:newprio=prio:onchange($newprio).save(comm,prio):onchange($newprio).snapshot() if comm=="ping"' >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
-> +
-> +ping localhost -c 3
-> +nice -n 1 ping localhost -c 3
-
-Ditto. please use $LOCALHOST if you send this to the latest tree.
-
-http://lkml.kernel.org/r/153563862993.29700.6436770573173736555.stgit@devbox
-
-> +
-> +echo 0 > /sys/kernel/debug/tracing/events/sched/enable
-> +
-> +if ! grep -q "changed:" events/sched/sched_waking/hist; then
-> +    fail "Failed to create onchange action inter-event histogram"
-> +fi
-> +
-> +if ! grep -q "comm=ping" snapshot; then
-> +    fail "Failed to create snapshot action inter-event histogram"
-> +fi
-> +
-> +do_reset
-
-Also you don't need this.
-
-
-BTW, are there no "expected fail" tests? (e.g. passing wrong snapshot command to trigger)
-
-Thank you,
-
-> +
-> +exit 0
-> -- 
-> 2.14.1
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Rob
