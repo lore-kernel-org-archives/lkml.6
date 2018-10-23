@@ -2,257 +2,183 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C67C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5142C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3922420671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:43:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="M8zNL+sw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3922420671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	by mail.kernel.org (Postfix) with ESMTP id 6351E20813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:44:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6351E20813
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbeJXEIR (ORCPT
+        id S1727070AbeJXEJk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 00:08:17 -0400
-Received: from alln-iport-4.cisco.com ([173.37.142.91]:64594 "EHLO
-        alln-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725266AbeJXEIQ (ORCPT
+        Wed, 24 Oct 2018 00:09:40 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:44328 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725266AbeJXEJk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 00:08:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=5223; q=dns/txt; s=iport;
-  t=1540323806; x=1541533406;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=/0he3lxJbaiajGDYUV0yzKQnMyfyCNLleIITgIeKD3Y=;
-  b=M8zNL+swCC7n1AdWrn1snsex3AdiPguJxc1iUjd2I10slANy8jRQ70jP
-   P95DbsRMNbHf8pU81/GmbeEODBSI8jBtfmivPdUULs0XRxZ2Ub3sOe0qY
-   6X0PXccYcoIGcdppjwY7dmgq7xWHDNt87BnN/e7NoRjWq4/0mta6DXJK0
-   8=;
-X-IronPort-AV: E=Sophos;i="5.54,417,1534809600"; 
-   d="scan'208";a="190479108"
-Received: from rcdn-core-12.cisco.com ([173.37.93.148])
-  by alln-iport-4.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 19:43:25 +0000
-Received: from [10.154.208.140] ([10.154.208.140])
-        by rcdn-core-12.cisco.com (8.15.2/8.15.2) with ESMTP id w9NJhKDh008280;
-        Tue, 23 Oct 2018 19:43:20 GMT
-Subject: Re: [PATCH v2] kernel/signal: Signal-based pre-coredump notification
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>,
-        Enke Chen <enkechen@cisco.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
- <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
- <20181023092348.GA14340@redhat.com>
-From:   Enke Chen <enkechen@cisco.com>
-Message-ID: <1e68a3ce-32cd-b058-3d1d-36455ceca848@cisco.com>
-Date:   Tue, 23 Oct 2018 12:43:20 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181023092348.GA14340@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Wed, 24 Oct 2018 00:09:40 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1gF2be-0004C7-F4; Tue, 23 Oct 2018 21:44:46 +0200
+Message-ID: <3abaaea3cd2477fbcf8830f0dd34dbfcc4cfbcc2.camel@sipsolutions.net>
+Subject: Re: [PATCH] Revert "workqueue: re-add lockdep dependencies for
+ flushing"
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Bart Van Assche <bvanassche@acm.org>, Tejun Heo <tj@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "linux-nvme @ lists . infradead . org" 
+        <linux-nvme@lists.infradead.org>
+Date:   Tue, 23 Oct 2018 21:44:26 +0200
+In-Reply-To: <1540243592.128590.36.camel@acm.org> (sfid-20181022_232636_906722_14E48F04)
+References: <20181022151818.135163-1-bvanassche@acm.org>
+         <13901aed5074f4b1fbd259d03928efb6ab40c65a.camel@sipsolutions.net>
+         <094669f3df1690dec5913c2086f6a6d8c470f685.camel@sipsolutions.net>
+         <1540241646.128590.16.camel@acm.org>
+         (sfid-20181022_225411_316091_CE34F84D) <d45d54e8a46028c2b83296c5bf25a89500a289c4.camel@sipsolutions.net>
+         <1540243592.128590.36.camel@acm.org> (sfid-20181022_232636_906722_14E48F04)
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.154.208.140, [10.154.208.140]
-X-Outbound-Node: rcdn-core-12.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Oleg:
-
-Thanks for your review. Please see my replies inline.
-
-On 10/23/18 2:23 AM, Oleg Nesterov wrote:
-> On 10/22, Enke Chen wrote:
->>
->> As the coredump of a process may take time, in certain time-sensitive
->> applications it is necessary for a parent process (e.g., a process
->> manager) to be notified of a child's imminent death before the coredump
->> so that the parent process can act sooner, such as re-spawning an
->> application process, or initiating a control-plane fail-over.
-> 
-> Personally I still do not like this feature, but I won't argue.
-> 
->> --- a/fs/coredump.c
->> +++ b/fs/coredump.c
->> @@ -546,6 +546,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->>  	struct cred *cred;
->>  	int retval = 0;
->>  	int ispipe;
->> +	bool notify;
->>  	struct files_struct *displaced;
->>  	/* require nonrelative corefile path and be extra careful */
->>  	bool need_suid_safe = false;
->> @@ -590,6 +591,15 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->>  	if (retval < 0)
->>  		goto fail_creds;
->>
->> +	/*
->> +	 * Send the pre-coredump signal to the parent if requested.
->> +	 */
->> +	read_lock(&tasklist_lock);
->> +	notify = do_notify_parent_predump(current);
->> +	read_unlock(&tasklist_lock);
->> +	if (notify)
->> +		cond_resched();
-> 
-> Hmm. I do not understand why do we need cond_resched(). And even if we need it,
-> why we can't call it unconditionally?
-
-Remember the goal is to allow the parent (e.g., a process manager) to take early
-action. The "yield" before doing coredump will help.
-
-The yield is made conditional because the notification is conditional.
-Is that ok?
-
-> 
-> I'd also suggest to move read_lock/unlock(tasklist) into do_notify_parent_predump()
-> and remove the "task_struct *tsk" argument, tsk is always current.
-> 
-> Yes, do_notify_parent() and do_notify_parent_cldstop() are called with tasklist_lock
-> held, but there are good reasons for that.
-
-Sure I will make the suggested changes. This function is only called in one place.
-
-> 
-> 
->> +static inline int valid_predump_signal(int sig)
->> +{
->> +	return (sig == SIGCHLD) || (sig == SIGUSR1) || (sig == SIGUSR2);
->> +}
-> 
-> I still do not understand why do we need to restrict predump_signal.
-> 
-> PR_SET_PREDUMP_SIG can only change the caller's ->predump_signal, so to me
-> even PR_SET_PREDUMP_SIG(SIGKILL) is fine.
-
-I will remove it to reduce the code size and give more flexibility to the application.
-
-> 
-> And once again, SIGCHLD/SIGUSR do not queue, this means that PR_SET_PREDUMP_SIG
-> is pointless if you have 2 or more children.
-
-Hmm, could you point me to the code where SIGCHLD/SIGUSR is treated differently
-w.r.t. queuing?  That does not sound right to me.
-
-> 
->> +bool do_notify_parent_predump(struct task_struct *tsk)
->> +{
->> +	struct sighand_struct *sighand;
->> +	struct kernel_siginfo info;
->> +	struct task_struct *parent;
->> +	unsigned long flags;
->> +	pid_t pid;
->> +	int sig;
->> +
->> +	parent = tsk->parent;
->> +	sighand = parent->sighand;
->> +	pid = task_tgid_vnr(tsk);
->> +
->> +	spin_lock_irqsave(&sighand->siglock, flags);
->> +	sig = parent->signal->predump_signal;
->> +	if (!valid_predump_signal(sig)) {
->> +		spin_unlock_irqrestore(&sighand->siglock, flags);
->> +		return false;
->> +	}
-> 
-> Why do we need to check parent->signal->predump_signal under ->siglock?
-> This complicates the code for no reason, afaics.
-> 
->> +	clear_siginfo(&info);
->> +	info.si_pid = pid;
->> +	info.si_signo = sig;
->> +	if (sig == SIGCHLD)
->> +		info.si_code = CLD_PREDUMP;
->> +
->> +	__group_send_sig_info(sig, &info, parent);
->> +	__wake_up_parent(tsk, parent);
-> 
-> Why __wake_up_parent() ?
-
-not needed, and will remove.
-
-> 
-> do_notify_parent() does this to wake up the parent sleeping in do_wait(), to
-> report the event. But predump_signal has nothing to do with wait().
-> 
-> Now. This version sends the signal to ->parent, not ->real_parent. OK, but this
-> means that real_parent won't be notified if its child is traced.
+On Mon, 2018-10-22 at 14:26 -0700, Bart Van Assche wrote:
+> On Mon, 2018-10-22 at 23:04 +0200, Johannes Berg wrote:
+> > When lockdep was added, the networking socket locks also were (mostly)
+> > fine, recursion there only happened on different types of sockets. Yet,
+> > lockdep did in fact report issues with it, because originally they
+> > weren't split into different classes.
 > > 
->> +	case PR_SET_PREDUMP_SIG:
->> +		if (arg3 || arg4 || arg5)
->> +			return -EINVAL;
->> +
->> +		/* 0 is valid for disabling the feature */
->> +		if (arg2 && !valid_predump_signal((int)arg2))
->> +			return -EINVAL;
->> +		me->signal->predump_signal = (int)arg2;
->> +		break;
+> > Did we remove lockdep again because it was reporting a potential problem
+> > in the socket lock code?
 > 
-> Again, I do not understand why do we need valid_predump_signal(). But even
-> if we need it, I don't understand why should we check it twice. IOW, why
-> do_notify_parent_predump() can't simply check ->predump_signal != 0?
-> 
-> Whatever we do, PR_SET_PREDUMP_SIG should validate arg2 anyway. Who else can
-> change ->predump_signal  after that?
+> I do not agree. It is accepted in the kernel community that if locks are
+> nested that nested locks should always be taken in the same order.
 
-Ok, will relax.
+You brought here another example, different from the one that we've been
+discussing in the nvmet-rdma thread. If somebody can explain how you end
+up with this specific example I'd be happy to explain what lockdep
+thinks it's going on, but from just the report, without knowing what the
+setup was, I don't really have any idea what's going on.
 
-> 
->> +	case PR_GET_PREDUMP_SIG:
->> +		if (arg3 || arg4 || arg5)
->> +			return -EINVAL;
->> +		error = put_user(me->signal->predump_signal,
->> +				 (int __user *)arg2);
-> 
-> To me it would be better to simply return ->predump_signal, iow
-> 
-> 		error = me->signal->predump_signal;
-> 		break;
-> 
-> but I won't insist, this is subjective and cosmetic.
+If I were to venture a guess I'd say you mounted a file system image
+loopback, and this happens during some kind of direct IO flush or
+perhaps unmount, because you try to flush the inner filesystem and that
+ends up tricking out to the outer filesystem, which is basically all the
+same (dio) code, so it connects the lock class back to itself as far as
+lockdep is concerned.
 
-Vast majority of system calls returns 0 or -1. So does PR_GET_PDEATHSIG.
-I would like to keep them consistent.
+> There is
+> no agreement however that the kind of checking implemented by the "crosslock"
+> code made sense. My understanding is that you are trying to reintroduce
+> through a backdoor some of the crosslock code. 
 
-Thanks again.
+Not at all.
 
--- Enke
+> There is scientific evidence
+> that it is not possible to come up with an algorithm that flags all
+> potential deadlocks in programs that use completions without reporting false
+> positives. See e.g. Agarwal, Rahul, and Scott D. Stoller. "Run-time detection
+> of potential deadlocks for programs with locks, semaphores, and condition
+> variables." In Proceedings of the 2006 workshop on Parallel and distributed
+> systems: testing and debugging, pp. 51-60. ACM, 2006.
+> (http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.436.7823&rep=rep1&type=pdf).
+
+Yeah, but again, you could take that as an argument for removing
+lockdep.
+
+> > As I thought I made pretty clear, the report is in fact valid.
+> 
+> I'm surprised that although your patch caused a deadlock to be reported while
+> no deadlock occurred that you keep insisting that your report is valid. I don't
+> understand this.
+
+I guess it boils down to semantics of "valid" here. I do argue that the
+report is valid because the report only says:
+
+   Look here, I found that you created a dependency from lock class X
+   (i_mutex_key) back to itself. This means you have a potential bug in
+   your program, because maybe if these are actually the same instance,
+   then you may deadlock.
+
+Note that this kind of reporting is all lockdep ever does.
+
+Think of it like this: You have a bunch of chains, looking like this:
+
+A1-B1
+   B2-A2
+
+where the letters are the lock classes, and the numbers are the
+instances.
+
+Lockdep will basically project that down to be
+
+A-B-A
+
+and tell you that you have a potential deadlock. If somehow you've
+ensured that A1 and A3 are _guaranteed_ to be different *instances*,
+then you can use *_nested() primitives to tell this to lockdep, in which
+case it would project down to
+
+A-B-A'
+
+and not complain.
+
+Now let's put a work struct in here, and you get something like
+
+A-W    # flush work struct W (*) while holding lock A
+  W-A  # lock A while running from work struct W
+
+(*) or a single-threaded/ordered workqueue that may run work struct W
+
+
+This is what lockdep is reporting here now. Again, if the A's are
+actually two guaranteed-to-be-different instances, then *_nested()
+versions of the locking, which may have to be added for flushing
+workqueues/work items, will let you tell lockdep that this is safe.
+
+
+You are arguing that we should remove the lockdep annotations instead,
+basically saying that you'd prefer that lockdep only sees
+
+A      # flush work struct W (*) while holding lock A
+    A  # lock A
+while running from work struct W
+
+instead of the picture with A-W/W-A above.
+
+While this obviously gets rid of this report and the other one in nvmet-
+rdma that you found, all it means is that you've just - to some extent -
+crippled lockdep's ability to find chains.
+
+You haven't removed something that's creating false positives, you've
+just removed links from the chains.
+
+This is why I say this code is valid, and why I say what you're arguing
+is pretty much equivalent to saying that lockdep is just fundamentally
+useless. You wouldn't, after all, say that mutexes shouldn't be
+annotated in lockdep just because lockdep found an A-B-A mutex class
+chain that you had to annotate with mutex_lock_nested() to make it into
+A-B-A' as per my other example above.
+
+
+I hope that clarifies what's going on here. I do understand that it can
+be frustrating if you see a lockdep report and can't really understand
+it immediately, and I also understand that it's not always trivial to
+teach lockdep about the right nesting, but I'd argue that we have ways
+to address both dynamic (mutex_lock_nested) and static (__mutex_init
+passing a different class) ways of addressing this issue.
+
+johannes
+
