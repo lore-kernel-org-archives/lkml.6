@@ -3,128 +3,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55226C46475
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C1FC7112C
 	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:33:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2382A205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:33:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2382A205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
+	by mail.kernel.org (Postfix) with ESMTP id 6AFD020813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:33:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AFD020813
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728480AbeJXE6m (ORCPT
+        id S1727679AbeJXE6i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 00:58:42 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:45118 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727667AbeJXE6l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 00:58:41 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1gF3Mu-0005AP-FR; Tue, 23 Oct 2018 22:33:36 +0200
-Message-ID: <94958073867a5bbf8161d7ea8851aaea026762b1.camel@sipsolutions.net>
-Subject: Re: [PATCH v2] wireless: mark expected switch fall-throughs
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Date:   Tue, 23 Oct 2018 22:33:17 +0200
-In-Reply-To: <c2fad584-1705-a5f2-d63c-824e9b96cf50@embeddedor.com>
-References: <20181023001308.GA4150@embeddedor.com>
-         <0b3197a734f71bdfffaf717e63b17e2fe31720a2.camel@sipsolutions.net>
-         <f0a240e2-cae7-07f4-757f-a8606199d29e@embeddedor.com>
-         <c2fad584-1705-a5f2-d63c-824e9b96cf50@embeddedor.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Wed, 24 Oct 2018 00:58:38 -0400
+Received: from mga03.intel.com ([134.134.136.65]:3192 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725859AbeJXE6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 00:58:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 13:33:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
+   d="scan'208";a="97934638"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
+  by fmsmga002.fm.intel.com with ESMTP; 23 Oct 2018 13:33:35 -0700
+Subject: Re: [PATCH V2 17/19] perf scripts python: exported-sql-viewer.py: Add
+ All branches report
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181001062853.28285-18-adrian.hunter@intel.com>
+ <20181023075949.18920-1-adrian.hunter@intel.com>
+ <20181023181218.GB6114@kernel.org>
+ <363DA0ED52042842948283D2FC38E4649C2B8A4D@IRSMSX106.ger.corp.intel.com>
+ <20181023192935.GD6114@kernel.org>
+ <363DA0ED52042842948283D2FC38E4649C2B8AA7@IRSMSX106.ger.corp.intel.com>
+ <20181023200230.GE6114@kernel.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <fa8d2495-0c47-c023-53dd-66718c2e1751@intel.com>
+Date:   Tue, 23 Oct 2018 23:31:54 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181023200230.GE6114@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-10-23 at 12:58 +0200, Gustavo A. R. Silva wrote:
-> On 10/23/18 10:59 AM, Gustavo A. R. Silva wrote:
-> > 
-> > On 10/23/18 9:01 AM, Johannes Berg wrote:
-> > > On Tue, 2018-10-23 at 02:13 +0200, Gustavo A. R. Silva wrote:
-> > > > In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> > > > where we are expecting to fall through.
-> > > > 
-> > > > Warning level 3 was used: -Wimplicit-fallthrough=3
-> > > > 
-> > > > This code was not tested and GCC 7.2.0 was used to compile it.
-> > > 
-> > > Look, I'm not going to make this any clearer: I'm not applying patches
-> > > like that where you've invested no effort whatsoever on verifying that
-> > > they're correct.
-> > > 
-> > 
-> > How do you suggest me to verify that every part is correct in this type
-> > of patches?
-> > 
+On 23/10/18 11:02 PM, Arnaldo Carvalho de Melo wrote:
+> Em Tue, Oct 23, 2018 at 07:57:17PM +0000, Hunter, Adrian escreveu:
+>>> -----Original Message-----
+>>> From: Arnaldo Carvalho de Melo [mailto:acme@kernel.org]
+>>> Sent: Tuesday, October 23, 2018 10:30 PM
+>>> To: Hunter, Adrian <adrian.hunter@intel.com>
+>>> Cc: Jiri Olsa <jolsa@redhat.com>; Andi Kleen <ak@linux.intel.com>; linux-
+>>> kernel@vger.kernel.org
+>>> Subject: Re: [PATCH V2 17/19] perf scripts python: exported-sql-viewer.py:
+>>> Add All branches report
+>>>
+>>> Em Tue, Oct 23, 2018 at 06:41:17PM +0000, Hunter, Adrian escreveu:
+>>>>> -----Original Message-----
+>>>>> From: Arnaldo Carvalho de Melo [mailto:acme@kernel.org]
+>>>>> So, I followed the instructions then ended up with:
+>>>>>
+>>>>> [acme@seventh perf]$ find /usr/local -name "*xed*" | head
+>>>>> /usr/local/lib/libxed.so /usr/local/lib/libxed.a
+>>>>> /usr/local/lib/libxed-ild.so /usr/local/lib/libxed-ild.a
+>>>>> /usr/local/include/xed /usr/local/include/xed/xed- syntax-enum.h
+>>>>> /usr/local/include/xed/xed-attributes.h
+>>>>> /usr/local/include/xed/xed-build-defines.h
+>>>>> /usr/local/include/xed/xed-cpuid-rec.h
+>>>>> /usr/local/include/xed/xed-flags.h
+>>>>> [acme@seventh perf]$
+>>>>>
+>>>>> Ran ldconfig as root, etc:
+>>>>>
+>>>>> [acme@seventh perf]$ ldconfig -v -N | grep xed
+>>
+>> What about:
+>> 	ldconfig -p | grep  xed
 > 
-> BTW... I'm under the impression you think that I don't even look at
-> the code. Is that correct?
-
-That's what your commit log looks like, yes. This is your full commit
-log:
-
-   In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-   where we are expecting to fall through.
-
-   Warning level 3 was used: -Wimplicit-fallthrough=3
-
-   This code was not tested and GCC 7.2.0 was used to compile it.
-
-   For all I know, you could've run spatch to add the comments wherever
-   there was no break, and then compiled it once.
-
-   > I've been working on this for quite a while, and in every case I try to
-> understand the code in terms of the context in which every warning is
-> reported.
-
-That's great.
-
-> Here is a bug I found yesterday at drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+> $ ldconfig -p | grep xed
+> $ echo $LD_LIBRARY_PATH 
+> /usr/local/lib
+> $ ls -la /usr/local/lib/libxed*so
+> -r--r--r--. 1 root root  132840 Oct 23 14:52 /usr/local/lib/libxed-ild.so
+> -r--r--r--. 2 root root 6842688 Oct 23 14:52 /usr/local/lib/libxed.so
+> $ ldconfig -p | grep xed
+> $ 
 > 
-> 5690         case WLAN_CIPHER_SUITE_CCMP:
-> 5691                 key->flags |= IEEE80211_KEY_FLAG_SW_MGMT_TX;
-> 5692                 break;
-> 5693         case WLAN_CIPHER_SUITE_TKIP:
-> 5694                 key->flags |= IEEE80211_KEY_FLAG_GENERATE_MMIC;
-> 5695         default:
-> 5696                 return -EOPNOTSUPP;
-> 5697         }
 
-Indeed, that looks like a bug, although kinda benign since it just means
-TKIP will always use software crypto and TKIP is slow anyway ;-)
+A short term solution might be to add /usr/local/lib with ldconfig i.e.
 
-> I do this analysis for every warning.  Now, when I say I haven't tested the code
-> is because I don't have any log as evidence for anything. Not that I haven't put
-> any effort on trying to understand it and its context.  When I started working on
-> this task there were more than 2000 of these issues, now there are around 600 left.
-> 
-> I have fixed many bugs on the way, so a good amount of work is being invested on
-> this, and it's paying off. :)
+sudo ldconfig /usr/local/lib
 
-:-)
 
-> Now, let me ask you this question:
-> 
-> It would be easier for you to review this patch if I turn it into a series?
-> 
-> I can do that without a problem.
 
-I'd be happy if you were to actually just mention that you've looked at
-them, and found them to be expected fall throughs. I'll still review
-them, but without that information I feel like I'm doing the first round
-of reviews this code ever got.
-
-johannes
 
