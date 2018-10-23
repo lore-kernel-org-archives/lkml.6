@@ -2,94 +2,116 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7993C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E3FC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:48:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ABEC20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:37:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ABEC20651
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 355DA20665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:48:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 355DA20665
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbeJWVAv (ORCPT
+        id S1728081AbeJWVMK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 17:00:51 -0400
-Received: from mout02.posteo.de ([185.67.36.142]:47357 "EHLO mout02.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726277AbeJWVAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 17:00:51 -0400
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout02.posteo.de (Postfix) with ESMTPS id 2B7E92400FB
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 14:37:31 +0200 (CEST)
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 42fXw81Pxbz9rxV;
-        Tue, 23 Oct 2018 14:37:28 +0200 (CEST)
-Subject: Re: CRC errors between mvneta and macb
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Willy Tarreau <w@1wt.eu>, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Yelena Krivosheev <yelena@marvell.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        netdev@vger.kernel.org
-References: <f6ccdfbd-7a67-ae14-5940-c7614cb143e9@sorico.fr>
- <20181019154439.GC24045@1wt.eu>
- <c24489f6-3b9a-f26b-bc7f-b564d5567294@sorico.fr>
- <31385a3b-2196-94d0-7f4f-52e37ee07a28@sorico.fr>
- <20181022181918.GF24112@lunn.ch>
-From:   Richard Genoud <richard.genoud@gmail.com>
-Message-ID: <302ebc5c-0c07-dc4e-73ed-6a4adb9cbee4@sorico.fr>
-Date:   Tue, 23 Oct 2018 14:37:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 23 Oct 2018 17:12:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35978 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726953AbeJWVMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 17:12:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 28684AF04;
+        Tue, 23 Oct 2018 12:48:49 +0000 (UTC)
+Date:   Tue, 23 Oct 2018 14:48:47 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
+Message-ID: <20181023124847.GT18839@dhcp22.suse.cz>
+References: <f9a8079f-55b0-301e-9b3d-a5250bd7d277@i-love.sakura.ne.jp>
+ <20181022120308.GB18839@dhcp22.suse.cz>
+ <201810230101.w9N118i3042448@www262.sakura.ne.jp>
+ <20181023114246.GR18839@dhcp22.suse.cz>
+ <20181023121055.GS18839@dhcp22.suse.cz>
+ <a55e70bd-dc5f-9a11-72e6-7cd7b3b48ab7@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <20181022181918.GF24112@lunn.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a55e70bd-dc5f-9a11-72e6-7cd7b3b48ab7@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 22/10/2018 à 20:19, Andrew Lunn a écrit :
->> I dug more on the subject, and I think I found what Marvell's PHY/MAC
->> doesn't like.
+On Tue 23-10-18 21:33:43, Tetsuo Handa wrote:
+> On 2018/10/23 21:10, Michal Hocko wrote:
+> > On Tue 23-10-18 13:42:46, Michal Hocko wrote:
+> >> On Tue 23-10-18 10:01:08, Tetsuo Handa wrote:
+> >>> Michal Hocko wrote:
+> >>>> On Mon 22-10-18 20:45:17, Tetsuo Handa wrote:
+> >>>>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> >>>>>> index e79cb59552d9..a9dfed29967b 100644
+> >>>>>> --- a/mm/memcontrol.c
+> >>>>>> +++ b/mm/memcontrol.c
+> >>>>>> @@ -1380,10 +1380,22 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
+> >>>>>>  		.gfp_mask = gfp_mask,
+> >>>>>>  		.order = order,
+> >>>>>>  	};
+> >>>>>> -	bool ret;
+> >>>>>> +	bool ret = true;
+> >>>>>>  
+> >>>>>>  	mutex_lock(&oom_lock);
+> >>>>>> +
+> >>>>>> +	/*
+> >>>>>> +	 * multi-threaded tasks might race with oom_reaper and gain
+> >>>>>> +	 * MMF_OOM_SKIP before reaching out_of_memory which can lead
+> >>>>>> +	 * to out_of_memory failure if the task is the last one in
+> >>>>>> +	 * memcg which would be a false possitive failure reported
+> >>>>>> +	 */
+> >>>>>> +	if (tsk_is_oom_victim(current))
+> >>>>>> +		goto unlock;
+> >>>>>> +
+> >>>>>
+> >>>>> This is not wrong but is strange. We can use mutex_lock_killable(&oom_lock)
+> >>>>> so that any killed threads no longer wait for oom_lock.
+> >>>>
+> >>>> tsk_is_oom_victim is stronger because it doesn't depend on
+> >>>> fatal_signal_pending which might be cleared throughout the exit process.
+> >>>>
+> >>>
+> >>> I still want to propose this. No need to be memcg OOM specific.
+> >>
+> >> Well, I maintain what I've said [1] about simplicity and specific fix
+> >> for a specific issue. Especially in the tricky code like this where all
+> >> the consequences are far more subtle than they seem to be.
+> >>
+> >> This is obviously a matter of taste but I don't see much point discussing
+> >> this back and forth for ever. Unless there is a general agreement that
+> >> the above is less appropriate then I am willing to consider a different
+> >> change but I simply do not have energy to nit pick for ever.
+> >>
+> >> [1] http://lkml.kernel.org/r/20181022134315.GF18839@dhcp22.suse.cz
+> > 
+> > In other words. Having a memcg specific fix means, well, a memcg
+> > maintenance burden. Like any other memcg specific oom decisions we
+> > already have. So are you OK with that Johannes or you would like to see
+> > a more generic fix which might turn out to be more complex?
+> > 
 > 
-> Hi Richard
-> 
-> What PHY is being used?
-> 
->> After analyzing the ethernet frame on the Davicom PHY's output (pin
->> TX+), I find out that the FCS errors occurs when the ethernet preamble
->> is longer than 56bits. (something like 58 or 60 bits)
-> 
-> Some Marvell PHYs have a register bit which might be of interest: Page
-> 2, register 16, bit 6.
-> 
-> 0 = Pad odd nibble preambles in copper receive packets.
-> 1 = Pass as is and do not pad odd nibble preambles in
-It doesn't seem to change anything.
+> I don't know what "that Johannes" refers to.
 
-But the problem really seems to be between the 88E1512 and mvneta.
+let me rephrase
 
-In mvneta_rx_swbm() I dumped the data received, in both cases, I've got
-the same thing:
-0000 0000 0000 0000 0004 a3d2 a7ef 0800
-dead beef 0000 0000 0000 0000 0000 0000
-0000 0000 0000 0000 0000 0000 0000 0000
-0000 0000 0000 0000 0000 0000 0000 8a86 ce78
-The 2 first bytes are the marvell header, and 4 last the CRC
-In one case the MVNETA_RXD_ERR_SUMMARY status bit is set, and not in the
-other case.
-
-But I don't have access to the Marvell documentation to know exactly
-what is the status "MVNETA_RXD_ERR_CRC".
-
-Richard
+Johannes, are you OK with that (memcg specific fix) or you would like to
+see a more generic fix which might turn out to be more complex.
+-- 
+Michal Hocko
+SUSE Labs
