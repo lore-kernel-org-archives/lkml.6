@@ -2,72 +2,88 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93247C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4993C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6190120813
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:33:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6190120813
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B57420651
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:34:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B57420651
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dominikbrodowski.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729005AbeJXD6O (ORCPT
+        id S1729034AbeJXD6y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:58:14 -0400
-Received: from smtprelay0056.hostedemail.com ([216.40.44.56]:44235 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728813AbeJXD6O (ORCPT
+        Tue, 23 Oct 2018 23:58:54 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59884 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727758AbeJXD6y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:58:14 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id A82C1181D3417;
-        Tue, 23 Oct 2018 19:33:26 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: burst07_1dddc9ae52951
-X-Filterd-Recvd-Size: 1714
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 23 Oct 2018 19:33:25 +0000 (UTC)
-Message-ID: <19b16ca89b5cde607338513638d4ef8e3a3d2802.camel@perches.com>
-Subject: Re: [PATCH v2] rtlwifi: remove set but not used variable
- 'radiob_array_table' and 'radiob_arraylen'
-From:   Joe Perches <joe@perches.com>
-To:     zhong jiang <zhongjiang@huawei.com>, kvalo@codeaurora.org
-Cc:     davem@davemloft.net, pkshih@realtek.com,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Tue, 23 Oct 2018 23:58:54 -0400
+Received: by isilmar-4.linta.de (Postfix, from userid 1000)
+        id B4D0120093E; Tue, 23 Oct 2018 19:34:05 +0000 (UTC)
+Date:   Tue, 23 Oct 2018 21:34:05 +0200
+From:   Dominik Brodowski <linux@dominikbrodowski.net>
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     linux-pm@vger.kernel.org, lenb@kernel.org, rjw@rjwysocki.net,
         linux-kernel@vger.kernel.org
-Date:   Tue, 23 Oct 2018 12:33:23 -0700
-In-Reply-To: <1540283282-9772-1-git-send-email-zhongjiang@huawei.com>
-References: <1540283282-9772-1-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] cpufreq: intel_pstate: Fix compilation for !CONFIG_ACPI
+Message-ID: <20181023193405.pxfl4vyazt7rtc3x@isilmar-4.linta.de>
+References: <20181023185429.GA6756@light.dominikbrodowski.net>
+ <e8e018e267434cabc2b8db434a3576c082ab3fff.camel@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e8e018e267434cabc2b8db434a3576c082ab3fff.camel@linux.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-10-23 at 16:28 +0800, zhong jiang wrote:
-> radiob_array_table' and 'radiob_arraylen' are not used after setting its value.
-> It is safe to remove the unused variable. Meanwhile, radio B radio should be
-> removed as well. because it will no longer be referenced.
+On Tue, Oct 23, 2018 at 12:17:28PM -0700, Srinivas Pandruvada wrote:
+> On Tue, 2018-10-23 at 20:54 +0200, Dominik Brodowski wrote:
+> > Fixes: 86d333a8cc7f ("cpufreq: intel_pstate: Add base_frequency
+> > attribute")
+> Thanks for the fix.
+> 
+> > Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Cc: Len Brown <lenb@kernel.org>
+> > Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+> > 
+> > diff --git a/drivers/cpufreq/intel_pstate.c
+> > b/drivers/cpufreq/intel_pstate.c
+> > index 49c0abf2d48f..50c5699970c5 100644
+> > --- a/drivers/cpufreq/intel_pstate.c
+> > +++ b/drivers/cpufreq/intel_pstate.c
+> > @@ -390,11 +390,6 @@ static int intel_pstate_get_cppc_guranteed(int
+> > cpu)
+> >  static void intel_pstate_set_itmt_prio(int cpu)
+> >  {
+> >  }
+> > -
+> > -static int intel_pstate_get_cppc_guranteed(int cpu)
+> > -{
+> > -	return -ENOTSUPP;
+> > -}
+> What is ACPI is defined but SCHED_MC_PRIO is not defined?
+> Based on
+> "select ACPI_CPPC_LIB if X86_64 && ACPI && SCHED_MC_PRIO"
+> 
+> So the above is still required. correct?
 
-The patch subject is a bit off and too generic here.
+Seems so, yes. Though that leads to either complicated #ifdefs or code
+duplications.
 
-This is specific to rtl8723ae and not rtlwifi so it is
-probably better for the subject to be something like:
+In any case, I'd suggest marking at least nested #else and #endif lines
+with comments denoting which #ifdef they relate to, e.g.
 
-[PATCH] rtl8723ae: Remove set but not used variables and #defines
+	#else	/* CONFIG_ACPI */
+	#endif	/* CONFIG_ACPI */
 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c   | 5 +----
->  drivers/net/wireless/realtek/rtlwifi/rtl8723ae/table.c | 4 ----
->  drivers/net/wireless/realtek/rtlwifi/rtl8723ae/table.h | 2 --
-
+Thanks,
+	Dominik
