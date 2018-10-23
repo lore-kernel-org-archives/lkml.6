@@ -2,211 +2,200 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=DATE_IN_PAST_03_06,
+	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4742C46475
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D9AC46475
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC7D4206B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:31:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC7D4206B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id ACCDA206B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:34:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AB6ok6PX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACCDA206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbeJXL6B (ORCPT
+        id S1726543AbeJXMAL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 07:58:01 -0400
-Received: from mga06.intel.com ([134.134.136.31]:25503 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725896AbeJXL6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 07:58:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 20:31:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,418,1534834800"; 
-   d="scan'208";a="275060897"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.27])
-  by fmsmga006.fm.intel.com with ESMTP; 23 Oct 2018 20:31:43 -0700
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: Re: [PATCH -V6 00/21] swap: Swapout/swapin THP in one piece
-References: <20181010071924.18767-1-ying.huang@intel.com>
-        <20181023122738.a5j2vk554tsx4f6i@ca-dmjordan1.us.oracle.com>
-Date:   Wed, 24 Oct 2018 11:31:42 +0800
-In-Reply-To: <20181023122738.a5j2vk554tsx4f6i@ca-dmjordan1.us.oracle.com>
-        (Daniel Jordan's message of "Tue, 23 Oct 2018 05:27:38 -0700")
-Message-ID: <87sh0wuijl.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+        Wed, 24 Oct 2018 08:00:11 -0400
+Received: from mail-oi1-f201.google.com ([209.85.167.201]:55334 "EHLO
+        mail-oi1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725896AbeJXMAK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 08:00:10 -0400
+Received: by mail-oi1-f201.google.com with SMTP id m129-v6so2493150oif.22
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 20:33:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=44RvLdlbHWeLbsI4FsWkczRJMebcjaBtMNCiH44tKr0=;
+        b=AB6ok6PXf9wGtYqQaN8gyoMLpZEzKJCwiN4OhbIFy/qhSvJz7T85MzLTEVa5WyftLU
+         Zj9/+0PEE9UUjrPcKFTnjad7y6c8J5QhyD8nS/SK6OeQf8KAN8LJIBbq1GtkYlLATYlm
+         XuGhc+WVLGI4RnNCnl3GHr1IsiMKGr1YnByk13qhCKHoPCgqZyLsR8NhP4AoPjLLmJvI
+         HtRNhfgUtT0PWXXzQTmOox/QL7sHfUxZAk9EfWY7S1/VCgNskcVGlpl2zz+gCE9D4Exb
+         EkjD/I05wGnrEpqk4N9vy8WimHN7Bka9Wxk+G6l477RjELqGvZ+2YhvU26zWMKM+0s/1
+         sCSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=44RvLdlbHWeLbsI4FsWkczRJMebcjaBtMNCiH44tKr0=;
+        b=OiH8+l8AWUg/Zej/5aLRCbDLN1xPg2kK2jKc5Wnj1LD+i7p82KndaLYFVKCq1YHaVe
+         2F8A6eh0l6EX8b+RCHPTK+1IDTHtiDFowVJrsU0zZHrlZSZgNeYgFrZmTFJufJoDOC+r
+         lkH6vz2XXFAU2CvDw/+fLAymXnVgXP+GxMeIX/TMxSlD+hIpcsdX5qTApyjSs0HZYRL9
+         teyi6FG+FDTUjP8uYJ23Sz2wTlnOqQO1YdGnbG4cGn/WOfDWCh1V2eSOMwLdXQQ2Ib0q
+         +83Wi8Mmwr0j5eSAL41hNrpR39FmIjehnhLPhNtxwLdy87v0k6yQ+r70/G4HInzgRT7x
+         lf+w==
+X-Gm-Message-State: AGRZ1gLzFcNWl76oEVkdogpq0j8nh2AuxSsMgs71zR/Y2TK/df8ibdfL
+        ixCy0DELnYq0UeAIbSPV9aO718PgFyjD5540mze0eg==
+X-Google-Smtp-Source: AJdET5f0SC1xD3J1Eyxz7caHVqEYtJVlMvJgMo/XK4X/oZGUsB/MepnsvKeKrQqmc03IywVjgrdWTH8z3/9jDu3XbFidzA==
+X-Received: by 2002:a9d:48f8:: with SMTP id a53mr318139otj.18.1540339204891;
+ Tue, 23 Oct 2018 17:00:04 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 16:57:47 -0700
+In-Reply-To: <20181023235750.103146-1-brendanhiggins@google.com>
+Message-Id: <20181023235750.103146-12-brendanhiggins@google.com>
+Mime-Version: 1.0
+References: <20181023235750.103146-1-brendanhiggins@google.com>
+X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
+Subject: [RFC v2 11/14] kunit: add KUnit wrapper script and simple output parser
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
+        shuah@kernel.org
+Cc:     joel@jms.id.au, mpe@ellerman.id.au, joe@perches.com, brakmo@fb.com,
+        rostedt@goodmis.org, Tim.Bird@sony.com, khilman@baylibre.com,
+        julia.lawall@lip6.fr, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        daniel@ffwll.ch, dri-devel@lists.freedesktop.org, robh@kernel.org,
+        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
+        kieran.bingham@ideasonboard.com,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Felix Guo <felixguoxiuping@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Daniel,
+The KUnit wrapper script interfaces with the two modules
+(kunit_config.py and kunit_kernel.py) and provides a command line
+interface for running KUnit tests. This interface allows the caller to
+specify options like test timeouts. The script handles configuring,
+building and running the kernel and tests.
 
-Daniel Jordan <daniel.m.jordan@oracle.com> writes:
+The output parser (kunit_parser.py) simply strips out all the output
+from the kernel that is outputted as part of it's initialization
+sequence. This ensures that only the output from KUnit is displayed
+on the screen.
 
-> On Wed, Oct 10, 2018 at 03:19:03PM +0800, Huang Ying wrote:
->> And for all, Any comment is welcome!
->> 
->> This patchset is based on the 2018-10-3 head of mmotm/master.
->
-> There seems to be some infrequent memory corruption with THPs that have been
-> swapped out: page contents differ after swapin.
+A full version of the output is written to test.log, or can be seen by
+passing --raw_output to the wrapper script.
 
-Thanks a lot for testing this!  I know there were big effort behind this
-and it definitely will improve the quality of the patchset greatly!
-
-> Reproducer at the bottom.  Part of some tests I'm writing, had to separate it a
-> little hack-ily.  Basically it writes the word offset _at_ each word offset in
-> a memory blob, tries to push it to swap, and verifies the offset is the same
-> after swapin.
->
-> I ran with THP enabled=always.  THP swapin_enabled could be always or never, it
-> happened with both.  Every time swapping occurred, a single THP-sized chunk in
-> the middle of the blob had different offsets.  Example:
->
-> ** > word corruption gap
-> ** corruption detected 14929920 bytes in (got 15179776, expected 14929920) **
-> ** corruption detected 14929928 bytes in (got 15179784, expected 14929928) **
-> ** corruption detected 14929936 bytes in (got 15179792, expected 14929936) **
-> ...pattern continues...
-> ** corruption detected 17027048 bytes in (got 15179752, expected 17027048) **
-> ** corruption detected 17027056 bytes in (got 15179760, expected 17027056) **
-> ** corruption detected 17027064 bytes in (got 15179768, expected 17027064) **
-
-15179776 < 15179xxx <= 17027064
-
-15179776 % 4096 = 0
-
-And 15179776 = 15179768 + 8
-
-So I guess we have some alignment bug.  Could you try the patches
-attached?  It deal with some alignment issue.
-
-> 100.0% of memory was swapped out at mincore time
-> 0.00305% of pages were corrupted (first corrupt word 14929920, last corrupt word 17027064)
->
-> The problem goes away with THP enabled=never, and I don't see it on 2018-10-3
-> mmotm/master with THP enabled=always.
->
-> The server had an NVMe swap device and ~760G memory over two nodes, and the
-> program was always run like this:  swap-verify -s $((64 * 2**30))
->
-> The kernels had one extra patch, Alexander Duyck's
-> "dma-direct: Fix return value of dma_direct_supported", which was required to
-> get them to build.
->
-
-Thanks again!
-
-Best Regards,
-Huang, Ying
-
----------------------------------->8-----------------------------
-From e1c3e4f565deeb8245bdc4ee53a1f1e4188b6d4a Mon Sep 17 00:00:00 2001
-From: Huang Ying <ying.huang@intel.com>
-Date: Wed, 24 Oct 2018 11:24:15 +0800
-Subject: [PATCH] Fix alignment bug
-
+Signed-off-by: Felix Guo <felixguoxiuping@gmail.com>
+Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 ---
- include/linux/huge_mm.h | 6 ++----
- mm/huge_memory.c        | 9 ++++-----
- mm/swap_state.c         | 2 +-
- 3 files changed, 7 insertions(+), 10 deletions(-)
+ tools/testing/kunit/kunit.py        | 40 +++++++++++++++++++++++++++++
+ tools/testing/kunit/kunit_kernel.py |  3 +--
+ tools/testing/kunit/kunit_parser.py | 24 +++++++++++++++++
+ 3 files changed, 65 insertions(+), 2 deletions(-)
+ create mode 100755 tools/testing/kunit/kunit.py
+ create mode 100644 tools/testing/kunit/kunit_parser.py
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 96baae08f47c..e7b3527bc493 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -379,8 +379,7 @@ struct page_vma_mapped_walk;
+diff --git a/tools/testing/kunit/kunit.py b/tools/testing/kunit/kunit.py
+new file mode 100755
+index 0000000000000..1356be404996b
+--- /dev/null
++++ b/tools/testing/kunit/kunit.py
+@@ -0,0 +1,40 @@
++#!/usr/bin/python3
++# SPDX-License-Identifier: GPL-2.0
++
++# A thin wrapper on top of the KUnit Kernel
++
++import argparse
++import sys
++import os
++
++import kunit_config
++import kunit_kernel
++import kunit_parser
++
++parser = argparse.ArgumentParser(description='Runs KUnit tests.')
++
++parser.add_argument('--raw_output', help='don\'t format output from kernel',
++		    action='store_true')
++
++parser.add_argument('--timeout', help='maximum number of seconds to allow for '
++		    'all tests to run. This does not include time taken to '
++		    'build the tests.', type=int, default=300,
++		    metavar='timeout')
++
++cli_args = parser.parse_args()
++linux = kunit_kernel.LinuxSourceTree()
++
++success = linux.build_reconfig()
++if not success:
++	quit()
++
++print('Building KUnit Kernel ...')
++success = linux.build_um_kernel()
++if not success:
++	quit()
++
++print('Starting KUnit Kernel ...')
++if cli_args.raw_output:
++	kunit_parser.raw_output(linux.run_kernel(timeout=cli_args.timeout))
++else:
++	kunit_parser.parse_run_tests(linux.run_kernel(timeout=cli_args.timeout))
+diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
+index 87abaede50513..c1259b174f7d4 100644
+--- a/tools/testing/kunit/kunit_kernel.py
++++ b/tools/testing/kunit/kunit_kernel.py
+@@ -113,8 +113,7 @@ class LinuxSourceTree(object):
+ 			return False
+ 		return True
  
- #ifdef CONFIG_THP_SWAP
- extern void __split_huge_swap_pmd(struct vm_area_struct *vma,
--				  unsigned long haddr,
--				  pmd_t *pmd);
-+				  unsigned long addr, pmd_t *pmd);
- extern int split_huge_swap_pmd(struct vm_area_struct *vma, pmd_t *pmd,
- 			       unsigned long address, pmd_t orig_pmd);
- extern int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd);
-@@ -411,8 +410,7 @@ static inline bool transparent_hugepage_swapin_enabled(
- }
- #else /* CONFIG_THP_SWAP */
- static inline void __split_huge_swap_pmd(struct vm_area_struct *vma,
--					 unsigned long haddr,
--					 pmd_t *pmd)
-+					 unsigned long addr, pmd_t *pmd)
- {
- }
- 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index ed64266b63dc..b2af3bff7624 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1731,10 +1731,11 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf, pmd_t pmd)
- #ifdef CONFIG_THP_SWAP
- /* Convert a PMD swap mapping to a set of PTE swap mappings */
- void __split_huge_swap_pmd(struct vm_area_struct *vma,
--			   unsigned long haddr,
-+			   unsigned long addr,
- 			   pmd_t *pmd)
- {
- 	struct mm_struct *mm = vma->vm_mm;
-+	unsigned long haddr = addr & HPAGE_PMD_MASK;
- 	pgtable_t pgtable;
- 	pmd_t _pmd;
- 	swp_entry_t entry;
-@@ -1772,7 +1773,7 @@ int split_huge_swap_pmd(struct vm_area_struct *vma, pmd_t *pmd,
- 
- 	ptl = pmd_lock(mm, pmd);
- 	if (pmd_same(*pmd, orig_pmd))
--		__split_huge_swap_pmd(vma, address & HPAGE_PMD_MASK, pmd);
-+		__split_huge_swap_pmd(vma, address, pmd);
- 	else
- 		ret = -ENOENT;
- 	spin_unlock(ptl);
-@@ -2013,9 +2014,7 @@ bool madvise_free_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 			 * swap mapping and operate on the PTEs
- 			 */
- 			if (next - addr != HPAGE_PMD_SIZE) {
--				unsigned long haddr = addr & HPAGE_PMD_MASK;
--
--				__split_huge_swap_pmd(vma, haddr, pmd);
-+				__split_huge_swap_pmd(vma, addr, pmd);
- 				goto out;
- 			}
- 			free_swap_and_cache(entry, HPAGE_PMD_NR);
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 784ad6388da0..fd143ef82351 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -451,7 +451,7 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 		/* May fail (-ENOMEM) if XArray node allocation failed. */
- 		__SetPageLocked(new_page);
- 		__SetPageSwapBacked(new_page);
--		err = add_to_swap_cache(new_page, entry, gfp_mask & GFP_KERNEL);
-+		err = add_to_swap_cache(new_page, hentry, gfp_mask & GFP_KERNEL);
- 		if (likely(!err)) {
- 			/* Initiate read into locked page */
- 			SetPageWorkingset(new_page);
+-	def run_kernel(self, args=[]):
+-		timeout = None
++	def run_kernel(self, args=[], timeout=None):
+ 		args.extend(['mem=256M'])
+ 		process = self._ops.linux_bin(args, timeout)
+ 		with open('test.log', 'w') as f:
+diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/kunit_parser.py
+new file mode 100644
+index 0000000000000..1dff3adb73bd3
+--- /dev/null
++++ b/tools/testing/kunit/kunit_parser.py
+@@ -0,0 +1,24 @@
++# SPDX-License-Identifier: GPL-2.0
++
++import re
++
++kunit_start_re = re.compile('console .* enabled')
++kunit_end_re = re.compile('List of all partitions:')
++
++def isolate_kunit_output(kernel_output):
++	started = False
++	for line in kernel_output:
++		if kunit_start_re.match(line):
++			started = True
++		elif kunit_end_re.match(line):
++			break
++		elif started:
++			yield line
++
++def raw_output(kernel_output):
++	for line in kernel_output:
++		print(line)
++
++def parse_run_tests(kernel_output):
++	for output in isolate_kunit_output(kernel_output):
++		print(output)
 -- 
-2.18.1
+2.19.1.568.g152ad8e336-goog
 
