@@ -2,130 +2,177 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3837C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E363DC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:31:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7353520813
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:28:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89165204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:31:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZG2CGAlQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7353520813
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kz061Smv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89165204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728623AbeJXCwx (ORCPT
+        id S1728613AbeJXCzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 22:52:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37396 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727829AbeJXCwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 22:52:53 -0400
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90845204EC;
-        Tue, 23 Oct 2018 18:28:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540319301;
-        bh=G2PlBONjhBi9sv1Xw4h/cc+8zN2vfVGL036aDNPg7aY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZG2CGAlQf8OO9gLkJXvzk6IwdqMpSRc9UXnsKDlXN04dRLpieip4Nq2TxeKtVHFZP
-         +kYnH59bpFiLl/PtP1Beytul3kF/Kknt1e5G2Xe8f17SmTFaEkVt7CavfN4zWN8x8m
-         Nv9J8AUv74IMRfFVKlVVQPfg3J0tvH8mnVZVOtR4=
-Received: by mail-qt1-f172.google.com with SMTP id a10-v6so2708343qtp.2;
-        Tue, 23 Oct 2018 11:28:21 -0700 (PDT)
-X-Gm-Message-State: ABuFfogbdHd3m5li1C8+lX3yb/OaL0/4GIZ6dH9Uu/dj1VblR1IlAQuz
-        vSUT/gP7PstNv9xUuxnsev0iqK+ay0k9udC2Fg==
-X-Google-Smtp-Source: ACcGV626xKFuZct1TwBK3H5EtHX6IhYLT+6mA62VaDgK/p63QtU+y26y+TVqQfgjpqVjH+HocrDYwTGqVNCnuAM8zbA=
-X-Received: by 2002:ac8:3a64:: with SMTP id w91-v6mr49731392qte.144.1540319300770;
- Tue, 23 Oct 2018 11:28:20 -0700 (PDT)
+        Tue, 23 Oct 2018 22:55:36 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43397 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728408AbeJXCzf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 22:55:35 -0400
+Received: by mail-wr1-f68.google.com with SMTP id t10-v6so2775755wrn.10
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 11:31:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=+iI2WIH8XTggL0ZcvmaPJUnh55lXQmNlHjbP+7TjBmw=;
+        b=Kz061SmvKEPtC/Q1J/gDZj7FFj88C1PAwKLv6E4bVjZ3CrNfr2kdIyqnxYVUxAawp4
+         ed9zzU4s6Uzj2ohPH1ou5vxhcnOB0l5frlWmLk86ZntEPiPuEVjHTNNBhwKp1uj7OMt3
+         EM2ceN4NjTCg0F09MO59Ry/L/iQoh0n8Cc5uE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=+iI2WIH8XTggL0ZcvmaPJUnh55lXQmNlHjbP+7TjBmw=;
+        b=UdM8YA76jIJPXB+7MpINyExu2UlVvR6ufhSjkFGwD2OAi6eZGkWT3+c6Yygrk6T07q
+         9XIMBiAb+a9e31/yGBmewKNMJaBlaQf1sI9blf72TqxVTqP/kqmvV5DRfb3H0f78qC00
+         hWEzdmMZ1pk9U7LX3SKMWas8smiYlvqxvUlESe+OvTgY6vMXPw5RycLpqBW1UfUR0cNd
+         UhHQzXaKNXPZ0btR9aANZ0aHR0zi+58ozLw/BdDTzjJ57vdIKW63SgCu2s7rhnGE6w8R
+         c06nBqOyNiX8hf0vRpZGz666d6khIwYDO70hYGcT1bpUdfQrsyhI2/mmMLagAIVehFNb
+         Qu7g==
+X-Gm-Message-State: ABuFfogszvJGZSspw3+CmM9h88BgS3rU8dFxDXy8glUFyY69fadUPK8b
+        tMXF1qPcQsesSoQhI8ZcTEJl96PdVETxnjShjBoVrA==
+X-Google-Smtp-Source: ACcGV62I1Wym9CcQNj/ZEhWdJdqNvFg2Q7LSlu0fbhq195NmxRCNA6JwZb4DpeVTijTKZJyGlfIL6XlVrVLuv8sKjyA=
+X-Received: by 2002:adf:ba06:: with SMTP id o6-v6mr25781187wrg.249.1540319461616;
+ Tue, 23 Oct 2018 11:31:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180827082153.22537-1-johan@kernel.org> <20180827082153.22537-6-johan@kernel.org>
- <20180827102820.3abf7291@bbrezillon> <20180827084414.GZ14967@localhost>
- <20180827104842.26bce912@bbrezillon> <20180827094423.GA14967@localhost>
-In-Reply-To: <20180827094423.GA14967@localhost>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 23 Oct 2018 13:28:09 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+fiM8E-za-fKufgDuoDqu3DY5a4bgZOuF3Ssvj2=6ayg@mail.gmail.com>
-Message-ID: <CAL_Jsq+fiM8E-za-fKufgDuoDqu3DY5a4bgZOuF3Ssvj2=6ayg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/9] mtd: nand: atmel: fix OF child-node lookup
-To:     Johan Hovold <johan@kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Josh Wu <rainyfeeling@outlook.com>
+Received: by 2002:a1c:b485:0:0:0:0:0 with HTTP; Tue, 23 Oct 2018 11:31:00
+ -0700 (PDT)
+In-Reply-To: <CALAqxLUpKU73kzBh6mxgoCX4nEueuE42REcXw6F6DYYk4Hry6Q@mail.gmail.com>
+References: <20181015160945.5993-1-christopher.s.hall@intel.com>
+ <alpine.DEB.2.21.1810191720590.6075@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1810191955250.1651@nanos.tec.linutronix.de>
+ <CALAqxLWHdZn9RCcYbYicKXeu3QiCuVna27mWBQPbFvaj9gm-fw@mail.gmail.com>
+ <alpine.DEB.2.21.1810192050250.1651@nanos.tec.linutronix.de>
+ <CALAqxLVrPH-SFacys6pWBvL79OBwiAMUOL55oy3S7C+7pNffHA@mail.gmail.com>
+ <alpine.DEB.2.21.1810192244150.1651@nanos.tec.linutronix.de> <CALAqxLUpKU73kzBh6mxgoCX4nEueuE42REcXw6F6DYYk4Hry6Q@mail.gmail.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Tue, 23 Oct 2018 11:31:00 -0700
+Message-ID: <CALAqxLUKOYYm=bzn4owZC_UgWTqrVPiz2TSnLFm1RNak3tm8-g@mail.gmail.com>
+Subject: Re: TSC to Mono-raw Drift
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Christopher Hall <christopher.s.hall@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        jesus.sanchez-palencia@intel.com,
+        Gavin Hindman <gavin.hindman@intel.com>,
+        liam.r.girdwood@intel.com, Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miroslav Lichvar <mlichvar@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 4:44 AM Johan Hovold <johan@kernel.org> wrote:
+On Fri, Oct 19, 2018 at 3:36 PM, John Stultz <john.stultz@linaro.org> wrote:
+> On Fri, Oct 19, 2018 at 1:50 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>> John,
+>>
+>> On Fri, 19 Oct 2018, John Stultz wrote:
+>>> On Fri, Oct 19, 2018 at 11:57 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>>> > I don't think you need complex oscillation for that. The error is constant
+>>> > and small enough that it is a fractional nanoseconds thing with an interval
+>>> > <= 1s. So you can just add that in a regular interval. Due to it being
+>>> > small you can't observe time jumping I think.
+>>>
+>>> Well, from the examples the trouble is we seem to be a bit fast,
+>>> rather then slow.
+>>> So we'll have to reduce mult by one, and rework the calculations, but
+>>> maybe something like this (correcting the raw_interval value) would
+>>> work.
+>>
+>> Shouldn't be rocket science. It's a one off calculation of adjustment value
+>> and maybe the period at which the correction happens.
+>>
+>>> But this also sort of breaks, fundamental argument that the raw clock
+>>> is a simple mult/shift transformation of the underlying clocksource
+>>> counter. Its not the accuracy of the clock but the consistency that
+>>> was key.
+>>>
+>>> The counter argument is that the raw clock is abstracting the
+>>> underlying hardware so folks who would have used the TSC directly can
+>>> now use the raw clock and have a generic abstracted hardware-counter
+>>> interface. So userland shouldn't really be worried about the
+>>> occasional injections made since they shouldn't be trying to
+>>> re-generate the abstraction from the hardware themselves.  <--
+>>> Remember this point as we move to the next comment:)
+>>>
+>>> > The end-result is 'correct' as much correct it is in relation to real
+>>> > nanoseconds. :)
+>>> >
+>>> >> I guess I'd want to understand more of the use here and the need to
+>>> >> tie the raw clock back to the hardware counter it abstracts.
+>>> >
+>>> > The problem there is ART which is distributed to PCIe devices and ART time
+>>> > stamps are exposed in various ways. ART has a fixed ratio vs. TSC so there
+>>> > is a reasonable expectation that MONOTONIC_RAW is accurate.
+>>>
+>>> Which is maybe sort of my issue here. The raw clock provided a
+>>> abstraction away from the hardware for generic usage, but then its
+>>> being re-used with other un-abstracted hardware references. So unless
+>>> they use the same method of transformation, there will be problems (of
+>>> varying degree).
+>>
+>> OTOH. If people use the CPUID provided frequency information and the TSC
+>> from userspace then they get different results which is contrary to the
+>> goal of providing them an abstracted way of doing it.
 >
-> On Mon, Aug 27, 2018 at 10:48:42AM +0200, Boris Brezillon wrote:
-> > On Mon, 27 Aug 2018 10:44:14 +0200
-> > Johan Hovold <johan@kernel.org> wrote:
-> >
-> > > On Mon, Aug 27, 2018 at 10:28:20AM +0200, Boris Brezillon wrote:
-> > > > Hi Johan
-> > > >
-> > > > On Mon, 27 Aug 2018 10:21:49 +0200
-> > > > Johan Hovold <johan@kernel.org> wrote:
-> > > >
-> > > > > Use the new of_get_compatible_child() helper to lookup the nfc child
-> > > > > node instead of using of_find_compatible_node(), which searches the
-> > > > > entire tree from a given start node and thus can return an unrelated
-> > > > > (i.e. non-child) node.
-> > > > >
-> > > > > This also addresses a potential use-after-free (e.g. after probe
-> > > > > deferral) as the tree-wide helper drops a reference to its first
-> > > > > argument (i.e. the node of the device being probed).
-> > > > >
-> > > > > While at it, also fix a related nfc-node reference leak.
-> > > > >
-> > > > > Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
-> > > > > Cc: stable <stable@vger.kernel.org>     # 4.11
-> > > > > Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-> > > > > Cc: Josh Wu <rainyfeeling@outlook.com>
-> > > > > Cc: Boris Brezillon <boris.brezillon@bootlin.com>
-> > > > > Signed-off-by: Johan Hovold <johan@kernel.org>
-> > > >
-> > > > Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> > >
-> > > Thanks for the ack.
-> > >
-> > > > I'll let Miquel queue this patch to the nand/next branch, unless you
-> > > > want it to be merged in 4.19, in which case I'll queue it to the
-> > > > mtd/fixes branch.
-> > >
-> > > Note that there's a dependency on the first patch of the series which
-> > > adds the new helper.
-> >
-> > I was not Cc-ed on this patch :P.
+> But that's my point. If they are pulling time values from the hardware
+> directly that's unabstracted. I'm not sure its smart to be comparing
+> the abstracted and unabstracted time stamps if your worried about
+> precision. They are sort of two separate (though similar) time
+> domains.
 >
-> Yeah, sorry about that. I made sure everyone was CCed on the
-> cover letter, but guess I could have reused that list for the helper as
-> well.
+>>> We might be able to reduce the degree in this case, but I worry the
+>>> extra complexity may only cause problems for others.
+>>
+>> Is it really that complex to add a fixed correction value periodically?
+>>
+>> I don't think so and it should just work for any clocksource which is
+>> exposed this way. Famous last words .....
 >
-> > > Rob can pick up the entire series if the various
-> > > maintainers agree, otherwise I'll try to get at the least the helper
-> > > into -rc2.
-> >
-> > If everything goes in 4.19-rc2 through Rob's tree that's fine, but if
-> > it's queued for 4.20 we might need an immutable tag just in case we
-> > queue conflicting changes to the NAND tree.
->
-> Ok, thanks.
+> I'm not saying that the code is overly complex (at least compared to
+> the rest of the timekeeping code :), but just how the accumulation is
+> done is less-trivial. So if someone else is trying to mimic the
+> abstracted time with unabstracted hardware values (again, not
+> something I reccomend, but that's sort of the usage case pushing
+> this), they need to use a similar method that is slightly more
+> complicated (or use slower math). Its all subtle stuff, but this makes
+> something that was relatively very simple (by design) a bit harder to
+> explain.
 
-Hi Boris, can you pick this one up. It conflicts with "mtd: rawnand:
-atmel: Fix potential NULL pointer dereference"
+Adding Mirosalv as he's always thoughtful on these sorts of issues.
 
-Rob
+I spent a little bit of time thinking this out. Unfortunately I don't
+think its a simple matter of calculating the granularity error on the
+raw clock and adding it in each interval. The other trouble spot is
+that the adjusted clocks (monotonic/realtime) are adjusted off of that
+raw clock. So they would need to have that error added as well,
+otherwise the raw and a otherwise non-adjusted monotonic clock would
+drift.
+
+However, to be correct, the ntp adjustments made would have to be made
+to both the base interval + error, which mucks the math up a fair bit.
+
+Maybe Miroslav will have a better idea here, but otherwise I'll stew
+on this a bit more and see what I can come up with.
+
+thanks
+-john
