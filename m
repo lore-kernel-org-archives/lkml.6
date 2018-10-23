@@ -6,55 +6,56 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14270C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C98C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:53:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C54AD2075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:50:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C54AD2075D
+	by mail.kernel.org (Postfix) with ESMTP id 6CB392082B
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:53:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB392082B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728647AbeJXBOw (ORCPT
+        id S1728659AbeJXBSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 21:14:52 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:52340 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727402AbeJXBOw (ORCPT
+        Tue, 23 Oct 2018 21:18:00 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:51122 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbeJXBSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 21:14:52 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9NGodN5053194;
-        Tue, 23 Oct 2018 11:50:39 -0500
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9NGodLw032789
+        Tue, 23 Oct 2018 21:18:00 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9NGrkeX055584;
+        Tue, 23 Oct 2018 11:53:46 -0500
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9NGrki7101153
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 23 Oct 2018 11:50:39 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 23 Oct 2018 11:53:46 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 23
- Oct 2018 11:50:38 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
+ Oct 2018 11:53:46 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 23 Oct 2018 11:50:38 -0500
+ Tue, 23 Oct 2018 11:53:46 -0500
 Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9NGocX4013898;
-        Tue, 23 Oct 2018 11:50:38 -0500
-Subject: Re: [PATCH v4 02/17] remoteproc: add rproc_va_to_pa function
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9NGrkqn004480;
+        Tue, 23 Oct 2018 11:53:46 -0500
+Subject: Re: [PATCH v4 03/17] remoteproc: add release ops in rproc_mem_entry
+ struct
 To:     Loic Pallardy <loic.pallardy@st.com>, <bjorn.andersson@linaro.org>,
         <ohad@wizery.com>
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>
 References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
- <1532697292-14272-3-git-send-email-loic.pallardy@st.com>
+ <1532697292-14272-4-git-send-email-loic.pallardy@st.com>
 From:   Suman Anna <s-anna@ti.com>
-Message-ID: <91e489e7-86c3-6ee3-918d-151ef1697429@ti.com>
-Date:   Tue, 23 Oct 2018 11:50:38 -0500
+Message-ID: <90b2b81b-a3e1-fcfc-2a14-64050637d440@ti.com>
+Date:   Tue, 23 Oct 2018 11:53:46 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1532697292-14272-3-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1532697292-14272-4-git-send-email-loic.pallardy@st.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -64,67 +65,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Loic, Bjorn,
-
 On 7/27/18 8:14 AM, Loic Pallardy wrote:
-> This new function translates CPU virtual address in
-> CPU physical one according to virtual address location.
+> Memory entry could be allocated in different ways (ioremap,
+> dma_alloc_coherent, internal RAM allocator...).
+> This patch introduces a release ops in rproc_mem_entry structure
+> to associate dedicated release mechanism to each memory entry descriptor
+> in order to keep remoteproc core generic.
 > 
 > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 > Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Acked-by: Suman Anna <s-anna@ti.com>
+
 > ---
->  drivers/remoteproc/remoteproc_core.c | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
+>  drivers/remoteproc/remoteproc_core.c | 23 +++++++++++++++++++++--
+>  include/linux/remoteproc.h           |  5 ++++-
+>  2 files changed, 25 insertions(+), 3 deletions(-)
 > 
 > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 437fabf..8e5fe1e 100644
+> index 8e5fe1e..24fe11f 100644
 > --- a/drivers/remoteproc/remoteproc_core.c
 > +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -140,6 +140,22 @@ static void rproc_disable_iommu(struct rproc *rproc)
->  	iommu_domain_free(domain);
+> @@ -600,6 +600,24 @@ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
 >  }
 >  
-> +static phys_addr_t rproc_va_to_pa(void *cpu_addr)
+>  /**
+> + * rproc_release_carveout() - release acquired carveout
+> + * @rproc: rproc handle
+> + * @mem: the memory entry to release
+> + *
+> + * This function releases specified memory entry @mem allocated via
+> + * dma_alloc_coherent() function by @rproc.
+> + */
+> +static int rproc_release_carveout(struct rproc *rproc,
+> +				  struct rproc_mem_entry *mem)
 > +{
-> +	/*
-> +	 * Return physical address according to virtual address location
-> +	 * - in vmalloc: if region ioremapped or defined as dma_alloc_coherent
-> +	 * - in kernel: if region allocated in generic dma memory pool
-> +	 */
-> +	if (is_vmalloc_addr(cpu_addr)) {
-> +		return page_to_phys(vmalloc_to_page(cpu_addr)) +
-> +				    offset_in_page(cpu_addr);
-> +	}
+> +	struct device *dev = &rproc->dev;
 > +
-> +	WARN_ON(!virt_addr_valid(cpu_addr));
-> +	return virt_to_phys(cpu_addr);
+> +	/* clean up carveout allocations */
+> +	dma_free_coherent(dev->parent, mem->len, mem->va, mem->dma);
+> +	return 0;
 > +}
 > +
->  /**
->   * rproc_da_to_va() - lookup the kernel virtual address for a remoteproc address
->   * @rproc: handle of a remote processor
-> @@ -711,7 +727,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  	 * In this case, the device address and the physical address
->  	 * are the same.
->  	 */
-> -	rsc->pa = dma;
-> +	rsc->pa = (u32)rproc_va_to_pa(va);
-
-While I agree with the direction here, we ought to add a check here
-warning users if some address bits are getting lost as a result of the
-typecast. Granted the issue may have been present previously with
-dma_addr_t as well, but most platforms were using 32-bit dma addresses,
-so this was kinda masked. There are ARMv7 platforms with LPAE enabled
-allowing physical addresses > 32-bits.
-
-In anycase, we definitely have a need for a v2 for the fw_rsc_carveout
-structure to deal with 64-bit addresses.
-
-regards
-Suman
-
->  
->  	carveout->va = va;
+> +/**
+>   * rproc_handle_carveout() - handle phys contig memory allocation requests
+>   * @rproc: rproc handle
+>   * @rsc: the resource entry
+> @@ -733,6 +751,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
 >  	carveout->len = rsc->len;
+>  	carveout->dma = dma;
+>  	carveout->da = rsc->da;
+> +	carveout->release = rproc_release_carveout;
+>  
+>  	list_add_tail(&carveout->node, &rproc->carveouts);
+>  
+> @@ -920,8 +939,8 @@ static void rproc_resource_cleanup(struct rproc *rproc)
+>  
+>  	/* clean up carveout allocations */
+>  	list_for_each_entry_safe(entry, tmp, &rproc->carveouts, node) {
+> -		dma_free_coherent(dev->parent, entry->len, entry->va,
+> -				  entry->dma);
+> +		if (entry->release)
+> +			entry->release(rproc, entry);
+>  		list_del(&entry->node);
+>  		kfree(entry);
+>  	}
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index e3c5d85..bef2e83 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -305,12 +305,15 @@ struct fw_rsc_vdev {
+>  	struct fw_rsc_vdev_vring vring[0];
+>  } __packed;
+>  
+> +struct rproc;
+> +
+>  /**
+>   * struct rproc_mem_entry - memory entry descriptor
+>   * @va:	virtual address
+>   * @dma: dma address
+>   * @len: length, in bytes
+>   * @da: device address
+> + * @release: release associated memory
+>   * @priv: associated data
+>   * @node: list node
+>   */
+> @@ -321,9 +324,9 @@ struct rproc_mem_entry {
+>  	u32 da;
+>  	void *priv;
+>  	struct list_head node;
+> +	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
+>  };
+>  
+> -struct rproc;
+>  struct firmware;
+>  
+>  /**
 > 
 
