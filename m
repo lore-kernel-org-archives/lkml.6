@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FB1C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 22:45:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDB6C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 22:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1492720671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 22:45:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1492720671
+	by mail.kernel.org (Postfix) with ESMTP id 2F60620671
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 22:45:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F60620671
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729124AbeJXHLP (ORCPT
+        id S1729148AbeJXHLW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 03:11:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36272 "EHLO mx1.suse.de"
+        Wed, 24 Oct 2018 03:11:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36334 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725787AbeJXHLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 03:11:15 -0400
+        id S1725787AbeJXHLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 03:11:21 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2DE3AAF84;
-        Tue, 23 Oct 2018 22:45:49 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id A3D75AEAD;
+        Tue, 23 Oct 2018 22:45:55 +0000 (UTC)
 From:   NeilBrown <neilb@suse.com>
 To:     Jeff Layton <jlayton@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>
 Date:   Wed, 24 Oct 2018 09:43:54 +1100
-Subject: [PATCH 2/9] fs/locks: split out __locks_wake_up_blocks().
+Subject: [PATCH 3/9] NFS: use locks_copy_lock() to copy locks.
 Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
         Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
         Frank Filz <ffilzlnx@mindspring.com>,
         linux-kernel@vger.kernel.org
-Message-ID: <154033463440.29542.7694639999612998712.stgit@noble>
+Message-ID: <154033463444.29542.13558945918454678800.stgit@noble>
 In-Reply-To: <154033435272.29542.13985568983074440924.stgit@noble>
 References: <154033435272.29542.13985568983074440924.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -47,58 +47,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This functionality will be useful in future patches, so
-split it out from locks_wake_up_blocks().
+Using memcpy() to copy lock requests leave the various
+list_head in an inconsistent state.
+As we will soon attach a list of conflicting request to
+another pending request, we need these lists to be consistent.
+So change NFS to use locks_init_lock/locks_copy_lock instead
+of memcpy.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- fs/locks.c |   27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+ fs/nfs/nfs4proc.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/locks.c b/fs/locks.c
-index a6c6d601286c..b8f33792a0a6 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -672,6 +672,21 @@ static void __locks_delete_block(struct file_lock *waiter)
- 	waiter->fl_blocker = NULL;
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 8220a168282e..cd5a431c6583 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -6284,7 +6284,8 @@ static struct nfs4_unlockdata *nfs4_alloc_unlockdata(struct file_lock *fl,
+ 	/* Ensure we don't close file until we're done freeing locks! */
+ 	p->ctx = get_nfs_open_context(ctx);
+ 	p->l_ctx = nfs_get_lock_context(ctx);
+-	memcpy(&p->fl, fl, sizeof(p->fl));
++	locks_init_lock(&p->fl);
++	locks_copy_lock(&p->fl, fl);
+ 	p->server = NFS_SERVER(inode);
+ 	return p;
  }
- 
-+static void __locks_wake_up_blocks(struct file_lock *blocker)
-+{
-+	while (!list_empty(&blocker->fl_blocked)) {
-+		struct file_lock *waiter;
-+
-+		waiter = list_first_entry(&blocker->fl_blocked,
-+					  struct file_lock, fl_block);
-+		__locks_delete_block(waiter);
-+		if (waiter->fl_lmops && waiter->fl_lmops->lm_notify)
-+			waiter->fl_lmops->lm_notify(waiter);
-+		else
-+			wake_up(&waiter->fl_wait);
-+	}
-+}
-+
- static void locks_delete_block(struct file_lock *waiter)
- {
- 	spin_lock(&blocked_lock_lock);
-@@ -726,17 +741,7 @@ static void locks_wake_up_blocks(struct file_lock *blocker)
- 		return;
- 
- 	spin_lock(&blocked_lock_lock);
--	while (!list_empty(&blocker->fl_blocked)) {
--		struct file_lock *waiter;
--
--		waiter = list_first_entry(&blocker->fl_blocked,
--				struct file_lock, fl_block);
--		__locks_delete_block(waiter);
--		if (waiter->fl_lmops && waiter->fl_lmops->lm_notify)
--			waiter->fl_lmops->lm_notify(waiter);
--		else
--			wake_up(&waiter->fl_wait);
--	}
-+	__locks_wake_up_blocks(blocker);
- 	spin_unlock(&blocked_lock_lock);
- }
- 
+@@ -6506,7 +6507,8 @@ static struct nfs4_lockdata *nfs4_alloc_lockdata(struct file_lock *fl,
+ 	p->server = server;
+ 	refcount_inc(&lsp->ls_count);
+ 	p->ctx = get_nfs_open_context(ctx);
+-	memcpy(&p->fl, fl, sizeof(p->fl));
++	locks_init_lock(&p->fl);
++	locks_copy_lock(&p->fl, fl);
+ 	return p;
+ out_free_seqid:
+ 	nfs_free_seqid(p->arg.open_seqid);
 
 
