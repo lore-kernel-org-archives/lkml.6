@@ -2,134 +2,129 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D535CC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4328C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 789B62075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eamLta3D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 789B62075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8855A2075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8855A2075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728128AbeJWTiG (ORCPT
+        id S1728143AbeJWTiL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 15:38:06 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40236 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbeJWTiG (ORCPT
+        Tue, 23 Oct 2018 15:38:11 -0400
+Received: from mail1.windriver.com ([147.11.146.13]:35144 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbeJWTiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 15:38:06 -0400
-Received: by mail-wm1-f66.google.com with SMTP id b203-v6so1344706wme.5
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 04:15:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=fUiPn4dPwl3opyNTUO6CIPAnA4Do3UK5isbOHbqBsmw=;
-        b=eamLta3DT+bK6zFzrpC+4az/uq3vjdDjNHVYBnIsmOnZaafuBvyBUMTKVDYbwMQ7bZ
-         bOUJmbYJ6wL9jFWaPcXdzgHngHZnqJHDOE/9yN7fsA9XUIRm5LMEbJTGkVEhcQlRGVZz
-         EOTTLMh0Kh9Y/TrRdwlT4Rh5nV9OEBiRpKsK7S93tWnsJJwziYMDf1Usmx6ZCN2Cs7v9
-         J0ytvhAY3/h/qFIWKkP3sb9tKk660W38fprRkX4PQfts/Hy+r6fYoR2f/xlm7o5Ejs1V
-         3DN+VWU5yjnWVAY94SEfadaRFSn0YIYhHiXPbhZFOiPGapUIHAyebj5/jFk8pBJIrcTI
-         GxqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=fUiPn4dPwl3opyNTUO6CIPAnA4Do3UK5isbOHbqBsmw=;
-        b=Fq7tMLmh2zBJZPod6aR/7BQ5Hda0c69CT45qDrC1g1eFx1CwYzHND4xUpHEIHiDjlJ
-         ZF1XR/QvTYuuWFiudjDC11c9BqZlFVsZFQvkYOxbtNpE49dPTHNYVwiJUiGVR9ByT0dx
-         u5osQ0yYR/N3Q4uVCASzTwUQiljnra3ZdWLYrgz/MFrrPwjigc4qpXrjjSe9hl58Oa9+
-         ROBSA6lSiBR+DXu7vtBBQEoCPtpFqFJ/xqgJXHwiSabGZeEXzyKtmW6Cauj6t1lWs8nB
-         9ZwhIIrPjC9illGPvSt6Rkq/UxfCn+aseHWW7o1+uc4pCaPd7Jk0pvSYxhGj4efcjlTE
-         p8lA==
-X-Gm-Message-State: AGRZ1gIq9jKkfAYC+nLCg6c1qcCS+ZyWbBi+SyFZU7qdmJbnCjx8XLCY
-        iNzeBP2GIm/jjYggo1BdV30=
-X-Google-Smtp-Source: AJdET5cmse27v1Dks5bpGa+qwjinPEFXjCOAJ9OJXHbZ6FjKJ9qfcJoeokmjQ1GBqtoMzyv58Ft2uQ==
-X-Received: by 2002:a1c:824b:: with SMTP id e72-v6mr19966135wmd.92.1540293303931;
-        Tue, 23 Oct 2018 04:15:03 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id o13sm1016857wrx.53.2018.10.23.04.15.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Oct 2018 04:15:03 -0700 (PDT)
-Date:   Tue, 23 Oct 2018 13:15:01 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86/asm changes for v4.20
-Message-ID: <20181023111501.GA114423@gmail.com>
+        Tue, 23 Oct 2018 15:38:10 -0400
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id w9NBEhSZ012091
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Tue, 23 Oct 2018 04:14:43 -0700 (PDT)
+Received: from [128.224.162.216] (128.224.162.216) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 23 Oct
+ 2018 04:14:42 -0700
+Subject: Re: [PATCH] kernel/dma: Fix panic caused by passing swiotlb to
+ command line
+To:     Konrad Rzeszutek Wilk <konrad@darnok.org>
+CC:     <konrad.wilk@oracle.com>, <hch@lst.de>, <m.szyprowski@samsung.com>,
+        <robin.murphy@arm.com>, <iommu@lists.linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1537154831-447363-1-git-send-email-zhe.he@windriver.com>
+ <c3536f4f-9bde-4f7f-a180-aa569d4e786d@windriver.com>
+ <20181022192921.GA20677@dhcp-10-175-29-12.vpn.oracle.com>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <87ee40fa-7a01-4d4c-7fa3-81aafc93e14f@windriver.com>
+Date:   Tue, 23 Oct 2018 19:14:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181022192921.GA20677@dhcp-10-175-29-12.vpn.oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [128.224.162.216]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
-
-Please pull the latest x86-asm-for-linus git tree from:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-asm-for-linus
-
-   # HEAD: ec3a94188df7d28b374868d9a2a0face910e62ab x86/fsgsbase/64: Clean up various details
-
-The main changes in this cycle were the fsgsbase related preparatory 
-patches from Chang S. Bae - but there's also an optimized 
-memcpy_flushcache() and a cleanup for the __cmpxchg_double() assembly 
-glue.
-
- Thanks,
-
-	Ingo
-
------------------->
-Andy Lutomirski (1):
-      x86/fsgsbase/64: Fix ptrace() to read the FS/GS base accurately
-
-Chang S. Bae (7):
-      x86/fsgsbase/64: Introduce FS/GS base helper functions
-      x86/fsgsbase/64: Make ptrace use the new FS/GS base helpers
-      x86/fsgsbase/64: Convert the ELF core dump code to the new FSGSBASE helpers
-      x86/fsgsbase/64: Factor out FS/GS segment loading from __switch_to()
-      x86/segments/64: Rename the GDT PER_CPU entry to CPU_NUMBER
-      x86/vdso: Introduce helper functions for CPU and node number
-      x86/vdso: Initialize the CPU/node NR segment descriptor earlier
-
-Ingo Molnar (2):
-      x86/segments: Introduce the 'CPUNODE' naming to better document the segment limit CPU/node NR trick
-      x86/fsgsbase/64: Clean up various details
-
-Mikulas Patocka (1):
-      x86/asm: Optimize memcpy_flushcache()
-
-Uros Bizjak (1):
-      x86/asm: Use CC_SET()/CC_OUT() in __cmpxchg_double()
 
 
- arch/x86/entry/vdso/vgetcpu.c    |   8 +-
- arch/x86/entry/vdso/vma.c        |  38 +-------
- arch/x86/include/asm/cmpxchg.h   |  10 ++-
- arch/x86/include/asm/elf.h       |   6 +-
- arch/x86/include/asm/fsgsbase.h  |  49 +++++++++++
- arch/x86/include/asm/segment.h   |  46 +++++++++-
- arch/x86/include/asm/string_64.h |  20 ++++-
- arch/x86/include/asm/vgtod.h     |  26 ------
- arch/x86/kernel/cpu/common.c     |  24 +++++
- arch/x86/kernel/process_64.c     | 183 ++++++++++++++++++++++++++++++---------
- arch/x86/kernel/ptrace.c         |  28 ++----
- arch/x86/lib/usercopy_64.c       |   4 +-
- 12 files changed, 299 insertions(+), 143 deletions(-)
- create mode 100644 arch/x86/include/asm/fsgsbase.h
+On 2018/10/23 03:29, Konrad Rzeszutek Wilk wrote:
+> On Sat, Sep 22, 2018 at 08:56:58PM +0800, He Zhe wrote:
+>> May I have your input?
+> Alternatively would it make more sense for it to assume some default
+> value?
+
+Maybe, but the original code has no default value and I have no idea
+what default value is proper here.
+
+Zhe
+
+>> Thanks,
+>> Zhe
+>>
+>> On 2018年09月17日 11:27, zhe.he@windriver.com wrote:
+>>> From: He Zhe <zhe.he@windriver.com>
+>>>
+>>> setup_io_tlb_npages does not check input argument before passing it
+>>> to isdigit. The argument would be a NULL pointer if "swiotlb", without
+>>> its value, is set in command line and thus causes the following panic.
+>>>
+>>> PANIC: early exception 0xe3 IP 10:ffffffffbb9b8e9f error 0 cr2 0x0
+>>> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-yocto-standard+ #9
+>>> [    0.000000] RIP: 0010:setup_io_tlb_npages+0xf/0x95
+>>> ...
+>>> [    0.000000] Call Trace:
+>>> [    0.000000]  do_early_param+0x57/0x8e
+>>> [    0.000000]  parse_args+0x208/0x320
+>>> [    0.000000]  ? rdinit_setup+0x30/0x30
+>>> [    0.000000]  parse_early_options+0x29/0x2d
+>>> [    0.000000]  ? rdinit_setup+0x30/0x30
+>>> [    0.000000]  parse_early_param+0x36/0x4d
+>>> [    0.000000]  setup_arch+0x336/0x99e
+>>> [    0.000000]  start_kernel+0x6f/0x4e6
+>>> [    0.000000]  x86_64_start_reservations+0x24/0x26
+>>> [    0.000000]  x86_64_start_kernel+0x6f/0x72
+>>> [    0.000000]  secondary_startup_64+0xa4/0xb0
+>>>
+>>> This patch adds a check to prevent the panic.
+>>>
+>>> Signed-off-by: He Zhe <zhe.he@windriver.com>
+>>> Cc: stable@vger.kernel.org
+>>> Cc: konrad.wilk@oracle.com
+>>> Cc: hch@lst.de
+>>> Cc: m.szyprowski@samsung.com
+>>> Cc: robin.murphy@arm.com
+>>> ---
+>>>  kernel/dma/swiotlb.c | 5 +++++
+>>>  1 file changed, 5 insertions(+)
+>>>
+>>> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+>>> index 4f8a6db..46fc34e 100644
+>>> --- a/kernel/dma/swiotlb.c
+>>> +++ b/kernel/dma/swiotlb.c
+>>> @@ -109,6 +109,11 @@ static int late_alloc;
+>>>  static int __init
+>>>  setup_io_tlb_npages(char *str)
+>>>  {
+>>> +	if (!str) {
+>>> +		pr_err("Config string not provided\n");
+>>> +		return -EINVAL;
+>>> +	}
+>>> +
+>>>  	if (isdigit(*str)) {
+>>>  		io_tlb_nslabs = simple_strtoul(str, &str, 0);
+>>>  		/* avoid tail segment of size < IO_TLB_SEGSIZE */
+>> _______________________________________________
+>> iommu mailing list
+>> iommu@lists.linux-foundation.org
+>> https://lists.linuxfoundation.org/mailman/listinfo/iommu
 
