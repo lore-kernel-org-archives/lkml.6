@@ -2,389 +2,219 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 164D0C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A14A6C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:17:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C68A920652
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:16:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C68A920652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
+	by mail.kernel.org (Postfix) with ESMTP id 50791207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:17:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EuO1ZH3o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50791207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727733AbeJWQjI (ORCPT
+        id S1727772AbeJWQkL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 12:39:08 -0400
-Received: from mleia.com ([178.79.152.223]:33294 "EHLO mail.mleia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727210AbeJWQjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 12:39:08 -0400
-Received: from mail.mleia.com (localhost [127.0.0.1])
-        by mail.mleia.com (Postfix) with ESMTP id 5B6A0428009;
-        Tue, 23 Oct 2018 09:16:46 +0100 (BST)
-Received: from [10.101.220.187] (unknown [185.7.230.215])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.mleia.com (Postfix) with ESMTPSA id CAB8B3D2B29;
-        Tue, 23 Oct 2018 09:16:45 +0100 (BST)
-Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD
- driver
-From:   Vladimir Zapolskiy <vz@mleia.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        kieran.bingham@ideasonboard.com, Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181008211205.2900-1-vz@mleia.com>
- <506c03d7-7986-44dd-3290-92d16a8106ad@mentor.com>
- <4a807a53-1592-a895-f140-54e7acc473b3@ideasonboard.com>
- <3599186.afdMBtdL0k@avalon> <735126c6-9780-a9ef-4fd0-699d6876ed37@mleia.com>
-Message-ID: <f0a52a64-a7e7-b266-a402-1279036fad36@mleia.com>
-Date:   Tue, 23 Oct 2018 09:16:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 23 Oct 2018 12:40:11 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38672 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727420AbeJWQkL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 12:40:11 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 193-v6so765308wme.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 01:17:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pstTuRLNyfbo8OBAUHO4Carb6ForQeYM6MN8xRaOVp0=;
+        b=EuO1ZH3oQZjauw2FGWtXew3RA5+DHailSNEgE0FIqJQV7MUTtbhT468BX9y+KyKvM8
+         2t2zjsTRGrrCgcpdhYsx4/7jMPQbTOenkjPsm8T0zh50huX46DMDKzdXK2vrTzCtA3bV
+         1ZpPjzyqRVyRwQwrM7EblMYo2OOJWwCoZNBHA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pstTuRLNyfbo8OBAUHO4Carb6ForQeYM6MN8xRaOVp0=;
+        b=s1auK9H8l3fTQEzQyx/5jfsOXRWXOn8CkzBQd1IsmTcr46MtKWaT8cUyvET8Yrilao
+         XXI1RRm2tWb9HSKYwld4Sg1L29WaPnhsEJoq0hHo/DDFskji1z2H5HELNgdwMulE1t2E
+         4jkPyna0G9pAcynR/+uVUxoAIurzSC9PL/uFvuEEhLk5IHdMTXYrofTzhnC3NGo8O1G+
+         j2Jp+ZGnmi4vMq08d7aUUva7rhunTc7/Ljee4qRxq3OBF8+FUYLlgb2Jkz3qWHlKCEwQ
+         v0efx8nvdM6jXdPTHBSRhSWPJbDT55Gqkh1APECV40nwjLBUNuaj3rT77Oo1B8nFfJhe
+         j5Lg==
+X-Gm-Message-State: ABuFfojG9HAwd7DfTxpgMyec6JtU0Z6ZMzLzJSz7RAuZRciGuWdhMBwc
+        CdcClOnzGNoj9aIjfLzErDxdSw==
+X-Google-Smtp-Source: AJdET5dJntC25cK5INSyCYGqCSbl+VnpZ/83+q9V1rFX06WU4INFGze5KLFecu0pgIgyyeA2J8ktfw==
+X-Received: by 2002:a1c:ce02:: with SMTP id e2-v6mr18686384wmg.85.1540282670449;
+        Tue, 23 Oct 2018 01:17:50 -0700 (PDT)
+Received: from [192.168.0.40] (59.140.136.77.rev.sfr.net. [77.136.140.59])
+        by smtp.googlemail.com with ESMTPSA id l4-v6sm904580wrb.92.2018.10.23.01.17.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Oct 2018 01:17:49 -0700 (PDT)
+Subject: Re: [PATCH 1/2] thermal: Add notifier call chain for hot/critical
+ events
+To:     Ross Zwisler <zwisler@google.com>, linux-kernel@vger.kernel.org
+Cc:     Duncan Laurie <dlaurie@chromium.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
+References: <20181022203218.7007-1-zwisler@google.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <7c7d14e2-3c58-fcbb-14b1-e0a2fecb0224@linaro.org>
+Date:   Tue, 23 Oct 2018 10:17:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <735126c6-9780-a9ef-4fd0-699d6876ed37@mleia.com>
+In-Reply-To: <20181022203218.7007-1-zwisler@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20181023_091646_395919_1BD659E5 
-X-CRM114-Status: GOOD (  29.19  )
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
-
-On 10/12/2018 02:59 PM, Vladimir Zapolskiy wrote:
-> Hello Laurent.
+On 22/10/2018 22:32, Ross Zwisler wrote:
+> From: Duncan Laurie <dlaurie@chromium.org>
 > 
-> On 10/12/2018 04:01 PM, Laurent Pinchart wrote:
->> Hello Vladimir,
->>
-
-...
-
->> then move to the driver side. In that area I would like to have a full example 
->> of a system using these chips, as the "initial support" is too limited for a 
->> proper review. This won't come as a surprise, but I will expect the OF graph 
->> bindings to be used to model data connections.
->>
+> This will allow drivers to register a callback for important
+> thermal events and log critical thresholds that cause the system
+> to shut down.
 > 
-> The leverage of "the initial support" to "the complete support" requires:
-> * audio bridge cell driver -- trivial, just one mute/unmute control,
-> * interrupt controller cell driver -- trivial, but for sake of perfection
->   it requires some minimal changes in drivers/base/regmap/regmap-irq.c
-> * DS90Ux940 MIPI CSI-2 -- non-trivial one, but we have it ready, I just
->   don't want to add it to the pile at the moment, otherwise we'll continue
->   discussing cameras, and I'd like to postpone it :)
+> There are other places this might work, but after consideration
+> I think it makes sense to have the chain at this level:
 > 
-> No more than that is needed to get absolutely complete support of 5 claimed
-> DS90UB9xx ICs, really. 5 other DS90UH9xx will require HDCP support in addition.
+> The ACPI thermal driver has an existing notify function that is
+> eventually called into, but that would limit the notifier to only
+> working on systems that use ACPI.
 > 
-> I'll try to roll out an example of DTS snippet soon.
+> The cpufreq driver is already getting a notify callback executed
+> in this path (tz->ops->notify) but the threshold info is not passed
+> to the cpu_cooling notifier chain so it is not useful for logging.
+> 
+> Signed-off-by: Duncan Laurie <dlaurie@chromium.org>
+> Reviewed-by: Olof Johansson <olofj@chromium.org>
+> Reviewed-by: Vincent Palatin <vpalatin@chromium.org>
+> [ rez: updated changelog for upstream ]
+> Signed-off-by: Ross Zwisler <zwisler@google.com>
+> ---
 
-Below I share an example of the serializer and deserializer equipped boards
-described in DT.
+At the critical code path, the thermal framework gives a chance to
+orderly_poweroff() to complete but the execution is bounded by a delay
+which in turn forces a kernel power off.
 
-The example naturally describes *two* simplistic boards in device tree
-representation -- main board with an application SoC (ordinary i.MX6*)
-and panel display module board. For demonstation I select a simple
-FPD-Link III connection between two boards, note that significantly
-more advanced configurations are also supported by the published
-drivers, for example deliberately I skip audio bridging functionality.
+The usage of a notifier call chain is inadequate in this code path. When
+the system is reaching a critical temperature it has to *urgently* take
+action. By adding this notifier that allows anyone to hook this path and
+add an overhead/delays.
 
-The main board features:
-* TI DS90UB927Q serializer (LVDS input) at 0xc, connected to SoC over I2C2,
-  SoC GPIO5[10] signal is connected to the IC PDB pin,
-* a status LED connected to DS90UB927Q GPIO2, it shall turn on,
-  if FPD-Link III connection is established,
-* TI DS90UB928Q GPIO0 line signal is pulled-up,
-* TI DS90UB927Q GPIO3 line serves as generic GPIO, it is supposed to be
-  controlled from userspace,
-* TI DS90UB927Q INTB line is connected to SoC GPIO5[4], the line serves
-  as an interrupt line routed from a touchscreen controller on a panel
-  display module.
 
-The panel display module board features:
-* TI DS90UB928Q deserializer (LVDS output), *mapped* to have 0x3b address,
-* AUO C070EAT01 panel,
-* I2C EEPROM at 0x50, *mapped* to have 0x52 address on SoC I2C bus,
-* Atmel MaxTouch touchscreen controller at 0x4b, *mapped* to have 0x60
-  address on SoC I2C bus, power-up control signal is connected to DS90UB928Q GPIO4,
-* a status LED connected to DS90UB928Q GPIO0, its on/off status shall
-  repeat a user-defined status of DS90UB927Q GPIO0 on the main board,
-* TI DS90UB928Q GPIO1 controls panel backlight, bridges DS90UB927Q
-  GPIO1 signal level, which in turn is connected to a SoC controlled GPIO,
-* TI DS90UB928Q GPIO2 line signal is pulled-up,
-* TI DS90UB928Q GPIO3 line serves as generic GPIOs, it is supposed to be
-  controlled from userspace.
 
-All OF hard-coded controls like pinmuxing, I2C bridging of a remote
-deserializer and I2C devices behind it, GPIO line state setting and so
-forth must be applied with no interaction from a user -- and it just
-works with the current / published versions of the drivers, in other
-words a panel display module as a whole is truly hot-pluggable over
-FPD-Link III connection.
+>  drivers/thermal/thermal_core.c | 38 ++++++++++++++++++++++++++++++++++
+>  include/linux/thermal.h        |  4 ++++
+>  2 files changed, 42 insertions(+)
+> 
+> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+> index 6ab982309e6a0..e1f8764b3d9f9 100644
+> --- a/drivers/thermal/thermal_core.c
+> +++ b/drivers/thermal/thermal_core.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/kdev_t.h>
+>  #include <linux/idr.h>
+> +#include <linux/notifier.h>
+>  #include <linux/thermal.h>
+>  #include <linux/reboot.h>
+>  #include <linux/string.h>
+> @@ -313,12 +314,46 @@ static void monitor_thermal_zone(struct thermal_zone_device *tz)
+>  	mutex_unlock(&tz->lock);
+>  }
+>  
+> +static BLOCKING_NOTIFIER_HEAD(thermal_notifier_list);
+> +
+> +/**
+> + * register_thermal_notifier - Register function to be called for
+> + *                             critical thermal events.
+> + *
+> + * @nb: Info about notifier function to be called
+> + *
+> + * Currently always returns zero, as blocking_notifier_chain_register()
+> + * always returns zero.
+> + */
+> +int register_thermal_notifier(struct notifier_block *nb)
+> +{
+> +	return blocking_notifier_chain_register(&thermal_notifier_list, nb);
+> +}
+> +EXPORT_SYMBOL(register_thermal_notifier);
+> +
+> +/**
+> + * unregister_thermal_notifier - Unregister thermal notifier
+> + *
+> + * @nb: Hook to be unregistered
+> + *
+> + * Returns zero on success, or %-ENOENT on failure.
+> + */
+> +int unregister_thermal_notifier(struct notifier_block *nb)
+> +{
+> +	return blocking_notifier_chain_unregister(&thermal_notifier_list, nb);
+> +}
+> +EXPORT_SYMBOL(unregister_thermal_notifier);
+> +
+> +
+>  static void handle_non_critical_trips(struct thermal_zone_device *tz,
+>  				      int trip,
+>  				      enum thermal_trip_type trip_type)
+>  {
+>  	tz->governor ? tz->governor->throttle(tz, trip) :
+>  		       def_governor->throttle(tz, trip);
+> +
+> +	blocking_notifier_call_chain(&thermal_notifier_list,
+> +				     trip_type, NULL);
+>  }
+>  
+>  /**
+> @@ -385,6 +420,9 @@ static void handle_critical_trips(struct thermal_zone_device *tz,
+>  	if (tz->ops->notify)
+>  		tz->ops->notify(tz, trip, trip_type);
+>  
+> +	blocking_notifier_call_chain(&thermal_notifier_list,
+> +				     trip_type, NULL);
+> +
+>  	if (trip_type == THERMAL_TRIP_CRITICAL) {
+>  		dev_emerg(&tz->device,
+>  			  "critical temperature reached (%d C), shutting down\n",
+> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+> index 5f4705f46c2f9..b948344d55cab 100644
+> --- a/include/linux/thermal.h
+> +++ b/include/linux/thermal.h
+> @@ -13,6 +13,7 @@
+>  #include <linux/of.h>
+>  #include <linux/idr.h>
+>  #include <linux/device.h>
+> +#include <linux/notifier.h>
+>  #include <linux/sysfs.h>
+>  #include <linux/workqueue.h>
+>  #include <uapi/linux/thermal.h>
+> @@ -542,4 +543,7 @@ static inline int thermal_generate_netlink_event(struct thermal_zone_device *tz,
+>  }
+>  #endif
+>  
+> +extern int register_thermal_notifier(struct notifier_block *);
+> +extern int unregister_thermal_notifier(struct notifier_block *);
+> +
+>  #endif /* __THERMAL_H__ */
+> 
 
-The example is quite close to ones found in reality, if we put aside
-production main boards from the real world, *the panel display modules*
-or sensor modules (in case of a reverted serializer to deserializer link
-connection to SoC) are even more complex, they host FPGAs, all kinds of
-sensors, RF tuners, audio sources and sinks, and loads of other
-incredible and fascinating stuff.
 
-The published drivers allow to support very intricate and fine grained
-control of "remote" PCBs, and reducing the complexity to "just a media
-device" level could be done only if various IC functions are excluded
-from the consideration. Here my purpose is to demonstrate that
-* pinmux and GPIO controller functions are crucial and non-replaceable,
-* I2C bridge function modeled as another cell device actually does not
-  fit into the existing I2C host/mux device driver models, and it is
-  a completely new abstraction with custom device tree properties,
-* video bridge is absolutely transparent, thus trivial, and is modeled
-  as another cell device, if needed it would be possible to write a
-  DRM driver at no cost,
-* reusing OF graph model fits naturally, bus vs. link discussion can
-  be started separately, note that LVDS (a.k.a FPD-Link) is formally
-  an electric bus, so please define the difference,
-* to sum up I see no real objections to the given model of IC series
-  support in Linux as an MFD parent device driver, plus pinmux/GPIO
-  controller cell device driver, plus other needed cell device drivers.
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-For video bridging I fabricated a "video-bridge" device driver, it can
-be substituted by your "lvds-encoder" driver, here I just need a simple
-transparent video bridge driver with NO media controls, its only purpose
-is to establish OF graph links, also note that on "remote" side a
-video bridge cell node can be omitted (but it may ).
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-The example is NOT build tested and it may contain errors of secondary
-importance, but it tends to repeat the real usage and description of
-TI DS90Ux9xx equipped boards.
-
-======== The panel display module board device tree description ========
-
-/ {
-	display-module {
-		panel {
-			compatible = "auo,c070eat01", "panel-lvds";
-			pinctrl-names = "default";
-			pinctrl-0 = <&panel_pins>;
-
-			width-mm = <153>;
-			height-mm = <90>;
-
-			data-mapping = "jeida-24";
-
-			panel-timing {
-				clock-frequency = <71000000>;
-				hactive = <1280>;
-				vactive = <800>;
-				hsync-len = <70>;
-				hfront-porch = <20>;
-				hback-porch = <70>;
-				vsync-len = <5>;
-				vfront-porch = <3>;
-				vback-porch = <15>;
-			};
-
-			port {
-				panel_input: endpoint {
-					remote-endpoint = <&ds90ub928_output>;
-				};
-			};
-		};
-
-		deserializer: deserializer {
-			compatible = "ti,ds90ub928q", "ti,ds90ux9xx";
-
-			i2c-bridge {
-				compatible = "ti,ds90ux9xx-i2c-bridge";
-				#address-cells = <1>;
-				#size-cells = <0>;
-
-				touchscreen@4b {
-					compatible = "atmel,maxtouch";
-					reg = <0x4b>;
-					pinctrl-names = "default";
-					pinctrl-0 = <&touchscreen_pins>;
-					interrupt-parent = <&ds90ub927_intc>;
-					interrupts = <0>;
-					atmel,mtu = <200>;
-				};
-
-				eeprom@50 {
-					compatible = "microchip,24lc128";
-					reg = <0x50>;
-					pagesize = <64>;
-				};
-			};
-
-			ds90ub928_pctrl: pin-controller {
-				compatible = "ti,ds90ub928q-pinctrl", "ti,ds90ux9xx-pinctrl";
-				gpio-controller;
-				#gpio-cells = <2>;
-				gpio-ranges = <&ds90ub928_pctrl 0 0 8>;
-
-				pinctrl-names = "default";
-				pinctrl-0 = <&led_pins>;
-
-				led_pins: pinmux {
-					gpio-remote {
-						pins = "gpio0";
-						function = "gpio-remote";
-					};
-				};
-
-				panel_pins: panel-pwm {
-					gpio-remote {
-						pins = "gpio1";
-						function = "gpio-remote";
-					};
-				};
-
-				touchscreen_pins: touchscreen-power-up {
-					gpio-hog;
-					gpios = <4 GPIO_ACTIVE_HIGH>;
-					output-high;
-				};
-			};
-
-			/*
-			 * For simplicity video-bridge can be simply removed here
-			 * by "connecting" ds90ub927_fpd to &panel_input directly.
-			 */
-			video-bridge {
-				compatible = "ti,ds90ux9xx-video-bridge", "video-bridge";
-
-				ports {
-					#address-cells = <1>;
-					#size-cells = <0>;
-
-					port@0 {
-						reg = <0>;
-						ds90ub928_fpd: endpoint {
-							remote-endpoint = <&ds90ub927_fpd>;
-						};
-					};
-
-					port@1 {
-						reg = <1>;
-						ds90ub928_output: endpoint {
-							remote-endpoint = <&panel_input>;
-						};
-					};
-				};
-			};
-		};
-	};
-};
-
-======== The main board device tree description ========
-
-/ {
-	/* iMX6 series SoC for demonstration purpose */
-
-	&ldb {
-		status = "okay";
-
-		lvds-channel@1 {
-			status = "okay";
-			fsl,data-mapping = "jeida";
-			fsl,data-width = <24>;
-
-			port@4 {
-				reg = <4>;
-
-				lvds1_out: endpoint {
-					remote-endpoint = <&ds90ub927_lvds>;
-				};
-			};
-		};
-	};
-
-	&i2c2 {
-		status = "okay";
-		clock-frequency = <400000>;
-
-		serializer: serializer@c {
-			compatible = "ti,ds90ub927q", "ti,ds90ux9xx";
-			reg = <0xc>;
-			power-gpios = <&gpio5 10 GPIO_ACTIVE_HIGH>;
-			ti,backward-compatible-mode = <0>;
-			ti,low-frequency-mode = <0>;
-
-			i2c-bridge {
-				compatible = "ti,ds90ux9xx-i2c-bridge";
-				ti,i2c-bridges = <&deserializer 0 0x3b>;
-				ti,i2c-bridge-maps = <0 0x4b 0x60>, <0 0x50 0x52>;
-			};
-
-			ds90ub927_intc: interrupt-controller {
-				compatible = "ti,ds90ub927-intc";
-				interrupt-parent = <&gpio5>;
-				interrupts = <4 IRQ_TYPE_EDGE_RISING>;
-				interrupt-controller;
-				#interrupt-cells = <1>;
-			};
-
-			ds90ub927_pctrl: pin-controller {
-				compatible = "ti,ds90ub927b-pinctrl", "ti,ds90ux9xx-pinctrl";
-				gpio-controller;
-				#gpio-cells = <2>;
-				gpio-ranges = <&ds90ub927_pctrl 0 0 8>;
-
-				/* Wired to some SoC controlled GPIO */
-				pwm-backlight {
-					gpio-hog;
-					gpios = <1 GPIO_ACTIVE_HIGH>;
-					input;
-				};
-
-				led_pins: pinmux {
-					gpio-remote {
-						pins = "gpio2";
-						function = "gpio-remote";
-					};
-				};
-			};
-
-			video-bridge {
-				compatible = "ti,ds90ux9xx-video-bridge", "video-bridge";
-
-				ports {
-					#address-cells = <1>;
-					#size-cells = <0>;
-
-					port@0 {
-						reg = <0>;
-						ds90ub927_lvds: endpoint {
-							remote-endpoint = <&lvds1_out>;
-						};
-					};
-
-					port@1 {
-						reg = <1>;
-						ds90ub927_fpd: endpoint {
-							remote-endpoint = <&ds90ub928_fpd>;
-						};
-					};
-				};
-			};
-		};
-	};
-};
-
-==== end of example =====
-
---
-Best wishes,
-Vladimir
