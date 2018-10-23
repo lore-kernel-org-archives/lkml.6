@@ -2,81 +2,218 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10AF0C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 676FEC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFC46207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:38:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFC46207DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 1D70320813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:39:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D70320813
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728538AbeJXBCf (ORCPT
+        id S1728554AbeJXBD5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 21:02:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42626 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727402AbeJXBCf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 21:02:35 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 623C4AD8E;
-        Tue, 23 Oct 2018 16:38:26 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 2FF4CE0093; Tue, 23 Oct 2018 18:38:25 +0200 (CEST)
-Date:   Tue, 23 Oct 2018 18:38:25 +0200
-From:   Michal Kubecek <mkubecek@suse.cz>
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     Mahesh Bandewar
-         =?utf-8?B?KOCkruCkueClh+CktiDgpKzgpILgpKHgpYfgpLXgpL4=?=
-         =?utf-8?B?4KSwKQ==?= <maheshb@google.com>, mk.singh@oracle.com,
-        linux-netdev <netdev@vger.kernel.org>,
-        Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bonding:avoid repeated display of same link status change
-Message-ID: <20181023163825.GB22291@unicorn.suse.cz>
-References: <20181023152924.24033-1-mk.singh@oracle.com>
- <CAF2d9jjM+5twGtwnB-JvOaaFbU9-n1oNyMXF6wx=s-0fVn9-6w@mail.gmail.com>
- <65f98009-1ce0-d6fd-06dc-233aa115abc9@gmail.com>
- <20181023162613.GA22291@unicorn.suse.cz>
+        Tue, 23 Oct 2018 21:03:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48762 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727402AbeJXBD5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 21:03:57 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5CED488317;
+        Tue, 23 Oct 2018 16:39:49 +0000 (UTC)
+Received: from treble (ovpn-123-230.rdu2.redhat.com [10.10.123.230])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9B363600C3;
+        Tue, 23 Oct 2018 16:39:45 +0000 (UTC)
+Date:   Tue, 23 Oct 2018 11:39:43 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Miroslav Benes <mbenes@suse.cz>, Jiri Kosina <jikos@kernel.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 06/12] livepatch: Simplify API by removing
+ registration step
+Message-ID: <20181023163943.ex65stywf2cwqvep@treble>
+References: <20180828143603.4442-1-pmladek@suse.com>
+ <20180828143603.4442-7-pmladek@suse.com>
+ <alpine.LSU.2.21.1809051108440.7768@pobox.suse.cz>
+ <20181012130120.f5berowklyccd7lj@pathway.suse.cz>
+ <alpine.LSU.2.21.1810151756290.11383@pobox.suse.cz>
+ <20181018145456.nrekm2iuyf5ztw3n@pathway.suse.cz>
+ <20181018153027.x4nk2ihgs5ehsln2@treble>
+ <alpine.LSU.2.21.1810191400320.4692@pobox.suse.cz>
+ <20181019143604.35zgwus4arkolbwr@treble>
+ <20181022132509.6vxrdvq42e5j2bpx@pathway.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181023162613.GA22291@unicorn.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181022132509.6vxrdvq42e5j2bpx@pathway.suse.cz>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 23 Oct 2018 16:39:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 06:26:14PM +0200, Michal Kubecek wrote:
-> On Tue, Oct 23, 2018 at 09:10:44AM -0700, Eric Dumazet wrote:
+On Mon, Oct 22, 2018 at 03:25:10PM +0200, Petr Mladek wrote:
+> On Fri 2018-10-19 09:36:04, Josh Poimboeuf wrote:
+> > On Fri, Oct 19, 2018 at 02:16:19PM +0200, Miroslav Benes wrote:
+> > > On Thu, 18 Oct 2018, Josh Poimboeuf wrote:
+> > > 
+> > > > On Thu, Oct 18, 2018 at 04:54:56PM +0200, Petr Mladek wrote:
+> > > > > OK, what about having just "disable" in sysfs. I agree that it makes
+> > > > > much more sense than "enable" now.
+> > > > > 
+> > > > > It might be used also for the reverse operation the same way as
+> > > > > "enable" was used before. I think that standalone "reverse" might
+> > > > > be confusing when we allow to reverse the operation in both
+> > > > > directions.
+> > > > 
+> > > > As long as we're talking about radical changes... how about we just
+> > > > don't allow disabling patches at all?  Instead a patch can be replaced
+> > > > with a 'revert' patch, or an empty 'nop' patch.  That would make our
+> > > > code simpler and also ensure there's an audit trail.
+> > > > 
+> > > > (Apologies if we've already talked about this.  My brain is still mushy
+> > > > thanks to Spectre and friends.)
+> > > 
+> > > I think we talked about it last year in Prague and I think we convinced 
+> > > you that it was not a good idea (...not to allow disabling patches at 
+> > > all).
+> > > 
+> > > BUT! Empty 'nop' patch is a new idea and we may certainly discuss it.
 > > 
-> > 
-> > On 10/23/2018 08:54 AM, Mahesh Bandewar (महेश बंडेवार) wrote:
-> > 
-> > > Atomic operations are expensive (on certain architectures) and miimon
-> > > runs quite frequently. Is the added cost of these atomic operations
-> > > even worth just to avoid *duplicate info* messages? This seems like a
-> > > overkill!
-> > 
-> > atomic_read() is a simple read, no atomic operation involved.
-> > 
-> > Same remark for atomic_set()
+> > I definitely remember talking about it in Prague, but I don't remember
+> > any conclusions.
 > 
-> Which makes me wonder if the patch really needs atomic_t.
+> The revert operation allows to remove a livepatch stuck in the
+> transition without forcing.
 
-IMHO it does not. AFAICS multiple instances of bond_mii_monitor() cannot
-run simultaneously for the same bond so that there doesn't seem to be
-anything to collide with. (And if they could, we would need to test and
-set the flag atomically in bond_miimon_inspect().)
+True, though I question the real world value of that.
 
-Michal Kubecek
+> Also implementing empty cumulative patch might be tricky because
+> of the callbacks. The current proposal is to call callbacks only
+> from the new livepatch. It helps tp keep the interactions easy
+> and under control. The way how to take over some change between
+> an old and new patch depends on the particular functionality.
+
+Presumably a 'no-op' patch would be special, in that it would call the
+un-patch callbacks.
+
+I think the only *real* benefit of this proposal would be that history
+would be a straight line, with no backtracking.  Similar to git rebase
+vs merge.  You'd be able to tell what has been applied and reverted just
+by looking at what modules are loaded.
+
+But, I now realize that in order for that to be the case, we'd have to
+disallow the unloading of replaced modules.  But I think we're going to
+end up *allowing* the unloading of replaced modules, right?
+
+So maybe it's not worth it.  I'll drop it.
+
+> It would mean that the empty patch might need to be custom.
+> Users probably would need to ask and wait for it.
+> 
+> 
+> > My livepatch-related brain cache lines have been
+> > flushed thanks to the aforementioned CVEs and my rapidly advancing
+> > senility.
+> 
+> Uff, I am not the only one.
+
+:-)
+
+> > > > The amount of flexibility we allow is kind of crazy, considering how
+> > > > delicate of an operation live patching is.  That reminds me that I
+> > > > should bring up my other favorite idea at LPC: require modules to be
+> > > > loaded before we "patch" them.
+> > > 
+> > > We talked about this as well and if I remember correctly we came to a 
+> > > conclusion that it is all about a distribution and maintenance. We cannot 
+> > > ask customers to load modules they do not need just because we need to 
+> > > patch them.
+> > 
+> > Fair enough.
+> > 
+> > > One cumulative patch is not that great in this case. I remember you
+> > > had a crazy idea how to solve it, but I don't remember details. My
+> > > notes from the event say...
+> > > 
+> > > 	- livepatch code complexity
+> > > 		- make it synchronous with respect to modules loading
+> > > 		- Josh's crazy idea
+> > > 
+> > > That's not much :D
+> > > 
+> > > So yes, we can talk about it and hopefully make proper notes this time.
+> > 
+> > Heh, better notes would be good, otherwise I'll just keep complaining
+> > about the same things every year :-)  I'll try to remember what my crazy
+> > idea was, or maybe come up with some new ones to keep it fresh.
+> 
+> If we do not want to force users to load all patched modules then
+> we would need to create a livepatch-per-module. This just moves
+> the complexity somewhere else.
+> 
+> One big problem would be how to keep the system consistent. You
+> would need to solve races between loading modules and livepatches
+> anyway.
+> 
+> For example, you could not load fixed/patched modules when the system
+> is not fully patched yet. You would need to load the module and
+> the related livepatch at the same time and follow the consistency
+> model as we do now.
+> 
+> OK, there was the idea to refuse loading modules when livepatch
+> transition is in progress. But it might not be acceptable,
+> especially when the transition gets blocked infinitely
+> and manual intervention would be needed.
+> 
+> I agree that the current solution adds complexity to
+> the livepatching code but it is not that complicated.
+> Races with loading modules and livepatches in parallel
+> are solved by mod->klp_active flag. There are no other
+> races because all other operations are done on code
+> that is not actively used. One good thing is that
+> everything is in one place and kernel has it under
+> control.
+> 
+> I am open to discuss it. But we would need to come up with
+> some clever solution.
+
+Yeah, I think that's pretty much the crazy idea Miroslav mentioned.  The
+patch would consist of several modules.  The parent module would
+register the patch and patch vmlinux.  Each child module would be
+associated with a to-be-patched module.  The child modules could be
+loaded on demand, either by special klp code or by modprobe.
+
+As you described, there would be some races to think about.  However, it
+would also have some benefits.
+
+I *hope* it would mean we could get rid of a lot of our ugly hacks, like
+
+- klp symbols, klp relas
+- preserving ELF data, PLT's, other horrible arch-specific things
+- klp.arch..altinstructions, klp.arch..parainstructions
+- manually calling apply_relocate_add()
+
+However... we might still need some of those things for another reason:
+to bypass exported symbol protections.  It needs some more
+investigation.
+
+Given this discussion, I'm thinking there wouldn't be much to discuss at
+LPC for this topic unless we had a prototype to look at (which I won't
+have time to do).  So I may drop my talk in favor of giving more time
+for other more tangible discussions.
+
+-- 
+Josh
