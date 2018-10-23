@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF295C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 05:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C41EFC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 05:31:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8559A20665
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 05:31:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 886E1207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 05:31:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="JuwMaK0p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8559A20665
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="wmKll0tx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 886E1207DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbeJWNxA (ORCPT
+        id S1727599AbeJWNxS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 09:53:00 -0400
-Received: from mail-ve1eur01on0064.outbound.protection.outlook.com ([104.47.1.64]:14784
+        Tue, 23 Oct 2018 09:53:18 -0400
+Received: from mail-ve1eur01on0087.outbound.protection.outlook.com ([104.47.1.87]:16832
         "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726764AbeJWNw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 09:52:59 -0400
+        id S1726764AbeJWNxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 09:53:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x1KmpRWhX7lgD8Pe0u7kUKk2lyoSvNomWeAjnBriB+I=;
- b=JuwMaK0pbiRJW73KYq+f8sVvZj0nN/1jvMKXWxdPn7pEWgkVtXorX2GPigap9CLlIDALUAdzmDlbmYf2Jz2dY3Ww+pkaz3S5/LsKQuAYXhf0u1BRfYRZDi0C9nNppSt5jbL79KeGF5WlVQa+Ubah3RPkeII9a0ATL+FtOFWfqQk=
+ bh=RF9D4CkRgtvTARGP6qSJKY4HDzD4As5FuBYxgca8EF4=;
+ b=wmKll0txq7W7UMUaeLZziUv/63YdnSb9xaPVxgWccHcsTpzorwQqVihY974t9y5vanKtReb/Mnf8DO++nqrT3jmVmcNWGfE1ijyjIbxbnhh91oBn21c4wU3xGcySYWAEoZqJSMissc6IY81F5gH99JxYbmjLrTNRyNeiaaO6NFc=
 Received: from DB7PR04MB4618.eurprd04.prod.outlook.com (52.135.138.152) by
  DB7PR04MB4794.eurprd04.prod.outlook.com (20.176.233.92) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1250.30; Tue, 23 Oct 2018 05:31:09 +0000
+ 15.20.1250.30; Tue, 23 Oct 2018 05:31:27 +0000
 Received: from DB7PR04MB4618.eurprd04.prod.outlook.com
  ([fe80::51ba:96d4:721e:f6a9]) by DB7PR04MB4618.eurprd04.prod.outlook.com
  ([fe80::51ba:96d4:721e:f6a9%4]) with mapi id 15.20.1250.028; Tue, 23 Oct 2018
- 05:31:09 +0000
+ 05:31:27 +0000
 From:   Joakim Zhang <qiangqing.zhang@nxp.com>
 To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
         "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
@@ -51,12 +51,12 @@ CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
         Joakim Zhang <qiangqing.zhang@nxp.com>
-Subject: [PATCH V1 3/4] ARM: dts: imx6ul: Add flexcan stop mode wakeup support
-Thread-Topic: [PATCH V1 3/4] ARM: dts: imx6ul: Add flexcan stop mode wakeup
+Subject: [PATCH V1 4/4] ARM: dts: imx7s: Add flexcan stop mode wakeup support
+Thread-Topic: [PATCH V1 4/4] ARM: dts: imx7s: Add flexcan stop mode wakeup
  support
-Thread-Index: AQHUapGaP3I0aylQ0kKpz9Wv1MeRQw==
-Date:   Tue, 23 Oct 2018 05:31:09 +0000
-Message-ID: <20181023052831.2553-4-qiangqing.zhang@nxp.com>
+Thread-Index: AQHUapGl+6L9HzbtLkyRfB+dw/oQkw==
+Date:   Tue, 23 Oct 2018 05:31:27 +0000
+Message-ID: <20181023052831.2553-5-qiangqing.zhang@nxp.com>
 References: <20181023052831.2553-1-qiangqing.zhang@nxp.com>
 In-Reply-To: <20181023052831.2553-1-qiangqing.zhang@nxp.com>
 Accept-Language: en-US
@@ -71,28 +71,28 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [92.121.68.129]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB7PR04MB4794;6:Iv3vUFKEfurSpxqAnZf7xWj4FAcq/9Nsb0o4yADDi4QiXtvo/Z/3U+bxsCB2XvMnDMwGvu2Qe27GYANi+kS/Jcl/hc+Q9+JVRHc+kVQrvxONbyHMl/Suy5DkNKh253ngbVp2u9i75Dy9kLK6sDfjOQN5eezAiO1cdWimLGCfnCFWyVaj1ad4naV9tL2npLWCwu8HwjW3cgF3BeMml3YveaEpgjJMl/mZjSdsWyHR9xQLi1imyn/eWsbLsxZTpYgoDR1CEY8qzK1T+Uz8bau68fH0Z6BbpRxI2xpmjRW6zs3mwiBLaUFgsgPVOQRbj0VW8ROGNhRHeCnASz3iYZQnPtIht7Jo05o3AAt98SQsA+5G/wP35+XB/JkZiarzplIP2IrZpsZdbBShcvkoT505F7DG0j9ZL9Xjso2mJCuLppydMUmj7hO1FoiDXUscQRWuOfYVLWPJckwOfrm7MQT/nw==;5:5ugJh1+WMPTYAL2JaeriC74O+uoQucOTMvtRnPSmThJT9oGLmIf9xMW/Fh95/Z2E1Ao+UmvxpJq3jaNN/kXBNzNexFi9Obcu7Pt4yenT9tg5wAM3cl0cKsmszFlxwsfCiMhUs0Je9Uc+5GjCn78W/GgKZbuQTwZQ+DApyxWV4JE=;7:gp5GuR/K4PcWkTHxG6IOrsnKq5Fn/LgA2y8jsfSlopNWCK5li3GQ8/aY3CAcwyFD2Pp434OPE08tT/wtxT0QecnnAYMGCfEraZcWpYJ8kaG8VFKl5GYveUJMj0O1AlWOqVeJqkhazlgVpc1rS9D/MmxSQ73bDZYBJ7ABgk3UXAblccgxo/k6zV1ZKcnA+siABmlj5n2kk6NH3xJk8cvfRIqEGKF8QZ+8PYdh2DGgIJ8s1Coy5oJYi28szUBRIYAB
-x-ms-office365-filtering-correlation-id: 2f294aa5-4676-4da4-2f97-08d638a8bc84
+x-microsoft-exchange-diagnostics: 1;DB7PR04MB4794;6:jo2QVP+OQJgNcpHIWdoZaFXjzV5rmvp3wELjEkY+DXVfYaCEi9LRf2lkuii0Zyfewhs+PRKt+yef3Cp2AjhZtypOwsO5wNI3+fp6kDu3hQsoXWTh8cRTJ54I7X5w8pOh2ckRFw6VmGLpaZb0n5yaY2OgHQFq/Acmgyud33FRGwWGpxE6X9a+2yM+AwPK0CTUhY8oqL42RQO98oNipjzXi5SuT0dmdz3Fc2DXbjdcdRyRkm1yOc7OgNpGgyX+LggrCj4LVAQjccIqkPAPjF69Y9mKYt+1qMC7kTA2UbKjKwNJa4GPDBKot+eyRMEOIm6lBfMo0HOlJwCUgm2BR6/MrBFc4J2qnfUgtU+OZkqci0+XYAOJjjeIr+WhCCxYHiYuoJ9V2/N2AxbIXseyi9o6ll/U4G0tu7hvyjNuaEwYCK1r9LXT2wlAMCI49NrcDddasFrVC/AWlqt2+gISqTBikQ==;5:T26Ka1m3LacncUboriZEEuL40vSbvKf6UxtF3kSw+G4ae5bzdmmL/Q1oMtIDYRU9bt78gOfBdSDlUQvjJiTRcOIezLe3YZh8N2QTGMAnMi/K9ZZxnLkN0fTlT2GlAkeGiGL1DbmxFi9duATYRyBKW1S9TQ39Wt5Z4N2C4iwbNLw=;7:vgkWh8jxtWPkZTGYw7a1NRsMcKlmxi2EObib4heTr+miQsSVCQdBgFAPQNzEqn9mF6VyiIqBexcA6ju0/SUBoCA0U8Gn6DNwcGseUEyB0qfL6C3Ax4nDdOiWhL2xSROBQdQTmd0BYmcKxR4V5V0bQQDVt8PBqnFmgmsu4k+BGCwtg1f82oAyjWPk6ieWEr1aBhCf5mBRyuKV6b7ZM3/EIfko+027lU+JSreGoM4pW8ub1YvLXE5Y06raca+x9XK/
+x-ms-office365-filtering-correlation-id: 20833da8-a79f-4e8d-02ea-08d638a8c759
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4794;
 x-ms-traffictypediagnostic: DB7PR04MB4794:
-x-microsoft-antispam-prvs: <DB7PR04MB4794CA3D695410CA60BED9D9E6F50@DB7PR04MB4794.eurprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <DB7PR04MB4794A139B16451DC2C1A3952E6F50@DB7PR04MB4794.eurprd04.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(185117386973197);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DB7PR04MB4794;BCL:0;PCL:0;RULEID:;SRVR:DB7PR04MB4794;
 x-forefront-prvs: 0834BAF534
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(376002)(346002)(396003)(39860400002)(189003)(199004)(81166006)(26005)(8936002)(6436002)(446003)(11346002)(25786009)(2906002)(8676002)(305945005)(7736002)(81156014)(476003)(6116002)(2616005)(3846002)(53936002)(256004)(5660300001)(102836004)(6512007)(6486002)(14444005)(50226002)(71190400001)(186003)(4326008)(52116002)(1076002)(86362001)(71200400001)(486006)(575784001)(478600001)(14454004)(68736007)(6506007)(2900100001)(76176011)(97736004)(386003)(99286004)(36756003)(316002)(5250100002)(54906003)(2501003)(66066001)(110136005)(106356001)(105586002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4794;H:DB7PR04MB4618.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(376002)(346002)(396003)(39860400002)(189003)(199004)(81166006)(26005)(8936002)(6436002)(446003)(11346002)(25786009)(2906002)(8676002)(305945005)(7736002)(81156014)(476003)(6116002)(2616005)(3846002)(53936002)(256004)(5660300001)(102836004)(6512007)(6486002)(14444005)(50226002)(71190400001)(186003)(4326008)(52116002)(1076002)(86362001)(71200400001)(486006)(478600001)(14454004)(68736007)(6506007)(2900100001)(76176011)(97736004)(386003)(99286004)(36756003)(316002)(5250100002)(54906003)(2501003)(66066001)(110136005)(106356001)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4794;H:DB7PR04MB4618.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: EHALMGh+6zdMn3tLwLT3nQPO1CX3CbP4l1CzSBT3akTtHPbgpIElnrMdxmT3oluHJEwG4HwYdPUICw/E8TQ6C9z09zJRsvum23UYl6K+cqVPFzKVIqinTWD3L6arDEL36MnNG8yx7ILR1mmsFPbXB62WQMbe/3q/9cV3v0JRshLL6GBfvaMrgTzz3+99M/4Z1hAtHiHJ/a+ZkN1NhsrwpYxawPtYFBjofLqMWmtOhsje6+RGWK/Q83sfN5Jo39q0EgMGrgbBN9i3GZZKr3ZZlDNtguh0mXa0jUABVoO5eufJJrMfxata/Qv8iW/qUfU8zgMPzvCFQWo54/SMAxUOZ87utWyRKl3xT/hnHQfn1Fc=
+x-microsoft-antispam-message-info: UuYUDVWyIqjPIJ92479I2mMdBTm27HJCu5AUwIhkLzQsn1QH1JGefyVNWriOU3XzQQ13+c3bPsA7WGPM7xywkSmo1dGN7tYJu+pedrm6DApwKFKsNffddGJVCzHHh+Hg0aYWnGGit62cVynGJA7LUz8EIGfpCE5M+Cpc549wskTbSn5//giOYI9pljqlh8iNbyUqHYU2gG7gKKCzPCF5ZlDM5+WuLiTA4TgK6l0BVRdopYGpj2XrjtFlD7Orh70KA37yWnK2syiIkU3yE5IW/XyrpNDX7XBhtgX7YwUzjK57NDXb5sfzHgM/ha6+3CNn2813qfQ2NMgyKkH78rMVVRr1hj8jPTl12X2Yey6aqng=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f294aa5-4676-4da4-2f97-08d638a8bc84
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2018 05:31:09.6537
+X-MS-Exchange-CrossTenant-Network-Message-Id: 20833da8-a79f-4e8d-02ea-08d638a8c759
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2018 05:31:27.3570
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
@@ -110,24 +110,24 @@ feature.
 Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
 ---
- arch/arm/boot/dts/imx6ul.dtsi | 2 ++
+ arch/arm/boot/dts/imx7s.dtsi | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
-index 6dc0b569acdf..76486a42959c 100644
---- a/arch/arm/boot/dts/imx6ul.dtsi
-+++ b/arch/arm/boot/dts/imx6ul.dtsi
-@@ -407,6 +407,7 @@
- 				clocks =3D <&clks IMX6UL_CLK_CAN1_IPG>,
- 					 <&clks IMX6UL_CLK_CAN1_SERIAL>;
+diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
+index a052198f6e96..382f1e1a92e3 100644
+--- a/arch/arm/boot/dts/imx7s.dtsi
++++ b/arch/arm/boot/dts/imx7s.dtsi
+@@ -877,6 +877,7 @@
+ 				clocks =3D <&clks IMX7D_CLK_DUMMY>,
+ 					<&clks IMX7D_CAN1_ROOT_CLK>;
  				clock-names =3D "ipg", "per";
 +				stop-mode =3D <&gpr 0x10 1 0x10 17>;
  				status =3D "disabled";
  			};
 =20
-@@ -417,6 +418,7 @@
- 				clocks =3D <&clks IMX6UL_CLK_CAN2_IPG>,
- 					 <&clks IMX6UL_CLK_CAN2_SERIAL>;
+@@ -887,6 +888,7 @@
+ 				clocks =3D <&clks IMX7D_CLK_DUMMY>,
+ 					<&clks IMX7D_CAN2_ROOT_CLK>;
  				clock-names =3D "ipg", "per";
 +				stop-mode =3D <&gpr 0x10 2 0x10 18>;
  				status =3D "disabled";
