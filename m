@@ -2,101 +2,116 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 998F0C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10AFCC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6668E20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:27:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6668E20651
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
+	by mail.kernel.org (Postfix) with ESMTP id B120920651
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:27:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qm0KLMMq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B120920651
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728747AbeJXDvn (ORCPT
+        id S1728788AbeJXDwi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:51:43 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:44120 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727758AbeJXDvn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:51:43 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1gF2KJ-0003oc-8T; Tue, 23 Oct 2018 21:26:51 +0200
-Message-ID: <b3aae7aa8241c9828c04d2f2b58927f4ce1411b9.camel@sipsolutions.net>
-Subject: Re: [PATCH] Revert "workqueue: re-add lockdep dependencies for
- flushing"
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Sagi Grimberg <sagi@grimberg.me>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Tejun Heo <tj@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "linux-nvme @ lists . infradead . org" 
-        <linux-nvme@lists.infradead.org>
-Date:   Tue, 23 Oct 2018 21:26:31 +0200
-In-Reply-To: <63ae9bac-3587-bded-ea98-e43fb4d7240d@grimberg.me> (sfid-20181023_024355_374203_678E864D)
-References: <20181022151818.135163-1-bvanassche@acm.org>
-         <13901aed5074f4b1fbd259d03928efb6ab40c65a.camel@sipsolutions.net>
-         <1540244870.128590.39.camel@acm.org>
-         <63ae9bac-3587-bded-ea98-e43fb4d7240d@grimberg.me>
-         (sfid-20181023_024355_374203_678E864D)
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 23 Oct 2018 23:52:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55194 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727758AbeJXDwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:52:38 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA13120651;
+        Tue, 23 Oct 2018 19:27:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540322872;
+        bh=CO5Wozb6bKk7bN3jfhKDCP2in90zXgHtCEmYScyJPzA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Qm0KLMMqV/tZhDicztLSpe9DrTs5ts12Mx/q7+q0odocxw1jdMkFnxGGOJDK38bnb
+         AbJnfwFdGPUGERwKQ0h7uhJbNSfTF9fvpVMcLoaeZ7iqg1qhLxdSijuimcRvWvShwL
+         ZBzu+TYWnUhbu4+rbSezFBaCkg5OP8w8mmOSSuCA=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 268A1142C5E; Tue, 23 Oct 2018 16:27:50 -0300 (-03)
+Date:   Tue, 23 Oct 2018 16:27:50 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     David Miller <davem@davemloft.net>
+Cc:     jolsa@redhat.com, dzickus@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: perf overlapping maps...
+Message-ID: <20181023192750.GC6114@kernel.org>
+References: <20181023063452.GB20075@krava>
+ <20181023.105405.364015687995752826.davem@davemloft.net>
+ <20181023180503.GA6114@kernel.org>
+ <20181023.111503.1978409398989251135.davem@davemloft.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181023.111503.1978409398989251135.davem@davemloft.net>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-22 at 17:43 -0700, Sagi Grimberg wrote:
-> > > I must also say that I'm disappointed you'd try to do things this way.
-> > > I'd be (have been?) willing to actually help you understand the problem
-> > > and add the annotations, but rather than answer my question ("where do I
-> > > find the right git tree"!) you just send a revert patch.
-> > 
-> > Sorry that I had not yet provided that information. You should have
-> > received this information through another e-mail thread. See also
-> > http://lists.infradead.org/pipermail/linux-nvme/2018-October/020493.html.
-> > 
-> > > To do that, you have to understand what recursion is valid (I'm guessing
-> > > there's some sort of layering involved), and I'm far from understanding
-> > > anything about the code that triggered this report.
-> > 
-> > I don't think there is any kind of recursion involved in the NVMe code
-> > that triggered the lockdep complaint. Sagi, please correct me if I got this
-> > wrong.
-> 
-> I commented on the original thread. I'm not sure it qualifies as a
-> recursion, but in that use-case, when priv->handler_mutex is taken
-> it is possible that other priv->handler_mutex instances are taken but
-> are guaranteed not to belong to that priv...
+Em Tue, Oct 23, 2018 at 11:15:03AM -0700, David Miller escreveu:
+> From: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Date: Tue, 23 Oct 2018 15:05:03 -0300
+> > IIRC this was first done for 'perf record', where we have to stash those
+> > events in the perf.data file, to then, later, 'perf report' to process
+> > those, so when working on 'perf top', it just reuses that machinery.
 
-I also commented over there regarding this specific problem.
+> > Sure, with some love and care 'perf top' could do better and update all
+> > the data structures directly :-)
+ 
+> Thanks for the history, it is useful information :)
+ 
+> > Anyway, have you guys considered tweaking using event->header.misc |=
+> > PERF_RECORD_MISC_USER? The kernel leaves that as zero for the
+> > PERF_RECORD_FORK it emits:
+ 
+> I really would like to steer the approach away from using UAPI
+> perf_event fields in an internal way.
+ 
+> I am really very sorry for suggesting such a scheme myself in the
+> first place.  It really was a bad idea upon much consideration.
+ 
+> The synthetic fork is not really a fork, it's more like a "create".
+ 
+> And this fundamental semantic difference is why we have all of these
+> issues wrt. handling COMM and parent map inheritance.
+ 
+> There is also a bunch of non-trivial code to deal with whether we
+> synthetically create the child or the parent first, wrt. finding
+> thread leaders and parent threads.
 
-I think my wording was inaccurate perhaps. It's not so much direct
-recursion, but a dependency chain connecting the handler_mutex class
-back to itself. This is how lockdep finds problems, it doesn't consider
-actual *instances* but only *classes*.
+> What I'm trying to say is that there is a clean design based solution
+> hiding somewhere in here and I'd like to find it :-)
 
-As Sagi mentioned on the other thread, in this specific instance you
-happen to know out-of-band that this is safe, (somehow) the code ensures
-that you can't actually recursively connect back to yourself. Perhaps
-there's some kind of layering involved, I don't know. (*)
+So, this is all because we're trying to recreate things that happened in
+the past, for threads we're interested in but couldn't catch the
+PERF_RECORD_{FORK,COMM,MMAP} when they originally take place.
 
-As I said over there, this type of thing can be solved with
-mutex_lock_nested(), though it's possible that in this case it should
-really be flush_workqueue_nested() or flush_work_nested() or so.
+Ideally we would recreate them in the exact same order and with the
+exact same details, which was kinda what was intended, but as you're
+seeing is failing at that in various cases.
 
-johannes
+Also if we keep using this abstraction, i.e. synthesize in userspace
+what the kernel does, generating PERF_RECORD__{FORK,COMM,MMAP}, then
+older tools will continue working with perf.data files generated by
+a new, fixed up 'perf record'.
 
-(*) note that just checking "obj != self" might not be enough, depending
-on how you pick candidates for "obj" you might recurse down another
-level and end up back at yourself, just two levels down, and actually
-have a dependency chain leading back to yourself.
+And nowadays there are other tools that read perf.data files:
 
+  http://code.qt.io/cgit/qt-creator/perfparser.git/
+  https://doc.qt.io/qtcreator/creator-cpu-usage-analyzer.html
 
+Or do you think we should introduce new record types that deal better
+with pre-existing threads/maps?
+
+- Arnaldo
