@@ -2,218 +2,210 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9582FC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC48C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:03:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F3142075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:02:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F3142075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 513212075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:03:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 513212075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbeJXH1x convert rfc822-to-8bit (ORCPT
+        id S1729071AbeJXH24 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 03:27:53 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58871 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725787AbeJXH1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 03:27:53 -0400
-Received: from [IPv6:2607:fb90:363e:f905:e41d:7bd1:7679:b710] ([172.58.37.165])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w9NN25j43215612
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Tue, 23 Oct 2018 16:02:06 -0700
-Date:   Tue, 23 Oct 2018 16:01:58 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAKwvOd=XG00jNmhgbu15UafDNMTzBiGVarMQAQiMEsjwjPUtzA@mail.gmail.com>
-References: <20181023003725.21463-1-natechancellor@gmail.com> <F3BBC06A-A9CB-4ABF-ADF4-6B0971FAE364@vmware.com> <CAKwvOdmsKbW9v9or+u-W9V7T+LrF4ODY9cgUStkjkmsbMcqJ2g@mail.gmail.com> <96ffedd2-a19d-95de-45fd-3a83025dd48a@zytor.com> <20181023215811.GA10771@flashbox> <CAKwvOd=-i0cVWuZaLQt5PQ11pa+gXaJCD_c6g9OTWwf79OS9Sw@mail.gmail.com> <20181023224435.GA7163@flashbox> <CAKwvOd=XG00jNmhgbu15UafDNMTzBiGVarMQAQiMEsjwjPUtzA@mail.gmail.com>
+        Wed, 24 Oct 2018 03:28:56 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:38757 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbeJXH2z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 03:28:55 -0400
+X-Originating-IP: 86.151.207.216
+Received: from w540 (host86-151-207-216.range86-151.btcentralplus.com [86.151.207.216])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 5A834240006;
+        Tue, 23 Oct 2018 23:03:20 +0000 (UTC)
+Date:   Wed, 24 Oct 2018 01:03:09 +0200
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     steve_longerbeam@mentor.com, Fabio Estevam <festevam@gmail.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        p.zabel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
+        gstreamer-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
+Message-ID: <20181023230259.GA3766@w540>
+References: <CAHCN7xLx6uAmYiGh3p=piZFwE0VkfixTLqdjETibKwk2+DhMzA@mail.gmail.com>
+ <CAHCN7xJKuPYg04WfRzbYWO4bGoHHnD16LBPRsK1QsiYY1bL7nA@mail.gmail.com>
+ <20181022113306.GB2867@w540>
+ <CAHCN7xJkc5RW73C0zruWBgyF7G0J3C5tLE=ZdfxTKbrUqs=-PQ@mail.gmail.com>
+ <CAOMZO5ATm4BRzPEQOU+ZD6bHCP2Aqjp4raRYhuc+wNe0t4+C=w@mail.gmail.com>
+ <CAHCN7x+csKEk25CF=teUv+F5_GoTe6_3Yqb5PODLn+AmCCm88w@mail.gmail.com>
+ <d78877f8-2c23-2bf0-0a9c-cd98b855e95e@mentor.com>
+ <CAHCN7xKhGAXs0jGv96CfOfLQfVubxzsdE9UjpDu+4NM6oLDGWw@mail.gmail.com>
+ <bc034299-4a32-f248-d09a-0d1b5872a506@mentor.com>
+ <CAHCN7xKVUgpyCb5k7s0PNXW-efySSwP25ZGMLdbFnohATPwKhg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH RFC] x86: Don't include '-Wa,-' when building with Clang
-To:     Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-CC:     namit@vmware.com, Thomas Gleixner <tglx@linutronix.de>,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-From:   hpa@zytor.com
-Message-ID: <0025D05B-9171-46ED-8DD8-83E487BC88B7@zytor.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="f2QGlHpHGjS2mn6Y"
+Content-Disposition: inline
+In-Reply-To: <CAHCN7xKVUgpyCb5k7s0PNXW-efySSwP25ZGMLdbFnohATPwKhg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On October 23, 2018 3:53:10 PM PDT, Nick Desaulniers <ndesaulniers@google.com> wrote:
->On Tue, Oct 23, 2018 at 3:44 PM Nathan Chancellor
-><natechancellor@gmail.com> wrote:
->>
->> On Tue, Oct 23, 2018 at 03:08:53PM -0700, Nick Desaulniers wrote:
->> > On Tue, Oct 23, 2018 at 2:58 PM Nathan Chancellor
->> > <natechancellor@gmail.com> wrote:
->> > >
->> > > On Tue, Oct 23, 2018 at 01:01:22PM -0700, H. Peter Anvin wrote:
->> > > > On 10/23/18 11:40, Nick Desaulniers wrote:
->> > > > > On Mon, Oct 22, 2018 at 10:11 PM Nadav Amit
-><namit@vmware.com> wrote:
->> > > > >>
->> > > > >> at 5:37 PM, Nathan Chancellor <natechancellor@gmail.com>
->wrote:
->> > > > >>
->> > > > >> Commit 77b0bf55bc67 ("kbuild/Makefile: Prepare for using
->macros in
->> > > > >> inline assembly code to work around asm() related GCC
->inlining bugs")
->> > > > >> added this flag to KBUILD_CFLAGS, where it works perfectly
->fine with
->> > > > >> GCC. However, when building with Clang, all of the object
->files compile
->> > > > >> fine but the build hangs indefinitely at init/main.o, right
->before the
->> > > > >> linking stage. Don't include this flag when building with
->Clang.
->> > > > >>
->> > > > >> The kernel builds and boots to a shell in QEMU with both GCC
->and Clang
->> > > > >> with this patch applied.
->> > > > >>
->> > > > >> Link:
->https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2FClangBuiltLinux%2Flinux%2Fissues%2F213&amp;data=02%7C01%7Cnamit%40vmware.com%7C871daebc2ca44947d28d08d638811fb5%7Cb39138ca3cee4b4aa4d6cd83d9dd62f0%7C1%7C0%7C636758524579997650&amp;sdata=shuxW81QRrO3TSqbgf462wgZYdLeAKeQEdGRxmnUX30%3D&amp;reserved=0
->> > > > >> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
->> > > > >> ---
->> > > > >>
->> > > > >> The reason this patch is labeled RFC is while I can verify
->that this
->> > > > >> fixes the issue, I'm not entirely sure why the '-Wa,-' works
->for GCC
->> > > > >> and not Clang. I looked into what the flag means and I
->couldn't really
->> > > > >> find anything so I just assume it's taking input from stdin?
->The issue
->> > > > >> could stem from how GCC forks gas versus how Clang does it.
->If this
->> > > > >> isn't of concern and the maintainers are happy with this
->patch as is,
->> > > > >> feel free to take it.
->> > > > >>
->> > > >
->> > > > Perhaps someone could actually, you know, time the build and
->see how
->> > > > much -pipe actually matters, if at all?
->> > > >
->> > > >       -hpa
->> > > >
->> > >
->> > > Thank you for the suggestion! With the attached diff for removing
->> > > '-pipe' and 'make -j1' with defconfig (just to make sure any
->variance
->> > > would stand out), here are my results:
->> > >
->> > > -pipe (GCC):
->> > >
->> > > real    15m55.202s
->> > > user    14m17.748s
->> > > sys     1m47.496s
->> > >
->> > > No -pipe (GCC):
->> > >
->> > > real    16m4.430s
->> > > user    14m16.277s
->> > > sys     1m46.604s
->> > >
->> > > -pipe (Clang):
->> > >
->> > > real    21m26.016s
->> > > user    19m21.722s
->> > > sys     2m2.606s
->> > >
->> > > No -pipe (Clang):
->> > >
->> > > real    21m27.822s
->> > > user    19m22.092s
->> > > sys     2m4.151s
->> >
->> > Looks like Clang eats `-pipe`:
->> >
->https://github.com/llvm-mirror/clang/blob/391667a023f79287f9c40868f34f08c161555556/lib/Driver/Driver.cpp#L962
->> > commit r110007 has the log:
->> >     Driver: Start ripping out support for -pipe, which is worthless
->> > and complicates
->> >     too many other things.
->> >
->>
->> In that case, we can either keep this change (I'll resend with the
->> explanation that Clang doesn't respect -pipe) or we can just rip out
->> -pipe for GCC too. Here are three separate results for GCC with my
->> normal jobs flag:
->>
->> -pipe (GCC):
->>
->> real    3m40.813s
->> real    3m44.449s
->> real    3m39.648s
->>
->> No -pipe (GCC):
->>
->> real    3m38.492s
->> real    3m38.335s
->> real    3m38.975s
->>
->> Practically no variance.
->
->Thanks for these measurements.  With these in mind I agree with HPA
->that `-pipe -Wa,-` doesn't buy us anything, and would be simpler to
->remove it for compatibility with Clang.
->
->>
->> Thanks,
->> Nathan
->>
->> > >
->> > > Certainly seems like -pipe doesn't make a ton of difference. If
->this is
->> > > a better fix, I am happy to draft up a proper commit message and
->send
->> > > it out for review.
->> > >
->> > > ==================================================
->> > >
->> > > diff --git a/arch/x86/Makefile b/arch/x86/Makefile
->> > > index 73f4831283ac..672c689c1faa 100644
->> > > --- a/arch/x86/Makefile
->> > > +++ b/arch/x86/Makefile
->> > > @@ -213,8 +213,6 @@ ifdef CONFIG_X86_64
->> > >  KBUILD_LDFLAGS += $(call ld-option, -z max-page-size=0x200000)
->> > >  endif
->> > >
->> > > -# Speed up the build
->> > > -KBUILD_CFLAGS += -pipe
->> > >  # Workaround for a gcc prelease that unfortunately was shipped
->in a suse release
->> > >  KBUILD_CFLAGS += -Wno-sign-compare
->> > >  #
->> > > @@ -239,7 +237,7 @@ archheaders:
->> > >  archmacros:
->> > >         $(Q)$(MAKE) $(build)=arch/x86/kernel
->arch/x86/kernel/macros.s
->> > >
->> > > -ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s -Wa,-
->> > > +ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s
->> > >  export ASM_MACRO_FLAGS
->> > >  KBUILD_CFLAGS += $(ASM_MACRO_FLAGS)
->> > >
->> >
->> >
->> > --
->> > Thanks,
->> > ~Nick Desaulniers
 
-So -pipe actually hurts sightly. Let's kill it.
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+--f2QGlHpHGjS2mn6Y
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+Hi Adam,
+
+On Tue, Oct 23, 2018 at 12:54:12PM -0500, Adam Ford wrote:
+> On Tue, Oct 23, 2018 at 12:39 PM Steve Longerbeam
+> <steve_longerbeam@mentor.com> wrote:
+> >
+> >
+> > On 10/23/18 10:34 AM, Adam Ford wrote:
+> > > On Tue, Oct 23, 2018 at 11:36 AM Steve Longerbeam
+> > > <steve_longerbeam@mentor.com> wrote:
+> > >> Hi Adam,
+> > >>
+> > >> On 10/23/18 8:19 AM, Adam Ford wrote:
+> > >>> On Mon, Oct 22, 2018 at 7:40 AM Fabio Estevam <festevam@gmail.com> wrote:
+> > >>>> Hi Adam,
+> > >>>>
+> > >>>> On Mon, Oct 22, 2018 at 9:37 AM Adam Ford <aford173@gmail.com> wrote:
+> > >>>>
+> > >>>>> Thank you!  This tutorial web site is exactly what I need.  The
+> > >>>>> documentation page in Linux touched on the media-ctl links, but it
+> > >>>>> didn't explain the syntax or the mapping.  This graphical
+> > >>>>> interpretation really helps it make more sense.
+> > >>>> Is capturing working well on your i.MX6 board now?
+> > >>> Fabio,
+> > >>>
+> > >>> Unfortunately, no.  I built the rootfs based on Jagan's instructions
+> > >>> at https://openedev.amarulasolutions.com/display/ODWIKI/i.CoreM6+1.5
+> > >>>
+> > >>> I tried building both the 4.15-RC6 kernel, a 4.19 kernel and a 4.14 LTS kernel.
+> > >>>
+> > >>> Using the suggested method of generating the graphical display of the
+> > >>> pipeline options, I am able to enable various pipeline options
+> > >>> connecting different /dev/videoX options tot he camera.  I have tried
+> > >>> both the  suggested method above as well as the instructions found in
+> > >>> Documentation/media/v4l-drivers/imx.rst for their respective kernels,
+> > >>> and I have tried multiple options to capture through
+> > >>> ipu1_csi1_capture, ipu2_csi1_capture, and ip1_ic_prepenc capture, and
+> > >>> all yield a broken pipe.
+> > >>>
+> > >>> libv4l2: error turning on stream: Broken pipe
+> > >>> ERROR: from element /GstPipeline:pipeline0/GstV4l2Src:v4l2src0: Could
+> > >>> not read from resource.
+> > >>> Additional debug info:
+> > >>> gstv4l2bufferpool.c(1064): gst_v4l2_buffer_pool_poll ():
+> > >>> /GstPipeline:pipeline0/GstV4l2Src:v4l2src0:
+> > >>> poll error 1: Broken pipe (32)
+> > >>>
+> > >>> I can hear the camera click when I start gstreamer and click again
+> > >>> when it stops trying to stream.
+> > >>>
+> > >>> dmesg indicates a broken pipe as well..
+> > >>>
+> > >>> [ 2419.851502] ipu2_csi1: pipeline start failed with -32
+> > >>>
+> > >>> might you have any suggestions?
+> > >>
+> > >> This -EPIPE error might mean you have a mis-match of resolution, pixel
+> > >> format, or field type between one of the source->sink pad links. You can
+> > >> find out which pads have a mis-match by enabling dynamic debug in the
+> > >> kernel function __media_pipeline_start.
+> > > Following Jagan's suggestion, I tried to make sure all the resolution
+> > > and pixel formats were set the same between each source and sink.
+> > >
+> > > media-ctl --set-v4l2 "'ov5640 2-0010':0[fmt:UYVY2X8/640x480
+> > > field:none]"
+> > > media-ctl --set-v4l2 "'imx6-mipi-csi2':1[fmt:UYVY2X8/640x480
+> > > field:none]"
+> > > media-ctl --set-v4l2 "'ipu1_csi0_mux':2[fmt:UYVY2X8/640x480
+> > > field:none]"
+> > > media-ctl --set-v4l2 "'ipu1_csi0':2[fmt:AYUV32/640x480 field:none]"
+> > >
+> > >> Also make sure you are attempting to stream from the correct /dev/videoN.
+> > > I have graphically plotted the pipeline using media-ctl --print-dot
+> > > and I can see the proper video is routed, but your dynamic debug
+> > > suggestion yielded something:
+> > >
+> > >     imx-media capture-subsystem: link validation failed for 'ov5640
+> > > 2-0010':0 -> 'imx6-mipi-csi2':0, error -32
+> >
+> >
+> > It's what I expected, you have a format mismatch between those pads.
+>
+> Is the mismatch something I am doing wrong with:
+>
+> media-ctl --set-v4l2 "'ov5640 2-0010':0[fmt:UYVY2X8/640x480 field:none]"
+> media-ctl --set-v4l2 "'imx6-mipi-csi2':2[fmt:UYVY2X8/640x480 field:none]"
+>
+
+Could you try to verify the actual format configured on the sensor?
+(media-ctl --get-v4l2 "'ov5640 2-0010':0").
+
+Depending on the driver version you are running, you might be affected
+by different regressions.
+
+> or is there something else I need to do?  I just used Jagan's suggestion.
+
+I suggest you to update the driver version to the last one available
+in the media-tree master, or at least try to backport the following
+commit:
+fb98e29 media: ov5640: fix mode change regression
+
+If it turns out the format and mode configured on the sensor do not
+match the one you want.
+
+Thanks
+   j
+
+> adam
+> >
+> > Steve
+> >
+> >
+> > >
+> > > I am assume this means the interface between the camera and the csi2
+> > > isn't working.  I am going to double check the power rails and the
+> > > clocks.  i can hear it click when activated and deactivated, so
+> > > something is happening.
+> > >
+> > > adam
+> > >
+> > >> Steve
+> > >>
+
+--f2QGlHpHGjS2mn6Y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbz6itAAoJEHI0Bo8WoVY87U4P/34uE8uXTUoSd9lXwWwTKoAC
+K6f/oRcuc8l9S5VyWUCVUikOzQMqcfixcfk/CnFp14fMJ9oznRv1+y3Q3aLlgBsM
+3QkqxOxZ87Oy7EtcPk60OZlJ1QeJI/oXGpLgcYrQf79UdGRUwhpkOr8sU7TrLs6g
+j7vNlPDbkF5riiOFUunifJNF6C43he2iUWDc+DDzv24+3PdezN3lxrRydrA+j1nm
+jO6QUmCicJXO6Z4ezmmGuma0hiGoWMXTqolZT7vBWOBVAexWmSRNkhXmotOs3e45
+jnwK2X3Nakga8z8nCWOnpQfUgbgHESNSalPUy6FuyqYnLNMIREH9kuwq+B4d2Phb
+3+mAlBdPsHZp/Dm5vBum9+eHwykFF3YfbSYbi5hd7ji0+99w6XGFgjd7rzibmRJr
+uhC8jK9Iqlj99BnOPolcsIDuJ38AZUUlsu+po8YxgHXBafA3yVyjUNBbfFbHnS9r
+DN5X3MlVoXDMKoTinVkUgfWuqlqKFm0TsSpOl6hhyssommJsHwa/9B+spGyKgEiY
+oyulewcX+faQAcYRoZ2rPXgzk5MzouxWIWxBAPH/daTZnxCL18ADCz7QK5YEYDHb
+LRX1aA91CtMfgEaRY/lQhwsJtnqqCqRZ/pTPu37jTX2MWoJyWEllykbubta3Am1+
+gt8bWtub7PdCRbhTZxVb
+=ECHR
+-----END PGP SIGNATURE-----
+
+--f2QGlHpHGjS2mn6Y--
