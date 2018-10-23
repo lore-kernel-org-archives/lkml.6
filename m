@@ -2,73 +2,109 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 343ECC67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 03:54:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EF9C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 03:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F094C2075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 03:54:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F094C2075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 3531A2075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 03:58:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hg/TxZoy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3531A2075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbeJWMP4 (ORCPT
+        id S1727226AbeJWMU1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 08:15:56 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:34452 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbeJWMP4 (ORCPT
+        Tue, 23 Oct 2018 08:20:27 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41002 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726764AbeJWMU1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 08:15:56 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gEnlx-0002yI-9P; Tue, 23 Oct 2018 03:54:25 +0000
-Date:   Tue, 23 Oct 2018 04:54:25 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Vito Caputo <vcaputo@pengaru.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        reiserfs-devel@vger.kernel.org
-Subject: Re: Reiser4 Linux 4.17.19-1 hangs in Google cloud VM, too.
-Message-ID: <20181023035425.GS32577@ZenIV.linux.org.uk>
-References: <20181022101912.3CE2E292B005@huitzilopochtli.metztli-it.com>
- <20181023033852.GR32577@ZenIV.linux.org.uk>
- <20181023034719.tqkvdj2eakh2uh2q@shells.gnugeneration.com>
+        Tue, 23 Oct 2018 08:20:27 -0400
+Received: by mail-pf1-f196.google.com with SMTP id a19-v6so329460pfo.8
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 20:58:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=vrLzbMQB2qosUS+SNjOskqaK6dqBKdQNnSmc8vqPpEg=;
+        b=Hg/TxZoyb3XxkQu9cyZkYcnpZ6Ovo4EGOy+0Ox1FNF2+2cldy5hOrrHMY585377OU+
+         /GrqVJySdXiHxwthrbOPCRWb5KWyvyuG5n/1vwWjL/XhzlRrpMysOhU3QmpAX8VBbobr
+         SzmMxHtwUo6m/ayGBHcgu3qrMPVB0OV1iNU0ZXPvhnHAOX4KnZu5EGT/twN9APKmb2c6
+         HeZzTfFe8AaD+9u2wJQG0rGlwUExRhFYzx69rTdKnYZhqdMDQxS0RGl/QNPLnRrMEbR1
+         q2o4nyGQzMVgl45gzBzoJKV/fRCs4esedHcSpSzQQMKqrZUr6cA3VDEwYs6GrdGQ/qlc
+         H+5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=vrLzbMQB2qosUS+SNjOskqaK6dqBKdQNnSmc8vqPpEg=;
+        b=mTUrCSBGuc3vM4v3FU/m9Z4ZUJK+vfONPkTOpjCjqi/IobK2OE5HZIrQsQtvnfU2QQ
+         uOBXAFGZ8ZO5sWKkvD66Q+1iKjBf30MyH9Fe0UriE06e08yrDbbulzyIRHybcSzIMFS0
+         VFfu59IixRDScDN3qrjGaAOo8yOSQDG76HjcKlacmpJiLpX1qZh8v4pSawMvJnsVzCSi
+         1yIYxE/M+pME8mHtTiAJhdVDYT3g2n1SRN+8RwR+KRpnSnHPQCAEe70Nw9z093/9dXm1
+         hA9j7afP5ItBjCAHoUQDDbq7Vg9LALR58L5HvR2GQkT8QWZS8OFcWvctyMb21eJg3voN
+         Yl/Q==
+X-Gm-Message-State: AGRZ1gJvA3DKTCXj9cW6FbZpdB/FIVK9veisaEnIF8/lQ3lWzDwtunFl
+        RqGDVnDDfDVS7xQIMBh5R78=
+X-Google-Smtp-Source: AJdET5dot2rydcQ65AotXQ18iDrsB0AVl18JqDCOEE3LHffBNAiiSFeqcgQWZfpS/jNiWYPBs7O/sA==
+X-Received: by 2002:a63:515b:: with SMTP id r27-v6mr9535006pgl.419.1540267136804;
+        Mon, 22 Oct 2018 20:58:56 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([49.205.217.86])
+        by smtp.gmail.com with ESMTPSA id j25-v6sm38276365pff.116.2018.10.22.20.58.54
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 22 Oct 2018 20:58:55 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 09:32:22 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        sean@poorly.run, airlied@linux.ie
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        sabyasachi.linux@gmail.com, brajeswar.linux@gmail.com
+Subject: [PATCH] drm/drm_pci.c: Use dma_zalloc_coherent
+Message-ID: <20181023040222.GA1540@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181023034719.tqkvdj2eakh2uh2q@shells.gnugeneration.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 08:47:19PM -0700, Vito Caputo wrote:
-> On Tue, Oct 23, 2018 at 04:38:52AM +0100, Al Viro wrote:
-> > On Mon, Oct 22, 2018 at 03:19:12AM -0700, Metztli Information Technology wrote:
-> > > I installed reiser4 -enhanced Linux kernel 4.17.19-1 --thus replacing the prior hung reiser4 -patched kernel 4.18.15-1 in the Google Compute Engine (GCE) cloud instance. After less than 24 hours the 4.17.19-1 hung in similar way to the 4.18.15-1.
-> > > 
-> > > Please note that I had been running my custom Metztli Reiser4 Debian Stretch image with reiser4 linux 4.14.20-1 without issues for several months
-> > > < https://github.com/Metztli/reiser4-debian-kernel-packaging-4.14.20 >  --until I decided to upgrade to newer kernel(s).
-> > 
-> > Er...  Does anybody maintain reiser4 these days?  I can't recall a single mail
-> > along the lines of "such-and-such VFS/VM/scheduler/etc. change would break reiser4"
-> > in quite a few years (more than a decade, most likely)...
-> 
-> I've wondered if we should rename reiserfs to something else.  As-is,
-> it's not likely to attract any developers since it may as well be named
-> hitlerfs or something similarly uncomfortable to explain to a
-> significant other as what you've been working on.
+Replace dma_alloc_coherent + memset with dma_zalloc_coherent.
 
-Sigh...  Godwin Law in action, at the third posting in thread ;-/
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ drivers/gpu/drm/drm_pci.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> That is, assuming it's going to continue to exist in-tree...
+diff --git a/drivers/gpu/drm/drm_pci.c b/drivers/gpu/drm/drm_pci.c
+index 896e42a..1427879 100644
+--- a/drivers/gpu/drm/drm_pci.c
++++ b/drivers/gpu/drm/drm_pci.c
+@@ -61,15 +61,14 @@ drm_dma_handle_t *drm_pci_alloc(struct drm_device * dev, size_t size, size_t ali
+ 		return NULL;
+ 
+ 	dmah->size = size;
+-	dmah->vaddr = dma_alloc_coherent(&dev->pdev->dev, size, &dmah->busaddr, GFP_KERNEL | __GFP_COMP);
++	dmah->vaddr = dma_zalloc_coherent(&dev->pdev->dev, size, &dmah->busaddr,
++						GFP_KERNEL | __GFP_COMP);
+ 
+ 	if (dmah->vaddr == NULL) {
+ 		kfree(dmah);
+ 		return NULL;
+ 	}
+ 
+-	memset(dmah->vaddr, 0, size);
+-
+ 	/* XXX - Is virt_to_page() legal for consistent mem? */
+ 	/* Reserve */
+ 	for (addr = (unsigned long)dmah->vaddr, sz = size;
+-- 
+1.9.1
 
-reiser4 has never been in-tree to start with.  And name is completely irrelevant -
-all I'm refering to is that I have not seen any postings on l-k/fsdevel/etc.
-from anybody working on that particular out-of-tree codebase.
-
-Put it that way - I would expect the bitrot from (apparent) decade-long
-inactivity to be a much more serious problem than anything naming-related.
