@@ -2,180 +2,102 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3084DC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0493C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F010020665
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:32:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F010020665
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
+	by mail.kernel.org (Postfix) with ESMTP id 7D28F20665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:35:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="GxvbfjUO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D28F20665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728527AbeJWRzQ (ORCPT
+        id S1728643AbeJWR6D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 13:55:16 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:41704 "EHLO leonov.paulk.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728020AbeJWRzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 13:55:15 -0400
-Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id BD606BFE63;
-        Tue, 23 Oct 2018 11:32:39 +0200 (CEST)
-Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id 18111C10A6; Tue, 23 Oct 2018 11:32:39 +0200 (CEST)
-Received: from collins (unknown [192.168.1.1])
-        by gagarine.paulk.fr (Postfix) with ESMTPSA id C44A7C1008;
-        Tue, 23 Oct 2018 11:32:25 +0200 (CEST)
-Message-ID: <224ec158bf627b4d2f577b1dadf10bd87891e2a7.camel@paulk.fr>
-Subject: Re: [PATCH 1/4] drm/sun4i: tcon: Support an active-low DE signal
- with RGB interface
-From:   Paul Kocialkowski <contact@paulk.fr>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>, linux-sunxi@googlegroups.com,
-        Mark Van den Borre <mark@fosdem.org>,
-        Gerry Demaret <gerry@fosdem.org>,
-        Luc Verhaegen <libv@skynet.be>
-Date:   Tue, 23 Oct 2018 11:33:10 +0200
-In-Reply-To: <20181010145736.l6zpohvvd4b5qngr@flea>
-References: <20181010114134.8211-1-contact@paulk.fr>
-         <20181010145736.l6zpohvvd4b5qngr@flea>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-gI9g6LVf0JgHXOGJa04j"
-User-Agent: Evolution 3.30.1 
-Mime-Version: 1.0
+        Tue, 23 Oct 2018 13:58:03 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34145 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728020AbeJWR6C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 13:58:02 -0400
+Received: by mail-pg1-f195.google.com with SMTP id g12-v6so380910pgs.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 02:35:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SOwbrMWkrYb7j2jMIP6h9f2kkTsVFHKRu1DgJ7Zd3jQ=;
+        b=GxvbfjUO6Z+ktgPzghSbCOzh0wnoTDncH7HuyxNrJlDMdp1eVYNHcuw2pucedRD1Ih
+         oq4ud3wVJwoiQ1IV0fbni2nz3pf1b3hMWjM33ciGVzrQIgtOHAVlV5gn9Y4zYff3RX8R
+         9jftVrRASrZ1a9VjAjRJr+71u6TtqLo3/WQwuIQGt7pPA45SGff64NUTzmJF93qTKOmA
+         fwwGhYNacujaawjYq4hbwL6NXSFnUx+uHTZrRRwIkxn7dW+D3SifyJYnbjxV0xz8+XGc
+         o7csKtwUN7vrcoTzRJVlIMl4N789YEFkVp+1R0n5Fa5uB7+0eeiLAG/+vDiDpWhUX46z
+         uSpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SOwbrMWkrYb7j2jMIP6h9f2kkTsVFHKRu1DgJ7Zd3jQ=;
+        b=Cw3kfBwSLXfldEOYvGuUYCbagWycejdZ0y0wzUmcFt8aaPLGQAJ5ga0WgU9MWsuDpB
+         9sIfA8PBh+6qaJcZXMzA/XLeSm2EHfhNGtuqb2WdiOedrCcJCOiKh+UTbOYSfk7aR99G
+         /bl6Fy/CR7Fy16bF0uqkVKsZHEjlTur/wX5yKOpZd6bTNO3zOGhaPiE+kMIrFDn4jP8b
+         4jiFhBOkAIGzNCJFXRf222iV4Q2Txro96sTgOiTvj2Ld/tkG+gmq49SvS8U2BW17OZwP
+         L0AqyQSl5/2ij9oFCHnIPq9/2XAT7hcQSzhDlvSKp83LPnm3hj/8UZt8wOb8KDHiiY1b
+         J4qA==
+X-Gm-Message-State: ABuFfoirYbdpZ/vAkCuMpPpc7a0qHdpoQKpzXjQVn/sj0811m8miBh7U
+        FJwrKETEhEs5uGsXy3I/UjIWLg==
+X-Google-Smtp-Source: ACcGV607BPAGvF6PeF8vG5xdd89HnLMvTkNyfquj4RX+N+3DwO5Wt1VMTOvYiZAACjLOzq/vTMucDg==
+X-Received: by 2002:a65:56cc:: with SMTP id w12-v6mr22852028pgs.224.1540287326711;
+        Tue, 23 Oct 2018 02:35:26 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain (fmdmzpr04-ext.fm.intel.com. [192.55.54.39])
+        by smtp.gmail.com with ESMTPSA id e3-v6sm2248823pgc.71.2018.10.23.02.35.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Oct 2018 02:35:25 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 19D3A3065E5; Tue, 23 Oct 2018 12:35:22 +0300 (+03)
+Date:   Tue, 23 Oct 2018 12:35:22 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Mark Brown <broonie@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Git pull ack emails..
+Message-ID: <20181023093521.dm3l5oen2j7etsot@kshutemo-mobl1>
+References: <CAHk-=wjS6cjjP+fkZWzzrdZ_fZ1F=PrAGcBc57vKCpNyoD73Vw@mail.gmail.com>
+ <CACRpkdbi2gqqc271eMgHjD68bqf2mzw8zw+iAhYv2LFajfo-eQ@mail.gmail.com>
+ <CAHk-=wiiC65aZFrDp69vdcSALLDZNPkTL1diadxNL54tBPeAzQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiiC65aZFrDp69vdcSALLDZNPkTL1diadxNL54tBPeAzQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 23, 2018 at 10:10:47AM +0100, Linus Torvalds wrote:
+> So I feel that he automation model is just not good. The reply should
+> go to the actual pull request, not to the git history. People who want
+> just _that_ could already automate the git history thing without me
+> even doing anything at all, either scripting it themselves or by using
+> some filtering on the kernel commit mailing list..
 
---=-gI9g6LVf0JgHXOGJa04j
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Can you tag merge commit with message-id of the pull request?
+Automation machinery can reply to the pull request with proper CC list
+obtained from the archive?
 
-Hi,
-
-Le mercredi 10 octobre 2018 =C3=A0 16:57 +0200, Maxime Ripard a =C3=A9crit =
-:
-> On Wed, Oct 10, 2018 at 01:41:31PM +0200, Paul Kocialkowski wrote:
-> > Some panels need an active-low data enable (DE) signal for the RGB
-> > interface. This requires flipping a bit in the TCON0 polarity register
-> > when setting up the mode for the RGB interface.
-> >=20
-> > Add a new helper function to match specific bus flags and use it to set
-> > the polarity inversion bit for the DE signal when required.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
-> > ---
-> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 28 ++++++++++++++++++++++++++--
-> >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  1 +
-> >  2 files changed, 27 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i=
-/sun4i_tcon.c
-> > index 3fb084f802e2..d249a462ec09 100644
-> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > @@ -78,6 +78,24 @@ static int sun4i_tcon_get_pixel_depth(const struct d=
-rm_encoder *encoder)
-> >  	return -EINVAL;
-> >  }
-> > =20
-> > +static bool sun4i_tcon_match_bus_flags(const struct drm_encoder *encod=
-er,
-> > +				       u32 bus_flags)
-> > +{
-> > +	struct drm_connector *connector;
-> > +	struct drm_display_info *info;
-> > +
-> > +	connector =3D sun4i_tcon_get_connector(encoder);
-> > +	if (!connector)
-> > +		return false;
-> > +
-> > +	info =3D &connector->display_info;
-> > +
-> > +	if ((info->bus_flags & bus_flags) =3D=3D bus_flags)
-> > +		return true;
-> > +
-> > +	return false;
-> > +}
-> > +
-> >  static void sun4i_tcon_channel_set_status(struct sun4i_tcon *tcon, int=
- channel,
-> >  					  bool enabled)
-> >  {
-> > @@ -415,6 +433,7 @@ static void sun4i_tcon0_mode_set_lvds(struct sun4i_=
-tcon *tcon,
-> >  }
-> > =20
-> >  static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
-> > +				     const struct drm_encoder *encoder,
-> >  				     const struct drm_display_mode *mode)
-> >  {
-> >  	unsigned int bp, hsync, vsync;
-> > @@ -474,8 +493,13 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_=
-tcon *tcon,
-> >  	if (mode->flags & DRM_MODE_FLAG_PVSYNC)
-> >  		val |=3D SUN4I_TCON0_IO_POL_VSYNC_POSITIVE;
-> > =20
-> > +	if (sun4i_tcon_match_bus_flags(encoder, DRM_BUS_FLAG_DE_LOW))
-> > +		val |=3D SUN4I_TCON0_IO_POL_DE_NEGATIVE;
-> > +
->=20
-> There's other flags in use in that function, you should also migrate
-> them (ideally by splitting that new function into a separate patch).
-
-Actually, these other flags are not DRM bus flags but DRM mode flags,
-which can be accessed directly from the mode pointer passed as
-argument. Thus, they don't require a helper.
-
-If you'd like, I could still split this patch into one introducing the
-helper and one using it for checking the DE_LOW flag.
-
-What do you think?
-
-Cheers,
-
-Paul
-
---=20
-Developer of free digital technology and hardware support.
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
-
---=-gI9g6LVf0JgHXOGJa04j
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlvO6tYACgkQhP3B6o/u
-lQyaww/+LEHGAI0eyS9mXFNnzLafS9wACmtlBIlb9tRWy3aRnIxZgvwChAWG+ljG
-MaYnphmP6Yykfru2B2i8VgfpdFU0Eat6wBiacvjXKVhCGaAqCfeQC8YBeW8JwDyS
-C39T27GBef3raNT5tD2MxTXwRdUQEXlqsSwy9ClRzzyp8p4Hc772gFhJv2iEEdoW
-VQQs4Vb43JyrJaTdHucs+y6E7HeMg0UaB6e6fDpHjeN0vQzjvttwVT5rK6N0FWyX
-ajSlFNECBZ++OpOjGXaFMCPAu3zLraev0hXb4fqLfqfu0AfbhxcOJ6QNtY6CkO43
-MwS37sqmWuY1bCfB8bSJRzRD1Smii3D47BVk6J/ZH9Xt9jDKc5IV0ZVCeOjFTjmk
-2OwT/C2FfDYOnoSDwD/f50UTMnwWx/+3Rv45TyAPAmuK549wD1HD1tA7u3jqLbhT
-Kgubq2mqkA0xmuoULb+yvIj2VZgwRgWG2HLfifQu/1N57SqgVIDvZtWm9RWjdCZo
-k7jtLN8kkpx5uw5PXao5RiwB8dJwqg9T3e6RqrXsTQr3DVCLHcmC4dC1kZD3bNTQ
-nfpqRxh08gZR5x8k4GZ4H834srLFrfXsN3xSBnbvtavYcj4Cr9yNamDUJAj+FGnW
-c600E2ireiaHQoXYrB0fcRQdqAJCNiW3KdeykzhE9QKp2yBnenU=
-=QD2w
------END PGP SIGNATURE-----
-
---=-gI9g6LVf0JgHXOGJa04j--
-
+-- 
+ Kirill A. Shutemov
