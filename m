@@ -2,139 +2,284 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E8AC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAEF8C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:45:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED72F20665
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:44:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED72F20665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A8B0820665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:45:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8B0820665
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729064AbeJXDJG (ORCPT
+        id S1728966AbeJXDJj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:09:06 -0400
-Received: from mga05.intel.com ([192.55.52.43]:55078 "EHLO mga05.intel.com"
+        Tue, 23 Oct 2018 23:09:39 -0400
+Received: from mga02.intel.com ([134.134.136.20]:6501 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728818AbeJXDH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:07:59 -0400
+        id S1727829AbeJXDJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:09:39 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:43:25 -0700
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:45:04 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
-   d="scan'208";a="243726568"
-Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
-  by orsmga004.jf.intel.com with ESMTP; 23 Oct 2018 11:43:24 -0700
-From:   "Chang S. Bae" <chang.seok.bae@intel.com>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        "Chang S . Bae" <chang.seok.bae@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [v3 02/12] x86/fsgsbase/64: Add 'unsafe_fsgsbase' to enable CR4.FSGSBASE
-Date:   Tue, 23 Oct 2018 11:42:24 -0700
-Message-Id: <20181023184234.14025-3-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181023184234.14025-1-chang.seok.bae@intel.com>
-References: <20181023184234.14025-1-chang.seok.bae@intel.com>
+   d="scan'208";a="100049983"
+Received: from pwolsza-mobl1.ger.corp.intel.com ([10.249.254.37])
+  by fmsmga004.fm.intel.com with ESMTP; 23 Oct 2018 11:45:00 -0700
+Date:   Tue, 23 Oct 2018 21:44:57 +0300 (EEST)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     Tomas Winkler <tomas.winkler@intel.com>
+cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 21/21] tpm: use u32 instead of int for PCR index
+In-Reply-To: <20181019182307.17745-22-tomas.winkler@intel.com>
+Message-ID: <alpine.DEB.2.21.1810232144440.3433@jsakkine-mobl1>
+References: <20181019182307.17745-1-tomas.winkler@intel.com> <20181019182307.17745-22-tomas.winkler@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Lutomirski <luto@kernel.org>
+On Fri, 19 Oct 2018, Tomas Winkler wrote:
+> The TPM specs defines PCR index as a positive number, and there is
+> no reason to use a signed number. It is also a possible security
+> issue as currently no functions check for a negative index,
+> which may become a large number when converted to u32.
+>
+> Adjust the API to use u32 instead of int in all PCR related
+> functions.
+>
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+> V3: New in the series.
+> V4: Separate unrelated change to another patches.
+> V5: Fix the commit message.
+> V6: Rebased.
+> V7: Resend.
+>
+> drivers/char/tpm/tpm-interface.c    |  6 +++---
+> drivers/char/tpm/tpm-sysfs.c        |  2 +-
+> drivers/char/tpm/tpm.h              | 10 +++++-----
+> drivers/char/tpm/tpm1-cmd.c         |  6 +++---
+> drivers/char/tpm/tpm2-cmd.c         |  5 ++---
+> include/linux/tpm.h                 | 11 +++++++----
+> security/integrity/ima/ima_crypto.c |  5 +++--
+> 7 files changed, 24 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index acd647476ae1..d9439f9abe78 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -38,7 +38,7 @@
+>  * recently changed pcr on suspend, so force the flush
+>  * with an extend to the selected _unused_ non-volatile pcr.
+>  */
+> -static int tpm_suspend_pcr;
+> +static u32 tpm_suspend_pcr;
+> module_param_named(suspend_pcr, tpm_suspend_pcr, uint, 0644);
+> MODULE_PARM_DESC(suspend_pcr,
+> 		 "PCR to use for dummy writes to facilitate flush on suspend.");
+> @@ -455,7 +455,7 @@ EXPORT_SYMBOL_GPL(tpm_is_tpm2);
+>  *
+>  * Return: same as with tpm_transmit_cmd()
+>  */
+> -int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
+> +int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
+> {
+> 	int rc;
+>
+> @@ -485,7 +485,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
+>  *
+>  * Return: same as with tpm_transmit_cmd()
+>  */
+> -int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+> +int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+> {
+> 	int rc;
+> 	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
+> diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
+> index 96fc7433c57d..b88e08ec2c59 100644
+> --- a/drivers/char/tpm/tpm-sysfs.c
+> +++ b/drivers/char/tpm/tpm-sysfs.c
+> @@ -102,7 +102,7 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
+> 	cap_t cap;
+> 	u8 digest[TPM_DIGEST_SIZE];
+> 	ssize_t rc;
+> -	int i, j, num_pcrs;
+> +	u32 i, j, num_pcrs;
+> 	char *str = buf;
+> 	struct tpm_chip *chip = to_tpm_chip(dev);
+>
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index e0778d19da98..f27d1f38a93d 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -509,14 +509,14 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+> int tpm_get_timeouts(struct tpm_chip *);
+> int tpm_auto_startup(struct tpm_chip *chip);
+>
+> -int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
+> +int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr);
+> int tpm1_auto_startup(struct tpm_chip *chip);
+> int tpm1_do_selftest(struct tpm_chip *chip);
+> int tpm1_get_timeouts(struct tpm_chip *chip);
+> unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+> -int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+> +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
+> 		    const char *log_msg);
+> -int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
+> +int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
+> ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+> 		    const char *desc, size_t min_cap_length);
+> int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
+> @@ -558,8 +558,8 @@ static inline u32 tpm2_rc_value(u32 rc)
+> }
+>
+> int tpm2_get_timeouts(struct tpm_chip *chip);
+> -int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
+> -int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+> +int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
+> +int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+> 		    struct tpm2_digest *digests);
+> int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
+> void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+> index 6b04648f8184..6f306338953b 100644
+> --- a/drivers/char/tpm/tpm1-cmd.c
+> +++ b/drivers/char/tpm/tpm1-cmd.c
+> @@ -449,7 +449,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
+> }
+>
+> #define TPM_ORD_PCR_EXTEND 20
+> -int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+> +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
+> 		    const char *log_msg)
+> {
+> 	struct tpm_buf buf;
+> @@ -572,7 +572,7 @@ int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+> }
+>
+> #define TPM_ORD_PCRREAD 21
+> -int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
+> +int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
+> {
+> 	struct tpm_buf buf;
+> 	int rc;
+> @@ -729,7 +729,7 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+>  * * 0 on success,
+>  * * < 0 on error.
+>  */
+> -int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
+> +int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
+> {
+> 	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
+> 	struct tpm_buf buf;
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 6ca4fc0a0d6f..ae86fb0218ab 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -175,7 +175,7 @@ struct tpm2_pcr_read_out {
+>  *
+>  * Return: Same as with tpm_transmit_cmd.
+>  */
+> -int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
+> +int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
+> {
+> 	int rc;
+> 	struct tpm_buf buf;
+> @@ -225,7 +225,7 @@ struct tpm2_null_auth_area {
+>  *
+>  * Return: Same as with tpm_transmit_cmd.
+>  */
+> -int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+> +int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+> 		    struct tpm2_digest *digests)
+> {
+> 	struct tpm_buf buf;
+> @@ -272,7 +272,6 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+> 	return rc;
+> }
+>
+> -
+> struct tpm2_get_random_out {
+> 	__be16 size;
+> 	u8 buffer[TPM_MAX_RNG_DATA];
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index 4609b94142d4..b49a55cf775f 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -53,8 +53,8 @@ struct tpm_class_ops {
+> #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+>
+> extern int tpm_is_tpm2(struct tpm_chip *chip);
+> -extern int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
+> -extern int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash);
+> +extern int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
+> +extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash);
+> extern int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen);
+> extern int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t max);
+> extern int tpm_seal_trusted(struct tpm_chip *chip,
+> @@ -69,15 +69,18 @@ static inline int tpm_is_tpm2(struct tpm_chip *chip)
+> {
+> 	return -ENODEV;
+> }
+> -static inline int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
+> +
+> +static inline int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
+> {
+> 	return -ENODEV;
+> }
+> -static inline int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx,
+> +
+> +static inline int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+> 				 const u8 *hash)
+> {
+> 	return -ENODEV;
+> }
+> +
+> static inline int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
+> {
+> 	return -ENODEV;
+> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+> index 7e7e7e7c250a..959d9edc113a 100644
+> --- a/security/integrity/ima/ima_crypto.c
+> +++ b/security/integrity/ima/ima_crypto.c
+> @@ -629,7 +629,7 @@ int ima_calc_buffer_hash(const void *buf, loff_t len,
+> 	return calc_buffer_shash(buf, len, hash);
+> }
+>
+> -static void __init ima_pcrread(int idx, u8 *pcr)
+> +static void __init ima_pcrread(u32 idx, u8 *pcr)
+> {
+> 	if (!ima_tpm_chip)
+> 		return;
+> @@ -645,7 +645,8 @@ static int __init ima_calc_boot_aggregate_tfm(char *digest,
+> 					      struct crypto_shash *tfm)
+> {
+> 	u8 pcr_i[TPM_DIGEST_SIZE];
+> -	int rc, i;
+> +	int rc;
+> +	u32 i;
+> 	SHASH_DESC_ON_STACK(shash, tfm);
+>
+> 	shash->tfm = tfm;
+>
 
-This is temporary.  It will allow the next few patches to be tested
-incrementally.
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Setting unsafe_fsgsbase is a root hole.  Don't do it.
-
-[ chang: Minor fix. Add the TAINT_INSECURE flag. ]
-
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
----
- .../admin-guide/kernel-parameters.txt         |  3 +++
- arch/x86/kernel/cpu/common.c                  | 27 +++++++++++++++++++
- 2 files changed, 30 insertions(+)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index ea8095521085..dfc2023b796b 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2729,6 +2729,9 @@
- 	no5lvl		[X86-64] Disable 5-level paging mode. Forces
- 			kernel to use 4-level paging instead.
- 
-+	unsafe_fsgsbase	[X86] Allow FSGSBASE instructions.  This will be
-+			replaced with a  nofsgsbase flag.
-+
- 	no_console_suspend
- 			[HW] Never suspend the console
- 			Disable suspending of consoles during suspend and
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 660d0b22e962..6c54e6d2fdfb 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -365,6 +365,25 @@ static __always_inline void setup_umip(struct cpuinfo_x86 *c)
- 	cr4_clear_bits(X86_CR4_UMIP);
- }
- 
-+/*
-+ * Temporary hack: FSGSBASE is unsafe until a few kernel code paths are
-+ * updated. This allows us to get the kernel ready incrementally. Setting
-+ * unsafe_fsgsbase and TAINT_INSECURE flags will allow the series to be
-+ * bisected if necessary.
-+ *
-+ * Once all the pieces are in place, these will go away and be replaced with
-+ * a nofsgsbase chicken flag.
-+ */
-+static bool unsafe_fsgsbase;
-+
-+static __init int setup_unsafe_fsgsbase(char *arg)
-+{
-+	unsafe_fsgsbase = true;
-+	add_taint(TAINT_INSECURE, LOCKDEP_STILL_OK);
-+	return 1;
-+}
-+__setup("unsafe_fsgsbase", setup_unsafe_fsgsbase);
-+
- /*
-  * Protection Keys are not available in 32-bit mode.
-  */
-@@ -1352,6 +1371,14 @@ static void identify_cpu(struct cpuinfo_x86 *c)
- 	setup_smap(c);
- 	setup_umip(c);
- 
-+	/* Enable FSGSBASE instructions if available. */
-+	if (cpu_has(c, X86_FEATURE_FSGSBASE)) {
-+		if (unsafe_fsgsbase)
-+			cr4_set_bits(X86_CR4_FSGSBASE);
-+		else
-+			clear_cpu_cap(c, X86_FEATURE_FSGSBASE);
-+	}
-+
- 	/*
- 	 * The vendor-specific functions might have changed features.
- 	 * Now we do "generic changes."
--- 
-2.19.1
-
+/Jarkko
