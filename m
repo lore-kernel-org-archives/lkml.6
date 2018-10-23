@@ -2,140 +2,139 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D480FC67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E8AC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9037920824
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:44:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9037920824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id ED72F20665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:44:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED72F20665
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729048AbeJXDI7 (ORCPT
+        id S1729064AbeJXDJG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:08:59 -0400
-Received: from mga01.intel.com ([192.55.52.88]:58808 "EHLO mga01.intel.com"
+        Tue, 23 Oct 2018 23:09:06 -0400
+Received: from mga05.intel.com ([192.55.52.43]:55078 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728146AbeJXDIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:08:53 -0400
+        id S1728818AbeJXDH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:07:59 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:44:18 -0700
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:43:25 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
-   d="scan'208";a="100049739"
-Received: from pwolsza-mobl1.ger.corp.intel.com ([10.249.254.37])
-  by fmsmga004.fm.intel.com with ESMTP; 23 Oct 2018 11:44:14 -0700
-Date:   Tue, 23 Oct 2018 21:44:12 +0300 (EEST)
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-X-Sender: jsakkine@jsakkine-mobl1
-To:     Tomas Winkler <tomas.winkler@intel.com>
-cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 18/21] tpm1: rename tpm1_pcr_read_dev to
- tpm1_pcr_read()
-In-Reply-To: <20181019182307.17745-19-tomas.winkler@intel.com>
-Message-ID: <alpine.DEB.2.21.1810232143580.3433@jsakkine-mobl1>
-References: <20181019182307.17745-1-tomas.winkler@intel.com> <20181019182307.17745-19-tomas.winkler@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+   d="scan'208";a="243726568"
+Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
+  by orsmga004.jf.intel.com with ESMTP; 23 Oct 2018 11:43:24 -0700
+From:   "Chang S. Bae" <chang.seok.bae@intel.com>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Markus T Metzger <markus.t.metzger@intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        "Chang S . Bae" <chang.seok.bae@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [v3 02/12] x86/fsgsbase/64: Add 'unsafe_fsgsbase' to enable CR4.FSGSBASE
+Date:   Tue, 23 Oct 2018 11:42:24 -0700
+Message-Id: <20181023184234.14025-3-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181023184234.14025-1-chang.seok.bae@intel.com>
+References: <20181023184234.14025-1-chang.seok.bae@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 19 Oct 2018, Tomas Winkler wrote:
-> Rename tpm1_pcr_read_dev to tpm1_pcr_read() to match
-> the counterpart tpm2_pcr_read().
->
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
-> V4: New in the series
-> V5: Resend.
-> V6: Resend.
-> V7: Fix typo tmp->tpm
->
-> drivers/char/tpm/tpm-interface.c | 2 +-
-> drivers/char/tpm/tpm-sysfs.c     | 2 +-
-> drivers/char/tpm/tpm.h           | 2 +-
-> drivers/char/tpm/tpm1-cmd.c      | 4 ++--
-> 4 files changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 8e1d2bc2df82..acd647476ae1 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -466,7 +466,7 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-> 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> 		rc = tpm2_pcr_read(chip, pcr_idx, res_buf);
-> 	else
-> -		rc = tpm1_pcr_read_dev(chip, pcr_idx, res_buf);
-> +		rc = tpm1_pcr_read(chip, pcr_idx, res_buf);
->
-> 	tpm_put_ops(chip);
-> 	return rc;
-> diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-> index 861acafd8f29..96fc7433c57d 100644
-> --- a/drivers/char/tpm/tpm-sysfs.c
-> +++ b/drivers/char/tpm/tpm-sysfs.c
-> @@ -114,7 +114,7 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
->
-> 	num_pcrs = be32_to_cpu(cap.num_pcrs);
-> 	for (i = 0; i < num_pcrs; i++) {
-> -		rc = tpm1_pcr_read_dev(chip, i, digest);
-> +		rc = tpm1_pcr_read(chip, i, digest);
-> 		if (rc)
-> 			break;
-> 		str += sprintf(str, "PCR-%02d: ", i);
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 51d147675b1f..bf2ef1eeda50 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -525,7 +525,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip);
-> unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-> int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-> 		    const char *log_msg);
-> -int tpm1_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
-> +int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
-> ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
-> 		    const char *desc, size_t min_cap_length);
-> int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
-> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-> index d30f336518f6..05b772477bac 100644
-> --- a/drivers/char/tpm/tpm1-cmd.c
-> +++ b/drivers/char/tpm/tpm1-cmd.c
-> @@ -572,7 +572,7 @@ int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
-> }
->
-> #define TPM_ORD_PCRREAD 21
-> -int tpm1_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-> +int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-> {
-> 	struct tpm_buf buf;
-> 	int rc;
-> @@ -660,7 +660,7 @@ int tpm1_do_selftest(struct tpm_chip *chip)
->
-> 	do {
-> 		/* Attempt to read a PCR value */
-> -		rc = tpm1_pcr_read_dev(chip, 0, dummy);
-> +		rc = tpm1_pcr_read(chip, 0, dummy);
->
-> 		/* Some buggy TPMs will not respond to tpm_tis_ready() for
-> 		 * around 300ms while the self test is ongoing, keep trying
->
+From: Andy Lutomirski <luto@kernel.org>
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+This is temporary.  It will allow the next few patches to be tested
+incrementally.
 
-/Jarkko
+Setting unsafe_fsgsbase is a root hole.  Don't do it.
+
+[ chang: Minor fix. Add the TAINT_INSECURE flag. ]
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+---
+ .../admin-guide/kernel-parameters.txt         |  3 +++
+ arch/x86/kernel/cpu/common.c                  | 27 +++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index ea8095521085..dfc2023b796b 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2729,6 +2729,9 @@
+ 	no5lvl		[X86-64] Disable 5-level paging mode. Forces
+ 			kernel to use 4-level paging instead.
+ 
++	unsafe_fsgsbase	[X86] Allow FSGSBASE instructions.  This will be
++			replaced with a  nofsgsbase flag.
++
+ 	no_console_suspend
+ 			[HW] Never suspend the console
+ 			Disable suspending of consoles during suspend and
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 660d0b22e962..6c54e6d2fdfb 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -365,6 +365,25 @@ static __always_inline void setup_umip(struct cpuinfo_x86 *c)
+ 	cr4_clear_bits(X86_CR4_UMIP);
+ }
+ 
++/*
++ * Temporary hack: FSGSBASE is unsafe until a few kernel code paths are
++ * updated. This allows us to get the kernel ready incrementally. Setting
++ * unsafe_fsgsbase and TAINT_INSECURE flags will allow the series to be
++ * bisected if necessary.
++ *
++ * Once all the pieces are in place, these will go away and be replaced with
++ * a nofsgsbase chicken flag.
++ */
++static bool unsafe_fsgsbase;
++
++static __init int setup_unsafe_fsgsbase(char *arg)
++{
++	unsafe_fsgsbase = true;
++	add_taint(TAINT_INSECURE, LOCKDEP_STILL_OK);
++	return 1;
++}
++__setup("unsafe_fsgsbase", setup_unsafe_fsgsbase);
++
+ /*
+  * Protection Keys are not available in 32-bit mode.
+  */
+@@ -1352,6 +1371,14 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 	setup_smap(c);
+ 	setup_umip(c);
+ 
++	/* Enable FSGSBASE instructions if available. */
++	if (cpu_has(c, X86_FEATURE_FSGSBASE)) {
++		if (unsafe_fsgsbase)
++			cr4_set_bits(X86_CR4_FSGSBASE);
++		else
++			clear_cpu_cap(c, X86_FEATURE_FSGSBASE);
++	}
++
+ 	/*
+ 	 * The vendor-specific functions might have changed features.
+ 	 * Now we do "generic changes."
+-- 
+2.19.1
+
