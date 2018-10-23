@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D08C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F08ECDE44
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8837E2075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F7482082B
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZaGL7O9Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8837E2075D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9X2B2Cp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F7482082B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729284AbeJXGBi (ORCPT
+        id S1729250AbeJXGBe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 02:01:38 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46974 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729227AbeJXGBg (ORCPT
+        Wed, 24 Oct 2018 02:01:34 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46968 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729205AbeJXGBd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 02:01:36 -0400
-Received: by mail-lj1-f196.google.com with SMTP id x3-v6so2784065lji.13;
-        Tue, 23 Oct 2018 14:36:22 -0700 (PDT)
+        Wed, 24 Oct 2018 02:01:33 -0400
+Received: by mail-lj1-f194.google.com with SMTP id x3-v6so2783963lji.13;
+        Tue, 23 Oct 2018 14:36:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-        bh=9FjWk819tI8q4Of5/GPMym38mMpreAR6lAKVVURm4+E=;
-        b=ZaGL7O9QhY2jV9QlUoGEx2RYYKVeDm+Qn8Dz7gfcUqyv0drW9KAQdyhAtBl5ScwmJ4
-         nDiWn/GV5yOAQihkjSTJnjT2aokUhrXlMJohwEiUETROgzQo7qqJsHjUCafOBfQvdMxH
-         YHQR1GLLP/maXsuxnk63Cxq9HpqVTBMK2NI2bv900uXuZmBGqH51It6uGOsLJE2fWYfG
-         6pkXXBdjXQw5c81MPcYkUp/W2Fchea7WoyQOXNAdP3rX0RjytwLNxw0tBso2VK3Bnzzp
-         +nDYJl8GRYYpT918e/BGp+3Qu4x67MFTUlCnXST536vZQUhX2hfdmUDtAqW8JAyluAPO
-         vifw==
+        bh=5k2OYOiqWNcnfE7W+3KF/KBNiSrfTjcJhGVfescDD7o=;
+        b=E9X2B2CpnKD8qa/LlwKbw4cqywWLq+kgQJxUHmDXA/7aJp+l2MwLvziy7JYXJR2pEv
+         9ibFPiGUYTS/Qlb0EaDxVRWYjcdvYGbvdL3im1xYKw1TGKh8dJ/tXwP/AUV0dYTUqYPO
+         dbdOFG35QNYcyRS3e1oO/wuojHCxN7/EOLMwQSo1/ko2daDNHFMzlW5eLmfHKqdKi8+I
+         fA4rUKveaRuwVhnXbvQvfkj9atodqyBsetdWmgi6drrvxPw36vSsWD/60sUqIbDKcDgf
+         sGI6PCYGGEp8GrYUaYwWLruOvkU+/A2BBMDTX+SIeB6NVHmFiqj2jLq/1A9Atn3JB8T4
+         5plQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to;
-        bh=9FjWk819tI8q4Of5/GPMym38mMpreAR6lAKVVURm4+E=;
-        b=bY01P2bAWn0trm+tChkWO6aSu01j1D7IH0E8gneMnPED1+VkmoGysCKBCa3K43+Td8
-         jibpC/qXWh7GhsUDoSCSmYZ63t7K5AKzzwJ6vE3SX0YRzN90fT0l6OBbOpU0FunQyYb1
-         2utR9mJ2TqI1udO57e6po+qIiA53DD2zGm42NQbe9Sa+tpKflULswrrF6MC2oS7IecJq
-         9MRJcS2jqk+VotYqZ5z9ek07pJ4QrHbv3cNGnlMYUO1GLpJvaglcRQqLEuvBAvP90INh
-         OCdyV9IYTHq4MyQO5NTDFbN9HJbChPdUYKpafSl8LjJpRrQhHUtNLmygnJT+aVgFS32+
-         n55w==
-X-Gm-Message-State: ABuFfoixGhCl3E9m3ySPsv68ZLR2f5wRgIMYK+zwyGRaqTz22V7J4n37
-        TYXGy9tZ+mtFi8yu0/wFv5s=
-X-Google-Smtp-Source: AJdET5fStpo5iwjElaH4GwCWOgDJjeaJxYFI38XhqKxAW7VjqnSm921zQaz+uFEKHN4MgpOPwJPDsA==
-X-Received: by 2002:a2e:9f17:: with SMTP id u23-v6mr15051827ljk.53.1540330582091;
-        Tue, 23 Oct 2018 14:36:22 -0700 (PDT)
+        bh=5k2OYOiqWNcnfE7W+3KF/KBNiSrfTjcJhGVfescDD7o=;
+        b=nCIV64TuBEnR/h0a0Ldq/unF9rUtuzBivll1OoBKrPvfWigqinPM0G9PlL/PVD6vQc
+         UdndujIV2RFANDSnIZQpQ0h/4ueYkZU3HLAoETLvO2MKT8FPJ/8lxyk8ytnbDxHnspeH
+         2Rblo6j46nhVHGehaxLPqzzyNUBqGpHRtQVoQYxu1CYhFlhgxgFUdRfwHiUVexZVyxXP
+         XdUVRnEJw8XqDjedsIzyEmoVeU/rGDxSWmD41ZPdPIEIakQgA7DZvlrvf5gG4YteIORY
+         Pbog8/03pFaoJlo6C6dLWRyNWOa/FbK0TV4Yl75ou84ltQijU9c3xJmlSSg3eRzdFsff
+         aIwg==
+X-Gm-Message-State: AGRZ1gJu/AIcBIK2koVECplOLhT52tacndzeoJmMcp10/L69S0ezw7+j
+        VqB0IYe7r45kHfaAnLfQSqo=
+X-Google-Smtp-Source: ACcGV62ipIIRNsS/46sZsIuOqouun/oWdvVQjUzMek7vtdGeL9YSFlZUWQAvsBQSWnrWxYsmQTJLtA==
+X-Received: by 2002:a2e:8457:: with SMTP id u23-v6mr10422349ljh.154.1540330579056;
+        Tue, 23 Oct 2018 14:36:19 -0700 (PDT)
 Received: from localhost.localdomain (91-159-62-169.elisa-laajakaista.fi. [91.159.62.169])
-        by smtp.gmail.com with ESMTPSA id y127-v6sm377950lfc.13.2018.10.23.14.36.20
+        by smtp.gmail.com with ESMTPSA id y127-v6sm377950lfc.13.2018.10.23.14.36.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 14:36:21 -0700 (PDT)
+        Tue, 23 Oct 2018 14:36:18 -0700 (PDT)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -73,11 +73,15 @@ To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
 Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Laura Abbott <labbott@redhat.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 17/17] prmem: ima: turn the measurements list write rare
-Date:   Wed, 24 Oct 2018 00:35:04 +0300
-Message-Id: <20181023213504.28905-18-igor.stoppa@huawei.com>
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Edward Cree <ecree@solarflare.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 15/17] prmem: test cases for prlist and prhlist
+Date:   Wed, 24 Oct 2018 00:35:02 +0300
+Message-Id: <20181023213504.28905-16-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181023213504.28905-1-igor.stoppa@huawei.com>
 References: <20181023213504.28905-1-igor.stoppa@huawei.com>
@@ -87,424 +91,326 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The measurement list is moved to write rare memory, including
-related data structures.
+These test cases focus on the basic operations required to operate
+both prlist and prhlist data, in particular creating, growing, shrinking,
+destroying.
 
-Various boilerplate linux data structures and related functions are
-replaced by their write-rare counterpart.
+They can also be useful as reference for practical use of write-rare lists.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-CC: Mimi Zohar <zohar@linux.vnet.ibm.com>
-CC: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-CC: James Morris <jmorris@namei.org>
-CC: "Serge E. Hallyn" <serge@hallyn.com>
-CC: linux-integrity@vger.kernel.org
+CC: Kate Stewart <kstewart@linuxfoundation.org>
+CC: Philippe Ombredanne <pombredanne@nexb.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Edward Cree <ecree@solarflare.com>
 CC: linux-kernel@vger.kernel.org
 ---
- security/integrity/ima/ima.h              | 18 ++++++++------
- security/integrity/ima/ima_api.c          | 29 +++++++++++++----------
- security/integrity/ima/ima_fs.c           | 12 +++++-----
- security/integrity/ima/ima_main.c         |  6 +++++
- security/integrity/ima/ima_queue.c        | 28 +++++++++++++---------
- security/integrity/ima/ima_template.c     | 14 ++++++-----
- security/integrity/ima/ima_template_lib.c | 14 +++++++----
- 7 files changed, 74 insertions(+), 47 deletions(-)
+ MAINTAINERS       |   1 +
+ lib/Kconfig.debug |   9 ++
+ lib/Makefile      |   1 +
+ lib/test_prlist.c | 252 ++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 263 insertions(+)
+ create mode 100644 lib/test_prlist.c
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 67db9d9454ca..5f5959753bf5 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -24,6 +24,8 @@
- #include <linux/hash.h>
- #include <linux/tpm.h>
- #include <linux/audit.h>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f5689c014e07..e7f7cb1682a6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9465,6 +9465,7 @@ F:	mm/test_write_rare.c
+ F:	mm/test_pmalloc.c
+ F:	Documentation/core-api/prmem.rst
+ F:	include/linux/prlist.h
++F:	lib/test_prlist.c
+ 
+ MEMORY MANAGEMENT
+ L:	linux-mm@kvack.org
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 4966c4fbe7f7..40039992f05f 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -2034,6 +2034,15 @@ config IO_STRICT_DEVMEM
+ 
+ 	  If in doubt, say Y.
+ 
++config DEBUG_PRLIST_TEST
++	bool "Testcase for Protected Linked List"
++	depends on STRICT_KERNEL_RWX && PRMEM
++	help
++	  This option enables the testing of an implementation of linked
++	  list based on write rare memory.
++	  The test cases can also be used as examples for how to use the
++	  prlist data structure(s).
++
+ source "arch/$(SRCARCH)/Kconfig.debug"
+ 
+ endmenu # Kernel hacking
+diff --git a/lib/Makefile b/lib/Makefile
+index 423876446810..fe7200e84c5f 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -270,3 +270,4 @@ obj-$(CONFIG_GENERIC_LIB_LSHRDI3) += lshrdi3.o
+ obj-$(CONFIG_GENERIC_LIB_MULDI3) += muldi3.o
+ obj-$(CONFIG_GENERIC_LIB_CMPDI2) += cmpdi2.o
+ obj-$(CONFIG_GENERIC_LIB_UCMPDI2) += ucmpdi2.o
++obj-$(CONFIG_DEBUG_PRLIST_TEST) += test_prlist.o
+diff --git a/lib/test_prlist.c b/lib/test_prlist.c
+new file mode 100644
+index 000000000000..8ee46795d72a
+--- /dev/null
++++ b/lib/test_prlist.c
+@@ -0,0 +1,252 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * test_prlist.c: Test cases for protected doubly linked list
++ *
++ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
++ * Author: Igor Stoppa <igor.stoppa@huawei.com>
++ */
++
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/mm.h>
++#include <linux/bug.h>
 +#include <linux/prlist.h>
-+#include <linux/pratomic-long.h>
- #include <crypto/hash_info.h>
- 
- #include "../integrity.h"
-@@ -84,7 +86,7 @@ struct ima_template_field {
- 
- /* IMA template descriptor definition */
- struct ima_template_desc {
--	struct list_head list;
-+	union prlist_head list;
- 	char *name;
- 	char *fmt;
- 	int num_fields;
-@@ -100,11 +102,13 @@ struct ima_template_entry {
- };
- 
- struct ima_queue_entry {
--	struct hlist_node hnext;	/* place in hash collision list */
--	struct list_head later;		/* place in ima_measurements list */
-+	union prhlist_node hnext;	/* place in hash collision list */
-+	union prlist_head later;	/* place in ima_measurements list */
- 	struct ima_template_entry *entry;
- };
--extern struct list_head ima_measurements;	/* list of all measurements */
 +
-+/* list of all measurements */
-+extern union prlist_head ima_measurements __wr_after_init;
- 
- /* Some details preceding the binary serialized measurement list */
- struct ima_kexec_hdr {
-@@ -160,9 +164,9 @@ void ima_init_template_list(void);
- extern spinlock_t ima_queue_lock;
- 
- struct ima_h_table {
--	atomic_long_t len;	/* number of stored measurements in the list */
--	atomic_long_t violations;
--	struct hlist_head queue[IMA_MEASURE_HTABLE_SIZE];
-+	struct pratomic_long_t len;	/* # of measurements in the list */
-+	struct pratomic_long_t violations;
-+	union prhlist_head queue[IMA_MEASURE_HTABLE_SIZE];
- };
- extern struct ima_h_table ima_htable;
- 
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index a02c5acfd403..4fc28c2478b0 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -19,9 +19,12 @@
- #include <linux/xattr.h>
- #include <linux/evm.h>
- #include <linux/iversion.h>
-+#include <linux/prmemextra.h>
-+#include <linux/pratomic-long.h>
- 
- #include "ima.h"
- 
-+extern struct pmalloc_pool ima_pool;
- /*
-  * ima_free_template_entry - free an existing template entry
-  */
-@@ -29,10 +32,10 @@ void ima_free_template_entry(struct ima_template_entry *entry)
- {
- 	int i;
- 
--	for (i = 0; i < entry->template_desc->num_fields; i++)
--		kfree(entry->template_data[i].data);
-+//	for (i = 0; i < entry->template_desc->num_fields; i++)
-+//		kfree(entry->template_data[i].data);
- 
--	kfree(entry);
-+//	kfree(entry);
- }
- 
- /*
-@@ -44,12 +47,13 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
- 	struct ima_template_desc *template_desc = ima_template_desc_current();
- 	int i, result = 0;
- 
--	*entry = kzalloc(sizeof(**entry) + template_desc->num_fields *
--			 sizeof(struct ima_field_data), GFP_NOFS);
-+	*entry = pzalloc(&ima_pool,
-+			 sizeof(**entry) + template_desc->num_fields *
-+			 sizeof(struct ima_field_data));
- 	if (!*entry)
- 		return -ENOMEM;
- 
--	(*entry)->template_desc = template_desc;
-+	wr_ptr(&((*entry)->template_desc), template_desc);
- 	for (i = 0; i < template_desc->num_fields; i++) {
- 		struct ima_template_field *field = template_desc->fields[i];
- 		u32 len;
-@@ -59,9 +63,10 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
- 		if (result != 0)
- 			goto out;
- 
--		len = (*entry)->template_data[i].len;
--		(*entry)->template_data_len += sizeof(len);
--		(*entry)->template_data_len += len;
-+		len = (*entry)->template_data_len + sizeof(len) +
-+			(*entry)->template_data[i].len;
-+		wr_memcpy(&(*entry)->template_data_len, &len,
-+			  sizeof(len));
- 	}
- 	return 0;
- out:
-@@ -113,9 +118,9 @@ int ima_store_template(struct ima_template_entry *entry,
- 					    audit_cause, result, 0);
- 			return result;
- 		}
--		memcpy(entry->digest, hash.hdr.digest, hash.hdr.length);
-+		wr_memcpy(entry->digest, hash.hdr.digest, hash.hdr.length);
- 	}
--	entry->pcr = pcr;
-+	wr_int(&entry->pcr, pcr);
- 	result = ima_add_template_entry(entry, violation, op, inode, filename);
- 	return result;
- }
-@@ -139,7 +144,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
- 	int result;
- 
- 	/* can overflow, only indicator */
--	atomic_long_inc(&ima_htable.violations);
-+	pratomic_long_inc(&ima_htable.violations);
- 
- 	result = ima_alloc_init_template(&event_data, &entry);
- 	if (result < 0) {
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index ae9d5c766a3c..ab20da1161c7 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -57,7 +57,8 @@ static ssize_t ima_show_htable_violations(struct file *filp,
- 					  char __user *buf,
- 					  size_t count, loff_t *ppos)
- {
--	return ima_show_htable_value(buf, count, ppos, &ima_htable.violations);
-+	return ima_show_htable_value(buf, count, ppos,
-+				     &ima_htable.violations.l);
- }
- 
- static const struct file_operations ima_htable_violations_ops = {
-@@ -69,8 +70,7 @@ static ssize_t ima_show_measurements_count(struct file *filp,
- 					   char __user *buf,
- 					   size_t count, loff_t *ppos)
- {
--	return ima_show_htable_value(buf, count, ppos, &ima_htable.len);
--
-+	return ima_show_htable_value(buf, count, ppos, &ima_htable.len.l);
- }
- 
- static const struct file_operations ima_measurements_count_ops = {
-@@ -86,7 +86,7 @@ static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
- 
- 	/* we need a lock since pos could point beyond last element */
- 	rcu_read_lock();
--	list_for_each_entry_rcu(qe, &ima_measurements, later) {
-+	list_for_each_entry_rcu(qe, &ima_measurements.list, later.list) {
- 		if (!l--) {
- 			rcu_read_unlock();
- 			return qe;
-@@ -303,7 +303,7 @@ static ssize_t ima_read_policy(char *path)
- 		size -= rc;
- 	}
- 
--	vfree(data);
-+//	vfree(data);
- 	if (rc < 0)
- 		return rc;
- 	else if (size)
-@@ -350,7 +350,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
- 	}
- 	mutex_unlock(&ima_write_mutex);
- out_free:
--	kfree(data);
-+//	kfree(data);
- out:
- 	if (result < 0)
- 		valid_policy = 0;
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 2d31921fbda4..d52e59006781 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -29,6 +29,7 @@
- #include <linux/ima.h>
- #include <linux/iversion.h>
- #include <linux/fs.h>
-+#include <linux/prlist.h>
- 
- #include "ima.h"
- 
-@@ -536,10 +537,15 @@ int ima_load_data(enum kernel_load_data_id id)
- 	return 0;
- }
- 
-+struct pmalloc_pool ima_pool;
 +
-+#define IMA_POOL_ALLOC_CHUNK (16 * PAGE_SIZE)
- static int __init init_ima(void)
- {
- 	int error;
- 
-+	pmalloc_init_custom_pool(&ima_pool, IMA_POOL_ALLOC_CHUNK, 3,
-+				 PMALLOC_MODE_START_WR);
- 	ima_init_template_list();
- 	hash_setup(CONFIG_IMA_DEFAULT_HASH);
- 	error = ima_init();
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index b186819bd5aa..444c47b745d8 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -24,11 +24,14 @@
- #include <linux/module.h>
- #include <linux/rculist.h>
- #include <linux/slab.h>
-+#include <linux/prmemextra.h>
-+#include <linux/prlist.h>
-+#include <linux/pratomic-long.h>
- #include "ima.h"
- 
- #define AUDIT_CAUSE_LEN_MAX 32
- 
--LIST_HEAD(ima_measurements);	/* list of all measurements */
-+PRLIST_HEAD(ima_measurements);	/* list of all measurements */
- #ifdef CONFIG_IMA_KEXEC
- static unsigned long binary_runtime_size;
- #else
-@@ -36,9 +39,9 @@ static unsigned long binary_runtime_size = ULONG_MAX;
- #endif
- 
- /* key: inode (before secure-hashing a file) */
--struct ima_h_table ima_htable = {
--	.len = ATOMIC_LONG_INIT(0),
--	.violations = ATOMIC_LONG_INIT(0),
-+struct ima_h_table ima_htable __wr_after_init = {
-+	.len = PRATOMIC_LONG_INIT(0),
-+	.violations = PRATOMIC_LONG_INIT(0),
- 	.queue[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
- };
- 
-@@ -58,7 +61,7 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
- 
- 	key = ima_hash_key(digest_value);
- 	rcu_read_lock();
--	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext) {
-+	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext.node) {
- 		rc = memcmp(qe->entry->digest, digest_value, TPM_DIGEST_SIZE);
- 		if ((rc == 0) && (qe->entry->pcr == pcr)) {
- 			ret = qe;
-@@ -87,6 +90,8 @@ static int get_binary_runtime_size(struct ima_template_entry *entry)
- 	return size;
- }
- 
-+extern struct pmalloc_pool ima_pool;
++#ifdef pr_fmt
++#undef pr_fmt
++#endif
 +
- /* ima_add_template_entry helper function:
-  * - Add template entry to the measurement list and hash table, for
-  *   all entries except those carried across kexec.
-@@ -99,20 +104,21 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
- 	struct ima_queue_entry *qe;
- 	unsigned int key;
- 
--	qe = kmalloc(sizeof(*qe), GFP_KERNEL);
-+	qe = pmalloc(&ima_pool, sizeof(*qe));
- 	if (qe == NULL) {
- 		pr_err("OUT OF MEMORY ERROR creating queue entry\n");
- 		return -ENOMEM;
- 	}
--	qe->entry = entry;
-+	wr_ptr(&qe->entry, entry);
-+	INIT_PRLIST_HEAD(&qe->later);
-+	prlist_add_tail_rcu(&qe->later, &ima_measurements);
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 +
- 
--	INIT_LIST_HEAD(&qe->later);
--	list_add_tail_rcu(&qe->later, &ima_measurements);
-+	pratomic_long_inc(&ima_htable.len);
- 
--	atomic_long_inc(&ima_htable.len);
- 	if (update_htable) {
- 		key = ima_hash_key(entry->digest);
--		hlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
-+		prhlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
- 	}
- 
- 	if (binary_runtime_size != ULONG_MAX) {
-diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index 30db39b23804..40ae57a17d89 100644
---- a/security/integrity/ima/ima_template.c
-+++ b/security/integrity/ima/ima_template.c
-@@ -22,14 +22,15 @@
- enum header_fields { HDR_PCR, HDR_DIGEST, HDR_TEMPLATE_NAME,
- 		     HDR_TEMPLATE_DATA, HDR__LAST };
- 
--static struct ima_template_desc builtin_templates[] = {
-+static struct ima_template_desc builtin_templates[] __wr_after_init = {
- 	{.name = IMA_TEMPLATE_IMA_NAME, .fmt = IMA_TEMPLATE_IMA_FMT},
- 	{.name = "ima-ng", .fmt = "d-ng|n-ng"},
- 	{.name = "ima-sig", .fmt = "d-ng|n-ng|sig"},
- 	{.name = "", .fmt = ""},	/* placeholder for a custom format */
- };
- 
--static LIST_HEAD(defined_templates);
-+static PRLIST_HEAD(defined_templates);
++static struct pmalloc_pool *pool;
 +
- static DEFINE_SPINLOCK(template_list);
- 
- static struct ima_template_field supported_fields[] = {
-@@ -114,7 +115,8 @@ static struct ima_template_desc *lookup_template_desc(const char *name)
- 	int found = 0;
- 
- 	rcu_read_lock();
--	list_for_each_entry_rcu(template_desc, &defined_templates, list) {
-+	list_for_each_entry_rcu(template_desc, &defined_templates.list,
-+				list.list) {
- 		if ((strcmp(template_desc->name, name) == 0) ||
- 		    (strcmp(template_desc->fmt, name) == 0)) {
- 			found = 1;
-@@ -207,12 +209,12 @@ void ima_init_template_list(void)
- {
- 	int i;
- 
--	if (!list_empty(&defined_templates))
-+	if (!list_empty(&defined_templates.list))
- 		return;
- 
- 	spin_lock(&template_list);
- 	for (i = 0; i < ARRAY_SIZE(builtin_templates); i++) {
--		list_add_tail_rcu(&builtin_templates[i].list,
-+		prlist_add_tail_rcu(&builtin_templates[i].list,
- 				  &defined_templates);
- 	}
- 	spin_unlock(&template_list);
-@@ -266,7 +268,7 @@ static struct ima_template_desc *restore_template_fmt(char *template_name)
- 		goto out;
- 
- 	spin_lock(&template_list);
--	list_add_tail_rcu(&template_desc->list, &defined_templates);
-+	prlist_add_tail_rcu(&template_desc->list, &defined_templates);
- 	spin_unlock(&template_list);
- out:
- 	return template_desc;
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index 43752002c222..a6d10eabf0e5 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -15,8 +15,12 @@
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
-+#include <linux/printk.h>
-+#include <linux/prmemextra.h>
- #include "ima_template_lib.h"
- 
-+extern struct pmalloc_pool ima_pool;
++static PRLIST_HEAD(test_prlist_head);
 +
- static bool ima_template_hash_algo_allowed(u8 algo)
- {
- 	if (algo == HASH_ALGO_SHA1 || algo == HASH_ALGO_MD5)
-@@ -42,11 +46,11 @@ static int ima_write_template_field_data(const void *data, const u32 datalen,
- 	if (datafmt == DATA_FMT_STRING)
- 		buflen = datalen + 1;
- 
--	buf = kzalloc(buflen, GFP_KERNEL);
-+	buf = pzalloc(&ima_pool, buflen);
- 	if (!buf)
- 		return -ENOMEM;
- 
--	memcpy(buf, data, datalen);
-+	wr_memcpy(buf, data, datalen);
- 
- 	/*
- 	 * Replace all space characters with underscore for event names and
-@@ -58,11 +62,11 @@ static int ima_write_template_field_data(const void *data, const u32 datalen,
- 	if (datafmt == DATA_FMT_STRING) {
- 		for (buf_ptr = buf; buf_ptr - buf < datalen; buf_ptr++)
- 			if (*buf_ptr == ' ')
--				*buf_ptr = '_';
-+				wr_char(buf_ptr, '_');
- 	}
- 
--	field_data->data = buf;
--	field_data->len = buflen;
-+	wr_ptr(&field_data->data, buf);
-+	wr_memcpy(&field_data->len, &buflen, sizeof(buflen));
- 	return 0;
- }
- 
++/* ---------------------- prlist test functions ---------------------- */
++static bool test_init_prlist_head(void)
++{
++	if (WARN(test_prlist_head.prev != &test_prlist_head ||
++		 test_prlist_head.next != &test_prlist_head,
++		 "static initialization of static prlist_head failed"))
++		return false;
++	wr_ptr(&test_prlist_head.next, NULL);
++	wr_ptr(&test_prlist_head.prev, NULL);
++	if (WARN(test_prlist_head.prev || test_prlist_head.next,
++		 "resetting of static prlist_head failed"))
++		return false;
++	INIT_PRLIST_HEAD(&test_prlist_head);
++	if (WARN(test_prlist_head.prev != &test_prlist_head ||
++		 test_prlist_head.next != &test_prlist_head,
++		 "initialization of static prlist_head failed"))
++		return false;
++	pr_info("initialization of static prlist_head passed");
++	return true;
++}
++
++struct prlist_data {
++	int d_int;
++	union prlist_head node;
++	unsigned long long d_ulonglong;
++};
++
++
++#define LIST_INTERVAL 5
++#define LIST_INTERVALS 3
++#define LIST_NODES (LIST_INTERVALS * LIST_INTERVAL)
++static bool test_build_prlist(void)
++{
++	short i;
++	struct prlist_data *data;
++	int delta;
++
++	pool = prlist_create_pool();
++	if (WARN(!pool, "could not create pool"))
++		return false;
++
++	for (i = 0; i < LIST_NODES; i++) {
++		data = (struct prlist_data *)pmalloc(pool, sizeof(*data));
++		if (WARN(!data, "Failed to allocate prlist node"))
++			goto out;
++		wr_int(&data->d_int, i);
++		wr_ulonglong(&data->d_ulonglong, i);
++		prlist_add_tail(&data->node, &test_prlist_head);
++	}
++	for (i = 1; i < LIST_NODES; i++) {
++		data = (struct prlist_data *)pmalloc(pool, sizeof(*data));
++		if (WARN(!data, "Failed to allocate prlist node"))
++			goto out;
++		wr_int(&data->d_int, i);
++		wr_ulonglong(&data->d_ulonglong, i);
++		prlist_add(&data->node, &test_prlist_head);
++	}
++	i = LIST_NODES;
++	delta = -1;
++	list_for_each_entry(data, &test_prlist_head, node) {
++		i += delta;
++		if (!i)
++			delta = 1;
++		if (WARN(data->d_int != i || data->d_ulonglong != i,
++			 "unexpected value in prlist, build test failed"))
++			goto out;
++	}
++	pr_info("build prlist test passed");
++	return true;
++out:
++	pmalloc_destroy_pool(pool);
++	return false;
++}
++
++static bool test_teardown_prlist(void)
++{
++	short i;
++
++	for (i = 0; !list_empty(&test_prlist_head.list); i++)
++		prlist_del(test_prlist_head.next);
++	if (WARN(i != LIST_NODES * 2 - 1, "teardown prlist test failed"))
++		return false;
++	pmalloc_destroy_pool(pool);
++	pr_info("teardown prlist test passed");
++	return true;
++}
++
++static bool test_prlist(void)
++{
++	if (WARN(!(test_init_prlist_head() &&
++		   test_build_prlist() &&
++		   test_teardown_prlist()),
++		 "prlist test failed"))
++		return false;
++	pr_info("prlist test passed");
++	return true;
++}
++
++/* ---------------------- prhlist test functions ---------------------- */
++static PRHLIST_HEAD(test_prhlist_head);
++
++static bool test_init_prhlist_head(void)
++{
++	if (WARN(test_prhlist_head.first,
++		 "static initialization of static prhlist_head failed"))
++		return false;
++	wr_ptr(&test_prhlist_head.first, (void *)-1);
++	if (WARN(!test_prhlist_head.first,
++		 "resetting of static prhlist_head failed"))
++		return false;
++	INIT_PRHLIST_HEAD(&test_prhlist_head);
++	if (WARN(!test_prlist_head.prev,
++		 "initialization of static prhlist_head failed"))
++		return false;
++	pr_info("initialization of static prlist_head passed");
++	return true;
++}
++
++struct prhlist_data {
++	int d_int;
++	union prhlist_node node;
++	unsigned long long d_ulonglong;
++};
++
++static bool test_build_prhlist(void)
++{
++	short i;
++	struct prhlist_data *data;
++	union prhlist_node *anchor;
++
++	pool = prhlist_create_pool();
++	if (WARN(!pool, "could not create pool"))
++		return false;
++
++	for (i = 2 * LIST_INTERVAL - 1; i >= LIST_INTERVAL; i--) {
++		data = (struct prhlist_data *)pmalloc(pool, sizeof(*data));
++		if (WARN(!data, "Failed to allocate prhlist node"))
++			goto out;
++		wr_int(&data->d_int, i);
++		wr_ulonglong(&data->d_ulonglong, i);
++		prhlist_add_head(&data->node, &test_prhlist_head);
++	}
++	anchor = test_prhlist_head.first;
++	for (i = 0; i < LIST_INTERVAL; i++) {
++		data = (struct prhlist_data *)pmalloc(pool, sizeof(*data));
++		if (WARN(!data, "Failed to allocate prhlist node"))
++			goto out;
++		wr_int(&data->d_int, i);
++		wr_ulonglong(&data->d_ulonglong, i);
++		prhlist_add_before(&data->node, anchor);
++	}
++	hlist_for_each_entry(data, &test_prhlist_head, node)
++		if (!data->node.next)
++			anchor = &data->node;
++	for (i = 3 * LIST_INTERVAL - 1; i >= 2 * LIST_INTERVAL; i--) {
++		data = (struct prhlist_data *)pmalloc(pool, sizeof(*data));
++		if (WARN(!data, "Failed to allocate prhlist node"))
++			goto out;
++		wr_int(&data->d_int, i);
++		wr_ulonglong(&data->d_ulonglong, i);
++		prhlist_add_behind(&data->node, anchor);
++	}
++	i = 0;
++	hlist_for_each_entry(data, &test_prhlist_head, node) {
++		if (WARN(data->d_int != i || data->d_ulonglong != i,
++			 "unexpected value in prhlist, build test failed"))
++			goto out;
++		i++;
++	}
++	if (WARN(i != LIST_NODES,
++		 "wrong number of nodes: %d, expectd %d", i, LIST_NODES))
++		goto out;
++	pr_info("build prhlist test passed");
++	return true;
++out:
++	pmalloc_destroy_pool(pool);
++	return false;
++}
++
++static bool test_teardown_prhlist(void)
++{
++	union prhlist_node **pnode;
++	bool retval = false;
++
++	for (pnode = &test_prhlist_head.first->next; *pnode;) {
++		if (WARN(*(*pnode)->pprev != *pnode,
++			 "inconsistent pprev value, delete test failed"))
++			goto err;
++		prhlist_del(*pnode);
++	}
++	prhlist_del(test_prhlist_head.first);
++	if (WARN(!hlist_empty(&test_prhlist_head.head),
++		 "prhlist is not empty, delete test failed"))
++		goto err;
++	pr_info("deletion of prhlist passed");
++	retval = true;
++err:
++	pmalloc_destroy_pool(pool);
++	return retval;
++}
++
++static bool test_prhlist(void)
++{
++	if (WARN(!(test_init_prhlist_head() &&
++		   test_build_prhlist() &&
++		   test_teardown_prhlist()),
++		 "prhlist test failed"))
++		return false;
++	pr_info("prhlist test passed");
++	return true;
++}
++
++static int __init test_prlists_init_module(void)
++{
++	if (WARN(!(test_prlist() &&
++		   test_prhlist()),
++		 "protected lists test failed"))
++		return -EFAULT;
++	pr_info("protected lists test passed");
++	return 0;
++}
++
++module_init(test_prlists_init_module);
++
++MODULE_LICENSE("GPL v2");
++MODULE_AUTHOR("Igor Stoppa <igor.stoppa@huawei.com>");
++MODULE_DESCRIPTION("Test module for protected doubly linked list.");
 -- 
 2.17.1
 
