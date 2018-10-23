@@ -2,162 +2,242 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A73C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D02C7112C
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:43:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7DDB20665
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:42:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhIg2WBu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7DDB20665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CA6DD20813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:43:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA6DD20813
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728795AbeJXDHR (ORCPT
+        id S1728815AbeJXDH6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:07:17 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:43165 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727758AbeJXDHR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:07:17 -0400
-Received: by mail-qt1-f193.google.com with SMTP id q41-v6so2735167qtq.10;
-        Tue, 23 Oct 2018 11:42:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=5I4jJmJY18k8jFrKZs61HiMBE7oB5H0TbtuwvkjeXOA=;
-        b=mhIg2WBuS983BgiTTgcOdCHM8LcybHktUwZ/FU8X17u2xmIIuBQwS7Esm41pRf7xU+
-         lINReL24yG9hgt92dX1RWfQY4AF2hJTIOyYnjjBjXQzR2UmCXK818jBq1E3XecQYdsRR
-         iu02lntAhsp2jNLeNtDzGy9TnVj93eK/OFvOLasUKHfFpyMVoi1gj71UL5b7YLWTP6pB
-         YQYp80UNriZ7mWddlTCxSgKXxScuT7xuuV3pVSsNBEbgUfzhJ5Zisqb9u5hBLW6o1gbW
-         2qF74KSQoUFK38erdi3XLEFiFP7gQOpt2cPvYHXo1VL9oaBF/ZFOvK49d3RnErH6l9/m
-         y79A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=5I4jJmJY18k8jFrKZs61HiMBE7oB5H0TbtuwvkjeXOA=;
-        b=SqAjyOvEIV0HDzuNy3VJ9YaV4FPyX7PnCiDK7lPWcEpEZUNg08IWleLxd2qbAxlPu6
-         6ykhn57Fp1swMK+XO/6sIvcky+ND47NxhBnKAhKE6Zmk3370TcpqxxEyaTE7AxHUW6Wm
-         dZI2snWGjJX2MkhSfBGdKWewkxufwIKOUcfFdWddaWYPXb9eV41daqSdCZU9qtgK2ZMu
-         v15x415BqRp+LsUaa0GdfNqHdd3NJY0ls82Q7cmbyXADqWfFL+xEYSMpYA6LIvvC4ng6
-         Zkz/8VXi3HQCNa2DcFunQOLnWcgzp8E3GMV+CzAOodJ5SlSZEFtwTLyFGwpgw2+TRApd
-         uUZA==
-X-Gm-Message-State: ABuFfohkm0cYquUY8i7VvG1mjykNHXFUy02WFv4ST78ySkqsZNhF1dES
-        RzXR1OVwpim07hkRWGO7uic=
-X-Google-Smtp-Source: ACcGV60RQ/cCfepyrD2cRd2SBrRIHOmMWpn5RXb1dXZYs+27qt4+B8qaTUyGMNgnygMqTG5NNILCxQ==
-X-Received: by 2002:aed:2f82:: with SMTP id m2-v6mr49228746qtd.85.1540320162268;
-        Tue, 23 Oct 2018 11:42:42 -0700 (PDT)
-Received: from localhost ([144.121.20.162])
-        by smtp.gmail.com with ESMTPSA id o7-v6sm1432200qkc.67.2018.10.23.11.42.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Oct 2018 11:42:41 -0700 (PDT)
-From:   Rob Clark <robdclark@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     jcrouse@codeaurora.org, Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/msm/gpu: add submit flag to hint which buffers should be dumped
-Date:   Tue, 23 Oct 2018 14:42:37 -0400
-Message-Id: <20181023184239.18771-1-robdclark@gmail.com>
-X-Mailer: git-send-email 2.17.2
+        Tue, 23 Oct 2018 23:07:58 -0400
+Received: from mga11.intel.com ([192.55.52.93]:7304 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727758AbeJXDH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:07:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:43:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
+   d="scan'208";a="100049593"
+Received: from pwolsza-mobl1.ger.corp.intel.com ([10.249.254.37])
+  by fmsmga004.fm.intel.com with ESMTP; 23 Oct 2018 11:43:20 -0700
+Date:   Tue, 23 Oct 2018 21:43:17 +0300 (EEST)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     Tomas Winkler <tomas.winkler@intel.com>
+cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 11/21] tpm: factor out tpm 1.x pm suspend flow into
+ tpm1-cmd.c
+In-Reply-To: <20181019182307.17745-12-tomas.winkler@intel.com>
+Message-ID: <alpine.DEB.2.21.1810232143020.3433@jsakkine-mobl1>
+References: <20181019182307.17745-1-tomas.winkler@intel.com> <20181019182307.17745-12-tomas.winkler@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To lower CPU  overhead, future userspace will be switching to pinning
-iova and avoiding the use of relocs, and only include cmds table entries
-for IB1 level cmdstream (but not IB2 or state-groups).
+On Fri, 19 Oct 2018, Tomas Winkler wrote:
+> Factor out TPM 1.x suspend flow from tpm-interface.c into a new function
+> tpm1_pm_suspend() in tpm1-cmd.c
+>
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+> V2-V3: Rebase.
+> V4: 1. Add kdoc for tpm1_pm_suspend().
+>    2. Fix commit message.
+> V5: Adjust the kdoc to the new standard.
+> V6: Rebase.
+> V7: Resend.
+>
+> drivers/char/tpm/tpm-interface.c | 55 ++++--------------------------------
+> drivers/char/tpm/tpm.h           |  2 ++
+> drivers/char/tpm/tpm1-cmd.c      | 61 ++++++++++++++++++++++++++++++++++++++++
+> 3 files changed, 68 insertions(+), 50 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 43d3540a7875..e7f220f691f9 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -586,15 +586,6 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
+> }
+> EXPORT_SYMBOL_GPL(tpm_send);
+>
+> -#define TPM_ORD_SAVESTATE 152
+> -#define SAVESTATE_RESULT_SIZE 10
+> -
+> -static const struct tpm_input_header savestate_header = {
+> -	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+> -	.length = cpu_to_be32(10),
+> -	.ordinal = cpu_to_be32(TPM_ORD_SAVESTATE)
+> -};
+> -
+> /*
+>  * We are about to suspend. Save the TPM state
+>  * so that it can be restored.
+> @@ -602,54 +593,18 @@ static const struct tpm_input_header savestate_header = {
+> int tpm_pm_suspend(struct device *dev)
+> {
+> 	struct tpm_chip *chip = dev_get_drvdata(dev);
+> -	struct tpm_cmd_t cmd;
+> -	int rc, try;
+> -
+> -	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
+> +	int rc = 0;
+>
+> -	if (chip == NULL)
+> +	if (!chip)
+> 		return -ENODEV;
+>
+> 	if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
+> 		return 0;
+>
+> -	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> +	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> 		tpm2_shutdown(chip, TPM2_SU_STATE);
+> -		return 0;
+> -	}
+> -
+> -	/* for buggy tpm, flush pcrs with extend to selected dummy */
+> -	if (tpm_suspend_pcr)
+> -		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
+> -				     "extending dummy pcr before suspend");
+> -
+> -	/* now do the actual savestate */
+> -	for (try = 0; try < TPM_RETRY; try++) {
+> -		cmd.header.in = savestate_header;
+> -		rc = tpm_transmit_cmd(chip, NULL, &cmd, SAVESTATE_RESULT_SIZE,
+> -				      0, 0, NULL);
+> -
+> -		/*
+> -		 * If the TPM indicates that it is too busy to respond to
+> -		 * this command then retry before giving up.  It can take
+> -		 * several seconds for this TPM to be ready.
+> -		 *
+> -		 * This can happen if the TPM has already been sent the
+> -		 * SaveState command before the driver has loaded.  TCG 1.2
+> -		 * specification states that any communication after SaveState
+> -		 * may cause the TPM to invalidate previously saved state.
+> -		 */
+> -		if (rc != TPM_WARN_RETRY)
+> -			break;
+> -		tpm_msleep(TPM_TIMEOUT_RETRY);
+> -	}
+> -
+> -	if (rc)
+> -		dev_err(&chip->dev,
+> -			"Error (%d) sending savestate before suspend\n", rc);
+> -	else if (try > 0)
+> -		dev_warn(&chip->dev, "TPM savestate took %dms\n",
+> -			 try * TPM_TIMEOUT_RETRY);
+> +	else
+> +		rc = tpm1_pm_suspend(chip, tpm_suspend_pcr);
+>
+> 	return rc;
+> }
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index f284a98a9455..754f7bcb15fa 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -542,6 +542,8 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+> 			 const char *desc);
+> int tpm_startup(struct tpm_chip *chip);
+> int tpm_get_timeouts(struct tpm_chip *);
+> +
+> +int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
+> int tpm1_auto_startup(struct tpm_chip *chip);
+> int tpm1_do_selftest(struct tpm_chip *chip);
+> int tpm1_get_timeouts(struct tpm_chip *chip);
+> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+> index a69a02366c32..3bd9f1fa77ce 100644
+> --- a/drivers/char/tpm/tpm1-cmd.c
+> +++ b/drivers/char/tpm/tpm1-cmd.c
+> @@ -666,3 +666,64 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+> 		rc = -ENODEV;
+> 	return rc;
+> }
+> +
+> +#define TPM_ORD_SAVESTATE 152
+> +#define SAVESTATE_RESULT_SIZE 10
+> +static const struct tpm_input_header savestate_header = {
+> +	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+> +	.length = cpu_to_be32(10),
+> +	.ordinal = cpu_to_be32(TPM_ORD_SAVESTATE)
+> +};
+> +
+> +/**
+> + * tpm1_pm_suspend() - pm suspend handler
+> + * @chip: TPM chip to use.
+> + * @tpm_suspend_pcr: flush pcr for buggy TPM chips.
+> + *
+> + * The functions saves the TPM state to be restored on resume.
+> + *
+> + * Return:
+> + * * 0 on success,
+> + * * < 0 on error.
+> + */
+> +int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
+> +{
+> +	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
+> +	struct tpm_cmd_t cmd;
+> +	int rc, try;
+> +
+> +	/* for buggy tpm, flush pcrs with extend to selected dummy */
+> +	if (tpm_suspend_pcr)
+> +		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
+> +				     "extending dummy pcr before suspend");
+> +
+> +	/* now do the actual savestate */
+> +	for (try = 0; try < TPM_RETRY; try++) {
+> +		cmd.header.in = savestate_header;
+> +		rc = tpm_transmit_cmd(chip, NULL, &cmd, SAVESTATE_RESULT_SIZE,
+> +				      0, 0, NULL);
+> +
+> +		/*
+> +		 * If the TPM indicates that it is too busy to respond to
+> +		 * this command then retry before giving up.  It can take
+> +		 * several seconds for this TPM to be ready.
+> +		 *
+> +		 * This can happen if the TPM has already been sent the
+> +		 * SaveState command before the driver has loaded.  TCG 1.2
+> +		 * specification states that any communication after SaveState
+> +		 * may cause the TPM to invalidate previously saved state.
+> +		 */
+> +		if (rc != TPM_WARN_RETRY)
+> +			break;
+> +		tpm_msleep(TPM_TIMEOUT_RETRY);
+> +	}
+> +
+> +	if (rc)
+> +		dev_err(&chip->dev, "Error (%d) sending savestate before suspend\n",
+> +			rc);
+> +	else if (try > 0)
+> +		dev_warn(&chip->dev, "TPM savestate took %dms\n",
+> +			 try * TPM_TIMEOUT_RETRY);
+> +
+> +	return rc;
+> +}
+>
 
-This leaves the kernel unsure what to dump for rd/hangrd cmdstream
-dumping.  So add a MSM_SUBMIT_BO_DUMP flag so userspace can indicate
-buffers that contain cmdstream (or are otherwise important to dump).
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Signed-off-by: Rob Clark <robdclark@gmail.com>
----
- drivers/gpu/drm/msm/msm_gem_submit.c |  5 ++++-
- drivers/gpu/drm/msm/msm_rd.c         | 13 ++++++++++---
- include/uapi/drm/msm_drm.h           |  5 ++++-
- 3 files changed, 18 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/msm_gem_submit.c b/drivers/gpu/drm/msm/msm_gem_submit.c
-index 66673ea9bf6f..a43dd946d208 100644
---- a/drivers/gpu/drm/msm/msm_gem_submit.c
-+++ b/drivers/gpu/drm/msm/msm_gem_submit.c
-@@ -114,8 +114,11 @@ static int submit_lookup_objects(struct msm_gem_submit *submit,
- 			pagefault_disable();
- 		}
- 
-+/* at least one of READ and/or WRITE flags should be set: */
-+#define MANDATORY_FLAGS (MSM_SUBMIT_BO_READ | MSM_SUBMIT_BO_WRITE)
-+
- 		if ((submit_bo.flags & ~MSM_SUBMIT_BO_FLAGS) ||
--			!(submit_bo.flags & MSM_SUBMIT_BO_FLAGS)) {
-+			!(submit_bo.flags & MANDATORY_FLAGS)) {
- 			DRM_ERROR("invalid flags: %x\n", submit_bo.flags);
- 			ret = -EINVAL;
- 			goto out_unlock;
-diff --git a/drivers/gpu/drm/msm/msm_rd.c b/drivers/gpu/drm/msm/msm_rd.c
-index 0c2c8d2c631f..90e9d0a48dc0 100644
---- a/drivers/gpu/drm/msm/msm_rd.c
-+++ b/drivers/gpu/drm/msm/msm_rd.c
-@@ -348,6 +348,12 @@ static void snapshot_buf(struct msm_rd_state *rd,
- 	msm_gem_put_vaddr(&obj->base);
- }
- 
-+static bool
-+should_dump(struct msm_gem_submit *submit, int idx)
-+{
-+	return rd_full || (submit->bos[idx].flags & MSM_SUBMIT_BO_DUMP);
-+}
-+
- /* called under struct_mutex */
- void msm_rd_dump_submit(struct msm_rd_state *rd, struct msm_gem_submit *submit,
- 		const char *fmt, ...)
-@@ -389,15 +395,16 @@ void msm_rd_dump_submit(struct msm_rd_state *rd, struct msm_gem_submit *submit,
- 
- 	rd_write_section(rd, RD_CMD, msg, ALIGN(n, 4));
- 
--	for (i = 0; rd_full && i < submit->nr_bos; i++)
--		snapshot_buf(rd, submit, i, 0, 0);
-+	for (i = 0; i < submit->nr_bos; i++)
-+		if (should_dump(submit, i))
-+			snapshot_buf(rd, submit, i, 0, 0);
- 
- 	for (i = 0; i < submit->nr_cmds; i++) {
- 		uint64_t iova = submit->cmd[i].iova;
- 		uint32_t szd  = submit->cmd[i].size; /* in dwords */
- 
- 		/* snapshot cmdstream bo's (if we haven't already): */
--		if (!rd_full) {
-+		if (!should_dump(submit, i)) {
- 			snapshot_buf(rd, submit, submit->cmd[i].idx,
- 					submit->cmd[i].iova, szd * 4);
- 		}
-diff --git a/include/uapi/drm/msm_drm.h b/include/uapi/drm/msm_drm.h
-index c06d0a5bdd80..3c3af92c4b3e 100644
---- a/include/uapi/drm/msm_drm.h
-+++ b/include/uapi/drm/msm_drm.h
-@@ -188,8 +188,11 @@ struct drm_msm_gem_submit_cmd {
-  */
- #define MSM_SUBMIT_BO_READ             0x0001
- #define MSM_SUBMIT_BO_WRITE            0x0002
-+#define MSM_SUBMIT_BO_DUMP             0x0004
- 
--#define MSM_SUBMIT_BO_FLAGS            (MSM_SUBMIT_BO_READ | MSM_SUBMIT_BO_WRITE)
-+#define MSM_SUBMIT_BO_FLAGS            (MSM_SUBMIT_BO_READ | \
-+					MSM_SUBMIT_BO_WRITE | \
-+					MSM_SUBMIT_BO_DUMP)
- 
- struct drm_msm_gem_submit_bo {
- 	__u32 flags;          /* in, mask of MSM_SUBMIT_BO_x */
--- 
-2.17.2
-
+/Jarkko
