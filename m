@@ -2,135 +2,138 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAD7C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C76EC004D3
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:05:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E27A22064C
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:01:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E27A22064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 4E13E2064C
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:05:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="CqxtW2at"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E13E2064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbeJWJWT (ORCPT
+        id S1727760AbeJWJ0V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 05:22:19 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:36455 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725998AbeJWJWT (ORCPT
+        Tue, 23 Oct 2018 05:26:21 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:39567 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727739AbeJWJ0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 05:22:19 -0400
-Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9N1190s042453;
-        Tue, 23 Oct 2018 10:01:09 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp);
- Tue, 23 Oct 2018 10:01:09 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9N118Et042449;
-        Tue, 23 Oct 2018 10:01:08 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id w9N118i3042448;
-        Tue, 23 Oct 2018 10:01:08 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201810230101.w9N118i3042448@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: [RFC PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Tue, 23 Oct 2018 05:26:21 -0400
+Received: by mail-oi1-f193.google.com with SMTP id y81-v6so33831365oia.6
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 18:05:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LLGM/TIWzl/vGR2lOho6G+DtskYukbTdjeItH+ug3gQ=;
+        b=CqxtW2atpN6n/1353B3eELp8W9NGvRXag3NcibXKUTW7H8wxpgYoR4kOvPCFnN/WPf
+         bytQeUCKfszwwCBoE9jxvCiFjNTXWua+yV+nqzAJmBQGJ7OiY2+Y7BeM5hePG6FiKjRh
+         nmD6jpzFlgeLoPabyFW6o5phJ5NFxvA5e6/J6jUPJcKhdPHCRYgfIIMRU7F3mH0xBfkJ
+         v6KKO284AFbhXXGzozbIOSmyXNEujvA/imJX0gRS31lvfqQGqugeuyos8fMervW6Y9L7
+         hrVwLTrqKmVYl/AOQROvWh9qBvHw9Kn4LMw1M2M/Xczn0dnyAWXPWYYCFqR0BgVDpQyD
+         Absw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LLGM/TIWzl/vGR2lOho6G+DtskYukbTdjeItH+ug3gQ=;
+        b=q+ZAajaKaUF2512N6YkntiE4OKuRdS+OjFTi6nfmfu+gkgAtoW44u//XGnTCye+2vt
+         jpjEJTrHHHrT26e+lw2CKYaDLyLapaKQ4bG+90sRY/EiwOSv1MmG6fsi3o0klixud9v9
+         Rzn01MspE7FsmgJj2CZmS4KfzhpI83FO+UrMT04c+4GzvvtoO+rSfxUOczwna/R3NMP1
+         innEeVBj4+v1d2jxAruZ/9HSB9Myk6gRGa4Qu5QMeejDer9A7fl4JZ5tK7aO7jy6N3Iv
+         pM+cnxdXMAI7/UgdT6XVhr68R/SN4506+qELq4Ug8Id9iGBOIr1HnjDhtj4eVa44OgEi
+         kXAw==
+X-Gm-Message-State: ABuFfogUq8x4Tex8LSoBWXmbSa4m4Hcb3mJzKFRBybai8CX3hpPL7GJy
+        ADysg075nvj6J7QI34X3zc6WQwD/YsbQ4aOARrZ6vQ==
+X-Google-Smtp-Source: ACcGV61Hr9bdqai1eJmG32znpmB7zx9W86O9uM0D7aCwHYERCcdvmbBEhxHG86TZAEFrT81AeHM0nbnV4MD3OesxSXA=
+X-Received: by 2002:a54:4516:: with SMTP id l22-v6mr26410695oil.0.1540256722800;
+ Mon, 22 Oct 2018 18:05:22 -0700 (PDT)
 MIME-Version: 1.0
-Date:   Tue, 23 Oct 2018 10:01:08 +0900
-References: <f9a8079f-55b0-301e-9b3d-a5250bd7d277@i-love.sakura.ne.jp> <20181022120308.GB18839@dhcp22.suse.cz>
-In-Reply-To: <20181022120308.GB18839@dhcp22.suse.cz>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+References: <20181022201317.8558C1D8@viggo.jf.intel.com>
+In-Reply-To: <20181022201317.8558C1D8@viggo.jf.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 22 Oct 2018 18:05:11 -0700
+Message-ID: <CAPcyv4hxs-GnmwQU1wPZyg5aydCY5K09-YpSrrLpvU1v_8dbBw@mail.gmail.com>
+Subject: Re: [PATCH 0/9] Allow persistent memory to be used like normal RAM
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux MM <linux-mm@kvack.org>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        Fengguang Wu <fengguang.wu@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Hocko wrote:
-> On Mon 22-10-18 20:45:17, Tetsuo Handa wrote:
-> > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > > index e79cb59552d9..a9dfed29967b 100644
-> > > --- a/mm/memcontrol.c
-> > > +++ b/mm/memcontrol.c
-> > > @@ -1380,10 +1380,22 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
-> > >  		.gfp_mask = gfp_mask,
-> > >  		.order = order,
-> > >  	};
-> > > -	bool ret;
-> > > +	bool ret = true;
-> > >  
-> > >  	mutex_lock(&oom_lock);
-> > > +
-> > > +	/*
-> > > +	 * multi-threaded tasks might race with oom_reaper and gain
-> > > +	 * MMF_OOM_SKIP before reaching out_of_memory which can lead
-> > > +	 * to out_of_memory failure if the task is the last one in
-> > > +	 * memcg which would be a false possitive failure reported
-> > > +	 */
-> > > +	if (tsk_is_oom_victim(current))
-> > > +		goto unlock;
-> > > +
-> > 
-> > This is not wrong but is strange. We can use mutex_lock_killable(&oom_lock)
-> > so that any killed threads no longer wait for oom_lock.
-> 
-> tsk_is_oom_victim is stronger because it doesn't depend on
-> fatal_signal_pending which might be cleared throughout the exit process.
-> 
+On Mon, Oct 22, 2018 at 1:18 PM Dave Hansen <dave.hansen@linux.intel.com> wrote:
+>
+> Persistent memory is cool.  But, currently, you have to rewrite
+> your applications to use it.  Wouldn't it be cool if you could
+> just have it show up in your system like normal RAM and get to
+> it like a slow blob of memory?  Well... have I got the patch
+> series for you!
+>
+> This series adds a new "driver" to which pmem devices can be
+> attached.  Once attached, the memory "owned" by the device is
+> hot-added to the kernel and managed like any other memory.  On
+> systems with an HMAT (a new ACPI table), each socket (roughly)
+> will have a separate NUMA node for its persistent memory so
+> this newly-added memory can be selected by its unique NUMA
+> node.
+>
+> This is highly RFC, and I really want the feedback from the
+> nvdimm/pmem folks about whether this is a viable long-term
+> perversion of their code and device mode.  It's insufficiently
+> documented and probably not bisectable either.
+>
+> Todo:
+> 1. The device re-binding hacks are ham-fisted at best.  We
+>    need a better way of doing this, especially so the kmem
+>    driver does not get in the way of normal pmem devices.
+> 2. When the device has no proper node, we default it to
+>    NUMA node 0.  Is that OK?
+> 3. We muck with the 'struct resource' code quite a bit. It
+>    definitely needs a once-over from folks more familiar
+>    with it than I.
+> 4. Is there a better way to do this than starting with a
+>    copy of pmem.c?
 
-I still want to propose this. No need to be memcg OOM specific.
+So I don't think we want to do patch 2, 3, or 5. Just jump to patch 7
+and remove all the devm_memremap_pages() infrastructure and dax_region
+infrastructure.
 
- mm/memcontrol.c |  3 ++-
- mm/oom_kill.c   | 10 ++++++++++
- 2 files changed, 12 insertions(+), 1 deletion(-)
+The driver should be a dead simple turn around to call add_memory()
+for the passed in range. The hard part is, as you say, arranging for
+the kmem driver to not stand in the way of typical range / device
+claims by the dax_pmem device.
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e79cb59..2c1e1ac 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1382,7 +1382,8 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	};
- 	bool ret;
- 
--	mutex_lock(&oom_lock);
-+	if (mutex_lock_killable(&oom_lock))
-+		return true;
- 	ret = out_of_memory(&oc);
- 	mutex_unlock(&oom_lock);
- 	return ret;
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index f10aa53..e453bad 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -1055,6 +1055,16 @@ bool out_of_memory(struct oom_control *oc)
- 	unsigned long freed = 0;
- 	enum oom_constraint constraint = CONSTRAINT_NONE;
- 
-+	/*
-+	 * It is possible that multi-threaded OOM victims get
-+	 * task_will_free_mem(current) == false when the OOM reaper quickly
-+	 * set MMF_OOM_SKIP. But since we know that tsk_is_oom_victim() == true
-+	 * tasks won't loop forever (unleess it is a __GFP_NOFAIL allocation
-+	 * request), we don't need to select next OOM victim.
-+	 */
-+	if (tsk_is_oom_victim(current) && !(oc->gfp_mask & __GFP_NOFAIL))
-+		return true;
-+
- 	if (oom_killer_disabled)
- 		return false;
- 
--- 
-1.8.3.1
+To me this looks like teaching the nvdimm-bus and this dax_kmem driver
+to require explicit matching based on 'id'. The attachment scheme
+would look like this:
+
+modprobe dax_kmem
+echo dax0.0 > /sys/bus/nd/drivers/dax_kmem/new_id
+echo dax0.0 > /sys/bus/nd/drivers/dax_pmem/unbind
+echo dax0.0 > /sys/bus/nd/drivers/dax_kmem/bind
+
+At step1 the dax_kmem drivers will match no devices and stays out of
+the way of dax_pmem. It learns about devices it cares about by being
+explicitly told about them. Then unbind from the typical dax_pmem
+driver and attach to dax_kmem to perform the one way hotplug.
+
+I expect udev can automate this by setting up a rule to watch for
+device-dax instances by UUID and call a script to do the detach /
+reattach dance.
