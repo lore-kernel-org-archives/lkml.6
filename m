@@ -2,136 +2,93 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD970C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72268C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1E58207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E58207DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 35C35207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:16:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35C35207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbeJWTiu (ORCPT
+        id S1728120AbeJWTjp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 15:38:50 -0400
-Received: from gateway20.websitewelcome.com ([192.185.50.28]:46829 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728092AbeJWTit (ORCPT
+        Tue, 23 Oct 2018 15:39:45 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36866 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727568AbeJWTjo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 15:38:49 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 519DA400D3C55
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 06:15:47 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id EueKgv0ZW7jE8EuekgLC04; Tue, 23 Oct 2018 06:15:46 -0500
-X-Authority-Reason: nr=8
-Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:55796 helo=[192.168.1.41])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gEueJ-002NGn-Qb; Tue, 23 Oct 2018 06:15:00 -0500
-Subject: Re: [PATCH v3 0/2] phy: ocelot-serdes: fix out-of-bounds read
-To:     David Miller <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org, kishon@ti.com,
-        quentin.schulz@bootlin.com, netdev@vger.kernel.org
-References: <cover.1539940387.git.gustavo@embeddedor.com>
- <20181022.192747.1517598401629589272.davem@davemloft.net>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <edb88888-0c90-4e5f-6dda-d84630b4c497@embeddedor.com>
-Date:   Tue, 23 Oct 2018 13:14:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181022.192747.1517598401629589272.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 86.245.173.13
-X-Source-L: No
-X-Exim-ID: 1gEueJ-002NGn-Qb
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:55796
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Tue, 23 Oct 2018 15:39:44 -0400
+Received: by mail-ed1-f65.google.com with SMTP id c15-v6so1228737eds.4
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 04:16:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YQlIoQEvZV2c0KzstEoIq+zMWcSi8VGplQrKjXZ4Yr0=;
+        b=MCHEow8hN+hLdQUg0Fbl0gdtjDGO96NcVlXM7ZIv/CEtG+mnOGbi+NrxEDUFrc0zkQ
+         fVdErUnTP4Q/aD+MdlFVQNf43itLQDTPbbWnBXBMosFfyS/qf+bFVpkbiRCl5IMDYAkY
+         Jgj+pMJ+9JaSmcY5nCJ280E4Yw5N9PwjBJo8Ih3IBWy2ZfpSHriKQN9xE0gywaWuLdJc
+         2dPEvbydEsMqza75Kurdik7bnGoX4Fi2p0oYMkLVhytA2bY9ttXN3QyLJvK736jWohYW
+         WTktIT8Fbmio8V3Dqb1+4X+EP3UbPvq7XU4zYBR4z7Lt/7skJMfwLx0fGSGBlZbzzpuG
+         iQMQ==
+X-Gm-Message-State: ABuFfogmr12sx5Ig00eXQukUP66mWIk1SG6qKKVplrMK+w12zEy9pAzq
+        gqZRi3jR3PqDMVgB86E9K1s=
+X-Google-Smtp-Source: ACcGV63ygUP1HqyhINhvWF7+CDcSAX2sOF/IJxiNhWUZ/79MQSZ80r4qe6umNrqkS3dZqRcxlPuyFw==
+X-Received: by 2002:a17:906:4591:: with SMTP id t17-v6mr724921ejq.84.1540293402524;
+        Tue, 23 Oct 2018 04:16:42 -0700 (PDT)
+Received: from green.intra.ispras.ru (bran.ispras.ru. [83.149.199.196])
+        by smtp.googlemail.com with ESMTPSA id t15-v6sm305298ejf.27.2018.10.23.04.16.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 23 Oct 2018 04:16:41 -0700 (PDT)
+From:   efremov@linux.com
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Denis Efremov <efremov@linux.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Kees Cook <keescook@chromium.org>,
+        John Johansen <john.johansen@canonical.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] security: fix documentation for the path_chmod hook
+Date:   Tue, 23 Oct 2018 14:16:33 +0300
+Message-Id: <20181023111633.490-1-efremov@linux.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Denis Efremov <efremov@linux.com>
 
+The path_chmod hook was changed in the commit
+"switch security_path_chmod() to struct path *" (cdcf116d44e7).
+The argument @mnt was removed from the hook, @dentry was changed
+to @path. This patch updates the documentation accordingly.
 
-On 10/23/18 4:27 AM, David Miller wrote:
->>
->> Changes in v3:
->>  - Post the series to netdev, so Dave can take it.
->>
->> Changes in v2:
->>  - Send the whole series to Kishon Vijay Abraham I, so it
->>    can be taken into the PHY tree.
->>  - Add Quentin's Reviewed-by to commit log in both patches.
-> 
-> Series applied.
-> 
+Signed-off-by: Denis Efremov <efremov@linux.com>
+---
+ include/linux/lsm_hooks.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks, Dave.
---
-Gustavo
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index a598e601ccb3..596351f7c3d1 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -304,8 +304,7 @@
+  *	Return 0 if permission is granted.
+  * @path_chmod:
+  *	Check for permission to change DAC's permission of a file or directory.
+- *	@dentry contains the dentry structure.
+- *	@mnt contains the vfsmnt structure.
++ *	@path contains the path structure.
+  *	@mode contains DAC's mode.
+  *	Return 0 if permission is granted.
+  * @path_chown:
+-- 
+2.17.2
+
