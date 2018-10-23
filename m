@@ -2,76 +2,115 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C05A3C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65ADBC46475
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:36:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F20C206B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:35:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F20C206B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 308F0206B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:36:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 308F0206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbeJXMB4 (ORCPT
+        id S1726997AbeJXMCJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 08:01:56 -0400
-Received: from mga12.intel.com ([192.55.52.136]:49187 "EHLO mga12.intel.com"
+        Wed, 24 Oct 2018 08:02:09 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50274 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726268AbeJXMBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 08:01:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 19:22:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,418,1534834800"; 
-   d="scan'208";a="102098561"
-Received: from jhli-desk1.jf.intel.com ([10.7.198.167])
-  by orsmga001.jf.intel.com with ESMTP; 23 Oct 2018 19:22:22 -0700
-From:   Juston Li <juston.li@intel.com>
-To:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     lyude@redhat.com, clinton.a.taylor@intel.com,
-        nathan.d.ciobanu@intel.com, mario.limonciello@dell.com,
-        jared_dominguez@dell.com, linux-kernel@vger.kernel.org,
-        Juston Li <juston.li@intel.com>
-Subject: [RESEND PATCH v2 0/2] Check MST topology change on resume
-Date:   Tue, 23 Oct 2018 19:19:23 -0700
-Message-Id: <20181024021925.27026-1-juston.li@intel.com>
-X-Mailer: git-send-email 2.17.2
+        id S1726240AbeJXMCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 08:02:09 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8BB3FC033460;
+        Tue, 23 Oct 2018 23:59:52 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B0AE910018FD;
+        Tue, 23 Oct 2018 23:59:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 17/25] afs: Fix FS.FetchStatus delivery from updating wrong
+ vnode [ver #2]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 24 Oct 2018 00:59:51 +0100
+Message-ID: <154033919097.12041.15300070817747413274.stgit@warthog.procyon.org.uk>
+In-Reply-To: <154033906284.12041.12908874734066278152.stgit@warthog.procyon.org.uk>
+References: <154033906284.12041.12908874734066278152.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 23 Oct 2018 23:59:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Updated and resending these patches from Lyude:
-https://lkml.org/lkml/2016/5/19/361
-https://lkml.org/lkml/2016/5/19/360
+The FS.FetchStatus reply delivery function was updating inode of the
+directory in which a lookup had been done with the status of the looked up
+file.  This corrupts some of the directory state.
 
-As Lyude explains in patch 1/2, we can't rely on MST hubs to handle
-hotplugs during suspend. This patchset will check if any EDID's changed
-upon resume and reset the MST connections if they did.
+Fixes: 5cf9dd55a0ec ("afs: Prospectively look up extra files when doing a single lookup")
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-This resolves issues with monitors not being detected when hotplugging them
-during suspend.
+ fs/afs/fsclient.c |   16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-Signed-off-by: Juston Li <juston.li@intel.com>
-
-Changes since v1:
- - update functions that have been renamed since the original patch
- - add a null check for the cached EDID in case a new device was added
- - checkpatch fixes
-
-Lyude (2):
-  drm/dp/mst: Reprobe EDID for MST ports on resume
-  drm/i915/mst: Reset MST after resume when necessary
-
- drivers/gpu/drm/drm_dp_mst_topology.c | 94 ++++++++++++++++++++++++++-
- drivers/gpu/drm/i915/intel_dp.c       |  7 +-
- 2 files changed, 99 insertions(+), 2 deletions(-)
-
--- 
-2.17.2
+diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
+index 5e3027f21390..f758750e81d8 100644
+--- a/fs/afs/fsclient.c
++++ b/fs/afs/fsclient.c
+@@ -2026,7 +2026,7 @@ static int afs_deliver_fs_fetch_status(struct afs_call *call)
+ 	struct afs_file_status *status = call->reply[1];
+ 	struct afs_callback *callback = call->reply[2];
+ 	struct afs_volsync *volsync = call->reply[3];
+-	struct afs_vnode *vnode = call->reply[0];
++	struct afs_fid *fid = call->reply[0];
+ 	const __be32 *bp;
+ 	int ret;
+ 
+@@ -2034,21 +2034,15 @@ static int afs_deliver_fs_fetch_status(struct afs_call *call)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	_enter("{%llx:%llu}", vnode->fid.vid, vnode->fid.vnode);
++	_enter("{%llx:%llu}", fid->vid, fid->vnode);
+ 
+ 	/* unmarshall the reply once we've received all of it */
+ 	bp = call->buffer;
+-	ret = afs_decode_status(call, &bp, status, vnode,
++	ret = afs_decode_status(call, &bp, status, NULL,
+ 				&call->expected_version, NULL);
+ 	if (ret < 0)
+ 		return ret;
+-	callback[call->count].version	= ntohl(bp[0]);
+-	callback[call->count].expiry	= ntohl(bp[1]);
+-	callback[call->count].type	= ntohl(bp[2]);
+-	if (vnode)
+-		xdr_decode_AFSCallBack(call, vnode, &bp);
+-	else
+-		bp += 3;
++	xdr_decode_AFSCallBack_raw(&bp, callback);
+ 	if (volsync)
+ 		xdr_decode_AFSVolSync(&bp, volsync);
+ 
+@@ -2089,7 +2083,7 @@ int afs_fs_fetch_status(struct afs_fs_cursor *fc,
+ 	}
+ 
+ 	call->key = fc->key;
+-	call->reply[0] = NULL; /* vnode for fid[0] */
++	call->reply[0] = fid;
+ 	call->reply[1] = status;
+ 	call->reply[2] = callback;
+ 	call->reply[3] = volsync;
 
