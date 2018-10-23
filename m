@@ -2,154 +2,206 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 757D7C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43316C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45ED1207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:14:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45ED1207DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=koikeco.de
+	by mail.kernel.org (Postfix) with ESMTP id D6849207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:17:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20150623.gappssmtp.com header.i=@philpotter-co-uk.20150623.gappssmtp.com header.b="bxuJlNME"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6849207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728553AbeJXFjz (ORCPT
+        id S1727660AbeJXFmk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 01:39:55 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33505 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbeJXFjy (ORCPT
+        Wed, 24 Oct 2018 01:42:40 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36228 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725761AbeJXFmk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 01:39:54 -0400
-Received: by mail-wm1-f67.google.com with SMTP id y140-v6so12501462wmd.0;
-        Tue, 23 Oct 2018 14:14:46 -0700 (PDT)
+        Wed, 24 Oct 2018 01:42:40 -0400
+Received: by mail-wr1-f67.google.com with SMTP id y16so3248949wrw.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 14:17:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=philpotter-co-uk.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=VnD+CLavQLnq9oG7intxx34ZowLx+fsbcrRX+5LIf+I=;
+        b=bxuJlNMEGjdkKTmh4lJdvFQ+j/muy8n8crXTE4zbACMsbdUmd9HIEtoDYn5OTMYW7R
+         edkejjHUxc4IQjntSBZxkRqNG+2zT2J9iYCx9Upsgpoafxiwyvo+PD2h2Sj9kgmJqems
+         jb8bNx8JvAseqyoYLeRBdLgGnHJ+pWFq7ghMwPcSUB7lvZX3LofShdB1YlRi/Qvb2TSV
+         o4QP4YJjV/eQJgCJguoLaYZBdQjqFKYhABb7usrbUbMMqybhEb8peOz+9n4EQ1th24TS
+         XjrLcRlPN7q774kN+G7OkdN0WT+stZbS/2ncI99yXMcUc86XnlWLxZjrlLfVElucgxIM
+         Jf5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Qr1FmtSftxN0zwALW5CK++3qISzQ5YIkwO/jQxA0fvo=;
-        b=mYh2MatR10CZNVsJArN5ZVxhvmT+BkEXKTrTYVbBF0EZSTWR7pn4OeudRikSCvBUk2
-         9WgAQU3ghG9jymJ16o/1yQPwSvCnLrKszND6FurNmDfosBxjWPGZ+aqTYTY5Qh0neoBN
-         0YUxF3seKPuC7xIs2xH3MzejrIu1tQOOaMToXjlSQLVicYPzYoPDcMkTzHv2FQz/kAz2
-         NQtQJYktbnHzyd6K+AWCUnaloott1w6cMKyF89ALl8rTmwMECb4bCtfd/4POs5NrRRn+
-         Gkwx/BQjrQyv6Ij31MFTgA7mBDSuFelUjwEIogbbwji52Uk5/EVfAw5u6EkTZ9JJY0OT
-         E1FQ==
-X-Gm-Message-State: ABuFfogleeODvaFKDM0YKXwnGdbNMNVQFmzAqZ28MFA9g5dJj3dyCmLq
-        Fb5nMbPhjbXA6x0hfbybPzMI+BGrb1c=
-X-Google-Smtp-Source: ACcGV62P9x+Y34dapTAZmf0BfxdV94mpt6kwgVtqYcAEuUyWaws6KBkSqKM4l2TtOYiQL0TV56AfmQ==
-X-Received: by 2002:a1c:a55:: with SMTP id 82-v6mr22929957wmk.54.1540329285653;
-        Tue, 23 Oct 2018 14:14:45 -0700 (PDT)
-Received: from [192.168.1.178] (host-92-3-126-56.as43234.net. [92.3.126.56])
-        by smtp.gmail.com with ESMTPSA id x186-v6sm2452461wmx.24.2018.10.23.14.14.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 14:14:44 -0700 (PDT)
-Subject: Re: [PATCH v2 3/5] Creates macro to avoid variable shadowing
-To:     =?UTF-8?Q?Leonardo_Br=c3=a1s?= <leobras.c@gmail.com>,
-        lkcamp@lists.libreplanetbr.org
-Cc:     Borislav Petkov <bp@alien8.de>, David.Laight@aculab.com,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181023011042.GA6582@WindFlash>
-From:   Helen Koike <helen@koikeco.de>
-Message-ID: <8872be37-0ef3-7498-a846-bac3c38ee948@koikeco.de>
-Date:   Tue, 23 Oct 2018 18:14:41 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=VnD+CLavQLnq9oG7intxx34ZowLx+fsbcrRX+5LIf+I=;
+        b=jpTJSKeLk3/1E9L4YM8oblZ6Mow+BwNhQWTDEnRXlKSMsCXexcYsCAH63F41yInN5m
+         h2oNnR+KhH+0/acoH4YyqcjCRo8k/HAYFKjBRX/JOZAcQPb3BRXMbhBYWEbj51qMhNE6
+         2NfSJofc+te/HAynP/fJrlPmYQ+cML7R998r8XWlx/ui/Lh6PYPQi11hXZTuZHzPjeIc
+         bdX8rScnymOPXtL/bhBK3KbBoUZvFaKJdnTiS0B2O2k1TVa3Ms6wxudt6+XJXgg7+Nhx
+         IE3+3JnnDbjGWvsb0XKagiD1gDqDWt1yGaZH+keyB7EBTfgC6zXrOGURiTO39oBcegXp
+         QlmQ==
+X-Gm-Message-State: AGRZ1gKyO9tOUmwZ9APVx+niWOi4FrIPQOseYQhLuBs3gDJA+peYiYHM
+        qHUCcxcbUBmHMIPhMj3LJcSqxA==
+X-Google-Smtp-Source: AJdET5dhFgrLz5h1q/d6A6wrEH/Mp0I9P41YR+355HRaY223VeGT+xZfnD0DxMGjbK2BbkYwGiI/7Q==
+X-Received: by 2002:a5d:6b4f:: with SMTP id x15-v6mr23038176wrw.304.1540329450688;
+        Tue, 23 Oct 2018 14:17:30 -0700 (PDT)
+Received: from pathfinder (62-64-249-96.dynamic.dsl.as9105.com. [62.64.249.96])
+        by smtp.gmail.com with ESMTPSA id j203-v6sm4380200wmd.46.2018.10.23.14.17.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 23 Oct 2018 14:17:29 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 22:17:28 +0100
+From:   Phillip Potter <phil@philpotter.co.uk>
+To:     clm@fb.com
+Cc:     linux-kernel@vger.kernel.org, amir73il@gmail.com,
+        viro@zeniv.linux.org.uk, jbacik@fb.com, dsterba@suse.com,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: [RFC][PATCH v2 10/10] btrfs: use common file type conversion
+Message-ID: <20181023211728.GA16584@pathfinder>
 MIME-Version: 1.0
-In-Reply-To: <20181023011042.GA6582@WindFlash>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leonardo,
+Deduplicate the btrfs file type conversion implementation.
 
-Thanks for your patch.
+Original patch by Amir Goldstein.
 
-On 10/22/18 11:10 PM, Leonardo Brás wrote:
-> Creates DEF_FIELD_ADDR_VAR as a more generic version of the DEF_FIELD_ADD
-> macro, allowing usage of a variable name other than the struct element name.
-> Also, sets DEF_FIELD_ADDR as a specific usage of DEF_FILD_ADDR_VAR in which
-> the var name is the same as the struct element name.
-> 
-> Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
-> ---
->  scripts/mod/file2alias.c | 24 +++++++++++++++++-------
->  1 file changed, 17 insertions(+), 7 deletions(-)
-> 
-> diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-> index 7be43697ff84..3015c0bdecb2 100644
-> --- a/scripts/mod/file2alias.c
-> +++ b/scripts/mod/file2alias.c
-> @@ -95,12 +95,20 @@ extern struct devtable *__start___devtable[], *__stop___devtable[];
->   */
->  #define DEF_FIELD(m, devid, f) \
->  	typeof(((struct devid *)0)->f) f = TO_NATIVE(*(typeof(f) *)((m) + OFF_##devid##_##f))
-> +
-> +/* Define a variable v that holds the address of field f of struct devid
-> + * based at address m.  Due to the way typeof works, for a field of type
-> + * T[N] the variable has type T(*)[N], _not_ T*.
-> + */
-> +#define DEF_FIELD_ADDR_VAR(m, devid, f, v) \
-> +	typeof(((struct devid *)0)->f) *v = ((m) + OFF_##devid##_##f)
+v2:
+- Rebased against Linux 4.19 by Phillip Potter
+- Compile-time checks added by Phillip Potter to make
+  sure the BTRFS_FT_x enum values stay same as FT_x values
 
-You created this macro but you don't use it below, maybe you forgot to
-update the patch? Please check.
+v1:
+- Initial implementation
 
-Helen
+Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
+---
+ fs/btrfs/btrfs_inode.h          |  2 --
+ fs/btrfs/delayed-inode.c        |  2 +-
+ fs/btrfs/inode.c                | 35 +++++++++++++++++----------------
+ include/uapi/linux/btrfs_tree.h |  2 ++
+ 4 files changed, 21 insertions(+), 20 deletions(-)
 
-> +
->  /* Define a variable f that holds the address of field f of struct devid
->   * based at address m.  Due to the way typeof works, for a field of type
->   * T[N] the variable has type T(*)[N], _not_ T*.
->   */
->  #define DEF_FIELD_ADDR(m, devid, f) \
-> -	typeof(((struct devid *)0)->f) *f = ((m) + OFF_##devid##_##f)
-> +	DEF_FIELD_ADDR_VAR(m, devid, f, f)
->  
->  /* Add a table entry.  We test function type matches while we're here. */
->  #define ADD_TO_DEVTABLE(device_id, type, function) \
-> @@ -641,25 +649,27 @@ static void do_pnp_card_entries(void *symval, unsigned long size,
->  	unsigned int i;
->  
->  	device_id_check(mod->name, "pnp", size, id_size, symval);
-> +	DEF_FIELD_ADDR(symval, pnp_card_device_id, devs);
-> +	typeof(devs) devs_last;
->  
->  	for (i = 0; i < count; i++) {
->  		unsigned int j;
-> -		DEF_FIELD_ADDR(symval + i*id_size, pnp_card_device_id, devs);
-> +		devs_last = devs + i * id_size;
->  
->  		for (j = 0; j < PNP_MAX_DEVICES; j++) {
-> -			const char *id = (char *)(*devs)[j].id;
-> -			int i2, j2;
-> +			const char *id = (char *)(*devs_last)[j].id;
-> +			int j2;
->  			int dup = 0;
->  
->  			if (!id[0])
->  				break;
->  
->  			/* find duplicate, already added value */
-> -			for (i2 = 0; i2 < i && !dup; i2++) {
-> -				DEF_FIELD_ADDR(symval + i2*id_size, pnp_card_device_id, devs);
-> +			while ((devs_last -= id_size) >= devs && !dup) {
->  
->  				for (j2 = 0; j2 < PNP_MAX_DEVICES; j2++) {
-> -					const char *id2 = (char *)(*devs)[j2].id;
-> +					const char *id2 =
-> +						(char *)(*devs_last)[j2].id;
->  
->  					if (!id2[0])
->  						break;
-> 
+diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
+index 1343ac57b438..c7c6db6b4a35 100644
+--- a/fs/btrfs/btrfs_inode.h
++++ b/fs/btrfs/btrfs_inode.h
+@@ -196,8 +196,6 @@ struct btrfs_inode {
+ 	struct inode vfs_inode;
+ };
+ 
+-extern unsigned char btrfs_filetype_table[];
+-
+ static inline struct btrfs_inode *BTRFS_I(const struct inode *inode)
+ {
+ 	return container_of(inode, struct btrfs_inode, vfs_inode);
+diff --git a/fs/btrfs/delayed-inode.c b/fs/btrfs/delayed-inode.c
+index f51b509f2d9b..c1da34e3a775 100644
+--- a/fs/btrfs/delayed-inode.c
++++ b/fs/btrfs/delayed-inode.c
+@@ -1691,7 +1691,7 @@ int btrfs_readdir_delayed_dir_index(struct dir_context *ctx,
+ 		name = (char *)(di + 1);
+ 		name_len = btrfs_stack_dir_name_len(di);
+ 
+-		d_type = btrfs_filetype_table[di->type];
++		d_type = fs_dtype(di->type);
+ 		btrfs_disk_key_to_cpu(&location, &di->location);
+ 
+ 		over = !dir_emit(ctx, name, name_len,
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 3ea5339603cf..4cbdcba4799a 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -73,17 +73,6 @@ struct kmem_cache *btrfs_trans_handle_cachep;
+ struct kmem_cache *btrfs_path_cachep;
+ struct kmem_cache *btrfs_free_space_cachep;
+ 
+-#define S_SHIFT 12
+-static const unsigned char btrfs_type_by_mode[S_IFMT >> S_SHIFT] = {
+-	[S_IFREG >> S_SHIFT]	= BTRFS_FT_REG_FILE,
+-	[S_IFDIR >> S_SHIFT]	= BTRFS_FT_DIR,
+-	[S_IFCHR >> S_SHIFT]	= BTRFS_FT_CHRDEV,
+-	[S_IFBLK >> S_SHIFT]	= BTRFS_FT_BLKDEV,
+-	[S_IFIFO >> S_SHIFT]	= BTRFS_FT_FIFO,
+-	[S_IFSOCK >> S_SHIFT]	= BTRFS_FT_SOCK,
+-	[S_IFLNK >> S_SHIFT]	= BTRFS_FT_SYMLINK,
+-};
+-
+ static int btrfs_setsize(struct inode *inode, struct iattr *attr);
+ static int btrfs_truncate(struct inode *inode, bool skip_writeback);
+ static int btrfs_finish_ordered_io(struct btrfs_ordered_extent *ordered_extent);
+@@ -5803,10 +5792,6 @@ static struct dentry *btrfs_lookup(struct inode *dir, struct dentry *dentry,
+ 	return d_splice_alias(inode, dentry);
+ }
+ 
+-unsigned char btrfs_filetype_table[] = {
+-	DT_UNKNOWN, DT_REG, DT_DIR, DT_CHR, DT_BLK, DT_FIFO, DT_SOCK, DT_LNK
+-};
+-
+ /*
+  * All this infrastructure exists because dir_emit can fault, and we are holding
+  * the tree lock when doing readdir.  For now just allocate a buffer and copy
+@@ -5945,7 +5930,23 @@ static int btrfs_real_readdir(struct file *file, struct dir_context *ctx)
+ 		name_ptr = (char *)(entry + 1);
+ 		read_extent_buffer(leaf, name_ptr, (unsigned long)(di + 1),
+ 				   name_len);
+-		put_unaligned(btrfs_filetype_table[btrfs_dir_type(leaf, di)],
++
++		/*
++		 * compile-time asserts that generic FT_x types
++		 * still match BTRFS_FT_x types - no need to list
++		 * in other functions as well as build will
++		 * fail either way
++		 */
++		BUILD_BUG_ON(BTRFS_FT_UNKNOWN != FT_UNKNOWN);
++		BUILD_BUG_ON(BTRFS_FT_REG_FILE != FT_REG_FILE);
++		BUILD_BUG_ON(BTRFS_FT_DIR != FT_DIR);
++		BUILD_BUG_ON(BTRFS_FT_CHRDEV != FT_CHRDEV);
++		BUILD_BUG_ON(BTRFS_FT_BLKDEV != FT_BLKDEV);
++		BUILD_BUG_ON(BTRFS_FT_FIFO != FT_FIFO);
++		BUILD_BUG_ON(BTRFS_FT_SOCK != FT_SOCK);
++		BUILD_BUG_ON(BTRFS_FT_SYMLINK != FT_SYMLINK);
++
++		put_unaligned(fs_dtype(btrfs_dir_type(leaf, di)),
+ 				&entry->type);
+ 		btrfs_dir_item_key_to_cpu(leaf, di, &location);
+ 		put_unaligned(location.objectid, &entry->ino);
+@@ -6350,7 +6351,7 @@ static struct inode *btrfs_new_inode(struct btrfs_trans_handle *trans,
+ 
+ static inline u8 btrfs_inode_type(struct inode *inode)
+ {
+-	return btrfs_type_by_mode[(inode->i_mode & S_IFMT) >> S_SHIFT];
++	return fs_umode_to_ftype(inode->i_mode);
+ }
+ 
+ /*
+diff --git a/include/uapi/linux/btrfs_tree.h b/include/uapi/linux/btrfs_tree.h
+index aff1356c2bb8..5747cffa09fa 100644
+--- a/include/uapi/linux/btrfs_tree.h
++++ b/include/uapi/linux/btrfs_tree.h
+@@ -307,6 +307,8 @@
+  *
+  * Used by:
+  * struct btrfs_dir_item.type
++ *
++ * Values 0..7 should match common file type values in file_type.h.
+  */
+ #define BTRFS_FT_UNKNOWN	0
+ #define BTRFS_FT_REG_FILE	1
+-- 
+2.17.2
+
