@@ -2,211 +2,88 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4862EC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A162C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:25:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09EAF20665
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:24:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09EAF20665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 08BBA20665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:25:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WzhNYuho"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08BBA20665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728582AbeJWRqc (ORCPT
+        id S1728589AbeJWRrd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 13:46:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40522 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727714AbeJWRqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 13:46:32 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8B10A3084259;
-        Tue, 23 Oct 2018 09:23:58 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.106])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 8EF1D60BF6;
-        Tue, 23 Oct 2018 09:23:49 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 23 Oct 2018 11:23:58 +0200 (CEST)
-Date:   Tue, 23 Oct 2018 11:23:48 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Enke Chen <enkechen@cisco.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>
-Subject: Re: [PATCH v2] kernel/signal: Signal-based pre-coredump notification
-Message-ID: <20181023092348.GA14340@redhat.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
- <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
+        Tue, 23 Oct 2018 13:47:33 -0400
+Received: from mail-lj1-f170.google.com ([209.85.208.170]:41271 "EHLO
+        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727714AbeJWRrd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 13:47:33 -0400
+Received: by mail-lj1-f170.google.com with SMTP id u21-v6so662573lja.8
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 02:24:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ISFsbrVIlOGOELJ62+NBkKgPGroYGp92vujbYXOckWI=;
+        b=WzhNYuhoRrS+hX1mdTUzO2XnL4fGfsNxyCYDskZWSMAsl6pQ/DcPa33YS6aJU2AfPm
+         pINChOyq6bSsSO64e6Zy2NHV0OCbOOmCKTiw8hcCvdBQdVHaZo+JXc1KQ1W6wcNH+1Um
+         UFhpgwEALtCeSokj+e+usF/jz/J4XLlJ4jJFM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ISFsbrVIlOGOELJ62+NBkKgPGroYGp92vujbYXOckWI=;
+        b=DMhql6tuZS4ntZNzO/J30Fo4UQa40re3m5hPVVYl1DYGMR/zf4MCWuaq+woOdgG2Cu
+         Uhals+A5gm7NlTB7tCUKmglb6Rqpw2Jqr17apFzWG1hyZKoAQsIiq++AqhA+xtLPqLWf
+         NU9e/xnghOH3i+rLYvQoO0W6/PHRoJIpB4a0o5CRU2y7S0MttwoejAiKx5IOEPHAnV0k
+         HbSocW//oIi8Z570bxiU6LdGcfuIA8WyeDMV/yj6IULVpS25py8yK0uyLPaDsZWYbW6O
+         EPQ0qBqbgGXdI7Pio7rdXGSeVLkQR52CTgFzUfkzhFFwlS17go3F9UCcQDpdBPlfxAwk
+         LgIw==
+X-Gm-Message-State: ABuFfohSktP1L6FTxugpHkmvLENEUE04pCTrF6BtExeBLVC1gW03yBuj
+        76BPpRBuadPrPb4lFrBo5ilhwWq2pfFBm9+u
+X-Google-Smtp-Source: ACcGV61ZFS+S4WYxnfOUqOWxTmUz+OKuXdrxe3qhZhuxua/FDLsrDJLZ3vKz9vuSvpgCHBpl4zLYtA==
+X-Received: by 2002:a2e:9e88:: with SMTP id f8-v6mr31528657ljk.142.1540286697595;
+        Tue, 23 Oct 2018 02:24:57 -0700 (PDT)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id x141-v6sm130022lff.32.2018.10.23.02.24.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Oct 2018 02:24:56 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id c24-v6so545745lfi.12
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 02:24:56 -0700 (PDT)
+X-Received: by 2002:a19:1cc3:: with SMTP id c186-v6mr11044345lfc.16.1540286696177;
+ Tue, 23 Oct 2018 02:24:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 23 Oct 2018 09:23:59 +0000 (UTC)
+References: <20181022143915.GA387@light.dominikbrodowski.net>
+In-Reply-To: <20181022143915.GA387@light.dominikbrodowski.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 23 Oct 2018 10:24:40 +0100
+X-Gmail-Original-Message-ID: <CAHk-=whdTOFurCd7rCjOA5dsvmXY2z57mbP=1dNPXetF46kpVQ@mail.gmail.com>
+Message-ID: <CAHk-=whdTOFurCd7rCjOA5dsvmXY2z57mbP=1dNPXetF46kpVQ@mail.gmail.com>
+Subject: Re: [GIT PULL] pcmcia odd fixes for v4.20-rc1
+To:     Dominik Brodowski <linux@dominikbrodowski.net>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/22, Enke Chen wrote:
+On Mon, Oct 22, 2018 at 3:39 PM Dominik Brodowski
+<linux@dominikbrodowski.net> wrote:
 >
-> As the coredump of a process may take time, in certain time-sensitive
-> applications it is necessary for a parent process (e.g., a process
-> manager) to be notified of a child's imminent death before the coredump
-> so that the parent process can act sooner, such as re-spawning an
-> application process, or initiating a control-plane fail-over.
+> These are just a few odd fixes and improvements to the PCMCIA core
+> and to a few PCMCIA device drivers.
 
-Personally I still do not like this feature, but I won't argue.
+Pulled,
 
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -546,6 +546,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->  	struct cred *cred;
->  	int retval = 0;
->  	int ispipe;
-> +	bool notify;
->  	struct files_struct *displaced;
->  	/* require nonrelative corefile path and be extra careful */
->  	bool need_suid_safe = false;
-> @@ -590,6 +591,15 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->  	if (retval < 0)
->  		goto fail_creds;
->
-> +	/*
-> +	 * Send the pre-coredump signal to the parent if requested.
-> +	 */
-> +	read_lock(&tasklist_lock);
-> +	notify = do_notify_parent_predump(current);
-> +	read_unlock(&tasklist_lock);
-> +	if (notify)
-> +		cond_resched();
-
-Hmm. I do not understand why do we need cond_resched(). And even if we need it,
-why we can't call it unconditionally?
-
-I'd also suggest to move read_lock/unlock(tasklist) into do_notify_parent_predump()
-and remove the "task_struct *tsk" argument, tsk is always current.
-
-Yes, do_notify_parent() and do_notify_parent_cldstop() are called with tasklist_lock
-held, but there are good reasons for that.
-
-
-> +static inline int valid_predump_signal(int sig)
-> +{
-> +	return (sig == SIGCHLD) || (sig == SIGUSR1) || (sig == SIGUSR2);
-> +}
-
-I still do not understand why do we need to restrict predump_signal.
-
-PR_SET_PREDUMP_SIG can only change the caller's ->predump_signal, so to me
-even PR_SET_PREDUMP_SIG(SIGKILL) is fine.
-
-And once again, SIGCHLD/SIGUSR do not queue, this means that PR_SET_PREDUMP_SIG
-is pointless if you have 2 or more children.
-
-> +bool do_notify_parent_predump(struct task_struct *tsk)
-> +{
-> +	struct sighand_struct *sighand;
-> +	struct kernel_siginfo info;
-> +	struct task_struct *parent;
-> +	unsigned long flags;
-> +	pid_t pid;
-> +	int sig;
-> +
-> +	parent = tsk->parent;
-> +	sighand = parent->sighand;
-> +	pid = task_tgid_vnr(tsk);
-> +
-> +	spin_lock_irqsave(&sighand->siglock, flags);
-> +	sig = parent->signal->predump_signal;
-> +	if (!valid_predump_signal(sig)) {
-> +		spin_unlock_irqrestore(&sighand->siglock, flags);
-> +		return false;
-> +	}
-
-Why do we need to check parent->signal->predump_signal under ->siglock?
-This complicates the code for no reason, afaics.
-
-> +	clear_siginfo(&info);
-> +	info.si_pid = pid;
-> +	info.si_signo = sig;
-> +	if (sig == SIGCHLD)
-> +		info.si_code = CLD_PREDUMP;
-> +
-> +	__group_send_sig_info(sig, &info, parent);
-> +	__wake_up_parent(tsk, parent);
-
-Why __wake_up_parent() ?
-
-do_notify_parent() does this to wake up the parent sleeping in do_wait(), to
-report the event. But predump_signal has nothing to do with wait().
-
-Now. This version sends the signal to ->parent, not ->real_parent. OK, but this
-means that real_parent won't be notified if its child is traced.
-
-
-> +	case PR_SET_PREDUMP_SIG:
-> +		if (arg3 || arg4 || arg5)
-> +			return -EINVAL;
-> +
-> +		/* 0 is valid for disabling the feature */
-> +		if (arg2 && !valid_predump_signal((int)arg2))
-> +			return -EINVAL;
-> +		me->signal->predump_signal = (int)arg2;
-> +		break;
-
-Again, I do not understand why do we need valid_predump_signal(). But even
-if we need it, I don't understand why should we check it twice. IOW, why
-do_notify_parent_predump() can't simply check ->predump_signal != 0?
-
-Whatever we do, PR_SET_PREDUMP_SIG should validate arg2 anyway. Who else can
-change ->predump_signal  after that?
-
-> +	case PR_GET_PREDUMP_SIG:
-> +		if (arg3 || arg4 || arg5)
-> +			return -EINVAL;
-> +		error = put_user(me->signal->predump_signal,
-> +				 (int __user *)arg2);
-
-To me it would be better to simply return ->predump_signal, iow
-
-		error = me->signal->predump_signal;
-		break;
-
-but I won't insist, this is subjective and cosmetic.
-
-Oleg.
-
+             Linus
