@@ -2,140 +2,137 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A7DC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE631C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:13:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D54972075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:12:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85CE520665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:13:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="MQ2Wig8y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D54972075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="bGsTPBBW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85CE520665
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728481AbeJXAgS (ORCPT
+        id S1728499AbeJXAhk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 20:36:18 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34207 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727612AbeJXAgS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 20:36:18 -0400
-Received: by mail-pg1-f194.google.com with SMTP id g12-v6so897146pgs.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 09:12:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1i2lznVyglXGUJdFbyOeaEkfvd6J8yKfE652P5VFc1U=;
-        b=MQ2Wig8y8nsZc8ub8dy2kA61PJ5KOBypJ+sIhKmOvBfNE6cDiR3D0X1/rTel7pg3wT
-         99lXS1kyLWteGQWnQyr36DMEIl4J42/7WTN651LPxRQf3gpxLpyertp6l2H9M8FjXHDA
-         DRrFUDA3bukw6atwYxAsuWzZzWVbbvMl0PYpQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1i2lznVyglXGUJdFbyOeaEkfvd6J8yKfE652P5VFc1U=;
-        b=cnmP04Vh84cg81zuRnbjHXzzO0B70ahq7aUwMrFECU0wji0aT32EWvCmRWRHbcotF+
-         YFaXP1oFCukbZScrGoruzkDwq9zkbB+3PgItIrlj52XQeNHSgxsvilsCpsoWfv9fb9FD
-         /jt0541L5NdTbTRQIFgq1JhQHKwFCyoGgaRl9BtLOqMOnjzLBiOrESSaI7ZzFa29mUr5
-         NApN1iEvfY3BPSxMd27TMbe5LX/Kxc6J3ByA3wNgdNKY4CB3kZb90u4AFYuwXFKsk/uX
-         7G/Son5njq5izm+a+/HCCDaVNZNmBDDn50FhC2fv658uo2DGLyt/uwcGJlvfZ3N7a+K0
-         YSdw==
-X-Gm-Message-State: AGRZ1gKkkzb74S1IRrm+BXeJ9FYHZKhUlhKs0ACIO9oy9OjYOj/1eV9T
-        hXbAXSRleaPW6s5GrWxC/YvsgQ==
-X-Google-Smtp-Source: AJdET5ei1Xh0Jr57Y+8ahXuHjX6PvN6g8BqGc0gI9s0LlKHMFabDUapOsDuZyA4D6J8QFTQgYMIF6Q==
-X-Received: by 2002:a63:314c:: with SMTP id x73mr7782810pgx.323.1540311136170;
-        Tue, 23 Oct 2018 09:12:16 -0700 (PDT)
-Received: from localhost.localdomain ([27.7.51.1])
-        by smtp.gmail.com with ESMTPSA id u21-v6sm2771449pfa.176.2018.10.23.09.12.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 09:12:15 -0700 (PDT)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH] arm64: dts: allwinner: a64: Add device node for Mali-400 GPU
-Date:   Tue, 23 Oct 2018 21:42:03 +0530
-Message-Id: <20181023161203.2956-1-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+        Tue, 23 Oct 2018 20:37:40 -0400
+Received: from mail-eopbgr10067.outbound.protection.outlook.com ([40.107.1.67]:24560
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728034AbeJXAhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 20:37:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QtKVwKm1RytM3kwFLau/gSZVIzzMvQodGqzgmYKAwLA=;
+ b=bGsTPBBW8WHhNW5qWW+9+rRCqHBwFGldEv3Zes5/d/sazUIA9CWhXPlIxxz+6mjioQpjpXuaJJn7vvFQ9NrFRDnKVClglnNbPVKNOnf3bRQP2mLtuXJ+xkx5Ay3kxznqDHemtmr9I5eE2OPyPsIxBlTeEjkeYXrd65taPGYzADU=
+Received: from VI1PR0501MB2271.eurprd05.prod.outlook.com (10.169.135.8) by
+ VI1PR0501MB2431.eurprd05.prod.outlook.com (10.168.135.151) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1250.30; Tue, 23 Oct 2018 16:13:33 +0000
+Received: from VI1PR0501MB2271.eurprd05.prod.outlook.com
+ ([fe80::b487:46d9:b391:cb3]) by VI1PR0501MB2271.eurprd05.prod.outlook.com
+ ([fe80::b487:46d9:b391:cb3%7]) with mapi id 15.20.1250.028; Tue, 23 Oct 2018
+ 16:13:33 +0000
+From:   Parav Pandit <parav@mellanox.com>
+To:     Rami Rosen <ramirose@gmail.com>,
+        "pandit.parav@gmail.com" <pandit.parav@gmail.com>
+CC:     "tj@kernel.org" <tj@kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>
+Subject: RE: [PATCH] rdmacg: fix a typo in rdmacg documentation
+Thread-Topic: [PATCH] rdmacg: fix a typo in rdmacg documentation
+Thread-Index: AQHUauFEaB6WV+4Klk2RCNmuRl7KpaUs/9Cw
+Date:   Tue, 23 Oct 2018 16:13:33 +0000
+Message-ID: <VI1PR0501MB2271192C00D2E25E0AB6950DD1F50@VI1PR0501MB2271.eurprd05.prod.outlook.com>
+References: <20181023150106.7332-1-ramirose@gmail.com>
+In-Reply-To: <20181023150106.7332-1-ramirose@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=parav@mellanox.com; 
+x-originating-ip: [122.171.149.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0501MB2431;6:AGnkNTRzFZQNHTrFuHHshhlKBJkRF8dQZjrVSRbTW6hzFLZRXoHZuzWoTy48ML2EUtd7ulU+Mt91uFhTZcpqhw85bs2z5uEv74q88HwqPqiDEAPk8AovwL+dz7bV4BsXXuRqJ9vTDnTT7svIwusMQmd1fC5nSMSZUhaN4lcpXkqMva0Pcn+mducZcyrhWJDPKB7dq/vHLdTQcdiNGcLtzw+p708K8vYHj+abcnERjARc3VgfMGAC0oXMVt0aLgTKvdz2BUH2KsDhM0KB08QBKxu5xfk2hCgjEQo1RlQDRjFd0LwVhsdASnr6SycquSJuijq8AE//F0SVaG/Sk4RMVXScHQ6z4SRDpWDOGDrnpjXiYlPknScPBjEmzSnAq40yUm+Bm3TawrMSRasJksbomX5v1Sm0OKdOmvbqMkF/cmjOFg1gySkHoBwDu+sk5txjeGuufdnxeeaN129fdZz/Ag==;5:4p4/oDclpVVDzUXLmAMEUkVNQdWEC6vFcTVtzkMQAwTSQIrd65KWywN7cEprVAwENL74xZ2FqKFeESKUC5Pvtvce2m09ipAdPMV1+Eu14Y6jKaS/Fk5FGX5hZ5i8zQc0ns7IUHMAgWYNVMk/m4Pt7+mYM60DcHE78ofBLeqbuTk=;7:CU3Fpvg+TwtsoSIGFY643Zcb2Hk0cnQFY1Pq8KdWVAz0VZsKfXxsW5AmUIblUQkf9CVRCPr3TD1qA7+Sr3FGJ8+uCxp+/+3t/tBQzrhxLrY+u1LvRaMihcXQrlmM7fuG82zZvRIjiM99tQvWkv8gH/c9axiT3MBXOMuV2s+5pDPdMs/CGQxOfs4IfNQ7XgC92vct8i0gZqQiwQ1KtWEQaV9swCv/rZeAwh/h0L5FdqctTYPvyae6ivPg7yTl8JPH
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 35ba2077-2acd-450d-52ef-08d639027ae7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2431;
+x-ms-traffictypediagnostic: VI1PR0501MB2431:
+x-microsoft-antispam-prvs: <VI1PR0501MB243144442B5B4E978D986DA1D1F50@VI1PR0501MB2431.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(278428928389397);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231355)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:VI1PR0501MB2431;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0501MB2431;
+x-forefront-prvs: 0834BAF534
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(366004)(376002)(346002)(136003)(13464003)(199004)(189003)(78486010)(102836004)(2906002)(25786009)(478600001)(305945005)(7736002)(26005)(86362001)(575784001)(71190400001)(53936002)(74316002)(53546011)(76176011)(11346002)(81156014)(476003)(71200400001)(486006)(6506007)(6436002)(110136005)(68736007)(316002)(39060400002)(6116002)(66066001)(256004)(14444005)(55016002)(97736004)(81166006)(8936002)(14454004)(5660300001)(33656002)(6246003)(446003)(106356001)(99286004)(3846002)(2900100001)(186003)(4326008)(8676002)(2501003)(54906003)(229853002)(5250100002)(105586002)(9686003)(7696005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0501MB2431;H:VI1PR0501MB2271.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: CdxH7+183Zb1Kyg7iX228otge2SLHct72B3It15qtaiGuH2TFhjIynQNiw2yq4F7w1gp6ojBl3GoToF1zwYvTiS0DjxCVQtbyn+X6dZtmP1eROW4o3NpXHwNS3Dcx1i0l0e6cYqCyn40qINLplP+Rh//Zf/66ev8k2zK1rmGqXuM1kKrlYyVrCBn1WDDAbwJmrEOIREIZZTcoI7AFoqZas9ktSSDObrkcO0vhfkga5EPQmg5Pgp/xIIacyE8/GemCESFw843A3AuoCzykfIkzvQjGNNUNCZHQzhh0BQay/G8noZumdioVhwyipDQD0DzYwO2hdMhi5kIrkGz5bU5NwkcAmmEihSzC36bbfFJdDg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35ba2077-2acd-450d-52ef-08d639027ae7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2018 16:13:33.3108
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2431
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for Allwinner A64 has Mali-400MP2.
 
-All interrupt lines are mentioned in the manual so used the same.
-Used 408MHz as assigned clock rate used by BSP, so used the same as
-well.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Note:
-- Modules was able to load it on 4.19. 
+> -----Original Message-----
+> From: linux-rdma-owner@vger.kernel.org <linux-rdma-
+> owner@vger.kernel.org> On Behalf Of Rami Rosen
+> Sent: Tuesday, October 23, 2018 8:31 PM
+> To: pandit.parav@gmail.com
+> Cc: tj@kernel.org; linux-rdma@vger.kernel.org; linux-kernel@vger.kernel.o=
+rg;
+> cgroups@vger.kernel.org; Rami Rosen <ramirose@gmail.com>
+> Subject: [PATCH] rdmacg: fix a typo in rdmacg documentation
+>=20
+> This patch fixes a typo in RDMA cgroup documentation.
+>=20
+> Signed-off-by: Rami Rosen <ramirose@gmail.com>
+> ---
+>  Documentation/cgroup-v1/rdma.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/cgroup-v1/rdma.txt b/Documentation/cgroup-
+> v1/rdma.txt
+> index af618171e0eb..9bdb7fd03f83 100644
+> --- a/Documentation/cgroup-v1/rdma.txt
+> +++ b/Documentation/cgroup-v1/rdma.txt
+> @@ -27,7 +27,7 @@ cgroup.
+>  Currently user space applications can easily take away all the rdma verb
+> specific resources such as AH, CQ, QP, MR etc. Due to which other
+> applications  in other cgroup or kernel space ULPs may not even get chanc=
+e
+> to allocate any -rdma resources. This can leads to service unavailability=
+.
+> +rdma resources. This can lead to service unavailability.
+>=20
+>  Therefore RDMA controller is needed through which resource consumption
+> of processes can be limited. Through this controller different rdma
+> --
+> 2.17.1
 
- .../bindings/gpu/arm,mali-utgard.txt          |  1 +
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 25 +++++++++++++++++++
- 2 files changed, 26 insertions(+)
+Thanks Rami for the correction.
+For sake of process correctness, below fixes tag is good to have.
 
-diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-index 63cd91176a68..a0ee62a5b221 100644
---- a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-+++ b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-@@ -11,6 +11,7 @@ Required properties:
-       + allwinner,sun4i-a10-mali
-       + allwinner,sun7i-a20-mali
-       + allwinner,sun8i-h3-mali
-+      + allwinner,sun50i-a64-mali
-       + allwinner,sun50i-h5-mali
-       + amlogic,meson-gxbb-mali
-       + amlogic,meson-gxl-mali
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index f82e6b165d57..2db3aa151902 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -812,6 +812,31 @@
- 			};
- 		};
- 
-+		mali: gpu@1c40000 {
-+			compatible = "allwinner,sun50i-a64-mali", "arm,mali-400";
-+			reg = <0x01c40000 0x10000>;
-+			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "gp",
-+					  "gpmmu",
-+					  "pp0",
-+					  "ppmmu0",
-+					  "pp1",
-+					  "ppmmu1",
-+					  "pmu";
-+			clocks = <&ccu CLK_BUS_GPU>, <&ccu CLK_GPU>;
-+			clock-names = "bus", "core";
-+			resets = <&ccu RST_BUS_GPU>;
-+
-+			assigned-clocks = <&ccu CLK_GPU>;
-+			assigned-clock-rates = <408000000>;
-+		};
-+
- 		gic: interrupt-controller@1c81000 {
- 			compatible = "arm,gic-400";
- 			reg = <0x01c81000 0x1000>,
--- 
-2.18.0.321.gffc6fa0e3
+Fixes: 9c1e67f94101 ("rdmacg: Added documentation for rdmacg")
 
+Reviewed-by: Parav Pandit <parav@mellanox.com>
