@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC1DC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B145BC67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6217420813
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A1C320652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:54:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="C3q1mUdl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6217420813
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="iCCT5W3S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A1C320652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728311AbeJWSQv (ORCPT
+        id S1728522AbeJWSRC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 14:16:51 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45864 "EHLO
+        Tue, 23 Oct 2018 14:17:02 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46184 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727602AbeJWSQv (ORCPT
+        with ESMTP id S1726277AbeJWSRC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 14:16:51 -0400
+        Tue, 23 Oct 2018 14:17:02 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=r11TmnrN0STucqqrcj06gKKo7FzgwdebMiVuJW9H/mQ=; b=C3q1mUdl2wlX
-        vjOzDK3QTsfclYm94Mc2PEDRQrnT/QXeMn4URd4bKZTDb04qRt8UEd0oU4XGevyjwFYVOTO+xGZVD
-        3FItAZlU1ZKG8wNjAQTucJZHsksOh4I+rwYe72zB6S7IMlYiSleUfyNIygzqSbFYtJWl6IFbfUrWv
-        y6/lE=;
+        List-Archive; bh=tMIv+6qvoPF3tPMg9wrUHL/uW1sSgc6LAqrB1CQs6DE=; b=iCCT5W3Sgrok
+        iJ2k31P2RiAkzaHkmPU4Pr/Sy/1OMVuqUFoXxltj8Rl8p06xTWlz3L6Uuk/aBvWJviN5Xxa64pZ/b
+        yRVjlxsCDtwoD0JpeqUVCQPMLUQ1DodIBN6GEO+xVjcsE6Z8neQvBo9sJDn8FGVFpASdF5HMBAbzp
+        03d4g=;
 Received: from [185.7.230.215] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gEtNs-0007PT-Sb; Tue, 23 Oct 2018 09:53:56 +0000
+        id 1gEtO1-0007Pd-6g; Tue, 23 Oct 2018 09:54:05 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 02CB9440078; Tue, 23 Oct 2018 11:53:55 +0200 (CEST)
+        id C9F7F440078; Tue, 23 Oct 2018 11:54:04 +0200 (CEST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Olivier Moysan <olivier.moysan@st.com>
 Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
@@ -52,10 +52,10 @@ Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
         linux-kernel@vger.kernel.org, olivier.moysan@st.com,
         arnaud.pouliquen@st.com, benjamin.gaignard@st.com,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: stm32: sai: fix master clock naming" to the asoc tree
-In-Reply-To:  <1540221046-11812-3-git-send-email-olivier.moysan@st.com>
-Message-Id: <20181023095356.02CB9440078@finisterre.ee.mobilebroadband>
-Date:   Tue, 23 Oct 2018 11:53:55 +0200 (CEST)
+Subject: Applied "ASoC: stm32: add clock dependency for sai" to the asoc tree
+In-Reply-To:  <1540221046-11812-2-git-send-email-olivier.moysan@st.com>
+Message-Id: <20181023095404.C9F7F440078@finisterre.ee.mobilebroadband>
+Date:   Tue, 23 Oct 2018 11:54:04 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,7 +63,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: stm32: sai: fix master clock naming
+   ASoC: stm32: add clock dependency for sai
 
 has been applied to the asoc tree at
 
@@ -88,40 +88,34 @@ to this mail.
 Thanks,
 Mark
 
-From 6be0f96d799f487f05eb412d362d5a1747d665c2 Mon Sep 17 00:00:00 2001
+From e6d7942ce602e99d506a7c08f1935a274645dfda Mon Sep 17 00:00:00 2001
 From: Olivier Moysan <olivier.moysan@st.com>
-Date: Mon, 22 Oct 2018 17:10:46 +0200
-Subject: [PATCH] ASoC: stm32: sai: fix master clock naming
+Date: Mon, 22 Oct 2018 17:10:45 +0200
+Subject: [PATCH] ASoC: stm32: add clock dependency for sai
 
 Fixes: 8307b2afd386 ("ASoC: stm32: sai: set sai as mclk clock provider")
 
-Fix warning issued by strncat when bound equals to source length.
+Add COMMON_CLK dependency for STM32 SAI,
+as it is required by clock provider.
 
 Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/stm/stm32_sai_sub.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ sound/soc/stm/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
-index 31d22abd3204..ea05cc91aa05 100644
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -404,12 +404,11 @@ static int stm32_sai_add_mclk_provider(struct stm32_sai_sub_data *sai)
- 	 * String after "_" char is stripped in parent name.
- 	 */
- 	p = mclk_name;
--	while (*s && *s != '_' && (i < (SAI_MCLK_NAME_LEN - 6))) {
-+	while (*s && *s != '_' && (i < (SAI_MCLK_NAME_LEN - 7))) {
- 		*p++ = *s++;
- 		i++;
- 	}
--	STM_SAI_IS_SUB_A(sai) ?
--		strncat(p, "a_mclk", 6) : strncat(p, "b_mclk", 6);
-+	STM_SAI_IS_SUB_A(sai) ? strcat(p, "a_mclk") : strcat(p, "b_mclk");
- 
- 	mclk->hw.init = CLK_HW_INIT(mclk_name, pname, &mclk_ops, 0);
- 	mclk->sai_data = sai;
+diff --git a/sound/soc/stm/Kconfig b/sound/soc/stm/Kconfig
+index 9b2681397dba..c66ffa72057e 100644
+--- a/sound/soc/stm/Kconfig
++++ b/sound/soc/stm/Kconfig
+@@ -3,6 +3,7 @@ menu "STMicroelectronics STM32 SOC audio support"
+ config SND_SOC_STM32_SAI
+ 	tristate "STM32 SAI interface (Serial Audio Interface) support"
+ 	depends on (ARCH_STM32 && OF) || COMPILE_TEST
++	depends on COMMON_CLK
+ 	depends on SND_SOC
+ 	select SND_SOC_GENERIC_DMAENGINE_PCM
+ 	select REGMAP_MMIO
 -- 
 2.19.0
 
