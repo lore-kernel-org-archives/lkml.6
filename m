@@ -2,192 +2,105 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D27AEC67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 428E0C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 934C420652
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:40:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jRmlsPlM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 934C420652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id EEDC7207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:41:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEDC7207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728006AbeJWTD2 (ORCPT
+        id S1728144AbeJWTEf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 15:03:28 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:40558 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727250AbeJWTD2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 15:03:28 -0400
-Received: by mail-it1-f195.google.com with SMTP id i191-v6so1413929iti.5
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 03:40:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=umVJRm+Q8LyQ43wRvgLS7GmIknwhy36zd2FIlxnBkSQ=;
-        b=jRmlsPlMqiVzjkb0tVI9qGV4p4VddLjWwnIfzQLhiZjN1SQtgOXI1UUi4/Bwkqwt+x
-         SkvrECsjUkDQUTs7CP//73FG9XMj7eLXSdMcSUjjk3ff7mPgOPWniPgT0nPabFGMZaMd
-         LafKZOaBCx8XlF1gxrZxGgwPAsWxAqa4baCWg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=umVJRm+Q8LyQ43wRvgLS7GmIknwhy36zd2FIlxnBkSQ=;
-        b=bMmV7zs7pplmcda6WOVCuWAVfCZWPiozdrt85QjbOirJvRv5czklKyPJpckoYdWK4T
-         jXx7YxmAmzjNGeMj8dGSa/WCnQFPjMlI4ToPIamshLxEadm7zC82HjNrytUIG4TfZzbc
-         Ev3bwRKzHTKXBVKh7MQNbCZJfuMmdk47HhL76inqBwMqVsz/drBlievdReycPAPX3iGJ
-         jhA4mjpj/2RwaQB8DUr0r8ZHJMrimAEwZLkYod13+hac5RB+nr7hdG6H2dfZPFrAuFBT
-         zLSzOZPE8kDZZLhrFprvxQKHp+QUqK7qBOx6vWzC9h8PGdfdrsLi4AURc5xlmX555PYU
-         /3XA==
-X-Gm-Message-State: ABuFfog4OCpZcksdhnrouK6LzEDaieX8oIAtu17e8mJz39yKDMvY1HNx
-        Ix1fpEvFtPVmCaomGb6TDWkV0uWDaykOG3baiJUbKw==
-X-Google-Smtp-Source: ACcGV61mlKSnCfm9NA6BH3hPIrvyvN3u/GTL93HVlTAhpRtz0tdlSjLKRSwCERDLEGCJxwb1AD5y8FgYaKyhO5l4k0s=
-X-Received: by 2002:a05:660c:383:: with SMTP id x3mr10843540itj.121.1540291235318;
- Tue, 23 Oct 2018 03:40:35 -0700 (PDT)
+        Tue, 23 Oct 2018 15:04:35 -0400
+Received: from foss.arm.com ([217.140.101.70]:56820 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727439AbeJWTEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 15:04:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1358E341;
+        Tue, 23 Oct 2018 03:41:43 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B4F53F6A8;
+        Tue, 23 Oct 2018 03:41:41 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 11:41:38 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Peng Hao <peng.hao2@zte.com.cn>
+Cc:     robh+dt@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+        andy@infradead.org, dvhart@infradead.org,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        hutao@cn.fujitsu.com
+Subject: Re: [PATCH 4/4]  pvpanic: add document for pvpanic-mmio DT
+Message-ID: <20181023104138.5yqjgul7mrpodjhe@lakrids.cambridge.arm.com>
+References: <1540315537-70007-1-git-send-email-peng.hao2@zte.com.cn>
+ <1540315537-70007-4-git-send-email-peng.hao2@zte.com.cn>
 MIME-Version: 1.0
-Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Tue, 23 Oct 2018 03:40:34
- -0700 (PDT)
-In-Reply-To: <20181020071206.GE876@sol.localdomain>
-References: <20181015175424.97147-1-ebiggers@kernel.org> <20181015175424.97147-12-ebiggers@kernel.org>
- <CAKv+Gu9wrOOk-LGPYmxgLbv86uXzMeHN6th3mMEDT3Vg893HWw@mail.gmail.com> <20181020071206.GE876@sol.localdomain>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 23 Oct 2018 07:40:34 -0300
-Message-ID: <CAKv+Gu9zBKK7ughbBAKkHdfgX2KrBXkF6MhH3xrSdLegrjjYJQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 11/12] crypto: adiantum - add Adiantum support
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Paul Crowley <paulcrowley@google.com>,
-        Greg Kaiser <gkaiser@google.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Samuel Neves <samuel.c.p.neves@gmail.com>,
-        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1540315537-70007-4-git-send-email-peng.hao2@zte.com.cn>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20 October 2018 at 15:12, Eric Biggers <ebiggers@kernel.org> wrote:
-> Hi Ard,
->
-> On Sat, Oct 20, 2018 at 12:17:58PM +0800, Ard Biesheuvel wrote:
->> On 16 October 2018 at 01:54, Eric Biggers <ebiggers@kernel.org> wrote:
->> > From: Eric Biggers <ebiggers@google.com>
->> >
->> > Add support for the Adiantum encryption mode.  Adiantum was designed b=
-y
->> > Paul Crowley and is specified by our paper:
->> >
->> >     Adiantum: length-preserving encryption for entry-level processors
->> >     (https://eprint.iacr.org/2018/720.pdf)
->> >
->> > See our paper for full details; this patch only provides an overview.
->> >
->> > Adiantum is a tweakable, length-preserving encryption mode designed fo=
-r
->> > fast and secure disk encryption, especially on CPUs without dedicated
->> > crypto instructions.  Adiantum encrypts each sector using the XChaCha1=
-2
->> > stream cipher, two passes of an =CE=B5-almost-=E2=88=86-universal (=CE=
-=B5A=E2=88=86U) hash
->> > function, and an invocation of the AES-256 block cipher on a single
->> > 16-byte block.  On CPUs without AES instructions, Adiantum is much
->> > faster than AES-XTS; for example, on ARM Cortex-A7, on 4096-byte secto=
-rs
->> > Adiantum encryption is about 4 times faster than AES-256-XTS encryptio=
-n,
->> > and decryption about 5 times faster.
->> >
->> > Adiantum is a specialization of the more general HBSH construction.  O=
-ur
->> > earlier proposal, HPolyC, was also a HBSH specialization, but it used =
-a
->> > different =CE=B5A=E2=88=86U hash function, one based on Poly1305 only.=
-  Adiantum's
->> > =CE=B5A=E2=88=86U hash function, which is based primarily on the "NH" =
-hash function
->> > like that used in UMAC (RFC4418), is about twice as fast as HPolyC's;
->> > consequently, Adiantum is about 20% faster than HPolyC.
->> >
->> > This speed comes with no loss of security: Adiantum is provably just a=
-s
->> > secure as HPolyC, in fact slightly *more* secure.  Like HPolyC,
->> > Adiantum's security is reducible to that of XChaCha12 and AES-256,
->> > subject to a security bound.  XChaCha12 itself has a security reductio=
-n
->> > to ChaCha12.  Therefore, one need not "trust" Adiantum; one need only
->> > trust ChaCha12 and AES-256.  Note that the =CE=B5A=E2=88=86U hash func=
-tion is only
->> > used for its proven combinatorical properties so cannot be "broken".
->> >
->>
->> So what happens if the part of the input covered by the block cipher
->> is identical between different generations of the same disk block
->> (whose sector count is used as the 'outer' IV). How are we not in the
->> same boat as before when using stream ciphers for disk encryption?
->>
->
-> This is the point of the hash step.  The value encrypted with the block c=
-ipher
-> to produce the intermediate value C_M (used as the stream cipher nonce) i=
-s
-> H(T, P_L) + P_R.  (T is the tweak a.k.a the IV, P_L is the plaintext exce=
-pt the
-> last 16 bytes, P_R is the last 16 bytes.)  A collision in this value occu=
-rs iff:
->
->         H(T1, P1_L) + P1_R =3D H(T2, P2_L) + P2_R
-> i.e.
->         H(T1, P1_L) - H(T2, P2_L) =3D P2_R - P1_R
->
-> If (T1, P1_L) =3D (T2, P2_L) then P1_R !=3D P2_R so the equation has no s=
-olutions
-> (since we don't consider queries where the whole input is the same; those
-> unavoidably produce the same ciphertext).  Otherwise (T1, P1_L) !=3D (T2,=
- P2_L),
-> and since the hash function H is =CE=B5-almost-=E2=88=86-universal over i=
-ntegers mod 2^128,
-> the equation is true for at most a very small proportion '=CE=B5' of hash=
- keys.
-> But, the hash key is chosen at random and is unknown to the attacker.
->
-> The same applies in the other direction, for chosen ciphertext attacks.
->
-> Basically, it's very difficult for an attacker to cause the intermediate =
-value
-> C_M to be reused, and the outputs will appear random until they do.
->
-> Of course, all this is explained much more precisely and comprehensively =
-in our
-> paper.  See section 5, "Security reduction".
->
+On Wed, Oct 24, 2018 at 01:25:37AM +0800, Peng Hao wrote:
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> ---
+>  .../devicetree/bindings/arm/pvpanic-mmio.txt       | 26 ++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/pvpanic-mmio.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/pvpanic-mmio.txt b/Documentation/devicetree/bindings/arm/pvpanic-mmio.txt
+> new file mode 100644
+> index 0000000..96c84e15
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/pvpanic-mmio.txt
+> @@ -0,0 +1,26 @@
+> +* QEMU PVPANIC MMIO Configuration bindings for ARM
+> +
+> +QEMU's aarch64-softmmu emulation / virtualization targets provide the
+> +following PVPANIC MMIO Configuration interface on the "virt" machine
+> +type:
+> +
+> +- a read-write, 16-bit wide data register.
+> +
+> +QEMU exposes the data register to ARM guests as memory mapped registers.
 
-Thanks for the explanation. I saw that the result of the AES
-encryption was used as the XChaCha nonce, but I failed to spot that
-the result of the nhpoly1305 pass is added/subtracted to/from that
-particular block first.
+Please drop references to arm/arm64 in the commit message. I'm sure
+other architectures will pick this up, and we only need to describe that
+it's an MMIO device that QEMU can provide.
 
-In any case, this looks good to me: as far as I can tell, the code
-implements the algorithm as described in the paper, and the plumbing
-into the crypto API looks correct to me as well.
+> +
+> +Required properties:
+> +
+> +- compatible: "qemu,pvpanic-mmio".
 
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+The reg property should also be described.
 
-Whether the paper is correct is a different matter: it looks
-convincing to me but IANAC.
+Otherwise, this looks good to me.
 
-The only request I have is to add a speed test to tcrypt as well so we
-can easily benchmark it.
+Thanks,
+Mark.
+
+> +
+> +Example:
+> +
+> +/ {
+> +        #size-cells = <0x2>;
+> +        #address-cells = <0x2>;
+> +
+> +        pvpanic-mmio@9060000 {
+> +                compatible = "qemu,pvpanic-mmio";
+> +                reg = <0x0 0x9060000 0x0 0x2>;
+> +        };
+> +};
+> +
+> -- 
+> 1.8.3.1
+> 
