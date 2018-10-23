@@ -2,35 +2,35 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B998C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FA55C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1C6B20665
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:43:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C6B20665
+	by mail.kernel.org (Postfix) with ESMTP id CB9A82082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:43:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB9A82082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728859AbeJXDIA (ORCPT
+        id S1728898AbeJXDIC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:08:00 -0400
-Received: from mga05.intel.com ([192.55.52.43]:55078 "EHLO mga05.intel.com"
+        Tue, 23 Oct 2018 23:08:02 -0400
+Received: from mga05.intel.com ([192.55.52.43]:55080 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727758AbeJXDH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:07:59 -0400
+        id S1727758AbeJXDIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:08:01 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:43:24 -0700
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:43:26 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
-   d="scan'208";a="243726561"
+   d="scan'208";a="243726577"
 Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
-  by orsmga004.jf.intel.com with ESMTP; 23 Oct 2018 11:43:23 -0700
+  by orsmga004.jf.intel.com with ESMTP; 23 Oct 2018 11:43:25 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -42,115 +42,212 @@ Cc:     Andi Kleen <ak@linux.intel.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [v3 00/12] x86: Enable FSGSBASE instructions
-Date:   Tue, 23 Oct 2018 11:42:22 -0700
-Message-Id: <20181023184234.14025-1-chang.seok.bae@intel.com>
+Subject: [v3 04/12] x86/fsgsbase/64: Enable FSGSBASE instructions in the helper functions
+Date:   Tue, 23 Oct 2018 11:42:26 -0700
+Message-Id: <20181023184234.14025-5-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181023184234.14025-1-chang.seok.bae@intel.com>
+References: <20181023184234.14025-1-chang.seok.bae@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FSGSBASE is a 64-bit instruction set to allow read/write FS/GSBASE from
-any privileges. Since introduced in Ivybridge, enabling efforts has been
-revolving in a quite long period of time, for various reasons [2,3,4].
-After the extended discussions [1], the new ABIs are finally introduced to
-customize FS/GSBASE separately from the selector.
+The helper functions will switch on faster accesses to FSBASE and GSBASE
+when the FSGSBASE feature is enabled.
 
-Benefits:
-Some performance benefit in context switch is expected by skipping MSR
-write for GSBASE. User-level programs (such as JAVA-based) may benefit
-from avoiding system calls to edit FS/GSBASE.
+Accessing user GSBASE needs a couple of SWAPGS operations. It is avoidable
+if the user GSBASE is saved at kernel entry, being updated as changes, and
+restored back at kernel exit. However, it seems to spend more cycles for
+savings and restorations. Little or no benefit was measured from
+experiments.
 
-Major changes in the kernel:
-* In a context switch, a thread's FS/GSBASE will be secured regardless of
-its selector, base on the discussion [1].
-* (Subsequently) ptracer should expect a divergence of FS/GS index and
-base values. There was a controversial debate on the concerns for a
-backward compatibility (mostly for GDB. [7,8]). We finally concluded it is
-insignificant in real usages.
-* On the paranoid_entry, GSBASE is updated to point the per_CPU base and
-the original GSBASE is restored at the exit.
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Cc: Any Lutomirski <luto@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+---
+ arch/x86/include/asm/fsgsbase.h | 17 +++----
+ arch/x86/kernel/process_64.c    | 82 +++++++++++++++++++++++++++------
+ 2 files changed, 75 insertions(+), 24 deletions(-)
 
-Virtualization:
-A FSGSBASE-enabled VM can be located on a host either with HW
-virtualization or with SW emulation. KVM advertises FSGSBASE when
-physical CPU has. The emulation is supported in QEMU/TCG [5]. In a pool of
-the mixed systems, VMM may disable FSGSBASE for seamless VM migrations [6].
-
-Update from v2 [10]:
-* Separate out the preparatory patches [11] (now merged to the tip)
-* Bisect the paranoid_entry update patch
-* Edit minor nits
-
-Updates from v1 [9]:
-* Update the GSBASE update mechanism on the paranoid entry/exit.
-* Exclude ptracer backward compatibility patches.
-* Include FSGSBASE documentation and enumerating capability
-for user space
-* Add the TAINT_INSECURE flag.
-
-[1] Recent discussion on LKML:
-https://marc.info/?t=150147053700001&r=1&w=2
-[2] Andy Lutomirski’s patchwork work :
-https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/log/?h=x86/fsgsbase
-[3] Patchset shown in 2016:
-https://lore.kernel.org/patchwork/patch/660520
-[4] Patchset shown in 2014:
-https://lore.kernel.org/patchwork/patch/460288
-[5] QEMU with FSGSBASE emulation:
-https://github.com/qemu/qemu/blob/026aaf47c02b79036feb830206cfebb2a726510d/target/i386/translate.c#L8186
-[6] 5-level EPT:
-http://lkml.kernel.org/r/9ddf602b-6c8b-8c1e-ab46-07ed12366593@redhat.com
-[7] RR/FSGSBASE:
-https://mail.mozilla.org/pipermail/rr-dev/2018-March/000616.html
-[8] CRIU/FSGSBASE:
-https://lists.openvz.org/pipermail/criu/2018-March/040654.html
-[9] Version 1:
-https://lore.kernel.org/patchwork/cover/934843
-[10] Version 2:
-https://lore.kernel.org/patchwork/cover/912063
-[11] x86: infra to enable FSGSBASE
-https://lore.kernel.org/patchwork/cover/988180
-
-Andi Kleen (3):
-  x86/fsgsbase/64: Add intrinsics/macros for FSGSBASE instructions
-  x86/elf: Enumerate kernel FSGSBASE capability in AT_HWCAP2
-  x86/fsgsbase/64: Add documentation for FSGSBASE
-
-Andy Lutomirski (4):
-  x86/fsgsbase/64: Add 'unsafe_fsgsbase' to enable CR4.FSGSBASE
-  x86/fsgsbase/64: Preserve FS/GS state in __switch_to() if FSGSBASE is
-    on
-  selftests/x86/fsgsbase: Test WRGSBASE
-  x86/fsgsbase/64: Enable FSGSBASE by default and add a chicken bit
-
-Chang S. Bae (5):
-  taint: Introduce a new taint flag (insecure)
-  x86/fsgsbase/64: Enable FSGSBASE instructions in the helper functions
-  x86/fsgsbase/64: When copying a thread, use the FSGSBASE instructions
-    if available
-  x86/fsgsbase/64: Introduce the new FIND_PERCPU_BASE macro
-  x86/fsgsbase/64: Use the per-CPU base as GSBASE at the paranoid_entry
-
- .../admin-guide/kernel-parameters.txt         |   2 +
- Documentation/sysctl/kernel.txt               |   1 +
- Documentation/x86/fsgs.txt                    | 104 +++++++++++++
- arch/x86/entry/entry_64.S                     |  73 +++++++--
- arch/x86/include/asm/fsgsbase.h               | 140 +++++++++++++++++-
- arch/x86/include/asm/inst.h                   |  15 ++
- arch/x86/include/uapi/asm/hwcap2.h            |   3 +
- arch/x86/kernel/cpu/common.c                  |  22 +++
- arch/x86/kernel/process_64.c                  | 128 +++++++++++++---
- include/linux/kernel.h                        |   3 +-
- kernel/panic.c                                |   1 +
- tools/testing/selftests/x86/fsgsbase.c        | 110 +++++++++++++-
- 12 files changed, 556 insertions(+), 46 deletions(-)
- create mode 100644 Documentation/x86/fsgs.txt
-
---
+diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
+index b4d4509b786c..e500d771155f 100644
+--- a/arch/x86/include/asm/fsgsbase.h
++++ b/arch/x86/include/asm/fsgsbase.h
+@@ -57,26 +57,23 @@ static __always_inline void wrgsbase(unsigned long gsbase)
+ 			: "memory");
+ }
+ 
++#include <asm/cpufeature.h>
++
+ /* Helper functions for reading/writing FS/GS base */
+ 
+ static inline unsigned long x86_fsbase_read_cpu(void)
+ {
+ 	unsigned long fsbase;
+ 
+-	rdmsrl(MSR_FS_BASE, fsbase);
++	if (static_cpu_has(X86_FEATURE_FSGSBASE))
++		fsbase = rdfsbase();
++	else
++		rdmsrl(MSR_FS_BASE, fsbase);
+ 
+ 	return fsbase;
+ }
+ 
+-static inline unsigned long x86_gsbase_read_cpu_inactive(void)
+-{
+-	unsigned long gsbase;
+-
+-	rdmsrl(MSR_KERNEL_GS_BASE, gsbase);
+-
+-	return gsbase;
+-}
+-
++extern unsigned long x86_gsbase_read_cpu_inactive(void);
+ extern void x86_fsbase_write_cpu(unsigned long fsbase);
+ extern void x86_gsbase_write_cpu_inactive(unsigned long gsbase);
+ 
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index 31b4755369f0..fcf18046c3d6 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -159,6 +159,36 @@ enum which_selector {
+ 	GS
+ };
+ 
++/*
++ * Interrupts are disabled here. Out of line to be protected from kprobes.
++ */
++static noinline __kprobes unsigned long rd_inactive_gsbase(void)
++{
++	unsigned long gsbase, flags;
++
++	local_irq_save(flags);
++	native_swapgs();
++	gsbase = rdgsbase();
++	native_swapgs();
++	local_irq_restore(flags);
++
++	return gsbase;
++}
++
++/*
++ * Interrupts are disabled here. Out of line to be protected from kprobes.
++ */
++static noinline __kprobes void wr_inactive_gsbase(unsigned long gsbase)
++{
++	unsigned long flags;
++
++	local_irq_save(flags);
++	native_swapgs();
++	wrgsbase(gsbase);
++	native_swapgs();
++	local_irq_restore(flags);
++}
++
+ /*
+  * Saves the FS or GS base for an outgoing thread if FSGSBASE extensions are
+  * not available.  The goal is to be reasonably fast on non-FSGSBASE systems.
+@@ -337,22 +367,42 @@ static unsigned long x86_fsgsbase_read_task(struct task_struct *task,
+ 	return base;
+ }
+ 
++unsigned long x86_gsbase_read_cpu_inactive(void)
++{
++	unsigned long gsbase;
++
++	if (static_cpu_has(X86_FEATURE_FSGSBASE))
++		gsbase = rd_inactive_gsbase();
++	else
++		rdmsrl(MSR_KERNEL_GS_BASE, gsbase);
++
++	return gsbase;
++}
++
+ void x86_fsbase_write_cpu(unsigned long fsbase)
+ {
+-	/*
+-	 * Set the selector to 0 as a notion, that the segment base is
+-	 * overwritten, which will be checked for skipping the segment load
+-	 * during context switch.
+-	 */
+-	loadseg(FS, 0);
+-	wrmsrl(MSR_FS_BASE, fsbase);
++	if (static_cpu_has(X86_FEATURE_FSGSBASE)) {
++		wrfsbase(fsbase);
++	} else {
++		/*
++		 * Set the selector to 0 as a notion, that the segment base is
++		 * overwritten, which will be checked for skipping the segment load
++		 * during context switch.
++		 */
++		loadseg(FS, 0);
++		wrmsrl(MSR_FS_BASE, fsbase);
++	}
+ }
+ 
+ void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
+ {
+-	/* Set the selector to 0 for the same reason as %fs above. */
+-	loadseg(GS, 0);
+-	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
++	if (static_cpu_has(X86_FEATURE_FSGSBASE)) {
++		wr_inactive_gsbase(gsbase);
++	} else {
++		/* Set the selector to 0 for the same reason as %fs above. */
++		loadseg(GS, 0);
++		wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
++	}
+ }
+ 
+ unsigned long x86_fsbase_read_task(struct task_struct *task)
+@@ -361,7 +411,8 @@ unsigned long x86_fsbase_read_task(struct task_struct *task)
+ 
+ 	if (task == current)
+ 		fsbase = x86_fsbase_read_cpu();
+-	else if (task->thread.fsindex == 0)
++	else if (static_cpu_has(X86_FEATURE_FSGSBASE) ||
++		 (task->thread.fsindex == 0))
+ 		fsbase = task->thread.fsbase;
+ 	else
+ 		fsbase = x86_fsgsbase_read_task(task, task->thread.fsindex);
+@@ -375,7 +426,8 @@ unsigned long x86_gsbase_read_task(struct task_struct *task)
+ 
+ 	if (task == current)
+ 		gsbase = x86_gsbase_read_cpu_inactive();
+-	else if (task->thread.gsindex == 0)
++	else if (static_cpu_has(X86_FEATURE_FSGSBASE) ||
++		 (task->thread.gsindex == 0))
+ 		gsbase = task->thread.gsbase;
+ 	else
+ 		gsbase = x86_fsgsbase_read_task(task, task->thread.gsindex);
+@@ -396,7 +448,8 @@ int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase)
+ 	task->thread.fsbase = fsbase;
+ 	if (task == current)
+ 		x86_fsbase_write_cpu(fsbase);
+-	task->thread.fsindex = 0;
++	if (!static_cpu_has(X86_FEATURE_FSGSBASE))
++		task->thread.fsindex = 0;
+ 	preempt_enable();
+ 
+ 	return 0;
+@@ -411,7 +464,8 @@ int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase)
+ 	task->thread.gsbase = gsbase;
+ 	if (task == current)
+ 		x86_gsbase_write_cpu_inactive(gsbase);
+-	task->thread.gsindex = 0;
++	if (!static_cpu_has(X86_FEATURE_FSGSBASE))
++		task->thread.gsindex = 0;
+ 	preempt_enable();
+ 
+ 	return 0;
+-- 
 2.19.1
 
