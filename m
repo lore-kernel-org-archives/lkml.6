@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE91C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D884EC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AC0E20824
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:43:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AC0E20824
+	by mail.kernel.org (Postfix) with ESMTP id AC4BB20665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:43:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC4BB20665
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728970AbeJXDII (ORCPT
+        id S1728985AbeJXDIP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:08:08 -0400
-Received: from mga05.intel.com ([192.55.52.43]:55096 "EHLO mga05.intel.com"
+        Tue, 23 Oct 2018 23:08:15 -0400
+Received: from mga05.intel.com ([192.55.52.43]:55091 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728934AbeJXDIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728900AbeJXDIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 23 Oct 2018 23:08:04 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:43:30 -0700
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:43:29 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
-   d="scan'208";a="243726606"
+   d="scan'208";a="243726597"
 Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
-  by orsmga004.jf.intel.com with ESMTP; 23 Oct 2018 11:43:30 -0700
+  by orsmga004.jf.intel.com with ESMTP; 23 Oct 2018 11:43:29 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -42,9 +42,9 @@ Cc:     Andi Kleen <ak@linux.intel.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [v3 12/12] x86/fsgsbase/64: Add documentation for FSGSBASE
-Date:   Tue, 23 Oct 2018 11:42:34 -0700
-Message-Id: <20181023184234.14025-13-chang.seok.bae@intel.com>
+Subject: [v3 10/12] x86/fsgsbase/64: Enable FSGSBASE by default and add a chicken bit
+Date:   Tue, 23 Oct 2018 11:42:32 -0700
+Message-Id: <20181023184234.14025-11-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181023184234.14025-1-chang.seok.bae@intel.com>
 References: <20181023184234.14025-1-chang.seok.bae@intel.com>
@@ -55,135 +55,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-v2: Minor updates to documentation requested in review.
-v3: Update for new gcc and various improvements.
+Now that FSGSBASE is fully supported, remove unsafe_fsgsbase, enable
+FSGSBASE by default, and add nofsgsbase to disable it.
 
-[ chang: Fix some typo. Fix the example code. ]
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 ---
- Documentation/x86/fsgs.txt | 104 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 104 insertions(+)
- create mode 100644 Documentation/x86/fsgs.txt
+ .../admin-guide/kernel-parameters.txt         |  3 +-
+ arch/x86/kernel/cpu/common.c                  | 35 ++++++++-----------
+ 2 files changed, 15 insertions(+), 23 deletions(-)
 
-diff --git a/Documentation/x86/fsgs.txt b/Documentation/x86/fsgs.txt
-new file mode 100644
-index 000000000000..7a973a5c1767
---- /dev/null
-+++ b/Documentation/x86/fsgs.txt
-@@ -0,0 +1,104 @@
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index dfc2023b796b..72ed1a5ed832 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2729,8 +2729,7 @@
+ 	no5lvl		[X86-64] Disable 5-level paging mode. Forces
+ 			kernel to use 4-level paging instead.
+ 
+-	unsafe_fsgsbase	[X86] Allow FSGSBASE instructions.  This will be
+-			replaced with a  nofsgsbase flag.
++	nofsgsbase	[X86] Disables FSGSBASE instructions.
+ 
+ 	no_console_suspend
+ 			[HW] Never suspend the console
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 6c54e6d2fdfb..f20edc754532 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -365,24 +365,21 @@ static __always_inline void setup_umip(struct cpuinfo_x86 *c)
+ 	cr4_clear_bits(X86_CR4_UMIP);
+ }
+ 
+-/*
+- * Temporary hack: FSGSBASE is unsafe until a few kernel code paths are
+- * updated. This allows us to get the kernel ready incrementally. Setting
+- * unsafe_fsgsbase and TAINT_INSECURE flags will allow the series to be
+- * bisected if necessary.
+- *
+- * Once all the pieces are in place, these will go away and be replaced with
+- * a nofsgsbase chicken flag.
+- */
+-static bool unsafe_fsgsbase;
+-
+-static __init int setup_unsafe_fsgsbase(char *arg)
++static __init int x86_nofsgsbase_setup(char *arg)
+ {
+-	unsafe_fsgsbase = true;
+-	add_taint(TAINT_INSECURE, LOCKDEP_STILL_OK);
++	/* Require an exact match without trailing characters. */
++	if (strlen(arg))
++		return 0;
 +
-+Using FS and GS prefixes on 64bit x86 linux
++	/* Do not emit a message if the feature is not present. */
++	if (!boot_cpu_has(X86_FEATURE_FSGSBASE))
++		return 1;
 +
-+The x86 architecture supports segment prefixes per instruction to add an
-+offset to an address.  On 64bit x86, these are mostly nops, except for FS
-+and GS.
-+
-+This offers an efficient way to reference a global pointer.
-+
-+The compiler has to generate special code to use these base registers,
-+or they can be accessed with inline assembler.
-+
-+	mov %gs:offset,%reg
-+	mov %fs:offset,%reg
-+
-+On 64bit code, FS is used to address the thread local segment (TLS), declared using
-+__thread.  The compiler then automatically generates the correct prefixes and
-+relocations to access these values.
-+
-+FS is normally managed by the runtime code or the threading library
-+Overwriting it can break a lot of things (including syscalls and gdb),
-+but it can make sense to save/restore it for threading purposes.
-+
-+GS is freely available, but may need special (compiler or inline assembler)
-+code to use.
-+
-+Traditionally 64bit FS and GS could be set by the arch_prctl system call
-+
-+	arch_prctl(ARCH_SET_GS, value)
-+	arch_prctl(ARCH_SET_FS, value)
-+
-+[There was also an older method using modify_ldt(), inherited from 32bit,
-+but this is not discussed here.]
-+
-+However using a syscall is problematic for user space threading libraries
-+that want to context switch in user space. The whole point of them
-+is avoiding the overhead of a syscall. It's also cleaner for compilers
-+wanting to use the extra register to use instructions to write
-+it, or read it directly to compute addresses and offsets.
-+
-+Newer Intel CPUs (Ivy Bridge and later) added new instructions to directly
-+access these registers quickly from user context
-+
-+	RDFSBASE %reg	read the FS base	(or _readfsbase_u64)
-+	RDGSBASE %reg	read the GS base	(or _readgsbase_u64)
-+
-+	WRFSBASE %reg	write the FS base	(or _writefsbase_u64)
-+	WRGSBASE %reg	write the GS base	(or _writegsbase_u64)
-+
-+If you use the intrinsics include <immintrin.h> and set the -mfsgsbase option.
-+
-+The instructions are supported by the CPU when the "fsgsbase" string is shown in
-+/proc/cpuinfo (or directly retrieved through the CPUID instruction,
-+7:0 (ebx), word 9, bit 0)
-+
-+The instructions are only available to 64bit binaries.
-+
-+In addition the kernel needs to explicitly enable these instructions, as it
-+may otherwise not correctly context switch the state. Newer Linux
-+kernels enable this. When the kernel did not enable the instruction
-+they will fault with an #UD exception.
-+
-+An FSGSBASE enabled kernel can be detected by checking the AT_HWCAP2
-+bitmask in the aux vector. When the HWCAP2_FSGSBASE bit is set the
-+kernel supports FSGSBASE.
-+
-+	#include <sys/auxv.h>
-+	#include <elf.h>
-+
-+	/* Will be eventually in asm/hwcap.h */
-+	#define HWCAP2_FSGSBASE        (1 << 1)
-+
-+        unsigned val = getauxval(AT_HWCAP2);
-+        if (val & HWCAP2_FSGSBASE) {
-+                asm("wrgsbase %0" :: "r" (ptr));
-+        }
-+
-+No extra CPUID check needed as the kernel will not set this bit if the CPU
-+does not support it.
-+
-+gcc 6 will have special support to directly access data relative
-+to fs/gs using the __seg_fs and __seg_gs address space pointer
-+modifiers.
-+
-+#ifndef __SEG_GS
-+#error "Need gcc 6 or later"
-+#endif
-+
-+struct gsdata {
-+	int a;
-+	int b;
-+} gsdata = { 1, 2 };
-+
-+int __seg_gs *valp = 0;		/* offset relative to GS */
-+
-+	/* Check if kernel supports FSGSBASE as above */
-+
-+	/* Set up new GS */
-+	asm("wrgsbase %0" :: "r" (&gsdata));
-+
-+	/* Now the global pointer can be used normally */
-+	printf("gsdata.a = %d\n", *valp);
-+
-+Andi Kleen
++	setup_clear_cpu_cap(X86_FEATURE_FSGSBASE);
++	pr_info("nofsgsbase: FSGSBASE disabled\n");
+ 	return 1;
+ }
+-__setup("unsafe_fsgsbase", setup_unsafe_fsgsbase);
++__setup("nofsgsbase", x86_nofsgsbase_setup);
+ 
+ /*
+  * Protection Keys are not available in 32-bit mode.
+@@ -1372,12 +1369,8 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 	setup_umip(c);
+ 
+ 	/* Enable FSGSBASE instructions if available. */
+-	if (cpu_has(c, X86_FEATURE_FSGSBASE)) {
+-		if (unsafe_fsgsbase)
+-			cr4_set_bits(X86_CR4_FSGSBASE);
+-		else
+-			clear_cpu_cap(c, X86_FEATURE_FSGSBASE);
+-	}
++	if (cpu_has(c, X86_FEATURE_FSGSBASE))
++		cr4_set_bits(X86_CR4_FSGSBASE);
+ 
+ 	/*
+ 	 * The vendor-specific functions might have changed features.
 -- 
 2.19.1
 
