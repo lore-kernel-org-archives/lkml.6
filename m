@@ -2,159 +2,156 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CCEC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3065C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 728A020671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:40:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="auQUjqbL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 728A020671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id B3C9D2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:41:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3C9D2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbeJXDFX (ORCPT
+        id S1728722AbeJXDFy convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:05:23 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37701 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727758AbeJXDFX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:05:23 -0400
-Received: by mail-pl1-f196.google.com with SMTP id bh10-v6so1043684plb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 11:40:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=pXsCxTAkx2jrfCYySg/rQW7IAaA9rGO09Q12oVsa3SY=;
-        b=auQUjqbL/lpn3x8yhozTQAp5ADEi0+DsOVu+4X6GO53U8GlGewGtyNk1VJrs7HnmDs
-         AMo+1BShKXfJJTEgSfG4LsAFQSTmrCyQ2V2F4i5stWdHhfqd2C4ydzwrtog4fKdG25ja
-         0IfC4YJ2bTg2IZbcu8Eqagt/HPe4Trn31oNLx/Q7SPC4dOg5hpwNkVF8KLjVa/EwP1l3
-         seYJdg0cOpOUhKi9bUQiMgzKSQ4JPG2aeoBK5N4yaRV559t3KwWsisEYjNUaxhN9cE1O
-         pAbjF5mAacqbEH+Z3yxuAPJc1YSKvfpl0drQ0RNCsB6oHyeF2cnXQDeXpls4TSy8REky
-         aGIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pXsCxTAkx2jrfCYySg/rQW7IAaA9rGO09Q12oVsa3SY=;
-        b=Kr/Vbzgc2ljvuLjPfMe7jthVqD/FgasQX6Pa2Hb9kpX9T3gSi79NvsJ5woEQn1reF9
-         XAnq91lyuexNeWy7+PdHJHSE+92rjG/Em6VTGug7pwmLSNLvIqmdf+pE4Kag+AZQdpCa
-         XGlXqL4YIrVDoLEt2+qSfNa/gT1lOVJJ72uCny2GAf7a+nxIQ3rtEuDSdp1KtWG4YeCv
-         jPkg7mC8prIbt2IyYMp8W3XaB7pg5mbSUcDd1ZhZt/ui5cpEvShd4CBHPux26Cumeq3e
-         eU4pnCEzj7XrLeC4X/mDXOAKW0ooq1NY+KefSHjUUWuXRT5aaH8IAN046cMK8Q2xxd38
-         U+ug==
-X-Gm-Message-State: AGRZ1gJuOLb4wTdwJCmkeK7AetkSUDX4bEInBOyqctycwaM7wSOB50HT
-        A3cFLpNEOvZc5emr6XIFXYxV3b13GnOXCRCBpTSVWA==
-X-Google-Smtp-Source: AJdET5c9rxqFbITrWT2gGwa1y5mA/tx6/ZX3kLTN3Lm1HLUu4D5N4llmrbPqtwHel2lpXZmptxbooGNm4xlrwibOELc=
-X-Received: by 2002:a17:902:b106:: with SMTP id q6-v6mr5713271plr.238.1540320048944;
- Tue, 23 Oct 2018 11:40:48 -0700 (PDT)
+        Tue, 23 Oct 2018 23:05:54 -0400
+Received: from mga02.intel.com ([134.134.136.20]:5922 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727758AbeJXDFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:05:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:41:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
+   d="scan'208";a="97906363"
+Received: from irsmsx108.ger.corp.intel.com ([163.33.3.3])
+  by fmsmga002.fm.intel.com with ESMTP; 23 Oct 2018 11:41:18 -0700
+Received: from irsmsx106.ger.corp.intel.com ([169.254.8.45]) by
+ IRSMSX108.ger.corp.intel.com ([169.254.11.187]) with mapi id 14.03.0319.002;
+ Tue, 23 Oct 2018 19:41:18 +0100
+From:   "Hunter, Adrian" <adrian.hunter@intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+CC:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH V2 17/19] perf scripts python: exported-sql-viewer.py:
+ Add All branches report
+Thread-Topic: [PATCH V2 17/19] perf scripts python: exported-sql-viewer.py:
+ Add All branches report
+Thread-Index: AQHUaqaeWJRZYosv3UW89nQIvhP4TKUtEc0AgAATeyA=
+Date:   Tue, 23 Oct 2018 18:41:17 +0000
+Message-ID: <363DA0ED52042842948283D2FC38E4649C2B8A4D@IRSMSX106.ger.corp.intel.com>
+References: <20181001062853.28285-18-adrian.hunter@intel.com>
+ <20181023075949.18920-1-adrian.hunter@intel.com>
+ <20181023181218.GB6114@kernel.org>
+In-Reply-To: <20181023181218.GB6114@kernel.org>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTBhNWI1OTAtYjk0ZC00ZjgyLWFlODgtYzI0NzA0YThkZDI2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWWVCZGxGMlFRVFVxMGRWV2s2U3ZPQnZ0UVhjdVE5WVQrbnNcL1dzR2dqRmxYRm91WkE5bHpFWXJoWG1nc21FUUYifQ==
+x-originating-ip: [163.33.239.180]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20181023003725.21463-1-natechancellor@gmail.com> <F3BBC06A-A9CB-4ABF-ADF4-6B0971FAE364@vmware.com>
-In-Reply-To: <F3BBC06A-A9CB-4ABF-ADF4-6B0971FAE364@vmware.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 23 Oct 2018 11:40:37 -0700
-Message-ID: <CAKwvOdmsKbW9v9or+u-W9V7T+LrF4ODY9cgUStkjkmsbMcqJ2g@mail.gmail.com>
-Subject: Re: [PATCH RFC] x86: Don't include '-Wa,-' when building with Clang
-To:     namit@vmware.com
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 10:11 PM Nadav Amit <namit@vmware.com> wrote:
->
-> at 5:37 PM, Nathan Chancellor <natechancellor@gmail.com> wrote:
->
-> Commit 77b0bf55bc67 ("kbuild/Makefile: Prepare for using macros in
-> inline assembly code to work around asm() related GCC inlining bugs")
-> added this flag to KBUILD_CFLAGS, where it works perfectly fine with
-> GCC. However, when building with Clang, all of the object files compile
-> fine but the build hangs indefinitely at init/main.o, right before the
-> linking stage. Don't include this flag when building with Clang.
->
-> The kernel builds and boots to a shell in QEMU with both GCC and Clang
-> with this patch applied.
->
-> Link: https://na01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2F=
-github.com%2FClangBuiltLinux%2Flinux%2Fissues%2F213&amp;data=3D02%7C01%7Cna=
-mit%40vmware.com%7C871daebc2ca44947d28d08d638811fb5%7Cb39138ca3cee4b4aa4d6c=
-d83d9dd62f0%7C1%7C0%7C636758524579997650&amp;sdata=3DshuxW81QRrO3TSqbgf462w=
-gZYdLeAKeQEdGRxmnUX30%3D&amp;reserved=3D0
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->
-> The reason this patch is labeled RFC is while I can verify that this
-> fixes the issue, I'm not entirely sure why the '-Wa,-' works for GCC
-> and not Clang. I looked into what the flag means and I couldn't really
-> find anything so I just assume it's taking input from stdin? The issue
-> could stem from how GCC forks gas versus how Clang does it. If this
-> isn't of concern and the maintainers are happy with this patch as is,
-> feel free to take it.
->
-> arch/x86/Makefile | 5 ++++-
-> 1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-> index 5b562e464009..4736dcc1caec 100644
-> --- a/arch/x86/Makefile
-> +++ b/arch/x86/Makefile
-> @@ -239,7 +239,10 @@ archheaders:
-> archmacros:
-> $(Q)$(MAKE) $(build)=3Darch/x86/kernel arch/x86/kernel/macros.s
->
-> -ASM_MACRO_FLAGS =3D -Wa,arch/x86/kernel/macros.s -Wa,-
-> +ASM_MACRO_FLAGS =3D -Wa,arch/x86/kernel/macros.s
-> +ifneq ($(cc-name),clang)
-> +ASM_MACRO_FLAGS +=3D -Wa,-
-> +endif
-> export ASM_MACRO_FLAGS
-> KBUILD_CFLAGS +=3D $(ASM_MACRO_FLAGS)
->
->
-> The '-Wa,-=E2=80=98 was indeed used to take the input from stdin when the=
- =E2=80=98-pipe=E2=80=99
-> option is used in GCC. Perhaps clang ignores the =E2=80=98-pipe=E2=80=99 =
-flag.
->
+> -----Original Message-----
+> From: Arnaldo Carvalho de Melo [mailto:acme@kernel.org]
+> Sent: Tuesday, October 23, 2018 9:12 PM
+> To: Hunter, Adrian <adrian.hunter@intel.com>
+> Cc: Jiri Olsa <jolsa@redhat.com>; Andi Kleen <ak@linux.intel.com>; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH V2 17/19] perf scripts python: exported-sql-viewer.py:
+> Add All branches report
+> 
+> Em Tue, Oct 23, 2018 at 10:59:49AM +0300, Adrian Hunter escreveu:
+> > Add a report to display branches in a similar fashion to perf script.
+> > The main purpose of this report is to display disassembly, however,
+> > presently, the only supported disassembler is Intel XED, and
+> > additionally the object code must be present in perf build ID cache.
+> >
+> > To use Intel XED, libxed.so must be present. To build and install
+> > libxed.so:
+> > 	git clone https://github.com/intelxed/mbuild.git mbuild
+> > 	git clone https://github.com/intelxed/xed
+> > 	cd xed
+> > 	./mfile.py --share
+> > 	sudo ./mfile.py --prefix=/usr/local install
+> > 	sudo ldconfig
+> >
+> > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> > ---
+> >
+> >
+> > Changes in V2:
+> >
+> > 	Fix branch report not appearing for kernel-only or user-only tracing:
+> > 	Find branch events named like "branches:k" or "branches:u" as well
+> as
+> > 	just plain "branches", by splitting the name at the colon. i.e.
+> > 	event = event.split(":")[0]
+> 
+> So, I followed the instructions then ended up with:
+> 
+> [acme@seventh perf]$ find /usr/local -name "*xed*" | head
+> /usr/local/lib/libxed.so /usr/local/lib/libxed.a /usr/local/lib/libxed-ild.so
+> /usr/local/lib/libxed-ild.a /usr/local/include/xed /usr/local/include/xed/xed-
+> syntax-enum.h
+> /usr/local/include/xed/xed-attributes.h
+> /usr/local/include/xed/xed-build-defines.h
+> /usr/local/include/xed/xed-cpuid-rec.h
+> /usr/local/include/xed/xed-flags.h
+> [acme@seventh perf]$
+> 
+> Ran ldconfig as root, etc:
+> 
+> [acme@seventh perf]$ ldconfig -v -N | grep xed
+> ldconfig: Can't stat /libx32: No such file or directory
+> ldconfig: Path `/usr/lib' given more than once
+> ldconfig: Path `/usr/lib64' given more than once
+> ldconfig: Can't stat /usr/libx32: No such file or directory [acme@seventh
+> perf]$
+> 
+> [acme@seventh perf]$ file /usr/local/lib/libxed.so
+> /usr/local/lib/libxed.so: ELF 64-bit LSB shared object, x86-64, version 1
+> (SYSV), dynamically linked,
+> BuildID[sha1]=09cf45310a731f727b4575582a638052b8f3e3bb, not stripped
+> [acme@seventh perf]$ file /usr/local/lib/libxed-ild.so
+> /usr/local/lib/libxed-ild.so: ELF 64-bit LSB shared object, x86-64, version 1
+> (SYSV), dynamically linked,
+> BuildID[sha1]=a5601603e305bb7b7f8edc7da0e78acbc9b63eba, not stripped
+> [acme@seventh perf]$
+> 
+> Tried with:
+> 
+> export LD_LIBRARY_PATH=/usr/local/lib/
+> 
+> But so far couldn't get it to show the disassembly.
+> 
+> The "All Branches" is there, wasn't in v1 of this patch.
+> 
+> Ideas?
 
-Clang documents support for `-pipe`.
-https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-=
-pipe
+The "All Branches" report is a 2-level tree, and the disassembly displays when the next level of the tree is opened
+i.e. click the arrow at the start of the line.
 
-$ clang hello_world.c -no-integrated-as -Wa,-
+Have you tried both kernel and user space?
 
-is simple enough to reproduce the hang (notice no `-pipe`).
-`strace`'ing the above with and without `-Wa,-` shows clang hung in a
-`wait4` call after spawning as, while without `-Wa,-` shows it
-receiving a SIGCHLD.
+The script looks for dsos in the build id cache.  The dsos can be viewed by selecting dsos_view from the Tables menu,
+so you could check if that information looks right.
 
-I've filed a bug against Clang to investigate:
-https://bugs.llvm.org/show_bug.cgi?id=3D39410
+Also the script has a variable "have_disassembler", so you could hack the script to print that to find out if XED is working.
 
-In the meantime, I think Nathan's patch is the correct way to work
-around this, if it is indeed a bug in Clang.
 
-Reviewed-and-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-
-https://stackoverflow.com/questions/1512933/when-should-i-use-gccs-pipe-opt=
-ion
-has some interesting perspectives on the use of `-pipe`.
-Thanks for the patch Nathan, and more info Nadav.
---=20
-Thanks,
-~Nick Desaulniers
