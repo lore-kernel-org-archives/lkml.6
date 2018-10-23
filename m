@@ -2,119 +2,170 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82EACC67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCA0C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56B6820671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:03:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56B6820671
+	by mail.kernel.org (Postfix) with ESMTP id EAC0C207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:03:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUqUl2x/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAC0C207DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728405AbeJWX1L (ORCPT
+        id S1728417AbeJWX1e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 19:27:11 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:37729 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728034AbeJWX1L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 19:27:11 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 3B7022103C;
-        Tue, 23 Oct 2018 15:03:23 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id tKbjgDn9uMwD; Tue, 23 Oct 2018 15:03:23 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 23 Oct 2018 19:27:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47726 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727359AbeJWX1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 19:27:33 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id D6D1A2100E;
-        Tue, 23 Oct 2018 15:03:02 +0000 (UTC)
-Subject: Re: [RFC PATCH 0/2] improve vmalloc allocation
-To:     Michal Hocko <mhocko@kernel.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
-        Shuah Khan <shuah@kernel.org>
-References: <20181019173538.590-1-urezki@gmail.com>
- <20181022125142.GD18839@dhcp22.suse.cz>
- <20181022165253.uphv3xzqivh44o3d@pc636>
- <20181023072306.GN18839@dhcp22.suse.cz>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <dd0c3528-9c01-12bc-3400-ca88060cb7cf@kernel.org>
-Date:   Tue, 23 Oct 2018 09:02:56 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181023072306.GN18839@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        by mail.kernel.org (Postfix) with ESMTPSA id EFE6620671;
+        Tue, 23 Oct 2018 15:03:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540307025;
+        bh=zZnFTlhP/IPmPEsdqVbFn3Y1YOrRl0xfCjanMkT0MtU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=oUqUl2x/Q+RWDEwRdug9Y6orCiwuZXBkQG8wQn2fXJhT0PhGw57RwmWtG2/514yTr
+         DCfekMyTu64W4rzTKtmDkTdi7AogtBo42gJYwFWUaPBALtEGcOripqn6+j2iipsYjN
+         tRS7QwigblvJDv1dkZ0L60mXNhariot2LclFR6qs=
+Date:   Wed, 24 Oct 2018 00:03:42 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
+        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v6 10/15] tracing: Add hist trigger snapshot() action
+ test case
+Message-Id: <20181024000342.d1e82a160a5efecdb9c0d4f5@kernel.org>
+In-Reply-To: <75db4ded21471580e5ad8d57c74fd9c8923cd90a.1539288364.git.tom.zanussi@linux.intel.com>
+References: <cover.1539288364.git.tom.zanussi@linux.intel.com>
+        <75db4ded21471580e5ad8d57c74fd9c8923cd90a.1539288364.git.tom.zanussi@linux.intel.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+On Thu, 11 Oct 2018 16:02:07 -0500
+Tom Zanussi <zanussi@kernel.org> wrote:
 
-On 10/23/2018 01:23 AM, Michal Hocko wrote:
-> Hi Shuah,
+> From: Tom Zanussi <tom.zanussi@linux.intel.com>
 > 
-> On Mon 22-10-18 18:52:53, Uladzislau Rezki wrote:
->> On Mon, Oct 22, 2018 at 02:51:42PM +0200, Michal Hocko wrote:
->>> Hi,
->>> I haven't read through the implementation yet but I have say that I
->>> really love this cover letter. It is clear on intetion, it covers design
->>> from high level enough to start discussion and provides a very nice
->>> testing coverage. Nice work!
->>>
->>> I also think that we need a better performing vmalloc implementation
->>> long term because of the increasing number of kvmalloc users.
->>>
->>> I just have two mostly workflow specific comments.
->>>
->>>> A test-suite patch you can find here, it is based on 4.18 kernel.
->>>> ftp://vps418301.ovh.net/incoming/0001-mm-vmalloc-stress-test-suite-v4.18.patch
->>>
->>> Can you fit this stress test into the standard self test machinery?
->>>
->> If you mean "tools/testing/selftests", then i can fit that as a kernel module.
->> But not all the tests i can trigger from kernel module, because 3 of 8 tests
->> use __vmalloc_node_range() function that is not marked as EXPORT_SYMBOL.
-> 
-> Is there any way to conditionally export these internal symbols just for
-> kselftests? Or is there any other standard way how to test internal
-> functionality that is not exported to modules?
+> Add a test case verifying the basic functionality of the
+> hist:snapshot() action.
 > 
 
-The way it can be handled is by adding a test module under lib. test_kmod,
-test_sysctl, test_user_copy etc.
+I think this is OK for current tracing tree, but for next kernel version
+you may need to update it (against the kselftest tree)
 
-There is a corresponding test script e.g selftests/kmod/kmod.sh that loads
-the module and runs tests.
+> Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+> ---
+>  .../inter-event/trigger-snapshot-action-hist.tc    | 55 ++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc
+> new file mode 100644
+> index 000000000000..f427be989296
+> --- /dev/null
+> +++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc
+> @@ -0,0 +1,55 @@
+> +#!/bin/sh
+> +# description: event trigger - test inter-event histogram trigger snapshot action
+> +
+> +do_reset() {
+> +    reset_trigger
+> +    echo > set_event
+> +    echo 0 > snapshot
+> +    clear_trace
+> +}
+> +
+> +fail() { #msg
+> +    do_reset
+> +    echo $1
+> +    exit_fail
+> +}
+> +
+> +if [ ! -f set_event ]; then
+> +    echo "event tracing is not supported"
+> +    exit_unsupported
+> +fi
+> +
+> +if [ ! -f snapshot ]; then
+> +    echo "snapshot is not supported"
+> +    exit_unsupported
+> +fi
+> +
+> +grep "onchange(var)" README > /dev/null || exit_unsupported # version issue
 
-Take a look at lib/test_overflow.c - It is running some vmalloc_node tests
-test_overflow.c:DEFINE_TEST_ALLOC(vmalloc_node,  vfree,	     0, 0, 1);
-test_overflow.c:DEFINE_TEST_ALLOC(kvmalloc_node, kvfree,     0, 1, 1);
-test_overflow.c:	err |= test_kvmalloc_node(NULL);
-test_overflow.c:	err |= test_vmalloc_node(NULL);
+grep -q will be better.
 
-This module could be extended to tun these stress tests perhaps? I don't see a
-selftests test script for test_overflow, one could be added.
+> +
+> +grep "snapshot()" README > /dev/null || exit_unsupported # version issue
 
-Adding Kees Cook to the thread for input on test_overflow.
+Ditto.
 
-thanks,
--- Shuah
+> +
+> +reset_tracer
+> +do_reset
 
+Depends on the merge timing, but I already moved this kind of "reset 
+before/after test" into initialize_ftrace(), so you don't need do_reset()
+here. It is required only if you reset tracer in between tests.
+
+> +
+> +echo "Test snapshot action"
+> +
+> +echo 1 > /sys/kernel/debug/tracing/events/sched/enable
+> +
+> +echo 'hist:keys=comm:newprio=prio:onchange($newprio).save(comm,prio):onchange($newprio).snapshot() if comm=="ping"' >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
+> +
+> +ping localhost -c 3
+> +nice -n 1 ping localhost -c 3
+
+Ditto. please use $LOCALHOST if you send this to the latest tree.
+
+http://lkml.kernel.org/r/153563862993.29700.6436770573173736555.stgit@devbox
+
+> +
+> +echo 0 > /sys/kernel/debug/tracing/events/sched/enable
+> +
+> +if ! grep -q "changed:" events/sched/sched_waking/hist; then
+> +    fail "Failed to create onchange action inter-event histogram"
+> +fi
+> +
+> +if ! grep -q "comm=ping" snapshot; then
+> +    fail "Failed to create snapshot action inter-event histogram"
+> +fi
+> +
+> +do_reset
+
+Also you don't need this.
+
+
+BTW, are there no "expected fail" tests? (e.g. passing wrong snapshot command to trigger)
+
+Thank you,
+
+> +
+> +exit 0
+> -- 
+> 2.14.1
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
