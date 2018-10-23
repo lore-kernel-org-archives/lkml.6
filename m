@@ -2,157 +2,231 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81950C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B28F8C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:40:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 516D620813
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:39:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 516D620813
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D4A620813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:40:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="G/TXyMok"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D4A620813
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728676AbeJXCED (ORCPT
+        id S1728706AbeJXCEd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 22:04:03 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:40537 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728034AbeJXCED (ORCPT
+        Tue, 23 Oct 2018 22:04:33 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:48148 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728034AbeJXCEd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 22:04:03 -0400
-Received: from svr-orw-mbx-02.mgc.mentorg.com ([147.34.90.202])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gF0eY-0003Fj-L3 from Steve_Longerbeam@mentor.com ; Tue, 23 Oct 2018 10:39:38 -0700
-Received: from [172.30.89.8] (147.34.91.1) by svr-orw-mbx-02.mgc.mentorg.com
- (147.34.90.202) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 23 Oct
- 2018 10:39:36 -0700
-Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
-To:     Adam Ford <aford173@gmail.com>
-CC:     Fabio Estevam <festevam@gmail.com>, <jacopo@jmondi.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        <p.zabel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
-        <gstreamer-devel@lists.freedesktop.org>,
-        <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
- <20180920145658.GE16851@w540>
- <CAHCN7x+U=Y=-v1UP5UYvY8WtUFRJGjmx=nawTuE=YcHdm_DYvA@mail.gmail.com>
- <c1cb34b0-b715-cf08-6f75-2842f1090c5d@mentor.com>
- <20181017080103.GD11703@w540>
- <CAHCN7xLx6uAmYiGh3p=piZFwE0VkfixTLqdjETibKwk2+DhMzA@mail.gmail.com>
- <CAHCN7xJKuPYg04WfRzbYWO4bGoHHnD16LBPRsK1QsiYY1bL7nA@mail.gmail.com>
- <20181022113306.GB2867@w540>
- <CAHCN7xJkc5RW73C0zruWBgyF7G0J3C5tLE=ZdfxTKbrUqs=-PQ@mail.gmail.com>
- <CAOMZO5ATm4BRzPEQOU+ZD6bHCP2Aqjp4raRYhuc+wNe0t4+C=w@mail.gmail.com>
- <CAHCN7x+csKEk25CF=teUv+F5_GoTe6_3Yqb5PODLn+AmCCm88w@mail.gmail.com>
- <d78877f8-2c23-2bf0-0a9c-cd98b855e95e@mentor.com>
- <CAHCN7xKhGAXs0jGv96CfOfLQfVubxzsdE9UjpDu+4NM6oLDGWw@mail.gmail.com>
-From:   Steve Longerbeam <steve_longerbeam@mentor.com>
-Message-ID: <bc034299-4a32-f248-d09a-0d1b5872a506@mentor.com>
-Date:   Tue, 23 Oct 2018 10:39:35 -0700
+        Tue, 23 Oct 2018 22:04:33 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9NHe7wS077142;
+        Tue, 23 Oct 2018 12:40:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1540316407;
+        bh=lme3swre1KmJlG3BeN5UK60iQ3gEQNO4+3zoH8z/z38=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=G/TXyMokMBV6eBMcymphE3sGwrAG/dYW65Fwk/scPcQF0COz0ebIUHyTGBHkJgkPj
+         5mq5MyT/hFa+K6GyxuGtOSP1NELOR0nNYvB3TA3LgkI2cHtjkaKlgFZ2Q6pP0dcFPx
+         ymggWXkZcU/QlFGkFIt6B73ryChLIR+V5EXO1PC4=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9NHe7wr104263
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 23 Oct 2018 12:40:07 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 23
+ Oct 2018 12:40:07 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 23 Oct 2018 12:40:07 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9NHe7Ji016207;
+        Tue, 23 Oct 2018 12:40:07 -0500
+Subject: Re: [PATCH v2 05/16] remoteproc: modify rproc_handle_carveout to
+ support preallocated region
+To:     Loic PALLARDY <loic.pallardy@st.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     "ohad@wizery.com" <ohad@wizery.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
+ <1512060411-729-6-git-send-email-loic.pallardy@st.com>
+ <20171214005917.GG17344@builder>
+ <0bbc0455b6ee45cdb0ebab04117b6a40@SFHDAG7NODE2.st.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <9ced2a8b-916e-9447-4be7-6316385ade0a@ti.com>
+Date:   Tue, 23 Oct 2018 12:40:06 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAHCN7xKhGAXs0jGv96CfOfLQfVubxzsdE9UjpDu+4NM6oLDGWw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <0bbc0455b6ee45cdb0ebab04117b6a40@SFHDAG7NODE2.st.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
- svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202)
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 10/23/18 10:34 AM, Adam Ford wrote:
-> On Tue, Oct 23, 2018 at 11:36 AM Steve Longerbeam
-> <steve_longerbeam@mentor.com> wrote:
->> Hi Adam,
 >>
->> On 10/23/18 8:19 AM, Adam Ford wrote:
->>> On Mon, Oct 22, 2018 at 7:40 AM Fabio Estevam <festevam@gmail.com> wrote:
->>>> Hi Adam,
->>>>
->>>> On Mon, Oct 22, 2018 at 9:37 AM Adam Ford <aford173@gmail.com> wrote:
->>>>
->>>>> Thank you!  This tutorial web site is exactly what I need.  The
->>>>> documentation page in Linux touched on the media-ctl links, but it
->>>>> didn't explain the syntax or the mapping.  This graphical
->>>>> interpretation really helps it make more sense.
->>>> Is capturing working well on your i.MX6 board now?
->>> Fabio,
->>>
->>> Unfortunately, no.  I built the rootfs based on Jagan's instructions
->>> at https://openedev.amarulasolutions.com/display/ODWIKI/i.CoreM6+1.5
->>>
->>> I tried building both the 4.15-RC6 kernel, a 4.19 kernel and a 4.14 LTS kernel.
->>>
->>> Using the suggested method of generating the graphical display of the
->>> pipeline options, I am able to enable various pipeline options
->>> connecting different /dev/videoX options tot he camera.  I have tried
->>> both the  suggested method above as well as the instructions found in
->>> Documentation/media/v4l-drivers/imx.rst for their respective kernels,
->>> and I have tried multiple options to capture through
->>> ipu1_csi1_capture, ipu2_csi1_capture, and ip1_ic_prepenc capture, and
->>> all yield a broken pipe.
->>>
->>> libv4l2: error turning on stream: Broken pipe
->>> ERROR: from element /GstPipeline:pipeline0/GstV4l2Src:v4l2src0: Could
->>> not read from resource.
->>> Additional debug info:
->>> gstv4l2bufferpool.c(1064): gst_v4l2_buffer_pool_poll ():
->>> /GstPipeline:pipeline0/GstV4l2Src:v4l2src0:
->>> poll error 1: Broken pipe (32)
->>>
->>> I can hear the camera click when I start gstreamer and click again
->>> when it stops trying to stream.
->>>
->>> dmesg indicates a broken pipe as well..
->>>
->>> [ 2419.851502] ipu2_csi1: pipeline start failed with -32
->>>
->>> might you have any suggestions?
+>> On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
 >>
->> This -EPIPE error might mean you have a mis-match of resolution, pixel
->> format, or field type between one of the source->sink pad links. You can
->> find out which pads have a mis-match by enabling dynamic debug in the
->> kernel function __media_pipeline_start.
-> Following Jagan's suggestion, I tried to make sure all the resolution
-> and pixel formats were set the same between each source and sink.
->
-> media-ctl --set-v4l2 "'ov5640 2-0010':0[fmt:UYVY2X8/640x480
-> field:none]"
-> media-ctl --set-v4l2 "'imx6-mipi-csi2':1[fmt:UYVY2X8/640x480
-> field:none]"
-> media-ctl --set-v4l2 "'ipu1_csi0_mux':2[fmt:UYVY2X8/640x480
-> field:none]"
-> media-ctl --set-v4l2 "'ipu1_csi0':2[fmt:AYUV32/640x480 field:none]"
->
->> Also make sure you are attempting to stream from the correct /dev/videoN.
-> I have graphically plotted the pipeline using media-ctl --print-dot
-> and I can see the proper video is routed, but your dynamic debug
-> suggestion yielded something:
->
->     imx-media capture-subsystem: link validation failed for 'ov5640
-> 2-0010':0 -> 'imx6-mipi-csi2':0, error -32
-
-
-It's what I expected, you have a format mismatch between those pads.
-
-Steve
-
-
->
-> I am assume this means the interface between the camera and the csi2
-> isn't working.  I am going to double check the power rails and the
-> clocks.  i can hear it click when activated and deactivated, so
-> something is happening.
->
-> adam
->
->> Steve
+>>> In current version rproc_handle_carveout function support only dynamic
+>>> region allocation.
+>>> This patch extends rproc_handle_carveout function to support different
+>> carveout
+>>> configurations:
+>>> - fixed DA and fixed PA: check if already part of pre-registered carveouts
+>>> (platform driver). If no, return error.
+>>> - fixed DA and any PA: check if already part of pre-allocated carveouts
+>>> (platform driver). If not found and rproc supports iommu, continue with
+>>> dynamic allocation (DA will be used for iommu programming), else return
+>>> error as no way to force DA.
+>>> - any DA and any PA: use original dynamic allocation
+>>>
+>>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+>>> ---
+>>>  drivers/remoteproc/remoteproc_core.c | 40
+>> ++++++++++++++++++++++++++++++++++++
+>>>  1 file changed, 40 insertions(+)
+>>>
+>>> diff --git a/drivers/remoteproc/remoteproc_core.c
+>> b/drivers/remoteproc/remoteproc_core.c
+>>> index 78525d1..515a17a 100644
+>>> --- a/drivers/remoteproc/remoteproc_core.c
+>>> +++ b/drivers/remoteproc/remoteproc_core.c
+>>> @@ -184,6 +184,10 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da,
+>> int len)
+>>>  	struct rproc_mem_entry *carveout;
+>>>  	void *ptr = NULL;
+>>>
+>>> +	/*
+>>> +	 * da_to_va platform driver is deprecated. Driver should register
+>>> +	 * carveout thanks to rproc_add_carveout function
+>>> +	 */
 >>
+>> I think this comment is unrelated to the rest of this patch. I also
+>> think that at the end of the carveout-rework we should have a patch
+>> removing this ops.
+> 
+> I'll remove this comment and add a da_to_va clean-up patch at the end of the series
+
+da_to_va platform ops is actually used to provide the remoteproc
+internal memory translations for the most part, not restricted just to
+fixed carveouts. Also, typically these do have multiple address-views -
+one the regular bus-address view, and another a remote processor address
+view.
+
+regards
+Suman
+
+> 
+>>
+>>>  	if (rproc->ops->da_to_va) {
+>>>  		ptr = rproc->ops->da_to_va(rproc, da, len);
+>>>  		if (ptr)
+>>> @@ -677,6 +681,7 @@ static int rproc_handle_carveout(struct rproc
+>> *rproc,
+>>>  	struct rproc_mem_entry *carveout, *mapping;
+>>>  	struct device *dev = &rproc->dev;
+>>>  	dma_addr_t dma;
+>>> +	phys_addr_t pa;
+>>>  	void *va;
+>>>  	int ret;
+>>>
+>>> @@ -698,6 +703,41 @@ static int rproc_handle_carveout(struct rproc
+>> *rproc,
+>>>  	if (!carveout)
+>>>  		return -ENOMEM;
+>>>
+>>> +	/* Check carveout rsc already part of a registered carveout */
+>>> +	if (rsc->da != FW_RSC_ADDR_ANY) {
+>>
+>> As mentioned before, I consider it perfectly viable for rsc->da to be
+>> ANY and the driver providing a fixed carveout.
+> 
+> Yes I'll change sequence to lookup by name first and then verify exact parameters matching , not only da definition.
+> 
+>>
+>>> +		va = rproc_find_carveout_by_da(rproc, rsc->da, rsc->len);
+>>> +
+>>> +		if (va) {
+>>
+>> In a system with an iommu it's possible that rsc->len is larger than
+>> some carveout->len and va is NULL here so we fall through, allocate some
+>> memory and remap a segment of the carveout. (Or hopefully fails
+>> attempting).
+>>
+>>> +			/* Registered region found */
+>>> +			pa = rproc_va_to_pa(va);
+>>> +			if (rsc->pa != FW_RSC_ADDR_ANY && rsc->pa !=
+>> (u32)pa) {
+>>> +				/* Carveout doesn't match request */
+>>> +				dev_err(dev->parent,
+>>> +					"Failed to find carveout fitting da and
+>> pa\n");
+>>> +				return -ENOMEM;
+>>> +			}
+>>> +
+>>> +			/* Update rsc table with physical address */
+>>> +			rsc->pa = (u32)pa;
+>>> +
+>>> +			/* Update carveouts list */
+>>> +			carveout->va = va;
+>>> +			carveout->len = rsc->len;
+>>> +			carveout->da = rsc->da;
+>>> +			carveout->priv = (void *)CARVEOUT_RSC;
+>>> +
+>>> +			list_add_tail(&carveout->node, &rproc->carveouts);
+>>
+>> rproc_find_carveout_by_da() will return a reference into a carveout, now
+>> we add another overlapping carveout into the same list.
+>>
+>>
+>> I think it would be saner to not allow the resource table to describe
+>> subsets of carveouts registered by the driver.
+>>
+>> In which case this would better find a carveout by name or exact da,
+>> then check that the pa, da, len and rsc->flags are adequate.
+> 
+> Agree
+> /Loic
+>>
+>>> +
+>>> +			return 0;
+>>> +		}
+>>> +
+>>> +		if (!rproc->domain) {
+>>
+>> Currently this function ignore invalid values of da when !domain, so I
+>> think it would be good you can submit this sanity check in it's own
+>> patch so that anyone bisecting this would know why their broken firmware
+>> suddenly isn't loadable.
+>>
+>>> +			dev_err(dev->parent,
+>>> +				"Bad carveout rsc configuration\n");
+>>> +			return -ENOMEM;
+>>> +		}
+>>> +	}
+>>> +
+>>
+>> Regards,
+>> Bjorn
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
