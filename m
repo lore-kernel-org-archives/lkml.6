@@ -2,218 +2,172 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 676FEC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F275FC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D70320813
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:39:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D70320813
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A1FDC20671
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:42:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1FDC20671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbeJXBD5 (ORCPT
+        id S1728520AbeJXBGv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 21:03:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48762 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727402AbeJXBD5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 21:03:57 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5CED488317;
-        Tue, 23 Oct 2018 16:39:49 +0000 (UTC)
-Received: from treble (ovpn-123-230.rdu2.redhat.com [10.10.123.230])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9B363600C3;
-        Tue, 23 Oct 2018 16:39:45 +0000 (UTC)
-Date:   Tue, 23 Oct 2018 11:39:43 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Miroslav Benes <mbenes@suse.cz>, Jiri Kosina <jikos@kernel.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v12 06/12] livepatch: Simplify API by removing
- registration step
-Message-ID: <20181023163943.ex65stywf2cwqvep@treble>
-References: <20180828143603.4442-1-pmladek@suse.com>
- <20180828143603.4442-7-pmladek@suse.com>
- <alpine.LSU.2.21.1809051108440.7768@pobox.suse.cz>
- <20181012130120.f5berowklyccd7lj@pathway.suse.cz>
- <alpine.LSU.2.21.1810151756290.11383@pobox.suse.cz>
- <20181018145456.nrekm2iuyf5ztw3n@pathway.suse.cz>
- <20181018153027.x4nk2ihgs5ehsln2@treble>
- <alpine.LSU.2.21.1810191400320.4692@pobox.suse.cz>
- <20181019143604.35zgwus4arkolbwr@treble>
- <20181022132509.6vxrdvq42e5j2bpx@pathway.suse.cz>
+        Tue, 23 Oct 2018 21:06:51 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:51720 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbeJXBGv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 21:06:51 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9NGgcS1051709;
+        Tue, 23 Oct 2018 11:42:38 -0500
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9NGgcMA106149
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 23 Oct 2018 11:42:38 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 23
+ Oct 2018 11:42:37 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 23 Oct 2018 11:42:37 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9NGgbsM023729;
+        Tue, 23 Oct 2018 11:42:37 -0500
+Subject: Re: [PATCH v4 00/17] remoteproc: add fixed memory region support
+To:     Loic Pallardy <loic.pallardy@st.com>, <bjorn.andersson@linaro.org>,
+        <ohad@wizery.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <129e3fbe-72c6-97d7-7d83-dc2858074f33@ti.com>
+Date:   Tue, 23 Oct 2018 11:42:37 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181022132509.6vxrdvq42e5j2bpx@pathway.suse.cz>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 23 Oct 2018 16:39:49 +0000 (UTC)
+In-Reply-To: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 03:25:10PM +0200, Petr Mladek wrote:
-> On Fri 2018-10-19 09:36:04, Josh Poimboeuf wrote:
-> > On Fri, Oct 19, 2018 at 02:16:19PM +0200, Miroslav Benes wrote:
-> > > On Thu, 18 Oct 2018, Josh Poimboeuf wrote:
-> > > 
-> > > > On Thu, Oct 18, 2018 at 04:54:56PM +0200, Petr Mladek wrote:
-> > > > > OK, what about having just "disable" in sysfs. I agree that it makes
-> > > > > much more sense than "enable" now.
-> > > > > 
-> > > > > It might be used also for the reverse operation the same way as
-> > > > > "enable" was used before. I think that standalone "reverse" might
-> > > > > be confusing when we allow to reverse the operation in both
-> > > > > directions.
-> > > > 
-> > > > As long as we're talking about radical changes... how about we just
-> > > > don't allow disabling patches at all?  Instead a patch can be replaced
-> > > > with a 'revert' patch, or an empty 'nop' patch.  That would make our
-> > > > code simpler and also ensure there's an audit trail.
-> > > > 
-> > > > (Apologies if we've already talked about this.  My brain is still mushy
-> > > > thanks to Spectre and friends.)
-> > > 
-> > > I think we talked about it last year in Prague and I think we convinced 
-> > > you that it was not a good idea (...not to allow disabling patches at 
-> > > all).
-> > > 
-> > > BUT! Empty 'nop' patch is a new idea and we may certainly discuss it.
-> > 
-> > I definitely remember talking about it in Prague, but I don't remember
-> > any conclusions.
+Hi Bjorn,
+
+On 7/27/18 8:14 AM, Loic Pallardy wrote:
+> The aim of the series is to implement carveout memory management as
+> discussed during OpenAMP weekly call and defined in proposed document [1]
 > 
-> The revert operation allows to remove a livepatch stuck in the
-> transition without forcing.
+> This first series focus only on adding support of the different types of
+> carveout memories (dynamic, fixed, platform driver depend...).
+> 64bit resource table will be addressed in a next series.
+> Cent
+> [1]: http://openamp.github.io/docs/mca/coprocessor-memory-definition-v6.pdf
 
-True, though I question the real world value of that.
+Some of the patches in this series are breaking TI platforms, and I have
+found couple of generic bugs as well. You may want to reconsider some of
+these patches for 4.20. Apologies for the late review, but please look
+through the comments I will be posting on various patches through the
+rest of the day.
 
-> Also implementing empty cumulative patch might be tricky because
-> of the callbacks. The current proposal is to call callbacks only
-> from the new livepatch. It helps tp keep the interactions easy
-> and under control. The way how to take over some change between
-> an old and new patch depends on the particular functionality.
+regards
+Suman
 
-Presumably a 'no-op' patch would be special, in that it would call the
-un-patch callbacks.
-
-I think the only *real* benefit of this proposal would be that history
-would be a straight line, with no backtracking.  Similar to git rebase
-vs merge.  You'd be able to tell what has been applied and reverted just
-by looking at what modules are loaded.
-
-But, I now realize that in order for that to be the case, we'd have to
-disallow the unloading of replaced modules.  But I think we're going to
-end up *allowing* the unloading of replaced modules, right?
-
-So maybe it's not worth it.  I'll drop it.
-
-> It would mean that the empty patch might need to be custom.
-> Users probably would need to ask and wait for it.
+> 
+> ---
+> Changes since V3:
+> - Rebase on top of Bjorn remoteproc next git (3d065621c921)
+> - Apply on top of "remoteproc: replace "%p" with "%pK"" [2]
+> - Lot of changes to centralize carveout allocation before rproc_start()
+> - Remove prepare/unprepare ops and rely on parse_fw instead of
+> - Add possibility to assign reserved memory region to vdev device
+> - Adapt TI da8xx and keystone remoteproc driver
+> 
+> As V3 series, V4 series takes some assumptions for carveout names
+> associated to vdev:
+> - For vring: "vdev%xvring%x" with vdev index from resource table and vring index
+>   in vdev.
+> - For vdev buffer: "vdev%xbuffer" with vdev index from resource table
+> 
+> [2] https://patchwork.kernel.org/patch/10511599
+> 
+> Changes since V2:
+> Reshuffle the series to: 
+> - Take into account Bjorn's comments.
+> - Add patch to check consistency between carveout resource request and IOMMU
+>   support.
+> - Introduce platform specific prepare and unprepare ops to enable HW like
+>   clock, bus, regulator, memory region... before loading co-processor firmware.
+> - Rely on memory carveout management for all remoteproc memory allocations.
+> - Lookup pre-registered carveout by name first.
+> - Create a subdevice for each vdev declared in firmware resource table that
+>   will be used by virtio based driver to retrieve specific memory pool.
+> 
+> This series takes some assumptions for carveout names associated to vdev:
+> - For vring: "vdev%xvring%x" with vdev index from resource table and vring index
+>   in vdev.
+> - For vdev buffer: "vdev%xbuffer" with vdev index from resource table
+> 
+> This will be changed in the future, adding names field in vdev resource in
+> next resource table version.
 > 
 > 
-> > My livepatch-related brain cache lines have been
-> > flushed thanks to the aforementioned CVEs and my rapidly advancing
-> > senility.
+> Changes since V1:
+> - Minor corrections on first 7 patches (error management)
+> - Add "memory device" support on the top of first 7 patches.
+>   Goal is to answer use case reported during OpenAMP weekly discussion:
+>   - "Be able to specify memory region for vring and buffer allocation, even
+>     if no specific request defined in firmware resource table."
+>   Patches offer the capability to create a "memory device" associated to a
+>   carveout with a dedicated DMA memory pool. Different resource handlers are
+>   modified to look-up for specific carveout by name. If match found and associated
+>   "memory device" present, device is used instead of rproc platform device for
+>   allocation.
 > 
-> Uff, I am not the only one.
-
-:-)
-
-> > > > The amount of flexibility we allow is kind of crazy, considering how
-> > > > delicate of an operation live patching is.  That reminds me that I
-> > > > should bring up my other favorite idea at LPC: require modules to be
-> > > > loaded before we "patch" them.
-> > > 
-> > > We talked about this as well and if I remember correctly we came to a 
-> > > conclusion that it is all about a distribution and maintenance. We cannot 
-> > > ask customers to load modules they do not need just because we need to 
-> > > patch them.
-> > 
-> > Fair enough.
-> > 
-> > > One cumulative patch is not that great in this case. I remember you
-> > > had a crazy idea how to solve it, but I don't remember details. My
-> > > notes from the event say...
-> > > 
-> > > 	- livepatch code complexity
-> > > 		- make it synchronous with respect to modules loading
-> > > 		- Josh's crazy idea
-> > > 
-> > > That's not much :D
-> > > 
-> > > So yes, we can talk about it and hopefully make proper notes this time.
-> > 
-> > Heh, better notes would be good, otherwise I'll just keep complaining
-> > about the same things every year :-)  I'll try to remember what my crazy
-> > idea was, or maybe come up with some new ones to keep it fresh.
 > 
-> If we do not want to force users to load all patched modules then
-> we would need to create a livepatch-per-module. This just moves
-> the complexity somewhere else.
+> Loic Pallardy (17):
+>   remoteproc: configure IOMMU only if device address requested
+>   remoteproc: add rproc_va_to_pa function
+>   remoteproc: add release ops in rproc_mem_entry struct
+>   remoteproc: add name in rproc_mem_entry struct
+>   remoteproc: add helper function to allocate and init rproc_mem_entry
+>     struct
+>   remoteproc: introduce rproc_add_carveout function
+>   remoteproc: introduce rproc_find_carveout_by_name function
+>   remoteproc: add alloc ops in rproc_mem_entry struct
+>   remoteproc: add helper function to allocate rproc_mem_entry from
+>     reserved memory
+>   remoteproc: add helper function to check carveout device address
+>   remoteproc: modify rproc_handle_carveout to support pre-registered
+>     region
+>   remoteproc: modify vring allocation to rely on centralized carveout
+>     allocator
+>   remoteproc: create vdev subdevice with specific dma memory pool
+>   remoteproc: keystone: declare reserved memory region for vdev device
+>   remoteproc: da8xx: declare reserved memory region for vdev device
+>   remoteproc: st: add reserved memory support
+>   rpmsg: virtio: allocate buffer from parent
 > 
-> One big problem would be how to keep the system consistent. You
-> would need to solve races between loading modules and livepatches
-> anyway.
+>  drivers/remoteproc/da8xx_remoteproc.c    |  38 ++
+>  drivers/remoteproc/keystone_remoteproc.c |  53 ++-
+>  drivers/remoteproc/remoteproc_core.c     | 572 +++++++++++++++++++++++++------
+>  drivers/remoteproc/remoteproc_debugfs.c  |   1 +
+>  drivers/remoteproc/remoteproc_internal.h |   3 +
+>  drivers/remoteproc/remoteproc_virtio.c   |  56 ++-
+>  drivers/remoteproc/st_remoteproc.c       |  96 +++++-
+>  drivers/rpmsg/virtio_rpmsg_bus.c         |   6 +-
+>  include/linux/remoteproc.h               |  35 +-
+>  9 files changed, 728 insertions(+), 132 deletions(-)
 > 
-> For example, you could not load fixed/patched modules when the system
-> is not fully patched yet. You would need to load the module and
-> the related livepatch at the same time and follow the consistency
-> model as we do now.
-> 
-> OK, there was the idea to refuse loading modules when livepatch
-> transition is in progress. But it might not be acceptable,
-> especially when the transition gets blocked infinitely
-> and manual intervention would be needed.
-> 
-> I agree that the current solution adds complexity to
-> the livepatching code but it is not that complicated.
-> Races with loading modules and livepatches in parallel
-> are solved by mod->klp_active flag. There are no other
-> races because all other operations are done on code
-> that is not actively used. One good thing is that
-> everything is in one place and kernel has it under
-> control.
-> 
-> I am open to discuss it. But we would need to come up with
-> some clever solution.
 
-Yeah, I think that's pretty much the crazy idea Miroslav mentioned.  The
-patch would consist of several modules.  The parent module would
-register the patch and patch vmlinux.  Each child module would be
-associated with a to-be-patched module.  The child modules could be
-loaded on demand, either by special klp code or by modprobe.
-
-As you described, there would be some races to think about.  However, it
-would also have some benefits.
-
-I *hope* it would mean we could get rid of a lot of our ugly hacks, like
-
-- klp symbols, klp relas
-- preserving ELF data, PLT's, other horrible arch-specific things
-- klp.arch..altinstructions, klp.arch..parainstructions
-- manually calling apply_relocate_add()
-
-However... we might still need some of those things for another reason:
-to bypass exported symbol protections.  It needs some more
-investigation.
-
-Given this discussion, I'm thinking there wouldn't be much to discuss at
-LPC for this topic unless we had a prototype to look at (which I won't
-have time to do).  So I may drop my talk in favor of giving more time
-for other more tangible discussions.
-
--- 
-Josh
