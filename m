@@ -2,132 +2,257 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F085C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:10:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3458FC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB05E204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:10:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uZAMzZmS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB05E204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D2B2B204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:12:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2B2B204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729006AbeJXDel (ORCPT
+        id S1728841AbeJXDha (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:34:41 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46268 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728385AbeJXDek (ORCPT
+        Tue, 23 Oct 2018 23:37:30 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:33260 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728385AbeJXDha (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:34:40 -0400
-Received: by mail-lf1-f65.google.com with SMTP id o2-v6so2026486lfl.13;
-        Tue, 23 Oct 2018 12:09:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NqY84tiS/iXTCTRJflVvZ5Ci6t/R3jNgj5FkDN1n+Fw=;
-        b=uZAMzZmSGpORVZZVe+pGxQM/FjCXdcgcs1L1RJKgvId2n4ZFGe5wUsVon8uoSDZIMA
-         oBD0HkUBw0J1/FF+FrwG8D7PUJzi7Wi+1aViPQjhZbCHBWbw9YwXXUpACQBWWSaAqmI0
-         7Z4YMpnxd3xGqZBAWssLHX51Uo8gPde7vZXRD60B6KhhknL5Ye+OEkekpwTHhk61OLCe
-         YWB2Iw9rJfhCyD1OWZHiYnHX6P7qlENrL135dwbcVFyLnDrtaPlF2+bqKedQ+WOrYjMz
-         3v1vxc0dBAsEMCRXTNomBoiqZJz/EjyfQ1L9R3s2A6DPWC2+asjIDtGkF7KNBn5l8Xuj
-         II4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NqY84tiS/iXTCTRJflVvZ5Ci6t/R3jNgj5FkDN1n+Fw=;
-        b=pl7rvQ8YT5bjuT2CchZ/bxR8RM7tJQmnp8/JcPTS+ZiT7KeriCcoGZ3O143abGYkXU
-         y3WFWGM8HvcOCTJ2HBGSGKsmXv5enFincdTmR8ZePhpIwkwn7GqIJy/kHdBT9Xomhd5R
-         gZLVxRlgHHxJCkyCL5MmAoV0NqhhvSljWQxKqi6JmZDm2i0fc+wHQXQStd+qQ4Y2BPVJ
-         +3lQfkiOrReKA/yPHhBHpBSGvsbJFkTnbn1kXWw67kVQGgTN+q1lXCL4lIA70lEV12hl
-         XedORZfe/VKG5bKZmJg7NTPvIC5Av2etvZ/zJWlKyI4ekaOSECIrjCxDjd/t/SE8Ir5e
-         JYVw==
-X-Gm-Message-State: ABuFfohrndBCKGy/0GZclezUHT7BHdRi7Qame+GOTalZJx6e9kCsq3hT
-        iJZfuk+67J6efIv6vhQB8fc=
-X-Google-Smtp-Source: ACcGV60DNsxOn/9Qv8HFzBvlw13Jy8UfNNAz/ECZLXmXQvgTqkd4QRtPC+LS/+44dSB/O8mpHmmU5w==
-X-Received: by 2002:a19:6e0b:: with SMTP id j11-v6mr12663503lfc.118.1540321797233;
-        Tue, 23 Oct 2018 12:09:57 -0700 (PDT)
-Received: from [192.168.1.18] (dks61.neoplus.adsl.tpnet.pl. [83.24.22.61])
-        by smtp.gmail.com with ESMTPSA id b21-v6sm325911lfi.17.2018.10.23.12.09.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 12:09:56 -0700 (PDT)
-Subject: Re: [PATCH v2 2/3] leds: upboard: Add LED support
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Dan O'Donovan <dan@emutex.com>, linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org,
-        Carlos Iglesias <carlos.iglesias@emutex.com>,
-        Javier Arteaga <javier@emutex.com>
-References: <20180421085009.28773-1-javier@emutex.com>
- <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1539969334-24577-3-git-send-email-dan@emutex.com>
- <ede59ef8-7caf-413d-6858-33a1eab5f084@gmail.com> <20181023185453.GA27397@amd>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <226e0df2-83f9-bee5-f359-a3e040d12311@gmail.com>
-Date:   Tue, 23 Oct 2018 21:09:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 23 Oct 2018 23:37:30 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9NJCjXk084591;
+        Tue, 23 Oct 2018 14:12:45 -0500
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9NJCjYv094227
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 23 Oct 2018 14:12:45 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 23
+ Oct 2018 14:12:44 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 23 Oct 2018 14:12:44 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9NJCi0Z028142;
+        Tue, 23 Oct 2018 14:12:44 -0500
+Subject: Re: [PATCH v2 05/16] remoteproc: modify rproc_handle_carveout to
+ support preallocated region
+To:     Loic PALLARDY <loic.pallardy@st.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     "ohad@wizery.com" <ohad@wizery.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
+ <1512060411-729-6-git-send-email-loic.pallardy@st.com>
+ <20171214005917.GG17344@builder>
+ <0bbc0455b6ee45cdb0ebab04117b6a40@SFHDAG7NODE2.st.com>
+ <9ced2a8b-916e-9447-4be7-6316385ade0a@ti.com>
+ <717bc0509ad54c4e8a9f601b8220edc2@SFHDAG7NODE2.st.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <0f1aa281-e1cf-6496-202f-b69ec50c5df6@ti.com>
+Date:   Tue, 23 Oct 2018 14:12:44 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181023185453.GA27397@amd>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <717bc0509ad54c4e8a9f601b8220edc2@SFHDAG7NODE2.st.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/23/2018 08:54 PM, Pavel Machek wrote:
-> Hi!
+On 10/23/18 2:09 PM, Loic PALLARDY wrote:
 > 
->>> +	led->field = devm_regmap_field_alloc(dev, regmap, conf);
->>> +	if (IS_ERR(led->field))
->>> +		return PTR_ERR(led->field);
->>> +
->>> +	led->cdev.max_brightness = 1;
+> 
+>> -----Original Message-----
+>> From: Suman Anna <s-anna@ti.com>
+>> Sent: mardi 23 octobre 2018 19:40
+>> To: Loic PALLARDY <loic.pallardy@st.com>; Bjorn Andersson
+>> <bjorn.andersson@linaro.org>
+>> Cc: ohad@wizery.com; linux-remoteproc@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
+>> benjamin.gaignard@linaro.org
+>> Subject: Re: [PATCH v2 05/16] remoteproc: modify rproc_handle_carveout to
+>> support preallocated region
 >>
->> s/1/LED_ON/
+>>>>
+>>>> On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
+>>>>
+>>>>> In current version rproc_handle_carveout function support only dynamic
+>>>>> region allocation.
+>>>>> This patch extends rproc_handle_carveout function to support different
+>>>> carveout
+>>>>> configurations:
+>>>>> - fixed DA and fixed PA: check if already part of pre-registered carveouts
+>>>>> (platform driver). If no, return error.
+>>>>> - fixed DA and any PA: check if already part of pre-allocated carveouts
+>>>>> (platform driver). If not found and rproc supports iommu, continue with
+>>>>> dynamic allocation (DA will be used for iommu programming), else
+>> return
+>>>>> error as no way to force DA.
+>>>>> - any DA and any PA: use original dynamic allocation
+>>>>>
+>>>>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+>>>>> ---
+>>>>>  drivers/remoteproc/remoteproc_core.c | 40
+>>>> ++++++++++++++++++++++++++++++++++++
+>>>>>  1 file changed, 40 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/remoteproc/remoteproc_core.c
+>>>> b/drivers/remoteproc/remoteproc_core.c
+>>>>> index 78525d1..515a17a 100644
+>>>>> --- a/drivers/remoteproc/remoteproc_core.c
+>>>>> +++ b/drivers/remoteproc/remoteproc_core.c
+>>>>> @@ -184,6 +184,10 @@ void *rproc_da_to_va(struct rproc *rproc, u64
+>> da,
+>>>> int len)
+>>>>>  	struct rproc_mem_entry *carveout;
+>>>>>  	void *ptr = NULL;
+>>>>>
+>>>>> +	/*
+>>>>> +	 * da_to_va platform driver is deprecated. Driver should register
+>>>>> +	 * carveout thanks to rproc_add_carveout function
+>>>>> +	 */
+>>>>
+>>>> I think this comment is unrelated to the rest of this patch. I also
+>>>> think that at the end of the carveout-rework we should have a patch
+>>>> removing this ops.
+>>>
+>>> I'll remove this comment and add a da_to_va clean-up patch at the end of
+>> the series
+>>
+>> da_to_va platform ops is actually used to provide the remoteproc
+>> internal memory translations for the most part, not restricted just to
+>> fixed carveouts. Also, typically these do have multiple address-views -
+>> one the regular bus-address view, and another a remote processor address
+>> view.
 > 
-> Actually, I prefer constant 1 here, as it makes it immediately obvious
-> this supports just 0/1.
+> da_to_va op sis still there. I was proposing to remove this ops as we were discussing to register all carveouts accessed by coprocessor in rproc core carveout list.
+> This will allow to centralize all carveout definitions and to see all memory resources viewed by coprocessor (va, pa and da) via debugfs...
+
+Yes, understood. I was commenting only on the future removal part, and
+if it is really judicious to do that.
+
+regards
+Suman
+
 > 
-> Yes, LED_ON is also 1, but I had to grep the header files for
-> that... (I thought it was 255).
+> Regards,
+> Loic
+>>
+>> regards
+>> Suman
+>>
+>>>
+>>>>
+>>>>>  	if (rproc->ops->da_to_va) {
+>>>>>  		ptr = rproc->ops->da_to_va(rproc, da, len);
+>>>>>  		if (ptr)
+>>>>> @@ -677,6 +681,7 @@ static int rproc_handle_carveout(struct rproc
+>>>> *rproc,
+>>>>>  	struct rproc_mem_entry *carveout, *mapping;
+>>>>>  	struct device *dev = &rproc->dev;
+>>>>>  	dma_addr_t dma;
+>>>>> +	phys_addr_t pa;
+>>>>>  	void *va;
+>>>>>  	int ret;
+>>>>>
+>>>>> @@ -698,6 +703,41 @@ static int rproc_handle_carveout(struct rproc
+>>>> *rproc,
+>>>>>  	if (!carveout)
+>>>>>  		return -ENOMEM;
+>>>>>
+>>>>> +	/* Check carveout rsc already part of a registered carveout */
+>>>>> +	if (rsc->da != FW_RSC_ADDR_ANY) {
+>>>>
+>>>> As mentioned before, I consider it perfectly viable for rsc->da to be
+>>>> ANY and the driver providing a fixed carveout.
+>>>
+>>> Yes I'll change sequence to lookup by name first and then verify exact
+>> parameters matching , not only da definition.
+>>>
+>>>>
+>>>>> +		va = rproc_find_carveout_by_da(rproc, rsc->da, rsc->len);
+>>>>> +
+>>>>> +		if (va) {
+>>>>
+>>>> In a system with an iommu it's possible that rsc->len is larger than
+>>>> some carveout->len and va is NULL here so we fall through, allocate some
+>>>> memory and remap a segment of the carveout. (Or hopefully fails
+>>>> attempting).
+>>>>
+>>>>> +			/* Registered region found */
+>>>>> +			pa = rproc_va_to_pa(va);
+>>>>> +			if (rsc->pa != FW_RSC_ADDR_ANY && rsc->pa !=
+>>>> (u32)pa) {
+>>>>> +				/* Carveout doesn't match request */
+>>>>> +				dev_err(dev->parent,
+>>>>> +					"Failed to find carveout fitting da and
+>>>> pa\n");
+>>>>> +				return -ENOMEM;
+>>>>> +			}
+>>>>> +
+>>>>> +			/* Update rsc table with physical address */
+>>>>> +			rsc->pa = (u32)pa;
+>>>>> +
+>>>>> +			/* Update carveouts list */
+>>>>> +			carveout->va = va;
+>>>>> +			carveout->len = rsc->len;
+>>>>> +			carveout->da = rsc->da;
+>>>>> +			carveout->priv = (void *)CARVEOUT_RSC;
+>>>>> +
+>>>>> +			list_add_tail(&carveout->node, &rproc->carveouts);
+>>>>
+>>>> rproc_find_carveout_by_da() will return a reference into a carveout, now
+>>>> we add another overlapping carveout into the same list.
+>>>>
+>>>>
+>>>> I think it would be saner to not allow the resource table to describe
+>>>> subsets of carveouts registered by the driver.
+>>>>
+>>>> In which case this would better find a carveout by name or exact da,
+>>>> then check that the pa, da, len and rsc->flags are adequate.
+>>>
+>>> Agree
+>>> /Loic
+>>>>
+>>>>> +
+>>>>> +			return 0;
+>>>>> +		}
+>>>>> +
+>>>>> +		if (!rproc->domain) {
+>>>>
+>>>> Currently this function ignore invalid values of da when !domain, so I
+>>>> think it would be good you can submit this sanity check in it's own
+>>>> patch so that anyone bisecting this would know why their broken
+>> firmware
+>>>> suddenly isn't loadable.
+>>>>
+>>>>> +			dev_err(dev->parent,
+>>>>> +				"Bad carveout rsc configuration\n");
+>>>>> +			return -ENOMEM;
+>>>>> +		}
+>>>>> +	}
+>>>>> +
+>>>>
+>>>> Regards,
+>>>> Bjorn
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc"
+>> in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+> 
 
-If we have the enum for that, let's use it.
-Here's the commit message of the patch adding LED_ON - it should
-be somehow familiar to you - see the ack.
-
-commit 4e552c8cb5bc9137e67e035bab8df6dddbca7384
-Author: Andi Shyti <andi.shyti@samsung.com>
-Date:   Thu Jan 5 11:34:12 2017 +0900
-
-    leds: add LED_ON brightness as boolean value
-
-    Some devices do not handle the led brightness or simply don't
-    care about it. Conceptually said devices want to just switch on
-    or off the led. It is useless in this case to have a 255 range
-    of brightness, while just having an LED_ON and LED_OFF improves
-    the boolean meaning of the led status.
-
-    Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-    Acked-by: Pavel Machek <pavel@ucw.cz>
-    Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-
-
--- 
-Best regards,
-Jacek Anaszewski
