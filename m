@@ -2,150 +2,134 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6862C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A9DC67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 964D520652
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:34:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 964D520652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id D63CE207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:34:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C4DdlCs+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D63CE207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728122AbeJWU5X (ORCPT
+        id S1728147AbeJWU5w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 16:57:23 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:43706 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728060AbeJWU5W (ORCPT
+        Tue, 23 Oct 2018 16:57:52 -0400
+Received: from mail-wr1-f43.google.com ([209.85.221.43]:41184 "EHLO
+        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727940AbeJWU5w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 16:57:22 -0400
-Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9NCXpM5045411;
-        Tue, 23 Oct 2018 21:33:52 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
- Tue, 23 Oct 2018 21:33:51 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157065137.bbtec.net [60.157.65.137])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9NCXi49045332
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 23 Oct 2018 21:33:51 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: [RFC PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
-To:     Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Cc:     linux-mm@kvack.org, David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <f9a8079f-55b0-301e-9b3d-a5250bd7d277@i-love.sakura.ne.jp>
- <20181022120308.GB18839@dhcp22.suse.cz>
- <201810230101.w9N118i3042448@www262.sakura.ne.jp>
- <20181023114246.GR18839@dhcp22.suse.cz>
- <20181023121055.GS18839@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <a55e70bd-dc5f-9a11-72e6-7cd7b3b48ab7@I-love.SAKURA.ne.jp>
-Date:   Tue, 23 Oct 2018 21:33:43 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 23 Oct 2018 16:57:52 -0400
+Received: by mail-wr1-f43.google.com with SMTP id q7-v6so1507872wrr.8
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 05:34:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=RcYjqI+7c0qk0gAmE4Rj9IBt9U6/lFlA+lmyjrqllxw=;
+        b=C4DdlCs+7Z2BtVqGIuL1L3chr0qjg0DPOaDpRaPr5MASNVSYp5MyBNEbRuDnvxMyE+
+         p7XEh3Aez6y1/a+gSYuNLPMHq+B4Ipx/Ohry+bzvz3JeR5LM3TsBiC/3Lt4vy6W7OlNr
+         nY1NYHA5IaxWdoaNsl8oKYaC1rAKwg1rRqzqRWGbcaPr7BKWaU5oiL/S8kyb2xvsCkKT
+         d9vI8qRWUD0pChVLGJzohpLyQJrqeR/F/OETvcUbazY+qx2jVsZFqMqQO5Obh+s3LTH7
+         eYsh7gupxJOw9F4oGxFwXzACxMvn+42ThFFChLZ5PnrvS2NtCKMV5qRuXAbZlMy5KwGo
+         hmig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=RcYjqI+7c0qk0gAmE4Rj9IBt9U6/lFlA+lmyjrqllxw=;
+        b=LiQIsegBogCsjnb8aCn7aZ0z5pBqQmOPg6MukyLlBh8xEd+wKhQV/EJM6nPboxxkJp
+         0DjpJynGmmIzInB20KkHWRqYzOAFlgPN55U60ucdlAD+mNtTicJ1Bhn+atLQgW52SQot
+         q+2ncuoQh+YR+bA20R+1WFBp0QcNCW+jtB0wgNi9LIypblpqlfmHdXi46+h6Bp0LsZU7
+         ZcIJyqGkTWpnXS3xqoq481h1+hrV4SvJhN6esIFwERrvwS+397aDhholhD4dJe2Mgi+I
+         yWSvoEllqvHKARm4JseLb1nBmtqMOabBHWLiIrdC0Tpek2Vap9J5ixMsjFaCJzSp8IvY
+         blCA==
+X-Gm-Message-State: ABuFfoim6m3AaQ3m1qrb7b4LFWnvwOJdYw9u8cRxL41dyDo6ijr2/9xQ
+        2vz0gtIGpFTIZ5cigV0JJaA=
+X-Google-Smtp-Source: ACcGV62gnDLiHNP3jYgDrA+VY/MFMvftEnGXvj/FHF1IqmSO7RvGPMg26STPQNCwavegfMiZcfP1Tw==
+X-Received: by 2002:adf:f301:: with SMTP id i1-v6mr49061055wro.161.1540298072826;
+        Tue, 23 Oct 2018 05:34:32 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id p8-v6sm1402911wre.50.2018.10.23.05.34.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 23 Oct 2018 05:34:32 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 14:34:29 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] x86/vdso changes for v4.20
+Message-ID: <20181023123429.GA88575@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181023121055.GS18839@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/23 21:10, Michal Hocko wrote:
-> On Tue 23-10-18 13:42:46, Michal Hocko wrote:
->> On Tue 23-10-18 10:01:08, Tetsuo Handa wrote:
->>> Michal Hocko wrote:
->>>> On Mon 22-10-18 20:45:17, Tetsuo Handa wrote:
->>>>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->>>>>> index e79cb59552d9..a9dfed29967b 100644
->>>>>> --- a/mm/memcontrol.c
->>>>>> +++ b/mm/memcontrol.c
->>>>>> @@ -1380,10 +1380,22 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
->>>>>>  		.gfp_mask = gfp_mask,
->>>>>>  		.order = order,
->>>>>>  	};
->>>>>> -	bool ret;
->>>>>> +	bool ret = true;
->>>>>>  
->>>>>>  	mutex_lock(&oom_lock);
->>>>>> +
->>>>>> +	/*
->>>>>> +	 * multi-threaded tasks might race with oom_reaper and gain
->>>>>> +	 * MMF_OOM_SKIP before reaching out_of_memory which can lead
->>>>>> +	 * to out_of_memory failure if the task is the last one in
->>>>>> +	 * memcg which would be a false possitive failure reported
->>>>>> +	 */
->>>>>> +	if (tsk_is_oom_victim(current))
->>>>>> +		goto unlock;
->>>>>> +
->>>>>
->>>>> This is not wrong but is strange. We can use mutex_lock_killable(&oom_lock)
->>>>> so that any killed threads no longer wait for oom_lock.
->>>>
->>>> tsk_is_oom_victim is stronger because it doesn't depend on
->>>> fatal_signal_pending which might be cleared throughout the exit process.
->>>>
->>>
->>> I still want to propose this. No need to be memcg OOM specific.
->>
->> Well, I maintain what I've said [1] about simplicity and specific fix
->> for a specific issue. Especially in the tricky code like this where all
->> the consequences are far more subtle than they seem to be.
->>
->> This is obviously a matter of taste but I don't see much point discussing
->> this back and forth for ever. Unless there is a general agreement that
->> the above is less appropriate then I am willing to consider a different
->> change but I simply do not have energy to nit pick for ever.
->>
->> [1] http://lkml.kernel.org/r/20181022134315.GF18839@dhcp22.suse.cz
-> 
-> In other words. Having a memcg specific fix means, well, a memcg
-> maintenance burden. Like any other memcg specific oom decisions we
-> already have. So are you OK with that Johannes or you would like to see
-> a more generic fix which might turn out to be more complex?
-> 
+Linus,
 
-I don't know what "that Johannes" refers to.
+Please pull the latest x86-vdso-for-linus git tree from:
 
-If you don't want to affect SysRq-OOM and pagefault-OOM cases,
-are you OK with having a global-OOM specific fix?
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-vdso-for-linus
 
- mm/page_alloc.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+   # HEAD: 99c19e6a8fe4a95fa0dac191207a1d40461b1604 x86/vdso: Rearrange do_hres() to improve code generation
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index e2ef1c1..f59f029 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3518,6 +3518,17 @@ void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...)
- 	if (gfp_mask & __GFP_THISNODE)
- 		goto out;
- 
-+	/*
-+	 * It is possible that multi-threaded OOM victims get
-+	 * task_will_free_mem(current) == false when the OOM reaper quickly
-+	 * set MMF_OOM_SKIP. But since we know that tsk_is_oom_victim() == true
-+	 * tasks won't loop forever (unless it is a __GFP_NOFAIL allocation
-+	 * request), we don't need to select next OOM victim.
-+	 */
-+	if (tsk_is_oom_victim(current) && !(gfp_mask & __GFP_NOFAIL)) {
-+		*did_some_progress = 1;
-+		goto out;
-+	}
- 	/* Exhausted what can be done so it's blame time */
- 	if (out_of_memory(&oc) || WARN_ON_ONCE(gfp_mask & __GFP_NOFAIL)) {
- 		*did_some_progress = 1;
--- 
-1.8.3.1
+Two main changes:
+
+ - Cleanups, simplifications and CLOCK_TAI support (Thomas Gleixner)
+
+ - Improve code generation (Andy Lutomirski)
+
+ Thanks,
+
+	Ingo
+
+  out-of-topic modifications in x86-vdso-for-linus:
+  ---------------------------------------------------
+  include/linux/clocksource.h        # d67f34c19a67: clocksource: Provide clockso
+  kernel/time/Kconfig                # d67f34c19a67: clocksource: Provide clockso
+  kernel/time/clocksource.c          # d67f34c19a67: clocksource: Provide clockso
+
+
+------------------>
+Andy Lutomirski (3):
+      x86/vdso: Remove "memory" clobbers in the vDSO syscall fallbacks
+      x86/vdso: Document vgtod_ts better
+      x86/vdso: Rearrange do_hres() to improve code generation
+
+Thomas Gleixner (11):
+      clocksource: Provide clocksource_arch_init()
+      x86/time: Implement clocksource_arch_init()
+      x86/vdso: Enforce 64bit clocksource
+      x86/vdso: Use unsigned int consistently for vsyscall_gtod_data:: Seq
+      x86/vdso: Introduce and use vgtod_ts
+      x86/vdso: Collapse high resolution functions
+      x86/vdso: Collapse coarse functions
+      x86/vdso: Replace the clockid switch case
+      x86/vdso: Simplify the invalid vclock case
+      x86/vdso: Move cycle_last handling into the caller
+      x66/vdso: Add CLOCK_TAI support
+
+
+ arch/x86/Kconfig                        |   1 +
+ arch/x86/entry/vdso/vclock_gettime.c    | 210 +++++++++-----------------------
+ arch/x86/entry/vsyscall/vsyscall_gtod.c |  51 ++++----
+ arch/x86/include/asm/vgtod.h            |  53 +++++---
+ arch/x86/kernel/time.c                  |  22 ++++
+ include/linux/clocksource.h             |   5 +
+ kernel/time/Kconfig                     |   4 +
+ kernel/time/clocksource.c               |   2 +
+ 8 files changed, 155 insertions(+), 193 deletions(-)
+
