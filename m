@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5819EC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C3C1C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AF332075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:55:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C76542081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:55:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=lemmela.net header.i=@lemmela.net header.b="S4ZFqzUX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AF332075D
+	dkim=pass (4096-bit key) header.d=lemmela.net header.i=@lemmela.net header.b="ZzpwxEyf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C76542081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemmela.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728911AbeJXDSs (ORCPT
+        id S1729231AbeJXDUG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:18:48 -0400
-Received: from mail1.kuutio.org ([92.222.216.83]:45816 "EHLO mail1.kuutio.org"
+        Tue, 23 Oct 2018 23:20:06 -0400
+Received: from mail1.kuutio.org ([92.222.216.83]:45886 "EHLO mail1.kuutio.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728451AbeJXDSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728575AbeJXDSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 23 Oct 2018 23:18:46 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail1.kuutio.org (Postfix) with ESMTP id A70221FB8E;
-        Tue, 23 Oct 2018 20:54:05 +0200 (CEST)
+        by mail1.kuutio.org (Postfix) with ESMTP id 43CDF1FB8F;
+        Tue, 23 Oct 2018 20:54:07 +0200 (CEST)
 Authentication-Results: mail1.kuutio.org (amavisd-new);
         dkim=pass (4096-bit key) reason="pass (just generated, assumed good)"
         header.d=lemmela.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lemmela.net; h=
         references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:from:from:received:received; s=dkim; t=1540320844; x=
-        1542912845; bh=k3hRch9kwYKaig1/554liSX6evfpQRGPH5Lx06DPVFc=; b=S
-        4ZFqzUXVboMJEr1rfqPU3TbqncDyUcXGKB3T6EwLST9b/GjRy4eZCC7Xh3tloDDX
-        SDNbwS7uldXqE54Vj2mGMoHF1B5WO6kiUMUx5Ij1NAKx86JZf/wqyuCkOLlsa/ZV
-        GS0eAz8eFYyGhIKXLkJBk8bmkNNgrOvrMhOVbfX+BfT7QfNOjKIwZSRTGpsvpJF6
-        LucyuDGXZieTKop0Q7j6i3rXSfx+i77isIoX7VtzTLrG2dverzeQ1fC3Lo6bGmy0
-        p+Nv009hLRojMuGenZpB1FsXn0eeFe5M5thjeiDNxz0SxeeqI9lmGegQOaDYknNU
-        /xKSdWzczsj4dhkzRXk6DQ44yMVqF2i2UD3D7eELX5e0BdWTXD985BC6D9fOhG3B
-        wk8GmFZxwfFFxcg0EUCaDrISn0qwqHk+w2wGuiER6gk/5yFG/1n0ImHD6KaTkF65
-        12D/ozsfXuaJnIgLbncwyQ0urOKp65nzio9rPULwgSH1HlohJsf3bLZtC+C0O4F7
-        2Lm8NaSx+pYGBWAg579lXuiU7FzBjcHXxaC2DIYFNaRDJgizVES/am5RWATf7COG
-        0eFO1vj3jjB/SJGR5LXm+W+B24xVjzJUKxkZpI94F/GHDCl6cRejuH9TPkb9Edcw
-        mEQbCTUIPm7w7j3J1MDngC+Y2+lE7UyN8k+gAhfHbM=
+        :subject:from:from:received:received; s=dkim; t=1540320846; x=
+        1542912847; bh=pynibka8auirUqb0BTZoo/q8Z5wVAhJZgUGoIcWmgJM=; b=Z
+        zpwxEyfc0BNtaduL2eN9Tn6MPM69ozM/IhLwQlBsI+Oz2qBxbrGEVLTwM9nruwYv
+        s6kh/QvG7P9K1/OzTbZ2BwTUsJufPqpQQBwBq6VZJ/B8n7opfcFGtQ4BnWLg8SjE
+        OJGo12YEU4nyDV7znHbWrmTu9Wa+2KQ5WNclu6y5PPuBZpvg0HginMkZUDr3Vfkm
+        +L2iR0eVSdTfb/lpDKDZDe6fHom5cw6EeUoRfQgFaEIX+5mL2FmjGDrsTBmBfGb1
+        JtLuT0wyA47/u8n8NSxcBV9eqzZMQu6FROcrELOZgbGWVlo8mJEb91Ws20MXnmh4
+        dsCoKW9UownJD7WAfKv7O/vvFMPnG7/uvMWqcjWSflfL+j2m9CM2RzBHyEW9L9nU
+        9Q5halLku4l0Z9JQC8EuMdUAnlfu0C3f0fcPCQfq11dm/88Bjszl3wQf8jMRZ+9B
+        U8y0X+m73Nawaqf1CwoCeYZyhkpVjv65ZGXfrRcksKaO/IZvwwSnXtbsC5Mv60qE
+        MCybpY118uI2svGFHeba0Y5RMKAKaoXPkBj4iYV7bvv+Tda4DApD0C7kb7TvddD3
+        CY15o8/cdZ/X50eqcDMfLis7gpK1NOLqtR+GT6UiVEmyPwM8fHhB4Bh8wv8tIV+4
+        1SqnfibnMy9d8oKzSwLSk7W8mQ2zosrHPYtYP2m9AI=
 X-Virus-Scanned: amavisd-new at kuutio.org
 Received: from mail1.kuutio.org ([127.0.0.1])
         by localhost (mail1.kuutio.org [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id qAkoHgeLnzrL; Tue, 23 Oct 2018 20:54:04 +0200 (CEST)
+        with LMTP id abn3hQvZK61p; Tue, 23 Oct 2018 20:54:06 +0200 (CEST)
 Received: from build.kuutio.org (unknown [IPv6:2001:998:13:e4::69])
-        by mail1.kuutio.org (Postfix) with ESMTPSA id 2FCB41F984;
-        Tue, 23 Oct 2018 20:54:04 +0200 (CEST)
+        by mail1.kuutio.org (Postfix) with ESMTPSA id CB89E1F99A;
+        Tue, 23 Oct 2018 20:54:05 +0200 (CEST)
 From:   Oskari Lemmela <oskari@lemmela.net>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Sebastian Reichel <sre@kernel.org>,
@@ -69,9 +69,9 @@ Cc:     Lee Jones <lee.jones@linaro.org>, Hartmut Knaack <knaack.h@gmx.de>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         linux-iio@vger.kernel.org
-Subject: [PATCH v5 02/11] dt-bindings: power: supply: axp20x: add AXP803 power bindings
-Date:   Tue, 23 Oct 2018 21:53:21 +0300
-Message-Id: <20181023185330.10472-3-oskari@lemmela.net>
+Subject: [PATCH v5 04/11] dt-bindings: iio: adc: add AXP803 ADC bindings
+Date:   Tue, 23 Oct 2018 21:53:23 +0300
+Message-Id: <20181023185330.10472-5-oskari@lemmela.net>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181023185330.10472-1-oskari@lemmela.net>
 References: <20181023185330.10472-1-oskari@lemmela.net>
@@ -80,39 +80,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The AXP803 power supplies are compatible with AXP813, but
-add specific compatibles for them.
+The AXP803 ADC is compatible with AXP813 ADC, but add
+specific compatible for it.
 
 Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
 ---
- .../devicetree/bindings/power/supply/axp20x_ac_power.txt         | 1 +
- .../devicetree/bindings/power/supply/axp20x_battery.txt          | 1 +
- 2 files changed, 2 insertions(+)
+ Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt b/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
-index 7a1fb532abe5..acdeb4b8f4cc 100644
---- a/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
-+++ b/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
-@@ -4,6 +4,7 @@ Required Properties:
-  - compatible: One of:
- 			"x-powers,axp202-ac-power-supply"
- 			"x-powers,axp221-ac-power-supply"
-+			"x-powers,axp803-ac-power-supply"
- 			"x-powers,axp813-ac-power-supply"
+diff --git a/Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt b/Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt
+index 7a6313913923..1dbd5e480acd 100644
+--- a/Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt
++++ b/Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt
+@@ -4,6 +4,7 @@ Required properties:
+   - compatible: should be one of:
+     - "x-powers,axp209-adc",
+     - "x-powers,axp221-adc",
++    - "x-powers,axp803-adc",
+     - "x-powers,axp813-adc",
+   - #io-channel-cells: should be 1,
  
- This node is a subnode of the axp20x PMIC.
-diff --git a/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt b/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt
-index 41916f69902c..780ebd7e3b84 100644
---- a/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt
-+++ b/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt
-@@ -4,6 +4,7 @@ Required Properties:
-  - compatible, one of:
- 			"x-powers,axp209-battery-power-supply"
- 			"x-powers,axp221-battery-power-supply"
-+			"x-powers,axp803-battery-power-supply"
- 			"x-powers,axp813-battery-power-supply"
+@@ -39,6 +40,7 @@ AXP22x
+  2 | batt_chrg_i
+  3 | batt_dischrg_i
  
- This node is a subnode of its respective PMIC DT node.
++AXP803
+ AXP813
+ ------
+  0 | pmic_temp
 -- 
 2.17.1
 
