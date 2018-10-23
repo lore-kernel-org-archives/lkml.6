@@ -7,66 +7,65 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC2EECDE47
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71791ECDE46
 	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 724E020830
+	by mail.kernel.org (Postfix) with ESMTP id 2945020868
 	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:20:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20150623.gappssmtp.com header.i=@philpotter-co-uk.20150623.gappssmtp.com header.b="f15T7iMM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 724E020830
+	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20150623.gappssmtp.com header.i=@philpotter-co-uk.20150623.gappssmtp.com header.b="nmOCSLyY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2945020868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729114AbeJXEpQ (ORCPT
+        id S1729100AbeJXEpE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 00:45:16 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38277 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728992AbeJXEpA (ORCPT
+        Wed, 24 Oct 2018 00:45:04 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53764 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727667AbeJXEpD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 00:45:00 -0400
-Received: by mail-wr1-f68.google.com with SMTP id d10-v6so3104067wrs.5
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 13:20:03 -0700 (PDT)
+        Wed, 24 Oct 2018 00:45:03 -0400
+Received: by mail-wm1-f66.google.com with SMTP id f8-v6so692127wmc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 13:20:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=philpotter-co-uk.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=A/jiG96sg0/Qi5Ypt2KE8HkbyupaifGhdu3oPA0BQsI=;
-        b=f15T7iMME5asxnV69hCKOrgoXtdxbOS5TxcXhdynPgkC590ZoMFAFdolJvKwvQJYO8
-         ccLS4fSC5LJbzrvYSAV+xiQHwKcCWmEcxMBK9B5df0JgVshC/uTyxrh9f8Q0bXtvwc6y
-         +AdIOlhVbM9RM7qmgmY5wOFUotmngIiJb3yd6MrwxrG8SuUcMOUsQCBQiGTQu/MV3M+M
-         jogvsCxoWbeIiYFMPsxY0FlwX3H3Zds50EFeAd/YF+aDOgDiNh64kW+cTmMjxsqlNPBX
-         DEiHcRHqxG8+/sDw2FBS3TN7JlB3z8PuKF1GjTocl5tL51Yv0y3pFf27Bo2++VOKPwVh
-         Q/RA==
+        bh=jSWvX4QxrsoC+ZiESoxasWdqpZ9hWx9gFFsef9JZrNg=;
+        b=nmOCSLyY/o648Zx1j6VahFWJsTKRtVgwiKM6YiDRixuYevAjr6y84Y5V6M2TxMMhku
+         RUJvawazuUOV11ZO8bTvmHMpzqkq3L+kFG3dXLxomNtxwwOR8hUBZWwd45TKCT4AgA2j
+         LDw9GiMTVvrxzWhhGvIq7Or7icdmuH5MTAXYipZ7RJGMXWDAmqexd3X2nSn7cBLK3sig
+         gAOOHGIs4Tza1uOKfn0cSMy+DgI9cY1AOy1s++zqFIsxcaNIanShGM+xwXU3JzMaYXOC
+         Aa+J29/IfWv9G3LyW9WsdGZdHCQUdgzqpgIWky3eUF/AMlNak7iusxNvfsnYRSfp4Cmj
+         iRTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=A/jiG96sg0/Qi5Ypt2KE8HkbyupaifGhdu3oPA0BQsI=;
-        b=KgmsUFwXQcu9unVfIpkqje8ugYnAL2VyFJNYjtVOTRjktK9mihcAeqJoaEkhfD/dRL
-         h/T60A6WdCupsh+fQBur5uPL+eJCxvd1bqvjSh5dLQrmWRvm5nnhy2OUMVvLgcfqh2hC
-         iDEHQTFpUkcuu72UytvgtORAh/bB0WrgcMLdwC6QBu87jJzKVBvDoiMXlyYE1XJZXwLR
-         8Yn5E+49iWv6Jdn18/mZsN97LjX+nMBADzwAhfeTc3w4EUKc3r7zgK4eZSYzAs0v6AIP
-         78FcZCk4zHkCeXdaaVpRAOe0I/OtaZAy0kDj5KBjTFgjpjVLfjJri09oqjzuuQXTqMKs
-         CxJA==
-X-Gm-Message-State: AGRZ1gK7vCxytbxi4hDPzw1nrDsLAiyhGhtVs4kZgjvpCxamVGPWmnnZ
-        D2nMsTLa41XNb1fnIvx50+c67w==
-X-Google-Smtp-Source: AJdET5dWs1WpKf4w89OuTfD4liCVVN6bkdEFfQpJJzulV9iYjGoUNeFQXN9+XdyP5O61h6eZ0GQZmA==
-X-Received: by 2002:a5d:6a47:: with SMTP id t7-v6mr7612669wrw.78.1540326002875;
-        Tue, 23 Oct 2018 13:20:02 -0700 (PDT)
+        bh=jSWvX4QxrsoC+ZiESoxasWdqpZ9hWx9gFFsef9JZrNg=;
+        b=mdb+HYxf95xlbinTlXzhhc37h9ykgkwrQI7mXxAIZQ00b7fhCd+qf8gPc3cRtP9Chy
+         CJHnpmKyoxQE6ov9tA78L2J2SFQ0qUBbBD/VjsYirtghMpWm/erKk7IBPZM8dP6tP58c
+         2iDYvpkyPU9Gd9TBFfo0TT+fwJzJ/7obSR7GnI3KkMva4ruEg7JUWa7h+XCt8bSQcHKd
+         RjRdjKbpjGtnAcoKZld7Jx47mflBZFNHxI/60OmTR6m7qtgUNCT92V7qF846GCqJAsMr
+         TO1Zzk4MsFMDNJVS9P4QSBu0hN0OKrt8aGMirOdj4zupDwjk29qJQ/hskPF1jy+/AV+9
+         3XGA==
+X-Gm-Message-State: ABuFfoiJZtO5+N74PVB58W/jcF3ovb30FeK8egwayPsNivCPeIJ9moQr
+        +ChqsvQ/0oxG+Y/otXR3pTaLEw==
+X-Google-Smtp-Source: ACcGV62CkJWOfwMoq/Yj3fPlZ1mbZRYVCy0z6ZabJ6ipvTg/3HYXNyK1K1Teh01kuPkZDojRx5jh+w==
+X-Received: by 2002:a1c:9f41:: with SMTP id i62-v6mr23061793wme.53.1540326005409;
+        Tue, 23 Oct 2018 13:20:05 -0700 (PDT)
 Received: from pathfinder (62-64-249-96.dynamic.dsl.as9105.com. [62.64.249.96])
-        by smtp.gmail.com with ESMTPSA id e196-v6sm4687560wmf.43.2018.10.23.13.20.02
+        by smtp.gmail.com with ESMTPSA id z185-v6sm4373951wmz.47.2018.10.23.13.20.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Oct 2018 13:20:02 -0700 (PDT)
-Date:   Tue, 23 Oct 2018 21:20:01 +0100
+        Tue, 23 Oct 2018 13:20:04 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 21:20:04 +0100
 From:   Phillip Potter <phil@philpotter.co.uk>
-To:     mark@fasheh.com
+To:     linux-nilfs@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, amir73il@gmail.com,
-        viro@zeniv.linux.org.uk, jlbec@evilplan.org,
-        linux-fsdevel@vger.kernel.org, ocfs2-devel@oss.oracle.com
-Subject: [RFC][PATCH v2 07/10] ocfs2: use common file type conversion
-Message-ID: <20181023202001.GA15731@pathfinder>
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Subject: [RFC][PATCH v2 09/10] nilfs2: use common file type conversion
+Message-ID: <20181023202004.GA15745@pathfinder>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -76,118 +75,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Deduplicate the ocfs2 file type conversion implementation.
+Deduplicate the nilfs2 file type conversion implementation.
 
 Original patch by Amir Goldstein.
 
 v2:
-- This version does not replace the OCFS2_FT_x defines from
-  fs/ocfs2/ocfs2_fs.h, as these values are now used in compile-time
-  checks added by Phillip Potter to make sure they remain the
-  same as FT_x values
+- Compile-time checks added by Phillip Potter to make
+  sure the NILFS_FT_x enum values stay same as FT_x values
 
 v1:
 - Initial implementation
 
 Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
 ---
- fs/ocfs2/dir.c      | 32 ++++++++++++++++++--------------
- fs/ocfs2/ocfs2_fs.h | 13 +------------
- 2 files changed, 19 insertions(+), 26 deletions(-)
+ fs/nilfs2/dir.c                    | 54 +++++++++++-------------------
+ include/uapi/linux/nilfs2_ondisk.h |  1 +
+ 2 files changed, 20 insertions(+), 35 deletions(-)
 
-diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
-index b048d4fa3959..8a628633cb5c 100644
---- a/fs/ocfs2/dir.c
-+++ b/fs/ocfs2/dir.c
-@@ -69,10 +69,6 @@
- #define NAMEI_RA_BLOCKS  4
- #define NAMEI_RA_SIZE        (NAMEI_RA_CHUNKS * NAMEI_RA_BLOCKS)
- 
--static unsigned char ocfs2_filetype_table[] = {
--	DT_UNKNOWN, DT_REG, DT_DIR, DT_CHR, DT_BLK, DT_FIFO, DT_SOCK, DT_LNK
--};
--
- static int ocfs2_do_extend_dir(struct super_block *sb,
- 			       handle_t *handle,
- 			       struct inode *dir,
-@@ -1803,13 +1799,25 @@ static int ocfs2_dir_foreach_blk_id(struct inode *inode,
- 		}
- 		offset += le16_to_cpu(de->rec_len);
- 		if (le64_to_cpu(de->inode)) {
--			unsigned char d_type = DT_UNKNOWN;
--
--			if (de->file_type < OCFS2_FT_MAX)
--				d_type = ocfs2_filetype_table[de->file_type];
-+			/*
-+			 * compile-time asserts that generic FT_x types
-+			 * still match OCFS2_FT_x types - no need to list
-+			 * in other functions as well as build will
-+			 * fail either way
-+			 */
-+			BUILD_BUG_ON(OCFS2_FT_UNKNOWN != FT_UNKNOWN);
-+			BUILD_BUG_ON(OCFS2_FT_REG_FILE != FT_REG_FILE);
-+			BUILD_BUG_ON(OCFS2_FT_DIR != FT_DIR);
-+			BUILD_BUG_ON(OCFS2_FT_CHRDEV != FT_CHRDEV);
-+			BUILD_BUG_ON(OCFS2_FT_BLKDEV != FT_BLKDEV);
-+			BUILD_BUG_ON(OCFS2_FT_FIFO != FT_FIFO);
-+			BUILD_BUG_ON(OCFS2_FT_SOCK != FT_SOCK);
-+			BUILD_BUG_ON(OCFS2_FT_SYMLINK != FT_SYMLINK);
-+			BUILD_BUG_ON(OCFS2_FT_MAX != FT_MAX);
- 
- 			if (!dir_emit(ctx, de->name, de->name_len,
--				      le64_to_cpu(de->inode), d_type))
-+				      le64_to_cpu(de->inode),
-+				      fs_dtype(de->file_type)))
- 				goto out;
- 		}
- 		ctx->pos += le16_to_cpu(de->rec_len);
-@@ -1901,14 +1909,10 @@ static int ocfs2_dir_foreach_blk_el(struct inode *inode,
- 				continue;
- 			}
- 			if (le64_to_cpu(de->inode)) {
--				unsigned char d_type = DT_UNKNOWN;
--
--				if (de->file_type < OCFS2_FT_MAX)
--					d_type = ocfs2_filetype_table[de->file_type];
- 				if (!dir_emit(ctx, de->name,
- 						de->name_len,
- 						le64_to_cpu(de->inode),
--						d_type)) {
-+						fs_dtype(de->file_type))) {
- 					brelse(bh);
- 					return 0;
- 				}
-diff --git a/fs/ocfs2/ocfs2_fs.h b/fs/ocfs2/ocfs2_fs.h
-index 7071ad0dec90..a08e2622ace7 100644
---- a/fs/ocfs2/ocfs2_fs.h
-+++ b/fs/ocfs2/ocfs2_fs.h
-@@ -424,17 +424,6 @@ static struct ocfs2_system_inode_info ocfs2_system_inodes[NUM_SYSTEM_INODES] = {
- #define	OCFS2_LINKS_HI_SHIFT	16
- #define	OCFS2_DX_ENTRIES_MAX	(0xffffffffU)
- 
--#define S_SHIFT			12
--static unsigned char ocfs2_type_by_mode[S_IFMT >> S_SHIFT] = {
--	[S_IFREG >> S_SHIFT]  = OCFS2_FT_REG_FILE,
--	[S_IFDIR >> S_SHIFT]  = OCFS2_FT_DIR,
--	[S_IFCHR >> S_SHIFT]  = OCFS2_FT_CHRDEV,
--	[S_IFBLK >> S_SHIFT]  = OCFS2_FT_BLKDEV,
--	[S_IFIFO >> S_SHIFT]  = OCFS2_FT_FIFO,
--	[S_IFSOCK >> S_SHIFT] = OCFS2_FT_SOCK,
--	[S_IFLNK >> S_SHIFT]  = OCFS2_FT_SYMLINK,
--};
--
- 
- /*
-  * Convenience casts
-@@ -1629,7 +1618,7 @@ static inline int ocfs2_sprintf_system_inode_name(char *buf, int len,
- static inline void ocfs2_set_de_type(struct ocfs2_dir_entry *de,
- 				    umode_t mode)
- {
--	de->file_type = ocfs2_type_by_mode[(mode & S_IFMT)>>S_SHIFT];
-+	de->file_type = fs_umode_to_ftype(mode);
+diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
+index 81394e22d0a0..168238278d24 100644
+--- a/fs/nilfs2/dir.c
++++ b/fs/nilfs2/dir.c
+@@ -229,35 +229,25 @@ static struct nilfs_dir_entry *nilfs_next_entry(struct nilfs_dir_entry *p)
+ 					  nilfs_rec_len_from_disk(p->rec_len));
  }
  
- static inline int ocfs2_gd_is_discontig(struct ocfs2_group_desc *gd)
+-static unsigned char
+-nilfs_filetype_table[NILFS_FT_MAX] = {
+-	[NILFS_FT_UNKNOWN]	= DT_UNKNOWN,
+-	[NILFS_FT_REG_FILE]	= DT_REG,
+-	[NILFS_FT_DIR]		= DT_DIR,
+-	[NILFS_FT_CHRDEV]	= DT_CHR,
+-	[NILFS_FT_BLKDEV]	= DT_BLK,
+-	[NILFS_FT_FIFO]		= DT_FIFO,
+-	[NILFS_FT_SOCK]		= DT_SOCK,
+-	[NILFS_FT_SYMLINK]	= DT_LNK,
+-};
+-
+-#define S_SHIFT 12
+-static unsigned char
+-nilfs_type_by_mode[S_IFMT >> S_SHIFT] = {
+-	[S_IFREG >> S_SHIFT]	= NILFS_FT_REG_FILE,
+-	[S_IFDIR >> S_SHIFT]	= NILFS_FT_DIR,
+-	[S_IFCHR >> S_SHIFT]	= NILFS_FT_CHRDEV,
+-	[S_IFBLK >> S_SHIFT]	= NILFS_FT_BLKDEV,
+-	[S_IFIFO >> S_SHIFT]	= NILFS_FT_FIFO,
+-	[S_IFSOCK >> S_SHIFT]	= NILFS_FT_SOCK,
+-	[S_IFLNK >> S_SHIFT]	= NILFS_FT_SYMLINK,
+-};
+-
+ static void nilfs_set_de_type(struct nilfs_dir_entry *de, struct inode *inode)
+ {
+-	umode_t mode = inode->i_mode;
+-
+-	de->file_type = nilfs_type_by_mode[(mode & S_IFMT)>>S_SHIFT];
++	/*
++	 * compile-time asserts that generic FT_x types
++	 * still match NILFS_FT_x types - no need to list
++	 * in other functions as well as build will
++	 * fail either way
++	 */
++	BUILD_BUG_ON(NILFS_FT_UNKNOWN != FT_UNKNOWN);
++	BUILD_BUG_ON(NILFS_FT_REG_FILE != FT_REG_FILE);
++	BUILD_BUG_ON(NILFS_FT_DIR != FT_DIR);
++	BUILD_BUG_ON(NILFS_FT_CHRDEV != FT_CHRDEV);
++	BUILD_BUG_ON(NILFS_FT_BLKDEV != FT_BLKDEV);
++	BUILD_BUG_ON(NILFS_FT_FIFO != FT_FIFO);
++	BUILD_BUG_ON(NILFS_FT_SOCK != FT_SOCK);
++	BUILD_BUG_ON(NILFS_FT_SYMLINK != FT_SYMLINK);
++	BUILD_BUG_ON(NILFS_FT_MAX != FT_MAX);
++
++	de->file_type = fs_umode_to_ftype(inode->i_mode);
+ }
+ 
+ static int nilfs_readdir(struct file *file, struct dir_context *ctx)
+@@ -293,15 +283,9 @@ static int nilfs_readdir(struct file *file, struct dir_context *ctx)
+ 				return -EIO;
+ 			}
+ 			if (de->inode) {
+-				unsigned char t;
+-
+-				if (de->file_type < NILFS_FT_MAX)
+-					t = nilfs_filetype_table[de->file_type];
+-				else
+-					t = DT_UNKNOWN;
+-
+ 				if (!dir_emit(ctx, de->name, de->name_len,
+-						le64_to_cpu(de->inode), t)) {
++						le64_to_cpu(de->inode),
++						fs_dtype(de->file_type))) {
+ 					nilfs_put_page(page);
+ 					return 0;
+ 				}
+diff --git a/include/uapi/linux/nilfs2_ondisk.h b/include/uapi/linux/nilfs2_ondisk.h
+index a7e66ab11d1d..90362b1957f1 100644
+--- a/include/uapi/linux/nilfs2_ondisk.h
++++ b/include/uapi/linux/nilfs2_ondisk.h
+@@ -309,6 +309,7 @@ struct nilfs_dir_entry {
+ /*
+  * NILFS directory file types.  Only the low 3 bits are used.  The
+  * other bits are reserved for now.
++ * Values should match common file type values in file_type.h.
+  */
+ enum {
+ 	NILFS_FT_UNKNOWN,
 -- 
 2.17.2
 
