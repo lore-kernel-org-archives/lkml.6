@@ -2,219 +2,135 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB161C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8B3CC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B87D320652
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:09:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B87D320652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 6805A20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:09:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="l4bhE/uW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6805A20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728389AbeJWRbo (ORCPT
+        id S1728419AbeJWRcR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 13:31:44 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40948 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727704AbeJWRbn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 13:31:43 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C9FA220DB5; Tue, 23 Oct 2018 11:09:12 +0200 (CEST)
-Received: from bbrezillon (aaubervilliers-681-1-25-52.w90-88.abo.wanadoo.fr [90.88.145.52])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 650AF20AA3;
-        Tue, 23 Oct 2018 11:09:01 +0200 (CEST)
-Date:   Tue, 23 Oct 2018 11:09:01 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     "Cristian.Birsan@microchip.com" <Cristian.Birsan@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        "richard@nod.at" <richard@nod.at>, Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "cyrille.pitchen@microchip.com" <cyrille.pitchen@microchip.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP
- SPI NOR flash memories
-Message-ID: <20181023110901.310d00c1@bbrezillon>
-In-Reply-To: <VI1PR04MB1038AB2711EF5C639E5139BF99F50@VI1PR04MB1038.eurprd04.prod.outlook.com>
-References: <20180911154007.17195-1-tudor.ambarus@microchip.com>
-        <20181022111543.2a607efc@bbrezillon>
-        <VI1PR04MB1038EF892921194D1BFDE6FC99F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022122659.0675942e@bbrezillon>
-        <VI1PR04MB1038E92FFAB03E07048FD8B499F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022124627.2c6c3b93@bbrezillon>
-        <20181022125259.42df83ea@bbrezillon>
-        <VI1PR04MB1038C9C889185F2A700220F299F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022134324.2c1bd248@bbrezillon>
-        <VI1PR04MB1038E072BFFD09C7C19AD2F899F40@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181022135211.1978c25d@bbrezillon>
-        <VI1PR04MB1038B9A5A8C59E6CB0863FF599F50@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181023073946.138b287e@bbrezillon>
-        <VI1PR04MB10381C2DC4052E636BA26ADA99F50@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <20181023104827.77e7775b@bbrezillon>
-        <VI1PR04MB1038AB2711EF5C639E5139BF99F50@VI1PR04MB1038.eurprd04.prod.outlook.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 23 Oct 2018 13:32:17 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:33552 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727704AbeJWRcR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 13:32:17 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 9B65B8EE0FC;
+        Tue, 23 Oct 2018 02:09:46 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id F2H9WlPlsN2Y; Tue, 23 Oct 2018 02:09:44 -0700 (PDT)
+Received: from [172.20.48.127] (unknown [62.232.21.219])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 12E098EE0D5;
+        Tue, 23 Oct 2018 02:09:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1540285784;
+        bh=H1MyH1/gU67Nqxg+v7ZaMVq2TXoWPQoFyqOAPMgwX4g=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=l4bhE/uW9oQCD04KhKNhMzCk6PKEnG1qjIj8f3feaboNoItCMt8NsU+msd7GNMSLb
+         hmEhDmjTeNomMyx5kow4OpJHYU0ISvtpZO3jAiMJ7nza6OqvoF23EgPK42k2gekwLo
+         zKD2p6UQn6BX7SAER6vWK+njXMpS2MT2+JxyHKsE=
+Message-ID: <1540285779.3347.27.camel@HansenPartnership.com>
+Subject: Re: [Ksummit-discuss] [GIT PULL] code of conduct fixes for 4.19-rc8
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Greg Kroah-Hartman <greg@kroah.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        ksummit-discuss@lists.linuxfoundation.org
+Date:   Tue, 23 Oct 2018 10:09:39 +0100
+In-Reply-To: <20181022211025.GA8911@kroah.com>
+References: <1540066514.3464.22.camel@HansenPartnership.com>
+         <20181022211025.GA8911@kroah.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 23 Oct 2018 08:59:22 +0000
-Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+On Mon, 2018-10-22 at 22:10 +0100, Greg Kroah-Hartman wrote:
+> On Sat, Oct 20, 2018 at 01:15:14PM -0700, James Bottomley wrote:
+> > This is the series of patches which has been discussed on both
+> > ksummit-discuss and linux-kernel for the past few weeks.  As Shuah
+> > said when kicking off the process, it's designed as a starting
+> > point for the next phase of the discussion, not as the end point,
+> > so it's only really a set of minor updates to further that goal.
+> > 
+> > The merger of the three patches to show the combined effect is
+> > attached below.  However, Greg recently posted the next phase of
+> > the discussion, so people will be asking what the merger of the
+> > series looks like.  Ignoring the non-CoC documents, I think it
+> > looks like this
+> 
+> Sorry for not responding sooner for this, travel and the meeting
+> today took up my time.
+> 
+> Anyway, as we discussed today in the Maintainers summit, let's leave
+> the Code of Conduct text alone for now.
 
-> Hi, 
-> 
-> > -----Original Message-----
-> > From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
-> > Sent: Tuesday, October 23, 2018 2:18 PM
-> > To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-> > Cc: Cristian.Birsan@microchip.com; Tudor Ambarus
-> > <tudor.ambarus@microchip.com>; richard@nod.at; Mark Brown
-> > <broonie@kernel.org>; linux-kernel@vger.kernel.org;
-> > nicolas.ferre@microchip.com; marek.vasut@gmail.com;
-> > cyrille.pitchen@microchip.com; linux-mtd@lists.infradead.org; Cyrille Pitchen
-> > <cyrille.pitchen@wedev4u.fr>; computersforpeace@gmail.com;
-> > dwmw2@infradead.org; linux-arm-kernel@lists.infradead.org
-> > Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add support to non-uniform SFDP SPI
-> > NOR flash memories
-> > 
-> > On Tue, 23 Oct 2018 08:18:35 +0000
-> > Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
-> >   
-> > >
-> > > I have added the prints in m25p80_read() and in flexspi controller prepare_lut  
-> > and read_rxfifo() func.  
-> > > In these have added prints for data variable of struct op and data which being  
-> > read by the controller from the flash.  
-> > >
-> > > [    2.091467] smpt[0]=[addr_width:00000003, read_dumy:00000008,  
-> > read_opcode:00000065, data_mask:00000008]  
-> > > [    2.099113] m25p80_read, nor[op:00000065 addr_width:00000003,  
-> > dummy:00000008, len:00000001  
-> > > [    2.107367] m25p80_read, cmd[opcode:65 bwidth:1] aadr[val:4, nbytes:3,  
-> > bwidth:1]  
-> > > [    2.114753] m25p80_read, dummy[nbytes:1 bwidth:1] data[bwidth:1,  
-> > nbytes:1]  
-> > > [    2.121706] nxp_fspi_prepare_lut cmd[opcode:65 bwidth:1] aadr[val:4,  
-> > nbytes:3, bwidth:1]  
-> > > [    2.129786] dummy[nbytes:1 bwidth:1] data[dir:0 bwidth:1, nbytes:1]
-> > > [    2.136132] nxp-fspi 20c0000.flexspi: CMD[65] lutval[0:8180465  
-> > 1:24003008      2:0     3:0]  
-> > > [    2.144223] nxp_fspi_read_rxfifo, ReadData op.buf[0x00]
-> > > [    2.151004] smpt_read[1] addr[00000004], data_byte[00000000]  
-> > err:00000000  
-> > >
-> > >
-> > > [    2.157782] smpt[2]=[addr_width:00000003, read_dumy:00000008,  
-> > read_opcode:00000065, data_mask:00000004]  
-> > > [    2.165429] m25p80_read, nor[op:00000065 addr_width:00000003,  
-> > dummy:00000008, len:00000001  
-> > > [    2.173683] m25p80_read, cmd[opcode:65 bwidth:1] aadr[val:2, nbytes:3,  
-> > bwidth:1]  
-> > > [    2.181068] m25p80_read, dummy[nbytes:1 bwidth:1] data[bwidth:1,  
-> > nbytes:1]  
-> > > [    2.188021] nxp_fspi_prepare_lut cmd[opcode:65 bwidth:1] aadr[val:2,  
-> > nbytes:3, bwidth:1]  
-> > > [    2.196101] dummy[nbytes:1 bwidth:1] data[dir:0 bwidth:1, nbytes:1]
-> > > [    2.202447] nxp-fspi 20c0000.flexspi: CMD[65] lutval[0:8180465  
-> > 1:24003008      2:0     3:0]  
-> > > [    2.210539] nxp_fspi_read_rxfifo, ReadData op.buf[0x02]
-> > > [    2.217319] smpt_read[3] addr[00000002], data_byte[00000002]  
-> > err:00000000  
-> > >
-> > >
-> > > [    2.224098] smpt[4]=[addr_width:00000003, read_dumy:00000008,  
-> > read_opcode:00000065, data_mask:00000002]  
-> > > [    2.231744] m25p80_read, nor[op:00000065 addr_width:00000003,  
-> > dummy:00000008, len:00000001  
-> > > [    2.239998] m25p80_read, cmd[opcode:65 bwidth:1] aadr[val:4, nbytes:3,  
-> > bwidth:1]  
-> > > [    2.247383] m25p80_read, dummy[nbytes:1 bwidth:1] data[bwidth:1,  
-> > nbytes:1]  
-> > > [    2.254336] nxp_fspi_prepare_lut cmd[opcode:65 bwidth:1] aadr[val:4,  
-> > nbytes:3, bwidth:1]  
-> > > [    2.262416] dummy[nbytes:1 bwidth:1] data[dir:0 bwidth:1, nbytes:1]
-> > > [    2.268762] nxp-fspi 20c0000.flexspi: CMD[65] lutval[0:8180465  
-> > 1:24003008      2:0     3:0]  
-> > > [    2.276854] nxp_fspi_read_rxfifo, ReadData op.buf[0x00]
-> > > [    2.283634] smpt_read[5] addr[00000004], data_byte[00000000]  
-> > err:00000000  
-> > >
-> > >
-> > > [    2.290412] spi_nor_get_map_in_use:2915 map_id=0 smpt_len:16 i=:6
-> > > [    2.296496] End [addr_width:00000003, read_dumy:00000008,  
-> > read_opcode:00000065] ReturnVal:00000000  
-> > > [    2.305444] spi_nor_parse_smpt:3065
-> > > [    2.308924] m25p80 spi0.0: failed to parse SMPT (err = -22)
-> > >
-> > >  
-> > > >
-> > > > Next thing you can do is read the CR2NV reg (using the RDAR command)
-> > > > and check the RL (Read Latency) and AL (Address Length) values.  
-> > >
-> > > Please let me know how to read CR2NV register.  
-> > 
-> > Actually, RDAR is already what you use to read the map_id, and we need to use
-> > it to read the register that contains the number of dummy cycles and the number
-> > of address bytes to use for RDAR operations. Looks like we have a chicken and
-> > egg situation here :-).
-> > 
-> > Let's try something else:
-> > 
-> > 1/ create an u8 array of 16 entries named data_bytes
-> > 
-> > for each loop iteration (the first for loop):
-> > 2/ set ->addr_width to 3 and ->read_dummy to 0 3/ call spi_nor_read_raw(nor,
-> > addr, ARRAY_SIZE(data_bytes), data_bytes) 4/ dump the data_bytes buf 5/ set -  
-> > >addr_width to 4 6/ call spi_nor_read_raw(nor, addr, ARRAY_SIZE(data_bytes),  
-> > data_bytes) 7/ dump the data_bytes buf
-> > 
-> > If the SPI driver is working correctly, we should be able to figure out the right
-> > value for ->addr_width and ->read_dummy.
-> >   
-> 
-> Ok, I would try with the suggested change.
-> But till the point we not able to figure out actual failure reason can we have below changes pushed-in
+I still think rejecting this pull request in favour of your own patches
+rather than doing a combination is a process mistake.  However, I do
+believe most people can live with the current status quo.  So I'm not
+going to object further (and I'm grateful for the commitment to try to
+be more transparent and actually follow our own processes next time we
+do something like this that we also arrived at at the Maintainer
+Summit).
 
-We're not there yet. The change just reached Linus tree, and we have
-plenty of time to fix the issue before 4.20 is out. So no, I don't want
-to rush this patch in until we figure out what's really going on.
+>   It matches what "upstream" has with the exception of removing that
+> one paragraph.
 
+Um, and adding the interpretation paragraph; that paragraph is one of
+the most significant changes because the interpretation document
+corrals a lot of the potential effects of the undiluted contributor
+covenant.
+
+>   If you have issues with the wording in it, please work with
+> upstream to fix the issues there as hundreds of other projects will
+> benefit with your changes if they are really needed.
+
+Deflection to "upstream" is a bit of a red herring on two counts:
+firstly because we have no commitment to move to later revisions and
+secondly because the interaction of the interpretation document with an
+update is quite a big source of potential conflicts: to properly update
+we'd have to update both documents which means us potentially rewriting
+one or both again.
+
+I also think deflection to "upstream" is a social mistake.  If you want
+the community to own the code of conduct, you can't keep telling them
+it's someone else's document.
+
+James
+
+
+> For now, let's let things settle down and not worry about
+> hypothetical situations that might possibly happen in some way or
+> another as we can debate that type of thing endlessly (it's a good
+> skill we have which makes us great kernel developers, but it not
+> always transferrable to other environments).
 > 
-> @@ -3139,6 +3177,17 @@ static int spi_nor_parse_sfdp(struct spi_nor *nor,
->                 switch (SFDP_PARAM_HEADER_ID(param_header)) {
->                 case SFDP_SECTOR_MAP_ID:
->                         err = spi_nor_parse_smpt(nor, param_header);
-> +                       if (err) {
-> +                               dev_warn(dev,
-> +                               "failed to parse SMPT (err = %d)\n",
-> +                               err);
-> +                               /*
-> +                                * SMPT parsing is optional, let's not drop
-> +                                * all information we extracted so far just
-> +                                * because it failed.
-> +                                */
-> +                               err = 0;
-> +                       }
+> If real issues do come up in the future, we will address them then,
+> as we always have the option to change and revisit things as needed.
 > 
-> --
-> Regards
-> Yogesh Gaur.
->  
-> > Thanks,
-> > 
-> > Boris  
+> thanks,
+> 
+> greg k-h
+> _______________________________________________
+> Ksummit-discuss mailing list
+> Ksummit-discuss@lists.linuxfoundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/ksummit-discuss
+> 
 
