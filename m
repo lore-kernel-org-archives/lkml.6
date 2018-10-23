@@ -2,89 +2,121 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C67C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB9FC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 372B720665
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:51:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 272E320671
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:52:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oXsPxpxs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 372B720665
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="TYWtVl1D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 272E320671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbeJWROF (ORCPT
+        id S1728007AbeJWRO5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 13:14:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47840 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbeJWROF (ORCPT
+        Tue, 23 Oct 2018 13:14:57 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:52754 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727713AbeJWRO5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 13:14:05 -0400
+        Tue, 23 Oct 2018 13:14:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5O5EUWCTYX4TgB0xqILhK7k+WaSQy4FSABRtisgyZT0=; b=oXsPxpxswdyp1yeiLHNOFO0Af
-        WjK4nIFSeA7vB8QyznXi7lhjtibZiPXw+bn8SOFzDB7F1fB5IHdr4l45lCk1kaHTDHGrFsw41+vRr
-        xy69QURCWDtGR51gWrEw49QU44dIof2D5UUZWSs0uAqy1CnF1sTtNUDjQ9XvxgcCBV5sfj+DNbtdM
-        MxCUar6PjiaHydwc/OGyLlcl6p0ZJRv3Tv+GtRwJQKAw3WKAuRzxjDzNJqDLqD5VrD/FvAjyzh1S6
-        4dYB5QUHQdzcqZ9tVv/qse3mgA4WyNHrxVUFNyfmw2+yIIb9sn5ffj5rdPfYmibrNDe0FWmiliMfv
-        dfUF9Wfxw==;
-Received: from [185.7.230.213] (helo=worktop)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gEsPR-0001Zl-TW; Tue, 23 Oct 2018 08:51:30 +0000
-Received: by worktop (Postfix, from userid 1000)
-        id 9B2476E08AB; Tue, 23 Oct 2018 10:51:27 +0200 (CEST)
-Date:   Tue, 23 Oct 2018 10:51:27 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Yi Sun <yi.y.sun@linux.intel.com>
-Cc:     Waiman Long <longman@redhat.com>, Juergen Gross <jgross@suse.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-        chao.p.peng@intel.com, chao.gao@intel.com,
-        isaku.yamahata@intel.com, michael.h.kelley@microsoft.com,
-        tianyu.lan@microsoft.com, "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v1 2/2] x86/hyperv: make HvNotifyLongSpinWait hypercall
-Message-ID: <20181023085127.GG3109@worktop.c.hoisthospitality.com>
-References: <1539954835-34035-1-git-send-email-yi.y.sun@linux.intel.com>
- <1539954835-34035-3-git-send-email-yi.y.sun@linux.intel.com>
- <bab010e9-a122-95f1-d8cc-790e56c72716@suse.com>
- <20181022015342.GK11769@yi.y.sun>
- <2e0d62cb-b706-a5b4-65f7-982a913fb32b@suse.com>
- <ba75b994-c1a6-6e91-6499-b9af90636fcf@redhat.com>
- <20181022171516.GH3117@worktop.programming.kicks-ass.net>
- <20181023025740.GL11769@yi.y.sun>
+         bh=zmUXFEV6IkLnfea5ZbMTFeqbY20LU3a2Qil9JcHTH6k=; b=TYWtVl1DXUfFtNbkWwI2ITjlY
+        o5gnsUcJxyFBret4Ho6wiPZa9P3yAMf5B+sTlROWv5SMeTXhdRvvvDSPIiXmVt+CUAa4zZJjbuHoJ
+        qpaNc7FvUXikbRfJqgaWT9IMSOdpZw7GQ2afxmaUVwt28Gn5MxHtSkEwam1i7dl9SWCXs=;
+Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:39521)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gEsQL-0003dW-Lh; Tue, 23 Oct 2018 09:52:25 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gEsQA-0001JK-Cg; Tue, 23 Oct 2018 09:52:14 +0100
+Date:   Tue, 23 Oct 2018 09:52:09 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
+Cc:     Dinh Nguyen <dinguyen@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] ARM: socfpga: Clean unused functions
+Message-ID: <20181023085208.GL30658@n2100.armlinux.org.uk>
+References: <20181009112021.756-1-peron.clem@gmail.com>
+ <CAJiuCceqyPY+dYr+1xdSyUh5x1Fr=M_p1nsMF9h52v5CXt1uYw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181023025740.GL11769@yi.y.sun>
-User-Agent: Mutt/1.5.22.1 (2013-10-16)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJiuCceqyPY+dYr+1xdSyUh5x1Fr=M_p1nsMF9h52v5CXt1uYw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 10:57:40AM +0800, Yi Sun wrote:
-> On 18-10-22 19:15:16, Peter Zijlstra wrote:
+On Tue, Oct 23, 2018 at 10:47:05AM +0200, Clément Péron wrote:
+> Hi Dinh / Russell,
+> 
+> Could you have a look at these patchs please ?
 
-> > > >>>> +#if defined(CONFIG_X86_64) && defined(CONFIG_PARAVIRT_SPINLOCKS) && IS_ENABLED(CONFIG_HYPERV)
-> > > >>>> +			if (!hv_notify_long_spin_wait(SPIN_THRESHOLD - loop))
-> > > >>>> +				break;
-> > > >>>> +#endif
-> > 
-> > Secondly; how come you thought that was acceptable in any way shape or
-> > form?
-> > 
-> Sorry for that. Will try another way.
+Nothing to do with me - it's up to the socfpga maintainer and arm-soc
+maintainers.
 
-Can you try and explain why vcpu_is_preempted() doesn't work for you?
+> Thanks,
+> Clement
+> 
+> On Tue, 9 Oct 2018 at 13:20, Clément Péron <peron.clem@gmail.com> wrote:
+> >
+> > These functions are unused externally, removed them and declare
+> > the one used locally as static.
+> >
+> > Signed-off-by: Clément Péron <peron.clem@gmail.com>
+> > ---
+> >  arch/arm/mach-socfpga/core.h    | 2 --
+> >  arch/arm/mach-socfpga/socfpga.c | 2 +-
+> >  2 files changed, 1 insertion(+), 3 deletions(-)
+> >
+> > diff --git a/arch/arm/mach-socfpga/core.h b/arch/arm/mach-socfpga/core.h
+> > index 65e1817d8afe..92cae0a9213f 100644
+> > --- a/arch/arm/mach-socfpga/core.h
+> > +++ b/arch/arm/mach-socfpga/core.h
+> > @@ -34,8 +34,6 @@
+> >
+> >  #define RSTMGR_MPUMODRST_CPU1          0x2     /* CPU1 Reset */
+> >
+> > -extern void socfpga_init_clocks(void);
+> > -extern void socfpga_sysmgr_init(void);
+> >  void socfpga_init_l2_ecc(void);
+> >  void socfpga_init_ocram_ecc(void);
+> >  void socfpga_init_arria10_l2_ecc(void);
+> > diff --git a/arch/arm/mach-socfpga/socfpga.c b/arch/arm/mach-socfpga/socfpga.c
+> > index dde14f7bf2c3..5fb6f79059a8 100644
+> > --- a/arch/arm/mach-socfpga/socfpga.c
+> > +++ b/arch/arm/mach-socfpga/socfpga.c
+> > @@ -32,7 +32,7 @@ void __iomem *rst_manager_base_addr;
+> >  void __iomem *sdr_ctl_base_addr;
+> >  unsigned long socfpga_cpu1start_addr;
+> >
+> > -void __init socfpga_sysmgr_init(void)
+> > +static void __init socfpga_sysmgr_init(void)
+> >  {
+> >         struct device_node *np;
+> >
+> > --
+> > 2.17.1
+> >
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
