@@ -2,82 +2,78 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C5DC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D691C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1906720665
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:01:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1906720665
+	by mail.kernel.org (Postfix) with ESMTP id E6B3D20665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:02:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6B3D20665
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728662AbeJXBZw (ORCPT
+        id S1728685AbeJXB04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 21:25:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44674 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727758AbeJXBZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 21:25:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 34C92AF8E;
-        Tue, 23 Oct 2018 17:01:39 +0000 (UTC)
-Date:   Tue, 23 Oct 2018 19:01:36 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 1/7] mm, devm_memremap_pages: Mark
- devm_memremap_pages() EXPORT_SYMBOL_GPL
-Message-ID: <20181023170136.GV18839@dhcp22.suse.cz>
-References: <153936657159.1198040.4489957977352276272.stgit@dwillia2-desk3.amr.corp.intel.com>
- <153936657702.1198040.119388737535638846.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20181017081753.GG18839@dhcp22.suse.cz>
- <CAPcyv4hMFQYekvZWMzKYckuVLSGd3GizRtoDudFBQj5bfxD3Mw@mail.gmail.com>
+        Tue, 23 Oct 2018 21:26:56 -0400
+Received: from twin.jikos.cz ([91.219.245.39]:42108 "EHLO twin.jikos.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727758AbeJXB0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 21:26:55 -0400
+X-Greylist: delayed 1567 seconds by postgrey-1.27 at vger.kernel.org; Tue, 23 Oct 2018 21:26:54 EDT
+Received: from twin.jikos.cz (jikos@[127.0.0.1])
+        by twin.jikos.cz (8.13.6/8.13.6) with ESMTP id w9NGaRHF019896
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 23 Oct 2018 18:36:27 +0200
+Received: from localhost (jikos@localhost)
+        by twin.jikos.cz (8.13.6/8.13.6/Submit) with ESMTP id w9NGaQfR019892;
+        Tue, 23 Oct 2018 18:36:26 +0200
+X-Authentication-Warning: twin.jikos.cz: jikos owned process doing -bs
+Date:   Tue, 23 Oct 2018 18:36:26 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+cc:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>
+Subject: Re: Is Fixes line enough?
+In-Reply-To: <20181023143856.GD6850@thunk.org>
+Message-ID: <alpine.LRH.2.00.1810231833260.2860@gjva.wvxbf.pm>
+References: <a99840d5-7d57-ec1f-1c70-37ffa6cfd31b@lwfinger.net> <20181023143856.GD6850@thunk.org>
+User-Agent: Alpine 2.00 (LRH 1167 2008-08-23)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4hMFQYekvZWMzKYckuVLSGd3GizRtoDudFBQj5bfxD3Mw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 17-10-18 09:30:58, Dan Williams wrote:
-> On Wed, Oct 17, 2018 at 1:18 AM Michal Hocko <mhocko@kernel.org> wrote:
-[...]
-> > > Again, devm_memremap_pagex() exposes and relies upon core kernel
-> > > internal assumptions and will continue to evolve along with 'struct
-> > > page', memory hotplug, and support for new memory types / topologies.
-> > > Only an in-kernel GPL-only driver is expected to keep up with this
-> > > ongoing evolution. This interface, and functionality derived from this
-> > > interface, is not suitable for kernel-external drivers.
-> >
-> > I do not follow this line of argumentation though. We generally do not
-> > care about out-of-tree modules and breaking them if the interface has to
-> > be updated.
+On Tue, 23 Oct 2018, Theodore Y. Ts'o wrote:
+
+> > A question has come up on the linux-wireless ML. If a patch has a "Fixes"
+> > line, is that sufficient to get it flagged as a patch in Stable, or is a
+> > "Cc: Stable" line also needed?
 > 
-> Exactly right. The EXPORT_SYMBOL_GPL is there to say that this api has
-> deep enough ties into the core kernel to lower the confidence that the
-> API will stay stable from one kernel revision to the next. It's also
-> an api that is attracting widening and varied reuse and the long term
-> health of the implementation depends on being able to peer deeply into
-> its users and refactor the interface and the core kernel as a result.
+> Someone actually asked this question at the Maintainer's Summit,
+> actually.  The answer was that the Fixes line is not sufficient for
+> Greg's scripts; you have to have the "Cc: stable" line as well.  Greg
+> tried using the Fixes line as a trigger, but there were too many cases
+> where this pulled in commits that weren't really suitable for the
+> Stable kernels.  Sasha's machine-learning lash up will use the Fixes
+> line as a signal, but if you want to explicitly request that the patch
+> should be cherry-picked into Stable, you should have the "Cc: stable"
+> line.
 
-I am sorry I do not follow. For in-tree modules you have to update users
-whether the export is GPL or not and we do not care _at all_ about out
-of tree because we do not guarantee _any_ kABI/API stability
-(Documentation/process/stable-api-nonsense.rst).
+FWIW, I brought this up already at KS 2016, see Jon's coverage here:
 
-Anyway, I do not really care much, but I find the way of the
-argumentation dubious. I can clearly understand a simple line "me as the
-author want this GPL - live with that".
+	https://lwn.net/Articles/705220/
+
+My primary motivation to bring that up back then was to try to reduce the 
+number of patches that are taken into -stable while there is no good 
+justification for that (by requiring each and every of those having Fixes: 
+present as a requirement), but it didn't really lead anywhere.
+
 -- 
-Michal Hocko
+Jiri Kosina
 SUSE Labs
