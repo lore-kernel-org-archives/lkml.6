@@ -2,152 +2,143 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA17C7112C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8BDC67863
 	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 495B620813
+	by mail.kernel.org (Postfix) with ESMTP id 8A86A2075D
 	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:24:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TCcmhzHA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 495B620813
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="g0LziTC2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A86A2075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729068AbeJXHsy (ORCPT
+        id S1729098AbeJXHuQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 03:48:54 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38340 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728894AbeJXHsy (ORCPT
+        Wed, 24 Oct 2018 03:50:16 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:51314 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726919AbeJXHuQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 03:48:54 -0400
-Received: by mail-pl1-f195.google.com with SMTP id p7-v6so1340659plk.5
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 16:23:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UWYw/fvE0kL/sYUGmpBB4/DDhLvzduRWBbeLKbNQNGM=;
-        b=TCcmhzHAdIOM+nx3qtMVoPRzBTnXMWPpue4nWNIq2JgT3JN6spF/SMio4jsRF1gOjY
-         ehgr6uiTvpkDV829QQ+V3NpyEEULb8an9Quc3jSJBVGOFmPynT37FnySK86aMaBLi+8d
-         3SnSj8N/EMb5S1TMNidjWMmhxT4YgpZORzk40tVtnDY++CpTlUm8HXXA3gR9r93ZVrgK
-         lEo20QtDYl1BaXTXdvTuF1NVbwvgm7HgibekVjoT9WAo0CtGsn6oL8hQgBhtL3HXnPQv
-         BaJzmFwHdv/Qeyt1yPzzMmfXVTJ8Iq4xoIzzlLPhP7CTMU8OZbrJid2VZ0g5Cxu23nIS
-         4Cmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UWYw/fvE0kL/sYUGmpBB4/DDhLvzduRWBbeLKbNQNGM=;
-        b=d3jiFUZvTwOrF9Tk1DhjitYqtRv3s1gSHThzw8pnatmGigllGP7KXO/QVcFr5Dhtdv
-         fu9cxyGqIXgGsdt/krrzVSS+/GpBFzP6ENFv7Ee++0VaDJlSHHsr309g8HbSlszxZ7ZX
-         t4rHnlmv++zVXvB1USYnbQVB5P1VUE5N6d0vt86InRDF0zq3HBstvbtaFsXs852nBOZK
-         E8mIqnXUB/T+zjJTUxBjVQFjImHSeyjcDP+EB4Y8iDMm/c0VIlINTaM5Mel5BKVLDKYZ
-         150NKBUHwa4O0bdyqysusplWCWTQuBVe6p5VSRq3H38g/GKexGQlswS5G3E/+pArQMkq
-         NDsQ==
-X-Gm-Message-State: AGRZ1gKdZZFZhgETdTD38vLWI9ipdCNNW9/qYiXV0CK2mp+wiXBQ2DTG
-        qgCK7tiWSHLIEt0C9yWcEE1IMtxA0qeMrdeCn/eqQg==
-X-Google-Smtp-Source: AJdET5f+h10Dya3DQpF4KGYmDqPcT3UxpHoAGZNdx6uXoYYYX0yvMyTN5MX5iGJK0XmIHMr7GnYIeFNet1TgOSm3BSw=
-X-Received: by 2002:a17:902:b106:: with SMTP id q6-v6mr261572plr.238.1540336999067;
- Tue, 23 Oct 2018 16:23:19 -0700 (PDT)
+        Wed, 24 Oct 2018 03:50:16 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9NNOceZ005455;
+        Tue, 23 Oct 2018 18:24:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1540337078;
+        bh=OAPiWTpaAeEd+JGAXzPLx0jY0DwDwmFw2pyyrv+iw94=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=g0LziTC26czXgr2sYCNrfVX/ApzY0GUjZ3iod1pBkn7RQ7UIqpB6isUxG1RlzWWsZ
+         ymD5qxKviu4dORmmWrmd4clhYD8qLJUp+OOM5n5P6plmzxbsedfHs6NozeXfvEdBBP
+         QvNYCOV+uYboPefsE2cAoP7Hy6rtK4z9oDuBHIbU=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9NNOcmn001734;
+        Tue, 23 Oct 2018 18:24:38 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 23
+ Oct 2018 18:24:38 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 23 Oct 2018 18:24:38 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9NNOcam008289;
+        Tue, 23 Oct 2018 18:24:38 -0500
+Subject: Re: [PATCH v4 12/17] remoteproc: modify vring allocation to rely on
+ centralized carveout allocator
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Loic PALLARDY <loic.pallardy@st.com>
+CC:     "ohad@wizery.com" <ohad@wizery.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+ <1532697292-14272-13-git-send-email-loic.pallardy@st.com>
+ <20181010053206.GA20016@builder>
+ <89f3d4bbbc484c5fb5d85f03b1325103@SFHDAG7NODE2.st.com>
+ <20181015064040.GT12063@builder>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <6d2a42f0-d981-fac5-e4a9-fa7b8fdaef73@ti.com>
+Date:   Tue, 23 Oct 2018 18:24:37 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181023231125.27976-1-natechancellor@gmail.com>
-In-Reply-To: <20181023231125.27976-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 23 Oct 2018 16:23:07 -0700
-Message-ID: <CAKwvOdnPbO-CVHCeoz9JWTAVtJOGGMzNv3kPUTYxeFs=uMzH4A@mail.gmail.com>
-Subject: Re: [PATCH] x86: Remove -pipe from KBUILD_CFLAGS
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, namit@vmware.com,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181015064040.GT12063@builder>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 4:11 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Commit 77b0bf55bc67 ("kbuild/Makefile: Prepare for using macros in
-> inline assembly code to work around asm() related GCC inlining bugs")
-> added -Wa,- to KBUILD_CFLAGS, which breaks compiling with Clang (hangs
-> indefinitely at compiling init/main.o). This happens because while Clang
-> accepts -pipe (and has it documented in its list of supported flags), it
-> silently ignores it after this 2010 commit (thanks to Nick Desaulniers
-> for tracking this down), meaning that gas just infinitely waits for
-> stdin and never receives it.
->
-> https://github.com/llvm-mirror/clang/commit/c19a12dc3d441bec62eed55e312b76c12d6d9022
->
-> Initially, I had suggested just add -Wa,- to KBUILD_CFLAGS when GCC was
-> being used but that was before realizing it is because Clang doesn't do
-> anything with -pipe. H. Peter Anvin suggested checking to see if -pipe
-> gives us any gains out of GCC. Turns out it might actually be hurting:
->
-> With -pipe:
->
-> real    3m40.813s
-> real    3m44.449s
-> real    3m39.648s
->
-> Without -pipe:
->
-> real    3m38.492s
-> real    3m38.335s
-> real    3m38.975s
->
-> The issue of -Wa,- being passed along to gas without -pipe being
-> supported should still probably be fixed on the LLVM side (open issue:
-> https://bugs.llvm.org/show_bug.cgi?id=39410) but this is not as much of
-> a workaround anymore since it helps both GCC and Clang.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/213
-> Suggested-by: H. Peter Anvin <hpa@zytor.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Hi Bjorn, Loic,
 
-Thanks Nathan for this patch and the timings and HPA for the suggestions.
-Tested-and-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+On 10/15/18 1:40 AM, Bjorn Andersson wrote:
 
-> ---
->  arch/x86/Makefile | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-> index 73f4831283ac..672c689c1faa 100644
-> --- a/arch/x86/Makefile
-> +++ b/arch/x86/Makefile
-> @@ -213,8 +213,6 @@ ifdef CONFIG_X86_64
->  KBUILD_LDFLAGS += $(call ld-option, -z max-page-size=0x200000)
->  endif
->
-> -# Speed up the build
-> -KBUILD_CFLAGS += -pipe
->  # Workaround for a gcc prelease that unfortunately was shipped in a suse release
->  KBUILD_CFLAGS += -Wno-sign-compare
->  #
-> @@ -239,7 +237,7 @@ archheaders:
->  archmacros:
->         $(Q)$(MAKE) $(build)=arch/x86/kernel arch/x86/kernel/macros.s
->
-> -ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s -Wa,-
-> +ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s
->  export ASM_MACRO_FLAGS
->  KBUILD_CFLAGS += $(ASM_MACRO_FLAGS)
->
-> --
-> 2.19.1
->
+> On Wed 10 Oct 11:58 PDT 2018, Loic PALLARDY wrote:
+> 
+>>
+>>
+>>> -----Original Message-----
+>>> From: Bjorn Andersson [mailto:bjorn.andersson@linaro.org]
+>>> Sent: mercredi 10 octobre 2018 07:32
+>>> To: Loic PALLARDY <loic.pallardy@st.com>
+>>> Cc: ohad@wizery.com; linux-remoteproc@vger.kernel.org; linux-
+>>> kernel@vger.kernel.org; Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
+>>> benjamin.gaignard@linaro.org; s-anna@ti.com
+>>> Subject: Re: [PATCH v4 12/17] remoteproc: modify vring allocation to rely on
+>>> centralized carveout allocator
+>>>
+>>> On Fri 27 Jul 06:14 PDT 2018, Loic Pallardy wrote:
+>>>>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>>>> diff --git a/drivers/remoteproc/remoteproc_virtio.c
+>>> b/drivers/remoteproc/remoteproc_virtio.c
+>>> [..]
+>>>> @@ -114,6 +122,10 @@ static struct virtqueue *rp_find_vq(struct
+>>> virtio_device *vdev,
+>>>>  	rvring->vq = vq;
+>>>>  	vq->priv = rvring;
+>>>>
+>>>> +	/* Update vring in resource table */
+>>>> +	rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
+>>>> +	rsc->vring[id].da = mem->da;
+>>>> +
+>>>
+>>> This would now happen after we've started the remoteproc. Don't we need
+>>> to do this in-between allocating the carveouts and booting the
+>>> remoteproc?
+>>
+>> Yes da is updated after coprocessor boot, but before vdev status in resource table is set to DRIVER_OK and kick.
+>> Coprocessor should not parse this resource before as vrings not initialized yet.
+>> If coprocessor needs to get some information about vring carveout at boot time, carveout resources named vdev"x"vring"y" should be added to firmware resource table.
+>> In that case information will be filled before coprocessor boot.
+>>
+> 
+> Makes sense, thanks for clarifying. Applied.
 
+Unfortunately, our current firmwares are not doing this, and so this
+patch is breaking the IPC functionality in our platform drivers. We do
+wait for the vdev status before actually attempting any Tx from the
+remote side.
 
--- 
-Thanks,
-~Nick Desaulniers
+Our newer platforms will definitely be leveraging this before the vring
+inits to account for early-boot of rprocs in bootloaders and
+late-attach/ipc-only modes in kernel.
+
+regards
+Suman
+
+> 
+> Regards,
+> Bjorn
+> 
+
