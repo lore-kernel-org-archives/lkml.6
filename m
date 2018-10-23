@@ -2,120 +2,138 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D912C004D3
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:17:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB014C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3172720652
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:17:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3172720652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 11ACE20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:20:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RRysfJg4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11ACE20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbeJWJig (ORCPT
+        id S1727809AbeJWJlj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 05:38:36 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36192 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbeJWJig (ORCPT
+        Tue, 23 Oct 2018 05:41:39 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:43926 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbeJWJlj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 05:38:36 -0400
-Received: by mail-pf1-f194.google.com with SMTP id l81-v6so20798240pfg.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 18:17:35 -0700 (PDT)
+        Tue, 23 Oct 2018 05:41:39 -0400
+Received: by mail-qt1-f193.google.com with SMTP id q41-v6so48717578qtq.10;
+        Mon, 22 Oct 2018 18:20:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=8/8INH84dIZzXD9t1cfNjZHLAxNXXeBy6HCUhD39Vk4=;
+        b=RRysfJg4oCtUMcUR4ATcTXH/GMpDTWfBaSwgKzdYEzUNwNrbjWf0vlklTAjfWd9tra
+         v0HlFRCgVZGk6W6EWZbWaAlTP9UvTUVM0oFmvVy8h5694lqvqZwlxS41UYlCbrl3KU9j
+         ZkrbRbbUJrcTx0ry++3B4trCU7rus2IE37iXQEgG9xjdDGnNTd/tstD7GMU3Rgl5A0XN
+         UkPZh0EiS+rVjCKAn12u3ufwr9uhzlAeqipEkPZ9t1r9Qb3kHJgwX/X1UapIQwniFQ/l
+         3/C+F2BJdn1ottaBZqdFjCls62RouauctcF74HEckpkr2xoHaw9o62QsykRoa7emVT86
+         UxcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cGNpZiE5bm5Dwbzd49m6GkEYZ/oFBviilpQqDTYn6KI=;
-        b=SR0ELf5YLNzOPx4sN2TxzofnZYlhJ2NAmd5CA3/volQK5QPrjWC3XpUBALz8tOSC3P
-         ngy2jVSCji9p39kWvv3Ou87NREoKaeztk8X7G5JgCN+7aVHackqtmgO+YHA0NApmB/Co
-         WVSWbD15Cn7DoQbeJaArPaY5VZ2y6vaoka1FMKK7BTZS9ft16Ah3kaTU2QJrpUfz/gpZ
-         lSO+Sm6k9lSVUt7VlzwyGQEOjUEea9noCbyIc332Ib3TT2cLHI3nyg14zvwd0NVrJ6En
-         56G9LutFJC91B7DrLJVXNiJl6wN8TCBXLS41gYsjKuwzjm6tQBoT+8IIXnZ7aueSbUNT
-         vWNw==
-X-Gm-Message-State: ABuFfohTbFOLcY0prZHN7cEjgl0aW18YG0uIedhWJy2Txv6CfV88dWTn
-        lhEBIx6m4sXCWAs/iWw93S8=
-X-Google-Smtp-Source: ACcGV63YBaA2mvdqlPmMWsYyizBOLj8U7XcCdAvpVSy8bZhLIX4fvwwCBRmvGxmkE9lf7gaLAWWa7A==
-X-Received: by 2002:a62:670f:: with SMTP id b15-v6mr189156pfc.243.1540257455078;
-        Mon, 22 Oct 2018 18:17:35 -0700 (PDT)
-Received: from asus.site ([2601:647:4601:42b4:3842:3e31:3bb6:cf62])
-        by smtp.gmail.com with ESMTPSA id y144-v6sm47853378pfb.81.2018.10.22.18.17.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Oct 2018 18:17:33 -0700 (PDT)
-Subject: Re: [PATCH] Revert "workqueue: re-add lockdep dependencies for
- flushing"
-To:     Johannes Berg <johannes@sipsolutions.net>,
-        Tejun Heo <tj@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "linux-nvme @ lists . infradead . org" 
-        <linux-nvme@lists.infradead.org>
-References: <20181022151818.135163-1-bvanassche@acm.org>
- <13901aed5074f4b1fbd259d03928efb6ab40c65a.camel@sipsolutions.net>
- <094669f3df1690dec5913c2086f6a6d8c470f685.camel@sipsolutions.net>
- <1540241646.128590.16.camel@acm.org>
- <d45d54e8a46028c2b83296c5bf25a89500a289c4.camel@sipsolutions.net>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <8d1a9c8c-fddb-7fb9-4bba-377bc6d51829@acm.org>
-Date:   Mon, 22 Oct 2018 18:17:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=8/8INH84dIZzXD9t1cfNjZHLAxNXXeBy6HCUhD39Vk4=;
+        b=TaEMVhXLxFqqq+EJutaxt/b0hUT6FaUkp7WNCL5Sny+jcsNQJFe3krORwMQ2qNL2VB
+         Ht55DRKxW7uaMsEcbPecTcRSBUZWVQwYWDtWJznXKud48ntmPeVQ68sPVAARTiApc13g
+         g1n9PjOTUSkpKmN5MPYzg/qCNZFSun4+nfJ0hQ5CoOgNfKtAk2dcqWPSOEvZJLWFioGb
+         2LZqLiNZ7oc89Z8GQvjQIZpL5ExFvLB7ayHXX2lbjdRQFxZ1VPA75ecYQIvVkuWpqJjA
+         crWYxr4h4yq174NtxEOviCYpDkf/Aei56XBuVEmrE62UX/+aVgz3+sY8MbqdBGJDJlfq
+         LTOg==
+X-Gm-Message-State: ABuFfojU4MTR57/2rQiNl2u9R9G2xvck/1HJIVW8v5AaWGfPW+aO+bhU
+        tbNL8+8KxPqasOQY7edgtcQ=
+X-Google-Smtp-Source: AJdET5cRTcaMiRjLOirfoourjak+xIcbVG+gOBbcn/fq55FEkGMqcXwG1KMzrxFI+ypj55wqDYSIZg==
+X-Received: by 2002:ac8:3fb7:: with SMTP id d52-v6mr10667111qtk.46.1540257637071;
+        Mon, 22 Oct 2018 18:20:37 -0700 (PDT)
+Received: from WindFlash ([179.159.21.48])
+        by smtp.gmail.com with ESMTPSA id s21-v6sm7575288qth.11.2018.10.22.18.20.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 22 Oct 2018 18:20:36 -0700 (PDT)
+Date:   Mon, 22 Oct 2018 22:20:31 -0300
+From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
+To:     lkcamp@lists.libreplanetbr.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] Changes style to look more like list iteration.
+Message-ID: <20181023012031.GA6920@WindFlash>
 MIME-Version: 1.0
-In-Reply-To: <d45d54e8a46028c2b83296c5bf25a89500a289c4.camel@sipsolutions.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/22/18 2:04 PM, Johannes Berg wrote:
-> On Mon, 2018-10-22 at 13:54 -0700, Bart Van Assche wrote:
->> The code in the column with label "CPU0" is code called by do_blockdev_direct_IO().
->>  From the body of that function:
->>
->> 			/* will be released by direct_io_worker */
->> 			inode_lock(inode);
-> 
-> I don't think this is related. If this comment is true (and I have no
-> reason to believe it's not), then the inode lock is - by nature of
-> allowing lock/unlock to happen in different processes - not something
-> lockdep can track to start with.
-> 
-> [ ... ]
- >> You do realize that this workqueue tracking stuff has been around for
-> a few years (and got removed again in refactoring, etc.) and has found > countless bugs?
+Changes the code in order to make it looks more like its a list iteration.
 
-This is something I had not realized when I posted the patch at the 
-start of this e-mail thread. Thanks for having mentioned this.
+Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
+---
 
-But I doubt that the inode lock has been annotated incorrectly. From the 
-kernel source code:
+It's a remainer from a patch from the -Wshadow patchset.
+Since it doesn't really belongs to that patchset anymore, 
+I decided to release it just as a code refactor for
+file2alias.c
 
-static inline void inode_lock(struct inode *inode)
-{
-	down_write(&inode->i_rwsem);
-}
+I fixed it after Koike's suggestion (&&!dup added)
 
-[ ... ]
+IMHO it reads better this way, and no drastic change has been made.
 
-void __sched down_write(struct rw_semaphore *sem)
-{
-	might_sleep();
-	rwsem_acquire(&sem->dep_map, 0, 0, _RET_IP_);
+Thanks.
 
-	LOCK_CONTENDED(sem, __down_write_trylock, __down_write);
-	rwsem_set_owner(sem);
-}
+---
+ scripts/mod/file2alias.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-It seems to me that the inode lock has been annotated correctly as an 
-rwsem. It's not clear to me however why lockdep complains about a 
-deadlock for the direct I/O code. I hope someone has the time to go to 
-the bottom of this.
+diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
+index 3015c0bdecb2..b957279c4117 100644
+--- a/scripts/mod/file2alias.c
++++ b/scripts/mod/file2alias.c
+@@ -650,26 +650,26 @@ static void do_pnp_card_entries(void *symval, unsigned long size,
+ 
+ 	device_id_check(mod->name, "pnp", size, id_size, symval);
+ 	DEF_FIELD_ADDR(symval, pnp_card_device_id, devs);
+-	typeof(devs) devs_last;
++	DEF_FIELD_ADDR_VAR(symval, pnp_card_device_id, devs, devs_aux);
+ 
+ 	for (i = 0; i < count; i++) {
+ 		unsigned int j;
+-		devs_last = devs + i * id_size;
++		devs_aux = devs + i * id_size;
+ 
+ 		for (j = 0; j < PNP_MAX_DEVICES; j++) {
+-			const char *id = (char *)(*devs_last)[j].id;
++			const char *id = (char *)(*devs_aux)[j].id;
+ 			int j2;
+ 			int dup = 0;
+ 
+ 			if (!id[0])
+ 				break;
+ 
+-			/* find duplicate, already added value */
+-			while ((devs_last -= id_size) >= devs && !dup) {
++			/* find duplicate on previous devs*/
++			while ((devs_aux -= id_size) >= devs && !dup) {
+ 
+ 				for (j2 = 0; j2 < PNP_MAX_DEVICES; j2++) {
+ 					const char *id2 =
+-						(char *)(*devs_last)[j2].id;
++						(char *)(*devs_aux)[j2].id;
+ 
+ 					if (!id2[0])
+ 						break;
+-- 
+2.19.1
 
-Bart.
