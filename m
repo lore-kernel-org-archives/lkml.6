@@ -2,127 +2,120 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2740C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F68CC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:22:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A714F2064C
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:11:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c2UMzSG/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A714F2064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 11A732075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:22:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11A732075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbeJWPdj (ORCPT
+        id S1727585AbeJWPoX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 11:33:39 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:46948 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726885AbeJWPdj (ORCPT
+        Tue, 23 Oct 2018 11:44:23 -0400
+Received: from lucky1.263xmail.com ([211.157.147.130]:40802 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726837AbeJWPoW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 11:33:39 -0400
-Received: by mail-yb1-f194.google.com with SMTP id o8-v6so123613ybk.13
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 00:11:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tAUoW4GPMceex9vKPnxYK5d2K6OG73bxqiDXkLVgDpI=;
-        b=c2UMzSG/4b6FgoZJ5pABqK/m8ll3XNqCNGSupB0N1Z90jdOJwlXjzcxb4AhLywVVhL
-         eGrfdnMD9FnnN3vr3CioHZnUsQ7rCmUA1IBvOHUHhMbwPWu22zj/VQ7hLpnl8SJ/nHKT
-         y/EE4YzZEALyQjNfj4FlfmnOxCDQNrWAmdr0z5rkTkfC68RmWBORYE8jFI9aTur/ZsDd
-         p6cI7iG9H24awBgLxSFpdyb9KvrJnlAU1jx9D1CGXoiYzYQPpQJj3RtLQuRiN7H5VVsC
-         RFzJfDVswKZs7VQ9E9qsi444vhuC4wucOZttBI1u8/m/FDc1epV2cmi0Sh//MoAF8rJ5
-         98uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tAUoW4GPMceex9vKPnxYK5d2K6OG73bxqiDXkLVgDpI=;
-        b=fJF0Toi/ocnITHe0dR4j9abHiFfT11AlLc04HqVZOfuU1CZqnFVVg8ZZzQZ40rE8bt
-         GPthJHZINdOWT9TH21isdUDMdPMcEyhNejFDSXevR9VNWEDzSfpTOol7S1SHcMzaGpI0
-         7Cf8bK8jhfx/kv1EjwVr43aWwJuIwd6Yd7vhLpdYgNAvaD6/oZWp5ue63zXLbf6pu9Zi
-         FBhYYzid6knUdu+mfijgVoMB59xr0/F0gv9iKF8mYi/TRvGheQ7WRIvBzjCZug7CiJHq
-         y/q53rQ6gZ/WaYvrMvNunmklufinoUQj9h0GDybPRhQ0Le/UJHhnIjrYCGsY9Wht0yJa
-         Ka/g==
-X-Gm-Message-State: ABuFfohpBjvxVCLW/y7zW+7sxMOjlbAN17vAQiqIcIL8uRC9hyj4z7sy
-        MP99IlcZrujQSczMB3K7suDVeBGlxHOqaclFUFE=
-X-Google-Smtp-Source: ACcGV61vFOr6fdZ6LyedC7mAu/vunW/cF4UiYIwNOByqnQDGrNzVmqLHZRkBIMp8jSbrLM6noSfzN+NafDIfl9LNufQ=
-X-Received: by 2002:a25:3c7:: with SMTP id 190-v6mr34754584ybd.457.1540278691334;
- Tue, 23 Oct 2018 00:11:31 -0700 (PDT)
+        Tue, 23 Oct 2018 11:44:22 -0400
+Received: from tony.xie?rock-chips.com (unknown [192.168.167.12])
+        by lucky1.263xmail.com (Postfix) with ESMTP id E4C2C5EF;
+        Tue, 23 Oct 2018 15:21:57 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from [172.16.12.36] (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id E025F3CB;
+        Tue, 23 Oct 2018 15:21:52 +0800 (CST)
+X-IP-DOMAINF: 1
+X-RL-SENDER: tony.xie@rock-chips.com
+X-FST-TO: tony.xie@rock-chips.com
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: tony.xie@rock-chips.com
+X-UNIQUE-TAG: <cc3f527087c8e6a1cd530f1fd272a160>
+X-ATTACHMENT-NUM: 0
+X-SENDER: xxx@rock-chips.com
+X-DNS-TYPE: 0
+Received: from [172.16.12.36] (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith ESMTP id 15439NZS84B;
+        Tue, 23 Oct 2018 15:21:56 +0800 (CST)
+Subject: Re: [PATCH v3 1/5] mfd: rk808: Add RK817 and RK809 support
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     heiko@sntech.de, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+References: <1535081441-20718-1-git-send-email-tony.xie@rock-chips.com>
+ <1535081441-20718-2-git-send-email-tony.xie@rock-chips.com>
+ <20180911114732.GL4185@dell>
+ <b0f9fff3-3084-91b3-fa78-5163ebd43bbb@rock-chips.com>
+ <20181023062601.GS4939@dell>
+From:   tony <tony.xie@rock-chips.com>
+Message-ID: <3d96be69-e50c-187e-7d3a-75eec63d2be0@rock-chips.com>
+Date:   Tue, 23 Oct 2018 15:21:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1540229092-25207-1-git-send-email-arunks@codeaurora.org>
- <20181022181122.GK18839@dhcp22.suse.cz> <CABOM9Zpq41Ox8wQvsNjgfCtwuqh6CnyeW1B09DWa1TQN+JKf0w@mail.gmail.com>
- <20181023053359.GL18839@dhcp22.suse.cz> <alpine.DEB.2.21.1810230711220.2343@hadrien>
-In-Reply-To: <alpine.DEB.2.21.1810230711220.2343@hadrien>
-From:   Arun Sudhilal <getarunks@gmail.com>
-Date:   Tue, 23 Oct 2018 12:41:19 +0530
-Message-ID: <CABOM9Zr48HTphfbmk9v7a3A+cqzrAFZT71pEyvvseV8PpbWOhg@mail.gmail.com>
-Subject: Re: [PATCH] mm: convert totalram_pages, totalhigh_pages and
- managed_pages to atomic.
-To:     julia.lawall@lip6.fr
-Cc:     mhocko@kernel.org, arunks@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        minchan@kernel.org, mhocko@suse.com, gregkh@linuxfoundation.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181023062601.GS4939@dell>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 12:11 PM Julia Lawall <julia.lawall@lip6.fr> wrote:
->
->
->
-> On Tue, 23 Oct 2018, Michal Hocko wrote:
->
-> > [Trimmed CC list + Julia - there is indeed no need to CC everybody maintain a
-> > file you are updating for the change like this]
-> >
-> > On Tue 23-10-18 10:16:51, Arun Sudhilal wrote:
-> > > On Mon, Oct 22, 2018 at 11:41 PM Michal Hocko <mhocko@kernel.org> wrote:
-> > > >
-> > > > On Mon 22-10-18 22:53:22, Arun KS wrote:
-> > > > > Remove managed_page_count_lock spinlock and instead use atomic
-> > > > > variables.
-> > > >
-> > >
-> > > Hello Michal,
-> > > > I assume this has been auto-generated. If yes, it would be better to
-> > > > mention the script so that people can review it and regenerate for
-> > > > comparision. Such a large change is hard to review manually.
-> > >
-> > > Changes were made partially with script.  For totalram_pages and
-> > > totalhigh_pages,
-> > >
-> > > find dir -type f -exec sed -i
-> > > 's/totalram_pages/atomic_long_read(\&totalram_pages)/g' {} \;
-> > > find dir -type f -exec sed -i
-> > > 's/totalhigh_pages/atomic_long_read(\&totalhigh_pages)/g' {} \;
-> > >
-> > > For managed_pages it was mostly manual edits after using,
-> > > find mm/ -type f -exec sed -i
-> > > 's/zone->managed_pages/atomic_long_read(\&zone->managed_pages)/g' {}
-> > > \;
-> >
-> > I guess we should be able to use coccinelle for this kind of change and
-> > reduce the amount of manual intervention to absolute minimum.
->
-> Coccinelle looks like it would be desirable, especially in case the word
-> zone is not always used.
->
-> Arun, please feel free to contact me if you want to try it and need help.
 
-Thanks Julia. I m starting with,
-http://coccinelle.lip6.fr/papers/backport_edcc15.pdf
 
-Regards,
-Arun
+在 2018/10/23 14:26, Lee Jones 写道:
+>>>>       The rk809 and rk817 are a Power Management IC (PMIC) for multimedia
+>>>>       and handheld devices. It contains the following components:
+>>>>
+>>>>           - Regulators
+>>>>           - RTC
+>>>>           - Clocking
+>>>>
+>>>>       Both RK809 and RK817 chips are using a similar register map,
+>>>>       so we can reuse the RTC and Clocking and regulators functionality.
+>>>>
+>>>> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+>>>> ---
+>>>>    drivers/mfd/Kconfig       |   6 +-
+>>>>    drivers/mfd/rk808.c       | 218 +++++++++++++++++++++++++++++++++++++++++++++-
+>>>>    include/linux/mfd/rk808.h | 172 ++++++++++++++++++++++++++++++++++++
+>>>>    kernel/reboot.c           |   1 +
+>>>>    4 files changed, 391 insertions(+), 6 deletions(-)
+> [...]
 >
-> julia
+>>>> diff --git a/kernel/reboot.c b/kernel/reboot.c
+>>>> index e4ced88..83810d7 100644
+>>>> --- a/kernel/reboot.c
+>>>> +++ b/kernel/reboot.c
+>>>> @@ -49,6 +49,7 @@
+>>>>     */
+>>>>    void (*pm_power_off_prepare)(void);
+>>>> +EXPORT_SYMBOL_GPL(pm_power_off_prepare);
+>>> Why do you need this where no other driver in the kernel does?
+>>      There is a gpio_slp pin for RK809 and RK817，this pin has reset、power
+>> down and sleep functions，so
+>>      when system is going to power down, this pin is needed to switch to
+>> power down function，and then we just only control
+>>      this pin to high to power down the system in atf at last。
+> There are other PM call-backs that you can use for this.  There
+> shouldn't be any requirement to export and call functions at this
+> level directly.
+     I will use a shutdown call-backs from syscore to implement it.
+>
+
+
