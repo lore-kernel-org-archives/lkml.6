@@ -2,160 +2,124 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F869C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 04:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4ED0C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 04:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6179620671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 04:25:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6179620671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+	by mail.kernel.org (Postfix) with ESMTP id 6AA3F20671
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 04:28:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=metztli-com.20150623.gappssmtp.com header.i=@metztli-com.20150623.gappssmtp.com header.b="m+UOoMuT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AA3F20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=metztli.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbeJWMq4 (ORCPT
+        id S1727276AbeJWMuS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 08:46:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58328 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726438AbeJWMq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 08:46:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 11289AE81;
-        Tue, 23 Oct 2018 04:25:19 +0000 (UTC)
-From:   NeilBrown <neil@brown.name>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Date:   Tue, 23 Oct 2018 15:25:08 +1100
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ksummit-discuss@lists.linuxfoundation.org,
-        Mishi Choudhary <mishi@linux.com>
-Subject: Re: [Ksummit-discuss] Call to Action Re: [PATCH 0/7] Code of Conduct: Fix some wording, and add an interpretation document
-In-Reply-To: <20181023033130.GQ32577@ZenIV.linux.org.uk>
-References: <20181020134908.GA32218@kroah.com> <87y3ar80ac.fsf@notabene.neil.brown.name> <20181021222608.GA24845@localhost> <875zxt919d.fsf@notabene.neil.brown.name> <20181023033130.GQ32577@ZenIV.linux.org.uk>
-Message-ID: <87r2gh70ij.fsf@notabene.neil.brown.name>
+        Tue, 23 Oct 2018 08:50:18 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:34697 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727014AbeJWMuS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 08:50:18 -0400
+Received: by mail-qt1-f194.google.com with SMTP id z2-v6so49801qts.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 21:28:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=metztli-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RMQv7HvnEqrZ8wBhwlspCtiBJ0pAc4OUXAVj9Moim58=;
+        b=m+UOoMuTRK/wzpDdCBUyS4bBzt5l0hLFvchYyvzDiWUeLjKhrmvbw32GyuR77Ku3i9
+         HS6Xnd3O2WFBdpKPhORIvJRraS1BvajYx9y0QoVdyks6JymKwhAkcAgVSykz184mVpSu
+         CItS0yAPPhlTRpb+Hav9JLUw5kQNdsD4pA17fwuuWmNC1ORszzSda57zfq5B/FhRWy4D
+         9u+hmPMRiIcWDjV4C2EmlGWHWof8cVmU5MEzJbGqzLOzERiyQt17yB17cwEcB1mwR2V9
+         zzEYsoeBRKLOCfER270u7ifrlJLMqu38VbQf+0TSACFgyaAoYXsdJWyqMw5NIGrc61H9
+         80ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RMQv7HvnEqrZ8wBhwlspCtiBJ0pAc4OUXAVj9Moim58=;
+        b=cIbXUP4l7m16e9dnjm8gyIw19ZHneZQjIciHpZWKmoAnIqIPe6QsU+CYqE8KTZGxTe
+         X4NvsLypnnclAiJdyOvd/cW/NvbJjFzs3nTIzreCnSSTgAk8Gg7cxRfaHu+EfADBBTN+
+         6PdyqHoa9y3a3vDh/xJt0Wfe46SG1QIvMGXzMqlkh3/TyEMU8yuO4PXwHplnA29tF2m6
+         34GXKDB4NiSr7B5xWlsqNokU4VlGjpgZ9eGG9axlGCWzzYjhuz13VZbUluruDBNJNDBa
+         ed/hw32rMW7tzMWT8z7TFtWOvmfwlGw66ajZWBhUVRsJa0KZ2mxEEWnplV0RjzmPGoKI
+         lIEg==
+X-Gm-Message-State: ABuFfoj2tcoF/96XkxzZzaAM/a2IT0NPAPnCZ95x9SE6oUmJOisOchUD
+        UjJVqiXjnZeAr1gvj0fhvgZ9PXOjjT+kGPVGHmzytWG0Lexv0g==
+X-Google-Smtp-Source: ACcGV62LfeLRSTelXpMfCLpgVlWUx5rpks2yN0FVYetMKFZAAvFqMoLwuTznUajio9AsPvMzqxeYqYjt6Rk84RIQ+Pg=
+X-Received: by 2002:a0c:d927:: with SMTP id p36mr45959929qvj.181.1540268922278;
+ Mon, 22 Oct 2018 21:28:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+References: <20181022101912.3CE2E292B005@huitzilopochtli.metztli-it.com> <20181023033852.GR32577@ZenIV.linux.org.uk>
+In-Reply-To: <20181023033852.GR32577@ZenIV.linux.org.uk>
+From:   Jose R R <jose.r.r@metztli.com>
+Date:   Mon, 22 Oct 2018 21:28:29 -0700
+Message-ID: <CAM12Q5Q5qfrKQrw-2f_PX_FBgFsC6C=dde0gwn8ugBXEx05S_g@mail.gmail.com>
+Subject: Re: Reiser4 Linux 4.17.19-1 hangs in Google cloud VM, too.
+To:     viro@zeniv.linux.org.uk
+Cc:     ReiserFS Development List <reiserfs-devel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Thank you for replying, Al-
 
-On Tue, Oct 23 2018, Al Viro wrote:
-
-> On Tue, Oct 23, 2018 at 07:26:06AM +1100, NeilBrown wrote:
+On Mon, Oct 22, 2018 at 8:38 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
->> Currently if a maintainer is rude to you, there is no where else that
->> you can go and *that* is why it hurts.  It isn't the abuse so much as
->> the powerlessness associated with it.  If you can (metaphorically) say
->> to that maintainer "I don't care about your toilet mouth, you've just
->> given me the right to take my petition to caesar" - then the emotional
->> response will be quite different to pain.
->
-> Bollocks.  First of all, you *always* can take patches to Linus, even if
-> maintainer is being the sodding Miss Manners.  Always could.  What you
-> can't (and shouldn't be able to) is to _force_ a piece of shit patch
-> (pardon the toilet mouth) into the tree on the grounds of maintainer havi=
-ng
-> been "rude" to your patch.
+> On Mon, Oct 22, 2018 at 03:19:12AM -0700, Metztli Information Technology wrote:
+> > I installed reiser4 -enhanced Linux kernel 4.17.19-1 --thus replacing the prior hung reiser4 -patched kernel 4.18.15-1 in the Google Compute Engine (GCE) cloud instance. After less than 24 hours the 4.17.19-1 hung in similar way to the 4.18.15-1.
+> >
+> > Please note that I had been running my custom Metztli Reiser4 Debian Stretch image with reiser4 linux 4.14.20-1 without issues for several months
+> > < https://github.com/Metztli/reiser4-debian-kernel-packaging-4.14.20 >  --until I decided to upgrade to newer kernel(s).
 
-Yes, you could, and you can.  But if it was Linus who was behaving
-inappropriately, where did you go then?  This is why I think whatever
-"code" we have should be overtly a statement Linus makes about his
-behaviour, in the first instance.
-
-And of course a bad patch should be rejected.  In many cases a bad patch
-can then be improved.  If the maintainer responds badly to your first (bad)
-patch, it can be very hard to try again - once bitten twice shy, as they
-say.
-
-The point of being able to circumvent a maintainer is to be able to get
-relevant rational review, instead of emotional attacks.
+That link you referenced is just my hack for the corresponding Debian
+kernel packaging (wrapper) to build 'Reiser4 the Debian Way', i.e,
+generating reiser4 module & kernel -- suitable for installation media
+-- in addition to Debian's.
 
 >
-> Again, you can and always could appeal to Linus if your patches are wrong=
-ly
-> rejected, in your opinion.  You'd better have good evidence supporting the
-> "wrongly" bit in that case, but the "right to petition" model implies that
-> anyway.
+> Er...  Does anybody maintain reiser4 these days?  I can't recall a single mail
+> along the lines of "such-and-such VFS/VM/scheduler/etc. change would break reiser4"
+> in quite a few years (more than a decade, most likely)...
 
-I wonder how many people know about this right-to-petition, or use it.
-Maybe it should be stated in the "Code of conduct".
-
+This is the actual patch for the Linux 4.14.xy series:
+< https://sourceforge.net/projects/reiser4/files/reiser4-for-linux-4.x/reiser4-for-4.14.1.patch.gz/download
 >
-> If you are talking about the situations when "rude" maintainer makes insu=
-fferable
-> requests to one's precious patches (e.g. demonstrates his or her mental i=
-nferiority
-> by admitting that they are unable to follow contributor's 0.5KLoC of spag=
-hetty in a
-> single function and has an unspeakable gall to demand to clean it up - in=
-stead of
-> passing that task upon the interns, as they ought to[1])... sure, that wo=
-uld be
-> something new.  Would you care to be the person charged with dealing with=
- such...
-> valuable contributors?  And how good is the coverage of psychiatric treat=
-ments
-> offered by your medical insurance?
->
-> [1] no, I'm not making it up
->=20=20
->> If Linus is not true to his new-found sensitivity, we might need someone
->> (Greg?) to be a co-maintainer, able to accept patches when Linus has a
->> relapse.  It might be good form to create this channel anyway, but I
->> doubt it would be needed in practice.
->>=20
->> So there you have it. The "Code" is upside down.
->> We need documents which:
->>   - curtail the power of the strong, starting with Linus
->>   - are adopted willingly by individuals, not imposed on the community.
->>   - provide alternate routes for patch-flow, so that no-one has ultimate
->>     power.
->
-> Really?  The ultimate power being to say "No" to a patch, and nobody shou=
-ld
-> have such?  Are you fucking serious?
 
-I have noticed of late a tendency in all sorts of different people to
-hear/read a statement from someone they know, interpret it a particular
-way, be surprised about that interpretation, and persist with believing
-that interpretation anyway, rather than realizing that the most likely
-explanation is a communication failure, and asking for clarification.
+And yes, Mr. Edward Shishkin, still develops/maintains reiser4, please see:
+< https://github.com/edward6/reiser4 >
 
-The "ultimate power" is the ability to say "no" to a patch, *with no
-opportunity for review*.  Two people together having that ultimate power
-is a totally different thing to one person having it alone.
+I have a couple of reiser4 custom Google Compute Engine (GCE) cloud
+instances which have been running LAMP for a while. One of them runs
+reiser4 -enabled Linux kernel 4.15.x whereas the other one was running
+4.14.x (both for several months/years already) until I decided to
+upgrade the 4.4.20-1 to newer reiser4 -enabled kernels. By the way
+this last kernel that I installed:
+uname -a
+Linux cohuatl 4.16.0-2+reiser4.0.2-amd64 #1 SMP Debian 4.16.18-2
+(2018-06-27) x86_64 GNU/Linux
 
-Thanks
-NeilBrown
+seems to be performing nicely --if things continue fine I can assume
+that the drastic change affecting reiser4 hacked kernels occurred
+beginning with upstream Linux series 4.17.x and on...
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Best Professional Regards.
 
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvOoqUACgkQOeye3VZi
-gbl5dg/7BVUVORVpSJ5vVNBa+rFP/F5QAeIz46rh0+Dn95fEO2RtJ/zUbkmnbc2U
-rrswH21tN1cjUYbbbahUKmnJvyY+sOMHXq2CIVcL01m6tfwuOVaarl8tQE+lqBuj
-lIzuyp41ncYqYa5HIiPRDJXu5B33oYRjZuQDbADDIgNx2V+DUDjsi7Ii5VJJXszj
-A81petng7ukenGCC85DU02tx2ys1AuBRZAInpUhedkAnwif0Q01MwT1D0VtQTaEO
-Nn31ao/AAO61OzH2VXSPARHXY1qqyhK/+GSbZDi9LPtsIVGuicOQtA6eZSpnvVqi
-ULoRID6nh0CAyWLANYKPzeLz8oaLAN2v/ev1J7XyZYpv46LAJrrDEOdmV+OJ/dAr
-ghOlrMXUO4qVOER4kwuMS3Lek7SsoLfEhf72J4chRuuTEEZgi/Buze0M/hTCk2/d
-KEhxnV/wdoU6oAxPOVedkgLXh9hcD/Gi91MtWPh6Pfe6wOfzGzaYp+R/4CKbqGem
-jG6VSmei6HDfgR80pjfXEfKbtPl83wKGzhsN3NXovex+perCIUGyX9hxHBRaml5p
-sI87+ClOxBP5JIXNSYQdMq8+FqXN/dXDaCrCCKxB0qvIHrzz2QJqS+MM7EoTec+c
-6RrKlVkBkYiIrszuwytHHRXpCrkjqEX5rRzlbsB1IxUA5PfEN7k=
-=CKBo
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Jose R R
+http://metztli.it
+---------------------------------------------------------------------------------------------
+Download Metztli Reiser4: Debian Stretch w/ Linux 4.17 AMD64
+---------------------------------------------------------------------------------------------
+feats ZSTD compression https://sf.net/projects/metztli-reiser4/
+-------------------------------------------------------------------------------------------
+Official current Reiser4 resources: https://reiser4.wiki.kernel.org/
