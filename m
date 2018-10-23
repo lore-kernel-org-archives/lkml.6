@@ -3,238 +3,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE123C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7806C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E8742075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:40:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E8742075D
+	by mail.kernel.org (Postfix) with ESMTP id 828362080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:40:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 828362080A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727864AbeJWRDE (ORCPT
+        id S1727987AbeJWRDJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 13:03:04 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:47496 "EHLO huawei.com"
+        Tue, 23 Oct 2018 13:03:09 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13683 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727542AbeJWRDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 13:03:04 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5FD3F65163E88;
-        Tue, 23 Oct 2018 16:38:23 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.408.0; Tue, 23 Oct 2018 16:38:19 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: add bio cache for IPU
-Date:   Tue, 23 Oct 2018 16:38:17 +0800
-Message-ID: <20181023083817.3466-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        id S1727542AbeJWRDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 13:03:08 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 28C6DFAF76082;
+        Tue, 23 Oct 2018 16:40:42 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.408.0; Tue, 23 Oct 2018 16:40:43 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <kvalo@codeaurora.org>
+CC:     <davem@davemloft.net>, <pkshih@realtek.com>,
+        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] rtlwifi: remove set but not used variable 'radiob_array_table' and 'radiob_arraylen'
+Date:   Tue, 23 Oct 2018 16:28:02 +0800
+Message-ID: <1540283282-9772-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
+X-Originating-IP: [10.175.102.37]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SQLite in Wal mode may trigger sequential IPU write in db-wal file, after
-commit d1b3e72d5490 ("f2fs: submit bio of in-place-update pages"), we
-lost the chance of merging page in inner managed bio cache, result in
-submitting more small-sized IO.
+radiob_array_table' and 'radiob_arraylen' are not used after setting its value.
+It is safe to remove the unused variable. Meanwhile, radio B radio should be
+removed as well. because it will no longer be referenced.
 
-So let's add temporary bio in writepages() to cache mergeable write IO as
-much as possible.
-
-Test case:
-1. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
-2. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
-
-Before:
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65552, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65560, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65568, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65576, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65584, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65592, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65600, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65608, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65616, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65624, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65632, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65640, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65648, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65656, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65664, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57352, size = 4096
-
-After:
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 65536
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57368, size = 4096
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 ---
- fs/f2fs/data.c    | 57 +++++++++++++++++++++++++++++++++++++++++++++--
- fs/f2fs/f2fs.h    |  3 +++
- fs/f2fs/segment.c |  5 ++++-
- 3 files changed, 62 insertions(+), 3 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c   | 5 +----
+ drivers/net/wireless/realtek/rtlwifi/rtl8723ae/table.c | 4 ----
+ drivers/net/wireless/realtek/rtlwifi/rtl8723ae/table.h | 2 --
+ 3 files changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 01b7f59523dc..0c8f18dc140d 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -491,6 +491,49 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 	return 0;
- }
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c
+index 5cf29f5..3f33278 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c
+@@ -509,13 +509,10 @@ bool rtl8723e_phy_config_rf_with_headerfile(struct ieee80211_hw *hw,
+ 	int i;
+ 	bool rtstatus = true;
+ 	u32 *radioa_array_table;
+-	u32 *radiob_array_table;
+-	u16 radioa_arraylen, radiob_arraylen;
++	u16 radioa_arraylen;
  
-+int f2fs_merge_page_bio(struct f2fs_io_info *fio)
-+{
-+	struct bio *bio = *fio->bio;
-+	struct page *page = fio->encrypted_page ?
-+			fio->encrypted_page : fio->page;
-+
-+	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
-+			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
-+		return -EFAULT;
-+
-+	trace_f2fs_submit_page_bio(page, fio);
-+	f2fs_trace_ios(fio, 0);
-+
-+	if (bio && (*fio->last_block + 1 != fio->new_blkaddr ||
-+			!__same_bdev(fio->sbi, fio->new_blkaddr, bio))) {
-+		__submit_bio(fio->sbi, bio, fio->type);
-+		bio = NULL;
-+	}
-+alloc_new:
-+	if (!bio) {
-+		bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
-+				BIO_MAX_PAGES, false, fio->type, fio->temp);
-+		*fio->last_block = fio->new_blkaddr;
-+		bio_set_op_attrs(bio, fio->op, fio->op_flags);
-+	}
-+
-+	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
-+		__submit_bio(fio->sbi, bio, fio->type);
-+		bio = NULL;
-+		goto alloc_new;
-+	}
-+
-+	if (fio->io_wbc)
-+		wbc_account_io(fio->io_wbc, page, PAGE_SIZE);
-+
-+	*fio->last_block = fio->new_blkaddr;
-+
-+	inc_page_count(fio->sbi, WB_DATA_TYPE(fio->page));
-+
-+	*fio->bio = bio;
-+	return 0;
-+}
-+
- void f2fs_submit_page_write(struct f2fs_io_info *fio)
- {
- 	struct f2fs_sb_info *sbi = fio->sbi;
-@@ -1899,6 +1942,8 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
- }
+ 	radioa_arraylen = RTL8723ERADIOA_1TARRAYLENGTH;
+ 	radioa_array_table = RTL8723E_RADIOA_1TARRAY;
+-	radiob_arraylen = RTL8723E_RADIOB_1TARRAYLENGTH;
+-	radiob_array_table = RTL8723E_RADIOB_1TARRAY;
  
- static int __write_data_page(struct page *page, bool *submitted,
-+				struct bio **bio,
-+				sector_t *last_block,
- 				struct writeback_control *wbc,
- 				enum iostat_type io_type)
- {
-@@ -1924,6 +1969,8 @@ static int __write_data_page(struct page *page, bool *submitted,
- 		.need_lock = LOCK_RETRY,
- 		.io_type = io_type,
- 		.io_wbc = wbc,
-+		.bio = bio,
-+		.last_block = last_block,
- 	};
+ 	rtstatus = true;
  
- 	trace_f2fs_writepage(page, DATA);
-@@ -2051,7 +2098,7 @@ static int __write_data_page(struct page *page, bool *submitted,
- static int f2fs_write_data_page(struct page *page,
- 					struct writeback_control *wbc)
- {
--	return __write_data_page(page, NULL, wbc, FS_DATA_IO);
-+	return __write_data_page(page, NULL, NULL, NULL, wbc, FS_DATA_IO);
- }
- 
- /*
-@@ -2067,6 +2114,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 	int done = 0;
- 	struct pagevec pvec;
- 	struct f2fs_sb_info *sbi = F2FS_M_SB(mapping);
-+	struct bio *bio = NULL;
-+	sector_t last_block;
- 	int nr_pages;
- 	pgoff_t uninitialized_var(writeback_index);
- 	pgoff_t index;
-@@ -2154,7 +2203,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 			if (!clear_page_dirty_for_io(page))
- 				goto continue_unlock;
- 
--			ret = __write_data_page(page, &submitted, wbc, io_type);
-+			ret = __write_data_page(page, &submitted, &bio,
-+						&last_block, wbc, io_type);
- 			if (unlikely(ret)) {
- 				/*
- 				 * keep nr_to_write, since vfs uses this to
-@@ -2201,6 +2251,9 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 	if (nwritten)
- 		f2fs_submit_merged_write_cond(F2FS_M_SB(mapping), mapping->host,
- 								NULL, 0, DATA);
-+	/* submit cached bio of IPU write */
-+	if (bio)
-+		__submit_bio(sbi, bio, DATA);
- 
- 	return ret;
- }
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8932276015f9..6af2a105529d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1042,6 +1042,8 @@ struct f2fs_io_info {
- 	bool retry;		/* need to reallocate block address */
- 	enum iostat_type io_type;	/* io type */
- 	struct writeback_control *io_wbc; /* writeback control */
-+	struct bio **bio;		/* bio for ipu */
-+	sector_t *last_block;		/* last block number in bio */
- 	unsigned char version;		/* version of the node */
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/table.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/table.c
+index 61e8604..1bbee0b 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/table.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/table.c
+@@ -475,10 +475,6 @@
+ 	0x000, 0x00030159,
  };
  
-@@ -3085,6 +3087,7 @@ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
- 				nid_t ino, enum page_type type);
- void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
- int f2fs_submit_page_bio(struct f2fs_io_info *fio);
-+int f2fs_merge_page_bio(struct f2fs_io_info *fio);
- void f2fs_submit_page_write(struct f2fs_io_info *fio);
- struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
- 			block_t blk_addr, struct bio *bio);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 3aa2f00262b3..b51b182dd7f4 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3194,7 +3194,10 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
- 
- 	stat_inc_inplace_blocks(fio->sbi);
- 
--	err = f2fs_submit_page_bio(fio);
-+	if (fio->bio)
-+		err = f2fs_merge_page_bio(fio);
-+	else
-+		err = f2fs_submit_page_bio(fio);
- 	if (!err)
- 		update_device_state(fio);
- 
+-u32 RTL8723E_RADIOB_1TARRAY[RTL8723E_RADIOB_1TARRAYLENGTH] = {
+-	0x0,
+-};
+-
+ u32 RTL8723EMAC_ARRAY[RTL8723E_MACARRAYLENGTH] = {
+ 	0x420, 0x00000080,
+ 	0x423, 0x00000000,
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/table.h b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/table.h
+index 57a548c..a044f3c 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/table.h
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/table.h
+@@ -36,8 +36,6 @@
+ extern u32 RTL8723EPHY_REG_ARRAY_PG[RTL8723E_PHY_REG_ARRAY_PGLENGTH];
+ #define RTL8723ERADIOA_1TARRAYLENGTH		282
+ extern u32 RTL8723E_RADIOA_1TARRAY[RTL8723ERADIOA_1TARRAYLENGTH];
+-#define RTL8723E_RADIOB_1TARRAYLENGTH		1
+-extern u32 RTL8723E_RADIOB_1TARRAY[RTL8723E_RADIOB_1TARRAYLENGTH];
+ #define RTL8723E_MACARRAYLENGTH			172
+ extern u32 RTL8723EMAC_ARRAY[RTL8723E_MACARRAYLENGTH];
+ #define RTL8723E_AGCTAB_1TARRAYLENGTH		320
 -- 
-2.18.0.rc1
+1.7.12.4
 
