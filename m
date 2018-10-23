@@ -2,667 +2,226 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D08A6C004D3
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 00:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B068C004D3
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 00:13:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5E3720674
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 00:09:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5E3720674
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 50D11205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 00:13:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50D11205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbeJWI3w (ORCPT
+        id S1726863AbeJWIeA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 04:29:52 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:44423 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725799AbeJWI3w (ORCPT
+        Tue, 23 Oct 2018 04:34:00 -0400
+Received: from gateway20.websitewelcome.com ([192.185.58.11]:17084 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725768AbeJWId7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 04:29:52 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437211|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03310;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=3;RT=3;SR=0;TI=SMTPD_---.D65tEbH_1540253315;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D65tEbH_1540253315)
-          by smtp.aliyun-inc.com(10.147.41.158);
-          Tue, 23 Oct 2018 08:08:35 +0800
-Date:   Tue, 23 Oct 2018 08:08:34 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH V9 01/21] csky: Build infrastructure
-Message-ID: <20181023000834.GA20335@guoren-Inspiron-7460>
-References: <cover.1539655731.git.ren_guo@c-sky.com>
- <801add6d63256a3bf0802e2b03efb0f9c206dab0.1539655731.git.ren_guo@c-sky.com>
+        Tue, 23 Oct 2018 04:33:59 -0400
+X-Greylist: delayed 356 seconds by postgrey-1.27 at vger.kernel.org; Tue, 23 Oct 2018 04:33:59 EDT
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id B329A400D1676
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 19:13:11 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id EkJrgbekvBcCXEkJrgqiUt; Mon, 22 Oct 2018 19:13:11 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:53540 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gEkJq-003pq0-Kd; Mon, 22 Oct 2018 19:13:11 -0500
+Date:   Tue, 23 Oct 2018 02:13:08 +0200
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH v2] wireless: mark expected switch fall-throughs
+Message-ID: <20181023001308.GA4150@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <801add6d63256a3bf0802e2b03efb0f9c206dab0.1539655731.git.ren_guo@c-sky.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gEkJq-003pq0-Kd
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr (embeddedor) [86.245.173.13]:53540
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-Could you help me review the patch, seems the patch is skipped.
-ref: https://lkml.org/lkml/2018/10/16/224
+Warning level 3 was used: -Wimplicit-fallthrough=3
 
-Thx
+This code was not tested and GCC 7.2.0 was used to compile it.
 
-On Tue, Oct 16, 2018 at 10:58:20AM +0800, Guo Ren wrote:
-> This patch adds Makefile, Kconfig for build infrastructure.
-> 
-> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> ---
-> Changelog:
->  - make allmodconfig is OK.
->  - Use BUILTIN_DTB as string, remove bool define for compile.
->  - Add xor.h in asm/Kbuild
->  - Add compat.h in asm/Kbuild.
->  - Add select DMA_DIRECT_OPS in Kconfig.
->  - remove kernel/platform.c in Makefile.
-> ---
-> ---
->  arch/csky/Kconfig                      | 205 +++++++++++++++++++++++++++++++++
->  arch/csky/Kconfig.debug                |   9 ++
->  arch/csky/Makefile                     |  93 +++++++++++++++
->  arch/csky/abiv1/Makefile               |   8 ++
->  arch/csky/abiv2/Makefile               |  10 ++
->  arch/csky/boot/Makefile                |  24 ++++
->  arch/csky/boot/dts/Makefile            |  13 +++
->  arch/csky/boot/dts/include/dt-bindings |   1 +
->  arch/csky/include/asm/Kbuild           |  72 ++++++++++++
->  arch/csky/include/uapi/asm/Kbuild      |  33 ++++++
->  arch/csky/kernel/Makefile              |   8 ++
->  arch/csky/lib/Makefile                 |   1 +
->  arch/csky/mm/Makefile                  |  13 +++
->  13 files changed, 490 insertions(+)
->  create mode 100644 arch/csky/Kconfig
->  create mode 100644 arch/csky/Kconfig.debug
->  create mode 100644 arch/csky/Makefile
->  create mode 100644 arch/csky/abiv1/Makefile
->  create mode 100644 arch/csky/abiv2/Makefile
->  create mode 100644 arch/csky/boot/Makefile
->  create mode 100644 arch/csky/boot/dts/Makefile
->  create mode 120000 arch/csky/boot/dts/include/dt-bindings
->  create mode 100644 arch/csky/include/asm/Kbuild
->  create mode 100644 arch/csky/include/uapi/asm/Kbuild
->  create mode 100644 arch/csky/kernel/Makefile
->  create mode 100644 arch/csky/lib/Makefile
->  create mode 100644 arch/csky/mm/Makefile
-> 
-> diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
-> new file mode 100644
-> index 0000000..0a05585
-> --- /dev/null
-> +++ b/arch/csky/Kconfig
-> @@ -0,0 +1,205 @@
-> +config CSKY
-> +	def_bool y
-> +	select ARCH_HAS_SYNC_DMA_FOR_CPU
-> +	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
-> +	select ARCH_USE_BUILTIN_BSWAP
-> +	select ARCH_USE_QUEUED_RWLOCKS if NR_CPUS>2
-> +	select COMMON_CLK
-> +	select CLKSRC_MMIO
-> +	select CLKSRC_OF
-> +	select DMA_DIRECT_OPS
-> +	select DMA_NONCOHERENT_OPS
-> +	select IRQ_DOMAIN
-> +	select HANDLE_DOMAIN_IRQ
-> +	select DW_APB_TIMER_OF
-> +	select GENERIC_LIB_ASHLDI3
-> +	select GENERIC_LIB_ASHRDI3
-> +	select GENERIC_LIB_LSHRDI3
-> +	select GENERIC_LIB_MULDI3
-> +	select GENERIC_LIB_CMPDI2
-> +	select GENERIC_LIB_UCMPDI2
-> +	select GENERIC_ALLOCATOR
-> +	select GENERIC_ATOMIC64
-> +	select GENERIC_CLOCKEVENTS
-> +	select GENERIC_CPU_DEVICES
-> +	select GENERIC_IRQ_CHIP
-> +	select GENERIC_IRQ_PROBE
-> +	select GENERIC_IRQ_SHOW
-> +	select GENERIC_IRQ_MULTI_HANDLER
-> +	select GENERIC_SCHED_CLOCK
-> +	select GENERIC_SMP_IDLE_THREAD
-> +	select HAVE_ARCH_TRACEHOOK
-> +	select HAVE_GENERIC_DMA_COHERENT
-> +	select HAVE_KERNEL_GZIP
-> +	select HAVE_KERNEL_LZO
-> +	select HAVE_KERNEL_LZMA
-> +	select HAVE_C_RECORDMCOUNT
-> +	select HAVE_DMA_API_DEBUG
-> +	select HAVE_DMA_CONTIGUOUS
-> +	select HAVE_MEMBLOCK
-> +	select MAY_HAVE_SPARSE_IRQ
-> +	select MODULES_USE_ELF_RELA if MODULES
-> +	select NO_BOOTMEM
-> +	select OF
-> +	select OF_EARLY_FLATTREE
-> +	select OF_RESERVED_MEM
-> +	select PERF_USE_VMALLOC
-> +	select RTC_LIB
-> +	select TIMER_OF
-> +	select USB_ARCH_HAS_EHCI
-> +	select USB_ARCH_HAS_OHCI
-> +
-> +config CPU_HAS_CACHEV2
-> +	bool
-> +
-> +config CPU_HAS_FPUV2
-> +	bool
-> +
-> +config CPU_HAS_HILO
-> +	bool
-> +
-> +config CPU_HAS_TLBI
-> +	bool
-> +
-> +config CPU_HAS_LDSTEX
-> +	bool
-> +	help
-> +	  For SMP, CPU needs "ldex&stex" instrcutions to atomic operations.
-> +
-> +config CPU_NEED_TLBSYNC
-> +	bool
-> +
-> +config CPU_NEED_SOFTALIGN
-> +	bool
-> +
-> +config CPU_NO_USER_BKPT
-> +	bool
-> +	help
-> +	  For abiv2 we couldn't use "trap 1" as user space bkpt in gdbserver, because
-> +	  abiv2 is 16/32bit instruction set and "trap 1" is 32bit.
-> +	  So we need a 16bit instruction as user space bkpt, and it will cause an illegal
-> +	  instruction exception.
-> +	  In kernel we parse the *regs->pc to determine whether to send SIGTRAP or not.
-> +
-> +config GENERIC_CALIBRATE_DELAY
-> +	def_bool y
-> +
-> +config GENERIC_CSUM
-> +	def_bool y
-> +
-> +config GENERIC_HWEIGHT
-> +	def_bool y
-> +
-> +config MMU
-> +	def_bool y
-> +
-> +config RWSEM_GENERIC_SPINLOCK
-> +	def_bool y
-> +
-> +config TIME_LOW_RES
-> +	def_bool y
-> +
-> +config TRACE_IRQFLAGS_SUPPORT
-> +	def_bool y
-> +
-> +config CPU_TLB_SIZE
-> +	int
-> +	default "128"	if (CPU_CK610 || CPU_CK807 || CPU_CK810)
-> +	default "1024"	if (CPU_CK860)
-> +
-> +config CPU_ASID_BITS
-> +	int
-> +	default "8"	if (CPU_CK610 || CPU_CK807 || CPU_CK810)
-> +	default "12"	if (CPU_CK860)
-> +
-> +config L1_CACHE_SHIFT
-> +	int
-> +	default "4"	if (CPU_CK610)
-> +	default "5"	if (CPU_CK807 || CPU_CK810)
-> +	default "6"	if (CPU_CK860)
-> +
-> +menu "Processor type and features"
-> +
-> +choice
-> +	prompt "CPU MODEL"
-> +	default CPU_CK807
-> +
-> +config CPU_CK610
-> +	bool "CSKY CPU ck610"
-> +	select CPU_NEED_TLBSYNC
-> +	select CPU_NEED_SOFTALIGN
-> +	select CPU_NO_USER_BKPT
-> +
-> +config CPU_CK810
-> +	bool "CSKY CPU ck810"
-> +	select CPU_HAS_HILO
-> +	select CPU_NEED_TLBSYNC
-> +
-> +config CPU_CK807
-> +	bool "CSKY CPU ck807"
-> +	select CPU_HAS_HILO
-> +
-> +config CPU_CK860
-> +	bool "CSKY CPU ck860"
-> +	select CPU_HAS_TLBI
-> +	select CPU_HAS_CACHEV2
-> +	select CPU_HAS_LDSTEX
-> +	select CPU_HAS_FPUV2
-> +endchoice
-> +
-> +choice
-> +	prompt "Power Manager Instruction (wait/doze/stop)"
-> +	default CPU_PM_NONE
-> +
-> +config CPU_PM_NONE
-> +	bool "None"
-> +
-> +config CPU_PM_WAIT
-> +	bool "wait"
-> +
-> +config CPU_PM_DOZE
-> +	bool "doze"
-> +
-> +config CPU_PM_STOP
-> +	bool "stop"
-> +endchoice
-> +
-> +config CPU_HAS_VDSP
-> +	bool "CPU has VDSP coprocessor"
-> +	depends on CPU_HAS_FPU && CPU_HAS_FPUV2
-> +
-> +config CPU_HAS_FPU
-> +	bool "CPU has FPU coprocessor"
-> +	depends on CPU_CK807 || CPU_CK810 || CPU_CK860
-> +
-> +config CPU_HAS_TEE
-> +	bool "CPU has Trusted Execution Environment"
-> +	depends on CPU_CK810
-> +
-> +config SMP
-> +	bool "Symmetric Multi-Processing (SMP) support for C-SKY"
-> +	depends on CPU_CK860
-> +	default n
-> +
-> +config NR_CPUS
-> +	int "Maximum number of CPUs (2-32)"
-> +	range 2 32
-> +	depends on SMP
-> +	default "2"
-> +
-> +config HIGHMEM
-> +	bool "High Memory Support"
-> +	depends on !CPU_CK610
-> +	default y
-> +
-> +config FORCE_MAX_ZONEORDER
-> +	int "Maximum zone order"
-> +	default "11"
-> +
-> +config RAM_BASE
-> +	hex "DRAM start addr (the same with memory-section in dts)"
-> +	default 0x0
-> +
-> +endmenu
-> +
-> +source "kernel/Kconfig.hz"
-> diff --git a/arch/csky/Kconfig.debug b/arch/csky/Kconfig.debug
-> new file mode 100644
-> index 0000000..48cf6ff
-> --- /dev/null
-> +++ b/arch/csky/Kconfig.debug
-> @@ -0,0 +1,9 @@
-> +menu "C-SKY Debug Options"
-> +config CSKY_BUILTIN_DTB
-> +	string "Use kernel builtin dtb"
-> +	help
-> +	  User could define the dtb instead of the one which is passed from
-> +	  bootloader.
-> +	  Sometimes for debug, we want to use a built-in dtb and then we needn't
-> +	  modify bootloader at all.
-> +endmenu
-> diff --git a/arch/csky/Makefile b/arch/csky/Makefile
-> new file mode 100644
-> index 0000000..67a4ae1
-> --- /dev/null
-> +++ b/arch/csky/Makefile
-> @@ -0,0 +1,93 @@
-> +OBJCOPYFLAGS		:=-O binary
-> +GZFLAGS			:=-9
-> +KBUILD_DEFCONFIG	:= defconfig
-> +
-> +ifdef CONFIG_CPU_HAS_FPU
-> +FPUEXT = f
-> +endif
-> +
-> +ifdef CONFIG_CPU_HAS_VDSP
-> +VDSPEXT = v
-> +endif
-> +
-> +ifdef CONFIG_CPU_HAS_TEE
-> +TEEEXT = t
-> +endif
-> +
-> +ifdef CONFIG_CPU_CK610
-> +CPUTYPE	= ck610
-> +CSKYABI	= abiv1
-> +endif
-> +
-> +ifdef CONFIG_CPU_CK810
-> +CPUTYPE = ck810
-> +CSKYABI	= abiv2
-> +endif
-> +
-> +ifdef CONFIG_CPU_CK807
-> +CPUTYPE = ck807
-> +CSKYABI	= abiv2
-> +endif
-> +
-> +ifdef CONFIG_CPU_CK860
-> +CPUTYPE = ck860
-> +CSKYABI	= abiv2
-> +endif
-> +
-> +ifneq ($(CSKYABI),)
-> +MCPU_STR = $(CPUTYPE)$(FPUEXT)$(VDSPEXT)$(TEEEXT)
-> +KBUILD_CFLAGS += -mcpu=$(MCPU_STR)
-> +KBUILD_CFLAGS += -DCSKYCPU_DEF_NAME=\"$(MCPU_STR)\"
-> +KBUILD_CFLAGS += -msoft-float -mdiv
-> +KBUILD_CFLAGS += -fno-tree-vectorize
-> +endif
-> +
-> +KBUILD_CFLAGS += -pipe
-> +ifeq ($(CSKYABI),abiv2)
-> +KBUILD_CFLAGS += -mno-stack-size
-> +endif
-> +
-> +abidirs := $(patsubst %,arch/csky/%/,$(CSKYABI))
-> +KBUILD_CFLAGS += $(patsubst %,-I$(srctree)/%inc,$(abidirs))
-> +
-> +KBUILD_CPPFLAGS += -mlittle-endian
-> +LDFLAGS += -EL
-> +
-> +KBUILD_AFLAGS += $(KBUILD_CFLAGS)
-> +
-> +head-y := arch/csky/kernel/head.o
-> +
-> +core-y += arch/csky/kernel/
-> +core-y += arch/csky/mm/
-> +core-y += arch/csky/$(CSKYABI)/
-> +
-> +libs-y += arch/csky/lib/ \
-> +	$(shell $(CC) $(KBUILD_CFLAGS) $(KCFLAGS) -print-libgcc-file-name)
-> +
-> +boot := arch/csky/boot
-> +ifneq '$(CONFIG_CSKY_BUILTIN_DTB)' '""'
-> +core-y += $(boot)/dts/
-> +endif
-> +
-> +all: zImage
-> +
-> +
-> +dtbs: scripts
-> +	$(Q)$(MAKE) $(build)=$(boot)/dts
-> +
-> +%.dtb %.dtb.S %.dtb.o: scripts
-> +	$(Q)$(MAKE) $(build)=$(boot)/dts $(boot)/dts/$@
-> +
-> +zImage Image uImage: vmlinux dtbs
-> +	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
-> +
-> +archclean:
-> +	$(Q)$(MAKE) $(clean)=$(boot)
-> +	$(Q)$(MAKE) $(clean)=$(boot)/dts
-> +	rm -rf arch/csky/include/generated
-> +
-> +define archhelp
-> +  echo  '* zImage       - Compressed kernel image (arch/$(ARCH)/boot/zImage)'
-> +  echo  '  Image        - Uncompressed kernel image (arch/$(ARCH)/boot/Image)'
-> +  echo  '  uImage       - U-Boot wrapped zImage'
-> +endef
-> diff --git a/arch/csky/abiv1/Makefile b/arch/csky/abiv1/Makefile
-> new file mode 100644
-> index 0000000..7c06276
-> --- /dev/null
-> +++ b/arch/csky/abiv1/Makefile
-> @@ -0,0 +1,8 @@
-> +obj-$(CONFIG_CPU_NEED_SOFTALIGN)	+= alignment.o
-> +obj-y					+= bswapdi.o
-> +obj-y					+= bswapsi.o
-> +obj-y					+= cacheflush.o
-> +obj-y					+= mmap.o
-> +obj-y					+= memcpy.o
-> +obj-y					+= memset.o
-> +obj-y					+= strksyms.o
-> diff --git a/arch/csky/abiv2/Makefile b/arch/csky/abiv2/Makefile
-> new file mode 100644
-> index 0000000..069ca72
-> --- /dev/null
-> +++ b/arch/csky/abiv2/Makefile
-> @@ -0,0 +1,10 @@
-> +obj-y				+= cacheflush.o
-> +obj-$(CONFIG_CPU_HAS_FPU)	+= fpu.o
-> +obj-y				+= memcmp.o
-> +obj-y				+= memcpy.o
-> +obj-y				+= memmove.o
-> +obj-y				+= memset.o
-> +obj-y				+= strcmp.o
-> +obj-y				+= strcpy.o
-> +obj-y				+= strlen.o
-> +obj-y				+= strksyms.o
-> diff --git a/arch/csky/boot/Makefile b/arch/csky/boot/Makefile
-> new file mode 100644
-> index 0000000..47d3d72
-> --- /dev/null
-> +++ b/arch/csky/boot/Makefile
-> @@ -0,0 +1,24 @@
-> +targets := Image zImage uImage
-> +targets += $(dtb-y)
-> +
-> +$(obj)/Image: vmlinux FORCE
-> +	$(call if_changed,objcopy)
-> +	@echo '  Kernel: $@ is ready'
-> +
-> +compress-$(CONFIG_KERNEL_GZIP) = gzip
-> +compress-$(CONFIG_KERNEL_LZO)  = lzo
-> +compress-$(CONFIG_KERNEL_LZMA) = lzma
-> +compress-$(CONFIG_KERNEL_XZ)   = xzkern
-> +compress-$(CONFIG_KERNEL_LZ4)  = lz4
-> +
-> +$(obj)/zImage:  $(obj)/Image FORCE
-> +	$(call if_changed,$(compress-y))
-> +	@echo '  Kernel: $@ is ready'
-> +
-> +UIMAGE_ARCH		= sandbox
-> +UIMAGE_COMPRESSION	= $(compress-y)
-> +UIMAGE_LOADADDR		= $(shell $(NM) vmlinux | awk '$$NF == "_start" {print $$1}')
-> +
-> +$(obj)/uImage: $(obj)/zImage
-> +	$(call if_changed,uimage)
-> +	@echo 'Image: $@ is ready'
-> diff --git a/arch/csky/boot/dts/Makefile b/arch/csky/boot/dts/Makefile
-> new file mode 100644
-> index 0000000..305e81a
-> --- /dev/null
-> +++ b/arch/csky/boot/dts/Makefile
-> @@ -0,0 +1,13 @@
-> +dtstree	:= $(srctree)/$(src)
-> +
-> +ifneq '$(CONFIG_CSKY_BUILTIN_DTB)' '""'
-> +builtindtb-y := $(patsubst "%",%,$(CONFIG_CSKY_BUILTIN_DTB))
-> +dtb-y += $(builtindtb-y).dtb
-> +obj-y += $(builtindtb-y).dtb.o
-> +.SECONDARY: $(obj)/$(builtindtb-y).dtb.S
-> +else
-> +dtb-y := $(patsubst $(dtstree)/%.dts,%.dtb, $(wildcard $(dtstree)/*.dts))
-> +endif
-> +
-> +always += $(dtb-y)
-> +clean-files += *.dtb *.dtb.S
-> diff --git a/arch/csky/boot/dts/include/dt-bindings b/arch/csky/boot/dts/include/dt-bindings
-> new file mode 120000
-> index 0000000..08c00e4
-> --- /dev/null
-> +++ b/arch/csky/boot/dts/include/dt-bindings
-> @@ -0,0 +1 @@
-> +../../../../../include/dt-bindings
-> \ No newline at end of file
-> diff --git a/arch/csky/include/asm/Kbuild b/arch/csky/include/asm/Kbuild
-> new file mode 100644
-> index 0000000..014eb57
-> --- /dev/null
-> +++ b/arch/csky/include/asm/Kbuild
-> @@ -0,0 +1,72 @@
-> +generic-y += asm-offsets.h
-> +generic-y += bitsperlong.h
-> +generic-y += bugs.h
-> +generic-y += clkdev.h
-> +generic-y += compat.h
-> +generic-y += current.h
-> +generic-y += delay.h
-> +generic-y += device.h
-> +generic-y += div64.h
-> +generic-y += dma.h
-> +generic-y += dma-contiguous.h
-> +generic-y += dma-mapping.h
-> +generic-y += emergency-restart.h
-> +generic-y += errno.h
-> +generic-y += exec.h
-> +generic-y += fb.h
-> +generic-y += ftrace.h
-> +generic-y += futex.h
-> +generic-y += gpio.h
-> +generic-y += hardirq.h
-> +generic-y += hw_irq.h
-> +generic-y += ioctl.h
-> +generic-y += ioctls.h
-> +generic-y += irq.h
-> +generic-y += irq_regs.h
-> +generic-y += ipcbuf.h
-> +generic-y += irq_work.h
-> +generic-y += kdebug.h
-> +generic-y += kmap_types.h
-> +generic-y += kprobes.h
-> +generic-y += kvm_para.h
-> +generic-y += linkage.h
-> +generic-y += local.h
-> +generic-y += local64.h
-> +generic-y += mman.h
-> +generic-y += mm-arch-hooks.h
-> +generic-y += module.h
-> +generic-y += msgbuf.h
-> +generic-y += mutex.h
-> +generic-y += param.h
-> +generic-y += pci.h
-> +generic-y += percpu.h
-> +generic-y += posix_types.h
-> +generic-y += poll.h
-> +generic-y += preempt.h
-> +generic-y += qrwlock.h
-> +generic-y += resource.h
-> +generic-y += scatterlist.h
-> +generic-y += sections.h
-> +generic-y += sembuf.h
-> +generic-y += serial.h
-> +generic-y += setup.h
-> +generic-y += shmbuf.h
-> +generic-y += shm.h
-> +generic-y += siginfo.h
-> +generic-y += signal.h
-> +generic-y += socket.h
-> +generic-y += sockios.h
-> +generic-y += statfs.h
-> +generic-y += termbits.h
-> +generic-y += termios.h
-> +generic-y += timex.h
-> +generic-y += topology.h
-> +generic-y += trace_clock.h
-> +generic-y += types.h
-> +generic-y += ucontext.h
-> +generic-y += unaligned.h
-> +generic-y += user.h
-> +generic-y += vga.h
-> +generic-y += vmlinux.lds.h
-> +generic-y += word-at-a-time.h
-> +generic-y += xor.h
-> diff --git a/arch/csky/include/uapi/asm/Kbuild b/arch/csky/include/uapi/asm/Kbuild
-> new file mode 100644
-> index 0000000..b65252b
-> --- /dev/null
-> +++ b/arch/csky/include/uapi/asm/Kbuild
-> @@ -0,0 +1,33 @@
-> +include include/uapi/asm-generic/Kbuild.asm
-> +
-> +header-y += cachectl.h
-> +header-y += stat.h
-> +
-> +generic-y += auxvec.h
-> +generic-y += param.h
-> +generic-y += bpf_perf_event.h
-> +generic-y += errno.h
-> +generic-y += fcntl.h
-> +generic-y += ioctl.h
-> +generic-y += ioctls.h
-> +generic-y += ipcbuf.h
-> +generic-y += shmbuf.h
-> +generic-y += bitsperlong.h
-> +generic-y += mman.h
-> +generic-y += msgbuf.h
-> +generic-y += poll.h
-> +generic-y += posix_types.h
-> +generic-y += resource.h
-> +generic-y += sembuf.h
-> +generic-y += siginfo.h
-> +generic-y += signal.h
-> +generic-y += socket.h
-> +generic-y += sockios.h
-> +generic-y += statfs.h
-> +generic-y += stat.h
-> +generic-y += setup.h
-> +generic-y += swab.h
-> +generic-y += termbits.h
-> +generic-y += termios.h
-> +generic-y += types.h
-> +generic-y += ucontext.h
-> diff --git a/arch/csky/kernel/Makefile b/arch/csky/kernel/Makefile
-> new file mode 100644
-> index 0000000..4422de7
-> --- /dev/null
-> +++ b/arch/csky/kernel/Makefile
-> @@ -0,0 +1,8 @@
-> +extra-y := head.o vmlinux.lds
-> +
-> +obj-y += entry.o atomic.o signal.o traps.o irq.o time.o vdso.o
-> +obj-y += power.o syscall.o syscall_table.o setup.o
-> +obj-y += process.o cpu-probe.o ptrace.o dumpstack.o
-> +
-> +obj-$(CONFIG_MODULES)			+= module.o
-> +obj-$(CONFIG_SMP)			+= smp.o
-> diff --git a/arch/csky/lib/Makefile b/arch/csky/lib/Makefile
-> new file mode 100644
-> index 0000000..d1f368c
-> --- /dev/null
-> +++ b/arch/csky/lib/Makefile
-> @@ -0,0 +1 @@
-> +lib-y  := usercopy.o delay.o
-> diff --git a/arch/csky/mm/Makefile b/arch/csky/mm/Makefile
-> new file mode 100644
-> index 0000000..c870eb3
-> --- /dev/null
-> +++ b/arch/csky/mm/Makefile
-> @@ -0,0 +1,13 @@
-> +ifeq ($(CONFIG_CPU_HAS_CACHEV2),y)
-> +obj-y +=			cachev2.o
-> +else
-> +obj-y +=			cachev1.o
-> +endif
-> +
-> +obj-y +=			dma-mapping.o
-> +obj-y +=			fault.o
-> +obj-$(CONFIG_HIGHMEM) +=	highmem.o
-> +obj-y +=			init.o
-> +obj-y +=			ioremap.o
-> +obj-y +=			syscache.o
-> +obj-y +=			tlb.o
-> -- 
-> 2.7.4
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Changes in v2:
+ - Explicity mention in the commit log that this the code was not
+   tested.
+ - Use warning level 3 instead of 2.
+ - Change the form "else: fall through" to "fall through" instead.
+ - Address -Wimplicit-fallthrough warnings in net/wireless/scan.c
+
+ net/wireless/chan.c        | 2 ++
+ net/wireless/nl80211.c     | 9 +++++++++
+ net/wireless/scan.c        | 2 +-
+ net/wireless/wext-compat.c | 2 ++
+ 4 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/net/wireless/chan.c b/net/wireless/chan.c
+index 2db713d..0a45265 100644
+--- a/net/wireless/chan.c
++++ b/net/wireless/chan.c
+@@ -747,6 +747,7 @@ bool cfg80211_chandef_usable(struct wiphy *wiphy,
+ 	case NL80211_CHAN_WIDTH_20:
+ 		if (!ht_cap->ht_supported)
+ 			return false;
++		/* fall through */
+ 	case NL80211_CHAN_WIDTH_20_NOHT:
+ 		prohibited_flags |= IEEE80211_CHAN_NO_20MHZ;
+ 		width = 20;
+@@ -769,6 +770,7 @@ bool cfg80211_chandef_usable(struct wiphy *wiphy,
+ 		cap = vht_cap->cap & IEEE80211_VHT_CAP_SUPP_CHAN_WIDTH_MASK;
+ 		if (cap != IEEE80211_VHT_CAP_SUPP_CHAN_WIDTH_160_80PLUS80MHZ)
+ 			return false;
++		/* fall through */
+ 	case NL80211_CHAN_WIDTH_80:
+ 		if (!vht_cap->vht_supported)
+ 			return false;
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index 744b585..0276370 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -1706,6 +1706,7 @@ static int nl80211_send_wiphy(struct cfg80211_registered_device *rdev,
+ 		state->split_start++;
+ 		if (state->split)
+ 			break;
++		/* fall through */
+ 	case 1:
+ 		if (nla_put(msg, NL80211_ATTR_CIPHER_SUITES,
+ 			    sizeof(u32) * rdev->wiphy.n_cipher_suites,
+@@ -1752,6 +1753,7 @@ static int nl80211_send_wiphy(struct cfg80211_registered_device *rdev,
+ 		state->split_start++;
+ 		if (state->split)
+ 			break;
++		/* fall through */
+ 	case 2:
+ 		if (nl80211_put_iftypes(msg, NL80211_ATTR_SUPPORTED_IFTYPES,
+ 					rdev->wiphy.interface_modes))
+@@ -1759,6 +1761,7 @@ static int nl80211_send_wiphy(struct cfg80211_registered_device *rdev,
+ 		state->split_start++;
+ 		if (state->split)
+ 			break;
++		/* fall through */
+ 	case 3:
+ 		nl_bands = nla_nest_start(msg, NL80211_ATTR_WIPHY_BANDS);
+ 		if (!nl_bands)
+@@ -1784,6 +1787,7 @@ static int nl80211_send_wiphy(struct cfg80211_registered_device *rdev,
+ 				state->chan_start++;
+ 				if (state->split)
+ 					break;
++				/* fall through */
+ 			default:
+ 				/* add frequencies */
+ 				nl_freqs = nla_nest_start(
+@@ -1837,6 +1841,7 @@ static int nl80211_send_wiphy(struct cfg80211_registered_device *rdev,
+ 			state->split_start++;
+ 		if (state->split)
+ 			break;
++		/* fall through */
+ 	case 4:
+ 		nl_cmds = nla_nest_start(msg, NL80211_ATTR_SUPPORTED_COMMANDS);
+ 		if (!nl_cmds)
+@@ -1863,6 +1868,7 @@ static int nl80211_send_wiphy(struct cfg80211_registered_device *rdev,
+ 		state->split_start++;
+ 		if (state->split)
+ 			break;
++		/* fall through */
+ 	case 5:
+ 		if (rdev->ops->remain_on_channel &&
+ 		    (rdev->wiphy.flags & WIPHY_FLAG_HAS_REMAIN_ON_CHANNEL) &&
+@@ -1880,6 +1886,7 @@ static int nl80211_send_wiphy(struct cfg80211_registered_device *rdev,
+ 		state->split_start++;
+ 		if (state->split)
+ 			break;
++		/* fall through */
+ 	case 6:
+ #ifdef CONFIG_PM
+ 		if (nl80211_send_wowlan(msg, rdev, state->split))
+@@ -1890,6 +1897,7 @@ static int nl80211_send_wiphy(struct cfg80211_registered_device *rdev,
+ #else
+ 		state->split_start++;
+ #endif
++		/* fall through */
+ 	case 7:
+ 		if (nl80211_put_iftypes(msg, NL80211_ATTR_SOFTWARE_IFTYPES,
+ 					rdev->wiphy.software_iftypes))
+@@ -1902,6 +1910,7 @@ static int nl80211_send_wiphy(struct cfg80211_registered_device *rdev,
+ 		state->split_start++;
+ 		if (state->split)
+ 			break;
++		/* fall through */
+ 	case 8:
+ 		if ((rdev->wiphy.flags & WIPHY_FLAG_HAVE_AP_SME) &&
+ 		    nla_put_u32(msg, NL80211_ATTR_DEVICE_AP_SME,
+diff --git a/net/wireless/scan.c b/net/wireless/scan.c
+index d0e7472..0f0b519 100644
+--- a/net/wireless/scan.c
++++ b/net/wireless/scan.c
+@@ -1183,7 +1183,7 @@ cfg80211_inform_bss_data(struct wiphy *wiphy,
+ 	switch (ftype) {
+ 	case CFG80211_BSS_FTYPE_BEACON:
+ 		ies->from_beacon = true;
+-		/* fall through to assign */
++		/* fall through - to assign */
+ 	case CFG80211_BSS_FTYPE_UNKNOWN:
+ 		rcu_assign_pointer(tmp.pub.beacon_ies, ies);
+ 		break;
+diff --git a/net/wireless/wext-compat.c b/net/wireless/wext-compat.c
+index 06943d9..d522787 100644
+--- a/net/wireless/wext-compat.c
++++ b/net/wireless/wext-compat.c
+@@ -1337,6 +1337,7 @@ static struct iw_statistics *cfg80211_wireless_stats(struct net_device *dev)
+ 			wstats.qual.qual = sig + 110;
+ 			break;
+ 		}
++		/* fall through */
+ 	case CFG80211_SIGNAL_TYPE_UNSPEC:
+ 		if (sinfo.filled & BIT_ULL(NL80211_STA_INFO_SIGNAL)) {
+ 			wstats.qual.updated |= IW_QUAL_LEVEL_UPDATED;
+@@ -1345,6 +1346,7 @@ static struct iw_statistics *cfg80211_wireless_stats(struct net_device *dev)
+ 			wstats.qual.qual = sinfo.signal;
+ 			break;
+ 		}
++		/* fall through */
+ 	default:
+ 		wstats.qual.updated |= IW_QUAL_LEVEL_INVALID;
+ 		wstats.qual.updated |= IW_QUAL_QUAL_INVALID;
+-- 
+2.7.4
+
