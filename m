@@ -2,124 +2,140 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4ED0C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 04:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 041CAC67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 04:36:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AA3F20671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 04:28:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD68420671
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 04:36:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=metztli-com.20150623.gappssmtp.com header.i=@metztli-com.20150623.gappssmtp.com header.b="m+UOoMuT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AA3F20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=metztli.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CdM595XV";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q1BRFxCk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD68420671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbeJWMuS (ORCPT
+        id S1727356AbeJWM5v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 08:50:18 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:34697 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbeJWMuS (ORCPT
+        Tue, 23 Oct 2018 08:57:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48480 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727014AbeJWM5u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 08:50:18 -0400
-Received: by mail-qt1-f194.google.com with SMTP id z2-v6so49801qts.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 21:28:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metztli-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RMQv7HvnEqrZ8wBhwlspCtiBJ0pAc4OUXAVj9Moim58=;
-        b=m+UOoMuTRK/wzpDdCBUyS4bBzt5l0hLFvchYyvzDiWUeLjKhrmvbw32GyuR77Ku3i9
-         HS6Xnd3O2WFBdpKPhORIvJRraS1BvajYx9y0QoVdyks6JymKwhAkcAgVSykz184mVpSu
-         CItS0yAPPhlTRpb+Hav9JLUw5kQNdsD4pA17fwuuWmNC1ORszzSda57zfq5B/FhRWy4D
-         9u+hmPMRiIcWDjV4C2EmlGWHWof8cVmU5MEzJbGqzLOzERiyQt17yB17cwEcB1mwR2V9
-         zzEYsoeBRKLOCfER270u7ifrlJLMqu38VbQf+0TSACFgyaAoYXsdJWyqMw5NIGrc61H9
-         80ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RMQv7HvnEqrZ8wBhwlspCtiBJ0pAc4OUXAVj9Moim58=;
-        b=cIbXUP4l7m16e9dnjm8gyIw19ZHneZQjIciHpZWKmoAnIqIPe6QsU+CYqE8KTZGxTe
-         X4NvsLypnnclAiJdyOvd/cW/NvbJjFzs3nTIzreCnSSTgAk8Gg7cxRfaHu+EfADBBTN+
-         6PdyqHoa9y3a3vDh/xJt0Wfe46SG1QIvMGXzMqlkh3/TyEMU8yuO4PXwHplnA29tF2m6
-         34GXKDB4NiSr7B5xWlsqNokU4VlGjpgZ9eGG9axlGCWzzYjhuz13VZbUluruDBNJNDBa
-         ed/hw32rMW7tzMWT8z7TFtWOvmfwlGw66ajZWBhUVRsJa0KZ2mxEEWnplV0RjzmPGoKI
-         lIEg==
-X-Gm-Message-State: ABuFfoj2tcoF/96XkxzZzaAM/a2IT0NPAPnCZ95x9SE6oUmJOisOchUD
-        UjJVqiXjnZeAr1gvj0fhvgZ9PXOjjT+kGPVGHmzytWG0Lexv0g==
-X-Google-Smtp-Source: ACcGV62LfeLRSTelXpMfCLpgVlWUx5rpks2yN0FVYetMKFZAAvFqMoLwuTznUajio9AsPvMzqxeYqYjt6Rk84RIQ+Pg=
-X-Received: by 2002:a0c:d927:: with SMTP id p36mr45959929qvj.181.1540268922278;
- Mon, 22 Oct 2018 21:28:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181022101912.3CE2E292B005@huitzilopochtli.metztli-it.com> <20181023033852.GR32577@ZenIV.linux.org.uk>
-In-Reply-To: <20181023033852.GR32577@ZenIV.linux.org.uk>
-From:   Jose R R <jose.r.r@metztli.com>
-Date:   Mon, 22 Oct 2018 21:28:29 -0700
-Message-ID: <CAM12Q5Q5qfrKQrw-2f_PX_FBgFsC6C=dde0gwn8ugBXEx05S_g@mail.gmail.com>
-Subject: Re: Reiser4 Linux 4.17.19-1 hangs in Google cloud VM, too.
-To:     viro@zeniv.linux.org.uk
-Cc:     ReiserFS Development List <reiserfs-devel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 23 Oct 2018 08:57:50 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 78C28611F1; Tue, 23 Oct 2018 04:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540269373;
+        bh=emgBIf1Pwi67lf0bNoGLXKtdK36mpWNRlSIow7nthGA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CdM595XVDu/fteseqDT1mkYIbwZayABqEK9qukIt+O01Ld7BR1YDQ4Xow3q9o16ow
+         WD6w8lU/apinS3RZ5kKdEtqAPqqZiuqGp39p1Z5Zh3d9HjtgTHpX8vRANoo45KFEV9
+         DJR1ZpKjqfWdGbKHU+BcjsOLFxEU/9MRMl4jmiDM=
+Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: cang@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id EEB8960C48;
+        Tue, 23 Oct 2018 04:36:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540269372;
+        bh=emgBIf1Pwi67lf0bNoGLXKtdK36mpWNRlSIow7nthGA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Q1BRFxCksEvK4ZJZ07r+VJ1DXKybGgkRF9bY8N67eGHjaWZIEFFQs2TVedU54rrg4
+         jC8Ao1j4rmlZyxjPkAwsw2SHvjpZRSAbJuZL4719AE96s/GWVVPly6prQXTAGxBDfy
+         QDaQh/xDLk8Fn5Y9u6crnW5+c4mCCGobV8ZBMu00=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EEB8960C48
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
+From:   Can Guo <cang@codeaurora.org>
+To:     subhashj@codeaurora.org, asutoshd@codeaurora.org,
+        vivek.gautam@codeaurora.org, evgreen@chromium.org,
+        mgautam@codeaurora.org, kishon@ti.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Can Guo <cang@codeaurora.org>
+Subject: [PATCH v10 0/6] Support for Qualcomm UFS QMP PHY on SDM845
+Date:   Mon, 22 Oct 2018 21:35:55 -0700
+Message-Id: <1540269361-28185-1-git-send-email-cang@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you for replying, Al-
+This patch series adds support for UFS QMP PHY on SDM845 and the
+compatible string for it. This patch series depends on the current
+proposed QMP V3 USB3 UNI PHY support for sdm845 driver [1], on
+the DT bindings for the QMP V3 USB3 PHYs based dirver [2], and also
+rebased on updated pipe_clk initialization sequence [3]. This series
+can only be merged once the dependent patches do.
+[1] http://lists-archives.com/linux-kernel/29071659-dt-bindings-phy-qcom-qmp-update-bindings-for-sdm845.html
+[2] http://lists-archives.com/linux-kernel/29071660-phy-qcom-qmp-add-qmp-v3-usb3-uni-phy-support-for-sdm845.html
+[3] https://patchwork.kernel.org/patch/10376551/
 
-On Mon, Oct 22, 2018 at 8:38 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Mon, Oct 22, 2018 at 03:19:12AM -0700, Metztli Information Technology wrote:
-> > I installed reiser4 -enhanced Linux kernel 4.17.19-1 --thus replacing the prior hung reiser4 -patched kernel 4.18.15-1 in the Google Compute Engine (GCE) cloud instance. After less than 24 hours the 4.17.19-1 hung in similar way to the 4.18.15-1.
-> >
-> > Please note that I had been running my custom Metztli Reiser4 Debian Stretch image with reiser4 linux 4.14.20-1 without issues for several months
-> > < https://github.com/Metztli/reiser4-debian-kernel-packaging-4.14.20 >  --until I decided to upgrade to newer kernel(s).
+Changes since v9:
+- Incorporated review comments from Rob.
 
-That link you referenced is just my hack for the corresponding Debian
-kernel packaging (wrapper) to build 'Reiser4 the Debian Way', i.e,
-generating reiser4 module & kernel -- suitable for installation media
--- in addition to Debian's.
+Changes since v8:
+- Add one new change to support ufs core reset.
+- Incorporated review comments from Evan, Vivek.
 
->
-> Er...  Does anybody maintain reiser4 these days?  I can't recall a single mail
-> along the lines of "such-and-such VFS/VM/scheduler/etc. change would break reiser4"
-> in quite a few years (more than a decade, most likely)...
+Changes since v7:
+- Add one new change to update UFS PHY power on sequence
+- Incorporated review comments from Evan, Vivek and Manu.
 
-This is the actual patch for the Linux 4.14.xy series:
-< https://sourceforge.net/projects/reiser4/files/reiser4-for-linux-4.x/reiser4-for-4.14.1.patch.gz/download
->
+Changes since v6:
+- Add one new change to clean up some structs and field
+- Updates the PHY power control sequence.
+- Incorporated review comments from Vivek and Manu.
 
-And yes, Mr. Edward Shishkin, still develops/maintains reiser4, please see:
-< https://github.com/edward6/reiser4 >
+Changes since v5:
+- Updates the PHY power control sequence.
+- Updates UFS PHY power on condition check.
 
-I have a couple of reiser4 custom Google Compute Engine (GCE) cloud
-instances which have been running LAMP for a while. One of them runs
-reiser4 -enabled Linux kernel 4.15.x whereas the other one was running
-4.14.x (both for several months/years already) until I decided to
-upgrade the 4.4.20-1 to newer reiser4 -enabled kernels. By the way
-this last kernel that I installed:
-uname -a
-Linux cohuatl 4.16.0-2+reiser4.0.2-amd64 #1 SMP Debian 4.16.18-2
-(2018-06-27) x86_64 GNU/Linux
+Changes since v4:
+- Adds 'ref_aux' clock back to SDM845 UFS PHY clock list.
+- Power on PHY before serdes configuration starts.
+- Updates the UFS PHY initialization sequence.
+- Updates a few UFS PHY registers.
+- Incorporated review comments from Vivek and Manu.
 
-seems to be performing nicely --if things continue fine I can assume
-that the drastic change affecting reiser4 hacked kernels occurred
-beginning with upstream Linux series 4.17.x and on...
+Changes since v3:
+- Incorporated review comments from Vivek and Rob.
 
+Changes since v2:
+- Incorporated review comments from Vivek and Rob.
+- Remove "ref_aux" from sdm845 ufs phy clock list structure.
 
-Best Professional Regards.
+Changes since v1:
+- Incorporated review comments from Vivek and Manu.
+- Update the commit title of patch 2.
+
+Can Guo (5):
+  phy: Update PHY power control sequence
+  phy: General struct and field cleanup
+  phy: Add QMP phy based UFS phy support for sdm845
+  scsi: ufs: Power on phy after it is initialized
+  dt-bindings: phy-qcom-qmp: Add UFS phy compatible string for sdm845
+
+Dov Levenglick (1):
+  scsi: ufs: Add core reset support
+
+ .../devicetree/bindings/phy/qcom-qmp-phy.txt       |   4 +-
+ drivers/phy/qualcomm/phy-qcom-qmp.c                | 216 +++++++++++++++++++--
+ drivers/phy/qualcomm/phy-qcom-qmp.h                |  15 ++
+ drivers/scsi/ufs/ufs-qcom.c                        |  34 +++-
+ drivers/scsi/ufs/ufs-qcom.h                        |   1 +
+ drivers/scsi/ufs/ufshcd-pltfrm.c                   |  22 +++
+ drivers/scsi/ufs/ufshcd.c                          |  13 ++
+ drivers/scsi/ufs/ufshcd.h                          |  12 ++
+ 8 files changed, 296 insertions(+), 21 deletions(-)
 
 -- 
-Jose R R
-http://metztli.it
----------------------------------------------------------------------------------------------
-Download Metztli Reiser4: Debian Stretch w/ Linux 4.17 AMD64
----------------------------------------------------------------------------------------------
-feats ZSTD compression https://sf.net/projects/metztli-reiser4/
--------------------------------------------------------------------------------------------
-Official current Reiser4 resources: https://reiser4.wiki.kernel.org/
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
