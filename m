@@ -2,118 +2,115 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF401C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F45C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A08A6207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:38:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2E3520665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:41:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYDroE7w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A08A6207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZaaZGP1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2E3520665
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbeJWUBo (ORCPT
+        id S1727781AbeJWUEo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 16:01:44 -0400
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:38003 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727720AbeJWUBn (ORCPT
+        Tue, 23 Oct 2018 16:04:44 -0400
+Received: from mail-wm1-f41.google.com ([209.85.128.41]:34313 "EHLO
+        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbeJWUEo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 16:01:43 -0400
-Received: by mail-vk1-f195.google.com with SMTP id j20so242271vke.5;
-        Tue, 23 Oct 2018 04:38:37 -0700 (PDT)
+        Tue, 23 Oct 2018 16:04:44 -0400
+Received: by mail-wm1-f41.google.com with SMTP id z25-v6so11417000wmf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 04:41:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nOlkRSKN//LyAA072zP7IYIF2xXwxuJvCbHoMHKNPNw=;
-        b=BYDroE7w4YSnLTWNqY1j17nvgv6kRBxi05TEnRZKdlnGULQ+ZoKoblQr6ky+OdBK5i
-         xnLn7zG5D3aCOMWn+QYzOiazXC1V/Xr3ulqNPYZwijXS5Ep27lR5ZrZvb6GAag+jhxi9
-         fsgwmnXOYxtC+DxrbqPKrs6OSg+ixIaDHbmcT9Gsk2UZFAmET76t3wZ7EqrKJ/DRosvx
-         yvozs3Xn7tuhEEa2uJTZAeCCfz8pW5VHDAhr4/thw+kxWIdSKN6UX/6diQNNgsDWhBNB
-         Jse7kkuCYbhurxv2/3MG3B6725SCPDbPrB/W6/BfHT/B8+4Mr+uw+UP5ds3NBDgddw7B
-         X4/g==
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=MMJmjMZDiegL05twTYGG/uUvJOumkvYrEzwG00EtUfs=;
+        b=HZaaZGP1xHdONIn4S/dI/xTkwQw4CtvwKJJ4k9OjHj6GP8FzefllcAL5/lLcyqI3hj
+         XlLHBVpLKyznBVxWQIqvOCroVoTIJK57tTb1QefR+KsG6sUMoOKIAL7QJFrjyqwB4miR
+         E8anUkpHvHaoKo84iAhLJMHaaLvAqTQrKlJTIZER01fA+6YYf7b3bd9f8VtlEls/qCHb
+         g7A8fQArAYv9Ar/loMFMptKKhOrSWZo1JnlHIoM7kRusrvaXn14nWIISljjvCb4HX8uB
+         14k2FoKIWYiNw55PBgRknugO0xmueAjk3htKxdY4syA+W/kDryGGN89FKoInybXGzyWG
+         xoiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nOlkRSKN//LyAA072zP7IYIF2xXwxuJvCbHoMHKNPNw=;
-        b=LIkUUaOHQIKC3JZyQMIqy7kpaf7GnIDRWFI/I7i6PJPmQjldZpJL3GrdmseEfnX2cf
-         apQhVi6zitEzJeRGbPX7YJddE9DfiNF0/T5u/K7tuPOtAs4ZB9LhmnUCM6jo7CXFdyk1
-         azWIvGnIPfMnuYB92NNjkFT3HNEMk1ZQK7ThUeMFT+m5ODOLydsO9AVam8waLiw55Uiz
-         utGLjkhUsNiN3ZTC4nHBfX4FE6hUMCNzGD5GsuGzPUALCunhuAkDf2EJyRKsG8wK0z4H
-         oE0kr5CRk8zTVTZyqNvot+ZPKZ8qr2sWPmIUAajIyAEFRskCo1VcAZe2sxxqPuWmNrcG
-         QFFg==
-X-Gm-Message-State: ABuFfog9u3TRSzlKZBrENT77fyakXI810jtr+hWShXNOxyGXtDsE7tkQ
-        /8aiV4H1lrZYBZrxkWeLl0UTQH0xynQV/FfA3Ok=
-X-Google-Smtp-Source: ACcGV61DAjUErAn2jr9QNeJEaIWi7rreXV9Jt4g0ljeBteiHlPufiCZJT+pcKXI7AcdH3E/XHeqnMQg2YFLzmlvUwUE=
-X-Received: by 2002:a1f:9fcd:: with SMTP id i196mr20299537vke.77.1540294716624;
- Tue, 23 Oct 2018 04:38:36 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=MMJmjMZDiegL05twTYGG/uUvJOumkvYrEzwG00EtUfs=;
+        b=WFQ5u/7uKUA9XVFE8t6OW90IHgDG6wHZ3/tuDCxS8HWgdnts4SkzAWgXfzh1amWJi4
+         1ymTRn4AOrsnr2lEAzeWkVvDUj5WlgYK1aGLbkMMwFbioEmR2adZWWDKq1qVOvAyUzwm
+         jZbNB8gsomwcm9Kukyd6xxROBYaXM9QDp9DcIgtqW5cNFszM+M6+7KShKEthrgRpCt+X
+         es5hsf+Aansbp/r64UMk+s0sMHFDicThUayz0G5opdw84YSwDGyS2OIDid8oZebemg+j
+         m1vahz1mXPhowh4EYfWQq6iqM9ewNVygsvw48brhhFgPGYps5z1jnPKrqDuqjyBaOgR6
+         QMKQ==
+X-Gm-Message-State: ABuFfoi07kmtDMextMRaZSkp0h9pzKoSxCU3MSXCf1PXvcYwZe/ZltN2
+        gn6nCkimTJYHQv4ErkcY+UU=
+X-Google-Smtp-Source: ACcGV61FqoJJ2ebjfZXNP/1TDz2xWc7oVQ0p8roxXLuCaQ0e0ICZU7xYx+22PtPyNFCTO/n5BFJp4Q==
+X-Received: by 2002:a1c:7ed4:: with SMTP id z203-v6mr19538632wmc.62.1540294895596;
+        Tue, 23 Oct 2018 04:41:35 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id q77-v6sm2542936wmd.33.2018.10.23.04.41.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 23 Oct 2018 04:41:35 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 13:41:32 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Juergen Gross <jgross@suse.com>
+Subject: [GIT PULL] x86/grub2 changes for v4.20
+Message-ID: <20181023114132.GA119389@gmail.com>
 MIME-Version: 1.0
-References: <20181023085314.3561-1-lhenriques@suse.com>
-In-Reply-To: <20181023085314.3561-1-lhenriques@suse.com>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Tue, 23 Oct 2018 19:38:24 +0800
-Message-ID: <CAAM7YA=k5h-PdqACkmWGtiu+5cpRki0FWyMW4ukyzSgdMKGa6w@mail.gmail.com>
-Subject: Re: [PATCH] ceph: add destination file data sync before doing any
- remote copy
-To:     Luis Henriques <lhenriques@suse.com>
-Cc:     Zheng Yan <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 5:08 PM Luis Henriques <lhenriques@suse.com> wrote:
->
-> If we try to copy into a file that was just written, any data that is remote
-> copied will be overwritten by our buffered writes once they are flushed.  When
-> this happens, the call to invalidate_inode_pages2_range will also return a
-> -EBUSY error.
->
-> This patch fixes this by also sync'ing the destination file before starting any
-> copy.
->
-> Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> ---
->  fs/ceph/file.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index f788496fafcc..b4607baa8969 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1932,10 +1932,17 @@ static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
->         if (!prealloc_cf)
->                 return -ENOMEM;
->
-> -       /* Start by sync'ing the source file */
-> +       /* Start by sync'ing the source and destination files */
->         ret = file_write_and_wait_range(src_file, src_off, (src_off + len));
-> -       if (ret < 0)
-> +       if (ret < 0) {
-> +               dout("failed to write src file (%zd)\n", ret);
-> +               goto out;
-> +       }
-> +       ret = file_write_and_wait_range(dst_file, dst_off, (dst_off + len));
-> +       if (ret < 0) {
-> +               dout("failed to write dst file (%zd)\n", ret);
->                 goto out;
-> +       }
->
->         /*
->          * We need FILE_WR caps for dst_ci and FILE_RD for src_ci as other
+Linus,
 
-Applied, thanks
+Please pull the latest x86-grub2-for-linus git tree from:
 
-Yan, Zheng
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-grub2-for-linus
+
+   # HEAD: e7b66d16fe41722350ba87f5788052ef53ee28bb x86/acpi, x86/boot: Take RSDP address for boot params if available
+
+This tree extends the x86 boot protocol to include an address for the 
+RSDP table - utilized by Xen currently. Matching Grub2 patches are 
+pending as well. (Juergen Gross)
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Juergen Gross (3):
+      x86/xen: Fix boot loader version reported for PVH guests
+      x86/boot: Add ACPI RSDP address to setup_header
+      x86/acpi, x86/boot: Take RSDP address for boot params if available
+
+
+ Documentation/x86/boot.txt            | 32 +++++++++++++++++++++++++++++++-
+ arch/x86/boot/header.S                |  6 +++++-
+ arch/x86/include/asm/acpi.h           |  7 +++++++
+ arch/x86/include/asm/x86_init.h       |  2 ++
+ arch/x86/include/uapi/asm/bootparam.h |  4 ++++
+ arch/x86/kernel/acpi/boot.c           |  6 ++++++
+ arch/x86/kernel/head32.c              |  1 +
+ arch/x86/kernel/head64.c              |  2 ++
+ arch/x86/kernel/setup.c               | 17 +++++++++++++++++
+ arch/x86/kernel/x86_init.c            |  3 +--
+ arch/x86/xen/enlighten_pvh.c          |  2 +-
+ 11 files changed, 77 insertions(+), 5 deletions(-)
+
