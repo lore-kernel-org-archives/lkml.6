@@ -2,117 +2,184 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F097FC67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 135A3ECDE44
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9D6320665
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:07:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=astier-eu.20150623.gappssmtp.com header.i=@astier-eu.20150623.gappssmtp.com header.b="SI+biLT6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9D6320665
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=astier.eu
+	by mail.kernel.org (Postfix) with ESMTP id D3C4A2080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:07:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3C4A2080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbeJWSab (ORCPT
+        id S1729080AbeJWSag (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 14:30:31 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37398 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729027AbeJWSaa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 14:30:30 -0400
-Received: by mail-wm1-f67.google.com with SMTP id x19-v6so1124643wmc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 03:07:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=astier-eu.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=2lGu63PRc1IiqaG5JjRbZANs5k88cp36wl81f1JLXWE=;
-        b=SI+biLT6x8fnzl8nEcGcGde6OlmtnkUzg8dvnvVksAzdfV3opYNiOD5/9hthmqXyyY
-         G+EJ0mb9WdLN2fK9RMvoPODktJoMj7CnvjicmfLWzm9wlp/2r4QTGc//4TMtrbkUuULO
-         pJslCXCzFO1nQO0ghNBRRU6nrKOOXfXUHy64Dp23ZadLdvHqEZWgr61R6eCJsmxIepWF
-         b6Pyjr5+U+vykepG/Tuz83Ar+6IKtiVbgmgOb8ChloXkjK9bzSHiqm884f8fBHhQvfU/
-         pElvC271Rrz99X/O7mJlB2XzZ499S9jiZ1Rrfnrx//q84ks7coJiS24xSrHITaCw/xeM
-         E7qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=2lGu63PRc1IiqaG5JjRbZANs5k88cp36wl81f1JLXWE=;
-        b=PHVdN25Hl48qfmz48zvtegAmusmOIKCBxkkO00JDY4oGZRQFZf+v1ID0nekniE/LG6
-         A2yNYCr6MERJ3b/0/V2hOBFKwpUL/0W6dPusowrwCkGrOq8YF7R9Jjd/gQ/FPwOQvWYK
-         W3YOQ4Y6vGF519XCerSAreqrMKMfTPE9swa5vqqoJM9WVwwOkzdwoYYAhx1mD4u/b8Ui
-         ysGxOCjjVOZPdSrUIR+laUMIrBNEYOfUFatlXH1smpnk3JMFp7p0vIXJCWF8phFJM8vb
-         /u7W+IlU4KOMVmTJn2X3BA/fvmHZuMQhGuCtOi43ub3InPT/X0ypckdsrH7/g94+Hdo3
-         H3eg==
-X-Gm-Message-State: AGRZ1gJ6TcFYH/ix+njks5DPNZqYRjMxYFRopwrP8E2U2AG5iU53W2rP
-        VBhzhar4xm9WThThuLPvIzfO+Q==
-X-Google-Smtp-Source: ACcGV6390eJA+hhle7tonXD7EiuB+vB5K7iHR/+6t2Q6ip4HUdvFYnjDgiiuf2wJwnJe2Zyrno+fqw==
-X-Received: by 2002:a1c:f518:: with SMTP id t24-v6mr1840374wmh.82.1540289264902;
-        Tue, 23 Oct 2018 03:07:44 -0700 (PDT)
-Received: from jaya.substantiel.local ([92.103.140.194])
-        by smtp.gmail.com with ESMTPSA id i13-v6sm910930wrn.62.2018.10.23.03.07.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Oct 2018 03:07:44 -0700 (PDT)
-From:   Anisse Astier <anisse@astier.eu>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Anisse Astier <anisse@astier.eu>
-Subject: [PATCH v2 3/3] mmc: sdhci-pci: only install voltage switch method when useful
-Date:   Tue, 23 Oct 2018 12:07:29 +0200
-Message-Id: <20181023100729.28864-4-anisse@astier.eu>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20181023100729.28864-1-anisse@astier.eu>
-References: <20181023100729.28864-1-anisse@astier.eu>
-In-Reply-To: <20181022134026.GB18413@jaya>
-References: <20181022134026.GB18413@jaya>
+        Tue, 23 Oct 2018 14:30:36 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:41732 "EHLO leonov.paulk.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729006AbeJWSag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 14:30:36 -0400
+Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
+        by leonov.paulk.fr (Postfix) with ESMTPS id D8CC1BFE1D;
+        Tue, 23 Oct 2018 12:07:51 +0200 (CEST)
+Received: by gagarine.paulk.fr (Postfix, from userid 114)
+        id 36E36C10E5; Tue, 23 Oct 2018 12:07:51 +0200 (CEST)
+Received: from collins (unknown [192.168.1.1])
+        by gagarine.paulk.fr (Postfix) with ESMTPSA id E9F15C10E6;
+        Tue, 23 Oct 2018 12:07:31 +0200 (CEST)
+Message-ID: <30178c8b263656a9c285e45c78e1908927c99c48.camel@paulk.fr>
+Subject: Re: [PATCH 2/4] drm/panel: simple: Add support for the Lemaker
+ BL035 3.5" LCD
+From:   Paul Kocialkowski <contact@paulk.fr>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, linux-sunxi@googlegroups.com,
+        Mark Van den Borre <mark@fosdem.org>,
+        Gerry Demaret <gerry@fosdem.org>,
+        Luc Verhaegen <libv@skynet.be>
+Date:   Tue, 23 Oct 2018 12:08:17 +0200
+In-Reply-To: <20181010145850.krwe7wlqkbcpja33@flea>
+References: <20181010114134.8211-1-contact@paulk.fr>
+         <20181010114134.8211-2-contact@paulk.fr>
+         <20181010145850.krwe7wlqkbcpja33@flea>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-0SJEQcI45ApnAHSZseZc"
+User-Agent: Evolution 3.30.1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If there's no ACPI DSM for voltage switch, it will just cause a lot of
-debug info down the line, we only need one at startup.
 
-Signed-off-by: Anisse Astier <anisse@astier.eu>
----
- drivers/mmc/host/sdhci-pci-core.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+--=-0SJEQcI45ApnAHSZseZc
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-index f2c1fb339d66..95fdbb883c7e 100644
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -723,6 +723,7 @@ static const struct dmi_system_id board_no_1_8v[] = {
- static void byt_probe_slot(struct sdhci_pci_slot *slot)
- {
- 	struct mmc_host_ops *ops = &slot->host->mmc_host_ops;
-+	struct intel_host *intel_host = sdhci_pci_priv(slot);
- 
- 	byt_read_dsm(slot);
- 
-@@ -733,6 +734,16 @@ static void byt_probe_slot(struct sdhci_pci_slot *slot)
- 				mmc_hostname(slot->host->mmc));
- 		slot->host->quirks2 |= SDHCI_QUIRK2_NO_1_8_V;
- 	}
-+	/* Check if we have the appropriate voltage switch DSM methods */
-+	if (!(intel_host->dsm_fns & (1 << INTEL_DSM_V18_SWITCH)) &&
-+	    !(intel_host->dsm_fns & (1 << INTEL_DSM_V33_SWITCH))) {
-+		/* No voltage switching supported at all, there's no
-+		 * point in installing the callback: return.
-+		 */
-+		pr_debug("%s: No voltage switching ACPI DSM helper\n",
-+				mmc_hostname(slot->host->mmc));
-+		return;
-+	}
- 	ops->start_signal_voltage_switch = intel_start_signal_voltage_switch;
- }
- 
--- 
-2.17.2
+Hi,
+
+Le mercredi 10 octobre 2018 =C3=A0 16:58 +0200, Maxime Ripard a =C3=A9crit =
+:
+> On Wed, Oct 10, 2018 at 01:41:32PM +0200, Paul Kocialkowski wrote:
+> > This adds support for the 3.5" LCD panel from Lemaker, sold for use wit=
+h
+> > BananaPi boards. It comes with a 24-bit RGB888 parallel interface and
+> > requires an active-low DE signal
+> >=20
+> > Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+> > ---
+> >  drivers/gpu/drm/panel/panel-simple.c | 27 +++++++++++++++++++++++++++
+> >  1 file changed, 27 insertions(+)
+> >=20
+> > diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/pan=
+el/panel-simple.c
+> > index 97964f7f2ace..229080fcf65e 100644
+> > --- a/drivers/gpu/drm/panel/panel-simple.c
+> > +++ b/drivers/gpu/drm/panel/panel-simple.c
+> > @@ -1461,6 +1461,30 @@ static const struct panel_desc kyo_tcg121xglp =
+=3D {
+> >  	.bus_format =3D MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
+> >  };
+> > =20
+> > +static const struct drm_display_mode lemaker_bl035_mode =3D {
+> > +	.clock =3D 7000,
+> > +	.hdisplay =3D 320,
+> > +	.hsync_start =3D 320 + 20,
+> > +	.hsync_end =3D 320 + 20 + 30,
+> > +	.htotal =3D 320 + 20 + 30 + 38,
+> > +	.vdisplay =3D 240,
+> > +	.vsync_start =3D 240 + 4,
+> > +	.vsync_end =3D 240 + 4 + 3,
+> > +	.vtotal =3D 240 + 4 + 3 + 15,
+> > +	.vrefresh =3D 60,
+> > +};
+> > +
+> > +static const struct panel_desc lemaker_bl035 =3D {
+> > +	.modes =3D &lemaker_bl035_mode,
+> > +	.num_modes =3D 1,
+> > +	.size =3D {
+> > +		.width =3D 70,
+> > +		.height =3D 52,
+> > +	},
+> > +	.bus_format =3D MEDIA_BUS_FMT_RGB888_1X24,
+> > +	.bus_flags =3D DRM_BUS_FLAG_DE_LOW,
+> > +};
+> > +
+> >  static const struct drm_display_mode lg_lb070wv8_mode =3D {
+> >  	.clock =3D 33246,
+> >  	.hdisplay =3D 800,
+> > @@ -2456,6 +2480,9 @@ static const struct of_device_id platform_of_matc=
+h[] =3D {
+> >  	}, {
+> >  		.compatible =3D "kyo,tcg121xglp",
+> >  		.data =3D &kyo_tcg121xglp,
+> > +	}, {
+> > +		.compatible =3D "lemaker,bl035",
+> > +		.data =3D &lemaker_bl035,
+>=20
+> You should document that new compatible. Also, where is this name
+> coming from? Is it the name it's sold under? something you came up
+> with?
+
+Oh right, I forgot to document the compatible (and add the new vendor).
+
+The name "BL035" comes from the PCB itself, where it reads "BL035-RGB-
+002" under the Lemaker logo. I went for "BL035" to keep it short.
+
+The latter part seems to be the PCB revision. According to the fex
+files[0], the timings are the same for all the screens of the same size
+(regardless of revision), so that revision probably shouldn't be in the
+panel name.
+
+As for the "RGB" part, Lemaker only makes 3.5 and 5 inch LCDs with a
+parallel RGB interface and 7 and 10.1 inch LCDs with LVDS, so there is
+no ambiguity for now.
+
+Do you think it makes sense to keep that part in the panel name
+nevertheless?
+
+[0]: https://github.com/LeMaker/fex_configuration
+
+Cheers,
+
+Paul
+
+--=20
+Developer of free digital technology and hardware support.
+
+Website: https://www.paulk.fr/
+Coding blog: https://code.paulk.fr/
+Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+
+--=-0SJEQcI45ApnAHSZseZc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlvO8xEACgkQhP3B6o/u
+lQzpMg/+ML7N+BzGh9M6OgP5btTNUVRScOB+abDsXfuTteTeDD5m433Uc7XH+ExC
+PFyqUUrP09BLaunv66N4aGjV8Ltuot0IeWNMUbzlwa1PKtBykPJpNv56W9//0bIX
+bynbil2cjzvKXKNT02avdI3ywTSNfYHKmPbmjidmvUlgy6BkyoZoPx4fjS12pkui
+OkCq6C/Qd+5zrMVIur03EFLJWeFBxzttd3NXTWjflIVXXNc9THPfp8WGAwKnUX9x
+Qg9C6FVtXItrqnlpke2ak8ItWqS2qeXy5/stP/zyF20RiIXW9Dp/D4Dpk6Im3Cz8
+bNX5Ky/ztZzTxOcyOUxOaWe3+im832aVWIKo+1AM7bQViyVvr2tixylVghvrTU8p
+ms7mkzIIkXDzhowRYVq5bPcpj0wT3HZFU7AnUD1juE6X8TeN3p2H/bYJzam7alzN
+8jGu9cL5TiKvaEzTRDJhipTldeJjG/R/CDfJD3WMZKVblBQ4fWpgZYYI2AmB+MPS
+Fx9xu7xujaWtWZSMNV95qGn6EbVs1IHJQq+MeyJbm9gi9z1BD+flkUE669KKjUB2
+b+mhYmpfSsZuW7eOLLvi8+KteNTxYTOTQ3Eh/QbeBCLfO3LKCxi7UEw16U3xXPSu
+E7A3ZAFHxCR36krvF9seuJdvmuWUM8YpQyWnYo824ZcTwpKiaO4=
+=7gG0
+-----END PGP SIGNATURE-----
+
+--=-0SJEQcI45ApnAHSZseZc--
 
