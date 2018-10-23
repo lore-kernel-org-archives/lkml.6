@@ -2,120 +2,83 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F68CC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3973C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11A732075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:22:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11A732075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by mail.kernel.org (Postfix) with ESMTP id C2BBF2075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:23:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2BBF2075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbeJWPoX (ORCPT
+        id S1727655AbeJWPpR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 11:44:23 -0400
-Received: from lucky1.263xmail.com ([211.157.147.130]:40802 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbeJWPoW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 11:44:22 -0400
-Received: from tony.xie?rock-chips.com (unknown [192.168.167.12])
-        by lucky1.263xmail.com (Postfix) with ESMTP id E4C2C5EF;
-        Tue, 23 Oct 2018 15:21:57 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from [172.16.12.36] (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id E025F3CB;
-        Tue, 23 Oct 2018 15:21:52 +0800 (CST)
-X-IP-DOMAINF: 1
-X-RL-SENDER: tony.xie@rock-chips.com
-X-FST-TO: tony.xie@rock-chips.com
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: tony.xie@rock-chips.com
-X-UNIQUE-TAG: <cc3f527087c8e6a1cd530f1fd272a160>
-X-ATTACHMENT-NUM: 0
-X-SENDER: xxx@rock-chips.com
-X-DNS-TYPE: 0
-Received: from [172.16.12.36] (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith ESMTP id 15439NZS84B;
-        Tue, 23 Oct 2018 15:21:56 +0800 (CST)
-Subject: Re: [PATCH v3 1/5] mfd: rk808: Add RK817 and RK809 support
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     heiko@sntech.de, broonie@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com
-References: <1535081441-20718-1-git-send-email-tony.xie@rock-chips.com>
- <1535081441-20718-2-git-send-email-tony.xie@rock-chips.com>
- <20180911114732.GL4185@dell>
- <b0f9fff3-3084-91b3-fa78-5163ebd43bbb@rock-chips.com>
- <20181023062601.GS4939@dell>
-From:   tony <tony.xie@rock-chips.com>
-Message-ID: <3d96be69-e50c-187e-7d3a-75eec63d2be0@rock-chips.com>
-Date:   Tue, 23 Oct 2018 15:21:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 23 Oct 2018 11:45:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49374 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726837AbeJWPpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 11:45:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AD68FAFF0;
+        Tue, 23 Oct 2018 07:23:07 +0000 (UTC)
+Date:   Tue, 23 Oct 2018 09:23:06 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Uladzislau Rezki <urezki@gmail.com>, Shuah Khan <shuah@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Garnier <thgarnie@google.com>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
+Subject: Re: [RFC PATCH 0/2] improve vmalloc allocation
+Message-ID: <20181023072306.GN18839@dhcp22.suse.cz>
+References: <20181019173538.590-1-urezki@gmail.com>
+ <20181022125142.GD18839@dhcp22.suse.cz>
+ <20181022165253.uphv3xzqivh44o3d@pc636>
 MIME-Version: 1.0
-In-Reply-To: <20181023062601.GS4939@dell>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181022165253.uphv3xzqivh44o3d@pc636>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Shuah,
 
+On Mon 22-10-18 18:52:53, Uladzislau Rezki wrote:
+> On Mon, Oct 22, 2018 at 02:51:42PM +0200, Michal Hocko wrote:
+> > Hi,
+> > I haven't read through the implementation yet but I have say that I
+> > really love this cover letter. It is clear on intetion, it covers design
+> > from high level enough to start discussion and provides a very nice
+> > testing coverage. Nice work!
+> > 
+> > I also think that we need a better performing vmalloc implementation
+> > long term because of the increasing number of kvmalloc users.
+> > 
+> > I just have two mostly workflow specific comments.
+> > 
+> > > A test-suite patch you can find here, it is based on 4.18 kernel.
+> > > ftp://vps418301.ovh.net/incoming/0001-mm-vmalloc-stress-test-suite-v4.18.patch
+> > 
+> > Can you fit this stress test into the standard self test machinery?
+> > 
+> If you mean "tools/testing/selftests", then i can fit that as a kernel module.
+> But not all the tests i can trigger from kernel module, because 3 of 8 tests
+> use __vmalloc_node_range() function that is not marked as EXPORT_SYMBOL.
 
-在 2018/10/23 14:26, Lee Jones 写道:
->>>>       The rk809 and rk817 are a Power Management IC (PMIC) for multimedia
->>>>       and handheld devices. It contains the following components:
->>>>
->>>>           - Regulators
->>>>           - RTC
->>>>           - Clocking
->>>>
->>>>       Both RK809 and RK817 chips are using a similar register map,
->>>>       so we can reuse the RTC and Clocking and regulators functionality.
->>>>
->>>> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
->>>> ---
->>>>    drivers/mfd/Kconfig       |   6 +-
->>>>    drivers/mfd/rk808.c       | 218 +++++++++++++++++++++++++++++++++++++++++++++-
->>>>    include/linux/mfd/rk808.h | 172 ++++++++++++++++++++++++++++++++++++
->>>>    kernel/reboot.c           |   1 +
->>>>    4 files changed, 391 insertions(+), 6 deletions(-)
-> [...]
->
->>>> diff --git a/kernel/reboot.c b/kernel/reboot.c
->>>> index e4ced88..83810d7 100644
->>>> --- a/kernel/reboot.c
->>>> +++ b/kernel/reboot.c
->>>> @@ -49,6 +49,7 @@
->>>>     */
->>>>    void (*pm_power_off_prepare)(void);
->>>> +EXPORT_SYMBOL_GPL(pm_power_off_prepare);
->>> Why do you need this where no other driver in the kernel does?
->>      There is a gpio_slp pin for RK809 and RK817，this pin has reset、power
->> down and sleep functions，so
->>      when system is going to power down, this pin is needed to switch to
->> power down function，and then we just only control
->>      this pin to high to power down the system in atf at last。
-> There are other PM call-backs that you can use for this.  There
-> shouldn't be any requirement to export and call functions at this
-> level directly.
-     I will use a shutdown call-backs from syscore to implement it.
->
-
-
+Is there any way to conditionally export these internal symbols just for
+kselftests? Or is there any other standard way how to test internal
+functionality that is not exported to modules?
+-- 
+Michal Hocko
+SUSE Labs
