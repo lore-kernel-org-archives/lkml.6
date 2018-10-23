@@ -2,92 +2,95 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A087C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 14:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EA0C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 14:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43FB7207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 14:39:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="FUHbHd+w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43FB7207DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 5728D20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 14:40:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5728D20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728372AbeJWXCw (ORCPT
+        id S1728373AbeJWXEM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 19:02:52 -0400
-Received: from imap.thunk.org ([74.207.234.97]:48876 "EHLO imap.thunk.org"
+        Tue, 23 Oct 2018 19:04:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37282 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727829AbeJWXCv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 19:02:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=ZUUyvOv+SDlYPpYvAvKrprUZi1eEyh/sA/WJpgeGqD8=; b=FUHbHd+wz72+DCXtj1bGJBgqws
-        MZw67Z4CcYu6tzc05Wj64QNEsxS5KoeNA122cnOrhtHUjYyibCL3fDguJki+K/a2BfuoVAaLLqM1q
-        NtfAQllSxiUUqRHkYSfSmcQkJNqnE1YD47q43W/p1/R8HYnHZYIFFofrY+IigBsGVc5U=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gExpq-00027F-7Q; Tue, 23 Oct 2018 14:39:07 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id A9F617A56BE; Tue, 23 Oct 2018 10:38:56 -0400 (EDT)
-Date:   Tue, 23 Oct 2018 10:38:56 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Larry Finger <Larry.Finger@lwfinger.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>
-Subject: Re: Is Fixes line enough?
-Message-ID: <20181023143856.GD6850@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>
-References: <a99840d5-7d57-ec1f-1c70-37ffa6cfd31b@lwfinger.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a99840d5-7d57-ec1f-1c70-37ffa6cfd31b@lwfinger.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+        id S1726277AbeJWXEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 19:04:11 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E9104356D5;
+        Tue, 23 Oct 2018 14:40:28 +0000 (UTC)
+Received: from ceranb.redhat.com (ovpn-204-227.brq.redhat.com [10.40.204.227])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 01D1462A8A;
+        Tue, 23 Oct 2018 14:40:26 +0000 (UTC)
+From:   Ivan Vecera <ivecera@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     Sathya Perla <sathya.perla@broadcom.com>,
+        Ajit Khaparde <ajit.khaparde@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] Revert "be2net: remove desc field from be_eq_obj"
+Date:   Tue, 23 Oct 2018 16:40:26 +0200
+Message-Id: <20181023144026.26180-1-ivecera@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 23 Oct 2018 14:40:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 09:05:20AM -0500, Larry Finger wrote:
-> Greg,
-> 
-> A question has come up on the linux-wireless ML. If a patch has a "Fixes"
-> line, is that sufficient to get it flagged as a patch in Stable, or is a
-> "Cc: Stable" line also needed?
+The mentioned commit needs to be reverted because we cannot pass
+string allocated on stack to request_irq(). This function stores
+uses this pointer for later use (e.g. /proc/interrupts) so we need
+to keep this string persistently.
 
-Someone actually asked this question at the Maintainer's Summit,
-actually.  The answer was that the Fixes line is not sufficient for
-Greg's scripts; you have to have the "Cc: stable" line as well.  Greg
-tried using the Fixes line as a trigger, but there were too many cases
-where this pulled in commits that weren't really suitable for the
-Stable kernels.  Sasha's machine-learning lash up will use the Fixes
-line as a signal, but if you want to explicitly request that the patch
-should be cherry-picked into Stable, you should have the "Cc: stable"
-line.
+Fixes: d6d9704af8f4 ("be2net: remove desc field from be_eq_obj")
 
-(Also mentioned that at the Maintainer's Summit was that we probably
-do need to take a look at the Stable documentation and see how it
-needs to be updated to reflect how things are currently behind
-handled.  :-)
+Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+---
+ drivers/net/ethernet/emulex/benet/be.h      | 1 +
+ drivers/net/ethernet/emulex/benet/be_main.c | 6 ++----
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-Cheers,
+diff --git a/drivers/net/ethernet/emulex/benet/be.h b/drivers/net/ethernet/emulex/benet/be.h
+index 58bcee8f0a58..ce041c90adb0 100644
+--- a/drivers/net/ethernet/emulex/benet/be.h
++++ b/drivers/net/ethernet/emulex/benet/be.h
+@@ -185,6 +185,7 @@ static inline void queue_tail_inc(struct be_queue_info *q)
+ 
+ struct be_eq_obj {
+ 	struct be_queue_info q;
++	char desc[32];
+ 
+ 	struct be_adapter *adapter;
+ 	struct napi_struct napi;
+diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
+index 534787291b44..bff74752cef1 100644
+--- a/drivers/net/ethernet/emulex/benet/be_main.c
++++ b/drivers/net/ethernet/emulex/benet/be_main.c
+@@ -3488,11 +3488,9 @@ static int be_msix_register(struct be_adapter *adapter)
+ 	int status, i, vec;
+ 
+ 	for_all_evt_queues(adapter, eqo, i) {
+-		char irq_name[IFNAMSIZ+4];
+-
+-		snprintf(irq_name, sizeof(irq_name), "%s-q%d", netdev->name, i);
++		sprintf(eqo->desc, "%s-q%d", netdev->name, i);
+ 		vec = be_msix_vec_get(adapter, eqo);
+-		status = request_irq(vec, be_msix, 0, irq_name, eqo);
++		status = request_irq(vec, be_msix, 0, eqo->desc, eqo);
+ 		if (status)
+ 			goto err_msix;
+ 
+-- 
+2.18.1
 
-						- Ted
