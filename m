@@ -2,138 +2,81 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB014C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 783DCC004D3
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11ACE20652
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:20:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RRysfJg4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11ACE20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 623A320665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:24:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 623A320665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbeJWJlj (ORCPT
+        id S1727862AbeJWJpa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 05:41:39 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:43926 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbeJWJlj (ORCPT
+        Tue, 23 Oct 2018 05:45:30 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:55051 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbeJWJpa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 05:41:39 -0400
-Received: by mail-qt1-f193.google.com with SMTP id q41-v6so48717578qtq.10;
-        Mon, 22 Oct 2018 18:20:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=8/8INH84dIZzXD9t1cfNjZHLAxNXXeBy6HCUhD39Vk4=;
-        b=RRysfJg4oCtUMcUR4ATcTXH/GMpDTWfBaSwgKzdYEzUNwNrbjWf0vlklTAjfWd9tra
-         v0HlFRCgVZGk6W6EWZbWaAlTP9UvTUVM0oFmvVy8h5694lqvqZwlxS41UYlCbrl3KU9j
-         ZkrbRbbUJrcTx0ry++3B4trCU7rus2IE37iXQEgG9xjdDGnNTd/tstD7GMU3Rgl5A0XN
-         UkPZh0EiS+rVjCKAn12u3ufwr9uhzlAeqipEkPZ9t1r9Qb3kHJgwX/X1UapIQwniFQ/l
-         3/C+F2BJdn1ottaBZqdFjCls62RouauctcF74HEckpkr2xoHaw9o62QsykRoa7emVT86
-         UxcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=8/8INH84dIZzXD9t1cfNjZHLAxNXXeBy6HCUhD39Vk4=;
-        b=TaEMVhXLxFqqq+EJutaxt/b0hUT6FaUkp7WNCL5Sny+jcsNQJFe3krORwMQ2qNL2VB
-         Ht55DRKxW7uaMsEcbPecTcRSBUZWVQwYWDtWJznXKud48ntmPeVQ68sPVAARTiApc13g
-         g1n9PjOTUSkpKmN5MPYzg/qCNZFSun4+nfJ0hQ5CoOgNfKtAk2dcqWPSOEvZJLWFioGb
-         2LZqLiNZ7oc89Z8GQvjQIZpL5ExFvLB7ayHXX2lbjdRQFxZ1VPA75ecYQIvVkuWpqJjA
-         crWYxr4h4yq174NtxEOviCYpDkf/Aei56XBuVEmrE62UX/+aVgz3+sY8MbqdBGJDJlfq
-         LTOg==
-X-Gm-Message-State: ABuFfojU4MTR57/2rQiNl2u9R9G2xvck/1HJIVW8v5AaWGfPW+aO+bhU
-        tbNL8+8KxPqasOQY7edgtcQ=
-X-Google-Smtp-Source: AJdET5cRTcaMiRjLOirfoourjak+xIcbVG+gOBbcn/fq55FEkGMqcXwG1KMzrxFI+ypj55wqDYSIZg==
-X-Received: by 2002:ac8:3fb7:: with SMTP id d52-v6mr10667111qtk.46.1540257637071;
-        Mon, 22 Oct 2018 18:20:37 -0700 (PDT)
-Received: from WindFlash ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id s21-v6sm7575288qth.11.2018.10.22.18.20.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Oct 2018 18:20:36 -0700 (PDT)
-Date:   Mon, 22 Oct 2018 22:20:31 -0300
-From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
-To:     lkcamp@lists.libreplanetbr.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] Changes style to look more like list iteration.
-Message-ID: <20181023012031.GA6920@WindFlash>
+        Tue, 23 Oct 2018 05:45:30 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID w9N1O432025981, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtitcas12.realtek.com.tw[172.21.6.16])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id w9N1O432025981
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 23 Oct 2018 09:24:04 +0800
+Received: from RTITMBSVM01.realtek.com.tw ([fe80::f4ca:82cf:5a3:5d7a]) by
+ RTITCAS12.realtek.com.tw ([::1]) with mapi id 14.03.0415.000; Tue, 23 Oct
+ 2018 09:24:04 +0800
+From:   Pkshih <pkshih@realtek.com>
+To:     "gustavo@embeddedor.com" <gustavo@embeddedor.com>
+CC:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 19/20] rtlwifi: rtl8821ae: phy: Mark expected switch fall-through
+Thread-Topic: [PATCH 19/20] rtlwifi: rtl8821ae: phy: Mark expected switch
+ fall-through
+Thread-Index: AQHUakiNjRTzSjAO0U2PXkgqC4Gn3qUrg1UA
+Date:   Tue, 23 Oct 2018 01:24:03 +0000
+Message-ID: <1540257810.2768.3.camel@realtek.com>
+References: <cover.1540239684.git.gustavo@embeddedor.com>
+         <0a15ff0a1f238f2868ceefc6440ba9ac03e98a22.1540239684.git.gustavo@embeddedor.com>
+In-Reply-To: <0a15ff0a1f238f2868ceefc6440ba9ac03e98a22.1540239684.git.gustavo@embeddedor.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.69.146]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7BE827F70F6F5C45B0096D093B9C4C6E@realtek.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes the code in order to make it looks more like its a list iteration.
-
-Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
----
-
-It's a remainer from a patch from the -Wshadow patchset.
-Since it doesn't really belongs to that patchset anymore, 
-I decided to release it just as a code refactor for
-file2alias.c
-
-I fixed it after Koike's suggestion (&&!dup added)
-
-IMHO it reads better this way, and no drastic change has been made.
-
-Thanks.
-
----
- scripts/mod/file2alias.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-index 3015c0bdecb2..b957279c4117 100644
---- a/scripts/mod/file2alias.c
-+++ b/scripts/mod/file2alias.c
-@@ -650,26 +650,26 @@ static void do_pnp_card_entries(void *symval, unsigned long size,
- 
- 	device_id_check(mod->name, "pnp", size, id_size, symval);
- 	DEF_FIELD_ADDR(symval, pnp_card_device_id, devs);
--	typeof(devs) devs_last;
-+	DEF_FIELD_ADDR_VAR(symval, pnp_card_device_id, devs, devs_aux);
- 
- 	for (i = 0; i < count; i++) {
- 		unsigned int j;
--		devs_last = devs + i * id_size;
-+		devs_aux = devs + i * id_size;
- 
- 		for (j = 0; j < PNP_MAX_DEVICES; j++) {
--			const char *id = (char *)(*devs_last)[j].id;
-+			const char *id = (char *)(*devs_aux)[j].id;
- 			int j2;
- 			int dup = 0;
- 
- 			if (!id[0])
- 				break;
- 
--			/* find duplicate, already added value */
--			while ((devs_last -= id_size) >= devs && !dup) {
-+			/* find duplicate on previous devs*/
-+			while ((devs_aux -= id_size) >= devs && !dup) {
- 
- 				for (j2 = 0; j2 < PNP_MAX_DEVICES; j2++) {
- 					const char *id2 =
--						(char *)(*devs_last)[j2].id;
-+						(char *)(*devs_aux)[j2].id;
- 
- 					if (!id2[0])
- 						break;
--- 
-2.19.1
-
+T24gTW9uLCAyMDE4LTEwLTIyIGF0IDIyOjQ3ICswMjAwLCBHdXN0YXZvIEEuIFIuIFNpbHZhIHdy
+b3RlOg0KPiBJbiBwcmVwYXJhdGlvbiB0byBlbmFibGluZyAtV2ltcGxpY2l0LWZhbGx0aHJvdWdo
+LCBtYXJrIHN3aXRjaCBjYXNlcw0KPiB3aGVyZSB3ZSBhcmUgZXhwZWN0aW5nIHRvIGZhbGwgdGhy
+b3VnaC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gQS4gUi4gU2lsdmEgPGd1c3Rhdm9A
+ZW1iZWRkZWRvci5jb20+DQo+IC0tLQ0KPiDCoGRyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsv
+cnRsd2lmaS9ydGw4ODIxYWUvcGh5LmMgfCAxICsNCj4gwqAxIGZpbGUgY2hhbmdlZCwgMSBpbnNl
+cnRpb24oKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVr
+L3J0bHdpZmkvcnRsODgyMWFlL3BoeS5jDQo+IGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRl
+ay9ydGx3aWZpL3J0bDg4MjFhZS9waHkuYw0KPiBpbmRleCAxNzZkZWIyLi5hNzU0NTFjIDEwMDY0
+NA0KPiAtLS0gYS9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvcnRsODgyMWFl
+L3BoeS5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lmaS9ydGw4
+ODIxYWUvcGh5LmMNCj4gQEAgLTM5NCw2ICszOTQsNyBAQCBzdGF0aWMgdm9pZCBfcnRsODgxMmFl
+X3BoeV9zZXRfcmZlX3JlZ18yNGcoc3RydWN0DQo+IGllZWU4MDIxMV9odyAqaHcpDQo+IMKgCQkJ
+cnRsX3NldF9iYnJlZyhodywgUkJfUkZFX0lOViwgQk1BU0tSRkVJTlYsIDB4MDAwKTsNCj4gwqAJ
+CQlicmVhazsNCj4gwqAJCX0NCj4gKwkJLyogZmFsbCB0aHJvdWdoICovDQo+IMKgCWNhc2UgMDoN
+Cj4gwqAJY2FzZSAyOg0KPiDCoAlkZWZhdWx0Og0KDQpJZiBCVCBpc24ndCBjb2V4aXN0aW5nIGlu
+IHRoZSBjYXNlIDEsIHRoZSBzZXR0aW5ncyB3aWxsIGJlIHRoZSBzYW1lIGFzIGNhc2UgMC8yLg0K
+DQpBY2tlZC1ieTogUGluZy1LZSBTaGloIDxwa3NoaWhAcmVhbHRlay5jb20+DQoNCg0K
