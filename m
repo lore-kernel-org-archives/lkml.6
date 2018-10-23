@@ -2,167 +2,151 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A70C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D258C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B49720671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:36:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1A4820652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 08:36:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="mglc60XV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B49720671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="d7QoByKd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1A4820652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbeJWQ6n (ORCPT
+        id S1727876AbeJWQ6t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 12:58:43 -0400
-Received: from mail-eopbgr30056.outbound.protection.outlook.com ([40.107.3.56]:28895
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        Tue, 23 Oct 2018 12:58:49 -0400
+Received: from mail-he1eur01on0083.outbound.protection.outlook.com ([104.47.0.83]:53120
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727352AbeJWQ6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 12:58:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
+        id S1727352AbeJWQ6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 12:58:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CCULCQZxTpwZIkP10yQFAxRVF2ChI26cq5NYd3Dwk0A=;
- b=mglc60XV9us5r+uUsJMB/niABv+p19vug1sFlGoWrjcDaHcsEp4VVNDT2XAFAOM2EbHKUoPAJWOWPVlhjBmOdniDb5UyO68JRRj7fPvrEWG4HVpOJYghhbt5PAUSI7+VVKX0WchLdBoYOFERWO2NsVaWq2bNMpbvraweYuRvnus=
-Received: from AM4PR08MB2788.eurprd08.prod.outlook.com (10.171.191.18) by
- AM4PR08MB2625.eurprd08.prod.outlook.com (10.171.190.138) with Microsoft SMTP
+ bh=5hfm+TVmoA6lE8U/P/0JPp8plNs9LYR0T0kZMuNXzUc=;
+ b=d7QoByKdrwvJy+C13w9m1bdtzcQeHPAw4uGnmlS+k6Fnr1taTGSvi4ZgEKfMFhSre30OxIr5d7rd2fqPVQvUZYhAw9EOseB9n9CUO12IdgBJT0DZNaeaGzwTN/mHQ1yLrmqljm35ruPsc5xgVo8hJVH6GkaMjYHliTEUDhB2k3w=
+Received: from AM6PR04MB5016.eurprd04.prod.outlook.com (20.177.34.88) by
+ AM6PR04MB5077.eurprd04.prod.outlook.com (20.177.34.141) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1250.29; Tue, 23 Oct 2018 08:36:16 +0000
-Received: from AM4PR08MB2788.eurprd08.prod.outlook.com
- ([fe80::11fa:6313:23e1:c943]) by AM4PR08MB2788.eurprd08.prod.outlook.com
- ([fe80::11fa:6313:23e1:c943%2]) with mapi id 15.20.1250.028; Tue, 23 Oct 2018
- 08:36:16 +0000
-From:   Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>
-To:     Catalin Marinas <Catalin.Marinas@arm.com>,
-        Kristina Martsenko <Kristina.Martsenko@arm.com>
-CC:     "linux-arm-kernel@lists.infradead.org" 
+ 15.20.1250.30; Tue, 23 Oct 2018 08:36:17 +0000
+Received: from AM6PR04MB5016.eurprd04.prod.outlook.com
+ ([fe80::14d:71ff:bbe0:a643]) by AM6PR04MB5016.eurprd04.prod.outlook.com
+ ([fe80::14d:71ff:bbe0:a643%2]) with mapi id 15.20.1250.028; Tue, 23 Oct 2018
+ 08:36:17 +0000
+From:   Clark Wang <xiaoning.wang@nxp.com>
+To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        Andrew Jones <drjones@redhat.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        Adam Wallis <awallis@codeaurora.org>,
-        Suzuki Poulose <Suzuki.Poulose@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Christoffer Dall <Christoffer.Dall@arm.com>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        Amit Kachhap <Amit.Kachhap@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>, nd <nd@arm.com>
-Subject: Re: [PATCH v5 07/17] arm64: add basic pointer authentication support
-Thread-Topic: [PATCH v5 07/17] arm64: add basic pointer authentication support
-Thread-Index: AQHUXIhuaCYPVPx6oECJrNko5qx/h6UmgRWAgAYcxAA=
-Date:   Tue, 23 Oct 2018 08:36:16 +0000
-Message-ID: <5ca5bf92-f2b7-48c9-ea41-5efeff09a799@arm.com>
-References: <20181005084754.20950-1-kristina.martsenko@arm.com>
- <20181005084754.20950-8-kristina.martsenko@arm.com>
- <20181019111542.6wrvjguirglzg7vg@mbp>
-In-Reply-To: <20181019111542.6wrvjguirglzg7vg@mbp>
-Accept-Language: en-GB, en-US
+        Clark Wang <xiaoning.wang@nxp.com>
+Subject: [PATCH] ARM: dts: fix imx7d boot spi dma setup error
+Thread-Topic: [PATCH] ARM: dts: fix imx7d boot spi dma setup error
+Thread-Index: AQHUaqt3ioSACcXgGEGVITyY2hPSvg==
+Date:   Tue, 23 Oct 2018 08:36:17 +0000
+Message-ID: <20181023083356.17579-1-xiaoning.wang@nxp.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-x-originating-ip: [217.140.106.50]
-x-clientproxiedby: LO2P265CA0246.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:8a::18) To AM4PR08MB2788.eurprd08.prod.outlook.com
- (2603:10a6:205:d::18)
+x-clientproxiedby: SG2PR03CA0109.apcprd03.prod.outlook.com
+ (2603:1096:4:91::13) To AM6PR04MB5016.eurprd04.prod.outlook.com
+ (2603:10a6:20b:9::24)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Ramana.Radhakrishnan@arm.com; 
+ smtp.mailfrom=xiaoning.wang@nxp.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [92.121.68.129]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM4PR08MB2625;6:AUB+e/UoJvx3VYvCHVoGvBpTqzmOR0D0itzJyaJGZnMv5ParIEWbCqqSzECH+mqDmWtjdVPcU93yxJqmIRJfMcktcNuIxwxIjMg1xkgGqxXirW/W1N02ws5TyW8uawkgOjZOlNjgGp3Aor6b5UIR3SGEgVAayYUbPw/hKmvraDvop3hX315V9+oIT6UzPSKRg47jVRoG76KVQCZVWj+GrTlQIZJgOyBUNcs1jR2zKh+jJsX3mU6VVbZgY6G0KMfdsjKrDA1NsOsT7My9bQULYpzvYpRbST/ixCGr33H8VkS0x0Y2/oXZplMbEsCmhJKDURhuiUZuDvAQgyaieDH9kLuLmGPQyUB5AcydlIIV4j4PTsqgRbvQiEeLcsrdPo8ubiXgtzQYmA9G/Lk8sqlvdhZADvdCumO2tbkgy7j769jS+fdf4SGxpf0zmckSU52LxZIhhOmZsYncFQG0ojIrlw==;5:PrPygIbV9Kw5L0tVyl520SZdry6GsYcqj4MFNxFW+0AA4t0Up+HpJBWDjIAsVlqUab9QgqL5ttKQeWDVbKhKjPiiS0m9MkQAZN/7o+09YJnMjlyvrpAsTaDcS2r+srTXSr9kdWKyyibVxOfHFKTsHOkaCb2GX+PvS+DQEwSNKHY=;7:BSFmoOQDoRR3kNaNT8ANEicmYYpHurNh9O8O4PII5WRS/DTYSvUaR/SiP1xI824zTvIBzMdZQ8oEC+AJathEbhzJszL/6doC7fH9wqWpIHU2355uae5KfKcfUR4/VJpCsYjqSZRpWfwJ+Z2FpT9m5wkBOfeEcMOfLq8D9GM8bgtAjQayexKyA2Zdo86Z/MSjkR8kgeDc7H1tTPP0nN10XNhK6dTo3E7QkwO0PEJ+i0Dn5UAi5brAvK/0f2f3lUcc
-x-ms-office365-filtering-correlation-id: d53fc0e5-0238-491d-58b7-08d638c29908
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB5077;6:/bcubWgkBzfcdqYR2FOCN1PDBNRpQKCMKXb6X2z3CrXJTip+T6v5wbICrhqJZsWgYglT7V1vsbissWM04UgBJdmAygTrinTY/WzrS9PqP4v+tiBnZ9CbXaLEQyfR212e+5YYWg7IEo2KO39cKzg0hXeDVSBlfYu3+jZjACiTOx4k0tJPETK6sJhfdy1LDyIoy4ecKMwWQfaREZs+2TtK/K7Trqgea/pU7TmmUopEeIOaxF+8T0igFTWfsncyuCQKzXEQV6IBcArLU9AWiuXYSpfWRowlUMve9/Q84dt4nOmbpcZXVxkgh2WhgzJIkwa+ET2UNWdWC/NQtNbvvQW0neARL/m2aSFE6qju+Gd0Vww2fxJFkNNBmaIvpmojU61d9/BZkmoOTWOIJ6oZWCVWzdRM/JySMEspGzPqISs6P3vXz3sb3UtJo2ROEYs7nGZDfQ/CUxJkcCDFuG/feFNlIg==;5:8vNtojcNaLASKsQJB15fADNNocAJQvR1CwmuL4ogbCSky80JOqMGRfnJ5lbqYuzgC11s6x7hqusmEcZXqzFuK0OE8rdLTzzFx0XWTS07lPHx3bPx+ej5g4dTdzDS/owKDnY5lbAAkZNN5pyOYQ8BwB9zu8yJPBeqAN8mJwKjluM=;7:0BzsSpTkY6wMGMC/Cseq7dz9Sv9r/n+ZnQOELqdkvnrkkwj8nOiE4iFx4cNDKPxazvsOzv9M0QV2nuRZoJWDBHpD2IUygV8hrBbSH+qzG9T1EMYWZRXefWsbjFcpJMunYeASj9tMdc+s+dm0Y1NgwD7TcA5eHNh5T7TPdWmN6kD5z4w2gP6qokNC8+17X5EHggxurJnMzKgKoY0pmI8ck65/LgNs+FpU0ny1SKhtHhCvxMN6wsuhChO3JM6dO/f+
+x-ms-office365-filtering-correlation-id: 60ffbea9-cac2-445b-e8c0-08d638c299b0
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM4PR08MB2625;
-x-ms-traffictypediagnostic: AM4PR08MB2625:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <AM4PR08MB26252D336429D89FFF66535D81F50@AM4PR08MB2625.eurprd08.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB5077;
+x-ms-traffictypediagnostic: AM6PR04MB5077:
+x-microsoft-antispam-prvs: <AM6PR04MB5077659C8A21A1F48E76C018F3F50@AM6PR04MB5077.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231355)(944501410)(52105095)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM4PR08MB2625;BCL:0;PCL:0;RULEID:;SRVR:AM4PR08MB2625;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231355)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB5077;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB5077;
 x-forefront-prvs: 0834BAF534
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(366004)(136003)(39860400002)(189003)(199004)(446003)(5250100002)(53546011)(110136005)(256004)(6246003)(6512007)(86362001)(11346002)(476003)(2616005)(6116002)(97736004)(65956001)(6436002)(3846002)(486006)(2900100001)(65806001)(66066001)(2906002)(53936002)(186003)(44832011)(26005)(36756003)(7736002)(85306007)(64126003)(6506007)(25786009)(102836004)(305945005)(76176011)(71190400001)(99286004)(71200400001)(65826007)(6486002)(105586002)(4326008)(5660300001)(31696002)(229853002)(478600001)(81166006)(8676002)(106356001)(31686004)(316002)(14454004)(68736007)(72206003)(6636002)(52116002)(81156014)(8936002)(386003)(54906003)(58126008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR08MB2625;H:AM4PR08MB2788.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(346002)(396003)(366004)(189003)(199004)(305945005)(6116002)(71190400001)(71200400001)(102836004)(3846002)(6512007)(2906002)(14454004)(2501003)(53936002)(7736002)(106356001)(316002)(105586002)(5660300001)(66066001)(478600001)(6436002)(2616005)(476003)(486006)(110136005)(54906003)(4326008)(52116002)(6506007)(68736007)(81156014)(81166006)(25786009)(8676002)(8936002)(6486002)(26005)(1076002)(1857600001)(99286004)(186003)(36756003)(97736004)(386003)(14444005)(256004)(86362001)(5250100002)(2900100001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5077;H:AM6PR04MB5016.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: wdI0/uhqyFHNSYt1OioI8/o48iyV6NmL0z54A4ZUU7T/u54xffpVnkqiqpW8puyHtebHi2PeuUDnEqNiOX2CjGwQRodr2+9QrkLA3aqjt46PdB8w0i/QNiB4RlffJEoSueGjV5YA2Vf2J6AxP4D/adxe4d9gXghS/M2PH0wquSl1Zfim1sqZjFbwIgUoNRaKFIxOknOOiMn0Vywnli6B/ZGofN70fB/DI83XQNRqS8RWkVGU3EuRmj6y34n8jtCE7JuRLkKWyG/iORdIrMPf0UwtgGPbH0QuU8Wmp724zLmg0Z7gaiEhtRx1+YfTUg5skxkQ90Q/f4qUja2dPGHOhVpQ6ZBsR7ngNtpPHbmkBTI=
+x-microsoft-antispam-message-info: JPa1iFz9usJdNL9HOJ84AgWyscbFOI0YOFQQCpcrStnq6uRY2igE8K1ktpZBE0UfkASutIPcp2awVSMMRI6jo87ISnRsrGO1THSXvBLVC2DlLoT8dIABAqy0U0GVt2YoCplGgNLO0a/7Jwtmsav0WNJ1xujfkuVQXvYi9bVXL5MbJgVtx4zbyekcEYzNxRr1eyGxVZnhyU+5qeG1AcHQh1rOq1c24QxDC+9UkJ8t+TDdNHroDyrEexoJE9m9S/+Vjzju3EOOCOclk2vKnt1z82Q3fpxov3rfZjNuZyn/JP8RPFSv+1ZXHn8WIYXG9gq/qht1c7Xg96/FRr5lqjlYKrds10YtWfRt5Vt/j33zpso=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <AAD136982C3E6A438E34A7F2DAB94C7A@eurprd08.prod.outlook.com>
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d53fc0e5-0238-491d-58b7-08d638c29908
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2018 08:36:16.7244
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60ffbea9-cac2-445b-e8c0-08d638c299b0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2018 08:36:17.7822
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR08MB2625
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5077
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/10/2018 12:15, Catalin Marinas wrote:
-> On Fri, Oct 05, 2018 at 09:47:44AM +0100, Kristina Martsenko wrote:
->> diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/=
-asm/pointer_auth.h
->> new file mode 100644
->> index 000000000000..2aefedc31d9e
->> --- /dev/null
->> +++ b/arch/arm64/include/asm/pointer_auth.h
->> @@ -0,0 +1,63 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +#ifndef __ASM_POINTER_AUTH_H
->> +#define __ASM_POINTER_AUTH_H
->> +
->> +#include <linux/random.h>
->> +
->> +#include <asm/cpufeature.h>
->> +#include <asm/sysreg.h>
->> +
->> +#ifdef CONFIG_ARM64_PTR_AUTH
->> +/*
->> + * Each key is a 128-bit quantity which is split across a pair of 64-bi=
-t
->> + * registers (Lo and Hi).
->> + */
->> +struct ptrauth_key {
->> +	unsigned long lo, hi;
->> +};
->> +
->> +/*
->> + * We give each process its own instruction A key (APIAKey), which is s=
-hared by
->> + * all threads. This is inherited upon fork(), and reinitialised upon e=
-xec*().
->> + * All other keys are currently unused, with APIBKey, APDAKey, and APBA=
-Key
->> + * instructions behaving as NOPs.
->> + */
->=20
-> I don't remember the past discussions but I assume the tools guys are ok
-> with a single key shared by multiple threads. Ramana, could you ack this
-> part, FTR?
+Add dmas and dma-names for ecspi1~4 to fix kernel boot error:
+"spi_imx 30840000.ecspi: dma setup error -19, use pio".
 
-Sorry about the slow response, I've been traveling.
+Signed-off-by: Xiaoning Wang <xiaoning.wang@nxp.com>
+---
+ arch/arm/boot/dts/imx7s.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Ack and Will's response covers the reasons why pretty well. A prctl call=20
-would be a good enhancement.
-
-regards
-Ramana
-
+diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
+index aa8df7d93b2e..043e39124c43 100644
+--- a/arch/arm/boot/dts/imx7s.dtsi
++++ b/arch/arm/boot/dts/imx7s.dtsi
+@@ -651,6 +651,8 @@
+ 				clocks =3D <&clks IMX7D_ECSPI4_ROOT_CLK>,
+ 					<&clks IMX7D_ECSPI4_ROOT_CLK>;
+ 				clock-names =3D "ipg", "per";
++				dmas =3D <&sdma 6 7 1>, <&sdma 7 7 2>;
++				dma-names =3D "rx", "tx";
+ 				status =3D "disabled";
+ 			};
+=20
+@@ -732,6 +734,8 @@
+ 					clocks =3D <&clks IMX7D_ECSPI1_ROOT_CLK>,
+ 						<&clks IMX7D_ECSPI1_ROOT_CLK>;
+ 					clock-names =3D "ipg", "per";
++					dmas =3D <&sdma 0 7 1>, <&sdma 1 7 2>;
++					dma-names =3D "rx", "tx";
+ 					status =3D "disabled";
+ 				};
+=20
+@@ -744,6 +748,8 @@
+ 					clocks =3D <&clks IMX7D_ECSPI2_ROOT_CLK>,
+ 						<&clks IMX7D_ECSPI2_ROOT_CLK>;
+ 					clock-names =3D "ipg", "per";
++					dmas =3D <&sdma 2 7 1>, <&sdma 3 7 2>;
++					dma-names =3D "rx", "tx";
+ 					status =3D "disabled";
+ 				};
+=20
+@@ -756,6 +762,8 @@
+ 					clocks =3D <&clks IMX7D_ECSPI3_ROOT_CLK>,
+ 						<&clks IMX7D_ECSPI3_ROOT_CLK>;
+ 					clock-names =3D "ipg", "per";
++					dmas =3D <&sdma 4 7 1>, <&sdma 5 7 2>;
++					dma-names =3D "rx", "tx";
+ 					status =3D "disabled";
+ 				};
+=20
+--=20
+2.17.1
 
