@@ -2,89 +2,78 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F2AC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF22C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:08:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DE912064C
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:07:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DE912064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
+	by mail.kernel.org (Postfix) with ESMTP id 16C512064C
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:08:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16C512064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727626AbeJWPaB (ORCPT
+        id S1727705AbeJWPaO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 11:30:01 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:34551 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727023AbeJWPaB (ORCPT
+        Tue, 23 Oct 2018 11:30:14 -0400
+Received: from antares.kleine-koenig.org ([94.130.110.236]:45748 "EHLO
+        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727023AbeJWPaO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 11:30:01 -0400
-X-Originating-IP: 167.98.65.38
-Received: from localhost (unknown [167.98.65.38])
-        (Authenticated sender: josh@joshtriplett.org)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 5CE6EE0006;
-        Tue, 23 Oct 2018 07:07:51 +0000 (UTC)
-Date:   Tue, 23 Oct 2018 08:07:50 +0100
-From:   Josh Triplett <josh@joshtriplett.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Greg Kroah-Hartman <greg@kroah.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        ksummit-discuss@lists.linuxfoundation.org
-Subject: Re: [Ksummit-discuss] [GIT PULL] code of conduct fixes for 4.19-rc8
-Message-ID: <20181023070750.GB3068@localhost>
-References: <1540066514.3464.22.camel@HansenPartnership.com>
- <20181022211025.GA8911@kroah.com>
- <23e41205115d317908c63d37a20ee316b44a8404.camel@perches.com>
+        Tue, 23 Oct 2018 11:30:14 -0400
+Received: by antares.kleine-koenig.org (Postfix, from userid 1000)
+        id 38D8442A858; Tue, 23 Oct 2018 09:08:07 +0200 (CEST)
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>, Joe Perches <joe@perches.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] scripts/spdxcheck: make python3 compliant
+Date:   Tue, 23 Oct 2018 09:08:02 +0200
+Message-Id: <20181023070802.22558-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23e41205115d317908c63d37a20ee316b44a8404.camel@perches.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 09:16:20PM -0700, Joe Perches wrote:
-> On Mon, 2018-10-22 at 22:10 +0100, Greg Kroah-Hartman wrote:
-> > On Sat, Oct 20, 2018 at 01:15:14PM -0700, James Bottomley wrote:
-> > > This is the series of patches which has been discussed on both ksummit-
-> > > discuss and linux-kernel for the past few weeks.  As Shuah said when
-> > > kicking off the process, it's designed as a starting point for the next
-> > > phase of the discussion, not as the end point, so it's only really a
-> > > set of minor updates to further that goal.
-> > > 
-> > > The merger of the three patches to show the combined effect is attached
-> > > below.  However, Greg recently posted the next phase of the discussion,
-> > > so people will be asking what the merger of the series looks like. 
-> > > Ignoring the non-CoC documents, I think it looks like this
-> > 
-> > Sorry for not responding sooner for this, travel and the meeting today
-> > took up my time.
-> > 
-> > Anyway, as we discussed today in the Maintainers summit, let's leave the
-> > Code of Conduct text alone for now.  It matches what "upstream" has with
-> > the exception of removing that one paragraph.  If you have issues with
-> > the wording in it, please work with upstream to fix the issues there as
-> > hundreds of other projects will benefit with your changes if they are
-> > really needed.
-> 
-> Given the different development models, that's not
-> a very compelling argument.
-> 
-> As James Bottomley has suggested multiple times,
-> I'd much rather kernel development use the debian
-> code of conduct verbatim than even this modified one.
-> 
-> https://www.debian.org/code_of_conduct
+Without this change the following happens when using Python3 (3.6.6):
 
-The Debian code of conduct doesn't do nearly as good a job of addressing
-issues. (Debian also adopted that code of conduct back when such codes
-weren't nearly as well understood or established.) Many people *in*
-Debian, including supporters of their current CoC, have an interest in
-improving it further and/or adopting a more well-established one.
+	$ echo "GPL-2.0" | python3 scripts/spdxcheck.py -
+	FAIL: 'str' object has no attribute 'decode'
+	Traceback (most recent call last):
+	  File "scripts/spdxcheck.py", line 253, in <module>
+	    parser.parse_lines(sys.stdin, args.maxlines, '-')
+	  File "scripts/spdxcheck.py", line 171, in parse_lines
+	    line = line.decode(locale.getpreferredencoding(False), errors='ignore')
+	AttributeError: 'str' object has no attribute 'decode'
+
+So as the line is already a string, there is no need to decode it and
+the line can be dropped.
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ scripts/spdxcheck.py | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/scripts/spdxcheck.py b/scripts/spdxcheck.py
+index 839e190bbd7a..5056fb3b897d 100755
+--- a/scripts/spdxcheck.py
++++ b/scripts/spdxcheck.py
+@@ -168,7 +168,6 @@ class id_parser(object):
+         self.curline = 0
+         try:
+             for line in fd:
+-                line = line.decode(locale.getpreferredencoding(False), errors='ignore')
+                 self.curline += 1
+                 if self.curline > maxlines:
+                     break
+-- 
+2.19.1
+
