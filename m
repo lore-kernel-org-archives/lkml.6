@@ -2,118 +2,67 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D95C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA9EC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:19:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6CCF2075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:18:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6CCF2075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dudau.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 30DCD207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:19:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30DCD207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbeJWTls (ORCPT
+        id S1728193AbeJWTmV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 15:41:48 -0400
-Received: from dliviu.plus.com ([80.229.23.120]:39332 "EHLO smtp.dudau.co.uk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727568AbeJWTls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 15:41:48 -0400
-Received: from mail.dudau.co.uk (bart.dudau.co.uk [192.168.14.2])
-        by smtp.dudau.co.uk (Postfix) with SMTP id F1BA241D1360;
-        Tue, 23 Oct 2018 12:18:44 +0100 (BST)
-Received: by mail.dudau.co.uk (sSMTP sendmail emulation); Tue, 23 Oct 2018 12:18:44 +0100
-Date:   Tue, 23 Oct 2018 12:18:44 +0100
-From:   Liviu Dudau <liviu@dudau.co.uk>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] leds: gpio: set led_dat->gpiod pointer for OF defined
- GPIO leds
-Message-ID: <20181023111842.GA29083@bart.dudau.co.uk>
-References: <20181018001432.710-1-liviu@dudau.co.uk>
+        Tue, 23 Oct 2018 15:42:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52192 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727568AbeJWTmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 15:42:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CE303AF43;
+        Tue, 23 Oct 2018 11:19:18 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 75EBEDA6FB; Tue, 23 Oct 2018 13:19:10 +0200 (CEST)
+Date:   Tue, 23 Oct 2018 13:19:10 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Liu Bo <obuil.liubo@gmail.com>
+Cc:     Chris Mason <clm@fb.com>, torvalds@linux-foundation.org,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] Btrfs updates for 4.20, part 1
+Message-ID: <20181023111910.GO16290@suse.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Liu Bo <obuil.liubo@gmail.com>,
+        Chris Mason <clm@fb.com>, torvalds@linux-foundation.org,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1540227161.git.dsterba@suse.com>
+ <CANQeFDB6Qy_=E1GD6i6f3VaU0CiKQBr7td1=8gbvZYZ3ui88Yg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181018001432.710-1-liviu@dudau.co.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CANQeFDB6Qy_=E1GD6i6f3VaU0CiKQBr7td1=8gbvZYZ3ui88Yg@mail.gmail.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 01:14:32AM +0100, Liviu Dudau wrote:
-> Commit 45d4c6de4e49 ("leds: gpio: Try to lookup gpiod from device")
-> removed the common code path that set the led_dat->gpiod pointer in
-> create_gpio_led(), but only added it back for the devices that have
-> a valid gpio_led_platform_data structure. Calling gpio_leds_create()
-> in gpio_led_probe() is not enough to get a valid gpiod pointer.
+On Mon, Oct 22, 2018 at 05:23:36PM -0700, Liu Bo wrote:
+> > Performance improvements:
+> >
+> > * blocking mode of path is gone, means that only the spinning mode is used;
 > 
-> Fortunately enough, gpio_leds_create() already gets the needed pointer,
-> we just need to assign it to the relevant gpio_led_data structure.
-> 
-> Fixes: 45d4c6de4e49 ("leds: gpio: Try to lookup gpiod from device")
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Signed-off-by: Liviu Dudau <liviu@dudau.co.uk>
-> ---
+> I'd like to do a few corrections here, the transition from the
+> spinning mode to blocking mode is removed, we still need blocking mode
+> of path for sleeping context.
 
-Gentle ping! I haven't seen any reply to this, even if the commit it fixes is
-still in for-next branch.
+Ok, thanks. So for the purpose of merge changelog, the updated text:
 
-Best regards,
-Liviu
-
-> 
-> Hi,
-> 
-> I found this issue while testing linux-next-20181017, I don't know how
-> stable the leds for-next tree is in terms of commit IDs, if that gets
-> rebased then the Fixes commit ID needs updating.
-> 
-> Best regards,
-> Liviu
-> 
->  drivers/leds/leds-gpio.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> index 32fa752565bc..45e012093865 100644
-> --- a/drivers/leds/leds-gpio.c
-> +++ b/drivers/leds/leds-gpio.c
-> @@ -163,6 +163,8 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
->  			return ERR_CAST(led.gpiod);
->  		}
->  
-> +		led_dat->gpiod = led.gpiod;
-> +
->  		fwnode_property_read_string(child, "linux,default-trigger",
->  					    &led.default_trigger);
->  
-> -- 
-> 2.19.0
-> 
-
--- 
-             /`\
-            / : |
-   _.._     | '/
- /`    \    | /
-|  .-._ '-"` (
-|_/   /   o  o\
-      |  == () ==
-       \   -- /                       ______________________________________
-       / ---<_              ________|                                      |_______
-      |      \\             \       |  I would like to fix the world but   |      /
-      | |     \\__           \      |   no one gives me the source code.   |     /
-      / ;     |.__)          /      |______________________________________|     \
-     (_/.-.   ;             /__________)                                (_________\
-    { `|   \_/
-     '-\   / |
-        | /  |
-       /  \  '-.
-       \__|-----'
+* transition between blocking and spinning modes of path is gone, which
+  originally resulted to more unnecessary wakeups and updates to the
+  path locks, the effects are measurable and improve latency and
+  scalability
