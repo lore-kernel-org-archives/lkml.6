@@ -2,142 +2,130 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9271FC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD47C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B60D20813
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:48:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B60D20813
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id B6B9420824
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:48:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CV5ze7/J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6B9420824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbeJXENS (ORCPT
+        id S1727456AbeJXENY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 00:13:18 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46839 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725740AbeJXENS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 00:13:18 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w9NJdDV0015972;
-        Tue, 23 Oct 2018 21:48:23 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2n7sg6424n-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 23 Oct 2018 21:48:23 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1DD2A31;
-        Tue, 23 Oct 2018 19:48:23 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F246158C6;
-        Tue, 23 Oct 2018 19:48:22 +0000 (GMT)
-Received: from SFHDAG7NODE2.st.com (10.75.127.20) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 23 Oct
- 2018 21:48:22 +0200
-Received: from SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090]) by
- SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090%20]) with mapi id
- 15.00.1347.000; Tue, 23 Oct 2018 21:48:22 +0200
-From:   Loic PALLARDY <loic.pallardy@st.com>
-To:     Suman Anna <s-anna@ti.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "ohad@wizery.com" <ohad@wizery.com>
-CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Arnaud POULIQUEN" <arnaud.pouliquen@st.com>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
-Subject: RE: [PATCH v4 06/17] remoteproc: introduce rproc_add_carveout
- function
-Thread-Topic: [PATCH v4 06/17] remoteproc: introduce rproc_add_carveout
- function
-Thread-Index: AQHUJavg0ZTjSUq+aEy+qgIgpjwiZ6UteFIAgABONZA=
-Date:   Tue, 23 Oct 2018 19:48:22 +0000
-Message-ID: <415434350e194ee78811629fa41aa7d2@SFHDAG7NODE2.st.com>
-References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
- <1532697292-14272-7-git-send-email-loic.pallardy@st.com>
- <8f6737ec-6132-25df-107c-b646310b2dce@ti.com>
-In-Reply-To: <8f6737ec-6132-25df-107c-b646310b2dce@ti.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.49]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 24 Oct 2018 00:13:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58532 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725740AbeJXENY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 00:13:24 -0400
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C863B20671;
+        Tue, 23 Oct 2018 19:48:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540324113;
+        bh=+GZ7dmsYDNS1RXziMK2uPb0GmUtrniDrYvCjC+m9WFs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=CV5ze7/JREUyg8FFRo116jRZKvxTlOOVQhpvsqxTv4JUeJ1CnpfygH4l7dbaTsnVl
+         eyVjSST45CGcIhAn5SwgP6/A0ArAQypdEFESW3Ud2Jxw7VnLo6im2lbeWKuV1E5cwu
+         2Nf3tVLy/biIOnGtheu/eFZ3ZjI5dCgIJUwbaQQk=
+Subject: Re: [RFC PATCH 0/2] improve vmalloc allocation
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Garnier <thgarnie@google.com>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
+        maco@android.com, Shuah Khan <shuah@kernel.org>
+References: <20181019173538.590-1-urezki@gmail.com>
+ <20181022125142.GD18839@dhcp22.suse.cz>
+ <20181022165253.uphv3xzqivh44o3d@pc636>
+ <20181023072306.GN18839@dhcp22.suse.cz>
+ <dd0c3528-9c01-12bc-3400-ca88060cb7cf@kernel.org>
+ <20181023152640.GD20085@bombadil.infradead.org>
+ <20181023170532.GW18839@dhcp22.suse.cz>
+ <98842edb-d462-96b1-311f-27c6ebfc108a@kernel.org>
+ <20181023193044.GA139403@joelaf.mtv.corp.google.com>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <024af44a-77e1-1c61-c9b2-64ffbe4f7c49@kernel.org>
+Date:   Tue, 23 Oct 2018 13:48:32 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-23_06:,,
- signatures=0
+In-Reply-To: <20181023193044.GA139403@joelaf.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3VtYW4gQW5uYSA8cy1h
-bm5hQHRpLmNvbT4NCj4gU2VudDogbWFyZGkgMjMgb2N0b2JyZSAyMDE4IDE5OjA1DQo+IFRvOiBM
-b2ljIFBBTExBUkRZIDxsb2ljLnBhbGxhcmR5QHN0LmNvbT47IGJqb3JuLmFuZGVyc3NvbkBsaW5h
-cm8ub3JnOw0KPiBvaGFkQHdpemVyeS5jb20NCj4gQ2M6IGxpbnV4LXJlbW90ZXByb2NAdmdlci5r
-ZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBBcm5hdWQgUE9VTElR
-VUVOIDxhcm5hdWQucG91bGlxdWVuQHN0LmNvbT47DQo+IGJlbmphbWluLmdhaWduYXJkQGxpbmFy
-by5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2NCAwNi8xN10gcmVtb3RlcHJvYzogaW50cm9k
-dWNlIHJwcm9jX2FkZF9jYXJ2ZW91dA0KPiBmdW5jdGlvbg0KPiANCj4gSGkgQmpvcm4sIExvaWMs
-DQo+IA0KPiBPbiA3LzI3LzE4IDg6MTQgQU0sIExvaWMgUGFsbGFyZHkgd3JvdGU6DQo+ID4gVGhp
-cyBwYXRjaCBpbnRyb2R1Y2VzIGEgbmV3IEFQSSB0byBhbGxvdyBwbGF0Zm9ybSBkcml2ZXIgdG8g
-cmVnaXN0ZXINCj4gPiBwbGF0Zm9ybSBzcGVjaWZpYyBjYXJ2ZW91dCByZWdpb25zLg0KPiA+DQo+
-ID4gU2lnbmVkLW9mZi1ieTogTG9pYyBQYWxsYXJkeSA8bG9pYy5wYWxsYXJkeUBzdC5jb20+DQo+
-ID4gQWNrZWQtYnk6IEJqb3JuIEFuZGVyc3NvbiA8Ympvcm4uYW5kZXJzc29uQGxpbmFyby5vcmc+
-DQo+IA0KPiBIbW0sIEkgZG8gbm90IHByZWZlciB0aGF0IHRoaXMgZnVuY3Rpb24gYmUgZXhwb3J0
-ZWQuIEl0IGFkZHMgbm8gdmFsdWUsDQo+IGFuZCB0aGlzIGFkZHMgYW4gYXN5bW1ldHJpYyBBUEkg
-Zm9yIHJlbW90ZXByb2MgZHJpdmVycyB0byBhZGQgYSBtZW0NCj4gZW50cnkgdG8gdGhlIGludGVy
-bmFsIHJlbW90ZXByb2MgbGlzdHMsIHdoaWxlIHJlbHlpbmcgb24gdGhlIHJlbW90ZXByb2MNCj4g
-Y29yZSB0byByZW1vdmUgdGhlbS4gVGhlIGNhcnZlb3V0IGxpc3QgbWFpbnRlbmFuY2UgaXMgYSBy
-ZW1vdGVwcm9jDQo+IGludGVybmFsIHNjaGVtZSwgYW5kIHNvIHNob3VsZCBiZSBtYWludGFpbmVk
-IHRoYXQgd2F5LiBGdXJ0aGVyIG1vcmUsIG9uDQo+IHRoZSBjdXJyZW50IHNlcmllcywgYWxsIHRo
-ZSBleGlzdGluZyBjYWxscyBhcmUgaW1tZWRpYXRlbHkgYWZ0ZXIgYQ0KPiBycHJvY19vZl9yZXNt
-X21lbV9lbnRyeV9pbml0KCkgb3IgYSBycHJvY19tZW1fZW50cnlfaW5pdCgpIGZ1bmN0aW9uLA0K
-PiB3aGljaCBtZWFucyB0aGlzIGNvdWxkIHZlcnkgd2VsbCBiZSBmb2xkZWQgaW50byB0aG9zZSBp
-bmRpdmlkdWFsIGZ1bmN0aW9ucy4NCj4gDQpJIHRoaW5rIGl0IGhhcyBiZWVuIGludHJvZHVjZWQg
-aW4gZmlyc3Qgc2VyaWVzLiBMb29rIHRoYXQgcnByb2NfYWRkX2NhcnZlb3V0KCkgY2FsbCBjb3Vs
-ZCBiZSBpbnRlZ3JhdGVkIGluIGhlbHBlciBmdW5jdGlvbnMgbm93Lg0KSSBjYW4gcHJvcG9zZSBh
-IHBhdGNoIHRvIGNvcnJlY3QgdGhpcy4NCg0KUmVnYXJkcywNCkxvaWMNCj4gcmVnYXJkcw0KPiBT
-dW1hbg0KPiANCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfY29y
-ZS5jIHwgMTYgKysrKysrKysrKysrKysrLQ0KPiA+ICBpbmNsdWRlL2xpbnV4L3JlbW90ZXByb2Mu
-aCAgICAgICAgICAgfCAgMiArKw0KPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDE3IGluc2VydGlvbnMo
-KyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3JlbW90ZXBy
-b2MvcmVtb3RlcHJvY19jb3JlLmMNCj4gYi9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19j
-b3JlLmMNCj4gPiBpbmRleCBiNzY3NjBlLi5mZTZjNGU0IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZl
-cnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPiA+ICsrKyBiL2RyaXZlcnMvcmVtb3Rl
-cHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPiA+IEBAIC03NDcsNyArNzQ3LDcgQEAgc3RhdGljIGlu
-dCBycHJvY19oYW5kbGVfY2FydmVvdXQoc3RydWN0IHJwcm9jDQo+ICpycHJvYywNCj4gPiAgCWlm
-ICghY2FydmVvdXQpDQo+ID4gIAkJZ290byBmcmVlX2NhcnY7DQo+ID4NCj4gPiAtCWxpc3RfYWRk
-X3RhaWwoJmNhcnZlb3V0LT5ub2RlLCAmcnByb2MtPmNhcnZlb3V0cyk7DQo+ID4gKwlycHJvY19h
-ZGRfY2FydmVvdXQocnByb2MsIGNhcnZlb3V0KTsNCj4gPg0KPiA+ICAJcmV0dXJuIDA7DQo+ID4N
-Cj4gPiBAQCAtNzYxLDYgKzc2MSwyMCBAQCBzdGF0aWMgaW50IHJwcm9jX2hhbmRsZV9jYXJ2ZW91
-dChzdHJ1Y3QgcnByb2MNCj4gKnJwcm9jLA0KPiA+ICB9DQo+ID4NCj4gPiAgLyoqDQo+ID4gKyAq
-IHJwcm9jX2FkZF9jYXJ2ZW91dCgpIC0gcmVnaXN0ZXIgYW4gYWxsb2NhdGVkIGNhcnZlb3V0IHJl
-Z2lvbg0KPiA+ICsgKiBAcnByb2M6IHJwcm9jIGhhbmRsZQ0KPiA+ICsgKiBAbWVtOiBtZW1vcnkg
-ZW50cnkgdG8gcmVnaXN0ZXINCj4gPiArICoNCj4gPiArICogVGhpcyBmdW5jdGlvbiByZWdpc3Rl
-cnMgc3BlY2lmaWVkIG1lbW9yeSBlbnRyeSBpbiBAcnByb2MgY2FydmVvdXRzIGxpc3QuDQo+ID4g
-KyAqIFNwZWNpZmllZCBjYXJ2ZW91dCBzaG91bGQgaGF2ZSBiZWVuIGFsbG9jYXRlZCBiZWZvcmUg
-cmVnaXN0ZXJpbmcuDQo+ID4gKyAqLw0KPiA+ICt2b2lkIHJwcm9jX2FkZF9jYXJ2ZW91dChzdHJ1
-Y3QgcnByb2MgKnJwcm9jLCBzdHJ1Y3QgcnByb2NfbWVtX2VudHJ5DQo+ICptZW0pDQo+ID4gK3sN
-Cj4gPiArCWxpc3RfYWRkX3RhaWwoJm1lbS0+bm9kZSwgJnJwcm9jLT5jYXJ2ZW91dHMpOw0KPiA+
-ICt9DQo+ID4gK0VYUE9SVF9TWU1CT0wocnByb2NfYWRkX2NhcnZlb3V0KTsNCj4gPiArDQo+ID4g
-Ky8qKg0KPiA+ICAgKiBycHJvY19tZW1fZW50cnlfaW5pdCgpIC0gYWxsb2NhdGUgYW5kIGluaXRp
-YWxpemUgcnByb2NfbWVtX2VudHJ5IHN0cnVjdA0KPiA+ICAgKiBAZGV2OiBwb2ludGVyIG9uIGRl
-dmljZSBzdHJ1Y3QNCj4gPiAgICogQHZhOiB2aXJ0dWFsIGFkZHJlc3MNCj4gPiBkaWZmIC0tZ2l0
-IGEvaW5jbHVkZS9saW51eC9yZW1vdGVwcm9jLmggYi9pbmNsdWRlL2xpbnV4L3JlbW90ZXByb2Mu
-aA0KPiA+IGluZGV4IDRiYzk2MWYuLjU1ZjMwZmMgMTAwNjQ0DQo+ID4gLS0tIGEvaW5jbHVkZS9s
-aW51eC9yZW1vdGVwcm9jLmgNCj4gPiArKysgYi9pbmNsdWRlL2xpbnV4L3JlbW90ZXByb2MuaA0K
-PiA+IEBAIC01NTgsNiArNTU4LDggQEAgc3RydWN0IHJwcm9jICpycHJvY19hbGxvYyhzdHJ1Y3Qg
-ZGV2aWNlICpkZXYsIGNvbnN0DQo+IGNoYXIgKm5hbWUsDQo+ID4gIGludCBycHJvY19kZWwoc3Ry
-dWN0IHJwcm9jICpycHJvYyk7DQo+ID4gIHZvaWQgcnByb2NfZnJlZShzdHJ1Y3QgcnByb2MgKnJw
-cm9jKTsNCj4gPg0KPiA+ICt2b2lkIHJwcm9jX2FkZF9jYXJ2ZW91dChzdHJ1Y3QgcnByb2MgKnJw
-cm9jLCBzdHJ1Y3QgcnByb2NfbWVtX2VudHJ5DQo+ICptZW0pOw0KPiA+ICsNCj4gPiAgc3RydWN0
-IHJwcm9jX21lbV9lbnRyeSAqDQo+ID4gIHJwcm9jX21lbV9lbnRyeV9pbml0KHN0cnVjdCBkZXZp
-Y2UgKmRldiwNCj4gPiAgCQkgICAgIHZvaWQgKnZhLCBkbWFfYWRkcl90IGRtYSwgaW50IGxlbiwg
-dTMyIGRhLA0KPiA+DQoNCg==
+On 10/23/2018 01:30 PM, Joel Fernandes wrote:
+> On Tue, Oct 23, 2018 at 11:13:36AM -0600, Shuah Khan wrote:
+>> On 10/23/2018 11:05 AM, Michal Hocko wrote:
+>>> On Tue 23-10-18 08:26:40, Matthew Wilcox wrote:
+>>>> On Tue, Oct 23, 2018 at 09:02:56AM -0600, Shuah Khan wrote:
+>>> [...]
+>>>>> The way it can be handled is by adding a test module under lib. test_kmod,
+>>>>> test_sysctl, test_user_copy etc.
+>>>>
+>>>> The problem is that said module can only invoke functions which are
+>>>> exported using EXPORT_SYMBOL.  And there's a cost to exporting them,
+>>>> which I don't think we're willing to pay, purely to get test coverage.
+>>>
+>>> Yes, I think we do not want to export internal functionality which might
+>>> be still interesting for the testing coverage. Maybe we want something
+>>> like EXPORT_SYMBOL_KSELFTEST which would allow to link within the
+>>> kselftest machinery but it wouldn't allow the same for general modules
+>>> and will not give any API promisses.
+>>>
+>>
+>> I like this proposal. I think we will open up lot of test opportunities with
+>> this approach.
+>>
+>> Maybe we can use this stress test as a pilot and see where it takes us.
+> 
+> I am a bit worried that such an EXPORT_SYMBOL_KSELFTEST mechanism can be abused by
+> out-of-tree module writers to call internal functionality.
+
+That is  valid concern to consider before we go forward with the proposal.
+
+We could wrap EXPORT_SYMBOL_KSELFTEST this in an existing debug option. This could
+be fine grained for each sub-system for its debug option. We do have a few of these
+now
+
+# CONFIG_STATIC_KEYS_SELFTEST is not set
+# CONFIG_BT_SELFTEST is not set
+# CONFIG_DRM_DEBUG_SELFTEST is not set
+# CONFIG_CHASH_SELFTEST is not set
+# CONFIG_DRM_I915_SELFTEST is not set
+# CONFIG_CRC32_SELFTEST is not set
+# CONFIG_RANDOM32_SELFTEST is not set
+# CONFIG_GLOB_SELFTEST is not set
+# CONFIG_STRING_SELFTEST is not set
+# CONFIG_DEBUG_LOCKING_API_SELFTESTS is not set
+# CONFIG_WW_MUTEX_SELFTEST is not set
+# CONFIG_ATOMIC64_SELFTEST is not set
+# CONFIG_X86_DECODER_SELFTEST is not set
+# CONFIG_DEBUG_NMI_SELFTEST is not set
+
+thanks,
+-- Shuah
+
+
+
