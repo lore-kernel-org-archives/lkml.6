@@ -2,105 +2,132 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBAA9C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB1CC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ACB12080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:10:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ACB12080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CF2C420671
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:12:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HFtJemb+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF2C420671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbeJWUeK (ORCPT
+        id S1728090AbeJWUfs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 16:34:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59598 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727264AbeJWUeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 16:34:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 789C9AF4D;
-        Tue, 23 Oct 2018 12:10:56 +0000 (UTC)
-Date:   Tue, 23 Oct 2018 14:10:55 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     linux-mm@kvack.org,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        David Rientjes <rientjes@google.com>,
+        Tue, 23 Oct 2018 16:35:48 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39540 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbeJWUfs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 16:35:48 -0400
+Received: by mail-pl1-f196.google.com with SMTP id e67-v6so528415plb.6;
+        Tue, 23 Oct 2018 05:12:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=X+VDBCcN50SuGfbTBlLF8lQKLFDbCRL6cREZHVdGokM=;
+        b=HFtJemb+dlhgLRKQLJZzGHvFBTrUDNz9n9v2BSpD5wr7uSoCUa/g+tc66dxexLXQ6F
+         fd00nMEnBnsqPYKUkxftC4woKBRn53zXlT0qRPT0T+7Sj5mAPPWP7C7c/7PO2Ap7XR4/
+         lVRXbLDLwg2yNKN3vEQiqDMz+fDBmsCuo3dETstnL/Cn0bSb/DkLJvGWkC3s4C6RZ7ra
+         h/bqWunOYG2gteq/dGSCKFuEViZA38CWHbC6oWc80Is4pD22pGEPtZc3I+Dc1yJljX/e
+         /rTLMCICtlFbqiFkTVjE0DCwV7VCxVoe25jTVIWRiljNMBAwc8KGT/RyhbA5vQplgSgX
+         wcwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=X+VDBCcN50SuGfbTBlLF8lQKLFDbCRL6cREZHVdGokM=;
+        b=L2jrozr20gcryhdoqo6fdxwFO4xgS40vfhrFFAztv2Pn/EIFUB9lXEKh/ij0Ln60HE
+         cMcaZWdPYFI2fJ5VPyhJr+Lg1Ayukw/xMyIglrFAgoPqtPMuQwWmAUhBHNdywFPANaYH
+         kVxAXnYuBf8/0lpoJr/AyNUYXBx03TSBGUZ7K3Bc35u2uaepRqgFa9oQrlSUNELnlgh9
+         xDESyOJBQfQBjvGOtL9xdl5w98X6VmE+QNSRiindRRVZnEth213gjHbKt94BK+qJcMIO
+         1Ju10ZklieIKQTuHGfNBQKDyfiIgZLhdTwSmofL4IwOkHvLCmkHOqs5DGViMJCV2pm4/
+         Jseg==
+X-Gm-Message-State: AGRZ1gIwHA3BpuhMC5xDuFttPLeWy3GfOZrDvrKPMMEVFZKw7uapl0sw
+        qGL7043bfkigGV7xGmfuSM4=
+X-Google-Smtp-Source: AJdET5cyIDQ2qpJM4JwoE4Pkl5zPJMxMpkyrCvAedyhh47sGUGBpgsDf9urt93k+Uqc78zOuI/37+A==
+X-Received: by 2002:a17:902:2924:: with SMTP id g33-v6mr11643797plb.76.1540296754637;
+        Tue, 23 Oct 2018 05:12:34 -0700 (PDT)
+Received: from localhost ([175.223.11.183])
+        by smtp.gmail.com with ESMTPSA id p1-v6sm1858032pfj.72.2018.10.23.05.12.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 23 Oct 2018 05:12:33 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 21:12:30 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
-Message-ID: <20181023121055.GS18839@dhcp22.suse.cz>
-References: <f9a8079f-55b0-301e-9b3d-a5250bd7d277@i-love.sakura.ne.jp>
- <20181022120308.GB18839@dhcp22.suse.cz>
- <201810230101.w9N118i3042448@www262.sakura.ne.jp>
- <20181023114246.GR18839@dhcp22.suse.cz>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [RFC][PATCHv2 1/4] panic: avoid deadlocks in re-entrant console
+ drivers
+Message-ID: <20181023121057.GC10251@jagdpanzerIV>
+References: <20181016050428.17966-1-sergey.senozhatsky@gmail.com>
+ <20181016050428.17966-2-sergey.senozhatsky@gmail.com>
+ <20181023110751.un2u67bc7dpo4ska@pathway.suse.cz>
+ <20181023115433.GA10251@jagdpanzerIV>
+ <20181023120441.GB10251@jagdpanzerIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181023114246.GR18839@dhcp22.suse.cz>
+In-Reply-To: <20181023120441.GB10251@jagdpanzerIV>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 23-10-18 13:42:46, Michal Hocko wrote:
-> On Tue 23-10-18 10:01:08, Tetsuo Handa wrote:
-> > Michal Hocko wrote:
-> > > On Mon 22-10-18 20:45:17, Tetsuo Handa wrote:
-> > > > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > > > > index e79cb59552d9..a9dfed29967b 100644
-> > > > > --- a/mm/memcontrol.c
-> > > > > +++ b/mm/memcontrol.c
-> > > > > @@ -1380,10 +1380,22 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
-> > > > >  		.gfp_mask = gfp_mask,
-> > > > >  		.order = order,
-> > > > >  	};
-> > > > > -	bool ret;
-> > > > > +	bool ret = true;
-> > > > >  
-> > > > >  	mutex_lock(&oom_lock);
-> > > > > +
-> > > > > +	/*
-> > > > > +	 * multi-threaded tasks might race with oom_reaper and gain
-> > > > > +	 * MMF_OOM_SKIP before reaching out_of_memory which can lead
-> > > > > +	 * to out_of_memory failure if the task is the last one in
-> > > > > +	 * memcg which would be a false possitive failure reported
-> > > > > +	 */
-> > > > > +	if (tsk_is_oom_victim(current))
-> > > > > +		goto unlock;
-> > > > > +
-> > > > 
-> > > > This is not wrong but is strange. We can use mutex_lock_killable(&oom_lock)
-> > > > so that any killed threads no longer wait for oom_lock.
-> > > 
-> > > tsk_is_oom_victim is stronger because it doesn't depend on
-> > > fatal_signal_pending which might be cleared throughout the exit process.
-> > > 
-> > 
-> > I still want to propose this. No need to be memcg OOM specific.
+On (10/23/18 21:04), Sergey Senozhatsky wrote:
 > 
-> Well, I maintain what I've said [1] about simplicity and specific fix
-> for a specific issue. Especially in the tricky code like this where all
-> the consequences are far more subtle than they seem to be.
+> Seems that s390 is the only arch which defines its own bust_spinlocks().
+> Not sure why... Just to play games with console_loglevel?
 > 
-> This is obviously a matter of taste but I don't see much point discussing
-> this back and forth for ever. Unless there is a general agreement that
-> the above is less appropriate then I am willing to consider a different
-> change but I simply do not have energy to nit pick for ever.
+> ---
 > 
-> [1] http://lkml.kernel.org/r/20181022134315.GF18839@dhcp22.suse.cz
+> void bust_spinlocks(int yes)
+> {
+> 	if (yes) {
+> 		oops_in_progress = 1;
+> 	} else {
+> 		int loglevel_save = console_loglevel;
+> 		console_unblank();
+> 		oops_in_progress = 0;
+> 		/*
+> 		 * OK, the message is on the console.  Now we call printk()
+> 		 * without oops_in_progress set so that printk will give klogd
+> 		 * a poke.  Hold onto your hats...
+> 		 */
+> 		console_loglevel = 15;
+> 		printk(" ");
+> 		console_loglevel = loglevel_save;
+> 	}
+> }
+> 
+> ---
+> 
+> The "printk(" "); without oops_in_progress" part is a bit worrisome.
+> This thing technically can deadlock. Unless s390 has no NMI panic().
 
-In other words. Having a memcg specific fix means, well, a memcg
-maintenance burden. Like any other memcg specific oom decisions we
-already have. So are you OK with that Johannes or you would like to see
-a more generic fix which might turn out to be more complex?
--- 
-Michal Hocko
-SUSE Labs
+And console_unblank() is not guaranteed to print anything (unlike
+console_flush_on_panic(), but oops is not panic() yet, so we can't
+replace it with flush_on_panic()) - console_sem can be locked, so
+console_unblank() would do nothing.
+
+That printk(" ") probably wants to be printk_deferred(" ").
+
+	-ss
