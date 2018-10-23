@@ -2,238 +2,73 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27154C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F64C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:42:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECD1420665
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:42:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD1420665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BCEE20813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:42:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BCEE20813
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728734AbeJXDGx (ORCPT
+        id S1728773AbeJXDG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:06:53 -0400
-Received: from mga17.intel.com ([192.55.52.151]:51400 "EHLO mga17.intel.com"
+        Tue, 23 Oct 2018 23:06:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51420 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727758AbeJXDGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:06:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:42:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
-   d="scan'208";a="273827747"
-Received: from pwolsza-mobl1.ger.corp.intel.com ([10.249.254.37])
-  by fmsmga005.fm.intel.com with ESMTP; 23 Oct 2018 11:42:13 -0700
-Date:   Tue, 23 Oct 2018 21:42:12 +0300 (EEST)
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-X-Sender: jsakkine@jsakkine-mobl1
-To:     Tomas Winkler <tomas.winkler@intel.com>
-cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 09/21] tpm: factor out tpm1_get_random into
- tpm1-cmd.c
-In-Reply-To: <20181019182307.17745-10-tomas.winkler@intel.com>
-Message-ID: <alpine.DEB.2.21.1810232141550.3433@jsakkine-mobl1>
-References: <20181019182307.17745-1-tomas.winkler@intel.com> <20181019182307.17745-10-tomas.winkler@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727758AbeJXDG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:06:57 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E6DED3082DD1;
+        Tue, 23 Oct 2018 18:42:23 +0000 (UTC)
+Received: from [10.40.204.227] (ovpn-204-227.brq.redhat.com [10.40.204.227])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 58196177BD;
+        Tue, 23 Oct 2018 18:42:22 +0000 (UTC)
+Subject: Re: [PATCH] Revert "be2net: remove desc field from be_eq_obj"
+To:     David Miller <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, sathya.perla@broadcom.com,
+        ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com,
+        somnath.kotur@broadcom.com, linux-kernel@vger.kernel.org
+References: <20181023144026.26180-1-ivecera@redhat.com>
+ <20181023.110305.461689764889182451.davem@davemloft.net>
+From:   Ivan Vecera <ivecera@redhat.com>
+Message-ID: <ffdc9846-e500-247a-8cd5-8f8a1a7102c3@redhat.com>
+Date:   Tue, 23 Oct 2018 20:42:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+In-Reply-To: <20181023.110305.461689764889182451.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 23 Oct 2018 18:42:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 19 Oct 2018, Tomas Winkler wrote:
-> Factor out get random implementation from tpm-interface.c
-> into tpm1_get_random function in tpm1-cmd.c.
-> No functional changes.
->
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> Reviewed-by: Jarkko Sakkine <jarkko.sakkinen@linux.intel.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
-> V2-V3: Rebase
-> V4-V7: Resend
->
-> drivers/char/tpm/tpm-interface.c | 58 +++++-----------------------------------
-> drivers/char/tpm/tpm.h           |  1 +
-> drivers/char/tpm/tpm1-cmd.c      | 55 +++++++++++++++++++++++++++++++++++++
-> 3 files changed, 63 insertions(+), 51 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 486e211b03a0..a72bf6ea8f05 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -812,14 +812,6 @@ int tpm_pm_resume(struct device *dev)
-> }
-> EXPORT_SYMBOL_GPL(tpm_pm_resume);
->
-> -#define TPM_ORD_GET_RANDOM 70
-> -#define TPM_GETRANDOM_RESULT_SIZE	18
-> -static const struct tpm_input_header tpm_getrandom_header = {
-> -	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
-> -	.length = cpu_to_be32(14),
-> -	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
-> -};
-> -
-> /**
->  * tpm_get_random() - get random bytes from the TPM's RNG
->  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-> @@ -830,58 +822,22 @@ static const struct tpm_input_header tpm_getrandom_header = {
->  */
-> int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
-> {
-> -	struct tpm_cmd_t tpm_cmd;
-> -	u32 recd, num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA), rlength;
-> -	int err, total = 0, retries = 5;
-> -	u8 *dest = out;
-> +	int rc;
->
-> -	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
-> +	if (!out || max > TPM_MAX_RNG_DATA)
-> 		return -EINVAL;
->
-> 	chip = tpm_find_get_ops(chip);
-> 	if (!chip)
-> 		return -ENODEV;
->
-> -	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> -		err = tpm2_get_random(chip, out, max);
-> -		tpm_put_ops(chip);
-> -		return err;
-> -	}
-> -
-> -	do {
-> -		tpm_cmd.header.in = tpm_getrandom_header;
-> -		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
-> -
-> -		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
-> -				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
-> -				       offsetof(struct tpm_getrandom_out,
-> -						rng_data),
-> -				       0, "attempting get random");
-> -		if (err)
-> -			break;
-> -
-> -		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
-> -		if (recd > num_bytes) {
-> -			total = -EFAULT;
-> -			break;
-> -		}
-> -
-> -		rlength = be32_to_cpu(tpm_cmd.header.out.length);
-> -		if (rlength < TPM_HEADER_SIZE +
-> -			      offsetof(struct tpm_getrandom_out, rng_data) +
-> -			      recd) {
-> -			total = -EFAULT;
-> -			break;
-> -		}
-> -		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
-> -
-> -		dest += recd;
-> -		total += recd;
-> -		num_bytes -= recd;
-> -	} while (retries-- && total < max);
-> +	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> +		rc = tpm2_get_random(chip, out, max);
-> +	else
-> +		rc = tpm1_get_random(chip, out, max);
->
-> 	tpm_put_ops(chip);
-> -	return total ? total : -EIO;
-> +	return rc;
-> }
-> EXPORT_SYMBOL_GPL(tpm_get_random);
->
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 05c386b3ab12..22f89f41ad52 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -551,6 +551,7 @@ int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-> 		    const char *log_msg);
-> ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
-> 		    const char *desc, size_t min_cap_length);
-> +int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
-> unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-> int tpm_pm_suspend(struct device *dev);
-> int tpm_pm_resume(struct device *dev);
-> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-> index 3bd079587ef5..e02f0c1c822f 100644
-> --- a/drivers/char/tpm/tpm1-cmd.c
-> +++ b/drivers/char/tpm/tpm1-cmd.c
-> @@ -469,3 +469,58 @@ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
-> 	return rc;
-> }
-> EXPORT_SYMBOL_GPL(tpm1_getcap);
-> +
-> +#define TPM_ORD_GET_RANDOM 70
-> +#define TPM_GETRANDOM_RESULT_SIZE	18
-> +static const struct tpm_input_header tpm_getrandom_header = {
-> +	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
-> +	.length = cpu_to_be32(14),
-> +	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
-> +};
-> +
-> +int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max)
-> +{
-> +	struct tpm_cmd_t tpm_cmd;
-> +	u32 recd;
-> +	u32 num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA);
-> +	u32 rlength;
-> +	int err, total = 0, retries = 5;
-> +	u8 *dest = out;
-> +
-> +	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
-> +		return -EINVAL;
-> +
-> +	do {
-> +		tpm_cmd.header.in = tpm_getrandom_header;
-> +		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
-> +
-> +		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
-> +				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
-> +				       offsetof(struct tpm_getrandom_out,
-> +						rng_data),
-> +				       0, "attempting get random");
-> +		if (err)
-> +			break;
-> +
-> +		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
-> +		if (recd > num_bytes) {
-> +			total = -EFAULT;
-> +			break;
-> +		}
-> +
-> +		rlength = be32_to_cpu(tpm_cmd.header.out.length);
-> +		if (rlength < TPM_HEADER_SIZE +
-> +			      offsetof(struct tpm_getrandom_out, rng_data) +
-> +			      recd) {
-> +			total = -EFAULT;
-> +			break;
-> +		}
-> +		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
-> +
-> +		dest += recd;
-> +		total += recd;
-> +		num_bytes -= recd;
-> +	} while (retries-- && (size_t)total < max);
-> +
-> +	return total ? total : -EIO;
-> +}
->
+On 23.10.2018 20:03, David Miller wrote:
+> From: Ivan Vecera <ivecera@redhat.com>
+> Date: Tue, 23 Oct 2018 16:40:26 +0200
+> 
+>> The mentioned commit needs to be reverted because we cannot pass
+>> string allocated on stack to request_irq(). This function stores
+>> uses this pointer for later use (e.g. /proc/interrupts) so we need
+>> to keep this string persistently.
+>>
+>> Fixes: d6d9704af8f4 ("be2net: remove desc field from be_eq_obj")
+>>
+>> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+> 
+> Please do not put empty lines between Fixes and the other tags,
+> all tags should appear together as one contiguous group.
+Sure Dave... sorry for that.
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
-/Jarkko
+Ivan
