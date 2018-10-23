@@ -2,87 +2,628 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6C8C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 04:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A654C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 05:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8323320651
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 04:52:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8323320651
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 332DD20671
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 05:10:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="km+U4SZf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 332DD20671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbeJWNOb (ORCPT
+        id S1727423AbeJWNbL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 09:14:31 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:35096 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727201AbeJWNOb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 09:14:31 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gEogR-0003sw-HR; Tue, 23 Oct 2018 04:52:47 +0000
-Date:   Tue, 23 Oct 2018 05:52:47 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     NeilBrown <neil@brown.name>
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ksummit-discuss@lists.linuxfoundation.org,
-        Mishi Choudhary <mishi@linux.com>
-Subject: Re: [Ksummit-discuss] Call to Action Re: [PATCH 0/7] Code of
- Conduct: Fix some wording, and add an interpretation document
-Message-ID: <20181023045247.GV32577@ZenIV.linux.org.uk>
-References: <20181020134908.GA32218@kroah.com>
- <87y3ar80ac.fsf@notabene.neil.brown.name>
- <20181021222608.GA24845@localhost>
- <875zxt919d.fsf@notabene.neil.brown.name>
- <20181023033130.GQ32577@ZenIV.linux.org.uk>
- <87r2gh70ij.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87r2gh70ij.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Tue, 23 Oct 2018 09:31:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57136 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727101AbeJWNbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 09:31:10 -0400
+Received: from devnote (113x40x118x2.ap113.ftth.ucom.ne.jp [113.40.118.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4CC920671;
+        Tue, 23 Oct 2018 05:09:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540271367;
+        bh=UGplxbp98UuLRyjQpUoOTrLIZmnxiB4TKQm6sLjh5lA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=km+U4SZfavWhKeUNr7atQ4wn0PcvttE+YhWJqffoErhw6P6N0Mm8B4yVQtTyq1I7b
+         nLvayjpuW9LxUc+VMBMGbY1QGIUvlWZhNCJ0yeRvd5+TURn5INnJ6ztTDsAKxavVCG
+         naI2kv6ScPj69zbiwfql7ob46md81Vf4BhFVsc5c=
+Date:   Tue, 23 Oct 2018 14:09:23 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
+        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v6 01/15] tracing: Refactor hist trigger action code
+Message-Id: <20181023140923.1833a0a6239210b29ee4aa27@kernel.org>
+In-Reply-To: <d8321db01e0021d03086470bd38dc3bac7dc0829.1539288364.git.tom.zanussi@linux.intel.com>
+References: <cover.1539288364.git.tom.zanussi@linux.intel.com>
+        <d8321db01e0021d03086470bd38dc3bac7dc0829.1539288364.git.tom.zanussi@linux.intel.com>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 03:25:08PM +1100, NeilBrown wrote:
+Hi Tom,
 
-> >> If Linus is not true to his new-found sensitivity, we might need someone
-> >> (Greg?) to be a co-maintainer, able to accept patches when Linus has a
-> >> relapse.  It might be good form to create this channel anyway, but I
-> >> doubt it would be needed in practice.
-> >> 
-> >> So there you have it. The "Code" is upside down.
-> >> We need documents which:
-> >>   - curtail the power of the strong, starting with Linus
-> >>   - are adopted willingly by individuals, not imposed on the community.
-> >>   - provide alternate routes for patch-flow, so that no-one has ultimate
-> >>     power.
-> >
-> > Really?  The ultimate power being to say "No" to a patch, and nobody should
-> > have such?  Are you fucking serious?
+On Thu, 11 Oct 2018 16:01:58 -0500
+Tom Zanussi <zanussi@kernel.org> wrote:
+
+> From: Tom Zanussi <tom.zanussi@linux.intel.com>
 > 
-> I have noticed of late a tendency in all sorts of different people to
-> hear/read a statement from someone they know, interpret it a particular
-> way, be surprised about that interpretation, and persist with believing
-> that interpretation anyway, rather than realizing that the most likely
-> explanation is a communication failure, and asking for clarification.
+> The hist trigger action code currently implements two essentially
+> hard-coded pairs of 'actions' - onmax(), which tracks a variable and
+> saves some event fields when a max is hit, and onmatch(), which is
+> hard-coded to generate a synthetic event.
 > 
-> The "ultimate power" is the ability to say "no" to a patch, *with no
-> opportunity for review*.  Two people together having that ultimate power
-> is a totally different thing to one person having it alone.
+> These hardcoded pairs (track max/save fields and detect match/generate
+> synthetic event) should really be decoupled into separate components
+> that can then be arbitrarily combined.  The first component of each
+> pair (track max/detect match) is called a 'handler' in the new code,
+> while the second component (save fields/generate synthetic event) is
+> called an 'action' in this scheme.
+> 
+> This change refactors the action code to reflect this split by adding
+> two handlers, HANDLER_ONMATCH and HANDLER_ONMAX, along with two
+> actions, ACTION_SAVE and ACTION_TRACE.
+> 
+> The new code combines them to produce the existing ONMATCH/TRACE and
+> ONMAX/SAVE functionality, but doesn't implement the other combinations
+> now possible.  Future patches will expand these to further useful
+> cases, such as ONMAX/TRACE, as well as add additional handlers and
+> actions such as ONCHANGE and SNAPSHOT.
 
-If that's a clarification, I'm sorry to say that I understand you even less now.
-What are you proposing?  Duopoly?  How do you deal with disagreements?  Fork?
-Revert wars?
+This patch looks good, but I have some comment below;
 
-Frankly, CoC as-is is a bloody awful idea wide-open to abuses, but what you
-are proposing feels even more incoherent...
+[...]
+> @@ -3248,11 +3260,12 @@ static void onmax_print(struct seq_file *m,
+>  {
+>  	unsigned int i, save_var_idx, max_idx = data->onmax.max_var->var.idx;
+>  
+> -	seq_printf(m, "\n\tmax: %10llu", tracing_map_read_var(elt, max_idx));
+> +	if (data->handler == HANDLER_ONMAX)
+
+It seems a bit odd that checks HANDLER_ONMAX or not in onmax_X function().
+
+> +		seq_printf(m, "\n\tmax: %10llu", tracing_map_read_var(elt, max_idx));
+>  
+> -	for (i = 0; i < hist_data->n_max_vars; i++) {
+> -		struct hist_field *save_val = hist_data->max_vars[i]->val;
+> -		struct hist_field *save_var = hist_data->max_vars[i]->var;
+> +	for (i = 0; i < hist_data->n_save_vars; i++) {
+> +		struct hist_field *save_val = hist_data->save_vars[i]->val;
+> +		struct hist_field *save_var = hist_data->save_vars[i]->var;
+>  		u64 val;
+>  
+>  		save_var_idx = save_var->var.idx;
+> @@ -3296,7 +3309,7 @@ static void onmax_destroy(struct action_data *data)
+>  	destroy_hist_field(data->onmax.var, 0);
+>  
+>  	kfree(data->onmax.var_str);
+> -	kfree(data->onmax.fn_name);
+> +	kfree(data->action_name);
+>  
+>  	for (i = 0; i < data->n_params; i++)
+>  		kfree(data->params[i]);
+> @@ -3304,16 +3317,17 @@ static void onmax_destroy(struct action_data *data)
+>  	kfree(data);
+>  }
+>  
+> +static int action_create(struct hist_trigger_data *hist_data,
+> +			 struct action_data *data);
+> +
+>  static int onmax_create(struct hist_trigger_data *hist_data,
+>  			struct action_data *data)
+>  {
+> +	struct hist_field *var_field, *ref_field, *max_var = NULL;
+>  	struct trace_event_file *file = hist_data->event_file;
+> -	struct hist_field *var_field, *ref_field, *max_var;
+>  	unsigned int var_ref_idx = hist_data->n_var_refs;
+> -	struct field_var *field_var;
+> -	char *onmax_var_str, *param;
+> +	char *onmax_var_str;
+>  	unsigned long flags;
+> -	unsigned int i;
+>  	int ret = 0;
+>  
+>  	onmax_var_str = data->onmax.var_str;
+> @@ -3343,9 +3357,10 @@ static int onmax_create(struct hist_trigger_data *hist_data,
+>  	ref_field->var_ref_idx = hist_data->n_var_refs++;
+>  	data->onmax.var = ref_field;
+>  
+> -	data->fn = onmax_save;
+>  	data->onmax.max_var_ref_idx = var_ref_idx;
+> -	max_var = create_var(hist_data, file, "max", sizeof(u64), "u64");
+> +
+> +	if (data->handler == HANDLER_ONMAX)
+
+Ditto.
+
+> +		max_var = create_var(hist_data, file, "max", sizeof(u64), "u64");
+>  	if (IS_ERR(max_var)) {
+>  		hist_err("onmax: Couldn't create onmax variable: ", "max");
+>  		ret = PTR_ERR(max_var);
+> @@ -3353,27 +3368,7 @@ static int onmax_create(struct hist_trigger_data *hist_data,
+>  	}
+>  	data->onmax.max_var = max_var;
+>  
+> -	for (i = 0; i < data->n_params; i++) {
+> -		param = kstrdup(data->params[i], GFP_KERNEL);
+> -		if (!param) {
+> -			ret = -ENOMEM;
+> -			goto out;
+> -		}
+> -
+> -		field_var = create_target_field_var(hist_data, NULL, NULL, param);
+> -		if (IS_ERR(field_var)) {
+> -			hist_err("onmax: Couldn't create field variable: ", param);
+> -			ret = PTR_ERR(field_var);
+> -			kfree(param);
+> -			goto out;
+> -		}
+> -
+> -		hist_data->max_vars[hist_data->n_max_vars++] = field_var;
+> -		if (field_var->val->flags & HIST_FIELD_FL_STRING)
+> -			hist_data->n_max_var_str++;
+> -
+> -		kfree(param);
+> -	}
+> +	ret = action_create(hist_data, data);
+>   out:
+>  	return ret;
+>  }
+> @@ -3384,11 +3379,14 @@ static int parse_action_params(char *params, struct action_data *data)
+>  	int ret = 0;
+>  
+>  	while (params) {
+> -		if (data->n_params >= SYNTH_FIELDS_MAX)
+> +		if (data->n_params >= SYNTH_FIELDS_MAX) {
+> +			hist_err("Too many action params", "");
+>  			goto out;
+> +		}
+>  
+>  		param = strsep(&params, ",");
+>  		if (!param) {
+> +			hist_err("No action param found", "");
+>  			ret = -EINVAL;
+>  			goto out;
+>  		}
+> @@ -3412,10 +3410,69 @@ static int parse_action_params(char *params, struct action_data *data)
+>  	return ret;
+>  }
+>  
+> -static struct action_data *onmax_parse(char *str)
+> +static int action_parse(char *str, struct action_data *data,
+> +			enum handler_id handler)
+> +{
+> +	char *action_name;
+> +	int ret = 0;
+> +
+> +	strsep(&str, ".");
+> +	if (!str) {
+> +		hist_err("action parsing: No action found", "");
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	action_name = strsep(&str, "(");
+> +	if (!action_name || !str) {
+> +		hist_err("action parsing: No action found", "");
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	if (strncmp(action_name, "save", strlen("save")) == 0) {
+> +		char *params = strsep(&str, ")");
+> +
+> +		if (!params) {
+> +			hist_err("action parsing: No params found for %s", "save");
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
+> +
+> +		ret = parse_action_params(params, data);
+> +		if (ret)
+> +			goto out;
+> +
+> +		if (handler == HANDLER_ONMAX)
+> +			data->fn = onmax_save;
+> +
+> +		data->action = ACTION_SAVE;
+> +	} else {
+> +		char *params = strsep(&str, ")");
+> +
+> +		if (params) {
+> +			ret = parse_action_params(params, data);
+> +			if (ret)
+> +				goto out;
+> +		}
+> +
+> +		data->fn = action_trace;
+> +		data->action = ACTION_TRACE;
+> +	}
+> +
+> +	data->action_name = kstrdup(action_name, GFP_KERNEL);
+> +	if (!data->action_name) {
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+
+Since we know "handler", it is natural that data->handler is assigned here.
+
+> + out:
+> +	return ret;
+> +}
+> +
+> +static struct action_data *onmax_parse(char *str, enum handler_id handler)
+>  {
+> -	char *onmax_fn_name, *onmax_var_str;
+>  	struct action_data *data;
+> +	char *onmax_var_str;
+>  	int ret = -EINVAL;
+>  
+>  	data = kzalloc(sizeof(*data), GFP_KERNEL);
+> @@ -3434,33 +3491,11 @@ static struct action_data *onmax_parse(char *str)
+>  		goto free;
+>  	}
+>  
+> -	strsep(&str, ".");
+> -	if (!str)
+> -		goto free;
+> -
+> -	onmax_fn_name = strsep(&str, "(");
+> -	if (!onmax_fn_name || !str)
+> -		goto free;
+> -
+> -	if (strncmp(onmax_fn_name, "save", strlen("save")) == 0) {
+> -		char *params = strsep(&str, ")");
+> -
+> -		if (!params) {
+> -			ret = -EINVAL;
+> -			goto free;
+> -		}
+> -
+> -		ret = parse_action_params(params, data);
+> -		if (ret)
+> -			goto free;
+> -	} else
+> +	ret = action_parse(str, data, handler);
+> +	if (ret)
+>  		goto free;
+>  
+> -	data->onmax.fn_name = kstrdup(onmax_fn_name, GFP_KERNEL);
+> -	if (!data->onmax.fn_name) {
+> -		ret = -ENOMEM;
+> -		goto free;
+> -	}
+> +	data->handler = handler;
+>   out:
+>  	return data;
+>   free:
+> @@ -3477,7 +3512,7 @@ static void onmatch_destroy(struct action_data *data)
+>  
+>  	kfree(data->onmatch.match_event);
+>  	kfree(data->onmatch.match_event_system);
+> -	kfree(data->onmatch.synth_event_name);
+> +	kfree(data->action_name);
+>  
+>  	for (i = 0; i < data->n_params; i++)
+>  		kfree(data->params[i]);
+> @@ -3554,8 +3589,9 @@ static int check_synth_field(struct synth_event *event,
+>  }
+>  
+>  static struct hist_field *
+> -onmatch_find_var(struct hist_trigger_data *hist_data, struct action_data *data,
+> -		 char *system, char *event, char *var)
+> +trace_action_find_var(struct hist_trigger_data *hist_data,
+> +		      struct action_data *data,
+> +		      char *system, char *event, char *var)
+>  {
+>  	struct hist_field *hist_field;
+>  
+> @@ -3563,7 +3599,7 @@ onmatch_find_var(struct hist_trigger_data *hist_data, struct action_data *data,
+>  
+>  	hist_field = find_target_event_var(hist_data, system, event, var);
+>  	if (!hist_field) {
+> -		if (!system) {
+> +		if (!system && data->handler == HANDLER_ONMATCH) {
+>  			system = data->onmatch.match_event_system;
+>  			event = data->onmatch.match_event;
+>  		}
+> @@ -3572,15 +3608,15 @@ onmatch_find_var(struct hist_trigger_data *hist_data, struct action_data *data,
+>  	}
+>  
+>  	if (!hist_field)
+> -		hist_err_event("onmatch: Couldn't find onmatch param: $", system, event, var);
+> +		hist_err_event("trace action: Couldn't find param: $", system, event, var);
+>  
+>  	return hist_field;
+>  }
+>  
+>  static struct hist_field *
+> -onmatch_create_field_var(struct hist_trigger_data *hist_data,
+> -			 struct action_data *data, char *system,
+> -			 char *event, char *var)
+> +trace_action_create_field_var(struct hist_trigger_data *hist_data,
+> +			      struct action_data *data, char *system,
+> +			      char *event, char *var)
+>  {
+>  	struct hist_field *hist_field = NULL;
+>  	struct field_var *field_var;
+> @@ -3603,7 +3639,7 @@ onmatch_create_field_var(struct hist_trigger_data *hist_data,
+>  		 * looking for fields on the onmatch(system.event.xxx)
+>  		 * event.
+>  		 */
+> -		if (!system) {
+> +		if (!system && data->handler == HANDLER_ONMATCH) {
+>  			system = data->onmatch.match_event_system;
+>  			event = data->onmatch.match_event;
+>  		}
+> @@ -3627,9 +3663,8 @@ onmatch_create_field_var(struct hist_trigger_data *hist_data,
+>  	goto out;
+>  }
+>  
+> -static int onmatch_create(struct hist_trigger_data *hist_data,
+> -			  struct trace_event_file *file,
+> -			  struct action_data *data)
+> +static int trace_action_create(struct hist_trigger_data *hist_data,
+> +			       struct action_data *data)
+>  {
+>  	char *event_name, *param, *system = NULL;
+>  	struct hist_field *hist_field, *var_ref;
+> @@ -3639,12 +3674,14 @@ static int onmatch_create(struct hist_trigger_data *hist_data,
+>  	int ret = 0;
+>  
+>  	mutex_lock(&synth_event_mutex);
+> -	event = find_synth_event(data->onmatch.synth_event_name);
+> +
+> +	event = find_synth_event(data->action_name);
+>  	if (!event) {
+> -		hist_err("onmatch: Couldn't find synthetic event: ", data->onmatch.synth_event_name);
+> +		hist_err("trace action: Couldn't find synthetic event: ", data->action_name);
+>  		mutex_unlock(&synth_event_mutex);
+>  		return -EINVAL;
+>  	}
+> +
+>  	event->ref++;
+>  	mutex_unlock(&synth_event_mutex);
+>  
+> @@ -3673,13 +3710,15 @@ static int onmatch_create(struct hist_trigger_data *hist_data,
+>  		}
+>  
+>  		if (param[0] == '$')
+> -			hist_field = onmatch_find_var(hist_data, data, system,
+> -						      event_name, param);
+> +			hist_field = trace_action_find_var(hist_data, data,
+> +							   system, event_name,
+> +							   param);
+>  		else
+> -			hist_field = onmatch_create_field_var(hist_data, data,
+> -							      system,
+> -							      event_name,
+> -							      param);
+> +			hist_field = trace_action_create_field_var(hist_data,
+> +								   data,
+> +								   system,
+> +								   event_name,
+> +								   param);
+>  
+>  		if (!hist_field) {
+>  			kfree(p);
+> @@ -3701,7 +3740,7 @@ static int onmatch_create(struct hist_trigger_data *hist_data,
+>  			continue;
+>  		}
+>  
+> -		hist_err_event("onmatch: Param type doesn't match synthetic event field type: ",
+> +		hist_err_event("trace action: Param type doesn't match synthetic event field type: ",
+>  			       system, event_name, param);
+>  		kfree(p);
+>  		ret = -EINVAL;
+> @@ -3709,12 +3748,11 @@ static int onmatch_create(struct hist_trigger_data *hist_data,
+>  	}
+>  
+>  	if (field_pos != event->n_fields) {
+> -		hist_err("onmatch: Param count doesn't match synthetic event field count: ", event->name);
+> +		hist_err("trace action: Param count doesn't match synthetic event field count: ", event->name);
+>  		ret = -EINVAL;
+>  		goto err;
+>  	}
+>  
+> -	data->fn = action_trace;
+>  	data->onmatch.synth_event = event;
+>  	data->onmatch.var_ref_idx = var_ref_idx;
+>   out:
+> @@ -3727,10 +3765,60 @@ static int onmatch_create(struct hist_trigger_data *hist_data,
+>  	goto out;
+>  }
+>  
+> +static int action_create(struct hist_trigger_data *hist_data,
+> +			 struct action_data *data)
+> +{
+> +	struct field_var *field_var;
+> +	unsigned int i;
+> +	char *param;
+> +	int ret = 0;
+> +
+> +	if (data->action == ACTION_TRACE) {
+> +		ret = trace_action_create(hist_data, data);
+
+This can return soon without "goto".
+
+> +		goto out;
+> +	}
+> +
+> +	if (data->action == ACTION_SAVE) {
+> +		if (hist_data->n_save_vars) {
+> +			ret = -EINVAL;
+
+Maybe -EEXIST?
+
+> +			hist_err("save action: Can't have more than one save() action per hist", "");
+> +			goto out;
+> +		}
+> +
+> +		for (i = 0; i < data->n_params; i++) {
+> +			param = kstrdup(data->params[i], GFP_KERNEL);
+> +			if (!param) {
+> +				ret = -ENOMEM;
+> +				goto out;
+> +			}
+> +
+> +			field_var = create_target_field_var(hist_data, NULL, NULL, param);
+> +			if (IS_ERR(field_var)) {
+> +				hist_err("save action: Couldn't create field variable: ", param);
+> +				ret = PTR_ERR(field_var);
+> +				kfree(param);
+> +				goto out;
+> +			}
+> +
+> +			hist_data->save_vars[hist_data->n_save_vars++] = field_var;
+> +			if (field_var->val->flags & HIST_FIELD_FL_STRING)
+> +				hist_data->n_save_var_str++;
+> +			kfree(param);
+> +		}
+> +	}
+> + out:
+> +	return ret;
+> +}
+> +
+> +static int onmatch_create(struct hist_trigger_data *hist_data,
+> +			  struct action_data *data)
+> +{
+> +	return action_create(hist_data, data);
+> +}
+> +
+>  static struct action_data *onmatch_parse(struct trace_array *tr, char *str)
+>  {
+>  	char *match_event, *match_event_system;
+> -	char *synth_event_name, *params;
+>  	struct action_data *data;
+>  	int ret = -EINVAL;
+>  
+> @@ -3768,33 +3856,11 @@ static struct action_data *onmatch_parse(struct trace_array *tr, char *str)
+>  		goto free;
+>  	}
+>  
+> -	strsep(&str, ".");
+> -	if (!str) {
+> -		hist_err("onmatch: Missing . after onmatch(): ", str);
+> -		goto free;
+> -	}
+> -
+> -	synth_event_name = strsep(&str, "(");
+> -	if (!synth_event_name || !str) {
+> -		hist_err("onmatch: Missing opening paramlist paren: ", synth_event_name);
+> -		goto free;
+> -	}
+> -
+> -	data->onmatch.synth_event_name = kstrdup(synth_event_name, GFP_KERNEL);
+> -	if (!data->onmatch.synth_event_name) {
+> -		ret = -ENOMEM;
+> -		goto free;
+> -	}
+> -
+> -	params = strsep(&str, ")");
+> -	if (!params || !str || (str && strlen(str))) {
+> -		hist_err("onmatch: Missing closing paramlist paren: ", params);
+> -		goto free;
+> -	}
+> -
+> -	ret = parse_action_params(params, data);
+> +	ret = action_parse(str, data, HANDLER_ONMATCH);
+>  	if (ret)
+>  		goto free;
+> +
+> +	data->handler = HANDLER_ONMATCH;
+
+This assignment seems to be done in action_parse().
+
+>   out:
+>  	return data;
+>   free:
+> @@ -4232,9 +4298,9 @@ static void destroy_actions(struct hist_trigger_data *hist_data)
+>  	for (i = 0; i < hist_data->n_actions; i++) {
+>  		struct action_data *data = hist_data->actions[i];
+>  
+> -		if (data->fn == action_trace)
+> +		if (data->handler == HANDLER_ONMATCH)
+>  			onmatch_destroy(data);
+> -		else if (data->fn == onmax_save)
+> +		else if (data->handler == HANDLER_ONMAX)
+>  			onmax_destroy(data);
+>  		else
+>  			kfree(data);
+> @@ -4260,16 +4326,14 @@ static int parse_actions(struct hist_trigger_data *hist_data)
+>  				ret = PTR_ERR(data);
+>  				break;
+>  			}
+> -			data->fn = action_trace;
+>  		} else if (strncmp(str, "onmax(", strlen("onmax(")) == 0) {
+>  			char *action_str = str + strlen("onmax(");
+>  
+> -			data = onmax_parse(action_str);
+> +			data = onmax_parse(action_str, HANDLER_ONMAX);
+>  			if (IS_ERR(data)) {
+>  				ret = PTR_ERR(data);
+>  				break;
+>  			}
+> -			data->fn = onmax_save;
+>  		} else {
+>  			ret = -EINVAL;
+>  			break;
+> @@ -4281,8 +4345,7 @@ static int parse_actions(struct hist_trigger_data *hist_data)
+>  	return ret;
+>  }
+>  
+> -static int create_actions(struct hist_trigger_data *hist_data,
+> -			  struct trace_event_file *file)
+> +static int create_actions(struct hist_trigger_data *hist_data)
+>  {
+>  	struct action_data *data;
+>  	unsigned int i;
+> @@ -4291,14 +4354,17 @@ static int create_actions(struct hist_trigger_data *hist_data,
+>  	for (i = 0; i < hist_data->attrs->n_actions; i++) {
+>  		data = hist_data->actions[i];
+>  
+> -		if (data->fn == action_trace) {
+> -			ret = onmatch_create(hist_data, file, data);
+> +		if (data->handler == HANDLER_ONMATCH) {
+> +			ret = onmatch_create(hist_data, data);
+>  			if (ret)
+>  				return ret;
+> -		} else if (data->fn == onmax_save) {
+> +		} else if (data->handler == HANDLER_ONMAX) {
+>  			ret = onmax_create(hist_data, data);
+>  			if (ret)
+>  				return ret;
+> +		} else {
+> +			ret = -EINVAL;
+
+This is a bit odd (or just mixtured), return -EINVAL will be enough here.
+Or above "if (ret) return ret;" shoud be "if (ret) break;" since this function
+returns ret soon after this loop.
+
+> +			break;
+>  		}
+>  	}
+>  
+
+Thank you,
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
