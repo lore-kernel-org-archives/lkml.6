@@ -2,108 +2,119 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B15C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:03:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4964AC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 032852082B
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:03:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 032852082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id E4B6D20665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:09:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZqKtQQot"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4B6D20665
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728450AbeJXA1i convert rfc822-to-8bit (ORCPT
+        id S1728256AbeJXAdS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 20:27:38 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45123 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727437AbeJXA1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 20:27:37 -0400
-Received: from [IPv6:2607:fb90:3611:d0a3:6080:aaf0:a987:a514] ([172.58.37.89])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w9NG2vXK3083724
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Tue, 23 Oct 2018 09:02:58 -0700
-Date:   Tue, 23 Oct 2018 09:02:47 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20181023145351.GA28516@kroah.com>
-References: <20181022161905.26589-1-hpa@zytor.com> <20181023145351.GA28516@kroah.com>
+        Tue, 23 Oct 2018 20:33:18 -0400
+Received: from mail-ed1-f44.google.com ([209.85.208.44]:39940 "EHLO
+        mail-ed1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726970AbeJXAdS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 20:33:18 -0400
+Received: by mail-ed1-f44.google.com with SMTP id r1-v6so2167114edd.7;
+        Tue, 23 Oct 2018 09:09:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=Fgm4tFmb3aCVBUqVRe/lYD1am1ANjqT3rkKG73BHrA0=;
+        b=ZqKtQQotqtvSi/BvgAxSrFvgRLYJqUDOhA0kxHrEufBXnxNntz5BcbEzjTuayF1q7a
+         0ysmOTlaBB+WHtnpemnIlA/t4rb5kqzUEHJKk8CNYvwvzcCKhGTFPlmpi7sx84OdpqwC
+         8Fpj9q7UjGZ/wYOAuDU9+6mJbyiLfEuTMUjmIZl6oa/KzgyoVhV0KXZfEXwxBk9qRxva
+         2nvc5uYKDSHXh7VZgFQnqdkjztLS1KwAd3u+xOoLi8XEiuibW+jHKfdffMlOJ2mAqS3k
+         poLVZH36Cf8KMyHe0E0lQX+sMTVMvywClNw5s+LZUK1BP1hGZV03qVj6QhIr7CPb8nLh
+         AnYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=Fgm4tFmb3aCVBUqVRe/lYD1am1ANjqT3rkKG73BHrA0=;
+        b=nEOH4P8eHIV41o/Vs54+uOJwBzlMBcCBXWTOcRLpftHMY4XatDz6oHrheoiYsAhXWR
+         7oesevhLc29XFwCPJ9vCmULAGLc21DJdW2ZbZKK3rEG3z20Q1ShLbZMMGXjqblj0gxcY
+         QnOZMfSPNGTaYjbsY616B+drPcLvLkUUkyc6S4WpBKZufFL1hpmDR7F+jAwQm3lAJYEb
+         n9UNTxd+gtEhwriro97j0nWu6rawJA7pKZ5RpMlbJr1WQsMJ4XYj34RAsod6V24LMNzy
+         BMVX1/rIL4YaFYM+ROB5cJ3cpaCCj7HZtm5cQZwwSWNw34Na1TKR6m6tA+iQSMve6jdo
+         ksGg==
+X-Gm-Message-State: AGRZ1gKshCgNcit6BeEFAOe3bvyfyBsHl4UtbNTRh7aoUFhbwyLXqcSZ
+        iB1L70xEEFlSFHrqIPzIJE+B7bAA2/hUw9suW0M=
+X-Google-Smtp-Source: AJdET5cA8XFEIPAVLNXUQDLOTgLU+IQR0nqHRB7dwN54oHZh1dnf3t7UuSqyd+xtjgXNOUzWcfCM2gmhjtpvPjD9LEc=
+X-Received: by 2002:a05:6402:12c8:: with SMTP id k8mr9185770edx.143.1540310956010;
+ Tue, 23 Oct 2018 09:09:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH stable v2 1/2] termios, tty/tty_baudrate.c: fix buffer overrun
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        linux-alpha@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>,
-        stable@vger.kernel.org
-From:   hpa@zytor.com
-Message-ID: <DD4A5EC1-E0A8-4DB0-907F-F334C27CE54D@zytor.com>
+References: <a4912516-8c6b-d8d3-b714-5c03bcfc5e91@gmail.com> <20181017161958.GT270328@devbig004.ftw2.facebook.com>
+In-Reply-To: <20181017161958.GT270328@devbig004.ftw2.facebook.com>
+Reply-To: mtk.manpages@gmail.com
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Date:   Tue, 23 Oct 2018 18:09:05 +0200
+Message-ID: <CAKgNAkgEeHSYCFGdXOBQHBALg0KgWP_1=dEFYD_R6wCaV99MJg@mail.gmail.com>
+Subject: Re: Cgroup v2 thread mode oddity: "domain invalid" cgroup with
+ threaded controller enabled
+To:     Tejun Heo <tj@kernel.org>
+Cc:     "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On October 23, 2018 7:53:51 AM PDT, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
->On Mon, Oct 22, 2018 at 09:19:04AM -0700, H. Peter Anvin (Intel) wrote:
->> From: "H. Peter Anvin" <hpa@zytor.com>
->> 
->> On architectures with CBAUDEX == 0 (Alpha and PowerPC), the code in
->tty_baudrate.c does
->> not do any limit checking on the tty_baudrate[] array, and in fact a
->> buffer overrun is possible on both architectures. Add a limit check
->to
->> prevent that situation.
->> 
->> This will be followed by a much bigger cleanup/simplification patch.
->> 
->> Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
->> Requested-by: Cc: Johan Hovold <johan@kernel.org>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: Jiri Slaby <jslaby@suse.com>
->> Cc: Al Viro <viro@zeniv.linux.org.uk>
->> Cc: Richard Henderson <rth@twiddle.net>
->> Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
->> Cc: Matt Turner <mattst88@gmail.com>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Kate Stewart <kstewart@linuxfoundation.org>
->> Cc: Philippe Ombredanne <pombredanne@nexb.com>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: Eugene Syromiatnikov <esyr@redhat.com>
->> Cc: <linux-alpha@vger.kernel.org>
->> Cc: <linux-serial@vger.kernel.org>
->> Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
->> Cc: <stable@vger.kernel.org>
->> ---
->>  drivers/tty/tty_baudrate.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Tejun
+On Wed, 17 Oct 2018 at 18:20, Tejun Heo <tj@kernel.org> wrote:
 >
->As I think Al's big termios cleanups are going to be hitting Linus's
->tree soon, do you know how these patches interact with that?
+> Hello, Michael.
 >
->This patch seems like it will not, so I'll be glad to queue that up
->after my first round of patches get merged to Linus later this week,
->but
->the second one worries me.
+> Sorry about the delay.
 >
->thanks,
+> On Thu, Oct 04, 2018 at 09:40:57PM +0200, Michael Kerrisk (man-pages) wrote:
+> > This seems odd. x/y is now of "domain invalid" type with a controller
+> > enabled! This feels like a violation of the rules, since we can't
+> > in other circumstances do anything with a "domain invalid" cgroup
+> > except convert it to "threaded". In particular, we can't create
+> > child cgroups under a "domain invalid" cgroup, or add member processes
+> > to the cgroup, or *enable controllers in the cgroup*. In fact, when
+> > doing the
+> >
+> >     # echo threaded > x/z/cgroup.type
+> >
+> > I had expected a write(2) error because the state of x/y should
+> > (I thought) not be permitted.
 >
->greg k-h
+> So, both the interim (before turning x/z into threaded) and final
+> (after) are completely fine - the cgroups are empty and whether
+> threaded controllers like pids are enabled or not don't really change
+> things that much.
+>
+> Maybe it is a bit inconsistent to then deny enabling threaded
+> controllers on invalid domain cgroups.  We can lift that restriction
+> but I personally can't see why that'd be clearly better.
 
-I have been working with Al; we had approached much the same problems but from different directions. Mine ended up being a bit more comprehensive as a result, so I think we're going to end up using my code with Al's reviews.
+So, I also can't see anything that seems harmful in the scenario I
+described; it's just an odd inconsistency, and I supposed it was
+unintended/overlooked behavior, and I wanted to alert you to it, in
+case it seemed problematic. However, as long as you have no concerns,
+I see no reason to change the existing behavior.
 
-So bottom line is that it should be all good.
+Thanks,
+
+Michael
+
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
