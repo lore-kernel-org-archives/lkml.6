@@ -2,46 +2,59 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51598C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FDC7C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3E9B204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:17:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3E9B204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A478204FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:23:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A478204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728651AbeJXDmM (ORCPT
+        id S1728628AbeJXDsC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:42:12 -0400
-Received: from mga01.intel.com ([192.55.52.88]:61484 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727758AbeJXDmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:42:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 12:17:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
-   d="scan'208";a="80342283"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
-  by fmsmga007.fm.intel.com with ESMTP; 23 Oct 2018 12:17:28 -0700
-Message-ID: <e8e018e267434cabc2b8db434a3576c082ab3fff.camel@linux.intel.com>
-Subject: Re: [PATCH] cpufreq: intel_pstate: Fix compilation for !CONFIG_ACPI
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-pm@vger.kernel.org, lenb@kernel.org
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org
-Date:   Tue, 23 Oct 2018 12:17:28 -0700
-In-Reply-To: <20181023185429.GA6756@light.dominikbrodowski.net>
-References: <20181023185429.GA6756@light.dominikbrodowski.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+        Tue, 23 Oct 2018 23:48:02 -0400
+Received: from smtprelay0249.hostedemail.com ([216.40.44.249]:38756 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727758AbeJXDsC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:48:02 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id CE197837F24A;
+        Tue, 23 Oct 2018 19:23:16 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: floor50_56873ae492538
+X-Filterd-Recvd-Size: 2526
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 23 Oct 2018 19:23:14 +0000 (UTC)
+Message-ID: <16591e6735e32baad10f083c688119ce79d12911.camel@perches.com>
+Subject: Re: [PATCH v2 2/3] leds: upboard: Add LED support
+From:   Joe Perches <joe@perches.com>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan O'Donovan <dan@emutex.com>, linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org,
+        linux-leds@vger.kernel.org,
+        Carlos Iglesias <carlos.iglesias@emutex.com>,
+        Javier Arteaga <javier@emutex.com>
+Date:   Tue, 23 Oct 2018 12:23:13 -0700
+In-Reply-To: <ede59ef8-7caf-413d-6858-33a1eab5f084@gmail.com>
+References: <20180421085009.28773-1-javier@emutex.com>
+         <1539969334-24577-1-git-send-email-dan@emutex.com>
+         <1539969334-24577-3-git-send-email-dan@emutex.com>
+         <ede59ef8-7caf-413d-6858-33a1eab5f084@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,52 +62,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-10-23 at 20:54 +0200, Dominik Brodowski wrote:
-> Fixes: 86d333a8cc7f ("cpufreq: intel_pstate: Add base_frequency
-> attribute")
-Thanks for the fix.
-
-> Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Cc: Len Brown <lenb@kernel.org>
-> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+On Tue, 2018-10-23 at 20:50 +0200, Jacek Anaszewski wrote:
+> > diff --git a/drivers/leds/leds-upboard.c b/drivers/leds/leds-upboard.c
+> > new file mode 100644
+> > index 0000000..34a6973
+> > --- /dev/null
+> > +++ b/drivers/leds/leds-upboard.c
+> > @@ -0,0 +1,104 @@
+[]
+> > +#include <linux/kernel.h>
+> > +#include <linux/leds.h>
+> > +#include <linux/mfd/upboard.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/regmap.h>
+> > +#include <linux/acpi.h>
 > 
-> diff --git a/drivers/cpufreq/intel_pstate.c
-> b/drivers/cpufreq/intel_pstate.c
-> index 49c0abf2d48f..50c5699970c5 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -390,11 +390,6 @@ static int intel_pstate_get_cppc_guranteed(int
-> cpu)
->  static void intel_pstate_set_itmt_prio(int cpu)
->  {
->  }
-> -
-> -static int intel_pstate_get_cppc_guranteed(int cpu)
-> -{
-> -	return -ENOTSUPP;
-> -}
-What is ACPI is defined but SCHED_MC_PRIO is not defined?
-Based on
-"select ACPI_CPPC_LIB if X86_64 && ACPI && SCHED_MC_PRIO"
+> The last include should go first to keep alphabetical order.
 
-So the above is still required. correct?
+There is no accepted single kernel style for #include
+file ordering.
 
->  #endif
->  
->  static void intel_pstate_init_acpi_perf_limits(struct cpufreq_policy
-> *policy)
-> @@ -490,6 +485,11 @@ static inline bool
-> intel_pstate_acpi_pm_profile_server(void)
->  {
->  	return false;
->  }
-> +
-> +static int intel_pstate_get_cppc_guranteed(int cpu)
-> +{
-> +	return -ENOTSUPP;
-> +}
->  #endif
->  
->  static inline void update_turbo_state(void)
+drivers/leds does not use a single style nor is this
+particular variant documented anywhere to my knowledge.
+
+Until such a time when either a local preferred style
+document or a treewide preferred style exists, please
+stop asking people to modify #include ordering for
+various styles like reverse christmas tree by length,
+alphabetic ordering, or other individual styles.
+
+My preferred style would always have kernel.h first
+as that may help with precompiled headers and overall
+kernel compilation time one day.
 
