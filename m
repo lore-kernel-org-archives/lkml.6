@@ -2,109 +2,314 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1A9C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19773C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:40:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BC382075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:38:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BC382075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A4A582075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:40:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Aad0blps"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4A582075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbeJWWBg (ORCPT
+        id S1728084AbeJWWES (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 18:01:36 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59436 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726277AbeJWWBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 18:01:36 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9678A78;
-        Tue, 23 Oct 2018 06:38:05 -0700 (PDT)
-Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 40C443F627;
-        Tue, 23 Oct 2018 06:38:04 -0700 (PDT)
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@redhat.com, peterz@infradead.org, morten.rasmussen@arm.com,
-        sudeep.holla@arm.com, quentin.perret@arm.com,
-        Dietmar.Eggemann@arm.com
-Subject: [PATCH] sched/core: Take the hotplug lock in sched_init_smp()
-Date:   Tue, 23 Oct 2018 14:37:31 +0100
-Message-Id: <1540301851-3048-1-git-send-email-valentin.schneider@arm.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 23 Oct 2018 18:04:18 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:34636 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbeJWWES (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 18:04:18 -0400
+Received: by mail-ed1-f68.google.com with SMTP id w19-v6so1672785eds.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 06:40:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=HAscuA7lvAkCpbCNskj9tMuhG7sRQzglBkY/CVYtHrU=;
+        b=Aad0blpsQ34GU39pUmgIDp85ObvecvfDUohYx/oD9inUBBV/CT81eWb1PUtoFP4flM
+         JejRkyvvTQEgVQOuoUuZEIxd7JWLzxgExitqYp40iCslFmfbDEV9btqH2PvJaAD5fE0+
+         vb3txolE+q7vDSRqDwpIdU6CZ9IBR+RslH6nc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=HAscuA7lvAkCpbCNskj9tMuhG7sRQzglBkY/CVYtHrU=;
+        b=H7dxv1qVKjQC4KkHw4imjWmzmPMBFTgoyhGd94kbKl02+bMVZzCoaCrT4i6LVFNw9Y
+         a7+PRtYZjqJFIhFBT/1B7k80sHyxC2trigZ9nymo7SWCNzJC6VzUf3s7TlokwokPaKnr
+         TDsbdzDYF8DihLuYC0oVMRHh9y2YN9KT0j7i4jcvfR7e0o2XbE5e/gmLkAxpcIU1HWHN
+         nLh8Dk19RXdXw8xB2QbbuNA6MVamzlYB7ehCedcwb90elTVy7DzPS124OFnzPVi1VzJb
+         94MCeteXMKZlsk9c1HrstZRlXQjoCDo3XT8Ps/8lDClQtUfw9BI9+lkF6mkMsLvpFXVj
+         X7sA==
+X-Gm-Message-State: ABuFfoi7GJI8xip7Ymxq80gxfQsiTeQCgsr8oQAXO6RzrsQPx5xOgIT+
+        OmEYTsuEAaKceRnMPmCNj/Z5vQ==
+X-Google-Smtp-Source: ACcGV60zo7JIf5YWZleiPL9UOX7ewoFK8BWHJZHlnVgFbvBAqpH3to9V6nXx+l8DSag+tWHX9pOaug==
+X-Received: by 2002:a17:906:8491:: with SMTP id m17-v6mr38621311ejx.120.1540302044795;
+        Tue, 23 Oct 2018 06:40:44 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id l22-v6sm367054ejd.53.2018.10.23.06.40.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 23 Oct 2018 06:40:44 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 15:40:41 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     noralf@tronnes.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        sean@poorly.run, airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH] drm/rcar-du: Convert drm_atomic_helper_suspend/resume()
+Message-ID: <20181023134041.GO324@phenom.ffwll.local>
+Mail-Followup-To: Souptick Joarder <jrdr.linux@gmail.com>,
+        noralf@tronnes.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        sean@poorly.run, airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20180918163903.GA11172@jordon-HP-15-Notebook-PC>
+ <20809880.gF2CxujBy3@avalon>
+ <20181001065220.GE11082@phenom.ffwll.local>
+ <26527911.hs5tlrnKDc@avalon>
+ <042a6076-62e2-c029-2a09-f1123d9ac403@tronnes.org>
+ <CAFqt6zZ9vZ8qDpockDyUgqxJxA-d6ajyufzBUCPzKkxv0Vnu_Q@mail.gmail.com>
+ <20181011081849.GR31561@phenom.ffwll.local>
+ <CAFqt6zaaEWb-vQ6BVhYg1GgsxwKX=4H661OHU3Qfbk0FD3Cz9g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFqt6zaaEWb-vQ6BVhYg1GgsxwKX=4H661OHU3Qfbk0FD3Cz9g@mail.gmail.com>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When running on linux-next (8c60c36d0b8c ("Add linux-next specific files
-for 20181019")) + CONFIG_PROVE_LOCKING=y on a big.LITTLE system (e.g.
-Juno or HiKey960), we get the following report:
+On Mon, Oct 22, 2018 at 01:51:35PM +0530, Souptick Joarder wrote:
+> Hi Laurent,
+> 
+> On Thu, Oct 11, 2018 at 1:48 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+> >
+> > On Mon, Oct 08, 2018 at 09:57:52PM +0530, Souptick Joarder wrote:
+> > > Hi Laurent,
+> > > On Mon, Oct 1, 2018 at 6:12 PM Noralf Trønnes <noralf@tronnes.org> wrote:
+> > > >
+> > > >
+> > > > Den 01.10.2018 13.56, skrev Laurent Pinchart:
+> > > > > Hi Daniel,
+> > > > >
+> > > > > On Monday, 1 October 2018 09:52:20 EEST Daniel Vetter wrote:
+> > > > >> On Fri, Sep 28, 2018 at 06:30:35PM +0300, Laurent Pinchart wrote:
+> > > > >>> On Friday, 28 September 2018 18:05:18 EEST Laurent Pinchart wrote:
+> > > > >>>> On Thursday, 27 September 2018 09:34:18 EEST Souptick Joarder wrote:
+> > > > >>>>> On Tue, Sep 18, 2018 at 10:05 PM Souptick Joarder wrote:
+> > > > >>>>>> convert drm_atomic_helper_suspend/resume() to use
+> > > > >>>>>> drm_mode_config_helper_suspend/resume().
+> > > > >>>>>>
+> > > > >>>>>> remove suspend_state field from the rcar_du_device
+> > > > >>>>>> structure as it is no more required.
+> > > > >>>>>>
+> > > > >>>>>> With this conversion, also drm_fbdev_cma_set_suspend_unlocked()
+> > > > >>>>>> will left with no consumer. So this function can be removed.
+> > > > >>>>>>
+> > > > >>>>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > > > >>>>> Laurent, any comment on this patch ??
+> > > > >>>> Sorry for the delay, and thanks for pinging me.
+> > > > >>>>
+> > > > >>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > >>>>
+> > > > >>>> Should I apply this to my tree or do you plan to merge it through
+> > > > >>>> drm-misc
+> > > > >>>> as it touches drm_fb_cma_helper.c ?
+> > > > >>> I just realized that the same patch got supplied by Noralf Trønnes nearly
+> > > > >>> a
+> > > > >>> year ago, and was later superseded by
+> > > > >>> https://patchwork.freedesktop.org/patch/247861/. I think we should thus
+> > > > >>> apply Noralf's patches instead (once he sends v4 out).
+> > > > >> I don't think Noralf is still actively working on this, he's busy with the
+> > > > >> fbdev emulation stuff. Probably better if you pick up one of the existing
+> > > > >> ones, than waiting another year or so :-)
+> > > > > Isn't https://patchwork.freedesktop.org/patch/247861/ part of the fbdev
+> > > > > emulation stuff ? That patch series is from less than a month ago, so I
+> > > > > thought it was actively developed.
+> > > > >
+> > > > > Let's ask him. Noralf, any comment ? :-)
+> > > >
+> > > > I see now that I've caused some confusion here.
+> > > >
+> > > > I did some refactoring of the fbdev stuff in the CMA helper last year.
+> > > > In the last series of that work there is this patch:
+> > > >
+> > > > [v3,07/11] drm/rcar-du: Use drm_mode_config_helper_suspend/resume()
+> > > > https://patchwork.freedesktop.org/patch/192414/
+> > > >
+> > > > During Christmas I got the idea that maybe it was possible to use a dumb
+> > > > buffer to do generic fbdev emulation. That work took me 6 months before a
+> > > > solution using a general internal DRM client was hammered out. By the
+> > > > time I started to convert drivers I had forgotten about that patch.
+> > > >
+> > > > When I wrote the patch (#247861) to convert rcar to the generic fbdev, I
+> > > > just bundled up the suspend/resume change with the fbdev conversion.
+> > > > Laurent and Sam commented on that bundling, so I said that I would split
+> > > > it up in the next version.
+> > > >
+> > > > All that being said, I think that this patch should be applied and I'll
+> > > > just rebase the rcar fbdev conversion patch on top of that.
+> > > > It's the easiest for me at least :-)
+> > > >
+> > > Any conclusion on this patch ? :-)
+> >
+> > Laurent should pick it up and apply to his rcar-du tree I think. We can
+> > also stuff it into drm-misc as a fallback.
+> 
+> Can we get this patch in queue for 4.20 ?
 
-[    0.748225] Call trace:
-[    0.750685]  lockdep_assert_cpus_held+0x30/0x40
-[    0.755236]  static_key_enable_cpuslocked+0x20/0xc8
-[    0.760137]  build_sched_domains+0x1034/0x1108
-[    0.764601]  sched_init_domains+0x68/0x90
-[    0.768628]  sched_init_smp+0x30/0x80
-[    0.772309]  kernel_init_freeable+0x278/0x51c
-[    0.776685]  kernel_init+0x10/0x108
-[    0.780190]  ret_from_fork+0x10/0x18
+5.1, 4.20 is already done.
 
-The static_key in question is sched_asym_cpucapacity introduced by
-commit df054e8445a4 ("sched/topology: Add static_key for asymmetric CPU
-capacity optimizations"). In this particular case, we enable it because
-smp_prepare_cpus() will end up fetching the capacity-dmips-mhz entry
-from the devicetree, so we already have some asymmetry detected when
-entering sched_init_smp().
+But yes, I pulled this into drm-misc-next. Thanks for your patch.
+-Daniel
 
-This didn't get detected in tip/sched/core because we were missing
-commit cb538267ea1e ("jump_label/lockdep: Assert we hold the hotplug
-lock for _cpuslocked() operations").
+> 
+> > -Daniel
+> >
+> > >
+> > > ers/gpu/drm/drm_fb_cma_helper.c   | 18 ------------------
+> > > > >>>>>>   drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 ++-------------------
+> > > > >>>>>>   drivers/gpu/drm/rcar-du/rcar_du_drv.h |  1 -
+> > > > >>>>>>   include/drm/drm_fb_cma_helper.h       |  2 --
+> > > > >>>>>>   4 files changed, 2 insertions(+), 40 deletions(-)
+> > > > >>>>>>
+> > > > >>>>>> diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c
+> > > > >>>>>> b/drivers/gpu/drm/drm_fb_cma_helper.c index 47e0e2f..96efc88 100644
+> > > > >>>>>> --- a/drivers/gpu/drm/drm_fb_cma_helper.c
+> > > > >>>>>> +++ b/drivers/gpu/drm/drm_fb_cma_helper.c
+> > > > >>>>>> @@ -224,21 +224,3 @@ void drm_fbdev_cma_hotplug_event(struct
+> > > > >>>>>> drm_fbdev_cma *fbdev_cma)
+> > > > >>>>>>
+> > > > >>>>>>                  drm_fb_helper_hotplug_event(&fbdev_cma->fb_helper);
+> > > > >>>>>>
+> > > > >>>>>>   }
+> > > > >>>>>>   EXPORT_SYMBOL_GPL(drm_fbdev_cma_hotplug_event);
+> > > > >>>>>>
+> > > > >>>>>> -
+> > > > >>>>>> -/**
+> > > > >>>>>> - * drm_fbdev_cma_set_suspend_unlocked - wrapper around
+> > > > >>>>>> - *
+> > > > >>>>>> drm_fb_helper_set_suspend_unlocked
+> > > > >>>>>> - * @fbdev_cma: The drm_fbdev_cma struct, may be NULL
+> > > > >>>>>> - * @state: desired state, zero to resume, non-zero to suspend
+> > > > >>>>>> - *
+> > > > >>>>>> - * Calls drm_fb_helper_set_suspend, which is a wrapper around
+> > > > >>>>>> - * fb_set_suspend implemented by fbdev core.
+> > > > >>>>>> - */
+> > > > >>>>>> -void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma
+> > > > >>>>>> *fbdev_cma,
+> > > > >>>>>> -                                       bool state)
+> > > > >>>>>> -{
+> > > > >>>>>> -       if (fbdev_cma)
+> > > > >>>>>> -
+> > > > >>>>>> drm_fb_helper_set_suspend_unlocked(&fbdev_cma->fb_helper,
+> > > > >>>>>> -                                                  state);
+> > > > >>>>>> -}
+> > > > >>>>>> -EXPORT_SYMBOL(drm_fbdev_cma_set_suspend_unlocked);
+> > > > >>>>>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> > > > >>>>>> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 02aee6c..288220f 100644
+> > > > >>>>>> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> > > > >>>>>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> > > > >>>>>> @@ -357,32 +357,15 @@ static void rcar_du_lastclose(struct drm_device
+> > > > >>>>>> *dev)
+> > > > >>>>>>
+> > > > >>>>>>   static int rcar_du_pm_suspend(struct device *dev)
+> > > > >>>>>>   {
+> > > > >>>>>>
+> > > > >>>>>>          struct rcar_du_device *rcdu = dev_get_drvdata(dev);
+> > > > >>>>>>
+> > > > >>>>>> -       struct drm_atomic_state *state;
+> > > > >>>>>>
+> > > > >>>>>> -       drm_kms_helper_poll_disable(rcdu->ddev);
+> > > > >>>>>> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, true);
+> > > > >>>>>> -
+> > > > >>>>>> -       state = drm_atomic_helper_suspend(rcdu->ddev);
+> > > > >>>>>> -       if (IS_ERR(state)) {
+> > > > >>>>>> -               drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev,
+> > > > >>>>>> false);
+> > > > >>>>>> -               drm_kms_helper_poll_enable(rcdu->ddev);
+> > > > >>>>>> -               return PTR_ERR(state);
+> > > > >>>>>> -       }
+> > > > >>>>>> -
+> > > > >>>>>> -       rcdu->suspend_state = state;
+> > > > >>>>>> -
+> > > > >>>>>> -       return 0;
+> > > > >>>>>> +       return drm_mode_config_helper_suspend(rcdu->ddev);
+> > > > >>>>>>
+> > > > >>>>>>   }
+> > > > >>>>>>
+> > > > >>>>>>   static int rcar_du_pm_resume(struct device *dev)
+> > > > >>>>>>   {
+> > > > >>>>>>
+> > > > >>>>>>          struct rcar_du_device *rcdu = dev_get_drvdata(dev);
+> > > > >>>>>>
+> > > > >>>>>> -       drm_atomic_helper_resume(rcdu->ddev, rcdu->suspend_state);
+> > > > >>>>>> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
+> > > > >>>>>> -       drm_kms_helper_poll_enable(rcdu->ddev);
+> > > > >>>>>> -
+> > > > >>>>>> -       return 0;
+> > > > >>>>>> +       return drm_mode_config_helper_resume(rcdu->ddev);
+> > > > >>>>>>
+> > > > >>>>>>   }
+> > > > >>>>>>   #endif
+> > > > >>>>>>
+> > > > >>>>>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> > > > >>>>>> b/drivers/gpu/drm/rcar-du/rcar_du_drv.h index b3a25e8..ff25c8d 100644
+> > > > >>>>>> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> > > > >>>>>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> > > > >>>>>> @@ -78,7 +78,6 @@ struct rcar_du_device {
+> > > > >>>>>>
+> > > > >>>>>>          struct drm_device *ddev;
+> > > > >>>>>>          struct drm_fbdev_cma *fbdev;
+> > > > >>>>>>
+> > > > >>>>>> -       struct drm_atomic_state *suspend_state;
+> > > > >>>>>>
+> > > > >>>>>>          struct rcar_du_crtc crtcs[RCAR_DU_MAX_CRTCS];
+> > > > >>>>>>          unsigned int num_crtcs;
+> > > > >>>>>>
+> > > > >>>>>> diff --git a/include/drm/drm_fb_cma_helper.h
+> > > > >>>>>> b/include/drm/drm_fb_cma_helper.h index 4a65f0d..8dbbe1e 100644
+> > > > >>>>>> --- a/include/drm/drm_fb_cma_helper.h
+> > > > >>>>>> +++ b/include/drm/drm_fb_cma_helper.h
+> > > > >>>>>> @@ -26,8 +26,6 @@ struct drm_fbdev_cma *drm_fbdev_cma_init(struct
+> > > > >>>>>> drm_device *dev,
+> > > > >>>>>>
+> > > > >>>>>>   void drm_fbdev_cma_restore_mode(struct drm_fbdev_cma *fbdev_cma);
+> > > > >>>>>>   void drm_fbdev_cma_hotplug_event(struct drm_fbdev_cma *fbdev_cma);
+> > > > >>>>>>
+> > > > >>>>>> -void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma
+> > > > >>>>>> *fbdev_cma,
+> > > > >>>>>> -                                       bool state);
+> > > > >>>>>>
+> > > > >>>>>>   struct drm_gem_cma_object *drm_fb_cma_get_gem_obj(struct
+> > > > >>>>>>   drm_framebuffer *fb,
+> > > > >>>>>>
+> > > > >>>>>>          unsigned int plane);
+> > > >
+> >
+> > --
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > http://blog.ffwll.ch
 
-Calls to build_sched_domains() post sched_init_smp() will hold the
-hotplug lock, it just so happens that this very first call is a
-special case. As stated by a comment in sched_init_smp(), "There's no
-userspace yet to cause hotplug operations" so this is a harmless
-warning.
-
-However, to both respect the semantics of underlying
-callees and make lockdep happy, take the hotplug lock in
-sched_init_smp(). This also satisfies the comment atop
-sched_init_domains() that says "Callers must hold the hotplug lock".
-
-Reported-by: Sudeep Holla <sudeep.holla@arm.com>
-Tested-by: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
----
- kernel/sched/core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index fd2fce8..02a20ef 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5859,11 +5859,14 @@ void __init sched_init_smp(void)
- 	/*
- 	 * There's no userspace yet to cause hotplug operations; hence all the
- 	 * CPU masks are stable and all blatant races in the below code cannot
--	 * happen.
-+	 * happen. The hotplug lock is nevertheless taken to satisfy lockdep,
-+	 * but there won't be any contention on it.
- 	 */
-+	cpus_read_lock();
- 	mutex_lock(&sched_domains_mutex);
- 	sched_init_domains(cpu_active_mask);
- 	mutex_unlock(&sched_domains_mutex);
-+	cpus_read_unlock();
- 
- 	/* Move init over to a non-isolated CPU */
- 	if (set_cpus_allowed_ptr(current, housekeeping_cpumask(HK_FLAG_DOMAIN)) < 0)
---
-2.7.4
-
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
