@@ -2,162 +2,163 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0A1C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B83C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DC5820671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:13:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B046E20671
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:14:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bYXck+RW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DC5820671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKcj5FK1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B046E20671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbeJWUhA (ORCPT
+        id S1728186AbeJWUiB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 16:37:00 -0400
-Received: from mail-it1-f176.google.com ([209.85.166.176]:50982 "EHLO
-        mail-it1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbeJWUhA (ORCPT
+        Tue, 23 Oct 2018 16:38:01 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44721 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbeJWUiB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 16:37:00 -0400
-Received: by mail-it1-f176.google.com with SMTP id k206-v6so1619127ite.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 05:13:46 -0700 (PDT)
+        Tue, 23 Oct 2018 16:38:01 -0400
+Received: by mail-lj1-f193.google.com with SMTP id v6-v6so1120534ljc.11
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 05:14:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7ZP6uHZJ/F6v0hE+9XCHZPml+qtTSgB2HLcg17zVahg=;
-        b=bYXck+RWATCT2/+6/TlCC6NLCX66f+w/6hec1xtErVfsfYOEaxRX2HeG7wPYkDb6Zm
-         iEhqYR/Et9gNvj2qm1bQwttLLVA0y+DT6oxapdcng7HAjDyGJNoH4D6kqRh7RIq2c1xf
-         j85m/Dz9Hj9/GK13crb8X+qRoHIobuaqi5lno=
+        bh=nBAwiVSgHF1r2FEzQ1N95UBkQZFlWElgz2GsLIR5y1Q=;
+        b=jKcj5FK18qHxKi8uhKcyfxaucS9xPoPDL0pat1y45W0Mg50ZHplITKEfmcg8cxgX6a
+         /BxJsDAwxOAcJvT9wvMQr7XsTQvbT5Z8yA0L+TT5CwiNBGICjNDJymMXuGxy3GCwdOTp
+         /Z47kGeou09D2YjNgGsiHAvDTracP6Wj8FdIKugMf/MJZIS8ABZgY+YpAqi8LKaO+Ihy
+         S8+qrR4M1DLg9axAAmTZiJ3uCVlJWRcJUXpZRa0Ac8TqSwG9Nm0e5Gf16fJ3T6LW3D4z
+         bql3QfnK3qLpDkYIwJv0S82mgptb0Z2YqfsN1jH6XtWMlH/z6H6oFr5uoscbnHbwK+WL
+         98pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7ZP6uHZJ/F6v0hE+9XCHZPml+qtTSgB2HLcg17zVahg=;
-        b=b0XH3mYwZF8QIx0NtSEKQAS7asaHIrSY1dAQSdTZ/FWwL91LbMg4d5RsyFbMuV2myF
-         91qS7mznfNm8vFDIXcmGE0dFbI9kdWKwfmo03P0BYbGlomZJDws9+WxPXtTx3VXVnW2T
-         pRm2+Fwtcrm5e+cxDbSDqrNTV6ubrPtvVd7s0wASokjPc9VxHzTfYoxHhPnSgfK30ZIj
-         x0Ah34E4dKN4G4MmeUx5KxC8U2egqByS6kqN+WRQXWIWZJB0ycA0N6hIm5Y+m9DmFINj
-         KK83j7FrDYgxabJxg3tmiKn/lsuprzcUSIAJlrA5i93eGFYj1ANBbjNkZcoBh34QMmDN
-         dvCA==
-X-Gm-Message-State: ABuFfohj6D6jx7o7kplDoyqQ3wX9NzWNXf2LuBPPZfvWrPNrd6RXKueP
-        FxebC/A6e+KfX2DlSK3VFkVSJVF4EgUoY0XjhwZoZQ==
-X-Google-Smtp-Source: ACcGV613ekwxS4mhn0o/HuC7QnP7m4OeKwydKvSLqjXfVQnh8Shx77WNWCyBz5C12IIom9s555nFiMlqPNrb5hAoegI=
-X-Received: by 2002:a24:6b4d:: with SMTP id v74-v6mr11671977itc.26.1540296825542;
- Tue, 23 Oct 2018 05:13:45 -0700 (PDT)
+        bh=nBAwiVSgHF1r2FEzQ1N95UBkQZFlWElgz2GsLIR5y1Q=;
+        b=uV0AwTHUJP3J5yo2k13wA2TQYgQ9QJty0G0ydOuOReqlvz/RXEE/uHuRdRlZCfzamp
+         p/7lnsbokJ5LTRoYmDCVVb1wSX+qrQ5aLx9Xy64N4Xjo9hU0Y2sA7zqfixBVTlyEM/o1
+         SFf/1qATn/cPIrGVIxuE8eQgBWR95RJRxqjt/2bN2HrHQYJ+KRJvohm3PiV2hJQVra4f
+         dOEGLcEro6f2c8QUBaPMDg9d2y7izzkixi4EzHnefwbaZGOf0KPqgzuzvYzx+iJCp2qs
+         8H/9GWQct36aId4K6LO8M5dvZVbdmOWla9Tr2YtFOjYtGa15Cfrtwg9oXNE9ES4vlMTg
+         FjVw==
+X-Gm-Message-State: ABuFfoi6PvxQgX3rhcnRnLMr2eu9gZBgqLzmbQ4wWw/y9bgcQi8ui0Xq
+        hXuet5j0bCsqTrAmztRdXQ2XS3lEQCF62MaQt6U=
+X-Google-Smtp-Source: ACcGV62iMaozcdTVuKmKDY42Rn2SXVejGskhzJsjtZzlGQf8wfeLjYUtSO0qtLt+Efv/tKJVHmTP4VYS+g7rNHInl8s=
+X-Received: by 2002:a2e:5586:: with SMTP id g6-v6mr31371476lje.75.1540296884897;
+ Tue, 23 Oct 2018 05:14:44 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Tue, 23 Oct 2018 05:13:05
- -0700 (PDT)
-In-Reply-To: <CAHk-=wjS6cjjP+fkZWzzrdZ_fZ1F=PrAGcBc57vKCpNyoD73Vw@mail.gmail.com>
-References: <CAHk-=wjS6cjjP+fkZWzzrdZ_fZ1F=PrAGcBc57vKCpNyoD73Vw@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 23 Oct 2018 14:13:05 +0200
-Message-ID: <CAPDyKFrxJNM9TShLJhYm6L+Pp7F77u8FQ3Lk2WmatAma772btA@mail.gmail.com>
-Subject: Re: Git pull ack emails..
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181003185854.GA1174@jordon-HP-15-Notebook-PC>
+ <20181003200003.GA9965@bombadil.infradead.org> <20181003221444.GZ30658@n2100.armlinux.org.uk>
+ <CAFqt6zYHhmPwUdaCZX-BuAvaVwA-x1W39tz+Q50-nbEaW2cYVg@mail.gmail.com>
+ <20181004123400.GC30658@n2100.armlinux.org.uk> <CAFqt6zZPOM17QwmcWKF3F1gqkJm=2PxvuJ3naWuRXZGHc2HrEQ@mail.gmail.com>
+ <20181004181736.GB20842@bombadil.infradead.org> <CAFqt6zaN0PQHkjuwFf8VriROLy7qrPDu-iNE=VPiXJw8C7GpQg@mail.gmail.com>
+ <CANiq72mkTP_m20vqei-cpN+ypQ_gU472qn5m68vb_4Nqj5afMQ@mail.gmail.com>
+ <CAFqt6zaFc_GenhfvsD0VPfepR-jjXypj+4CgNEuHMVq1WXV+8w@mail.gmail.com>
+ <CANiq72kVJn7985EET067Dgj+z0dwb0x2MTUnREMWKCVU6=WnJA@mail.gmail.com>
+ <CAFqt6zZ4sPjtb5BaDfwc5tZv+vMj6ao3NJZ_3quX9AH5pCMwJg@mail.gmail.com>
+ <CANiq72m9u1PL9X+dPNLxgkhvttj=4ijLyM2sFex=Kws7wswKzw@mail.gmail.com>
+ <CAFqt6zYH4Aczu8AYke8AfGuMS70SJXCMn-n8X8C_Tz03gTjn8g@mail.gmail.com>
+ <CANiq72kRAZE9SyM4EkpaBZH03Ex0Z=4Pk2iOuc2jBDKTfKjHQg@mail.gmail.com>
+ <CAFqt6zZCCPFE3sQ3u_gjiN8wwd99nwWatk9JRsiGxbCwhi91mg@mail.gmail.com> <CANiq72k-e_j67==VdrayqggjAd7MAfpaJS-_0=jkmh4OWynukQ@mail.gmail.com>
+In-Reply-To: <CANiq72k-e_j67==VdrayqggjAd7MAfpaJS-_0=jkmh4OWynukQ@mail.gmail.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Tue, 23 Oct 2018 17:44:32 +0530
+Message-ID: <CAFqt6zZ2yHkVcbYtK1dxr9B3K5WVYGboavjP1ibmYei0u4zFbQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: Introduce new function vm_insert_kmem_page
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        robin@protonic.nl, stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
+        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
+        robin.murphy@arm.com, iamjoonsoo.kim@lge.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kees Cook <keescook@chromium.org>, treding@nvidia.com,
+        Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>, aryabinin@virtuozzo.com,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>, tchibo@google.com,
+        riel@redhat.com, Minchan Kim <minchan@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Huang, Ying" <ying.huang@intel.com>, ak@linux.intel.com,
+        rppt@linux.vnet.ibm.com, linux@dominikbrodowski.net,
+        Arnd Bergmann <arnd@arndb.de>, cpandya@codeaurora.org,
+        hannes@cmpxchg.org, Joe Perches <joe@perches.com>,
+        mcgrof@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, Linux-MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23 October 2018 at 10:41, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> So I've obviously started pulling stuff for the merge window, and one
-> of the things I noticed with Greg doing it for the last few weeks was
-> that he has this habit (or automation) to send Ack emails when he
-> pulls.
+On Sat, Oct 6, 2018 at 4:19 PM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 >
-> In fact, I reacted to them not being there when he sent himself his
-> fake pull messages. Because he didn't then send himself an ack for
-> having pulled it ;(
+> On Sat, Oct 6, 2018 at 7:11 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> >
+> > On Fri, Oct 5, 2018 at 11:39 PM Miguel Ojeda
+> > <miguel.ojeda.sandonis@gmail.com> wrote:
+> > > They are not supposed to be "steps". You did it with 70+ commits (!!)
+> > > over the course of several months. Why a tree wasn't created, stuff
+> > > developed there, and when done, submitted it for review?
+> >
+> > Because we already have a plan for entire vm_fault_t migration and
+> > the * instruction * was to send one patch per driver.
 >
-> And I actually went into this saying "I'll try to do the same".
->
-> But after having actually started doing the pulls, I notice how it
-> doesn't work well with my traditional workflow, and so I haven't been
-> doing it after all.
->
-> In particular, the issue is that after each pull, I do a build test
-> before the pull is really "final", and while that build test is
-> ongoing (which takes anything from a few minutes to over an hour when
-> I'm on the road and using my laptop), I go on and look at the *next*
-> pull (or one of the other pending ones).
->
-> So by the time the build test has finished, the original pull request
-> is already long gone - archived and done - and I have moved on.
->
-> End result: answering the pull request is somewhat inconvenient to my
-> flow, which is why I haven't done it.
->
-> In contrast, this email is written "after the fact", just scripting
-> "who did I pull for and then push out" by just looking at the git
-> tree. Which sucks, because it means that I don't actually answer the
-> original email at all, and thus lose any cc's for other people or
-> mailing lists.  That would literally be done better by simple
-> automation.
->
-> So I've got a few options:
->
->  - just don't do it
->
->  - acking the pull request before it's validated and finalized.
->
->  - starting the reply when doing the pull, leaving the email open in a
-> separate window, going on to the next pull request, and then when
-> build tests are done and I'll start the next one, finish off the old
-> pending email.
->
-> and obviously that first option is the easiest one. I'm not sure what
-> Greg did, and during the later rc's it probably doesn't matter,
-> because there likely simply aren't any overlapping operations.
->
-> Because yes, the second option likely works fine in most cases, but my
-> pull might not actually be final *if* something goes bad (where  bad
-> might be just "oops, my tests showed a semantic conflict, I'll need to
-> fix up my merge" to "I'm going to have to look more closely at that
-> warning" to "uhhuh, I'm going to just undo the pull entirely because
-> it ended up being broken").
->
-> The third option would work reliably, and not have the "oh, my pull is
-> only tentatively done" issue. It just adds an annoying back-and-forth
-> switch to my workflow.
->
-> So I'm mainly pinging people I've already pulled to see how much
-> people actually _care_. Yes, the ack is nice, but do people care
-> enough that I should try to make that workflow change? Traditionally,
-> you can see that I've pulled from just seeing the end result when it
-> actually hits the public tree (which is yet another step removed from
-> the steps above - I do build tests between every pull, but I generally
-> tend to push out the end result in batches, usually a couple of times
-> a day).
->
-> Comments?
+> The instruction?
 
-Welcome back!
+Sorry for the delayed response.
+Instruction from Matthew  Wilcox who is supervising the entire vm_fault_t
+migration work :-)
 
-I have no strong opinions, in regards to the acks.
-
-Your current approach, with no ack at all, just means that I have to
-do "git remote update" a few times, which I probably would have done
-anyways. So, to me, feel free to pick whatever option that makes the
-life easiest for you.
-
-Kind regards
-Uffe
+>
+> > >
+> > > Fine, but you haven't answered to the other parts of my email: you
+> > > don't explain why you choose one alternative over the others, you
+> > > simply keep changing the approach.
+> >
+> > We are going in circles here. That you want to convert vm_insert_page
+> > to vmf_insert_page for the PF case is fine and understood. However,
+> > you don't *need* to introduce a new name for the remaining non-PF
+> > cases if the function is going to be the exact same thing as before.
+> > You say "The final goal is to remove vm_insert_page", but you haven't
+> > justified *why* you need to remove that name.
+> >
+> > I think I have given that answer. If we don't remove vm_insert_page,
+> > future #PF caller will have option to use it. But those should be
+> > restricted. How are we going to restrict vm_insert_page in one half
+> > of kernel when other half is still using it  ?? Is there any way ? ( I don't
+> > know)
+>
+> Ah, so that is what you are concerned about: future misuses. Well, I
+> don't really see the problem. There are only ~18 calls to
+> vm_insert_page() in the entire kernel: checking if people is using it
+> properly for a while should be easy. As long as the new behavior is
+> documented properly, it should be fine. If you are really concerned
+> about mistakes being made, then fine, we can rename it as I suggested.
+>
+> Now, the new vm_insert_range() is another topic. It simplifies a few
+> of the callers and buys us the rename at the same time, so I am also
+> OK with it.
+>
+> As you see, I am not against the changes -- it is just that they
+> should clearly justified. :-) It wasn't clear what your problem with
+> the current vm_insert_page() is.
+>
+> Cheers,
+> Miguel
