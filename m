@@ -2,413 +2,574 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE33C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:07:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A72CC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C85F204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:07:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0908520813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:09:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dmi16/wj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C85F204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZxUcgLts"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0908520813
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729003AbeJXDcW (ORCPT
+        id S1728771AbeJXDdn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:32:22 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38878 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728775AbeJXDcW (ORCPT
+        Tue, 23 Oct 2018 23:33:43 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:40306 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728385AbeJXDdm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:32:22 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f8-v6so1098321pgq.5
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 12:07:41 -0700 (PDT)
+        Tue, 23 Oct 2018 23:33:42 -0400
+Received: by mail-ed1-f66.google.com with SMTP id r1-v6so2694249edd.7;
+        Tue, 23 Oct 2018 12:08:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ekCHjoKA6CAi10Zv1PCEdpufcwUFeObbP8nppV00v2U=;
-        b=dmi16/wj60Hy7MnhgVDxUhg+fuecyIA1aJ9h/Gv0B7n3JYWhnlPHuTMRwqDcQAJ7x/
-         ok3v/O6R4lW7FYg5+ybSAgDbLAC5UuXE9SOvX0ivO1U7jxAh/RE1b0LRAVTQxtYGE80P
-         B5LtdiU8Qw6jhq0chTrcJeqcilppR0iGy5VHE=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Z0QbeR3VQfZSOiXUbMfJfEO3M/OuYhTCJnLw06ws6+M=;
+        b=ZxUcgLtsJu+9asuifclznP5hM1NK3AHqfB2mif0lB5vIfkBTyJr8FTAtGl8JATNjvj
+         Zl9fQfkX8dK1rbYehm7ixZ0GKBF+6aN3JD3eLaJWyur3lLpjhK5szQ2EbOcVcCiKwGzd
+         4shkdqthdmjEnlAYKzbZ9NeILW619lpYduC4HT8nKPQlDonWv8WDsoQ7U0GPxWmeQ6nf
+         6YrP+2F4dFK8VYskVz+Pt1BAlk5vuu5yroUPeW/2b6jX/DjUNel/YFvM12mmpEumdE9b
+         ZSAv9V0yUOMq1Tj1+btTSiHEqOBxUcihR++zCzy0brjukRouhipoTH4Wr2IY9BFPKMfl
+         khEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ekCHjoKA6CAi10Zv1PCEdpufcwUFeObbP8nppV00v2U=;
-        b=rqDsWpa3liLwu2ipheBe5iIFPVtJIYRRd6d1pQatiBukOfjNls4Y0ip5CHbQrQztax
-         9kO97bOBjpdDFCeXISVEBPdTw0JYv35zWxJdZKX2KPoEH6tP8hJy6XSB7N+5oISNfEGl
-         2z11z1Z25aXlUs2zeXbEQXAAgBEYowMpLhOMHexQPkTCkYlYjOtfV92dYhLfrVfHWE8B
-         +oJF5ydFNeu1ZTiT5+DTS9TjVv4K8798HbX4oPaXn/OhNt4Qtv/hQb4B0tKxsmacBE8+
-         XeNrQ9FtB6ufvjovNZ5YnngzMgZZxPAZdG7PdT6CeEVbNBMnO6lT57k2VCEOdjEH4mzS
-         O9vw==
-X-Gm-Message-State: ABuFfohw++KRrvzp10BVIDXDVCtcsJG0knCU1FL0tkizqsd50VTTi6xJ
-        xXfDcx+EsKSVz4lDOr0hgcs7
-X-Google-Smtp-Source: ACcGV60C8wh0jygv0m5jx0yELiPkByAAZh2BtGjZTNuy+vXFAXSiTt4S5ZdLsbtA96pVsDvWMBEcKg==
-X-Received: by 2002:a62:fc13:: with SMTP id e19-v6mr51474755pfh.101.1540321661098;
-        Tue, 23 Oct 2018 12:07:41 -0700 (PDT)
-Received: from localhost.localdomain ([2405:204:744c:7bc5:17c:5f65:76c4:d542])
-        by smtp.gmail.com with ESMTPSA id v189-v6sm4897075pfb.54.2018.10.23.12.07.36
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Z0QbeR3VQfZSOiXUbMfJfEO3M/OuYhTCJnLw06ws6+M=;
+        b=I9XfuXwDSG3ijhr8jg1PhvbeobEOIAK8MOicoltePFBG9L+DfIEFQ225yAMOIdfOGW
+         wzP2/SHJGg73hpoVzbh1HrzIALi8hAby3OyqX/IZIk+A4+xZ20mK8JHfFYFXeJGCrWid
+         7kQiJcItH18UkftfelexUkIp1wm4clAEBit33xsetUmfzzZEBRjEViuxtVA3iPZ6p5cq
+         iFH1DckYwTggGfSWWv72o6zTQ9aYBe9Qp1e6XnkRO9eFvwXP9oPjWVFAEcFyxB3lo/VA
+         KmCenF0Y9H6oUMyFsRHJ54su0OYPOzYXvST1Mz8pZGE++04zZVS3eZG73rs38PeVKkv9
+         JjWQ==
+X-Gm-Message-State: AGRZ1gKBcxvIbUFaLVVmBg0p/rMsFPyfPPfx0r3iPjtt1avrt37Py/Fj
+        ZJAS9HM61WhOziVrGdyS2sA=
+X-Google-Smtp-Source: AJdET5diw70VnYrZdzUVK3bTOBGSu9FrdFEUYq6K5R0PKh3otqRXYqlbErCcheNX0LqTMOIE64PW1w==
+X-Received: by 2002:a50:f5ad:: with SMTP id u42-v6mr4935731edm.68.1540321738694;
+        Tue, 23 Oct 2018 12:08:58 -0700 (PDT)
+Received: from ubuntu.home ([2a02:8071:6a3:700:6d72:e81e:8854:c88e])
+        by smtp.gmail.com with ESMTPSA id b26-v6sm722312edw.0.2018.10.23.12.08.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 12:07:40 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     xuwei5@hisilicon.com, linus.walleij@linaro.org, robh+dt@kernel.org
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 5/5] arm64: dts: hisilicon: hikey970: Add GPIO line names
-Date:   Wed, 24 Oct 2018 00:36:55 +0530
-Message-Id: <20181023190655.12004-6-manivannan.sadhasivam@linaro.org>
+        Tue, 23 Oct 2018 12:08:57 -0700 (PDT)
+From:   Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+To:     Dinh Nguyen <dinguyen@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Vasut <marex@denx.de>,
+        Nobuhiro Iwamatsu <iwamatsu@nigauri.org>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        Graham Moore <grmoore@opensource.altera.com>,
+        Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+Subject: [PATCH] arm: dts: socfpga*.dts*: use SPDX-License-Identifier
+Date:   Tue, 23 Oct 2018 21:08:53 +0200
+Message-Id: <20181023190853.23252-1-simon.k.r.goldschmidt@gmail.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181023190655.12004-1-manivannan.sadhasivam@linaro.org>
-References: <20181023190655.12004-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add GPIO line names for HiSilicon HiKey970 board based on HI3670 SoC.
-The Line names are derived from "hikey970-schematics.pdf" document and
-named in conjunction with 96Boards CE Specification v1.0.
+Follow the recent trend for the license description.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+This is also in an effort to fully sync the devicetrees with U-Boot.
+
+Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
 ---
- .../boot/dts/hisilicon/hi3670-hikey970.dts    | 317 ++++++++++++++++++
- 1 file changed, 317 insertions(+)
+ arch/arm/boot/dts/socfpga.dtsi                | 16 +------
+ arch/arm/boot/dts/socfpga_arria10.dtsi        | 13 +-----
+ arch/arm/boot/dts/socfpga_arria10_socdk.dtsi  | 14 +-----
+ .../boot/dts/socfpga_arria10_socdk_nand.dts   | 13 +-----
+ .../boot/dts/socfpga_arria10_socdk_qspi.dts   | 13 +-----
+ .../boot/dts/socfpga_arria10_socdk_sdmmc.dts  | 14 +-----
+ arch/arm/boot/dts/socfpga_arria5.dtsi         | 15 +-----
+ arch/arm/boot/dts/socfpga_arria5_socdk.dts    | 16 +------
+ arch/arm/boot/dts/socfpga_cyclone5.dtsi       | 16 +------
+ .../dts/socfpga_cyclone5_de0_nano_soc.dts     | 13 +-----
+ arch/arm/boot/dts/socfpga_cyclone5_mcv.dtsi   | 14 +-----
+ arch/arm/boot/dts/socfpga_cyclone5_mcvevk.dts | 14 +-----
+ arch/arm/boot/dts/socfpga_cyclone5_socdk.dts  | 16 +------
+ arch/arm/boot/dts/socfpga_cyclone5_sockit.dts | 16 +------
+ .../boot/dts/socfpga_cyclone5_socrates.dts    | 16 +------
+ arch/arm/boot/dts/socfpga_cyclone5_sodia.dts  | 16 +------
+ .../boot/dts/socfpga_cyclone5_vining_fpga.dts | 46 +------------------
+ arch/arm/boot/dts/socfpga_vt.dts              | 16 +------
+ 18 files changed, 28 insertions(+), 269 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3670-hikey970.dts b/arch/arm64/boot/dts/hisilicon/hi3670-hikey970.dts
-index fc851a3177e7..c9775b66629f 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3670-hikey970.dts
-+++ b/arch/arm64/boot/dts/hisilicon/hi3670-hikey970.dts
-@@ -37,6 +37,323 @@
- 	};
- };
+diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
+index 2d300396f0ed..2458d6707dc5 100644
+--- a/arch/arm/boot/dts/socfpga.dtsi
++++ b/arch/arm/boot/dts/socfpga.dtsi
+@@ -1,18 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+- *  Copyright (C) 2012 Altera <www.altera.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ * Copyright (C) 2012 Altera <www.altera.com>
+  */
  
-+/*
-+ * Legend: proper name = the GPIO line is used as GPIO
-+ *         NC = not connected (pin out but not routed from the chip to
-+ *              anything the board)
-+ *         "[PER]" = pin is muxed for [peripheral] (not GPIO)
-+ *         "" = no idea, schematic doesn't say, could be
-+ *              unrouted (not connected to any external pin)
-+ *         LSEC = Low Speed External Connector
-+ *         HSEC = High Speed External Connector
-+ *
-+ * Line names are taken from "hikey970-schematics.pdf" from HiSilicon.
-+ *
-+ * For the lines routed to the external connectors the
-+ * lines are named after the 96Boards CE Specification 1.0,
-+ * Appendix "Expansion Connector Signal Description".
-+ *
-+ * When the 96Board naming of a line and the schematic name of
-+ * the same line are in conflict, the 96Board specification
-+ * takes precedence, which means that the external UART on the
-+ * LSEC is named UART0 while the schematic and SoC names this
-+ * UART2. This is only for the informational lines i.e. "[FOO]",
-+ * the GPIO named lines "GPIO-A" thru "GPIO-L" are the only
-+ * ones actually used for GPIO.
-+ */
-+&gpio0 {
-+	/* GPIO_000-GPIO_007 */
-+	gpio-line-names =
-+		"",
-+		"TP901", /* TEST_MODE connected to TP901 */
-+		"",
-+		"GPIO_003_USB_HUB_RESET_N",
-+		"NC",
-+		"[AP_GPS_REF_CLK]",
-+		"[I2C3_SCL]",
-+		"[I2C3_SDA]";
-+};
-+
-+&gpio1 {
-+	/* GPIO_008-GPIO_015 */
-+	gpio-line-names =
-+		"[UART0_CTS]", /* LSEC pin 3: GPIO_008_UART2_CTS_N */
-+		"[UART0_RTS]", /* LSEC pin 9: GPIO_009_UART2_RTS_N */
-+		"[UART0_TXD]", /* LSEC pin 5: GPIO_010_UART2_TXD */
-+		"[UART0_RXD]", /* LSEC pin 7: GPIO_011_UART2_RXD */
-+		"[USER_LED5]",
-+		"GPIO-I", /* LSEC pin 31: GPIO_013_CAM0_RST_N */
-+		"[USER_LED3]",
-+		"[USER_LED4]";
-+};
-+
-+&gpio2 {
-+	/* GPIO_016-GPIO_023 */
-+	gpio-line-names =
-+		"GPIO-G", /* LSEC pin 29: GPIO_016_LCD_TE0 */
-+		"[CSI0_MCLK]", /* HSEC pin 15: ISP_CCLK0_MCAM */
-+		"[CSI1_MCLK]", /* HSEC pin 17: ISP_CCLK1_SCAM */
-+		"GPIO_019_BT_ACTIVE",
-+		"[I2C2_SCL]", /* HSEC pin 32: ISP_SCL0 */
-+		"[I2C2_SDA]", /* HSEC pin 34: ISP_SDA0 */
-+		"[I2C3_SCL]", /* HSEC pin 36: ISP_SCL1 */
-+		"[I2C3_SDA]"; /* HSEC pin 38: ISP_SDA1 */
-+};
-+
-+&gpio3 {
-+	/* GPIO_024-GPIO_031 */
-+	gpio-line-names =
-+		"GPIO_024_WIFI_ACTIVE",
-+		"GPIO_025_PERST_M.2",
-+		"[I2C4_SCL]",
-+		"[I2C4_SDA]",
-+		"NC",
-+		"GPIO-H", /* LSEC pin 30: GPIO_029_LCD_RST_N */
-+		"[USER_LED1]",
-+		"GPIO-L"; /* LSEC pin 34: GPIO_031 */
-+};
-+
-+&gpio4 {
-+	/* GPIO_032-GPIO_039 */
-+	gpio-line-names =
-+		"GPIO-K", /* LSEC pin 33: GPIO_032_CAM1_RST_N */
-+		"GPIO_033_PMU1_EN",
-+		"GPIO_034_USBSW_SEL",
-+		/*
-+		 * These two pins should be used for SD(IO) data according
-+		 * to the 96boards specification but seems to be repurposed
-+		 * for UART 0. They are however named according to the spec.
-+		 */
-+		"[SD_DAT1]", /* HSEC pin 3: GPIO_035_UART0_RXD */
-+		"[SD_DAT2]", /* HSEC pin 5: GPIO_036_UART0_TXD */
-+		"[UART1_RXD]", /* LSEC pin 13: DEBUG_UART6_RXD */
-+		"[UART1_TXD]", /* LSEC pin 11: DEBUG_UART6_TXD */
-+		"[SOC_GPS_UART3_CTS_N]"; /* TP2304 */
-+};
-+
-+&gpio5 {
-+	/* GPIO_040-GPIO_047 */
-+	gpio-line-names =
-+		"[SOC_GPS_UART3_RTS_N]", /* TP2302 */
-+		"[SOC_GPS_UART3_RXD]", /* TP2303 */
-+		"[SOC_GPS_UART3_TXD]", /* TP2305 */
-+		"[SOC_BT_UART4_CTS_N]",
-+		"[SOC_BT_UART4_RTS_N]",
-+		"[SOC_BT_UART4_RXD]",
-+		"[SOC_BT_UART4_TXD]",
-+		"NC";
-+};
-+
-+&gpio6 {
-+	/* GPIO_048-GPIO_055 */
-+	gpio-line-names =
-+		"NC",
-+		"GPIO_049_USER_LED6",
-+		"GPIO_050_CAN_RST",
-+		"GPIO_051_WIFI_EN",
-+		"GPIO-D", /* LSEC pin 26 */
-+		"GPIO-J", /* LSEC pin 32 */
-+		"GPIO_054_BT_EN",
-+		"[GPIO_055_SEL]";
-+};
-+
-+&gpio7 {
-+	/* GPIO_056-GPIO_063 */
-+	gpio-line-names =
-+		"[PCIE_PERST_L]", "NC", "NC", "NC", "NC", "NC", "NC", "NC";
-+};
-+
-+&gpio8 {
-+	/* GPIO_064-GPIO_071 */
-+	gpio-line-names = "NC", "NC", "NC", "NC", "NC", "NC", "NC", "NC";
-+};
-+
-+&gpio9 {
-+	/* GPIO_072-GPIO_079 */
-+	gpio-line-names = "NC", "NC", "NC", "NC", "NC", "NC", "NC", "NC";
-+};
-+
-+&gpio10 {
-+	/* GPIO_080-GPIO_087 */
-+	gpio-line-names = "NC", "NC", "NC", "NC", "NC", "NC", "NC", "NC";
-+};
-+
-+&gpio11 {
-+	/* GPIO_088-GPIO_095 */
-+	gpio-line-names = "NC", "NC", "NC", "NC", "NC", "NC", "NC", "NC";
-+};
-+
-+&gpio12 {
-+	/* GPIO_096-GPIO_103 */
-+	gpio-line-names = "NC", "", "", "", "", "", "", "";
-+};
-+
-+&gpio13 {
-+	/* GPIO_104-GPIO_111 */
-+	gpio-line-names = "", "", "", "", "", "", "", "";
-+};
-+
-+&gpio14 {
-+	/* GPIO_112-GPIO_119 */
-+	gpio-line-names = "", "", "", "", "", "", "", "";
-+};
-+
-+&gpio15 {
-+	/* GPIO_120-GPIO_127 */
-+	gpio-line-names = "", "", "", "", "", "", "", "";
-+};
-+
-+&gpio16 {
-+	/* GPIO_128-GPIO_135 */
-+	gpio-line-names =
-+		"[WL_SDIO_CLK]",
-+		"[WL_SDIO_CMD]",
-+		"[WL_SDIO_DATA0]",
-+		"[WL_SDIO_DATA1]",
-+		"[WL_SDIO_DATA2]",
-+		"[WL_SDIO_DATA3]",
-+		"[ETH_ISOLATE]",
-+		"NC";
-+};
-+
-+&gpio17 {
-+	/* GPIO_136-GPIO_143 */
-+	gpio-line-names =
-+		"[MINI1CLK_EN]", "NC", "", "", "", "", "", "";
-+};
-+
-+&gpio18 {
-+	/* GPIO_144-GPIO_151 */
-+	gpio-line-names =
-+		"[SPI1_SCLK]", /* HSEC pin 9: GPIO_144_SPI3_CLK */
-+		"[SPI1_DIN]", /* HSEC pin 11: GPIO_145_SPI3_DI */
-+		"[SPI1_DOUT]", /* HSEC pin 1: GPIO_146_SPI3_DO */
-+		"[SPI1_CS]", /* HSEC pin 7: GPIO_147_SPI3_CS0_N */
-+		"[POWER_INT_N]",
-+		"[CDMA_GPS_SYNC]",
-+		"GPIO_150_PEX_INTA",
-+		"GPIO_151_CAN_INT";
-+};
-+
-+&gpio19 {
-+	/* GPIO_152-GPIO_159 */
-+	gpio-line-names = "", "", "", "", "", "", "", "";
-+};
-+
-+&gpio20 {
-+	/* GPIO_160-GPIO_167 */
-+	gpio-line-names =
-+		"[SD_CLK]",
-+		"[SD_CMD]",
-+		"[SD_DATA0]",
-+		"[SD_DATA1]",
-+		"[SD_DATA2]",
-+		"[SD_DATA3]",
-+		"GPIO_166_ETHCLK_EN",
-+		"GPIO_167_USER_LED2";
-+};
-+
-+&gpio21 {
-+	/* GPIO_168-GPIO_175 */
-+	gpio-line-names =
-+		"GPIO_168_GPS_EN",
-+		"GPIO-C", /* LSEC pin 25: GPIO_169_USIM1_CLK */
-+		"GPIO-E", /* LSEC pin 27: GPIO_170_USIM1_RST */
-+		"GPIO-B", /* LSEC pin 24: GPIO_171_USIM1_DATA */
-+		"", "", "", "", "";
-+};
-+
-+&gpio22 {
-+	/* GPIO_176-GPIO_183 */
-+	gpio-line-names =
-+		"[PMU_PWR_HOLD]",
-+		"GPIO_177_WL_WAKEUP_AP",
-+		"[JTAG_TCK]",
-+		"[JTAG_TMS]",
-+		"[JTAG_TDI]",
-+		"[JTAG_TMS]",
-+		"GPIO_182_FATAL_ERR",
-+		"NC";
-+};
-+
-+&gpio23 {
-+	/* GPIO_184-GPIO_191 */
-+	gpio-line-names =
-+		"GPIO_184_JTAG_SEL",
-+		"GPIO-F", /* LSEC pin 28: GPIO_185_LCD_BL_PWM */
-+		"[I2C0_SCL]", /* LSEC pin 15: GPIO_186_I2C0_SCL */
-+		"[I2C0_SDA]", /* LSEC pin 17: GPIO_187_I2C0_SDA */
-+		"[GPIO_188_I2C1_SCL]", /* Actual SoC I2C1_SCL */
-+		"[GPIO_189_I2C1_SDA]", /* Actual SoC I2C1_SDA */
-+		"[I2C1_SCL]", /* LSEC pin 19: GPIO_190_I2C2_SCL */
-+		"[I2C2_SDA]"; /* LSEC pin 21: GPIO_191_I2C2_SDA */
-+};
-+
-+&gpio24 {
-+	/* GPIO_192-GPIO_199 */
-+	gpio-line-names =
-+		"[SD_LED]",
-+		"NC",
-+		"[PCM_DI]", /* LSEC pin 22: GPIO_194_I2S0_DI */
-+		"[PCM_DO]", /* LSEC pin 20: GPIO_195_I2S0_DO */
-+		"[PCM_CLK]", /* LSEC pin 18: GPIO_196_I2S0_XCLK */
-+		"[PCM_FS]", /* LSEC pin 16: GPIO_197_I2S0_XFS */
-+		"",
-+		"[I2S2_DO]";
-+};
-+
-+&gpio25 {
-+	/* GPIO_200-GPIO_207 */
-+	gpio-line-names =
-+		"[I2S2_XCLK]",
-+		"[I2S2_XFS]",
-+		"GPIO_202_PERST_ETH",
-+		"GPIO_203_PWRON_DET",
-+		"GPIO_204_PMU1_IRQ_N",
-+		"GPIO_205_SD_DET",
-+		"GPIO_206_GPS_MOTION_INT",
-+		"GPIO_207_HDMI_SEL";
-+};
-+
-+&gpio26 {
-+	/* GPIO_208-GPIO_215 */
-+	gpio-line-names =
-+		"GPIO-A", /* LSEC pin 23: GPIO_208_WAKEUP_SOC */
-+		"GPIO_209_VBUS_TYPEC",
-+		"NC",
-+		"NC",
-+		"NC",
-+		"[SPI0_SCLK]", /* LSEC pin 8: GPIO_213_SPI2_CLK */
-+		"[SPI0_DIN]", /* LSEC pin 10: GPIO_214_SPI2_DI */
-+		"[SPI0_DOUT]"; /* LSEC pin 14: GPIO_215_SPI2_DO */
-+};
-+
-+&gpio27 {
-+	/* GPIO_216-GPIO_223 */
-+	gpio-line-names =
-+		"[SPI0_CS]", /* LSEC pin 12: GPIO_216_SPI2_CS0_N */
-+		"GPIO_217_HDMI_PD",
-+		"GPIO_218_GPS_WAKEUP_AP",
-+		"GPIO_219_M.2CLK_EN",
-+		"GPIO_220_PERST_MINI",
-+		"GPIO_221_CC_INT",
-+		"[PCIE_CLKREQ_L]",
-+		"NC";
-+};
-+
-+&gpio28 {
-+	/* GPIO_224-GPIO_231 */
-+	gpio-line-names =
-+		"[PMU0_INT]",
-+		"[SPMI_DATA]",
-+		"[SPMI_CLK]",
-+		"[CAN_SPI_CLK]",
-+		"[CAN_SPI_DI]",
-+		"[CAN_SPI_DO]",
-+		"[CAN_SPI_CS]",
-+		"GPIO_231_HDMI_INT";
-+};
-+
- &uart0 {
- 	/* On High speed expansion header */
- 	label = "HS-UART0";
+ #include <dt-bindings/reset/altr,rst-mgr.h>
+diff --git a/arch/arm/boot/dts/socfpga_arria10.dtsi b/arch/arm/boot/dts/socfpga_arria10.dtsi
+index 59ef13e37536..0b1ab88b4039 100644
+--- a/arch/arm/boot/dts/socfpga_arria10.dtsi
++++ b/arch/arm/boot/dts/socfpga_arria10.dtsi
+@@ -1,17 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright Altera Corporation (C) 2014. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+diff --git a/arch/arm/boot/dts/socfpga_arria10_socdk.dtsi b/arch/arm/boot/dts/socfpga_arria10_socdk.dtsi
+index 64cc86a98771..360dae5a5b12 100644
+--- a/arch/arm/boot/dts/socfpga_arria10_socdk.dtsi
++++ b/arch/arm/boot/dts/socfpga_arria10_socdk.dtsi
+@@ -1,18 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Copyright (C) 2015 Altera Corporation <www.altera.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ #include "socfpga_arria10.dtsi"
+ 
+diff --git a/arch/arm/boot/dts/socfpga_arria10_socdk_nand.dts b/arch/arm/boot/dts/socfpga_arria10_socdk_nand.dts
+index d14f9ccb6e10..e36e0a0f8aa6 100644
+--- a/arch/arm/boot/dts/socfpga_arria10_socdk_nand.dts
++++ b/arch/arm/boot/dts/socfpga_arria10_socdk_nand.dts
+@@ -1,17 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) 2015 Altera Corporation. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm/boot/dts/socfpga_arria10_socdk_qspi.dts b/arch/arm/boot/dts/socfpga_arria10_socdk_qspi.dts
+index beb2fc6b9eb6..b4c0a76a4d1a 100644
+--- a/arch/arm/boot/dts/socfpga_arria10_socdk_qspi.dts
++++ b/arch/arm/boot/dts/socfpga_arria10_socdk_qspi.dts
+@@ -1,17 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (C) 2016 Intel. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dts b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dts
+index 5822fd2085db..df2bab1624d4 100644
+--- a/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dts
++++ b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc.dts
+@@ -1,18 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Copyright (C) 2014-2015 Altera Corporation <www.altera.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm/boot/dts/socfpga_arria5.dtsi b/arch/arm/boot/dts/socfpga_arria5.dtsi
+index e59461f5416e..22dbf07afcff 100644
+--- a/arch/arm/boot/dts/socfpga_arria5.dtsi
++++ b/arch/arm/boot/dts/socfpga_arria5.dtsi
+@@ -1,17 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+- *  Copyright (C) 2013 Altera Corporation <www.altera.com>
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * this program.  If not, see <http://www.gnu.org/licenses/>.
++ * Copyright (C) 2013 Altera Corporation <www.altera.com>
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm/boot/dts/socfpga_arria5_socdk.dts b/arch/arm/boot/dts/socfpga_arria5_socdk.dts
+index aac4feea86f3..90e676e7019f 100644
+--- a/arch/arm/boot/dts/socfpga_arria5_socdk.dts
++++ b/arch/arm/boot/dts/socfpga_arria5_socdk.dts
+@@ -1,18 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+- *  Copyright (C) 2013 Altera Corporation <www.altera.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ * Copyright (C) 2013 Altera Corporation <www.altera.com>
+  */
+ 
+ #include "socfpga_arria5.dtsi"
+diff --git a/arch/arm/boot/dts/socfpga_cyclone5.dtsi b/arch/arm/boot/dts/socfpga_cyclone5.dtsi
+index 68ced67f8bfb..319a71e41ea4 100644
+--- a/arch/arm/boot/dts/socfpga_cyclone5.dtsi
++++ b/arch/arm/boot/dts/socfpga_cyclone5.dtsi
+@@ -1,18 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+- *  Copyright (C) 2012 Altera Corporation <www.altera.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ * Copyright (C) 2012 Altera Corporation <www.altera.com>
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm/boot/dts/socfpga_cyclone5_de0_nano_soc.dts b/arch/arm/boot/dts/socfpga_cyclone5_de0_nano_soc.dts
+index 31b01a998b2e..67076e1b1c7f 100644
+--- a/arch/arm/boot/dts/socfpga_cyclone5_de0_nano_soc.dts
++++ b/arch/arm/boot/dts/socfpga_cyclone5_de0_nano_soc.dts
+@@ -1,17 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright Altera Corporation (C) 2015. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ #include "socfpga_cyclone5.dtsi"
+diff --git a/arch/arm/boot/dts/socfpga_cyclone5_mcv.dtsi b/arch/arm/boot/dts/socfpga_cyclone5_mcv.dtsi
+index 3c03da6b8b1d..bd92806ffc12 100644
+--- a/arch/arm/boot/dts/socfpga_cyclone5_mcv.dtsi
++++ b/arch/arm/boot/dts/socfpga_cyclone5_mcv.dtsi
+@@ -1,18 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Copyright (C) 2015 Marek Vasut <marex@denx.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ #include "socfpga_cyclone5.dtsi"
+diff --git a/arch/arm/boot/dts/socfpga_cyclone5_mcvevk.dts b/arch/arm/boot/dts/socfpga_cyclone5_mcvevk.dts
+index c2eb88aab8b3..ceaec29770c6 100644
+--- a/arch/arm/boot/dts/socfpga_cyclone5_mcvevk.dts
++++ b/arch/arm/boot/dts/socfpga_cyclone5_mcvevk.dts
+@@ -1,18 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Copyright (C) 2015 Marek Vasut <marex@denx.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ #include "socfpga_cyclone5_mcv.dtsi"
+diff --git a/arch/arm/boot/dts/socfpga_cyclone5_socdk.dts b/arch/arm/boot/dts/socfpga_cyclone5_socdk.dts
+index 155829f9eba1..6f138b2b2616 100644
+--- a/arch/arm/boot/dts/socfpga_cyclone5_socdk.dts
++++ b/arch/arm/boot/dts/socfpga_cyclone5_socdk.dts
+@@ -1,18 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+- *  Copyright (C) 2012 Altera Corporation <www.altera.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ * Copyright (C) 2012 Altera Corporation <www.altera.com>
+  */
+ 
+ #include "socfpga_cyclone5.dtsi"
+diff --git a/arch/arm/boot/dts/socfpga_cyclone5_sockit.dts b/arch/arm/boot/dts/socfpga_cyclone5_sockit.dts
+index a4a555c19d94..c155ff02eb6e 100644
+--- a/arch/arm/boot/dts/socfpga_cyclone5_sockit.dts
++++ b/arch/arm/boot/dts/socfpga_cyclone5_sockit.dts
+@@ -1,18 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+- *  Copyright (C) 2013 Steffen Trumtrar <s.trumtrar@pengutronix.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ * Copyright (C) 2013 Steffen Trumtrar <s.trumtrar@pengutronix.de>
+  */
+ 
+ #include "socfpga_cyclone5.dtsi"
+diff --git a/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts b/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts
+index 031c721441ff..8d5d3996f6f2 100644
+--- a/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts
++++ b/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts
+@@ -1,18 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+- *  Copyright (C) 2014 Steffen Trumtrar <s.trumtrar@pengutronix.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ * Copyright (C) 2014 Steffen Trumtrar <s.trumtrar@pengutronix.de>
+  */
+ 
+ #include "socfpga_cyclone5.dtsi"
+diff --git a/arch/arm/boot/dts/socfpga_cyclone5_sodia.dts b/arch/arm/boot/dts/socfpga_cyclone5_sodia.dts
+index 8860dd2e242c..e54b5f2af74f 100644
+--- a/arch/arm/boot/dts/socfpga_cyclone5_sodia.dts
++++ b/arch/arm/boot/dts/socfpga_cyclone5_sodia.dts
+@@ -1,18 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+- *  Copyright (C) 2016 Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ * Copyright (C) 2016 Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+  */
+ 
+ #include "socfpga_cyclone5.dtsi"
+diff --git a/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts b/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts
+index e61efe16e79c..355b3dbf438d 100644
+--- a/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts
++++ b/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts
+@@ -1,48 +1,6 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR X11)
+ /*
+- *  Copyright (C) 2015 Marek Vasut <marex@denx.de>
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the X11 license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This file is free software; you can redistribute it and/or
+- *     modify it under the terms of the GNU General Public License as
+- *     published by the Free Software Foundation; either version 2 of
+- *     the License, or (at your option) any later version.
+- *
+- *     This file is distributed in the hope that it will be useful,
+- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *     GNU General Public License for more details.
+- *
+- *     You should have received a copy of the GNU General Public
+- *     License along with this file; if not, write to the Free
+- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
+- *     MA 02110-1301 USA
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
++ * Copyright (C) 2015 Marek Vasut <marex@denx.de>
+  */
+ 
+ #include "socfpga_cyclone5.dtsi"
+diff --git a/arch/arm/boot/dts/socfpga_vt.dts b/arch/arm/boot/dts/socfpga_vt.dts
+index 547c38632c68..a77846f73b34 100644
+--- a/arch/arm/boot/dts/socfpga_vt.dts
++++ b/arch/arm/boot/dts/socfpga_vt.dts
+@@ -1,18 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+- *  Copyright (C) 2013 Altera Corporation <www.altera.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ * Copyright (C) 2013 Altera Corporation <www.altera.com>
+  */
+ 
+ /dts-v1/;
 -- 
 2.17.1
 
