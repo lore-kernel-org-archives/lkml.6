@@ -2,96 +2,136 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E8EC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD970C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89C61207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89C61207DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	by mail.kernel.org (Postfix) with ESMTP id A1E58207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E58207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbeJWTiO (ORCPT
+        id S1728177AbeJWTiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 15:38:14 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:39909 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbeJWTiO (ORCPT
+        Tue, 23 Oct 2018 15:38:50 -0400
+Received: from gateway20.websitewelcome.com ([192.185.50.28]:46829 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728092AbeJWTit (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 15:38:14 -0400
-Received: by mail-ed1-f66.google.com with SMTP id e5-v6so1216970eds.6
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 04:15:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=kO/0D40r2wod5v3I6jD1fuRXjPfSQhJNJigkdYeWUl0=;
-        b=f9VYlW9BCpTvU05SIY9OrzXAvBp+qw8iFgL/Sr3kUx9AJvbyIBtpIAyIcfg2BggYMO
-         veNWkhT0IbVquMWDlgJegwQI25iFBAgbnbY5/lVp/oqc8po0odj3uo2+E/bDvY+9ieL+
-         Ar2ErOtBO+T/Zljj4xSrPZuc9drMCb5712YjokWnj51vS35vDBGvUaJ1PoKAWjKsjy2w
-         HgV1Tief2RivCfI93kavqXjVoL4l1cwajnaItdF8q2bOVEtk+a24Lsp34BnVj2assSg+
-         4F3QUoAkqV0Ur8dRDCwUS/Oqe8B78b+yNzuvo5DUHFD0QG/PE4vgq9568ULhJz0203rM
-         nk9w==
-X-Gm-Message-State: AGRZ1gIErnjkew9Ekf9jTdi3SMfOeuSeCcdYEWJqQJZkbueZUTtRG35v
-        EXbpQvQqiLLwXFF3YD7Amww=
-X-Google-Smtp-Source: AJdET5ewv3ohtWeO4+dAj+oTWa/Z9k3y8f78KeG0ARFlTh8ss974vQ/tydFinM/d2kAmAcgrYLW06g==
-X-Received: by 2002:a50:a3f6:: with SMTP id t51-v6mr645211edb.238.1540293312257;
-        Tue, 23 Oct 2018 04:15:12 -0700 (PDT)
-Received: from green.intra.ispras.ru (bran.ispras.ru. [83.149.199.196])
-        by smtp.googlemail.com with ESMTPSA id l34-v6sm459177eda.54.2018.10.23.04.15.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Oct 2018 04:15:11 -0700 (PDT)
-From:   efremov@linux.com
-To:     James Morris <jmorris@namei.org>
-Cc:     Denis Efremov <efremov@linux.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Eric Paris <eparis@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Kees Cook <keescook@chromium.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Catherine Zhang <cxzhang@watson.ibm.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] security: fix documentation for the socket_getpeersec_dgram hook
-Date:   Tue, 23 Oct 2018 14:14:50 +0300
-Message-Id: <20181023111450.31837-1-efremov@linux.com>
-X-Mailer: git-send-email 2.17.2
+        Tue, 23 Oct 2018 15:38:49 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 519DA400D3C55
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 06:15:47 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id EueKgv0ZW7jE8EuekgLC04; Tue, 23 Oct 2018 06:15:46 -0500
+X-Authority-Reason: nr=8
+Received: from lfbn-1-466-13.w86-245.abo.wanadoo.fr ([86.245.173.13]:55796 helo=[192.168.1.41])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gEueJ-002NGn-Qb; Tue, 23 Oct 2018 06:15:00 -0500
+Subject: Re: [PATCH v3 0/2] phy: ocelot-serdes: fix out-of-bounds read
+To:     David Miller <davem@davemloft.net>
+Cc:     linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org, kishon@ti.com,
+        quentin.schulz@bootlin.com, netdev@vger.kernel.org
+References: <cover.1539940387.git.gustavo@embeddedor.com>
+ <20181022.192747.1517598401629589272.davem@davemloft.net>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <edb88888-0c90-4e5f-6dda-d84630b4c497@embeddedor.com>
+Date:   Tue, 23 Oct 2018 13:14:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181022.192747.1517598401629589272.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 86.245.173.13
+X-Source-L: No
+X-Exim-ID: 1gEueJ-002NGn-Qb
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-466-13.w86-245.abo.wanadoo.fr ([192.168.1.41]) [86.245.173.13]:55796
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Efremov <efremov@linux.com>
 
-The socket_getpeersec_dgram hook was changed in the commit
-"[AF_UNIX]: Kernel memory leak fix for af_unix datagram getpeersec patch"
-(dc49c1f94e34). The arguments @secdata and @seclen were changed to @sock
-and @secid. This patch updates the documentation accordingly.
 
-Signed-off-by: Denis Efremov <efremov@linux.com>
----
- include/linux/lsm_hooks.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On 10/23/18 4:27 AM, David Miller wrote:
+>>
+>> Changes in v3:
+>>  - Post the series to netdev, so Dave can take it.
+>>
+>> Changes in v2:
+>>  - Send the whole series to Kishon Vijay Abraham I, so it
+>>    can be taken into the PHY tree.
+>>  - Add Quentin's Reviewed-by to commit log in both patches.
+> 
+> Series applied.
+> 
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index ae3766720264..a598e601ccb3 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -861,9 +861,9 @@
-  *	the IP_PASSSEC option via getsockopt.  It can then retrieve the
-  *	security state returned by this hook for a packet via the SCM_SECURITY
-  *	ancillary message type.
-- *	@skb is the skbuff for the packet being queried
-- *	@secdata is a pointer to a buffer in which to copy the security data
-- *	@seclen is the maximum length for @secdata
-+ *	@sock contains the socket structure.
-+ *	@skb is the skbuff for the packet being queried.
-+ *	@secid: pointer to where to put the secid of the packet.
-  *	Return 0 on success, error on failure.
-  * @sk_alloc_security:
-  *	Allocate and attach a security structure to the sk->sk_security field,
--- 
-2.17.2
-
+Thanks, Dave.
+--
+Gustavo
