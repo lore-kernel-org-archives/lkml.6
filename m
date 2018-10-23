@@ -2,106 +2,106 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BDD5C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 03:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7C4ECDE44
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 03:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BD292064C
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 03:31:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BD292064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 154D520651
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 03:33:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 154D520651
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727173AbeJWLxA (ORCPT
+        id S1727261AbeJWLyo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 07:53:00 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:34226 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726438AbeJWLxA (ORCPT
+        Tue, 23 Oct 2018 07:54:44 -0400
+Received: from lucky1.263xmail.com ([211.157.147.135]:52332 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726438AbeJWLyo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 07:53:00 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gEnPm-0002bg-AG; Tue, 23 Oct 2018 03:31:30 +0000
-Date:   Tue, 23 Oct 2018 04:31:30 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     NeilBrown <neil@brown.name>
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ksummit-discuss@lists.linuxfoundation.org,
-        Mishi Choudhary <mishi@linux.com>
-Subject: Re: [Ksummit-discuss] Call to Action Re: [PATCH 0/7] Code of
- Conduct: Fix some wording, and add an interpretation document
-Message-ID: <20181023033130.GQ32577@ZenIV.linux.org.uk>
-References: <20181020134908.GA32218@kroah.com>
- <87y3ar80ac.fsf@notabene.neil.brown.name>
- <20181021222608.GA24845@localhost>
- <875zxt919d.fsf@notabene.neil.brown.name>
+        Tue, 23 Oct 2018 07:54:44 -0400
+Received: from tony.xie?rock-chips.com (unknown [192.168.167.201])
+        by lucky1.263xmail.com (Postfix) with ESMTP id C37729A2;
+        Tue, 23 Oct 2018 11:33:16 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from [172.16.12.36] (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id C070638A;
+        Tue, 23 Oct 2018 11:33:12 +0800 (CST)
+X-IP-DOMAINF: 1
+X-RL-SENDER: tony.xie@rock-chips.com
+X-FST-TO: tony.xie@rock-chips.com
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: tony.xie@rock-chips.com
+X-UNIQUE-TAG: <83ab091dd92a5e2cc69e9106708cacb4>
+X-ATTACHMENT-NUM: 0
+X-SENDER: xxx@rock-chips.com
+X-DNS-TYPE: 0
+Received: from [172.16.12.36] (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith ESMTP id 21656V2NIDM;
+        Tue, 23 Oct 2018 11:33:16 +0800 (CST)
+Subject: Re: [PATCH v4 1/5] mfd: rk808: Add RK817 and RK809 support
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     heiko@sntech.de, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+References: <1535968829-19418-1-git-send-email-tony.xie@rock-chips.com>
+ <1535968829-19418-2-git-send-email-tony.xie@rock-chips.com>
+ <20180911123907.GN4185@dell>
+From:   tony <tony.xie@rock-chips.com>
+Message-ID: <219a9cdd-00d7-2920-4986-dcc1c8a27f6c@rock-chips.com>
+Date:   Tue, 23 Oct 2018 11:33:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <875zxt919d.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180911123907.GN4185@dell>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 07:26:06AM +1100, NeilBrown wrote:
 
-> Currently if a maintainer is rude to you, there is no where else that
-> you can go and *that* is why it hurts.  It isn't the abuse so much as
-> the powerlessness associated with it.  If you can (metaphorically) say
-> to that maintainer "I don't care about your toilet mouth, you've just
-> given me the right to take my petition to caesar" - then the emotional
-> response will be quite different to pain.
+> On Mon, 03 Sep 2018, Tony Xie wrote:
+>
+>>      The rk809 and rk817 are a Power Management IC (PMIC) for multimedia
+>>      and handheld devices. It contains the following components:
+>>
+>>          - Regulators
+>>          - RTC
+>>          - Clocking
+>>
+>>      Both RK809 and RK817 chips are using a similar register map,
+>>      so we can reuse the RTC and Clocking and regulators functionality.
+>>
+>> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+>> ---
+> It's often helpful to place a Changelog in this space.
+     I will output the changelog in the first mail when send-mail.
+>
+>>   drivers/mfd/Kconfig       |   6 +-
+>>   drivers/mfd/rk808.c       | 218 +++++++++++++++++++++++++++++++++++++++++++++-
+>>   include/linux/mfd/rk808.h | 172 ++++++++++++++++++++++++++++++++++++
+>>   kernel/reboot.c           |   1 +
+>>   4 files changed, 391 insertions(+), 6 deletions(-)
+> I just reviewed v4.
+>
+> It looks like the review comments are still relevant.
+     I will commit the v5 today which includes some modification base on 
+your comments base in the v3.
+>
 
-Bollocks.  First of all, you *always* can take patches to Linus, even if
-maintainer is being the sodding Miss Manners.  Always could.  What you
-can't (and shouldn't be able to) is to _force_ a piece of shit patch
-(pardon the toilet mouth) into the tree on the grounds of maintainer having
-been "rude" to your patch.
 
-Again, you can and always could appeal to Linus if your patches are wrongly
-rejected, in your opinion.  You'd better have good evidence supporting the
-"wrongly" bit in that case, but the "right to petition" model implies that
-anyway.
-
-If you are talking about the situations when "rude" maintainer makes insufferable
-requests to one's precious patches (e.g. demonstrates his or her mental inferiority
-by admitting that they are unable to follow contributor's 0.5KLoC of spaghetty in a
-single function and has an unspeakable gall to demand to clean it up - instead of
-passing that task upon the interns, as they ought to[1])... sure, that would be
-something new.  Would you care to be the person charged with dealing with such...
-valuable contributors?  And how good is the coverage of psychiatric treatments
-offered by your medical insurance?
-
-[1] no, I'm not making it up
- 
-> If Linus is not true to his new-found sensitivity, we might need someone
-> (Greg?) to be a co-maintainer, able to accept patches when Linus has a
-> relapse.  It might be good form to create this channel anyway, but I
-> doubt it would be needed in practice.
-> 
-> So there you have it. The "Code" is upside down.
-> We need documents which:
->   - curtail the power of the strong, starting with Linus
->   - are adopted willingly by individuals, not imposed on the community.
->   - provide alternate routes for patch-flow, so that no-one has ultimate
->     power.
-
-Really?  The ultimate power being to say "No" to a patch, and nobody should
-have such?  Are you fucking serious?
-
-PS: All together, now -
-
-Every Patch is Sacred,
-Every Patch is Great,
-If a Patch Is Wasted,
-Neil Gets Quite Irate
-
-may the filking begin...
