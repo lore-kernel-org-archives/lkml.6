@@ -2,156 +2,238 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3065C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27154C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:42:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3C9D2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:41:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3C9D2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id ECD1420665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:42:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD1420665
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728722AbeJXDFy convert rfc822-to-8bit (ORCPT
+        id S1728734AbeJXDGx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:05:54 -0400
-Received: from mga02.intel.com ([134.134.136.20]:5922 "EHLO mga02.intel.com"
+        Tue, 23 Oct 2018 23:06:53 -0400
+Received: from mga17.intel.com ([192.55.52.151]:51400 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727758AbeJXDFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:05:54 -0400
+        id S1727758AbeJXDGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:06:53 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:41:19 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:42:18 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
-   d="scan'208";a="97906363"
-Received: from irsmsx108.ger.corp.intel.com ([163.33.3.3])
-  by fmsmga002.fm.intel.com with ESMTP; 23 Oct 2018 11:41:18 -0700
-Received: from irsmsx106.ger.corp.intel.com ([169.254.8.45]) by
- IRSMSX108.ger.corp.intel.com ([169.254.11.187]) with mapi id 14.03.0319.002;
- Tue, 23 Oct 2018 19:41:18 +0100
-From:   "Hunter, Adrian" <adrian.hunter@intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-CC:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH V2 17/19] perf scripts python: exported-sql-viewer.py:
- Add All branches report
-Thread-Topic: [PATCH V2 17/19] perf scripts python: exported-sql-viewer.py:
- Add All branches report
-Thread-Index: AQHUaqaeWJRZYosv3UW89nQIvhP4TKUtEc0AgAATeyA=
-Date:   Tue, 23 Oct 2018 18:41:17 +0000
-Message-ID: <363DA0ED52042842948283D2FC38E4649C2B8A4D@IRSMSX106.ger.corp.intel.com>
-References: <20181001062853.28285-18-adrian.hunter@intel.com>
- <20181023075949.18920-1-adrian.hunter@intel.com>
- <20181023181218.GB6114@kernel.org>
-In-Reply-To: <20181023181218.GB6114@kernel.org>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTBhNWI1OTAtYjk0ZC00ZjgyLWFlODgtYzI0NzA0YThkZDI2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWWVCZGxGMlFRVFVxMGRWV2s2U3ZPQnZ0UVhjdVE5WVQrbnNcL1dzR2dqRmxYRm91WkE5bHpFWXJoWG1nc21FUUYifQ==
-x-originating-ip: [163.33.239.180]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+   d="scan'208";a="273827747"
+Received: from pwolsza-mobl1.ger.corp.intel.com ([10.249.254.37])
+  by fmsmga005.fm.intel.com with ESMTP; 23 Oct 2018 11:42:13 -0700
+Date:   Tue, 23 Oct 2018 21:42:12 +0300 (EEST)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     Tomas Winkler <tomas.winkler@intel.com>
+cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 09/21] tpm: factor out tpm1_get_random into
+ tpm1-cmd.c
+In-Reply-To: <20181019182307.17745-10-tomas.winkler@intel.com>
+Message-ID: <alpine.DEB.2.21.1810232141550.3433@jsakkine-mobl1>
+References: <20181019182307.17745-1-tomas.winkler@intel.com> <20181019182307.17745-10-tomas.winkler@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Arnaldo Carvalho de Melo [mailto:acme@kernel.org]
-> Sent: Tuesday, October 23, 2018 9:12 PM
-> To: Hunter, Adrian <adrian.hunter@intel.com>
-> Cc: Jiri Olsa <jolsa@redhat.com>; Andi Kleen <ak@linux.intel.com>; linux-
-> kernel@vger.kernel.org
-> Subject: Re: [PATCH V2 17/19] perf scripts python: exported-sql-viewer.py:
-> Add All branches report
-> 
-> Em Tue, Oct 23, 2018 at 10:59:49AM +0300, Adrian Hunter escreveu:
-> > Add a report to display branches in a similar fashion to perf script.
-> > The main purpose of this report is to display disassembly, however,
-> > presently, the only supported disassembler is Intel XED, and
-> > additionally the object code must be present in perf build ID cache.
-> >
-> > To use Intel XED, libxed.so must be present. To build and install
-> > libxed.so:
-> > 	git clone https://github.com/intelxed/mbuild.git mbuild
-> > 	git clone https://github.com/intelxed/xed
-> > 	cd xed
-> > 	./mfile.py --share
-> > 	sudo ./mfile.py --prefix=/usr/local install
-> > 	sudo ldconfig
-> >
-> > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> > ---
-> >
-> >
-> > Changes in V2:
-> >
-> > 	Fix branch report not appearing for kernel-only or user-only tracing:
-> > 	Find branch events named like "branches:k" or "branches:u" as well
-> as
-> > 	just plain "branches", by splitting the name at the colon. i.e.
-> > 	event = event.split(":")[0]
-> 
-> So, I followed the instructions then ended up with:
-> 
-> [acme@seventh perf]$ find /usr/local -name "*xed*" | head
-> /usr/local/lib/libxed.so /usr/local/lib/libxed.a /usr/local/lib/libxed-ild.so
-> /usr/local/lib/libxed-ild.a /usr/local/include/xed /usr/local/include/xed/xed-
-> syntax-enum.h
-> /usr/local/include/xed/xed-attributes.h
-> /usr/local/include/xed/xed-build-defines.h
-> /usr/local/include/xed/xed-cpuid-rec.h
-> /usr/local/include/xed/xed-flags.h
-> [acme@seventh perf]$
-> 
-> Ran ldconfig as root, etc:
-> 
-> [acme@seventh perf]$ ldconfig -v -N | grep xed
-> ldconfig: Can't stat /libx32: No such file or directory
-> ldconfig: Path `/usr/lib' given more than once
-> ldconfig: Path `/usr/lib64' given more than once
-> ldconfig: Can't stat /usr/libx32: No such file or directory [acme@seventh
-> perf]$
-> 
-> [acme@seventh perf]$ file /usr/local/lib/libxed.so
-> /usr/local/lib/libxed.so: ELF 64-bit LSB shared object, x86-64, version 1
-> (SYSV), dynamically linked,
-> BuildID[sha1]=09cf45310a731f727b4575582a638052b8f3e3bb, not stripped
-> [acme@seventh perf]$ file /usr/local/lib/libxed-ild.so
-> /usr/local/lib/libxed-ild.so: ELF 64-bit LSB shared object, x86-64, version 1
-> (SYSV), dynamically linked,
-> BuildID[sha1]=a5601603e305bb7b7f8edc7da0e78acbc9b63eba, not stripped
-> [acme@seventh perf]$
-> 
-> Tried with:
-> 
-> export LD_LIBRARY_PATH=/usr/local/lib/
-> 
-> But so far couldn't get it to show the disassembly.
-> 
-> The "All Branches" is there, wasn't in v1 of this patch.
-> 
-> Ideas?
+On Fri, 19 Oct 2018, Tomas Winkler wrote:
+> Factor out get random implementation from tpm-interface.c
+> into tpm1_get_random function in tpm1-cmd.c.
+> No functional changes.
+>
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Reviewed-by: Jarkko Sakkine <jarkko.sakkinen@linux.intel.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+> V2-V3: Rebase
+> V4-V7: Resend
+>
+> drivers/char/tpm/tpm-interface.c | 58 +++++-----------------------------------
+> drivers/char/tpm/tpm.h           |  1 +
+> drivers/char/tpm/tpm1-cmd.c      | 55 +++++++++++++++++++++++++++++++++++++
+> 3 files changed, 63 insertions(+), 51 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 486e211b03a0..a72bf6ea8f05 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -812,14 +812,6 @@ int tpm_pm_resume(struct device *dev)
+> }
+> EXPORT_SYMBOL_GPL(tpm_pm_resume);
+>
+> -#define TPM_ORD_GET_RANDOM 70
+> -#define TPM_GETRANDOM_RESULT_SIZE	18
+> -static const struct tpm_input_header tpm_getrandom_header = {
+> -	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+> -	.length = cpu_to_be32(14),
+> -	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
+> -};
+> -
+> /**
+>  * tpm_get_random() - get random bytes from the TPM's RNG
+>  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+> @@ -830,58 +822,22 @@ static const struct tpm_input_header tpm_getrandom_header = {
+>  */
+> int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+> {
+> -	struct tpm_cmd_t tpm_cmd;
+> -	u32 recd, num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA), rlength;
+> -	int err, total = 0, retries = 5;
+> -	u8 *dest = out;
+> +	int rc;
+>
+> -	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
+> +	if (!out || max > TPM_MAX_RNG_DATA)
+> 		return -EINVAL;
+>
+> 	chip = tpm_find_get_ops(chip);
+> 	if (!chip)
+> 		return -ENODEV;
+>
+> -	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> -		err = tpm2_get_random(chip, out, max);
+> -		tpm_put_ops(chip);
+> -		return err;
+> -	}
+> -
+> -	do {
+> -		tpm_cmd.header.in = tpm_getrandom_header;
+> -		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
+> -
+> -		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
+> -				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
+> -				       offsetof(struct tpm_getrandom_out,
+> -						rng_data),
+> -				       0, "attempting get random");
+> -		if (err)
+> -			break;
+> -
+> -		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
+> -		if (recd > num_bytes) {
+> -			total = -EFAULT;
+> -			break;
+> -		}
+> -
+> -		rlength = be32_to_cpu(tpm_cmd.header.out.length);
+> -		if (rlength < TPM_HEADER_SIZE +
+> -			      offsetof(struct tpm_getrandom_out, rng_data) +
+> -			      recd) {
+> -			total = -EFAULT;
+> -			break;
+> -		}
+> -		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
+> -
+> -		dest += recd;
+> -		total += recd;
+> -		num_bytes -= recd;
+> -	} while (retries-- && total < max);
+> +	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> +		rc = tpm2_get_random(chip, out, max);
+> +	else
+> +		rc = tpm1_get_random(chip, out, max);
+>
+> 	tpm_put_ops(chip);
+> -	return total ? total : -EIO;
+> +	return rc;
+> }
+> EXPORT_SYMBOL_GPL(tpm_get_random);
+>
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 05c386b3ab12..22f89f41ad52 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -551,6 +551,7 @@ int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+> 		    const char *log_msg);
+> ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+> 		    const char *desc, size_t min_cap_length);
+> +int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
+> unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+> int tpm_pm_suspend(struct device *dev);
+> int tpm_pm_resume(struct device *dev);
+> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+> index 3bd079587ef5..e02f0c1c822f 100644
+> --- a/drivers/char/tpm/tpm1-cmd.c
+> +++ b/drivers/char/tpm/tpm1-cmd.c
+> @@ -469,3 +469,58 @@ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+> 	return rc;
+> }
+> EXPORT_SYMBOL_GPL(tpm1_getcap);
+> +
+> +#define TPM_ORD_GET_RANDOM 70
+> +#define TPM_GETRANDOM_RESULT_SIZE	18
+> +static const struct tpm_input_header tpm_getrandom_header = {
+> +	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+> +	.length = cpu_to_be32(14),
+> +	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
+> +};
+> +
+> +int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+> +{
+> +	struct tpm_cmd_t tpm_cmd;
+> +	u32 recd;
+> +	u32 num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA);
+> +	u32 rlength;
+> +	int err, total = 0, retries = 5;
+> +	u8 *dest = out;
+> +
+> +	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
+> +		return -EINVAL;
+> +
+> +	do {
+> +		tpm_cmd.header.in = tpm_getrandom_header;
+> +		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
+> +
+> +		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
+> +				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
+> +				       offsetof(struct tpm_getrandom_out,
+> +						rng_data),
+> +				       0, "attempting get random");
+> +		if (err)
+> +			break;
+> +
+> +		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
+> +		if (recd > num_bytes) {
+> +			total = -EFAULT;
+> +			break;
+> +		}
+> +
+> +		rlength = be32_to_cpu(tpm_cmd.header.out.length);
+> +		if (rlength < TPM_HEADER_SIZE +
+> +			      offsetof(struct tpm_getrandom_out, rng_data) +
+> +			      recd) {
+> +			total = -EFAULT;
+> +			break;
+> +		}
+> +		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
+> +
+> +		dest += recd;
+> +		total += recd;
+> +		num_bytes -= recd;
+> +	} while (retries-- && (size_t)total < max);
+> +
+> +	return total ? total : -EIO;
+> +}
+>
 
-The "All Branches" report is a 2-level tree, and the disassembly displays when the next level of the tree is opened
-i.e. click the arrow at the start of the line.
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Have you tried both kernel and user space?
-
-The script looks for dsos in the build id cache.  The dsos can be viewed by selecting dsos_view from the Tables menu,
-so you could check if that information looks right.
-
-Also the script has a variable "have_disassembler", so you could hack the script to print that to find out if XED is working.
-
-
+/Jarkko
