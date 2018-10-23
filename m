@@ -2,131 +2,130 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A99F9C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3837C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:28:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BD4F2075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:16:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BD4F2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7353520813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:28:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZG2CGAlQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7353520813
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728587AbeJXClW (ORCPT
+        id S1728623AbeJXCwx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 22:41:22 -0400
-Received: from mga14.intel.com ([192.55.52.115]:9228 "EHLO mga14.intel.com"
+        Tue, 23 Oct 2018 22:52:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725997AbeJXClV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 22:41:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:16:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
-   d="scan'208";a="243720300"
-Received: from ray.jf.intel.com (HELO [10.7.201.18]) ([10.7.201.18])
-  by orsmga004.jf.intel.com with ESMTP; 23 Oct 2018 11:16:52 -0700
-Subject: Re: [PATCH 0/9] Allow persistent memory to be used like normal RAM
-To:     "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>,
-        'Dan Williams' <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
-        "Hocko, Michal" <MHocko@suse.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        "zwisler@kernel.org" <zwisler@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Fengguang Wu <fengguang.wu@intel.com>
-References: <20181022201317.8558C1D8@viggo.jf.intel.com>
- <CAPcyv4hxs-GnmwQU1wPZyg5aydCY5K09-YpSrrLpvU1v_8dbBw@mail.gmail.com>
- <AT5PR8401MB11694012893ED2121D7A345EABF50@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <2677a7f9-5dc8-7590-2b8b-a67da1cb6b92@intel.com>
-Date:   Tue, 23 Oct 2018 11:16:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1727829AbeJXCwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 22:52:53 -0400
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90845204EC;
+        Tue, 23 Oct 2018 18:28:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540319301;
+        bh=G2PlBONjhBi9sv1Xw4h/cc+8zN2vfVGL036aDNPg7aY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ZG2CGAlQf8OO9gLkJXvzk6IwdqMpSRc9UXnsKDlXN04dRLpieip4Nq2TxeKtVHFZP
+         +kYnH59bpFiLl/PtP1Beytul3kF/Kknt1e5G2Xe8f17SmTFaEkVt7CavfN4zWN8x8m
+         Nv9J8AUv74IMRfFVKlVVQPfg3J0tvH8mnVZVOtR4=
+Received: by mail-qt1-f172.google.com with SMTP id a10-v6so2708343qtp.2;
+        Tue, 23 Oct 2018 11:28:21 -0700 (PDT)
+X-Gm-Message-State: ABuFfogbdHd3m5li1C8+lX3yb/OaL0/4GIZ6dH9Uu/dj1VblR1IlAQuz
+        vSUT/gP7PstNv9xUuxnsev0iqK+ay0k9udC2Fg==
+X-Google-Smtp-Source: ACcGV626xKFuZct1TwBK3H5EtHX6IhYLT+6mA62VaDgK/p63QtU+y26y+TVqQfgjpqVjH+HocrDYwTGqVNCnuAM8zbA=
+X-Received: by 2002:ac8:3a64:: with SMTP id w91-v6mr49731392qte.144.1540319300770;
+ Tue, 23 Oct 2018 11:28:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <AT5PR8401MB11694012893ED2121D7A345EABF50@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180827082153.22537-1-johan@kernel.org> <20180827082153.22537-6-johan@kernel.org>
+ <20180827102820.3abf7291@bbrezillon> <20180827084414.GZ14967@localhost>
+ <20180827104842.26bce912@bbrezillon> <20180827094423.GA14967@localhost>
+In-Reply-To: <20180827094423.GA14967@localhost>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 23 Oct 2018 13:28:09 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+fiM8E-za-fKufgDuoDqu3DY5a4bgZOuF3Ssvj2=6ayg@mail.gmail.com>
+Message-ID: <CAL_Jsq+fiM8E-za-fKufgDuoDqu3DY5a4bgZOuF3Ssvj2=6ayg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/9] mtd: nand: atmel: fix OF child-node lookup
+To:     Johan Hovold <johan@kernel.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Josh Wu <rainyfeeling@outlook.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> This series adds a new "driver" to which pmem devices can be
->> attached.  Once attached, the memory "owned" by the device is
->> hot-added to the kernel and managed like any other memory.  On
-> 
-> Would this memory be considered volatile (with the driver initializing
-> it to zeros), or persistent (contents are presented unchanged,
-> applications may guarantee persistence by using cache flush
-> instructions, fence instructions, and writing to flush hint addresses
-> per the persistent memory programming model)?
+On Mon, Aug 27, 2018 at 4:44 AM Johan Hovold <johan@kernel.org> wrote:
+>
+> On Mon, Aug 27, 2018 at 10:48:42AM +0200, Boris Brezillon wrote:
+> > On Mon, 27 Aug 2018 10:44:14 +0200
+> > Johan Hovold <johan@kernel.org> wrote:
+> >
+> > > On Mon, Aug 27, 2018 at 10:28:20AM +0200, Boris Brezillon wrote:
+> > > > Hi Johan
+> > > >
+> > > > On Mon, 27 Aug 2018 10:21:49 +0200
+> > > > Johan Hovold <johan@kernel.org> wrote:
+> > > >
+> > > > > Use the new of_get_compatible_child() helper to lookup the nfc child
+> > > > > node instead of using of_find_compatible_node(), which searches the
+> > > > > entire tree from a given start node and thus can return an unrelated
+> > > > > (i.e. non-child) node.
+> > > > >
+> > > > > This also addresses a potential use-after-free (e.g. after probe
+> > > > > deferral) as the tree-wide helper drops a reference to its first
+> > > > > argument (i.e. the node of the device being probed).
+> > > > >
+> > > > > While at it, also fix a related nfc-node reference leak.
+> > > > >
+> > > > > Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
+> > > > > Cc: stable <stable@vger.kernel.org>     # 4.11
+> > > > > Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > > > > Cc: Josh Wu <rainyfeeling@outlook.com>
+> > > > > Cc: Boris Brezillon <boris.brezillon@bootlin.com>
+> > > > > Signed-off-by: Johan Hovold <johan@kernel.org>
+> > > >
+> > > > Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> > >
+> > > Thanks for the ack.
+> > >
+> > > > I'll let Miquel queue this patch to the nand/next branch, unless you
+> > > > want it to be merged in 4.19, in which case I'll queue it to the
+> > > > mtd/fixes branch.
+> > >
+> > > Note that there's a dependency on the first patch of the series which
+> > > adds the new helper.
+> >
+> > I was not Cc-ed on this patch :P.
+>
+> Yeah, sorry about that. I made sure everyone was CCed on the
+> cover letter, but guess I could have reused that list for the helper as
+> well.
+>
+> > > Rob can pick up the entire series if the various
+> > > maintainers agree, otherwise I'll try to get at the least the helper
+> > > into -rc2.
+> >
+> > If everything goes in 4.19-rc2 through Rob's tree that's fine, but if
+> > it's queued for 4.20 we might need an immutable tag just in case we
+> > queue conflicting changes to the NAND tree.
+>
+> Ok, thanks.
 
-Volatile.
+Hi Boris, can you pick this one up. It conflicts with "mtd: rawnand:
+atmel: Fix potential NULL pointer dereference"
 
->> I expect udev can automate this by setting up a rule to watch for
->> device-dax instances by UUID and call a script to do the detach /
->> reattach dance.
-> 
-> Where would that rule be stored? Storing it on another device
-> is problematic. If that rule is lost, it could confuse other
-> drivers trying to grab device DAX devices for use as persistent
-> memory.
-
-Well, we do lots of things like stable device naming from udev scripts.
- We depend on them not being lost.  At least this "fails safe" so we'll
-default to persistence instead of defaulting to "eat your data".
-
+Rob
