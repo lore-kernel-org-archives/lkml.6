@@ -5,131 +5,98 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A72C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 998F0C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:27:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72F56204FD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:26:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72F56204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6668E20651
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 19:27:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6668E20651
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728691AbeJXDux (ORCPT
+        id S1728747AbeJXDvn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:50:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54348 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727758AbeJXDux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:50:53 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7A66688317;
-        Tue, 23 Oct 2018 19:26:08 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6B94D5DA63;
-        Tue, 23 Oct 2018 19:26:08 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 4F43E4BB74;
-        Tue, 23 Oct 2018 19:26:08 +0000 (UTC)
-Date:   Tue, 23 Oct 2018 15:26:08 -0400 (EDT)
-From:   Bob Peterson <rpeterso@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     cluster-devel <cluster-devel@redhat.com>,
-        linux-kernel@vger.kernel.org
-Message-ID: <200314933.23623823.1540322768252.JavaMail.zimbra@redhat.com>
-In-Reply-To: <1929897739.23623737.1540322729596.JavaMail.zimbra@redhat.com>
-Subject: GFS2: Pull request (merge window)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        Tue, 23 Oct 2018 23:51:43 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:44120 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727758AbeJXDvn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:51:43 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1gF2KJ-0003oc-8T; Tue, 23 Oct 2018 21:26:51 +0200
+Message-ID: <b3aae7aa8241c9828c04d2f2b58927f4ce1411b9.camel@sipsolutions.net>
+Subject: Re: [PATCH] Revert "workqueue: re-add lockdep dependencies for
+ flushing"
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Sagi Grimberg <sagi@grimberg.me>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Tejun Heo <tj@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "linux-nvme @ lists . infradead . org" 
+        <linux-nvme@lists.infradead.org>
+Date:   Tue, 23 Oct 2018 21:26:31 +0200
+In-Reply-To: <63ae9bac-3587-bded-ea98-e43fb4d7240d@grimberg.me> (sfid-20181023_024355_374203_678E864D)
+References: <20181022151818.135163-1-bvanassche@acm.org>
+         <13901aed5074f4b1fbd259d03928efb6ab40c65a.camel@sipsolutions.net>
+         <1540244870.128590.39.camel@acm.org>
+         <63ae9bac-3587-bded-ea98-e43fb4d7240d@grimberg.me>
+         (sfid-20181023_024355_374203_678E864D)
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.3.116.65, 10.4.195.24]
-Thread-Topic: GFS2: Pull request (merge window)
-Thread-Index: 75c+qw/d95wVPL2sNZrRrWbgN3LJOg==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 23 Oct 2018 19:26:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon, 2018-10-22 at 17:43 -0700, Sagi Grimberg wrote:
+> > > I must also say that I'm disappointed you'd try to do things this way.
+> > > I'd be (have been?) willing to actually help you understand the problem
+> > > and add the annotations, but rather than answer my question ("where do I
+> > > find the right git tree"!) you just send a revert patch.
+> > 
+> > Sorry that I had not yet provided that information. You should have
+> > received this information through another e-mail thread. See also
+> > http://lists.infradead.org/pipermail/linux-nvme/2018-October/020493.html.
+> > 
+> > > To do that, you have to understand what recursion is valid (I'm guessing
+> > > there's some sort of layering involved), and I'm far from understanding
+> > > anything about the code that triggered this report.
+> > 
+> > I don't think there is any kind of recursion involved in the NVMe code
+> > that triggered the lockdep complaint. Sagi, please correct me if I got this
+> > wrong.
+> 
+> I commented on the original thread. I'm not sure it qualifies as a
+> recursion, but in that use-case, when priv->handler_mutex is taken
+> it is possible that other priv->handler_mutex instances are taken but
+> are guaranteed not to belong to that priv...
 
-Welcome back.
-Please consider pulling the following changes for the GFS2 file system.
+I also commented over there regarding this specific problem.
 
-Regards,
+I think my wording was inaccurate perhaps. It's not so much direct
+recursion, but a dependency chain connecting the handler_mutex class
+back to itself. This is how lockdep finds problems, it doesn't consider
+actual *instances* but only *classes*.
 
-Bob Peterson
-----------------------------------------------------------------
-The following changes since commit 050cdc6c9501abcd64720b8cc3e7941efee9547d:
+As Sagi mentioned on the other thread, in this specific instance you
+happen to know out-of-band that this is safe, (somehow) the code ensures
+that you can't actually recursively connect back to yourself. Perhaps
+there's some kind of layering involved, I don't know. (*)
 
-  Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net (2018-08-27 11:59:39 -0700)
+As I said over there, this type of thing can be solved with
+mutex_lock_nested(), though it's possible that in this case it should
+really be flush_workqueue_nested() or flush_work_nested() or so.
 
-are available in the Git repository at:
+johannes
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/gfs2-4.20.fixes
+(*) note that just checking "obj != self" might not be enough, depending
+on how you pick candidates for "obj" you might recurse down another
+level and end up back at yourself, just two levels down, and actually
+have a dependency chain leading back to yourself.
 
-for you to fetch changes up to 8e31582a9ab18093c0b7708b52d7f79eed9a8688:
 
-  gfs2: Fix minor typo: couln't versus couldn't. (2018-10-19 11:34:04 -0500)
-
-----------------------------------------------------------------
-We've got 18 patches for this merge window, none of which are very major.
-
-1. Andreas Gruenbacher contributed several patches to clean up the gfs2
-   block allocator to prepare for future performance enhancements.
-2. Andy Price contributed a patch to fix a use-after-free problem.
-3. I contributed some patches that fix gfs2's broken rgrplvb mount option.
-4. I contributed some cleanup patches and error message improvements.
-5. Steve Whitehouse and Abhi Das sent a patch to enable getlabel support.
-6. Tim Smith contributed a patch to flush the glock delete workqueue at exit.
-
-----------------------------------------------------------------
-Andreas Gruenbacher (8):
-      gfs2: Always check the result of gfs2_rbm_from_block
-      gfs2: Clean up out-of-bounds check in gfs2_rbm_from_block
-      gfs2: Move rs_{sizehint, rgd_gh} fields into the inode
-      gfs2: Remove unused RGRP_RSRV_MINBYTES definition
-      gfs2: Rename bitmap.bi_{len => bytes}
-      gfs2: Fix some minor typos
-      gfs2: Fix marking bitmaps non-full
-      gfs2: Pass resource group to rgblk_free
-
-Andrew Price (1):
-      gfs2: Don't leave s_fs_info pointing to freed memory in init_sbd
-
-Bob Peterson (7):
-      gfs2: improve debug information when lvb mismatches are found
-      gfs2: Don't set GFS2_RDF_UPTODATE when the lvb is updated
-      gfs2: slow the deluge of io error messages
-      gfs2: Use fs_* functions instead of pr_* function where we can
-      gfs2: Remove unnecessary gfs2_rlist_alloc parameter
-      gfs2: write revokes should traverse sd_ail1_list in reverse
-      gfs2: Fix minor typo: couln't versus couldn't.
-
-Steve Whitehouse (1):
-      gfs2: getlabel support
-
-Tim Smith (1):
-      GFS2: Flush the GFS2 delete workqueue before stopping the kernel threads
-
- fs/gfs2/bmap.c       |   4 +-
- fs/gfs2/dir.c        |  28 ++++---
- fs/gfs2/file.c       |  18 ++++-
- fs/gfs2/glock.c      |  17 +++--
- fs/gfs2/incore.h     |   9 +--
- fs/gfs2/lock_dlm.c   |  10 +--
- fs/gfs2/log.c        |  11 ++-
- fs/gfs2/lops.c       |   2 +-
- fs/gfs2/main.c       |   2 +
- fs/gfs2/ops_fstype.c |   2 +-
- fs/gfs2/quota.c      |   2 +-
- fs/gfs2/rgrp.c       | 201 +++++++++++++++++++++++++++++----------------------
- fs/gfs2/rgrp.h       |  11 +--
- fs/gfs2/super.c      |   4 +-
- fs/gfs2/trans.c      |  15 ++--
- fs/gfs2/util.c       |  16 ++--
- fs/gfs2/util.h       |   2 +-
- fs/gfs2/xattr.c      |  18 +++--
- 18 files changed, 218 insertions(+), 154 deletions(-)
