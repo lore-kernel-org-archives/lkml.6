@@ -2,270 +2,85 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD2CC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13907C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:13:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54A12207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:13:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54A12207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DD3FB20665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 10:13:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD3FB20665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728203AbeJWSfv (ORCPT
+        id S1728223AbeJWSfz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 14:35:51 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:55652 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728156AbeJWSfs (ORCPT
+        Tue, 23 Oct 2018 14:35:55 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45007 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728204AbeJWSfy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 14:35:48 -0400
-Received: by mail-io1-f72.google.com with SMTP id o7-v6so582533ioh.22
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 03:13:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=4+TCD05JM4Wqc8MT6ppuRwxt6cvL/CoDE/DZzGRqIvk=;
-        b=lcOCGpAmIo9cEyZevRwiLVQaOeAvhoSAWLPxOvYKjSQSQbqUEbmrIT2Xm5DGjx1wsD
-         tkfWB/bqZH9KOSpdaRnrClRv0haQpqHyPeKA1jFXizRFC7A32vpvPE3qrk+igbFkvMJ2
-         j6SZh3EPEKqRh8d1KOxrxc/V6sUMGdWTQpJcAxkNN+v9/JKz55TE8o28xSO1bl+tKeD4
-         rr4pWh3p1iqu9iEmgQGOYxadStocOF2hWLBTXegEcqC9eESXePJp4xxWk9Y+vFRUVGz+
-         sj+pbMed88fcX3WJmIewnmOia5u3i4yPLle9RBlM5MvYYb1KiSEHUn9KOWnbCr1r2kLT
-         xnng==
-X-Gm-Message-State: ABuFfojxBk6duqB41eL9R8zOReooL4LnzyevI6WpFf+kCsSDtcMXLixR
-        694rnxrDyU6Ot8d0KVH5grVQdHyeT2VHx8BF1aQypQuJ/k4J
-X-Google-Smtp-Source: ACcGV61KBUK50sEu9OW/CCnFlWGiSGba7g6HIXB1+UCQoe9WXnTZezT48C6gsRVb5ZGNFnRfr3Xr1iOnoqs3Y89FM69utW1W+nTR
+        Tue, 23 Oct 2018 14:35:54 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gEtgO-0006tN-Mz; Tue, 23 Oct 2018 12:13:04 +0200
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gEtgN-0006tJ-3H; Tue, 23 Oct 2018 12:13:03 +0200
+Date:   Tue, 23 Oct 2018 12:13:03 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Clark Wang <xiaoning.wang@nxp.com>
+Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Gavin Schenk <g.schenk@eckelmann.de>,
+        Oleksij Rempel <ore@pengutronix.de>
+Subject: Re: [PATCH] ARM: dts: fix imx7d boot spi dma setup error
+Message-ID: <20181023101302.ttniiewnouyrufdg@pengutronix.de>
+References: <20181023083356.17579-1-xiaoning.wang@nxp.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:e38e:: with SMTP id d136-v6mr15013007ith.27.1540289583100;
- Tue, 23 Oct 2018 03:13:03 -0700 (PDT)
-Date:   Tue, 23 Oct 2018 03:13:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000073bd310578e29d8d@google.com>
-Subject: KASAN: use-after-free Read in sctp_outq_select_transport
-From:   syzbot <syzbot+56a40ceee5fb35932f4d@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
-        netdev@vger.kernel.org, nhorman@tuxdriver.com,
-        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181023083356.17579-1-xiaoning.wang@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, Oct 23, 2018 at 08:36:17AM +0000, Clark Wang wrote:
+> Add dmas and dma-names for ecspi1~4 to fix kernel boot error:
+> "spi_imx 30840000.ecspi: dma setup error -19, use pio".
 
-syzbot found the following crash on:
+Actually this should not be an error and the message is supposed to say:
 
-HEAD commit:    23469de647c4 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=13580ce5400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b3f55cb3dfcc6c33
-dashboard link: https://syzkaller.appspot.com/bug?extid=56a40ceee5fb35932f4d
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+	Unable to setup DMA, falling back to PIO
 
-Unfortunately, I don't have any reproducer for this crash yet.
+So IMHO this should be downgraded from dev_err to dev_info and reworded.
+Maybe even try DMA-setup on devices where it is known to fail and don't
+emit a message on -ENODEV at all.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+56a40ceee5fb35932f4d@syzkaller.appspotmail.com
+Best regards
+Uwe
 
-==================================================================
-BUG: KASAN: use-after-free in sctp_outq_select_transport+0x77e/0x9a0  
-net/sctp/outqueue.c:840
-Read of size 4 at addr ffff8801c5ff2614 by task syz-executor5/8275
-
-CPU: 0 PID: 8275 Comm: syz-executor5 Not tainted 4.19.0-rc8+ #152
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c4/0x2b6 lib/dump_stack.c:113
-  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-  sctp_outq_select_transport+0x77e/0x9a0 net/sctp/outqueue.c:840
-  sctp_outq_flush_data net/sctp/outqueue.c:1100 [inline]
-  sctp_outq_flush+0x14f7/0x34f0 net/sctp/outqueue.c:1209
-  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
-  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
-  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
-  sctp_do_sm+0x608/0x7190 net/sctp/sm_sideeffect.c:1191
-  sctp_assoc_bh_rcv+0x346/0x670 net/sctp/associola.c:1067
-  sctp_inq_push+0x280/0x370 net/sctp/inqueue.c:95
-  sctp_rcv+0x2d93/0x3c00 net/sctp/input.c:268
-  sctp6_rcv+0x15/0x30 net/sctp/ipv6.c:1061
-  ip6_input_finish+0x3fc/0x1aa0 net/ipv6/ip6_input.c:383
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  ip6_input+0xe9/0x600 net/ipv6/ip6_input.c:426
-  dst_input include/net/dst.h:450 [inline]
-  ip6_rcv_finish+0x17a/0x330 net/ipv6/ip6_input.c:76
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  ipv6_rcv+0x120/0x640 net/ipv6/ip6_input.c:271
-  __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4913
-  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5023
-  process_backlog+0x218/0x6f0 net/core/dev.c:5829
-  napi_poll net/core/dev.c:6249 [inline]
-  net_rx_action+0x7c5/0x1950 net/core/dev.c:6315
-IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
-  __do_softirq+0x30c/0xb03 kernel/softirq.c:292
-  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1047
-  </IRQ>
-  do_softirq.part.13+0x126/0x160 kernel/softirq.c:336
-  do_softirq kernel/softirq.c:328 [inline]
-  __local_bh_enable_ip+0x21d/0x260 kernel/softirq.c:189
-  local_bh_enable include/linux/bottom_half.h:32 [inline]
-  rcu_read_unlock_bh include/linux/rcupdate.h:723 [inline]
-  ip6_finish_output2+0xce4/0x27a0 net/ipv6/ip6_output.c:121
-  ip6_finish_output+0x58c/0xc60 net/ipv6/ip6_output.c:154
-  NF_HOOK_COND include/linux/netfilter.h:278 [inline]
-  ip6_output+0x232/0x9d0 net/ipv6/ip6_output.c:171
-  dst_output include/net/dst.h:444 [inline]
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  ip6_xmit+0xf69/0x2420 net/ipv6/ip6_output.c:275
-  sctp_v6_xmit+0x3b2/0x790 net/sctp/ipv6.c:230
-  sctp_packet_transmit+0x298e/0x3db0 net/sctp/output.c:656
-  sctp_packet_singleton net/sctp/outqueue.c:791 [inline]
-  sctp_outq_flush_ctrl.constprop.11+0x7a9/0xe50 net/sctp/outqueue.c:922
-  sctp_outq_flush+0x310/0x34f0 net/sctp/outqueue.c:1204
-  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
-kobject: 'rfkill9' (0000000067be229d): fill_kobj_path: path  
-= '/devices/virtual/mac80211_hwsim/hwsim7/ieee80211/phy7/rfkill9'
-  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1349 [inline]
-  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
-  sctp_do_sm+0x4f25/0x7190 net/sctp/sm_sideeffect.c:1191
-ieee80211 phy7: Selected rate control algorithm 'minstrel_ht'
-kobject: 'net' (00000000cdd117dc): kobject_add_internal: parent: 'hwsim7',  
-set: '(null)'
-  sctp_endpoint_bh_rcv+0x465/0x960 net/sctp/endpointola.c:456
-kobject: 'wlan0' (00000000c9d333fc): kobject_add_internal: parent: 'net',  
-set: 'devices'
-  sctp_inq_push+0x280/0x370 net/sctp/inqueue.c:95
-  sctp_backlog_rcv+0x1a8/0xd50 net/sctp/input.c:351
-kobject: 'wlan0' (00000000c9d333fc): kobject_uevent_env
-kobject: 'wlan0' (00000000c9d333fc): fill_kobj_path: path  
-= '/devices/virtual/mac80211_hwsim/hwsim7/net/wlan0'
-  sk_backlog_rcv include/net/sock.h:931 [inline]
-  __release_sock+0x12f/0x3a0 net/core/sock.c:2336
-kobject: 'queues' (00000000c5d009e9): kobject_add_internal:  
-parent: 'wlan0', set: '<NULL>'
-  release_sock+0xad/0x2c0 net/core/sock.c:2849
-  sock_setsockopt+0x60d/0x2280 net/core/sock.c:1054
-kobject: 'queues' (00000000c5d009e9): kobject_uevent_env
-kobject: 'queues' (00000000c5d009e9): kobject_uevent_env: filter function  
-caused the event to drop!
-  __sys_setsockopt+0x304/0x3c0 net/socket.c:1898
-kobject: 'rx-0' (000000007736ba36): kobject_add_internal: parent: 'queues',  
-set: 'queues'
-  __do_sys_setsockopt net/socket.c:1913 [inline]
-  __se_sys_setsockopt net/socket.c:1910 [inline]
-  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1910
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-kobject: 'rx-0' (000000007736ba36): kobject_uevent_env
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-kobject: 'rx-0' (000000007736ba36): fill_kobj_path: path  
-= '/devices/virtual/mac80211_hwsim/hwsim7/net/wlan0/queues/rx-0'
-RIP: 0033:0x457569
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f0613beec78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457569
-RDX: 000000000000001a RSI: 0000000000000001 RDI: 0000000000000003
-RBP: 000000000072c040 R08: 0000000000000010 R09: 0000000000000000
-R10: 00000000200000c0 R11: 0000000000000246 R12: 00007f0613bef6d4
-R13: 00000000004c3b61 R14: 00000000004d5c88 R15: 00000000ffffffff
-
-Allocated by task 8261:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-kobject: 'tx-0' (000000008f0eae4c): kobject_add_internal: parent: 'queues',  
-set: 'queues'
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
-  kmalloc include/linux/slab.h:513 [inline]
-  kzalloc include/linux/slab.h:707 [inline]
-  sctp_transport_new+0x10a/0x880 net/sctp/transport.c:111
-  sctp_assoc_add_peer+0x2de/0x10d0 net/sctp/associola.c:630
-  sctp_process_param net/sctp/sm_make_chunk.c:2540 [inline]
-  sctp_process_init+0xfc0/0x29e0 net/sctp/sm_make_chunk.c:2356
-  sctp_cmd_process_init net/sctp/sm_sideeffect.c:682 [inline]
-  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1410 [inline]
-  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
-  sctp_do_sm+0x13b9/0x7190 net/sctp/sm_sideeffect.c:1191
-  sctp_assoc_bh_rcv+0x346/0x670 net/sctp/associola.c:1067
-  sctp_inq_push+0x280/0x370 net/sctp/inqueue.c:95
-  sctp_backlog_rcv+0x1a8/0xd50 net/sctp/input.c:351
-  sk_backlog_rcv include/net/sock.h:931 [inline]
-  __release_sock+0x12f/0x3a0 net/core/sock.c:2336
-kobject: 'tx-0' (000000008f0eae4c): kobject_uevent_env
-  release_sock+0xad/0x2c0 net/core/sock.c:2849
-  sctp_wait_for_connect+0x391/0x640 net/sctp/socket.c:8667
-  sctp_sendmsg_to_asoc+0x1d0f/0x2230 net/sctp/socket.c:1985
-  sctp_sendmsg+0x13c2/0x1da0 net/sctp/socket.c:2131
-  inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:631
-  __sys_sendto+0x3d7/0x670 net/socket.c:1788
-  __do_sys_sendto net/socket.c:1800 [inline]
-  __se_sys_sendto net/socket.c:1796 [inline]
-  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1796
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-kobject: 'tx-0' (000000008f0eae4c): fill_kobj_path: path  
-= '/devices/virtual/mac80211_hwsim/hwsim7/net/wlan0/queues/tx-0'
-
-Freed by task 9:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3813
-  sctp_transport_destroy_rcu+0x4a/0x60 net/sctp/transport.c:163
-  __rcu_reclaim kernel/rcu/rcu.h:236 [inline]
-  rcu_do_batch kernel/rcu/tree.c:2576 [inline]
-  invoke_rcu_callbacks kernel/rcu/tree.c:2880 [inline]
-  __rcu_process_callbacks kernel/rcu/tree.c:2847 [inline]
-  rcu_process_callbacks+0xf23/0x2670 kernel/rcu/tree.c:2864
-  __do_softirq+0x30c/0xb03 kernel/softirq.c:292
-kobject: 'tx-1' (000000009aaee194): kobject_add_internal: parent: 'queues',  
-set: 'queues'
-
-The buggy address belongs to the object at ffff8801c5ff24c0
-  which belongs to the cache kmalloc-1024 of size 1024
-The buggy address is located 340 bytes inside of
-  1024-byte region [ffff8801c5ff24c0, ffff8801c5ff28c0)
-The buggy address belongs to the page:
-page:ffffea000717fc80 count:1 mapcount:0 mapping:ffff8801da800ac0 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffffea00070ed808 ffffea00071b2488 ffff8801da800ac0
-raw: 0000000000000000 ffff8801c5ff2040 0000000100000007 0000000000000000
-kobject: 'tx-1' (000000009aaee194): kobject_uevent_env
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801c5ff2500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801c5ff2580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8801c5ff2600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                          ^
-  ffff8801c5ff2680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801c5ff2700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
