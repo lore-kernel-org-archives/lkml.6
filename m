@@ -6,166 +6,237 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A07C46475
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A66E5C46475
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:36:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA653206B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:36:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA653206B5
+	by mail.kernel.org (Postfix) with ESMTP id 6C479206B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:36:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C479206B5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbeJXMCj (ORCPT
+        id S1727368AbeJXMCo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 08:02:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37246 "EHLO mx1.redhat.com"
+        Wed, 24 Oct 2018 08:02:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37640 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726082AbeJXMCi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 08:02:38 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        id S1726082AbeJXMCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 08:02:44 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 505BA3002F8C;
-        Tue, 23 Oct 2018 23:58:55 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9EE29300294D;
+        Tue, 23 Oct 2018 23:59:59 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4B810611C5;
-        Tue, 23 Oct 2018 23:58:54 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8BB4660F80;
+        Tue, 23 Oct 2018 23:59:58 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 09/25] afs: Fix TTL on VL server and address lists [ver #2]
+Subject: [PATCH 18/25] afs: Calc callback expiry in op reply delivery [ver
+ #2]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Date:   Wed, 24 Oct 2018 00:58:53 +0100
-Message-ID: <154033913355.12041.14275066646402136427.stgit@warthog.procyon.org.uk>
+Date:   Wed, 24 Oct 2018 00:59:57 +0100
+Message-ID: <154033919777.12041.10784965476676661095.stgit@warthog.procyon.org.uk>
 In-Reply-To: <154033906284.12041.12908874734066278152.stgit@warthog.procyon.org.uk>
 References: <154033906284.12041.12908874734066278152.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 23 Oct 2018 23:58:55 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 23 Oct 2018 23:59:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the TTL on VL server and address lists isn't set in all
-circumstances and may be set to poor choices in others, since the TTL is
-derived from the SRV/AFSDB DNS record if and when available.
-
-Fix the TTL by limiting the range to a minimum and maximum from the current
-time.  At some point these can be made into sysctl knobs.  Further, use the
-TTL we obtained from the upcall to set the expiry on negative results too;
-in future a mechanism can be added to force reloading of such data.
+Calculate the callback expiration time at the point of operation reply
+delivery, using the reply time queried from AF_RXRPC on that call as a
+base.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/afs/cell.c |   26 ++++++++++++++++++++++----
- fs/afs/proc.c |   14 +++++++++++---
- 2 files changed, 33 insertions(+), 7 deletions(-)
+ fs/afs/afs.h      |    2 +-
+ fs/afs/fsclient.c |   22 +++++++++++++++++-----
+ fs/afs/inode.c    |    4 ++--
+ fs/afs/internal.h |    2 ++
+ fs/afs/rxrpc.c    |    6 ++++++
+ 5 files changed, 28 insertions(+), 8 deletions(-)
 
-diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index 963b6fa51fdf..cf445dbd5f2e 100644
---- a/fs/afs/cell.c
-+++ b/fs/afs/cell.c
-@@ -20,6 +20,8 @@
- #include "internal.h"
+diff --git a/fs/afs/afs.h b/fs/afs/afs.h
+index fb9bcb8758ea..417cd23529c5 100644
+--- a/fs/afs/afs.h
++++ b/fs/afs/afs.h
+@@ -68,8 +68,8 @@ typedef enum {
+ } afs_callback_type_t;
  
- static unsigned __read_mostly afs_cell_gc_delay = 10;
-+static unsigned __read_mostly afs_cell_min_ttl = 10 * 60;
-+static unsigned __read_mostly afs_cell_max_ttl = 24 * 60 * 60;
+ struct afs_callback {
++	time64_t		expires_at;	/* Time at which expires */
+ 	unsigned		version;	/* Callback version */
+-	unsigned		expiry;		/* Time at which expires */
+ 	afs_callback_type_t	type;		/* Type of callback */
+ };
  
- static void afs_manage_cell(struct work_struct *);
- 
-@@ -171,6 +173,8 @@ static struct afs_cell *afs_alloc_cell(struct afs_net *net,
- 
- 		rcu_assign_pointer(cell->vl_servers, vllist);
- 		cell->dns_expiry = TIME64_MAX;
-+	} else {
-+		cell->dns_expiry = ktime_get_real_seconds();
- 	}
- 
- 	_leave(" = %p", cell);
-@@ -358,25 +362,39 @@ int afs_cell_init(struct afs_net *net, const char *rootcell)
- static void afs_update_cell(struct afs_cell *cell)
- {
- 	struct afs_vlserver_list *vllist, *old;
--	time64_t now, expiry;
-+	unsigned int min_ttl = READ_ONCE(afs_cell_min_ttl);
-+	unsigned int max_ttl = READ_ONCE(afs_cell_max_ttl);
-+	time64_t now, expiry = 0;
- 
- 	_enter("%s", cell->name);
- 
- 	vllist = afs_dns_query(cell, &expiry);
-+
-+	now = ktime_get_real_seconds();
-+	if (min_ttl > max_ttl)
-+		max_ttl = min_ttl;
-+	if (expiry < now + min_ttl)
-+		expiry = now + min_ttl;
-+	else if (expiry > now + max_ttl)
-+		expiry = now + max_ttl;
-+
- 	if (IS_ERR(vllist)) {
- 		switch (PTR_ERR(vllist)) {
- 		case -ENODATA:
--			/* The DNS said that the cell does not exist */
-+		case -EDESTADDRREQ:
-+			/* The DNS said that the cell does not exist or there
-+			 * weren't any addresses to be had.
-+			 */
- 			set_bit(AFS_CELL_FL_NOT_FOUND, &cell->flags);
- 			clear_bit(AFS_CELL_FL_DNS_FAIL, &cell->flags);
--			cell->dns_expiry = ktime_get_real_seconds() + 61;
-+			cell->dns_expiry = expiry;
- 			break;
- 
- 		case -EAGAIN:
- 		case -ECONNREFUSED:
- 		default:
- 			set_bit(AFS_CELL_FL_DNS_FAIL, &cell->flags);
--			cell->dns_expiry = ktime_get_real_seconds() + 10;
-+			cell->dns_expiry = now + 10;
- 			break;
- 		}
- 
-diff --git a/fs/afs/proc.c b/fs/afs/proc.c
-index 6585f4bec0d3..fc36c41641ab 100644
---- a/fs/afs/proc.c
-+++ b/fs/afs/proc.c
-@@ -37,16 +37,24 @@ static inline struct afs_net *afs_seq2net_single(struct seq_file *m)
-  */
- static int afs_proc_cells_show(struct seq_file *m, void *v)
- {
--	struct afs_cell *cell = list_entry(v, struct afs_cell, proc_link);
-+	struct afs_vlserver_list *vllist;
-+	struct afs_cell *cell;
- 
- 	if (v == SEQ_START_TOKEN) {
- 		/* display header on line 1 */
--		seq_puts(m, "USE NAME\n");
-+		seq_puts(m, "USE    TTL SV NAME\n");
- 		return 0;
- 	}
- 
-+	cell = list_entry(v, struct afs_cell, proc_link);
-+	vllist = rcu_dereference(cell->vl_servers);
-+
- 	/* display one cell per line on subsequent lines */
--	seq_printf(m, "%3u %s\n", atomic_read(&cell->usage), cell->name);
-+	seq_printf(m, "%3u %6lld %2u %s\n",
-+		   atomic_read(&cell->usage),
-+		   cell->dns_expiry - ktime_get_real_seconds(),
-+		   vllist ? vllist->nr_servers : 0,
-+		   cell->name);
- 	return 0;
+diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
+index f758750e81d8..6105cdb17163 100644
+--- a/fs/afs/fsclient.c
++++ b/fs/afs/fsclient.c
+@@ -287,13 +287,19 @@ static void xdr_decode_AFSCallBack(struct afs_call *call,
+ 	*_bp = bp;
  }
  
+-static void xdr_decode_AFSCallBack_raw(const __be32 **_bp,
++static ktime_t xdr_decode_expiry(struct afs_call *call, u32 expiry)
++{
++	return ktime_add_ns(call->reply_time, expiry * NSEC_PER_SEC);
++}
++
++static void xdr_decode_AFSCallBack_raw(struct afs_call *call,
++				       const __be32 **_bp,
+ 				       struct afs_callback *cb)
+ {
+ 	const __be32 *bp = *_bp;
+ 
+ 	cb->version	= ntohl(*bp++);
+-	cb->expiry	= ntohl(*bp++);
++	cb->expires_at	= xdr_decode_expiry(call, ntohl(*bp++));
+ 	cb->type	= ntohl(*bp++);
+ 	*_bp = bp;
+ }
+@@ -440,6 +446,7 @@ int afs_fs_fetch_file_status(struct afs_fs_cursor *fc, struct afs_volsync *volsy
+ 	call->reply[0] = vnode;
+ 	call->reply[1] = volsync;
+ 	call->expected_version = new_inode ? 1 : vnode->status.data_version;
++	call->want_reply_time = true;
+ 
+ 	/* marshall the parameters */
+ 	bp = call->request;
+@@ -627,6 +634,7 @@ static int afs_fs_fetch_data64(struct afs_fs_cursor *fc, struct afs_read *req)
+ 	call->reply[1] = NULL; /* volsync */
+ 	call->reply[2] = req;
+ 	call->expected_version = vnode->status.data_version;
++	call->want_reply_time = true;
+ 
+ 	/* marshall the parameters */
+ 	bp = call->request;
+@@ -672,6 +680,7 @@ int afs_fs_fetch_data(struct afs_fs_cursor *fc, struct afs_read *req)
+ 	call->reply[1] = NULL; /* volsync */
+ 	call->reply[2] = req;
+ 	call->expected_version = vnode->status.data_version;
++	call->want_reply_time = true;
+ 
+ 	/* marshall the parameters */
+ 	bp = call->request;
+@@ -714,7 +723,7 @@ static int afs_deliver_fs_create_vnode(struct afs_call *call)
+ 				&call->expected_version, NULL);
+ 	if (ret < 0)
+ 		return ret;
+-	xdr_decode_AFSCallBack_raw(&bp, call->reply[3]);
++	xdr_decode_AFSCallBack_raw(call, &bp, call->reply[3]);
+ 	/* xdr_decode_AFSVolSync(&bp, call->reply[X]); */
+ 
+ 	_leave(" = 0 [done]");
+@@ -773,6 +782,7 @@ int afs_fs_create(struct afs_fs_cursor *fc,
+ 	call->reply[2] = newstatus;
+ 	call->reply[3] = newcb;
+ 	call->expected_version = current_data_version + 1;
++	call->want_reply_time = true;
+ 
+ 	/* marshall the parameters */
+ 	bp = call->request;
+@@ -2042,7 +2052,7 @@ static int afs_deliver_fs_fetch_status(struct afs_call *call)
+ 				&call->expected_version, NULL);
+ 	if (ret < 0)
+ 		return ret;
+-	xdr_decode_AFSCallBack_raw(&bp, callback);
++	xdr_decode_AFSCallBack_raw(call, &bp, callback);
+ 	if (volsync)
+ 		xdr_decode_AFSVolSync(&bp, volsync);
+ 
+@@ -2088,6 +2098,7 @@ int afs_fs_fetch_status(struct afs_fs_cursor *fc,
+ 	call->reply[2] = callback;
+ 	call->reply[3] = volsync;
+ 	call->expected_version = 1; /* vnode->status.data_version */
++	call->want_reply_time = true;
+ 
+ 	/* marshall the parameters */
+ 	bp = call->request;
+@@ -2188,7 +2199,7 @@ static int afs_deliver_fs_inline_bulk_status(struct afs_call *call)
+ 		bp = call->buffer;
+ 		callbacks = call->reply[2];
+ 		callbacks[call->count].version	= ntohl(bp[0]);
+-		callbacks[call->count].expiry	= ntohl(bp[1]);
++		callbacks[call->count].expires_at = xdr_decode_expiry(call, ntohl(bp[1]));
+ 		callbacks[call->count].type	= ntohl(bp[2]);
+ 		statuses = call->reply[1];
+ 		if (call->count == 0 && vnode && statuses[0].abort_code == 0)
+@@ -2261,6 +2272,7 @@ int afs_fs_inline_bulk_status(struct afs_fs_cursor *fc,
+ 	call->reply[2] = callbacks;
+ 	call->reply[3] = volsync;
+ 	call->count2 = nr_fids;
++	call->want_reply_time = true;
+ 
+ 	/* marshall the parameters */
+ 	bp = call->request;
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 4ba47efe9668..4c6d8e1112c2 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -317,11 +317,11 @@ struct inode *afs_iget(struct super_block *sb, struct key *key,
+ 			 * didn't give us a callback) */
+ 			vnode->cb_version = 0;
+ 			vnode->cb_type = 0;
+-			vnode->cb_expires_at = 0;
++			vnode->cb_expires_at = ktime_get();
+ 		} else {
+ 			vnode->cb_version = cb->version;
+ 			vnode->cb_type = cb->type;
+-			vnode->cb_expires_at = cb->expiry;
++			vnode->cb_expires_at = cb->expires_at;
+ 			vnode->cb_interest = afs_get_cb_interest(cbi);
+ 			set_bit(AFS_VNODE_CB_PROMISED, &vnode->flags);
+ 		}
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 28d08aac515d..78065af05153 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -131,6 +131,7 @@ struct afs_call {
+ 	bool			async;		/* T if asynchronous */
+ 	bool			ret_reply0;	/* T if should return reply[0] on success */
+ 	bool			upgrade;	/* T to request service upgrade */
++	bool			want_reply_time;	/* T if want reply_time */
+ 	u16			service_id;	/* Actual service ID (after upgrade) */
+ 	unsigned int		debug_id;	/* Trace ID */
+ 	u32			operation_ID;	/* operation ID for an incoming call */
+@@ -144,6 +145,7 @@ struct afs_call {
+ 	};
+ 	afs_dataversion_t	expected_version; /* Updated version expected from store */
+ 	afs_dataversion_t	expected_version_2; /* 2nd updated version expected from store */
++	ktime_t			reply_time;	/* Time of first reply packet */
+ };
+ 
+ struct afs_call_type {
+diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
+index ce98e133caa6..444ba0d511ef 100644
+--- a/fs/afs/rxrpc.c
++++ b/fs/afs/rxrpc.c
+@@ -499,6 +499,12 @@ static void afs_deliver_to_call(struct afs_call *call)
+ 			return;
+ 		}
+ 
++		if (call->want_reply_time &&
++		    rxrpc_kernel_get_reply_time(call->net->socket,
++						call->rxcall,
++						&call->reply_time))
++			call->want_reply_time = false;
++
+ 		ret = call->type->deliver(call);
+ 		state = READ_ONCE(call->state);
+ 		switch (ret) {
 
