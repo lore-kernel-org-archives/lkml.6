@@ -3,80 +3,200 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7575EC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9F1C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:57:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BDFF20813
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:55:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BDFF20813
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id A822020813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 23:57:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A822020813
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729111AbeJXIUs (ORCPT
+        id S1729120AbeJXIX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 04:20:48 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:55502 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728740AbeJXIUs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 04:20:48 -0400
-Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id A51CE147213C1;
-        Tue, 23 Oct 2018 16:55:05 -0700 (PDT)
-Date:   Tue, 23 Oct 2018 16:55:03 -0700 (PDT)
-Message-Id: <20181023.165503.1642911590033574600.davem@davemloft.net>
-To:     sam@mendozajonas.com
-Cc:     netdev@vger.kernel.org, Justin.Lee1@Dell.com,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
-Subject: Re: [PATCH net-next v2 0/6] net/ncsi: Allow enabling multiple
- packages & channels
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181023215201.27315-1-sam@mendozajonas.com>
-References: <20181023215201.27315-1-sam@mendozajonas.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Wed, 24 Oct 2018 04:23:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50114 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727595AbeJXIX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 04:23:28 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 27F81811A9;
+        Tue, 23 Oct 2018 23:57:45 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 00B9D60F80;
+        Tue, 23 Oct 2018 23:57:43 +0000 (UTC)
+Subject: [PATCH 00/25] AFS development [ver #2]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 24 Oct 2018 00:57:43 +0100
+Message-ID: <154033906284.12041.12908874734066278152.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 23 Oct 2018 16:55:05 -0700 (PDT)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 23 Oct 2018 23:57:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Samuel Mendoza-Jonas <sam@mendozajonas.com>
-Date: Wed, 24 Oct 2018 10:51:55 +1300
 
-> This series extends the NCSI driver to configure multiple packages
-> and/or channels simultaneously. Since the RFC series this includes a few
-> extra changes to fix areas in the driver that either made this harder or
-> were roadblocks due to deviations from the NCSI specification.
-> 
-> Patches 1 & 2 fix two issues where the driver made assumptions about the
-> capabilities of the NCSI topology.
-> Patches 3 & 4 change some internal semantics slightly to make multi-mode
-> easier.
-> Patch 5 introduces a cleaner way of reconfiguring the NCSI configuration
-> and keeping track of channel states.
-> Patch 6 implements the main multi-package/multi-channel configuration,
-> configured via the Netlink interface.
-> 
-> Readers who have an interesting NCSI setup - especially multi-package
-> with HWA - please test! I think I've covered all permutations but I
-> don't have infinite hardware to test on.
-> 
-> Changes in v2:
-> - Updated use of the channel lock in ncsi_reset_dev(), making the
-> channel invisible and leaving the monitor check to
-> ncsi_stop_channel_monitor().
-> - Fixed ncsi_channel_is_tx() to consider the state of channels in other
-> packages.
+Hi Al,
 
-net-next is closed, please resubmit this when net-next opens back up.
+Here's a set of development patches for AFS if you could pull it for the
+upcoming merge window.  Its main features are:
 
-Thank you.
+ (1) Provide wrapper functions for accessing iov iterators and provide a
+     new read discard iterator type (ITER_DISCARD).
+
+ (2) Use iov iterators more directly in AFS unmarshalling routines.
+
+ (3) Support for retrieving DNS information where the VL server address list
+     is partitioned by server.
+
+ (4) Implement VL server rotation and improve both this and FS server
+     rotation.
+
+ (5) Add support for the YFS variant of the AFS server.
+
+ (6) When first attempting to use a server or a list of servers, plumb all
+     the addresses simultaneously to try and determine the best route.
+
+The patches are tagged here:
+
+	git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+	afs-next-20181024
+
+and can also be found on the following branch:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-next
+
+David
+---
+David Howells (25):
+      amd-gpu: Don't undefine READ and WRITE
+      iov_iter: Use accessor function
+      iov_iter: Separate type from direction and use accessor functions
+      iov_iter: Add I/O discard iterator
+      afs: Better tracing of protocol errors
+      afs: Set up the iov_iter before calling afs_extract_data()
+      afs: Improve FS server rotation error handling
+      afs: Implement VL server rotation
+      afs: Fix TTL on VL server and address lists
+      afs: Handle EIO from delivery function
+      afs: Add a couple of tracepoints to log I/O errors
+      afs: Don't invoke the server to read data beyond EOF
+      afs: Increase to 64-bit volume ID and 96-bit vnode ID for YFS
+      afs: Commit the status on a new file/dir/symlink
+      afs: Remove callback details from afs_callback_break struct
+      afs: Implement the YFS cache manager service
+      afs: Fix FS.FetchStatus delivery from updating wrong vnode
+      afs: Calc callback expiry in op reply delivery
+      afs: Get the target vnode in afs_rmdir() and get a callback on it
+      afs: Expand data structure fields to support YFS
+      afs: Implement YFS support in the fs client
+      afs: Allow dumping of server cursor on operation failure
+      afs: Eliminate the address pointer from the address list cursor
+      afs: Fix callback handling
+      afs: Probe multiple fileservers simultaneously
+
+
+ block/bio.c                               |    2 
+ drivers/block/drbd/drbd_main.c            |    2 
+ drivers/block/drbd/drbd_receiver.c        |    2 
+ drivers/block/loop.c                      |    9 
+ drivers/block/nbd.c                       |   12 
+ drivers/fsi/fsi-sbefifo.c                 |    4 
+ drivers/gpu/drm/amd/display/dc/os_types.h |    2 
+ drivers/isdn/mISDN/l1oip_core.c           |    3 
+ drivers/misc/vmw_vmci/vmci_queue_pair.c   |    6 
+ drivers/nvme/target/io-cmd-file.c         |    2 
+ drivers/target/iscsi/iscsi_target_util.c  |    6 
+ drivers/target/target_core_file.c         |    6 
+ drivers/usb/usbip/usbip_common.c          |    2 
+ drivers/xen/pvcalls-back.c                |    8 
+ fs/9p/vfs_addr.c                          |    4 
+ fs/9p/vfs_dir.c                           |    2 
+ fs/9p/xattr.c                             |    4 
+ fs/afs/Kconfig                            |   12 
+ fs/afs/Makefile                           |    7 
+ fs/afs/addr_list.c                        |  209 ++-
+ fs/afs/afs.h                              |   50 -
+ fs/afs/cache.c                            |    2 
+ fs/afs/callback.c                         |   17 
+ fs/afs/cell.c                             |   65 +
+ fs/afs/cmservice.c                        |  287 +++-
+ fs/afs/dir.c                              |   75 +
+ fs/afs/dynroot.c                          |    4 
+ fs/afs/file.c                             |    8 
+ fs/afs/flock.c                            |   22 
+ fs/afs/fs_probe.c                         |  270 ++++
+ fs/afs/fsclient.c                         |  583 ++++----
+ fs/afs/inode.c                            |   37 
+ fs/afs/internal.h                         |  322 ++++
+ fs/afs/mntpt.c                            |    5 
+ fs/afs/proc.c                             |  110 +
+ fs/afs/protocol_yfs.h                     |  163 ++
+ fs/afs/rotate.c                           |  302 +++-
+ fs/afs/rxrpc.c                            |  115 +-
+ fs/afs/security.c                         |   13 
+ fs/afs/server.c                           |  145 --
+ fs/afs/server_list.c                      |    6 
+ fs/afs/super.c                            |    5 
+ fs/afs/vl_list.c                          |  340 +++++
+ fs/afs/vl_probe.c                         |  273 ++++
+ fs/afs/vl_rotate.c                        |  355 +++++
+ fs/afs/vlclient.c                         |  195 +--
+ fs/afs/volume.c                           |   56 -
+ fs/afs/write.c                            |   30 
+ fs/afs/xattr.c                            |    2 
+ fs/afs/yfsclient.c                        | 2184 +++++++++++++++++++++++++++++
+ fs/block_dev.c                            |    2 
+ fs/ceph/file.c                            |    7 
+ fs/cifs/connect.c                         |    4 
+ fs/cifs/file.c                            |    4 
+ fs/cifs/misc.c                            |    4 
+ fs/cifs/smb2ops.c                         |    4 
+ fs/cifs/smbdirect.c                       |   17 
+ fs/cifs/transport.c                       |    8 
+ fs/direct-io.c                            |    2 
+ fs/dlm/lowcomms.c                         |    2 
+ fs/fuse/file.c                            |    2 
+ fs/iomap.c                                |    2 
+ fs/nfsd/vfs.c                             |    4 
+ fs/ocfs2/cluster/tcp.c                    |    2 
+ fs/orangefs/inode.c                       |    2 
+ fs/splice.c                               |    7 
+ include/linux/uio.h                       |   65 +
+ include/trace/events/afs.h                |  213 +++
+ lib/iov_iter.c                            |  125 +-
+ mm/filemap.c                              |    2 
+ mm/page_io.c                              |    2 
+ net/9p/client.c                           |    2 
+ net/9p/trans_virtio.c                     |    2 
+ net/bluetooth/6lowpan.c                   |    2 
+ net/bluetooth/a2mp.c                      |    2 
+ net/bluetooth/smp.c                       |    2 
+ net/ceph/messenger.c                      |    6 
+ net/netfilter/ipvs/ip_vs_sync.c           |    2 
+ net/smc/smc_clc.c                         |    4 
+ net/socket.c                              |    6 
+ net/sunrpc/svcsock.c                      |    2 
+ net/tipc/topsrv.c                         |    2 
+ net/tls/tls_device.c                      |    4 
+ net/tls/tls_sw.c                          |    4 
+ 84 files changed, 5629 insertions(+), 1236 deletions(-)
+ create mode 100644 fs/afs/fs_probe.c
+ create mode 100644 fs/afs/protocol_yfs.h
+ create mode 100644 fs/afs/vl_list.c
+ create mode 100644 fs/afs/vl_probe.c
+ create mode 100644 fs/afs/vl_rotate.c
+ create mode 100644 fs/afs/yfsclient.c
+
