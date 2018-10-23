@@ -2,169 +2,214 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F5CFC004D3
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 00:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF5BC004D3
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 00:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 546B820651
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 00:32:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fewIorW0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 546B820651
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5D190207DE
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 00:39:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D190207DE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbeJWIwv (ORCPT
+        id S1726884AbeJWJAo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 04:52:51 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44729 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726606AbeJWIwv (ORCPT
+        Tue, 23 Oct 2018 05:00:44 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:45063 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbeJWJAo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 04:52:51 -0400
-Received: by mail-pg1-f196.google.com with SMTP id w3-v6so4251747pgs.11
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 17:32:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=6mjVJo8FQcNol+fIkwm+4i7sGlA8vnjlD8h3YNdJi64=;
-        b=fewIorW0Ov/kbOpQIkLdcGkZw7y7mdYJzNhY/t7ZdWFWu+KsdULeF6ilNeVOg0oyja
-         VCVUTiZKNybVzcsIbVQqSeK+bNsaiKjEvDlj3NL7SoAoFbOufe2QQCpG8KMCdVnjSnru
-         GX4BU3l9vx0HXg0iTRRBnmqvHPIK7pfhgV81I=
+        Tue, 23 Oct 2018 05:00:44 -0400
+Received: by mail-oi1-f196.google.com with SMTP id q63-v6so646287oic.12;
+        Mon, 22 Oct 2018 17:39:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6mjVJo8FQcNol+fIkwm+4i7sGlA8vnjlD8h3YNdJi64=;
-        b=jizKbmhp+oEXs9cqpIlcnurOmmeTyv5/UJuHNNEb0zs0JcMHdoLzT2Dksr/IWOljCI
-         xuP8m5n/YsofnIoaPy4gYtLapgQA8t3JmLYyKijP5wcyAizJ1GGDNmfXCRJnYfsHQuM4
-         /z4wDKQe5DmfobssHoxIs5n1Zah3EQxYM3tQgDfQtN5C9aM4hmzoiQRfS7gghMPkMh37
-         j9txY8S/bEMfFx+5ldqwrWpwo0ZIb9zorEeyRHOw8NmIrG/ReSkrIuD3E/z59To3GNb5
-         KbEmKte6Es3KAnOxZkYvwQzeO+rgFu1MGF2Cde6R/cE+T/NpwMG3omJW8TE2HmouzGUQ
-         lfeg==
-X-Gm-Message-State: ABuFfogoxObkeX4jAZwpr89gXtUP4pxSMbeX8huDg8xDOwic42MKH5RC
-        Ul+I0yp8wnXyJ76UWaHIkaed1Wl8bZQ=
-X-Google-Smtp-Source: ACcGV61KsQH5Xg3EV6JtvK5EHUcafvjxZIzb3suedZb6sjWMQenRnjxsHj8ssIko4qyLNrx+1wAu3Q==
-X-Received: by 2002:a62:11cb:: with SMTP id 72-v6mr47220418pfr.120.1540254718925;
-        Mon, 22 Oct 2018 17:31:58 -0700 (PDT)
-Received: from localhost.localdomain ([2601:1c2:680:1319:4e72:b9ff:fe99:466a])
-        by smtp.gmail.com with ESMTPSA id j188-v6sm48787664pfg.132.2018.10.22.17.31.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 22 Oct 2018 17:31:57 -0700 (PDT)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     Wei Li <liwei213@huawei.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, Dmitry Shmidt <dimitrysh@google.com>,
-        John Stultz <john.stultz@linaro.org>
-Subject: [RFC][PATCH v2] scsi: ufs: Fix hynix ufs bug with quirk on hi36xx SoC
-Date:   Mon, 22 Oct 2018 17:31:50 -0700
-Message-Id: <1540254710-26936-1-git-send-email-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=53if1BoyB7IOoVYyFzCCDmsbX0bWzP9QUNqbb8bldFY=;
+        b=VOIApowF3fEJDvZ9emgucX3LXtR06yThKrrk5RChtIKvrUbm3y1q4C6dBQQ0CirkBo
+         ycF1elAUo6XhuVzlqNJ0n0XBn0EG4vVpA5WjPeCZuDNnhTSz9phh5RPPh9hys5dx8J7f
+         kNdSiesstU6fLSG/+x2YvM6Nw0fH2HKF1yKaQj1+tcJh+v/LO+6CqwFz1flpwAANlR3t
+         Sy1lU0tUHeHSeCyDA+9WihSeNHBJdltaw/Hbr9/FIh0mz03fJ4gyx8djfHYgm5wMp1Iu
+         rkaj4/rCm+JNasBJ33uo6dh/Shj2tlNd0OB77ElCL6zpRPQ0BEQN9fsAk4cAmGO1jJQg
+         U1cA==
+X-Gm-Message-State: ABuFfogfUaXha+v5m2GOWh1uL9o3qLxPXW1ViOakV9Os4Aw4H76K/Dzk
+        kFkX7JMotaKJaMn0wqW5ahAkydU=
+X-Google-Smtp-Source: ACcGV60DpMwAIbnVSA9P78E8PISTQKPGHKjtNLef/KDI7MThRD9hjyRn0VwUpZT0EYQekvU+gUTxwg==
+X-Received: by 2002:aca:7288:: with SMTP id p130-v6mr23439737oic.252.1540255190747;
+        Mon, 22 Oct 2018 17:39:50 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id p129-v6sm10627800oia.21.2018.10.22.17.39.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 22 Oct 2018 17:39:50 -0700 (PDT)
+Date:   Mon, 22 Oct 2018 19:39:49 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Stefan Popa <stefan.popa@analog.com>
+Cc:     jic23@kernel.org, mark.rutland@arm.com, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, Michael.Hennerich@analog.com,
+        gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] dt-bindings: iio: adc: Add docs for ad7124
+Message-ID: <20181023003949.GA24213@bogus>
+References: <1539935265-8904-1-git-send-email-stefan.popa@analog.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1539935265-8904-1-git-send-email-stefan.popa@analog.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Li <liwei213@huawei.com>
+On Fri, Oct 19, 2018 at 10:47:45AM +0300, Stefan Popa wrote:
+> Add support for Analog Devices AD7124 4-channels and 8-channels ADC.
+> 
+> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+> ---
+> Changes in v2:
+> 	- Nothing changed.
+> 
+>  .../devicetree/bindings/iio/adc/adi,ad7124.txt     | 96 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 97 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt
+> new file mode 100644
+> index 0000000..77a7b92
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt
+> @@ -0,0 +1,96 @@
+> +Analog Devices AD7124 ADC device driver
+> +
+> +Required properties for the AD7124:
+> +	- compatible: Must be one of "adi,ad7124-4" or "adi,ad7124-8"
+> +	- reg: SPI chip select number for the device
+> +	- spi-max-frequency: Max SPI frequency to use
+> +		see: Documentation/devicetree/bindings/spi/spi-bus.txt
+> +	- clocks: phandle to the master clock (mclk)
+> +		see: Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +	- clock-names: Must be "mclk".
+> +	- interrupts: IRQ line for the ADC
+> +		see: Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+> +
+> +	- adi,channels: List of external channels connected to the ADC:
 
-Hynix ufs has deviations on hi36xx platform which will result in
-ufs bursts transfer failures.
+It's not clear here that this is a node, not a property. However, I 
+think you can just get rid of this extra level unless you anticipate 
+having other child nodes that aren't channels.
 
-To fix the problem, the Hynix device must set the register
-VS_DebugSaveConfigTime to 0x10, which will set time reference
-for SaveConfigTime is 250 ns. The time reference for SaveConfigTime
-is 40 ns by default.
+> +	  Required properties:
+> +		* #address-cells: Must be 2.
+> +		* #size-cells: Must be 0.
+> +
+> +	  The child nodes of this node represent the external channels which are
+> +	  connected to the ADC.
+> +
+> +	  Each child node represents one channel and has the following
+> +	  properties:
+> +		Required properties:
+> +			* reg: Pins the channel is connected to. The first value specifies
+> +			  the positive input pin, the second value the negative input pin.
 
-This patch is necessary to boot on HiKey960 boards that use
-Hynix UFS chips (H28U62301AMR model: hB8aL1).
+That sounds more like 2 entries than a 2 cell address.
 
-Not sure if this is the preferred way of scoping the quirk to
-the controller or not. Feedback would be greatly appreciated!
+> +			* adi,channel-number: It can have up to 4 channels on ad7124-4 and
+> +			  8 channels on ad7124-8, numbered from 0 to 15.
 
-Cc: Vinayak Holikatti <vinholikatti@gmail.com>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org
-Signed-off-by: Wei Li <liwei213@huawei.com>
-Signed-off-by: Dmitry Shmidt <dimitrysh@google.com>
-[jstultz: Forward ported from older code, slight tweak to commit message]
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
-v2:
-* Narrowed the UFS chip model to the specific model where
-  the issue has been seen. (SKhynix  H28U62301AMR model: hB8aL1)
-* Reworked logic to be contained in ufs-hisi.c since it seems to
-  be a controller issue that crops up with this specific chip
----
- drivers/scsi/ufs/ufs-hisi.c | 14 ++++++++++++++
- drivers/scsi/ufs/ufshcd.c   |  2 +-
- drivers/scsi/ufs/ufshcd.h   |  2 ++
- 3 files changed, 17 insertions(+), 1 deletion(-)
+Humm, I think the channel number would be more typically what 'reg' 
+defines and then have a custom property to list the pins. There's 
+probably some other multi-channel ADC examples in the tree.
 
-diff --git a/drivers/scsi/ufs/ufs-hisi.c b/drivers/scsi/ufs/ufs-hisi.c
-index 46df707..a306acf 100644
---- a/drivers/scsi/ufs/ufs-hisi.c
-+++ b/drivers/scsi/ufs/ufs-hisi.c
-@@ -20,6 +20,7 @@
- #include "unipro.h"
- #include "ufs-hisi.h"
- #include "ufshci.h"
-+#include "ufs_quirks.h"
- 
- static int ufs_hisi_check_hibern8(struct ufs_hba *hba)
- {
-@@ -390,6 +391,19 @@ static void ufs_hisi_set_dev_cap(struct ufs_hisi_dev_params *hisi_param)
- 
- static void ufs_hisi_pwr_change_pre_change(struct ufs_hba *hba)
- {
-+	struct ufs_dev_desc card = {0};
-+
-+	if (!ufs_get_device_desc(hba, &card)) {
-+		if ((card.wmanufacturerid == UFS_VENDOR_SKHYNIX) &&
-+		    (STR_PRFX_EQUAL("hB8aL1" /*H28U62301AMR*/, card.model))) {
-+			pr_info("Hynix ufs flash device must set VS_DebugSaveConfigTime 0x10\n");
-+			/* VS_DebugSaveConfigTime */
-+			ufshcd_dme_set(hba, UIC_ARG_MIB(0xD0A0), 0x10);
-+			/* sync length */
-+			ufshcd_dme_set(hba, UIC_ARG_MIB(0x1556), 0x48);
-+		}
-+	}
-+
- 	/* update */
- 	ufshcd_dme_set(hba, UIC_ARG_MIB(0x15A8), 0x1);
- 	/* PA_TxSkip */
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index c55f38e..326fa32 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -6242,7 +6242,7 @@ static int ufshcd_scsi_add_wlus(struct ufs_hba *hba)
- 	return ret;
- }
- 
--static int ufs_get_device_desc(struct ufs_hba *hba,
-+int ufs_get_device_desc(struct ufs_hba *hba,
- 			       struct ufs_dev_desc *dev_desc)
- {
- 	int err;
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 33fdd3f..31c0562 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -877,6 +877,8 @@ int ufshcd_read_desc_param(struct ufs_hba *hba,
- 			   u8 param_offset,
- 			   u8 *param_read_buf,
- 			   u8 param_size);
-+int ufs_get_device_desc(struct ufs_hba *hba,
-+			struct ufs_dev_desc *dev_desc);
- int ufshcd_query_attr(struct ufs_hba *hba, enum query_opcode opcode,
- 		      enum attr_idn idn, u8 index, u8 selector, u32 *attr_val);
- int ufshcd_query_flag(struct ufs_hba *hba, enum query_opcode opcode,
--- 
-2.7.4
+> +
+> +		Optional properties:
+> +			* adi,bipolar: If set the channel is used in bipolar mode.
 
+So boolean type?
+
+> +			* adi,reference-select: Select the reference source to use when
+> +			  converting on the the specific channel. Valid values are:
+> +			  0: REFIN1(+)/REFIN1(−).
+> +			  1: REFIN2(+)/REFIN2(−).
+> +			  3: AVDD
+> +			  If this field is left empty, internal reference is selected.
+> +			* adi,gain: Select the gain when converting on the specific channel.
+> +			  Valid values are: 1, 2, 4, 8, 16, 32, 64, 128.
+> +			  If this field is left empty, gain of 1 is selected.
+> +			* adi,odr-hz: The output data rate can be programmed from:
+> +			  9 to 19200 for full power mode (when the master clock is 614.4 kHz)
+> +			  2 to 4800 for mid power mode (when the master clock is 153.6 kHz)
+> +			  1 to 2400 for low power mode (when the master clock is 76.8 kHz)
+> +			  If this field is left empty, odr of 9 is selected.
+> +
+> +Optional properties:
+> +	- refin1-supply: refin1 supply can be used as reference for conversion.
+> +	- refin2-supply: refin2 supply can be used as reference for conversion.
+> +	- avdd-supply: avdd supply can be used as reference for conversion.
+> +
+> +Example:
+> +	adc@0 {
+> +		compatible = "adi,ad7124-4";
+> +		reg = <0>;
+> +		spi-max-frequency = <5000000>;
+> +		interrupts = <25 2>;
+> +		interrupt-parent = <&gpio>;
+> +		refin1-supply = <&adc_vref>;
+> +		clocks = <&ad7124_mclk>;
+> +		clock-names = "mclk";
+> +
+> +		adi,channels {
+> +			#address-cells = <2>;
+> +			#size-cells = <0>;
+> +
+> +			channel@0 {
+> +				reg = <0 1>;
+> +				adi,channel-number = <0>;
+> +				adi,reference-select = <0>;
+> +				adi,gain = <2>;
+> +				adi,odr-hz = <10>;
+> +			};
+> +
+> +			channel@1 {
+> +				reg = <2 3>;
+> +				adi,bipolar;
+> +				adi,channel-number = <1>;
+> +				adi,reference-select = <0>;
+> +				adi,gain = <4>;
+> +				adi,odr-hz = <50>;
+> +			};
+> +
+> +			channel@2 {
+> +				reg = <4 5>;
+> +				adi,channel-number = <2>;
+> +				adi,gain = <128>;
+> +				adi,odr-hz = <19200>;
+> +			};
+> +
+> +			channel@3 {
+> +				reg = <6 7>;
+> +				adi,channel-number = <3>;
+> +			};
+> +		};
+> +	};
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3a1bfcb..f2fa508 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -845,6 +845,7 @@ L:	linux-iio@vger.kernel.org
+>  W:	http://ez.analog.com/community/linux-device-drivers
+>  S:	Supported
+>  F:	drivers/iio/adc/ad7124.c
+> +F:	Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt
+>  
+>  ANALOG DEVICES INC AD9389B DRIVER
+>  M:	Hans Verkuil <hans.verkuil@cisco.com>
+> -- 
+> 2.7.4
+> 
