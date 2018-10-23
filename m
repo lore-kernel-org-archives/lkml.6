@@ -2,69 +2,75 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40661C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D535CC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 074002075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:14:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 789B62075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 11:15:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hVJ6aCI4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 074002075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eamLta3D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 789B62075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbeJWThA (ORCPT
+        id S1728128AbeJWTiG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 15:37:00 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52842 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbeJWThA (ORCPT
+        Tue, 23 Oct 2018 15:38:06 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40236 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbeJWTiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 15:37:00 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 189-v6so1347595wmw.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 04:13:59 -0700 (PDT)
+        Tue, 23 Oct 2018 15:38:06 -0400
+Received: by mail-wm1-f66.google.com with SMTP id b203-v6so1344706wme.5
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 04:15:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=1HyQ2bbt9cszvfk9MAVeEWT6agyVikeeJCuUYA9t1mo=;
-        b=hVJ6aCI4cDA8F0NBkHN1lGHYIePWfMnqM6mW2c6sY+ZXlpRaITick0bdKzf48cGMLn
-         tnhYzKnOnCXKqHvZvLKz+6VxT36nBZ9NjYm0Vf45oO5InmwEYiBBs3pqp3XCaZc8ee6p
-         uPT7REPf18SEfEhsFK+4jKsaNZd0j8SDO7dHo=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=fUiPn4dPwl3opyNTUO6CIPAnA4Do3UK5isbOHbqBsmw=;
+        b=eamLta3DT+bK6zFzrpC+4az/uq3vjdDjNHVYBnIsmOnZaafuBvyBUMTKVDYbwMQ7bZ
+         bOUJmbYJ6wL9jFWaPcXdzgHngHZnqJHDOE/9yN7fsA9XUIRm5LMEbJTGkVEhcQlRGVZz
+         EOTTLMh0Kh9Y/TrRdwlT4Rh5nV9OEBiRpKsK7S93tWnsJJwziYMDf1Usmx6ZCN2Cs7v9
+         J0ytvhAY3/h/qFIWKkP3sb9tKk660W38fprRkX4PQfts/Hy+r6fYoR2f/xlm7o5Ejs1V
+         3DN+VWU5yjnWVAY94SEfadaRFSn0YIYhHiXPbhZFOiPGapUIHAyebj5/jFk8pBJIrcTI
+         GxqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=1HyQ2bbt9cszvfk9MAVeEWT6agyVikeeJCuUYA9t1mo=;
-        b=KyzWlEp1nXDZqn1vn2XvF/Bjtff7XiwKoG7CEFxlrqstbJ3DqBpc1F78XcRJIDHRvw
-         PNUUHOLXNu9NQYkkb6t/NGAeBb46weAsS7heJ8IO0lp7n14ymZCgm6HzH1Tmu7cgfINZ
-         SeaVT6RC0MQZBBaDTBticR3vBbd5adRTDTOuTq3TednMG5baLrj9kXaS3QM5xsVzbeZ/
-         gS50WE0Vmsw29IllxzdpF25LiyEOHqRSlNYgveNZtTrLU1I/G/wpQn/ilClDJOSESrYC
-         +4a/plxStczjeO8Cgrg8U7BIhQHlpVnUxEYM0fmktthFitytasRlmP19vr0fGobgEJPq
-         /5qw==
-X-Gm-Message-State: ABuFfog/H39EVSkGzARqK8DNRsUZNIaaWV4WULYSJ/kFMYpzSRpCNX8t
-        Rvbn+tn2JkXl9TDC9Qq4NgUNKZ7Z++U=
-X-Google-Smtp-Source: AJdET5evRaifu8hy6gjcEvN4NeABnJg5oWbiNrisFvndciugRgWIyGnYt2gdrmLj12rBpPB47K+SYg==
-X-Received: by 2002:a1c:204:: with SMTP id 4-v6mr20682155wmc.138.1540293238229;
-        Tue, 23 Oct 2018 04:13:58 -0700 (PDT)
-Received: from dell ([2.27.167.33])
-        by smtp.gmail.com with ESMTPSA id q1-v6sm568445wru.23.2018.10.23.04.13.57
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=fUiPn4dPwl3opyNTUO6CIPAnA4Do3UK5isbOHbqBsmw=;
+        b=Fq7tMLmh2zBJZPod6aR/7BQ5Hda0c69CT45qDrC1g1eFx1CwYzHND4xUpHEIHiDjlJ
+         ZF1XR/QvTYuuWFiudjDC11c9BqZlFVsZFQvkYOxbtNpE49dPTHNYVwiJUiGVR9ByT0dx
+         u5osQ0yYR/N3Q4uVCASzTwUQiljnra3ZdWLYrgz/MFrrPwjigc4qpXrjjSe9hl58Oa9+
+         ROBSA6lSiBR+DXu7vtBBQEoCPtpFqFJ/xqgJXHwiSabGZeEXzyKtmW6Cauj6t1lWs8nB
+         9ZwhIIrPjC9illGPvSt6Rkq/UxfCn+aseHWW7o1+uc4pCaPd7Jk0pvSYxhGj4efcjlTE
+         p8lA==
+X-Gm-Message-State: AGRZ1gIq9jKkfAYC+nLCg6c1qcCS+ZyWbBi+SyFZU7qdmJbnCjx8XLCY
+        iNzeBP2GIm/jjYggo1BdV30=
+X-Google-Smtp-Source: AJdET5cmse27v1Dks5bpGa+qwjinPEFXjCOAJ9OJXHbZ6FjKJ9qfcJoeokmjQ1GBqtoMzyv58Ft2uQ==
+X-Received: by 2002:a1c:824b:: with SMTP id e72-v6mr19966135wmd.92.1540293303931;
+        Tue, 23 Oct 2018 04:15:03 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id o13sm1016857wrx.53.2018.10.23.04.15.02
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Oct 2018 04:13:57 -0700 (PDT)
-Date:   Tue, 23 Oct 2018 12:13:55 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Backlight for v4.20
-Message-ID: <20181023111355.GY4939@dell>
+        Tue, 23 Oct 2018 04:15:03 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 13:15:01 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] x86/asm changes for v4.20
+Message-ID: <20181023111501.GA114423@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -73,69 +79,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-Welcome back.
+Please pull the latest x86-asm-for-linus git tree from:
 
-Enjoy!
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-asm-for-linus
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+   # HEAD: ec3a94188df7d28b374868d9a2a0face910e62ab x86/fsgsbase/64: Clean up various details
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+The main changes in this cycle were the fsgsbase related preparatory 
+patches from Chang S. Bae - but there's also an optimized 
+memcpy_flushcache() and a cleanup for the __cmpxchg_double() assembly 
+glue.
 
-are available in the Git repository at:
+ Thanks,
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/backlight.git backlight-next-4.20
+	Ingo
 
-for you to fetch changes up to e1c9f2eaa0fbfda0ca0d958e98fe0c458ecfa96d:
+------------------>
+Andy Lutomirski (1):
+      x86/fsgsbase/64: Fix ptrace() to read the FS/GS base accurately
 
-  backlight: Remove ld9040 driver (2018-10-09 02:59:20 -0700)
+Chang S. Bae (7):
+      x86/fsgsbase/64: Introduce FS/GS base helper functions
+      x86/fsgsbase/64: Make ptrace use the new FS/GS base helpers
+      x86/fsgsbase/64: Convert the ELF core dump code to the new FSGSBASE helpers
+      x86/fsgsbase/64: Factor out FS/GS segment loading from __switch_to()
+      x86/segments/64: Rename the GDT PER_CPU entry to CPU_NUMBER
+      x86/vdso: Introduce helper functions for CPU and node number
+      x86/vdso: Initialize the CPU/node NR segment descriptor earlier
 
-----------------------------------------------------------------
- - Old Drivers
-   - Remove driver for S6E63M0
-   - Remove driver for LD9040
+Ingo Molnar (2):
+      x86/segments: Introduce the 'CPUNODE' naming to better document the segment limit CPU/node NR trick
+      x86/fsgsbase/64: Clean up various details
 
- - Fix-ups
-   - Trivial (email address update); adp*_bl
-   - Use 'atomic' PWM API; pwm_bl
+Mikulas Patocka (1):
+      x86/asm: Optimize memcpy_flushcache()
 
- - Bug Fixes
-   - Remove pointless boolen '&ptr' check; lm3639_bl
+Uros Bizjak (1):
+      x86/asm: Use CC_SET()/CC_OUT() in __cmpxchg_double()
 
-----------------------------------------------------------------
-Enric Balletbo i Serra (1):
-      backlight: pwm_bl: Switch to using "atomic" PWM API
 
-Krzysztof Kozlowski (2):
-      backlight: Remove s6e63m0 driver
-      backlight: Remove ld9040 driver
+ arch/x86/entry/vdso/vgetcpu.c    |   8 +-
+ arch/x86/entry/vdso/vma.c        |  38 +-------
+ arch/x86/include/asm/cmpxchg.h   |  10 ++-
+ arch/x86/include/asm/elf.h       |   6 +-
+ arch/x86/include/asm/fsgsbase.h  |  49 +++++++++++
+ arch/x86/include/asm/segment.h   |  46 +++++++++-
+ arch/x86/include/asm/string_64.h |  20 ++++-
+ arch/x86/include/asm/vgtod.h     |  26 ------
+ arch/x86/kernel/cpu/common.c     |  24 +++++
+ arch/x86/kernel/process_64.c     | 183 ++++++++++++++++++++++++++++++---------
+ arch/x86/kernel/ptrace.c         |  28 ++----
+ arch/x86/lib/usercopy_64.c       |   4 +-
+ 12 files changed, 299 insertions(+), 143 deletions(-)
+ create mode 100644 arch/x86/include/asm/fsgsbase.h
 
-Michael Hennerich (1):
-      backlight: Update MODULE AUTHOR email address
-
-Nathan Chancellor (1):
-      backlight: lm3639: Unconditionally call led_classdev_unregister
-
- Documentation/ABI/testing/sysfs-class-lcd-s6e63m0 |  27 --
- drivers/video/backlight/Kconfig                   |  16 -
- drivers/video/backlight/Makefile                  |   2 -
- drivers/video/backlight/adp5520_bl.c              |   2 +-
- drivers/video/backlight/adp8860_bl.c              |   2 +-
- drivers/video/backlight/adp8870_bl.c              |   2 +-
- drivers/video/backlight/ld9040.c                  | 811 -------------------------------------------
- drivers/video/backlight/ld9040_gamma.h            | 202 -----------
- drivers/video/backlight/lm3639_bl.c               |   6 +-
- drivers/video/backlight/pwm_bl.c                  |  81 ++---
- drivers/video/backlight/s6e63m0.c                 | 857 ----------------------------------------------
- drivers/video/backlight/s6e63m0_gamma.h           | 266 --------------
- 12 files changed, 47 insertions(+), 2227 deletions(-)
- delete mode 100644 Documentation/ABI/testing/sysfs-class-lcd-s6e63m0
- delete mode 100644 drivers/video/backlight/ld9040.c
- delete mode 100644 drivers/video/backlight/ld9040_gamma.h
- delete mode 100644 drivers/video/backlight/s6e63m0.c
- delete mode 100644 drivers/video/backlight/s6e63m0_gamma.h
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
