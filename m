@@ -2,71 +2,256 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6720C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE63C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC0F82075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:53:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC0F82075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 145EE2075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 07:57:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 145EE2075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbeJWQPp (ORCPT
+        id S1727680AbeJWQUF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 12:15:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53154 "EHLO mx1.suse.de"
+        Tue, 23 Oct 2018 12:20:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53722 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727017AbeJWQPp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 12:15:45 -0400
+        id S1727420AbeJWQUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 12:20:05 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E1328AEBB;
-        Tue, 23 Oct 2018 07:53:30 +0000 (UTC)
-Date:   Tue, 23 Oct 2018 09:53:30 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Sterba <dsterba@suse.cz>
-Cc:     Olof Johansson <olof@lixom.net>, dsterba@suse.de,
-        linux-btrfs@vger.kernel.org, clm@fb.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: Circular lock dep in btrfs triggered by shrinker
-Message-ID: <20181023075330.GP18839@dhcp22.suse.cz>
-References: <20181022100726.5hwvc5xswg3k3a2f@localhost>
- <20181022182243.GM16290@twin.jikos.cz>
+        by mx1.suse.de (Postfix) with ESMTP id BE3EAAEBB;
+        Tue, 23 Oct 2018 07:57:48 +0000 (UTC)
+Date:   Tue, 23 Oct 2018 08:57:45 +0100
+From:   Mel Gorman <mgorman@suse.de>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Argangeli <andrea@kernel.org>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: thp:  relax __GFP_THISNODE for MADV_HUGEPAGE
+ mappings
+Message-ID: <20181023075745.GA28684@suse.de>
+References: <20181009094825.GC6931@suse.de>
+ <20181009122745.GN8528@dhcp22.suse.cz>
+ <20181009130034.GD6931@suse.de>
+ <20181009142510.GU8528@dhcp22.suse.cz>
+ <20181009230352.GE9307@redhat.com>
+ <alpine.DEB.2.21.1810101410530.53455@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1810151525460.247641@chino.kir.corp.google.com>
+ <20181015154459.e870c30df5c41966ffb4aed8@linux-foundation.org>
+ <20181016074606.GH6931@suse.de>
+ <alpine.DEB.2.21.1810221355050.120157@chino.kir.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <20181022182243.GM16290@twin.jikos.cz>
+In-Reply-To: <alpine.DEB.2.21.1810221355050.120157@chino.kir.corp.google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 22-10-18 20:22:43, David Sterba wrote:
-> On Mon, Oct 22, 2018 at 03:07:26AM -0700, Olof Johansson wrote:
-> > I hit the below circular locking dependency. Seems like the assumption made in
-> > 712e36c5f2a7fa56 ("btrfs: use GFP_KERNEL in btrfs_alloc_inode") either isn't
-> > true, or has since changed?
+On Mon, Oct 22, 2018 at 02:04:32PM -0700, David Rientjes wrote:
+> On Tue, 16 Oct 2018, Mel Gorman wrote:
 > 
-> I think it must have been there from the beginning. There were reports
-> of this lockdep warning like the below and IIRC a few more
-> (https://lkml.kernel.org/r/20180627120523.GA2287@suse.cz), but without a
-> resolution.
+> > I consider this to be an unfortunate outcome. On the one hand, we have a
+> > problem that three people can trivially reproduce with known test cases
+> > and a patch shown to resolve the problem. Two of those three people work
+> > on distributions that are exposed to a large number of users. On the
+> > other, we have a problem that requires the system to be in a specific
+> > state and an unknown workload that suffers badly from the remote access
+> > penalties with a patch that has review concerns and has not been proven
+> > to resolve the trivial cases.
 > 
-> Incidentally, there was a fix that's now in the 4.20 pull and only after
-> I had seen your report I realized that it was the fix for the warning:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git/commit/?h=for-4.20-part1&id=84de76a2fb217dc1b6bc2965cc397d1648aa1404
-> 
-> It disables the filesystem allocations using the memalloc_nofs mechanism
-> around free space inode allocation, while my original patch expected
-> only regular inodes created by VFS.
+> The specific state is that remote memory is fragmented as well, this is 
+> not atypical. 
 
-Wouldn't it be better/possible to take the mark the scope at the higher
-level where you take the trans handle?
+While not necessarily atypical, *how* it gets fragmented is important.
+The final state of fragmentation depends on both the input allocation
+stream *and* the liveness of the mobility of unmovable pages. This is
+why a target workload is crucial. While it's trivial to fragment memory,
+it can be in a state that may or may not be trivially compacted.
+
+For example, a fragmenting workload that interleaves slab allocations
+with page cache may fragment memory but if the files are not being used
+at the time of a THP allocation then they are trivially
+reclaimed/compacted. However, if the files are in active use, the system
+remains active.
+
+You make the following claim in another response
+
+	The test case is rather trivial: fragment all memory with order-4
+	memory to replicate a fragmented local zone, use sched_setaffinity()
+	to bind to that node, and fault a reasonable number of hugepages
+	(128MB, 256, whatever).
+
+You do not describe why it's order-4 allocations that are fragmenting or why
+they remain live. order-4 might imply large jumbo frame allocations but they
+typically do not remain live for very long unless you are using a driver
+that recycles large numbers of order-4 pages. It's a critical detail. If
+your test case is trivial then post it so there is a common base to work
+from. A test case has been requested from you multiple times already.
+
+Note that I accept it's trivial to fragment memory in a harmful way.
+I've prototyped a test case yesterday that uses fio in the following way
+to fragment memory
+
+o fio of many small files (64K)
+o create initial pages using writes that disable fallocate and create
+  inodes on first open. This is massively inefficient from an IO
+  perspective but it mixes slab and page cache allocations so all
+  NUMA nodes get fragmented.
+o Size the page cache so that it's 150% the size of memory so it forces
+  reclaim activity and new fio activity to further mix slab and page
+  cache allocations
+o After initial write, run parallel readers to keep slab active and run
+  this for the same length of time the initial writes took so fio has
+  called stat() on the existing files and begun the read phase. This
+  forces the slab and page cache pages to remain "live" and difficult
+  to reclaim/compact.
+o Finally, start a workload that allocates THP after the warmup phase
+  but while fio is still runnning to measure allocation success rate
+  and latencies
+
+There are three configurations that use default advice, MADV_HUGEPAGE and
+"always" fragment that is still running to cover the differet configurations
+of interest. However, this is completly useless to you as even if this test
+cases are fixed, there is no guarantee at all that it helps yours. They
+are still being evaluated as they were recently prototyped but the mmtests
+configurations in case someone wishes to independently evaluate are;
+
+config-global-dhp__workload_thpfioscale
+config-global-dhp__workload_thpfioscale-defrag
+config-global-dhp__workload_thpfioscale-madvhugepage
+
+It's best to run them on a dedicated test partition if possible. Locally
+I've configured them to use a freshly created XFS filesystem.
+
+If you're going to block fixes for problems that multiple people
+experience then at least do the courtesy of providing a test case or
+prototype patches for the complex alternatives you are proposing so they
+can be independently evaluated. 
+
+> Removing __GFP_THISNODE to avoid thrashing a zone will only 
+> be beneficial when you can allocate remotely instead.  When you cannot 
+> allocate remotely instead, you've made the problem much worse for 
+> something that should be __GFP_NORETRY in the first place (and was for 
+> years) and should never thrash.
+> 
+> I'm not interested in patches that require remote nodes to have an 
+> abundance of free or unfragmented memory to avoid regressing.
+> 
+
+If only there was a test case that could reliably demonstrate this
+independenly so it can be analysed and fixed *hint hint*. Better yet,
+kindly prototype a fix.
+
+> > In the case of distributions, the first
+> > patch addresses concerns with a common workload where on the other hand
+> > we have an internal workload of a single company that is affected --
+> > which indirectly affects many users admittedly but only one entity directly.
+> > 
+> 
+> The alternative, which is my patch, hasn't been tested or shown why it 
+> cannot work.  We continue to talk about order >= pageblock_order vs
+> __GFP_COMPACTONLY.
+> 
+
+You already received negative feedback on it. I worried that it would
+conflate the requirements of THP and hugetlbfs with the latter usually
+being more willing to tolerate initial latency to get the huge pages.
+It's also being pointed out numerous times that the bug being addressed
+is for a trivial workload on a clean system and not a case that depends
+heavily on the system state. Normally the priority is to fix the trivial
+case and work on the complex case.
+
+Furthermore, Andrea has already stated that the complex alternatives will
+take too long as they are non-trivial changes and that upstrewam cannot
+be shipped (for RHEL presumably) with the existing bug. The bug being
+addressed, and has a confirmed patch for, is addressing a severe regression
+that "made important workloads unusuable". We are now in a situation where
+distributions are likely to carry an out-of-tree patch to cover the trivial
+case with a limited path forward as the blocking test case is unuavailable.
+
+All that said, your patches results when tested were inconclusive at
+best. For the trivial case, system CPU usage is indeed reduced to similar
+levels to Michal's patch. However, the actual time to complete is 15.7%
+longer than the vanilla kernel. Michal's patch completed 10.5% faster.
+
+> I'd like to know, specifically:
+> 
+>  - what measurable affect my patch has that is better solved with removing
+>    __GFP_THISNODE on systems where remote memory is also fragmented?
+> 
+
+In my case, it failed to fix the trivial case. That may be specific to
+my machine or bad luck but nevertheless, it failed. The patch is also at
+the RFC level with no test case that can be independently verified.
+
+>  - what platforms benefit from remote access to hugepages vs accessing
+>    local small pages (I've asked this maybe 4 or 5 times now)?
+> 
+
+That's a loaded question. In the case of a workload that has long
+active phases that fit in L3 cache, the remote access penalty is masked.
+Furthermore, virtualisation can benefit from THP even if remote due to
+the reduced depth of page table walks combined with the fact that vcpus
+may migrate to nodes accessing local memory due to either normal scheduler
+waker/wakee migrations or automatic NUMA balancing.
+
+>  - how is reclaiming (and possibly thrashing) memory helpful if compaction
+>    fails to free an entire pageblock due to slab fragmentation due to low
+>    on memory conditions and the page allocator preference to return node-
+>    local memory?
+> 
+
+It is not, but it requires knowledge of the future to know if
+reclaim/compaction will be truely beneficial. While it could be addressed
+with tracking state and heuristics, no such state or heuristic has been
+proposed. Furthermore, it's ortotogonal to the patch under discussion
+and this is somewhat the crux of the matter. You are naking a fix for a
+known trivial problem and proposing that people work on an unspecified,
+unbounded, long-lived project as the basis for the nak without providing
+even a prototype of what you propose.
+
+>  - how is reclaiming (and possibly thrashing) memory helpful if compaction
+>    cannot access the memory reclaimed because the freeing scanner has 
+>    already passed by it, or the migration scanner has passed by it, since
+>    this reclaim is not targeted to pages it can find?
+> 
+
+Again, knowledge of the future or a lot of memory scanning combined with
+heuristics may be required to achieve what you propose.
+
+>  - what metrics can be introduced to the page allocator so that we can
+>    determine that reclaiming (and possibly thrashing) memory will result 
+>    in a hugepage being allocated?
+> 
+
+Knowledge of the future to know as we cannot know in advance if reclaimn
+will succeed without knowing if a workload is keeping contents of slab
+and the LRU active.
+
+> Until we have answers, especially for the last, there is no reason why thp 
+> allocations should not be __GFP_NORETRY including for MADV_HUGEPAGE 
+> regions.  The implementation of memory compaction simply cannot guarantee 
+> that the cost is worthwhile.
+
+Other than the fact that the __GFP_NORETRY patch failed at least one test
+that is without a clear indication and changelog showing that it
+addresses the problems with an unreleased workload.
+
 -- 
-Michal Hocko
+Mel Gorman
 SUSE Labs
