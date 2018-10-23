@@ -2,318 +2,80 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD5C1C7112C
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB79C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:56:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F2312075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:56:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F2312075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 938A02075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:56:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 938A02075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dominikbrodowski.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728843AbeJXDVG convert rfc822-to-8bit (ORCPT
+        id S1728962AbeJXDVP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:21:06 -0400
-Received: from mga11.intel.com ([192.55.52.93]:8280 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728575AbeJXDVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:21:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:56:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
-   d="scan'208";a="90655938"
-Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by FMSMGA003.fm.intel.com with ESMTP; 23 Oct 2018 11:56:27 -0700
-Received: from lcsmsx153.ger.corp.intel.com (10.186.165.228) by
- fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 23 Oct 2018 11:56:27 -0700
-Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
- LCSMSX153.ger.corp.intel.com ([169.254.8.212]) with mapi id 14.03.0319.002;
- Tue, 23 Oct 2018 21:56:24 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v7 21/21] tpm: use u32 instead of int for PCR index
-Thread-Topic: [PATCH v7 21/21] tpm: use u32 instead of int for PCR index
-Thread-Index: AQHUawHnIN5RhfIfM0i8KmmwsGrk/aUtLgFw
-Date:   Tue, 23 Oct 2018 18:56:24 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9FB7DC@hasmsx109.ger.corp.intel.com>
-References: <20181019182307.17745-1-tomas.winkler@intel.com>
- <20181019182307.17745-22-tomas.winkler@intel.com>
- <alpine.DEB.2.21.1810232154130.8524@jsakkine-mobl1>
-In-Reply-To: <alpine.DEB.2.21.1810232154130.8524@jsakkine-mobl1>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2Q4MTA4ODUtMmY5My00MDQ3LThiZmMtNjE2ZTk1ODUzODc3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWGZvQjZqeGtIRmdLQnVcLzdId25lN1l1VTIzcklEZE03OHlpTkR6N2VyWURBUHMrZWdSQ1psQVR2bmk4VHFvRTUifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.252.19.114]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 23 Oct 2018 23:21:15 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:58124 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728575AbeJXDVP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 23:21:15 -0400
+Received: from light.dominikbrodowski.net (isilmar.linta [10.0.0.1])
+        by isilmar-4.linta.de (Postfix) with ESMTPS id C533820093C;
+        Tue, 23 Oct 2018 18:56:35 +0000 (UTC)
+Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
+        id 4D368210ED; Tue, 23 Oct 2018 20:54:29 +0200 (CEST)
+Date:   Tue, 23 Oct 2018 20:54:29 +0200
+From:   Dominik Brodowski <linux@dominikbrodowski.net>
+To:     linux-pm@vger.kernel.org, srinivas.pandruvada@linux.intel.com,
+        lenb@kernel.org
+Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org
+Subject: [PATCH] cpufreq: intel_pstate: Fix compilation for !CONFIG_ACPI
+Message-ID: <20181023185429.GA6756@light.dominikbrodowski.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> On Fri, 19 Oct 2018, Tomas Winkler wrote:
-> > The TPM specs defines PCR index as a positive number, and there is no
-> > reason to use a signed number. It is also a possible security issue as
-> > currently no functions check for a negative index, which may become a
-> > large number when converted to u32.
-> >
-> > Adjust the API to use u32 instead of int in all PCR related functions.
-> >
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> > V3: New in the series.
-> > V4: Separate unrelated change to another patches.
-> > V5: Fix the commit message.
-> > V6: Rebased.
-> > V7: Resend.
-> >
-> > drivers/char/tpm/tpm-interface.c    |  6 +++---
-> > drivers/char/tpm/tpm-sysfs.c        |  2 +-
-> > drivers/char/tpm/tpm.h              | 10 +++++-----
-> > drivers/char/tpm/tpm1-cmd.c         |  6 +++---
-> > drivers/char/tpm/tpm2-cmd.c         |  5 ++---
-> > include/linux/tpm.h                 | 11 +++++++----
-> > security/integrity/ima/ima_crypto.c |  5 +++--
-> > 7 files changed, 24 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm-interface.c
-> > b/drivers/char/tpm/tpm-interface.c
-> > index acd647476ae1..d9439f9abe78 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -38,7 +38,7 @@
-> >  * recently changed pcr on suspend, so force the flush
-> >  * with an extend to the selected _unused_ non-volatile pcr.
-> >  */
-> > -static int tpm_suspend_pcr;
-> > +static u32 tpm_suspend_pcr;
-> > module_param_named(suspend_pcr, tpm_suspend_pcr, uint, 0644);
-> > MODULE_PARM_DESC(suspend_pcr,
-> > 		 "PCR to use for dummy writes to facilitate flush on
-> suspend."); @@
-> > -455,7 +455,7 @@ EXPORT_SYMBOL_GPL(tpm_is_tpm2);
-> >  *
-> >  * Return: same as with tpm_transmit_cmd()  */ -int
-> > tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-> > +int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
-> > {
-> > 	int rc;
-> >
-> > @@ -485,7 +485,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
-> >  *
-> >  * Return: same as with tpm_transmit_cmd()  */ -int
-> > tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
-> > +int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8
-> > +*hash)
-> > {
-> > 	int rc;
-> > 	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
-> > diff --git a/drivers/char/tpm/tpm-sysfs.c
-> > b/drivers/char/tpm/tpm-sysfs.c index 96fc7433c57d..b88e08ec2c59 100644
-> > --- a/drivers/char/tpm/tpm-sysfs.c
-> > +++ b/drivers/char/tpm/tpm-sysfs.c
-> > @@ -102,7 +102,7 @@ static ssize_t pcrs_show(struct device *dev, struct
-> device_attribute *attr,
-> > 	cap_t cap;
-> > 	u8 digest[TPM_DIGEST_SIZE];
-> > 	ssize_t rc;
-> > -	int i, j, num_pcrs;
-> > +	u32 i, j, num_pcrs;
-> > 	char *str = buf;
-> > 	struct tpm_chip *chip = to_tpm_chip(dev);
-> >
-> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index
-> > e0778d19da98..f27d1f38a93d 100644
-> > --- a/drivers/char/tpm/tpm.h
-> > +++ b/drivers/char/tpm/tpm.h
-> > @@ -509,14 +509,14 @@ ssize_t tpm_transmit_cmd(struct tpm_chip
-> *chip,
-> > struct tpm_space *space, int tpm_get_timeouts(struct tpm_chip *); int
-> > tpm_auto_startup(struct tpm_chip *chip);
-> >
-> > -int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
-> > +int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr);
-> > int tpm1_auto_startup(struct tpm_chip *chip); int
-> > tpm1_do_selftest(struct tpm_chip *chip); int tpm1_get_timeouts(struct
-> > tpm_chip *chip); unsigned long tpm1_calc_ordinal_duration(struct
-> > tpm_chip *chip, u32 ordinal); -int tpm1_pcr_extend(struct tpm_chip
-> > *chip, int pcr_idx, const u8 *hash,
-> > +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8
-> > +*hash,
-> > 		    const char *log_msg);
-> > -int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
-> > +int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
-> > ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
-> > 		    const char *desc, size_t min_cap_length); int
-> > tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max); @@ -558,8
-> > +558,8 @@ static inline u32 tpm2_rc_value(u32 rc) }
-> >
-> > int tpm2_get_timeouts(struct tpm_chip *chip); -int
-> > tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf); -int
-> > tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
-> > +int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
-> > +int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > 		    struct tpm2_digest *digests);
-> > int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max); void
-> > tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle, diff --git
-> > a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c index
-> > 6b04648f8184..6f306338953b 100644
-> > --- a/drivers/char/tpm/tpm1-cmd.c
-> > +++ b/drivers/char/tpm/tpm1-cmd.c
-> > @@ -449,7 +449,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip) }
-> >
-> > #define TPM_ORD_PCR_EXTEND 20
-> > -int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8
-> > *hash,
-> > +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8
-> > +*hash,
-> > 		    const char *log_msg)
-> > {
-> > 	struct tpm_buf buf;
-> > @@ -572,7 +572,7 @@ int tpm1_get_random(struct tpm_chip *chip, u8
-> > *dest, size_t max) }
-> >
-> > #define TPM_ORD_PCRREAD 21
-> > -int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-> > +int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
-> > {
-> > 	struct tpm_buf buf;
-> > 	int rc;
-> > @@ -729,7 +729,7 @@ int tpm1_auto_startup(struct tpm_chip *chip)
-> >  * * 0 on success,
-> >  * * < 0 on error.
-> >  */
-> > -int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
-> > +int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
-> > {
-> > 	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
-> > 	struct tpm_buf buf;
-> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> > index 6ca4fc0a0d6f..ae86fb0218ab 100644
-> > --- a/drivers/char/tpm/tpm2-cmd.c
-> > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > @@ -175,7 +175,7 @@ struct tpm2_pcr_read_out {
-> >  *
-> >  * Return: Same as with tpm_transmit_cmd.
-> >  */
-> > -int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-> > +int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
-> > {
-> > 	int rc;
-> > 	struct tpm_buf buf;
-> > @@ -225,7 +225,7 @@ struct tpm2_null_auth_area {
-> >  *
-> >  * Return: Same as with tpm_transmit_cmd.
-> >  */
-> > -int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
-> > +int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > 		    struct tpm2_digest *digests)
-> > {
-> > 	struct tpm_buf buf;
-> > @@ -272,7 +272,6 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int
-> pcr_idx, u32 count,
-> > 	return rc;
-> > }
-> >
-> > -
-> > struct tpm2_get_random_out {
-> > 	__be16 size;
-> > 	u8 buffer[TPM_MAX_RNG_DATA];
-> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h index
-> > 4609b94142d4..b49a55cf775f 100644
-> > --- a/include/linux/tpm.h
-> > +++ b/include/linux/tpm.h
-> > @@ -53,8 +53,8 @@ struct tpm_class_ops { #if defined(CONFIG_TCG_TPM)
-> > || defined(CONFIG_TCG_TPM_MODULE)
-> >
-> > extern int tpm_is_tpm2(struct tpm_chip *chip); -extern int
-> > tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf); -extern
-> > int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8
-> > *hash);
-> > +extern int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8
-> > +*res_buf); extern int tpm_pcr_extend(struct tpm_chip *chip, u32
-> > +pcr_idx, const u8 *hash);
-> > extern int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen);
-> > extern int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t
-> > max); extern int tpm_seal_trusted(struct tpm_chip *chip, @@ -69,15
-> > +69,18 @@ static inline int tpm_is_tpm2(struct tpm_chip *chip) {
-> > 	return -ENODEV;
-> > }
-> > -static inline int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8
-> > *res_buf)
-> > +
-> > +static inline int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8
-> > +*res_buf)
-> > {
-> > 	return -ENODEV;
-> > }
-> > -static inline int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx,
-> > +
-> > +static inline int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
-> > 				 const u8 *hash)
-> > {
-> > 	return -ENODEV;
-> > }
-> > +
-> > static inline int tpm_send(struct tpm_chip *chip, void *cmd, size_t
-> > buflen) {
-> > 	return -ENODEV;
-> > diff --git a/security/integrity/ima/ima_crypto.c
-> > b/security/integrity/ima/ima_crypto.c
-> > index 7e7e7e7c250a..959d9edc113a 100644
-> > --- a/security/integrity/ima/ima_crypto.c
-> > +++ b/security/integrity/ima/ima_crypto.c
-> > @@ -629,7 +629,7 @@ int ima_calc_buffer_hash(const void *buf, loff_t
-> len,
-> > 	return calc_buffer_shash(buf, len, hash); }
-> >
-> > -static void __init ima_pcrread(int idx, u8 *pcr)
-> > +static void __init ima_pcrread(u32 idx, u8 *pcr)
-> > {
-> > 	if (!ima_tpm_chip)
-> > 		return;
-> > @@ -645,7 +645,8 @@ static int __init ima_calc_boot_aggregate_tfm(char
-> *digest,
-> > 					      struct crypto_shash *tfm)
-> > {
-> > 	u8 pcr_i[TPM_DIGEST_SIZE];
-> > -	int rc, i;
-> > +	int rc;
-> > +	u32 i;
-> > 	SHASH_DESC_ON_STACK(shash, tfm);
-> >
-> > 	shash->tfm = tfm;
-> >
-> 
-> All commits have been now applied.
-> 
-Appreciated.
-Thanks
-Tomas
 
+Fixes: 86d333a8cc7f ("cpufreq: intel_pstate: Add base_frequency attribute")
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Len Brown <lenb@kernel.org>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index 49c0abf2d48f..50c5699970c5 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -390,11 +390,6 @@ static int intel_pstate_get_cppc_guranteed(int cpu)
+ static void intel_pstate_set_itmt_prio(int cpu)
+ {
+ }
+-
+-static int intel_pstate_get_cppc_guranteed(int cpu)
+-{
+-	return -ENOTSUPP;
+-}
+ #endif
+ 
+ static void intel_pstate_init_acpi_perf_limits(struct cpufreq_policy *policy)
+@@ -490,6 +485,11 @@ static inline bool intel_pstate_acpi_pm_profile_server(void)
+ {
+ 	return false;
+ }
++
++static int intel_pstate_get_cppc_guranteed(int cpu)
++{
++	return -ENOTSUPP;
++}
+ #endif
+ 
+ static inline void update_turbo_state(void)
