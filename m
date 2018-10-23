@@ -5,71 +5,89 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D69C4C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 06:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E9CC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 06:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 889D5205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 06:10:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 889D5205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id D6E7720813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 06:13:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6E7720813
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbeJWOci (ORCPT
+        id S1727647AbeJWOfI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 10:32:38 -0400
-Received: from smtprelay0242.hostedemail.com ([216.40.44.242]:35764 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726837AbeJWOci (ORCPT
+        Tue, 23 Oct 2018 10:35:08 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:24761
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726764AbeJWOfI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 10:32:38 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 771D718017BF5;
-        Tue, 23 Oct 2018 06:10:42 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: snail41_6067c9cebc48
-X-Filterd-Recvd-Size: 1741
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 23 Oct 2018 06:10:41 +0000 (UTC)
-Message-ID: <a401f973508662fa241b1410e08480884baca606.camel@perches.com>
-Subject: Re: [Ksummit-discuss] [GIT PULL] code of conduct fixes for 4.19-rc8
-From:   Joe Perches <joe@perches.com>
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        ksummit-discuss@lists.linuxfoundation.org
-Date:   Mon, 22 Oct 2018 23:10:40 -0700
-In-Reply-To: <800b68eb-9cf4-9c72-104d-0d4d9ae26ea1@infradead.org>
-References: <1540066514.3464.22.camel@HansenPartnership.com>
-         <20181022211025.GA8911@kroah.com>
-         <23e41205115d317908c63d37a20ee316b44a8404.camel@perches.com>
-         <800b68eb-9cf4-9c72-104d-0d4d9ae26ea1@infradead.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 23 Oct 2018 10:35:08 -0400
+X-IronPort-AV: E=Sophos;i="5.54,415,1534802400"; 
+   d="scan'208";a="283003085"
+Received: from 30.9-255-62.static.virginmediabusiness.co.uk (HELO [172.16.7.66]) ([62.255.9.30])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 08:13:10 +0200
+Date:   Tue, 23 Oct 2018 07:13:09 +0100 (BST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Arun Sudhilal <getarunks@gmail.com>,
+        Arun KS <arunks@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>, Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] mm: convert totalram_pages, totalhigh_pages and
+ managed_pages to atomic.
+In-Reply-To: <20181023053359.GL18839@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.1810230711220.2343@hadrien>
+References: <1540229092-25207-1-git-send-email-arunks@codeaurora.org> <20181022181122.GK18839@dhcp22.suse.cz> <CABOM9Zpq41Ox8wQvsNjgfCtwuqh6CnyeW1B09DWa1TQN+JKf0w@mail.gmail.com> <20181023053359.GL18839@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-22 at 23:05 -0700, Randy Dunlap wrote:
-> On 10/22/18 9:16 PM, Joe Perches wrote:
-> > As James Bottomley has suggested multiple times,
-> > I'd much rather kernel development use the debian
-> > code of conduct verbatim than even this modified one.
-> > 
-> > https://www.debian.org/code_of_conduct
-> 
-> Yes, that and the Samba URL are good.
-> 
-> And it's disappointing how patches from James are acked or reviewed on the
-> mailing lists and then mostly ignored (until the maintainer summit) while
-> other patches are merged into the mainline git tree.
-> 
-> It seems to be very one-sided.
 
-Perhaps an apt description is 'cabal like'.
 
+On Tue, 23 Oct 2018, Michal Hocko wrote:
+
+> [Trimmed CC list + Julia - there is indeed no need to CC everybody maintain a
+> file you are updating for the change like this]
+>
+> On Tue 23-10-18 10:16:51, Arun Sudhilal wrote:
+> > On Mon, Oct 22, 2018 at 11:41 PM Michal Hocko <mhocko@kernel.org> wrote:
+> > >
+> > > On Mon 22-10-18 22:53:22, Arun KS wrote:
+> > > > Remove managed_page_count_lock spinlock and instead use atomic
+> > > > variables.
+> > >
+> >
+> > Hello Michal,
+> > > I assume this has been auto-generated. If yes, it would be better to
+> > > mention the script so that people can review it and regenerate for
+> > > comparision. Such a large change is hard to review manually.
+> >
+> > Changes were made partially with script.  For totalram_pages and
+> > totalhigh_pages,
+> >
+> > find dir -type f -exec sed -i
+> > 's/totalram_pages/atomic_long_read(\&totalram_pages)/g' {} \;
+> > find dir -type f -exec sed -i
+> > 's/totalhigh_pages/atomic_long_read(\&totalhigh_pages)/g' {} \;
+> >
+> > For managed_pages it was mostly manual edits after using,
+> > find mm/ -type f -exec sed -i
+> > 's/zone->managed_pages/atomic_long_read(\&zone->managed_pages)/g' {}
+> > \;
+>
+> I guess we should be able to use coccinelle for this kind of change and
+> reduce the amount of manual intervention to absolute minimum.
+
+Coccinelle looks like it would be desirable, especially in case the word
+zone is not always used.
+
+Arun, please feel free to contact me if you want to try it and need help.
+
+julia
