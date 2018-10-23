@@ -2,145 +2,104 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41DB8C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9512EC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:06:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B825820813
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:05:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BC2620671
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 18:06:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1VHvmEEv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B825820813
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DYpLUnyt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BC2620671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728540AbeJXC3f (ORCPT
+        id S1728671AbeJXCaa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 22:29:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33076 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725997AbeJXC3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 22:29:35 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 699A120671;
-        Tue, 23 Oct 2018 18:05:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540317907;
-        bh=R4KpHg/vibBHyOE2VlSTvPP6bhjBkOc+Oh/8G8JdH3s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1VHvmEEvoCTiEKslJxUDz6o1VT7VqEmuSxq95Bz2dlViRy0pVwx+5lV0qSubikFWo
-         Eh+DHwpY5vhCxpDRg8WuGm3mkS91p2DUOwtlgLZTbShXqtBXcFnB2wpcce+kgMrMK5
-         1heSisSSk75YZ+QtT80raIcz4LRKh2m9dmExSv0U=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id CE554142C5E; Tue, 23 Oct 2018 15:05:03 -0300 (-03)
-Date:   Tue, 23 Oct 2018 15:05:03 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     David Miller <davem@davemloft.net>
-Cc:     jolsa@redhat.com, dzickus@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: perf overlapping maps...
-Message-ID: <20181023180503.GA6114@kernel.org>
-References: <20181022161613.GF2945@krava>
- <20181022.105842.1364583912952511294.davem@davemloft.net>
- <20181023063452.GB20075@krava>
- <20181023.105405.364015687995752826.davem@davemloft.net>
+        Tue, 23 Oct 2018 22:30:30 -0400
+Received: from mail-lf1-f53.google.com ([209.85.167.53]:32834 "EHLO
+        mail-lf1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725997AbeJXCa3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 22:30:29 -0400
+Received: by mail-lf1-f53.google.com with SMTP id o21-v6so1905746lfe.0;
+        Tue, 23 Oct 2018 11:06:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=E8Gg4mKKacYaQ8jlyesL8yhwS9omVZzGYBqcq8s4anE=;
+        b=DYpLUnytObPZSYjDWUu7ps56mlnKKjWRvZuKd17tcfOzZoZyWjj9xs6Ki8UnwB6Syg
+         3eiZ+sG+zbHpbDFKaglz+wYH6yHqy6AUcM5GDgg2+VNXmBJlSc/XZgb3gHt+C4e/FfzG
+         SNDTH9GE2+G2/iATChTxlqMzu751e1rZtu4NYTLXRRQ1KSNgV0vHX15zIehM3oGFTP+D
+         4bHXix0XWp4aUt6Mayvb/BQK8HSgF55ly5BCFZWeGTymOymNt6LHcUg6FOR16UFySupL
+         jLg3ru5bUktmAS35P1uHNYlTrjhtY9WXmxflY0bRItUjMghP5pwPkM/4dXrQXs0Wa679
+         7E7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=E8Gg4mKKacYaQ8jlyesL8yhwS9omVZzGYBqcq8s4anE=;
+        b=pOoW4U99th1Ebz/UQ8r5VVO7mc/fxwzOLEbc1RN6bP3n83q0WQIHi9i+XK54C3SOy6
+         gJQQaLPFmJhHP95wpoedvKlkLo7J3TJTphrN+lT7IyEUAckPIvXgm3WTnLtEZfRnReiG
+         8AIqa1IpvjlhwNUk5OdbTWDCzLYfXetQYFmNVkvfYomsXEZDFZ5AmOwiLdXiQeQOAe5V
+         JDd2O0ilEEEg5sAHvwz2/IJOs1S6o4ivL8ohHvmTSWoAr2NGRvj4ySFf0o/Ker6b2XfW
+         lWd1HKwI5Q/D5D2dIIolsZX+NVHXoVwNNJ2ijPN15MgHRPJOgKE4SjOmndyy5J03CUgq
+         MR/w==
+X-Gm-Message-State: ABuFfojP7LjjDPFt7NhCCQ7kU4NOLhDsBSxDBiDUfNdvNzTxO+z8UcOc
+        UmZmuQiWU70FvKg84f4D396hfdS+rAP1cTBv3+w=
+X-Google-Smtp-Source: ACcGV60mbuS/f2euoCVSpjveTJx9v+pE6W3T8v/dwjg9VfSZAqQjp8G8M1ZJKXPBYIbeCJb3G9nPm/2BreVjlRjKYMk=
+X-Received: by 2002:a19:7d55:: with SMTP id y82-v6mr12941001lfc.29.1540317960627;
+ Tue, 23 Oct 2018 11:06:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181023.105405.364015687995752826.davem@davemloft.net>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <a99840d5-7d57-ec1f-1c70-37ffa6cfd31b@lwfinger.net>
+ <20181023143856.GD6850@thunk.org> <alpine.LRH.2.00.1810231833260.2860@gjva.wvxbf.pm>
+ <20181023173747.GG6850@thunk.org>
+In-Reply-To: <20181023173747.GG6850@thunk.org>
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date:   Tue, 23 Oct 2018 11:05:48 -0700
+Message-ID: <CAKdAkRQvwe93nwLgEQuSsmbUbzMzVjO22wrfg=wzQtfHoSq2DA@mail.gmail.com>
+Subject: Re: Is Fixes line enough?
+To:     "Theodore Ts'o" <tytso@mit.edu>, Jiri Kosina <jikos@kernel.org>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Oct 23, 2018 at 10:54:05AM -0700, David Miller escreveu:
-> From: Jiri Olsa <jolsa@redhat.com>
-> Date: Tue, 23 Oct 2018 08:34:52 +0200
-> 
-> > I'm not sure about using the misc field bit defined/used by userland,
-> > in case there's some new one comming in future for fork event..
-> > 
-> > but the only other way I can think of now is adding new 'user' event
-> > for that, but that ended up as a bigger change (attached)
-> > 
-> > I think if we make some 'big enough' comment about the bit usage,
-> > your change is better.. will you post or should I?
-> 
-> There might be something else we can do to implement this, and I think
-> making a whole new event for what is an application internal problem
-> is overkill.
+On Tue, Oct 23, 2018 at 10:38 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>
+> On Tue, Oct 23, 2018 at 06:36:26PM +0200, Jiri Kosina wrote:
+> > FWIW, I brought this up already at KS 2016, see Jon's coverage here:
+> >
+> >       https://lwn.net/Articles/705220/
+> >
+> > My primary motivation to bring that up back then was to try to reduce the
+> > number of patches that are taken into -stable while there is no good
+> > justification for that (by requiring each and every of those having Fixes:
+> > present as a requirement), but it didn't really lead anywhere.
+>
+> Ah, I didn't get that you were trying to suggest that things only go
+> into stable if it has both Fixes: *and* Cc: Stable.
+>
+> If that's the problem you were trying to solve, perhaps we could ask
+> Stephen Rothwell if he would be willing to run a script that sends
+> nag-o-grams to Maintainers who incluce patches in linux-next that have
+> Cc: stable but neither Fixes nor a "# 4.x" appended to the end of the
+> Cc: stable line?
+>
 
-agreed, I saw this earlier today and thought about "use cpumode" but got
-sidetracked with processing other patches :-\ see below.
- 
-> What is kind of silly about how all of the synthetic events work is
-> that we throw away a lot of information by tossing the events over to
-> the generic event processing engine of the perf tool.
-> 
-> So we generate the events knowing the thread, context, PID, cpu, etc.
-> and then we lose all of that information, and the event processing
-> engine has to look all of it up again.
-> 
-> This is also, BTW, the reason we have dependencies on synthetic event
-> emission ordering.  F.e. this comes up wrt. COMM and FORK events.
-> 
-> I understand that this design allows the perf tool types to define a
-> private function to dispatch the events, as is appropriate for what
-> the tool is doing.
-> 
-> But the side effect of this design is that it means it is hard to pass
-> internal state around, outside of the event object itself.
-> 
-> Anyways, I'll look into this and see if there is a better way to
-> implement this.
+Patches adding new PCI/USB/ACPI IDs or DMI quirks are usually accepted
+into stable but normally lack "Fixes" tag.
 
-IIRC this was first done for 'perf record', where we have to stash those
-events in the perf.data file, to then, later, 'perf report' to process
-those, so when working on 'perf top', it just reuses that machinery.
+Thanks.
 
-Sure, with some love and care 'perf top' could do better and update all
-the data structures directly :-)
-
-Anyway, have you guys considered tweaking using event->header.misc |=
-PERF_RECORD_MISC_USER? The kernel leaves that as zero for the
-PERF_RECORD_FORK it emits:
-
-static void perf_event_task(struct task_struct *task,
-                              struct perf_event_context *task_ctx,
-                              int new)
-{
-        struct perf_task_event task_event;
-
-        if (!atomic_read(&nr_comm_events) &&
-            !atomic_read(&nr_mmap_events) &&
-            !atomic_read(&nr_task_events))
-                return;
-
-        task_event = (struct perf_task_event){
-                .task     = task,
-                .task_ctx = task_ctx,
-                .event_id    = {
-                        .header = {
-                                .type = new ? PERF_RECORD_FORK : PERF_RECORD_EXIT,
-                                .misc = 0,
-                                .size = sizeof(task_event.event_id),
-                        },
-<SNIP>
- 
-void perf_event_fork(struct task_struct *task)
-{
-        perf_event_task(task, NULL, 1);
-        perf_event_namespaces(task);
-}
-
-#define PERF_RECORD_MISC_CPUMODE_UNKNOWN        (0 << 0)
-#define PERF_RECORD_MISC_KERNEL                 (1 << 0)
-#define PERF_RECORD_MISC_USER                   (2 << 0)
-
-- Arnaldo
+-- 
+Dmitry
