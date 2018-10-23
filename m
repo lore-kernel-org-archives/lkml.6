@@ -2,138 +2,109 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C76EC004D3
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:05:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76617C004D3
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E13E2064C
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:05:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9971D20674
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 01:06:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="CqxtW2at"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E13E2064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WiN596Ut"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9971D20674
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbeJWJ0V (ORCPT
+        id S1727780AbeJWJ1G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 05:26:21 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39567 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727739AbeJWJ0V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 05:26:21 -0400
-Received: by mail-oi1-f193.google.com with SMTP id y81-v6so33831365oia.6
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 18:05:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LLGM/TIWzl/vGR2lOho6G+DtskYukbTdjeItH+ug3gQ=;
-        b=CqxtW2atpN6n/1353B3eELp8W9NGvRXag3NcibXKUTW7H8wxpgYoR4kOvPCFnN/WPf
-         bytQeUCKfszwwCBoE9jxvCiFjNTXWua+yV+nqzAJmBQGJ7OiY2+Y7BeM5hePG6FiKjRh
-         nmD6jpzFlgeLoPabyFW6o5phJ5NFxvA5e6/J6jUPJcKhdPHCRYgfIIMRU7F3mH0xBfkJ
-         v6KKO284AFbhXXGzozbIOSmyXNEujvA/imJX0gRS31lvfqQGqugeuyos8fMervW6Y9L7
-         hrVwLTrqKmVYl/AOQROvWh9qBvHw9Kn4LMw1M2M/Xczn0dnyAWXPWYYCFqR0BgVDpQyD
-         Absw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LLGM/TIWzl/vGR2lOho6G+DtskYukbTdjeItH+ug3gQ=;
-        b=q+ZAajaKaUF2512N6YkntiE4OKuRdS+OjFTi6nfmfu+gkgAtoW44u//XGnTCye+2vt
-         jpjEJTrHHHrT26e+lw2CKYaDLyLapaKQ4bG+90sRY/EiwOSv1MmG6fsi3o0klixud9v9
-         Rzn01MspE7FsmgJj2CZmS4KfzhpI83FO+UrMT04c+4GzvvtoO+rSfxUOczwna/R3NMP1
-         innEeVBj4+v1d2jxAruZ/9HSB9Myk6gRGa4Qu5QMeejDer9A7fl4JZ5tK7aO7jy6N3Iv
-         pM+cnxdXMAI7/UgdT6XVhr68R/SN4506+qELq4Ug8Id9iGBOIr1HnjDhtj4eVa44OgEi
-         kXAw==
-X-Gm-Message-State: ABuFfogUq8x4Tex8LSoBWXmbSa4m4Hcb3mJzKFRBybai8CX3hpPL7GJy
-        ADysg075nvj6J7QI34X3zc6WQwD/YsbQ4aOARrZ6vQ==
-X-Google-Smtp-Source: ACcGV61Hr9bdqai1eJmG32znpmB7zx9W86O9uM0D7aCwHYERCcdvmbBEhxHG86TZAEFrT81AeHM0nbnV4MD3OesxSXA=
-X-Received: by 2002:a54:4516:: with SMTP id l22-v6mr26410695oil.0.1540256722800;
- Mon, 22 Oct 2018 18:05:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181022201317.8558C1D8@viggo.jf.intel.com>
-In-Reply-To: <20181022201317.8558C1D8@viggo.jf.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 22 Oct 2018 18:05:11 -0700
-Message-ID: <CAPcyv4hxs-GnmwQU1wPZyg5aydCY5K09-YpSrrLpvU1v_8dbBw@mail.gmail.com>
-Subject: Re: [PATCH 0/9] Allow persistent memory to be used like normal RAM
-To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux MM <linux-mm@kvack.org>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        Fengguang Wu <fengguang.wu@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 23 Oct 2018 05:27:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49262 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727187AbeJWJ1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 05:27:06 -0400
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A0902064C;
+        Tue, 23 Oct 2018 01:06:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540256768;
+        bh=4Jjj1C6ElfuQVh9qn5XTKaf9YikveYNTtZsYlo6uVGo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=WiN596UtcpV8nLePTj0Nn3BJOh2IMzV2IdQl7wb2IOr6ZSOWjT+3gN2WEk/egr8+R
+         9yTIdRiUQbhkG790n8gtyo4KUpa45UcqTfT0VG/u/oUYLO1HjhVBfh999uO/DDby8I
+         h0ny7fk2j0ZBy7UhJlZBOE6kOvrTgww78frUeH6g=
+Date:   Tue, 23 Oct 2018 10:06:04 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        William Cohen <wcohen@redhat.com>,
+        Laura Abbott <labbott@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: kprobes: Fix false positive with FORTIFY_SOURCE
+Message-Id: <20181023100604.ea7a1a9b5c1c8904aab1b36b@kernel.org>
+In-Reply-To: <20181022093023.GA8920@beast>
+References: <20181022093023.GA8920@beast>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 1:18 PM Dave Hansen <dave.hansen@linux.intel.com> wrote:
->
-> Persistent memory is cool.  But, currently, you have to rewrite
-> your applications to use it.  Wouldn't it be cool if you could
-> just have it show up in your system like normal RAM and get to
-> it like a slow blob of memory?  Well... have I got the patch
-> series for you!
->
-> This series adds a new "driver" to which pmem devices can be
-> attached.  Once attached, the memory "owned" by the device is
-> hot-added to the kernel and managed like any other memory.  On
-> systems with an HMAT (a new ACPI table), each socket (roughly)
-> will have a separate NUMA node for its persistent memory so
-> this newly-added memory can be selected by its unique NUMA
-> node.
->
-> This is highly RFC, and I really want the feedback from the
-> nvdimm/pmem folks about whether this is a viable long-term
-> perversion of their code and device mode.  It's insufficiently
-> documented and probably not bisectable either.
->
-> Todo:
-> 1. The device re-binding hacks are ham-fisted at best.  We
->    need a better way of doing this, especially so the kmem
->    driver does not get in the way of normal pmem devices.
-> 2. When the device has no proper node, we default it to
->    NUMA node 0.  Is that OK?
-> 3. We muck with the 'struct resource' code quite a bit. It
->    definitely needs a once-over from folks more familiar
->    with it than I.
-> 4. Is there a better way to do this than starting with a
->    copy of pmem.c?
+On Mon, 22 Oct 2018 02:30:23 -0700
+Kees Cook <keescook@chromium.org> wrote:
 
-So I don't think we want to do patch 2, 3, or 5. Just jump to patch 7
-and remove all the devm_memremap_pages() infrastructure and dax_region
-infrastructure.
+> The arm compiler internally interprets an inline assembly label
+> as an unsigned long value, not a pointer. As a result, under
+> CONFIG_FORTIFY_SOURCE, the size of the array pointed to by an address
+> of a label is 4 bytes, which was tripping the runtime checks. Instead,
+> we can just cast the label (as done with the size calculations earlier)
+> to avoid the problem.
+> 
+> Reported-by: William Cohen <wcohen@redhat.com>
+> Fixes: 6974f0c4555e ("include/linux/string.h: add the option of fortified string.h functions")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-The driver should be a dead simple turn around to call add_memory()
-for the passed in range. The hard part is, as you say, arranging for
-the kmem driver to not stand in the way of typical range / device
-claims by the dax_pmem device.
+Good catch! This looks good to me.
 
-To me this looks like teaching the nvdimm-bus and this dax_kmem driver
-to require explicit matching based on 'id'. The attachment scheme
-would look like this:
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-modprobe dax_kmem
-echo dax0.0 > /sys/bus/nd/drivers/dax_kmem/new_id
-echo dax0.0 > /sys/bus/nd/drivers/dax_pmem/unbind
-echo dax0.0 > /sys/bus/nd/drivers/dax_kmem/bind
+Thank you,
 
-At step1 the dax_kmem drivers will match no devices and stays out of
-the way of dax_pmem. It learns about devices it cares about by being
-explicitly told about them. Then unbind from the typical dax_pmem
-driver and attach to dax_kmem to perform the one way hotplug.
 
-I expect udev can automate this by setting up a rule to watch for
-device-dax instances by UUID and call a script to do the detach /
-reattach dance.
+> ---
+>  arch/arm/probes/kprobes/opt-arm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/probes/kprobes/opt-arm.c b/arch/arm/probes/kprobes/opt-arm.c
+> index b2aa9b32bff2..2c118a6ab358 100644
+> --- a/arch/arm/probes/kprobes/opt-arm.c
+> +++ b/arch/arm/probes/kprobes/opt-arm.c
+> @@ -247,7 +247,7 @@ int arch_prepare_optimized_kprobe(struct optimized_kprobe *op, struct kprobe *or
+>  	}
+>  
+>  	/* Copy arch-dep-instance from template. */
+> -	memcpy(code, &optprobe_template_entry,
+> +	memcpy(code, (unsigned char *)optprobe_template_entry,
+>  			TMPL_END_IDX * sizeof(kprobe_opcode_t));
+>  
+>  	/* Adjust buffer according to instruction. */
+> -- 
+> 2.17.1
+> 
+> 
+> -- 
+> Kees Cook
+> Pixel Security
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
