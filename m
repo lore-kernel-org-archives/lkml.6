@@ -2,85 +2,70 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C92C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E26CC67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:36:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2AB9207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:35:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EGljOfDG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2AB9207DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2EEAA20665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:36:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EEAA20665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbeJWR6R (ORCPT
+        id S1728681AbeJWR6d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 13:58:17 -0400
-Received: from mail-lf1-f41.google.com ([209.85.167.41]:34966 "EHLO
-        mail-lf1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728644AbeJWR6R (ORCPT
+        Tue, 23 Oct 2018 13:58:33 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:58219 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728557AbeJWR6d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 13:58:17 -0400
-Received: by mail-lf1-f41.google.com with SMTP id d7-v6so596846lfi.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 02:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=J1+EROeEjWTWEKvw09h3UwBdHMUt8ySP2FzjmP4Y2nk=;
-        b=EGljOfDGM9VsrjADrUVBiVOVw0PH/tN1YBJwUT9SvroFyYfrRax32433AZltcfRCBP
-         9dIHps5ZPrSoOOIjKXy4SvXqr3j1DYmFNGFh7SQUNH3MFw4imrU1V1Ma52M3Q53ZGbrh
-         tWFT9uABHUd2eD7hR9ZlOhAxoG4se+xoavYNo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J1+EROeEjWTWEKvw09h3UwBdHMUt8ySP2FzjmP4Y2nk=;
-        b=XLlvC7fEFNMOp5z8E1+RG947YNhwH/sgjwAIdu0qMS4ToWwMCjXMxdQRDrSrmlgCb2
-         DpeN5UO9YWWWqTdCQERPLtZ+3IKN29Cx5yZCizazWZcdxgRbSbEizIzwFPusz+EOC3x0
-         u852VrYk1BsFcQiUAl2w3syx7FtH02VEHlq9jqkcSdJbdHDR1g/4YW5nZBVfnAhGRckG
-         mMdObtUnrsr2QAkOD/NzoK8VGROo2UTxJC6phMyF3FjkAgTjmPwLX5spAJBVDUiuhIve
-         jC8PW6lz/sQKgI0KoE6mSQ2BX7+MMZ2UGInbuhtBadqGDVDjaACj3kScrJGs4xmEWJJ2
-         9w5Q==
-X-Gm-Message-State: ABuFfohwOVFCPXBhF/dU8OKc8zlkC+tugFb1iiDdZSC5fVeqAgCFnKky
-        OZ5jqSkniG3l/gU+3nWDpmo9ekEy9hEIlcls
-X-Google-Smtp-Source: ACcGV63TOR4nNlgrIEzefO/mVHiGPVifMHL6nfVx7lqC+gAulkNLJEtggXdHuJmxnoK/lcEahxnpjw==
-X-Received: by 2002:a19:f115:: with SMTP id p21mr10702487lfh.20.1540287339642;
-        Tue, 23 Oct 2018 02:35:39 -0700 (PDT)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id i186-v6sm136362lfe.41.2018.10.23.02.35.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 02:35:38 -0700 (PDT)
-Received: by mail-lf1-f46.google.com with SMTP id o2-v6so568234lfl.13
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 02:35:38 -0700 (PDT)
-X-Received: by 2002:a19:3fcf:: with SMTP id m198mr1102833lfa.106.1540287338182;
- Tue, 23 Oct 2018 02:35:38 -0700 (PDT)
+        Tue, 23 Oct 2018 13:58:33 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID w9N9ZmVE030877, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtitcas12.realtek.com.tw[172.21.6.16])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id w9N9ZmVE030877
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 23 Oct 2018 17:35:48 +0800
+Received: from RTITMBSVM01.realtek.com.tw ([fe80::f4ca:82cf:5a3:5d7a]) by
+ RTITCAS12.realtek.com.tw ([::1]) with mapi id 14.03.0415.000; Tue, 23 Oct
+ 2018 17:35:48 +0800
+From:   Pkshih <pkshih@realtek.com>
+To:     "zhongjiang@huawei.com" <zhongjiang@huawei.com>,
+        "kvalo@codeaurora.org" <kvalo@codeaurora.org>
+CC:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] rtlwifi: remove set but not used variable 'radiob_array_table' and 'radiob_arraylen'
+Thread-Topic: [PATCH v2] rtlwifi: remove set but not used variable
+ 'radiob_array_table' and 'radiob_arraylen'
+Thread-Index: AQHUaqwWhqcVPdyTf0GD+7a2PdeLy6UsC/CA
+Date:   Tue, 23 Oct 2018 09:35:47 +0000
+Message-ID: <1540287313.27623.0.camel@realtek.com>
+References: <1540283282-9772-1-git-send-email-zhongjiang@huawei.com>
+In-Reply-To: <1540283282-9772-1-git-send-email-zhongjiang@huawei.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.69.146]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7DFE95F0C7812740BEF647EF1D104DD3@realtek.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <CAJZ5v0jbwJ04_n0xrs+9hL-hVT5+JYcMRo1MMACbKgHVsFnpTg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jbwJ04_n0xrs+9hL-hVT5+JYcMRo1MMACbKgHVsFnpTg@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 23 Oct 2018 10:35:22 +0100
-X-Gmail-Original-Message-ID: <CAHk-=wjtp3wTzAKH5KGb_uTg-uu2PfAV6g_Tg=-OP_N=tZ+nsA@mail.gmail.com>
-Message-ID: <CAHk-=wjtp3wTzAKH5KGb_uTg-uu2PfAV6g_Tg=-OP_N=tZ+nsA@mail.gmail.com>
-Subject: Re: [GIT PULL] ACPI updates for v4.20-rc1
-To:     rafael@kernel.org
-Cc:     linux-acpi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 6:41 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> ACPI updates for 4.20-rc1.
-
-This - and the power management updates - pulled.
-
-             Linus
+T24gVHVlLCAyMDE4LTEwLTIzIGF0IDE2OjI4ICswODAwLCB6aG9uZyBqaWFuZyB3cm90ZToNCj4g
+cmFkaW9iX2FycmF5X3RhYmxlJyBhbmQgJ3JhZGlvYl9hcnJheWxlbicgYXJlIG5vdCB1c2VkIGFm
+dGVyIHNldHRpbmcgaXRzDQo+IHZhbHVlLg0KPiBJdCBpcyBzYWZlIHRvIHJlbW92ZSB0aGUgdW51
+c2VkIHZhcmlhYmxlLiBNZWFud2hpbGUsIHJhZGlvIEIgcmFkaW8gc2hvdWxkIGJlDQo+IHJlbW92
+ZWQgYXMgd2VsbC4gYmVjYXVzZSBpdCB3aWxsIG5vIGxvbmdlciBiZSByZWZlcmVuY2VkLg0KPiAN
+Cj4gU2lnbmVkLW9mZi1ieTogemhvbmcgamlhbmcgPHpob25namlhbmdAaHVhd2VpLmNvbT4NCj4g
+DQoNCkFja2VkLWJ5OiBQaW5nLUtlIFNoaWggPHBrc2hpaEByZWFsdGVrLmNvbT4NCg0KVGhhbmsg
+eW91DQoNCg==
