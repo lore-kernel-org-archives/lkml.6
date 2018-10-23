@@ -2,145 +2,110 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32259C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EEDBC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04A3F2075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:02:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04A3F2075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 468972075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:02:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PaJON69B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 468972075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbeJWVZr (ORCPT
+        id S1728134AbeJWVZs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 23 Oct 2018 17:25:48 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:50779 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728008AbeJWVZr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 23 Oct 2018 17:25:47 -0400
-Received: from foss.arm.com ([217.140.101.70]:58876 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728018AbeJWVZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 17:25:46 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC2321596;
-        Tue, 23 Oct 2018 06:02:23 -0700 (PDT)
-Received: from p8cg001049571a15.arm.com (unknown [10.163.1.17])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4747F3F6A8;
-        Tue, 23 Oct 2018 06:02:15 -0700 (PDT)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-To:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     suzuki.poulose@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
-        Steven.Price@arm.com, steve.capper@arm.com,
-        catalin.marinas@arm.com, mhocko@kernel.org,
-        akpm@linux-foundation.org, mike.kravetz@oracle.com,
-        n-horiguchi@ah.jp.nec.com
-Subject: [PATCH V3 1/5] mm/hugetlb: Distinguish between migratability and movability
-Date:   Tue, 23 Oct 2018 18:31:57 +0530
-Message-Id: <1540299721-26484-2-git-send-email-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1540299721-26484-1-git-send-email-anshuman.khandual@arm.com>
-References: <1540299721-26484-1-git-send-email-anshuman.khandual@arm.com>
+Received: by mail-it1-f193.google.com with SMTP id k206-v6so1787689ite.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 06:02:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=NPIUALSoQMb4v7EO9qELFWSAsHu6NJEZ3OBI9YB6DNw=;
+        b=PaJON69BEY/JcNzPagaujT1/j9cStc3mCjB5t4x1X9JwPP2j5M/XNWI5F7V+M1wLZk
+         /mt665Cz4XCj54aaha9vA9UHLvlZ8IM5+jtgIQJnTlHPOvdJwcUZ/S4IdmSB8fVWqPgV
+         v7gytL5fTelcAUu1ehRbRnOm52vrzky3I1wjk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=NPIUALSoQMb4v7EO9qELFWSAsHu6NJEZ3OBI9YB6DNw=;
+        b=Rc5OYxNCl87IKjHWZDwumZ6Jxn6WiwHRoAqTjVLAVjkN6RT+BacucHV6WsXiqR/4xh
+         GtBTokgIq+OmxAXozfwlOVGAKmKt+7d2kkabp0OmWO6QCsRm+8gTsBgtaXJzBzLIysbx
+         vcmGvTToxbG/W6qeFjn1r6V2IhQpslS6vkMrAwJU0YcnsKldN2SMetqQLg71J06lqtWM
+         qrmstrHILbHl+B65QJ1HIdFhOkPcTpQoRArjaJViJUSF9AuOYZXUuTJxGe/j2Opaerob
+         jd1e8h28Cx9eb56YVgZP7eib/m4Q4jnlvNTwyE13acFiKKDAU5AqXeqYTfX4aF9i/DV6
+         c7Ww==
+X-Gm-Message-State: ABuFfojAHXi/J9k6XNBjK2rDP4TMixDdWndXNGhaqBZyOFyCGwINfrVU
+        ZluUTHHmtgGfpJ1Ztv5foUl1Jpp7JBJmdam0w+sOwg==
+X-Google-Smtp-Source: ACcGV63zrH6EuBYA8bjdN44pMuNbXhrjHY8fdpGf9ArO1zQ+fTQupxAtdmYyZXjfWIRjFk5P2u37R5zO5RBfHFjavVk=
+X-Received: by 2002:a02:2b29:: with SMTP id h41-v6mr12418234jaa.12.1540299743554;
+ Tue, 23 Oct 2018 06:02:23 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Tue, 23 Oct 2018 06:01:43
+ -0700 (PDT)
+In-Reply-To: <1539677982-13762-1-git-send-email-zhang.chunyan@linaro.org>
+References: <1539677982-13762-1-git-send-email-zhang.chunyan@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 23 Oct 2018 15:01:43 +0200
+Message-ID: <CAPDyKFrfwJeupJ50smx8Qu5Zpk74ATcQXGVqu5sAsFY2ou3VFw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci: use goto rather than return directly
+To:     Chunyan Zhang <zhang.chunyan@linaro.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During huge page allocation it's migratability is checked to determine if
-it should be placed under movable zones with GFP_HIGHUSER_MOVABLE. But the
-movability aspect of the huge page could depend on other factors than just
-migratability. Movability in itself is a distinct property which should not
-be tied with migratability alone.
+On 16 October 2018 at 10:19, Chunyan Zhang <zhang.chunyan@linaro.org> wrote:
+> The driver should clean resources requested in the function before
+> unnormal return.
+>
+> CC: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+> Fixes: bd9b902798ab ("mmc: sdhci: Implement an SDHCI-specific bounce buffer")
+> ---
+>  drivers/mmc/host/sdhci.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 1b3fbd9..f6b57e1 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3991,7 +3991,7 @@ int sdhci_setup_host(struct sdhci_host *host)
+>                 /* This may alter mmc->*_blk_* parameters */
+>                 ret = sdhci_allocate_bounce_buffer(host);
+>                 if (ret)
+> -                       return ret;
+> +                       goto unreg;
 
-This differentiates these two and implements an enhanced movability check
-which also considers huge page size to determine if it is feasible to be
-placed under a movable zone. At present it just checks for gigantic pages
-but going forward it can incorporate other enhanced checks.
+Instead of making the error path a bit more complicated, I suggest to
+convert sdhci_allocate_bounce_buffer() from returning an int to a
+void. Simply because it always returns 0 and thus we can remove this
+error path altogether.
 
-Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Suggested-by: Michal Hocko <mhocko@kernel.org>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- include/linux/hugetlb.h | 30 ++++++++++++++++++++++++++++++
- mm/hugetlb.c            |  2 +-
- mm/migrate.c            |  2 +-
- 3 files changed, 32 insertions(+), 2 deletions(-)
+>         }
+>
+>         return 0;
+> --
+> 2.7.4
+>
 
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 087fd5f4..1b858d7 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -506,6 +506,31 @@ static inline bool hugepage_migration_supported(struct hstate *h)
- #endif
- }
- 
-+/*
-+ * Movability check is different as compared to migration check.
-+ * It determines whether or not a huge page should be placed on
-+ * movable zone or not. Movability of any huge page should be
-+ * required only if huge page size is supported for migration.
-+ * There wont be any reason for the huge page to be movable if
-+ * it is not migratable to start with. Also the size of the huge
-+ * page should be large enough to be placed under a movable zone
-+ * and still feasible enough to be migratable. Just the presence
-+ * in movable zone does not make the migration feasible.
-+ *
-+ * So even though large huge page sizes like the gigantic ones
-+ * are migratable they should not be movable because its not
-+ * feasible to migrate them from movable zone.
-+ */
-+static inline bool hugepage_movable_supported(struct hstate *h)
-+{
-+	if (!hugepage_migration_supported(h))
-+		return false;
-+
-+	if (hstate_is_gigantic(h))
-+		return false;
-+	return true;
-+}
-+
- static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
- 					   struct mm_struct *mm, pte_t *pte)
- {
-@@ -602,6 +627,11 @@ static inline bool hugepage_migration_supported(struct hstate *h)
- 	return false;
- }
- 
-+static inline bool hugepage_movable_supported(struct hstate *h)
-+{
-+	return false;
-+}
-+
- static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
- 					   struct mm_struct *mm, pte_t *pte)
- {
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 5c390f5..f810cf0 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -919,7 +919,7 @@ static struct page *dequeue_huge_page_nodemask(struct hstate *h, gfp_t gfp_mask,
- /* Movability of hugepages depends on migration support. */
- static inline gfp_t htlb_alloc_mask(struct hstate *h)
- {
--	if (hugepage_migration_supported(h))
-+	if (hugepage_movable_supported(h))
- 		return GFP_HIGHUSER_MOVABLE;
- 	else
- 		return GFP_HIGHUSER;
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 84381b5..bfda9e4 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1272,7 +1272,7 @@ static int unmap_and_move_huge_page(new_page_t get_new_page,
- 	struct anon_vma *anon_vma = NULL;
- 
- 	/*
--	 * Movability of hugepages depends on architectures and hugepage size.
-+	 * Migratability of hugepages depends on architectures and their size.
- 	 * This check is necessary because some callers of hugepage migration
- 	 * like soft offline and memory hotremove don't walk through page
- 	 * tables or check whether the hugepage is pmd-based or not before
--- 
-2.7.4
-
+Kind regards
+Uffe
