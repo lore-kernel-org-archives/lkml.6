@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C84EC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27316C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4196F20671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:20:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF24420813
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 20:20:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20150623.gappssmtp.com header.i=@philpotter-co-uk.20150623.gappssmtp.com header.b="bunJ2uXk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4196F20671
+	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20150623.gappssmtp.com header.i=@philpotter-co-uk.20150623.gappssmtp.com header.b="vSYrhZFC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF24420813
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728892AbeJXEoz (ORCPT
+        id S1728945AbeJXEo5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 00:44:55 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46365 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727566AbeJXEoy (ORCPT
+        Wed, 24 Oct 2018 00:44:57 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44230 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728894AbeJXEo4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 00:44:54 -0400
-Received: by mail-wr1-f66.google.com with SMTP id i4-v6so3075506wrr.13
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 13:19:57 -0700 (PDT)
+        Wed, 24 Oct 2018 00:44:56 -0400
+Received: by mail-wr1-f68.google.com with SMTP id q6-v6so3087717wrw.11
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 13:19:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=philpotter-co-uk.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=95Fd5rI3XvksS6xocCMzSCrV7TdI040H8LYjyP/+fwo=;
-        b=bunJ2uXkxmQaxPLh50ANlx5pUrnZXgnh6cXibToudhOLcIh9Io7LjOqY451eRPntaj
-         C+qrp0bjdhc2hBfJ3ZAxCBZtjxBIKFu3zlY4/CNSqczjPCD7GdYr4nF5zsuHtDBU/F+l
-         +DwGVQJ+nFJV6VVTs5miyebzOKg4z9UABmbHngilb0GIwTMueoTuW61EN083Q/3Ac0+s
-         TtpR8G5kJaI6FIC+MSrgsVY+TWGVOtYPzpXp8RN4g63R1Qwj5vAe8j6VhkU7LEFCsSEK
-         EpDUzLkFZ6cHSfrJzpGFmNeUhwSXUZX1hXcylFID358Xp2RKQS0feB8TEAhWzqBRFF37
-         QvNA==
+        bh=jdd0D8AR1ApPlV0fOV572ah65ZvPkOSB5huK6z0QU0s=;
+        b=vSYrhZFCHmruhJgiY4ksAzQp4qwizaFBtnylygfc9pMiVHHYjerkUG/ulgayhL7GwD
+         qk4IBSDH0cKXvHXb3iUhjN29rdpHmp6ne+bxvW9wfwpi/T9+dma2bRIjkmue7Y7h45cP
+         Bh542RywrE4kuIlo9VlTLhge1MlK6Ncqlc6eYPIJSdM3M1DuWfnyZb83xY8u2mtINfhc
+         QVdPEP9sHr5XJMW66PgY+NRNemgi/Lf//1hODCDBYsvQFRPYZyYGImWPHq+/pA0VCOJy
+         FXTgiFKBo2hWYHTnNKppunM2W2/1C7yoJYPBTuRpyvlVRuICLsIX9lW3LeUPBVVOR8cK
+         Nh1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=95Fd5rI3XvksS6xocCMzSCrV7TdI040H8LYjyP/+fwo=;
-        b=pnTEIpDCx/yxzoZOJPiuMe2xQwgMu09OFsOR554AWpCjYSFBEz44m7jgau9TEyZXYk
-         V1nLxFPnLqJzSkpFOZd+5YFIbJ8rDYTtlCbfk7TnI9vnRfRVGUnmvgVnX6aAd/bS333V
-         dqvzzTNFuW2w8cczhDikWzjzfHgL69YNyONONd2qdQeirwFBEJ1+8kN8q9Ng27ktk0x7
-         Xe526XxLhAzWLZDOXOq29aKTcPmjmvm1Eq5v8GDWaEdCALN6ZkYHR3UarUlp4cJFrERQ
-         YnNLsRVjtMk3YOPo5j0y9vTELtrKNAwsYLeKoUTuF9uEOmoDxxivIDgryneGBU23gOxM
-         YgFQ==
-X-Gm-Message-State: AGRZ1gJaS/BriARsI8smkCik2HvZLekJhp8XtDADbTJ2MbOeAVC/RyFo
-        /Cy3XVDCfl/I+gAR9Bp2y2OEMQ==
-X-Google-Smtp-Source: AJdET5ehCc00RM9LpCWbGfPgTkkR5UrJd8Tl1zumpw4iX0pR6rgoVxBYvFiDHNNHGuwbE1gxuCdR6g==
-X-Received: by 2002:a5d:4086:: with SMTP id o6-v6mr20755369wrp.133.1540325996303;
-        Tue, 23 Oct 2018 13:19:56 -0700 (PDT)
+        bh=jdd0D8AR1ApPlV0fOV572ah65ZvPkOSB5huK6z0QU0s=;
+        b=rScFedhyxQYeuAAA5aAAjerb25HXicFs4ryZQL1sJ88oCOerDJVmJwVXGP4WsX43hE
+         32AEoIewdPI7fzSds/05t2ZqbMFtWGz4JitLUsS3XVyC70WgijQiAAeNuFUmmZjzTYx6
+         ix+MKF+hR16rNEvQnocltWV8uEIedSa8NeNhSwc1mAtrTwsag9WKXJNLtTwmWMG/NgVX
+         ykgTor23qfhVlwa/VsqRiSLgdByNkqFMbxHJwL4SsProRBhRvgkpLrESteq82JtpRhGx
+         UqC8qUAuzbWdXCQWu1dqyinW6CFaJEsk+Xmf6+gpFmsuPYVKn+T30igYZI5/WDpzOwXj
+         mEqw==
+X-Gm-Message-State: AGRZ1gIJc5teN2bQPNSFKtLK9O9aHzAuukdqWROqyzUwPD0JBBMLdjl5
+        dSqwfwp0yMfkXrdTFv0Uv9YeVA==
+X-Google-Smtp-Source: AJdET5esiromYYAi8MReL5kD9GEqTIwtt4ejJWXzmJODmcW95LbMMZCeOTUNBAiaephQFZLZjUyXWA==
+X-Received: by 2002:adf:ea0b:: with SMTP id q11-v6mr2420609wrm.5.1540325999059;
+        Tue, 23 Oct 2018 13:19:59 -0700 (PDT)
 Received: from pathfinder (62-64-249-96.dynamic.dsl.as9105.com. [62.64.249.96])
-        by smtp.gmail.com with ESMTPSA id a18sm1470274wrx.55.2018.10.23.13.19.55
+        by smtp.gmail.com with ESMTPSA id x12-v6sm4953496wmd.32.2018.10.23.13.19.57
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Oct 2018 13:19:55 -0700 (PDT)
-Date:   Tue, 23 Oct 2018 21:19:55 +0100
+        Tue, 23 Oct 2018 13:19:58 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 21:19:57 +0100
 From:   Phillip Potter <phil@philpotter.co.uk>
-To:     dushistov@mail.ru
+To:     jack@suse.com
 Cc:     linux-kernel@vger.kernel.org, amir73il@gmail.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: [RFC][PATCH 02/10] ufs: use fs_umode_to_dtype() helper
-Message-ID: <20181023201955.GA15694@pathfinder>
+        viro@zeniv.linux.org.uk, linux-ext4@vger.kernel.org
+Subject: [RFC][PATCH v2 04/10] ext2: use common file type conversion
+Message-ID: <20181023201957.GA15708@pathfinder>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -75,55 +75,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace switch statement with common lookup table implementation.
+Deduplicate the ext2 file type conversion implementation.
 
-Original patch written by Amir Goldstein.
+Original patch by Amir Goldstein.
+
+v2:
+- Rebased against Linux 4.19 by Phillip Potter
+- This version does not remove EXT2_FT_x enum from fs/ext2/ext2.h,
+  as these values are now used in compile-time checks added by
+  Phillip Potter to make sure they remain the same as FT_x values
+
+v1:
+- Initial implementation
 
 Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
 ---
- fs/ufs/util.h | 29 +----------------------------
- 1 file changed, 1 insertion(+), 28 deletions(-)
+ fs/ext2/dir.c | 51 ++++++++++++++++++++++-----------------------------
+ 1 file changed, 22 insertions(+), 29 deletions(-)
 
-diff --git a/fs/ufs/util.h b/fs/ufs/util.h
-index 1fd3011ea623..8c7759860739 100644
---- a/fs/ufs/util.h
-+++ b/fs/ufs/util.h
-@@ -158,34 +158,7 @@ ufs_set_de_type(struct super_block *sb, struct ufs_dir_entry *de, int mode)
- 	if ((UFS_SB(sb)->s_flags & UFS_DE_MASK) != UFS_DE_44BSD)
- 		return;
- 
--	/*
--	 * TODO turn this into a table lookup
--	 */
--	switch (mode & S_IFMT) {
--	case S_IFSOCK:
--		de->d_u.d_44.d_type = DT_SOCK;
--		break;
--	case S_IFLNK:
--		de->d_u.d_44.d_type = DT_LNK;
--		break;
--	case S_IFREG:
--		de->d_u.d_44.d_type = DT_REG;
--		break;
--	case S_IFBLK:
--		de->d_u.d_44.d_type = DT_BLK;
--		break;
--	case S_IFDIR:
--		de->d_u.d_44.d_type = DT_DIR;
--		break;
--	case S_IFCHR:
--		de->d_u.d_44.d_type = DT_CHR;
--		break;
--	case S_IFIFO:
--		de->d_u.d_44.d_type = DT_FIFO;
--		break;
--	default:
--		de->d_u.d_44.d_type = DT_UNKNOWN;
--	}
-+	de->d_u.d_44.d_type = fs_umode_to_dtype(mode);
+diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
+index 3b8114def693..420d4b9e8980 100644
+--- a/fs/ext2/dir.c
++++ b/fs/ext2/dir.c
+@@ -252,33 +252,10 @@ ext2_validate_entry(char *base, unsigned offset, unsigned mask)
+ 	return (char *)p - base;
  }
  
- static inline u32
+-static unsigned char ext2_filetype_table[EXT2_FT_MAX] = {
+-	[EXT2_FT_UNKNOWN]	= DT_UNKNOWN,
+-	[EXT2_FT_REG_FILE]	= DT_REG,
+-	[EXT2_FT_DIR]		= DT_DIR,
+-	[EXT2_FT_CHRDEV]	= DT_CHR,
+-	[EXT2_FT_BLKDEV]	= DT_BLK,
+-	[EXT2_FT_FIFO]		= DT_FIFO,
+-	[EXT2_FT_SOCK]		= DT_SOCK,
+-	[EXT2_FT_SYMLINK]	= DT_LNK,
+-};
+-
+-#define S_SHIFT 12
+-static unsigned char ext2_type_by_mode[S_IFMT >> S_SHIFT] = {
+-	[S_IFREG >> S_SHIFT]	= EXT2_FT_REG_FILE,
+-	[S_IFDIR >> S_SHIFT]	= EXT2_FT_DIR,
+-	[S_IFCHR >> S_SHIFT]	= EXT2_FT_CHRDEV,
+-	[S_IFBLK >> S_SHIFT]	= EXT2_FT_BLKDEV,
+-	[S_IFIFO >> S_SHIFT]	= EXT2_FT_FIFO,
+-	[S_IFSOCK >> S_SHIFT]	= EXT2_FT_SOCK,
+-	[S_IFLNK >> S_SHIFT]	= EXT2_FT_SYMLINK,
+-};
+-
+ static inline void ext2_set_de_type(ext2_dirent *de, struct inode *inode)
+ {
+-	umode_t mode = inode->i_mode;
+ 	if (EXT2_HAS_INCOMPAT_FEATURE(inode->i_sb, EXT2_FEATURE_INCOMPAT_FILETYPE))
+-		de->file_type = ext2_type_by_mode[(mode & S_IFMT)>>S_SHIFT];
++		de->file_type = fs_umode_to_ftype(inode->i_mode);
+ 	else
+ 		de->file_type = 0;
+ }
+@@ -293,14 +270,14 @@ ext2_readdir(struct file *file, struct dir_context *ctx)
+ 	unsigned long n = pos >> PAGE_SHIFT;
+ 	unsigned long npages = dir_pages(inode);
+ 	unsigned chunk_mask = ~(ext2_chunk_size(inode)-1);
+-	unsigned char *types = NULL;
+ 	bool need_revalidate = !inode_eq_iversion(inode, file->f_version);
++	bool has_filetype;
+ 
+ 	if (pos > inode->i_size - EXT2_DIR_REC_LEN(1))
+ 		return 0;
+ 
+-	if (EXT2_HAS_INCOMPAT_FEATURE(sb, EXT2_FEATURE_INCOMPAT_FILETYPE))
+-		types = ext2_filetype_table;
++	has_filetype =
++		EXT2_HAS_INCOMPAT_FEATURE(sb, EXT2_FEATURE_INCOMPAT_FILETYPE);
+ 
+ 	for ( ; n < npages; n++, offset = 0) {
+ 		char *kaddr, *limit;
+@@ -335,8 +312,24 @@ ext2_readdir(struct file *file, struct dir_context *ctx)
+ 			if (de->inode) {
+ 				unsigned char d_type = DT_UNKNOWN;
+ 
+-				if (types && de->file_type < EXT2_FT_MAX)
+-					d_type = types[de->file_type];
++				/*
++				 * compile-time asserts that generic FT_x types
++				 * still match EXT2_FT_x types - no need to list
++				 * for other functions as well as build will
++				 * fail either way
++				 */
++				BUILD_BUG_ON(EXT2_FT_UNKNOWN != FT_UNKNOWN);
++				BUILD_BUG_ON(EXT2_FT_REG_FILE != FT_REG_FILE);
++				BUILD_BUG_ON(EXT2_FT_DIR != FT_DIR);
++				BUILD_BUG_ON(EXT2_FT_CHRDEV != FT_CHRDEV);
++				BUILD_BUG_ON(EXT2_FT_BLKDEV != FT_BLKDEV);
++				BUILD_BUG_ON(EXT2_FT_FIFO != FT_FIFO);
++				BUILD_BUG_ON(EXT2_FT_SOCK != FT_SOCK);
++				BUILD_BUG_ON(EXT2_FT_SYMLINK != FT_SYMLINK);
++				BUILD_BUG_ON(EXT2_FT_MAX != FT_MAX);
++
++				if (has_filetype)
++					d_type = fs_dtype(de->file_type);
+ 
+ 				if (!dir_emit(ctx, de->name, de->name_len,
+ 						le32_to_cpu(de->inode),
 -- 
 2.17.2
 
