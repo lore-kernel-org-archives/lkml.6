@@ -2,265 +2,206 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73B1CC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD27C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:13:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D1C7207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:13:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B3ED20671
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:13:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="N6jNKXQm";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iu6gY1J/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D1C7207DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHt1ahhP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B3ED20671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbeJWUgp (ORCPT
+        id S1728145AbeJWUgx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 16:36:45 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:32972 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbeJWUgp (ORCPT
+        Tue, 23 Oct 2018 16:36:53 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34566 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbeJWUgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 16:36:45 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B194160BDE; Tue, 23 Oct 2018 12:13:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540296810;
-        bh=LGd3pdIQnNSaMT0A5cA25FVM4y1/CBogXgOcKKVA4KU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=N6jNKXQmsKVL3IMuOmFVnnoWEj8pF/nOT132PSCq6EEus4yn9IWG4D5EGDaMqdPww
-         jdtEOve3jMis7vs0Gs0Pb0sco4RmCh2WWnvTBhnEybnowF1O0yAlppE7OOEisiewu0
-         gtLZ3Q/XJH/sVbDX5UeciuTM+In/9a8+zLCYfObI=
-Received: from [10.252.221.155] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vbadigan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4BBE960364;
-        Tue, 23 Oct 2018 12:13:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540296809;
-        bh=LGd3pdIQnNSaMT0A5cA25FVM4y1/CBogXgOcKKVA4KU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=iu6gY1J/h5CBxjXM93bIoM8lQcVCeHngfzdIkoZR0L+8M9xyqNCsTBabQw1qCz3If
-         U/t1mgLqigD4ae4VkaGE3c6Gmo5TWlmmPvq27BTtWK5YnsxV40DRPobFeSStGUgVS/
-         781hcFIeuSsQKszx0OEdG6mTmjXw/eKCV/DkjSi0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4BBE960364
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
-Subject: Re: [PATCH V2 2/2] mmc: sdhci-msm: Re-initialize DLL if MCLK is gated
- dynamically
-To:     Evan Green <evgreen@chromium.org>
-Cc:     adrian.hunter@intel.com, Ulf Hansson <ulf.hansson@linaro.org>,
-        robh+dt@kernel.org, Doug Anderson <dianders@google.com>,
-        asutoshd@codeaurora.org, riteshh@codeaurora.org,
-        stummala@codeaurora.org, sayali <sayalil@codeaurora.org>,
-        linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1539005138-32560-1-git-send-email-vbadigan@codeaurora.org>
- <1539005138-32560-3-git-send-email-vbadigan@codeaurora.org>
- <CAE=gft4tWoMTUwvLWLL6k0x1AqbBTM=5=dAckEEHiu6zLXskGA@mail.gmail.com>
-From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-Message-ID: <f816f58d-19f0-b0c9-40bb-3e436f0968a7@codeaurora.org>
-Date:   Tue, 23 Oct 2018 17:43:19 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 23 Oct 2018 16:36:52 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l6-v6so1457081wrt.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 05:13:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=SY9sm4mtyJg6CY9D6kkJ3F0Bl2eNlSoO/9jF3Woxy94=;
+        b=AHt1ahhPJ6EYrAXc8SgDKz97a5lMgpRQTxLYZYjmoFEgP24cTxh2jQZEi84ZDbDDEr
+         Ox1qeEtRtTwgUD8y71Qw7qL1P1jqx3W1/G2cCeRoa55tsghITBWZNGq/6RGCgGY3Zhab
+         cF/ihmtgBZHZPg75NQ1g1zJn3CHnySmRSNYgFiokcdP/ZyE1qucQUjyEJhGlg9j0Q7X/
+         opeiVr41GCJeKjNvdDqPGcoOjo9vhP4LbL12CzJ9MA6oxzUqd8OED5EOuqfjFq+3KiAq
+         tXkbaaXVI5R0vpfQIB9WKr7+nuGoONMLRf3HDALENLRpAzbKctEWTvDCHtszqC0JvVFr
+         xIbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=SY9sm4mtyJg6CY9D6kkJ3F0Bl2eNlSoO/9jF3Woxy94=;
+        b=JJisRzQbbvVFI/nhM0w0K/LPV/wYv/k//1kHk40syvSIJR555f7P+i3JPEL5DvFKka
+         a0GANgptraK2RhO0t8IW7CuaTLfL47XaFBL7Ye3qFOl1wDcdfruYzFA2PH7L/f6SC0j2
+         8Yjl7/aHMyJzgrL77C7PbHOcdpnfPnzQ3ibKkakTytWbYQlaYq9zGBJV2hZjU8xq+Qhi
+         XxHg0By9LAgsAUP3c4hQ5RBR0US2yK9t7qL4cs24Xge2qqQWIZf6jcxUqp2OUVkzLKgU
+         M7I97jmhFTkFAmhQeJMNz61MsL74tomz0ED9O8BlmNYvghuPrk6YF+5wZiEL42QTHfCq
+         9PZQ==
+X-Gm-Message-State: ABuFfogTZV3x1RM33JZPkhevEvfzYhbskJH/KWjm6opRc84zWnmjdrz7
+        mUsOPvBzV5fBIHfUr7abgh0=
+X-Google-Smtp-Source: ACcGV60v4Wl0CvUk2DePauxhjA/soi1DfH0F/nAYXMiwyK3X+KF6iUrNufgGcVCSbl2F1kn9P/Hnwg==
+X-Received: by 2002:a5d:6902:: with SMTP id t2-v6mr49578404wru.323.1540296816972;
+        Tue, 23 Oct 2018 05:13:36 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id p7-v6sm1688703wrt.10.2018.10.23.05.13.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 23 Oct 2018 05:13:36 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 14:13:33 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Juergen Gross <jgross@suse.com>
+Subject: [GIT PULL] x86/paravirt changes for v4.20
+Message-ID: <20181023121333.GA114100@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAE=gft4tWoMTUwvLWLL6k0x1AqbBTM=5=dAckEEHiu6zLXskGA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus,
 
-On 10/17/2018 3:58 AM, Evan Green wrote:
-> On Mon, Oct 8, 2018 at 6:26 AM Veerabhadrarao Badiganti
-> <vbadigan@codeaurora.org> wrote:
->> On few SDHCI-MSM controllers, the host controller's clock tuning
->> circuit may go out of sync if controller clocks are gated which
->> eventually will result in data CRC, command CRC/timeout errors.
->> To overcome this h/w limitation, the DLL needs to be re-initialized
->> and restored with its old settings once clocks are ungated.
->>
->> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
->> ---
->>   drivers/mmc/host/sdhci-msm.c | 67 ++++++++++++++++++++++++++++++++++++++++++--
->>   1 file changed, 65 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
->> index 6918e70..1eb70c0 100644
->> --- a/drivers/mmc/host/sdhci-msm.c
->> +++ b/drivers/mmc/host/sdhci-msm.c
->> @@ -234,6 +234,7 @@ struct sdhci_msm_variant_ops {
->>    */
->>   struct sdhci_msm_variant_info {
->>          bool mci_removed;
->> +       bool uses_sdcdc10;
-> What does that flag mean? Couldn't this just be called something like
-> restore_dll_config?
+Please pull the latest x86-paravirt-for-linus git tree from:
 
-'sdcdc10' is the DLL code-name that is being used in SDHC controller on 
-SDM845.
-I should have named it as uses_sdcdc10_dll.
-I will update the name to be more meaningful.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-paravirt-for-linus
 
->
->>          const struct sdhci_msm_variant_ops *var_ops;
->>          const struct sdhci_msm_offset *offset;
->>   };
->> @@ -264,6 +265,8 @@ struct sdhci_msm_host {
->>          u32 vmmc_level[2];
->>          bool vqmmc_load;
->>          u32 vqmmc_level[2];
->> +       bool uses_sdcdc10_dll;
->> +       bool restore_sdr_dll_cfg;
-> restore_sdr_dll_cfg appears to not be used.
+   # HEAD: 3a025de64bf89c84a79909069e3c24ad9e710d27 x86/hyperv: Enable PV qspinlock for Hyper-V
 
-Yes, this needs to be removed, will remove it. Thanks for pointing.
+Two main changes:
 
->>   };
->>
->>   static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
->> @@ -1031,6 +1034,36 @@ static int sdhci_msm_hs400_dll_calibration(struct sdhci_host *host)
->>          return ret;
->>   }
->>
->> +static int sdhci_msm_restore_sdr_dll_config(struct sdhci_host *host)
->> +{
->> +       struct mmc_ios ios = host->mmc->ios;
->> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->> +       struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
->> +       int ret;
->> +
->> +       /*
->> +        * SDR DLL comes into picure only if clock frequency is greater than
->> +        * 100MHz. And its needed only for SDR104, HS200 and HS400 cards.
->> +        * Its not needed for HS400es cards.
->> +        */
->> +       if (host->clock <= CORE_FREQ_100MHZ ||
->> +           !(ios.timing == MMC_TIMING_MMC_HS400 ||
->> +           ios.timing == MMC_TIMING_MMC_HS200 ||
->> +           ios.timing == MMC_TIMING_UHS_SDR104) ||
->> +           ios.enhanced_strobe)
->> +               return 0;
->> +
->> +       /* Reset the tuning block */
->> +       ret = msm_init_cm_dll(host);
-> Is this reinit required? It's kind of meaty.
+ - Remove no longer parts of the paravirt infrastructure and put large 
+   quantities of paravirt ops under a new config option PARAVIRT_XXL=y,
+   which is selected by XEN_PV only. (Joergen Gross)
 
-DLL re-initialization is very-much needed.
-Its as per DLL h/w team instructions to support sdcdc10 DLL (10nm DLL)
+ - Enable PV spinlocks on Hyperv (Yi Sun)
 
->> +       if (ret)
->> +               return ret;
->> +
->> +       /* Restore the tuning block */
->> +       ret = msm_config_cm_dll_phase(host, msm_host->saved_tuning_phase);
->> +
->> +       return ret;
->> +}
->> +
->>   static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
->>   {
->>          struct sdhci_host *host = mmc_priv(mmc);
->> @@ -1075,7 +1108,6 @@ static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
->>                  if (rc)
->>                          return rc;
->>
->> -               msm_host->saved_tuning_phase = phase;
->>                  rc = mmc_send_tuning(mmc, opcode, NULL);
->>                  if (!rc) {
->>                          /* Tuning is successful at this tuning point */
->> @@ -1100,6 +1132,7 @@ static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
->>                  rc = msm_config_cm_dll_phase(host, phase);
->>                  if (rc)
->>                          return rc;
->> +               msm_host->saved_tuning_phase = phase;
->>                  dev_dbg(mmc_dev(mmc), "%s: Setting the tuning phase to %d\n",
->>                           mmc_hostname(mmc), phase);
->>          } else {
->> @@ -1807,19 +1840,39 @@ static int sdhci_msm_start_signal_voltage_switch(struct mmc_host *mmc,
->>
->>   static const struct sdhci_msm_variant_info sdhci_msm_mci_var = {
->>          .mci_removed = false,
->> +       .uses_sdcdc10 = false,
->> +       .var_ops = &mci_var_ops,
->> +       .offset = &sdhci_msm_mci_offset,
->> +};
->> +
->> +static const struct sdhci_msm_variant_info sdhci_msm_mci_sdcdc10_var = {
->> +       .mci_removed = false,
->> +       .uses_sdcdc10 = true,
->>          .var_ops = &mci_var_ops,
->>          .offset = &sdhci_msm_mci_offset,
->>   };
->>
->>   static const struct sdhci_msm_variant_info sdhci_msm_v5_var = {
->>          .mci_removed = true,
->> +       .uses_sdcdc10 = false,
->> +       .var_ops = &v5_var_ops,
->> +       .offset = &sdhci_msm_v5_offset,
->> +};
->> +
->> +static const struct sdhci_msm_variant_info sdhci_msm_v5_sdcdc10_var = {
->> +       .mci_removed = true,
->> +       .uses_sdcdc10 = true,
->>          .var_ops = &v5_var_ops,
->>          .offset = &sdhci_msm_v5_offset,
->>   };
->>
->>   static const struct of_device_id sdhci_msm_dt_match[] = {
->>          {.compatible = "qcom,sdhci-msm-v4", .data = &sdhci_msm_mci_var},
->> +       {.compatible = "qcom,sdhci-msm-v4-sdcdc10",
->> +                                           .data = &sdhci_msm_mci_sdcdc10_var},
->>          {.compatible = "qcom,sdhci-msm-v5", .data = &sdhci_msm_v5_var},
->> +       {.compatible = "qcom,sdhci-msm-v5-sdcdc10",
->> +                                           .data = &sdhci_msm_v5_sdcdc10_var},
->>          {},
->>   };
->>
->> @@ -1880,6 +1933,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->>          var_info = of_device_get_match_data(&pdev->dev);
->>
->>          msm_host->mci_removed = var_info->mci_removed;
->> +       msm_host->uses_sdcdc10_dll = var_info->uses_sdcdc10;
->>          msm_host->var_ops = var_info->var_ops;
->>          msm_host->offset = var_info->offset;
->>
->> @@ -2124,9 +2178,18 @@ static int sdhci_msm_runtime_resume(struct device *dev)
->>          struct sdhci_host *host = dev_get_drvdata(dev);
->>          struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->>          struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
->> +       int ret;
->>
->> -       return clk_bulk_prepare_enable(ARRAY_SIZE(msm_host->bulk_clks),
->> +       ret = clk_bulk_prepare_enable(ARRAY_SIZE(msm_host->bulk_clks),
->>                                         msm_host->bulk_clks);
-> It might be nicer to just put an if (ret) return ret; here, instead of
-> rolling it into the next conditional.
 
-Sure. Will update it.
+ Thanks,
 
->
->> +       /*
->> +        * Whenever core-clock is gated dynamically, it's needed to
->> +        * restore the SDR DLL settings when the clock is ungated.
->> +        */
->> +       if (!ret && msm_host->uses_sdcdc10_dll && msm_host->clk_rate)
->> +               ret = sdhci_msm_restore_sdr_dll_config(host);
->> +
->> +       return ret;
->>   }
->>   #endif
->>
->> --
->> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
->> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
->>
+	Ingo
+
+  out-of-topic modifications in x86-paravirt-for-linus:
+  -------------------------------------------------------
+  arch/arm/include/asm/paravirt.h    # 5c83511bdb98: x86/paravirt: Use a single o
+  arch/arm/kernel/paravirt.c         # 5c83511bdb98: x86/paravirt: Use a single o
+  arch/arm64/include/asm/paravirt.h  # 5c83511bdb98: x86/paravirt: Use a single o
+  arch/arm64/kernel/paravirt.c       # 5c83511bdb98: x86/paravirt: Use a single o
+
+------------------>
+Borislav Petkov (1):
+      x86/paravirt: Clean up native_patch()
+
+Juergen Gross (17):
+      x86/xen: Move pv irq related functions under CONFIG_XEN_PV umbrella
+      x86/xen: Move pv specific parts of arch/x86/xen/mmu.c to mmu_pv.c
+      x86/xen: Link platform-pci-unplug.o only if CONFIG_XEN_PVHVM
+      x86/xen: Add SPDX identifier in arch/x86/xen files
+      x86/paravirt: Make paravirt_patch_call() and paravirt_patch_jmp() static
+      x86/paravirt: Remove clobbers parameter from paravirt patch functions
+      x86/paravirt: Remove clobbers from struct paravirt_patch_site
+      x86/paravirt: Use a single ops structure
+      x86/paravirt: Remove unused paravirt bits
+      x86/paravirt: Introduce new config option PARAVIRT_XXL
+      x86/paravirt: Move items in pv_info under PARAVIRT_XXL umbrella
+      x86/paravirt: Move the Xen-only pv_cpu_ops under the PARAVIRT_XXL umbrella
+      x86/paravirt: Move the pv_irq_ops under the PARAVIRT_XXL umbrella
+      x86/paravirt: Move the Xen-only pv_mmu_ops under the PARAVIRT_XXL umbrella
+      x86/paravirt: Remove unneeded mmu related paravirt ops bits
+      x86/xen: Make xen_reservation_lock static
+      x86/paravirt: Prevent redefinition of SAVE_FLAGS macro
+
+Yi Sun (2):
+      x86/hyperv: Add GUEST_IDLE_MSR support
+      x86/hyperv: Enable PV qspinlock for Hyper-V
+
+
+ Documentation/admin-guide/kernel-parameters.txt |   5 +
+ arch/arm/include/asm/paravirt.h                 |   9 +-
+ arch/arm/kernel/paravirt.c                      |   4 +-
+ arch/arm/xen/enlighten.c                        |  34 --
+ arch/arm64/include/asm/paravirt.h               |   9 +-
+ arch/arm64/kernel/paravirt.c                    |   4 +-
+ arch/x86/Kconfig                                |   4 +
+ arch/x86/boot/compressed/misc.h                 |   1 +
+ arch/x86/entry/entry_32.S                       |   8 +-
+ arch/x86/entry/entry_64.S                       |   8 +-
+ arch/x86/hyperv/Makefile                        |   4 +
+ arch/x86/hyperv/hv_spinlock.c                   |  88 +++++
+ arch/x86/hyperv/mmu.c                           |   4 +-
+ arch/x86/include/asm/debugreg.h                 |   2 +-
+ arch/x86/include/asm/desc.h                     |   4 +-
+ arch/x86/include/asm/fixmap.h                   |   2 +-
+ arch/x86/include/asm/hyperv-tlfs.h              |   5 +
+ arch/x86/include/asm/irqflags.h                 |  16 +-
+ arch/x86/include/asm/mmu_context.h              |   4 +-
+ arch/x86/include/asm/mshyperv.h                 |   2 +
+ arch/x86/include/asm/msr.h                      |   4 +-
+ arch/x86/include/asm/paravirt.h                 | 415 +++++++++++-------------
+ arch/x86/include/asm/paravirt_types.h           |  82 +++--
+ arch/x86/include/asm/pgalloc.h                  |   2 +-
+ arch/x86/include/asm/pgtable-3level_types.h     |   2 +-
+ arch/x86/include/asm/pgtable.h                  |   7 +-
+ arch/x86/include/asm/processor.h                |   4 +-
+ arch/x86/include/asm/ptrace.h                   |   2 +-
+ arch/x86/include/asm/segment.h                  |   2 +-
+ arch/x86/include/asm/special_insns.h            |   4 +-
+ arch/x86/kernel/alternative.c                   |   2 +-
+ arch/x86/kernel/asm-offsets.c                   |  13 +-
+ arch/x86/kernel/asm-offsets_64.c                |   9 +-
+ arch/x86/kernel/cpu/common.c                    |   4 +-
+ arch/x86/kernel/cpu/mshyperv.c                  |  14 +
+ arch/x86/kernel/cpu/vmware.c                    |   4 +-
+ arch/x86/kernel/head_64.S                       |   2 +-
+ arch/x86/kernel/kvm.c                           |  19 +-
+ arch/x86/kernel/kvmclock.c                      |   4 +-
+ arch/x86/kernel/paravirt-spinlocks.c            |  15 +-
+ arch/x86/kernel/paravirt.c                      | 316 +++++++++---------
+ arch/x86/kernel/paravirt_patch_32.c             |  87 +++--
+ arch/x86/kernel/paravirt_patch_64.c             |  97 +++---
+ arch/x86/kernel/tsc.c                           |   2 +-
+ arch/x86/kernel/vsmp_64.c                       |  26 +-
+ arch/x86/mm/mem_encrypt_identity.c              |   1 +
+ arch/x86/xen/Kconfig                            |   1 +
+ arch/x86/xen/Makefile                           |  41 ++-
+ arch/x86/xen/efi.c                              |  14 +-
+ arch/x86/xen/enlighten.c                        |   2 +
+ arch/x86/xen/enlighten_hvm.c                    |   2 +
+ arch/x86/xen/enlighten_pv.c                     |  31 +-
+ arch/x86/xen/grant-table.c                      |  25 +-
+ arch/x86/xen/irq.c                              |   2 +-
+ arch/x86/xen/mmu.c                              | 188 +----------
+ arch/x86/xen/mmu_hvm.c                          |   2 +-
+ arch/x86/xen/mmu_pv.c                           | 168 +++++++++-
+ arch/x86/xen/p2m.c                              |   2 +
+ arch/x86/xen/pci-swiotlb-xen.c                  |   2 +
+ arch/x86/xen/platform-pci-unplug.c              |  18 +-
+ arch/x86/xen/spinlock.c                         |  11 +-
+ arch/x86/xen/time.c                             |   4 +-
+ arch/x86/xen/vdso.h                             |   2 +
+ arch/x86/xen/xen-pvh.S                          |  15 +-
+ drivers/xen/time.c                              |   2 +-
+ include/xen/events.h                            |   2 +
+ include/xen/interface/memory.h                  |   6 -
+ include/xen/xen-ops.h                           | 133 +++++---
+ 68 files changed, 1023 insertions(+), 1006 deletions(-)
+ create mode 100644 arch/x86/hyperv/hv_spinlock.c
 
