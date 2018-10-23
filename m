@@ -5,59 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FC2C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95223C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9548720831
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51E892075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2P3EntG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9548720831
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JtoyO3mZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51E892075D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729032AbeJXGBS (ORCPT
+        id S1729076AbeJXGBU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 02:01:18 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39219 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728725AbeJXGBP (ORCPT
+        Wed, 24 Oct 2018 02:01:20 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33335 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728575AbeJXGBT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 02:01:15 -0400
-Received: by mail-lf1-f66.google.com with SMTP id p11-v6so2330933lfc.6;
-        Tue, 23 Oct 2018 14:36:02 -0700 (PDT)
+        Wed, 24 Oct 2018 02:01:19 -0400
+Received: by mail-lj1-f195.google.com with SMTP id z21-v6so2820304ljz.0;
+        Tue, 23 Oct 2018 14:36:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-        bh=6jXsMcNOASyEUd+AGjVZam8sdvDi65Nq+ICQnyI7NC8=;
-        b=D2P3EntG9KSCG0qbpHMKa1F9RkSy7Fi1vmdHYMZHlxzpBrRFHHM9NmSDNJ6UUFNIPF
-         XSi1KAxTa0aD5TdT4IY4q5HajQnHuMo2x/tOfbQmk3e8Gv/273K7kgKcTKKN8ICPJDC8
-         4nfmvBBbpIlF4xCgqU3MJDPqYXXkrivUSNIamTfQjKKdnAPxoAywQP5MZOy3u2PJdNbN
-         2NQqXXVPhvdWOQYVBqXNNymOa3SgIAbrVfxW3CzlsnFmaD5CaeVIfl4C900BUKgXU5an
-         FofC3Bb9uPmIhTPS+tO5MFQl0G6FTHn7fQfWj2uSai/ifDGqQQf+uh5p7/Lk5iQgg19Q
-         Wf2w==
+        bh=9TeBZENTG4lUlljtOFNGnausIJ9loexqClGDhlY00q0=;
+        b=JtoyO3mZ13IGzAbCIgy6S5RYsmImtY6hfg34KQRQ2X3TR1VVri5yBZ/LUjBcD0TzXa
+         0s8L1kB/YwwSuVWbA3820PquvwCu3SkJCcO1geuaAaOGfUNh9JAvXkHX3kScSRePUVzs
+         LpBgTT1JYuKJ1aT49DAJUFExgxQPahyLwVz4BPku8ogRZBoPGO9RswhALPMjDi8XbttO
+         OjGxJeSt7f0J7GWI7q5EdlapOM+CLE2SPmDyplRRclUZ20Yaw/5nyVtaOA6eSk9/RtMb
+         rtjjIO80ygFKzuE+VuAYK60mF+XSs2WkRVh4yBh7Fgr9V0xTBNIf9zkz+/Qr1wr90r6X
+         Paxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to;
-        bh=6jXsMcNOASyEUd+AGjVZam8sdvDi65Nq+ICQnyI7NC8=;
-        b=SfM2Xhvrdmi9tlep41o0IOCS77/bDehyqLiCkRGqk5gME798Yp4AM5kBM5v5UD7S5i
-         KZsgjyL44rfhPxIgPPoLoE5FnfsKEw4XRq0I0EsmipI3VYP2s6jrqUfeZtjJSD/GuKSE
-         1+RGnWV3yrpPQ3Nzyh8842Nsf4tfdjyV97wzvD+lnpnPVO6drcJHw23Dty8XwGVFEdac
-         YUCYjamn2ATR07IKKzg3Y7hsGSCNTqWgaR7ueNl5F1kmAMyHPhY/F0Ocey7XKtC9jmJa
-         RnQ6HJSm3t3ZPdOpGH8YmB+sRdZAIuE69XvEr5d/iy0UAFCIWc7vqzWA2cNFKg14WlKk
-         SgrQ==
-X-Gm-Message-State: ABuFfogNA8TMmVctepClIZ7+2vb/MNzABj178VhoJdZocvxENiJt0JDW
-        UE133X/5yj3xQI7SGHpg61s=
-X-Google-Smtp-Source: ACcGV602U2IyIsctESkBUXllpEO17589f4KnIPcsRRLcANMrqKwA6sberqeguWGCzYnkS5FtCx9hDw==
-X-Received: by 2002:a19:c954:: with SMTP id z81mr8626755lff.150.1540330561406;
-        Tue, 23 Oct 2018 14:36:01 -0700 (PDT)
+        bh=9TeBZENTG4lUlljtOFNGnausIJ9loexqClGDhlY00q0=;
+        b=FpbpxAwKLEmXDfy/uazfjNkN09RAySspZSohBqTcu4iXtmC2aQtKMhDXc/Ra1GDii2
+         BHiyx9U6/xtEGzVTYeaRnhcc5BUVHal6lv2MaYdXfk33b37E7oVBSl/N9It92+NVYLIH
+         caQApND1Fz3MkJSTTKqsreI+GsrAD0GxVfEpy/ahbLx+3dYv9a84LrASIV3YKq+3b4XA
+         LwwVVV+3XQ9IFJOPmIWIWr7k+FhlFN1IAZWKf42BsnHYqugbaxBsDqWVU1plQb+sac1/
+         mNb3ZfwbGcWNhB3dyB299lywXOASss2L9VXk/l4BCuBt1o+CsWlskz8q+dx+u8GdxTM0
+         sYbg==
+X-Gm-Message-State: AGRZ1gKoPdcecuDUbP/fzxSXc4eLBkHDFL0bUAkMBrFEd8luG31rfW98
+        Qb79rW9hJOLfVeEiwA0vcPc=
+X-Google-Smtp-Source: AJdET5fm/SfTwnUQw/H/6N0AMH3Waqo8igwVte/fLnkcWUycwtZsZmlgduLgWV39YuSoalp0uJ0pjw==
+X-Received: by 2002:a2e:84c5:: with SMTP id q5-v6mr5777858ljh.65.1540330564560;
+        Tue, 23 Oct 2018 14:36:04 -0700 (PDT)
 Received: from localhost.localdomain (91-159-62-169.elisa-laajakaista.fi. [91.159.62.169])
-        by smtp.gmail.com with ESMTPSA id y127-v6sm377950lfc.13.2018.10.23.14.36.00
+        by smtp.gmail.com with ESMTPSA id y127-v6sm377950lfc.13.2018.10.23.14.36.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 14:36:00 -0700 (PDT)
+        Tue, 23 Oct 2018 14:36:03 -0700 (PDT)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -72,18 +73,14 @@ To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
 Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Laura Abbott <labbott@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>, linux-mm@kvack.org,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 03/17] prmem: vmalloc support for dynamic allocation
-Date:   Wed, 24 Oct 2018 00:34:50 +0300
-Message-Id: <20181023213504.28905-4-igor.stoppa@huawei.com>
+Subject: [PATCH 05/17] prmem: shorthands for write rare on common types
+Date:   Wed, 24 Oct 2018 00:34:52 +0300
+Message-Id: <20181023213504.28905-6-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181023213504.28905-1-igor.stoppa@huawei.com>
 References: <20181023213504.28905-1-igor.stoppa@huawei.com>
@@ -93,90 +90,178 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Prepare vmalloc for:
-- tagging areas used for dynamic allocation of protected memory
-- supporting various tags, related to the property that an area might have
-- extrapolating the pool containing a given area
-- chaining the areas in each pool
-- extrapolating the area containing a given memory address
+Wrappers around the basic write rare functionality, addressing several
+common data types found in the kernel, allowing to specify the new
+values through immediates, like constants and defines.
 
-NOTE:
-Since there is a list_head structure that is used only when disposing of
-the allocation (the field purge_list), there are two pointers for the take,
-before it comes the time of freeing the allocation.
-To avoid increasing the size of the vmap_area structure, instead of
-using a standard doubly linked list for tracking the chain of
-vmap_areas, only one pointer is spent for this purpose, in a single
-linked list, while the other is used to provide a direct connection to the
-parent pool.
+Note:
+The list is not complete and could be expanded.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 CC: Michal Hocko <mhocko@kernel.org>
+CC: Vlastimil Babka <vbabka@suse.cz>
+CC: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Chintan Pandya <cpandya@codeaurora.org>
-CC: Joe Perches <joe@perches.com>
-CC: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Kate Stewart <kstewart@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Philippe Ombredanne <pombredanne@nexb.com>
+CC: Pavel Tatashin <pasha.tatashin@oracle.com>
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
 ---
- include/linux/vmalloc.h | 12 +++++++++++-
- mm/vmalloc.c            |  2 +-
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ MAINTAINERS                |   1 +
+ include/linux/prmemextra.h | 133 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 134 insertions(+)
+ create mode 100644 include/linux/prmemextra.h
 
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index 398e9c95cd61..4d14a3b8089e 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -21,6 +21,9 @@ struct notifier_block;		/* in notifier.h */
- #define VM_UNINITIALIZED	0x00000020	/* vm_struct is not fully initialized */
- #define VM_NO_GUARD		0x00000040      /* don't add guard page */
- #define VM_KASAN		0x00000080      /* has allocated kasan shadow memory */
-+#define VM_PMALLOC		0x00000100	/* pmalloc area - see docs */
-+#define VM_PMALLOC_WR		0x00000200	/* pmalloc write rare area */
-+#define VM_PMALLOC_PROTECTED	0x00000400	/* pmalloc protected area */
- /* bits [20..32] reserved for arch specific ioremap internals */
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e566c5d09faf..df7221eca160 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9459,6 +9459,7 @@ M:	Igor Stoppa <igor.stoppa@gmail.com>
+ L:	kernel-hardening@lists.openwall.com
+ S:	Maintained
+ F:	include/linux/prmem.h
++F:	include/linux/prmemextra.h
+ F:	mm/prmem.c
  
- /*
-@@ -48,7 +51,13 @@ struct vmap_area {
- 	unsigned long flags;
- 	struct rb_node rb_node;         /* address sorted rbtree */
- 	struct list_head list;          /* address sorted list */
--	struct llist_node purge_list;    /* "lazy purge" list */
-+	union {
-+		struct llist_node purge_list;    /* "lazy purge" list */
-+		struct {
-+			struct vmap_area *next;
-+			struct pmalloc_pool *pool;
-+		};
-+	};
- 	struct vm_struct *vm;
- 	struct rcu_head rcu_head;
- };
-@@ -134,6 +143,7 @@ extern struct vm_struct *__get_vm_area_caller(unsigned long size,
- 					const void *caller);
- extern struct vm_struct *remove_vm_area(const void *addr);
- extern struct vm_struct *find_vm_area(const void *addr);
-+extern struct vmap_area *find_vmap_area(unsigned long addr);
- 
- extern int map_vm_area(struct vm_struct *area, pgprot_t prot,
- 			struct page **pages);
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index a728fc492557..15850005fea5 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -742,7 +742,7 @@ static void free_unmap_vmap_area(struct vmap_area *va)
- 	free_vmap_area_noflush(va);
- }
- 
--static struct vmap_area *find_vmap_area(unsigned long addr)
-+struct vmap_area *find_vmap_area(unsigned long addr)
- {
- 	struct vmap_area *va;
- 
+ MEMORY MANAGEMENT
+diff --git a/include/linux/prmemextra.h b/include/linux/prmemextra.h
+new file mode 100644
+index 000000000000..36995717720e
+--- /dev/null
++++ b/include/linux/prmemextra.h
+@@ -0,0 +1,133 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * prmemextra.h: Shorthands for write rare of basic data types
++ *
++ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
++ * Author: Igor Stoppa <igor.stoppa@huawei.com>
++ *
++ */
++
++#ifndef _LINUX_PRMEMEXTRA_H
++#define _LINUX_PRMEMEXTRA_H
++
++#include <linux/prmem.h>
++
++/**
++ * wr_char - alters a char in write rare memory
++ * @dst: target for write
++ * @val: new value
++ *
++ * Returns true on success, false otherwise.
++ */
++static __always_inline
++bool wr_char(const char *dst, const char val)
++{
++	return wr_memcpy(dst, &val, sizeof(val));
++}
++
++/**
++ * wr_short - alters a short in write rare memory
++ * @dst: target for write
++ * @val: new value
++ *
++ * Returns true on success, false otherwise.
++ */
++static __always_inline
++bool wr_short(const short *dst, const short val)
++{
++	return wr_memcpy(dst, &val, sizeof(val));
++}
++
++/**
++ * wr_ushort - alters an unsigned short in write rare memory
++ * @dst: target for write
++ * @val: new value
++ *
++ * Returns true on success, false otherwise.
++ */
++static __always_inline
++bool wr_ushort(const unsigned short *dst, const unsigned short val)
++{
++	return wr_memcpy(dst, &val, sizeof(val));
++}
++
++/**
++ * wr_int - alters an int in write rare memory
++ * @dst: target for write
++ * @val: new value
++ *
++ * Returns true on success, false otherwise.
++ */
++static __always_inline
++bool wr_int(const int *dst, const int val)
++{
++	return wr_memcpy(dst, &val, sizeof(val));
++}
++
++/**
++ * wr_uint - alters an unsigned int in write rare memory
++ * @dst: target for write
++ * @val: new value
++ *
++ * Returns true on success, false otherwise.
++ */
++static __always_inline
++bool wr_uint(const unsigned int *dst, const unsigned int val)
++{
++	return wr_memcpy(dst, &val, sizeof(val));
++}
++
++/**
++ * wr_long - alters a long in write rare memory
++ * @dst: target for write
++ * @val: new value
++ *
++ * Returns true on success, false otherwise.
++ */
++static __always_inline
++bool wr_long(const long *dst, const long val)
++{
++	return wr_memcpy(dst, &val, sizeof(val));
++}
++
++/**
++ * wr_ulong - alters an unsigned long in write rare memory
++ * @dst: target for write
++ * @val: new value
++ *
++ * Returns true on success, false otherwise.
++ */
++static __always_inline
++bool wr_ulong(const unsigned long *dst, const unsigned long val)
++{
++	return wr_memcpy(dst, &val, sizeof(val));
++}
++
++/**
++ * wr_longlong - alters a long long in write rare memory
++ * @dst: target for write
++ * @val: new value
++ *
++ * Returns true on success, false otherwise.
++ */
++static __always_inline
++bool wr_longlong(const long long *dst, const long long val)
++{
++	return wr_memcpy(dst, &val, sizeof(val));
++}
++
++/**
++ * wr_ulonglong - alters an unsigned long long in write rare memory
++ * @dst: target for write
++ * @val: new value
++ *
++ * Returns true on success, false otherwise.
++ */
++static __always_inline
++bool wr_ulonglong(const unsigned long long *dst,
++			  const unsigned long long val)
++{
++	return wr_memcpy(dst, &val, sizeof(val));
++}
++
++#endif
 -- 
 2.17.1
 
