@@ -2,196 +2,116 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E27C67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D72C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:43:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44DDA207DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:41:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44DDA207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 08C542081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 17:43:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f3moeBgi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08C542081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728616AbeJXCGO (ORCPT
+        id S1728635AbeJXCHb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 22:06:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50508 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726865AbeJXCGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 22:06:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 341FDB086;
-        Tue, 23 Oct 2018 17:41:50 +0000 (UTC)
-Date:   Tue, 23 Oct 2018 19:41:48 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] hugetlbfs: dirty pages as they are added to pagecache
-Message-ID: <20181023174148.GX18839@dhcp22.suse.cz>
-References: <20181018041022.4529-1-mike.kravetz@oracle.com>
- <20181023074340.GO18839@dhcp22.suse.cz>
- <b5be45b8-5afe-56cd-9482-28384699a049@oracle.com>
+        Tue, 23 Oct 2018 22:07:31 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:46371 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726865AbeJXCHb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 22:07:31 -0400
+Received: by mail-qk1-f193.google.com with SMTP id a193-v6so1368229qkc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 10:43:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=LTQBbN7v01p06gTRf7aJbSH9y9Y2K/1hrzJaEfI2w6g=;
+        b=f3moeBgiXEmlRXMxcVbbeSMnAbr01S7kNzC5HKP5fox0DzOIjOUGgkz+CAlO9nYGE0
+         nazgPsB7YukROpfOZqpQB46jVOskf1hnPz4RbO+qX08GNcrpwg9wSTX21z0dyG0ydgar
+         nQRhg8By8CWxmnytSyS+IZoFrX0hd7ndSZ475NZQBVydZ/q7cDJTUrrEz11OCo9rFWR5
+         46LSBIjpnjz2dudLX13I+5vc8ddnVw+knzY2FruNQ7Tnf0wpELuKgVV0ZjaoCw5+o2Op
+         5+gFUw6OvlDxUJdYheI1pvjOybgDpmIj4lKtnAKBriO2jxjfBeXnGClFVcB4E8DLzPdN
+         1Xjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=LTQBbN7v01p06gTRf7aJbSH9y9Y2K/1hrzJaEfI2w6g=;
+        b=TVNNjLijXAqNBbs7THNuRItiwA4c/heg1DIgxrwOyZkx15DbSTd4FPBflPAj6CZFv4
+         hJoKs1JeSYiBI8slMLlO/vlLoUGxrT9o8K153EJ0AWUhR4Xy+WRpx7VXqWQPPgOxY2az
+         wkU2Gqp2IUOhHGN1QXAgR61RXA7daUFNneTUlPPSmO3QCU6m3EuNeTSGy3P3hytRnafw
+         G52EpyuiIGmNG8XlHQ3wntWgLpC/eWstfj9pcWtP+XBm8PyYGjHVUsyJnVo5GbGjLEOa
+         ga/9TQqrFvTeW5MBvApSkDzhWEc4rdRrLtKJeCzTrHcR2Wqh+mCkSo+TT652oduTBakw
+         lvjg==
+X-Gm-Message-State: AGRZ1gLk+ozyY175s1k+5oE7sGwrrQX7N++J4HithzRCrGGiQnDxch8s
+        ttEt9xnYeVBZDtgwQ5zB7vQ=
+X-Google-Smtp-Source: AJdET5exDiEwp8JRh6+/r0E6MEIcAaAZ7DyxtSbw46OMg086H1X27Vm4V9Pc76AO+tfr1FkvLwicmA==
+X-Received: by 2002:a37:15a5:: with SMTP id 37mr6580495qkv.292.1540316588896;
+        Tue, 23 Oct 2018 10:43:08 -0700 (PDT)
+Received: from smtp.gmail.com ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id z188-v6sm1218662qkz.66.2018.10.23.10.43.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 23 Oct 2018 10:43:08 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 14:43:04 -0300
+From:   Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Michael Thayer <michael.thayer@oracle.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com
+Subject: [PATCH v2] staging: vboxvideo: Remove unnecessary parentheses
+Message-ID: <20181023174304.iq4ra7vafwujr3ex@smtp.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b5be45b8-5afe-56cd-9482-28384699a049@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 23-10-18 10:30:44, Mike Kravetz wrote:
-> On 10/23/18 12:43 AM, Michal Hocko wrote:
-> > On Wed 17-10-18 21:10:22, Mike Kravetz wrote:
-> >> Some test systems were experiencing negative huge page reserve
-> >> counts and incorrect file block counts.  This was traced to
-> >> /proc/sys/vm/drop_caches removing clean pages from hugetlbfs
-> >> file pagecaches.  When non-hugetlbfs explicit code removes the
-> >> pages, the appropriate accounting is not performed.
-> >>
-> >> This can be recreated as follows:
-> >>  fallocate -l 2M /dev/hugepages/foo
-> >>  echo 1 > /proc/sys/vm/drop_caches
-> >>  fallocate -l 2M /dev/hugepages/foo
-> >>  grep -i huge /proc/meminfo
-> >>    AnonHugePages:         0 kB
-> >>    ShmemHugePages:        0 kB
-> >>    HugePages_Total:    2048
-> >>    HugePages_Free:     2047
-> >>    HugePages_Rsvd:    18446744073709551615
-> >>    HugePages_Surp:        0
-> >>    Hugepagesize:       2048 kB
-> >>    Hugetlb:         4194304 kB
-> >>  ls -lsh /dev/hugepages/foo
-> >>    4.0M -rw-r--r--. 1 root root 2.0M Oct 17 20:05 /dev/hugepages/foo
-> >>
-> >> To address this issue, dirty pages as they are added to pagecache.
-> >> This can easily be reproduced with fallocate as shown above. Read
-> >> faulted pages will eventually end up being marked dirty.  But there
-> >> is a window where they are clean and could be impacted by code such
-> >> as drop_caches.  So, just dirty them all as they are added to the
-> >> pagecache.
-> >>
-> >> In addition, it makes little sense to even try to drop hugetlbfs
-> >> pagecache pages, so disable calls to these filesystems in drop_caches
-> >> code.
-> >>
-> >> Fixes: 70c3547e36f5 ("hugetlbfs: add hugetlbfs_fallocate()")
-> >> Cc: stable@vger.kernel.org
-> >> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-> > 
-> > I do agree with others that HUGETLBFS_MAGIC check in drop_pagecache_sb
-> > is wrong in principal. I am not even sure we want to special case memory
-> > backed filesystems. What if we ever implement MADV_FREE on fs? Should
-> > those pages be dropped? My first idea take would be yes.
-> 
-> Ok, I have removed that hard coded check.  Implementing MADV_FREE on
-> hugetlbfs would take some work, but it could be done.
-> 
-> > Acked-by: Michal Hocko <mhocko@suse.com> to the set_page_dirty dirty
-> > part.
-> > 
-> > Although I am wondering why you haven't covered only the fallocate path
-> > wrt Fixes tag. In other words, do we need the same treatment for the
-> > page fault path? We do not set dirty bit on page there as well. We rely
-> > on the dirty bit in pte and only for writable mappings. I have hard time
-> > to see why we have been safe there as well. So maybe it is your Fixes:
-> > tag which is not entirely correct, or I am simply missing the fault
-> > path.
-> 
-> No, you are not missing anything.  In the commit log I mentioned that this
-> also does apply to the fault path.  The change takes care of them both.
-> 
-> I was struggling with what to put in the fixes tag.  As mentioned, this
-> problem also exists in the fault path.  Since 3.16 is the oldest stable
-> release, I went back and used the commit next to the add_to_page_cache code
-> there.  However, that seems kind of random.  Is there a better way to say
-> the patch applies to all stable releases?
+Remove unneeded parentheses around the arguments of ||. This reduces
+clutter and code behave in the same way.
+Change suggested by checkpatch.pl.
 
-OK, good, I was afraid I was missing something, well except for not
-reading the changelog properly. I would go with
+vbox_main.c:119: CHECK: Unnecessary parentheses around 'rects[i].x2 <
+crtc->x'
 
-Cc: stable # all kernels with hugetlb
+Signed-off-by: Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
+---
+Changes in v2:
+  - Make the commit message more clearer.
+ 
+ drivers/staging/vboxvideo/vbox_main.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> Here is updated patch without the drop_caches change and updated fixes tag.
-> 
-> From: Mike Kravetz <mike.kravetz@oracle.com>
-> 
-> hugetlbfs: dirty pages as they are added to pagecache
-> 
-> Some test systems were experiencing negative huge page reserve
-> counts and incorrect file block counts.  This was traced to
-> /proc/sys/vm/drop_caches removing clean pages from hugetlbfs
-> file pagecaches.  When non-hugetlbfs explicit code removes the
-> pages, the appropriate accounting is not performed.
-> 
-> This can be recreated as follows:
->  fallocate -l 2M /dev/hugepages/foo
->  echo 1 > /proc/sys/vm/drop_caches
->  fallocate -l 2M /dev/hugepages/foo
->  grep -i huge /proc/meminfo
->    AnonHugePages:         0 kB
->    ShmemHugePages:        0 kB
->    HugePages_Total:    2048
->    HugePages_Free:     2047
->    HugePages_Rsvd:    18446744073709551615
->    HugePages_Surp:        0
->    Hugepagesize:       2048 kB
->    Hugetlb:         4194304 kB
->  ls -lsh /dev/hugepages/foo
->    4.0M -rw-r--r--. 1 root root 2.0M Oct 17 20:05 /dev/hugepages/foo
-> 
-> To address this issue, dirty pages as they are added to pagecache.
-> This can easily be reproduced with fallocate as shown above. Read
-> faulted pages will eventually end up being marked dirty.  But there
-> is a window where they are clean and could be impacted by code such
-> as drop_caches.  So, just dirty them all as they are added to the
-> pagecache.
-> 
-> Fixes: 6bda666a03f0 ("hugepages: fold find_or_alloc_pages into huge_no_page()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-
-Acked-by: Mihcla Hocko <mhocko@suse.com>
-
-> ---
->  mm/hugetlb.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 5c390f5a5207..7b5c0ad9a6bd 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -3690,6 +3690,12 @@ int huge_add_to_page_cache(struct page *page, struct address_space *mapping,
->  		return err;
->  	ClearPagePrivate(page);
->  
-> +	/*
-> +	 * set page dirty so that it will not be removed from cache/file
-> +	 * by non-hugetlbfs specific code paths.
-> +	 */
-> +	set_page_dirty(page);
-> +
->  	spin_lock(&inode->i_lock);
->  	inode->i_blocks += blocks_per_huge_page(h);
->  	spin_unlock(&inode->i_lock);
-> -- 
-> 2.17.2
-
+diff --git a/drivers/staging/vboxvideo/vbox_main.c b/drivers/staging/vboxvideo/vbox_main.c
+index 429f6a453619..10a862674789 100644
+--- a/drivers/staging/vboxvideo/vbox_main.c
++++ b/drivers/staging/vboxvideo/vbox_main.c
+@@ -116,10 +116,10 @@ void vbox_framebuffer_dirty_rectangles(struct drm_framebuffer *fb,
+ 			struct vbva_cmd_hdr cmd_hdr;
+ 			unsigned int crtc_id = to_vbox_crtc(crtc)->crtc_id;
+ 
+-			if ((rects[i].x1 > crtc->x + crtc->hwmode.hdisplay) ||
+-			    (rects[i].y1 > crtc->y + crtc->hwmode.vdisplay) ||
+-			    (rects[i].x2 < crtc->x) ||
+-			    (rects[i].y2 < crtc->y))
++			if (rects[i].x1 > crtc->x + crtc->hwmode.hdisplay ||
++			    rects[i].y1 > crtc->y + crtc->hwmode.vdisplay ||
++			    rects[i].x2 < crtc->x ||
++			    rects[i].y2 < crtc->y)
+ 				continue;
+ 
+ 			cmd_hdr.x = (s16)rects[i].x1;
 -- 
-Michal Hocko
-SUSE Labs
+2.19.1
+
