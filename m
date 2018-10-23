@@ -2,158 +2,103 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5493EC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DCEC67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0B7920813
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:42:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E75120651
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:47:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="fDQhMITC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0B7920813
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="V9+Qrvoy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E75120651
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728136AbeJWWFi (ORCPT
+        id S1728153AbeJWWLY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 18:05:38 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37000 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbeJWWFh (ORCPT
+        Tue, 23 Oct 2018 18:11:24 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:39142 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbeJWWLY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 18:05:37 -0400
-Received: by mail-ed1-f68.google.com with SMTP id c15-v6so1675155eds.4
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 06:42:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fP1++GP6Qvp0pjdsuFyG5LSW6guXoD+iihM0y8mWSZI=;
-        b=fDQhMITCnwbcfTP52XID1evT3XSDSFV96EEVT+usROZfY3U9F8uaouDVouHMpXD8Ut
-         9PoWPKwfR5+kUS8xv14wAzZV+5Kr150xlP9/Z5LJhKsEg56riRilwgHBW/wDb/VbI2C8
-         2ag9SgHLWwBbIZtUGZnrjW9lTaJc9ZN+gv5eI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=fP1++GP6Qvp0pjdsuFyG5LSW6guXoD+iihM0y8mWSZI=;
-        b=pNDxYGlqTgqhydTSBx9qOUcUsZmCWWqZBYMDtd+3i6BWmnjpi2lZEYZAOEFfglFd0z
-         5RGtf4cIbJm6sXnewuisW1shecmhElTyobNgXX4arbnVzV3nEsDjolWXjhx7Nh2hYQ7q
-         PRgI9gHbsvMQTPH9PqIXbM1GzaiSRwNrKxH+T7gT2+v+2f031g2lbcSoVW8jWH6AqPB2
-         CU3sKGiYNx5qP9ebuuTwnxfc0/596PRbVQ6B4OTwEHhgcc682VbL75kO5toCnz3Tb2RI
-         MDwmdLxO9Fs7f0zeUGGJ6J0key9Vbd2YIJnq6SWojFvC/phMUlGUgN1wHUrlck0mo++l
-         TFmA==
-X-Gm-Message-State: ABuFfojUKJUeiDhYQTLCfHXxxjBgHrcCdfRp5z3TksMXKlay17fhdT5h
-        k9BO+/eStl74D5JxMrKGjaQExQ==
-X-Google-Smtp-Source: ACcGV61ByXP0ubcYJF0Ep302gB3gzko9og2FQuRtl3/yKBFmpfEOJAKBPpeRbiZS2fIicu+ovHl2AQ==
-X-Received: by 2002:a17:906:d81:: with SMTP id m1-v6mr940808eji.16.1540302125528;
-        Tue, 23 Oct 2018 06:42:05 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id br14-v6sm397509ejb.17.2018.10.23.06.42.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Oct 2018 06:42:04 -0700 (PDT)
-Date:   Tue, 23 Oct 2018 15:42:02 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-Cc:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "marcheu@chromium.org" <marcheu@chromium.org>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "gustavo@padovan.org" <gustavo@padovan.org>,
-        "sean@poorly.run" <sean@poorly.run>
-Subject: Re: [PATCH] DRM: UDL: get rid of useless vblank initialization
-Message-ID: <20181023134202.GP324@phenom.ffwll.local>
-Mail-Followup-To: Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "marcheu@chromium.org" <marcheu@chromium.org>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-        "gustavo@padovan.org" <gustavo@padovan.org>,
-        "sean@poorly.run" <sean@poorly.run>
-References: <20180928144126.21598-1-Eugeniy.Paltsev@synopsys.com>
- <1540292472.19916.13.camel@synopsys.com>
+        Tue, 23 Oct 2018 18:11:24 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9NDi9Cn085551;
+        Tue, 23 Oct 2018 13:47:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : message-id : date : mime-version : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=epbEsJEAWOS2EFxIvycpsRWXFthqXb8MVvixBqbEyxs=;
+ b=V9+QrvoyF+JDLiAsubgh8C//su9lu8L911A7ugVzfuEmsMie6GeHNI0ajunGSmfbhGRh
+ crowOlxwzxsrUO0zroIjvJyMapXrDpCy6CoDxHERkZbaStA76oq2YrkuKbRqLPX3jigP
+ IvM+5S50UqjO1YIHpR2gHqtEtF9roOBWr3nAa1ZmsvrFgRC1gk2NT+K5zxLDzf9cCyah
+ FcPYNxBHGxVegLz/aDX8KMlPYxt4Nd+t2aCvEgfKF54cKFWFPybrfDu8Yp/VHAk8ZzRe
+ K2hR6+is7i0Opasc7K4fs8RYZ/EJBbY4JAufh7prAb60qlX6PEDmqro2ZrCqOQsAw+2f 5w== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2n7usu5cry-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Oct 2018 13:47:45 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9NDliLc020362
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Oct 2018 13:47:44 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9NDlg5T030448;
+        Tue, 23 Oct 2018 13:47:43 GMT
+Received: from [192.168.1.93] (/99.156.91.244)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 23 Oct 2018 06:47:42 -0700
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Chao Yu <yuchao0@huawei.com>, Chengguang Xu <cgxu519@gmx.com>
+Subject: [GIT PULL] jfs fixes for v4.20
+From:   Dave Kleikamp <dave.kleikamp@oracle.com>
+Openpgp: preference=signencrypt
+Message-ID: <743b8d6b-6b1f-8766-7db3-1df5d95227f5@oracle.com>
+Date:   Tue, 23 Oct 2018 08:47:41 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540292472.19916.13.camel@synopsys.com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9054 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=950
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810230113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 11:01:14AM +0000, Eugeniy Paltsev wrote:
-> Hi David,
-> 
-> Maybe you have any comments or remarks about this patch?
-> And if you don't could you please apply it. Thanks!
+The following changes since commit be65e2595b4c1fbeceba336d8ee83406726b1d8d:
 
-Hm I hoped Sean would pick this up. I stuffed it into drm-misc-next now,
-and Sean owes me one. Generally pinging Dave is a last resort in dri-devel
-(and doesn't work too well).
+  Merge tag 'trace-v4.19-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace (2018-09-06 09:06:49 -0700)
 
-Thanks for your patch.
--Daniel
-> 
-> On Fri, 2018-09-28 at 17:41 +0300, Eugeniy Paltsev wrote:
-> > UDL doesn't support vblank functionality so we don't need to
-> > initialize vblank here (we are able to send page flip
-> > completion events even without vblank initialization)
-> > 
-> > Moreover current drm_vblank_init call with num_crtcs > 0 causes
-> > sending DRM_EVENT_FLIP_COMPLETE event with zero timestamp every
-> > time. This breaks userspace apps (for example weston) which
-> > relies on timestamp value.
-> > 
-> > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> > ---
-> >  drivers/gpu/drm/udl/udl_main.c | 7 +------
-> >  1 file changed, 1 insertion(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/udl/udl_main.c b/drivers/gpu/drm/udl/udl_main.c
-> > index f455f095a146..1b014d92855b 100644
-> > --- a/drivers/gpu/drm/udl/udl_main.c
-> > +++ b/drivers/gpu/drm/udl/udl_main.c
-> > @@ -350,15 +350,10 @@ int udl_driver_load(struct drm_device *dev, unsigned long flags)
-> >  	if (ret)
-> >  		goto err;
-> >  
-> > -	ret = drm_vblank_init(dev, 1);
-> > -	if (ret)
-> > -		goto err_fb;
-> > -
-> >  	drm_kms_helper_poll_init(dev);
-> >  
-> >  	return 0;
-> > -err_fb:
-> > -	udl_fbdev_cleanup(dev);
-> > +
-> >  err:
-> >  	if (udl->urbs.count)
-> >  		udl_free_urb_list(dev);
-> -- 
->  Eugeniy Paltsev
+are available in the Git repository at:
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+  git://github.com/kleikamp/linux-shaggy.git tags/jfs-for-4.20
+
+for you to fetch changes up to 1390643d1d5c539be4d7031a0c507565cb1168a0:
+
+  jfs: remove redundant dquot_initialize() in jfs_evict_inode() (2018-09-20 09:28:49 -0500)
+
+----------------------------------------------------------------
+Just a few small fixes
+
+----------------------------------------------------------------
+Chao Yu (1):
+      jfs: remove redundant dquot_initialize() in jfs_evict_inode()
+
+Chengguang Xu (2):
+      jfs: cache NULL when both default_acl and acl are NULL
+      jfs: remove quota option from ignore list
+
+ fs/jfs/acl.c   | 4 ++++
+ fs/jfs/inode.c | 1 -
+ fs/jfs/super.c | 2 +-
+ 3 files changed, 5 insertions(+), 2 deletions(-)
