@@ -2,223 +2,74 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2191EC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 14:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 285E1C67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 14:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5F2F20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 14:28:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2629207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 14:35:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="LVlm0Y3a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5F2F20651
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNNvY1W7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2629207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728360AbeJWWwF (ORCPT
+        id S1728291AbeJWW6q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 18:52:05 -0400
-Received: from imap.thunk.org ([74.207.234.97]:48830 "EHLO imap.thunk.org"
+        Tue, 23 Oct 2018 18:58:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728231AbeJWWwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 18:52:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=n77AOKoF9TLvsIC4rTJAmfts7m0B/RIiyxQgaFcAheQ=; b=LVlm0Y3aGSP2NPOXkfyazwWOHC
-        VE4y2iGP6GbZsdpUmTtZ3tYZze4caPOEIrHJHMXolvKrU3Vl78L0YoJc8Iv9hNxtL0QlDqJETtCdU
-        W0KtN13Sk86mW0yQqMNhRvkpQjWVvea4KLgEfyi8ei8S2G0rTApmmS1sqRTdDDNgJvj4=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gExfK-00024W-Ps; Tue, 23 Oct 2018 14:28:16 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id BCD977A447E; Tue, 23 Oct 2018 10:28:04 -0400 (EDT)
-Date:   Tue, 23 Oct 2018 10:28:04 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     syzbot <syzbot+a50c7541a4a55cd49b02@syzkaller.appspotmail.com>
-Cc:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        linux-fsdevel@vger.kernel.org, tj@kernel.org,
-        jiangshanlai@gmail.com
-Subject: Re: possible deadlock in flush_workqueue (2)
-Message-ID: <20181023142804.GC6850@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        syzbot <syzbot+a50c7541a4a55cd49b02@syzkaller.appspotmail.com>,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        linux-fsdevel@vger.kernel.org, tj@kernel.org,
-        jiangshanlai@gmail.com
-References: <000000000000bfd4270578abe88b@google.com>
- <0000000000009bcd4a0578e22ebd@google.com>
+        id S1726970AbeJWW6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 18:58:45 -0400
+Received: from localhost (unknown [185.7.230.214])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F37320651;
+        Tue, 23 Oct 2018 14:35:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540305304;
+        bh=Q/qQE6a7Du+EIAEEcdrCCjKJuypGR/JpxHcqKubpBlI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CNNvY1W76yEVSpavgmMjlCREgxuJV2OQiiSvKtoTxiF3pZkygeX+cCMhR4dAVSEWM
+         zg1HlGAOaP2wabYO766dWz4ZbBdfw9I4Pq7tIchxRya+w7Tp/MzPrMs2qeSJa9ZlH/
+         KRbFoK7dRvaxtO4WQ7Cb/zUErpvdglcnaUrLTpcE=
+Date:   Tue, 23 Oct 2018 15:34:55 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Larry Finger <Larry.Finger@lwfinger.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>
+Subject: Re: Is Fixes line enough?
+Message-ID: <20181023143455.GA25771@kroah.com>
+References: <a99840d5-7d57-ec1f-1c70-37ffa6cfd31b@lwfinger.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000009bcd4a0578e22ebd@google.com>
+In-Reply-To: <a99840d5-7d57-ec1f-1c70-37ffa6cfd31b@lwfinger.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 02:42:03AM -0700, syzbot wrote:
-> syzbot has found a reproducer for the following crash on:
+On Tue, Oct 23, 2018 at 09:05:20AM -0500, Larry Finger wrote:
+> Greg,
 > 
-> HEAD commit:    ca9eb48fe01f Merge tag 'regulator-v5.0' of git://git.kerne..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11a60939400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=963b24abf3f7c2d8
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a50c7541a4a55cd49b02
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12097f03400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b55ac5400000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+a50c7541a4a55cd49b02@syzkaller.appspotmail.com
+> A question has come up on the linux-wireless ML. If a patch has a "Fixes"
+> line, is that sufficient to get it flagged as a patch in Stable, or is a
+> "Cc: Stable" line also needed?
 
-This is a false positive in lockdep, but it's not clear to me what's
-the best way to fix it.  It's not ext4-specific, so I've added
-linux-fsdevel, Tejun, and Lai to the cc.
+No, a "Fixes" line is not sufficient enough, stable@ will get the
+attention of my scripts properly and will always be looked at.
+Sometimes I look at the fixes: tag, if I have nothing else to do (not
+something that's happened in the past few months), and sometimes Sasha's
+scripts will pick up on that tag, but not always.
 
-The problem is that when we first start doing direct I/O in a
-particular file system, we use a lockless technique to allocate the
-dio workqueue.  From fs/direct-io.c:
+So to be sure, always use cc: stable@ like the stable_kernel_rules.txt
+file says to do.
 
-int sb_init_dio_done_wq(struct super_block *sb)
-{
-	struct workqueue_struct *old;
-	struct workqueue_struct *wq = alloc_workqueue("dio/%s",
-						      WQ_MEM_RECLAIM, 0,
-						      sb->s_id);
-	if (!wq)
-		return -ENOMEM;
-	/*
-	 * This has to be atomic as more DIOs can race to create the workqueue
-	 */
-	old = cmpxchg(&sb->s_dio_done_wq, NULL, wq);
-	/* Someone created workqueue before us? Free ours... */
-	if (old)
-		destroy_workqueue(wq);
-	return 0;
-}
+thanks,
 
-If we have multiple DIO writers racing to initialize
-sb->s_dio_done_wq, the losers of the race will destroy the fresly
-created workqueue.  Because it's freshly created, there's nothing to
-drain --- but lockdep doesn't know that.
-
-One way I suppose we could solve this is to call sb_init_dio_done_wq
-on open if the O_DIRECT flag is set.  But now if we have multiple
-threads racing to open files with O_DIRECT we'll still hit this
-particular race.
-
-The other, and I think better way, we could fix this is to have an
-alternate destroy_never_used_workqueue() function which skips the
-drain_workqueue().
-
-What do people think?
-
-The annotated lockdep is attached below.
-
-						- Ted
-
-[  263.210408] EXT4-fs (vdc): mounted filesystem without journal. Opts: acl,user_xattr,d
-[  263.227896]
-[  263.229118] ======================================================
-[  263.231370] WARNING: possible circular locking dependency detected
-[  263.232950] 4.19.0-rc6-xfstests-00021-g33458eaba4df #706 Not tainted
-[  263.234762] ------------------------------------------------------
-[  263.236915] kworker/1:3/1371 is trying to acquire lock:
-[  263.238630] 00000000f97c1367 (&sb->s_type->i_mutex_key#11){+.+.}, at: __generic_file0
-[  263.241115]
-[  263.241115] but task is already holding lock:
-[  263.243121] 000000008f473d52 ((work_completion)(&dio->complete_work)){+.+.}, at: pro0
-[  263.246910]
-[  263.246910] which lock already depends on the new lock.
-[  263.246910]
-[  263.249597]
-[  263.249597] the existing dependency chain (in reverse order) is:
-[  263.252024]
-[  263.252024] -> #2 ((work_completion)(&dio->complete_work)){+.+.}:
-[  263.254384] process_one_work (/arch/x86/include/asm/jump_label.h:36 /include/linux/jump_label.h:142 /include/trace/events/workqueue.h:89 /kernel/workqueue.c:2152) 
-[  263.255835] worker_thread (/include/linux/compiler.h:188 /include/linux/list.h:203 /kernel/workqueue.c:2297) 
-[  263.257180] kthread (/kernel/kthread.c:246) 
-[  263.258310] ret_from_fork (/arch/x86/entry/entry_64.S:419) 
-[  263.259449]
-[  263.259449] -> #1 ((wq_completion)"dio/%s"sb->s_id){+.+.}:
-[  263.260991] flush_workqueue (/kernel/workqueue.c:2655) 
-[  263.262024] drain_workqueue (/kernel/workqueue.c:2822) 
-[  263.263076] destroy_workqueue (/kernel/workqueue.c:4158) 
-[  263.264177] sb_init_dio_done_wq (/fs/direct-io.c:636) 
-[  263.265131] __blockdev_direct_IO (/fs/direct-io.c:1283 /fs/direct-io.c:1417) 
-[  263.266248] ext4_direct_IO (/fs/ext4/inode.c:3778 /fs/ext4/inode.c:3901) 
-[  263.267184] generic_file_direct_write (/mm/filemap.c:3057) 
-[  263.268164] __generic_file_write_iter (/mm/filemap.c:3229) 
-[  263.269173] ext4_file_write_iter (/include/linux/fs.h:743 /fs/ext4/file.c:267) 
-[  263.270052] aio_write (/fs/aio.c:1473 /fs/aio.c:1561) 
-[  263.270821] io_submit_one (/fs/aio.c:1836) 
-[  263.272136] __se_sys_io_submit (/fs/aio.c:1916 /fs/aio.c:1887) 
-[  263.273565] do_syscall_64 (/arch/x86/entry/common.c:290) 
-[  263.274831] entry_SYSCALL_64_after_hwframe (/arch/x86/entry/entry_64.S:240) 
-[  263.276514]
-[  263.276514] -> #0 (&sb->s_type->i_mutex_key#11){+.+.}:
-[  263.278492] lock_acquire (/arch/x86/include/asm/paravirt.h:788 /kernel/locking/lockdep.c:3903) 
-[  263.279690] down_write (/arch/x86/include/asm/rwsem.h:160 /kernel/locking/rwsem.c:72) 
-[  263.280812] __generic_file_fsync (/fs/libfs.c:982) 
-[  263.282156] ext4_sync_file (/fs/ext4/fsync.c:121) 
-[  263.283400] dio_complete (/include/linux/fs.h:2733 /fs/direct-io.c:329) 
-[  263.284629] process_one_work (/arch/x86/include/asm/jump_label.h:36 /include/linux/jump_label.h:142 /include/trace/events/workqueue.h:114 /kernel/workqueue.c:2158) 
-[  263.285916] worker_thread (/include/linux/compiler.h:188 /include/linux/list.h:203 /kernel/workqueue.c:2297) 
-[  263.287114] kthread (/kernel/kthread.c:246) 
-[  263.288198] ret_from_fork (/arch/x86/entry/entry_64.S:419) 
-[  263.289394]
-[  263.289394] other info that might help us debug this:
-[  263.289394]
-[  263.291805] Chain exists of:
-[  263.291805]   &sb->s_type->i_mutex_key#11 --> (wq_completion)"dio/%s"sb->s_id --> (w)
-[  263.291805]
-[  263.294392]  Possible unsafe locking scenario:
-[  263.294392]
-[  263.295398]        CPU0                    CPU1
-[  263.296171]        ----                    ----
-[  263.296949]   lock((work_completion)(&dio->complete_work));
-[  263.298481]                                lock((wq_completion)"dio/%s"sb->s_id);
-[  263.300579]                                lock((work_completion)(&dio->complete_wor;
-[  263.302856]   lock(&sb->s_type->i_mutex_key#11);
-[  263.304175]
-[  263.304175]  *** DEADLOCK ***
-[  263.304175]
-[  263.305861] 2 locks held by kworker/1:3/1371:
-[  263.307097]  #0: 000000004a793a56 ((wq_completion)"dio/%s"sb->s_id){+.+.}, at: proce0
-[  263.309761]  #1: 000000008f473d52 ((work_completion)(&dio->complete_work)){+.+.}, at0
-[  263.312663]
-[  263.312663] stack backtrace:
-[  263.313881] CPU: 1 PID: 1371 Comm: kworker/1:3 Not tainted 4.19.0-rc6-xfstests-000216
-[  263.316541] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.1-1 04/4
-[  263.318894] Workqueue: dio/vdc dio_aio_complete_work
-[  263.320303] Call Trace:
-[  263.321038] dump_stack (/lib/dump_stack.c:115) 
-[  263.322010] print_circular_bug.isra.19.cold.39 (/kernel/locking/lockdep.c:1221) 
-[  263.323581] check_prev_add.constprop.27 (/kernel/locking/lockdep.c:1861) 
-[  263.324991] __lock_acquire (/kernel/locking/lockdep.c:1975 /kernel/locking/lockdep.c:2415 /kernel/locking/lockdep.c:3411) 
-[  263.326054] lock_acquire (/arch/x86/include/asm/paravirt.h:788 /kernel/locking/lockdep.c:3903) 
-[  263.327086] ? __generic_file_fsync (/fs/libfs.c:982) 
-[  263.328349] down_write (/arch/x86/include/asm/rwsem.h:160 /kernel/locking/rwsem.c:72) 
-[  263.329300] ? __generic_file_fsync (/fs/libfs.c:982) 
-[  263.330504] __generic_file_fsync (/fs/libfs.c:982) 
-[  263.331663] ext4_sync_file (/fs/ext4/fsync.c:121) 
-[  263.332722] dio_complete (/include/linux/fs.h:2733 /fs/direct-io.c:329) 
-[  263.333772] process_one_work (/arch/x86/include/asm/jump_label.h:36 /include/linux/jump_label.h:142 /include/trace/events/workqueue.h:114 /kernel/workqueue.c:2158) 
-[  263.334719] worker_thread (/include/linux/compiler.h:188 /include/linux/list.h:203 /kernel/workqueue.c:2297) 
-[  263.335482] ? process_one_work (/kernel/workqueue.c:2239) 
-[  263.336241] kthread (/kernel/kthread.c:246) 
-[  263.336826] ? kthread_park (/kernel/kthread.c:206) 
-[  263.337548] ret_from_fork (/arch/x86/entry/entry_64.S:419) 
+greg k-h
