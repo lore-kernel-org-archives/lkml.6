@@ -2,115 +2,266 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C8FC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19475C46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:27:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B6A220652
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:25:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B62BB207DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 12:27:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pHqdw9gE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B6A220652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HiZFFvfK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B62BB207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbeJWUsx (ORCPT
+        id S1728033AbeJWUvN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 16:48:53 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:32896 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727492AbeJWUsw (ORCPT
+        Tue, 23 Oct 2018 16:51:13 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42918 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbeJWUvM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 16:48:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=d0SR6uAd9+fp4gIT+veEgCDquPv2pU5w5Fjybo4wDvQ=; b=pHqdw9gE8MuWLYrOasOTitl2f
-        r7+jSP56/BqiHWaRC80aiq8e4HH3dWP9SVQaRkjsV1j1sxFDmK5M4KM8MrwvFTTcAYask2d/G8rz3
-        20qOh8tZjbR+OAYRz5BGxDgRsWmbehukRhVsC6kHwQH2UaiC44Bv5Ti2AAlc5cJaQpJndLn/k8PtS
-        7QOpn4yER0zSuIHSM+OqBT8Gevyre3eFf7bx3LerBc9z8PWDdT44vw/igRWlWu+JRMA3peFHMbk+Y
-        NLIV0ibjgfc01ApQHV0IGm51Dwpcys/+x31qtCRjY6ecODej+4YKbkOg4J0baEszn8xO3FiyPA7+i
-        NjXKZBQbw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gEvjg-0007u7-4V; Tue, 23 Oct 2018 12:24:36 +0000
-Date:   Tue, 23 Oct 2018 05:24:35 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin@protonic.nl, stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
-        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
-        robin.murphy@arm.com, iamjoonsoo.kim@lge.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kees Cook <keescook@chromium.org>, treding@nvidia.com,
-        Michal Hocko <mhocko@suse.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>, aryabinin@virtuozzo.com,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>, tchibo@google.com,
-        riel@redhat.com, Minchan Kim <minchan@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Huang, Ying" <ying.huang@intel.com>, ak@linux.intel.com,
-        rppt@linux.vnet.ibm.com, linux@dominikbrodowski.net,
-        Arnd Bergmann <arnd@arndb.de>, cpandya@codeaurora.org,
-        hannes@cmpxchg.org, Joe Perches <joe@perches.com>,
-        mcgrof@kernel.org, linux-arm-kernel@lists.infradead.org,
+        Tue, 23 Oct 2018 16:51:12 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9NCIlF7007317;
+        Tue, 23 Oct 2018 12:27:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=xlVJTMtDx2NqR5iBa0pscJrEhHhYzwACWIFcyZUkVKw=;
+ b=HiZFFvfKp6jGhV59jRAWvBfXNYJNJuYdXxGM9PEDaKcRs4xs9a0Qjgqn2gq+htGZu0su
+ SjBv6Brje4S6qFokplO0cWEb8CM9gjZwlSK+jHbxH2D0EB/A4AYrzgHliDp+iKskzrK4
+ T387DlbDVDOofkgCaVBPF7/sryFuJQjuvm/1Bypov85qFygPQlks0kD/1Rp+iC6GxiVs
+ Krewz43Gm6zveoSdW9cTKt3VlAfD+7k5mb8AdVhIn78Pl+RXNY6j5H1ZoAsW6ixw7+iM
+ 3u3JGWW/uAt31u393JrCdThqX3794I3Ivc41IHmmduS5WdqDM42zCJI7UerEx1aiMxwm TA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2n7usu4w5x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Oct 2018 12:27:40 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9NCRdAJ001789
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Oct 2018 12:27:39 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9NCRc0g013670;
+        Tue, 23 Oct 2018 12:27:38 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 23 Oct 2018 05:27:37 -0700
+Date:   Tue, 23 Oct 2018 05:27:38 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Huang Ying <ying.huang@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, Linux-MM <linux-mm@kvack.org>
-Subject: Re: [PATCH v2] mm: Introduce new function vm_insert_kmem_page
-Message-ID: <20181023122435.GB20085@bombadil.infradead.org>
-References: <CANiq72mkTP_m20vqei-cpN+ypQ_gU472qn5m68vb_4Nqj5afMQ@mail.gmail.com>
- <CAFqt6zaFc_GenhfvsD0VPfepR-jjXypj+4CgNEuHMVq1WXV+8w@mail.gmail.com>
- <CANiq72kVJn7985EET067Dgj+z0dwb0x2MTUnREMWKCVU6=WnJA@mail.gmail.com>
- <CAFqt6zZ4sPjtb5BaDfwc5tZv+vMj6ao3NJZ_3quX9AH5pCMwJg@mail.gmail.com>
- <CANiq72m9u1PL9X+dPNLxgkhvttj=4ijLyM2sFex=Kws7wswKzw@mail.gmail.com>
- <CAFqt6zYH4Aczu8AYke8AfGuMS70SJXCMn-n8X8C_Tz03gTjn8g@mail.gmail.com>
- <CANiq72kRAZE9SyM4EkpaBZH03Ex0Z=4Pk2iOuc2jBDKTfKjHQg@mail.gmail.com>
- <CAFqt6zZCCPFE3sQ3u_gjiN8wwd99nwWatk9JRsiGxbCwhi91mg@mail.gmail.com>
- <CANiq72k-e_j67==VdrayqggjAd7MAfpaJS-_0=jkmh4OWynukQ@mail.gmail.com>
- <CAFqt6zZ2yHkVcbYtK1dxr9B3K5WVYGboavjP1ibmYei0u4zFbQ@mail.gmail.com>
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: Re: [PATCH -V6 00/21] swap: Swapout/swapin THP in one piece
+Message-ID: <20181023122738.a5j2vk554tsx4f6i@ca-dmjordan1.us.oracle.com>
+References: <20181010071924.18767-1-ying.huang@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFqt6zZ2yHkVcbYtK1dxr9B3K5WVYGboavjP1ibmYei0u4zFbQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181010071924.18767-1-ying.huang@intel.com>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9054 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810230106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 05:44:32PM +0530, Souptick Joarder wrote:
-> On Sat, Oct 6, 2018 at 4:19 PM Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
-> >
-> > On Sat, Oct 6, 2018 at 7:11 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> > >
-> > > On Fri, Oct 5, 2018 at 11:39 PM Miguel Ojeda
-> > > <miguel.ojeda.sandonis@gmail.com> wrote:
-> > > > They are not supposed to be "steps". You did it with 70+ commits (!!)
-> > > > over the course of several months. Why a tree wasn't created, stuff
-> > > > developed there, and when done, submitted it for review?
-> > >
-> > > Because we already have a plan for entire vm_fault_t migration and
-> > > the * instruction * was to send one patch per driver.
-> >
-> > The instruction?
+On Wed, Oct 10, 2018 at 03:19:03PM +0800, Huang Ying wrote:
+> And for all, Any comment is welcome!
 > 
-> Sorry for the delayed response.
-> Instruction from Matthew  Wilcox who is supervising the entire vm_fault_t
-> migration work :-)
+> This patchset is based on the 2018-10-3 head of mmotm/master.
 
-Hang on.  That was for the initial vm_fault_t conversion in which each
-step was clearly an improvement.  What you're looking at now is far
-from that.
+There seems to be some infrequent memory corruption with THPs that have been
+swapped out: page contents differ after swapin.
 
+Reproducer at the bottom.  Part of some tests I'm writing, had to separate it a
+little hack-ily.  Basically it writes the word offset _at_ each word offset in
+a memory blob, tries to push it to swap, and verifies the offset is the same
+after swapin.
+
+I ran with THP enabled=always.  THP swapin_enabled could be always or never, it
+happened with both.  Every time swapping occurred, a single THP-sized chunk in
+the middle of the blob had different offsets.  Example:
+
+** > word corruption gap
+** corruption detected 14929920 bytes in (got 15179776, expected 14929920) **
+** corruption detected 14929928 bytes in (got 15179784, expected 14929928) **
+** corruption detected 14929936 bytes in (got 15179792, expected 14929936) **
+...pattern continues...
+** corruption detected 17027048 bytes in (got 15179752, expected 17027048) **
+** corruption detected 17027056 bytes in (got 15179760, expected 17027056) **
+** corruption detected 17027064 bytes in (got 15179768, expected 17027064) **
+100.0% of memory was swapped out at mincore time
+0.00305% of pages were corrupted (first corrupt word 14929920, last corrupt word 17027064)
+
+The problem goes away with THP enabled=never, and I don't see it on 2018-10-3
+mmotm/master with THP enabled=always.
+
+The server had an NVMe swap device and ~760G memory over two nodes, and the
+program was always run like this:  swap-verify -s $((64 * 2**30))
+
+The kernels had one extra patch, Alexander Duyck's
+"dma-direct: Fix return value of dma_direct_supported", which was required to
+get them to build.
+
+---------------------------------------8<---------------------------------------
+
+/*
+ * swap-verify.c - helper to verify contents of swapped out pages
+ *
+ * Daniel Jordan <daniel.m.jordan@oracle.com>
+ */
+
+#define _GNU_SOURCE
+#include <getopt.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <unistd.h>
+
+#define TEST_SUCCESS	0
+#define TEST_FAIL	1
+#define TEST_SKIP	2
+
+static void usagedie(int exitcode)
+{
+	fprintf(stderr, "usage: swap-verify\n"
+			"    -h                show this message\n"
+			"    -s bytes\n");
+	exit(exitcode);
+}
+
+int main(int argc, char **argv)
+{
+	int c, pgsize;
+	char *pages;
+	unsigned char *mincore_vec;
+	size_t i, j, nr_pages_swapped, nr_pages_corrupted;
+	size_t bytes = 1ul << 30;	/* default 1G */
+	ssize_t bytes_read;
+	size_t first_corrupt_word, last_corrupt_word, prev_corrupt_word;
+
+	while ((c = getopt(argc, argv, "hs:")) != -1) {
+		switch (c) {
+		case 'h':
+			usagedie(0);
+			break;
+		case 's':
+			bytes = strtoul(optarg, NULL, 10);
+			break;
+		default:
+			fprintf(stderr, "unrecognized option %c\n", c);
+			exit(TEST_SKIP);
+		}
+	}
+
+	pgsize = getpagesize();
+
+	if ((mincore_vec = calloc(bytes / pgsize, 1)) == NULL) {
+		perror("calloc");
+		exit(TEST_SKIP);
+	}
+
+	if ((pages = mmap(NULL, bytes, PROT_READ | PROT_WRITE,
+			  MAP_PRIVATE | MAP_ANONYMOUS, -1, 0)) == MAP_FAILED) {
+		perror("mmap");
+		exit(TEST_SKIP);
+	}
+
+	/* Fill pages with a "random" pattern. */
+	for (i = 0; i < bytes; i += sizeof(unsigned long))
+		*(unsigned long *)(pages + i) = i;
+
+	/* Now fill memory, trying to push the pages just allocated to swap. */
+	system("./use-mem-total");
+
+	/* Is the memory swapped out? */
+	if (mincore(pages, bytes, mincore_vec) == -1) {
+		perror("mincore");
+		exit(TEST_SKIP);
+	}
+
+	nr_pages_swapped = 0;
+	nr_pages_corrupted = 0;
+	first_corrupt_word = bytes;
+	last_corrupt_word = 0;
+	prev_corrupt_word = bytes;
+	for (i = 0; i < bytes; i += pgsize) {
+		bool page_corrupt = false;
+		if (mincore_vec[i / pgsize] & 1) {
+			/* Resident, don't bother checking. */
+			continue;
+		}
+		++nr_pages_swapped;
+		for (j = i; j < i + pgsize; j += sizeof(unsigned long)) {
+			unsigned long val = *(unsigned long *)(pages + j);
+			if (val != j) {
+				if (!page_corrupt)
+					++nr_pages_corrupted;
+				page_corrupt = true;
+				if (j - prev_corrupt_word != sizeof(unsigned long))
+					fprintf(stderr, "** > word corruption gap\n");
+				if (j % (1ul << 21) == 0)
+					fprintf(stderr, "-- THP boundary\n");
+				if (j < first_corrupt_word)
+					first_corrupt_word = j;
+				if (j > last_corrupt_word)
+					last_corrupt_word = j;
+				fprintf(stderr, "** corruption detected %lu "
+					"bytes in (got %lu, expected %lu) **\n",
+					j, val, j);
+				prev_corrupt_word = j;
+			}
+		}
+	}
+	fprintf(stderr, "%.1f%% of memory was swapped out at mincore time\n",
+	       ((double)nr_pages_swapped / (bytes / pgsize)) * 100);
+
+	if (nr_pages_corrupted) {
+		fprintf(stderr, "%.5f%% of pages were corrupted (first corrupt "
+			"word %lu, last corrupt word %lu)\n",
+			((double)nr_pages_corrupted / (bytes / pgsize)) * 100,
+			first_corrupt_word, last_corrupt_word);
+	} else {
+		fprintf(stderr, "no memory corruption detected\n");
+	}
+	return (nr_pages_corrupted) ? TEST_FAIL : TEST_SUCCESS;
+}
+
+---------------------------------------8<---------------------------------------
+
+#!/usr/bin/env bash
+#
+# use-mem-total
+#
+# Helper that allocates MemTotal and exits immediately.  Useful for causing
+# swapping of previously allocated memory.
+
+# XXX fix paths
+source /path/to/vm-scalability/hw_vars
+
+/path/to/usemem --thread $nr_task --step $pagesize -q --repeat 4 \
+	$(( mem * 11 / 10 / nr_task )) > /dev/null
+
+---------------------------------------8<---------------------------------------
