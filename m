@@ -2,95 +2,119 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B379FC67863
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82EACC67863
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F24D20671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:01:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QyJJfFLO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F24D20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 56B6820671
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 15:03:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56B6820671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728399AbeJWXZE (ORCPT
+        id S1728405AbeJWX1L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 19:25:04 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38717 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbeJWXZD (ORCPT
+        Tue, 23 Oct 2018 19:27:11 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:37729 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728034AbeJWX1L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 19:25:03 -0400
-Received: by mail-wr1-f68.google.com with SMTP id d10-v6so2098661wrs.5;
-        Tue, 23 Oct 2018 08:01:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=DNPRj44yO0W2TUQq8beXtrJGB9zkBaGSgZsPlXqFj/A=;
-        b=QyJJfFLOY65FbWduxMazW7FJJXkw829rPfmxBiDmTW1Grwx3zH4By+FeutZyqpGuUB
-         d1twqZKnF2Y5h+gal1/ugPCpPGHXMExhLZlXQBtMemOV5Jx+GDd8sQ63Cy058iJkGwe8
-         k01594Wk+rR3HpFrHr8BmEeK9Jyu1AX9f5gRHZpEqlWIWxMV0fqOdBiBDETuC4HMUiyU
-         iMTBHBCrwDRlYuixfZhjfNuBdwa/e9NQho4NjA4hFFF402j1i94/Cg/LK5PIsUuqFbuc
-         5h/OjZI5lnc917GsV7huKASiiHKTmYE5NfCkGzA1tjqYR2K6yUxSLjDgOUWZ4+Yl9jab
-         VCNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=DNPRj44yO0W2TUQq8beXtrJGB9zkBaGSgZsPlXqFj/A=;
-        b=KWJCV8NnptvtE1xPd0zvOEiFO8ehJBl1u5x3pzwvDgcmvqwfU+P2+MFzEkDyWDkuVT
-         17Fd6T8/nBGUDFT7Qtg5B15ZVWDOE3rJTkDHNmHc+dQwd3xyMm6BY2cz0oxCMaxDNNlS
-         j1WM1ypsIrZzS/smaXsvw13LGCIBKXE6jmBQ8V4Vr9IFv1ncUFMLUST/5zaRjkt5vxkB
-         gHrlarPmjOuhB0pZl2V0VqPnJSJ2CnONA10vNjyUdZ4aRE2O3U/3i+x9TAmIWeH6uLZs
-         vUUNz6kGsMoguDHquIY9/qXUPbqZBzHfAsybrpxXlenuoUr1FoY3A7hSPFis+4T+N3o3
-         GWmg==
-X-Gm-Message-State: AGRZ1gJSQy+fmw+ElL1QXOZL1yaM6G3LqbZgeQVz9/1p3AfyLF3Seqvg
-        yqK8Fiq9GaBMMyIoDxOv6T4=
-X-Google-Smtp-Source: AJdET5cNURh1YsokQ/6OfdD+fmprUGaZlvkGHNHrg0IjSoikyPmCoh5KQV/CNN2LXvnDDXLFyLQiyA==
-X-Received: by 2002:a5d:5449:: with SMTP id w9-v6mr4685974wrv.284.1540306875020;
-        Tue, 23 Oct 2018 08:01:15 -0700 (PDT)
-Received: from artemis.netio.cloud (bzq-218-196-25.red.bezeqint.net. [81.218.196.25])
-        by smtp.gmail.com with ESMTPSA id u132-v6sm2485699wmg.17.2018.10.23.08.01.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Oct 2018 08:01:14 -0700 (PDT)
-From:   Rami Rosen <ramirose@gmail.com>
-To:     pandit.parav@gmail.com
-Cc:     tj@kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        Rami Rosen <ramirose@gmail.com>
-Subject: [PATCH] rdmacg: fix a typo in rdmacg documentation
-Date:   Tue, 23 Oct 2018 18:01:06 +0300
-Message-Id: <20181023150106.7332-1-ramirose@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 23 Oct 2018 19:27:11 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 3B7022103C;
+        Tue, 23 Oct 2018 15:03:23 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id tKbjgDn9uMwD; Tue, 23 Oct 2018 15:03:23 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id D6D1A2100E;
+        Tue, 23 Oct 2018 15:03:02 +0000 (UTC)
+Subject: Re: [RFC PATCH 0/2] improve vmalloc allocation
+To:     Michal Hocko <mhocko@kernel.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Garnier <thgarnie@google.com>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
+        Shuah Khan <shuah@kernel.org>
+References: <20181019173538.590-1-urezki@gmail.com>
+ <20181022125142.GD18839@dhcp22.suse.cz>
+ <20181022165253.uphv3xzqivh44o3d@pc636>
+ <20181023072306.GN18839@dhcp22.suse.cz>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <dd0c3528-9c01-12bc-3400-ca88060cb7cf@kernel.org>
+Date:   Tue, 23 Oct 2018 09:02:56 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181023072306.GN18839@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes a typo in RDMA cgroup documentation.
+Hi Michal,
 
-Signed-off-by: Rami Rosen <ramirose@gmail.com>
----
- Documentation/cgroup-v1/rdma.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 10/23/2018 01:23 AM, Michal Hocko wrote:
+> Hi Shuah,
+> 
+> On Mon 22-10-18 18:52:53, Uladzislau Rezki wrote:
+>> On Mon, Oct 22, 2018 at 02:51:42PM +0200, Michal Hocko wrote:
+>>> Hi,
+>>> I haven't read through the implementation yet but I have say that I
+>>> really love this cover letter. It is clear on intetion, it covers design
+>>> from high level enough to start discussion and provides a very nice
+>>> testing coverage. Nice work!
+>>>
+>>> I also think that we need a better performing vmalloc implementation
+>>> long term because of the increasing number of kvmalloc users.
+>>>
+>>> I just have two mostly workflow specific comments.
+>>>
+>>>> A test-suite patch you can find here, it is based on 4.18 kernel.
+>>>> ftp://vps418301.ovh.net/incoming/0001-mm-vmalloc-stress-test-suite-v4.18.patch
+>>>
+>>> Can you fit this stress test into the standard self test machinery?
+>>>
+>> If you mean "tools/testing/selftests", then i can fit that as a kernel module.
+>> But not all the tests i can trigger from kernel module, because 3 of 8 tests
+>> use __vmalloc_node_range() function that is not marked as EXPORT_SYMBOL.
+> 
+> Is there any way to conditionally export these internal symbols just for
+> kselftests? Or is there any other standard way how to test internal
+> functionality that is not exported to modules?
+> 
 
-diff --git a/Documentation/cgroup-v1/rdma.txt b/Documentation/cgroup-v1/rdma.txt
-index af618171e0eb..9bdb7fd03f83 100644
---- a/Documentation/cgroup-v1/rdma.txt
-+++ b/Documentation/cgroup-v1/rdma.txt
-@@ -27,7 +27,7 @@ cgroup.
- Currently user space applications can easily take away all the rdma verb
- specific resources such as AH, CQ, QP, MR etc. Due to which other applications
- in other cgroup or kernel space ULPs may not even get chance to allocate any
--rdma resources. This can leads to service unavailability.
-+rdma resources. This can lead to service unavailability.
- 
- Therefore RDMA controller is needed through which resource consumption
- of processes can be limited. Through this controller different rdma
--- 
-2.17.1
+The way it can be handled is by adding a test module under lib. test_kmod,
+test_sysctl, test_user_copy etc.
+
+There is a corresponding test script e.g selftests/kmod/kmod.sh that loads
+the module and runs tests.
+
+Take a look at lib/test_overflow.c - It is running some vmalloc_node tests
+test_overflow.c:DEFINE_TEST_ALLOC(vmalloc_node,  vfree,	     0, 0, 1);
+test_overflow.c:DEFINE_TEST_ALLOC(kvmalloc_node, kvfree,     0, 1, 1);
+test_overflow.c:	err |= test_kvmalloc_node(NULL);
+test_overflow.c:	err |= test_vmalloc_node(NULL);
+
+This module could be extended to tun these stress tests perhaps? I don't see a
+selftests test script for test_overflow, one could be added.
+
+Adding Kees Cook to the thread for input on test_overflow.
+
+thanks,
+-- Shuah
 
