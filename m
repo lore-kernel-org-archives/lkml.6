@@ -2,136 +2,133 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA892C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A073EC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:20:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6AB120652
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:19:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5697C20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 09:20:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="a5tbrl2V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6AB120652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="XUWY3xpT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5697C20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728461AbeJWRl4 (ORCPT
+        id S1728474AbeJWRnL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 13:41:56 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43902 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727714AbeJWRl4 (ORCPT
+        Tue, 23 Oct 2018 13:43:11 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:19225 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727714AbeJWRnL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 13:41:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=U705E0+xUa/nZ5KaHQgUff62hUgvpDcI8nNTrrYCFZE=; b=a5tbrl2VKFgdnXOhAQTKfyTF6
-        bAFj2aP640EoSFHDfGtkp2M2buhyFIhGngkXEO+SvqNhLj7yqhYbeWhWgI2cW1ddw1hoxKBqvx8sW
-        N/2LqTwr5AkEQT09S35gAOZU8TD78zaBRVcrEDdYz+uEADWr9ECX0+0e63mCLKg/fqm/w=;
-Received: from [185.7.230.215] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gEsqN-0007Nz-VB; Tue, 23 Oct 2018 09:19:20 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 7B3EC440078; Tue, 23 Oct 2018 11:19:19 +0200 (CEST)
-Date:   Tue, 23 Oct 2018 10:19:19 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Git pull ack emails..
-Message-ID: <20181023091919.GG2103@sirena.org.uk>
-References: <CAHk-=wjS6cjjP+fkZWzzrdZ_fZ1F=PrAGcBc57vKCpNyoD73Vw@mail.gmail.com>
+        Tue, 23 Oct 2018 13:43:11 -0400
+X-IronPort-AV: E=Sophos;i="5.54,415,1534834800"; 
+   d="scan'208";a="22886404"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 23 Oct 2018 02:20:38 -0700
+Received: from NAM05-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.105) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Tue, 23 Oct 2018 02:20:38 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0/ZOMMaiC0QNsOMcDE9PXd+L2yrZSViNiAp2KZp1EwE=;
+ b=XUWY3xpTsxWbB9nzl5TnZw6R0TI3kCcrTwXrcQ7rsjmBWvvacGloSdwT/pu3eITYK5GY02MhQp56D10Xbsha9T+DUJ2w7I0dOn4RnZmTAttVvoPJUWFN3kT4VMxcjGSrFSq7unEpui01C+uQ3sbKbZKtQQdTYqBPxSd/GzPQcBU=
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
+ BN6PR11MB1524.namprd11.prod.outlook.com (10.172.22.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1250.30; Tue, 23 Oct 2018 09:20:37 +0000
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::11b7:21db:803a:7cfa]) by BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::11b7:21db:803a:7cfa%4]) with mapi id 15.20.1250.028; Tue, 23 Oct 2018
+ 09:20:37 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <wsa@the-dreams.de>, <Ludovic.Desroches@microchip.com>,
+        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <linux-i2c@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <Tudor.Ambarus@microchip.com>
+Subject: [RESEND PATCH 0/2] i2c: enable buses to save their clock frequency in
+ adapter
+Thread-Topic: [RESEND PATCH 0/2] i2c: enable buses to save their clock
+ frequency in adapter
+Thread-Index: AQHUarGoltrXm92vyk6DVBiiYgvl1w==
+Date:   Tue, 23 Oct 2018 09:20:36 +0000
+Message-ID: <20181023092025.32463-1-tudor.ambarus@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CWLP265CA0181.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:401:4d::25) To BN6PR11MB1842.namprd11.prod.outlook.com
+ (2603:10b6:404:103::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tudor.Ambarus@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [185.7.230.215]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR11MB1524;6:tBF3AH792IT0PcfQAVOv0mzyGyGZafRnsJxOmySu1vGz+2xR35yzp4cY6s+kibhkKRvsxAoPBGnyIsRDmNz3dJ+WKxf83c3zbno2rQmkgjg1y4C1j0kQF37/sNgXJXoheNjUoXbyU1gEuq6g6DNFMLRO6vu2CCFfNDQdHRDIajpdReFJjLemQpYjmL3YacyiS3eFWPSsE70iNNN50RT+wsbrFKhp4VEgJTs7nkg+4uevx1fQ8mvU9Ux7fjT+1mBQnibC1QxCwtXthweotnFDUfmSAcc8WpwZ0ReJl3zsZoH4c5Ua1kD62LjOA0+xEKEEiVnqr1g9hGkOGb/lc6YV77/WFqIGb2OQ03rqCG1gZMJvYvJbQ1HCSh0Dw3RhNP53FLSBfyForuhrUPK5dexb0hnlneYcnX7BJ24tskaW7+8s3LV7+bpDRC8M+yE1z4sTT5aI5OkiComynIcFhFFYmw==;5:GHjN6swC5F/EK8JSDdKEotTyAfHpVlWpkHC0rIycIJsW2dAlsBpvkjgEpnieNp/r5ERPsOvNefUuxfmvD5VATB85vQyPZ28tbbQnS31a4NmFThdWA4Q6o2CoAyR4coF/OnAMsYjbhPzfa8kBzSMvlNINdegqCwcyG0IzusrWZCs=;7:1MQCOhvMFwQrgc8sJ8pbwfFx6yPVzYSJBc3OILO+vrPLr74o2J9WxY/48hVQPnv3mENLjVkVUC0yQgbrlUZsu1x/+GlstrW91AcH/A9y72tyXd25XT9S2FzgeQS2OYnEhLNo55fJ3dpoutybFPl2p+gRkymngEdufvKHh2hC5NiIdeiByKhbpGHa3O91KEAOemx8xOVgPW1Tkp4ptSSzv7eeCwHaRWDa+XC9Ik62nyo3JmvLsU4Bhj1H5CKKn76r
+x-ms-office365-filtering-correlation-id: 9ad8cb01-c4cf-4c71-095d-08d638c8ca4f
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1524;
+x-ms-traffictypediagnostic: BN6PR11MB1524:
+x-microsoft-antispam-prvs: <BN6PR11MB15241134E227FAC052725209F0F50@BN6PR11MB1524.namprd11.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB1524;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB1524;
+x-forefront-prvs: 0834BAF534
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(39860400002)(396003)(366004)(189003)(199004)(52116002)(478600001)(26005)(4326008)(316002)(14444005)(86362001)(305945005)(6486002)(6436002)(6512007)(256004)(110136005)(7736002)(72206003)(53936002)(14454004)(25786009)(107886003)(2501003)(97736004)(36756003)(105586002)(66066001)(486006)(106356001)(386003)(2906002)(1076002)(476003)(6116002)(6506007)(3846002)(5660300001)(2201001)(5250100002)(102836004)(2616005)(8676002)(99286004)(81166006)(2900100001)(71190400001)(71200400001)(8936002)(217873002)(81156014)(68736007)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1524;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: C6Ac7f8PFXc/yYzw8fDahvLGdrGebJRwS5EFMNGORAOzusi1jNMbrVGIbfqQMuSIlMeuzdu2PYTC7v10UUVrbVv0rb/hqhkAfMCAIT/gkcopC6ENvNyeqP8cClxs0rMdFFnLnupfDUDQBY/aqVgUcPoDa+wQpZQd8M0F8M8G7Bo6TvpA7MwLyIHwsxRO7SJXJ3MuS3ROnDi0ZvRSrg5808Yty2tEpxJ/JDAfeC2sA7zwc3NGpiWmKMLShttakwgjxXPHyGckIKGrwGPfa3lY/J/mWDeUHooJRqV06txADTBYclkN6L9/GO+LQ7V7sKBrOlF5r8Y1BYjFzLviv/QngPwZmpQefwYfNuCbj9hdLnA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nqkreNcslJAfgyzk"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjS6cjjP+fkZWzzrdZ_fZ1F=PrAGcBc57vKCpNyoD73Vw@mail.gmail.com>
-X-Cookie: Piece of cake!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ad8cb01-c4cf-4c71-095d-08d638c8ca4f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2018 09:20:36.9077
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1524
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The clock-frequency property is not mandatory for the i2c buses. If it's
+not present in the device tree, the buses __usually__ assume it's 100kHZ
+(see altera, at91, axxia, etc.). Broadcom uses a 375kHZ default
+clock-frequency, so the default clock frequency varies from bus to bus.
 
---nqkreNcslJAfgyzk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+There are i2c clients that need to know the bus clock frequency in order to
+compute their wake token (see atecc508a i2c client).
 
-On Tue, Oct 23, 2018 at 09:41:32AM +0100, Linus Torvalds wrote:
+The clock-frequency value has to be propagated to the i2c clients, otherwis=
+e,
+if they will not find the i2c bus clock frequency in the device tree, they
+will have to make their own assumption of the clock frequency.
 
-> In contrast, this email is written "after the fact", just scripting
-> "who did I pull for and then push out" by just looking at the git
-> tree. Which sucks, because it means that I don't actually answer the
-> original email at all, and thus lose any cc's for other people or
-> mailing lists.  That would literally be done better by simple
-> automation.
+Spare the i2c clients of making wrong assumptions of the i2c bus clock
+frequency and enable the buses to save their clock frequency in adapter.
 
-> So I've got a few options:
+since rfc:
+- reword commit messages
 
->  - just don't do it
+Tudor Ambarus (2):
+  i2c: enable buses to save their clock frequency in adapter
+  i2c: at91: Save the bus clock frequency in adapter
 
->  - acking the pull request before it's validated and finalized.
+ drivers/i2c/busses/i2c-at91.c | 1 +
+ include/linux/i2c.h           | 1 +
+ 2 files changed, 2 insertions(+)
 
->  - starting the reply when doing the pull, leaving the email open in a
-> separate window, going on to the next pull request, and then when
-> build tests are done and I'll start the next one, finish off the old
-> pending email.
+--=20
+2.9.4
 
-> and obviously that first option is the easiest one. I'm not sure what
-> Greg did, and during the later rc's it probably doesn't matter,
-> because there likely simply aren't any overlapping operations.
-
-I have a script that sends people rather lengthy "applied" e-mails when
-I push things out with a lot of process blurb that new contributors
-might need.  It tries to use patchwork to get the message ID and CC
-list, though it will just fall back to scraping from git.  In my case
-it's mainly there to help new contributors know what's going on but a
-lot of other people have said they find them useful.
-
-> So I'm mainly pinging people I've already pulled to see how much
-> people actually _care_. Yes, the ack is nice, but do people care
-> enough that I should try to make that workflow change? Traditionally,
-> you can see that I've pulled from just seeing the end result when it
-> actually hits the public tree (which is yet another step removed from
-> the steps above - I do build tests between every pull, but I generally
-> tend to push out the end result in batches, usually a couple of times
-> a day).
-
-It doesn't urgently bother me personally, honestly I was a bit alarmed
-the first time Greg sent me an ack - your usual workflow is that if
-there's any mail it means that there's a problem.  So long as it's
-consistent.
-
---nqkreNcslJAfgyzk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvO55YACgkQJNaLcl1U
-h9DQHgf/RfeHWJKGoGzi5WcMGXUn2sQBRTHrfHTVFYVjxcmXHYWjxitoA6ryl2gd
-/A8Z2ygFgmiFdwu6zqP7xJToTIaR7+rbj+tBxG+opYSNbBIUFFyKEy3hWmyV+tf5
-rzJQXLL55armI/YoJn9YaEGinw+MaysZjVWsJvV4dYO749do7L+HQcbFiSpnmGD1
-7N0L8Rs+7abiH2BB98y3QTR1D1fdMg55jxUO5v9+M702knLsovtNOtyZHKwdsayf
-KG5to//bAurOProfvWpiedbIFY9OV/PvlQsTugLNmS2GCiYup05Nd+IlKIVbDAdB
-M2lnEkjPd/qZ+L4x0yJkzHODxJChDA==
-=/CFB
------END PGP SIGNATURE-----
-
---nqkreNcslJAfgyzk--
