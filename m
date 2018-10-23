@@ -4,117 +4,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4964AC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA2EC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:10:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4B6D20665
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:09:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32A4F20665
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 16:10:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZqKtQQot"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4B6D20665
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H1p2xgpJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32A4F20665
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbeJXAdS (ORCPT
+        id S1728391AbeJXAet (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 20:33:18 -0400
-Received: from mail-ed1-f44.google.com ([209.85.208.44]:39940 "EHLO
-        mail-ed1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726970AbeJXAdS (ORCPT
+        Tue, 23 Oct 2018 20:34:49 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38040 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726970AbeJXAet (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 20:33:18 -0400
-Received: by mail-ed1-f44.google.com with SMTP id r1-v6so2167114edd.7;
-        Tue, 23 Oct 2018 09:09:16 -0700 (PDT)
+        Tue, 23 Oct 2018 20:34:49 -0400
+Received: by mail-pl1-f196.google.com with SMTP id p7-v6so861963plk.5;
+        Tue, 23 Oct 2018 09:10:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=Fgm4tFmb3aCVBUqVRe/lYD1am1ANjqT3rkKG73BHrA0=;
-        b=ZqKtQQotqtvSi/BvgAxSrFvgRLYJqUDOhA0kxHrEufBXnxNntz5BcbEzjTuayF1q7a
-         0ysmOTlaBB+WHtnpemnIlA/t4rb5kqzUEHJKk8CNYvwvzcCKhGTFPlmpi7sx84OdpqwC
-         8Fpj9q7UjGZ/wYOAuDU9+6mJbyiLfEuTMUjmIZl6oa/KzgyoVhV0KXZfEXwxBk9qRxva
-         2nvc5uYKDSHXh7VZgFQnqdkjztLS1KwAd3u+xOoLi8XEiuibW+jHKfdffMlOJ2mAqS3k
-         poLVZH36Cf8KMyHe0E0lQX+sMTVMvywClNw5s+LZUK1BP1hGZV03qVj6QhIr7CPb8nLh
-         AnYA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XopQWpUn3r3x0zxHb7arPLfIlwDzk8qREyRleyVHv94=;
+        b=H1p2xgpJNhy8jplF+wEgLd4AJnvfF/7Nrh8Ve/mkVh0Ghzaw+xyAjENbB57SonncT9
+         FnMttezKzu6MIMt81U9TrJxJxzO78JMJWlCTuZ7X1Ba4/qsCx7qk86Zqkryk5KIyPMJM
+         cWWdDyYtE/DYM1uU2M9iFZDjh8z9jDK6uxDHl34nBykW5Yblu1mZauDgx1cRFrtKvwdq
+         vM4CCnpacsFFkJ6UVBCixordRv70i4K8GZlxUgQ4A0VyqWfyfUPO+CZJDhf4bLWoBkXZ
+         nzREiQNoxPjDn5RZm91uNEzRKNHumCooRMARiZNHtg8Qn4VLPumcbiCpc2Nau8LHAQ3V
+         UZjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=Fgm4tFmb3aCVBUqVRe/lYD1am1ANjqT3rkKG73BHrA0=;
-        b=nEOH4P8eHIV41o/Vs54+uOJwBzlMBcCBXWTOcRLpftHMY4XatDz6oHrheoiYsAhXWR
-         7oesevhLc29XFwCPJ9vCmULAGLc21DJdW2ZbZKK3rEG3z20Q1ShLbZMMGXjqblj0gxcY
-         QnOZMfSPNGTaYjbsY616B+drPcLvLkUUkyc6S4WpBKZufFL1hpmDR7F+jAwQm3lAJYEb
-         n9UNTxd+gtEhwriro97j0nWu6rawJA7pKZ5RpMlbJr1WQsMJ4XYj34RAsod6V24LMNzy
-         BMVX1/rIL4YaFYM+ROB5cJ3cpaCCj7HZtm5cQZwwSWNw34Na1TKR6m6tA+iQSMve6jdo
-         ksGg==
-X-Gm-Message-State: AGRZ1gKshCgNcit6BeEFAOe3bvyfyBsHl4UtbNTRh7aoUFhbwyLXqcSZ
-        iB1L70xEEFlSFHrqIPzIJE+B7bAA2/hUw9suW0M=
-X-Google-Smtp-Source: AJdET5cA8XFEIPAVLNXUQDLOTgLU+IQR0nqHRB7dwN54oHZh1dnf3t7UuSqyd+xtjgXNOUzWcfCM2gmhjtpvPjD9LEc=
-X-Received: by 2002:a05:6402:12c8:: with SMTP id k8mr9185770edx.143.1540310956010;
- Tue, 23 Oct 2018 09:09:16 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XopQWpUn3r3x0zxHb7arPLfIlwDzk8qREyRleyVHv94=;
+        b=tFx2WGnu4L2TCGB8/lG6mpW3KMQ4snElWoBDtr1qNr7IQDBktM6zhRUotuHHRRrsm4
+         68drSqFRXmGhzVMUolj/PY5U7o9YgZC3sT1msth+uetstYLeN2rFmKH58GiGbHuf7vLU
+         EP3YhJSpwcOzSiFOCE6LL4otg4lZ44FKrKKAJysmb8F2Ny4/SBxO0iTxVjtv62J4mcHd
+         QaJifexudEXVp8g7oL0en1S0QMBccxNAjio3vFRkZmpABAL6suyne833sF4UYbe6KjL2
+         HdhZgKtcQzwuJ61JqCKqDx6ziPyrhXq843IQf56tVc9VudcvV0Q5IZWM4StZP0mhJ8BO
+         EuIQ==
+X-Gm-Message-State: ABuFfojVillOgiBslkb5Drg8JR8B2WnAmoXgSVfc77cWeAAJgLvYFAUt
+        2Ri3a/s4HVV06L4Uusy33qLRa1mF
+X-Google-Smtp-Source: ACcGV62FqFdPb8pimLrzOoBdDiQszyVu/Wwb/XL2liJAtjjSV/a7mpiwLvb9DO7Ao/DFCDPmAbS2Kw==
+X-Received: by 2002:a17:902:603:: with SMTP id 3-v6mr17031327plg.252.1540311047772;
+        Tue, 23 Oct 2018 09:10:47 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
+        by smtp.gmail.com with ESMTPSA id 28-v6sm2832848pgm.27.2018.10.23.09.10.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Oct 2018 09:10:45 -0700 (PDT)
+Subject: Re: [PATCH] bonding:avoid repeated display of same link status change
+To:     =?UTF-8?B?TWFoZXNoIEJhbmRld2FyICjgpK7gpLngpYfgpLYg4KSs4KSC4KSh4KWH4KS1?=
+         =?UTF-8?B?4KS+4KSwKQ==?= <maheshb@google.com>,
+        mk.singh@oracle.com
+Cc:     linux-netdev <netdev@vger.kernel.org>,
+        Jay Vosburgh <j.vosburgh@gmail.com>,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+References: <20181023152924.24033-1-mk.singh@oracle.com>
+ <CAF2d9jjM+5twGtwnB-JvOaaFbU9-n1oNyMXF6wx=s-0fVn9-6w@mail.gmail.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <65f98009-1ce0-d6fd-06dc-233aa115abc9@gmail.com>
+Date:   Tue, 23 Oct 2018 09:10:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <a4912516-8c6b-d8d3-b714-5c03bcfc5e91@gmail.com> <20181017161958.GT270328@devbig004.ftw2.facebook.com>
-In-Reply-To: <20181017161958.GT270328@devbig004.ftw2.facebook.com>
-Reply-To: mtk.manpages@gmail.com
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Date:   Tue, 23 Oct 2018 18:09:05 +0200
-Message-ID: <CAKgNAkgEeHSYCFGdXOBQHBALg0KgWP_1=dEFYD_R6wCaV99MJg@mail.gmail.com>
-Subject: Re: Cgroup v2 thread mode oddity: "domain invalid" cgroup with
- threaded controller enabled
-To:     Tejun Heo <tj@kernel.org>
-Cc:     "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAF2d9jjM+5twGtwnB-JvOaaFbU9-n1oNyMXF6wx=s-0fVn9-6w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tejun
-On Wed, 17 Oct 2018 at 18:20, Tejun Heo <tj@kernel.org> wrote:
->
-> Hello, Michael.
->
-> Sorry about the delay.
->
-> On Thu, Oct 04, 2018 at 09:40:57PM +0200, Michael Kerrisk (man-pages) wrote:
-> > This seems odd. x/y is now of "domain invalid" type with a controller
-> > enabled! This feels like a violation of the rules, since we can't
-> > in other circumstances do anything with a "domain invalid" cgroup
-> > except convert it to "threaded". In particular, we can't create
-> > child cgroups under a "domain invalid" cgroup, or add member processes
-> > to the cgroup, or *enable controllers in the cgroup*. In fact, when
-> > doing the
-> >
-> >     # echo threaded > x/z/cgroup.type
-> >
-> > I had expected a write(2) error because the state of x/y should
-> > (I thought) not be permitted.
->
-> So, both the interim (before turning x/z into threaded) and final
-> (after) are completely fine - the cgroups are empty and whether
-> threaded controllers like pids are enabled or not don't really change
-> things that much.
->
-> Maybe it is a bit inconsistent to then deny enabling threaded
-> controllers on invalid domain cgroups.  We can lift that restriction
-> but I personally can't see why that'd be clearly better.
 
-So, I also can't see anything that seems harmful in the scenario I
-described; it's just an odd inconsistency, and I supposed it was
-unintended/overlooked behavior, and I wanted to alert you to it, in
-case it seemed problematic. However, as long as you have no concerns,
-I see no reason to change the existing behavior.
 
-Thanks,
+On 10/23/2018 08:54 AM, Mahesh Bandewar (महेश बंडेवार) wrote:
 
-Michael
+> Atomic operations are expensive (on certain architectures) and miimon
+> runs quite frequently. Is the added cost of these atomic operations
+> even worth just to avoid *duplicate info* messages? This seems like a
+> overkill!
 
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+atomic_read() is a simple read, no atomic operation involved.
+
+Same remark for atomic_set()
+
