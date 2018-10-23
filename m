@@ -2,113 +2,99 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB8BC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E0CC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:02:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7851520671
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:00:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u0BHRQIy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7851520671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 85A972075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 13:02:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A972075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbeJWVXf (ORCPT
+        id S1728002AbeJWVZi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 17:23:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44818 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbeJWVXf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 17:23:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QziV/CBCPYyfRcIL1PSQsrTW0Z/irr4rMFr39XgIheA=; b=u0BHRQIy56IvHJSEX3I5xmQUs
-        hQfjEfj+78cHlQyak/h5xmgfrX+zXOueI5YtmRuiklt8T4QL8wrPaTINQV4G/YD8B9mtl8uW4rPYx
-        Gc94+41GugqARkTJwEnoj3EqQRoFhJ5HIHmVYrfH1gclvoWy14ZerSpbbZF7nuTR1f5DE+5o5TCyF
-        qXRd4+1VtuayCdNmScVQky+tcrtXFbrA0Sdif2biOv8/LHt8p6kMRSWmMhcZmRo0fP13Az6qVoBIW
-        YRpjpq5RTBBtaUmJy+5+XK+hbKepGe0kWd4OetYUC9KjbaMYZTGyasmM3ZpTX7WeW4oij+Pl1HYsB
-        ZKlWaXogA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gEwHQ-0004JQ-Oz; Tue, 23 Oct 2018 12:59:28 +0000
-Date:   Tue, 23 Oct 2018 05:59:28 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin@protonic.nl, stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
-        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
-        robin.murphy@arm.com, iamjoonsoo.kim@lge.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kees Cook <keescook@chromium.org>, treding@nvidia.com,
-        Michal Hocko <mhocko@suse.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>, aryabinin@virtuozzo.com,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>, tchibo@google.com,
-        riel@redhat.com, Minchan Kim <minchan@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Huang, Ying" <ying.huang@intel.com>, ak@linux.intel.com,
-        rppt@linux.vnet.ibm.com, linux@dominikbrodowski.net,
-        Arnd Bergmann <arnd@arndb.de>, cpandya@codeaurora.org,
-        hannes@cmpxchg.org, Joe Perches <joe@perches.com>,
-        mcgrof@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, Linux-MM <linux-mm@kvack.org>
-Subject: Re: [PATCH v2] mm: Introduce new function vm_insert_kmem_page
-Message-ID: <20181023125928.GC20085@bombadil.infradead.org>
-References: <CANiq72kVJn7985EET067Dgj+z0dwb0x2MTUnREMWKCVU6=WnJA@mail.gmail.com>
- <CAFqt6zZ4sPjtb5BaDfwc5tZv+vMj6ao3NJZ_3quX9AH5pCMwJg@mail.gmail.com>
- <CANiq72m9u1PL9X+dPNLxgkhvttj=4ijLyM2sFex=Kws7wswKzw@mail.gmail.com>
- <CAFqt6zYH4Aczu8AYke8AfGuMS70SJXCMn-n8X8C_Tz03gTjn8g@mail.gmail.com>
- <CANiq72kRAZE9SyM4EkpaBZH03Ex0Z=4Pk2iOuc2jBDKTfKjHQg@mail.gmail.com>
- <CAFqt6zZCCPFE3sQ3u_gjiN8wwd99nwWatk9JRsiGxbCwhi91mg@mail.gmail.com>
- <CANiq72k-e_j67==VdrayqggjAd7MAfpaJS-_0=jkmh4OWynukQ@mail.gmail.com>
- <CAFqt6zZ2yHkVcbYtK1dxr9B3K5WVYGboavjP1ibmYei0u4zFbQ@mail.gmail.com>
- <20181023122435.GB20085@bombadil.infradead.org>
- <CAFqt6zZp=UsSGH148=tPWLnSxC51EGdR0Vv4f5tP58MO-6OS_w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFqt6zZp=UsSGH148=tPWLnSxC51EGdR0Vv4f5tP58MO-6OS_w@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Tue, 23 Oct 2018 17:25:38 -0400
+Received: from foss.arm.com ([217.140.101.70]:58856 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726277AbeJWVZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Oct 2018 17:25:38 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29B6580D;
+        Tue, 23 Oct 2018 06:02:15 -0700 (PDT)
+Received: from p8cg001049571a15.arm.com (unknown [10.163.1.17])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4E1E03F6A8;
+        Tue, 23 Oct 2018 06:02:08 -0700 (PDT)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+To:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     suzuki.poulose@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
+        Steven.Price@arm.com, steve.capper@arm.com,
+        catalin.marinas@arm.com, mhocko@kernel.org,
+        akpm@linux-foundation.org, mike.kravetz@oracle.com,
+        n-horiguchi@ah.jp.nec.com
+Subject: [PATCH V3 0/5] arm64/mm: Enable HugeTLB migration
+Date:   Tue, 23 Oct 2018 18:31:56 +0530
+Message-Id: <1540299721-26484-1-git-send-email-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 06:03:42PM +0530, Souptick Joarder wrote:
-> On Tue, Oct 23, 2018 at 5:54 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > On Tue, Oct 23, 2018 at 05:44:32PM +0530, Souptick Joarder wrote:
-> > > Instruction from Matthew  Wilcox who is supervising the entire vm_fault_t
-> > > migration work :-)
-> >
-> > Hang on.  That was for the initial vm_fault_t conversion in which each
-> > step was clearly an improvement.  What you're looking at now is far
-> > from that.
-> 
-> Ok. But my understanding was, the approach of vm_insert_range comes
-> into discussion as part of converting vm_insert_page into vmf_insert_page
-> which is still part of original vm_fault_t conversion discussion.  No ?
+This patch series enables HugeTLB migration support for all supported
+huge page sizes at all levels including contiguous bit implementation.
+Following HugeTLB migration support matrix has been enabled with this
+patch series. All permutations have been tested except for the 16GB.
 
-No.  The initial part (converting all page fault methods to vm_fault_t)
-is done.  What remains undone (looking at akpm's tree) is changing the
-typedef of vm_fault_t from int to unsigned int.  That will prevent new
-page fault handlers with the wrong type from being added.
+         CONT PTE    PMD    CONT PMD    PUD
+         --------    ---    --------    ---
+4K:         64K     2M         32M     1G
+16K:         2M    32M          1G
+64K:         2M   512M         16G
 
-I don't necessarily want to get rid of vm_insert_page().  Maybe it will
-make sense to do that, and maybe not.  What I do want to see is thought,
-and not "Matthew told me to do it", when I didn't.
+First the series adds migration support for PUD based huge pages. It
+then adds a platform specific hook to query an architecture if a
+given huge page size is supported for migration while also providing
+a default fallback option preserving the existing semantics which just
+checks for (PMD|PUD|PGDIR)_SHIFT macros. The last two patches enables
+HugeTLB migration on arm64 and subscribe to this new platform specific
+hook by defining an override.
+
+The second patch differentiates between movability and migratability
+aspects of huge pages and implements hugepage_movable_supported() which
+can then be used during allocation to decide whether to place the huge
+page in movable zone or not.
+
+Changes in V3:
+
+- Re-ordered patches 1 and 2 per Michal
+- s/Movability/Migratability/ in unmap_and_move_huge_page() per Naoya
+
+Changes in V2: (https://lkml.org/lkml/2018/10/12/190)
+
+- Added a new patch which differentiates migratability and movability
+  of huge pages and implements hugepage_movable_supported() function
+  as suggested by Michal Hocko.
+
+Anshuman Khandual (5):
+  mm/hugetlb: Distinguish between migratability and movability
+  mm/hugetlb: Enable PUD level huge page migration
+  mm/hugetlb: Enable arch specific huge page size support for migration
+  arm64/mm: Enable HugeTLB migration
+  arm64/mm: Enable HugeTLB migration for contiguous bit HugeTLB pages
+
+ arch/arm64/Kconfig               |  4 ++++
+ arch/arm64/include/asm/hugetlb.h |  5 +++++
+ arch/arm64/mm/hugetlbpage.c      | 20 +++++++++++++++++
+ include/linux/hugetlb.h          | 48 +++++++++++++++++++++++++++++++++++++---
+ mm/hugetlb.c                     |  2 +-
+ mm/migrate.c                     |  2 +-
+ 6 files changed, 76 insertions(+), 5 deletions(-)
+
+-- 
+2.7.4
 
