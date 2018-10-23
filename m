@@ -2,132 +2,118 @@ Return-Path: <SRS0=vsD1=ND=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69820C46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 06:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B527CC46475
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 06:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F9102064C
-	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 06:26:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A7B62064C
+	for <linux-kernel@archiver.kernel.org>; Tue, 23 Oct 2018 06:27:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eOAP+bRD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F9102064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AAWnigQG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A7B62064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbeJWOsF (ORCPT
+        id S1727620AbeJWOtQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 23 Oct 2018 10:48:05 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46330 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726764AbeJWOsF (ORCPT
+        Tue, 23 Oct 2018 10:49:16 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:50710 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726764AbeJWOtQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Oct 2018 10:48:05 -0400
-Received: by mail-wr1-f67.google.com with SMTP id i4-v6so236305wrr.13
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Oct 2018 23:26:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=kW5fR0njpXy7BRl0EhManAPDjgZpGoiV9D/hR3+QT+0=;
-        b=eOAP+bRDeC5yL309FIJW9lL33r6OY0XdwFi/s7P1poSjx0nwUU8ozivCbmbOUUm7/8
-         oAOr1zSgb1SWAo84eABFVKiX9k91tMCUa3AaSGFa24V5wQuPVMhX3A4xoxtwYEq908EB
-         NudCUNHDPN4ZrhkcC5v2C1T7lM/d3jUsO6Nc8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=kW5fR0njpXy7BRl0EhManAPDjgZpGoiV9D/hR3+QT+0=;
-        b=VNVChlpR0qoyJootvbF1KRu/0jqmWmV2lqmkaafg01WjoQMB6KkJiekmiG518R0JIx
-         neSCDmb59D5E8uU2yhsodUQ71tVw1+sP+z+rarDeqSdXSvuFHudahuuFUoYcdiF6v+jp
-         k4HWgLhO8HUY0r51nP767YKfTBRGvgj+2B9cvIi1TZkmHLfz2KWaTHmiYYsaNCFkyAMu
-         W/mqyuawP+polNBl7V239UKnG/K+VKYhfy179byOD7LehMN6cjgJ2AuPHkerN9I+MNjj
-         eAVLkqpAyOPgbXjJmGblawUILu8kLTVYILIKkeyCm0wClg1ECZCwaxPYeLvoGRi/nMBT
-         QaAA==
-X-Gm-Message-State: ABuFfohMyE3tvNPyktmDajhtAlXb0zM8ylsL/F61M2/O5jQVgb3ydkhG
-        dAiLAicZUVl8h9SBNI0RhnXcF8slQY0=
-X-Google-Smtp-Source: ACcGV63H0fNsvoUiUkVxSPaYN0fmhsQoRliXE3EjYhi9HltDWaI9SqodQRMYBTZcYUbbAInhggJjyg==
-X-Received: by 2002:adf:8bc5:: with SMTP id w5-v6mr51071700wra.110.1540275965113;
-        Mon, 22 Oct 2018 23:26:05 -0700 (PDT)
-Received: from dell ([2.27.167.33])
-        by smtp.gmail.com with ESMTPSA id e133-v6sm442351wma.42.2018.10.22.23.26.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Oct 2018 23:26:04 -0700 (PDT)
-Date:   Tue, 23 Oct 2018 07:26:01 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     tony <tony.xie@rock-chips.com>
-Cc:     heiko@sntech.de, broonie@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com
-Subject: Re: [PATCH v3 1/5] mfd: rk808: Add RK817 and RK809 support
-Message-ID: <20181023062601.GS4939@dell>
-References: <1535081441-20718-1-git-send-email-tony.xie@rock-chips.com>
- <1535081441-20718-2-git-send-email-tony.xie@rock-chips.com>
- <20180911114732.GL4185@dell>
- <b0f9fff3-3084-91b3-fa78-5163ebd43bbb@rock-chips.com>
+        Tue, 23 Oct 2018 10:49:16 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9N6NfYT096546;
+        Tue, 23 Oct 2018 06:27:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=/N9QV/QBp9+cdyWU0JKDLoh69mampezDCpO8hjxKSaw=;
+ b=AAWnigQGok78PN4HuT8lOa9mrd33e2l9IEp4J8lOTcUt5yhZPTUMU7GN1QTpsZAGY7YG
+ fjH8K9ObiIjQ56/UYebu1rdDbCLN7UVKLG+PolrGc3wIxhzEkJaP5iQy0IUGz6C51yCq
+ KZpPeRa+lk/aJrgeHr4edkqC+1F/zKjwc9STxdYKW8GT//sXD3MTN4cZ6h5I4vapMSb8
+ jm+1VwvPeDqQmhuMz1TXPeBcJgcdVRAsCDsYYc5wbrjgTgKyihYZLVGBOspWsM0ZbfZm
+ Wy9LpyQMK7baWOX8glvig+W1wWJ0A0+oFSfcXiB0agUYOee8It05xHWdzqgl7T5wVOK5 Vg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2n7vaptxwd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Oct 2018 06:27:08 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9N6R7bg021190
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Oct 2018 06:27:07 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9N6R6wh004668;
+        Tue, 23 Oct 2018 06:27:06 GMT
+Received: from mwanda (/129.205.6.86)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 22 Oct 2018 23:27:05 -0700
+Date:   Tue, 23 Oct 2018 09:26:52 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>, NeilBrown <neil@brown.name>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mishi Choudhary <mishi@linux.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        ksummit-discuss@lists.linuxfoundation.org
+Subject: Re: [Ksummit-discuss] Call to Action Re: [PATCH 0/7] Code of
+ Conduct: Fix some wording, and add an interpretation document
+Message-ID: <20181023062652.yrns7n67jkuict5n@mwanda>
+References: <20181020134908.GA32218@kroah.com>
+ <87y3ar80ac.fsf@notabene.neil.brown.name>
+ <20181021222608.GA24845@localhost>
+ <875zxt919d.fsf@notabene.neil.brown.name>
+ <20181022224604.GM1617@thunk.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b0f9fff3-3084-91b3-fa78-5163ebd43bbb@rock-chips.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181022224604.GM1617@thunk.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9054 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810230057
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > >      The rk809 and rk817 are a Power Management IC (PMIC) for multimedia
-> > >      and handheld devices. It contains the following components:
-> > > 
-> > >          - Regulators
-> > >          - RTC
-> > >          - Clocking
-> > > 
-> > >      Both RK809 and RK817 chips are using a similar register map,
-> > >      so we can reuse the RTC and Clocking and regulators functionality.
-> > > 
-> > > Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
-> > > ---
-> > >   drivers/mfd/Kconfig       |   6 +-
-> > >   drivers/mfd/rk808.c       | 218 +++++++++++++++++++++++++++++++++++++++++++++-
-> > >   include/linux/mfd/rk808.h | 172 ++++++++++++++++++++++++++++++++++++
-> > >   kernel/reboot.c           |   1 +
-> > >   4 files changed, 391 insertions(+), 6 deletions(-)
+On Mon, Oct 22, 2018 at 06:46:04PM -0400, Theodore Y. Ts'o wrote:
+> Neil,
+> 
+> I disagree with your framing, and thus your analysis, and thus your
+> proposed solution.
+> 
+> On Tue, Oct 23, 2018 at 07:26:06AM +1100, NeilBrown wrote:
+> > If, for example, Linus or Andrew said "if you cannot work with any given
+> > maintainer, I will consider your patch directly, but you need to point
+> > to where you tried, and why you failed - or to where the promise is
+> > inadequate".
+> > 
+> > Currently if a maintainer is rude to you, there is no where else that
+> > you can go and *that* is why it hurts.  It isn't the abuse so much as
+> > the powerlessness associated with it.  If you can (metaphorically) say
+> > to that maintainer "I don't care about your toilet mouth, you've just
+> > given me the right to take my petition to caesar" - then the emotional
+> > response will be quite different to pain.
+> 
+> No.  That's just not how things work.  Patches don't get rejected
+> because maintainers are being rude.  Patches don't get accepted
+> because they are not of a sufficiently high technical quality.
 
-[...]
+I once sent a bugfix and instead of applying it, the maintainer insulted
+me and rejected it because the subject wasn't in imperative tense and
+because I said "NULL dereference" instead of "NULL pointer dereference."
 
-> > > diff --git a/kernel/reboot.c b/kernel/reboot.c
-> > > index e4ced88..83810d7 100644
-> > > --- a/kernel/reboot.c
-> > > +++ b/kernel/reboot.c
-> > > @@ -49,6 +49,7 @@
-> > >    */
-> > >   void (*pm_power_off_prepare)(void);
-> > > +EXPORT_SYMBOL_GPL(pm_power_off_prepare);
-> > Why do you need this where no other driver in the kernel does?
->     There is a gpio_slp pin for RK809 and RK817，this pin has reset、power
-> down and sleep functions，so
->     when system is going to power down, this pin is needed to switch to
-> power down function，and then we just only control
->     this pin to high to power down the system in atf at last。
+Ten years back there was a patch rejected because "F*** you, what do
+women know about programming?"  I can't imagine it happening now, but I
+was so shocked by it at the time also...
 
-There are other PM call-backs that you can use for this.  There
-shouldn't be any requirement to export and call functions at this
-level directly.
+regards,
+dan carpenter
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
