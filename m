@@ -2,348 +2,191 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C32BECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B91FECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:55:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CE6C2075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:50:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E08162082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:55:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UD58P0C1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CE6C2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="u6XujMBE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E08162082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727153AbeJYFUR (ORCPT
+        id S1727173AbeJYFZa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 01:20:17 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:39643 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726759AbeJYFUQ (ORCPT
+        Thu, 25 Oct 2018 01:25:30 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44332 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726759AbeJYFZ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 01:20:16 -0400
-Received: by mail-it1-f194.google.com with SMTP id m15so8399499itl.4
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 13:50:40 -0700 (PDT)
+        Thu, 25 Oct 2018 01:25:29 -0400
+Received: by mail-lj1-f193.google.com with SMTP id v6-v6so6093342ljc.11
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 13:55:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6Xvwd17tOem2RL7IfdlQlCm8UazktfSY6sN64HItH5c=;
-        b=UD58P0C1wrUEpr3rcrIV57e+Jfwhn4ZTZU6eEAMJUgQVv7xsI06cw7R+ip0/Vc/1h9
-         Cd9G/MGXIsZrDwILU+sZ/sMbb6JKPbGTvqiyKlJN/B9looaXUbPsDOxCkjZWi9rufzi8
-         mWTW+cW4ZgBWoWT4GXNjtFCekq0qNvZdjL5dg=
+         :cc:content-transfer-encoding;
+        bh=mhT58Z9DF7vdT8qdRKAIaDFlfdlZuKDmfDR6LKKEz4M=;
+        b=u6XujMBEI0FG97PZBQ/dTWD45/m8psIFsVE5KrrqVxNOY9SQTmP6SDOgfKtXM3XsJR
+         oYy47EM1GVtSPbh4Dy8kK53NARVGHW+/+Xoo622/APDmsvsL4yFIhDUVQq4isNuXZEL4
+         UGdUCp/8s0faIV4vPNvAsvAdXLhsPX+WjNQdZcmTDIxoTOLfwlyyTkwRcmf5EDsMmg5a
+         0ZOC8ZfGxLDinGG6F1ZYxm0ews4MH8nkJKfmBBgVw6WLmVb1ZcZ+C4vbYAQALDumN7JW
+         pjxrPeBQiWq3kfVqv1xC4xHoMKpEidbJCIQGd3miaiQuyoHQslibexQBHc+Rt0UDOeFx
+         f/Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6Xvwd17tOem2RL7IfdlQlCm8UazktfSY6sN64HItH5c=;
-        b=kYS7fQjXt5MBOsHsLpfFKIxlsile3qLJfGfBEmdnyJcR3o2zY7nfFhbKMoO+2VQZb+
-         5PnM6ZyJ5lxdunimeG6v2r7zBrqKkZeta7uF61SmTB/CUooyMOBwaa+5yUA55hJ9hizC
-         O1/FQjUxnKpvPm+rqq1qmr5X+h7u5QPnKqMZkStz2SfmNlKZVJC/KPl3+oNoadbd3O3/
-         fJQuuiu9Vx/GL//qpr3f4Zf10k0Tl4bBQ3dmRyeVV80+mZ1up6x3PZDcsrxOhkhFqGqS
-         MmICYVX4JE4A6VrnXGymukXJrBNVBvk7EqDolmsN0w2YU0cdsPrCjyhEhYrYYdQd3R4r
-         HyDg==
-X-Gm-Message-State: AGRZ1gI26cMDNPLdhhvDbrW6Gku511VQxcYfVPtIqw9dy1jFeyKHlBjT
-        9pBbtyYiBOx9V9/n5dWYkax+OzJWM2LKJWHI8kZWXQ==
-X-Google-Smtp-Source: AJdET5f0kA+wn5psTSEvVwBFaa9akEcq+oliV3G4ktTrzSWoLoF1O7sg5ink/yeNdZoNlibEIwIaS5IEnofWufP4OtU=
-X-Received: by 2002:a24:5214:: with SMTP id d20-v6mr2646074itb.24.1540414239637;
- Wed, 24 Oct 2018 13:50:39 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=mhT58Z9DF7vdT8qdRKAIaDFlfdlZuKDmfDR6LKKEz4M=;
+        b=aulEHFNRHkgiaNGN+07Ogszydj7QPSUxbPfo3P2qw4jwVVUJIDxrtc/HkJhZBOEdOj
+         ZrkCosXftk/IIaK3KxX/xPDcpDgO2ybsHVnaCSQgBDjbjnv27xKIpir6qKSN1c+1u0Q6
+         SgYasLkhjmFLPWWJzMy0xdBiqzd7hhGV14X+AQC0tfFMgbhSxL58mvlsQrmwbmAQ1DZx
+         iR97m11xbAZOk9TYEAXuXXgzbyqOjrRO4XkbSMhaJYwf9iLLG0Sy2ODgx6d+fGCwH0Ru
+         QGXuGkMsJtz/puKUjksitX8tvggoBn9eKB2BvvicS3hVq6CnkRN+Qbc9lC3bzpqGEB4d
+         Emiw==
+X-Gm-Message-State: AGRZ1gJSi4Tkf7FzRwqcZpVtEbClX47RItwy7vM4iNRXoYHUdiYb6txq
+        PSqrqEgF97AHBLp56Jzl8oJvYEOTK+QexU37dJma
+X-Google-Smtp-Source: AJdET5dVD8iRmUl/WGSSLcloM+rsRpzC0Y/o4ruERDqIkho4sdOf4l0i8mWjzYe1HHyNnoTPu2BRWGjWxBbSAa0cadg=
+X-Received: by 2002:a2e:3810:: with SMTP id f16-v6mr2440311lja.77.1540414549952;
+ Wed, 24 Oct 2018 13:55:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181024013132.115907-1-dbasehore@chromium.org>
- <20181024013132.115907-2-dbasehore@chromium.org> <264adf2a81bcd602f2a58e4a46c3273cd7c77ca2.camel@baylibre.com>
- <CAGAzgspHFiuUpfTjD5v9-U=yAxwkBnZh3Mwtaom4wsiO-Bcfgw@mail.gmail.com>
-In-Reply-To: <CAGAzgspHFiuUpfTjD5v9-U=yAxwkBnZh3Mwtaom4wsiO-Bcfgw@mail.gmail.com>
-From:   "dbasehore ." <dbasehore@chromium.org>
-Date:   Wed, 24 Oct 2018 13:50:28 -0700
-Message-ID: <CAGAzgsrTPoBaP_wZ1fUryTgbu6RhwOtGPDV_njamOoiiH9Or9g@mail.gmail.com>
-Subject: Re: [PATCH 1/6] clk: Remove recursion in clk_core_{prepare,enable}()
-To:     jbrunet@baylibre.com
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
-        sboyd@kernel.org, Michael Turquette <mturquette@baylibre.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        aisheng.dong@nxp.com, mchehab+samsung@kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Stephen Boyd <sboyd@codeaurora.org>
+References: <cover.1533065887.git.rgb@redhat.com> <34017c395d03a213d6b0d49b9964429bd32b283d.1533065887.git.rgb@redhat.com>
+ <CAHC9VhSv4hWGHiaaOfuBrRQKdp2YG5RtqXQbFXg7j7LNEhO2XQ@mail.gmail.com> <20181024151439.lavhanabsyxdrdvo@madcap2.tricolour.ca>
+In-Reply-To: <20181024151439.lavhanabsyxdrdvo@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 24 Oct 2018 16:55:38 -0400
+Message-ID: <CAHC9VhRF1vsxM-k0Lw-9NqS9b9rgXRRBu0tq4ajdFpMqUxiH4A@mail.gmail.com>
+Subject: Re: [PATCH ghak90 (was ghak32) V4 03/10] audit: log container info of syscalls
+To:     rgb@redhat.com
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-audit@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        luto@kernel.org, carlos@redhat.com, dhowells@redhat.com,
+        viro@zeniv.linux.org.uk, simo@redhat.com,
+        Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 1:15 PM dbasehore . <dbasehore@chromium.org> wrote:
->
-> On Wed, Oct 24, 2018 at 2:51 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
-> >
-> > On Tue, 2018-10-23 at 18:31 -0700, Derek Basehore wrote:
-> > > From: Stephen Boyd <sboyd@codeaurora.org>
+On Wed, Oct 24, 2018 at 11:15 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2018-10-19 19:16, Paul Moore wrote:
+> > On Sun, Aug 5, 2018 at 4:32 AM Richard Guy Briggs <rgb@redhat.com> wrot=
+e:
+> > > Create a new audit record AUDIT_CONTAINER to document the audit
+> > > container identifier of a process if it is present.
 > > >
-> > > Enabling and preparing clocks can be written quite naturally with
-> > > recursion. We start at some point in the tree and recurse up the
-> > > tree to find the oldest parent clk that needs to be enabled or
-> > > prepared. Then we enable/prepare and return to the caller, going
-> > > back to the clk we started at and enabling/preparing along the
-> > > way.
+> > > Called from audit_log_exit(), syscalls are covered.
 > > >
-> > > The problem is recursion isn't great for kernel code where we
-> > > have a limited stack size. Furthermore, we may be calling this
-> > > code inside clk_set_rate() which also has recursion in it, so
-> > > we're really not looking good if we encounter a tall clk tree.
+> > > A sample raw event:
+> > > type=3DSYSCALL msg=3Daudit(1519924845.499:257): arch=3Dc000003e sysca=
+ll=3D257 success=3Dyes exit=3D3 a0=3Dffffff9c a1=3D56374e1cef30 a2=3D241 a3=
+=3D1b6 items=3D2 ppid=3D606 pid=3D635 auid=3D0 uid=3D0 gid=3D0 euid=3D0 sui=
+d=3D0 fsuid=3D0 egid=3D0 sgid=3D0 fsgid=3D0 tty=3Dpts0 ses=3D3 comm=3D"bash=
+" exe=3D"/usr/bin/bash" subj=3Dunconfined_u:unconfined_r:unconfined_t:s0-s0=
+:c0.c1023 key=3D"tmpcontainerid"
+> > > type=3DCWD msg=3Daudit(1519924845.499:257): cwd=3D"/root"
+> > > type=3DPATH msg=3Daudit(1519924845.499:257): item=3D0 name=3D"/tmp/" =
+inode=3D13863 dev=3D00:27 mode=3D041777 ouid=3D0 ogid=3D0 rdev=3D00:00 obj=
+=3Dsystem_u:object_r:tmp_t:s0 nametype=3D PARENT cap_fp=3D0000000000000000 =
+cap_fi=3D0000000000000000 cap_fe=3D0 cap_fver=3D0
+> > > type=3DPATH msg=3Daudit(1519924845.499:257): item=3D1 name=3D"/tmp/tm=
+pcontainerid" inode=3D17729 dev=3D00:27 mode=3D0100644 ouid=3D0 ogid=3D0 rd=
+ev=3D00:00 obj=3Dunconfined_u:object_r:user_tmp_t:s0 nametype=3DCREATE cap_=
+fp=3D0000000000000000 cap_fi=3D0000000000000000 cap_fe=3D0 cap_fver=3D0
+> > > type=3DPROCTITLE msg=3Daudit(1519924845.499:257): proctitle=3D6261736=
+8002D6300736C65657020313B206563686F2074657374203E202F746D702F746D70636F6E74=
+61696E65726964
+> > > type=3DCONTAINER msg=3Daudit(1519924845.499:257): op=3Dtask contid=3D=
+123458
 > > >
-> > > Let's create a stack instead by looping over the parent chain and
-> > > collecting clks of interest. Then the enable/prepare becomes as
-> > > simple as iterating over that list and calling enable.
-> >
-> > Hi Derek,
-> >
-> > What about unprepare() and disable() ?
-> >
-> > This patch removes the recursion from the enable path but keeps it for the
-> > disable path ... this is very odd. Assuming doing so works, It certainly makes
-> > CCF a lot harder to understand.
-> >
-> > What about clock protection which essentially works on the same model as prepare
-> > and enable ?
-> >
-> > Overall, this change does not look like something that should be merged as it
-> > is. If you were just seeking comments, you should add the "RFC" tag to your
-> > series.
-> >
-> > Jerome.
-> >
-> > >
-> > > Cc: Jerome Brunet <jbrunet@baylibre.com>
-> >
-> > If you don't mind, I would prefer to get the whole series next time. It helps to
-> > get the context.
-> >
-> > > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> > > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> > > See: https://github.com/linux-audit/audit-kernel/issues/90
+> > > See: https://github.com/linux-audit/audit-userspace/issues/51
+> > > See: https://github.com/linux-audit/audit-testsuite/issues/64
+> > > See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Conta=
+iner-ID
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > Acked-by: Serge Hallyn <serge@hallyn.com>
+> > > Acked-by: Steve Grubb <sgrubb@redhat.com>
 > > > ---
-> > >  drivers/clk/clk.c | 113 ++++++++++++++++++++++++++--------------------
-> > >  1 file changed, 64 insertions(+), 49 deletions(-)
-> > >
-> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > index af011974d4ec..95d818f5edb2 100644
-> > > --- a/drivers/clk/clk.c
-> > > +++ b/drivers/clk/clk.c
-> > > @@ -71,6 +71,8 @@ struct clk_core {
-> > >       struct hlist_head       children;
-> > >       struct hlist_node       child_node;
-> > >       struct hlist_head       clks;
-> > > +     struct list_head        prepare_list;
-> > > +     struct list_head        enable_list;
-> > >       unsigned int            notifier_count;
-> > >  #ifdef CONFIG_DEBUG_FS
-> > >       struct dentry           *dentry;
-> > > @@ -740,49 +742,48 @@ EXPORT_SYMBOL_GPL(clk_unprepare);
-> > >  static int clk_core_prepare(struct clk_core *core)
-> > >  {
-> > >       int ret = 0;
-> > > +     struct clk_core *tmp, *parent;
-> > > +     LIST_HEAD(head);
-> > >
-> > >       lockdep_assert_held(&prepare_lock);
-> > >
-> > > -     if (!core)
-> > > -             return 0;
-> > > +     while (core) {
-> > > +             list_add(&core->prepare_list, &head);
-> > > +             /* Stop once we see a clk that is already prepared */
-> > > +             if (core->prepare_count)
-> > > +                     break;
-> > > +             core = core->parent;
-> > > +     }
-> > >
-> > > -     if (core->prepare_count == 0) {
-> > > -             ret = clk_pm_runtime_get(core);
-> > > -             if (ret)
-> > > -                     return ret;
-> > > +     list_for_each_entry_safe(core, tmp, &head, prepare_list) {
-> > > +             list_del_init(&core->prepare_list);
+> > >  include/linux/audit.h      |  7 +++++++
+> > >  include/uapi/linux/audit.h |  1 +
+> > >  kernel/audit.c             | 24 ++++++++++++++++++++++++
+> > >  kernel/auditsc.c           |  3 +++
+> > >  4 files changed, 35 insertions(+)
 > >
-> > Is there any point in removing it from the list ?
-> > Maybe I missed it but it does not seems useful.
+> > ...
 > >
-> > Without this, we could use list_for_each_entry()
-> >
-> > >
-> > > -             ret = clk_core_prepare(core->parent);
-> > > -             if (ret)
-> > > -                     goto runtime_put;
-> > > +             if (core->prepare_count == 0) {
-> >
-> > Should we really check the count here ? You are not checking the count when the
-> > put() counterpart is called below.
->
-> I think I accidentally messed that up when I picked up the patch.
-> There were some merge conflicts with the addition of the
-> clk_pm_runtime code.
-
-Nevermind, this is incorrect. The clk_pm_runtime_put is within this if
-statement too, so there isn't an issue here.
-
->
-> >
-> > Since PM runtime has ref counting as well, either way would work I guess ... but
-> > we shall be consistent
-> >
-> > > +                     ret = clk_pm_runtime_get(core);
-> > > +                     if (ret)
-> > > +                             goto err;
-> > >
-> > > -             trace_clk_prepare(core);
-> > > +                     trace_clk_prepare(core);
-> > >
-> > > -             if (core->ops->prepare)
-> > > -                     ret = core->ops->prepare(core->hw);
-> > > +                     if (core->ops->prepare)
-> > > +                             ret = core->ops->prepare(core->hw);
-> > >
-> > > -             trace_clk_prepare_complete(core);
-> > > +                     trace_clk_prepare_complete(core);
-> > >
-> > > -             if (ret)
-> > > -                     goto unprepare;
-> > > +                     if (ret) {
-> > > +                             clk_pm_runtime_put(core);
-> > > +                             goto err;
-> > > +                     }
-> > > +             }
-> > > +             core->prepare_count++;
-> > >       }
-> > >
-> > > -     core->prepare_count++;
-> > > -
-> > > -     /*
-> > > -      * CLK_SET_RATE_GATE is a special case of clock protection
-> > > -      * Instead of a consumer claiming exclusive rate control, it is
-> > > -      * actually the provider which prevents any consumer from making any
-> > > -      * operation which could result in a rate change or rate glitch while
-> > > -      * the clock is prepared.
-> > > -      */
-> > > -     if (core->flags & CLK_SET_RATE_GATE)
-> > > -             clk_core_rate_protect(core);
-> >
-> > This gets removed without anything replacing it.
-> >
-> > is CLK_SET_RATE_GATE and clock protection support dropped after this change ?
->
-> No, I think I just accidentally removed this when resolving conflicts.
->
-> >
-> > > -
-> > >       return 0;
-> > > -unprepare:
-> > > -     clk_core_unprepare(core->parent);
-> > > -runtime_put:
-> > > -     clk_pm_runtime_put(core);
-> > > +err:
-> > > +     parent = core->parent;
-> > > +     list_for_each_entry_safe_continue(core, tmp, &head, prepare_list)
-> > > +             list_del_init(&core->prepare_list);
-> > > +     clk_core_unprepare(parent);
-> >
-> > If you get here because of failure clk_pm_runtime_get(), you will unprepare a
-> > clock which may have not been prepared first
-> >
-> > Overall the rework of error exit path does not seem right (or necessary)
-> >
->
-> Yeah, all of this seems to just be a poor resolution of patch
-> conflicts on my part. Will fix.
-
-Nevermind, that's not the case. We add the first core that has a
-non-zero prepare_count to the first (or we go all the way to root).
-That core can't encounter an error since those only happen in the
-prepare_count == 0 case. If it's NULL, clk_core_unprepare just
-returns.
-
->
-> > >       return ret;
+> > > @@ -2045,6 +2045,30 @@ void audit_log_session_info(struct audit_buffe=
+r *ab)
+> > >         audit_log_format(ab, " auid=3D%u ses=3D%u", auid, sessionid);
 > > >  }
 > > >
-> > > @@ -878,37 +879,49 @@ EXPORT_SYMBOL_GPL(clk_disable);
-> > >  static int clk_core_enable(struct clk_core *core)
-> > >  {
-> > >       int ret = 0;
-> > > +     struct clk_core *tmp, *parent;
-> > > +     LIST_HEAD(head);
-> > >
-> > >       lockdep_assert_held(&enable_lock);
-> > >
-> > > -     if (!core)
-> > > -             return 0;
-> > > -
-> > > -     if (WARN(core->prepare_count == 0,
-> > > -         "Enabling unprepared %s\n", core->name))
-> > > -             return -ESHUTDOWN;
-> > > +     while (core) {
-> > > +             list_add(&core->enable_list, &head);
-> > > +             /* Stop once we see a clk that is already enabled */
-> > > +             if (core->enable_count)
-> > > +                     break;
-> > > +             core = core->parent;
-> > > +     }
-> > >
-> > > -     if (core->enable_count == 0) {
-> > > -             ret = clk_core_enable(core->parent);
-> > > +     list_for_each_entry_safe(core, tmp, &head, enable_list) {
-> > > +             list_del_init(&core->enable_list);
-> > >
-> > > -             if (ret)
-> > > -                     return ret;
-> > > +             if (WARN_ON(core->prepare_count == 0)) {
-> > > +                     ret = -ESHUTDOWN;
-> > > +                     goto err;
-> > > +             }
-> > >
-> > > -             trace_clk_enable_rcuidle(core);
-> > > +             if (core->enable_count == 0) {
-> > > +                     trace_clk_enable_rcuidle(core);
-> > >
-> > > -             if (core->ops->enable)
-> > > -                     ret = core->ops->enable(core->hw);
-> > > +                     if (core->ops->enable)
-> > > +                             ret = core->ops->enable(core->hw);
-> > >
-> > > -             trace_clk_enable_complete_rcuidle(core);
-> > > +                     trace_clk_enable_complete_rcuidle(core);
-> > >
-> > > -             if (ret) {
-> > > -                     clk_core_disable(core->parent);
-> > > -                     return ret;
-> > > +                     if (ret)
-> > > +                             goto err;
-> > >               }
+> > > +/*
+> > > + * audit_log_contid - report container info
+> > > + * @tsk: task to be recorded
+> > > + * @context: task or local context for record
+> > > + * @op: contid string description
+> > > + */
+> > > +int audit_log_contid(struct task_struct *tsk,
+> > > +                            struct audit_context *context, char *op)
+> > > +{
+> > > +       struct audit_buffer *ab;
 > > > +
-> > > +             core->enable_count++;
-> > >       }
-> > >
-> > > -     core->enable_count++;
-> > >       return 0;
-> > > +err:
-> > > +     parent = core->parent;
-> > > +     list_for_each_entry_safe_continue(core, tmp, &head, enable_list)
-> > > +             list_del_init(&core->enable_list);
-> > > +     clk_core_disable(parent);
-> > > +     return ret;
-> > >  }
-> > >
-> > >  static int clk_core_enable_lock(struct clk_core *core)
-> > > @@ -3281,6 +3294,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
-> > >       core->num_parents = hw->init->num_parents;
-> > >       core->min_rate = 0;
-> > >       core->max_rate = ULONG_MAX;
-> > > +     INIT_LIST_HEAD(&core->prepare_list);
-> > > +     INIT_LIST_HEAD(&core->enable_list);
-> > >       hw->core = core;
-> > >
-> > >       /* allocate local copy in case parent_names is __initdata */
+> > > +       if (!audit_contid_set(tsk))
+> > > +               return 0;
+> > > +       /* Generate AUDIT_CONTAINER record with container ID */
+> > > +       ab =3D audit_log_start(context, GFP_KERNEL, AUDIT_CONTAINER);
+> > > +       if (!ab)
+> > > +               return -ENOMEM;
+> > > +       audit_log_format(ab, "op=3D%s contid=3D%llu",
+> > > +                        op, audit_get_contid(tsk));
+> > > +       audit_log_end(ab);
+> > > +       return 0;
+> > > +}
+> > > +EXPORT_SYMBOL(audit_log_contid);
 > >
-> >
+> > As discussed in the previous iteration of the patch, I prefer
+> > AUDIT_CONTAINER_ID here over AUDIT_CONTAINER.  If you feel strongly
+> > about keeping it as-is with AUDIT_CONTAINER I suppose I could live
+> > with that, but it is isn't my first choice.
+>
+> I don't have a strong opinion on this one, mildly preferring the shorter
+> one only because it is shorter.
+
+We already have multiple AUDIT_CONTAINER* record types, so it seems as
+though we should use "AUDIT_CONTAINER" as a prefix of sorts, rather
+than a type itself.
+
+> > However, I do care about the "op" field in this record.  It just
+> > doesn't make any sense; the way you are using it it is more of a
+> > context field than an operations field, and even then why is the
+> > context important from a logging and/or security perspective?  Drop it
+> > please.
+>
+> I'll rename it to whatever you like.  I'd suggest "ref=3D".  The reason I
+> think it is important is there are multiple sources that aren't always
+> obvious from the other records to which it is associated.  In the case
+> of ptrace and signals, there can be many target tasks listed (OBJ_PID)
+> with no other way to distinguish the matching audit container identifier
+> records all for one event.  This is in addition to the default syscall
+> container identifier record.  I'm not currently happy with the text
+> content to link the two, but that should be solvable (most obvious is
+> taret PID).  Throwing away this information seems shortsighted.
+
+It would be helpful if you could generate real audit events
+demonstrating the problems you are describing, as well as a more
+standard syscall event, so we can discuss some possible solutions.
+
+--=20
+paul moore
+www.paul-moore.com
