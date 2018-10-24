@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE45C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 04:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 397ADC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 04:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 219DC20651
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 04:04:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00B81207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 04:04:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4ykYFjr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 219DC20651
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I25XmZ3q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00B81207DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeJXMak (ORCPT
+        id S1727089AbeJXMap (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 08:30:40 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:46653 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726898AbeJXMaj (ORCPT
+        Wed, 24 Oct 2018 08:30:45 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:40730 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727021AbeJXMao (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 08:30:39 -0400
-Received: by mail-qt1-f193.google.com with SMTP id c16-v6so4207153qtj.13;
-        Tue, 23 Oct 2018 21:04:21 -0700 (PDT)
+        Wed, 24 Oct 2018 08:30:44 -0400
+Received: by mail-qt1-f196.google.com with SMTP id z9-v6so4231610qto.7;
+        Tue, 23 Oct 2018 21:04:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Yg0WFvnhpoiY1xicrTEMzVs+sIxjqijPnqrrojoKadA=;
-        b=l4ykYFjrxd+tE8MLPU4hUwoZE/9w2uR6AyW5yDPeef6cRrD472Uccm3d4OM+Vo7Kgc
-         ghB2Mlxv0He2l3IZ7YQdZdBRVQT8nAqPwXLJ0rHAocDR/90EeTzauiSxK4Co91CIGXP1
-         YSYu4D7ju/4Mj0Lsf2GAbpa8jOftW47aPr4l9JSFpn+FNXMr2EX736IMtqafdX3f0ROg
-         INNRlwhPun3yzIU5n4EgyoitcMZiIM1wAqTGigtlULQ9NADbBOlnW9KXKwkIEBS17rqe
-         KEXxt+2+BIBjrbNcR9OBjYxOzupGKu1qvqdNpaH0Kz+Am5yPASMFqWs2Ej6ZH/VjCa0Q
-         kG4w==
+        bh=xcajrvfrkbhr4aN7eaKQgtnrP3L7wB3TYYRQ4bJlwjA=;
+        b=I25XmZ3qMOOznouA8nIzeRBZb0ujCDT+w2KzXknbrHl0wADNsAVM3uE82AVROt9ynR
+         2RWWsERdWGlO9OxhpAxAKHV6nPIaBlcNQZSTNvGaqtcUT8nSuNOptrCFTov4hUshxXSC
+         cFmJLtfhXMVtIuUz/oVpz2LaBLvpTNwmKw5vHE0sSxxi5zOd8kz4EGmJCNwGYQfXkcaD
+         l70eUCYPCDsXKGanZbCPbHiYsivfxHIID1JxXCmJz3/iKZ5vzOaKHoCMPfVskNy20mmr
+         guL1DJTe3m81w87vx+MlCVxyQi/HUvujgslgyU+ty0frx75bL7z5Sh9WuPjhbNQwW7tq
+         3bkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Yg0WFvnhpoiY1xicrTEMzVs+sIxjqijPnqrrojoKadA=;
-        b=m43VfDErx+VQp1D9nzd8PUlGFYo0VGBxBQb/9vB0iCKryqwWUkNLszWTAiEJfUPaqX
-         brKAqftQ4n/cbdwCQ23I6tzJ98+GAb1XbD1TEv97lHQQk31w1YSrFW1UGcdxSl86cjJu
-         fyuh77C225PTbTU43+CRxEwo6tAbX3DY44d5NVKsmp5dMv0wOiHAoSvqIqDj11QSFccX
-         Ug8+I2bCT9X1F5z4r+XVmoFbFWBdki3ZDT8FpJ55ciev+rbmNivj0Vi4MYDsM4visTRS
-         XawZDFQnqNEbuoDazHmMlONTiMdoTOwa92GISEYT9UVwkx771CAHD+tf2gKhaPu3sDP5
-         v5gg==
-X-Gm-Message-State: AGRZ1gLI+dwB1Mi6L0+ErONWHOfO8l286JqF9bQwrUeu58PYsWDMcNnS
-        +2iM9h40sMdbj82z452tKOw=
-X-Google-Smtp-Source: AJdET5fw8P03DX+dcu9bu3JBYFKZwspy5r9CUkHSM1xAmz2PBNY4gRcejzdiN9xE9umBSi9Ye7twqg==
-X-Received: by 2002:a0c:983d:: with SMTP id c58-v6mr930642qvd.86.1540353861450;
-        Tue, 23 Oct 2018 21:04:21 -0700 (PDT)
+        bh=xcajrvfrkbhr4aN7eaKQgtnrP3L7wB3TYYRQ4bJlwjA=;
+        b=Pu/mY/pZsJUt4f1xNBMRTD9uBEKAeLFPhikYA2MoqAez1ErBoB+BLXpOazBTvc9FgT
+         3QquRzO65cwlvIhNgg9oRTQ0uCzGGcLB4ASioMhCCmFT3kF1Yt4gPr/QLiAIZxlMnH3M
+         PklZsvheLdCZjpkQqSgQtjnOWw/g19XuAAHMzQZAoUMmSHrEqDYBakXFtMvDpN7EWpNr
+         7vXCDcUqpQ8ecC9075mHeN77y09xbj2BkDMzDIJpfsDEFmUvOkkxIbfflAkAet/qMdv9
+         AYuaMtB+Je7/jU2GtLxemlsF0Mn6jjh3Gavv4PMvBpxGJ/BFnVJ2jl/ps7+H4rM7DNcT
+         3OdA==
+X-Gm-Message-State: AGRZ1gJHYIbU2YcO5le9Cj/7xwCeodPtLRylPIuOBvZfpDx3R+pBeok5
+        Ci7nXH7TNUJX5XyjWf6kRx4=
+X-Google-Smtp-Source: AJdET5dX+1y67BUbP8yoaOq+yzRgk4Z+ZZdVd/ZolHZcTOZHpYpkR6c5FZGoRWp4CWBxAGCsKCfQLA==
+X-Received: by 2002:a0c:e091:: with SMTP id l17mr893708qvk.144.1540353865835;
+        Tue, 23 Oct 2018 21:04:25 -0700 (PDT)
 Received: from localhost.localdomain ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id e195-v6sm3229126qka.2.2018.10.23.21.04.16
+        by smtp.gmail.com with ESMTPSA id e195-v6sm3229126qka.2.2018.10.23.21.04.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 21:04:21 -0700 (PDT)
+        Tue, 23 Oct 2018 21:04:25 -0700 (PDT)
 From:   Leonardo Bras <leobras.c@gmail.com>
 To:     lkcamp@lists.libreplanetbr.org
 Cc:     Leonardo Bras <leobras.c@gmail.com>,
@@ -68,9 +68,9 @@ Cc:     Leonardo Bras <leobras.c@gmail.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Michal Marek <michal.lkml@markovi.net>,
         linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/5] modpost: Changes parameter name to avoid shadowing.
-Date:   Wed, 24 Oct 2018 01:03:53 -0300
-Message-Id: <20181024040354.24879-5-leobras.c@gmail.com>
+Subject: [PATCH v3 5/5] Adds -Wshadow on KBUILD_HOSTCFLAGS
+Date:   Wed, 24 Oct 2018 01:03:54 -0300
+Message-Id: <20181024040354.24879-6-leobras.c@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181024040354.24879-1-leobras.c@gmail.com>
 References: <20181024040354.24879-1-leobras.c@gmail.com>
@@ -81,33 +81,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes the parameter name to avoid shadowing a variable.
+Adds -Wshadow on KBUILD_HOSTCFLAGS to show shadow warnings
+on tools built for HOST.
 
 Signed-off-by: Leonardo Bras <leobras.c@gmail.com>
 ---
- scripts/mod/modpost.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 0d998c54564d..368fe42340df 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -2228,13 +2228,13 @@ static int add_versions(struct buffer *b, struct module *mod)
- }
+diff --git a/Makefile b/Makefile
+index e8b599b4dcde..3edae5d359b5 100644
+--- a/Makefile
++++ b/Makefile
+@@ -360,7 +360,7 @@ HOST_LFS_LIBS := $(shell getconf LFS_LIBS 2>/dev/null)
  
- static void add_depends(struct buffer *b, struct module *mod,
--			struct module *modules)
-+			struct module *module_list)
- {
- 	struct symbol *s;
- 	struct module *m;
- 	int first = 1;
- 
--	for (m = modules; m; m = m->next)
-+	for (m = module_list; m; m = m->next)
- 		m->seen = is_vmlinux(m->name);
- 
- 	buf_printf(b, "\n");
+ HOSTCC       = gcc
+ HOSTCXX      = g++
+-KBUILD_HOSTCFLAGS   := -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 \
++KBUILD_HOSTCFLAGS   := -Wall -Wshadow -Wmissing-prototypes -Wstrict-prototypes -O2 \
+ 		-fomit-frame-pointer -std=gnu89 $(HOST_LFS_CFLAGS) \
+ 		$(HOSTCFLAGS)
+ KBUILD_HOSTCXXFLAGS := -O2 $(HOST_LFS_CFLAGS) $(HOSTCXXFLAGS)
 -- 
 2.19.1
 
