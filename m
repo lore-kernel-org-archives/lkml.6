@@ -2,345 +2,153 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5CDECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12471ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:36:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03C272064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:34:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OUB6CNtY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C272064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C81EF2064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:36:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81EF2064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbeJYEDx (ORCPT
+        id S1726852AbeJYEFg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 00:03:53 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44888 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727225AbeJYEDl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 00:03:41 -0400
-Received: by mail-pl1-f193.google.com with SMTP id d23-v6so2682151pls.11;
-        Wed, 24 Oct 2018 12:34:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jZRxRcX58vlVGx5DKWx9aAIsUJCedGMpn9hiGaSCbQE=;
-        b=OUB6CNtYorsuxgAcf3wXfwJsSR8ugZ7jkT2kQHPJtnO4xuJ5BXcjAQ00LCVtqX9b9O
-         AjRudzgD2Wayxuiuj4Ryjj6HMUAcxe3LzSTUrt6XyH2UI3sZR/lxf+THwgiDtvZsl5aq
-         cWbz0sKtS4tky7YJYE2yO71qOPoQqa45dVa6XvllyuEZIY2PBGPwclm6HpQsix6llWwK
-         JY/KZ5BEdzRmZqy7wEwGLFvmADCGlOV2V7h6zK4oGVEVPnpN3QlRzBWWNvSLJsgRydHc
-         36Y+LjYN7oyK347YtRwToj9uYeWjME81TB6DLsSJVl/o5a3WayFPSEhRGliQoKF9g0u0
-         eCFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=jZRxRcX58vlVGx5DKWx9aAIsUJCedGMpn9hiGaSCbQE=;
-        b=n/qdAkXiwM8WtuJ42I2TIiuTkv/M7WNBsLTo6d/Jg0GnxEbKQ1EOLxarjJegE7WnKA
-         MVCXyOcw2MkPEr70dLRfe27kPZvWH8HNBte4qXXHjj+Die7/OppWTvwDGg65U4aZ/4Aj
-         rZU71nLQSe6EL2ADIcJzf3Ny/B6GpSFmnNBJ56BrT+ZEMekUOrlC6BHeI5rflo1WpOur
-         oj+eZZY9B/zNyiEUscY4gc6bSlYt4j1peoLndc1S8dyASDhfIGzNnI8dEy0ydccaHrCV
-         gHO26eWpKO7+6PWU5DTu5FCLTAjSck/ePRmIhXYmvxPkebNd7sB6PMisoMaERNrxijmH
-         fwAw==
-X-Gm-Message-State: AGRZ1gLD+Gia38uR5mxvcGBpQNc7p8C9IaF5alBgwA1qboHvVMyhjTbE
-        gitG1xB6Sgv7+B+HgHwSbRk=
-X-Google-Smtp-Source: AJdET5dIsk7U8vC0XupwawVVtbYjOYZAw+5h1dUR8FSMAFcc8fzbQ8rvcaImGh0YGadDkLcPIF8uOw==
-X-Received: by 2002:a17:902:748a:: with SMTP id h10-v6mr3657913pll.187.1540409659761;
-        Wed, 24 Oct 2018 12:34:19 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id r81-v6sm19921633pfa.110.2018.10.24.12.34.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 12:34:19 -0700 (PDT)
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     jdelvare@suse.com, linux@roeck-us.net
-Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/5] hwmon: (ina3221) Add PM runtime support
-Date:   Wed, 24 Oct 2018 12:34:02 -0700
-Message-Id: <20181024193402.16698-6-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181024193402.16698-1-nicoleotsuka@gmail.com>
-References: <20181024193402.16698-1-nicoleotsuka@gmail.com>
+        Thu, 25 Oct 2018 00:05:36 -0400
+Received: from mga09.intel.com ([134.134.136.24]:14657 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726207AbeJYEFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 00:05:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 12:36:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,421,1534834800"; 
+   d="scan'208";a="244068057"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by orsmga004.jf.intel.com with ESMTP; 24 Oct 2018 12:36:14 -0700
+Received: from fmsmsx119.amr.corp.intel.com (10.18.124.207) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 24 Oct 2018 12:36:14 -0700
+Received: from crsmsx102.amr.corp.intel.com (172.18.63.137) by
+ FMSMSX119.amr.corp.intel.com (10.18.124.207) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 24 Oct 2018 12:36:13 -0700
+Received: from crsmsx101.amr.corp.intel.com ([169.254.1.85]) by
+ CRSMSX102.amr.corp.intel.com ([169.254.2.244]) with mapi id 14.03.0415.000;
+ Wed, 24 Oct 2018 13:36:11 -0600
+From:   "Bae, Chang Seok" <chang.seok.bae@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+CC:     Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: RE: [v3 05/12] x86/fsgsbase/64: Preserve FS/GS state in
+ __switch_to() if FSGSBASE is on
+Thread-Topic: [v3 05/12] x86/fsgsbase/64: Preserve FS/GS state in
+ __switch_to() if FSGSBASE is on
+Thread-Index: AQHUawBO7l1gssH07kCl6Hdk10LxvKUvLBEA//+e6ZA=
+Date:   Wed, 24 Oct 2018 19:36:10 +0000
+Message-ID: <C9BB696F3A938947B10DCAD29FAB8FFA66CCBCEE@CRSMSX101.amr.corp.intel.com>
+References: <20181023184234.14025-1-chang.seok.bae@intel.com>
+ <20181023184234.14025-6-chang.seok.bae@intel.com>
+ <CALCETrWZZ65pzmO_OwG0x3DWtLbLykB16DB5t8r3rkjg5VmzmA@mail.gmail.com>
+In-Reply-To: <CALCETrWZZ65pzmO_OwG0x3DWtLbLykB16DB5t8r3rkjg5VmzmA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDdkZTBiMjktNjBiOS00ZGVmLTk4Y2EtMGI4ZjZlOWRmMWVhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTExFNFRoN1Flclp5SFduY0pEbk5mVDFVaHRWWnpnSUd3UE92Qkx4QnRpYmtPZHo5TUlRQ1hhdk82VHcrXC9YSDAifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [172.18.205.10]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If all three channels are disabled via in[123]_enable ABI,
-the driver could suspend the chip for power saving purpose.
-
-So this patch adds the PM runtime support in order to gain
-more power control than system suspend and resume use case.
-
-For PM runtime, there are a few related changes happening:
-1) Added a new explicit hdev device pointer for all the PM
-   runtime callbacks. This is because hwmon core registers
-   a child device for each hwmon driver. So there might be
-   a mismatch between two device pointers in the driver if
-   mixing using them.
-2) Added a check in ina3221_is_enabled() to make sure that
-   the chip is resumed.
-3) Bypassed the unchanged status in ina3221_write_enable()
-   in order to keep the PM runtime refcount being matched.
-4) Removed the reset routine in the probe() by calling the
-   resume() via pm_runtime_get_sync() instead, as they're
-   similar. It's also necessary to do so to match initial
-   PM refcount with the number of enabled channels.
-5) Bypassed the system suspend/resume callbacks from the
-   i2c_client->dev, because both the i2c_client->dev and
-   the ina->hdev coexist and share the same pair of system
-   suspend/resume callback functions, which means there'd
-   be two suspend() calls during the system suspend while
-   the second one will fail.
-
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
-Changelog
-v2->v3:
- * Improved a dev_err message
- * Added comments at pm_runtime_put_noidle() callbacks
- * Added pm_runtime header file in an alphabetical order
-v1->v2:
- * Bypassed i2c_client->dev in suspend/resume()
- * Added a missing '\n' in one dev_err()
-
- drivers/hwmon/ina3221.c | 113 ++++++++++++++++++++++++++++++++--------
- 1 file changed, 91 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
-index 07dd6ef58d3e..3e7c6fac6e1b 100644
---- a/drivers/hwmon/ina3221.c
-+++ b/drivers/hwmon/ina3221.c
-@@ -20,6 +20,7 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- 
- #define INA3221_DRIVER_NAME		"ina3221"
-@@ -53,6 +54,7 @@
- #define INA3221_CONFIG_CHs_EN_MASK	GENMASK(14, 12)
- #define INA3221_CONFIG_CHx_EN(x)	BIT(14 - (x))
- 
-+#define INA3221_CONFIG_DEFAULT		0x7127
- #define INA3221_RSHUNT_DEFAULT		10000
- 
- enum ina3221_fields {
-@@ -103,6 +105,7 @@ struct ina3221_input {
- 
- /**
-  * struct ina3221_data - device specific information
-+ * @hdev: Device pointer of hwmon child device, used for pm runtime
-  * @regmap: Register map of the device
-  * @fields: Register fields of the device
-  * @inputs: Array of channel input source specific structures
-@@ -110,6 +113,7 @@ struct ina3221_input {
-  * @reg_config: Register value of INA3221_CONFIG
-  */
- struct ina3221_data {
-+	struct device *hdev;
- 	struct regmap *regmap;
- 	struct regmap_field *fields[F_MAX_FIELDS];
- 	struct ina3221_input inputs[INA3221_NUM_CHANNELS];
-@@ -119,7 +123,8 @@ struct ina3221_data {
- 
- static inline bool ina3221_is_enabled(struct ina3221_data *ina, int channel)
- {
--	return ina->reg_config & INA3221_CONFIG_CHx_EN(channel);
-+	return pm_runtime_active(ina->hdev) &&
-+	       (ina->reg_config & INA3221_CONFIG_CHx_EN(channel));
- }
- 
- /* Lookup table for Bus and Shunt conversion times in usec */
-@@ -290,21 +295,48 @@ static int ina3221_write_enable(struct device *dev, int channel, bool enable)
- {
- 	struct ina3221_data *ina = dev_get_drvdata(dev);
- 	u16 config, mask = INA3221_CONFIG_CHx_EN(channel);
-+	u16 config_old = ina->reg_config & mask;
- 	int ret;
- 
- 	config = enable ? mask : 0;
- 
-+	/* Bypass if enable status is not being changed */
-+	if (config_old == config)
-+		return 0;
-+
-+	/* For enabling routine, increase refcount and resume() at first */
-+	if (enable) {
-+		ret = pm_runtime_get_sync(ina->hdev);
-+		if (ret < 0) {
-+			dev_err(dev, "Failed to get PM runtime\n");
-+			return ret;
-+		}
-+	}
-+
- 	/* Enable or disable the channel */
- 	ret = regmap_update_bits(ina->regmap, INA3221_CONFIG, mask, config);
- 	if (ret)
--		return ret;
-+		goto fail;
- 
- 	/* Cache the latest config register value */
- 	ret = regmap_read(ina->regmap, INA3221_CONFIG, &ina->reg_config);
- 	if (ret)
--		return ret;
-+		goto fail;
-+
-+	/* For disabling routine, decrease refcount or suspend() at last */
-+	if (!enable)
-+		pm_runtime_put_sync(ina->hdev);
- 
- 	return 0;
-+
-+fail:
-+	if (enable) {
-+		dev_err(dev, "Failed to enable channel %d: error %d\n",
-+			channel, ret);
-+		pm_runtime_put_sync(ina->hdev);
-+	}
-+
-+	return ret;
- }
- 
- static int ina3221_read(struct device *dev, enum hwmon_sensor_types type,
-@@ -599,7 +631,6 @@ static int ina3221_probe(struct i2c_client *client,
- {
- 	struct device *dev = &client->dev;
- 	struct ina3221_data *ina;
--	struct device *hwmon_dev;
- 	int i, ret;
- 
- 	ina = devm_kzalloc(dev, sizeof(*ina), GFP_KERNEL);
-@@ -631,44 +662,72 @@ static int ina3221_probe(struct i2c_client *client,
- 		return ret;
- 	}
- 
--	ret = regmap_field_write(ina->fields[F_RST], true);
--	if (ret) {
--		dev_err(dev, "Unable to reset device\n");
--		return ret;
--	}
--
--	/* Sync config register after reset */
--	ret = regmap_read(ina->regmap, INA3221_CONFIG, &ina->reg_config);
--	if (ret)
--		return ret;
-+	/* The driver will be reset, so use reset value */
-+	ina->reg_config = INA3221_CONFIG_DEFAULT;
- 
- 	/* Disable channels if their inputs are disconnected */
- 	for (i = 0; i < INA3221_NUM_CHANNELS; i++) {
- 		if (ina->inputs[i].disconnected)
- 			ina->reg_config &= ~INA3221_CONFIG_CHx_EN(i);
- 	}
--	ret = regmap_write(ina->regmap, INA3221_CONFIG, ina->reg_config);
--	if (ret)
--		return ret;
- 
- 	mutex_init(&ina->lock);
- 	dev_set_drvdata(dev, ina);
- 
--	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, ina,
-+	/* Fence sysfs nodes till pm_runtime is resumed */
-+	mutex_lock(&ina->lock);
-+
-+	/* Use the returned hdev for pm_runtime */
-+	ina->hdev = devm_hwmon_device_register_with_info(dev, client->name, ina,
- 							 &ina3221_chip_info,
- 							 ina3221_groups);
--	if (IS_ERR(hwmon_dev)) {
-+	if (IS_ERR(ina->hdev)) {
- 		dev_err(dev, "Unable to register hwmon device\n");
--		mutex_destroy(&ina->lock);
--		return PTR_ERR(hwmon_dev);
-+		ret = PTR_ERR(ina->hdev);
-+		goto fail_lock;
- 	}
- 
-+	/* Enable PM runtime -- status is suspended by default */
-+	pm_runtime_enable(ina->hdev);
-+
-+	/* Initialize (resume) the device */
-+	for (i = 0; i < INA3221_NUM_CHANNELS; i++) {
-+		if (ina->inputs[i].disconnected)
-+			continue;
-+		/* Match the refcount with number of enabled channels */
-+		ret = pm_runtime_get_sync(ina->hdev);
-+		if (ret < 0)
-+			goto fail_pm;
-+	}
-+
-+	mutex_unlock(&ina->lock);
-+
- 	return 0;
-+
-+fail_pm:
-+	pm_runtime_disable(ina->hdev);
-+	pm_runtime_set_suspended(ina->hdev);
-+	/* pm_runtime_put_noidle() will decrease the PM refcount until 0 */
-+	for (i = 0; i < INA3221_NUM_CHANNELS; i++)
-+		pm_runtime_put_noidle(ina->hdev);
-+fail_lock:
-+	mutex_unlock(&ina->lock);
-+	mutex_destroy(&ina->lock);
-+
-+	return ret;
- }
- 
- static int ina3221_remove(struct i2c_client *client)
- {
- 	struct ina3221_data *ina = dev_get_drvdata(&client->dev);
-+	int i;
-+
-+	pm_runtime_disable(ina->hdev);
-+	pm_runtime_set_suspended(ina->hdev);
-+
-+	/* pm_runtime_put_noidle() will decrease the PM refcount until 0 */
-+	for (i = 0; i < INA3221_NUM_CHANNELS; i++)
-+		pm_runtime_put_noidle(ina->hdev);
- 
- 	mutex_destroy(&ina->lock);
- 
-@@ -680,6 +739,10 @@ static int __maybe_unused ina3221_suspend(struct device *dev)
- 	struct ina3221_data *ina = dev_get_drvdata(dev);
- 	int ret;
- 
-+	/* Let hdev control all PM runtime callbacks */
-+	if (dev != ina->hdev)
-+		return 0;
-+
- 	/* Save config register value and enable cache-only */
- 	ret = regmap_read(ina->regmap, INA3221_CONFIG, &ina->reg_config);
- 	if (ret)
-@@ -703,6 +766,10 @@ static int __maybe_unused ina3221_resume(struct device *dev)
- 	struct ina3221_data *ina = dev_get_drvdata(dev);
- 	int ret;
- 
-+	/* Let hdev control all PM runtime callbacks */
-+	if (dev != ina->hdev)
-+		return 0;
-+
- 	regcache_cache_only(ina->regmap, false);
- 
- 	/* Software reset the chip */
-@@ -726,7 +793,9 @@ static int __maybe_unused ina3221_resume(struct device *dev)
- }
- 
- static const struct dev_pm_ops ina3221_pm = {
--	SET_SYSTEM_SLEEP_PM_OPS(ina3221_suspend, ina3221_resume)
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
-+	SET_RUNTIME_PM_OPS(ina3221_suspend, ina3221_resume, NULL)
- };
- 
- static const struct of_device_id ina3221_of_match_table[] = {
--- 
-2.17.1
-
+T24gVHVlLCBPY3QgMjQsIDIwMTggYXQgMTI6MjEgUE0gQW5keSBMdXRvbWlyc2tpIDxsdXRvQGtl
+cm5lbC5vcmc+IHdyb3RlOg0KPiBPbiBUdWUsIE9jdCAyMywgMjAxOCBhdCAxMTo0MyBBTSBDaGFu
+ZyBTLiBCYWUgPGNoYW5nLnNlb2suYmFlQGludGVsLmNvbT4NCj4gd3JvdGU6DQo+ID4NCj4gPiBG
+cm9tOiBBbmR5IEx1dG9taXJza2kgPGx1dG9Aa2VybmVsLm9yZz4NCj4gPg0KPiA+IFdpdGggdGhl
+IG5ldyBGU0dTQkFTRSBpbnN0cnVjdGlvbnMsIHdlIGNhbiBlZmZpY2llbnRseSByZWFkIGFuZCB3
+cml0ZQ0KPiA+IHRoZSBGU0JBU0UgYW5kIEdTQkFTRSBpbiBfX3N3aXRjaF90bygpLiAgVXNlIHRo
+YXQgY2FwYWJpbGl0eSB0byBwcmVzZXJ2ZQ0KPiA+IHRoZSBmdWxsIHN0YXRlLg0KPiA+DQo+ID4g
+VGhpcyB3aWxsIGVuYWJsZSB1c2VyIGNvZGUgdG8gZG8gd2hhdGV2ZXIgaXQgd2FudHMgd2l0aCB0
+aGUgbmV3DQo+ID4gaW5zdHJ1Y3Rpb25zIHdpdGhvdXQgYW55IGtlcm5lbC1pbmR1Y2VkIGdvdGNo
+YXMuICAoVGhlcmUgY2FuIHN0aWxsIGJlDQo+ID4gYXJjaGl0ZWN0dXJhbCBnb3RjaGFzOiBtb3Zs
+ICVncywlZWF4OyBtb3ZsICVlYXgsJWdzIG1heSBjaGFuZ2UgR1NCQVNFDQo+ID4gaWYgV1JHU0JB
+U0Ugd2FzIHVzZWQsIGJ1dCB1c2VycyBhcmUgZXhwZWN0ZWQgdG8gcmVhZCB0aGUgQ1BVIG1hbnVh
+bA0KPiA+IGJlZm9yZSBkb2luZyB0aGluZ3MgbGlrZSB0aGF0LikNCj4gPg0KPiA+IFRoaXMgaXMg
+YSBjb25zaWRlcmFibGUgc3BlZWR1cC4gIEl0IHNlZW1zIHRvIHNhdmUgYWJvdXQgMTAwIGN5Y2xl
+cw0KPiA+IHBlciBjb250ZXh0IHN3aXRjaCBjb21wYXJlZCB0byB0aGUgYmFzZWxpbmUgNC42LXJj
+MSBiZWhhdmlvciBvbiBteQ0KPiA+IFNreWxha2UgbGFwdG9wLg0KPiA+DQo+ID4gWyBjaGFuZzog
+NX4xMCUgcGVyZm9ybWFuY2UgaW1wcm92ZW1lbnRzIHdlcmUgc2VlbiBieSBhIGNvbnRleHQgc3dp
+dGNoDQo+ID4gICBiZW5jaG1hcmsgdGhhdCByYW4gdGhyZWFkcyB3aXRoIGRpZmZlcmVudCBGUy9H
+U0JBU0UgdmFsdWVzLiBNaW5vcg0KPiA+ICAgZWRpdCBvbiB0aGUgY2hhbmdlbG9nLiBdDQo+ID4N
+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBBbmR5IEx1dG9taXJza2kgPGx1dG9Aa2VybmVsLm9yZz4NCj4g
+PiBTaWduZWQtb2ZmLWJ5OiBDaGFuZyBTLiBCYWUgPGNoYW5nLnNlb2suYmFlQGludGVsLmNvbT4N
+Cj4gPiBSZXZpZXdlZC1ieTogQW5kaSBLbGVlbiA8YWtAbGludXguaW50ZWwuY29tPg0KPiA+IENj
+OiBILiBQZXRlciBBbnZpbiA8aHBhQHp5dG9yLmNvbT4NCj4gPiBDYzogVGhvbWFzIEdsZWl4bmVy
+IDx0Z2x4QGxpbnV0cm9uaXguZGU+DQo+ID4gQ2M6IEluZ28gTW9sbmFyIDxtaW5nb0BrZXJuZWwu
+b3JnPg0KPiA+IENjOiBEYXZlIEhhbnNlbiA8ZGF2ZS5oYW5zZW5AbGludXguaW50ZWwuY29tPg0K
+PiA+IC0tLQ0KPiA+ICBhcmNoL3g4Ni9rZXJuZWwvcHJvY2Vzc182NC5jIHwgMzQgKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKy0tLS0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMjggaW5zZXJ0
+aW9ucygrKSwgNiBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9r
+ZXJuZWwvcHJvY2Vzc182NC5jIGIvYXJjaC94ODYva2VybmVsL3Byb2Nlc3NfNjQuYw0KPiA+IGlu
+ZGV4IGZjZjE4MDQ2YzNkNi4uMWQ5NzVjYWRjMjU2IDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gveDg2
+L2tlcm5lbC9wcm9jZXNzXzY0LmMNCj4gPiArKysgYi9hcmNoL3g4Ni9rZXJuZWwvcHJvY2Vzc182
+NC5jDQo+ID4gQEAgLTIzOCw4ICsyMzgsMTggQEAgc3RhdGljIF9fYWx3YXlzX2lubGluZSB2b2lk
+IHNhdmVfZnNncyhzdHJ1Y3QNCj4gdGFza19zdHJ1Y3QgKnRhc2spDQo+ID4gIHsNCj4gPiAgICAg
+ICAgIHNhdmVzZWdtZW50KGZzLCB0YXNrLT50aHJlYWQuZnNpbmRleCk7DQo+ID4gICAgICAgICBz
+YXZlc2VnbWVudChncywgdGFzay0+dGhyZWFkLmdzaW5kZXgpOw0KPiA+IC0gICAgICAgc2F2ZV9i
+YXNlX2xlZ2FjeSh0YXNrLCB0YXNrLT50aHJlYWQuZnNpbmRleCwgRlMpOw0KPiA+IC0gICAgICAg
+c2F2ZV9iYXNlX2xlZ2FjeSh0YXNrLCB0YXNrLT50aHJlYWQuZ3NpbmRleCwgR1MpOw0KPiA+ICsg
+ICAgICAgaWYgKHN0YXRpY19jcHVfaGFzKFg4Nl9GRUFUVVJFX0ZTR1NCQVNFKSkgew0KPiA+ICsg
+ICAgICAgICAgICAgICAvKg0KPiA+ICsgICAgICAgICAgICAgICAgKiBJZiBGU0dTQkFTRSBpcyBl
+bmFibGVkLCB3ZSBjYW4ndCBtYWtlIGFueSB1c2VmdWwgZ3Vlc3Nlcw0KPiA+ICsgICAgICAgICAg
+ICAgICAgKiBhYm91dCB0aGUgYmFzZSwgYW5kIHVzZXIgY29kZSBleHBlY3RzIHVzIHRvIHNhdmUg
+dGhlIGN1cnJlbnQNCj4gPiArICAgICAgICAgICAgICAgICogdmFsdWUuICBGb3J0dW5hdGVseSwg
+cmVhZGluZyB0aGUgYmFzZSBkaXJlY3RseSBpcyBlZmZpY2llbnQuDQo+ID4gKyAgICAgICAgICAg
+ICAgICAqLw0KPiA+ICsgICAgICAgICAgICAgICB0YXNrLT50aHJlYWQuZnNiYXNlID0gcmRmc2Jh
+c2UoKTsNCj4gPiArICAgICAgICAgICAgICAgdGFzay0+dGhyZWFkLmdzYmFzZSA9IHJkX2luYWN0
+aXZlX2dzYmFzZSgpOw0KPiA+ICsgICAgICAgfSBlbHNlIHsNCj4gPiArICAgICAgICAgICAgICAg
+c2F2ZV9iYXNlX2xlZ2FjeSh0YXNrLCB0YXNrLT50aHJlYWQuZnNpbmRleCwgRlMpOw0KPiA+ICsg
+ICAgICAgICAgICAgICBzYXZlX2Jhc2VfbGVnYWN5KHRhc2ssIHRhc2stPnRocmVhZC5nc2luZGV4
+LCBHUyk7DQo+ID4gKyAgICAgICB9DQo+ID4gIH0NCj4gPg0KPiA+ICAjaWYgSVNfRU5BQkxFRChD
+T05GSUdfS1ZNKQ0KPiA+IEBAIC0zMTgsMTAgKzMyOCwyMiBAQCBzdGF0aWMgX19hbHdheXNfaW5s
+aW5lIHZvaWQNCj4gbG9hZF9zZWdfbGVnYWN5KHVuc2lnbmVkIHNob3J0IHByZXZfaW5kZXgsDQo+
+ID4gIHN0YXRpYyBfX2Fsd2F5c19pbmxpbmUgdm9pZCB4ODZfZnNnc2Jhc2VfbG9hZChzdHJ1Y3Qg
+dGhyZWFkX3N0cnVjdCAqcHJldiwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgc3RydWN0IHRocmVhZF9zdHJ1Y3QgKm5leHQpDQo+ID4gIHsNCj4gPiAt
+ICAgICAgIGxvYWRfc2VnX2xlZ2FjeShwcmV2LT5mc2luZGV4LCBwcmV2LT5mc2Jhc2UsDQo+ID4g
+LSAgICAgICAgICAgICAgICAgICAgICAgbmV4dC0+ZnNpbmRleCwgbmV4dC0+ZnNiYXNlLCBGUyk7
+DQo+ID4gLSAgICAgICBsb2FkX3NlZ19sZWdhY3kocHJldi0+Z3NpbmRleCwgcHJldi0+Z3NiYXNl
+LA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgIG5leHQtPmdzaW5kZXgsIG5leHQtPmdzYmFz
+ZSwgR1MpOw0KPiA+ICsgICAgICAgaWYgKHN0YXRpY19jcHVfaGFzKFg4Nl9GRUFUVVJFX0ZTR1NC
+QVNFKSkgew0KPiA+ICsgICAgICAgICAgICAgICAvKiBVcGRhdGUgdGhlIEZTIGFuZCBHUyBzZWxl
+Y3RvcnMgaWYgdGhleSBjb3VsZCBoYXZlIGNoYW5nZWQuICovDQo+ID4gKyAgICAgICAgICAgICAg
+IGlmICh1bmxpa2VseShwcmV2LT5mc2luZGV4IHx8IG5leHQtPmZzaW5kZXgpKQ0KPiA+ICsgICAg
+ICAgICAgICAgICAgICAgICAgIGxvYWRzZWcoRlMsIG5leHQtPmZzaW5kZXgpOw0KPiA+ICsgICAg
+ICAgICAgICAgICBpZiAodW5saWtlbHkocHJldi0+Z3NpbmRleCB8fCBuZXh0LT5nc2luZGV4KSkN
+Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICBsb2Fkc2VnKEdTLCBuZXh0LT5nc2luZGV4KTsN
+Cj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgIC8qIFVwZGF0ZSB0aGUgYmFzZXMuICovDQo+ID4g
+KyAgICAgICAgICAgICAgIHdyZnNiYXNlKG5leHQtPmZzYmFzZSk7DQo+ID4gKyAgICAgICAgICAg
+ICAgIHdyX2luYWN0aXZlX2dzYmFzZShuZXh0LT5nc2Jhc2UpOw0KPiANCj4gQWhhLCBJIHNlZSB3
+aGF0IHlvdSdyZSBkb2luZyB3aXRoIHRoZSBGU0dTQkFTRS1vcHRpbWl6ZWQgdmVyc2lvbiBiZWlu
+Zw0KPiBvdXQgb2YgbGluZS4gIEJ1dCBpdCdzIHdheSB0b28gdW5jbGVhciBmcm9tIHRoZSBjb2Rl
+LiAgWW91IHNob3VsZCBuYW1lDQo+IHRoZSBoZWxwZXIgd3Jnc2Jhc2VfaW5hY3RpdmUgb3IgbWF5
+YmUgX193cmdzYmFzZV9pbmFjdGl2ZSgpIHRvDQo+IGVtcGhhc2l6ZSB0aGF0IHlvdSdyZSBsaXRl
+cmFsbHkgdXNpbmcgdGhlIFdSR1NCQVNFIGluc3RydWN0aW9uLiAgKE9yDQo+IGl0J3MgWGVuIFBW
+IGVxdWl2YWxlbnQuICBIbW0uKQ0KDQpPa2F5LiBXaWxsIHJlbmFtZSB0aGUgcmVsZXZhbnRzLg0K
