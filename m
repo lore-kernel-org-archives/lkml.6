@@ -2,118 +2,102 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0861EC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB179C7112C
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B531A2064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:43:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B531A2064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id B2CBB2064A
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:43:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7Qbpjfs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2CBB2064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbeJXWLh (ORCPT
+        id S1726964AbeJXWL6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 18:11:37 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56344 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726414AbeJXWLh (ORCPT
+        Wed, 24 Oct 2018 18:11:58 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37439 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726414AbeJXWL6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:11:37 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 9A45780800; Wed, 24 Oct 2018 15:43:23 +0200 (CEST)
-Date:   Wed, 24 Oct 2018 15:43:24 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com
-Subject: Re: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the
- LM3697
-Message-ID: <20181024134324.GA12125@amd>
-References: <20181023170623.31820-1-dmurphy@ti.com>
- <20181023170623.31820-2-dmurphy@ti.com>
- <20181024090421.GB24997@amd>
- <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com>
+        Wed, 24 Oct 2018 18:11:58 -0400
+Received: by mail-wr1-f65.google.com with SMTP id g9-v6so5658680wrq.4;
+        Wed, 24 Oct 2018 06:43:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dNJtO6i3Kfvf1KktXEna8GrGSbj5XeMGVArGLLH9Iwk=;
+        b=D7Qbpjfs83TTGaTKXLLfoV9nMNNXmCTAscxOF5Z42z1oNXFMhuLoGfe1XT5+mkPX2g
+         FyUjTyIGZJDtnwkRTezwdphbBLQ9liGuLgBA8VnDTM1SIxSQwO98/+XYpH2EaSLgUUkr
+         rqkhrtT4T4a/khzjB4whJL9PMvLUCWXMGDiz9LxzyKYvbpoot2DLYo3F42X41rPuBVmq
+         r1ge3kHV1J7VIjRzZ3VEmpXDlBnSrFvhP5R9tpidAmBdaQNONznHGzuekmkh4R+yOMc0
+         rlY47qBRQkV+VvO/5rjZulEd/5wvTbL2mRqnfmTpztn5RpPNiMe9k6mYnkOjDPM8aJOr
+         9/aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dNJtO6i3Kfvf1KktXEna8GrGSbj5XeMGVArGLLH9Iwk=;
+        b=uLnq4YehmBAti4uW2SbJMNvR/Qpzxuw/vXOuMtTLC4bsyZi7nF1KG3Qe6Omc3l+QL0
+         yHzmUiQbKU4Nb2pe70r6mTd3ElEtfHRKbNo3LeAQPop3xI4w/s/bBel2f3FJpr1m3RW3
+         ALTImTkiTdGndDnQ7VJ52BJ9LgKWPFSWxN07F6vTrK4Lf0oFu04tw49p4lpk0aLnjHnB
+         xlP6QafLm8KhGy4zMC9qHanUN3QUp4AuLdLtTLMf9SYokhYmsGpNWVhwnVePSIzCHmpM
+         ObJ9hdUK85jJk5MsLtoek46xXQpnEy2U9USc4sxoWyQBxWBfgjELzTJMDSz2u8hwAsIk
+         FyjQ==
+X-Gm-Message-State: AGRZ1gJuqLYxgFiQ2xZliABIw0KcQXlLlCSVv9CrFEH8nC/scCvqHg6J
+        C4jw/JD3Khq4Cp90hopmzQ==
+X-Google-Smtp-Source: AJdET5fl9VwfAPxKCK3bVYvE4u89Qilo/202VZ7Wn9iu+eHOMop3IqLiin8QfIt6E62WlAHIgRTj4A==
+X-Received: by 2002:adf:9592:: with SMTP id p18-v6mr3145316wrp.202.1540388626661;
+        Wed, 24 Oct 2018 06:43:46 -0700 (PDT)
+Received: from avx2 (nat5-minsk-pool-46-53-217-92.telecom.by. [46.53.217.92])
+        by smtp.gmail.com with ESMTPSA id m16sm3812393wrx.75.2018.10.24.06.43.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Oct 2018 06:43:45 -0700 (PDT)
+Date:   Wed, 24 Oct 2018 16:43:43 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Lihao Liang <lianglihao@huawei.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/17] prmem: linked list: disable layout randomization
+Message-ID: <20181024134343.GA7767@avx2>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-14-igor.stoppa@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181023213504.28905-14-igor.stoppa@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 24, 2018 at 12:35:00AM +0300, Igor Stoppa wrote:
+> Some of the data structures used in list management are composed by two
+> pointers. Since the kernel is now configured by default to randomize the
+> layout of data structures soleley composed by pointers,
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> >> The LM3697 is a single function LED driver. The single function LED
-> >> driver needs to reside in the LED directory as a dedicated LED driver
-> >> and not as a MFD device.  The device does have common brightness and r=
-amp
-> >=20
-> > So it is single function LED driver. That does not mean it can not
-> > share bindings with the rest. Where the bindings live is not imporant.
->=20
-> It can share bindings that are correctly done, not ones that are incomple=
-te and incorrect.
-
-If you see wrong binding you are welcome to fix it. If it is in wrong
-place, you can move it around.
-
-You are not welcome to create 2 "fixed" versions, while leaving
-original "buggy" version in tree!
-
-=2E..but that's what your series does. Better changelogs will _not_ help.
-
-> Where bindings live is important to new Linux kernel developers and produ=
-ct=20
-> developers looking for the proper documentation on the H/W bindings.
-
-We have talked about this before.
-
-> >> @@ -9,7 +9,6 @@ TI LMU driver supports lighting devices below.
-> >>    LM3632       Backlight and regulator
-> >>    LM3633       Backlight, LED and fault monitor
-> >>    LM3695       Backlight
-> >> -  LM3697       Backlight and fault monitor
-> >> =20
-> >>  Required properties:
-> >>    - compatible: Should be one of:
-> >=20
-> > NAK. You can use existing binding.
->=20
-> Thank you for the consistency
-
-You are wasting your time. What is worse, you are wasting my time,
-too, and time of people on the list.
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---vkogqOf2sHV7VnPd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvQdvwACgkQMOfwapXb+vKIVQCdHKRZaUqDYczyawaKzJ6Jh/hc
-RhAAni+U1fIHCxm+J71dz9ORidtXH868
-=cFuT
------END PGP SIGNATURE-----
-
---vkogqOf2sHV7VnPd--
+Isn't this true for function pointers?
