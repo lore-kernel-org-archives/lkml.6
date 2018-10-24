@@ -2,144 +2,143 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 242C2C7112C
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 04:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FD62C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 04:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0159206B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 04:11:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01E0D20652
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 04:31:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OJKJu8KB";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nnJP7uEE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0159206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dp5Kgz/E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01E0D20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbeJXMh5 (ORCPT
+        id S1726531AbeJXM5W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 08:37:57 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55178 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725996AbeJXMh5 (ORCPT
+        Wed, 24 Oct 2018 08:57:22 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37802 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbeJXM5W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 08:37:57 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3D7DA610DA; Wed, 24 Oct 2018 04:11:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540354297;
-        bh=+3QIdjvJuiCkjIpFe1sSDQ5E5k7iPTZuaNs9Me0GrdQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OJKJu8KBk46FjVinuGnvL1WvsZ1hlPNqrluDrioGsupGAwa+qLkAJGb1GtALzJrCN
-         vV+USjgaLvNR7GHCEAt93QNsbEUQ2KTX12VWTuguOLhP10pXjYSQTJrcRzb39rO0kJ
-         dbqx5hav+khLHg/dxvVSYCL7QBfzCG/I186Xy5VE=
-Received: from [10.201.3.39] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sricharan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 340646030F;
-        Wed, 24 Oct 2018 04:11:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540354296;
-        bh=+3QIdjvJuiCkjIpFe1sSDQ5E5k7iPTZuaNs9Me0GrdQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nnJP7uEE2lkJ2D/U7Yl+QDXaBH4PcV9DuHr+tENfmRNWNanbMO8tOcSu8caPLF4rE
-         IWCMPL/OEt7eg7LIQn3TPpCub7cPy13dbK5hxUkaVNCqajufRWJjxWPackMgQpw3TS
-         Z5lYJzyH2IbUEezEsiLTwkAmM3QtirgrpB1r5L1I=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 340646030F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH V12 00/14] Krait clocks + Krait CPUfreq
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Craig <ctatlor97@gmail.com>,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux@arm.linux.org.uk,
-        linux@armlinux.org.uk, mark.rutland@arm.com,
-        mturquette@baylibre.com, rjw@rjwysocki.net, robh@kernel.org,
-        sboyd@codeaurora.org, sudeep.holla@arm.com,
-        thierry.escande@linaro.org, viresh.kumar@linaro.org
-References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
- <2ae96741-94c0-ba4c-fc19-05d33179683c@codeaurora.org>
- <d682580d-5070-0271-197f-29d988172937@codeaurora.org>
- <D8FC68C0-2572-4A86-81D9-D0099D314A45@gmail.com>
- <F5A89365-C613-4FE2-AD32-DC0AC6DF380B@gmail.com>
- <fb81b8d5-3d24-b413-8d59-33cb70e46f8b@codeaurora.org>
- <153979105280.5275.841088095583550635@swboyd.mtv.corp.google.com>
- <153980741313.5275.10376918222904341760@swboyd.mtv.corp.google.com>
- <c5f492c0-19a2-db8f-a114-d3cfe17ae6c6@codeaurora.org>
- <20181022153005.GA23950@centauri.lan>
-From:   Sricharan R <sricharan@codeaurora.org>
-Message-ID: <a9fed22d-89c2-9d3d-f6bb-594dac0e3ec5@codeaurora.org>
-Date:   Wed, 24 Oct 2018 09:41:26 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 24 Oct 2018 08:57:22 -0400
+Received: by mail-pl1-f194.google.com with SMTP id bh10-v6so1654452plb.4;
+        Tue, 23 Oct 2018 21:31:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V9HEy+JpVDrqHTtVwbWj1AV96zTNQiQmnitvlf06EDk=;
+        b=dp5Kgz/Ew1FiDmoWunQvzK6lvfWDP81FICZ6LO5gqpkPG5GYtJaij7SFP/AMxKiDMY
+         1Ph0MgvsMNFY4RVtEra3GNqQgq1kkw6XHKKQsiL51tfW80CWtpHlwCX9MpUW37C4lxZC
+         ElV9DAjup+ShDx/c6FwhQf+HTR5IkgchoE02yLI0KigC9WBu2GOrMo6KyDq9pxoi1+z9
+         oERZPqzNTRr3nRXttIEUDJGCPlRvX2yHIyV9rjjg2jutiIMm4uXw/tJ9vCUSwgZmjGjT
+         uXG7Gs379sCel/ByTWxRz/w9R4WxFfOnyV2+vulfs2owzlS1CzHOBMgWjf1bykeG+BWy
+         UNvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V9HEy+JpVDrqHTtVwbWj1AV96zTNQiQmnitvlf06EDk=;
+        b=mhPRLGwnFPZNny264iVPWNCXFXUGdkGd7cmXgsSWON9xfvsT+cHkaAr3r+Dt/61luV
+         whEjOhqEJ3Ef4ZYKsYApmfEjJYzumD1BP5AEeVn0zXor+WsK2YGIx8ve52wgXAFKRviZ
+         uZ1yL+R+pPqqld1QxEWRG4ZCwFy8dk2UzouyMeLBTvqCiG7PNxwbuYVeRSSwr9VQj8St
+         HSIw6IikvifOCWq7tiHBFwPjfSiaSLWrDVPqHiAj1F6YIfM0oVRdWJIH3wnz410KFjuf
+         BEn+VzOwwoWeq9gDaTrzHnhJXJEkta8clThk/OlneAbQLDAKwZ7sbEeTal0GvA3KLw0Z
+         eoXw==
+X-Gm-Message-State: AGRZ1gKGcpDa2YcoW431Z6GXELpLntFDDH5d6oNEQrtsAtIL4/T8c7Ty
+        ePt9ujLNWnSKIVwOzkVfsUE=
+X-Google-Smtp-Source: AJdET5c5AQQ1wCnMjGWL8arUPOUwWniLVA09Ztx1MeGVWX8EdB+IK8qlpY5DYhlAAU0hCfMP7AG8Nw==
+X-Received: by 2002:a17:902:2ac3:: with SMTP id j61-v6mr1035664plb.139.1540355459881;
+        Tue, 23 Oct 2018 21:30:59 -0700 (PDT)
+Received: from localhost.localdomain ([39.7.47.81])
+        by smtp.gmail.com with ESMTPSA id r81-v6sm11228163pfa.110.2018.10.23.21.30.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Oct 2018 21:30:58 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: [PATCH] s390/fault: use wake_up_klogd() in bust_spinlocks()
+Date:   Wed, 24 Oct 2018 13:30:48 +0900
+Message-Id: <20181024043048.21248-1-sergey.senozhatsky@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20181022153005.GA23950@centauri.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Niklas,
+printk() without oops_in_progress set is potentially dangerous.
+it will attempt to call into console driver, so if oops happened
+while console driver port->lock spin_lock was locked on the same
+CPU (NMI oops or oops from console driver), then re-entering
+console driver from bust_spinlocks() will deadlock the system.
 
-On 10/22/2018 9:00 PM, Niklas Cassel wrote:
-> On Mon, Oct 22, 2018 at 09:39:03AM +0530, Sricharan R wrote:
->> Hi Stephen,
->>
->> On 10/18/2018 1:46 AM, Stephen Boyd wrote:
->>> Quoting Stephen Boyd (2018-10-17 08:44:12)
->>>> Quoting Sricharan R (2018-09-20 06:03:31)
->>>>>
->>>>>
->>>>> On 9/20/2018 1:54 AM, Craig wrote:
->>>>>> Yup, this patch seems to have fixed the higher frequencies from the quick test I did.
->>>>>>
->>>>>       Thanks !!. Can i take that as 
->>>>>           Tested-by: Craig Tatlor <ctatlor97@gmail.com>  ?
->>>>>
->>>>
->>>> Is this patch series going to be resent?
->>>>
->>>
->>> Nevermind. Looking at it I think I can apply all the clk ones and we're
->>> good to go. If you can send a followup patch series to change the
->>> registration and provider APIs to be clk_hw instead of clk based I would
->>> appreciate it.
->>>
->>
->> Sorry for the late response. Was away.
->> Only pending thing was separating out the binding documentation for the cpu-freq
->> driver and fixing the text in documentation.  That means, yes its fine to merge
->> the clk ones as you said. I will resend that. Also, will send a follow up series for clk_hw to
->> clk change as you mentioned separately.
-> 
-> Hello Sricharan,
-> 
-> Great to see that the clk parts has been marged to clk-next!
-> 
-> Are you also planning on sending out a new version of the cpufreq driver
-> consolidation parts?
-> 
-   yeah right, will send a new version, sometime next week.
+Some serial drivers have are re-entrant from oops path:
 
-> I'm planning on extending your consilidated cpufreq driver with support
-> for msm8916 (Cortex-A53), where I plan to read PVS/speedbin, in order to
-> set opp_supported_hw(), and also register with cpufreq (since Viresh/Ulf
-> suggested that we shouldn't register with cpufreq in the CPR power-domain
-> driver).
+static void serial_console_write(struct console *co, const char *s,
+                                 unsigned count)
+{
+...
+        if (port->sysrq)
+                locked = 0;
+        else if (oops_in_progress)
+                locked = spin_trylock_irqsave(&port->lock, flags);
+        else
+                spin_lock_irqsave(&port->lock, flags);
+...
 
-   ok sure.
+        uart_console_write(port, s, count, serial_console_putchar);
+...
+        if (locked)
+                spin_unlock_irqrestore(&port->lock, flags);
+}
 
-Regards,
- Sricharan
+So it's OK to call printk() or console_unblank() and re-enter
+serial console drivers when oops_in_progress set. But once we
+clear oops_in_progress serial consoles become non-reentrant.
 
+From the comment it seems that s390 wants to just poke klogd.
+There is wake_up_klogd() for this purpose, so we can replace
+that printk(" ").
+
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+---
+ arch/s390/mm/fault.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
+index 2b8f32f56e0c..244993dc3c70 100644
+--- a/arch/s390/mm/fault.c
++++ b/arch/s390/mm/fault.c
+@@ -93,15 +93,10 @@ void bust_spinlocks(int yes)
+ 	} else {
+ 		int loglevel_save = console_loglevel;
+ 		console_unblank();
+-		oops_in_progress = 0;
+-		/*
+-		 * OK, the message is on the console.  Now we call printk()
+-		 * without oops_in_progress set so that printk will give klogd
+-		 * a poke.  Hold onto your hats...
+-		 */
+-		console_loglevel = 15;
+-		printk(" ");
+ 		console_loglevel = loglevel_save;
++
++		oops_in_progress = 0;
++		wake_up_klogd();
+ 	}
+ }
+ 
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.19.1
+
