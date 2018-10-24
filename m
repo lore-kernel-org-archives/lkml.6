@@ -2,83 +2,183 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB5AC67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B82C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2530B20832
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:53:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2530B20832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=topic.nl
+	by mail.kernel.org (Postfix) with ESMTP id 6F883206B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:56:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PUY6WbRl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F883206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbeJXQUO (ORCPT
+        id S1727778AbeJXQX4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 12:20:14 -0400
-Received: from atl4mhob13.registeredsite.com ([209.17.115.51]:51832 "EHLO
-        atl4mhob13.registeredsite.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726832AbeJXQUO (ORCPT
+        Wed, 24 Oct 2018 12:23:56 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:40623 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbeJXQX4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 12:20:14 -0400
-Received: from mailpod.hostingplatform.com (atl4qobmail03pod0.registeredsite.com [10.30.71.205])
-        by atl4mhob13.registeredsite.com (8.14.4/8.14.4) with ESMTP id w9O7rAOV022222
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 03:53:10 -0400
-Received: (qmail 14926 invoked by uid 0); 24 Oct 2018 07:53:09 -0000
-X-TCPREMOTEIP: 81.173.50.109
-X-Authenticated-UID: mike@milosoftware.com
-Received: from unknown (HELO mikebuntu.TOPIC.LOCAL) (mike@milosoftware.com@81.173.50.109)
-  by 0 with ESMTPA; 24 Oct 2018 07:53:09 -0000
-From:   Mike Looijmans <mike.looijmans@topic.nl>
-To:     linux-fpga@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        michal.simek@xilinx.com, mdf@kernel.org, atull@kernel.org,
-        git@xilinx.com, Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH v2] zynq-fpga: Only route PR via PCAP when required
-Date:   Wed, 24 Oct 2018 09:53:03 +0200
-Message-Id: <1540367583-5413-1-git-send-email-mike.looijmans@topic.nl>
-X-Mailer: git-send-email 1.9.1
-References: <1540276279-2903-1-git-send-email-mike.looijmans@topic.nl>
-In-Reply-To: <1540276279-2903-1-git-send-email-mike.looijmans@topic.nl>
+        Wed, 24 Oct 2018 12:23:56 -0400
+Received: by mail-yb1-f194.google.com with SMTP id g9-v6so1732093ybh.7;
+        Wed, 24 Oct 2018 00:56:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cazemmgITw+38DcQtiOT3humLWlxajcFoFT0jUf59nk=;
+        b=PUY6WbRlVH8VCh2cso7NhVUc0sI5LKHq3dcnT5lAtAhx7AGL0ngevNMjXF9WkurjM3
+         XSzL2jl5bSpl3duwLYk1hRZMR2iIW16hU7UVXj8FG9i7mfXRl7TrqdoGX0l2E1ZB2jGj
+         CHI/cNKmgdbtiW1ngan/hLQRygTGlvtI7sMYEpSXpJ+2OFH5vJ4Esv8MiwDXyDXMQxF9
+         yTmAFYIzd1qIV/YOnOXy5YPh18SKZKeqJhsapZ5glEU0vpxATAjVa1xdL13B2n9IcMkq
+         vrMSAPDKZoOYphF8NuS0TMl3a4Vde0nS9AIiLs+T4oHSUDS2ysHYBDMAWsdB4Cyn+XTZ
+         XMbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cazemmgITw+38DcQtiOT3humLWlxajcFoFT0jUf59nk=;
+        b=T4HHlAoicVqRz3Cy63X2XOq8JwIB2PbWdnXNGdYBd3yQUBplJVrR6lLDaZy7s1Ls74
+         4Shd0AQW7t8gjhwQzybZYD2+fJ7KmegIYUCbfYqtOsx0JQTWrZZm3o+EHG5/8gA8tJcq
+         xdhMTFAz1Comw+0Lltc3hXzv/2vokYrswVnqPYJr+HS3LroDpa0DgTJZmTb8G1pR0QBR
+         RT+PXtDswCpBCTRzgdqyyPB5Z17TYlfrCV4gEeSvAA4N5viUtmLAjJLKt8RHIFdlLT4s
+         4Lu/x1g6ByuTwcmbrqEixQ+ppYNhPD8HNoHRW2IAjJs4sfiQbq0JCVdbvbaTl/ABRBvK
+         0UfA==
+X-Gm-Message-State: AGRZ1gK0URHKit3hkK5md6e6EFUvdybHJ/yhcogVoWugOGCV8Kquiy//
+        7NlgEOC3OPUaB0a9mrKsIakavz4taI8a7qPDAkw=
+X-Google-Smtp-Source: AJdET5epCntvHuZJsQDjyyNUC/l6+Dz5yVEyEwgARik1HqsDo78LCFjMtVt5ex0aQf682OL0DefX6pCbbLBUtPlWzpk=
+X-Received: by 2002:a25:198a:: with SMTP id 132-v6mr1249182ybz.325.1540367815394;
+ Wed, 24 Oct 2018 00:56:55 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181023201957.GA15708@pathfinder> <CAOQ4uxhitRXu+qjg-0hWVe4VJLEu0Th+ExFr=MSeBdP+y2C6vw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhitRXu+qjg-0hWVe4VJLEu0Th+ExFr=MSeBdP+y2C6vw@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 24 Oct 2018 10:56:43 +0300
+Message-ID: <CAOQ4uxjAh9wbdKT5TAAY9mgahfqCdKghdAFxkuxwkx_+0+dXhA@mail.gmail.com>
+Subject: Re: [RFC][PATCH v2 04/10] ext2: use common file type conversion
+To:     Phillip Potter <phil@philpotter.co.uk>
+Cc:     Jan Kara <jack@suse.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Ext4 <linux-ext4@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Xilinx Zynq FPGA driver takes ownership of the PR interface, making
-it impossible to use the ICAP interface for partial reconfiguration.
+On Wed, Oct 24, 2018 at 9:50 AM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Tue, Oct 23, 2018 at 11:19 PM Phillip Potter <phil@philpotter.co.uk> wrote:
+> >
+> > Deduplicate the ext2 file type conversion implementation.
+> >
+> > Original patch by Amir Goldstein.
+> >
+> > v2:
+> > - Rebased against Linux 4.19 by Phillip Potter
+> > - This version does not remove EXT2_FT_x enum from fs/ext2/ext2.h,
+> >   as these values are now used in compile-time checks added by
+> >   Phillip Potter to make sure they remain the same as FT_x values
+> >
+> > v1:
+> > - Initial implementation
+> >
+>
+> Same comments as how to apply a patch and about changelog as patch 1.
+> Won't repeat for other patches.
+>
+> I think it would be also good to mention there is a lurking bug if code
+> ever tries to access ext2_type_by_mode[S_IFMT] because on-disk
+> data is corrupted.
 
-This patch changes the driver to only activate PR over PCAP while the
-device is actively being accessed by the driver for programming.
+So my old notes on the alleged ext2 bug:
+https://marc.info/?l=linux-fsdevel&m=148243866204444&w=2
 
-This allows both PCAP and ICAP interfaces to be used for PR.
+>
+> > Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
+> > ---
+> >  fs/ext2/dir.c | 51 ++++++++++++++++++++++-----------------------------
+> >  1 file changed, 22 insertions(+), 29 deletions(-)
+> >
+> > diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
+> > index 3b8114def693..420d4b9e8980 100644
+> > --- a/fs/ext2/dir.c
+> > +++ b/fs/ext2/dir.c
+> > @@ -252,33 +252,10 @@ ext2_validate_entry(char *base, unsigned offset, unsigned mask)
+> >         return (char *)p - base;
+> >  }
+> >
+> > -static unsigned char ext2_filetype_table[EXT2_FT_MAX] = {
+> > -       [EXT2_FT_UNKNOWN]       = DT_UNKNOWN,
+> > -       [EXT2_FT_REG_FILE]      = DT_REG,
+> > -       [EXT2_FT_DIR]           = DT_DIR,
+> > -       [EXT2_FT_CHRDEV]        = DT_CHR,
+> > -       [EXT2_FT_BLKDEV]        = DT_BLK,
+> > -       [EXT2_FT_FIFO]          = DT_FIFO,
+> > -       [EXT2_FT_SOCK]          = DT_SOCK,
+> > -       [EXT2_FT_SYMLINK]       = DT_LNK,
+> > -};
+> > -
+> > -#define S_SHIFT 12
+> > -static unsigned char ext2_type_by_mode[S_IFMT >> S_SHIFT] = {
+> > -       [S_IFREG >> S_SHIFT]    = EXT2_FT_REG_FILE,
+> > -       [S_IFDIR >> S_SHIFT]    = EXT2_FT_DIR,
+> > -       [S_IFCHR >> S_SHIFT]    = EXT2_FT_CHRDEV,
+> > -       [S_IFBLK >> S_SHIFT]    = EXT2_FT_BLKDEV,
+> > -       [S_IFIFO >> S_SHIFT]    = EXT2_FT_FIFO,
+> > -       [S_IFSOCK >> S_SHIFT]   = EXT2_FT_SOCK,
+> > -       [S_IFLNK >> S_SHIFT]    = EXT2_FT_SYMLINK,
+> > -};
+> > -
+> >  static inline void ext2_set_de_type(ext2_dirent *de, struct inode *inode)
+> >  {
+> > -       umode_t mode = inode->i_mode;
+> >         if (EXT2_HAS_INCOMPAT_FEATURE(inode->i_sb, EXT2_FEATURE_INCOMPAT_FILETYPE))
+> > -               de->file_type = ext2_type_by_mode[(mode & S_IFMT)>>S_SHIFT];
+> > +               de->file_type = fs_umode_to_ftype(inode->i_mode);
+> >         else
+> >                 de->file_type = 0;
+> >  }
+> > @@ -293,14 +270,14 @@ ext2_readdir(struct file *file, struct dir_context *ctx)
+> >         unsigned long n = pos >> PAGE_SHIFT;
+> >         unsigned long npages = dir_pages(inode);
+> >         unsigned chunk_mask = ~(ext2_chunk_size(inode)-1);
+> > -       unsigned char *types = NULL;
+> >         bool need_revalidate = !inode_eq_iversion(inode, file->f_version);
+> > +       bool has_filetype;
+> >
+> >         if (pos > inode->i_size - EXT2_DIR_REC_LEN(1))
+> >                 return 0;
+> >
+> > -       if (EXT2_HAS_INCOMPAT_FEATURE(sb, EXT2_FEATURE_INCOMPAT_FILETYPE))
+> > -               types = ext2_filetype_table;
+> > +       has_filetype =
+> > +               EXT2_HAS_INCOMPAT_FEATURE(sb, EXT2_FEATURE_INCOMPAT_FILETYPE);
+> >
+> >         for ( ; n < npages; n++, offset = 0) {
+> >                 char *kaddr, *limit;
+> > @@ -335,8 +312,24 @@ ext2_readdir(struct file *file, struct dir_context *ctx)
+> >                         if (de->inode) {
+> >                                 unsigned char d_type = DT_UNKNOWN;
+> >
+> > -                               if (types && de->file_type < EXT2_FT_MAX)
+> > -                                       d_type = types[de->file_type];
+> > +                               /*
+> > +                                * compile-time asserts that generic FT_x types
+> > +                                * still match EXT2_FT_x types - no need to list
+> > +                                * for other functions as well as build will
+> > +                                * fail either way
 
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-Reviewed-by: Moritz Fischer <mdf@kernel.org>
----
-v2: Move the register setting in between the clock enable/disable
+Please remove the part about "no need to list for other functions..."
+Imagine how kernel code would look like if every call to BUILD_BUG_ON()
+would have a comment explaining how BUILD_BUG_ON() works...
 
- drivers/fpga/zynq-fpga.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/fpga/zynq-fpga.c b/drivers/fpga/zynq-fpga.c
-index 3110e00..ff3a427 100644
---- a/drivers/fpga/zynq-fpga.c
-+++ b/drivers/fpga/zynq-fpga.c
-@@ -501,6 +501,10 @@ static int zynq_fpga_ops_write_complete(struct fpga_manager *mgr,
- 	if (err)
- 		return err;
- 
-+	/* Release 'PR' control back to the ICAP */
-+	zynq_fpga_write(priv, CTRL_OFFSET,
-+		zynq_fpga_read(priv, CTRL_OFFSET) & ~CTRL_PCAP_PR_MASK);
-+
- 	err = zynq_fpga_poll_timeout(priv, INT_STS_OFFSET, intr_status,
- 				     intr_status & IXR_PCFG_DONE_MASK,
- 				     INIT_POLL_DELAY,
--- 
-1.9.1
-
+Thanks,
+Amir.
