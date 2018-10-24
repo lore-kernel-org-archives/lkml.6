@@ -3,43 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C45CC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFB7C7112C
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1CCD2082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:12:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1CCD2082E
+	by mail.kernel.org (Postfix) with ESMTP id BCC20207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:12:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCC20207DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbeJXXlG (ORCPT
+        id S1726792AbeJXXlK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:41:06 -0400
+        Wed, 24 Oct 2018 19:41:10 -0400
 Received: from mga18.intel.com ([134.134.136.126]:38292 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726407AbeJXXlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:41:06 -0400
+        id S1726407AbeJXXlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 19:41:09 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 08:12:36 -0700
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 08:12:39 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,420,1534834800"; 
-   d="scan'208";a="80581149"
+   d="scan'208";a="80581153"
 Received: from otc-cfl-s-03.jf.intel.com ([10.54.55.152])
-  by fmsmga007.fm.intel.com with ESMTP; 24 Oct 2018 08:12:36 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 24 Oct 2018 08:12:38 -0700
 From:   kan.liang@linux.intel.com
 To:     peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
         acme@kernel.org, linux-kernel@vger.kernel.org
 Cc:     bp@alien8.de, ak@linux.intel.com, eranian@google.com,
         Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH 1/2] perf: Add munmap callback
-Date:   Wed, 24 Oct 2018 08:11:15 -0700
-Message-Id: <20181024151116.30935-1-kan.liang@linux.intel.com>
+Subject: [PATCH 2/2] perf/x86/intel: Fix missing physical address in large PEBS
+Date:   Wed, 24 Oct 2018 08:11:16 -0700
+Message-Id: <20181024151116.30935-2-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181024151116.30935-1-kan.liang@linux.intel.com>
+References: <20181024151116.30935-1-kan.liang@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -47,97 +49,127 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-To calculate the physical address, perf needs to walk the pages tables.
-The related mapping may has already been removed from pages table in
-some cases (e.g. large PEBS). The virtual address recorded in the first
-PEBS records may already be unmapped before draining PEBS buffers.
+The physical addresses for the last several samples are always lost in
+large PEBS. For example,
+ #perf record -e mem-loads:uP --phys-data -c10000 -- ./dtlb
+ [ perf record: Woken up 1 times to write data ]
+ [ perf record: Captured and wrote 0.103 MB perf.data (2661 samples) ]
+ #perf script -Ftime,event,sym,phys_addr  | tail
+  1595.162483: mem-loads:uP: DoDependentLoads 0
+  1595.162484: mem-loads:uP: DoDependentLoads 0
+  1595.162484: mem-loads:uP: DoDependentLoads 0
+  1595.162485: mem-loads:uP: DoDependentLoads 0
 
-Add a munmap callback to notify the PMU of any unmapping, which only be
-invoked when the munmap is implemented.
+The problem happens because the mapping has been removed before walking
+through the pages table.
+To avoid this, drain the PEBS buffer on munmap.
 
+With the patch,
+ #perf script -Ftime,event,sym,phys_addr  | tail
+  190.425922: mem-loads:uP: DoDependentLoads 3ce180a80
+  190.425922: mem-loads:uP: DoDependentLoads 3c59ef540
+  190.425922: mem-loads:uP: DoDependentLoads 3e3c73dc0
+  190.425923: mem-loads:uP: DoDependentLoads 3d6c0d440
+
+Fixes: fc7ce9c74c3a ("perf/core, x86: Add PERF_SAMPLE_PHYS_ADDR")
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- include/linux/perf_event.h |  3 +++
- kernel/events/core.c       | 25 +++++++++++++++++++++++++
- mm/mmap.c                  |  1 +
- 3 files changed, 29 insertions(+)
+ arch/x86/events/core.c       | 7 +++++++
+ arch/x86/events/intel/core.c | 6 ++++++
+ arch/x86/events/intel/ds.c   | 8 ++++++++
+ arch/x86/events/perf_event.h | 4 +++-
+ 4 files changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 53c500f0ca79..7f0a9258ce1f 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -400,6 +400,7 @@ struct pmu {
- 	 */
- 	void (*sched_task)		(struct perf_event_context *ctx,
- 					bool sched_in);
-+	void (*munmap)			(void);
- 	/*
- 	 * PMU specific data size
- 	 */
-@@ -1113,6 +1114,7 @@ static inline void perf_event_task_sched_out(struct task_struct *prev,
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index de32741d041a..9b23b49a0778 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2288,6 +2288,12 @@ static void x86_pmu_sched_task(struct perf_event_context *ctx, bool sched_in)
+ 		x86_pmu.sched_task(ctx, sched_in);
  }
  
- extern void perf_event_mmap(struct vm_area_struct *vma);
-+extern void perf_event_munmap(void);
- extern struct perf_guest_info_callbacks *perf_guest_cbs;
- extern int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
- extern int perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
-@@ -1333,6 +1335,7 @@ static inline int perf_unregister_guest_info_callbacks
- (struct perf_guest_info_callbacks *callbacks)				{ return 0; }
- 
- static inline void perf_event_mmap(struct vm_area_struct *vma)		{ }
-+static inline void perf_event_munmap(void)				{ }
- static inline void perf_event_exec(void)				{ }
- static inline void perf_event_comm(struct task_struct *tsk, bool exec)	{ }
- static inline void perf_event_namespaces(struct task_struct *tsk)	{ }
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 5a97f34bc14c..00338d6fbed7 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -3184,6 +3184,31 @@ static void perf_pmu_sched_task(struct task_struct *prev,
- 	}
- }
- 
-+void perf_event_munmap(void)
++static void x86_pmu_munmap(void)
 +{
-+	struct perf_cpu_context *cpuctx;
-+	unsigned long flags;
-+	struct pmu *pmu;
-+
-+	local_irq_save(flags);
-+	list_for_each_entry(cpuctx, this_cpu_ptr(&sched_cb_list), sched_cb_entry) {
-+		pmu = cpuctx->ctx.pmu;
-+
-+		if (!pmu->munmap)
-+			continue;
-+
-+		perf_ctx_lock(cpuctx, cpuctx->task_ctx);
-+		perf_pmu_disable(pmu);
-+
-+		pmu->munmap();
-+
-+		perf_pmu_enable(pmu);
-+
-+		perf_ctx_unlock(cpuctx, cpuctx->task_ctx);
-+	}
-+	local_irq_restore(flags);
++	if (x86_pmu.munmap)
++		x86_pmu.munmap();
 +}
 +
- static void perf_event_switch(struct task_struct *task,
- 			      struct task_struct *next_prev, bool sched_in);
+ void perf_check_microcode(void)
+ {
+ 	if (x86_pmu.check_microcode)
+@@ -2317,6 +2323,7 @@ static struct pmu pmu = {
  
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 5f2b2b184c60..61978ad8c480 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2777,6 +2777,7 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 	.event_idx		= x86_pmu_event_idx,
+ 	.sched_task		= x86_pmu_sched_task,
++	.munmap			= x86_pmu_munmap,
+ 	.task_ctx_size          = sizeof(struct x86_perf_task_context),
+ };
+ 
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 0fb8659b20d8..db393f6b3f53 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3548,6 +3548,11 @@ static void intel_pmu_sched_task(struct perf_event_context *ctx,
+ 	intel_pmu_lbr_sched_task(ctx, sched_in);
+ }
+ 
++static void intel_pmu_munmap(void)
++{
++	intel_pmu_pebs_munmap();
++}
++
+ PMU_FORMAT_ATTR(offcore_rsp, "config1:0-63");
+ 
+ PMU_FORMAT_ATTR(ldlat, "config1:0-15");
+@@ -3669,6 +3674,7 @@ static __initconst const struct x86_pmu intel_pmu = {
+ 	.cpu_dying		= intel_pmu_cpu_dying,
+ 	.guest_get_msrs		= intel_guest_get_msrs,
+ 	.sched_task		= intel_pmu_sched_task,
++	.munmap			= intel_pmu_munmap,
+ };
+ 
+ static __init void intel_clovertown_quirk(void)
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index b7b01d762d32..a0ca0e7c005c 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -893,6 +893,14 @@ void intel_pmu_pebs_sched_task(struct perf_event_context *ctx, bool sched_in)
+ 		intel_pmu_drain_pebs_buffer();
+ }
+ 
++void intel_pmu_pebs_munmap(void)
++{
++	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
++
++	if (pebs_needs_sched_cb(cpuc))
++		intel_pmu_drain_pebs_buffer();
++}
++
+ static inline void pebs_update_threshold(struct cpu_hw_events *cpuc)
+ {
+ 	struct debug_store *ds = cpuc->ds;
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index adae087cecdd..e1a8b8b928e8 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -591,7 +591,7 @@ struct x86_pmu {
+ 	void		(*check_microcode)(void);
+ 	void		(*sched_task)(struct perf_event_context *ctx,
+ 				      bool sched_in);
+-
++	void		(*munmap)(void);
  	/*
- 	 * Remove the vma's, and unmap the actual pages
+ 	 * Intel Arch Perfmon v2+
  	 */
-+	perf_event_munmap();
- 	detach_vmas_to_be_unmapped(mm, vma, prev, end);
- 	unmap_region(mm, vma, prev, start, end);
+@@ -932,6 +932,8 @@ void intel_pmu_pebs_disable_all(void);
  
+ void intel_pmu_pebs_sched_task(struct perf_event_context *ctx, bool sched_in);
+ 
++void intel_pmu_pebs_munmap(void);
++
+ void intel_pmu_auto_reload_read(struct perf_event *event);
+ 
+ void intel_ds_init(void);
 -- 
 2.17.1
 
