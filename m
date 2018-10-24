@@ -2,89 +2,110 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7009FC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2ED5C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41B91207DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:27:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41B91207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5AABC207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:32:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="v8dxdars"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AABC207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbeJXX4R (ORCPT
+        id S1726742AbeJYABT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:56:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45008 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726407AbeJXX4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:56:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6187AAEAF;
-        Wed, 24 Oct 2018 15:27:44 +0000 (UTC)
-Date:   Wed, 24 Oct 2018 17:27:42 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        pavel.tatashin@microsoft.com, dave.jiang@intel.com,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        davem@davemloft.net, yi.z.zhang@linux.intel.com,
-        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com, vbabka@suse.cz,
-        sparclinux@vger.kernel.org, dan.j.williams@intel.com,
-        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com
-Subject: Re: [mm PATCH v3 4/6] mm: Move hot-plug specific memory init into
- separate functions and optimize
-Message-ID: <20181024152742.GJ18839@dhcp22.suse.cz>
-References: <20181015202456.2171.88406.stgit@localhost.localdomain>
- <20181015202716.2171.7284.stgit@localhost.localdomain>
- <20181017091824.GL18839@dhcp22.suse.cz>
- <d9011108-4099-58dc-8b8c-110c5f2a3674@linux.intel.com>
- <20181024123640.GF18839@dhcp22.suse.cz>
- <40b17814b2a65531c5059e52a61c8f41b9603904.camel@linux.intel.com>
+        Wed, 24 Oct 2018 20:01:19 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38652 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726449AbeJYABT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 20:01:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Lzf2JzWbYQ3FRLBtkd7NCOlqCcUtoh/qnrmPufEWU3s=; b=v8dxdarsPNISDVCdT9ORTthT+X
+        Wc45syCGetYVasmawIXsvUWBhSV5OyBFi3mbtSVLAo0FQ4jGhn7nYLevhj+itTftBYYek3U52+SsR
+        QPrqFdkGi9yqc2797Euwq6W1BQGGLu8nof6Ltua1GrihBxhUlT/cZcaLsYh8a6CFt41/ZXCMxKvyI
+        AU3+Zp8Nl1kTFOyAPEDEpE5HMaL8FJ0KK6D8f+vBDI+g9UNXlFiT7rgPuA0KZXDMYjlwRAfGUVex3
+        iAkV5nwaBfqs20fNFK3bTS/1kfhjH64RnVENttwNJQtJmxBWP0RhcjGiiDIVvaz2PGXZwHswjXwQe
+        Twz0k1XQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gFL9G-0000fE-9K; Wed, 24 Oct 2018 15:32:45 +0000
+Subject: Re: [PATCH] init/main.c Enable watchdog_thresh control from kernel
+ line
+To:     Laurence Oberman <loberman@redhat.com>,
+        linux-kernel@vger.kernel.org
+References: <1540394484-18252-1-git-send-email-loberman@redhat.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <cc05c205-5f98-4709-96d0-947a9316f0c5@infradead.org>
+Date:   Wed, 24 Oct 2018 08:32:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <40b17814b2a65531c5059e52a61c8f41b9603904.camel@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1540394484-18252-1-git-send-email-loberman@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 24-10-18 08:08:41, Alexander Duyck wrote:
-> On Wed, 2018-10-24 at 14:36 +0200, Michal Hocko wrote:
-> > On Wed 17-10-18 08:26:20, Alexander Duyck wrote:
-> > [...]
-> > > With that said I am also wondering if a possible solution to the
-> > > complaints
-> > > you had would be to look at just exporting the __init_pageblock
-> > > function
-> > > later and moving the call to memmap_init_zone_device out to the
-> > > memremap or
-> > > hotplug code when Dan gets the refactoring for HMM and memremap all
-> > > sorted
-> > > out.
-> > 
-> > Why cannot we simply provide a constructor for each page by the
-> > caller if there are special requirements? we currently have alt_map
-> > to do struct page allocation but nothing really prevents to make it
-> > more generic and control both allocation and initialization whatever
-> > suits a specific usecase. I really do not want make special cases
-> > here and there.
-> 
-> The advantage to the current __init_pageblock function is that we end
-> up constructing everything we are going to write outside of the main
-> loop and then are focused only on init.
+Hi,
 
-But we do really want move_pfn_range_to_zone to provide a usable pfn
-range without any additional tweaks. If there are potential
-optimizations to be done there then let's do it but please do not try to
-micro optimize to the point that the interface doesn't make any sense
-anymore.
+On 10/24/18 8:21 AM, Laurence Oberman wrote:
+> Both graphics and serial consoels are exposed to hard lockups
+
+                           consoles
+
+> when handling a large amount of messaging. The kernel watchdog_thresh
+> parameter up to now has not been available to be set on the kernel line for
+> early boot. 
+> This patch allows the setting of watchdog_thresh to be increased
+> when needed to avoid the hard lockups in the console code.
+> 
+> Signed-off-by: Laurence Oberman <loberman@redhat.com>
+
+Please add corresponding documentation to the
+Documentation/admin-guide/kernel-parameters.txt file.
+
+Thanks.
+
+> ---
+>  init/main.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/init/main.c b/init/main.c
+> index e4a3160..5882750 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -977,6 +977,15 @@ static int __init set_debug_rodata(char *str)
+>  __setup("rodata=", set_debug_rodata);
+>  #endif
+>  
+> +static int __init
+> +is_watchdog_thresh_setup(char *str)
+> +{
+> +	get_option(&str, &watchdog_thresh);
+> +	return 1;
+> +}
+> +__setup("watchdog_thresh=", is_watchdog_thresh_setup);
+> +
+> +
+>  #ifdef CONFIG_STRICT_KERNEL_RWX
+>  static void mark_readonly(void)
+>  {
+> 
+
+
 -- 
-Michal Hocko
-SUSE Labs
+~Randy
