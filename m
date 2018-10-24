@@ -2,81 +2,95 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0BDECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F440ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:18:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E60FD2082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:14:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rl0op/x6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E60FD2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D19DB2075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:18:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D19DB2075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbeJYGnw (ORCPT
+        id S1726776AbeJYGst (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 02:43:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57002 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726044AbeJYGnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 02:43:52 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F8DD2075D;
-        Wed, 24 Oct 2018 22:14:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540419240;
-        bh=I0/HoZy/5Qtiq/LDZOlUyb8v4svXUYh+DkT8SAyu4P0=;
-        h=Subject:From:To:Cc:Date:From;
-        b=Rl0op/x6cUBgIJQhh1nAguCg9QcZshQZaLDqtLqAWNUxe6wWLjIa/j1N3dL3IA44X
-         r52Z8A99UEx2EoLwxzHBWPD+GVGnVqdtuqw6c7oFBunsqNjnLWJ0RJzuV8lNy3nJv5
-         73kG9wivHgOVNkHRBPxLCRmGClsHgVgzfk5EHWVY=
-Subject: [PATCH] MAINTAINERS: Add x86 early-quirks.c file pattern to PCI
- subsystem
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     linux-pci@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Date:   Wed, 24 Oct 2018 17:13:59 -0500
-Message-ID: <154041923937.26247.17083948926896599419.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+        Thu, 25 Oct 2018 02:48:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45936 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbeJYGst (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 02:48:49 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E55711721;
+        Wed, 24 Oct 2018 22:18:55 +0000 (UTC)
+Date:   Wed, 24 Oct 2018 15:18:53 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [RFC PATCH] mm: don't reclaim inodes with many attached pages
+Message-Id: <20181024151853.3edd9097400b0d52edff1f16@linux-foundation.org>
+In-Reply-To: <20181023164302.20436-1-guro@fb.com>
+References: <20181023164302.20436-1-guro@fb.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Tue, 23 Oct 2018 16:43:29 +0000 Roman Gushchin <guro@fb.com> wrote:
 
-arch/x86/kernel/early-quirks.c contains special PCI quirks that need to
-run even before the usual DECLARE_PCI_FIXUP_EARLY() quirks.  These have
-typically been merged by the x86 maintainers, which is fine, but PCI folks
-should at least see what's happening, so add a file pattern to the PCI
-subsystem entry.
+> Spock reported that the commit 172b06c32b94 ("mm: slowly shrink slabs
+> with a relatively small number of objects") leads to a regression on
+> his setup: periodically the majority of the pagecache is evicted
+> without an obvious reason, while before the change the amount of free
+> memory was balancing around the watermark.
+> 
+> The reason behind is that the mentioned above change created some
+> minimal background pressure on the inode cache. The problem is that
+> if an inode is considered to be reclaimed, all belonging pagecache
+> page are stripped, no matter how many of them are there. So, if a huge
+> multi-gigabyte file is cached in the memory, and the goal is to
+> reclaim only few slab objects (unused inodes), we still can eventually
+> evict all gigabytes of the pagecache at once.
+> 
+> The workload described by Spock has few large non-mapped files in the
+> pagecache, so it's especially noticeable.
+> 
+> To solve the problem let's postpone the reclaim of inodes, which have
+> more than 1 attached page. Let's wait until the pagecache pages will
+> be evicted naturally by scanning the corresponding LRU lists, and only
+> then reclaim the inode structure.
+> 
+> ...
+>
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -730,8 +730,11 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
+>  		return LRU_REMOVED;
+>  	}
+>  
+> -	/* recently referenced inodes get one more pass */
+> -	if (inode->i_state & I_REFERENCED) {
+> +	/*
+> +	 * Recently referenced inodes and inodes with many attached pages
+> +	 * get one more pass.
+> +	 */
+> +	if (inode->i_state & I_REFERENCED || inode->i_data.nrpages > 1) {
+>  		inode->i_state &= ~I_REFERENCED;
+>  		spin_unlock(&inode->i_lock);
+>  		return LRU_ROTATE;
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- MAINTAINERS |    1 +
- 1 file changed, 1 insertion(+)
+hm, why "1"?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4ece30f15777..63cb7f3dbbb4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11249,6 +11249,7 @@ F:	include/uapi/linux/pci*
- F:	lib/pci*
- F:	arch/x86/pci/
- F:	arch/x86/kernel/quirks.c
-+F:	arch/x86/kernel/early-quirks.c
- 
- PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS
- M:	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-
+I guess one could argue that this will encompass long symlinks, but I
+just made that up to make "1" appear more justifiable ;) 
