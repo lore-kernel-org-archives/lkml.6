@@ -2,157 +2,96 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F70DECDE44
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:07:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6098BECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:08:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1E4420831
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:07:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1E4420831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2223520831
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:08:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2223520831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=videotron.qc.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbeJYIhO (ORCPT
+        id S1726826AbeJYIiR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 04:37:14 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:35538 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726019AbeJYIhN (ORCPT
+        Thu, 25 Oct 2018 04:38:17 -0400
+Received: from alt14.smtp-out.videotron.ca ([135.19.0.27]:15133 "EHLO
+        alt14.smtp-out.videotron.ca" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726019AbeJYIiR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 04:37:13 -0400
-Received: by mail-oi1-f194.google.com with SMTP id 22-v6so5626109oiz.2;
-        Wed, 24 Oct 2018 17:07:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OkZ7rWkGOhN1LDCNYnYrhnsdWqyBuJgrBIJEhDcSQOs=;
-        b=n+lk5Y3ZJvba9EJL0Cg1dSy4rzYZhEl+OxAh9vHMYy5RL4/o/hYetjHhXdoEeAC5hl
-         rrkHWB+D19FfjJIcvjrwRBhkOyxecB0gqjw7hb4XYqnX8U7fnANcrUQcEvDMdg5wrxEC
-         drFBd41CHYQDs/t4u/WRx0AGMwxasvFt5BZpW6pZnWKof25Z0UzU5BhePIJXtIDhWuUk
-         ZDdYrPnaJ0JNxWEoOlTJuznHYz/w2OQolAdb9fhSNCGmLkk/wKOY9p+lxGGeLJh35v1x
-         v0gK7fuMioqLGEo7gvaKwI+aCobRm0xrssg8x1/mx6ol53MuewHYkA+k2JfMR+Nz1j5+
-         qP/A==
-X-Gm-Message-State: AGRZ1gL7zqvQ6dDKzWxUBsRhVM/3DNL4tTXm57wQp+37WgwKms2DfPuV
-        fcqADEqGJfK9XfyEcpPpyg==
-X-Google-Smtp-Source: AJdET5fHgjm0pbWiQBmbUwowNhcDSHyBqwJfubUR7BLF3O5gFptQB5r+nzxTqFFtGh9V/zS1ThDQUg==
-X-Received: by 2002:aca:5c3:: with SMTP id 186-v6mr2713557oif.185.1540426020504;
-        Wed, 24 Oct 2018 17:07:00 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id e75-v6sm1352282oih.41.2018.10.24.17.06.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 17:06:59 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 19:06:58 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Sven Van Asbroeck <svendev@arcx.com>
-Cc:     lee.jones@linaro.org, mark.rutland@arm.com, afaerber@suse.de,
-        treding@nvidia.com, david@lechnology.com, noralf@tronnes.org,
-        johan@kernel.org, monstr@monstr.eu, michal.vokac@ysoft.com,
-        arnd@arndb.de, gregkh@linuxfoundation.org, john.garry@huawei.com,
-        andriy.shevchenko@linux.intel.com, geert+renesas@glider.be,
-        robin.murphy@arm.com, paul.gortmaker@windriver.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        yuanzhichang@hisilicon.com, stuyoder@gmail.com,
-        linus.walleij@linaro.org, maxime.ripard@bootlin.com,
-        bogdan.purcareata@nxp.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH anybus v1 2/4] dt-bindings: anybus-bridge: document
- devicetree binding.
-Message-ID: <20181025000658.GA26048@bogus>
-References: <20181024142456.10084-1-svendev@arcx.com>
- <20181024142456.10084-3-svendev@arcx.com>
+        Thu, 25 Oct 2018 04:38:17 -0400
+Received: from [192.168.122.131] ([70.81.202.49])
+        by Videotron with SMTP
+        id FSx6glmwgg9eoFSxSgxoqK; Wed, 24 Oct 2018 19:53:03 -0400
+X-Authority-Analysis: v=2.3 cv=evbxMLhX c=1 sm=1 tr=0
+ a=WHmR/RjFJjHp+qGai9ucMg==:117 a=WHmR/RjFJjHp+qGai9ucMg==:17
+ a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=8LccymvpPOanfCBx0qUA:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22
+Subject: Re: [PATCH] pfn_t: force '~' to be parsed as an unary operator
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, acme@redhat.com,
+        tz.stoyanov@gmail.com, Namhyung Kim <namhyung@kernel.org>,
+        zwisler@kernel.org, arangradient@gmail.com,
+        linux-perf-users@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181021145939.8760-1-sebhtml@videotron.qc.ca>
+ <CAPcyv4iJ_bfzOtV_GAQg_tdLLuebE_1Gp420LMG0xbR2ZQdV7g@mail.gmail.com>
+ <FRrzgp7InaOtKFRs0geay1@videotron.ca>
+From:   sebhtml <sebhtml@videotron.qc.ca>
+Message-ID: <d48b2b1b-201a-d350-6bda-943a66f1abfb@videotron.qc.ca>
+Date:   Wed, 24 Oct 2018 19:52:40 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181024142456.10084-3-svendev@arcx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <FRrzgp7InaOtKFRs0geay1@videotron.ca>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfEYpD8IQosAAam0Ac8NNjp9LUuFtrsIgz16/c0a3T8eHJl9y3HMso7GYbuGZoqhfVF7T8jkalRrPlgfIONkFvZOvFzhNuXvVg9TQJbun5n2ScJSgzn74
+ g3qAtJU3P8dZzNnai2gJ8dEgoXJy57SHbklTSFYTQNHoBaFRiCudGCNA38mnyjTfU/A9BTdCOf/Fm7vIH+MRoxl60ulvYTdTN5RuD/e8jHH3tbCN4kGsu16x
+ PPxjYbF5SMsmu6s/3+2td5j11IlVoNfcy9F8ra2v9m7FDWOkM7lQTq1UTPN5/Fvv1dZ5GDrNQqByZjb2m56cL2pHb/95v7weUeyaTG+Lqh86/ts5ZQKKrc3a
+ YlndW7Q16U4GaCR7hU75ET1IHL8h3N6oiLVc7fJcZhjKXKBVhn8c/nVdWYUgPk8ATqmtHoEBmMFQAiFse+wA+9f2dIkOtg7GalH6emW9yiTIt90kb/nBTRVd
+ HQRFo8e54VhCrEGgNfvzEJKTFPdFNXxvwdrlNw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 10:24:54AM -0400, Sven Van Asbroeck wrote:
-> This patch adds devicetree binding documentation for the
-> Arcx anybus bridge.
+On 2018-10-24 6:43 p.m., Andrew Morton wrote:
 > 
-> Signed-off-by: Sven Van Asbroeck <svendev@arcx.com>
-> ---
->  .../bindings/mfd/arcx,anybus-bridge.txt       | 37 +++++++++++++++++++
->  .../devicetree/bindings/vendor-prefixes.txt   |  1 +
->  2 files changed, 38 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/arcx,anybus-bridge.txt
+> I grabbed it, and added cc:stable.
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/arcx,anybus-bridge.txt b/Documentation/devicetree/bindings/mfd/arcx,anybus-bridge.txt
-> new file mode 100644
-> index 000000000000..3c0399c4ed45
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/arcx,anybus-bridge.txt
-> @@ -0,0 +1,37 @@
-> +* Arcx anybus bridge
-> +
-> +This chip communicates with the SoC over the WEIM bus. It is
-> +expected that its Device Tree node is specified as the child of a node
-> +corresponding to the WEIM bus used for communication.
-
-By WEIM you are referring to i.MX external parallel bus? Presumably this 
-can work on any parallel bus, not just i.MX.
-
-> +
-> +Required properties:
-> +
-> +  - compatible : The following chip-specific string:
-> +        "arcx,anybus-bridge"
-
-No version or part number?
-
-> +
-> +  - reg :
-> +	weim memory area where the cpld registers are located,	followed by:
-> +	weim memory area of the first  anybus-s slot,		followed by:
-> +	weim memory area of the second anybus-s slot.
-> +
-> +  - enable-gpios : the gpio connected to the bridge's 'enable gpio'.
-> +
-> +  - pwms : the pwm connected to the bridge's 'pwm input'.
-> +
-> +  - irq-gpios : the gpios connected to the bridge's interrupt lines.
-> +	note that there is no need to provide the 'interrupts' property here.
-
-Why not? This should not be base on what the OS currently happens to 
-support.
-
-What are the functions of each line? The order must be defined.
-
-> +
-> +Example of usage:
-> +
-> +&weim {
-> +	bridge@0,0 {
-> +		compatible = "arcx,anybus-bridge";
-> +		reg = <0 0 0x100>, <0 0x400000 0x800>, <1 0x400000 0x800>;
-> +		fsl,weim-cs-timing = <0x024400b1 0x00001010 0x20081100
-> +				0x00000000 0xa0000240 0x00000000>;
-> +		enable-gpios = <&gpio5 2 GPIO_ACTIVE_HIGH>;
-> +		pwms = <&pwm3 0 571>;
-> +		irq-gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>,
-> +					<&gpio1 5 GPIO_ACTIVE_HIGH>;
-> +	};
-> +};
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> index 2c3fc512e746..1bf07b20a8af 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> @@ -35,6 +35,7 @@ aptina	Aptina Imaging
->  arasan	Arasan Chip Systems
->  archermind ArcherMind Technology (Nanjing) Co., Ltd.
->  arctic	Arctic Sand
-> +arcx	Arcx/Archronix Inc.
->  aries	Aries Embedded GmbH
->  arm	ARM Ltd.
->  armadeus	ARMadeus Systems SARL
-> -- 
-> 2.17.1
+> But aren't we fixing this in the wrong place?  That's a valid
+> expression and if this isn't addressed in perf then we may hit a
+> similar issue elsewhere...
 > 
+
+Right.
+
+Based on:
+     git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 01aa9d518eae8a4d75cd3049defc6ed0b6d0a658
+
+In perf, the warning
+       [fs_dax:dax_pmd_insert_mapping] unknown op '~'
+comes from tools/lib/traceevent/event-parse.c at line 2045:
+                 do_warning_event(event, "unknown op '%s'", token);
+
+This is in this function:
+
+static enum tep_event_type
+process_op(struct tep_event_format *event, struct tep_print_arg *arg, char **tok);
+
+The code path to reach the good '~' case needs:
+         if (arg->type == TEP_PRINT_OP && !arg->op.left) {
+
+I assume that here arg->op.left is not NULL because of (u64) on the left.
+
+~(((u64) ~(~(((1UL) << 12)-1)))
+          ^
+
+However, I fail to see where '~' is parsed as a binary operator though.
+
+Any pointer would be welcome.
