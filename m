@@ -2,168 +2,252 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89014C7112C
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D0EC67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:08:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5E12064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:03:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LUpMu5HM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C5E12064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 702572075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:08:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 702572075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbeJXWb0 (ORCPT
+        id S1726676AbeJXWgp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 18:31:26 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36541 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726407AbeJXWbZ (ORCPT
+        Wed, 24 Oct 2018 18:36:45 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:33107 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726407AbeJXWgp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:31:25 -0400
-Received: by mail-lj1-f193.google.com with SMTP id s15-v6so4896307lji.3;
-        Wed, 24 Oct 2018 07:03:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4oigFIxbskxQ+7j0sOvaNmyhXD381TEaoqgq18GgLd8=;
-        b=LUpMu5HMo/ylWBXkbU6ZEQy6GVx90KNbd+aWDu0yLoaiokqjUdXOKuzMXnbAGdgovn
-         WfIztBwenEEY/GPTQ/ygbrvC+Us5EzwZWMd9MhbLf2CCTpRu0jkWEiHZkUeuaDJsftNy
-         LcwpzSjevuss2oV/v2wblJAf6xwPZoXYtbixhWk2P0QuxkX8UwUBgzY1J8igdbYnCGt5
-         s8N7ATeOgkBc6x2RNfHfzLLlMQqAdhXtWOrHo1lhhw12cFp6ALhl4KowkPzOggsdrYRY
-         /SXajjQlrxy0VqtJdarjQrviHz4pVSkoy/nAwqsDyvmAt72C0el+kzkzwElbny961FMz
-         kxkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4oigFIxbskxQ+7j0sOvaNmyhXD381TEaoqgq18GgLd8=;
-        b=Nuo3cBt/zFf2NFNP+RgLOxZ7LwuvzanGVleaknZc1VMTlDJi0CbS9LBbDMA+Wr96CZ
-         hW6oWKo2db4BBsGoXAbcWwPkCiApKBt4HWYg9CvOnq21pf8PZ96ZQi0q8NcbTf6qfcH2
-         aJAmoskw8oREmZUfWjp5XLeZhdaDnj6kQlrc33otpA0C7AwIbK09Z6YpmaEOhDjPfU8u
-         jE4CuRgnfJsp3L3NwuTi0VzJSCZB/RdNO0wZo4DeZsO7dFkO0zOYhNyC10sOG/de+95k
-         7m9VdVLGUWuTAnPeEy6tUKbusRqecI7ue2usqDd1Tu2kgqVFnt3vEFAjOGnKpErkcBDu
-         LqlA==
-X-Gm-Message-State: AGRZ1gKmmQ1hdVVDAG3gjqdmcnexzWyXfxisS4Iv1Bex80/TTwfXUiru
-        GkUxt2v3a6XxAm74UEO0u/xbUsLoN2w=
-X-Google-Smtp-Source: AJdET5fbSQ+PHVEsZDI7REDXRgFb8dtL3n5QN1wm5AfCwMDbxOo/kVGB8Ve/2K3BGrJpZtMkSbZsOw==
-X-Received: by 2002:a2e:b1ca:: with SMTP id e10-v6mr1650020lja.38.1540389787662;
-        Wed, 24 Oct 2018 07:03:07 -0700 (PDT)
-Received: from [10.222.93.64] ([164.5.176.2])
-        by smtp.gmail.com with ESMTPSA id 134-v6sm737953lfz.76.2018.10.24.07.03.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 07:03:05 -0700 (PDT)
-Subject: Re: [PATCH 14/17] prmem: llist, hlist, both plain and rcu
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        igor stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        rostedt <rostedt@goodmis.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-15-igor.stoppa@huawei.com>
- <1634210774.446.1540381072927.JavaMail.zimbra@efficios.com>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <243a8ff2-889c-089f-a1ff-c882933ca5c3@gmail.com>
-Date:   Wed, 24 Oct 2018 17:03:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 24 Oct 2018 18:36:45 -0400
+X-Originating-IP: 185.7.230.213
+Received: from w540 (unknown [185.7.230.213])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 5185EE0009;
+        Wed, 24 Oct 2018 14:08:23 +0000 (UTC)
+Date:   Wed, 24 Oct 2018 16:08:20 +0200
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     steve_longerbeam@mentor.com, Fabio Estevam <festevam@gmail.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        p.zabel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
+        gstreamer-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
+Message-ID: <20181024140820.GB3766@w540>
+References: <20181022113306.GB2867@w540>
+ <CAHCN7xJkc5RW73C0zruWBgyF7G0J3C5tLE=ZdfxTKbrUqs=-PQ@mail.gmail.com>
+ <CAOMZO5ATm4BRzPEQOU+ZD6bHCP2Aqjp4raRYhuc+wNe0t4+C=w@mail.gmail.com>
+ <CAHCN7x+csKEk25CF=teUv+F5_GoTe6_3Yqb5PODLn+AmCCm88w@mail.gmail.com>
+ <d78877f8-2c23-2bf0-0a9c-cd98b855e95e@mentor.com>
+ <CAHCN7xKhGAXs0jGv96CfOfLQfVubxzsdE9UjpDu+4NM6oLDGWw@mail.gmail.com>
+ <bc034299-4a32-f248-d09a-0d1b5872a506@mentor.com>
+ <CAHCN7xKVUgpyCb5k7s0PNXW-efySSwP25ZGMLdbFnohATPwKhg@mail.gmail.com>
+ <20181023230259.GA3766@w540>
+ <CAHCN7xJaY_916OLHvaN_q1FwM2vqH5UXzVxLAS4DuEV0icPUXg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1634210774.446.1540381072927.JavaMail.zimbra@efficios.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="32u276st3Jlj2kUU"
+Content-Disposition: inline
+In-Reply-To: <CAHCN7xJaY_916OLHvaN_q1FwM2vqH5UXzVxLAS4DuEV0icPUXg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/10/18 14:37, Mathieu Desnoyers wrote:
 
-> I could not find a description of the overall context of this patch
-> (e.g. a patch 00/17 ?) that would explain the attack vectors this aims
-> to protect against.
+--32u276st3Jlj2kUU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Apologies, I have to admit I was a bit baffled about what to do: the 
-patchset spans across several subsystems and I was reluctant at spamming 
-all the mailing lists.
+Hi Adam,
 
-I was hoping that by CC-ing kernel.org, the explicit recipients would 
-get both the mail directly intended for them (as subsystem 
-maintainers/supporters) and the rest.
+On Wed, Oct 24, 2018 at 08:53:41AM -0500, Adam Ford wrote:
+> On Tue, Oct 23, 2018 at 6:03 PM jacopo mondi <jacopo@jmondi.org> wrote:
+> >
+> > Hi Adam,
+> >
+> > On Tue, Oct 23, 2018 at 12:54:12PM -0500, Adam Ford wrote:
+> > > On Tue, Oct 23, 2018 at 12:39 PM Steve Longerbeam
+> > > <steve_longerbeam@mentor.com> wrote:
+> > > >
+> > > >
+> > > > On 10/23/18 10:34 AM, Adam Ford wrote:
+> > > > > On Tue, Oct 23, 2018 at 11:36 AM Steve Longerbeam
+> > > > > <steve_longerbeam@mentor.com> wrote:
+> > > > >> Hi Adam,
+> > > > >>
+> > > > >> On 10/23/18 8:19 AM, Adam Ford wrote:
+> > > > >>> On Mon, Oct 22, 2018 at 7:40 AM Fabio Estevam <festevam@gmail.com> wrote:
+> > > > >>>> Hi Adam,
+> > > > >>>>
+> > > > >>>> On Mon, Oct 22, 2018 at 9:37 AM Adam Ford <aford173@gmail.com> wrote:
+> > > > >>>>
+> > > > >>>>> Thank you!  This tutorial web site is exactly what I need.  The
+> > > > >>>>> documentation page in Linux touched on the media-ctl links, but it
+> > > > >>>>> didn't explain the syntax or the mapping.  This graphical
+> > > > >>>>> interpretation really helps it make more sense.
+> > > > >>>> Is capturing working well on your i.MX6 board now?
+> > > > >>> Fabio,
+> > > > >>>
+> > > > >>> Unfortunately, no.  I built the rootfs based on Jagan's instructions
+> > > > >>> at https://openedev.amarulasolutions.com/display/ODWIKI/i.CoreM6+1.5
+> > > > >>>
+> > > > >>> I tried building both the 4.15-RC6 kernel, a 4.19 kernel and a 4.14 LTS kernel.
+> > > > >>>
+> > > > >>> Using the suggested method of generating the graphical display of the
+> > > > >>> pipeline options, I am able to enable various pipeline options
+> > > > >>> connecting different /dev/videoX options tot he camera.  I have tried
+> > > > >>> both the  suggested method above as well as the instructions found in
+> > > > >>> Documentation/media/v4l-drivers/imx.rst for their respective kernels,
+> > > > >>> and I have tried multiple options to capture through
+> > > > >>> ipu1_csi1_capture, ipu2_csi1_capture, and ip1_ic_prepenc capture, and
+> > > > >>> all yield a broken pipe.
+> > > > >>>
+> > > > >>> libv4l2: error turning on stream: Broken pipe
+> > > > >>> ERROR: from element /GstPipeline:pipeline0/GstV4l2Src:v4l2src0: Could
+> > > > >>> not read from resource.
+> > > > >>> Additional debug info:
+> > > > >>> gstv4l2bufferpool.c(1064): gst_v4l2_buffer_pool_poll ():
+> > > > >>> /GstPipeline:pipeline0/GstV4l2Src:v4l2src0:
+> > > > >>> poll error 1: Broken pipe (32)
+> > > > >>>
+> > > > >>> I can hear the camera click when I start gstreamer and click again
+> > > > >>> when it stops trying to stream.
+> > > > >>>
+> > > > >>> dmesg indicates a broken pipe as well..
+> > > > >>>
+> > > > >>> [ 2419.851502] ipu2_csi1: pipeline start failed with -32
+> > > > >>>
+> > > > >>> might you have any suggestions?
+> > > > >>
+> > > > >> This -EPIPE error might mean you have a mis-match of resolution, pixel
+> > > > >> format, or field type between one of the source->sink pad links. You can
+> > > > >> find out which pads have a mis-match by enabling dynamic debug in the
+> > > > >> kernel function __media_pipeline_start.
+> > > > > Following Jagan's suggestion, I tried to make sure all the resolution
+> > > > > and pixel formats were set the same between each source and sink.
+> > > > >
+> > > > > media-ctl --set-v4l2 "'ov5640 2-0010':0[fmt:UYVY2X8/640x480
+> > > > > field:none]"
+> > > > > media-ctl --set-v4l2 "'imx6-mipi-csi2':1[fmt:UYVY2X8/640x480
+> > > > > field:none]"
+> > > > > media-ctl --set-v4l2 "'ipu1_csi0_mux':2[fmt:UYVY2X8/640x480
+> > > > > field:none]"
+> > > > > media-ctl --set-v4l2 "'ipu1_csi0':2[fmt:AYUV32/640x480 field:none]"
+> > > > >
+> > > > >> Also make sure you are attempting to stream from the correct /dev/videoN.
+> > > > > I have graphically plotted the pipeline using media-ctl --print-dot
+> > > > > and I can see the proper video is routed, but your dynamic debug
+> > > > > suggestion yielded something:
+> > > > >
+> > > > >     imx-media capture-subsystem: link validation failed for 'ov5640
+> > > > > 2-0010':0 -> 'imx6-mipi-csi2':0, error -32
+> > > >
+> > > >
+> > > > It's what I expected, you have a format mismatch between those pads.
+> > >
+> > > Is the mismatch something I am doing wrong with:
+> > >
+> > > media-ctl --set-v4l2 "'ov5640 2-0010':0[fmt:UYVY2X8/640x480 field:none]"
+> > > media-ctl --set-v4l2 "'imx6-mipi-csi2':2[fmt:UYVY2X8/640x480 field:none]"
+> > >
+> >
+> > Could you try to verify the actual format configured on the sensor?
+> > (media-ctl --get-v4l2 "'ov5640 2-0010':0").
+> >
+> > Depending on the driver version you are running, you might be affected
+> > by different regressions.
+> >
+> > > or is there something else I need to do?  I just used Jagan's suggestion.
+> >
+> > I suggest you to update the driver version to the last one available
+> > in the media-tree master, or at least try to backport the following
+> > commit:
+> > fb98e29 media: ov5640: fix mode change regression
+> >
+> > If it turns out the format and mode configured on the sensor do not
+> > match the one you want.
+> >
+> > Thanks
+>
+> That got me past one hurdle.   Wtih your help, I was able to confirm
+> the mis-match of the modes between the sensor and the csi1 source.  I
+> applied the patch as you suggested, but now I get a new error.
+>
+> [  295.294370] imx6-mipi-csi2: LP-11 timeout, phy_state = 0x00000230
+> [  295.300681] ipu1_csi0: pipeline start failed with -110
+>
+>
 
-The next time I'll err in the opposite direction.
+Here you go:
+bad1774 media: ov5640: Fix timings setup code
+aa4bb8b media: ov5640: Re-work MIPI startup sequence
 
-In the meanwhile, please find the whole set here:
+Please update your ov5640 driver to the last version available on
+linux-media master repository. There have been a looot of developments
+and fixes recently (and I would be happy to know if they have helped
+you)
 
-https://www.openwall.com/lists/kernel-hardening/2018/10/23/3
+> I am going to go through various patches to the imx framework and
+> ov5640 driver to see if I can find the solution,  but if you have
+> suggestions as to which fixes are appropriate, I'll test those.  If I
 
-> This might help figuring out whether this added complexity in the core
-> kernel is worth it.
+Just get what's on linux-media master tree.
 
-I hope it will.
+> can get this working, would it make sense for me to submit some
+> requests with kernel-stable to backport some of these commits to 4.19
+> and if applicable, 4.14 too?
 
-> Also, is it the right approach to duplicate existing APIs, or should we
-> rather hook into page fault handlers and let the kernel do those "shadow"
-> mappings under the hood ?
+Sure it will (even if I'm not familiar with the procedure used to tag
+patches to be applied to stable. I would just apply everything that's
+on the latest media tree)
 
-This question is probably a good candidate for the small Q&A section I 
-have in the 00/17.
+Keep us posted!
+   j
+>
+> adam
+> >    j
+> >
+> > > adam
+> > > >
+> > > > Steve
+> > > >
+> > > >
+> > > > >
+> > > > > I am assume this means the interface between the camera and the csi2
+> > > > > isn't working.  I am going to double check the power rails and the
+> > > > > clocks.  i can hear it click when activated and deactivated, so
+> > > > > something is happening.
+> > > > >
+> > > > > adam
+> > > > >
+> > > > >> Steve
+> > > > >>
 
+--32u276st3Jlj2kUU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> Adding a new GFP flags for dynamic allocation, and a macro mapping to
-> a section attribute might suffice for allocation or definition of such
-> mostly-read-only/seldom-updated data.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-I think what you are proposing makes sense from a pure hardening 
-standpoint. From a more defensive one, I'd rather minimise the chances 
-of giving a free pass to an attacker.
+iQIcBAEBAgAGBQJb0HzUAAoJEHI0Bo8WoVY867MP/0ZgtRyokvkTgZKltukNV0u+
+v9H/jq3fSfPkV+cPlD1E6ZGEiNByWceT+GJ9MX2t3X2EwNM3/Os7P2saMH/1b8Ov
+yXsDyO+rFyPl5oMDQH1wXzgpgDA+J5oKUfIp9OOW1490siUgJt/8w20y9zfC0mRs
+YL0mFdv+g7iDK3FSj0pVBXM/kAa9u9hRFq8YkMF6F1O1KC/WRyfq4Sbo4Hr7Jgs/
+n8eUpYB5HhT6+HnRH1l7qdj0JNgs69Id3sNMLKmr71rvVnaMi9A4/ILb2SFMldzZ
+xFrG79m2o9pX3kePCIXoA156jGrzJYD8m4N2yp2QTxKROTzl1iAXvWm3bZ4AMZrO
+ynZr7QSvKm8V9xES9ssqrpKvxjOC59rG/okE9VojfWyFvIFIBiAqgTxRiltkVfNc
+H/SmjERm9LzjCxjrIlmKfNb4pQ3GzsCbqSbl/PtaOBTahuHB7nnJhaxRzT13Pb/B
+IJQWyS61NBp+CpALaAgjNLwReKxqf2sQkyTvtra2LfioL3qjMv5pYbYRAUwXLD4o
+/qish1Wqryjb/Y9pMMXaRIyvmYtm3feDVD+s1qVdRMzumfnsS2i3PsbB2lb0W1Ln
++vyDnvhkYj1G7pAXk5XxY9YFT63YL9QjmFeyeEonKqcl9WR0xJC5zc/SjKroP32M
+QtTKyzixNMVATX6xaZvQ
+=w0ys
+-----END PGP SIGNATURE-----
 
-Maybe there is a better implementation of this, than what I have in 
-mind. But, based on my current understanding of what you are describing, 
-there would be few issues:
-
-1) where would the pool go? The pool is a way to manage multiple vmas 
-and express common property they share. Even before a vma is associated 
-to the pool.
-
-2) there would be more code that can seamlessly deal with both protected 
-and regular data. Based on what? Some parameter, I suppose.
-That parameter would be the new target.
-If the code is "duplicated", as you say, the actual differences are 
-baked in at compile time. The "duplication" would also allow to have 
-always inlined functions for write-rare and leave more freedom to the 
-compiler for their non-protected version.
-
-Besides, I think the separate wr version also makes it very clear, to 
-the user of the API, that there will be a price to pay, in terms of 
-performance. The more seamlessly alternative might make this price less 
-obvious.
-
---
-igor
+--32u276st3Jlj2kUU--
