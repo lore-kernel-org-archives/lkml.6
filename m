@@ -3,34 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14BF2C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C58C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:07:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D00F520833
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:07:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D00F520833
+	by mail.kernel.org (Postfix) with ESMTP id 33EA2207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:07:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33EA2207DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbeJXQex (ORCPT
+        id S1728667AbeJXQfA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 12:34:53 -0400
-Received: from mga17.intel.com ([192.55.52.151]:28654 "EHLO mga17.intel.com"
+        Wed, 24 Oct 2018 12:35:00 -0400
+Received: from mga04.intel.com ([192.55.52.120]:9992 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727981AbeJXQew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 12:34:52 -0400
+        id S1727981AbeJXQe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 12:34:59 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 01:07:50 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 01:07:57 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,419,1534834800"; 
-   d="scan'208";a="273987383"
+   d="scan'208";a="273987411"
 Received: from skx-d.bj.intel.com ([10.238.135.53])
-  by fmsmga005.fm.intel.com with ESMTP; 24 Oct 2018 01:07:45 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 24 Oct 2018 01:07:51 -0700
 From:   Luwei Kang <luwei.kang@intel.com>
 To:     kvm@vger.kernel.org, x86@kernel.org
 Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
@@ -42,12 +42,10 @@ Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
         Janakarajan.Natarajan@amd.com, dwmw@amazon.co.uk,
         jpoimboe@redhat.com, marcorr@google.com, ubizjak@gmail.com,
         sean.j.christopherson@intel.com, jmattson@google.com,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v13 08/12] KVM: x86: Add Intel PT context switch for each vcpu
-Date:   Wed, 24 Oct 2018 16:05:12 +0800
-Message-Id: <1540368316-12998-9-git-send-email-luwei.kang@intel.com>
+        linux-kernel@vger.kernel.org, Luwei Kang <luwei.kang@intel.com>
+Subject: [PATCH v13 09/12] KVM: x86: Introduce a function to initialize the PT configuration
+Date:   Wed, 24 Oct 2018 16:05:13 +0800
+Message-Id: <1540368316-12998-10-git-send-email-luwei.kang@intel.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1540368316-12998-1-git-send-email-luwei.kang@intel.com>
 References: <1540368316-12998-1-git-send-email-luwei.kang@intel.com>
@@ -56,173 +54,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Peng <chao.p.peng@linux.intel.com>
+Initialize the Intel PT configuration when cpuid update.
+Include cpuid inforamtion, rtit_ctl bit mask and the number of
+address ranges.
 
-Load/Store Intel Processor Trace register in context switch.
-MSR IA32_RTIT_CTL is loaded/stored automatically from VMCS.
-In Host-Guest mode, we need load/resore PT MSRs only when PT
-is enabled in guest.
-
-Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 Signed-off-by: Luwei Kang <luwei.kang@intel.com>
 ---
- arch/x86/include/asm/intel_pt.h |  2 +
- arch/x86/kvm/vmx.c              | 94 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 96 insertions(+)
+ arch/x86/kvm/vmx.c | 73 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
 
-diff --git a/arch/x86/include/asm/intel_pt.h b/arch/x86/include/asm/intel_pt.h
-index 4727584..eabbdbc 100644
---- a/arch/x86/include/asm/intel_pt.h
-+++ b/arch/x86/include/asm/intel_pt.h
-@@ -8,6 +8,8 @@
- #define PT_MODE_SYSTEM		0
- #define PT_MODE_HOST_GUEST	1
- 
-+#define RTIT_ADDR_RANGE		4
-+
- enum pt_capabilities {
- 	PT_CAP_max_subleaf = 0,
- 	PT_CAP_cr3_filtering,
 diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 692154c..d8480a6 100644
+index d8480a6..2697618 100644
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -978,6 +978,24 @@ struct vmx_msrs {
- 	struct vmx_msr_entry	val[NR_AUTOLOAD_MSRS];
- };
- 
-+struct pt_ctx {
-+	u64 ctl;
-+	u64 status;
-+	u64 output_base;
-+	u64 output_mask;
-+	u64 cr3_match;
-+	u64 addr_a[RTIT_ADDR_RANGE];
-+	u64 addr_b[RTIT_ADDR_RANGE];
-+};
-+
-+struct pt_desc {
-+	u64 ctl_bitmask;
-+	u32 addr_range;
-+	u32 caps[PT_CPUID_REGS_NUM * PT_CPUID_LEAVES];
-+	struct pt_ctx host;
-+	struct pt_ctx guest;
-+};
-+
- struct vcpu_vmx {
- 	struct kvm_vcpu       vcpu;
- 	unsigned long         host_rsp;
-@@ -1071,6 +1089,8 @@ struct vcpu_vmx {
- 	u64 msr_ia32_feature_control;
- 	u64 msr_ia32_feature_control_valid_bits;
- 	u64 ept_pointer;
-+
-+	struct pt_desc pt_desc;
- };
- 
- enum segment_cache_field {
-@@ -2899,6 +2919,69 @@ static unsigned long segment_base(u16 selector)
+@@ -11921,6 +11921,75 @@ static void nested_vmx_entry_exit_ctls_update(struct kvm_vcpu *vcpu)
+ 	}
  }
- #endif
  
-+static inline void pt_load_msr(struct pt_ctx *ctx, u32 addr_range)
++static void update_intel_pt_cfg(struct kvm_vcpu *vcpu)
 +{
-+	u32 i;
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	struct kvm_cpuid_entry2 *best = NULL;
++	int i;
 +
-+	wrmsrl(MSR_IA32_RTIT_STATUS, ctx->status);
-+	wrmsrl(MSR_IA32_RTIT_OUTPUT_BASE, ctx->output_base);
-+	wrmsrl(MSR_IA32_RTIT_OUTPUT_MASK, ctx->output_mask);
-+	wrmsrl(MSR_IA32_RTIT_CR3_MATCH, ctx->cr3_match);
-+	for (i = 0; i < addr_range; i++) {
-+		wrmsrl(MSR_IA32_RTIT_ADDR0_A + i * 2, ctx->addr_a[i]);
-+		wrmsrl(MSR_IA32_RTIT_ADDR0_B + i * 2, ctx->addr_b[i]);
++	for (i = 0; i < PT_CPUID_LEAVES; i++) {
++		best = kvm_find_cpuid_entry(vcpu, 0x14, i);
++		if (!best)
++			return;
++		vmx->pt_desc.caps[CPUID_EAX + i*PT_CPUID_REGS_NUM] = best->eax;
++		vmx->pt_desc.caps[CPUID_EBX + i*PT_CPUID_REGS_NUM] = best->ebx;
++		vmx->pt_desc.caps[CPUID_ECX + i*PT_CPUID_REGS_NUM] = best->ecx;
++		vmx->pt_desc.caps[CPUID_EDX + i*PT_CPUID_REGS_NUM] = best->edx;
 +	}
-+}
 +
-+static inline void pt_save_msr(struct pt_ctx *ctx, u32 addr_range)
-+{
-+	u32 i;
++	/* Get the number of configurable Address Ranges for filtering */
++	vmx->pt_desc.addr_range = intel_pt_validate_cap(vmx->pt_desc.caps,
++						PT_CAP_num_address_ranges);
 +
-+	rdmsrl(MSR_IA32_RTIT_STATUS, ctx->status);
-+	rdmsrl(MSR_IA32_RTIT_OUTPUT_BASE, ctx->output_base);
-+	rdmsrl(MSR_IA32_RTIT_OUTPUT_MASK, ctx->output_mask);
-+	rdmsrl(MSR_IA32_RTIT_CR3_MATCH, ctx->cr3_match);
-+	for (i = 0; i < addr_range; i++) {
-+		rdmsrl(MSR_IA32_RTIT_ADDR0_A + i * 2, ctx->addr_a[i]);
-+		rdmsrl(MSR_IA32_RTIT_ADDR0_B + i * 2, ctx->addr_b[i]);
-+	}
-+}
-+
-+static void pt_guest_enter(struct vcpu_vmx *vmx)
-+{
-+	if (pt_mode == PT_MODE_SYSTEM)
-+		return;
-+
-+	/* Save host state before VM entry */
-+	rdmsrl(MSR_IA32_RTIT_CTL, vmx->pt_desc.host.ctl);
++	/* Initialize and clear the no dependency bits */
++	vmx->pt_desc.ctl_bitmask = ~(RTIT_CTL_TRACEEN | RTIT_CTL_OS |
++			RTIT_CTL_USR | RTIT_CTL_TSC_EN | RTIT_CTL_DISRETC);
 +
 +	/*
-+	 * Set guest state of MSR_IA32_RTIT_CTL MSR (PT will be disabled
-+	 * on VM entry when it has been disabled in guest before).
++	 * If CPUID.(EAX=14H,ECX=0):EBX[0]=1 CR3Filter can be set otherwise
++	 * will inject an #GP
 +	 */
-+	vmcs_write64(GUEST_IA32_RTIT_CTL, vmx->pt_desc.guest.ctl);
++	if (intel_pt_validate_cap(vmx->pt_desc.caps, PT_CAP_cr3_filtering))
++		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_CR3EN;
 +
-+	if (vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) {
-+		wrmsrl(MSR_IA32_RTIT_CTL, 0);
-+		pt_save_msr(&vmx->pt_desc.host, vmx->pt_desc.addr_range);
-+		pt_load_msr(&vmx->pt_desc.guest, vmx->pt_desc.addr_range);
-+	}
++	/*
++	 * If CPUID.(EAX=14H,ECX=0):EBX[1]=1 CYCEn, CycThresh and
++	 * PSBFreq can be set
++	 */
++	if (intel_pt_validate_cap(vmx->pt_desc.caps, PT_CAP_psb_cyc))
++		vmx->pt_desc.ctl_bitmask &= ~(RTIT_CTL_CYCLEACC |
++				RTIT_CTL_CYC_THRESH | RTIT_CTL_PSB_FREQ);
++
++	/*
++	 * If CPUID.(EAX=14H,ECX=0):EBX[3]=1 MTCEn BranchEn and
++	 * MTCFreq can be set
++	 */
++	if (intel_pt_validate_cap(vmx->pt_desc.caps, PT_CAP_mtc))
++		vmx->pt_desc.ctl_bitmask &= ~(RTIT_CTL_MTC_EN |
++				RTIT_CTL_BRANCH_EN | RTIT_CTL_MTC_RANGE);
++
++	/* If CPUID.(EAX=14H,ECX=0):EBX[4]=1 FUPonPTW and PTWEn can be set */
++	if (intel_pt_validate_cap(vmx->pt_desc.caps, PT_CAP_ptwrite))
++		vmx->pt_desc.ctl_bitmask &= ~(RTIT_CTL_FUP_ON_PTW |
++							RTIT_CTL_PTW_EN);
++
++	/* If CPUID.(EAX=14H,ECX=0):EBX[5]=1 PwrEvEn can be set */
++	if (intel_pt_validate_cap(vmx->pt_desc.caps, PT_CAP_power_event_trace))
++		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_PWR_EVT_EN;
++
++	/* If CPUID.(EAX=14H,ECX=0):ECX[0]=1 ToPA can be set */
++	if (intel_pt_validate_cap(vmx->pt_desc.caps, PT_CAP_topa_output))
++		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_TOPA;
++
++	/* If CPUID.(EAX=14H,ECX=0):ECX[3]=1 FabircEn can be set */
++	if (intel_pt_validate_cap(vmx->pt_desc.caps, PT_CAP_output_subsys))
++		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_FABRIC_EN;
++
++	/* unmask address range configure area */
++	for (i = 0; i < vmx->pt_desc.addr_range; i++)
++		vmx->pt_desc.ctl_bitmask &= ~(0xf << (32 + i * 4));
 +}
 +
-+static void pt_guest_exit(struct vcpu_vmx *vmx)
-+{
-+	if (pt_mode == PT_MODE_SYSTEM)
-+		return;
-+
-+	if (vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) {
-+		pt_save_msr(&vmx->pt_desc.guest, vmx->pt_desc.addr_range);
-+		pt_load_msr(&vmx->pt_desc.host, vmx->pt_desc.addr_range);
-+	}
-+
-+	/* Reload host state (IA32_RTIT_CTL will be cleared on VM exit). */
-+	wrmsrl(MSR_IA32_RTIT_CTL, vmx->pt_desc.host.ctl);
-+}
-+
- static void vmx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
+ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
  {
  	struct vcpu_vmx *vmx = to_vmx(vcpu);
-@@ -6749,6 +6832,13 @@ static void vmx_vcpu_setup(struct vcpu_vmx *vmx)
- 
- 	if (cpu_has_vmx_encls_vmexit())
- 		vmcs_write64(ENCLS_EXITING_BITMAP, -1ull);
+@@ -11941,6 +12010,10 @@ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
+ 		nested_vmx_cr_fixed1_bits_update(vcpu);
+ 		nested_vmx_entry_exit_ctls_update(vcpu);
+ 	}
 +
-+	if (pt_mode == PT_MODE_HOST_GUEST) {
-+		memset(&vmx->pt_desc, 0, sizeof(vmx->pt_desc));
-+		/* Bit[6~0] are forced to 1, writes are ignored. */
-+		vmx->pt_desc.guest.output_mask = 0x7F;
-+		vmcs_write64(GUEST_IA32_RTIT_CTL, 0);
-+	}
++	if (boot_cpu_has(X86_FEATURE_INTEL_PT) &&
++			guest_cpuid_has(vcpu, X86_FEATURE_INTEL_PT))
++		update_intel_pt_cfg(vcpu);
  }
  
- static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
-@@ -11260,6 +11350,8 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 	    vcpu->arch.pkru != vmx->host_pkru)
- 		__write_pkru(vcpu->arch.pkru);
- 
-+	pt_guest_enter(vmx);
-+
- 	atomic_switch_perf_msrs(vmx);
- 
- 	vmx_update_hv_timer(vcpu);
-@@ -11459,6 +11551,8 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 				  | (1 << VCPU_EXREG_CR3));
- 	vcpu->arch.regs_dirty = 0;
- 
-+	pt_guest_exit(vmx);
-+
- 	/*
- 	 * eager fpu is enabled if PKEY is supported and CR4 is switched
- 	 * back on host, so it is safe to read guest PKRU from current
+ static void vmx_set_supported_cpuid(u32 func, struct kvm_cpuid_entry2 *entry)
 -- 
 1.8.3.1
 
