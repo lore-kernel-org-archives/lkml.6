@@ -2,137 +2,127 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F015CC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A5DC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4EFA2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:19:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 796112054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:21:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RpPJBl1f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4EFA2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mAoLn8nK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 796112054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeJXPq0 (ORCPT
+        id S1727070AbeJXPsj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 11:46:26 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45260 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbeJXPq0 (ORCPT
+        Wed, 24 Oct 2018 11:48:39 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34866 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726279AbeJXPsj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 11:46:26 -0400
-Received: by mail-pg1-f196.google.com with SMTP id s3-v6so1890366pga.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 00:19:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=LU33Gsa2HCKv9HOvNZu+bYf6MApf/+vgJR72mmhToLI=;
-        b=RpPJBl1fDo/7KGPRXj+10cEfzqnP/GDfyBd76eYV2r1mttD+B8i+L2TLAjB47hwWed
-         VNQwErQzti2JqdrtHL1AbHJYhqXiMd3rw0tFn4zSIQ+KF2nUfeUahtqc/yrAyyLCI3XM
-         pETs1TFgGGncQg0/XkG6eeX9DEBn9m5HiQIxo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=LU33Gsa2HCKv9HOvNZu+bYf6MApf/+vgJR72mmhToLI=;
-        b=uT7Pr46xYHyyBRapwVz+WlDlwPOAaXNyFACtU3JsWZhkybAbz8M5XZ/TVqxk0j3lld
-         2Kx/jZ4gsAOl7U7SWSq6TA4yPltu9dkIdwqf6B6yjBnBZkTBAqvWDA79xeO2KgJZ5eea
-         /wM3qWLdMHQKyPqNit6Z3N2fpIS0Dj1PWDH1j6NmaymiyjRgUJbxmm4gCTAz1nUgOqyR
-         2G6Iggtm3dVfnjWGQGXCbIm7p8A60RQwoMMFqfUqpVEr/l8WutddOsfVwYdFzG9whiU+
-         HQMUk/GP1Azm9kpVmpHWS+uiQWSt5vbTT88pqI8vuUYxCRO53cy0F8g7rO8lHlKB1HBM
-         ameQ==
-X-Gm-Message-State: AGRZ1gLinqMUwESe6GNxhFwumGD96AreIxeIcT9WUhqsLsOfrC2ckJjl
-        neRGDq5+2lSaqiXR+JEeRBTP4Q==
-X-Google-Smtp-Source: AJdET5dJ7E4uAQxZO9m16w7UnVLFBRKPHmr2pUr9o/ReSKOTkYiQkuuPUQ6nEmk5q38J7yY3+EE94g==
-X-Received: by 2002:a65:5608:: with SMTP id l8-v6mr1480665pgs.433.1540365577104;
-        Wed, 24 Oct 2018 00:19:37 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id n64-v6sm5707035pfi.185.2018.10.24.00.19.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 24 Oct 2018 00:19:35 -0700 (PDT)
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH] mmc: sdhci: Conver sdhci_allocate_bounce_buffer() to return void
-Date:   Wed, 24 Oct 2018 15:19:24 +0800
-Message-Id: <1540365564-30645-1-git-send-email-zhang.chunyan@linaro.org>
+        Wed, 24 Oct 2018 11:48:39 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9O7ImfD083396;
+        Wed, 24 Oct 2018 07:21:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=FaEYic3nmykB5rYC9r5ox+y7RiwQW1cjbL0df/ZtlqI=;
+ b=mAoLn8nKXeS+As41x4ma8zwwR/ndCkyKOZSOkbKQSi5uncS/wtIOxqrIDJSpIIvMnsXK
+ 0QlmQmlrB7oL+wtuHSO6BUu2evTai7g5/0u8uL5rPCkg1BLoxRQJNrvwodFf9soU2k+s
+ MUhrZtHWo7mmOTYEsQWepkCtKE1AIHUrgm5SJuDz8yVMrdIqRv9jmD/SbuVfKUQSlgl7
+ Jf/jhy1Gj/irvKWesZBQF+q5XzxjxJJesxJhA/Rn6aKt1uEDAUKpgetCNl7xYD0MHIsp
+ hftFgHS49D6xUJ0rC4oHVhKb8uHQZA/sA7vYQTehUnwlJRpYjmfjyjrxOhbNDvPGKliN jw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2n7w0qsm3g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Oct 2018 07:21:47 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9O7LgNZ003993
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Oct 2018 07:21:42 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9O7Lf1w013794;
+        Wed, 24 Oct 2018 07:21:41 GMT
+Received: from will-ThinkCentre-M93p.cn.oracle.com (/10.182.70.234)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 24 Oct 2018 00:21:41 -0700
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     axboe@kernel.dk
+Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] blk-mq: ensure hctx to be ran on mapped cpu when issue directly
+Date:   Wed, 24 Oct 2018 23:20:07 +0800
+Message-Id: <1540394407-20769-1-git-send-email-jianchao.w.wang@oracle.com>
 X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9055 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810240067
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function sdhci_allocate_bounce_buffer() always return zero at
-present, so there's no need to have a return value, that will also make
-error path easier.
+When issue request directly and the task is migrated out of the
+original cpu where it allocates request, hctx could be ran on
+the cpu where it is not mapped. To fix this, insert the request
+if BLK_MQ_F_BLOCKING is set, check whether the current is mapped
+to the hctx and invoke __blk_mq_issue_directly under preemption
+disabled.
 
-CC: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 ---
- drivers/mmc/host/sdhci.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ block/blk-mq.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 1b3fbd9..e94f4aa 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -3408,7 +3408,7 @@ void __sdhci_read_caps(struct sdhci_host *host, u16 *ver, u32 *caps, u32 *caps1)
- }
- EXPORT_SYMBOL_GPL(__sdhci_read_caps);
- 
--static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
-+static void sdhci_allocate_bounce_buffer(struct sdhci_host *host)
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index e3c39ea..0cdc306 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1717,6 +1717,12 @@ static blk_status_t __blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
  {
- 	struct mmc_host *mmc = host->mmc;
- 	unsigned int max_blocks;
-@@ -3446,7 +3446,7 @@ static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
- 		 * Exiting with zero here makes sure we proceed with
- 		 * mmc->max_segs == 1.
- 		 */
--		return 0;
-+		return;
+ 	struct request_queue *q = rq->q;
+ 	bool run_queue = true;
++	blk_status_t ret;
++
++	if (hctx->flags & BLK_MQ_F_BLOCKING) {
++		bypass_insert = false;
++		goto insert;
++	}
+ 
+ 	/*
+ 	 * RCU or SRCU read lock is needed before checking quiesced flag.
+@@ -1734,6 +1740,11 @@ static blk_status_t __blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
+ 	if (q->elevator && !bypass_insert)
+ 		goto insert;
+ 
++	if (!cpumask_test_cpu(get_cpu(), hctx->cpumask)) {
++		bypass_insert = false;
++		goto insert;
++	}
++
+ 	if (!blk_mq_get_dispatch_budget(hctx))
+ 		goto insert;
+ 
+@@ -1742,8 +1753,12 @@ static blk_status_t __blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
+ 		goto insert;
  	}
  
- 	host->bounce_addr = dma_map_single(mmc->parent,
-@@ -3456,7 +3456,7 @@ static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
- 	ret = dma_mapping_error(mmc->parent, host->bounce_addr);
- 	if (ret)
- 		/* Again fall back to max_segs == 1 */
--		return 0;
-+		return;
- 	host->bounce_buffer_size = bounce_size;
- 
- 	/* Lie about this since we're bouncing */
-@@ -3466,8 +3466,6 @@ static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
- 
- 	pr_info("%s bounce up to %u segments into one, max segment size %u bytes\n",
- 		mmc_hostname(mmc), max_blocks, bounce_size);
--
--	return 0;
- }
- 
- int sdhci_setup_host(struct sdhci_host *host)
-@@ -3987,12 +3985,9 @@ int sdhci_setup_host(struct sdhci_host *host)
- 	 */
- 	mmc->max_blk_count = (host->quirks & SDHCI_QUIRK_NO_MULTIBLOCK) ? 1 : 65535;
- 
--	if (mmc->max_segs == 1) {
-+	if (mmc->max_segs == 1)
- 		/* This may alter mmc->*_blk_* parameters */
--		ret = sdhci_allocate_bounce_buffer(host);
--		if (ret)
--			return ret;
--	}
-+		sdhci_allocate_bounce_buffer(host);
- 
- 	return 0;
+-	return __blk_mq_issue_directly(hctx, rq, cookie);
++	ret = __blk_mq_issue_directly(hctx, rq, cookie);
++	put_cpu();
++	return ret;
++
+ insert:
++	put_cpu();
+ 	if (bypass_insert)
+ 		return BLK_STS_RESOURCE;
  
 -- 
 2.7.4
