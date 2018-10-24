@@ -2,212 +2,136 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD32C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE1FEC67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A3FE2075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:11:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A3FE2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6325B2075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:12:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iuWp/WtN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6325B2075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbeJXWjU (ORCPT
+        id S1726863AbeJXWk3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 18:39:20 -0400
-Received: from mail-it1-f198.google.com ([209.85.166.198]:55448 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726407AbeJXWjU (ORCPT
+        Wed, 24 Oct 2018 18:40:29 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:34466 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726407AbeJXWk3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:39:20 -0400
-Received: by mail-it1-f198.google.com with SMTP id u72-v6so4296674itc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 07:11:03 -0700 (PDT)
+        Wed, 24 Oct 2018 18:40:29 -0400
+Received: by mail-yw1-f66.google.com with SMTP id v199-v6so2127225ywg.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 07:12:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=HuCqK2ARAHcmlEKqmdsiC5mHIpMWzNwmljnZCCYU8T8=;
+        b=iuWp/WtNquRQSHgqBmY+aiasvReosGUm5evhj6wjePZWb6fRhXJfKSIXYEMTG5jm32
+         slg770pYfImx61Prz04NbJmDV+QXr6L/z471YUd4NX7U7n0FP+jiPf9rSVu/Nh1j9BPR
+         95QzqwsxsFe+0zTiLNtGpUc2JuLerqGh+31DEwuam6s6LDgSyPWHPSt4QB7Aj6b4j+6r
+         CbEGuptmpDlKTPSdqDlSAqe1NtAiA5hshRRVH0ruAjysjn5dce9IiodbRHQJdva3DPZP
+         Yul1u6RYXKJddryeKVP5psbHKRPpSLzINYpAeenJu+6p/393hjn/CywGndgwY+goUjDZ
+         S0QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=DDWP/Gw28OOmzUX1JXzXTpOnkLArHKNLlo45KhFqtg4=;
-        b=KJWhQ/YGZzcas5UVX0icMAUQoTSmFsiG/iDMOnmnr/1xK6rn2PzvqphOdfNSpkGP5p
-         4+J57lZlwduYgelUS1Y5JHN/bT53bdYR0iJpPLwhhGmzV+5vIn/7doXhkCjMXiBUY3oO
-         SFixfqFgwz+GnBxWNFqTvp41EIaUVtwAIrpTcaiUgspUsot8UpuGVRSU+8Iox3nLiS8H
-         0O+7dMD/kAGAwbVQBFWp9n9HGYAb1vQX+pBDC4r4sZt68dByNIVDJZFXjuVRmuUIvZB2
-         QTEG9NNL0QNjezTfB+8Lq/Q8T6wahesQu9Ci0D2+/g3ty9QvirrXXntAh9ZnkXjzykpZ
-         KZ6Q==
-X-Gm-Message-State: AGRZ1gLNO//oegalNZCprbCRyi8n2NQUSQDnh8JBHHrCJsaH63zQFxDe
-        iyPrbJ2dVgWqz3zBiEe8knL7HApNqu+is0TGGnB0z2tbNxbg
-X-Google-Smtp-Source: AJdET5eGM0Xu6jwhKoyhDcV3W6Ux+gZQeHvSYy0LmQQ9GGJz13bAp/NC01qg+r8Moio5F7C55QLxv9A4I1okJzCdXRS1nFIt0B67
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=HuCqK2ARAHcmlEKqmdsiC5mHIpMWzNwmljnZCCYU8T8=;
+        b=XEimXVPFsmgBKLTl5eh5baYzvV7gHIN+Sr5lFNjRhb64PUneT0hw2IcY/XRRHI+goh
+         jG6xVA5hptdT7GaCUiJ2hn3XrNrd8Gf5UkIiwv7u7QhQbckAB67iihmrpdsvBXbLxJWJ
+         7RMN8YtXENHyKntNCSyXIU0YvpfF9TA5x3y+FbwkWXxv+1WfgMJhajvx91lnQslh1TA4
+         gekwBs1cnVSXSqTpi+MtAtgiLZcpbKsZ5ug6xyb483H8I3KiSrafIVn5zJPp7idxI/3H
+         bLBgGBEafQAduAb5W6ao89e7XGQTSgxoelHcyotsC9SsV4it9bvOGKo2b6SjG8RQDGqJ
+         xQVA==
+X-Gm-Message-State: AGRZ1gK/jH2619s1l2Op7z++Bq2WosRxuo0LMMU805HP1X30OvmQICvb
+        m2lNSehY3qyDd1bD9QHqpOoW7aVEHDpfp/0UMxo=
+X-Google-Smtp-Source: AJdET5fLo1Hx8tt1eHVWftGtaSYRgl7GFt6a6cypOaQbDFctsXEJSIH28nojN68WfOtC9DvcoXuVuWyD1Mdz6Df9iXg=
+X-Received: by 2002:a81:5044:: with SMTP id e65-v6mr2397945ywb.392.1540390331125;
+ Wed, 24 Oct 2018 07:12:11 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a02:602d:: with SMTP id i45-v6mr2180391jac.6.1540390262948;
- Wed, 24 Oct 2018 07:11:02 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 07:11:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000705cf30578fa0e3c@google.com>
-Subject: KASAN: use-after-free Read in snd_seq_timer_interrupt
-From:   syzbot <syzbot+d5136d4d3240cbe45a2a@syzkaller.appspotmail.com>
-To:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        perex@perex.cz, syzkaller-bugs@googlegroups.com, tiwai@suse.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20181009112837.2517-1-peron.clem@gmail.com> <e761c76d-a806-402a-b25b-04aee9329dbc@kernel.org>
+ <CAJiuCceZr8NsDgBJgA2y61VHdQ3JYQ6_3r4jKooKLbVfRD8eJQ@mail.gmail.com>
+ <74512aef-d551-30af-b4cf-25f48047a4ac@kernel.org> <20181024065152.yinlj4axprtwdzku@pengutronix.de>
+In-Reply-To: <20181024065152.yinlj4axprtwdzku@pengutronix.de>
+From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date:   Wed, 24 Oct 2018 16:11:59 +0200
+Message-ID: <CAJiuCcfZ7+gaxA5iGhS48eODPsTaZc5-Bd2zXqaAgtNd0fwSKg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: debug: enable UART1 for socfpga Cyclone5
+To:     u.kleine-koenig@pengutronix.de
+Cc:     Dinh Nguyen <dinguyen@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi,
 
-syzbot found the following crash on:
+On Wed, 24 Oct 2018 at 08:51, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+>
+> On Tue, Oct 23, 2018 at 03:35:31PM -0500, Dinh Nguyen wrote:
+> >
+> >
+> > On 10/23/2018 09:44 AM, Cl=C3=A9ment P=C3=A9ron wrote:
+> > > HI Dinh,
+> > >
+> > > On Tue, 23 Oct 2018 at 16:04, Dinh Nguyen <dinguyen@kernel.org> wrote=
+:
+> > >>
+> > >> Hi Cl=C3=A9ment,
+> > >>
+> > >> On 10/09/2018 06:28 AM, Cl=C3=A9ment P=C3=A9ron wrote:
+> > >>> Cyclone5 and Arria10 doesn't have the same memory map for UART1.
+> > >>>
+> > >>> Split the SOCFPGA_UART1 into 2 options to allow debugging on UART1 =
+for Cylone5.
+> > >>>
+> > >>
+> > >> I'm not sure the need for this patch. Are there any cyclone5 based
+> > >> boards that has UART1 as the debug uart? I see that all of them are
+> > >> using UART0.
+> > >
+> > > There is no upstream device with this UART used. But the board I have
+> > > use it, and there is no limitation to not have it available upstream
+> > > no ?
+> > >
+> >
+> > I see. Then I don't think the patch is applicable because none of the
+> > upstream devices need it. Now, if you were to upstream your board that
+> > uses UART1, then there will be a case for this patch. Do you agree?
 
-HEAD commit:    44786880df19 Merge branch 'parisc-4.20-1' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=178c8bad400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5071a2e3cb82c943
-dashboard link: https://syzkaller.appspot.com/bug?extid=d5136d4d3240cbe45a2a
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+I don't think my board is upstreamable it's not a devkit and not
+really interesting for the community.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+It's really a trivial patch and it will avoid wasting time  to another
+owner of CycloneV board who would like to have debug on UART1
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d5136d4d3240cbe45a2a@syzkaller.appspotmail.com
+Thanks
+Clement
 
-==================================================================
-BUG: KASAN: use-after-free in snd_seq_timer_interrupt+0x364/0x3e0  
-sound/core/seq/seq_timer.c:145
-Read of size 8 at addr ffff8801cf71c118 by task syz-executor0/24085
-
-CPU: 1 PID: 24085 Comm: syz-executor0 Not tainted 4.19.0+ #300
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  snd_seq_timer_interrupt+0x364/0x3e0 sound/core/seq/seq_timer.c:145
-  snd_timer_interrupt+0x9ff/0x1660 sound/core/timer.c:855
-  snd_timer_s_function+0xcd/0x130 sound/core/timer.c:1094
-  call_timer_fn+0x272/0x920 kernel/time/timer.c:1326
-  expire_timers kernel/time/timer.c:1363 [inline]
-  __run_timers+0x7e5/0xc70 kernel/time/timer.c:1682
-  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1695
-  __do_softirq+0x308/0xb7e kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x17f/0x1c0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:801
-  </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:761  
-[inline]
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160  
-[inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0xaf/0xd0  
-kernel/locking/spinlock.c:184
-Code: 30 f6 31 89 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c  
-02 00 75 28 48 83 3d 28 cd 7c 01 00 74 15 48 89 df 57 9d <0f> 1f 44 00 00  
-eb ad e8 7c 52 4b f9 eb bb 0f 0b 0f 0b e8 8a 54 0e
-RSP: 0018:ffff880181eaf508 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: 0000000000000282 RCX: 0000000000000000
-RDX: 1ffffffff1263ec6 RSI: 0000000000000001 RDI: 0000000000000282
-RBP: ffff880181eaf518 R08: ffff88018378a140 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801c0b94ac0
-R13: ffff8801c0b94300 R14: ffff8801daf2cc40 R15: 0000000000000001
-  try_to_wake_up+0x10a/0x12e0 kernel/sched/core.c:2056
-  wake_up_process kernel/sched/core.c:2124 [inline]
-  wake_up_q+0xa4/0x100 kernel/sched/core.c:440
-  futex_wake+0x61f/0x760 kernel/futex.c:1556
-  do_futex+0x2e4/0x26d0 kernel/futex.c:3533
-  __do_sys_futex kernel/futex.c:3589 [inline]
-  __se_sys_futex kernel/futex.c:3557 [inline]
-  __x64_sys_futex+0x472/0x6a0 kernel/futex.c:3557
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457569
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:0000000000a3fbf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: ffffffffffffffda RBX: 000000000072bfa0 RCX: 0000000000457569
-RDX: 0000000000000000 RSI: 0000000000000081 RDI: 000000000072bfa8
-RBP: 00000000000003b7 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000a3fcb0 R11: 0000000000000246 R12: 000000000072bfac
-R13: 000000000072bfac R14: 0000000000000003 R15: 0000000000000001
-
-Allocated by task 24073:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
-  kmalloc include/linux/slab.h:513 [inline]
-  kzalloc include/linux/slab.h:707 [inline]
-  queue_new sound/core/seq/seq_queue.c:113 [inline]
-  snd_seq_queue_alloc+0xab/0x5b0 sound/core/seq/seq_queue.c:185
-  snd_seq_ioctl_create_queue+0xb0/0x320 sound/core/seq/seq_clientmgr.c:1522
-  snd_seq_ioctl+0x253/0x440 sound/core/seq/seq_clientmgr.c:2138
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:501 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-  __do_sys_ioctl fs/ioctl.c:709 [inline]
-  __se_sys_ioctl fs/ioctl.c:707 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 24072:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3813
-  queue_delete+0x90/0xb0 sound/core/seq/seq_queue.c:156
-  snd_seq_queue_client_leave+0x36/0x170 sound/core/seq/seq_queue.c:584
-  seq_free_client1.part.9+0xf4/0x270 sound/core/seq/seq_clientmgr.c:263
-  seq_free_client1 sound/core/seq/seq_clientmgr.c:256 [inline]
-  seq_free_client+0x82/0x100 sound/core/seq/seq_clientmgr.c:285
-  snd_seq_release+0x51/0xe0 sound/core/seq/seq_clientmgr.c:366
-  __fput+0x385/0xa30 fs/file_table.c:278
-  ____fput+0x15/0x20 fs/file_table.c:309
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801cf71c0c0
-  which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 88 bytes inside of
-  512-byte region [ffff8801cf71c0c0, ffff8801cf71c2c0)
-The buggy address belongs to the page:
-page:ffffea00073dc700 count:1 mapcount:0 mapping:ffff8801da800940 index:0x0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea00073a4fc8 ffffea000761f4c8 ffff8801da800940
-raw: 0000000000000000 ffff8801cf71c0c0 0000000100000006 0000000000000000
-kobject: 'loop5' (00000000172d3417): kobject_uevent_env
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801cf71c000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801cf71c080: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-> ffff8801cf71c100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                             ^
-  ffff8801cf71c180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801cf71c200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+>
+> I'd not say having to upstream the board is a sensible precondition for
+> such a patch. One of the arguments for moving ARM to dt was that this
+> allows to separate the machine specifics from the code. So I'd say if
+> Cl=C3=A9ment has a need, this is a good enough reason to take this patch.
+>
+> Just my 0.02 =E2=82=AC,
+> Uwe
+>
+> --
+> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
+     |
+> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
+|
