@@ -2,98 +2,110 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD6E0ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C62ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1CCD2064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:34:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59F2D2064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:34:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tPbPqCDO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1CCD2064C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="exDauN6+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59F2D2064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbeJYEDh (ORCPT
+        id S1727209AbeJYEDj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 00:03:37 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39253 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725778AbeJYEDh (ORCPT
+        Thu, 25 Oct 2018 00:03:39 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33073 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725817AbeJYEDi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 00:03:37 -0400
-Received: by mail-pf1-f196.google.com with SMTP id c25-v6so2927265pfe.6;
-        Wed, 24 Oct 2018 12:34:16 -0700 (PDT)
+        Thu, 25 Oct 2018 00:03:38 -0400
+Received: by mail-pf1-f193.google.com with SMTP id 22-v6so2941647pfz.0;
+        Wed, 24 Oct 2018 12:34:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=TyAItt7B89hqOiKcSGQWElDSW87SzMYqvzXcYlna0tk=;
-        b=tPbPqCDOHk0VEZh+B4xohBcmribIHioUNZbff4mWhMHFNplj12GXAK8IjJE3PoVVbN
-         DUAFAcHo+TzlteT2iZn0OqelOlBT1PFHXWdIWaxlS23xFD7CJjMrbTr3Z52/36LrYoK+
-         1ww6vOAfpM9eXc2Y7DHavJTYje4sZOK4OGVpr2mAxqe5uwhUpEpTqidE1Gdz71T9WEkT
-         x5twxBrWxwJ2VrEcChjCfxHBe2oQe1RbCA/fxUabq71m9qXo3IQDGoZpxO60Ia2MWP4Q
-         YwRLvHHeDeGmPbiXOz0lhixC7rC9UCwakh0ZamyPwhogJRNLQ9OUaCf6kmGUJcmq5iQF
-         kD8A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ErQIde3ytmx8BZaFyBy+CXyz9NH/Bog4bW1OGBrV7Nw=;
+        b=exDauN6+6zYVvBCFU4vdKfTLAynQCUccVsbXBwVn05M1cAButQqRi7icqiwogzer1O
+         pdNapF2Sddoa5jfzAPeIXoVZb/il923zOIvlWcErhLzWiei9cd2hIjpkwrI/WE+1qgTo
+         zq6oBucVA1CTWTGuusQu3habTo7YJluT1pBTcHT18XgsGH9LstQ8kfYH/MhsYMObR3uO
+         EPdyb0pQRQ7tlHzQ255fVJpfogyc4mBOTQmqHnlNGS9xohbi+YeFhzwu3qk92sgYd2YO
+         0oLvdDApIPHiRNHTKsmI9j7JtT24Eq/toqMVS1jNiUh2Uvm4hQsDhWfNeaGh5BBZ/2lh
+         MaAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=TyAItt7B89hqOiKcSGQWElDSW87SzMYqvzXcYlna0tk=;
-        b=E27R57J0nVR+klQ9zvmR0QLc18W5miLzfjYPp5UoFe1WAuRV3YR40h4N4a+9OPXREV
-         vvQrKU35TTHLle647jDPiK7nFBbfrP02TNQa3RxFIRt5iWnx5tntY96sX6N2PUWccJ3Z
-         OOguhF6Ax/gZooY72YmxmqP4KGMe7CdhKxGeaKdkG7eLHO4Bu1bliM+Ma1xP2GG/U56P
-         TstwE6ccVjccSllNgBASolAwTimkZNuDXwiR6dRv/DYEpcgI35CN+trc3rl5BPzlAynO
-         1mu0NSe5c0dasN3di0t/JlI7I7ictwY1pFwJ7h0JX97hWwHzcIN+yUFI2qJTgzP2LV7H
-         U27g==
-X-Gm-Message-State: AGRZ1gIQ+65qiRT2TDGrbWvamhkRurbrTTSA/q9NqPqYi/QGaeGXIg+R
-        s4Kj79t5beRrUD7/kEeEYnvzp9cY
-X-Google-Smtp-Source: AJdET5cYTZnvZWwl5lXnRLjs56uZijWsjOThd5N5spLEBl1bbELbZHN8ZPL7UT93t4/2IeLTzX8Qew==
-X-Received: by 2002:a63:af18:: with SMTP id w24mr3732644pge.385.1540409655485;
-        Wed, 24 Oct 2018 12:34:15 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ErQIde3ytmx8BZaFyBy+CXyz9NH/Bog4bW1OGBrV7Nw=;
+        b=iQYw2+iYZ7V2DiDZFOxK82niau95qh2hmnAc/14k63jdxVqFgxfFsZijX0Fw7WHQfe
+         gslCwzEUYZ0N01oL7+cOzgvY3nzc8/JX0vmx7B/f3cq4M3StgQ9CTM0oM27K6kr7t7Ky
+         XijxA69jEfFJbZuq1UNucea9DxA+DNCtTYW4cf8/AFg8jauDx6aIw+ajf9nit3EY1NrZ
+         CxrL7esFKRgBHnHLGXBptypXgThIfgDoMaeacid2iNRZyxJKWr2PchIS03KmDbpzhBrZ
+         2UsDYysqqvn/GqiWA84Z7w1F+jbmVNShm+tXjRVyEOjJZ8LAmh4sfC+01jI5AQTD40eb
+         0pmQ==
+X-Gm-Message-State: AGRZ1gKyjvoQGOuY61B/lLSet7qyqYvR9vdJoyVWbXkDUw6uMWwMz63V
+        +gpFnrRNtUMA6qY4KeQyCXY=
+X-Google-Smtp-Source: AJdET5dHLcfQ6LKnxKasn4Lr3vBppeaoFPyAb/S60/B9uM7BYURxrKyQuaMjHoc9AnQ2IAgtkyp+Uw==
+X-Received: by 2002:a63:4c6:: with SMTP id 189mr3733473pge.391.1540409657251;
+        Wed, 24 Oct 2018 12:34:17 -0700 (PDT)
 Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id r81-v6sm19921633pfa.110.2018.10.24.12.34.14
+        by smtp.gmail.com with ESMTPSA id r81-v6sm19921633pfa.110.2018.10.24.12.34.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 12:34:14 -0700 (PDT)
+        Wed, 24 Oct 2018 12:34:16 -0700 (PDT)
 From:   Nicolin Chen <nicoleotsuka@gmail.com>
 To:     jdelvare@suse.com, linux@roeck-us.net
 Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/5] hwmon: (ina3221) Implement PM runtime to save power
-Date:   Wed, 24 Oct 2018 12:33:57 -0700
-Message-Id: <20181024193402.16698-1-nicoleotsuka@gmail.com>
+Subject: [PATCH v3 2/5] hwmon: (ina3221) Check channel status for alarms attribute read
+Date:   Wed, 24 Oct 2018 12:33:59 -0700
+Message-Id: <20181024193402.16698-3-nicoleotsuka@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181024193402.16698-1-nicoleotsuka@gmail.com>
+References: <20181024193402.16698-1-nicoleotsuka@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series patches implement PM runtime feature in the ina3221 hwmon
-driver (PATCH-5). However, PATCH-[1:4] are required to make sure that
-the PM runtime feature would be functional and safe.
+There is nothing critically wrong to read these two attributes
+without having a is_enabled() check at this point. But reading
+the MASK_ENABLE register would clear the CVRF bit according to
+the datasheet. So it'd be safer to fence for disabled channels
+in order to add pm runtime feature.
 
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+---
 Changelog
 v2->v3:
- * Dropped timeout dev_err messages as it's indicated in errno (PATCH-4)
- * Improved a dev_err message and comments (PATCH-5)
+ * N/A
 v1->v2:
- * Added device pointer check (PATCH-1)
- * Returned 0 for alert flags (PATCH-2)
- * Moved CVRF polling to data read routine (PATCH-4)
- * Bypassed i2c_client->dev in suspend/resume() (PATCH-5)
+ * Returned 0 for alert flags instead of -ENODATA
 
-Nicolin Chen (5):
-  hwmon: (core) Inherit power properties to hdev
-  hwmon: (ina3221) Check channel status for alarms attribute read
-  hwmon: (ina3221) Serialize sysfs ABI accesses
-  hwmon: (ina3221) Make sure data is ready before reading
-  hwmon: (ina3221) Add PM runtime support
+ drivers/hwmon/ina3221.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
- drivers/hwmon/hwmon.c   |   7 +-
- drivers/hwmon/ina3221.c | 210 ++++++++++++++++++++++++++++++++++------
- 2 files changed, 189 insertions(+), 28 deletions(-)
-
+diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
+index d61688f04594..26cdf3342d80 100644
+--- a/drivers/hwmon/ina3221.c
++++ b/drivers/hwmon/ina3221.c
+@@ -200,6 +200,12 @@ static int ina3221_read_curr(struct device *dev, u32 attr,
+ 		return 0;
+ 	case hwmon_curr_crit_alarm:
+ 	case hwmon_curr_max_alarm:
++		/* No actual register read if channel is disabled */
++		if (!ina3221_is_enabled(ina, channel)) {
++			/* Return 0 for alert flags */
++			*val = 0;
++			return 0;
++		}
+ 		ret = regmap_field_read(ina->fields[reg], &regval);
+ 		if (ret)
+ 			return ret;
 -- 
 2.17.1
 
