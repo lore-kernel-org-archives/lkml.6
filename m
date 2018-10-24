@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E1EC67863
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A87C7112C
 	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18A182082E
+	by mail.kernel.org (Postfix) with ESMTP id 6D4DD2075D
 	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:29:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="H8fIi0NQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18A182082E
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="IUzGmazB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D4DD2075D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbeJXQ4v (ORCPT
+        id S1727498AbeJXQ4x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 12:56:51 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:47755 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbeJXQ4v (ORCPT
+        Wed, 24 Oct 2018 12:56:53 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:43720 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727356AbeJXQ4w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 12:56:51 -0400
+        Wed, 24 Oct 2018 12:56:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1540369782; x=1571905782;
+  t=1540369783; x=1571905783;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=5sqDDn7QP7sBKIfJPTSAIDBRqBS3u0CYMIP5f/m9YTo=;
-  b=H8fIi0NQckGtDMIdojY9H6PbWpp9t59nOMM8mx3cC/6JecjoWMetEwu5
-   HYpf2105umSBBMp92wYHj4SztDiqR+3Kd2W70sIgvE3cwkRisuz775P19
-   YlQ1ZXs93AiZFGYn4c6buhiJLDdKyH6IbUHLUclYV+S24hR4Gb3c3+4Ph
-   0=;
+  bh=Ia1bA2EwUCIicadXyP2boItppd2fNM58Z5bAjO88G64=;
+  b=IUzGmazBE2smmVykcUPZXSByg+CdWDh9Bo1SNCLjZ9Cd6N3CCNxvJmkW
+   d9PyEC6NSr9nYajrP1FsqxXD9NGIf0JVhNSrUS6dXKFIvUT9LiGoPOpVA
+   17R8psUJoeSfHM7wWlJcMy8G1D1mjHZFWvfCQf33db0PT+sjp1PiW5CC4
+   M=;
 X-IronPort-AV: E=Sophos;i="5.54,419,1534809600"; 
-   d="scan'208";a="701226933"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2b-2eab95aa.us-west-2.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 24 Oct 2018 08:29:41 +0000
+   d="scan'208";a="760955894"
+Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-2a-c5104f52.us-west-2.amazon.com) ([10.47.22.34])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 24 Oct 2018 08:29:41 +0000
 Received: from u54ee758033e858cfa736.ant.amazon.com (pdx2-ws-svc-lb17-vlan2.amazon.com [10.247.140.66])
-        by email-inbound-relay-2b-2eab95aa.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9O8TbpF022039
+        by email-inbound-relay-2a-c5104f52.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9O8TcJ7080732
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 24 Oct 2018 08:29:38 GMT
+        Wed, 24 Oct 2018 08:29:39 GMT
 Received: from u54ee758033e858cfa736.ant.amazon.com (localhost [127.0.0.1])
-        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w9O8Ta9A030178;
-        Wed, 24 Oct 2018 10:29:36 +0200
+        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w9O8Tbe2030182;
+        Wed, 24 Oct 2018 10:29:37 +0200
 Received: (from jsteckli@localhost)
-        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Submit) id w9O8TaIe030177;
-        Wed, 24 Oct 2018 10:29:36 +0200
+        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Submit) id w9O8Tbjs030181;
+        Wed, 24 Oct 2018 10:29:37 +0200
 From:   Julian Stecklina <jsteckli@amazon.de>
 To:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
 Cc:     Julian Stecklina <jsteckli@amazon.de>, js@alien8.de,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] kvm, vmx: move register clearing out of assembly path
-Date:   Wed, 24 Oct 2018 10:28:57 +0200
-Message-Id: <558fea0b4df498eefcaea5ae07a089ad9706c1a2.1540369608.git.jsteckli@amazon.de>
+Subject: [PATCH 3/4] kvm, vmx: fix __invvpid style
+Date:   Wed, 24 Oct 2018 10:28:58 +0200
+Message-Id: <16eda1c463f357607b6d7ae5cfe967055fc17ec5.1540369608.git.jsteckli@amazon.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <09986c98c9655f1542768ecfda644ac821e67a57.1540369608.git.jsteckli@amazon.de>
 References: <09986c98c9655f1542768ecfda644ac821e67a57.1540369608.git.jsteckli@amazon.de>
@@ -70,69 +70,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split the security related register clearing out of the large inline
-assembly VM entry path. This results in two slightly less complicated
-inline assembly statements, where it is clearer what each one does.
+The code violated the coding style. Fixed by using tabs instead of
+spaces. There are only whitespace changes here.
 
 Signed-off-by: Julian Stecklina <jsteckli@amazon.de>
 Reviewed-by: Jan H. Schönherr <jschoenh@amazon.de>
 Reviewed-by: Konrad Jan Miller <kjm@amazon.de>
 ---
- arch/x86/kvm/vmx.c | 33 ++++++++++++++++++++-------------
- 1 file changed, 20 insertions(+), 13 deletions(-)
+ arch/x86/kvm/vmx.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 93562d5..9225099 100644
+index 9225099..82cfb909 100644
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -10797,20 +10797,7 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 		"mov %%r13, %c[r13](%0) \n\t"
- 		"mov %%r14, %c[r14](%0) \n\t"
- 		"mov %%r15, %c[r15](%0) \n\t"
--		"xor %%r8d,  %%r8d \n\t"
--		"xor %%r9d,  %%r9d \n\t"
--		"xor %%r10d, %%r10d \n\t"
--		"xor %%r11d, %%r11d \n\t"
--		"xor %%r12d, %%r12d \n\t"
--		"xor %%r13d, %%r13d \n\t"
--		"xor %%r14d, %%r14d \n\t"
--		"xor %%r15d, %%r15d \n\t"
- #endif
--
--		"xor %%eax, %%eax \n\t"
--		"xor %%ebx, %%ebx \n\t"
--		"xor %%esi, %%esi \n\t"
--		"xor %%edi, %%edi \n\t"
- 		"pop  %%" _ASM_BP "; pop  %%" _ASM_DX " \n\t"
- 		".pushsection .rodata \n\t"
- 		".global vmx_return \n\t"
-@@ -10847,6 +10834,26 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- #endif
- 	      );
+@@ -2079,17 +2079,17 @@ static int __find_msr_index(struct vcpu_vmx *vmx, u32 msr)
  
-+	/* Don't let guest register values survive. */
-+	asm volatile (
-+		""
-+#ifdef CONFIG_X86_64
-+		"xor %%r8d,  %%r8d \n\t"
-+		"xor %%r9d,  %%r9d \n\t"
-+		"xor %%r10d, %%r10d \n\t"
-+		"xor %%r11d, %%r11d \n\t"
-+		"xor %%r12d, %%r12d \n\t"
-+		"xor %%r13d, %%r13d \n\t"
-+		"xor %%r14d, %%r14d \n\t"
-+		"xor %%r15d, %%r15d \n\t"
-+#endif
-+		:: "a" (0), "b" (0), "S" (0), "D" (0)
-+		: "cc"
-+#ifdef CONFIG_X86_64
-+		  , "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15"
-+#endif
-+		);
+ static inline void __invvpid(int ext, u16 vpid, gva_t gva)
+ {
+-    struct {
+-	u64 vpid : 16;
+-	u64 rsvd : 48;
+-	u64 gva;
+-    } operand = { vpid, 0, gva };
+-    bool error;
+-
+-    asm volatile (__ex(ASM_VMX_INVVPID) CC_SET(na)
+-		  : CC_OUT(na) (error) : "a"(&operand), "c"(ext)
+-		  : "memory");
+-    BUG_ON(error);
++	struct {
++		u64 vpid : 16;
++		u64 rsvd : 48;
++		u64 gva;
++	} operand = { vpid, 0, gva };
++	bool error;
 +
- 	/*
- 	 * We do not use IBRS in the kernel. If this vCPU has used the
- 	 * SPEC_CTRL MSR it may have left it on; save the value and
++	asm volatile (__ex(ASM_VMX_INVVPID) CC_SET(na)
++		      : CC_OUT(na) (error) : "a"(&operand), "c"(ext)
++		      : "memory");
++	BUG_ON(error);
+ }
+ 
+ static inline void __invept(int ext, u64 eptp, gpa_t gpa)
 -- 
 2.7.4
 
