@@ -5,106 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D52EAECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 161A4ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:41:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98BAE207DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:39:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98BAE207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 88E87207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:41:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88E87207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbeJYBIi (ORCPT
+        id S1726865AbeJYBJs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 21:08:38 -0400
-Received: from mga05.intel.com ([192.55.52.43]:22533 "EHLO mga05.intel.com"
+        Wed, 24 Oct 2018 21:09:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60668 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726521AbeJYBIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 21:08:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 09:39:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,421,1534834800"; 
-   d="scan'208";a="244022544"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
-  by orsmga004.jf.intel.com with ESMTP; 24 Oct 2018 09:39:51 -0700
-Subject: Re: [PATCH v8 07/12] dt-bindings: mfd: Add a document for PECI client
- MFD
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Jason M Biils <jason.m.bills@linux.intel.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>, openbmc@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        "Bryant G . Ly" <bryantly@linux.vnet.ibm.com>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
-        David Kershner <david.kershner@unisys.com>,
-        Guenter Roeck <linux@roeck-us.net>, Wu Hao <hao.wu@intel.com>,
-        linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Johan Hovold <johan@kernel.org>,
-        Tomohiro Kusumi <kusumi.tomohiro@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Juergen Gross <jgross@suse.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-        James Feist <james.feist@linux.intel.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S . Miller" <davem@davemloft.net>
-References: <20180918215124.14003-1-jae.hyun.yoo@linux.intel.com>
- <20180918215124.14003-8-jae.hyun.yoo@linux.intel.com>
- <20181024072540.GA4939@dell>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <8c322777-7c35-1c2a-730f-f8de86522b96@linux.intel.com>
-Date:   Wed, 24 Oct 2018 09:39:51 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726521AbeJYBJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 21:09:48 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DEE5E3082B71;
+        Wed, 24 Oct 2018 16:41:01 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C7D8561B9A;
+        Wed, 24 Oct 2018 16:41:01 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id B66361800540;
+        Wed, 24 Oct 2018 16:41:01 +0000 (UTC)
+Date:   Wed, 24 Oct 2018 12:41:01 -0400 (EDT)
+From:   Bob Peterson <rpeterso@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     cluster-devel@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <479471988.24247710.1540399261450.JavaMail.zimbra@redhat.com>
+In-Reply-To: <CAHk-=wjMjVx_swPnhRWejvvrMvDqOY0MW2Ov9GNt8vn4UEjchw@mail.gmail.com>
+References: <1929897739.23623737.1540322729596.JavaMail.zimbra@redhat.com> <200314933.23623823.1540322768252.JavaMail.zimbra@redhat.com> <CAHk-=wjMjVx_swPnhRWejvvrMvDqOY0MW2Ov9GNt8vn4UEjchw@mail.gmail.com>
+Subject: Re: GFS2: Pull request (merge window)
 MIME-Version: 1.0
-In-Reply-To: <20181024072540.GA4939@dell>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.3.116.65, 10.4.195.30]
+Thread-Topic: GFS2: Pull request (merge window)
+Thread-Index: 0Iezq9bBFeaQ2u2R3pAfakhZgZC+Sg==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 24 Oct 2018 16:41:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
+----- Original Message -----
+> On Tue, Oct 23, 2018 at 8:26 PM Bob Peterson <rpeterso@redhat.com> wrote:
+> >
+> > Please consider pulling the following changes for the GFS2 file system.
+> 
+> Pulled.
+> 
+> Just FYI - I end up editing your notes to look a bit more like most
+> other people send them. No need to change anything, I just thought I'd
+> mention it.
+> 
+>             Linus
+> 
+Thanks. In the future I'll try to make future pull requests more like the others.
 
-On 10/24/2018 12:25 AM, Lee Jones wrote:
-> On Tue, 18 Sep 2018, Jae Hyun Yoo wrote:
-> 
->> +Required properties:
->> +- compatible : Should be "intel,peci-client".
->> +- reg        : Should contain address of a client CPU. Address range of CPU
->> +	       clients starts from 0x30 based on PECI specification.
-> 
-> Nit: "start"
-> 
-> Would be better worded:
-> 
-> "According to the PECI specification client addresses start from 0x30."
-> 
+Regards,
 
-Yes, that would be better. Will fix it like you suggested.
-
-Thanks for the review!
-
-Jae
+Bob Peterson
