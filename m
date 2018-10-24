@@ -2,179 +2,165 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 916FCC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A222C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40E382081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:34:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AA862054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:39:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3GHKc9s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40E382081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="B50CbS61"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AA862054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeJXPAs (ORCPT
+        id S1727010AbeJXPGj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 11:00:48 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:34110 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbeJXPAs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 11:00:48 -0400
-Received: by mail-it1-f195.google.com with SMTP id e81-v6so3402975itc.1;
-        Tue, 23 Oct 2018 23:34:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=+UvNXmiZwtZyHVA4XEPF2n/w7DO1Fy/It4bFEBqI7PM=;
-        b=Z3GHKc9s6uissUYlV5Yg6paumpDIHBGz8aLG38EecIgXx7AtVTFNlGdQYOjCccjB22
-         XVq+GHprDBqjkawOKnlgoe9QW0YaN1/3WDaUxlvNTEDfEwu4DCEOPbl5dsUSY7M2T1dR
-         xbpeSqx2BRR9oAdmYJ4xH8UIg9BXt4Pbgo5YjJl9v8FIX2g4jZoC0vreKMcK8gANpNwy
-         HI8H2CNE2TEDnf5lZlbvW0mQu3wcz33+zHDN2rBAfAlBAkLl0pbN3KmxbuzkrkCpYS4e
-         SVUcmK1pRXdoAXYG3rUEiGk0qpemXm7e+eitNTy7ba8kRNVVw3Bh9XzZWlMZ6TINTEZs
-         3idw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=+UvNXmiZwtZyHVA4XEPF2n/w7DO1Fy/It4bFEBqI7PM=;
-        b=GA0vRmtPkzUGyS5WrUNtCq6mT1ZJrA73zWMOsZR73hdhov4CimFOBC+l+baurezjsv
-         vGSxMwTfimQgsETXgOY/dSV4sB1Zi/DnMgoPBb7Mz0P2vUlE5457sbH3OYkVWitRaGkr
-         J8yt2PKNt5O1iB4+G7w7dvyirZrNDJRKToyUy9W2rz9mBvtm68LLw/DUG4IygylaqDsM
-         0SpW2frizTOWsHycmwO8hOCxDD/dHrJcGSr4lq70R0M3vaaVp+ErklN/Hno27iJDJBfL
-         iVDN7QH/bXHCc3VVcPwhaF/fv3EmiH+StSCcAEhQeC0xGtaw7mfey5/hqbZ9AA6J5BAT
-         +TRw==
-X-Gm-Message-State: AGRZ1gIDYIZXwlgNkDSJkGkdPwubixNQhPSpca2qJMnQfUznp3QYyPpu
-        6w5P8eoOJRR9lNV6n0A/u1km7SIa/jvzo5gN35Y=
-X-Google-Smtp-Source: AJdET5dge/ogJJQ026r/+SwdUnptzu4Y99hrPKmaBjJa3BHFRwWDXWl7Cd2AVA0XnTTg1Z3dxofiY9E1xMqvHXvFlcc=
-X-Received: by 2002:a24:9790:: with SMTP id k138-v6mr717864ite.69.1540362846432;
- Tue, 23 Oct 2018 23:34:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAEAjamtML1yMLL0DsV5JkD1H6P0Yg19F2DVq+_c-u09RaCKuDw@mail.gmail.com>
- <fcad3085-6801-71f9-b2cf-4c1702889d70@kernel.dk> <CAEAjamtJrbLZyN+f97Y+LOMbogveYNBdxM-pVvfqUMhaGsH2uw@mail.gmail.com>
-In-Reply-To: <CAEAjamtJrbLZyN+f97Y+LOMbogveYNBdxM-pVvfqUMhaGsH2uw@mail.gmail.com>
-From:   Kyungtae Kim <kt0755@gmail.com>
-Date:   Wed, 24 Oct 2018 02:33:55 -0400
-Message-ID: <CAEAjams3Y4PE-yDP0FyipCAohOepSF9WgXw3h_CEd1YW+mjS0g@mail.gmail.com>
-Subject: Re: UBSAN: Undefined behaviour in drivers/block/floppy.c:1495:32
-To:     axboe@kernel.dk
-Cc:     jikos@kernel.org, Byoungyoung Lee <lifeasageek@gmail.com>,
-        DaeRyong Jeong <threeearcat@gmail.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 24 Oct 2018 11:06:39 -0400
+Received: from mail-eopbgr80072.outbound.protection.outlook.com ([40.107.8.72]:10798
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726338AbeJXPGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 11:06:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9iOH2xYFSDci1dD5Z/weJC4BmWvwFY2o00is33qxqjE=;
+ b=B50CbS61PkltOy+OCoIwJVTZfVZIP/gISUU0Xe0MrzfipbqUQsLqd4xE0qtFu+C0hYOCUk7JOitXM/DWhPqkeWinpQy4WikSJbwdgAn2NfPawd6sumA84j1UVitwDhNMwR4zAi30066xECK0r87VtyFtILEf1p4nyQ9utFNhS54=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3644.eurprd04.prod.outlook.com (52.134.70.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1250.30; Wed, 24 Oct 2018 06:39:54 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::ddfd:3571:1813:2ee4]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::ddfd:3571:1813:2ee4%5]) with mapi id 15.20.1273.019; Wed, 24 Oct 2018
+ 06:39:53 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH] thermal: imx: fix for dependency on cpu-freq
+Thread-Topic: [PATCH] thermal: imx: fix for dependency on cpu-freq
+Thread-Index: AQHUa2Ref+fMFTxEzkOrPUZd06/1Xg==
+Date:   Wed, 24 Oct 2018 06:39:53 +0000
+Message-ID: <1540362909-32481-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR01CA0014.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:92::26) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3644;6:S7DA33ppyDexCK+Uu4HIss6R8XAoN3WwL5tRN+Y/zU1Ss9VztyrObF1DfzExK3uOR1QOT11nTvwf7E4v4tzm3nfIOZaXlOCWYifggDyzFJVP6Bq030etNp6M0FYzFN/Zjhz1UWyh8tXqpcUpWTff3888zjuOTXC/+k3x6782h0bzCVO2UWNpu04ZQ/Z3xl3lpC91OJW+IvODB496mOnvuSu+fh/n7K9E37e0EddGPORlGaPZXMa6KaiQv8aXv0CyT8enC8HSr4Ts3KgDjxumKc+MQ+yvbBx1x0miw0VLW/ktSrg7IwnRiuU/PN9ltjC6UTT8coSKxM+KdrRLgQUXe+CKig0X0El1u7INPbBeRPqFUyxyORygxMqGGmgrBy8ymSUMceVE34R2RmB4Dds5eDxm3QAm8YYgiWYoqNNE+Zjhj1fnPfpfEWRYU4JXPGR/rdY3Rny3p75KKo/vCbDGrA==;5:wKTPN/Edy5aCiCjtQBcOKzw73bO/wx4d34n5NrXK6HdYhTa7Djz0uonbHqrYmbnrb5KSV7TZvmbfsJAWwHD5YWKSrWwdtBzE6hhVuQ/fiBZlvZRLxnlnrZR4OPWm8Sm/3pSV3lCVxwyllEskBz62lDnqOmYb6VOle5ab7hNClFA=;7:0GDDwen98QSBKZpCbP7enncEtiyl7I1S75NaGCIGrOdR0Gy6fNkPFlhMaYJRBs69iJj603Se8P9h7g2VenID7fkbmzZh2rei83WnKryptJvjrVrouBjDbg0y962QOot6je3+OGZfCktJpRLMDyzFjJHjJ7xT6A2vqGYTHcVM7zaM0HOU4VITpQ1qiKCGKpRchoanvQDaNwedvtnghk3w9GKICyW43/R9zpXduw5TZr0hv7ebjtLOI2Ltho9kmsqt
+x-ms-office365-filtering-correlation-id: 763c68a8-5b4f-407e-0c00-08d6397b8136
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3644;
+x-ms-traffictypediagnostic: DB3PR0402MB3644:
+x-microsoft-antispam-prvs: <DB3PR0402MB364496EE63BF843E0BFE84B5F5F60@DB3PR0402MB3644.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(72170088055959)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231355)(944501410)(52105095)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3644;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3644;
+x-forefront-prvs: 083526BF8A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(366004)(39860400002)(396003)(189003)(199004)(36756003)(39060400002)(97736004)(66066001)(2201001)(14454004)(2501003)(68736007)(478600001)(6512007)(86362001)(53936002)(476003)(2616005)(256004)(25786009)(14444005)(50226002)(71190400001)(8936002)(71200400001)(4326008)(486006)(7736002)(1857600001)(5660300001)(110136005)(186003)(102836004)(99286004)(81166006)(81156014)(316002)(6486002)(6346003)(6116002)(6506007)(386003)(6436002)(305945005)(3846002)(2900100001)(106356001)(26005)(2906002)(5250100002)(8676002)(105586002)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3644;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-microsoft-antispam-message-info: wgrnVvL90+19gb2GZkoUww1T4vH9HJYwz1/54mRiw5He7b6OMwIOCjFQKfqFNGytVPWzP/ProJ9B95rU4gRi5DMQwYSQ3GoUp2nJLZVW7/ZFW6dMs3kbbU7jqB5pkN2MGxJhczGtK7fXlon78E5pFvXQvs/8UiJP4e4BdV17yfZ2SSFSU8TUFJqotpH45Sbc8jUbc0mhqbgxBpE1QbZQEagBKaU/teEaz4VOJEP26V7DMLhNSarViRewRvu1MMAUUo4cB+FJh3BPU0Y3KEO+YWncrQinuUIUGIdSVsBZRoVP4TXFPH/vDdPPkEB0jRRJUVxXCiHEsIGMSAdJuwoLuQDCJaNbiBSkCEBAx3L+nho=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 763c68a8-5b4f-407e-0c00-08d6397b8136
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2018 06:39:53.7782
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3644
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Corrected.
+The thermal driver is a standalone driver for monitoring SoC temperature
+by enabling thermal sensor, so it can be enabled even when CONFIG_CPU_FREQ
+is NOT set. So remove the dependency with CPU_THERMAL.
 
+Add CONFIG_CPU_FREQ check for cpu-freq related operation in thermal
+driver to make thermal driver probe successfully when CONFIG_CPU_FREQ
+is NOT set.
 
-diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-index a8cfa01..41160a1 100644
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -3146,6 +3146,9 @@ static int raw_cmd_copyin(int cmd, void __user *param=
-,
-                         */
-                return -EINVAL;
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/thermal/Kconfig       | 2 +-
+ drivers/thermal/imx_thermal.c | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-+       if (ptr->cmd_count > ARRAY_SIZE(ptr->cmd))
-+         return -EINVAL;
-+
-        for (i =3D 0; i < 16; i++)
-                ptr->reply[i] =3D 0;
-        ptr->resultcode =3D 0;
+diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+index 1775d44..c8a6352 100644
+--- a/drivers/thermal/Kconfig
++++ b/drivers/thermal/Kconfig
+@@ -212,7 +212,7 @@ config HISI_THERMAL
+=20
+ config IMX_THERMAL
+ 	tristate "Temperature sensor driver for Freescale i.MX SoCs"
+-	depends on (ARCH_MXC && CPU_THERMAL) || COMPILE_TEST
++	depends on ARCH_MXC || COMPILE_TEST
+ 	depends on NVMEM || !NVMEM
+ 	depends on MFD_SYSCON
+ 	depends on OF
+diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
+index 1566154..87386d1 100644
+--- a/drivers/thermal/imx_thermal.c
++++ b/drivers/thermal/imx_thermal.c
+@@ -648,6 +648,7 @@ static const struct of_device_id of_imx_thermal_match[]=
+ =3D {
+ };
+ MODULE_DEVICE_TABLE(of, of_imx_thermal_match);
+=20
++#ifdef CONFIG_CPU_FREQ
+ /*
+  * Create cooling device in case no #cooling-cells property is available i=
+n
+  * CPU node
+@@ -668,6 +669,7 @@ static int imx_thermal_register_legacy_cooling(struct i=
+mx_thermal_data *data)
+=20
+ 	return 0;
+ }
++#endif
+=20
+ static int imx_thermal_probe(struct platform_device *pdev)
+ {
+@@ -743,6 +745,7 @@ static int imx_thermal_probe(struct platform_device *pd=
+ev)
+ 	regmap_write(map, data->socdata->sensor_ctrl + REG_SET,
+ 		     data->socdata->power_down_mask);
+=20
++#ifdef CONFIG_CPU_FREQ
+ 	data->policy =3D cpufreq_cpu_get(0);
+ 	if (!data->policy) {
+ 		pr_debug("%s: CPUFreq policy not found\n", __func__);
+@@ -755,6 +758,7 @@ static int imx_thermal_probe(struct platform_device *pd=
+ev)
+ 			"failed to register cpufreq cooling device: %d\n", ret);
+ 		return ret;
+ 	}
++#endif
+=20
+ 	data->thermal_clk =3D devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(data->thermal_clk)) {
+--=20
+2.7.4
 
-
-Thanks,
-Kyungtae Kim
-On Wed, Oct 24, 2018 at 2:29 AM Kyungtae Kim <kt0755@gmail.com> wrote:
->
-> Thanks. The following should work.
->
-> diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-> index a8cfa01..41160a1 100644
-> --- a/drivers/block/floppy.c
-> +++ b/drivers/block/floppy.c
-> @@ -3146,6 +3146,9 @@ static int raw_cmd_copyin(int cmd, void __user *par=
-am,
->                          */
->                 return -EINVAL;
->
-> +       if (ptr->cmd_count > ARRAY_SIZE(ptr->cmd))
-> +         return -EINVAL;
-> +
->         for (i =3D 0; i < 16; i++)
->                 ptr->reply[i] =3D 0;
->         ptr->resultcode =3D 0;
-> On Tue, Oct 23, 2018 at 6:01 AM Jens Axboe <axboe@kernel.dk> wrote:
-> >
-> > On 10/22/18 5:20 PM, Kyungtae Kim wrote:
-> > > We report a bug found in v4.19-rc2 (v4.19-rc8 as well):
-> > > UBSAN: Undefined behaviour in drivers/block/floppy.c:1495:32
-> > >
-> > > kernel config: https://kt0755.github.io/etc/config_v2-4.19
-> > > repro: https://kt0755.github.io/etc/repro.b4076.c
-> > >
-> > > Analysis:
-> > >
-> > > struct floppy_raw_cmd {
-> > >    unsigned char cmd_count;
-> > >    unsigned char cmd[16];
-> > >   ...
-> > > };
-> > >
-> > > for (i=3D0; i<raw_cmd->cmd_count; i++)
-> > >     output_byte(raw_cmd->cmd[i])
-> > >
-> > > In driver/block/floppy.c:1495, the code snippet above is trying to
-> > > write some bytes to the floppy disk controller, depending on "cmd_cou=
-nt".
-> > > As you see "struct floppy_raw_cmd" above, the size of array =E2=80=9C=
-cmd=E2=80=9D is
-> > > fixed as 16.
-> > > The thing is, there is no boundary check for the index of array "cmd"
-> > > when this is used. Besides, "cmd_count" can be manipulated by raw_cmd=
-_ioctl
-> > > which is derived from ioctl system call.
-> > > We observed that cmd_count is set at line 2540 (or 2111), but that is
-> > > after such a bug arose in our experiment. So by manipulating system c=
-all ioctl,
-> > > user program can have illegitimate memory access.
-> > >
-> > > The following is a simple patch to stop this. (This might not be the
-> > > best.)
-> > >
-> > > diff --git a/linux-4.19-rc2/drivers/block/floppy.c
-> > > b/linux-4.19-rc2/drivers/block/floppy.c
-> > > index f2b6f4d..a3610c9 100644
-> > > --- a/linux-4.19-rc2/drivers/block/floppy.c
-> > > +++ b/linux-4.19-rc2/drivers/block/floppy.c
-> > > @@ -3149,6 +3149,8 @@ static int raw_cmd_copyin(int cmd, void __user =
-*param,
-> > >                          */
-> > >                 return -EINVAL;
-> > >
-> > > +       if (ptr->cmd_count > ARRAY_SIZE(ptr->cmd)) {
-> > > +               return -EINVAL;
-> > > +
-> > >         for (i =3D 0; i < 16; i++)
-> > >                 ptr->reply[i] =3D 0;
-> > >         ptr->resultcode =3D 0;
-> >
-> > I think that's a decent way to fix it, but you probably want to
-> > test your patch - it doesn't compile. Send something you've
-> > tested that works.
-> >
-> > --
-> > Jens Axboe
-> >
