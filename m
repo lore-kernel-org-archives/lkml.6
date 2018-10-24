@@ -2,87 +2,81 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF49C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9AAC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1F9720833
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:49:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2bZyxEG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1F9720833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 831F52081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:50:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 831F52081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbeJXRQx (ORCPT
+        id S1727693AbeJXRRU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 13:16:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726720AbeJXRQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 13:16:53 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A0712082F;
-        Wed, 24 Oct 2018 08:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540370981;
-        bh=/r/uQVEgQJgOoCblGOZqP/08XrnHCSEfmo6FIoJhdng=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=Q2bZyxEG7PTTELFva0QXl3SXy/CzUrtT3WfnTxNC+48SO9TPQTkL0xf5vYb3OPAR1
-         5KsjDPmuNpEHGcKLOiG9GDpQUsEqipaRk/jpgcH41/1pm9NBqAR+/g6E74kIWJNpEI
-         OGozz6eCc7evpYfs085UXvGWo800r+Joo6M06A5c=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181023155035.9101-13-jagan@amarulasolutions.com>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>
-References: <20181023155035.9101-1-jagan@amarulasolutions.com>
- <20181023155035.9101-13-jagan@amarulasolutions.com>
-Message-ID: <154037098047.53599.11415144740017316303@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2 12/15] clk: sunxi-ng: a64: Add min and max rate for PLL_MIPI
-Date:   Wed, 24 Oct 2018 01:49:40 -0700
+        Wed, 24 Oct 2018 13:17:20 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36041 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbeJXRRU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 13:17:20 -0400
+Received: from 220-133-187-190.hinet-ip.hinet.net ([220.133.187.190] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1gFErd-0004NA-E5; Wed, 24 Oct 2018 08:50:06 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     arnd@arndb.de, gregkh@linuxfoundation.org
+Cc:     ulf.hansson@linaro.org, stern@rowland.harvard.edu,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH 0/4 v5] Keep rtsx_usb suspended when there's no card
+Date:   Wed, 24 Oct 2018 16:49:54 +0800
+Message-Id: <20181024084958.4627-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jagan Teki (2018-10-23 08:50:32)
-> A64 manual say PLL_MIPI rates are 500MHz to 1.4GHz, but
-> using minimum 500MHz can't release the clock and which
-> is not working.
-> =
+Hi,
 
-> So use working minimum rate as 300MHz which is tested on
-> Bananapi DSI panel.
+This is based on Ulf's work [1] [2].
 
-That's weird, but OK.
+This patch series can keep rtsx_usb suspended, to save ~0.5W on Intel
+platforms and ~1.5W on AMD platforms.
 
-> =
+[1] https://patchwork.kernel.org/patch/10440583/
+[2] https://patchwork.kernel.org/patch/10445725/
 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
+Kai-Heng Feng (4):
+  misc: rtsx_usb: Use USB remote wakeup signaling for card insertion
+    detection
+  memstick: Prevent memstick host from getting runtime suspended during
+    card detection
+  memstick: rtsx_usb_ms: Use ms_dev() helper
+  memstick: rtsx_usb_ms: Support runtime power management
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+v5: Corretly use system suspend/resume and runtime suspend/resume callback.
+    Prevent runtime callbacks get call during system suspend.
+
+v4: Use pm_runtime_put() in memstick_check().
+
+v3: Skip parent device check in rtsx_usb_resume_child().
+    Remove dev_dbg() if it only prints function name.
+    Use ms_dev() helper at more places.
+    Remove const qualifier for UNIVERSAL_DEV_PM_OPS.
+
+v2: Resend to linux-usb and LKML.
+
+ drivers/memstick/core/memstick.c    |   4 +
+ drivers/memstick/host/rtsx_usb_ms.c | 173 +++++++++++++++++-----------
+ drivers/misc/cardreader/rtsx_usb.c  |   8 ++
+ 3 files changed, 117 insertions(+), 68 deletions(-)
+
+-- 
+2.17.1
 
