@@ -2,102 +2,143 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EE4ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46935ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:43:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A42D82075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:42:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A42D82075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EE10B20831
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:43:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWfX7h2B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE10B20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbeJYEL0 (ORCPT
+        id S1727199AbeJYEMr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 00:11:26 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53916 "EHLO mx1.redhat.com"
+        Thu, 25 Oct 2018 00:12:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725870AbeJYEL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 00:11:26 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725994AbeJYEMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 00:12:46 -0400
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 974B9308213D;
-        Wed, 24 Oct 2018 19:42:03 +0000 (UTC)
-Received: from loberhel74.redhat.com (ovpn-121-56.rdu2.redhat.com [10.10.121.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DD9839F73;
-        Wed, 24 Oct 2018 19:42:01 +0000 (UTC)
-From:   Laurence Oberman <loberman@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     rdunlap@infradead.org, tglx@linutronix.de,
-        Laurence Oberman <loberman@redhat.com>
-Subject: [PATCH] V6 init/main.c Enable watchdog_thresh control from kernel  line To: loberman@redhat.com
-Date:   Wed, 24 Oct 2018 15:41:59 -0400
-Message-Id: <1540410119-21120-1-git-send-email-loberman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 24 Oct 2018 19:42:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E984820838
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 19:43:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540410203;
+        bh=/7S5W1p4mQlQiMVukMxG2Hl5Z1udO4DYAFseVZHZJTc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=aWfX7h2B7Fpf7kjIiQk3vb2MCq57vk6JKrAwcB3dB/Eaqp0wemJFhU0CYp18g9Kk1
+         +KvC7gmJNQOtu/MsPE7o0zqPluXA7pgv50FmRA/Hi/vJIDTqvnyKPM7L3wvV3E4iVd
+         1dmp1mgflM7ord7BJfx3dFItJtf0yLCYIrsN/1xc=
+Received: by mail-wm1-f42.google.com with SMTP id b14-v6so3997997wmj.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 12:43:22 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gLVZ+bBBpcTxLZpbWzDH98O3pX5sEKz1NKKoUMEknSullo50/jE
+        o8HIlp/ZeUoHWJ5lLqTI+UPT7B+FVAcpZtVq3WAVyA==
+X-Google-Smtp-Source: AJdET5d1NuGc2p0AFI2jg0S9BOPZ9tUl2EWLGCAVf93p6Niz3dSA1/2va9CoBsVf77sN8/GnCPJl+robUlKAumeHFrA=
+X-Received: by 2002:a1c:f312:: with SMTP id q18-v6mr4007453wmq.14.1540410201338;
+ Wed, 24 Oct 2018 12:43:21 -0700 (PDT)
+MIME-Version: 1.0
+References: <1537312139-5580-1-git-send-email-chang.seok.bae@intel.com>
+ <1537312139-5580-3-git-send-email-chang.seok.bae@intel.com>
+ <CALCETrUr3DGwW8y6y_cffEKWO_KQs1J2_UvTBZsbdAzES_f-Ag@mail.gmail.com>
+ <C9BB696F3A938947B10DCAD29FAB8FFA66CCBBE3@CRSMSX101.amr.corp.intel.com>
+ <CALCETrWMMQDa4T0m34GfkkYBxqwGUOg96aeWgiANRv9tCvQVRw@mail.gmail.com> <C9BB696F3A938947B10DCAD29FAB8FFA66CCBC7E@CRSMSX101.amr.corp.intel.com>
+In-Reply-To: <C9BB696F3A938947B10DCAD29FAB8FFA66CCBC7E@CRSMSX101.amr.corp.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 24 Oct 2018 12:43:09 -0700
+X-Gmail-Original-Message-ID: <CALCETrV=dJ-3CGM3oB7xgNYsKE_Tbpu5i7H4qwKpuNmEsjyL_A@mail.gmail.com>
+Message-ID: <CALCETrV=dJ-3CGM3oB7xgNYsKE_Tbpu5i7H4qwKpuNmEsjyL_A@mail.gmail.com>
+Subject: Re: [regression in -rc1] Re: [PATCH v6 2/8] x86/fsgsbase/64:
+ Introduce FS/GS base helper functions
+To:     "Bae, Chang Seok" <chang.seok.bae@intel.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both graphics and serial consoles are exposed to hard lockups
-when handling a large amount of messaging. The kernel watchdog_thresh
-parameter up to now has not been available to be set on the kernel line for
-early boot.
-This patch allows the setting of watchdog_thresh to be increased
-when needed to avoid the hard lockups in the console code.
+On Wed, Oct 24, 2018 at 12:29 PM Bae, Chang Seok
+<chang.seok.bae@intel.com> wrote:
+>
+> On Wed, Oct 24, 2018 at 12:22 PM Andy Lutomirski <luto@kernel.org>
+> > On Wed, Oct 24, 2018 at 12:13 PM Bae, Chang Seok
+> > <chang.seok.bae@intel.com> wrote:
+> > >
+> > > On Tue, Sep 18, 2018 at 12:02 PM Andy Lutomirski <luto@kernel.org>
+> > > > On Tue, Sep 18, 2018 at 4:09 PM Chang S. Bae
+> > > > <chang.seok.bae@intel.com>
+> > > > wrote:
+> > > > >
+> > > > > With new helpers, FS/GS base access is centralized.
+> > > > > Eventually, when FSGSBASE instruction enabled, it will be faster.
+> > > >
+> > > > Sorry for not catching this during review, but:
+> > > >
+> > > > > +void x86_fsbase_write_cpu(unsigned long fsbase) {
+> > > > > +       /*
+> > > > > +        * Set the selector to 0 as a notion, that the segment base is
+> > > > > +        * overwritten, which will be checked for skipping the segment load
+> > > > > +        * during context switch.
+> > > > > +        */
+> > > > > +       loadseg(FS, 0);
+> > > >
+> > > > ^^^
+> > > >
+> > > > what?
+> > > >
+> > > > > +       wrmsrl(MSR_FS_BASE, fsbase); }
+> > > >
+> > > > I don't understand what the comment is trying to say, but the sole
+> > > > caller so far of this function is x86_gsbase_write_task(), and the code looks
+> > incorrect.
+> > > >
+> > > > Ingo, I think we need to address this during this merge window,
+> > > > probably by removing the comment and the loadseg() call (and the
+> > > > same for gsbase...inactive).  But first, Chang, can you explain what
+> > > > exactly your intent is here?
+> > >
+> > > It's coming from do_arch_prctl_64(). If you think it really makes
+> > > confusion in x86_fsbase_write_cpu(), how about moving it to
+> > x86_fsbase_write_task()?
+> >
+> > Why should ..write_task() magically change the index but only if it's writing
+> > current?
+> >
+> > I think you should move it all the way out to the caller
+> > (do_arch_prctl_64()?) and we can see if it makes sense there.
+> >
+>
+> Okay. x86_fsbase_write_task() doesn't make sense.
+> Then, it should rollback that helper and call x86_fsbase_write_cpu() only
+> from ptrace. Same for gsbase. Sounds okay?
+>
 
-Signed-off-by: Laurence Oberman <loberman@redhat.com>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
----
- Documentation/admin-guide/kernel-parameters.txt |  7 +++++++
- init/main.c                                     | 11 +++++++++++
- 2 files changed, 18 insertions(+)
+I think x86_fsbase_write_task() makes plenty of sense, but I think
+that callers need to be aware that the effect of writing a nonzero
+fsbase *and* a nonzero fsindex is bizarre on non-FSGSBASE systems.  So
+that code should go in the callers.  The oddities involved have little
+to do with whether the caller is writing to current or to something
+else.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 4cdcd1a..102382f 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4932,6 +4932,13 @@
- 			or other driver-specific files in the
- 			Documentation/watchdog/ directory.
- 
-+	watchdog_thresh=
-+			This parameter allows early boot to change the
-+			value of the watchdog timeout threshold from the default
-+			of 10 seconds to avoid hard lockups.  Example:
-+			watchdog_thresh=30
-+			Default: 10
-+
- 	workqueue.watchdog_thresh=
- 			If CONFIG_WQ_WATCHDOG is configured, workqueue can
- 			warn stall conditions and dump internal state to
-diff --git a/init/main.c b/init/main.c
-index 1c3f902..d5511a9 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -1038,6 +1038,17 @@ static int __init set_debug_rodata(char *str)
- __setup("rodata=", set_debug_rodata);
- #endif
- 
-+#ifdef CONFIG_LOCKUP_DETECTOR
-+extern int watchdog_thresh;
-+
-+static int __init watchdog_thresh_setup(char *str)
-+{
-+	get_option(&str, &watchdog_thresh);
-+	return 1;
-+}
-+__setup("watchdog_thresh=", watchdog_thresh_setup);
-+#endif
-+
- #ifdef CONFIG_STRICT_KERNEL_RWX
- static void mark_readonly(void)
- {
--- 
-1.8.3.1
+Arguably the code should be entirely split out into the code that
+writes current (arch_prctl()) and the code that writes a stopped task
+(ptrace).  I don't think there are any code paths that genuinely can
+write either.
 
+--Andy
+
+--Andy
