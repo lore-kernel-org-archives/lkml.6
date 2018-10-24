@@ -2,184 +2,92 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D07CC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6086CC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB1182082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:07:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2k0TtMo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB1182082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2387F207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:08:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2387F207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbeJXXfm (ORCPT
+        id S1726867AbeJXXhK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:35:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40152 "EHLO mail.kernel.org"
+        Wed, 24 Oct 2018 19:37:10 -0400
+Received: from mga06.intel.com ([134.134.136.31]:10898 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726414AbeJXXfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:35:42 -0400
-Received: from linux-8ccs (ip5f5adbf3.dynamic.kabel-deutschland.de [95.90.219.243])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C9F2207DD;
-        Wed, 24 Oct 2018 15:07:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540393633;
-        bh=WwOBXOwgr297l+RWsTyqJULARk5/y8fdD0bCYYLlECE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i2k0TtMomizu5+xtvT3as/BmHXvNPYVS1yHuFMg/3gfpIy5LZ5xFh36I/vNQalJvS
-         R5opRNXCktXi8X11V2h1uTjAjFtgBhGLJWyE0c+wG/xqigzLd979tjgIc60d9jZtMM
-         +8sHAgf8/5Ru0VWPtGfcHTREjs84ZJ0X2TS3Z0KQ=
-Date:   Wed, 24 Oct 2018 17:07:06 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "arjan@linux.intel.com" <arjan@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>
-Subject: Re: [PATCH RFC v3 0/3] Rlimit for module space
-Message-ID: <20181024150706.jewcclhhh756tupn@linux-8ccs>
-References: <20181019204723.3903-1-rick.p.edgecombe@intel.com>
- <CAKv+Gu_AgPv2o4=U0-7pnpgtSufEobnta8oKhhGfCdCxM82B5Q@mail.gmail.com>
- <6b1017c450d163539d2b974657baaaf697f0a138.camel@intel.com>
- <CAKv+Gu-Rk-SQVOQ63L3DkF3=EVik3pHXzpNp5r5TrgDajTM_iQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu-Rk-SQVOQ63L3DkF3=EVik3pHXzpNp5r5TrgDajTM_iQ@mail.gmail.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.16-default x86_64
-User-Agent: NeoMutt/20170912 (1.9.0)
+        id S1726414AbeJXXhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 19:37:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 08:08:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,420,1534834800"; 
+   d="scan'208";a="102923006"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga002.jf.intel.com with ESMTP; 24 Oct 2018 08:08:41 -0700
+Message-ID: <40b17814b2a65531c5059e52a61c8f41b9603904.camel@linux.intel.com>
+Subject: Re: [mm PATCH v3 4/6] mm: Move hot-plug specific memory init into
+ separate functions and optimize
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
+        pavel.tatashin@microsoft.com, dave.jiang@intel.com,
+        linux-kernel@vger.kernel.org, willy@infradead.org,
+        davem@davemloft.net, yi.z.zhang@linux.intel.com,
+        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com, vbabka@suse.cz,
+        sparclinux@vger.kernel.org, dan.j.williams@intel.com,
+        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
+        mingo@kernel.org, kirill.shutemov@linux.intel.com
+Date:   Wed, 24 Oct 2018 08:08:41 -0700
+In-Reply-To: <20181024123640.GF18839@dhcp22.suse.cz>
+References: <20181015202456.2171.88406.stgit@localhost.localdomain>
+         <20181015202716.2171.7284.stgit@localhost.localdomain>
+         <20181017091824.GL18839@dhcp22.suse.cz>
+         <d9011108-4099-58dc-8b8c-110c5f2a3674@linux.intel.com>
+         <20181024123640.GF18839@dhcp22.suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Ard Biesheuvel [23/10/18 08:54 -0300]:
->On 22 October 2018 at 20:06, Edgecombe, Rick P
-><rick.p.edgecombe@intel.com> wrote:
->> On Sat, 2018-10-20 at 19:20 +0200, Ard Biesheuvel wrote:
->>> Hi Rick,
->>>
->>> On 19 October 2018 at 22:47, Rick Edgecombe <rick.p.edgecombe@intel.com>
->>> wrote:
->>> > If BPF JIT is on, there is no effective limit to prevent filling the entire
->>> > module space with JITed e/BPF filters.
->>>
->>> Why do BPF filters use the module space, and does this reason apply to
->>> all architectures?
->>>
->>> On arm64, we already support loading plain modules far away from the
->>> core kernel (i.e. out of range for ordinary relative jump/calll
->>> instructions), and so I'd expect BPF to be able to deal with this
->>> already as well. So for arm64, I wonder why an ordinary vmalloc_exec()
->>> wouldn't be more appropriate.
->> AFAIK, it's like you said about relative instruction limits, but also because
->> some predictors don't predict past a certain distance. So performance as well.
->> Not sure the reasons for each arch, or if they all apply for BPF JIT. There seem
->> to be 8 by my count, that have a dedicated module space for some reason.
->>
->>> So before refactoring the module alloc/free routines to accommodate
->>> BPF, I'd like to take one step back and assess whether it wouldn't be
->>> more appropriate to have a separate bpf_alloc/free API, which could be
->>> totally separate from module alloc/free if the arch permits it.
->>>
->> I am not a BPF JIT expert unfortunately, hopefully someone more authoritative
->> will chime in. I only ran into this because I was trying to increase
->> randomization for the module space and wanted to find out how many allocations
->> needed to be supported.
->>
->> I'd guess though, that BPF JIT is just assuming that there will be some arch
->> specific constraints about where text can be placed optimally and they would
->> already be taken into account in the module space allocator.
->>
->> If there are no constraints for some arch, I'd wonder why not just update its
->> module_alloc to use the whole space available. What exactly are the constraints
->> for arm64 for normal modules?
->>
->
->Relative branches and the interactions with KAsan.
->
->We just fixed something similar in the kprobes code: it was using
->RWX-mapped module memory to store kprobed instructions, and we
->replaced that with a simple vmalloc_exec() [and code to remap it
->read-only], which was possible given that relative branches are always
->emulated by arm64 kprobes.
->
->So it depends on whether BPF code needs to be in relative branching
->range from the calling code, and whether the BPF code itself is
->emitted using relative branches into other parts of the code.
->
->> It seems fine to me for architectures to have the option of solving this a
->> different way. If potentially the rlimit ends up being the best solution for
->> some architectures though, do you think this refactor (pretty close to just a
->> name change) is that intrusive?
->>
->> I guess it could be just a BPF JIT per user limit and not touch module space,
->> but I thought the module space limit was a more general solution as that is the
->> actual limited resource.
->>
->
->I think it is wrong to conflate the two things. Limiting the number of
->BPF allocations and the limiting number of module allocations are two
->separate things, and the fact that BPF reuses module_alloc() out of
->convenience does not mean a single rlimit for both is appropriate.
+On Wed, 2018-10-24 at 14:36 +0200, Michal Hocko wrote:
+> On Wed 17-10-18 08:26:20, Alexander Duyck wrote:
+> [...]
+> > With that said I am also wondering if a possible solution to the
+> > complaints
+> > you had would be to look at just exporting the __init_pageblock
+> > function
+> > later and moving the call to memmap_init_zone_device out to the
+> > memremap or
+> > hotplug code when Dan gets the refactoring for HMM and memremap all
+> > sorted
+> > out.
+> 
+> Why cannot we simply provide a constructor for each page by the
+> caller if there are special requirements? we currently have alt_map
+> to do struct page allocation but nothing really prevents to make it
+> more generic and control both allocation and initialization whatever
+> suits a specific usecase. I really do not want make special cases
+> here and there.
 
-Hm, I think Ard has a good point. AFAIK, and correct me if I'm wrong,
-users of module_alloc() i.e. kprobes, ftrace, bpf, seem to use it
-because it is an easy way to obtain executable kernel memory (and
-depending on the needs of the architecture, being additionally
-reachable via relative branches) during runtime. The side effect is
-that all these users share the "module" memory space, even though this
-memory region is not exclusively used by modules (well, personally I
-think it technically should be, because seeing module_alloc() usage
-outside of the module loader is kind of a misuse of the module API and
-it's confusing for people who don't know the reason behind its usage
-outside of the module loader).
+The advantage to the current __init_pageblock function is that we end
+up constructing everything we are going to write outside of the main
+loop and then are focused only on init.
 
-Right now I'm not sure if it makes sense to impose a blanket limit on
-all module_alloc() allocations when the real motivation behind the
-rlimit is related to BPF, i.e., to stop unprivileged users from
-hogging up all the vmalloc space for modules with JITed BPF filters.
-So the rlimit has more to do with limiting the memory usage of BPF
-filters than it has to do with modules themselves.
+If we end up having to call a per page constructor that is going to
+slow things down. For example just that reserved bit setting was adding
+something like 4 seconds to the init time for the system. By allowing
+it to be configured as a part of the flags outside of the loop I was
+able to avoid taking that performance hit.
 
-I think Ard's suggestion of having a separate bpf_alloc/free API makes
-a lot of sense if we want to keep track of bpf-related allocations
-(and then the rlimit would be enforced for those). Maybe part of the
-module mapping space could be carved out for bpf filters (e.g. have
-BPF_VADDR, BPF_VSIZE, etc like how we have it for modules), or
-continue sharing the region but explicitly define a separate bpf_alloc
-API, depending on an architecture's needs. What do people think?
-
-Thanks,
-
-Jessica
+- Alex
 
