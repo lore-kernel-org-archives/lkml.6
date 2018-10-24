@@ -2,87 +2,143 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07710C7112C
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 590C8C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6312207DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:49:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AE8520824
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:49:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gBSaw3I7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6312207DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JwOM9aaX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AE8520824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727372AbeJXTQu (ORCPT
+        id S1727428AbeJXTR2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 15:16:50 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39536 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726913AbeJXTQu (ORCPT
+        Wed, 24 Oct 2018 15:17:28 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4912 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727204AbeJXTR2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 15:16:50 -0400
-Received: by mail-lj1-f193.google.com with SMTP id p1-v6so4296110ljg.6
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 03:49:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NjhJy2C/nhCp5K5exIPr0+iG29RUhRQdf03e9ezu1fs=;
-        b=gBSaw3I7jd1fjqCzFEJsk8Mqy5gaVU9+uJD6jxVsIXdQcyE4Ihc5eV6NJTF4is7xjT
-         OjcSjwQLwU8Ieug4JML6Z5isEHZFFv2dKfbvPmJ599/Ob+7Gq10PuuKCm7R6+qBp0q+q
-         6ayotGuv7IVj35Te+FuIHehp/sTrE3WYPdnao=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NjhJy2C/nhCp5K5exIPr0+iG29RUhRQdf03e9ezu1fs=;
-        b=qeAngGzsQQpXviJjU6GDEAiiFIHftLg+rCdhs6oHrYk8cQJONCV2WoCRVLJVBA963D
-         gBC+u1m45+KPPM+t/10hlh2p2E62e0ZE2TupuNWb+E8AbalJp6lldRfZiOghzS3PM8Eu
-         dh96Uf0VFd1EYNBijYO6/KGb/Chcno8aw9dBIsbqu7I+95KBx5dTKxPk9lYJ4P/47hgf
-         TVJuVmwXeqHO8W+f76a2RfBBQ6b/xzfRaZM6g/K34Zco0LwoE9F2zWiaCCSKh3Tqd4RB
-         7LvtfXHqGOXuWqPXaZc52DPiL+F4vxhq/EDPSqOrH4xblbUHp+2fhCJQpITO9uMvkOpB
-         EHpA==
-X-Gm-Message-State: AGRZ1gJhDiBWqT1AluAnEyKwNzQD2qfORnH0Z+vH0qQw20JtED0FERKd
-        gqryKousIFmxZvy5WkZYXsGBKWc+kLwvIJQJ
-X-Google-Smtp-Source: AJdET5cOzZeyzHxePOlpHaEr3Ag0SoGflb+At4bg+EQbFJ7Z5/JQ032ZVDiq7xD7hdqxJ+zEHohxyg==
-X-Received: by 2002:a2e:4751:: with SMTP id u78-v6mr1403119lja.72.1540378152250;
-        Wed, 24 Oct 2018 03:49:12 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id d2-v6sm640743lfc.11.2018.10.24.03.49.11
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 03:49:11 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id x22-v6so1111906ljc.10
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 03:49:11 -0700 (PDT)
-X-Received: by 2002:a2e:9584:: with SMTP id w4-v6mr1423488ljh.118.1540378150673;
- Wed, 24 Oct 2018 03:49:10 -0700 (PDT)
+        Wed, 24 Oct 2018 15:17:28 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bd04e450000>; Wed, 24 Oct 2018 03:49:41 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 24 Oct 2018 03:49:50 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 24 Oct 2018 03:49:50 -0700
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 24 Oct
+ 2018 10:49:48 +0000
+Subject: Re: [PATCH] mfd: tps6586x: Handle interrupts on suspend
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     Lee Jones <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+References: <1539955373-13735-1-git-send-email-jonathanh@nvidia.com>
+ <20181022095257.GD4014@ulmo> <366ad7c3-85e2-3526-1c0b-6d2fbde4c552@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <72b80285-d6ff-9cb9-3bcd-bb3d92006323@nvidia.com>
+Date:   Wed, 24 Oct 2018 11:49:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <CAHC9VhRHCOZL5WTwiyPQxknO2SAHCeDLuSJmkKWmYLYb4WFXng@mail.gmail.com>
-In-Reply-To: <CAHC9VhRHCOZL5WTwiyPQxknO2SAHCeDLuSJmkKWmYLYb4WFXng@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 24 Oct 2018 11:48:54 +0100
-X-Gmail-Original-Message-ID: <CAHk-=wjhfhKGWapO18bohQvkPtBB2ut1Rn+3x01CEtFzbPWKNQ@mail.gmail.com>
-Message-ID: <CAHk-=wjhfhKGWapO18bohQvkPtBB2ut1Rn+3x01CEtFzbPWKNQ@mail.gmail.com>
-Subject: Re: [GIT PULL] SELinux patches for v4.20
-To:     paul@paul-moore.com
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <366ad7c3-85e2-3526-1c0b-6d2fbde4c552@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1540378181; bh=EnfAEWo9Fyuonh30bnRjLQzNmU/poTnYKBGromKp3C0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=JwOM9aaXLJaCuyOFnbLojD+5E23rXhnGvDgYbMikHXV6EVodg8S2C4+4+51vpCXog
+         m+1IXwY2a/Y4tnyw1Kv6HTLL2BVTk7P+JDATcAd96jEQcbdg0AMoaiIsAWOwzMbj3/
+         yVhZBK79n8BgHJgZ4YI5eTK8YnBF+TebtikyADZ7Le6kayFF8Avf6JwTKTKoW5jaxZ
+         Tmkt+f+0uJ2gCbs0Qff8Gp8HQN1MXbEoTepqSS3M7dGElM4AeO2KNSAL1MYaXQrGDW
+         C/0yGRVW1sFzJkjvNMjTuQ6QvUqL9QlVIkPEfh1pxp8RTbWWmFuyrR7U2ySWPFpja5
+         s28G943P7SjFw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 1:55 AM Paul Moore <paul@paul-moore.com> wrote:
->
-> Three SELinux patches for v4.20, all fall under the bug-fix or
-> behave-better category, which is good.  All three have pretty good
-> descriptions too, which is even better.  Please merge this for v4.20.
 
-Pulled,
+On 22/10/2018 12:19, Dmitry Osipenko wrote:
+> On 10/22/18 12:52 PM, Thierry Reding wrote:
+>> On Fri, Oct 19, 2018 at 02:22:53PM +0100, Jon Hunter wrote:
+>>> From: Jonathan Hunter <jonathanh@nvidia.com>
+>>>
+>>> The tps6586x driver creates an irqchip that is used by its various child
+>>> devices for managing interrupts. The tps6586x-rtc device is one of its
+>>> children that uses the tps6586x irqchip. When using the tps6586x-rtc as
+>>> a wake-up device from suspend, the following is seen:
+>>>
+>>>  PM: Syncing filesystems ... done.
+>>>  Freezing user space processes ... (elapsed 0.001 seconds) done.
+>>>  OOM killer disabled.
+>>>  Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
+>>>  Disabling non-boot CPUs ...
+>>>  Entering suspend state LP1
+>>>  Enabling non-boot CPUs ...
+>>>  CPU1 is up
+>>>  tps6586x 3-0034: failed to read interrupt status
+>>>  tps6586x 3-0034: failed to read interrupt status
+>>>
+>>> The reason why the tps6586x interrupt status cannot be read is because
+>>> the tps6586x interrupt is not masked during suspend and when the
+>>> tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
+>>> seen before the i2c controller has been resumed in order to read the
+>>> tps6586x interrupt status.
+>>>
+>>> The tps6586x-rtc driver sets it's interrupt as a wake-up source during
+>>> suspend, which gets propagated to the parent tps6586x interrupt.
+>>> However, the tps6586x-rtc driver cannot disable it's interrupt during
+>>> suspend otherwise we would never be woken up and so the tps6586x must
+>>> disable it's interrupt instead.
+>>>
+>>> Prevent the tps6586x interrupt handler from executing on exiting suspend
+>>> before the i2c controller has been resumed by disabling the tps6586x
+>>> interrupt on entering suspend and re-enabling it on resuming from
+>>> suspend.
+>>>
+>>> Cc: stable@vger.kernel.org
+>>>
+>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>> ---
+>>>  drivers/mfd/tps6586x.c | 24 ++++++++++++++++++++++++
+>>>  1 file changed, 24 insertions(+)
+>>
+>> So does this mean that the SPI interrupt for the PMIC can still be a
+>> wakeup source even if it is masked? This is slightly odd because now
+>> you're saying that this does work while it doesn't work for the RTC
+>> interrupt. So is this an implementation quirk of the LIC/GIC on Tegra
+>> which doesn't extend to the TPS6586x? Or am I missing something?
+> 
+> What is the expected behaviour of IRQ disabling? Should it disable wakeup ability or only mask IRQ handling?
 
-               Linus
+I believe only mask the interrupt. However, the caveat here could be if
+the parent interrupt controller actually supports wake-up. For Tegra it
+is the LIC that handles the wake-up.
+
+> Couple months ago disabling of IRQ was disabling the wakeup, now something has been changed in kernel and wakeup isn't getting disabled. So either there was a bug before that was fixed or there is a bug now.
+
+Are you sure you were disabling the PMIC host interrupt? If you disable
+the RTC interrupt in the PMIC's RTC driver, then this will prevent the
+wake-up from occurring because you are masking the interrupt within the
+PMIC and so it will never generate an interrupt to the host.
+
+Cheers
+Jon
+
+-- 
+nvpublic
