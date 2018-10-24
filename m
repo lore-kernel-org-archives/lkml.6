@@ -2,50 +2,95 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C5F0ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 23:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0642ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 23:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 147CD2075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 23:01:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 147CD2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 83AF42075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 23:01:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H7dTgP4y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83AF42075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbeJYHbC (ORCPT
+        id S1726826AbeJYHbG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 03:31:02 -0400
-Received: from mga18.intel.com ([134.134.136.126]:11273 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbeJYHbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 03:31:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 16:00:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,422,1534834800"; 
-   d="scan'208";a="81356468"
-Received: from mgerlach-mobl.amr.corp.intel.com (HELO [10.0.2.15]) ([10.251.134.207])
-  by fmsmga008.fm.intel.com with ESMTP; 24 Oct 2018 16:00:56 -0700
-Date:   Wed, 24 Oct 2018 16:00:56 -0700 (PDT)
-From:   matthew.gerlach@linux.intel.com
-X-X-Sender: mgerlach@mgerlach-VirtualBox
-To:     Moritz Fischer <mdf@kernel.org>
-cc:     Andreas Puhm <puhm@oregano.at>, Anatolij Gustschin <agust@denx.de>,
-        Alan Tull <atull@kernel.org>,
-        "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] fpga: altera_cvp: restrict registration to CvP enabled
- devices
-In-Reply-To: <20181024095135.GA1382@archbook>
-Message-ID: <alpine.DEB.2.20.1810241545580.2819@mgerlach-VirtualBox>
-References: <78c44ad0b2344a4490ffd300cf0df746@SRV177.busymouse24.de> <20181023182649.047f1f93@crub> <3773264cdfcb4c258cc7eebd213302dd@SRV177.busymouse24.de> <20181024095135.GA1382@archbook>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Thu, 25 Oct 2018 03:31:06 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51252 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbeJYHbG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 03:31:06 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 143-v6so6954838wmf.1;
+        Wed, 24 Oct 2018 16:01:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pUiKFQkI36XJHPifHvNgkCndVjQT2GzGWI06zA9lZ1U=;
+        b=H7dTgP4yeEDbpIfo60PFZmqf4Uc0hE1PWrSPdHmU41MPXM9KO/VYz+KrQ3Tjt4YU6c
+         ty12n92S0TxTW2f35ZGHF5NwFd4/gHCVmtd1E4pvvGS5VzyQTrSdL7J4vQpy7QGkQ7go
+         PErMuff9X6kA9SRXtZEMOkz37YPWJ3fUZTvMz0LA13FQBiZ/rA9ZUfHFcbi6YFNnMRS4
+         MWShTKpGFEjA3mzcSlmTzOofsuPU9kbs3ELR8NUy3LEjr8adhqmXW5NpueJSNpjdbG7m
+         aEf7Y0reUS2aQItqSEeaHM4l6XZr1mmkxudhB3IYd7yP1r0H+c0VhpVxxaOeb1zIjN7/
+         5eHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pUiKFQkI36XJHPifHvNgkCndVjQT2GzGWI06zA9lZ1U=;
+        b=cev9GuwDeLxXlnh0QqT/2ath0Ymr+Akaw0gKkaU/SVLD/uidVpj7QP/QcbtQrSwNrh
+         h/Cgi6odaB2aANZdSHUSJ/yJKhTfILTPqE9KHdBYt5+DX/c5CQfgB/s6eFG7WlLN3KAm
+         RObuwIxIMoYIQAkzmlkm+zkxuzoxvI/u8/0Ze63fvFUjIwNe+imodaOYalmtBpouPrIe
+         N4elnLZCR8JoIcL2SqEr4ao6HwZGfqq7bFJ1PXzliPcO7J64F6FxkASJNzb2whCovjsz
+         B2oOxuQIcCAhYYwm83OMuDJ3kBJmxwa8InydNjizWw0mTke8RswyvIOF17oBGxDcArzb
+         v1jg==
+X-Gm-Message-State: AGRZ1gKWbc0kxUHN2vwl33iczB2I0fnj9A+HwJ+8eA0GMmIJmtxHBEP+
+        9C9ntuhc3GlPojRrStmNRG35HP1FHzrRiw==
+X-Google-Smtp-Source: AJdET5dAH/w22mh/kaFPFlLUAiP0khn2L3sDgltKjJsxDcBPMCsA1Qq69uF03lFGNRowujnXQazWjQ==
+X-Received: by 2002:a1c:c58b:: with SMTP id v133-v6mr4393413wmf.139.1540422064351;
+        Wed, 24 Oct 2018 16:01:04 -0700 (PDT)
+Received: from [10.17.176.77] ([109.144.211.182])
+        by smtp.gmail.com with ESMTPSA id x15-v6sm6885306wrt.90.2018.10.24.16.01.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Oct 2018 16:01:03 -0700 (PDT)
+Subject: Re: [PATCH 08/17] prmem: struct page: track vmap_area
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-9-igor.stoppa@huawei.com>
+ <20181024031200.GC25444@bombadil.infradead.org>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <ffb887e1-2029-42d5-3a97-54546e4d28d8@gmail.com>
+Date:   Thu, 25 Oct 2018 02:01:02 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+In-Reply-To: <20181024031200.GC25444@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,86 +98,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On Wed, 24 Oct 2018, Moritz Fischer wrote:
+On 24/10/2018 06:12, Matthew Wilcox wrote:
+> On Wed, Oct 24, 2018 at 12:34:55AM +0300, Igor Stoppa wrote:
+>> The connection between each page and its vmap_area avoids more expensive
+>> searches through the btree of vmap_areas.
+> 
+> Typo -- it's an rbtree.
 
-> Hi Anatolij, Andreas,
->
-> On Tue, Oct 23, 2018 at 06:46:47PM +0000, Andreas Puhm wrote:
->> Hi Anatolij,
->>
->>> The CvP docs says that on some FPGAs (e.g. Arria 10) the assertion of CVP
->>> status can take up to 500ms. However it is not clear whether this delay
->>> might be required after peripheral image configuration and after PCIe
->>> link activation. The diagram describing configuration sequence suggests
->>> that CVP_EN should be polled until it is asserted. I can imaging the
->>> situation that this bit is still not asserted when the device is being
->>> probed. Maybe we should better defer device probing if CVP_EN bit is
->>> cleared? When deferred probing fails again and sufficient period for
->>> CVP_EN bit assertion elapsed, then stop deferred probing and return
->>> -ENODEV?
->>>
->>> Thanks,
->>>
->>> Anatolij
->>
->> Anatolij, thank you for your feedback.
->>
->> My rationale behind the patch is as follows:
->>
->> The CVP_EN is part of the Hard PCIe IP core configuration,
->> and therefore, has a defined and static value right from "the start".
->>
->> Remark in [1, fig 12]
->> " For high density devices such as Intel Cyclone 10 GX,
->> it may be necessary to wait up to 500 ms for the CvP
->> status register bit assertion."
->> According to [2] the Cyclone 10 GX devices achieve proper operation
->> within 100 ms (via the PCIe IP core and CvP).
->>
->> I think (and here the documentation is a bit lacking),
->> that this remark is valid only for other bits of the status register,
->> e.g., CVP_CONFIG_DONE or USERMODE.
->> I also think, that the 500 ms delay is calculated from peripheral + core image programming
->> and that the time for peripheral image programming is far lower than that
->> (i.e., low enough to allow PCI enumeration).
->>
->> But if this actually means that it can take up to 500 ms to program the peripheral image,
->> than such FPGAs would have different problems.
->> I.e., missing the deadline for PCI enumeration.
->> This would need a solution outside of the scope of the
->> altera_cvp module (e.g., soft-reset to re-start enumeration with a stable system).
->>
->> Bottom line:
->> The CVP_EN should be deemed stable when altera_cvp is called,
->> if not,
->> the programming of the Intel/Altera FPGA and PCIe IP core has not been completed in time
->> for the enumeration of the PCI device. Hence it would be questionable or, more likely, would not
->> have completed successfully in the first place, i.e., altera_cvp would not have been called.
->
-> Yeah I think this makes sense. If your config space isn't up on boot you
-> would run into issues. I agree the docs are soemwhat vague here. Maybe Matthew or Alan can shoot
-> an email to their HW folks internally to clarify?
+ack
 
-My experience with cvp is with Arria10 and Stratix 10.  The PCIe Hard IP 
-gets configured when the IOring gets configured at power on.  The idea is 
-that the load of the IOring is very fast, much before the infamous 100ms
-PCIe timeout for link training.  When the Hard IP is configured, the 
-CVP_EN is set or cleared according to how it was configured.  Yes, you 
-will run into issues if config space is not up on boot.  The exact nature 
-of the issues is dependent on the platform being used.
+>> +++ b/include/linux/mm_types.h
+>> @@ -87,13 +87,24 @@ struct page {
+>>   			/* See page-flags.h for PAGE_MAPPING_FLAGS */
+>>   			struct address_space *mapping;
+>>   			pgoff_t index;		/* Our offset within mapping. */
+>> -			/**
+>> -			 * @private: Mapping-private opaque data.
+>> -			 * Usually used for buffer_heads if PagePrivate.
+>> -			 * Used for swp_entry_t if PageSwapCache.
+>> -			 * Indicates order in the buddy system if PageBuddy.
+>> -			 */
+>> -			unsigned long private;
+>> +			union {
+>> +				/**
+>> +				 * @private: Mapping-private opaque data.
+>> +				 * Usually used for buffer_heads if
+>> +				 * PagePrivate.
+>> +				 * Used for swp_entry_t if PageSwapCache.
+>> +				 * Indicates order in the buddy system if
+>> +				 * PageBuddy.
+>> +				 */
+>> +				unsigned long private;
+>> +				/**
+>> +				 * @area: reference to the containing area
+>> +				 * For pages that are mapped into a virtually
+>> +				 * contiguous area, avoids performing a more
+>> +				 * expensive lookup.
+>> +				 */
+>> +				struct vmap_area *area;
+>> +			};
+> 
+> Not like this.  Make it part of a different struct in the existing union,
+> not a part of the pagecache struct.  And there's no need to use ->private
+> explicitly.
 
-For the record, if cvp is not being used then the initial full 
-configuration of the FPGA can take much longer than just configuring the 
-IOring.  In the worst case, if the initial FPGA image in flash is 
-corrupted, it can take a while before the failover image gets configured 
-into the fpga.  This might be the explanation for the 500 ms for Cyclone 
-10 GX devices.  For an Arria10, the flash failover can take much longer 
-than even the 500ms, which has been shown to have issues for many platforms.
+Ok, I'll have a look at the googledoc you made
 
-Thanks,
-Matthew
+>> @@ -1747,6 +1750,10 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+>>   	if (!addr)
+>>   		return NULL;
+>>   
+>> +	va = __find_vmap_area((unsigned long)addr);
+>> +	for (i = 0; i < va->vm->nr_pages; i++)
+>> +		va->vm->pages[i]->area = va;
+> 
+> I don't like it that you're calling this for _every_ vmalloc() caller
+> when most of them will never use this.  Perhaps have page->va be initially
+> NULL and then cache the lookup in it when it's accessed for the first time.
+> 
 
->
-> Thanks,
-> Moritz
->
+If __find_vmap_area() was part of the API, this loop could be left out 
+from __vmalloc_node_range() and the user of the allocation could 
+initialize the field, if needed.
+
+What is the reason for keeping __find_vmap_area() private?
+
+--
+igor
