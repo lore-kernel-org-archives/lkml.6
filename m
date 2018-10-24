@@ -2,221 +2,99 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8910C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 12:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADD8C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 12:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 753E22064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 12:51:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 753E22064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A87E2054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 12:52:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A87E2054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbeJXVTr (ORCPT
+        id S1727747AbeJXVUS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 17:19:47 -0400
-Received: from mga06.intel.com ([134.134.136.31]:1102 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727177AbeJXVTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 17:19:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 05:51:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,420,1534834800"; 
-   d="scan'208";a="81221311"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 24 Oct 2018 05:51:27 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id B39F17D; Wed, 24 Oct 2018 15:51:26 +0300 (EEST)
-From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org
-Cc:     boris.ostrovsky@oracle.com, jgross@suse.com, bhe@redhat.com,
-        willy@infradead.org, x86@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 1/2] x86/mm: Move LDT remap out of KASLR region on 5-level paging
-Date:   Wed, 24 Oct 2018 15:51:11 +0300
-Message-Id: <20181024125112.55999-2-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181024125112.55999-1-kirill.shutemov@linux.intel.com>
-References: <20181024125112.55999-1-kirill.shutemov@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 24 Oct 2018 17:20:18 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:41738 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbeJXVUS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 17:20:18 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1gFIds-0002F8-NC; Wed, 24 Oct 2018 08:52:08 -0400
+Message-ID: <3faac660df4f52a0a4e140cd51715f0efede56d1.camel@surriel.com>
+Subject: Re: [PATCH 0/7] x86/mm/tlb: make lazy TLB mode even lazier
+From:   Rik van Riel <riel@surriel.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        kernel-team@fb.com, songliubraving@fb.com, will.deacon@arm.com,
+        hpa@zytor.com, luto@kernel.org, npiggin@gmail.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Borislav Petkov <bp@alien8.de>
+Date:   Wed, 24 Oct 2018 08:52:08 -0400
+In-Reply-To: <20181024055319.GA73309@gmail.com>
+References: <20180924183759.23955-1-riel@surriel.com>
+         <20181024055319.GA73309@gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-DOaT8WT9ap6L9LGur/AZ"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5-level paging LDT remap area is placed in the middle of
-KASLR randomization region and it can overlap with direct mapping,
-vmalloc or vmap area.
 
-Let's move LDT just before direct mapping which makes it safe for KASLR.
-This also allows us to unify layout between 4- and 5-level paging.
+--=-DOaT8WT9ap6L9LGur/AZ
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-We don't touch 4 pgd slot gap just before the direct mapping reserved
-for a hypervisor, but move direct mapping by one slot instead.
+On Wed, 2018-10-24 at 07:53 +0200, Ingo Molnar wrote:
+> * Rik van Riel <riel@surriel.com> wrote:
+>=20
+> > The big thing remaining is the reference count overhead of
+> > the lazy TLB mm_struct, but getting rid of that is rather a
+> > lot of code for a small performance gain. Not quite what
+> > Linus asked for :)
+>=20
+> BTW., what would be the plan to improve scalability there,
+> is it even possible?
 
-The LDT mapping is per-mm, so we cannot move it into P4D page table next
-to CPU_ENTRY_AREA without complicating PGD table allocation for 5-level
-paging.
+One thing I looked at was shooting down the lazy TLB
+MM from the exit code path, that way the MM would no
+longer be referenced from any CPU by the time the
+memory gets freed.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Fixes: f55f0501cbf6 ("x86/pti: Put the LDT in its own PGD if PTI is on")
----
- Documentation/x86/x86_64/mm.txt         | 34 +++++++++++++------------
- arch/x86/include/asm/page_64_types.h    | 12 +++++----
- arch/x86/include/asm/pgtable_64_types.h |  4 +--
- arch/x86/xen/mmu_pv.c                   |  6 ++---
- 4 files changed, 29 insertions(+), 27 deletions(-)
+Once we do that, we no longer need to do any refcounting
+for the lazy TLB MM.
 
-diff --git a/Documentation/x86/x86_64/mm.txt b/Documentation/x86/x86_64/mm.txt
-index 702898633b00..75bff98928a8 100644
---- a/Documentation/x86/x86_64/mm.txt
-+++ b/Documentation/x86/x86_64/mm.txt
-@@ -34,23 +34,24 @@ __________________|____________|__________________|_________|___________________
- ____________________________________________________________|___________________________________________________________
-                   |            |                  |         |
-  ffff800000000000 | -128    TB | ffff87ffffffffff |    8 TB | ... guard hole, also reserved for hypervisor
-- ffff880000000000 | -120    TB | ffffc7ffffffffff |   64 TB | direct mapping of all physical memory (page_offset_base)
-- ffffc80000000000 |  -56    TB | ffffc8ffffffffff |    1 TB | ... unused hole
-+ ffff880000000000 | -120    TB | ffff887fffffffff |  0.5 TB | LDT remap for PTI
-+ ffff888000000000 | -119.5  TB | ffffc87fffffffff |   64 TB | direct mapping of all physical memory (page_offset_base)
-+ ffffc88000000000 |  -55.5  TB | ffffc8ffffffffff |  0.5 TB | ... unused hole
-  ffffc90000000000 |  -55    TB | ffffe8ffffffffff |   32 TB | vmalloc/ioremap space (vmalloc_base)
-  ffffe90000000000 |  -23    TB | ffffe9ffffffffff |    1 TB | ... unused hole
-  ffffea0000000000 |  -22    TB | ffffeaffffffffff |    1 TB | virtual memory map (vmemmap_base)
-  ffffeb0000000000 |  -21    TB | ffffebffffffffff |    1 TB | ... unused hole
-  ffffec0000000000 |  -20    TB | fffffbffffffffff |   16 TB | KASAN shadow memory
-- fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole
--                  |            |                  |         | vaddr_end for KASLR
-- fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping
-- fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | LDT remap for PTI
-- ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks
- __________________|____________|__________________|_________|____________________________________________________________
-                                                             |
--                                                            | Identical layout to the 47-bit one from here on:
-+                                                            | Identical layout to the 56-bit one from here on:
- ____________________________________________________________|____________________________________________________________
-                   |            |                  |         |
-+ fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole
-+                  |            |                  |         | vaddr_end for KASLR
-+ fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping
-+ fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | ... unused hole
-+ ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks
-  ffffff8000000000 | -512    GB | ffffffeeffffffff |  444 GB | ... unused hole
-  ffffffef00000000 |  -68    GB | fffffffeffffffff |   64 GB | EFI region mapping space
-  ffffffff00000000 |   -4    GB | ffffffff7fffffff |    2 GB | ... unused hole
-@@ -83,7 +84,7 @@ Notes:
- __________________|____________|__________________|_________|___________________________________________________________
-                   |            |                  |         |
-  0000800000000000 |  +64    PB | ffff7fffffffffff | ~16K PB | ... huge, still almost 64 bits wide hole of non-canonical
--                  |            |                  |         |     virtual memory addresses up to the -128 TB
-+                  |            |                  |         |     virtual memory addresses up to the -64 PB
-                   |            |                  |         |     starting offset of kernel mappings.
- __________________|____________|__________________|_________|___________________________________________________________
-                                                             |
-@@ -91,23 +92,24 @@ __________________|____________|__________________|_________|___________________
- ____________________________________________________________|___________________________________________________________
-                   |            |                  |         |
-  ff00000000000000 |  -64    PB | ff0fffffffffffff |    4 PB | ... guard hole, also reserved for hypervisor
-- ff10000000000000 |  -60    PB | ff8fffffffffffff |   32 PB | direct mapping of all physical memory (page_offset_base)
-- ff90000000000000 |  -28    PB | ff9fffffffffffff |    4 PB | LDT remap for PTI
-+ ff10000000000000 |  -60    PB | ff10ffffffffffff | 0.25 PB | LDT remap for PTI
-+ ff11000000000000 |  -59.75 PB | ff90ffffffffffff |   32 PB | direct mapping of all physical memory (page_offset_base)
-+ ff91000000000000 |  -27.75 PB | ff9fffffffffffff | 3.75 PB | ... unused hole
-  ffa0000000000000 |  -24    PB | ffd1ffffffffffff | 12.5 PB | vmalloc/ioremap space (vmalloc_base)
-  ffd2000000000000 |  -11.5  PB | ffd3ffffffffffff |  0.5 PB | ... unused hole
-  ffd4000000000000 |  -11    PB | ffd5ffffffffffff |  0.5 PB | virtual memory map (vmemmap_base)
-  ffd6000000000000 |  -10.5  PB | ffdeffffffffffff | 2.25 PB | ... unused hole
-  ffdf000000000000 |   -8.25 PB | fffffdffffffffff |   ~8 PB | KASAN shadow memory
-- fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole
--                  |            |                  |         | vaddr_end for KASLR
-- fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping
-- fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | ... unused hole
-- ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks
- __________________|____________|__________________|_________|____________________________________________________________
-                                                             |
-                                                             | Identical layout to the 47-bit one from here on:
- ____________________________________________________________|____________________________________________________________
-                   |            |                  |         |
-+ fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole
-+                  |            |                  |         | vaddr_end for KASLR
-+ fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping
-+ fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | ... unused hole
-+ ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks
-  ffffff8000000000 | -512    GB | ffffffeeffffffff |  444 GB | ... unused hole
-  ffffffef00000000 |  -68    GB | fffffffeffffffff |   64 GB | EFI region mapping space
-  ffffffff00000000 |   -4    GB | ffffffff7fffffff |    2 GB | ... unused hole
-diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/page_64_types.h
-index cd0cf1c568b4..8f657286d599 100644
---- a/arch/x86/include/asm/page_64_types.h
-+++ b/arch/x86/include/asm/page_64_types.h
-@@ -33,12 +33,14 @@
- 
- /*
-  * Set __PAGE_OFFSET to the most negative possible address +
-- * PGDIR_SIZE*16 (pgd slot 272).  The gap is to allow a space for a
-- * hypervisor to fit.  Choosing 16 slots here is arbitrary, but it's
-- * what Xen requires.
-+ * PGDIR_SIZE*17 (pgd slot 273).
-+ *
-+ * The gap is to allow a space for LDT remap for PTI (1 pgd slot) and space for
-+ * a hypervisor (16 slots). Choosing 16 slots for a hypervisor is arbitrary,
-+ * but it's what Xen requires.
-  */
--#define __PAGE_OFFSET_BASE_L5	_AC(0xff10000000000000, UL)
--#define __PAGE_OFFSET_BASE_L4	_AC(0xffff880000000000, UL)
-+#define __PAGE_OFFSET_BASE_L5	_AC(0xff11000000000000, UL)
-+#define __PAGE_OFFSET_BASE_L4	_AC(0xffff888000000000, UL)
- 
- #ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
- #define __PAGE_OFFSET           page_offset_base
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 04edd2d58211..84bd9bdc1987 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -111,9 +111,7 @@ extern unsigned int ptrs_per_p4d;
-  */
- #define MAXMEM			(1UL << MAX_PHYSMEM_BITS)
- 
--#define LDT_PGD_ENTRY_L4	-3UL
--#define LDT_PGD_ENTRY_L5	-112UL
--#define LDT_PGD_ENTRY		(pgtable_l5_enabled() ? LDT_PGD_ENTRY_L5 : LDT_PGD_ENTRY_L4)
-+#define LDT_PGD_ENTRY		-240UL
- #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
- #define LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
- 
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index 70ea598a37d2..7a2a74c2dd30 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -1905,7 +1905,7 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
- 	init_top_pgt[0] = __pgd(0);
- 
- 	/* Pre-constructed entries are in pfn, so convert to mfn */
--	/* L4[272] -> level3_ident_pgt  */
-+	/* L4[273] -> level3_ident_pgt  */
- 	/* L4[511] -> level3_kernel_pgt */
- 	convert_pfn_mfn(init_top_pgt);
- 
-@@ -1925,8 +1925,8 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
- 	addr[0] = (unsigned long)pgd;
- 	addr[1] = (unsigned long)l3;
- 	addr[2] = (unsigned long)l2;
--	/* Graft it onto L4[272][0]. Note that we creating an aliasing problem:
--	 * Both L4[272][0] and L4[511][510] have entries that point to the same
-+	/* Graft it onto L4[273][0]. Note that we creating an aliasing problem:
-+	 * Both L4[273][0] and L4[511][510] have entries that point to the same
- 	 * L2 (PMD) tables. Meaning that if you modify it in __va space
- 	 * it will be also modified in the __ka space! (But if you just
- 	 * modify the PMD table to point to other PTE's or none, then you
--- 
-2.19.1
+--=20
+All Rights Reversed.
+
+--=-DOaT8WT9ap6L9LGur/AZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlvQavgACgkQznnekoTE
+3oNMAQgAiHFXw8tNipEdZT3mvRm42r5nHzbL9sCNEQeza8ZQW7de/pz4lfFOepN4
+dBJFODEEAYLpjoBzJpAtQohZl3fZoPO5eE/1Q3fAi3q1tpdbnzyguTSgQgIaYF5r
+Ab8jDKKSNw3OEt8kwCq6oyvvNc118ZmZ1ktJWhaA90n9Xutfc+9bHrreSTrNeg6f
+YhDPG814O7m5Ys9ZFQLRdw8gSlmr8Gvn4mNOZrQgt8sKhzUCrdNVDIq4tBQisKVq
+ivoDNksry7L3HFa/UD13EboHXU6SH2MMsAsKyLDbc5lzmfALV3toSkECE5QaFQBX
+faIhrPN8GdTRYtwLiPzuZ/K1P6kIrg==
+=HFGi
+-----END PGP SIGNATURE-----
+
+--=-DOaT8WT9ap6L9LGur/AZ--
 
