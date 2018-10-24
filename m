@@ -2,98 +2,103 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D15ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D96F7ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:18:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37BCA2082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:16:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37BCA2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vivier.eu
+	by mail.kernel.org (Postfix) with ESMTP id 8A7D620824
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:18:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A7D620824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbeJYBpU (ORCPT
+        id S1727109AbeJYBr2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 21:45:20 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:54681 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbeJYBpU (ORCPT
+        Wed, 24 Oct 2018 21:47:28 -0400
+Received: from smtprelay0054.hostedemail.com ([216.40.44.54]:42593 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726497AbeJYBr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 21:45:20 -0400
-Received: from [10.43.15.91] ([94.185.135.34]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.184]) with ESMTPSA (Nemesis) id
- 1MF35K-1gLwLV3oMq-00FQKN; Wed, 24 Oct 2018 19:15:58 +0200
-Received: from [10.43.15.91] ([94.185.135.34]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.184]) with ESMTPSA (Nemesis) id
- 1MF35K-1gLwLV3oMq-00FQKN; Wed, 24 Oct 2018 19:15:58 +0200
-Subject: Re: [PATCH v6 1/1] ns: add binfmt_misc to the user namespace
-To:     Andrei Vagin <avagin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        containers@lists.linux-foundation.org,
-        Dmitry Safonov <dima@arista.com>
-References: <20181010161430.11633-1-laurent@vivier.eu>
- <20181010161430.11633-2-laurent@vivier.eu> <20181016162245.GA7697@gmail.com>
-From:   Laurent Vivier <laurent@vivier.eu>
-Message-ID: <0fb09ce6-e006-31a2-1f32-f3f6eda44504@vivier.eu>
-Date:   Wed, 24 Oct 2018 18:15:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20181016162245.GA7697@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Wed, 24 Oct 2018 21:47:28 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 8A945181D341A;
+        Wed, 24 Oct 2018 17:18:34 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: frog90_4aa1ccc66364d
+X-Filterd-Recvd-Size: 2341
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 24 Oct 2018 17:18:32 +0000 (UTC)
+Message-ID: <375561cf08343abbcd4118da2272507c30311788.camel@perches.com>
+Subject: Re: [PATCH] Change judgment len position
+From:   Joe Perches <joe@perches.com>
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     Willy Tarreau <w@1wt.eu>, wanghaifine@gmail.com,
+        David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Wed, 24 Oct 2018 10:18:31 -0700
+In-Reply-To: <CANn89iLH=VP1i=KS5QV1x41EpQM5-o1TJfDh01Y++bMpFpfBRg@mail.gmail.com>
+References: <20181024154729.5312-1-wanghaifine@gmail.com>
+         <20181024155739.GA25314@1wt.eu>
+         <60f08664db5751949ddfb34666bfda77f99682f1.camel@perches.com>
+         <20181024163230.GA25382@1wt.eu>
+         <bbc4eba31b89cb487962c0a5980a12c53b1aa58b.camel@perches.com>
+         <CANn89iLH=VP1i=KS5QV1x41EpQM5-o1TJfDh01Y++bMpFpfBRg@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:iiQD9ckAiFLTBKMZ1aJxZN0Qflsphi71k9meEBIC8QASsiKcVvb
- N4l1RZoCaGoBadYiuiV0mYFdXXtyggbTfpbqUgmAS6j0t2t8pF1A2rITPg0Q+Dls1t0funH
- KsOdbzGrVdvnhLsCtSNmfJyT3TPOBG5seKfqi6EErpzKmR1FzJqHfrqo9pInxnQ/XtfhNer
- IcIem34IkIO5bwoSGlVGQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:JCwADjGa0Lo=:w0yaDMiWIqp7AHd11N3aZ3
- 6NL+bYC67rWIlR9QfiAEP1yUkQogCMfJZqUpk5FHAQnCvx0b1/FyfZOgnVO/uDbftkauAGscr
- zNWIlX9Q6qzEYWa4fnuhQWX/m3hlPFJs8A9EUu+o+N0wDGXI5WHisVfZ0pnO9rOW40MV5asY3
- DfvubLYvvQAoq7Hq6vykOExsAgYjV7aI8dweIEv1xGxBaHKl4dluhdRAe+iFBMnNIZRA86mLh
- VV8mXPLTKunw2E3NHiwtJz94fBCXxzkszpDlV+PNoIuOMBz59EY12BW/w/+YXgP2kTNclLTu3
- HSt3dZcyJjSzkLArItv9guNt6ZgzFr/7urdbkl9/qYVlZvZs/Jrb0xMu8PGuyPb/wTjqMs8Rf
- Gb130tqVHKvjWaMT6pTlvapqV1sHCEeG3I7fbzMiZ7mAvl9Agz0xyRDxjjZt2rbvIqRUotG/d
- KF/w4kwRTTPDJXqWeqH0E3aZQ/vEYpHIvFnNKQcWwQpegqCLiZbv9VkRJYzcAu9tePP5reTVD
- EM0EFrEm6Oi7Yr9s65g4ylZN6A6NdXTHIHN34uShUsVg5sqmS0e4VGUREg1vTQFG7mLBEnWQh
- 1J6qnTlp5wYzJuVFm4mC9XeN6wK5P5mx3Zq61PtfOIKOKIg70sjJfFVionpLWRRWjuGiGUXBM
- HyCZiHwAHtVk7M/tOKFCUvaYegWzeOD1sPg5DcwnXQe6JzGJBqiJc39rZKf5P/S340DIqUnE5
- T2/R4Cqr6S5cmUa2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/10/2018 17:22, Andrei Vagin wrote:
-> On Wed, Oct 10, 2018 at 06:14:30PM +0200, Laurent Vivier wrote:
->> This patch allows to have a different binfmt_misc configuration
->> for each new user namespace. By default, the binfmt_misc configuration
->> is the one of the previous level, but if the binfmt_misc filesystem is
->> mounted in the new namespace a new empty binfmt instance is created and
->> used in this namespace.
->>
->> For instance, using "unshare" we can start a chroot of another
->> architecture and configure the binfmt_misc interpreter without being root
->> to run the binaries in this chroot.
->>
->> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+On Wed, 2018-10-24 at 10:03 -0700, Eric Dumazet wrote:
+> On Wed, Oct 24, 2018 at 9:54 AM Joe Perches <joe@perches.com> wrote:
 > 
-> Acked-by: Andrei Vagin <avagin@gmail.com>
+> > I think if the point is to test for negative numbers,
+> > it's clearer to do that before using min_t.and it's
+> > probably clearer not to use min_t at all.
+> > 
 > 
-> Thanks,
-> Andrei
+> ...
 > 
+> >         if (len > sizeof(int))
+> >                 len = sizeof(int);
+> 
+> It is a matter of taste really,
 
-I don't konw who is the maintainer for this part, but is there any
-chance to have this merged in 4.20?
+Agree and hence my use of 'I think' above.
 
-Thanks,
-Laurent
+> I know some people (like me) sometimes
+> mixes min() and max()
+
+Not quite sure what you mean here by mixes.
+mix up?  If so, the < > inversions probably
+have about the same error rate.
+
+And I suppose there are cases where the
+always set of len in uses like
+
+	len = min(len, 4);
+
+are more costly (len being in a slow write
+speed area of memory or some such) than the
+other style of
+
+	if (len < 4)
+		len = 4;
+
+I think that min() is easier to read in most
+cases.
+
+> I would suggest that if someones wants to change the current code, a
+> corresponding test would be added in tools/testing/selftests/net?
 
