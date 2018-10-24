@@ -6,81 +6,83 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A45ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2196EECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49EF5207DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:41:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D40B6207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:45:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UCl6oCYm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49EF5207DD
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UFk0NgDo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D40B6207DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbeJYBKZ (ORCPT
+        id S1726747AbeJYBN4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 21:10:25 -0400
-Received: from mail-lj1-f178.google.com ([209.85.208.178]:44078 "EHLO
-        mail-lj1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbeJYBKY (ORCPT
+        Wed, 24 Oct 2018 21:13:56 -0400
+Received: from mail-ed1-f50.google.com ([209.85.208.50]:36984 "EHLO
+        mail-ed1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726433AbeJYBN4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 21:10:24 -0400
-Received: by mail-lj1-f178.google.com with SMTP id v6-v6so5398452ljc.11
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 09:41:37 -0700 (PDT)
+        Wed, 24 Oct 2018 21:13:56 -0400
+Received: by mail-ed1-f50.google.com with SMTP id c15-v6so5706071eds.4
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 09:45:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VxFyRWVbciaBJWTK7enllxkooTq1Y6PMMZfOI+hBz7w=;
-        b=UCl6oCYmRaK+M1suHc3Ia+yCrp6flTUnbpki07P5hdsOCRPfH2lqlufNcFKdT7tRDO
-         rzYfDhQ+UMtrDxrKEr6I353QQVHBkHFdPWPj4JG956na9tmP04zvyQ30iKJay4Iobzs2
-         BQAd0LfbYzkJSvETPTrjF+6aBZ1Hr6aU68i+k=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=q2yGdz+mJj2rfUfrEziegu6tNONEGcD2TOJVIMOid1g=;
+        b=UFk0NgDoyizIPNaBDTm5rI/EiWhwlUEJq3o9xBHnn+kD1u2tnuYITLpjeT5aeVtPoX
+         ijTfGS9p36xIJ2fiR1l8tu4xEW7cJ6ufd2S/dtpYKxYQFYUJPAYOKKW+BjXIDK8ojfqk
+         mkC+qjoiqbNKSBs1VxtowMoA+HI+UGz2ZHxpo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VxFyRWVbciaBJWTK7enllxkooTq1Y6PMMZfOI+hBz7w=;
-        b=gjeIjoaO56kdjbZwvuYfeCBv/fByPomCGnBgUL/9FXV6+UQ+v6+Q7Qkml8WRj/aHvM
-         chL3mAktpiC+hAZaiIJmhqPCWW+tdnTxtrwiwYiTqWoRx5gWM//TCcSB6Bd3Mi62h77a
-         89WFuT76QABMnRnHfUfSo+ZmaiDbMcftMi7GNqvt1miUPeHhGqgGPYkZzApA6VSlUHDm
-         SEfw1NVQ7Yk9qa6imNAJkYOLSu6eG5TwV+CBm9imSK/ZPpXb+zbFHtNkeTfw23W3Kbbl
-         kMiGk+v3VXW7QUU+yTTAcjMncCyfoy2L6GxGEtEdcj71rAqczX6GQXsfAFdG0196EEkK
-         z8tQ==
-X-Gm-Message-State: AGRZ1gJ0hJVsgcDqAbwC88jYixamIagDxN/vXAkMRGDafItP8TZ+bBS8
-        W2I3qjq2sje4VR8Heh5ijRDVTUs4zpUBJnjJ
-X-Google-Smtp-Source: AJdET5eeLYxTLLTlMajtd0fjgMkFz6/lisjV+XUerV4GhZ570z6ntHgBPLmoI+gQPsfXRou7jKMvlA==
-X-Received: by 2002:a2e:21d2:: with SMTP id h79-v6mr2302112lji.46.1540399295903;
-        Wed, 24 Oct 2018 09:41:35 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id k10-v6sm63073ljc.70.2018.10.24.09.41.35
+         :message-id:subject:to;
+        bh=q2yGdz+mJj2rfUfrEziegu6tNONEGcD2TOJVIMOid1g=;
+        b=WHDIfbB6do93iKklm6VA5lJNOsdVfIVQmkBukXA5lumQBcHdllE/adKpjCz0VPGXGM
+         k313T/wkKKoyPAFe8r0JLHJJhnLoR1HpOEKBy5V8ugoQ5XjLs+jmM0ymFtu1LNtMymag
+         /DaOjcIGw7xitjM1i9qNcVt3KD9mkaqISQaQw193UWPB4xCyrNRMLdYnLDfUbm7UMHp0
+         tBl5HF1ExbommP57jXU/KDS2Re/j3bAXsT2mhDkP4LmJkBQiwUIba9oRv0TZQsuGpxM9
+         gfe329QIqogISEBWl3//Gqc+Ko5BiH2Eq+MQJIGKZTsktRqyTe3/091QOXHbh4lAGX8C
+         XCew==
+X-Gm-Message-State: AGRZ1gKWmmbhyx8PD0vsNpvt9Xogx8EaF2tqU17RaS5QdtLg3+EMfKFI
+        31/ZfHa5cC3hmhyXmMZ6u77kDAVaj2svl/Mu
+X-Google-Smtp-Source: AJdET5fh2gqHlQk/HPk2uipBYsaNQzWvhCtW5uJ+Lg6ShDtXFgVbJt9HzF2Ni+qY9IF6WWBKp4NKJA==
+X-Received: by 2002:a50:ab55:: with SMTP id t21-v6mr3217316edc.293.1540399506933;
+        Wed, 24 Oct 2018 09:45:06 -0700 (PDT)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com. [209.85.128.42])
+        by smtp.gmail.com with ESMTPSA id v16-v6sm1865077edm.49.2018.10.24.09.45.05
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 09:41:35 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id j4-v6so5385758ljc.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 09:41:35 -0700 (PDT)
-X-Received: by 2002:a2e:9e56:: with SMTP id g22-v6mr2074473ljk.120.1540399294715;
- Wed, 24 Oct 2018 09:41:34 -0700 (PDT)
+        Wed, 24 Oct 2018 09:45:06 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id i8-v6so6096094wmg.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 09:45:05 -0700 (PDT)
+X-Received: by 2002:a1c:2351:: with SMTP id j78-v6mr439312wmj.62.1540399505529;
+ Wed, 24 Oct 2018 09:45:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181024020504.GA31877@jaegeuk-macbookpro.roam.corp.google.com>
-In-Reply-To: <20181024020504.GA31877@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20181024144735.GA28816@thunk.org>
+In-Reply-To: <20181024144735.GA28816@thunk.org>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 24 Oct 2018 17:41:18 +0100
-X-Gmail-Original-Message-ID: <CAHk-=whLxYn2iXNhwcZ8mtdxZvNyQmQ4j9AsEbFXxhvJT6F8HQ@mail.gmail.com>
-Message-ID: <CAHk-=whLxYn2iXNhwcZ8mtdxZvNyQmQ4j9AsEbFXxhvJT6F8HQ@mail.gmail.com>
-Subject: Re: [GIT PULL] f2fs update for 4.20-rc1
-To:     jaegeuk@kernel.org
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Wed, 24 Oct 2018 17:44:47 +0100
+X-Gmail-Original-Message-ID: <CAHk-=wgtz3Xamn_RT0hzBbEhsXyB2yWJ_M4vCRnJRT1du-otdw@mail.gmail.com>
+Message-ID: <CAHk-=wgtz3Xamn_RT0hzBbEhsXyB2yWJ_M4vCRnJRT1du-otdw@mail.gmail.com>
+Subject: Re: [GIT PULL] ext4 updates for 4.20-rc1
+To:     "Theodore Ts'o" <tytso@mit.edu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 3:05 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+On Wed, Oct 24, 2018 at 3:47 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
 >
->   git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-4.20-rc1
+> Further restructure ext4 documentation; fix up ext4's delayed
+> allocation for bigalloc file systems; fix up some syzbot-detected
+> races in EXT4_IOC_MOVE_EXT, EXT4_IOC_SWAP_BOOT, and ext4_remount; and
+> a few other miscellaneous bugs and optimizations.
 
-Pulled,
+Thanks, pulled,
 
-                 Linus
+               Linus
