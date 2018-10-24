@@ -2,138 +2,125 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9C6C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 937C9C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41BDD206B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:01:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DBF0206B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:05:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xcn/jYWX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41BDD206B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=qca.qualcomm.com header.i=@qca.qualcomm.com header.b="gUFXG7js"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DBF0206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=qca.qualcomm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbeJXQ2n (ORCPT
+        id S1727559AbeJXQcw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 12:28:43 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35970 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbeJXQ2m (ORCPT
+        Wed, 24 Oct 2018 12:32:52 -0400
+Received: from alexa-out-ams-01.qualcomm.com ([185.23.61.162]:53730 "EHLO
+        alexa-out-ams-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726732AbeJXQcw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 12:28:42 -0400
-Received: by mail-pl1-f194.google.com with SMTP id y11-v6so1889742plt.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 01:01:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=LU33Gsa2HCKv9HOvNZu+bYf6MApf/+vgJR72mmhToLI=;
-        b=Xcn/jYWXh81tB7zFOyRmQkfxygest239hGEdHnATb5SOizedBC5t28MrgBM+OvJ2LY
-         V9xSr96BjCgJZFKKEMP/E1u0oZ6mFhoP5Rc6zvVtVdP1WFf+FTXNTjSQ/iywaOyM2SMD
-         G/+CfIc8BZE06H0e11kDQ0o44c8oskH79sHGQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=LU33Gsa2HCKv9HOvNZu+bYf6MApf/+vgJR72mmhToLI=;
-        b=kCtpkWPd+sv9sgBpshjlwXb00xvolKVEPkSkewutF4kD0UjRiao2Ddu8jBQ0Pb0yWn
-         fg/9RlO0+KHkPgdVMed7PCrZyNmxtXpxj5j3Irbpzn8w0/2A0q5O4VJPieZQEOdWf1up
-         furGYpVn7WsJ3mNPZPX21EVhyjje0mfqEP2HqmaPvSBbwI77jZly+wV4FzNfCHLo7wjY
-         3ihce7KLjgsQ7bPe+kRqr/P/r/Q25aDrf6/ofMgS9GOxkshftS1K/c+K7ulanHzHxhrK
-         SSpaqSO82YcpXWCOcQLUhHPKSegHLaFObrLfCT7A97NJ4CqWcfGGp+1L+bh4X2r9HzgR
-         UDzg==
-X-Gm-Message-State: AGRZ1gKHLcyNnsXWEDTvBitrbJP1E8kCFl+Xpah6GQpCYa2tTlw8mDZb
-        EZsYqIxyVtfebhpT4+mLvmuHag==
-X-Google-Smtp-Source: AJdET5eWg+JGFllyer/VRZzTkHRck+UOgANGR+FdeV2oSWN9KhcIjdIoWhfQfEJHCfNULczATbqASg==
-X-Received: by 2002:a17:902:bf44:: with SMTP id u4-v6mr1591650pls.48.1540368101663;
-        Wed, 24 Oct 2018 01:01:41 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id d2-v6sm4299086pfn.118.2018.10.24.01.01.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 24 Oct 2018 01:01:40 -0700 (PDT)
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH] mmc: sdhci: Convert sdhci_allocate_bounce_buffer() to return void
-Date:   Wed, 24 Oct 2018 16:01:24 +0800
-Message-Id: <1540368084-32202-1-git-send-email-zhang.chunyan@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 24 Oct 2018 12:32:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=qca.qualcomm.com; i=@qca.qualcomm.com; q=dns/txt;
+  s=qcdkim; t=1540368349; x=1571904349;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=MUsGFMqrI/RqibRKHczBMT8v7IKt0yVamEjoy90YRc4=;
+  b=gUFXG7jsBA5IbC7NboZcQ/GxUKXikdMZeajIBb/HxMH+BHiD0MHspExy
+   hAE8Y1/LvLATofNWP1KkiijT1ffzPrj+X9Ri7x9qJB7sOSwkl7CEQGpj+
+   A8hyZywF2Sn1VMQuFvxm+kyQOoKA1y70nN2QCAui6/NPOXu3Du34k7/P8
+   o=;
+X-IronPort-AV: E=Sophos;i="5.54,419,1534802400"; 
+   d="scan'208";a="1384585"
+Received: from ironmsg03-ams.qualcomm.com ([10.251.56.4])
+  by alexa-out-ams-01.qualcomm.com with ESMTP; 24 Oct 2018 10:05:47 +0200
+X-IronPort-AV: E=McAfee;i="5900,7806,9055"; a="6106319"
+Received: from euamsexm01e.eu.qualcomm.com ([10.251.127.42])
+  by ironmsg03-ams.qualcomm.com with ESMTP/TLS/AES256-SHA; 24 Oct 2018 10:05:47 +0200
+Received: from euamsexm01a.eu.qualcomm.com (10.251.127.40) by
+ euamsexm01e.eu.qualcomm.com (10.251.127.42) with Microsoft SMTP Server (TLS)
+ id 15.0.1365.1; Wed, 24 Oct 2018 10:05:45 +0200
+Received: from euamsexm01a.eu.qualcomm.com ([10.251.127.40]) by
+ euamsexm01a.eu.qualcomm.com ([10.251.127.40]) with mapi id 15.00.1365.000;
+ Wed, 24 Oct 2018 10:05:45 +0200
+From:   Kalle Valo <kvalo@qca.qualcomm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+CC:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        Govind Singh <govinds@codeaurora.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "ath10k@lists.infradead.org" <ath10k@lists.infradead.org>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        "niklas.cassel@linaro.org" <niklas.cassel@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Subject: Re: [GIT] Networking
+Thread-Topic: [GIT] Networking
+Thread-Index: AQHUa3BdF4XdUlTYE0KLV6oOVLPx7Q==
+Date:   Wed, 24 Oct 2018 08:05:45 +0000
+Message-ID: <87h8hbu5uy.fsf@qca.qualcomm.com>
+References: <20181023.202921.1185045750138652543.davem@davemloft.net>
+        <CAHk-=whuhCGujWKO8JObGQaSdWOpJBXdkM-B-vD80QZifveScw@mail.gmail.com>
+        <CAHk-=wh2H9jE2RXibQgWs3_Q539roj62_gzPXKjnhhKqSFcw2g@mail.gmail.com>
+        <87lg6nu6k1.fsf@codeaurora.org>
+In-Reply-To: <87lg6nu6k1.fsf@codeaurora.org> (Kalle Valo's message of "Wed, 24
+        Oct 2018 10:50:38 +0300")
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [199.106.107.6]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function sdhci_allocate_bounce_buffer() always return zero at
-present, so there's no need to have a return value, that will also make
-error path easier.
+Kalle Valo <kvalo@codeaurora.org> writes:
 
-CC: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
----
- drivers/mmc/host/sdhci.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+> Linus Torvalds <torvalds@linux-foundation.org> writes:
+>
+>> On Wed, Oct 24, 2018 at 7:01 AM Linus Torvalds
+>> <torvalds@linux-foundation.org> wrote:
+>>>
+>>> Hmm. Tentatively pulled, but there's something wrong with the Kconfig r=
+ules.
+>>
+>> Confirmed.
+>
+> BTW, our emails crossed and more info in the other email[1].
+>
+>> I did a978a5b8d83f ("net/kconfig: Make QCOM_QMI_HELPERS available when
+>> COMPILE_TEST") to fix the breakage.
+>
+> Thanks, though I don't see it yet as I guess you haven't pushed it yet.
+> Do note that it _might_ conflict the other commit which I suspect is in
+> also coming to you:
+>
+> ccfb464cd106 ("soc: qcom: Allow COMPILE_TEST of qcom SoC Kconfigs")
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 1b3fbd9..e94f4aa 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -3408,7 +3408,7 @@ void __sdhci_read_caps(struct sdhci_host *host, u16 *ver, u32 *caps, u32 *caps1)
- }
- EXPORT_SYMBOL_GPL(__sdhci_read_caps);
- 
--static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
-+static void sdhci_allocate_bounce_buffer(struct sdhci_host *host)
- {
- 	struct mmc_host *mmc = host->mmc;
- 	unsigned int max_blocks;
-@@ -3446,7 +3446,7 @@ static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
- 		 * Exiting with zero here makes sure we proceed with
- 		 * mmc->max_segs == 1.
- 		 */
--		return 0;
-+		return;
- 	}
- 
- 	host->bounce_addr = dma_map_single(mmc->parent,
-@@ -3456,7 +3456,7 @@ static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
- 	ret = dma_mapping_error(mmc->parent, host->bounce_addr);
- 	if (ret)
- 		/* Again fall back to max_segs == 1 */
--		return 0;
-+		return;
- 	host->bounce_buffer_size = bounce_size;
- 
- 	/* Lie about this since we're bouncing */
-@@ -3466,8 +3466,6 @@ static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
- 
- 	pr_info("%s bounce up to %u segments into one, max segment size %u bytes\n",
- 		mmc_hostname(mmc), max_blocks, bounce_size);
--
--	return 0;
- }
- 
- int sdhci_setup_host(struct sdhci_host *host)
-@@ -3987,12 +3985,9 @@ int sdhci_setup_host(struct sdhci_host *host)
- 	 */
- 	mmc->max_blk_count = (host->quirks & SDHCI_QUIRK_NO_MULTIBLOCK) ? 1 : 65535;
- 
--	if (mmc->max_segs == 1) {
-+	if (mmc->max_segs == 1)
- 		/* This may alter mmc->*_blk_* parameters */
--		ret = sdhci_allocate_bounce_buffer(host);
--		if (ret)
--			return ret;
--	}
-+		sdhci_allocate_bounce_buffer(host);
- 
- 	return 0;
- 
--- 
-2.7.4
+git.kernel.org is alive again for me so I can now check both commits. It
+seems that Niklas' commit[1] is more finegrained than what Linus did[2].
+I guess either of the commits should be reverted when Niklas' commit
+goes to Linus tree, or what's the best course of action?
 
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git/commit=
+/?h=3Dfor-next&id=3Dccfb464cd106890cfa51070f75921a273e2852e5
+
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/?id=3Da978a5b8d83f795e107a2ff759b28643739be70e
+
+--=20
+Kalle Valo=
