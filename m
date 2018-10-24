@@ -2,656 +2,211 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33132C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2C2C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4E472082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:34:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4E472082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 20AB52082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:35:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20AB52082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727182AbeJXTCN (ORCPT
+        id S1727284AbeJXTCh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 15:02:13 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:46241 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726899AbeJXTCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 15:02:13 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id F0FAE58E6C05;
-        Wed, 24 Oct 2018 18:34:35 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 24 Oct 2018 18:34:31 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: clean up f2fs_sb_has_##feature_name
-Date:   Wed, 24 Oct 2018 18:34:26 +0800
-Message-ID: <20181024103426.9172-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        Wed, 24 Oct 2018 15:02:37 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:42107 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbeJXTCg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 15:02:36 -0400
+Received: by mail-io1-f70.google.com with SMTP id d4-v6so403897ioh.9
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 03:35:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=WpV4Wmyhgoq5UXDyRFa6SGioA4noR4j8+XQ5TzTaJRU=;
+        b=tSvOUOHB40oi2vzpQefVx8eq6k+4FScMPt/umbixhlnCJOl2TaiHJSo2DNf2UuGM4P
+         jXNlaVkggNbDo+TBiAh+1zHYaGL2uRcHBShOmX3onqFH/6bPwxZ3MywlCsAUH2ek+nko
+         pQ1EZQegHVesP9uTF/3NdbhjDz/sASd89as3NFAdnieUAtCarbwiscYRY6JzitQMRyiQ
+         1pUQD6LJbAUGLfDnwjUwgHPST6YMOWc7WuBJgfNb5niKWzP76tGUwktbWPmY+L4IRBq8
+         6Y6WlYWQBBydL5InWXslzImN1C3dmKdns+TLOrcCns8RgOXa4z6rbsIP0eCwbIxC7NGG
+         P0yQ==
+X-Gm-Message-State: AGRZ1gI1OinK9DRezTKrz243+Sy/+N4ngCG5bl+tOq8ve6nICk6cvJ69
+        8M1XI43PrsXdZLmj6M9NeGN2dRJvToVgKFVX2qjtvFqAUjzI
+X-Google-Smtp-Source: AJdET5fhFBWLIGwbM2lfKZ7uxdUH94vPsOfJfDAfxRnLLbwk1RNh99azrKrQ9w3fX554KXyTgO1+lhpapnsQIZKoHuyp0XYNVoVF
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+X-Received: by 2002:a02:6a07:: with SMTP id l7-v6mr1570010jac.0.1540377302942;
+ Wed, 24 Oct 2018 03:35:02 -0700 (PDT)
+Date:   Wed, 24 Oct 2018 03:35:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f6512e0578f70944@google.com>
+Subject: KASAN: use-after-free Read in do_exit
+From:   syzbot <syzbot+71a06dcf7e167c30ab9d@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, ebiederm@xmission.com,
+        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
+        mark.rutland@arm.com, paulmck@linux.vnet.ibm.com,
+        sudipm.mukherjee@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In F2FS_HAS_FEATURE(), we will use F2FS_SB(sb) to get sbi pointer to
-access .raw_super field, to avoid unneeded pointer conversion, this
-patch changes to F2FS_HAS_FEATURE() accept sbi parameter directly.
+Hello,
 
-Just do cleanup, no logic change.
+syzbot found the following crash on:
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+HEAD commit:    58a022870787 Merge tag 'acpi-4.20-rc1' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12a0f939400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=414a8e66ba2c6789
+dashboard link: https://syzkaller.appspot.com/bug?extid=71a06dcf7e167c30ab9d
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+71a06dcf7e167c30ab9d@syzkaller.appspotmail.com
+
+TCP: request_sock_TCPv6: Possible SYN flooding on port 20002. Sending  
+cookies.  Check SNMP counters.
+input: syz1 as /devices/virtual/input/input1084
+netlink: 20 bytes leftover after parsing attributes in process  
+`syz-executor2'.
+kasan: CONFIG_KASAN_INLINE enabled
+==================================================================
+BUG: KASAN: use-after-free in stack_not_used  
+include/linux/sched/task_stack.h:101 [inline]
+BUG: KASAN: use-after-free in check_stack_usage kernel/exit.c:748 [inline]
+BUG: KASAN: use-after-free in do_exit+0x2196/0x26d0 kernel/exit.c:916
+Read of size 8 at addr ffff8801c2b90008 by task blkid/5862
+
+CPU: 1 PID: 5862 Comm: blkid Not tainted 4.19.0+ #299
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c4/0x2b6 lib/dump_stack.c:113
+  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  stack_not_used include/linux/sched/task_stack.h:101 [inline]
+  check_stack_usage kernel/exit.c:748 [inline]
+  do_exit+0x2196/0x26d0 kernel/exit.c:916
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 5797 Comm: syz-executor4 Not tainted 4.19.0+ #299
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
+RIP: 0010:compound_head include/linux/page-flags.h:142 [inline]
+RIP: 0010:put_page include/linux/mm.h:931 [inline]
+RIP: 0010:tls_sk_proto_close+0x419/0xbb0 net/tls/tls_main.c:277
+Code: 8d e8 fe ff ff 48 89 85 f0 fe ff ff e8 b0 55 db fa 48 8b 85 f0 fe ff  
+ff 49 83 e5 fc 49 8d 7d 08 c6 00 00 48 89 f8 48 c1 e8 03 <42> 80 3c 20 00  
+0f 85 ad 06 00 00 48 8b 85 f0 fe ff ff 4d 8b 75 08
+RSP: 0018:ffff88018c2e6f70 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: ffff88018566ae40 RCX: ffffffff86a36050
+RDX: 0000000000000000 RSI: ffffffff86a35e10 RDI: 0000000000000008
+RBP: ffff88018c2e70d0 R08: ffff880182d0c580 R09: 0000000000000006
+R10: 0000000000000000 R11: ffff880182d0c580 R12: dffffc0000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff88018ba82740
+FS:  00007f2e39ea9700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b32334000 CR3: 00000001ccbdb000 CR4: 00000000001426f0
+Call Trace:
+  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:428
+  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:457
+  __sock_release+0xd7/0x250 net/socket.c:579
+  sock_close+0x19/0x20 net/socket.c:1141
+  __fput+0x385/0xa30 fs/file_table.c:278
+  do_group_exit+0x177/0x440 kernel/exit.c:970
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  __do_sys_exit_group kernel/exit.c:981 [inline]
+  __se_sys_exit_group kernel/exit.c:979 [inline]
+  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:979
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1ad6/0x26d0 kernel/exit.c:867
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f564809d1e8
+Code: Bad RIP value.
+RSP: 002b:00007ffd77478cc8 EFLAGS: 00000246
+  ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f564809d1e8
+RDX: 0000000000000002 RSI: 000000000000003c RDI: 0000000000000002
+RBP: 00007f5648372840 R08: 00000000000000e7 R09: ffffffffffffffa8
+R10: 00007f5648378740 R11: 0000000000000246 R12: 00007f5648372840
+R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 5279:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+  kmem_cache_alloc+0x12e/0x730 mm/slab.c:3554
+  kmem_cache_zalloc include/linux/slab.h:697 [inline]
+  locks_alloc_lock+0x8e/0x270 fs/locks.c:303
+  fcntl_setlk+0xc8/0xfb0 fs/locks.c:2246
+  do_fcntl+0xa6f/0x1500 fs/fcntl.c:370
+  __do_sys_fcntl fs/fcntl.c:463 [inline]
+  __se_sys_fcntl fs/fcntl.c:448 [inline]
+  __x64_sys_fcntl+0x177/0x1f0 fs/fcntl.c:448
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 5279:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kmem_cache_free+0x83/0x290 mm/slab.c:3756
+  locks_free_lock+0x209/0x340 fs/locks.c:339
+  fcntl_setlk+0x79f/0xfb0 fs/locks.c:2323
+  do_fcntl+0xa6f/0x1500 fs/fcntl.c:370
+  __do_sys_fcntl fs/fcntl.c:463 [inline]
+  __se_sys_fcntl fs/fcntl.c:448 [inline]
+  __x64_sys_fcntl+0x177/0x1f0 fs/fcntl.c:448
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801c2b90000
+  which belongs to the cache file_lock_cache of size 248
+The buggy address is located 8 bytes inside of
+  248-byte region [ffff8801c2b90000, ffff8801c2b900f8)
+The buggy address belongs to the page:
+  do_group_exit+0x177/0x440 kernel/exit.c:970
+page:ffffea00070ae400 count:1 mapcount:0 mapping:ffff8801d9bf5b00 index:0x0
+  get_signal+0x8b0/0x1980 kernel/signal.c:2513
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea000709e388 ffffea0006039548 ffff8801d9bf5b00
+raw: 0000000000000000 ffff8801c2b90000 000000010000000d 0000000000000000
+page dumped because: kasan: bad access detected
+  do_signal+0x9c/0x21e0 arch/x86/kernel/signal.c:816
+
+Memory state around the buggy address:
+  ffff8801c2b8ff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8801c2b8ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffff8801c2b90000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                       ^
+  ffff8801c2b90080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc
+  ffff8801c2b90100: fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- fs/f2fs/checkpoint.c |  2 +-
- fs/f2fs/f2fs.h       | 23 ++++++++++----------
- fs/f2fs/file.c       | 13 +++++------
- fs/f2fs/inode.c      | 18 +++++++--------
- fs/f2fs/namei.c      |  6 ++---
- fs/f2fs/node.c       |  6 ++---
- fs/f2fs/recovery.c   |  2 +-
- fs/f2fs/segment.c    |  4 ++--
- fs/f2fs/super.c      | 52 ++++++++++++++++++++++----------------------
- fs/f2fs/sysfs.c      | 20 ++++++++---------
- 10 files changed, 73 insertions(+), 73 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 9c28ea439e0b..3a25cf22d732 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1465,7 +1465,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	 * invalidate intermediate page cache borrowed from meta inode
- 	 * which are used for migration of encrypted inode's blocks.
- 	 */
--	if (f2fs_sb_has_encrypt(sbi->sb))
-+	if (f2fs_sb_has_encrypt(sbi))
- 		invalidate_mapping_pages(META_MAPPING(sbi),
- 				MAIN_BLKADDR(sbi), MAX_BLKADDR(sbi) - 1);
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ada394395676..b60ab0b78be5 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -152,12 +152,13 @@ struct f2fs_mount_info {
- #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
- #define F2FS_FEATURE_SB_CHKSUM		0x0800
- 
--#define F2FS_HAS_FEATURE(sb, mask)					\
--	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
--#define F2FS_SET_FEATURE(sb, mask)					\
--	(F2FS_SB(sb)->raw_super->feature |= cpu_to_le32(mask))
--#define F2FS_CLEAR_FEATURE(sb, mask)					\
--	(F2FS_SB(sb)->raw_super->feature &= ~cpu_to_le32(mask))
-+#define __F2FS_HAS_FEATURE(raw_super, mask)				\
-+	((raw_super->feature & cpu_to_le32(mask)) != 0)
-+#define F2FS_HAS_FEATURE(sbi, mask)	__F2FS_HAS_FEATURE(sbi->raw_super, mask)
-+#define F2FS_SET_FEATURE(sbi, mask)					\
-+	(sbi->raw_super->feature |= cpu_to_le32(mask))
-+#define F2FS_CLEAR_FEATURE(sbi, mask)					\
-+	(sbi->raw_super->feature &= ~cpu_to_le32(mask))
- 
- /*
-  * Default values for user and/or group using reserved blocks
-@@ -3464,9 +3465,9 @@ static inline bool f2fs_post_read_required(struct inode *inode)
- }
- 
- #define F2FS_FEATURE_FUNCS(name, flagname) \
--static inline int f2fs_sb_has_##name(struct super_block *sb) \
-+static inline int f2fs_sb_has_##name(struct f2fs_sb_info *sbi) \
- { \
--	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_##flagname); \
-+	return F2FS_HAS_FEATURE(sbi, F2FS_FEATURE_##flagname); \
- }
- 
- F2FS_FEATURE_FUNCS(encrypt, ENCRYPT);
-@@ -3496,7 +3497,7 @@ static inline int get_blkz_type(struct f2fs_sb_info *sbi,
- 
- static inline bool f2fs_hw_should_discard(struct f2fs_sb_info *sbi)
- {
--	return f2fs_sb_has_blkzoned(sbi->sb);
-+	return f2fs_sb_has_blkzoned(sbi);
- }
- 
- static inline bool f2fs_hw_support_discard(struct f2fs_sb_info *sbi)
-@@ -3571,7 +3572,7 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
- 	 * for blkzoned device, fallback direct IO to buffered IO, so
- 	 * all IOs can be serialized by log-structured write.
- 	 */
--	if (f2fs_sb_has_blkzoned(sbi->sb))
-+	if (f2fs_sb_has_blkzoned(sbi))
- 		return true;
- 	if (test_opt(sbi, LFS) && (rw == WRITE) &&
- 				block_unaligned_IO(inode, iocb, iter))
-@@ -3594,7 +3595,7 @@ extern void f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned int rate,
- static inline bool is_journalled_quota(struct f2fs_sb_info *sbi)
- {
- #ifdef CONFIG_QUOTA
--	if (f2fs_sb_has_quota_ino(sbi->sb))
-+	if (f2fs_sb_has_quota_ino(sbi))
- 		return true;
- 	if (F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
- 		F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 88b124677189..82f144052fce 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -696,7 +696,7 @@ int f2fs_getattr(const struct path *path, struct kstat *stat,
- 	unsigned int flags;
- 
- 	if (f2fs_has_extra_attr(inode) &&
--			f2fs_sb_has_inode_crtime(inode->i_sb) &&
-+			f2fs_sb_has_inode_crtime(F2FS_I_SB(inode)) &&
- 			F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_crtime)) {
- 		stat->result_mask |= STATX_BTIME;
- 		stat->btime.tv_sec = fi->i_crtime.tv_sec;
-@@ -2030,7 +2030,7 @@ static int f2fs_ioc_set_encryption_policy(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
- 
--	if (!f2fs_sb_has_encrypt(inode->i_sb))
-+	if (!f2fs_sb_has_encrypt(F2FS_I_SB(inode)))
- 		return -EOPNOTSUPP;
- 
- 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
-@@ -2040,7 +2040,7 @@ static int f2fs_ioc_set_encryption_policy(struct file *filp, unsigned long arg)
- 
- static int f2fs_ioc_get_encryption_policy(struct file *filp, unsigned long arg)
- {
--	if (!f2fs_sb_has_encrypt(file_inode(filp)->i_sb))
-+	if (!f2fs_sb_has_encrypt(F2FS_I_SB(file_inode(filp))))
- 		return -EOPNOTSUPP;
- 	return fscrypt_ioctl_get_policy(filp, (void __user *)arg);
- }
-@@ -2051,7 +2051,7 @@ static int f2fs_ioc_get_encryption_pwsalt(struct file *filp, unsigned long arg)
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	int err;
- 
--	if (!f2fs_sb_has_encrypt(inode->i_sb))
-+	if (!f2fs_sb_has_encrypt(sbi))
- 		return -EOPNOTSUPP;
- 
- 	err = mnt_want_write_file(filp);
-@@ -2635,12 +2635,11 @@ static int f2fs_ioc_setproject(struct file *filp, __u32 projid)
- 	struct inode *inode = file_inode(filp);
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct super_block *sb = sbi->sb;
- 	struct page *ipage;
- 	kprojid_t kprojid;
- 	int err;
- 
--	if (!f2fs_sb_has_project_quota(sb)) {
-+	if (!f2fs_sb_has_project_quota(sbi)) {
- 		if (projid != F2FS_DEF_PROJID)
- 			return -EOPNOTSUPP;
- 		else
-@@ -2757,7 +2756,7 @@ static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
- 	fa.fsx_xflags = f2fs_iflags_to_xflags(fi->i_flags &
- 				F2FS_FL_USER_VISIBLE);
- 
--	if (f2fs_sb_has_project_quota(inode->i_sb))
-+	if (f2fs_sb_has_project_quota(F2FS_I_SB(inode)))
- 		fa.fsx_projid = (__u32)from_kprojid(&init_user_ns,
- 							fi->i_projid);
- 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 91ceee0ed4c4..f63d4fe6156d 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -118,7 +118,7 @@ static bool f2fs_enable_inode_chksum(struct f2fs_sb_info *sbi, struct page *page
- {
- 	struct f2fs_inode *ri = &F2FS_NODE(page)->i;
- 
--	if (!f2fs_sb_has_inode_chksum(sbi->sb))
-+	if (!f2fs_sb_has_inode_chksum(sbi))
- 		return false;
- 
- 	if (!IS_INODE(page) || !(ri->i_inline & F2FS_EXTRA_ATTR))
-@@ -218,7 +218,7 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
- 		return false;
- 	}
- 
--	if (f2fs_sb_has_flexible_inline_xattr(sbi->sb)
-+	if (f2fs_sb_has_flexible_inline_xattr(sbi)
- 			&& !f2fs_has_extra_attr(inode)) {
- 		set_sbi_flag(sbi, SBI_NEED_FSCK);
- 		f2fs_msg(sbi->sb, KERN_WARNING,
-@@ -228,7 +228,7 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
- 	}
- 
- 	if (f2fs_has_extra_attr(inode) &&
--			!f2fs_sb_has_extra_attr(sbi->sb)) {
-+			!f2fs_sb_has_extra_attr(sbi)) {
- 		set_sbi_flag(sbi, SBI_NEED_FSCK);
- 		f2fs_msg(sbi->sb, KERN_WARNING,
- 			"%s: inode (ino=%lx) is with extra_attr, "
-@@ -340,7 +340,7 @@ static int do_read_inode(struct inode *inode)
- 	fi->i_extra_isize = f2fs_has_extra_attr(inode) ?
- 					le16_to_cpu(ri->i_extra_isize) : 0;
- 
--	if (f2fs_sb_has_flexible_inline_xattr(sbi->sb)) {
-+	if (f2fs_sb_has_flexible_inline_xattr(sbi)) {
- 		fi->i_inline_xattr_size = le16_to_cpu(ri->i_inline_xattr_size);
- 	} else if (f2fs_has_inline_xattr(inode) ||
- 				f2fs_has_inline_dentry(inode)) {
-@@ -390,14 +390,14 @@ static int do_read_inode(struct inode *inode)
- 	if (fi->i_flags & F2FS_PROJINHERIT_FL)
- 		set_inode_flag(inode, FI_PROJ_INHERIT);
- 
--	if (f2fs_has_extra_attr(inode) && f2fs_sb_has_project_quota(sbi->sb) &&
-+	if (f2fs_has_extra_attr(inode) && f2fs_sb_has_project_quota(sbi) &&
- 			F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_projid))
- 		i_projid = (projid_t)le32_to_cpu(ri->i_projid);
- 	else
- 		i_projid = F2FS_DEF_PROJID;
- 	fi->i_projid = make_kprojid(&init_user_ns, i_projid);
- 
--	if (f2fs_has_extra_attr(inode) && f2fs_sb_has_inode_crtime(sbi->sb) &&
-+	if (f2fs_has_extra_attr(inode) && f2fs_sb_has_inode_crtime(sbi) &&
- 			F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_crtime)) {
- 		fi->i_crtime.tv_sec = le64_to_cpu(ri->i_crtime);
- 		fi->i_crtime.tv_nsec = le32_to_cpu(ri->i_crtime_nsec);
-@@ -542,11 +542,11 @@ void f2fs_update_inode(struct inode *inode, struct page *node_page)
- 	if (f2fs_has_extra_attr(inode)) {
- 		ri->i_extra_isize = cpu_to_le16(F2FS_I(inode)->i_extra_isize);
- 
--		if (f2fs_sb_has_flexible_inline_xattr(F2FS_I_SB(inode)->sb))
-+		if (f2fs_sb_has_flexible_inline_xattr(F2FS_I_SB(inode)))
- 			ri->i_inline_xattr_size =
- 				cpu_to_le16(F2FS_I(inode)->i_inline_xattr_size);
- 
--		if (f2fs_sb_has_project_quota(F2FS_I_SB(inode)->sb) &&
-+		if (f2fs_sb_has_project_quota(F2FS_I_SB(inode)) &&
- 			F2FS_FITS_IN_INODE(ri, F2FS_I(inode)->i_extra_isize,
- 								i_projid)) {
- 			projid_t i_projid;
-@@ -556,7 +556,7 @@ void f2fs_update_inode(struct inode *inode, struct page *node_page)
- 			ri->i_projid = cpu_to_le32(i_projid);
- 		}
- 
--		if (f2fs_sb_has_inode_crtime(F2FS_I_SB(inode)->sb) &&
-+		if (f2fs_sb_has_inode_crtime(F2FS_I_SB(inode)) &&
- 			F2FS_FITS_IN_INODE(ri, F2FS_I(inode)->i_extra_isize,
- 								i_crtime)) {
- 			ri->i_crtime =
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 99299ede7429..2d5626939893 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -61,7 +61,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 		goto fail;
- 	}
- 
--	if (f2fs_sb_has_project_quota(sbi->sb) &&
-+	if (f2fs_sb_has_project_quota(sbi) &&
- 		(F2FS_I(dir)->i_flags & F2FS_PROJINHERIT_FL))
- 		F2FS_I(inode)->i_projid = F2FS_I(dir)->i_projid;
- 	else
-@@ -79,7 +79,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 				f2fs_may_encrypt(inode))
- 		f2fs_set_encrypted_inode(inode);
- 
--	if (f2fs_sb_has_extra_attr(sbi->sb)) {
-+	if (f2fs_sb_has_extra_attr(sbi)) {
- 		set_inode_flag(inode, FI_EXTRA_ATTR);
- 		F2FS_I(inode)->i_extra_isize = F2FS_TOTAL_EXTRA_ATTR_SIZE;
- 	}
-@@ -92,7 +92,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 	if (f2fs_may_inline_dentry(inode))
- 		set_inode_flag(inode, FI_INLINE_DENTRY);
- 
--	if (f2fs_sb_has_flexible_inline_xattr(sbi->sb)) {
-+	if (f2fs_sb_has_flexible_inline_xattr(sbi)) {
- 		f2fs_bug_on(sbi, !f2fs_has_extra_attr(inode));
- 		if (f2fs_has_inline_xattr(inode))
- 			xattr_size = F2FS_OPTION(sbi).inline_xattr_size;
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 2b34206486d8..904f4b97a1aa 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2563,17 +2563,17 @@ int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
- 	if (dst->i_inline & F2FS_EXTRA_ATTR) {
- 		dst->i_extra_isize = src->i_extra_isize;
- 
--		if (f2fs_sb_has_flexible_inline_xattr(sbi->sb) &&
-+		if (f2fs_sb_has_flexible_inline_xattr(sbi) &&
- 			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
- 							i_inline_xattr_size))
- 			dst->i_inline_xattr_size = src->i_inline_xattr_size;
- 
--		if (f2fs_sb_has_project_quota(sbi->sb) &&
-+		if (f2fs_sb_has_project_quota(sbi) &&
- 			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
- 								i_projid))
- 			dst->i_projid = src->i_projid;
- 
--		if (f2fs_sb_has_inode_crtime(sbi->sb) &&
-+		if (f2fs_sb_has_inode_crtime(sbi) &&
- 			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
- 							i_crtime_nsec)) {
- 			dst->i_crtime = src->i_crtime;
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 1dfb17f9f9ff..c22f9d0011ba 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -250,7 +250,7 @@ static int recover_inode(struct inode *inode, struct page *page)
- 	i_gid_write(inode, le32_to_cpu(raw->i_gid));
- 
- 	if (raw->i_inline & F2FS_EXTRA_ATTR) {
--		if (f2fs_sb_has_project_quota(F2FS_I_SB(inode)->sb) &&
-+		if (f2fs_sb_has_project_quota(F2FS_I_SB(inode)) &&
- 			F2FS_FITS_IN_INODE(raw, le16_to_cpu(raw->i_extra_isize),
- 								i_projid)) {
- 			projid_t i_projid;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index c04a06e08330..63b109679281 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1736,7 +1736,7 @@ static int __issue_discard_async(struct f2fs_sb_info *sbi,
- 		struct block_device *bdev, block_t blkstart, block_t blklen)
- {
- #ifdef CONFIG_BLK_DEV_ZONED
--	if (f2fs_sb_has_blkzoned(sbi->sb) &&
-+	if (f2fs_sb_has_blkzoned(sbi) &&
- 				bdev_zoned_model(bdev) != BLK_ZONED_NONE)
- 		return __f2fs_issue_discard_zone(sbi, bdev, blkstart, blklen);
- #endif
-@@ -1948,7 +1948,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- 					sbi->blocks_per_seg, cur_pos);
- 			len = next_pos - cur_pos;
- 
--			if (f2fs_sb_has_blkzoned(sbi->sb) ||
-+			if (f2fs_sb_has_blkzoned(sbi) ||
- 			    (force && len < cpc->trim_minlen))
- 				goto skip;
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index af58b2cc21b8..5b297f3b55e4 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -259,7 +259,7 @@ static int f2fs_set_qf_name(struct super_block *sb, int qtype,
- 			"quota options when quota turned on");
- 		return -EINVAL;
- 	}
--	if (f2fs_sb_has_quota_ino(sb)) {
-+	if (f2fs_sb_has_quota_ino(sbi)) {
- 		f2fs_msg(sb, KERN_INFO,
- 			"QUOTA feature is enabled, so ignore qf_name");
- 		return 0;
-@@ -314,7 +314,7 @@ static int f2fs_check_quota_options(struct f2fs_sb_info *sbi)
- 	 * 'grpquota' mount options are allowed even without quota feature
- 	 * to support legacy quotas in quota files.
- 	 */
--	if (test_opt(sbi, PRJQUOTA) && !f2fs_sb_has_project_quota(sbi->sb)) {
-+	if (test_opt(sbi, PRJQUOTA) && !f2fs_sb_has_project_quota(sbi)) {
- 		f2fs_msg(sbi->sb, KERN_ERR, "Project quota feature not enabled. "
- 			 "Cannot enable project quota enforcement.");
- 		return -1;
-@@ -348,7 +348,7 @@ static int f2fs_check_quota_options(struct f2fs_sb_info *sbi)
- 		}
- 	}
- 
--	if (f2fs_sb_has_quota_ino(sbi->sb) && F2FS_OPTION(sbi).s_jquota_fmt) {
-+	if (f2fs_sb_has_quota_ino(sbi) && F2FS_OPTION(sbi).s_jquota_fmt) {
- 		f2fs_msg(sbi->sb, KERN_INFO,
- 			"QUOTA feature is enabled, so ignore jquota_fmt");
- 		F2FS_OPTION(sbi).s_jquota_fmt = 0;
-@@ -417,7 +417,7 @@ static int parse_options(struct super_block *sb, char *options)
- 			set_opt(sbi, DISCARD);
- 			break;
- 		case Opt_nodiscard:
--			if (f2fs_sb_has_blkzoned(sb)) {
-+			if (f2fs_sb_has_blkzoned(sbi)) {
- 				f2fs_msg(sb, KERN_WARNING,
- 					"discard is required for zoned block devices");
- 				return -EINVAL;
-@@ -566,7 +566,7 @@ static int parse_options(struct super_block *sb, char *options)
- 				return -ENOMEM;
- 			if (strlen(name) == 8 &&
- 					!strncmp(name, "adaptive", 8)) {
--				if (f2fs_sb_has_blkzoned(sb)) {
-+				if (f2fs_sb_has_blkzoned(sbi)) {
- 					f2fs_msg(sb, KERN_WARNING,
- 						 "adaptive mode is not allowed with "
- 						 "zoned block device feature");
-@@ -758,7 +758,7 @@ static int parse_options(struct super_block *sb, char *options)
- 			break;
- 		case Opt_test_dummy_encryption:
- #ifdef CONFIG_F2FS_FS_ENCRYPTION
--			if (!f2fs_sb_has_encrypt(sb)) {
-+			if (!f2fs_sb_has_encrypt(sbi)) {
- 				f2fs_msg(sb, KERN_ERR, "Encrypt feature is off");
- 				return -EINVAL;
- 			}
-@@ -799,13 +799,13 @@ static int parse_options(struct super_block *sb, char *options)
- 	if (f2fs_check_quota_options(sbi))
- 		return -EINVAL;
- #else
--	if (f2fs_sb_has_quota_ino(sbi->sb) && !f2fs_readonly(sbi->sb)) {
-+	if (f2fs_sb_has_quota_ino(sbi) && !f2fs_readonly(sbi->sb)) {
- 		f2fs_msg(sbi->sb, KERN_INFO,
- 			 "Filesystem with quota feature cannot be mounted RDWR "
- 			 "without CONFIG_QUOTA");
- 		return -EINVAL;
- 	}
--	if (f2fs_sb_has_project_quota(sbi->sb) && !f2fs_readonly(sbi->sb)) {
-+	if (f2fs_sb_has_project_quota(sbi) && !f2fs_readonly(sbi->sb)) {
- 		f2fs_msg(sb, KERN_ERR,
- 			"Filesystem with project quota feature cannot be "
- 			"mounted RDWR without CONFIG_QUOTA");
-@@ -821,8 +821,8 @@ static int parse_options(struct super_block *sb, char *options)
- 	}
- 
- 	if (test_opt(sbi, INLINE_XATTR_SIZE)) {
--		if (!f2fs_sb_has_extra_attr(sb) ||
--			!f2fs_sb_has_flexible_inline_xattr(sb)) {
-+		if (!f2fs_sb_has_extra_attr(sbi) ||
-+			!f2fs_sb_has_flexible_inline_xattr(sbi)) {
- 			f2fs_msg(sb, KERN_ERR,
- 					"extra_attr or flexible_inline_xattr "
- 					"feature is off");
-@@ -1431,7 +1431,7 @@ static void default_options(struct f2fs_sb_info *sbi)
- 	sbi->sb->s_flags |= SB_LAZYTIME;
- 	set_opt(sbi, FLUSH_MERGE);
- 	set_opt(sbi, DISCARD);
--	if (f2fs_sb_has_blkzoned(sbi->sb))
-+	if (f2fs_sb_has_blkzoned(sbi))
- 		set_opt_mode(sbi, F2FS_MOUNT_LFS);
- 	else
- 		set_opt_mode(sbi, F2FS_MOUNT_ADAPTIVE);
-@@ -1575,7 +1575,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		sb->s_flags &= ~SB_RDONLY;
- 		if (sb_any_quota_suspended(sb)) {
- 			dquot_resume(sb, -1);
--		} else if (f2fs_sb_has_quota_ino(sb)) {
-+		} else if (f2fs_sb_has_quota_ino(sbi)) {
- 			err = f2fs_enable_quotas(sb);
- 			if (err)
- 				goto restore_opts;
-@@ -1817,7 +1817,7 @@ int f2fs_enable_quota_files(struct f2fs_sb_info *sbi, bool rdonly)
- 	int enabled = 0;
- 	int i, err;
- 
--	if (f2fs_sb_has_quota_ino(sbi->sb) && rdonly) {
-+	if (f2fs_sb_has_quota_ino(sbi) && rdonly) {
- 		err = f2fs_enable_quotas(sbi->sb);
- 		if (err) {
- 			f2fs_msg(sbi->sb, KERN_ERR,
-@@ -1848,7 +1848,7 @@ static int f2fs_quota_enable(struct super_block *sb, int type, int format_id,
- 	unsigned long qf_inum;
- 	int err;
- 
--	BUG_ON(!f2fs_sb_has_quota_ino(sb));
-+	BUG_ON(!f2fs_sb_has_quota_ino(F2FS_SB(sb)));
- 
- 	qf_inum = f2fs_qf_ino(sb, type);
- 	if (!qf_inum)
-@@ -1993,7 +1993,7 @@ static int f2fs_quota_off(struct super_block *sb, int type)
- 		goto out_put;
- 
- 	err = dquot_quota_off(sb, type);
--	if (err || f2fs_sb_has_quota_ino(sb))
-+	if (err || f2fs_sb_has_quota_ino(F2FS_SB(sb)))
- 		goto out_put;
- 
- 	inode_lock(inode);
-@@ -2173,7 +2173,7 @@ static int f2fs_set_context(struct inode *inode, const void *ctx, size_t len,
- 	 * if LOST_FOUND feature is enabled.
- 	 *
- 	 */
--	if (f2fs_sb_has_lost_found(sbi->sb) &&
-+	if (f2fs_sb_has_lost_found(sbi) &&
- 			inode->i_ino == F2FS_ROOT_INO(sbi))
- 		return -EPERM;
- 
-@@ -2396,7 +2396,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 	__u32 crc = 0;
- 
- 	/* Check checksum_offset and crc in superblock */
--	if (le32_to_cpu(raw_super->feature) & F2FS_FEATURE_SB_CHKSUM) {
-+	if (__F2FS_HAS_FEATURE(raw_super, F2FS_FEATURE_SB_CHKSUM)) {
- 		crc_offset = le32_to_cpu(raw_super->checksum_offset);
- 		if (crc_offset !=
- 			offsetof(struct f2fs_super_block, crc)) {
-@@ -2749,7 +2749,7 @@ static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
- 	unsigned int n = 0;
- 	int err = -EIO;
- 
--	if (!f2fs_sb_has_blkzoned(sbi->sb))
-+	if (!f2fs_sb_has_blkzoned(sbi))
- 		return 0;
- 
- 	if (sbi->blocks_per_blkz && sbi->blocks_per_blkz !=
-@@ -2880,7 +2880,7 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
- 	}
- 
- 	/* we should update superblock crc here */
--	if (!recover && f2fs_sb_has_sb_chksum(sbi->sb)) {
-+	if (!recover && f2fs_sb_has_sb_chksum(sbi)) {
- 		crc = f2fs_crc32(sbi, F2FS_RAW_SUPER(sbi),
- 				offsetof(struct f2fs_super_block, crc));
- 		F2FS_RAW_SUPER(sbi)->crc = cpu_to_le32(crc);
-@@ -2968,7 +2968,7 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
- 
- #ifdef CONFIG_BLK_DEV_ZONED
- 		if (bdev_zoned_model(FDEV(i).bdev) == BLK_ZONED_HM &&
--				!f2fs_sb_has_blkzoned(sbi->sb)) {
-+				!f2fs_sb_has_blkzoned(sbi)) {
- 			f2fs_msg(sbi->sb, KERN_ERR,
- 				"Zoned block device feature not enabled\n");
- 			return -EINVAL;
-@@ -3064,7 +3064,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	sbi->raw_super = raw_super;
- 
- 	/* precompute checksum seed for metadata */
--	if (f2fs_sb_has_inode_chksum(sb))
-+	if (f2fs_sb_has_inode_chksum(sbi))
- 		sbi->s_chksum_seed = f2fs_chksum(sbi, ~0, raw_super->uuid,
- 						sizeof(raw_super->uuid));
- 
-@@ -3074,7 +3074,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	 * devices, but mandatory for host-managed zoned block devices.
- 	 */
- #ifndef CONFIG_BLK_DEV_ZONED
--	if (f2fs_sb_has_blkzoned(sb)) {
-+	if (f2fs_sb_has_blkzoned(sbi)) {
- 		f2fs_msg(sb, KERN_ERR,
- 			 "Zoned block device support is not enabled\n");
- 		err = -EOPNOTSUPP;
-@@ -3101,13 +3101,13 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 
- #ifdef CONFIG_QUOTA
- 	sb->dq_op = &f2fs_quota_operations;
--	if (f2fs_sb_has_quota_ino(sb))
-+	if (f2fs_sb_has_quota_ino(sbi))
- 		sb->s_qcop = &dquot_quotactl_sysfile_ops;
- 	else
- 		sb->s_qcop = &f2fs_quotactl_ops;
- 	sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP | QTYPE_MASK_PRJ;
- 
--	if (f2fs_sb_has_quota_ino(sbi->sb)) {
-+	if (f2fs_sb_has_quota_ino(sbi)) {
- 		for (i = 0; i < MAXQUOTAS; i++) {
- 			if (f2fs_qf_ino(sbi->sb, i))
- 				sbi->nquota_files++;
-@@ -3297,7 +3297,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 
- #ifdef CONFIG_QUOTA
- 	/* Enable quota usage during mount */
--	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb)) {
-+	if (f2fs_sb_has_quota_ino(sbi) && !f2fs_readonly(sb)) {
- 		err = f2fs_enable_quotas(sb);
- 		if (err)
- 			f2fs_msg(sb, KERN_ERR,
-@@ -3392,7 +3392,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- free_meta:
- #ifdef CONFIG_QUOTA
- 	f2fs_truncate_quota_inode_pages(sb);
--	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb))
-+	if (f2fs_sb_has_quota_ino(sbi) && !f2fs_readonly(sb))
- 		f2fs_quota_off_umount(sbi->sb);
- #endif
- 	/*
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index b777cbdd796b..240e4881279e 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -90,34 +90,34 @@ static ssize_t features_show(struct f2fs_attr *a,
- 	if (!sb->s_bdev->bd_part)
- 		return snprintf(buf, PAGE_SIZE, "0\n");
- 
--	if (f2fs_sb_has_encrypt(sb))
-+	if (f2fs_sb_has_encrypt(sbi))
- 		len += snprintf(buf, PAGE_SIZE - len, "%s",
- 						"encryption");
--	if (f2fs_sb_has_blkzoned(sb))
-+	if (f2fs_sb_has_blkzoned(sbi))
- 		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
- 				len ? ", " : "", "blkzoned");
--	if (f2fs_sb_has_extra_attr(sb))
-+	if (f2fs_sb_has_extra_attr(sbi))
- 		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
- 				len ? ", " : "", "extra_attr");
--	if (f2fs_sb_has_project_quota(sb))
-+	if (f2fs_sb_has_project_quota(sbi))
- 		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
- 				len ? ", " : "", "projquota");
--	if (f2fs_sb_has_inode_chksum(sb))
-+	if (f2fs_sb_has_inode_chksum(sbi))
- 		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
- 				len ? ", " : "", "inode_checksum");
--	if (f2fs_sb_has_flexible_inline_xattr(sb))
-+	if (f2fs_sb_has_flexible_inline_xattr(sbi))
- 		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
- 				len ? ", " : "", "flexible_inline_xattr");
--	if (f2fs_sb_has_quota_ino(sb))
-+	if (f2fs_sb_has_quota_ino(sbi))
- 		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
- 				len ? ", " : "", "quota_ino");
--	if (f2fs_sb_has_inode_crtime(sb))
-+	if (f2fs_sb_has_inode_crtime(sbi))
- 		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
- 				len ? ", " : "", "inode_crtime");
--	if (f2fs_sb_has_lost_found(sb))
-+	if (f2fs_sb_has_lost_found(sbi))
- 		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
- 				len ? ", " : "", "lost_found");
--	if (f2fs_sb_has_sb_chksum(sb))
-+	if (f2fs_sb_has_sb_chksum(sbi))
- 		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
- 				len ? ", " : "", "sb_checksum");
- 	len += snprintf(buf + len, PAGE_SIZE - len, "\n");
--- 
-2.18.0.rc1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
