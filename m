@@ -6,220 +6,98 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E84ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EE4ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4ACE2075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:41:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4ACE2075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id A42D82075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:42:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A42D82075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbeJYELS (ORCPT
+        id S1727190AbeJYEL0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 00:11:18 -0400
-Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:32436 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbeJYELS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 00:11:18 -0400
-X-IronPort-AV: E=Sophos;i="5.54,421,1534809600"; 
-   d="scan'208";a="80917626"
-Subject: Re: [Xen-devel] [v3 04/12] x86/fsgsbase/64: Enable FSGSBASE
- instructions in the helper functions
-To:     Andy Lutomirski <luto@kernel.org>,
-        "Bae, Chang Seok" <chang.seok.bae@intel.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        xen-devel <xen-devel@lists.xenproject.org>
-CC:     "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-References: <20181023184234.14025-1-chang.seok.bae@intel.com>
- <20181023184234.14025-5-chang.seok.bae@intel.com>
- <CALCETrVcJ08c6yf6y3ruOA_Hx_7srkHw5iYfx1c2p8_ySiL2WA@mail.gmail.com>
-From:   Andrew Cooper <andrew.cooper3@citrix.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
- 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
- 6+ahAA==
-Message-ID: <0d64fe9d-0cc3-5901-0d6f-4bcb94aa9ee4@citrix.com>
-Date:   Wed, 24 Oct 2018 20:41:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CALCETrVcJ08c6yf6y3ruOA_Hx_7srkHw5iYfx1c2p8_ySiL2WA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+        Thu, 25 Oct 2018 00:11:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53916 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725870AbeJYEL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 00:11:26 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 974B9308213D;
+        Wed, 24 Oct 2018 19:42:03 +0000 (UTC)
+Received: from loberhel74.redhat.com (ovpn-121-56.rdu2.redhat.com [10.10.121.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DD9839F73;
+        Wed, 24 Oct 2018 19:42:01 +0000 (UTC)
+From:   Laurence Oberman <loberman@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     rdunlap@infradead.org, tglx@linutronix.de,
+        Laurence Oberman <loberman@redhat.com>
+Subject: [PATCH] V6 init/main.c Enable watchdog_thresh control from kernel  line To: loberman@redhat.com
+Date:   Wed, 24 Oct 2018 15:41:59 -0400
+Message-Id: <1540410119-21120-1-git-send-email-loberman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 24 Oct 2018 19:42:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/10/18 20:16, Andy Lutomirski wrote:
-> On Tue, Oct 23, 2018 at 11:43 AM Chang S. Bae <chang.seok.bae@intel.com> wrote:
->> The helper functions will switch on faster accesses to FSBASE and GSBASE
->> when the FSGSBASE feature is enabled.
->>
->> Accessing user GSBASE needs a couple of SWAPGS operations. It is avoidable
->> if the user GSBASE is saved at kernel entry, being updated as changes, and
->> restored back at kernel exit. However, it seems to spend more cycles for
->> savings and restorations. Little or no benefit was measured from
->> experiments.
->>
->> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
->> Reviewed-by: Andi Kleen <ak@linux.intel.com>
->> Cc: Any Lutomirski <luto@kernel.org>
->> Cc: H. Peter Anvin <hpa@zytor.com>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Ingo Molnar <mingo@kernel.org>
->> Cc: Dave Hansen <dave.hansen@linux.intel.com>
->> ---
->>  arch/x86/include/asm/fsgsbase.h | 17 +++----
->>  arch/x86/kernel/process_64.c    | 82 +++++++++++++++++++++++++++------
->>  2 files changed, 75 insertions(+), 24 deletions(-)
->>
->> diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
->> index b4d4509b786c..e500d771155f 100644
->> --- a/arch/x86/include/asm/fsgsbase.h
->> +++ b/arch/x86/include/asm/fsgsbase.h
->> @@ -57,26 +57,23 @@ static __always_inline void wrgsbase(unsigned long gsbase)
->>                         : "memory");
->>  }
->>
->> +#include <asm/cpufeature.h>
->> +
->>  /* Helper functions for reading/writing FS/GS base */
->>
->>  static inline unsigned long x86_fsbase_read_cpu(void)
->>  {
->>         unsigned long fsbase;
->>
->> -       rdmsrl(MSR_FS_BASE, fsbase);
->> +       if (static_cpu_has(X86_FEATURE_FSGSBASE))
->> +               fsbase = rdfsbase();
->> +       else
->> +               rdmsrl(MSR_FS_BASE, fsbase);
->>
->>         return fsbase;
->>  }
->>
->> -static inline unsigned long x86_gsbase_read_cpu_inactive(void)
->> -{
->> -       unsigned long gsbase;
->> -
->> -       rdmsrl(MSR_KERNEL_GS_BASE, gsbase);
->> -
->> -       return gsbase;
->> -}
->> -
->> +extern unsigned long x86_gsbase_read_cpu_inactive(void);
->>  extern void x86_fsbase_write_cpu(unsigned long fsbase);
->>  extern void x86_gsbase_write_cpu_inactive(unsigned long gsbase);
->>
->> diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
->> index 31b4755369f0..fcf18046c3d6 100644
->> --- a/arch/x86/kernel/process_64.c
->> +++ b/arch/x86/kernel/process_64.c
->> @@ -159,6 +159,36 @@ enum which_selector {
->>         GS
->>  };
->>
->> +/*
->> + * Interrupts are disabled here. Out of line to be protected from kprobes.
->> + */
->> +static noinline __kprobes unsigned long rd_inactive_gsbase(void)
->> +{
->> +       unsigned long gsbase, flags;
->> +
->> +       local_irq_save(flags);
->> +       native_swapgs();
->> +       gsbase = rdgsbase();
->> +       native_swapgs();
->> +       local_irq_restore(flags);
->> +
->> +       return gsbase;
->> +}
-> Please fold this into its only caller and make *that* noinline.
->
-> Also, this function, and its "write" equivalent, will access the
-> *active* gsbase.  So it either needs to be fixed for Xen PV or some
-> clear comment and careful auditing needs to be added to ensure that
-> it's not used on Xen PV.  Or it needs to be renamed
-> native_x86_fsgsbase_... and add paravirt hooks, since Xen PV allows a
-> very efficient but different implementation, I think.  The latter is
-> probably the right solution.
->
-> (Hi Xen people -- how does CR4.FSGSBASE work on Xen?  Is it always
-> set?  Never set?  Set only if the guest tries to set it?)
+Both graphics and serial consoles are exposed to hard lockups
+when handling a large amount of messaging. The kernel watchdog_thresh
+parameter up to now has not been available to be set on the kernel line for
+early boot.
+This patch allows the setting of watchdog_thresh to be increased
+when needed to avoid the hard lockups in the console code.
 
-FML.  Seriously - whoever put this code into the hypervisor in the past
-did an atrocious job.  After some experimentation, you're going to be
-sad and I'm declaring this borderline unusable.
+Signed-off-by: Laurence Oberman <loberman@redhat.com>
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+---
+ Documentation/admin-guide/kernel-parameters.txt |  7 +++++++
+ init/main.c                                     | 11 +++++++++++
+ 2 files changed, 18 insertions(+)
 
-Looks like Xen unconditionally enabled CR4.FSGSBASE if it is available. 
-Therefore, PV guests can use the instructions, even if the bit is clear
-in vCR4.
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 4cdcd1a..102382f 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4932,6 +4932,13 @@
+ 			or other driver-specific files in the
+ 			Documentation/watchdog/ directory.
+ 
++	watchdog_thresh=
++			This parameter allows early boot to change the
++			value of the watchdog timeout threshold from the default
++			of 10 seconds to avoid hard lockups.  Example:
++			watchdog_thresh=30
++			Default: 10
++
+ 	workqueue.watchdog_thresh=
+ 			If CONFIG_WQ_WATCHDOG is configured, workqueue can
+ 			warn stall conditions and dump internal state to
+diff --git a/init/main.c b/init/main.c
+index 1c3f902..d5511a9 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -1038,6 +1038,17 @@ static int __init set_debug_rodata(char *str)
+ __setup("rodata=", set_debug_rodata);
+ #endif
+ 
++#ifdef CONFIG_LOCKUP_DETECTOR
++extern int watchdog_thresh;
++
++static int __init watchdog_thresh_setup(char *str)
++{
++	get_option(&str, &watchdog_thresh);
++	return 1;
++}
++__setup("watchdog_thresh=", watchdog_thresh_setup);
++#endif
++
+ #ifdef CONFIG_STRICT_KERNEL_RWX
+ static void mark_readonly(void)
+ {
+-- 
+1.8.3.1
 
-The CPUID bits are exposed to guests by default, and Xen will emulate
-vCR4.FSGSBASE being set and cleared.
-
-We don't however emulate swapgs (which is a cpl0 instruction).  The
-guest gets handed a #GP[0] instead.
-
-The Linux WRMSR PVop uses the set_segment_base() hypercall in instead of
-going through the full wrmsr emulation path.
-
-There is no equivalent get hypercall, so the only way I can see of
-getting the value is to actually read MSR_KERNEL_GS_BASE and take the
-full rdmsr emulation path.
-
-~Andrew
