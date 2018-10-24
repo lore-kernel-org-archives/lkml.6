@@ -2,210 +2,181 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02427ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B61A6ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A216A2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:16:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AD132082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:17:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f1Q/3yNr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A216A2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MzMmFWRZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AD132082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbeJYDqM (ORCPT
+        id S1727073AbeJYDqt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 23:46:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51090 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726433AbeJYDqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 23:46:12 -0400
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BD5B2084A
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 19:16:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540408614;
-        bh=6Jj0roqAEQx2ASP0o35natrHoQiitq11zKCVsJwB8JA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=f1Q/3yNr31lbZsnbGPGQFbD9Fig7yXhLzvxHtMZP33c57AAttwUmbAoeI3dEs0W9Y
-         YVz/dBxNeRMGYTTQAc1/54i8PwDC2xshnJlkLTCN3EJvfdXTItV455SLhbje1WFptx
-         ZSfRtSDzd7jJDu1KlPMBlV2qLFuDrsyGVVGjBO38=
-Received: by mail-wr1-f41.google.com with SMTP id q6-v6so6782512wrw.11
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 12:16:54 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gJgkEku9vOyPloul5QKpSGMoLwikEPFuyLxPplxd1BzDTyPwlIV
-        w6qhrwPyVTaSF4miaSNgD1mf+4Xsictkgps6KaNFFw==
-X-Google-Smtp-Source: AJdET5eE0HtpQ3Y58R2RGYox6V1bx5VZKprdEZ3hkJg6spNtZVe/ZlrEXbjjmxvY6+/fLWr7ItLdw0SwRKijPi/tTTo=
-X-Received: by 2002:adf:b1db:: with SMTP id r27-v6mr1049320wra.95.1540408612532;
- Wed, 24 Oct 2018 12:16:52 -0700 (PDT)
+        Wed, 24 Oct 2018 23:46:49 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45101 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726652AbeJYDqt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 23:46:49 -0400
+Received: by mail-lj1-f194.google.com with SMTP id j4-v6so5827391ljc.12;
+        Wed, 24 Oct 2018 12:17:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pwOaWq361y+BBOuEcV2WBGuL+YC+eKSUhwrvxmiJNy0=;
+        b=MzMmFWRZz1pDcTbexFeCNy19R9HFjVIRjiYCQoMBR80S8EW4tuosCEqKUxADe6CAXN
+         M++KMH1ML/czqziOCBk+N1jKWb223XWHMTN6rEwgFJGDjBhuOGjzRGXnJ4Qs2g4uPHvV
+         +Hk/fNOkcyJhXXh1pieA2dye7wQsABB3D0df24BSSM6jSPNwkD7DY8/FGhx3bEoxhVSR
+         A3hs7SY0YVNeCl0sLGs7xE07sa3DoWjHF5VKUskVFOJ6iDsCL+PZ98b5YnrPcIr2zRJb
+         B6MjrePSUMFlQqIbl8uUNN9xbsMmp2MI0s7dVxDLOMV8d3G40rEAO73191rvtJln6YS1
+         8dDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pwOaWq361y+BBOuEcV2WBGuL+YC+eKSUhwrvxmiJNy0=;
+        b=GX+jhhhEO/5f15A6atgnHXtIN9R/nbVb1JvhTnWst+w9CqGLp4OiYivhdfMExYouVT
+         10JCMMtxyg1zLja80pz3ExcL2Xs7wj0zABb/LqxrQ6EbG/yDOHVtfuec3ecybEFA9zGJ
+         tjxvoVjZpcnh4G7h3lndOu31Kc50Ri1iNSwOTugwJXlmevDPUnNWKrwQwgzkhZrLuGoC
+         6POo/RNEwMHtmWnt/B3/nKvHuPBm4Hna+RNYYYWMGHMU2Jg7N6kTQ7b2+ZZRaCf8USYY
+         YYCB6fv/yf/5nF2GmEY08uKDAql6I9PlPuqkNdYsr0TRIJvvUS1AoHjyRDb3Tki3Yms7
+         cThw==
+X-Gm-Message-State: AGRZ1gI6x24yovN4dVQr5Nu5e/x8J5Mvb0SrSM8xC7HbNBTntB0pB0QX
+        8T/a5YYGo8RZ1WB1HlmvsEfFS+xe
+X-Google-Smtp-Source: AJdET5eDGxpp+ayW9w+LsZ3NOa2J4oN6x/YnA2goAWQT7O1G1qON/pShdGoiJCZQWW6S2z1CaLonug==
+X-Received: by 2002:a2e:98c2:: with SMTP id s2-v6mr2604953ljj.19.1540408649133;
+        Wed, 24 Oct 2018 12:17:29 -0700 (PDT)
+Received: from [192.168.1.18] (bgs214.neoplus.adsl.tpnet.pl. [83.28.82.214])
+        by smtp.gmail.com with ESMTPSA id 134-v6sm867797lfz.76.2018.10.24.12.17.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Oct 2018 12:17:28 -0700 (PDT)
+Subject: Re: [PATCH v15 1/2] leds: core: Introduce LED pattern trigger
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com,
+        bjorn.andersson@linaro.org, broonie@kernel.org,
+        linus.walleij@linaro.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
+ <d90397dd-429f-4f3f-307c-b69dccc360e0@gmail.com> <20181024083143.GA24165@amd>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <bdadda71-f919-b6a6-4e1c-f87ed298b6b5@gmail.com>
+Date:   Wed, 24 Oct 2018 21:17:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181023184234.14025-1-chang.seok.bae@intel.com> <20181023184234.14025-5-chang.seok.bae@intel.com>
-In-Reply-To: <20181023184234.14025-5-chang.seok.bae@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 24 Oct 2018 12:16:40 -0700
-X-Gmail-Original-Message-ID: <CALCETrVcJ08c6yf6y3ruOA_Hx_7srkHw5iYfx1c2p8_ySiL2WA@mail.gmail.com>
-Message-ID: <CALCETrVcJ08c6yf6y3ruOA_Hx_7srkHw5iYfx1c2p8_ySiL2WA@mail.gmail.com>
-Subject: Re: [v3 04/12] x86/fsgsbase/64: Enable FSGSBASE instructions in the
- helper functions
-To:     "Bae, Chang Seok" <chang.seok.bae@intel.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        xen-devel <xen-devel@lists.xenproject.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181024083143.GA24165@amd>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 11:43 AM Chang S. Bae <chang.seok.bae@intel.com> wrote:
->
-> The helper functions will switch on faster accesses to FSBASE and GSBASE
-> when the FSGSBASE feature is enabled.
->
-> Accessing user GSBASE needs a couple of SWAPGS operations. It is avoidable
-> if the user GSBASE is saved at kernel entry, being updated as changes, and
-> restored back at kernel exit. However, it seems to spend more cycles for
-> savings and restorations. Little or no benefit was measured from
-> experiments.
->
-> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-> Reviewed-by: Andi Kleen <ak@linux.intel.com>
-> Cc: Any Lutomirski <luto@kernel.org>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> ---
->  arch/x86/include/asm/fsgsbase.h | 17 +++----
->  arch/x86/kernel/process_64.c    | 82 +++++++++++++++++++++++++++------
->  2 files changed, 75 insertions(+), 24 deletions(-)
->
-> diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
-> index b4d4509b786c..e500d771155f 100644
-> --- a/arch/x86/include/asm/fsgsbase.h
-> +++ b/arch/x86/include/asm/fsgsbase.h
-> @@ -57,26 +57,23 @@ static __always_inline void wrgsbase(unsigned long gsbase)
->                         : "memory");
->  }
->
-> +#include <asm/cpufeature.h>
-> +
->  /* Helper functions for reading/writing FS/GS base */
->
->  static inline unsigned long x86_fsbase_read_cpu(void)
->  {
->         unsigned long fsbase;
->
-> -       rdmsrl(MSR_FS_BASE, fsbase);
-> +       if (static_cpu_has(X86_FEATURE_FSGSBASE))
-> +               fsbase = rdfsbase();
-> +       else
-> +               rdmsrl(MSR_FS_BASE, fsbase);
->
->         return fsbase;
->  }
->
-> -static inline unsigned long x86_gsbase_read_cpu_inactive(void)
-> -{
-> -       unsigned long gsbase;
-> -
-> -       rdmsrl(MSR_KERNEL_GS_BASE, gsbase);
-> -
-> -       return gsbase;
-> -}
-> -
-> +extern unsigned long x86_gsbase_read_cpu_inactive(void);
->  extern void x86_fsbase_write_cpu(unsigned long fsbase);
->  extern void x86_gsbase_write_cpu_inactive(unsigned long gsbase);
->
-> diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-> index 31b4755369f0..fcf18046c3d6 100644
-> --- a/arch/x86/kernel/process_64.c
-> +++ b/arch/x86/kernel/process_64.c
-> @@ -159,6 +159,36 @@ enum which_selector {
->         GS
->  };
->
-> +/*
-> + * Interrupts are disabled here. Out of line to be protected from kprobes.
-> + */
-> +static noinline __kprobes unsigned long rd_inactive_gsbase(void)
-> +{
-> +       unsigned long gsbase, flags;
-> +
-> +       local_irq_save(flags);
-> +       native_swapgs();
-> +       gsbase = rdgsbase();
-> +       native_swapgs();
-> +       local_irq_restore(flags);
-> +
-> +       return gsbase;
-> +}
+On 10/24/2018 10:31 AM, Pavel Machek wrote:
+> Hi!
+> 
+>>> +
+>>> +		The gradual dimming format of the software pattern values should be:
+>>> +		"brightness_1 duration_1 brightness_2 duration_2 brightness_3
+>>> +		duration_3 ...". For example:
+>>> +
+>>> +		echo 0 1000 255 2000 > pattern
+>>> +
+>>> +		It will make the LED go gradually from zero-intensity to max (255)
+>>> +		intensity in 1000 milliseconds, then back to zero intensity in 2000
+>>> +		milliseconds:
+>>> +
+>>> +		LED brightness
+>>> +		    ^
+>>> +		255-|       / \            / \            /
+>>> +		    |      /    \         /    \         /
+>>> +		    |     /       \      /       \      /
+>>> +		    |    /          \   /          \   /
+>>> +		  0-|   /             \/             \/
+>>> +		    +---0----1----2----3----4----5----6------------> time (s)
+>>> +
+> 
+> Ok, so I got around to testing this.
+> 
+> echo "0 1000 10 2550 0 1000 0 100" > pattern
+> 
+> makes expected pattern [  .-xXx-.  ].
+> 
+> But when I do
+> 
+> echo "0 1000 10 2550 0 1000" > pattern
+> 
+> I only get expected pattern on the first iteration, then I get
+> [    Xx-.   ].
 
-Please fold this into its only caller and make *that* noinline.
+This is because the tuples are processed in a loop, without
+discerning between start and end of the sequence.
 
-Also, this function, and its "write" equivalent, will access the
-*active* gsbase.  So it either needs to be fixed for Xen PV or some
-clear comment and careful auditing needs to be added to ensure that
-it's not used on Xen PV.  Or it needs to be renamed
-native_x86_fsgsbase_... and add paravirt hooks, since Xen PV allows a
-very efficient but different implementation, I think.  The latter is
-probably the right solution.
+So this sequence ends up being squashed, because of the
+comparison:
 
-(Hi Xen people -- how does CR4.FSGSBASE work on Xen?  Is it always
-set?  Never set?  Set only if the guest tries to set it?)
+if (data->curr->brightness == data->next->brightness) {
+	//step change od brightness
+	...
+	/* Skip the tuple with zero duration */
 
->  void x86_fsbase_write_cpu(unsigned long fsbase)
->  {
-> -       /*
-> -        * Set the selector to 0 as a notion, that the segment base is
-> -        * overwritten, which will be checked for skipping the segment load
-> -        * during context switch.
-> -        */
-> -       loadseg(FS, 0);
-> -       wrmsrl(MSR_FS_BASE, fsbase);
-> +       if (static_cpu_has(X86_FEATURE_FSGSBASE)) {
-> +               wrfsbase(fsbase);
-> +       } else {
-> +               /*
-> +                * Set the selector to 0 as a notion, that the segment base is
-> +                * overwritten, which will be checked for skipping the segment load
-> +                * during context switch.
-> +                */
-> +               loadseg(FS, 0);
-> +               wrmsrl(MSR_FS_BASE, fsbase);
-> +       }
->  }
->
->  void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
->  {
-> -       /* Set the selector to 0 for the same reason as %fs above. */
-> -       loadseg(GS, 0);
-> -       wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
-> +       if (static_cpu_has(X86_FEATURE_FSGSBASE)) {
-> +               wr_inactive_gsbase(gsbase);
-> +       } else {
-> +               /* Set the selector to 0 for the same reason as %fs above. */
-> +               loadseg(GS, 0);
-> +               wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
+Here we actually only assume that this is zero duration since it
+is not checked. Possibly needs fixing.
 
-I still don't get what this code is trying to do.  See other email.  I
-think it will straight up crash the kernel on some CPUs, since writing
-0 to %%gs will zero out the *active* base on some CPUs.
+	pattern_trig_update_patterns(data);
+	/* Select next tuple */
+	pattern_trig_update_patterns(data);
 
-I think that, if you really want some fancy optimization for the
-non-FSGSBASE case, you need to pull that out into the callers of these
-helpers.
+In effect we have:
+
+0 -> 10    // dimming
+10 -> 0    // dimming
+0 skipped  // step
+10 -> 0    // dimming
+0 skipped  // step
+10 -> 0    // dimming
+...
+
+In order to get "rise - fall - rise - fall" sequence you need
+only two tuples:
+
+echo "0 1000 10 1000" > pattern
+
+which will be processed as follows:
+
+0 -> 10    // dimming
+10 -> 0    // dimming
+0 -> 10    // dimming
+10 -> 0    // dimming
+0 -> 10    // dimming
+10 -> 0    // dimming
+
+> I'm using led-controller:flash on nokia n900 (so everything in
+> software).
+> 
+>> OK, let's abide by constant update interval for now.
+>>
+>> Thank you for your work on this patch set throughout
+>> all these months. We will have -rc8, so one week of testing
+>> before sending upstream should be enough.
+>>
+>> Patch set applied to the for-next branch of linux-leds.git.
+> 
+> Thanks!
+> 									Pavel
+> 
+
+-- 
+Best regards,
+Jacek Anaszewski
