@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC839ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1252ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:11:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 807572075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:11:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A97782082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:11:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QH4l17QX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 807572075D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ggodCmSy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A97782082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbeJYGlV (ORCPT
+        id S1727420AbeJYGl3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 02:41:21 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34574 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727225AbeJYGlK (ORCPT
+        Thu, 25 Oct 2018 02:41:29 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:39718 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727144AbeJYGlH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 02:41:10 -0400
-Received: by mail-lj1-f195.google.com with SMTP id c21-v6so387174ljj.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 15:11:18 -0700 (PDT)
+        Thu, 25 Oct 2018 02:41:07 -0400
+Received: by mail-lf1-f68.google.com with SMTP id p11-v6so5192065lfc.6
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 15:11:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TR0EsogAgO34iqbw5VJcRTSY0YEnIrhIhjr9xb1cTvc=;
-        b=QH4l17QXxF0XBWk+z3/tnLL5j/cXJXpS/QtaI/1w62fb7r9KYN5Y65dC1lvQACWXHM
-         ueVvCdK+DIwDu4w4OSSTQJd2uG8mHCeyihdzEZCFpc+ejNXzhsidz66vKNXDEmB166Ae
-         VkGtsjN/WTeRBX7gLewyC6OEaA5jgepQ+gQhs=
+        bh=kt0ifiviCYm9e+arNneTDb/upc83BNkTvPy8eJnbc1A=;
+        b=ggodCmSyrpsvTrMb5CjscBt0YsKysH+YCtsFI/jgJVBzUDXK2BPABys6p8rLaw0i2p
+         aVqW20qx6zqgqdUjnGTxhIaHhaRXcP9YIP74tW8Tt/c4akq5mmCUZGsfZTjfADXyQyxQ
+         6G3hGh+dTm83w3pV9VJL+U8KALfm8X2QtQIAk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=TR0EsogAgO34iqbw5VJcRTSY0YEnIrhIhjr9xb1cTvc=;
-        b=BmgSn8sX/sr35p0hZe2jMRk0OVu42VobEB/QBx3/8sJjlX9NxbpcJXbtquW7ttJiN3
-         1w5WN8Qbsps6Pqe83vcXLiN8ddDLjMIl3VDpXg+NGZ+14aq15JIjhCUSHcqzqVSZ6Fj3
-         g4U4ZYPWJ2gxKGBO0GgFLRabsgWUxck6sfIdtQWgjFNpsPzEoy1FUfAQDk0eByhwsjGj
-         Zaw+3UESlr0rZj7sISNQndjb78dtiCHmZ/kPkp5S8WfKiCWN5olenfgpSkdKmEsl4cnA
-         OsDGovKWWLcryUxUDP54fQ/lDsCz+2Pgaa5dct4TykJC0vkBpGwAF0c/+7+WUIg/gPOr
-         kFnw==
-X-Gm-Message-State: AGRZ1gJn8+oG9z8C6vfc6pvhTrQMKUJJWNXSbJxt3/c+PuJb/Sg4UG0l
-        qAMJm60/3ittD9s5huCFqtFbUA==
-X-Google-Smtp-Source: AJdET5fzsjx9iC+dbzwJM7VcnPoh5bc5w9V1Txr9UORGlY/GVkTTHqWFQKHmYtAxHIDws5ipPDejkA==
-X-Received: by 2002:a2e:1311:: with SMTP id 17-v6mr2885804ljt.70.1540419077508;
-        Wed, 24 Oct 2018 15:11:17 -0700 (PDT)
+        bh=kt0ifiviCYm9e+arNneTDb/upc83BNkTvPy8eJnbc1A=;
+        b=fjMcF8Vk6ST31HRbGf3Vf3AwEnCNWQYqKwPJ9NSJjf06a0U/qdFqCglHcinyzJx5Ht
+         jSz9jmiLpG5ngPDk76vr8yMxF516jhWqmHVImHFhfpUJ964PA/1Zonn9q7VmWopihzl+
+         xkWZmZhv0FWFome0CrAupaIaFzLXk71B/2fw0YSw2gCy0Uq0YSqhnnMSElPDH8OQkeZz
+         S0OmB4vIiz708SVqpZ1X74kAgidwyEq2BhiD64NO2+xbtSbzsgo7G6/AP/QBHKDPtzWO
+         5qZl0LyJUyAJNPglyhRcd1ZJl01iwqCLEr/9mna4mUZwkzKTqS+I+4RMpdpUwEknqDjK
+         Zs/w==
+X-Gm-Message-State: AGRZ1gIAXdUgvMiu6znmmwPEB3MqUwQVsqdRMYY50rKQDFPBYOKD6XYs
+        AWlCMUxE3uVH/1Dym0uimRce+Q==
+X-Google-Smtp-Source: AJdET5d0ozkN75m3uQwtPQvWSEg05ubG+jS6KC3Dg33JU0cO9IWaG+68UehrTV9t7yQsG7N592njGg==
+X-Received: by 2002:a19:d824:: with SMTP id p36-v6mr73317lfg.23.1540419074714;
+        Wed, 24 Oct 2018 15:11:14 -0700 (PDT)
 Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id f19-v6sm835350ljc.31.2018.10.24.15.11.16
+        by smtp.gmail.com with ESMTPSA id f19-v6sm835350ljc.31.2018.10.24.15.11.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 15:11:16 -0700 (PDT)
+        Wed, 24 Oct 2018 15:11:13 -0700 (PDT)
 From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 To:     grygorii.strashko@ti.com, davem@davemloft.net
 Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, alexander.h.duyck@intel.com,
         bjorn@mork.no, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH net-next 4/4] net: ethernet: ti: cpsw: fix vlan configuration while down/up
-Date:   Thu, 25 Oct 2018 01:10:59 +0300
-Message-Id: <20181024221059.21834-5-ivan.khoronzhuk@linaro.org>
+Subject: [PATCH net-next 2/4] net: 8021q: vlan_core: allow use list of vlans for real device
+Date:   Thu, 25 Oct 2018 01:10:57 +0300
+Message-Id: <20181024221059.21834-3-ivan.khoronzhuk@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181024221059.21834-1-ivan.khoronzhuk@linaro.org>
 References: <20181024221059.21834-1-ivan.khoronzhuk@linaro.org>
@@ -71,66 +71,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vlan configuration is not restored after interface donw/up sequence
-(if dual-emac - both interfaces). Tested on am572x EVM.
+It's redundancy for the drivers to hold the list of vlans when
+absolutely the same list exists in vlan core. In most cases it's
+needed only to traverse the vlan devices, their vids and sync some
+settings with h/w, so add API to simplify this.
 
-Steps to check:
-~# ip link add link eth1 name eth1.100 type vlan id 100
-~# ifconfig eth0 down
-~# ifconfig eth1 down
+At least some of these drivers also can benefit:
+grep "for_each.*vid" -r drivers/net/ethernet/
 
-Try to remove vid and observe warning:
-~# ip link del eth1.100
-[  739.526757] net eth1: removing vlanid 100 from vlan filter
-[  739.533322] failed to kill vid 0081/100 for device eth1
-
-This patch fixes it, restoring only vlan ALE entries and all other
-unicast/multicast entries are restored by system calling rx_mode ndo.
+drivers/net/ethernet/hisilicon/hns3/hns3_enet.c:
+drivers/net/ethernet/synopsys/dwc-xlgmac-hw.c:
+drivers/net/ethernet/qlogic/qlge/qlge_main.c:
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c:
+drivers/net/ethernet/via/via-rhine.c:
+drivers/net/ethernet/via/via-velocity.c:
+drivers/net/ethernet/intel/igb/igb_main.c:
+drivers/net/ethernet/intel/ice/ice_main.c:
+drivers/net/ethernet/intel/e1000/e1000_main.c:
+drivers/net/ethernet/intel/i40e/i40e_main.c:
+drivers/net/ethernet/intel/e1000e/netdev.c:
+drivers/net/ethernet/intel/igbvf/netdev.c:
+drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c:
+drivers/net/ethernet/intel/ixgb/ixgb_main.c:
+drivers/net/ethernet/intel/ixgbe/ixgbe_main.c:
+drivers/net/ethernet/amd/xgbe/xgbe-dev.c:
+drivers/net/ethernet/emulex/benet/be_main.c:
+drivers/net/ethernet/neterion/vxge/vxge-main.c:
+drivers/net/ethernet/adaptec/starfire.c:
+drivers/net/ethernet/brocade/bna/bnad.c:
 
 Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
 Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 ---
- drivers/net/ethernet/ti/cpsw.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ include/linux/if_vlan.h | 11 +++++++++++
+ net/8021q/vlan_core.c   | 27 +++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 27e0a5d5ccf9..a061a12e3022 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -565,6 +565,9 @@ static const struct cpsw_stats cpsw_gstrings_ch_stats[] = {
- 				(func)(slave++, ##arg);			\
- 	} while (0)
+diff --git a/include/linux/if_vlan.h b/include/linux/if_vlan.h
+index 83ea4df6ab81..410a14cd856c 100644
+--- a/include/linux/if_vlan.h
++++ b/include/linux/if_vlan.h
+@@ -133,6 +133,9 @@ struct vlan_pcpu_stats {
  
-+static int cpsw_ndo_vlan_rx_add_vid(struct net_device *ndev,
-+				    __be16 proto, u16 vid);
-+
- static inline int cpsw_get_slave_port(u32 slave_num)
- {
- 	return slave_num + 1;
-@@ -1977,9 +1980,23 @@ static void cpsw_mqprio_resume(struct cpsw_slave *slave, struct cpsw_priv *priv)
- 	slave_write(slave, tx_prio_map, tx_prio_rg);
+ extern struct net_device *__vlan_find_dev_deep_rcu(struct net_device *real_dev,
+ 					       __be16 vlan_proto, u16 vlan_id);
++extern int vlan_for_each(struct net_device *dev,
++			 int (*action)(struct net_device *dev, int vid,
++				       void *arg), void *arg);
+ extern struct net_device *vlan_dev_real_dev(const struct net_device *dev);
+ extern u16 vlan_dev_vlan_id(const struct net_device *dev);
+ extern __be16 vlan_dev_vlan_proto(const struct net_device *dev);
+@@ -236,6 +239,14 @@ __vlan_find_dev_deep_rcu(struct net_device *real_dev,
+ 	return NULL;
  }
  
-+static int cpsw_restore_vlans(struct net_device *vdev, int vid, void *arg)
++static inline int
++vlan_for_each(struct net_device *dev,
++	      int (*action)(struct net_device *dev, int vid, void *arg),
++	      void *arg)
 +{
-+	struct cpsw_priv *priv = arg;
-+
-+	if (!vdev)
-+		return 0;
-+
-+	cpsw_ndo_vlan_rx_add_vid(priv->ndev, 0, vid);
 +	return 0;
 +}
 +
- /* restore resources after port reset */
- static void cpsw_restore(struct cpsw_priv *priv)
+ static inline struct net_device *vlan_dev_real_dev(const struct net_device *dev)
  {
-+	/* restore vlan configurations */
-+	vlan_for_each(priv->ndev, cpsw_restore_vlans, priv);
-+
- 	/* restore MQPRIO offload */
- 	for_each_slave(priv, cpsw_mqprio_resume, priv);
+ 	BUG();
+diff --git a/net/8021q/vlan_core.c b/net/8021q/vlan_core.c
+index 4f60e86f4b8d..6308b5427a66 100644
+--- a/net/8021q/vlan_core.c
++++ b/net/8021q/vlan_core.c
+@@ -223,6 +223,33 @@ static int vlan_kill_rx_filter_info(struct net_device *dev, __be16 proto, u16 vi
+ 		return -ENODEV;
+ }
  
++int vlan_for_each(struct net_device *dev,
++		  int (*action)(struct net_device *dev, int vid, void *arg),
++		  void *arg)
++{
++	struct vlan_vid_info *vid_info;
++	struct vlan_info *vlan_info;
++	struct net_device *vdev;
++	int ret;
++
++	ASSERT_RTNL();
++
++	vlan_info = rtnl_dereference(dev->vlan_info);
++	if (!vlan_info)
++		return 0;
++
++	list_for_each_entry(vid_info, &vlan_info->vid_list, list) {
++		vdev = vlan_group_get_device(&vlan_info->grp, vid_info->proto,
++					     vid_info->vid);
++		ret = action(vdev, vid_info->vid, arg);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL(vlan_for_each);
++
+ int vlan_filter_push_vids(struct vlan_info *vlan_info, __be16 proto)
+ {
+ 	struct net_device *real_dev = vlan_info->real_dev;
 -- 
 2.17.1
 
