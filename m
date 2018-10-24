@@ -2,265 +2,101 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D21C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B97C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1EFF20833
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:43:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1EFF20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
+	by mail.kernel.org (Postfix) with ESMTP id C236220832
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:45:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="CqjNKmq2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C236220832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbeJXTLa (ORCPT
+        id S1727384AbeJXTMd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 15:11:30 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:42178 "EHLO leonov.paulk.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726428AbeJXTLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 15:11:30 -0400
-Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id 30456BFE1D;
-        Wed, 24 Oct 2018 12:43:54 +0200 (CEST)
-Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id C21F2C0FDF; Wed, 24 Oct 2018 12:43:53 +0200 (CEST)
-Received: from collins (unknown [192.168.1.1])
-        by gagarine.paulk.fr (Postfix) with ESMTPSA id 81C3AC04A1;
-        Wed, 24 Oct 2018 12:43:50 +0200 (CEST)
-Message-ID: <6ec9238a952c428b07da5a1e392e4d7b600fac37.camel@paulk.fr>
-Subject: Re: [RFC] Stateless codecs: how to refer to reference frames
-From:   Paul Kocialkowski <contact@paulk.fr>
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Date:   Wed, 24 Oct 2018 12:44:28 +0200
-In-Reply-To: <a02b50ee-37e1-0202-b999-8e32b7bd1a96@xs4all.nl>
-References: <20181019080928.208446-1-acourbot@chromium.org>
-         <a02b50ee-37e1-0202-b999-8e32b7bd1a96@xs4all.nl>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-ZDbRHXgDOFbsTxIYZqiK"
-User-Agent: Evolution 3.30.1 
-Mime-Version: 1.0
+        Wed, 24 Oct 2018 15:12:33 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34062 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbeJXTMd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 15:12:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MuNNxvx+1+ZN+ze5op33G4It9NyJYyCb3PunQuF0V/0=; b=CqjNKmq2eXzcy+/EMzlNMUrjt
+        EJ91kD66tg53Sy6weZ9Dbu0bHyenXbdiBplV1oG6r0zZVaPC/KfEUbnZFM8dANcTPjBMDWQW8K8Bf
+        LtOH4IFF5RgqLViqVeaDfa6XGVG0VQ9dxEvactIqu40A82yLnrQf1F9F/gAOFTqhjcaNI=;
+Received: from [185.7.230.213] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gFGem-00017F-L1; Wed, 24 Oct 2018 10:44:56 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 4394B440078; Wed, 24 Oct 2018 12:44:56 +0200 (CEST)
+Date:   Wed, 24 Oct 2018 11:44:56 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Clark Wang <xiaoning.wang@nxp.com>
+Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Han Xu <han.xu@nxp.com>
+Subject: Re: [PATCH V2 4/5] spi: lpspi: enable runtime pm for lpspi
+Message-ID: <20181024104456.GP2103@sirena.org.uk>
+References: <20181024075617.19548-1-xiaoning.wang@nxp.com>
+ <20181024075617.19548-4-xiaoning.wang@nxp.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3bc47Eih9dS+biPM"
+Content-Disposition: inline
+In-Reply-To: <20181024075617.19548-4-xiaoning.wang@nxp.com>
+X-Cookie: Piece of cake!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-ZDbRHXgDOFbsTxIYZqiK
-Content-Type: text/plain; charset="UTF-8"
+--3bc47Eih9dS+biPM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Oct 24, 2018 at 07:58:30AM +0000, Clark Wang wrote:
 
-Le vendredi 19 octobre 2018 =C3=A0 11:40 +0200, Hans Verkuil a =C3=A9crit :
-> From Alexandre's '[RFC PATCH v3] media: docs-rst: Document m2m stateless
-> video decoder interface':
+> Enable the runtime pm for lpspi module
 >=20
-> On 10/19/18 10:09, Alexandre Courbot wrote:
-> > Two points being currently discussed have not been changed in this
-> > revision due to lack of better idea. Of course this is open to change:
+> BuildInfo:
+> 	- U-Boot 2018.03-imx_4.14.y
 >=20
-> <snip>
->=20
-> > * The other hot topic is the use of capture buffer indexes in order to
-> >   reference frames. I understand the concerns, but I doesn't seem like
-> >   we have come with a better proposal so far - and since capture buffer=
-s
-> >   are essentially well, frames, using their buffer index to directly
-> >   reference them doesn't sound too inappropriate to me. There is also
-> >   the restriction that drivers must return capture buffers in queue
-> >   order. Do we have any concrete example where this scenario would not
-> >   work?
->=20
-> I'll stick to decoders in describing the issue. Stateless encoders probab=
-ly
-> do not have this issue.
->=20
-> To recap: the application provides a buffer with compressed data to the
-> decoder. After the request is finished the application can dequeue the
-> decompressed frame from the capture queue.
->=20
-> In order to decompress the decoder needs to access previously decoded
-> reference frames. The request passed to the decoder contained state
-> information containing the buffer index (or indices) of capture buffers
-> that contain the reference frame(s).
->=20
-> This approach puts restrictions on the framework and the application:
->=20
-> 1) It assumes that the application can predict the capture indices.
-> This works as long as there is a simple relationship between the
-> buffer passed to the decoder and the buffer you get back.
->=20
-> But that may not be true for future codecs. And what if one buffer
-> produces multiple capture buffers? (E.g. if you want to get back
-> decompressed slices instead of full frames to reduce output latency).
+> Signed-off-by: Han Xu <han.xu@nxp.com>
+> Reviewed-by: Frank Li <frank.li@nxp.com>
+> Signed-off-by: Xiaoning Wang <xiaoning.wang@nxp.com>
 
-I don't really understand how there could be multiple capture buffers
-for the same frame used as reference here. I believe the stateless VPU
-API should make it a hard requirement that reference frames must be
-fully held in a single capture buffer. This is because the hardware
-will generally expect one address for the reference frame (that's
-definitely the case for Cedrus: we cannot deal with reference frames if
-each reference is scattered accross multiple buffers).
+This looks like Han Xu wrote this patch, Frank Li reviewed it and then
+you are sending it on but it doesn't say that you wrote it - is that
+what's going on here?
 
-So I don't believe it's a problem to associate a reference frame and a
-single capture buffer for the stateless VPU case. Rather that it should
-be specified as a requriement of the API.
-
-I don't see any problem with allowing multiple output buffers though
-(that should then be rendered to the same capture buffer), so the 1:1
-relationship between output and capture cannot be assumed either way.
-
-> This API should be designed to be future-proof (within reason of course),
-> and I am not at all convinced that future codecs will be just as easy
-> to predict.
->=20
-> 2) It assumes that neither drivers nor applications mess with the buffers=
-.
-> One case that might happen today is if the DMA fails and a buffer is
-> returned marked ERROR and the DMA is retried with the next buffer. There
-> is nothing in the spec that prevents you from doing that, but it will mes=
-s
-> up the capture index numbering. And does the application always know in
-> what order capture buffers are queued? Perhaps there are two threads: one
-> queueing buffers with compressed data, and the other dequeueing the
-> decompressed buffers, and they are running mostly independently.
->=20
-> I believe that assuming that you can always predict the indices of the
-> capture queue is dangerous and asking for problems in the future.
-
-I agree, assuming that userspace can predict the matching capture
-buffer index seems very fragile.=20
-
-> I am very much in favor of using a dedicated cookie. The application sets
-> it for the compressed buffer and the driver copies it to the uncompressed
-> capture buffer. It keeps track of the association between capture index
-> and cookie. If a compressed buffer decompresses into multiple capture
-> buffers, then they will all be associated with the same cookie, so
-> that simplifies how you refer to reference frames if they are split
-> over multiple buffers.
-
-This seems like a great idea, I'm all for it!
-
-> The codec controls refer to reference frames by cookie(s).
->=20
-> For existing applications that use the capture index all you need to do
-> is to set the capture index as the cookie value in the output buffer.
->=20
-> It is my understanding that ChromeOS was using the timestamp as the
-> cookie value.
->=20
-> I have thought about that, but I am not in favor of doing that. One
-> reason is that struct timeval comes in various flavors (32 bit, 64 bit,
-> and a y2038-compatible 32-bit type in the future).
->=20
-> The y2038 compat code that we will need concerns me in particular since
-> it will mean that the timeval is converted from 32 to 64 bit and back
-> again, and that might well mangle the data. I'm not so sure if you can
-> stick a 64-bit pointer in the timeval (e.g. the high 32 bits go to into
-> the tv_sec field, the low 32 bits go to the usecs). The y2038 conversion
-> might mangle the tv_usec field (e.g. divide by 1000000 and add the second=
-s
-> to the tv_sec field).
->=20
-> I would really prefer an independent 64-bit cookie value that the applica=
-tion
-> can set instead of abusing something else.
->=20
-> I propose to make a union with v4l2_timecode (which nobody uses) and a
-> new V4L2_BUF_FLAG_COOKIE flag.
->=20
-> struct v4l2_buffer_cookie {
-> 	__u32 high;
-> 	__u32 low;
-> };
->=20
-> And in v4l2_buffer:
->=20
-> 	union {
-> 		struct v4l2_timecode timecode;
-> 		struct v4l2_buffer_cookie cookie;
-> 	};
->=20
-> And static inlines:
->=20
-> void v4l2_buffer_set_cookie(struct v4l2_buffer *buf, __u64 cookie)
-> {
-> 	buf->cookie.high =3D cookie >> 32;
-> 	buf->cookie.low =3D cookie & 0xffffffffULL;
-> 	buf->flags |=3D V4L2_BUF_FLAG_COOKIE;
-> }
->=20
-> void v4l2_buffer_set_cookie_ptr(struct v4l2_buffer *buf, void *cookie)
-> {
-> 	v4l2_buffer_set_cookie(buf, (__u64)cookie);
-> }
->=20
-> __u64 v4l2_buffer_get_cookie(struct v4l2_buffer *buf)
-> {
-> 	if (!(buf->flags & V4L2_BUF_FLAG_COOKIE))
-> 		return 0;
-> 	return (((__u64)buf->cookie.high) << 32) | (__u64)buf->cookie.low;
-> }
->=20
-> void *v4l2_buffer_get_cookie_ptr(struct v4l2_buffer *buf)
-> {
-> 	return (void *)v4l2_buffer_get_cookie(buf);
-> }
->=20
-> Why not just use __u64? Because the alignment in v4l2_buffer is a nightma=
-re.
-> Using __u64 would create holes, made even worse by different struct timev=
-al
-> sizes depending on the architecture.
->=20
-> I'm proposing a struct v4l2_ext_buffer together with new streaming ioctls
-> during the media summit that has a clean layout and there this can be jus=
-t
-> a __u64.
->=20
-> I'm calling it a 'cookie' here, but that's just a suggestion. Better
-> names are welcome.
-
-Cheers,
-
-Paul
-
---=20
-Developer of free digital technology and hardware support.
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
-
---=-ZDbRHXgDOFbsTxIYZqiK
+--3bc47Eih9dS+biPM
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlvQTQwACgkQhP3B6o/u
-lQyR6A//YZ2aTeJcgGKBMV/PdqAnWjnxTSD0MRcq1McM5htWM+MZDEdM64z3Kv/P
-2AqWFflRimc63Bd+fl/H0YdmSlINj/j79SLy0+bPK8AjFr+kF4dXADMnbZKVV9fZ
-emlzulu/pzNhf3IWEaeqA1zOw9TQ0b6gaf3l7jTuMgtsBgXyLJaEMFVBRhhIYNU7
-iOXW681DuJzvp8ylnPOrhyzdalAqy0ANxKk9mqU9PXWXB8+1YZyK1gj4ZOl3CBiS
-iH9hpEi5fF2jsm7Hpb7CHq4kTaVDa5XFd8+r43RFI1rXHqtCnMD7D2iw/oeWPJw8
-uy+0RgmeZolyP2CbiaH1cQBl9FBWaH/6V29BA53ecyTS+t3UlAJKmrRZ1ALMm6m2
-8nB/pJh9T3BfZCFZ1ehY1eAYbKNIEJwvkrrIrrXAbUHnBBq5GOXyyLD4hyB9lzTl
-S/Yg9KofCTszhSI4ZLWyZUpChO/COKu+KyTbacMEGbnBLnPpjZpLtD+18yce2A5b
-xRhHpEMSPCYea1lDtnzPs7cpi2Su62ANNfsLjU+5fNDNDmzJiUHUioyBMTs/5T2Q
-sL16TAKUnSO5fdDIk6nYfg7oS8ZS60oJLmDmZarB7bqjHnQFOs89FsQrfbjbnSFJ
-TE7+4qDNRQee5IwM16m+GZ7vMoL6B3DN4oyZtX3ZF5fKNHrGCz0=
-=MB8T
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvQTScACgkQJNaLcl1U
+h9D93wf9EQUZ5MMqEsDkIYvm7eUCXUNGM8pdl50zZDEevyleUZ9+NvKjLwvG9HMo
+MGPCi2a4nHQpbkc5nZ2GdVdnU0bGCRH/zcGUhvEobAvAN9ujtkqpTzj2hRa2GSlm
+TzZoYe41UsI0g8IcgIMFovxKgBeYaQtRDeymm0U9lF/lgunEBc3VxD8P2qNxRpXh
+9EqRzrR6mFPwrM64Byq7prNQ8GdqyWnTXFPZYxnX6mlXcxzRrY/uRoiySv5ZP4ct
+1QqztSSTzj2ksAUtVaClkKa6ymh4kZ0Vhnv1AvQ06SVzDGS4Q+7lcW+fXNAfO2w2
+lJ9kB9pNl3So7WMxneRu4NSdHZ5mDA==
+=vlfN
 -----END PGP SIGNATURE-----
 
---=-ZDbRHXgDOFbsTxIYZqiK--
-
+--3bc47Eih9dS+biPM--
