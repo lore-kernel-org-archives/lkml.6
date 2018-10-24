@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1252ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FB1ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:11:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A97782082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:11:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EF792082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:11:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ggodCmSy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A97782082E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QEJk3NJc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EF792082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbeJYGl3 (ORCPT
+        id S1727189AbeJYGlH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 02:41:29 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39718 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727144AbeJYGlH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 25 Oct 2018 02:41:07 -0400
-Received: by mail-lf1-f68.google.com with SMTP id p11-v6so5192065lfc.6
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 15:11:15 -0700 (PDT)
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37729 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726332AbeJYGlG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 02:41:06 -0400
+Received: by mail-lf1-f66.google.com with SMTP id a82-v6so5216878lfa.4
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 15:11:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kt0ifiviCYm9e+arNneTDb/upc83BNkTvPy8eJnbc1A=;
-        b=ggodCmSyrpsvTrMb5CjscBt0YsKysH+YCtsFI/jgJVBzUDXK2BPABys6p8rLaw0i2p
-         aVqW20qx6zqgqdUjnGTxhIaHhaRXcP9YIP74tW8Tt/c4akq5mmCUZGsfZTjfADXyQyxQ
-         6G3hGh+dTm83w3pV9VJL+U8KALfm8X2QtQIAk=
+        bh=22nZ9/bSF5a5KbPfuw41q2GQOTsW0tyvBp+WWCauFas=;
+        b=QEJk3NJcbDjR841N9DXE0vt2Gx8cPjd1QaH1gRkrDWiGfX4XP+xrDMTStChBmqJlVC
+         en8284wnfANYkweMtdB15juEK7tT2Cd5tMApgtF8BVFAgzhBPPJVY2fu+EXrF7BOaNYv
+         nXuYdfr26zxvlTAu+DbdmoEPEaGaWjXifmAho=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=kt0ifiviCYm9e+arNneTDb/upc83BNkTvPy8eJnbc1A=;
-        b=fjMcF8Vk6ST31HRbGf3Vf3AwEnCNWQYqKwPJ9NSJjf06a0U/qdFqCglHcinyzJx5Ht
-         jSz9jmiLpG5ngPDk76vr8yMxF516jhWqmHVImHFhfpUJ964PA/1Zonn9q7VmWopihzl+
-         xkWZmZhv0FWFome0CrAupaIaFzLXk71B/2fw0YSw2gCy0Uq0YSqhnnMSElPDH8OQkeZz
-         S0OmB4vIiz708SVqpZ1X74kAgidwyEq2BhiD64NO2+xbtSbzsgo7G6/AP/QBHKDPtzWO
-         5qZl0LyJUyAJNPglyhRcd1ZJl01iwqCLEr/9mna4mUZwkzKTqS+I+4RMpdpUwEknqDjK
-         Zs/w==
-X-Gm-Message-State: AGRZ1gIAXdUgvMiu6znmmwPEB3MqUwQVsqdRMYY50rKQDFPBYOKD6XYs
-        AWlCMUxE3uVH/1Dym0uimRce+Q==
-X-Google-Smtp-Source: AJdET5d0ozkN75m3uQwtPQvWSEg05ubG+jS6KC3Dg33JU0cO9IWaG+68UehrTV9t7yQsG7N592njGg==
-X-Received: by 2002:a19:d824:: with SMTP id p36-v6mr73317lfg.23.1540419074714;
-        Wed, 24 Oct 2018 15:11:14 -0700 (PDT)
-Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id f19-v6sm835350ljc.31.2018.10.24.15.11.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=22nZ9/bSF5a5KbPfuw41q2GQOTsW0tyvBp+WWCauFas=;
+        b=XgY39Teg2riRZ80hATUZViVrEZGvNc2uE+rJiJIxLHNw/4DZFZnftiacAokqkI20BA
+         Ky6gukDyVvzj0C6UTH9mGuFxo1gIB3DWQPTDw6kj3PDeU8L5Lckj5foKgG2F10k+MPGz
+         5sMbtsthaF5He/HmrQwliWXYeoVTKISh3s6HwXOWtz0csUwyWSySA48PHo9ETd4MkIWg
+         BtcCXoXiu9zqLWElixsTsXnTZVSrahpWZ94f9+R07lXkl+F2XFt9V6QMaVKL/Wd+puJc
+         MOcXeJrgc2QKnzTnC5fRVeVBHnog5+uHYkyK0THciOjGdUL28GISJajnxiQmTmd6lT3+
+         vN8w==
+X-Gm-Message-State: AGRZ1gLi4T3mlaZGdeeoLVffJYHVCelYkgH60dWnN5YdpOOD3UF/THbQ
+        d/etgJyImpj/Djia/creHBNIpw==
+X-Google-Smtp-Source: AJdET5f3s2Jv2dv+2tM5MRb/p9obyxQls9mbdPx4BIN1SJ0ht88Js3piwLxaY4Y53Ji8EFYlNEZt3w==
+X-Received: by 2002:a19:d612:: with SMTP id n18-v6mr86329lfg.4.1540419073218;
         Wed, 24 Oct 2018 15:11:13 -0700 (PDT)
+Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id f19-v6sm835350ljc.31.2018.10.24.15.11.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Oct 2018 15:11:12 -0700 (PDT)
 From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 To:     grygorii.strashko@ti.com, davem@davemloft.net
 Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, alexander.h.duyck@intel.com,
         bjorn@mork.no, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH net-next 2/4] net: 8021q: vlan_core: allow use list of vlans for real device
-Date:   Thu, 25 Oct 2018 01:10:57 +0300
-Message-Id: <20181024221059.21834-3-ivan.khoronzhuk@linaro.org>
+Subject: [PATCH net-next 1/4] net: core: dev_addr_lists: add auxiliary func to handle reference address updates
+Date:   Thu, 25 Oct 2018 01:10:56 +0300
+Message-Id: <20181024221059.21834-2-ivan.khoronzhuk@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181024221059.21834-1-ivan.khoronzhuk@linaro.org>
 References: <20181024221059.21834-1-ivan.khoronzhuk@linaro.org>
@@ -71,109 +71,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's redundancy for the drivers to hold the list of vlans when
-absolutely the same list exists in vlan core. In most cases it's
-needed only to traverse the vlan devices, their vids and sync some
-settings with h/w, so add API to simplify this.
+In order to avoid all table update, and only remove or add new
+address, the auxiliary function exists, named __hw_addr_sync_dev().
+It allows end driver do nothing when nothing changed and add/rm when
+concrete address is firstly added or lastly removed. But it doesn't
+include cases when an address of real device or vlan was reused by
+other vlans or vlan/macval devices.
 
-At least some of these drivers also can benefit:
-grep "for_each.*vid" -r drivers/net/ethernet/
+For handaling events when address was reused/unreused the patch adds
+new auxiliary routine - __hw_addr_ref_sync_dev(). It allows to do
+nothing when nothing was changed and do updates only for an address
+being added/reused/deleted/unreused. Thus, clone address changes for
+vlans can be mirrored in the table. The function is exclusive with
+__hw_addr_sync_dev(). It's responsibility of the end driver to
+identify address vlan device, if it needs so.
 
-drivers/net/ethernet/hisilicon/hns3/hns3_enet.c:
-drivers/net/ethernet/synopsys/dwc-xlgmac-hw.c:
-drivers/net/ethernet/qlogic/qlge/qlge_main.c:
-drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c:
-drivers/net/ethernet/via/via-rhine.c:
-drivers/net/ethernet/via/via-velocity.c:
-drivers/net/ethernet/intel/igb/igb_main.c:
-drivers/net/ethernet/intel/ice/ice_main.c:
-drivers/net/ethernet/intel/e1000/e1000_main.c:
-drivers/net/ethernet/intel/i40e/i40e_main.c:
-drivers/net/ethernet/intel/e1000e/netdev.c:
-drivers/net/ethernet/intel/igbvf/netdev.c:
-drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c:
-drivers/net/ethernet/intel/ixgb/ixgb_main.c:
-drivers/net/ethernet/intel/ixgbe/ixgbe_main.c:
-drivers/net/ethernet/amd/xgbe/xgbe-dev.c:
-drivers/net/ethernet/emulex/benet/be_main.c:
-drivers/net/ethernet/neterion/vxge/vxge-main.c:
-drivers/net/ethernet/adaptec/starfire.c:
-drivers/net/ethernet/brocade/bna/bnad.c:
-
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
 Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 ---
- include/linux/if_vlan.h | 11 +++++++++++
- net/8021q/vlan_core.c   | 27 +++++++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
+ include/linux/netdevice.h | 10 ++++
+ net/core/dev_addr_lists.c | 97 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 107 insertions(+)
 
-diff --git a/include/linux/if_vlan.h b/include/linux/if_vlan.h
-index 83ea4df6ab81..410a14cd856c 100644
---- a/include/linux/if_vlan.h
-+++ b/include/linux/if_vlan.h
-@@ -133,6 +133,9 @@ struct vlan_pcpu_stats {
- 
- extern struct net_device *__vlan_find_dev_deep_rcu(struct net_device *real_dev,
- 					       __be16 vlan_proto, u16 vlan_id);
-+extern int vlan_for_each(struct net_device *dev,
-+			 int (*action)(struct net_device *dev, int vid,
-+				       void *arg), void *arg);
- extern struct net_device *vlan_dev_real_dev(const struct net_device *dev);
- extern u16 vlan_dev_vlan_id(const struct net_device *dev);
- extern __be16 vlan_dev_vlan_proto(const struct net_device *dev);
-@@ -236,6 +239,14 @@ __vlan_find_dev_deep_rcu(struct net_device *real_dev,
- 	return NULL;
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index dc1d9ed33b31..de95f96a6352 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -4048,6 +4048,16 @@ int __hw_addr_sync_dev(struct netdev_hw_addr_list *list,
+ 		       int (*sync)(struct net_device *, const unsigned char *),
+ 		       int (*unsync)(struct net_device *,
+ 				     const unsigned char *));
++int __hw_addr_ref_sync_dev(struct netdev_hw_addr_list *list,
++			   struct net_device *dev,
++			   int (*sync)(struct net_device *,
++				       const unsigned char *, int),
++			   int (*unsync)(struct net_device *,
++					 const unsigned char *, int));
++void __hw_addr_ref_unsync_dev(struct netdev_hw_addr_list *list,
++			      struct net_device *dev,
++			      int (*unsync)(struct net_device *,
++					    const unsigned char *, int));
+ void __hw_addr_unsync_dev(struct netdev_hw_addr_list *list,
+ 			  struct net_device *dev,
+ 			  int (*unsync)(struct net_device *,
+diff --git a/net/core/dev_addr_lists.c b/net/core/dev_addr_lists.c
+index d884d8f5f0e5..81a8cd4ea3bd 100644
+--- a/net/core/dev_addr_lists.c
++++ b/net/core/dev_addr_lists.c
+@@ -277,6 +277,103 @@ int __hw_addr_sync_dev(struct netdev_hw_addr_list *list,
  }
+ EXPORT_SYMBOL(__hw_addr_sync_dev);
  
-+static inline int
-+vlan_for_each(struct net_device *dev,
-+	      int (*action)(struct net_device *dev, int vid, void *arg),
-+	      void *arg)
++/**
++ *  __hw_addr_ref_sync_dev - Synchronize device's multicast address list taking
++ *  into account references
++ *  @list: address list to synchronize
++ *  @dev:  device to sync
++ *  @sync: function to call if address or reference on it should be added
++ *  @unsync: function to call if address or some reference on it should removed
++ *
++ *  This function is intended to be called from the ndo_set_rx_mode
++ *  function of devices that require explicit address or references on it
++ *  add/remove notifications. The unsync function may be NULL in which case
++ *  the addresses or references on it requiring removal will simply be
++ *  removed without any notification to the device. That is responsibility of
++ *  the driver to identify and distribute address or references on it between
++ *  internal address tables.
++ **/
++int __hw_addr_ref_sync_dev(struct netdev_hw_addr_list *list,
++			   struct net_device *dev,
++			   int (*sync)(struct net_device *,
++				       const unsigned char *, int),
++			   int (*unsync)(struct net_device *,
++					 const unsigned char *, int))
 +{
-+	return 0;
-+}
++	struct netdev_hw_addr *ha, *tmp;
++	int err, ref_cnt;
 +
- static inline struct net_device *vlan_dev_real_dev(const struct net_device *dev)
- {
- 	BUG();
-diff --git a/net/8021q/vlan_core.c b/net/8021q/vlan_core.c
-index 4f60e86f4b8d..6308b5427a66 100644
---- a/net/8021q/vlan_core.c
-+++ b/net/8021q/vlan_core.c
-@@ -223,6 +223,33 @@ static int vlan_kill_rx_filter_info(struct net_device *dev, __be16 proto, u16 vi
- 		return -ENODEV;
- }
- 
-+int vlan_for_each(struct net_device *dev,
-+		  int (*action)(struct net_device *dev, int vid, void *arg),
-+		  void *arg)
-+{
-+	struct vlan_vid_info *vid_info;
-+	struct vlan_info *vlan_info;
-+	struct net_device *vdev;
-+	int ret;
++	/* first go through and flush out any unsynced/stale entries */
++	list_for_each_entry_safe(ha, tmp, &list->list, list) {
++		/* sync if address is not used */
++		if ((ha->sync_cnt << 1) <= ha->refcount)
++			continue;
 +
-+	ASSERT_RTNL();
++		/* if fails defer unsyncing address */
++		ref_cnt = ha->refcount - ha->sync_cnt;
++		if (unsync && unsync(dev, ha->addr, ref_cnt))
++			continue;
 +
-+	vlan_info = rtnl_dereference(dev->vlan_info);
-+	if (!vlan_info)
-+		return 0;
++		ha->refcount = (ref_cnt << 1) + 1;
++		ha->sync_cnt = ref_cnt;
++		__hw_addr_del_entry(list, ha, false, false);
++	}
 +
-+	list_for_each_entry(vid_info, &vlan_info->vid_list, list) {
-+		vdev = vlan_group_get_device(&vlan_info->grp, vid_info->proto,
-+					     vid_info->vid);
-+		ret = action(vdev, vid_info->vid, arg);
-+		if (ret)
-+			return ret;
++	/* go through and sync updated/new entries to the list */
++	list_for_each_entry_safe(ha, tmp, &list->list, list) {
++		/* sync if address added or reused */
++		if ((ha->sync_cnt << 1) >= ha->refcount)
++			continue;
++
++		ref_cnt = ha->refcount - ha->sync_cnt;
++		err = sync(dev, ha->addr, ref_cnt);
++		if (err)
++			return err;
++
++		ha->refcount = ref_cnt << 1;
++		ha->sync_cnt = ref_cnt;
 +	}
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL(vlan_for_each);
++EXPORT_SYMBOL(__hw_addr_ref_sync_dev);
 +
- int vlan_filter_push_vids(struct vlan_info *vlan_info, __be16 proto)
- {
- 	struct net_device *real_dev = vlan_info->real_dev;
++/**
++ *  __hw_addr_ref_unsync_dev - Remove synchronized addresses and references on
++ *  it from device
++ *  @list: address list to remove synchronized addresses (references on it) from
++ *  @dev:  device to sync
++ *  @unsync: function to call if address and references on it should be removed
++ *
++ *  Remove all addresses that were added to the device by
++ *  __hw_addr_ref_sync_dev(). This function is intended to be called from the
++ *  ndo_stop or ndo_open functions on devices that require explicit address (or
++ *  references on it) add/remove notifications. If the unsync function pointer
++ *  is NULL then this function can be used to just reset the sync_cnt for the
++ *  addresses in the list.
++ **/
++void __hw_addr_ref_unsync_dev(struct netdev_hw_addr_list *list,
++			      struct net_device *dev,
++			      int (*unsync)(struct net_device *,
++					    const unsigned char *, int))
++{
++	struct netdev_hw_addr *ha, *tmp;
++
++	list_for_each_entry_safe(ha, tmp, &list->list, list) {
++		if (!ha->sync_cnt)
++			continue;
++
++		/* if fails defer unsyncing address */
++		if (unsync && unsync(dev, ha->addr, ha->sync_cnt))
++			continue;
++
++		ha->refcount -= ha->sync_cnt - 1;
++		ha->sync_cnt = 0;
++		__hw_addr_del_entry(list, ha, false, false);
++	}
++}
++EXPORT_SYMBOL(__hw_addr_ref_unsync_dev);
++
+ /**
+  *  __hw_addr_unsync_dev - Remove synchronized addresses from device
+  *  @list: address list to remove synchronized addresses from
 -- 
 2.17.1
 
