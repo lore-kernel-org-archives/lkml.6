@@ -2,119 +2,185 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 416FFC67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA8BC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0728E2054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:41:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03C962054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:43:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lv8o6rXq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0728E2054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fuhsjVrZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C962054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbeJXPIK (ORCPT
+        id S1726919AbeJXPKQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 11:08:10 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39503 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbeJXPIJ (ORCPT
+        Wed, 24 Oct 2018 11:10:16 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:44079 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbeJXPKQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 11:08:09 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c25-v6so1942551pfe.6
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 23:41:27 -0700 (PDT)
+        Wed, 24 Oct 2018 11:10:16 -0400
+Received: by mail-yb1-f195.google.com with SMTP id p144-v6so1651150yba.11;
+        Tue, 23 Oct 2018 23:43:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bYjblIwUWV3TvDA1gjPimUFpNpks8E4/u1/Kq3quwZc=;
-        b=Lv8o6rXqSNonbLqWjruCzz+TvlRgLyrFL4Pu8ej6N927XdVXpz1uyoVlBcPfB/MpW1
-         HXXl01AoEmqifSrZ7cTkUkiJSk0tWcHxtvsffgIeEVqwkDD3vaqrUc8iF5Ya9bnZSlIl
-         rjh9NEObSWqo9uY7+DttnZptTGChVoVzUmhBU=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=44lXhFijXc/WppbtbZeHRUNMlR8HSQS5PODiH30kUYQ=;
+        b=fuhsjVrZnBfpx9ADm+BBzuVzDJDKkbNmdfWaDY1/LMbB9S+Y82fRG6+2M3Eku7kuH6
+         rrj619TvzOKgb+DxOURDLxqvONxssCZEO7LQ6LRDlAP9TVVAYaiJLeOtRoDGu52CcTZw
+         IkYtoAOzxAQUINCL8d/r7HVLYUkVRptwZUbcxSJNdX/oGQuS/9GZYy+EuOe3hd46eQ4+
+         CXXlhRDcz4GE3Tc5Yn/Dz2UIMCLQM/KblB6ghG2WxsaJz2aV3vcD89NIG1p3Ipj/KDYk
+         arBkt4eFJiJd48Q2out6tkrHsRbUiuXXjzHVRn0s8szsA/eD30WhX3vSEsOmml34JHfp
+         a7LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bYjblIwUWV3TvDA1gjPimUFpNpks8E4/u1/Kq3quwZc=;
-        b=NWAyBsDVsFi92BoFtcz7S+IS7pqAclgd6LIUxRanAiCjFRs6X8x4lYu3TOkawkLsls
-         UvltJDNaPDLcPXumHxYjROxG5asHtFsNZqtoan99ZjgAHVgte4WPrXQ8YjwhJ+SnxB3f
-         XfdFtey0z9MedyI8lRAST4TLa+Wdqz1wB7Fgkn4UWChHKppmg0T8djdVWQC/smWggeak
-         XYU4FzxKsjeKQNLhXnxHHDcL9VRlcE/nBkKsXABPMByRnr124MxG9CKxJVUY8gWR52ZZ
-         vCC+NOlLLDZ0+48H3dfT4W+fXKwtwKlSZYTKB+c0MQ7yII6E8QoY2J0UUl9fYbucD5V3
-         5YOA==
-X-Gm-Message-State: AGRZ1gJyOEDO+4qg8R0+b5x7Jrhxh+rq/0hQWVQ+NXKfUXlFiJHFeXaV
-        QRwbyz4yPGoJLsycJeUAIAstYfQtPkw=
-X-Google-Smtp-Source: AJdET5f1AgmZDqSftT+i+YAGDNNpZQA/9WkZxXFXPhDhkQebYgMaFyKVvZ3B7LG4WBJxHTk34/+hCg==
-X-Received: by 2002:a63:3e05:: with SMTP id l5mr1318777pga.96.1540363286463;
-        Tue, 23 Oct 2018 23:41:26 -0700 (PDT)
-Received: from localhost ([122.172.217.9])
-        by smtp.gmail.com with ESMTPSA id n64-v6sm5147722pfi.185.2018.10.23.23.41.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 23:41:25 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 12:11:23 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 01/17] OPP: Allow to request stub voltage
- regulators
-Message-ID: <20181024064123.lbpbeervghp35fe7@vireshk-i7>
-References: <20181021205501.23943-1-digetx@gmail.com>
- <20181021205501.23943-2-digetx@gmail.com>
- <20181022053636.ag62j3rj3vovbz53@vireshk-i7>
- <e4027793-9436-413d-2a7b-34cf519218c3@gmail.com>
- <20181022113224.b5fiebgy2aap66nd@vireshk-i7>
- <29f893be-feed-c4c5-8468-51f7228dd468@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=44lXhFijXc/WppbtbZeHRUNMlR8HSQS5PODiH30kUYQ=;
+        b=LA/TwYht8CBkf8QpIe3SwgC6EsdaX3NGzjyBZBBCFRPwQwP2msh+qPb3YPHVPvyFJO
+         /deB7/gQKuenIuSR2N3FKX0TJbYt+ijigaaNAvDnHLYxzXdopzJchN86KsMhLkdn8EIL
+         T42WJytXkB+QULb8Zq9OYqAljn+32/rqPQakZkAQmdQS1f7SmI7GE+/jmXjCPL7y0oIp
+         DSAL2GM43rCSuB/3J4jTfjpbatB+Xl75YzyMN0+hia7hQc6MuzWtarOul80Dw0qjJmb4
+         wPpv9W262/FVUjVuGjb3r93hVXdXIIPSPG845AE65NKqQBJ9wOykjxVP7BzgsrOjn6v+
+         oR4Q==
+X-Gm-Message-State: AGRZ1gKyZPnJt00w1KfqHs/epROrvC7dWQz1mAijjDRiisEYrrVRNNH2
+        S395o1VlBe2oUePL/HoE3lByIBoQFFc7U2hcgfg=
+X-Google-Smtp-Source: AJdET5cty0zimPhZr2DU3M+K6MW+JZDwgpiOSlgKa048L1VcIKCYIK+7+gcqMQVlp2PV6ZI2luT+WTCEu4zbY8sUkCE=
+X-Received: by 2002:a25:6607:: with SMTP id a7-v6mr1110848ybc.507.1540363412500;
+ Tue, 23 Oct 2018 23:43:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <29f893be-feed-c4c5-8468-51f7228dd468@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+References: <20181023201952.GA15676@pathfinder>
+In-Reply-To: <20181023201952.GA15676@pathfinder>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 24 Oct 2018 09:43:21 +0300
+Message-ID: <CAOQ4uxgFdquNqcRXETriSvwc24DDQbmu218WFv-a5K3k0nuu7Q@mail.gmail.com>
+Subject: Re: [RFC][PATCH 00/11] common implementation of dirent file types
+To:     Phillip Potter <phil@philpotter.co.uk>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-10-18, 15:12, Dmitry Osipenko wrote:
-> Because there is one Tegra20 board (tegra20-trimslice) that doesn't declare
-> necessary regulators, but we want to have CPU frequency scaling. I couldn't
-> find board schematics and so don't know if CPU / CORE voltages are fixed on
-> Trim-Slice or it is just preferable not to have DVFS for that board, it is an
-> outlet-powered device [0]. Hence tegra20-cpufreq driver will request a dummy
-> regulators when appropriate. 
+On Tue, Oct 23, 2018 at 11:19 PM Phillip Potter <phil@philpotter.co.uk> wrote:
+>
+> This cleanup series is a respin of Amir Goldstein's work, created
+> in late 2016. It removes several instances of duplicated code. Most
+> of the duplication dates back to git pre-historic era.
+>
+> The controversial aspect of this cleanup is that it uses common
+> code to handle file system specific on-disk format bits.
 
-We have been using the regulator_get_optional() variant until now in the OPP
-core to make sure that we don't do DVFS for the CPU without the mandatory
-regulators being present, as that may make things unstable and cause harm to the
-SoC if we try to take CPU to frequency range over the currently programmed
-regulator can support.
+We handled this aspect with care by placing compile time checks.
 
-Now coming back to tegra-20 SoC, which actually requires a regulator normally by
-design. On one of the boards (which is outlet powered), you aren't sure if there
-is a programmable regulator or not, or if DVFS should really be done or not.
-Isn't it worth checking the same from Tegra maintainers, or whomsoever has
-information on that board ? What would happen if there actually was a regulator
-and its default settings aren't good enough for high end frequencies ?
+> All 7 file systems use a single byte to store dirent file type
+> on-disk and all of them use the same conversion routines from
+> i_mode to 4bits DT_* constants to 3bits on-disk FT_* constants.
+>
+> Patch 1 places a common implementation in file_type.h and
+> add some useful conversion helpers.
+>
+> Patches 2-3 make use of some helpers in ufs and hfsplus
+> without any on-disk implications.
+>
+> Patches 4-10 replace the specific implementations in ext2, exofs,
+> ext4, ocfs2, f2fs, nilfs and btrfs with the common implementation.
+> These patches also now include compile-time checks to ensure that
+> the file system specific on-disk bits are equivalent to the common
+> implementation FT_* bits. These compile-time checks are only
+> included once per file system, as my reasoning is that regardless
+> of their location, the build will fail/succeed anyway.
+>
+> In addition, where needed (for patches which no longer apply),
+> I've rebased them to apply to the newest 4.19 kernel sources.
+> Each patch is independent of the others, except for the
+> common implementation itself which they all depend on.
+>
 
-On the other hand, the tegra20 cpufreq driver is common across a lot of boards.
-What will happen if the DT for some of the boards isn't correct and missed the
-necessary regulator node ? And because you are moving to regulator_get() API for
-the entire SoC (i.e. its cpufreq driver), people will never find the missing
-regulator.
+This is still RFC, but since this is an exercise let's talk about social
+engineering. First (now) you want to gather ACKs and review comments
+from fs developers/maintainers.
 
-If we can do it safely for all tegra20 boards, why not migrate to using
-regulator_get() instead of regulator_get_optional() in the OPP core API itself
-for everyone ?
+Once all comments are addressed and assuming no objections, you have
+two possible ways forward:
 
--- 
-viresh
+1. Wait for VFS maintainer to take the common code and patches ACKed
+    by individual maintainers (Al practically maintains some of the small fs
+    himself). Al's backlog is long, so this may be a long wait.
+
+2. Ask a filesystem maintainer to carry the common patch along with his
+   specific fs patch through his tree and let other maintainers apply the patch
+   at their own will on the following development cycle.
+   The ext2 tree would be a good candidate for such a move, if Jan accepts
+   this change, considering that all other fs copied the buggy code from ext2.
+
+> I would love feedback as newish kernel contributor, particularly
+> from the original author Amir who suggested this task for me. I
+> hope the various subsystem/fs maintainers will see fit to accept
+> this work also.
+>
+
+I usually prefer to have the revisions log in the cover letter for
+a 10 patch series, much less work and more appropriate when
+revision log looks mostly the same on all patches, e.g.:
+
+v2:
+- Rebased against Linux 4.19 by Phillip Potter
+- This version does not remove filesystem specific XXX_FT_x definitions,
+  as these values are now used in compile-time checks added by
+  Phillip Potter to make sure they remain the same as FT_x values
+- Removed xfs patch (a variant of original patch has already been applied)
+- Anything else relevant to the context of the series...
+
+v1:
+- Initial implementation by Amir Goldstein:
+https://marc.info/?l=linux-fsdevel&m=148217829301701&w=2
+
+> Phillip Potter (10):
+>   fs: common implementation of file type conversions
+>   ufs: use fs_umode_to_dtype() helper
+>   hfsplus: use fs_umode_to_dtype() helper
+>   ext2: use common file type conversion
+>   exofs: use common file type conversion
+>   ext4: use common file type conversion
+>   ocfs2: use common file type conversion
+>   f2fs: use common file type conversion
+>   nilfs2: use common file type conversion
+>   btrfs: use common file type conversion
+> ---
+>  MAINTAINERS                        |   1 +
+>  fs/btrfs/btrfs_inode.h             |   2 -
+>  fs/btrfs/delayed-inode.c           |   2 +-
+>  fs/btrfs/inode.c                   |  35 +++++-----
+>  fs/exofs/dir.c                     |  49 +++++--------
+>  fs/ext2/dir.c                      |  51 ++++++--------
+>  fs/ext4/ext4.h                     |  35 +++++-----
+>  fs/f2fs/dir.c                      |  43 +++++-------
+>  fs/f2fs/inline.c                   |   2 +-
+>  fs/hfsplus/dir.c                   |  16 +----
+>  fs/nilfs2/dir.c                    |  54 +++++----------
+>  fs/ocfs2/dir.c                     |  32 +++++----
+>  fs/ocfs2/ocfs2_fs.h                |  13 +---
+>  fs/ufs/util.h                      |  29 +-------
+>  include/linux/f2fs_fs.h            |   8 ++-
+>  include/linux/file_type.h          | 108 +++++++++++++++++++++++++++++
+>  include/linux/fs.h                 |  17 +----
+>  include/uapi/linux/btrfs_tree.h    |   2 +
+>  include/uapi/linux/nilfs2_ondisk.h |   1 +
+>  19 files changed, 256 insertions(+), 244 deletions(-)
+>  create mode 100644 include/linux/file_type.h
+>
+> --
+> 2.17.2
+>
