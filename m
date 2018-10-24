@@ -2,98 +2,123 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E1BDECDE47
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C970ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:14:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F383620838
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:13:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F383620838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 03CD620831
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:14:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JGD2EwkM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03CD620831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbeJYCmv (ORCPT
+        id S1727265AbeJYCnn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 22:42:51 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52832 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726433AbeJYCmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 22:42:51 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E8D67208C7; Wed, 24 Oct 2018 20:13:44 +0200 (CEST)
-Received: from localhost (unknown [2.223.63.88])
-        by mail.bootlin.com (Postfix) with ESMTPSA id AAA8020890;
-        Wed, 24 Oct 2018 20:13:34 +0200 (CEST)
-Date:   Wed, 24 Oct 2018 19:13:34 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 12/15] clk: sunxi-ng: a64: Add min and max rate for
- PLL_MIPI
-Message-ID: <20181024181334.lul7ta7ijluwfb7v@flea>
-References: <20181023155035.9101-1-jagan@amarulasolutions.com>
- <20181023155035.9101-13-jagan@amarulasolutions.com>
+        Wed, 24 Oct 2018 22:43:43 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54830 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726433AbeJYCnn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 22:43:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gby0APml37BXslNnoxTYpVn9Dt2sYAd+h3kISPnzojY=; b=JGD2EwkMuKKmFVx2GP2A6yd6w
+        eBmbmTn25uN70xreDqDmRcnR8qSIBNnvvLhtN9bSbWKV+3dduht92Ma9X1xtsBR2yUbz+1JzWBgAg
+        oRLqOvpf7M8TGOlyL1LhxMRUHGSBHfspn/GCwPROzuFnPpoOhcTjfQB4sZnGWPV3+eimYJ9vpzrJe
+        yFIh9TklKY7VbeQbTok5FhbJUN/BJJS7Dideb+ZJaJKIFVfc/mUlYM94djEVeMK8ivPvhzDyNZcA9
+        Tuf9Q2dBn31WbQLuXXmfpNAM40uyIzL89slrpg8rg8ZrgVQtlPY/vfKPCsfS6cNiTf7L4442w4igN
+        TAGaULEHQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gFNfy-0006zd-IB; Wed, 24 Oct 2018 18:14:38 +0000
+Subject: Re: [PATCH] V4 init/main.c Enable watchdog_thresh control from kernel
+ line
+To:     Laurence Oberman <loberman@redhat.com>,
+        linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de
+References: <1540404366-26999-1-git-send-email-loberman@redhat.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <fe9d7131-fc66-7f18-339b-b4bdc1ed314d@infradead.org>
+Date:   Wed, 24 Oct 2018 11:14:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bqw3vje525gqrsp3"
-Content-Disposition: inline
-In-Reply-To: <20181023155035.9101-13-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1540404366-26999-1-git-send-email-loberman@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/24/18 11:06 AM, Laurence Oberman wrote:
+> Both graphics and serial consoles are exposed to hard lockups
+> when handling a large amount of messaging. The kernel watchdog_thresh
+> parameter up to now has not been available to be set on the kernel line for
+> early boot.
+> This patch allows the setting of watchdog_thresh to be increased
+> when needed to avoid the hard lockups in the console code.
+> 
+> Signed-off-by: Laurence Oberman <loberman@redhat.com>
 
---bqw3vje525gqrsp3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-On Tue, Oct 23, 2018 at 09:20:32PM +0530, Jagan Teki wrote:
-> A64 manual say PLL_MIPI rates are 500MHz to 1.4GHz, but
-> using minimum 500MHz can't release the clock and which
-> is not working.
->
-> So use working minimum rate as 300MHz which is tested on
-> Bananapi DSI panel.
+Thanks.
 
-I'm not quite sure what you mean by that. What do you mean by "500MHz
-can't release the clock"? Why would 300MHz work better then? Should be
-avoid reaching 500MHz if it's a frequency in the valid range?
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt | 7 +++++++
+>  init/main.c                                     | 8 ++++++++
+>  2 files changed, 15 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 4cdcd1a..05f76b8 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4932,6 +4932,13 @@
+>  			or other driver-specific files in the
+>  			Documentation/watchdog/ directory.
+>  
+> +	watchdog_thresh=
+> +			This parameter allows early boot to change the
+> +			value of the watchdog timeout threshold from the default
+> +			of 10 seconds to avoid hard lockups.  Example:
+> +			 watchdog_thresh=30
+> +			Default: 10
+> +
+>  	workqueue.watchdog_thresh=
+>  			If CONFIG_WQ_WATCHDOG is configured, workqueue can
+>  			warn stall conditions and dump internal state to
+> diff --git a/init/main.c b/init/main.c
+> index 1c3f902..ae45291 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -1038,6 +1038,14 @@ static int __init set_debug_rodata(char *str)
+>  __setup("rodata=", set_debug_rodata);
+>  #endif
+>  
+> +static int __init is_watchdog_thresh_setup(char *str)
+> +{
+> +	get_option(&str, &watchdog_thresh);
+> +	return 1;
+> +}
+> +__setup("watchdog_thresh=", is_watchdog_thresh_setup);
+> +
+> +
+>  #ifdef CONFIG_STRICT_KERNEL_RWX
+>  static void mark_readonly(void)
+>  {
+> 
 
-Maxime
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---bqw3vje525gqrsp3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9C2TgAKCRDj7w1vZxhR
-xRk5AP9l8gJcTk3NRkPKMtYP8PiTTLkMKZDifHCACpchw6KSEgD+Ip4W0VWvyICR
-hnTLjoVBjGzX3A4swj5luUG0JfnWRQo=
-=4oPG
------END PGP SIGNATURE-----
-
---bqw3vje525gqrsp3--
+-- 
+~Randy
