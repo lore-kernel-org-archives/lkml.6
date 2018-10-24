@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9370C46475
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D045C46475
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98FE720832
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:05:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A80EA20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:08:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UM4L/fsN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98FE720832
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ubkKuQU2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A80EA20832
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbeJXLbo (ORCPT
+        id S1726426AbeJXLeT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 07:31:44 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42640 "EHLO
+        Wed, 24 Oct 2018 07:34:19 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36042 "EHLO
         mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbeJXLbo (ORCPT
+        with ESMTP id S1725826AbeJXLeT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 07:31:44 -0400
-Received: by mail-pg1-f195.google.com with SMTP id i4-v6so1608313pgq.9;
-        Tue, 23 Oct 2018 20:05:41 -0700 (PDT)
+        Wed, 24 Oct 2018 07:34:19 -0400
+Received: by mail-pg1-f195.google.com with SMTP id l6-v6so1625578pgp.3;
+        Tue, 23 Oct 2018 20:08:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=a5VCWP1jvBGTVRlOXHM630rkywHqtK6S6KhPyPHlEck=;
-        b=UM4L/fsNfl52iBUTqQrnNlYc0SvU96IYRp2htFW/JEC8hNwBNC9Q4SUWP8/xPvDJxo
-         hycsB/sDK2YcksE4CezBcK8RImrYzrT9S3wg67V6jOpn03dYxf2ped5CJ361iYN1qcv6
-         2J+t9+bnVtMT5xq4hTyd9tGVzDfozkmCb9X7PJg8lvu/Uh5hXzVFYft3NCXJbnm3Tg97
-         EQWRZinHuSPI9CVpHkBgxSss8yYYK8WrPEmWNElNnQM93D8JsI4iTRtFmC9rCAc7kAb2
-         VvQhKoKTaHLOsArkwj0XBbcMhMCHJXtEcXzmIoqNljlV3B5vT3O0ClfKtq+UNtPmyMdA
-         DZCw==
+        bh=nsuYjcR1EiPlDCJ6JViUW3dlgy89BBd7N5H87xE87CE=;
+        b=ubkKuQU2ptxlXeSTDT848h8n7RDmXT9J0x8RR9wqe7y571qSuE/IrY6xfBi1ybOTGt
+         syDTlQNrvioVDWgJvJbUFFvUhn/4iYxyB+X07ZVK5rFdlv4Dpnu95nSQUXOzJIDSe+h8
+         zyy4EsSJzhYPX+veKAOnQ+UmQaxAzAXTVF84pk1tP5VBri9zORekoj5SKQtYf0GQpvcI
+         eEEDcjVTVSdj3iaEgEKhuwB1P/E4CJrWEjTew89zxZa70R/gsPoP+l330fuIuOXAx2+j
+         R84QnEMG/Ko50qNOPIEWRaSiO2E/NKe6AZSbHMrziZpA+rBfYGBgqc6nxVEwOUhgmE6q
+         4aVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=a5VCWP1jvBGTVRlOXHM630rkywHqtK6S6KhPyPHlEck=;
-        b=a+/Kk89I8HLTBiG7M1J3oqwitoA1qEV3SKzxkEt8GDyNtoirUxsGBf/3PPNI9KF/PB
-         VvTvK9c7zFhlA3uVxdz/u94cNG5lX/6OL9pOR9az/ImThvCnH6fHrUT9+YAvDC+pzvGa
-         Rz6fp8/jpxuH/Rv6bntm5ijkeEd8XE00RaNdr2/elkvdQgRZFcPk4WRMWj0cFK2Ov3RT
-         6UTI7eGIUlcFx9IqB1Id2iv7qU87gN51KKGLxgLamgTRAZmCgUYQaPwjKDFzvErxx5UC
-         OPpHTgU6sCy5gg4QhenTWT8Lmfdnp1teTbSs91pK62Lyz/NrtZvRLP7MglXrTW1+2iZp
-         TySw==
-X-Gm-Message-State: AGRZ1gJurYzt25qOsFVx8vKqjtiJbNWmr6z69H+IqrJrAQ5Bfb8UEpxt
-        4BWuGXuoCFKb4JdKafsMaelyItgT
-X-Google-Smtp-Source: AJdET5fv217Bs7DKw59s4YDhDn46i1Imb1FTHLoPNX9xObMsI2s7ozEZ3mH85tjqMfool4WCWZrt0g==
-X-Received: by 2002:a63:1f58:: with SMTP id q24-v6mr781948pgm.88.1540348591440;
-        Tue, 23 Oct 2018 19:36:31 -0700 (PDT)
+        bh=nsuYjcR1EiPlDCJ6JViUW3dlgy89BBd7N5H87xE87CE=;
+        b=S0u2SZOzgnrAvXb1fReMptKeaKAvH9bEbMNHoM9+mjnfjWVf8GCrOz9xVLA371C+sy
+         uU/As1UvwpU8BwNcm+hTGxyBc1DRN5xSkd+763uyfpPkYoucDMK2UcETd5/aRYcpRozT
+         iqSMOPPOQg/5okamZzGtAcwUuBwLBp5hnGr/2a6SHIpHJVKXoHpE7bDath09vPmX0QmC
+         o6hdIuaundhQmZ/T8tjtGKz/LoU3cGetcrnvG8BykY0S3ql6/D+Mp4XN/f28J4exxs/V
+         hRpni2W0vTErvq2al0+xNeiWNRygS8vYziA/upXqdyXxN4MSY9sOhlTkrkmvxHGlDSRZ
+         L7sw==
+X-Gm-Message-State: AGRZ1gJhRZxZFSkYeePw4NC2V2i7li/4Y0cZqGwl5gaBLA/ybaK/G9Io
+        pMuTQauj0LNdPT2Jv6Pf9g/c5opf
+X-Google-Smtp-Source: AJdET5cc0i8uCrPezrM5rd+Nk5MIEcEXua+GqjevguZVp7wx+xPrnyGvuIm7JgiMv+2A8Cl0djEUnQ==
+X-Received: by 2002:a65:4981:: with SMTP id r1-v6mr771496pgs.153.1540348590701;
+        Tue, 23 Oct 2018 19:36:30 -0700 (PDT)
 Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
         by smtp.gmail.com with ESMTPSA id n17-v6sm3606625pfj.84.2018.10.23.19.36.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
@@ -61,9 +61,9 @@ Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.2
 From:   Nicolin Chen <nicoleotsuka@gmail.com>
 To:     jdelvare@suse.com, linux@roeck-us.net
 Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/5] hwmon: (ina3221) Serialize sysfs ABI accesses
-Date:   Tue, 23 Oct 2018 19:36:21 -0700
-Message-Id: <20181024023623.4231-4-nicoleotsuka@gmail.com>
+Subject: [PATCH v2 2/5] hwmon: (ina3221) Check channel status for alarms attribute read
+Date:   Tue, 23 Oct 2018 19:36:20 -0700
+Message-Id: <20181024023623.4231-3-nicoleotsuka@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181024023623.4231-1-nicoleotsuka@gmail.com>
 References: <20181024023623.4231-1-nicoleotsuka@gmail.com>
@@ -72,148 +72,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change adds a mutex to serialize accesses of sysfs attributes.
-
-This is required when polling CVRF bit of the MASK/ENABLE register
-because this bit is cleared on a read of this MASK/ENABLE register
-or a write to CONFIG register, which means that this bit might be
-accidentally cleared by reading other fields like alert flags.
-
-So this patch adds a mutex lock to protect the write() and read()
-callbacks. The read_string() callback won't need the lock since it
-just returns the label without touching any hardware register.
+There is nothing critically wrong to read these two attributes
+without having a is_enabled() check at this point. But reading
+the MASK_ENABLE register would clear the CVRF bit according to
+the datasheet. So it'd be safer to fence for disabled channels
+in order to add pm runtime feature.
 
 Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 ---
- drivers/hwmon/ina3221.c | 51 ++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 45 insertions(+), 6 deletions(-)
+Changelog
+v1->v2:
+ * Returned 0 for alert flags instead of -ENODATA
+
+ drivers/hwmon/ina3221.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
-index 26cdf3342d80..10e8347a3c80 100644
+index d61688f04594..26cdf3342d80 100644
 --- a/drivers/hwmon/ina3221.c
 +++ b/drivers/hwmon/ina3221.c
-@@ -18,6 +18,7 @@
- #include <linux/hwmon-sysfs.h>
- #include <linux/i2c.h>
- #include <linux/module.h>
-+#include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/regmap.h>
- 
-@@ -94,12 +95,14 @@ struct ina3221_input {
-  * @regmap: Register map of the device
-  * @fields: Register fields of the device
-  * @inputs: Array of channel input source specific structures
-+ * @lock: mutex lock to serialize sysfs attribute accesses
-  * @reg_config: Register value of INA3221_CONFIG
-  */
- struct ina3221_data {
- 	struct regmap *regmap;
- 	struct regmap_field *fields[F_MAX_FIELDS];
- 	struct ina3221_input inputs[INA3221_NUM_CHANNELS];
-+	struct mutex lock;
- 	u32 reg_config;
- };
- 
-@@ -265,29 +268,53 @@ static int ina3221_write_enable(struct device *dev, int channel, bool enable)
- static int ina3221_read(struct device *dev, enum hwmon_sensor_types type,
- 			u32 attr, int channel, long *val)
- {
-+	struct ina3221_data *ina = dev_get_drvdata(dev);
-+	int ret;
-+
-+	mutex_lock(&ina->lock);
-+
- 	switch (type) {
- 	case hwmon_in:
- 		/* 0-align channel ID */
--		return ina3221_read_in(dev, attr, channel - 1, val);
-+		ret = ina3221_read_in(dev, attr, channel - 1, val);
-+		break;
- 	case hwmon_curr:
--		return ina3221_read_curr(dev, attr, channel, val);
-+		ret = ina3221_read_curr(dev, attr, channel, val);
-+		break;
- 	default:
--		return -EOPNOTSUPP;
-+		ret = -EOPNOTSUPP;
-+		break;
- 	}
-+
-+	mutex_unlock(&ina->lock);
-+
-+	return ret;
- }
- 
- static int ina3221_write(struct device *dev, enum hwmon_sensor_types type,
- 			 u32 attr, int channel, long val)
- {
-+	struct ina3221_data *ina = dev_get_drvdata(dev);
-+	int ret;
-+
-+	mutex_lock(&ina->lock);
-+
- 	switch (type) {
- 	case hwmon_in:
- 		/* 0-align channel ID */
--		return ina3221_write_enable(dev, channel - 1, val);
-+		ret = ina3221_write_enable(dev, channel - 1, val);
-+		break;
- 	case hwmon_curr:
--		return ina3221_write_curr(dev, attr, channel, val);
-+		ret = ina3221_write_curr(dev, attr, channel, val);
-+		break;
- 	default:
--		return -EOPNOTSUPP;
-+		ret = -EOPNOTSUPP;
-+		break;
- 	}
-+
-+	mutex_unlock(&ina->lock);
-+
-+	return ret;
- }
- 
- static int ina3221_read_string(struct device *dev, enum hwmon_sensor_types type,
-@@ -582,6 +609,7 @@ static int ina3221_probe(struct i2c_client *client,
- 	if (ret)
- 		return ret;
- 
-+	mutex_init(&ina->lock);
- 	dev_set_drvdata(dev, ina);
- 
- 	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, ina,
-@@ -589,12 +617,22 @@ static int ina3221_probe(struct i2c_client *client,
- 							 ina3221_groups);
- 	if (IS_ERR(hwmon_dev)) {
- 		dev_err(dev, "Unable to register hwmon device\n");
-+		mutex_destroy(&ina->lock);
- 		return PTR_ERR(hwmon_dev);
- 	}
- 
- 	return 0;
- }
- 
-+static int ina3221_remove(struct i2c_client *client)
-+{
-+	struct ina3221_data *ina = dev_get_drvdata(&client->dev);
-+
-+	mutex_destroy(&ina->lock);
-+
-+	return 0;
-+}
-+
- static int __maybe_unused ina3221_suspend(struct device *dev)
- {
- 	struct ina3221_data *ina = dev_get_drvdata(dev);
-@@ -663,6 +701,7 @@ MODULE_DEVICE_TABLE(i2c, ina3221_ids);
- 
- static struct i2c_driver ina3221_i2c_driver = {
- 	.probe = ina3221_probe,
-+	.remove = ina3221_remove,
- 	.driver = {
- 		.name = INA3221_DRIVER_NAME,
- 		.of_match_table = ina3221_of_match_table,
+@@ -200,6 +200,12 @@ static int ina3221_read_curr(struct device *dev, u32 attr,
+ 		return 0;
+ 	case hwmon_curr_crit_alarm:
+ 	case hwmon_curr_max_alarm:
++		/* No actual register read if channel is disabled */
++		if (!ina3221_is_enabled(ina, channel)) {
++			/* Return 0 for alert flags */
++			*val = 0;
++			return 0;
++		}
+ 		ret = regmap_field_read(ina->fields[reg], &regval);
+ 		if (ret)
+ 			return ret;
 -- 
 2.17.1
 
