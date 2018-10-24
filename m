@@ -2,108 +2,125 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CC8C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B55C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB5502064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:16:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="dau/jQwL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5502064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 72AC7207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:17:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72AC7207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbeJXVoQ (ORCPT
+        id S1726797AbeJXVpX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 17:44:16 -0400
-Received: from imap.thunk.org ([74.207.234.97]:52676 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726285AbeJXVoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 17:44:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=bBxSB3Vz4tdzpwUC7MA6Ml58QKYOxyWCVP1GvRwfYsc=; b=dau/jQwLkN6wuQgTUvkpNkl8Og
-        zH5tTWa8mClAXqMJdAJJeADvHDnFBQw1RRfmGh4tpKOwx4aqp4Eo4w9EbKraOjKGREhFyZtb6D/90
-        j025dQxVqvnT5sAB0GqyL4C6QbwTUuk5nP9qrvpDZsxRpNz/YcxDM6WQpusoPdjdtpdg=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gFJ0e-0007sP-Sx; Wed, 24 Oct 2018 13:15:40 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id D180F7A56C1; Wed, 24 Oct 2018 09:15:34 -0400 (EDT)
-Date:   Wed, 24 Oct 2018 09:15:34 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     NeilBrown <neilb@suse.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-tip-commits@vger.kernel.org, jsimmons@infradead.org
-Subject: Re: in_compat_syscall() returns from kernel thread for X86_32.
-Message-ID: <20181024131534.GD11606@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        NeilBrown <neilb@suse.com>, Andy Lutomirski <luto@kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-tip-commits@vger.kernel.org, jsimmons@infradead.org
-References: <1460987025-30360-1-git-send-email-dsafonov@virtuozzo.com>
- <tip-abfb9498ee1327f534df92a7ecaea81a85913bae@git.kernel.org>
- <87h8hkc9fd.fsf@notabene.neil.brown.name>
- <CALCETrXB8PE4Ue0BeD0wUS9psLLjpv_pt+nj=SEaj+Nb_dZzUA@mail.gmail.com>
- <871s8ndg6a.fsf@notabene.neil.brown.name>
- <CALCETrWH342Y7jKHsYdT=_3fuyDkWhvQLK9z4PTs9jzbfoCVwg@mail.gmail.com>
- <871s8g6roy.fsf@notabene.neil.brown.name>
+        Wed, 24 Oct 2018 17:45:23 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55676 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbeJXVpX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 17:45:23 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id D1ADD807FE; Wed, 24 Oct 2018 15:17:15 +0200 (CEST)
+Date:   Wed, 24 Oct 2018 15:17:16 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Subject: Re: [PATCH v4 1/7] leds: add TI LMU backlight driver
+Message-ID: <20181024131716.GA11619@amd>
+References: <20181023170623.31820-1-dmurphy@ti.com>
+ <20181024091407.GC24997@amd>
+ <4afc7944-d6f1-fef1-1ae4-f761e050fec9@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
 Content-Disposition: inline
-In-Reply-To: <871s8g6roy.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <4afc7944-d6f1-fef1-1ae4-f761e050fec9@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 12:47:57PM +1100, NeilBrown wrote:
-> 
-> I doubt it was copied - more likely independent evolution.
-> But on reflection, I see that it is probably reasonable that it
-> shouldn't be used this way - or at all in this context.
-> I'll try to understand what the issues really are and see if I can
-> find a solution that doesn't depend on this interface.
-> Thanks for your help.
 
-At least for ext4, the primary problem is that we want to use a 64-bit
-telldir/seekdir cookie if all 64-bits will make it to user space, and
-a 32-bit telldir cookie if only 32 bits will make it userspace.  This
-impacts NFS as well because if there are people who are still using
-NFSv2, which has 32-bit directory offsets, we need to constrain the
-telldir/seekdir cookies we give to NFS to be a 32 has as opposed to a
-64-bit hash.
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-						- Ted
+On Wed 2018-10-24 07:27:57, Dan Murphy wrote:
+> Pavel
+>=20
+> On 10/24/2018 04:14 AM, Pavel Machek wrote:
+> > On Tue 2018-10-23 12:06:17, Dan Murphy wrote:
+> >> From: Pavel Machek <pavel@ucw.cz>
+> >>
+> >> This adds backlight support for the following TI LMU
+> >> chips: LM3532, LM3631, LM3632, LM3633, LM3695 and LM3697.
+> >>
+> >> It controls LEDs on Droid 4
+> >> smartphone, including keyboard and screen backlights.
+> >>
+> >> Signed-off-by: Milo Kim <milo.kim@ti.com>
+> >> [add LED subsystem support for keyboard backlight and rework DT
+> >> binding according to Rob Herrings feedback]
+> >> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> >> [remove backlight subsystem support for now]
+> >> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> >=20
+> > This is not correct way to sign off a patch.
+> >=20
+> > What is worse, this is very different from patch I submitted; this
+> > misses imporant parts while my patch was complete.
+> >=20
+> > I already submitted better patch for both the driver and device tree
+> > bindings. Can we go back and apply that?
+> >=20
+> > Then you can add your changes on top of that, if they actually make
+> > the situation better.
+>=20
+> Thanks for this.  I wanted to make sure not to loose any authorship or cr=
+edit
+> in the commit.  Actually removing Milo might help stop getting the bounce=
+ back
+> from the mail daemon.
+>=20
+> I was using the RFC patch as my base https://lore.kernel.org/patchwork/pa=
+tch/978995/
+>=20
+> Which contains this sign off.
+
+Yeah, but you need to append your sign-off to the end, preferably
+prepending note saying what you modified. [I'm ok with the original
+patch, but I'm not ok with your version].
+
+=46rom: Pavel Machek <pavel@ucw.cz>
+
+Is not correct. Original patch is from Milo, if you want to add
+explicit From:, I guess it should be his.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvQcNwACgkQMOfwapXb+vL9mgCfZ/m3O860tSqL0HBhl1qUP6EV
+nUsAn3Sk6DE7p7E0zkedARl61HPpdVuZ
+=SUnO
+-----END PGP SIGNATURE-----
+
+--CE+1k2dSO48ffgeK--
