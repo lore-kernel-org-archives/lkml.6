@@ -2,156 +2,155 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E651C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1661C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E98B2205F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:05:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A8F0207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:18:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3RQ3YDzo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E98B2205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LQQROJYZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A8F0207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbeJYAeS (ORCPT
+        id S1726716AbeJYAq5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 20:34:18 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:55974 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726449AbeJYAeS (ORCPT
+        Wed, 24 Oct 2018 20:46:57 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:36385 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726449AbeJYAq4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 20:34:18 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9OG4R6a117844;
-        Wed, 24 Oct 2018 16:05:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=6agoU7alTHiWAx6DoRytImdcajTbjXamv5ky2Y6SWPo=;
- b=3RQ3YDzoAet0rdMxjVjg4C5rNQlYw+RxnHMUJA95BohzFjq5FWgfTWcXsQK4j2kBMBrK
- E3EfZzYKnOpNGUYfMVfg5x90VKMKfv5ehd/B/2KACEtFo3EDhh63y3dKROIBXy27AzK7
- NIgb/yYqOovZf/MJmAjxwbdLVkMOrTJrjJK9r3L16RHUZ+c31zWqkqU3wpgp1UCnx1zi
- O+Z4Z2Nn90DaN771Xdf9kmVUiJcAQsUVLi3uHSCy9NCSklRHVC8dM30Bya5wB/7cTGeb
- jprEN4tAI6J3Av8ZbcFLlyfmMENY9VBSp+mdgmbJ90I51KQYQfGbXs6xJL++UiibtmZJ Ng== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2n7vaq4kj0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 24 Oct 2018 16:05:32 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9OG5VUo007121
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 24 Oct 2018 16:05:31 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9OG5V1S007440;
-        Wed, 24 Oct 2018 16:05:31 GMT
-Received: from [10.211.46.5] (/10.211.46.5)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 24 Oct 2018 09:05:31 -0700
-Subject: Re: [PATCH] xen-swiotlb: exchange memory with Xen only when pages are
- contiguous
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     "DONGLI.ZHANG" <dongli.zhang@oracle.com>, konrad@kernel.org,
-        Christoph Helwig <hch@lst.de>,
-        John Sobecki <john.sobecki@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-kernel@vger.kernel.org\"" <linux-kernel@vger.kernel.org>
-References: <bb6d87b4-c371-c6c0-8c48-bc95df018ad1@oracle.com>
- <20181024130246.GA22616@localhost.localdomain>
-From:   Joe Jin <joe.jin@oracle.com>
-Message-ID: <b6f5e6e3-0536-d8e1-d100-aaa7f944731d@oracle.com>
-Date:   Wed, 24 Oct 2018 09:05:30 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Wed, 24 Oct 2018 20:46:56 -0400
+Received: by mail-oi1-f193.google.com with SMTP id p125-v6so4573826oic.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 09:18:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=SHb51qNidXX1azSEMCSFQKhmfnfm4385+9UvNhmSAfk=;
+        b=LQQROJYZOkNEYyN+cJp3zSOF1zCBVCtBDxTm7nLfGTf6phAMqXbmpQyTIIl1KAsVcB
+         MHFOyo0bPnK5et/k6WL89xNiok03ptEI51Tc70rxTVgraMRVxAAJ0Z4bsuygpiXNsSM/
+         ktZpPZZ2Cjbnaz08IrwdAtPGv6Ifi1BsJi46vD0JCpt6VmK19fgEkS1ODmHUlNzkk4zt
+         ZujSZuLLUuGaI0Dqg8KjQdM7tQk9DzKZdYj64PaylVVMswKM8MVeb9LyAfcmZfj6C8m+
+         62Ryiu3oGQTmuhPazQxFWbMiPWB1tnk7C1TMNSCobzAn199db4MgwZL+9uryRhADIXe/
+         ht2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=SHb51qNidXX1azSEMCSFQKhmfnfm4385+9UvNhmSAfk=;
+        b=OCUsV7hrev4Fn35cvkN4DIzCc/pS84nIrjJtG+ueWGtuDImvc2QIw+MrF0OpoO8/QP
+         IQ+FDH8awjTf36isig2maaSSTm4khRLFcSgTt7OSiZdtfZFRvHIu7Yf+wO/YYvdFnXjA
+         TsdXw+LACFvXXA5oLsfkpPFje400rXtaAsrsx+tqEtdRyPVZkuGu1lxzkcjhc9QpM5a/
+         /k/uuUwq6Qeh8erIKG1vLp4XI2VQVGSMKHPU2JLVmFR7/Hem6h+fAJiRW2n8DNpTrDZN
+         Cm2I4cBxrz5xE/TNoqdEPqn3WCEge4x6oyauxTVx3/iAuABYtiPA15A1hjnwZBHCjg1m
+         RoBg==
+X-Gm-Message-State: AGRZ1gJN2X7lyg9ECKfMWNJacxxfF8QX3d4QnQw59hcvcuWKW0GdhJ+r
+        /L0GGK5ni8ik+PxPh9SmeKj1SAm1W7Y25/oXuF6/bA==
+X-Google-Smtp-Source: AJdET5e3akmf4B6QfldM1ya30TQL9dTyCM5AuLacfur/NJohpXiEWzDQFNUxByXiLw9iVGL4SBw/5CCUiVKG2hOdl3c=
+X-Received: by 2002:aca:d651:: with SMTP id n78-v6mr1691698oig.287.1540397893313;
+ Wed, 24 Oct 2018 09:18:13 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181024130246.GA22616@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9055 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810240137
+Received: by 2002:ac9:2ac9:0:0:0:0:0 with HTTP; Wed, 24 Oct 2018 09:18:12
+ -0700 (PDT)
+In-Reply-To: <1540368316-12998-7-git-send-email-luwei.kang@intel.com>
+References: <1540368316-12998-1-git-send-email-luwei.kang@intel.com> <1540368316-12998-7-git-send-email-luwei.kang@intel.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Wed, 24 Oct 2018 09:18:12 -0700
+Message-ID: <CALMp9eSNr_AedOLv+gcqayFQSpwxQnVdsJQSWG1qixwNUmQXzw@mail.gmail.com>
+Subject: Re: [PATCH v13 06/12] KVM: x86: Add Intel PT virtualization work mode
+To:     Luwei Kang <luwei.kang@intel.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>, songliubraving@fb.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        alexander.shishkin@linux.intel.com, kstewart@linuxfoundation.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        mattst88@gmail.com,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Marc Orr <marcorr@google.com>, Uros Bizjak <ubizjak@gmail.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Chao Peng <chao.p.peng@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24/18 6:02 AM, Konrad Rzeszutek Wilk wrote:
-> On Tue, Oct 23, 2018 at 08:09:04PM -0700, Joe Jin wrote:
->> Commit 4855c92dbb7 "xen-swiotlb: fix the check condition for
->> xen_swiotlb_free_coherent" only fixed memory address check condition
->> on xen_swiotlb_free_coherent(), when memory was not physically
->> contiguous and tried to exchanged with Xen via 
->> xen_destroy_contiguous_region it will lead kernel panic.
-> 
-> s/it will lead/which lead to/?
-> 
->>
->> The correct check condition should be memory is in DMA area and
->> physically contiguous.
-> 
-> "The correct check condition to make Xen hypercall to revert the
-> memory back from its 32-bit pool is if it is:
->  1) Above its DMA bit mask (for example 32-bit devices can only address
-> up to 4GB, and we may want 4GB+2K), and
->  2) If it not physically contingous
+On Wed, Oct 24, 2018 at 1:05 AM, Luwei Kang <luwei.kang@intel.com> wrote:
+> From: Chao Peng <chao.p.peng@linux.intel.com>
+>
+> Intel Processor Trace virtualization can be work in one
+> of 2 possible modes:
+>
+> a. System-Wide mode (default):
+>    When the host configures Intel PT to collect trace packets
+>    of the entire system, it can leave the relevant VMX controls
+>    clear to allow VMX-specific packets to provide information
+>    across VMX transitions.
+>    KVM guest will not aware this feature in this mode and both
+>    host and KVM guest trace will output to host buffer.
+>
+> b. Host-Guest mode:
+>    Host can configure trace-packet generation while in
+>    VMX non-root operation for guests and root operation
+>    for native executing normally.
+>    Intel PT will be exposed to KVM guest in this mode, and
+>    the trace output to respective buffer of host and guest.
+>    In this mode, tht status of PT will be saved and disabled
+>    before VM-entry and restored after VM-exit if trace
+>    a virtual machine.
+>
+> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+> ---
 
-Here should be physically contiguous? on allocating, it asked physically
-contiguous memory for DMA, if not contiguous, it can not do DMA,
-am I right?
+> +#define SECONDARY_EXEC_PT_USE_GPA              0x01000000
+> +#define VM_EXIT_CLEAR_IA32_RTIT_CTL            0x02000000
+> +#define VM_ENTRY_LOAD_IA32_RTIT_CTL            0x00040000
 
-Andy range_straddles_page_boundary() return 0 means is physically contiguous,
-is that correct?
+Where are all of these bits documented? I'm looking at the latest SDM,
+volume 3 (325384-067US), and none of these bits aredocumented there.
 
-Thanks,
-Joe
+> +       GUEST_IA32_RTIT_CTL             = 0x00002814,
+> +       GUEST_IA32_RTIT_CTL_HIGH        = 0x00002815,
 
-> 
-> N.B. The logic in the code is inverted, which leads to all sorts of
-> confusions."
-> 
-> Does that sound correct?
-> 
->>
->> Thank you Boris for pointing it out.
->>
-> 
-> Fixes: 4855c92dbb7 ("xen-sw..") ?
-> 
->> Signed-off-by: Joe Jin <joe.jin@oracle.com>
->> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
->> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> 
-> Reported-by: Boris Ostrovs... ?
->> Cc: Christoph Helwig <hch@lst.de>
->> Cc: Dongli Zhang <dongli.zhang@oracle.com>
->> Cc: John Sobecki <john.sobecki@oracle.com>
->> ---
->>  drivers/xen/swiotlb-xen.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
->> index f5c1af4ce9ab..aed92fa019f9 100644
->> --- a/drivers/xen/swiotlb-xen.c
->> +++ b/drivers/xen/swiotlb-xen.c
->> @@ -357,8 +357,8 @@ xen_swiotlb_free_coherent(struct device *hwdev, size_t size, void *vaddr,
->>  	/* Convert the size to actually allocated. */
->>  	size = 1UL << (order + XEN_PAGE_SHIFT);
->>  
->> -	if (((dev_addr + size - 1 <= dma_mask)) ||
->> -	    range_straddles_page_boundary(phys, size))
->> +	if ((dev_addr + size - 1 <= dma_mask) &&
->> +	    !range_straddles_page_boundary(phys, size))
->>  		xen_destroy_contiguous_region(phys, order);
->>  
->>  	xen_free_coherent_pages(hwdev, size, vaddr, (dma_addr_t)phys, attrs);
->> -- 
->> 2.17.1 (Apple Git-112)
->>
+Where is this VMCS field documented?
+
+> +/* Default is SYSTEM mode. */
+> +static int __read_mostly pt_mode = PT_MODE_SYSTEM;
+> +module_param(pt_mode, int, S_IRUGO);
+
+As a module parameter, this doesn't allow much flexibility. Is it
+possible to make this decision per-VM, using a VM capability that can
+be set by userspace? (In that case, it may make sense to have a module
+parameter which allows/disallows the per-VM capability.)
+
+
+> +static inline bool cpu_has_vmx_intel_pt(void)
+> +{
+> +       u64 vmx_msr;
+> +
+> +       rdmsrl(MSR_IA32_VMX_MISC, vmx_msr);
+> +       return !!(vmx_msr & MSR_IA32_VMX_MISC_INTEL_PT);
+> +}
+
+Instead of the rdmsr here, wouldn't it be better to cache the
+IA32_VMX_MISC MSR in vmcs_config?
+Nit: throughout this change, the '!!' isn't necessary when casting an
+integer type to bool.
