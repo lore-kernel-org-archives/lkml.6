@@ -1,69 +1,133 @@
-Return-Path: <SRS0=y2AW=NE=drjdonshik.com=ticket@kernel.org>
+Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ECA5C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:30:28 +0000 (UTC)
-X-Greylist: delayed 601 seconds by postgrey-1.34 at mail.kernel.org; Wed, 24 Oct 2018 13:30:28 UTC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C261C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:35:46 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id E48E720834
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:35:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=drjdonshik.com header.i=ticket@drjdonshik.com header.b="DByc6a0z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26B042082F
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=drjdonshik.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=ticket@drjdonshik.com
-Received: from drjdonshik.com (drjdonshik.com [176.119.6.252])
-	by mail.kernel.org (Postfix) with ESMTP id 26B042082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:30:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mail; d=drjdonshik.com;
- h=Date:Subject:From:To:MIME-Version:Content-Type:Message-ID; i=ticket@drjdonshik.com;
- bh=Aw0KrNY2eVx1u4hREcdaf0QtJpNC0DKLoBRKZxxqLjQ=;
- b=DByc6a0z9wnfYqEEtxWHJKD6EEoATpJwMxIWK0edYF0seytiZZQUGM4mSGlCNnlKcuE4AC9R8Il1
-   3tYdsfXGcCXMeOe7GrmAXSi5+LXVTvzKlVOj5Mbed18Vjm7YYjvcWMw+0AQYFR7oK0xtXT55cb9f
-   g303/wl+MLx+2A4ZOpU=
-Date: Wed, 24 Oct 2018 15:20:25 +0200
-Subject: Regarding Job
-From: Klara Mauger =?UTF-8?B?wqA=?= <ticket@drjdonshik.com>
-To: linux-kernel@archiver.kernel.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="efWK+m0I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E48E720834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1726652AbeJXWDx (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 24 Oct 2018 18:03:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45522 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726407AbeJXWDx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 18:03:53 -0400
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7957120834;
+        Wed, 24 Oct 2018 13:35:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540388143;
+        bh=5emZ9J66/F1lP3p/Mk/Hq2DE0MkGkgOYW3dNirbEsDE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=efWK+m0IELpG/KGk2jsPNRU1RkGNHAB1LUFs4sVgWEBqK2JCy36TDYTg7RgTtdJFM
+         iK8AfNMDnWKQA0g5fVwu3hwFloRRnmHPKv/smmZe04kMgz4+ySzyLjFox1lNtinVvR
+         K5KQQVTDDGLERWPMhBLNmsHxidC3Fk8KOoBxp7OE=
+Received: by mail-qt1-f178.google.com with SMTP id a10-v6so5711866qtp.2;
+        Wed, 24 Oct 2018 06:35:43 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gL8JfMGoPasF/pYCBVND82x3XRUHpkZXtLO8aZvjiK3ZKgUxfJR
+        FEUwc9/BbOfz/fuPa0JkbDCdMXw0t9a6BS5++Q==
+X-Google-Smtp-Source: AJdET5cuhkje0TfVkjCknF5cYuJLempAWBISflkyADnut1oiBRZfjnSpcG76/ZSkscTIgbj9heeGqtY9/SaXCbQd3LQ=
+X-Received: by 2002:a0c:e004:: with SMTP id j4mr2466453qvk.90.1540388142648;
+ Wed, 24 Oct 2018 06:35:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/alternative;
- boundary="--_com.android.email_89612860185071"
-Message-ID: <nwzygjn-p92t41-A5@drjdonshik.com>
-Errors-To: <bouncechecker@yahoo.com>
-List-Id: <linux-kernel.vger.kernel.org>
+References: <1540401136-78500-1-git-send-email-peng.hao2@zte.com.cn> <1540401136-78500-4-git-send-email-peng.hao2@zte.com.cn>
+In-Reply-To: <1540401136-78500-4-git-send-email-peng.hao2@zte.com.cn>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 24 Oct 2018 08:35:31 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+Bj2A8z=_vTr+sz4HGCSC8zN7VQkWL1inJYQ56JSkPNg@mail.gmail.com>
+Message-ID: <CAL_Jsq+Bj2A8z=_vTr+sz4HGCSC8zN7VQkWL1inJYQ56JSkPNg@mail.gmail.com>
+Subject: Re: [PATCH V2 4/4] misc/pvpanic : pvpanic: add document for
+ pvpanic-mmio DT
+To:     peng.hao2@zte.com.cn
+Cc:     Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org, hutao@cn.fujitsu.com
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-kernel.vger.kernel.org>
+X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format
+Please Cc DT list for bindings.
 
-----_com.android.email_89612860185071
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Wed, Oct 24, 2018 at 4:01 AM Peng Hao <peng.hao2@zte.com.cn> wrote:
+>
 
+Commit message?
 
-Hiya,
-My name is Klara Mauger =C2=A0 and I'm interested in a position.
-I've attached a copy of my resume.
-http://bpoleon.com/ffazsret
-The password for the file is 1234
+"dt-bindings: misc: ..." for the subject.
 
-Best regards!
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> ---
+>  .../devicetree/bindings/arm/pvpanic-mmio.txt       | 29 ++++++++++++++++++++++
 
+As Mark said, not ARM specific. So please move to bindings/misc/ and
+use the compatible string for the name (qemu,pvpanic-mmio.txt).
 
---
-Klara Mauger =C2=A0
+>  1 file changed, 29 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/pvpanic-mmio.txt
+>
+> diff --git a/Documentation/devicetree/bindings/arm/pvpanic-mmio.txt b/Documentation/devicetree/bindings/arm/pvpanic-mmio.txt
+> new file mode 100644
+> index 0000000..a6bdacd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/pvpanic-mmio.txt
+> @@ -0,0 +1,29 @@
+> +* QEMU PVPANIC MMIO Configuration bindings for ARM
 
-----_com.android.email_89612860185071
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Drop the "for ARM"
 
-<body title=3D""><p title=3D"">Hiya,<br>My name is Klara Mauger =C2=A0=
- and I'm interested in a position.</p><p title=3D"">I've attached a co=
-py of my resume.<br><a title=3D"" href=3D"http://bpoleon.com/ffazsret"=
->Please click here to download my resume.</a></p><p title=3D"">The pas=
-sword for the file is 1234</p><p title=3D""><br>Best regards!</p><p ti=
-tle=3D""><br></p><p title=3D"">--<br>Klara Mauger =C2=A0<br></p>
-</body>
+> +
+> +QEMU's emulation / virtualization targets provide the following PVPANIC
+> +MMIO Configuration interface on the "virt" machine.
+> +type:
+> +
+> +- a read-write, 16-bit wide data register.
+> +
+> +QEMU exposes the data register to guests as memory mapped registers.
 
-----_com.android.email_89612860185071--
+I have to wonder why we need a QEMU specific way to signal a panic.
+What about every real platform that panics? What are they supposed to
+do? Shouldn't this be a PSCI call so we can have something not per
+platform?
 
+> +
+> +Required properties:
+> +
+> +- compatible: "qemu,pvpanic-mmio".
+> +- reg: the MMIO region used by the device.
+> +  * Bytes 0x0  Write panic event to the reg when guest OS panics.
+> +  * Bytes 0x1  Reserved.
+> +
+> +Example:
+> +
+> +/ {
+> +        #size-cells = <0x2>;
+> +        #address-cells = <0x2>;
+> +
+> +        pvpanic-mmio@9060000 {
+> +                compatible = "qemu,pvpanic-mmio";
+> +                reg = <0x0 0x9060000 0x0 0x2>;
+> +        };
+> +};
+> +
+> --
+> 1.8.3.1
+>
