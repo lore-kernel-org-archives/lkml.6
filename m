@@ -2,93 +2,203 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69608C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:56:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D35C7112C
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:58:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F9652082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:56:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cW+QLCto"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F9652082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 19DBD20833
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:58:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19DBD20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeJXTY3 (ORCPT
+        id S1727576AbeJXTZr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 15:24:29 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:40055 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727090AbeJXTY3 (ORCPT
+        Wed, 24 Oct 2018 15:25:47 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:21872 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727090AbeJXTZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 15:24:29 -0400
-Received: by mail-oi1-f193.google.com with SMTP id j68-v6so3684861oib.7;
-        Wed, 24 Oct 2018 03:56:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Hvbf0hxukcB63kDIMWdcSJsjnL1VtJgh9L+Uif60YZM=;
-        b=cW+QLCto+OPrv4ElEOZGuRlUq9xRzp9XMvW44DLeShOzeXs9bzoNw3ZiJWhEgbVDNM
-         c/wuFdt2Hjk+lHCiRhGovDX4TResuNe5c9312SlRgAvIzWKdr1bHiRMzecNjk5wxpB/X
-         Jfkn+V4LpGfABL0AC7pAm09Cc/w7RvoDsgVmEOiqRTKWSLN1y/HJWVXHKBNPqVy6/Cvq
-         3Ds7SyiHgHIwcHux9UgPJ6pC3aE8cvKMqj6l00fQrwSXu97/h0gaLb5sXbxW2fky9ceY
-         78u+w8xKKS2+uBw5e5UQHlwMVTlgAgY2/JhCyP28Hm2y+M2hDNmXR5+h5vMVWBKrukwy
-         PK0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Hvbf0hxukcB63kDIMWdcSJsjnL1VtJgh9L+Uif60YZM=;
-        b=V64LmmfwPDWU1yJQaC1/v9cdmNEdnKSIL2jaTiFYOEq+P/lMeyRbY1n+5wkI/ltCsK
-         txeeUDXTsDEeEiaG4BFdTQ3wjIkTKnWZsbmtUIgP745kVKVlyGZ4tRnFHN1HYklqeEX2
-         9hrHIE8Wep0ZCN50RsA9d84XDXImbjlYOOYzBSm1FgL5NKIw+kNozurtrNbHEWJNYcIg
-         P7TdeF6jiYGjcSmh7ZmC/uH/DUNY/bqoD6o8B43piKECLj62vjW2Q+ZyWNrMvv2qUrq7
-         YXGv54POMkyLkBtSps1F6eq08cg8qKTC4PpP8vWLjSMQ6snyoxfl9U3UACCAQ801/bIt
-         GZ2A==
-X-Gm-Message-State: AGRZ1gJI9UjQ73n5TVUKSp1JGVJxnMMaZrnIoUATxHueSrqP2qWCcn7W
-        R/0cd5JYrsEPAW7aJeVGZlmwMRJhZKF7BTbHcuY=
-X-Google-Smtp-Source: AJdET5e1xWe5ZAacPdnpLB4JSGx/i08+qct18/l/HdM4i0SI5BQiMTO20ybJVawL7RfT8Tqmq+kYZ3Rsv20VEoBIONo=
-X-Received: by 2002:aca:3083:: with SMTP id w125-v6mr1169755oiw.67.1540378610932;
- Wed, 24 Oct 2018 03:56:50 -0700 (PDT)
+        Wed, 24 Oct 2018 15:25:47 -0400
+Received: from [10.18.29.185] (10.18.29.185) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 24 Oct
+ 2018 18:57:50 +0800
+Subject: Re: [PATCH v5 1/3] clk: meson: add emmc sub clock phase delay driver
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
+ <1539839245-13793-2-git-send-email-jianxin.pan@amlogic.com>
+ <10a0572db79ef0cb4f345c8ba2685bea5670b1a5.camel@baylibre.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <04c6457f-4cc1-9af5-c56e-6880d5abc40d@amlogic.com>
+Date:   Wed, 24 Oct 2018 18:57:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181024075617.19548-1-xiaoning.wang@nxp.com> <20181024075617.19548-4-xiaoning.wang@nxp.com>
-In-Reply-To: <20181024075617.19548-4-xiaoning.wang@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 24 Oct 2018 07:56:47 -0300
-Message-ID: <CAOMZO5DFgd2RsjRojWaDBOc2XxD47aQ1fkhxXYX-7BCAJnnVdA@mail.gmail.com>
-Subject: Re: [PATCH V2 4/5] spi: lpspi: enable runtime pm for lpspi
-To:     xiaoning.wang@nxp.com
-Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Han Xu <han.xu@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <10a0572db79ef0cb4f345c8ba2685bea5670b1a5.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.29.185]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Clark,
+On 2018/10/24 16:58, Jerome Brunet wrote:
+> On Thu, 2018-10-18 at 13:07 +0800, Jianxin Pan wrote:
+>> From: Yixun Lan <yixun.lan@amlogic.com>
+[...]
+>>
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/clk-phase-delay.c
+>> @@ -0,0 +1,79 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Amlogic Meson MMC Sub Clock Controller Driver
+>> + *
+>> + * Copyright (c) 2017 Baylibre SAS.
+>> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+>> + *
+>> + * Copyright (c) 2018 Amlogic, inc.
+>> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include "clkc.h"
+>> +
+>> +static int meson_clk_phase_delay_get_phase(struct clk_hw *hw)
+>> +{
+>> +	struct clk_regmap *clk = to_clk_regmap(hw);
+>> +	struct meson_clk_phase_delay_data *ph =
+>> +		meson_clk_get_phase_delay_data(clk);
+>> +	unsigned long period_ps, p, d;
+>> +	int degrees;
+>> +	u32 val;
+>> +
+>> +	regmap_read(clk->map, ph->phase.reg_off, &val);
+>> +	p = PARM_GET(ph->phase.width, ph->phase.shift, val);
+> 
+> there is an helper for this: meson_parm_read()
+OK. I will use meson_parm_read instead. Thanks for your review.
 
-On Wed, Oct 24, 2018 at 5:01 AM Clark Wang <xiaoning.wang@nxp.com> wrote:
->
-> Enable the runtime pm for lpspi module
->
-> BuildInfo:
->         - U-Boot 2018.03-imx_4.14.y
+The result of regmap_read is shared by two PARM_GETs: phase and delay.
+There will be one more register read when change to meson_parm_read, but I don't think it matters.
 
-This buildinfo piece is not very helpful in upstream. Please drop it.
+> 
+>> +	degrees = p * 360 / (1 << (ph->phase.width));
+>> +
+>> +	period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
+>> +				 clk_hw_get_rate(hw));
+>> +
+>> +	d = PARM_GET(ph->delay.width, ph->delay.shift, val);
+>> +	degrees += d * ph->delay_step_ps * 360 / period_ps;
+>> +	degrees %= 360;
+>> +
+>> +	return degrees;
+>> +}
+>> +
+>> +static void meson_clk_apply_phase_delay(struct clk_regmap *clk,
+>> +					unsigned int phase,
+>> +					unsigned int delay)
+> 
+> This helper function is a bit overkill.
+> simply call meson_parm_write() twice in meson_clk_phase_delay_set_phase().
+OK. I will use meson_parm_write() instead.
+With meson_parm_write(), there will be one more register read and write
+> 
+>> +{
+>> +	struct meson_clk_phase_delay_data *ph = clk->data;
+>> +	u32 val;
+>> +
+>> +	regmap_read(clk->map, ph->delay.reg_off, &val);
+>> +	val = PARM_SET(ph->phase.width, ph->phase.shift, val, phase);
+>> +	val = PARM_SET(ph->delay.width, ph->delay.shift, val, delay);
+>> +	regmap_write(clk->map, ph->delay.reg_off, val);
+>> +}
+>> +
+>> +static int meson_clk_phase_delay_set_phase(struct clk_hw *hw, int degrees)
+>> +{
+>> +	struct clk_regmap *clk = to_clk_regmap(hw);
+>> +	struct meson_clk_phase_delay_data *ph =
+>> +		meson_clk_get_phase_delay_data(clk);
+>> +	unsigned long period_ps, d = 0, r;
+>> +	u64 p;
+>> +
+>> +	p = degrees % 360;
+>> +	period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
+>> +				 clk_hw_get_rate(hw));
+>> +
+>> +	/* First compute the phase index (p), the remainder (r) is the
+>> +	 * part we'll try to acheive using the delays (d).
+>> +	 */
+>> +	r = do_div(p, 360 / (1 << (ph->phase.width)));
+>> +	d = DIV_ROUND_CLOSEST(r * period_ps,
+>> +			      360 * ph->delay_step_ps);
+>> +	d = min(d, PMASK(ph->delay.width));
+>> +
+>> +	meson_clk_apply_phase_delay(clk, p, d);
+>> +	return 0;
+>> +}
+>> +
+>> +const struct clk_ops meson_clk_phase_delay_ops = {
+>> +	.get_phase = meson_clk_phase_delay_get_phase,
+>> +	.set_phase = meson_clk_phase_delay_set_phase,
+>> +};
+>> +EXPORT_SYMBOL_GPL(meson_clk_phase_delay_ops);
+>> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+>> index 6b96d55..3309d78 100644
+>> --- a/drivers/clk/meson/clkc.h
+>> +++ b/drivers/clk/meson/clkc.h
+>> @@ -105,6 +105,18 @@ struct clk_regmap _name = {						\
+>>  	},								\
+>>  };
+>>  
+>> +struct meson_clk_phase_delay_data {
+>> +	struct parm			phase;
+>> +	struct parm			delay;
+>> +	unsigned int			delay_step_ps;
+>> +};
+>> +
+>> +static inline struct meson_clk_phase_delay_data *
+>> +meson_clk_get_phase_delay_data(struct clk_regmap *clk)
+>> +{
+>> +	return (struct meson_clk_phase_delay_data *)clk->data;
+>> +}
+>> +
+>>  /* clk_ops */
+>>  extern const struct clk_ops meson_clk_pll_ro_ops;
+>>  extern const struct clk_ops meson_clk_pll_ops;
+>> @@ -112,5 +124,6 @@ struct clk_regmap _name = {						\
+>>  extern const struct clk_ops meson_clk_mpll_ro_ops;
+>>  extern const struct clk_ops meson_clk_mpll_ops;
+>>  extern const struct clk_ops meson_clk_phase_ops;
+>> +extern const struct clk_ops meson_clk_phase_delay_ops;
+>>  
+>>  #endif /* __CLKC_H */
+> 
+> 
+> .
+> 
 
-> Signed-off-by: Han Xu <han.xu@nxp.com>
-> Reviewed-by: Frank Li <frank.li@nxp.com>
-> Signed-off-by: Xiaoning Wang <xiaoning.wang@nxp.com>
-
-Also, it would be nice if your From field (Clark Wang) could match
-your Signed-off-by (Xiaoning Wang).
-
-As Mark mentioned in case this patch comes from Han Xu, then his name
-should go into the From field instead.
