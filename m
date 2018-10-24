@@ -2,190 +2,147 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92DBEC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8B1C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46DA32082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:39:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46DA32082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
+	by mail.kernel.org (Postfix) with ESMTP id D96FA2082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:41:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvLSmLJ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D96FA2082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbeJXSHQ (ORCPT
+        id S1727075AbeJXSI1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 14:07:16 -0400
-Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:20834 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726301AbeJXSHQ (ORCPT
+        Wed, 24 Oct 2018 14:08:27 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55344 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726258AbeJXSI1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 14:07:16 -0400
-Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id w9O9e97m046702;
-        Wed, 24 Oct 2018 17:40:09 +0800 (GMT-8)
-        (envelope-from nickhu@andestech.com)
-Received: from andestech.com (10.0.15.65) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Wed, 24 Oct 2018
- 17:38:42 +0800
-Date:   Wed, 24 Oct 2018 17:38:43 +0800
-From:   Nick Hu <nickhu@andestech.com>
-To:     Pavel Machek <pavel@ucw.cz>
-CC:     Greentime Ying-Han =?utf-8?B?SHUo6IOh6Iux5ryiKQ==?= 
-        <greentime@andestech.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "deanbo422@gmail.com" <deanbo422@gmail.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        Zong Zong-Xian =?utf-8?B?TGko5p2O5a6X5oayKQ==?= 
-        <zong@andestech.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        Alan Quey-Liang =?utf-8?B?S2FvKOmrmOmtgeiJryk=?= 
-        <alankao@andestech.com>, "green.hu@gmail.com" <green.hu@gmail.com>
-Subject: Re: [PATCH 1/1] nds32: Power management for nds32
-Message-ID: <20181024093843.GA18476@andestech.com>
-References: <cover.1540349342.git.nickhu@andestech.com>
- <ccc18702a8d93c0a31e46f53c498b6d34c9c17e1.1540349342.git.nickhu@andestech.com>
- <20181024065117.GA18779@amd>
+        Wed, 24 Oct 2018 14:08:27 -0400
+Received: by mail-wm1-f66.google.com with SMTP id s10-v6so2574914wmc.5;
+        Wed, 24 Oct 2018 02:41:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XZtgObpVvHrAsDw9OZTWexptw1jCGycSDOQHSyb17Jc=;
+        b=PvLSmLJ1DekD2dXe1U8rg+H6aWVBfURMq72Tq1g4Ai/6usKhmzlvqc4D1+/JlIviQS
+         UiB9VX8Ngcl+xSfCnEzRegbtU9GH2gl54MIsr4+V50GC6vYmHiNKGI12SJXspKB4aKVV
+         VWKnAimTm4hRXUiXi3Ejgv2PJQduG6fAHShY0z2DNfWmg2jOFwrNNyBVmDELJXDn7qud
+         Zi9EVHDIpRPJkSawcRFGaOQBxG2i62WbdmthK0B5WDWKioYyaEG8NrlQwZXaS9PRaVqw
+         zqr9S2Q+5PMNwJb5tbo55vCU779bbGKe8xRm3uemXwK2CS3/6/aruxA+YX06yZ0bEWBZ
+         kbtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XZtgObpVvHrAsDw9OZTWexptw1jCGycSDOQHSyb17Jc=;
+        b=myFbRaqbMCvmaeEvfZ79x+7xv7lIzN4wKEfXwHmS2ya634BaxICYWAdoT341+2765Q
+         sH7NJ/cokMO8djD9jpVL6AR7gU8fgkvDHhpq/KveNhWDlUtfd7PKjY7YtnKUTjZvkXWw
+         3bqsalYt2pw2OybdAvahOWPw1Z9uWyY3qEGoDfIBhXVGZ9Poxiiov1CwiPiFU82kuXnE
+         GdSx3JBE7Ox0nwTa1yOKEtc4nNcTaB8Mjipk+J2+I1rRow4w0EDUIodbQpnfehf/xB4m
+         iXHIc89ZHh2AuOk4LueF225V51BGaI62IdMwhVRbuXQCCWfX3jy7my0Ag3rYVEO0+DWc
+         Rnmw==
+X-Gm-Message-State: AGRZ1gJqa+ZO7vttc6CWRS2WzSJStTnhAHR0p6gEVk/bHwk2jTX8fjDm
+        kABxSZXF0N4hy7j9LAAqb7pf9T99Qf1kUNBvddE=
+X-Google-Smtp-Source: AJdET5c2LnyQ0LYCuDIz7YssSCqWG/cYYwIZAMjL6YAr/xqyerygPKAQcz1Vv6K8E6SX5ePWopZ47ByEJ2BHBuXq1bE=
+X-Received: by 2002:a1c:1250:: with SMTP id 77-v6mr1841177wms.70.1540374061872;
+ Wed, 24 Oct 2018 02:41:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181024065117.GA18779@amd>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.0.15.65]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w9O9e97m046702
+References: <20181023001308.GA4150@embeddedor.com> <0b3197a734f71bdfffaf717e63b17e2fe31720a2.camel@sipsolutions.net>
+ <f0a240e2-cae7-07f4-757f-a8606199d29e@embeddedor.com> <c2fad584-1705-a5f2-d63c-824e9b96cf50@embeddedor.com>
+ <94958073867a5bbf8161d7ea8851aaea026762b1.camel@sipsolutions.net>
+In-Reply-To: <94958073867a5bbf8161d7ea8851aaea026762b1.camel@sipsolutions.net>
+From:   Julian Calaby <julian.calaby@gmail.com>
+Date:   Wed, 24 Oct 2018 20:40:47 +1100
+Message-ID: <CAGRGNgVC6TMYRF98yp=54BNETsT9tnzVuE9y8t0+tq_jJcxRjQ@mail.gmail.com>
+Subject: Re: [PATCH v2] wireless: mark expected switch fall-throughs
+To:     gustavo@embeddedor.com
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
+Hi Gustavo,
 
-On Wed, Oct 24, 2018 at 02:51:17PM +0800, Pavel Machek wrote:
-> On Wed 2018-10-24 11:40:07, Nickhu wrote:
-> > There are three sleep states in nds32:
-> > 	suspend to idle,
-> > 	suspend to standby,
-> > 	suspend to ram
-> > 
-> > In suspend to ram, we use the 'standby' instruction to emulate
-> > power management device to hang the system util wakeup source
-> > send wakeup events to break the loop.
-> > 
-> > First, we push the general purpose registers and system registers
-> > to stack. Second, we translate stack pointer to physical address
-> > and store to memory to save the stack pointer. Third, after write
-> > back and invalid the cache we hang in 'standby' intruction.
-> > When wakeup source trigger wake up events, the loop will be break
-> > and resume the system.
-> > 
-> > Signed-off-by: Nickhu <nickhu@andestech.com>
-> 
-> Is "Nickhu" complete name?
+On Wed, Oct 24, 2018 at 7:36 AM Johannes Berg <johannes@sipsolutions.net> wrote:
 >
-Oh, Nick Hu is my complete name.
-I will fix it.
-Thanks!
- 
-> > diff --git a/arch/nds32/kernel/pm.c b/arch/nds32/kernel/pm.c
-> > new file mode 100644
-> > index 000000000000..e1eaf3bac709
-> > --- /dev/null
-> > +++ b/arch/nds32/kernel/pm.c
-> > @@ -0,0 +1,91 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +// Copyright (C) 2008-2017 Andes Technology Corporation
-> > +
-> > +/*
-> > + * nds32 Power Management Routines
-> > + *
-> > + * This program is free software; you can redistribute it and/or
-> > + * modify it under the terms of the GNU General Public License.
-> > + *
-> > + *  Abstract:
-> > + *
-> > + *    This program is for nds32 power management routines.
-> > + *
-> > + */
-> 
-> I'd get rid of "abstract" here, repeating GPL twice and "nds32 power
-> management routines" twice does not make much sense either.
-> 
-Ok, I will get rid of it.
-
-> > @@ -0,0 +1,129 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/* Copyright (C) 2017 Andes Technology Corporation */
-> > +
-> > +#include<asm/memory.h>
-> 
-> Missing space.
-> 
-> > +static int nointc_set_wake(struct irq_data *data, unsigned int on)
-> > +{
-> > +	unsigned long int_mask = __nds32__mfsr(NDS32_SR_INT_MASK);
-> > +	static bool is_bit_1[NR_IRQS] = {false};
-> > +	u32 bit = 1 << data->hwirq;
-> > +
-> > +	if (on) {
-> > +		if (int_mask & bit)
-> > +			is_bit_1[data->hwirq] = true;
-> > +		else
-> > +			is_bit_1[data->hwirq] = false;
-> > +
-> > +		int_mask |= bit;
-> > +		wake_mask |= bit;
-> > +	} else {
-> > +		if (!is_bit_1[data->hwirq])
-> > +			int_mask &= ~bit;
-> > +
-> > +		wake_mask &= ~bit;
-> > +		is_bit_1[data->hwirq] = false;
-> > +	}
-> 
-> Can we get rid of "is_bit_1" array here, and use normal bit operations
-> on another variable here?
+> On Tue, 2018-10-23 at 12:58 +0200, Gustavo A. R. Silva wrote:
+> > On 10/23/18 10:59 AM, Gustavo A. R. Silva wrote:
+> > >
+> > > On 10/23/18 9:01 AM, Johannes Berg wrote:
+> > > > On Tue, 2018-10-23 at 02:13 +0200, Gustavo A. R. Silva wrote:
+> > > > > In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> > > > > where we are expecting to fall through.
+> > > > >
+> > > > > Warning level 3 was used: -Wimplicit-fallthrough=3
+> > > > >
+> > > > > This code was not tested and GCC 7.2.0 was used to compile it.
+> > > >
+> > > > Look, I'm not going to make this any clearer: I'm not applying patches
+> > > > like that where you've invested no effort whatsoever on verifying that
+> > > > they're correct.
+> > > >
+> > >
+> > > How do you suggest me to verify that every part is correct in this type
+> > > of patches?
+> > >
+> >
+> > BTW... I'm under the impression you think that I don't even look at
+> > the code. Is that correct?
 >
-Do you mean like this:
+> That's what your commit log looks like, yes. This is your full commit
+> log:
+>
+>    In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>    where we are expecting to fall through.
+>
+>    Warning level 3 was used: -Wimplicit-fallthrough=3
+>
+>    This code was not tested and GCC 7.2.0 was used to compile it.
+>
+>    For all I know, you could've run spatch to add the comments wherever
+>    there was no break, and then compiled it once.
 
- static int nointc_set_wake(struct irq_data *data, unsigned int on)  {
-        unsigned long int_mask = __nds32__mfsr(NDS32_SR_INT_MASK);
-        static unsigned long irq_orig_bit = 0;
-        u32 bit = 1 << data->hwirq;
+It might also help to split these up by the "type" of change. For
+example this patch contains:
 
-        if (on) {
-                if (int_mask & bit)
-                        __assign_bit(data->hwirq, &irq_orig_bit, true);
-                else
-                        __assign_bit(data->hwirq, &irq_orig_bit, false);
- 
-                __assign_bit(data->hwirq, &int_mask, true);
-                __assign_bit(data->hwirq, &wake_mask, true);
+1. A whole lot of places where there's a "if (condition) { break; }"
+just before the fall through
 
-        } else {
-                if (!(irq_orig_bit & bit))
-                        __assign_bit(data->hwirq, &int_mask, false);
+You could add a line describing the logic there to the commit message,
+maybe something like:
 
-                __assign_bit(data->hwirq, &wake_mask, false);
-                __assign_bit(data->hwirq, &irq_orig_bit, false);
-        }
+As there's a conditional break at the end of the case, the fall
+through appears to be intentional.
 
-        __nds32__mtsr_dsb(int_mask, NDS32_SR_INT_MASK);
- 
-        return 0;
- }
 
-> Thanks,
-> 									Pavel
-> -- 
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+2. Reformatting an existing comment
 
-Thank your for quick reply,
-Nick Hu.
+These should definitely be split out as they're just reformatting
+comments to match gcc's expectations. You could describe this like:
+
+Reformat existing fall through messages into the format expected by gcc.
+
+
+Thanks,
+
+-- 
+Julian Calaby
+
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
