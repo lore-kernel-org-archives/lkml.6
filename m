@@ -2,153 +2,101 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A307C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58018C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:52:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D26282054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:51:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D26282054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 29AB82064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:52:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29AB82064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbeJXPSE (ORCPT
+        id S1727092AbeJXPS4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 11:18:04 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45516 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbeJXPSE (ORCPT
+        Wed, 24 Oct 2018 11:18:56 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58037 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726732AbeJXPS4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 11:18:04 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id BFC1D807D7; Wed, 24 Oct 2018 08:51:16 +0200 (CEST)
-Date:   Wed, 24 Oct 2018 08:51:17 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Nickhu <nickhu@andestech.com>
-Cc:     greentime@andestech.com, linux-kernel@vger.kernel.org,
-        arnd@arndb.de, deanbo422@gmail.com, rjw@rjwysocki.net,
-        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        zong@andestech.com, linux-pm@vger.kernel.org,
-        alankao@andestech.com, green.hu@gmail.com
-Subject: Re: [PATCH 1/1] nds32: Power management for nds32
-Message-ID: <20181024065117.GA18779@amd>
-References: <cover.1540349342.git.nickhu@andestech.com>
- <ccc18702a8d93c0a31e46f53c498b6d34c9c17e1.1540349342.git.nickhu@andestech.com>
+        Wed, 24 Oct 2018 11:18:56 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gFD1F-0007c4-TT; Wed, 24 Oct 2018 08:51:53 +0200
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gFD1F-0001W9-2J; Wed, 24 Oct 2018 08:51:53 +0200
+Date:   Wed, 24 Oct 2018 08:51:52 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: debug: enable UART1 for socfpga Cyclone5
+Message-ID: <20181024065152.yinlj4axprtwdzku@pengutronix.de>
+References: <20181009112837.2517-1-peron.clem@gmail.com>
+ <e761c76d-a806-402a-b25b-04aee9329dbc@kernel.org>
+ <CAJiuCceZr8NsDgBJgA2y61VHdQ3JYQ6_3r4jKooKLbVfRD8eJQ@mail.gmail.com>
+ <74512aef-d551-30af-b4cf-25f48047a4ac@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ccc18702a8d93c0a31e46f53c498b6d34c9c17e1.1540349342.git.nickhu@andestech.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <74512aef-d551-30af-b4cf-25f48047a4ac@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 23, 2018 at 03:35:31PM -0500, Dinh Nguyen wrote:
+> 
+> 
+> On 10/23/2018 09:44 AM, Clément Péron wrote:
+> > HI Dinh,
+> > 
+> > On Tue, 23 Oct 2018 at 16:04, Dinh Nguyen <dinguyen@kernel.org> wrote:
+> >>
+> >> Hi Clément,
+> >>
+> >> On 10/09/2018 06:28 AM, Clément Péron wrote:
+> >>> Cyclone5 and Arria10 doesn't have the same memory map for UART1.
+> >>>
+> >>> Split the SOCFPGA_UART1 into 2 options to allow debugging on UART1 for Cylone5.
+> >>>
+> >>
+> >> I'm not sure the need for this patch. Are there any cyclone5 based
+> >> boards that has UART1 as the debug uart? I see that all of them are
+> >> using UART0.
+> > 
+> > There is no upstream device with this UART used. But the board I have
+> > use it, and there is no limitation to not have it available upstream
+> > no ?
+> > 
+> 
+> I see. Then I don't think the patch is applicable because none of the
+> upstream devices need it. Now, if you were to upstream your board that
+> uses UART1, then there will be a case for this patch. Do you agree?
 
---sm4nu43k4a2Rpi4c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'd not say having to upstream the board is a sensible precondition for
+such a patch. One of the arguments for moving ARM to dt was that this
+allows to separate the machine specifics from the code. So I'd say if
+Clément has a need, this is a good enough reason to take this patch.
 
-On Wed 2018-10-24 11:40:07, Nickhu wrote:
-> There are three sleep states in nds32:
-> 	suspend to idle,
-> 	suspend to standby,
-> 	suspend to ram
->=20
-> In suspend to ram, we use the 'standby' instruction to emulate
-> power management device to hang the system util wakeup source
-> send wakeup events to break the loop.
->=20
-> First, we push the general purpose registers and system registers
-> to stack. Second, we translate stack pointer to physical address
-> and store to memory to save the stack pointer. Third, after write
-> back and invalid the cache we hang in 'standby' intruction.
-> When wakeup source trigger wake up events, the loop will be break
-> and resume the system.
->=20
-> Signed-off-by: Nickhu <nickhu@andestech.com>
+Just my 0.02 €,
+Uwe
 
-Is "Nickhu" complete name?
-
-> diff --git a/arch/nds32/kernel/pm.c b/arch/nds32/kernel/pm.c
-> new file mode 100644
-> index 000000000000..e1eaf3bac709
-> --- /dev/null
-> +++ b/arch/nds32/kernel/pm.c
-> @@ -0,0 +1,91 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2008-2017 Andes Technology Corporation
-> +
-> +/*
-> + * nds32 Power Management Routines
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License.
-> + *
-> + *  Abstract:
-> + *
-> + *    This program is for nds32 power management routines.
-> + *
-> + */
-
-I'd get rid of "abstract" here, repeating GPL twice and "nds32 power
-management routines" twice does not make much sense either.
-
-> @@ -0,0 +1,129 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/* Copyright (C) 2017 Andes Technology Corporation */
-> +
-> +#include<asm/memory.h>
-
-Missing space.
-
-> +static int nointc_set_wake(struct irq_data *data, unsigned int on)
-> +{
-> +	unsigned long int_mask =3D __nds32__mfsr(NDS32_SR_INT_MASK);
-> +	static bool is_bit_1[NR_IRQS] =3D {false};
-> +	u32 bit =3D 1 << data->hwirq;
-> +
-> +	if (on) {
-> +		if (int_mask & bit)
-> +			is_bit_1[data->hwirq] =3D true;
-> +		else
-> +			is_bit_1[data->hwirq] =3D false;
-> +
-> +		int_mask |=3D bit;
-> +		wake_mask |=3D bit;
-> +	} else {
-> +		if (!is_bit_1[data->hwirq])
-> +			int_mask &=3D ~bit;
-> +
-> +		wake_mask &=3D ~bit;
-> +		is_bit_1[data->hwirq] =3D false;
-> +	}
-
-Can we get rid of "is_bit_1" array here, and use normal bit operations
-on another variable here?
-
-Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---sm4nu43k4a2Rpi4c
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvQFmUACgkQMOfwapXb+vKtKgCgqujodsnnEp000PGVRDbR4LHy
-iO0AnjEkvFReScr9wQvjGwSsmVf+UHL3
-=Vddh
------END PGP SIGNATURE-----
-
---sm4nu43k4a2Rpi4c--
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
