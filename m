@@ -2,85 +2,184 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2E8C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:23:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC4AC67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95A3A2064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:23:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A3A2064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 776AF2064A
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:23:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 776AF2064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbeJXQuU (ORCPT
+        id S1727431AbeJXQuy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 12:50:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59442 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726916AbeJXQuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 12:50:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 77908AF9D;
-        Wed, 24 Oct 2018 08:23:13 +0000 (UTC)
-Date:   Wed, 24 Oct 2018 10:23:12 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Arun KS <arunks@codeaurora.org>, Kees Cook <keescook@chromium.org>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Minchan Kim <minchan@kernel.org>,
-        Arun Sudhilal <getarunks@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] mm: convert totalram_pages, totalhigh_pages and
- managed_pages to atomic.
-Message-ID: <20181024082312.GD18839@dhcp22.suse.cz>
-References: <1540229092-25207-1-git-send-email-arunks@codeaurora.org>
- <c57bcc584b3700c483b0311881ec3ae8786f88b1.camel@perches.com>
- <15247f54-53f3-83d4-6706-e9264b90ca7a@yandex-team.ru>
- <CAGXu5j+NsDHRWA5PKAKeJCO_oiGkFAUeWE8O-1fEBQX80MDu1A@mail.gmail.com>
- <7a4fcbaee7efb71d2a3c6b403c090db4@codeaurora.org>
- <20181024061546.GY18839@dhcp22.suse.cz>
- <0e1fc40af360ed55fd32784f6973af5940232f99.camel@perches.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e1fc40af360ed55fd32784f6973af5940232f99.camel@perches.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 24 Oct 2018 12:50:54 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:60653 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbeJXQux (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 12:50:53 -0400
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost)
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gFES7-000830-RK; Wed, 24 Oct 2018 10:23:43 +0200
+Message-ID: <896bdd27a559a7c9508524f9b618d480d392bf46.camel@pengutronix.de>
+Subject: Re: [PATCH v1 1/2] drm: Add missing flags for pixel clock & data
+ enable
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Daniel Vetter <daniel@ffwll.ch>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc:     sean@poorly.run, Benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        David Airlie <airlied@linux.ie>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Vincent Abriou <vincent.abriou@st.com>
+Date:   Wed, 24 Oct 2018 10:23:40 +0200
+In-Reply-To: <20181024081658.GD324@phenom.ffwll.local>
+References: <1537788981-21479-1-git-send-email-yannick.fertre@st.com>
+         <1537788981-21479-2-git-send-email-yannick.fertre@st.com>
+         <CA+M3ks4L_Cs_GB2sxg1XyygLz79eH7d+JcgLULM3fFN0U=YCZw@mail.gmail.com>
+         <CA+M3ks5HWuUXHdKePT0MAU9G=4YkUdJZBXBasVW_X1A2YTSSoA@mail.gmail.com>
+         <20181024081658.GD324@phenom.ffwll.local>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 23-10-18 23:26:16, Joe Perches wrote:
-> On Wed, 2018-10-24 at 08:15 +0200, Michal Hocko wrote:
-> > On Wed 24-10-18 10:47:52, Arun KS wrote:
-> > > On 2018-10-24 01:34, Kees Cook wrote:
-> > [...]
-> > > > Thank you -- I was struggling to figure out the best way to reply to
-> > > > this. :)
-> > > I'm sorry for the trouble caused. Sent the email using,
-> > > git send-email  --to-cmd="scripts/get_maintainer.pl -i"
-> > > 0001-convert-totalram_pages-totalhigh_pages-and-managed_p.patch
+Am Mittwoch, den 24.10.2018, 10:16 +0200 schrieb Daniel Vetter:
+> On Tue, Oct 23, 2018 at 04:50:19PM +0200, Benjamin Gaignard wrote:
+> > Le lun. 15 oct. 2018 à 13:15, Benjamin Gaignard
+> > <benjamin.gaignard@linaro.org> a écrit :
 > > > 
-> > > Is this not a recommended approach?
+> > > Le lun. 24 sept. 2018 à 13:59, Yannick Fertré <yannick.fertre@st.com> a écrit :
+> > > > 
+> > > > Add missing flags for pixel clock & data enable polarities.
+> > > > These flags are similar to other synchronization signals (hsync, vsync...).
+> > > > 
+> > > > Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
+> > > 
+> > > Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
 > > 
-> > Not really for tree wide mechanical changes. It is much more preferrable
-> > IMHO to only CC people who should review the intention of the change
-> > rather than each and every maintainer whose code is going to be changed.
-> > This is a case by case thing of course but as soon as you see a giant CC
-> > list from get_maintainer.pl then you should try to think twice to use
-> > it. If not sure, just ask on the mailing list.
+> > Dave or Daniel could you give us your PoV on this patch ?
 > 
-> Generally, it's better to use scripts to control
-> the --to-cmd and --cc-cmd options.
+> Does it work? Iirc we had some userspace chocking on new mode flags, and
+> needed explicit opt-in. If that looks good (check weston, -modesetting and
+> drm_hwc, that should have you covered I hope) then has my ack.
 
-I would argue that it is better to use a common sense much more than
-scripts.
+What's the use of exposing those to userspace? There are a number of
+drivers that already have to deal with this and they are totally fine
+with keeping this information internal to the driver.
 
--- 
-Michal Hocko
-SUSE Labs
+For reference see include/video/display_timing.h, specifically the enum
+display_flags.
+
+Regards,
+Lucas
+
+> -Daniel
+> 
+> > Thanks
+> > 
+> > > 
+> > > > ---
+> > > >  drivers/gpu/drm/drm_modes.c | 19 ++++++++++++++++++-
+> > > >  include/uapi/drm/drm_mode.h |  6 ++++++
+> > > >  2 files changed, 24 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
+> > > > index 02db9ac..596f8b3 100644
+> > > > --- a/drivers/gpu/drm/drm_modes.c
+> > > > +++ b/drivers/gpu/drm/drm_modes.c
+> > > > @@ -130,7 +130,7 @@ EXPORT_SYMBOL(drm_mode_probed_add);
+> > > >   * according to the hdisplay, vdisplay, vrefresh.
+> > > >   * It is based from the VESA(TM) Coordinated Video Timing Generator by
+> > > >   * Graham Loveridge April 9, 2003 available at
+> > > > - * http://www.elo.utfsm.cl/~elo212/docs/CVTd6r1.xls
+> > > > + * http://www.elo.utfsm.cl/~elo212/docs/CVTd6r1.xls
+> > > >   *
+> > > >   * And it is copied from xf86CVTmode in xserver/hw/xfree86/modes/xf86cvt.c.
+> > > >   * What I have done is to translate it by using integer calculation.
+> > > > @@ -611,6 +611,15 @@ void drm_display_mode_from_videomode(const struct videomode *vm,
+> > > >                 dmode->flags |= DRM_MODE_FLAG_DBLSCAN;
+> > > >         if (vm->flags & DISPLAY_FLAGS_DOUBLECLK)
+> > > >                 dmode->flags |= DRM_MODE_FLAG_DBLCLK;
+> > > > +       if (vm->flags & DISPLAY_FLAGS_PIXDATA_POSEDGE)
+> > > > +               dmode->flags |= DRM_MODE_FLAG_PPIXCLK;
+> > > > +       else if (vm->flags & DISPLAY_FLAGS_PIXDATA_NEGEDGE)
+> > > > +               dmode->flags |= DRM_MODE_FLAG_NPIXCLK;
+> > > > +       if (vm->flags & DISPLAY_FLAGS_DE_HIGH)
+> > > > +               dmode->flags |= DRM_MODE_FLAG_PDATAEN;
+> > > > +       else if (vm->flags & DISPLAY_FLAGS_DE_LOW)
+> > > > +               dmode->flags |= DRM_MODE_FLAG_NDE;
+> > > > +
+> > > >         drm_mode_set_name(dmode);
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(drm_display_mode_from_videomode);
+> > > > @@ -652,6 +661,14 @@ void drm_display_mode_to_videomode(const struct drm_display_mode *dmode,
+> > > >                 vm->flags |= DISPLAY_FLAGS_DOUBLESCAN;
+> > > >         if (dmode->flags & DRM_MODE_FLAG_DBLCLK)
+> > > >                 vm->flags |= DISPLAY_FLAGS_DOUBLECLK;
+> > > > +       if (dmode->flags & DRM_MODE_FLAG_PPIXDATA)
+> > > > +               vm->flags |= DISPLAY_FLAGS_PIXDATA_POSEDGE;
+> > > > +       else if (dmode->flags & DRM_MODE_FLAG_NPIXDATA)
+> > > > +               vm->flags |= DISPLAY_FLAGS_PIXDATA_NEGEDGE;
+> > > > +       if (dmode->flags & DRM_MODE_FLAG_PDE)
+> > > > +               vm->flags |= DISPLAY_FLAGS_DE_HIGH;
+> > > > +       else if (dmode->flags & DRM_MODE_FLAG_NDE)
+> > > > +               vm->flags |= DISPLAY_FLAGS_DE_LOW;
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(drm_display_mode_to_videomode);
+> > > > 
+> > > > diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+> > > > index d3e0fe3..b335a17 100644
+> > > > --- a/include/uapi/drm/drm_mode.h
+> > > > +++ b/include/uapi/drm/drm_mode.h
+> > > > @@ -89,6 +89,12 @@ extern "C" {
+> > > >  #define  DRM_MODE_FLAG_3D_TOP_AND_BOTTOM       (7<<14)
+> > > >  #define  DRM_MODE_FLAG_3D_SIDE_BY_SIDE_HALF    (8<<14)
+> > > > 
+> > > > +/* flags for polarity clock & data enable polarities */
+> > > > +#define DRM_MODE_FLAG_PPIXDATA                 (1 << 19)
+> > > > +#define DRM_MODE_FLAG_NPIXDATA                 (1 << 20)
+> > > > +#define DRM_MODE_FLAG_PDE                      (1 << 21)
+> > > > +#define DRM_MODE_FLAG_NDE                      (1 << 22)
+> > > > +
+> > > >  /* Picture aspect ratio options */
+> > > >  #define DRM_MODE_PICTURE_ASPECT_NONE           0
+> > > >  #define DRM_MODE_PICTURE_ASPECT_4_3            1
+> > > > --
+> > > > 2.7.4
+> > > > 
+> > > > _______________________________________________
+> > > > dri-devel mailing list
+> > > > dri-devel@lists.freedesktop.org
+> > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > 
+> > 
+> > 
+> > -- 
+> > Benjamin Gaignard
+> > 
+> > Graphic Study Group
+> > 
+> > Linaro.org │ Open source software for ARM SoCs
+> > 
+> > Follow Linaro: Facebook | Twitter | Blog
+> 
+> 
+
