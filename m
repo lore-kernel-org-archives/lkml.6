@@ -2,92 +2,142 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6086CC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C45CC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2387F207DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:08:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2387F207DD
+	by mail.kernel.org (Postfix) with ESMTP id D1CCD2082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:12:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1CCD2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbeJXXhK (ORCPT
+        id S1726652AbeJXXlG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:37:10 -0400
-Received: from mga06.intel.com ([134.134.136.31]:10898 "EHLO mga06.intel.com"
+        Wed, 24 Oct 2018 19:41:06 -0400
+Received: from mga18.intel.com ([134.134.136.126]:38292 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726414AbeJXXhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:37:10 -0400
+        id S1726407AbeJXXlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 19:41:06 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 08:08:41 -0700
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 08:12:36 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,420,1534834800"; 
-   d="scan'208";a="102923006"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga002.jf.intel.com with ESMTP; 24 Oct 2018 08:08:41 -0700
-Message-ID: <40b17814b2a65531c5059e52a61c8f41b9603904.camel@linux.intel.com>
-Subject: Re: [mm PATCH v3 4/6] mm: Move hot-plug specific memory init into
- separate functions and optimize
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        pavel.tatashin@microsoft.com, dave.jiang@intel.com,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        davem@davemloft.net, yi.z.zhang@linux.intel.com,
-        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com, vbabka@suse.cz,
-        sparclinux@vger.kernel.org, dan.j.williams@intel.com,
-        ldufour@linux.vnet.ibm.com, mgorman@techsingularity.net,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com
-Date:   Wed, 24 Oct 2018 08:08:41 -0700
-In-Reply-To: <20181024123640.GF18839@dhcp22.suse.cz>
-References: <20181015202456.2171.88406.stgit@localhost.localdomain>
-         <20181015202716.2171.7284.stgit@localhost.localdomain>
-         <20181017091824.GL18839@dhcp22.suse.cz>
-         <d9011108-4099-58dc-8b8c-110c5f2a3674@linux.intel.com>
-         <20181024123640.GF18839@dhcp22.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+   d="scan'208";a="80581149"
+Received: from otc-cfl-s-03.jf.intel.com ([10.54.55.152])
+  by fmsmga007.fm.intel.com with ESMTP; 24 Oct 2018 08:12:36 -0700
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        acme@kernel.org, linux-kernel@vger.kernel.org
+Cc:     bp@alien8.de, ak@linux.intel.com, eranian@google.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH 1/2] perf: Add munmap callback
+Date:   Wed, 24 Oct 2018 08:11:15 -0700
+Message-Id: <20181024151116.30935-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-24 at 14:36 +0200, Michal Hocko wrote:
-> On Wed 17-10-18 08:26:20, Alexander Duyck wrote:
-> [...]
-> > With that said I am also wondering if a possible solution to the
-> > complaints
-> > you had would be to look at just exporting the __init_pageblock
-> > function
-> > later and moving the call to memmap_init_zone_device out to the
-> > memremap or
-> > hotplug code when Dan gets the refactoring for HMM and memremap all
-> > sorted
-> > out.
-> 
-> Why cannot we simply provide a constructor for each page by the
-> caller if there are special requirements? we currently have alt_map
-> to do struct page allocation but nothing really prevents to make it
-> more generic and control both allocation and initialization whatever
-> suits a specific usecase. I really do not want make special cases
-> here and there.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-The advantage to the current __init_pageblock function is that we end
-up constructing everything we are going to write outside of the main
-loop and then are focused only on init.
+To calculate the physical address, perf needs to walk the pages tables.
+The related mapping may has already been removed from pages table in
+some cases (e.g. large PEBS). The virtual address recorded in the first
+PEBS records may already be unmapped before draining PEBS buffers.
 
-If we end up having to call a per page constructor that is going to
-slow things down. For example just that reserved bit setting was adding
-something like 4 seconds to the init time for the system. By allowing
-it to be configured as a part of the flags outside of the loop I was
-able to avoid taking that performance hit.
+Add a munmap callback to notify the PMU of any unmapping, which only be
+invoked when the munmap is implemented.
 
-- Alex
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ include/linux/perf_event.h |  3 +++
+ kernel/events/core.c       | 25 +++++++++++++++++++++++++
+ mm/mmap.c                  |  1 +
+ 3 files changed, 29 insertions(+)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 53c500f0ca79..7f0a9258ce1f 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -400,6 +400,7 @@ struct pmu {
+ 	 */
+ 	void (*sched_task)		(struct perf_event_context *ctx,
+ 					bool sched_in);
++	void (*munmap)			(void);
+ 	/*
+ 	 * PMU specific data size
+ 	 */
+@@ -1113,6 +1114,7 @@ static inline void perf_event_task_sched_out(struct task_struct *prev,
+ }
+ 
+ extern void perf_event_mmap(struct vm_area_struct *vma);
++extern void perf_event_munmap(void);
+ extern struct perf_guest_info_callbacks *perf_guest_cbs;
+ extern int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
+ extern int perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
+@@ -1333,6 +1335,7 @@ static inline int perf_unregister_guest_info_callbacks
+ (struct perf_guest_info_callbacks *callbacks)				{ return 0; }
+ 
+ static inline void perf_event_mmap(struct vm_area_struct *vma)		{ }
++static inline void perf_event_munmap(void)				{ }
+ static inline void perf_event_exec(void)				{ }
+ static inline void perf_event_comm(struct task_struct *tsk, bool exec)	{ }
+ static inline void perf_event_namespaces(struct task_struct *tsk)	{ }
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 5a97f34bc14c..00338d6fbed7 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -3184,6 +3184,31 @@ static void perf_pmu_sched_task(struct task_struct *prev,
+ 	}
+ }
+ 
++void perf_event_munmap(void)
++{
++	struct perf_cpu_context *cpuctx;
++	unsigned long flags;
++	struct pmu *pmu;
++
++	local_irq_save(flags);
++	list_for_each_entry(cpuctx, this_cpu_ptr(&sched_cb_list), sched_cb_entry) {
++		pmu = cpuctx->ctx.pmu;
++
++		if (!pmu->munmap)
++			continue;
++
++		perf_ctx_lock(cpuctx, cpuctx->task_ctx);
++		perf_pmu_disable(pmu);
++
++		pmu->munmap();
++
++		perf_pmu_enable(pmu);
++
++		perf_ctx_unlock(cpuctx, cpuctx->task_ctx);
++	}
++	local_irq_restore(flags);
++}
++
+ static void perf_event_switch(struct task_struct *task,
+ 			      struct task_struct *next_prev, bool sched_in);
+ 
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 5f2b2b184c60..61978ad8c480 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2777,6 +2777,7 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 	/*
+ 	 * Remove the vma's, and unmap the actual pages
+ 	 */
++	perf_event_munmap();
+ 	detach_vmas_to_be_unmapped(mm, vma, prev, end);
+ 	unmap_region(mm, vma, prev, start, end);
+ 
+-- 
+2.17.1
 
