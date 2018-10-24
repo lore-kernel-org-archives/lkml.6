@@ -2,85 +2,88 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6578ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19DFAECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:32:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D8512075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:23:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8A0B207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:32:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="K6eu7jLC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D8512075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WwMGVNsz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8A0B207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbeJYAwV (ORCPT
+        id S1726685AbeJYBA5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 20:52:21 -0400
-Received: from mail-lj1-f172.google.com ([209.85.208.172]:38151 "EHLO
-        mail-lj1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726433AbeJYAwT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 20:52:19 -0400
-Received: by mail-lj1-f172.google.com with SMTP id k11-v6so5350753lja.5
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 09:23:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KE4Z5RqGmFwIirvCmcQXGA7g2F3UiV0a7VmuLfzbaA4=;
-        b=K6eu7jLCQU/1J/NQJxqOI95yX1egHkxcSIOVg6PidI+g34yoQC1rBOIWAj/n/x93rl
-         QhInUL1Tc+t1p+e2B+KKsZQwcYSov7W4RQMhlWj1i3BTcXiUJWdT96+u/ZvKBHoLBFLO
-         AR4mDnhtGZsY5t0bLKHt+670Dk2St8uamIKow=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KE4Z5RqGmFwIirvCmcQXGA7g2F3UiV0a7VmuLfzbaA4=;
-        b=X7vTDdwx7B21HGM1FOM+gPnI8SApGOQ8/x+n1p3o/oTRt00CkiXTP5QVVRzALEYBag
-         u/i08qFgaCrYV8rs0Cm7XEkh1dI+Zy6OlMDYeAdqWhSMI0GHTihvgj7WsqcbkPwUD/QO
-         OQ3i1SuzRmMWmdO43dtzstOLPhmMonTLC1rlG/JX63JuIdptJd36arjR15oSMIhCcLGm
-         Li6wZjbyaVW3IiSUEchoTxAH4TmJQS1XIRy2jpFxwpLuo8hKvdPZbE9qPb5sYESkH71l
-         HNA0FdixMyQ54NHdDeCGrIL7mPGZc4jg5GdPDm8IxvePC+a6Xuy2JFrUjb+p9V37dLD2
-         YR7g==
-X-Gm-Message-State: AGRZ1gI3cALfAkNnfXOX5osBOhGvfcXLV0EKlf5l8KDZSmN8t6AftxVy
-        KvyzcSN/z3NPcB2NNQCuSju0vG22rNxf0sIT
-X-Google-Smtp-Source: AJdET5dgSIAQCnlFHf4TdUjSim0Q6lPZitthr5gaKm6aX4p9naeiLxWVSrymIM7cbBxtz8nntyyOjw==
-X-Received: by 2002:a2e:5c2:: with SMTP id 185-v6mr2435386ljf.127.1540398214274;
-        Wed, 24 Oct 2018 09:23:34 -0700 (PDT)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id u20-v6sm800872lfk.55.2018.10.24.09.23.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 09:23:33 -0700 (PDT)
-Received: by mail-lj1-f178.google.com with SMTP id u21-v6so5344160lja.8
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 09:23:33 -0700 (PDT)
-X-Received: by 2002:a2e:980f:: with SMTP id a15-v6mr2444826ljj.6.1540398212895;
- Wed, 24 Oct 2018 09:23:32 -0700 (PDT)
+        Wed, 24 Oct 2018 21:00:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57618 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726433AbeJYBA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 21:00:57 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61A1A2075D;
+        Wed, 24 Oct 2018 16:32:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540398732;
+        bh=d+v2sUGIhz7Jz1PCr3QQ7WmJLL5CHnTj1xoKicde3fU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WwMGVNszACam9VrnuWaIJAHWLi1SGg+YovXzBS7u7Gjtcg0O8cMJo+kkMF9t/CMrP
+         o6LMHotc+GRJcICs/Jh11h4GNrQRIbPJFUvCQyEIalcC1iufiR437qGedfKhuSGW7U
+         rNnJPjHboH8MgkltWEkxULhOfvN3b3hVd/E6jqXY=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 830E7142C5E; Wed, 24 Oct 2018 13:32:08 -0300 (-03)
+Date:   Wed, 24 Oct 2018 13:32:08 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     kan.liang@linux.intel.com, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        bp@alien8.de, Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH 1/2] perf: Add munmap callback
+Message-ID: <20181024163208.GC15106@kernel.org>
+References: <20181024151116.30935-1-kan.liang@linux.intel.com>
+ <20181024162334.GG6218@tassilo.jf.intel.com>
 MIME-Version: 1.0
-References: <743b8d6b-6b1f-8766-7db3-1df5d95227f5@oracle.com>
-In-Reply-To: <743b8d6b-6b1f-8766-7db3-1df5d95227f5@oracle.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 24 Oct 2018 17:23:16 +0100
-X-Gmail-Original-Message-ID: <CAHk-=wgYz2Ht5ieCN4_t3L04rqEa6UW+POk-GxydR7UyASQTgg@mail.gmail.com>
-Message-ID: <CAHk-=wgYz2Ht5ieCN4_t3L04rqEa6UW+POk-GxydR7UyASQTgg@mail.gmail.com>
-Subject: Re: [GIT PULL] jfs fixes for v4.20
-To:     dave.kleikamp@oracle.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        yuchao0@huawei.com, cgxu519@gmx.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181024162334.GG6218@tassilo.jf.intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 2:47 PM Dave Kleikamp <dave.kleikamp@oracle.com> wrote:
->
-> Just a few small fixes
+Em Wed, Oct 24, 2018 at 09:23:34AM -0700, Andi Kleen escreveu:
+> > +void perf_event_munmap(void)
+> > +{
+> > +	struct perf_cpu_context *cpuctx;
+> > +	unsigned long flags;
+> > +	struct pmu *pmu;
+> > +
+> > +	local_irq_save(flags);
+> > +	list_for_each_entry(cpuctx, this_cpu_ptr(&sched_cb_list), sched_cb_entry) {
+> 
+> Would be good have a fast path here that checks for the list being empty
+> without disabling the interrupts. munmap can be somewhat hot. I think
+> it's ok to make it slower with perf running, but we shouldn't impact
+> it without perf.
 
-Pulled,
+Right, look at how its counterpart, perf_event_mmap() works:
 
-      Linus
+void perf_event_mmap(struct vm_area_struct *vma)
+{
+        struct perf_mmap_event mmap_event;
+
+        if (!atomic_read(&nr_mmap_events))
+                return;
+<SNIP>
+}
+
+- Arnaldo
