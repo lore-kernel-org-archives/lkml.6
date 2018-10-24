@@ -2,95 +2,122 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75770ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE9DECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 238852082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:54:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wNpOPqZb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 238852082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D190B207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:57:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D190B207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727400AbeJYDXV (ORCPT
+        id S1727444AbeJYD0p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 23:23:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45850 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726748AbeJYDXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 23:23:21 -0400
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EADB2082F
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 18:54:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540407248;
-        bh=54SvS0WM5XZyZnqsD7ZKspIz03vxdHQfZHGt30OX5iA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=wNpOPqZbPWvdiIbrqm7iYtADYnNGtcsHq76D4p1c8TyScNCtpKTEma8jXjDzhh8KD
-         sUiExLb0dspK5EbmZnTJfFUb3EmdqCdVxTDm+++udFYvF6oPnEuBy9PVUrT4AySlhU
-         HtJebEBUdBqc49ZL7Limm6ZDP5lmwtH9t1DL+YVo=
-Received: by mail-wr1-f47.google.com with SMTP id t10-v6so6706000wrn.10
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 11:54:08 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gIMKvRFhAn07QaI9dI3bjC05/Mh0vLYLK6KY2lE1hsRvGKami1i
-        skmXoMnVMshL5tU6WThlNeAnoWMMGPJhRK5JsMDbpw==
-X-Google-Smtp-Source: AJdET5ez0LAhvedbqgPNVNGm/jMmUEF5DFTri3dNR0dnLpskhaSXaMBp2mmrg8ktRHd5xSkE4vWEz4vYMmRRF1rpLzg=
-X-Received: by 2002:adf:82c9:: with SMTP id 67-v6mr937631wrc.131.1540407246617;
- Wed, 24 Oct 2018 11:54:06 -0700 (PDT)
+        Wed, 24 Oct 2018 23:26:45 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:30225 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727010AbeJYD0p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 23:26:45 -0400
+X-IronPort-AV: E=Sophos;i="5.54,421,1534802400"; 
+   d="scan'208";a="352679581"
+Received: from 30.9-255-62.static.virginmediabusiness.co.uk (HELO [172.16.5.17]) ([62.255.9.30])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 20:57:29 +0200
+Date:   Wed, 24 Oct 2018 19:57:27 +0100 (BST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Chunming Zhou <david1.zhou@amd.com>
+cc:     kbuild-all@01.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
+        =?ISO-8859-15?Q?Christian_K=F6nig?= 
+        <easy2remember.chk@googlemail.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: fix call_kern.cocci warnings (fwd)
+Message-ID: <alpine.DEB.2.21.1810241955110.3776@hadrien>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20181023184234.14025-1-chang.seok.bae@intel.com> <20181023184234.14025-4-chang.seok.bae@intel.com>
-In-Reply-To: <20181023184234.14025-4-chang.seok.bae@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 24 Oct 2018 11:53:54 -0700
-X-Gmail-Original-Message-ID: <CALCETrWWBYgaJfPykTpJ9=TsptVL_ieOR3JdYVVW02=O9CM17Q@mail.gmail.com>
-Message-ID: <CALCETrWWBYgaJfPykTpJ9=TsptVL_ieOR3JdYVVW02=O9CM17Q@mail.gmail.com>
-Subject: Re: [v3 03/12] x86/fsgsbase/64: Add intrinsics/macros for FSGSBASE instructions
-To:     "Bae, Chang Seok" <chang.seok.bae@intel.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="8323329-944385150-1540407448=:3776"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 11:43 AM Chang S. Bae <chang.seok.bae@intel.com> wrote:
->
-> From: Andi Kleen <ak@linux.intel.com>
->
-> Add C intrinsics and assembler macros for the new FSBASE and GSBASE
-> instructions.
->
-> Very straight forward. Used in followon patches.
->
-> [ luto: Rename the variables from FS and GS to FSBASE and GSBASE and
->   make <asm/fsgsbase.h> safe to include on 32-bit kernels. ]
->
-> v2: Use __always_inline
->
-> [ chang: Revise the changelog. Place them in <asm/fsgsbase.h>. Replace
->   the macros with GAS-compatible ones. ]
->
-> If GCC supports it, we can add -mfsgsbase to CFLAGS and use the builtins
-> here for extra performance.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Reviewed-by: Andy Lutomirski <luto@kernel.org> # C parts only
+--8323329-944385150-1540407448=:3776
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 
-With the caveat that I'm not convinced that the memory clobbers are
-needed.  The __force_order trick in special_insns.h would probably be
-more appropriate.
+The containing function is called with a spin_lock held, so GFP_KERNEL
+can't be used.
 
-I don't feel qualified to review the asm part without some research.
-Whereas hpa or Boris could probably review it with their eyes closed.
+julia
+
+---------- Forwarded message ----------
+Date: Tue, 23 Oct 2018 17:14:25 +0800
+From: kbuild test robot <lkp@intel.com>
+To: kbuild@01.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Subject: [PATCH] drm: fix call_kern.cocci warnings
+
+CC: kbuild-all@01.org
+CC: intel-gfx@lists.freedesktop.org
+CC: dri-devel@lists.freedesktop.org
+TO: Chunming Zhou <david1.zhou@amd.com>
+CC: "Christian König" <easy2remember.chk@googlemail.com>
+CC: Gustavo Padovan <gustavo@padovan.org>
+CC: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+CC: Sean Paul <sean@poorly.run>
+CC: David Airlie <airlied@linux.ie>
+CC: dri-devel@lists.freedesktop.org
+CC: linux-kernel@vger.kernel.org
+
+From: kbuild test robot <fengguang.wu@intel.com>
+
+drivers/gpu/drm/drm_syncobj.c:202:4-14: ERROR: function drm_syncobj_find_signal_pt_for_point called on line 390 inside lock on line 389 but uses GFP_KERNEL
+
+ Find functions that refer to GFP_KERNEL but are called with locks held.
+
+Semantic patch information:
+ The proposed change of converting the GFP_KERNEL is not necessarily the
+ correct one.  It may be desired to unlock the lock, or to not call the
+ function under the lock in the first place.
+
+Generated by: scripts/coccinelle/locks/call_kern.cocci
+
+Fixes: 48197bc564c7 ("drm: add syncobj timeline support v9")
+CC: Chunming Zhou <david1.zhou@amd.com>
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+---
+
+tree:   git://anongit.freedesktop.org/drm/drm-tip drm-tip
+head:   8d7ffd2298c607c3e1a16f94d51450d7940fd6a7
+commit: 48197bc564c7a1888c86024a1ba4f956e0ec2300 [1968/2033] drm: add syncobj timeline support v9
+:::::: branch date: 4 hours ago
+:::::: commit date: 5 days ago
+
+Please take the patch only if it's a positive warning. Thanks!
+
+ drm_syncobj.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/gpu/drm/drm_syncobj.c
++++ b/drivers/gpu/drm/drm_syncobj.c
+@@ -199,7 +199,7 @@ static struct dma_fence
+ 	    (point <= syncobj->timeline)) {
+ 		struct drm_syncobj_stub_fence *fence =
+ 			kzalloc(sizeof(struct drm_syncobj_stub_fence),
+-				GFP_KERNEL);
++				GFP_ATOMIC);
+
+ 		if (!fence)
+ 			return NULL;
+--8323329-944385150-1540407448=:3776--
