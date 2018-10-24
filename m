@@ -2,95 +2,260 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E731C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E14AC67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A0DA2075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:16:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B91D62075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:17:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IuRf2I/R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A0DA2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G57+umnF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B91D62075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726759AbeJXWol (ORCPT
+        id S1726857AbeJXWpg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 18:44:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55196 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726497AbeJXWok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:44:40 -0400
-Received: from jouet.infradead.org (unknown [189.40.65.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4158E2075D;
-        Wed, 24 Oct 2018 14:16:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540390582;
-        bh=B8XKSULsbsXw/XTmHXBM72/MDXxVBJICz3dRk+vlvAA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IuRf2I/RL817y0rsbdSH00/pYMxaM8+A2TfeXh5J7CY4Va/9OOSUbfipOSkkbtvYN
-         8X/Zs5T7R+VxQguHAtwFmTzOyxdB/36YtQD3wDNqhGVDNkeelM0ZyvLGsZC3Ia75Tj
-         YGmlHmDjNcfbANnN2a88DU1o5ePUi7hN/cBqLp88=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id E9779142C5E; Wed, 24 Oct 2018 11:16:18 -0300 (-03)
-Date:   Wed, 24 Oct 2018 11:16:18 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        David Miller <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 17/19] perf scripts python: exported-sql-viewer.py:
- Add All branches report
-Message-ID: <20181024141618.GB15106@kernel.org>
-References: <20181001062853.28285-18-adrian.hunter@intel.com>
- <20181023075949.18920-1-adrian.hunter@intel.com>
- <20181023181218.GB6114@kernel.org>
- <363DA0ED52042842948283D2FC38E4649C2B8A4D@IRSMSX106.ger.corp.intel.com>
- <20181023192935.GD6114@kernel.org>
- <363DA0ED52042842948283D2FC38E4649C2B8AA7@IRSMSX106.ger.corp.intel.com>
- <20181023200230.GE6114@kernel.org>
- <fa8d2495-0c47-c023-53dd-66718c2e1751@intel.com>
- <04a9bf3a-ff00-2331-d0a5-a3efcc4cdd94@intel.com>
+        Wed, 24 Oct 2018 18:45:36 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:40464 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbeJXWpg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 18:45:36 -0400
+Received: by mail-ed1-f66.google.com with SMTP id r1-v6so5200271edd.7;
+        Wed, 24 Oct 2018 07:17:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SU8HEqkQxqBlgg1Rw1a2f9rM0UwRZkLlkQ2yHtl4QG8=;
+        b=G57+umnF6Shl/a4vNsd4zRg+tFNza0QVeTZsvfRN1GO3dCW2C2yjSBNclVAJzQVTMZ
+         +c0EhVdhC1N0cW6DI1bgQLdW+HKMaw7ea+GG5+uz24h/535U9RZzYF2pTuluQgQB5/XI
+         QnhLIhqBNsRuF06ZJ2P4OwukJMJaJ3GyK7XOMCbTqPUZM59+MImoXHBBKjI/fgDj4fSE
+         /z3Is6UbMe9oMA6hcETxm8ozGOwa6/EbPHJt088C4khF9vtxIzzxHVSTOL20BXnJuEhg
+         8WOSjFjsrLVI8f2lAJ85pkuMHtjZfc1zWFdBWEPOSeUZCo2J86sUj0V+lEFQrx9vLDix
+         ClKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SU8HEqkQxqBlgg1Rw1a2f9rM0UwRZkLlkQ2yHtl4QG8=;
+        b=NU9UwiYcBZ0sSDR+xQGN43h8yaZv+tv8SX5xrTDRzrTTuolpozPIMjfFAHcp0Ksn38
+         xN+vxBRGjg35Vxuj4RpxuKuARGYN3S/rxulrKFJ7AZEbmIz1GlSmuQtYmKCmlxzPVS3L
+         K0su4d3MkLMOdbRt0QZHoNUbTk4YKOSt6IH6RmTMOvgO+b92aBkpRLffmVq1ta60Du4R
+         IKK2t68yjXecqCOGe1f36c3fSExXNswHvvZT8BLUCKwit1XxOR5XLx9ZEgRLPgAAY4eC
+         w66zc+QFhkchvQcwP1I+S1PJyj6uVIl4wN8MP67mPnibViC0k5Dbi7yrGvpi4Av+oLz1
+         iZQA==
+X-Gm-Message-State: AGRZ1gJjnD6HoGZ/ZA94bbfOfbSqt6W4PtLqAJ9m/+0Q0qy467FbTeQW
+        NSLFKOiwtiOTx3EFQlrBIiQ5SQ5MXM40Qs76JTE=
+X-Google-Smtp-Source: AJdET5duFaGEv3n1y9l7UNHBcwD/S72Uuuyk944xvGleLc5T2gVUJ2x3rMqubTDnGhwyXVb1hfakJKqa7z9iV3uiciQ=
+X-Received: by 2002:a17:906:6a13:: with SMTP id o19-v6mr1454020ejr.99.1540390636613;
+ Wed, 24 Oct 2018 07:17:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <04a9bf3a-ff00-2331-d0a5-a3efcc4cdd94@intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20181022113306.GB2867@w540> <CAHCN7xJkc5RW73C0zruWBgyF7G0J3C5tLE=ZdfxTKbrUqs=-PQ@mail.gmail.com>
+ <CAOMZO5ATm4BRzPEQOU+ZD6bHCP2Aqjp4raRYhuc+wNe0t4+C=w@mail.gmail.com>
+ <CAHCN7x+csKEk25CF=teUv+F5_GoTe6_3Yqb5PODLn+AmCCm88w@mail.gmail.com>
+ <d78877f8-2c23-2bf0-0a9c-cd98b855e95e@mentor.com> <CAHCN7xKhGAXs0jGv96CfOfLQfVubxzsdE9UjpDu+4NM6oLDGWw@mail.gmail.com>
+ <bc034299-4a32-f248-d09a-0d1b5872a506@mentor.com> <CAHCN7xKVUgpyCb5k7s0PNXW-efySSwP25ZGMLdbFnohATPwKhg@mail.gmail.com>
+ <20181023230259.GA3766@w540> <CAHCN7xJaY_916OLHvaN_q1FwM2vqH5UXzVxLAS4DuEV0icPUXg@mail.gmail.com>
+ <20181024140820.GB3766@w540>
+In-Reply-To: <20181024140820.GB3766@w540>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Wed, 24 Oct 2018 09:17:04 -0500
+Message-ID: <CAHCN7xKbAuTmic+L-a2o1NreSCmYBKzzvmHuUTGZtVHELFoirg@mail.gmail.com>
+Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
+To:     jacopo@jmondi.org
+Cc:     steve_longerbeam@mentor.com, Fabio Estevam <festevam@gmail.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        p.zabel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
+        gstreamer-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Oct 24, 2018 at 04:56:03PM +0300, Adrian Hunter escreveu:
-> However I found kernel disassembly doesn't work, I think due to:
- 
->     commit edeb0c90df3581b821a764052d185df985f8b8dc
->     perf tools: Stop fallbacking to kallsyms for vdso symbols lookup
- 
-> As I mentioned here:
- 
-> https://lore.kernel.org/lkml/4c682937-3cee-6974-0970-68610e13ad37@intel.com/T/#u
- 
-> So I will look at a fix for that also.
+On Wed, Oct 24, 2018 at 9:08 AM jacopo mondi <jacopo@jmondi.org> wrote:
+>
+> Hi Adam,
+>
+> On Wed, Oct 24, 2018 at 08:53:41AM -0500, Adam Ford wrote:
+> > On Tue, Oct 23, 2018 at 6:03 PM jacopo mondi <jacopo@jmondi.org> wrote:
+> > >
+> > > Hi Adam,
+> > >
+> > > On Tue, Oct 23, 2018 at 12:54:12PM -0500, Adam Ford wrote:
+> > > > On Tue, Oct 23, 2018 at 12:39 PM Steve Longerbeam
+> > > > <steve_longerbeam@mentor.com> wrote:
+> > > > >
+> > > > >
+> > > > > On 10/23/18 10:34 AM, Adam Ford wrote:
+> > > > > > On Tue, Oct 23, 2018 at 11:36 AM Steve Longerbeam
+> > > > > > <steve_longerbeam@mentor.com> wrote:
+> > > > > >> Hi Adam,
+> > > > > >>
+> > > > > >> On 10/23/18 8:19 AM, Adam Ford wrote:
+> > > > > >>> On Mon, Oct 22, 2018 at 7:40 AM Fabio Estevam <festevam@gmail.com> wrote:
+> > > > > >>>> Hi Adam,
+> > > > > >>>>
+> > > > > >>>> On Mon, Oct 22, 2018 at 9:37 AM Adam Ford <aford173@gmail.com> wrote:
+> > > > > >>>>
+> > > > > >>>>> Thank you!  This tutorial web site is exactly what I need.  The
+> > > > > >>>>> documentation page in Linux touched on the media-ctl links, but it
+> > > > > >>>>> didn't explain the syntax or the mapping.  This graphical
+> > > > > >>>>> interpretation really helps it make more sense.
+> > > > > >>>> Is capturing working well on your i.MX6 board now?
+> > > > > >>> Fabio,
+> > > > > >>>
+> > > > > >>> Unfortunately, no.  I built the rootfs based on Jagan's instructions
+> > > > > >>> at https://openedev.amarulasolutions.com/display/ODWIKI/i.CoreM6+1.5
+> > > > > >>>
+> > > > > >>> I tried building both the 4.15-RC6 kernel, a 4.19 kernel and a 4.14 LTS kernel.
+> > > > > >>>
+> > > > > >>> Using the suggested method of generating the graphical display of the
+> > > > > >>> pipeline options, I am able to enable various pipeline options
+> > > > > >>> connecting different /dev/videoX options tot he camera.  I have tried
+> > > > > >>> both the  suggested method above as well as the instructions found in
+> > > > > >>> Documentation/media/v4l-drivers/imx.rst for their respective kernels,
+> > > > > >>> and I have tried multiple options to capture through
+> > > > > >>> ipu1_csi1_capture, ipu2_csi1_capture, and ip1_ic_prepenc capture, and
+> > > > > >>> all yield a broken pipe.
+> > > > > >>>
+> > > > > >>> libv4l2: error turning on stream: Broken pipe
+> > > > > >>> ERROR: from element /GstPipeline:pipeline0/GstV4l2Src:v4l2src0: Could
+> > > > > >>> not read from resource.
+> > > > > >>> Additional debug info:
+> > > > > >>> gstv4l2bufferpool.c(1064): gst_v4l2_buffer_pool_poll ():
+> > > > > >>> /GstPipeline:pipeline0/GstV4l2Src:v4l2src0:
+> > > > > >>> poll error 1: Broken pipe (32)
+> > > > > >>>
+> > > > > >>> I can hear the camera click when I start gstreamer and click again
+> > > > > >>> when it stops trying to stream.
+> > > > > >>>
+> > > > > >>> dmesg indicates a broken pipe as well..
+> > > > > >>>
+> > > > > >>> [ 2419.851502] ipu2_csi1: pipeline start failed with -32
+> > > > > >>>
+> > > > > >>> might you have any suggestions?
+> > > > > >>
+> > > > > >> This -EPIPE error might mean you have a mis-match of resolution, pixel
+> > > > > >> format, or field type between one of the source->sink pad links. You can
+> > > > > >> find out which pads have a mis-match by enabling dynamic debug in the
+> > > > > >> kernel function __media_pipeline_start.
+> > > > > > Following Jagan's suggestion, I tried to make sure all the resolution
+> > > > > > and pixel formats were set the same between each source and sink.
+> > > > > >
+> > > > > > media-ctl --set-v4l2 "'ov5640 2-0010':0[fmt:UYVY2X8/640x480
+> > > > > > field:none]"
+> > > > > > media-ctl --set-v4l2 "'imx6-mipi-csi2':1[fmt:UYVY2X8/640x480
+> > > > > > field:none]"
+> > > > > > media-ctl --set-v4l2 "'ipu1_csi0_mux':2[fmt:UYVY2X8/640x480
+> > > > > > field:none]"
+> > > > > > media-ctl --set-v4l2 "'ipu1_csi0':2[fmt:AYUV32/640x480 field:none]"
+> > > > > >
+> > > > > >> Also make sure you are attempting to stream from the correct /dev/videoN.
+> > > > > > I have graphically plotted the pipeline using media-ctl --print-dot
+> > > > > > and I can see the proper video is routed, but your dynamic debug
+> > > > > > suggestion yielded something:
+> > > > > >
+> > > > > >     imx-media capture-subsystem: link validation failed for 'ov5640
+> > > > > > 2-0010':0 -> 'imx6-mipi-csi2':0, error -32
+> > > > >
+> > > > >
+> > > > > It's what I expected, you have a format mismatch between those pads.
+> > > >
+> > > > Is the mismatch something I am doing wrong with:
+> > > >
+> > > > media-ctl --set-v4l2 "'ov5640 2-0010':0[fmt:UYVY2X8/640x480 field:none]"
+> > > > media-ctl --set-v4l2 "'imx6-mipi-csi2':2[fmt:UYVY2X8/640x480 field:none]"
+> > > >
+> > >
+> > > Could you try to verify the actual format configured on the sensor?
+> > > (media-ctl --get-v4l2 "'ov5640 2-0010':0").
+> > >
+> > > Depending on the driver version you are running, you might be affected
+> > > by different regressions.
+> > >
+> > > > or is there something else I need to do?  I just used Jagan's suggestion.
+> > >
+> > > I suggest you to update the driver version to the last one available
+> > > in the media-tree master, or at least try to backport the following
+> > > commit:
+> > > fb98e29 media: ov5640: fix mode change regression
+> > >
+> > > If it turns out the format and mode configured on the sensor do not
+> > > match the one you want.
+> > >
+> > > Thanks
+> >
+> > That got me past one hurdle.   Wtih your help, I was able to confirm
+> > the mis-match of the modes between the sensor and the csi1 source.  I
+> > applied the patch as you suggested, but now I get a new error.
+> >
+> > [  295.294370] imx6-mipi-csi2: LP-11 timeout, phy_state = 0x00000230
+> > [  295.300681] ipu1_csi0: pipeline start failed with -110
+> >
+> >
+>
+> Here you go:
+> bad1774 media: ov5640: Fix timings setup code
+> aa4bb8b media: ov5640: Re-work MIPI startup sequence
+>
+> Please update your ov5640 driver to the last version available on
+> linux-media master repository. There have been a looot of developments
+> and fixes recently (and I would be happy to know if they have helped
+> you)
+>
+> > I am going to go through various patches to the imx framework and
+> > ov5640 driver to see if I can find the solution,  but if you have
+> > suggestions as to which fixes are appropriate, I'll test those.  If I
+>
+> Just get what's on linux-media master tree.
+>
+> > can get this working, would it make sense for me to submit some
+> > requests with kernel-stable to backport some of these commits to 4.19
+> > and if applicable, 4.14 too?
+>
+> Sure it will (even if I'm not familiar with the procedure used to tag
+> patches to be applied to stable. I would just apply everything that's
+> on the latest media tree)
+>
+> Keep us posted!
 
-Ok.
+Thank you everyone for your help.  I pulled the linux-media master and
+built it, and it works perfectly from what I can tell. I'll go through
+the patch list and see what's back-port-able to 4.19.  I noticed that
+just copying the ov5640.c driver breaks the build on 4.19.0, so I'm
+going to focus on just patches labeled 'fix' on both the ov5640 for
+now.
 
-But then that function receives both the addr and the cpumode, so its
-callers should take into account the mixed ip/addr cpumodes, i.e. if we
-get a sample with an ip in kernel and an addr in userspace, all we know
-is that the ip is in the kernel, so we can either check the x86-specific
-(well, specific to archs that share the address space for kernel and
-userspace) machine__kernel_ip(addr) and pass a kernel cpu mode to
-thread__find_addr(), otherwise ask for thread__find(addr, cpumode=user),
-no?
+I appreciate everyone's help, and Iearned a lot about the v4l system
+in the process.
 
-Since this is x86 specific stuff, using machine__kernel_ip(addr) to
-figure out the addr cpumode seems the way to go, right?
+adam
 
-- Arnaldo
+>    j
+> >
+> > adam
+> > >    j
+> > >
+> > > > adam
+> > > > >
+> > > > > Steve
+> > > > >
+> > > > >
+> > > > > >
+> > > > > > I am assume this means the interface between the camera and the csi2
+> > > > > > isn't working.  I am going to double check the power rails and the
+> > > > > > clocks.  i can hear it click when activated and deactivated, so
+> > > > > > something is happening.
+> > > > > >
+> > > > > > adam
+> > > > > >
+> > > > > >> Steve
+> > > > > >>
