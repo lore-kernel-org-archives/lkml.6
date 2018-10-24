@@ -2,120 +2,541 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCACC67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D86C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:30:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFF4020824
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:29:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DL4sQRFw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFF4020824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1E02920824
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:30:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E02920824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbeJXV5H (ORCPT
+        id S1726829AbeJXV6W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 17:57:07 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:42973 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726285AbeJXV5H (ORCPT
+        Wed, 24 Oct 2018 17:58:22 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:54481 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbeJXV6W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 17:57:07 -0400
-Received: by mail-vk1-f196.google.com with SMTP id m199-v6so1237295vke.9
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 06:28:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wsoFEiNJLakB7ct6YlFja9F63VVvqb40HY6OnEjnKBo=;
-        b=DL4sQRFwwfhxovU/H+LN9cCunok0+R3k4qmxZ5N7a8vUjdxmGGuQP5h+cAu6+ZiRWa
-         ertW6GBYEP9fN1byA+qE5YTEGP7ZnWhMpE3NTLqzdeyFwyvKver9IyDv+YYX4VaZbtuz
-         QD3CyAxnw0GE8UiohXFbBMfTDmXQtuD12cIlM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wsoFEiNJLakB7ct6YlFja9F63VVvqb40HY6OnEjnKBo=;
-        b=r1AqpDRTXCzS8TJnEMHJwwLlUVROmvzZf3YIdgTzy8rQxTp9Pb7JMfbqMl8fBr1qLZ
-         R6FcQWhVQE3nbxGbQnNYt8i68ZeNNQcacJbN65wzkSBVPe1ssDnmTPr8wa/OV3mtgsmf
-         ZyE6HdzsbbGMeMk4sSnLQXcfgiqtzrqEDqT3jRGhB7O43j4UCpyt/1bKXJDUGe4OraSS
-         yej7ejnjXWovBfLr6h/ANRqvIHLht1ed5+XR4teTnSXOExpNeSYeJpuPWizm/TDoznDe
-         WXWlMHWNij7n9/jHTNHg4rthP+cOyFsIloCssB/F+cpmrP3j+T5WhhWNMiK9QF4fjtJ/
-         /lgw==
-X-Gm-Message-State: AGRZ1gJYSdQ/gUwvG7R38vo47YOYmEf+rv1BSss9pS2Wb29dtvb3OGcH
-        3bXdc5fgogxpmwC1YOYjrAiEj/8hiakL1xEN2wtuwA==
-X-Google-Smtp-Source: AJdET5fVF94KrxzinhpiyndW0oSHa4elGvmIDDHxyCxL8GofFAn05g/MIwo26/4DUBMjt1XVCsMc5sLAsYjEPqlXEII=
-X-Received: by 2002:a1f:8011:: with SMTP id b17mr1117095vkd.31.1540387738504;
- Wed, 24 Oct 2018 06:28:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181023.202921.1185045750138652543.davem@davemloft.net>
- <CAHk-=whuhCGujWKO8JObGQaSdWOpJBXdkM-B-vD80QZifveScw@mail.gmail.com>
- <CAHk-=wh2H9jE2RXibQgWs3_Q539roj62_gzPXKjnhhKqSFcw2g@mail.gmail.com>
- <87lg6nu6k1.fsf@codeaurora.org> <87h8hbu5uy.fsf@qca.qualcomm.com>
-In-Reply-To: <87h8hbu5uy.fsf@qca.qualcomm.com>
-From:   Andy Gross <andy.gross@linaro.org>
-Date:   Wed, 24 Oct 2018 14:28:47 +0100
-Message-ID: <CAPBZ5QcpooNi=YnGJJxM020LO=Z_GAM_teGiE5gLKX-g9xhcHQ@mail.gmail.com>
-Subject: Re: [GIT] Networking
-To:     "Valo, Kalle" <kvalo@qca.qualcomm.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        govinds@codeaurora.org, "David S. Miller" <davem@davemloft.net>,
+        Wed, 24 Oct 2018 17:58:22 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gFJEe-000698-60; Wed, 24 Oct 2018 07:30:08 -0600
+Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gFJEb-0006pt-No; Wed, 24 Oct 2018 07:30:07 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Enke Chen <enkechen@cisco.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel list <linux-kernel@vger.kernel.org>,
-        linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
-        jeffrey.t.kirsher@intel.com,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        "Victor Kamensky \(kamensky\)" <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+        <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
+Date:   Wed, 24 Oct 2018 08:29:37 -0500
+In-Reply-To: <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com> (Enke Chen's
+        message of "Mon, 22 Oct 2018 14:09:09 -0700")
+Message-ID: <87sh0vpj5q.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1gFJEb-0006pt-No;;;mid=<87sh0vpj5q.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19M05AzRz7tk3ljCpoaOmjvu4gTzpvS2Bs=
+X-SA-Exim-Connect-IP: 67.3.154.154
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v2] kernel/signal: Signal-based pre-coredump notification
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry for spam, I am resending in cleartext because the previous
-missed the lists.  Thanks Google for resetting my config when you
-'upgraded'.
+Enke Chen <enkechen@cisco.com> writes:
 
-On Wed, 24 Oct 2018 at 09:05, Kalle Valo <kvalo@qca.qualcomm.com> wrote:
+> For simplicity and consistency, this patch provides an implementation
+> for signal-based fault notification prior to the coredump of a child
+> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
+> be used by an application to express its interest and to specify the
+> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
+> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
 >
-> Kalle Valo <kvalo@codeaurora.org> writes:
+> Changes to prctl(2):
 >
-> > Linus Torvalds <torvalds@linux-foundation.org> writes:
-> >
-> >> On Wed, Oct 24, 2018 at 7:01 AM Linus Torvalds
-> >> <torvalds@linux-foundation.org> wrote:
-> >>>
-> >>> Hmm. Tentatively pulled, but there's something wrong with the Kconfig rules.
-> >>
-> >> Confirmed.
-> >
-> > BTW, our emails crossed and more info in the other email[1].
-> >
-> >> I did a978a5b8d83f ("net/kconfig: Make QCOM_QMI_HELPERS available when
-> >> COMPILE_TEST") to fix the breakage.
-> >
-> > Thanks, though I don't see it yet as I guess you haven't pushed it yet.
-> > Do note that it _might_ conflict the other commit which I suspect is in
-> > also coming to you:
-> >
-> > ccfb464cd106 ("soc: qcom: Allow COMPILE_TEST of qcom SoC Kconfigs")
+>    PR_SET_PREDUMP_SIG (since Linux 4.20.x)
+>           Set the child pre-coredump signal of the calling process to
+>           arg2 (either SIGUSR1, or SIUSR2, or SIGCHLD, or 0 to clear).
+>           This is the signal that the calling process will get prior to
+>           the coredump of a child process. This value is cleared across
+>           execve(2), or for the child of a fork(2).
 >
-> git.kernel.org is alive again for me so I can now check both commits. It
-> seems that Niklas' commit[1] is more finegrained than what Linus did[2].
-> I guess either of the commits should be reverted when Niklas' commit
-> goes to Linus tree, or what's the best course of action?
+>           When SIGCHLD is specified, the signal code will be set to
+>           CLD_PREDUMP in such an SIGCHLD signal.
 
-Yes this will conflict with Niklas's patch which is part of the 4.20
-pull requests.  I would prefer that we revert Linus's and take
-Niklas's unless there is a compelling argument to have it fixed before
--rc1.  That said, if you didn't, the merge conflicts would be minor
-and easily handled.
+Your signal handling is still not right.  Please read and comprehend
+siginfo_layout.
 
-Regards,
-Andy Gross
+You have not filled in all of the required fields for the SIGCHLD case.
+For the non SIGCHLD case you are using si_code == 0 == SI_USER which is
+very wrong.  This is not a user generated signal.
+
+Let me say this slowly.  The pair si_signo si_code determines the union
+member of struct siginfo.  That needs to be handled consistently. You
+aren't.  I just finished fixing this up in the entire kernel and now you
+are trying to add a usage that is worst than most of the bugs I have
+fixed.  I really don't appreciate having to deal with no bugs.
+
+
+
+Further siginfo can be dropped.  Multiple signals with the same signal
+number can be consolidated.  What is your plan for dealing with that?
+Other code paths pair with wait to get the information out.  There
+is no equivalent of wait in your code.
+
+Signals can be delayed by quite a bit, scheduling delays etc.  They can
+not provide any meaningful kind of real time notification.
+
+So between delays and loss of information signals appear to be a very
+poor fit for this usecase.
+
+I am concerned about code that does not fit the usecase well because
+such code winds up as code that no one cares about that must be
+maintained indefinitely, because somewhere out there there is one use
+that would break if the interface was removed.  This does not feel like
+an interface people will want to use and maintain in proper working
+order forever.
+
+Ugh.  Your test case is even using signalfd.  So you don't even want
+this signal to be delivered as a signal.
+
+You add an interface that takes a pointer and you don't add a compat
+interface.  See Oleg's point of just returning the signal number in the
+return code.
+
+Now I am wondering how well prctl works from a 32bit process on a 64bit
+kernel.  At first glance it looks like it probably does not work.
+
+Consistency with PDEATHSIG is not a good argument for anything.
+PDEATHSIG at the present time is unusable in the real world by most
+applications that want something like it.
+
+So far I see an interface that even you don't want to use as designed,
+that is implemented incorrectly.
+
+The concern is real and deserves to be addressed.  I don't think signals
+are the right way to handle it, and certainly not this patch as it
+stands.
+
+Eric
+
+
+> diff --git a/arch/x86/kernel/signal_compat.c b/arch/x86/kernel/signal_compat.c
+> index 9ccbf05..a3deba8 100644
+> --- a/arch/x86/kernel/signal_compat.c
+> +++ b/arch/x86/kernel/signal_compat.c
+> @@ -30,7 +30,7 @@ static inline void signal_compat_build_tests(void)
+>  	BUILD_BUG_ON(NSIGSEGV != 7);
+>  	BUILD_BUG_ON(NSIGBUS  != 5);
+>  	BUILD_BUG_ON(NSIGTRAP != 5);
+> -	BUILD_BUG_ON(NSIGCHLD != 6);
+> +	BUILD_BUG_ON(NSIGCHLD != 7);
+>  	BUILD_BUG_ON(NSIGSYS  != 1);
+>  
+>  	/* This is part of the ABI and can never change in size: */
+> diff --git a/fs/coredump.c b/fs/coredump.c
+> index e42e17e..f11e31f 100644
+> --- a/fs/coredump.c
+> +++ b/fs/coredump.c
+> @@ -546,6 +546,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+>  	struct cred *cred;
+>  	int retval = 0;
+>  	int ispipe;
+> +	bool notify;
+>  	struct files_struct *displaced;
+>  	/* require nonrelative corefile path and be extra careful */
+>  	bool need_suid_safe = false;
+> @@ -590,6 +591,15 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+>  	if (retval < 0)
+>  		goto fail_creds;
+>  
+> +	/*
+> +	 * Send the pre-coredump signal to the parent if requested.
+> +	 */
+> +	read_lock(&tasklist_lock);
+> +	notify = do_notify_parent_predump(current);
+> +	read_unlock(&tasklist_lock);
+> +	if (notify)
+> +		cond_resched();
+> +
+>  	old_cred = override_creds(cred);
+>  
+>  	ispipe = format_corename(&cn, &cprm);
+> diff --git a/fs/exec.c b/fs/exec.c
+> index fc281b7..7714da7 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1181,6 +1181,9 @@ static int de_thread(struct task_struct *tsk)
+>  	/* we have changed execution domain */
+>  	tsk->exit_signal = SIGCHLD;
+>  
+> +	/* Clear the pre-coredump signal before loading a new binary */
+> +	sig->predump_signal = 0;
+> +
+>  #ifdef CONFIG_POSIX_TIMERS
+>  	exit_itimers(sig);
+>  	flush_itimer_signals();
+> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+> index 13789d1..047829d 100644
+> --- a/include/linux/sched/signal.h
+> +++ b/include/linux/sched/signal.h
+> @@ -112,6 +112,9 @@ struct signal_struct {
+>  	int			group_stop_count;
+>  	unsigned int		flags; /* see SIGNAL_* flags below */
+>  
+> +	/* The signal sent prior to a child's coredump */
+> +	int			predump_signal;
+> +
+>  	/*
+>  	 * PR_SET_CHILD_SUBREAPER marks a process, like a service
+>  	 * manager, to re-parent orphan (double-forking) child processes
+> @@ -332,6 +335,7 @@ extern int kill_pid_info_as_cred(int, struct kernel_siginfo *, struct pid *,
+>  extern int kill_pgrp(struct pid *pid, int sig, int priv);
+>  extern int kill_pid(struct pid *pid, int sig, int priv);
+>  extern __must_check bool do_notify_parent(struct task_struct *, int);
+> +extern bool do_notify_parent_predump(struct task_struct *p);
+>  extern void __wake_up_parent(struct task_struct *p, struct task_struct *parent);
+>  extern void force_sig(int, struct task_struct *);
+>  extern int send_sig(int, struct task_struct *, int);
+> diff --git a/include/linux/signal.h b/include/linux/signal.h
+> index f428e86..6e1b2c9 100644
+> --- a/include/linux/signal.h
+> +++ b/include/linux/signal.h
+> @@ -262,6 +262,11 @@ static inline int valid_signal(unsigned long sig)
+>  	return sig <= _NSIG ? 1 : 0;
+>  }
+>  
+> +static inline int valid_predump_signal(int sig)
+> +{
+> +	return (sig == SIGCHLD) || (sig == SIGUSR1) || (sig == SIGUSR2);
+> +}
+> +
+>  struct timespec;
+>  struct pt_regs;
+>  enum pid_type;
+> diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
+> index cb3d6c2..1a47cef 100644
+> --- a/include/uapi/asm-generic/siginfo.h
+> +++ b/include/uapi/asm-generic/siginfo.h
+> @@ -267,7 +267,8 @@ struct {				\
+>  #define CLD_TRAPPED	4	/* traced child has trapped */
+>  #define CLD_STOPPED	5	/* child has stopped */
+>  #define CLD_CONTINUED	6	/* stopped child has continued */
+> -#define NSIGCHLD	6
+> +#define CLD_PREDUMP	7	/* child is about to dump core */
+> +#define NSIGCHLD	7
+>  
+>  /*
+>   * SIGPOLL (or any other signal without signal specific si_codes) si_codes
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index 9a32bc2..e4c154b 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -1855,6 +1855,45 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
+>  	return autoreap;
+>  }
+>  
+> +/*
+> + * While do_notify_parent() notifies the parent of a child's death post
+> + * its coredump, this function lets the parent (if so desired) know about
+> + * the imminent death of a child just prior to its coredump.
+> + *
+> + * The caller must hold at least the read lock on tasklist_lock.
+> + */
+> +bool do_notify_parent_predump(struct task_struct *tsk)
+> +{
+> +	struct sighand_struct *sighand;
+> +	struct kernel_siginfo info;
+> +	struct task_struct *parent;
+> +	unsigned long flags;
+> +	pid_t pid;
+> +	int sig;
+> +
+> +	parent = tsk->parent;
+> +	sighand = parent->sighand;
+> +	pid = task_tgid_vnr(tsk);
+> +
+> +	spin_lock_irqsave(&sighand->siglock, flags);
+> +	sig = parent->signal->predump_signal;
+> +	if (!valid_predump_signal(sig)) {
+> +		spin_unlock_irqrestore(&sighand->siglock, flags);
+> +		return false;
+> +	}
+> +
+> +	clear_siginfo(&info);
+> +	info.si_pid = pid;
+> +	info.si_signo = sig;
+> +	if (sig == SIGCHLD)
+> +		info.si_code = CLD_PREDUMP;
+
+
+
+> +
+> +	__group_send_sig_info(sig, &info, parent);
+> +	__wake_up_parent(tsk, parent);
+> +	spin_unlock_irqrestore(&sighand->siglock, flags);
+> +	return true;
+> +}
+> +
+>  /**
+>   * do_notify_parent_cldstop - notify parent of stopped/continued state change
+>   * @tsk: task reporting the state change
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index 123bd73..8ed9a63 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -2476,6 +2476,21 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
+>  			return -EINVAL;
+>  		error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
+>  		break;
+> +	case PR_SET_PREDUMP_SIG:
+> +		if (arg3 || arg4 || arg5)
+> +			return -EINVAL;
+> +
+> +		/* 0 is valid for disabling the feature */
+> +		if (arg2 && !valid_predump_signal((int)arg2))
+> +			return -EINVAL;
+> +		me->signal->predump_signal = (int)arg2;
+> +		break;
+> +	case PR_GET_PREDUMP_SIG:
+> +		if (arg3 || arg4 || arg5)
+> +			return -EINVAL;
+> +		error = put_user(me->signal->predump_signal,
+> +				 (int __user *)arg2);
+> +		break;
+>  	default:
+>  		error = -EINVAL;
+>  		break;
+> diff --git a/tools/testing/selftests/prctl/Makefile b/tools/testing/selftests/prctl/Makefile
+> index c7923b2..f8d60d5 100644
+> --- a/tools/testing/selftests/prctl/Makefile
+> +++ b/tools/testing/selftests/prctl/Makefile
+> @@ -5,7 +5,7 @@ ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
+>  
+>  ifeq ($(ARCH),x86)
+>  TEST_PROGS := disable-tsc-ctxt-sw-stress-test disable-tsc-on-off-stress-test \
+> -		disable-tsc-test
+> +		disable-tsc-test predump-sig-test
+>  all: $(TEST_PROGS)
+>  
+>  include ../lib.mk
+> diff --git a/tools/testing/selftests/prctl/predump-sig-test.c b/tools/testing/selftests/prctl/predump-sig-test.c
+> new file mode 100644
+> index 0000000..57042f7
+> --- /dev/null
+> +++ b/tools/testing/selftests/prctl/predump-sig-test.c
+> @@ -0,0 +1,171 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2018, Enke Chen, Cisco Systems, Inc.
+> + *
+> + * Tests for prctl(PR_SET_PREDUMP_SIG, ...) / prctl(PR_GET_PREDUMP_SIG, ...)
+> + *
+> + * When set with prctl(), the specified signal is sent to the parent process
+> + * prior to the coredump of a child process.
+> + *
+> + * Usage: ./predump-sig-test {SIGUSR1 | SIGUSR2 | SIGCHLD}
+> + */
+> +
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <unistd.h>
+> +#include <sys/prctl.h>
+> +#include <signal.h>
+> +#include <sys/signalfd.h>
+> +#include <errno.h>
+> +
+> +#ifndef PR_SET_PREDUMP_SIG
+> +#define PR_SET_PREDUMP_SIG	54
+> +#define PR_GET_PREDUMP_SIG	55
+> +#endif
+> +
+> +#ifndef CLD_PREDUMP
+> +#define CLD_PREDUMP	7	/* child is about to dump core */
+> +#endif
+> +
+> +#define handle_error(msg) \
+> +	do { perror(msg); exit(EXIT_FAILURE); } while (0)
+> +
+> +static int test_prctl(int sig)
+> +{
+> +	int sig2, rc;
+> +
+> +	rc = prctl(PR_SET_PREDUMP_SIG, sig, 0, 0, 0);
+> +	if (rc < 0)
+> +		handle_error("prctl: setting");
+> +
+> +	rc = prctl(PR_GET_PREDUMP_SIG, &sig2, 0, 0, 0);
+> +	if (rc < 0)
+> +		handle_error("prctl: getting");
+> +
+> +	if (sig2 != sig) {
+> +		printf("prctl: sig %d, post %d\n", sig, sig2);
+> +		return -1;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int sigfd;
+> +static int predump_signal;
+> +
+> +static int init_signalfd(void)
+> +{
+> +	sigset_t mask;
+> +	int sfd;
+> +
+> +	sigemptyset(&mask);
+> +	sigaddset(&mask, SIGCHLD);
+> +	if (predump_signal && (predump_signal != SIGCHLD))
+> +		sigaddset(&mask, predump_signal);
+> +
+> +	/*
+> +	 * Block signals so that they aren't handled according to their
+> +	 * default dispositions.
+> +	 */
+> +	if (sigprocmask(SIG_BLOCK, &mask, NULL) == -1)
+> +		handle_error("sigprocmask");
+> +
+> +	sfd = signalfd(-1, &mask, SFD_CLOEXEC);
+> +	if (sfd == -1)
+> +		handle_error("signalfd");
+> +
+> +	return sfd;
+> +}
+> +
+> +static void parent_func(pid_t child_pid)
+> +{
+> +	struct signalfd_siginfo si;
+> +	int count = 0;
+> +	ssize_t s;
+> +
+> +	for (;;) {
+> +		s = read(sigfd, &si, sizeof(struct signalfd_siginfo));
+> +		if (s != sizeof(struct signalfd_siginfo))
+> +			handle_error("read");
+> +
+> +		count++;
+> +		printf("\nReceived signal: ssi_pid %ld, ssi_signo %d\n",
+> +		       si.ssi_pid, si.ssi_signo);
+> +		printf("siginfo: ssi_errno %d, ssi_code %d, ssi_status %d\n",
+> +		       si.ssi_errno, si.ssi_code, si.ssi_status);
+> +
+> +		if (si.ssi_signo == SIGCHLD) {
+> +			if (si.ssi_code == CLD_PREDUMP)
+> +				printf("predump signal\n");
+> +			else
+> +				break;
+> +		} else if (si.ssi_signo == predump_signal)
+> +			printf("predump signal\n");
+> +	}
+> +
+> +	printf("Test result: %s\n", (count == 2) ? "PASS" : "FAIL");
+> +	fflush(stdout);
+> +}
+> +
+> +static void child_func(void)
+> +{
+> +	int rc, sig;
+> +
+> +	printf("\nChild pid: %ld\n", (long)getpid());
+> +
+> +	/* Test: Child should not inherit the predump_signal */
+> +	rc = prctl(PR_GET_PREDUMP_SIG, &sig, 0, 0, 0);
+> +	if (rc < 0)
+> +		handle_error("prctl: child");
+> +
+> +	printf("child: predump_signal %d\n", sig);
+> +
+> +	/* Force coredump here */
+> +	printf("child: calling abort()\n");
+> +	fflush(stdout);
+> +	abort();
+> +}
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +	pid_t child_pid;
+> +	int rc;
+> +
+> +	if (argc != 2) {
+> +		printf("invalid number of arguments\n");
+> +		exit(EXIT_FAILURE);
+> +	}
+> +
+> +	if (strcmp(argv[1], "SIGUSR1") == 0)
+> +		predump_signal = SIGUSR1;
+> +	else if (strcmp(argv[1], "SIGUSR2") == 0)
+> +		predump_signal = SIGUSR2;
+> +	else if (strcmp(argv[1], "SIGCHLD") == 0)
+> +		predump_signal = SIGCHLD;
+> +	else {
+> +		printf("invalid argument for signal\n");
+> +		fflush(stdout);
+> +		exit(EXIT_FAILURE);
+> +	}
+> +
+> +	/* Test: prctl() setting */
+> +	rc = test_prctl(0);
+> +	printf("prctl: sig %d %s\n", 0, (rc == 0) ? "PASS" : "FAIL");
+> +	rc = test_prctl(predump_signal);
+> +	printf("prctl: sig %d %s\n",
+> +	       predump_signal, (rc == 0) ? "PASS" : "FAIL");
+> +
+> +	/* Init signalfd */
+> +	sigfd = init_signalfd();
+> +
+> +	child_pid = fork();
+> +	if (child_pid == -1)
+> +		handle_error("fork");
+> +
+> +	if (child_pid == 0) {       /* Code executed by child */
+> +		child_func();
+> +	} else {                    /* Code executed by parent */
+> +		parent_func(child_pid);
+> +		exit(EXIT_SUCCESS);
+> +	}
+> +}
