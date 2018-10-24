@@ -2,130 +2,118 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6FC7C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0861EC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:43:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A52D2064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:41:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WALh6Y4r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A52D2064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B531A2064A
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:43:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B531A2064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbeJXWJK (ORCPT
+        id S1726743AbeJXWLh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 18:09:10 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46379 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726543AbeJXWJK (ORCPT
+        Wed, 24 Oct 2018 18:11:37 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56344 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726414AbeJXWLh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:09:10 -0400
-Received: by mail-pg1-f196.google.com with SMTP id a5-v6so1437372pgt.13;
-        Wed, 24 Oct 2018 06:41:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=9mWsTcPqMY0qr/vSPSqluFvmjGHdFxVw9fd9KQt4RmY=;
-        b=WALh6Y4rJtkQz6yytTGoV03d3AsVA8UmtFo7nfO8GSICFjO0oMa6xLu0ChpU6NYfzs
-         3sYiS2NeMnWGe9/Cg9jXHpip/3pUDx7tqEcSUmJMWZZw7EBHsMGoLrZ3Rfyekcrz+4Iv
-         hG1VVDw02Q5HsWXbWA1Lu0AG28mzIIBqLm+KYzUOvSI2CvQGB8+qK9QVjA0570ycadog
-         WMR/LTusvlIeJDs2kGp1Mnzh7MmJAg/JqzZCKsk/iVlR33b0oO+YvLCeK+qokk7Rt+Kr
-         FwQyE7xmG14QriowVfrMA3QGk+kifAkQ9pwdc8+R+e2s2l2fQ/Pgoy+mL2TcBJaiV375
-         tXrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=9mWsTcPqMY0qr/vSPSqluFvmjGHdFxVw9fd9KQt4RmY=;
-        b=m04QtnFYeh1nZNjK6NI8gJCq/V5VouKGmuMwTxTzUvakGHaB3YCTbyWPF6kuENaKxt
-         dTMvj8Pe0xbFPs8vwhkFgd6VfvzG4WOWzGOGl2Xs1ZJVVjzMbgOUvaB8GSZiQRrBnPAA
-         1opQhC8qX5EtqbTnmLFULJ44CG0coXKhnO54brPt/If+MYVrOSeCBKph91+6JE/soHot
-         8G0HyEv8dDyRJMOtKxKxt6T81Pnr9GLRDOpts4hphKbW1ZgZvHb+1uNZntdi0egi+z58
-         G8cXGlyHw7JA3/eSH/WomrFp+1z47SZ8Gm1HOTbdYPKjZ/ticr/Tvbk/BXyFuyOKJiuJ
-         6Pow==
-X-Gm-Message-State: AGRZ1gL3FO8zp6I11DUK1VGY3PJmR53N9KTTdzD6+E4i2suw0yqy947J
-        gjwC6oX4EfuVhiclEnbiCG0=
-X-Google-Smtp-Source: AJdET5c9RxaNq2ycb4X1QMRfBNVYLG323HGKXewOC8Ar+tOhiwrbUk9Q1Z98AtaLCuSPG/VIM9/A4Q==
-X-Received: by 2002:a62:c2c1:: with SMTP id w62-v6mr2694322pfk.35.1540388459727;
-        Wed, 24 Oct 2018 06:40:59 -0700 (PDT)
-Received: from localhost.localdomain ([104.238.150.158])
-        by smtp.gmail.com with ESMTPSA id a64-v6sm6277399pfe.32.2018.10.24.06.40.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 06:40:58 -0700 (PDT)
-From:   Muchun Song <smuchun@gmail.com>
-To:     linus.walleij@linaro.org
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] gpiolib: fix possible use after free on label
-Date:   Wed, 24 Oct 2018 21:40:40 +0800
-Message-Id: <20181024134040.115413-1-smuchun@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 24 Oct 2018 18:11:37 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 9A45780800; Wed, 24 Oct 2018 15:43:23 +0200 (CEST)
+Date:   Wed, 24 Oct 2018 15:43:24 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com
+Subject: Re: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the
+ LM3697
+Message-ID: <20181024134324.GA12125@amd>
+References: <20181023170623.31820-1-dmurphy@ti.com>
+ <20181023170623.31820-2-dmurphy@ti.com>
+ <20181024090421.GB24997@amd>
+ <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
+Content-Disposition: inline
+In-Reply-To: <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gpiod_request_commit() copies the pointer to the label
-passed as an argument only to be used later. But there's a
-chance the caller could immediately free the passed string
-(e.g., local variable). This could trigger a use after free
-when we use gpio label(e.g., gpiochip_unlock_as_irq(),
-gpiochip_is_requested()).
 
-To be on the safe side: duplicate the string with
-kstrdup_const() so that if an unaware user passes an address
-to a stack-allocated buffer, we won't get the arbitrary label.
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Muchun Song <smuchun@gmail.com>
----
- drivers/gpio/gpiolib.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Hi!
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 25187403e3ac..e600c5f5d9a7 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2270,6 +2270,12 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
- 	unsigned long		flags;
- 	unsigned		offset;
- 
-+	if (label) {
-+		label = kstrdup_const(label, GFP_KERNEL);
-+		if (!label)
-+			return -ENOMEM;
-+	}
-+
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
- 	/* NOTE:  gpio_request() can be called in early boot,
-@@ -2280,6 +2286,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
- 		desc_set_label(desc, label ? : "?");
- 		status = 0;
- 	} else {
-+		kfree_const(label);
- 		status = -EBUSY;
- 		goto done;
- 	}
-@@ -2296,6 +2303,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
- 
- 		if (status < 0) {
- 			desc_set_label(desc, NULL);
-+			kfree_const(label);
- 			clear_bit(FLAG_REQUESTED, &desc->flags);
- 			goto done;
- 		}
-@@ -2391,6 +2399,7 @@ static bool gpiod_free_commit(struct gpio_desc *desc)
- 			chip->free(chip, gpio_chip_hwgpio(desc));
- 			spin_lock_irqsave(&gpio_lock, flags);
- 		}
-+		kfree_const(desc->label);
- 		desc_set_label(desc, NULL);
- 		clear_bit(FLAG_ACTIVE_LOW, &desc->flags);
- 		clear_bit(FLAG_REQUESTED, &desc->flags);
--- 
-2.17.1
+> >> The LM3697 is a single function LED driver. The single function LED
+> >> driver needs to reside in the LED directory as a dedicated LED driver
+> >> and not as a MFD device.  The device does have common brightness and r=
+amp
+> >=20
+> > So it is single function LED driver. That does not mean it can not
+> > share bindings with the rest. Where the bindings live is not imporant.
+>=20
+> It can share bindings that are correctly done, not ones that are incomple=
+te and incorrect.
 
+If you see wrong binding you are welcome to fix it. If it is in wrong
+place, you can move it around.
+
+You are not welcome to create 2 "fixed" versions, while leaving
+original "buggy" version in tree!
+
+=2E..but that's what your series does. Better changelogs will _not_ help.
+
+> Where bindings live is important to new Linux kernel developers and produ=
+ct=20
+> developers looking for the proper documentation on the H/W bindings.
+
+We have talked about this before.
+
+> >> @@ -9,7 +9,6 @@ TI LMU driver supports lighting devices below.
+> >>    LM3632       Backlight and regulator
+> >>    LM3633       Backlight, LED and fault monitor
+> >>    LM3695       Backlight
+> >> -  LM3697       Backlight and fault monitor
+> >> =20
+> >>  Required properties:
+> >>    - compatible: Should be one of:
+> >=20
+> > NAK. You can use existing binding.
+>=20
+> Thank you for the consistency
+
+You are wasting your time. What is worse, you are wasting my time,
+too, and time of people on the list.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--vkogqOf2sHV7VnPd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvQdvwACgkQMOfwapXb+vKIVQCdHKRZaUqDYczyawaKzJ6Jh/hc
+RhAAni+U1fIHCxm+J71dz9ORidtXH868
+=cFuT
+-----END PGP SIGNATURE-----
+
+--vkogqOf2sHV7VnPd--
