@@ -2,319 +2,226 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A6EC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 495A0C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 310F02075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:51:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF6362082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:51:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUYyEYf/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 310F02075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="pZRcD3sw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF6362082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cern.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbeJXXT2 (ORCPT
+        id S1727146AbeJXXTh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:19:28 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35948 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbeJXXT1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:19:27 -0400
-Received: by mail-pl1-f196.google.com with SMTP id y11-v6so2351434plt.3;
-        Wed, 24 Oct 2018 07:51:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=mWejzS4tfiPSW0zer83uPgJ1SMZ4PMy9yb4StfnxnfA=;
-        b=hUYyEYf/pKPvTOn/oJAzkNy/YnbHLd0wUaBYL9EjiwOZ3i+8sYjnQoX7XhuRBFo5CE
-         /2XDtcLZ5v/lU3Vwb/vQbaZlmsuoU5trihQtzycd+OBmtoOw+EOs0NQbvJvEKnISdnoQ
-         mW36GZBqlCH1sA0EMBMeNyPZrVHp05Tj7ydGxIw4Qmoe59HkPIqum9kUXecitXMYzbyR
-         KK5PpZLrfSmymH7pSjH93Emea9maMZBjikEh5ghucM/pwFWsffg8Jk5zVsMXyyVF7RpO
-         MiK5VQS5nFbf+1Weyhjhw4fUdQKlti+MgXARawhlbtokvuTjlYpUGpPn0KRT6VeEgSUI
-         q0Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=mWejzS4tfiPSW0zer83uPgJ1SMZ4PMy9yb4StfnxnfA=;
-        b=kVeUxNtL0qxEdHASPZ2AvWlveXIt0WNEN6DjdB30+3zulNw1n+sg4F8CP6b5rPHpUE
-         LR5GKZPfV/YWg/Ur3S7Zhom575GNILdCU3xdIKiMJXBwK2V3wPUwqnh7NaLssFwCs9gP
-         deu6SUzjL75q8P9MWQaD7B4pvaBEhlf8/gTeuMfuwSixiJbFEOllvqaFDdpT+9XW5c3R
-         DTAcat2hzorCgpmJRZNWV8IMU9zfKvCsMpWBa+lmdhQGWvKETcQTmtZismtoR7Zwu/Lv
-         rdINnw8aBFWNTZhd9+6IRYeNL4TAYw574e0oUpX44DZo+FWQTWZWg9FYOpIFZAof/uOD
-         BU0Q==
-X-Gm-Message-State: AGRZ1gKTazytmtoCsGH932eV1LYN+tw1vIKsqifOuONf8wrRZHalpvtM
-        LLp3vjQRHIoU8pVw2TpYPGk=
-X-Google-Smtp-Source: AJdET5de9cNDcbrtIohM7nX9oHCPrwXkS6mBygOVXlseaqbg89cu2zNQ7TbT0tXNEOFtezrRz+3V2Q==
-X-Received: by 2002:a17:902:76cb:: with SMTP id j11-v6mr2792608plt.258.1540392662544;
-        Wed, 24 Oct 2018 07:51:02 -0700 (PDT)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id s13-v6sm13138197pgs.76.2018.10.24.07.50.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 07:51:01 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 20:20:55 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Slawomir Stepien <sst@poczta.fm>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4] staging: iio: ad2s1210: Switch to the gpio descriptor
- interface
-Message-ID: <20181024145051.GA18490@nishad>
+        Wed, 24 Oct 2018 19:19:37 -0400
+Received: from mail-eopbgr20051.outbound.protection.outlook.com ([40.107.2.51]:55744
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726457AbeJXXTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 19:19:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
+ s=selector1-cern-ch;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vLLI12od2LTd5wqa0hL5JJiA5+ybIpzyyTZfY5WlOsU=;
+ b=pZRcD3swGLP44pQ5gVNHyeB1wOsl4vwSTS0uGQzT/wNvdFC2BurZL0G0TahJD2cPHxYp4uvwmwL6my2aehLzuwJ7Dgrffik2GjY0QIR76l5NX77LhiIZM8wV7JGmNKBHXnCpFfQURv3D/JnoX3Rd00BA4Dy5tVheQsJD27r5UwM=
+Received: from AM5PR0601CA0041.eurprd06.prod.outlook.com
+ (2603:10a6:203:68::27) by HE1PR06MB1627.eurprd06.prod.outlook.com
+ (2a01:111:e400:59ae::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1273.19; Wed, 24 Oct
+ 2018 14:51:08 +0000
+Received: from VE1EUR02FT056.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:f400:7e06::204) by AM5PR0601CA0041.outlook.office365.com
+ (2603:10a6:203:68::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1273.19 via Frontend
+ Transport; Wed, 24 Oct 2018 14:51:08 +0000
+Authentication-Results: spf=pass (sender IP is 188.184.36.48)
+ smtp.mailfrom=cern.ch; sunsite.dk; dkim=none (message not signed)
+ header.d=none;sunsite.dk; dmarc=bestguesspass action=none
+ header.from=cern.ch;
+Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
+ 188.184.36.48 as permitted sender) receiver=protection.outlook.com;
+ client-ip=188.184.36.48; helo=cernmxgwlb4.cern.ch;
+Received: from cernmxgwlb4.cern.ch (188.184.36.48) by
+ VE1EUR02FT056.mail.protection.outlook.com (10.152.13.71) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1273.13 via Frontend Transport; Wed, 24 Oct 2018 14:51:07 +0000
+Received: from cernfe04.cern.ch (188.184.36.41) by cernmxgwlb4.cern.ch
+ (188.184.36.48) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 24 Oct
+ 2018 16:51:04 +0200
+Received: from pcbe13614.localnet (2001:1458:202:121::100:40) by smtp.cern.ch
+ (2001:1458:201:66::100:14) with Microsoft SMTP Server (TLS) id 14.3.408.0;
+ Wed, 24 Oct 2018 16:51:03 +0200
+From:   Federico Vaga <federico.vaga@cern.ch>
+To:     Peter Korsgaard <jacmet@sunsite.dk>
+Reply-To: <federico.vaga@cern.ch>
+CC:     linux-i2c <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] i2c:ocores: stop transfer on timeout
+Date:   Wed, 24 Oct 2018 16:51:04 +0200
+Message-ID: <1549360.saVjYH78Bt@pcbe13614>
+In-Reply-To: <CACXmVia0vStmBwd4ndFk6UjE9wGsjp7Y75ej0AGq68H8-XkZqw@mail.gmail.com>
+References: <20180625161303.7991-1-federico.vaga@cern.ch> <20180625161303.7991-2-federico.vaga@cern.ch> <CACXmVia0vStmBwd4ndFk6UjE9wGsjp7Y75ej0AGq68H8-XkZqw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Originating-IP: [2001:1458:202:121::100:40]
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:188.184.36.48;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(396003)(346002)(136003)(39860400002)(2980300002)(438002)(189003)(199004)(476003)(11346002)(14444005)(2906002)(446003)(126002)(486006)(44832011)(336012)(74482002)(426003)(26005)(50466002)(6246003)(246002)(9686003)(575784001)(86362001)(6116002)(23726003)(7636002)(7736002)(305945005)(46406003)(8936002)(8676002)(229853002)(356004)(3450700001)(9576002)(106002)(786003)(316002)(53546011)(106466001)(97756001)(54906003)(33716001)(43066004)(478600001)(47776003)(16526019)(186003)(4326008)(6916009)(76176011)(5660300001)(230700001)(33896004)(39026011);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR06MB1627;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx12.cern.ch;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 574aca2b-073d-45b4-63de-08d639c02188
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:HE1PR06MB1627;
+X-MS-TrafficTypeDiagnostic: HE1PR06MB1627:
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR06MB1627;20:2GYbZTOnR1S79L7iJ6diHHffVs+KvuCOXrDhAX9aWi9eXc1yFuGyzoFb4/tMyBoq76pooh+fM042rfstPKG1vOoCQ/iM1fi1/W5Vu2jERTFxjkE6KlpeGYVp916oelrvKLo80gIHkE5anzreK0S6gfjy8cFW9jt3GDqgVGrruqcwk+LCopy7H9gcU72iFC61UXO7WmTZwBCXsEHOUEkJ3wkMOi4Im19LTVm33/2c6HjDuD+DC+fV6RUHmCR2Nl4rRYaLv7yzLhnpJpxQbKK2ZGoAmVsNyITz6u1tGyqWmU4XrrvTVb9p+58pgtd4FjRVl3g2hH2FlfRGNO4MQZ2+48//ybPTrS9qSspuJjkXRDNdm26lwPEy50+vvOwN1+XiIna/maVfCp2Jq7Sxx9ojjPLXDTqdjt4BK4Fy69elPMSgwVBvLEkS05Al0foam4ZUSGu2k6kUaC1soDVlBpMxdu5C6plPbeh2vLKqZeOjmGJaPSUoDuwOqSYAJer4ULYN;4:DdEfF2Vm/i1dbRenyMn61kNAzjohvWi1EGjAKoC4IWaznn9rsT2HoBlOHgud8cwVi82y36RwA3chVuTl+3Gj3OHz01iEu5SvXzzYlWtLSGUpm0t1hc1NnD+oN4Dqqj9hNma7uGUoJk/vvwk9sUYv3PvBC+5sNTvJWHX+zzYpPHvjXzFS3fqeLfr1Mu2PY/6JOn0X7dcdmQCAOfUXQP+JTR7YTXds0bm94A78Q45xKjbZ8rMuMCG3POyaAwASnnVx3fxJX7PsxSyCeBFnm4xplA==
+X-Microsoft-Antispam-PRVS: <HE1PR06MB1627AAC322A4970F8D6028EDEFF60@HE1PR06MB1627.eurprd06.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(3002001)(3231355)(944501410)(52105095)(10201501046)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281529075)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:HE1PR06MB1627;BCL:0;PCL:0;RULEID:;SRVR:HE1PR06MB1627;
+X-Forefront-PRVS: 083526BF8A
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR06MB1627;23:G0XcdXEbPW74hVl06X0MAOojUBczHYpN6uvD6P372?=
+ =?us-ascii?Q?ACXaN4miiWjGAhYy5Fb/RYOWTpvEVxnctVotUO8Acc+7o+vqShOwQJIsCbnT?=
+ =?us-ascii?Q?VzAbcZTQuXBMogEuE77E9ulNgEEzFuBRyAStQQlpDln1FMDXpn5wAnd6jDzp?=
+ =?us-ascii?Q?Z+FewvAt+iTSAas7iCGBBxQavLVX7sjxAOzNPcWvtrhai5Km4SEWg3hFQect?=
+ =?us-ascii?Q?SbJgl1yteiolNA1Caw2jREb4Pt+95yOpQonJs8LnsXDfCjcG6UhdNYfl5l5V?=
+ =?us-ascii?Q?fnCW6ED7E67AhSGc0o624pQRSsPg+OrHXoaeWzVWrXmfMKoORLk4Cw0esI4i?=
+ =?us-ascii?Q?/Lr5A5O5lUkdFAJhit0ApKP3XOnb/zq/+1jsfMC5tT6pWBJQ32LrRG1K17zc?=
+ =?us-ascii?Q?LAB66TsMiE7G8J/z0OYEfpqZDiMD9IcVXb1FK1KOOpbvVEypwVuTgC++QYlR?=
+ =?us-ascii?Q?A2wMhdp83jj/E8iq2r8HP03ZVWTYJwYIawBCMU55WLZ4yR+ZHu8p19FkH1wJ?=
+ =?us-ascii?Q?IbWCs0RwyQrvYjoNid8ewr82K9lmgIw8id7Es9yLY5OcAwMJCUO3KY8CpnE1?=
+ =?us-ascii?Q?fO74DOa9zFdC/2omY5k3ksuNYWEOzNaPrBagN2lQuRD/z5akHHwiwlBstiUD?=
+ =?us-ascii?Q?9yPqcF5LDRmvh7+SIey/3ZGklpbJQ34iUpDA+gv9zuGMn9OQdVFQosGl4gHY?=
+ =?us-ascii?Q?76vcB+TMJkTxS9cQ9bzHQR9KDFy8AOMHV24dFxUuBtrtWS9G9nhCOmXy4b6B?=
+ =?us-ascii?Q?mI46HRyS3sP/PLQBGyv38NDCB7EDzGbDh9fvaAXo3TyYczPOvo/ZIUwazj66?=
+ =?us-ascii?Q?cgemNs7J9hOnf0QixUHfFFbOMTIkE06WKaSFiTKMdlFaHhxZj3F5xbmDwK6j?=
+ =?us-ascii?Q?BEzhUdlYgWCBo2rxbOqkVfAfXWBEBYXDrAR13SumoqS8E7oAYIeHA6z7bMIL?=
+ =?us-ascii?Q?vRgPNgNhLWEiFmr3NeKqi0V9LQ1ESdl7dKUstBd8C7SIKPYMm6zrwg8ggAd9?=
+ =?us-ascii?Q?0GaGx8rThrvK6Nc2nR0/jRRq1bAwjHy16oMhVO1WBbonizbky8A0tqIscONz?=
+ =?us-ascii?Q?CdFL+lEGqS0uQjEvzLddgP0gW2ikLJPrf/Gnv3hl+pfgJV/Gc2fLTR+9j82t?=
+ =?us-ascii?Q?qdKpILRU9jtoXouUY05yUkzP4e8oUTZQsjSclx6MH5wLwk8rchFMvxVZNPrP?=
+ =?us-ascii?Q?2IVuHEXTU7SwBa8CQKggfifxqvUTUFAz8eIMMRGnfBILid3M0E3rqCxJt4bF?=
+ =?us-ascii?Q?C9qxQ+EIBFf2Q1hCs051FKqVwBdWm4z8Wo6wWUKtEHvP4hWRf8fDfinwWXWT?=
+ =?us-ascii?B?QT09?=
+X-Microsoft-Antispam-Message-Info: mjo8UlqsiSrlVCxw0IYJDVjhQwp9BJ/zHnvaQVsuaVJ3b6BdNpaDxGBPOuf2rSDpE3TA85xe9/Bov484CSOfYLXW7DxY5WZ8UXsumlLZRRfUPlYJaX5CM6mc76zO1SNCYk2C1TUUR00fZnmLtLAwvcVeuuYoFrty9wZu7BH8i7gQa9Cb8V1y5yH5stiYF1KPkYQQdCky1OugTqqxSLmU9N7DZsd6Q+ebVRalGXImv0Q4MDz54dymbsRVscI7+LHszBCLjqEaIpmGVD9JXci3T8CoPt4RND/cQ+G/kqBhlHg2G+m4ju2tsZKuQOVvimaiBvMyCmkXJnRP/wPM16B8VDdf3t9bJcybDZlHcq8Ky5Q=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR06MB1627;6:DaSZIQr0eAnIeGKZVPUCYvM3l2Nwa9O7saLSddFeEwfxW0ahI40UmocKzWrZvGVz/cp5LmB8mPcALOj0cN017OeAnEAfOBy+ot2FaCkLSWeNAbv7xOU4e1plAjbMn2CR5wigGkOdCxKbYtZjHT4noqYLkNgA2vkuPAkUPUBQhXMhVjtpCYTXxW8ZgTSDSbqJiyr24a028QKKIZIzr0xEoyVCAhgCKZdFCIo034Ds4eaWctIoxK/IBiweRGoqsj70ijxZFSnPxDFBaTXlnUwfSKvdRQOGRUt60m3G7BGjR90P9tFdYxWqHfWCNGwUbvuEMzLqz7GiuO4A7mRe5IoLL8QeXp7Txg3rTPUce/OB5yq+0GIoERpc2SPLQboULFuYdrksx6LFtsiDdLr7semgDQkU/su5c8XY16R7MZTWY9GdmNNvW8R2b7EJDqnYXb680IIKDXianwk4JhJ7HJRsMQ==;5:epQE3dIbmdyDclXVTeUJFOvPz2I4t3ql6jqTTmr7Jqghqh120iN/hcUTK+OZI7bNQm2+wnCp5gt5LMt70HTdfJTu4UAOuCvJdEDOotPPkLdnSsjrrRcWS5D+zHm2YfT2vzfAIB/MUWRJadq0Nlcp6jSHutcc0WjT0yKhQ3uiunY=;7:kJfLkQT87t1EpBht7F1hix02eQQSE7OyI4H1WlrHhr2ngxivVS2nmOgaKn/TT5NbwWd5WHD7v1Kmn0T7aXMzB8Qc88ZkDNgFUl+ev1O5Hz319ptC9qOQAONixWHnTSQyYwxkbY0Xjn6ZwKLXH4L4Zw==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: cern.ch
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2018 14:51:07.5469
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 574aca2b-073d-45b4-63de-08d639c02188
+X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.48];Helo=[cernmxgwlb4.cern.ch]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR06MB1627
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the gpiod interface instead of the deprecated old non-descriptor
-interface.
+On Sunday, October 21, 2018 4:10:30 PM CEST Peter Korsgaard wrote:
+> On Mon, Jun 25, 2018 at 6:14 PM Federico Vaga <federico.vaga@cern.ch> wrote:
+> 
+> Hi, and sorry for the slow response.
+> 
+> > Detecting a timeout is ok, but we also need to assert a STOP command on
+> > the bus in order to prevent it from generating interrupts when there are
+> > no on going transfers.
+> > 
+> > Example: very long transmission.
+> > 
+> > 1. ocores_xfer: START a transfer
+> > 2. ocores_isr : handle byte by byte the transfer
+> > 3. ocores_xfer: goes in timeout [[bugfix here]]
+> > 4. ocores_xfer: return to I2C subsystem and to the I2C driver
+> > 5. I2C driver : it may clean up the i2c_msg memory
+> > 6. ocores_isr : receives another interrupt (pending bytes to be
+> > 
+> >                 transferred) but the i2c_msg memory is invalid now
+> > 
+> > So, since the transfer was too long, we have to detect the timeout and
+> > STOP the transfer.
+> > 
+> > Another point is that we have a critical region here. When handling the
+> > timeout condition we may have a running IRQ handler. For this reason I
+> > introduce a spinlock. In the IRQ handler we can just use trylock because
+> > if the lock is taken is because we are in timeout, so there is no need to
+> > process the IRQ.
+> > 
+> > Signed-off-by: Federico Vaga <federico.vaga@cern.ch>
+> > ---
+> > 
+> >  drivers/i2c/busses/i2c-ocores.c | 28 ++++++++++++++++++++++++++--
+> >  1 file changed, 26 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/i2c/busses/i2c-ocores.c
+> > b/drivers/i2c/busses/i2c-ocores.c index 88444ef74943..98c0ef74882b 100644
+> > --- a/drivers/i2c/busses/i2c-ocores.c
+> > +++ b/drivers/i2c/busses/i2c-ocores.c
+> > @@ -25,6 +25,7 @@
+> > 
+> >  #include <linux/slab.h>
+> >  #include <linux/io.h>
+> >  #include <linux/log2.h>
+> > 
+> > +#include <linux/spinlock.h>
+> > 
+> >  struct ocores_i2c {
+> >  
+> >         void __iomem *base;
+> > 
+> > @@ -36,6 +37,7 @@ struct ocores_i2c {
+> > 
+> >         int pos;
+> >         int nmsgs;
+> >         int state; /* see STATE_ */
+> > 
+> > +       spinlock_t xfer_lock;
+> > 
+> >         struct clk *clk;
+> >         int ip_clock_khz;
+> >         int bus_clock_khz;
+> > 
+> > @@ -207,15 +209,30 @@ static void ocores_process(struct ocores_i2c *i2c)
+> > 
+> >  static irqreturn_t ocores_isr(int irq, void *dev_id)
+> >  {
+> >  
+> >         struct ocores_i2c *i2c = dev_id;
+> > 
+> > +       unsigned long flags;
+> > +       int ret;
+> > +
+> > +       /*
+> > +        * We need to protect i2c against a timeout event (see
+> > ocores_xfer()) +        * If we cannot take this lock, it means that we
+> > are already in +        * timeout, so it's pointless to handle this
+> > interrupt because we +        * are going to abort the current transfer.
+> > +        */
+> > +       ret = spin_trylock_irqsave(&i2c->xfer_lock, flags);
+> 
+> This is very old code, so I might be missing something - But I still
+> don't quite understand this trylock logic. If we end up here with the
+> lock taken, then that must mean that we are on SMP system. We still
+> need to ack the interrupt, so just spinning until the other CPU
+> releases the lock seems more sensible?
 
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
-Changes in v4:
- - Add spaces after { and before } in gpios[]
-   initialization.
- - Check the correct pointer for error.
- - Align the dev_err msg to existing format in the code.
-Changes in v3:
- - Use a pointer to pointer for gpio_desc in
-   struct ad2s1210_gpio as it will be used to
-   modify a pointer.
- - Use dot notation to initialize the structure.
- - Use a pointer variable to avoid writing gpios[i].
-Changes in v2:
- - Use the spi_device struct embedded in st instead
-   of passing it as an argument to ad2s1210_setup_gpios().
- - Use an array of structs to reduce redundant code in
-   in ad2s1210_setup_gpios().
- - Remove ad2s1210_free_gpios() as devm API is being used.
----
- drivers/staging/iio/resolver/ad2s1210.c | 92 ++++++++++++++-----------
- drivers/staging/iio/resolver/ad2s1210.h |  3 -
- 2 files changed, 50 insertions(+), 45 deletions(-)
+I think you are right.
 
-diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
-index ac13b99bd9cb..93c3c70ce62e 100644
---- a/drivers/staging/iio/resolver/ad2s1210.c
-+++ b/drivers/staging/iio/resolver/ad2s1210.c
-@@ -15,7 +15,7 @@
- #include <linux/slab.h>
- #include <linux/sysfs.h>
- #include <linux/delay.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/module.h>
- 
- #include <linux/iio/iio.h>
-@@ -69,10 +69,21 @@ enum ad2s1210_mode {
- 
- static const unsigned int ad2s1210_resolution_value[] = { 10, 12, 14, 16 };
- 
-+struct ad2s1210_gpio {
-+	struct gpio_desc **ptr;
-+	const char *name;
-+	unsigned long flags;
-+};
-+
- struct ad2s1210_state {
- 	const struct ad2s1210_platform_data *pdata;
- 	struct mutex lock;
- 	struct spi_device *sdev;
-+	struct gpio_desc *sample;
-+	struct gpio_desc *a0;
-+	struct gpio_desc *a1;
-+	struct gpio_desc *res0;
-+	struct gpio_desc *res1;
- 	unsigned int fclkin;
- 	unsigned int fexcit;
- 	bool hysteresis;
-@@ -91,8 +102,8 @@ static const int ad2s1210_mode_vals[4][2] = {
- static inline void ad2s1210_set_mode(enum ad2s1210_mode mode,
- 				     struct ad2s1210_state *st)
- {
--	gpio_set_value(st->pdata->a[0], ad2s1210_mode_vals[mode][0]);
--	gpio_set_value(st->pdata->a[1], ad2s1210_mode_vals[mode][1]);
-+	gpiod_set_value(st->a0, ad2s1210_mode_vals[mode][0]);
-+	gpiod_set_value(st->a1, ad2s1210_mode_vals[mode][1]);
- 	st->mode = mode;
- }
- 
-@@ -152,8 +163,8 @@ int ad2s1210_update_frequency_control_word(struct ad2s1210_state *st)
- 
- static unsigned char ad2s1210_read_resolution_pin(struct ad2s1210_state *st)
- {
--	int resolution = (gpio_get_value(st->pdata->res[0]) << 1) |
--			  gpio_get_value(st->pdata->res[1]);
-+	int resolution = (gpiod_get_value(st->res0) << 1) |
-+			  gpiod_get_value(st->res1);
- 
- 	return ad2s1210_resolution_value[resolution];
- }
-@@ -164,10 +175,10 @@ static const int ad2s1210_res_pins[4][2] = {
- 
- static inline void ad2s1210_set_resolution_pin(struct ad2s1210_state *st)
- {
--	gpio_set_value(st->pdata->res[0],
--		       ad2s1210_res_pins[(st->resolution - 10) / 2][0]);
--	gpio_set_value(st->pdata->res[1],
--		       ad2s1210_res_pins[(st->resolution - 10) / 2][1]);
-+	gpiod_set_value(st->res0,
-+			ad2s1210_res_pins[(st->resolution - 10) / 2][0]);
-+	gpiod_set_value(st->res1,
-+			ad2s1210_res_pins[(st->resolution - 10) / 2][1]);
- }
- 
- static inline int ad2s1210_soft_reset(struct ad2s1210_state *st)
-@@ -401,15 +412,15 @@ static ssize_t ad2s1210_clear_fault(struct device *dev,
- 	int ret;
- 
- 	mutex_lock(&st->lock);
--	gpio_set_value(st->pdata->sample, 0);
-+	gpiod_set_value(st->sample, 0);
- 	/* delay (2 * tck + 20) nano seconds */
- 	udelay(1);
--	gpio_set_value(st->pdata->sample, 1);
-+	gpiod_set_value(st->sample, 1);
- 	ret = ad2s1210_config_read(st, AD2S1210_REG_FAULT);
- 	if (ret < 0)
- 		goto error_ret;
--	gpio_set_value(st->pdata->sample, 0);
--	gpio_set_value(st->pdata->sample, 1);
-+	gpiod_set_value(st->sample, 0);
-+	gpiod_set_value(st->sample, 1);
- error_ret:
- 	mutex_unlock(&st->lock);
- 
-@@ -466,7 +477,7 @@ static int ad2s1210_read_raw(struct iio_dev *indio_dev,
- 	s16 vel;
- 
- 	mutex_lock(&st->lock);
--	gpio_set_value(st->pdata->sample, 0);
-+	gpiod_set_value(st->sample, 0);
- 	/* delay (6 * tck + 20) nano seconds */
- 	udelay(1);
- 
-@@ -512,7 +523,7 @@ static int ad2s1210_read_raw(struct iio_dev *indio_dev,
- 	}
- 
- error_ret:
--	gpio_set_value(st->pdata->sample, 1);
-+	gpiod_set_value(st->sample, 1);
- 	/* delay (2 * tck + 20) nano seconds */
- 	udelay(1);
- 	mutex_unlock(&st->lock);
-@@ -630,30 +641,32 @@ static const struct iio_info ad2s1210_info = {
- 
- static int ad2s1210_setup_gpios(struct ad2s1210_state *st)
- {
--	unsigned long flags = st->pdata->gpioin ? GPIOF_DIR_IN : GPIOF_DIR_OUT;
--	struct gpio ad2s1210_gpios[] = {
--		{ st->pdata->sample, GPIOF_DIR_IN, "sample" },
--		{ st->pdata->a[0], flags, "a0" },
--		{ st->pdata->a[1], flags, "a1" },
--		{ st->pdata->res[0], flags, "res0" },
--		{ st->pdata->res[0], flags, "res1" },
-+	int ret, i;
-+	struct spi_device *spi = st->sdev;
-+	struct ad2s1210_gpio *pin;
-+	unsigned long flags = st->pdata->gpioin ? GPIOD_IN : GPIOD_OUT_LOW;
-+
-+	struct ad2s1210_gpio gpios[] = {
-+		{ .ptr = &st->sample, .name = "sample", .flags = GPIOD_IN },
-+		{ .ptr = &st->a0, .name = "a0", .flags = flags },
-+		{ .ptr = &st->a1, .name = "a1", .flags = flags },
-+		{ .ptr = &st->res0, .name = "res0", .flags = flags },
-+		{ .ptr = &st->res1, .name = "res1", .flags = flags },
- 	};
- 
--	return gpio_request_array(ad2s1210_gpios, ARRAY_SIZE(ad2s1210_gpios));
--}
--
--static void ad2s1210_free_gpios(struct ad2s1210_state *st)
--{
--	unsigned long flags = st->pdata->gpioin ? GPIOF_DIR_IN : GPIOF_DIR_OUT;
--	struct gpio ad2s1210_gpios[] = {
--		{ st->pdata->sample, GPIOF_DIR_IN, "sample" },
--		{ st->pdata->a[0], flags, "a0" },
--		{ st->pdata->a[1], flags, "a1" },
--		{ st->pdata->res[0], flags, "res0" },
--		{ st->pdata->res[0], flags, "res1" },
--	};
-+	for (i = 0; i < ARRAY_SIZE(gpios); i++) {
-+		pin = &gpios[i];
-+		*pin->ptr = devm_gpiod_get(&spi->dev, pin->name, pin->flags);
-+		if (IS_ERR(*pin->ptr)) {
-+			ret = PTR_ERR(*pin->ptr);
-+			dev_err(&spi->dev,
-+				"ad2s1210: failed to request %s GPIO: %d\n",
-+				pin->name, ret);
-+			return ret;
-+		}
-+	}
- 
--	gpio_free_array(ad2s1210_gpios, ARRAY_SIZE(ad2s1210_gpios));
-+	return 0;
- }
- 
- static int ad2s1210_probe(struct spi_device *spi)
-@@ -692,7 +705,7 @@ static int ad2s1210_probe(struct spi_device *spi)
- 
- 	ret = iio_device_register(indio_dev);
- 	if (ret)
--		goto error_free_gpios;
-+		return ret;
- 
- 	st->fclkin = spi->max_speed_hz;
- 	spi->mode = SPI_MODE_3;
-@@ -700,10 +713,6 @@ static int ad2s1210_probe(struct spi_device *spi)
- 	ad2s1210_initial(st);
- 
- 	return 0;
--
--error_free_gpios:
--	ad2s1210_free_gpios(st);
--	return ret;
- }
- 
- static int ad2s1210_remove(struct spi_device *spi)
-@@ -711,7 +720,6 @@ static int ad2s1210_remove(struct spi_device *spi)
- 	struct iio_dev *indio_dev = spi_get_drvdata(spi);
- 
- 	iio_device_unregister(indio_dev);
--	ad2s1210_free_gpios(iio_priv(indio_dev));
- 
- 	return 0;
- }
-diff --git a/drivers/staging/iio/resolver/ad2s1210.h b/drivers/staging/iio/resolver/ad2s1210.h
-index e9b2147701fc..63d479b20a6c 100644
---- a/drivers/staging/iio/resolver/ad2s1210.h
-+++ b/drivers/staging/iio/resolver/ad2s1210.h
-@@ -12,9 +12,6 @@
- #define _AD2S1210_H
- 
- struct ad2s1210_platform_data {
--	unsigned int		sample;
--	unsigned int		a[2];
--	unsigned int		res[2];
- 	bool			gpioin;
- };
- #endif /* _AD2S1210_H */
--- 
-2.17.1
+When I wrote that, I had the idea the STOP command stops the ongoing I2C 
+transfer and clear IACK automatically (I do not remember why I had this idea 
+in mind, unfortunately I did not take notes about this). So in that case, 
+having done STOP on time out, makes IACK useless: that's why "try".
+
+I had another look at the HDL code and apparently my assumption was wrong, and 
+STOP just do stop, and IACK is still necessary.
+
+So, yes, without try is better because we save an extra, useless, IRQ call
+
+
 
