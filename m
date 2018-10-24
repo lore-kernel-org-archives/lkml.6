@@ -2,361 +2,106 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA85C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D86C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:51:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C99C52081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:50:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99C52081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 8894D2082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:51:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8894D2082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbeJXRRl (ORCPT
+        id S1727617AbeJXRSx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 13:17:41 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36072 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727599AbeJXRRk (ORCPT
+        Wed, 24 Oct 2018 13:18:53 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:22426 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727333AbeJXRSx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 13:17:40 -0400
-Received: from 220-133-187-190.hinet-ip.hinet.net ([220.133.187.190] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gFErw-0004PD-Pd; Wed, 24 Oct 2018 08:50:25 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     arnd@arndb.de, gregkh@linuxfoundation.org
-Cc:     ulf.hansson@linaro.org, stern@rowland.harvard.edu,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH 4/4 v5] memstick: rtsx_usb_ms: Support runtime power management
-Date:   Wed, 24 Oct 2018 16:49:58 +0800
-Message-Id: <20181024084958.4627-5-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181024084958.4627-1-kai.heng.feng@canonical.com>
-References: <20181024084958.4627-1-kai.heng.feng@canonical.com>
+        Wed, 24 Oct 2018 13:18:53 -0400
+Received: from [10.18.29.185] (10.18.29.185) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 24 Oct
+ 2018 16:51:28 +0800
+Subject: Re: [PATCH v5 3/3] clk: meson: add sub MMC clock controller driver
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
+ <1539839245-13793-4-git-send-email-jianxin.pan@amlogic.com>
+ <153988282130.5275.17528969137837015544@swboyd.mtv.corp.google.com>
+ <ffb2e431-95a2-b5fc-34ee-432e101379a4@amlogic.com>
+ <154037087711.53599.12246779227164118041@swboyd.mtv.corp.google.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <40509901-a793-971d-eb2e-40230b67f490@amlogic.com>
+Date:   Wed, 24 Oct 2018 16:51:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <154037087711.53599.12246779227164118041@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.29.185]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to let host's parent device, rtsx_usb, to use USB remote wake
-up signaling to do card detection, it needs to be suspended. Hence it's
-necessary to add runtime PM support for the memstick host.
-
-To keep memstick host stays suspended when it's not in use, convert the
-card detection function from kthread to delayed_work, which can be
-scheduled when the host is resumed and can be canceled when the host is
-suspended.
-
-Put the device to suspend when there's no card and the power mode is
-MEMSTICK_POWER_OFF.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/memstick/host/rtsx_usb_ms.c | 167 +++++++++++++++++-----------
- 1 file changed, 102 insertions(+), 65 deletions(-)
-
-diff --git a/drivers/memstick/host/rtsx_usb_ms.c b/drivers/memstick/host/rtsx_usb_ms.c
-index cd12f3d1c088..3800c24b084e 100644
---- a/drivers/memstick/host/rtsx_usb_ms.c
-+++ b/drivers/memstick/host/rtsx_usb_ms.c
-@@ -40,15 +40,14 @@ struct rtsx_usb_ms {
- 
- 	struct mutex		host_mutex;
- 	struct work_struct	handle_req;
--
--	struct task_struct	*detect_ms;
--	struct completion	detect_ms_exit;
-+	struct delayed_work	poll_card;
- 
- 	u8			ssc_depth;
- 	unsigned int		clock;
- 	int			power_mode;
- 	unsigned char           ifmode;
- 	bool			eject;
-+	bool			system_suspending;
- };
- 
- static inline struct device *ms_dev(struct rtsx_usb_ms *host)
-@@ -545,7 +544,7 @@ static void rtsx_usb_ms_handle_req(struct work_struct *work)
- 						host->req->error);
- 			}
- 		} while (!rc);
--		pm_runtime_put(ms_dev(host));
-+		pm_runtime_put_sync(ms_dev(host));
- 	}
- 
- }
-@@ -585,14 +584,14 @@ static int rtsx_usb_ms_set_param(struct memstick_host *msh,
- 			break;
- 
- 		if (value == MEMSTICK_POWER_ON) {
--			pm_runtime_get_sync(ms_dev(host));
-+			pm_runtime_get_noresume(ms_dev(host));
- 			err = ms_power_on(host);
-+			if (err)
-+				pm_runtime_put_noidle(ms_dev(host));
- 		} else if (value == MEMSTICK_POWER_OFF) {
- 			err = ms_power_off(host);
--			if (host->msh->card)
-+			if (!err)
- 				pm_runtime_put_noidle(ms_dev(host));
--			else
--				pm_runtime_put(ms_dev(host));
- 		} else
- 			err = -EINVAL;
- 		if (!err)
-@@ -638,25 +637,44 @@ static int rtsx_usb_ms_set_param(struct memstick_host *msh,
- 	}
- out:
- 	mutex_unlock(&ucr->dev_mutex);
--	pm_runtime_put(ms_dev(host));
-+	pm_runtime_put_sync(ms_dev(host));
- 
- 	/* power-on delay */
--	if (param == MEMSTICK_POWER && value == MEMSTICK_POWER_ON)
-+	if (param == MEMSTICK_POWER && value == MEMSTICK_POWER_ON) {
- 		usleep_range(10000, 12000);
- 
-+		if (!host->eject)
-+			schedule_delayed_work(&host->poll_card, 100);
-+	}
-+
- 	dev_dbg(ms_dev(host), "%s: return = %d\n", __func__, err);
- 	return err;
- }
- 
--#ifdef CONFIG_PM_SLEEP
-+#ifdef CONFIG_PM
- static int rtsx_usb_ms_suspend(struct device *dev)
- {
- 	struct rtsx_usb_ms *host = dev_get_drvdata(dev);
- 	struct memstick_host *msh = host->msh;
- 
--	dev_dbg(ms_dev(host), "--> %s\n", __func__);
-+	/* Since we use rtsx_usb's resume callback to runtime resume its
-+	 * children to implement remote wakeup signaling, this causes
-+	 * rtsx_usb_ms' runtime resume callback runs after its suspend
-+	 * callback:
-+	 * rtsx_usb_ms_suspend()
-+	 * rtsx_usb_resume()
-+	 *   -> rtsx_usb_ms_runtime_resume()
-+	 *     -> memstick_detect_change()
-+	 *
-+	 * rtsx_usb_suspend()
-+	 *
-+	 * To avoid this, skip runtime resume/suspend if system suspend is
-+	 * underway.
-+	 */
- 
-+	host->system_suspending = true;
- 	memstick_suspend_host(msh);
-+
- 	return 0;
- }
- 
-@@ -665,58 +683,83 @@ static int rtsx_usb_ms_resume(struct device *dev)
- 	struct rtsx_usb_ms *host = dev_get_drvdata(dev);
- 	struct memstick_host *msh = host->msh;
- 
--	dev_dbg(ms_dev(host), "--> %s\n", __func__);
--
- 	memstick_resume_host(msh);
-+	host->system_suspending = false;
-+
- 	return 0;
- }
--#endif /* CONFIG_PM_SLEEP */
- 
--/*
-- * Thread function of ms card slot detection. The thread starts right after
-- * successful host addition. It stops while the driver removal function sets
-- * host->eject true.
-- */
--static int rtsx_usb_detect_ms_card(void *__host)
-+static int rtsx_usb_ms_runtime_suspend(struct device *dev)
-+{
-+	struct rtsx_usb_ms *host = dev_get_drvdata(dev);
-+
-+	if (host->system_suspending)
-+		return 0;
-+
-+	if (host->msh->card || host->power_mode != MEMSTICK_POWER_OFF)
-+		return -EAGAIN;
-+
-+	return 0;
-+}
-+
-+static int rtsx_usb_ms_runtime_resume(struct device *dev)
-+{
-+	struct rtsx_usb_ms *host = dev_get_drvdata(dev);
-+
-+
-+	if (host->system_suspending)
-+		return 0;
-+
-+	memstick_detect_change(host->msh);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops rtsx_usb_ms_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(rtsx_usb_ms_suspend, rtsx_usb_ms_resume)
-+	SET_RUNTIME_PM_OPS(rtsx_usb_ms_runtime_suspend, rtsx_usb_ms_runtime_resume, NULL)
-+};
-+
-+#endif /* CONFIG_PM */
-+
-+static void rtsx_usb_ms_poll_card(struct work_struct *work)
- {
--	struct rtsx_usb_ms *host = (struct rtsx_usb_ms *)__host;
-+	struct rtsx_usb_ms *host = container_of(work, struct rtsx_usb_ms,
-+			poll_card.work);
- 	struct rtsx_ucr *ucr = host->ucr;
--	u8 val = 0;
- 	int err;
-+	u8 val;
- 
--	for (;;) {
--		pm_runtime_get_sync(ms_dev(host));
--		mutex_lock(&ucr->dev_mutex);
--
--		/* Check pending MS card changes */
--		err = rtsx_usb_read_register(ucr, CARD_INT_PEND, &val);
--		if (err) {
--			mutex_unlock(&ucr->dev_mutex);
--			goto poll_again;
--		}
-+	if (host->eject || host->power_mode != MEMSTICK_POWER_ON)
-+		return;
- 
--		/* Clear the pending */
--		rtsx_usb_write_register(ucr, CARD_INT_PEND,
--				XD_INT | MS_INT | SD_INT,
--				XD_INT | MS_INT | SD_INT);
-+	pm_runtime_get_sync(ms_dev(host));
-+	mutex_lock(&ucr->dev_mutex);
- 
-+	/* Check pending MS card changes */
-+	err = rtsx_usb_read_register(ucr, CARD_INT_PEND, &val);
-+	if (err) {
- 		mutex_unlock(&ucr->dev_mutex);
-+		goto poll_again;
-+	}
- 
--		if (val & MS_INT) {
--			dev_dbg(ms_dev(host), "MS slot change detected\n");
--			memstick_detect_change(host->msh);
--		}
-+	/* Clear the pending */
-+	rtsx_usb_write_register(ucr, CARD_INT_PEND,
-+			XD_INT | MS_INT | SD_INT,
-+			XD_INT | MS_INT | SD_INT);
- 
--poll_again:
--		pm_runtime_put(ms_dev(host));
--		if (host->eject)
--			break;
-+	mutex_unlock(&ucr->dev_mutex);
- 
--		schedule_timeout_idle(HZ);
-+	if (val & MS_INT) {
-+		dev_dbg(ms_dev(host), "MS slot change detected\n");
-+		memstick_detect_change(host->msh);
- 	}
- 
--	complete(&host->detect_ms_exit);
--	return 0;
-+poll_again:
-+	pm_runtime_put_sync(ms_dev(host));
-+
-+	if (!host->eject && host->power_mode == MEMSTICK_POWER_ON)
-+		schedule_delayed_work(&host->poll_card, 100);
- }
- 
- static int rtsx_usb_ms_drv_probe(struct platform_device *pdev)
-@@ -747,39 +790,35 @@ static int rtsx_usb_ms_drv_probe(struct platform_device *pdev)
- 	mutex_init(&host->host_mutex);
- 	INIT_WORK(&host->handle_req, rtsx_usb_ms_handle_req);
- 
--	init_completion(&host->detect_ms_exit);
--	host->detect_ms = kthread_create(rtsx_usb_detect_ms_card, host,
--			"rtsx_usb_ms_%d", pdev->id);
--	if (IS_ERR(host->detect_ms)) {
--		dev_dbg(&(pdev->dev),
--				"Unable to create polling thread.\n");
--		err = PTR_ERR(host->detect_ms);
--		goto err_out;
--	}
-+	INIT_DELAYED_WORK(&host->poll_card, rtsx_usb_ms_poll_card);
- 
- 	msh->request = rtsx_usb_ms_request;
- 	msh->set_param = rtsx_usb_ms_set_param;
- 	msh->caps = MEMSTICK_CAP_PAR4;
- 
--	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_set_active(ms_dev(host));
-+	pm_runtime_enable(ms_dev(host));
-+
-+	pm_runtime_get_sync(ms_dev(host));
- 	err = memstick_add_host(msh);
- 	if (err)
- 		goto err_out;
- 
--	wake_up_process(host->detect_ms);
-+	pm_runtime_put(ms_dev(host));
-+
- 	return 0;
- err_out:
- 	memstick_free_host(msh);
-+	pm_runtime_put_noidle(ms_dev(host));
- 	return err;
- }
- 
- static int rtsx_usb_ms_drv_remove(struct platform_device *pdev)
- {
- 	struct rtsx_usb_ms *host = platform_get_drvdata(pdev);
--	struct memstick_host *msh;
-+	struct memstick_host *msh = host->msh;
- 	int err;
- 
--	msh = host->msh;
- 	host->eject = true;
- 	cancel_work_sync(&host->handle_req);
- 
-@@ -797,7 +836,6 @@ static int rtsx_usb_ms_drv_remove(struct platform_device *pdev)
- 	}
- 	mutex_unlock(&host->host_mutex);
- 
--	wait_for_completion(&host->detect_ms_exit);
- 	memstick_remove_host(msh);
- 	memstick_free_host(msh);
- 
-@@ -816,9 +854,6 @@ static int rtsx_usb_ms_drv_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static SIMPLE_DEV_PM_OPS(rtsx_usb_ms_pm_ops,
--		rtsx_usb_ms_suspend, rtsx_usb_ms_resume);
--
- static struct platform_device_id rtsx_usb_ms_ids[] = {
- 	{
- 		.name = "rtsx_usb_ms",
-@@ -834,7 +869,9 @@ static struct platform_driver rtsx_usb_ms_driver = {
- 	.id_table       = rtsx_usb_ms_ids,
- 	.driver		= {
- 		.name	= "rtsx_usb_ms",
-+#ifdef CONFIG_PM
- 		.pm	= &rtsx_usb_ms_pm_ops,
-+#endif
- 	},
- };
- module_platform_driver(rtsx_usb_ms_driver);
--- 
-2.17.1
+On 2018/10/24 16:47, Stephen Boyd wrote:
+> Quoting Jianxin Pan (2018-10-23 23:29:24)
+>> On 2018/10/19 1:13, Stephen Boyd wrote:
+>>> Quoting Jianxin Pan (2018-10-17 22:07:25)
+>> [...]
+>>>> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
+>>>> new file mode 100644
+>>>> index 0000000..5555e3f
+>>>> --- /dev/null
+>>>> +++ b/drivers/clk/meson/mmc-clkc.c
+>>>> @@ -0,0 +1,296 @@
+>>>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>>>> +/*
+>>>> + * Amlogic Meson MMC Sub Clock Controller Driver
+>>>> + *
+>>>> + * Copyright (c) 2017 Baylibre SAS.
+>>>> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+>>>> + *
+>>>> + * Copyright (c) 2018 Amlogic, inc.
+>>>> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+>>>> + */
+>>>> +
+>>>> +#include <linux/clk.h>
+>>>
+>>> clk-provider.h instead of clk.h?>
+>> Maybe we need to keep clk.h
+>> devm_clk_get() is called in mmc_clkc_register_mux() to get parent in from DTS.
+>> I'm sorry to miss this in previous reply.
+> 
+> OK. But also include clk-provider.h if provider APIs are being used
+> here.
+OK. I will add it. Thank you.
+> 
+> .
+> 
 
