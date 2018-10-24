@@ -2,156 +2,151 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 723CEC67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 12:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CECC8C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 12:08:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CDD720824
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 12:05:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AEDC20824
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 12:08:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QZbXNXEC";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QZbXNXEC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CDD720824
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SJrSM3x2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AEDC20824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbeJXUdC (ORCPT
+        id S1727562AbeJXUgE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 16:33:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54712 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727204AbeJXUdB (ORCPT
+        Wed, 24 Oct 2018 16:36:04 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:50082 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727204AbeJXUgD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 16:33:01 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CFE9A60C5F; Wed, 24 Oct 2018 12:05:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540382708;
-        bh=M/xzbe4xN96bQmKPUq1GK7Q9XLW5PwfQeBrVwXNpV8I=;
-        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
-        b=QZbXNXECG/OIM88MiEWjVIHIR5SBoOrdwEdTtf5ggEFPxoogC7e9e5w/nKqfQ7K+O
-         lXrot7cVb4xdMubI+2MqCt3HZ62sDGV5fnTo1+w/hosTw4x8EQtvYmlUa9dgE+NLwA
-         4Xx+CAPyJKbzvoNWrqsH1ar+gwR4jzDTkJNIfN0U=
-Received: from [10.206.28.53] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: anilc@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BFE106021A;
-        Wed, 24 Oct 2018 12:05:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540382708;
-        bh=M/xzbe4xN96bQmKPUq1GK7Q9XLW5PwfQeBrVwXNpV8I=;
-        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
-        b=QZbXNXECG/OIM88MiEWjVIHIR5SBoOrdwEdTtf5ggEFPxoogC7e9e5w/nKqfQ7K+O
-         lXrot7cVb4xdMubI+2MqCt3HZ62sDGV5fnTo1+w/hosTw4x8EQtvYmlUa9dgE+NLwA
-         4Xx+CAPyJKbzvoNWrqsH1ar+gwR4jzDTkJNIfN0U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BFE106021A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anilc@codeaurora.org
-From:   AnilKumar Chimata <anilc@codeaurora.org>
-Subject: Re: [PATCH 3/3] crypto: qce: ice: Add support for Inline Crypto
- Engine
-To:     AnilKumar Chimata <anilc@codeaurora.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ebiggers@kernel.org,
-        mhalcrow@google.com
-References: <1539789476-6098-1-git-send-email-anilc@codeaurora.org>
- <1539789476-6098-4-git-send-email-anilc@codeaurora.org>
- <20181017170446.GD29710@thunk.org>
-Message-ID: <3d330886-3d78-bc85-e2c1-f64a65d20205@codeaurora.org>
-Date:   Wed, 24 Oct 2018 17:34:53 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 24 Oct 2018 16:36:03 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9OC85ga032577;
+        Wed, 24 Oct 2018 07:08:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1540382885;
+        bh=qFc2bDEeZzuiO2UxrbmIuUdWmg9mFwV3HEwD38vdQ3w=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=SJrSM3x2CWVJcIwD1ApnUxHlWMbJdNQVYG+qFdvcAWpKmH4vSes9OcxwwqgQXvmLW
+         Jn29XqNiv1bfgG5jX9HM1pntUBm6THAuVN4uvv1hzm9EBRGSmChQB3C3i/Lymt+E4d
+         pOelwXlxgGbSxeSfzAj33tOyS8wrlJ4slD7fAQKw=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9OC84kB030151;
+        Wed, 24 Oct 2018 07:08:04 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 24
+ Oct 2018 07:08:04 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 24 Oct 2018 07:08:04 -0500
+Received: from [172.22.136.76] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9OC847Q028800;
+        Wed, 24 Oct 2018 07:08:04 -0500
+Subject: Re: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the
+ LM3697
+To:     Pavel Machek <pavel@ucw.cz>
+CC:     <robh+dt@kernel.org>, <jacek.anaszewski@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>, <lee.jones@linaro.org>,
+        <tony@atomide.com>
+References: <20181023170623.31820-1-dmurphy@ti.com>
+ <20181023170623.31820-2-dmurphy@ti.com> <20181024090421.GB24997@amd>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com>
+Date:   Wed, 24 Oct 2018 07:07:57 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181017170446.GD29710@thunk.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <20181024090421.GB24997@amd>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Theodore,
+Pavel
 
-Thanks for the comments,
-
-On 2018-10-17 22:34, Theodore Y. Ts'o wrote:
-> First, thanks for the effort for working on getting the core ICE
-> driver support into upstreamable patches.
+On 10/24/2018 04:04 AM, Pavel Machek wrote:
+> Hi!
 > 
-> On Wed, Oct 17, 2018 at 08:47:56PM +0530, AnilKumar Chimata wrote:
->> +2) Per File Encryption (PFE)
->> +Per File Manager(PFM) calls QSEECom api to create the key. PFM has a 
->> peer comp-
->> +onent(PFT) at kernel layer which gets the corresponding key index 
->> from PFM.
->> ...
->> +Further Improvements
->> +====================
->> +Currently, Due to PFE use case, ICE driver is dependent upon 
->> dm-req-crypt to
->> +provide the keys as part of request structure. This couples ICE 
->> driver with
->> +dm-req-crypt based solution. It is under discussion to expose an 
->> IOCTL based
->> +and registration based interface APIs from ICE driver. ICE driver 
->> would use
->> +these two interfaces to find out if any key exists for current 
->> request. If
->> +yes, choose the right key index received from IOCTL or registration 
->> based
->> +APIs. If not, dont set any crypto parameter in the request.
+>> The LM3697 is a single function LED driver. The single function LED
+>> driver needs to reside in the LED directory as a dedicated LED driver
+>> and not as a MFD device.  The device does have common brightness and ramp
 > 
-> However, this documentation is referencing components which are not in
-> the mainline kernel.
+> So it is single function LED driver. That does not mean it can not
+> share bindings with the rest. Where the bindings live is not imporant.
+> 
 
-Sure, will clean the documentation and try to minimize the unknown 
-components. Provided these details for better understanding of the flow.
+It can share bindings that are correctly done, not ones that are incomplete and incorrect.
+
+Where bindings live is important to new Linux kernel developers and product 
+developers looking for the proper documentation on the H/W bindings.
+
+>> reside in the Documentation/devicetree/bindings/leds directory and follow the
+>> current LED and general bindings guidelines.
+> 
+> What you forgot to tell us in the changelog:
+
+I can add this to the changelog.
 
 > 
-> In the long term, what I'd like to see for per-file key support is a
-> clean solution which interfaces with the in-kernel fscrypt-enabled
-> file systems (e.g., f2fs and ext4).  What I think we need to do is to
+>> +Optional child properties:
+>> +	- runtime-ramp-up-msec: Current ramping from one brightness level to
+>> +				the a higher brightness level.
+>> +				Range from 2048 us - 117.44 s
+> 
+> The other binding uses "ramp-up-msec". Tell us why you are changing this, or
+> better don't change things needlessly.
+> 
+> We don't want to be using "runtime-ramp-up-msec" for one device and
+> "ramp-up-msec" for the other.
 
-Agree, we are working on making per-file key (PFK) driver generic to 
-support any file system.
+This is another example of how the original bindings were incorrect and misleading.
 
-> add a field in the bio structure which references a key id, and then
-> define a bdi-specific interface which allows the file system to
-> register a struct key and get a key id.  Use of the key id will be
-> refcounted, so the device driver knows how many I/O operations are in
-> flight using a particular key --- since each ICE hardware will have a
-> different number of active keys that it can support.
+The LM3697 have 2 ramp implementations that can be used.
 
-Understand the point here, we will consider this refcount while working 
-on upstreamable PFK driver.
+Startup/Shutdown ramp and Runtime Ramp.  Same Ramp rates different registers and
+different end user experience.
+
+So having a single node call ramp-up-msec is misleading and it does not
+indicate what the H/W will do.
 
 > 
-> Until that's there, at least for the upstream documentation, I think
-> it would be better to drop mention of code that is not yet upstream
-> --- and which may have problems ever going upstream in their current
-> form.
+> I'm not sure what other changes you did, and changelog does not tell
+> me.
+> 
+>> --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+>> +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+>> @@ -9,7 +9,6 @@ TI LMU driver supports lighting devices below.
+>>    LM3632       Backlight and regulator
+>>    LM3633       Backlight, LED and fault monitor
+>>    LM3695       Backlight
+>> -  LM3697       Backlight and fault monitor
+>>  
+>>  Required properties:
+>>    - compatible: Should be one of:
+> 
+> NAK. You can use existing binding.
 
-Will clean the documentation.
+Thank you for the consistency
+
+Dan
 
 > 
-> (I haven't checked in a while, but last time I looked the code in
-> question blindly dereferenced private pointers assuming that the only
-> two file systems that could ever use ICE were ext4 and f2fs....  not
-> that the code used by Google handsets were _that_ much cleaner, but
-> at least we dropped in a crypto key into the struct bio, instead of
-> playing unnatural games with private pointers from the wrong
-> abstraction layer.  :-)
-
-before upstreaming the PFK drivers, we will try to avoid private pointer 
-dereferences to achieve better abstraction to file system.
-
+> 									Pavel
 > 
-> 						- Ted
+
+
+-- 
+------------------
+Dan Murphy
