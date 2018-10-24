@@ -2,138 +2,94 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1168C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE0FCC7112C
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:07:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B8BD2064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:05:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B8BD2064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B356520832
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:07:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugZxX7dH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B356520832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbeJXVdM (ORCPT
+        id S1726832AbeJXVf6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 17:33:12 -0400
-Received: from mga12.intel.com ([192.55.52.136]:25390 "EHLO mga12.intel.com"
+        Wed, 24 Oct 2018 17:35:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726267AbeJXVdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 17:33:12 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 06:05:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,420,1534834800"; 
-   d="scan'208";a="100281727"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga004.fm.intel.com with ESMTP; 24 Oct 2018 06:05:05 -0700
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gFIqO-0004jP-PY; Wed, 24 Oct 2018 16:05:04 +0300
-Date:   Wed, 24 Oct 2018 16:05:04 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Dan O'Donovan <dan@emutex.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org,
-        linux-leds@vger.kernel.org,
-        Carlos Iglesias <carlos.iglesias@emutex.com>
-Subject: Re: [PATCH v2 0/3] UP Squared board drivers
-Message-ID: <20181024130504.GU10650@smile.fi.intel.com>
-References: <20180421085009.28773-1-javier@emutex.com>
- <1539969334-24577-1-git-send-email-dan@emutex.com>
+        id S1726633AbeJXVf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 17:35:58 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82B952064C;
+        Wed, 24 Oct 2018 13:07:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540386474;
+        bh=Ux2wTOcJdcAMlG0IVHnIbrQ10+25LJ1VZR/4E5o1AO0=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=ugZxX7dHytw3MERDa4RID+JXo3sOTB07GouKDfSPG8oYu0Gei5+IsthMRu+ZQ6lke
+         UOgC8I4OY/k6TZ0h+T2h4Xu66xSAWxSB5TLgmTfuZmZ4IMtWa2zlt9EPYxlVIkAv+6
+         EBNm+H9QoA9uPWykyETEUU7F9a/i9WRfElV4qg5w=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1539969334-24577-1-git-send-email-dan@emutex.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+To:     Derek Basehore <dbasehore@chromium.org>,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181024013132.115907-2-dbasehore@chromium.org>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
+        mturquette@baylibre.com, heiko@sntech.de, aisheng.dong@nxp.com,
+        mchehab+samsung@kernel.org, corbet@lwn.net,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Derek Basehore <dbasehore@chromium.org>
+References: <20181024013132.115907-1-dbasehore@chromium.org>
+ <20181024013132.115907-2-dbasehore@chromium.org>
+Message-ID: <154038647375.53599.631725372765617195@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 1/6] clk: Remove recursion in clk_core_{prepare,enable}()
+Date:   Wed, 24 Oct 2018 06:07:53 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 06:15:31PM +0100, Dan O'Donovan wrote:
-> Hi all,
-> 
-> This series adds platform support for AAEON's UP Squared, a x86 SBC
-> based on Apollo Lake [1]. Specifically, it enables control for the board
-> pin headers and for the LEDs, as both of these features are only
-> available behind a FPGA-based platform controller.
-> 
-> This is structured around a MFD driver that provides a regmap interface
-> to that platform controller to each MFD cell.
-> 
-> The series is carved out from an out-of-tree support patchset, initially
-> written for the original UP Board [2] and then extended through the past
-> year to support new entries in the lineup (UP Board, UP Squared and
-> UP Core) [3].
-> 
-> Here we only submit support for UP Squared to simplify review. Still,
-> the driver is designed so that it can easily gain support for the other
-> boards.
-> 
-> V1 was originally submitted by Javier Arteaga in April 2018 as an RFC [4].
-> This V2 aims to address the feedback gratefully received from that.
+Quoting Derek Basehore (2018-10-23 18:31:27)
+> From: Stephen Boyd <sboyd@codeaurora.org>
+> =
 
-Are you attending ELCE in Edinburgh?
+> Enabling and preparing clocks can be written quite naturally with
+> recursion. We start at some point in the tree and recurse up the
+> tree to find the oldest parent clk that needs to be enabled or
+> prepared. Then we enable/prepare and return to the caller, going
+> back to the clk we started at and enabling/preparing along the
+> way.
+> =
 
-> 
-> [1]: http://www.up-board.org/upsquared/specifications-up2/
-> [2]: https://lkml.kernel.org/r/1467648434-29080-1-git-send-email-dan@emutex.com
-> [3]: https://github.com/emutex/ubilinux-kernel/commits/upboard-4.9
-> [4]: https://lore.kernel.org/lkml/20180421085009.28773-1-javier@emutex.com/
-> 
-> V2:
-> * Rewrote regmap r/w handlers to avoid duplication and improve readability
-> * Simplified data passing between MFD parent and child device drivers
-> * Removed incorrect __init attribute from probe functions
-> * Moved MFD cell definitions into same patch as MFD driver and simplified them
-> * Promoted some dev_dbg instances to dev_err for probe error cases
-> * Decoupled MFD cell reference from ACPI driver data
-> * Miscellanous coding style improvements
-> * Fixed license mismatches
-> 
-> Javier Arteaga (3):
->   mfd: upboard: Add UP2 platform controller driver
->   leds: upboard: Add LED support
->   pinctrl: upboard: Add UP2 pinctrl and gpio driver
-> 
->  drivers/leds/Kconfig              |  10 +
->  drivers/leds/Makefile             |   1 +
->  drivers/leds/leds-upboard.c       | 104 ++++++++
->  drivers/mfd/Kconfig               |  17 ++
->  drivers/mfd/Makefile              |   1 +
->  drivers/mfd/upboard.c             | 344 +++++++++++++++++++++++++
->  drivers/pinctrl/Kconfig           |  13 +
->  drivers/pinctrl/Makefile          |   1 +
->  drivers/pinctrl/pinctrl-upboard.c | 519 ++++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/upboard.h       |  44 ++++
->  10 files changed, 1054 insertions(+)
->  create mode 100644 drivers/leds/leds-upboard.c
->  create mode 100644 drivers/mfd/upboard.c
->  create mode 100644 drivers/pinctrl/pinctrl-upboard.c
->  create mode 100644 include/linux/mfd/upboard.h
-> 
-> -- 
-> 2.7.4
-> 
-> 
-> ------
-> This email has been scanned for spam and malware by The Email Laundry.
-> 
+> The problem is recursion isn't great for kernel code where we
+> have a limited stack size. Furthermore, we may be calling this
+> code inside clk_set_rate() which also has recursion in it, so
+> we're really not looking good if we encounter a tall clk tree.
+> =
 
--- 
-With Best Regards,
-Andy Shevchenko
+> Let's create a stack instead by looping over the parent chain and
+> collecting clks of interest. Then the enable/prepare becomes as
+> simple as iterating over that list and calling enable.
+> =
 
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+
+Did you change anything substantially? Or is it just a resend of my
+patch from a while ago? If you can add a link to the original and also
+describe what changed in a maintainer tag it would be much easier for me
+to compare.
 
