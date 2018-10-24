@@ -2,351 +2,212 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B91C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD32C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:11:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B42EA2075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:10:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NohBNGrE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B42EA2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A3FE2075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:11:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A3FE2075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726745AbeJXWjH (ORCPT
+        id S1726832AbeJXWjU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 18:39:07 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45794 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726407AbeJXWjH (ORCPT
+        Wed, 24 Oct 2018 18:39:20 -0400
+Received: from mail-it1-f198.google.com ([209.85.166.198]:55448 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726407AbeJXWjU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:39:07 -0400
-Received: by mail-pl1-f193.google.com with SMTP id o19-v6so2281536pll.12;
-        Wed, 24 Oct 2018 07:10:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=6sHBfP9gsisosiAyL61rxIONGHARsdgEPnA2SMm3lI8=;
-        b=NohBNGrEmeL1L6y1DDxQWQ84zAt0aoZrSgihNvk3+NS5KzMGw5GgITpt2q3WuxvErW
-         99sg6+/V7YNMNsTpD+V1QXhb9zxvYhklSpDUB6Y6SPBlGe96O6NoEDQ4zKPwwzZt91po
-         Df4OEyv0spdTiFHPjKLmD0bAcZPDVPsir9El8n8nhJvJD1+hXEHhKqykkOCSe+stXT7U
-         fdYAwk8LLk1qhnizO9gjGqUccFMBlKQBLaOKwu0Pyg4ElMHqm1FCBsFmD0egu2rnL7SN
-         caaahsKlvZAS5fJ2ZKKbLaH1792Yks/oID4rMuE8f2TYLJ5pETmRWoIpVP6JP/0F3GTp
-         tEeQ==
+        Wed, 24 Oct 2018 18:39:20 -0400
+Received: by mail-it1-f198.google.com with SMTP id u72-v6so4296674itc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 07:11:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=6sHBfP9gsisosiAyL61rxIONGHARsdgEPnA2SMm3lI8=;
-        b=OQKOaMFSnQ5v7T75NR7vHqsLJqR3kin4W7hpyU3Mj7wPR8JYjrQKYKm/wBN790zjqR
-         R6srp0zxEL3NogMl7WW5Txzdc6gUKuC2UyjGfKkr9znz3A10fnXaYDtjb0cpIVLGl+Fh
-         gUJHYrVF69aJD52GIOwEIq00UsjbYqFiJlDIhapHk5jVeXwBTFlrd1r0Fx12TM1UlQfa
-         5YD0zKDgqtBhxxtEWuB59YePe/D74wmgiVBYHLjwDRquW2rlwkWG19HLhwb3ay+LFlrq
-         cbdcKVDb1XF/DxCnF4cgFiIhaEKEXHbw9F3wuG1U5Jive2m4dwwcXNRX/5aYvAxhp479
-         nQtQ==
-X-Gm-Message-State: AGRZ1gLd5i5m2xwb3YYVwTUwiEyGsRBVfs3ns1K9TY+X7yTPYoSte/PR
-        82I0V0Mwuvd0X95CebPv/jI=
-X-Google-Smtp-Source: AJdET5eYgwB2g1UthLDjxZWk5q3m7N493UGc2R/Tqrtw7ZFEpyylW/dqCfpwAq7TyfTT1MWBG+1cww==
-X-Received: by 2002:a17:902:4e:: with SMTP id 72-v6mr2665712pla.204.1540390249782;
-        Wed, 24 Oct 2018 07:10:49 -0700 (PDT)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id t4-v6sm955140pfb.44.2018.10.24.07.10.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 07:10:49 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 19:40:42 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Slawomir Stepien <sst@poczta.fm>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] staging: iio: ad2s1210: Switch to the gpio descriptor
- interface
-Message-ID: <20181024141037.GA17297@nishad>
-References: <20181023190437.GA12974@nishad>
- <20181024065249.GA19150@x220.localdomain>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=DDWP/Gw28OOmzUX1JXzXTpOnkLArHKNLlo45KhFqtg4=;
+        b=KJWhQ/YGZzcas5UVX0icMAUQoTSmFsiG/iDMOnmnr/1xK6rn2PzvqphOdfNSpkGP5p
+         4+J57lZlwduYgelUS1Y5JHN/bT53bdYR0iJpPLwhhGmzV+5vIn/7doXhkCjMXiBUY3oO
+         SFixfqFgwz+GnBxWNFqTvp41EIaUVtwAIrpTcaiUgspUsot8UpuGVRSU+8Iox3nLiS8H
+         0O+7dMD/kAGAwbVQBFWp9n9HGYAb1vQX+pBDC4r4sZt68dByNIVDJZFXjuVRmuUIvZB2
+         QTEG9NNL0QNjezTfB+8Lq/Q8T6wahesQu9Ci0D2+/g3ty9QvirrXXntAh9ZnkXjzykpZ
+         KZ6Q==
+X-Gm-Message-State: AGRZ1gLNO//oegalNZCprbCRyi8n2NQUSQDnh8JBHHrCJsaH63zQFxDe
+        iyPrbJ2dVgWqz3zBiEe8knL7HApNqu+is0TGGnB0z2tbNxbg
+X-Google-Smtp-Source: AJdET5eGM0Xu6jwhKoyhDcV3W6Ux+gZQeHvSYy0LmQQ9GGJz13bAp/NC01qg+r8Moio5F7C55QLxv9A4I1okJzCdXRS1nFIt0B67
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181024065249.GA19150@x220.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Received: by 2002:a02:602d:: with SMTP id i45-v6mr2180391jac.6.1540390262948;
+ Wed, 24 Oct 2018 07:11:02 -0700 (PDT)
+Date:   Wed, 24 Oct 2018 07:11:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000705cf30578fa0e3c@google.com>
+Subject: KASAN: use-after-free Read in snd_seq_timer_interrupt
+From:   syzbot <syzbot+d5136d4d3240cbe45a2a@syzkaller.appspotmail.com>
+To:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        perex@perex.cz, syzkaller-bugs@googlegroups.com, tiwai@suse.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 08:52:49AM +0200, Slawomir Stepien wrote:
-> On paź 24, 2018 00:34, Nishad Kamdar wrote:
-> > Use the gpiod interface instead of the deprecated old non-descriptor
-> > interface.
-> 
-> Hi Nishad
-> 
-> Few more comments from me below.
-> 
-> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> > ---
-> > Changes in v3:
-> >  - Use a pointer to pointer for gpio_desc in
-> >    struct ad2s1210_gpio as it will be used to
-> >    modify a pointer.
-> >  - Use dot notation to initialize the structure.
-> >  - Use a pointer variable to avoid writing gpios[i].
-> > Changes in v2:
-> >  - Use the spi_device struct embedded in st instead
-> >    of passing it as an argument to ad2s1210_setup_gpios().
-> >  - Use an array of structs to reduce redundant code in
-> >    in ad2s1210_setup_gpios().
-> >  - Remove ad2s1210_free_gpios() as devm API is being used.
-> > ---
-> >  drivers/staging/iio/resolver/ad2s1210.c | 92 ++++++++++++++-----------
-> >  drivers/staging/iio/resolver/ad2s1210.h |  3 -
-> >  2 files changed, 50 insertions(+), 45 deletions(-)
-> > 
-> > diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
-> > index ac13b99bd9cb..fbf0cc722979 100644
-> > --- a/drivers/staging/iio/resolver/ad2s1210.c
-> > +++ b/drivers/staging/iio/resolver/ad2s1210.c
-> > @@ -15,7 +15,7 @@
-> >  #include <linux/slab.h>
-> >  #include <linux/sysfs.h>
-> >  #include <linux/delay.h>
-> > -#include <linux/gpio.h>
-> > +#include <linux/gpio/consumer.h>
-> >  #include <linux/module.h>
-> >  
-> >  #include <linux/iio/iio.h>
-> > @@ -69,10 +69,21 @@ enum ad2s1210_mode {
-> >  
-> >  static const unsigned int ad2s1210_resolution_value[] = { 10, 12, 14, 16 };
-> >  
-> > +struct ad2s1210_gpio {
-> > +	struct gpio_desc **ptr;
-> > +	const char *name;
-> > +	unsigned long flags;
-> > +};
-> > +
-> >  struct ad2s1210_state {
-> >  	const struct ad2s1210_platform_data *pdata;
-> >  	struct mutex lock;
-> >  	struct spi_device *sdev;
-> > +	struct gpio_desc *sample;
-> > +	struct gpio_desc *a0;
-> > +	struct gpio_desc *a1;
-> > +	struct gpio_desc *res0;
-> > +	struct gpio_desc *res1;
-> >  	unsigned int fclkin;
-> >  	unsigned int fexcit;
-> >  	bool hysteresis;
-> > @@ -91,8 +102,8 @@ static const int ad2s1210_mode_vals[4][2] = {
-> >  static inline void ad2s1210_set_mode(enum ad2s1210_mode mode,
-> >  				     struct ad2s1210_state *st)
-> >  {
-> > -	gpio_set_value(st->pdata->a[0], ad2s1210_mode_vals[mode][0]);
-> > -	gpio_set_value(st->pdata->a[1], ad2s1210_mode_vals[mode][1]);
-> > +	gpiod_set_value(st->a0, ad2s1210_mode_vals[mode][0]);
-> > +	gpiod_set_value(st->a1, ad2s1210_mode_vals[mode][1]);
-> >  	st->mode = mode;
-> >  }
-> >  
-> > @@ -152,8 +163,8 @@ int ad2s1210_update_frequency_control_word(struct ad2s1210_state *st)
-> >  
-> >  static unsigned char ad2s1210_read_resolution_pin(struct ad2s1210_state *st)
-> >  {
-> > -	int resolution = (gpio_get_value(st->pdata->res[0]) << 1) |
-> > -			  gpio_get_value(st->pdata->res[1]);
-> > +	int resolution = (gpiod_get_value(st->res0) << 1) |
-> > +			  gpiod_get_value(st->res1);
-> >  
-> >  	return ad2s1210_resolution_value[resolution];
-> >  }
-> > @@ -164,10 +175,10 @@ static const int ad2s1210_res_pins[4][2] = {
-> >  
-> >  static inline void ad2s1210_set_resolution_pin(struct ad2s1210_state *st)
-> >  {
-> > -	gpio_set_value(st->pdata->res[0],
-> > -		       ad2s1210_res_pins[(st->resolution - 10) / 2][0]);
-> > -	gpio_set_value(st->pdata->res[1],
-> > -		       ad2s1210_res_pins[(st->resolution - 10) / 2][1]);
-> > +	gpiod_set_value(st->res0,
-> > +			ad2s1210_res_pins[(st->resolution - 10) / 2][0]);
-> > +	gpiod_set_value(st->res1,
-> > +			ad2s1210_res_pins[(st->resolution - 10) / 2][1]);
-> >  }
-> >  
-> >  static inline int ad2s1210_soft_reset(struct ad2s1210_state *st)
-> > @@ -401,15 +412,15 @@ static ssize_t ad2s1210_clear_fault(struct device *dev,
-> >  	int ret;
-> >  
-> >  	mutex_lock(&st->lock);
-> > -	gpio_set_value(st->pdata->sample, 0);
-> > +	gpiod_set_value(st->sample, 0);
-> >  	/* delay (2 * tck + 20) nano seconds */
-> >  	udelay(1);
-> > -	gpio_set_value(st->pdata->sample, 1);
-> > +	gpiod_set_value(st->sample, 1);
-> >  	ret = ad2s1210_config_read(st, AD2S1210_REG_FAULT);
-> >  	if (ret < 0)
-> >  		goto error_ret;
-> > -	gpio_set_value(st->pdata->sample, 0);
-> > -	gpio_set_value(st->pdata->sample, 1);
-> > +	gpiod_set_value(st->sample, 0);
-> > +	gpiod_set_value(st->sample, 1);
-> >  error_ret:
-> >  	mutex_unlock(&st->lock);
-> >  
-> > @@ -466,7 +477,7 @@ static int ad2s1210_read_raw(struct iio_dev *indio_dev,
-> >  	s16 vel;
-> >  
-> >  	mutex_lock(&st->lock);
-> > -	gpio_set_value(st->pdata->sample, 0);
-> > +	gpiod_set_value(st->sample, 0);
-> >  	/* delay (6 * tck + 20) nano seconds */
-> >  	udelay(1);
-> >  
-> > @@ -512,7 +523,7 @@ static int ad2s1210_read_raw(struct iio_dev *indio_dev,
-> >  	}
-> >  
-> >  error_ret:
-> > -	gpio_set_value(st->pdata->sample, 1);
-> > +	gpiod_set_value(st->sample, 1);
-> >  	/* delay (2 * tck + 20) nano seconds */
-> >  	udelay(1);
-> >  	mutex_unlock(&st->lock);
-> > @@ -630,30 +641,32 @@ static const struct iio_info ad2s1210_info = {
-> >  
-> >  static int ad2s1210_setup_gpios(struct ad2s1210_state *st)
-> >  {
-> > -	unsigned long flags = st->pdata->gpioin ? GPIOF_DIR_IN : GPIOF_DIR_OUT;
-> > -	struct gpio ad2s1210_gpios[] = {
-> > -		{ st->pdata->sample, GPIOF_DIR_IN, "sample" },
-> > -		{ st->pdata->a[0], flags, "a0" },
-> > -		{ st->pdata->a[1], flags, "a1" },
-> > -		{ st->pdata->res[0], flags, "res0" },
-> > -		{ st->pdata->res[0], flags, "res1" },
-> > +	int ret, i;
-> > +	struct spi_device *spi = st->sdev;
-> > +	struct ad2s1210_gpio *pin;
-> > +	unsigned long flags = st->pdata->gpioin ? GPIOD_IN : GPIOD_OUT_LOW;
-> > +
-> > +	struct ad2s1210_gpio gpios[] = {
-> > +		{.ptr = &st->sample, .name = "sample", .flags = GPIOD_IN},
-> > +		{.ptr = &st->a0, .name = "a0", .flags = flags},
-> > +		{.ptr = &st->a1, .name = "a1", .flags = flags},
-> > +		{.ptr = &st->res0, .name = "res0", .flags = flags},
-> > +		{.ptr = &st->res1, .name = "res1", .flags = flags},
-> >  	};
-> 
-> I think that you should add spaces after { and before }. It's the file style
-> from what I see.
+Hello,
 
-Ok. I'll do that.
-> 
-> >  
-> > -	return gpio_request_array(ad2s1210_gpios, ARRAY_SIZE(ad2s1210_gpios));
-> > -}
-> > -
-> > -static void ad2s1210_free_gpios(struct ad2s1210_state *st)
-> > -{
-> > -	unsigned long flags = st->pdata->gpioin ? GPIOF_DIR_IN : GPIOF_DIR_OUT;
-> > -	struct gpio ad2s1210_gpios[] = {
-> > -		{ st->pdata->sample, GPIOF_DIR_IN, "sample" },
-> > -		{ st->pdata->a[0], flags, "a0" },
-> > -		{ st->pdata->a[1], flags, "a1" },
-> > -		{ st->pdata->res[0], flags, "res0" },
-> > -		{ st->pdata->res[0], flags, "res1" },
-> > -	};
-> > +	for (i = 0; i < ARRAY_SIZE(gpios); i++) {
-> > +		pin = &gpios[i];
-> > +		*pin->ptr = devm_gpiod_get(&spi->dev, pin->name,
-> > +					   pin->flags);
-> 
-> This can now fit into one line.
-> 
-> > +		if (IS_ERR(pin->ptr)) {
-> 
-> Here you are checking the wrong pointer. Also notice the line below.
-> 
+syzbot found the following crash on:
 
-Yes. I'll change that.
-> > +			ret = PTR_ERR(pin->ptr);
-> > +			dev_err(&spi->dev, "Failed to request %s GPIO: %d\n",
-> > +				pin->name, ret);
-> 
-> Please notice how other dev_err looks like in this code. Align the message to
-> the existing format.
-> 
+HEAD commit:    44786880df19 Merge branch 'parisc-4.20-1' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=178c8bad400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5071a2e3cb82c943
+dashboard link: https://syzkaller.appspot.com/bug?extid=d5136d4d3240cbe45a2a
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Ok. I'll do that.
-> > +			return ret;
-> > +		}
-> > +	}
-> >  
-> > -	gpio_free_array(ad2s1210_gpios, ARRAY_SIZE(ad2s1210_gpios));
-> > +	return 0;
-> >  }
-> >  
-> >  static int ad2s1210_probe(struct spi_device *spi)
-> > @@ -692,7 +705,7 @@ static int ad2s1210_probe(struct spi_device *spi)
-> >  
-> >  	ret = iio_device_register(indio_dev);
-> >  	if (ret)
-> > -		goto error_free_gpios;
-> > +		return ret;
-> >  
-> >  	st->fclkin = spi->max_speed_hz;
-> >  	spi->mode = SPI_MODE_3;
-> > @@ -700,10 +713,6 @@ static int ad2s1210_probe(struct spi_device *spi)
-> >  	ad2s1210_initial(st);
-> >  
-> >  	return 0;
-> > -
-> > -error_free_gpios:
-> > -	ad2s1210_free_gpios(st);
-> > -	return ret;
-> >  }
-> >  
-> >  static int ad2s1210_remove(struct spi_device *spi)
-> > @@ -711,7 +720,6 @@ static int ad2s1210_remove(struct spi_device *spi)
-> >  	struct iio_dev *indio_dev = spi_get_drvdata(spi);
-> >  
-> >  	iio_device_unregister(indio_dev);
-> > -	ad2s1210_free_gpios(iio_priv(indio_dev));
-> >  
-> >  	return 0;
-> >  }
-> > diff --git a/drivers/staging/iio/resolver/ad2s1210.h b/drivers/staging/iio/resolver/ad2s1210.h
-> > index e9b2147701fc..63d479b20a6c 100644
-> > --- a/drivers/staging/iio/resolver/ad2s1210.h
-> > +++ b/drivers/staging/iio/resolver/ad2s1210.h
-> > @@ -12,9 +12,6 @@
-> >  #define _AD2S1210_H
-> >  
-> >  struct ad2s1210_platform_data {
-> > -	unsigned int		sample;
-> > -	unsigned int		a[2];
-> > -	unsigned int		res[2];
-> >  	bool			gpioin;
-> >  };
-> >  #endif /* _AD2S1210_H */
-> 
-> -- 
-> Slawomir Stepien
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Thanks for the review.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+d5136d4d3240cbe45a2a@syzkaller.appspotmail.com
 
-regards,
-Nishad
+==================================================================
+BUG: KASAN: use-after-free in snd_seq_timer_interrupt+0x364/0x3e0  
+sound/core/seq/seq_timer.c:145
+Read of size 8 at addr ffff8801cf71c118 by task syz-executor0/24085
+
+CPU: 1 PID: 24085 Comm: syz-executor0 Not tainted 4.19.0+ #300
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  snd_seq_timer_interrupt+0x364/0x3e0 sound/core/seq/seq_timer.c:145
+  snd_timer_interrupt+0x9ff/0x1660 sound/core/timer.c:855
+  snd_timer_s_function+0xcd/0x130 sound/core/timer.c:1094
+  call_timer_fn+0x272/0x920 kernel/time/timer.c:1326
+  expire_timers kernel/time/timer.c:1363 [inline]
+  __run_timers+0x7e5/0xc70 kernel/time/timer.c:1682
+  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1695
+  __do_softirq+0x308/0xb7e kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x17f/0x1c0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:801
+  </IRQ>
+RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:761  
+[inline]
+RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160  
+[inline]
+RIP: 0010:_raw_spin_unlock_irqrestore+0xaf/0xd0  
+kernel/locking/spinlock.c:184
+Code: 30 f6 31 89 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c  
+02 00 75 28 48 83 3d 28 cd 7c 01 00 74 15 48 89 df 57 9d <0f> 1f 44 00 00  
+eb ad e8 7c 52 4b f9 eb bb 0f 0b 0f 0b e8 8a 54 0e
+RSP: 0018:ffff880181eaf508 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
+RAX: dffffc0000000000 RBX: 0000000000000282 RCX: 0000000000000000
+RDX: 1ffffffff1263ec6 RSI: 0000000000000001 RDI: 0000000000000282
+RBP: ffff880181eaf518 R08: ffff88018378a140 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801c0b94ac0
+R13: ffff8801c0b94300 R14: ffff8801daf2cc40 R15: 0000000000000001
+  try_to_wake_up+0x10a/0x12e0 kernel/sched/core.c:2056
+  wake_up_process kernel/sched/core.c:2124 [inline]
+  wake_up_q+0xa4/0x100 kernel/sched/core.c:440
+  futex_wake+0x61f/0x760 kernel/futex.c:1556
+  do_futex+0x2e4/0x26d0 kernel/futex.c:3533
+  __do_sys_futex kernel/futex.c:3589 [inline]
+  __se_sys_futex kernel/futex.c:3557 [inline]
+  __x64_sys_futex+0x472/0x6a0 kernel/futex.c:3557
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457569
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:0000000000a3fbf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: ffffffffffffffda RBX: 000000000072bfa0 RCX: 0000000000457569
+RDX: 0000000000000000 RSI: 0000000000000081 RDI: 000000000072bfa8
+RBP: 00000000000003b7 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000a3fcb0 R11: 0000000000000246 R12: 000000000072bfac
+R13: 000000000072bfac R14: 0000000000000003 R15: 0000000000000001
+
+Allocated by task 24073:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
+  kmalloc include/linux/slab.h:513 [inline]
+  kzalloc include/linux/slab.h:707 [inline]
+  queue_new sound/core/seq/seq_queue.c:113 [inline]
+  snd_seq_queue_alloc+0xab/0x5b0 sound/core/seq/seq_queue.c:185
+  snd_seq_ioctl_create_queue+0xb0/0x320 sound/core/seq/seq_clientmgr.c:1522
+  snd_seq_ioctl+0x253/0x440 sound/core/seq/seq_clientmgr.c:2138
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:501 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+  __do_sys_ioctl fs/ioctl.c:709 [inline]
+  __se_sys_ioctl fs/ioctl.c:707 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 24072:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3813
+  queue_delete+0x90/0xb0 sound/core/seq/seq_queue.c:156
+  snd_seq_queue_client_leave+0x36/0x170 sound/core/seq/seq_queue.c:584
+  seq_free_client1.part.9+0xf4/0x270 sound/core/seq/seq_clientmgr.c:263
+  seq_free_client1 sound/core/seq/seq_clientmgr.c:256 [inline]
+  seq_free_client+0x82/0x100 sound/core/seq/seq_clientmgr.c:285
+  snd_seq_release+0x51/0xe0 sound/core/seq/seq_clientmgr.c:366
+  __fput+0x385/0xa30 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801cf71c0c0
+  which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 88 bytes inside of
+  512-byte region [ffff8801cf71c0c0, ffff8801cf71c2c0)
+The buggy address belongs to the page:
+page:ffffea00073dc700 count:1 mapcount:0 mapping:ffff8801da800940 index:0x0
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea00073a4fc8 ffffea000761f4c8 ffff8801da800940
+raw: 0000000000000000 ffff8801cf71c0c0 0000000100000006 0000000000000000
+kobject: 'loop5' (00000000172d3417): kobject_uevent_env
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801cf71c000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801cf71c080: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+> ffff8801cf71c100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                             ^
+  ffff8801cf71c180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801cf71c200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
