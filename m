@@ -2,121 +2,148 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6563AC67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE40C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3245620832
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:41:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3245620832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 421B620831
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:41:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Hj1j3snd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 421B620831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbeJXTJI (ORCPT
+        id S1727421AbeJXTJJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 15:09:08 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42584 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726913AbeJXTJI (ORCPT
+        Wed, 24 Oct 2018 15:09:09 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:18303 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727061AbeJXTJI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 24 Oct 2018 15:09:08 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9OAZwuH068795
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 06:41:32 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2naq4b88vb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 06:41:32 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Wed, 24 Oct 2018 11:41:31 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 24 Oct 2018 11:41:27 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9OAfQis7471604
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 24 Oct 2018 10:41:26 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B9B674C04E;
-        Wed, 24 Oct 2018 10:41:26 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C99ED4C040;
-        Wed, 24 Oct 2018 10:41:24 +0000 (GMT)
-Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Wed, 24 Oct 2018 10:41:24 +0000 (GMT)
-Date:   Wed, 24 Oct 2018 16:11:24 +0530
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Mel Gorman <mgorman@techsingularity.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Yi Wang <wang.yi59@zte.com.cn>, zhong.weidong@zte.com.cn,
-        Yi Liu <liu.yi24@zte.com.cn>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2] sched/core: Don't mix isolcpus and housekeeping CPUs
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <1540350169-18581-1-git-send-email-srikar@linux.vnet.ibm.com>
- <20181024085636.GB23537@techsingularity.net>
- <20181024094646.GA18466@linux.vnet.ibm.com>
- <20181024101508.GP3109@worktop.c.hoisthospitality.com>
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bd04c520002>; Wed, 24 Oct 2018 03:41:22 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 24 Oct 2018 03:41:32 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 24 Oct 2018 03:41:32 -0700
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 24 Oct
+ 2018 10:41:30 +0000
+Subject: Re: [PATCH] mfd: tps6586x: Handle interrupts on suspend
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     Lee Jones <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>,
+        <stable@vger.kernel.org>
+References: <1539955373-13735-1-git-send-email-jonathanh@nvidia.com>
+ <20181022095257.GD4014@ulmo>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <38d9adb7-8a1a-3169-5401-f353a190f9c7@nvidia.com>
+Date:   Wed, 24 Oct 2018 11:41:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20181024101508.GP3109@worktop.c.hoisthospitality.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-TM-AS-GCONF: 00
-x-cbid: 18102410-0028-0000-0000-0000030C683A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18102410-0029-0000-0000-000023C87557
-Message-Id: <20181024104124.GC18466@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-24_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810240095
+In-Reply-To: <20181022095257.GD4014@ulmo>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1540377682; bh=YlMD+oal1eunp4ZsnQn3UuQKsJNF2LuRwDgS8c4SMKk=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Hj1j3sndxAs5SQLDdf1zJwaFih+Oc/QgAcL+XadYFpJp0RnNo2LfpC5UmebDj2NBw
+         J4/BtW996fCKn4bnupndbie/bRLna+mnaY8H88rVLyBAOz59p/N9kXOxmsUZdzYonC
+         2+ASFZK2tIsGjfijzn2TsXuvs3YUQSYdmxI7/idewzdGONIYL8g0CKnuiRK0oTLTT4
+         ykrxVjFjdLlQ2PAMEJqqpBgcbeX/pjQnreP8m6x3+I2JAKU6ZaGcL7swhPvKiW0p5q
+         oqCvGx1TJ7iO9rchSQDnHsU7l5TZBO3nanJeAkF91WXI4K6IrfVEnMF6jhO+mXNOwv
+         XUD3VlqDVII6g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Peter Zijlstra <peterz@infradead.org> [2018-10-24 12:15:08]:
 
-> On Wed, Oct 24, 2018 at 03:16:46PM +0530, Srikar Dronamraju wrote:
-> > * Mel Gorman <mgorman@techsingularity.net> [2018-10-24 09:56:36]:
-> > 
-> > > On Wed, Oct 24, 2018 at 08:32:49AM +0530, Srikar Dronamraju wrote:
-> > > It would certainly be a bit odd because the
-> > > application is asking for some protection but no guarantees are given
-> > > and the application is not made aware via an error code that there is a
-> > > problem. Asking the application to parse dmesg hoping to find the right
-> > > error message is going to be fragile.
-> > 
-> > Its a actually a good question.
-> > What should we be doing if a mix of isolcpus and housekeeping (aka
-> > non-isolcpus) is given in the mask.
-> > 
-> > Right now as you pointed, there is no easy way for the application to know
-> > which are the non-isolcpus to set its affinity. cpusets effective_cpus and
-> > cpus_allowed both will contain isolcpus too.
+On 22/10/2018 10:52, Thierry Reding wrote:
+> On Fri, Oct 19, 2018 at 02:22:53PM +0100, Jon Hunter wrote:
+>> From: Jonathan Hunter <jonathanh@nvidia.com>
+>>
+>> The tps6586x driver creates an irqchip that is used by its various child
+>> devices for managing interrupts. The tps6586x-rtc device is one of its
+>> children that uses the tps6586x irqchip. When using the tps6586x-rtc as
+>> a wake-up device from suspend, the following is seen:
+>>
+>>  PM: Syncing filesystems ... done.
+>>  Freezing user space processes ... (elapsed 0.001 seconds) done.
+>>  OOM killer disabled.
+>>  Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
+>>  Disabling non-boot CPUs ...
+>>  Entering suspend state LP1
+>>  Enabling non-boot CPUs ...
+>>  CPU1 is up
+>>  tps6586x 3-0034: failed to read interrupt status
+>>  tps6586x 3-0034: failed to read interrupt status
+>>
+>> The reason why the tps6586x interrupt status cannot be read is because
+>> the tps6586x interrupt is not masked during suspend and when the
+>> tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
+>> seen before the i2c controller has been resumed in order to read the
+>> tps6586x interrupt status.
+>>
+>> The tps6586x-rtc driver sets it's interrupt as a wake-up source during
+>> suspend, which gets propagated to the parent tps6586x interrupt.
+>> However, the tps6586x-rtc driver cannot disable it's interrupt during
+>> suspend otherwise we would never be woken up and so the tps6586x must
+>> disable it's interrupt instead.
+>>
+>> Prevent the tps6586x interrupt handler from executing on exiting suspend
+>> before the i2c controller has been resumed by disabling the tps6586x
+>> interrupt on entering suspend and re-enabling it on resuming from
+>> suspend.
+>>
+>> Cc: stable@vger.kernel.org
+>>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>>  drivers/mfd/tps6586x.c | 24 ++++++++++++++++++++++++
+>>  1 file changed, 24 insertions(+)
 > 
-> The easy option is to not use isolcpus :-) It is a horrifically bad
-> interface.
+> So does this mean that the SPI interrupt for the PMIC can still be a
+> wakeup source even if it is masked? This is slightly odd because now
+> you're saying that this does work while it doesn't work for the RTC
+> interrupt. So is this an implementation quirk of the LIC/GIC on Tegra
+> which doesn't extend to the TPS6586x? Or am I missing something?
 
-Agree, but thats something thats been exposed long time back.
-Do we have an option to remove that?  Hopefully nobody is using it.
+No it is not a quirk for the Tegra LIC/GIC, it is purely an issue with
+the PMIC driver and this issue could occur on other platforms not just
+Tegra.
+
+During suspend, we want the PMIC's host interrupt to be masked in the
+LIC/GIC level, but the wake-up for this interrupt to be enabled in the
+LIC. Currently, the wake-up is enabled in the LIC, but the interrupt is
+not being masked in the LIC/GIC which is the problem.
+
+If the RTC interrupt within the PMIC is disabled, then the PMIC
+generates no interrupt to the host (ie. Tegra) on an alarm. The PMIC
+interrupt controller only has an interrupt mask for the various
+interrupt sources within the PMIC. Therefore, if the RTC is
+enabled/in-use we should never mask its interrupt within the PMIC.
+
+Once the PMIC has been suspended, then it makes sense to disable its
+interrupt, because it cannot be service until it has been resumed,
+implying that I2C controller (ie. its parent) has also been resumed.
+
+Cheers
+Jon
 
 -- 
-Thanks and Regards
-Srikar Dronamraju
-
+nvpublic
