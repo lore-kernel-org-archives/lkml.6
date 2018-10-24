@@ -2,225 +2,81 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FB1ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0BDECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:14:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EF792082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:11:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E60FD2082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:14:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QEJk3NJc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EF792082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rl0op/x6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E60FD2082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbeJYGlH (ORCPT
+        id S1726674AbeJYGnw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 02:41:07 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:37729 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbeJYGlG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 02:41:06 -0400
-Received: by mail-lf1-f66.google.com with SMTP id a82-v6so5216878lfa.4
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 15:11:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=22nZ9/bSF5a5KbPfuw41q2GQOTsW0tyvBp+WWCauFas=;
-        b=QEJk3NJcbDjR841N9DXE0vt2Gx8cPjd1QaH1gRkrDWiGfX4XP+xrDMTStChBmqJlVC
-         en8284wnfANYkweMtdB15juEK7tT2Cd5tMApgtF8BVFAgzhBPPJVY2fu+EXrF7BOaNYv
-         nXuYdfr26zxvlTAu+DbdmoEPEaGaWjXifmAho=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=22nZ9/bSF5a5KbPfuw41q2GQOTsW0tyvBp+WWCauFas=;
-        b=XgY39Teg2riRZ80hATUZViVrEZGvNc2uE+rJiJIxLHNw/4DZFZnftiacAokqkI20BA
-         Ky6gukDyVvzj0C6UTH9mGuFxo1gIB3DWQPTDw6kj3PDeU8L5Lckj5foKgG2F10k+MPGz
-         5sMbtsthaF5He/HmrQwliWXYeoVTKISh3s6HwXOWtz0csUwyWSySA48PHo9ETd4MkIWg
-         BtcCXoXiu9zqLWElixsTsXnTZVSrahpWZ94f9+R07lXkl+F2XFt9V6QMaVKL/Wd+puJc
-         MOcXeJrgc2QKnzTnC5fRVeVBHnog5+uHYkyK0THciOjGdUL28GISJajnxiQmTmd6lT3+
-         vN8w==
-X-Gm-Message-State: AGRZ1gLi4T3mlaZGdeeoLVffJYHVCelYkgH60dWnN5YdpOOD3UF/THbQ
-        d/etgJyImpj/Djia/creHBNIpw==
-X-Google-Smtp-Source: AJdET5f3s2Jv2dv+2tM5MRb/p9obyxQls9mbdPx4BIN1SJ0ht88Js3piwLxaY4Y53Ji8EFYlNEZt3w==
-X-Received: by 2002:a19:d612:: with SMTP id n18-v6mr86329lfg.4.1540419073218;
-        Wed, 24 Oct 2018 15:11:13 -0700 (PDT)
-Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id f19-v6sm835350ljc.31.2018.10.24.15.11.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 15:11:12 -0700 (PDT)
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     grygorii.strashko@ti.com, davem@davemloft.net
-Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alexander.h.duyck@intel.com,
-        bjorn@mork.no, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH net-next 1/4] net: core: dev_addr_lists: add auxiliary func to handle reference address updates
-Date:   Thu, 25 Oct 2018 01:10:56 +0300
-Message-Id: <20181024221059.21834-2-ivan.khoronzhuk@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181024221059.21834-1-ivan.khoronzhuk@linaro.org>
-References: <20181024221059.21834-1-ivan.khoronzhuk@linaro.org>
+        Thu, 25 Oct 2018 02:43:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57002 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726044AbeJYGnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 02:43:52 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F8DD2075D;
+        Wed, 24 Oct 2018 22:14:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540419240;
+        bh=I0/HoZy/5Qtiq/LDZOlUyb8v4svXUYh+DkT8SAyu4P0=;
+        h=Subject:From:To:Cc:Date:From;
+        b=Rl0op/x6cUBgIJQhh1nAguCg9QcZshQZaLDqtLqAWNUxe6wWLjIa/j1N3dL3IA44X
+         r52Z8A99UEx2EoLwxzHBWPD+GVGnVqdtuqw6c7oFBunsqNjnLWJ0RJzuV8lNy3nJv5
+         73kG9wivHgOVNkHRBPxLCRmGClsHgVgzfk5EHWVY=
+Subject: [PATCH] MAINTAINERS: Add x86 early-quirks.c file pattern to PCI
+ subsystem
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     linux-pci@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Date:   Wed, 24 Oct 2018 17:13:59 -0500
+Message-ID: <154041923937.26247.17083948926896599419.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to avoid all table update, and only remove or add new
-address, the auxiliary function exists, named __hw_addr_sync_dev().
-It allows end driver do nothing when nothing changed and add/rm when
-concrete address is firstly added or lastly removed. But it doesn't
-include cases when an address of real device or vlan was reused by
-other vlans or vlan/macval devices.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-For handaling events when address was reused/unreused the patch adds
-new auxiliary routine - __hw_addr_ref_sync_dev(). It allows to do
-nothing when nothing was changed and do updates only for an address
-being added/reused/deleted/unreused. Thus, clone address changes for
-vlans can be mirrored in the table. The function is exclusive with
-__hw_addr_sync_dev(). It's responsibility of the end driver to
-identify address vlan device, if it needs so.
+arch/x86/kernel/early-quirks.c contains special PCI quirks that need to
+run even before the usual DECLARE_PCI_FIXUP_EARLY() quirks.  These have
+typically been merged by the x86 maintainers, which is fine, but PCI folks
+should at least see what's happening, so add a file pattern to the PCI
+subsystem entry.
 
-Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- include/linux/netdevice.h | 10 ++++
- net/core/dev_addr_lists.c | 97 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 107 insertions(+)
+ MAINTAINERS |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index dc1d9ed33b31..de95f96a6352 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -4048,6 +4048,16 @@ int __hw_addr_sync_dev(struct netdev_hw_addr_list *list,
- 		       int (*sync)(struct net_device *, const unsigned char *),
- 		       int (*unsync)(struct net_device *,
- 				     const unsigned char *));
-+int __hw_addr_ref_sync_dev(struct netdev_hw_addr_list *list,
-+			   struct net_device *dev,
-+			   int (*sync)(struct net_device *,
-+				       const unsigned char *, int),
-+			   int (*unsync)(struct net_device *,
-+					 const unsigned char *, int));
-+void __hw_addr_ref_unsync_dev(struct netdev_hw_addr_list *list,
-+			      struct net_device *dev,
-+			      int (*unsync)(struct net_device *,
-+					    const unsigned char *, int));
- void __hw_addr_unsync_dev(struct netdev_hw_addr_list *list,
- 			  struct net_device *dev,
- 			  int (*unsync)(struct net_device *,
-diff --git a/net/core/dev_addr_lists.c b/net/core/dev_addr_lists.c
-index d884d8f5f0e5..81a8cd4ea3bd 100644
---- a/net/core/dev_addr_lists.c
-+++ b/net/core/dev_addr_lists.c
-@@ -277,6 +277,103 @@ int __hw_addr_sync_dev(struct netdev_hw_addr_list *list,
- }
- EXPORT_SYMBOL(__hw_addr_sync_dev);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4ece30f15777..63cb7f3dbbb4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11249,6 +11249,7 @@ F:	include/uapi/linux/pci*
+ F:	lib/pci*
+ F:	arch/x86/pci/
+ F:	arch/x86/kernel/quirks.c
++F:	arch/x86/kernel/early-quirks.c
  
-+/**
-+ *  __hw_addr_ref_sync_dev - Synchronize device's multicast address list taking
-+ *  into account references
-+ *  @list: address list to synchronize
-+ *  @dev:  device to sync
-+ *  @sync: function to call if address or reference on it should be added
-+ *  @unsync: function to call if address or some reference on it should removed
-+ *
-+ *  This function is intended to be called from the ndo_set_rx_mode
-+ *  function of devices that require explicit address or references on it
-+ *  add/remove notifications. The unsync function may be NULL in which case
-+ *  the addresses or references on it requiring removal will simply be
-+ *  removed without any notification to the device. That is responsibility of
-+ *  the driver to identify and distribute address or references on it between
-+ *  internal address tables.
-+ **/
-+int __hw_addr_ref_sync_dev(struct netdev_hw_addr_list *list,
-+			   struct net_device *dev,
-+			   int (*sync)(struct net_device *,
-+				       const unsigned char *, int),
-+			   int (*unsync)(struct net_device *,
-+					 const unsigned char *, int))
-+{
-+	struct netdev_hw_addr *ha, *tmp;
-+	int err, ref_cnt;
-+
-+	/* first go through and flush out any unsynced/stale entries */
-+	list_for_each_entry_safe(ha, tmp, &list->list, list) {
-+		/* sync if address is not used */
-+		if ((ha->sync_cnt << 1) <= ha->refcount)
-+			continue;
-+
-+		/* if fails defer unsyncing address */
-+		ref_cnt = ha->refcount - ha->sync_cnt;
-+		if (unsync && unsync(dev, ha->addr, ref_cnt))
-+			continue;
-+
-+		ha->refcount = (ref_cnt << 1) + 1;
-+		ha->sync_cnt = ref_cnt;
-+		__hw_addr_del_entry(list, ha, false, false);
-+	}
-+
-+	/* go through and sync updated/new entries to the list */
-+	list_for_each_entry_safe(ha, tmp, &list->list, list) {
-+		/* sync if address added or reused */
-+		if ((ha->sync_cnt << 1) >= ha->refcount)
-+			continue;
-+
-+		ref_cnt = ha->refcount - ha->sync_cnt;
-+		err = sync(dev, ha->addr, ref_cnt);
-+		if (err)
-+			return err;
-+
-+		ha->refcount = ref_cnt << 1;
-+		ha->sync_cnt = ref_cnt;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(__hw_addr_ref_sync_dev);
-+
-+/**
-+ *  __hw_addr_ref_unsync_dev - Remove synchronized addresses and references on
-+ *  it from device
-+ *  @list: address list to remove synchronized addresses (references on it) from
-+ *  @dev:  device to sync
-+ *  @unsync: function to call if address and references on it should be removed
-+ *
-+ *  Remove all addresses that were added to the device by
-+ *  __hw_addr_ref_sync_dev(). This function is intended to be called from the
-+ *  ndo_stop or ndo_open functions on devices that require explicit address (or
-+ *  references on it) add/remove notifications. If the unsync function pointer
-+ *  is NULL then this function can be used to just reset the sync_cnt for the
-+ *  addresses in the list.
-+ **/
-+void __hw_addr_ref_unsync_dev(struct netdev_hw_addr_list *list,
-+			      struct net_device *dev,
-+			      int (*unsync)(struct net_device *,
-+					    const unsigned char *, int))
-+{
-+	struct netdev_hw_addr *ha, *tmp;
-+
-+	list_for_each_entry_safe(ha, tmp, &list->list, list) {
-+		if (!ha->sync_cnt)
-+			continue;
-+
-+		/* if fails defer unsyncing address */
-+		if (unsync && unsync(dev, ha->addr, ha->sync_cnt))
-+			continue;
-+
-+		ha->refcount -= ha->sync_cnt - 1;
-+		ha->sync_cnt = 0;
-+		__hw_addr_del_entry(list, ha, false, false);
-+	}
-+}
-+EXPORT_SYMBOL(__hw_addr_ref_unsync_dev);
-+
- /**
-  *  __hw_addr_unsync_dev - Remove synchronized addresses from device
-  *  @list: address list to remove synchronized addresses from
--- 
-2.17.1
+ PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS
+ M:	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 
