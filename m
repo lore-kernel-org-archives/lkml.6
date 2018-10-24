@@ -2,107 +2,184 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2114C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D07CC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 870592082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:05:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB1182082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:07:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KnNn+MAa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 870592082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2k0TtMo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB1182082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbeJXXe0 (ORCPT
+        id S1727361AbeJXXfm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:34:26 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36752 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726433AbeJXXeZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:34:25 -0400
-Received: by mail-wr1-f66.google.com with SMTP id y16so6002264wrw.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 08:05:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=ol38AcypG0XHnL+BLcdwn9BhH113PECyNrBUMEWjyZs=;
-        b=KnNn+MAawBioiNA8jRu3Nfk39I8werT6GevLIKKbwl8AgJULLNVgBpcKguPMMMuk7K
-         B6P1IRrio/4Xs7tuVQ86SoCtyrLUYH9sA9yQXar2VDh3G9FJwMFUW1Sy5cGOIp6WJrV4
-         xP5c1+gGpB+YwSxBV2mnj4UFRqP1PTRaFqC9eBnqZOpZ0N1IyMZrSQpj4kSZbD87WJjh
-         14WdQ84PLfng6YrYZFsteXjhqyFX0JZXVSZAhaPeKyOI0rv83NS+L6hVqRuEiA6w2uSH
-         D7oGmNhB4HCHPFtggGcX2KR+kSOwQIgCVEYWdJYRjmmmebLuWeeCbkmxw2IRY3I90KqY
-         V9/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ol38AcypG0XHnL+BLcdwn9BhH113PECyNrBUMEWjyZs=;
-        b=OhtKepXOyxVs87DO2vG9cp3arq/YCF9/4FcLmEjz4EWcSIHk4L+5JElpgsIcqfFZie
-         kgsxNKN/7YHcBv8QqXI/7HvgYFUik/GZC7rh3LVdm9+NNGqsa3gvm9DDfaUvhDP7DIgR
-         STANZ9Db4TrM7NLJLBad/7jXvsfj6HszaTXJp9HQBoePp8wd7bR16O5AT1ydKjOG31PT
-         ipHc9jyAFwr6oHP03YMRNBcXkis6HTGPKwdv2QK94zb7XXAxYOGzP5X8HyyNivEC0u9Z
-         yltRPqGqVy1rN0Jvqdr8xDvVuvvSkIjlMgz1uyDw02/8SCKKiSV7O6J3+Pc0xxuwRyhj
-         p6lA==
-X-Gm-Message-State: AGRZ1gI6ZZk4rFnd39tSrdwB0HYoM8VF/nANT6z60ynqgPwKTEWlSghS
-        Mnp882MP9DwZMtgIcW4lWJE8pnOJ4OQ=
-X-Google-Smtp-Source: AJdET5fd8z84BRfh2g7bsDrUE7LxG8HAyLStbL/QdLUrHc5/JILoGVBFX/6wZAxRxMsSfyijZDdc/g==
-X-Received: by 2002:a5d:4c84:: with SMTP id z4-v6mr129976wrs.75.1540393555676;
-        Wed, 24 Oct 2018 08:05:55 -0700 (PDT)
-Received: from zdravcePC (cable-178-149-91-180.dynamic.sbb.rs. [178.149.91.180])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm4518369wrw.12.2018.10.24.08.05.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 08:05:55 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 17:05:53 +0200
-From:   Aleksa Zdravkovic <alex.zdravkovic98@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: axis-fifo: Fix line over 80 characters error
-Message-ID: <20181024150550.GA5150@zdravcePC>
+        Wed, 24 Oct 2018 19:35:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40152 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726414AbeJXXfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 19:35:42 -0400
+Received: from linux-8ccs (ip5f5adbf3.dynamic.kabel-deutschland.de [95.90.219.243])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C9F2207DD;
+        Wed, 24 Oct 2018 15:07:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540393633;
+        bh=WwOBXOwgr297l+RWsTyqJULARk5/y8fdD0bCYYLlECE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=i2k0TtMomizu5+xtvT3as/BmHXvNPYVS1yHuFMg/3gfpIy5LZ5xFh36I/vNQalJvS
+         R5opRNXCktXi8X11V2h1uTjAjFtgBhGLJWyE0c+wG/xqigzLd979tjgIc60d9jZtMM
+         +8sHAgf8/5Ru0VWPtGfcHTREjs84ZJ0X2TS3Z0KQ=
+Date:   Wed, 24 Oct 2018 17:07:06 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "arjan@linux.intel.com" <arjan@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>
+Subject: Re: [PATCH RFC v3 0/3] Rlimit for module space
+Message-ID: <20181024150706.jewcclhhh756tupn@linux-8ccs>
+References: <20181019204723.3903-1-rick.p.edgecombe@intel.com>
+ <CAKv+Gu_AgPv2o4=U0-7pnpgtSufEobnta8oKhhGfCdCxM82B5Q@mail.gmail.com>
+ <6b1017c450d163539d2b974657baaaf697f0a138.camel@intel.com>
+ <CAKv+Gu-Rk-SQVOQ63L3DkF3=EVik3pHXzpNp5r5TrgDajTM_iQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKv+Gu-Rk-SQVOQ63L3DkF3=EVik3pHXzpNp5r5TrgDajTM_iQ@mail.gmail.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.16-default x86_64
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the checkpatch.pl warning:
++++ Ard Biesheuvel [23/10/18 08:54 -0300]:
+>On 22 October 2018 at 20:06, Edgecombe, Rick P
+><rick.p.edgecombe@intel.com> wrote:
+>> On Sat, 2018-10-20 at 19:20 +0200, Ard Biesheuvel wrote:
+>>> Hi Rick,
+>>>
+>>> On 19 October 2018 at 22:47, Rick Edgecombe <rick.p.edgecombe@intel.com>
+>>> wrote:
+>>> > If BPF JIT is on, there is no effective limit to prevent filling the entire
+>>> > module space with JITed e/BPF filters.
+>>>
+>>> Why do BPF filters use the module space, and does this reason apply to
+>>> all architectures?
+>>>
+>>> On arm64, we already support loading plain modules far away from the
+>>> core kernel (i.e. out of range for ordinary relative jump/calll
+>>> instructions), and so I'd expect BPF to be able to deal with this
+>>> already as well. So for arm64, I wonder why an ordinary vmalloc_exec()
+>>> wouldn't be more appropriate.
+>> AFAIK, it's like you said about relative instruction limits, but also because
+>> some predictors don't predict past a certain distance. So performance as well.
+>> Not sure the reasons for each arch, or if they all apply for BPF JIT. There seem
+>> to be 8 by my count, that have a dedicated module space for some reason.
+>>
+>>> So before refactoring the module alloc/free routines to accommodate
+>>> BPF, I'd like to take one step back and assess whether it wouldn't be
+>>> more appropriate to have a separate bpf_alloc/free API, which could be
+>>> totally separate from module alloc/free if the arch permits it.
+>>>
+>> I am not a BPF JIT expert unfortunately, hopefully someone more authoritative
+>> will chime in. I only ran into this because I was trying to increase
+>> randomization for the module space and wanted to find out how many allocations
+>> needed to be supported.
+>>
+>> I'd guess though, that BPF JIT is just assuming that there will be some arch
+>> specific constraints about where text can be placed optimally and they would
+>> already be taken into account in the module space allocator.
+>>
+>> If there are no constraints for some arch, I'd wonder why not just update its
+>> module_alloc to use the whole space available. What exactly are the constraints
+>> for arm64 for normal modules?
+>>
+>
+>Relative branches and the interactions with KAsan.
+>
+>We just fixed something similar in the kprobes code: it was using
+>RWX-mapped module memory to store kprobed instructions, and we
+>replaced that with a simple vmalloc_exec() [and code to remap it
+>read-only], which was possible given that relative branches are always
+>emulated by arm64 kprobes.
+>
+>So it depends on whether BPF code needs to be in relative branching
+>range from the calling code, and whether the BPF code itself is
+>emitted using relative branches into other parts of the code.
+>
+>> It seems fine to me for architectures to have the option of solving this a
+>> different way. If potentially the rlimit ends up being the best solution for
+>> some architectures though, do you think this refactor (pretty close to just a
+>> name change) is that intrusive?
+>>
+>> I guess it could be just a BPF JIT per user limit and not touch module space,
+>> but I thought the module space limit was a more general solution as that is the
+>> actual limited resource.
+>>
+>
+>I think it is wrong to conflate the two things. Limiting the number of
+>BPF allocations and the limiting number of module allocations are two
+>separate things, and the fact that BPF reuses module_alloc() out of
+>convenience does not mean a single rlimit for both is appropriate.
 
-WARNING: line over 80 characters
-+			 (write_timeout >= 0) ? msecs_to_jiffies(write_timeout) :
+Hm, I think Ard has a good point. AFAIK, and correct me if I'm wrong,
+users of module_alloc() i.e. kprobes, ftrace, bpf, seem to use it
+because it is an easy way to obtain executable kernel memory (and
+depending on the needs of the architecture, being additionally
+reachable via relative branches) during runtime. The side effect is
+that all these users share the "module" memory space, even though this
+memory region is not exclusively used by modules (well, personally I
+think it technically should be, because seeing module_alloc() usage
+outside of the module loader is kind of a misuse of the module API and
+it's confusing for people who don't know the reason behind its usage
+outside of the module loader).
 
-Signed-off-by: Aleksa Zdravkovic <alex.zdravkovic98@gmail.com>
----
- drivers/staging/axis-fifo/axis-fifo.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Right now I'm not sure if it makes sense to impose a blanket limit on
+all module_alloc() allocations when the real motivation behind the
+rlimit is related to BPF, i.e., to stop unprivileged users from
+hogging up all the vmalloc space for modules with JITed BPF filters.
+So the rlimit has more to do with limiting the memory usage of BPF
+filters than it has to do with modules themselves.
 
-diff --git a/drivers/staging/axis-fifo/axis-fifo.c b/drivers/staging/axis-fifo/axis-fifo.c
-index c18bf31f55b6..2f609712f507 100644
---- a/drivers/staging/axis-fifo/axis-fifo.c
-+++ b/drivers/staging/axis-fifo/axis-fifo.c
-@@ -482,10 +482,10 @@ static ssize_t axis_fifo_write(struct file *f, const char __user *buf,
- 		spin_lock_irq(&fifo->write_queue_lock);
- 		ret = wait_event_interruptible_lock_irq_timeout
- 			(fifo->write_queue,
--			 ioread32(fifo->base_addr + XLLF_TDFV_OFFSET)
-+			ioread32(fifo->base_addr + XLLF_TDFV_OFFSET)
- 				>= words_to_write,
--			 fifo->write_queue_lock,
--			 (write_timeout >= 0) ? msecs_to_jiffies(write_timeout) :
-+			fifo->write_queue_lock,
-+			(write_timeout >= 0) ? msecs_to_jiffies(write_timeout) :
- 				MAX_SCHEDULE_TIMEOUT);
- 		spin_unlock_irq(&fifo->write_queue_lock);
- 
--- 
-2.19.1
+I think Ard's suggestion of having a separate bpf_alloc/free API makes
+a lot of sense if we want to keep track of bpf-related allocations
+(and then the rlimit would be enforced for those). Maybe part of the
+module mapping space could be carved out for bpf filters (e.g. have
+BPF_VADDR, BPF_VSIZE, etc like how we have it for modules), or
+continue sharing the region but explicitly define a separate bpf_alloc
+API, depending on an architecture's needs. What do people think?
+
+Thanks,
+
+Jessica
 
