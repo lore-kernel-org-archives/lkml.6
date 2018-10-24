@@ -2,94 +2,90 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11007C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB28C46475
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9591206B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:30:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SNli1Hum"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9591206B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A8654206B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:31:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8654206B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbeJXL4j (ORCPT
+        id S1726575AbeJXL57 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 07:56:39 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41742 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725896AbeJXL4i (ORCPT
+        Wed, 24 Oct 2018 07:57:59 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:57404 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726082AbeJXL57 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 07:56:38 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c32so3591111otb.8;
-        Tue, 23 Oct 2018 20:30:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ggV+ywjKf3q0Ak4QYOtHoDVSmG7i1LNnqaTdg3lP9vw=;
-        b=SNli1HumAxDYKEMrxn0IepzjbLvZtbAP4b1uKwWldCtlLkkIIOpP6ygnja9ckGchp2
-         zUcb0mAnY3x+92H4oeIGERY/4yNZijiZ4z8B/9E8TYSe3wCDqIHfZCUWvUgjbFeJ0F1z
-         mpmvcmCh5ElKKiTM4x7Bd5AW8JnCsdBE+gXT+75SDyq5IslQY7ZUJXmgjLV2L4MMbzRu
-         7RZrsruUSb7a1q6dy/6kAHssY0M3vgyfMLWHiG6vkIL1OGVXezJnX+Bk4HfyWft6NMiH
-         NLSXMTQUT/1veqws8bP5L6omVLULIJtQBh/L84VOvnFbBJVItfv4rkFaV9tOgbuF3w0J
-         IelA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ggV+ywjKf3q0Ak4QYOtHoDVSmG7i1LNnqaTdg3lP9vw=;
-        b=LifxeOjEOjwpV2vUEdo6YvRevRPoaOKyukQuQmlkZwvkdl83D1Xy6hVGU8rLbNrQps
-         Bp9v9ibHMZgedB6cYCfK52ZBLtgvKxcJv+BfrN40T+546POQkb1wsi1/Vk45AHMp7QN0
-         5ZmlooTSfIvHJaJQMMlJid1dRrNLy4DnoYrcfiUmYLhCBaVGweHfRTs9r59h6osIzfEh
-         jqPkr8qWttcg01GzLbrZnEKywZd/9v2lW6/wml9MMK9uMmUBjj3XIoG7oFURfr+Lo5ou
-         Dt7Mbek4Pppj2bB9gt6Z+F9SCJrnbBNu1rMt2Q2p1fTkpnmxEQ0f91fqfXl7nKYB1ayG
-         9VVA==
-X-Gm-Message-State: AGRZ1gKqCIrhJSZlhsfjGUBluKtWL/UFZnT3VMMleZXdrfKY6WZH9z9i
-        nz6l2pNgV5Tjj11Cw832RFgpraRnLag7lx1JqH72og==
-X-Google-Smtp-Source: AJdET5f0d6LhgH53CC0WuFyLn++sT+oA34PGB0du+WlX81Wh1OCHtnvQTNvPWiR2Mcvtyy3YAcacYnAo4hXtzwZ1H4s=
-X-Received: by 2002:a9d:529:: with SMTP id 38mr304185otw.233.1540341584420;
- Tue, 23 Oct 2018 17:39:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181023011022.GA6574@WindFlash> <93692F0D-D25B-4225-B127-4988E43B4CE1@amacapital.net>
-In-Reply-To: <93692F0D-D25B-4225-B127-4988E43B4CE1@amacapital.net>
-From:   Leonardo Bras <leobras.c@gmail.com>
-Date:   Tue, 23 Oct 2018 21:39:33 -0300
-Message-ID: <CADvQ+rEk-VE4uLZ_iRi26BnuEWFzCNZxdcdHRgWW6YbKS4R_tA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] x86/vdso: Renames variable to fix shadow warning.
-To:     luto@amacapital.net
-Cc:     lkcamp@lists.libreplanetbr.org, Borislav Petkov <bp@alien8.de>,
-        David.Laight@aculab.com, Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, helen@koikeco.de,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 24 Oct 2018 07:57:59 -0400
+Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 9162714771C2E;
+        Tue, 23 Oct 2018 20:31:49 -0700 (PDT)
+Date:   Tue, 23 Oct 2018 20:31:48 -0700 (PDT)
+Message-Id: <20181023.203148.123764172393516338.davem@davemloft.net>
+To:     torvalds@linux-foundation.org
+CC:     akpm@linux-foundation.org, sparclinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT] Sparc
+From:   David Miller <davem@davemloft.net>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 23 Oct 2018 20:31:49 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Andy,
 
-Yeah, it's much better. I will replace this part of the commit message.
-It will be fixed for v3.
+Mostly VDSO cleanups and optimizations.
 
-Thank you!
+Please pull, thanks a lot!
 
+The following changes since commit 91b15613ce7fb3e724ca0d433eef8e6bf15322af:
 
-On Mon, Oct 22, 2018 at 11:13 PM Andy Lutomirski <luto@amacapital.net> wrot=
-e:
+  Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net (2018-10-19 09:16:20 +0200)
 
-> How about =E2=80=9CThe go32() and go64() functions has an argument and a =
-local variable called =E2=80=98name=E2=80=99.  Rename both to clarify the c=
-ode and to fix a warning with -Wshadow.=E2=80=9D
->
-> Other than that, Acked-by: Andy Lutomirski <luto@kernel.org
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc.git 
+
+for you to fetch changes up to 8dbc450f76dc8f3b47fe117cd0cde166e1f21b64:
+
+  Merge branch 'sparc-vdso' (2018-10-22 19:14:24 -0700)
+
+----------------------------------------------------------------
+David S. Miller (10):
+      sparc: Fix parport build warnings.
+      sparc: Improve VDSO instruction patching.
+      sparc: Inline VDSO gettime code aggressively.
+      sparc: Don't bother masking out TICK_PRIV_BIT in VDSO code.
+      sparc: Set DISABLE_BRANCH_PROFILING in VDSO CFLAGS.
+      sparc: Improve VDSO CFLAGS.
+      sparc: Really use linker with LDFLAGS.
+      sparc: Validate VDSO for undefined symbols.
+      sparc: Several small VDSO vclock_gettime.c improvements.
+      Merge branch 'sparc-vdso'
+
+ arch/sparc/include/asm/parport.h        |   2 ++
+ arch/sparc/include/asm/thread_info_64.h |   4 ++++
+ arch/sparc/include/asm/vdso.h           |   6 +++---
+ arch/sparc/kernel/time_64.c             |   3 ---
+ arch/sparc/vdso/Makefile                |  33 +++++++++++++++++----------------
+ arch/sparc/vdso/checkundef.sh           |  10 ++++++++++
+ arch/sparc/vdso/vclock_gettime.c        | 102 ++++++++++++++++++++++++++++++++++++++++++++++--------------------------------------------------------
+ arch/sparc/vdso/vdso-layout.lds.S       |   7 ++-----
+ arch/sparc/vdso/vdso2c.c                |   6 ------
+ arch/sparc/vdso/vdso2c.h                |  18 ++++++++++++++++--
+ arch/sparc/vdso/vma.c                   |  39 +++++++++++++++++++++++----------------
+ 11 files changed, 123 insertions(+), 107 deletions(-)
+ create mode 100644 arch/sparc/vdso/checkundef.sh
